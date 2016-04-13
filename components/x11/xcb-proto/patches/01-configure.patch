@@ -1,0 +1,34 @@
+--- ./configure.orig	2015-01-12 16:27:54.075325910 +0000
++++ ./configure	2015-01-12 16:28:56.437559852 +0000
+@@ -2569,14 +2569,7 @@
+      else
+        am_py_prefix=$prefix
+      fi
+-     am_cv_python_pythondir=`$PYTHON -c "
+-$am_python_setup_sysconfig
+-if can_use_sysconfig:
+-    sitedir = sysconfig.get_path('purelib', vars={'base':'$am_py_prefix'})
+-else:
+-    from distutils import sysconfig
+-    sitedir = sysconfig.get_python_lib(0, 0, prefix='$am_py_prefix')
+-sys.stdout.write(sitedir)"`
++     am_cv_python_pythondir=`echo "$PYTHON_PREFIX/lib/python$PYTHON_VERSION/vendor-packages"`
+      case $am_cv_python_pythondir in
+      $am_py_prefix*)
+        am__strip_prefix=`echo "$am_py_prefix" | sed 's|.|.|g'`
+@@ -2613,14 +2606,7 @@
+      else
+        am_py_exec_prefix=$exec_prefix
+      fi
+-     am_cv_python_pyexecdir=`$PYTHON -c "
+-$am_python_setup_sysconfig
+-if can_use_sysconfig:
+-    sitedir = sysconfig.get_path('platlib', vars={'platbase':'$am_py_prefix'})
+-else:
+-    from distutils import sysconfig
+-    sitedir = sysconfig.get_python_lib(1, 0, prefix='$am_py_prefix')
+-sys.stdout.write(sitedir)"`
++     am_cv_python_pyexecdir=`echo "$PYTHON_EXEC_PREFIX/lib/python$PYTHON_VERSION/vendor-packages"`
+      case $am_cv_python_pyexecdir in
+      $am_py_exec_prefix*)
+        am__strip_prefix=`echo "$am_py_exec_prefix" | sed 's|.|.|g'`

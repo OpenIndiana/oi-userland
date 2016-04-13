@@ -47,6 +47,9 @@ PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
+GENERATE_HISTORY= $(WS_TOOLS)/generate-history
+HISTORY=	history
+
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
 COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
@@ -106,7 +109,7 @@ PKG_MACROS +=		USERLAND_GIT_REMOTE=$(USERLAND_GIT_REMOTE)
 PKG_MACROS +=		USERLAND_GIT_BRANCH=$(USERLAND_GIT_BRANCH)
 PKG_MACROS +=		USERLAND_GIT_REV=$(USERLAND_GIT_REV)
 
-PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) -D COMPONENT_SUMMARY="$(COMPONENT_SUMMARY)"
+PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) -D COMPONENT_SUMMARY="$(COMPONENT_SUMMARY)" -D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)" 
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
@@ -115,6 +118,9 @@ PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+ifneq ($(wildcard $(HISTORY)),)
+HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
+endif
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
@@ -136,10 +142,28 @@ else
 NOPERL_MANIFESTS = $(UNVERSIONED_MANIFESTS)
 endif
 
+# Look for manifests which need to be duplicated for each version of ruby.
+# NOPERL_MANIFESTS represents the manifests that are not Python or
+# Perl manifests.  Extract the Ruby Manifests from NOPERL_MANIFESTS.
+# Any remaining manifests are stored in NONRUBY_MANIFESTS
+ifeq ($(findstring -RUBYVER,$(NOPERL_MANIFESTS)),-RUBYVER)
+NORUBY_MANIFESTS = $(filter-out %GENFRAG.p5m,\
+                      $(filter-out %-RUBYVER.p5m,$(NOPERL_MANIFESTS)))
+RUBY_MANIFESTS = $(filter %-RUBYVER.p5m,$(NOPERL_MANIFESTS))
+RUBYV_MANIFESTS = $(foreach v,$(shell echo $(RUBY_VERSIONS)),\
+                      $(shell echo $(RUBY_MANIFESTS) |\
+                      sed -e 's/-RUBYVER.p5m/-$(shell echo $(v) |\
+                      cut -d. -f1,2 | tr -d .).p5m/g'))
+RUBYNV_MANIFESTS = $(shell echo $(RUBY_MANIFESTS) | sed -e 's/-RUBYVER//')
+else
+NORUBY_MANIFESTS = $(NOPERL_MANIFESTS)
+endif
+
 VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
-	$(NOPERL_MANIFESTS)
+	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
+	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -231,6 +255,52 @@ $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+# Rule to generate historical manifests from the $(HISTORY) file.
+define history-manifest-rule
+$(MANIFEST_BASE)-$(1): $(HISTORY) $(BUILD_DIR)
+	$(NAWK) -v TARGET=$(1) -v FUNCTION=manifest -f $(GENERATE_HISTORY) < \
+	    $(HISTORY) > $$@
+endef
+$(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfst))))
+
+# Define and execute a macro that generates a rule to create a manifest for a
+# ruby module specific to a particular version of the ruby runtime.
+# Creates build/manifest-*-modulename-##.p5m file where ## is replaced with
+# the version number.
+define ruby-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
+        PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
+            RUBYV=$(subst .,,$(1))
+
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
+	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
+	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
+	fi
+	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
+	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
+endef
+$(foreach ver,$(RUBY_VERSIONS),\
+        $(eval $(call ruby-manifest-rule,$(shell echo $(ver) | \
+            cut -d. -f1,2),$(ver))))
+
+# A rule to create a helper transform package for ruby, that will insert the
+# appropriate conditional dependencies into a ruby library's
+# runtime-version-generic package to pull in the version-specific bits when the
+# corresponding version of ruby is on the system.
+$(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
+	$(RM) $@
+	$(foreach ver,$(RUBY_VERSIONS),\
+	        $(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
+	            cut -d. -f1,2 | tr -d .)))
+
+# Build Ruby version-wrapping manifests from the generic version.
+# Creates build/manifest-*-modulename.p5m file.
+#
+$(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
+	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
+	        $(WS_TOP)/transforms/mkgeneric $< > $@
+	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+
 ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 # auto-generate file/directory list
 $(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
@@ -308,14 +378,14 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
 # lint the manifests all at once
 $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 	@echo "VALIDATING MANIFEST CONTENT: $(RESOLVED)"
-	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
+	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)" $(COMPONENT_PKGLINT_ENV)\
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
 	$(TOUCH) $@
 
 lintme: FRC
 	@echo "VALIDATING MANIFEST CONTENT: $(RESOLVED)"
-	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
+	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)" $(COMPONENT_PKGLINT_ENV)\
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
 

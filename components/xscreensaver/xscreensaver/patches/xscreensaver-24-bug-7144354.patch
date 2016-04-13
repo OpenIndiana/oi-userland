@@ -29,14 +29,9 @@
  Already, RFE(CR7144354) is  filed to add the LWP perl modules to Solaris . 
 */
 
----
- driver/xscreensaver-getimage-file |  428 ++++---------------------------------
- 1 files changed, 45 insertions(+), 383 deletions(-)
-
-diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
---- driver/xscreensaver-getimage-file
-+++ driver/xscreensaver-getimage-file
-@@ -13,18 +13,12 @@
+--- driver/xscreensaver-getimage-file	Sun Dec  8 03:54:54 2013
++++ driver/xscreensaver-getimage-file	Tue Nov 19 22:18:03 2013
+@@ -13,10 +13,6 @@
  # prints its name.  The file will be an image file whose dimensions are
  # larger than a certain minimum size.
  #
@@ -47,6 +42,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
  # The various xscreensaver hacks that manipulate images ("jigsaw", etc.) get
  # the image to manipulate by running the "xscreensaver-getimage" program.
  #
+@@ -23,8 +19,6 @@
  # Under X11, the "xscreensaver-getimage" program invokes this script,
  # depending on the value of the "chooseRandomImages" and "imageDirectory"
  # settings in the ~/.xscreensaver file (or .../app-defaults/XScreenSaver).
@@ -68,23 +64,24 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
  
  
  my $progname = $0; $progname =~ s@.*/@@g;
--my $version = q{ $Revision: 1.35 $ }; $version =~ s/^[^0-9]+([0-9.]+).*$/$1/;
+-my $version = q{ $Revision: 1.38 $ }; $version =~ s/^[^0-9]+([0-9.]+).*$/$1/;
 +my $version = q{ $Revision: 1.27 $ }; $version =~ s/^[^0-9]+([0-9.]+).*$/$1/;
  
  my $verbose = 0;
  
-@@ -74,10 +64,6 @@ my $cache_p = 1;
+@@ -77,11 +69,7 @@
  #
  my $cache_max_age = 60 * 60 * 3;   # 3 hours
  
 -# Re-poll RSS/Atom feeds when local copy is older than this many seconds.
 -#
 -my $feed_max_age = $cache_max_age;
--
  
+-
  # This matches files that we are allowed to use as images (case-insensitive.)
  # Anything not matching this is ignored.  This is so you can point your
-@@ -118,19 +104,18 @@ my $stat_count = 0;	    # number of files/dirs stat'ed
+ # imageDirectory at directory trees that have things other than images in
+@@ -121,19 +109,18 @@
  my $skip_count_unstat = 0;  # number of files skipped without stat'ing
  my $skip_count_stat = 0;    # number of files skipped after stat
  
@@ -109,7 +106,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
  
    my @dirs = ();
  
-@@ -205,7 +190,7 @@ sub find_all_files($) {
+@@ -208,7 +195,7 @@
  }
  
  
@@ -118,7 +115,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($dir) = @_;
  
    my @terms = ();
-@@ -235,7 +220,7 @@ sub spotlight_all_files($) {
+@@ -238,7 +225,7 @@
  # running at once, one will wait for the other, instead of both of
  # them spanking the same file system at the same time.
  #
@@ -127,7 +124,20 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
  my $cache_file_name = undef;
  my $read_cache_p = 0;
  
-@@ -257,18 +242,18 @@ sub read_cache($) {
+@@ -250,11 +237,7 @@
+   my $dd = "$ENV{HOME}/Library/Caches";    # MacOS location
+   if (-d $dd) {
+     $cache_file_name = "$dd/org.jwz.xscreensaver.getimage.cache";
+-  } elsif (-d "$ENV{HOME}/.cache") {	   # Gnome "FreeDesktop XDG" location
+-    $dd = "$ENV{HOME}/.cache/xscreensaver";
+-    if (! -d $dd) { mkdir ($dd) || error ("mkdir $dd: $!"); }
+-    $cache_file_name = "$dd/xscreensaver-getimage.cache"
+-  } elsif (-d "$ENV{HOME}/tmp") {	   # If ~/.tmp/ exists, use it.
++  } elsif (-d "$ENV{HOME}/tmp") {
+     $cache_file_name = "$ENV{HOME}/tmp/.xscreensaver-getimage.cache";
+   } else {
+     $cache_file_name = "$ENV{HOME}/.xscreensaver-getimage.cache";
+@@ -264,11 +247,11 @@
      if ($verbose > 1);
  
    my $file = $cache_file_name;
@@ -143,6 +153,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
  
    if ($mtime + $cache_max_age < time) {
      print STDERR "$progname: cache is too old\n" if ($verbose);
+@@ -275,7 +258,7 @@
      return ();
    }
  
@@ -151,7 +162,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    $odir =~ s/[\r\n]+$//s if defined ($odir);
    if (!defined ($odir) || ($dir ne $odir)) {
      print STDERR "$progname: cache is for $odir, not $dir\n"
-@@ -277,7 +262,7 @@ sub read_cache($) {
+@@ -284,7 +267,7 @@
    }
  
    my @files = ();
@@ -160,7 +171,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
      s/[\r\n]+$//s;
      push @files, "$odir/$_";
    }
-@@ -300,17 +285,18 @@ sub write_cache($) {
+@@ -307,17 +290,18 @@
  
    if (! $read_cache_p) {
  
@@ -177,14 +188,14 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 +      my $re = qr/$dir/;
        foreach (@all_files) {
          my $f = $_; # stupid Perl. do this to avoid modifying @all_files!
--        $f =~ s@^\Q$dir\L/@@so || die;  # remove $dir from front
+-        $f =~ s@^\Q$dir/@@so || die;  # remove $dir from front
 -        print $cache_fd "$f\n";
 +        $f =~ s@^$re/@@so || die;
 +        print CACHE_FILE "$f\n";
        }
      }
-
-@@ -321,422 +309,17 @@
+ 
+@@ -325,474 +309,17 @@
        if ($verbose);
    }
  
@@ -269,6 +280,10 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -  if ($body !~ m@^<\?xml\s@si) {
 -    # Not an RSS/Atom feed.  Try RSS autodiscovery.
 -
+-    # (Great news, everybody: Flickr no longer provides RSS for "Sets",
+-    # only for "Photostreams", and only the first 20 images of those.
+-    # Thanks, assholes.)
+-
 -    error ("not an RSS or Atom feed, or HTML: $url")
 -      unless ($body =~ m@<(HEAD|BODY|A|IMG)\b@si);
 -
@@ -281,6 +296,10 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -          $p =~ m! \b HREF \s* = \s* ['"]  ( [^<>'"]+ ) !six
 -         ) {
 -        my $u2 = html_unquote ($1);
+-        if ($u2 =~ m!^/!s) {
+-          my ($h) = ($url =~ m!^([a-z]+://[^/]+)!si);
+-          $u2 = "$h$u2";
+-        }
 -        print STDERR "$progname: found feed: $u2\n"
 -          if ($verbose);
 -        return parse_feed ($u2);
@@ -418,7 +437,29 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -sub download_image($$$) {
 -  my ($url, $uid, $dir) = @_;
 -
--  my ($ext) = ($url =~ m@\.([a-z\d]+)$@si);
+-  my $url2 = $url;
+-  $url2 =~ s/\#.*$//s;		# Omit search terms after file extension
+-  $url2 =~ s/\?.*$//s;
+-  my ($ext) = ($url2 =~ m@\.([a-z\d]+)$@si);
+-
+-  # If the feed hasn't put a sane extension on their URLs, nothing's going
+-  # to work. This code assumes that file names have extensions, even the
+-  # ones in the cache directory.
+-  #
+-  if (! $ext) {
+-    print STDERR "$progname: skipping extensionless URL: $url\n"
+-      if ($verbose > 1);
+-    return undef;
+-  }
+-
+-  # Don't bother downloading files that we will reject anyway.
+-  #
+-  if (! ($url2 =~ m/$good_file_re/io)) {
+-    print STDERR "$progname: skipping non-image URL: $url\n"
+-      if ($verbose > 1);
+-    return undef;
+-  }
+-
 -  my $file = md5_file ($uid);
 -  $file .= '.' . lc($ext) if $ext;
 -
@@ -432,10 +473,22 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -
 -  # Special-case kludge for Flickr:
 -  # Their RSS feeds sometimes include only the small versions of the images.
--  # So if the URL ends in "s" (75x75), "t" (100x100) or "m" (240x240),then
--  # munge it to be "b" (1024x1024).
+-  # So if the URL ends in one of the "small-size" letters, change it to "b".
 -  #
--  $url =~ s@_[stm](\.[a-z]+)$@_b$1@si
+-  #     _o  orig,  1600 +
+-  #     _k  large, 2048 max
+-  #     _h  large, 1600 max
+-  #     _b  large, 1024 max
+-  #     _c  medium, 800 max
+-  #     _z  medium, 640 max
+-  #     ""  medium, 500 max
+-  #     _n  small,  320 max
+-  #     _m  small,  240 max
+-  #     _t  thumb,  100 max
+-  #     _q  square, 150x150
+-  #     _s  square,  75x75
+-  #
+-  $url =~ s@_[sqtmnzc](\.[a-z]+)$@_b$1@si
 -    if ($url =~ m@^https?://[^/?#&]*?flickr\.com/@si);
 -
 -  print STDERR "$progname: downloading: $dir/$file for $uid / $url\n" 
@@ -461,7 +514,12 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -  my $dir = "$ENV{HOME}/Library/Caches";    # MacOS location
 -  if (-d $dir) {
 -    $dir = "$dir/org.jwz.xscreensaver.feeds";
--  } elsif (-d "$ENV{HOME}/tmp") {
+-  } elsif (-d "$ENV{HOME}/.cache") {	   # Gnome "FreeDesktop XDG" location
+-    $dir = "$ENV{HOME}/.cache/xscreensaver";
+-    if (! -d $dir) { mkdir ($dir) || error ("mkdir $dir: $!"); }
+-    $dir .= "/feeds";
+-    if (! -d $dir) { mkdir ($dir) || error ("mkdir $dir: $!"); }
+-  } elsif (-d "$ENV{HOME}/tmp") {	   # If ~/.tmp/ exists, use it.
 -    $dir = "$ENV{HOME}/tmp/.xscreensaver-feeds";
 -  } else {
 -    $dir = "$ENV{HOME}/.xscreensaver-feeds";
@@ -499,10 +557,11 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -
 -  my $poll_p = ($mtime + $feed_max_age < time);
 -
--  $poll_p = 1 unless ($cache_p);  # poll again now with --no-cache cmd line arg.
+-  # --no-cache cmd line arg means poll again right now.
+-  $poll_p = 1 unless ($cache_p);
 -
--  # Even if the cache is young, let's make sure there are at least
--  # a few files in it, and re-check if not.
+-  # Even if the cache is young, make sure there is at least one file,
+-  # and re-check if not.
 -  #
 -  if (! $poll_p) {
 -    my $count = 0;
@@ -548,7 +607,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -      $count++;
 -    }
 -
--    print STDERR "$progname: empty feed: $url\n" if ($count <= 0);
+-    my $empty_p = ($count <= 0);
 -
 -    # Now delete any files that are no longer in the feed.
 -    # But if there was nothing in the feed (network failure?)
@@ -569,8 +628,12 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 -      }
 -    }
 -
--    # Both feed and cache are empty. No files at all.
+-    # Both feed and cache are empty. No files at all. Bail.
 -    error ("empty feed: $url") if ($kept <= 1);
+-
+-    # Feed is empty, but we have some files from last time. Warn.
+-    print STDERR "$progname: empty feed: using cache: $url\n"
+-      if ($empty_p);
 -
 -    $mtime = time();	# update the timestamp
 -
@@ -611,7 +674,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    if ($use_spotlight_p == -1) {
      $use_spotlight_p = 0;
      if (-x '/usr/bin/mdfind') {
-@@ -638,14 +322,6 @@ sub find_random_file($) {
+@@ -800,14 +327,6 @@
      }
    }
  
@@ -626,26 +689,26 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    @all_files = read_cache ($dir);
  
    if ($#all_files >= 0) {
-@@ -673,7 +349,7 @@ sub find_random_file($) {
+@@ -835,6 +354,8 @@
  
    write_cache ($dir);
  
--#  @all_files = sort(@all_files);
 +  @all_files = sort(@all_files);
- 
++
    if ($#all_files < 0) {
      print STDERR "$progname: no files in $dir\n";
-@@ -686,9 +362,6 @@ sub find_random_file($) {
+     exit 1;
+@@ -846,9 +367,6 @@
      my $n = int (rand ($#all_files + 1));
      my $file = $all_files[$n];
      if (large_enough_p ($file)) {
 -      if (! $url) {
--        $file =~ s@^\Q$dir\L/@@so || die;  # remove $dir from front
+-        $file =~ s@^\Q$dir/@@so || die;  # remove $dir from front
 -      }
        return $file;
      }
    }
-@@ -699,7 +372,7 @@ sub find_random_file($) {
+@@ -863,7 +381,7 @@
  }
  
  
@@ -654,7 +717,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($file) = @_;
  
    my ($w, $h) = image_file_size ($file);
-@@ -726,7 +399,7 @@ sub large_enough_p($) {
+@@ -895,7 +413,7 @@
  
  # Given the raw body of a GIF document, returns the dimensions of the image.
  #
@@ -663,7 +726,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($body) = @_;
    my $type = substr($body, 0, 6);
    my $s;
-@@ -738,7 +411,7 @@ sub gif_size($) {
+@@ -907,7 +425,7 @@
  
  # Given the raw body of a JPEG document, returns the dimensions of the image.
  #
@@ -672,7 +735,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($body) = @_;
    my $i = 0;
    my $L = length($body);
-@@ -789,7 +462,7 @@ sub jpeg_size($) {
+@@ -958,7 +476,7 @@
  
  # Given the raw body of a PNG document, returns the dimensions of the image.
  #
@@ -681,7 +744,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($body) = @_;
    return () unless ($body =~ m/^\211PNG\r/s);
    my ($bits) = ($body =~ m/^.{12}(.{12})/s);
-@@ -803,7 +476,7 @@ sub png_size($) {
+@@ -972,7 +490,7 @@
  # Given the raw body of a GIF, JPEG, or PNG document, returns the dimensions
  # of the image.
  #
@@ -690,7 +753,7 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my ($body) = @_;
    return () if (length($body) < 10);
    my ($w, $h) = gif_size ($body);
-@@ -931,17 +503,17 @@
+@@ -985,16 +503,17 @@
  
  # Returns the dimensions of the image file.
  #
@@ -698,13 +761,12 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
 +sub image_file_size() {
    my ($file) = @_;
 -  my $in;
--  if (! open ($in, '<', $file)) {
+-  if (! open ($in, '<:raw', $file)) {
 +  local *IN;
 +  if (! open (IN, "<$file")) {
      print STDERR "$progname: $file: $!\n" if ($verbose);
      return ();
    }
--  binmode ($in);  # Larry can take Unicode and shove it up his ass sideways.
 +  binmode (IN);  # Larry can take Unicode and shove it up his ass sideways.
    my $body = '';
 -  sysread ($in, $body, 1024 * 50);  # The first 50k should be enough.
@@ -714,13 +776,14 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    return image_size ($body);	    # but we know they're huge!)
  }
  
-@@ -952,19 +524,15 @@
+@@ -1005,49 +524,38 @@
    exit 1;
  }
  
 -sub usage() {
+-  print STDERR "usage: $progname [--verbose] directory-or-feed-url\n\n" .
 +sub usage {
-   print STDERR "usage: $progname [--verbose] directory\n" .
++  print STDERR "usage: $progname [--verbose] directory\n" .
    "       Prints the name of a randomly-selected image file.  The directory\n" .
    "       is searched recursively.  Images smaller than " .
 -         "${min_image_width}x${min_image_height} are excluded.\n" .
@@ -737,19 +800,40 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    my $dir = undef;
  
    while ($_ = $ARGV[0]) {
-@@ -868,18 +537,11 @@ sub main() {
+     shift @ARGV;
+-    if    (m/^--?verbose$/s)      { $verbose++; }
+-    elsif (m/^-v+$/s)             { $verbose += length($_)-1; }
+-    elsif (m/^--?name$/s)         { }   # ignored, for compatibility
+-    elsif (m/^--?spotlight$/s)    { $use_spotlight_p = 1; }
+-    elsif (m/^--?no-spotlight$/s) { $use_spotlight_p = 0; }
+-    elsif (m/^--?cache$/s)        { $cache_p = 1; }
+-    elsif (m/^--?no-?cache$/s)    { $cache_p = 0; }
+-    elsif (m/^-./)                { usage; }
+-    elsif (!defined($dir))        { $dir = $_; }
+-    else                          { usage; }
++    if ($_ eq "--verbose") { $verbose++; }
++    elsif (m/^-v+$/) { $verbose += length($_)-1; }
++    elsif ($_ eq "--name") { }     # ignored, for compatibility
++    elsif ($_ eq "--spotlight")    { $use_spotlight_p = 1; }
++    elsif ($_ eq "--no-spotlight") { $use_spotlight_p = 0; }
++    elsif ($_ eq "--cache")        { $cache_p = 1; }
++    elsif ($_ eq "--no-cache")     { $cache_p = 0; }
++    elsif (m/^-./) { usage; }
++    elsif (!defined($dir)) { $dir = $_; }
++    else { usage; }
+   }
  
    usage unless (defined($dir));
  
 -  $dir =~ s@^feed:@http:@si;
--
++  $dir =~ s@^~/@$ENV{HOME}/@s;     # allow literal "~/"
+ 
 -  if ($dir =~ m/^https?:/si) {
 -    # ok
 -  } else {
 -    $dir =~ s@^~/@$ENV{HOME}/@s;     # allow literal "~/"
 -    $dir =~ s@/+$@@s;		   # omit trailing /
-+  $dir =~ s@^~/@$ENV{HOME}/@s;     # allow literal "~/"
- 
+-
 -    if (! -d $dir) {
 -      print STDERR "$progname: $dir: not a directory or URL\n";
 -      usage;
@@ -760,4 +844,3 @@ diff --git driver/xscreensaver-getimage-file driver/xscreensaver-getimage-file
    }
  
    my $file = find_random_file ($dir);
-

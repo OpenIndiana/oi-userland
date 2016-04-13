@@ -1,0 +1,100 @@
+Developed in-house, fed to community.
+http://redmine.lighttpd.net/issues/2530
+
+--- src/lempar.c	2012-08-31 07:11:20.000000000 -0700
++++ src/lempar.c	2013-10-14 02:10:29.201323553 -0700
+@@ -486,6 +486,9 @@
+   }else if( yyact == YYNSTATE + YYNRULE + 1 ){
+     yy_accept(yypParser);
+   }
++  /* Parfait_ALLOW memory-leak - false positive for variable yygotominor - memory is properly freed in function yy_accept above */
++  /* parfait needs two comments here to stop complaining and accept Parfait_ALLOW directive, I don't know why */
++  return;
+ }
+ 
+ /*
+--- src/mod_mysql_vhost.c	2010-08-17 02:04:38.000000000 -0700
++++ src/mod_mysql_vhost.c	2013-10-14 03:48:47.184131818 -0700
+@@ -217,7 +217,10 @@
+ 
+         	if (config_insert_values_global(srv,
+ 			((data_config *)srv->config_context->data[i])->value,
+-			cv)) return HANDLER_ERROR;
++			cv)) {
++			buffer_free(sel);
++			return HANDLER_ERROR;
++		}
+ 
+ 		s->mysql_pre = buffer_init();
+ 		s->mysql_post = buffer_init();
+--- src/lemon.c	2012-08-31 07:11:20.000000000 -0700
++++ src/lemon.c	2013-10-14 04:29:24.547185717 -0700
+@@ -453,13 +453,11 @@
+ #define acttab_yylookahead(X,N)  ((X)->aAction[N].lookahead)
+ 
+ /* Free all memory associated with the given acttab */
+-/*
+ PRIVATE void acttab_free(acttab *p){
+   free( p->aAction );
+   free( p->aLookahead );
+   free( p );
+ }
+-*/
+ 
+ /* Allocate a new acttab structure */
+ PRIVATE acttab *acttab_alloc(void){
+@@ -3582,6 +3580,7 @@
+ 
+   fclose(in);
+   fclose(out);
++  acttab_free(pActtab);
+   return;
+ }
+ 
+--- src/fdevent.c	2012-08-31 07:11:20.000000000 -0700
++++ src/fdevent.c	2013-10-14 03:55:48.707756259 -0700
+@@ -77,6 +77,7 @@
+ 
+ 	log_error_write(ev->srv, __FILE__, __LINE__, "S",
+ 		"event-handler is unknown, try to set server.event-handler = \"poll\" or \"select\"");
++	free(ev);
+ 	return NULL;
+ }
+ 
+--- src/configfile.c	2012-11-07 06:50:29.000000000 -0800
++++ src/configfile.c	2013-10-15 06:45:37.918474628 -0700
+@@ -1131,12 +1131,14 @@
+ 	context_free(&context);
+ 
+ 	if (0 != ret) {
++		/* Parfait_ALLOW memory-leak - false positive dcwd variable - memory is properly freed on server close */
+ 		return ret;
+ 	}
+ 
+ 	if (NULL != (dc = (data_config *)array_get_element(srv->config_context, "global"))) {
+ 		srv->config = dc->value;
+ 	} else {
++		/* Parfait_ALLOW memory-leak - false positive dcwd variable - memory is properly freed on server close */
+ 		return -1;
+ 	}
+ 
+@@ -1146,6 +1148,7 @@
+ 
+ 		if (modules->type != TYPE_ARRAY) {
+ 			fprintf(stderr, "server.modules must be an array");
++			/* Parfait_ALLOW memory-leak - false positive dcwd variable - memory is properly freed on server close */
+ 			return -1;
+ 		}
+ 
+@@ -1200,9 +1207,11 @@
+ 
+ 
+ 	if (0 != config_insert(srv)) {
++		/* Parfait_ALLOW memory-leak - false positive dcwd variable - memory is properly freed on server close */
+ 		return -1;
+ 	}
+ 
++	/* Parfait_ALLOW memory-leak - false positive dcwd variable - memory is properly freed on server close */
+ 	return 0;
+ }
+ 

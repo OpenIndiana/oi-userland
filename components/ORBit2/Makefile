@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ORBit2
 COMPONENT_VERSION=	2.14.19
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/ORBit2/
 COMPONENT_SUMMARY=	High-performance CORBA Object Request Broker
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

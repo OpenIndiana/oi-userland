@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -46,13 +46,15 @@ export WS_TOP := \
 	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
-WS_LOGS =	$(WS_TOP)/$(MACH)/logs
-WS_REPO =	$(WS_TOP)/$(MACH)/repo
-WS_TOOLS =	$(WS_TOP)/tools
-WS_MAKE_RULES =	$(WS_TOP)/make-rules
-WS_COMPONENTS =	$(WS_TOP)/components
-WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
+WS_MACH =       $(WS_TOP)/$(MACH)
+WS_LOGS =       $(WS_MACH)/logs
+WS_REPO =       $(WS_MACH)/repo
+WS_TOOLS =      $(WS_TOP)/tools
+WS_MAKE_RULES = $(WS_TOP)/make-rules
+WS_COMPONENTS = $(WS_TOP)/components
+WS_LICENSES =   $(WS_TOP)/licenses
+WS_INCORPORATIONS =     $(WS_TOP)/incorporations
+WS_LINT_CACHE = $(WS_MACH)/pkglint-cache
 
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
@@ -67,6 +69,9 @@ install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
 
 SHELL=	/bin/bash
+
+# This can be overridden to avoid rebuilding when you touch a Makefile
+MAKEFILE_PREREQ =	Makefile
 
 CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
@@ -112,8 +117,11 @@ VARDIR =	/var
 KERNELDRVDIR =	/kernel/drv
 KERNELDRVDIR64 =/kernel/drv/$(MACH64)
 USRBINDIR =	$(USRDIR)/bin
+USRBINDIR32 =	$(USRDIR)/bin/$(MACH32)
 USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
 USRSBINDIR =	$(USRDIR)/sbin
+USRSBINDIR32 =	$(USRDIR)/sbin/$(MACH32)
+USRSBINDIR64 =	$(USRDIR)/sbin/$(MACH64)
 USRLIBDIR =	$(USRDIR)/lib
 USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
 USRSHAREDIR =	$(USRDIR)/share
@@ -140,8 +148,11 @@ PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
 PROTOKERNELDRVDIR =	$(PROTO_DIR)/$(KERNELDRVDIR)
 PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
 PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
+PROTOUSRBINDIR32 =	$(PROTO_DIR)/$(USRBINDIR32)
 PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
 PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
+PROTOUSRSBINDIR32 =	$(PROTO_DIR)/$(USRSBINDIR32)
+PROTOUSRSBINDIR64 =	$(PROTO_DIR)/$(USRSBINDIR64)
 PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
 PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
 PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
@@ -173,6 +184,9 @@ PROTOSFWSHARE =	$(PROTO_DIR)/$(SFWSHARE)
 PROTOSFWSHAREMAN =	$(PROTO_DIR)/$(SFWSHAREMAN)
 PROTOSFWSHAREMAN1 =	$(PROTO_DIR)/$(SFWSHAREMAN1)
 PROTOSFWINCLUDE =	$(PROTO_DIR)/$(SFWINCLUDE)
+
+CLDIR =	/usr/share/common-lisp
+PROTOCLDIR =	$(PROTO_DIR)/$(CLDIR)
 
 GNUBIN =	/usr/gnu/bin
 GNULIB =	/usr/gnu/lib
@@ -224,14 +238,102 @@ $(BUILD_DIR_64)/.installed:       BITS=64
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
 
-TEST_32 =		$(BUILD_DIR_32)/.tested
-TEST_64 =		$(BUILD_DIR_64)/.tested
-TEST_32_and_64 =	$(TEST_32) $(TEST_64)
-$(BUILD_DIR_32)/.tested:       BITS=32
-$(BUILD_DIR_64)/.tested:       BITS=64
+# set the default test results directory
+COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
+
+# set the default master test results file
+COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+# set the default test results output file
+COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
+
+# set the default test results comparison diffs file
+COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-diffs
+
+# set the default test snapshot file
+COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).snapshot
+
+# The set of default transforms to be applied to the test results to try
+# to normalize them.
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s|$(@D)|\\$$(@D)|g" ' \
+	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
+	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+
+# set the default commands used to generate the file containing the set
+# of transforms to be applied to the test results to try to normalize them.
+COMPONENT_TEST_CREATE_TRANSFORMS = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(GSED) ' \
+			$(COMPONENT_TEST_TRANSFORMS) \
+                	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(COMPONENT_TEST_OUTPUT) \\' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '> $(COMPONENT_TEST_SNAPSHOT)' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command for performing any test result munging
+COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_RESULTS_DIR)/transform-$(BITS)-results
+
+# set the default operation to run to perform test result normalization
+COMPONENT_TEST_PERFORM_TRANSFORM = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command used to compare the master results with the snapshot
+COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
+
+# set the default way that master and snapshot test results are compared
+COMPONENT_TEST_COMPARE = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(COMPONENT_TEST_COMPARE_CMD) \
+			$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
+			> $(COMPONENT_TEST_DIFFS); \
+		print "Test results in $(COMPONENT_TEST_OUTPUT)"; \
+		if [ -s $(COMPONENT_TEST_DIFFS) ]; \
+		then \
+			print "Differences found."; \
+			$(CAT) $(COMPONENT_TEST_DIFFS); \
+			exit 2; \
+		else \
+			print "No differences found."; \
+		fi \
+	fi
+
+# set the default env command to use for test of the component
+COMPONENT_TEST_ENV_CMD =	$(ENV)
+
+# set the default test environment (none) that we can append to later
+COMPONENT_TEST_ENV_CMD =
+
+# set the default command to use for test of the component
+COMPONENT_TEST_CMD =	$(GMAKE)
 
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
+
+# set the default directory for test of the component
+COMPONENT_TEST_DIR =	$(@D)
+
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 =		$(BUILD_DIR_32)/.tested
+TEST_64 =		$(BUILD_DIR_64)/.tested
+else
+TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
+TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
+endif
+TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+$(BUILD_DIR_32)/.tested:		BITS=32
+$(BUILD_DIR_64)/.tested:		BITS=64
+$(BUILD_DIR_32)/.tested-and-compared:	BITS=32
+$(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
@@ -246,7 +348,58 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/gcc/4.7
+#
+# The CCACHE makefile variable should evaluate to empty string or a pathname
+# like /usr/bin/ccache depending on your PATH value and "which" implementation.
+# The assignment via ":=" is important, to only do this once in a Makefile,
+# and not on every reference to the value as "=" assignment would result in.
+# Review `man ccache` for optional configuration tuning, like cache size etc.
+#
+# For production builds or suspected errors you can disable this feature by
+# setting ENABLE_CCACHE=false (as makefile or environment variable, which
+# is currently the default) to not even define the usage of wrapper in the
+# userland-building makefile system.
+# If you want to speed up your re-builds, you must set ENABLE_CCACHE=true.
+# For legacy reasons, the CCACHE_DISABLE and CCACHE_NODISABLE variables (from
+# configuration of the "ccache" program itself) are also supported, but direct
+# use is discouraged, since their syntax and usage are counter-intuitive.
+#
+# Still, absence of ccache in PATH is not considered a fatal error since the
+# build would just proceed well with original compiler.
+# Note: In code below we fast-track if the makefile CCACHE variable is defined
+# but fall back to shell executability tests if just envvar CCACHE is passed.
+#
+export CCACHE := $(shell \
+    if test -n "$(CCACHE)" ; then \
+        echo "$(CCACHE)"; \
+    else \
+        if test x"$${CCACHE_DISABLE-}" != x -o x"$(CCACHE_DISABLE)" != x \
+             -o x"$${ENABLE_CCACHE-}" = xfalse -o x"$(ENABLE_CCACHE)" = xfalse \
+        ; then \
+                echo "NOT USING CCACHE FOR OI-USERLAND because explicitly disabled" >&2 ; \
+        else \
+            if test x"$${CCACHE_NODISABLE-}" != x -o x"$(CCACHE_NODISABLE)" != x \
+                 -o x"$${ENABLE_CCACHE-}" = xtrue -o x"$(ENABLE_CCACHE)" = xtrue \
+            ; then \
+                for F in \
+                    "$$CCACHE" \
+                    `which ccache 2>/dev/null | egrep '^/'` \
+                    /usr/bin/ccache \
+                ; do if test -n "$$F" && test -x "$$F" ; then \
+                        echo "$$F" ; \
+                        echo "USING CCACHE FOR OI-USERLAND: $$F" >&2 ; \
+                        if test x"$${CCACHE_DISABLE-}" != x ; then \
+                            echo "WARNING: envvar CCACHE_DISABLE is set, so effectively ccache will not act!" >&2 ; \
+                        fi; \
+                        exit 0; \
+                    fi; \
+                done; \
+                echo "NOT USING CCACHE FOR OI-USERLAND because not found" >&2 ; \
+            fi; \
+        fi; \
+    fi)
+
+GCC_ROOT =	/usr/gcc/4.9
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -268,6 +421,27 @@ CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
+ifneq ($(strip $(CCACHE)),)
+
+CCACHE_WRAP_ROOT   =	$(WS_TOOLS)/ccache-wrap
+export CC_gcc_32  :=	$(CC.gcc.32)
+export CC_gcc_64  :=	$(CC.gcc.64)
+export CXX_gcc_32 :=	$(CXX.gcc.32)
+export CXX_gcc_64 :=	$(CXX.gcc.64)
+CC.gcc.32  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.32
+CC.gcc.64  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.64
+CXX.gcc.32 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.32
+CXX.gcc.64 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.64
+
+ifneq ($(strip $(CCACHE_DIR)),)
+export CCACHE_DIR :=	$(CCACHE_DIR)
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+export CCACHE_LOGFILE :=	$(CCACHE_LOGFILE)
+endif
+
+endif
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -301,9 +475,14 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =	1.8
-RUBY.1.8 =	/usr/bin/ruby18
-VENDOR_RUBY =	/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_VERSION)
+RUBY_VERSION =  1.9
+RUBY_LIB_VERSION =      1.9.1
+RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
+RUBY =          $(RUBY.$(RUBY_VERSION))
+# Use the ruby lib versions to represent the RUBY_VERSIONS that
+# need to get built.  This is done because during package transformations
+# both the ruby version and the ruby library version are needed. 
+RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
@@ -315,6 +494,9 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
+PYTHON.3.4.32 =	/usr/bin/python3.4
+PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
+
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
@@ -325,21 +507,17 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
-JAVA7_HOME =	/usr/jdk/instances/jdk1.7.0
-JAVA6_HOME =	/usr/jdk/instances/jdk1.6.0
+JAVA7_HOME =	/usr/jdk/instances/openjdk1.7.0
 JAVA_HOME = $(JAVA7_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-#PERL_VERSION =  5.10.0
-PERL_VERSION =  5.16
+PERL_VERSION =  5.22
 
-#PERL_VERSIONS = 5.10.0 5.12 5.16
-PERL_VERSIONS = 5.10.0 5.16
+PERL_VERSIONS = 5.16 5.22
 
-PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
-PERL.5.12 =     /usr/perl5/5.12/bin/perl
 PERL.5.16 =	/usr/perl5/5.16/bin/perl
+PERL.5.22 =	/usr/perl5/5.22/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
 
@@ -387,6 +565,8 @@ PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 GSED =		/usr/gnu/bin/sed
+GDIFF =		/usr/gnu/bin/diff
+GSORT =		/usr/gnu/bin/sort
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
@@ -407,6 +587,7 @@ RM =		/bin/rm -f
 CP =		/bin/cp -f
 MV =		/bin/mv -f
 LN =		/bin/ln
+CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 INSTALL =	/usr/bin/ginstall
@@ -746,6 +927,43 @@ PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(s
 
 # Allow user to override default maximum number of archives
 NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
+
+# Rewrite absolute source-code paths into relative for ccache, so that any
+# workspace with a shared CCACHE_DIR can benefit when compiling a component
+ifneq ($(strip $(CCACHE)),)
+export CCACHE_BASEDIR = $(BUILD_DIR_$(BITS))
+COMPONENT_BUILD_ENV += CCACHE="$(CCACHE)"
+COMPONENT_INSTALL_ENV += CCACHE="$(CCACHE)"
+COMPONENT_TEST_ENV += CCACHE="$(CCACHE)"
+COMPONENT_BUILD_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_INSTALL_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_TEST_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+
+ifneq ($(strip $(CCACHE_DIR)),)
+COMPONENT_BUILD_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_INSTALL_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_TEST_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+COMPONENT_BUILD_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_INSTALL_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_TEST_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+endif
+
+endif
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))

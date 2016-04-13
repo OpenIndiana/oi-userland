@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		sudo
 SRC_VERSION=		1.8.6
 SRC_PATCH_VERSION=	8
+COMPONENT_REVISION=	2
 COMPONENT_VERSION=	$(SRC_VERSION).$(SRC_PATCH_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)p$(SRC_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -48,6 +49,7 @@ CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
 CONFIGURE_OPTIONS +=	--with-pam 
 CONFIGURE_OPTIONS +=	--with-pam-login
+CONFIGURE_OPTIONS +=	--disable-pam-session
 CONFIGURE_OPTIONS +=	--with-tty-tickets
 CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture

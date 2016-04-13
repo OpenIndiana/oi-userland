@@ -1,0 +1,2005 @@
+There are a lot of separate ipcv2 patches collected here in one file.
+Some of them are Studio specific and can hopefully be removed.
+
+In more detail: 
+
+First part is for studio, we may be able to remove. 
+Need to keep the if defined(OS_LINUX)... parts, should try to send upstream. 
+Using evpoll/devpoll instead of epoll may be Studio specific. 
+asm_volatile changes may also be studio specific. 
+
+For Solaris, we have no proc/self/exe location so we get the name of the 
+process some other way. Should be able to send this part upstream. 
+
+Patch to use FTS (tool for traversing tool hierarchies). We have these
+functions but they're not in libraries for C. This part is included in firefox
+40. 
+
+ENABLE_XSS_SUPPORT links XSS libraries; needs further investigation. 
+
+In Solaris, the queue can be too long so we have it read 32 bits only (?) for
+the wakeup_pip_read function. 
+
+DCHECK(std::find...) may be because we couldn't compile it otherwise. Needs
+namespace added. 
+
+We can remove the part for wstring because it's for studio. 
+
+Solaris specific change for adding definition of thr_self. 
+
+Differing memory for munmap((caddr_t)... patch
+
+We don't have timestruct defined in solaris (#ifndef SOLARIS...timstruct...)
+
+event2/event-config.h: Adds a new file so that libevent will compile on Solaris.In the .mozconfig file, we are using system libevent, so this shouldn't be necessary.
+
+IPC_RMID -- shared memory; on solaris, need to detach the shared memory first. So we move that segment of code up. If we detach the memory in Solaris, we cannot do a new attach.
+
+Add flags for Studio compiler. (CXXFLAGS)
+
+extern *C* int madvise(...) not defined , so we need to define it.
+
+diff --git a/configure b/configure
+--- a/configure
++++ b/configure
+@@ -9647,7 +9647,7 @@
+ EOF
+ 
+        CFLAGS="$CFLAGS -xlibmieee -xstrconst -xbuiltin=%all -D__FUNCTION__=__func__"
+-       CXXFLAGS="$CXXFLAGS -xlibmieee -xbuiltin=%all -features=tmplife,tmplrefstatic,extensions,no%except -norunpath -D__FUNCTION__=__func__ -template=no%extdef"
++       CXXFLAGS="$CXXFLAGS -xlibmieee -xbuiltin=%all -features=tmplife,tmplrefstatic,extensions,no%except -norunpath -D__FUNCTION__=__func__ -template=no%extdef -D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
+        LDFLAGS="-xildoff $LDFLAGS"
+        MMX_FLAGS="-xarch=mmx -xO4"
+        SSE_FLAGS="-xarch=sse -xO4"
+diff --git a/dom/plugins/ipc/PluginMessageUtils.cpp b/dom/plugins/ipc/PluginMessageUtils.cpp
+--- a/dom/plugins/ipc/PluginMessageUtils.cpp
++++ b/dom/plugins/ipc/PluginMessageUtils.cpp
+@@ -85,7 +85,7 @@
+   }
+ }
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ static string
+ ReplaceAll(const string& haystack, const string& needle, const string& with)
+ {
+@@ -104,7 +104,7 @@
+ string
+ MungePluginDsoPath(const string& path)
+ {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   // https://bugzilla.mozilla.org/show_bug.cgi?id=519601
+   return ReplaceAll(path, "netscape", "netsc@pe");
+ #else
+@@ -115,7 +115,7 @@
+ string
+ UnmungePluginDsoPath(const string& munged)
+ {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   return ReplaceAll(munged, "netsc@pe", "netscape");
+ #else
+   return munged;
+diff --git a/dom/plugins/ipc/PluginModuleChild.cpp b/dom/plugins/ipc/PluginModuleChild.cpp
+--- a/dom/plugins/ipc/PluginModuleChild.cpp
++++ b/dom/plugins/ipc/PluginModuleChild.cpp
+@@ -320,7 +320,7 @@
+ 
+     // TODO: use PluginPRLibrary here
+ 
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     mShutdownFunc =
+         (NP_PLUGINSHUTDOWN) PR_FindFunctionSymbol(mLibrary, "NP_Shutdown");
+ 
+@@ -351,9 +351,11 @@
+ }
+ 
+ #if defined(MOZ_WIDGET_GTK)
++extern "C" {
+ typedef void (*GObjectDisposeFn)(GObject*);
+ typedef gboolean (*GtkWidgetScrollEventFn)(GtkWidget*, GdkEventScroll*);
+ typedef void (*GtkPlugEmbeddedFn)(GtkPlug*);
++}
+ 
+ static GObjectDisposeFn real_gtk_plug_dispose;
+ static GtkPlugEmbeddedFn real_gtk_plug_embedded;
+@@ -1882,7 +1884,7 @@
+     AssertPluginThread();
+     MOZ_ASSERT(mIsChrome);
+ 
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     return true;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     *_retval = mGetEntryPointsFunc(&mFunctions);
+@@ -1927,7 +1929,7 @@
+ #endif
+ 
+     NPError result;
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     result = mInitializeFunc(&sBrowserFuncs, &mFunctions);
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     result = mInitializeFunc(&sBrowserFuncs);
+diff --git a/dom/plugins/ipc/PluginModuleChild.h b/dom/plugins/ipc/PluginModuleChild.h
+--- a/dom/plugins/ipc/PluginModuleChild.h
++++ b/dom/plugins/ipc/PluginModuleChild.h
+@@ -328,7 +328,7 @@
+ 
+     // we get this from the plugin
+     NP_PLUGINSHUTDOWN mShutdownFunc;
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     NP_PLUGINUNIXINIT mInitializeFunc;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     NP_PLUGININIT mInitializeFunc;
+diff --git a/dom/plugins/ipc/PluginProcessParent.cpp b/dom/plugins/ipc/PluginProcessParent.cpp
+--- a/dom/plugins/ipc/PluginProcessParent.cpp
++++ b/dom/plugins/ipc/PluginProcessParent.cpp
+@@ -143,6 +143,9 @@
+         else if (base::PROCESS_ARCH_ARM & pluginLibArchitectures & containerArchitectures) {
+           selectedArchitecture = base::PROCESS_ARCH_ARM;
+         }
++        else if (base::PROCESS_ARCH_SPARC & pluginLibArchitectures & containerArchitectures) {
++          selectedArchitecture = base::PROCESS_ARCH_SPARC;
++        }
+         else {
+             return false;
+         }
+diff --git a/ipc/chromium/chromium-config.mozbuild b/ipc/chromium/chromium-config.mozbuild
+--- a/ipc/chromium/chromium-config.mozbuild
++++ b/ipc/chromium/chromium-config.mozbuild
+@@ -45,6 +45,9 @@
+     if CONFIG['OS_ARCH'] == 'Darwin':
+         DEFINES['OS_MACOSX'] = 1
+ 
++    elif CONFIG['OS_ARCH'] == 'SunOS':
++        DEFINES['OS_SOLARIS'] = 1
++
+     elif CONFIG['OS_ARCH'] == 'DragonFly':
+         DEFINES.update({
+             'OS_DRAGONFLY': 1,
+diff --git a/ipc/chromium/moz.build b/ipc/chromium/moz.build
+--- a/ipc/chromium/moz.build
++++ b/ipc/chromium/moz.build
+@@ -205,17 +205,25 @@
+             'moc_message_pump_qt.cc',
+         ]
+     if not CONFIG['MOZ_NATIVE_LIBEVENT']:
+-        if CONFIG['OS_TARGET'] != 'Android':
++        if CONFIG['OS_TARGET'] != 'SunOS':
++            if CONFIG['OS_TARGET'] != 'Android':
++                SOURCES += [
++                    'src/third_party/libevent/epoll_sub.c',
++                ]
+             SOURCES += [
+-                'src/third_party/libevent/epoll_sub.c',
++                'src/third_party/libevent/epoll.c',
+             ]
+-        SOURCES += [
+-            'src/third_party/libevent/epoll.c',
+-        ]
+         if CONFIG['OS_TARGET'] == 'Android':
+             LOCAL_INCLUDES += ['src/third_party/libevent/android']
+         else:
+-            LOCAL_INCLUDES += ['src/third_party/libevent/linux']
++            if CONFIG['OS_TARGET'] != 'SunOS':
++                LOCAL_INCLUDES += ['src/third_party/libevent/linux']
++            else:
++                LOCAL_INCLUDES += ['src/third_party/libevent/solaris']
++                SOURCES += [
++                    'src/third_party/libevent/devpoll.c',
++                    'src/third_party/libevent/evport.c',
++                ]
+ 
+ if os_bsd:
+     SOURCES += [
+diff --git a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
+--- a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
++++ b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
+@@ -19,13 +19,13 @@
+ // Inline cpuid instruction.  In PIC compilations, %ebx contains the address
+ // of the global offset table.  To avoid breaking such executables, this code
+ // must preserve that register's value across cpuid instructions.
+-#if defined(__i386__)
++#if defined(__i386__) || defined (__i386)
+ #define cpuid(a, b, c, d, inp) \
+   asm ("mov %%ebx, %%edi\n"    \
+        "cpuid\n"               \
+        "xchg %%edi, %%ebx\n"   \
+        : "=a" (a), "=D" (b), "=c" (c), "=d" (d) : "a" (inp))
+-#elif defined (__x86_64__)
++#elif defined (__x86_64__) || defined(__x86_64)
+ #define cpuid(a, b, c, d, inp) \
+   asm ("mov %%rbx, %%rdi\n"    \
+        "cpuid\n"               \
+diff --git a/ipc/chromium/src/base/atomicops_internals_x86_gcc.h b/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
+--- a/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
++++ b/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
+@@ -29,18 +29,18 @@
+                                          Atomic32 old_value,
+                                          Atomic32 new_value) {
+   Atomic32 prev;
+-  __asm__ __volatile__("lock; cmpxchgl %1,%2"
++  __asm__ __volatile__("lock; cmpxchgl %1,(%2)"
+                        : "=a" (prev)
+-                       : "q" (new_value), "m" (*ptr), "0" (old_value)
++                       : "q" (new_value), "r" (ptr), "0" (old_value)
+                        : "memory");
+   return prev;
+ }
+ 
+ inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
+                                          Atomic32 new_value) {
+-  __asm__ __volatile__("xchgl %1,%0"  // The lock prefix is implicit for xchg.
++  __asm__ __volatile__("xchgl (%1),%0"  // The lock prefix is implicit for xchg.
+                        : "=r" (new_value)
+-                       : "m" (*ptr), "0" (new_value)
++                       : "r" (ptr), "0" (new_value)
+                        : "memory");
+   return new_value;  // Now it's the previous value.
+ }
+@@ -48,8 +48,8 @@
+ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
+                                           Atomic32 increment) {
+   Atomic32 temp = increment;
+-  __asm__ __volatile__("lock; xaddl %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddl %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now holds the old value of *ptr
+   return temp + increment;
+@@ -58,8 +58,8 @@
+ inline Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr,
+                                         Atomic32 increment) {
+   Atomic32 temp = increment;
+-  __asm__ __volatile__("lock; xaddl %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddl %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now holds the old value of *ptr
+   if (AtomicOps_Internalx86CPUFeatures.has_amd_lock_mb_bug) {
+@@ -153,18 +153,18 @@
+                                          Atomic64 old_value,
+                                          Atomic64 new_value) {
+   Atomic64 prev;
+-  __asm__ __volatile__("lock; cmpxchgq %1,%2"
++  __asm__ __volatile__("lock; cmpxchgq %1,(%2)"
+                        : "=a" (prev)
+-                       : "q" (new_value), "m" (*ptr), "0" (old_value)
++                       : "q" (new_value), "r" (ptr), "0" (old_value)
+                        : "memory");
+   return prev;
+ }
+ 
+ inline Atomic64 NoBarrier_AtomicExchange(volatile Atomic64* ptr,
+                                          Atomic64 new_value) {
+-  __asm__ __volatile__("xchgq %1,%0"  // The lock prefix is implicit for xchg.
++  __asm__ __volatile__("xchgq (%1),%0"  // The lock prefix is implicit for xchg.
+                        : "=r" (new_value)
+-                       : "m" (*ptr), "0" (new_value)
++                       : "r" (ptr), "0" (new_value)
+                        : "memory");
+   return new_value;  // Now it's the previous value.
+ }
+@@ -172,8 +172,8 @@
+ inline Atomic64 NoBarrier_AtomicIncrement(volatile Atomic64* ptr,
+                                           Atomic64 increment) {
+   Atomic64 temp = increment;
+-  __asm__ __volatile__("lock; xaddq %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddq %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now contains the previous value of *ptr
+   return temp + increment;
+@@ -182,8 +182,8 @@
+ inline Atomic64 Barrier_AtomicIncrement(volatile Atomic64* ptr,
+                                         Atomic64 increment) {
+   Atomic64 temp = increment;
+-  __asm__ __volatile__("lock; xaddq %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddq %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now contains the previous value of *ptr
+   if (AtomicOps_Internalx86CPUFeatures.has_amd_lock_mb_bug) {
+diff --git a/ipc/chromium/src/base/file_util.cc b/ipc/chromium/src/base/file_util.cc
+--- a/ipc/chromium/src/base/file_util.cc
++++ b/ipc/chromium/src/base/file_util.cc
+@@ -245,4 +245,25 @@
+ int WriteFile(const std::wstring& filename, const char* data, int size) {
+   return WriteFile(FilePath::FromWStringHack(filename), data, size);
+ }
++
++#ifdef OS_SOLARIS
++
++bool IsDot(const FilePath& path) {
++  return FILE_PATH_LITERAL(".") == path.BaseName().value();
++}
++
++bool IsDotDot(const FilePath& path) {
++  return FILE_PATH_LITERAL("..") == path.BaseName().value();
++}
++
++///////////////////////////////////////////////
++// FileEnumerator
++//
++// Note: the main logic is in file_util_<platform>.cc
++
++bool FileEnumerator::ShouldSkip(const FilePath& path) {
++  FilePath::StringType basename = path.BaseName().value();
++  return IsDot(path) || (IsDotDot(path) && !(INCLUDE_DOT_DOT & file_type_));
++}
++#endif
+ }  // namespace
+diff --git a/ipc/chromium/src/base/file_util.h b/ipc/chromium/src/base/file_util.h
+--- a/ipc/chromium/src/base/file_util.h
++++ b/ipc/chromium/src/base/file_util.h
+@@ -12,7 +12,7 @@
+ 
+ #if defined(OS_WIN)
+ #include <windows.h>
+-#elif defined(ANDROID)
++#elif defined(ANDROID) || defined(OS_SOLARIS)
+ #include <sys/stat.h>
+ #elif defined(OS_POSIX) 
+ #include <sys/types.h>
+@@ -240,6 +240,103 @@
+ // Deprecated temporary compatibility function.
+ bool SetCurrentDirectory(const std::wstring& current_directory);
+ 
++#ifdef OS_SOLARIS
++// A class for enumerating the files in a provided path. The order of the
++// results is not guaranteed.
++//
++// DO NOT USE FROM THE MAIN THREAD of your application unless it is a test
++// program where latency does not matter. This class is blocking.
++class FileEnumerator {
++ public:
++  typedef struct {
++    struct stat stat;
++    std::string filename;
++  } FindInfo;
++
++  enum FILE_TYPE {
++    FILES                 = 1 << 0,
++    DIRECTORIES           = 1 << 1,
++    INCLUDE_DOT_DOT       = 1 << 2,
++    SHOW_SYM_LINKS        = 1 << 4,
++  };
++
++  // |root_path| is the starting directory to search for. It may or may not end
++  // in a slash.
++  //  
++  // If |recursive| is true, this will enumerate all matches in any
++  // subdirectories matched as well. It does a breadth-first search, so all
++  // files in one directory will be returned before any files in a
++  // subdirectory.
++  //
++  // |file_type| specifies whether the enumerator should match files,
++  // directories, or both.
++  //
++  // |pattern| is an optional pattern for which files to match. This
++  // works like shell globbing. For example, "*.txt" or "Foo???.doc".
++  // However, be careful in specifying patterns that aren't cross platform
++  // since the underlying code uses OS-specific matching routines.  In general,
++  // Windows matching is less featureful than others, so test there first.
++  // If unspecified, this will match all files.
++  // NOTE: the pattern only matches the contents of root_path, not files in
++  // recursive subdirectories.
++  // TODO(erikkay): Fix the pattern matching to work at all levels.
++  FileEnumerator(const FilePath& root_path,
++                 bool recursive,
++                 FileEnumerator::FILE_TYPE file_type);
++  FileEnumerator(const FilePath& root_path,
++                 bool recursive,
++                 FileEnumerator::FILE_TYPE file_type,
++                 const FilePath::StringType& pattern);
++  ~FileEnumerator();
++
++  // Returns an empty string if there are no more results.
++  FilePath Next();
++
++  // Write the file info into |info|.
++  void GetFindInfo(FindInfo* info);
++
++  // Looks inside a FindInfo and determines if it's a directory.
++  static bool IsDirectory(const FindInfo& info);
++
++  static FilePath GetFilename(const FindInfo& find_info);
++
++ private:
++  // Returns true if the given path should be skipped in enumeration.
++  bool ShouldSkip(const FilePath& path);
++
++
++  typedef struct {
++    FilePath filename;
++    struct stat stat;
++  } DirectoryEntryInfo;
++
++  // Read the filenames in source into the vector of DirectoryEntryInfo's
++  static bool ReadDirectory(std::vector<DirectoryEntryInfo>* entries,
++                            const FilePath& source, bool show_links);
++
++  // The files in the current directory
++  std::vector<DirectoryEntryInfo> directory_entries_;
++
++  // The next entry to use from the directory_entries_ vector
++  size_t current_directory_entry_;
++
++  FilePath root_path_;
++  bool recursive_;
++  FILE_TYPE file_type_;
++  FilePath::StringType pattern_;  // Empty when we want to find everything.
++
++  // Set to true when there is a find operation open. This way, we can lazily
++  // start the operations when the caller calls Next().
++  bool is_in_find_op_;
++
++  // A stack that keeps track of which subdirectories we still need to
++  // enumerate in the breadth-first search.
++  std::stack<FilePath> pending_paths_;
++
++  DISALLOW_COPY_AND_ASSIGN(FileEnumerator);
++};
++#endif
++
+ }  // namespace file_util
+ 
+ #endif  // BASE_FILE_UTIL_H_
+diff --git a/ipc/chromium/src/base/file_util_posix.cc b/ipc/chromium/src/base/file_util_posix.cc
+--- a/ipc/chromium/src/base/file_util_posix.cc
++++ b/ipc/chromium/src/base/file_util_posix.cc
+@@ -8,7 +8,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <fnmatch.h>
+-#ifndef ANDROID
++#if !defined(ANDROID) && !defined(OS_SOLARIS)
+ #include <fts.h>
+ #endif
+ #include <libgen.h>
+@@ -67,9 +67,34 @@
+   if (!recursive)
+     return (rmdir(path_str) == 0);
+ 
+-#ifdef ANDROID
++#if defined(ANDROID)
+   // XXX Need ftsless impl for bionic
+   return false;
++#elif defined(OS_SOLARIS)
++  bool success = true;
++  std::stack<std::string> directories;
++  directories.push(path.value());
++  FileEnumerator traversal(path, true, static_cast<FileEnumerator::FILE_TYPE>(
++        FileEnumerator::FILES | FileEnumerator::DIRECTORIES |
++        FileEnumerator::SHOW_SYM_LINKS));
++  for (FilePath current = traversal.Next(); success && !current.empty();
++       current = traversal.Next()) {
++    FileEnumerator::FindInfo info;
++    traversal.GetFindInfo(&info);
++
++    if (S_ISDIR(info.stat.st_mode))
++      directories.push(current.value());
++    else
++      success = (unlink(current.value().c_str()) == 0);
++  }
++
++  while (success && !directories.empty()) {
++    FilePath dir = FilePath(directories.top());
++    directories.pop();
++    success = (rmdir(dir.value().c_str()) == 0);
++  }
++
++  return success; 
+ #else
+   bool success = true;
+   int ftsflags = FTS_PHYSICAL | FTS_NOSTAT;
+@@ -140,14 +165,98 @@
+     return false;
+   }
+ 
+-#ifdef ANDROID
++#if defined(ANDROID)
+   // XXX Need ftsless impl for bionic
+   return false;
++#elif defined(OS_SOLARIS)
++  // This function does not properly handle destinations within the source
++  FilePath real_to_path = to_path;
++  if (PathExists(real_to_path)) {
++    if (!AbsolutePath(&real_to_path))
++      return false;
++  } else {
++    real_to_path = real_to_path.DirName();
++    if (!AbsolutePath(&real_to_path))
++      return false;
++  }
++  FilePath real_from_path = from_path;
++  if (!AbsolutePath(&real_from_path))
++    return false;
++  if (real_to_path.value().size() >= real_from_path.value().size() &&
++      real_to_path.value().compare(0, real_from_path.value().size(),
++      real_from_path.value()) == 0)
++    return false;
++
++  bool success = true;
++  FileEnumerator::FILE_TYPE traverse_type =
++      static_cast<FileEnumerator::FILE_TYPE>(FileEnumerator::FILES |
++      FileEnumerator::SHOW_SYM_LINKS);
++  if (recursive)
++    traverse_type = static_cast<FileEnumerator::FILE_TYPE>(
++        traverse_type | FileEnumerator::DIRECTORIES);
++  FileEnumerator traversal(from_path, recursive, traverse_type);
++
++  // We have to mimic windows behavior here. |to_path| may not exist yet,
++  // start the loop with |to_path|.
++  FileEnumerator::FindInfo info;
++  FilePath current = from_path;
++  if (stat(from_path.value().c_str(), &info.stat) < 0) {
++    CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't stat source directory: " <<
++        from_path.value() << " errno = " << errno;
++    success = false;
++  }
++  struct stat to_path_stat;
++  FilePath from_path_base = from_path;
++  if (recursive && stat(to_path.value().c_str(), &to_path_stat) == 0 &&
++      S_ISDIR(to_path_stat.st_mode)) {
++    // If the destination already exists and is a directory, then the
++    // top level of source needs to be copied.
++    from_path_base = from_path.DirName();
++  }
++
++  // The Windows version of this function assumes that non-recursive calls
++  // will always have a directory for from_path.
++  DCHECK(recursive || S_ISDIR(info.stat.st_mode));
++
++  while (success && !current.empty()) {
++    // current is the source path, including from_path, so paste
++    // the suffix after from_path onto to_path to create the target_path.
++    std::string suffix(&current.value().c_str()[from_path_base.value().size()]);
++    // Strip the leading '/' (if any).
++    if (!suffix.empty()) {
++      DCHECK_EQ('/', suffix[0]);
++      suffix.erase(0, 1);
++    }
++    const FilePath target_path = to_path.Append(suffix);
++
++    if (S_ISDIR(info.stat.st_mode)) {
++      if (mkdir(target_path.value().c_str(), info.stat.st_mode & 01777) != 0 &&
++          errno != EEXIST) {
++        CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't create directory: " <<
++            target_path.value() << " errno = " << errno;
++        success = false;
++      }
++    } else if (S_ISREG(info.stat.st_mode)) {
++      if (!CopyFile(current, target_path)) {
++        CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't create file: " <<
++            target_path.value();
++        success = false;
++      }
++    } else {
++      CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping non-regular file: " <<
++          current.value();
++    }
++
++    current = traversal.Next();
++    traversal.GetFindInfo(&info);
++  }
++
++  return success;
+ #else
+   char* dir_list[] = { top_dir, NULL };
+   FTS* fts = fts_open(dir_list, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+   if (!fts) {
+-    CHROMIUM_LOG(ERROR) << "fts_open failed: " << strerror(errno);
++    CHROMIUM_CHROMIUM_LOG(ERROR) << "fts_open failed: " << strerror(errno);
+     return false;
+   }
+ 
+@@ -203,11 +312,11 @@
+         break;
+       case FTS_SL:      // Symlink.
+       case FTS_SLNONE:  // Symlink with broken target.
+-        CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping symbolic link: " <<
++        CHROMIUM_CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping symbolic link: " <<
+             ent->fts_path;
+         continue;
+       case FTS_DEFAULT:  // Some other sort of file.
+-        CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping file of unknown type: " <<
++        CHROMIUM_CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping file of unknown type: " <<
+             ent->fts_path;
+         continue;
+       default:
+@@ -227,7 +336,7 @@
+   }
+ 
+   if (error) {
+-    CHROMIUM_LOG(ERROR) << "CopyDirectory(): " << strerror(error);
++    CHROMIUM_CHROMIUM_LOG(ERROR) << "CopyDirectory(): " << strerror(error);
+     return false;
+   }
+   return true;
+@@ -446,7 +555,7 @@
+ }
+ 
+ bool GetShmemTempDir(FilePath* path) {
+-#if defined(OS_LINUX) && !defined(ANDROID)
++#if defined(OS_LINUX) && !defined(ANDROID) && !defined(OS_SOLARIS)
+   *path = FilePath("/dev/shm");
+   return true;
+ #else
+@@ -501,4 +610,144 @@
+ }
+ #endif // !defined(OS_MACOSX)
+ 
++#ifdef OS_SOLARIS
++///////////////////////////////////////////////
++// FileEnumerator
++
++FileEnumerator::FileEnumerator(const FilePath& root_path,
++                               bool recursive,
++                               FileEnumerator::FILE_TYPE file_type)
++    : current_directory_entry_(0),
++      root_path_(root_path),
++      recursive_(recursive),
++      file_type_(file_type),
++      is_in_find_op_(false) {
++  // INCLUDE_DOT_DOT must not be specified if recursive.
++  DCHECK(!(recursive && (INCLUDE_DOT_DOT & file_type_)));
++  pending_paths_.push(root_path);
++}
++
++FileEnumerator::FileEnumerator(const FilePath& root_path,
++                               bool recursive,
++                               FileEnumerator::FILE_TYPE file_type,
++                               const FilePath::StringType& pattern)
++    : current_directory_entry_(0),
++      root_path_(root_path),
++      recursive_(recursive),
++      file_type_(file_type),
++      pattern_(root_path.Append(pattern).value()),
++      is_in_find_op_(false) {
++  // INCLUDE_DOT_DOT must not be specified if recursive.
++  DCHECK(!(recursive && (INCLUDE_DOT_DOT & file_type_)));
++  // The Windows version of this code appends the pattern to the root_path,
++  // potentially only matching against items in the top-most directory.
++  // Do the same here.
++  if (pattern.size() == 0)
++    pattern_ = FilePath::StringType();
++  pending_paths_.push(root_path);
++}
++
++FileEnumerator::~FileEnumerator() {
++}
++
++void FileEnumerator::GetFindInfo(FindInfo* info) {
++  DCHECK(info);
++
++  if (current_directory_entry_ >= directory_entries_.size())
++    return;
++
++  DirectoryEntryInfo* cur_entry = &directory_entries_[current_directory_entry_];
++  memcpy(&(info->stat), &(cur_entry->stat), sizeof(info->stat));
++  info->filename.assign(cur_entry->filename.value());
++}
++
++bool FileEnumerator::IsDirectory(const FindInfo& info) {
++  return S_ISDIR(info.stat.st_mode);
++}
++
++// static
++FilePath FileEnumerator::GetFilename(const FindInfo& find_info) {
++  return FilePath(find_info.filename);
++}
++
++FilePath FileEnumerator::Next() {
++  ++current_directory_entry_;
++
++  // While we've exhausted the entries in the current directory, do the next
++  while (current_directory_entry_ >= directory_entries_.size()) {
++    if (pending_paths_.empty())
++      return FilePath();
++
++    root_path_ = pending_paths_.top();
++    root_path_ = root_path_.StripTrailingSeparators();
++    pending_paths_.pop();
++
++    std::vector<DirectoryEntryInfo> entries;
++    if (!ReadDirectory(&entries, root_path_, file_type_ & SHOW_SYM_LINKS))
++      continue;
++
++    directory_entries_.clear();
++    current_directory_entry_ = 0;
++    for (std::vector<DirectoryEntryInfo>::const_iterator
++        i = entries.begin(); i != entries.end(); ++i) {
++      FilePath full_path = root_path_.Append(i->filename);
++      if (ShouldSkip(full_path))
++        continue;
++
++      if (pattern_.size() &&
++          fnmatch(pattern_.c_str(), full_path.value().c_str(), FNM_NOESCAPE))
++        continue;
++
++      if (recursive_ && S_ISDIR(i->stat.st_mode))
++        pending_paths_.push(full_path);
++
++      if ((S_ISDIR(i->stat.st_mode) && (file_type_ & DIRECTORIES)) ||
++          (!S_ISDIR(i->stat.st_mode) && (file_type_ & FILES)))
++        directory_entries_.push_back(*i);
++    }
++  }
++
++  return root_path_.Append(directory_entries_[current_directory_entry_
++      ].filename);
++}
++
++bool FileEnumerator::ReadDirectory(std::vector<DirectoryEntryInfo>* entries,
++                                   const FilePath& source, bool show_links) {
++
++  DIR* dir = opendir(source.value().c_str());
++  if (!dir)
++    return false;
++  struct {
++          dirent dent_buffer;
++          char chars[MAXNAMLEN];
++  } dent_buf;
++  struct dirent* dent;
++
++  while (readdir_r(dir, (dirent *)&dent_buf, &dent) == 0 && dent) {
++    DirectoryEntryInfo info;
++    info.filename = FilePath(dent->d_name);
++
++    FilePath full_name = source.Append(dent->d_name);
++    int ret;
++    if (show_links)
++      ret = lstat(full_name.value().c_str(), &info.stat);
++    else
++      ret = stat(full_name.value().c_str(), &info.stat);
++    if (ret < 0) {
++      // Print the stat() error message unless it was ENOENT and we're
++      // following symlinks.
++      if (!(errno == ENOENT && !show_links)) {
++        CHROMIUM_LOG(ERROR) << "Couldn't stat "
++                   << source.Append(dent->d_name).value();
++      }
++      memset(&info.stat, 0, sizeof(info.stat));
++    }
++    entries->push_back(info);
++  }
++
++  closedir(dir);
++  return true;
++}
++#endif
++
+ } // namespace file_util
+diff --git a/ipc/chromium/src/base/idle_timer.cc b/ipc/chromium/src/base/idle_timer.cc
+--- a/ipc/chromium/src/base/idle_timer.cc
++++ b/ipc/chromium/src/base/idle_timer.cc
+@@ -7,13 +7,13 @@
+ // We may not want to port idle_timer to Linux, but we have implemented it
+ // anyway.  Define this to 1 to enable the Linux idle timer and then add the
+ // libs that need to be linked (Xss).
+-#define ENABLE_XSS_SUPPORT 0
++#define ENABLE_XSS_SUPPORT 1
+ 
+ #if defined(OS_MACOSX)
+ #include <ApplicationServices/ApplicationServices.h>
+ #endif
+ 
+-#if defined(OS_LINUX) && ENABLE_XSS_SUPPORT
++#if (defined(OS_LINUX) || defined(OS_SOLARIS)) && ENABLE_XSS_SUPPORT
+ // We may not want to port idle_timer to Linux, but we have implemented it
+ // anyway.  Remove the 0 above if we want it.
+ #include <gdk/gdkx.h>
+@@ -53,7 +53,7 @@
+           kCGAnyInputEventType) * 1000.0;
+   return true;
+ }
+-#elif defined(OS_LINUX) && ENABLE_XSS_SUPPORT
++#elif (defined(OS_LINUX) || defined(OS_SOLARIS)) && ENABLE_XSS_SUPPORT
+ class IdleState {
+  public:
+   IdleState() {
+diff --git a/ipc/chromium/src/base/message_loop.cc b/ipc/chromium/src/base/message_loop.cc
+--- a/ipc/chromium/src/base/message_loop.cc
++++ b/ipc/chromium/src/base/message_loop.cc
+@@ -19,7 +19,7 @@
+ #if defined(OS_POSIX)
+ #include "base/message_pump_libevent.h"
+ #endif
+-#if defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+ #if defined(MOZ_WIDGET_GTK)
+ #include "base/message_pump_glib.h"
+ #endif
+@@ -144,9 +144,9 @@
+   if (type_ == TYPE_UI) {
+ #if defined(OS_MACOSX)
+     pump_ = base::MessagePumpMac::Create();
+-#elif defined(OS_LINUX) || defined(OS_BSD)
++#elif defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+     pump_ = new base::MessagePumpForUI();
+-#endif  // OS_LINUX
++#endif  // OS_LINUX || OS_SOLARIS
+   } else if (type_ == TYPE_IO) {
+     pump_ = new base::MessagePumpLibevent();
+   } else {
+diff --git a/ipc/chromium/src/base/message_pump_glib.cc b/ipc/chromium/src/base/message_pump_glib.cc
+--- a/ipc/chromium/src/base/message_pump_glib.cc
++++ b/ipc/chromium/src/base/message_pump_glib.cc
+@@ -128,6 +128,12 @@
+   // Create our wakeup pipe, which is used to flag when work was scheduled.
+   int fds[2];
+   CHECK(pipe(fds) == 0);
++
++  int flags = fcntl(fds[0], F_GETFL, 0);
++  if (flags == -1)
++    flags = 0;
++  fcntl(fds[0], F_SETFL, flags | O_NDELAY);
++
+   wakeup_pipe_read_  = fds[0];
+   wakeup_pipe_write_ = fds[1];
+   wakeup_gpollfd_->fd = wakeup_pipe_read_;
+@@ -234,10 +240,9 @@
+   // are only signaled when the queue went from empty to non-empty.  The glib
+   // poll will tell us whether there was data, so this read shouldn't block.
+   if (wakeup_gpollfd_->revents & G_IO_IN) {
+-    char msg;
+-    if (HANDLE_EINTR(read(wakeup_pipe_read_, &msg, 1)) != 1 || msg != '!') {
+-      NOTREACHED() << "Error reading from the wakeup pipe.";
+-    }
++    char buf[32];
++    while (HANDLE_EINTR(read(wakeup_pipe_read_, &buf, 32)));
++
+     // Since we ate the message, we need to record that we have more work,
+     // because HandleCheck() may be called without HandleDispatch being called
+     // afterwards.
+@@ -301,6 +306,9 @@
+   // variables as we would then need locks all over.  This ensures that if
+   // we are sleeping in a poll that we will wake up.
+   char msg = '!';
++  char buf[32];
++  while (HANDLE_EINTR(read(wakeup_pipe_read_, &buf, 32)));
++
+   if (HANDLE_EINTR(write(wakeup_pipe_write_, &msg, 1)) != 1) {
+     NOTREACHED() << "Could not write to the UI message loop wakeup pipe!";
+   }
+diff --git a/ipc/chromium/src/base/message_pump_libevent.cc b/ipc/chromium/src/base/message_pump_libevent.cc
+--- a/ipc/chromium/src/base/message_pump_libevent.cc
++++ b/ipc/chromium/src/base/message_pump_libevent.cc
+@@ -6,6 +6,10 @@
+ 
+ #include <errno.h>
+ #include <fcntl.h>
++#if defined(OS_SOLARIS)
++#include <unistd.h>
++#include <sys/stat.h>
++#endif
+ #if defined(ANDROID) || defined(OS_POSIX)
+ #include <unistd.h>
+ #endif
+diff --git a/ipc/chromium/src/base/observer_list.h b/ipc/chromium/src/base/observer_list.h
+--- a/ipc/chromium/src/base/observer_list.h
++++ b/ipc/chromium/src/base/observer_list.h
+@@ -88,7 +88,7 @@
+ 
+   // Add an observer to the list.
+   void AddObserver(ObserverType* obs) {
+-    DCHECK(find(observers_.begin(), observers_.end(), obs) == observers_.end())
++    DCHECK(std::find(observers_.begin(), observers_.end(), obs) == observers_.end())
+         << "Observers can only be added once!";
+     observers_.push_back(obs);
+   }
+diff --git a/ipc/chromium/src/base/platform_thread.h b/ipc/chromium/src/base/platform_thread.h
+--- a/ipc/chromium/src/base/platform_thread.h
++++ b/ipc/chromium/src/base/platform_thread.h
+@@ -22,7 +22,7 @@
+ #elif defined(OS_POSIX)
+ #include <pthread.h>
+ typedef pthread_t PlatformThreadHandle;
+-#if defined(OS_LINUX) || defined(OS_OPENBSD) || defined(__GLIBC__)
++#if defined(OS_LINUX) || defined(OS_OPENBSD) || defined(OS_SOLARIS) || defined(__GLIBC__)
+ #include <unistd.h>
+ typedef pid_t PlatformThreadId;
+ #elif defined(OS_BSD)
+diff --git a/ipc/chromium/src/base/platform_thread_posix.cc b/ipc/chromium/src/base/platform_thread_posix.cc
+--- a/ipc/chromium/src/base/platform_thread_posix.cc
++++ b/ipc/chromium/src/base/platform_thread_posix.cc
+@@ -27,6 +27,12 @@
+ #include <pthread_np.h>
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#include <sys/syscall.h>
++#include <unistd.h>
++#include <thread.h>
++#endif
++
+ #if defined(OS_MACOSX)
+ namespace base {
+ void InitThreading();
+@@ -54,6 +60,8 @@
+ #else
+   return syscall(__NR_gettid);
+ #endif
++#elif defined(OS_SOLARIS)
++  return thr_self();
+ #elif defined(OS_OPENBSD) || defined(__GLIBC__)
+   return (intptr_t) (pthread_self());
+ #elif defined(OS_NETBSD)
+@@ -96,6 +104,7 @@
+ 
+ // static
+ void PlatformThread::SetName(const char* name) {
++#ifndef OS_SOLARIS
+   // On linux we can get the thread names to show up in the debugger by setting
+   // the process name for the LWP.  We don't want to do this for the main
+   // thread because that would rename the process, causing tools like killall
+@@ -116,6 +125,7 @@
+   pthread_set_name_np(pthread_self(), name);
+ #else
+ #endif
++#endif // !OS_SOLARIS
+ }
+ #endif // !OS_MACOSX
+ 
+diff --git a/ipc/chromium/src/base/port.h b/ipc/chromium/src/base/port.h
+--- a/ipc/chromium/src/base/port.h
++++ b/ipc/chromium/src/base/port.h
+@@ -56,7 +56,7 @@
+ // Define an OS-neutral wrapper for shared library entry points
+ #if defined(OS_WIN)
+ #define API_CALL __stdcall
+-#elif defined(OS_LINUX) || defined(OS_MACOSX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_MACOSX)
+ #define API_CALL
+ #endif
+ 
+diff --git a/ipc/chromium/src/base/process_util.h b/ipc/chromium/src/base/process_util.h
+--- a/ipc/chromium/src/base/process_util.h
++++ b/ipc/chromium/src/base/process_util.h
+@@ -25,6 +25,10 @@
+ #include <mach/mach.h>
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#define NAME_MAX 14
++#endif
++
+ #include <map>
+ #include <string>
+ #include <vector>
+@@ -71,7 +75,8 @@
+   PROCESS_ARCH_I386 = 0x1,
+   PROCESS_ARCH_X86_64 = 0x2,
+   PROCESS_ARCH_PPC = 0x4,
+-  PROCESS_ARCH_ARM = 0x8
++  PROCESS_ARCH_ARM = 0x8,
++  PROCESS_ARCH_SPARC = 0x10
+ };
+ 
+ inline ProcessArchitecture GetCurrentProcessArchitecture()
+@@ -85,6 +90,8 @@
+   currentArchitecture = base::PROCESS_ARCH_PPC;
+ #elif defined(ARCH_CPU_ARMEL)
+   currentArchitecture = base::PROCESS_ARCH_ARM;
++#elif defined(ARCH_CPU_SPARC)
++  currentArchitecture = base::PROCESS_ARCH_SPARC;
+ #endif
+   return currentArchitecture;
+ }
+diff --git a/ipc/chromium/src/base/process_util_posix.cc b/ipc/chromium/src/base/process_util_posix.cc
+--- a/ipc/chromium/src/base/process_util_posix.cc
++++ b/ipc/chromium/src/base/process_util_posix.cc
+@@ -116,7 +116,7 @@
+ #if defined(ANDROID)
+   static const rlim_t kSystemDefaultMaxFds = 1024;
+   static const char kFDDir[] = "/proc/self/fd";
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   static const rlim_t kSystemDefaultMaxFds = 8192;
+   static const char kFDDir[] = "/proc/self/fd";
+ #elif defined(OS_MACOSX)
+@@ -208,7 +208,7 @@
+ // TODO(agl): Remove this function. It's fundamentally broken for multithreaded
+ // apps.
+ void SetAllFDsToCloseOnExec() {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   const char fd_dir[] = "/proc/self/fd";
+ #elif defined(OS_MACOSX) || defined(OS_BSD)
+   const char fd_dir[] = "/dev/fd";
+diff --git a/ipc/chromium/src/base/shared_memory_posix.cc b/ipc/chromium/src/base/shared_memory_posix.cc
+--- a/ipc/chromium/src/base/shared_memory_posix.cc
++++ b/ipc/chromium/src/base/shared_memory_posix.cc
+@@ -125,9 +125,15 @@
+   if (file_util::GetShmemTempDir(&temp_dir) == false)
+     return false;
+ 
++#ifndef OS_SOLARIS    
+   mem_filename = UTF8ToWide(temp_dir.value());
+   file_util::AppendToPath(&mem_filename, L"com.google.chrome.shmem." + memname);
+   *filename = mem_filename;
++#else  
++  *filename = (temp_dir.Append("com.google.chrome.shmem." +
++                               WideToUTF8(memname))).ToWStringHack();
++#endif                               
++
+   return true;
+ }
+ 
+@@ -247,7 +253,7 @@
+   if (memory_ == NULL)
+     return false;
+ 
+-  munmap(memory_, max_size_);
++  munmap((caddr_t)memory_, max_size_);
+   memory_ = NULL;
+   max_size_ = 0;
+   return true;
+diff --git a/ipc/chromium/src/base/sys_info_posix.cc b/ipc/chromium/src/base/sys_info_posix.cc
+--- a/ipc/chromium/src/base/sys_info_posix.cc
++++ b/ipc/chromium/src/base/sys_info_posix.cc
+@@ -119,7 +119,7 @@
+ 
+ // static
+ std::string SysInfo::OperatingSystemName() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+@@ -129,7 +129,7 @@
+ 
+ // static
+ std::string SysInfo::OperatingSystemVersion() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+@@ -139,7 +139,7 @@
+ 
+ // static
+ std::string SysInfo::CPUArchitecture() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+diff --git a/ipc/chromium/src/base/time.h b/ipc/chromium/src/base/time.h
+--- a/ipc/chromium/src/base/time.h
++++ b/ipc/chromium/src/base/time.h
+@@ -62,6 +62,10 @@
+     return delta_;
+   }
+ 
++#if defined(OS_POSIX)
++  struct timespec ToTimeSpec() const;
++#endif
++
+   // Returns the time delta in some unit. The F versions return a floating
+   // point value, the "regular" versions return a rounded-down value.
+   int InDays() const;
+@@ -224,6 +228,10 @@
+   static Time FromDoubleT(double dt);
+   double ToDoubleT() const;
+ 
++#if defined(OS_POSIX)
++  struct timeval ToTimeVal() const;
++#endif
++
+ 
+ #if defined(OS_WIN)
+   static Time FromFileTime(FILETIME ft);
+diff --git a/ipc/chromium/src/base/time_posix.cc b/ipc/chromium/src/base/time_posix.cc
+--- a/ipc/chromium/src/base/time_posix.cc
++++ b/ipc/chromium/src/base/time_posix.cc
+@@ -65,11 +65,13 @@
+   timestruct.tm_wday   = exploded.day_of_week;  // mktime/timegm ignore this
+   timestruct.tm_yday   = 0;     // mktime/timegm ignore this
+   timestruct.tm_isdst  = -1;    // attempt to figure it out
++#ifndef OS_SOLARIS
+   timestruct.tm_gmtoff = 0;     // not a POSIX field, so mktime/timegm ignore
+   timestruct.tm_zone   = NULL;  // not a POSIX field, so mktime/timegm ignore
+-
++#endif
++  
+   time_t seconds;
+-#ifdef ANDROID
++#if defined(ANDROID) || defined(OS_SOLARIS)
+     seconds = mktime(&timestruct);
+ #else
+   if (is_local)
+@@ -167,7 +169,7 @@
+   // With numer and denom = 1 (the expected case), the 64-bit absolute time
+   // reported in nanoseconds is enough to last nearly 585 years.
+ 
+-#elif defined(OS_OPENBSD) || defined(OS_POSIX) && \
++#elif defined(OS_OPENBSD) || defined(OS_SOLARIS) || defined(OS_POSIX) && \
+       defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK >= 0
+ 
+   struct timespec ts;
+@@ -192,4 +194,25 @@
+   return Now();
+ }
+ 
++struct timespec TimeDelta::ToTimeSpec() const {
++  int64_t microseconds = InMicroseconds();
++  time_t seconds = 0;
++  if (microseconds >= Time::kMicrosecondsPerSecond) {
++    seconds = InSeconds();
++    microseconds -= seconds * Time::kMicrosecondsPerSecond;
++  }
++  struct timespec result =
++      {seconds,
++       microseconds * Time::kNanosecondsPerMicrosecond};
++  return result;
++}
++
++struct timeval Time::ToTimeVal() const {
++  struct timeval result;
++  int64_t us = us_ - kTimeTToMicrosecondsOffset;
++  result.tv_sec = us / Time::kMicrosecondsPerSecond;
++  result.tv_usec = us % Time::kMicrosecondsPerSecond;
++  return result;
++}
++
+ }  // namespace base
+diff --git a/ipc/chromium/src/build/build_config.h b/ipc/chromium/src/build/build_config.h
+--- a/ipc/chromium/src/build/build_config.h
++++ b/ipc/chromium/src/build/build_config.h
+@@ -4,9 +4,9 @@
+ 
+ // This file adds defines about the platform we're currently building on.
+ //  Operating System:
+-//    OS_WIN / OS_MACOSX / OS_LINUX / OS_POSIX (MACOSX or LINUX)
++//    OS_WIN / OS_MACOSX / OS_LINUX / OS_SOLARIS / OS_POSIX (MACOSX or LINUX)
+ //  Compiler:
+-//    COMPILER_MSVC / COMPILER_GCC
++//    COMPILER_MSVC / COMPILER_GCC / COMPILER_SUNPRO
+ //  Processor:
+ //    ARCH_CPU_X86 / ARCH_CPU_X86_64 / ARCH_CPU_X86_FAMILY (X86 or X86_64)
+ //    ARCH_CPU_32_BITS / ARCH_CPU_64_BITS
+@@ -30,6 +30,8 @@
+ #define OS_NETBSD 1
+ #elif defined(__OpenBSD__)
+ #define OS_OPENBSD 1
++#elif defined(__sun__) || defined(__sun)
++#define OS_SOLARIS 1
+ #elif defined(_WIN32)
+ #define OS_WIN 1
+ #else
+@@ -45,13 +47,15 @@
+ 
+ // For access to standard POSIX features, use OS_POSIX instead of a more
+ // specific macro.
+-#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_BSD)
++#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+ #define OS_POSIX 1
+ #endif
+ 
+ // Compiler detection.
+ #if defined(__GNUC__)
+ #define COMPILER_GCC 1
++#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
++#define COMPILER_SUNPRO 1
+ #elif defined(_MSC_VER)
+ #define COMPILER_MSVC 1
+ #else
+@@ -62,11 +66,11 @@
+ //   http://msdn.microsoft.com/en-us/library/b0084kay.aspx
+ //   http://www.agner.org/optimize/calling_conventions.pdf
+ //   or with gcc, run: "echo | gcc -E -dM -"
+-#if defined(_M_X64) || defined(__x86_64__)
++#if defined(_M_X64) || defined(__x86_64__) || defined(__x86_64)
+ #define ARCH_CPU_X86_FAMILY 1
+ #define ARCH_CPU_X86_64 1
+ #define ARCH_CPU_64_BITS 1
+-#elif defined(_M_IX86) || defined(__i386__)
++#elif defined(_M_IX86) || defined(__i386__) || defined(__i386)
+ #define ARCH_CPU_X86_FAMILY 1
+ #define ARCH_CPU_X86 1
+ #define ARCH_CPU_32_BITS 1
+@@ -84,7 +88,7 @@
+ #elif defined(__sparc64__)
+ #define ARCH_CPU_SPARC 1
+ #define ARCH_CPU_64_BITS 1
+-#elif defined(__sparc__)
++#elif defined(__sparc__) || defined(__sparc)
+ #define ARCH_CPU_SPARC 1
+ #define ARCH_CPU_32_BITS 1
+ #elif defined(__mips64) && defined(__LP64__)
+diff --git a/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc b/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
+--- a/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
++++ b/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
+@@ -4,6 +4,10 @@
+ 
+ #include "chrome/common/file_descriptor_set_posix.h"
+ 
++#if defined(OS_SOLARIS)
++#include <unistd.h>
++#endif
++
+ #include "base/eintr_wrapper.h"
+ #include "base/logging.h"
+ 
+diff --git a/ipc/chromium/src/chrome/common/transport_dib.h b/ipc/chromium/src/chrome/common/transport_dib.h
+--- a/ipc/chromium/src/chrome/common/transport_dib.h
++++ b/ipc/chromium/src/chrome/common/transport_dib.h
+@@ -13,7 +13,7 @@
+ 
+ #if defined(OS_WIN)
+ #include <windows.h>
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include "chrome/common/x11_util.h"
+ #endif
+ 
+@@ -66,7 +66,7 @@
+   typedef base::SharedMemoryHandle Handle;
+   // On Mac, the inode number of the backing file is used as an id.
+   typedef base::SharedMemoryId Id;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   typedef int Handle;  // These two ints are SysV IPC shared memory keys
+   typedef int Id;
+ #endif
+@@ -96,7 +96,7 @@
+   // wire to give this transport DIB to another process.
+   Handle handle() const;
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   // Map the shared memory into the X server and return an id for the shared
+   // segment.
+   XID MapToX(Display* connection);
+@@ -107,7 +107,7 @@
+ #if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_BSD)
+   explicit TransportDIB(base::SharedMemoryHandle dib);
+   base::SharedMemory shared_memory_;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   int key_;  // SysV shared memory id
+   void* address_;  // mapped address
+   XID x_shm_;  // X id for the shared segment
+diff --git a/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h b/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h
+new file mode 100644
+--- /dev/null
++++ b/ipc/chromium/src/third_party/libevent/solaris/event2/event-config.h
+@@ -0,0 +1,455 @@
++/* event2/event-config.h
++ *
++ * This file was generated by autoconf when libevent was built, and post-
++ * processed by Libevent so that its macros would have a uniform prefix.
++ *
++ * DO NOT EDIT THIS FILE.
++ *
++ * Do not rely on macros in this file existing in later versions.
++ */
++
++#ifndef _EVENT2_EVENT_CONFIG_H_
++#define _EVENT2_EVENT_CONFIG_H_
++
++/* config.h.  Generated from config.h.in by configure.  */
++/* config.h.in.  Generated from configure.in by autoheader.  */
++
++/* Define if libevent should build without support for a debug mode */
++/* #undef _EVENT_DISABLE_DEBUG_MODE */
++
++/* Define if libevent should not allow replacing the mm functions */
++/* #undef _EVENT_DISABLE_MM_REPLACEMENT */
++
++/* Define if libevent should not be compiled with thread support */
++/* #undef _EVENT_DISABLE_THREAD_SUPPORT */
++
++/* Define to 1 if you have the `arc4random' function. */
++/* #undef _EVENT_HAVE_ARC4RANDOM */
++
++/* Define to 1 if you have the `arc4random_buf' function. */
++/* #undef _EVENT_HAVE_ARC4RANDOM_BUF */
++
++/* Define to 1 if you have the <arpa/inet.h> header file. */
++#define _EVENT_HAVE_ARPA_INET_H 1
++
++/* Define to 1 if you have the `clock_gettime' function. */
++#define _EVENT_HAVE_CLOCK_GETTIME 1
++
++/* Define to 1 if you have the declaration of `CTL_KERN', and to 0 if you
++   don't. */
++/* #undef _EVENT_HAVE_DECL_CTL_KERN */
++
++/* Define to 1 if you have the declaration of `KERN_ARND', and to 0 if you
++   don't. */
++/* #undef _EVENT_HAVE_DECL_KERN_ARND */
++
++/* Define to 1 if you have the declaration of `KERN_RANDOM', and to 0 if you
++   don't. */
++/* #undef _EVENT_HAVE_DECL_KERN_RANDOM */
++
++/* Define to 1 if you have the declaration of `RANDOM_UUID', and to 0 if you
++   don't. */
++#define _EVENT_HAVE_DECL_RANDOM_UUID 1
++
++/* Define if /dev/poll is available */
++#define _EVENT_HAVE_DEVPOLL 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#define _EVENT_HAVE_DLFCN_H 1
++
++/* Define if your system supports the epoll system calls */
++/* #undef _EVENT_HAVE_EPOLL */
++
++/* Define to 1 if you have the `epoll_ctl' function. */
++/* #undef _EVENT_HAVE_EPOLL_CTL */
++
++/* Define to 1 if you have the `eventfd' function. */
++/* #undef _EVENT_HAVE_EVENTFD */
++
++/* Define if your system supports event ports */
++#define _EVENT_HAVE_EVENT_PORTS 1
++
++/* Define to 1 if you have the `fcntl' function. */
++#define _EVENT_HAVE_FCNTL 1
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#define _EVENT_HAVE_FCNTL_H 1
++
++/* Define to 1 if the system has the type `fd_mask'. */
++#define _EVENT_HAVE_FD_MASK 1
++
++/* Do we have getaddrinfo()? */
++#define _EVENT_HAVE_GETADDRINFO 1
++
++/* Define to 1 if you have the `getegid' function. */
++#define _EVENT_HAVE_GETEGID 1
++
++/* Define to 1 if you have the `geteuid' function. */
++#define _EVENT_HAVE_GETEUID 1
++
++/* Define this if you have any gethostbyname_r() */
++/* #undef _EVENT_HAVE_GETHOSTBYNAME_R */
++
++/* Define this if gethostbyname_r takes 3 arguments */
++/* #undef _EVENT_HAVE_GETHOSTBYNAME_R_3_ARG */
++
++/* Define this if gethostbyname_r takes 5 arguments */
++/* #undef _EVENT_HAVE_GETHOSTBYNAME_R_5_ARG */
++
++/* Define this if gethostbyname_r takes 6 arguments */
++/* #undef _EVENT_HAVE_GETHOSTBYNAME_R_6_ARG */
++
++/* Define to 1 if you have the `getnameinfo' function. */
++#define _EVENT_HAVE_GETNAMEINFO 1
++
++/* Define to 1 if you have the `getprotobynumber' function. */
++#define _EVENT_HAVE_GETPROTOBYNUMBER 1
++
++/* Define to 1 if you have the `getservbyname' function. */
++/* #undef _EVENT_HAVE_GETSERVBYNAME */
++
++/* Define to 1 if you have the `gettimeofday' function. */
++#define _EVENT_HAVE_GETTIMEOFDAY 1
++
++/* Define to 1 if you have the `inet_aton' function. */
++#define _EVENT_HAVE_INET_ATON 1
++
++/* Define to 1 if you have the `inet_ntop' function. */
++#define _EVENT_HAVE_INET_NTOP 1
++
++/* Define to 1 if you have the `inet_pton' function. */
++#define _EVENT_HAVE_INET_PTON 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#define _EVENT_HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the `issetugid' function. */
++#define _EVENT_HAVE_ISSETUGID 1
++
++/* Define to 1 if you have the `kqueue' function. */
++/* #undef _EVENT_HAVE_KQUEUE */
++
++/* Define if the system has zlib */
++#define _EVENT_HAVE_LIBZ 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#define _EVENT_HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the `mmap' function. */
++#define _EVENT_HAVE_MMAP 1
++
++/* Define to 1 if you have the <netdb.h> header file. */
++#define _EVENT_HAVE_NETDB_H 1
++
++/* Define to 1 if you have the <netinet/in6.h> header file. */
++/* #undef _EVENT_HAVE_NETINET_IN6_H */
++
++/* Define to 1 if you have the <netinet/in.h> header file. */
++#define _EVENT_HAVE_NETINET_IN_H 1
++
++/* Define if the system has openssl */
++#define _EVENT_HAVE_OPENSSL 1
++
++/* Define to 1 if you have the <openssl/bio.h> header file. */
++#define _EVENT_HAVE_OPENSSL_BIO_H 1
++
++/* Define to 1 if you have the `pipe' function. */
++#define _EVENT_HAVE_PIPE 1
++
++/* Define to 1 if you have the `poll' function. */
++#define _EVENT_HAVE_POLL 1
++
++/* Define to 1 if you have the <poll.h> header file. */
++#define _EVENT_HAVE_POLL_H 1
++
++/* Define to 1 if you have the `port_create' function. */
++#define _EVENT_HAVE_PORT_CREATE 1
++
++/* Define to 1 if you have the <port.h> header file. */
++#define _EVENT_HAVE_PORT_H 1
++
++/* Define if you have POSIX threads libraries and header files. */
++/* #undef _EVENT_HAVE_PTHREAD */
++
++/* Define if we have pthreads on this system */
++#define _EVENT_HAVE_PTHREADS 1
++
++/* Define to 1 if you have the `putenv' function. */
++#define _EVENT_HAVE_PUTENV 1
++
++/* Define to 1 if the system has the type `sa_family_t'. */
++#define _EVENT_HAVE_SA_FAMILY_T 1
++
++/* Define to 1 if you have the `select' function. */
++#define _EVENT_HAVE_SELECT 1
++
++/* Define to 1 if you have the `sendfile' function. */
++#define _EVENT_HAVE_SENDFILE 1
++
++/* Define to 1 if you have the `setenv' function. */
++#define _EVENT_HAVE_SETENV 1
++
++/* Define if F_SETFD is defined in <fcntl.h> */
++#define _EVENT_HAVE_SETFD 1
++
++/* Define to 1 if you have the `sigaction' function. */
++#define _EVENT_HAVE_SIGACTION 1
++
++/* Define to 1 if you have the `signal' function. */
++#define _EVENT_HAVE_SIGNAL 1
++
++/* Define to 1 if you have the `splice' function. */
++#define _EVENT_HAVE_SPLICE 1
++
++/* Define to 1 if you have the <stdarg.h> header file. */
++#define _EVENT_HAVE_STDARG_H 1
++
++/* Define to 1 if you have the <stddef.h> header file. */
++#define _EVENT_HAVE_STDDEF_H 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#define _EVENT_HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define _EVENT_HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#define _EVENT_HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#define _EVENT_HAVE_STRING_H 1
++
++/* Define to 1 if you have the `strlcpy' function. */
++#define _EVENT_HAVE_STRLCPY 1
++
++/* Define to 1 if you have the `strsep' function. */
++#define _EVENT_HAVE_STRSEP 1
++
++/* Define to 1 if you have the `strtok_r' function. */
++#define _EVENT_HAVE_STRTOK_R 1
++
++/* Define to 1 if you have the `strtoll' function. */
++#define _EVENT_HAVE_STRTOLL 1
++
++/* Define to 1 if the system has the type `struct addrinfo'. */
++#define _EVENT_HAVE_STRUCT_ADDRINFO 1
++
++/* Define to 1 if the system has the type `struct in6_addr'. */
++#define _EVENT_HAVE_STRUCT_IN6_ADDR 1
++
++/* Define to 1 if `s6_addr16' is a member of `struct in6_addr'. */
++/* #undef _EVENT_HAVE_STRUCT_IN6_ADDR_S6_ADDR16 */
++
++/* Define to 1 if `s6_addr32' is a member of `struct in6_addr'. */
++/* #undef _EVENT_HAVE_STRUCT_IN6_ADDR_S6_ADDR32 */
++
++/* Define to 1 if the system has the type `struct sockaddr_in6'. */
++#define _EVENT_HAVE_STRUCT_SOCKADDR_IN6 1
++
++/* Define to 1 if `sin6_len' is a member of `struct sockaddr_in6'. */
++/* #undef _EVENT_HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN */
++
++/* Define to 1 if `sin_len' is a member of `struct sockaddr_in'. */
++/* #undef _EVENT_HAVE_STRUCT_SOCKADDR_IN_SIN_LEN */
++
++/* Define to 1 if the system has the type `struct sockaddr_storage'. */
++#define _EVENT_HAVE_STRUCT_SOCKADDR_STORAGE 1
++
++/* Define to 1 if `ss_family' is a member of `struct sockaddr_storage'. */
++#define _EVENT_HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY 1
++
++/* Define to 1 if `__ss_family' is a member of `struct sockaddr_storage'. */
++/* #undef _EVENT_HAVE_STRUCT_SOCKADDR_STORAGE___SS_FAMILY */
++
++/* Define to 1 if you have the `sysctl' function. */
++/* #undef _EVENT_HAVE_SYSCTL */
++
++/* Define to 1 if you have the <sys/devpoll.h> header file. */
++#define _EVENT_HAVE_SYS_DEVPOLL_H 1
++
++/* Define to 1 if you have the <sys/epoll.h> header file. */
++/* #undef _EVENT_HAVE_SYS_EPOLL_H 1 */
++
++/* Define to 1 if you have the <sys/eventfd.h> header file. */
++/* #define _EVENT_HAVE_SYS_EVENTFD_H 1 */
++
++/* Define to 1 if you have the <sys/event.h> header file. */
++/* #undef _EVENT_HAVE_SYS_EVENT_H */
++
++/* Define to 1 if you have the <sys/ioctl.h> header file. */
++#define _EVENT_HAVE_SYS_IOCTL_H 1
++
++/* Define to 1 if you have the <sys/mman.h> header file. */
++#define _EVENT_HAVE_SYS_MMAN_H 1
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#define _EVENT_HAVE_SYS_PARAM_H 1
++
++/* Define to 1 if you have the <sys/queue.h> header file. */
++#define _EVENT_HAVE_SYS_QUEUE_H 1
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++#define _EVENT_HAVE_SYS_SELECT_H 1
++
++/* Define to 1 if you have the <sys/sendfile.h> header file. */
++#define _EVENT_HAVE_SYS_SENDFILE_H 1
++
++/* Define to 1 if you have the <sys/socket.h> header file. */
++#define _EVENT_HAVE_SYS_SOCKET_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#define _EVENT_HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/sysctl.h> header file. */
++/* #undef _EVENT_HAVE_SYS_SYSCTL_H */
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#define _EVENT_HAVE_SYS_TIME_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#define _EVENT_HAVE_SYS_TYPES_H 1
++
++/* Define to 1 if you have the <sys/uio.h> header file. */
++#define _EVENT_HAVE_SYS_UIO_H 1
++
++/* Define to 1 if you have the <sys/wait.h> header file. */
++#define _EVENT_HAVE_SYS_WAIT_H 1
++
++/* Define if TAILQ_FOREACH is defined in <sys/queue.h> */
++#define _EVENT_HAVE_TAILQFOREACH 1
++
++/* Define if timeradd is defined in <sys/time.h> */
++#define _EVENT_HAVE_TIMERADD 1
++
++/* Define if timerclear is defined in <sys/time.h> */
++#define _EVENT_HAVE_TIMERCLEAR 1
++
++/* Define if timercmp is defined in <sys/time.h> */
++#define _EVENT_HAVE_TIMERCMP 1
++
++/* Define if timerisset is defined in <sys/time.h> */
++#define _EVENT_HAVE_TIMERISSET 1
++
++/* Define to 1 if the system has the type `uint16_t'. */
++#define _EVENT_HAVE_UINT16_T 1
++
++/* Define to 1 if the system has the type `uint32_t'. */
++#define _EVENT_HAVE_UINT32_T 1
++
++/* Define to 1 if the system has the type `uint64_t'. */
++#define _EVENT_HAVE_UINT64_T 1
++
++/* Define to 1 if the system has the type `uint8_t'. */
++#define _EVENT_HAVE_UINT8_T 1
++
++/* Define to 1 if the system has the type `uintptr_t'. */
++#define _EVENT_HAVE_UINTPTR_T 1
++
++/* Define to 1 if you have the `umask' function. */
++#define _EVENT_HAVE_UMASK 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#define _EVENT_HAVE_UNISTD_H 1
++
++/* Define to 1 if you have the `unsetenv' function. */
++#define _EVENT_HAVE_UNSETENV 1
++
++/* Define to 1 if you have the `vasprintf' function. */
++#define _EVENT_HAVE_VASPRINTF 1
++
++/* Define if kqueue works correctly with pipes */
++/* #undef _EVENT_HAVE_WORKING_KQUEUE */
++
++/* Define to 1 if you have the <zlib.h> header file. */
++#define _EVENT_HAVE_ZLIB_H 1
++
++/* Define to the sub-directory in which libtool stores uninstalled libraries.
++   */
++#define _EVENT_LT_OBJDIR ".libs/"
++
++/* Define to 1 if your C compiler doesn't accept -c and -o together. */
++/* #undef _EVENT_NO_MINUS_C_MINUS_O */
++
++/* Numeric representation of the version */
++#define _EVENT_NUMERIC_VERSION 0x02001500
++
++/* Name of package */
++#define _EVENT_PACKAGE "libevent"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define _EVENT_PACKAGE_BUGREPORT ""
++
++/* Define to the full name of this package. */
++#define _EVENT_PACKAGE_NAME ""
++
++/* Define to the full name and version of this package. */
++#define _EVENT_PACKAGE_STRING ""
++
++/* Define to the one symbol short name of this package. */
++#define _EVENT_PACKAGE_TARNAME ""
++
++/* Define to the home page for this package. */
++#define _EVENT_PACKAGE_URL ""
++
++/* Define to the version of this package. */
++#define _EVENT_PACKAGE_VERSION ""
++
++/* Define to necessary symbol if this constant uses a non-standard name on
++   your system. */
++/* #undef _EVENT_PTHREAD_CREATE_JOINABLE */
++
++/* The size of `int', as computed by sizeof. */
++#define _EVENT_SIZEOF_INT 4
++
++/* The size of `long', as computed by sizeof. */
++#define _EVENT_SIZEOF_LONG 4
++
++/* The size of `long long', as computed by sizeof. */
++#define _EVENT_SIZEOF_LONG_LONG 8
++
++/* The size of `pthread_t', as computed by sizeof. */
++#define _EVENT_SIZEOF_PTHREAD_T 4
++
++/* The size of `short', as computed by sizeof. */
++#define _EVENT_SIZEOF_SHORT 2
++
++/* The size of `size_t', as computed by sizeof. */
++#define _EVENT_SIZEOF_SIZE_T 4
++
++/* The size of `void *', as computed by sizeof. */
++#define _EVENT_SIZEOF_VOID_P 4
++
++/* Define to 1 if you have the ANSI C header files. */
++#define _EVENT_STDC_HEADERS 1
++
++/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
++#define _EVENT_TIME_WITH_SYS_TIME 1
++
++/* Version number of package */
++#define _EVENT_VERSION "2.0.21-stable"
++
++/* Define to appropriate substitue if compiler doesnt have __func__ */
++/* #undef _EVENT___func__ */
++
++/* Define to empty if `const' does not conform to ANSI C. */
++/* #undef _EVENT_const */
++
++/* Define to `__inline__' or `__inline' if that's what the C compiler
++   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef _EVENT___cplusplus
++/* #undef _EVENT_inline */
++#endif
++
++/* Define to `int' if <sys/types.h> does not define. */
++/* #undef _EVENT_pid_t */
++
++/* Define to `unsigned int' if <sys/types.h> does not define. */
++/* #undef _EVENT_size_t */
++
++/* Define to unsigned int if you dont have it */
++/* #undef _EVENT_socklen_t */
++
++/* Define to `int' if <sys/types.h> does not define. */
++/* #undef _EVENT_ssize_t */
++
++#endif /* event2/event-config.h */
+diff --git a/ipc/glue/BrowserProcessSubThread.cpp b/ipc/glue/BrowserProcessSubThread.cpp
+--- a/ipc/glue/BrowserProcessSubThread.cpp
++++ b/ipc/glue/BrowserProcessSubThread.cpp
+@@ -25,7 +25,7 @@
+ //  "Chrome_FileThread",  // FILE
+ //  "Chrome_DBThread",  // DB
+ //  "Chrome_HistoryThread",  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   "Gecko_Background_X11Thread",  // BACKGROUND_X11
+ #endif
+ };
+@@ -36,7 +36,7 @@
+ //  nullptr,  // FILE
+ //  nullptr,  // DB
+ //  nullptr,  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   nullptr,  // BACKGROUND_X11
+ #endif
+ };
+diff --git a/ipc/glue/BrowserProcessSubThread.h b/ipc/glue/BrowserProcessSubThread.h
+--- a/ipc/glue/BrowserProcessSubThread.h
++++ b/ipc/glue/BrowserProcessSubThread.h
+@@ -28,7 +28,7 @@
+       //FILE,
+       //DB,
+       //HISTORY,
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+       // This thread has a second connection to the X server and is used
+       // to process UI requests when routing the request to the UI
+       // thread would risk deadlock.
+diff --git a/ipc/glue/GeckoChildProcessHost.cpp b/ipc/glue/GeckoChildProcessHost.cpp
+--- a/ipc/glue/GeckoChildProcessHost.cpp
++++ b/ipc/glue/GeckoChildProcessHost.cpp
+@@ -547,12 +547,15 @@
+   // and passing wstrings from one config to the other is unsafe.  So
+   // we split the logic here.
+ 
+-#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
+-  base::environment_map newEnvVars;
++#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD) || defined(OS_SOLARIS)
+   ChildPrivileges privs = mPrivileges;
+   if (privs == base::PRIVILEGES_DEFAULT) {
+     privs = DefaultChildPrivileges();
+   }
++#endif
++
++#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
++  base::environment_map newEnvVars;
+   // XPCOM may not be initialized in some subprocesses.  We don't want
+   // to initialize XPCOM just for the directory service, especially
+   // since LD_LIBRARY_PATH is already set correctly in subprocesses
+@@ -686,7 +689,7 @@
+   childArgv.push_back(pidstring);
+ 
+ #if defined(MOZ_CRASHREPORTER)
+-#  if defined(OS_LINUX) || defined(OS_BSD)
++#  if defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+   int childCrashFd, childCrashRemapFd;
+   if (!CrashReporter::CreateNotificationPipeForChild(
+         &childCrashFd, &childCrashRemapFd))
+@@ -702,7 +705,7 @@
+   }
+ #  elif defined(MOZ_WIDGET_COCOA)
+   childArgv.push_back(CrashReporter::GetChildNotificationPipe());
+-#  endif  // OS_LINUX
++#  endif  // OS_LINUX || defined(OS_SOLARIS)
+ #endif
+ 
+ #ifdef MOZ_WIDGET_COCOA
+@@ -721,6 +724,8 @@
+   base::LaunchApp(childArgv, mFileMap,
+ #if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_BSD)
+                   newEnvVars, privs,
++#elif defined(OS_SOLARIS)
++                  base::environment_map(), privs,
+ #endif
+                   false, &process, arch);
+ 
+diff --git a/ipc/glue/SharedMemorySysV.h b/ipc/glue/SharedMemorySysV.h
+--- a/ipc/glue/SharedMemorySysV.h
++++ b/ipc/glue/SharedMemorySysV.h
+@@ -8,7 +8,7 @@
+ #ifndef mozilla_ipc_SharedMemorySysV_h
+ #define mozilla_ipc_SharedMemorySysV_h
+ 
+-#if (defined(OS_LINUX) && !defined(ANDROID)) || defined(OS_BSD)
++#if (defined(OS_LINUX) && !defined(ANDROID)) || defined(OS_BSD) || defined(OS_SOLARIS)
+ 
+ // SysV shared memory isn't available on Windows, but we define the
+ // following macro so that #ifdefs are clearer (compared to #ifdef
+@@ -55,6 +55,9 @@
+   virtual ~SharedMemorySysV()
+   {
+     shmdt(mData);
++#ifdef OS_SOLARIS    
++    shmctl(mHandle, IPC_RMID, 0);
++#endif    
+     mHandle = -1;
+     mData = nullptr;
+   }
+@@ -94,7 +97,9 @@
+ 
+     // Mark the handle as deleted so that, should this process go away, the
+     // segment is cleaned up.
++#ifndef OS_SOLARIS
+     shmctl(mHandle, IPC_RMID, 0);
++#endif
+ 
+     mData = mem;
+ 
+@@ -145,6 +150,6 @@
+ } // namespace ipc
+ } // namespace mozilla
+ 
+-#endif // OS_LINUX
++#endif // OS_LINUX || OS_SOLARIS
+ 
+ #endif // ifndef mozilla_ipc_SharedMemorySysV_h
+diff --git a/ipc/ipdl/test/cxx/Makefile.in b/ipc/ipdl/test/cxx/Makefile.in
+--- a/ipc/ipdl/test/cxx/Makefile.in
++++ b/ipc/ipdl/test/cxx/Makefile.in
+@@ -9,6 +9,10 @@
+   TestBridgeSub \
+   $(NULL)
+ 
++ifeq ($(OS_ARCH),SunOS)
++IPDLTESTS += TestSysVShmem
++endif
++
+ IPDLTESTHDRS = $(addprefix $(srcdir)/,$(addsuffix .h,$(IPDLTESTS)))
+ 
+ TESTER_TEMPLATE := $(srcdir)/IPDLUnitTests.template.cpp
+diff --git a/ipc/ipdl/test/cxx/TestShutdown.cpp b/ipc/ipdl/test/cxx/TestShutdown.cpp
+--- a/ipc/ipdl/test/cxx/TestShutdown.cpp
++++ b/ipc/ipdl/test/cxx/TestShutdown.cpp
+@@ -184,6 +184,8 @@
+         // detectors
+         _exit(0);
+     }
++
++    return false;
+ }
+ 
+ void
+diff --git a/js/src/configure b/js/src/configure
+--- a/js/src/configure
++++ b/js/src/configure
+@@ -8219,7 +8219,7 @@
+ EOF
+ 
+        CFLAGS="$CFLAGS -xlibmieee -xstrconst -xbuiltin=%all -D__FUNCTION__=__func__"
+-       CXXFLAGS="$CXXFLAGS -xlibmieee -xbuiltin=%all -features=tmplife,tmplrefstatic,extensions,no%except -norunpath -D__FUNCTION__=__func__ -template=no%extdef"
++       CXXFLAGS="$CXXFLAGS -xlibmieee -xbuiltin=%all -features=tmplife,tmplrefstatic,extensions,no%except -norunpath -D__FUNCTION__=__func__ -template=no%extdef -D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
+        LDFLAGS="-xildoff $LDFLAGS"
+        if test -z "$CROSS_COMPILE" -a -f /usr/lib/ld/map.noexstk; then
+            _SAVE_LDFLAGS=$LDFLAGS
+diff --git a/mfbt/Poison.cpp b/mfbt/Poison.cpp
+--- a/mfbt/Poison.cpp
++++ b/mfbt/Poison.cpp
+@@ -25,6 +25,7 @@
+ #  endif
+ # endif
+ #endif
++extern "C" int madvise(caddr_t, size_t, int);
+ 
+ extern "C" {
+ uintptr_t gMozillaPoisonValue;
+@@ -129,7 +130,7 @@
+ static bool
+ ProbeRegion(uintptr_t aRegion, uintptr_t aSize)
+ {
+-  if (madvise(reinterpret_cast<void*>(aRegion), aSize, MADV_NORMAL)) {
++  if (madvise(reinterpret_cast<char*>(aRegion), aSize, MADV_NORMAL)) {
+     return true;
+   } else {
+     return false;
+diff --git a/mfbt/tests/TestPoisonArea.cpp b/mfbt/tests/TestPoisonArea.cpp
+--- a/mfbt/tests/TestPoisonArea.cpp
++++ b/mfbt/tests/TestPoisonArea.cpp
+@@ -103,6 +103,7 @@
+ #include <sys/wait.h>
+ 
+ #include <sys/mman.h>
++extern "C" int madvise(caddr_t, size_t, int);
+ #ifndef MAP_ANON
+ #ifdef MAP_ANONYMOUS
+ #define MAP_ANON MAP_ANONYMOUS
+diff --git a/modules/libjar/nsZipArchive.cpp b/modules/libjar/nsZipArchive.cpp
+--- a/modules/libjar/nsZipArchive.cpp
++++ b/modules/libjar/nsZipArchive.cpp
+@@ -40,7 +40,8 @@
+     #include <sys/stat.h>
+     #include <limits.h>
+     #include <unistd.h>
+-#elif defined(XP_WIN)
++extern "C" int madvise(caddr_t, size_t, int);
++#elif defined(XP_WIN) || defined(XP_OS2)
+     #include <io.h>
+ #endif
+ 
+@@ -612,7 +613,7 @@
+     uint32_t readaheadLength = xtolong(startp);
+     if (readaheadLength) {
+ #if defined(XP_UNIX)
+-      madvise(const_cast<uint8_t*>(startp), readaheadLength, MADV_WILLNEED);
++      madvise((caddr_t)const_cast<uint8_t*>(startp), readaheadLength, MADV_WILLNEED);
+ #elif defined(XP_WIN)
+       if (aFd) {
+         HANDLE hFile = (HANDLE) PR_FileDesc2NativeHandle(aFd);
+diff --git a/config/system-headers b/config/system-headers
+--- a/config/system-headers
++++ b/config/system-headers
+@@ -1,16 +1,17 @@
+ nspr.h
+ plarena.h
+ plarenas.h
+ plbase64.h
+ plerror.h
+ plgetopt.h
+ plhash.h
+ plstr.h
++port.h
+ pratom.h
+ prbit.h
+ prclist.h
+ prcmon.h
+ prcountr.h
+ prcpucfg.h
+ prcvar.h
+ prdtoa.h
+@@ -1040,16 +1041,17 @@ sys/lwp.h
+ sys/machine.h
+ sys/mman.h
+ sys/mmu.h
+ sys/mount.h
+ sys/mpctl.h
+ sys/param.h
+ sys/pda.h
+ sys/poll.h
++sys/port.h
+ sys/ppc.h
+ sys/prctl.h
+ sys/priv.h
+ sys/procfs.h
+ sys/pstat.h
+ sys/ptrace.h
+ sys/queue.h
+ sys/quota.h
+diff --git a/ipc/glue/MessageLink.cpp b/ipc/glue/MessageLink.cpp
+--- a/ipc/glue/MessageLink.cpp
++++ b/ipc/glue/MessageLink.cpp
+@@ -338,17 +338,17 @@ ProcessLink::OnChannelOpened()
+     /*assert*/mTransport->Connect();
+ }
+ 
+ void
+ ProcessLink::OnTakeConnectedChannel()
+ {
+     AssertIOThread();
+ 
+-    queue<Message> pending;
++    std::queue<Message> pending;
+     {
+         MonitorAutoLock lock(*mChan->mMonitor);
+ 
+         mChan->mChannelState = ChannelConnected;
+ 
+         mExistingListener = mTransport->set_listener(this);
+         if (mExistingListener) {
+             mExistingListener->GetQueuedMessages(pending);

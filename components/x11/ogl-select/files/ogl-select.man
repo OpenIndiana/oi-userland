@@ -1,0 +1,98 @@
+'\" t
+.\" Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\" 
+.ds q \N'34'
+.TH ogl-select 1 "6 Jul 2010"
+.SH NAME
+ogl-select \- boot time selection of OpenGL vendor files 
+.PP
+.SH DESCRIPTION
+.I ogl-select
+is a service for the Service Management Facility (SMF) under
+the identifier \fIsvc:/application/opengl/ogl-select\fP
+that determines at boot time which vendor supplied OpenGL headers
+and libraries will be used.  The selection of the OpenGL vendor
+should be automatic and in most cases will not require any
+configuration.  However, for system configurations with special
+needs a property can be used to select the vendor.  The property
+is described in the SMF PROPERTIES section below. 
+.PP
+The SMF method performs the automatic probe by querying the
+device driver attached to the primary framebuffer device, /dev/fb.
+If the name reported by the driver matches the value advertised
+by a vendor registry, the rules in the vendor registry will be
+used to select the OpenGL headers and libraries.  The name reported
+by the driver can be verfied with \fIconstype\fP(1).  If the system
+configuration does not match the desired OpenGL vendor, a SMF
+property can be used to force the vendor selection.
+.SH SMF PROPERTIES
+.PP
+Configuration properties for \fBogl-select\fP program are
+managed by the service management facility, \fBsmf\fR(5), under the service 
+identifier:
+.PP
+.nf
+svc:/application/opengl/ogl-select
+.fi
+Use \fBsvccfg\fR(1M) to make configuration changes and to view configuration 
+information for this service\&. 
+.PP
+These properties may be set for ogl-select:
+.TP
+.B options/vendor 
+(Type astring) The vendor tag to use for selecting the OpenGL headers
+and libraries, overriding the results of the automatic probe.  Available
+vendors can be found with 'ls /lib/opengl/ogl_select/*_vendor_select'.
+If the property is set to an unknown vendor tag, the method will default
+to "mesa".  Setting the property to "" or "notset" causes it to be ignored
+and the results of the automatic probe are used instead.  The default
+value is "notset". 
+.TP
+.SH FILES
+.TP 30
+.I /var/svc/manifest/opengl/ogl-select.xml
+The SMF manifest
+.TP 30
+.I /lib/svc/method/ogl-select
+The SMF method run by the manifest
+.TP 30
+.I /lib/opengl/ogl_select/\fB*\fP_vendor_select
+Vendor registry files scanned by the manifest
+.PP
+.SH SEE ALSO
+.PP
+\fIsmf\fP(5), \fIsvcadm\fP(1M), \fIsvccfg\fP(1M)
+.SH ATTRIBUTES
+See
+.BR attributes (5)
+for descriptions of the following attributes:
+.sp
+.TS
+box;
+cbp-1 | cbp-1
+l | l .
+ATTRIBUTE TYPE	ATTRIBUTE VALUE
+=
+Availability	pkg:/service/opengl/ogl-select
+Interface Stability	Uncommitted
+.TE
+

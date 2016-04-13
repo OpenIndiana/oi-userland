@@ -1,0 +1,92 @@
+Changes were originally part of Solaris bug fix for:
+5099951 Fonts (in particular Lucida Sans Typewriter) look terrible in JDS.
+
+Allows fontconfig to use bitmap fonts (which may be hand-tuned for the
+specific size) instead of scalable fonts when a close match is found and
+anti-aliasing is not requested.
+
+diff -urp -x '*~' -x '*.orig' src/fcmatch.c src/fcmatch.c
+--- fontconfig-2.11.1/src/fcmatch.c.~1~	2014-01-20 12:14:20.000000000 +0400
++++ fontconfig-2.11.1/src/fcmatch.c	2015-03-25 23:42:41.118970979 +0300
+@@ -183,6 +183,15 @@
+     if (v2 == 0)
+ 	return 0;
+     v = v2 - v1;
++
++    /*
++     * Hack to allow bitmap fonts to equal requested font if it is close
++     */
++    if ( v > -.5 && v <= .5 )
++    {
++        v = 0;
++    }
++
+     if (v < 0)
+ 	v = -v;
+     return v;
+@@ -582,6 +591,47 @@
+     return new;
+ }
+ 
++static void
++FcChangeFormat ( FcPattern *p )
++{
++    int i;
++    FcPatternElt    *pe = FcPatternElts(p);
++
++    /*
++     * Hack. If user want monochrome mode, then try to pick bitmaps over
++     * outlines.
++     */
++    for ( i = 0; i < p->num; i++ )
++    {
++        if ( !strcmp(&pe[i].object, "antialias" ))
++        {
++            int aa = (int) &pe[i].values->value.u.b;
++            int j;
++            int done = 0;
++            FcValue v;
++
++            v.type = FcTypeBool;
++            v.u.b  = aa;
++
++            for ( j = 0; j < p->num; j++ )
++            {
++                if ( !strcmp(&pe[j].object, "outline" ))
++                {
++                    done = 1;
++                    break;
++                }
++            }
++            if ( !done )
++            {
++                FcPatternObjectAddWithBinding (p, "outline", v,
++                        FcValueBindingStrong, 1);
++            }
++            break;
++        }
++    }
++}
++
++
+ static FcPattern *
+ FcFontSetMatchInternal (FcFontSet   **sets,
+ 			int	    nsets,
+@@ -594,6 +644,8 @@
+     FcPattern	    *best;
+     int		    i;
+     int		    set;
++   
++    FcChangeFormat ( p );
+ 
+     for (i = 0; i < PRI_END; i++)
+ 	bestscore[i] = 0;
+@@ -848,6 +900,8 @@
+     if (result)
+ 	*result = FcResultNoMatch;
+ 
++    FcChangeFormat ( p );
++
+     if (FcDebug () & FC_DBG_MATCH)
+     {
+ 	printf ("Sort ");

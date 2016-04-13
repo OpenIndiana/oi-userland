@@ -23,12 +23,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-filters
-COMPONENT_VERSION=	4.0.15
+COMPONENT_VERSION=	4.0.17
 COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f5b7b67aacedec4c0294d242cbffbe0d7d3cd0fdd2b410c055e818f25ed3bc79
+    sha256:a2e2e53e502571e88eeb9010c45a0d54671f15707ee104f5c9c22b59ea7a33e3
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 COMPONENT_BUGDB=	utility/foomatic

@@ -1,0 +1,50 @@
+diff -urN -x '*.orig' gnome-session-2.27.4/gnome-session/gsm-manager.c ../SUNWgnome-session-2.26.1.hacked/gnome-session-2.27.4/gnome-session/gsm-manager.c
+--- gnome-session-2.27.4/gnome-session/gsm-manager.c	2009-07-23 15:42:09.679931892 +0100
++++ ../SUNWgnome-session-2.26.1.hacked/gnome-session-2.27.4/gnome-session/gsm-manager.c	2009-07-23 15:50:29.967601535 +0100
+@@ -376,6 +376,22 @@
+ }
+ 
+ static void start_phase (GsmManager *manager);
++#define ABOUT_PROMPT_KEY "/desktop/gnome/session/sun_extensions/viewed_about_jds_three"
++
++static gint
++show_gnome_about (gpointer data)
++{
++       int status;
++
++       if (g_spawn_command_line_async("gnome-about", NULL))
++       {
++               GConfClient *gconf_client = gconf_client_get_default ();
++               gconf_client_set_bool (gconf_client, ABOUT_PROMPT_KEY, TRUE, NULL);
++               g_object_unref (gconf_client);
++       }
++
++       return FALSE;
++}
+ 
+ static void
+ quit_request_completed (GsmConsolekit *consolekit,
+@@ -1276,6 +1292,9 @@
+ void
+ gsm_manager_start (GsmManager *manager)
+ {
++	gboolean show_about;
++	GConfClient *gconf_client;
++
+         g_debug ("GsmManager: GSM starting to manage");
+ 
+         g_return_if_fail (GSM_IS_MANAGER (manager));
+@@ -1283,6 +1302,13 @@
+         gsm_manager_set_phase (manager, GSM_MANAGER_PHASE_INITIALIZATION);
+         debug_app_summary (manager);
+         start_phase (manager);
++
++	/* Do not attempt to show gnome-about dialog if user is gdm (uid 50) */
++	if (getuid()==50)
++		return;
++	gconf_client = gconf_client_get_default ();
++	show_about = gconf_client_get_bool (gconf_client, ABOUT_PROMPT_KEY, NULL);
++	if (!show_about) gtk_timeout_add (4000, show_gnome_about, NULL);
+ }
+ 
+ static gboolean

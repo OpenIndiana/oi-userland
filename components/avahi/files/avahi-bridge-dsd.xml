@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+	Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+	Use is subject to license terms.
+
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License, Version 1.0 only
+ (the "License").  You may not use this file except in compliance
+ with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+	ident	"@(#)avahi-bridge-dsd.xml	1.1	06/04/24 SMI"
+
+	NOTE:  This service manifest is not editable; its contents will
+	be overwritten by package or patch operations, including
+	operating system upgrade.  Make customizations in a different
+	file.
+
+	Service manifest for avahi.
+-->
+
+<service_bundle type='manifest' name='SUNWavahi-bridge-dsd:avahi-bridge-dsd'>
+
+<service
+	name='system/avahi-bridge-dsd'
+	type='service'
+	version='1'>
+
+	<create_default_instance enabled='false' />
+
+	<single_instance />
+
+	<dependency name='usr'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+	<dependency name='dbus'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/system/dbus' />
+	</dependency>
+
+	<dependency name='multicast'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/network/dns/multicast' />
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/lib/svc/method/svc-avahi-bridge-dsd start'
+		timeout_seconds='30'>
+	</exec_method>
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec='/lib/svc/method/svc-avahi-bridge-dsd stop'
+		timeout_seconds='30' />
+
+	<property_group name='startd' type='framework'>
+		<!-- sub-process core dumps shouldn't restart session -->
+		<propval name='ignore_error' type='astring'
+		    value='core,signal' />
+	</property_group>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+			Avahi Daemon Bridge to Bonjour
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='avahi-daemon-bridge-dsd' section='1' manpath='/usr/man' />
+		</documentation>
+	</template>
+
+</service>
+
+</service_bundle>

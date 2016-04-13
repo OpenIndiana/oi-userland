@@ -1,0 +1,27 @@
+--- libcanberra-0.26/configure.ac-orig	2010-06-14 13:40:45.221735831 -0500
++++ libcanberra-0.26/configure.ac	2010-06-14 13:41:18.525027478 -0500
+@@ -63,14 +63,8 @@ AC_USE_SYSTEM_EXTENSIONS
+ 
+ AC_PROG_CXX
+ 
+-DESIRED_FLAGS="-Wall -W -Wextra -pedantic -pipe -Wno-long-long -Winline -Wvla -Wno-overlength-strings -Wunsafe-loop-optimizations -Wundef -Wformat=2 -Wlogical-op -Wsign-compare -Wpacked -Wformat-security -Wmissing-include-dirs -Wformat-nonliteral -Wold-style-definition -Wpointer-arith -Winit-self -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wstrict-aliasing=2 -Wcast-align -Wwrite-strings -Wno-unused-parameter -ffast-math -Wp,-D_FORTIFY_SOURCE=2 -fno-common -fdiagnostics-show-option -fno-strict-aliasing"
+-
+-for flag in $DESIRED_FLAGS ; do
+-  CC_CHECK_CFLAGS([$flag], [CFLAGS="$CFLAGS $flag"])
+-done
+-
+ #### libtool stuff ####
+-LT_PREREQ(2.2)
++AC_PROG_LIBTOOL
+ LT_INIT([dlopen win32-dll disable-static])
+ 
+ dnl Unfortunately, even up to libtool 2.2.6a there is no way to know
+@@ -91,7 +85,7 @@ dnl can give the proper place to find li
+ dnl variables like LDFLAGS and CPPFLAGS.
+ 
+ AC_CHECK_HEADER([ltdl.h],
+-    [AC_CHECK_LIB([ltdl], [lt_dladvise_init], [LIBLTDL=-lltdl], [LIBLTDL=])],
++    [AC_CHECK_LIB([ltdl], [lt_dlclose], [LIBLTDL=-lltdl], [LIBLTDL=])],
+     [LIBLTDL=])
+ 
+ AS_IF([test "x$LIBLTDL" = "x"],

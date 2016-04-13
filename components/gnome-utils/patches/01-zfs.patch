@@ -1,0 +1,42 @@
+--- gnome-utils-2.32.0/baobab/src/baobab-utils.c.orig	Tue Sep 28 00:34:58 2010
++++ gnome-utils-2.32.0/baobab/src/baobab-utils.c	Sat Apr 12 10:07:20 2014
+@@ -42,33 +42,15 @@
+ void
+ baobab_get_filesystem (BaobabFS *fs)
+ {
+-	size_t i;
+-	glibtop_mountlist mountlist;
+-	glibtop_mountentry *mountentries;
++	glibtop_fsusage fsusage;
+ 
++	/* OpenSolaris using ZFS filesystem , just need to get slash usage stats */
++	glibtop_get_fsusage (&fsusage, "/");
+ 	memset (fs, 0, sizeof *fs);
+ 
+-	mountentries = glibtop_get_mountlist (&mountlist, FALSE);
+-
+-	for (i = 0; i < mountlist.number; ++i) {
+-		GFile *file;
+-		glibtop_fsusage fsusage;
+-
+-		file = g_file_new_for_path (mountentries[i].mountdir);
+-
+-		if (!baobab_is_excluded_location (file)) {
+-
+-			glibtop_get_fsusage (&fsusage, mountentries[i].mountdir);
+-
+-			fs->total += fsusage.blocks * fsusage.block_size;
+-			fs->avail += fsusage.bfree * fsusage.block_size;
+-			fs->used += (fsusage.blocks - fsusage.bfree) * fsusage.block_size;
+-		}
+-
+-		g_object_unref (file);
+-	}
+-
+-	g_free (mountentries);
++	fs->total = fsusage.blocks * fsusage.block_size;
++	fs->avail = fsusage.bfree * fsusage.block_size;
++	fs->used = (fsusage.blocks - fsusage.bfree) * fsusage.block_size;
+ }
+ 
+ void

@@ -1,0 +1,28 @@
+From aba3143b9e5986f5ffef841864b3942013120de0 Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Fri, 15 Jun 2012 10:32:39 +0100
+Subject: [PATCH 20/20] opusenc: add missing mutex unlock on error path
+
+---
+ ext/opus/gstopusenc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/ext/opus/gstopusenc.c b/ext/opus/gstopusenc.c
+index 80b3fe8..4c05028 100644
+--- a/ext/opus/gstopusenc.c
++++ b/ext/opus/gstopusenc.c
+@@ -635,8 +635,10 @@ gst_opus_enc_set_format (GstAudioEncoder * benc, GstAudioInfo * info)
+     opus_multistream_encoder_destroy (enc->state);
+     enc->state = NULL;
+   }
+-  if (!gst_opus_enc_setup (enc))
++  if (!gst_opus_enc_setup (enc)) {
++    g_mutex_unlock (enc->property_lock);
+     return FALSE;
++  }
+ 
+   enc->frame_samples = gst_opus_enc_get_frame_samples (enc);
+ 
+-- 
+1.7.10.4
+

@@ -17,14 +17,14 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 
-COMPONENT_VERSION= 2.20.1
+COMPONENT_VERSION= 2.24.29
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0e081731d21e34ff45c82199490c2889504fa8b3c7e117c043e82ababaec0f65
+  sha256:0741c59600d3d810a223866453dc2bbb18ce4723828681ba24aa6519c37631b8
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.20/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 
 include ../../make-rules/prep.mk
@@ -60,6 +60,7 @@ CONFIGURE_ENV    += PYTHON=$(PYTHON)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
 
 COMPONENT_POST_INSTALL_ACTION.32 = ( $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $(PROTO_DIR)/usr/bin/gtk-builder-convert )
 COMPONENT_POST_INSTALL_ACTION.64 = ( $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $(PROTO_DIR)/usr/bin/$(MACH64)/gtk-builder-convert )

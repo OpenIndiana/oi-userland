@@ -1,0 +1,56 @@
+Can probably send upstream. 
+
+diff --git a/media/libvpx/Makefile.in b/media/libvpx/Makefile.in
+--- a/media/libvpx/Makefile.in
++++ b/media/libvpx/Makefile.in
+@@ -14,6 +14,10 @@
+   ASFLAGS += -D__ANDROID__
+ endif
+ 
++ifeq ($(OS_TARGET),SunOS)
++ASFLAGS+=-DSOLARIS=1
++endif  
++
+ ifdef VPX_ARM_ASM
+ # Building on an ARM platform with a supported assembler, include
+ # the optimized assembly in the build.
+@@ -121,7 +125,7 @@
+ # Workaround a bug of Sun Studio (CR 6963410)
+ ifdef SOLARIS_SUNPRO_CC
+ ifeq (86,$(findstring 86,$(OS_TEST)))
+-filter.o: filter.c Makefile.in
++filter.o: vp8/common/filter.c Makefile.in
+ 	$(REPORT_BUILD)
+ 	@$(MAKE_DEPS_AUTO_CC)
+ 	$(CC) -o $@ -c $(patsubst -xO[45],-xO3,$(COMPILE_CFLAGS)) $<
+diff --git a/media/libvpx/vpx_ports/x86_abi_support.asm b/media/libvpx/vpx_ports/x86_abi_support.asm
+--- a/media/libvpx/vpx_ports/x86_abi_support.asm
++++ b/media/libvpx/vpx_ports/x86_abi_support.asm
+@@ -225,9 +225,13 @@
+   %ifdef CHROMIUM
+     %ifidn __OUTPUT_FORMAT__,macho32
+       %define HIDDEN_DATA(x) x:private_extern
++    %elifidn SOLARIS,1
++      %define HIDDEN_DATA(x) x:data hidden
+     %else
+       %define HIDDEN_DATA(x) x
+     %endif
++  %elifidn SOLARIS,1
++    %define HIDDEN_DATA(x) x:data hidden
+   %else
+     %define HIDDEN_DATA(x) x
+   %endif
+@@ -244,9 +248,13 @@
+   %elifidn __OUTPUT_FORMAT__,macho64
+     %ifdef CHROMIUM
+       %define HIDDEN_DATA(x) x:private_extern
++    %elifidn SOLARIS,1
++      %define HIDDEN_DATA(x) x:data hidden
+     %else
+       %define HIDDEN_DATA(x) x
+     %endif
++  %elifidn SOLARIS,1
++    %define HIDDEN_DATA(x) x:data hidden
+   %else
+     %define HIDDEN_DATA(x) x
+   %endif

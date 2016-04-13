@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= opal
 
 COMPONENT_VERSION= 3.6.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -39,13 +40,9 @@ COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf &&\
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_PREFIX=/usr/g++
-
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS += $(LDFLAGS.$(BITS))
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-iax
+CONFIGURE_OPTIONS += --enable-localgsm
 
 build: $(BUILD_32)
 

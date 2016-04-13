@@ -1,0 +1,25 @@
+--- gdb-7.10.1/gdb/proc-utils.h.orig	Fri Feb 26 23:16:01 2016
++++ gdb-7.10.1/gdb/proc-utils.h	Fri Feb 26 21:49:42 2016
+@@ -89,6 +89,7 @@
+ extern  int   open_with_trace  (char *, int, char *, int);
+ extern  int   close_with_trace (int, char *, int);
+ extern  void  procfs_note      (char *, char *, int);
++extern  int   procfs_get_trace (void);
+ 
+ #ifdef PROCFS_TRACE
+ /*
+--- gdb-7.10.1/gdb/proc-api.c.orig	Fri Feb 26 21:40:14 2016
++++ gdb-7.10.1/gdb/proc-api.c	Fri Feb 26 21:49:56 2016
+@@ -62,6 +62,12 @@
+ static FILE *procfs_file     = NULL;
+ static char *procfs_filename = "procfs_trace";
+ 
++int
++procfs_get_trace(void)
++{
++  return procfs_trace;
++}
++
+ static void
+ prepare_to_trace (void)
+ {

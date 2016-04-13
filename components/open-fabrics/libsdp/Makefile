@@ -28,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.15.gd7fdb72.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b72d4d84c7a02207c261082d1837757f8c131942193ceaf017daf684d61e8be1
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

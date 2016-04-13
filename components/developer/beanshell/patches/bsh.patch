@@ -1,0 +1,44 @@
+--- beanshell-2.0b4/scripts/bsh	Fri Oct 19 14:54:14 2007
++++ beanshell-2.0b4/scripts/bsh.new	Tue May 10 17:13:29 2011
+@@ -10,11 +10,28 @@
+ # always be used.
+ #
+ 
++help()
++{
++cat << EOF
++  BeanShell, a small and embeddable Java source interpreter
++  Usage:
++  beansh | beanshell [ -g ] [Beanshell Script....]
++        -g		: beanshell graphics mode
++        -h or --help	: this manual
++
++EOF
++}
++
++if [ "$1" = "-h" -o "$1" = "--help" ]; then
++	help
++	exit;
++fi
++
+ # The (hard coded) location of a default bsh jar.
+ # e.g. Win
+ #DEFAULTBSH=`cygpath --windows $HOME/pkg/bsh-1.3a1.jar`
+ # e.g. Unix
+-DEFAULTBSH=/home/pat/bin/bsh-1.3a1.jar
++DEFAULTBSH=/usr/share/lib/java/bsh-2.0b6.jar
+ 
+ name=`basename $0`
+ if [ $name = "bshd" ]; then
+@@ -54,6 +71,10 @@
+ 		path=${DEFAULTBSH}
+ 	fi
+ 
+-	java $debug -classpath $path bsh.Interpreter $* 
++	if [ "$1" = "-g" ]; then
++		java $debug -classpath $path bsh.Console
++	else
++		java $debug -classpath $path bsh.Interpreter $*
++	fi
+ fi
+ 

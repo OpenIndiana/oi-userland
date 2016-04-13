@@ -15,7 +15,7 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cbe
-COMPONENT_VERSION=	1.8.0
+COMPONENT_VERSION=	1.8.1
 
 include ../../make-rules/ips.mk
 

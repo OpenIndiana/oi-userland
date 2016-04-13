@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.15
+COMPONENT_VERSION=	1.4.24
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:169721ab7a7531add6ae9f6b14b6b5641725fe0b1f0bdf5c3a4327725901e2b4
-COMPONENT_ARCHIVE_URL=	http://memcached.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:08a426c504ecf64633151eec1058584754d2f54e62e5ed2d6808559401617e55
+COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
 include ../../make-rules/prep.mk
@@ -41,8 +41,17 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
+COMPONENT_PREP_ACTION = \
+    (cd $(@D) && \
+	$(TOUCH) README &&\
+	libtoolize --copy --force &&\
+	aclocal -I m4 &&\
+	automake -c -f -a &&\
+	autoconf )
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf )
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
 
 COMPONENT_TEST_TARGETS=	test
 
@@ -64,6 +73,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# t/whitespace.t fails
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

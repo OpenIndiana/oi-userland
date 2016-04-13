@@ -40,7 +40,7 @@ component-hook:		TARGET = component-hook
 .DEFAULT:	publish
 
 download setup prep build install publish validate clean clobber \
-test component-hook: $(SUBDIRS)
+test component-hook unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)

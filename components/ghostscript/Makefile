@@ -30,6 +30,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      9.00
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://ghostscript.com/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -105,8 +106,6 @@ build: $(VARIANTS:%=%/.built)
 # install gs and ijs
 install: $(VARIANTS:%=%/.installed)
 
-# empty test target
-test:
-	@echo "no tests available"
+test: $(NO_TESTS)
 
 include ../../make-rules/depend.mk

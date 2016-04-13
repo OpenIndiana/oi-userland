@@ -1,0 +1,20 @@
+--- libmtp-1.1.8/src/gphoto2-endian.h.~1~	2015-03-11 00:46:33.545905878 +0300
++++ libmtp-1.1.8/src/gphoto2-endian.h	2015-03-11 00:47:44.806166816 +0300
+@@ -8,10 +8,17 @@
+ #include <arpa/inet.h>
+ 
+ /* Define generic byte swapping functions */
++#ifdef __sun
++#include <sys/byteorder.h>
++#define swap16(x) BSWAP_16(x)
++#define swap32(x) BSWAP_32(x)
++#define swap64(x) BSWAP_64(x)
++#else
+ #include <byteswap.h>
+ #define swap16(x) bswap_16(x)
+ #define swap32(x) bswap_32(x)
+ #define swap64(x) bswap_64(x)
++#endif
+ 
+ /* The byte swapping macros have the form: */
+ /*   EENN[a]toh or htoEENN[a] where EE is be (big endian) or */

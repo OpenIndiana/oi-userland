@@ -20,220 +20,231 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Samba does not work properly on i386 when built by studio with -xO3+.
+ifeq ($(MACH), sparc)
+# parallelize up to 64 concurent tasks for sparc
+WAFOPT1 = -j64
+else
+# Both SPRO_VROOT and studio_OPT vars must use the override keyword otherwise
+# Userland will ignore it and use its default value.
+# To use the older 12.3 compiler instead of the default 12.4 compiler uncomment
+# the following line.
+#override SPRO_VROOT = $(SPRO_ROOT)/solarisstudio12.3
+#override studio_OPT = -xO1
+# parallelize up to 16 concurent tasks for i386
+WAFOPT1 = -j16
+endif
+
+# parfait seems to spin on us
+export PARFAIT_BUILD=no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.6.23
+COMPONENT_VERSION=	4.2.11
+TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:25bbfa81b9a26609a0be744240b63e1f5030bbcfab684cf7aea3b86ed0db2dd0
+COMPONENT_ARCHIVE_HASH= sha256:75bce53c922e51352933c9846f2c4b1e251fabb80927adb426a773a321ee01f8
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
-COMPONENT_NAME_1=		docbook-xsl
-COMPONENT_VERSION_1=		1.76.1
-COMPONENT_SRC_1=		$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1=		$(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_HASH_1=	\
-    sha256:d6bdfd76f672c810299c71443e5127431ffb87d2c79d818aee72c86eaccd312c
-COMPONENT_ARCHIVE_URL_1=	http://sourceforge.net/projects/docbook/files/$(COMPONENT_NAME_1)/$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
+include $(WS_MAKE_RULES)/prep.mk
 
-COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
-COMPONENT_ARCHIVE_HASH_2=	\
-    sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
-COMPONENT_ARCHIVE_URL_2=	http://dlc.openindiana.org/oi-build/source-archives/libsam-LGPL.tar
+# waf
+WAF_PATH	=	PATH=$(BUILD_DIR)/samba/buildtools/bin:$(PROTO_DIR)/usr/bin:$$PATH:/usr/perl5/bin
+# Verbosed waf produces unreadable output if parallelized.
+# Uncomment to enable verbose build.
+#override WAFOPT1	=	-v -j1
 
-# Samba does not work properly on i86 when built by studio.
-# Samba on SPARC has serious performance drop when built by gcc.
-ifeq ($(MACH), sparc)
-COMPILER = studio
-else
-COMPILER = gcc
-endif
+# Set build dirs for Samba + Winbind / Winbind (without Samba).
+BUILD_DIR_SMB		= $(BUILD_DIR)/samba
+BUILD_DIR_WINB		= $(BUILD_DIR)/winbind
 
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-ifeq ($(strip $(USERLAND_ARCHIVES)),)
-  DISTFILES_LOCATION=../
-else 
-  DISTFILES_LOCATION=$(USERLAND_ARCHIVES)
-endif
-
-SRC_OFFSET =	source3
-# Now we override paths to .built
-BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
-BUILD_DIR_64 = $(BUILD_DIR)/$(MACH64)/$(SRC_OFFSET)
-
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
-
-CONFIGURE_SCRIPT = $(BUILD_DIR_$(BITS))/configure
-
+# directory to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
+# Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
+PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
-DOCS-XML_DIR =	$(SOURCE_DIR)/docs-xml
+# Compiler settings
+CFLAGS	+=	$($(COMPILER)_C99_ENABLE)
 
-# Build mozldap if not yet built.
-$(COMPONENT_DIR)/../mozldap/build/$(MACH32)/.installed \
-$(COMPONENT_DIR)/../mozldap/build/$(MACH64)/.installed:
-	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap install
-
-# Clone mozldap libs and headers to $(PROTO_DIR).
-# Create also $(PROTO_DIR).
-$(PROTO_DIR)/.mozldap:	   $(COMPONENT_DIR)/../mozldap/build/$(MACH32)/.installed \
-			   $(COMPONENT_DIR)/../mozldap/build/$(MACH64)/.installed
-	$(MKDIR) $(PROTO_DIR)
-	$(CLONEY) $(COMPONENT_DIR)/../mozldap/build/prototype/$(MACH) $(PROTO_DIR)
-	$(TOUCH) $@
-
-# Solve dependencies before the 32bits configure.
-$(BUILD_DIR_32)/.configured: $(DOCS-XML_DIR)/.built $(PROTO_DIR)/.mozldap \
-			$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
-
-# Start 64bits configure after the 32bits one is finished
-# to have all dependecies solved.
-$(BUILD_DIR_64)/.configured: $(BUILD_DIR_32)/.configured
-
-# re-create configure dir with respect of SRC_OFFSET
-# (target $(BUILD_DIR_64)/.configured does not know about
-# the lower level of directories)
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	$(RM) -r $(BUILD_DIR)/$(MACH$(BITS)) ; \
-	$(MKDIR) $(BUILD_DIR)/$(MACH$(BITS)) ;
-
-# Clone SOURCE_DIR and remove links to all of the files generated
-# from *.in to distinguish then between the 32/64bits builds.
-COMPONENT_PRE_CONFIGURE_ACTION += \
-	( $(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH$(BITS)) ; \
-	  find $(@D)/.. -name '*.in' | sed -e 's/.in$$//' | xargs $(RM) ) ;
-
-# finish preparation
-COMPONENT_PRE_CONFIGURE_ACTION += \
-	( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
-
-# Depend on $(PROTO_DIR)/.mozldap because this target creates $(PROTO_DIR).
-$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
-		$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
-	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
-	$(CC) -shared -fPIC -DPIC -Wl,-hlibsam.so Solaris/libsam.c \
-		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_2)
-
-CFLAGS.studio	+=	$(studio_C99_ENABLE)
-CFLAGS.gcc	+=	-std=c99
+LIBS +=		-lrt -lsec -lcrypt -lmd5 -lsocket -lnsl
+# libavahi and libgamin libraries are not available for 64bits
+LIBS32 =	-lsendfile -lavahi-common -lavahi-core
 
 #CPPFLAGS +=	-DSAMBA_VERSION_VENDOR_SUFFIX=\\\"Placeholder_for_vendor_suffix\\\"
 CPPFLAGS +=	$(CPP_LARGEFILES)
 CPPFLAGS +=	$(CPP_XPG6MODE)
-CPPFLAGS +=	-I$(PROTOUSRINCDIR)/samba -I$(PROTOUSRINCDIR)/samba/ldap6 -I$(BUILD_DIR_$(BITS))/include
+CPPFLAGS +=	-I/usr/include/openldap
 
-LIBS +=		-lrt -lsocket -lnsl
-# libavahi is not for 64bits but we do not need it
-LIBS32 =	-lsendfile -lavahi-common -lavahi-core
-
-LDFLAGS.32 +=	-L $(PROTOUSRLIBDIR)
-LDFLAGS.32 +=	-L $(PROTOUSRLIBDIR)/samba -R/usr/lib/samba
-LDFLAGS.32 +=	-L $(PROTO_DIR)/opt/SUNWsamfs/lib
+LDFLAGS.32 +=	-R/usr/lib/samba
+LDFLAGS.32 +=	-R/usr/lib/samba/private
 LDFLAGS.32 +=	$(LIBS) $(LIBS32)
+LDFLAGS.32 +=	-R/usr/gnu/lib
 
-LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR)/$(MACH64)
-LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR)/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
+LDFLAGS.64 +=	-m64
+LDFLAGS.64 +=	-R/usr/lib/samba/$(MACH64)
+LDFLAGS.64 +=	-R/usr/lib/samba/private/$(MACH64)
 LDFLAGS.64 +=	$(LIBS)
+LDFLAGS.64 +=	-R/usr/gnu/lib/$(MACH64)
 
-ifeq ($(COMPILER), studio)
-LDFLAGS +=	$(LDFLAGS.$(BITS)) $(LD_OPTIONS)
-else
-LDFLAGS +=      $(LDFLAGS.$(BITS)) $(LD_OPTIONS:%=-Xlinker %)
-endif
+#ASLR_MODE =	$(ASLR_ENABLE)
+LD_OPTIONS += 	-B direct
 
-CONFIGURE_LIBDIR.32 = /usr/lib/samba
-CONFIGURE_LIBDIR.64 = /usr/lib/samba/$(MACH64)
-CONFIGURE_OPTIONS +=	--includedir=/usr/include/samba
+# --enable-fhs should not be on
+CONFIGURE_OPTIONS =	--exec-prefix=/usr
+CONFIGURE_OPTIONS.32 +=	--bindir=/usr/lib/samba/bin
+CONFIGURE_OPTIONS.64 +=	--bindir=/usr/lib/samba/bin/$(MACH64)
+CONFIGURE_OPTIONS.32 +=	--sbindir=/usr/lib/samba/sbin
+CONFIGURE_OPTIONS.64 +=	--sbindir=/usr/lib/samba/sbin/$(MACH64)
+CONFIGURE_OPTIONS.32 +=	--libdir=/usr/lib/samba
+CONFIGURE_OPTIONS.64 +=	--libdir=/usr/lib/samba/$(MACH64)
+CONFIGURE_OPTIONS.32 +=	--with-privatelibdir=/usr/lib/samba/private
+CONFIGURE_OPTIONS.64 +=	--with-privatelibdir=/usr/lib/samba/private/$(MACH64)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
-CONFIGURE_OPTIONS +=	--with-configdir=/etc/samba
+CONFIGURE_OPTIONS.32 +=	--with-pammodulesdir=/usr/lib/samba/security
+CONFIGURE_OPTIONS.64 +=	--with-pammodulesdir=/usr/lib/samba/security/$(MACH64)
+CONFIGURE_OPTIONS +=	--datarootdir=/usr/lib/samba
+CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
+CONFIGURE_OPTIONS +=	--htmldir=/usr/share/samba/swat/help
+CONFIGURE_OPTIONS +=	--includedir=/usr/include/samba
 CONFIGURE_OPTIONS +=	--with-privatedir=/etc/samba/private
-CONFIGURE_OPTIONS +=	--with-swatdir=/usr/share/samba/swat
 CONFIGURE_OPTIONS +=	--localstatedir=/var/samba
-CONFIGURE_OPTIONS +=	--with-lockdir=/var/samba/locks
-CONFIGURE_OPTIONS +=	--with-piddir=/var/samba/locks
 CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
-CONFIGURE_OPTIONS +=	--enable-shared=yes
-CONFIGURE_OPTIONS +=	--enable-static=no
-CONFIGURE_OPTIONS.32 +=	--with-static-modules=vfs_solarisacl
-CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
-CONFIGURE_OPTIONS.64 +=	--with-static-modules=
-CONFIGURE_OPTIONS.64 += --with-shared-modules=
-CONFIGURE_OPTIONS +=	--with-readline
-CONFIGURE_OPTIONS +=	--enable-cups
-CONFIGURE_OPTIONS +=	--with-aio-support
-CONFIGURE_OPTIONS +=	--with-acl-support
+CONFIGURE_OPTIONS +=	--sharedstatedir=/var/samba/com
+CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/samba
+
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
+CONFIGURE_OPTIONS.32 +=	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
+CONFIGURE_OPTIONS.64 +=	--with-shared-modules=idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS +=	--with-ads
-CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-automount
-CONFIGURE_OPTIONS +=	--with-dnsupdate=no
-CONFIGURE_OPTIONS +=	--with-pam
 CONFIGURE_OPTIONS +=	--with-winbind
+CONFIGURE_OPTIONS +=	--with-ldap
+CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
+#CONFIGURE_OPTIONS +=	--with-system-mitkrb5
+#CONFIGURE_OPTIONS +=	--without-ad-dc
 
-CONFIGURE_OPTIONS += 	LD="$(LD)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(BUILD_DIR)/libsam-LGPL/include"
-CONFIGURE_OPTIONS.64 +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS.32 +=	LIBS="$(LIBS) $(LIBS32)"
-CONFIGURE_OPTIONS.64 +=	LIBS="$(LIBS)"
-CONFIGURE_OPTIONS +=	LDAP_LIBS=-lldap60
-CONFIGURE_OPTIONS +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
-CONFIGURE_OPTIONS.32 +=	SAMFS_LIBS="-R/opt/SUNWsamfs/lib -lsam"
+CONFIGURE_OPTIONS +=	--nocache
+CONFIGURE_OPTIONS +=	--nopyo
+CONFIGURE_OPTIONS +=	--disable-rpath
+#CONFIGURE_OPTIONS +=	--disable-gnutls
+CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
 
-# download recent docbook-xsl and unpack it
-$(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) \
-		$(SOURCE_DIR)/.prep $(PROTO_DIR)/.mozldap
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_1)
-	cd $(DOCS-XML_DIR) ; $(GMAKE) clobber
-	$(TOUCH) $@
+#CONFIGURE_OPTIONS.32 +=	--with-samfs=$(PROTO_DIR)/opt/SUNWsamfs/lib
 
-# create also the: $(DOCS-XML_DIR)/configure and $(DOCS-XML_DIR)/build/catalog.xml
-# needed to buils docs from XML sources
-$(DOCS-XML_DIR)/Makefile.settings: $(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep
-	cd $(@D) ; $(GMAKE) configure \
-		BUILDDIR=$(@D) \
-		DOCBOOKXSLVER=$(COMPONENT_VERSION_1) \
-		DOCBOOKXSLDIR=$(BUILD_DIR)/$(COMPONENT_SRC_1)
+CONFIGURE_ENV += 	CC="$(CC)"
+CONFIGURE_ENV += 	CPP="$(CC) -E"
+CONFIGURE_ENV += 	AWK=gawk
+CONFIGURE_ENV += 	PERL=$(PERL)
+CONFIGURE_ENV += 	PYTHONDIR="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += 	PYTHONARCHDIR="$(PYTHON_VENDOR_PACKAGES)/samba"
+CONFIGURE_ENV += 	LD="$(LD)"
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(COMPONENT_DIR)/Solaris/include"
+CONFIGURE_ENV.64 +=	CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV.32 +=	LINKFLAGS="$(LDFLAGS.32)"
+CONFIGURE_ENV.64 +=	LINKFLAGS="$(LDFLAGS.64)"
+CONFIGURE_ENV.64 +=	MACH64="$(MACH64)"
+CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 
-# Build docs from DocBook XML sources.
-$(DOCS-XML_DIR)/.built: $(DOCS-XML_DIR)/Makefile.settings
-	cd $(@D) ; \
-	env - XML_CATALOG_FILES="catalog.xml file:///$(@D)/build/catalog.xml" \
-		$(GMAKE) smbdotconf/parameters.all.xml manpages3 htmlman3
-	$(TOUCH) $@
-
-$(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_32)
+# Propagation of smb.conf with default settings.
+$(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
 	$(MKDIR) $(@D)
 	sed -f $(COMPONENT_DIR)/Solaris/smbconf.sed > $@ \
-	   $(BUILD_DIR)/$(MACH32)/examples/smb.conf.default
+	   $(BUILD_DIR_SMB)/examples/smb.conf.default
 
-# Samba targets
-$(BUILD_32): COMPONENT_BUILD_TARGETS = showlayout all libsmbclient modules smbtorture
-$(BUILD_64): COMPONENT_BUILD_TARGETS = showlayout nss_modules pam_modules pam_smbpass wins pam_winbind
-$(INSTALL_32): COMPONENT_INSTALL_TARGETS = showlayout install-everything
-$(INSTALL_64): COMPONENT_INSTALL_TARGETS = showlayout installpammodules
+# Build targets for WAF:
+# (motivation) Samba started to use WAF (build system from Google) from the 3.x
+# (as a parallel build system) but Samba4 discontinued the use of auto tools
+# definitively.
+# (note) .BDprep target is an additional step between .prep and .configure
+# targets. It was added because there were problems with libtool-like phase of
+# WAF when the not "prepared well". "waf distclean" on CLONEY'ed BUILD_DIR is
+# enough.
+
+# Prepare build dir for Samba + Winbind.
+$(BUILD_DIR_SMB)/.BDprep:	$(SOURCE_DIR)/.prep
+	# re-create configure dir
+	$(MKDIR) $(@D)
+	# Clone SOURCE_DIR
+	$(CLONEY) $(SOURCE_DIR) $(@D)
+	# clenup of clone
+	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	$(TOUCH) $@
+
+# Configure of Samba + Winbind.
+$(BUILD_DIR_SMB)/.configured:	$(BUILD_DIR_SMB)/.BDprep
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
+		$(CONFIGURE_ENV.32) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
+	$(TOUCH) $@
+
+# Build of Samba + Winbind.
+$(BUILD_DIR_SMB)/.built:	$(BUILD_DIR_SMB)/.configured
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) )
+	$(TOUCH) $@
+
+# Install of Samba + Winbind.
+$(BUILD_DIR_SMB)/.installed:	$(BUILD_DIR_SMB)/.built
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
+	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/
+	$(TOUCH) $@
+
+# Prepare build dir for Winbind (without Samba) for different bitness.
+$(BUILD_DIR_WINB)/.BDprep:	$(SOURCE_DIR)/.prep
+	# re-create configure dir
+	$(MKDIR) $(@D)
+	# Clone SOURCE_DIR
+	$(CLONEY) $(SOURCE_DIR) $(@D)
+	# clenup of clone
+	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	$(TOUCH) $@
+
+# Configure of Winbind (without Samba) for different bitness.
+#$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep $(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so
+$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
+		$(CONFIGURE_ENV.64) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.64) )
+	$(TOUCH) $@
+
+# Build of Winbind (without Samba) for different bitness.
+WB_TARGETS =	--targets=nss_winbind,pamsmbpass,pamwinbind
+$(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
+	    $(WB_TARGETS) )
+	$(TOUCH) $@
+
+# Installf Winbind (without Samba) for different bitness.
+$(BUILD_DIR_WINB)/.installed:	$(BUILD_DIR_WINB)/.built
+	(cd $(@D) ; \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/$(MACH64) ; \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/$(MACH64) bin/shared/*.so* ; \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/private/$(MACH64) ; \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/private/$(MACH64) bin/shared/private/*.so* \
+	)
+	$(TOUCH) $@
+
+# Set appropriate bitnesses for Samba + Winbind / Winbind (without Samba).
+$(BUILD_DIR_SMB)/.configured:	BITS=32
+$(BUILD_DIR_WINB)/.configured:	BITS=64
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_DIR_SMB)/.built $(BUILD_DIR_WINB)/.built
 
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
-install:	$(PROTO_DIR)/etc/samba/smb.conf-example $(INSTALL_32_and_64)
+install:	$(BUILD_DIR_SMB)/.installed $(BUILD_DIR_WINB)/.installed
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
-	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap clean
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+	$(RM) -r $(BUILD_DIR)

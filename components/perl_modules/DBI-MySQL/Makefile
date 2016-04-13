@@ -47,12 +47,6 @@ include $(WS_TOP)/make-rules/ips.mk
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# Workaround strange issue: 
-# for Perl 5.10 some *.pm files are not installed
-COMPONENT_POST_BUILD_ACTION += \
-	(rm $(BUILD_DIR)/$(MACH32)-5.10.0/pm_to_blib && \
-              $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) -C $(BUILD_DIR)/$(MACH32)-5.10.0/ pm_to_blib)
-
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)

@@ -1,0 +1,64 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME= fontconfig
+COMPONENT_VERSION= 2.11.1
+COMPONENT_SUMMARY=  Fontconfig - Font configuration and customization library
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+  sha256:3413f48d05d3a866482a315b4a78d0bbcee5cfe39632d4b2a94a63ddf226d043
+COMPONENT_ARCHIVE_URL= \
+  http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/fontconfig/
+COMPONENT_FMRI= system/library/fontconfig
+COMPONENT_LICENSE= MIT
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_CLASSIFICATION= System/Libraries
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+PATH=/usr/gnu/bin:/usr/bin
+
+gcc_OPT=-O2
+
+# This is necessary to pass tests
+ENV=/usr/bin/env -i
+
+CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS+= --with-confdir=/etc/fonts
+CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
+CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
+CONFIGURE_OPTIONS+= --with-cache-dir=/var/cache/fontconfig
+
+$(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
+	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d 
+	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.avail
+	$(MKDIR) $(PROTO_DIR)/etc/fonts/conf.d
+	$(MV) $(PROTO_DIR)/usr/share/fontconfig/conf.avail $(PROTO_DIR)/etc/fonts/conf.avail
+	for i in $$(ls $(PROTO_DIR)/etc/fonts/conf.avail); do \
+		ln -s ../conf.avail/$$i $(PROTO_DIR)/etc/fonts/conf.d/$$i; \
+	done
+	$(TOUCH) $@
+
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
+
+test: $(TEST_32_and_64)

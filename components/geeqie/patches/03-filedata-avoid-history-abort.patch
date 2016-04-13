@@ -1,0 +1,16 @@
+diff -Nur geeqie-1.1-orig/src/filedata.c geeqie-1.1/src/filedata.c
+--- geeqie-1.1-orig/src/filedata.c	2012-08-12 22:13:41.000000000 +0200
++++ geeqie-1.1/src/filedata.c	2013-02-08 21:07:49.742677702 +0100
+@@ -1098,9 +1098,11 @@
+ 	filelist_read_real(dir, &files, NULL, TRUE);
+ 	
+ 	fd = g_hash_table_lookup(file_data_pool, path_utf8);
++    if (!fd)  /* non-existing paths from history path_list would abort/crash */
++        goto RETURN_1;
+ 	g_assert(fd);
+ 	file_data_ref(fd);
+-	
++ RETURN_1:
+ 	filelist_free(files);
+ 	g_free(dir);
+ 	return fd;

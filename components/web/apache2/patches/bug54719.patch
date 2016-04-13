@@ -1,0 +1,26 @@
+https://issues.apache.org/bugzilla/show_bug.cgi?id=54719
+
+--- server/main.c
++++ server/main.c
+@@ -675,6 +675,21 @@ int main(int argc, const char * const ar
+         }
+     }
+ 
++    /* Unless started with non-default configuration file we will ensure that
++     * run time directory exists. This is required by systems where run time
++     * directory is on non-reboot persistent file system).
++     */
++    if (strcmp(confname, SERVER_CONFIG_FILE) == 0) {
++        rv = apr_dir_make_recursive(DEFAULT_REL_RUNTIMEDIR,
++                                    APR_OS_DEFAULT, pconf);
++        if (rv != APR_SUCCESS) {
++            ap_log_error(APLOG_MARK, APLOG_STARTUP |APLOG_ERR,
++                         0, NULL, "could not create runtime directory: %s",
++                         DEFAULT_REL_RUNTIMEDIR);
++            destroy_and_exit_process(process, 1);
++        }
++    }
++
+     apr_pool_clear(plog);
+ 
+     if ( ap_run_open_logs(pconf, plog, ptemp, server_conf) != OK) {

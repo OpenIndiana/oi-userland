@@ -20,6 +20,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
@@ -29,11 +30,12 @@ PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	2.8.6
+COMPONENT_VERSION=	2.8.12.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e6999b81ac367d85ffb0f69b6c4a0ef96f95dc154efd3592f9cfebacdf75728e
+	sha256:8c6574e9afabcb9fc66f463bb1f2f051958d86c85c37fccf067eb1a44a120e5e
 COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v2.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 COMPONENT_BUGDB=	utility/cmake
@@ -55,6 +57,11 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"	
 endif
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
+
+CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--datadir=/share/cmake-2.8
+CONFIGURE_OPTIONS +=	--docdir=/share/doc/cmake-2.8
+CONFIGURE_OPTIONS += 	--mandir=/share/man
 
 # Use system-installed third-party libraries, rather than the private
 # copies in the cmake source.  Only libarchive will come from the cmake

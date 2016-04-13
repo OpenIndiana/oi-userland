@@ -1,0 +1,21 @@
+Patch origin: in-house
+Patch status: submitted to upstream
+
+https://bugzilla.gnome.org/show_bug.cgi?id=751205
+
+--- libxml2-2.9.2/Makefile.am
++++ libxml2-2.9.2/Makefile.am
+@@ -211,6 +211,13 @@
+ 
+ check: all runtests
+ 
++# It will use libxml2 installed on system only when there is no one in
++# .libs/ directory (which could be used via LD_LIBRARY_PATH).
++system-test:
++	$(MAKE) runtest testrecurse testapi testchar testdict runxmlconf DEPS= LDADDS=-lxml2
++	$(MAKE) runtests PYTHON_SUBDIR=
++	cd python/tests; $(MAKE) tests
++
+ check-valgrind valgrind: all
+ 	@echo '## Running the regression tests under Valgrind'
+ 	@echo '## Go get a cup of coffee it is gonna take a while ...'

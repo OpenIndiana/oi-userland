@@ -1,0 +1,130 @@
+--- a/greeter/Login.h-orig	Thu Sep 17 19:24:37 2009
++++ b/greeter/Login.h	Mon Feb 24 00:45:55 2014
+@@ -100,6 +100,7 @@
+ # define XtNgreetFace		"greetFace"
+ # define XtNfailFace		"failFace"
+ # define XtNfailTimeout		"failTimeout"
++# define XtNgrabDelay           "grabDelay"
+ # define XtNsessionArgument	"sessionArgument"
+ # define XtNsecureSession	"secureSession"
+ # define XtNallowAccess		"allowAccess"
+@@ -140,6 +141,7 @@
+ # define XtCPasswdPrompt	"PasswdPrompt"
+ # define XtCFail		"Fail"
+ # define XtCFailTimeout		"FailTimeout"
++# define XtCGrabDelay           "GrabDelay"
+ # define XtCSessionArgument	"SessionArgument"
+ # define XtCSecureSession	"SecureSession"
+ # define XtCAllowAccess		"AllowAccess"
+--- a/greeter/LoginP.h-orig	Thu Sep 17 19:24:37 2009
++++ b/greeter/LoginP.h	Mon Feb 24 00:46:53 2014
+@@ -130,6 +130,7 @@
+ 	char		*sessionArg;	/* argument passed to session */
+ 	LoginFunc	notify_done;	/* proc to call when done */
+ 	int		failTimeout;	/* seconds til drop fail msg */
++	int             grabDelay;      /* time to retry to set the input focus to the login widget */
+ 	XtIntervalId	interval_id;	/* drop fail message note */
+ 	Boolean		secure_session;	/* session is secured */
+ 	Boolean		allow_access;	/* disable access control on login */
+--- a/greeter/Login.c-orig	Wed Feb 26 01:36:09 2014
++++ b/greeter/Login.c	Wed Feb 26 01:21:35 2014
+@@ -217,6 +217,8 @@
+ 	(XtPointer) "Password Change Required" },
+     {XtNfailTimeout, XtCFailTimeout, XtRInt, sizeof (int),
+ 	offset(failTimeout), XtRImmediate, (XtPointer) 10},
++    {XtNgrabDelay, XtCGrabDelay, XtRInt, sizeof (int),
++	offset(grabDelay), XtRImmediate, (XtPointer) 10},
+     {XtNnotifyDone, XtCCallback, XtRFunction, sizeof (XtPointer),
+ 	offset(notify_done), XtRFunction, (XtPointer) 0},
+     {XtNsessionArgument, XtCSessionArgument, XtRString,	sizeof (char *),
+@@ -665,6 +667,37 @@
+     ErrorMessage(ctx, w->login.passwdChangeMsg, False);
+ }
+ 
++const char *
++xerrMessage(int e)
++{
++	const char *s;
++	
++	switch (e) {
++
++		case BadMatch:
++			s = "window is not visible";
++			break;
++
++		case BadWindow:
++			s = "window is no longer valid";
++			break;
++		
++		default:
++			s = "generic failure";
++			break;
++	}
++	return s;
++}
++
++static volatile int xerr;
++
++static int
++xErrorHandler(Display *d, XErrorEvent *xeep)
++{
++	xerr = xeep->error_code;
++	return xerr;
++}
++
+ static void
+ draw_it (LoginWidget w)
+ {
+@@ -770,8 +803,40 @@
+     }
+     RedrawFail (w);
+     XorCursor (w);
+-    XSetInputFocus (XtDisplay (w), XtWindow (w),
+-		RevertToPointerRoot, CurrentTime);
++
++   if (XGrabKeyboard (XtDisplay (w), XtWindow (w), False, GrabModeAsync,
++			GrabModeAsync, CurrentTime) != GrabSuccess)
++   {
++			typedef int (*x_e_h)(Display *, XErrorEvent *);
++		x_e_h originalHandler = XSetErrorHandler(xErrorHandler);
++		int waitsecs = w->login.grabDelay;
++		for (;;) {
++			xerr = Success;
++			XSetInputFocus (XtDisplay (w), XtWindow (w),
++			RevertToPointerRoot, CurrentTime);
++			XSync(XtDisplay (w), False);
++
++			if (xerr != BadMatch) {
++				break;
++			}
++
++			if (waitsecs == 0) {    /* timed out */
++				break;
++			}
++
++			if (waitsecs > 0) {
++				sleep(1);
++				--waitsecs;
++			}
++		}
++		(void) XSetErrorHandler(originalHandler);
++
++		if (xerr != Success) {
++			fprintf(stderr, "%s: failed to set focus; %s\n",
++					"greeter", xerrMessage(xerr));
++		}
++  }
++
+ }
+ 
+ /* Returns 0 on success, -1 on failure */
+--- a/config/Xresources.cpp-orig	Thu Sep 17 19:24:37 2009
++++ b/config/Xresources.cpp	Mon Feb 24 01:06:12 2014
+@@ -5,6 +5,7 @@
+ !
+ 
+ Xcursor.theme: whiteglass
++xlogin*grabDelay: 5
+ 
+ #define BS \ /* cpp can be trickier than m4 */
+ #define NLBS \n\ /* don't remove these comments */

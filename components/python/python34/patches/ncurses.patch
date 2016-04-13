@@ -1,0 +1,55 @@
+--- Python-3.4.0/setup.py.1    2014-06-03 09:38:26.426128086 +0400
++++ Python-3.4.0/setup.py    2014-06-03 09:48:18.477173216 +0400
+@@ -1263,8 +1263,18 @@
+         # provided by the ncurses library.
+         curses_defines = []
+         curses_includes = []
++        curses_lib_dirs = []
+         panel_library = 'panel'
+-        if curses_library == 'ncursesw':
++        if host_platform == 'sunos5':
++            # look for ncurses in /usr/gnu on Solaris
++            curses_includes.append('/usr/include/ncurses')
++            curses_lib_dirs.append('/usr/gnu/lib')
++        if os.path.exists('/usr/gnu/lib/sparcv9'):
++            curses_lib_dirs.append('/usr/gnu/lib/sparcv9')
++        else:
++            curses_lib_dirs.append('/usr/gnu/lib/amd64')
++        if (self.compiler.find_library_file(lib_dirs, 'ncursesw')):
++            curses_libs = ['ncursesw']
+             curses_defines.append(('HAVE_NCURSESW', '1'))
+             curses_includes.append('/usr/include/ncursesw')
+             # Bug 1464056: If _curses.so links with ncursesw,
+@@ -1283,13 +1293,13 @@
+             curses_defines.append(('HAVE_NCURSESW', '1'))
+             curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
+ 
+-        if curses_library.startswith('ncurses'):
+-            curses_libs = [curses_library]
++        if (self.compiler.find_library_file(lib_dirs + curses_lib_dirs, 'ncurses')):
++            curses_libs = ['ncurses']
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    include_dirs=curses_includes,
+                                    define_macros=curses_defines,
+                                    libraries = curses_libs) )
+-        elif curses_library == 'curses' and host_platform != 'darwin':
++        elif (self.compiler.find_library_file(lib_dirs, 'curses') and host_platform != 'darwin'):
+                 # OSX has an old Berkeley curses, not good enough for
+                 # the _curses module.
+             if (self.compiler.find_library_file(lib_dirs, 'terminfo')):
+@@ -1307,11 +1317,13 @@
+ 
+         # If the curses module is enabled, check for the panel module
+         if (module_enabled(exts, '_curses') and
+-            self.compiler.find_library_file(lib_dirs, panel_library)):
++            self.compiler.find_library_file(lib_dirs + curses_lib_dirs, panel_library)):
+             exts.append( Extension('_curses_panel', ['_curses_panel.c'],
++                     libraries = [panel_library] + curses_libs,
+                                    include_dirs=curses_includes,
+                                    define_macros=curses_defines,
+-                                   libraries = [panel_library] + curses_libs) )
++                   library_dirs=curses_lib_dirs,
++                   runtime_library_dirs = curses_lib_dirs ) )
+         else:
+             missing.append('_curses_panel')
+ 

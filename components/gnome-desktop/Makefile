@@ -10,20 +10,21 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2014 Ken Mays
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-desktop
-COMPONENT_VERSION=	2.30.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Gnome Desktop Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:089c672cd70617541a9e4a827467af43266357e0c3635fc875b86b9b902084d8
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+    sha256:55cbecf67efe1fa1e57ac966520a7c46d799c8ba3c652a1219f60cafccb3739d
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -52,6 +53,8 @@ CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
 CONFIGURE_OPTIONS+=	--with-gnome-distributor-version="GNOME $(COMPONENT_VERSION) Desktop"
+
+CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 
 # common targets

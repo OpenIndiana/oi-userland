@@ -28,10 +28,14 @@
 
 import pkg.lint.base as base
 from pkg.lint.engine import lint_fmri_successor
+import pkg.fmri
 import pkg.elf as elf
 import re
 import os.path
 import subprocess
+import pkg.client.api
+import pkg.client.api_errors
+import pkg.client.progress
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -443,6 +447,27 @@ class UserlandManifestChecker(base.ManifestChecker):
 	def __init__(self, config):
 		super(UserlandManifestChecker, self).__init__(config)
 
+	def forbidden_publisher(self, manifest, engine, pkglint_id="1001"):
+		if not os.environ.get("ENCUMBERED"):
+			for action in manifest.gen_actions_by_type("depend"):
+				for f in action.attrlist("fmri"):
+					pkg_name=pkg.fmri.PkgFmri(f).pkg_name
+					info_needed = pkg.client.api.PackageInfo.ALL_OPTIONS - \
+			                    (pkg.client.api.PackageInfo.ACTION_OPTIONS |
+					     frozenset([pkg.client.api.PackageInfo.LICENSES]))
+					progtracker = pkg.client.progress.NullProgressTracker()
+					interface=pkg.client.api.ImageInterface("/", pkg.client.api.CURRENT_API_VERSION, progtracker, lambda x: False, None,None)
+					ret = interface.info([pkg_name],True,info_needed)
+					if ret[pkg.client.api.ImageInterface.INFO_FOUND]:
+						allowed_pubs = engine.get_param("%s.allowed_pubs" % self.name).split(" ") + ["openindiana.org","on-nightly"]
+						for i in ret[pkg.client.api.ImageInterface.INFO_FOUND]:
+							if i.publisher not in allowed_pubs:
+								engine.error(_("package %(pkg)s depends on %(name)s, which comes from forbidden publisher %(publisher)s") %
+									{"pkg":manifest.fmri,"name":pkg_name,"publisher":i.publisher}, msgid="%s%s.1" % (self.name, pkglint_id))
+
+	forbidden_publisher.pkglint_dest = _(
+		"Dependencies should come from standard publishers" )
+
 	def component_check(self, manifest, engine, pkglint_id="001"):
 		manifest_paths = []
 		files = False
@@ -471,9 +496,8 @@ class UserlandManifestChecker(base.ManifestChecker):
 		"license actions and ARC information are required if you deliver files.")
 
         def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
-                lint_id = "%s%s" % (self.name, pkglint_id)
                 allowed_pubs = engine.get_param(
-                    "%s.allowed_pubs" % lint_id).split(" ") 
+                    "%s.allowed_pubs" % self.name).split(" ")
 
                 fmri = manifest.fmri
                 if fmri.publisher and fmri.publisher not in allowed_pubs:

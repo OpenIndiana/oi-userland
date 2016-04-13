@@ -20,54 +20,47 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:/usr/bin
 
-COMPONENT_NAME=			erlang
-COMPONENT_VERSION_MAJOR=	15
-COMPONENT_VERSION_MINOR=	B
-COMPONENT_VERSION_MICRO=	03
-# IPS_COMPONENT_VERSION needs update whenever this is changed
-COMPONENT_VERSION=	R$(COMPONENT_VERSION_MAJOR)$(COMPONENT_VERSION_MINOR)$(COMPONENT_VERSION_MICRO)
+COMPONENT_NAME=		erlang
+COMPONENT_VERSION=	17.5
 COMPONENT_PROJECT_URL=	http://www.erlang.org/
 COMPONENT_SRC_NAME=	otp_src
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4bccac86dd76aec050252e44276a0283a0df9218e6470cf042a9b9f9dfc9476c
+    sha256:3c28820c981b30c50df8ac2a4a238e5813454fa3ed2ad530bc7948a282846474
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/erlang
 
 # manpages
 COMPONENT_NAME_1=	otp_doc_man
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1)-1.tar.gz
+COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
-    sha256:07980d8014c7cf8194b7078c137353f5083992add4663ced3dcba2ff91f228d8
+    sha256:85b1b2a1011fc01af550f1fe9e5a599a4c5f2a35d264d2804af1d05590a857c3
 COMPONENT_ARCHIVE_URL_1=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
+UNPACK_ARGS_1=  -r $(COMPONENT_SRC_1)
+PKG_PROTO_DIRS +=       $(COMPONENT_SRC_1)
 
 # HTML documentation
 COMPONENT_NAME_2=	otp_doc_html
 COMPONENT_SRC_2=	$(COMPONENT_NAME_2)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2)-1.tar.gz
+COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2).tar.gz
 COMPONENT_ARCHIVE_HASH_2=	\
-    sha256:d06f580f11d1303217a5c1cf8d68a98d7e01c535be934dcd430ecdc254f7572e
+    sha256:baba1d373c1faacf4a1a6ec1220d57d0cb2b977edb74f32cd58dc786361c6cf5
 COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
+UNPACK_ARGS_2=  -r $(COMPONENT_SRC_2)
+PKG_PROTO_DIRS +=       $(COMPONENT_SRC_2)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-# IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
-# enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
-# Because the IPS_COMPONENT_VERSION cannot contain letters or leading zeroes
-# we use mapping:
-# R(major)(minor)(micro) - (major).(minor as number).(micro)
-IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
 
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
@@ -99,7 +92,13 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -rp $(SOURCE_DIR)/. $(@D))
 CONFIGURE_SCRIPT =	$(@D)/configure
 
+# Always show the build and link lines for easier debugging.
+COMPONENT_BUILD_ARGS +=		V=1
+
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
+
+COMPONENT_TEST_ENV +=	ERL_TOP=$(BUILD_DIR_$(BITS))
+COMPONENT_TEST_TARGETS =	tests
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -133,7 +132,7 @@ install:	$(INSTALL_32_and_64)
 clean::
 	$(RM) -r documentation
 
-test:	$(NO_TESTS)
+test:	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

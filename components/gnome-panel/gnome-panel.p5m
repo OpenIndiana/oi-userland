@@ -28,6 +28,8 @@ depend type=require fmri=desktop/notification-daemon@0.4.0
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
 
+file files/gnome-cleanup path=usr/bin/gnome-cleanup
+
 file path=etc/gconf/schemas/clock.schemas
 file path=etc/gconf/schemas/panel-compatibility.schemas
 file path=etc/gconf/schemas/panel-default-setup.entries
@@ -40,29 +42,37 @@ file path=etc/gconf/schemas/workspace-switcher.schemas
 file path=usr/bin/gnome-desktop-item-edit
 file path=usr/bin/gnome-panel
 file path=usr/bin/panel-test-applets
+file path=usr/bin/panel-test-applets-bonobo
+file path=usr/include/gnome-panel-3.0/libpanel-applet/panel-applet-enums.h
+file path=usr/include/gnome-panel-3.0/libpanel-applet/panel-applet-gconf.h
+file path=usr/include/gnome-panel-3.0/libpanel-applet/panel-applet.h
 file path=usr/include/panel-2.0/GNOME_Panel.h
 file path=usr/include/panel-2.0/panel-applet-enums.h
 file path=usr/include/panel-2.0/panel-applet-gconf.h
 file path=usr/include/panel-2.0/panel-applet.h
-file path=usr/lib/bonobo/servers/GNOME_ClockApplet_Factory.server
-file path=usr/lib/bonobo/servers/GNOME_NotificationAreaApplet.server
-file path=usr/lib/bonobo/servers/GNOME_Wncklet_Factory.server
 file path=usr/lib/clock-applet mode=0555
+file path=usr/lib/girepository-1.0/PanelApplet-3.0.typelib
 file path=usr/lib/gnome-panel-add mode=0555
-link path=usr/lib/libpanel-applet-2.so target=libpanel-applet-2.so.0.2.68
-link path=usr/lib/libpanel-applet-2.so.0 target=libpanel-applet-2.so.0.2.68
-file path=usr/lib/libpanel-applet-2.so.0.2.68
+file path=usr/lib/gnome-panel/modules/libpanel-applets-bonobo.so
+link path=usr/lib/libpanel-applet-2.so target=libpanel-applet-2.so.0.2.73
+link path=usr/lib/libpanel-applet-2.so.0 target=libpanel-applet-2.so.0.2.73
+file path=usr/lib/libpanel-applet-2.so.0.2.73
+link path=usr/lib/libpanel-applet-3.so target=libpanel-applet-3.so.0.0.6
+link path=usr/lib/libpanel-applet-3.so.0 target=libpanel-applet-3.so.0.0.6
+file path=usr/lib/libpanel-applet-3.so.0.0.6
 file path=usr/lib/notification-area-applet mode=0555
 file path=usr/lib/pkgconfig/libpanelapplet-2.0.pc
+file path=usr/lib/pkgconfig/libpanelapplet-3.0.pc
 file path=usr/lib/wnck-applet mode=0555
 file path=usr/share/applications/gnome-panel.desktop
-file path=usr/share/gnome-2.0/ui/GNOME_ClockApplet.xml
-file path=usr/share/gnome-2.0/ui/GNOME_NotificationAreaApplet.xml
+file path=usr/share/dbus-1/services/org.gnome.panel.applet.ClockAppletFactory.service
+file path=usr/share/dbus-1/services/org.gnome.panel.applet.NotificationAreaAppletFactory.service
+file path=usr/share/dbus-1/services/org.gnome.panel.applet.WnckletFactory.service
+file path=usr/share/gir-1.0/PanelApplet-3.0.gir
 file path=usr/share/gnome-2.0/ui/GNOME_Panel_Popup.xml
-file path=usr/share/gnome-2.0/ui/GNOME_ShowDesktopApplet.xml
-file path=usr/share/gnome-2.0/ui/GNOME_WindowListApplet.xml
-file path=usr/share/gnome-2.0/ui/GNOME_WindowMenuApplet.xml
-file path=usr/share/gnome-2.0/ui/GNOME_WorkspaceSwitcherApplet.xml
+file path=usr/share/gnome-panel/applets/org.gnome.panel.ClockApplet.panel-applet
+file path=usr/share/gnome-panel/applets/org.gnome.panel.NotificationAreaApplet.panel-applet
+file path=usr/share/gnome-panel/applets/org.gnome.panel.Wncklet.panel-applet
 file path=usr/share/gnome-panel/pixmaps/bottom-panel-image.png
 file path=usr/share/gnome-panel/pixmaps/clock-calendar-icon.png
 file path=usr/share/gnome-panel/pixmaps/clock-face-large.svg
@@ -78,12 +88,18 @@ file path=usr/share/gnome-panel/pixmaps/clock-map.png
 file path=usr/share/gnome-panel/pixmaps/gnome-gegl2-2.png
 file path=usr/share/gnome-panel/pixmaps/gnome-gegl2.png
 file path=usr/share/gnome-panel/pixmaps/top-panel-image.png
-file path=usr/share/gnome-panel/pixmaps/world_map-960.png
+file path=usr/share/gnome-panel/ui/clock-menu.xml
 file path=usr/share/gnome-panel/ui/clock.ui
+file path=usr/share/gnome-panel/ui/notification-area-menu.xml
 file path=usr/share/gnome-panel/ui/panel-properties-dialog.ui
 file path=usr/share/gnome-panel/ui/panel-run-dialog.ui
+file path=usr/share/gnome-panel/ui/panel-test-applets-bonobo.ui
 file path=usr/share/gnome-panel/ui/panel-test-applets.ui
+file path=usr/share/gnome-panel/ui/showdesktop-menu.xml
+file path=usr/share/gnome-panel/ui/window-list-menu.xml
 file path=usr/share/gnome-panel/ui/window-list.ui
+file path=usr/share/gnome-panel/ui/window-menu-menu.xml
+file path=usr/share/gnome-panel/ui/workspace-switcher-menu.xml
 file path=usr/share/gnome-panel/ui/workspace-switcher.ui
 file path=usr/share/gnome-panelrc
 file path=usr/share/gnome/help/clock/C/clock.xml
@@ -157,6 +173,10 @@ file path=usr/share/gnome/help/clock/ru/clock.xml
 link path=usr/share/gnome/help/clock/ru/figures/clock_applet.png \
     target=../../C/figures/clock_applet.png
 file path=usr/share/gnome/help/clock/ru/legal.xml
+file path=usr/share/gnome/help/clock/sl/clock.xml
+link path=usr/share/gnome/help/clock/sl/figures/clock_applet.png \
+    target=../../C/figures/clock_applet.png
+file path=usr/share/gnome/help/clock/sl/legal.xml
 file path=usr/share/gnome/help/clock/sr/clock.xml
 file path=usr/share/gnome/help/clock/sr/figures/clock_applet.png
 file path=usr/share/gnome/help/clock/sr/legal.xml
@@ -288,9 +308,11 @@ file path=usr/share/locale/fa/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/fi/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/fr/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/fur/LC_MESSAGES/gnome-panel-2.0.mo
+file path=usr/share/locale/fy/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ga/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/gl/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/gu/LC_MESSAGES/gnome-panel-2.0.mo
+file path=usr/share/locale/gv/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ha/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/he/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/hi/LC_MESSAGES/gnome-panel-2.0.mo
@@ -303,6 +325,7 @@ file path=usr/share/locale/is/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/it/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ja/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ka/LC_MESSAGES/gnome-panel-2.0.mo
+file path=usr/share/locale/kk/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/kn/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ko/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/ku/LC_MESSAGES/gnome-panel-2.0.mo
@@ -347,6 +370,7 @@ file path=usr/share/locale/ta/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/te/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/th/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/tr/LC_MESSAGES/gnome-panel-2.0.mo
+file path=usr/share/locale/ug/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/uk/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/uz/LC_MESSAGES/gnome-panel-2.0.mo
 file path=usr/share/locale/uz@cyrillic/LC_MESSAGES/gnome-panel-2.0.mo
@@ -381,6 +405,7 @@ file path=usr/share/omf/clock/clock-pa.omf
 file path=usr/share/omf/clock/clock-pt.omf
 file path=usr/share/omf/clock/clock-pt_BR.omf
 file path=usr/share/omf/clock/clock-ru.omf
+file path=usr/share/omf/clock/clock-sl.omf
 file path=usr/share/omf/clock/clock-sr.omf
 file path=usr/share/omf/clock/clock-sv.omf
 file path=usr/share/omf/clock/clock-th.omf

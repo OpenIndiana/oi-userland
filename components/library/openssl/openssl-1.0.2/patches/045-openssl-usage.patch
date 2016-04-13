@@ -1,0 +1,59 @@
+#
+# This patch fixes the usage bug: It shows '-ssl2' option even though it's not
+# available. The bug has been reported to the upstream: #3580.
+#
+--- openssl/apps/s_client.c.orig	Tue Sep 15 13:33:45 2015
++++ openssl/apps/s_client.c	Tue Sep 15 13:34:26 2015
+@@ -376,7 +376,9 @@
+                " -srp_strength int - minimal length in bits for N (default %d).\n",
+                SRP_MINIMAL_N);
+ #endif
++#ifndef OPENSSL_NO_SSL2
+     BIO_printf(bio_err, " -ssl2         - just use SSLv2\n");
++#endif
+ #ifndef OPENSSL_NO_SSL3_METHOD
+     BIO_printf(bio_err, " -ssl3         - just use SSLv3\n");
+ #endif
+--- openssl/apps/s_server.c.orig	Tue Sep 15 13:33:58 2015
++++ openssl/apps/s_server.c	Tue Sep 15 13:35:15 2015
+@@ -592,7 +592,9 @@
+     BIO_printf(bio_err,
+                " -srpuserseed string - A seed string for a default user salt.\n");
+ #endif
++#ifndef OPENSSL_NO_SSL2
+     BIO_printf(bio_err, " -ssl2         - Just talk SSLv2\n");
++#endif
+ #ifndef OPENSSL_NO_SSL3_METHOD
+     BIO_printf(bio_err, " -ssl3         - Just talk SSLv3\n");
+ #endif
+No differences encountered
+--- openssl/apps/s_time.c.orig	Tue Sep 15 13:33:53 2015
++++ openssl/apps/s_time.c	Tue Sep 15 13:35:01 2015
+@@ -190,8 +190,12 @@
+            SSL_CONNECT_NAME);
+ #ifdef FIONBIO
+     printf("-nbio         - Run with non-blocking IO\n");
++#ifndef OPENSSL_NO_SSL2
+     printf("-ssl2         - Just use SSLv2\n");
++#endif
++#ifndef OPENSSL_NO_SSL3_METHOD
+     printf("-ssl3         - Just use SSLv3\n");
++#endif
+     printf("-bugs         - Turn on SSL bug compatibility\n");
+     printf("-new          - Just time new connections\n");
+     printf("-reuse        - Just time connection reuse\n");
+--- openssl/apps/ciphers.c.orig	Tue Sep 15 13:34:02 2015
++++ openssl/apps/ciphers.c	Tue Sep 15 13:51:03 2015
+@@ -73,8 +73,12 @@
+     "usage: ciphers args\n",
+     " -v          - verbose mode, a textual listing of the SSL/TLS ciphers in OpenSSL\n",
+     " -V          - even more verbose\n",
++#ifndef OPENSSL_NO_SSL2
+     " -ssl2       - SSL2 mode\n",
++#endif
++#ifndef OPENSSL_NO_SSL3_METHOD
+     " -ssl3       - SSL3 mode\n",
++#endif
+     " -tls1       - TLS1 mode\n",
+     NULL
+ };

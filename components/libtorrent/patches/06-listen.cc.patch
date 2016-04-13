@@ -1,0 +1,20 @@
+https://github.com/rakshasa/libtorrent/pull/40
+
+--- libtorrent-0.13.2.orig/src/net/listen.cc	2012-01-19 14:19:26.000000000 +0400
++++ libtorrent-0.13.2/src/net/listen.cc	2013-09-27 15:12:56.405155158 +0400
+@@ -125,7 +125,14 @@
+ 
+ void
+ Listen::event_error() {
+-  throw internal_error("Listener port received an error event.");
++  int socket = get_fd().get_fd();
++  int error = 0;
++  socklen_t errorLen = sizeof(error);
++
++  if (getsockopt(socket, SOL_SOCKET, SO_ERROR, &error, &errorLen) != -1 && error != 0) {
++    std::string errorMsg = std::string("Listener port received an error event: ") + strerror(error);
++    throw internal_error(errorMsg.c_str());
++  } 
+ }
+ 
+ }

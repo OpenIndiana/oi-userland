@@ -18,19 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
-COMPONENT_VERSION=	1.03
-IPS_COMPONENT_VERSION=	1.0.3
+COMPONENT_VERSION=	2.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://jikos.cz/~mikulas/links/
+COMPONENT_PROJECT_URL=	http://links.twibright.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:32443c6f011216a8a43ed0806d9d23c1defdd19bc4b021ee00cda197782e175a
-COMPONENT_ARCHIVE_URL=	http://www.jikos.cz/~mikulas/$(COMPONENT_NAME)/download/$(COMPONENT_ARCHIVE)
+    sha256:e2d4e193eb3147f0d745e28d37d510edb22697707e329cbe361bb79037bae332
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/links
 
 include ../../make-rules/prep.mk

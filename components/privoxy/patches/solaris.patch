@@ -1,17 +1,17 @@
 In some circumstances config file is installed as config.new...
 
---- privoxy-3.0.17-stable/GNUmakefile.in.~1~	2010-02-20 15:53:30.000000000 +0300
-+++ privoxy-3.0.17-stable/GNUmakefile.in	2013-08-26 00:11:42.801440043 +0400
-@@ -240,7 +240,7 @@
- # Add your flags here 
- OTHER_CFLAGS =   
+--- privoxy-3.0.23-stable/GNUmakefile.in.~1~	2015-01-24 19:40:07.000000000 +0300
++++ privoxy-3.0.23-stable/GNUmakefile.in	2015-08-06 20:52:25.595669015 +0300
+@@ -241,7 +241,7 @@
+ # Add your flags here
+ OTHER_CFLAGS =
  
 -CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) -Wall \
 +CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) \
-          @STATIC_PCRE_ONLY@ -Ipcre 
+          @STATIC_PCRE_ONLY@ -Ipcre
  
  LDFLAGS = @LDFLAGS@ $(DEBUG_CFLAGS) $(SPECIAL_CFLAGS)
-@@ -902,7 +902,7 @@
+@@ -918,7 +918,7 @@
  	fi ;\
  	$(ECHO) Installing configuration files to $(DESTDIR)$(CONF_DEST);\
  	for i in $(CONFIGS); do \
@@ -20,9 +20,10 @@ In some circumstances config file is installed as config.new...
  			$(RM) $(DESTDIR)$(CONF_DEST)/$$i ;\
  			$(ECHO) Installing fresh $$i;\
  			$(INSTALL) $$INSTALL_CONF $$i $(DESTDIR)$(CONF_DEST) || exit 1;\
+
 diff -ru privoxy-3.0.8-stable-orig/config privoxy-3.0.8-stable/config
---- privoxy-3.0.8-stable-orig/config	Fri Aug  1 14:32:01 2008
-+++ privoxy-3.0.8-stable/config	Fri Aug  1 14:37:51 2008
+--- privoxy-3.0.23-stable/config.~1~	2015-01-24 19:44:20.000000000 +0300
++++ privoxy-3.0.23-stable/config	2015-08-06 20:53:29.180676722 +0300
 @@ -260,7 +260,7 @@
  #
  #      No trailing "/", please.
@@ -30,23 +31,23 @@ diff -ru privoxy-3.0.8-stable-orig/config privoxy-3.0.8-stable/config
 -confdir .
 +confdir /etc/privoxy
  #
- #
  #  2.2. templdir
-@@ -315,7 +315,7 @@
+ #  ==============
+@@ -345,7 +345,7 @@
  #
  #      No trailing "/", please.
  #
 -logdir .
 +logdir /var/log/privoxy
  #
- #
- #  2.4. actionsfile
-@@ -452,7 +452,7 @@
- #      Any log files must be writable by whatever user Privoxy is
- #      being run as (on Unix, default user id is "privoxy").
+ #  2.5. actionsfile
+ #  =================
+@@ -478,7 +478,7 @@
+ #      require additional software to do it. For details, please
+ #      refer to the documentation for your operating system.
  #
 -logfile logfile
 +logfile privoxy.log
  #
- #
- #  2.7. jarfile
+ #  2.8. trustfile
+ #  ===============

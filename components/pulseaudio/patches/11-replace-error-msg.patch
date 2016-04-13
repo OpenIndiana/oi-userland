@@ -1,0 +1,63 @@
+--- pulseaudio-1.1/src/daemon/main.c.orig	2013-05-14 16:45:30.389709737 +0530
++++ pulseaudio-1.1/src/daemon/main.c	2013-05-14 16:52:26.904862590 +0530
+@@ -786,7 +786,7 @@ int main(int argc, char *argv[]) {
+             }
+ 
+             if (retval)
+-                pa_log(_("Daemon startup failed."));
++                pa_log_debug(_("Daemon startup failed."));
+             else
+                 pa_log_info(_("Daemon startup successful."));
+ 
+@@ -1079,11 +1079,11 @@ int main(int argc, char *argv[]) {
+         if (r >= 0)
+             r = pa_cli_command_execute(c, conf->script_commands, buf, &conf->fail);
+ 
+-        pa_log_error("%s", s = pa_strbuf_tostring_free(buf));
++        pa_log_debug("%s", s = pa_strbuf_tostring_free(buf));
+         pa_xfree(s);
+ 
+         if (r < 0 && conf->fail) {
+-            pa_log(_("Failed to initialize daemon."));
++            pa_log_debug(_("Failed to initialize daemon."));
+             goto finish;
+         }
+ 
+--- pulseaudio-1.1/src/modules/oss/oss-util.c.orig	2013-05-14 15:33:49.410701010 +0530
++++ pulseaudio-1.1/src/modules/oss/oss-util.c	2013-05-14 16:41:28.310755410 +0530
+@@ -72,13 +72,13 @@ int pa_oss_open(const char *device, int 
+ 
+         if ((fd = pa_open_cloexec(device, (*mode = O_WRONLY)|O_NDELAY, 0)) < 0) {
+             if ((fd = pa_open_cloexec(device, (*mode = O_RDONLY)|O_NDELAY, 0)) < 0) {
+-                pa_log("open('%s'): %s", device, pa_cstrerror(errno));
++                pa_log_debug("open('%s'): %s", device, pa_cstrerror(errno));
+                 goto fail;
+             }
+         }
+     } else {
+         if ((fd = pa_open_cloexec(device, *mode|O_NDELAY, 0)) < 0) {
+-            pa_log("open('%s'): %s", device, pa_cstrerror(errno));
++            pa_log_debug("open('%s'): %s", device, pa_cstrerror(errno));
+             goto fail;
+         }
+     }
+--- pulseaudio-1.1/src/pulsecore/module.c.orig	2013-05-14 16:43:37.482573113 +0530
++++ pulseaudio-1.1/src/pulsecore/module.c	2013-05-14 16:45:12.746586892 +0530
+@@ -96,7 +96,7 @@ pa_module* pa_module_load(pa_core *c, co
+     }
+ 
+     if (!(m->init = (int (*)(pa_module*_m)) pa_load_sym(m->dl, name, PA_SYMBOL_INIT))) {
+-        pa_log("Failed to load module \"%s\": symbol \""PA_SYMBOL_INIT"\" not found.", name);
++        pa_log_debug("Failed to load module \"%s\": symbol \""PA_SYMBOL_INIT"\" not found.", name);
+         goto fail;
+     }
+ 
+@@ -107,7 +107,7 @@ pa_module* pa_module_load(pa_core *c, co
+     m->unload_requested = FALSE;
+ 
+     if (m->init(m) < 0) {
+-        pa_log_error("Failed to load module \"%s\" (argument: \"%s\"): initialization failed.", name, argument ? argument : "");
++        pa_log_debug("Failed to load module \"%s\" (argument: \"%s\"): initialization failed.", name, argument ? argument : "");
+         goto fail;
+     }
+ 

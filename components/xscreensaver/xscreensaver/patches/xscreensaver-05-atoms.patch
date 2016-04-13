@@ -40,9 +40,9 @@ round trip for each XInternAtom individual call.
  create mode 100644 driver/atoms.h
 
 diff --git driver/Makefile.in driver/Makefile.in
---- driver/Makefile.in
-+++ driver/Makefile.in
-@@ -190,18 +190,18 @@ SAVER_OBJS_1	= xscreensaver.o windows.o screens.o timers.o subprocs.o \
+--- driver/Makefile.in	2015-02-17 23:27:04.790360858 +0300
++++ driver/Makefile.in	2015-02-17 23:28:41.286434141 +0300
+@@ -188,18 +188,18 @@
  		  exec.o xset.o splash.o setuid.o stderr.o mlstring.o
  
  SAVER_SRCS	= $(SAVER_SRCS_1) prefs.c dpms.c $(LOCK_SRCS) \
@@ -67,20 +67,18 @@ diff --git driver/Makefile.in driver/Makefile.in
  
  PDF2JPEG_SRCS	= pdf2jpeg.m
  PDF2JPEG_OBJS	= pdf2jpeg.o
-@@ -231,7 +231,7 @@ SCRIPTS		= $(SCRIPTS_1) @SCRIPTS_OSX@
+@@ -228,7 +228,7 @@
+ 
  HDRS		= XScreenSaver_ad.h XScreenSaver_Xm_ad.h \
  		  xscreensaver.h prefs.h remote.h exec.h \
- 		  demo-Gtk-widgets.h demo-Gtk-stubs.h demo-Gtk-support.h \
 -		  demo-Gtk-conf.h auth.h mlstring.h types.h
 +		  demo-Gtk-conf.h auth.h mlstring.h types.h atoms.h
  MEN_1		= xscreensaver.man xscreensaver-demo.man \
  		  xscreensaver-command.man \
  		  xscreensaver-text.man \
-diff --git driver/atoms.c driver/atoms.c
-new file mode 100644
 --- /dev/null
 +++ driver/atoms.c
-@@ -0,0 +1,113 @@
+@@ -0,0 +1,114 @@
 +/* xscreensaver, Copyright (c) 1991-2010 Jamie Zawinski <jwz@jwz.org>
 + *
 + * Permission to use, copy, modify, distribute, and sell this software and its
@@ -113,7 +111,7 @@ new file mode 100644
 +/* Atoms to send commands to remote daemon */
 +Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
 +  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
-+  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE;
++  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
 +
 +static const struct atom_request remote_control_atom_list[] =
 +{
@@ -136,6 +134,7 @@ new file mode 100644
 +    { &XA_SELECT, "SELECT" },
 +    { &XA_THROTTLE, "THROTTLE" },
 +    { &XA_UNTHROTTLE, "UNTHROTTLE" },
++    { &XA_NET_WM_USER_TIME, "_NET_WM_USER_TIME" },
 +    { NULL, NULL } /* Must be last to terminate list */
 +};
 +
@@ -229,7 +228,7 @@ new file mode 100644
 +/* Atoms to send commands to remote daemon */
 +extern Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
 +  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
-+  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE;
++  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE, XA_NET_WM_USER_TIME;
 +
 +#endif /* _XSCREENSAVER_ATOMS_H_ */
 diff --git driver/demo-Gtk.c driver/demo-Gtk.c
@@ -331,6 +330,16 @@ diff --git driver/demo-Xm.c driver/demo-Xm.c
  
    /* Create the window and all its widgets.
     */
+--- driver/timers.c   2015-08-21 14:42:34.803300281 +0300
++++ driver/timers.c   2015-08-21 14:45:59.666689509 +0300
+@@ -47,6 +47,7 @@
+ #endif /* HAVE_RANDR */
+ 
+ #include "xscreensaver.h"
++#include "atoms.h"
+ 
+ #undef ABS
+ #define ABS(x)((x)<0?-(x):(x))
 diff --git driver/remote.c driver/remote.c
 --- driver/remote.c
 +++ driver/remote.c
@@ -354,23 +363,22 @@ diff --git driver/remote.c driver/remote.c
 diff --git driver/windows.c driver/windows.c
 --- driver/windows.c
 +++ driver/windows.c
-@@ -69,14 +69,12 @@ typedef long PROP32;
+@@ -69,14 +69,11 @@
  #include "xscreensaver.h"
  #include "visual.h"
  #include "fade.h"
+-
 +#include "atoms.h"
- 
  
  extern int kill (pid_t, int);		/* signal() is in sys/signal.h... */
  
  Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+-Atom XA_NET_WM_USER_TIME;
 -Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
 -Atom XA_SCREENSAVER_STATUS;
--
  
  extern saver_info *global_si_kludge;	/* I hate C so much... */
  
-diff --git driver/xscreensaver-command.c driver/xscreensaver-command.c
 --- driver/xscreensaver-command.c
 +++ driver/xscreensaver-command.c
 @@ -40,6 +40,7 @@
@@ -432,7 +440,7 @@ diff --git driver/xscreensaver-command.c driver/xscreensaver-command.c
 diff --git driver/xscreensaver.c driver/xscreensaver.c
 --- driver/xscreensaver.c
 +++ driver/xscreensaver.c
-@@ -224,6 +224,7 @@
+@@ -232,6 +232,7 @@
  #include "visual.h"
  #include "usleep.h"
  #include "auth.h"
@@ -440,7 +448,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  saver_info *global_si_kludge = 0;	/* I hate C so much... */
  
-@@ -232,12 +233,6 @@ char *progclass = 0;
+@@ -240,12 +241,6 @@
  XrmDatabase db = 0;
  
  
@@ -453,7 +461,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -628,30 +623,20 @@ connect_to_server (saver_info *si, int *argc, char **argv)
+@@ -657,31 +652,20 @@
  
    db = si->prefs.db;	/* resources.c needs this */
  
@@ -467,6 +475,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
 -  XA_XSETROOT_ID = XInternAtom (si->dpy, "_XSETROOT_ID", False);
 -  XA_ESETROOT_PMAP_ID = XInternAtom (si->dpy, "ESETROOT_PMAP_ID", False);
 -  XA_XROOTPMAP_ID = XInternAtom (si->dpy, "_XROOTPMAP_ID", False);
+-  XA_NET_WM_USER_TIME = XInternAtom (si->dpy, "_NET_WM_USER_TIME", False);
 -  XA_ACTIVATE = XInternAtom (si->dpy, "ACTIVATE", False);
 -  XA_DEACTIVATE = XInternAtom (si->dpy, "DEACTIVATE", False);
 -  XA_RESTART = XInternAtom (si->dpy, "RESTART", False);
@@ -484,11 +493,11 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
 +  {
 +    const struct atom_request root_atoms[] =
 +      {
-+	{ &XA_VROOT, "__SWM_VROOT" },
-+	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
-+	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
-+	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
-+	{ NULL, NULL } /* Must be last to terminate list */
++       { &XA_VROOT, "__SWM_VROOT" },
++       { &XA_XSETROOT_ID, "_XSETROOT_ID" },
++       { &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
++       { &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
++       { NULL, NULL } /* Must be last to terminate list */
 +      };
 +    const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
 +    atom_lists[0] = remote_control_atoms;
@@ -498,16 +507,15 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
    return toplevel_shell;
  }
-diff --git driver/xscreensaver.h driver/xscreensaver.h
 --- driver/xscreensaver.h
 +++ driver/xscreensaver.h
-@@ -200,8 +200,5 @@ Bool safe_XF86VidModeGetViewPort (Display *, int, int *, int *);
+@@ -201,9 +201,5 @@
  #endif /* HAVE_XF86VMODE */
  
  extern Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+-extern Atom XA_NET_WM_USER_TIME;
 -extern Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
 -extern Atom XA_SCREENSAVER_STATUS, XA_LOCK, XA_BLANK;
 -extern Atom XA_DEMO, XA_PREFS;
  
  #endif /* __XSCREENSAVER_H__ */
-

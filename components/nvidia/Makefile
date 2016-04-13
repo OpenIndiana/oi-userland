@@ -15,12 +15,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia
-COMPONENT_VERSION=	334.16
+COMPONENT_VERSION=	340.93
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
-	sha256:fb6251cf97e62ea0dac32523eb399b8c36e334a4671a7167cfcdbbdaeeec220e
+	sha256:aaee5171d71fa74807960f9ccc65dbc09bfe77bc469c060b768b4293645ea9b7
 #COMPONENT_ARCHIVE_URL=	http://uk.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 #COMPONENT_ARCHIVE_URL=	ftp://download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 #COMPONENT_ARCHIVE_URL=	http://download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
@@ -34,14 +34,21 @@ $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) -x
 	$(TOUCH) $@
 
-build: prep
+$(BUILD_32):	$(SOURCE_DIR)/.prep
+	$(RM) -r $(@D) ; $(MKDIR) $(@D)
+	$(TOUCH) $@
 
-install: build
+$(INSTALL_32): 	$(BUILD_32)
 	[ -d $(PROTO_DIR)/kernel/drv/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/drv/amd64
 	for i in kernel/drv/amd64/nvidia kernel/drv/nvidia kernel/drv/nvidia.conf; do \
 	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
 	[ -h $(PROTO_DIR)/usr ] && rm $(PROTO_DIR)/usr || true
 	ln -sf $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	$(TOUCH) $@
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32)
 
 clean::
 	if [ -d $(BUILD_DIR) ] ;  then \

@@ -1,0 +1,30 @@
+EMMS() is not in sparc. 
+
+diff --git a/gfx/ycbcr/yuv_convert.cpp b/gfx/ycbcr/yuv_convert.cpp
+--- a/gfx/ycbcr/yuv_convert.cpp
++++ b/gfx/ycbcr/yuv_convert.cpp
+@@ -105,9 +105,11 @@
+     }
+   }
+ 
++#ifdef ARCH_CPU_X86_FAMILY
+   // MMX used for FastConvertYUVToRGB32Row requires emms instruction.
+   if (has_sse)
+     EMMS();
++#endif
+ }
+ 
+ // C version does 8 at a time to mimic MMX code
+@@ -348,9 +350,12 @@
+ #endif
+     }
+   }
++
++#ifdef ARCH_CPU_X86_FAMILY
+   // MMX used for FastConvertYUVToRGB32Row and FilterRows requires emms.
+   if (has_mmx)
+     EMMS();
++#endif
+ }
+ 
+ }  // namespace gfx

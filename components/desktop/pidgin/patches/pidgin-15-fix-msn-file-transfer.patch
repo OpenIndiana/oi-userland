@@ -1,0 +1,41 @@
+# date:2014-02-28 owner:abhijit type:bug bugdb:18157348
+# Bug 18157348 18 pidgin security advisories on 2014-01-28
+#
+# These changes should be submitted upstream.
+
+--- pidgin-2.10.9/libpurple/protocols/msn/slplink.c.orig	2014-02-24 15:29:54.414804070 +0530
++++ pidgin-2.10.9/libpurple/protocols/msn/slplink.c	2014-02-24 15:31:15.715299921 +0530
+@@ -317,7 +317,10 @@ msn_slplink_send_msgpart(MsnSlpLink *slp
+ 			if (len > MSN_SBCONN_MAX_SIZE)
+ 				len = MSN_SBCONN_MAX_SIZE;
+ 
+-			msn_slpmsgpart_set_bin_data(part, slpmsg->buffer + offset, len);
++ 			if ((slpmsg->buffer != NULL) && (slpmsg->buffer + offset != NULL) ) 
++			{ 
++				msn_slpmsgpart_set_bin_data(part, slpmsg->buffer + offset, len);
++			} 
+ 		}
+ 
+ 		msn_p2p_info_set_length(slpmsg->p2p_info, len);
+--- pidgin-2.10.9/libpurple/ft.c.orig	2014-02-26 11:13:12.556709745 +0530
++++ pidgin-2.10.9/libpurple/ft.c	2014-02-26 11:14:00.241111366 +0530
+@@ -1659,6 +1659,8 @@ purple_xfer_get_thumbnail(const PurpleXf
+ {
+ 	PurpleXferPrivData *priv = g_hash_table_lookup(xfers_data, xfer);
+ 
++	if (priv == NULL)
++		return NULL;
+ 	if (len)
+ 		*len = priv->thumbnail_size;
+ 
+--- pidgin-2.10.9/libpurple/protocols/msn/xfer.c.orig	2014-02-28 11:53:14.973470848 +0530
++++ pidgin-2.10.9/libpurple/protocols/msn/xfer.c	2014-02-28 11:55:54.460787530 +0530
+@@ -147,7 +147,7 @@ msn_xfer_end_cb(MsnSlpCall *slpcall, Msn
+ 		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_REMOTE) &&
+ 		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_LOCAL))
+ 	{
+-		purple_xfer_cancel_remote(slpcall->xfer);
++		return;
+ 	}
+ }
+ 

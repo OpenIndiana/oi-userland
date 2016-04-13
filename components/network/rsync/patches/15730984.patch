@@ -1,0 +1,101 @@
+Reduce references to source pathnames down to the respective basenames so
+that builds are reproducible between workspaces.
+
+--- rsync-3.1.0/main.c.orig	Sat Jan 19 11:05:53 2013
++++ rsync-3.1.0/main.c	Mon Mar 17 14:57:32 2014
+@@ -26,6 +26,7 @@
+ #if defined CONFIG_LOCALE && defined HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
++#include <libgen.h>
+ 
+ extern int dry_run;
+ extern int list_only;
+@@ -1215,7 +1216,7 @@
+ 	for (i = 0; argv[i]; i++) {
+ 		if (!(argv[i] = strdup(argv[i]))) {
+ 			rprintf (FERROR, "out of memory at %s(%d)\n",
+-				 __FILE__, __LINE__);
++				 basename(__FILE__), __LINE__);
+ 			return RERR_MALLOC;
+ 		}
+ 	}
+--- rsync-3.1.0/t_stub.c.orig	Tue Jun 11 18:06:53 2013
++++ rsync-3.1.0/t_stub.c	Mon Mar 17 14:58:24 2014
+@@ -20,6 +20,7 @@
+  */
+ 
+ #include "rsync.h"
++#include <libgen.h>
+ 
+ int modify_window = 0;
+ int preallocate_files = 0;
+@@ -56,7 +57,7 @@
+  void _exit_cleanup(int code, const char *file, int line)
+ {
+ 	fprintf(stderr, "exit(%d): %s(%d)\n",
+-		code, file, line);
++		code, basename((char *)file), line);
+ 	exit(code);
+ }
+ 
+--- rsync-3.1.0/log.c.orig	Tue Jun 11 13:36:44 2013
++++ rsync-3.1.0/log.c	Mon Mar 17 14:58:51 2014
+@@ -22,6 +22,7 @@
+ #include "rsync.h"
+ #include "itypes.h"
+ #include "inums.h"
++#include <libgen.h>
+ 
+ extern int dry_run;
+ extern int am_daemon;
+@@ -887,10 +888,10 @@
+ 		/* VANISHED is not an error, only a warning */
+ 		if (code == RERR_VANISHED) {
+ 			rprintf(FWARNING, "rsync warning: %s (code %d) at %s(%d) [%s=%s]\n",
+-				name, code, file, line, who_am_i(), RSYNC_VERSION);
++				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
+ 		} else {
+ 			rprintf(FERROR, "rsync error: %s (code %d) at %s(%d) [%s=%s]\n",
+-				name, code, file, line, who_am_i(), RSYNC_VERSION);
++				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
+ 		}
+ 	}
+ }
+--- rsync-3.1.2/cleanup.c.~1~	2015-08-08 22:47:03.000000000 +0300
++++ rsync-3.1.2/cleanup.c	2015-12-22 21:42:58.948691208 +0300
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include "rsync.h"
++#include <libgen.h>
+ 
+ extern int dry_run;
+ extern int am_server;
+@@ -135,7 +136,7 @@
+ 		if (DEBUG_GTE(EXIT, 2)) {
+ 			rprintf(FINFO,
+ 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): entered\n",
+-				who_am_i(), code, file, line);
++				who_am_i(), code, basename((char *)file), line);
+ 		}
+ 
+ 		/* FALLTHROUGH */
+@@ -224,7 +225,7 @@
+ 		 * we don't want to output a duplicate error. */
+ 		if ((exit_code && line > 0)
+ 		 || am_daemon || (logfile_name && (am_server || !INFO_GTE(STATS, 1))))
+-			log_exit(exit_code, exit_file, exit_line);
++			log_exit(exit_code, basename((char *)exit_file), exit_line);
+ 
+ 		/* FALLTHROUGH */
+ #include "case_N.h"
+@@ -234,7 +235,7 @@
+ 			rprintf(FINFO,
+ 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): "
+ 				"about to call exit(%d)%s\n",
+-				who_am_i(), first_code, exit_file, exit_line, exit_code,
++				who_am_i(), first_code, basename((char *)exit_file), exit_line, exit_code,
+ 				dry_run ? " (DRY RUN)" : "");
+ 		}
+ 

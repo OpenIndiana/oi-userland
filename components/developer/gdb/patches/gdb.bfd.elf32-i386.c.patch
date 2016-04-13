@@ -1,0 +1,172 @@
+--- gdb-7.6/bfd/elf32-i386.c	2013-02-20 19:02:29.000000000 -0800
++++ gdb-7.6/bfd/elf32-i386.c	2013-10-08 09:04:26.769608447 -0700
+@@ -434,6 +434,45 @@
+       offset = 28;
+       size = bfd_get_32 (abfd, note->descdata + 8);
+     }
++  else if (note->namesz == 5 && strncmp (note->namedata, "CORE", 4) == 0)
++  {
++    if (note->descsz == 432) /* sizeof(prstatus_t) Solaris Intel 32 */
++    {
++      /* pr_cursig */
++      elf_tdata (abfd)->core->signal =
++        bfd_get_16 (abfd, note->descdata + 136);
++
++      /* pr_pid */
++      elf_tdata (abfd)->core->pid =
++        bfd_get_32 (abfd, note->descdata + 216);
++
++      /* pr_lwpid */
++      elf_tdata (abfd)->core->lwpid =
++        bfd_get_32 (abfd, note->descdata + 308);
++
++      /* pr_reg */
++      offset = 356;
++      size = 76;
++    }
++    else if (note->descsz == 824) /* sizeof(prstatus_t) Solaris Intel 64 */
++    {
++      /* pr_cursig */
++      elf_tdata (abfd)->core->signal =
++        bfd_get_16 (abfd, note->descdata + 264);
++
++      /* pr_pid */
++      elf_tdata (abfd)->core->pid =
++        bfd_get_32 (abfd, note->descdata + 360);
++
++      /* pr_lwpid */
++      elf_tdata (abfd)->core->lwpid =
++        bfd_get_32 (abfd, note->descdata + 520);
++
++      /* pr_reg */
++      offset = 600;
++      size = 224;
++    }
++  }
+   else
+     {
+       switch (note->descsz)
+@@ -476,6 +515,31 @@
+       elf_tdata (abfd)->core->command
+ 	= _bfd_elfcore_strndup (abfd, note->descdata + 25, 81);
+     }
++  else if (note->namesz == 5 && strncmp (note->namedata, "CORE", 4) == 0)
++  {
++    switch (note->descsz)
++    {
++      default:
++        return FALSE;
++        break;
++      case 260: /* sizeof(prpsinfo_t) on 32-bit Solaris */
++        elf_tdata (abfd)->core->pid =
++          bfd_get_32 (abfd, note->descdata + 16);
++        elf_tdata (abfd)->core->program =
++          _bfd_elfcore_strndup (abfd, note->descdata + 84, 16);
++        elf_tdata (abfd)->core->command =
++          _bfd_elfcore_strndup (abfd, note->descdata + 100, 80);
++        break;
++      case 328: /* sizeof(prpsinfo_t) on 64-bit Solaris */
++        elf_tdata (abfd)->core->pid =
++          bfd_get_32 (abfd, note->descdata + 16);
++        elf_tdata (abfd)->core->program =
++          _bfd_elfcore_strndup (abfd, note->descdata + 120, 16);
++        elf_tdata (abfd)->core->command =
++          _bfd_elfcore_strndup (abfd, note->descdata + 136, 80);
++        break;
++    }
++  }
+   else
+     {
+       switch (note->descsz)
+@@ -507,6 +571,83 @@
+   return TRUE;
+ }
+ 
++static bfd_boolean
++elf_i386_grok_lwpstatus (bfd *abfd, Elf_Internal_Note *note)
++{
++  asection *sect;
++  char reg2_section_name[16];
++  size_t gregset_size;
++  size_t fpregset_size;
++
++  /* Solaris */
++  if (note->namesz == 5 && strncmp (note->namedata, "CORE", 4) == 0)
++  {
++    switch (note->descsz)
++    {
++      default:
++        return FALSE;
++        break;
++      case 800: /* sizeof(lwpstatus_t) on Intel 32-bit */
++        gregset_size = 76;
++        fpregset_size = 380;
++
++        (void) snprintf (reg2_section_name, 16, "%s/%i", ".reg2", 1);
++        sect = bfd_get_section_by_name (abfd, reg2_section_name);
++        if (sect != NULL)
++        {
++          sect->size = fpregset_size;
++          sect->filepos = note->descpos + 420;
++          sect->alignment_power = 2;
++        }
++        else
++          return _bfd_elfcore_make_pseudosection (abfd, reg2_section_name,
++              fpregset_size, note->descpos + 420);
++
++        sect = bfd_get_section_by_name (abfd, ".reg");
++        if (sect != NULL)
++        {
++          sect->size = gregset_size;
++          sect->filepos = note->descpos + 344;
++          sect->alignment_power = 2;
++        }
++        else
++          return _bfd_elfcore_make_pseudosection (abfd, ".reg",
++              gregset_size, note->descpos + 344);
++        break;
++      case 1296: /* sizeof(lwpstatus_t) on Intel 64-bit */
++        gregset_size = 224;
++        fpregset_size = 528;
++
++        (void) snprintf (reg2_section_name, 16, "%s/%i", ".reg2", 1);
++        sect = bfd_get_section_by_name (abfd, reg2_section_name);
++        if (sect != NULL)
++        {
++          sect->size = fpregset_size;
++          sect->filepos = note->descpos + 420;
++          sect->alignment_power = 2;
++        }
++        else
++          return _bfd_elfcore_make_pseudosection (abfd, reg2_section_name,
++              fpregset_size, note->descpos + 420);
++
++        sect = bfd_get_section_by_name (abfd, ".reg");
++        if (sect != NULL)
++        {
++          sect->size = gregset_size;
++          sect->filepos = note->descpos + 344;
++          sect->alignment_power = 2;
++        }
++        else
++          return _bfd_elfcore_make_pseudosection (abfd, ".reg",
++              gregset_size, note->descpos + 344);
++        break;
++    }
++  }
++  return TRUE;
++}
++
++
++
+ /* Functions for the i386 ELF linker.
+ 
+    In order to gain some understanding of code in this file without
+@@ -5053,6 +5194,7 @@
+ #define elf_backend_gc_mark_hook	      elf_i386_gc_mark_hook
+ #define elf_backend_gc_sweep_hook	      elf_i386_gc_sweep_hook
+ #define elf_backend_grok_prstatus	      elf_i386_grok_prstatus
++#define elf_backend_grok_lwpstatus	      elf_i386_grok_lwpstatus
+ #define elf_backend_grok_psinfo		      elf_i386_grok_psinfo
+ #define elf_backend_reloc_type_class	      elf_i386_reloc_type_class
+ #define elf_backend_relocate_section	      elf_i386_relocate_section

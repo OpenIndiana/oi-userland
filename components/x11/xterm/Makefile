@@ -1,0 +1,54 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME= xterm
+COMPONENT_VERSION= 318
+COMPONENT_SUMMARY= xterm - terminal emulator for X 
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:e71f2b0fb11d6c723c1f9af10fc01048b776f44c1636aa1b71e5eff77deb81d7
+COMPONENT_ARCHIVE_URL= \
+  ftp://invisible-island.net/xterm/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://invisible-island.net/xterm/
+COMPONENT_FMRI= terminal/xterm
+COMPONENT_LICENSE= MIT
+COMPONENT_LICENSE_FILE= xterm.license
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+PATH=/usr/gnu/bin:/usr/bin
+
+CONFIGURE_OPTIONS += --enable-256-color
+CONFIGURE_OPTIONS += --enable-88-color
+CONFIGURE_OPTIONS += --enable-wide-chars
+CONFIGURE_OPTIONS += --disable-setuid
+CONFIGURE_OPTIONS += --disable-setgid
+CONFIGURE_OPTIONS += --enable-luit
+CONFIGURE_OPTIONS += --disable-imake
+CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
+CONFIGURE_OPTIONS += --with-icondir=/usr/share/pixmaps
+CONFIGURE_OPTIONS += --enable-logging
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32)
+
+test: $(TEST_32)

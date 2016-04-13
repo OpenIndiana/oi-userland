@@ -1,0 +1,191 @@
+'\" te
+.\" Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+.TH tomcat8 1M "May 2015" "SunOS 5.11" "System Administration Commands"
+.SH NAME
+tomcat \- Apache Tomcat Version 8 overview
+.SH DESCRIPTION
+.sp
+.LP
+Apache Tomcat Version 8 (Tomcat) is implementation of
+the Java Servlet and JavaServer Pages technologies.
+.sp
+Tomcat can be enabled by authorized user within the service
+management facility (SMF), using the following fault management
+resource identifier (FMRI):
+.sp
+.in +2
+.nf
+svc:/network/http:tomcat8
+.fi
+.in -2
+.sp
+Tomcat enabled via SMF is executed for better security with "webserv"
+user credentials and with added "net_privaddr" privilege so it can be
+configured to listen on privileged TCP ports (e.g. 80). With default
+configuration Tomcat listens on TCP port 8080.
+.sp
+Unauthorized user can start Tomcat with his or her credentials using
+ordinary startup scripts and by setting CATALINA_BASE environment
+variable to path with his or her conf/, webapp/ and logs/ subdirectories
+(see Tomcat directory structure bellow).
+.sp
+Similarly it's possible to run multiple SMF Tomcat instances by setting
+CATALINA_BASE for both start and stop methods for newly created Tomcat
+FMRI.
+.sp
+.LP
+.SH FILES
+.sp
+.LP
+The following files specify the installation locations for Tomcat 6:
+.LP
+\fB\fB/etc/tomcat8/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Symbolic link to directory containing Tomcat 8 configuration files (/var/tomcat8/conf).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/tomcat8/bin/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains Tomcat startup scripts.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/tomcat8/lib/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains Tomcat private libraries.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/tomvat8/docs/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains Tomcat documentation in HTML format. The directory has classical
+WEBAPP structure and it's symbolically linked as /var/tomcat8/webapps/docs
+(the link is part of web/java-servlet/tomcat/tomcat-examples packages).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/conf/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains Tomcat configuration files. A newly-installed Tomcat
+contains a default \fBserver.xml\fR file. This is the main configuration file.
+For setting Tomcat environment variables it's possible to create here
+\fBsetenv.sh\fR file which is sourced during start by catalina.sh.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/logs/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains Tomcat log and output files.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/temp/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Directory used by the JVM for temporary files (java.io.tmpdir).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/webapps/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Tomcat Web Application Directory where are WAR files put for deployment.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/webapps/ROOT/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Directory with default (ROOT) web application which is served when URL
+is requested without further path specifier (http://hostname/). After
+Tomcat packages installation this directory is intentionally left empty
+with just index.jsp and index.htm files. The HTML file redirects
+requester to Tomcat home page which is in ROOT.example/ directory (this
+file is part of web/java-servlet/tomcat/tomcat-examples package). The JSP file is default home 
+page which is shown when web/java-servlet/tomcat/tomcat-examples (and thus HTML file) is not
+installed. This shall allow better deployment of custom ROOT web
+application while maintain upgrade ability via packaging system (without
+loosing data).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/webapps/ROOT.example/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Tomcat home web application (part of web/java-servlet/tomcat/tomcat-examples package).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/webapps/examples/\fR\fR
+.ad
+.sp .6
+.RS 4n
+This directory contains web application with various ServLets and JSP
+examples. The directory is part of web/java-servlet/tomcat/tomcat-examples package which can
+be removed if it's required (to permanently disable this web
+application).
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/tomcat8/work/\fR\fR
+.ad
+.sp .6
+.RS 4n
+Directory where Tomcat places for web applications intermediate files
+(such as compiled JSP files) during its work.
+.RE
+
+.SH SEE ALSO
+.sp
+.LP
+http://tomcat.apache.org/tomcat-8.0-doc

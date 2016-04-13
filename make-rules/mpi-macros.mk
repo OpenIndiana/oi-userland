@@ -21,8 +21,6 @@
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
 
-include $(WS_MAKE_RULES)/shared-macros.mk
-
 MPI_IMPLEMENTATIONS_LIST = mpich openmpi
 
 MPI.mpich =         mpich

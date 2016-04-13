@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		system-tools-backends
 COMPONENT_VERSION=	1.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://system-tools-backends.freedesktop.org/
 COMPONENT_SUMMARY=	Backends for the GNOME System Tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,7 +29,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(shell dirname $(PERL)):/usr/gnu/bin:/usr/bin
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -38,7 +38,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
      for file in $(PROTO_DIR)/usr/share/setup-tool-backends/scripts/* ; do \
-        $(GSED) -i -e 's:\#!/usr/bin/env perl:\#!/usr/bin/perl:' $$file ;\
+        $(GSED) -i -e "s:\#!/usr/bin/env perl:\#!$(PERL):" $$file ;\
     done ; )
 
 

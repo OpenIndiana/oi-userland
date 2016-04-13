@@ -1,0 +1,43 @@
+OI (and Solaris) iconv doesn't support WCHAR_T <-> UTF-8 conversions 
+( https://www.illumos.org/issues/5089 ). But internal encoding used 
+in WCHAR_T is UCS-4LE, so we use it.
+
+--- glibmm-2.28.2/glib/glibmm/ustring.cc.~1~	2014-11-28 17:13:54.224573590 +0300
++++ glibmm-2.28.2/glib/glibmm/ustring.cc	2014-11-28 17:20:42.966679418 +0300
+@@ -1279,7 +1279,12 @@
+   gsize n_bytes = 0;
+   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(str.data()),
+                                        str.size() * sizeof(std::wstring::value_type),
++#if defined(__sun)
++                                       "UTF-8", "UCS-4LE", 0, &n_bytes, &error));
++#else
+                                        "UTF-8", "WCHAR_T", 0, &n_bytes, &error));
++#endif
++
+ # endif /* !(__STDC_ISO_10646__ || G_OS_WIN32) */
+ 
+ #else /* !GLIBMM_HAVE_WIDE_STREAM */
+@@ -1363,7 +1368,11 @@
+   gsize n_bytes = 0;
+   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(wstr.data()),
+                                        wstr.size() * sizeof(std::wstring::value_type),
++#if defined(__sun)
++                                       "UTF-8", "UCS-4LE", 0, &n_bytes, &error));
++#else
+                                        "UTF-8", "WCHAR_T", 0, &n_bytes, &error));
++#endif
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
+ 
+   if (error)
+@@ -1393,7 +1402,11 @@
+   // with g_convert(), while iconv on the command line handles it just fine.
+   // Maybe a bug in GLib?
+   const ScopedPtr<char> buf (g_convert(utf8_string.raw().data(), utf8_string.raw().size(),
++#if defined(__sun)
++                                       "UCS-4LE", "UTF-8", 0, 0, &error));
++#else
+                                        "WCHAR_T", "UTF-8", 0, 0, &error));
++#endif
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
+ 
+   if (error)

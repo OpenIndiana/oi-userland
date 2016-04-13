@@ -1,0 +1,12 @@
+Patch for FACT-654 facter ldom.rb generates virtinfo usage error on Solaris 11.2 x86
+Upstream bug: https://tickets.puppetlabs.com/browse/FACT-654
+--- facter-2.1.0/lib/facter/ldom.rb.orig	2014-08-13 17:15:34.284330702 -0600
++++ facter-2.1.0/lib/facter/ldom.rb	2014-08-13 17:16:13.476092829 -0600
+@@ -1,4 +1,6 @@
+-if Facter.value(:kernel) == 'SunOS' and Facter::Core::Execution.which('virtinfo')
++if Facter.value(:kernel) == 'SunOS' and
++    Facter.value(:hardwareisa) == 'sparc' and
++    Facter::Core::Execution.which('virtinfo')
+   virtinfo = Facter::Core::Execution.exec('virtinfo -ap')
+ 
+   # Convert virtinfo parseable output format to array of arrays.

@@ -1,0 +1,19 @@
+Disable mdb support as it requires libproc.h present in SmartOS, but not in pure illumos
+
+--- node-v0.12.7/configure.~1~	2015-07-17 14:11:15.585313242 +0300
++++ node-v0.12.7/configure	2015-07-17 14:11:42.584871068 +0300
+@@ -553,10 +553,10 @@
+ 
+   # if we're on illumos based systems wrap the helper library into the
+   # executable
+-  if flavor == 'solaris':
+-    o['variables']['node_use_mdb'] = 'true'
+-  else:
+-    o['variables']['node_use_mdb'] = 'false'
++  # if flavor == 'solaris':
++  #   o['variables']['node_use_mdb'] = 'true'
++  # else:
++  o['variables']['node_use_mdb'] = 'false'
+ 
+   if options.no_ifaddrs:
+     o['defines'] += ['SUNOS_NO_IFADDRS']

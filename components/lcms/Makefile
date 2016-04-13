@@ -39,21 +39,12 @@ include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
-# adding to the C++ compiler because libtool appears to strip it from CXXFLAGS
-CXX +=	$(studio_NORUNPATH)
-
 # It seems that we have no other way to designate that we want large file support
 CFLAGS += $(CPP_LARGEFILES)
 CXXFLAGS += $(CPP_LARGEFILES)
-# non-default C++ flags
-CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
-CXXFLAGS += -template=geninlinefuncs
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYTHONMODULEDIR="$(PYTHON_VENDOR_PACKAGES)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms
 CONFIGURE_OPTIONS  +=           --enable-shared

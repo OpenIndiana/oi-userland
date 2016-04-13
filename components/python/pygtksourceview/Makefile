@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtksourceview
 COMPONENT_VERSION=	2.10.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GtkSourceView
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,14 +31,9 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-gcc_OPT		= -O2
-
 COMPONENT_PREP_ACTION = \
         ( cd $(@D) ; \
-		libtoolize --force --copy ; \
-                aclocal -I/usr/share/aclocal -I. ; \
-                autoconf ; \
- 		autoheader )
+ 		autoreconf -f -i )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)

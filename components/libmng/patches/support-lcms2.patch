@@ -1,0 +1,182 @@
+Description: Patch to support lcms2
+ Cherry-pick lcms2-support from new upstream version 2.0.2
+Author: Tobias Frost <tobi@debian.org>
+Forwarded: not-needed
+Last-Update: 2014-08-03
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/libmng_cms.c
++++ b/libmng_cms.c
+@@ -86,6 +86,9 @@
+ #pragma option -A                      /* force ANSI-C */
+ #endif
+ 
++#undef HAVE_LIBLCMS1
++#define HAVE_LIBLCMS2
++
+ /* ************************************************************************** */
+ 
+ #ifdef MNG_INCLUDE_DISPLAY_PROCS
+@@ -104,7 +107,9 @@
+ 
+ void mnglcms_initlibrary ()
+ {
++#ifdef HAVE_LIBLCMS1
+   cmsErrorAction (LCMS_ERROR_IGNORE);  /* LCMS should ignore errors! */
++#endif
+ }
+ 
+ /* ************************************************************************** */
+@@ -132,14 +137,30 @@
+                                       {0.3000, 0.6000, 1.0},
+                                       {0.1500, 0.0600, 1.0}
+                                     };
++#ifdef HAVE_LIBLCMS1
+   LPGAMMATABLE    Gamma24[3];
++#elif defined(HAVE_LIBLCMS2)
++  cmsToneCurve* Gamma24[3];
++#endif
+   mng_cmsprof     hsRGB;
+ 
++#ifdef HAVE_LIBLCMS1
+   cmsWhitePointFromTemp(6504, &D65);
+-  Gamma24[0] = Gamma24[1] = Gamma24[2] = cmsBuildGamma(256, 2.4);
++#elif defined(HAVE_LIBLCMS2)
++  cmsWhitePointFromTemp(&D65, 6504);
++#endif
++  Gamma24[0] = Gamma24[1] = Gamma24[2] =
++#ifdef HAVE_LIBLCMS1 
++	cmsBuildGamma(256, 2.4);
++#elif defined(HAVE_LIBLCMS2)
++	cmsBuildGamma(NULL, 2.4);
++#endif
+   hsRGB = cmsCreateRGBProfile(&D65, &Rec709Primaries, Gamma24);
++#ifdef HAVE_LIBLCMS1
+   cmsFreeGamma(Gamma24[0]);
+-
++#elif defined(HAVE_LIBLCMS2)
++  cmsFreeToneCurve(Gamma24[0]);
++#endif
+   return hsRGB;
+ }
+ 
+@@ -368,16 +389,22 @@
+ 
+       pGammatable [0] =                /* and build the lookup tables */
+       pGammatable [1] =
+-      pGammatable [2] = cmsBuildGamma (256, dGamma);
+-
++      pGammatable [2] = 
++#ifdef HAVE_LIBLCMS1
++	cmsBuildGamma (256, dGamma);
++#elif defined(HAVE_LIBLCMS2)
++	cmsBuildGamma(NULL, dGamma);
++#endif
+       if (!pGammatable [0])            /* enough memory ? */
+         MNG_ERRORL (pData, MNG_LCMS_NOMEM);
+                                        /* create the profile */
+       hProf = cmsCreateRGBProfile (&sWhitepoint, &sPrimaries, pGammatable);
+-
++#ifdef HAVE_LIBLCMS1
+       cmsFreeGamma (pGammatable [0]);  /* free the temporary gamma tables ? */
+                                        /* yes! but just the one! */
+-
++#elif defined(HAVE_LIBLCMS2)
++	  cmsFreeToneCurve(pGammatable [0]);
++#endif
+       pData->hProf1 = hProf;           /* save for future use */
+ 
+       if (!hProf)                      /* handle error ? */
+--- a/makefiles/makefile.linux
++++ b/makefiles/makefile.linux
+@@ -50,7 +50,7 @@
+ 	-L$(ZLIBLIB) -Wl,-rpath,$(ZLIBLIB) \
+ 	-L$(JPEGLIB) -Wl,-rpath,$(JPEGLIB) \
+ 	-L$(LCMSLIB) -Wl,-rpath,$(LCMSLIB) \
+-	-lmng -lz -ljpeg -llcms -lm
++	-lmng -lz -ljpeg -llcms2 -lm
+ 
+ RANLIB=ranlib
+ #RANLIB=echo
+@@ -107,7 +107,7 @@
+ #	$(CC) -shared -Wl,-soname,libmng.so.$(MNGMAJ) -o libmng.so.$(MNGVER) \
+ #	$(OBJSDLL) -L$(ZLIBLIB) -L$(JPEGLIB) -L$(LCMSLIB) -lz -lm -lc
+ 	$(CC) -shared -Wl,-soname,libmng.so.$(MNGMAJ) -o libmng.so.$(MNGVER) \
+-	$(OBJSDLL) -L$(ZLIBLIB) -L$(JPEGLIB) -ljpeg -L$(LCMSLIB) -llcms \
++	$(OBJSDLL) -L$(ZLIBLIB) -L$(JPEGLIB) -ljpeg -L$(LCMSLIB) -llcms2 \
+     -lz -lm -lc
+ 
+ install: libmng.a libmng.so.$(MNGVER)
+--- libmng-1.0.10/libmng_types.h.~1~	2007-04-20 12:41:59.000000000 +0400
++++ libmng-1.0.10/libmng_types.h	2015-08-24 20:21:25.840025071 +0300
+@@ -133,6 +133,9 @@
+ 
+ /* ************************************************************************** */
+ 
++#undef HAVE_LIBLCMS1
++#define HAVE_LIBLCMS2
++
+ #ifdef __BORLANDC__
+ #pragma option -AT                     /* turn off strict ANSI-C for the moment */
+ #endif
+@@ -151,12 +154,13 @@
+ /* *  together)                                                             * */
+ /* *                                                                        * */
+ /* ************************************************************************** */
+-
++#ifdef HIDDEN_FOR_NOW
+ #ifdef WIN32                           /* only include needed stuff */
+ #ifndef WIN32_LEAN_AND_MEAN
+ #define WIN32_LEAN_AND_MEAN
+ #endif
+ #endif
++#endif /* HIDDEN_FOR_NOW */
+ 
+ #ifdef MNG_USE_DLL
+ #ifdef MNG_SKIP_ZLIB
+@@ -178,11 +182,16 @@
+ #ifndef ZLIB_DLL
+ #undef FAR
+ #endif
++#ifdef HAVE_LIBLCMS1
+ #include <lcms.h>
++#elif defined(HAVE_LIBLCMS2)
++#include <lcms2.h>
++#endif
+ #endif /* MNG_INCLUDE_LCMS */
+ 
+ #ifdef MNG_INCLUDE_IJG6B               /* IJG's jpgsrc6b */
+ #include <stdio.h>
++#define JPEG_INTERNAL_OPTIONS		/* for RGB_PIXELSIZE */
+ #ifdef MNG_USE_SETJMP
+ #include <setjmp.h>                    /* needed for error-recovery (blergh) */
+ #else
+@@ -388,7 +397,12 @@
+ typedef cmsHTRANSFORM       mng_cmstrans;
+ typedef cmsCIExyY           mng_CIExyY;
+ typedef cmsCIExyYTRIPLE     mng_CIExyYTRIPLE;
++
++#ifdef HAVE_LIBLCMS1
+ typedef LPGAMMATABLE        mng_gammatabp;
++#elif defined(HAVE_LIBLCMS2)
++typedef cmsToneCurve*       mng_gammatabp;
++#endif
+ #endif /* MNG_INCLUDE_LCMS */
+ 
+ /* ************************************************************************** */
+--- libmng-1.0.10/makefiles/configure.in.~1~	2015-08-24 20:33:07.044282352 +0300
++++ libmng-1.0.10/makefiles/configure.in	2015-08-24 20:33:30.517322138 +0300
+@@ -168,10 +168,10 @@
+   fi
+ 
+   if test "x$with_lcms" != "xno"; then
+-    AC_CHECK_HEADER(lcms.h, [
++    AC_CHECK_HEADER(lcms2.h, [
+       have_lcms=yes
+-      AC_CHECK_LIB(lcms, cmsCreateRGBProfile, [
+-        LIBS="$LIBS -llcms"
++      AC_CHECK_LIB(lcms2, cmsCreateRGBProfile, [
++        LIBS="$LIBS -llcms2"
+         AC_DEFINE(HAVE_LIBLCMS)
+         dnl for now this implies MNG_INCLUDE_LCMS in the headers:
+         AC_DEFINE(MNG_FULL_CMS)

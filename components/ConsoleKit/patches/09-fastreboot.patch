@@ -1,0 +1,445 @@
+diff -uprN ConsoleKit-0.4.1-backup/configure.ac ConsoleKit-0.4.1/configure.ac
+--- ConsoleKit-0.4.1-backup/configure.ac	2009-11-10 15:28:55.524301156 +0800
++++ ConsoleKit-0.4.1/configure.ac	2009-11-10 15:31:24.985394958 +0800
+@@ -81,10 +81,10 @@ AC_PATH_PROG(GLIB_GENMARSHAL, glib-genma
+ 
+ EXTRA_COMPILE_WARNINGS(yes)
+ 
+-# Solaris requires libresolv for daemon()
++# Solaris requires libscf
+ case "$host" in
+ 	*-*-solaris*)
+-		AC_CHECK_LIB(resolv, daemon, [CONSOLE_KIT_LIBS="$CONSOLE_KIT_LIBS -lresolv"])
++		AC_CHECK_LIB(scf, daemon, [CONSOLE_KIT_LIBS="$CONSOLE_KIT_LIBS -lscf"])
+ 	;;
+ esac
+ 
+diff -uprN ConsoleKit-0.4.1-backup/data/ConsoleKit.conf ConsoleKit-0.4.1/data/ConsoleKit.conf
+--- ConsoleKit-0.4.1-backup/data/ConsoleKit.conf	2009-11-10 15:28:55.525135254 +0800
++++ ConsoleKit-0.4.1/data/ConsoleKit.conf	2009-11-10 15:31:24.985644376 +0800
+@@ -38,6 +38,12 @@
+            send_member="CanStop"/>
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
++           send_member="GetAvailableOperatingSystems"/>
++    <allow send_destination="org.freedesktop.ConsoleKit"
++           send_interface="org.freedesktop.ConsoleKit.Manager"
++           send_member="RestartWithParameters"/>
++    <allow send_destination="org.freedesktop.ConsoleKit"
++           send_interface="org.freedesktop.ConsoleKit.Manager"
+            send_member="OpenSession"/>
+     <allow send_destination="org.freedesktop.ConsoleKit"
+            send_interface="org.freedesktop.ConsoleKit.Manager"
+diff -uprN ConsoleKit-0.4.1-backup/src/ck-manager.c ConsoleKit-0.4.1/src/ck-manager.c
+--- ConsoleKit-0.4.1-backup/src/ck-manager.c	2009-11-10 15:28:55.561041146 +0800
++++ ConsoleKit-0.4.1/src/ck-manager.c	2009-11-10 15:32:06.905204994 +0800
+@@ -39,6 +39,10 @@
+ #include <dbus/dbus-glib.h>
+ #include <dbus/dbus-glib-lowlevel.h>
+ 
++#if (defined(sun) && defined(__SVR4))
++#include <libscf_priv.h>
++#endif
++
+ #if defined HAVE_POLKIT
+ #include <polkit/polkit.h>
+ #elif defined ENABLE_RBAC_SHUTDOWN
+@@ -759,13 +763,15 @@ get_cookie_for_pid (CkManager *manager,
+ }
+ 
+ typedef void (*AuthorizedCallback) (CkManager             *manager,
+-                                    DBusGMethodInvocation *context);
++                                    DBusGMethodInvocation *context,
++                                    void                  *arg);
+ 
+ typedef struct
+ {
+         CkManager             *manager;
+         DBusGMethodInvocation *context;
+         AuthorizedCallback     callback;
++        void                  *arg;
+ } AuthorizedCallbackData;
+ 
+ static void
+@@ -799,7 +805,7 @@ auth_ready_callback (PolkitAuthority    
+                 g_error_free (error);
+         }
+         else if (polkit_authorization_result_get_is_authorized (result)) {
+-                data->callback (data->manager, data->context);
++                data->callback (data->manager, data->context, data->arg);
+         }
+         else if (polkit_authorization_result_get_is_challenge (result)) {
+                 error = g_error_new (CK_MANAGER_ERROR,
+@@ -825,7 +831,8 @@ static void
+ check_polkit_permissions (CkManager             *manager,
+                           DBusGMethodInvocation *context,
+                           const char            *action,
+-                          AuthorizedCallback     callback)
++                          AuthorizedCallback     callback,
++                          void                  *arg)
+ {
+         const char    *sender;
+         PolkitSubject *subject;
+@@ -843,6 +850,7 @@ check_polkit_permissions (CkManager     
+         data->manager = g_object_ref (manager);
+         data->context = context;
+         data->callback = callback;
++        data->arg = arg;
+ 
+         polkit_authority_check_authorization (manager->priv->pol_ctx,
+                                               subject,
+@@ -1048,7 +1056,8 @@ static gboolean
+ check_rbac_permissions (CkManager             *manager,
+                         DBusGMethodInvocation *context,
+                         const char            *action,
+-                        AuthorizedCallback     callback)
++                        AuthorizedCallback     callback,
++                        void                  *arg)
+ {
+         const char *sender;
+         char       *username;
+@@ -1085,7 +1094,7 @@ out:
+         g_free (username);
+ 
+         if (res && callback) {
+-                callback (manager, context);
++                callback (manager, context, arg);
+         }
+ 
+         return res;
+@@ -1094,7 +1103,8 @@ out:
+ 
+ static void
+ do_restart (CkManager             *manager,
+-            DBusGMethodInvocation *context)
++            DBusGMethodInvocation *context,
++            void                  *arg)
+ {
+         GError *error;
+         gboolean res;
+@@ -1145,9 +1155,10 @@ ck_manager_restart (CkManager           
+         g_debug ("ConsoleKit Restart: %s", action);
+ 
+ #if defined HAVE_POLKIT
+-        check_polkit_permissions (manager, context, action, do_restart);
++        check_polkit_permissions (manager, context, action, do_restart, NULL);
+ #elif defined ENABLE_RBAC_SHUTDOWN
+-        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_restart);
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_restart,
++                                NULL);
+ #else
+         g_warning ("Compiled without PolicyKit or RBAC support!");
+ #endif
+@@ -1168,7 +1179,7 @@ ck_manager_can_restart (CkManager  *mana
+         get_polkit_permissions (manager, action, context);
+ #else
+         if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
+-                                        NULL)) {
++                                        NULL, NULL)) {
+                 dbus_g_method_return (context, TRUE);
+         } else {
+                 dbus_g_method_return (context, FALSE);
+@@ -1180,7 +1191,8 @@ ck_manager_can_restart (CkManager  *mana
+ 
+ static void
+ do_stop (CkManager             *manager,
+-         DBusGMethodInvocation *context)
++         DBusGMethodInvocation *context,
++         void                  *arg)
+ {
+         GError *error;
+         gboolean res;
+@@ -1221,9 +1233,10 @@ ck_manager_stop (CkManager             *
+         }
+ 
+ #if defined HAVE_POLKIT
+-        check_polkit_permissions (manager, context, action, do_stop);
++        check_polkit_permissions (manager, context, action, do_stop, NULL);
+ #elif defined  ENABLE_RBAC_SHUTDOWN
+-        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_stop);
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_stop,
++                                NULL);
+ #else
+         g_warning ("Compiled without PolicyKit or RBAC support!");
+ #endif
+@@ -1243,7 +1256,7 @@ ck_manager_can_stop (CkManager  *manager
+         get_polkit_permissions (manager, action, context);
+ #else
+         if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
+-                                        NULL)) {
++                                        NULL, NULL)) {
+                 dbus_g_method_return (context, TRUE);
+         } else {
+                 dbus_g_method_return (context, FALSE);
+@@ -1253,6 +1266,218 @@ ck_manager_can_stop (CkManager  *manager
+         return TRUE;
+ }
+ 
++#define OS_STRUCT_TYPE (dbus_g_type_get_struct ("GValueArray",   \
++                                                        G_TYPE_INT, \
++                                                        G_TYPE_STRING, \
++                                                        G_TYPE_STRING, \
++                                                        G_TYPE_STRING, \
++                                                        G_TYPE_BOOLEAN, \
++                                                        G_TYPE_INVALID))
++
++#if (defined(sun) && defined(__SVR4))
++static gint
++parse_output (const gchar *output, GPtrArray **systems)
++{
++        gchar **lines;
++        gint default_id = -1;
++
++        if (output == NULL)
++                return default_id;
++
++        lines = g_strsplit (output, "\n", 0);
++        for (int i = 0; lines[i] != NULL; i++) {
++                gchar *index;
++
++                if (i == 0 || i == 2) {
++                        /* We do not care 1st & 2nd line. */
++                        continue;
++                } else if (i == 1) {
++                        /* default boot menu entry */
++                        index = strchr (lines[i], ' ');
++                        if (index && (index + 1)) {
++                                default_id = atol (index + 1);
++                        } else {
++                                continue;
++                        }
++                } else if (lines[i][0] != NULL && systems) {
++                        /* boot menu entries */
++                        GValue elem = {0};
++
++                        index = strchr (lines[i], ' ');
++                        if (index && (index + 1)) {
++                                gint id;
++
++                                *index = '\0';
++                                id = atoi (lines[i]);
++                                g_value_init (&elem, OS_STRUCT_TYPE);
++                                g_value_take_boxed (&elem,
++                                        dbus_g_type_specialized_construct (OS_STRUCT_TYPE));
++                                dbus_g_type_struct_set (&elem,
++                                                0, id,
++                                                1, "",
++                                                2, "",
++                                                3, (index + 1),
++                                                4, (default_id == id),
++                                                G_MAXUINT);
++                                g_ptr_array_add (*systems,
++                                        g_value_get_boxed (&elem));
++                        } else {
++                                continue;
++                        }
++                }
++        }
++        g_strfreev (lines);
++        return default_id;
++}
++
++static gint
++get_available_boot_environment (CkManager *manager,
++                                GPtrArray **systems,
++                                DBusGMethodInvocation *context)
++{
++        gchar *cmd[] = {"/usr/sbin/bootadm", "list-menu", NULL};
++        gchar *output = NULL;
++        GError *err = NULL;
++        gint status;
++        gint ret = -1;
++
++        g_spawn_sync (NULL, cmd, NULL,
++                G_SPAWN_STDERR_TO_DEV_NULL, NULL,
++                NULL, &output, NULL,
++               &status, &err);
++        if (err) {
++                g_error_free (err);
++                return ret;
++        }
++
++        if (status == 0) {
++                ret = parse_output (output, systems);
++        }
++        if (output)
++                g_free (output);
++        return ret;
++}
++#endif
++
++/*
++  Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.GetAvailableOperatingSystems
++*/
++gboolean
++ck_manager_get_available_operating_systems (CkManager *manager,
++                                           DBusGMethodInvocation *context)
++{
++        GPtrArray *systems;
++
++        g_return_val_if_fail (CK_IS_MANAGER (manager), FALSE);
++
++        systems = g_ptr_array_new ();
++#if (defined(sun) && defined(__SVR4))
++        get_available_boot_environment (manager, &systems, context);
++#endif
++        dbus_g_method_return (context, systems);
++
++        return TRUE;
++}
++
++#if (defined(sun) && defined(__SVR4))
++static void
++set_default_boot_entry (CkManager *manager,
++                        gint id,
++                        DBusGMethodInvocation *context)
++{
++        gint default_id;
++
++        default_id = get_available_boot_environment (manager, NULL, context);
++        if (default_id != id) {
++                gchar *cmd;
++
++                g_debug ("Set default boot entry from %d to %d",
++                                default_id, id);
++                cmd = g_strdup_printf ("/usr/sbin/bootadm set-menu default=%d",
++                                        id);
++                if (g_spawn_command_line_async (cmd, NULL) == FALSE) {
++                        g_warning ("Unable to set default boot entry");
++                }
++                g_free (cmd);
++        }
++}
++#endif
++
++static void
++do_restart_with_parameters (CkManager *manager,
++                            DBusGMethodInvocation *context,
++                            void *parameters)
++{
++#if (defined(sun) && defined(__SVR4))
++        gchar **param;
++
++        if (parameters == NULL)
++                return;
++
++        param = g_strsplit ((gchar*)parameters, " ", 0);
++        for (int i = 0; param[i] != NULL; i++) {
++                if (strncmp (param[i], "id:", 3) == 0) {
++                        if (g_ascii_isdigit(param[i][3])) {
++                                gint id;
++
++                                id = atoi (&param[i][3]);
++                                set_default_boot_entry (manager, id, context);
++                        }
++#if defined(__x86__) || defined(__x86)
++                } else if (strncmp (param[i], "fast:", 5) == 0) {
++                        if (g_ascii_isdigit(param[i][5])) {
++                                gint val;
++
++                                val = atoi (&param[i][5]);
++                                if (val == 1)
++                                        scf_fastreboot_default_set_transient (1);
++                                else if (val == 0)
++                                        scf_fastreboot_default_set_transient (0);
++                        }
++#endif
++                }
++        }
++        g_strfreev (param);
++#endif
++        do_restart (manager, context, NULL);
++}
++
++/*
++  Example:
++  dbus-send --system --dest=org.freedesktop.ConsoleKit \
++  --type=method_call --print-reply --reply-timeout=2000 \
++  /org/freedesktop/ConsoleKit/Manager \
++  org.freedesktop.ConsoleKit.Manager.RestartWithParameters \
++  string:"id:0 fast:1"
++*/
++gboolean
++ck_manager_restart_with_parameters (CkManager *manager,
++                                    const gchar *parameters,
++                                    DBusGMethodInvocation *context)
++{
++        const char *action;
++
++        g_return_val_if_fail (CK_IS_MANAGER (manager), FALSE);
++
++#if defined HAVE_POLKIT
++        if (get_system_num_users (manager) > 1) {
++                action = "org.freedesktop.consolekit.system.restart-multiple-users";
++        } else {
++                action = "org.freedesktop.consolekit.system.restart";
++        }
++        check_polkit_permissions (manager, context, action,
++                                do_restart_with_parameters, (void *)parameters);
++#elif defined ENABLE_RBAC_SHUTDOWN
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
++                                do_restart_with_parameters, (void *)parameters);
++#endif
++        return TRUE;
++}
++
+ static void
+ on_seat_active_session_changed_full (CkSeat     *seat,
+                                      CkSession  *old_session,
+diff -uprN ConsoleKit-0.4.1-backup/src/ck-manager.h ConsoleKit-0.4.1/src/ck-manager.h
+--- ConsoleKit-0.4.1-backup/src/ck-manager.h	2009-11-10 15:28:55.534101649 +0800
++++ ConsoleKit-0.4.1/src/ck-manager.h	2009-11-10 15:31:24.987857782 +0800
+@@ -88,6 +88,11 @@ gboolean            ck_manager_can_stop 
+                                                                 DBusGMethodInvocation *context);
+ gboolean            ck_manager_can_restart                    (CkManager *manager,
+                                                                DBusGMethodInvocation *context);
++gboolean             ck_manager_get_available_operating_systems (CkManager *manager,
++                                                                 DBusGMethodInvocation *context);
++gboolean             ck_manager_restart_with_parameters       (CkManager *manager,
++                                                               const gchar *parameters,
++                                                               DBusGMethodInvocation *context);
+ /* Authoritative properties */
+ gboolean            ck_manager_open_session                   (CkManager             *manager,
+                                                                DBusGMethodInvocation *context);
+diff -uprN ConsoleKit-0.4.1-backup/src/org.freedesktop.ConsoleKit.Manager.xml ConsoleKit-0.4.1/src/org.freedesktop.ConsoleKit.Manager.xml
+--- ConsoleKit-0.4.1-backup/src/org.freedesktop.ConsoleKit.Manager.xml	2009-11-10 15:28:55.540314508 +0800
++++ ConsoleKit-0.4.1/src/org.freedesktop.ConsoleKit.Manager.xml	2009-11-10 15:31:24.988157959 +0800
+@@ -32,6 +32,34 @@
+       <arg name="can_stop" type="b" direction="out"/>
+     </method>
+ 
++    <method name="GetAvailableOperatingSystems">
++      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="systems" direction="out" type="a(isssb)">
++        <doc:doc>
++          <doc:summary>An array of available operating systems</doc:summary>
++        </doc:doc>
++      </arg>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method returns an array of available operating systems.</doc:para>
++        </doc:description>
++      </doc:doc>
++    </method>
++
++    <method name="RestartWithParameters">
++      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
++      <arg name="parameters" direction="in" type="s">
++        <doc:doc>
++          <doc:summary>The parameeters used to restart.</doc:summary>
++        </doc:doc>
++      </arg>
++      <doc:doc>
++        <doc:description>
++          <doc:para>This method initiates a request to restart (ie. reboot) with system specific parameters.</doc:para>
++        </doc:description>
++      </doc:doc>
++    </method>
++
+     <method name="OpenSession">
+       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+       <arg name="cookie" direction="out" type="s">

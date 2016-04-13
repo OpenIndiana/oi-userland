@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= rhythmbox
 COMPONENT_VERSION= 0.13.3
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Rhythmbox Multimedia Player
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -32,6 +33,7 @@ include ../../make-rules/ips.mk
 
 CXXFLAGS+= -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\"
 CXXFLAGS+= -std=gnu++0x
+CFLAGS += -I/usr/include/check
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) &&\
 		intltoolize --copy --force --automake &&\
@@ -43,7 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-browser-plugin
 CONFIGURE_OPTIONS+= --enable-gstreamer
+CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
+CONFIGURE_OPTIONS+= --with-mtp=no
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV    += PYTHON=$(PYTHON)

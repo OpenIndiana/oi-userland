@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
 COMPONENT_VERSION=	1.1.28
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -58,7 +59,7 @@ COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
 		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ; \
 		    libtoolize --force --copy ; aclocal ; \
-		    automake --addmissing --copy ; autoconf)
+		    automake -f -a --copy ; autoconf)
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.

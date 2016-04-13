@@ -1,0 +1,42 @@
+Developed inhouse, the patch is attached to bug https://bugzil.la/213606
+and I have sent email to mcs@pearlcrescent.com. Since the mozldap development
+does not seem to be rapid at the moment, we may need to keep this patch for
+some time.
+
+--- c-sdk/ldap/libraries/libldap/tmplout.c.orig	Mon Feb 10 17:35:04 2014
++++ c-sdk/ldap/libraries/libldap/tmplout.c	Mon Feb 10 17:36:13 2014
+@@ -40,6 +40,8 @@
+  * 
+  */
+ 
++#define	_POSIX_PTHREAD_SEMANTICS	/* for ctime_r() */
++
+ #include "ldap-int.h"
+ #include "disptmpl.h"
+ 
+@@ -47,12 +49,6 @@
+ #include <time.h> /* for struct tm and ctime */
+ #endif
+ 
+-
+-/* This is totally lame, since it should be coming from time.h, but isn't. */
+-#if defined(SOLARIS) 
+-char *ctime_r(const time_t *, char *, int);
+-#endif
+-
+ static int do_entry2text( LDAP *ld, char *buf, char *base, LDAPMessage *entry,
+ 	struct ldap_disptmpl *tmpl, char **defattrs, char ***defvals,
+ 	writeptype writeproc, void *writeparm, char *eol, int rdncount,
+
+--- c-sdk/ldap/include/portable.h.orig	Fri Feb  7 16:24:43 2014
++++ c-sdk/ldap/include/portable.h	Fri Feb  7 16:22:58 2014
+@@ -317,7 +317,8 @@
+ 	|| defined(OSF1V4) || defined(AIX) || defined(UnixWare) \
+         || defined(hpux) || defined(HPUX11) || defined(NETBSD) \
+         || defined(IRIX6) || defined(FREEBSD) || defined(VMS) \
+-        || defined(NTO) || defined(OPENBSD) || defined(DRAGONFLY)
++        || defined(NTO) || defined(OPENBSD) || defined(DRAGONFLY) \
++	|| defined(SOLARIS)
+ #define NSLDAPI_CTIME( c, b, l )        ctime_r( c, b )
+ #elif defined( OSF1V3 )
+ #define NSLDAPI_CTIME( c, b, l )	(ctime_r( c, b, l ) ? NULL : b)

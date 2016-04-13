@@ -16,15 +16,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	numpy
-COMPONENT_VERSION= 	1.4.1
-COMPONENT_SUMMARY= 	Python XML module
+COMPONENT_VERSION= 	1.8.2
+COMPONENT_FMRI= 	library/python-2/numpy
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2e7bb84573e5123e07f3c919fd433bc09b78d606252b6b719e385c2a981d8e06
+  sha256:ce5743a3a24bf13e0373faeb240b08e48d139e6313f1b5fbfd771057c7a49dbd
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/$(COMPONENT_NAME)/files/NumPy/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://numpy.scipy.org/
+COMPONENT_CLASSIFICATION= Development/Python
+COMPONENT_SUMMARY= 	Numerical-Python
+COMPONENT_LICENSE= 	BSD
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -50,10 +54,46 @@ COMPONENT_POST_INSTALL_ACTION =	$(RM) $(BUILD_DIR)/fake_cc
 CC=$(BUILD_DIR)/fake_cc
 
 COMPONENT_BUILD_ARGS	=	--fcompiler=gnu95 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/env python2\.6:\#!/usr/bin/python2.6:' \
-	$(PROTO_DIR)/usr/bin/f2py2.6 && \
-	$(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python2.6:' \
-	$(PROTO_DIR)/usr/lib/python2.6/vendor-packages/numpy/f2py/diagnose.py )
+
+NUMPY_WRONG_HASHBANG =\
+	fft/tests/test_helper.py\
+	testing/print_coercion_tables.py\
+	testing/setup.py\
+	setup.py\
+	f2py/use_rules.py\
+	f2py/common_rules.py\
+	f2py/capi_maps.py\
+	f2py/auxfuncs.py\
+	f2py/f2py2e.py\
+	f2py/__init__.py\
+	f2py/cfuncs.py\
+	f2py/func2subr.py\
+	f2py/rules.py\
+	f2py/cb_rules.py\
+	f2py/crackfortran.py\
+	f2py/f90mod_rules.py\
+	f2py/diagnose.py\
+	f2py/setup.py\
+	f2py/docs/usersguide/setup_example.py\
+	ma/setup.py\
+	matrixlib/setup.py\
+	distutils/tests/f2py_ext/setup.py\
+	distutils/tests/test_misc_util.py\
+	distutils/tests/setup.py\
+	distutils/tests/f2py_f90_ext/setup.py\
+	distutils/tests/pyrex_ext/setup.py\
+	distutils/tests/gen_ext/setup.py\
+	distutils/tests/swig_ext/setup.py\
+	distutils/exec_command.py\
+	distutils/setup.py\
+	distutils/cpuinfo.py\
+	distutils/system_info.py\
+	compat/setup.py
+
+COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python2\.6:\#!/usr/bin/python$(PYTHON_VERSION):' \
+	$(PROTO_DIR)/usr/bin/f2py$(PYTHON_VERSION) && \
+	( for file in $(NUMPY_WRONG_HASHBANG); do $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
+	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/numpy/$${file}; done; ) );
 
 build: $(BUILD_32_and_64)
 

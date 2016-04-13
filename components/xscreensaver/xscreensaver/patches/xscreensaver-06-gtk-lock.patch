@@ -244,13 +244,13 @@ diff --git driver/Makefile.in driver/Makefile.in
  
  # How we build object files in this directory.
  .c.o:
--	$(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
-+	$(CC) -c $(INCLUDES) $(DEFS) $(INTL_DEFS) $(CFLAGS) $(X_CFLAGS) $<
+-	$(CC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
++	$(CC) -c $(INCLUDES) $(DEFS) $(INTL_DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
  
  .m.o:
- 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
+ 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
 @@ -764,6 +777,16 @@ demo-Gtk-conf.o: demo-Gtk-conf.c
- 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CFLAGS) $(X_CFLAGS) \
+ 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) \
  	  $(srcdir)/demo-Gtk-conf.c
  
 +# lock takes an extra -D option.
@@ -270,8 +270,8 @@ diff --git driver/Makefile.in driver/Makefile.in
  # The executables linked in this directory.
  #
  xscreensaver: $(SAVER_OBJS)
--	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS)
-+	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) \
+-	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS)
++	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS) \
 +	-lgconf-2 -lgobject-2.0
  
  xscreensaver-command: $(CMD_OBJS)
@@ -762,7 +762,7 @@ new file mode 100644
 +
 +  /* frame */
 +  frame1 = g_object_new (GTK_TYPE_FRAME,
-+                         "shadow", GTK_SHADOW_OUT,
++                         "shadow-type", GTK_SHADOW_OUT,
 +                         NULL);
 +  gtk_container_add (GTK_CONTAINER (dialog), frame1);
 +  /* AT role = panel */
@@ -780,7 +780,7 @@ new file mode 100644
 +
 +  /* image frame */
 +  frame2 = g_object_new (GTK_TYPE_FRAME,
-+                         "shadow", GTK_SHADOW_ETCHED_IN,
++                         "shadow-type", GTK_SHADOW_ETCHED_IN,
 +                         NULL);
 +  gtk_box_pack_start (GTK_BOX (hbox1), frame2,
 +                      TRUE, TRUE, 0);
@@ -3393,10 +3393,10 @@ diff --git driver/subprocs.c driver/subprocs.c
 diff --git driver/timers.c driver/timers.c
 --- driver/timers.c
 +++ driver/timers.c
-@@ -47,6 +47,8 @@
- #endif /* HAVE_RANDR */
+@@ -48,6 +48,8 @@
  
  #include "xscreensaver.h"
+ #include "atoms.h"
 +#include "types.h"
 +#include "dialog-data.h"
  
@@ -3605,15 +3605,15 @@ diff --git driver/timers.c driver/timers.c
 diff --git driver/types.h driver/types.h
 --- driver/types.h
 +++ driver/types.h
-@@ -250,12 +250,30 @@ struct saver_info {
- 
+@@ -275,12 +275,29 @@
    int unlock_failures;		/* Counts failed login attempts while the
  				   screen is locked. */
+   time_t unlock_failure_time;	/* Time of first failed login attempt. */
 +#ifdef HAVE_XSCREENSAVER_LOCK
-+  Window *raise_wins;		/* List of windows to raise above the	*/
-+  int num_raise_wins;		/*  virtual root/hack display, such as	*/
-+  int max_raise_wins;		/*  accessibility helpers		*/
-+
++  Window *raise_wins;          /* List of windows to raise above the   */
++  int num_raise_wins;          /*  virtual root/hack display, such as  */
++  int max_raise_wins;          /*  accessibility helpers               */
+ 
 +  Window *override_wins;        /* Windows we had to unset the          */
 +  int num_override_wins;        /*  override_redirect attribute on and  */
 +  int max_override_wins;        /*  need to restore it on after unlock. */
@@ -3623,10 +3623,9 @@ diff --git driver/types.h driver/types.h
 +                                   are running an external process for it. */
 +  Bool external_passwd;
 +
-+  XKeyEvent *typeahead_events;	/* Like unlock_typeahead, but as raw events */
++  XKeyEvent *typeahead_events; /* Like unlock_typeahead, but as raw events */
 +  int num_typeahead_events;
 +#else
- 
    char *unlock_typeahead;	/* If the screen is locked, and the user types
                                     a character, we assume that it is the first
                                     character of the password.  It's stored here
@@ -3705,9 +3704,9 @@ diff --git driver/windows.c driver/windows.c
        if (p->verbose_p)
  	fprintf (stderr, "%s: %d: destroyed old saver window 0x%lx.\n",
 diff --git driver/xscreensaver.c driver/xscreensaver.c
---- driver/xscreensaver.c
-+++ driver/xscreensaver.c
-@@ -156,6 +156,8 @@
+--- driver/xscreensaver.c.~2~	2015-11-04 08:48:22.363128363 +0300
++++ driver/xscreensaver.c	2015-11-04 08:51:43.056049703 +0300
+@@ -164,6 +164,8 @@
  #include <X11/StringDefs.h>
  #include <X11/Shell.h>
  #include <X11/Xos.h>
@@ -3716,7 +3715,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  #include <time.h>
  #include <sys/time.h>
  #include <netdb.h>	/* for gethostbyname() */
-@@ -217,6 +219,7 @@
+@@ -225,6 +227,7 @@
  #endif /* HAVE_RANDR */
  
  
@@ -3724,7 +3723,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  #include "xscreensaver.h"
  #include "version.h"
  #include "yarandom.h"
-@@ -228,11 +231,28 @@
+@@ -236,11 +239,28 @@
  
  saver_info *global_si_kludge = 0;	/* I hate C so much... */
  
@@ -3753,17 +3752,17 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -630,6 +650,9 @@ connect_to_server (saver_info *si, int *argc, char **argv)
- 	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
- 	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
- 	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
+@@ -669,6 +689,9 @@
+        { &XA_XSETROOT_ID, "_XSETROOT_ID" },
+        { &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
+        { &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
 +#ifdef HAVE_XSCREENSAVER_LOCK
-+	{ &XA_UNLOCK_RATIO, "UNLOCK_RATIO" },
++       { &XA_UNLOCK_RATIO, "UNLOCK_RATIO" },
 +#endif
- 	{ NULL, NULL } /* Must be last to terminate list */
+        { NULL, NULL } /* Must be last to terminate list */
        };
      const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
-@@ -1105,8 +1128,36 @@ static void
+@@ -1163,8 +1186,36 @@
  main_loop (saver_info *si)
  {
    saver_preferences *p = &si->prefs;
@@ -3801,7 +3800,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
    while (1)
      {
-@@ -1137,6 +1188,17 @@ main_loop (saver_info *si)
+@@ -1195,6 +1246,17 @@
              fprintf (stderr, "%s: idle with blanking disabled at %s.\n",
                       blurb(), timestring());
  
@@ -3819,15 +3818,15 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
            /* Go around the loop and wait for the next bout of idleness,
               or for the init file to change, or for a remote command to
               come in, or something.
-@@ -1198,6 +1260,7 @@ main_loop (saver_info *si)
-                        blurb());
+@@ -1266,6 +1328,7 @@
+                 set_locked_p (si, False);
  
                schedule_wakeup_event (si, retry, p->debug_p);
 +              set_locked_p(si, False);
                continue;
              }
          }
-@@ -1263,7 +1326,17 @@ main_loop (saver_info *si)
+@@ -1328,7 +1391,17 @@
              p->lock_p &&                /* and locking is enabled */
              !si->locking_disabled_p &&  /* and locking is possible */
              lock_timeout == 0)          /* and locking is not timer-deferred */
@@ -3846,7 +3845,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
          /* locked_p might be true already because of the above, or because of
             the LOCK ClientMessage.  But if not, and if we're supposed to lock
-@@ -1278,10 +1351,7 @@ main_loop (saver_info *si)
+@@ -1343,10 +1416,7 @@
        }
  #endif /* !NO_LOCKING */
  
@@ -3857,7 +3856,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
          check_for_leaks ("blanked A");
  	sleep_until_idle (si, False);		/* until not idle */
          check_for_leaks ("blanked B");
-@@ -1291,6 +1361,13 @@ main_loop (saver_info *si)
+@@ -1356,6 +1426,13 @@
  #ifndef NO_LOCKING
          /* Maybe unlock the screen.
           */
@@ -3871,7 +3870,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  	if (si->locked_p)
  	  {
  	    saver_screen_info *ssi = si->default_screen;
-@@ -1302,7 +1379,20 @@ main_loop (saver_info *si)
+@@ -1367,7 +1444,20 @@
                suspend_screenhack (&si->screens[i], True);	  /* suspend */
  	    XUndefineCursor (si->dpy, ssi->screensaver_window);
  
@@ -3892,7 +3891,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  	    si->dbox_up_p = False;
  	    XDefineCursor (si->dpy, ssi->screensaver_window, ssi->cursor);
-@@ -1327,6 +1417,7 @@ main_loop (saver_info *si)
+@@ -1392,6 +1482,7 @@
  
  	} while (!ok_to_unblank);
  
@@ -3900,7 +3899,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
        if (p->verbose_p)
  	fprintf (stderr, "%s: unblanking screen at %s.\n",
-@@ -1411,7 +1502,19 @@ main (int argc, char **argv)
+@@ -1476,7 +1567,19 @@
    textdomain (GETTEXT_PACKAGE);
  #endif /* ENABLE_NLS */
  
@@ -3920,7 +3919,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
    global_si_kludge = si;	/* I hate C so much... */
  
    fix_fds();
-@@ -1421,7 +1524,9 @@ main (int argc, char **argv)
+@@ -1486,7 +1589,9 @@
  
    save_argv (argc, argv);
    set_version_string (si, &argc, argv);
@@ -3930,7 +3929,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
    hack_environment (si);
  
    spasswd = getpwuid(getuid());
-@@ -1444,6 +1549,10 @@ main (int argc, char **argv)
+@@ -1509,6 +1614,10 @@
    print_banner (si);
  
    load_init_file(si->dpy, p); /* must be before initialize_per_screen_info() */
@@ -3941,7 +3940,7 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
    blurb_timestamp_p = p->timestamp_p;  /* kludge */
    initialize_per_screen_info (si, shell); /* also sets si->fading_possible_p */
  
-@@ -1695,8 +1804,12 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
+@@ -1761,8 +1870,12 @@
    Atom type = 0;
    Window window = event->xclient.window;
  
@@ -3954,21 +3953,27 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
    if (event->xclient.message_type != XA_SCREENSAVER ||
        event->xclient.format != 32)
-@@ -1969,10 +2082,18 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
- 			    : "locking.");
+@@ -2054,10 +2167,14 @@
  	  sprintf (buf, "LOCK ClientMessage received; %s", response);
  	  clientmessage_response (si, window, False, buf, response);
-+
+ 
 +	  if (p->verbose_p)
 +	    fprintf(stderr, "going to lock screen A\n");
 +
+           /* Note that this leaves things in a slightly inconsistent state:
+              we are blanked but not locked.  And blanking might actually
+              fail if we can't get the grab. */
  	  set_locked_p (si, True);
 +	  si->emergency_lock_p = True;
+ 
+            /* Have to set the time or xscreensaver-command doesn't
+               report the LOCK state change. */
+@@ -2066,6 +2183,9 @@
  	  si->selection_mode = 0;
  	  si->demoing_p = False;
  
 +	  return True; /* dont set lock_id to 0,
-+                          causes to go in lock in main_loop above */
++			    causes to go in lock in main_loop above */
 +
  	  if (si->lock_id)	/* we're doing it now, so lose the timeout */
  	    {

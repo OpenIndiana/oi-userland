@@ -1,0 +1,189 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+
+DT_BINPATH=/usr/dt/bin
+XPREFIXES='
+/usr/X11
+/usr/openwin
+'
+
+LING=${LC_CTYPE:-"$LC_ALL"}
+LING=${LING:-"$LANG"}
+LING=${LING:-"C"}
+
+for XPATH in $XPREFIXES
+do
+  if [ -x $XPATH/bin/xset ] && [ x$XSET = x ] ; then
+    XSET=$XPATH/bin/xset
+  fi
+  if [ -f $XPATH/lib/locale/$LING/OWfontpath ] && [ x$OWFONTPATH = x ] ; then
+    OWFONTPATH=$XPATH/lib/locale/$LING/OWfontpath
+  fi
+done
+
+XSET=${XSET:-"xset"}
+OWFONTPATH=${OWFONTPATH:-"/usr/openwin/lib/locale/$LING/OWfontpath"}
+
+# Copied from /usr/dt/bin/Xsession
+# ###########################################################################
+#  
+# Append desktop font aliases to font path
+#
+# ###########################################################################
+
+
+ADDFONTPATH_LOCAL() {
+        # Combine lines together to make arguments for the xset command
+        FP=`/usr/bin/awk '
+        BEGIN { fp="fp+ " }
+        /^[     ]*$/ { fp=" +fp " ; continue }
+        { printf("%s%s", fp, $0) ; fp="," } ' $1`
+        if [ -n "$FP" ]; then
+                eval "$XSET $FP"
+        fi
+}
+
+ADDFONTPATH_REMOTE() {
+        /usr/bin/nawk '  BEGIN {
+                fp=" fp+ "
+                }
+                /^[     ]*$/ {
+                fp=" +fp " ; continue }
+                {cmd = sprintf("%s%s%s%s",XSET,fp, $0," 1>/dev/null");
+                system(cmd); } ' $1
+}
+
+
+# 
+# Reset Xserver font path to its default values
+#
+
+$XSET fp default
+
+
+# Append desktop font paths. Note: these directories should be
+# accessable by the X server. The file precedence is:
+#
+#   /etc/dt/config/xfonts/C
+#   /usr/dt/config/xfonts/C
+#   /etc/dt/config/xfonts/$LING
+#   /usr/dt/config/xfonts/$LING
+#
+
+if [ "$DTXSERVERLOCATION" != "remote" -o "$XSERVERLOCATION" != "remote" ]; then
+
+  #
+  # Since X server is local, optimize by checking local desktop
+  # font directories and making one call to xset.
+  #
+  if [ -r $OWFONTPATH ]; then
+    ADDFONTPATH_LOCAL $OWFONTPATH
+  fi
+
+  if [ -f /etc/dt/config/xfonts/C/fonts.dir ]; then
+    fontpath=/etc/dt/config/xfonts/C
+  fi
+
+  if [ -f /usr/dt/config/xfonts/C/fonts.dir ]; then
+    if [ "x$fontpath" = x ]; then
+      fontpath=/usr/dt/config/xfonts/C
+    else
+      fontpath=$fontpath,/usr/dt/config/xfonts/C
+    fi
+  fi
+
+  if [ "$LING" != "C" ]; then
+    if [ -f /etc/dt/config/xfonts/$LING/fonts.dir ]; then
+      if [ "x$fontpath" = x ]; then
+        fontpath=/etc/dt/config/xfonts/$LING
+      else
+        fontpath=$fontpath,/etc/dt/config/xfonts/$LING
+      fi
+    fi
+
+    if [ -f /usr/dt/config/xfonts/$LING/fonts.dir ]; then
+      if [ "x$fontpath" = x ]; then
+        fontpath=/usr/dt/config/xfonts/$LING
+      else
+        fontpath=$fontpath,/usr/dt/config/xfonts/$LING
+      fi
+    fi
+  fi
+
+  if [ "x$fontpath" != x ]; then
+    $XSET fp+ $fontpath
+  fi
+else
+  #
+  # Since X server not local, we don't know if the desktop font
+  # directories exist on the X server machine, so we have to
+  # set them one at a time.
+  #
+  if [ -r $OWFONTPATH ]; then
+      ADDFONTPATH_REMOTE $OWFONTPATH
+  fi
+
+  $XSET fp+ /etc/dt/config/xfonts/C 1>/dev/null
+  $XSET fp+ /usr/dt/config/xfonts/C 1>/dev/null
+
+  if [ "$LING" != "C" ]; then 
+    $XSET fp+ /etc/dt/config/xfonts/$LING 1>/dev/null
+    $XSET fp+ /usr/dt/config/xfonts/$LING 1>/dev/null
+  fi
+
+  #
+  # Append Font Server to tail of path.  
+  # Will server any "-dt-" fonts not found on the remote machine.
+  # 
+  if [ -x /usr/openwin/bin/fs ]; then
+    Hostname=`/usr/bin/hostname`
+    dom=`/usr/bin/domainname`
+    FS_HOSTNAME=''
+
+    if [ ! -z "$dom" ]; then
+            dom=".`echo $dom | /usr/bin/cut -d. -f2-`"
+    fi
+
+    if [ -x /usr/bin/getent ] && \
+       /usr/bin/getent ipnodes "${Hostname}" > /dev/null 2>&1; then
+            FS_HOSTNAME=`/usr/bin/getent ipnodes "${Hostname}" | \
+                         /usr/bin/head -1 | /usr/bin/cut -f1`
+    elif /usr/sbin/ping "${Hostname}${dom}" 1 > /dev/null 2>&1; then
+            FS_HOSTNAME="${Hostname}${dom}"
+    fi
+
+    if [ -z "$FS_HOSTNAME" ] || \
+       ! /usr/sbin/ping "$FS_HOSTNAME" 1 >/dev/null 2>&1
+    then
+            FS_HOSTNAME="${Hostname}"
+    fi
+
+    $XSET fp+ "tcp/${FS_HOSTNAME}:7100"
+  fi
+fi
+

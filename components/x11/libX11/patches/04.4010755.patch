@@ -1,0 +1,101 @@
+###############################################################################
+# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+4010755: SEGV in XFindContext if XInitThreads has been enabled
+
+XFindContext in Xlib was calling _XLockMutex with an uninitialized
+mutex lock structure. The new version of XInitThreads activates the
+locking functions at any time, even after displays have been created.
+
+In this new case, the context structure was created prior to
+XInitThreads being invoked. As a result, the display contained an
+opaque pointer to this context structure, which still contained an
+uninitialized lock structure.
+
+The solution was to explicitly set the lock structure pointer to NULL
+(as a flag) when creating the context, then check for NULL when
+locking. If NULL is found and threads are now enabled, then the
+structure gets reinitialized to the correct mutex lock structure
+in the lock call.
+
+Another area besides the functions in Context.c are the functions in
+Xrm.c. A similar fix was added to them as well.
+
+
+diff --git a/src/Context.c b/src/Context.c
+index 8a07871..dd4df6b 100644
+--- a/src/Context.c
++++ b/src/Context.c
+@@ -190,6 +190,9 @@ int XSaveContext(
+ 	    return XCNOMEM;
+ 	}
+ 	db->numentries = 0;
++#ifdef SUNSOFT
++	db->linfo.lock = (xmutex_t) NULL;
++#endif
+ 	_XCreateMutex(&db->linfo);
+ #ifdef MOTIFBC
+ 	if (!display) *pdb = db; else
+diff --git a/src/Xrm.c b/src/Xrm.c
+index 36b71d6..b3283e6 100644
+--- a/src/Xrm.c
++++ b/src/Xrm.c
+@@ -497,6 +497,9 @@ static XrmDatabase NewDatabase(void)
+ 
+     db = Xmalloc(sizeof(XrmHashBucketRec));
+     if (db) {
++#ifdef SUNSOFT
++        db->linfo.lock = (xmutex_t) NULL;
++#endif
+ 	_XCreateMutex(&db->linfo);
+ 	db->table = (NTable)NULL;
+ 	db->mbstate = (XPointer)NULL;
+diff --git a/src/locking.c b/src/locking.c
+index e4e0444..eb875e3 100644
+--- libX11-1.6.2/src/locking.c.~2~	2015-02-04 10:00:11.175372726 +0300
++++ libX11-1.6.2/src/locking.c	2015-02-04 10:04:59.050279588 +0300
+@@ -99,11 +99,24 @@
+ static LockInfoRec global_lock;
+ static LockInfoRec i18n_lock;
+ 
++#ifdef SUNSOFT
++static void _XCreateMutex(LockInfoPtr lip); /* Forward declaration */
++#endif
++
+ static void _XLockMutex(
+     LockInfoPtr lip
+     XTHREADS_FILE_LINE_ARGS
+     )
+ {
++#ifdef SUNSOFT
++    /* Make sure any locks in structures that were created before calling
++     * XInitThreads are initialized before locking, now that we allow calls
++     * to XInitThreads after other Xlib calls (Sun bugs 1234757 & 4010755)
++     */
++    if (lip->lock == NULL) {
++	_XCreateMutex(lip);
++    }
++#endif /* SUNSOFT */
+     xmutex_lock(lip->lock);
+ }
+ 

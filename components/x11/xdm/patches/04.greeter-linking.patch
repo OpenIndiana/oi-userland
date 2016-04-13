@@ -1,0 +1,47 @@
+From 284532c0884893728b75ca37f5d2a9a33f7bc8db Mon Sep 17 00:00:00 2001
+From: Julien Cristau <jcristau@debian.org>
+Date: Sat, 22 Oct 2011 17:14:46 +0200
+Subject: [PATCH:xdm] greeter: link against -lXrender if xft is enabled
+
+XmuCvtStringToXftColor uses XRenderParseColor, so require xrender for
+the xft option, and link against it.
+
+Signed-off-by: Julien Cristau <jcristau@debian.org>
+Reviewed-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ configure.ac    |    4 ++--
+ greeter/Login.c |    4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index b123a1f..2d95000 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -311,10 +311,10 @@ AC_ARG_WITH(xft,
+     	AC_HELP_STRING([--with-xft], 
+ 			[Use Xft to draw text (default is YES if installed)]),
+ 	[USE_XFT="$withval"], 
+-	PKG_CHECK_EXISTS(xft, [USE_XFT="yes"], [USE_XFT="no"]))
++	PKG_CHECK_EXISTS(xft xrender, [USE_XFT="yes"], [USE_XFT="no"]))
+ 
+ if test "x$USE_XFT" = "xyes" ; then
+-	PKG_CHECK_MODULES(XFT, xft)
++	PKG_CHECK_MODULES(XFT, xft xrender)
+ 	GREETER_CFLAGS="$GREETER_CFLAGS $XFT_CFLAGS"
+ 	GREETER_LIBS="$GREETER_LIBS $XFT_LIBS"
+ 	AC_DEFINE([USE_XFT], 1, 
+diff --git a/greeter/Login.c b/greeter/Login.c
+index 4903ea2..2fec5f4 100644
+--- a/greeter/Login.c
++++ b/greeter/Login.c
+@@ -91,6 +91,10 @@ from The Open Group.
+ # include <X11/extensions/Xinerama.h>
+ #endif
+ 
++#ifdef USE_XFT
++# include <X11/extensions/Xrender.h>
++#endif
++
+ #ifndef DEBUG
+ # define XDM_ASSERT(a)	/* do nothing */
+ #else

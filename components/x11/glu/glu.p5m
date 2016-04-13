@@ -1,0 +1,73 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/x11/library/glu@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/X11"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license glu.license  license='MIT'
+
+<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+
+# All headers are moved to /usr/include/mesa.
+<transform file path=usr/include/mesa/(.+)$ -> set action.hash usr/include/GL/%<\1> >
+
+# All libraries are moved to /usr/lib/mesa.
+<transform file path=usr/lib/mesa/(.+)$ -> set action.hash usr/lib/%<\1> >
+
+# For several headers we create direct links
+link path=usr/include/GL/glu.h target=../mesa/glu.h
+
+# For several libraries we create direct links
+link path=usr/lib/GL/libGLU.so.1 target=libGLU.so.1.3.1
+link path=usr/lib/GL/libGLU.so.1.3.1 target=../mesa/libGLU.so.1.3.1
+link path=usr/lib/GL/libGLU.so target=libGLU.so.1
+link path=usr/lib/GL/$(MACH64)/libGLU.so.1 target=libGLU.so.1.3.1 
+link path=usr/lib/GL/$(MACH64)/libGLU.so target=libGLU.so.1 
+link path=usr/lib/GL/$(MACH64)/libGLU.so.1.3.1 target=../../mesa/$(MACH64)/libGLU.so.1.3.1 
+
+# For several libraries we create runtime links
+link path=usr/X11/lib/libGLU.so target=libGLU.so.1
+link path=usr/X11/lib/libGLU.so.1 target=libGLU.so.1.3.1
+link path=usr/X11/lib/libGLU.so.1.3.1 target=GL/libGLU.so.1.3.1 pkg.linted.userland.action002.0=true
+link path=usr/lib/libGLU.so.1 target=libGLU.so.1.3.1
+link path=usr/lib/libGLU.so target=libGLU.so.1
+link path=usr/lib/libGLU.so.1.3.1 target=GL/libGLU.so.1.3.1
+link path=usr/lib/$(MACH64)/libGLU.so.1 target=libGLU.so.1.3.1
+link path=usr/lib/$(MACH64)/libGLU.so target=libGLU.so.1
+link path=usr/lib/$(MACH64)/libGLU.so.1.3.1 target=../GL/$(MACH64)/libGLU.so.1.3.1
+link path=usr/X11/lib/$(MACH64)/libGLU.so target=libGLU.so.1 
+link path=usr/X11/lib/$(MACH64)/libGLU.so.1 target=libGLU.so.1.3.1 
+link path=usr/X11/lib/$(MACH64)/libGLU.so.1.3.1 target=../GL/$(MACH64)/libGLU.so.1.3.1 pkg.linted.userland.action002.0=true 
+
+# Runtime links are provided by ogl-select
+depend fmri=pkg:/service/opengl/ogl-select type=require
+
+# libGLU was earlier in x11/library/mesa
+depend fmri=x11/library/mesa@9.0.3,5.11 type=optional
+
+file path=usr/include/mesa/glu.h
+file path=usr/include/mesa/glu_mangle.h
+file path=usr/lib/$(MACH64)/pkgconfig/glu.pc
+link path=usr/lib/mesa/$(MACH64)/libGLU.so target=libGLU.so.1.3.1
+link path=usr/lib/mesa/$(MACH64)/libGLU.so.1 target=libGLU.so.1.3.1
+file path=usr/lib/mesa/$(MACH64)/libGLU.so.1.3.1
+link path=usr/lib/mesa/libGLU.so target=libGLU.so.1.3.1
+link path=usr/lib/mesa/libGLU.so.1 target=libGLU.so.1.3.1
+file path=usr/lib/mesa/libGLU.so.1.3.1
+file path=usr/lib/pkgconfig/glu.pc

@@ -1,0 +1,43 @@
+From c7acfe5514af7151bb574eff62aa3d8997d51843 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Mon, 3 Aug 2015 17:27:41 -0700
+Subject: [PATCH 22/36] Compatibility fix for "ListenAddress ::"
+
+In SunSSH, a config that specifies only "ListenAddress ::" in
+fact will listen on both IPv4 and IPv6.
+---
+ servconf.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/servconf.c b/servconf.c
+index dca59fd..a0edff2 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -762,11 +762,22 @@ process_queued_listen_addrs(ServerOptions *options)
+ 		options->address_family = AF_UNSPEC;
+ 
+ 	for (i = 0; i < options->num_queued_listens; i++) {
+-		add_listen_addr(options, options->queued_listen_addrs[i],
+-		    options->queued_listen_ports[i]);
++		/*
++		 * To retain backwards compat with SunSSH, convert any listener
++		 * on :: into a listener of unspecified AF (so it listens on
++		 * v4 too)
++		 */
++		if (strcmp(options->queued_listen_addrs[i], "::") == 0) {
++			add_listen_addr(options, NULL,
++			    options->queued_listen_ports[i]);
++		} else {
++			add_listen_addr(options, options->queued_listen_addrs[i],
++			    options->queued_listen_ports[i]);
++		}
+ 		free(options->queued_listen_addrs[i]);
+ 		options->queued_listen_addrs[i] = NULL;
+ 	}
++
+ 	free(options->queued_listen_addrs);
+ 	options->queued_listen_addrs = NULL;
+ 	free(options->queued_listen_ports);
+-- 
+2.5.4 (Apple Git-61)
+

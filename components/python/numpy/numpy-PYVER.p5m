@@ -1,59 +1,44 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Aurelien Larcher. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/library/python-2/numpy-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Python XML module"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license numpy.license license='BSD'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on the numpy package
+# force a dependency on the unversioned package
 #depend type=require \
-#    fmri=library/python-2/numpy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+#    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 link path=usr/bin/f2py \
     target=f2py$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 
-<transform file path=usr/lib/python$(PYVER)/vendor-packages/numpy/.*tests/.*\.py$ -> default pkg.tmp.autopyc false>
+<transform file path=usr/lib/python$(PYVER)/vendor-packages/numpy/.*\.py$ -> default pkg.tmp.autopyc false>
 
 file path=usr/bin/f2py$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy-1.4.1-py$(PYVER).egg-info
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/COMPATIBILITY
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/DEV_README.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/INSTALL.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/LICENSE.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/README.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/THANKS.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/__config__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/__config__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/__init__.py
@@ -66,18 +51,26 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/_inspect.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/_inspect.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/py3k.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/py3k.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/compat/setupscons.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/_dummy.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/multiarray.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/multiarray_tests.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/operand_flag_tests.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/scalarmath.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/struct_ufunc_test.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/test_rational.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/umath.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/umath_tests.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_dummy.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_internal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_internal.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_mx_datetime_parser.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_mx_datetime_parser.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_sort.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/_sort.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_methods.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/_methods.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/arrayprint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/arrayprint.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/defchararray.py
@@ -96,14 +89,19 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/_neigh
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/_numpyconfig.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/arrayobject.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/arrayscalars.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/halffloat.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/multiarray_api.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/ndarrayobject.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/ndarraytypes.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/noprefix.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_1_7_deprecated_api.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_3kcompat.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_common.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_cpu.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_endian.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_interrupt.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_math.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_no_deprecated_api.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/npy_os.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/numpyconfig.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/include/numpy/old_defines.h
@@ -121,55 +119,59 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/machar.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/memmap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/memmap.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/multiarray.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/multiarray.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/multiarray_tests.so \
-    mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/multiarray_tests.so \
-    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/multiarray_tests.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/numeric.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/numeric.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/numerictypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/numerictypes.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/operand_flag_tests.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/records.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/records.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/scalarmath.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/scalarmath.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/scons_support.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/scons_support.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setup.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setup_common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setup_common.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/shape_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/shape_base.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/struct_ufunc_test.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/test_rational.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/data/astype_copy.pkl
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/data/recarray_from_file.fits
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_arrayprint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_blasdot.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_datetime.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_defchararray.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_deprecations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_dtype.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_einsum.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_errstate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_function_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_getlimits.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_half.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_indexerrors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_indexing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_item_selection.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_machar.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_memmap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_multiarray.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_multiarray_assignment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_nditer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_numeric.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_numerictypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_print.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_records.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_regression.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_scalarmath.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_scalarprint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_shape_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_ufunc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_umath.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_umath_complex.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/tests/test_unicode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/umath.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/umath.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/umath_tests.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/core/64/umath_tests.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ctypeslib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ctypeslib.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/__config__.py
@@ -214,10 +216,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/install
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/install_data.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/install_headers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/install_headers.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/scons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/scons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/sdist.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/command/sdist.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/compat.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/conv_template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/conv_template.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/core.py
@@ -254,6 +256,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/nag.p
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/nag.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/none.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/none.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/pathf95.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/pathf95.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/pg.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/pg.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/fcompiler/sun.py
@@ -266,8 +270,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/info.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/intelccompiler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/intelccompiler.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/interactive.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/interactive.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/lib2def.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/lib2def.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/line_endings.py
@@ -283,10 +285,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/npy_pkg_config.
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/npy_pkg_config.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/numpy_distribution.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/numpy_distribution.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/pathccompiler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/pathccompiler.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/system_info.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/system_info.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/f2py_ext/__init__.py
@@ -316,7 +318,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/swig_ext/
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/swig_ext/src/zoo.i
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/swig_ext/tests/test_example.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/swig_ext/tests/test_example2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/test_exec_command.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/test_fcompiler_gnu.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/test_fcompiler_intel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/test_misc_util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/tests/test_npy_pkg_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/distutils/unixccompiler.py
@@ -359,21 +363,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/doc/ufuncs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/doc/ufuncs.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/dual.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/dual.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/__init__.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/__version__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/__version__.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/auxfuncs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/auxfuncs.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/auxfuncs.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/capi_maps.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/capi_maps.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/capi_maps.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cb_rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cb_rules.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cb_rules.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cfuncs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cfuncs.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/cfuncs.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/common_rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/common_rules.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/common_rules.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/crackfortran.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/crackfortran.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/crackfortran.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/diagnose.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/diagnose.pyc
@@ -387,7 +391,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/default.css
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/docutils.conf
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/hello.f
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/pyforttest.pyf
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/pytest.py pkg.tmp.autopyc=false
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/pytest.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/simple.f
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/simple_session.dat
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/allocarr.f90
@@ -418,7 +422,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/modd
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/run_main_session.dat
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/scalar.f
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/scalar_session.dat
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/setup_example.py pkg.tmp.autopyc=false pkg.depend.bypass-generate=.*
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/setup_example.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/spam.pyf
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/spam_session.dat
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/string.f
@@ -426,57 +430,75 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/stri
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/var.pyf
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/docs/usersguide/var_session.dat
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py.1
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py2e.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py2e.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py2e.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py_testing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f2py_testing.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f90mod_rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f90mod_rules.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/f90mod_rules.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/func2subr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/func2subr.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/func2subr.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/info.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/rules.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/rules.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/src/fortranobject.c
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/src/fortranobject.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/use_rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/array_from_pyobj/wrapmodule.c
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/assumed_shape/.f2py_f2cmap
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/assumed_shape/foo_free.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/assumed_shape/foo_mod.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/assumed_shape/foo_use.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/assumed_shape/precision.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/kind/foo.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/mixed/foo.f
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/mixed/foo_fixed.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/mixed/foo_free.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/src/size/foo.f90
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_array_from_pyobj.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_assumed_shape.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_callback.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_kind.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_mixed.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_return_character.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_return_complex.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_return_integer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_return_logical.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_return_real.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/test_size.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/tests/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/use_rules.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/f2py/use_rules.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/64/fftpack_lite.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/fftpack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/fftpack.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/fftpack_lite.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/64/fftpack_lite.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/helper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/helper.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/info.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/tests/test_fftpack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/fft/tests/test_helper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/64/_compiled_base.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/__init__.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_compiled_base.so \
-    mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/64/_compiled_base.so \
-    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_compiled_base.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_datasource.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_datasource.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_iotools.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/_iotools.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arraypad.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arraypad.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arraysetops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arraysetops.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arrayterator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/arrayterator.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/benchmarks/bench_arraysetops.py pkg.tmp.autopyc=false
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/financial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/financial.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/format.py
@@ -487,8 +509,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/index_tricks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/index_tricks.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/info.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/io.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/io.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/nanfunctions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/nanfunctions.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/npyio.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/npyio.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/polynomial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/polynomial.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/recfunctions.py
@@ -497,14 +521,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/scimath.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/scimath.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/shape_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/shape_base.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/stride_tricks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/stride_tricks.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test__datasource.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test__iotools.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_arraypad.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_arraysetops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_arrayterator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_financial.py
@@ -512,6 +535,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_function_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_index_tricks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_io.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_nanfunctions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_polynomial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_recfunctions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/tests/test_regression.py
@@ -531,21 +555,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/user_array.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/user_array.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/lib/utils.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/64/_umath_linalg.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/64/lapack_lite.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/_umath_linalg.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/info.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/lapack_lite.so \
-    mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/64/lapack_lite.so \
-    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/lapack_lite.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/linalg.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/linalg.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/tests/test_build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/tests/test_deprecations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/tests/test_linalg.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/linalg/tests/test_regression.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/__init__.py
@@ -560,8 +583,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/mrecords.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/mrecords.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/tests/test_core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/tests/test_extras.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/ma/tests/test_mrecords.py
@@ -582,16 +603,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/defmatrix.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/defmatrix.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/tests/test_defmatrix.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/tests/test_multiarray.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/tests/test_numeric.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/matrixlib/tests/test_regression.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/64/_capi.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/_capi.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/64/_capi.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/alter_code1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/alter_code1.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/alter_code2.py
@@ -606,6 +625,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/functions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/functions.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/image.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/image.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/arraybase.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/cfunc.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/ieeespecial.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/libnumarray.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/numcomplex.h
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/include/numpy/nummacro.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/linear_algebra.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/linear_algebra.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/ma.py
@@ -618,20 +643,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/nd_image.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/nd_image.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numerictypes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numerictypes.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/arraybase.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/cfunc.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/ieeespecial.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/libnumarray.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/numcomplex.h
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/numpy/nummacro.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/random_array.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/random_array.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/session.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/session.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/ufuncs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/ufuncs.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/numarray/util.py
@@ -674,8 +691,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/rng_stats.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/rng_stats.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/tests/test_oldnumeric.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/tests/test_regression.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/oldnumeric/typeconv.py
@@ -688,6 +703,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/chebyshev.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/chebyshev.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/hermite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/hermite.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/hermite_e.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/hermite_e.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/laguerre.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/laguerre.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/legendre.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/legendre.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/polynomial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/polynomial.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/polytemplate.py
@@ -697,25 +720,27 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/polyutils.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/setup.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_chebyshev.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_classes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_hermite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_hermite_e.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_laguerre.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_legendre.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_polynomial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_polyutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/polynomial/tests/test_printing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/64/mtrand.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/info.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/mtrand.so mode=0555
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/64/mtrand.so mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/randomkit.h
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/tests/test_random.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/random/tests/test_regression.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/setupscons.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/site.cfg.example
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/__init__.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/decorators.py
@@ -724,18 +749,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/noseclasses.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/noseclasses.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/nosetester.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/nosetester.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/nulltester.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/nulltester.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/numpytest.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/numpytest.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/print_coercion_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/print_coercion_tables.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/setup.pyc
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/setupscons.py
-file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/setupscons.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/tests/test_decorators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/tests/test_doctesting.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/tests/test_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/testing/utils.pyc
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/tests/test_ctypeslib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/numpy/tests/test_matlib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/numpy/version.pyc

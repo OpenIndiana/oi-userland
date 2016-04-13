@@ -1,0 +1,143 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/lib(.*)/pkgconfig/(.+).pc$ -> set action.hash usr/lib/xorg%<\1>/pkgconfig/%<\2>.pc >
+
+file path=usr/include/exynos/exynos_drm.h
+file path=usr/include/exynos/exynos_fimg2d.h
+file path=usr/include/freedreno/freedreno_drmif.h
+file path=usr/include/freedreno/freedreno_ringbuffer.h
+file path=usr/include/libdrm/amdgpu.h
+file path=usr/include/libdrm/amdgpu_drm.h
+file path=usr/include/libdrm/drm.h
+file path=usr/include/libdrm/drm_fourcc.h
+file path=usr/include/libdrm/drm_mode.h
+file path=usr/include/libdrm/drm_sarea.h
+file path=usr/include/libdrm/exynos_drmif.h
+file path=usr/include/libdrm/i915_drm.h
+file path=usr/include/libdrm/intel_aub.h
+file path=usr/include/libdrm/intel_bufmgr.h
+file path=usr/include/libdrm/intel_debug.h
+file path=usr/include/libdrm/mach64_drm.h
+file path=usr/include/libdrm/mga_drm.h
+file path=usr/include/libdrm/nouveau_drm.h
+file path=usr/include/libdrm/omap_drmif.h
+file path=usr/include/libdrm/qxl_drm.h
+file path=usr/include/libdrm/r128_drm.h
+file path=usr/include/libdrm/r600_pci_ids.h
+file path=usr/include/libdrm/radeon_bo.h
+file path=usr/include/libdrm/radeon_bo_gem.h
+file path=usr/include/libdrm/radeon_bo_int.h
+file path=usr/include/libdrm/radeon_cs.h
+file path=usr/include/libdrm/radeon_cs_gem.h
+file path=usr/include/libdrm/radeon_cs_int.h
+file path=usr/include/libdrm/radeon_drm.h
+file path=usr/include/libdrm/radeon_surface.h
+file path=usr/include/libdrm/savage_drm.h
+file path=usr/include/libdrm/sis_drm.h
+file path=usr/include/libdrm/tegra.h
+file path=usr/include/libdrm/tegra_drm.h
+file path=usr/include/libdrm/via_drm.h
+file path=usr/include/libdrm/vmwgfx_drm.h
+file path=usr/include/libkms/libkms.h
+file path=usr/include/omap/omap_drm.h
+file path=usr/include/xf86drm.h
+file path=usr/include/xf86drmMode.h
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_amdgpu.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_exynos.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_freedreno.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_intel.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_omap.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_radeon.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_tegra.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libkms.pc
+file path=usr/lib/pkgconfig/libdrm.pc
+file path=usr/lib/pkgconfig/libdrm_amdgpu.pc
+file path=usr/lib/pkgconfig/libdrm_exynos.pc
+file path=usr/lib/pkgconfig/libdrm_freedreno.pc
+file path=usr/lib/pkgconfig/libdrm_intel.pc
+file path=usr/lib/pkgconfig/libdrm_omap.pc
+file path=usr/lib/pkgconfig/libdrm_radeon.pc
+file path=usr/lib/pkgconfig/libdrm_tegra.pc
+file path=usr/lib/pkgconfig/libkms.pc
+link path=usr/lib/xorg/$(MACH64)/libdrm.so target=libdrm.so.2.4.0
+link path=usr/lib/xorg/$(MACH64)/libdrm.so.2 target=libdrm.so.2.4.0
+file path=usr/lib/xorg/$(MACH64)/libdrm.so.2.4.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_amdgpu.so target=libdrm_amdgpu.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_amdgpu.so.1 \
+    target=libdrm_amdgpu.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_amdgpu.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so target=libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so.1 \
+    target=libdrm_exynos.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so \
+    target=libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so.1 \
+    target=libdrm_freedreno.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_intel.so target=libdrm_intel.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_intel.so.1 target=libdrm_intel.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_intel.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_omap.so target=libdrm_omap.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_omap.so.1 target=libdrm_omap.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_omap.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so target=libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so.1 \
+    target=libdrm_radeon.so.1.0.1
+file path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so target=libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so.0 target=libdrm_tegra.so.0.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/$(MACH64)/libkms.so target=libkms.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libkms.so.1 target=libkms.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libkms.so.1.0.0
+link path=usr/lib/xorg/libdrm.so target=libdrm.so.2.4.0
+link path=usr/lib/xorg/libdrm.so.2 target=libdrm.so.2.4.0
+file path=usr/lib/xorg/libdrm.so.2.4.0
+link path=usr/lib/xorg/libdrm_amdgpu.so target=libdrm_amdgpu.so.1.0.0
+link path=usr/lib/xorg/libdrm_amdgpu.so.1 target=libdrm_amdgpu.so.1.0.0
+file path=usr/lib/xorg/libdrm_amdgpu.so.1.0.0
+link path=usr/lib/xorg/libdrm_exynos.so target=libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/libdrm_exynos.so.1 target=libdrm_exynos.so.1.0.0
+file path=usr/lib/xorg/libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/libdrm_freedreno.so target=libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/libdrm_freedreno.so.1 target=libdrm_freedreno.so.1.0.0
+file path=usr/lib/xorg/libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/libdrm_intel.so target=libdrm_intel.so.1.0.0
+link path=usr/lib/xorg/libdrm_intel.so.1 target=libdrm_intel.so.1.0.0
+file path=usr/lib/xorg/libdrm_intel.so.1.0.0
+link path=usr/lib/xorg/libdrm_omap.so target=libdrm_omap.so.1.0.0
+link path=usr/lib/xorg/libdrm_omap.so.1 target=libdrm_omap.so.1.0.0
+file path=usr/lib/xorg/libdrm_omap.so.1.0.0
+link path=usr/lib/xorg/libdrm_radeon.so target=libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/libdrm_radeon.so.1 target=libdrm_radeon.so.1.0.1
+file path=usr/lib/xorg/libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/libdrm_tegra.so target=libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/libdrm_tegra.so.0 target=libdrm_tegra.so.0.0.0
+file path=usr/lib/xorg/libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/libkms.so target=libkms.so.1.0.0
+link path=usr/lib/xorg/libkms.so.1 target=libkms.so.1.0.0
+file path=usr/lib/xorg/libkms.so.1.0.0

@@ -1,0 +1,60 @@
+In house patch, will not send upstream.
+ERR() function is already defined elsewhere. 
+
+--- mozilla-esr38/gfx/angle/src/common/debug.h	2015-10-26 15:49:18.755193254 -0700
++++ mozilla-esr38/gfx/angle/src/common/debug.h	2015-10-26 15:48:39.108802848 -0700
+@@ -57,9 +57,9 @@ namespace gl
+ 
+ // A macro to output a function call and its arguments to the debugging log, in case of error.
+ #if defined(ANGLE_ENABLE_DEBUG_TRACE) || defined(ANGLE_ENABLE_DEBUG_ANNOTATIONS)
+-#define ERR(message, ...) gl::trace(false, "err: %s(%d): " message "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
++#define FFERR(message, ...) gl::trace(false, "err: %s(%d): " message "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+ #else
+-#define ERR(message, ...) (void(0))
++#define FFERR(message, ...) (void(0))
+ #endif
+ 
+ // A macro to log a performance event around a scope.
+@@ -77,7 +77,7 @@ namespace gl
+ #if !defined(NDEBUG)
+ #define ASSERT(expression) do { \
+     if(!(expression)) \
+-        ERR("\t! Assert failed in %s(%d): "#expression"\n", __FUNCTION__, __LINE__); \
++        FFERR("\t! Assert failed in %s(%d): "#expression"\n", __FUNCTION__, __LINE__); \
+         assert(expression); \
+     } while(0)
+ #define UNUSED_ASSERTION_VARIABLE(variable)
+@@ -116,11 +116,11 @@ namespace gl
+ // A macro for code which is not expected to be reached under valid assumptions
+ #if !defined(NDEBUG)
+ #define UNREACHABLE() do { \
+-    ERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__); \
++    FFERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__); \
+     assert(false); \
+     } while(0)
+ #else
+-    #define UNREACHABLE() ERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__)
++    #define UNREACHABLE() FFERR("\t! Unreachable reached: %s(%d)\n", __FUNCTION__, __LINE__)
+ #endif
+ 
+ // A macro that determines whether an object has a given runtime type.
+--- mozilla-esr38/gfx/angle/src/common/winrt/IInspectableNativeWindow.cpp	2015-10-26 15:51:25.857595462 -0700
++++ mozilla-esr38/gfx/angle/src/common/winrt/IInspectableNativeWindow.cpp	2015-10-26 15:50:59.541429136 -0700
+@@ -44,7 +44,7 @@ bool NativeWindow::initialize()
+     }
+     else
+     {
+-        ERR("Invalid IInspectable EGLNativeWindowType detected. Valid IInspectables include ICoreWindow and IPropertySet");
++        FFERR("Invalid IInspectable EGLNativeWindowType detected. Valid IInspectables include ICoreWindow and IPropertySet");
+     }
+ 
+     return false;
+@@ -127,7 +127,7 @@ bool isEGLConfiguredPropertySet(EGLNativ
+     // considered invalid.
+     if (SUCCEEDED(result) && !hasEglNativeWindowPropertyKey)
+     {
+-        ERR("Could not find EGLNativeWindowTypeProperty in IPropertySet. Valid EGLNativeWindowTypeProperty values include ICoreWindow");
++        FFERR("Could not find EGLNativeWindowTypeProperty in IPropertySet. Valid EGLNativeWindowTypeProperty values include ICoreWindow");
+         return false;
+     }
+ 

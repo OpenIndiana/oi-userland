@@ -15,14 +15,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-menus
-COMPONENT_VERSION=	2.30.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.30.5
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Implementation of Desktop Menu Specification for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:31797d73c93ec4f3082d8447c6c2b6dc29009c4a4f3ac7075999c387dc4b0c9e
+    sha256:6dcc565006d6e8c2025ae83ab1f82edf6bd04d61c804c0dc9bf5ea50629c4caa
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

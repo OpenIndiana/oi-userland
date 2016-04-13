@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=	/opt/onbld/bin/i386:/usr/bin:/usr/sbin:/sbin:/usr/gnu/bin
 COMPONENT_NAME=		illumos-kvm-cmd
-COMPONENT_VERSION=	1c6181b
-IPS_COMPONENT_VERSION=	0.0.1.20131024
+COMPONENT_VERSION=	c1a197c8e4582c68739ab08f7e3198b2392c9820
+IPS_COMPONENT_VERSION=	0.0.1.20160303
 COMPONENT_SRC=		illumos-kvm-cmd-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1664981d73d4a17e3271f167a15b20601f3c5a9cbb500db9ebe6dfa58d37f87a
-COMPONENT_ARCHIVE_URL=	https://codeload.github.com/joyent/illumos-kvm-cmd/tar.gz/$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_HASH=	sha256:463cc37688c6089a8107e164e65107b54671daf7afac36353524925ffd09346f
+COMPONENT_ARCHIVE_URL=	https://github.com/joyent/illumos-kvm-cmd/archive/$(COMPONENT_VERSION).zip
 
 ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
@@ -47,7 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_ENV += PATH=$(PATH):/usr/sbin
 
 CONFIGURE_OPTIONS = --cc=$(CC)
-CONFIGURE_OPTIONS += --extra-cflags="-fno-builtin"
+CONFIGURE_OPTIONS += --extra-cflags="-fno-builtin -msave-args"
 CONFIGURE_OPTIONS += --extra-ldflags="-nodefaultlibs -lz -lm -lc"
 CONFIGURE_OPTIONS += --prefix=/usr
 CONFIGURE_OPTIONS += --mandir=/usr/share/man

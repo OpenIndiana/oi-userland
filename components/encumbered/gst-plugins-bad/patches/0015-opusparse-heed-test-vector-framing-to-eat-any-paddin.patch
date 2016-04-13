@@ -1,0 +1,28 @@
+From 88c96c2baad14ba5c7b6bd233be2c7f1fc0a2c2d Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Fri, 25 May 2012 22:16:30 +0100
+Subject: [PATCH 15/20] opusparse: heed test vector framing to eat any padding
+
+This fixes parsing on one particular test vector where payload
+data is smaller than the actual audio payload.
+---
+ ext/opus/gstopusparse.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/ext/opus/gstopusparse.c b/ext/opus/gstopusparse.c
+index 472e7b0..8d18211 100644
+--- a/ext/opus/gstopusparse.c
++++ b/ext/opus/gstopusparse.c
+@@ -193,6 +193,9 @@ gst_opus_parse_check_valid_frame (GstBaseParse * base,
+ 
+     packet_offset = 8;
+     data += packet_offset;
++
++    /* for ad hoc framing, heed the framing, so we eat any padding */
++    payload_offset = packet_size;
+   }
+ 
+   if (is_header) {
+-- 
+1.7.10.4
+

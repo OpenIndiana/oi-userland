@@ -24,17 +24,20 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		junit
 COMPONENT_VERSION=	4.11
-COMPONENT_PROJECT_URL=	https://github.com/junit-team/junit/archive
+COMPONENT_PROJECT_URL=	https://github.com/junit-team/junit
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-r$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).zip
+COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3048cb3f2b07fada9d85b2c042bbedb93892ef70c1dcfe0594124850418f9ffb
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
+    sha256:7f427e18a21006ea5394fb71b268d2fa1d12a9f4575b5743ff093547c7ac7b37
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/junit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
+
+COMPONENT_BUILD_ARGS=
 
 # These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}

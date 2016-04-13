@@ -37,8 +37,6 @@ extern void TsolExtensionInit(INITARGS);
 ExtensionModule xtsolExt = {
     TsolExtensionInit,
     "SUN_TSOL",
-    NULL,
-    NULL,
     NULL
 };
 

@@ -1,0 +1,343 @@
+diff -urN gnome-session-2.27.4/capplet/gsm-properties-dialog.c ../SUNWgnome-session-2.26.1.p12.hacked/gnome-session-2.27.4/capplet/gsm-properties-dialog.c
+--- gnome-session-2.27.4/capplet/gsm-properties-dialog.c        2009-07-01 13:45:30.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p12.hacked/gnome-session-2.27.4/capplet/gsm-properties-dialog.c 2009-07-21 14:49:15.145840020 +0100
+@@ -35,6 +35,8 @@
+ #include "gsm-util.h"
+ #include "gsp-app.h"
+ #include "gsp-app-manager.h"
++#include <dbus/dbus-glib.h>
++#include <dbus/dbus-glib-lowlevel.h>
+ 
+ #define GSM_PROPERTIES_DIALOG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GSM_TYPE_PROPERTIES_DIALOG, GsmPropertiesDialogPrivate))
+ 
+@@ -45,6 +47,10 @@
+ 
+ #define GTKBUILDER_FILE "session-properties.ui"
+ 
++#define GSM_SERVICE_DBUS   "org.gnome.SessionManager"
++#define GSM_PATH_DBUS      "/org/gnome/SessionManager"
++#define GSM_INTERFACE_DBUS "org.gnome.SessionManager"
++
+ #define CAPPLET_TREEVIEW_WIDGET_NAME      "session_properties_treeview"
+ #define CAPPLET_ADD_WIDGET_NAME           "session_properties_add_button"
+ #define CAPPLET_DELETE_WIDGET_NAME        "session_properties_delete_button"
+@@ -1246,10 +1253,113 @@
+ }
+ 
+ static void
++display_error (const char *message)
++{
++	GtkWidget *dialog;
++
++        dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
++                                         GTK_BUTTONS_CLOSE, "%s", message);
++
++        gtk_dialog_run (GTK_DIALOG (dialog));
++        gtk_widget_destroy (dialog);
++}
++
++static DBusGConnection *
++get_session_bus (void)
++{
++        DBusGConnection *bus;
++        GError *error = NULL;
++
++        bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
++
++        if (bus == NULL) {
++                g_warning ("Couldn't connect to session bus: %s", error->message);
++                g_error_free (error);
++        }
++
++        return bus;
++}
++
++static DBusGProxy *
++get_sm_proxy (void)
++{
++        DBusGConnection *connection;
++        DBusGProxy      *sm_proxy;
++
++        connection = get_session_bus ();
++        if (connection == NULL) {
++                display_error (_("Could not connect to the session manager"));
++                return NULL;
++        }
++
++        sm_proxy = dbus_g_proxy_new_for_name (connection,
++                                               GSM_SERVICE_DBUS,
++                                               GSM_PATH_DBUS,
++                                               GSM_INTERFACE_DBUS);
++
++        if (sm_proxy == NULL) {
++                display_error (_("Could not connect to the session manager"));
++                return NULL;
++        }
++
++        return sm_proxy;
++}
++
++static char*
++save_session (void)
++{
++	DBusGProxy *sm_proxy;
++	GError	   *error;
++	gboolean    res = FALSE;
++
++	sm_proxy = get_sm_proxy ();
++	if (sm_proxy == NULL) {
++		return NULL;
++	}
++
++        error = NULL;
++        res = dbus_g_proxy_call (sm_proxy,
++                                 "SaveSession",
++                                 &error,
++                                 G_TYPE_INVALID,
++                                 G_TYPE_INVALID);
++
++	if (!res) {
++        	if (error != NULL) {
++                	g_warning ("Failed to call save session: %s",
++                                   error->message);
++                        g_error_free (error);
++		} else {
++                	g_warning ("Failed to call save session");
++		}
++	}
++
++	if (sm_proxy != NULL) {
++        	g_object_unref (sm_proxy);
++	}
++
++	if (res)
++		return "Session saved successfully!";
++}
++
++static void
+ on_save_session_clicked (GtkWidget           *widget,
+                          GsmPropertiesDialog *dialog)
+ {
+-        g_debug ("Session saving is not implemented yet!");
++	GtkWidget *message;
++	char *status=NULL;
++
++	status = save_session ();
++
++	if (status) {
++  		message = gtk_message_dialog_new (GTK_WINDOW (dialog),
++				   	 	  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
++				   	 	  GTK_MESSAGE_INFO,
++				   	 	  GTK_BUTTONS_OK,
++				   	 	  status);
++		gtk_dialog_run (GTK_DIALOG (message));
++		gtk_widget_destroy (message);
++	}
+ }
+ 
+ static void
+diff -urN -x '*.orig' gnome-session-2.26.1/gnome-session/gsm-manager.c ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-manager.c
+--- gnome-session-2.26.1/gnome-session/gsm-manager.c	2009-04-16 11:41:55.315470790 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-manager.c	2009-04-16 11:42:51.278978139 +0100
+@@ -1913,6 +1913,18 @@
+ }
+ 
+ static void
++on_xsmp_client_save_request (GsmXSMPClient *client,
++                               gboolean       show_dialog,
++                               GsmManager    *manager)
++{
++	GError *error;
++
++	g_debug ("GsmManager: save_request");
++        error = NULL;
++        gsm_session_save (manager->priv->clients, &error);
++}
++
++static void
+ on_store_client_added (GsmStore   *store,
+                        const char *id,
+                        GsmManager *manager)
+@@ -1933,6 +1945,10 @@
+                                   "logout-request",
+                                   G_CALLBACK (on_xsmp_client_logout_request),
+                                   manager);
++                g_signal_connect (client,
++                                  "save-request",
++                                  G_CALLBACK (on_xsmp_client_save_request),
++                                  manager);
+         }
+ 
+         g_signal_connect (client,
+@@ -2831,6 +2847,29 @@
+ }
+ 
+ gboolean
++gsm_manager_save_session (GsmManager *manager,
++                          GError	**error)
++{
++ 	g_debug ("GsmManager: SaveSession called");
++
++	g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
++
++	if (manager->priv->phase != GSM_MANAGER_PHASE_RUNNING) {
++		g_set_error (error,
++                             GSM_MANAGER_ERROR,
++                             GSM_MANAGER_ERROR_NOT_IN_RUNNING,
++                             "SaveSession interface is only available during the Running phase");
++		return FALSE;
++	}
++
++	g_debug ("GsmManager: SaveSession, saving");
++
++        maybe_save_session (manager);
++
++	return TRUE;
++}
++
++gboolean
+ gsm_manager_can_shutdown (GsmManager *manager,
+                           gboolean   *shutdown_available,
+                           GError    **error)
+diff -urN -x '*.orig' gnome-session-2.26.1/gnome-session/gsm-manager.h ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-manager.h
+--- gnome-session-2.26.1/gnome-session/gsm-manager.h	2009-04-14 16:31:45.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-manager.h	2009-04-16 11:42:51.294073611 +0100
+@@ -152,6 +152,9 @@
+ gboolean            gsm_manager_shutdown                       (GsmManager     *manager,
+                                                                 GError        **error);
+ 
++gboolean            gsm_manager_save_session                   (GsmManager     *manager,
++                                                                GError        **error);
++
+ gboolean            gsm_manager_can_shutdown                   (GsmManager     *manager,
+                                                                 gboolean       *shutdown_available,
+                                                                 GError        **error);
+diff -urN -x '*.orig' gnome-session-2.26.1/gnome-session/gsm-xsmp-client.c ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-xsmp-client.c
+--- gnome-session-2.26.1/gnome-session/gsm-xsmp-client.c	2009-04-14 16:31:45.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-xsmp-client.c	2009-04-16 11:42:51.311373196 +0100
+@@ -69,6 +69,7 @@
+ enum {
+         REGISTER_REQUEST,
+         LOGOUT_REQUEST,
++        SAVE_REQUEST,
+         LAST_SIGNAL
+ };
+ 
+@@ -1011,6 +1012,17 @@
+                               g_cclosure_marshal_VOID__BOOLEAN,
+                               G_TYPE_NONE,
+                               1, G_TYPE_BOOLEAN);
++	signals[SAVE_REQUEST] =
++		g_signal_new ("save-request",
++                              G_OBJECT_CLASS_TYPE (object_class),
++                              G_SIGNAL_RUN_LAST,
++                              G_STRUCT_OFFSET (GsmXSMPClientClass, save_request),
++                              NULL,
++                              NULL,
++                              g_cclosure_marshal_VOID__BOOLEAN,
++                              G_TYPE_NONE,
++                              1, G_TYPE_BOOLEAN);
++
+ 
+         g_object_class_install_property (object_class,
+                                          PROP_ICE_CONNECTION,
+diff -urN -x '*.orig' gnome-session-2.26.1/gnome-session/gsm-xsmp-client.h ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-xsmp-client.h
+--- gnome-session-2.26.1/gnome-session/gsm-xsmp-client.h	2009-04-14 16:31:45.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/gsm-xsmp-client.h	2009-04-16 11:42:51.323164917 +0100
+@@ -54,7 +54,8 @@
+                                           char          **client_id);
+         gboolean (*logout_request)       (GsmXSMPClient  *client,
+                                           gboolean        prompt);
+-
++        gboolean (*save_request)	 (GsmXSMPClient  *client,
++                                          gboolean        prompt);
+ 
+         void     (*saved_state)          (GsmXSMPClient  *client);
+ 
+diff -urN -x '*.orig' gnome-session-2.26.1/gnome-session/org.gnome.SessionManager.xml ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/org.gnome.SessionManager.xml
+--- gnome-session-2.26.1/gnome-session/org.gnome.SessionManager.xml	2009-04-14 16:31:45.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/gnome-session/org.gnome.SessionManager.xml	2009-04-16 11:42:51.333867423 +0100
+@@ -256,6 +256,14 @@
+       </doc:doc>
+     </method>
+ 
++    <method name="SaveSession">
++      <doc:doc>
++	<doc:description>
++	  <doc:para>Request to save session</doc:para>
++	</doc:description>
++      </doc:doc>
++    </method>
++
+     <method name="CanShutdown">
+       <arg name="is_available" direction="out" type="b">
+         <doc:doc>
+diff -urN -x '*.orig' gnome-session-2.26.1/tools/gnome-session-save.c ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/tools/gnome-session-save.c
+--- gnome-session-2.26.1/tools/gnome-session-save.c	2009-04-14 16:31:45.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p13/gnome-session-2.26.1/tools/gnome-session-save.c	2009-04-16 11:44:36.581278915 +0100
+@@ -240,11 +240,48 @@
+         }
+ }
+ 
++static gboolean
++save_session (void)
++{
++	DBusGProxy *sm_proxy;
++	GError	   *error;
++	gboolean    res = FALSE;
++
++	sm_proxy = get_sm_proxy ();
++	if (sm_proxy == NULL) {
++		return TRUE;
++	}
++
++        error = NULL;
++        res = dbus_g_proxy_call (sm_proxy,
++                                 "SaveSession",
++                                 &error,
++                                 G_TYPE_INVALID,
++                                 G_TYPE_INVALID);
++
++	if (!res) {
++        	if (error != NULL) {
++                	g_warning ("Failed to call save session: %s",
++                                   error->message);
++                        g_error_free (error);
++		} else {
++                	g_warning ("Failed to call save session");
++		}
++	}
++
++	if (sm_proxy != NULL) {
++        	g_object_unref (sm_proxy);
++	}
++	
++	return (!res);
++}
++
+ int
+ main (int argc, char *argv[])
+ {
+         GError *error;
+         int     conflicting_options;
++	int     exit_status = 0;
+ 
+         /* Initialize the i18n stuff */
+         bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
+@@ -279,6 +316,9 @@
+                         logout_dialog = TRUE;
+         }
+ 
++	if (argc == 1)
++		exit_status = save_session ();
++
+         if (logout) {
+                 do_logout (GSM_LOGOUT_MODE_NO_CONFIRMATION);
+         } else if (force_logout) {
+@@ -289,5 +329,5 @@
+                 do_shutdown_dialog ();
+         }
+ 
+-        return 0;
++        return exit_status;
+ }

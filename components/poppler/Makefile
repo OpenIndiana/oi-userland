@@ -18,19 +18,19 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
-COMPONENT_VERSION=	0.14.5
+COMPONENT_VERSION=	0.32.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c805317c4c1a7080098ae8c7c2a1c1b8e2c784858fc2e04941878eeb8164814c
+    sha256:4963e31ba5e17530a87b16588e22928bc044e8d28d02303dded981bff6725b98
 COMPONENT_ARCHIVE_URL= \
      http://poppler.freedesktop.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://poppler.freedesktop.org/
-COMPONENT_AUTOGEN_MANIFEST=	yes
 COMPONENT_FMRI=		library/libpoppler
 COMPONENT_SUMMARY=	Poppler is a PDF rendering library based on the xpdf-3.0 code base
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 
 
 include ../../make-rules/prep.mk
@@ -52,6 +52,10 @@ CONFIGURE_OPTIONS += --disable-poppler-qt
 CONFIGURE_OPTIONS += --disable-poppler-qt4
 CONFIGURE_OPTIONS += --enable-zlib
 CONFIGURE_OPTIONS += --enable-xpdf-headers
+
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CXX="$(CXX)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 build:	$(BUILD_32_and_64)
 

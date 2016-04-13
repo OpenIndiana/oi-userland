@@ -1,0 +1,14 @@
+# Setting the freed pointer to NULL after free'ing
+# prevents it from being double-free'd.
+# Solaris-specific patch.
+--- lib/glob/xmbsrtowcs.c	2010-05-30 15:36:27.000000000 -0700
++++ lib/glob/xmbsrtowcs.c	2011-11-29 09:34:23.471481937 -0800
+@@ -36,7 +36,7 @@
+ #if HANDLE_MULTIBYTE
+ 
+ #ifndef FREE
+-#  define FREE(x)	do { if (x) free (x); } while (0)
++#  define FREE(x)	do { if (x) free (x); x = 0; } while (0)
+ #endif
+ 
+ #if ! HAVE_STRCHRNUL

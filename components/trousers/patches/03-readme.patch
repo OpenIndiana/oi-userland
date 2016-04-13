@@ -1,0 +1,47 @@
+Author: Daniel Baumann <daniel@debian.org>
+Description: Adjusting file pathes and locations to debian.
+
+--- a/README
++++ b/README
+@@ -105,9 +105,9 @@
+ storage file for trousers to use.  Normally trousers would create this file
+ itself at the time ownership is taken.  If your SRK has been given an
+ authorization password by the non-Linux OS, you will need to move the file
+-dist/system.data.auth to /usr/local/var/lib/tpm/system.data.  If you've
++examples/system.data.auth to /var/lib/tpm/system.data.  If you've
+ taken ownership of your TPM without issuing a password, move
+-dist/system.data.noauth to /usr/local/var/lib/tpm/system.data.
++examples/system.data.noauth to /var/lib/tpm/system.data.
+ 
+   Passwords:  When entering passwords for keys you'd like to use in both
+ Linux and other OS's, you'll need to take note of how you entered those
+@@ -165,10 +165,10 @@
+      valid across all application lifetimes, TCSD restarts and system
+      resets. Data registered in system PS stays valid until an application
+      requests that it be removed. The System PS file by default is
+-     /usr/local/var/lib/tpm/system.data. The system PS file is initially
++     /var/lib/tpm/system.data. The system PS file is initially
+      created when ownership of the TPM is first taken.
+ 
+-  D) A config file. By default located in /usr/local/etc/tcsd.conf.
++  D) A config file. By default located in /etc/tcsd.conf.
+ 
+ 
+ RUNNING the TSS
+@@ -192,13 +192,13 @@
+   or,
+   # modprobe tpm_natl
+ 
+-  start the TCS Core Services daemon, by default /usr/local/sbin/tcsd.
+-  # /usr/local/sbin/tcsd
++  start the TCS Core Services daemon, by default /usr/sbin/tcsd.
++  # /etc/init.d/tcsd start
+ 
+   If you're attempting to make the TCS Core Services daemon communicate with a
+ softwware TPM through TCP, you must call it using the -e option. 
+ 
+-  # /usr/local/sbin/tcsd -e
++  # /usr/sbin/tcsd -e
+ 
+   The default values for hostname, port and UN socket device path are  "localhost", 
+ "6545" and "/var/run/tpm/tpmd_socket:0". It will search for the IN socket device,

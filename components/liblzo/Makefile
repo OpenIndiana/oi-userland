@@ -11,21 +11,30 @@
 #
 # Copyright 2012 EveryCity Ltd. All rights reserved.
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2016 Jim Klimov. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzo
-COMPONENT_VERSION=	2.06
-IPS_COMPONENT_VERSION=	2.0.6
+COMPONENT_VERSION=	2.09
+IPS_COMPONENT_VERSION=	2.0.9
+COMPONENT_REVISION=	1
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION =	System/Libraries
+COMPONENT_SUMMARY=	LZO is a portable lossless data compression library written in ANSI C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ff79e6f836d62d3f86ef6ce893ed65d07e638ef4d3cb952963471b4234d43e73
-COMPONENT_ARCHIVE_URL=	http://www.oberhumer.com/opensource/lzo/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:f294a7ced313063c057c504257f437c8335c41bfeed23531ee4e6a2b87bcb34c
+COMPONENT_PROJECT_URL=	http://www.oberhumer.com/opensource/$(COMPONENT_NAME)/
+COMPONENT_ARCHIVE_URL=	http://www.oberhumer.com/opensource/$(COMPONENT_NAME)/download/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE =	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-static=no
 CONFIGURE_OPTIONS+=	--enable-shared
@@ -35,3 +44,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+include $(WS_TOP)/make-rules/depend.mk

@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
-COMPONENT_VERSION=	1.2.12
+COMPONENT_VERSION=	1.2.13
 COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bcffbf3d128516cc4e1da64485866fbb5f62754f2af8327e7a527855186ba10f
+    sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hexedit
 
@@ -43,6 +43,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS += "-Dinline"
+CFLAGS += -I/usr/include/ncurses
+
+LDFLAGS.32 = -L/usr/gnu/lib -R/usr/gnu/lib
+LDFLAGS.64 = -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+LDFLAGS += $(LDFLAGS.$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
 

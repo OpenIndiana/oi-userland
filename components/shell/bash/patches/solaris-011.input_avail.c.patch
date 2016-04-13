@@ -1,0 +1,16 @@
+# bash itself needs to include <sys/filio.h> (FIONREAD) on Solaris.
+# Solaris-specific patch.
+# Not for upstream.
+--- lib/sh/input_avail.c	2009-04-19 10:01:14.000000000 -0700
++++ lib/sh/input_avail.c	2010-09-01 10:47:30.418016819 -0700
+@@ -45,6 +45,10 @@
+ #  include <sys/ioctl.h>
+ #endif
+ 
++#if defined(SOLARIS)
++#  include <sys/filio.h> /* Solaris FIONREAD */
++#endif
++
+ #include <stdio.h>
+ #include <errno.h>
+ 

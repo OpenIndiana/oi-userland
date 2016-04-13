@@ -18,9 +18,9 @@
  *  This functionality is provided by the load_mnttab_cache_solaris()
  *  function called from the Init_HR_FileSys() function.
  */
---- net-snmp-5.4.1.orig/agent/mibgroup/host/hr_filesys.c	2007-05-18 11:08:01.000000000 -0700
-+++ net-snmp-5.4.1/agent/mibgroup/host/hr_filesys.c	2013-01-17 03:36:28.181493003 -0800
-@@ -31,6 +31,10 @@
+--- net-snmp-5.4.4/agent/mibgroup/host/hr_filesys.c.~1~	2011-01-13 15:04:53.000000000 +0300
++++ net-snmp-5.4.4/agent/mibgroup/host/hr_filesys.c	2015-08-17 21:19:43.518501301 +0300
+@@ -34,6 +34,10 @@
  #include <sys/mount.h>
  #endif
  
@@ -31,7 +31,7 @@
  #include <ctype.h>
  #if HAVE_STRING_H
  #include <string.h>
-@@ -85,7 +89,11 @@
+@@ -88,7 +92,11 @@
  #ifdef solaris2
  
  struct mnttab   HRFS_entry_struct;
@@ -44,7 +44,7 @@
  #define	HRFS_name	mnt_special
  #define	HRFS_mount	mnt_mountp
  #define	HRFS_type	mnt_fstype
-@@ -167,6 +175,9 @@
+@@ -177,6 +185,9 @@
  static u_char  *when_dumped(char *filesys, int level, size_t * length);
  int             header_hrfilesys(struct variable *, oid *, size_t *, int,
                                   size_t *, WriteMethod **);
@@ -54,7 +54,7 @@
  
          /*********************
  	 *
-@@ -606,8 +617,14 @@
+@@ -621,6 +632,10 @@
      HRFS_index = 1;
      if (fp != NULL)
          fclose(fp);
@@ -63,13 +63,17 @@
 +        return;
 +#else    
      fp = fopen(ETC_MNTTAB, "r");
+     if (!fp) {
+       char tmpbuf[STRINGMAX];
+@@ -628,6 +643,7 @@
+       config_perror(tmpbuf);
+     }
  #endif
-+
 +#endif
  }
  
  const char     *HRFS_ignores[] = {
-@@ -663,6 +680,117 @@
+@@ -683,6 +699,117 @@
      0
  };
  
@@ -187,7 +191,7 @@
  int
  Get_Next_HR_FileSys(void)
  {
-@@ -699,17 +827,18 @@
+@@ -719,17 +846,18 @@
  #else
      const char    **cpp;
  
@@ -208,9 +212,9 @@
          return -1;
 -#endif                          /* solaris2 */
  
-     for (cpp = HRFS_ignores; *cpp != NULL; ++cpp)
-         if (!strcmp(HRFS_entry->HRFS_type, *cpp))
-@@ -728,6 +857,8 @@
+     DEBUGMSGTL(("host/hr_filesys", "Get_Next_HRFS %s\n", HRFS_entry->HRFS_name));
+ 
+@@ -752,6 +880,8 @@
      }
  
      return HRFS_index++;
@@ -219,7 +223,7 @@
  #endif                          /* HAVE_GETFSSTAT */
  }
  
-@@ -791,9 +922,24 @@
+@@ -819,9 +949,24 @@
          HRFS_entry = NULL;
      }
  #else

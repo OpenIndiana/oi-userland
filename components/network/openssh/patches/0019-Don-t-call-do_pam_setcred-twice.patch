@@ -1,0 +1,47 @@
+From 5d88117bbbf58eab0895f532202ff1c46016ec0f Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:38:41 -0700
+Subject: [PATCH 19/36] Don't call do_pam_setcred twice
+
+# This issue has been raised with the upstream OpenSSH community:
+#
+# 2426 OpenSSH doesn't need the second call to do_pam_setcred() on non-Linux
+#      platforms
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2426
+#
+# The OpenSSH maintainers added a call to do_pam_setcred() in
+# platform_setusercontext_post_groups() with no corresponding bugID along with
+# a befuddling comment that initgroups(3C) wipes out supplementary groups:
+#
+#https://anongit.mindrot.org/openssh.git/commit/platform.c?id=cc12418e18242ce1f61d7035da4956274ba13a96
+#
+# This only applies in the Linux world if the LinuxPAM pam_group(8) module
+# has been installed and configured which allows one to assign additional
+# secondary groups to a user using /etc/security/group.conf in addition to
+# /etc/group.  To confuse things a bit more, there is an OpenPAM PAM module
+# of the same name, pam_group(8), which has different functionality, it
+# performs access control based on group membership.
+#
+# In short, this additional call to do_pam_setcred() is Linux-specific and
+# shouldn't be called on Solaris.
+#
+---
+ platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/platform.c b/platform.c
+index ee313da..8362a08 100644
+--- a/platform.c
++++ b/platform.c
+@@ -145,7 +145,7 @@ platform_setusercontext(struct passwd *pw)
+ void
+ platform_setusercontext_post_groups(struct passwd *pw)
+ {
+-#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
++#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM) && !defined(PAM_SUN_CODEBASE)
+ 	/*
+ 	 * PAM credentials may take the form of supplementary groups.
+ 	 * These will have been wiped by the above initgroups() call.
+-- 
+2.5.4 (Apple Git-61)
+

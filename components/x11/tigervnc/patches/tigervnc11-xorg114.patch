@@ -1,0 +1,141 @@
+--- unix/xserver/hw/vnc/xorg-version.h	Mon Feb 18 08:28:49 2013
++++ unix/xserver/hw/vnc/xorg-version.h	Mon Feb 18 08:28:43 2013
+@@ -40,6 +40,10 @@
+ #define XORG 111
+ #elif XORG_VERSION_CURRENT < ((1 * 10000000) + (12 * 100000) + (99 * 1000))
+ #define XORG 112
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (13 * 100000) + (99 * 1000))
++#define XORG 113
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (14 * 100000) + (99 * 1000))
++#define XORG 114
+ #else
+ #error "X.Org newer than 1.10 is not supported"
+ #endif
+--- unix/xserver/hw/vnc/vncHooks.cc	Mon Feb 18 08:29:37 2013
++++ unix/xserver/hw/vnc/vncHooks.cc	Mon Feb 18 08:31:40 2013
+@@ -116,7 +116,7 @@
+ 
+ // screen functions
+ 
+-static Bool vncHooksCloseScreen(int i, ScreenPtr pScreen);
++static Bool vncHooksCloseScreen(ScreenPtr pScreen);
+ static Bool vncHooksCreateGC(GCPtr pGC);
+ static void vncHooksCopyWindow(WindowPtr pWin, DDXPointRec ptOldOrg,
+                                RegionPtr pOldRegion);
+@@ -133,7 +133,7 @@
+ 				  DeviceIntPtr pDev,
+ #endif
+ 				  ScreenPtr pScreen, CursorPtr cursor);
+-static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
++static void vncHooksBlockHandler(ScreenPtr pScreen_, pointer pTimeout,
+                                  pointer pReadmask);
+ #ifdef RENDER
+ static void vncHooksComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, 
+@@ -335,7 +335,7 @@
+ // CloseScreen - unwrap the screen functions and call the original CloseScreen
+ // function
+ 
+-static Bool vncHooksCloseScreen(int i, ScreenPtr pScreen_)
++static Bool vncHooksCloseScreen(ScreenPtr pScreen_)
+ {
+   SCREEN_UNWRAP(pScreen_, CloseScreen);
+ 
+@@ -366,7 +366,7 @@
+ 
+   DBGPRINT((stderr,"vncHooksCloseScreen: unwrapped screen functions\n"));
+ 
+-  return (*pScreen->CloseScreen)(i, pScreen);
++  return (*pScreen->CloseScreen)(pScreen);
+ }
+ 
+ // CreateGC - wrap the "GC funcs"
+@@ -531,14 +531,14 @@
+ // BlockHandler - ignore any changes during the block handler - it's likely
+ // these are just drawing the cursor.
+ 
+-static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
++static void vncHooksBlockHandler(ScreenPtr pScreen_, pointer pTimeout,
+                                  pointer pReadmask)
+ {
+-  SCREEN_UNWRAP(screenInfo.screens[i], BlockHandler);
++  SCREEN_UNWRAP(pScreen_, BlockHandler);
+ 
+   vncHooksScreen->desktop->ignoreHooks(true);
+ 
+-  (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
++  (*pScreen->BlockHandler) (pScreen, pTimeout, pReadmask);
+ 
+   vncHooksScreen->desktop->ignoreHooks(false);
+ 
+--- unix/xserver/hw/vnc/xf86vncModule.cc	Mon Feb 18 08:32:09 2013
++++ unix/xserver/hw/vnc/xf86vncModule.cc	Mon Feb 18 08:32:27 2013
+@@ -53,8 +53,6 @@
+ {
+     vncExtensionInitWithParams,
+     "VNC",
+-    NULL,
+-    NULL,
+     NULL
+ };
+ 
+--- unix/xserver/hw/vnc/xvnc.cc	Mon Feb 18 08:32:43 2013
++++ unix/xserver/hw/vnc/xvnc.cc	Mon Feb 18 08:33:57 2013
+@@ -266,7 +266,7 @@
+ }
+ 
+ void
+-OsVendorFatalError()
++OsVendorFatalError(const char *f, va_list args)
+ {
+ }
+ 
+@@ -1134,9 +1134,9 @@
+ #endif
+ 
+ static Bool
+-vfbCloseScreen(int index, ScreenPtr pScreen)
++vfbCloseScreen(ScreenPtr pScreen)
+ {
+-    vfbScreenInfoPtr pvfb = &vfbScreens[index];
++    vfbScreenInfoPtr pvfb = &vfbScreens[pScreen->myNum];
+     int i;
+  
+     pScreen->CloseScreen = pvfb->closeScreen;
+@@ -1148,13 +1148,13 @@
+     for (i = 0; i < MAXSCREENS; i++)
+ 	InstalledMaps[i] = NULL;
+ 
+-    return pScreen->CloseScreen(index, pScreen);
++    return pScreen->CloseScreen(pScreen);
+ }
+ 
+ static Bool
+-vfbScreenInit(int index, ScreenPtr pScreen, int argc, char **argv)
++vfbScreenInit(ScreenPtr pScreen, int argc, char **argv)
+ {
+-    vfbScreenInfoPtr pvfb = &vfbScreens[index];
++    vfbScreenInfoPtr pvfb = &vfbScreens[pScreen->myNum];
+     int dpi;
+     int ret;
+     void *pbits;
+@@ -1166,8 +1166,8 @@
+ 
+     pbits = vfbAllocateFramebufferMemory(&pvfb->fb);
+     if (!pbits) return FALSE;
+-    vncFbptr[index] = pbits;
+-    vncFbstride[index] = pvfb->fb.paddedWidth;
++    vncFbptr[pScreen->myNum] = pbits;
++    vncFbstride[pScreen->myNum] = pvfb->fb.paddedWidth;
+ 
+     miSetPixmapDepths();
+ 
+--- unix/xserver/hw/vnc/xvnc.cc	Tue Feb 19 08:50:20 2013
++++ unix/xserver/hw/vnc/xvnc.cc	Tue Feb 19 08:50:27 2013
+@@ -54,7 +54,6 @@
+ #include "servermd.h"
+ #include "fb.h"
+ #include "mi.h"
+-#include "mibstore.h"
+ #include "colormapst.h"
+ #include "gcstruct.h"
+ #include "input.h"

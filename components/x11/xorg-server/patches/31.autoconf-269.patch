@@ -1,0 +1,26 @@
+From 988b2ae2ca4b5336188bd963d85e9cbf522b6504 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Fri, 15 May 2015 10:25:46 -0700
+Subject: [PATCH] Make configure test for LD_NO_UNDEFINED_FLAG on Solaris work
+ w/autoconf 2.69
+
+After upgrading from autoconf 2.68 to 2.69, this test started failing with
+"conftest.c", line 149: undefined symbol: NULL
+so use a raw 0 pointer to avoid header dependencies in the autoconf
+generated test case.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ configure.ac |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- a/configure.ac	Fri May 15 10:54:54 2015
++++ b/configure.ac	Fri May 15 10:55:31 2015
+@@ -1553,7 +1553,7 @@
+ #		 XORG_DRIVER_LIBS="-Wl,-z,defs -Wl,-z,parent=${bindir}/Xorg"
+          ],[],
+ 		[AC_LANG_SOURCE([extern int main(int argc, char **argv);
+-			int call_main(void) { return main(0, NULL); }])])
++			int call_main(void) { return main(0, (void *)0); }])])
+ 	     rm -f conftest.parent
+ 	    ])
+ 	;;

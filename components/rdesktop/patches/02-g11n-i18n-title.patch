@@ -1,0 +1,24 @@
+--- rdesktop-1.6.0/ewmhints.c.orig	2008-09-11 13:50:48.793730000 +0900
++++ rdesktop-1.6.0/ewmhints.c	2008-09-11 15:16:52.075814000 +0900
+@@ -402,11 +402,17 @@ ewmh_move_to_desktop(Window wnd, unsigne
+ void
+ ewmh_set_wm_name(Window wnd, const char *title)
+ {
+-	int len;
++	int len, res;
++	XTextProperty property;
+ 
+-	len = strlen(title);
+-	XChangeProperty(g_display, wnd, g_net_wm_name_atom, g_utf8_string_atom,
+-			8, PropModeReplace, (unsigned char *) title, len);
++	res = XmbTextListToTextProperty(g_display, (char**)&title, 1, XCompoundTextStyle, &property);
++	if (res == Success) {
++		XSetWMName(g_display, wnd, &property);
++	} else {
++		len = strlen(title);
++		XChangeProperty(g_display, wnd, g_net_wm_name_atom, g_utf8_string_atom,
++		                8, PropModeReplace, (unsigned char *) title, len);
++	}
+ }
+ 
+ 

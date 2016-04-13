@@ -19,18 +19,19 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2015, PALO Richard.
 #
 include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		Mako
-COMPONENT_VERSION=	0.4.1
+COMPONENT_VERSION=	1.0.3
 COMPONENT_PROJECT_URL=	http://www.makotemplates.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c282a6bb1c15571e1bc1612df58e6b5bb8d3d7c57169e641434bb50d303af6e9
+	sha256:7644bc0ee35965d2e146dde31827b8982ed70a58281085fac42869a09764d38c
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/M/Mako/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/mako
 
@@ -38,12 +39,15 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_ARGS=	./setup.py test
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

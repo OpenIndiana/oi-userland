@@ -1,0 +1,45 @@
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 26ceda7..3fe220b 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -175,3 +175,40 @@ EXTRA_DIST = \
+ 	radeon_atombios.h \
+ 	radeon_dri2.h \
+ 	drmmode_display.h
++
++# Generate linker mapfiles for symbols found in other modules and use them
++# and library flag additions to make sure all symbols are resolvable
++
++radeon_MAPFILES = \
++	mapfile-theatre_detect_drv-external \
++	mapfile-theatre_drv-external \
++	mapfile-tda9885_drv-external \
++	mapfile-msp3430_drv-external \
++	mapfile-uda1380_drv-external \
++	mapfile-fi1236_drv-external \
++	mapfile-bt829_drv-external
++
++radeon_drv_la_LDFLAGS += $(radeon_MAPFILES:%=-Wl,-M,%) \
++	$(radeon_drv_la_LDFLAGS_add) \
++	-lexa -lfb -lint10 -lvbe -lvgahw -lshadow \
++	-lpixman-1 -ldrm -lglx -lm
++
++radeon_drv_la_DEPENDENCIES = $(radeon_MAPFILES)
++
++mapfiles: $(MAPFILES)
++
++mapfile-theatre_drv-external: $(theatre_drv_la_OBJECTS)
++mapfile-theatre_detect_drv-external: $(theatre_detect_drv_la_OBJECTS)
++mapfile-bt829_drv-external: $(bt829_drv_la_OBJECTS)
++mapfile-fi1236_drv-external: $(fi1236_drv_OBJECTS)
++mapfile-uda1380_drv-external: $(uda1380_drv_OBJECTS)
++mapfile-msp3430_drv-external: $(msp3430_drv_OBJECTS)
++mapfile-tda9885_drv-external: $(tda9885_drv_OBJECTS)
++
++mapfile-%-external:
++	-rm -f $@
++	printf '# Functions exported to loadable modules\n\n' > $@
++	printf '{\n  global:\n' >> $@
++	/usr/ccs/bin/nm -g $? | grep -v UNDEF | sed -n -e 's/^.*\|FUNC \|GLOB \|.*\|\(.*\)$$/    \1 = FUNCTION extern;/p' -e 's/^.*\|OBJT \|GLOB \|.*\|\(.*\)$$/    \1 = DATA extern;/p' >> $@
++	printf '};\n' >> $@
++

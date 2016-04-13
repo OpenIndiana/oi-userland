@@ -1,0 +1,108 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+    Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice (including the next
+    paragraph) shall be included in all copies or substantial portions of the
+    Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
+
+
+
+    Service manifest for the X Window System font server (xfs).
+
+    Replacement for the inetd.conf(4) format line:
+fs stream tcp6 wait nobody /usr/openwin/lib/fs.auto fs
+-->
+
+<service_bundle type='manifest' name='SUNWxwplr:fs'>
+
+<service
+	name='application/x11/xfs'
+	type='service'
+	version='1'>
+
+	<restarter>
+		<service_fmri value='svc:/network/inetd:default' />
+	</restarter>
+
+	<!--
+	    Set a timeout of -1 to signify to inetd that we don't want to
+	    timeout this service, since the forked process is the one that
+	    does the services work. This is the case for most/all legacy
+	    inetd services; for services written to take advantage of SMF
+	    capabilities, the start method should fork off a process to
+	    handle the request and return a success code.
+	-->
+	<exec_method
+		type='method'
+		name='inetd_start'
+		exec='/usr/bin/xfs -inetd'
+		timeout_seconds='-1'>
+		<method_context>
+			<method_credential user='noaccess' group='noaccess' />
+		</method_context>
+		<propval name='arg0' type='astring'
+		    value='/usr/bin/xfs' />
+	</exec_method>
+
+	<exec_method
+		type='method'
+		name='inetd_offline'
+		exec=':kill_process'
+		timeout_seconds='0'>
+	</exec_method>
+
+	<property_group name='inetd' type='framework'>
+		<propval name='name' type='astring' value='fs' />
+		<propval name='endpoint_type' type='astring' value='stream' />
+		<propval name='wait' type='boolean' value='true' />
+		<propval name='isrpc' type='boolean' value='false' />
+	</property_group>
+
+	<property_group name='general' type='framework'>
+		<!-- manage server state -->
+		<propval name='action_authorization' type='astring'
+			value='solaris.smf.manage.x11' />
+	</property_group>
+
+	<instance name='default' enabled='true'>
+		<property_group name='inetd' type='framework'>
+			<propval name='proto' type='astring'
+			    value='tcp6' />
+		</property_group>
+	</instance>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				X Window System font server
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='xfs' section='1' 
+				manpath='/usr/share/man' />
+			<manpage title='fsadmin' section='1' 
+				manpath='/usr/share/man' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

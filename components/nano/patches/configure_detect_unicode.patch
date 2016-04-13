@@ -1,52 +1,36 @@
---- nano-2.2.6/configure.orig	2014-02-09 16:50:34.868716078 +0100
-+++ nano-2.2.6/configure	2014-02-09 16:46:24.262821000 +0100
-@@ -7878,8 +7878,8 @@
+--- nano-2.4.2/configure.ac.~1~	2015-08-19 22:33:39.744730507 +0300
++++ nano-2.4.2/configure.ac	2015-08-19 22:40:44.166463717 +0300
+@@ -484,32 +484,10 @@
+ fi
  
+ if eval "test x$CURSES_LIB_NAME = x"; then
+-    AC_CHECK_HEADERS(ncurses.h)
+-
+-    if test "x$enable_utf8" != xno; then
+-	OLDLIBS="$LIBS"
+-	AC_CHECK_TOOL(NCURSESW_CONFIG, ncursesw5-config, no)
+-	if test "x$NCURSESW_CONFIG" != xno; then
+-	    CURSES_LIB=`$NCURSESW_CONFIG --libs`
+-	    LIBS="$CURSES_LIB $LIBS"
+-	    CPPFLAGS="`$NCURSESW_CONFIG --cflags` $CPPFLAGS"
+-	    AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+-	else
+-	    AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB="-lncursesw" CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+-	fi
+-	LIBS="$OLDLIBS"
+-    fi
+-
+-    if eval "test x$CURSES_LIB_NAME = x"; then
+-	AC_CHECK_LIB(ncurses, initscr, [CURSES_LIB="-lncurses" CURSES_LIB_NAME=ncurses])
+-    fi
+-fi
+-
+-if eval "test x$CURSES_LIB_NAME = x"; then
+     AC_CHECK_HEADERS(curses.h)
  
-     if test x$enable_utf8 != xno; then
--	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for get_wch in -lncursesw" >&5
--$as_echo_n "checking for get_wch in -lncursesw... " >&6; }
-+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for getwch in -lncursesw" >&5
-+$as_echo_n "checking for getwch in -lncursesw... " >&6; }
- if test "${ac_cv_lib_ncursesw_get_wch+set}" = set; then :
-   $as_echo_n "(cached) " >&6
- else
-@@ -7894,11 +7894,11 @@
- #ifdef __cplusplus
- extern "C"
- #endif
--char get_wch ();
-+char getwch ();
- int
- main ()
- {
--return get_wch ();
-+return getwch ();
-   ;
-   return 0;
- }
-@@ -7979,8 +7979,8 @@
+     if test "x$enable_utf8" != xno; then
+-	AC_CHECK_LIB(curses, get_wch, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses CURSES_LIB_WIDE=yes])
++	AC_CHECK_LIB(curses, getwch, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses CURSES_LIB_WIDE=yes])
+     fi
  
- 
-     if test x$enable_utf8 != xno; then
--	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for get_wch in -lcurses" >&5
--$as_echo_n "checking for get_wch in -lcurses... " >&6; }
-+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for getwch in -lcurses" >&5
-+$as_echo_n "checking for getwch in -lcurses... " >&6; }
- if test "${ac_cv_lib_curses_get_wch+set}" = set; then :
-   $as_echo_n "(cached) " >&6
- else
-@@ -7995,11 +7995,11 @@
- #ifdef __cplusplus
- extern "C"
- #endif
--char get_wch ();
-+char getwch ();
- int
- main ()
- {
--return get_wch ();
-+return getwch ();
-   ;
-   return 0;
- }
+     if eval "test x$CURSES_LIB_NAME = x"; then

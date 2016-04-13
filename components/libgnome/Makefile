@@ -32,6 +32,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+				libtoolize --copy --force &&\
+				aclocal -I m4 &&\
+				automake -c -f -a &&\
+				autoconf )
 gcc_OPT = -O2
 
 PATH=/usr/gnu/bin:/usr/bin

@@ -1,0 +1,30 @@
+--- gnome-session-2.25.2/gnome-session/main.c.ori	2008-12-26 04:08:19.837029682 +0000
++++ gnome-session-2.25.2/gnome-session/main.c	2008-12-26 04:09:10.959777120 +0000
+@@ -30,6 +30,7 @@
+ 
+ #include <glib/gi18n.h>
+ #include <glib.h>
++#include <gdk/gdkx.h>
+ #include <gtk/gtk.h>
+ 
+ #include <dbus/dbus.h>
+@@ -494,6 +495,8 @@
+         struct sigaction  sa;
+         GError           *error;
+         char             *display_str;
++	Display *xdisp;
++	GdkDisplay *gdisp;
+         GsmManager       *manager;
+         GsmStore         *client_store;
+         GsmXsmpServer    *xsmp_server;
+@@ -557,6 +560,10 @@
+         gsm_util_setenv ("DISPLAY", display_str);
+         g_free (display_str);
+ 
++	gdisp = gdk_display_get_default ();
++	xdisp = gdk_x11_display_get_xdisplay (gdisp);
++	XInternAtom (xdisp, "GNOME_SM_DESKTOP", FALSE);
++
+         /* Some third-party programs rely on GNOME_DESKTOP_SESSION_ID to
+          * detect if GNOME is running. We keep this for compatibility reasons.
+          */

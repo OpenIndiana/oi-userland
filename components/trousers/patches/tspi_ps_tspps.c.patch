@@ -1,5 +1,13 @@
---- src/tspi/ps/tspps.c.orig	2011-03-24 13:06:14.607907754 -0700
-+++ src/tspi/ps/tspps.c	2011-03-24 13:07:30.668528209 -0700
+--- a/src/tspi/ps/tspps.c.orig	2011-03-24 13:06:14.607907754 -0700
++++ b/src/tspi/ps/tspps.c	2011-03-24 13:07:30.668528209 -0700
+@@ -42,6 +42,7 @@
+ #include "spi_utils.h"
+ #include "tspps.h"
+ #include "tsplog.h"
++#include <libgen.h>
+ 
+ static int user_ps_fd = -1;
+ static MUTEX_DECLARE_INIT(user_ps_lock);
 @@ -70,9 +70,12 @@
  	TSS_RESULT result;
  	char *file_name = NULL, *home_dir = NULL;

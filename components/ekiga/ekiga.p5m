@@ -22,10 +22,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license ekiga.license license="GPL v2"
 
-legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - / filesystem" name="$(COMPONENT_SUMMARY) - / filesystem" pkg=SUNWgnome-meeting-root
-legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - l10n files" name="$(COMPONENT_SUMMARY) - l10n files" pkg=SUNWgnome-meeting-l10n
-legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY)" name="$(COMPONENT_SUMMARY)" pkg=SUNWgnome-meeting
-
 <transform file path=usr/share/doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
@@ -36,11 +32,9 @@ legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY)" name="$(COM
 
 file usr/share/icons/hicolor/128x128/apps/ekiga.png path=usr/share/pixmaps/ekiga.png 
 
-depend type=require fmri=library/g++/sigcpp@2.2.10
-
 # Generated section:
 file path=etc/gconf/schemas/ekiga.schemas 
-file path=usr/bin/ekiga mode=0555 pkg.depend.bypass-generate=(.)*libsigc-2.0.so.0(.)*
+file path=usr/bin/ekiga mode=0555
 file path=usr/bin/ekiga-config-tool mode=0555
 file path=usr/bin/ekiga-helper mode=0555
 file path=usr/share/applications/ekiga.desktop 

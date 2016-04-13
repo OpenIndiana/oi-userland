@@ -1,0 +1,1188 @@
+#!/bin/sh
+#
+# Author : Matt Keenan  <matt.keenan@sun.com>
+# Copyright (c) 2009, by Sun Microsystems, Inc.
+#
+# compiz-by-default, run a series of tests to determine if
+# compiz window manager can be enabled by default on the current
+# X server.
+#
+# If successful, set gconf key :
+#    /desktop/gnome/session/required_components/windowmanager
+# to "compiz", so subsequent logins will launch compiz as preferred 
+# window-manager, and launch compiz window manager.
+#
+# If unsuccessful, set gconf key :
+#    /desktop/gnome/session/required_components/windowmanager
+# to "metacity", and launch metacity.
+#
+
+# Set up Globals
+METACITY="/usr/bin/metacity --replace --sm-client-id=default0"
+GREP="/usr/xpg4/bin/grep"
+XDPYINFO="/usr/X11/bin/xdpyinfo"
+XPROP="/usr/X11/bin/xprop"
+GTK_WINDOW_DECORATOR="/usr/bin/gtk-window-decorator"
+CONSTYPE="/usr/X11/bin/constype"
+PRTCONF="/usr/sbin/prtconf"
+MODINFO="/usr/sbin/modinfo"
+NVIDIA_XCONFIG="/usr/bin/nvidia-xconfig"
+NVIDIA_SETTINGS="/usr/bin/nvidia-settings"
+NAWK="/usr/bin/nawk"
+CUT="/usr/bin/cut"
+SED="/usr/bin/sed"
+ISALIST="/usr/bin/isalist"
+XSET="/usr/X11/bin/xset"
+PKGINFO="/usr/bin/pkginfo"
+PKG="/usr/bin/pkg"
+GLXINFO="/usr/X11/bin/glxinfo"
+COMPIZ_BIN="/usr/bin/compiz-bin"
+COMPIZ_SCRIPT="/usr/bin/compiz"
+COMPOSITE_INCLUDE="/usr/include/X11/extensions/composite.h"
+GCONFTOOL="/usr/bin/gconftool-2"
+LDD="/usr/bin/ldd"
+ELFDUMP="/usr/bin/elfdump"
+XGLXTEST=/usr/lib/compiz/xglxtest
+
+GCONF_WM_KEY="/desktop/gnome/session/required_components/windowmanager"
+GCONF_A11Y_KEY="/desktop/gnome/interface/accessibility"
+OPENSOLARIS_MACHINE=""
+CARD_TYPE=""
+PCI_TYPE=""
+NVIDIA_MEMORY="65536" # 64MB
+MINIMUM_RAM="1024"
+
+FAILURE_REASON=""
+FAILURE_LEVEL=0
+
+if [ "x$COMPIZ_VERBOSE" != "x" ]; then
+    VERBOSE="yes"
+else
+    VERBOSE="no"
+fi
+
+# Echo status information to stdout
+verbose()
+{
+    if [ "x$VERBOSE" = "xyes" ]; then
+        echo "$*"
+    fi
+}
+
+# Set windowmanager gconf key 
+set_gconf()
+{
+    verbose "Setting $GCONF_WM_KEY to $1"
+
+    # Only update gconf key if not doing a dry run.
+    if [ "x$COMPIZ_DRYRUN" = "x" ]; then
+        $GCONFTOOL --set $GCONF_WM_KEY --type=string $1
+    fi
+}
+
+
+# Cannot run compiz by default, abort with metacity
+abort_with_metacity()
+{
+    verbose "Cannot run compiz starting metacity instead\n"
+    if [ "x$FAILURE_REASON" = "x" ]; then
+        echo "Aborting with metacity"
+    else
+        echo "Aborting with metacity"
+        echo "  Reason : $FAILURE_REASON\n"
+    fi
+
+    # Set gconf key to metacity
+    set_gconf "metacity"
+
+    # If Just doing a dry run, exit now don't launch metacity
+    if [ "x$COMPIZ_DRYRUN" != "x" ]; then
+        exit
+    fi
+
+    exec $METACITY 
+}
+
+# Check architecture
+check_architecture_type()
+{
+    arch_type=`/usr/bin/uname -i`
+    if [ "x$arch_type" = "xi86pc" ]; then
+        verbose "Architecture $arch_type compatible.\n"
+        return 0
+    else
+        verbose "Architecture $arch_type not compatible.\n"
+        FAILURE_REASON="Architecture $arch_type not compatible."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+}
+
+# Ensure certain utilities are installed
+check_utilities_installed()
+{
+
+    # Compiz script
+    if [ -x $COMPIZ_SCRIPT ]; then
+        verbose "$COMPIZ_SCRIPT installed.\n"
+    else
+        verbose "$COMPIZ_SCRIPT not installed.\n"
+        FAILURE_REASON="$COMPIZ_SCRIPT not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # Compiz Binary
+    if [ -x $COMPIZ_BIN ]; then
+        verbose "$COMPIZ_BIN installed.\n"
+    else
+        verbose "$COMPIZ_BIN not installed.\n"
+        FAILURE_REASON="$COMPIZ_BIN not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # Gtk Window Decorator used by compiz
+    if [ -x $GTK_WINDOW_DECORATOR ]; then
+        verbose "$GTK_WINDOW_DECORATOR installed.\n"
+    else
+        verbose "$GTK_WINDOW_DECORATOR not installed.\n"
+        FAILURE_REASON="$GTK_WINDOW_DECORATOR not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # xdpyinfo - X Server Display Utility
+    if [ -x $XDPYINFO ]; then
+        verbose "$XDPYINFO installed.\n"
+    else
+        verbose "$XDPYINFO not installed.\n"
+        FAILURE_REASON="$XDPYINFO not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # xprop - X Window Property Utility
+    if [ -x $XPROP ]; then
+        verbose "$XPROP installed.\n"
+    else
+        verbose "$XPROP not installed.\n"
+        FAILURE_REASON="$XPROP not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # prtconf - Print System Configuration
+    if [ -x $PRTCONF ]; then
+        verbose "$PRTCONF installed.\n"
+    else
+        verbose "$PRTCONF not installed.\n"
+        FAILURE_REASON="$PRTCONF not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # modinfo - Kernel Module Information
+    if [ -x $MODINFO ]; then
+        verbose "$MODINFO installed.\n"
+    else
+        verbose "$MODINFO not installed.\n"
+        FAILURE_REASON="$MODINFO not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # isalist - Native instruction set display utility"
+    if [ -x $ISALIST ]; then
+        verbose "$ISALIST installed.\n"
+    else
+        verbose "$ISALIST not installed.\n"
+        FAILURE_REASON="$ISALIST not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # xset - X user preference utility
+    if [ -x $XSET ]; then
+        verbose "$XSET installed.\n"
+    else
+        verbose "$XSET not installed.\n"
+        FAILURE_REASON="$XSET not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # glxinfo - GLX Extension information
+    if [ -x $GLXINFO ]; then
+        verbose "$GLXINFO installed.\n"
+    else
+        verbose "$GLXINFO not installed.\n"
+        FAILURE_REASON="$GLXINFO not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # gconftool-2 - GConf configuration utility
+    if [ -x $GCONFTOOL ]; then
+        verbose "$GCONFTOOL installed.\n"
+    else
+        verbose "$GCONFTOOL not installed.\n"
+        FAILURE_REASON="$GCONFTOOL not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # Check if OpenSolaris Machine
+    if $GREP -q "OpenSolaris" /etc/release; then
+        verbose "OpenSolaris installation detected.\n"
+        OPENSOLARIS_MACHINE="yes"
+    else
+        verbose "OpenSolaris not installed.\n"
+        OPENSOLARIS_MACHINE="no"
+    fi
+
+    if [ "x$OPENSOLARIS_MACHINE" = "xyes" ]; then
+        # pkg - IPS packageing system
+        if [ -x $PKG ]; then
+            verbose "$PKG installed.\n"
+        else
+            verbose "$PKG not installed.\n"
+            FAILURE_REASON="$PKG not installed."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    else
+        # pkginfo - display software package information
+        if [ -x $PKGINFO ]; then
+            verbose "$PKGINFO installed.\n"
+        else
+            verbose "$PKGINFO not installed.\n"
+            FAILURE_REASON="$PKGINFO not installed."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    fi
+
+    # All good return success
+    return 0
+}
+
+# Ensure session type is correct
+check_session_type ()
+{
+
+    verbose "Checking for Trusted session: "
+    if $XDPYINFO -queryExtensions | $GREP -q SUN_TSOL ; then
+        verbose "	Present, cannot run Compiz. \n"
+        FAILURE_REASON="Running Trusted session."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "	Not present.\n"
+    fi
+
+    verbose "Checking for Sunray session: "
+    if $XPROP -root | $GREP -q _SUN_SUNRAY_HOME ; then
+        verbose "	Present, cannot run compiz. \n"
+        FAILURE_REASON="Runnong Sunray session."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "	Not present. \n"
+    fi
+
+    verbose "Checking for A11y enabled session: "
+    a11y_value=`$GCONFTOOL --get $GCONF_A11Y_KEY`
+    if [ "x$a11y_value" = "xtrue" ]; then
+        verbose "	Running a11y session, cannot run compiz by default. \n"
+        FAILURE_REASON="A11y session."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "	Not present. \n"
+    fi
+
+    # Ubuntu check for failsafe session aswell, we don't as 
+    # when testing for problemes useful to be able to run a compiz
+    # enabled session from a failsafe terminal.
+
+    return 0
+}
+
+# Ensure graphics card is supported
+check_graphics_card_type ()
+{
+    prtconf_v_output=`$PRTCONF -v`
+    prtconf_pv_output=`$PRTCONF -pv`
+    CARD_TYPE=""
+    PCI_TYPE=""
+    
+    # constype - Graphics card utility
+    if [ -x $CONSTYPE ]; then
+        constype_output=`$CONSTYPE`
+        verbose "Constype : $constype_output\n"
+    fi
+
+    # Nvidia
+    verbose "Checking for Nvidia Graphics Card Type : "
+    if echo $prtconf_v_output | $GREP -q "nvidia"; then
+        CARD_TYPE="nvidia"
+        PCI_TYPE="nvidia"
+        verbose "   $CARD_TYPE : $PCI_TYPE, present.\n"
+
+        # nvidia-xconfig - X Config MAnipulation for NVIDIA Driver
+        if [ -x $NVIDIA_XCONFIG ]; then
+            verbose "$NVIDIA_XCONFIG installed.\n"
+        else
+            verbose "$NVIDIA_XCONFIG not installed.\n"
+            FAILURE_REASON="$NVIDIA_XCONFIG not installed."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+
+        # nvidia-settings - Nvidia configuration tool
+        if [ -x $NVIDIA_SETTINGS ]; then
+            verbose "$NVIDIA_SETTINGS installed.\n"
+        else
+            verbose "$NVIDIA_SETTINGS not installed.\n"
+            FAILURE_REASON="$NVIDIA_SETTINGS not installed."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    else
+        verbose "   Not Present.\n"
+    fi
+
+    # Intel
+    if [ "x$CARD_TYPE" = "x" ]; then
+        verbose "Checking for Intel Graphics Card Type : "
+        # List taken from SUNWdrmr/postinstall
+        # Confirmed list (29/01/09)
+        #   pci8086,2562 - compiz fails, driver problem
+        #   pci8086,27a2 - compiz fails, driver problem
+        #   pci8086,2a42 - compiz runs
+        #   pci80ee,beef - vgatext, virtualbox driver
+        intel=`echo $prtconf_pv_output | $NAWK '{               \
+                if (index($0, "pci8086,2562") != 0) {           \
+                    print "no pci8086,2562";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2572") != 0) {    \
+                    print "yes pci8086,2572";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2582") != 0) {    \
+                    print "yes pci8086,2582";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2592") != 0) {    \
+                    print "yes pci8086,2592";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2772") != 0) {    \
+                    print "yes pci8086,2772";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,27a2") != 0) {    \
+                    print "no pci8086,27a2";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2972") != 0) {    \
+                    print "yes pci8086,2972";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2982") != 0) {    \
+                    print "yes pci8086,2982";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2992") != 0) {    \
+                    print "yes pci8086,2992";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,29a2") != 0) {    \
+                    print "yes pci8086,29a2";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,29b2") != 0) {    \
+                    print "yes pci8086,29b2";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,29c2") != 0) {    \
+                    print "yes pci8086,29c2";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,29d2") != 0) {    \
+                    print "yes pci8086,29d2";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2a02") != 0) {    \
+                    print "yes pci8086,2a02";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2a12") != 0) {    \
+                    print "yes pci8086,2a12";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2a42") != 0) {    \
+                    print "yes pci8086,2a42";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2e02.8086.2e02") != 0) {    \
+                    print "yes pci8086,2e02.8086.2e02";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2e22") != 0) {    \
+                    print "yes pci8086,2e12";                   \
+                    exit;                                       \
+                } else if (index($0, "pci8086,2e22") != 0) {    \
+                    print "yes pci8086,2e22";                   \
+                    exit;                                       \
+                } else if (index($0, "pci80ee,beef") != 0) {    \
+                    print "no pci80ee,beef";                    \
+                    exit;                                       \
+                }} END { print "no";}'`
+
+        if echo $intel | $GREP -q "^yes"; then
+            PCI_TYPE=`echo $intel | $NAWK '{print $2;}'`
+            CARD_TYPE="i915"
+            verbose "   $CARD_TYPE : $PCI_TYPE, present.\n"
+        else
+            PCI_TYPE=`echo $intel | $NAWK '{print $2;}'`
+            if [ "x$PCI_TYPE" != "x" ]; then
+                verbose "   intel/i915 : $PCI_TYPE, not supported.\n"
+            else
+                verbose "   Not Present.\n"
+            fi
+        fi
+    fi
+
+    # Radeon - At the moment no radeon card types are supported
+    if [ "x$CARD_TYPE" = "x" ]; then
+        verbose "Checking for Radeon Graphics Card Type : "
+
+        radeon=`echo $prtconf_v_output | $NAWK '{               \
+                    if (index($0, "pci1002,4136") !=0) {        \
+                        print "yes pci1002,4136";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4137") !=0) { \
+                        print "yes pci1002,4137";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4144") !=0) { \
+                        print "yes pci1002,4144";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4145") !=0) { \
+                        print "yes pci1002,4145";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4146") !=0) { \
+                        print "yes pci1002,4146";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4147") !=0) { \
+                        print "yes pci1002,4147";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4150") !=0) { \
+                        print "yes pci1002,4150";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4151") !=0) { \
+                        print "yes pci1002,4151";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4152") !=0) { \
+                        print "yes pci1002,4152";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4153") !=0) { \
+                        print "yes pci1002,4153";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4154") !=0) { \
+                        print "yes pci1002,4154";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4156") !=0) { \
+                        print "yes pci1002,4156";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4237") !=0) { \
+                        print "yes pci1002,4237";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4242") !=0) { \
+                        print "yes pci1002,4242";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4243") !=0) { \
+                        print "yes pci1002,4243";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4336") !=0) { \
+                        print "yes pci1002,4336";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4337") !=0) { \
+                        print "yes pci1002,4337";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4437") !=0) { \
+                        print "yes pci1002,4437";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4966") !=0) { \
+                        print "yes pci1002,4966";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4967") !=0) { \
+                        print "yes pci1002,4967";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4a49") !=0) { \
+                        print "yes pci1002,4a49";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4a4b") !=0) { \
+                        print "yes pci1002,4a4b";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c57") !=0) { \
+                        print "yes pci1002,4c57";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c58") !=0) { \
+                        print "yes pci1002,4c58";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c59") !=0) { \
+                        print "yes pci1002,4c59";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c5a") !=0) { \
+                        print "yes pci1002,4c5a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c64") !=0) { \
+                        print "yes pci1002,4c64";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c65") !=0) { \
+                        print "yes pci1002,4c65";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c66") !=0) { \
+                        print "yes pci1002,4c66";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4c67") !=0) { \
+                        print "yes pci1002,4c67";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e44") !=0) { \
+                        print "yes pci1002,4e44";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e45") !=0) { \
+                        print "yes pci1002,4e45";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e46") !=0) { \
+                        print "yes pci1002,4e46";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e47") !=0) { \
+                        print "yes pci1002,4e47";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e48") !=0) { \
+                        print "yes pci1002,4e48";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e49") !=0) { \
+                        print "yes pci1002,4e49";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e4a") !=0) { \
+                        print "yes pci1002,4e4a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e4b") !=0) { \
+                        print "yes pci1002,4e4b";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e50") !=0) { \
+                        print "yes pci1002,4e50";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e51") !=0) { \
+                        print "yes pci1002,4e51";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e54") !=0) { \
+                        print "yes pci1002,4e54";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,4e56") !=0) { \
+                        print "yes pci1002,4e56";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5144") !=0) { \
+                        print "yes pci1002,5144";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5145") !=0) { \
+                        print "yes pci1002,5145";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5146") !=0) { \
+                        print "yes pci1002,5146";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5147") !=0) { \
+                        print "yes pci1002,5147";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5148") !=0) { \
+                        print "yes pci1002,5148";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5149") !=0) { \
+                        print "yes pci1002,5149";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514a") !=0) { \
+                        print "yes pci1002,514a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514b") !=0) { \
+                        print "yes pci1002,514b";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514c") !=0) { \
+                        print "yes pci1002,514c";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514d") !=0) { \
+                        print "yes pci1002,514d";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514e") !=0) { \
+                        print "yes pci1002,514e";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,514f") !=0) { \
+                        print "yes pci1002,514f";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5157") !=0) { \
+                        print "yes pci1002,5157";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5158") !=0) { \
+                        print "yes pci1002,5158";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5159") !=0) { \
+                        print "yes pci1002,5159";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,515a") !=0) { \
+                        print "yes pci1002,515a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,515e") !=0) { \
+                        print "yes pci1002,515e";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5168") !=0) { \
+                        print "yes pci1002,5168";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5169") !=0) { \
+                        print "yes pci1002,5169";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,516a") !=0) { \
+                        print "yes pci1002,516a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,516b") !=0) { \
+                        print "yes pci1002,516b";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,516c") !=0) { \
+                        print "yes pci1002,516c";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5460") !=0) { \
+                        print "yes pci1002,5460";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,554f") !=0) { \
+                        print "yes pci1002,554f";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5653") !=0) { \
+                        print "yes pci1002,5653";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5834") !=0) { \
+                        print "yes pci1002,5834";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5835") !=0) { \
+                        print "yes pci1002,5835";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5836") !=0) { \
+                        print "yes pci1002,5836";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5837") !=0) { \
+                        print "yes pci1002,5837";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5960") !=0) { \
+                        print "yes pci1002,5960";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5961") !=0) { \
+                        print "yes pci1002,5961";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5962") !=0) { \
+                        print "yes pci1002,5962";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5963") !=0) { \
+                        print "yes pci1002,5963";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5964") !=0) { \
+                        print "yes pci1002,5964";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5969") !=0) { \
+                        print "yes pci1002,5969";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,596a") !=0) { \
+                        print "yes pci1002,596a";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,596b") !=0) { \
+                        print "yes pci1002,596b";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5b60") !=0) { \
+                        print "yes pci1002,5b60";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5c61") !=0) { \
+                        print "yes pci1002,5c61";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5c62") !=0) { \
+                        print "yes pci1002,5c62";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5c63") !=0) { \
+                        print "yes pci1002,5c63";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5c64") !=0) { \
+                        print "yes pci1002,5c64";               \
+                        exit;                                   \
+                    } else if (index($0, "pci1002,5d4d") !=0) { \
+                        print "yes pci1002,5d4d";               \
+                        exit;                                   \
+                    }} END {print "no";}'`
+
+        if echo $radeon | $GREP -q "^yes"; then
+            PCI_TYPE=`echo $radeon | $NAWK '{print $2;}'`
+            CARD_TYPE="radeon"
+            verbose "   $CARD_TYPE : $PCI_TYPE, present.\n"
+            verbose "   ATI Radeon not supported by default."
+            FAILURE_REASON="ATI Radeon not supported by default."
+            FAILURE_LEVEL=1
+            return 1
+        else
+            verbose "   Not Present.\n"
+        fi
+    fi
+
+    if [ "x$CARD_TYPE" = "x" ]; then
+        verbose "Unsupported Graphics Card Type."
+        if [ "x$PCI_TYPE" != "x" ]; then
+            FAILURE_REASON="Unsupported Graphics Card Type : $PCI_TYPE."
+        else
+            FAILURE_REASON="Card type not determinable therefore unsupported."
+        fi
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # Ensure card type not black listed
+    # Added pci10de,18a : Nvidia Quatro NVS 280 NV18GL
+    verbose "Check blacklisted PCI Card types : "
+    blacklisted=`echo $prtconf_pv_output | $NAWK '{           \
+                    if (index($0, "1002,5954") != 0) {        \
+                        print "yes 1002,5924";                \
+                        exit;                                 \
+                    } else if (index($0, "1002,5854") != 0) { \
+                        print "yes 1002,5854";                \
+                        exit;                                 \
+                    } else if (index($0, "1002,5955") != 0) { \
+                        print "yes 1002,5955";                \
+                        exit;                                 \
+                    } else if (index($0, "1002,4153") != 0) { \
+                        print "yes 1002,4153";                \
+                        exit;                                 \
+                    } else if (index($0, "8096,2982") != 0) { \
+                        print "yes 8096,2982";                \
+                        exit;                                 \
+                    } else if (index($0, "8096,2992") != 0) { \
+                        print "yes 8096,2992";                \
+                        exit;                                 \
+                    } else if (index($0, "8096,29a2") != 0) { \
+                        print "yes 8096,29a2";                \
+                        exit;                                 \
+                    } else if (index($0, "8096,2a02") != 0) { \
+                        print "yes 8096,2a02";                \
+                        exit;                                 \
+                    } else if (index($0, "8096,2a12") != 0) { \
+                        print "yes 8096,2a12";                \
+                        exit;                                 \
+                    } else if (index($0, "pci10de,18a") != 0) { \
+                        print "yes pci10de,18a";                \
+                        exit;                                 \
+                    } } \
+                    END { print "no";}'`
+    if echo $blacklisted | $GREP -q "^yes"; then
+        blacklisted_pci=`echo $blacklisted | $NAWK '{print $2;}'`
+        verbose "   $blacklisted_pci is blacklisted.\n"
+        FAILURE_REASON="PCI : $blacklisted_pci, is not supported (Blacklisted)."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "   Not blacklisted.\n"
+    fi
+    
+    return 0
+}
+
+# Check Graphics Card Driver
+check_graphics_driver()
+{
+    if [ "x$CARD_TYPE" = "x" ]; then
+        verbose "Card type not supported or determinable.\n"
+        FAILURE_REASON="Card type not determinable therefore unsupported."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # no test see d.o.o 13859
+    return 0
+}
+
+# Check for required X Server Extensions
+check_x_server_extensions()
+{
+    xdpy_output=`$XDPYINFO -queryExtensions`
+    verbose "Checking for Composite Extension : "
+    if echo $xdpy_output | $GREP -q "Composite"; then
+        verbose "	Available.\n"
+    else
+        verbose "	Missing.\n"
+        FAILURE_REASON="Composite X Extension not available."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    verbose "Checking for Composite Extension Version >= 0.2 : "
+    composite_ext_str=`$XDPYINFO -ext Composite | grep "Composite version"`
+    if echo $composite_ext_str | $GREP -q "Composite"; then
+        verbose "   Using $XDPYINFO ..."
+
+        version_str=`echo $composite_ext_str | $CUT -d' ' -f3`
+        major=`echo $version_str | $CUT -d. -f1`
+        minor=`echo $version_str | $CUT -d. -f2`
+
+        if [ $major -gt 0 ]; then
+            verbose "   Version = $major.$minor.\n"
+        else
+            if [ $minor -ge 2 ]; then
+                verbose "   Version = $major.$minor.\n"
+            else
+                verbose "   Version = $major.$minor, Too low\n"
+                FAILURE_REASON="Composite X Extension version too old : $major.$minor."
+                FAILURE_LEVEL=1
+                return 1
+            fi
+        fi
+    elif [ -f $COMPOSITE_INCLUDE ]; then
+        verbose "   Using $COMPOSITE_INCLUDE ..."
+        major=`$GREP "COMPOSITE_MAJOR" $COMPOSITE_INCLUDE | $NAWK '{print $3;}'`
+        minor=`$GREP "COMPOSITE_MINOR" $COMPOSITE_INCLUDE | $NAWK '{print $3;}'`
+
+        if [ $major -gt 0 ]; then
+            verbose "   Version = $major.$minor.\n"
+        else
+            if [ $minor -ge 2 ]; then
+                verbose "   Version = $major.$minor.\n"
+            else
+                verbose "   Version = $major.$minor, Too low\n"
+                FAILURE_REASON="Composite X Extension version too old : $major.$minor."
+                FAILURE_LEVEL=1
+                return 1
+            fi
+        fi
+    else
+        verbose "   $COMPOSITE_INCLUDE does not exist. Cannot verify Composite Extension version.\n"
+    fi
+
+    verbose "Checking for DAMAGE Extension : "
+    if echo $xdpy_output | $GREP -q "DAMAGE"; then
+        verbose "	Available.\n"
+    else
+        verbose "	Missing.\n"
+        FAILURE_REASON="DAMAGE X Extension not available."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    verbose "Checking for SYNC Extension : "
+    if echo $xdpy_output | $GREP -q "SYNC"; then
+        verbose "	Available.\n"
+    else
+        verbose "	Missing.\n"
+        FAILURE_REASON="SYNC X Extension not available."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    verbose "Checking for XFIXES Extension : "
+    if echo $xdpy_output | $GREP -q "XFIXES"; then
+        verbose "	Available.\n"
+    else
+        verbose "	Missing.\n"
+        FAILURE_REASON="XFIXES X Extension not available."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    return 0
+}
+
+# OpenGL / GLX Tests
+check_opengl_glx()
+{
+    verbose "Check if OpenGL/GLX installed :"
+    if $XDPYINFO | $GREP -q "GLX"; then
+        verbose "   OpenGL/GLX Installed.\n"
+    else
+        verbose "   OpenGL/GLX not installed.\n"
+        FAILURE_REASON="OpenGL/GLX not installed."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    verbose "Check for Xgl : "
+    if $XVINFO | $GREP -q "Xgl"; then
+        verbose "   present.\n"
+    else
+        verbose "   Xgl not present.\n"
+    fi
+    
+    # Get glxinfo -i (use indirect rendering connection only) information)
+    glxinfo_output=`$GLXINFO -i`
+
+    verbose "Check OpenGL renderer : "
+    if echo $glxinfo_output | $GREP -q "OpenGL renderer string: Software Rasterizer"; then
+        verbose "   Software Rasterizer.\n"
+        FAILURE_REASON="Mesa OpenGL Software Rasterizer: too slow for compiz."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "   Not using the software rasterizer.\n"
+    fi
+
+    verbose "Check for OpenGL Extensions : "
+    if echo $glxinfo_output | $GREP -q "GLX_EXT_texture_from_pixmap"; then
+        verbose "   GLX_EXT_texture_from_pixmap Exists."
+    else
+        verbose "   GLX_EXT_texture_from_pixmap Missing.\n"
+        FAILURE_REASON="OpenGL Extension : GLX_EXT_texture_from_pixmap missing."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    if echo $glxinfo_output | $GREP -q "GLX_SGIX_fbconfig"; then
+        verbose "   GLX_SGIX_fbconfig Exists."
+    else
+        verbose "   GLX_SGIX_fbconfig Missing.\n"
+        FAILURE_REASON="OpenGL Extension : GLX_SGIX_fbconfig missing."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    # Process symbols for libGL ensure glXBindTexImageEXT and
+    # glXReleaseTexImageEXT functions both exist
+    libglpath=`$LDD $COMPIZ_BIN | $GREP libGL.so | $CUT -d' ' -f3`
+    if $ELFDUMP -s $libglpath | $GREP -q "glXBindTexImageEXT"; then
+        verbose "   glxBindTexImageEXT function exists."
+    else
+        verbose "   glxBindTexImageEXT function missing.\n"
+        FAILURE_REASON="glxBindTexImageEXT function missing."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    if $ELFDUMP -s $libglpath | $GREP -q "glXReleaseTexImageEXT"; then
+        verbose "   glxReleaseTexImageEXT function exists."
+    else
+        verbose "   glxReleaseTexImageEXT function missing.\n"
+        FAILURE_REASON="glxReleaseTexImageEXT function missing."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    if [ "x$COMPIZ_VERBOSE" != "x" ]; then
+        $XGLXTEST --verbose --indirect-rendering
+    else
+        $XGLXTEST --indirect-rendering
+    fi
+
+    if [ $? -ne 0 ]; then
+        verbose " "
+        FAILURE_REASON=""
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    if echo $glxinfo_output | $GREP -q "GL_ARB_texture_non_power_of_two"; then
+        verbose "   GL_ARB_texture_non_power_of_two present."
+        ARB_non_power_of_two="yes"
+    else
+        verbose "   GL_ARB_texture_non_power_of_two missing."
+        ARB_non_power_of_two="no"
+    fi
+
+    if echo $glxinfo_output | $GREP -q "GL_NV_texture_rectangle"; then
+        verbose "   GL_NV_texture_rectangle present."
+        NV_texture_rectangle="yes"
+    else
+        verbose "   GL_NV_texture_rectangle missing."
+        NV_texture_rectangle="no"
+    fi
+
+    if echo $glxinfo_output | $GREP -q "GL_EXT_texture_rectangle"; then
+        verbose "   GL_EXT_texture_rectangle present."
+        EXT_texture_rectangle="yes"
+    else
+        verbose "   GL_EXT_texture_rectangle missing."
+        EXT_texture_rectangle="no"
+    fi
+
+    if echo $glxinfo_output | $GREP -q "GL_ARB_texture_rectangle"; then
+        verbose "   GL_ARB_texture_rectangle present."
+        ARB_texture_rectangle="yes"
+    else
+        verbose "   GL_ARB_texture_rectangle missing."
+        ARB_texture_rectangle="no"
+    fi
+
+    # This is what compiz code itself states
+    if [ "x$NV_texture_rectangle" = "xno" -a "x$EXT_texture_rectangle" = "xno" -a "x$ARB_texture_rectangle" = "xno" ]; then
+        if [ "x$ARB_non_power_of_two" = "xno" ]; then
+            verbose "\nSupport for non power of two textures missing.\n"
+            FAILURE_REASEON="\nSupport for non power of two textures missing."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    fi
+
+    # For i915 cards we may possibly need to be more Vigilant and check if all 
+    # of these exists
+    if [ "x$CARD_TYPE" = "xi915" ]; then
+        if [ "x$ARB_non_power_of_two" = "xno" ]; then
+            FAILURE_REASON="OpenGL Extension : GL_ARB_texture_non_power_of_two missing."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+        
+        if [ "x$NV_texture_rectangle" = "xno" ]; then
+            FAILURE_REASON="OpenGL Extension : GL_NV_texture_rectangle missing."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+
+        if [ "x$EXT_texture_rectangle" = "xno" -a "x$ARB_texture_rectangle" = "xno" ]; then
+            FAILURE_REASON="OpenGL Extensions : GL_EXT_texture_rectangle and GL_ARB_texture_rectangle  missing."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    fi
+
+    if echo $glxinfo_output | $GREP -q GLX.*fbconfig; then
+        verbose "   FBConfig present."
+    else
+        verbose "   FBConfig not present.\n"
+        FAILIRE_REASON="FBConfig not present."
+        FAILURE_LEVEL=1
+        return 1
+    fi
+
+    max_texture_size=`$GLXINFO -l | $GREP "GL_MAX_TEXTURE_SIZE" | $NAWK '{print $3;}'`
+    dimensions=`$XDPYINFO | $GREP "dimensions:" | $NAWK '{print $2;}'`
+    hor_res=`echo $dimensions | $CUT -dx -f1`
+    if [ $hor_res -gt $max_texture_size ]; then
+        verbose "   Horizontal resoultion ($hor_res) greater than GL_MAX_TEXTURE_SIZE($max_texture_size).\n"
+        FAILURE_REASON="Horizontal resoultion ($hor_res) greater than GL_MAX_TEXTURE_SIZE($max_texture_size)."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "   Horizontal resolution ($hor_res) less than GL_MAX_TEXTURE_SIZE($max_texture_size)."
+    fi
+
+    ver_res=`echo $dimensions | $CUT -dx -f2`
+    if [ $ver_res -gt $max_texture_size ]; then
+        verbose "   Vertical resoultion ($ver_res) greater than GL_MAX_TEXTURE_SIZE($max_texture_size).\n"
+        FAILURE_REASON="Vertical resoultion ($ver_res) greater than GL_MAX_TEXTURE_SIZE($max_texture_size)."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "   Vertical resolution ($ver_res) less than GL_MAX_TEXTURE_SIZE($max_texture_size)."
+    fi
+    
+    if echo $glxinfo_output | $GREP -q "^OpenGL render string: Software Rasterizer"; then
+        verbose "   OpenGL Software rasterization in use.\n"
+        FAILURE_REASON="OpenGL using Software Rasterizer."
+        FAILURE_LEVEL=1
+        return 1
+    else
+        verbose "   OpenGL Software rasterization not being used.\n"
+    fi
+
+    # All Passed
+    return 0
+}
+
+# If Nvidia graphics card ensure enough Video Ram available
+check_nvidia_video_ram()
+{
+    if [ "x$CARD_TYPE" = "xnvidia" ]; then
+        verbose "Check Nvidia X Extension NG-GLX Exists..."
+        if $XDPYINFO | $GREP -q "NV-GLX"; then
+            verbose "   NV-GLX Exists.\n"
+            verbose "Check Nvidia Video Ram >= $NVIDIA_MEMORY bytes : "
+            
+	        video_ram=`$NVIDIA_SETTINGS -q VideoRam | $GREP "Attribute 'VideoRam'" | $CUT -d: -f3 | $SED 's/[^0-9]//g'`
+	        if [ $video_ram -lt $NVIDIA_MEMORY ]; then
+		        verbose "   Insufficient video memory of $video_ram.\n"
+                FAILURE_REASON="OpenGL using Software Rasterizer.."
+                FAILURE_LEVEL=1
+		        return 1;
+            else
+                verbose "   Sufficient video memory of $video_ram.\n"
+            fi
+        else
+		    verbose "   Nvidia NV-GLX X Extension missing.\n"
+		    FAILURE_REASON="Nvidia NV-GLX X Extension missing."
+            FAILURE_LEVEL=1
+		    return 1;
+        fi
+    fi
+    return 0
+}
+
+# If intel graphics card, ensure enough system RAM
+check_intel_ram()
+{
+    if [ "x$CARD_TYPE" = "xi915" ]; then
+        verbose "Check System RAM >= $MINIMUM_RAM MB : "
+        ramsize=`$PRTCONF | $GREP 'Memory size:' | $NAWK '{print $3;}'`
+        if [ "$ramsize" -ge $MINIMUM_RAM ]; then
+            verbose "   $ramsize is sufficient.\n"
+        else
+            verbose "   $ramsize is not enough. Minimum requirements >= $MINIMUM_RAM MB.\n"
+            FAILURE_REASON="Not enough System RAM : $ramsize available, Minimum Required : $MINIMUM_RAM."
+            FAILURE_LEVEL=1
+            return 1
+        fi
+    fi
+    return 0
+}
+
+#
+# Main routine of the script
+#
+
+# Architecture 
+check_architecture_type
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Utility binaries installed
+check_utilities_installed
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Session Type
+check_session_type
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Graphics Card
+check_graphics_card_type
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Graphics Driver
+check_graphics_driver
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# X Server Extensions
+check_x_server_extensions
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# OpenGL / GLX Tests
+check_opengl_glx
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Check Nvidia Video Ram
+check_nvidia_video_ram
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Check RAM (Intel)
+check_intel_ram
+if [ $? -eq 1 ]; then
+    abort_with_metacity
+fi
+
+# Set gconf key to metacity
+set_gconf "compiz"
+
+verbose "Compiz by default can be enabled.\n"
+
+# If Just doing a dry run, exit now don't launch compiz
+if [ "x$COMPIZ_DRYRUN" != "x" ]; then
+    exit
+fi
+
+exec $COMPIZ_SCRIPT || abort_with_metacity

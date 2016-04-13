@@ -1,0 +1,127 @@
+--- rsyslog-7.4.4/tools/rsyslogd.8.~1~	2013-09-03 14:31:42.000000000 +0400
++++ rsyslog-7.4.4/tools/rsyslogd.8	2014-12-04 15:36:11.058935267 +0300
+@@ -1,7 +1,7 @@
+ .\" Copyright 2004-2008 Rainer Gerhards and Adiscon for the rsyslog modifications
+ .\" May be distributed under the GNU General Public License
+ .\"
+-.TH RSYSLOGD 8 "16 October 2012" "Version 6.4.3" "Linux System Administration"
++.TH RSYSLOGD 8 "16 October 2012" "Version 7.4.4" "System Administration Commands"
+ .SH NAME
+ rsyslogd \- reliable and extended syslogd 
+ .SH SYNOPSIS
+@@ -45,17 +45,14 @@
+ unix domain sockets enables this utility to support both local
+ and remote logging.
+ 
+-.B Note that this version of rsyslog ships with extensive documentation in html format.
+-This is provided in the ./doc subdirectory and probably
+-in a separate package if you installed rsyslog via a packaging system.
+ To use rsyslog's advanced features, you
+ .B need
+-to look at the html documentation, because the man pages only cover
++to look at the online documentation, because the man pages only cover
+ basic aspects of operation.
+-.B For details and configuration examples, see the rsyslog.conf (5)
++.B For details and configuration examples, see the rsyslog.conf (4)
+ .B man page and the online documentation at http://www.rsyslog.com/doc
+ 
+-.BR Rsyslogd (8)
++.BR rsyslogd (1M)
+ is derived from the sysklogd package which in turn is derived from the
+ stock BSD sources.
+ 
+@@ -156,7 +153,8 @@
+ Avoid auto-backgrounding.  This is needed especially if the
+ .B rsyslogd
+ is started and controlled by
+-.BR init (8).
++.BR init (1M),
++which is not the case on Solaris.
+ .TP
+ .B "\-N " "level"
+ Do a coNfig check. Do NOT run in regular mode, just check configuration
+@@ -167,9 +165,6 @@
+ not specifying the -N option at all (so this makes limited sense) and
+ 1 actually activates the code. Later, higher levels will mean more
+ verbosity (this is a forward-compatibility option).
+-.B rsyslogd
+-is started and controlled by
+-.BR init (8).
+ .TP
+ .BI "\-q " "add hostname if DNS fails during ACL processing"
+ During ACL processing, hostnames are resolved to IP addresses for
+@@ -243,7 +238,7 @@
+ operation and should only be done when actually necessary. Actually, it is
+ a rsyslgod stop immediately followed by a restart. Future versions will remove
+ this restart functionality of HUP (it will go away in v5). So it is advised to use
+-HUP only for closing files, and a "real restart" (e.g. /etc/rc.d/rsyslogd restart)
++HUP only for closing files, and a "real restart" (e.g. svcadm restart svc:/system/system-log:rsyslog)
+ to activate configuration changes.
+ .TP
+ .B TERM ", " INT ", " QUIT
+@@ -316,12 +311,10 @@
+ The file containing the process id of 
+ .BR rsyslogd .
+ .TP
+-.I prefix/lib/rsyslog
++.I /usr/lib/rsyslog
+ Default directory for
+ .B rsyslogd
+-modules. The
+-.I prefix
+-is specified during compilation (e.g. /usr/local).
++modules.
+ .SH ENVIRONMENT
+ .TP
+ .B RSYSLOG_DEBUG
+@@ -364,20 +357,42 @@
+ .B RSYSLOG_MODDIR
+ Provides the default directory in which loadable modules reside.
+ .PD
+-.SH BUGS
+-Please review the file BUGS for up-to-date information on known
+-bugs and annoyances.
+ .SH Further Information
+ Please visit
+ .BR http://www.rsyslog.com/doc
+ for additional information, tutorials and a support forum.
++.SH ATTRIBUTES
++.sp
++.LP
++See \fBattributes\fR(5) for descriptions of the following attributes:
++.sp
++
++.sp
++.TS
++tab() box;
++cw(2.75i) |cw(2.75i) 
++lw(2.75i) |lw(2.75i) 
++.
++ATTRIBUTE TYPEATTRIBUTE VALUE
++_
++Availabilitypkg:/system/rsyslog
++_
++Servicesvc:/system/system-log:rsyslog
++.TE
++
++.SH Solaris Usage
++The rsyslog instance of the system-log service is not enabled by default.
++To enable it, first "svcadm disable svc:/system/system-log:default", then
++"svcadm enable svc:/system/system-log:rsyslog".  If you wish to enable log
++rotation, then add each file referenced in
++.BR rsyslog.conf(4)
++to /etc/logadm.conf.
+ .SH SEE ALSO
+-.BR rsyslog.conf (5),
++.BR rsyslog.conf (4),
+ .BR logger (1),
+-.BR syslog (2),
+-.BR syslog (3),
+-.BR services (5),
+-.BR savelog (8)
++.BR syslog (3C),
++.BR services (4)
++.BR logadm.conf (4)
+ .LP
+ .SH COLLABORATORS
+ .B rsyslogd

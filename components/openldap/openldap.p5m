@@ -50,7 +50,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2010/180
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-dir path=var/openldap/run
+dir  path=var/openldap owner=openldap group=openldap
+dir  path=var/openldap/openldap-data owner=openldap group=openldap mode=700
+dir  path=var/openldap/run owner=openldap group=openldap mode=700
 
 file path=etc/openldap/DB_CONFIG.example
 file path=etc/openldap/ldap.conf mode=0644 owner=root group=openldap preserve=true
@@ -109,13 +111,13 @@ file path=usr/include/openldap/ldap_schema.h
 file path=usr/include/openldap/ldap_utf8.h
 file path=usr/include/openldap/ldif.h
 file path=usr/include/openldap/slapi-plugin.h
-file path=usr/lib/$(MACH64)/liblber-2.4.so.2.10.2
-file path=usr/lib/$(MACH64)/libldap-2.4.so.2.10.2
-file path=usr/lib/$(MACH64)/libldap_r-2.4.so.2.10.2
+file path=usr/lib/$(MACH64)/liblber-2.4.so.2.10.5
+file path=usr/lib/$(MACH64)/libldap-2.4.so.2.10.5
+file path=usr/lib/$(MACH64)/libldap_r-2.4.so.2.10.5
 file path=usr/lib/$(MACH64)/slapd mode=0555
-file path=usr/lib/liblber-2.4.so.2.10.2
-file path=usr/lib/libldap-2.4.so.2.10.2
-file path=usr/lib/libldap_r-2.4.so.2.10.2
+file path=usr/lib/liblber-2.4.so.2.10.5
+file path=usr/lib/libldap-2.4.so.2.10.5
+file path=usr/lib/libldap_r-2.4.so.2.10.5
 file path=usr/lib/slapd mode=0555
 file path=usr/share/doc/openldap/admin24/guide.html
 file path=usr/share/doc/openldap/admin24/index.html
@@ -243,22 +245,22 @@ group groupname=openldap gid=75
 license openldap.license license="openldap license"
 link path=usr/bin/$(MACH64)/openldapadd target=openldapmodify
 link path=usr/bin/openldapadd target=openldapmodify
-link path=usr/lib/$(MACH64)/liblber-2.4.so target=liblber-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/liblber-2.4.so.2 target=liblber-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/liblber.so target=liblber-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/libldap-2.4.so target=libldap-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/libldap-2.4.so.2 target=libldap-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.2
-link path=usr/lib/$(MACH64)/libldap_r.so target=libldap_r-2.4.so.2.10.2
-link path=usr/lib/liblber-2.4.so target=liblber-2.4.so.2.10.2
-link path=usr/lib/liblber-2.4.so.2 target=liblber-2.4.so.2.10.2
-link path=usr/lib/liblber.so target=liblber-2.4.so.2.10.2
-link path=usr/lib/libldap-2.4.so target=libldap-2.4.so.2.10.2
-link path=usr/lib/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.2
-link path=usr/lib/libldap-2.4.so.2 target=libldap-2.4.so.2.10.2
-link path=usr/lib/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.2
-link path=usr/lib/libldap_r.so target=libldap_r-2.4.so.2.10.2
+link path=usr/lib/$(MACH64)/liblber-2.4.so target=liblber-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/liblber-2.4.so.2 target=liblber-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/liblber.so target=liblber-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/libldap-2.4.so target=libldap-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/libldap-2.4.so.2 target=libldap-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.5
+link path=usr/lib/$(MACH64)/libldap_r.so target=libldap_r-2.4.so.2.10.5
+link path=usr/lib/liblber-2.4.so target=liblber-2.4.so.2.10.5
+link path=usr/lib/liblber-2.4.so.2 target=liblber-2.4.so.2.10.5
+link path=usr/lib/liblber.so target=liblber-2.4.so.2.10.5
+link path=usr/lib/libldap-2.4.so target=libldap-2.4.so.2.10.5
+link path=usr/lib/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.5
+link path=usr/lib/libldap-2.4.so.2 target=libldap-2.4.so.2.10.5
+link path=usr/lib/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.5
+link path=usr/lib/libldap_r.so target=libldap_r-2.4.so.2.10.5
 link path=usr/lib/openldap/bin/$(MACH64)/ldapadd target=../../../../bin/openldapmodify
 link path=usr/lib/openldap/bin/$(MACH64)/ldapcompare target=../../../../bin/openldapcompare
 link path=usr/lib/openldap/bin/$(MACH64)/ldapdelete target=../../../../bin/openldapdelete

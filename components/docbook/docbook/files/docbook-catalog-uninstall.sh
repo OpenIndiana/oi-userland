@@ -57,6 +57,11 @@ rm -f /etc/sgml/sgml-docbook-4.3-${Version}-${Release}.cat
 	/etc/sgml/xml-docbook-4.3-${Version}-${Release}.cat
 rm -f /etc/sgml/xml-docbook-4.3-${Version}-${Release}.cat
 
+### Note about "added by laca" bits: Pedantically, these checks and removals
+### should be above for every version too. However, the docbook-4.4 version
+### of the package was released a few years ago, perhaps before OI/Hipster -
+### so in practice we do not care about updating docbook from older versions.
+### However, subsequent incremental updates should all contain this clause.
 # DocBook V4.4
 /usr/bin/xmlcatalog --sgml --noout --del /etc/sgml/catalog \
 	/etc/sgml/sgml-docbook-4.4-${Version}-${Release}.cat
@@ -72,6 +77,22 @@ rm -f /etc/sgml/sgml-docbook-4.4-${Version}-${Release}.cat
 cmp -s /etc/sgml/xml-docbook.cat /etc/sgml/xml-docbook-4.4-${Version}-${Release}.cat && \
     rm -f /etc/sgml/xml-docbook.cat
 rm -f /etc/sgml/xml-docbook-4.4-${Version}-${Release}.cat
+
+# DocBook V4.5
+/usr/bin/xmlcatalog --sgml --noout --del /etc/sgml/catalog \
+	/etc/sgml/sgml-docbook-4.5-${Version}-${Release}.cat
+# added by laca:
+cmp -s /etc/sgml/sgml-docbook.cat /etc/sgml/sgml-docbook-4.5-${Version}-${Release}.cat && \
+    rm -f /etc/sgml/sgml-docbook.cat
+rm -f /etc/sgml/sgml-docbook-4.5-${Version}-${Release}.cat
+
+# DocBook XML V4.5
+/usr/bin/xmlcatalog --sgml --noout --del /etc/sgml/catalog \
+	/etc/sgml/xml-docbook-4.5-${Version}-${Release}.cat
+# added by laca:
+cmp -s /etc/sgml/xml-docbook.cat /etc/sgml/xml-docbook-4.5-${Version}-${Release}.cat && \
+    rm -f /etc/sgml/xml-docbook.cat
+rm -f /etc/sgml/xml-docbook-4.5-${Version}-${Release}.cat
 
 # Fix up SGML super catalog so that there isn't an XML DTD before an
 # SGML one.  We need to do this (*sigh*) because xmlcatalog messes up
@@ -330,6 +351,64 @@ then
 		"xml-dtd-4.4-${Version}-${Release}/ent/iso-cyr2.ent" $CATALOG
 	/usr/bin/xmlcatalog --noout --del \
 		"xml-dtd-4.4-${Version}-${Release}" $CATALOG
+
+	# DocBook XML V4.5
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-pub.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-grk1.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/dbpoolx.mod" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-box.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/docbookx.dtd" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-grk3.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amsn.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-num.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/dbcentx.mod" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-grk4.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/dbnotnx.mod" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-dia.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-grk2.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/dbgenent.mod" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/dbhierx.mod" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amsa.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amso.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-cyrl.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-tech.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amsc.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/soextblx.dtd" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/calstblx.dtd" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-lat1.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amsb.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-lat2.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-amsr.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}/ent/iso-cyr2.ent" $CATALOG
+	/usr/bin/xmlcatalog --noout --del \
+		"xml-dtd-4.5-${Version}-${Release}" $CATALOG
 fi
 
 #

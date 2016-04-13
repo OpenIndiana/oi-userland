@@ -10,21 +10,21 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 
-COMPONENT_VERSION= 0.1.2
+COMPONENT_VERSION= 0.2.0
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b64e619b460c4f4a746596b219d0bcb722068e3c4a00a30cc03201ca2118e113
+  sha256:df2e6a0d9499afcbc4f9029c18d9d1e0dd5e8710a75e17c9b1d9a6480dd8d426
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gimp.org/pub/gegl/0.1/$(COMPONENT_ARCHIVE)
+  http://ftp.gimp.org/pub/gegl/0.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gegl.org/
 
 GEGLDOCDIR = $(PROTO_DIR)/usr/share/doc/$(COMPONENT_NAME)
@@ -36,6 +36,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PATH=/usr/gnu/bin:/usr/bin
+
+CFLAGS += -std=gnu99
+CFLAGS.32 = -D_FILE_OFFSET_BITS=64
+CFLAGS += $(CFLAGS.$(BITS))
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)

@@ -1,0 +1,109 @@
+# Add a vendor_dir for gems at vendor_ruby/gems/<ruby lib version>, to the end 
+# of GEM PATHS, so gem will search the vendor directory for gems.
+# We can use this directory to install Solaris Ruby modules
+# that we want to package as gems.
+#
+# This is a subset of changes made to Rubygems 2.4.0
+# to fix rubygems issue #943 site_ruby/vendor_ruby equivalent for rubygems
+# https://github.com/rubygems/rubygems/issues/943
+# We do not add the --vendor option to the gem command,
+# nor do we change the default gem installation directory.
+
+diff -rupN ruby-1.9.3-p484-orig/lib/rubygems/defaults.rb ruby-1.9.3-p484/lib/rubygems/defaults.rb
+--- ruby-1.9.3-p484-orig/lib/rubygems/defaults.rb	2012-04-19 15:43:16.000000000 -0700
++++ ruby-1.9.3-p484/lib/rubygems/defaults.rb	2014-08-05 10:40:08.041798000 -0700
+@@ -61,11 +61,11 @@ module Gem
+   # Default gem load path
+ 
+   def self.default_path
+-    if File.exist? Gem.user_home then
+-      [user_dir, default_dir]
+-    else
+-      [default_dir]
+-    end
++    path = []
++    path << user_dir if user_home && File.exist?(user_home)
++    path << default_dir
++    path << vendor_dir if File.directory? vendor_dir
++    path
+   end
+ 
+   ##
+@@ -121,4 +121,13 @@ module Gem
+       'ruby'
+     end
+   end
++
++  ##
++  # Directory where vendor gems are installed.
++
++  def self.vendor_dir # :nodoc:
++    File.join RbConfig::CONFIG['vendordir'], 'gems',
++              RbConfig::CONFIG['ruby_version']
++  end
++
+ end
+diff -rupN ruby-1.9.3-p484-orig/test/rubygems/test_gem.rb ruby-1.9.3-p484/test/rubygems/test_gem.rb
+--- ruby-1.9.3-p484-orig/test/rubygems/test_gem.rb	2012-04-19 15:43:16.000000000 -0700
++++ ruby-1.9.3-p484/test/rubygems/test_gem.rb	2014-08-05 14:04:49.794776000 -0700
+@@ -604,6 +604,45 @@ class TestGem < Gem::TestCase
+     Gem::ConfigMap[:ruby_install_name] = orig_RUBY_INSTALL_NAME
+   end
+ 
++  def test_default_path
++    orig_vendordir = RbConfig::CONFIG['vendordir']
++    RbConfig::CONFIG['vendordir'] = File.join @tempdir, 'vendor'
++
++    FileUtils.rm_rf Gem.user_home
++
++    expected = [Gem.default_dir]
++
++    assert_equal expected, Gem.default_path
++  ensure
++    RbConfig::CONFIG['vendordir'] = orig_vendordir
++  end
++
++  def test_default_path_user_home
++    orig_vendordir = RbConfig::CONFIG['vendordir']
++    RbConfig::CONFIG['vendordir'] = File.join @tempdir, 'vendor'
++
++    expected = [Gem.user_dir, Gem.default_dir]
++
++    assert_equal expected, Gem.default_path
++  ensure
++    RbConfig::CONFIG['vendordir'] = orig_vendordir
++  end
++
++  def test_default_path_vendor_dir
++    orig_vendordir = RbConfig::CONFIG['vendordir']
++    RbConfig::CONFIG['vendordir'] = File.join @tempdir, 'vendor'
++
++    FileUtils.mkdir_p Gem.vendor_dir
++
++    FileUtils.rm_rf Gem.user_home
++
++    expected = [Gem.default_dir, Gem.vendor_dir]
++
++    assert_equal expected, Gem.default_path
++  ensure
++    RbConfig::CONFIG['vendordir'] = orig_vendordir
++  end
++
+   def test_self_default_sources
+     assert_equal %w[http://rubygems.org/], Gem.default_sources
+   end
+@@ -1062,6 +1101,14 @@ class TestGem < Gem::TestCase
+     end
+   end
+ 
++  def test_self_vendor_dir
++    expected =
++      File.join RbConfig::CONFIG['vendordir'], 'gems',
++                RbConfig::CONFIG['ruby_version']
++
++    assert_equal expected, Gem.vendor_dir
++  end
++
+   def test_load_plugins
+     plugin_path = File.join "lib", "rubygems_plugin.rb"
+ 

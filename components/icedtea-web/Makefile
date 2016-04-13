@@ -16,14 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	icedtea-web
-COMPONENT_VERSION= 	1.4.1
+COMPONENT_VERSION= 	1.5.3
 COMPONENT_SUMMARY= 	Java browser plugin and Web Start launcher
-COMPONENT_SRC= 		$(COMPONENT_NAME)-6ec72d653144
-COMPONENT_ARCHIVE= 	6ec72d653144.tar.bz2
+COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-   sha256:0fa93e2fbbb2ea59abcaa03de909796489d506da9398ea626e74df77a3e55387
+   sha256:9b4b4477711930cb1d40bde752b17492fe8462a9c0cbd89bfe2c361b64d466b9
 COMPONENT_ARCHIVE_URL= \
-   http://icedtea.classpath.org/hg/icedtea-web/archive/$(COMPONENT_ARCHIVE)
+   http://icedtea.wildebeest.org/download/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://icedtea.classpath.org/wiki/Main_Page
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -33,8 +33,8 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if)
 
-CONFIGURE_OPTIONS+=        --with-jdk-home=/usr/jdk/instances/openjdk1.7.0
-CONFIGURE_OPTIONS+=        --with-rhino=/usr/jdk/instances/openjdk1.7.0/jre/lib/rhino.jar
+CONFIGURE_OPTIONS+=        --with-jdk-home=$(JAVA_HOME)
+CONFIGURE_OPTIONS+=        --with-rhino=$(JAVA_HOME)/jre/lib/rhino.jar
 CONFIGURE_OPTIONS+=        --disable-docs
 
 build: $(BUILD_32)

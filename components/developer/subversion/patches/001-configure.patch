@@ -1,0 +1,109 @@
+# Internal patch.
+# apr-config and apu-config use the wrong options
+# neon library pkg-config should not print the library path
+# Our Kerberos installation is not 100% compatible with MIT-Kerberos
+--- configure	2014-12-08 23:32:25.000000000 -0800
++++ configure	2015-01-20 10:36:42.439487008 -0800
+@@ -4686,14 +4686,14 @@
+   fi
+ 
+   if test "$enable_all_static" = "yes"; then
+-    SVN_APR_LIBS="`$apr_config --link-ld --libs`"
++    SVN_APR_LIBS="`$apr_config --link-libtool --libs`"
+     if test $? -ne 0; then
+-      as_fn_error $? "apr-config --link-ld --libs failed" "$LINENO" 5
++      as_fn_error $? "apr-config --link-libtool --libs failed" "$LINENO" 5
+     fi
+   else
+-    SVN_APR_LIBS="`$apr_config --link-ld`"
++    SVN_APR_LIBS="`$apr_config --link-libtool`"
+     if test $? -ne 0; then
+-      as_fn_error $? "apr-config --link-ld failed" "$LINENO" 5
++      as_fn_error $? "apr-config --link-libtool failed" "$LINENO" 5
+     fi
+   fi
+   SVN_APR_LIBS="`
+@@ -5089,14 +5089,14 @@
+   fi
+ 
+   if test "$enable_all_static" = "yes"; then
+-    SVN_APRUTIL_LIBS="`$apu_config --link-ld --libs`"
++    SVN_APRUTIL_LIBS="`$apu_config --link-libtool --libs`"
+     if test $? -ne 0; then
+-      as_fn_error $? "apu-config --link-ld --libs failed" "$LINENO" 5
++      as_fn_error $? "apu-config --link-libtool --libs failed" "$LINENO" 5
+     fi
+   else
+-    SVN_APRUTIL_LIBS="`$apu_config --link-ld`"
++    SVN_APRUTIL_LIBS="`$apu_config --link-libtool`"
+     if test $? -ne 0; then
+-      as_fn_error $? "apu-config --link-ld failed" "$LINENO" 5
++      as_fn_error $? "apu-config --link-libtool failed" "$LINENO" 5
+     fi
+   fi
+   SVN_APRUTIL_LIBS="`
+@@ -5300,6 +5300,8 @@
+               old_CFLAGS="$CFLAGS"
+               old_LIBS="$LIBS"
+               NEON_LIBS=`$PKG_CONFIG neon --libs`
++              NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-m32##g'`
++              NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-L/usr/lib##g'`
+               CFLAGS="$CFLAGS $SVN_NEON_INCLUDES"
+               LIBS="$LIBS $NEON_LIBS"
+               neon_test_code="
+@@ -5320,6 +5322,8 @@
+     conftest$ac_exeext conftest.$ac_ext
+               if test "$shared_linking" = "no"; then
+                 NEON_LIBS=`$PKG_CONFIG neon --libs --static`
++                NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-m32##g'`
++                NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-L/usr/lib##g'`
+                 LIBS="$LIBS $NEON_LIBS"
+                 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+@@ -5481,6 +5485,8 @@
+               old_CFLAGS="$CFLAGS"
+               old_LIBS="$LIBS"
+               NEON_LIBS=`$PKG_CONFIG neon --libs`
++              NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-m32##g'`
++              NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-L/usr/lib##g'`
+               CFLAGS="$CFLAGS $SVN_NEON_INCLUDES"
+               LIBS="$LIBS $NEON_LIBS"
+               neon_test_code="
+@@ -5501,6 +5507,8 @@
+     conftest$ac_exeext conftest.$ac_ext
+               if test "$shared_linking" = "no"; then
+                 NEON_LIBS=`$PKG_CONFIG neon --libs --static`
++                NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-m32##g'`
++                NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-L/usr/lib##g'`
+                 LIBS="$LIBS $NEON_LIBS"
+                 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+@@ -5576,9 +5584,9 @@
+ fi
+ 
+ 
+-
+-
+-
++NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-m32##g'`
++NEON_LIBS=`echo ${NEON_LIBS} | sed -e 's#-L/usr/lib##g'`
++export NEON_LIBS
+ 
+ if test "$svn_lib_neon" = "yes"; then
+ 
+@@ -6106,11 +6114,11 @@
+       old_CFLAGS="$CFLAGS"
+       old_LIBS="$LIBS"
+       CFLAGS=""
+-      SVN_GSSAPI_INCLUDES="`$KRB5_CONFIG --cflags`"
+-      SVN_GSSAPI_LIBS="`$KRB5_CONFIG --libs gssapi`"
++      SVN_GSSAPI_INCLUDES="-I/usr/include/gssapi -I/usr/include/kerberosv5"
++      SVN_GSSAPI_LIBS="-lgss"
+       if test $? -ne 0; then
+-                                SVN_GSSAPI_INCLUDES="$SVN_GSSAPI_INCLUDES -I/usr/include/gssapi"
+-        SVN_GSSAPI_LIBS="`$KRB5_CONFIG --libs krb5` -lgss"
++        SVN_GSSAPI_INCLUDES="-I/usr/include/gssapi -I/usr/include/kerberosv5"
++        SVN_GSSAPI_LIBS="-lgss"
+         if test $? -ne 0; then
+                     as_fn_error $? "krb5-config returned an error" "$LINENO" 5
+         fi

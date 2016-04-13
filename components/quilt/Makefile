@@ -28,12 +28,13 @@ include ../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.61
+COMPONENT_VERSION=	0.64
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1eec0a270ac4d41eea0fd5823603c9d2a35ab6b8ab73a90dd92ce1291b2a9fc3
+    sha256:c4bfd3282214a288e8d3e921ae4d52e73e24c4fead72b5446752adee99a7affd
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/quilt
 
@@ -53,11 +54,9 @@ PATCH_LEVEL=	0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS+=	--no-print-directory
 
-# Quilt will need this option until Solaris has GNU getopt.
-CONFIGURE_OPTIONS += --without-getopt
-
 CONFIGURE_OPTIONS += --with-cp=/usr/gnu/bin/cp
 CONFIGURE_OPTIONS += --with-date=/usr/gnu/bin/date
+CONFIGURE_OPTIONS += --with-getopt=/usr/gnu/bin/getopt
 CONFIGURE_OPTIONS += --with-grep=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --with-tail=/usr/gnu/bin/tail
 CONFIGURE_OPTIONS += --with-tr=/usr/gnu/bin/tr

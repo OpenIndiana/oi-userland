@@ -1,0 +1,11 @@
+--- gok-2.28.1/configure.in.ori	2009-10-26 14:50:25.946515328 +0000
++++ gok-2.28.1/configure.in	2009-10-26 15:02:02.372101401 +0000
+@@ -241,7 +241,7 @@
+ AC_SUBST(LIBBONOBO_IDL_DIR)
+ 
+ dnl list of language subdirs (for .gitignore)
+-LANGDIRS="`$GREP -v "^\#" po/LINGUAS | while read line; do echo -n "$line/ "; done `"
++LANGDIRS="`$AWK '/^[^#]/ {print $1"/"}' ORS=' ' po/LINGUAS`"
+ AC_SUBST(LANGDIRS)
+ 
+ AC_SUBST(CFLAGS)

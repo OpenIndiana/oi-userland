@@ -1,0 +1,403 @@
+###############################################################################
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+--- a/configure.ac	Tue Mar 17 10:20:46 2015
++++ b/configure.ac	Tue Mar 17 10:21:04 2015
+@@ -471,6 +471,7 @@
+ 		modules/im/ximcp/Makefile
+ 		modules/lc/Makefile
+ 		modules/lc/def/Makefile
++		modules/lc/gb18030/Makefile
+ 		modules/lc/gen/Makefile
+ 		modules/lc/Utf8/Makefile
+ 		modules/om/Makefile
+--- a/modules/lc/Makefile.am	Tue Mar 17 10:21:40 2015
++++ b/modules/lc/Makefile.am	Tue Mar 17 10:22:13 2015
+@@ -1,1 +1,1 @@
+-SUBDIRS=Utf8 def gen
++SUBDIRS=Utf8 def gen gb18030
+--- a/src/xlibi18n/Makefile.am	Tue Mar 17 10:22:47 2015
++++ b/src/xlibi18n/Makefile.am	Tue Mar 17 10:23:16 2015
+@@ -35,7 +35,8 @@
+ LC_LIBS = \
+ 	${top_builddir}/modules/lc/def/libxlcDef.la \
+ 	${top_builddir}/modules/lc/gen/libxlibi18n.la \
+-	${top_builddir}/modules/lc/Utf8/libxlcUTF8Load.la
++	${top_builddir}/modules/lc/Utf8/libxlcUTF8Load.la \
++	${top_builddir}/modules/lc/gb18030/libxlcGB18030.la
+ 
+ OM_LIBS = \
+ 	${top_builddir}/modules/om/generic/libxomGeneric.la
+--- a/src/xlibi18n/Xlcint.h	Tue Mar 17 10:23:35 2015
++++ b/src/xlibi18n/Xlcint.h	Tue Mar 17 10:24:49 2015
+@@ -932,6 +932,12 @@
+     const char*		name
+ );
+ 
++/* The GB18030 locale loader. Suitable for GB18030 encoding.
++   Uses an XLC_LOCALE configuration file. */
++extern XLCd _XlcGb18030Loader(
++    const char*                name
++);
++
+ extern XLCd _XlcDynamicLoad(
+     const char*		name
+ );
+--- a/src/xlibi18n/lcCT.c	Tue Mar 17 10:25:14 2015
++++ b/src/xlibi18n/lcCT.c	Tue Mar 17 10:26:07 2015
+@@ -126,6 +126,8 @@
+     { "BIG5-0:GLGR", "\033%/2"},
+     { "BIG5HKSCS-0:GLGR", "\033%/2"},
+     { "GBK-0:GLGR", "\033%/2"},
++    { "GB18030-0:GLGR", "\033%/2" },
++    { "GB18030-1:GLGR", "\033%/2" },
+     /* used by Emacs, but not backed by ISO-IR */
+     { "BIG5-E0:GL", "\033$(0" },
+     { "BIG5-E0:GR", "\033$)0" },
+--- a/src/xlibi18n/lcInit.c	Tue Mar 17 10:26:29 2015
++++ b/src/xlibi18n/lcInit.c	Tue Mar 17 10:27:58 2015
+@@ -102,6 +102,7 @@
+ #undef USE_DEFAULT_LOADER
+ #undef USE_GENERIC_LOADER
+ #undef USE_UTF8_LOADER
++#define USE_GB18030_LOADER
+ #else
+ #define USE_GENERIC_LOADER
+ #define USE_DEFAULT_LOADER
+@@ -133,6 +134,10 @@
+     _XlcAddLoader(_XlcUtf8Loader, XlcHead);
+ #endif
+ 
++#ifdef USE_GB18030_LOADER
++    _XlcAddLoader(_XlcGb18030Loader, XlcHead);
++#endif
++
+ #ifdef USE_DYNAMIC_LOADER
+     _XlcAddLoader(_XlcDynamicLoader, XlcHead);
+ #endif
+@@ -160,6 +165,10 @@
+     _XlcRemoveLoader(_XlcUtf8Loader);
+ #endif
+ 
++#ifdef USE_GB18030_LOADER
++    _XlcRemoveLoader(_XlcGb18030Loader);
++#endif
++
+ #ifdef USE_DYNAMIC_LOADER
+     _XlcRemoveLoader(_XlcDynamicLoader);
+ #endif
+--- a/src/xlibi18n/lcUTF8.c	Tue Mar 17 10:28:18 2015
++++ b/src/xlibi18n/lcUTF8.c	Tue Mar 17 10:35:38 2015
+@@ -213,6 +213,7 @@
+ #include "lcUniConv/big5_emacs.h"
+ #include "lcUniConv/big5hkscs.h"
+ #include "lcUniConv/gbk.h"
++#include "lcUniConv/gb18030.h"
+ 
+ static Utf8ConvRec all_charsets[] = {
+     /* The ISO10646-1/UTF-8 entry occurs twice, once at the beginning
+@@ -350,6 +351,18 @@
+     { "BIG5HKSCS-0", NULLQUARK,
+ 	big5hkscs_mbtowc, big5hkscs_wctomb
+     },
++    { "GB18030.2000-0", NULLQUARK,
++       gbk_mbtowc, gbk_wctomb
++    },
++    { "GB18030.2000-1", NULLQUARK,
++       gb18030_mbtowc, gb18030_wctomb
++    },
++    { "gb18030.2000-0", NULLQUARK,
++       gbk_mbtowc, gbk_wctomb
++    },
++    { "gb18030.2000-1", NULLQUARK,
++       gb18030_mbtowc, gb18030_wctomb
++    },
+ 
+     /* The ISO10646-1/UTF-8 entry occurs twice, once at the beginning
+        (for lookup speed), once at the end (as a fallback).  */
+--- a/src/xlibi18n/lcUniConv/gbk.h	Tue Mar 17 10:36:02 2015
++++ b/src/xlibi18n/lcUniConv/gbk.h	Tue Mar 17 10:43:34 2015
+@@ -1,9 +1,41 @@
++/*
++ * Copyright  The Open Group
++ * Permission to use, copy, modify, distribute, and sell this software and its
++ * documentation for any purpose is hereby granted without fee, provided that the
++ * above copyright notice appear in all copies and that both that copyright notice
++ * and this permission notice appear in supporting documentation.
+ 
++ * The above copyright notice and this permission notice shall be included in all
++ * copies or substantial portions of the Software.
++
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
++ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE OPEN GROUP
++ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
++ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
++ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++ * Except as contained in this notice, the name of The Open Group shall not be used
++ * in advertising or otherwise to promote the sale, use or other dealings in this
++ * Software without prior written authorization from The Open Group.
++
++ * Portions also covered by other licenses as noted in the above URL.
++ */
++
+ /*
+  * GBK-0
+  */
+ 
+-static const unsigned short gbk_2uni_page81[23766] = {
++#define UNICODECJKEXTA 52
++
++typedef struct key_value {
++        ucs4_t key;
++        unsigned short value;
++} table_t;
++
++
++
++static const unsigned short gbk_2uni_page81[23846] = {
+   /* 0x81 */
+   0x4e02, 0x4e04, 0x4e05, 0x4e06, 0x4e0f, 0x4e12, 0x4e17, 0x4e1f,
+   0x4e20, 0x4e21, 0x4e23, 0x4e26, 0x4e29, 0x4e2e, 0x4e2f, 0x4e31,
+@@ -850,7 +882,7 @@
+   0x2478, 0x2479, 0x247a, 0x247b, 0x247c, 0x247d, 0x247e, 0x247f,
+   0x2480, 0x2481, 0x2482, 0x2483, 0x2484, 0x2485, 0x2486, 0x2487,
+   0x2460, 0x2461, 0x2462, 0x2463, 0x2464, 0x2465, 0x2466, 0x2467,
+-  0x2468, 0x2469, 0xfffd, 0xfffd, 0x3220, 0x3221, 0x3222, 0x3223,
++  0x2468, 0x2469, 0x20ac, 0xfffd, 0x3220, 0x3221, 0x3222, 0x3223,
+   0x3224, 0x3225, 0x3226, 0x3227, 0x3228, 0x3229, 0xfffd, 0xfffd,
+   0x2160, 0x2161, 0x2162, 0x2163, 0x2164, 0x2165, 0x2166, 0x2167,
+   0x2168, 0x2169, 0x216a, 0x216b, 0xfffd, 0xfffd,
+@@ -995,7 +1027,7 @@
+   0x0101, 0x00e1, 0x01ce, 0x00e0, 0x0113, 0x00e9, 0x011b, 0x00e8,
+   0x012b, 0x00ed, 0x01d0, 0x00ec, 0x014d, 0x00f3, 0x01d2, 0x00f2,
+   0x016b, 0x00fa, 0x01d4, 0x00f9, 0x01d6, 0x01d8, 0x01da, 0x01dc,
+-  0x00fc, 0x00ea, 0x0251, 0xfffd, 0x0144, 0x0148, 0xfffd, 0x0261,
++  0x00fc, 0x00ea, 0x0251, 0xfffd, 0x0144, 0x0148, 0x01f9, 0x0261,
+   0xfffd, 0xfffd, 0xfffd, 0xfffd, 0x3105, 0x3106, 0x3107, 0x3108,
+   0x3109, 0x310a, 0x310b, 0x310c, 0x310d, 0x310e, 0x310f, 0x3110,
+   0x3111, 0x3112, 0x3113, 0x3114, 0x3115, 0x3116, 0x3117, 0x3118,
+@@ -1015,8 +1047,8 @@
+   0xfe5b, 0xfe5c, 0xfe5d, 0xfe5e, 0xfe5f, 0xfe60, 0xfe61, 0xfe62,
+   0xfe63, 0xfe64, 0xfe65, 0xfe66, 0xfe68, 0xfe69, 0xfe6a, 0xfe6b,
+   0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd,
+-  0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0x3007, 0xfffd, 0xfffd,
+-  0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd, 0xfffd,
++  0x303e, 0x2ff0, 0x2ff1, 0x2ff2, 0x2ff3, 0x2ff4, 0x2ff5, 0x2ff6,
++  0x2ff7, 0x2ff8, 0x2ff9, 0x2ffa, 0x2ffb, 0x3007, 0xfffd, 0xfffd,
+   0xfffd, 0xfffd, 0xfffd, 0x2500, 0x2501, 0x2502, 0x2503, 0x2504,
+   0x2505, 0x2506, 0x2507, 0x2508, 0x2509, 0x250a, 0x250b, 0x250c,
+   0x250d, 0x250e, 0x250f, 0x2510, 0x2511, 0x2512, 0x2513, 0x2514,
+@@ -3132,6 +3164,16 @@
+   /* 0xfe */
+   0xfa0c, 0xfa0d, 0xfa0e, 0xfa0f, 0xfa11, 0xfa13, 0xfa14, 0xfa18,
+   0xfa1f, 0xfa20, 0xfa21, 0xfa23, 0xfa24, 0xfa27, 0xfa28, 0xfa29,
++  0x2e81, 0xfffd, 0xfffd, 0xfffd, 0x2e84, 0x3473, 0x3447, 0x2e88,
++  0x2e8b, 0xfffd, 0x359e, 0x361a, 0x360e, 0x2e8c, 0x2e97, 0x396e,
++  0x3918, 0xfffd, 0x39cf, 0x39df, 0x3a73, 0x39d0, 0xfffd, 0xfffd,
++  0x3b4e, 0x3c6e, 0x3ce0, 0x2ea7, 0xfffd, 0xfffd, 0x2eaa, 0x4056,
++  0x415f, 0x2eae, 0x4337, 0x2eb3, 0x2eb6, 0x2eb7, 0xfffd, 0x43b1,
++  0x43ac, 0x2ebb, 0x43dd, 0x44d6, 0x4661, 0x464c, 0xfffd, 0x4723,
++  0x4729, 0x477c, 0x478d, 0x2eca, 0x4947, 0x497a, 0x497d, 0x4982,
++  0x4983, 0x4985, 0x4986, 0x499f, 0x499b, 0x49b7, 0x49b6, 0xfffd,
++  0xfffd, 0x4ca3, 0x4c9f, 0x4ca0, 0x4ca1, 0x4c77, 0x4ca2, 0x4d13,
++  0x4d14, 0x4d15, 0x4d16, 0x4d17, 0x4d18, 0x4d19, 0x4dae, 0xfffd,
+ };
+ 
+ static int
+@@ -3145,7 +3187,7 @@
+         unsigned int i = 190 * (c1 - 0x81) + (c2 - (c2 >= 0x80 ? 0x41 : 0x40));
+         unsigned short wc = 0xfffd;
+         {
+-          if (i < 23766)
++          if (i < 23846)
+             wc = gbk_2uni_page81[i];
+         }
+         if (wc != 0xfffd) {
+@@ -3335,6 +3377,25 @@
+   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x38-0x3f*/
+   0xa1e2, 0x0000, 0xa1e1, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x40-0x47*/
+ };
++
++static const unsigned short gbk_page2e[74] = {
++  0xfe50, 0x0000, 0x0000, 0xfe54, 0x0000, 0x0000, 0x0000, 0xfe57, /*0x00-0x07*/
++  0x0000, 0x0000, 0xfe58, 0xfe5d, 0x0000, 0x0000, 0x0000, 0x0000, /*0x08-0x0f*/
++  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe5e, 0x0000, /*0x10-0x17*/
++  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x18-0x1f*/
++  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe6b, 0x0000, /*0x20-0x27*/
++  0x0000, 0xfe6e, 0x0000, 0x0000, 0x0000, 0xfe71, 0x0000, 0x0000, /*0x28-0x2f*/
++  0x0000, 0x0000, 0xfe73, 0x0000, 0x0000, 0xfe74, 0xfe75, 0x0000, /*0x30-0x37*/
++  0x0000, 0x0000, 0xfe79, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x38-0x3f*/
++  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x40-0x47*/
++  0x0000, 0xfe84,
++};
++
++static const unsigned short gbk_page2f[12] = {
++  0xa98a, 0xa98b, 0xa98c, 0xa98d, 0xa98e, 0xa98f, 0xa990, 0xa991, /*0x00-0x07*/
++  0xa992, 0xa993, 0xa994, 0xa995, /*0x08-0x0f*/
++};
++
+ static const unsigned short gbk_page30[304] = {
+   0xa1a1, 0xa1a2, 0xa1a3, 0xa1a8, 0x0000, 0xa1a9, 0xa965, 0xa996, /*0x00-0x07*/
+   0xa1b4, 0xa1b5, 0xa1b6, 0xa1b7, 0xa1b8, 0xa1b9, 0xa1ba, 0xa1bb, /*0x08-0x0f*/
+@@ -3343,7 +3404,7 @@
+   0x0000, 0xa940, 0xa941, 0xa942, 0xa943, 0xa944, 0xa945, 0xa946, /*0x20-0x27*/
+   0xa947, 0xa948, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x28-0x2f*/
+   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x30-0x37*/
+-  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x38-0x3f*/
++  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xa989, 0x0000, /*0x38-0x3f*/
+   0x0000, 0xa4a1, 0xa4a2, 0xa4a3, 0xa4a4, 0xa4a5, 0xa4a6, 0xa4a7, /*0x40-0x47*/
+   0xa4a8, 0xa4a9, 0xa4aa, 0xa4ab, 0xa4ac, 0xa4ad, 0xa4ae, 0xa4af, /*0x48-0x4f*/
+   0xa4b0, 0xa4b1, 0xa4b2, 0xa4b3, 0xa4b4, 0xa4b5, 0xa4b6, 0xa4b7, /*0x50-0x57*/
+@@ -6135,6 +6196,92 @@
+   0xa1e9, 0xa1ea, 0xa956, 0xa3fe, 0xa957, 0xa3a4, 0x0000, 0x0000, /*0xe0-0xe7*/
+ };
+ 
++
++static table_t unicodecjkexta_gbk_tab[UNICODECJKEXTA] = {
++  {0x3447, 0xfe56},
++  {0x3473, 0xfe55},
++  {0x359e, 0xfe5a},
++  {0x360e, 0xfe5c},
++  {0x361a, 0xfe5b},
++  {0x3918, 0xfe60},
++  {0x396e, 0xfe5f},
++  {0x39cf, 0xfe62},
++  {0x39d0, 0xfe65},
++  {0x39df, 0xfe63},
++  {0x3a73, 0xfe64},
++  {0x3b4e, 0xfe68},
++  {0x3c6e, 0xfe69},
++  {0x3ce0, 0xfe6a},
++  {0x4056, 0xfe6f},
++  {0x415f, 0xfe70},
++  {0x4337, 0xfe72},
++  {0x43ac, 0xfe78},
++  {0x43b1, 0xfe77},
++  {0x43dd, 0xfe7a},
++  {0x44d6, 0xfe7b},
++  {0x464c, 0xfe7d},
++  {0x4661, 0xfe7c},
++  {0x4723, 0xfe80},
++  {0x4729, 0xfe81},
++  {0x477c, 0xfe82},
++  {0x478d, 0xfe83},
++  {0x4947, 0xfe85},
++  {0x497a, 0xfe86},
++  {0x497d, 0xfe87},
++  {0x4982, 0xfe88},
++  {0x4983, 0xfe89},
++  {0x4985, 0xfe8a},
++  {0x4986, 0xfe8b},
++  {0x499b, 0xfe8d},
++  {0x499f, 0xfe8c},
++  {0x49b6, 0xfe8f},
++  {0x49b7, 0xfe8e},
++  {0x4c77, 0xfe96},
++  {0x4c9f, 0xfe93},
++  {0x4ca0, 0xfe94},
++  {0x4ca1, 0xfe95},
++  {0x4ca2, 0xfe97},
++  {0x4ca3, 0xfe92},
++  {0x4d13, 0xfe98},
++  {0x4d14, 0xfe99},
++  {0x4d15, 0xfe9a},
++  {0x4d16, 0xfe9b},
++  {0x4d17, 0xfe9c},
++  {0x4d19, 0xfe9e},
++  {0x4dae, 0xfe9f},
++};
++
++/* binsearch: find x in v[0] <= v[1] <= ... <= v[n-1] */
++static int binsearch(ucs4_t x, table_t v[], int n)
++{
++        int low, high, mid;
++
++        low = 0;
++        high = n - 1;
++        while (low <= high) {
++                mid = (low + high) / 2;
++                if (x < v[mid].key)
++                        high = mid - 1;
++                else if (x > v[mid].key)
++                        low = mid + 1;
++                else    /* found match */
++                        return mid;
++        }
++        return (-1);    /* no match */
++}
++
++unsigned short gbk_cjkexta(ucs4_t wc)
++{
++  int index;
++
++  index = binsearch(wc, unicodecjkexta_gbk_tab, UNICODECJKEXTA);
++  if(index >= 0)
++       return unicodecjkexta_gbk_tab[index].value;
++  else
++       return 0;
++}
++
++
+ static int
+ gbk_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
+ {
+@@ -6144,6 +6291,8 @@
+       c = gbk_page00[wc-0x00a0];
+     else if (wc >= 0x01c8 && wc < 0x01e0)
+       c = gbk_page01[wc-0x01c8];
++    else if (wc == 0x01f9)
++      c = 0xa8bf; /* Latin Small letter N with grave */
+     else if (wc >= 0x0250 && wc < 0x0268)
+       c = gbk_page02a[wc-0x0250];
+     else if (wc >= 0x02c0 && wc < 0x02e0)
+@@ -6154,6 +6303,8 @@
+       c = gbk_page04[wc-0x0400];
+     else if (wc >= 0x2010 && wc < 0x2040)
+       c = gbk_page20[wc-0x2010];
++    else if (wc == 0x20ac)
++      c = 0xa2e3;  /* for euro sign */
+     else if (wc >= 0x2100 && wc < 0x21a0)
+       c = gbk_page21[wc-0x2100];
+     else if (wc >= 0x2208 && wc < 0x22c0)
+@@ -6166,6 +6317,10 @@
+       c = gbk_page25[wc-0x2500];
+     else if (wc >= 0x2600 && wc < 0x2648)
+       c = gbk_page26[wc-0x2600];
++    else if (wc >= 0x2e81 && wc < 0x2ecb)
++      c = gbk_page2e[wc-0x2e81];
++    else if (wc >= 0x2ff0 && wc < 0x2ffc)
++      c = gbk_page2f[wc-0x2ff0]; /* Ideographic Description Characters */
+     else if (wc >= 0x3000 && wc < 0x3130)
+       c = gbk_page30[wc-0x3000];
+     else if (wc >= 0x3220 && wc < 0x3238)
+@@ -6174,6 +6329,8 @@
+       c = 0xa949;
+     else if (wc >= 0x3388 && wc < 0x33d8)
+       c = gbk_page33[wc-0x3388];
++    else if (wc >=0x3447 && wc < 0x4daf)
++      c = gbk_cjkexta(wc);
+     else if (wc >= 0x4e00 && wc < 0x9fa8)
+       c = gbk_page4e[wc-0x4e00];
+     else if (wc == 0xf92c)

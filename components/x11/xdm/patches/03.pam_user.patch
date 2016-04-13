@@ -1,0 +1,101 @@
+From 504bb1aee60d570d8676a61acbe32c66d6069c45 Mon Sep 17 00:00:00 2001
+From: Dmitry V. Levin <ldv@altlinux.org>
+Date: Tue, 12 Jan 2010 14:38:33 +0000
+Subject: [PATCH:xdm] greeter: fix logging of failed login attempts
+
+When PAM rejects a login attempt, the "username" variable remains
+uninitialized, which results to garbage being syslogged instead of
+login name.  Explicit initialization helps to avoid this issue.
+
+Fixes FreeDesktop Bug #26015 <https://bugs.freedesktop.org/show_bug.cgi?id=26015>
+
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+---
+ greeter/greet.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/greeter/greet.c b/greeter/greet.c
+index 61c7a52..f4c972b 100644
+--- a/greeter/greet.c
++++ b/greeter/greet.c
+@@ -500,7 +500,7 @@ greet_user_rtn GreetUser(
+ 	struct myconv_data pcd		= { d, greet, NULL };
+ 	struct pam_conv   pc 		= { pamconv, &pcd };
+ 	const char *	  pam_fname;
+-	char *		  username;
++	char *		  username	= NULL;
+ 	const char *	  login_prompt;
+ 
+ 
+
+-- 
+1.7.3.2
+
+From afc752d1c483e77de9aa3cb9532a67d95fd27dd9 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Tue, 16 Mar 2010 11:23:30 -0700
+Subject: [PATCH:xdm] Make sure username is not NULL when calling syslog from FailedLogin()
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+---
+ greeter/greet.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/greeter/greet.c b/greeter/greet.c
+index 7f235ef..1afe2f1 100644
+--- a/greeter/greet.c
++++ b/greeter/greet.c
+@@ -410,9 +410,14 @@ static void
+ FailedLogin (struct display *d, struct greet_info *greet)
+ {
+ #ifdef USE_SYSLOG
++    const char *username = greet->name;
++
++    if (username == NULL)
++	username = "username unavailable";
++
+     syslog(LOG_AUTHPRIV|LOG_NOTICE,
+ 	   "LOGIN FAILURE ON %s, %s",
+-	   d->name, greet->name);
++	   d->name, username);
+ #endif
+     DrawFail (login);
+ #ifndef USE_PAM
+-- 
+1.7.3.2
+
+
+From e7986c0bc2ce191ddf27b385585454e946838805 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Thu, 2 Jun 2011 21:39:16 -0700
+Subject: [PATCH:xdm] Stop using username retrieved from PAM before pam_end frees it.
+
+The first time a failed login message was syslogged it had the right
+username, but subsequent ones kept reusing that pointer, even though
+PAM had freed it and it may have been reused and filled with something
+else, resulting in garbage user names for the later login failures.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ greeter/greet.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/greeter/greet.c b/greeter/greet.c
+index 5182650..8426a65 100644
+--- a/greeter/greet.c
++++ b/greeter/greet.c
+@@ -615,6 +615,10 @@ greet_user_rtn GreetUser(
+ 		greet->name = username;
+ 	    }
+ 	    FailedLogin (d, greet);
++	    if (greet->name == username) {
++		/* pam_end frees the value returned by pam_get_item */
++		greet->name = NULL;
++	    }
+ 	    RUN_AND_CHECK_PAM_ERROR(pam_end,
+ 				    (*pamhp, pam_error));
+ 	}
+-- 
+1.7.3.2
+

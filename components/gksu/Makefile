@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gksu
 COMPONENT_VERSION=	2.0.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
 COMPONENT_SUMMARY=	Graphical frontend to su
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +35,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(TOUCH) NEWS  README&&\
 					libtoolize --copy --force &&\
 					aclocal &&\
-					automake -c -f && \
+					automake -a -c -f && \
                                         autoconf &&\
 					intltoolize --force  --copy )
 

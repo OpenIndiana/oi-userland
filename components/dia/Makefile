@@ -9,19 +9,19 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dia
-COMPONENT_VERSION=        0.97.2
+COMPONENT_VERSION=        0.97.3
 COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Apps/Dia
 COMPONENT_SUMMARY=        Dia Diagram Editor
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:a761478fb98697f71b00d3041d7c267f3db4b94fe33ac07c689cb89c4fe5eae1
+    sha256:22914e48ef48f894bb5143c5efc3d01ab96e0a0cde80de11058d3b4301377d34
 COMPONENT_ARCHIVE_URL=        http://ftp.gnome.org/pub/GNOME/sources/dia/0.97/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -36,6 +36,7 @@ CONFIGURE_OPTIONS +=        --sysconfdir=/etc
 CONFIGURE_OPTIONS +=        --enable-gnome
 CONFIGURE_OPTIONS +=        --with-cairo
 CONFIGURE_OPTIONS +=        --disable-static
+CONFIGURE_OPTIONS +=        --enable-db2html
 
 # common targets
 build:		        $(BUILD_32)

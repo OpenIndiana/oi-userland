@@ -1,0 +1,102 @@
+diff -up xdg-utils-1.0.2/scripts/xdg-desktop-menu.orig xdg-utils-1.0.2/scripts/xdg-desktop-menu
+--- xdg-utils-1.0.2/scripts/xdg-desktop-menu.orig	2008-02-13 12:19:40.000000000 +0000
++++ xdg-utils-1.0.2/scripts/xdg-desktop-menu	2008-02-13 12:32:47.396025000 +0000
+@@ -641,7 +641,7 @@ update_desktop_database()
+ fixup_mandriva_categories()
+ {
+     DEBUG 1 "fixup_mandriva_categories $1"
+-    awk '
++    nawk '
+ BEGIN {
+     xlat["AudioVideo"]="X-Mandrakelinux-Multimedia;X-MandrivaLinux-Multimedia"
+     xlat["Development"]="X-Mandrakelinux-MoreApplications-Development;X-MandrivaLinux-MoreApplications-Development"
+@@ -685,7 +685,7 @@ make_lazy_default()
+     local xdg_default_dirs
+     
+     DEBUG 1 "make_lazy_default $1/$2"
+-    mimetypes=`awk '
++    mimetypes=`nawk '
+ {
+     if (match($0,/MimeType=/)) {
+         split(substr($0,RSTART+9),mimetypes,";")
+@@ -832,7 +832,7 @@ update_submenu()
+     tmpfile=`mktemp $TMPDIR/tmp.XXXXXXXXXX`
+     orig_desktop_files=
+     if [ -r "$orig_menu_file" ] ; then
+-        awk '
++        nawk '
+ # List all files within <Filename> tags
+ BEGIN {
+   RS="<"
+@@ -926,7 +926,7 @@ BEGIN {
+         tmpfile=`mktemp $TMPDIR/tmp.XXXXXXXXXX`
+         for menu_file in $xdg_dir/*; do
+             if grep 'generated and managed by xdg-desktop-menu' $menu_file > /dev/null 2> /dev/null; then
+-                awk '
++                nawk '
+ # List all files within <Directory> tags
+ BEGIN {
+   RS="<"
+
+diff -up xdg-utils-1.0.2/scripts/xdg-email.orig xdg-utils-1.0.2/scripts/xdg-email
+--- xdg-utils-1.0.2/scripts/xdg-email.orig	2008-02-13 12:19:40.000000000 +0000
++++ xdg-utils-1.0.2/scripts/xdg-email	2008-02-13 12:32:52.343450000 +0000
+@@ -454,7 +454,7 @@ open_generic()
+ 
+ url_encode()
+ {
+-result=$(echo "$1" | $utf8 | awk '
++result=$(echo "$1" | $utf8 | nawk '
+     BEGIN {
+         for ( i=1; i<=255; ++i ) ord [ sprintf ("%c", i) "" ] = i + 0
+         e = ""
+
+diff -up xdg-utils-1.0.2/scripts/xdg-mime.orig xdg-utils-1.0.2/scripts/xdg-mime
+--- xdg-utils-1.0.2/scripts/xdg-mime.orig	2008-02-13 12:19:40.000000000 +0000
++++ xdg-utils-1.0.2/scripts/xdg-mime	2008-02-13 12:32:56.308218000 +0000
+@@ -508,7 +508,7 @@ make_default_kde()
+     DEBUG 1 "Updating $default_file"
+     mkdir -p "$HOME/.kde/share/config"
+     [ -f $default_file ] || touch $default_file
+-    awk -v application="$1" -v mimetype="$2" '
++    nawk -v application="$1" -v mimetype="$2" '
+     BEGIN {
+         header_start="[" mimetype " - "
+         supress=0
+@@ -894,7 +894,7 @@ mimetypes=
+ if [ -n "$kde_dir" ] ; then
+     DEBUG 2 "KDE3 mimelnk directory found, extracting mimetypes from XML file"
+ 
+-    mimetypes=`awk < "$filename" '
++    mimetypes=`nawk < "$filename" '
+ # Strip XML comments
+ BEGIN {
+  supress=0
+@@ -923,7 +923,7 @@ BEGIN {
+     }
+  while(1)
+ }
+-' | awk '
++' | nawk '
+ # List MIME types listed in <mime-type> tags
+ BEGIN {
+   RS="<"
+@@ -954,7 +954,7 @@ case $action in
+             for x in $mimetypes ; do 
+                 DEBUG 1 "Installing $kde_dir/$x.desktop (KDE 3.x support)"
+                 mkdir -p `dirname $kde_dir/$x.desktop`
+-                awk < "$filename" '
++                nawk < "$filename" '
+ # Strip XML comments
+ BEGIN {
+  supress=0
+@@ -983,7 +983,7 @@ BEGIN {
+     }
+  while(1)
+ }
+-' | awk > $kde_dir/$x.desktop '
++' | nawk > $kde_dir/$x.desktop '
+ # Extract mimetype $x from the XML file $filename
+ # Note that bash requires us to escape a single quote as '"'"' 
+ BEGIN {
+

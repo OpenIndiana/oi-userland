@@ -1,0 +1,283 @@
+--- /usr/tmp/clean/avahi-0.6.28/avahi-daemon/main.c	2010-08-26 01:51:39.000153000 +0100
++++ avahi-0.6.28/avahi-daemon/main.c	2011-01-20 14:40:47.924814317 +0000
+@@ -73,7 +73,9 @@
+ 
+ #include "setproctitle.h"
+ #include "main.h"
++#ifndef HAVE_BONJOUR
+ #include "simple-protocol.h"
++#endif
+ #include "static-services.h"
+ #include "static-hosts.h"
+ #include "ini-file-parser.h"
+@@ -134,11 +136,13 @@
+ #define RESOLV_CONF "/etc/resolv.conf"
+ #define BROWSE_DOMAINS_MAX 16
+ 
++#ifndef HAVE_BONJOUR
+ static AvahiSEntryGroup *dns_servers_entry_group = NULL;
+ static AvahiSEntryGroup *resolv_conf_entry_group = NULL;
+ 
+ static char **resolv_conf_name_servers = NULL;
+ static char **resolv_conf_search_domains = NULL;
++#endif
+ 
+ static DaemonConfig config;
+ 
+@@ -150,6 +154,7 @@
+     return strlen(s) >= l && strncmp(s, prefix, l) == 0;
+ }
+ 
++#ifndef HAVE_BONJOUR
+ static int load_resolv_conf(void) {
+     int ret = -1;
+     FILE *f;
+@@ -334,6 +339,7 @@
+     avahi_server_set_browse_domains(avahi_server, l);
+     avahi_string_list_free(l);
+ }
++#endif
+ 
+ static void server_callback(AvahiServer *s, AvahiServerState state, void *userdata) {
+     DaemonConfig *c = userdata;
+@@ -359,7 +365,7 @@
+ 
+             static_service_add_to_server();
+             static_hosts_add_to_server();
+-
++#ifndef HAVE_BONJOUR
+             remove_dns_server_entry_groups();
+ 
+             if (c->publish_resolv_conf && resolv_conf_name_servers && resolv_conf_name_servers[0])
+@@ -369,6 +375,7 @@
+                 dns_servers_entry_group = add_dns_servers(s, dns_servers_entry_group, c->publish_dns_servers);
+ 
+             simple_protocol_restart_queries();
++#endif
+             break;
+ 
+         case AVAHI_SERVER_COLLISION: {
+@@ -376,7 +383,9 @@
+ 
+             static_service_remove_from_server();
+             static_hosts_remove_from_server();
++#ifndef HAVE_BONJOUR
+             remove_dns_server_entry_groups();
++#endif
+ 
+             n = avahi_alternative_host_name(avahi_server_get_host_name(s));
+ 
+@@ -405,7 +414,9 @@
+ 
+             static_service_remove_from_server();
+             static_hosts_remove_from_server();
++#ifndef HAVE_BONJOUR
+             remove_dns_server_entry_groups();
++#endif
+ 
+             break;
+ 
+@@ -425,9 +436,11 @@
+             "    -r --reload        Request a running daemon to reload static services\n"
+             "    -c --check         Return 0 if a daemon is already running\n"
+             "    -V --version       Show version\n"
++#ifndef HAVE_BONJOUR
+             "    -f --file=FILE     Load the specified configuration file instead of\n"
+             "                       "AVAHI_CONFIG_FILE"\n"
+             "       --no-rlimits    Don't enforce resource limits\n"
++#endif
+             "       --no-drop-root  Don't drop privileges\n"
+ #ifdef ENABLE_CHROOT
+             "       --no-chroot     Don't chroot()\n"
+@@ -456,11 +469,15 @@
+         { "daemonize",      no_argument,       NULL, 'D' },
+         { "kill",           no_argument,       NULL, 'k' },
+         { "version",        no_argument,       NULL, 'V' },
++#ifndef HAVE_BONJOUR
+         { "file",           required_argument, NULL, 'f' },
++#endif
+         { "reload",         no_argument,       NULL, 'r' },
+         { "check",          no_argument,       NULL, 'c' },
+         { "syslog",         no_argument,       NULL, 's' },
++#ifndef HAVE_BONJOUR
+         { "no-rlimits",     no_argument,       NULL, OPTION_NO_RLIMITS },
++#endif
+         { "no-drop-root",   no_argument,       NULL, OPTION_NO_DROP_ROOT },
+ #ifdef ENABLE_CHROOT
+         { "no-chroot",      no_argument,       NULL, OPTION_NO_CHROOT },
+@@ -472,7 +489,11 @@
+ 
+     assert(c);
+ 
++#ifdef HAVE_BONJOUR
++    while ((o = getopt_long(argc, argv, "hDkVrcs", long_options, NULL)) >= 0) {
++#else
+     while ((o = getopt_long(argc, argv, "hDkVf:rcs", long_options, NULL)) >= 0) {
++#endif
+ 
+         switch(o) {
+             case 's':
+@@ -490,6 +511,7 @@
+             case 'V':
+                 c->command = DAEMON_VERSION;
+                 break;
++#ifndef HAVE_BONJOUR
+             case 'f':
+                 avahi_free(c->config_file);
+                 c->config_file = avahi_strdup(optarg);
+@@ -497,12 +519,15 @@
+             case 'r':
+                 c->command = DAEMON_RELOAD;
+                 break;
++#endif
+             case 'c':
+                 c->command = DAEMON_CHECK;
+                 break;
++#ifndef HAVE_BONJOUR
+             case OPTION_NO_RLIMITS:
+                 c->set_rlimits = 0;
+                 break;
++#endif
+             case OPTION_NO_DROP_ROOT:
+                 c->drop_root = 0;
+                 break;
+@@ -576,6 +601,7 @@
+     return 0;
+ }
+ 
++#ifndef HAVE_BONJOUR
+ static int load_config_file(DaemonConfig *c) {
+     int r = -1;
+     AvahiIniFile *f;
+@@ -845,6 +871,7 @@
+ 
+     return r;
+ }
++#endif
+ 
+ static void log_function(AvahiLogLevel level, const char *txt) {
+ 
+@@ -965,6 +992,7 @@
+     static_service_add_to_server();
+     static_hosts_add_to_server();
+ 
++#ifndef HAVE_BONJOUR
+     if (resolv_conf_entry_group)
+         avahi_s_entry_group_reset(resolv_conf_entry_group);
+ 
+@@ -975,6 +1003,7 @@
+ 
+     if (config.publish_resolv_conf && resolv_conf_name_servers && resolv_conf_name_servers[0])
+         resolv_conf_entry_group = add_dns_servers(avahi_server, resolv_conf_entry_group, resolv_conf_name_servers);
++#endif
+ }
+ 
+ #ifdef HAVE_INOTIFY
+@@ -1062,8 +1091,12 @@
+             break;
+ 
+         case SIGUSR1:
++#ifdef HAVE_BONJOUR
++            avahi_log_info("Got SIGUSR1, ignoring recor.");
++#else
+             avahi_log_info("Got SIGUSR1, dumping record data.");
+             avahi_server_dump(avahi_server, dump, NULL);
++#endif
+             break;
+ 
+         default:
+@@ -1103,8 +1136,10 @@
+ 
+     ignore_signal(SIGPIPE);
+ 
++#ifndef HAVE_BONJOUR
+     if (!(nss_support = avahi_nss_support()))
+         avahi_log_warn("WARNING: No NSS support for mDNS detected, consider installing nss-mdns!");
++#endif
+ 
+     if (!(simple_poll_api = avahi_simple_poll_new())) {
+         avahi_log_error("Failed to create main loop object.");
+@@ -1123,8 +1158,10 @@
+         goto finish;
+     }
+ 
++#ifndef HAVE_BONJOUR
+     if (simple_protocol_setup(poll_api) < 0)
+         goto finish;
++#endif
+ 
+ #ifdef HAVE_DBUS
+     if (c->enable_dbus) {
+@@ -1193,7 +1230,9 @@
+     }
+ #endif
+ 
++#ifndef HAVE_BONJOUR
+     load_resolv_conf();
++#endif
+ #ifdef ENABLE_CHROOT
+     static_service_load(config.use_chroot);
+     static_hosts_load(config.use_chroot);
+@@ -1207,8 +1246,10 @@
+         goto finish;
+     }
+ 
++#ifndef HAVE_BONJOUR
+     update_wide_area_servers();
+     update_browse_domains();
++#endif
+ 
+     if (c->daemonize) {
+         daemon_retval_send(0);
+@@ -1238,10 +1279,12 @@
+ 
+     static_hosts_remove_from_server();
+     static_hosts_free_all();
++#ifndef HAVE_BONJOUR
+ 
+     remove_dns_server_entry_groups();
+ 
+     simple_protocol_shutdown();
++#endif
+ 
+ #ifdef HAVE_DBUS
+     if (c->enable_dbus)
+@@ -1555,8 +1598,10 @@
+             goto finish;
+         }
+ 
++#ifndef HAVE_BONJOUR
+         if (load_config_file(&config) < 0)
+             goto finish;
++#endif
+ 
+         if (config.daemonize) {
+             daemon_retval_init();
+@@ -1648,9 +1693,13 @@
+ 
+     avahi_server_config_free(&config.server_config);
+     avahi_free(config.config_file);
++#ifdef HAVE_BONJOUR
++    assert(config.publish_dns_servers == NULL);
++#else
+     avahi_strfreev(config.publish_dns_servers);
+     avahi_strfreev(resolv_conf_name_servers);
+     avahi_strfreev(resolv_conf_search_domains);
++#endif
+ 
+     if (wrote_pid_file) {
+ #ifdef ENABLE_CHROOT
+--- avahi-0.6.30/avahi-daemon/static-services.c.orig	2011-08-22 13:40:56.137423950 +0100
++++ avahi-0.6.30/avahi-daemon/static-services.c	2011-08-22 14:02:55.507416810 +0100
+@@ -711,7 +711,11 @@
+ 	        break;
+ #endif
+             default:
++#ifdef HAVE_BONJOUR
++	        avahi_log_info("Failed to read "AVAHI_SERVICE_DIR".");
++#else
+ 	        avahi_log_error("Failed to read "AVAHI_SERVICE_DIR".");
++#endif
+ 	        break;
+         }
+ 

@@ -1,6 +1,6 @@
-diff -ru cmake-2.8.6.org//Modules/CMakeDetermineJavaCompiler.cmake cmake-2.8.6/Modules/CMakeDetermineJavaCompiler.cmake
---- cmake-2.8.6.org//Modules/CMakeDetermineJavaCompiler.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/CMakeDetermineJavaCompiler.cmake	Mon Oct 10 13:44:03 2011
+diff -ur cmake-2.8.12.orig/Modules/CMakeDetermineJavaCompiler.cmake cmake-2.8.12/Modules/CMakeDetermineJavaCompiler.cmake
+--- cmake-2.8.12.orig/Modules/CMakeDetermineJavaCompiler.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/CMakeDetermineJavaCompiler.cmake	2015-06-03 09:26:30.105901688 -0400
 @@ -55,9 +55,10 @@
      /usr/bin
      /usr/lib/java/bin
@@ -15,85 +15,56 @@ diff -ru cmake-2.8.6.org//Modules/CMakeDetermineJavaCompiler.cmake cmake-2.8.6/M
      /usr/java/j2sdk1.4.2_04
      /usr/lib/j2sdk1.4-sun/bin
      /usr/java/j2sdk1.4.2_09/bin
-diff -ru cmake-2.8.6.org//Modules/CMakeDetermineSystem.cmake cmake-2.8.6/Modules/CMakeDetermineSystem.cmake
---- cmake-2.8.6.org//Modules/CMakeDetermineSystem.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/CMakeDetermineSystem.cmake	Mon Oct 10 13:47:49 2011
-@@ -43,7 +43,9 @@
+diff -ur cmake-2.8.12.orig/Modules/CMakeDetermineSystem.cmake cmake-2.8.12/Modules/CMakeDetermineSystem.cmake
+--- cmake-2.8.12.orig/Modules/CMakeDetermineSystem.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/CMakeDetermineSystem.cmake	2015-06-03 09:26:30.107633536 -0400
+@@ -43,7 +43,7 @@
  
  # find out on which system cmake runs
- IF(CMAKE_HOST_UNIX)
--  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-+FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin )
-+# Uncomment the following to enable /usr/local search
-+#  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-   IF(CMAKE_UNAME)
-     EXEC_PROGRAM(uname ARGS -s OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_NAME)
-     EXEC_PROGRAM(uname ARGS -r OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION)
-diff -ru cmake-2.8.6.org//Modules/FindBLAS.cmake cmake-2.8.6/Modules/FindBLAS.cmake
---- cmake-2.8.6.org//Modules/FindBLAS.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindBLAS.cmake	Mon Oct 10 16:55:05 2011
-@@ -80,9 +80,13 @@
-   if (WIN32)
-     set(_libdir ENV LIB)
-   elseif (APPLE)
--    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH)
-+    set(_libdir /usr/lib /usr/lib64 ENV DYLD_LIBRARY_PATH)
-+# Uncomment the following to enable /usr/local search
-+#    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH)
-   else ()
--    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH)
-+    set(_libdir /usr/lib /usr/lib64 ENV LD_LIBRARY_PATH)
-+# Uncomment the following to enable /usr/local search
-+#    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH)
-   endif ()
- endif ()
- foreach(_library ${_list})
-diff -ru cmake-2.8.6.org//Modules/FindFLTK.cmake cmake-2.8.6/Modules/FindFLTK.cmake
---- cmake-2.8.6.org//Modules/FindFLTK.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindFLTK.cmake	Tue Oct 11 11:54:22 2011
-@@ -103,11 +103,15 @@
-     ${FLTK_DIR_SEARCH}
+ if(CMAKE_HOST_UNIX)
+-  find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
++  find_program(CMAKE_UNAME uname /bin /usr/bin )
+   if(CMAKE_UNAME)
+     exec_program(uname ARGS -s OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_NAME)
+     exec_program(uname ARGS -r OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_VERSION)
+diff -ur cmake-2.8.12.orig/Modules/FindFLTK.cmake cmake-2.8.12/Modules/FindFLTK.cmake
+--- cmake-2.8.12.orig/Modules/FindFLTK.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindFLTK.cmake	2015-06-03 09:26:30.108627970 -0400
+@@ -101,9 +101,12 @@
  
+     PATHS
      # Look in standard UNIX install locations.
 -    /usr/local/lib/fltk
 +
 +# Uncomment the following to enable /usr/local search
 +#    /usr/local/lib/fltk
      /usr/lib/fltk
--    /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local/include
-     /usr/include
 -    /usr/local/fltk
 +# Uncomment the following to enable /usr/local search
 +#    /usr/local/fltk
      /usr/X11R6/include
  
      # Read from the CMakeSetup registry entries.  It is likely that
-@@ -221,7 +225,8 @@
-     ENDIF()
+@@ -217,7 +220,6 @@
+     endif()
  
-     SET(FLTK_INCLUDE_SEARCH_PATH ${FLTK_INCLUDE_SEARCH_PATH}
+     set(FLTK_INCLUDE_SEARCH_PATH ${FLTK_INCLUDE_SEARCH_PATH}
 -      /usr/local/fltk
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/fltk
        /usr/X11R6/include
        ${_FLTK_POSSIBLE_INCLUDE_DIRS}
        )
-@@ -242,7 +247,8 @@
-     ENDIF()
+@@ -238,7 +240,6 @@
+     endif()
  
-     SET(FLTK_LIBRARY_SEARCH_PATH ${FLTK_LIBRARY_SEARCH_PATH}
+     set(FLTK_LIBRARY_SEARCH_PATH ${FLTK_LIBRARY_SEARCH_PATH}
 -      /usr/local/fltk/lib
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/fltk/lib
        /usr/X11R6/lib
        ${FLTK_INCLUDE_DIR}/lib
        ${_FLTK_POSSIBLE_LIBRARY_DIR}
-diff -ru cmake-2.8.6.org//Modules/FindFLTK2.cmake cmake-2.8.6/Modules/FindFLTK2.cmake
---- cmake-2.8.6.org//Modules/FindFLTK2.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindFLTK2.cmake	Mon Oct 10 16:48:15 2011
-@@ -83,11 +83,15 @@
+diff -ur cmake-2.8.12.orig/Modules/FindFLTK2.cmake cmake-2.8.12/Modules/FindFLTK2.cmake
+--- cmake-2.8.12.orig/Modules/FindFLTK2.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindFLTK2.cmake	2015-06-03 09:26:30.109546757 -0400
+@@ -79,9 +79,12 @@
      ${FLTK2_DIR_SEARCH}
  
      # Look in standard UNIX install locations.
@@ -102,84 +73,60 @@ diff -ru cmake-2.8.6.org//Modules/FindFLTK2.cmake cmake-2.8.6/Modules/FindFLTK2.
 +# Uncomment the following to enable /usr/local search
 +#    /usr/local/lib/fltk2
      /usr/lib/fltk2
--    /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local/include
-     /usr/include
 -    /usr/local/fltk2
 +# Uncomment the following to enable /usr/local search
 +#    /usr/local/fltk2
      /usr/X11R6/include
  
      # Read from the CMakeSetup registry entries.  It is likely that
-@@ -193,9 +197,11 @@
-     ENDIF(FLTK2_FLUID_EXECUTABLE)
+@@ -187,14 +190,12 @@
+     endif()
  
-     SET(FLTK2_INCLUDE_SEARCH_PATH ${FLTK2_INCLUDE_SEARCH_PATH}
--      /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/include
-       /usr/include
+     set(FLTK2_INCLUDE_SEARCH_PATH ${FLTK2_INCLUDE_SEARCH_PATH}
 -      /usr/local/fltk2
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/fltk2
        /usr/X11R6/include
        )
  
-@@ -203,8 +209,9 @@
+     find_path(FLTK2_INCLUDE_DIR fltk/run.h ${FLTK2_INCLUDE_SEARCH_PATH})
  
-     SET(FLTK2_LIBRARY_SEARCH_PATH ${FLTK2_LIBRARY_SEARCH_PATH}
-       /usr/lib
--      /usr/local/lib
+     set(FLTK2_LIBRARY_SEARCH_PATH ${FLTK2_LIBRARY_SEARCH_PATH}
 -      /usr/local/fltk2/lib
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/lib
-+#      /usr/local/fltk2/lib
        /usr/X11R6/lib
        ${FLTK2_INCLUDE_DIR}/lib
        )
-diff -ru cmake-2.8.6.org//Modules/FindFreetype.cmake cmake-2.8.6/Modules/FindFreetype.cmake
---- cmake-2.8.6.org//Modules/FindFreetype.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindFreetype.cmake	Mon Oct 10 16:50:47 2011
-@@ -45,8 +45,9 @@
-   HINTS
-   $ENV{FREETYPE_DIR}
+diff -ur cmake-2.8.12.orig/Modules/FindFreetype.cmake cmake-2.8.12/Modules/FindFreetype.cmake
+--- cmake-2.8.12.orig/Modules/FindFreetype.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindFreetype.cmake	2015-06-03 09:28:02.238736903 -0400
+@@ -47,8 +47,6 @@
+     ENV FREETYPE_DIR
    PATHS
--  /usr/local/X11R6/include
--  /usr/local/X11/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/X11R6/include
-+#  /usr/local/X11/include
-   /usr/freeware/include
- )
- 
-@@ -54,8 +55,9 @@
-   HINTS
-   $ENV{FREETYPE_DIR}/include/freetype2
+     /usr/X11R6
+-    /usr/local/X11R6
+-    /usr/local/X11
+     /usr/freeware
+     ENV GTKMM_BASEPATH
+     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
+@@ -61,8 +59,6 @@
+     ENV FREETYPE_DIR
    PATHS
--  /usr/local/X11R6/include
--  /usr/local/X11/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/X11R6/include
-+#  /usr/local/X11/include
-   /usr/freeware/include
-   PATH_SUFFIXES freetype2
- )
-@@ -66,8 +68,9 @@
-   $ENV{FREETYPE_DIR}
-   PATH_SUFFIXES lib64 lib
+     /usr/X11R6
+-    /usr/local/X11R6
+-    /usr/local/X11
+     /usr/freeware
+     ENV GTKMM_BASEPATH
+     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
+@@ -77,8 +73,6 @@
+   PATH_SUFFIXES lib
    PATHS
--  /usr/local/X11R6
--  /usr/local/X11
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/X11R6
-+#  /usr/local/X11
-   /usr/freeware
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindGDAL.cmake cmake-2.8.6/Modules/FindGDAL.cmake
---- cmake-2.8.6.org//Modules/FindGDAL.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindGDAL.cmake	Mon Oct 10 16:52:52 2011
+     /usr/X11R6
+-    /usr/local/X11R6
+-    /usr/local/X11
+     /usr/freeware
+     ENV GTKMM_BASEPATH
+     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
+diff -ur cmake-2.8.12.orig/Modules/FindGDAL.cmake cmake-2.8.12/Modules/FindGDAL.cmake
+--- cmake-2.8.12.orig/Modules/FindGDAL.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindGDAL.cmake	2015-06-03 09:26:30.112333376 -0400
 @@ -53,7 +53,8 @@
        /Library/Frameworks/gdal.framework/Headers
        /sw # Fink
@@ -210,11 +157,11 @@ diff -ru cmake-2.8.6.org//Modules/FindGDAL.cmake cmake-2.8.6/Modules/FindGDAL.cm
      /opt
      /usr/freeware
  )
-diff -ru cmake-2.8.6.org//Modules/FindGTK.cmake cmake-2.8.6/Modules/FindGTK.cmake
---- cmake-2.8.6.org//Modules/FindGTK.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindGTK.cmake	Mon Oct 10 16:53:18 2011
+diff -ur cmake-2.8.12.orig/Modules/FindGTK.cmake cmake-2.8.12/Modules/FindGTK.cmake
+--- cmake-2.8.12.orig/Modules/FindGTK.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindGTK.cmake	2015-06-03 09:26:30.113396597 -0400
 @@ -36,9 +36,11 @@
-   FIND_PATH( GTK_glibconfig_INCLUDE_PATH NAMES glibconfig.h
+   find_path( GTK_glibconfig_INCLUDE_PATH NAMES glibconfig.h
      PATHS
      /usr/openwin/share/include
 -    /usr/local/include/glib12
@@ -227,24 +174,21 @@ diff -ru cmake-2.8.6.org//Modules/FindGTK.cmake cmake-2.8.6/Modules/FindGTK.cmak
      /opt/gnome/include
      /opt/gnome/lib/glib/include
    )
-diff -ru cmake-2.8.6.org//Modules/FindGTK2.cmake cmake-2.8.6/Modules/FindGTK2.cmake
---- cmake-2.8.6.org//Modules/FindGTK2.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindGTK2.cmake	Mon Oct 10 16:53:36 2011
-@@ -185,8 +185,9 @@
- 
-     find_path(${_var} ${_hdr}
+diff -ur cmake-2.8.12.orig/Modules/FindGTK2.cmake cmake-2.8.12/Modules/FindGTK2.cmake
+--- cmake-2.8.12.orig/Modules/FindGTK2.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindGTK2.cmake	2015-06-03 09:26:30.115038103 -0400
+@@ -217,8 +217,6 @@
+     find_path(${_var}_INCLUDE_DIR ${_hdr}
          PATHS
+             ${_gtk2_arch_dir}
 -            /usr/local/lib64
 -            /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#            /usr/local/lib64
-+#            /usr/local/lib
              /usr/lib64
              /usr/lib
              /opt/gnome/include
-diff -ru cmake-2.8.6.org//Modules/FindJNI.cmake cmake-2.8.6/Modules/FindJNI.cmake
---- cmake-2.8.6.org//Modules/FindJNI.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindJNI.cmake	Mon Oct 10 16:54:47 2011
+diff -ur cmake-2.8.12.orig/Modules/FindJNI.cmake cmake-2.8.12/Modules/FindJNI.cmake
+--- cmake-2.8.12.orig/Modules/FindJNI.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindJNI.cmake	2015-06-03 09:26:30.116199579 -0400
 @@ -102,12 +102,14 @@
    ${_JAVA_HOME}/lib
    ${_JAVA_HOME}
@@ -263,33 +207,27 @@ diff -ru cmake-2.8.6.org//Modules/FindJNI.cmake cmake-2.8.6/Modules/FindJNI.cmak
    /usr/lib/j2sdk1.4-sun/jre/lib/{libarch}
    /usr/lib/j2sdk1.5-sun/jre/lib/{libarch}
    /opt/sun-jdk-1.5.0.04/jre/lib/{libarch}
-@@ -139,15 +141,18 @@
+@@ -144,15 +146,12 @@
    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\${java_install_version};JavaHome]/include"
    ${_JAVA_HOME}/include
-   /usr/include 
+   /usr/include
 -  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
    /usr/lib/java/include
 -  /usr/local/lib/java/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/lib/java/include
    /usr/lib/jvm/java/include
    /usr/lib/jvm/java-6-sun/include
    /usr/lib/jvm/java-1.5.0-sun/include
    /usr/lib/jvm/java-6-sun-1.6.0.00/include       # can this one be removed according to #8821 ? Alex
    /usr/lib/jvm/java-6-openjdk/include
 -  /usr/local/share/java/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/share/java/include
    /usr/lib/j2sdk1.4-sun/include
    /usr/lib/j2sdk1.5-sun/include
    /opt/sun-jdk-1.5.0.04/include
-diff -ru cmake-2.8.6.org//Modules/FindJava.cmake cmake-2.8.6/Modules/FindJava.cmake
---- cmake-2.8.6.org//Modules/FindJava.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindJava.cmake	Mon Oct 10 16:54:01 2011
+diff -ur cmake-2.8.12.orig/Modules/FindJava.cmake cmake-2.8.12/Modules/FindJava.cmake
+--- cmake-2.8.12.orig/Modules/FindJava.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindJava.cmake	2015-06-03 09:26:30.117271669 -0400
 @@ -73,8 +73,9 @@
- SET(_JAVA_PATHS
+ set(_JAVA_PATHS
    /usr/lib/java/bin
    /usr/share/java/bin
 -  /usr/local/java/bin
@@ -300,9 +238,9 @@ diff -ru cmake-2.8.6.org//Modules/FindJava.cmake cmake-2.8.6/Modules/FindJava.cm
    /usr/java/j2sdk1.4.2_04
    /usr/lib/j2sdk1.4-sun/bin
    /usr/java/j2sdk1.4.2_09/bin
-diff -ru cmake-2.8.6.org//Modules/FindKDE3.cmake cmake-2.8.6/Modules/FindKDE3.cmake
---- cmake-2.8.6.org//Modules/FindKDE3.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindKDE3.cmake	Mon Oct 10 16:55:28 2011
+diff -ur cmake-2.8.12.orig/Modules/FindKDE3.cmake cmake-2.8.12/Modules/FindKDE3.cmake
+--- cmake-2.8.12.orig/Modules/FindKDE3.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindKDE3.cmake	2015-06-03 09:26:30.118154306 -0400
 @@ -141,7 +141,8 @@
    /opt/kde3/include
    /opt/kde/include
@@ -313,150 +251,28 @@ diff -ru cmake-2.8.6.org//Modules/FindKDE3.cmake cmake-2.8.6/Modules/FindKDE3.cm
    )
  
  #now the KDE library directory
-diff -ru cmake-2.8.6.org//Modules/FindLAPACK.cmake cmake-2.8.6/Modules/FindLAPACK.cmake
---- cmake-2.8.6.org//Modules/FindLAPACK.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindLAPACK.cmake	Mon Oct 10 16:56:57 2011
-@@ -69,9 +69,13 @@
-   if (WIN32)
-     set(_libdir ENV LIB)
-   elseif (APPLE)
--    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH)
-+    set(_libdir /usr/lib /usr/lib64 ENV DYLD_LIBRARY_PATH)
-+# Uncomment the following to enable /usr/local search
-+#    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV DYLD_LIBRARY_PATH)
-   else ()
--    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH)
-+    set(_libdir /usr/lib /usr/lib64 ENV LD_LIBRARY_PATH)
-+# Uncomment the following to enable /usr/local search
-+#    set(_libdir /usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64 ENV LD_LIBRARY_PATH)
-   endif ()
- endif ()
- foreach(_library ${_list})
-diff -ru cmake-2.8.6.org//Modules/FindLua50.cmake cmake-2.8.6/Modules/FindLua50.cmake
---- cmake-2.8.6.org//Modules/FindLua50.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindLua50.cmake	Tue Oct 11 11:01:21 2011
-@@ -31,11 +31,13 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw # Fink
-   /opt/local # DarwinPorts
--  /opt/csw # Blastwave
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw # Blastwave
-   /opt
- )
- 
-@@ -43,15 +45,17 @@
-   NAMES lua50 lua5.0 lua-5.0 lua5 lua
-   HINTS
-   $ENV{LUA_DIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-@@ -65,13 +69,15 @@
-     HINTS
-     $ENV{LUALIB_DIR}
-     $ENV{LUA_DIR}
--    PATH_SUFFIXES lib64 lib
-+    PATH_SUFFIXES lib64 lib lib/32 lib/64
-     PATHS
--    /usr/local
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local
-     /usr
-     /sw
-     /opt/local
--    /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#    /opt/csw
-     /opt
-   )
-   IF(LUA_LIBRARY_lualib AND LUA_LIBRARY_lua)
-diff -ru cmake-2.8.6.org//Modules/FindLua51.cmake cmake-2.8.6/Modules/FindLua51.cmake
---- cmake-2.8.6.org//Modules/FindLua51.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindLua51.cmake	Tue Oct 11 11:05:48 2011
-@@ -31,11 +31,13 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw # Fink
-   /opt/local # DarwinPorts
--  /opt/csw # Blastwave
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw # Blastwave
-   /opt
- )
- 
-@@ -43,15 +45,17 @@
-   NAMES lua51 lua5.1 lua-5.1 lua
-   HINTS
-   $ENV{LUA_DIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindMatlab.cmake cmake-2.8.6/Modules/FindMatlab.cmake
---- cmake-2.8.6.org//Modules/FindMatlab.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindMatlab.cmake	Mon Oct 10 17:00:16 2011
-@@ -60,7 +60,8 @@
-   IF(CMAKE_SIZEOF_VOID_P EQUAL 4)
+diff -ur cmake-2.8.12.orig/Modules/FindMatlab.cmake cmake-2.8.12/Modules/FindMatlab.cmake
+--- cmake-2.8.12.orig/Modules/FindMatlab.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindMatlab.cmake	2015-06-03 09:26:30.118979980 -0400
+@@ -60,7 +60,6 @@
+   if(CMAKE_SIZEOF_VOID_P EQUAL 4)
      # Regular x86
-     SET(MATLAB_ROOT
+     set(MATLAB_ROOT
 -      /usr/local/matlab-7sp1/bin/glnx86/
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/matlab-7sp1/bin/glnx86/
        /opt/matlab-7sp1/bin/glnx86/
        $ENV{HOME}/matlab-7sp1/bin/glnx86/
        $ENV{HOME}/redhat-matlab/bin/glnx86/
-@@ -68,7 +69,8 @@
-   ELSE(CMAKE_SIZEOF_VOID_P EQUAL 4)
+@@ -68,7 +67,6 @@
+   else()
      # AMD64:
-     SET(MATLAB_ROOT
+     set(MATLAB_ROOT
 -      /usr/local/matlab-7sp1/bin/glnxa64/
-+# Uncomment the following to enable /usr/local search
-+#      /usr/local/matlab-7sp1/bin/glnxa64/
        /opt/matlab-7sp1/bin/glnxa64/
        $ENV{HOME}/matlab7_64/bin/glnxa64/
        $ENV{HOME}/matlab-7sp1/bin/glnxa64/
-@@ -89,7 +91,8 @@
+@@ -89,7 +87,8 @@
      )
-   FIND_PATH(MATLAB_INCLUDE_DIR
+   find_path(MATLAB_INCLUDE_DIR
      "mex.h"
 -    "/usr/local/matlab-7sp1/extern/include/"
 +# Uncomment the following to enable /usr/local search
@@ -464,50 +280,10 @@ diff -ru cmake-2.8.6.org//Modules/FindMatlab.cmake cmake-2.8.6/Modules/FindMatla
      "/opt/matlab-7sp1/extern/include/"
      "$ENV{HOME}/matlab-7sp1/extern/include/"
      "$ENV{HOME}/redhat-matlab/extern/include/"
-diff -ru cmake-2.8.6.org//Modules/FindOpenAL.cmake cmake-2.8.6/Modules/FindOpenAL.cmake
---- cmake-2.8.6.org//Modules/FindOpenAL.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindOpenAL.cmake	Tue Oct 11 11:06:21 2011
-@@ -68,11 +68,13 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw # Fink
-   /opt/local # DarwinPorts
--  /opt/csw # Blastwave
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw # Blastwave
-   /opt
-   [HKEY_LOCAL_MACHINE\\SOFTWARE\\Creative\ Labs\\OpenAL\ 1.1\ Software\ Development\ Kit\\1.00.0000;InstallDir]
- )
-@@ -81,15 +83,17 @@
-   NAMES OpenAL al openal OpenAL32
-   HINTS
-   $ENV{OPENALDIR}
--  PATH_SUFFIXES lib64 lib libs64 libs libs/Win32 libs/Win64
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64 libs64 libs libs/Win32 libs/Win64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
-   [HKEY_LOCAL_MACHINE\\SOFTWARE\\Creative\ Labs\\OpenAL\ 1.1\ Software\ Development\ Kit\\1.00.0000;InstallDir]
- )
-diff -ru cmake-2.8.6.org//Modules/FindOpenThreads.cmake cmake-2.8.6/Modules/FindOpenThreads.cmake
---- cmake-2.8.6.org//Modules/FindOpenThreads.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindOpenThreads.cmake	Mon Oct 10 17:06:24 2011
-@@ -64,7 +64,8 @@
+diff -ur cmake-2.8.12.orig/Modules/FindOpenThreads.cmake cmake-2.8.12/Modules/FindOpenThreads.cmake
+--- cmake-2.8.12.orig/Modules/FindOpenThreads.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindOpenThreads.cmake	2015-06-03 09:26:30.119800475 -0400
+@@ -70,7 +70,8 @@
      PATHS
          /sw # Fink
          /opt/local # DarwinPorts
@@ -517,7 +293,7 @@ diff -ru cmake-2.8.6.org//Modules/FindOpenThreads.cmake cmake-2.8.6/Modules/Find
          /opt
          /usr/freeware
      PATH_SUFFIXES include
-@@ -84,7 +85,8 @@
+@@ -92,7 +93,8 @@
      PATHS
          /sw
          /opt/local
@@ -526,8 +302,8 @@ diff -ru cmake-2.8.6.org//Modules/FindOpenThreads.cmake cmake-2.8.6/Modules/Find
 +#        /opt/csw
          /opt
          /usr/freeware
-     PATH_SUFFIXES lib64 lib
-@@ -104,7 +106,8 @@
+     PATH_SUFFIXES lib
+@@ -114,7 +116,8 @@
      PATHS
          /sw
          /opt/local
@@ -536,13 +312,13 @@ diff -ru cmake-2.8.6.org//Modules/FindOpenThreads.cmake cmake-2.8.6/Modules/Find
 +#        /opt/csw
          /opt
          /usr/freeware
-     PATH_SUFFIXES lib64 lib
-diff -ru cmake-2.8.6.org//Modules/FindPHP4.cmake cmake-2.8.6/Modules/FindPHP4.cmake
---- cmake-2.8.6.org//Modules/FindPHP4.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindPHP4.cmake	Mon Oct 10 17:07:51 2011
+     PATH_SUFFIXES lib
+diff -ur cmake-2.8.12.orig/Modules/FindPHP4.cmake cmake-2.8.12/Modules/FindPHP4.cmake
+--- cmake-2.8.12.orig/Modules/FindPHP4.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindPHP4.cmake	2015-06-03 09:26:30.120587298 -0400
 @@ -22,10 +22,12 @@
  
- SET(PHP4_POSSIBLE_INCLUDE_PATHS
+ set(PHP4_POSSIBLE_INCLUDE_PATHS
    /usr/include/php4
 -  /usr/local/include/php4
 +# Uncomment the following to enable /usr/local search
@@ -555,91 +331,25 @@ diff -ru cmake-2.8.6.org//Modules/FindPHP4.cmake cmake-2.8.6/Modules/FindPHP4.cm
 +#  /usr/local/apache/php
    )
  
- SET(PHP4_POSSIBLE_LIB_PATHS
-diff -ru cmake-2.8.6.org//Modules/FindPhysFS.cmake cmake-2.8.6/Modules/FindPhysFS.cmake
---- cmake-2.8.6.org//Modules/FindPhysFS.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindPhysFS.cmake	Tue Oct 11 11:06:49 2011
-@@ -30,7 +30,8 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw # Fink
-   /opt/local # DarwinPorts
-@@ -42,11 +43,12 @@
-   NAMES physfs
-   HINTS
-   $ENV{PHYSFSDIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
-diff -ru cmake-2.8.6.org//Modules/FindPike.cmake cmake-2.8.6/Modules/FindPike.cmake
---- cmake-2.8.6.org//Modules/FindPike.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindPike.cmake	Mon Oct 10 17:09:13 2011
+ set(PHP4_POSSIBLE_LIB_PATHS
+diff -ur cmake-2.8.12.orig/Modules/FindPike.cmake cmake-2.8.12/Modules/FindPike.cmake
+--- cmake-2.8.12.orig/Modules/FindPike.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindPike.cmake	2015-06-03 09:26:30.121336015 -0400
 @@ -22,7 +22,9 @@
  
- FILE(GLOB PIKE_POSSIBLE_INCLUDE_PATHS
+ file(GLOB PIKE_POSSIBLE_INCLUDE_PATHS
    /usr/include/pike/*
 -  /usr/local/include/pike/*)
 +# Uncomment the following to enable /usr/local search
 +#  /usr/local/include/pike/*)
 +  )
  
- FIND_PATH(PIKE_INCLUDE_PATH program.h
+ find_path(PIKE_INCLUDE_PATH program.h
    ${PIKE_POSSIBLE_INCLUDE_PATHS})
-diff -ru cmake-2.8.6.org//Modules/FindProducer.cmake cmake-2.8.6/Modules/FindProducer.cmake
---- cmake-2.8.6.org//Modules/FindProducer.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindProducer.cmake	Tue Oct 11 11:07:52 2011
-@@ -51,11 +51,13 @@
-   PATHS
-     ~/Library/Frameworks
-     /Library/Frameworks
--    /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local/include
-     /usr/include
-     /sw/include # Fink
-     /opt/local/include # DarwinPorts
--    /opt/csw/include # Blastwave
-+# Uncomment the following to enable /opt/csw search
-+#    /opt/csw/include # Blastwave
-     /opt/include
-     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OpenThreads_ROOT]/include
-     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
-@@ -67,13 +69,15 @@
-   $ENV{PRODUCER_DIR}
-   $ENV{OSG_DIR}
-   $ENV{OSGDIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindQt.cmake cmake-2.8.6/Modules/FindQt.cmake
---- cmake-2.8.6.org//Modules/FindQt.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindQt.cmake	Tue Oct 11 10:08:04 2011
-@@ -82,8 +82,9 @@
+diff -ur cmake-2.8.12.orig/Modules/FindQt.cmake cmake-2.8.12/Modules/FindQt.cmake
+--- cmake-2.8.12.orig/Modules/FindQt.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindQt.cmake	2015-06-03 09:26:30.122129492 -0400
+@@ -98,8 +98,9 @@
    "[HKEY_CURRENT_USER\\Software\\Trolltech\\Versions\\4.0.0;InstallDir]/include/Qt"
    ${qt_headers}/Qt
    $ENV{QTDIR}/include/Qt
@@ -651,7 +361,7 @@ diff -ru cmake-2.8.6.org//Modules/FindQt.cmake cmake-2.8.6/Modules/FindQt.cmake
    /usr/lib/qt/include/Qt
    /usr/include/Qt
    /usr/share/qt4/include/Qt
-@@ -101,8 +102,9 @@
+@@ -118,8 +119,9 @@
    C:/Qt/3.3.3Educational/include
    $ENV{QTDIR}/include
    /usr/include/qt3/Qt
@@ -663,102 +373,69 @@ diff -ru cmake-2.8.6.org//Modules/FindQt.cmake cmake-2.8.6/Modules/FindQt.cmake
    /usr/lib/qt/include
    /usr/include
    /usr/share/qt3/include
-diff -ru cmake-2.8.6.org//Modules/FindQt3.cmake cmake-2.8.6/Modules/FindQt3.cmake
---- cmake-2.8.6.org//Modules/FindQt3.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindQt3.cmake	Tue Oct 11 10:08:58 2011
-@@ -53,7 +53,8 @@
+diff -ur cmake-2.8.12.orig/Modules/FindQt3.cmake cmake-2.8.12/Modules/FindQt3.cmake
+--- cmake-2.8.12.orig/Modules/FindQt3.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindQt3.cmake	2015-06-03 09:26:30.123039938 -0400
+@@ -57,14 +57,12 @@
    "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
    $ENV{QTDIR}/include
-   ${GLOB_PATHS_BIN}
+   ${GLOB_PATHS}
 -  /usr/local/qt/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/qt/include
    /usr/lib/qt/include
    /usr/lib/qt3/include
    /usr/include/qt
-@@ -91,7 +92,8 @@
-   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/lib"
-     $ENV{QTDIR}/lib
+   /usr/share/qt3/include
+   C:/Progra~1/qt/include
+   /usr/include/qt3
+-  /usr/local/include/X11/qt3
+   )
+ 
+ # if qglobal.h is not in the qt_include_dir then set
+@@ -97,7 +95,6 @@
+       "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]"
+       ENV QTDIR
+       ${GLOB_PATHS_LIB}
+-      /usr/local/qt
+       /usr/lib/qt
+       /usr/lib/qt3
+       /usr/share/qt3
+@@ -118,7 +115,6 @@
+       "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]"
+       ENV QTDIR
+       ${GLOB_PATHS_LIB}
+-      /usr/local/qt
+       /usr/lib/qt
+       /usr/lib/qt3
+       /usr/share/qt3
+@@ -137,7 +133,6 @@
+     "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]"
+     ENV QTDIR
      ${GLOB_PATHS_LIB}
--    /usr/local/qt/lib
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local/qt/lib
-     /usr/lib/qt/lib
-     /usr/lib/qt3/lib
-     /usr/lib/qt3/lib64
-@@ -111,7 +113,8 @@
-     "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/lib"
-     $ENV{QTDIR}/lib
-     ${GLOB_PATHS_LIB}
--    /usr/local/qt/lib
-+# Uncomment the following to enable /usr/local search
-+#    /usr/local/qt/lib
-     /usr/lib/qt/lib
-     /usr/lib/qt3/lib
-     /usr/lib/qt3/lib64
-@@ -129,7 +132,8 @@
-   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/lib"
-   $ENV{QTDIR}/lib
-   ${GLOB_PATHS_LIB}
--  /usr/local/qt/lib
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/qt/lib
-   /usr/lib/qt3/lib
-   /usr/lib/qt3/lib64
-   /usr/share/qt3/lib
-@@ -147,7 +151,8 @@
-   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
-   $ENV{QTDIR}/bin
-   ${GLOB_PATHS_BIN}
--  /usr/local/qt/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/qt/bin
-   /usr/lib/qt/bin
-   /usr/lib/qt3/bin
-   /usr/share/qt3/bin
-@@ -169,7 +174,8 @@
+-    /usr/local/qt
+     /usr/lib/qt3
+     /usr/share/qt3
+     C:/Progra~1/qt
+@@ -155,8 +150,6 @@
    "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
    "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
    ${GLOB_PATHS_BIN}
--  /usr/local/qt/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/qt/bin
-   /usr/lib/qt/bin
-   /usr/lib/qt3/bin
-   /usr/share/qt3/bin
-diff -ru cmake-2.8.6.org//Modules/FindSDL.cmake cmake-2.8.6/Modules/FindSDL.cmake
---- cmake-2.8.6.org//Modules/FindSDL.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL.cmake	Tue Oct 11 10:09:48 2011
-@@ -72,13 +72,15 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
-   /sw # Fink
-   /opt/local # DarwinPorts
--  /opt/csw # Blastwave
-+# Uncomment the following to enable /usr/local search
-+#  /opt/csw # Blastwave
-   /opt
- )
- #MESSAGE("SDL_INCLUDE_DIR is ${SDL_INCLUDE_DIR}")
-@@ -93,7 +95,8 @@
-   PATHS
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-@@ -113,7 +116,8 @@
+-    /usr/local/lib/qt3
+-    /usr/local/qt
+     /usr/lib/qt
+     /usr/lib/qt3
+     /usr/share/qt3
+@@ -180,7 +173,6 @@
+   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.2.0;InstallDir]/include/Qt"
+   "[HKEY_CURRENT_USER\\Software\\Trolltech\\Qt3Versions\\3.1.0;InstallDir]/include/Qt"
+   ${GLOB_PATHS_BIN}
+-    /usr/local/qt
+     /usr/lib/qt
+     /usr/lib/qt3
+     /usr/share/qt3
+diff -ur cmake-2.8.12.orig/Modules/FindSDL.cmake cmake-2.8.12/Modules/FindSDL.cmake
+--- cmake-2.8.12.orig/Modules/FindSDL.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindSDL.cmake	2015-06-03 09:26:30.124243581 -0400
+@@ -96,7 +96,8 @@
        PATHS
        /sw
        /opt/local
@@ -767,521 +444,148 @@ diff -ru cmake-2.8.6.org//Modules/FindSDL.cmake cmake-2.8.6/Modules/FindSDL.cmak
 +#      /opt/csw
        /opt
      )
-   ENDIF(NOT ${SDL_INCLUDE_DIR} MATCHES ".framework")
-diff -ru cmake-2.8.6.org//Modules/FindSDL_image.cmake cmake-2.8.6/Modules/FindSDL_image.cmake
---- cmake-2.8.6.org//Modules/FindSDL_image.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL_image.cmake	Tue Oct 11 10:10:36 2011
-@@ -33,20 +33,24 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local/include/SDL
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL
-   /usr/include/SDL
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include
-   /sw/include/SDL # Fink
-   /sw/include
-   /opt/local/include/SDL # DarwinPorts
-   /opt/local/include
--  /opt/csw/include/SDL # Blastwave
--  /opt/csw/include 
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/include/SDL # Blastwave
-+#  /opt/csw/include 
-   /opt/include/SDL
-   /opt/include
- )
-@@ -60,11 +64,13 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindSDL_mixer.cmake cmake-2.8.6/Modules/FindSDL_mixer.cmake
---- cmake-2.8.6.org//Modules/FindSDL_mixer.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL_mixer.cmake	Tue Oct 11 11:09:06 2011
-@@ -33,20 +33,24 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local/include/SDL
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL
-   /usr/include/SDL
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include
-   /sw/include/SDL # Fink
-   /sw/include
-   /opt/local/include/SDL # DarwinPorts
-   /opt/local/include
--  /opt/csw/include/SDL # Blastwave
--  /opt/csw/include 
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/include/SDL # Blastwave
-+#  /opt/csw/include 
-   /opt/include/SDL
-   /opt/include
- )
-@@ -56,15 +60,17 @@
-   HINTS
-   $ENV{SDLMIXERDIR}
-   $ENV{SDLDIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindSDL_net.cmake cmake-2.8.6/Modules/FindSDL_net.cmake
---- cmake-2.8.6.org//Modules/FindSDL_net.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL_net.cmake	Tue Oct 11 11:10:06 2011
-@@ -33,20 +33,24 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local/include/SDL
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL
-   /usr/include/SDL
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include
-   /sw/include/SDL # Fink
-   /sw/include
-   /opt/local/include/SDL # DarwinPorts
-   /opt/local/include
--  /opt/csw/include/SDL # Blastwave
--  /opt/csw/include 
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/include/SDL # Blastwave
-+#  /opt/csw/include 
-   /opt/include/SDL
-   /opt/include
- )
-@@ -55,15 +59,17 @@
-   HINTS
-   $ENV{SDLNETDIR}
-   $ENV{SDLDIR}
--  PATH_SUFFIXES lib64 lib
-+  PATH_SUFFIXES lib64 lib lib/32 lib/64
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
- )
- 
-diff -ru cmake-2.8.6.org//Modules/FindSDL_sound.cmake cmake-2.8.6/Modules/FindSDL_sound.cmake
---- cmake-2.8.6.org//Modules/FindSDL_sound.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL_sound.cmake	Tue Oct 11 10:15:08 2011
-@@ -80,20 +80,24 @@
-   $ENV{SDLDIR}/include
-   $ENV{SDLDIR}
-   PATHS
--  /usr/local/include/SDL
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL
-   /usr/include/SDL
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include
-   /sw/include/SDL # Fink
-   /sw/include
-   /opt/local/include/SDL # DarwinPorts
-   /opt/local/include
--  /opt/csw/include/SDL # Blastwave
--  /opt/csw/include 
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/include/SDL # Blastwave
-+#  /opt/csw/include 
-   /opt/include/SDL
-   /opt/include
-   )
-@@ -106,11 +110,13 @@
-   $ENV{SDLDIR}/lib
-   $ENV{SDLDIR}
-   PATHS
--  /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/lib
-   /usr/lib
-   /sw/lib
-   /opt/local/lib
--  /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/lib
-   /opt/lib
-   )
- 
-@@ -223,11 +229,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-        ) 
-        IF(MIKMOD_LIBRARY)
-@@ -246,11 +254,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-        )
-        IF(MODPLUG_LIBRARY)
-@@ -272,11 +282,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-          )
-        IF(VORBIS_LIBRARY)
-@@ -294,11 +306,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-          )
-        IF(OGG_LIBRARY)
-@@ -318,11 +332,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-          )
-        IF(SMPEG_LIBRARY)
-@@ -342,11 +358,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-          )
-        IF(FLAC_LIBRARY)
-@@ -369,11 +387,13 @@
-          $ENV{SDLSOUNDDIR}
-          $ENV{SDLDIR}/lib
-          $ENV{SDLDIR}
--         /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#         /usr/local/lib
-          /usr/lib
-          /sw/lib
-          /opt/local/lib
--         /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#         /opt/csw/lib
-        /opt/lib
-          )
-        IF(SPEEX_LIBRARY)
-@@ -396,11 +416,13 @@
-            $ENV{SDLSOUNDDIR}
-            $ENV{SDLDIR}/lib
-            $ENV{SDLDIR}
--           /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#           /usr/local/lib
-            /usr/lib
-            /sw/lib
-            /opt/local/lib
--           /opt/csw/lib
-+# Uncomment the following to enable /opt/csw search
-+#           /opt/csw/lib
-          /opt/lib
+   endif()
+diff -ur cmake-2.8.12.orig/Modules/FindSDL_sound.cmake cmake-2.8.12/Modules/FindSDL_sound.cmake
+--- cmake-2.8.12.orig/Modules/FindSDL_sound.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindSDL_sound.cmake	2015-06-03 09:26:30.125202500 -0400
+@@ -196,7 +196,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -216,7 +215,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -238,7 +236,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -256,7 +253,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -277,7 +273,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -298,7 +293,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -322,7 +316,6 @@
+            ENV SDLDIR
+            /sw
+            /opt/local
+-           /opt/csw
+            /opt
+          PATH_SUFFIXES
+            lib
+@@ -344,7 +337,6 @@
+              ENV SDLDIR
+              /sw
+              /opt/local
+-             /opt/csw
+              /opt
+            PATH_SUFFIXES lib
             )
-          IF(OGG_LIBRARY)
-diff -ru cmake-2.8.6.org//Modules/FindSDL_ttf.cmake cmake-2.8.6/Modules/FindSDL_ttf.cmake
---- cmake-2.8.6.org//Modules/FindSDL_ttf.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSDL_ttf.cmake	Tue Oct 11 10:15:50 2011
-@@ -33,20 +33,24 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local/include/SDL
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL
-   /usr/include/SDL
--  /usr/local/include/SDL12
--  /usr/local/include/SDL11 # FreeBSD ports
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include/SDL12
-+#  /usr/local/include/SDL11 # FreeBSD ports
-   /usr/include/SDL12
-   /usr/include/SDL11
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include
-   /sw/include/SDL # Fink
-   /sw/include
-   /opt/local/include/SDL # DarwinPorts
-   /opt/local/include
--  /opt/csw/include/SDL # Blastwave
--  /opt/csw/include 
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw/include/SDL # Blastwave
-+#  /opt/csw/include 
-   /opt/include/SDL
-   /opt/include
- )
-@@ -59,11 +63,13 @@
-   PATHS
-   ~/Library/Frameworks
-   /Library/Frameworks
--  /usr/local
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local
-   /usr
-   /sw
-   /opt/local
--  /opt/csw
-+# Uncomment the following to enable /opt/csw search
-+#  /opt/csw
-   /opt
-     PATH_SUFFIXES lib64 lib
- )
-diff -ru cmake-2.8.6.org//Modules/FindSelfPackers.cmake cmake-2.8.6/Modules/FindSelfPackers.cmake
---- cmake-2.8.6.org//Modules/FindSelfPackers.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindSelfPackers.cmake	Tue Oct 11 10:16:10 2011
-@@ -25,7 +25,8 @@
+diff -ur cmake-2.8.12.orig/Modules/FindSelfPackers.cmake cmake-2.8.12/Modules/FindSelfPackers.cmake
+--- cmake-2.8.12.orig/Modules/FindSelfPackers.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindSelfPackers.cmake	2015-06-03 09:26:30.125987069 -0400
+@@ -25,7 +25,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
  
-@@ -34,7 +35,8 @@
+@@ -34,7 +33,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
  
-diff -ru cmake-2.8.6.org//Modules/FindTCL.cmake cmake-2.8.6/Modules/FindTCL.cmake
---- cmake-2.8.6.org//Modules/FindTCL.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindTCL.cmake	Tue Oct 11 10:17:12 2011
-@@ -79,7 +79,8 @@
-   "${TCL_TCLSH_PATH_PARENT}/lib"
-   "${TK_WISH_PATH_PARENT}/lib"
-   /usr/lib 
--  /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/lib
-   )
- 
- IF(WIN32)
-@@ -159,7 +160,8 @@
-   "${TCL_TCLSH_PATH_PARENT}/include"
-   "${TK_WISH_PATH_PARENT}/include"
-   /usr/include
--  /usr/local/include
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/include
-   /usr/include/tcl${TK_LIBRARY_VERSION}
-   /usr/include/tcl${TCL_LIBRARY_VERSION}
-   /usr/include/tcl8.6
-diff -ru cmake-2.8.6.org//Modules/FindTclStub.cmake cmake-2.8.6/Modules/FindTclStub.cmake
---- cmake-2.8.6.org//Modules/FindTclStub.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindTclStub.cmake	Tue Oct 11 10:17:24 2011
-@@ -67,7 +67,8 @@
-   "${TCL_TCLSH_PATH_PARENT}/lib"
-   "${TK_WISH_PATH_PARENT}/lib"
-   /usr/lib 
--  /usr/local/lib
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/lib
- )
- 
- IF(WIN32)
-diff -ru cmake-2.8.6.org//Modules/FindUnixCommands.cmake cmake-2.8.6/Modules/FindUnixCommands.cmake
---- cmake-2.8.6.org//Modules/FindUnixCommands.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/FindUnixCommands.cmake	Tue Oct 11 10:17:56 2011
-@@ -22,7 +22,8 @@
+diff -ur cmake-2.8.12.orig/Modules/FindUnixCommands.cmake cmake-2.8.12/Modules/FindUnixCommands.cmake
+--- cmake-2.8.12.orig/Modules/FindUnixCommands.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/FindUnixCommands.cmake	2015-06-03 09:26:30.126838902 -0400
+@@ -22,7 +22,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-@@ -34,7 +35,8 @@
+ mark_as_advanced(
+@@ -34,7 +33,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-@@ -46,7 +48,8 @@
+ mark_as_advanced(
+@@ -46,7 +44,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-@@ -58,7 +61,8 @@
+ mark_as_advanced(
+@@ -58,7 +55,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-@@ -70,7 +74,8 @@
+ mark_as_advanced(
+@@ -70,7 +66,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-@@ -85,7 +90,8 @@
+ mark_as_advanced(
+@@ -85,7 +80,6 @@
    ${CYGWIN_INSTALL_PATH}/bin
    /bin
-   /usr/bin 
+   /usr/bin
 -  /usr/local/bin
-+# Uncomment the following to enable /usr/local search
-+#  /usr/local/bin
    /sbin
  )
- MARK_AS_ADVANCED(
-diff -ru cmake-2.8.6.org//Modules/Findosg_functions.cmake cmake-2.8.6/Modules/Findosg_functions.cmake
---- cmake-2.8.6.org//Modules/Findosg_functions.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/Findosg_functions.cmake	Mon Oct 10 17:06:52 2011
-@@ -34,7 +34,8 @@
+ mark_as_advanced(
+diff -ur cmake-2.8.12.orig/Modules/Findosg_functions.cmake cmake-2.8.12/Modules/Findosg_functions.cmake
+--- cmake-2.8.12.orig/Modules/Findosg_functions.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/Findosg_functions.cmake	2015-06-03 09:26:30.127655247 -0400
+@@ -37,7 +37,8 @@
         PATHS
              /sw # Fink
              /opt/local # DarwinPorts
@@ -1291,7 +595,7 @@ diff -ru cmake-2.8.6.org//Modules/Findosg_functions.cmake cmake-2.8.6/Modules/Fi
              /opt
              /usr/freeware
     )
-@@ -58,7 +59,8 @@
+@@ -63,7 +64,8 @@
         PATHS
              /sw # Fink
              /opt/local # DarwinPorts
@@ -1301,7 +605,7 @@ diff -ru cmake-2.8.6.org//Modules/Findosg_functions.cmake cmake-2.8.6/Modules/Fi
              /opt
              /usr/freeware
     )
-@@ -74,7 +76,8 @@
+@@ -81,7 +83,8 @@
         PATHS
              /sw # Fink
              /opt/local # DarwinPorts
@@ -1311,10 +615,10 @@ diff -ru cmake-2.8.6.org//Modules/Findosg_functions.cmake cmake-2.8.6/Modules/Fi
              /opt
              /usr/freeware
      )
-diff -ru cmake-2.8.6.org//Modules/GetPrerequisites.cmake cmake-2.8.6/Modules/GetPrerequisites.cmake
---- cmake-2.8.6.org//Modules/GetPrerequisites.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/GetPrerequisites.cmake	Tue Oct 11 10:18:31 2011
-@@ -588,7 +588,8 @@
+diff -ur cmake-2.8.12.orig/Modules/GetPrerequisites.cmake cmake-2.8.12/Modules/GetPrerequisites.cmake
+--- cmake-2.8.12.orig/Modules/GetPrerequisites.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/GetPrerequisites.cmake	2015-06-03 09:26:30.128590038 -0400
+@@ -575,7 +575,8 @@
      "C:/Program Files (x86)/Microsoft Visual Studio 8/VC/BIN"
      "C:/Program Files/Microsoft Visual Studio .NET 2003/VC7/BIN"
      "C:/Program Files (x86)/Microsoft Visual Studio .NET 2003/VC7/BIN"
@@ -1324,10 +628,10 @@ diff -ru cmake-2.8.6.org//Modules/GetPrerequisites.cmake cmake-2.8.6/Modules/Get
      "/usr/bin"
      )
  
-diff -ru cmake-2.8.6.org//Modules/UseJava.cmake cmake-2.8.6/Modules/UseJava.cmake
---- cmake-2.8.6.org//Modules/UseJava.cmake	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Modules/UseJava.cmake	Tue Oct 11 10:22:41 2011
-@@ -445,7 +445,8 @@
+diff -ur cmake-2.8.12.orig/Modules/UseJava.cmake cmake-2.8.12/Modules/UseJava.cmake
+--- cmake-2.8.12.orig/Modules/UseJava.cmake	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Modules/UseJava.cmake	2015-06-03 09:26:30.129584327 -0400
+@@ -534,7 +534,8 @@
      set(_jar_versions)
      set(_jar_paths
          /usr/share/java/
@@ -1337,10 +641,10 @@ diff -ru cmake-2.8.6.org//Modules/UseJava.cmake cmake-2.8.6/Modules/UseJava.cmak
          ${Java_JAR_PATHS})
      set(_jar_doc "NOTSET")
  
-diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocumentation.cxx
---- cmake-2.8.6.org//Source/cmDocumentation.cxx	Tue Oct  4 09:09:24 2011
-+++ cmake-2.8.6/Source/cmDocumentation.cxx	Tue Oct 18 12:33:05 2011
-@@ -1288,6 +1288,7 @@
+diff -ur cmake-2.8.12.orig/Source/cmDocumentation.cxx cmake-2.8.12/Source/cmDocumentation.cxx
+--- cmake-2.8.12.orig/Source/cmDocumentation.cxx	2013-10-07 11:31:00.000000000 -0400
++++ cmake-2.8.12/Source/cmDocumentation.cxx	2015-06-03 09:26:30.130866568 -0400
+@@ -1674,6 +1674,7 @@
  bool cmDocumentation::PrintDocumentationUsage(std::ostream& os)
  {
    this->ClearSections();
@@ -1348,7 +652,7 @@ diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocume
    this->AddSectionToPrint("Usage");
    this->AddSectionToPrint("Options");
    if(this->ShowGenerators)
-@@ -1314,6 +1315,7 @@
+@@ -1700,6 +1701,7 @@
    this->ClearSections();
    this->CreateModulesSection();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(Modules));
@@ -1356,7 +660,7 @@ diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocume
    this->AddSectionToPrint("Description");
    this->AddSectionToPrint("Modules");
    this->AddSectionToPrint("Copyright");
-@@ -1330,6 +1332,7 @@
+@@ -1716,6 +1718,7 @@
    this->ClearSections();
    this->CreateCustomModulesSection();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(CustomModules));
@@ -1364,7 +668,7 @@ diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocume
    this->AddSectionToPrint("Description");
    this->AddSectionToPrint("Custom CMake Modules");
  // the custom modules are most probably not under Kitware's copyright, Alex
-@@ -1347,6 +1350,7 @@
+@@ -1733,6 +1736,7 @@
  {
    this->ClearSections();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(Policies));
@@ -1372,23 +676,23 @@ diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocume
    this->AddSectionToPrint("Description");
    this->AddSectionToPrint("Policies");
    this->AddSectionToPrint("Copyright");
-@@ -1363,6 +1367,7 @@
+@@ -1749,6 +1753,7 @@
  {
    this->ClearSections();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(Properties));
 +  this->AddSectionToPrint("Name");
    this->AddSectionToPrint("Properties Description");
-   for (std::vector<std::string>::iterator i = 
+   for (std::vector<std::string>::iterator i =
           this->PropertySections.begin();
-@@ -1383,6 +1388,7 @@
+@@ -1769,6 +1774,7 @@
  {
    this->ClearSections();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(Variables));
 +  this->AddSectionToPrint("Name");
-   for (std::vector<std::string>::iterator i = 
+   for (std::vector<std::string>::iterator i =
           this->VariableSections.begin();
         i != this->VariableSections.end(); ++i)
-@@ -1402,6 +1408,7 @@
+@@ -1788,6 +1794,7 @@
  {
    this->ClearSections();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(Commands));
@@ -1396,7 +700,7 @@ diff -ru cmake-2.8.6.org//Source/cmDocumentation.cxx cmake-2.8.6/Source/cmDocume
    this->AddSectionToPrint("Commands");
    this->AddSectionToPrint("Copyright");
    this->AddSectionToPrint("Standard See Also");
-@@ -1416,6 +1423,7 @@
+@@ -1802,6 +1809,7 @@
  {
    this->ClearSections();
    this->AddDocumentIntroToPrint(GET_DOCUMENT_INTRO(CompatCommands));

@@ -1,0 +1,37 @@
+--- libdca-0.0.5-orig/libao/audio_out_wav.c	2007-04-10 12:07:05.000000000 +0000
++++ libdca-0.0.5/libao/audio_out_wav.c	2007-11-05 08:02:21.089231516 +0000
+@@ -163,8 +163,8 @@
+     union
+     {
+         float floats[256 * 6];
+-        int16_t words[0];
+-        int32_t dwords[0];
++        int16_t words[(256 * 6 * sizeof(float)) / sizeof(int16_t)];
++        int32_t dwords[(256 * 6 * sizeof(float)) / sizeof(int32_t)];
+     } ordered_samples;
+     int chans, size;
+     uint32_t speaker_flags;
+--- libdca-0.0.5-orig/src/configure.incl	2007-04-07 10:22:31.000000000 +0000
++++ libdca-0.0.5/src/configure.incl	2007-11-05 08:02:21.089380309 +0000
+@@ -1,5 +1,7 @@
+ AC_SUBST([DCADEC_CFLAGS])
+ 
++AC_TYPE_SIGNAL
++
+ DCADEC_CFLAGS="$OPT_CFLAGS"
+ 
+ AC_ARG_ENABLE([gprof],[  --enable-gprof          make a version using gprof])
+--- libdca-0.0.5-orig/src/dcadec.c	2007-04-08 09:03:48.000000000 +0000
++++ libdca-0.0.5/src/dcadec.c	2007-11-05 08:07:00.480792958 +0000
+@@ -66,7 +66,11 @@
+ {
+     sigint = 1;
+     signal (sig, SIG_DFL);
++#if RETSIGTYPE == void
++    return;
++#else
+     return (RETSIGTYPE)0;
++#endif    
+ }
+ 
+ static void print_fps (int final)

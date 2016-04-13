@@ -1,0 +1,36 @@
+--- brasero-2.32.1/plugins/growisofs/burn-growisofs.c.1	2015-02-23 10:28:30.257622372 +0300
++++ brasero-2.32.1/plugins/growisofs/burn-growisofs.c	2015-02-23 10:37:28.872106140 +0300
+@@ -53,6 +53,11 @@
+ #include "brasero-track-data.h"
+ #include "brasero-track-image.h"
+ 
++#ifdef __sun
++#define STDIN_PATH "/dev/fd/0"
++#else 
++#define STDIN_PATH "/proc/self/fd/0"
++#endif
+ 
+ #define BRASERO_TYPE_GROWISOFS         (brasero_growisofs_get_type ())
+ #define BRASERO_GROWISOFS(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), BRASERO_TYPE_GROWISOFS, BraseroGrowisofs))
+@@ -502,18 +507,18 @@
+ 			/* FIXME: is it right to mess with it ? 
+ 			   g_ptr_array_add (argv, g_strdup_printf ("-use-the-force-luke=bufsize:%im", 32)); */
+ 
+-			if (!g_file_test ("/proc/self/fd/0", G_FILE_TEST_EXISTS)) {
++			if (!g_file_test (STDIN_PATH, G_FILE_TEST_EXISTS)) {
+ 				g_set_error (error,
+ 					     BRASERO_BURN_ERROR,
+ 					     BRASERO_BURN_ERROR_FILE_NOT_FOUND,
+ 					     _("\"%s\" could not be found"),
+-					     "/proc/self/fd/0");
++						STDIN_PATH);
+ 				return BRASERO_BURN_ERR;
+ 			}
+ 
+ 			/* FIXME: should we use DAO ? */
+ 			g_ptr_array_add (argv, g_strdup ("-Z"));
+-			g_ptr_array_add (argv, g_strdup_printf ("%s=/proc/self/fd/0", device));
++			g_ptr_array_add (argv, g_strdup_printf ("%s=%s", device,STDIN_PATH));
+ 			g_free (device);
+ 		}
+ 		else if (BRASERO_IS_TRACK_IMAGE (current)) {

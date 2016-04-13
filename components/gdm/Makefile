@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gdm
 COMPONENT_VERSION= 2.30.7
-COMPONENT_REVISION=1
+COMPONENT_REVISION=3
 COMPONENT_SUMMARY= GNOME display manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -41,7 +41,7 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/box-openindiana.png $
 					glib-gettextize -f &&\
 					intltoolize --force --copy --automake &&\
 					libtoolize --force &&\
-					aclocal $ACLOCAL_FLAGS -I . -I ./m4 &&\
+					aclocal -I . -I ./m4 &&\
 					autoheader &&\
 					gnome-doc-prepare --force &&\
 					automake -a -c -f &&\
@@ -49,6 +49,8 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/box-openindiana.png $
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+LDFLAGS += -lsecdb
                                         
 CONFIGURE_SCRIPT=       $(@D)/configure
 

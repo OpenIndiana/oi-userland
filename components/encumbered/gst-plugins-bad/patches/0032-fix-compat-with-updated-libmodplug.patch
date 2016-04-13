@@ -1,0 +1,16 @@
+Description: Fix compatibility with current libmodplug
+ libmodplug was updated to a new upstream release in DSA 2751. This patch
+ fixes a FTBFS with that new version.
+Bug-Debian: http://bugs.debian.org/726871
+
+--- gst-plugins-bad0.10-0.10.23.orig/ext/modplug/gstmodplug.cc
++++ gst-plugins-bad0.10-0.10.23/ext/modplug/gstmodplug.cc
+@@ -50,7 +50,7 @@
+ #define WORDS_BIGENDIAN 0
+ #endif
+ 
+-#include <stdafx.h>
++#include <libmodplug/stdafx.h>
+ #include <libmodplug/sndfile.h>
+ 
+ #include "gstmodplug.h"

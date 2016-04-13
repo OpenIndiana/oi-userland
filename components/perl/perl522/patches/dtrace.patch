@@ -1,0 +1,28 @@
+From 133060d41947d038cba62b40072a28fdf9b60f42 Mon Sep 17 00:00:00 2001
+From: Robert Mustacchi <rm@joyent.com>
+Date: Fri, 26 Apr 2013 22:38:58 +0000
+Subject: [PATCH] perl uses dtrace -G without object files
+
+---
+ Makefile.SH |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile.SH b/Makefile.SH
+index fc13b2b..7e76ab8 100755
+--- a/Makefile.SH
++++ b/Makefile.SH
+@@ -231,9 +231,8 @@ minidtrace_o=''
+ case "$usedtrace" in
+ define|true)
+ 	dtrace_h='perldtrace.h' 
+-	$dtrace -G -s perldtrace.d -o perldtrace.tmp >/dev/null 2>&1 \
+-		&& rm -f perldtrace.tmp && dtrace_o='perldtrace$(OBJ_EXT)' \
+-		&& minidtrace_o='miniperldtrace$(OBJ_EXT)'
++	dtrace_o='perldtrace$(OBJ_EXT)'
++	minidtrace_o='miniperldtrace$(OBJ_EXT)'
+ 	;;
+ esac
+ 
+-- 
+1.7.7.2
+

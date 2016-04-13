@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.8
+COMPONENT_VERSION=	4.8.14
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7b5e6f90e6709d1c1bcb4a2bf6d2a62b9494adef3ff4325ffdb3551c29e42a1c
+    sha256:61fd0fd2280c3d09d7e0aec8ab001fc89dad8e4fd9941f386414667b55152ec5
 COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mc
 
@@ -47,10 +47,13 @@ CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
 CONFIGURE_OPTIONS += --with-screen=slang
+CONFIGURE_OPTIONS += --enable-vfs-sftp=no
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 
 # Enable Address Space Layout Randomization
 ASLR_MODE = $(ASLR_ENABLE)
+
+$(INSTALL_32):	$(INSTALL_64)
 
 # common targets
 build:		$(BUILD_32_and_64)

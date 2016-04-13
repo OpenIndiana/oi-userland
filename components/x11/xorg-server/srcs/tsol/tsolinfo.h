@@ -1,4 +1,5 @@
-/* Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,8 +23,8 @@
 
 
 
-#ifndef    _TSOL_INFO_H
-#define    _TSOL_INFO_H
+#ifndef	_TSOL_INFO_H
+#define	_TSOL_INFO_H
 
 #include <sys/types.h>
 
@@ -34,6 +35,7 @@
 #include <ucred.h>
 #include "misc.h"
 #include "dixstruct.h"
+#include "selection.h"
 #include "globals.h"
 #include <X11/keysym.h>
 
@@ -53,6 +55,7 @@
  */
  
 #define TSOL_MSG_ERROR		0		/* Always printed */
+#define TSOL_MSG_WARNING	4
 #define TSOL_MSG_POLICY_DENIED	5
 #define TSOL_MSG_UNIMPLEMENTED	6
 #define TSOL_MSG_ACCESS_TRACE	7
@@ -88,8 +91,8 @@ extern const char *TsolResourceTypeString(RESTYPE resource);
 #define XAUDIT_OFFSET     9102
 #define XAUDIT_EXTENSION  128
 
-#define MAX_CLIENT        16
-#define MAX_SLS           16            /* used in atom */
+#define MAX_CLIENT        256
+#define MAX_SLS           256           /* used in atom */
 #define MAX_POLYPROPS     128           /* used in property */
 #define DEF_UID           (uid_t)0      /* uid used for default objects */
 #define INVALID_UID       (uid_t)0xFFFF /* invalid uid */
@@ -145,7 +148,7 @@ typedef enum tsolconfig_types tsolconfig_t;
 
 #define WindowIsRoot(pWin) (pWin && (pWin->parent == NullWindow))
 #define DrawableIsRoot(pDraw)\
-	(pDraw && (pDraw->id == WindowTable[pDraw->pScreen->myNum]->drawable.id))
+	(pDraw && (pDraw->id == pDraw->pScreen->root->drawable.id))
 
 /*
  * True if client is part of TrustedPath
@@ -155,7 +158,7 @@ typedef enum tsolconfig_types tsolconfig_t;
 	(tsolinfo->forced_trust == 1))
 
 #define XTSOLTrusted(pWin) \
-    ((TsolResourcePrivate(pWin))->flags & TRUSTED_MASK)
+    ((TsolWindowPrivate(pWin))->flags & TRUSTED_MASK)
 
 
 /*********************************
@@ -183,10 +186,10 @@ typedef struct _TsolInfo {
     zoneid_t		zid;		/* zone id */
     priv_set_t          *privs;         /* privileges */
     bslabel_t		*sl;            /* sensitivity label */
-    u_long              iaddr;          /* internet addr */
+    ulong_t             iaddr;          /* internet addr */
     Bool		trusted_path;	/* has trusted path */
     Bool		priv_debug;	/* do privilege debugging */
-    u_long              flags;          /* various flags */
+    ulong_t             flags;          /* various flags */
     int                 forced_trust;   /* client masked as trusted */
     au_id_t		auid;		/* audit id */
     au_mask_t		amask;		/* audit mask */
@@ -203,11 +206,11 @@ typedef struct _TsolInfo {
 typedef struct _TsolRes {
     bslabel_t  *sl;                     /* sensitivity label */
     uid_t       uid;                    /* user id */
-    u_long      flags;                  /* various flags */
+    ulong_t     flags;                  /* various flags */
     pid_t       pid;                    /* who created it */
     Bool	internal;		/* Created internally by the server */
-    Bool	poly;			/* Polyinstantiated or not. Applicable to
-					 * selection or properties */
+    Bool	poly;			/* Polyinstantiated or not. Applicable
+					   to selection or properties */
 } TsolResRec, *TsolResPtr;
 
 /*
@@ -226,25 +229,69 @@ typedef struct _HotKeyRec {
 /*
  * information stored in devPrivates
  */
-typedef union {
-    TsolInfoRec		clientPrivate;
-    TsolResRec		resourcePrivate;
-    HotKeyRec		keyboardPrivate;
-} TsolPrivateRec, *TsolPrivatePtr;
+extern _X_HIDDEN DevPrivateKeyRec tsolClientPrivateKeyRec;
+#define tsolClientPrivateKey (&tsolClientPrivateKeyRec)
 
-extern DevPrivateKey tsolPrivateKey;
+extern _X_HIDDEN DevPrivateKeyRec tsolPixmapPrivateKeyRec;
+#define tsolPixmapPrivateKey (&tsolPixmapPrivateKeyRec)
 
-#define TsolClientPrivate(pClient) \
-    ((TsolInfoPtr) dixLookupPrivate(&(pClient)->devPrivates, tsolPrivateKey))
+extern _X_HIDDEN DevPrivateKeyRec tsolWindowPrivateKeyRec;
+#define tsolWindowPrivateKey (&tsolWindowPrivateKeyRec)
 
-#define TsolResourcePrivate(pRes)	\
-    ((TsolResPtr) dixLookupPrivate(&(pRes)->devPrivates, tsolPrivateKey))
+extern _X_HIDDEN DevPrivateKeyRec tsolPropertyPrivateKeyRec;
+#define tsolPropertyPrivateKey (&tsolPropertyPrivateKeyRec)
 
-#define TsolKeyboardPrivate(pDev)	\
-    ((HotKeyPtr) dixLookupPrivate(&(pDev)->devPrivates, tsolPrivateKey))
+extern _X_HIDDEN DevPrivateKeyRec tsolSelectionPrivateKeyRec;
+#define tsolSelectionPrivateKey (&tsolSelectionPrivateKeyRec)
+
+/* Currently only used in keyboard devices */
+extern _X_HIDDEN DevPrivateKeyRec tsolDevicePrivateKeyRec;
+#define tsolDevicePrivateKey (&tsolDevicePrivateKeyRec)
+
+static inline TsolInfoPtr
+TsolClientPrivate (ClientPtr pClient)
+{
+	return (TsolInfoPtr) dixLookupPrivate(&(pClient->devPrivates),
+					      tsolClientPrivateKey);
+}
+
+static inline TsolResPtr
+TsolPixmapPrivate (PixmapPtr pPix)
+{
+	return (TsolResPtr) dixLookupPrivate(&(pPix->devPrivates),
+					     tsolPixmapPrivateKey);
+}
+
+static inline TsolResPtr
+TsolWindowPrivate (WindowPtr pWin)
+{
+	return (TsolResPtr) dixLookupPrivate(&(pWin->devPrivates),
+					     tsolWindowPrivateKey);
+}
+
+static inline TsolResPtr
+TsolPropertyPrivate (PropertyPtr pProp)
+{
+	return (TsolResPtr) dixLookupPrivate(&(pProp->devPrivates),
+					     tsolPropertyPrivateKey);
+}
+
+static inline TsolResPtr
+TsolSelectionPrivate (Selection *pSel)
+{
+	return (TsolResPtr) dixLookupPrivate(&(pSel->devPrivates),
+					     tsolSelectionPrivateKey);
+}
+
+static inline HotKeyPtr
+TsolKeyboardPrivate (DeviceIntPtr pDev)
+{
+	return (HotKeyPtr) dixLookupPrivate(&(pDev->devPrivates),
+					    tsolDevicePrivateKey);
+}
 
 
-#define NODE_SLSIZE	16	/* increase sl array by this amount */
+#define NODE_SLSIZE	256	/* increase sl array by this amount */
 typedef struct _TsolNodeRec {
 	unsigned int flags;
 	int slcount; 		/* no. of SLs referenced */
@@ -290,7 +337,6 @@ extern  int PolyProperty(Atom atom, WindowPtr pWin);
 extern  int PolySelection(Atom atom);
 extern  TsolPolyInstInfoRec tsolpolyinstinfo;
 extern  uid_t OwnerUID;                 /* Workstation owner uid */
-extern Bool system_audit_on;
 
 /*********************************
  *
@@ -316,4 +362,4 @@ extern Bool ShapeOverlap(WindowPtr pWin, BoxPtr pWinBox,
 	WindowPtr pSib, BoxPtr pSibBox);
 extern TsolResPtr TsolDrawablePrivate(DrawablePtr pDraw, ClientPtr client);
 
-#endif    /* _TSOL_INFO_H */
+#endif	/* _TSOL_INFO_H */

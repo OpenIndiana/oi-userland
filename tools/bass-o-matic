@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -35,7 +35,7 @@ import subprocess
 # Locate SCM directories containing Userland components by searching from
 # from a supplied top of tree for .p5m files.  Once a .p5m file is located,
 # that directory is added to the list and no children are searched.
-def FindComponentPaths(path, debug=None):
+def FindComponentPaths(path, debug=None, subdir='/components'):
     expression = re.compile(".+\.p5m$", re.IGNORECASE)
 
     paths = []
@@ -43,7 +43,7 @@ def FindComponentPaths(path, debug=None):
     if debug:
         print >>debug, "searching %s for component directories" % path
 
-    for dirpath, dirnames, filenames in os.walk(path + '/components'):
+    for dirpath, dirnames, filenames in os.walk(path + subdir):
         found = 0
 
         for name in filenames:
@@ -126,12 +126,13 @@ def main():
     make_arg=None
     component_arg=None
     template_zone=None
+    subdir="/components"
     workspace = os.getenv('WS_TOP')
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
             [ "debug", "workspace=", "components=",
-              "make", "component=", "template-zone=" ])
+              "make", "component=", "template-zone=", "subdir=" ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -147,12 +148,14 @@ def main():
             component_arg = arg
         elif opt in [ "--template-zone" ]:
             template_zone = arg
+        elif opt in [ "--subdir" ]:
+            subdir = arg
         elif opt in [ "-d", "--debug" ]:
             debug = sys.stdout
         else:
             assert False, "unknown option"
 
-    component_paths = FindComponentPaths(workspace, debug)
+    component_paths = FindComponentPaths(workspace, debug, subdir)
 
     if make_arg:
         if template_zone:

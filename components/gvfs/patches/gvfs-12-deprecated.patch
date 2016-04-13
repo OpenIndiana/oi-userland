@@ -1,0 +1,45 @@
+--- gvfs-1.6.7/metadata/Makefile.am.orig	2013-10-09 15:18:59.792214465 +0530
++++ gvfs-1.6.7/metadata/Makefile.am	2013-10-09 15:19:39.201256624 +0530
+@@ -23,7 +23,7 @@
+ 	$(LIBXML_CFLAGS) $(GLIB_CFLAGS) $(DBUS_CFLAGS) \
+ 	$(UDEV_CFLAGS) \
+ 	-DGVFS_LOCALEDIR=\""$(localedir)"\"     \
+-	-DG_LOG_DOMAIN=\"GVFS\" -DG_DISABLE_DEPRECATED \
++	-DG_LOG_DOMAIN=\"GVFS\" \
+ 	-DDBUS_API_SUBJECT_TO_CHANGE
+ 
+ libmetadata_la_SOURCES = 		\
+--- gvfs-1.6.7/client/Makefile.am.orig	2013-10-09 15:22:47.093991616 +0530
++++ gvfs-1.6.7/client/Makefile.am	2013-10-09 15:25:35.906472962 +0530
+@@ -5,7 +5,7 @@
+ 	-I$(top_srcdir)/metadata \
+ 	-I$(top_srcdir)/common \
+ 	$(GLIB_CFLAGS) $(DBUS_CFLAGS) \
+-	-DG_LOG_DOMAIN=\"GVFS\" -DG_DISABLE_DEPRECATED \
++	-DG_LOG_DOMAIN=\"GVFS\" \
+ 	-DGVFS_MODULE_DIR=\"$(libdir)/gvfs/modules\"	\
+ 	-DGVFS_LOCALEDIR=\""$(localedir)"\"     \
+ 	-DDBUS_API_SUBJECT_TO_CHANGE
+--- gvfs-1.6.7/daemon/Makefile.am.orig	2013-10-09 15:29:30.746781139 +0530
++++ gvfs-1.6.7/daemon/Makefile.am	2013-10-09 15:28:33.623900984 +0530
+@@ -16,8 +16,7 @@
+ 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE	\
+ 	-DLIBEXEC_DIR=\"$(libexecdir)/\" 	\
+ 	-DMOUNTABLE_DIR=\"$(mountdir)/\" 	\
+-	-DGVFS_LOCALEDIR=\""$(localedir)"\"     \
+-	-DG_DISABLE_DEPRECATED
++	-DGVFS_LOCALEDIR=\""$(localedir)"\" 
+ 
+ noinst_LTLIBRARIES=libdaemon.la
+ 
+--- gvfs-1.6.7/common/Makefile.am.orig	2013-10-09 15:53:01.745852238 +0530
++++ gvfs-1.6.7/common/Makefile.am	2013-10-09 15:53:31.339873020 +0530
+@@ -5,7 +5,7 @@
+ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/gvfs \
+ 	-I$(top_srcdir)/daemon \
+ 	$(GLIB_CFLAGS) $(DBUS_CFLAGS) $(EXPAT_CFLAGS) \
+-	-DG_LOG_DOMAIN=\"GVFS\" -DG_DISABLE_DEPRECATED \
++	-DG_LOG_DOMAIN=\"GVFS\" \
+ 	-DDBUS_API_SUBJECT_TO_CHANGE
+ 
+ libgvfscommon_la_SOURCES = 	\

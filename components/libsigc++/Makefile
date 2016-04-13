@@ -17,12 +17,12 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsigc++
 
-COMPONENT_VERSION= 2.2.10
+COMPONENT_VERSION= 2.2.11
 COMPONENT_SUMMARY= Libsigc++ - a library that implements a typesafe callback system for standard C++ (g++ - compiled)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d3d810c2ad469edfb2d4db29643bef189b7613019eadbd4a72823af3c73c959c
+  sha256:9834045f74f56752c2c6b3cdc195c30ab8314ad22dc8e626d6f67f940f1e4957
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://libsigc.sourceforge.net
@@ -33,8 +33,6 @@ include ../../make-rules/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))  
-
-CONFIGURE_PREFIX= /usr/g++
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	MAKE=$(GMAKE)

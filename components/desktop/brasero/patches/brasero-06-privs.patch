@@ -1,0 +1,75 @@
+--- brasero-2.32.1/src/main.c.~1~	2010-11-08 23:04:39.000000000 +0300
++++ brasero-2.32.1/src/main.c	2016-03-11 22:32:27.549970514 +0300
+@@ -49,6 +49,10 @@
+ #include "brasero-app.h"
+ #include "brasero-cli.h"
+ 
++#ifdef __sun
++#include <priv.h>
++#endif
++
+ static BraseroApp *current_app = NULL;
+ 
+ /**
+@@ -61,11 +65,48 @@
+ 	return current_app;
+ }
+ 
++#ifdef __sun
++static int setprivs(){
++	priv_set_t *pPrivSet;
++
++	if(geteuid()==0){
++		g_warning("Running with euid 0, assuming you know what you are doing");
++		return 0;
++	}
++
++	if ((pPrivSet = priv_allocset()) == NULL) {
++		return 1;
++	}
++	
++	priv_basicset(pPrivSet);
++
++	if(priv_addset(pPrivSet,PRIV_SYS_DEVICES)) {
++		return 2;
++	};
++
++	if(setppriv(PRIV_SET,PRIV_EFFECTIVE,pPrivSet)) {
++		return 3;
++	}
++
++	/* CLI tools should also be able to use USCSICMD ioctls */
++	if(setppriv(PRIV_SET,PRIV_INHERITABLE,pPrivSet)) {
++		return 4;
++	}
++
++	priv_freeset(pPrivSet);
++
++	return 0;
++}
++#endif
++
+ int
+ main (int argc, char **argv)
+ {
+ 	UniqueApp *uapp = NULL;
+ 	GOptionContext *context;
++#ifdef __sun
++	int pcode=0;
++#endif
+ 
+ #ifdef ENABLE_NLS
+ 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+@@ -81,6 +122,12 @@
+ 	 * specific options are parsed. Otherwise on error that crashes. */
+ 	gtk_init (&argc, &argv);
+ 
++#ifdef __sun
++        if (pcode=setprivs()){
++		g_warning("Couldn't raise privileges, pcode=%d\n",pcode);
++	}
++#endif
++
+ 	memset (&cmd_line_options, 0, sizeof (cmd_line_options));
+ 
+ 	context = g_option_context_new (_("[URI] [URI] …"));

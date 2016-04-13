@@ -1,0 +1,36 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file mad.pc.32 path=usr/lib/pkgconfig/mad.pc
+file mad.pc.64 path=usr/lib/$(MACH64)/pkgconfig/mad.pc
+file files/mad.h path=usr/include/mad.h
+
+file path=usr/include/mad-32.h
+file path=usr/include/mad-64.h
+link path=usr/lib/$(MACH64)/libmad.so target=libmad.so.0.2.1
+link path=usr/lib/$(MACH64)/libmad.so.0 target=libmad.so.0.2.1
+file path=usr/lib/$(MACH64)/libmad.so.0.2.1
+link path=usr/lib/libmad.so target=libmad.so.0.2.1
+link path=usr/lib/libmad.so.0 target=libmad.so.0.2.1
+file path=usr/lib/libmad.so.0.2.1

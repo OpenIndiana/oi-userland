@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
 
@@ -80,6 +80,34 @@ CONFIGURE_ENV += FFLAGS="$(F77FLAGS)"
 CONFIGURE_ENV += FCFLAGS="$(FCFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+
+# Rewrite absolute source-code paths into relative for ccache, so that any
+# workspace with a shared CCACHE_DIR can benefit when compiling a component
+ifneq ($(strip $(CCACHE)),)
+CONFIGURE_ENV += CCACHE="$(CCACHE)"
+CONFIGURE_OPTIONS += CCACHE="$(CCACHE)"
+CONFIGURE_ENV += CC_gcc_32="$(CC_gcc_32)"
+CONFIGURE_ENV += CC_gcc_64="$(CC_gcc_32)"
+CONFIGURE_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+CONFIGURE_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+CONFIGURE_OPTIONS += CC_gcc_32="$(CC_gcc_32)"
+CONFIGURE_OPTIONS += CC_gcc_64="$(CC_gcc_32)"
+CONFIGURE_OPTIONS += CXX_gcc_32="$(CXX_gcc_64)"
+CONFIGURE_OPTIONS += CXX_gcc_64="$(CXX_gcc_64)"
+CONFIGURE_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+CONFIGURE_OPTIONS.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+
+ifneq ($(strip $(CCACHE_DIR)),)
+CONFIGURE_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+CONFIGURE_OPTIONS += CCACHE_DIR="$(CCACHE_DIR)"
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+CONFIGURE_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+CONFIGURE_OPTIONS += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+endif
+
+endif
 
 CONFIGURE_DEFAULT_DIRS?=yes
 
@@ -155,11 +183,28 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 # test the built source
-$(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_TEST_ENV) $(GMAKE) \
-			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+	-(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(COMPONENT_TEST_CMD) \
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+		&> $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
+	$(COMPONENT_TEST_COMPARE)
+	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
+$(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+	$(COMPONENT_PRE_TEST_ACTION)
+	(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(COMPONENT_TEST_CMD) \
+		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)

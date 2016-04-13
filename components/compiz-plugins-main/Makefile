@@ -15,14 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
-COMPONENT_VERSION=	0.8.8
-COMPONENT_PROJECT_URL=	http://www.compiz.org/
+COMPONENT_VERSION=	0.8.10
+COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	main effects plugins for compiz
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=		plugins-main
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:05a041a342ac6dd33f716655dd00dc283c777f6a64a666dbe33ced66737fafb0
-COMPONENT_ARCHIVE_URL=	http://releases.compiz.org/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:28988060199a46cb92d010075de0bf822a72d4fcb93a12205c06824c0e6da1cf
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

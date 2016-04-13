@@ -1,0 +1,24 @@
+--- ./driver/others/blas_server.c.orig	2015-12-14 13:32:26.701246997 +0100
++++ ./driver/others/blas_server.c	2015-12-14 14:03:08.126826419 +0100
+@@ -70,7 +70,7 @@
+ /*********************************************************************/
+ 
+ #include "common.h"
+-#if defined(OS_LINUX) || defined(OS_NETBSD) || defined(OS_DARWIN) || defined(OS_ANDROID)
++#if defined(OS_LINUX) || defined(OS_NETBSD) || defined(OS_DARWIN) || defined(OS_SUNOS) || defined(OS_ANDROID)
+ #include <dlfcn.h>
+ #include <signal.h>
+ #include <sys/resource.h>
+@@ -576,10 +576,12 @@
+ 	struct rlimit rlim;
+         const char *msg = strerror(ret);
+         fprintf(STDERR, "OpenBLAS blas_thread_init: pthread_create: %s\n", msg);
++#ifndef OS_SUNOS
+         if(0 == getrlimit(RLIMIT_NPROC, &rlim)) {
+           fprintf(STDERR, "OpenBLAS blas_thread_init: RLIMIT_NPROC "
+                   "%ld current, %ld max\n", (long)(rlim.rlim_cur), (long)(rlim.rlim_max));
+         }
++#endif
+         if(0 != raise(SIGINT)) {
+           fprintf(STDERR, "OpenBLAS blas_thread_init: calling exit(3)\n");
+           exit(EXIT_FAILURE);

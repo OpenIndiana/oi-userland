@@ -16,28 +16,29 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= docbook-xsl
-COMPONENT_VERSION= 1.69.1
+COMPONENT_VERSION= 1.78.1
 COMPONENT_SUBVERSION= 5.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Norman Walsh's XSL stylesheets for DocBook XML
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:917adc1dc5e2fadbcf434d9e5a8d4fc1cc5211bb3acffbb77e0a6b74d4a3f033
+  sha256:c98f7296ab5c8ccd2e0bc07634976a37f50847df2d8a59bdb1e157664700b467
 COMPONENT_ARCHIVE_URL= \
   http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=http://docbook.sourceforge.net/
 
-COMPONENT_ARCHIVE_1=    docbook-xsl-doc-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_1=    docbook-xsl-doc-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:a23fc5730aec3c19a520d9fd2249097c729a049074ff455a4e88832b70009611
-COMPONENT_ARCHIVE_URL_1= http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE_1)
+    sha256:cea88089e88a5b01554b123d1d89278763eab4e8e42974853a112a54bb76905d
+COMPONENT_ARCHIVE_URL_1= http://sourceforge.net/projects/docbook/files/docbook-xsl-doc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 # we don't use $(USERLAND_UNPACK) because it can't unpack files to existing directory
-COMPONENT_POST_UNPACK_ACTION += /usr/gnu/bin/tar xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
+COMPONENT_POST_UNPACK_ACTION += /usr/gnu/bin/tar xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_PREP_ACTION +=(cp $(COMPONENT_DIR)/files/docbook-style-xsl.Makefile $(@D)/Makefile)
 

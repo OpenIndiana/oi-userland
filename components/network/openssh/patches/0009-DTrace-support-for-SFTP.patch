@@ -1,0 +1,380 @@
+From df6b82f10e53d43cfbc4cb3f52aa7e1751998fa1 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:35:43 -0700
+Subject: [PATCH 09/36] DTrace support for SFTP
+
+---
+ Makefile.in          | 25 +++++++++++++++---
+ sftp-server.c        | 25 ++++++++++++++++--
+ sftp64.d             | 56 ++++++++++++++++++++++++++++++++++++++++
+ sftp_provider.d      | 61 +++++++++++++++++++++++++++++++++++++++++++
+ sftp_provider_impl.h | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 234 insertions(+), 6 deletions(-)
+ create mode 100644 sftp64.d
+ create mode 100644 sftp_provider.d
+ create mode 100644 sftp_provider_impl.h
+
+diff --git a/Makefile.in b/Makefile.in
+index 9f953e1..121a261 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
+ SFTP_SERVER=$(libexecdir)/sftp-server
+ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+ SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
++ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
+ PRIVSEP_PATH=@PRIVSEP_PATH@
+ SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
+ STRIP_OPT=@STRIP_OPT@
+@@ -85,6 +86,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+ 	atomicio.o key.o dispatch.o mac.o uidswap.o uuencode.o misc.o \
+ 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
+ 	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
++	sftp_provider.o \
+ 	ssh-pkcs11.o smult_curve25519_ref.o \
+ 	poly1305.o chacha.o cipher-chachapoly.o \
+ 	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
+@@ -111,7 +113,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+ 	sftp-server.o sftp-common.o \
+ 	roaming_common.o roaming_serv.o \
+ 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
+-	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o
++	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o \
++	sftp_provider.o
+ 
+ MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
+ MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
+@@ -188,8 +191,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
+ 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ 
+-sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
+-	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
++	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o sftp_provider.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+ 
+ sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
+ 	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
+@@ -226,9 +229,22 @@ umac128.o:	umac.c
+ 	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
+ 	    -Dumac_delete=umac128_delete
+ 
++# dtrace sftp
++sftp_provider.h: $(srcdir)/sftp_provider.d
++	/usr/sbin/dtrace -xnolibs -h -s $(srcdir)/sftp_provider.d \
++	    -o $(srcdir)/sftp_provider.h
++
++sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
++	/usr/sbin/dtrace -G -64 -xnolibs -s $(srcdir)/sftp_provider.d \
++	    sftp-server.o -o sftp_provider.o
++
++# special case for sftp-server.o, it includes sftp_provider.h
++sftp-server.o: sftp_provider.h sftp-server.c
++	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(srcdir)/sftp-server.c
++
+ clean:	regressclean
+ 	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
+-	rm -f *.out core survey
++	rm -f *.out core survey sftp_provider.h
+ 	rm -f regress/unittests/test_helper/*.a
+ 	rm -f regress/unittests/test_helper/*.o
+ 	rm -f regress/unittests/sshbuf/*.o
+@@ -341,6 +357,7 @@ install-files:
+ 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+ 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
++	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
+diff --git a/sftp-server.c b/sftp-server.c
+index 3877c03..772a7c3 100644
+--- a/sftp-server.c
++++ b/sftp-server.c
+@@ -54,6 +54,9 @@
+ 
+ #include "sftp.h"
+ #include "sftp-common.h"
++#ifdef DTRACE_SFTP
++#include "sftp_provider_impl.h"
++#endif
+ 
+ /* Our verbosity */
+ static LogLevel log_level = SYSLOG_LEVEL_ERROR;
+@@ -740,14 +743,17 @@ process_read(u_int32_t id)
+ 	u_int32_t len;
+ 	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
+ 	u_int64_t off;
++	char *fpath;
+ 
+ 	if ((r = get_handle(iqueue, &handle)) != 0 ||
+ 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
+ 	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
+ 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 
++	fpath = handle_to_name(handle);
++
+ 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
+-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
++	    id, fpath, handle, (unsigned long long)off, len);
+ 	if (len > sizeof buf) {
+ 		len = sizeof buf;
+ 		debug2("read change len %d", len);
+@@ -758,7 +764,13 @@ process_read(u_int32_t id)
+ 			error("process_read: seek failed");
+ 			status = errno_to_portable(errno);
+ 		} else {
++#ifdef DTRACE_SFTP
++			SFTP_TRANSFER_START_OP("read", fd, fpath, len);
++#endif
+ 			ret = read(fd, buf, len);
++#ifdef DTRACE_SFTP
++			SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
++#endif
+ 			if (ret < 0) {
+ 				status = errno_to_portable(errno);
+ 			} else if (ret == 0) {
+@@ -781,14 +793,16 @@ process_write(u_int32_t id)
+ 	size_t len;
+ 	int r, handle, fd, ret, status;
+ 	u_char *data;
++	char *fpath;
+ 
+ 	if ((r = get_handle(iqueue, &handle)) != 0 ||
+ 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
+ 	    (r = sshbuf_get_string(iqueue, &data, &len)) != 0)
+ 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 
++	fpath = handle_to_name(handle);
+ 	debug("request %u: write \"%s\" (handle %d) off %llu len %zu",
+-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
++	    id, fpath, handle, (unsigned long long)off, len);
+ 	fd = handle_to_fd(handle);
+ 
+ 	if (fd < 0)
+@@ -800,7 +814,14 @@ process_write(u_int32_t id)
+ 			error("process_write: seek failed");
+ 		} else {
+ /* XXX ATOMICIO ? */
++#ifdef DTRACE_SFTP
++			SFTP_TRANSFER_START_OP("write", fd, fpath, len);
++#endif
+ 			ret = write(fd, data, len);
++#ifdef DTRACE_SFTP
++			SFTP_TRANSFER_DONE_OP("write", fd, fpath, ret);
++#endif
++
+ 			if (ret < 0) {
+ 				error("process_write: write failed");
+ 				status = errno_to_portable(errno);
+diff --git a/sftp64.d b/sftp64.d
+new file mode 100644
+index 0000000..8305d0a
+--- /dev/null
++++ b/sftp64.d
+@@ -0,0 +1,56 @@
++/*
++ * Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
++ */
++
++#pragma D depends_on library net.d
++#pragma D depends_on library io.d
++#pragma D depends_on module lofs
++
++typedef struct sftpinfo {
++	string sfi_user;		/* user name */
++	string sfi_operation;		/* SFTP Operation */
++	ssize_t sfi_nbytes;		/* bytes transferred, if any */
++	string sfi_pathname;		/* pathname of transfer */
++	string sfi_fsresource;		/* Dataset(ZFS) or resource name */
++} sftpinfo_t;
++
++/*
++ * This structure must match the definition of same in sftp_provider_impl.h.
++ */
++typedef struct sftpproto {
++	int64_t sftp_nbytes;		/* bytes written or read */
++	uint64_t sftp_user;		/* user name */
++	uint64_t sftp_operation;	/* SFTP operation */
++	uint64_t sftp_raddr;		/* remote address */
++	uint64_t sftp_pathname;		/* path with file name */
++	int32_t sftp_fd;		/* fd for transfer, if any */
++} sftpproto_t;
++
++#pragma D binding "1.6.1" translator
++translator conninfo_t <sftpproto_t *s> {
++	ci_protocol = "tcp";
++	ci_remote = copyinstr((uintptr_t)
++	    *(uint64_t *)copyin((uintptr_t)&s->sftp_raddr, sizeof (uint64_t)));
++	ci_local = "<unknown>";
++};
++
++#pragma D binding "1.6.1" translator
++translator sftpinfo_t <sftpproto_t *s> {
++	sfi_user = copyinstr((uintptr_t)
++	    *(uint64_t *)copyin((uintptr_t)&s->sftp_user, sizeof (uint64_t)));
++	sfi_operation = copyinstr((uintptr_t)
++	    *(uint64_t *)copyin((uintptr_t)&s->sftp_operation,
++	    sizeof (uint64_t)));
++	sfi_nbytes =
++	    *(uint64_t *)copyin((uintptr_t)&s->sftp_nbytes, sizeof (uint64_t));
++	sfi_fsresource = stringof(fds[*(int32_t *)copyin((uintptr_t)&s->sftp_fd,
++	    sizeof (int32_t))].fi_fs) == "lofs" ? stringof(((struct loinfo *)
++	    curthread->t_procp->p_user.u_finfo.fi_list[*(int32_t *)copyin(
++	    (uintptr_t)&s->sftp_fd, sizeof (int32_t))].uf_file->f_vnode->
++	    v_vfsp->vfs_data)->li_realvfs->vfs_resource->rs_string) :
++	    stringof(curthread->t_procp->p_user.u_finfo.fi_list[
++	    *(int32_t *)copyin((uintptr_t)&s->sftp_fd, sizeof (int32_t))].
++	    uf_file->f_vnode->v_vfsp->vfs_resource->rs_string);
++	sfi_pathname = copyinstr((uintptr_t)*(uint64_t *)copyin(
++	    (uintptr_t)&s->sftp_pathname, sizeof (uint64_t)));
++};
+diff --git a/sftp_provider.d b/sftp_provider.d
+new file mode 100644
+index 0000000..99e9920
+--- /dev/null
++++ b/sftp_provider.d
+@@ -0,0 +1,61 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++/*
++ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
++ */
++
++/*
++ * We seem currently unable to depend properly on existing D libraries (like
++ * sftp.d). But the definitions for conninfo_t and sftpinfo_t are stored there
++ * (and have to be, since that's where the real translators live). So we're
++ * forced to define something here to satisfy dtrace(1M), but none of the
++ * definitions or translators here are actually used.
++ */
++typedef struct sftpinfo {
++	int dummy;
++} sftpinfo_t;
++
++typedef struct sftpproto {
++	int dummy;
++} sftpproto_t;
++
++typedef struct conninfo {
++	int dummy;
++} conninfo_t;
++
++translator conninfo_t <sftpproto_t *dp> {
++};
++
++translator sftpinfo_t <sftpproto_t *dp> {
++};
++
++provider sftp {
++	probe transfer__start(sftpproto_t *p) :
++	    (conninfo_t *p, sftpinfo_t *p);
++	probe transfer__done(sftpproto_t *p) :
++	    (conninfo_t *p, sftpinfo_t *p);
++};
++
++#pragma D attributes Evolving/Evolving/ISA provider sftp provider
++#pragma D attributes Private/Private/Unknown provider sftp module
++#pragma D attributes Private/Private/Unknown provider sftp function
++#pragma D attributes Private/Private/ISA provider sftp name
++#pragma D attributes Evolving/Evolving/ISA provider sftp args
+diff --git a/sftp_provider_impl.h b/sftp_provider_impl.h
+new file mode 100644
+index 0000000..4b18e6e
+--- /dev/null
++++ b/sftp_provider_impl.h
+@@ -0,0 +1,73 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++/*
++ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
++ */
++
++#ifndef	_SFTP_PROVIDER_IMPL_H
++#define	_SFTP_PROVIDER_IMPL_H
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++/*
++ * This structure must match the definition of same in sftp.d.
++ */
++typedef struct sftpproto {
++	int64_t sftp_nbytes;		/* bytes writtten or read */
++	const char *sftp_user;		/* user name */
++	const char *sftp_operation;	/* SFTP Operation */
++	const char *sftp_raddr;		/* remote address */
++	const char *sftp_pathname;	/* path with file name */
++	int32_t sftp_fd;		/* fd for transfer, if any */
++} sftpproto_t;
++
++#define	SFTP_TRANSFER_PROTO(proto, op, fd, path, len) \
++	bzero((proto), sizeof (struct sftpproto)); \
++	(proto)->sftp_user = (pw->pw_name ? pw->pw_name : "UNKNOWN"); \
++	(proto)->sftp_operation = (op ? op : "UNKNOWN"); \
++	(proto)->sftp_raddr = (client_addr); \
++	(proto)->sftp_fd = (fd); \
++	(proto)->sftp_pathname = (path ? path : "UNKNOWN"); \
++	(proto)->sftp_nbytes = (len); \
++
++#define	SFTP_TRANSFER_START_OP(op, fd, path, len) \
++	if (SFTP_TRANSFER_START_ENABLED()) { \
++		sftpproto_t proto; \
++		SFTP_TRANSFER_PROTO(&proto, op, fd, path, len); \
++		SFTP_TRANSFER_START(&proto); \
++	} \
++
++#define	SFTP_TRANSFER_DONE_OP(op, fd, path, len) \
++	if (SFTP_TRANSFER_DONE_ENABLED()) { \
++		sftpproto_t proto; \
++		SFTP_TRANSFER_PROTO(&proto, op, fd, path, len); \
++		SFTP_TRANSFER_DONE(&proto); \
++	} \
++
++#include "sftp_provider.h"
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif /* _SFTP_PROVIDER_IMPL_H */
+-- 
+2.5.4 (Apple Git-61)
+

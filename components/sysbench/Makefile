@@ -24,8 +24,8 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:83fa7464193e012c91254e595a89894d8e35b4a38324b52a5974777e3823ea9e
 COMPONENT_ARCHIVE_URL=  \
-	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://sysbench.sourceforge.net/
+	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://github.com/akopytov/sysbench
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

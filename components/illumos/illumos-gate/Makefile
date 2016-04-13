@@ -22,6 +22,8 @@ GIT_REPO=git://github.com/illumos/illumos-gate.git
 GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 
+FETCH=$(WS_TOOLS)/userland-fetch
+
 NIGHTLY_OPTIONS=-nClmprt
 ONNV_BUILDNUM=$(BRANCHID)
 
@@ -48,8 +50,20 @@ COMPONENT_ARCHIVE_HASH_2=	$(COMPONENT_ARCHIVE_HASH_2.$(MACH))
 ON_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
 
 CLEAN_PATHS += $(BUILD_DIR)
+CLOBBER_PATHS += $(SOURCE_DIR)
 
-include ../../../make-rules/prep.mk
+define download-rule
+ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
+CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
+$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)): Makefile
+	$$(FETCH) --file $$@ \
+		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
+		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %)
+	$$(TOUCH) $$@
+endef
+
+$(foreach suffix,$(NUM_EXTRA_ARCHIVES),\
+	$(eval $(call download-rule,_$(suffix))))
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -66,24 +80,38 @@ update:
 
 download:: $(SOURCE_DIR)/.downloaded
 
-$(BUILD_DIR)/$(MACH)/.closed-binaries: $(SOURCE_DIR)/.downloaded
+PATCH_DIR ?=    patches
+PATCH_PATTERN ?=        *.patch
+PATCHES =       $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
+                                2>/dev/null | sort) $(EXTRA_PATCHES)
+
+$(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 	$(MKDIR) $(@D)
 	[ -d $(SOURCE_DIR)/closed ] || \
-	  (bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) | \
-	  (cd $(SOURCE_DIR); tar xf -); \
-	  bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) | \
-	  (cd $(SOURCE_DIR); tar xf -))
+          (bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) | \
+          (cd $(SOURCE_DIR); tar xf -); \
+          bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) | \
+          (cd $(SOURCE_DIR); tar xf -))
+	cd $(SOURCE_DIR) && \
+        $(GIT) checkout -f && \
+              $(GIT) clean -f
+	for p in $(PATCHES); do \
+          $(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $$p; \
+        done
+	@cd $(SOURCE_DIR); $(GIT) log -1 --format=%H > .downloaded
 	$(TOUCH) $@
 
-prep:: $(BUILD_DIR)/$(MACH)/.closed-binaries
+prep::	$(SOURCE_DIR)/.patched
 
-$(BUILD_DIR)/$(MACH)/.built: $(BUILD_DIR)/$(MACH)/.closed-binaries
+$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	cd $(SOURCE_DIR) && \
 	  cat usr/src/tools/env/illumos.sh | \
 	  (sed \
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
-	    -e 's|^export GATE=.*|export GATE=\"$$(git log -1 --format=illumos-%h)\"|' \
+	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|'; \
+	  echo export PERL_VERSION=\"5.22\"; \
+	  echo export PERL_PKGVERS=\"-522\"; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
 	  echo export ONLY_LINT_DEFS=-I\$$SPRO_ROOT/sunstudio12.1/prod/include/lint; \
@@ -91,6 +119,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(BUILD_DIR)/$(MACH)/.closed-binaries
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
 	  illumos.sh && \
 	  time /opt/onbld/bin/nightly illumos.sh
+	@[ -d $(BUILD_DIR)/$(MACH) ] || $(MKDIR) $(BUILD_DIR)/$(MACH)
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
@@ -142,9 +171,11 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
 
-	# OI hipster is using updated bnx and bnxe drivers published directly from oi-userland
+	# OI hipster is using updated bnx driver published directly from oi-userland
 	echo "<transform depend fmri=pkg:/driver/network/bnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo "<transform depend fmri=pkg:/driver/network/bnxe@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	# Drop man pages for sun-solaris perl module to avoid conflicts between different versions
+	echo "<transform file path=usr/share/man/man3perl/.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	# Drop old obsolete and renamed package dependencies
 	echo "<transform depend fmri=pkg:/avs@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -152,6 +183,7 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/BRCMbnxe@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/consolidation/man/man-incorporation@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/CPQary3@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend fmri=pkg:/benchmark/filebench@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/arbel@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/bnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/ibd@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -320,6 +352,8 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/SUNWkvm@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWlatencytop@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWldskint@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend fmri=pkg:/SUNWlibm@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend fmri=pkg:/SUNWlibms@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWlibsasl@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWllc@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWlldap@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -522,12 +556,14 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/SUNWzoneint@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/SUNWzyd@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/dtrace@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend fmri=pkg:/system/file-system/ntfsprogs@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/library/security/crypto/pkcs11_kms@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/library/storage/scsi-plugin@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/management/snmp/sea@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/management/wbem/resource-management@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/manual@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/storage/mms@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend fmri=pkg:/system/storage/parted@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/zones/brand/lx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
@@ -542,9 +578,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	if [ -d $(@D)/pkgrecv.dir ]; then $(RM) -r $(@D)/pkgrecv.dir; fi
 	$(MKDIR) $(@D)/pkgrecv.dir
 
-	#pkgrepo -s $(ON_REPO) list -H -F tsv | awk '{ print $2 }' | sort -u
-	#pkgrecv -s illumos-gate/packages/i386/nightly-nd/repo.redist --newest
-	
 	pkgrepo -s $(ON_REPO) rebuild
 	pkgrecv -s $(ON_REPO) -d $(@D)/pkgrecv.dir --raw \
 	  $$(pkgrecv -s $(ON_REPO) --newest | sed -f packages.ignore)
@@ -562,6 +595,8 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 publish: update $(BUILD_DIR)/$(MACH)/.published
 
+clean::
+	$(RM) -r $(CLEAN_PATHS)
 
-
-
+clobber::       clean
+	$(RM) -r $(CLOBBER_PATHS)

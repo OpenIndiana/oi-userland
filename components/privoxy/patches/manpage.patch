@@ -1,0 +1,46 @@
+Solaris specific patch for man-page information. Not suitable for upstream. 
+
+diff -rupN privoxy-3.0.23-stable-orig/privoxy.1 privoxy-3.0.23-stable/privoxy.1
+--- privoxy-3.0.23-stable-orig/privoxy.1	2015-06-15 15:36:06.491090350 -0700
++++ privoxy-3.0.23-stable/privoxy.1	2015-06-15 15:45:25.081367798 -0700
+@@ -147,7 +147,7 @@ features and notes on upgrading.
+ .SH "FILES"
+ 
+ .nf
+- \fI/usr/sbin/privoxy\fR
++ \fI/usr/lib/privoxy\fR
+  \fI/etc/privoxy/config\fR
+  \fI/etc/privoxy/match-all.action\fR
+  \fI/etc/privoxy/default.action\fR
+@@ -211,6 +211,31 @@ configuration related suggestions to the
+  Roland Rosenfeld
+  Ian Silvester
+ .fi
++.RE
++.SH "AUTOMATIC SERVICE MANAGEMENT (SMF)"
++.PP
++The Privoxy service is disabled by default. You can
++check  the  status  of  the service by issuing the following
++command:
++.PP
++.nf
++\fB example% svcs privoxy\fR
++\fB STATE          STIME    FMRI
++\fB disabled       10:47:39 svc:/network/http:privoxy
++.fi
++.PP
++Enable the Privoxy service by issuing the following
++command :
++.PP
++\fB example% svcadm  enable privoxy\fR
++.PP
++The state of the service instance should change to "online".
++.PP
++.nf
++\fB example% svcs privoxy\fR
++\fB STATE          STIME    FMRI\fR
++\fB online         10:50:27 svc:/network/http:privoxy\fR
++.fi
+ .SH "COPYRIGHT AND LICENSE"
+ .SS "COPYRIGHT"
+ .PP

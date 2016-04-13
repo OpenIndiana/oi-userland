@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # This set of transforms helps us take a package that's parameterized on a
@@ -34,14 +34,16 @@
 #
 # We do this by grabbing just the set actions from "mako-generic", and emitting
 # those conditional depend actions.  We require that the parameterized package
-# name end in "-###" (typically by setting a pkgmogrify variable to "###"),
-# which we also remove here.  This works in conjunction with a set of rules in
-# make-rules/ips.mk which create and use another transform file that actually
-# emit the conditional dependencies.
+# name end in "-###PYV###" (typically by setting a pkgmogrify variable to
+# "###PYV###"), which we also remove here.  This works in conjunction with a set
+# of rules in make-rules/ips.mk which create and use another transform file
+# that actually emit the conditional dependencies.
 
 <transform file dir link hardlink license user group driver legacy signature -> drop>
 <transform depend -> default nodrop false>
 <transform depend nodrop=false -> drop>
+<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-###PYV###@(.*) -> \
+	edit value -###PYV### "">
 <transform set name=pkg.fmri value=(?:pkg:/)?(.+)-###@(.*) -> \
 	edit value -### "">
 <transform depend nodrop=true -> delete nodrop true>

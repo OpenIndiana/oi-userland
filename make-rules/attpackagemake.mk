@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that uses AT&T's package
@@ -72,6 +72,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
    		bin/package make $(COMPONENT_BUILD_TARGETS) $(COMPONENT_BUILD_ARGS)
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) $(@D)
+endif
 	$(TOUCH) $@
 
 # install the built source into a prototype area
@@ -86,13 +89,36 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 # test the built source
-$(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	cd $(@D); $(ENV) $(COMPONENT_TEST_ENV) \
+	-(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		bin/package test $(COMPONENT_TEST_TARGETS) \
+		$(COMPONENT_TEST_ARGS) \
+		&> $(COMPONENT_TEST_OUTPUT)
+	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
+	$(COMPONENT_TEST_COMPARE)
+	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
+$(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
+	$(COMPONENT_PRE_TEST_ACTION)
+	(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		bin/package test $(COMPONENT_TEST_TARGETS) \
 		$(COMPONENT_TEST_ARGS)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

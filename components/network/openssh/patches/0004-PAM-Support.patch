@@ -1,0 +1,54 @@
+From c57262f2123c44f2e306df153d6a3be1558ba228 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:34:19 -0700
+Subject: [PATCH 04/36] PAM Support
+
+#
+# To comply to the Solaris PAM policy, the UsePAM option is changed to be
+# always on and not configurable on Solaris.  This is for Solaris only, so we
+# will not contribute the changes to the upstream community.
+#
+
+*** orig/servconf.c	Mon Dec  5 17:23:03 2011
+---
+ servconf.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/servconf.c b/servconf.c
+index 6c7a91e..5e8ed97 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -185,7 +185,12 @@ fill_default_server_options(ServerOptions *options)
+ 
+ 	/* Portable-specific options */
+ 	if (options->use_pam == -1)
++#ifdef SET_USE_PAM
++		/* use_pam should be always set to 1 on Solaris */
++		options->use_pam = 1;
++#else
+ 		options->use_pam = 0;
++#endif
+ 
+ 	/* Standard Options */
+ 	if (options->protocol == SSH_PROTO_UNKNOWN)
+@@ -997,8 +1002,17 @@ process_server_config_line(ServerOptions *options, char *line,
+ 	switch (opcode) {
+ 	/* Portable-specific options */
+ 	case sUsePAM:
++#ifdef SET_USE_PAM
++		/* UsePAM is always on and not configurable on Solaris */
++		logit("%s line %d: ignoring UsePAM option value."
++		    " This option is always on.", filename, linenum);
++		while (arg)
++			arg = strdelim(&cp);
++		break; 
++#else
+ 		intptr = &options->use_pam;
+ 		goto parse_flag;
++#endif
+ 
+ 	/* Standard Options */
+ 	case sBadOption:
+-- 
+2.5.4 (Apple Git-61)
+

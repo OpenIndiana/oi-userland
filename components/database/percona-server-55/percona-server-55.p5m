@@ -1,0 +1,270 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/database/percona-server-55@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Percona Server 5.5 Database Management System"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+dir path=var/percona-server group=mysql mode=0700 owner=mysql
+dir path=var/percona-server/5.5 group=mysql mode=0700 owner=mysql
+dir path=var/percona-server/5.5/data group=mysql mode=0700 owner=mysql
+file build/prototype/i386/usr/percona-server/5.5/share/mysql/my-medium.cnf path=etc/percona-server/5.5/my.cnf \
+    mode=0644 preserve=renamenew
+file files/auth_attr path=etc/security/auth_attr.d/percona-server-55
+file files/prof_attr path=etc/security/prof_attr.d/percona-server-55
+file files/percona-server_55.xml \
+    path=lib/svc/manifest/application/database/percona-server_55.xml
+file files/percona-server_55 path=lib/svc/method/percona-server_55 mode=0555
+
+license percona-server-55.license license=GPLv2
+
+link path=etc/mysql/my.cnf target=../percona-server/5.5/my.cnf mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+link path=usr/percona-server/5.5/bin/64 target=$(MACH64)
+link path=usr/mysql/bin target=../percona-server/5.5/bin mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+link path=usr/mysql/docs target=../percona-server/5.5/docs mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+link path=usr/mysql/man target=../percona-server/5.5/man mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+link path=usr/mysql/share target=../percona-server/5.5/share mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+link path=var/mysql/data target=../percona-server/5.5/data mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
+
+depend fmri=database/mysql-common type=require
+depend fmri=database/percona-server-55/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+dir  path=usr/percona-server
+dir  path=usr/percona-server/5.5
+dir  path=usr/percona-server/5.5/bin
+dir  path=usr/percona-server/5.5/bin/amd64 
+file path=usr/percona-server/5.5/bin/amd64/innochecksum mode=0555
+file path=usr/percona-server/5.5/bin/amd64/my_print_defaults mode=0555
+file path=usr/percona-server/5.5/bin/amd64/myisam_ftdump mode=0555
+file path=usr/percona-server/5.5/bin/amd64/myisamchk mode=0555
+file path=usr/percona-server/5.5/bin/amd64/myisamlog mode=0555
+file path=usr/percona-server/5.5/bin/amd64/myisampack mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_fix_extensions mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_install_db mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_plugin mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_secure_installation mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_upgrade mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysql_zap mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqlbinlog mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqlbug mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqld mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqld_multi mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqld_safe mode=0555
+file path=usr/percona-server/5.5/bin/amd64/mysqlhotcopy mode=0555
+file path=usr/percona-server/5.5/bin/amd64/perror mode=0555
+file path=usr/percona-server/5.5/bin/amd64/replace mode=0555
+file path=usr/percona-server/5.5/bin/amd64/resolve_stack_dump mode=0555
+file path=usr/percona-server/5.5/bin/amd64/resolveip mode=0555
+file path=usr/percona-server/5.5/bin/innochecksum mode=0555
+file path=usr/percona-server/5.5/bin/my_print_defaults mode=0555
+file path=usr/percona-server/5.5/bin/myisam_ftdump mode=0555
+file path=usr/percona-server/5.5/bin/myisamchk mode=0555
+file path=usr/percona-server/5.5/bin/myisamlog mode=0555
+file path=usr/percona-server/5.5/bin/myisampack mode=0555
+file path=usr/percona-server/5.5/bin/mysql.info
+file path=usr/percona-server/5.5/bin/mysql_fix_extensions mode=0555
+file path=usr/percona-server/5.5/bin/mysql_install_db mode=0555
+file path=usr/percona-server/5.5/bin/mysql_plugin mode=0555
+file path=usr/percona-server/5.5/bin/mysql_secure_installation mode=0555
+file path=usr/percona-server/5.5/bin/mysql_upgrade mode=0555
+file path=usr/percona-server/5.5/bin/mysql_zap mode=0555
+file path=usr/percona-server/5.5/bin/mysqlbinlog mode=0555
+file path=usr/percona-server/5.5/bin/mysqlbug mode=0555
+file path=usr/percona-server/5.5/bin/mysqld mode=0555
+file path=usr/percona-server/5.5/bin/mysqld_multi mode=0555
+file path=usr/percona-server/5.5/bin/mysqld_safe mode=0555
+file path=usr/percona-server/5.5/bin/mysqlhotcopy mode=0555
+file path=usr/percona-server/5.5/bin/perror mode=0555
+file path=usr/percona-server/5.5/bin/replace mode=0555
+file path=usr/percona-server/5.5/bin/resolve_stack_dump mode=0555
+file path=usr/percona-server/5.5/bin/resolveip mode=0555
+dir  path=usr/percona-server/5.5/docs mode=0755
+file path=usr/percona-server/5.5/docs/INFO_BIN
+file path=usr/percona-server/5.5/docs/INFO_SRC
+dir  path=usr/percona-server/5.5/man mode=0755
+dir  path=usr/percona-server/5.5/man/man1 mode=0755
+file path=usr/percona-server/5.5/man/man1/comp_err.1
+file path=usr/percona-server/5.5/man/man1/innochecksum.1
+file path=usr/percona-server/5.5/man/man1/my_print_defaults.1
+file path=usr/percona-server/5.5/man/man1/myisam_ftdump.1
+file path=usr/percona-server/5.5/man/man1/myisamchk.1
+file path=usr/percona-server/5.5/man/man1/myisamlog.1
+file path=usr/percona-server/5.5/man/man1/myisampack.1
+file path=usr/percona-server/5.5/man/man1/mysql.server.1
+file path=usr/percona-server/5.5/man/man1/mysql_fix_extensions.1
+file path=usr/percona-server/5.5/man/man1/mysql_install_db.1
+file path=usr/percona-server/5.5/man/man1/mysql_plugin.1
+file path=usr/percona-server/5.5/man/man1/mysql_secure_installation.1
+file path=usr/percona-server/5.5/man/man1/mysql_upgrade.1
+file path=usr/percona-server/5.5/man/man1/mysql_zap.1
+file path=usr/percona-server/5.5/man/man1/mysqlbinlog.1
+file path=usr/percona-server/5.5/man/man1/mysqlbug.1
+file path=usr/percona-server/5.5/man/man1/mysqld_multi.1
+file path=usr/percona-server/5.5/man/man1/mysqld_safe.1
+file path=usr/percona-server/5.5/man/man1/mysqlhotcopy.1
+file path=usr/percona-server/5.5/man/man1/mysqlman.1
+file path=usr/percona-server/5.5/man/man1/perror.1
+file path=usr/percona-server/5.5/man/man1/replace.1
+file path=usr/percona-server/5.5/man/man1/resolve_stack_dump.1
+file path=usr/percona-server/5.5/man/man1/resolveip.1
+dir  path=usr/percona-server/5.5/man/man8 mode=0755
+file path=usr/percona-server/5.5/man/man8/mysqld.8
+dir  path=usr/percona-server/5.5/share mode=0755
+dir  path=usr/percona-server/5.5/share/charsets mode=0755
+file path=usr/percona-server/5.5/share/charsets/Index.xml
+file path=usr/percona-server/5.5/share/charsets/README
+file path=usr/percona-server/5.5/share/charsets/armscii8.xml
+file path=usr/percona-server/5.5/share/charsets/ascii.xml
+file path=usr/percona-server/5.5/share/charsets/cp1250.xml
+file path=usr/percona-server/5.5/share/charsets/cp1251.xml
+file path=usr/percona-server/5.5/share/charsets/cp1256.xml
+file path=usr/percona-server/5.5/share/charsets/cp1257.xml
+file path=usr/percona-server/5.5/share/charsets/cp850.xml
+file path=usr/percona-server/5.5/share/charsets/cp852.xml
+file path=usr/percona-server/5.5/share/charsets/cp866.xml
+file path=usr/percona-server/5.5/share/charsets/dec8.xml
+file path=usr/percona-server/5.5/share/charsets/geostd8.xml
+file path=usr/percona-server/5.5/share/charsets/greek.xml
+file path=usr/percona-server/5.5/share/charsets/hebrew.xml
+file path=usr/percona-server/5.5/share/charsets/hp8.xml
+file path=usr/percona-server/5.5/share/charsets/keybcs2.xml
+file path=usr/percona-server/5.5/share/charsets/koi8r.xml
+file path=usr/percona-server/5.5/share/charsets/koi8u.xml
+file path=usr/percona-server/5.5/share/charsets/latin1.xml
+file path=usr/percona-server/5.5/share/charsets/latin2.xml
+file path=usr/percona-server/5.5/share/charsets/latin5.xml
+file path=usr/percona-server/5.5/share/charsets/latin7.xml
+file path=usr/percona-server/5.5/share/charsets/macce.xml
+file path=usr/percona-server/5.5/share/charsets/macroman.xml
+file path=usr/percona-server/5.5/share/charsets/swe7.xml
+dir  path=usr/percona-server/5.5/share/czech mode=0755
+file path=usr/percona-server/5.5/share/czech/errmsg.sys
+dir  path=usr/percona-server/5.5/share/danish mode=0755
+file path=usr/percona-server/5.5/share/danish/errmsg.sys
+dir  path=usr/percona-server/5.5/share/dutch mode=0755
+file path=usr/percona-server/5.5/share/dutch/errmsg.sys
+dir  path=usr/percona-server/5.5/share/english mode=0755
+file path=usr/percona-server/5.5/share/english/errmsg.sys
+file path=usr/percona-server/5.5/share/errmsg-utf8.txt
+dir  path=usr/percona-server/5.5/share/estonian mode=0755
+file path=usr/percona-server/5.5/share/estonian/errmsg.sys
+file path=usr/percona-server/5.5/share/fill_help_tables.sql
+dir  path=usr/percona-server/5.5/share/french mode=0755
+file path=usr/percona-server/5.5/share/french/errmsg.sys
+dir  path=usr/percona-server/5.5/share/german mode=0755
+file path=usr/percona-server/5.5/share/german/errmsg.sys
+dir  path=usr/percona-server/5.5/share/greek mode=0755
+file path=usr/percona-server/5.5/share/greek/errmsg.sys
+dir  path=usr/percona-server/5.5/share/hungarian mode=0755
+file path=usr/percona-server/5.5/share/hungarian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/italian mode=0755
+file path=usr/percona-server/5.5/share/italian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/japanese mode=0755
+file path=usr/percona-server/5.5/share/japanese/errmsg.sys
+dir  path=usr/percona-server/5.5/share/korean mode=0755
+file path=usr/percona-server/5.5/share/korean/errmsg.sys
+dir  path=usr/percona-server/5.5/share/mysql mode=0755
+file path=usr/percona-server/5.5/share/mysql/binary-configure mode=0555
+file path=usr/percona-server/5.5/share/mysql/config.huge.ini mode=0555
+file path=usr/percona-server/5.5/share/mysql/config.medium.ini mode=0555
+file path=usr/percona-server/5.5/share/mysql/config.small.ini mode=0555
+file path=usr/percona-server/5.5/share/mysql/magic
+file path=usr/percona-server/5.5/share/mysql/my-huge.cnf
+file path=usr/percona-server/5.5/share/mysql/my-innodb-heavy-4G.cnf
+file path=usr/percona-server/5.5/share/mysql/my-large.cnf
+file path=usr/percona-server/5.5/share/mysql/my-medium.cnf
+file path=usr/percona-server/5.5/share/mysql/my-small.cnf
+file path=usr/percona-server/5.5/share/mysql/mysql-log-rotate mode=0555
+file path=usr/percona-server/5.5/share/mysql/mysql.server mode=0555
+file path=usr/percona-server/5.5/share/mysql/mysqld_multi.server mode=0555
+file path=usr/percona-server/5.5/share/mysql/ndb-config-2-node.ini mode=0555
+dir  path=usr/percona-server/5.5/share/mysql/solaris mode=0755
+file path=usr/percona-server/5.5/share/mysql/solaris/postinstall-solaris \
+    mode=0555
+file path=usr/percona-server/5.5/share/mysql_system_tables.sql
+file path=usr/percona-server/5.5/share/mysql_system_tables_data.sql
+file path=usr/percona-server/5.5/share/mysql_test_data_timezone.sql
+dir  path=usr/percona-server/5.5/share/norwegian mode=0755
+dir  path=usr/percona-server/5.5/share/norwegian-ny mode=0755
+file path=usr/percona-server/5.5/share/norwegian-ny/errmsg.sys
+file path=usr/percona-server/5.5/share/norwegian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/polish mode=0755
+file path=usr/percona-server/5.5/share/polish/errmsg.sys
+dir  path=usr/percona-server/5.5/share/portuguese mode=0755
+file path=usr/percona-server/5.5/share/portuguese/errmsg.sys
+dir  path=usr/percona-server/5.5/share/romanian mode=0755
+file path=usr/percona-server/5.5/share/romanian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/russian mode=0755
+file path=usr/percona-server/5.5/share/russian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/serbian mode=0755
+file path=usr/percona-server/5.5/share/serbian/errmsg.sys
+dir  path=usr/percona-server/5.5/share/slovak mode=0755
+file path=usr/percona-server/5.5/share/slovak/errmsg.sys
+dir  path=usr/percona-server/5.5/share/spanish mode=0755
+file path=usr/percona-server/5.5/share/spanish/errmsg.sys
+dir  path=usr/percona-server/5.5/share/swedish mode=0755
+file path=usr/percona-server/5.5/share/swedish/errmsg.sys
+dir  path=usr/percona-server/5.5/share/ukrainian mode=0755
+file path=usr/percona-server/5.5/share/ukrainian/errmsg.sys
+dir  path=usr/percona-server/5.5/lib/$(MACH64)/plugin
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/adt_null.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/audit_log.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/auth.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/auth_test_plugin.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/daemon_example.ini
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/ha_archive.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/ha_blackhole.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/ha_example.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/ha_federated.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/libdaemon_example.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/libfnv1a_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/libfnv_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/libmurmur_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/mypluglib.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/qa_auth_client.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/qa_auth_interface.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/qa_auth_server.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/scalability_metrics.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/semisync_master.so mode=0555
+file path=usr/percona-server/5.5/lib/$(MACH64)/plugin/semisync_slave.so mode=0555
+dir  path=usr/percona-server/5.5/lib/plugin
+file path=usr/percona-server/5.5/lib/plugin/adt_null.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/audit_log.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/auth.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/auth_test_plugin.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/daemon_example.ini
+file path=usr/percona-server/5.5/lib/plugin/ha_archive.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/ha_blackhole.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/ha_example.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/ha_federated.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/libdaemon_example.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/libfnv1a_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/libfnv_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/libmurmur_udf.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/mypluglib.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/qa_auth_client.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/qa_auth_interface.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/qa_auth_server.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/scalability_metrics.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/semisync_master.so mode=0555
+file path=usr/percona-server/5.5/lib/plugin/semisync_slave.so mode=0555

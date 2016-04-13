@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= libproxy
 
 COMPONENT_VERSION= 0.3.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Libproxy is a library that provides automatic proxy configuration management
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -58,6 +59,7 @@ CONFIGURE_OPTIONS+= --with-file
 CONFIGURE_OPTIONS+= --with-wpad
 CONFIGURE_OPTIONS+= --without-networkmanager
 CONFIGURE_OPTIONS+= --without-webkit
+CONFIGURE_OPTIONS+= --without-mozjs
 CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext

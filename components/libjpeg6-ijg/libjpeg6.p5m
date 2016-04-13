@@ -1,0 +1,54 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/image/library/libjpeg6@6.0.2,$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=image/library/libjpeg6-ijg type=require
+
+# Documentation provided by default implementation
+file path=usr/share/man/man1/cjpeg.1
+file path=usr/share/man/man1/djpeg.1
+file path=usr/share/man/man1/jpegtran.1
+file path=usr/share/man/man1/rdjpgcom.1
+file path=usr/share/man/man1/wrjpgcom.1
+
+# Set this version as default implementation for backward compatibility
+link path=usr/bin/cjpeg              target=../lib/$(COMPONENT_NAME)/bin/cjpeg
+link path=usr/bin/djpeg              target=../lib/$(COMPONENT_NAME)/bin/djpeg
+link path=usr/bin/jpegtran           target=../lib/$(COMPONENT_NAME)/bin/jpegtran
+link path=usr/bin/rdjpgcom           target=../lib/$(COMPONENT_NAME)/bin/rdjpgcom
+link path=usr/bin/wrjpgcom           target=../lib/$(COMPONENT_NAME)/bin/wrjpgcom
+link path=usr/bin/$(MACH64)/cjpeg    target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/cjpeg
+link path=usr/bin/$(MACH64)/djpeg    target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/djpeg
+link path=usr/bin/$(MACH64)/jpegtran target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/jpegtran
+link path=usr/bin/$(MACH64)/rdjpgcom target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/rdjpgcom
+link path=usr/bin/$(MACH64)/wrjpgcom target=../../lib/$(COMPONENT_NAME)/bin/$(MACH64)/wrjpgcom
+link path=usr/include/jconfig.h      target=$(COMPONENT_NAME)/jconfig.h
+link path=usr/include/jerror.h       target=$(COMPONENT_NAME)/jerror.h
+link path=usr/include/jmorecfg.h     target=$(COMPONENT_NAME)/jmorecfg.h
+link path=usr/include/jpeglib.h      target=$(COMPONENT_NAME)/jpeglib.h
+link path=usr/lib/libjpeg.so         target=$(COMPONENT_NAME)/lib/libjpeg.so.62.0.0
+link path=usr/lib/libjpeg.so.62      target=$(COMPONENT_NAME)/lib/libjpeg.so.62.0.0
+link path=usr/lib/libjpeg.so.62.0.0  target=$(COMPONENT_NAME)/lib/libjpeg.so.62.0.0
+link path=usr/lib/$(MACH64)/libjpeg.so        target=../$(COMPONENT_NAME)/lib/$(MACH64)/libjpeg.so.62.0.0
+link path=usr/lib/$(MACH64)/libjpeg.so.62     target=../$(COMPONENT_NAME)/lib/$(MACH64)/libjpeg.so.62.0.0
+link path=usr/lib/$(MACH64)/libjpeg.so.62.0.0 target=../$(COMPONENT_NAME)/lib/$(MACH64)/libjpeg.so.62.0.0

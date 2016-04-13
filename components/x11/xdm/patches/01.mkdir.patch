@@ -1,0 +1,167 @@
+From 619af82effb9125c904d34c9fbc4bf93385d7b9e Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Tue, 22 Sep 2009 13:41:38 -0700
+Subject: [PATCH:app/xdm] Create piddir if needed on startup
+
+Allows setting piddir to /var/run/xdm/
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+---
+ dm.c |   22 ++++++++++++++++++++++
+ 1 files changed, 22 insertions(+), 0 deletions(-)
+
+diff --git a/dm.c b/dm.c
+index c482017..abe4453 100644
+--- a/dm.c
++++ b/dm.c
+@@ -863,7 +863,29 @@ StorePid (void)
+     if (pidFile[0] != '\0') {
+ 	pidFd = open (pidFile, O_RDWR);
+ 	if (pidFd == -1 && errno == ENOENT)
++	{
++	    /* Make sure directory exists if needed
++	       Allows setting pidDir to /var/run/xdm
++	     */
++	    char *pidDir = strdup(pidFile);
++
++	    if (pidDir != NULL)
++	    {
++		char *p = strrchr(pidDir, '/');
++		int r;
++
++		if ((p != NULL) && (p != pidDir)) {
++		    *p = '\0';
++		}
++		r = mkdir(pidDir, 0755);
++		if ( (r < 0) && (errno != EEXIST) ) {
++		     LogError ("process-id directory %s cannot be created\n",
++			       pidDir);
++		}
++	    }
++
+ 	    pidFd = open (pidFile, O_RDWR|O_CREAT, 0666);
++	}
+ 	if (pidFd == -1 || !(pidFilePtr = fdopen (pidFd, "r+")))
+ 	{
+ 	    LogError ("process-id file %s cannot be opened\n",
+-- 
+1.5.6.5
+
+From 748cfcc771c7f599d8087c7aa044bc5ff770da1d Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Tue, 22 Sep 2009 13:42:31 -0700
+Subject: [PATCH:app/xdm] Make parent authdir if needed at startup
+
+Allows setting authdir to /var/run/xdm
+
+Also refactor directory creation code for less duplication
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+---
+ auth.c |   68 ++++++++++++++++++++++++++++++++++++++++++++-------------------
+ 1 files changed, 47 insertions(+), 21 deletions(-)
+
+diff --git a/auth.c b/auth.c
+index a2cd9d6..d7cb30b 100644
+--- a/auth.c
++++ b/auth.c
+@@ -270,6 +270,38 @@ CleanUpFileName (char *src, char *dst, int len)
+     *dst = '\0';
+ }
+ 
++/* Checks to see if specified directory exists, makes it if not
++ * Returns: 0 if already exists, 1 if created, < 0 if error occured
++ */
++static int
++CheckServerAuthDir (const char *path, struct stat *statb, int mode)
++{
++    int r = stat(path, statb);
++
++    if (r != 0) {
++	if (errno == ENOENT) {
++	    r = mkdir(path, mode);
++	    if (r < 0) {
++		LogError ("cannot make authentication directory %s: %s\n",
++			  path, _SysErrorMsg (errno));
++	    } else {
++		r = 1;
++	    }
++	} else {
++	    LogError ("cannot access authentication directory %s: %s\n",
++		      path, _SysErrorMsg (errno));
++	}
++    } else { /* Directory already exists */
++	if (!S_ISDIR(statb->st_mode)) {
++	    LogError ("cannot make authentication directory %s: %s\n",
++		      path, "file with that name already exists");
++	    return -1;
++	}
++    }
++
++    return r;
++}
++
+ static char authdir1[] = "authdir";
+ static char authdir2[] = "authfiles";
+ 
+@@ -298,6 +330,13 @@ MakeServerAuthFile (struct display *d, FILE ** file)
+ 		return FALSE;
+ 	} else {
+ 	    CleanUpFileName (d->name, cleanname, NAMELEN - 8);
++
++	    /* Make authDir if it doesn't already exist */
++	    r = CheckServerAuthDir(authDir, &statb, 0755);
++	    if (r < 0) {
++		return FALSE;
++	    }
++
+ 	    len = strlen (authDir) + strlen (authdir1) + strlen (authdir2)
+ 		+ strlen (cleanname) + 14;
+ 	    d->authFile = malloc (len);
+@@ -305,35 +344,22 @@ MakeServerAuthFile (struct display *d, FILE ** file)
+ 		return FALSE;
+ 
+ 	    snprintf (d->authFile, len, "%s/%s", authDir, authdir1);
+-	    r = stat(d->authFile, &statb);
++	    r = CheckServerAuthDir(d->authFile, &statb, 0700);
+ 	    if (r == 0) {
+ 		if (statb.st_uid != 0)
+ 		    (void) chown(d->authFile, 0, statb.st_gid);
+ 		if ((statb.st_mode & 0077) != 0)
+ 		    (void) chmod(d->authFile, statb.st_mode & 0700);
+-	    } else {
+-		if (errno == ENOENT) {
+-		    r = mkdir(d->authFile, 0700);
+-		    if (r < 0) {
+-			LogError ("cannot make authentication directory %s: "
+-				  "%s\n", d->authFile, _SysErrorMsg (errno));
+-		    }
+-		} else {
+-		    LogError ("cannot access authentication directory %s: "
+-			      "%s\n", d->authFile, _SysErrorMsg (errno));
+-		}
+-		if (r < 0) {
+-		    free (d->authFile);
+-		    d->authFile = NULL;
+-		    return FALSE;
+-		}
++	    } else if (r < 0) {
++		free (d->authFile);
++		d->authFile = NULL;
++		return FALSE;
+ 	    }
++
+ 	    snprintf (d->authFile, len, "%s/%s/%s",
+ 		      authDir, authdir1, authdir2);
+-	    r = mkdir(d->authFile, 0700);
+-	    if (r < 0  &&  errno != EEXIST) {
+-		LogError ("cannot make authentication directory %s: %s\n",
+-			  d->authFile, _SysErrorMsg (errno));
++	    r = CheckServerAuthDir(d->authFile, &statb, 0700);
++	    if (r < 0) {
+ 		free (d->authFile);
+ 		d->authFile = NULL;
+ 		return FALSE;
+-- 
+1.5.6.5
+

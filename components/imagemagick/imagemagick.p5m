@@ -1,64 +1,29 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2015 Aurelien Larcher
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=pkg.description value="ImageMagick is a software suite to create, edit, compose, or convert images"
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=com.oracle.info.description value="the ImageMagick Image Manipulation Utilities and Libraries"
-set name=info.classification value="org.opensolaris.category.2008:System/Multimedia Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2007/316
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_NAME).license license='$(COMPONENT_LICENSE)'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Legacy
-#
-legacy pkg=SUNWimagick \
-    desc="ImageMagick - Image Manipulation Utilities and Libraries" \
-    name="ImageMagick - Image Manipulation Utilities and Libraries"
-
-# Compatibility links
-#
-link path=usr/sfw/bin/Magick++-config target=../../bin/Magick++-config
-link path=usr/sfw/bin/Magick-config target=../../bin/Magick-config
-link path=usr/sfw/bin/animate target=../../bin/animate
-link path=usr/sfw/bin/composite target=../../bin/composite
-link path=usr/sfw/bin/conjure target=../../bin/conjure
-link path=usr/sfw/bin/convert target=../../bin/convert
-link path=usr/sfw/bin/display target=../../bin/display
-link path=usr/sfw/bin/identify target=../../bin/identify
-link path=usr/sfw/bin/import target=../../bin/import
-link path=usr/sfw/bin/mogrify target=../../bin/mogrify
-link path=usr/sfw/bin/montage target=../../bin/montage
-
-dir  path=usr
-dir  path=usr/bin
-dir  path=usr/bin/$(MACH64)
 file path=usr/bin/$(MACH64)/Magick++-config
 file path=usr/bin/$(MACH64)/Magick-config
 file path=usr/bin/$(MACH64)/MagickCore-config
@@ -91,23 +56,35 @@ file path=usr/bin/import
 file path=usr/bin/mogrify
 file path=usr/bin/montage
 file path=usr/bin/stream
-dir  path=usr/include
-dir  path=usr/include/ImageMagick-6
-dir  path=usr/include/ImageMagick-6/Magick++
+file path=usr/etc/ImageMagick-6/coder.xml
+file path=usr/etc/ImageMagick-6/colors.xml
+file path=usr/etc/ImageMagick-6/delegates.xml
+file path=usr/etc/ImageMagick-6/log.xml
+file path=usr/etc/ImageMagick-6/magic.xml
+file path=usr/etc/ImageMagick-6/mime.xml
+file path=usr/etc/ImageMagick-6/policy.xml
+file path=usr/etc/ImageMagick-6/quantization-table.xml
+file path=usr/etc/ImageMagick-6/thresholds.xml
+file path=usr/etc/ImageMagick-6/type-dejavu.xml
+file path=usr/etc/ImageMagick-6/type-ghostscript.xml
+file path=usr/etc/ImageMagick-6/type-windows.xml
+file path=usr/etc/ImageMagick-6/type.xml
 file path=usr/include/ImageMagick-6/Magick++.h
 file path=usr/include/ImageMagick-6/Magick++/Blob.h
+file path=usr/include/ImageMagick-6/Magick++/ChannelMoments.h
 file path=usr/include/ImageMagick-6/Magick++/CoderInfo.h
 file path=usr/include/ImageMagick-6/Magick++/Color.h
 file path=usr/include/ImageMagick-6/Magick++/Drawable.h
 file path=usr/include/ImageMagick-6/Magick++/Exception.h
+file path=usr/include/ImageMagick-6/Magick++/Functions.h
 file path=usr/include/ImageMagick-6/Magick++/Geometry.h
 file path=usr/include/ImageMagick-6/Magick++/Image.h
 file path=usr/include/ImageMagick-6/Magick++/Include.h
 file path=usr/include/ImageMagick-6/Magick++/Montage.h
 file path=usr/include/ImageMagick-6/Magick++/Pixels.h
+file path=usr/include/ImageMagick-6/Magick++/ResourceLimits.h
 file path=usr/include/ImageMagick-6/Magick++/STL.h
 file path=usr/include/ImageMagick-6/Magick++/TypeMetric.h
-dir  path=usr/include/ImageMagick-6/magick
 file path=usr/include/ImageMagick-6/magick/ImageMagick.h
 file path=usr/include/ImageMagick-6/magick/MagickCore.h
 file path=usr/include/ImageMagick-6/magick/PreRvIcccm.h
@@ -202,10 +179,10 @@ file path=usr/include/ImageMagick-6/magick/transform.h
 file path=usr/include/ImageMagick-6/magick/type.h
 file path=usr/include/ImageMagick-6/magick/utility.h
 file path=usr/include/ImageMagick-6/magick/version.h
+file path=usr/include/ImageMagick-6/magick/vision.h
 file path=usr/include/ImageMagick-6/magick/widget.h
 file path=usr/include/ImageMagick-6/magick/xml-tree.h
 file path=usr/include/ImageMagick-6/magick/xwindow.h
-dir  path=usr/include/ImageMagick-6/wand
 file path=usr/include/ImageMagick-6/wand/MagickWand.h
 file path=usr/include/ImageMagick-6/wand/animate.h
 file path=usr/include/ImageMagick-6/wand/compare.h
@@ -228,268 +205,140 @@ file path=usr/include/ImageMagick-6/wand/pixel-iterator.h
 file path=usr/include/ImageMagick-6/wand/pixel-wand.h
 file path=usr/include/ImageMagick-6/wand/stream.h
 file path=usr/include/ImageMagick-6/wand/wand-view.h
-dir  path=usr/lib
-dir  path=usr/lib/$(MACH64)
-dir  path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)
-dir  path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/config-Q16
-file usr/etc/ImageMagick-6/colors.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/colors.xml
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/config-Q16/configure.xml
-file build/$(MACH64)/config/delegates.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/delegates.xml
-file usr/share/ImageMagick-6/english.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/english.xml
-file usr/share/ImageMagick-6/francais.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/francais.xml
-file usr/share/ImageMagick-6/locale.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/locale.xml
-file build/$(MACH64)/config/type.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/type.xml
-file build/$(MACH64)/config/type-ghostscript.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/type-ghostscript.xml
-file build/$(MACH64)/config/type-windows.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/type-windows.xml
-file build/$(MACH64)/config/type-dejavu.xml path=usr/lib/$(MACH64)/ImageMagick-6/config-Q16/type-dejavu.xml
-dir  path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16
-dir  path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/aai.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/aai.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/art.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/art.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/avs.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/avs.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bgr.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bgr.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bmp.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bmp.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/braille.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/braille.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cals.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cals.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/caption.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/caption.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cin.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cin.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cip.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cip.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/clip.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/clip.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cmyk.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cmyk.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cut.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cut.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dcm.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dcm.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dds.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dds.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/debug.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/debug.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dib.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dib.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dng.la
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/djvu.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dng.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dot.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dot.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dpx.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dpx.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ept.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ept.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fax.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fax.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fd.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fd.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fits.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fits.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gif.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gif.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gradient.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gradient.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gray.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gray.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hald.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hald.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hdr.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hdr.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/histogram.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/histogram.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hrz.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hrz.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/html.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/html.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/icon.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/icon.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/info.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/info.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/inline.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/inline.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ipl.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ipl.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jnx.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jnx.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jpeg.la
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jp2.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jpeg.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/label.la
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/json.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/label.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mac.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mac.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/magick.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/magick.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/map.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/map.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mask.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mask.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mat.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mat.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/matte.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/matte.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/meta.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/meta.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/miff.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/miff.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mono.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mono.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpc.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpc.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpeg.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpeg.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpr.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpr.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/msl.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/msl.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mtv.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mtv.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mvg.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mvg.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/null.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/null.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/otb.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/otb.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/palm.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/palm.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pango.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pango.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pattern.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pattern.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcd.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcd.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcl.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcl.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcx.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcx.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdb.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdb.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdf.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdf.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pes.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pes.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pict.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pict.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pix.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pix.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/plasma.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/plasma.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/png.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/png.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pnm.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pnm.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/preview.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/preview.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps2.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps2.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps3.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps3.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/psd.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/psd.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pwp.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pwp.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/raw.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/raw.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgb.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgb.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgf.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgf.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rla.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rla.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rle.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rle.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/scr.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/scr.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sct.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sct.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sfw.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sfw.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sgi.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sgi.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/stegano.la
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sixel.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/stegano.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sun.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sun.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/svg.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/svg.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tga.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tga.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/thumbnail.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/thumbnail.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tiff.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tiff.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tile.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tile.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tim.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tim.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ttf.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ttf.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/txt.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/txt.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uil.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uil.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/url.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/url.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uyvy.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uyvy.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vicar.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vicar.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vid.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vid.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.la
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vips.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xc.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xc.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.so
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.so
-dir  path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters
-file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.la
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.so
-file path=usr/lib/$(MACH64)/libMagick++-6.Q16.la
 link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so \
-    target=libMagick++-6.Q16.so.3.0.0
-link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.3 \
-    target=libMagick++-6.Q16.so.3.0.0
-file path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.3.0.0
-file path=usr/lib/$(MACH64)/libMagickCore-6.Q16.la
+    target=libMagick++-6.Q16.so.5.0.0
+link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.5 \
+    target=libMagick++-6.Q16.so.5.0.0
+file path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0
 link path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so \
-    target=libMagickCore-6.Q16.so.1.0.0
-link path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1 \
-    target=libMagickCore-6.Q16.so.1.0.0
-file path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0
-file path=usr/lib/$(MACH64)/libMagickWand-6.Q16.la
+    target=libMagickCore-6.Q16.so.2.0.0
+link path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so.2 \
+    target=libMagickCore-6.Q16.so.2.0.0
+file path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so.2.0.0
 link path=usr/lib/$(MACH64)/libMagickWand-6.Q16.so \
-    target=libMagickWand-6.Q16.so.1.0.0
-link path=usr/lib/$(MACH64)/libMagickWand-6.Q16.so.1 \
-    target=libMagickWand-6.Q16.so.1.0.0
-file path=usr/lib/$(MACH64)/libMagickWand-6.Q16.so.1.0.0
-dir  path=usr/lib/$(MACH64)/pkgconfig
+    target=libMagickWand-6.Q16.so.2.0.0
+link path=usr/lib/$(MACH64)/libMagickWand-6.Q16.so.2 \
+    target=libMagickWand-6.Q16.so.2.0.0
+file path=usr/lib/$(MACH64)/libMagickWand-6.Q16.so.2.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/ImageMagick++-6.Q16.pc
 file path=usr/lib/$(MACH64)/pkgconfig/ImageMagick++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/ImageMagick-6.Q16.pc
@@ -502,267 +351,134 @@ file path=usr/lib/$(MACH64)/pkgconfig/MagickWand-6.Q16.pc
 file path=usr/lib/$(MACH64)/pkgconfig/MagickWand.pc
 file path=usr/lib/$(MACH64)/pkgconfig/Wand-6.Q16.pc
 file path=usr/lib/$(MACH64)/pkgconfig/Wand.pc
-dir  path=usr/lib/ImageMagick-$(COMPONENT_VERSION)
-dir  path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/config-Q16
-file usr/etc/ImageMagick-6/colors.xml path=usr/lib/ImageMagick-6/config-Q16/colors.xml
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/config-Q16/configure.xml
-file build/$(MACH32)/config/delegates.xml path=usr/lib/ImageMagick-6/config-Q16/delegates.xml
-file usr/share/ImageMagick-6/english.xml path=usr/lib/ImageMagick-6/config-Q16/english.xml
-file usr/share/ImageMagick-6/francais.xml path=usr/lib/ImageMagick-6/config-Q16/francais.xml
-file usr/share/ImageMagick-6/locale.xml path=usr/lib/ImageMagick-6/config-Q16/locale.xml
-file build/$(MACH32)/config/type.xml path=usr/lib/ImageMagick-6/config-Q16/type.xml
-file build/$(MACH32)/config/type-ghostscript.xml path=usr/lib/ImageMagick-6/config-Q16/type-ghostscript.xml
-file build/$(MACH32)/config/type-windows.xml path=usr/lib/ImageMagick-6/config-Q16/type-windows.xml
-file build/$(MACH32)/config/type-dejavu.xml path=usr/lib/ImageMagick-6/config-Q16/type-dejavu.xml
-file usr/etc/ImageMagick-6/coder.xml path=usr/lib/ImageMagick-6/config-Q16/coder.xml
-file usr/etc/ImageMagick-6/log.xml path=usr/lib/ImageMagick-6/config-Q16/log.xml
-file usr/etc/ImageMagick-6/magic.xml path=usr/lib/ImageMagick-6/config-Q16/magic.xml
-file usr/etc/ImageMagick-6/mime.xml path=usr/lib/ImageMagick-6/config-Q16/mime.xml
-file usr/etc/ImageMagick-6/policy.xml path=usr/lib/ImageMagick-6/config-Q16/pilocy.xml
-file usr/etc/ImageMagick-6/quantization-table.xml path=usr/lib/ImageMagick-6/config-Q16/quantization-table.xml
-file usr/etc/ImageMagick-6/thresholds.xml path=usr/lib/ImageMagick-6/config-Q16/thresholds.xml
-dir  path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16
-dir  path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/aai.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/aai.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/art.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/art.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/avs.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/avs.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bgr.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bgr.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bmp.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/bmp.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/braille.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/braille.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cals.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cals.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/caption.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/caption.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cin.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cin.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cip.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cip.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/clip.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/clip.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cmyk.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cmyk.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cut.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/cut.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dcm.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dcm.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dds.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dds.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/debug.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/debug.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dib.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dib.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dng.la
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/djvu.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dng.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dot.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dot.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dpx.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/dpx.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ept.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ept.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fax.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fax.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fd.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fd.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fits.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/fits.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gif.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gif.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gradient.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gradient.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gray.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/gray.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hald.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hald.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hdr.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hdr.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/histogram.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/histogram.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hrz.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/hrz.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/html.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/html.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/icon.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/icon.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/info.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/info.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/inline.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/inline.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ipl.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ipl.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jnx.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jnx.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jpeg.la
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jp2.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/jpeg.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/label.la
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/json.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/label.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mac.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mac.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/magick.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/magick.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/map.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/map.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mask.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mask.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mat.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mat.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/matte.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/matte.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/meta.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/meta.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/miff.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/miff.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mono.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mono.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpc.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpc.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpeg.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpeg.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpr.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mpr.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/msl.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/msl.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mtv.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mtv.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mvg.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/mvg.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/null.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/null.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/otb.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/otb.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/palm.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/palm.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pango.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pango.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pattern.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pattern.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcd.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcd.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcl.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcl.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcx.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pcx.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdb.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdb.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdf.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pdf.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pes.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pes.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pict.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pict.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pix.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pix.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/plasma.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/plasma.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/png.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/png.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pnm.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pnm.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/preview.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/preview.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps2.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps2.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps3.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ps3.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/psd.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/psd.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pwp.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/pwp.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/raw.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/raw.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgb.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgb.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgf.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rgf.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rla.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rla.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rle.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/rle.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/scr.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/scr.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sct.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sct.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sfw.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sfw.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sgi.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sgi.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/stegano.la
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sixel.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/stegano.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sun.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/sun.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/svg.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/svg.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tga.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tga.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/thumbnail.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/thumbnail.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tiff.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tiff.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tile.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tile.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tim.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/tim.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ttf.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ttf.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/txt.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/txt.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uil.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uil.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/url.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/url.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uyvy.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/uyvy.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vicar.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vicar.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vid.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vid.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.la
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vips.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xc.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xc.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.so
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.so
-dir  path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters
-file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.la
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.so
-file path=usr/lib/libMagick++-6.Q16.la
-link path=usr/lib/libMagick++-6.Q16.so target=libMagick++-6.Q16.so.3.0.0
-link path=usr/lib/libMagick++-6.Q16.so.3 target=libMagick++-6.Q16.so.3.0.0
-file path=usr/lib/libMagick++-6.Q16.so.3.0.0
-file path=usr/lib/libMagickCore-6.Q16.la
-link path=usr/lib/libMagickCore-6.Q16.so target=libMagickCore-6.Q16.so.1.0.0
-link path=usr/lib/libMagickCore-6.Q16.so.1 target=libMagickCore-6.Q16.so.1.0.0
-file path=usr/lib/libMagickCore-6.Q16.so.1.0.0
-file path=usr/lib/libMagickWand-6.Q16.la
-link path=usr/lib/libMagickWand-6.Q16.so target=libMagickWand-6.Q16.so.1.0.0
-link path=usr/lib/libMagickWand-6.Q16.so.1 target=libMagickWand-6.Q16.so.1.0.0
-file path=usr/lib/libMagickWand-6.Q16.so.1.0.0
-dir  path=usr/lib/pkgconfig
+link path=usr/lib/libMagick++-6.Q16.so target=libMagick++-6.Q16.so.5.0.0
+link path=usr/lib/libMagick++-6.Q16.so.5 target=libMagick++-6.Q16.so.5.0.0
+file path=usr/lib/libMagick++-6.Q16.so.5.0.0
+link path=usr/lib/libMagickCore-6.Q16.so target=libMagickCore-6.Q16.so.2.0.0
+link path=usr/lib/libMagickCore-6.Q16.so.2 target=libMagickCore-6.Q16.so.2.0.0
+file path=usr/lib/libMagickCore-6.Q16.so.2.0.0
+link path=usr/lib/libMagickWand-6.Q16.so target=libMagickWand-6.Q16.so.2.0.0
+link path=usr/lib/libMagickWand-6.Q16.so.2 target=libMagickWand-6.Q16.so.2.0.0
+file path=usr/lib/libMagickWand-6.Q16.so.2.0.0
 file path=usr/lib/pkgconfig/ImageMagick++-6.Q16.pc
 file path=usr/lib/pkgconfig/ImageMagick++.pc
 file path=usr/lib/pkgconfig/ImageMagick-6.Q16.pc
@@ -775,39 +491,22 @@ file path=usr/lib/pkgconfig/MagickWand-6.Q16.pc
 file path=usr/lib/pkgconfig/MagickWand.pc
 file path=usr/lib/pkgconfig/Wand-6.Q16.pc
 file path=usr/lib/pkgconfig/Wand.pc
-dir  path=usr/perl5
-dir  path=usr/perl5/5.16
-dir  path=usr/perl5/5.16/lib
-dir  path=usr/perl5/5.16/lib/i86pc-solaris-64int
-file path=usr/perl5/5.16/lib/i86pc-solaris-64int/perllocal.pod
-dir  path=usr/perl5/5.16/man
-dir  path=usr/perl5/5.16/man/man3
-file path=usr/perl5/5.16/man/man3/Image::Magick.3
-file path=usr/perl5/5.16/man/man3/Image::Magick::Q16.3
-dir  path=usr/perl5/vendor_perl
-dir  path=usr/perl5/vendor_perl/5.16
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/Image
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/Image/Magick
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/Image/Magick.pm
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/Image/Magick/Q16.pm
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/.packlist
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Magick.bs
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Magick.so
-dir  path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Q16
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Q16/Q16.bs
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Q16/Q16.so
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/Q16/autosplit.ix
-file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64int/auto/Image/Magick/autosplit.ix
-dir  path=usr/share/doc
-dir  path=usr/share/doc/ImageMagick-6
+file path=usr/perl5/5.22/lib/i86pc-solaris-64int/perllocal.pod
+file path=usr/perl5/5.22/man/man3/Image::Magick.3
+file path=usr/perl5/5.22/man/man3/Image::Magick::Q16.3
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Image/Magick.pm
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/Image/Magick/Q16.pm
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Image/Magick/.packlist
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Image/Magick/Magick.so
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Image/Magick/Q16/Q16.so
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Image/Magick/Q16/autosplit.ix
+file path=usr/perl5/vendor_perl/5.22/i86pc-solaris-64int/auto/Image/Magick/autosplit.ix
+file path=usr/share/ImageMagick-6/english.xml
+file path=usr/share/ImageMagick-6/francais.xml
+file path=usr/share/ImageMagick-6/locale.xml
 file path=usr/share/doc/ImageMagick-6/ChangeLog
 file path=usr/share/doc/ImageMagick-6/LICENSE
 file path=usr/share/doc/ImageMagick-6/NEWS.txt
-dir  path=usr/share/doc/ImageMagick-6/images
 file path=usr/share/doc/ImageMagick-6/images/ImageMagick.ico
 file path=usr/share/doc/ImageMagick-6/images/affine.png
 file path=usr/share/doc/ImageMagick-6/images/arc.png
@@ -820,9 +519,7 @@ file path=usr/share/doc/ImageMagick-6/images/bluebells_log.jpg
 file path=usr/share/doc/ImageMagick-6/images/button.gif
 file path=usr/share/doc/ImageMagick-6/images/configure.jpg
 file path=usr/share/doc/ImageMagick-6/images/cylinder_shaded.png
-file path=usr/share/doc/ImageMagick-6/images/definitive-guide.png
 file path=usr/share/doc/ImageMagick-6/images/difference.png
-file path=usr/share/doc/ImageMagick-6/images/donate.png
 file path=usr/share/doc/ImageMagick-6/images/examples.jpg
 file path=usr/share/doc/ImageMagick-6/images/frame.jpg
 file path=usr/share/doc/ImageMagick-6/images/fuzzy-magick.png
@@ -830,6 +527,7 @@ file path=usr/share/doc/ImageMagick-6/images/gaussian-blur.png
 file path=usr/share/doc/ImageMagick-6/images/granite.png
 file path=usr/share/doc/ImageMagick-6/images/imade_art2.jpg
 file path=usr/share/doc/ImageMagick-6/images/label.gif
+file path=usr/share/doc/ImageMagick-6/images/litecoin.png
 file path=usr/share/doc/ImageMagick-6/images/logo-sm-flop.png
 file path=usr/share/doc/ImageMagick-6/images/logo-sm-fx.png
 file path=usr/share/doc/ImageMagick-6/images/logo-sm.png
@@ -837,8 +535,9 @@ file path=usr/share/doc/ImageMagick-6/images/logo.jpg
 file path=usr/share/doc/ImageMagick-6/images/logo.png
 file path=usr/share/doc/ImageMagick-6/images/montage.jpg
 file path=usr/share/doc/ImageMagick-6/images/navy.png
-file path=usr/share/doc/ImageMagick-6/images/networkredux.png
-dir  path=usr/share/doc/ImageMagick-6/images/patterns
+file path=usr/share/doc/ImageMagick-6/images/objects.gif
+file path=usr/share/doc/ImageMagick-6/images/objects.jpg
+file path=usr/share/doc/ImageMagick-6/images/objects.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/bricks.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/checkerboard.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/circles.png
@@ -894,7 +593,6 @@ file path=usr/share/doc/ImageMagick-6/images/patterns/verticalleftshingle.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/verticalrightshingle.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/verticalsaw.png
 file path=usr/share/doc/ImageMagick-6/images/piechart.png
-file path=usr/share/doc/ImageMagick-6/images/project-support.jpg
 file path=usr/share/doc/ImageMagick-6/images/radial-gradient.png
 file path=usr/share/doc/ImageMagick-6/images/reconstruct.jpg
 file path=usr/share/doc/ImageMagick-6/images/red-ball.png
@@ -910,16 +608,13 @@ file path=usr/share/doc/ImageMagick-6/images/smile.gif
 file path=usr/share/doc/ImageMagick-6/images/sponsor.jpg
 file path=usr/share/doc/ImageMagick-6/images/sprite.jpg
 file path=usr/share/doc/ImageMagick-6/images/t-shirt.png
-file path=usr/share/doc/ImageMagick-6/images/tricks.png
 file path=usr/share/doc/ImageMagick-6/images/wand.ico
 file path=usr/share/doc/ImageMagick-6/images/wand.png
 file path=usr/share/doc/ImageMagick-6/images/white-highlight.png
 file path=usr/share/doc/ImageMagick-6/images/wizard.jpg
 file path=usr/share/doc/ImageMagick-6/images/wizard.png
 file path=usr/share/doc/ImageMagick-6/index.html
-dir  path=usr/share/doc/ImageMagick-6/www
 file path=usr/share/doc/ImageMagick-6/www/ImageMagickObject.html
-dir  path=usr/share/doc/ImageMagick-6/www/Magick++
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Blob.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Cache.fig
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Cache.png
@@ -962,9 +657,7 @@ file path=usr/share/doc/ImageMagick-6/www/Magick++/thumbnail-sample-plain.jpg
 file path=usr/share/doc/ImageMagick-6/www/advanced-unix-installation.html
 file path=usr/share/doc/ImageMagick-6/www/advanced-windows-installation.html
 file path=usr/share/doc/ImageMagick-6/www/animate.html
-dir  path=usr/share/doc/ImageMagick-6/www/api
 file path=usr/share/doc/ImageMagick-6/www/api.html
-dir  path=usr/share/doc/ImageMagick-6/www/api/MagickCore
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/ImageMagick_8h-source.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/ImageMagick_8h.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/MagickCore_8h-source.html
@@ -1535,7 +1228,6 @@ file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/xwindow-private_8h.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/xwindow_8c.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/xwindow_8h-source.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/xwindow_8h.html
-dir  path=usr/share/doc/ImageMagick-6/www/api/MagickWand
 file path=usr/share/doc/ImageMagick-6/www/api/MagickWand/MagickWand_8h-source.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickWand/MagickWand_8h.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickWand/animate_8c.html
@@ -1749,6 +1441,7 @@ file path=usr/share/doc/ImageMagick-6/www/compare.html
 file path=usr/share/doc/ImageMagick-6/www/compose.html
 file path=usr/share/doc/ImageMagick-6/www/composite.html
 file path=usr/share/doc/ImageMagick-6/www/conjure.html
+file path=usr/share/doc/ImageMagick-6/www/connected-components.html
 file path=usr/share/doc/ImageMagick-6/www/contact.html
 file path=usr/share/doc/ImageMagick-6/www/convert.html
 file path=usr/share/doc/ImageMagick-6/www/display.html
@@ -1786,7 +1479,6 @@ file path=usr/share/doc/ImageMagick-6/www/quantize.html
 file path=usr/share/doc/ImageMagick-6/www/resources.html
 file path=usr/share/doc/ImageMagick-6/www/search.html
 file path=usr/share/doc/ImageMagick-6/www/sitemap.html
-dir  path=usr/share/doc/ImageMagick-6/www/source
 file path=usr/share/doc/ImageMagick-6/www/source/analyze.c
 file path=usr/share/doc/ImageMagick-6/www/source/coder.xml
 file path=usr/share/doc/ImageMagick-6/www/source/colors.xml
@@ -1801,7 +1493,6 @@ file path=usr/share/doc/ImageMagick-6/www/source/incantation.msl
 file path=usr/share/doc/ImageMagick-6/www/source/locale.xml
 file path=usr/share/doc/ImageMagick-6/www/source/log.xml
 file path=usr/share/doc/ImageMagick-6/www/source/magic.xml
-file path=usr/share/doc/ImageMagick-6/www/source/mgk.c
 file path=usr/share/doc/ImageMagick-6/www/source/mime.xml
 file path=usr/share/doc/ImageMagick-6/www/source/piechart.mvg
 file path=usr/share/doc/ImageMagick-6/www/source/piechart.svg
@@ -1818,8 +1509,6 @@ file path=usr/share/doc/ImageMagick-6/www/support.html
 file path=usr/share/doc/ImageMagick-6/www/t-shirt.html
 file path=usr/share/doc/ImageMagick-6/www/wand.png
 file path=usr/share/doc/ImageMagick-6/www/webp.html
-dir  path=usr/share/man
-dir  path=usr/share/man/man1
 file path=usr/share/man/man1/ImageMagick.1
 file path=usr/share/man/man1/Magick++-config.1
 file path=usr/share/man/man1/Magick-config.1
@@ -1837,3 +1526,22 @@ file path=usr/share/man/man1/import.1
 file path=usr/share/man/man1/mogrify.1
 file path=usr/share/man/man1/montage.1
 file path=usr/share/man/man1/stream.1
+
+legacy pkg=SUNWimagick \
+    desc="ImageMagick - Image Manipulation Utilities and Libraries" \
+    name="ImageMagick - Image Manipulation Utilities and Libraries"
+license imagemagick.license license="Apache 2.0 license"
+#
+# Compatibility links
+#
+link path=usr/sfw/bin/Magick++-config target=../../bin/Magick++-config
+link path=usr/sfw/bin/Magick-config target=../../bin/Magick-config
+link path=usr/sfw/bin/animate target=../../bin/animate
+link path=usr/sfw/bin/composite target=../../bin/composite
+link path=usr/sfw/bin/conjure target=../../bin/conjure
+link path=usr/sfw/bin/convert target=../../bin/convert
+link path=usr/sfw/bin/display target=../../bin/display
+link path=usr/sfw/bin/identify target=../../bin/identify
+link path=usr/sfw/bin/import target=../../bin/import
+link path=usr/sfw/bin/mogrify target=../../bin/mogrify
+link path=usr/sfw/bin/montage target=../../bin/montage

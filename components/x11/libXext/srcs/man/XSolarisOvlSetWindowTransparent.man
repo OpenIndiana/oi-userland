@@ -1,0 +1,62 @@
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisOvlSetWindowTransparent __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XSolarisOvlSetWindowTransparent" "" "\f3XSolarisOvlSetWindowTransparent\f1(3) \(em sets the background state of an overlay window to be transparent.
+.SH NAME
+XSolarisOvlSetWindowTransparent \- sets the background state of an overlay window to be transparent
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3void\f1 5n
+.B XSolarisOvlSetWindowTransparent
+.B (Display
+.I *display,
+.B Window
+.I w)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I w
+Specifies the window.
+.SH DESCRIPTION
+This routine sets the background state of the given overlay to be transparent.
+Any background rendering that occurs after this request will cause the
+background to be transparent.  Use
+.BR XChangeWindowAttributes (3) ,
+.BR XSetWindowBackground (3) ,
+or
+.BR XSetWindowBackgroundPixmap (3)
+to change background state to any other value.
+.LP
+If
+.I w
+is not an overlay window,
+.SB BadMatch
+is generated.
+.SH ERRORS
+.LP
+.nf
+.SB BadMatch
+.fi

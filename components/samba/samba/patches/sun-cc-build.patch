@@ -1,0 +1,37 @@
+gcc allows to build 'empty' shared libraries (with no sources):
+
+$ gcc -shared -o a.so -lz
+
+Sun CC does not have this ability. Samba guys tried to workaround it by
+http://git.samba.org/?p=anatoliy/anatoliy.git;a=commitdiff_plain;h=65743f932b511db009655847e77288c95c0aa525
+
+The workaround adds - to the end of the command line. That does not seem to
+work too. So Instead of that I am creating small C source file which will be
+used as a base of the 'empty' libraries.
+
+see: https://bugzilla.samba.org/show_bug.cgi?id=10630
+
+--- samba-4.1.7/empty.c	2014-05-23 05:54:51.696077316 -0700
++++ samba-4.1.7/empty.c	2014-05-23 04:35:47.190194034 -0700
+@@ -0,0 +1 @@
++static int some_unused_variable_for_waf_build_with_sun_cc = 0;
+--- samba-4.1.7/source4/librpc/wscript_build	2014-06-03 15:22:35.884858404 -0700
++++ samba-4.1.7/source4/librpc/wscript_build	2014-06-03 15:01:45.303523288 -0700
+@@ -101,7 +101,7 @@ bld.SAMBA_SUBSYSTEM('RPC_NDR_WINBIND',
+ 
+ 
+ bld.SAMBA_LIBRARY('dcerpc-samr',
+-	source='',
++	source='../../empty.c',
+ 	pc_files='dcerpc_samr.pc',
+ 	vnum='0.0.1',
+ 	public_deps='dcerpc ndr-standard RPC_NDR_SAMR',
+@@ -111,7 +111,7 @@ bld.SAMBA_LIBRARY('dcerpc-samr',
+ 
+ 
+ bld.SAMBA_LIBRARY('dcerpc-atsvc',
+-	source='',
++	source='../../empty.c',
+ 	pc_files='dcerpc_atsvc.pc',
+ 	vnum='0.0.1',
+ 	public_deps='dcerpc ndr-standard RPC_NDR_ATSVC',

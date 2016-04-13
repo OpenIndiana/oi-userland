@@ -1,0 +1,20 @@
+--- Python-3.4.0/setup.py.1	2014-06-03 10:38:17.905574346 +0400
++++ Python-3.4.0/setup.py	2014-06-03 10:40:27.241329631 +0400
+@@ -757,8 +757,16 @@
+         exts.append( Extension('_posixsubprocess', ['_posixsubprocess.c']) )
+ 
+         # socket(2)
++        socket_libs = []
++        if self.compiler.find_library_file(lib_dirs,'socket'):
++           socket_libs.append('socket')
++        if self.compiler.find_library_file(lib_dirs,'nsl'):
++           socket_libs.append('nsl')
++        if self.compiler.find_library_file(lib_dirs,'resolv'):
++           socket_libs.append('resolv')
+         exts.append( Extension('_socket', ['socketmodule.c'],
+-                               depends = ['socketmodule.h']) )
++                               depends = ['socketmodule.h'],
++                               libraries = socket_libs ) )
+         # Detect SSL support for the socket module (via _ssl)
+         search_for_ssl_incs_in = [
+                               '/usr/local/ssl/include',

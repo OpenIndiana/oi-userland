@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	1.0.10
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.libmng.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -61,7 +62,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # because Solaris installed the lcms headers elsewhere
-CFLAGS += `pkg-config --cflags lcms`
+CFLAGS += `pkg-config --cflags lcms2`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 

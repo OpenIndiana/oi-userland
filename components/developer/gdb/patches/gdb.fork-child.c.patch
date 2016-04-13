@@ -1,0 +1,61 @@
+--- gdb-7.6/gdb/fork-child.c	2012-12-31 22:32:42.000000000 -0800
++++ gdb-7.6/gdb/fork-child.c	2013-07-10 23:30:02.327235300 -0700
+@@ -35,13 +35,19 @@
+ 
+ #include <signal.h>
+ 
++#include <fcntl.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
+ /* This just gets used as a default if we can't find SHELL.  */
+-#define SHELL_FILE "/bin/sh"
++#define SHELL_FILE "/bin/bash"
+ 
+ extern char **environ;
+ 
+ static char *exec_wrapper;
+ 
++static int isaexec_shell;
++
+ /* Break up SCRATCH into an argument vector suitable for passing to
+    execvp and store it in ARGV.  E.g., on "run a b c d" this routine
+    would get as input the string "a b c d", and as output it would
+@@ -142,6 +148,7 @@
+   struct inferior *inf;
+   int i;
+   int save_errno;
++  isaexec_shell = 0;
+ 
+   /* If no exec file handed to us, get it from the exec-file command
+      -- with a good, common error message if none is specified.  */
+@@ -155,12 +162,20 @@
+   shell_file = shell_file_arg;
+   if (STARTUP_WITH_SHELL)
+     {
++      struct stat buf1, buf2;
+       /* Figure out what shell to start up the user program under.  */
+       if (shell_file == NULL)
+ 	shell_file = getenv ("SHELL");
+       if (shell_file == NULL)
+ 	shell_file = default_shell_file;
+       shell = 1;
++
++      if (stat ("/usr/lib/isaexec", &buf1) == 0 &&
++          stat (shell_file, &buf2) == 0 &&
++          buf1.st_ino == buf2.st_ino &&
++          buf1.st_dev == buf2.st_dev &&
++          buf1.st_nlink == buf2.st_nlink)
++        isaexec_shell = 1;
+     }
+ 
+   if (!shell)
+@@ -416,6 +431,8 @@
+   int terminal_initted = 0;
+   ptid_t resume_ptid;
+ 
++  pending_execs += isaexec_shell;
++
+   if (target_supports_multi_process ())
+     resume_ptid = pid_to_ptid (ptid_get_pid (inferior_ptid));
+   else

@@ -1,0 +1,18 @@
+commit e4a75172f83894a4e821807b6d94770095ddaeff
+Author: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date:   Mon Nov 9 22:10:35 2015 +1100
+
+diff --git a/src/common.c b/src/common.c
+index 8aadbab..543c2c8 100644
+--- a/src/common.c
++++ b/src/common.c
+@@ -805,7 +805,8 @@ header_read (SF_PRIVATE *psf, void *ptr, int bytes)
+ 	if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+ 	{	int most ;
+ 
+-		most = SIGNED_SIZEOF (psf->header) - psf->headindex ;
++		most = SIGNED_SIZEOF (psf->header) - psf->headend ;
++
+ 		psf_fread (psf->header + psf->headend, 1, most, psf) ;
+ 		memset ((char *) ptr + most, 0, bytes - most) ;
+ 

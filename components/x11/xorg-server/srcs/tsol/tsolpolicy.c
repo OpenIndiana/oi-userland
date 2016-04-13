@@ -1,4 +1,5 @@
-/* Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -26,8 +27,6 @@
 #endif
 
 #include <X11/X.h>
-#define		NEED_REPLIES
-#define		NEED_EVENTS
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -108,7 +107,7 @@ unset_audit_flags(TsolInfoPtr tsolinfo)
 
 }
 /*
- * returns 
+ * returns
  *   TRUE  - if client/subject has the required privilege
  *   FALSE - otherwise
  */
@@ -123,7 +122,7 @@ client_has_privilege(TsolInfoPtr tsolinfo, priv_set_t *priv)
 
 	if (priv_issubset(priv, tsolinfo->privs)) {
 		if (tsolinfo->flags & TSOL_AUDITEVENT) {
-			auditwrite(AW_USEOFPRIV, AUDIT_SUCCESS, priv, 
+			auditwrite(AW_USEOFPRIV, AUDIT_SUCCESS, priv,
 				AW_APPEND, AW_END);
 		}
 
@@ -133,7 +132,8 @@ client_has_privilege(TsolInfoPtr tsolinfo, priv_set_t *priv)
 }
 
 int
-tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int reqcode)
+tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres,
+		  xpolicy_t flags, int reqcode)
 {
 	int status = BadAccess;
 
@@ -151,8 +151,8 @@ tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int
 		if (flags & TSOL_READOP) {
 			if (blequal(tsolinfo->sl, tsolres->sl) ||
 			    (blequal(tsolres->sl, &PublicObjSL) &&
-			 	reqcode != X_GetImage) ||
-			    ((flags & TSOL_DOMINATE)  &&
+				reqcode != X_GetImage) ||
+			    ((flags & TSOL_DOMINATE) &&
 				bldominates(tsolinfo->sl, tsolres->sl)) ||
 			    client_has_privilege(tsolinfo, pset_win_mac_read) ||
 			    HasTrustedPath(tsolinfo)) {
@@ -162,7 +162,7 @@ tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int
 				goto bad;
 			}
 		}
-			
+
 		if (flags & TSOL_WRITEOP) {
 			if (blequal(tsolinfo->sl, tsolres->sl) ||
 			    client_has_privilege(tsolinfo, pset_win_mac_write)) {
@@ -178,9 +178,9 @@ tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int
 		if (flags & TSOL_READOP) {
 			if ((tsolinfo->uid == tsolres->uid) ||
 			    tsolres->internal ||
-			    ((tsolres->uid == OwnerUID) && 
+			    ((tsolres->uid == OwnerUID) &&
 			    /* ((tsolres->uid == OwnerUID || tsolres->uid == DEF_UID) &&  */
-			 	blequal(tsolres->sl, &PublicObjSL)) ||
+			    blequal(tsolres->sl, &PublicObjSL)) ||
 			    client_has_privilege(tsolinfo, pset_win_dac_read)) {
 
 				status = Success;
@@ -206,11 +206,11 @@ tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int
 
 bad:
 	/* Access denied */
-	LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+	LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		TSOL_LOG_PREFIX
 		"tsol_check_policy(%s, %s, %d, pid=%d, %s, %d, %s) = %s\n",
-		tsolinfo->pname, xsltos(tsolinfo->sl), tsolinfo->uid, 
-		tsolres->pid, xsltos(tsolres->sl), tsolres->uid, 
+		tsolinfo->pname, xsltos(tsolinfo->sl), tsolinfo->uid,
+		tsolres->pid, xsltos(tsolres->sl), tsolres->uid,
 		TsolRequestNameString(reqcode),
 		"BadAccess");
 
@@ -317,8 +317,6 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 	TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
 	TsolResPtr  tsolres;
 	xpolicy_t flags;
-	int msgType;
-	int msgVerb;
 	int reqtype;
 
 	if (client->requestBuffer) {
@@ -333,22 +331,29 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 	case RT_WINDOW:
 		obj_code = AW_XWINDOW;
 		pWin = (WindowPtr ) (rec->res);
-		tsolres = TsolResourcePrivate(pWin);
+		tsolres = TsolWindowPrivate(pWin);
 		err_code = BadWindow;
 		break;
 	case RT_PIXMAP:
 		obj_code = AW_XPIXMAP;
 		pMap = (PixmapPtr ) (rec->res);
-		tsolres = TsolResourcePrivate(pMap);
+		tsolres = TsolPixmapPrivate(pMap);
 		err_code = BadDrawable;
 		break;
+	}
+
+	/* Ignore unlabeled resources */
+	if (tsolres->sl == NULL) {
+		tsolres->sl= tsolinfo->sl;
+		tsolres->uid = tsolinfo->uid;
+		tsolres->pid = tsolinfo->pid;
 	}
 
 	switch (reqtype) {
 	case X_GetImage:
 	case X_CopyArea:
 	case X_CopyPlane:
-		/* 
+		/*
 		 * Image operations are allowed here for lookup reasons.
 		 * The actual policy enforcement is in the protocol handler.
 		 */
@@ -357,7 +362,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 			check_mode &= ~DixReadAccess;
 		}
 		break;
-				
+
 
 	case X_ClearArea:
 		if (check_mode & DixWriteAccess) {
@@ -374,6 +379,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 	case X_UngrabKey:
 	case X_GrabButton:
 	case X_UngrabButton:
+	case X_WarpPointer:
 		/*
 		 * Allow pointer grab on root window, as long as
 		 * pointer is currently in a window owned by
@@ -382,7 +388,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 
 		if (WindowIsRoot(pWin)) {
 			pWin = GetSpriteWindow(device);
-			tsolres = TsolResourcePrivate(pWin);
+			tsolres = TsolWindowPrivate(pWin);
 		}
 		break;
 
@@ -451,7 +457,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 			check_mode &= ~modes;
 		}
 	}
-	
+
 	if (tsolinfo->flags & TSOL_AUDITEVENT) {
 		set_audit_flags(tsolinfo);
 		auditwrite(obj_code, id, tsolres->uid,
@@ -476,7 +482,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 
     if (rec->status != Success) {
     	tsolinfo = GetClientTsolInfo(client);
-    	LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+    	LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		   TSOL_LOG_PREFIX
 		   "TsolCheckDrawableAccess(%s, %s, 0x%x, %s, %s) = %s\n",
 		   tsolinfo->pname,
@@ -501,13 +507,9 @@ TsolCheckXIDAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	Mask modes;
 	int object_code;
 	int err_code;
-	int status;
 
 	Mask check_mode = access_mode;
 	TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
-	xpolicy_t flags;
-	int msgType;
-	int msgVerb;
 	int reqtype;
 
 	if (client->requestBuffer) {
@@ -545,7 +547,7 @@ TsolCheckXIDAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	}
 
 	/* DAC check is based on client isolation */
-	modes = (DixReadAccess|DixGetAttrAccess|DixUseAccess); 
+	modes = (DixReadAccess|DixGetAttrAccess|DixUseAccess);
 	if (check_mode & modes) {
 		if (!client_private(client, id) &&
 			(!client_has_privilege(tsolinfo, pset_win_dac_read))) {
@@ -562,10 +564,10 @@ TsolCheckXIDAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 		}
 		check_mode &= ~modes;
 	}
-			
+
 	if (tsolinfo->flags & TSOL_AUDITEVENT) {
 		set_audit_flags(tsolinfo);
-		auditwrite(object_code, (u_long)id, tsolinfo->uid,
+		auditwrite(object_code, (ulong_t)id, tsolinfo->uid,
 			 AW_APPEND, AW_END);
 	}
 
@@ -581,7 +583,7 @@ TsolCheckXIDAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
     if (rec->status != Success) {
 	    tsolinfo = GetClientTsolInfo(client);
-	    LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+	    LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		   TSOL_LOG_PREFIX
 		   "TsolCheckXIDAccess(%s, %s, 0x%x, %s, %s) = %s\n",
 		   tsolinfo->pname,
@@ -601,11 +603,9 @@ TsolCheckServerAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	Mask access_mode = rec->access_mode;
 	Mask modes;
 	int object_code = 0;
-	int err_code;
 
 	Mask check_mode = access_mode;
 	TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
-	xpolicy_t flags;
 	int reqtype;
 
 	if (client->requestBuffer) {
@@ -623,7 +623,8 @@ TsolCheckServerAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 		switch (reqtype) {
 		case X_SetFontPath:
 			if (priv_win_fontpath ||
-				client_has_privilege(tsolinfo, pset_win_fontpath)) {
+				client_has_privilege(tsolinfo,
+						     pset_win_fontpath)) {
 				rec->status = Success;
 			}
 			object_code = AW_XFONT;
@@ -632,7 +633,8 @@ TsolCheckServerAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 		case X_ChangeHosts:
 		case X_SetAccessControl:
 			if (priv_win_config ||
-				client_has_privilege(tsolinfo, pset_win_config)) {
+				client_has_privilege(tsolinfo,
+						     pset_win_config)) {
 				rec->status = Success;
 			}
 			object_code = AW_XCLIENT;
@@ -643,14 +645,15 @@ TsolCheckServerAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
 		if (tsolinfo->flags & TSOL_AUDITEVENT && object_code != 0) {
 			set_audit_flags(tsolinfo);
-			auditwrite(object_code, (u_long)client->index, tsolinfo->uid,
-				 AW_SLABEL, tsolinfo->sl,
-				 AW_APPEND, AW_END);
+			auditwrite(object_code, (ulong_t)client->index,
+				   tsolinfo->uid,
+				   AW_SLABEL, tsolinfo->sl,
+				   AW_APPEND, AW_END);
 		}
 	}
 
 	/* Allow get/read attributes, grab is enforced in protocol handler */
-	modes = (DixReadAccess|DixGetAttrAccess|DixGrabAccess); 
+	modes = (DixReadAccess|DixGetAttrAccess|DixGrabAccess);
 	if (check_mode & modes) {
 		rec->status = Success;
 		check_mode &= ~modes;
@@ -667,7 +670,7 @@ TsolCheckServerAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
     if (rec->status != Success) {
     	tsolinfo = GetClientTsolInfo(client);
-    	LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+    	LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		   TSOL_LOG_PREFIX
 		   "TsolCheckServerAccess(%s, %s, %s) = %s\n",
 		   tsolinfo->pname,
@@ -686,14 +689,9 @@ TsolCheckClientAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	ClientPtr client = rec->client;
 	Mask access_mode = rec->access_mode;
 	Mask modes;
-	int object_code = 0;
-	int err_code;
 
 	Mask check_mode = access_mode;
 	TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
-	xpolicy_t flags;
-	int msgType;
-	int msgVerb;
 	int reqtype;
 
 	if (client->requestBuffer) {
@@ -707,16 +705,17 @@ TsolCheckClientAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	modes = (DixManageAccess|DixDestroyAccess);
 	if (check_mode & modes) {
 		if (priv_win_config ||
-				client_has_privilege(tsolinfo, pset_win_config)) {
+		    client_has_privilege(tsolinfo, pset_win_config)) {
 			rec->status = Success;
 		}
 		check_mode &= ~modes;
 
 		if (tsolinfo->flags & TSOL_AUDITEVENT) {
 			set_audit_flags(tsolinfo);
-			auditwrite(AW_XCLIENT, (u_long)client->index, tsolinfo->uid,
-				 AW_SLABEL, tsolinfo->sl,
-				 AW_APPEND, AW_END);
+			auditwrite(AW_XCLIENT, (ulong_t)client->index,
+				   tsolinfo->uid,
+				   AW_SLABEL, tsolinfo->sl,
+				   AW_APPEND, AW_END);
 		}
 	}
 
@@ -731,7 +730,7 @@ TsolCheckClientAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
     if (rec->status != Success) {
     	tsolinfo = GetClientTsolInfo(client);
-    	LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+    	LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		   TSOL_LOG_PREFIX
 		   "TsolCheckClientAccess(%s, %s, %s) = %s\n",
 		   tsolinfo->pname,
@@ -763,25 +762,34 @@ TsolCheckDeviceAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
 	rec->status = BadWindow;
 
+	/* Allow all device access to the server itself */
+	if (client == serverClient) {
+		rec->status = Success;
+		check_mode = 0;
+	}
+
 	/* get/read access is allowed */
-	modes = (DixCreateAccess | DixGetAttrAccess | DixGetFocusAccess | DixReadAccess |
-		 DixShowAccess | DixHideAccess|DixUseAccess | DixBellAccess);
+	modes = (DixCreateAccess | DixGetAttrAccess | DixGetFocusAccess |
+		 DixReadAccess | DixShowAccess | DixHideAccess |
+		 DixUseAccess | DixBellAccess);
 	if (check_mode & modes) {
 		rec->status = Success;
 		check_mode &= ~modes;
 	}
 
 	/* change/set access requires privilege */
-	modes = (DixFreezeAccess | DixGrabAccess | DixManageAccess | DixSetAttrAccess |
-		 DixSetFocusAccess | DixForceAccess);
+	modes = (DixFreezeAccess | DixGrabAccess | DixManageAccess |
+		 DixSetAttrAccess | DixSetFocusAccess | DixForceAccess |
+		 DixWriteAccess);
 	if (check_mode & modes) {
-		if (priv_win_devices || client_has_privilege(tsolinfo, pset_win_devices))
+		if (priv_win_devices ||
+		    client_has_privilege(tsolinfo, pset_win_devices))
 			rec->status = Success;
-			if (tsolinfo->flags & TSOL_AUDITEVENT) {
-				set_audit_flags(tsolinfo);
-				auditwrite(AW_XCLIENT, client->index, 
-					AW_APPEND, AW_END);
-			}
+		if (tsolinfo->flags & TSOL_AUDITEVENT) {
+		    set_audit_flags(tsolinfo);
+		    auditwrite(AW_XCLIENT, client->index,
+			       AW_APPEND, AW_END);
+		}
 		check_mode &= ~modes;
 	}
 
@@ -796,7 +804,7 @@ TsolCheckDeviceAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
     if (rec->status != Success) {
     	tsolinfo = GetClientTsolInfo(client);
-    	LogMessageVerb(X_ERROR, TSOL_MSG_ERROR,
+    	LogMessageVerb(X_WARNING, TSOL_MSG_WARNING,
 		   TSOL_LOG_PREFIX
 		   "TsolCheckDeviceAccess(%s, %s, %s) = %s\n",
 		   tsolinfo->pname,
@@ -806,9 +814,9 @@ TsolCheckDeviceAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
     }
 
 #endif /* !NO_TSOL_DEBUG_MESSAGES */
-} 
+}
 
-TsolResPtr 
+TsolResPtr
 TsolDrawablePrivate(DrawablePtr pDraw, ClientPtr client)
 {
 	int	rc;
@@ -819,14 +827,14 @@ TsolDrawablePrivate(DrawablePtr pDraw, ClientPtr client)
 	if (pDraw->type == DRAWABLE_WINDOW) {
 		rc = dixLookupWindow(&pWin, pDraw->id, client, DixReadAccess);
 		if (rc == Success && pWin != NullWindow)
-			tsolres = TsolResourcePrivate(pWin);
+			tsolres = TsolWindowPrivate(pWin);
 	}
 	else if (pDraw->type == DRAWABLE_PIXMAP)
 	{
 		rc = dixLookupDrawable((DrawablePtr *)&pMap, pDraw->id, client,
 				       M_DRAWABLE_PIXMAP, DixReadAccess);
 		if (rc == Success && pMap != NullPixmap)
-			tsolres = TsolResourcePrivate(pMap);
+			tsolres = TsolPixmapPrivate(pMap);
 	}
 
 	return tsolres;

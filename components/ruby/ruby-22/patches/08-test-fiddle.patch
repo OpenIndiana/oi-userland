@@ -1,0 +1,27 @@
+--- ruby-2.2.0/test/fiddle/test_handle.rb.~1~	2015-01-16 14:03:06.884338931 +0300
++++ ruby-2.2.0/test/fiddle/test_handle.rb	2015-01-16 14:12:30.539181349 +0300
+@@ -36,9 +36,9 @@
+         assert_equal Fiddle::Handle.sym('dlopen'), Fiddle::Handle['dlopen']
+       rescue
+         # NetBSD
+-        require 'objspace'
+-        refute_nil Fiddle::Handle.sym('Init_objspace')
+-        assert_equal Fiddle::Handle.sym('Init_objspace'), Fiddle::Handle['Init_objspace']
++        require '-test-/dln/empty'
++        refute_nil Fiddle::Handle.sym('Init_empty')
++        assert_equal Fiddle::Handle.sym('Init_empty'), Fiddle::Handle['Init_empty']
+       end
+     end
+ 
+@@ -165,9 +165,9 @@
+         # interface, below, should be used, since getpid() is a function and not a
+         # data object.)
+         # --- FreeBSD 8.0 dlsym(3)
+-        require 'objspace'
++        require '-test-/dln/empty'
+         handle = Handle::NEXT
+-        refute_nil handle['Init_objspace']
++        refute_nil handle['Init_empty']
+       end
+     end unless /mswin|mingw/ =~ RUBY_PLATFORM
+ 

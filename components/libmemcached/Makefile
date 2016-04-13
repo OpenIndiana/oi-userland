@@ -51,6 +51,13 @@ CONFIGURE_OPTIONS +=    --without-mysql
 CONFIGURE_OPTIONS +=    --without-gearmand
 CONFIGURE_OPTIONS +=    --without-memcached
 
+COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+					aclocal -I./m4 && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
+					automake -a -f -c &&\
+					autoconf )
+
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))

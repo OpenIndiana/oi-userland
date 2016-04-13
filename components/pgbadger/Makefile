@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
-COMPONENT_VERSION= 	4.0
+COMPONENT_VERSION= 	7.1
 COMPONENT_SUMMARY= 	pgBadger PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a1a90828a4f0fd49be93142d8a2fb0b24360c65b4feb322c0cd5b2d6eab30c78
+  sha256:de7f36cb55d2c177fdf47115f3fb5c2e842b443432631212e408726baacbad7e
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/pgbadger/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  https://github.com/dalibo/pgbadger/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = http://dalibo.github.io/pgbadger/
 
 include $(WS_TOP)/make-rules/prep.mk

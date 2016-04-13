@@ -1,0 +1,11 @@
+--- gftp-2.0.19/lib/cache.c.orig	2008-12-23 15:40:43.800541719 +0800
++++ gftp-2.0.19/lib/cache.c	2008-12-23 15:41:03.680208360 +0800
+@@ -107,7 +107,7 @@
+                                  size_t len, int ignore_directory)
+ {
+   g_snprintf (description, len, "%s://%s@%s:%d%s",
+-              request->url_prefix,
++              request->url_prefix == NULL ? "" : request->url_prefix,
+               request->username == NULL ? "" : request->username,
+               request->hostname == NULL ? "" : request->hostname,
+               request->port, 

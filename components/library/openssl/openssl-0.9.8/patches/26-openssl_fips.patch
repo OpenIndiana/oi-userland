@@ -1,0 +1,92 @@
+--- openssl-0.9.8zg/apps/openssl.c.~1~	2015-06-12 12:12:46.077653324 +0300
++++ openssl-0.9.8zg/apps/openssl.c	2015-06-12 12:20:27.351934746 +0300
+@@ -131,6 +131,10 @@
+ #include "s_apps.h"
+ #include <openssl/err.h>
+ 
++/* Solaris OpenSSL */
++#include <dlfcn.h>
++
++
+ /*
+  * The LHASH callbacks ("hash" & "cmp") have been replaced by functions with
+  * the base prototypes (we cast each variable inside the function to the
+@@ -153,9 +157,10 @@
+ int in_FIPS_mode = 0;
+ #endif
+ 
++static int *modes;
++
+ static void lock_dbg_cb(int mode, int type, const char *file, int line)
+ {
+-    static int modes[CRYPTO_NUM_LOCKS]; /* = {0, 0, ... } */
+     const char *errstr = NULL;
+     int rw;
+ 
+@@ -165,7 +170,7 @@
+         goto err;
+     }
+ 
+-    if (type < 0 || type >= CRYPTO_NUM_LOCKS) {
++    if (type < 0 || type >= CRYPTO_num_locks()) {
+         errstr = "type out of bounds";
+         goto err;
+     }
+@@ -227,19 +232,29 @@
+ 
+     in_FIPS_mode = 0;
+ 
++/*
++ * Solaris OpenSSL
++ * Add a further check for the FIPS_mode_set() symbol before calling to
++ * allow openssl(1openssl) to be run against both fips and non-fips libraries.
++ */
+     if (getenv("OPENSSL_FIPS")) {
+-#ifdef OPENSSL_FIPS
+-        if (!FIPS_mode_set(1)) {
++       int (*FIPS_mode_set)(int);
++       FIPS_mode_set = (int (*)(int)) dlsym(RTLD_NEXT, "FIPS_mode_set");
++
++       if (FIPS_mode_set != NULL) {
++        if (!(*FIPS_mode_set)(1)) {
+             ERR_load_crypto_strings();
+             ERR_print_errors(BIO_new_fp(stderr, BIO_NOCLOSE));
+             EXIT(1);
+         }
+         in_FIPS_mode = 1;
+-#else
+-        fprintf(stderr, "FIPS mode not supported.\n");
++       } else {
++             fprintf(stderr, "Failed to enable FIPS mode. "
++              "For more information about running in FIPS mode see openssl(5).\n");
+         EXIT(1);
+-#endif
++       }
+     }
++   
+ 
+     if (bio_err == NULL)
+         if ((bio_err = BIO_new(BIO_s_file())) != NULL)
+@@ -262,6 +277,14 @@
+     if (getenv("OPENSSL_DEBUG_LOCKING") != NULL)
+ #endif
+     {
++        modes = OPENSSL_malloc(CRYPTO_num_locks() * sizeof (int));
++        if (modes == NULL) {
++                ERR_load_crypto_strings();
++                BIO_printf(bio_err,"Memory allocation failure\n");
++                ERR_print_errors(bio_err);
++                EXIT(1);
++        }
++        memset(modes, 0, CRYPTO_num_locks() * sizeof (int));
+         CRYPTO_set_locking_callback(lock_dbg_cb);
+     }
+ 
+@@ -371,6 +394,7 @@
+         BIO_free(bio_err);
+         bio_err = NULL;
+     }
++    if (modes != NULL) OPENSSL_free(modes);
+     OPENSSL_EXIT(ret);
+ }
+ 

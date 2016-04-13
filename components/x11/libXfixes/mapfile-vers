@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+# 
+#
+#
+
+# XFIXES_0.0 represents the X11R6.8 / XFixes 2.0 version
+XFIXES_0.0 {
+    global:
+# XFixes 1.0:
+	XFixesQueryExtension;
+	XFixesQueryVersion;
+	XFixesVersion;
+
+	XFixesChangeSaveSet;
+	XFixesSelectSelectionInput;
+	XFixesSelectCursorInput;
+	XFixesGetCursorImage;
+
+# XFixes 2.0:
+	XFixesCreateRegion;
+	XFixesCreateRegionFromBitmap;
+	XFixesCreateRegionFromWindow;
+	XFixesCreateRegionFromGC;
+	XFixesCreateRegionFromPicture;
+
+	XFixesDestroyRegion;
+	XFixesSetRegion;
+	XFixesCopyRegion;
+	XFixesUnionRegion;
+	XFixesIntersectRegion;
+	XFixesSubtractRegion;
+	XFixesInvertRegion;
+	XFixesTranslateRegion;
+	XFixesRegionExtents;
+	XFixesFetchRegion;
+	XFixesFetchRegionAndBounds;
+
+	XFixesSetGCClipRegion;
+	XFixesSetWindowShapeRegion;
+	XFixesSetPictureClipRegion;
+
+	XFixesGetCursorName;
+	XFixesSetCursorName;
+	XFixesChangeCursor;
+	XFixesChangeCursorByName;
+
+    local:
+	*;
+};
+
+XFIXES_2.0 {} XFIXES_0.0;
+
+# XFixes 3.0:
+XFIXES_3.0 {
+    global:
+	XFixesExpandRegion;
+} XFIXES_2.0;
+
+# XFixes 4.0 was the first version to have an API with Sun stability
+# declared above External/Volatile, so it became the initial SUNW_1.1 version.
+SUNW_1.1 {
+    global:
+	XFixesHideCursor;
+	XFixesShowCursor;
+} XFIXES_3.0;
+
+XFIXES_4.0 {} SUNW_1.1;
+
+XFIXES_5.0 {
+    global:
+	XFixesCreatePointerBarrier;
+	XFixesDestroyPointerBarrier;
+} XFIXES_4.0;

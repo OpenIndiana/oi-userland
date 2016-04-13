@@ -1,0 +1,116 @@
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
+Integration of Display Manager (gdm/xdm/etc.) to X server communication pipe
+with core server code - see sun-src/os/dtlogin.c for the main implementation.
+
+diff --git a/configure.ac b/configure.ac
+index 77ad53d..28eb2f1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1492,6 +1492,7 @@ PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
+ XSERVER_CFLAGS="${XSERVER_CFLAGS} ${XSERVERCFLAGS_CFLAGS}"
+ XSERVER_LIBS="$DIX_LIB $MI_LIB $OS_LIB"
+ XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS}"
++XSERVER_SYS_LIBS="${XSERVER_SYS_LIBS} -lproject"
+ AC_SUBST([XSERVER_LIBS])
+ AC_SUBST([XSERVER_SYS_LIBS])
+ 
+diff --git a/dix/main.c b/dix/main.c
+index e2ec177..0eaa6aa 100644
+--- a/dix/main.c
++++ b/dix/main.c
+@@ -116,6 +116,11 @@ Equipment Corporation.
+ #include "dpmsproc.h"
+ #endif
+ 
++#ifdef SUNSOFT
++extern void DtloginInit(void);
++extern void DtloginCloseDown(void);
++#endif /* SUNSOFT */
++
+ extern void Dispatch(void);
+ 
+ #ifdef XQUARTZ
+@@ -165,6 +170,13 @@ main(int argc, char *argv[], char *envp[])
+         InitBlockAndWakeupHandlers();
+         /* Perform any operating system dependent initializations you'd like */
+         OsInit();
++
++#ifdef SUNSOFT
++        /* Create pipe for dtlogin authentication info before we tell dtlogin 
++           we're done and ready for it to run. */
++        DtloginInit ();
++#endif
++
+         if (serverGeneration == 1) {
+             CreateWellKnownSockets();
+             for (i = 1; i < MAXCLIENTS; i++)
+@@ -302,6 +314,11 @@ main(int argc, char *argv[], char *envp[])
+         pthread_mutex_unlock(&serverRunningMutex);
+ #endif
+ 
++#ifdef SUNSOFT
++        /* Return to root privs before calling the rest of close down */
++        DtloginCloseDown ();
++#endif
++
+         UndisplayDevices();
+         DisableAllDevices();
+ 
+diff --git a/os/Makefile.am b/os/Makefile.am
+index c4825ad..27d70ca 100644
+--- a/os/Makefile.am
++++ b/os/Makefile.am
+@@ -35,6 +35,9 @@ if XDMCP
+ libos_la_SOURCES += $(XDMCP_SRCS)
+ endif
+ 
++libos_la_SOURCES += dtlogin.c
++libos_la_LIBADD += -lproject
++
+ EXTRA_DIST = $(SECURERPC_SRCS) $(XDMCP_SRCS)
+ 
+ if SPECIAL_DTRACE_OBJECTS
+diff --git a/os/auth.c b/os/auth.c
+index ac20de4..d43795b 100644
+--- a/os/auth.c
++++ b/os/auth.c
+@@ -277,6 +277,19 @@ AddAuthorization(unsigned name_length, const char *name,
+     return 0;
+ }
+ 
++#ifdef SUNSOFT
++/* This function is called from dtlogin.c 
++ * This is added to do "chmod authorization_file" since
++ * this file is owned by root and we need to change this
++ * to user logged on.  
++ */
++const char *
++GetAuthFilename(void)
++{
++    return (authorization_file);
++}
++#endif
++
+ #ifdef XCSECURITY
+ 
+ XID

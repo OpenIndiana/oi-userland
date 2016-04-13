@@ -1,0 +1,598 @@
+--- /usr/tmp/clean/avahi-0.6.28/avahi-core/entry.c	2010-08-26 01:51:38.985153000 +0100
++++ avahi-0.6.28/avahi-core/entry.c	2011-01-20 12:01:24.322248863 +0000
+@@ -50,6 +50,33 @@
+ #include "rr-util.h"
+ #include "domain-util.h"
+ 
++#ifdef HAVE_BONJOUR
++
++struct AvahiService {
++    AvahiServer *server;
++    AvahiSEntryGroup *group;
++
++    int dead;
++
++    AvahiPublishFlags flags;
++    AvahiIfIndex interface;
++    AvahiProtocol protocol;
++
++    char *name;
++    char *type;
++    char *domain;
++    char *host;
++    uint16_t port;
++
++    AvahiWatch *watch;
++    DNSServiceRef client;
++    size_t txtlen;
++    uint8_t *txtrecord;
++
++    AVAHI_LLIST_FIELDS(AvahiService, services);
++};
++#endif
++
+ static void transport_flags_from_domain(AvahiServer *s, AvahiPublishFlags *flags, const char *domain) {
+     assert(flags);
+     assert(domain);
+@@ -69,13 +96,146 @@
+         *flags |= AVAHI_PUBLISH_USE_WIDE_AREA;
+ }
+ 
++#ifdef HAVE_BONJOUR
++static void register_service_reply(DNSServiceRef client, const DNSServiceFlags flags, DNSServiceErrorType errorCode,
++        const char *name, const char *regtype, const char *domain, void *context) {
++    AvahiService *as = context;
++
++    switch (errorCode) {
++        case kDNSServiceErr_NoError:
++            as->group->n_probing--;
++            if (as->group->n_probing == 0) {
++                avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_ESTABLISHED);
++            }
++            break;
++        case kDNSServiceErr_NameConflict:
++            avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_COLLISION);
++            break;
++        default: 
++            avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_FAILURE);
++    }
++}
++
++static void register_service_socket_event(AvahiWatch *w, int fd, AvahiWatchEvent events, void *userdata) {
++    AvahiService *as = userdata;
++    DNSServiceErrorType ret;
++
++    assert(w);
++    assert(fd >= 0);
++    assert(events & AVAHI_WATCH_IN);
++
++    assert (fd == DNSServiceRefSockFD(as->client));
++    ret = DNSServiceProcessResult(as->client);
++    if (ret != kDNSServiceErr_NoError) {
++        if (as->watch) {
++            as->server->poll_api->watch_free(as->watch);
++            as->watch = NULL;
++        }
++        DNSServiceRefDeallocate(as->client);
++        as->client = NULL;
++        avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_FAILURE);
++    }
++}
++
++static void avahi_service_free(AvahiServer*s, AvahiService *as) {
++    AvahiService *t;
++
++    assert(s);
++    assert(as);
++
++    /* Remove from linked list */
++    AVAHI_LLIST_REMOVE(AvahiService, services, s->services, as);
++
++    /* Remove from associated group */
++    if (as->group && (as->group->services != NULL))
++        AVAHI_LLIST_REMOVE(AvahiService, services, as->group->services, as);
++
++    if (as->name)
++        avahi_free(as->name);
++
++    if (as->type)
++        avahi_free(as->type);
++
++    if (as->domain)
++        avahi_free(as->domain);
++
++    if (as->host)
++        avahi_free(as->host);
++
++    if (as->watch)
++        s->poll_api->watch_free(as->watch);
++    
++    if (as->client)
++        DNSServiceRefDeallocate (as->client);
++
++    if (as->txtrecord)
++        avahi_free(as->txtrecord);
++
++    avahi_free(as);
++}
++
++static void avahi_register_service(AvahiServer *s, AvahiService *as) {
++    DNSServiceErrorType ret;
++
++    ret = DNSServiceRegister(&as->client, 
++              as->interface == AVAHI_IF_UNSPEC ? 
++                  kDNSServiceInterfaceIndexAny :
++                  as->interface,
++              0, 
++              as->name,
++              as->type,
++              as->domain,
++              as->host,
++              htons(as->port),
++              as->txtlen,
++              as->txtrecord,
++              register_service_reply,
++              as);
++    if (ret == kDNSServiceErr_NoError) {
++        if  (!as->client) {
++            avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_FAILURE);
++        } else {
++            as->group->n_probing++;
++            as->watch = s->poll_api->watch_new(s->poll_api, DNSServiceRefSockFD(as->client), AVAHI_WATCH_IN, register_service_socket_event, as);
++        } 
++    } else {
++        if (ret == kDNSServiceErr_NameConflict) {
++            avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_COLLISION);
++        }
++        else {
++            avahi_s_entry_group_change_state(as->group, AVAHI_ENTRY_GROUP_FAILURE);
++        }
++    }
++}
++
++static void register_record_reply(DNSServiceRef client, DNSRecordRef recordref, const DNSServiceFlags flags, DNSServiceErrorType errorCode, void *context) {
++    AvahiEntry *e = context;
++    DNSServiceErrorType ret;
++    
++    switch (errorCode) {
++        case kDNSServiceErr_NoError:
++            break;
++        case kDNSServiceErr_NameConflict:
++            e->recordref = NULL;
++            avahi_server_set_errno(e->server, AVAHI_ERR_COLLISION);
++            break;
++        default: 
++            e->recordref = NULL;
++            avahi_server_set_errno(e->server, AVAHI_ERR_FAILURE);
++            break;
++    }
++}
++#endif
++
+ void avahi_entry_free(AvahiServer*s, AvahiEntry *e) {
+     AvahiEntry *t;
+ 
+     assert(s);
+     assert(e);
+ 
++#ifndef HAVE_BONJOUR
+     avahi_goodbye_entry(s, e, 1, 1);
++#endif
+ 
+     /* Remove from linked list */
+     AVAHI_LLIST_REMOVE(AvahiEntry, entries, s->entries, e);
+@@ -102,6 +262,15 @@
+ 
+     while (g->entries)
+         avahi_entry_free(s, g->entries);
++#ifdef HAVE_BONJOUR
++    while (g->services)
++        avahi_service_free(s, g->services);
++
++    if (g->record_connection) {
++        DNSServiceRefDeallocate(g->record_connection);
++        g->record_connection = NULL;
++    }
++#endif
+ 
+     if (g->register_time_event)
+         avahi_time_event_free(g->register_time_event);
+@@ -139,6 +308,21 @@
+         s->need_entry_cleanup = 0;
+     }
+ 
++#ifdef HAVE_BONJOUR
++    if (s->need_service_cleanup) {
++        AvahiService *as, *next;
++
++        for (as = s->services; as; as = next) {
++            next = as->services_next;
++
++            if (as->dead)
++                avahi_service_free(s, as);
++        }
++
++        s->need_service_cleanup = 0;
++    }
++#endif
++
+     if (s->need_browser_cleanup)
+         avahi_browser_cleanup(s);
+ 
+@@ -245,8 +429,54 @@
+ 
+         /* Hmm, nothing found? */
+         if (!e) {
++#ifdef HAVE_BONJOUR
++            /*
++             * Assume that we are updating a service's primary TXT record
++             * so find the service
++             */
++            DNSServiceErrorType ret;
++            uint16_t rlen;
++            uint8_t rdata[AVAHI_DNS_RDATA_MAX];
++            size_t l;
++            AvahiService *as;
++            int found_as = 0;
++
++            for (as = g->services; as; as = as->services_next) {
++                int a_ret = AVAHI_OK;
++                char svc_name[AVAHI_DOMAIN_NAME_MAX];
++
++                if ((a_ret = avahi_service_name_join(svc_name, sizeof(svc_name), as->name, as->type, as->domain ? as->domain : s->domain_name)) < 0) {
++                      avahi_server_set_errno(s, a_ret);
++                      return NULL;
++                }
++                if (!strcmp(svc_name, r->key->name)) {
++                    found_as = 1;
++                    break;
++                }
++            }
++
++            if (!found_as) {
++                avahi_server_set_errno(s, AVAHI_ERR_NOT_FOUND);
++                return NULL;
++            }
++            if ((l = avahi_rdata_serialize(r, rdata, sizeof(rdata))) == (size_t) -1) {
++                avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++                return NULL;
++            }
++            ret = DNSServiceUpdateRecord(as->client,
++                                         NULL,
++                                         0,
++                                         l,
++                                         rdata,
++                                         r->ttl);
++            if (ret != kDNSServiceErr_NoError) {
++                avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++            }
++            return NULL;
++#else
+             avahi_server_set_errno(s, AVAHI_ERR_NOT_FOUND);
+             return NULL;
++#endif
+         }
+ 
+         /* Update the entry */
+@@ -256,6 +486,36 @@
+ 
+         /* Announce our changes when needed */
+         if (!avahi_record_equal_no_ttl(old_record, r) && (!g || g->state != AVAHI_ENTRY_GROUP_UNCOMMITED)) {
++#ifdef HAVE_BONJOUR
++            DNSServiceErrorType ret;
++            uint16_t rlen;
++            uint8_t rdata[AVAHI_DNS_RDATA_MAX];
++            size_t l;
++
++            if (!g->record_connection) {
++                if (DNSServiceCreateConnection(&g->record_connection) != kDNSServiceErr_NoError) {
++                    avahi_entry_free(s, e);
++                    avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++                    return NULL;
++                }
++            }
++            if ((l = avahi_rdata_serialize(r, rdata, sizeof(rdata))) == (size_t) -1) {
++                avahi_entry_free(s, e);
++                avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++                return NULL;
++            }
++            ret = DNSServiceUpdateRecord(g->record_connection,
++                                         e->recordref,
++                                         0,
++                                         l,
++                                         rdata,
++                                         r->ttl);
++            if (ret != kDNSServiceErr_NoError) {
++                avahi_entry_free(s, e);
++                avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++                return NULL;
++            }
++#else
+ 
+             /* Remove the old entry from all caches, if needed */
+             if (!(e->flags & AVAHI_PUBLISH_UNIQUE))
+@@ -263,6 +523,7 @@
+ 
+             /* Reannounce our updated entry */
+             avahi_reannounce_entry(s, e);
++#endif
+         }
+ 
+         /* If we were the first entry in the list, we need to update the key */
+@@ -273,6 +534,14 @@
+ 
+     } else {
+         AvahiEntry *t;
++#ifdef HAVE_BONJOUR
++        DNSServiceErrorType ret;
++        DNSServiceFlags bflags;
++        uint16_t rlen;
++        uint8_t rdata[AVAHI_DNS_RDATA_MAX];
++        size_t l;
++        char *record_name;
++#endif
+ 
+         /* Add a new record */
+ 
+@@ -307,7 +576,69 @@
+         if (g)
+             AVAHI_LLIST_PREPEND(AvahiEntry, by_group, g->entries, e);
+ 
++#ifdef HAVE_BONJOUR
++        e->recordref = NULL;
++        if (!g->record_connection) {
++            if (DNSServiceCreateConnection(&g->record_connection) != kDNSServiceErr_NoError) {
++                avahi_entry_free(s, e);
++                avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++                return NULL;
++            }
++        }
++        bflags = 0;
++        if (flags & AVAHI_PUBLISH_ALLOW_MULTIPLE)
++            bflags |= kDNSServiceFlagsShared;
++        else
++            bflags |= kDNSServiceFlagsUnique;
++
++        switch (r->key->type) {
++            case AVAHI_DNS_TYPE_A:
++            case AVAHI_DNS_TYPE_AAAA:
++                record_name = avahi_strdup(r->key->name);
++                break;
++            default:
++                record_name = avahi_malloc(strlen(r->key->name) + strlen(s->host_name_fqdn) + 2);
++                strcpy(record_name, r->key->name);
++                strcat(record_name, ".");
++                strcat(record_name, s->host_name_fqdn);
++                break;
++        }
++
++        if ((l = avahi_rdata_serialize(r, rdata, sizeof(rdata))) == (size_t) -1) {
++            avahi_entry_free(s, e);
++            avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++            return NULL;
++        }
++
++        ret = DNSServiceRegisterRecord(g->record_connection,
++                  &e->recordref,
++                  bflags,
++                  interface == AVAHI_IF_UNSPEC ?
++                      kDNSServiceInterfaceIndexAny :
++                      interface,
++                  record_name,
++                  r->key->type,
++                  r->key->clazz,
++                  l,
++                  rdata,
++                  r->ttl,
++                  register_record_reply,
++                  e);
++        if (ret == kDNSServiceErr_NoError) {
++            ret = DNSServiceProcessResult(g->record_connection);
++            if (ret != kDNSServiceErr_NoError || e->recordref == NULL) {
++                avahi_entry_free(s, e);
++                return NULL;
++            }
++        } else {
++            avahi_entry_free(s, e);
++            avahi_server_set_errno(s, AVAHI_ERR_FAILURE);
++            return NULL;
++        }
++        avahi_free(record_name);
++#else
+         avahi_announce_entry(s, e);
++#endif
+     }
+ 
+     return e;
+@@ -583,6 +914,9 @@
+     AvahiRecord *r = NULL;
+     int ret = AVAHI_OK;
+     AvahiEntry *srv_entry = NULL, *txt_entry = NULL, *ptr_entry = NULL, *enum_entry = NULL;
++#ifdef HAVE_BONJOUR
++    AvahiService *as;
++#endif
+ 
+     assert(s);
+     assert(type);
+@@ -603,6 +937,36 @@
+     if (!domain)
+         domain = s->domain_name;
+ 
++#ifdef HAVE_BONJOUR
++    as = avahi_new (AvahiService, 1);
++    as->server = s;
++    as->group = g;
++    as->dead = 0;
++    as->flags = flags;
++    as->interface = interface;
++    as->protocol = protocol;
++    as->name = avahi_strdup(name);
++    as->type = avahi_strdup(type);
++    as->domain = avahi_strdup(domain);
++    as->host = avahi_strdup(host);
++    as->port = port;
++    as->watch = NULL;
++    as->client = NULL;
++    as->txtlen = avahi_string_list_serialize(strlst, NULL, 0);
++    if (as->txtlen > 0) {
++        as->txtrecord = avahi_new(uint8_t, as->txtlen);
++        if (as->txtrecord == NULL) {
++            as->txtlen = 0;
++            ret = avahi_server_set_errno(s, AVAHI_ERR_NO_MEMORY);
++            goto fail;
++        }
++        avahi_string_list_serialize(strlst, as->txtrecord, as->txtlen);
++    } else
++        as->txtrecord = NULL;
++
++    AVAHI_LLIST_PREPEND(AvahiService, services, s->services, as);
++    AVAHI_LLIST_PREPEND(AvahiService, services, g->services, as);
++#else
+     if (!host)
+         host = s->host_name_fqdn;
+ 
+@@ -667,6 +1031,7 @@
+         ret = avahi_server_errno(s);
+         goto fail;
+     }
++#endif
+ 
+ fail:
+     if (ret != AVAHI_OK && !(flags & AVAHI_PUBLISH_UPDATE)) {
+@@ -1013,7 +1378,11 @@
+     if (g->state == state)
+         return;
+ 
++#ifdef HAVE_BONJOUR
++    assert(state <= AVAHI_ENTRY_GROUP_FAILURE);
++#else
+     assert(state <= AVAHI_ENTRY_GROUP_COLLISION);
++#endif
+ 
+     if (g->state == AVAHI_ENTRY_GROUP_ESTABLISHED) {
+ 
+@@ -1063,6 +1432,10 @@
+     g->register_time.tv_sec = 0;
+     g->register_time.tv_usec = 0;
+     AVAHI_LLIST_HEAD_INIT(AvahiEntry, g->entries);
++#ifdef HAVE_BONJOUR
++    AVAHI_LLIST_HEAD_INIT(AvahiService, g->services);
++    g->record_connection = NULL;
++#endif
+ 
+     AVAHI_LLIST_PREPEND(AvahiSEntryGroup, groups, s->groups, g);
+     return g;
+@@ -1087,16 +1460,26 @@
+ 
+ void avahi_s_entry_group_free(AvahiSEntryGroup *g) {
+     AvahiEntry *e;
++#ifdef HAVE_BONJOUR
++    AvahiService *s;
++#endif
+ 
+     assert(g);
+     assert(g->server);
+ 
+     for (e = g->entries; e; e = e->by_group_next) {
+         if (!e->dead) {
++#ifndef HAVE_BONJOUR
+             avahi_goodbye_entry(g->server, e, 1, 1);
++#endif
+             e->dead = 1;
+         }
+     }
++#ifdef HAVE_BONJOUR
++    for (s = g->services; s; s = s->services_next) {
++        s->dead = 1;
++    }
++#endif
+ 
+     if (g->register_time_event) {
+         avahi_time_event_free(g->register_time_event);
+@@ -1107,11 +1490,17 @@
+ 
+     g->server->need_group_cleanup = 1;
+     g->server->need_entry_cleanup = 1;
++#ifdef HAVE_BONJOUR
++    g->server->need_service_cleanup = 1;
++#endif
+ 
+     schedule_cleanup(g->server);
+ }
+ 
+ static void entry_group_commit_real(AvahiSEntryGroup *g) {
++#ifdef HAVE_BONJOUR
++    AvahiService *s;
++#endif
+     assert(g);
+ 
+     gettimeofday(&g->register_time, NULL);
+@@ -1121,8 +1510,15 @@
+     if (g->dead)
+         return;
+ 
++#ifdef HAVE_BONJOUR
++    assert(g->server);
++    for (s = g->services; s; s = s->services_next)
++        if (!s->dead)
++            avahi_register_service(g->server, s);
++#else
+     avahi_announce_group(g->server, g);
+     avahi_s_entry_group_check_probed(g, 0);
++#endif
+ }
+ 
+ static void entry_group_register_time_event_callback(AVAHI_GCC_UNUSED AvahiTimeEvent *e, void* userdata) {
+@@ -1175,16 +1571,28 @@
+ 
+ void avahi_s_entry_group_reset(AvahiSEntryGroup *g) {
+     AvahiEntry *e;
++#ifdef HAVE_BONJOUR
++    AvahiService *s;
++#endif
+     assert(g);
+ 
+     for (e = g->entries; e; e = e->by_group_next) {
+         if (!e->dead) {
++#ifndef HAVE_BONJOUR
+             avahi_goodbye_entry(g->server, e, 1, 1);
++#endif
+             e->dead = 1;
+         }
+     }
+     g->server->need_entry_cleanup = 1;
+ 
++#ifdef HAVE_BONJOUR
++    for (s = g->services; s; s = s->services_next) {
++        s->dead = 1;
++    }
++    g->server->need_service_cleanup = 1;
++#endif
++
+     g->n_probing = 0;
+ 
+     avahi_s_entry_group_change_state(g, AVAHI_ENTRY_GROUP_UNCOMMITED);
+@@ -1222,12 +1630,23 @@
+ 
+ int avahi_s_entry_group_is_empty(AvahiSEntryGroup *g) {
+     AvahiEntry *e;
++#ifdef HAVE_BONJOUR
++    AvahiService *s;
++#endif
++
+     assert(g);
+ 
++#ifdef HAVE_BONJOUR
++    for (s = g->services; s; s = s->services_next)
++        if (!s->dead)
++            return 0;
++#else
+     /* Look for an entry that is not dead */
+     for (e = g->entries; e; e = e->by_group_next)
+         if (!e->dead)
+             return 0;
++#endif
+ 
+     return 1;
+ }
++

@@ -37,7 +37,7 @@ COMPONENT_BUGDB=	library/libidn
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
-COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

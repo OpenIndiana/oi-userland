@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -48,13 +48,21 @@ def uncompress_unpack_commands(filename, verbose=False):
 		uncompress = "/usr/bin/xz -dc"
 	elif (re.search("(\.zip)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
+	elif (re.search("(\.oxt)$", filename) != None):
+		uncompress = "/usr/bin/unzip -qo"
+	elif (re.search("(\.gem)$", filename) != None):
+		uncompress = "/usr/bin/gem unpack"
 
 	unpack = " | gtar -xf -"
 
 	if (re.search("(\.zip)$", filename) != None):
 		unpack = ""
+	elif (re.search("(\.oxt)$", filename) != None):
+		unpack = ""
 	elif (re.search("(\.jar)$", filename) != None):
 		unpack = " | jar xf -"
+	elif (re.search("(\.gem)$", filename) != None):
+		unpack = ""
 
 	if (verbose == True):
 		print "command: %s %s %s" % (uncompress, filename, unpack)

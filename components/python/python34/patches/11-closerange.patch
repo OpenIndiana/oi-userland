@@ -1,0 +1,43 @@
+This patch uses fdwalk(3c) to close file descriptors; as that function is not
+widely implemented, this is unsuitable for upstream.
+
+--- Python-3.4.0/Modules/posixmodule.c.~1~	2014-03-16 19:31:31.000000000 -0700
++++ Python-3.4.0/Modules/posixmodule.c	2014-03-17 13:31:33.433740698 -0700
+@@ -7789,16 +7789,34 @@
+ "closerange(fd_low, fd_high)\n\n\
+ Closes all file descriptors in [fd_low, fd_high), ignoring errors.");
+ 
++static int
++close_func(void *lohi, int fd)
++{
++    int lo = ((int *)lohi)[0];
++    int hi = ((int *)lohi)[1];
++
++    if (fd >= hi)
++        return (1);
++    else if (fd >= lo)
++        close(fd);
++
++    return (0);
++}
++
+ static PyObject *
+ posix_closerange(PyObject *self, PyObject *args)
+ {
+     int fd_from, fd_to, i;
++    int lohi[2];
++
+     if (!PyArg_ParseTuple(args, "ii:closerange", &fd_from, &fd_to))
+         return NULL;
+     Py_BEGIN_ALLOW_THREADS
+-    for (i = fd_from; i < fd_to; i++)
+-        if (_PyVerify_fd(i))
+-            close(i);
++
++    lohi[0] = fd_from;
++    lohi[1] = fd_to;
++    fdwalk(close_func, lohi);
++
+     Py_END_ALLOW_THREADS
+     Py_RETURN_NONE;
+ }

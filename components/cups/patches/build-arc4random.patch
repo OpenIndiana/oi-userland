@@ -1,0 +1,16 @@
+CUPS configure scripts check for arc4random(), but 
+also use arc4random_stir()
+--- config.h.in.1	2015-06-12 11:50:52.923161686 +0300
++++ config.h.in	2015-06-12 11:52:24.636930544 +0300
+@@ -619,10 +619,7 @@
+ #undef HAVE_RANDOM
+ #undef HAVE_LRAND48
+ 
+-#ifdef HAVE_ARC4RANDOM
+-#  define CUPS_RAND() arc4random()
+-#  define CUPS_SRAND(v) arc4random_stir()
+-#elif defined(HAVE_RANDOM)
++#if defined(HAVE_RANDOM)
+ #  define CUPS_RAND() random()
+ #  define CUPS_SRAND(v) srandom(v)
+ #elif defined(HAVE_LRAND48)

@@ -1,0 +1,363 @@
+###############################################################################
+# Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/nls/en_US.UTF-8/XI18N_OBJS b/nls/en_US.UTF-8/XI18N_OBJS
+index 97b30b9..337b362 100644
+--- a/nls/en_US.UTF-8/XI18N_OBJS
++++ b/nls/en_US.UTF-8/XI18N_OBJS
+@@ -5,3 +5,6 @@
+ XLC	common/xlcUTF8Load	_XlcUtf8Loader	        # XLC_open
+ XOM	common/xomGeneric	_XomGenericOpenOM	# XOM_open
+ XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_register XIM_unregister
++XIM	common/xiiimp		_XimpLocalOpenIM	# XIM_open
++XIM	common/ximll            _XimpLocalOpenIM        # XIM_open
++XIM	common/ximlocal         _XimpLocalOpenIM        # XIM_open
+diff --git a/nls/en_US.UTF-8/XLC_LOCALE.pre b/nls/en_US.UTF-8/XLC_LOCALE.pre
+index 35d009f..949a877 100644
+--- a/nls/en_US.UTF-8/XLC_LOCALE.pre
++++ b/nls/en_US.UTF-8/XLC_LOCALE.pre
+@@ -53,6 +53,7 @@ fs4	{
+ 		name	ISO8859-4:GR
+ 	}
+ 	font	{
++		load_option delay_nocheck
+ 		primary	ISO8859-4:GR
+ 	}
+ }
+@@ -66,16 +67,16 @@ fs5	{
+ 	}
+ }
+ XCOMM	fs6 class (koi8-r)
+-fs6	{
+-	charset	{
+-		name	KOI8-R:GR
+-	}
+-	font	{
+-		primary	KOI8-R:GR
+-	}
+-}
++XCOMM fs6	{
++XCOMM	charset	{
++XCOMM		name	KOI8-R:GR
++XCOMM	}
++XCOMM	font	{
++XCOMM		primary	KOI8-R:GR
++XCOMM	}
++XCOMM}
+ XCOMM	fs7 class (ISO8859 families)
+-fs7	{
++fs6	{
+ 	charset	{
+ 		name	ISO8859-7:GR
+ 	}
+@@ -84,7 +85,7 @@ fs7	{
+ 	}
+ }
+ XCOMM	fs9 class (ISO8859 families)
+-fs8	{
++fs7	{
+ 	charset	{
+ 		name	ISO8859-9:GR
+ 	}
+@@ -93,7 +94,7 @@ fs8	{
+ 	}
+ }
+ XCOMM	fs13 class (ISO8859 families)
+-fs9	{
++fs8		{
+ 	charset	{
+ 		name	ISO8859-13:GR
+ 	}
+@@ -102,7 +103,7 @@ fs9	{
+ 	}
+ }
+ XCOMM	fs14 class (ISO8859 families)
+-fs10	{
++fs9	{
+ 	charset	{
+ 		name	ISO8859-14:GR
+ 	}
+@@ -111,16 +112,17 @@ fs10	{
+ 	}
+ }
+ XCOMM	fs15 class (ISO8859 families)
+-fs11	{
++fs10	{
+ 	charset	{
+ 		name	ISO8859-15:GR
+ 	}
+-	font	{
++	font		{
++		load_option delay_nocheck
+ 		primary	ISO8859-15:GR
+ 	}
+ }
+ XCOMM 	fs16 class (Kanji)
+-fs12	{
++fs11	{
+ 	charset	{
+ 		name	JISX0208.1983-0:GL
+ 	}
+@@ -129,16 +131,16 @@ fs12	{
+ 	}
+ }
+ XCOMM   fs17 class (Korean Character)
+-fs13	{
++fs12	{
+ 	charset	{
+-		name	KSC5601.1987-0:GL
++		name	KSC5601.1992-3:GLGR
+ 	}
+ 	font	{
+-		primary	KSC5601.1987-0:GL
++		primary	KSC5601.1992-3:GLGR
+ 	}
+ }
+ XCOMM   fs18 class (Chinese Han Character)
+-fs14	{
++fs13	{
+ 	charset	{
+ 		name	GB2312.1980-0:GL
+ 	}
+@@ -147,7 +149,7 @@ fs14	{
+ 	}
+ }
+ XCOMM	fs20 class (Half Kana)
+-fs15	{
++fs14	{
+ 	charset	{
+ 		name	JISX0201.1976-0:GR
+ 	}
+@@ -156,9 +158,70 @@ fs15	{
+ 		vertical_rotate	all
+ 	}
+ }
++XCOMM
++fs15	{
++	charset	{
++		name	BIG5-0:GLGR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		BIG5-0:GLGR
++	}
++}
++XCOMM CTL language
++fs16	{
++	charset {
++		name	TIS620-0:GR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		TIS620-0:GR
++	}
++}
++XCOMM fs18 class (ISO8859-6) (Arabic)
++fs17	{
++	charset {
++		name	ISO8859-6:GLGR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		ISO8859-6:GLGR
++	}
++}
++XCOMM fs19 class (ISO8859-8) (Hebrew)
++fs18	{
++	charset {
++		name	ISO8859-8:GR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		ISO8859-8:GR
++	}
++}
++XCOMM fs20 class (SUN.UNICODE.INDIA-0) (Indian Script)
++fs19	{
++	charset {
++		name	SUN.UNICODE.INDIA-0:GLGR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		SUN.UNICODE.INDIA-0:GLGR
++	}
++}
++XCOMM fs20 (Last, fallback) class (unicode-fontspecific)
++fs20	{
++	charset {
++		name	UNICODE-FONTSPECIFIC:GLGR
++	}
++	font	{
++		load_option 	delay_nocheck
++		primary		UNICODE-FONTSPECIFIC:GLGR
++	}
++}
++
+ XCOMM	ISO10646 should come last so the fonts above will actually be used
+ XCOMM	fs24 class
+-fs16	{
++fs21	{
+ 	charset	{
+ 		name	ISO10646-1
+ 	}
+@@ -220,79 +283,120 @@ cs5     {
+ }
+  
+ XCOMM	cs6 class
+-cs6     {
+-        side            GR
+-        length          1
+-        ct_encoding     KOI8-R:GR
+-}
++XCOMM cs6     {
++XCOMM        side            GR
++XCOMM       length          1
++XCOMM        ct_encoding     KOI8-R:GR
++XCOMM}
+  
+ XCOMM	cs7 class
+-cs7     {
+-        side            GR
++cs6     {
++        side            GR:Default
+         length          1
+         ct_encoding     ISO8859-7:GR
+ }
+  
+ XCOMM	cs9 class
+-cs8     {
++cs7     {
+         side            GR
+         length          1
+         ct_encoding     ISO8859-9:GR
+ }
+  
+ XCOMM	cs13 class
+-cs9     {
++cs8     {
+         side            GR
+         length          1
+         ct_encoding     ISO8859-13:GR
+ }
+  
+ XCOMM	cs14 class
+-cs10     {
++cs9     {
+         side            GR
+         length          1
+         ct_encoding     ISO8859-14:GR
+ }
+  
+ XCOMM	cs15 class
+-cs11     {
++cs10     {
+         side            GR
+         length          1
+         ct_encoding     ISO8859-15:GR
+ }
+  
+ XCOMM	cs16 class
+-cs12	{
++cs11	{
+ 	side		GR
+ 	length		2
+-	ct_encoding	JISX0208.1983-0:GL; JISX0208.1983-0:GR;\
+-			JISX0208.1983-1:GL; JISX0208.1983-1:GR
++	ct_encoding	JISX0208.1983-0:GL; JISX0208.1983-0:GR;			JISX0208.1983-1:GL; JISX0208.1983-1:GR
++
+ }
+ 
+ XCOMM	cs17 class
+-cs13     {
++cs12     {
+         side            GL
+         length          2
+-        ct_encoding     KSC5601.1987-0:GL; KSC5601.1987-0:GR;\
+-                        KSC5601.1987-1:GL; KSC5601.1987-1:GR
++	ct_encoding	KSC5601.1992-3:GLGR
+ }
+  
+ XCOMM	cs18 class
+-cs14     {
++cs13     {
+         side            GR
+         length          2
+         ct_encoding     GB2312.1980-0:GL; GB2312.1980-0:GR
+ }
+  
+ XCOMM	cs20 class
+-cs15	{
++cs14	{
+ 	side		GR
+ 	length		1
+ 	ct_encoding	JISX0201.1976-0:GR
+ }
+  
++cs15     {
++	side		GR:Default
++	length		2
++	ct_encoding	BIG5-0:GLGR
++
++}
++
++XCOMM Thai
++cs16     {
++	side		GR:Default
++	length		1
++	ct_encoding	TIS620-0:GR
++}
++
++XCOMM Ar
++cs17 {
++	side		GR:Default
++	length		2
++	ct_encoding	ISO8859-6:GLGR
++}
++
++XCOMM 	cs15 class  He
++cs18	{
++	side		GR:Default
++	length		1
++	ct_encoding	ISO8859-8:GR
++}
++
++XCOMM   cs16 class
++cs19    {
++	side		GR:Default
++	length		2
++	ct_encoding	SUN.UNICODE.INDIA-0:GLGR
++}
++
++XCOMM 	Last, fallback class
++cs20	{
++	side		GR:Default
++	length		1
++	ct_encoding	UNICODE-FONTSPECIFIC:GLGR
++}
++
+ XCOMM	cs24 class
+-cs16	{
++cs21	{
+ 	side		none
+ 	ct_encoding	ISO10646-1
+ }

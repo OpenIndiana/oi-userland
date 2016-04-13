@@ -1,29 +1,27 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2013 Aurelien Larcher. All rights reserved.
+# Copyright 2013-2015 Aurelien Larcher. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/X11"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-dir  path=usr
-dir  path=usr/include
-dir  path=usr/include/xcb
 file path=usr/include/xcb/bigreq.h
 file path=usr/include/xcb/composite.h
 file path=usr/include/xcb/damage.h
@@ -55,8 +53,6 @@ file path=usr/include/xcb/xselinux.h
 file path=usr/include/xcb/xtest.h
 file path=usr/include/xcb/xv.h
 file path=usr/include/xcb/xvmc.h
-dir  path=usr/lib
-dir  path=usr/lib/$(MACH64)
 link path=usr/lib/$(MACH64)/libxcb-composite.so target=libxcb-composite.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-composite.so.0 \
     target=libxcb-composite.so.0.0.0
@@ -102,9 +98,9 @@ file path=usr/lib/$(MACH64)/libxcb-shape.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-shm.so target=libxcb-shm.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-shm.so.0 target=libxcb-shm.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-shm.so.0.0.0
-link path=usr/lib/$(MACH64)/libxcb-sync.so target=libxcb-sync.so.0.0.0
-link path=usr/lib/$(MACH64)/libxcb-sync.so.0 target=libxcb-sync.so.0.0.0
-file path=usr/lib/$(MACH64)/libxcb-sync.so.0.0.0
+link path=usr/lib/$(MACH64)/libxcb-sync.so target=libxcb-sync.so.1.0.0
+link path=usr/lib/$(MACH64)/libxcb-sync.so.1 target=libxcb-sync.so.1.0.0
+file path=usr/lib/$(MACH64)/libxcb-sync.so.1.0.0
 link path=usr/lib/$(MACH64)/libxcb-xevie.so target=libxcb-xevie.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-xevie.so.0 target=libxcb-xevie.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-xevie.so.0.0.0
@@ -117,6 +113,9 @@ file path=usr/lib/$(MACH64)/libxcb-xfixes.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-xinerama.so target=libxcb-xinerama.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-xinerama.so.0 target=libxcb-xinerama.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-xinerama.so.0.0.0
+link path=usr/lib/$(MACH64)/libxcb-xkb.so target=libxcb-xkb.so.1.0.0
+link path=usr/lib/$(MACH64)/libxcb-xkb.so.1 target=libxcb-xkb.so.1.0.0
+file path=usr/lib/$(MACH64)/libxcb-xkb.so.1.0.0
 link path=usr/lib/$(MACH64)/libxcb-xprint.so target=libxcb-xprint.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb-xprint.so.0 target=libxcb-xprint.so.0.0.0
 file path=usr/lib/$(MACH64)/libxcb-xprint.so.0.0.0
@@ -132,7 +131,6 @@ file path=usr/lib/$(MACH64)/libxcb-xvmc.so.0.0.0
 link path=usr/lib/$(MACH64)/libxcb.so target=libxcb.so.1.1.0
 link path=usr/lib/$(MACH64)/libxcb.so.1 target=libxcb.so.1.1.0
 file path=usr/lib/$(MACH64)/libxcb.so.1.1.0
-dir  path=usr/lib/$(MACH64)/pkgconfig
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-composite.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-damage.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-dpms.pc
@@ -152,6 +150,7 @@ file path=usr/lib/$(MACH64)/pkgconfig/xcb-xevie.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xf86dri.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xfixes.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xinerama.pc
+file path=usr/lib/$(MACH64)/pkgconfig/xcb-xkb.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xprint.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xtest.pc
 file path=usr/lib/$(MACH64)/pkgconfig/xcb-xv.pc
@@ -199,9 +198,9 @@ file path=usr/lib/libxcb-shape.so.0.0.0
 link path=usr/lib/libxcb-shm.so target=libxcb-shm.so.0.0.0
 link path=usr/lib/libxcb-shm.so.0 target=libxcb-shm.so.0.0.0
 file path=usr/lib/libxcb-shm.so.0.0.0
-link path=usr/lib/libxcb-sync.so target=libxcb-sync.so.0.0.0
-link path=usr/lib/libxcb-sync.so.0 target=libxcb-sync.so.0.0.0
-file path=usr/lib/libxcb-sync.so.0.0.0
+link path=usr/lib/libxcb-sync.so target=libxcb-sync.so.1.0.0
+link path=usr/lib/libxcb-sync.so.1 target=libxcb-sync.so.1.0.0
+file path=usr/lib/libxcb-sync.so.1.0.0
 link path=usr/lib/libxcb-xevie.so target=libxcb-xevie.so.0.0.0
 link path=usr/lib/libxcb-xevie.so.0 target=libxcb-xevie.so.0.0.0
 file path=usr/lib/libxcb-xevie.so.0.0.0
@@ -214,6 +213,9 @@ file path=usr/lib/libxcb-xfixes.so.0.0.0
 link path=usr/lib/libxcb-xinerama.so target=libxcb-xinerama.so.0.0.0
 link path=usr/lib/libxcb-xinerama.so.0 target=libxcb-xinerama.so.0.0.0
 file path=usr/lib/libxcb-xinerama.so.0.0.0
+link path=usr/lib/libxcb-xkb.so target=libxcb-xkb.so.1.0.0
+link path=usr/lib/libxcb-xkb.so.1 target=libxcb-xkb.so.1.0.0
+file path=usr/lib/libxcb-xkb.so.1.0.0
 link path=usr/lib/libxcb-xprint.so target=libxcb-xprint.so.0.0.0
 link path=usr/lib/libxcb-xprint.so.0 target=libxcb-xprint.so.0.0.0
 file path=usr/lib/libxcb-xprint.so.0.0.0
@@ -229,7 +231,6 @@ file path=usr/lib/libxcb-xvmc.so.0.0.0
 link path=usr/lib/libxcb.so target=libxcb.so.1.1.0
 link path=usr/lib/libxcb.so.1 target=libxcb.so.1.1.0
 file path=usr/lib/libxcb.so.1.1.0
-dir  path=usr/lib/pkgconfig
 file path=usr/lib/pkgconfig/xcb-composite.pc
 file path=usr/lib/pkgconfig/xcb-damage.pc
 file path=usr/lib/pkgconfig/xcb-dpms.pc
@@ -249,19 +250,14 @@ file path=usr/lib/pkgconfig/xcb-xevie.pc
 file path=usr/lib/pkgconfig/xcb-xf86dri.pc
 file path=usr/lib/pkgconfig/xcb-xfixes.pc
 file path=usr/lib/pkgconfig/xcb-xinerama.pc
+file path=usr/lib/pkgconfig/xcb-xkb.pc
 file path=usr/lib/pkgconfig/xcb-xprint.pc
 file path=usr/lib/pkgconfig/xcb-xtest.pc
 file path=usr/lib/pkgconfig/xcb-xv.pc
 file path=usr/lib/pkgconfig/xcb-xvmc.pc
 file path=usr/lib/pkgconfig/xcb.pc
-dir  path=usr/share
-dir  path=usr/share/doc
-dir  path=usr/share/doc/libxcb
-dir  path=usr/share/doc/libxcb/tutorial
 file path=usr/share/doc/libxcb/tutorial/index.html
 file path=usr/share/doc/libxcb/tutorial/xcb.css
-dir  path=usr/share/man
-dir  path=usr/share/man/man3
 file path=usr/share/man/man3/xcb-examples.3
 file path=usr/share/man/man3/xcb-requests.3
 file path=usr/share/man/man3/xcb_alloc_color.3
@@ -498,7 +494,7 @@ file path=usr/share/man/man3/xcb_free_gc.3
 file path=usr/share/man/man3/xcb_free_gc_checked.3
 file path=usr/share/man/man3/xcb_free_pixmap.3
 file path=usr/share/man/man3/xcb_free_pixmap_checked.3
-file path=usr/share/man/man3/xcb_ge_event_t.3
+file path=usr/share/man/man3/xcb_ge_generic_event_t.3
 file path=usr/share/man/man3/xcb_get_atom_name.3
 file path=usr/share/man/man3/xcb_get_atom_name_name.3
 file path=usr/share/man/man3/xcb_get_atom_name_name_end.3
@@ -2045,6 +2041,9 @@ file path=usr/share/man/man3/xcb_x_print_print_end_job_checked.3
 file path=usr/share/man/man3/xcb_x_print_print_end_page.3
 file path=usr/share/man/man3/xcb_x_print_print_end_page_checked.3
 file path=usr/share/man/man3/xcb_x_print_print_get_attributes.3
+file path=usr/share/man/man3/xcb_x_print_print_get_attributes_attributes.3
+file path=usr/share/man/man3/xcb_x_print_print_get_attributes_attributes_end.3
+file path=usr/share/man/man3/xcb_x_print_print_get_attributes_attributes_length.3
 file path=usr/share/man/man3/xcb_x_print_print_get_attributes_reply.3
 file path=usr/share/man/man3/xcb_x_print_print_get_attributes_unchecked.3
 file path=usr/share/man/man3/xcb_x_print_print_get_context.3
@@ -2328,23 +2327,6 @@ file path=usr/share/man/man3/xcb_xkb_get_device_info_name_end.3
 file path=usr/share/man/man3/xcb_xkb_get_device_info_name_length.3
 file path=usr/share/man/man3/xcb_xkb_get_device_info_reply.3
 file path=usr/share/man/man3/xcb_xkb_get_device_info_unchecked.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_colors_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_colors_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_doodads_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_doodads_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_key_aliases.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_key_aliases_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_key_aliases_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_label_font.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_properties_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_properties_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_reply.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_sections_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_sections_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_shapes_iterator.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_shapes_length.3
-file path=usr/share/man/man3/xcb_xkb_get_geometry_unchecked.3
 file path=usr/share/man/man3/xcb_xkb_get_indicator_map.3
 file path=usr/share/man/man3/xcb_xkb_get_indicator_map_maps.3
 file path=usr/share/man/man3/xcb_xkb_get_indicator_map_maps_iterator.3
@@ -2408,8 +2390,6 @@ file path=usr/share/man/man3/xcb_xkb_set_debugging_flags_reply.3
 file path=usr/share/man/man3/xcb_xkb_set_debugging_flags_unchecked.3
 file path=usr/share/man/man3/xcb_xkb_set_device_info.3
 file path=usr/share/man/man3/xcb_xkb_set_device_info_checked.3
-file path=usr/share/man/man3/xcb_xkb_set_geometry.3
-file path=usr/share/man/man3/xcb_xkb_set_geometry_checked.3
 file path=usr/share/man/man3/xcb_xkb_set_indicator_map.3
 file path=usr/share/man/man3/xcb_xkb_set_indicator_map_checked.3
 file path=usr/share/man/man3/xcb_xkb_set_map.3

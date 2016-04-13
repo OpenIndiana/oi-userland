@@ -1,0 +1,43 @@
+This patch uses a "belt & suspenders" approach: either the inclusion of
+<sys/types.h> before the define, or changing the variable name is sufficient,
+but both are used out of precaution.  The patch was developed in-house;
+the changing of the variable name part has been fed upstream and will be
+included in the next version.
+
+--- xmlto-0.0.28/xmlif/xmlif.c.~1~	2015-11-10 04:05:27.000000000 -0800
++++ xmlto-0.0.28/xmlif/xmlif.c	2016-03-14 13:33:03.905766962 -0700
+@@ -20,6 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <stdlib.h>
++#include <sys/types.h>
+ 
+ /* end standard C headers. */
+ 
+@@ -1306,7 +1307,7 @@
+ 
+ #define INITIAL 0
+ #define attrib 1
+-#define val 2
++#define xmlif_val 2
+ 
+ #ifndef YY_NO_UNISTD_H
+ /* Special case for "unistd.h", since it is non-ANSI. We include it way
+@@ -1594,7 +1595,7 @@
+ case 8:
+ YY_RULE_SETUP
+ #line 217 "xmlif/xmlif.l"
+-{BEGIN(val);}
++{BEGIN(xmlif_val);}
+ 	YY_BREAK
+ case 9:
+ YY_RULE_SETUP
+@@ -1636,7 +1637,7 @@
+ #line 1637 "xmlif/xmlif.c"
+ case YY_STATE_EOF(INITIAL):
+ case YY_STATE_EOF(attrib):
+-case YY_STATE_EOF(val):
++case YY_STATE_EOF(xmlif_val):
+ 	yyterminate();
+ 
+ 	case YY_END_OF_BUFFER:

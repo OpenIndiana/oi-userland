@@ -1,0 +1,334 @@
+From 613d4d3ef63b5717d3e91385c9d748806ac4cea0 Mon Sep 17 00:00:00 2001
+From: Jeffrey Stedfast <fejj@gnome.org>
+Date: Sun, 30 Jun 2013 12:52:28 -0400
+Subject: Use G_LOCK_DEFINE_STATIC to fix deprecated warnings in newer glib
+
+---
+ gmime/gmime-charset.c     |  9 +++---
+ gmime/gmime-iconv-utils.c | 41 ++++++++++++------------
+ gmime/gmime-iconv.c       |  9 +++---
+ gmime/gmime-utils.c       | 22 +++++++------
+ gmime/gmime.c             | 82 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 123 insertions(+), 40 deletions(-)
+
+diff --git a/gmime/gmime-charset.c b/gmime/gmime-charset.c
+index 42b0232..07b7f54 100644
+--- a/gmime/gmime-charset.c
++++ b/gmime/gmime-charset.c
+@@ -170,12 +170,13 @@ static char *locale_charset = NULL;
+ static char *locale_lang = NULL;
+ 
+ #ifdef G_THREADS_ENABLED
+-static GStaticMutex charset_lock = G_STATIC_MUTEX_INIT;
+-#define CHARSET_LOCK()   g_static_mutex_lock (&charset_lock);
+-#define CHARSET_UNLOCK() g_static_mutex_unlock (&charset_lock);
++extern void _g_mime_charset_unlock (void);
++extern void _g_mime_charset_lock (void);
++#define CHARSET_UNLOCK() _g_mime_charset_unlock ()
++#define CHARSET_LOCK()   _g_mime_charset_lock ()
+ #else
+-#define CHARSET_LOCK()
+ #define CHARSET_UNLOCK()
++#define CHARSET_LOCK()
+ #endif /* G_THREADS_ENABLED */
+ 
+ 
+diff --git a/gmime/gmime-iconv-utils.c b/gmime/gmime-iconv-utils.c
+index 9e83088..997959e 100644
+--- a/gmime/gmime-iconv-utils.c
++++ b/gmime/gmime-iconv-utils.c
+@@ -48,29 +48,24 @@
+ 
+ 
+ #ifdef G_THREADS_ENABLED
+-static GStaticMutex lock = G_STATIC_MUTEX_INIT;
+-#define LOCK()   g_static_mutex_lock (&lock)
+-#define UNLOCK() g_static_mutex_unlock (&lock)
++extern void _g_mime_iconv_utils_unlock (void);
++extern void _g_mime_iconv_utils_lock (void);
++#define UNLOCK() _g_mime_iconv_utils_unlock ()
++#define LOCK()   _g_mime_iconv_utils_lock ()
+ #else
+-#define LOCK()
+ #define UNLOCK()
++#define LOCK()
+ #endif /* G_THREADS_ENABLED */
+ 
+ static iconv_t utf8_to_locale = (iconv_t) -1;
+ static iconv_t locale_to_utf8 = (iconv_t) -1;
+ 
+ 
+-static void
+-iconv_utils_init (void)
++void
++g_mime_iconv_utils_init (void)
+ {
+-	static gboolean initialized = FALSE;
+ 	const char *utf8, *locale;
+ 	
+-	if (initialized)
+-		return;
+-	
+-	g_mime_charset_map_init ();
+-	
+ 	utf8 = g_mime_charset_iconv_name ("UTF-8");
+ 	
+ 	if (!(locale = g_mime_locale_charset ()))
+@@ -80,8 +75,20 @@ iconv_utils_init (void)
+ 		utf8_to_locale = iconv_open (locale, utf8);
+ 		locale_to_utf8 = iconv_open (utf8, locale);
+ 	}
++}
++
++void
++g_mime_iconv_utils_shutdown (void)
++{
++	if (utf8_to_locale != (iconv_t) -1) {
++		iconv_close (utf8_to_locale);
++		utf8_to_locale = (iconv_t) -1;
++	}
+ 	
+-	initialized = TRUE;
++	if (locale_to_utf8 != (iconv_t) -1) {
++		iconv_close (locale_to_utf8);
++		locale_to_utf8 = (iconv_t) -1;
++	}
+ }
+ 
+ 
+@@ -220,8 +227,6 @@ g_mime_iconv_locale_to_utf8 (const char *str)
+ 	char *buf;
+ 	
+ 	LOCK ();
+-	iconv_utils_init ();
+-	
+ 	buf = g_mime_iconv_strdup (locale_to_utf8, str);
+ 	UNLOCK ();
+ 	
+@@ -246,8 +251,6 @@ g_mime_iconv_locale_to_utf8_length (const char *str, size_t n)
+ 	char *buf;
+ 	
+ 	LOCK ();
+-	iconv_utils_init ();
+-	
+ 	buf = g_mime_iconv_strndup (locale_to_utf8, str, n);
+ 	UNLOCK ();
+ 	
+@@ -271,8 +274,6 @@ g_mime_iconv_utf8_to_locale (const char *str)
+ 	char *buf;
+ 	
+ 	LOCK ();
+-	iconv_utils_init ();
+-	
+ 	buf = g_mime_iconv_strdup (utf8_to_locale, str);
+ 	UNLOCK ();
+ 	
+@@ -297,8 +298,6 @@ g_mime_iconv_utf8_to_locale_length (const char *str, size_t n)
+ 	char *buf;
+ 	
+ 	LOCK ();
+-	iconv_utils_init ();
+-	
+ 	buf = g_mime_iconv_strndup (utf8_to_locale, str, n);
+ 	UNLOCK ();
+ 	
+diff --git a/gmime/gmime-iconv.c b/gmime/gmime-iconv.c
+index 3deac78..8f1196e 100644
+--- a/gmime/gmime-iconv.c
++++ b/gmime/gmime-iconv.c
+@@ -80,12 +80,13 @@ static int shutdown = 0;
+ #endif /* GMIME_ICONV_DEBUG */
+ 
+ #ifdef G_THREADS_ENABLED
+-static GStaticMutex iconv_cache_lock = G_STATIC_MUTEX_INIT;
+-#define ICONV_CACHE_LOCK()   g_static_mutex_lock (&iconv_cache_lock)
+-#define ICONV_CACHE_UNLOCK() g_static_mutex_unlock (&iconv_cache_lock)
++extern void _g_mime_iconv_cache_unlock (void);
++extern void _g_mime_iconv_cache_lock (void);
++#define ICONV_CACHE_UNLOCK() _g_mime_iconv_cache_unlock ()
++#define ICONV_CACHE_LOCK()   _g_mime_iconv_cache_lock ()
+ #else
+-#define ICONV_CACHE_LOCK()
+ #define ICONV_CACHE_UNLOCK()
++#define ICONV_CACHE_LOCK()
+ #endif /* G_THREADS_ENABLED */
+ 
+ 
+diff --git a/gmime/gmime-utils.c b/gmime/gmime-utils.c
+index dc3f3b5..ada8faf 100644
+--- a/gmime/gmime-utils.c
++++ b/gmime/gmime-utils.c
+@@ -80,6 +80,16 @@
+ extern gboolean _g_mime_enable_rfc2047_workarounds (void);
+ extern gboolean _g_mime_use_only_user_charsets (void);
+ 
++#ifdef G_THREADS_ENABLED
++extern void _g_mime_msgid_unlock (void);
++extern void _g_mime_msgid_lock (void);
++#define MSGID_UNLOCK() _g_mime_msgid_unlock ()
++#define MSGID_LOCK()   _g_mime_msgid_lock ()
++#else
++#define MSGID_UNLOCK()
++#define MSGID_LOCK()
++#endif
++
+ #define GMIME_FOLD_PREENCODED  (GMIME_FOLD_LEN / 2)
+ 
+ /* date parser macros */
+@@ -791,14 +801,6 @@ g_mime_utils_header_decode_date (const char *str, int *tz_offset)
+ char *
+ g_mime_utils_generate_message_id (const char *fqdn)
+ {
+-#ifdef G_THREADS_ENABLED
+-	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+-#define MUTEX_LOCK()   g_static_mutex_lock (&mutex)
+-#define MUTEX_UNLOCK() g_static_mutex_unlock (&mutex)
+-#else
+-#define MUTEX_LOCK()
+-#define MUTEX_UNLOCK()
+-#endif
+ 	static unsigned long int count = 0;
+ 	const char *hostname = NULL;
+ 	char *name = NULL;
+@@ -866,10 +868,10 @@ g_mime_utils_generate_message_id (const char *fqdn)
+ 		fqdn = name != NULL ? name : (hostname[0] ? hostname : "localhost.localdomain");
+ 	}
+ 	
+-	MUTEX_LOCK ();
++	MSGID_LOCK ();
+ 	msgid = g_strdup_printf ("%lu.%lu.%lu@%s", (unsigned long int) time (NULL),
+ 				 (unsigned long int) getpid (), count++, fqdn);
+-	MUTEX_UNLOCK ();
++	MSGID_UNLOCK ();
+ 	
+ 	g_free (name);
+ 	
+diff --git a/gmime/gmime.c b/gmime/gmime.c
+index 65a99ae..563b2e1 100644
+--- a/gmime/gmime.c
++++ b/gmime/gmime.c
+@@ -49,6 +49,18 @@
+ extern gboolean _g_mime_enable_rfc2047_workarounds (void);
+ extern gboolean _g_mime_use_only_user_charsets (void);
+ 
++extern void g_mime_iconv_utils_shutdown (void);
++extern void g_mime_iconv_utils_init (void);
++
++extern void _g_mime_iconv_cache_unlock (void);
++extern void _g_mime_iconv_cache_lock (void);
++extern void _g_mime_iconv_utils_unlock (void);
++extern void _g_mime_iconv_utils_lock (void);
++extern void _g_mime_charset_unlock (void);
++extern void _g_mime_charset_lock (void);
++extern void _g_mime_msgid_unlock (void);
++extern void _g_mime_msgid_lock (void);
++
+ GQuark gmime_gpgme_error_quark;
+ GQuark gmime_error_quark;
+ 
+@@ -58,6 +70,11 @@ const guint gmime_micro_version = GMIME_MICRO_VERSION;
+ const guint gmime_interface_age = GMIME_INTERFACE_AGE;
+ const guint gmime_binary_age = GMIME_BINARY_AGE;
+ 
++G_LOCK_DEFINE_STATIC (iconv_cache);
++G_LOCK_DEFINE_STATIC (iconv_utils);
++G_LOCK_DEFINE_STATIC (charset);
++G_LOCK_DEFINE_STATIC (msgid);
++
+ static unsigned int initialized = 0;
+ static guint32 enable = 0;
+ 
+@@ -114,7 +131,7 @@ g_mime_init (guint32 flags)
+ 	g_type_init ();
+ 	
+ 	g_mime_charset_map_init ();
+-	
++	g_mime_iconv_utils_init ();
+ 	g_mime_iconv_init ();
+ 	
+ #ifdef ENABLE_SMIME
+@@ -125,6 +142,13 @@ g_mime_init (guint32 flags)
+ 	gmime_gpgme_error_quark = g_quark_from_static_string ("gmime-gpgme");
+ 	gmime_error_quark = g_quark_from_static_string ("gmime");
+ 	
++#ifdef G_THREADS_ENABLED
++	g_mutex_init (&G_LOCK_NAME (iconv_cache));
++	g_mutex_init (&G_LOCK_NAME (iconv_utils));
++	g_mutex_init (&G_LOCK_NAME (charset));
++	g_mutex_init (&G_LOCK_NAME (msgid));
++#endif
++	
+ 	/* register our GObject types with the GType system */
+ 	g_mime_crypto_context_get_type ();
+ 	g_mime_decrypt_result_get_type ();
+@@ -201,7 +225,15 @@ g_mime_shutdown (void)
+ 	
+ 	g_mime_object_type_registry_shutdown ();
+ 	g_mime_charset_map_shutdown ();
++	g_mime_iconv_utils_shutdown ();
+ 	g_mime_iconv_shutdown ();
++	
++#ifdef G_THREADS_ENABLED
++	g_mutex_clear (&G_LOCK_NAME (iconv_cache));
++	g_mutex_clear (&G_LOCK_NAME (iconv_utils));
++	g_mutex_clear (&G_LOCK_NAME (charset));
++	g_mutex_clear (&G_LOCK_NAME (msgid));
++#endif
+ }
+ 
+ 
+@@ -216,3 +248,51 @@ _g_mime_use_only_user_charsets (void)
+ {
+ 	return (enable & GMIME_ENABLE_USE_ONLY_USER_CHARSETS);
+ }
++
++void
++_g_mime_iconv_cache_unlock (void)
++{
++	return G_UNLOCK (iconv_cache);
++}
++
++void
++_g_mime_iconv_cache_lock (void)
++{
++	return G_LOCK (iconv_cache);
++}
++
++void
++_g_mime_iconv_utils_unlock (void)
++{
++	return G_UNLOCK (iconv_utils);
++}
++
++void
++_g_mime_iconv_utils_lock (void)
++{
++	return G_LOCK (iconv_utils);
++}
++
++void
++_g_mime_charset_unlock (void)
++{
++	return G_UNLOCK (charset);
++}
++
++void
++_g_mime_charset_lock (void)
++{
++	return G_LOCK (charset);
++}
++
++void
++_g_mime_msgid_unlock (void)
++{
++	return G_UNLOCK (msgid);
++}
++
++void
++_g_mime_msgid_lock (void)
++{
++	return G_LOCK (msgid);
++}
+-- 
+cgit v0.12
+

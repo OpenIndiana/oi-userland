@@ -1,0 +1,101 @@
+--- libgksu-2.0.12/libgksu/libgksu-solaris.c	2016-03-04 11:54:57.818298670 +0300
++++ libgksu-2.0.12/libgksu/libgksu-solaris.c	2016-03-04 11:54:57.833853671 +0300
+@@ -373,7 +373,8 @@
+ gksu_context_embedded_su_run (GksuContext *context,
+ 			      GksuAskPassFunc ask_pass,
+ 			      gpointer ask_pass_data,
+-			      GError **error)
++			      GError **error,
++                              int *exit_status)
+ 
+ {
+ 	char **cmd;
+@@ -391,6 +392,8 @@
+ 	int parent_pipe[2];	/* For talking to the parent */
+ 	int child_pipe[2];	/* For talking to the child */
+ 
++	*exit_status = -1;	/* Return error by default */
++
+ 	gksu_quark = g_quark_from_string (PACKAGE_NAME);
+ 
+ 	if (!context->command)
+@@ -624,6 +627,8 @@
+ 		{
+ 			if (WIFEXITED(status))
+ 			{
++				*exit_status = WEXITSTATUS(status);
++
+ 				if (WEXITSTATUS(status))
+ 				{
+ 					*error = NULL;
+@@ -845,7 +850,7 @@
+ }
+ 
+ gboolean
+-gksu_context_pfexec_run (GksuContext *context, GError **error)
++gksu_context_pfexec_run (GksuContext *context, GError **error, int *exit_status)
+ {
+ 	GQuark gksu_quark;
+ 	char **cmd;
+@@ -862,6 +867,8 @@
+ 	int child_pipe[2];	/* For talking to the child */
+ 	int was_quoted = FALSE;
+ 
++	*exit_status = -1;      /* Return error by default */
++
+ 	gksu_quark = g_quark_from_string (PACKAGE_NAME);
+ 
+ 	if (!context->command)
+@@ -1047,6 +1054,8 @@
+ 
+ 		if (WIFEXITED(status))
+ 		{
++			*exit_status = WEXITSTATUS(status);
++
+ 			if (WEXITSTATUS(status))
+ 			{
+ 				*error = NULL;
+--- libgksu-2.0.12/libgksu/libgksu.h	2016-03-04 11:43:25.241411469 +0300
++++ libgksu-2.0.12/libgksu/libgksu.h	2016-03-04 11:43:28.944689197 +0300
+@@ -295,13 +295,14 @@
+ gksu_context_embedded_su_run (GksuContext *context,
+                               GksuAskPassFunc ask_pass,
+                               gpointer ask_pass_data,
+-                              GError **error);
++                              GError **error,
++                              int *exit_status);
+ 
+ gboolean
+ gksu_context_pfexec_try_run (GksuContext *context);
+ 
+ gboolean
+-gksu_context_pfexec_run (GksuContext *context, GError **error);
++gksu_context_pfexec_run (GksuContext *context, GError **error, int *exit_status);
+ 
+ gboolean
+ gksu_context_set_role (GksuContext *context);
+--- libgksu-2.0.12/libgksu/libgksu.c	2016-03-04 11:44:56.614637675 +0300
++++ libgksu-2.0.12/libgksu/libgksu.c	2016-03-04 11:44:59.077469118 +0300
+@@ -1836,7 +1836,7 @@
+     }
+ 
+   if (context->pfexec_mode) {
+-        rc = gksu_context_pfexec_run (context, error);
++        rc = gksu_context_pfexec_run (context, error, exit_status);
+   } else {
+     gint count;
+ 
+@@ -1853,11 +1853,11 @@
+ 
+           if (ask_pass == NULL)
+             {
+-              rc = gksu_context_embedded_su_run (context, su_ask_password, NULL, error);
++              rc = gksu_context_embedded_su_run (context, su_ask_password, NULL, error, exit_status);
+             }
+           else
+             {
+-              rc = gksu_context_embedded_su_run (context, ask_pass, ask_pass_data, error);
++              rc = gksu_context_embedded_su_run (context, ask_pass, ask_pass_data, error, exit_status);
+             }
+ 
+           if ((*error == NULL) || ((*error)->code != GKSU_ERROR_WRONGPASS))

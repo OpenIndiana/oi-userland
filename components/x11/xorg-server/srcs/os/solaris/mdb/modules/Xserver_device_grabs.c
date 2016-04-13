@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,9 +23,11 @@
 
 
 #include <sys/mdb_modapi.h>
+
+#include "Xserver_mdb.h"
 #include "xorg-server.h"
 #include "inputstr.h"
-#include "Xserver_mdb.h"
+
 
 struct inputdev_walk_data {
     InputInfo 		inputInfo;
@@ -35,7 +37,7 @@ struct inputdev_walk_data {
 /*
  * Initialize the inputdev walker by either using the given starting address,
  * or reading the value of the server's "inputInfo" pointer.  We also allocate
- * a for storage, and save this using the walk_data pointer.
+ * a struct for storage, and save this using the walk_data pointer.
  */
 _X_HIDDEN int
 inputdev_walk_init(mdb_walk_state_t *wsp)
@@ -48,7 +50,7 @@ inputdev_walk_init(mdb_walk_state_t *wsp)
 
     if (mdb_readsym(&(iwda->inputInfo), sizeof (InputInfo), "inputInfo") == -1)
     {
-	mdb_warn("failed to read inputInfo data", inputInfoPtr);
+	mdb_warn("failed to read inputInfo data");
 	return (WALK_ERR);
     }
 
@@ -95,6 +97,19 @@ _X_HIDDEN void
 inputdev_walk_fini(mdb_walk_state_t *wsp)
 {
     mdb_free(wsp->walk_data, sizeof (struct inputdev_walk_data));
+}
+
+_X_HIDDEN void
+inputdev_grabs_help(void)
+{
+    mdb_printf(
+	"Prints information about a DeviceIntRec entry in the X server's list\n"
+	"of currently connected input devices.\n"
+	"\n"
+	"If no %<u>addr%</u> is specified, uses ::inputdev_walk to walk the linked list\n"
+	"of DeviceIntRec entries starting at the entry stored in the global\n"
+	"variable \"InputInfo\" and print information about each one.\n"
+	);
 }
 
 _X_HIDDEN int

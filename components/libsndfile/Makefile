@@ -23,12 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
-COMPONENT_VERSION=	1.0.23
+COMPONENT_VERSION=	1.0.25
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/libsndfile/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:54c9c375598538263395a691f9b30987a2faa3d8a166d27e6a09ba4700223d4d
+    sha256:59016dbd326abe7e2366ded5c344c853829bebfd1702ef26a07ef662d6aa4882
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsndfile
 
@@ -36,10 +37,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
+# ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

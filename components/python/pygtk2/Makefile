@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtk2
 COMPONENT_VERSION=	2.17.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GTK+
 COMPONENT_SRC=		pygtk-$(COMPONENT_VERSION)
@@ -24,26 +25,55 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:6a61817a2e765c6209c72ecdf44389ec134c1ebed1d842408bf001c9321f1400
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.17/$(COMPONENT_ARCHIVE)
 
+VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
+VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
+
+VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+
+BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+
+INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+
+# Avoid overwriting python2.6 files in /usr/share
+$(VARIANT_PYTHON26)/$(MACH32)/.installed:       $(VARIANT_PYTHON27)/$(MACH32)/.installed
+$(VARIANT_PYTHON26)/$(MACH64)/.installed:       $(VARIANT_PYTHON27)/$(MACH64)/.installed
+
+$(VARIANT_PYTHON26)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
+$(VARIANT_PYTHON26)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.6.64)
+$(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
+$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
+$(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
+
+$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
+$(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
+$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
+$(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CFLAGS+=	-I$(PYTHON_VENDOR_PACKAGES.32)/numpy/core/include
-
-gcc_OPT		= -O2
+CFLAGS.$(BITS)+=	-I$(PYTHON_VENDOR_PACKAGES.$(BITS))/numpy/core/include
+CFLAGS+=	$(CFLAGS.$(BITS))
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-
-COMPONENT_POST_INSTALL_ACTION =  $(GSED) -i -e 's:site-packages:vendor-packages:' \
-					 $(PROTO_DIR)/usr/lib/pkgconfig/pygtk-2.0.pc
+CONFIGURE_ENV+=		am_cv_python_pythondir="$(am_cv_python_pythondir)"
+CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

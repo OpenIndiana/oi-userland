@@ -1,0 +1,52 @@
+--- ./makefile.cfg.orig	2015-12-11 22:50:28.338047305 +0100
++++ ./makefile.cfg	2015-12-11 23:14:55.224553592 +0100
+@@ -9,15 +9,15 @@
+ VPATH = @srcdir@
+ 
+ # Where to install the programs and man pages.
+-prefix = @prefix@
+-exec_prefix = @exec_prefix@
+-bindir = $(exec_prefix)/bin
+-libdir = $(exec_prefix)/lib
+-includedir = $(prefix)/include
++prefix = $(DESTDIR)@prefix@
++exec_prefix = $(DESTDIR)@exec_prefix@
++bindir = $(DESTDIR)@bindir@
++libdir = $(DESTDIR)@libdir@
++includedir = $(DESTDIR)@includedir@
+ binprefix =
+ manprefix =
+ manext = 1
+-mandir = $(prefix)/man/man$(manext)
++mandir = $(DESTDIR)@mandir@/man$(manext)
+ 
+ # The name of your C compiler:
+ CC= @CC@
+--- ./makefile.cfg.orig	2015-12-11 23:56:14.674198344 +0100
++++ ./makefile.cfg	2015-12-12 00:06:46.902684026 +0100
+@@ -191,11 +191,13 @@
+ # Installation rules:
+ 
+ install: cjpeg djpeg jpegtran rdjpgcom wrjpgcom @FORCE_INSTALL_LIB@
++	$(MKDIR) -p $(bindir)
+ 	$(INSTALL_PROGRAM) cjpeg $(bindir)/$(binprefix)cjpeg
+ 	$(INSTALL_PROGRAM) djpeg $(bindir)/$(binprefix)djpeg
+ 	$(INSTALL_PROGRAM) jpegtran $(bindir)/$(binprefix)jpegtran
+ 	$(INSTALL_PROGRAM) rdjpgcom $(bindir)/$(binprefix)rdjpgcom
+ 	$(INSTALL_PROGRAM) wrjpgcom $(bindir)/$(binprefix)wrjpgcom
++	$(MKDIR) -p $(mandir)
+ 	$(INSTALL_DATA) $(srcdir)/cjpeg.1 $(mandir)/$(manprefix)cjpeg.$(manext)
+ 	$(INSTALL_DATA) $(srcdir)/djpeg.1 $(mandir)/$(manprefix)djpeg.$(manext)
+ 	$(INSTALL_DATA) $(srcdir)/jpegtran.1 $(mandir)/$(manprefix)jpegtran.$(manext)
+@@ -203,9 +205,11 @@
+ 	$(INSTALL_DATA) $(srcdir)/wrjpgcom.1 $(mandir)/$(manprefix)wrjpgcom.$(manext)
+ 
+ install-lib: libjpeg.$(A) install-headers
++	$(MKDIR) -p $(libdir)
+ 	$(INSTALL_LIB) libjpeg.$(A) $(libdir)/$(binprefix)libjpeg.$(A)
+ 
+ install-headers: jconfig.h
++	$(MKDIR) -p $(includedir)
+ 	$(INSTALL_DATA) jconfig.h $(includedir)/jconfig.h
+ 	$(INSTALL_DATA) $(srcdir)/jpeglib.h $(includedir)/jpeglib.h
+ 	$(INSTALL_DATA) $(srcdir)/jmorecfg.h $(includedir)/jmorecfg.h

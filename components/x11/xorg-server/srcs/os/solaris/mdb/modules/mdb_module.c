@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -34,8 +34,10 @@
  */
 
 static const mdb_dcmd_t dcmds[] = {
-	{ "client_pids", NULL, "client process list", client_pids },
-	{ "inputdev_grabs", NULL, "inputdev grab list", inputdev_grabs },
+	{ "client_pids", "?[-w]", "client process list",
+	  client_pids, client_pids_help },
+	{ "inputdev_grabs", "?", "inputdev grab list",
+	  inputdev_grabs, inputdev_grabs_help },
 	{ NULL }
 };
 

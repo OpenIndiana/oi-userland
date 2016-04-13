@@ -1,0 +1,222 @@
+###############################################################################
+# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+1234757: XInitThreads needs to be made less restrictive
+
+This is a RFE to enhance XInitThreads so that it may be called:
+
+    * By libraries used by the client, (without the client's intervention)
+    * At a later time, after other Xlib calls have already been made. 
+      Currently, XInitThreads *Must* be the first Xlib call that the client 
+      makes.
+
+For Example, in order for XIL 1.3 to be MT HOT, it must be able to
+make the call to XInitThreads, even if the client has already made
+other Xlib calls.
+
+diff --git a/include/X11/Xlibint.h b/include/X11/Xlibint.h
+index 4431559..bc32bdf 100644
+--- a/include/X11/Xlibint.h
++++ b/include/X11/Xlibint.h
+@@ -207,6 +207,10 @@ struct _XDisplay
+ 	void *cookiejar;  /* cookie events returned but not claimed */
+ };
+ 
++#if defined(XTHREADS) && defined(SUNSOFT)
++int  InitDisplayArrayLock(void);
++#endif /* XTHREADS && SUNSOFT */
++
+ #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
+ 
+ #ifndef _XEVENT_
+diff --git a/src/OpenDis.c b/src/OpenDis.c
+index 3793814..a14d13b 100644
+--- a/src/OpenDis.c
++++ b/src/OpenDis.c
+@@ -38,6 +38,21 @@ in this Software without prior written authorization from The Open Group.
+ #include "XKBlib.h"
+ #endif /* XKB */
+ 
++#if defined(XTHREADS) && defined(SUNSOFT)
++struct _DisplayPtrLink {
++    Display *dpy;
++    struct _DisplayPtrLink *next;
++};
++
++typedef struct _DisplayPtrLink DisplayPtrLink;
++DisplayPtrLink *HeadDisplay=NULL;
++DisplayPtrLink *LastDisplay=NULL;
++
++static int  AddToDisplayLink(Display *dpy);
++static void RemoveFromDisplayLink(Display *dpy);
++
++#endif /* XTHREADS && SUNSOFT */
++
+ #ifdef XTHREADS
+ #include "locking.h"
+ int  (*_XInitDisplayLock_fn)(Display *dpy) = NULL;
+@@ -208,6 +223,13 @@ XOpenDisplay (
+ 		return(NULL);
+ 	}
+ 
++#ifdef XTHREADS
++        if (AddToDisplayLink(dpy) == 0) {
++                OutOfMemory (dpy);
++                return(NULL);
++        }
++#endif XTHREADS
++
+ 	if (!_XPollfdCacheInit(dpy)) {
+ 	        OutOfMemory (dpy);
+ 		return(NULL);
+@@ -576,6 +598,10 @@ XOpenDisplay (
+ 
+ void _XFreeDisplayStructure(Display *dpy)
+ {
++#ifdef XTHREADS
++        RemoveFromDisplayLink(dpy);
++#endif XTHREADS
++
+ 	/* move all cookies in the EQ to the jar, then free them. */
+ 	if (dpy->qfree) {
+ 	    _XQEvent *qelt = dpy->qfree;
+@@ -704,6 +730,103 @@ void _XFreeDisplayStructure(Display *dpy)
+ 	Xfree (dpy);
+ }
+ 
++#if defined(XTHREADS) && defined(SUNSOFT)
++static int
++AddToDisplayLink(Display *dpy)
++{
++    if ( dpy->lock )
++        return 1;
++
++/*
++ * Attempt to allocate a display array. Return NULL if allocation fails.
++ */
++    if ( !HeadDisplay ) {
++        HeadDisplay = Xcalloc (1, sizeof(struct _DisplayPtrLink));
++        if (HeadDisplay == NULL)
++            return 0;
++
++        HeadDisplay->dpy = dpy;
++        HeadDisplay->next = NULL;
++        LastDisplay = HeadDisplay;
++        return 1;
++    }
++
++    LastDisplay->next = Xcalloc (1, sizeof(struct _DisplayPtrLink));
++    if (LastDisplay->next == NULL )
++        return 0;
++
++    LastDisplay = LastDisplay->next;
++    LastDisplay->dpy = dpy;
++    LastDisplay->next = NULL;
++    return 1;
++}
++
++static void
++RemoveFromDisplayLink(Display *dpy)
++{
++    DisplayPtrLink *tmp_display  = HeadDisplay;
++    DisplayPtrLink *prev_display = HeadDisplay;
++
++    if ( dpy->lock )
++        return;
++
++    while ( tmp_display ) {
++        if ((tmp_display->dpy == dpy) && (tmp_display->dpy->fd == dpy->fd)){
++            break;
++        }
++
++        prev_display = tmp_display;
++        tmp_display = tmp_display->next;
++    }
++
++    /* Node not found */
++    if ( !tmp_display )
++        return;
++
++    /* If tmp_display is the first node */
++    if ( tmp_display == HeadDisplay ) {
++        if ( HeadDisplay->next )
++            HeadDisplay = HeadDisplay->next;
++        else {
++            HeadDisplay = NULL;
++            LastDisplay = NULL;
++        }
++    }
++    /* If tmp_display is the last node */
++    else if ( tmp_display == LastDisplay )  {
++        LastDisplay = prev_display;
++        LastDisplay->next = NULL;
++    }
++    /* tmp_display is in the middle of list*/
++    else
++        prev_display->next = tmp_display->next;
++
++    Xfree(tmp_display);
++    return;
++}
++
++int
++InitDisplayArrayLock(void)
++{
++    DisplayPtrLink *tmp_display  = HeadDisplay;
++    DisplayPtrLink *prev_display = HeadDisplay;
++
++    while ( tmp_display ) {
++        if ((tmp_display->dpy) && (!tmp_display->dpy->lock)) {
++            /* Initialize the display lock */
++            if (_XInitDisplayLock_fn(tmp_display->dpy) != 0) {
++                OutOfMemory (tmp_display->dpy);
++                return 0;
++            }
++        }
++        tmp_display = tmp_display->next;
++    }
++
++    return 1;
++}
++
++#endif /* XTHREADS && SUNSOFT */
++
+ /* OutOfMemory is called if malloc fails.  XOpenDisplay returns NULL
+    after this returns. */
+ 
+diff --git a/src/locking.c b/src/locking.c
+index 9f4fe06..e4e0444 100644
+--- a/src/locking.c
++++ b/src/locking.c
+@@ -614,6 +614,11 @@ Status XInitThreads(void)
+ #endif
+ #endif
+ 
++#ifdef SUNSOFT
++    if (InitDisplayArrayLock() == 0)
++        return 0;
++#endif
++
+     return 1;
+ }
+ 

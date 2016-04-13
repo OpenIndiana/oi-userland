@@ -1,4 +1,5 @@
-/* Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -42,8 +43,6 @@
 #include "inputstr.h"
 #include "xkbstr.h"
 #include "xkbsrv.h"
-
-#define NEED_REPLIES
 
 #include "dixevents.h"
 #include "selection.h"
@@ -174,8 +173,8 @@ int audit_eventsid[100][2] = {
 
 extern priv_set_t *pset_win_config;
 extern TsolResPtr TsolDrawablePrivateate(DrawablePtr pDraw, ClientPtr client);
-extern int
-tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres, xpolicy_t flags, int reqcode);
+extern int tsol_check_policy(TsolInfoPtr tsolinfo, TsolResPtr tsolres,
+			     xpolicy_t flags, int reqcode);
 extern Bool client_has_privilege(TsolInfoPtr tsolinfo, priv_set_t *priv);
 
 
@@ -210,10 +209,10 @@ UpdateTsolNode(Atom thisAtom, ClientPtr client)
 
 	/* Allocate & Initialize the node for the first time */
 	if (tsol_node == NULL) {
-		newsize = (lastAtom > INITIAL_TSOL_NODELENGTH ? 
+		newsize = (lastAtom > INITIAL_TSOL_NODELENGTH ?
 			lastAtom : INITIAL_TSOL_NODELENGTH);
 
-		tsol_node = (TsolNodePtr )xalloc((newsize + 1) * sizeof(TsolNodeRec));
+		tsol_node = malloc((newsize + 1) * sizeof(TsolNodeRec));
 		if (tsol_node == NULL) {
 			ErrorF("Cannot allocate memory for Tsol node\n");
 			return;
@@ -232,8 +231,8 @@ UpdateTsolNode(Atom thisAtom, ClientPtr client)
 
 	/* If the node is already allocated, see if it needs to be extended */
 	if (lastAtom > tsol_lastAtom) {
-		tsol_node = (TsolNodePtr )xrealloc(tsol_node, 
-			(lastAtom + 1) * sizeof(TsolNodeRec));
+		tsol_node = realloc(tsol_node,
+				    (lastAtom + 1) * sizeof(TsolNodeRec));
 
 		if (tsol_node == NULL) {
 			ErrorF("Cannot allocate memory for Tsol node\n");
@@ -251,20 +250,23 @@ UpdateTsolNode(Atom thisAtom, ClientPtr client)
 			tsol_node[ia].slcount = 0;
 			tsol_node[ia].sl = NULL;
 			tsol_node[ia].slsize= 0;
-			tsol_node[ia].flags = MatchTsolConfig(atomname, strlen(atomname));
-			tsol_node[ia].IsSpecial = SpecialName(atomname, strlen(atomname));
+			tsol_node[ia].flags = MatchTsolConfig(atomname,
+							      strlen(atomname));
+			tsol_node[ia].IsSpecial = SpecialName(atomname,
+							      strlen(atomname));
 			if (client == NULL) {
-				/* Mark as internal atom for GetAtomName to succeed */
+				/* Mark as internal atom for
+				   GetAtomName to succeed */
 				tsol_node[ia].flags |= TSOLM_ATOM;
 			}
-				
+
 
 		}
 		tsol_lastAtom = lastAtom;
 	}
 
 	/* Store the label info for non-global atoms */
-	if (thisAtom != 0 && client != NULL && 
+	if (thisAtom != 0 && client != NULL &&
 			(tsol_node[thisAtom].flags & TSOLM_ATOM) == 0) {
 		TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
 		TsolNodePtr tndp =  &(tsol_node[thisAtom]);
@@ -279,7 +281,7 @@ UpdateTsolNode(Atom thisAtom, ClientPtr client)
 
 		/* Allocate storage for sl if needed */
 		if (tndp->sl == NULL) {
-			tndp->sl = (bslabel_t **)xalloc(NODE_SLSIZE * (sizeof(bslabel_t *)));
+			tndp->sl = malloc(NODE_SLSIZE * (sizeof(bslabel_t *)));
 
 			if (tndp->sl == NULL) {
 				ErrorF("Not enough memory for atoms\n");
@@ -292,8 +294,8 @@ UpdateTsolNode(Atom thisAtom, ClientPtr client)
 		/* Expand storage space for sl if needed */
 		if (tndp->slsize < tndp->slcount) {
 			newsize = tndp->slsize + NODE_SLSIZE;
-			tndp->sl = (bslabel_t **)xrealloc(tndp->sl, 
-				newsize * (sizeof(bslabel_t *)));
+			tndp->sl = realloc(tndp->sl,
+					   newsize * (sizeof(bslabel_t *)));
 			if (tndp->sl == NULL) {
 				ErrorF("Not enough memory for atoms\n");
 			}
@@ -353,7 +355,6 @@ ProcTsolGetAtomName(ClientPtr client)
     if ((str = NameForAtom(stuff->id)))
     {
         char *blank_str = " ";
-        char *atomname;
 	TsolNodePtr tndp;
 
 	tndp = &(tsol_node[stuff->id]);
@@ -363,7 +364,7 @@ ProcTsolGetAtomName(ClientPtr client)
 	    TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
 
 	    for (k = 0; k < tndp->slcount; k++) {
-		if (tsolinfo->sl == tndp->sl[k]) 
+		if (tsolinfo->sl == tndp->sl[k])
 		    break;
 	    }
 
@@ -381,8 +382,8 @@ ProcTsolGetAtomName(ClientPtr client)
 	(void)WriteToClient(client, len, str);
 	return(client->noClientException);
     }
-    else 
-    { 
+    else
+    {
 	client->errorValue = stuff->id;
 	return (BadAtom);
     }
@@ -393,7 +394,7 @@ TsolInitWindow(ClientPtr client, WindowPtr pWin)
 {
     bslabel_t admin_low;
     TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
-    TsolResPtr  tsolres = TsolResourcePrivate(pWin);
+    TsolResPtr  tsolres = TsolWindowPrivate(pWin);
 
     tsolres->uid = tsolinfo->uid;
     tsolres->sl = tsolinfo->sl;
@@ -417,7 +418,7 @@ int
 TsolInitPixmap(ClientPtr client, PixmapPtr pMap)
 {
     TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
-    TsolResPtr  tsolres = TsolResourcePrivate(pMap);
+    TsolResPtr  tsolres = TsolPixmapPrivate(pMap);
 
     tsolres->uid = tsolinfo->uid;
     tsolres->sl = tsolinfo->sl;
@@ -455,8 +456,10 @@ ResetStripeWindow(ClientPtr client)
 	int         j;
 
 	if (tpwin) {
-            if ((panres = (PanoramiXRes *)LookupIDByType(tpwin->drawable.id,
-			XRT_WINDOW)) == NULL)
+	    rc = dixLookupResourceByType((pointer *) &panres,
+					 tpwin->drawable.id, XRT_WINDOW,
+					 client, DixReadAccess);
+	    if (rc != Success)
 		return;
 	}
 
@@ -465,7 +468,7 @@ ResetStripeWindow(ClientPtr client)
 	    if (panres == NULL)
 		return;
 	    /* Validate trusted stripe window */
-	    rc = dixLookupWindow(&pWin, panres->info[j].id, client, 
+	    rc = dixLookupWindow(&pWin, panres->info[j].id, client,
 		DixReadAccess);
 	    if (rc != Success)
 	        return;
@@ -484,7 +487,7 @@ ResetStripeWindow(ClientPtr client)
     {
 	/* Validate trusted stripe window */
 	if (tpwin) {
-            rc = dixLookupWindow(&pWin, tpwin->drawable.id, client, 
+            rc = dixLookupWindow(&pWin, tpwin->drawable.id, client,
 		DixReadAccess);
             if (rc != Success)
                 return;
@@ -750,7 +753,7 @@ ProcTsolQueryTree(ClientPtr client)
 #endif /* TSOL */
 
     reply.type = X_Reply;
-    reply.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+    reply.root = pWin->drawable.pScreen->root->drawable.id;
     reply.sequenceNumber = client->sequence;
     if (pWin->parent)
 	reply.parent = pWin->parent->drawable.id;
@@ -760,8 +763,9 @@ ProcTsolQueryTree(ClientPtr client)
     for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
 #ifdef TSOL
     {
-	tsolres = TsolResourcePrivate(pChild);
-	if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) == Success) {
+	tsolres = TsolWindowPrivate(pChild);
+	if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) ==
+	    Success) {
 		numChildren++;
     	}
     }
@@ -772,15 +776,16 @@ ProcTsolQueryTree(ClientPtr client)
     {
 	int curChild = 0;
 
-	childIDs = (Window *) xalloc(numChildren * sizeof(Window));
+	childIDs = malloc(numChildren * sizeof(Window));
 	if (!childIDs)
 	    return BadAlloc;
 	for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
 #ifdef TSOL
 	{
 
-	    tsolres = TsolResourcePrivate(pChild);
-	    if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) == Success) {
+	    tsolres = TsolWindowPrivate(pChild);
+	    if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) ==
+		Success) {
 	        childIDs[curChild++] = pChild->drawable.id;
     	    }
     	}
@@ -797,7 +802,7 @@ ProcTsolQueryTree(ClientPtr client)
     {
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, numChildren * sizeof(Window), childIDs);
-	xfree(childIDs);
+	free(childIDs);
     }
 
     return(client->noClientException);
@@ -817,8 +822,7 @@ TsolAuditStart)
     Bool audit_event = FALSE;
     TsolInfoPtr tsolinfo = (TsolInfoPtr)NULL;
     tsolinfo = GetClientTsolInfo(client);
-    if (system_audit_on &&
-	(tsolinfo->amask.am_success || tsolinfo->amask.am_failure)) {
+    if (tsolinfo->amask.am_success || tsolinfo->amask.am_failure) {
 
 	do_x_audit = TRUE;
         auditwrite(AW_PRESELECT, &(tsolinfo->amask), AW_END);
@@ -873,7 +877,7 @@ TsolAuditEnd)
     ClientPtr client = rec->client;
     int result = rec->requestResult;
 
-    char audit_ret = (char)NULL;
+    char audit_ret = (char)0;
     TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
 
     if (tsolinfo->flags & TSOL_DOXAUDIT)
@@ -923,7 +927,7 @@ ProcTsolQueryPointer(ClientPtr client)
     pSprite = mouse->spriteInfo->sprite;
 
     ptrWin = GetSpriteWindow(mouse);
-    tsolres = TsolResourcePrivate(ptrWin);
+    tsolres = TsolWindowPrivate(ptrWin);
     flags = (TSOL_MAC|TSOL_DAC|TSOL_READOP);
 
     if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) == Success) {
@@ -1032,7 +1036,9 @@ TsolDoGetImage(
     {
         if (DrawableIsRoot(pDraw))
         {
-            pWin = XYToWindow(PickPointer(client), x, y);
+            DeviceIntPtr pDev = PickPointer(client);
+            SpritePtr pSprite = pDev->spriteInfo->sprite;
+            pWin = XYToWindow(pSprite, x, y);
             if (!WindowIsRoot(pWin))
             {
                 pDrawtmp = &(pWin->parent->drawable);
@@ -1086,8 +1092,8 @@ TsolDoGetImage(
             box.y1 = pwinbox->y1;
             box.x2 = pwinbox->x2;
             box.y2 = box.y1;
-            tsolres_win = TsolResourcePrivate(pWin);
-            root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+            tsolres_win = TsolWindowPrivate(pWin);
+            root = pWin->drawable.pScreen->root->drawable.id;
             rc = dixLookupWindow(&pRoot, root, client, DixReadAccess);
             if (rc != Success)
 		return rc;
@@ -1154,7 +1160,7 @@ TsolDoGetImage(
     xgi.length = length;
 
     if (im_return) {
-	pBuf = (char *)xalloc(sz_xGetImageReply + length);
+	pBuf = malloc(sz_xGetImageReply + length);
 	if (!pBuf)
 	    return (BadAlloc);
 	if (widthBytesLine == 0)
@@ -1192,7 +1198,7 @@ TsolDoGetImage(
 		length += widthBytesLine;
 	    }
 	}
-	if(!(pBuf = (char *) xalloc(length)))
+	if(!(pBuf = malloc(length)))
 	    return (BadAlloc);
 	WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
     }
@@ -1225,8 +1231,8 @@ TsolDoGetImage(
             over_win = AnyWindowOverlapsJustMe(pWin, pHead, &box);
             if (over_win)
 	    {
-		tsolres = TsolResourcePrivate(over_win);
-    		if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) != Success) 
+		tsolres = TsolWindowPrivate(over_win);
+    		if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) != Success)
                 	overlap = TRUE;
             }
         }
@@ -1283,8 +1289,9 @@ TsolDoGetImage(
                     over_win = AnyWindowOverlapsJustMe(pWin, pHead, &box);
 		    if (over_win)
 		    {
-			tsolres = TsolResourcePrivate(over_win);
-			if (tsol_check_policy(tsolinfo, tsolres, flags, MAJOROP_CODE) != Success) 
+			tsolres = TsolWindowPrivate(over_win);
+			if (tsol_check_policy(tsolinfo, tsolres, flags,
+					      MAJOROP_CODE) != Success)
 				overlap = TRUE;
 		    }
                 }
@@ -1317,7 +1324,7 @@ TsolDoGetImage(
     }
 
     if (!im_return)
-	xfree(pBuf);
+	free(pBuf);
     return (client->noClientException);
 }
 
@@ -1364,7 +1371,6 @@ ProcTsolPolySegment(ClientPtr client)
 int
 ProcTsolPolyRectangle (ClientPtr client)
 {
-    int savedtrust;
     int status;
     GC *pGC;
     DrawablePtr pDraw;
@@ -1392,7 +1398,6 @@ ProcTsolPolyRectangle (ClientPtr client)
 int
 ProcTsolCopyArea (ClientPtr client)
 {
-    int savedtrust;
     int status;
     DrawablePtr pDst;
     DrawablePtr pSrc;

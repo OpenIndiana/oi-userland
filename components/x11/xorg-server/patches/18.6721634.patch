@@ -1,0 +1,72 @@
+# Copyright (c) 2008, 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+diff --git a/hw/xfree86/common/xf86AutoConfig.c b/hw/xfree86/common/xf86AutoConfig.c
+index 95d58fe..0b5f724 100644
+--- a/hw/xfree86/common/xf86AutoConfig.c
++++ b/hw/xfree86/common/xf86AutoConfig.c
+@@ -60,6 +60,18 @@
+ 	"\tIdentifier\t" BUILTIN_DEVICE_NAME "\n" \
+ 	"\tDriver\t\"%s\"\n"
+ 
++#ifdef sun
++/* 
++ * Allow setting an arbitrary number of options.
++ * Each option should be indented with a tab and newline terminated.
++ */ 
++#define BUILTIN_DEVICE_SECTION_PRE_OPT \
++	"Section \"Device\"\n" \
++	"\tIdentifier\t" BUILTIN_DEVICE_NAME "\n" \
++	"\tDriver\t\"%s\"\n" \
++	"%s"
++#endif
++
+ #define BUILTIN_DEVICE_SECTION_POST \
+ 	"EndSection\n\n"
+ 
+@@ -67,6 +79,13 @@
+ 	BUILTIN_DEVICE_SECTION_PRE \
+ 	BUILTIN_DEVICE_SECTION_POST
+ 
++#ifdef sun
++/* Device section with options */
++#define BUILTIN_DEVICE_SECTION_OPT \
++	BUILTIN_DEVICE_SECTION_PRE_OPT \
++	BUILTIN_DEVICE_SECTION_POST
++#endif
++
+ #define BUILTIN_SCREEN_NAME \
+ 	"\"Builtin Default %s Screen %d\""
+ 
+@@ -152,6 +171,14 @@ xf86AutoConfig(void)
+     listPossibleVideoDrivers(deviceList, 20);
+ 
+     for (p = deviceList; *p; p++) {
++#ifdef sun
++        const char *nvidia_string = "nvidia";
++        const char *nvidia_opt_no_logo = "\tOption \"NoLogo\" \"True\"\n";
++        if (!strncmp(*p, nvidia_string, sizeof(nvidia_string)))
++            snprintf(buf, sizeof(buf), BUILTIN_DEVICE_SECTION_OPT,
++                     *p, 0, *p, nvidia_opt_no_logo);
++        else
++#endif
+         snprintf(buf, sizeof(buf), BUILTIN_DEVICE_SECTION, *p, 0, *p);
+         AppendToConfig(buf);
+         snprintf(buf, sizeof(buf), BUILTIN_SCREEN_SECTION, *p, 0, *p, 0);

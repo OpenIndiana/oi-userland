@@ -1,0 +1,16 @@
+## 07_fix_esdcompat_bashism.dpatch by  <ogra@>
+diff -urNad pulseaudio-0.9.5~/src/daemon/esdcompat.in pulseaudio-0.9.5/src/daemon/esdcompat.in
+--- pulseaudio-0.9.5~/src/daemon/esdcompat.in	2006-07-19 20:12:17.000000000 +0200
++++ pulseaudio-0.9.5/src/daemon/esdcompat.in	2007-01-30 23:50:26.000000000 +0100
+@@ -92,7 +92,10 @@
+             ;;
+     esac
+ 
+-    shift
++    # don't try to shift nonexisting args
++    if [ $1 ]; then
++        shift
++    fi
+ done
+ 
+ eval "exec '@PA_BINARY@'$ARGS"

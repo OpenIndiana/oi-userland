@@ -19,6 +19,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license docbook.license license='docbook'
 
+# We must refresh (not just restart) the FMRI so it deletes old catalogs
+<transform file path=.* ->  default refresh_fmri svc:/application/desktop-cache/docbook-catalog-update:default>
+
 file files/docbook-catalog-uninstall.sh path=usr/share/sgml/docbook/docbook-catalog-uninstall.sh mode=0555
 file files/docbook-catalog-install.sh path=usr/share/sgml/docbook/docbook-catalog-install.sh mode=0555
 file files/docbook-catalog-update.sh path=lib/svc/method/docbook-catalog-update.sh mode=0555

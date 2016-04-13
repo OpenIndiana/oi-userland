@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.16.3
+COMPONENT_REVISION=	4
 PERL_VERSION=		5.16
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,6 +47,8 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 LD_B_DIRECT=		""
+
+COMPONENT_BUILD_ARGS =
 
 #
 # Override these compiler settings because they are causing problems
@@ -77,7 +80,6 @@ CONFIGURE_OPTIONS = \
 			-Dcf_by="perl-bugs" \
 			-Dlibperl=libperl.so \
 			-Dmyhostname="localhost" \
-			-Dperl_static_inline="static" \
 			-Dprefix=/usr/perl5/$(PERL_VERSION) \
                         -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
 			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \

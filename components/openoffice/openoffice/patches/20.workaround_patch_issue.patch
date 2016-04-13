@@ -1,0 +1,15 @@
+https://bz.apache.org/ooo/show_bug.cgi?id=126258
+
+Don't patch files accross ../
+
+--- aoo-4.1.1/main/odk/pack/gendocu/makefile.mk	2014-02-25 12:20:40.000000000 +0400
++++ aoo-4.1.1/main/odk/pack/gendocu/makefile.mk	2015-07-20 10:52:54.828902820 +0300
+@@ -112,7 +112,7 @@
+ 	-$(MKDIRHIER) $(@:d)        
+ 	$(JAVADOC) -J-Xmx120m $(JAVADOCPARAMS) > $(JAVADOCLOG)
+ .IF "$(OS)" != "MACOSX"
+-	patch $(JAVA_DOCU_INDEX_FILE) idl_ref_javadoc.patch
++        cd $(shell dirname $(JAVA_DOCU_INDEX_FILE)) && patch $(shell basename $(JAVA_DOCU_INDEX_FILE)) $(PWD)/idl_ref_javadoc.patch
+ .ENDIF
+ .ENDIF
+ 

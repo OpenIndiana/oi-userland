@@ -1,0 +1,38 @@
+--- /usr/tmp/clean/avahi-0.6.28/configure.ac	2010-10-05 00:33:15.689579806 +0100
++++ avahi-0.6.28/configure.ac	2011-01-21 09:13:07.100772101 +0000
+@@ -23,7 +23,7 @@
+ AC_CONFIG_SRCDIR([avahi-core/server.c])
+ AC_CONFIG_MACRO_DIR([common])
+ AC_CONFIG_HEADERS([config.h])
+-AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax])
++AM_INIT_AUTOMAKE([foreign 1.10 -Wall -Wno-portability tar-pax])
+ 
+ AC_SUBST(PACKAGE_URL, [http://avahi.org/])
+ 
+@@ -43,7 +43,7 @@
+ 
+ AC_CANONICAL_HOST
+ 
+-AM_SILENT_RULES([yes])
++#AM_SILENT_RULES([yes])
+ 
+ AC_CHECK_PROG([STOW], [stow], [yes], [no])
+ 
+@@ -153,6 +153,17 @@
+ ACX_PTHREAD(,AC_MSG_ERROR([Missing POSIX Threads support]))
+ 
+ #
++# Check for dns_sd.h
++#
++AC_CHECK_HEADER(dns_sd.h,
++HAVE_BONJOUR=yes
++AC_DEFINE([HAVE_BONJOUR],[],[Support for Bonjour])
++, [], [
++])
++
++AM_CONDITIONAL(HAVE_BONJOUR, [ test x"$HAVE_BONJOUR" = xyes ])
++
++#
+ # Check for netlink.h
+ #
+ AC_CHECK_HEADER(linux/netlink.h,

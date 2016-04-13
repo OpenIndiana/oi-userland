@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= libpqxx
 
 COMPONENT_VERSION= 4.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -39,15 +40,11 @@ COMPONENT_PREP_ACTION = \
 	   automake;\
 	   autoconf )
 
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
-
-CONFIGURE_PREFIX= /usr/g++
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
-COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTO_DIR)/usr/g++/share/doc/libpqxx-4.0 && \
-	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTO_DIR)/usr/g++/share/doc/libpqxx-4.0 )  
+COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 && \
+	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 )  
 
 build: $(BUILD_32_and_64)
 

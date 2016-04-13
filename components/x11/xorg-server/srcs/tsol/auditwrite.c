@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -40,6 +40,7 @@
 #include <thread.h>
 #include <synch.h>
 #include <bsm/audit.h>
+#include <bsm/adt.h>
 #include <bsm/audit_record.h>
 #include <bsm/libbsm.h>
 #include "auditwrite.h"
@@ -380,7 +381,11 @@ static int auditctl(uint32_t command, uint32_t value, caddr_t data);
 static void aw_debuglog(char *string, int rc, int param, va_list arglist);
 #endif
 
-extern int	cannot_audit(int);
+/* adt private */
+extern	void adt_get_asid(const adt_session_data_t *, au_asid_t *);
+extern	void adt_get_auid(const adt_session_data_t *, au_id_t *);
+extern	void adt_get_mask(const adt_session_data_t *, au_mask_t *);
+extern	void adt_get_termid(const adt_session_data_t *, au_tid_addr_t *);
 
 /*
  * a w _ g e t _ a r g s ( )
@@ -424,10 +429,6 @@ auditwrite(int param, ...)
 	int get_rd;		/* rd to pass back */
 	register int i;		/* counter */
 	int retval;		/* return value */
-
-	/* Is auditing even enabled?  If not, just exit */
-	if (cannot_audit(0) == 1)
-		AW_GEN_ERR(AW_ERR_AUDITON_FAIL);
 
 	/* Grab the lock */
 	(void) mutex_lock(&mutex_auditwrite);
@@ -574,18 +575,18 @@ auditwrite(int param, ...)
 		break;
 
 	case AW_NOPRESELECT_FLAG: {
-		auditinfo_addr_t auinfo;	/* temporary holder */
-
-		pmask.am_success = pmask.am_failure = 0;
+		adt_session_data_t	*ah;
 
 		/* Get the info from the proc */
-		if (getaudit_addr(&auinfo, sizeof (auinfo)) == -1) {
+		if (adt_start_session(&ah, NULL, ADT_USE_PROC_DATA) != 0) {
 			aw_set_err(AW_ERR_GETAUDIT_FAIL);
 			retval = AW_ERR_RTN;
 		}
 
 		/* Stuff the real values in */
-		pmask = auinfo.ai_mask;
+		adt_get_mask(ah, &pmask);
+
+		(void) adt_end_session(ah);
 
 		aw_static_flags &= ~AW_PRESELECT_FLAG;
 		break;
@@ -980,7 +981,10 @@ aw_do_subject(int rd)
 {
 	token_t *tokp;
 	gid_t gidset[NGROUPS_MAX];
-	auditinfo_addr_t auinfo;
+	adt_session_data_t      *ah;
+	au_asid_t		asid;
+	au_id_t			auid;
+	au_tid_addr_t		tid;
 	bslabel_t label_p;
 
 	/*
@@ -990,25 +994,32 @@ aw_do_subject(int rd)
 	if (AW_REC_SUBJECT_FLAG & aw_recs[rd]->aflags)
 		return (AW_SUCCESS_RTN);
 
-	if (getaudit_addr(&auinfo, sizeof (auinfo)) != 0)
+	if (adt_start_session(&ah, NULL, ADT_USE_PROC_DATA) != 0) {
 		AW_GEN_ERR(AW_ERR_GETAUDIT_FAIL);
+	} 
+	adt_get_asid(ah, &asid);
+	adt_get_termid(ah, &tid);
+	adt_get_auid(ah, &auid);
 
 	/*
 	 * Add the subject token using the values we have.
 	 * Append them to the record under construction
 	 */
 
-	if ((tokp = au_to_subject_ex(auinfo.ai_auid, geteuid(),
+	if ((tokp = au_to_subject_ex(auid, geteuid(),
 		    getegid(), getuid(), getgid(), getpid(),
-		    auinfo.ai_asid, &auinfo.ai_termid))
+		    asid, &tid))
 		    == (token_t *)0)
+		(void) adt_end_session(ah);
 		AW_GEN_ERR(AW_ERR_ALLOC_FAIL);
 	if (aw_buf_append(&(aw_recs[rd]->buf), &(aw_recs[rd]->len),
 		tokp->tt_data, (int)tokp->tt_size) ==
 		AW_ERR_RTN) {
+		(void) adt_end_session(ah);
 		aw_free_tok(tokp);
 		return (AW_ERR_RTN);
 	}
+	(void) adt_end_session(ah);
 	aw_free_tok(tokp);
 
 	/* Go grab the sensitivity label for this process */
@@ -2221,8 +2232,8 @@ aw_rec_init(aw_rec_t *rec)
 	rec->context.static_flags = AW_NO_FLAGS;
 	rec->context.save_rd = AW_NO_RD;
 	rec->context.aw_errno = AW_ERR_NO_ERROR;
-	rec->context.pmask.am_success = 0;
-	rec->context.pmask.am_failure = 0;
+	rec->context.pmask.am_success = AU_MASK_NONE;
+	rec->context.pmask.am_failure = AU_MASK_NONE;
 }
 /*
  * a w _ r e c _ a l l o c ( )
@@ -2429,7 +2440,7 @@ aw_set_event(int rd, au_event_t event_id, uint_t class)
 static int
 aw_init(void)
 {
-	auditinfo_addr_t auinfo;	/* tmp holder for masks */
+	adt_session_data_t	*ah;
 
 	aw_errno = AW_ERR_NO_ERROR;	/* No error so far */
 
@@ -2460,11 +2471,14 @@ aw_init(void)
 	 * to reduce system call overhead. If they change, we will be
 	 * auditing with stale values.
 	 */
-	if (getaudit_addr(&auinfo, sizeof (auinfo)) == -1)
+	if (adt_start_session(&ah, NULL, ADT_USE_PROC_DATA) != 0) {
 		AW_GEN_ERR(AW_ERR_GETAUDIT_FAIL);
+	}
 
 	/* Stuff the real values in */
-	pmask = auinfo.ai_mask;
+	adt_get_mask(ah, &pmask);
+
+	(void) adt_end_session(ah);
 
 	if (auditon(A_GETPOLICY, (caddr_t)&audit_policies, 0) == -1)
 		AW_GEN_ERR(AW_ERR_AUDIT_FAIL);

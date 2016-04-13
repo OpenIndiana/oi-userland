@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
 COMPONENT_VERSION=	2.1.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
 COMPONENT_SRC_NAME=	expat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)

@@ -34,15 +34,13 @@ Various settings to meet Sun/Solaris policies/customizations, including:
 6526791 xscreensaver and Xorg need to change timeouts for MOU4
 6652454 xscreensaver does not invoke after IDLE time expires from a Sun Ray DTU
 ---
-diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
---- driver/XScreenSaver.ad.in
-+++ driver/XScreenSaver.ad.in
-@@ -28,24 +28,25 @@
+--- driver/XScreenSaver.ad.in.~1~	2015-06-25 21:58:53.000000000 +0300
++++ driver/XScreenSaver.ad.in	2015-08-21 14:14:24.384543641 +0300
+@@ -28,41 +28,41 @@
  
  ! /* (xrdb prevention kludge: whole file)
  
 -*mode:			random
-+! We want the default mode to be just blank the screen
 +*mode:			blank
  *timeout:		0:10:00
  *cycle:			0:10:00
@@ -72,7 +70,6 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  *verbose:		False
  *timestamp:		True
  *fade:			True
-@@ -52,16 +53,16 @@
  *unfade:		False
  *fadeSeconds:		0:00:03
  *fadeTicks:		20
@@ -82,6 +79,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  *visualID:		default
  *captureStderr: 	True
  *ignoreUninstalledPrograms: False
+ *authWarningSlack:	20
  
 -*textMode:		file
 +*textMode:		date
@@ -89,10 +87,10 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  *textFile:		@DEFAULT_TEXT_FILE@
 -*textProgram:		fortune
 +*textProgram:		date
- *textURL:		http://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
+ *textURL:		https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
  
  *overlayTextForeground:	#FFFF00
-@@ -75,7 +76,7 @@
+@@ -76,7 +76,7 @@
  *procInterrupts:	True
  
  ! Turning this on makes pointerHysteresis not work.
@@ -101,7 +99,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  
  ! Set this to True if you are experiencing longstanding XFree86 bug #421
  ! (xscreensaver not covering the whole screen)
-@@ -160,8 +161,8 @@
+@@ -162,23 +162,23 @@
  @GL_KLUDGE@ GL: 				superquadrics -root			    \n\
  				attraction -root			    \n\
  				blitspin -root				    \n\
@@ -112,7 +110,6 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  				hopalong -root				    \n\
  				imsmap -root				    \n\
  -				noseguy -root				    \n\
-@@ -168,15 +169,15 @@
  -				pyro -root				    \n\
  				qix -root				    \n\
  -				rocks -root				    \n\
@@ -132,7 +129,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  				deco -root				    \n\
  				drift -root				    \n\
  -				fadeplot -root				    \n\
-@@ -185,13 +186,13 @@
+@@ -187,13 +187,13 @@
  				grav -root				    \n\
  				ifs -root				    \n\
  @GL_KLUDGE@ GL: 				jigsaw -root				    \n\
@@ -149,7 +146,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  				penrose -root				    \n\
  @GL_KLUDGE@ GL: 				pipes -root				    \n\
  				rd-bomb -root				    \n\
-@@ -206,7 +207,7 @@
+@@ -208,7 +208,7 @@
  				xjack -root				    \n\
  				xlyap -root				    \n\
  @GL_KLUDGE@ GL: 				atlantis -root				    \n\
@@ -158,7 +155,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				bubble3d -root				    \n\
  @GL_KLUDGE@ GL: 				cage -root				    \n\
  -				crystal -root				    \n\
-@@ -219,7 +220,7 @@
+@@ -221,7 +221,7 @@
  				interference -root			    \n\
  				kumppa -root				    \n\
  @GL_KLUDGE@ GL: 				lament -root				    \n\
@@ -167,7 +164,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				sonar -root				    \n\
  @GL_KLUDGE@ GL: 				stairs -root				    \n\
  				truchet -root				    \n\
-@@ -227,9 +228,9 @@
+@@ -229,9 +229,9 @@
  				blaster -root				    \n\
  				bumps -root				    \n\
  				ccurve -root				    \n\
@@ -179,7 +176,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GLE_KLUDGE@ GL: 				extrusion -root				    \n\
  -				loop -root				    \n\
  				penetrate -root				    \n\
-@@ -243,7 +244,7 @@
+@@ -245,7 +245,7 @@
  				squiral -root				    \n\
  				wander -root				    \n\
  -				webcollage -root			    \n\
@@ -188,7 +185,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  				xmatrix -root				    \n\
  @GL_KLUDGE@ GL: 				gflux -root				    \n\
  -				nerverot -root				    \n\
-@@ -258,7 +259,7 @@
+@@ -260,14 +260,14 @@
  @GL_KLUDGE@ GL: 				menger -root				    \n\
  @GL_KLUDGE@ GL: 				molecule -root				    \n\
  				rotzoomer -root				    \n\
@@ -197,7 +194,6 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				starwars -root				    \n\
  @GL_KLUDGE@ GL: 				stonerview -root			    \n\
  				vermiculate -root			    \n\
-@@ -265,7 +266,7 @@
  				whirlwindwarp -root			    \n\
  				zoom -root				    \n\
  				anemone -root				    \n\
@@ -206,7 +202,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				boxed -root				    \n\
  @GL_KLUDGE@ GL: 				cubenetic -root				    \n\
  @GL_KLUDGE@ GL: 				endgame -root				    \n\
-@@ -294,12 +295,11 @@
+@@ -296,12 +296,11 @@
  @GL_KLUDGE@ GL: 				cubestorm -root				    \n\
  				eruption -root				    \n\
  @GL_KLUDGE@ GL: 				flipflop -root				    \n\
@@ -220,7 +216,7 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				hypertorus -root			    \n\
  - GL: 				jigglypuff -root			    \n\
  				metaballs -root				    \n\
-@@ -319,7 +319,6 @@
+@@ -321,7 +320,6 @@
  				intermomentary -root			    \n\
  				memscroller -root			    \n\
  @GL_KLUDGE@ GL: 				noof -root				    \n\
@@ -228,11 +224,11 @@ diff driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				pinion -root				    \n\
  @GL_KLUDGE@ GL: 				polyhedra -root				    \n\
  - GL: 				providence -root			    \n\
-@@ -455,7 +454,6 @@
+@@ -467,7 +465,6 @@
  *hacks.flipscreen3d.name:   FlipScreen3D
  *hacks.fliptext.name:       FlipText
  *hacks.fluidballs.name:     FluidBalls
 -*hacks.flyingtoasters.name: FlyingToasters
  *hacks.fontglide.name:      FontGlide
  *hacks.fuzzyflakes.name:    FuzzyFlakes
- *hacks.gflux.name:          GFlux
+ *hacks.geodesicgears.name:  GeodesicGears

@@ -27,12 +27,13 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
 COMPONENT_VERSION=	6.3.26
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1c724a4e48c47e84981aef0da31cf01e0334c99b295d907d0d21d31674762a23
-COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME).berlios/files/$(COMPONENT_ARCHIVE)/download
+COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
 COMPONENT_BUGDB=	utility/fetchmail
 
 include ../../make-rules/prep.mk

@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= ptlib
 
 COMPONENT_VERSION= 2.6.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -36,8 +37,6 @@ COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf &&\
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_PREFIX=/usr/g++
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-plugins

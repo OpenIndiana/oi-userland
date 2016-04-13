@@ -1,0 +1,50 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file usr/bin/lame path=usr/bin/$(MACH32)/lame
+hardlink path=usr/bin/lame target=../lib/isaexec pkg.linted.userland.action002.0=true
+
+file path=usr/bin/$(MACH64)/lame
+file path=usr/include/lame/lame.h
+link path=usr/lib/$(MACH64)/libmp3lame.so target=libmp3lame.so.0.0.0
+link path=usr/lib/$(MACH64)/libmp3lame.so.0 target=libmp3lame.so.0.0.0
+file path=usr/lib/$(MACH64)/libmp3lame.so.0.0.0
+link path=usr/lib/libmp3lame.so target=libmp3lame.so.0.0.0
+link path=usr/lib/libmp3lame.so.0 target=libmp3lame.so.0.0.0
+file path=usr/lib/libmp3lame.so.0.0.0
+file path=usr/share/doc/lame/html/about.html
+file path=usr/share/doc/lame/html/abr.html
+file path=usr/share/doc/lame/html/cbr.html
+file path=usr/share/doc/lame/html/contact.html
+file path=usr/share/doc/lame/html/contributors.html
+file path=usr/share/doc/lame/html/detailed.html
+file path=usr/share/doc/lame/html/history.html
+file path=usr/share/doc/lame/html/index.html
+file path=usr/share/doc/lame/html/introduction.html
+file path=usr/share/doc/lame/html/links.html
+file path=usr/share/doc/lame/html/list.html
+file path=usr/share/doc/lame/html/ms_stereo.html
+file path=usr/share/doc/lame/html/usage.html
+file path=usr/share/doc/lame/html/vbr.html
+file path=usr/share/man/man1/lame.1

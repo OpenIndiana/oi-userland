@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.16.1
+COMPONENT_VERSION=	0.19.6
 IPS_PKG_NAME=		text/gnu-gettext
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0bf850d1a079fb5a61f0a47b1a9efd35eb44032255375e1cedb0253bc27b376d
+    sha256:9b95816620fd1168cb4eeca0e9dc0ffd86e864fc668f76f5e37cc054d6982e51
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-gettext
 
@@ -46,6 +46,21 @@ CONFIGURE_OPTIONS  +=		--without-emacs
 CONFIGURE_OPTIONS  +=		--disable-openmp
 CONFIGURE_OPTIONS  +=		--disable-static
 #CONFIGURE_OPTIONS  +=		--disable-shared
+
+# Fixes coredump in gnulib-test/test-localename test
+CONFIGURE_OPTIONS  +=		ac_cv_func_newlocale=no
+
+# Tests should run in a clean environment
+COMPONENT_TEST_ENV =	-i
+COMPONENT_TEST_ENV +=	PATH=${PATH}
+
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
+
 
 # common targets
 build:		$(BUILD_32)

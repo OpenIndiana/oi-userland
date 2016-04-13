@@ -1,0 +1,30 @@
+--- glib-2.37.0/configure.ac.orig	Fri May  3 14:52:05 2013
++++ glib-2.37.0/configure.ac	Fri May  3 14:55:44 2013
+@@ -3056,12 +3056,21 @@
+ _______EOF
+ 
+         cat >>$outfile <<_______EOF
+-typedef signed $glib_ssize_type_define gssize;
+-typedef unsigned $glib_size_type_define gsize;
+-#define G_GSIZE_MODIFIER $gsize_modifier
+-#define G_GSSIZE_MODIFIER $gssize_modifier
+-#define G_GSIZE_FORMAT $gsize_format
+-#define G_GSSIZE_FORMAT $gssize_format
++#if (defined (__amd64) || defined(__sparcv9))
++typedef signed long gssize;
++typedef unsigned long gsize;
++#define G_GSIZE_MODIFIER "l"
++#define G_GSSIZE_FORMAT "li"
++#define G_GSIZE_FORMAT "lu"
++#define G_GSSIZE_MODIFIER "l"
++#else
++typedef signed int gssize;
++typedef unsigned int gsize;
++#define G_GSIZE_MODIFIER ""
++#define G_GSSIZE_FORMAT "i"
++#define G_GSIZE_FORMAT "u"
++#define G_GSSIZE_MODIFIER ""
++#endif
+ 
+ #define G_MAXSIZE	G_MAXU$glib_msize_type
+ #define G_MINSSIZE	G_MIN$glib_mssize_type

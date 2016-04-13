@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= w3m
 
 COMPONENT_VERSION= 0.5.3
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= A text-based web browser
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -36,7 +37,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-browser=/usr/bin/firefox
-CONFIGURE_OPTIONS+= --with-gc=/usr/g++
 
 build: $(BUILD_32)
 

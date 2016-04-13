@@ -9,21 +9,3 @@
          return SNMP_ERR_NOERROR;
      }
  
-@@ -408,6 +410,8 @@
-                 /*
-                  * too large 
-                  */
-+                if (pdu)
-+                    snmp_free_pdu(pdu);
-                 snmp_log(LOG_ERR,
-                          "proxy oid request length is too long\n");
-                 return SNMP_ERR_NOERROR;
-@@ -437,6 +441,8 @@
-      */
-     if (!proxy_fill_in_session(handler, reqinfo, (void **)&configured)) {
-         netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
-+        if (pdu)
-+            snmp_free_pdu(pdu);
-         return SNMP_ERR_NOERROR;
-     }
- 

@@ -1,0 +1,170 @@
+--- gftp-2.0.19/lib/parse-dir-listing.c.orig	2008-12-09 11:58:27.338209964 +0900
++++ gftp-2.0.19/lib/parse-dir-listing.c	2008-12-09 12:06:12.492612579 +0900
+@@ -97,7 +97,7 @@ parse_time (char *str, char **endpos)
+ {
+   struct tm curtime, *loctime;
+   time_t t, ret;
+-  char *tmppos;
++  char *tmppos, *format;
+   size_t slen;
+   int i, num;
+ 
+@@ -131,7 +131,18 @@ parse_time (char *str, char **endpos)
+ 
+       if (strchr (str, ':') != NULL)
+         {
++#ifndef __sun
+           tmppos = strptime (str, "%h %d %H:%M", &curtime);
++#else
++#  if ENABLE_NLS
++          format = dcgettext ("SUNW_OST_OSCMD", " %b %e %H:%M", LC_TIME);
++          if (format && *format == ' ')
++            format++;
++          tmppos = strptime (str, format, &curtime);
++#  else
++          tmppos = strptime (str, "%b %e %H:%M", &curtime);
++#  endif
++#endif
+           t = time (NULL);
+           loctime = localtime (&t);
+ 
+@@ -141,7 +152,20 @@ parse_time (char *str, char **endpos)
+             curtime.tm_year = loctime->tm_year;
+         }
+       else
+-        tmppos = strptime (str, "%h %d %Y", &curtime);
++        {
++#ifndef __sun
++          tmppos = strptime (str, "%h %d %Y", &curtime);
++#else
++#  if ENABLE_NLS
++          format = dcgettext ("SUNW_OST_OSCMD", " %b %e  %Y", LC_TIME);
++          if (format && *format == ' ')
++            format++;
++          tmppos = strptime (str, format, &curtime);
++#  else
++          tmppos = strptime (str, "%b %e  %Y", &curtime);
++#  endif
++#endif
++        }
+     }
+ 
+   if (tmppos != NULL)
+@@ -387,6 +411,7 @@ gftp_parse_ls_unix (gftp_request * reque
+                     gftp_file * fle)
+ {
+   char *endpos, *startpos, *pos, *attribs;
++  char *backup_lc_time, *remote_lc_time;
+   int cols;
+ 
+   /* If there is no space between the attribs and links field, just make one */
+@@ -494,7 +519,17 @@ gftp_parse_ls_unix (gftp_request * reque
+   while (*startpos == ' ')
+     startpos++;
+ 
++#if ENABLE_NLS
++  backup_lc_time = setlocale (LC_TIME, NULL);
++  gftp_lookup_request_option (request, "remote_lc_time", &remote_lc_time);
++  if (backup_lc_time && remote_lc_time != NULL && *remote_lc_time != '\0')
++    setlocale (LC_TIME, remote_lc_time);
++#endif
+   fle->datetime = parse_time (startpos, &startpos);
++#if ENABLE_NLS
++  if (backup_lc_time && remote_lc_time != NULL && *remote_lc_time != '\0')
++    setlocale (LC_TIME, backup_lc_time);
++#endif
+ 
+   /* Skip the blanks till we get to the next entry */
+   startpos = goto_next_token (startpos);
+--- gftp-2.0.19/lib/protocols.c.orig	2008-12-09 11:42:25.720946263 +0900
++++ gftp-2.0.19/lib/protocols.c	2008-12-09 14:18:02.831821587 +0900
+@@ -362,12 +362,13 @@ gftp_stat_filename (gftp_request * reque
+ int
+ gftp_list_files (gftp_request * request)
+ {
+-  char *remote_lc_time, *locret;
+-  int fd;
++  char *backup_lc_time, *remote_lc_time, *locret;
++  int fd, ret;
+ 
+   g_return_val_if_fail (request != NULL, GFTP_EFATAL);
+ 
+ #if ENABLE_NLS
++  backup_lc_time = setlocale (LC_TIME, NULL);
+   gftp_lookup_request_option (request, "remote_lc_time", &remote_lc_time);
+   if (remote_lc_time != NULL && *remote_lc_time != '\0')
+     locret = setlocale (LC_TIME, remote_lc_time);
+@@ -394,6 +395,9 @@ gftp_list_files (gftp_request * request)
+ 
+       request->cachefd = fd;
+       request->cached = 1;
++#if ENABLE_NLS
++      setlocale (LC_TIME, backup_lc_time);
++#endif
+       return (0);
+     }
+   else if (request->use_cache)
+@@ -407,9 +411,18 @@ gftp_list_files (gftp_request * request)
+     }
+ 
+   if (request->list_files == NULL)
+-    return (GFTP_EFATAL);
++    {
++#if ENABLE_NLS
++      setlocale (LC_TIME, backup_lc_time);
++#endif
++      return (GFTP_EFATAL);
++    }
+ 
+-  return (request->list_files (request));
++  ret = request->list_files (request);
++#if ENABLE_NLS
++  setlocale (LC_TIME, backup_lc_time);
++#endif
++  return (ret);
+ }
+ 
+ 
+@@ -795,6 +808,12 @@ gftp_set_account (gftp_request * request
+ int
+ gftp_set_directory (gftp_request * request, const char *directory)
+ {
++  mode_t st_mode;
++  off_t linksize;
++  char *locale_directory = NULL;
++  int fd;
++  size_t dest_len;
++
+   g_return_val_if_fail (request != NULL, GFTP_EFATAL);
+   g_return_val_if_fail (directory != NULL, GFTP_EFATAL);
+ 
+@@ -809,6 +828,29 @@ gftp_set_directory (gftp_request * reque
+         }
+       return (0);
+     }
++  else if (request->url_prefix && !strcmp (request->url_prefix, "file"))
++    {
++      st_mode = 0;
++      linksize = 0;
++      gftp_stat_filename (request, directory, &st_mode, &linksize);
++      if (!S_ISDIR (st_mode))
++        {
++          locale_directory = gftp_filename_from_utf8 (request, directory, &dest_len);
++          if (locale_directory != NULL &&
++              (fd = gftp_fd_open (request, locale_directory, O_RDONLY, 0)) != -1)
++            {
++              close (fd);
++              request->directory = g_strdup (directory);
++            }
++          else if ((fd = gftp_fd_open (request, directory, O_RDONLY, 0)) != -1)
++            {
++              close (fd);
++              request->directory = g_strdup (directory);
++            }
++          g_free (locale_directory);
++          return (0);
++        }
++    }
+   else if (request->chdir == NULL)
+     return (GFTP_EFATAL);
+   return (request->chdir (request, directory));

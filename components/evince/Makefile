@@ -18,15 +18,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evince
-COMPONENT_VERSION=	2.30.3
+COMPONENT_VERSION=	2.32.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-	sha256:daddd9720bf8fc0156d9a4a5a85485c232393896376707cf7fcedfcbc515732f
+	sha256:2a4c91ae38f8b5028cebb91b9da9ddc50ea8ae3f3d429df89ba351da2d787ff7
 COMPONENT_ARCHIVE_URL= \
-	http://ftp.gnome.org/pub/GNOME/sources/evince/2.30/$(COMPONENT_ARCHIVE)
+	http://ftp.gnome.org/pub/GNOME/sources/evince/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Evince
-COMPONENT_AUTOGEN_MANIFEST=	yes
 COMPONENT_FMRI=		desktop/pdf-viewer/evince
 COMPONENT_SUMMARY=	GNOME PDF document viewer
 COMPONENT_LICENSE=	GPLv2
@@ -41,6 +41,9 @@ COMPONENT_PREP_ACTION += \
 
 # For GNU gettext
 CONFIGURE_ENV += PATH=/usr/gnu/bin:$(PATH)
+
+CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
+CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 build:		$(BUILD_32)
 

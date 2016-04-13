@@ -32,7 +32,7 @@ COMPONENT_PROJECT_URL=	http://grails.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:529e3cb766e1d49ef60f591f4b9355c5f3d090e38ba193505685cc0cdb729a59
-COMPONENT_ARCHIVE_URL=	http://dist.codehaus.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/grails
 
 include ../../make-rules/prep.mk
@@ -55,8 +55,6 @@ PKG_PROTO_DIRS = $(BUILD_DIR_32) $(MANGLED_DIR) $(PROTO_DIR) $(@D) \
 	$(COMPONENT_DIR) $(COMPONENT_SRC)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-JAVA_HOME=/usr/jdk/openjdk1.7.0
 
 # common targets
 build:		$(BUILD_32)

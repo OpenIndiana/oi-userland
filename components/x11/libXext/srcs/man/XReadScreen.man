@@ -1,0 +1,145 @@
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XReadScreen __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XReadScreen" "" "\f3XReadScreen\f1(3) \(em returns the displayed colors in a rectangle of the screen.
+.SH NAME
+XReadScreen \- returns the displayed colors in a rectangle of the screen
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3XImage *\f1
+.B XReadScreen
+.B (Display
+.I *display,
+.B Window
+.I w,
+.B int
+.I x,
+.B int
+.I y,
+.B unsigned int
+.I width,
+.B unsigned int
+.I height,
+.B Bool
+.I includeCursor)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I w
+Specifies the window from whose screen the data is read.
+.TP
+.I x, y
+Specify the X and Y coordinates of the upper-left corner
+of the rectangle relative to the origin of the window
+.I w.
+.TP
+.I width, height
+Specify the width and height of the rectangle.
+.TP
+.I includeCursor
+Specifies whether the cursor image is to be included in the colors returned.
+.SH DESCRIPTION
+This routine provides access to the colors displayed on the screen of the given
+window.  On some types of advanced display devices, the displayed colors can be
+a composite of the data contained in several different frame stores and these
+frame stores can be of different depth and visual types.
+.LP
+In addition, there can be overlay/underlay window pairs in which part of the
+underlay is visible beneath the overlay.  Because the data returned by
+.B XGetImage
+is undefined for portions of the rectangle that have different depths,
+.B XGetImage
+is inadequate to return a picture of the what user is actually seeing on the
+screen.  In addition,
+.B XGetImage
+cannot composite pixel information for an overlay/underlay window pair because
+the pixel information lies in different drawables.
+.B XReadScreen
+addresses these problems.
+.LP
+Rather than returning pixel information,
+.B XReadScreen
+returns color information-the actual displayed colors visible on the screen.
+It returns the color information from any window within the boundaries of the
+specified rectangle.  Unlike
+.B XGetImage,
+the returned contents of visible regions of inferior or overlapping windows of
+a different depth than the specified window's depth are not undefined.
+Instead, the actual displayed colors for these windows is returned.
+.LP
+\f3Note:\f1 The colors returned are the ones that would be displayed if an
+unlimited number of hardware color LUTs were available on the screen.  Thus, the
+colors returned are the theoretical display colors.  If colormap flashing is
+present on the screen because there aren't enough hardware color LUTs to
+display all of the software colormaps simultaneously, the returned colors may
+be different from the colors that are actually displayed.
+.LP
+If
+.I w
+is an overlay window, the overlay color information is returned everywhere
+there is opaque paint in the specified rectangle.  The color information of
+the underlay is returned everywhere there is transparent paint in the overlay.
+In general, since this underlay can be an overlay window containing transparent
+paint, the color information for a coordinate (x, y) which contains transparent
+paint is the youngest non-inferior that has opaque paint at (x, y).
+.LP
+The color data is returned as an
+.B XImage.
+The returned image has the same width and height as the arguments specified.
+The format of the image is
+.B ZPixmap.
+The depth of the image is 24 and the bits_per_pixel is 32.
+The most significant 8 bits of color information for each color channel
+(red, green blue) will be returned in the bit positions defined by
+.I red_mask,
+.I green_mask,
+and
+.I blue_mask
+in the
+.B XImage.
+The values of the following attributes of the
+.B XImage
+are server dependent:
+.I byte_order, bitmap_unit,
+.I bitmap_bit_order,
+.I bitmap_pad,
+.I bytes_per_line,
+.I red_mask,
+.I green_mask,
+.I blue_mask.
+.LP
+If
+.I includeCursor
+is
+.SB True,
+the cursor image is included in the returned colors.  Otherwise, it is excluded.
+.LP
+Note that the borders of the argument window (and other windows) can be included
+and read with this request.
+.LP
+If a problem occurs,
+.B XReadScreen
+returns NULL.

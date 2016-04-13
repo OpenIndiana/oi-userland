@@ -1,0 +1,13 @@
+--- mm-common-0.9.7/util/mm-common-prepare.in.~1~	2014-11-28 12:03:47.841861286 +0300
++++ mm-common-0.9.7/util/mm-common-prepare.in	2014-11-28 12:05:40.825647612 +0300
+@@ -85,8 +85,8 @@
+ 
+ # Extract the directory macro arguments from configure.ac
+ s='	 ' # tab+space
+-auxdir=`sed -n "s/^[$s]*AC_CONFIG_AUX_DIR([[$s]*\\([^])\$,$s]*\\).*/\\1/p" "$acfile"`
+-doctooldir=`sed -n "s/^[$s]*MM_CONFIG_DOCTOOL_DIR([[$s]*\\([^])\$,$s]*\\).*/\\1/p" "$acfile"`
++auxdir=`@SED@ -n "s/^[$s]*AC_CONFIG_AUX_DIR([[$s]*\\([^])\$,$s]*\\).*/\\1/p" "$acfile"`
++doctooldir=`@SED@ -n "s/^[$s]*MM_CONFIG_DOCTOOL_DIR([[$s]*\\([^])\$,$s]*\\).*/\\1/p" "$acfile"`
+ 
+ auxdir=$srcdir${auxdir:+/}$auxdir
+ echo "$progname: putting auxiliary files in '$auxdir'."

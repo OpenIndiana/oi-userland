@@ -1,14 +1,40 @@
---- gnome-panel-2.30.2.orig/gnome-panel/Makefile.am	2010-06-22 19:27:02.000000000 +0200
-+++ gnome-panel-2.30.2/gnome-panel/Makefile.am	2010-12-27 12:47:44.039426493 +0100
-@@ -165,6 +165,8 @@
- 	panel-ditem-editor.c	  \
- 	panel-marshal.c		  \
- 	panel-util.c		  \
-+	panel-lockdown.c	\
-+	panel-gconf.c		\
+--- gnome-panel-2.32.1/gnome-panel/Makefile.am.~1~	2010-09-29 20:51:03.000000000 +0400
++++ gnome-panel-2.32.1/gnome-panel/Makefile.am	2015-03-10 12:38:51.894270716 +0300
+@@ -15,6 +15,7 @@
+ 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"	\
+ 	-DBUILDERDIR=\""$(uidir)"\"				\
+ 	-DICONDIR=\""$(datadir)/gnome-panel/pixmaps"\"		\
++	-DGMENU_I_KNOW_THIS_IS_UNSTABLE 			\
+ 	$(DISABLE_DEPRECATED_CFLAGS)
+ 
+ AM_CFLAGS = $(WARN_CFLAGS)
+@@ -134,7 +135,8 @@
+ 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la			\
+ 	$(PANEL_LIBS)									\
+ 	$(XRANDR_LIBS)									\
+-	$(X_LIBS)
++	$(X_LIBS)									\
++	-lsecdb
+ 
+ gnome_panel_LDFLAGS = -export-dynamic
+ 
+@@ -143,12 +145,15 @@
+ 	panel-ditem-editor.c		\
+ 	panel-marshal.c			\
+ 	panel-util.c			\
++	panel-lockdown.c		\
++	panel-gconf.c			\
  	xstuff.c
  
- gnome_desktop_item_edit_LDFLAGS = -export-dynamic
+ gnome_desktop_item_edit_LDADD = 	\
+ 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la	\
+ 	$(PANEL_LIBS)							\
+-	$(X_LIBS)
++	$(X_LIBS)							\
++	-lsecdb
+ 
+ panel_test_applets_SOURCES =		\
+ 	panel-modules.c			\
 --- gnome-panel-2.30.2.orig/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 13:01:19.485602424 +0100
 +++ gnome-panel-2.30.2/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 12:47:44.055057740 +0100
 @@ -18,7 +18,6 @@
@@ -36,6 +62,231 @@
 +
          return 0;
  }
+--- gnome-panel-2.32.1/gnome-panel/menu.c.~1~	2010-06-23 03:42:54.000000000 +0400
++++ gnome-panel-2.32.1/gnome-panel/menu.c	2015-01-05 18:26:37.571796313 +0300
+@@ -75,7 +75,8 @@
+ static GSList *image_menu_items = NULL;
+ 
+ static GtkWidget *populate_menu_from_directory (GtkWidget          *menu,
+-						GMenuTreeDirectory *directory);
++						GMenuTreeDirectory *directory,
++                        gboolean           *is_hidden);
+ 
+ static void panel_load_menu_image_deferred (GtkWidget   *image_menu_item,
+ 					    GtkIconSize  icon_size,
+@@ -1276,7 +1277,8 @@
+ }
+ 
+ static void
+-submenu_to_display (GtkWidget *menu)
++submenu_to_display (GtkWidget *menu,
++                    gboolean  *is_hidden)
+ {
+ 	GMenuTree           *tree;
+ 	GMenuTreeDirectory  *directory;
+@@ -1311,7 +1313,15 @@
+ 	}
+ 
+ 	if (directory)
+-		populate_menu_from_directory (menu, directory);
++        { /* It's possible that is_hidden is NULL if we end up here from the show
++           signal, which could only happen for the top level menu. */
++        gboolean local_is_hidden = FALSE;
++
++		populate_menu_from_directory (menu, directory, &local_is_hidden);
++        if (is_hidden != NULL) {
++            *is_hidden = local_is_hidden;
++        }
++    }
+ 
+ 	append_callback = g_object_get_data (G_OBJECT (menu),
+ 					     "panel-menu-append-callback");
+@@ -1325,10 +1335,11 @@
+ submenu_to_display_in_idle (gpointer data)
+ {
+ 	GtkWidget *menu = GTK_WIDGET (data);
++    gboolean is_hidden = FALSE;
+ 
+ 	g_object_set_data (G_OBJECT (menu), "panel-menu-idle-id", NULL);
+ 
+-	submenu_to_display (menu);
++	submenu_to_display (menu, &is_hidden);
+ 
+ 	return FALSE;
+ }
+@@ -1423,19 +1434,25 @@
+ static void
+ create_submenu (GtkWidget          *menu,
+ 		GMenuTreeDirectory *directory,
+-		GMenuTreeDirectory *alias_directory)
++		GMenuTreeDirectory *alias_directory,
++		gboolean           *is_hidden)
+ {
+ 	GtkWidget *menuitem;
+ 	GtkWidget *submenu;
+ 	gboolean   force_categories_icon;
+ 
++	submenu = create_fake_menu (directory);
++	if (panel_lockdown_get_restrict_application_launching ()) {
++		submenu_to_display (submenu, is_hidden);
++	} else {
++		*is_hidden = FALSE;
++	}
++
+ 	if (alias_directory)
+ 		menuitem = create_submenu_entry (menu, alias_directory);
+ 	else
+ 		menuitem = create_submenu_entry (menu, directory);
+ 	
+-	submenu = create_fake_menu (directory);
+-
+ 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
+ 
+ 	/* Keep the infor that we force (or not) the icons to be visible */
+@@ -1444,15 +1461,21 @@
+ 	g_object_set_data (G_OBJECT (submenu),
+ 			   "panel-menu-force-icon-for-categories",
+ 			   GINT_TO_POINTER (force_categories_icon));
++
++	if (*is_hidden) {
++		gtk_widget_hide (menuitem);
++	}
+ }
+ 
+ static void 
+ create_header (GtkWidget       *menu,
+-	       GMenuTreeHeader *header)
++	       GMenuTreeHeader *header,
++	       gboolean *is_hidden)
+ {
+ 	GMenuTreeDirectory *directory;
+ 	GtkWidget          *menuitem;
+ 
++	*is_hidden = FALSE;
+ 	directory = gmenu_tree_header_get_directory (header);
+ 	menuitem = create_submenu_entry (menu, directory);
+ 	gmenu_tree_item_unref (directory);
+@@ -1469,10 +1492,12 @@
+ static void
+ create_menuitem (GtkWidget          *menu,
+ 		 GMenuTreeEntry     *entry,
+-		 GMenuTreeDirectory *alias_directory)
++		 GMenuTreeDirectory *alias_directory,
++                                    gboolean *is_hidden)
+ {
+ 	GtkWidget  *menuitem;
+ 	
++        *is_hidden = FALSE;
+ 	menuitem = panel_image_menu_item_new ();
+ 
+ 	g_object_set_data_full (G_OBJECT (menuitem),
+@@ -1553,12 +1578,18 @@
+ 	g_signal_connect (menuitem, "activate",
+ 			  G_CALLBACK (activate_app_def), entry);
+ 
+-	gtk_widget_show (menuitem);
++    if (entry != NULL && !panel_lockdown_is_allowed_menu_entry (entry)) {
++        gtk_widget_hide (menuitem);
++        *is_hidden = TRUE;
++    } else {
++	    gtk_widget_show (menuitem);
++    }
+ }
+ 
+ static void
+ create_menuitem_from_alias (GtkWidget      *menu,
+-			    GMenuTreeAlias *alias)
++			    GMenuTreeAlias *alias,
++                gboolean *is_hidden)
+ {
+ 	GMenuTreeItem *aliased_item;
+ 
+@@ -1568,13 +1599,15 @@
+ 	case GMENU_TREE_ITEM_DIRECTORY:
+ 		create_submenu (menu,
+ 				GMENU_TREE_DIRECTORY (aliased_item),
+-				gmenu_tree_alias_get_directory (alias));
++				gmenu_tree_alias_get_directory (alias),
++                is_hidden);
+ 		break;
+ 
+ 	case GMENU_TREE_ITEM_ENTRY:
+ 		create_menuitem (menu,
+ 				 GMENU_TREE_ENTRY (aliased_item),
+-				 gmenu_tree_alias_get_directory (alias));
++				 gmenu_tree_alias_get_directory (alias),
++                 is_hidden);
+ 		break;
+ 
+ 	default:
+@@ -1681,13 +1714,15 @@
+ 
+ static GtkWidget *
+ populate_menu_from_directory (GtkWidget          *menu,
+-			      GMenuTreeDirectory *directory)
++			      GMenuTreeDirectory *directory,
++                              gboolean *is_hidden)
+ {	
+ 	GList    *children;
+ 	GSList   *l;
+ 	GSList   *items;
+ 	gboolean  add_separator;
+ 
++        *is_hidden = TRUE;
+ 	children = gtk_container_get_children (GTK_CONTAINER (menu));
+ 	add_separator = (children != NULL);
+ 	g_list_free (children);
+@@ -1696,6 +1731,7 @@
+ 
+ 	for (l = items; l; l = l->next) {
+ 		GMenuTreeItem *item = l->data;
++		gboolean is_item_hidden = TRUE;
+ 
+ 		if (add_separator ||
+ 		    gmenu_tree_item_get_type (item) == GMENU_TREE_ITEM_SEPARATOR) {
+@@ -1705,11 +1741,13 @@
+ 
+ 		switch (gmenu_tree_item_get_type (item)) {
+ 		case GMENU_TREE_ITEM_DIRECTORY:
+-			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL);
++			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL,
++                            &is_item_hidden);
+ 			break;
+ 
+ 		case GMENU_TREE_ITEM_ENTRY:
+-			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL);
++			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL,
++                             &is_item_hidden);
+ 			break;
+ 
+ 		case GMENU_TREE_ITEM_SEPARATOR :
+@@ -1717,11 +1755,13 @@
+ 			break;
+ 
+ 		case GMENU_TREE_ITEM_ALIAS:
+-			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item));
++			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item),
++                                        &is_item_hidden);
+ 			break;
+ 
+ 		case GMENU_TREE_ITEM_HEADER:
+-			create_header (menu, GMENU_TREE_HEADER (item));
++			create_header (menu, GMENU_TREE_HEADER (item),
++                           &is_item_hidden);
+ 			break;
+ 
+ 		default:
+@@ -1729,6 +1769,10 @@
+ 		}
+ 
+ 		gmenu_tree_item_unref (item);
++
++        if (!is_item_hidden) {
++            *is_hidden = FALSE;
++        }
+ 	}
+ 
+ 	g_slist_free (items);
 --- gnome-panel-2.30.2.orig/gnome-panel/launcher.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/launcher.c	2010-12-27 12:47:44.045078620 +0100
 @@ -105,6 +105,9 @@
@@ -172,229 +423,6 @@
  	g_key_file_free (key_file);
  }
  
---- gnome-panel-2.30.2.orig/gnome-panel/menu.c	2010-06-22 19:27:02.000000000 +0200
-+++ gnome-panel-2.30.2/gnome-panel/menu.c	2010-12-27 12:47:44.044345990 +0100
-@@ -75,7 +75,8 @@
- static GSList *image_menu_items = NULL;
- 
- static GtkWidget *populate_menu_from_directory (GtkWidget          *menu,
--						GMenuTreeDirectory *directory);
-+						GMenuTreeDirectory *directory,
-+                        gboolean           *is_hidden);
- 
- static void panel_load_menu_image_deferred (GtkWidget   *image_menu_item,
- 					    GtkIconSize  icon_size,
-@@ -1273,7 +1274,8 @@
- }
- 
- static void
--submenu_to_display (GtkWidget *menu)
-+submenu_to_display (GtkWidget *menu,
-+                    gboolean  *is_hidden)
- {
- 	GMenuTree           *tree;
- 	GMenuTreeDirectory  *directory;
-@@ -1308,7 +1310,15 @@
- 	}
- 
- 	if (directory)
--		populate_menu_from_directory (menu, directory);
-+        { /* It's possible that is_hidden is NULL if we end up here from the show
-+           signal, which could only happen for the top level menu. */
-+        gboolean local_is_hidden = FALSE;
-+
-+		populate_menu_from_directory (menu, directory, &local_is_hidden);
-+        if (is_hidden != NULL) {
-+            *is_hidden = local_is_hidden;
-+        }
-+    }
- 
- 	append_callback = g_object_get_data (G_OBJECT (menu),
- 					     "panel-menu-append-callback");
-@@ -1322,10 +1332,11 @@
- submenu_to_display_in_idle (gpointer data)
- {
- 	GtkWidget *menu = GTK_WIDGET (data);
-+    gboolean is_hidden = FALSE;
- 
- 	g_object_set_data (G_OBJECT (menu), "panel-menu-idle-id", NULL);
- 
--	submenu_to_display (menu);
-+	submenu_to_display (menu, &is_hidden);
- 
- 	return FALSE;
- }
-@@ -1420,19 +1431,25 @@
- static void
- create_submenu (GtkWidget          *menu,
- 		GMenuTreeDirectory *directory,
--		GMenuTreeDirectory *alias_directory)
-+		GMenuTreeDirectory *alias_directory,
-+		gboolean           *is_hidden)
- {
- 	GtkWidget *menuitem;
- 	GtkWidget *submenu;
- 	gboolean   force_categories_icon;
- 
-+	submenu = create_fake_menu (directory);
-+	if (panel_lockdown_get_restrict_application_launching ()) {
-+		submenu_to_display (submenu, is_hidden);
-+	} else {
-+		*is_hidden = FALSE;
-+	}
-+
- 	if (alias_directory)
- 		menuitem = create_submenu_entry (menu, alias_directory);
- 	else
- 		menuitem = create_submenu_entry (menu, directory);
- 	
--	submenu = create_fake_menu (directory);
--
- 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
- 
- 	/* Keep the infor that we force (or not) the icons to be visible */
-@@ -1441,15 +1458,21 @@
- 	g_object_set_data (G_OBJECT (submenu),
- 			   "panel-menu-force-icon-for-categories",
- 			   GINT_TO_POINTER (force_categories_icon));
-+
-+	if (*is_hidden) {
-+		gtk_widget_hide (menuitem);
-+	}
- }
- 
- static void 
- create_header (GtkWidget       *menu,
--	       GMenuTreeHeader *header)
-+	       GMenuTreeHeader *header,
-+	       gboolean *is_hidden)
- {
- 	GMenuTreeDirectory *directory;
- 	GtkWidget          *menuitem;
- 
-+	*is_hidden = FALSE;
- 	directory = gmenu_tree_header_get_directory (header);
- 	menuitem = create_submenu_entry (menu, directory);
- 	gmenu_tree_item_unref (directory);
-@@ -1466,10 +1489,12 @@
- static void
- create_menuitem (GtkWidget          *menu,
- 		 GMenuTreeEntry     *entry,
--		 GMenuTreeDirectory *alias_directory)
-+		 GMenuTreeDirectory *alias_directory,
-+                                    gboolean *is_hidden)
- {
- 	GtkWidget  *menuitem;
- 	
-+        *is_hidden = FALSE;
- 	menuitem = panel_image_menu_item_new ();
- 
- 	g_object_set_data_full (G_OBJECT (menuitem),
-@@ -1550,12 +1575,18 @@
- 	g_signal_connect (menuitem, "activate",
- 			  G_CALLBACK (activate_app_def), entry);
- 
--	gtk_widget_show (menuitem);
-+    if (entry != NULL && !panel_lockdown_is_allowed_menu_entry (entry)) {
-+        gtk_widget_hide (menuitem);
-+        *is_hidden = TRUE;
-+    } else {
-+	    gtk_widget_show (menuitem);
-+    }
- }
- 
- static void
- create_menuitem_from_alias (GtkWidget      *menu,
--			    GMenuTreeAlias *alias)
-+			    GMenuTreeAlias *alias,
-+                gboolean *is_hidden)
- {
- 	GMenuTreeItem *aliased_item;
- 
-@@ -1565,13 +1596,15 @@
- 	case GMENU_TREE_ITEM_DIRECTORY:
- 		create_submenu (menu,
- 				GMENU_TREE_DIRECTORY (aliased_item),
--				gmenu_tree_alias_get_directory (alias));
-+				gmenu_tree_alias_get_directory (alias),
-+                is_hidden);
- 		break;
- 
- 	case GMENU_TREE_ITEM_ENTRY:
- 		create_menuitem (menu,
- 				 GMENU_TREE_ENTRY (aliased_item),
--				 gmenu_tree_alias_get_directory (alias));
-+				 gmenu_tree_alias_get_directory (alias),
-+                 is_hidden);
- 		break;
- 
- 	default:
-@@ -1678,18 +1711,21 @@
- 
- static GtkWidget *
- populate_menu_from_directory (GtkWidget          *menu,
--			      GMenuTreeDirectory *directory)
-+			      GMenuTreeDirectory *directory,
-+                  gboolean *is_hidden)
- {	
- 	GSList   *l;
- 	GSList   *items;
- 	gboolean  add_separator;
- 
-+    *is_hidden = TRUE;
- 	add_separator = (GTK_MENU_SHELL (menu)->children != NULL);
- 
- 	items = gmenu_tree_directory_get_contents (directory);
- 
- 	for (l = items; l; l = l->next) {
- 		GMenuTreeItem *item = l->data;
-+        gboolean is_item_hidden = TRUE;
- 
- 		if (add_separator ||
- 		    gmenu_tree_item_get_type (item) == GMENU_TREE_ITEM_SEPARATOR) {
-@@ -1699,11 +1735,13 @@
- 
- 		switch (gmenu_tree_item_get_type (item)) {
- 		case GMENU_TREE_ITEM_DIRECTORY:
--			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL);
-+			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL,
-+                            &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_ENTRY:
--			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL);
-+			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL,
-+                             &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_SEPARATOR :
-@@ -1711,11 +1749,13 @@
- 			break;
- 
- 		case GMENU_TREE_ITEM_ALIAS:
--			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item));
-+			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item),
-+                                        &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_HEADER:
--			create_header (menu, GMENU_TREE_HEADER (item));
-+			create_header (menu, GMENU_TREE_HEADER (item),
-+                           &is_item_hidden);
- 			break;
- 
- 		default:
-@@ -1723,6 +1763,10 @@
- 		}
- 
- 		gmenu_tree_item_unref (item);
-+
-+        if (!is_item_hidden) {
-+            *is_hidden = FALSE;
-+        }
- 	}
- 
- 	g_slist_free (items);
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-action-button.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/panel-action-button.c	2010-12-27 12:47:44.039866740 +0100
 @@ -207,8 +207,11 @@
@@ -534,12 +562,11 @@
  static void
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-lockdown.c	2010-02-09 13:32:08.000000000 +0100
 +++ gnome-panel-2.30.2/gnome-panel/panel-lockdown.c	2010-12-27 12:59:35.878172712 +0100
-@@ -28,13 +28,22 @@
+@@ -28,13 +28,21 @@
  
  #include <string.h>
  #include "panel-gconf.h"
 +#include <libpanel-util/panel-keyfile.h>
-+#include <libgnome/gnome-desktop-tsol-extensions.h>
  
 -#define N_LISTENERS 6
 +#include <exec_attr.h>

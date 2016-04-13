@@ -16,36 +16,26 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icu
-
-COMPONENT_VERSION= 4.6
+COMPONENT_VERSION= 55.1
+COMPONENT_UVERSION= 55_1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-svn.tar.gz
+COMPONENT_ARCHIVE= icu4c-$(COMPONENT_UVERSION)-src.tgz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b
 COMPONENT_PROJECT_URL = http://icu-project.org
-COMPONENT_ARCHIVE_URL = http://source.icu-project.org/repos/icu/icu/tags/release-4-6-1
+COMPONENT_ARCHIVE_URL = http://download.icu-project.org/files/icu4c/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-download::
-	if [ ! -f $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) ]; then \
-           svn export --force $(COMPONENT_ARCHIVE_URL) $(COMPONENT_SRC) ; \
-	   tar czf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) $(COMPONENT_SRC)  ; \
-	fi
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# prevent userland-fetch from overwriting icu-X.X-svn.tar.gz file
-FETCH = /usr/bin/true
-
-COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
+#COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
 
 # Missing files in build dir for configure without this.
 #COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
-
-CONFIGURE_PREFIX = /usr/g++
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
 CONFIGURE_OPTIONS = Solaris/GCC

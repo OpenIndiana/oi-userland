@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+
+Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice (including the next
+paragraph) shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+-->
+
+<service_bundle type='manifest' name='SUNWxwplr:x11-server'>
+
+<service
+	name='application/x11/x11-server'
+	type='service'
+	version='1'>
+
+	<!-- Need / & /usr filesystems mounted, /var mounted read/write -->
+	<dependency
+		name='fs-local'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+        <dependency
+            name='network-service'
+            grouping='require_all'
+            restart_on='none'
+            type='service'>
+                <service_fmri value='svc:/network/service' />
+        </dependency>
+
+        <dependency
+            name='name-services'
+            grouping='require_all'
+            restart_on='refresh'
+            type='service'>
+                <service_fmri value='svc:/milestone/name-services' />
+        </dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/lib/svc/method/x11-server -d 0 -c %i %m'
+		timeout_seconds='0'>
+	</exec_method>
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':kill -TERM'
+		timeout_seconds='10'>
+	</exec_method>
+
+	<property_group name='general' type='framework'>
+		<!-- manage server state -->
+		<propval name='action_authorization' type='astring'
+			value='solaris.smf.manage.x11' />
+	</property_group>
+
+	<property_group name='options' type='application'>
+               	<stability value='Evolving' />
+               	<propval name='server' type='astring'	
+		 value='/usr/bin/Xorg' />
+               	<propval name='server_args' type='astring'	
+		 value='' />
+               	<property name='default_depth' type='integer' />
+               	<propval name='tcp_listen' type='boolean' 
+		 value='false' />
+		<propval name='value_authorization' type='astring'
+			value='solaris.smf.manage.x11' />
+               	<propval name='display_0_on_console' type='boolean' 
+		 value='false' />
+               	<propval name='config_file' type='astring' value='' />
+	</property_group> 	
+
+	<stability value='Evolving' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+			X Window System server
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='Xserver' section='1' manpath='/usr/share/man' />
+			<manpage title='Xorg' section='1' manpath='/usr/share/man' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
+

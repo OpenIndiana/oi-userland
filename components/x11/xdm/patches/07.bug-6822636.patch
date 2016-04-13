@@ -1,0 +1,25 @@
+--- a/greeter/Login.c-orig	Tue Mar 23 22:11:38 2010
++++ b/greeter/Login.c	Tue Mar 23 22:12:41 2010
+@@ -766,20 +766,8 @@
+     }
+     RedrawFail (w);
+     XorCursor (w);
+-    /*
+-     * The GrabKeyboard here is needed only because of
+-     * a bug in the R3 server -- the keyboard is grabbed on
+-     * the root window, and the server won't dispatch events
+-     * to the focus window unless the focus window is a ancestor
+-     * of the grab window.  Bug in server already found and fixed,
+-     * compatibility until at least R4.
+-     */
+-    if (XGrabKeyboard (XtDisplay (w), XtWindow (w), False, GrabModeAsync,
+-		       GrabModeAsync, CurrentTime) != GrabSuccess)
+-    {
+-	XSetInputFocus (XtDisplay (w), XtWindow (w),
+-			RevertToPointerRoot, CurrentTime);
+-    }
++    XSetInputFocus (XtDisplay (w), XtWindow (w),
++		RevertToPointerRoot, CurrentTime);
+ }
+ 
+ /* Returns 0 on success, -1 on failure */

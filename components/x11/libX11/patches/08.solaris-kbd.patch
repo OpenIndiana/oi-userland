@@ -1,0 +1,802 @@
+###############################################################################
+# Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+--- a/src/KeyBind.c	Tue Mar 17 09:26:07 2015
++++ b/src/KeyBind.c	Tue Mar 17 09:55:54 2015
+@@ -45,6 +45,7 @@
+ #define XK_VIETNAMESE
+ #define XK_XKB_KEYS
+ #define XK_SINHALA
++#define XK_CURRENCY
+ #include <X11/keysymdef.h>
+ #include <stdio.h>
+ 
+@@ -51,6 +52,20 @@
+ #include "Xresource.h"
+ #include "Key.h"
+ 
++#ifdef SUNSOFT_KBD
++/* Sun: compose sequence support
++ * (state = chars_matched in XComposeStatus)
++ */
++#include "Suncompose.h"
++#include <X11/Sunkeysym.h>
++#define REJECTED        -1
++#define START           0
++#define ACCEPTED1       1
++#define ACCEPTED2       2
++#define ACCEPTED3       3
++#define COMPOSE_LED     2
++#endif /* SUNSOFT_KBD */
++
+ #ifdef XKB
+ #include "XKBlib.h"
+ #include "XKBlibint.h"
+@@ -72,6 +87,11 @@
+     Display *dpy,
+     register struct _XKeytrans *p);
+ 
++#ifdef SUNSOFT_KBD
++static int DoCompose(KeySym first_keysym, KeySym second_keysym, KeySym *result_keysym);
++      void SetLed (Display *dpy, int num, int state);
++#endif /* SUNSOFT_KBD */
++
+ struct _XKeytrans {
+ 	struct _XKeytrans *next;/* next on list */
+ 	char *string;		/* string to return when the time comes */
+@@ -93,6 +113,10 @@
+ 	((int)keycode < dpy->min_keycode) || ((int)keycode > dpy->max_keycode))
+       return NoSymbol;
+ 
++/* Sun comment: We need not protect dpy->keysyms[], because,
++ * this is * changed only in the initialize routine and
++ * XOpenDisplay().
++ */
+     syms = &dpy->keysyms[(keycode - dpy->min_keycode) * per];
+     if (col < 4) {
+ 	if (col > 1) {
+@@ -763,6 +787,10 @@
+     register KeySym *syms;
+     KeySym sym, lsym, usym;
+ 
++#ifdef SUNSOFT_KBD
++    int i, column, KeypadKey;
++#endif /* SUNSOFT_KBD */
++
+     if ((! dpy->keysyms) && (! _XKeyInitialize(dpy)))
+ 	return 0;
+     *modifiers_return = ((ShiftMask|LockMask)
+@@ -776,17 +804,54 @@
+     syms = &dpy->keysyms[(keycode - dpy->min_keycode) * per];
+     while ((per > 2) && (syms[per - 1] == NoSymbol))
+ 	per--;
++
++#ifdef SUNSOFT_KBD
++    /* Sun: Japanese keypad support */
++    KeypadKey = 0;
++    if (per < 5)
++    {
++        /* in case of Hobo keyboards, the keypad would be
++         * superimposed on the other (qwerty) keys. So by doing
++         * this * check, we would not get the Japanese keysyms
++         * on the * Hobo keypad superimposed keys.
++         */
++            for (i=0; i < per; i++)
++            {
++                if (IsKeypadKey(syms[i]))
++                    KeypadKey = 1;
++            }
++    }
++#endif /* SUNSOFT_KBD */
++
+     if ((per > 2) && (modifiers & dpy->mode_switch)) {
++#ifdef SUNSOFT_KBD
++/* Sun: ModeSwitch does not apply to function keys (Japanese kbd) */
++       if (!KeypadKey)
++       {
++#endif /* SUNSOFT_KBD */
+ 	syms += 2;
+ 	per -= 2;
++#ifdef SUNSOFT_KBD
++       }
++#endif /* SUNSOFT_KBD */
+     }
++
++#ifdef SUNSOFT_KBD
+     if ((modifiers & dpy->num_lock) &&
++       (per > 1 && (IsKeypadKey(syms[2]) ))) {
++#else
++    if ((modifiers & dpy->num_lock) &&
+ 	(per > 1 && (IsKeypadKey(syms[1]) || IsPrivateKeypadKey(syms[1])))) {
++#endif /* SUNSOFT_KBD */
+ 	if ((modifiers & ShiftMask) ||
+ 	    ((modifiers & LockMask) && (dpy->lock_meaning == XK_Shift_Lock)))
+ 	    *keysym_return = syms[0];
+ 	else
++#ifdef SUNSOFT_KBD
++            *keysym_return = syms[2];
++#else
+ 	    *keysym_return = syms[1];
++#endif /* SUNSOFT_KBD */
+     } else if (!(modifiers & ShiftMask) &&
+ 	(!(modifiers & LockMask) || (dpy->lock_meaning == NoSymbol))) {
+ 	if ((per == 1) || (syms[1] == NoSymbol))
+@@ -814,19 +879,41 @@
+ 
+ int
+ _XTranslateKeySym(
+-    Display *dpy,
+-    register KeySym symbol,
+-    unsigned int modifiers,
+-    char *buffer,
+-    int nbytes)
++    Display *          dpy,
++#ifdef SUNSOFT_KBD
++    register KeySym *  keysym,
++#else
++    register KeySym    keysym,
++#endif
++   unsigned int       modifiers,
++    char *             buffer,
++    int                nbytes
++#ifdef SUNSOFT_KBD
++      ,
++    XKeyEvent *                event,
++    XComposeStatus *   status
++#endif
++    )
+ {
+     register struct _XKeytrans *p;
+     int length;
+     unsigned long hiBytes;
+     register unsigned char c;
++    KeySym  symbol;
+ 
++#ifdef SUNSOFT_KBD
++    int      return_val;
++#endif /* SUNSOFT_KBD */
++
++#ifdef SUNSOFT_KBD
++    if (!keysym)
++        return 0;
++    else
++        symbol = *keysym;
++#else
+     if (!symbol)
+ 	return 0;
++#endif /* SUNSOFT_KBD */
+     /* see if symbol rebound, if so, return that string. */
+     for (p = dpy->key_bindings; p; p = p->next) {
+ 	if (((modifiers & AllMods) == p->state) && (symbol == p->key)) {
+@@ -840,8 +927,29 @@
+     hiBytes = symbol >> 8;
+     if (!(nbytes &&
+ 	  ((hiBytes == 0) ||
++#ifdef SUNSOFT_KBD
++/* The check for 0x100500 <= hiBytes < 0x100600 is Sun-specific.
++ * This represents Sun's registered range of vendor-specific
++ * keysyms. We need the check so that Sun specific keysyms will
++ * pass through this check and onto to be handled by
++ * HandleComposeSequence.
++ */
++          ((0x100500 <= hiBytes) && (hiBytes < 0x100600)) ||
++/*
++ * The following hard-coded line is to support the euro sign for legacy apps
++ * and single byte codeset locale apps with the euro sign at 0xa4.
++ * For any other codeset locales with properly internationalized apps,
++ * one must have an entry in the Compose file of the locale that will map
++ * the XK_EuroSign keysym to the correct character code value of the locale's
++ * codeset.
++ */
++          (symbol == XK_EuroSign) ||
++#endif /* SUNSOFT_KBD */
+ 	   ((hiBytes == 0xFF) &&
+ 	    (((symbol >= XK_BackSpace) && (symbol <= XK_Clear)) ||
++#ifdef SUNSOFT_KBD
++             (symbol == XK_Multi_key) ||
++#endif /* SUNSOFT_KBD */
+ 	     (symbol == XK_Return) ||
+ 	     (symbol == XK_Escape) ||
+ 	     (symbol == XK_KP_Space) ||
+@@ -852,15 +960,34 @@
+ 	     (symbol == XK_Delete))))))
+ 	return 0;
+ 
++#ifdef SUNSOFT_KBD
++    /* if this is a compose sequence, then HandleComposeSequence
++     * already deals w/ this. This is Sun-specific.
++     */
++    if (HandleComposeSequence(symbol, buffer, keysym, status, &return_val, event)) {
++        return return_val;
++   }
++#endif /* SUNSOFT_KBD */
++
+     /* if X keysym, convert to ascii by grabbing low 7 bits */
+     if (symbol == XK_KP_Space)
+ 	c = XK_space & 0x7F; /* patch encoding botch */
+     else if (hiBytes == 0xFF)
+ 	c = symbol & 0x7F;
++#ifdef SUNSOFT_KBD
++    else if (symbol == XK_EuroSign)
++       c = (unsigned char)0xa4; /* Latin-9 euro symbol code for legacy apps. */
++#endif /* SUNSOFT_KBD */
+     else
+ 	c = symbol & 0xFF;
+     /* only apply Control key if it makes sense, else ignore it */
+     if (modifiers & ControlMask) {
++#ifdef SUNSOFT_KBD
++    /* Sun: map control characters with high bit set */
++    if ((c >= (unsigned char)'\300' && c <= (unsigned char)'\377')) c &= 0x9F;
++#endif /* SUNSOFT_KBD */
++
++        /* MIT "standard" control character handling */
+ 	if ((c >= '@' && c < '\177') || c == ' ') c &= 0x1F;
+ 	else if (c == '2') c = '\000';
+ 	else if (c >= '3' && c <= '7') c -= ('3' - '\033');
+@@ -887,11 +1014,22 @@
+ 		  &modifiers, &symbol))
+ 	return 0;
+ 
++#ifdef SUNSOFT_KBD
++    if (keysym) {
++        *keysym = symbol;
++        return _XTranslateKeySym(event->display, keysym, event->state,
++                        buffer, nbytes, event, status);
++    } else {
++        return _XTranslateKeySym(event->display, &symbol, event->state,
++                         buffer, nbytes, event, status);
++    }
++#else
+     if (keysym)
+ 	*keysym = symbol;
+     /* arguable whether to use (event->state & ~modifiers) here */
+     return _XTranslateKeySym(event->display, symbol, event->state,
+ 			     buffer, nbytes);
++#endif /* SUNSOFT_KBD */
+ }
+ 
+ static void
+@@ -1003,3 +1141,282 @@
+     }
+     p->state &= AllMods;
+ }
++
++#ifdef SUNSOFT_KBD
++/*  added 2 functions:
++ *  HandleComposeSequence and DoCompose;
++ */
++
++/* Called from XTranslateKeySym & XkbTranslateKeySymExt
++ * Look at compose sequence and dead key sequence and try to get
++ * a Latin-1 character out of it.  Return 1 if it is able to
++ * resolve the lookup based on the info it has, return 0 if it
++ * can't, then XTranslateKeySym needs to do further processing.
++ */
++
++Bool compose_led_is_on = False;
++int  compose_state = START;
++
++int
++HandleComposeSequence(
++      KeySym  symbol,
++      char    *buffer,
++      KeySym *keysym,
++      XComposeStatus  *status,
++      int     *return_val,
++      XKeyEvent       *event)
++{
++    static char    compose_sequence[5];         /* initialized to NULL */
++    static KeyCode last_composed_keycode;       /* initialized to NULL */
++    static KeySym  last_composed_keysym;        /* initialized to NULL */
++    static char    watching_keypresses = 0;
++    static int     initialized = 0;
++    int            ret_val;
++
++    /*
++     * Even if the caller doesn't pass us a compose structure, we'll still
++     * support compose sequence processing. Note that the client won't be able
++     * to support multiple compose sequence clients within a single application.
++     */
++
++    /* must come first */
++    if (status != (XComposeStatus *) NULL) {
++        /*
++         * The caller provided a structure so we'll track his state         * (if reasonable) and we'll point him at our private
++         * compose_sequence (at bottom).  This allows him to implement
++         * multiple compose sequence clients within a single application.
++         */
++        if (! initialized) {            /* start him out right */
++            compose_state = START;
++            initialized = 1;
++
++           /* bug 4247009, vivekp, set the compose LED off very first
++               time, initialization time */
++           if (compose_led_is_on)
++            SetLed (event->display,COMPOSE_LED, LedModeOff);
++
++        } else {                        /* then track him */
++            compose_state = status->chars_matched;
++            if (compose_state < START || compose_state > ACCEPTED3)                compose_state = START;
++        }
++    }
++
++    /* must come second */
++    if (event->type == KeyPress) {
++        /* if we've ever seen a KeyPress, we're watching KeyPresses */
++        watching_keypresses = 1;
++    } else if (event->type == KeyRelease && watching_keypresses) {
++        /*
++         * don't let someone watching both KeyPresses and KeyReleases
++         * screw us unwittingly.  Try to return the right thing.
++         */
++        *return_val = 0;
++        if (compose_state > START) {
++            if (compose_state == ACCEPTED3 && event->keycode == last_composed_keycode) {
++                buffer[0] = last_composed_keysym;
++                *keysym = last_composed_keysym;
++                *return_val = 1;
++            }
++            return(1);
++        }
++        if ((*keysym == XK_Multi_key)     ||
++            (*keysym == SunXK_FA_Circum)  ||
++            (*keysym == SunXK_FA_Tilde)   ||
++            (*keysym == SunXK_FA_Grave)   ||
++            (*keysym == SunXK_FA_Acute)   ||
++            (*keysym == SunXK_FA_Cedilla) ||
++            (*keysym == SunXK_FA_Diaeresis))
++            return(1);
++        return(0);
++    }
++
++    /* XTranslateKeysym filters these out before we get here, but the
++     * XKB version doesn't so we need to punt these here to avoid breaking
++     * compose sequences when modifiers like the shift key are pressed.
++     */
++    if (IsModifierKey(*keysym)) {
++      return (0);
++    }
++
++    if (compose_state == ACCEPTED3)
++        compose_state = START;
++
++    /* now we're ready */
++    switch (compose_state) {
++        case START:
++            if (*keysym == XK_Multi_key) {
++               /* bug 4247009, vivekp, set the compose LED when the
++                   compose key is pressed first time.  */
++               SetLed (event->display,COMPOSE_LED, LedModeOn);
++                compose_state = ACCEPTED1;
++                compose_led_is_on = True;
++            }
++            else if (*keysym == SunXK_FA_Circum) {
++                compose_sequence[0] = '^';
++                compose_state = ACCEPTED2;
++            }
++            else if (*keysym == SunXK_FA_Tilde) {
++                compose_sequence[0] = '~';
++                compose_state = ACCEPTED2;
++            }
++            else if (*keysym == SunXK_FA_Cedilla) {
++                compose_sequence[0] = ',';
++                compose_state = ACCEPTED2;
++            }
++            else if (*keysym == SunXK_FA_Diaeresis){
++                compose_sequence[0] = '"';
++                compose_state = ACCEPTED2;
++            }
++            /* else don't change state */
++            break;
++
++        case ACCEPTED1:                 /* Got Compose last time */
++           if (*keysym < ASCII_SET_SIZE) {
++                if (compose_map[*keysym] >= 0) {
++                    compose_sequence[0] = *keysym;
++                    compose_state = ACCEPTED2;
++                }
++                else
++                    compose_state = REJECTED;
++            }
++            else
++                compose_state = REJECTED;
++            break;
++
++        case ACCEPTED2:                 /* Got Compose + composable char */
++
++            /* bug 4247009, vivekp, set the compose LED off after
++               compose+composable char is pressed.  */
++           SetLed (event->display,COMPOSE_LED, LedModeOff);
++            compose_led_is_on = False;
++            if (*keysym < ASCII_SET_SIZE) {
++                if (compose_map[*keysym] >= 0) {
++                    compose_sequence[1] = *keysym;
++/*
++ * If the second character is space, compose sequence should return * the first character.  See TBITS/NCTTI-5, Section 2.1
++ * Note: <Compose>+<space>+<space> = non-breaking space
++ */
++                    if (compose_sequence[1] == XK_space &&
++                        compose_sequence[0] != XK_space) {
++                        *keysym = compose_sequence[0];
++                        compose_state = ACCEPTED3;
++                    } else {
++                        if (compose_sequence[0] <= compose_sequence[1])
++                            ret_val = DoCompose(compose_sequence[0],
++                                            compose_sequence[1], keysym);
++                        else
++                            ret_val = DoCompose(compose_sequence[1],
++                                            compose_sequence[0], keysym);
++                        if (ret_val == 1) {
++                            compose_state = ACCEPTED3;
++                            compose_sequence[2] = *keysym;
++                        }
++                        else
++                            compose_state = REJECTED;
++                    }
++                }
++                else
++                    compose_state = REJECTED;
++            }
++            else
++                compose_state = REJECTED;
++            break;
++
++        default:
++            compose_state = START;
++            break;
++    }
++
++    if (compose_state == REJECTED)
++    {
++        /* bug 4247009, vivekp, set the compose LED off after the
++           compose key pressed second time or composable + 1st char +
++           2nd char.  */
++        SetLed (event->display,COMPOSE_LED, LedModeOff);
++        compose_led_is_on = False;
++        compose_state = START;
++    }
++    if (status != (XComposeStatus *) NULL) {
++        /*
++         * Ok, since the caller provided a compose structure,
++         * we need to point him at our private compose_sequence
++         * and copy the new state back to him.
++         */
++        status->compose_ptr = compose_sequence;
++        status->chars_matched = compose_state;
++    }
++
++    if (compose_state == START) {
++        compose_sequence[0] = '\0';
++        last_composed_keycode = 0;
++        last_composed_keysym = 0;
++        if ((*keysym == XK_Multi_key)     ||
++            (*keysym == SunXK_FA_Circum)  ||
++            (*keysym == SunXK_FA_Tilde)   ||
++            (*keysym == SunXK_FA_Grave)   ||
++            (*keysym == SunXK_FA_Acute)   ||
++            (*keysym == SunXK_FA_Cedilla) ||
++            (*keysym == SunXK_FA_Diaeresis)) {
++            *return_val = 0;
++            return(1);
++        }
++        return(0);
++    }
++
++   compose_sequence[compose_state-1] = '\0';
++    last_composed_keycode = event->keycode;
++    last_composed_keysym = *keysym;
++
++    if (compose_state == ACCEPTED3) {
++        buffer[0] = *keysym;
++       *return_val = 1;
++    }
++    else {
++        if (compose_state == ACCEPTED2) {
++            buffer[0] = '\0';
++       }
++        *return_val = 0;
++    }
++
++    return(1);
++}
++
++/*
++ * DoCompose - put result in keysym
++ */
++static int
++DoCompose(KeySym first_keysym, KeySym second_keysym, KeySym *result_keysym)
++{
++    const ComposeTableEntry *ptr;
++
++        /* Note:  this code presumes first_keysym rangecheck has
++         * been done in invoking routine.
++         */
++    ptr = &compose_table[compose_map[first_keysym]];
++    while (ptr->first == first_keysym) {
++        if (ptr->second == second_keysym) {
++            *result_keysym = ptr->result;
++            return (1);
++        }
++        ptr++;
++    }
++    return (0);
++}
++
++_X_HIDDEN void
++SetLed (Display *dpy, int num, int state)
++{
++    XKeyboardControl led_control;
++
++#ifdef XKB
++    if ((dpy->xkb_info == NULL) || (num != COMPOSE_LED) ||
++       XkbSetNamedIndicator(dpy,dpy->xkb_info->composeLED,
++                                True,state,False,NULL) == False)
++#endif
++    {
++       led_control.led_mode = state;
++       led_control.led = num;
++       XChangeKeyboardControl (dpy, KBLed | KBLedMode, &led_control);
++    }
++}
++#endif /* SUNSOFT_KBD */
+--- a/src/imConv.c	Tue Mar 17 09:56:27 2015
++++ b/src/imConv.c	Tue Mar 17 10:00:06 2015
+@@ -214,7 +214,9 @@
+ 			    args, 1 ) != 0) {
+ 		count = 0;
+ 	    } else {
+-                count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	    }
+ 	}
+     }
+@@ -284,7 +286,9 @@
+ 			    args, 1 ) != 0) {
+ 		count = 0;
+ 	    } else {
+-                count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	    }
+ 	}
+     } else
+@@ -345,7 +349,9 @@
+                         NULL, 0) != 0) {
+ 	    count = 0;
+ 	} else {
+-            count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	}
+     }
+     /* FIXME:
+--- a/src/xkb/XKBBind.c	Tue Mar 17 10:00:31 2015
++++ b/src/xkb/XKBBind.c	Tue Mar 17 10:09:59 2015
+@@ -46,6 +46,12 @@
+ 
+ static int _XkbLoadDpy(Display *dpy);
+ 
++static int XkbTranslateKeySymExt(
++    register Display * dpy, register KeySym *sym_rtrn, unsigned int mods,
++    char *buffer, int nbytes, int *extra_rtrn, XKeyEvent *event,
++    XComposeStatus *status
++);
++
+ struct _XKeytrans {
+     struct _XKeytrans *next;    /* next on list */
+     char *string;               /* string to return when the time comes */
+@@ -594,6 +600,20 @@
+                    int nbytes,
+                    int *extra_rtrn)
+ {
++       /* Call the new extended function but put in NULL for the extra params */
++       return XkbTranslateKeySymExt(dpy, sym_rtrn, mods, buffer, nbytes, extra_rtrn, NULL, NULL);
++}
++
++static int
++XkbTranslateKeySymExt(register Display *dpy,
++                      register KeySym *sym_rtrn,
++                      unsigned int mods,
++                      char *buffer,
++                      int nbytes,
++                      int *extra_rtrn,
++                      XKeyEvent *event,
++                      XComposeStatus *status)
++{
+     register XkbInfoPtr xkb;
+     XkbKSToMBFunc cvtr;
+     XPointer priv;
+@@ -636,6 +656,17 @@
+ 
+     n = (*cvtr) (priv, *sym_rtrn, buffer, nbytes, extra_rtrn);
+ 
++    /* Add Suns specific compose key handler here. Be sure the special
++     * globals are set before calling this function.
++     */
++    {
++       int return_val;
++
++       if (event && HandleComposeSequence(*sym_rtrn, buffer, sym_rtrn,
++                                         status, &return_val, event))
++           return return_val;
++    }
++
+     if ((!xkb->cvt.KSToUpper) && (mods & LockMask)) {
+         register int i;
+         int change;
+@@ -731,7 +762,8 @@
+     if (rtrnLen > 0)
+         return rtrnLen;
+ 
+-    return XkbTranslateKeySym(dpy, keysym, new_mods, buffer, nbytes, NULL);
++    return XkbTranslateKeySymExt(dpy ,keysym, new_mods, buffer, nbytes, NULL,
++				 event, status);
+ }
+ 
+ 
+--- a/src/xkb/XKBlibint.h	Tue Mar 17 10:10:40 2015
++++ b/src/xkb/XKBlibint.h	Tue Mar 17 10:11:56 2015
+@@ -169,10 +169,19 @@
+ 
+ extern int      _XTranslateKeySym(
+     Display *           /* dpy */,
+-    register KeySym     /* symbol */,
+-    unsigned int        /* modifiers */,
+-    char *              /* buffer */,
+-    int                 /* nbytes */
++#ifdef SUNSOFT_KBD
++    register KeySym *   /* symbol */,
++#else
++   register KeySym     /* symbol */,
++#endif
++   unsigned int        /* modifiers */,
++   char *              /* buffer */,
++   int                 /* nbytes */
++#ifdef SUNSOFT_KBD
++       ,
++    XKeyEvent *         /* event */,
++    XComposeStatus *    /* status */
++#endif
+ );
+ 
+ extern  int _XLookupString(
+@@ -332,6 +341,16 @@
+ 
+ #endif
+ 
++#ifdef SUNSOFT_KBD
++extern int HandleComposeSequence(
++       KeySym           symbol,
++       char            *buffer,
++       KeySym          *keysym,
++       XComposeStatus  *status,
++       int             *return_val,
++       XKeyEvent       *event);
++#endif /* SUNSOFT_KBD */
++
+ _XFUNCPROTOEND
+ 
+ #endif /* _XKBLIBINT_H_ */
+--- a/src/xlibi18n/ICWrap.c	Tue Mar 17 10:12:23 2015
++++ b/src/xlibi18n/ICWrap.c	Tue Mar 17 10:14:56 2015
+@@ -67,6 +67,12 @@
+ #include "Xlibint.h"
+ #include "Xlcint.h"
+ 
++#ifdef SUNSOFT_KBD
++#define COMPOSE_LED     2
++extern void SetLed (Display *dpy, int num, int state);
++extern int compose_state, compose_led_is_on;
++#endif
++
+ static int
+ _XIMNestedListToNestedList(
+     XIMArg *nlist,   /* This is the new list */
+@@ -397,9 +403,23 @@
+ XmbLookupString(XIC ic, XKeyEvent *ev, char *buffer, int nbytes,
+ 		KeySym *keysym, Status *status)
+ {
+-    if (ic->core.im)
+-	return (*ic->methods->mb_lookup_string) (ic, ev, buffer, nbytes,
+-						 keysym, status);
++    if (ic->core.im) {
++       int ret;
++       KeySym keysym_temp = NoSymbol;
++
++       ret = (*ic->methods->mb_lookup_string) (ic, ev, buffer, nbytes,
++                                               &keysym_temp, status);
++#ifdef SUNSOFT_KBD
++        if (ev->display->im_filters && !IsModifierKey(keysym_temp) &&
++               compose_led_is_on && compose_state != 0) {
++           SetLed (ev->display, COMPOSE_LED, LedModeOff);
++           compose_led_is_on = False;
++        }
++#endif
++        if (keysym)
++          *keysym = keysym_temp;
++       return ret;
++    }
+     return XLookupNone;
+ }
+ 
+@@ -407,9 +427,23 @@
+ XwcLookupString(XIC ic, XKeyEvent *ev, wchar_t *buffer, int nchars,
+ 		KeySym *keysym, Status *status)
+ {
+-    if (ic->core.im)
+-	return (*ic->methods->wc_lookup_string) (ic, ev, buffer, nchars,
+-						 keysym, status);
++    if (ic->core.im) {
++       int ret;
++       KeySym keysym_temp = NoSymbol;
++
++       ret = (*ic->methods->wc_lookup_string) (ic, ev, buffer, nchars,
++                                               &keysym_temp, status);
++#ifdef SUNSOFT_KBD
++        if (ev->display->im_filters && !IsModifierKey(keysym_temp) &&
++               compose_led_is_on && compose_state != 0) {
++           SetLed (ev->display, COMPOSE_LED, LedModeOff);
++           compose_led_is_on = False;
++        }
++#endif
++        if (keysym)
++          *keysym = keysym_temp;
++       return ret;
++    }
+     return XLookupNone;
+ }
+ 
+@@ -418,12 +452,25 @@
+ 		  KeySym *keysym, Status *status)
+ {
+     if (ic->core.im) {
++        int ret;
++        KeySym keysym_temp = NoSymbol;
++
+ 	if (ic->methods->utf8_lookup_string)
+-	    return (*ic->methods->utf8_lookup_string) (ic, ev, buffer, nbytes,
+-						   	keysym, status);
++           ret = (*ic->methods->utf8_lookup_string) (ic, ev, buffer, nbytes,
++                                                     &keysym_temp, status);
+ 	else if (ic->methods->mb_lookup_string)
+-	    return (*ic->methods->mb_lookup_string) (ic, ev, buffer, nbytes,
+-						   	keysym, status);
++           ret = (*ic->methods->mb_lookup_string) (ic, ev, buffer, nbytes,
++                                                   &keysym_temp, status);
++#ifdef SUNSOFT_KBD
++        if (ev->display->im_filters && !IsModifierKey(keysym_temp) &&
++                compose_led_is_on && compose_state != 0){
++           SetLed (ev->display, COMPOSE_LED, LedModeOff);
++           compose_led_is_on = False;
++        }
++#endif
++        if (keysym)
++          *keysym = keysym_temp;
++       return ret;
+     }
+     return XLookupNone;
+ }

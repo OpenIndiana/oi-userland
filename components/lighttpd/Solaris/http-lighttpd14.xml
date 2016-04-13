@@ -22,7 +22,7 @@ CDDL HEADER END
 
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-    Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <service_bundle type='manifest' name='SUNWlighttpd14r:lighttpd'>
@@ -76,15 +76,19 @@ CDDL HEADER END
        <exec_method
            type='method'
            name='start'
-           exec='/lib/svc/method/http-lighttpd14 start'
+           exec='/usr/lighttpd/1.4/sbin/lighttpd -f /etc/lighttpd/1.4/lighttpd.conf'
            timeout_seconds='60'>
-           <method_context />
+           <method_context>
+               <method_credential
+                   user='webservd' group='webservd'
+                   privileges='basic,net_privaddr'/>
+           </method_context>
       </exec_method>
 
       <exec_method
            type='method'
            name='stop'
-           exec='/lib/svc/method/http-lighttpd14 stop'
+           exec=':kill'
            timeout_seconds='60'>
            <method_context />
       </exec_method>
@@ -92,9 +96,13 @@ CDDL HEADER END
        <exec_method
            type='method'
            name='refresh'
-           exec='/lib/svc/method/http-lighttpd14 refresh'
+           exec=':kill -HUP'
            timeout_seconds='60'>
-           <method_context />
+           <method_context>
+               <method_credential
+                   user='webservd' group='webservd'
+                   privileges='basic,net_privaddr'/>
+           </method_context>
       </exec_method>
 
       <property_group name='httpd' type='application'>

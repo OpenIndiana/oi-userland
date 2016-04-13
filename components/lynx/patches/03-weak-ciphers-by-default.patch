@@ -1,0 +1,43 @@
+By default even recent versions of OpenSSL support and accept both
+"export strength" ciphers, small-bitsize ciphers as well as downright
+deprecated ones.
+
+This change sets a default cipher selection that tries to avoid the
+worst ones, and subsequently it makes https://www.howsmyssl.com/a/check
+no longer grade lynx/OpenSSL connects as 'Bad'.
+
+This change will be passed upstream.
+
+--- lynx2-8-8/WWW/Library/Implementation/HTTP.h.orig	2015-03-10 08:40:16.089217608 -0700
++++ lynx2-8-8/WWW/Library/Implementation/HTTP.h	2015-03-10 08:41:05.590224096 -0700
+@@ -21,6 +21,8 @@
+     GLOBALREF HTProtocol HTTPS;
+ #endif				/* GLOBALREF_IS_MACRO */
+ 
++#define DEFAULT_CIPHER_SELECTION "ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW!RC4"
++
+ #define URL_GET_METHOD  1
+ #define URL_POST_METHOD 2
+ #define URL_MAIL_METHOD 3
+--- lynx2-8-8/WWW/Library/Implementation/HTTP.c.orig	2015-03-10 08:40:31.459735465 -0700
++++ lynx2-8-8/WWW/Library/Implementation/HTTP.c	2015-03-10 08:53:29.358186971 -0700
+@@ -105,6 +105,8 @@
+ 
+ SSL *HTGetSSLHandle(void)
+ {
++    char *ciphers;
++
+ #ifdef USE_GNUTLS_INCL
+     static char *certfile = NULL;
+ #endif
+@@ -121,6 +123,10 @@
+ 	ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+ 	/* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
+ 	SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
++
++	ciphers = (char *)DEFAULT_CIPHER_SELECTION;
++	SSL_CTX_set_cipher_list(ssl_ctx, ciphers);
++
+ #ifdef SSL_OP_NO_COMPRESSION
+ 	SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_COMPRESSION);
+ #endif

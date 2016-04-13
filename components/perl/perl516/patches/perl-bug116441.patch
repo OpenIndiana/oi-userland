@@ -1,0 +1,17 @@
+https://rt.perl.org/Public/Bug/Display.html?id=116441
+
+--- perl-5.16.3/hv.c.~1~	2014-05-08 13:30:01.387693232 +0400
++++ perl-5.16.3/hv.c	2014-05-08 13:33:08.787750027 +0400
+@@ -1766,10 +1766,11 @@
+     dVAR;
+     register XPVHV* xhv;
+     const char *name;
+-    const bool save = !!SvREFCNT(hv);
++    bool save;
+ 
+     if (!hv)
+ 	return;
++    save = !!SvREFCNT(hv);
+     DEBUG_A(Perl_hv_assert(aTHX_ hv));
+     xhv = (XPVHV*)SvANY(hv);
+ 

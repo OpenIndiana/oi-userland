@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	1.4.5
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.4.8
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.cups.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0450d6d8e6e8af225d2a3319c848737d76473a6c7579cf97c52086d0371c0efe
+    sha256:6bd27e1213c139ed0bbadc5c29f97cf1e8f7f8f5b0bb29b227ecaff32aafa9a6
 COMPONENT_ARCHIVE_URL=	https://www.cups.org/software/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cups
 

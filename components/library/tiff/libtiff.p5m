@@ -1,0 +1,305 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/doc/.* ->  default facet.doc true>
+<transform file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/.* ->  default facet.doc.html true>
+<transform file path=usr/share/man/man3tiff/(.+)$ -> set action.hash usr/share/man/man3/%<\1> >
+
+file files/tiffconf.h path=usr/include/tiffconf.h
+
+file path=usr/bin/$(MACH64)/bmp2tiff
+file path=usr/bin/$(MACH64)/fax2ps
+file path=usr/bin/$(MACH64)/fax2tiff
+file path=usr/bin/$(MACH64)/gif2tiff
+file path=usr/bin/$(MACH64)/pal2rgb
+file path=usr/bin/$(MACH64)/ppm2tiff
+file path=usr/bin/$(MACH64)/ras2tiff
+file path=usr/bin/$(MACH64)/raw2tiff
+file path=usr/bin/$(MACH64)/rgb2ycbcr
+file path=usr/bin/$(MACH64)/thumbnail
+file path=usr/bin/$(MACH64)/tiff2bw
+file path=usr/bin/$(MACH64)/tiff2pdf
+file path=usr/bin/$(MACH64)/tiff2ps
+file path=usr/bin/$(MACH64)/tiff2rgba
+file path=usr/bin/$(MACH64)/tiffcmp
+file path=usr/bin/$(MACH64)/tiffcp
+file path=usr/bin/$(MACH64)/tiffcrop
+file path=usr/bin/$(MACH64)/tiffdither
+file path=usr/bin/$(MACH64)/tiffdump
+file path=usr/bin/$(MACH64)/tiffinfo
+file path=usr/bin/$(MACH64)/tiffmedian
+file path=usr/bin/$(MACH64)/tiffset
+file path=usr/bin/$(MACH64)/tiffsplit
+file path=usr/bin/bmp2tiff
+file path=usr/bin/fax2ps
+file path=usr/bin/fax2tiff
+file path=usr/bin/gif2tiff
+file path=usr/bin/pal2rgb
+file path=usr/bin/ppm2tiff
+file path=usr/bin/ras2tiff
+file path=usr/bin/raw2tiff
+file path=usr/bin/rgb2ycbcr
+file path=usr/bin/thumbnail
+file path=usr/bin/tiff2bw
+file path=usr/bin/tiff2pdf
+file path=usr/bin/tiff2ps
+file path=usr/bin/tiff2rgba
+file path=usr/bin/tiffcmp
+file path=usr/bin/tiffcp
+file path=usr/bin/tiffcrop
+file path=usr/bin/tiffdither
+file path=usr/bin/tiffdump
+file path=usr/bin/tiffinfo
+file path=usr/bin/tiffmedian
+file path=usr/bin/tiffset
+file path=usr/bin/tiffsplit
+file path=usr/include/tiff.h
+file path=usr/include/tiffconf-32.h
+file path=usr/include/tiffconf-64.h
+file path=usr/include/tiffio.h
+file path=usr/include/tiffvers.h
+link path=usr/lib/$(MACH64)/libtiff.so target=libtiff.so.5.2.4
+link path=usr/lib/$(MACH64)/libtiff.so.5 target=libtiff.so.5.2.4
+file path=usr/lib/$(MACH64)/libtiff.so.5.2.4
+file path=usr/lib/$(MACH64)/pkgconfig/libtiff-4.pc
+link path=usr/lib/libtiff.so target=libtiff.so.5.2.4
+link path=usr/lib/libtiff.so.5 target=libtiff.so.5.2.4
+file path=usr/lib/libtiff.so.5.2.4
+file path=usr/lib/pkgconfig/libtiff-4.pc
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/COPYRIGHT
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/ChangeLog
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/README
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/README.vms
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/RELEASE-DATE
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/TODO
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/VERSION
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/TIFFTechNote2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/addingtags.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/bugs.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/build.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/contrib.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/document.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/back.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/bali.jpg
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/cat.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/cover.jpg
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/cramps.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/dave.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/info.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/jello.jpg
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/jim.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/note.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/oxford.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/quad.jpg
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/ring.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/smallliz.jpg
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/strike.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/images/warning.gif
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/index.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/internals.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/intro.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/libtiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFClose.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFDataWidth.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFError.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldDataType.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldName.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldPassCount.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldReadCount.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldTag.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFieldWriteCount.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFFlush.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFGetField.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFOpen.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFPrintDirectory.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFRGBAImage.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadDirectory.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadEncodedStrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadEncodedTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadRGBAImage.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadRGBAStrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadRGBATile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadRawStrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadRawTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadScanline.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFReadTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFSetDirectory.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFSetField.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWarning.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteDirectory.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteEncodedStrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteEncodedTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteRawStrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteRawTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteScanline.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFWriteTile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFbuffer.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFcodec.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFcolor.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFmemory.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFquery.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFsize.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFstrip.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFswab.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/TIFFtile.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/bmp2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/fax2ps.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/fax2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/gif2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/index.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/libtiff.3tiff.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/pal2rgb.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/ppm2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/ras2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/raw2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/rgb2ycbcr.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/sgi2tiff.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/thumbnail.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiff2bw.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiff2pdf.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiff2ps.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiff2rgba.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffcmp.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffcp.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffcrop.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffdither.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffdump.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffgt.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffinfo.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffmedian.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffset.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffsplit.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/man/tiffsv.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/misc.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/support.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/tools.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta007.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta016.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta018.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta024.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta028.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta029.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta031.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta032.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta033.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta034.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta035.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.4beta036.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.3.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.4.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.5.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.6-beta.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.5.7.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.6.0.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.6.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.0.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.0alpha.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.0beta.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.0beta2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.3.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.7.4.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.8.0.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.8.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.8.2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.9.0beta.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.9.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v3.9.2.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v4.0.0.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v4.0.1.html
+file path=usr/share/doc/tiff-$(COMPONENT_VERSION)/html/v4.0.2.html
+file path=usr/share/man/man1/bmp2tiff.1
+file path=usr/share/man/man1/fax2ps.1
+file path=usr/share/man/man1/fax2tiff.1
+file path=usr/share/man/man1/gif2tiff.1
+file path=usr/share/man/man1/pal2rgb.1
+file path=usr/share/man/man1/ppm2tiff.1
+file path=usr/share/man/man1/ras2tiff.1
+file path=usr/share/man/man1/raw2tiff.1
+file path=usr/share/man/man1/rgb2ycbcr.1
+file path=usr/share/man/man1/sgi2tiff.1
+file path=usr/share/man/man1/thumbnail.1
+file path=usr/share/man/man1/tiff2bw.1
+file path=usr/share/man/man1/tiff2pdf.1
+file path=usr/share/man/man1/tiff2ps.1
+file path=usr/share/man/man1/tiff2rgba.1
+file path=usr/share/man/man1/tiffcmp.1
+file path=usr/share/man/man1/tiffcp.1
+file path=usr/share/man/man1/tiffcrop.1
+file path=usr/share/man/man1/tiffdither.1
+file path=usr/share/man/man1/tiffdump.1
+file path=usr/share/man/man1/tiffgt.1
+file path=usr/share/man/man1/tiffinfo.1
+file path=usr/share/man/man1/tiffmedian.1
+file path=usr/share/man/man1/tiffset.1
+file path=usr/share/man/man1/tiffsplit.1
+file path=usr/share/man/man1/tiffsv.1
+file path=usr/share/man/man3tiff/TIFFClose.3tiff
+file path=usr/share/man/man3tiff/TIFFDataWidth.3tiff
+file path=usr/share/man/man3tiff/TIFFError.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldDataType.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldName.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldPassCount.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldReadCount.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldTag.3tiff
+file path=usr/share/man/man3tiff/TIFFFieldWriteCount.3tiff
+file path=usr/share/man/man3tiff/TIFFFlush.3tiff
+file path=usr/share/man/man3tiff/TIFFGetField.3tiff
+file path=usr/share/man/man3tiff/TIFFOpen.3tiff
+file path=usr/share/man/man3tiff/TIFFPrintDirectory.3tiff
+file path=usr/share/man/man3tiff/TIFFRGBAImage.3tiff
+file path=usr/share/man/man3tiff/TIFFReadDirectory.3tiff
+file path=usr/share/man/man3tiff/TIFFReadEncodedStrip.3tiff
+file path=usr/share/man/man3tiff/TIFFReadEncodedTile.3tiff
+file path=usr/share/man/man3tiff/TIFFReadRGBAImage.3tiff
+file path=usr/share/man/man3tiff/TIFFReadRGBAStrip.3tiff
+file path=usr/share/man/man3tiff/TIFFReadRGBATile.3tiff
+file path=usr/share/man/man3tiff/TIFFReadRawStrip.3tiff
+file path=usr/share/man/man3tiff/TIFFReadRawTile.3tiff
+file path=usr/share/man/man3tiff/TIFFReadScanline.3tiff
+file path=usr/share/man/man3tiff/TIFFReadTile.3tiff
+file path=usr/share/man/man3tiff/TIFFSetDirectory.3tiff
+file path=usr/share/man/man3tiff/TIFFSetField.3tiff
+file path=usr/share/man/man3tiff/TIFFWarning.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteDirectory.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteEncodedStrip.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteEncodedTile.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteRawStrip.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteRawTile.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteScanline.3tiff
+file path=usr/share/man/man3tiff/TIFFWriteTile.3tiff
+file path=usr/share/man/man3tiff/TIFFbuffer.3tiff
+file path=usr/share/man/man3tiff/TIFFcodec.3tiff
+file path=usr/share/man/man3tiff/TIFFcolor.3tiff
+file path=usr/share/man/man3tiff/TIFFmemory.3tiff
+file path=usr/share/man/man3tiff/TIFFquery.3tiff
+file path=usr/share/man/man3tiff/TIFFsize.3tiff
+file path=usr/share/man/man3tiff/TIFFstrip.3tiff
+file path=usr/share/man/man3tiff/TIFFswab.3tiff
+file path=usr/share/man/man3tiff/TIFFtile.3tiff
+file path=usr/share/man/man3tiff/libtiff.3tiff

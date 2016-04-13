@@ -1,0 +1,45 @@
+--- espeak-1.48.04-source/src/Makefile.~1~	2014-02-02 14:58:11.000000000 +0400
++++ espeak-1.48.04-source/src/Makefile	2015-02-26 13:03:54.408929751 +0300
+@@ -3,9 +3,9 @@
+ DATADIR=/usr/share/espeak-data
+ 
+ PREFIX=/usr
+-BINDIR=$(PREFIX)/bin
++#BINDIR=$(PREFIX)/bin
+ INCDIR=$(PREFIX)/include/espeak
+-LIBDIR=$(PREFIX)/lib
++#LIBDIR=$(PREFIX)/lib
+ 
+ RELEASE = 1.48
+ BIN_NAME = speak
+@@ -16,7 +16,7 @@
+ LIBTAG = $(LIB_VERSION).$(RELEASE)
+ 
+ # Use SONAME_OPT=-Wl,h, on Solaris
+-SONAME_OPT=-Wl,-soname,
++SONAME_OPT=-h 
+ 
+ # Use EXTRA_LIBS=-lm on Solaris
+ EXTRA_LIBS =
+@@ -83,17 +83,17 @@
+ 
+ SRCS1=$(speak_SOURCES)
+ OBJS1=$(patsubst %.cpp,%.o,$(SRCS1))
+-LIBS1=-lstdc++ $(LIB_AUDIO) -lpthread $(EXTRA_LIBS)
++LIBS1=$(LIB_AUDIO) -lpthread $(EXTRA_LIBS)
+ 
+ SRCS2=$(libespeak_SOURCES)
+ OBJS2=$(patsubst %.cpp,x_%.o,$(SRCS2))
+-LIBS2=-lstdc++ $(LIB_AUDIO) -lpthread
++LIBS2=$(LIB_AUDIO) -lpthread
+ 
+ SRCS3 = espeak.cpp
+ OBJS3=$(patsubst %.cpp,%.o,$(SRCS3))
+-LIBS3=-lstdc++ -L . -lespeak
++LIBS3=-L . -lespeak
+ 
+-CXXFLAGS=-O2
++#CXXFLAGS=-O2
+ 
+ 
+ all: $(BIN_NAME) $(LIB_NAME) $(STATIC_LIB_NAME) $(BIN2_NAME)

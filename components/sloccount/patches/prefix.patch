@@ -1,0 +1,36 @@
+--- sloccount-2.26/makefile.orig	2014-12-01 14:31:34.804073640 -0500
++++ sloccount-2.26/makefile	2014-12-01 14:49:07.952172543 -0500
+@@ -28,7 +28,7 @@
+ # Set this for where to store the man pages and executables.
+ # If you want to store this as part of an official distribution,
+ # change this to "/usr":
+-PREFIX=/usr/local
++PREFIX?=/usr/local
+ 
+ # Set "EXE_SUFFIX" to ".exe" if you're running on Windows, like this:
+ # EXE_SUFFIX=.exe
+@@ -37,14 +37,14 @@
+ # Set this to your C compiler, if it's not "gcc"; a likely alternative is "cc".
+ # The "-Wall" option turns on warnings in gcc.  gcc users might also want
+ # to consider using "-Werror", which turns warnings into errors.
+-CC=gcc -Wall
++CC?=gcc -Wall
+ 
+ # Set this to the name of your "install" program.  On some systems,
+ # "install -C" would be useful (so unchanged files won't be modified),
+ # but not all systems support this install option.  "Install" should work
+ # for any Unix-like system as well as for Cygwin.
+ # "INSTALL_A_DIR" is the command to create a directory in the first place.
+-INSTALL=install
++INSTALL?=install
+ INSTALL_A_DIR=$(INSTALL) -d
+ 
+ # Set this to the name of the program to create RPMs.
+@@ -164,6 +164,7 @@
+ 
+ 
+ install_programs: all
++	$(INSTALL_A_DIR) $(INSTALL_DIR)
+ 	$(INSTALL) $(EXECUTABLES) $(INSTALL_DIR)
+ 
+ uninstall_programs:

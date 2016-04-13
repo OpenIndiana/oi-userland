@@ -1,0 +1,18 @@
+# If bash uses ncurses, then its own copy of libreadline should
+# use ncurses too.
+# Solaris-specific. On Linux, the <ncurses.h> header file is named
+# <curses.h>.
+# We should submit this upstream.
+--- lib/readline/display.c	2015-04-02 11:04:32.395423459 -0700
++++ lib/readline/display.c	2015-04-02 11:05:13.614898815 -0700
+@@ -41,6 +41,10 @@
+ 
+ #include <stdio.h>
+ 
++#if defined(SOLARIS)
++# include <ncurses/ncurses.h>
++#endif
++
+ #ifdef __MSDOS__
+ #  include <pc.h>
+ #endif

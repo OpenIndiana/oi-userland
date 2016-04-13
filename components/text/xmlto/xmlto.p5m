@@ -1,0 +1,76 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/text/xmlto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license xmlto.license license="GPLv2"
+
+# xmlto script dependencies that aren't automatically found:
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/lynx
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xmllint
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xsltproc
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/find
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/getopt
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tail
+
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/xmlto/format/docbook/man -> delete facet.doc.man all>
+
+file path=usr/bin/xmlif mode=0555
+file path=usr/bin/xmlto mode=0555
+file path=usr/share/man/man1/xmlif.1
+file path=usr/share/man/man1/xmlto.1
+file path=usr/share/xmlto/format/docbook/awt
+file path=usr/share/xmlto/format/docbook/dvi
+file path=usr/share/xmlto/format/docbook/epub
+file path=usr/share/xmlto/format/docbook/fo
+file path=usr/share/xmlto/format/docbook/html
+file path=usr/share/xmlto/format/docbook/html-nochunks
+file path=usr/share/xmlto/format/docbook/htmlhelp
+file path=usr/share/xmlto/format/docbook/javahelp
+file path=usr/share/xmlto/format/docbook/man 
+file path=usr/share/xmlto/format/docbook/mif
+file path=usr/share/xmlto/format/docbook/pcl
+file path=usr/share/xmlto/format/docbook/pdf
+file path=usr/share/xmlto/format/docbook/ps
+file path=usr/share/xmlto/format/docbook/svg
+file path=usr/share/xmlto/format/docbook/txt
+file path=usr/share/xmlto/format/docbook/xhtml
+file path=usr/share/xmlto/format/docbook/xhtml-nochunks
+file path=usr/share/xmlto/format/fo/awt
+file path=usr/share/xmlto/format/fo/dvi
+file path=usr/share/xmlto/format/fo/mif
+file path=usr/share/xmlto/format/fo/pcl
+file path=usr/share/xmlto/format/fo/pdf
+file path=usr/share/xmlto/format/fo/ps
+file path=usr/share/xmlto/format/fo/svg
+file path=usr/share/xmlto/format/fo/txt
+file path=usr/share/xmlto/format/xhtml1/awt
+file path=usr/share/xmlto/format/xhtml1/dvi
+file path=usr/share/xmlto/format/xhtml1/fo
+file path=usr/share/xmlto/format/xhtml1/mif
+file path=usr/share/xmlto/format/xhtml1/pcl
+file path=usr/share/xmlto/format/xhtml1/pdf
+file path=usr/share/xmlto/format/xhtml1/ps
+file path=usr/share/xmlto/format/xhtml1/svg
+file path=usr/share/xmlto/format/xhtml1/txt
+file path=usr/share/xmlto/xmlto.mak

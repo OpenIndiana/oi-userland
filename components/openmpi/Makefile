@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2013 Aurelien Larcher.  All rights reserved.
+# Copyright 2013-2015 Aurelien Larcher.  All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -18,15 +18,16 @@ MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
-OPENMPI_VERSION_MAJOR = 	1.6
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).5
-COMPONENT_FMRI =        	library/$(COMPONENT_NAME)
+OPENMPI_VERSION_MAJOR = 	1.10
+COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).1
+COMPONENT_FMRI = library/openmpi/$(COMPILER)
+COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
 COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:ac308dc38e77c622aedea5f3fd368c800b6636d0500f2124c36a505a65806559
+    sha256:90eda119e8dcae8d904e44f5fc38a5051a4fb94134f56dc24b9051baff8bb29e
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
@@ -50,16 +51,15 @@ CONFIGURE_OPTIONS+=	--mandir=$(MPI_MANDIR)
 CONFIGURE_OPTIONS+=	--sbindir=$(MPI_SBINDIR)
 CONFIGURE_OPTIONS+=	--sysconfdir=$(MPI_ETCDIR)
 CONFIGURE_OPTIONS+=	--enable-ipv6
-CONFIGURE_OPTIONS+=	--enable-mpi-f77
-CONFIGURE_OPTIONS+=	--enable-mpi-f90
+CONFIGURE_OPTIONS+= --enable-mpi-fortran=usempi
 CONFIGURE_OPTIONS+=	--enable-mpi-profile
 CONFIGURE_OPTIONS+=	--enable-mpi-cxx
 CONFIGURE_OPTIONS+=	--enable-mpi-cxx-seek
 CONFIGURE_OPTIONS+=	--with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+=	--with-wrapper-fflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-fcflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
+CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
 
 #COMPONENT_POST_CONFIGURE_ACTION += sed -i -e 's/-export-dynamic//g' $(SOURCE_DIR)/ompi/mpi/cxx/Makefile
 

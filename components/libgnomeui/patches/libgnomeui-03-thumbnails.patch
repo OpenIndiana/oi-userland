@@ -1,0 +1,100 @@
+--- libgnomeui-2.24.5/libgnomeui/gnome-thumbnail.c.orig	Fri Apr 11 17:18:48 2014
++++ libgnomeui-2.24.5/libgnomeui/gnome-thumbnail.c	Fri Apr 11 17:23:04 2014
+@@ -351,8 +351,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+   
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails",
++#endif
+ 			   (priv->size == GNOME_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 			   file,
+ 			   NULL);
+@@ -412,8 +417,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails/fail",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails/fail",
++#endif
+ 			   factory->priv->application,
+ 			   file,
+ 			   NULL);
+@@ -722,8 +732,13 @@
+ 
+   res = FALSE;
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  thumbnail_dir = g_build_filename (g_get_user_cache_dir (),
++				    "thumbnails",
++#else
+   thumbnail_dir = g_build_filename (g_get_home_dir (),
+ 				    ".thumbnails",
++#endif
+ 				    NULL);
+   if (!g_file_test (thumbnail_dir, G_FILE_TEST_IS_DIR))
+     {
+@@ -756,8 +771,13 @@
+ 
+   res = FALSE;
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  thumbnail_dir = g_build_filename (g_get_user_cache_dir (),
++				    "thumbnails",
++#else
+   thumbnail_dir = g_build_filename (g_get_home_dir (),
+ 				    ".thumbnails",
++#endif
+ 				    NULL);
+   if (!g_file_test (thumbnail_dir, G_FILE_TEST_IS_DIR))
+     {
+@@ -830,8 +850,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+   
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  dir = g_build_filename (g_get_user_cache_dir (),
++			  "thumbnails",
++#else
+   dir = g_build_filename (g_get_home_dir (),
+ 			  ".thumbnails",
++#endif
+ 			  (priv->size == GNOME_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 			  NULL);
+   
+@@ -938,8 +963,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+   
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  dir = g_build_filename (g_get_user_cache_dir (),
++			  "thumbnails/fail",
++#else
+   dir = g_build_filename (g_get_home_dir (),
+ 			  ".thumbnails/fail",
++#endif
+ 			  factory->priv->application,
+ 			  NULL);
+   
+@@ -1035,8 +1065,13 @@
+   file = g_strconcat (md5, ".png", NULL);
+   g_free (md5);
+   
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails",
++#endif
+ 			   (size == GNOME_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 			   file,
+ 			   NULL);

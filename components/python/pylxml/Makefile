@@ -19,17 +19,19 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2015, PALO Richard.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
-COMPONENT_VERSION=	2.3.3
+COMPONENT_VERSION=	3.5.0
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2a3ca34f63b062ee8e059ca2460ac18040ec9622f0a31e143383f0db944ceb36
+    sha256:349f93e3a4b09cc59418854ab8013d027d246757c51744bf20069bc89016f578
+
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
@@ -43,14 +45,18 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_ARGS=	test
+COMPONENT_TEST_CMD=	$(MAKE)
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_ENV+=	PYTHON=$(PYTHON)
+COMPONENT_TEST_ENV+=	LC_ALL=en_US.UTF-8
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(BUILD_32_and_64)
-		cd $(SOURCE_DIR) && $(PYTHON) selftest.py
-		cd $(SOURCE_DIR) && $(PYTHON) selftest2.py
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

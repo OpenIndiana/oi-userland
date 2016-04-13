@@ -1,0 +1,38 @@
+Disable SSLv3 as long as we're using GNU TLS 2.8 - we should be able to drop
+this once we upgrade to GNU TLS 3.4.0 or later, which disable it by default
+per http://lists.gnutls.org/pipermail/gnutls-devel/2015-April/007535.html
+
+diff --git a/common/rfb/CSecurityTLS.cxx b/common/rfb/CSecurityTLS.cxx
+index 3421de5..3a55d16 100644
+--- common/rfb/CSecurityTLS.cxx
++++ common/rfb/CSecurityTLS.cxx
+@@ -184,8 +184,10 @@ bool CSecurityTLS::processMsg(CConnection* cc)
+     if (gnutls_init(&session, GNUTLS_CLIENT) != GNUTLS_E_SUCCESS)
+       throw AuthFailureException("gnutls_init failed");
+ 
+-    if (gnutls_set_default_priority(session) != GNUTLS_E_SUCCESS)
+-      throw AuthFailureException("gnutls_set_default_priority failed");
++    // SSL 3.0 is enabled by default in GNU TLS 2.8, but we want it off
++    if (gnutls_priority_set_direct(session, "NORMAL:-VERS-SSL3.0", NULL)
++	!= GNUTLS_E_SUCCESS)
++      throw AuthFailureException("gnutls_priority_set_direct failed");
+ 
+     setParam();
+     
+diff --git a/common/rfb/SSecurityTLS.cxx b/common/rfb/SSecurityTLS.cxx
+index 2ea84e0..5cd4739 100644
+--- common/rfb/SSecurityTLS.cxx
++++ common/rfb/SSecurityTLS.cxx
+@@ -137,8 +137,10 @@ bool SSecurityTLS::processMsg(SConnection *sc)
+     if (gnutls_init(&session, GNUTLS_SERVER) != GNUTLS_E_SUCCESS)
+       throw AuthFailureException("gnutls_init failed");
+ 
+-    if (gnutls_set_default_priority(session) != GNUTLS_E_SUCCESS)
+-      throw AuthFailureException("gnutls_set_default_priority failed");
++    // SSL 3.0 is enabled by default in GNU TLS 2.8, but we want it off
++    if (gnutls_priority_set_direct(session, "NORMAL:-VERS-SSL3.0", NULL)
++	!= GNUTLS_E_SUCCESS)
++      throw AuthFailureException("gnutls_priority_set_direct failed");
+ 
+     try {
+       setParams(session);

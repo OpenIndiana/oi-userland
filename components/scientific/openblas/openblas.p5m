@@ -1,0 +1,43 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014-2015 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/openblas/cblas.h
+file path=usr/include/openblas/f77blas.h
+file path=usr/include/openblas/lapacke.h
+file path=usr/include/openblas/lapacke_config.h
+file path=usr/include/openblas/lapacke_mangling.h
+file path=usr/include/openblas/lapacke_utils.h
+file path=usr/include/openblas/openblas_config.h
+link path=usr/lib/$(MACH64)/libopenblas.a \
+    target=libopenblasp-r$(COMPONENT_VERSION).a
+link path=usr/lib/$(MACH64)/libopenblas.so \
+    target=libopenblasp-r$(COMPONENT_VERSION).so
+file path=usr/lib/$(MACH64)/libopenblasp-r$(COMPONENT_VERSION).a
+file path=usr/lib/$(MACH64)/libopenblasp-r$(COMPONENT_VERSION).so
+link path=usr/lib/libopenblas.a target=libopenblasp-r$(COMPONENT_VERSION).a
+link path=usr/lib/libopenblas.so target=libopenblasp-r$(COMPONENT_VERSION).so
+file path=usr/lib/libopenblasp-r$(COMPONENT_VERSION).a
+file path=usr/lib/libopenblasp-r$(COMPONENT_VERSION).so
+file path=usr/share/openblas-$(COMPONENT_VERSION)/OpenBLASConfig.cmake
+file path=usr/share/openblas-$(COMPONENT_VERSION)/OpenBLASConfigVersion.cmake

@@ -34,15 +34,6 @@ include ../../make-rules/ips.mk
 
 LD_OPTIONS=
 
-gcc_OPT = -O2
-
-CONFIGURE_PREFIX = /usr/g++
-
-LDFLAGS.32 = -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 = -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-
-LDFLAGS += $(LDFLAGS.$(BITS))
-
 CONFIGURE_OPTIONS += --localstatedir=/var 
 CONFIGURE_OPTIONS += --disable-skdb-update
 CONFIGURE_OPTIONS += --with-convert-dir=/usr/share/omf

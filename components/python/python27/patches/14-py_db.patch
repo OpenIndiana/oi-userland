@@ -1,7 +1,9 @@
-diff --git Python-2.7.1/Makefile.pre.in.orig Python-2.7.1/Makefile.pre.in
---- Python-2.7.1/Makefile.pre.in.orig   Sun Feb 13 19:37:16 2011
-+++ Python-2.7.1/Makefile.pre.in        Sun Feb 13 20:55:04 2011
-@@ -364,7 +364,7 @@
+This patch adds Python debugger support.  It may be contributed upstream at
+some point, but the suitability (or lack thereof) has not yet been determined.
+
+--- Python-2.7.9/Makefile.pre.in.~3~	2014-12-11 09:28:46.856724815 -0800
++++ Python-2.7.9/Makefile.pre.in	2014-12-11 09:30:15.502371832 -0800
+@@ -410,7 +410,7 @@
  
  # Default target
  all:		build_all
@@ -10,7 +12,7 @@ diff --git Python-2.7.1/Makefile.pre.in.orig Python-2.7.1/Makefile.pre.in
  
  # Compile a binary with gcc profile guided optimization.
  profile-opt:
-@@ -709,6 +709,19 @@
+@@ -791,6 +791,15 @@
  
  $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
  
@@ -19,121 +21,22 @@ diff --git Python-2.7.1/Makefile.pre.in.orig Python-2.7.1/Makefile.pre.in
 +libpython2.7_db.so.1.0:        $(srcdir)/py_db/libpython27_db.c
 +	$(CC) -o $@ $(CFLAGS) $(CPPFLAGS) $(SHLIB_FLAGS) $<
 +
-+check_offset:  $(srcdir)/py_db/check_offsets.c
-+	$(CC) -o $@ $(CFLAGS) $(CPPFLAGS) $<
++build-py_db:   libpython2.7_db.so.1.0
 +
-+build-py_db:   libpython2.7_db.so.1.0 check_offset
-+
-+install-py_db: libpython2.7_db.so.1.0 check_offset
++install-py_db: libpython2.7_db.so.1.0
 +	$(INSTALL_SHARED) libpython2.7_db.so.1.0 $(DESTDIR)$(LIBDIR)
-+	$(INSTALL_PROGRAM) check_offset $(DESTDIR)$(BINDIR)
  
  ######################################################################
  
-@@ -773,7 +786,7 @@
+@@ -855,7 +864,7 @@
  		$(TESTPYTHON) $(TESTPROG) $(MEMTESTOPTS)
  
  # Install everything
--install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@
-+install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@ install-py_db
- 
- # Install almost everything without disturbing previous versions
- altinstall:	@FRAMEWORKALTINSTALLFIRST@ altbininstall libinstall inclinstall libainstall \
-
-diff --git Python-2.7.1/py_db/check_offsets.c Python-2.7.1/py_db/check_offsets.c
-new file mode 100644
---- /dev/null
-+++ Python-2.7.1/py_db/check_offsets.c
-@@ -0,0 +1,87 @@
-+/*
-+ * CDDL HEADER START
-+ *
-+ * The contents of this file are subject to the terms of the
-+ * Common Development and Distribution License (the "License").
-+ * You may not use this file except in compliance with the License.
-+ *
-+ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-+ * or http://www.opensolaris.org/os/licensing.
-+ * See the License for the specific language governing permissions
-+ * and limitations under the License.
-+ *
-+ * When distributing Covered Code, include this CDDL HEADER in each
-+ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-+ * If applicable, add the following below this CDDL HEADER, with the
-+ * fields enclosed by brackets "[]" replaced with your own identifying
-+ * information: Portions Copyright [yyyy] [name of copyright owner]
-+ *
-+ * CDDL HEADER END
-+ */
-+/*
-+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
-+ */
-+
-+#include <stdio.h>
-+
-+#include <Python.h>
-+#include <frameobject.h>
-+
-+#include "libpython27_db_32.h"
-+
-+#if 0
-+#define	offsetof(s, m)	((size_t)(&(((s *)0)->m)))
-+#endif
-+
-+int
-+main(void)
-+{
-+/*
-+ * PyCodeObject co_name
-+ * PyCodeObject co_filename
-+ * PyCodeObject co_lnotab
-+ * PyFrameObject f_back
-+ * PyFrameObject f_code
-+ * PyFrameObject f_lasti
-+ * PyInterpreterState next
-+ * PyInterpreterState tstate_head
-+ * PyStringObject ob_sval
-+ * PyStringObject ob_size
-+ * PyThreadState frame
-+ * PyThreadState next
-+ */
-+
-+	printf("struct member: native 32\n");
-+	printf("PyCodeObject co_name: %d %d\n", offsetof(PyCodeObject, co_name),
-+	    offsetof(PyCodeObject32, co_name));
-+	printf("PyCodeObject co_filename: %d %d\n", offsetof(PyCodeObject,
-+	    co_filename), offsetof(PyCodeObject32, co_filename));
-+	printf("PyCodeObject co_lnotab: %d %d\n", offsetof(PyCodeObject,
-+	    co_lnotab), offsetof(PyCodeObject32, co_lnotab));
-+	printf("PyFrameObject f_back: %d %d\n", offsetof(PyFrameObject, f_back),
-+	    offsetof(PyFrameObject32, f_back));
-+	printf("PyFrameObject f_code: %d %d\n", offsetof(PyFrameObject, f_code),
-+	    offsetof(PyFrameObject32, f_code));
-+	printf("PyFrameObject f_lasti: %d %d\n", offsetof(PyFrameObject,
-+	    f_lasti), offsetof(PyFrameObject32, f_lasti));
-+	printf("PyInterpreterState next: %d %d\n", offsetof(PyInterpreterState,
-+	    next), offsetof(PyInterpreterState32, next));
-+	printf("PyInterpreterState tstate_head: %d %d\n",
-+	    offsetof(PyInterpreterState, tstate_head),
-+	    offsetof(PyInterpreterState32, tstate_head));
-+	printf("PyStringObject ob_sval: %d %d\n", offsetof(PyStringObject,
-+	    ob_sval), offsetof(PyStringObject32, ob_sval));
-+	printf("PyStringObject ob_size: %d %d\n", offsetof(PyStringObject,
-+	    ob_size), offsetof(PyStringObject32, ob_size));
-+	printf("PyThreadState frame: %d %d\n", offsetof(PyThreadState, frame),
-+	    offsetof(PyThreadState32, frame));
-+	printf("PyThreadState next: %d %d\n", offsetof(PyThreadState, next),
-+	    offsetof(PyThreadState32, next));
-+
-+	printf("\nObject sizes\n");
-+	printf("PyObject: %d %d\n", sizeof (PyObject), sizeof (PyObject32));
-+	printf("PyVarObject: %d %d\n", sizeof (PyVarObject),
-+	    sizeof (PyVarObject32));
-+
-+	return (0);
-+}
-diff --git Python-2.7.1/py_db/libpython27_db.c Python-2.7.1/py_db/libpython27_db.c
-new file mode 100644
+-install:	@FRAMEWORKINSTALLFIRST@ commoninstall bininstall maninstall @FRAMEWORKINSTALLLAST@
++install:	@FRAMEWORKINSTALLFIRST@ commoninstall bininstall maninstall @FRAMEWORKINSTALLLAST@ install-py_db
+ 	if test "x$(ENSUREPIP)" != "xno"  ; then \
+ 		case $(ENSUREPIP) in \
+ 			upgrade) ensurepip="--upgrade" ;; \
 --- /dev/null
 +++ Python-2.7.1/py_db/libpython27_db.c
 @@ -0,0 +1,654 @@

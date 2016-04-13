@@ -1,0 +1,23 @@
+--- xsane-0.995/src/xsane-preferences.c.orig	2008-08-15 13:41:32.397061000 +0800
++++ xsane-0.995/src/xsane-preferences.c	2008-08-15 13:52:53.039067000 +0800
+@@ -99,7 +99,7 @@
+        7.0,		/* png_compression */
+        6.0,		/* tiff_zip_compression */
+  COMPRESSION_PACKBITS,	/* tiff_compression16_nr */
+- COMPRESSION_JPEG,	/* tiff_compression8_nr */
++ COMPRESSION_PACKBITS,  /* tiff_compression8_nr */
+  COMPRESSION_CCITTFAX3,	/* tiff_compression1_nr */
+        1,		/* save_devprefs_at_exit */
+        1,		/* overwrite_warning */
+--- xsane-0.995/src/xsane-setup.c.orig	2008-08-15 13:45:06.384228000 +0800
++++ xsane-0.995/src/xsane-setup.c	2008-08-15 13:43:17.138552000 +0800
+@@ -2003,6 +2003,9 @@
+ 
+   for (i=1; i <= TIFF_COMPRESSION8_NUMBER; i++)
+   {
++    /* Due to JEPG-related pseudo tags aren't supported by libtiff, disable JEPG compression option */
++    if (strcmp (tiff_compression8_strings[i-1].name, MENU_ITEM_TIFF_COMP_JPEG) == 0)
++        continue;
+     tiff_compression_item = gtk_menu_item_new_with_label(tiff_compression8_strings[i-1].name);
+     gtk_container_add(GTK_CONTAINER(tiff_compression_menu), tiff_compression_item);
+     g_signal_connect(GTK_OBJECT(tiff_compression_item), "activate", (GtkSignalFunc) xsane_setup_tiff_compression8_callback, (void *) tiff_compression8_strings[i-1].number);

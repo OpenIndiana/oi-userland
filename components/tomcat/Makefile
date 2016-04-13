@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	6.0.39
+COMPONENT_VERSION=	6.0.44
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f31eba79138f5ac8223ff706fb2637205837ea44ba27c39bfb18ce9aada0f7ec
+    sha256:c6f01526d58f2ba7b9da496e959d9e68cc49183006077704ab91c36ebebf5a4a
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
@@ -48,12 +48,10 @@ COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(CO
 COMPONENT_ARCHIVE_3= ecj-4.3.1.jar
 COMPONENT_ARCHIVE_HASH_3= \
     sha256:5f86314f67dc57a0a9865265a48fd7831f16ab177c0c1349eea798c2c6297295
-COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_URL_3= http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
-
-JAVA_HOME=/usr/jdk/openjdk1.7.0
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   DISTFILES_LOCATION=\$${base.path}/../../
@@ -71,15 +69,18 @@ COMPONENT_POST_BUILD_ACTION= \
 	(cd $(PROTO_DIR) ; $(RM) conf/CONF.tar.gz ; \
 	    gtar cfz conf/CONF.tar.gz conf/* )
 
+COMPONENT_TEST_DIR =		$(@D)/test
+COMPONENT_TEST_ARGS =		$(COMPONENT_BUILD_ARGS) \
+				-Djunit.home=/usr/share/lib/java
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:	$(BUILD_32)
 
 install: build
 
-test:  build
-	@cd $(BUILD_DIR_32)/test; $(ENV) $(COMPONENT_BUILD_ENV) \
-	    $(ANT) $(COMPONENT_BUILD_ARGS) -Djunit.home=/usr/share/lib/java
+test:  $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

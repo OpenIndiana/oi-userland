@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1993, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -50,8 +50,6 @@
 #include <unistd.h>
 
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include <X11/X.h>
 #include <X11/Xproto.h>
 #include "os.h"
@@ -63,23 +61,30 @@
 #include <X11/extensions/interactive.h>
 #include <X11/Xfuncproto.h>
 #include "dix.h"
+#include "client.h"
 
 #include "interactive_srv.h"
 
-static int ProcIADispatch(ClientPtr client), SProcIADispatch(ClientPtr client);
-static int ProcIASetProcessInfo(ClientPtr client), SProcIASetProcessInfo(ClientPtr client);
-static int ProcIAGetProcessInfo(ClientPtr client), SProcIAGetProcessInfo(ClientPtr client);
-static int ProcIAQueryVersion(ClientPtr client), SProcIAQueryVersion(ClientPtr client);
+static int ProcIADispatch(ClientPtr client);
+static int SProcIADispatch(ClientPtr client);
+static int ProcIASetProcessInfo(ClientPtr client);
+static int SProcIASetProcessInfo(ClientPtr client);
+static int ProcIAGetProcessInfo(ClientPtr client);
+static int SProcIAGetProcessInfo(ClientPtr client);
+static int ProcIAQueryVersion(ClientPtr client);
+static int SProcIAQueryVersion(ClientPtr client);
 static void IACloseDown(ExtensionEntry *ext);
-static void IAClientStateChange(CallbackListPtr *pcbl, pointer nulldata, pointer calldata);
+static void IAClientStateChange(CallbackListPtr *pcbl, pointer nulldata,
+				pointer calldata);
 
-static int InitializeClass(void );
-static void SetIAPrivate(int*);
+static int InitializeClass(void);
+static void SetIAPrivate(int *);
 static void ChangeInteractive(ClientPtr);
 static int SetPriority(const ClientProcessPtr, int);
 static void ChangePriority(register ClientPtr client);
 
-static int SetClientPrivate(ClientPtr client, ConnectionPidPtr stuff, int length);
+static int SetClientPrivate(ClientPtr client, ConnectionPidPtr stuff,
+			    int length);
 static void FreeProcessList(IAClientPrivatePtr priv);
 /* static int LocalConnection(OsCommPtr); */
 static int PidSetEqual(ClientProcessPtr, ClientProcessPtr);
@@ -87,7 +92,7 @@ static int PidSetEqual(ClientProcessPtr, ClientProcessPtr);
 static int IAWrapProcVectors(void);
 static int IAUnwrapProcVectors(void);
 
-static CARD32 IAInitTimerCall(OsTimerPtr timer,CARD32 now,pointer arg);
+static CARD32 IAInitTimerCall(OsTimerPtr timer, CARD32 now, pointer arg);
 
 static iaclass_t 	IAClass;
 static id_t		TScid;
@@ -98,8 +103,8 @@ static unsigned long 	IAExtensionGeneration = 0;
 static OsTimerPtr 	IAInitTimer = NULL;
 static int (* IASavedProcVector[256]) (ClientPtr client);
 
-static int IAPrivKeyIndex;
-static DevPrivateKey IAPrivKey = &IAPrivKeyIndex;
+static DevPrivateKeyRec IAPrivKeyRec;
+#define IAPrivKey (&IAPrivKeyRec)
 
 #define GetIAClient(pClient)	\
     ((IAClientPrivatePtr) dixLookupPrivate(&(pClient)->devPrivates, IAPrivKey))
@@ -149,6 +154,9 @@ IAExtensionInit(void)
     if (SetPriority(&myProc, SET_PRIORITY) != Success)
 	return;
 
+    if (!dixRegisterPrivateKey(&IAPrivKeyRec, PRIVATE_CLIENT, 0))
+	return;
+
     if (!AddCallback(&ClientStateCallback, IAClientStateChange, NULL))
         return;
 
@@ -185,7 +193,7 @@ IAInitClientPrivate(ClientPtr pClient)
 	return Success;
     }
 
-    priv = xalloc(sizeof(IAClientPrivateRec));
+    priv = malloc(sizeof(IAClientPrivateRec));
     if (priv == NULL) {
 	return BadAlloc;
     }
@@ -200,7 +208,7 @@ IAInitClientPrivate(ClientPtr pClient)
 
 /* Called when we first hit WaitForSomething to initialize serverClient */
 static CARD32
-IAInitTimerCall(OsTimerPtr timer,CARD32 now,pointer arg)
+IAInitTimerCall(OsTimerPtr timer, CARD32 now, pointer arg)
 {
     ConnectionPidRec serverPid;
 
@@ -252,19 +260,18 @@ IAClientStateChange(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 	}
 
 	FreeProcessList(priv);
-	xfree(priv);
+	free(priv);
 	dixSetPrivate(&(pClient)->devPrivates, IAPrivKey, NULL);
 	break;
 
     case ClientStateInitial:
 	IAInitClientPrivate(pClient);
-	if (GetLocalClientCreds(pClient, &lcc) != -1) {
-	    if (lcc->fieldsSet & LCC_PID_SET) {
-		ConnectionPidRec clientPid = lcc->pid;
+	{
+	    ConnectionPidRec clientPid = GetClientPid(pClient);
+	    if (clientPid != -1) {
 		SetClientPrivate(pClient, &clientPid, 1);
 		ChangeInteractive(pClient);
 	    }
-	    FreeLocalClientCreds(lcc);
 	}
 	break;
 
@@ -322,7 +329,7 @@ ProcIASetProcessInfo(ClientPtr client)
 
     if ((stuff->flags & INTERACTIVE_INFO) &&
 	(stuff->uid==ServerUid || ServerUid==0 || stuff->uid==0) &&
-	LocalClient(client)) {
+	client->local) {
 	length = stuff->length - (sizeof(xIASetProcessInfoReq)>>2);
 	SetClientPrivate(client, (ConnectionPidPtr)&stuff[1], length);
 	ChangeInteractive(client);
@@ -330,8 +337,8 @@ ProcIASetProcessInfo(ClientPtr client)
 
     if ((stuff->flags & INTERACTIVE_SETTING) &&
 	(stuff->uid==ServerUid || ServerUid==0) &&
-	LocalClient(client)) {
-	SetIAPrivate((int*)&stuff[1]);
+	client->local) {
+	SetIAPrivate((int *)&stuff[1]);
     }
 
     return (client->noClientException);
@@ -345,31 +352,54 @@ ProcIAGetProcessInfo(ClientPtr client)
     REQUEST(xIAGetProcessInfoReq);
     xIAGetProcessInfoReply rep;
     register int length = 0;
-    caddr_t write_back = NULL;
+    int i;
+    int32_t *write_back = NULL;
 
     REQUEST_SIZE_MATCH(xIAGetProcessInfoReq);
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
+
     if (stuff->flags & INTERACTIVE_INFO) {
 	priv = GetIAClient(client);
 	if ( (priv == NULL) || (priv->process == NULL) ) {
 	    rep.count = 0;
 	} else {
-    	    CurrentPids = priv->process;
+	    CurrentPids = priv->process;
 	    rep.count = CurrentPids->count;
 	    length = rep.count << 2;
-	    write_back=(caddr_t)CurrentPids->pids;
+	    rep.length = rep.count;
+	    write_back = malloc((size_t) rep.count * sizeof(int32_t));
+	    if (write_back == NULL)
+		return ~Success;
+	    else {
+		int32_t *tmp = write_back;
+
+		for (i = 0; i < CurrentPids->count; ++i)
+		    *tmp++ = *CurrentPids->pids++;
+	    }
 	}
     }
     if (stuff->flags & INTERACTIVE_SETTING) {
 	rep.count=1;
 	length=rep.count << 2;
-	write_back=(caddr_t)&ia_nice;
+	rep.length = rep.count;
+
+	write_back = malloc(sizeof(int32_t));
+	if (write_back == NULL)
+	    return ~Success;
+
+	*write_back = (int32_t) ia_nice;
     }
 
     WriteToClient(client, sizeof(xIAGetProcessInfoReply), (char *)&rep);
-    WriteToClient(client, length, write_back);
+
+    if (rep.length > 0) {
+	(void) WriteToClient(client, (int) sizeof(int32_t) * rep.count,
+		(char *) write_back);
+	free(write_back);
+    }
+
     return (client->noClientException);
 }
 
@@ -527,16 +557,16 @@ SetPriority(const ClientProcessPtr cpp, int cmd)
     }
 
     if ( setegid(0) < 0 ) {
-	Error("Error in setting egid to 0");
+	ErrorF("Error in setting egid to 0: %s\n", strerror(errno));
     }
 
     for (i = 0; i < cpp->count ; i++) {
 	id_t	pid = cpp->pids[i];
 
-	pcinfo.pc_cid=PC_CLNULL;
+	pcinfo.pc_cid = PC_CLNULL;
 	if ((priocntl(P_PID, pid, PC_GETPARMS, (caddr_t)&pcinfo)) < 0) {
 	    if ( setegid(usr_egid) < 0 ) {
-		Error("Error in resetting egid");
+		ErrorF("Error in resetting egid: %s\n", strerror(errno));
 	    }
 	    return ~Success; /* Scary time; punt */
 	}
@@ -584,7 +614,7 @@ SetPriority(const ClientProcessPtr cpp, int cmd)
     }
 
     if (setegid(usr_egid) < 0)
-	Error("Error in resetting egid");
+	ErrorF("Error in resetting egid: %s\n", strerror(errno));
 
     if (ret == Success) {
 	if (cmd == SET_PRIORITY) {
@@ -598,7 +628,7 @@ SetPriority(const ClientProcessPtr cpp, int cmd)
 }
 
 static void
-SetIAPrivate(int * value)
+SetIAPrivate(int *value)
 {
     ia_nice = *value;
 }
@@ -621,15 +651,15 @@ SetClientPrivate(ClientPtr client, ConnectionPidPtr stuff, int length)
 	FreeProcessList(priv);
     }
 
-    cpp = (ClientProcessPtr)xalloc(sizeof(ClientProcessRec));
+    cpp = malloc(sizeof(ClientProcessRec));
 
     if (cpp == NULL)
 	return BadAlloc;
 
-    cpp->pids = (ConnectionPidPtr)xalloc(sizeof(ConnectionPidRec)*length);
+    cpp->pids = malloc(sizeof(ConnectionPidRec)*length);
 
     if (cpp->pids == NULL) {
-	xfree(cpp);
+	free(cpp);
 	return BadAlloc;
     }
 
@@ -650,13 +680,13 @@ FreeProcessList(IAClientPrivatePtr priv)
 	return;
     priv->process = NULL;
 
-    if ( LastPids == cpp )
+    if (LastPids == cpp)
 	LastPids = NULL;
 
     if (cpp->pids != NULL)
-	xfree(cpp->pids);
+	free(cpp->pids);
 
-    xfree(cpp);
+    free(cpp);
 }
 
 /*

@@ -1,0 +1,25 @@
+From 2ad90f2d162e8cc3a981d2e77e926d6eec01919e Mon Sep 17 00:00:00 2001
+From: Carlos Rafael Giani <dv@pseudoterminal.org>
+Date: Wed, 23 May 2012 20:28:06 +0200
+Subject: [PATCH 11/20] opuspay: plug buffer leak
+
+Fixes https://bugzilla.gnome.org/show_bug.cgi?id=676647
+---
+ ext/opus/gstrtpopuspay.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ext/opus/gstrtpopuspay.c b/ext/opus/gstrtpopuspay.c
+index cdd7ee0..08d01b1 100644
+--- a/ext/opus/gstrtpopuspay.c
++++ b/ext/opus/gstrtpopuspay.c
+@@ -136,5 +136,7 @@ gst_rtp_opus_pay_handle_buffer (GstBaseRTPPayload * basepayload,
+   gst_rtp_buffer_set_marker (outbuf, FALSE);
+   GST_BUFFER_TIMESTAMP (outbuf) = timestamp;
+ 
++  gst_buffer_unref (buffer);
++
+   return gst_basertppayload_push (basepayload, outbuf);
+ }
+-- 
+1.7.10.4
+

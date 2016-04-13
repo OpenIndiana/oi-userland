@@ -1,0 +1,39 @@
+https://bugzilla.samba.org/show_bug.cgi?id=10487
+Common synopsis:  Samba Winbind GETGRENT interface fails when any trusted domain is not available
+Bugs 16298670, 18191913
+
+--- a/nsswitch/wb_common.c	2014-02-07 17:26:50.046234000 +0100
++++ b/nsswitch/wb_common.c	2014-02-07 17:33:40.280002000 +0100
+@@ -462,7 +462,7 @@
+ 
+ 		if (ret == 0) {
+ 			/* Not ready for read yet... */
+-			if (total_time >= 30) {
++			if (total_time >= 1000) {
+ 				/* Timeout */
+ 				winbind_close_sock();
+ 				return -1;
+--- a/source3/winbindd/wb_next_grent.c	2014-02-07 17:27:14.079647000 +0100
++++ b/source3/winbindd/wb_next_grent.c	2014-02-07 17:58:36.599520000 +0100
+@@ -103,18 +103,16 @@
+ 	TALLOC_FREE(subreq);
+ 	if (tevent_req_nterror(req, status)) {
+ 		/* Ignore errors here, just log it */
+-		DEBUG(10, ("query_user_list for domain %s returned %s\n",
++		DEBUG(3, ("query_user_list for domain %s returned: %s\n",
+ 			   state->gstate->domain->name,
+ 			   nt_errstr(status)));
+-		return;
+ 	}
+ 	if (!NT_STATUS_IS_OK(result)) {
+ 		/* Ignore errors here, just log it */
+-		DEBUG(10, ("query_user_list for domain %s returned %s/%s\n",
++		DEBUG(1, ("query_user_list for domain %s failed with: %s/%s\n",
+ 			   state->gstate->domain->name,
+ 			   nt_errstr(status), nt_errstr(result)));
+-		tevent_req_nterror(req, result);
+-		return;
++		state->gstate->num_groups = 0;
+ 	}
+ 
+ 	state->gstate->num_groups = state->next_groups.num_principals;

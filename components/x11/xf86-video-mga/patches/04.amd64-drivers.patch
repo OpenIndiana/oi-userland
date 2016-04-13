@@ -1,0 +1,12 @@
+--- xf86-video-mga-1.6.3/src/Makefile.am.1	2015-02-13 15:01:15.510550054 +0300
++++ xf86-video-mga-1.6.3/src/Makefile.am	2015-02-13 15:02:11.291126057 +0300
+@@ -26,7 +26,8 @@
+ AM_CFLAGS = @XORG_CFLAGS@ @DRI_CFLAGS@
+ mga_drv_la_LTLIBRARIES = mga_drv.la
+ mga_drv_la_LDFLAGS = -module -avoid-version
+-mga_drv_ladir = @moduledir@/drivers
++tmp = @moduledir@/drivers
++mga_drv_ladir = $(tmp:amd64/xorg/modules/drivers=xorg/modules/drivers/amd64)
+ mga_drv_la_LIBADD = $(noinst_LTLIBRARIES) $(XORG_LIBS) $(PCIACCESS_LIBS)
+ mga_drv_la_LIBADD += -L$(moduledir) -lfb -lpixman-1 -lshadowfb -lfbdevhw -lexa
+ mga_drv_la_LIBADD += -lvgahw -lvbe -lint10

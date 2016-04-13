@@ -19,6 +19,7 @@ COMPONENT_NAME= pylibbe
 COMPONENT_SRC= src
 
 COMPONENT_VERSION= 0.5.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Python library to work with boot environments
 COMPONENT_PROJECT_URL = http://www.illumos.org
 

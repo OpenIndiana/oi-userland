@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	23.4
+COMPONENT_VERSION=	24.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:26576f9e664397c729f78f5ffcd092969251988461896fe8793062346ee988b9
+    sha256:0098ca3204813d69cd8412045ba33e8701fa2062f4bff56bedafc064979eef41
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 
@@ -58,6 +58,9 @@ PKG_MACROS +=	EMACS_ULEVDIR=$(EMACS_ULEVDIR)
 LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
+# LDFLAGS is defined for emacs to detect ncurses
+LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib
+
 # This code is built with gcc. The primary reason for this is that the
 # configure script has problems using a non-GNU cpp. I am not aware of
 # any reason Sun Studio could not be made to work, but simply made a
@@ -73,7 +76,7 @@ COMPILER =	gcc
 # CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR) --with-compress-info=no
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
@@ -84,7 +87,7 @@ CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 ASLR_MODE = $(ASLR_DISABLE)
 
 # variant specific configure options
-$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-x
+$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
 $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk
 
@@ -173,8 +176,7 @@ build:          $(BUILD_32)
 
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed 
 
-test:
-	@echo "no tests available"
+test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

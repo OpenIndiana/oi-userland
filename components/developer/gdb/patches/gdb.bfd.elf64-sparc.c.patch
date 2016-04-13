@@ -1,0 +1,75 @@
+--- gdb-7.6/bfd/elf64-sparc.c	2012-07-13 07:22:48.000000000 -0700
++++ gdb-7.6/bfd/elf64-sparc.c	2013-10-05 19:26:46.871871800 -0700
+@@ -22,11 +22,19 @@
+ 
+ #include "sysdep.h"
+ #include "bfd.h"
++#include "bfdlink.h"
+ #include "libbfd.h"
+ #include "elf-bfd.h"
+ #include "elf/sparc.h"
+ #include "opcode/sparc.h"
+ #include "elfxx-sparc.h"
++#include "elf-vxworks.h"
++
++#include <stddef.h>
++#include <sys/elf.h>
++#include <sys/procfs.h>
++#include <sys/regset.h>
++#include <sys/auxv.h>
+ 
+ /* In case we're on a 32-bit machine, construct a 64-bit "-1" value.  */
+ #define MINUS_ONE (~ (bfd_vma) 0)
+@@ -764,6 +772,40 @@
+     return symbol->name;
+ }
+ 
++/* Support for core dump NOTE sections.  */
++static bfd_boolean
++elf64_sparc_grok_prstatus (bfd *abfd, Elf_Internal_Note *note)
++{
++  /* silence warning about 'unused argument' */
++  if (abfd == NULL)
++    return FALSE;
++
++  switch (note->descsz)
++  {
++    default:
++      return FALSE;
++  }
++
++  return FALSE;
++}
++
++static bfd_boolean
++elf64_sparc_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
++{
++  /* silence warning about 'unused argument' */
++  if (abfd == NULL)
++    return FALSE;
++
++  switch (note->descsz)
++  {
++    default:
++      return FALSE;
++  }
++
++  return FALSE;
++}
++
++
+ static enum elf_reloc_type_class
+ elf64_sparc_reloc_type_class (const Elf_Internal_Rela *rela)
+ {
+@@ -909,6 +951,11 @@
+ #define elf_backend_init_index_section \
+   _bfd_elf_init_1_index_section
+ 
++#define elf_backend_grok_prstatus \
++  elf64_sparc_grok_prstatus
++#define elf_backend_grok_psinfo \
++  elf64_sparc_grok_psinfo
++
+ #define elf_backend_can_gc_sections 1
+ #define elf_backend_can_refcount 1
+ #define elf_backend_want_got_plt 0

@@ -1,0 +1,73 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/x11/library/glw@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/X11"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license glw.license license='MIT'
+
+<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+
+# All headers are moved to /usr/include/mesa.
+<transform file path=usr/include/mesa/(.+)$ -> set action.hash usr/include/GL/%<\1> >
+
+# All libraries are moved to /usr/lib/mesa.
+<transform file path=usr/lib/mesa/(.+)$ -> set action.hash usr/lib/%<\1> >
+
+# For several headers we create direct links
+link path=usr/X11/include/mesa target=../../include/mesa
+link path=usr/include/GL/GLwDrawA.h target=../mesa/GLwDrawA.h
+link path=usr/include/GL/GLwDrawAP.h target=../mesa/GLwDrawAP.h
+link path=usr/include/GL/GLwMDrawA.h target=../mesa/GLwMDrawA.h
+link path=usr/include/GL/GLwMDrawAP.h target=../mesa/GLwMDrawAP.h
+
+# For several libraries we create direct links
+link path=usr/lib/GL/libGLw.so.1 target=libGLw.so.1.0.0
+link path=usr/lib/GL/libGLw.so.1.0.0 target=../mesa/libGLw.so.1.0.0
+link path=usr/lib/GL/libGLw.so target=libGLw.so.1
+link path=usr/lib/GL/$(MACH64)/libGLw.so.1 target=libGLw.so.1.0.0 
+link path=usr/lib/GL/$(MACH64)/libGLw.so target=libGLw.so.1 
+link path=usr/lib/GL/$(MACH64)/libGLw.so.1.0.0 target=../../mesa/$(MACH64)/libGLw.so.1.0.0 
+
+# For several libraries we create runtime links
+link path=usr/X11/lib/libGLw.so target=libGLw.so.1
+link path=usr/X11/lib/libGLw.so.1 target=libGLw.so.1.0.0
+link path=usr/X11/lib/libGLw.so.1.0.0 target=GL/libGLw.so.1.0.0 pkg.linted.userland.action002.0=true
+link path=usr/lib/libGLw.so.1 target=libGLw.so.1.0.0
+link path=usr/lib/libGLw.so target=libGLw.so.1
+link path=usr/lib/libGLw.so.1.0.0 target=GL/libGLw.so.1.0.0
+link path=usr/lib/$(MACH64)/libGLw.so.1 target=libGLw.so.1.0.0
+link path=usr/lib/$(MACH64)/libGLw.so target=libGLw.so.1
+link path=usr/lib/$(MACH64)/libGLw.so.1.0.0 target=../GL/$(MACH64)/libGLw.so.1.0.0
+link path=usr/X11/lib/$(MACH64)/libGLw.so target=libGLw.so.1 
+link path=usr/X11/lib/$(MACH64)/libGLw.so.1 target=libGLw.so.1.0.0 
+link path=usr/X11/lib/$(MACH64)/libGLw.so.1.0.0 target=../GL/$(MACH64)/libGLw.so.1.0.0 pkg.linted.userland.action002.0=true 
+
+file path=usr/include/mesa/GLwDrawA.h
+file path=usr/include/mesa/GLwDrawAP.h
+file path=usr/include/mesa/GLwMDrawA.h
+file path=usr/include/mesa/GLwMDrawAP.h
+link path=usr/lib/mesa/$(MACH64)/libGLw.so target=libGLw.so.1.0.0
+link path=usr/lib/mesa/$(MACH64)/libGLw.so.1 target=libGLw.so.1.0.0
+file path=usr/lib/mesa/$(MACH64)/libGLw.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/glw.pc
+link path=usr/lib/mesa/libGLw.so target=libGLw.so.1.0.0
+link path=usr/lib/mesa/libGLw.so.1 target=libGLw.so.1.0.0
+file path=usr/lib/mesa/libGLw.so.1.0.0
+file path=usr/lib/pkgconfig/glw.pc

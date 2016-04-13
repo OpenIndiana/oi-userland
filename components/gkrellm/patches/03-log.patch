@@ -1,0 +1,18 @@
+diff -Nrup gkrellm-2.3.2.mod.3/server/main.c gkrellm-2.3.2.mod.4/server/main.c
+--- gkrellm-2.3.2.mod.3/server/main.c	2008-10-09 19:56:37.284510000 +0800
++++ gkrellm-2.3.2.mod.4/server/main.c	2008-10-09 20:07:54.465594000 +0800
+@@ -27,6 +27,14 @@
+ 	#include <syslog.h>
+ #endif // !WIN32
+ 
++/**********************************************************************
++ * Sun Solais doesn't seem to define LOG_MAKEPRI, so following compatibility code is provided.
++ **********************************************************************/
++
++#ifdef sun
++#define LOG_MAKEPRI(f, p)   (((f) << 3) | (p))
++#endif /* sun */
++
+ // win32 defines addrinfo but only supports getaddrinfo call on winxp or newer
+ #if !defined(HAVE_GETADDRINFO) && !defined(WIN32)
+ struct addrinfo

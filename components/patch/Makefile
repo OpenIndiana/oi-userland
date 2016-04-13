@@ -24,12 +24,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
-COMPONENT_VERSION=	2.7.1
+COMPONENT_VERSION=	2.7.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/patch/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c05f28668c3474bc63adcd48abae921d15e71c254fbebdbaeda40456d64039d5
+    sha256:7436f5a19f93c3ca83153ce9c5cbe4847e97c5d956e57a220121e741f6e7968f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gpatch
 
@@ -39,12 +39,14 @@ include ../../make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+ENV = /usr/bin/env -i
+
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

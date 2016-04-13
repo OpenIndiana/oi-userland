@@ -1,0 +1,105 @@
+'\" te
+.\"
+.\" "Copyright (c) 1994, 2014, Oracle and/or its affiliates. All rights reserved.
+.\" 
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the
+.\" "Software"), to deal in the Software without restriction, including
+.\" without limitation the rights to use, copy, modify, merge, publish,
+.\" distribute, and/or sell copies of the Software, and to permit persons
+.\" to whom the Software is furnished to do so, provided that the above
+.\" copyright notice(s) and this permission notice appear in all copies of
+.\" the Software and that both the above copyright notice(s) and this
+.\" permission notice appear in supporting documentation.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+.\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+.\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+.\" OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+.\" HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
+.\" INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+.\" FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+.\" NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+.\" WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of a copyright holder
+.\" shall not be used in advertising or otherwise to promote the sale, use
+.\" or other dealings in this Software without prior written authorization
+.\" of the copyright holder.
+.\"
+.TH fsadmin 1 "2 May 2014"
+.IX "fsadmin" "" "\f3fsadmin\f1(1) \(em administration utility for font server" ""
+.IX "font server" "admin" "font server" " administration utility \(em \f3fsadmin\f1(1)"
+.SH NAME
+fsadmin \- font server administration utility
+.SH SYNOPSIS
+.PP
+.B /usr/sbin/fsadmin
+[
+.B \-e 
+|
+.B \-d
+|
+.B \-usage
+]
+.SH DESCRIPTION
+.PP
+.B fsadmin
+is a font server administration utility.
+.B fsadmin
+allows users to control whether or not the X11 font server, \fBxfs\fR(1), is 
+started automatically by
+.BR inetd (1M).
+If no options are present
+.B fsadmin
+will display the current status of the font server.
+.SH OPTIONS
+.TP 8
+.B \-e
+enable: configure 
+.B inetd
+to start the font server automatically
+.TP 8
+.B \-d
+disable: configure
+.B inetd
+to not start the font server automatically
+.TP 8
+.B \-usage
+display list of options for 
+.B fsadmin
+.SH "NOTES"
+.PP
+The \fBxfs\fR service is managed by the service management facility, 
+\fBsmf\fR(5), under the service identifier:
+.PP
+.nf
+svc:/application/x11/xfs
+.fi
+.PP
+Administrative actions on this service, such as enabling, disabling, or 
+requesting restart, can be performed using \fBsvcadm\fR(1M)\&. Responsibility 
+for initiating and restarting this service is delegated to \fBinetd\fR(1M)\&.
+Use \fBinetadm\fR(1M) to make configuration changes and to view configuration 
+information for this service\&. The service\&'s status can be queried using 
+the \fBsvcs\fR(1) command\&.
+.SH "ATTRIBUTES"
+.PP
+See \fBattributes\fR(5) for descriptions of the following attributes:
+.sp
+.TS
+tab(^) allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPE^ATTRIBUTE VALUE
+Availability^x11/xfs
+Interface Stability^Committed
+.TE
+.sp
+.SH SEE ALSO
+.PP
+.BR xfs (1),
+.BR inetadm (1M),
+.BR inetd (1M),
+.BR smf (5),
+.BR X11 (5)

@@ -1,0 +1,128 @@
+From c2e317911f2fae424ec9a121f267e4a83efcf1c5 Mon Sep 17 00:00:00 2001
+From: Halton Huo <halton.huo@sun.com>
+Date: Wed, 19 May 2010 12:46:25 +0800
+Subject: [PATCH] Enhancement CanActivateSessions for OpenSolaris.
+
+VT switching is always enabled on Linux, but for OpenSolaris VT switching
+can be truned of by 'svcadm disable vtdaemon'. So we should also check
+whether the service vtdaemon is online on OpenSolaris.
+
+https://bugs.freedesktop.org/show_bug.cgi?id=26055
+---
+ src/Makefile.am          |    1 +
+ src/ck-sysdeps-freebsd.c |    6 ++++++
+ src/ck-sysdeps-linux.c   |    6 ++++++
+ src/ck-sysdeps-solaris.c |   18 ++++++++++++++++++
+ src/ck-sysdeps.h         |    1 +
+ 5 files changed, 32 insertions(+), 0 deletions(-)
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6ab05c8..869decd 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -49,6 +49,7 @@ if CK_COMPILE_SOLARIS
+ libck_la_SOURCES +=		\
+ 	ck-sysdeps-solaris.c	\
+ 	$(NULL)
++libck_la_LIBADD = -lscf
+ endif
+ if CK_COMPILE_FREEBSD
+ libck_la_SOURCES +=		\
+diff --git a/src/ck-sysdeps-freebsd.c b/src/ck-sysdeps-freebsd.c
+index a30c380..df2b0f4 100644
+--- a/src/ck-sysdeps-freebsd.c
++++ b/src/ck-sysdeps-freebsd.c
+@@ -361,6 +361,12 @@ done:
+         return ret;
+ }
+ 
++gboolean
++ck_supports_activatable_consoles (void)
++{
++        return TRUE;
++}
++
+ char *
+ ck_get_console_device_for_num (guint num)
+ {
+diff --git a/src/ck-sysdeps-linux.c b/src/ck-sysdeps-linux.c
+index 09db310..a95272e 100644
+--- a/src/ck-sysdeps-linux.c
++++ b/src/ck-sysdeps-linux.c
+@@ -693,6 +693,12 @@ ck_get_max_num_consoles (guint *num)
+         return TRUE;
+ }
+ 
++gboolean
++ck_supports_activatable_consoles (void)
++{
++        return TRUE;
++}
++
+ char *
+ ck_get_console_device_for_num (guint num)
+ {
+diff --git a/src/ck-sysdeps-solaris.c b/src/ck-sysdeps-solaris.c
+index 335ab8b..bb37e1e 100644
+--- a/src/ck-sysdeps-solaris.c
++++ b/src/ck-sysdeps-solaris.c
+@@ -33,6 +33,7 @@
+ #ifdef HAVE_SYS_VT_H
+ #include <sys/vt.h>
+ #endif
++#include <libscf.h>
+ 
+ #define DEV_ENCODE(M,m) ( \
+   ( (M&0xfff) << 8)   |   ( (m&0xfff00) << 12)   |   (m&0xff)   \
+@@ -419,6 +420,23 @@ ck_get_max_num_consoles (guint *num)
+         return ret;
+ }
+ 
++gboolean
++ck_supports_activatable_consoles (void)
++{
++        char *state = NULL;
++        gboolean vt_enabled;
++                               
++        state = smf_get_state ("svc:/system/vtdaemon:default");
++        if (state && g_str_equal (state, SCF_STATE_STRING_ONLINE)) {
++                vt_enabled = TRUE;
++        } else {
++                vt_enabled = FALSE;
++        }           
++                    
++        g_free (state);
++        return vt_enabled;
++}
++
+ char *
+ ck_get_console_device_for_num (guint num)
+ {
+diff --git a/src/ck-sysdeps.h b/src/ck-sysdeps.h
+index c3f3756..8f22d52 100644
+--- a/src/ck-sysdeps.h
++++ b/src/ck-sysdeps.h
+@@ -61,6 +61,7 @@ gboolean     ck_fd_is_a_console               (int             fd);
+ gboolean     ck_is_root_user                  (void);
+ 
+ gboolean     ck_get_max_num_consoles          (guint          *num);
++gboolean     ck_supports_activatable_consoles (void);
+ 
+ char *       ck_get_console_device_for_num    (guint           num);
+ gboolean     ck_get_console_num_from_device   (const char     *device,
+-- 
+1.5.6.5
+
+--- ConsoleKit-0.4.1/src/ck-seat.c-orig	2011-02-07 22:09:46.085393510 -0600
++++ ConsoleKit-0.4.1/src/ck-seat.c	2011-02-07 22:10:58.766029875 -0600
+@@ -1172,6 +1172,10 @@ ck_seat_can_activate_sessions (CkSeat   
+ {
+         g_return_val_if_fail (CK_IS_SEAT (seat), FALSE);
+ 
++        if (ck_supports_activatable_consoles () == FALSE) {
++                return FALSE; 
++        }
++
+         if (can_activate != NULL) {
+                 *can_activate = (seat->priv->kind == CK_SEAT_KIND_STATIC);
+         }

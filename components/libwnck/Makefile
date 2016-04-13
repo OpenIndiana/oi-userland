@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwnck
 COMPONENT_VERSION=	2.30.7
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,7 +37,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					intltoolize --force --copy &&\
 					gtkdocize &&\
 					aclocal &&\
-					automake -c -f && \
+					automake -a -c -f && \
                                         autoconf  )
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \

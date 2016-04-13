@@ -1,0 +1,32 @@
+--- at-spi-1.30.1/atk-bridge/bridge.c.orig	2011-06-22 13:36:49.641822693 +0800
++++ at-spi-1.30.1/atk-bridge/bridge.c	2011-06-22 13:45:51.438601272 +0800
+@@ -111,6 +111,7 @@
+ static void     spi_atk_bridge_init_rect               (CORBA_any *any, 
+ 							AtkObject *obj, 
+ 							AtkRectangle *rect);
++static int 	atk_bridge_init (gint *argc, gchar **argv[]);
+ 
+ static gboolean
+ spi_atk_bridge_window_event_listener (GSignalInvocationHint *signal_hint,
+@@ -179,6 +179,13 @@
+ }
+ 
+ static gboolean
++init_again (void)
++{
++  atk_bridge_init (NULL, NULL);
++  return FALSE;
++}
++
++static gboolean
+ post_init (void)
+ {
+   during_init_shutdown = FALSE;
+@@ -269,6 +276,7 @@
+   else
+     {
+       atk_bridge_initialized = FALSE;
++      g_idle_add (init_again, NULL);
+     }
+   g_idle_add (post_init, NULL);
+ 

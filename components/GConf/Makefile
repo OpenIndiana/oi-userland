@@ -16,14 +16,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GConf
-COMPONENT_VERSION= 2.31.7
+COMPONENT_VERSION= 2.32.4
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= GNOME Configuration Framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a5c7257d3c2572fabfbbb9ce901be2cab58d2b20cd9a334e31f334b44210ffc6
+  sha256:46030c09422603dbb72f13b5dd592dcc01fbc13562b9e94dafb2b58982bc6b3a
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
+  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://projects.gnome.org/gconf/
 
 include ../../make-rules/prep.mk
@@ -34,6 +35,7 @@ gcc_OPT = -O2
 
 PATH=/usr/gnu/bin:/usr/bin
 
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf --install --force)
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT =$(@D)/configure
@@ -41,12 +43,12 @@ CONFIGURE_SCRIPT =$(@D)/configure
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-defaults-service=no
-CONFIGURE_OPTIONS += --enable-debug=no
 
 CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
 
 $(INSTALL_32): $(INSTALL_64)
 

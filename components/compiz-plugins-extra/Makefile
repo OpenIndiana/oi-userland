@@ -15,14 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-extra
-COMPONENT_VERSION=	0.8.8
-COMPONENT_PROJECT_URL=	http://www.compiz.org/
+COMPONENT_VERSION=	0.8.10
+COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	extra effects plugins for compiz
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC=		plugins-extra
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:49fc71cc1aee806a626be9c46033efa658a1643090e9f1ed5d828e164217c04c
-COMPONENT_ARCHIVE_URL=	http://releases.compiz.org/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:31393ac6d58d12dca96b2f4b1d7c21fd118fc829aeb3117a598437c616186c80
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

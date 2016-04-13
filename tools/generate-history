@@ -1,0 +1,33 @@
+# If invoked with -v FUNCTION=name, then just print $1 (s|/|---|).
+# Otherwise we expect to be invoked with TARGET=<whatever>, then if
+# s|/|---| on $1 matches TARGET, we generate a manifest.
+{
+  if (substr($1, 1, 1) == "#") { # Skip comments.
+    continue
+  }
+  fmri=$1
+  split(fmri, a, "@")
+  gsub("/", "---", a[1])
+  target = sprintf("%s.p5m", a[1])
+  if (FUNCTION == "name") {
+    printf "%s\n", target
+    continue
+  }
+  if (target != TARGET) {
+    continue
+  }
+  printf "set name=pkg.fmri value=pkg:/%s\n", fmri
+  
+  if (NF == 3 || (NF ==2  && $2 != "noincorporate")) {
+    print "set name=pkg.renamed value=true"
+    printf "depend type=require fmri=%s\n", $2
+  } else {
+    print "set name=pkg.obsolete value=true"
+  }
+  
+  if ($NF == "noincorporate") {
+    print "set name=pkg.tmp.noincorporate value=true"
+  }
+  print "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)"
+  exit 0 # We're done; no point continuing.
+}

@@ -20,20 +20,24 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-# The version of rpm2cpio.pl delivered in SFW does not seem to be
-# available for download anymore, so it is exceptionally delivered in
-# the Userland gate itself.
+# The version of rpm2cpio.pl delivered in Userland does not seem to be
+# available in the form of a compressed source tarball, so it is
+# exceptionally delivered in the Userland gate itself. Note that the version
+# number comes from the PORTVERSION field of the Makefile at the
+# COMPONENT_PROJECT_URL site.
 #
 COMPONENT_NAME=		rpm2cpio
-COMPONENT_VERSION=	0.5.11
-COMPONENT_PROJECT_URL=	http://www.iagora.com/~espel/rpm2cpio/
+COMPONENT_VERSION=	1.3
+COMPONENT_PROJECT_URL=	http://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	utility/rpm
+
+TPNO=			17824
 
 include ../../make-rules/prep.mk
 
@@ -44,6 +48,8 @@ CLEAN_PATHS=
 include ../../make-rules/ips.mk
 
 CLEAN_PATHS+= $(BUILD_DIR)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Common targets
 #

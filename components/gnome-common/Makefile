@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-common
 COMPONENT_VERSION=	2.28.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Multiply used files used by the GNOME 2.0 platform
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

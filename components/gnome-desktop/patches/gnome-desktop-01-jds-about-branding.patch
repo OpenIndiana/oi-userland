@@ -1,15 +1,15 @@
-/jds/bin/diff -uprN gnome-desktop-2.27.91.old/gnome-about/contributors.list gnome-desktop-2.27.91/gnome-about/contributors.list
---- gnome-desktop-2.27.91.old/gnome-about/contributors.list	2009-08-26 16:52:03.564205000 +0100
-+++ gnome-desktop-2.27.91/gnome-about/contributors.list	2009-08-26 16:54:14.870164000 +0100
-@@ -555,3 +555,96 @@ Simon Zheng
+--- gnome-desktop-2.32.1.old/gnome-about/contributors.list	2014-12-19 16:52:03.564205000 +0100
++++ gnome-desktop-2.32.1/gnome-about/contributors.list	2014-12-19 16:54:14.870164000 +0100
+@@ -555,3 +555,98 @@
  Sascha Ziemann
  Michael Zucchi
  Jason van Zyl
++Alexander Pyhalov
 +Alfred Peng
 +Alvaro Lopez Ortega
 +Amith Yamasani
 +Anand Subramanian
-+Antonio Xu 
++Antonio Xu
 +Archana Shah
 +Ashish Mukharji
 +Balamurali Viswanathan
@@ -51,6 +51,7 @@
 +Joshua Xia
 +Kalpesh Shah
 +Kaveri Murthy
++Ken Mays
 +Kyle Yuan
 +Lalith Kumar
 +Laszlo Kovacs
@@ -98,6 +99,7 @@
 +Yan Dong Yao
 +Yogeesh MB
 +Young J. Song
+
 /jds/bin/diff -uprN gnome-desktop-2.27.91.old/gnome-about/gnome-about.desktop.in.in gnome-desktop-2.27.91/gnome-about/gnome-about.desktop.in.in
 --- gnome-desktop-2.27.91.old/gnome-about/gnome-about.desktop.in.in	2009-08-26 16:52:03.596334000 +0100
 +++ gnome-desktop-2.27.91/gnome-about/gnome-about.desktop.in.in	2009-08-26 16:55:00.686659000 +0100
@@ -141,34 +143,21 @@
  AC_SUBST(GNOME_DATE)
  AC_SUBST(GNOME_DATE_COMMENT_START)
  AC_SUBST(GNOME_DATE_COMMENT_END)
-/jds/bin/diff -uprN gnome-desktop-2.27.91.old/Makefile.am gnome-desktop-2.27.91/Makefile.am
---- gnome-desktop-2.27.91.old/Makefile.am	2009-08-26 16:52:03.828642000 +0100
-+++ gnome-desktop-2.27.91/Makefile.am	2009-08-26 17:04:15.716264000 +0100
-@@ -9,17 +9,21 @@ SUBDIRS =			\
- 	docs			\
- 	man
- 
+
+--- gnome-desktop-2.32.1/Makefile.am.orig    2014-12-19 13:33:13.134837000 -0800
++++ gnome-desktop-2.32.1/Makefile.am 2014-12-19 13:40:32.184212700 -0800
+@@ -15,8 +15,10 @@
+ ACLOCAL_AMFLAGS = -I m4
+
+ if GNOME_ABOUT_ENABLED
 +XML_IN_FILES=gnome-version.xml.in
 +XML_FILES=$(XML_IN_FILES:.xml.in=.xml)
-+versiondir=$(datadir)/gnome-about
-+version_DATA=$(XML_FILES)
-+
- EXTRA_DIST =			\
- 	MAINTAINERS		\
- 	ChangeLog.pre-git	\
--	gnome-version.xml.in.in	\
-+	$(XML_IN_FILES)		\
-+	$(XML_FILES)		\
- 	gnome-version.xml	\
- 	COPYING-DOCS		\
- 	HACKING			\
- 	gnome-doc-utils.make
- 
--versiondir=$(datadir)/gnome-about
+ versiondir=$(datadir)/gnome-about
 -version_DATA=gnome-version.xml
++version_DATA=$(XML_FILES)
+ endif
  @INTLTOOL_XML_RULE@
- 
- DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-scrollkeeper
+
 /jds/bin/diff -uprN gnome-desktop-2.28.0.old/gnome-about/gnome-about.in gnome-desktop-2.28.0/gnome-about/gnome-about.in
 --- gnome-desktop-2.28.0.old/gnome-about/gnome-about.in	2009-10-08 15:01:51.073593799 +0100
 +++ gnome-desktop-2.28.0/gnome-about/gnome-about.in	2009-10-08 15:03:11.026274982 +0100

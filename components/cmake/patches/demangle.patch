@@ -1,0 +1,19 @@
+diff -ur cmake-2.8.12.2.orig/Source/kwsys/SystemInformation.cxx cmake-2.8.12.2/Source/kwsys/SystemInformation.cxx
+--- cmake-2.8.12.2.orig/Source/kwsys/SystemInformation.cxx	2014-01-16 12:15:08.000000000 -0500
++++ cmake-2.8.12.2/Source/kwsys/SystemInformation.cxx	2015-06-08 11:54:48.004875643 -0400
+@@ -76,6 +76,15 @@
+ # include <signal.h>
+ # include <fcntl.h>
+ # include <errno.h> // extern int errno;
++# if defined(KWSYS_SYSTEMINFORMATION_HAS_BACKTRACE)
++#  include <execinfo.h>
++#  if defined(KWSYS_SYSTEMINFORMATION_HAS_CPP_DEMANGLE)
++#    include <cxxabi.h>
++#  endif
++#  if defined(KWSYS_SYSTEMINFORMATION_HAS_SYMBOL_LOOKUP)
++#    include <dlfcn.h>
++#  endif
++# endif
+ #endif
+ 
+ #ifdef __FreeBSD__

@@ -21,6 +21,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license COPYING license='LGPLv2'
 
+depend type=require fmri=gnome/config/gsettings-desktop-schemas@3.16.1,5.11-2015.0.1.0
+
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
@@ -28,6 +30,7 @@ license COPYING license='LGPLv2'
 dir  path=etc/gconf/gconf.xml.defaults group=sys
 dir  path=etc/gconf/gconf.xml.mandatory group=sys
 
+file path=etc/gconf/2/evoldap.conf
 file path=etc/gconf/2/path
 file path=etc/xdg/autostart/gsettings-data-convert.desktop
 file path=usr/bin/$(MACH64)/gconf-merge-tree
@@ -47,9 +50,9 @@ file path=usr/include/gconf/2/gconf/gconf-listeners.h
 file path=usr/include/gconf/2/gconf/gconf-schema.h
 file path=usr/include/gconf/2/gconf/gconf-value.h
 file path=usr/include/gconf/2/gconf/gconf.h
+file path=usr/lib/$(MACH64)/GConf/2/libgconfbackend-evoldap.so
 file path=usr/lib/$(MACH64)/GConf/2/libgconfbackend-oldxml.so
 file path=usr/lib/$(MACH64)/GConf/2/libgconfbackend-xml.so
-#file path=usr/lib/$(MACH64)/gconf-sanity-check-2
 #file path=usr/lib/$(MACH64)/gconfd-2
 file path=usr/lib/$(MACH64)/gio/modules/libgsettingsgconfbackend.so
 file path=usr/lib/$(MACH64)/girepository-1.0/GConf-2.0.typelib
@@ -57,9 +60,9 @@ link path=usr/lib/$(MACH64)/libgconf-2.so target=libgconf-2.so.4.1.5
 link path=usr/lib/$(MACH64)/libgconf-2.so.4 target=libgconf-2.so.4.1.5
 file path=usr/lib/$(MACH64)/libgconf-2.so.4.1.5
 file path=usr/lib/$(MACH64)/pkgconfig/gconf-2.0.pc
+file path=usr/lib/GConf/2/libgconfbackend-evoldap.so
 file path=usr/lib/GConf/2/libgconfbackend-oldxml.so
 file path=usr/lib/GConf/2/libgconfbackend-xml.so
-file path=usr/lib/gconf-sanity-check-2 mode=0555
 file path=usr/lib/gconfd-2 mode=0555
 file path=usr/lib/gio/modules/libgsettingsgconfbackend.so
 file path=usr/lib/girepository-1.0/GConf-2.0.typelib
@@ -67,6 +70,7 @@ link path=usr/lib/libgconf-2.so target=libgconf-2.so.4.1.5
 link path=usr/lib/libgconf-2.so.4 target=libgconf-2.so.4.1.5
 file path=usr/lib/libgconf-2.so.4.1.5
 file path=usr/lib/pkgconfig/gconf-2.0.pc
+file path=usr/share/GConf/schema/evoldap.schema
 file path=usr/share/aclocal/gconf-2.m4
 file path=usr/share/dbus-1/services/org.gnome.GConf.service
 file path=usr/share/gir-1.0/GConf-2.0.gir
@@ -113,6 +117,7 @@ file path=usr/share/locale/el/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/en@shaw/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/en_CA/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/GConf2.mo
+file path=usr/share/locale/eo/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/es/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/et/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/eu/LC_MESSAGES/GConf2.mo
@@ -126,6 +131,7 @@ file path=usr/share/locale/he/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/hi/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/hr/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/hu/LC_MESSAGES/GConf2.mo
+file path=usr/share/locale/hy/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/id/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/is/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/it/LC_MESSAGES/GConf2.mo
@@ -167,6 +173,7 @@ file path=usr/share/locale/ta/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/te/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/th/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/tr/LC_MESSAGES/GConf2.mo
+file path=usr/share/locale/ug/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/uk/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/vi/LC_MESSAGES/GConf2.mo
 file path=usr/share/locale/xh/LC_MESSAGES/GConf2.mo

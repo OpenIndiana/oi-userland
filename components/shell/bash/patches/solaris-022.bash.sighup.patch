@@ -1,0 +1,22 @@
+# Internal patch. Solaris-specific. Upstream will not accept it.
+# If read EOF on a non-blank line do not interpret as a NL.
+# Clear the readline buffers and return eof_found.
+--- lib/readline/readline.c	2009-08-31 05:45:31.000000000 -0700
++++ lib/readline/readline.c	2015-02-18 11:10:55.652803033 -0800
+@@ -533,7 +533,15 @@
+ 
+       /* EOF typed to a non-blank line is a <NL>. */
+       if (c == EOF && rl_end)
+-	c = NEWLINE;
++      {
++        _rl_internal_char_cleanup ();
++        eof_found = 1;
++#if defined (READLINE_CALLBACKS)
++        return 0;
++#else
++        return (eof_found);
++#endif
++      }
+ 
+       /* The character _rl_eof_char typed to blank line, and not as the
+ 	 previous character is interpreted as EOF. */

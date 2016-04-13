@@ -1,0 +1,15 @@
+In-house patch to fix upstream bug PUP-2509
+https://tickets.puppetlabs.com/browse/PUP-2509
+Patch has been submitted upstream but not yet accepted.
+
+--- puppet-3.6.2/lib/puppet/provider/service/smf.rb.orig	2014-05-29 08:23:38.214504274 -0600
++++ puppet-3.6.2/lib/puppet/provider/service/smf.rb	2014-05-29 08:23:51.968114765 -0600
+@@ -32,7 +32,7 @@
+   end
+ 
+   def self.instances
+-   svcs.split("\n").select{|l| l !~ /^legacy_run/ }.collect do |line|
++   svcs("-H").split("\n").select{|l| l !~ /^legacy_run/ }.collect do |line|
+      state,stime,fmri = line.split(/\s+/)
+      status =  case state
+                when /online/; :running

@@ -1,0 +1,30 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Redirects build process to use local archives instead of downloading
+from external webs.
+
+--- build.properties.default
++++ build.properties.default
+@@ -100,6 +100,12 @@
+ # Mirror, was used when there were problems with the main SF downloads site
+ # base-sf.loc=http://sunet.dl.sourceforge.net
+ 
++# In Userland we really don't want Tomcat to download its build
++# dependencies itself but instead we will do it ourself in advance.
++# Therefore those dependencies which are really required need to be
++# redirected to local file system.
++userland-files.loc=file://${base.path}/../../
++
+ # ----- Commons Logging, version 1.1 or later -----
+ # If this version is updated, check the versions required for the dependencies below
+ # - avalon-framework
+@@ -155,7 +161,7 @@
+ jdt.home=${base.path}/ecj-${jdt.version}
+ jdt.jar=${jdt.home}/ecj-${jdt.version}.jar
+ # The download will be moved to the archive area eventually. We are taking care of that in advance.
+-jdt.loc.1=http://archive.eclipse.org/eclipse/downloads/drops4/${jdt.release}/ecj-${jdt.version}.jar
++jdt.loc.1=file://${base.path}/ECJ/ecj.jar
+ jdt.loc.2=http://download.eclipse.org/eclipse/downloads/drops4/${jdt.release}/ecj-${jdt.version}.jar
+ 
+ # ----- Tomcat native library -----

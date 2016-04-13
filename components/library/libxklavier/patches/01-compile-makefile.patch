@@ -1,0 +1,22 @@
+--- libxklavier-5.2/libxklavier/Makefile.am-orig	2012-05-02 17:07:18.447017390 -0500
++++ libxklavier-5.2/libxklavier/Makefile.am	2012-05-02 17:07:30.141490798 -0500
+@@ -15,7 +15,7 @@ else
+   ENABLE_XMODMAP_SUPPORT_CFLAG = -DDISABLE_XMODMAP_SUPPORT=1
+ endif
+ 
+-AM_CFLAGS=-Wall -DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
++AM_CFLAGS=-DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+   -I. -I$(top_srcdir) $(X_CFLAGS) \
+   $(XML_CFLAGS) $(GLIB_CFLAGS) $(XINPUT_CFLAGS) \
+   $(LIBXKBFILE_PRESENT_CFLAG) \
+--- libxklavier-5.2/tests/Makefile.am-orig	2012-05-02 17:06:49.877445512 -0500
++++ libxklavier-5.2/tests/Makefile.am	2012-05-02 17:07:30.138646599 -0500
+@@ -4,7 +4,7 @@ test_config_SOURCES=test_config.c
+ 
+ test_monitor_SOURCES=test_monitor.c
+ 
+-AM_CFLAGS=-Wall -I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
++AM_CFLAGS=-I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
+ 
+ LDADD=$(top_builddir)/libxklavier/libxklavier.la $(X_LIBS) $(GLIB_LIBS)
+ 

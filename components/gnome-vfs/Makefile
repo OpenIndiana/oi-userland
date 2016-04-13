@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gnome-vfs
 
 COMPONENT_VERSION= 2.24.4
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -55,6 +56,8 @@ CONFIGURE_OPTIONS += --enable-fam
 CONFIGURE_OPTIONS += --enable-samba
 CONFIGURE_OPTIONS += --with-samba-includes=/usr/include/samba
 CONFIGURE_OPTIONS += --with-samba-libs=/usr/lib/samba
+CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
+CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
 CONFIGURE_ENV+= PERL=$(PERL)

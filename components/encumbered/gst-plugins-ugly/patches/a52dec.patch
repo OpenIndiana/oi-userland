@@ -1,0 +1,23 @@
+Description: enable A52DEC module generation
+
+ AC_CHECK_A52DEC always returns "HAVE_A52DEC=no" so module would not
+ be generated. This patch changes to do it.
+
+Author: Hideki Yamane <henrich@debian.org>
+Bug-Debian: http://bugs.debian.org/741848
+Forwarded: no
+Last-Update: 2014-03-26
+
+Index: gst-plugins-ugly0.10-0.10.19/configure.ac
+===================================================================
+--- gst-plugins-ugly0.10-0.10.19.orig/configure.ac
++++ gst-plugins-ugly0.10-0.10.19/configure.ac
+@@ -242,7 +242,7 @@ echo
+ dnl *** a52dec ***
+ translit(dnm, m, l) AM_CONDITIONAL(USE_A52DEC, true)
+ AG_GST_CHECK_FEATURE(A52DEC, [a52dec], a52dec, [
+-  AC_CHECK_A52DEC(HAVE_A52DEC=yes, HAVE_A52DEC=no)
++  AC_CHECK_A52DEC(,HAVE_A52DEC="yes")
+ ])
+ 
+ dnl *** amr-nb ***

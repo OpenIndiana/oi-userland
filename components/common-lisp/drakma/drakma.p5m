@@ -1,0 +1,57 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=library/common-lisp/puri type=require
+depend fmri=library/common-lisp/cl-base64 type=require
+depend fmri=library/common-lisp/chunga type=require
+depend fmri=library/common-lisp/flexi-streams type=require
+depend fmri=library/common-lisp/cl-ppcre type=require
+depend fmri=library/common-lisp/usocket type=require
+
+dir  path=usr
+dir  path=usr/share
+dir  path=usr/share/common-lisp
+dir  path=usr/share/common-lisp/source
+dir  path=usr/share/common-lisp/source/drakma
+file path=usr/share/common-lisp/source/drakma/CHANGELOG
+file path=usr/share/common-lisp/source/drakma/README.md
+file path=usr/share/common-lisp/source/drakma/conditions.lisp
+file path=usr/share/common-lisp/source/drakma/cookies.lisp
+dir  path=usr/share/common-lisp/source/drakma/doc
+file path=usr/share/common-lisp/source/drakma/doc/Makefile
+file path=usr/share/common-lisp/source/drakma/doc/clixdoc.xsl
+file path=usr/share/common-lisp/source/drakma/doc/index.html
+file path=usr/share/common-lisp/source/drakma/doc/index.xml
+file path=usr/share/common-lisp/source/drakma/drakma-test.asd
+file path=usr/share/common-lisp/source/drakma/drakma.asd
+file path=usr/share/common-lisp/source/drakma/encoding.lisp
+file path=usr/share/common-lisp/source/drakma/packages.lisp
+file path=usr/share/common-lisp/source/drakma/read.lisp
+file path=usr/share/common-lisp/source/drakma/request.lisp
+file path=usr/share/common-lisp/source/drakma/specials.lisp
+dir  path=usr/share/common-lisp/source/drakma/test
+file path=usr/share/common-lisp/source/drakma/test/drakma-test.lisp
+file path=usr/share/common-lisp/source/drakma/util.lisp
+dir  path=usr/share/common-lisp/systems
+link path=usr/share/common-lisp/systems/drakma.asd \
+    target=../source/drakma/drakma.asd

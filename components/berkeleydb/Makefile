@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -40,7 +41,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=$(JAVA6_HOME)
 PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -74,6 +74,7 @@ CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 CXXFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += HOSTCC="$(CC)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"

@@ -1,0 +1,33 @@
+--- pulseaudio-1.1/src/pulsecore/shm.c-orig	2011-10-24 19:42:44.692685416 -0500
++++ pulseaudio-1.1/src/pulsecore/shm.c	2011-10-24 20:24:30.605598557 -0500
+@@ -68,8 +68,13 @@
+  * /dev/shm. We can use that information to list all blocks and
+  * cleanup unused ones */
+ #define SHM_PATH "/dev/shm/"
++#define SHM_ID_LEN 10
++#elif defined(__sun)
++#define SHM_PATH "/tmp"
++#define SHM_ID_LEN 15
+ #else
+ #undef SHM_PATH
++#define SHM_ID_LEN 0
+ #endif
+ 
+ #define SHM_MARKER ((int) 0xbeefcafe)
+@@ -359,10 +364,14 @@ int pa_shm_cleanup(void) {
+         char fn[128];
+         struct shm_marker *m;
+ 
+-        if (strncmp(de->d_name, "pulse-shm-", 10))
++#ifdef __linux
++        if (strncmp(de->d_name, "pulse-shm-", SHM_ID_LEN))
++#elif defined(__sun)
++        if (strncmp(de->d_name, ".SHMDpulse-shm-", SHM_ID_LEN))
++#endif
+             continue;
+ 
+-        if (pa_atou(de->d_name + 10, &id) < 0)
++        if (pa_atou(de->d_name + SHM_ID_LEN, &id) < 0)
+             continue;
+ 
+         if (pa_shm_attach_ro(&seg, id) < 0)

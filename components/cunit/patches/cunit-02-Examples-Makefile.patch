@@ -1,0 +1,70 @@
+--- ./Examples/Makefile.am.orig	2014-10-20 02:02:57.202234936 +0000
++++ ./Examples/Makefile.am	2014-10-20 02:03:13.136646809 +0000
+@@ -24,6 +24,7 @@
+ 
+ if ENABLE_EXAMPLES
+ noinst_LIBRARIES = libcunitexamples.a
++AM_CPPFLAGS = -I$(top_srcdir)/CUnit/Headers
+ libcunitexamples_a_SOURCES = ExampleTests.c
+ endif
+ 
+--- ./Examples/ConsoleTest/Makefile.am.orig	2014-10-20 02:18:03.490912979 +0000
++++ ./Examples/ConsoleTest/Makefile.am	2014-10-20 02:18:25.117582970 +0000
+@@ -6,10 +6,11 @@
+ if ENABLE_CONSOLE
+ example_PROGRAMS = ConsoleTest
+ 
++AM_CPPFLAGS = -I$(top_srcdir)/CUnit/Headers
+ ConsoleTest_SOURCES = ConsoleTest.c
+ ConsoleTest_LDADD = -lcunit -lcunitexamples
+ ConsoleTest_LDFLAGS = -L.. -lm
+-INCLUDES = -I..
++INCLUDES = -I$(top_srcdir)/Examples
+ 
+ if ENABLE_CURSES
+ ConsoleTest_LDADD += -l$(CURSES_LIB)
+--- ./Examples/CursesTest/Makefile.am.orig	2014-10-20 02:18:57.700057401 +0000
++++ ./Examples/CursesTest/Makefile.am	2014-10-20 02:19:16.437341149 +0000
+@@ -7,10 +7,11 @@
+ 
+ example_PROGRAMS = CursesTest
+ 
++AM_CPPFLAGS = -I$(top_srcdir)/CUnit/Headers
+ CursesTest_SOURCES = CursesTest.c
+ CursesTest_LDADD = -lcunit -lcunitexamples
+ CursesTest_LDFLAGS = -L.. -lm
+-INCLUDES = -I..
++INCLUDES = -I$(top_srcdir)/Examples
+ 
+ if ENABLE_CURSES
+ CursesTest_LDADD += -l$(CURSES_LIB)
+--- ./Examples/BasicTest/Makefile.am.orig	2014-10-20 02:14:53.842380137 +0000
++++ ./Examples/BasicTest/Makefile.am	2014-10-20 02:15:43.422553561 +0000
+@@ -7,10 +7,11 @@
+ 
+ example_PROGRAMS = BasicTest
+ 
++AM_CPPFLAGS = -I$(top_srcdir)/CUnit/Headers
+ BasicTest_SOURCES = BasicTest.c
+ BasicTest_LDADD = -lcunit -lcunitexamples
+ BasicTest_LDFLAGS = -L.. -lm
+-INCLUDES = -I..
++INCLUDES = -I$(top_srcdir)/Examples
+ 
+ if ENABLE_CURSES
+ BasicTest_LDADD += -l$(CURSES_LIB)
+--- ./Examples/AutomatedTest/Makefile.am.orig	2014-10-20 02:22:39.199020321 +0000
++++ ./Examples/AutomatedTest/Makefile.am	2014-10-20 02:22:58.426810270 +0000
+@@ -7,10 +7,11 @@
+ 
+ example_PROGRAMS = AutomatedTest
+ 
++AM_CPPFLAGS = -I$(top_srcdir)/CUnit/Headers
+ AutomatedTest_SOURCES = AutomatedTest.c
+ AutomatedTest_LDADD = -lcunit -lcunitexamples
+ AutomatedTest_LDFLAGS = -L.. -lm
+-INCLUDES = -I..
++INCLUDES = -I$(top_srcdir)/Examples
+ 
+ if ENABLE_CURSES
+ AutomatedTest_LDADD += -l$(CURSES_LIB)

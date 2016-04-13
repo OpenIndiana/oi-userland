@@ -1,0 +1,84 @@
+diff --git a/src/ck-manager.c b/src/ck-manager.c
+index 99693a3..6bda488 100644
+--- a/src/ck-manager.c
++++ b/src/ck-manager.c
+@@ -1026,9 +1026,10 @@ get_system_num_users (CkManager *manager)
+ }
+ 
+ #ifdef ENABLE_RBAC_SHUTDOWN
+-static void
++static gboolean
+ check_rbac_permissions (CkManager             *manager,
+                         DBusGMethodInvocation *context,
++                        const char            *action,
+                         AuthorizedCallback     callback)
+ {
+         const char *sender;
+@@ -1050,7 +1051,7 @@ check_rbac_permissions (CkManager             *manager,
+         username = get_user_name (uid);
+ 
+         if (username == NULL ||
+-            !chkauthattr (RBAC_SHUTDOWN_KEY, username)) {
++            !chkauthattr (action, username)) {
+                 res = FALSE;
+                 goto out;
+         }
+@@ -1065,9 +1066,11 @@ out:
+ 
+         g_free (username);
+ 
+-        if (res) {
++        if (res && callback) {
+                 callback (manager, context);
+         }
++
++        return res;
+ }
+ #endif
+ 
+@@ -1126,7 +1129,7 @@ ck_manager_restart (CkManager             *manager,
+ #if defined HAVE_POLKIT
+         check_polkit_permissions (manager, context, action, do_restart);
+ #elif defined ENABLE_RBAC_SHUTDOWN
+-        check_rbac_permissions (manager, context, do_restart);
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_restart);
+ #else
+         g_warning ("Compiled without PolicyKit or RBAC support!");
+ #endif
+@@ -1146,7 +1149,12 @@ ck_manager_can_restart (CkManager  *manager,
+ #if defined HAVE_POLKIT
+         get_polkit_permissions (manager, action, context);
+ #else
+-        dbus_g_method_return (context, TRUE);
++        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
++                                        NULL)) {
++                dbus_g_method_return (context, TRUE);
++        } else {
++                dbus_g_method_return (context, FALSE);
++        }
+ #endif
+ 
+         return TRUE;
+@@ -1197,7 +1205,7 @@ ck_manager_stop (CkManager             *manager,
+ #if defined HAVE_POLKIT
+         check_polkit_permissions (manager, context, action, do_stop);
+ #elif defined  ENABLE_RBAC_SHUTDOWN
+-        check_rbac_permissions (manager, context, do_stop);
++        check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY, do_stop);
+ #else
+         g_warning ("Compiled without PolicyKit or RBAC support!");
+ #endif
+@@ -1216,7 +1224,12 @@ ck_manager_can_stop (CkManager  *manager,
+ #if defined HAVE_POLKIT
+         get_polkit_permissions (manager, action, context);
+ #else
+-        dbus_g_method_return (context, TRUE);
++        if (check_rbac_permissions (manager, context, RBAC_SHUTDOWN_KEY,
++                                        NULL)) {
++                dbus_g_method_return (context, TRUE);
++        } else {
++                dbus_g_method_return (context, FALSE);
++        }
+ #endif
+ 
+         return TRUE;

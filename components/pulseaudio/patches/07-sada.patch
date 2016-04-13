@@ -1,0 +1,93 @@
+--- pulseaudio-1.1/src/modules/module-solaris.c-orig	2012-05-14 20:28:17.916336872 -0500
++++ pulseaudio-1.1/src/modules/module-solaris.c	2012-05-14 20:28:38.353786471 -0500
+@@ -137,6 +137,7 @@ static const char* const valid_modargs[]
+ static uint64_t get_playback_buffered_bytes(struct userdata *u) {
+     audio_info_t info;
+     uint64_t played_bytes;
++    int64_t buffered_bytes;
+     int err;
+ 
+     pa_assert(u->sink);
+@@ -163,7 +164,13 @@ static uint64_t get_playback_buffered_by
+ 
+     pa_smoother_put(u->smoother, pa_rtclock_now(), pa_bytes_to_usec(played_bytes, &u->sink->sample_spec));
+ 
+-    return u->written_bytes - played_bytes;
++    buffered_bytes = u->written_bytes - played_bytes;
++
++    if (buffered_bytes < 0) {
++        buffered_bytes = 0;
++    }
++
++    return (uint64_t) buffered_bytes;
+ }
+ 
+ static pa_usec_t sink_get_latency(struct userdata *u, pa_sample_spec *ss) {
+@@ -348,7 +355,7 @@ static int suspend(struct userdata *u) {
+ 
+     pa_log_info("Suspending...");
+ 
+-    ioctl(u->fd, AUDIO_DRAIN, NULL);
++    ioctl(u->fd, I_FLUSH, FLUSHRW);
+     pa_close(u->fd);
+     u->fd = -1;
+ 
+@@ -485,14 +492,26 @@ static int source_process_msg(pa_msgobje
+ static void sink_set_volume(pa_sink *s) {
+     struct userdata *u;
+     audio_info_t info;
++    pa_volume_t v;
+ 
+     pa_assert_se(u = s->userdata);
+ 
++    if (u->fd < 0) {
++       u->fd = pa_open_cloexec(u->device_name, u->mode | O_NONBLOCK, 0);
++    }
++
+     if (u->fd >= 0) {
+         AUDIO_INITINFO(&info);
+ 
+-        info.play.gain = pa_cvolume_max(&s->real_volume) * AUDIO_MAX_GAIN / PA_VOLUME_NORM;
+-        assert(info.play.gain <= AUDIO_MAX_GAIN);
++        v = pa_cvolume_max(&s->real_volume);
++        if (v > PA_VOLUME_NORM) {
++                v = PA_VOLUME_NORM;
++        }
++
++        info.play.gain = v * AUDIO_MAX_GAIN / PA_VOLUME_NORM;
++
++        pa_log_debug("PA_VOLUME_NORM is %ld", PA_VOLUME_NORM);
++        pa_log_debug("Setting volume %ld %ld", v, info.play.gain);
+ 
+         if (ioctl(u->fd, AUDIO_SETINFO, &info) < 0) {
+             if (errno == EINVAL)
+@@ -513,6 +532,7 @@ static void sink_get_volume(pa_sink *s) 
+         if (ioctl(u->fd, AUDIO_GETINFO, &info) < 0)
+             pa_log("AUDIO_SETINFO: %s", pa_cstrerror(errno));
+         else
++            pa_log_debug("Getting volume %ld %ld", info.play.gain, (info.play.gain * PA_VOLUME_NORM / AUDIO_MAX_GAIN));
+             pa_cvolume_set(&s->real_volume, s->sample_spec.channels, info.play.gain * PA_VOLUME_NORM / AUDIO_MAX_GAIN);
+     }
+ }
+@@ -520,14 +540,19 @@ static void sink_get_volume(pa_sink *s) 
+ static void source_set_volume(pa_source *s) {
+     struct userdata *u;
+     audio_info_t info;
++    pa_volume_t v;
+ 
+     pa_assert_se(u = s->userdata);
+ 
+     if (u->fd >= 0) {
+         AUDIO_INITINFO(&info);
+ 
+-        info.play.gain = pa_cvolume_max(&s->real_volume) * AUDIO_MAX_GAIN / PA_VOLUME_NORM;
+-        assert(info.play.gain <= AUDIO_MAX_GAIN);
++        v = pa_cvolume_max(&s->real_volume);
++        if (v > PA_VOLUME_NORM) {
++                v = PA_VOLUME_NORM;
++        }
++
++        info.play.gain = v * AUDIO_MAX_GAIN / PA_VOLUME_NORM;
+ 
+         if (ioctl(u->fd, AUDIO_SETINFO, &info) < 0) {
+             if (errno == EINVAL)

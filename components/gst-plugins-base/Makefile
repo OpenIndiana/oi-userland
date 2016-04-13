@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-base
 COMPONENT_VERSION= 0.10.36
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -48,7 +49,9 @@ CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += CC="$(CC)"
 
 build: $(BUILD_32_and_64)
 

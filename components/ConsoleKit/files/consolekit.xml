@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+    Copyright 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+    Use is subject to license terms.
+-->
+
+<service_bundle type='manifest' name='SUNWconsolekit:consolekit'>
+
+<service
+    name='system/consolekit'
+    type='service'
+    version='1'>
+
+	<dependency
+	    name='filesystem'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
+
+        <dependency
+            name='dbus'
+            type='service'
+            grouping='require_all'
+            restart_on='none'>
+                <service_fmri value='svc:/system/dbus' />
+        </dependency>
+
+	<exec_method
+	    type='method'
+	    name='start'
+	    exec='/lib/svc/method/svc-consolekit start'
+	    timeout_seconds='60' />
+
+	<exec_method
+	    type='method'
+	    name='stop'
+	    exec=':kill'
+	    timeout_seconds='60' />
+
+	<!-- these are passed to gdm in the method script -->
+	<property_group name='consolekit' type='application'>
+		<propval name='args' type='astring' value='' />
+		<propval name='sessions' type='astring' value='Local' />
+	</property_group>
+
+	<instance name='default' enabled='true' />
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				ConsoleKit
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='console-kit-daemon' section='1m'
+				manpath='/usr/share/man' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

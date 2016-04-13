@@ -18,18 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.installed:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
+
+$(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.tested:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
+
+$(BUILD_DIR)/%-2.6/.tested-and-compared:	PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.tested-and-compared:	PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.tested-and-compared:	PYTHON_VERSION=3.4
+$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
 BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
@@ -38,8 +52,6 @@ BUILD_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
 INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
-
-TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
 
 PYTHON_ENV =	CC="$(CC)"
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
@@ -51,12 +63,16 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
-# if we are building python 2.7 support, build it and install it first
-# so that python 2.6 is installed last and is the canonical version.
-# when we switch to 2.7 as the default, it should go last.
+# If we are building Python 2.7 or 3.4 support, build them and install them
+# before Python 2.6, so 2.6 is installed last and is the canonical version.
+# When we change the default, the new default should go last.
 ifneq ($(findstring 2.7,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.6/.build:	$(BUILD_DIR)/%-2.7/.build
-$(BUILD_DIR)/%-2.6/.installed:	$(BUILD_DIR)/%-2.7/.installed
+$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-2.7/.built
+$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-2.7/.installed
+endif
+ifneq ($(findstring 3.4,$(PYTHON_VERSIONS)),)
+$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-3.4/.built
+$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-3.4/.installed
 endif
 
 # Create a distutils config file specific to the combination of build
@@ -96,20 +112,52 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built $(BUILD_DIR)/config-%/$(CFG)
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+# Define bit specific and Python version specific filenames.
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).master
+COMPONENT_TEST_OUTPUT =	$(COMPONENT_TEST_RESULTS_DIR)/test-$(PYTHON_VERSION)-$(BITS)-results
+COMPONENT_TEST_DIFFS =	$(COMPONENT_TEST_RESULTS_DIR)/test-$(PYTHON_VERSION)-$(BITS)-diffs
+COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).snapshot
+COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_RESULTS_DIR)/transform-$(PYTHON_VERSION)-$(BITS)-results
+
 COMPONENT_TEST_DEP =	$(BUILD_DIR)/%/.installed
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/test
-COMPONENT_TEST_ENV_CMD =	$(ENV) -
+COMPONENT_TEST_ENV_CMD =	$(ENV)
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_TEST_CMD =	$(PYTHON)
 COMPONENT_TEST_ARGS +=	./runtests.py
 
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
+TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
+TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
+else
+TEST_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested-and-compared)
+TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
+TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
+endif
+
 # test the built source
-$(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
+$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR); $(COMPONENT_TEST_ENV_CMD) \
-		$(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) $(COMPONENT_TEST_ARGS) )
+	-(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(COMPONENT_TEST_CMD) $(COMPONENT_TEST_ARGS)) \
+		&> $(COMPONENT_TEST_OUTPUT)
 	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
+	$(COMPONENT_TEST_COMPARE)
+	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
+$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
+	$(COMPONENT_PRE_TEST_ACTION)
+	(cd $(COMPONENT_TEST_DIR) ; \
+		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+		$(COMPONENT_TEST_CMD) $(COMPONENT_TEST_ARGS))
+	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)

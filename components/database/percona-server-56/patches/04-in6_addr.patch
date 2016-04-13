@@ -1,0 +1,40 @@
+https://bugs.launchpad.net/percona-server/+bug/1496315
+https://svnweb.freebsd.org/ports/head/databases/percona56-server/files/patch-sql_mysqld.cc?view=markup&pathrev=399074
+
+--- a/sql/mysqld.cc.orig	2015-07-25 17:06:21 UTC
++++ b/sql/mysqld.cc
+@@ -2117,6 +2117,16 @@
+ #ifndef EMBEDDED_LIBRARY
+
+ /* Initialise proxy protocol. */
++
++/* At least OpenBSD and NexentaCore do not
++* define s6_addr32 for user land settings.
++*/
++#if !defined s6_addr32 && defined __sun__
++#       define s6_addr32 _S6_un._S6_u32
++#elif !defined s6_addr32 && ( defined __OpenBSD__ || defined __FreeBSD__ )
++#       define s6_addr32 __u6_addr.__u6_addr32
++#endif  /* !defined s6_addr32 */
++
+ static void set_proxy()
+ {
+   const char *p;
+--- percona-server-5.6.28-76.1/vio/viosocket.c.1	2016-01-21 14:13:49.783597806 +0300
++++ percona-server-5.6.28-76.1/vio/viosocket.c	2016-01-21 14:14:43.695032467 +0300
+@@ -29,6 +29,15 @@
+ # include <sys/filio.h>
+ #endif
+ 
++/* At least OpenBSD and NexentaCore do not
++ * define s6_addr32 for user land settings.
++ */
++#if !defined s6_addr32 && defined __sun__
++# define s6_addr32 _S6_un._S6_u32
++#elif !defined s6_addr32 && ( defined __OpenBSD__ || defined __FreeBSD__ )
++# define s6_addr32 __u6_addr.__u6_addr32
++#endif /* !defined s6_addr32 */
++
+ /* Network io wait callbacks  for threadpool */
+ static void (*before_io_wait)(void)= 0;
+ static void (*after_io_wait)(void)= 0;

@@ -1,0 +1,72 @@
+--- xsane-0.995/src/xsane.c.orig	2008-07-01 18:50:56.144479000 +0800
++++ xsane-0.995/src/xsane.c	2008-07-01 19:35:41.122804000 +0800
+@@ -3751,7 +3751,11 @@
+   else /* netscape not running */
+   { 
+     DBG(DBG_proc, "xsane_show_doc_via_nsr: netscape is not running, trying to start netscape\n");
++#if defined(sun) && defined(__SVR4)
++    arg[0] = "firefox";
++#else
+     arg[0] = "netscape";
++#endif
+     arg[1] = name;
+     arg[2] = 0;
+  
+@@ -3860,13 +3864,17 @@
+   /* translation of language_dir gives the name of the subdirectory in */
+   /* which there may be a translation of a documentation */
+   language_dir = XSANE_LANGUAGE_DIR;
++#if defined(sun) && defined(__SVR4)
++  snprintf(path, sizeof(path), "%s/%s-doc.html", STRINGIFY(PATH_XSANE_DOC_DIR), name);  
++#else
+   snprintf(path, sizeof(path), "%s/%s/%s-doc.html", STRINGIFY(PATH_XSANE_DOC_DIR), language_dir, name);  
++#endif
+   if (stat(path, &st) != 0) /* test if file does exist */
+   {
+     snprintf(path, sizeof(path), "%s/%s-doc.html", STRINGIFY(PATH_XSANE_DOC_DIR), name); /* no, we use original doc */
+   }
+ 
+-  if (!strcmp(preferences.browser, BROWSER_NETSCAPE))
++  if (!strcmp(preferences.browser, BROWSER_NETSCAPE) || !strcmp(preferences.browser, BROWSER_FIREFOX))
+   {
+     xsane_show_doc_via_nsr(widget, (void *) path);
+   }
+@@ -4246,9 +4254,8 @@
+   gtk_menu_append(GTK_MENU(menu), item);
+   gtk_widget_show(item);
+ 
+-
++#if !defined(sun) || !defined(__SVR4)
+   /* Backend doc -> html viewer */
+-
+   if (xsane.backend)
+   {
+     item = gtk_menu_item_new_with_label(MENU_ITEM_BACKEND_DOC);
+@@ -4257,7 +4264,7 @@
+     gtk_widget_add_accelerator(item, "activate", xsane.accelerator_group, GDK_F2, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED);
+     gtk_widget_show(item);
+   }
+-
++#endif
+ 
+   /* available backends -> html viewer */
+ 
+--- xsane-0.995/src/xsane.h.orig	2008-07-01 18:51:52.865496000 +0800
++++ xsane-0.995/src/xsane.h	2008-07-01 19:17:48.644923000 +0800
+@@ -250,6 +250,8 @@
+ #  define DEFAULT_BROWSER "iexplore.exe"
+ # elif defined(HAVE_OS2_H)
+ #  define DEFAULT_BROWSER "netscape"
++# elif defined(sun) && defined(__SVR4)
++#  define DEFAULT_BROWSER "firefox"
+ # else
+ #  define DEFAULT_BROWSER "netscape"
+ # endif
+@@ -530,6 +532,7 @@
+ #define OCROUTFDOPT		"-x"
+ #define OCRPROGRESSKEY		""
+ #define BROWSER_NETSCAPE	"netscape"
++#define BROWSER_FIREFOX 	"firefox"
+ 
+ #define XSANE_MEDIUM_CALIB_BRIGHTNESS_MIN	-1000.0
+ #define XSANE_MEDIUM_CALIB_BRIGHTNESS_MAX	 1000.0

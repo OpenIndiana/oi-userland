@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Authen-PAM
 COMPONENT_VERSION=	16
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-0.16
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -42,6 +43,10 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
+
+COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+                                        autoconf )
+
 
 COMPONENT_TEST_TARGETS = test
 

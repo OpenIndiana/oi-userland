@@ -1,0 +1,33 @@
+We use a different function from the one in ieeefp.h.
+This may be a studio specific patch. Need to investigate if this can be
+removed.
+
+diff --git a/mfbt/decimal/Decimal.cpp b/mfbt/decimal/Decimal.cpp
+--- a/mfbt/decimal/Decimal.cpp
++++ b/mfbt/decimal/Decimal.cpp
+@@ -33,6 +33,7 @@
+ 
+ #include <algorithm>
+ #include <float.h>
++#include <ieeefp.h>
+ 
+ using namespace moz_decimal_utils;
+ 
+@@ -686,13 +687,13 @@
+ 
+ Decimal Decimal::fromDouble(double doubleValue)
+ {
+-    if (std::isfinite(doubleValue))
++    if (finite(doubleValue))
+         return fromString(mozToString(doubleValue));
+ 
+-    if (std::isinf(doubleValue))
+-        return infinity(doubleValue < 0 ? Negative : Positive);
++    if (isnand(doubleValue))
++        return nan();
+ 
+-    return nan();
++    return infinity(doubleValue < 0 ? Negative : Positive);
+ }
+ 
+ Decimal Decimal::fromString(const String& str)

@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.14
+COMPONENT_VERSION=	1.16.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1761d7f7c6a2ad6c8d494d239c53f0c17126efb6449ada16dee3a66d87a4147b
+    sha256:67f7b7b0f5c14db633e3b18f53172786c001e153d545cfc85d82759c5c2ffb37
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
@@ -60,11 +60,11 @@ CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 	gtar --get $(WWW)/lib/HTTP $(WWW)/lib/LWP $(WWW)/lib/LWP.pm \
 	     --strip-components=2 -f $(WWW).tar.gz; )
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

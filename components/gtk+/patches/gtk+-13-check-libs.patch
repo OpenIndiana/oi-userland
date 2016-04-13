@@ -1,0 +1,27 @@
+diff -urN gtk+-2.18.0/modules/printbackends/cups/gtkprintbackendcups.c ../../SUNWgtk2-2.18.0.hacked/i386/gtk+-2.18.0/modules/printbackends/cups/gtkprintbackendcups.c
+--- gtk+-2.18.0/modules/printbackends/cups/gtkprintbackendcups.c	2009-09-12 03:58:39.000000000 +0100
++++ ../../SUNWgtk2-2.18.0.hacked/i386/gtk+-2.18.0/modules/printbackends/cups/gtkprintbackendcups.c	2009-10-12 15:16:34.544907874 +0100
+@@ -240,6 +240,23 @@ pb_module_exit (void)
+ G_MODULE_EXPORT GtkPrintBackend * 
+ pb_module_create (void)
+ {
++  static gboolean loaded = FALSE;
++
++  if (!loaded)
++  {
++    GModule *cups;
++    GModuleFlags flags;
++
++    flags = G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL;
++
++    cups = g_module_open ("libcups.so", flags);
++    loaded = TRUE;
++    if (!cups)
++      return NULL;
++    else
++      g_module_close (cups);
++  }
++
+   return gtk_print_backend_cups_new ();
+ }
+ /* CUPS 1.6 Getter/Setter Functions CUPS 1.6 makes private most of the

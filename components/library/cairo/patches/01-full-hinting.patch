@@ -1,0 +1,15 @@
+--- cairo-1.8.4/src/cairo-ft-font.c.orig	2008-11-25 14:13:23.936565225 +0800
++++ cairo-1.8.4/src/cairo-ft-font.c	2008-11-25 14:23:02.348408718 +0800
+@@ -1372,8 +1372,12 @@
+ 	    break;
+ 	case FC_HINT_FULL:
+ 	    ft_options.base.hint_style = CAIRO_HINT_STYLE_FULL;
++#ifdef FT_CONFIG_ADD_FULL_HINTING
++	    ft_options.load_flags |= FT_LOAD_USE_FULL_HINTING;
++#endif
+ 	    break;
+ 	}
++	
+ #else /* !FC_HINT_STYLE */
+ 	if (!hinting) {
+ 	    ft_options.base.hint_style = CAIRO_HINT_STYLE_NONE;

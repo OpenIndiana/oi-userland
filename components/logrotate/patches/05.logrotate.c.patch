@@ -1,0 +1,12 @@
+/var/adm is owned by root:sys and has 775 permissions
+--- logrotate-r3-9-1/logrotate.c.1	2015-09-21 17:58:21.950752313 +0300
++++ logrotate-r3-9-1/logrotate.c	2015-09-21 18:00:20.370131156 +0300
+@@ -999,7 +999,7 @@
+ 			return 0;
+ 		}
+ 		/* Don't rotate in directories writable by others or group which is not "root"  */
+-		if ((sb.st_gid != 0 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
++		if ((sb.st_gid != 0 && sb.st_gid != 3 && sb.st_mode & S_IWGRP) || sb.st_mode & S_IWOTH) {
+ 			message(MESS_ERROR, "skipping \"%s\" because parent directory has insecure permissions"
+ 								" (It's world writable or writable by group which is not \"root\")"
+ 								" Set \"su\" directive in config file to tell logrotate which user/group"

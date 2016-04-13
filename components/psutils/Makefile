@@ -30,10 +30,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
-COMPONENT_ARCHIVE_URL= http://gd.tuwien.ac.at/publishing/tex/tex-utils/psutils/$(COMPONENT_ARCHIVE)
-#COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/psutils.tar.gz
-# Official ftp sources are currently unavailable, so I'm using mirror I found.
-# I made sure that the tarball is equal to the one present in SFW
+COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/psutils
 

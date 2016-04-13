@@ -1,0 +1,35 @@
+--- xf86-video-ast-1.0.1/src/ast_driver.c.~1~	2014-08-08 12:59:04.000000000 +0400
++++ xf86-video-ast-1.0.1/src/ast_driver.c	2015-02-13 12:44:40.089232180 +0300
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (c) 2005 ASPEED Technology Inc.
++ * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+@@ -1537,6 +1538,12 @@
+       else
+           Flags = ASTGetVGAEDID(pScrn, DDC_data);
+ 
++      /*
++       * Buffer is of size 128, can't read extension blocks even the monitor
++       * provides. 126 is NO_EDID defined in edid.h
++       */
++      DDC_data[126] = 0;
++
+       if (Flags)
+       {
+           ConfiguredMonitor = xf86InterpretEDID(pScrn->scrnIndex, DDC_data);
+@@ -1589,6 +1596,12 @@
+       else
+           Flags = ASTGetVGAEDID(pScrn, DDC_data);
+ 
++      /*
++       * Buffer is of size 128, can't read extension blocks even the monitor
++       * provides. 126 is NO_EDID defined in edid.h
++       */
++      DDC_data[126] = 0;
++
+       if (Flags)
+       {
+           MonInfo = MonInfo1 = xf86InterpretEDID(pScrn->scrnIndex, DDC_data);

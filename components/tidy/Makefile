@@ -32,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:074023e48ed151db743d194af1028e4a17fa72a18e4069b4f18d4683db4bb9cf
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/tidy
 
 include ../../make-rules/prep.mk
@@ -51,7 +51,6 @@ CONFIGURE_OPTIONS  +=       --disable-static
 CONFIGURE_OPTIONS  +=       --enable-access 
 CONFIGURE_OPTIONS  +=       --enable-utf16 
 CONFIGURE_OPTIONS  +=       --enable-asian
-CONFIGURE_OPTIONS  +=	    CFLAGS="$(CFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -r $(SOURCE_DIR)/test $(@D))
@@ -61,7 +60,15 @@ PROTODOCDIR=$(PROTOUSRSHAREDIR)/doc/tidy
 $(PROTODOCDIR):
 	$(MKDIR) $@
 
-ASLR_MODE = $(ASLR_ENABLE)
+# ASLR_MODE = $(ASLR_ENABLE)
+
+COMPONENT_TEST_DIR =    $(@D)/test
+COMPONENT_TEST_CMD =    ./testall.sh
+COMPONENT_TEST_TARGETS =
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # common targets
 build:		$(BUILD_32_and_64)

@@ -1,0 +1,148 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/x11/library/mesa@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/X11"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license mesa.license license='Mesa License (Mixed: MIT, LGPLv2, others)'
+
+<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+
+# libglx was moved from xorg to mesa
+depend type=optional fmri=x11/server/xorg@1.7.7,5.11-2014.1.3.0
+
+# dri modules were moved from drivers to mesa
+depend type=optional fmri=x11/server/xorg/driver/xorg-video-intel@2.6.3,5.11-2014.1.3.0
+depend type=optional fmri=x11/server/xorg/driver/xorg-video-ati@6.13.1,5.11-2014.1.3.0
+
+
+# All headers are moved to /usr/include/mesa.
+<transform file path=usr/include/mesa/(.+)$ -> set action.hash usr/include/GL/%<\1> >
+
+# All libraries are moved to /usr/lib/mesa.
+<transform file path=usr/lib/mesa/(.+)$ -> set action.hash usr/lib/%<\1> >
+
+# For several headers we create direct links
+link path=usr/X11/include/mesa target=../../include/mesa
+link path=usr/include/GL/internal/dri_interface.h target=../../mesa/internal/dri_interface.h
+link path=usr/include/GL/osmesa.h target=../mesa/osmesa.h
+
+# For several libraries we create direct links
+link path=usr/X11/lib/mesa target=../../lib/mesa
+link path=usr/lib/GL/libglapi.so target=libglapi.so.0
+link path=usr/lib/GL/libglapi.so.0 target=libglapi.so.0.0.0
+link path=usr/lib/GL/libglapi.so.0.0.0 target=../mesa/libglapi.so.0.0.0
+link path=usr/lib/GL/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0
+link path=usr/lib/GL/$(MACH64)/libglapi.so target=libglapi.so.0
+link path=usr/lib/GL/$(MACH64)/libglapi.so.0.0.0 target=../../mesa/$(MACH64)/libglapi.so.0.0.0
+
+link path=usr/lib/libGL.so.1 target=GL/libGL.so.1 pkg.linted.userland.action002.0=true
+link path=usr/lib/libGL.so target=libGL.so.1
+link path=usr/lib/libglapi.so.0.0.0 target=GL/libglapi.so.0.0.0
+link path=usr/lib/libglapi.so target=libglapi.so.0
+link path=usr/lib/libglapi.so.0 target=libglapi.so.0.0.0
+
+link path=usr/lib/$(MACH64)/libGL.so.1 target=../GL/$(MACH64)/libGL.so.1  pkg.linted.userland.action002.0=true
+link path=usr/lib/$(MACH64)/libGL.so target=libGL.so.1 
+link path=usr/lib/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0 
+link path=usr/lib/$(MACH64)/libglapi.so target=libglapi.so.0 
+link path=usr/lib/$(MACH64)/libglapi.so.0.0.0 target=../GL/$(MACH64)/libglapi.so.0.0.0 
+
+# Compat links
+link path=usr/X11/lib/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0 
+link path=usr/X11/lib/$(MACH64)/libglapi.so target=libglapi.so.0 
+link path=usr/X11/lib/$(MACH64)/libglapi.so.0.0.0 target=../GL/$(MACH64)/libglapi.so.0.0.0 pkg.linted.userland.action002.0=true
+link path=usr/X11/lib/libglapi.so target=libglapi.so.0
+link path=usr/X11/lib/libglapi.so.0 target=libglapi.so.0.0.0
+link path=usr/X11/lib/libglapi.so.0.0.0 target=GL/libglapi.so.0.0.0 pkg.linted.userland.action002.0=true
+
+# libGLU has moved to x11/library/glu 
+depend fmri=pkg:/x11/library/glu@9.0.0 type=require
+
+# libGLw has moved to x11/library/glw 
+depend fmri=pkg:/x11/library/glw@8.0.0 type=require
+
+# Runtime links are provided by ogl-select
+depend fmri=pkg:/service/opengl/ogl-select type=require
+
+# Some headers are provided by x11-protocols package
+depend facet.devel=true fmri=pkg:/x11/header/x11-protocols type=require
+
+dir path=usr/lib/mesa/$(MACH64)
+link path=usr/lib/mesa/64 target=$(MACH64)
+
+file path=usr/include/mesa/gl.h
+file path=usr/include/mesa/gl_mangle.h
+file path=usr/include/mesa/glcorearb.h
+file path=usr/include/mesa/glext.h
+file path=usr/include/mesa/glx.h
+file path=usr/include/mesa/glx_mangle.h
+file path=usr/include/mesa/glxext.h
+file path=usr/include/mesa/internal/dri_interface.h
+file path=usr/include/mesa/osmesa.h
+file path=usr/include/mesa/wglext.h
+link path=usr/lib/mesa/$(MACH64)/libGL.so target=libGL.so.1.2.0
+link path=usr/lib/mesa/$(MACH64)/libGL.so.1 target=libGL.so.1.2.0
+file path=usr/lib/mesa/$(MACH64)/libGL.so.1.2.0
+link path=usr/lib/mesa/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1.1.0
+link path=usr/lib/mesa/$(MACH64)/libGLESv1_CM.so.1 target=libGLESv1_CM.so.1.1.0
+file path=usr/lib/mesa/$(MACH64)/libGLESv1_CM.so.1.1.0
+link path=usr/lib/mesa/$(MACH64)/libGLESv2.so target=libGLESv2.so.2.0.0
+link path=usr/lib/mesa/$(MACH64)/libGLESv2.so.2 target=libGLESv2.so.2.0.0
+file path=usr/lib/mesa/$(MACH64)/libGLESv2.so.2.0.0
+link path=usr/lib/mesa/$(MACH64)/libOSMesa.so target=libOSMesa.so.8.0.0
+link path=usr/lib/mesa/$(MACH64)/libOSMesa.so.8 target=libOSMesa.so.8.0.0
+file path=usr/lib/mesa/$(MACH64)/libOSMesa.so.8.0.0
+link path=usr/lib/mesa/$(MACH64)/libglapi.so target=libglapi.so.0.0.0
+link path=usr/lib/mesa/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0
+file path=usr/lib/mesa/$(MACH64)/libglapi.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/dri.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gl.pc
+file path=usr/lib/$(MACH64)/pkgconfig/glesv1_cm.pc
+file path=usr/lib/$(MACH64)/pkgconfig/glesv2.pc
+file path=usr/lib/$(MACH64)/pkgconfig/osmesa.pc
+link path=usr/lib/mesa/libGL.so target=libGL.so.1.2.0
+link path=usr/lib/mesa/libGL.so.1 target=libGL.so.1.2.0
+file path=usr/lib/mesa/libGL.so.1.2.0
+link path=usr/lib/mesa/libGLESv1_CM.so target=libGLESv1_CM.so.1.1.0
+link path=usr/lib/mesa/libGLESv1_CM.so.1 target=libGLESv1_CM.so.1.1.0
+file path=usr/lib/mesa/libGLESv1_CM.so.1.1.0
+link path=usr/lib/mesa/libGLESv2.so target=libGLESv2.so.2.0.0
+link path=usr/lib/mesa/libGLESv2.so.2 target=libGLESv2.so.2.0.0
+file path=usr/lib/mesa/libGLESv2.so.2.0.0
+link path=usr/lib/mesa/libOSMesa.so target=libOSMesa.so.8.0.0
+link path=usr/lib/mesa/libOSMesa.so.8 target=libOSMesa.so.8.0.0
+file path=usr/lib/mesa/libOSMesa.so.8.0.0
+link path=usr/lib/mesa/libglapi.so target=libglapi.so.0.0.0
+link path=usr/lib/mesa/libglapi.so.0 target=libglapi.so.0.0.0
+file path=usr/lib/mesa/libglapi.so.0.0.0
+file path=usr/lib/pkgconfig/dri.pc
+file path=usr/lib/pkgconfig/gl.pc
+file path=usr/lib/pkgconfig/glesv1_cm.pc
+file path=usr/lib/pkgconfig/glesv2.pc
+file path=usr/lib/pkgconfig/osmesa.pc
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i965_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r200_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so target=swrast_dri.so
+file path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/i915_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/i965_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/radeon_dri.so target=swrast_dri.so
+file path=usr/lib/xorg/modules/dri/swrast_dri.so

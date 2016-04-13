@@ -1,0 +1,154 @@
+diff -ur gtkam-0.1.11.after-patch-2/gexif-0.5/Makefile.am gtkam-0.1.11/gexif-0.5/Makefile.am
+--- gexif-0.5/Makefile.am	2004-06-17 12:11:03.000000000 -0700
++++ gexif-0.5/Makefile.am	2004-06-17 12:11:30.000000000 -0700
+@@ -1,5 +1,10 @@
++NULL =
+ SUBDIRS = intl m4  libjpeg gexif po
+ 
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-EXTRA_DIST = config.rpath mkinstalldirs
++EXTRA_DIST = config.rpath mkinstalldirs \
++	intltool-extract.in \
++	intltool-merge.in \
++	intltool-update.in \
++	$(NULL)
+diff -ur gtkam-0.1.11.after-patch-2/gexif-0.5/configure.in gtkam-0.1.11/gexif-0.5/configure.in
+--- gexif-0.5/configure.in	2004-06-17 12:11:03.000000000 -0700
++++ gexif-0.5/configure.in	2004-06-17 12:11:34.000000000 -0700
+@@ -9,8 +9,15 @@
+ dnl ---------------------------------------------------------------------------
+ dnl i18n support
+ dnl ---------------------------------------------------------------------------
++GETTEXT_PACKAGE=gexif
++AC_SUBST(GETTEXT_PACKAGE)
++AC_PROG_INTLTOOL
+ ALL_LINGUAS="de es fr"
+-AM_GNU_GETTEXT
++AM_GLIB_GNU_GETTEXT
++USE_INCLUDED_LIBINTL=no
++AC_SUBST(USE_INCLUDED_LIBINTL)
++BUILD_INCLUDED_LIBINTL=no
++AC_SUBST(BUILD_INCLUDED_LIBINTL)
+ 
+ dnl ---------------------------------------------------------------------------
+ dnl libexif
+@@ -26,7 +33,13 @@
+ AC_SUBST(GEXIF_LIBS)
+ AC_SUBST(GEXIF_CFLAGS)
+ 
+-CFLAGS="$CFLAGS -Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith"
++dnl Only use -Wall if we have gcc
++if test "x$GCC" = "xyes"; then
++  if test -z "`echo "$CFLAGS" | grep "\-Wall" 2> /dev/null`" ; then
++    CFLAGS="$CFLAGS -Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith"
++  fi
++fi
++
+ AC_SUBST(CFLAGS)
+ 
+ AC_OUTPUT([ intl/Makefile po/Makefile.in m4/Makefile 
+diff -ur gtkam-0.1.11.after-patch-2/gexif-0.5/gexif/gexif-main.c gtkam-0.1.11/gexif-0.5/gexif/gexif-main.c
+--- gexif-0.5/gexif/gexif-main.c	2004-06-17 12:11:03.000000000 -0700
++++ gexif-0.5/gexif/gexif-main.c	2004-06-17 12:11:30.000000000 -0700
+@@ -34,7 +34,10 @@
+ #include <gtk/gtksignal.h>
+ #include <gtk/gtkfilesel.h>
+ #include <gtk/gtkbutton.h>
++#undef GTK_DISABLE_DEPRECATED
++#include <gtk/gtkfilesel.h>
+ #include <gtk/gtkitemfactory.h>
++#define GTK_DISABLE_DEPRECATED
+ #include <gtk/gtkstock.h>
+ 
+ #include <libjpeg/jpeg-data.h>
+@@ -281,7 +281,7 @@
+ action_about (gpointer callback_data, guint callback_action,
+ 	      GtkWidget *widget)
+ {
+-	g_warning ("Implement!");
++	g_warning (_("Implement!"));
+ }
+ 
+ static void
+@@ -303,19 +303,25 @@
+ 
+ static GtkItemFactoryEntry mi[] =
+ {
+-	{"/_File", NULL, 0, 0, "<Branch>"},
+-	{"/File/_Open...", NULL, action_open, 0, "<StockItem>", GTK_STOCK_OPEN},
+-	{"/File/_Save", NULL, action_save, 0, "<StockItem>", GTK_STOCK_SAVE},
+-	{"/File/Save _As...", NULL, action_save_as, 0, "<StockItem>",
++	{N_("/_File"), NULL, 0, 0, "<Branch>"},
++	{N_("/File/_Open..."), NULL, action_open, 0, "<StockItem>", GTK_STOCK_OPEN},
++	{N_("/File/_Save"), NULL, action_save, 0, "<StockItem>", GTK_STOCK_SAVE},
++	{N_("/File/Save _As..."), NULL, action_save_as, 0, "<StockItem>",
+ 							GTK_STOCK_SAVE_AS},
+-	{"/File/sep1", NULL, 0, 0, "<Separator>"},
+-	{"/File/E_xit", NULL, action_exit, 0, "<StockItem>", GTK_STOCK_QUIT},
+-	{"/_View", NULL, 0, 0, "<Branch>"},
+-	{"/View/_Thumbnail", NULL, action_thumbnail, 0, NULL, NULL},
+-	{"/_Help", NULL, 0, 0, "<Branch>"},
+-	{"/Help/About", NULL, action_about, 0, NULL, NULL}
++	{N_("/File/sep1"), NULL, 0, 0, "<Separator>"},
++	{N_("/File/E_xit"), NULL, action_exit, 0, "<StockItem>", GTK_STOCK_QUIT},
++	{N_("/_View"), NULL, 0, 0, "<Branch>"},
++	{N_("/View/_Thumbnail"), NULL, action_thumbnail, 0, NULL, NULL},
++	{N_("/_Help"), NULL, 0, 0, "<Branch>"},
++	{N_("/Help/About"), NULL, action_about, 0, NULL, NULL}
+ };
+ 
++static gchar *
++translate_func (const gchar *path, gpointer data)
++{
++	return g_strdup (_(path));
++}
++
+ GtkWidget *
+ gexif_main_new (void)
+ {
+@@ -337,6 +343,10 @@
+ 	ag = gtk_accel_group_new ();
+ 	gtk_window_add_accel_group (GTK_WINDOW (m), ag);
+ 	gif = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", ag);
++#ifdef ENABLE_NLS
++	gtk_item_factory_set_translate_func (GTK_ITEM_FACTORY (gif),
++					translate_func, NULL, NULL);
++#endif
+ 	g_object_set_data_full (G_OBJECT (m), "<main>", gif,
+ 				(GDestroyNotify) g_object_unref);
+ 	gtk_item_factory_create_items (gif, G_N_ELEMENTS (mi), mi, m);
+diff -ur gtkam-0.1.11.after-patch-2/gexif-0.5/gexif/gexif-thumbnail.c gtkam-0.1.11/gexif-0.5/gexif/gexif-thumbnail.c
+--- gexif-0.5/gexif/gexif-thumbnail.c.orig	2006-12-20 17:09:42.125517000 +0000
++++ gexif-0.5/gexif/gexif-thumbnail.c	2006-12-20 17:12:40.173757000 +0000
+@@ -54,6 +54,7 @@
+ 
+ struct _GExifThumbnailPrivate
+ {
++	char x;  /* Dummy member for building on Solaris. */
+ };
+ 
+ #define PARENT_TYPE GTK_TYPE_DIALOG
+diff -ur gtkam-0.1.11.after-patch-2/gexif-0.5/gexif/gexif.c gtkam-0.1.11/gexif-0.5/gexif/gexif.c
+--- gexif-0.5/gexif/gexif.c	2004-06-17 12:11:03.000000000 -0700
++++ gexif-0.5/gexif/gexif.c	2004-06-17 12:11:30.000000000 -0700
+@@ -50,6 +50,7 @@
+ 
+ 	gtk_set_locale ();
+ 	bindtextdomain (PACKAGE, GEXIF_LOCALEDIR);
++	bind_textdomain_codeset (PACKAGE, "UTF-8");
+ 	textdomain (PACKAGE);
+ 
+ 	gtk_init (&argc, &argv);
+--- gexif-0.5/gexif/gexif-main.h-orig	2008-06-10 19:12:02.837245000 -0500
++++ gexif-0.5/gexif/gexif-main.h	2008-06-10 19:12:21.670740000 -0500
+@@ -21,7 +21,9 @@
+ #ifndef __GEXIF_MAIN_H__
+ #define __GEXIF_MAIN_H__
+ 
++#undef GTK_DISABLE_DEPRECATED
+ #include <gtk/gtkwindow.h>
++#define GTK_DISABLE_DEPRECATED
+ 
+ #define GEXIF_TYPE_MAIN     (gexif_main_get_type())
+ #define GEXIF_MAIN(o)       (G_TYPE_CHECK_INSTANCE_CAST((o),GEXIF_TYPE_MAIN,GExifMain))

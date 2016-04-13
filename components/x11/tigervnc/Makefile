@@ -17,14 +17,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tigervnc
 COMPONENT_VERSION= 1.1.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= TigerVNC X11/VNC server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:594b70825a2c24863afd7b8dd2a5bc1935807118c6726e1d98396dee44d060f4
 COMPONENT_ARCHIVE_URL= \
-  http://download.sourceforge.net/project/tigervnc/tigervnc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.tigervnc.com/
+  ftp://tux.rainside.sk/gentoo/distfiles/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://tigervnc.org/
 COMPONENT_LICENSE_FILE= LICENCE.TXT
 COMPONENT_LICENSE= GPLv2
 
@@ -33,20 +34,26 @@ PATCH_LEVEL=0
 # Note that the xorg additional patch (tigervnc-xserver) does not fit this pattern. That is intentional
 PATCH_PATTERN = [0-9][0-9]*.patch
 
-XORG_ADDITIONAL_PATCH = $(PATCH_DIR)/tigervnc-xserver17.patch
+XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc11-xorg111.patch
+XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc11-xorg112.patch
+XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg114.patch
 
-XORG_SERVER_VERSION= 1.7.7
+XORG_SERVER_VERSION= 1.14.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/files/java $(SOURCE_DIR) )
+COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
 $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/.prep
 	$(COMPONENT_PREP_ACTION)
+	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH) 
+	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver114.patch
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3) 
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -80,6 +87,7 @@ gcc_OPT=
 
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I/usr/include/pixman-1
+CPPFLAGS += -I/usr/include/xorg
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -92,8 +100,10 @@ XVNC_CONFIGURE_OPTIONS += --disable-builddocs
 XVNC_CONFIGURE_OPTIONS += --disable-config-hal
 XVNC_CONFIGURE_OPTIONS += --disable-dga
 XVNC_CONFIGURE_OPTIONS += --disable-dmx
+XVNC_CONFIGURE_OPTIONS += --disable-dri3
 XVNC_CONFIGURE_OPTIONS += --disable-install-setuid
 XVNC_CONFIGURE_OPTIONS += --disable-kdrive
+XVNC_CONFIGURE_OPTIONS += --disable-present
 XVNC_CONFIGURE_OPTIONS += --disable-static
 XVNC_CONFIGURE_OPTIONS += --disable-unit-tests
 XVNC_CONFIGURE_OPTIONS += --disable-xephyr
@@ -122,6 +132,7 @@ XVNC_CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
 XVNC_CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
+XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
 
 $(BUILD_DIR)/.built_jar: $(BULD_32)
 	$(ENV) $(COMPONENT_BUILD_ENV) \

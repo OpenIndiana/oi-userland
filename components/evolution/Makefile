@@ -15,14 +15,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution
-COMPONENT_VERSION=	2.30.3
+COMPONENT_VERSION=	2.32.3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/
 COMPONENT_SUMMARY=	Evolution Email and Calendar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8c47e93ff5aedfad39d4224ae0751a938ccb7d2a2bcd407513cf1331c51b9cab
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+    sha256:33ab38780e9abb71506230e331e9c3534444b5ed3f17046f0b6371a00df686fb
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -45,13 +46,14 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 gcc_OPT		= -O2
 
 LDFLAGS+=       -L/usr/lib/mps -R/usr/lib/mps
+LDFLAGS+=	-lgmodule-2.0 -lgthread-2.0
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-nss=yes
 CONFIGURE_OPTIONS+=	--enable-smime=yes
-CONFIGURE_OPTIONS+=	--enable-pilot-conduits=yes
+CONFIGURE_OPTIONS+=	--enable-pilot-conduits=no
 CONFIGURE_OPTIONS+=	--with-pisock=yes
 CONFIGURE_OPTIONS+=	--with-sunldap=/usr
 CONFIGURE_OPTIONS+=	--with-krb5=/usr

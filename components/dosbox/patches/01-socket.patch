@@ -1,0 +1,25 @@
+--- dosbox-0.74/configure.in	Mon May 10 20:58:57 2010
++++ dosbox-0.74-patch/configure.in	Fri Jun 25 15:04:45 2010
+@@ -479,6 +479,11 @@
+        AC_DEFINE(BSD, 1, [Compiling on BSD])
+        AC_DEFINE(C_DIRECTSERIAL, 1, [ Define to 1 if you want serial passthrough support (Win32, Posix and OS/2).])
+        ;;
++    *-*-solaris*)
++       AC_DEFINE(SOLARIS, 1, [Compiling on Oracle Solaris])
++       AC_DEFINE(C_DIRECTSERIAL, 1, [ Define to 1 if you want serial passthrough support (Win32, Posix and OS/2).])
++       LIBS="$LIBS -lnsl -lsocket"
++       ;;
+     *-*-os2-emx*)
+        AC_DEFINE(OS2, 1, [Compiling on OS/2 EMX])
+        AC_DEFINE(C_DIRECTSERIAL, 1, [ Define to 1 if you want serial passthrough support (Win32, Posix and OS/2).])
+--- dosbox-0.74/src/hardware/serialport/libserial.cpp	Mon May 10 19:43:54 2010
++++ dosbox-0.74-patch/src/hardware/serialport/libserial.cpp	Fri Jun 25 15:07:06 2010
+@@ -254,7 +254,7 @@
+ }
+ #endif
+ 
+-#if defined (LINUX) || defined (MACOSX) || defined (BSD)
++#if defined (LINUX) || defined (MACOSX) || defined (BSD) || defined (SOLARIS)
+ 
+ #include <string.h> // strlen
+ #include <stdlib.h>

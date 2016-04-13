@@ -1,0 +1,54 @@
+#!/sbin/sh
+#
+# Copyright 2011, 2014 Oracle and/or its affiliates. All rights reserved.
+# Use is subject to license terms.
+#
+# For modifying parameters passed to dtlogin, do not edit
+# this script. Instead use svccfg(1m) to modify the SMF
+# repository. For example:
+#
+# # svccfg
+# svc:> select system/consolekit
+# svc:/system/consolekit> setprop consolekit/args = "--fatal-warnings"
+# svc:/system/consolekit> exit
+
+. /lib/svc/share/smf_include.sh
+
+case "$1" in
+'start')
+	FMRI=svc:/system/consolekit
+
+	arg=`eval "echo \`svcprop -p consolekit/args $FMRI\`"`
+
+	SEATFILE=/etc/ConsoleKit/seats.d/00-primary.seat
+
+	rep=`eval "echo \`svcprop -p consolekit/sessions $FMRI\`"`
+
+	curline=`sed -n "/Sessions=/p" $SEATFILE`
+	cur=`expr $curline : "Sessions=\(.*\);"`
+
+	if [[ $cur != $rep ]];  then
+		/usr/bin/ex $SEATFILE << EOF
+/$curline
+s/$curline/Sessions=$rep;/
+w
+q
+EOF
+	fi
+		
+	/usr/sbin/console-kit-daemon $arg
+
+	rc=$?
+	if [ $rc -ne 0 ]; then
+		echo "$0: consolekit failed with $rc"
+		exit $SMF_EXIT_ERR_FATAL 
+	fi
+	;;
+
+*)
+	echo "Usage: $0 { start }"
+	exit $SMF_EXIT_ERR_FATAL
+	;;
+esac
+
+exit $SMF_EXIT_OK

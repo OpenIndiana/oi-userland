@@ -1,0 +1,278 @@
+diff -Nrup gkrellm-2.3.2.mod.2/server/Makefile gkrellm-2.3.2.mod.3/server/Makefile
+--- gkrellm-2.3.2.mod.2/server/Makefile	2008-10-09 19:02:59.728948000 +0800
++++ gkrellm-2.3.2.mod.3/server/Makefile	2008-10-09 19:59:59.877475000 +0800
+@@ -56,10 +56,15 @@ GKRELLMD_INCLUDES = gkrellmd.h $(SHARED_
+ PKG_INCLUDE = `$(PKG_CONFIG) --cflags glib-2.0 gthread-2.0`
+ PKG_LIB = `$(PKG_CONFIG) --libs glib-2.0 gmodule-2.0 gthread-2.0`
+ 
++HAL_CFLAGS = -DDBUS_API_SUBJECT_TO_CHANGE -I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++HAL_LIBS = -lhal -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
++DBUS_CFLAGS = -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++DBUS_LIBS = -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
++
+ GLIB12_INCLUDE = `glib-config --cflags`
+ GLIB12_LIB = `glib-config --libs glib gmodule`
+ 
+-FLAGS = -O2 $(PKG_INCLUDE)
++FLAGS = -O2 $(PKG_INCLUDE) $(HAL_CFLAGS) $(DBUS_CFLAGS)
+ 
+ ifeq ($(glib12),1)
+     FLAGS = -O2 $(GLIB12_INCLUDE)
+@@ -69,7 +74,7 @@ ifeq ($(glib12),yes)
+ endif
+ FLAGS += $(GTOP_INCLUDE) $(PTHREAD_INC) -I.. -I$(SHARED_PATH) -DGKRELLM_SERVER
+ 
+-LIBS = $(PKG_LIB)
++LIBS = $(PKG_LIB) $(HAL_LIBS) $(DBUS_LIBS)
+ ifeq ($(glib12),1)
+     LIBS = $(GLIB12_LIB)
+ endif
+--- gkrellm-2.3.2.mod.2/src/sysdeps/solaris.c	2008-10-09 19:02:59.823558000 +0800
++++ gkrellm-2.3.2.mod.3/src/sysdeps/solaris.c	2008-10-22 20:33:19.630950000 +0800
+@@ -998,18 +998,218 @@ gkrellm_sys_fs_init(void)
+ 
+ /* ===================================================================== */
+ /* Battery monitor interface */
++
++#include <libhal.h>
++#include <dbus/dbus-glib-lowlevel.h>
++#include <glib.h>
++
++static void
++device_removed_callback( LibHalContext *ctx, const char *udi )
++{
++   return;
++}
++
++static void
++device_added_callback( LibHalContext *ctx, const char *udi )
++{
++   return;
++}
++
+ void
+ gkrellm_sys_battery_read_data(void)
+ 	{
+-	}
++    DBusConnection *connection;
++    LibHalContext *ctx;
++    DBusError error;
++    char **devices;
++    gint i, num;
++    char * key;
++    const char *udi; /* device name seen by HAL */
++    /* We need to know if we are on AC power or not.  Eventually, we can look
++     * at the AC adaptor HAL devices to determine that.  For now, we assume that
++     * if any battery is discharging then we must not be on AC power.  Else, by
++     * default, we must be on AC.
++     */
++    gboolean on_line = TRUE;
++
++    gboolean available; /* the device's battery is/isn't attached */
++    gboolean charging; /* If the battery is charged by AC */
++    gboolean discharging; /* If the battery is used */
++    gint remaining_time; /* remaining time in second gotten from HAL */
++    gint current_charge_total = 0, full_capacity_total = 0;
++    gint current_level, full_level;
++    gint time_left; /* how many time left for battery */
++    gint percent; /* used percent */
++
++    dbus_error_init( &error );
++
++    if( (connection = dbus_bus_get( DBUS_BUS_SYSTEM, &error )) == NULL )
++    {
++      dbus_error_free( &error );
++      return;
++     }
++
++    if( (ctx = libhal_ctx_new()) == NULL )
++    {
++      dbus_set_error( &error, _("HAL error"), _("Could not create libhal_ctx") );
++      dbus_error_free( &error );
++      return;
++    }
+ 
+-gboolean
+-gkrellm_sys_battery_init()
+-	{
+-	return FALSE;
+-	}
++    libhal_ctx_set_dbus_connection( ctx, connection );
++    libhal_ctx_set_device_added( ctx, device_added_callback );
++    libhal_ctx_set_device_removed( ctx, device_removed_callback );
++
++    if( libhal_ctx_init( ctx, &error ) == 0 )
++    {
++      libhal_ctx_free( ctx );
++      dbus_error_free( &error );
++      return;
++    }
++
++    devices = libhal_find_device_by_capability( ctx, "battery", &num, &error );
+ 
++    if( devices == NULL )
++    {
++      libhal_ctx_shutdown( ctx, NULL );
++      libhal_ctx_free( ctx );
++      dbus_error_free( &error );
++      return;
++    }
+ 
++    /* FIXME: for now, if 0 battery devices are present on first scan, then fail.
++     * This allows fallover to the legacy (ACPI, APM, etc) backends if the
++     * installed version of HAL doesn't know about batteries.  This check should
++     * be removed at some point in the future (maybe circa GNOME 2.13..).
++     */
++    if( num == 0 )
++    {
++
++      dbus_free_string_array( devices );
++      dbus_set_error( &error, _("HAL error"), _("No batteries found") );
++      libhal_ctx_shutdown( ctx, NULL );
++      libhal_ctx_free( ctx );
++      dbus_error_free( &error );
++
++      return;
++     }
++
++    for( i = 0; i < num; i++ )
++    {
++      char *type = libhal_device_get_property_string( ctx, devices[i],
++                                                    "battery.type",
++                                                    &error );
++      if( type )
++      {
++        /* We only track 'primary' batteries (ie: to avoid monitoring
++         * batteries in cordless mice or UPSes etc.)
++         */
++        if( !strcmp( type, "primary" ) ){
++
++           udi = devices[i];
++
++           key = g_strdup("battery.charge_level.current"); // current charge
++           current_level = libhal_device_get_property_int( ctx, udi, key, &error );
++           g_free(key);
++
++           key = g_strdup("battery.charge_level.last_full"); // maximum charge
++           full_level = libhal_device_get_property_int( ctx, udi, key, &error );
++           g_free(key);
++
++           key =  g_strdup("battery.present"); /* the device's battery is/isn't attached */
++           available = libhal_device_get_property_bool( ctx, udi, key, &error );
++           g_free(key);
++
++           if (!available)
++           {
++            /* Either no battery is present or something has gone horribly wrong.
++             * In either case we must return that the composite battery is not
++             * present.
++             */
++               available = FALSE;
++               percent = 0;
++               time_left = -1;
++               on_line = TRUE;
++               charging = FALSE;
++               gkrellm_battery_assign_data(i, available, on_line, charging, percent, time_left);
++
++               dbus_free_string_array( devices );
++               libhal_ctx_shutdown( ctx, NULL );
++               libhal_ctx_free( ctx );
++               dbus_error_free( &error );
++               return ;
++           }
++
++           key = "battery.rechargeable.is_discharging"; /* the battery is being used */
++           discharging = libhal_device_get_property_bool( ctx, udi, key, &error );
++           g_free(key);
++
++           key = g_strdup("battery.rechargeable.is_charging");
++           charging = libhal_device_get_property_bool( ctx, udi, key, &error );
++           g_free(key);
++
++           key = g_strdup("battery.charge_level.rate");// shows the percent charged
++           percent = libhal_device_get_property_int( ctx, udi, key, &error );
++           g_free(key);
++
++           key = g_strdup("battery.remaining_time"); // the remaining charge time or remaining battery time
++           remaining_time = libhal_device_get_property_int( ctx, udi, key, &error );
++           g_free(key);
++
++           /* In the case of exactly one battery, report the time remaining figure
++            * from HAL directly since it might have come from an authorative source
++            * (ie: the PMU or APM subsystem).
++            *
++            * HAL gives remaining time in seconds with a 0 to mean that the
++            * remaining time is unknown.  we uses minutes and -1 for 
++            * unknown time remaining.
++            */
++
++           if( remaining_time == 0 )
++              time_left = -1;
++           else
++              time_left = (remaining_time + 30) / 60;
++
++
++           /* At least one battery is discharging -> we're not on AC. */
++           if( discharging )
++           {
++             on_line = FALSE; /* AC is on-line? */
++             charging = FALSE;
++           }
++
++           current_charge_total += current_level;
++           full_capacity_total += full_level;
++
++           /* As per above, overall charge is:
++            *
++            *    Sum( Current charges ) / Sum( Full Capacities )
++            */
++           percent = ( ((double) current_charge_total) /
++                      ((double) full_capacity_total)    ) * 100.0 + 0.5;
++
++
++           gkrellm_battery_assign_data(i, available, on_line, charging, percent, time_left);
++
++           libhal_free_string( type );
++           }
++     } // end of if (type) 
++    } // end of for 
++
++    dbus_free_string_array( devices );
++
++    libhal_ctx_shutdown( ctx, NULL );
++    libhal_ctx_free( ctx );
++    dbus_error_free( &error );
++    return ;
++ 	}
++ 
++gboolean
++gkrellm_sys_battery_init()
++ 	{
++	  return TRUE;
++ 	}
++ 
+ /* ===================================================================== */
+ /* Uptime monitor interface */
+ 
+--- gkrellm-2.3.5/src/Makefile.orig	Sat Oct  2 18:21:01 2010
++++ gkrellm-2.3.5/src/Makefile	Sat Jan 11 17:34:14 2014
+@@ -71,11 +71,16 @@
+ PKG_INCLUDE = `$(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 gmodule-2.0`
+ PKG_LIB = `$(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 gmodule-2.0`
+ 
++HAL_CFLAGS = -DDBUS_API_SUBJECT_TO_CHANGE -I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++HAL_LIBS = -lhal -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
++DBUS_CFLAGS = -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
++DBUS_LIBS = -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0
++
+ FLAGS = -O2 -I.. -I$(SHARED_PATH) $(PKG_INCLUDE) $(GTOP_INCLUDE) $(PTHREAD_INC)\
+- ${SSL_INCLUDE} ${NTLM_INCLUDE} -DGKRELLM_CLIENT
++ ${SSL_INCLUDE} ${NTLM_INCLUDE} $(HAL_CFLAGS) $(DBUS_CFLAGS) -DGKRELLM_CLIENT
+ 
+-LIBS = $(PKG_LIB) $(GTOP_LIBS) $(X11_LIBS) $(SYS_LIBS) $(SSL_LIBS) $(SENSORS_LIBS)\
+- $(NTLM_LIBS) $(MATH_LIB)
++LIBS = $(PKG_LIB) $(GTOP_LIBS) $(X11_LIBS) $(SYS_LIBS) $(SSL_LIBS) $(SENSORS_LIBS) -lnsl \
++ $(NTLM_LIBS) $(MATH_LIB) $(HAL_LIBS) $(DBUS_LIBS)
+ 
+ ifeq ($(debug),1)
+     FLAGS += -g

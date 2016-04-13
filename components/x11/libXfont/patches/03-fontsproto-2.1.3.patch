@@ -1,0 +1,526 @@
+Based on https://launchpad.net/ubuntu/+archive/primary/+files/libxfont_1.4.7-2.diff.gz
+
+--- libxfont-1.4.7.orig/configure.ac
++++ libxfont-1.4.7/configure.ac
+@@ -21,7 +21,7 @@
+ 
+ # Initialize Autoconf
+ AC_PREREQ([2.60])
+-AC_INIT([libXfont], [1.4.9],
++AC_INIT([libXfont], [1.4.99.0],
+ 	[https://bugs.freedesktop.org/enter_bug.cgi?product=xorg], [libXfont])
+ AC_CONFIG_SRCDIR([Makefile.am])
+ AC_CONFIG_HEADERS([config.h include/X11/fonts/fontconf.h])
+@@ -181,7 +180,7 @@
+ AC_CHECK_LIB(m, hypot, [MATH_LIBS=-lm
+ AC_SUBST(MATH_LIBS)], AC_MSG_ERROR([*** libm is required]))
+ 
+-PKG_CHECK_MODULES(XFONT, [xproto xtrans fontsproto < 2.1.3 fontenc])
++PKG_CHECK_MODULES(XFONT, [xproto xtrans fontsproto >= 2.1.3 fontenc])
+ 
+ # Transport selection macro from xtrans.m4
+ XTRANS_CONNECTION_FLAGS
+--- libxfont-1.4.7.orig/include/X11/fonts/fntfil.h
++++ libxfont-1.4.7/include/X11/fonts/fntfil.h
+@@ -72,12 +72,12 @@
+ #define FontAliasFile	    "fonts.alias"
+ #define FontScalableFile    "fonts.scale"
+ 
+-extern int FontFileNameCheck ( char *name );
++extern int FontFileNameCheck ( const char *name );
+ extern int FontFileInitFPE ( FontPathElementPtr fpe );
+ extern int FontFileResetFPE ( FontPathElementPtr fpe );
+ extern int FontFileFreeFPE ( FontPathElementPtr fpe );
+ extern int FontFileOpenFont ( pointer client, FontPathElementPtr fpe,
+-			      Mask flags, char *name, int namelen,
++			      Mask flags, const char *name, int namelen,
+ 			      fsBitmapFormat format, fsBitmapFormatMask fmask,
+ 			      XID id, FontPtr *pFont, char **aliasName,
+ 			      FontPtr non_cachable_font );
+@@ -87,14 +87,14 @@
+ 				fsBitmapFormat format,
+ 				fsBitmapFormatMask fmask );
+ extern int FontFileListFonts ( pointer client, FontPathElementPtr fpe,
+-			       char *pat, int len, int max,
++			       const char *pat, int len, int max,
+ 			       FontNamesPtr names );
+ extern int FontFileStartListFonts ( pointer client, FontPathElementPtr fpe,
+-				    char *pat, int len, int max,
++				    const char *pat, int len, int max,
+ 				    pointer *privatep, int mark_aliases );
+ extern int FontFileStartListFontsWithInfo ( pointer client,
+ 					    FontPathElementPtr fpe,
+-					    char *pat, int len, int max,
++					    const char *pat, int len, int max,
+ 					    pointer *privatep );
+ extern int FontFileListNextFontWithInfo ( pointer client,
+ 					  FontPathElementPtr fpe,
+@@ -103,7 +103,7 @@
+ 					  int *numFonts, pointer private );
+ extern int FontFileStartListFontsAndAliases ( pointer client,
+ 					      FontPathElementPtr fpe,
+-					      char *pat, int len, int max,
++					      const char *pat, int len, int max,
+ 					      pointer *privatep );
+ extern int FontFileListNextFontOrAlias ( pointer client,
+ 					 FontPathElementPtr fpe,
+@@ -173,7 +173,7 @@
+ 				       fsBitmapFormatMask fmask,
+ 				       Bool noSpecificSize );
+ 
+-extern int FontFileReadDirectory ( char *directory, FontDirectoryPtr *pdir );
++extern int FontFileReadDirectory ( const char *directory, FontDirectoryPtr *pdir );
+ extern Bool FontFileDirectoryChanged ( FontDirectoryPtr dir );
+ 
+ #endif /* _FONTFILE_H_ */
+--- libxfont-1.4.7.orig/include/X11/fonts/fontmisc.h
++++ libxfont-1.4.7/include/X11/fonts/fontmisc.h
+@@ -91,7 +91,7 @@
+ 
+ extern void CopyISOLatin1Lowered(
+     char * /*dest*/,
+-    char * /*source*/,
++    const char * /*source*/,
+     int /*length*/
+ );
+ 
+--- libxfont-1.4.7.orig/src/FreeType/ftfuncs.c
++++ libxfont-1.4.7/src/FreeType/ftfuncs.c
+@@ -1069,6 +1069,8 @@
+ #endif
+ }
+ 
++#pragma GCC diagnostic ignored "-Wbad-function-cast"
++
+ int
+ FreeTypeRasteriseGlyph(unsigned idx, int flags, CharInfoPtr tgp,
+ 		       FTInstancePtr instance, int hasMetrics)
+--- libxfont-1.4.7.orig/src/bitmap/bitscale.c
++++ libxfont-1.4.7/src/bitmap/bitscale.c
+@@ -751,6 +751,8 @@
+  *  ScaleFont
+  *  returns a pointer to the new scaled font, or NULL (due to AllocError).
+  */
++#pragma GCC diagnostic ignored "-Wbad-function-cast"
++
+ static FontPtr
+ ScaleFont(FontPtr opf,            /* originating font */
+ 	  double widthMult, 	  /* glyphs width scale factor */
+@@ -811,8 +813,6 @@
+        needs to be for the output font */
+     if (vals->nranges)
+     {
+-	int i;
+-
+ 	pfi->allExist = 0;
+ 	firstCol = 255;
+ 	lastCol = 0;
+--- libxfont-1.4.7.orig/src/builtins/builtin.h
++++ libxfont-1.4.7/src/builtins/builtin.h
+@@ -54,9 +54,9 @@
+ extern const BuiltinAliasRec	builtin_alias[];
+ extern const int		builtin_alias_count;
+ 
+-extern FontFilePtr	BuiltinFileOpen (char *);
++extern FontFilePtr	BuiltinFileOpen (const char *);
+ extern int		BuiltinFileClose (BufFilePtr, int);
+-extern int BuiltinReadDirectory (char *, FontDirectoryPtr *);
++extern int BuiltinReadDirectory (const char *, FontDirectoryPtr *);
+ extern void BuiltinRegisterFontFileFunctions (void);
+ 
+ extern void BuiltinRegisterFpeFunctions (void);
+--- libxfont-1.4.7.orig/src/builtins/dir.c
++++ libxfont-1.4.7/src/builtins/dir.c
+@@ -148,7 +148,7 @@
+ }
+ 
+ int
+-BuiltinReadDirectory (char *directory, FontDirectoryPtr *pdir)
++BuiltinReadDirectory (const char *directory, FontDirectoryPtr *pdir)
+ {
+     FontDirectoryPtr	dir;
+     int			i;
+--- libxfont-1.4.7.orig/src/builtins/file.c
++++ libxfont-1.4.7/src/builtins/file.c
+@@ -90,7 +90,7 @@
+ 
+ 
+ FontFilePtr
+-BuiltinFileOpen (char *name)
++BuiltinFileOpen (const char *name)
+ {
+     int		    i;
+     BuiltinIOPtr    io;
+--- libxfont-1.4.7.orig/src/builtins/fpe.c
++++ libxfont-1.4.7/src/builtins/fpe.c
+@@ -32,7 +32,7 @@
+ static const char builtin_fonts[] = "built-ins";
+ 
+ static int
+-BuiltinNameCheck (char *name)
++BuiltinNameCheck (const char *name)
+ {
+     return (strcmp (name, builtin_fonts) == 0);
+ }
+--- libxfont-1.4.7.orig/src/fc/fsconvert.c
++++ libxfont-1.4.7/src/fc/fsconvert.c
+@@ -634,7 +634,7 @@
+ 
+ FontPtr
+ fs_create_font (FontPathElementPtr  fpe,
+-		char		    *name,
++		const char	    *name,
+ 		int		    namelen,
+ 		fsBitmapFormat	    format,
+ 		fsBitmapFormatMask  fmask)
+--- libxfont-1.4.7.orig/src/fc/fserve.c
++++ libxfont-1.4.7/src/fc/fserve.c
+@@ -137,7 +137,7 @@
+ _fs_close_server (FSFpePtr conn);
+ 
+ static FSFpePtr
+-_fs_init_conn (char *servername);
++_fs_init_conn (const char *servername);
+ 
+ static int
+ _fs_wait_connect (FSFpePtr conn);
+@@ -212,7 +212,7 @@
+ #endif
+ 
+ static Bool
+-fs_name_check(char *name)
++fs_name_check(const char *name)
+ {
+     /* Just make sure there is a protocol/ prefix */
+     return (name && *name != '/' && strchr(name, '/'));
+@@ -270,7 +270,7 @@
+ fs_init_fpe(FontPathElementPtr fpe)
+ {
+     FSFpePtr    conn;
+-    char       *name;
++    const char  *name;
+     int         err;
+     int		ret;
+ 
+@@ -1517,7 +1517,7 @@
+ /* ARGSUSED */
+ static int
+ fs_send_open_font(pointer client, FontPathElementPtr fpe, Mask flags,
+-		  char *name, int namelen,
++		  const char *name, int namelen,
+ 		  fsBitmapFormat format, fsBitmapFormatMask fmask,
+ 		  XID id, FontPtr *ppfont)
+ {
+@@ -1709,7 +1709,7 @@
+ /* ARGSUSED */
+ static int
+ fs_open_font(pointer client, FontPathElementPtr fpe, Mask flags,
+-	     char *name, int namelen,
++	     const char *name, int namelen,
+ 	     fsBitmapFormat format, fsBitmapFormatMask fmask,
+ 	     XID id, FontPtr *ppfont,
+ 	     char **alias, FontPtr non_cachable_font)
+@@ -2259,7 +2259,7 @@
+ }
+ 
+ static int
+-fs_send_list_fonts(pointer client, FontPathElementPtr fpe, char *pattern,
++fs_send_list_fonts(pointer client, FontPathElementPtr fpe, const char *pattern,
+ 		   int patlen, int maxnames, FontNamesPtr newnames)
+ {
+     FSFpePtr		conn = (FSFpePtr) fpe->private;
+@@ -2315,7 +2315,7 @@
+ 
+ static int
+ fs_list_fonts(pointer client, FontPathElementPtr fpe,
+-	      char *pattern, int patlen, int maxnames, FontNamesPtr newnames)
++	      const char *pattern, int patlen, int maxnames, FontNamesPtr newnames)
+ {
+     FSFpePtr		conn = (FSFpePtr) fpe->private;
+     FSBlockDataPtr	blockrec;
+@@ -2429,7 +2429,7 @@
+ /* ARGSUSED */
+ static int
+ fs_start_list_with_info(pointer client, FontPathElementPtr fpe,
+-			char *pattern, int len, int maxnames, pointer *pdata)
++			const char *pattern, int len, int maxnames, pointer *pdata)
+ {
+     FSFpePtr		    conn = (FSFpePtr) fpe->private;
+     FSBlockDataPtr	    blockrec;
+@@ -3144,7 +3145,7 @@
+ 
+ 
+ static FSFpePtr
+-_fs_init_conn (char *servername)
++_fs_init_conn (const char *servername)
+ {
+     FSFpePtr	conn;
+ 
+--- libxfont-1.4.7.orig/src/fc/fserve.h
++++ libxfont-1.4.7/src/fc/fserve.h
+@@ -72,7 +72,7 @@
+ extern void _fs_convert_char_info ( fsXCharInfo *src, xCharInfo *dst );
+ extern void _fs_free_props (FontInfoPtr pfi);
+ extern FontPtr fs_create_font (FontPathElementPtr   fpe,
+-			       char		    *name,
++			       const char	    *name,
+ 			       int		    namelen,
+ 			       fsBitmapFormat	    format,
+ 			       fsBitmapFormatMask   fmask);
+--- libXfont-1.4.9/src/fontfile/catalogue.c.~1~	2015-03-17 18:46:51.000000000 +0300
++++ libXfont-1.4.9/src/fontfile/catalogue.c	2016-03-25 22:25:21.751524569 +0300
+@@ -40,7 +40,7 @@
+ static int CatalogueFreeFPE (FontPathElementPtr fpe);
+ 
+ static int
+-CatalogueNameCheck (char *name)
++CatalogueNameCheck (const char *name)
+ {
+     return strncmp(name, CataloguePrefix, sizeof(CataloguePrefix) - 1) == 0;
+ }
+@@ -116,7 +116,7 @@
+ 	if (subfpe->refcount == 0)
+ 	{
+ 	    FontFileFreeFPE (subfpe);
+-	    free(subfpe->name);
++	    free((void *) subfpe->name);
+ 	    free(subfpe);
+ 	}
+     }
+@@ -158,6 +158,7 @@
+     CatalogueUnrefFPEs (fpe);
+     while (entry = readdir(dir), entry != NULL)
+     {
++        char *name;
+ 	snprintf(link, sizeof link, "%s/%s", path, entry->d_name);
+ 	len = readlink(link, dest, sizeof dest - 1);
+ 	if (len < 0)
+@@ -191,15 +192,16 @@
+ 	 * (which uses font->fpe->type) goes to CatalogueCloseFont. */
+ 	subfpe->type = fpe->type;
+ 	subfpe->name_length = len;
+-	subfpe->name = malloc (len + 1);
+-	if (subfpe->name == NULL)
++	name = malloc (len + 1);
++	if (name == NULL)
+ 	{
+ 	    free(subfpe);
+ 	    continue;
+ 	}
+ 
+-	memcpy(subfpe->name, dest, len);
+-	subfpe->name[len] = '\0';
++	memcpy(name, dest, len);
++	name[len] = '\0';
++        subfpe->name = name;
+ 
+ 	/* The X server will manipulate the subfpe ref counts
+ 	 * associated with the font in OpenFont and CloseFont, so we
+@@ -208,7 +210,7 @@
+ 
+ 	if (FontFileInitFPE (subfpe) != Successful)
+ 	{
+-	    free(subfpe->name);
++	    free((void *) subfpe->name);
+ 	    free(subfpe);
+ 	    continue;
+ 	}
+@@ -280,7 +282,7 @@
+ 
+ static int
+ CatalogueOpenFont (pointer client, FontPathElementPtr fpe, Mask flags,
+-		   char *name, int namelen,
++		   const char *name, int namelen,
+ 		   fsBitmapFormat format, fsBitmapFormatMask fmask,
+ 		   XID id, FontPtr *pFont, char **aliasName,
+ 		   FontPtr non_cachable_font)
+@@ -314,7 +316,7 @@
+ }
+ 
+ static int
+-CatalogueListFonts (pointer client, FontPathElementPtr fpe, char *pat,
++CatalogueListFonts (pointer client, FontPathElementPtr fpe, const char *pat,
+ 		    int len, int max, FontNamesPtr names)
+ {
+     CataloguePtr cat = fpe->private;
+@@ -339,7 +341,7 @@
+ 
+ static int
+ CatalogueStartListFonts(pointer client, FontPathElementPtr fpe,
+-			char *pat, int len, int max, pointer *privatep,
++			const char *pat, int len, int max, pointer *privatep,
+ 			int mark_aliases)
+ {
+     CataloguePtr	cat = fpe->private;
+@@ -375,7 +377,7 @@
+ 
+ static int
+ CatalogueStartListFontsWithInfo(pointer client, FontPathElementPtr fpe,
+-				char *pat, int len, int max,
++				const char *pat, int len, int max,
+ 				pointer *privatep)
+ {
+     return CatalogueStartListFonts(client, fpe, pat, len, max, privatep, 0);
+@@ -413,7 +415,7 @@
+ 
+ static int
+ CatalogueStartListFontsAndAliases(pointer client, FontPathElementPtr fpe,
+-				  char *pat, int len, int max,
++				  const char *pat, int len, int max,
+ 				  pointer *privatep)
+ {
+     return CatalogueStartListFonts(client, fpe, pat, len, max, privatep, 1);
+--- libxfont-1.4.7.orig/src/fontfile/dirfile.c
++++ libxfont-1.4.7/src/fontfile/dirfile.c
+@@ -49,8 +49,10 @@
+ static int lexAlias ( FILE *file, char **lexToken );
+ static int lexc ( FILE *file );
+ 
++#pragma GCC diagnostic ignored "-Wformat-nonliteral"
++
+ int
+-FontFileReadDirectory (char *directory, FontDirectoryPtr *pdir)
++FontFileReadDirectory (const char *directory, FontDirectoryPtr *pdir)
+ {
+     char        file_name[MAXFONTFILENAMELEN];
+     char        font_name[MAXFONTNAMELEN];
+--- libxfont-1.4.7.orig/src/fontfile/fontfile.c
++++ libxfont-1.4.7/src/fontfile/fontfile.c
+@@ -50,7 +50,7 @@
+ }
+ 
+ _X_HIDDEN void
+-CopyISOLatin1Lowered(char *dest, char *source, int length)
++CopyISOLatin1Lowered(char *dest, const char *source, int length)
+ {
+     int i;
+     for (i = 0; i < length; i++, source++, dest++)
+@@ -69,7 +69,7 @@
+ 				  FontPtr non_cachable_font);
+ 
+ int
+-FontFileNameCheck (char *name)
++FontFileNameCheck (const char *name)
+ {
+ #ifndef NCD
+ #if defined(WIN32)
+@@ -254,7 +254,7 @@
+ /* ARGSUSED */
+ int
+ FontFileOpenFont (pointer client, FontPathElementPtr fpe, Mask flags,
+-		  char *name, int namelen,
++		  const char *name, int namelen,
+ 		  fsBitmapFormat format, fsBitmapFormatMask fmask,
+ 		  XID id, FontPtr *pFont, char **aliasName,
+ 		  FontPtr non_cachable_font)
+@@ -688,7 +688,7 @@
+ /* ARGSUSED */
+ static int
+ _FontFileListFonts (pointer client, FontPathElementPtr fpe,
+-		    char *pat, int len, int max, FontNamesPtr names,
++		    const char *pat, int len, int max, FontNamesPtr names,
+ 		    int mark_aliases)
+ {
+     FontDirectoryPtr	dir;
+@@ -794,7 +794,7 @@
+ } LFWIDataRec, *LFWIDataPtr;
+ 
+ int
+-FontFileListFonts (pointer client, FontPathElementPtr fpe, char *pat,
++FontFileListFonts (pointer client, FontPathElementPtr fpe, const char *pat,
+ 		   int len, int max, FontNamesPtr names)
+ {
+     return _FontFileListFonts (client, fpe, pat, len, max, names, 0);
+@@ -802,7 +802,7 @@
+ 
+ int
+ FontFileStartListFonts(pointer client, FontPathElementPtr fpe,
+-		       char *pat, int len, int max,
++		       const char *pat, int len, int max,
+ 		       pointer *privatep, int mark_aliases)
+ {
+     LFWIDataPtr	data;
+@@ -833,7 +833,7 @@
+ 
+ int
+ FontFileStartListFontsWithInfo(pointer client, FontPathElementPtr fpe,
+-			       char *pat, int len, int max,
++			       const char *pat, int len, int max,
+ 			       pointer *privatep)
+ {
+     return FontFileStartListFonts(client, fpe, pat, len, max, privatep, 0);
+@@ -1067,7 +1067,7 @@
+ 
+ int
+ FontFileStartListFontsAndAliases(pointer client, FontPathElementPtr fpe,
+-				 char *pat, int len, int max,
++				 const char *pat, int len, int max,
+ 				 pointer *privatep)
+ {
+     return FontFileStartListFonts(client, fpe, pat, len, max, privatep, 1);
+--- libxfont-1.4.7.orig/src/util/patcache.c
++++ libxfont-1.4.7/src/util/patcache.c
+@@ -50,7 +50,7 @@
+ typedef struct _FontPatternCacheEntry {
+     struct _FontPatternCacheEntry   *next, **prev;
+     short			    patlen;
+-    char			    *pattern;
++    const char			    *pattern;
+     int				    hash;
+     FontPtr			    pFont;	/* associated font */
+ } FontPatternCacheEntryRec, *FontPatternCacheEntryPtr;
+@@ -74,7 +74,7 @@
+ 	cache->entries[i].next = &cache->entries[i+1];
+ 	cache->entries[i].prev = 0;
+ 	cache->entries[i].pFont = 0;
+-	free (cache->entries[i].pattern);
++	free ((void *) cache->entries[i].pattern);
+ 	cache->entries[i].pattern = 0;
+ 	cache->entries[i].patlen = 0;
+     }
+@@ -107,7 +107,7 @@
+     int	    i;
+ 
+     for (i = 0; i < NENTRIES; i++)
+-	free (cache->entries[i].pattern);
++	free ((void *) cache->entries[i].pattern);
+     free (cache);
+ }
+ 
+@@ -128,7 +128,7 @@
+ /* add entry */
+ void
+ CacheFontPattern (FontPatternCachePtr cache,
+-		  char *pattern,
++		  const char *pattern,
+ 		  int patlen,
+ 		  FontPtr pFont)
+ {
+@@ -154,7 +154,7 @@
+ 	if (e->next)
+ 	    e->next->prev = e->prev;
+ 	*e->prev = e->next;
+-	free (e->pattern);
++	free ((void *) e->pattern);
+     }
+     /* set pattern */
+     memcpy (newpat, pattern, patlen);
+@@ -174,7 +174,7 @@
+ /* find matching entry */
+ FontPtr
+ FindCachedFontPattern (FontPatternCachePtr cache,
+-		       char *pattern,
++		       const char *pattern,
+ 		       int patlen)
+ {
+     int				hash;
+@@ -211,7 +211,7 @@
+ 	    *e->prev = e->next;
+ 	    e->next = cache->free;
+ 	    cache->free = e;
+-	    free (e->pattern);
++	    free ((void *) e->pattern);
+ 	    e->pattern = 0;
+ 	}
+     }
+

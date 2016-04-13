@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ekiga
 COMPONENT_VERSION=	3.2.7
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.ekiga.org
 COMPONENT_SUMMARY=	A GNOME based H.323/SIP video conferencing application
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,16 +36,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cd $(@D)/po-sun && $(MAKE) all )
 					
 CFLAGS+=	-DSOLARIS -D__EXTENSIONS__
-CXXFLAGS+=	-DSOLARIS -D__EXTENSIONS__ -I/usr/g++/include 
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS += $(LDFLAGS.$(BITS))
+CXXFLAGS+=	-DSOLARIS -D__EXTENSIONS__
 
 CONFIGURE_SCRIPT=       $(@D)/configure
-
-gcc_OPT		= -O2
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-ldap

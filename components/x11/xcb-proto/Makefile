@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2015, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-proto
-COMPONENT_VERSION=	1.9
+COMPONENT_VERSION=	1.11
 COMPONENT_FMRI=     	x11/header/xcb-protocols
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:895afe21793e6e26c5ce999b1900c02a5984c201d96d55cc42c182d3c3bde43c
+COMPONENT_ARCHIVE_HASH=	sha256:b4aceee6502a0ce45fc39b33c541a2df4715d00b72e660ebe8c5bb444771e32e
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -38,9 +39,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-build: $(BUILD_32)
+CONFIGURE_ENV += PYTHON=$(PYTHON.$(BITS))
 
-install: $(INSTALL_32)
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 

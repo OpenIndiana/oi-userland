@@ -25,19 +25,22 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ImageMagick
-COMPONENT_FMRI=		image/imagemagick
-COMPONENT_VERSION=	6.8.7
-COMPONENT_SUBVERSION=	8
-HUMAN_VERSION=		$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
-COMPONENT_LICENSE=	Apache 2.0 license
-COMPONENT_PROJECT_URL=	http://www.imagemagick.org/
+COMPONENT_NAME=			ImageMagick
+COMPONENT_VERSION=		6.8.9
+COMPONENT_REVISION=		4
+COMPONENT_SUBVERSION=		10
+HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+COMPONENT_FMRI=	image/imagemagick
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=	ImageMagick - Image Manipulation Utilities and Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:89d6bfbadf0df2ab443615169cf2bc7b1f0483a1f7a076cffe16a8eded581c24
-COMPONENT_ARCHIVE_URL=  http://www.imagemagick.org/download/$(COMPONENT_ARCHIVE)
-#COMPONENT_ARCHIVE_URL=	http://www.imagemagick.org/download/legacy/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.xz
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:cac5dda165ab603a2f56110daf41811233d93c6fdd84e94a8430e057041d8e68
+COMPONENT_ARCHIVE_URL=	http://www.imagemagick.org/download/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE = Apache 2.0 license
+COMPONENT_LICENSE_FILE = imagemagick.license
 COMPONENT_BUGDB=	utility/imagemagick
 
 include ../../make-rules/prep.mk
@@ -69,6 +72,8 @@ CONFIGURE_OPTIONS+= --with-modules
 CONFIGURE_OPTIONS+= --enable-shared=yes
 CONFIGURE_OPTIONS+= --enable-static=no
 CONFIGURE_OPTIONS+= --without-gvc
+CONFIGURE_OPTIONS+= --with-lcms2
+CONFIGURE_OPTIONS+= --without-lcms1
 CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
@@ -85,7 +90,25 @@ CONFIGURE_OPTIONS.64+= --without-perl
 #
 build:		$(BUILD_32_and_64)
 
+# Doing it twice because /usr/lib is deep...
+# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0 ;\
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
 # can be run only after ImageMagick is actually installed and this is not 

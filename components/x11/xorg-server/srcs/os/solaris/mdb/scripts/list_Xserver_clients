@@ -1,6 +1,6 @@
 #!/usr/bin/ksh93
 #
-# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -39,7 +39,14 @@ fi
 
 print '::client_pids' | mdb "$@" | tee ${MDBOUT}
 
-for p in $(awk '/^[^\#\?]*$/ { for (i = 4 ; i <= NF ; i++) print $i}' ${MDBOUT})
+# Skip first two lines of output
+awk_filter='NR <= 2 {next}'
+# Print all pids in lines starting with whitespace, then +
+awk_filter+='/^[ \t]+\+/ { for (i = 2 ; i <= NF ; i++) print $i; next}'
+# Print only the pid (4th column) in other lines (most of them)
+awk_filter+='{ print $4 }'
+
+for p in $(awk "${awk_filter}" ${MDBOUT})
 do
 	ptree $p >> ${PIDOUT}
 done

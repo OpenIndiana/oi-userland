@@ -1,0 +1,100 @@
+Developed in-house, not fed back.
+Solaris-specific: configuration file customization.
+
+--- doc/config/lighttpd.conf	2013-11-04 08:53:35.317845225 -0800
++++ doc/config/lighttpd.conf	2013-11-04 08:52:54.468735970 -0800
+@@ -13,11 +13,11 @@
+ ## if you add a variable here. Add the corresponding variable in the
+ ## chroot example aswell.
+ ##
+-var.log_root    = "/var/log/lighttpd"
+-var.server_root = "/srv/www"
+-var.state_dir   = "/var/run"
+-var.home_dir    = "/var/lib/lighttpd"
+-var.conf_dir    = "/etc/lighttpd"
++var.log_root    = "/var/lighttpd/1.4/logs"
++var.server_root = "/var/lighttpd/1.4"
++var.state_dir   = log_root
++var.home_dir    = server_root
++var.conf_dir    = "/etc/lighttpd/1.4"
+ 
+ ## 
+ ## run the server chrooted.
+@@ -58,7 +58,7 @@
+ ## used in:
+ ## conf.d/compress.conf
+ ##
+-var.cache_dir   = "/var/cache/lighttpd"
++var.cache_dir   = server_root + "/cache"
+ 
+ ##
+ ## Base directory for sockets.
+@@ -101,8 +101,8 @@
+ ## Run as a different username/groupname.
+ ## This requires root permissions during startup. 
+ ##
+-server.username  = "lighttpd"
+-server.groupname = "lighttpd"
++server.username  = "webservd"
++server.groupname = "webservd"
+ 
+ ## 
+ ## enable core files.
+@@ -112,7 +112,7 @@
+ ##
+ ## Document root
+ ##
+-server.document-root = server_root + "/htdocs"
++server.document-root = server_root + "/docroot"
+ 
+ ##
+ ## The value for the "Server:" response field.
+@@ -124,7 +124,7 @@
+ ##
+ ## store a pid file
+ ##
+-server.pid-file = state_dir + "/lighttpd.pid"
++server.pid-file = log_root + "/run.pid"
+ 
+ ##
+ #######################################################################
+@@ -178,7 +178,7 @@
+ ##
+ ## linux-sysepoll is recommended on kernel 2.6.
+ ##
+-server.event-handler = "linux-sysepoll"
++server.event-handler = "solaris-devpoll"
+ 
+ ##
+ ## The basic network interface for all platforms at the syscalls read()
+@@ -296,7 +296,7 @@
+ ##                                 "index.htm", "default.htm" )
+ ##
+ index-file.names += (
+-  "index.xhtml", "index.html", "index.htm", "default.htm", "index.php"
++  "index.php", "index.html", "index.htm", "default.htm", "index.xhtml"
+ )
+ 
+ ##
+@@ -345,7 +345,7 @@
+ ## Format: <errorfile-prefix><status-code>.html
+ ## -> ..../status-404.html for 'File not found'
+ ##
+-#server.errorfile-prefix    = "/srv/www/htdocs/errors/status-"
++#server.errorfile-prefix    = "/var/lighttpd/1.4/errors/status-"
+ 
+ ##
+ ## mimetype mapping
+--- doc/config/conf.d/fastcgi.conf	2013-10-07 07:21:24.418114603 -0700
++++ doc/config/conf.d/fastcgi.conf	2013-10-07 07:24:01.824986033 -0700
+@@ -22,8 +22,8 @@
+ #fastcgi.server = ( ".php" =>
+ #                   ( "php-local" =>
+ #                     (
+-#                       "socket" => socket_dir + "/php-fastcgi-1.socket",
+-#                       "bin-path" => server_root + "/cgi-bin/php5",
++#                       "socket" => socket_dir + "/php-fastcgi.socket",
++#                       "bin-path" => "/usr/php/bin/php-cgi",
+ #                       "max-procs" => 1,
+ #                       "broken-scriptfilename" => "enable",
+ #                     )
