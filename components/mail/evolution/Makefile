@@ -12,11 +12,11 @@
 # Copyright (c) 2013 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution
 COMPONENT_VERSION=	2.32.3
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/
 COMPONENT_SUMMARY=	Evolution Email and Calendar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -53,8 +53,6 @@ CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-nss=yes
 CONFIGURE_OPTIONS+=	--enable-smime=yes
-CONFIGURE_OPTIONS+=	--enable-pilot-conduits=no
-CONFIGURE_OPTIONS+=	--with-pisock=yes
 CONFIGURE_OPTIONS+=	--with-sunldap=/usr
 CONFIGURE_OPTIONS+=	--with-krb5=/usr
 CONFIGURE_OPTIONS+=	--disable-nm
