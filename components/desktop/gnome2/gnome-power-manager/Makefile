@@ -12,12 +12,13 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-power-manager
 # DO NOT BUMP MODULE to 2.25.x and later versions 
 # AS IT DEPENDS ON DEVICEKIT-POWER NOT YET READY FOR SOLARIS/illumos
 COMPONENT_VERSION=	2.24.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Power Manager utilities for desktop users
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
