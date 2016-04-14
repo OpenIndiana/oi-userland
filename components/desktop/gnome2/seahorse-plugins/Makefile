@@ -12,10 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse-plugins
 COMPONENT_VERSION=	2.30.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Plugins for gedit and nautilus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
