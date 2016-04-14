@@ -22,51 +22,44 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.9.3
+COMPONENT_VERSION=	1.7.20
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:74cd21d2f8a2a54e4dbd2389fe1605a19dbda8ba88ffc4bb0edc9a66e143cc93
+	sha256:2bdb01eb3f3df5c9370af98580e1892822d6e75f2077ce97fc81749f316ef25a
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
-TPNO=			27091
+TPNO=			22298
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL := 0
+PATCH_LEVEL = 0
+PYMODS = client core delta fs ra repos wc
+PLMODS= Fs Core Wc Client Repos Ra Delta
 JAVA_ROOT = $(JAVA_HOME)
-GNUCP = /usr/gnu/bin/cp
+PERL_VERSION.32 = 5.12
+PERL_VERSION.64 = 5.16
+PERL_VERSION = $(PERL_VERSION.$(BITS))
+PERL = $(PERL.$(PERL_VERSION))
+GNUCP = $(GNUBIN)/cp
 
-# Because we can't seem to get -norunpath to the java bindings build any
+# because we can't seem to get -norunpath to the java bindings build any
 # other way.
 CXX += $(studio_NORUNPATH)
 CFLAGS += -features=extensions
-CFLAGS += -D_REENTRANT
 CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
 CXXFLAGS += $(CC_PIC)
-CXXFLAGS += -D_REENTRANT -DNDEBUG -DSOLARIS
+CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
 CXXFLAGS += $(CPP_LARGEFILES)
-CXXFLAGS += -D_REENTRANT
-CFLAGS += `pkg-config --cflags serf-1`
+CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
-
-PYMODS := client core delta fs ra repos wc
-PLMODS :=
-
-ifneq (,$(findstring m64,$(CXXFLAGS)))
-  PLMODS = Fs Core Wc Client Repos Ra Delta
-endif
 
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-subversion.master
@@ -75,44 +68,27 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
      '-e "/-m32/d"' \
      '-e "/-m64/d"' \
-     '-e "/Entering/d"' \
-     '-e "/Leaving/d"' \
-     '-e "/At least/d"' \
      '-e "s^lib/$(MACH64)^lib/MACH64^g"'  \
      '-e "s/^make\[[0-9]\{1,\}\]/make/g"' \
      '-e "/ld: warning/d"' \
      '-e "/warning/d"'
 
-PERL_VERSION.32 = none
-PERL_VERSION.64 = 5.22
-PERL_VERSION=$(PERL_VERSION.$(BITS))
-PERL.32 = none
-PERL.64 = /usr/perl5/$(PERL_VERSION)/bin/perl
-PERL=$(PERL.$(BITS))
-
-PERL_VERSION_22 = 5.22
-PERL_ARCH_22_i386 = i86pc-solaris-thread-multi-64
-PERL_ARCH_22_sparc = sun4-solaris-thread-multi-64
-PERL_ARCH_22 = $(PERL_ARCH_22_$(MACH))
-
+PERL_VERSION_12 = 5.12
+PERL_VERSION_16 = 5.16
+PERL_ARCH_12_i386 = i86pc-solaris-64int
+PERL_ARCH_16_i386 = i86pc-solaris-64
+PERL_ARCH_12_sparc = sun4-solaris-64int
+PERL_ARCH_16_sparc = sun4-solaris-64
+PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
+PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
 APR_VERSION = 1.5
 APR_UTIL_VERSION = 1.5
-
-# Use the libraries just built plus the svn test harness library.
-LD_TEST_PATH_32 := \
-  $(PROTO_DIR)/usr/lib/svn:$(BUILD_DIR_32)/subversion/tests/.libs
-LD_TEST_PATH_64 := \
-  $(PROTO_DIR)/usr/lib/svn/$(MACH64):$(BUILD_DIR_64)/subversion/tests/.libs
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( $(CLONEY) $(SOURCE_DIR) $(@D) ; \
     cd $(SOURCE_DIR) ; \
-    $(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 ; \
-    cd $(BUILD_DIR_$(BITS)) ; \
-    find . -type f -name "*.class" -exec rm -f {} \; > /dev/null 2>&1 ; \
-    cd $(BUILD_DIR_$(BITS)) ; \
-    $(GSED) -i 's/-mt//g' Makefile )
+	$(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
 COMPONENT_BUILD_TARGETS = all swig-py swig-pl javahl
 COMPONENT_INSTALL_TARGETS = install install-lib \
@@ -122,84 +98,51 @@ COMPONENT_INSTALL_TARGETS = install install-lib \
 
 $(BUILD_DIR)/$(MACH64)/.installed: COMPONENT_INSTALL_TARGETS += install-mods-shared
 
-CONFIGURE_LIBDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
-CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
-
-APR-CONFIG.32 = /usr/apr/$(APR_VERSION)/bin/apr-1-config
-APR-CONFIG.64 = /usr/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
-APU-CONFIG.32 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
-APU-CONFIG.64 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
-APXS.32 = no
-APXS.64 = /usr/apache2/2.4/bin/apxs
-APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
-APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
-APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
-APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
-
-EXPAT_INCLUDE = /usr/include
-EXPAT_LIBDIR.32 = /usr/lib
-EXPAT_LIBDIR.64 = /usr/lib/$(MACH64)
-EXPAT_LIBDIR = $(EXPAT_LIBDIR.$(BITS))
-EXPAT_LIB = -lexpat
-
-APACHE_LIBEXECDIR=/usr/apache2/2.4/libexec
-
-LDFLAGS += -R$(CONFIGURE_LIBDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
-	   -R$(APU-CONFIG-RPATH.$(BITS))
-
-LD_OPTIONS += -R$(CONFIGURE_LIBDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
-	      -R$(APU-CONFIG-RPATH.$(BITS))
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON.$(BITS))"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
 CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
 CONFIGURE_ENV += JAVA_ROOT="$(JAVA_ROOT)"
 CONFIGURE_ENV += PERL="$(PERL)"
-CONFIGURE_ENV += ac_cv_path_PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_LIBDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
+CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
+
+APR-CONFIG.32 = $(USRDIR)/apr/$(APR_VERSION)/bin/apr-1-config
+APR-CONFIG.64 = $(USRDIR)/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = $(USRDIR)/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
+APU-CONFIG.64 = $(USRDIR)/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
+APXS.32 = no
+APXS.64 = $(USRDIR)/apache2/2.4/bin/apxs
+APR-CONFIG-RPATH.32 = $(USRDIR)/apr/$(APR_VERSION)/lib
+APR-CONFIG-RPATH.64 = $(USRDIR)/apr/$(APR_VERSION)/lib/$(MACH64)
+APU-CONFIG-RPATH.32 = $(USRDIR)/apr-util/$(APR_VERSION)/lib
+APU-CONFIG-RPATH.64 = $(USRDIR)/apr-util/$(APR_VERSION)/lib/$(MACH64)
+
+LDFLAGS += -R$(CONFIGURE_LIBDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
+	   -R$(APU-CONFIG-RPATH.$(BITS))
+
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --enable-shared 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-libtool-lock
+CONFIGURE_OPTIONS += --disable-libtool-lock 
+CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
+CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
-CONFIGURE_OPTIONS += --with-apr=/usr/apr/$(APR_VERSION)
-CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/$(APR_UTIL_VERSION)
+CONFIGURE_OPTIONS += --with-apr=$(USRDIR)/apr/$(APR_VERSION)
+CONFIGURE_OPTIONS += --with-apr-util=$(USRDIR)/apr-util/$(APR_UTIL_VERSION)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
 CONFIGURE_OPTIONS += --with-swig
-CONFIGURE_OPTIONS += --with-expat=$(EXPAT_INCLUDE):$(EXPAT_LIBDIR):$(EXPAT_LIB)
-CONFIGURE_OPTIONS += --with-serf=$(CONFIGURE_PREFIIX)
+CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
-CONFIGURE_OPTIONS += --with-apache-libexecdir=$(APACHE_LIBEXECDIR)
-
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_BUILD_ENV += PYTHON="$(PYTHON.$(BITS))"
-COMPONENT_BUILD_ENV += PYMODS="$(PYMODS)"
-COMPONENT_BUILD_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
-COMPONENT_BUILD_ENV += JAVA_ROOT="$(JAVA_ROOT)"
-COMPONENT_BUILD_ENV += PERL="$(PERL)"
-COMPONENT_BUILD_ENV += ac_cv_path_PERL="$(PERL)"
-COMPONENT_BUILD_ENV += PLMODS="$(PLMODS)"
-
-COMPONENT_BUILD_ENV += LD_OPTIONS="$(LD_OPTIONS)"
-COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
-
-COMPONENT_TEST_ENV += LD_LIBRARY_PATH_32="$(LD_TEST_PATH_32)"
-COMPONENT_TEST_ENV += LD_LIBRARY_PATH_64="$(LD_TEST_PATH_64)"
-
-PKG_MACROS += PERL_ARCH_22="$(PERL_ARCH_22)"
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
+CONFIGURE_OPTIONS += --with-gssapi=$(CONFIGURE_PREFIX)
 
 # Swig overwrites the 32-bit directory with 64-bit objects.
 # So we work around that.
@@ -216,34 +159,18 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(GNUCP) -rpd vendor-packages-32/svn vendor-packages/ ; \
 	fi ; )
 
-ASLR_MODE=$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# The test target takes a very long time to run.
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+PKG_MACROS += PERL_ARCH_12="$(PERL_ARCH_12)"
+PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/versioning/subversion
-REQUIRED_PACKAGES += developer/build/scons
-REQUIRED_PACKAGES += gnome/gnome-keyring
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
-REQUIRED_PACKAGES += library/libserf
+REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
-
