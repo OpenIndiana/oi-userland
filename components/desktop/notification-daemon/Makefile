@@ -12,11 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		notification-daemon
 COMPONENT_VERSION=	0.4.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.galago-project.org/news/index.php
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
