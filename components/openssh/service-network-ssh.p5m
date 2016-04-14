@@ -34,13 +34,11 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/227
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=etc/ssh/moduli group=sys mode=0644 overlay=true preserve=renamenew
+file path=etc/ssh/moduli group=sys mode=0644 overlay=allow preserve=renamenew
 file path=etc/ssh/sshd_config group=sys mode=0644 \
-    original_name=SUNWsshd:etc/ssh/sshd_config overlay=true preserve=renamenew
-file sources/ssh.xml path=lib/svc/manifest/network/ssh.xml group=sys mode=0444 \
-    overlay=true preserve=true
-file sources/sshd.sh path=lib/svc/method/sshd mode=0555 overlay=true \
-    preserve=true
+    original_name=SUNWsshd:etc/ssh/sshd_config overlay=allow preserve=renamenew
+file sources/ssh.xml path=lib/svc/manifest/network/ssh.xml group=sys mode=0444
+file sources/sshd.sh path=lib/svc/method/sshd mode=0555
 file usr/lib/dtrace/64/sftp64.d path=usr/lib/dtrace/sftp.d
 file path=usr/lib/ssh/sftp-server mode=0555
 file path=usr/lib/ssh/ssh-keysign mode=4555
@@ -56,6 +54,10 @@ dir  path=var/empty owner=root group=sys mode=0755 sysattr=readonly
 group groupname=sshd gid=22
 user username=sshd ftpuser=false gcos-field="sshd privsep" group=sshd \
     home-dir=/var/empty login-shell=/bin/false uid=22
+legacy pkg=SUNWsshdr desc="Secure Shell protocol Server" \
+    name="SSH Server, (Root)"
+legacy pkg=SUNWsshdu desc="Secure Shell protocol Server" \
+    name="SSH Server, (Usr)"
 license openssh.license license="BSD, BSD-like (OpenSSH)" \
     com.oracle.info.description="OpenSSH, a suite of tools that help secure network connections" \
     com.oracle.info.name=openssh com.oracle.info.tpno=$(TPNO_OPENSSH) \
