@@ -23,19 +23,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.1p2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.2p2
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.1.0.2
+IPS_COMPONENT_VERSION=	7.2.0.2
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:dd75f024dcf21e06a0d6421d582690bf987a1f6323e32ad6619392f3bfde6bbd
+COMPONENT_ARCHIVE_HASH=	sha256:a72781d1a043876a224ff1b0032daa4094d87565a68528759c1c2cab5482548c
 COMPONENT_ARCHIVE_URL=	http://mirrors.nycbug.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 

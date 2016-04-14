@@ -1,7 +1,7 @@
-From 58d5723e03a5a582c2d1486719f9753aa969b244 Mon Sep 17 00:00:00 2001
+From 6fdd7632d7cfad601e3b354bc2a676932050060e Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 19 Aug 2015 11:35:32 -0700
-Subject: [PATCH 28/36] Re-enable DSA keys for pk auth
+Subject: [PATCH 27/34] Re-enable DSA keys for pk auth
 
 ---
  myproposal.h  | 4 +++-
@@ -10,49 +10,51 @@ Subject: [PATCH 28/36] Re-enable DSA keys for pk auth
  3 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/myproposal.h b/myproposal.h
-index 46e5b98..5041361 100644
+index bdd0596..7b15897 100644
 --- a/myproposal.h
 +++ b/myproposal.h
-@@ -99,9 +99,11 @@
+@@ -99,11 +99,13 @@
  	HOSTKEY_ECDSA_CERT_METHODS \
  	"ssh-ed25519-cert-v01@openssh.com," \
  	"ssh-rsa-cert-v01@openssh.com," \
 +	"ssh-dss-cert-v01@openssh.com," \
  	HOSTKEY_ECDSA_METHODS \
  	"ssh-ed25519," \
--	"ssh-rsa" \
+ 	"rsa-sha2-512," \
+ 	"rsa-sha2-256," \
+-	"ssh-rsa"
 +	"ssh-rsa," \
-+	"ssh-dss" \
++	"ssh-dss"
  
  /* the actual algorithms */
  
 diff --git a/ssh_config.4 b/ssh_config.4
-index 016adda..1d26140 100644
+index f4b471e..0e17ef9 100644
 --- a/ssh_config.4
 +++ b/ssh_config.4
-@@ -1264,8 +1264,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
+@@ -1344,8 +1344,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
  ecdsa-sha2-nistp521-cert-v01@openssh.com,
  ssh-ed25519-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
 -ssh-ed25519,ssh-rsa
-+ssh-ed25519,ssh-rsa,ssh-dss
++ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp
  The
 diff --git a/sshd_config.4 b/sshd_config.4
-index bd70a68..0c07fd1 100644
+index 0dec36c..8f0dbc4 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -1366,8 +1366,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
+@@ -1377,8 +1377,9 @@ ecdsa-sha2-nistp384-cert-v01@openssh.com,
  ecdsa-sha2-nistp521-cert-v01@openssh.com,
  ssh-ed25519-cert-v01@openssh.com,
  ssh-rsa-cert-v01@openssh.com,
 +ssh-dss-cert-v01@openssh.com,
  ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
 -ssh-ed25519,ssh-rsa
-+ssh-ed25519,ssh-rsa,ssh-dss
++ssh-ed25519,rsa-sha2-512,rsa-sha2-256,ssh-rsa,ssh-dss
  .Ed
  .Pp
  The

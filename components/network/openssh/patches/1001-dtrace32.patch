@@ -1,17 +1,15 @@
-diff --git a/Makefile.in b/Makefile.in
-index 623b887..6a89a22 100644
---- a/Makefile.in	2015-11-15 09:20:56.151304879 +0300
-+++ b/Makefile.in	2015-11-15 09:24:41.695539709 +0300
+--- openssh-7.2p2/Makefile.in.1	2016-04-14 14:17:58.130093926 +0300
++++ openssh-7.2p2/Makefile.in	2016-04-14 14:19:11.759175242 +0300
 @@ -26,7 +26,7 @@
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
 -ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
-+ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace
++ROOTDLIBDIR=$(DESTDIR)/usr/lib/dtrace
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -236,7 +236,7 @@
+@@ -234,7 +234,7 @@
  	    -o $(srcdir)/sftp_provider.h
  
  sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
@@ -20,12 +18,12 @@ index 623b887..6a89a22 100644
  	    sftp-server.o -o sftp_provider.o
  
  # special case for sftp-server.o, it includes sftp_provider.h
-@@ -358,7 +358,7 @@
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
- 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+@@ -352,7 +352,7 @@
+ 	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
+ 	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
 -	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
-+	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp.d
++	mkdir -p $(ROOTDLIBDIR) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR)/sftp.d
  
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \

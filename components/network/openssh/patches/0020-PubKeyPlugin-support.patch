@@ -1,7 +1,7 @@
-From 3940b5d3e954d472b52da4aed4f8e6f3725411d2 Mon Sep 17 00:00:00 2001
+From 730e53f3bebc365d2d2a2b48679e89196f7a3aee Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 21/36] PubKeyPlugin support
+Subject: [PATCH 20/34] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
@@ -13,7 +13,7 @@ into to check public keys for authentication.
  3 files changed, 155 insertions(+)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 5aa319c..77b00f7 100644
+index 41b34ae..c920e49 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
 @@ -22,6 +22,11 @@
@@ -58,7 +58,7 @@ index 5aa319c..77b00f7 100644
  static int
  userauth_pubkey(Authctxt *authctxt)
  {
-@@ -1030,6 +1046,125 @@ user_key_command_allowed2(struct passwd *user_pw, Key *key)
+@@ -1038,6 +1054,125 @@ user_key_command_allowed2(struct passwd *user_pw, Key *key)
  	return found_key;
  }
  
@@ -184,7 +184,7 @@ index 5aa319c..77b00f7 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1048,6 +1183,10 @@ user_key_allowed(struct passwd *pw, Key *key, int auth_attempt)
+@@ -1056,6 +1191,10 @@ user_key_allowed(struct passwd *pw, Key *key, int auth_attempt)
  	if (success)
  		return success;
  
@@ -196,7 +196,7 @@ index 5aa319c..77b00f7 100644
  	if (success > 0)
  		return success;
 diff --git a/servconf.c b/servconf.c
-index 53146af..dca59fd 100644
+index 157a64a..7e6c7f8 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -182,6 +182,7 @@ initialize_server_options(ServerOptions *options)
@@ -207,7 +207,7 @@ index 53146af..dca59fd 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -465,6 +466,7 @@ typedef enum {
+@@ -472,6 +473,7 @@ typedef enum {
  	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding, sFingerprintHash,
@@ -215,7 +215,7 @@ index 53146af..dca59fd 100644
  	sDeprecated, sUnsupported
  } ServerOpCodes;
  
-@@ -640,6 +642,7 @@ static struct {
+@@ -647,6 +649,7 @@ static struct {
  	{ "streamlocalbindunlink", sStreamLocalBindUnlink, SSHCFG_ALL },
  	{ "allowstreamlocalforwarding", sAllowStreamLocalForwarding, SSHCFG_ALL },
  	{ "fingerprinthash", sFingerprintHash, SSHCFG_GLOBAL },
@@ -223,7 +223,7 @@ index 53146af..dca59fd 100644
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -1966,6 +1969,18 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -1969,6 +1972,18 @@ process_server_config_line(ServerOptions *options, char *line,
  		}
  		break;
  
