@@ -26,13 +26,13 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nettle
-COMPONENT_VERSION=	3.1.1
+COMPONENT_VERSION=	3.2
 COMPONENT_PROJECT_URL=	http://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5fd4d25d64d8ddcb85d0d897572af73b05b4d163c6cc49438a5bfbb8ff293d4c
+    sha256:ea4283def236413edab5a4cf9cf32adf540c8df1b9b67641cfc2302fca849d97
 COMPONENT_BUGDB=	library/nettle
 
-TPNO=	23793
+TPNO=	27549
 
 # We need to build an extra static version of these libraries for
 # GRUB/Wanboot support.
