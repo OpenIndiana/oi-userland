@@ -1,7 +1,7 @@
-From 96ebc88bdb00bcf381a700049ad324ad0b0064b0 Mon Sep 17 00:00:00 2001
+From 6d8577b5a662b85a13a56aa8d41a589dc1ad0eae Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:34 -0700
-Subject: [PATCH 08/36] GSS store creds for Solaris
+Subject: [PATCH 07/34] GSS store creds for Solaris
 
 ---
  configure.ac    |  3 +++
@@ -12,10 +12,10 @@ Subject: [PATCH 08/36] GSS store creds for Solaris
  5 files changed, 71 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index b06cede..2985819 100644
+index 7258cc0..5dceabd 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -939,6 +939,9 @@ mips-sony-bsd|mips-sony-newsos4)
+@@ -942,6 +942,9 @@ mips-sony-bsd|mips-sony-newsos4)
  		],
  	)
  	TEST_SHELL=$SHELL	# let configure find us a capable shell
@@ -130,10 +130,10 @@ index 53993d6..209ffe8 100644
  
  /* This allows GSSAPI methods to do things to the childs environment based
 diff --git a/servconf.c b/servconf.c
-index 4ec6b57..ad884ec 100644
+index c6f4bdd..1872661 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -489,7 +489,11 @@ static struct {
+@@ -496,7 +496,11 @@ static struct {
  	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
@@ -146,7 +146,7 @@ index 4ec6b57..ad884ec 100644
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
 diff --git a/sshd.c b/sshd.c
-index 43d4650..84e1dee 100644
+index 430569c..68fd1ea 100644
 --- a/sshd.c
 +++ b/sshd.c
 @@ -2234,9 +2234,23 @@ main(int ac, char **av)

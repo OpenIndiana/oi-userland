@@ -1,7 +1,7 @@
-From 8aa9debff40660ed691f984b805e513f3f54334b Mon Sep 17 00:00:00 2001
+From 44ace33bdb8ac3a8033dabcde4d5c8242fcec169 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:19 -0700
-Subject: [PATCH 12/36] PAM enhancements for Solaris
+Subject: [PATCH 11/34] PAM enhancements for Solaris
 
 #
 # This patch contains a couple of PAM enhancements:
@@ -29,10 +29,10 @@ Subject: [PATCH 12/36] PAM enhancements for Solaris
  11 files changed, 379 insertions(+), 4 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index b941991..7bdee5c 100644
+index 92c3b1c..4ca0a58 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -617,6 +617,72 @@ sshpam_cleanup(void)
+@@ -618,6 +618,72 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
  
@@ -105,7 +105,7 @@ index b941991..7bdee5c 100644
  static int
  sshpam_init(Authctxt *authctxt)
  {
-@@ -624,18 +690,71 @@ sshpam_init(Authctxt *authctxt)
+@@ -625,18 +691,71 @@ sshpam_init(Authctxt *authctxt)
  	const char *pam_rhost, *pam_user, *user = authctxt->user;
  	const char **ptr_pam_user = &pam_user;
  
@@ -178,7 +178,7 @@ index b941991..7bdee5c 100644
  
  	if (sshpam_err != PAM_SUCCESS) {
 diff --git a/auth.h b/auth.h
-index 8b27575..a0e41a4 100644
+index 2160154..985053c 100644
 --- a/auth.h
 +++ b/auth.h
 @@ -81,6 +81,9 @@ struct Authctxt {
@@ -301,10 +301,10 @@ index 7177962..32ba663 100644
 -
 -
 diff --git a/monitor.c b/monitor.c
-index a914209..b3efbb0 100644
+index ac7dd30..63bde62 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -127,6 +127,9 @@ int mm_answer_sign(int, Buffer *);
+@@ -126,6 +126,9 @@ int mm_answer_sign(int, Buffer *);
  int mm_answer_pwnamallow(int, Buffer *);
  int mm_answer_auth2_read_banner(int, Buffer *);
  int mm_answer_authserv(int, Buffer *);
@@ -314,7 +314,7 @@ index a914209..b3efbb0 100644
  int mm_answer_authpassword(int, Buffer *);
  int mm_answer_bsdauthquery(int, Buffer *);
  int mm_answer_bsdauthrespond(int, Buffer *);
-@@ -206,10 +209,17 @@ struct mon_table mon_dispatch_proto20[] = {
+@@ -205,10 +208,17 @@ struct mon_table mon_dispatch_proto20[] = {
      {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
      {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
      {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
@@ -332,7 +332,7 @@ index a914209..b3efbb0 100644
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ISAUTH, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, MON_ISAUTH, mm_answer_pam_query},
-@@ -371,6 +381,24 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+@@ -370,6 +380,24 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  			if (!compat20)
  				fatal("AuthenticationMethods is not supported"
  				    "with SSH protocol 1");
@@ -357,7 +357,7 @@ index a914209..b3efbb0 100644
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -389,8 +417,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+@@ -388,8 +416,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  			    !auth_root_allowed(auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
@@ -379,7 +379,7 @@ index a914209..b3efbb0 100644
  				Buffer m;
  
  				buffer_init(&m);
-@@ -863,6 +904,10 @@ mm_answer_pwnamallow(int sock, Buffer *m)
+@@ -859,6 +900,10 @@ mm_answer_pwnamallow(int sock, Buffer *m)
  		/* Allow service/style information on the auth context */
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -390,7 +390,7 @@ index a914209..b3efbb0 100644
  	}
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -903,6 +948,24 @@ mm_answer_authserv(int sock, Buffer *m)
+@@ -899,6 +944,24 @@ mm_answer_authserv(int sock, Buffer *m)
  	return (0);
  }
  
@@ -430,7 +430,7 @@ index 93b8b66..da63e7d 100644
  
  struct mm_master;
 diff --git a/monitor_wrap.c b/monitor_wrap.c
-index eac421b..95231a3 100644
+index c5db6df..30e3c15 100644
 --- a/monitor_wrap.c
 +++ b/monitor_wrap.c
 @@ -345,6 +345,24 @@ mm_inform_authserv(char *service, char *style)
@@ -459,7 +459,7 @@ index eac421b..95231a3 100644
  int
  mm_auth_password(Authctxt *authctxt, char *password)
 diff --git a/servconf.c b/servconf.c
-index ad884ec..d0ca777 100644
+index 1872661..b16a8be 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -169,6 +169,18 @@ initialize_server_options(ServerOptions *options)
@@ -481,7 +481,7 @@ index ad884ec..d0ca777 100644
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -340,6 +352,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -352,6 +364,12 @@ fill_default_server_options(ServerOptions *options)
  		options->ip_qos_bulk = IPTOS_THROUGHPUT;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -494,7 +494,7 @@ index ad884ec..d0ca777 100644
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -421,6 +439,9 @@ typedef enum {
+@@ -428,6 +446,9 @@ typedef enum {
  	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate,
@@ -504,7 +504,7 @@ index ad884ec..d0ca777 100644
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sIPQoS, sVersionAddendum,
-@@ -559,6 +580,10 @@ static struct {
+@@ -566,6 +587,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -515,7 +515,7 @@ index ad884ec..d0ca777 100644
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -1865,6 +1890,37 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -1868,6 +1893,37 @@ process_server_config_line(ServerOptions *options, char *line,
  			options->fingerprint_hash = value;
  		break;
  
@@ -582,10 +582,10 @@ index f4137af..8c86b57 100644
  }       ServerOptions;
  
 diff --git a/sshd.1m b/sshd.1m
-index ada4f25..3753f90 100644
+index dac5c14..500c4d5 100644
 --- a/sshd.1m
 +++ b/sshd.1m
-@@ -944,6 +944,33 @@ concurrently for different ports, this contains the process ID of the one
+@@ -977,6 +977,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -620,7 +620,7 @@ index ada4f25..3753f90 100644
  .Xr scp 1 ,
  .Xr sftp 1 ,
 diff --git a/sshd.c b/sshd.c
-index 84e1dee..7e519d4 100644
+index 68fd1ea..418e1fd 100644
 --- a/sshd.c
 +++ b/sshd.c
 @@ -2165,6 +2165,11 @@ main(int ac, char **av)
@@ -636,10 +636,10 @@ index 84e1dee..7e519d4 100644
  	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
  		generate_ephemeral_server_key();
 diff --git a/sshd_config.4 b/sshd_config.4
-index ba4d79a..263175b 100644
+index 6351b43..f45ddef 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -1160,6 +1160,21 @@ The probability increases linearly and all connection attempts
+@@ -1168,6 +1168,21 @@ The probability increases linearly and all connection attempts
  are refused if the number of unauthenticated connections reaches
  .Dq full
  (60).
@@ -661,7 +661,7 @@ index ba4d79a..263175b 100644
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
-@@ -1573,8 +1588,7 @@ If
+@@ -1582,8 +1597,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 1M
  as a non-root user.

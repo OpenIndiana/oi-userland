@@ -1,21 +1,21 @@
-From df6b82f10e53d43cfbc4cb3f52aa7e1751998fa1 Mon Sep 17 00:00:00 2001
+From c1905780db9f622c36dae810897d23f66d2faafb Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 09/36] DTrace support for SFTP
+Subject: [PATCH 08/34] DTrace support for SFTP
 
 ---
- Makefile.in          | 25 +++++++++++++++---
+ Makefile.in          | 24 ++++++++++++++---
  sftp-server.c        | 25 ++++++++++++++++--
  sftp64.d             | 56 ++++++++++++++++++++++++++++++++++++++++
  sftp_provider.d      | 61 +++++++++++++++++++++++++++++++++++++++++++
  sftp_provider_impl.h | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 234 insertions(+), 6 deletions(-)
+ 5 files changed, 233 insertions(+), 6 deletions(-)
  create mode 100644 sftp64.d
  create mode 100644 sftp_provider.d
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 9f953e1..121a261 100644
+index 11e01ac..61a97de 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
@@ -34,19 +34,18 @@ index 9f953e1..121a261 100644
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -111,7 +113,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
  	sftp-server.o sftp-common.o \
- 	roaming_common.o roaming_serv.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
--	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o
-+	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o \
-+	sftp_provider.o
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
+-	sandbox-solaris.o
++	sandbox-solaris.o sftp_provider.o
  
  MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
  MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
-@@ -188,8 +191,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
- 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+@@ -187,8 +189,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
+ 	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
 -sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
 -	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
@@ -55,7 +54,7 @@ index 9f953e1..121a261 100644
  
  sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -226,9 +229,22 @@ umac128.o:	umac.c
+@@ -225,9 +227,22 @@ umac128.o:	umac.c
  	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
  	    -Dumac_delete=umac128_delete
  
@@ -79,16 +78,16 @@ index 9f953e1..121a261 100644
  	rm -f regress/unittests/test_helper/*.a
  	rm -f regress/unittests/test_helper/*.o
  	rm -f regress/unittests/sshbuf/*.o
-@@ -341,6 +357,7 @@ install-files:
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
- 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+@@ -336,6 +351,7 @@ install-files:
+ 	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
+ 	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
 +	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
  
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 diff --git a/sftp-server.c b/sftp-server.c
-index 3877c03..772a7c3 100644
+index e11a1b8..0e6a15a 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
 @@ -54,6 +54,9 @@

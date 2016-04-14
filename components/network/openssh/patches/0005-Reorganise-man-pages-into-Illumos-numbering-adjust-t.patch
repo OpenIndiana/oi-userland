@@ -1,7 +1,7 @@
-From 310f67442b9faf22eb3a30a614202cdd04f99119 Mon Sep 17 00:00:00 2001
+From 77ff05d79cf5745f5e7d059498348fc047cfb5ea Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:55 -0700
-Subject: [PATCH 06/36] Reorganise man pages into Illumos numbering, adjust
+Subject: [PATCH 05/34] Reorganise man pages into Illumos numbering, adjust
  text
 
 ---
@@ -15,13 +15,13 @@ Subject: [PATCH 06/36] Reorganise man pages into Illumos numbering, adjust
  ssh-keysign.8        |   93 ---
  ssh-pkcs11-helper.1m |   43 ++
  ssh-pkcs11-helper.8  |   43 --
- ssh_config.4         | 1726 +++++++++++++++++++++++++++++++++++++++++++++++++
- ssh_config.5         | 1726 -------------------------------------------------
- sshd.1m              |  971 ++++++++++++++++++++++++++++
- sshd.8               |  971 ----------------------------
- sshd_config.4        | 1736 ++++++++++++++++++++++++++++++++++++++++++++++++++
- sshd_config.5        | 1736 --------------------------------------------------
- 16 files changed, 4879 insertions(+), 4881 deletions(-)
+ ssh_config.4         | 1801 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ ssh_config.5         | 1801 --------------------------------------------------
+ sshd.1m              | 1004 ++++++++++++++++++++++++++++
+ sshd.8               | 1004 ----------------------------
+ sshd_config.4        | 1750 ++++++++++++++++++++++++++++++++++++++++++++++++
+ sshd_config.5        | 1750 ------------------------------------------------
+ 16 files changed, 5001 insertions(+), 5003 deletions(-)
  create mode 100644 moduli.4
  delete mode 100644 moduli.5
  create mode 100644 sftp-server.1m
@@ -38,12 +38,12 @@ Subject: [PATCH 06/36] Reorganise man pages into Illumos numbering, adjust
  delete mode 100644 sshd_config.5
 
 diff --git a/Makefile.in b/Makefile.in
-index bc4660f..9f953e1 100644
+index c124ef6..11e01ac 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -113,8 +113,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
- 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
- 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o
+@@ -112,8 +112,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
+ 	sandbox-solaris.o
  
 -MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
 -MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
@@ -52,7 +52,7 @@ index bc4660f..9f953e1 100644
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -308,8 +308,8 @@ install-files:
+@@ -307,8 +307,8 @@ install-files:
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(sbindir)
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(mandir)
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(mandir)/$(mansubdir)1
@@ -63,7 +63,7 @@ index bc4660f..9f953e1 100644
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(libexecdir)
  	(umask 022 ; $(srcdir)/mkinstalldirs $(DESTDIR)$(PRIVSEP_PATH))
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh$(EXEEXT) $(DESTDIR)$(bindir)/ssh$(EXEEXT)
-@@ -329,14 +329,14 @@ install-files:
+@@ -328,14 +328,14 @@ install-files:
  	$(INSTALL) -m 644 ssh-agent.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-agent.1
  	$(INSTALL) -m 644 ssh-keygen.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keygen.1
  	$(INSTALL) -m 644 ssh-keyscan.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keyscan.1
@@ -82,9 +82,9 @@ index bc4660f..9f953e1 100644
 +	$(INSTALL) -m 644 sftp-server.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/sftp-server.1m
 +	$(INSTALL) -m 644 ssh-keysign.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-keysign.1m
 +	$(INSTALL) -m 644 ssh-pkcs11-helper.1m.out $(DESTDIR)$(mandir)/$(mansubdir)1m/ssh-pkcs11-helper.1m
- 	-rm -f $(DESTDIR)$(bindir)/slogin
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 diff --git a/moduli.4 b/moduli.4
 new file mode 100644
 index 0000000..f87556b
@@ -704,10 +704,10 @@ index c117398..0000000
 -.Sh AUTHORS
 -.An Markus Friedl Aq Mt markus@openbsd.org
 diff --git a/ssh-keygen.1 b/ssh-keygen.1
-index ed17a08..9616030 100644
+index 37a4fc2..9e40bf2 100644
 --- a/ssh-keygen.1
 +++ b/ssh-keygen.1
-@@ -174,9 +174,7 @@ key in
+@@ -178,9 +178,7 @@ key in
  .Pa ~/.ssh/id_ed25519
  or
  .Pa ~/.ssh/id_rsa .
@@ -718,7 +718,7 @@ index ed17a08..9616030 100644
  .Pp
  Normally this program generates the key and asks for a file in which
  to store the private key.
-@@ -224,7 +222,7 @@ for which host keys
+@@ -228,7 +226,7 @@ for which host keys
  do not exist, generate the host keys with the default key file path,
  an empty passphrase, default bits for the key type, and default comment.
  This is used by
@@ -729,11 +729,11 @@ index ed17a08..9616030 100644
  When saving a new-format private key (i.e. an ed25519 key or any SSH protocol
 diff --git a/ssh-keysign.1m b/ssh-keysign.1m
 new file mode 100644
-index 0000000..60c96ad
+index 0000000..9ce1e61
 --- /dev/null
 +++ b/ssh-keysign.1m
 @@ -0,0 +1,93 @@
-+.\" $OpenBSD: ssh-keysign.8,v 1.14 2013/12/07 11:58:46 naddy Exp $
++.\" $OpenBSD: ssh-keysign.8,v 1.15 2016/02/17 07:38:19 jmc Exp $
 +.\"
 +.\" Copyright (c) 2002 Markus Friedl.  All rights reserved.
 +.\"
@@ -757,7 +757,7 @@ index 0000000..60c96ad
 +.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 +.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 +.\"
-+.Dd $Mdocdate: December 7 2013 $
++.Dd $Mdocdate: February 17 2016 $
 +.Dt SSH-KEYSIGN 1M
 +.Os
 +.Sh NAME
@@ -770,7 +770,7 @@ index 0000000..60c96ad
 +is used by
 +.Xr ssh 1
 +to access the local host keys and generate the digital signature
-+required during host-based authentication with SSH protocol version 2.
++required during host-based authentication.
 +.Pp
 +.Nm
 +is disabled by default and can only be enabled in the
@@ -828,11 +828,11 @@ index 0000000..60c96ad
 +.An Markus Friedl Aq Mt markus@openbsd.org
 diff --git a/ssh-keysign.8 b/ssh-keysign.8
 deleted file mode 100644
-index 69d0829..0000000
+index 19b0dbc..0000000
 --- a/ssh-keysign.8
 +++ /dev/null
 @@ -1,93 +0,0 @@
--.\" $OpenBSD: ssh-keysign.8,v 1.14 2013/12/07 11:58:46 naddy Exp $
+-.\" $OpenBSD: ssh-keysign.8,v 1.15 2016/02/17 07:38:19 jmc Exp $
 -.\"
 -.\" Copyright (c) 2002 Markus Friedl.  All rights reserved.
 -.\"
@@ -856,7 +856,7 @@ index 69d0829..0000000
 -.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 -.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -.\"
--.Dd $Mdocdate: December 7 2013 $
+-.Dd $Mdocdate: February 17 2016 $
 -.Dt SSH-KEYSIGN 8
 -.Os
 -.Sh NAME
@@ -869,7 +869,7 @@ index 69d0829..0000000
 -is used by
 -.Xr ssh 1
 -to access the local host keys and generate the digital signature
--required during host-based authentication with SSH protocol version 2.
+-required during host-based authentication.
 -.Pp
 -.Nm
 -is disabled by default and can only be enabled in the
@@ -1025,10 +1025,10 @@ index 3728c4e..0000000
 -.An Markus Friedl Aq Mt markus@openbsd.org
 diff --git a/ssh_config.4 b/ssh_config.4
 new file mode 100644
-index 0000000..8c099eb
+index 0000000..e190f6d
 --- /dev/null
 +++ b/ssh_config.4
-@@ -0,0 +1,1726 @@
+@@ -0,0 +1,1801 @@
 +.\"
 +.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 +.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -1064,8 +1064,8 @@ index 0000000..8c099eb
 +.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 +.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 +.\"
-+.\" $OpenBSD: ssh_config.5,v 1.215 2015/08/14 15:32:41 jmc Exp $
-+.Dd $Mdocdate: August 14 2015 $
++.\" $OpenBSD: ssh_config.5,v 1.228 2016/02/20 23:01:46 sobrado Exp $
++.Dd $Mdocdate: February 20 2016 $
 +.Dt SSH_CONFIG 4
 +.Os
 +.Sh NAME
@@ -1170,7 +1170,7 @@ index 0000000..8c099eb
 +keyword) to be used only when the conditions following the
 +.Cm Match
 +keyword are satisfied.
-+Match conditions are specified using one or more critera
++Match conditions are specified using one or more criteria
 +or the single token
 +.Cm all
 +which always matches.
@@ -1252,6 +1252,39 @@ index 0000000..8c099eb
 +(this keyword may be useful in system-wide
 +.Nm
 +files).
++.It Cm AddKeysToAgent
++Specifies whether keys should be automatically added to a running
++.Xr ssh-agent 1 .
++If this option is set to
++.Dq yes
++and a key is loaded from a file, the key and its passphrase are added to
++the agent with the default lifetime, as if by
++.Xr ssh-add 1 .
++If this option is set to
++.Dq ask ,
++.Nm ssh
++will require confirmation using the
++.Ev SSH_ASKPASS
++program before adding a key (see
++.Xr ssh-add 1
++for details).
++If this option is set to
++.Dq confirm ,
++each use of the key must be confirmed, as if the
++.Fl c
++option was specified to
++.Xr ssh-add 1 .
++If this option is set to
++.Dq no ,
++no keys are added to the agent.
++The argument must be
++.Dq yes ,
++.Dq confirm ,
++.Dq ask ,
++or
++.Dq no .
++The default is
++.Dq no .
 +.It Cm AddressFamily
 +Specifies which address family to use when connecting.
 +Valid arguments are
@@ -1260,6 +1293,8 @@ index 0000000..8c099eb
 +(use IPv4 only), or
 +.Dq inet6
 +(use IPv6 only).
++The default is
++.Dq any .
 +.It Cm BatchMode
 +If set to
 +.Dq yes ,
@@ -1356,6 +1391,41 @@ index 0000000..8c099eb
 +or
 +.Dq *.c.example.com
 +domains.
++.It Cm CertificateFile
++Specifies a file from which the user's certificate is read.
++A corresponding private key must be provided separately in order
++to use this certificate either
++from an
++.Cm IdentityFile
++directive or
++.Fl i
++flag to
++.Xr ssh 1 ,
++via
++.Xr ssh-agent 1 ,
++or via a
++.Cm PKCS11Provider .
++.Pp
++The file name may use the tilde
++syntax to refer to a user's home directory or one of the following
++escape characters:
++.Ql %d
++(local user's home directory),
++.Ql %u
++(local user name),
++.Ql %l
++(local host name),
++.Ql %h
++(remote host name) or
++.Ql %r
++(remote user name).
++.Pp
++It is possible to have multiple certificate files specified in
++configuration files; these certificates will be tried in sequence.
++Multiple
++.Cm CertificateFile
++directives will add to the list of certificates used for
++authentication.
 +.It Cm ChallengeResponseAuthentication
 +Specifies whether to use challenge-response authentication.
 +The argument to this keyword must be
@@ -1449,9 +1519,7 @@ index 0000000..8c099eb
 +chacha20-poly1305@openssh.com,
 +aes128-ctr,aes192-ctr,aes256-ctr,
 +aes128-gcm@openssh.com,aes256-gcm@openssh.com,
-+arcfour256,arcfour128,
-+aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,
-+aes192-cbc,aes256-cbc,arcfour
++aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc
 +.Ed
 +.Pp
 +The list of available ciphers may also be obtained using the
@@ -1569,8 +1637,11 @@ index 0000000..8c099eb
 +.Ql %r
 +by the remote login username,
 +.Ql %u
-+by the username of the user running
-+.Xr ssh 1 , and
++by the username and
++.Ql %i
++by the numeric user ID (uid) of the user running
++.Xr ssh 1 ,
++and
 +.Ql \&%C
 +by a hash of the concatenation: %l%h%p%r.
 +It is recommended that any
@@ -1670,7 +1741,14 @@ index 0000000..8c099eb
 +Specifies whether
 +.Xr ssh 1
 +should terminate the connection if it cannot set up all requested
-+dynamic, tunnel, local, and remote port forwardings.
++dynamic, tunnel, local, and remote port forwardings, (e.g.\&
++if either end is unable to bind and listen on a specified port).
++Note that
++.Cm ExitOnForwardFailure
++does not apply to connections made over port forwardings and will not,
++for example, cause
++.Xr ssh 1
++to exit if TCP connections to the ultimate forwarding destination fail.
 +The argument must be
 +.Dq yes
 +or
@@ -1779,12 +1857,10 @@ index 0000000..8c099eb
 +Specifies whether user authentication based on GSSAPI is allowed.
 +The default is
 +.Dq no .
-+Note that this option applies to protocol version 2 only.
 +.It Cm GSSAPIDelegateCredentials
 +Forward (delegate) credentials to the server.
 +The default is
 +.Dq no .
-+Note that this option applies to protocol version 2 only.
 +.It Cm HashKnownHosts
 +Indicates that
 +.Xr ssh 1
@@ -1811,9 +1887,6 @@ index 0000000..8c099eb
 +.Dq no .
 +The default is
 +.Dq no .
-+This option applies to protocol version 2 only and
-+is similar to
-+.Cm RhostsRSAAuthentication .
 +.It Cm HostbasedKeyTypes
 +Specifies the key types that will be used for hostbased authentication
 +as a comma-separated pattern list.
@@ -1838,7 +1911,7 @@ index 0000000..8c099eb
 +.Xr ssh 1
 +may be used to list supported key types.
 +.It Cm HostKeyAlgorithms
-+Specifies the protocol version 2 host key algorithms
++Specifies the host key algorithms
 +that the client wants to use in order of preference.
 +Alternately if the specified value begins with a
 +.Sq +
@@ -1890,9 +1963,13 @@ index 0000000..8c099eb
 +.It Cm IdentitiesOnly
 +Specifies that
 +.Xr ssh 1
-+should only use the authentication identity files configured in the
++should only use the authentication identity and certificate files explicitly
++configured in the
 +.Nm
-+files,
++files
++or passed on the
++.Xr ssh 1
++command-line,
 +even if
 +.Xr ssh-agent 1
 +or a
@@ -1922,6 +1999,8 @@ index 0000000..8c099eb
 +will be used for authentication unless
 +.Cm IdentitiesOnly
 +is set.
++If no certificates have been explicitly specified by
++.Cm CertificateFile ,
 +.Xr ssh 1
 +will try to load certificate information from the filename obtained by
 +appending
@@ -1955,6 +2034,11 @@ index 0000000..8c099eb
 +may be used in conjunction with
 +.Cm IdentitiesOnly
 +to select which identities in an agent are offered during authentication.
++.Cm IdentityFile
++may also be used in conjunction with
++.Cm CertificateFile
++in order to provide any certificate also needed for authentication with
++the identity.
 +.It Cm IgnoreUnknown
 +Specifies a pattern-list of unknown options to be ignored if they are
 +encountered in configuration parsing.
@@ -2114,8 +2198,7 @@ index 0000000..8c099eb
 +.It Cm MACs
 +Specifies the MAC (message authentication code) algorithms
 +in order of preference.
-+The MAC algorithm is used in protocol version 2
-+for data integrity protection.
++The MAC algorithm is used for data integrity protection.
 +Multiple algorithms must be comma-separated.
 +If the specified value begins with a
 +.Sq +
@@ -2131,13 +2214,9 @@ index 0000000..8c099eb
 +.Bd -literal -offset indent
 +umac-64-etm@openssh.com,umac-128-etm@openssh.com,
 +hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,
++hmac-sha1-etm@openssh.com,
 +umac-64@openssh.com,umac-128@openssh.com,
-+hmac-sha2-256,hmac-sha2-512,
-+hmac-md5-etm@openssh.com,hmac-sha1-etm@openssh.com,
-+hmac-ripemd160-etm@openssh.com,
-+hmac-sha1-96-etm@openssh.com,hmac-md5-96-etm@openssh.com,
-+hmac-md5,hmac-sha1,hmac-ripemd160,
-+hmac-sha1-96,hmac-md5-96
++hmac-sha2-256,hmac-sha2-512,hmac-sha1
 +.Ed
 +.Pp
 +The list of available MAC algorithms may also be obtained using the
@@ -2191,8 +2270,7 @@ index 0000000..8c099eb
 +Specifies the port number to connect on the remote host.
 +The default is 22.
 +.It Cm PreferredAuthentications
-+Specifies the order in which the client should try protocol 2
-+authentication methods.
++Specifies the order in which the client should try authentication methods.
 +This allows a client to prefer one method (e.g.\&
 +.Cm keyboard-interactive )
 +over another method (e.g.\&
@@ -2218,6 +2296,9 @@ index 0000000..8c099eb
 +if version 2 is not available.
 +The default is
 +.Sq 2 .
++Protocol 1 suffers from a number of cryptographic weaknesses and should
++not be used.
++It is only offered to support legacy devices.
 +.It Cm ProxyCommand
 +Specifies the command to use to connect to the server.
 +The command
@@ -2298,7 +2379,6 @@ index 0000000..8c099eb
 +.Dq no .
 +The default is
 +.Dq yes .
-+This option applies to protocol version 2 only.
 +.It Cm RekeyLimit
 +Specifies the maximum amount of data that may be transmitted before the
 +session key is renegotiated, optionally followed a maximum amount of
@@ -2324,7 +2404,6 @@ index 0000000..8c099eb
 +.Dq default none ,
 +which means that rekeying is performed after the cipher's default amount
 +of data has been sent or received and no time based rekeying is done.
-+This option applies to protocol version 2 only.
 +.It Cm RemoteForward
 +Specifies that a TCP port on the remote machine be forwarded over
 +the secure channel to the specified host and port from the local machine.
@@ -2417,7 +2496,6 @@ index 0000000..8c099eb
 +Specifies what variables from the local
 +.Xr environ 7
 +should be sent to the server.
-+Note that environment passing is only supported for protocol 2.
 +The server must also support it, and the server must be configured to
 +accept these environment variables.
 +Note that the
@@ -2465,7 +2543,6 @@ index 0000000..8c099eb
 +.Cm ServerAliveCountMax
 +is left at the default, if the server becomes unresponsive,
 +ssh will disconnect after approximately 45 seconds.
-+This option applies to protocol version 2 only.
 +.It Cm ServerAliveInterval
 +Sets a timeout interval in seconds after which if no data has been received
 +from the server,
@@ -2474,7 +2551,6 @@ index 0000000..8c099eb
 +channel to request a response from the server.
 +The default
 +is 0, indicating that these messages will not be sent to the server.
-+This option applies to protocol version 2 only.
 +.It Cm StreamLocalBindMask
 +Sets the octal file creation mode mask
 +.Pq umask
@@ -2606,7 +2682,7 @@ index 0000000..8c099eb
 +and supports graceful key rotation by allowing a server to send replacement
 +public keys before old ones are removed.
 +Additional hostkeys are only accepted if the key used to authenticate the
-+host was already trusted or explicity accepted by the user.
++host was already trusted or explicitly accepted by the user.
 +If
 +.Cm UpdateHostKeys
 +is set to
@@ -2671,7 +2747,6 @@ index 0000000..8c099eb
 +.Dq ask .
 +The default is
 +.Dq no .
-+Note that this option applies to protocol version 2 only.
 +.Pp
 +See also VERIFYING HOST KEYS in
 +.Xr ssh 1 .
@@ -2757,10 +2832,10 @@ index 0000000..8c099eb
 +protocol versions 1.5 and 2.0.
 diff --git a/ssh_config.5 b/ssh_config.5
 deleted file mode 100644
-index a47f3ca..0000000
+index caf13a6..0000000
 --- a/ssh_config.5
 +++ /dev/null
-@@ -1,1726 +0,0 @@
+@@ -1,1801 +0,0 @@
 -.\"
 -.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 -.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -2796,8 +2871,8 @@ index a47f3ca..0000000
 -.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 -.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -.\"
--.\" $OpenBSD: ssh_config.5,v 1.215 2015/08/14 15:32:41 jmc Exp $
--.Dd $Mdocdate: August 14 2015 $
+-.\" $OpenBSD: ssh_config.5,v 1.228 2016/02/20 23:01:46 sobrado Exp $
+-.Dd $Mdocdate: February 20 2016 $
 -.Dt SSH_CONFIG 5
 -.Os
 -.Sh NAME
@@ -2902,7 +2977,7 @@ index a47f3ca..0000000
 -keyword) to be used only when the conditions following the
 -.Cm Match
 -keyword are satisfied.
--Match conditions are specified using one or more critera
+-Match conditions are specified using one or more criteria
 -or the single token
 -.Cm all
 -which always matches.
@@ -2984,6 +3059,39 @@ index a47f3ca..0000000
 -(this keyword may be useful in system-wide
 -.Nm
 -files).
+-.It Cm AddKeysToAgent
+-Specifies whether keys should be automatically added to a running
+-.Xr ssh-agent 1 .
+-If this option is set to
+-.Dq yes
+-and a key is loaded from a file, the key and its passphrase are added to
+-the agent with the default lifetime, as if by
+-.Xr ssh-add 1 .
+-If this option is set to
+-.Dq ask ,
+-.Nm ssh
+-will require confirmation using the
+-.Ev SSH_ASKPASS
+-program before adding a key (see
+-.Xr ssh-add 1
+-for details).
+-If this option is set to
+-.Dq confirm ,
+-each use of the key must be confirmed, as if the
+-.Fl c
+-option was specified to
+-.Xr ssh-add 1 .
+-If this option is set to
+-.Dq no ,
+-no keys are added to the agent.
+-The argument must be
+-.Dq yes ,
+-.Dq confirm ,
+-.Dq ask ,
+-or
+-.Dq no .
+-The default is
+-.Dq no .
 -.It Cm AddressFamily
 -Specifies which address family to use when connecting.
 -Valid arguments are
@@ -2992,6 +3100,8 @@ index a47f3ca..0000000
 -(use IPv4 only), or
 -.Dq inet6
 -(use IPv6 only).
+-The default is
+-.Dq any .
 -.It Cm BatchMode
 -If set to
 -.Dq yes ,
@@ -3088,6 +3198,41 @@ index a47f3ca..0000000
 -or
 -.Dq *.c.example.com
 -domains.
+-.It Cm CertificateFile
+-Specifies a file from which the user's certificate is read.
+-A corresponding private key must be provided separately in order
+-to use this certificate either
+-from an
+-.Cm IdentityFile
+-directive or
+-.Fl i
+-flag to
+-.Xr ssh 1 ,
+-via
+-.Xr ssh-agent 1 ,
+-or via a
+-.Cm PKCS11Provider .
+-.Pp
+-The file name may use the tilde
+-syntax to refer to a user's home directory or one of the following
+-escape characters:
+-.Ql %d
+-(local user's home directory),
+-.Ql %u
+-(local user name),
+-.Ql %l
+-(local host name),
+-.Ql %h
+-(remote host name) or
+-.Ql %r
+-(remote user name).
+-.Pp
+-It is possible to have multiple certificate files specified in
+-configuration files; these certificates will be tried in sequence.
+-Multiple
+-.Cm CertificateFile
+-directives will add to the list of certificates used for
+-authentication.
 -.It Cm ChallengeResponseAuthentication
 -Specifies whether to use challenge-response authentication.
 -The argument to this keyword must be
@@ -3181,9 +3326,7 @@ index a47f3ca..0000000
 -chacha20-poly1305@openssh.com,
 -aes128-ctr,aes192-ctr,aes256-ctr,
 -aes128-gcm@openssh.com,aes256-gcm@openssh.com,
--arcfour256,arcfour128,
--aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,
--aes192-cbc,aes256-cbc,arcfour
+-aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc
 -.Ed
 -.Pp
 -The list of available ciphers may also be obtained using the
@@ -3301,8 +3444,11 @@ index a47f3ca..0000000
 -.Ql %r
 -by the remote login username,
 -.Ql %u
--by the username of the user running
--.Xr ssh 1 , and
+-by the username and
+-.Ql %i
+-by the numeric user ID (uid) of the user running
+-.Xr ssh 1 ,
+-and
 -.Ql \&%C
 -by a hash of the concatenation: %l%h%p%r.
 -It is recommended that any
@@ -3402,7 +3548,14 @@ index a47f3ca..0000000
 -Specifies whether
 -.Xr ssh 1
 -should terminate the connection if it cannot set up all requested
--dynamic, tunnel, local, and remote port forwardings.
+-dynamic, tunnel, local, and remote port forwardings, (e.g.\&
+-if either end is unable to bind and listen on a specified port).
+-Note that
+-.Cm ExitOnForwardFailure
+-does not apply to connections made over port forwardings and will not,
+-for example, cause
+-.Xr ssh 1
+-to exit if TCP connections to the ultimate forwarding destination fail.
 -The argument must be
 -.Dq yes
 -or
@@ -3511,12 +3664,10 @@ index a47f3ca..0000000
 -Specifies whether user authentication based on GSSAPI is allowed.
 -The default is
 -.Dq no .
--Note that this option applies to protocol version 2 only.
 -.It Cm GSSAPIDelegateCredentials
 -Forward (delegate) credentials to the server.
 -The default is
 -.Dq no .
--Note that this option applies to protocol version 2 only.
 -.It Cm HashKnownHosts
 -Indicates that
 -.Xr ssh 1
@@ -3543,9 +3694,6 @@ index a47f3ca..0000000
 -.Dq no .
 -The default is
 -.Dq no .
--This option applies to protocol version 2 only and
--is similar to
--.Cm RhostsRSAAuthentication .
 -.It Cm HostbasedKeyTypes
 -Specifies the key types that will be used for hostbased authentication
 -as a comma-separated pattern list.
@@ -3570,7 +3718,7 @@ index a47f3ca..0000000
 -.Xr ssh 1
 -may be used to list supported key types.
 -.It Cm HostKeyAlgorithms
--Specifies the protocol version 2 host key algorithms
+-Specifies the host key algorithms
 -that the client wants to use in order of preference.
 -Alternately if the specified value begins with a
 -.Sq +
@@ -3622,9 +3770,13 @@ index a47f3ca..0000000
 -.It Cm IdentitiesOnly
 -Specifies that
 -.Xr ssh 1
--should only use the authentication identity files configured in the
+-should only use the authentication identity and certificate files explicitly
+-configured in the
 -.Nm
--files,
+-files
+-or passed on the
+-.Xr ssh 1
+-command-line,
 -even if
 -.Xr ssh-agent 1
 -or a
@@ -3654,6 +3806,8 @@ index a47f3ca..0000000
 -will be used for authentication unless
 -.Cm IdentitiesOnly
 -is set.
+-If no certificates have been explicitly specified by
+-.Cm CertificateFile ,
 -.Xr ssh 1
 -will try to load certificate information from the filename obtained by
 -appending
@@ -3687,6 +3841,11 @@ index a47f3ca..0000000
 -may be used in conjunction with
 -.Cm IdentitiesOnly
 -to select which identities in an agent are offered during authentication.
+-.Cm IdentityFile
+-may also be used in conjunction with
+-.Cm CertificateFile
+-in order to provide any certificate also needed for authentication with
+-the identity.
 -.It Cm IgnoreUnknown
 -Specifies a pattern-list of unknown options to be ignored if they are
 -encountered in configuration parsing.
@@ -3846,8 +4005,7 @@ index a47f3ca..0000000
 -.It Cm MACs
 -Specifies the MAC (message authentication code) algorithms
 -in order of preference.
--The MAC algorithm is used in protocol version 2
--for data integrity protection.
+-The MAC algorithm is used for data integrity protection.
 -Multiple algorithms must be comma-separated.
 -If the specified value begins with a
 -.Sq +
@@ -3863,13 +4021,9 @@ index a47f3ca..0000000
 -.Bd -literal -offset indent
 -umac-64-etm@openssh.com,umac-128-etm@openssh.com,
 -hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,
+-hmac-sha1-etm@openssh.com,
 -umac-64@openssh.com,umac-128@openssh.com,
--hmac-sha2-256,hmac-sha2-512,
--hmac-md5-etm@openssh.com,hmac-sha1-etm@openssh.com,
--hmac-ripemd160-etm@openssh.com,
--hmac-sha1-96-etm@openssh.com,hmac-md5-96-etm@openssh.com,
--hmac-md5,hmac-sha1,hmac-ripemd160,
--hmac-sha1-96,hmac-md5-96
+-hmac-sha2-256,hmac-sha2-512,hmac-sha1
 -.Ed
 -.Pp
 -The list of available MAC algorithms may also be obtained using the
@@ -3923,8 +4077,7 @@ index a47f3ca..0000000
 -Specifies the port number to connect on the remote host.
 -The default is 22.
 -.It Cm PreferredAuthentications
--Specifies the order in which the client should try protocol 2
--authentication methods.
+-Specifies the order in which the client should try authentication methods.
 -This allows a client to prefer one method (e.g.\&
 -.Cm keyboard-interactive )
 -over another method (e.g.\&
@@ -3950,6 +4103,9 @@ index a47f3ca..0000000
 -if version 2 is not available.
 -The default is
 -.Sq 2 .
+-Protocol 1 suffers from a number of cryptographic weaknesses and should
+-not be used.
+-It is only offered to support legacy devices.
 -.It Cm ProxyCommand
 -Specifies the command to use to connect to the server.
 -The command
@@ -4030,7 +4186,6 @@ index a47f3ca..0000000
 -.Dq no .
 -The default is
 -.Dq yes .
--This option applies to protocol version 2 only.
 -.It Cm RekeyLimit
 -Specifies the maximum amount of data that may be transmitted before the
 -session key is renegotiated, optionally followed a maximum amount of
@@ -4056,7 +4211,6 @@ index a47f3ca..0000000
 -.Dq default none ,
 -which means that rekeying is performed after the cipher's default amount
 -of data has been sent or received and no time based rekeying is done.
--This option applies to protocol version 2 only.
 -.It Cm RemoteForward
 -Specifies that a TCP port on the remote machine be forwarded over
 -the secure channel to the specified host and port from the local machine.
@@ -4149,7 +4303,6 @@ index a47f3ca..0000000
 -Specifies what variables from the local
 -.Xr environ 7
 -should be sent to the server.
--Note that environment passing is only supported for protocol 2.
 -The server must also support it, and the server must be configured to
 -accept these environment variables.
 -Note that the
@@ -4197,7 +4350,6 @@ index a47f3ca..0000000
 -.Cm ServerAliveCountMax
 -is left at the default, if the server becomes unresponsive,
 -ssh will disconnect after approximately 45 seconds.
--This option applies to protocol version 2 only.
 -.It Cm ServerAliveInterval
 -Sets a timeout interval in seconds after which if no data has been received
 -from the server,
@@ -4206,7 +4358,6 @@ index a47f3ca..0000000
 -channel to request a response from the server.
 -The default
 -is 0, indicating that these messages will not be sent to the server.
--This option applies to protocol version 2 only.
 -.It Cm StreamLocalBindMask
 -Sets the octal file creation mode mask
 -.Pq umask
@@ -4338,7 +4489,7 @@ index a47f3ca..0000000
 -and supports graceful key rotation by allowing a server to send replacement
 -public keys before old ones are removed.
 -Additional hostkeys are only accepted if the key used to authenticate the
--host was already trusted or explicity accepted by the user.
+-host was already trusted or explicitly accepted by the user.
 -If
 -.Cm UpdateHostKeys
 -is set to
@@ -4403,7 +4554,6 @@ index a47f3ca..0000000
 -.Dq ask .
 -The default is
 -.Dq no .
--Note that this option applies to protocol version 2 only.
 -.Pp
 -See also VERIFYING HOST KEYS in
 -.Xr ssh 1 .
@@ -4489,10 +4639,10 @@ index a47f3ca..0000000
 -protocol versions 1.5 and 2.0.
 diff --git a/sshd.1m b/sshd.1m
 new file mode 100644
-index 0000000..ada4f25
+index 0000000..dac5c14
 --- /dev/null
 +++ b/sshd.1m
-@@ -0,0 +1,971 @@
+@@ -0,0 +1,1004 @@
 +.\"
 +.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 +.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -4528,8 +4678,8 @@ index 0000000..ada4f25
 +.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 +.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 +.\"
-+.\" $OpenBSD: sshd.8,v 1.280 2015/07/03 03:49:45 djm Exp $
-+.Dd $Mdocdate: July 3 2015 $
++.\" $OpenBSD: sshd.8,v 1.284 2016/02/17 07:38:19 jmc Exp $
++.Dd $Mdocdate: February 17 2016 $
 +.Dt SSHD 1M
 +.Os
 +.Sh NAME
@@ -4770,14 +4920,12 @@ index 0000000..ada4f25
 +.Cm Protocol
 +option in
 +.Xr sshd_config 4 .
-+Protocol 2 supports DSA, ECDSA, Ed25519 and RSA keys;
-+protocol 1 only supports RSA keys.
-+For both protocols,
-+each host has a host-specific key,
-+normally 2048 bits,
-+used to identify the host.
++Protocol 1 should not be used
++and is only offered to support legacy devices.
 +.Pp
-+Forward security for protocol 1 is provided through
++Each host has a host-specific key,
++used to identify the host.
++Partial forward security for protocol 1 is provided through
 +an additional server key,
 +normally 1024 bits,
 +generated when the server starts.
@@ -4965,7 +5113,7 @@ index 0000000..ada4f25
 +.Cm AuthorizedKeysFile
 +specifies the files containing public keys for
 +public key authentication;
-+if none is specified, the default is
++if this option is not specified, the default is
 +.Pa ~/.ssh/authorized_keys
 +and
 +.Pa ~/.ssh/authorized_keys2 .
@@ -5017,6 +5165,10 @@ index 0000000..ada4f25
 +The following option specifications are supported (note
 +that option keywords are case-insensitive):
 +.Bl -tag -width Ds
++.It Cm agent-forwarding
++Enable authentication agent forwarding previously disabled by the
++.Cm restrict
++option.
 +.It Cm cert-authority
 +Specifies that the listed key is a certification authority (CA) that is
 +trusted to validate signed certificates for user authentication.
@@ -5111,6 +5263,9 @@ index 0000000..ada4f25
 +A port specification of
 +.Cm *
 +matches any port.
++.It Cm port-forwarding
++Enable port forwarding previously disabled by the
++.Cm restrict
 +.It Cm principals="principals"
 +On a
 +.Cm cert-authority
@@ -5122,12 +5277,33 @@ index 0000000..ada4f25
 +signers using the
 +.Cm cert-authority
 +option.
++.It Cm pty
++Permits tty allocation previously disabled by the
++.Cm restrict
++option.
++.It Cm restrict
++Enable all restrictions, i.e. disable port, agent and X11 forwarding,
++as well as disabling PTY allocation
++and execution of
++.Pa ~/.ssh/rc .
++If any future restriction capabilities are added to authorized_keys files
++they will be included in this set.
 +.It Cm tunnel="n"
 +Force a
 +.Xr tun 4
 +device on the server.
 +Without this option, the next available device will be used if
 +the client requests a tunnel.
++.It Cm user-rc
++Enables execution of
++.Pa ~/.ssh/rc
++previously disabled by the
++.Cm restrict
++option.
++.It Cm X11-forwarding
++Permits X11 forwarding previously disabled by the
++.Cm restrict
++option.
 +.El
 +.Pp
 +An example authorized_keys file:
@@ -5142,6 +5318,10 @@ index 0000000..ada4f25
 +AAAAB5...21S==
 +tunnel="0",command="sh /etc/netstart tun0" ssh-rsa AAAA...==
 +jane@example.net
++restrict,command="uptime" ssh-rsa AAAA1C8...32Tv==
++user@example.net
++restrict,pty,command="nethack" ssh-rsa AAAA1f8...IrrC5==
++user@example.net
 +.Ed
 +.Sh SSH_KNOWN_HOSTS FILE FORMAT
 +The
@@ -5351,9 +5531,12 @@ index 0000000..ada4f25
 +It should only be writable by root.
 +.Pp
 +.It Pa /etc/moduli
-+Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange".
++Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange"
++key exchange method.
 +The file format is described in
 +.Xr moduli 4 .
++If no usable groups are found in this file then fixed internal groups will
++be used.
 +.Pp
 +.It Pa /etc/motd
 +See
@@ -5466,10 +5649,10 @@ index 0000000..ada4f25
 +for privilege separation.
 diff --git a/sshd.8 b/sshd.8
 deleted file mode 100644
-index 213b5fc..0000000
+index 6c521f2..0000000
 --- a/sshd.8
 +++ /dev/null
-@@ -1,971 +0,0 @@
+@@ -1,1004 +0,0 @@
 -.\"
 -.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 -.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -5505,8 +5688,8 @@ index 213b5fc..0000000
 -.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 -.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -.\"
--.\" $OpenBSD: sshd.8,v 1.280 2015/07/03 03:49:45 djm Exp $
--.Dd $Mdocdate: July 3 2015 $
+-.\" $OpenBSD: sshd.8,v 1.284 2016/02/17 07:38:19 jmc Exp $
+-.Dd $Mdocdate: February 17 2016 $
 -.Dt SSHD 8
 -.Os
 -.Sh NAME
@@ -5747,14 +5930,12 @@ index 213b5fc..0000000
 -.Cm Protocol
 -option in
 -.Xr sshd_config 5 .
--Protocol 2 supports DSA, ECDSA, Ed25519 and RSA keys;
--protocol 1 only supports RSA keys.
--For both protocols,
--each host has a host-specific key,
--normally 2048 bits,
--used to identify the host.
+-Protocol 1 should not be used
+-and is only offered to support legacy devices.
 -.Pp
--Forward security for protocol 1 is provided through
+-Each host has a host-specific key,
+-used to identify the host.
+-Partial forward security for protocol 1 is provided through
 -an additional server key,
 -normally 1024 bits,
 -generated when the server starts.
@@ -5942,7 +6123,7 @@ index 213b5fc..0000000
 -.Cm AuthorizedKeysFile
 -specifies the files containing public keys for
 -public key authentication;
--if none is specified, the default is
+-if this option is not specified, the default is
 -.Pa ~/.ssh/authorized_keys
 -and
 -.Pa ~/.ssh/authorized_keys2 .
@@ -5994,6 +6175,10 @@ index 213b5fc..0000000
 -The following option specifications are supported (note
 -that option keywords are case-insensitive):
 -.Bl -tag -width Ds
+-.It Cm agent-forwarding
+-Enable authentication agent forwarding previously disabled by the
+-.Cm restrict
+-option.
 -.It Cm cert-authority
 -Specifies that the listed key is a certification authority (CA) that is
 -trusted to validate signed certificates for user authentication.
@@ -6088,6 +6273,9 @@ index 213b5fc..0000000
 -A port specification of
 -.Cm *
 -matches any port.
+-.It Cm port-forwarding
+-Enable port forwarding previously disabled by the
+-.Cm restrict
 -.It Cm principals="principals"
 -On a
 -.Cm cert-authority
@@ -6099,12 +6287,33 @@ index 213b5fc..0000000
 -signers using the
 -.Cm cert-authority
 -option.
+-.It Cm pty
+-Permits tty allocation previously disabled by the
+-.Cm restrict
+-option.
+-.It Cm restrict
+-Enable all restrictions, i.e. disable port, agent and X11 forwarding,
+-as well as disabling PTY allocation
+-and execution of
+-.Pa ~/.ssh/rc .
+-If any future restriction capabilities are added to authorized_keys files
+-they will be included in this set.
 -.It Cm tunnel="n"
 -Force a
 -.Xr tun 4
 -device on the server.
 -Without this option, the next available device will be used if
 -the client requests a tunnel.
+-.It Cm user-rc
+-Enables execution of
+-.Pa ~/.ssh/rc
+-previously disabled by the
+-.Cm restrict
+-option.
+-.It Cm X11-forwarding
+-Permits X11 forwarding previously disabled by the
+-.Cm restrict
+-option.
 -.El
 -.Pp
 -An example authorized_keys file:
@@ -6119,6 +6328,10 @@ index 213b5fc..0000000
 -AAAAB5...21S==
 -tunnel="0",command="sh /etc/netstart tun0" ssh-rsa AAAA...==
 -jane@example.net
+-restrict,command="uptime" ssh-rsa AAAA1C8...32Tv==
+-user@example.net
+-restrict,pty,command="nethack" ssh-rsa AAAA1f8...IrrC5==
+-user@example.net
 -.Ed
 -.Sh SSH_KNOWN_HOSTS FILE FORMAT
 -The
@@ -6328,9 +6541,12 @@ index 213b5fc..0000000
 -It should only be writable by root.
 -.Pp
 -.It Pa /etc/moduli
--Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange".
+-Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange"
+-key exchange method.
 -The file format is described in
 -.Xr moduli 5 .
+-If no usable groups are found in this file then fixed internal groups will
+-be used.
 -.Pp
 -.It Pa /etc/motd
 -See
@@ -6443,10 +6659,10 @@ index 213b5fc..0000000
 -for privilege separation.
 diff --git a/sshd_config.4 b/sshd_config.4
 new file mode 100644
-index 0000000..ba4d79a
+index 0000000..6351b43
 --- /dev/null
 +++ b/sshd_config.4
-@@ -0,0 +1,1736 @@
+@@ -0,0 +1,1750 @@
 +.\"
 +.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 +.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -6482,8 +6698,8 @@ index 0000000..ba4d79a
 +.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 +.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 +.\"
-+.\" $OpenBSD: sshd_config.5,v 1.211 2015/08/14 15:32:41 jmc Exp $
-+.Dd $Mdocdate: August 14 2015 $
++.\" $OpenBSD: sshd_config.5,v 1.220 2016/02/17 08:57:34 djm Exp $
++.Dd $Mdocdate: February 17 2016 $
 +.Dt SSHD_CONFIG 4
 +.Os
 +.Sh NAME
@@ -6519,8 +6735,7 @@ index 0000000..ba4d79a
 +in
 +.Xr ssh_config 4
 +for how to configure the client.
-+Note that environment passing is only supported for protocol 2, and
-+that the
++The
 +.Ev TERM
 +environment variable is always sent whenever the client
 +requests a pseudo-terminal as it is required by the protocol.
@@ -6675,7 +6890,7 @@ index 0000000..ba4d79a
 +.Dq publickey,publickey
 +will require successful authentication using two different public keys.
 +.Pp
-+This option is only available for SSH protocol 2 and will yield a fatal
++This option will yield a fatal
 +error if enabled if protocol 1 is also enabled.
 +Note that each authentication method listed should also be explicitly enabled
 +in the configuration.
@@ -6734,6 +6949,9 @@ index 0000000..ba4d79a
 +is taken to be an absolute path or one relative to the user's home
 +directory.
 +Multiple files may be listed, separated by whitespace.
++Alternately this option may be set to
++.Dq none
++to skip checking for user keys in files.
 +The default is
 +.Dq .ssh/authorized_keys .ssh/authorized_keys2 .
 +.It Cm AuthorizedPrincipalsCommand
@@ -6819,7 +7037,6 @@ index 0000000..ba4d79a
 +If the argument is
 +.Dq none
 +then no banner is displayed.
-+This option is only available for protocol version 2.
 +By default, no banner is displayed.
 +.It Cm ChallengeResponseAuthentication
 +Specifies whether challenge-response authentication is allowed (e.g. via
@@ -6878,10 +7095,12 @@ index 0000000..ba4d79a
 +.Xr sshd 8
 +cannot detect.
 +.Pp
-+The default is not to
++The default is
++.Dq none ,
++indicating not to
 +.Xr chroot 2 .
 +.It Cm Ciphers
-+Specifies the ciphers allowed for protocol version 2.
++Specifies the ciphers allowed.
 +Multiple ciphers must be comma-separated.
 +If the specified value begins with a
 +.Sq +
@@ -6962,7 +7181,6 @@ index 0000000..ba4d79a
 +.Cm ClientAliveCountMax
 +is left at the default, unresponsive SSH clients
 +will be disconnected after approximately 45 seconds.
-+This option applies to protocol version 2 only.
 +.It Cm ClientAliveInterval
 +Sets a timeout interval in seconds after which if no data has been received
 +from the client,
@@ -6971,7 +7189,6 @@ index 0000000..ba4d79a
 +channel to request a response from the client.
 +The default
 +is 0, indicating that these messages will not be sent to the client.
-+This option applies to protocol version 2 only.
 +.It Cm Compression
 +Specifies whether compression is allowed, or delayed until
 +the user has authenticated successfully.
@@ -7045,6 +7262,8 @@ index 0000000..ba4d79a
 +will force the use of an in-process sftp server that requires no support
 +files when used with
 +.Cm ChrootDirectory .
++The default is
++.Dq none .
 +.It Cm GatewayPorts
 +Specifies whether remote hosts are allowed to connect to ports
 +forwarded for the client.
@@ -7069,13 +7288,11 @@ index 0000000..ba4d79a
 +Specifies whether user authentication based on GSSAPI is allowed.
 +The default is
 +.Dq no .
-+Note that this option applies to protocol version 2 only.
 +.It Cm GSSAPICleanupCredentials
 +Specifies whether to automatically destroy the user's credentials cache
 +on logout.
 +The default is
 +.Dq yes .
-+Note that this option applies to protocol version 2 only.
 +.It Cm GSSAPIStrictAcceptorCheck
 +Determines whether to be strict about the identity of the GSSAPI acceptor
 +a client authenticates against.
@@ -7118,9 +7335,6 @@ index 0000000..ba4d79a
 +Specifies whether rhosts or /etc/hosts.equiv authentication together
 +with successful public key client host authentication is allowed
 +(host-based authentication).
-+This option is similar to
-+.Cm RhostsRSAAuthentication
-+and applies to protocol version 2 only.
 +The default is
 +.Dq no .
 +.It Cm HostbasedUsesNameFromPacketOnly
@@ -7191,7 +7405,7 @@ index 0000000..ba4d79a
 +.Ev SSH_AUTH_SOCK
 +environment variable.
 +.It Cm HostKeyAlgorithms
-+Specifies the protocol version 2 host key algorithms
++Specifies the host key algorithms
 +that the server offers.
 +The default for this option is:
 +.Bd -literal -offset 3n
@@ -7412,8 +7626,7 @@ index 0000000..ba4d79a
 +Logging with a DEBUG level violates the privacy of users and is not recommended.
 +.It Cm MACs
 +Specifies the available MAC (message authentication code) algorithms.
-+The MAC algorithm is used in protocol version 2
-+for data integrity protection.
++The MAC algorithm is used for data integrity protection.
 +Multiple algorithms must be comma-separated.
 +If the specified value begins with a
 +.Sq +
@@ -7469,8 +7682,9 @@ index 0000000..ba4d79a
 +.Bd -literal -offset indent
 +umac-64-etm@openssh.com,umac-128-etm@openssh.com,
 +hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,
++hmac-sha1-etm@openssh.com,
 +umac-64@openssh.com,umac-128@openssh.com,
-+hmac-sha2-256,hmac-sha2-512
++hmac-sha2-256,hmac-sha2-512,hmac-sha1
 +.Ed
 +.Pp
 +The list of available MAC algorithms may also be obtained using the
@@ -7540,6 +7754,8 @@ index 0000000..ba4d79a
 +.Cm AuthorizedKeysCommand ,
 +.Cm AuthorizedKeysCommandUser ,
 +.Cm AuthorizedKeysFile ,
++.Cm AuthorizedPrincipalsCommand ,
++.Cm AuthorizedPrincipalsCommandUser ,
 +.Cm AuthorizedPrincipalsFile ,
 +.Cm Banner ,
 +.Cm ChrootDirectory ,
@@ -7583,7 +7799,15 @@ index 0000000..ba4d79a
 +additional failures are logged.
 +The default is 6.
 +.It Cm MaxSessions
-+Specifies the maximum number of open sessions permitted per network connection.
++Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
++sessions permitted per network connection.
++Multiple sessions may be established by clients that support connection
++multiplexing.
++Setting
++.Cm MaxSessions
++to 1 will effectively disable session multiplexing, whereas setting it to 0
++will prevent all shell, login and subsystem sessions while still permitting
++forwarding.
 +The default is 10.
 +.It Cm MaxStartups
 +Specifies the maximum number of concurrent unauthenticated connections to the
@@ -7773,6 +7997,10 @@ index 0000000..ba4d79a
 +Multiple versions must be comma-separated.
 +The default is
 +.Sq 2 .
++Protocol 1 suffers from a number of cryptographic weaknesses and should
++not be used.
++It is only offered to support legacy devices.
++.Pp
 +Note that the order of the protocol list does not indicate preference,
 +because the client selects among multiple protocol versions offered
 +by the server.
@@ -7807,7 +8035,6 @@ index 0000000..ba4d79a
 +Specifies whether public key authentication is allowed.
 +The default is
 +.Dq yes .
-+Note that this option applies to protocol version 2 only.
 +.It Cm RekeyLimit
 +Specifies the maximum amount of data that may be transmitted before the
 +session key is renegotiated, optionally followed a maximum amount of
@@ -7833,7 +8060,6 @@ index 0000000..ba4d79a
 +.Dq default none ,
 +which means that rekeying is performed after the cipher's default amount
 +of data has been sent or received and no time based rekeying is done.
-+This option applies to protocol version 2 only.
 +.It Cm RevokedKeys
 +Specifies revoked public keys file, or
 +.Dq none
@@ -7920,7 +8146,6 @@ index 0000000..ba4d79a
 +to force a different filesystem root on clients.
 +.Pp
 +By default no subsystems are defined.
-+Note that this option applies to protocol version 2 only.
 +.It Cm SyslogFacility
 +Gives the facility code that is used when logging messages from
 +.Xr sshd 1M .
@@ -8033,14 +8258,19 @@ index 0000000..ba4d79a
 +the privilege of the authenticated user.
 +The goal of privilege separation is to prevent privilege
 +escalation by containing any corruption within the unprivileged processes.
-+The default is
-+.Dq yes .
++The argument must be
++.Dq yes ,
++.Dq no ,
++or
++.Dq sandbox .
 +If
 +.Cm UsePrivilegeSeparation
 +is set to
 +.Dq sandbox
 +then the pre-authentication unprivileged process is subject to additional
 +restrictions.
++The default is
++.Dq sandbox .
 +.It Cm VersionAddendum
 +Optionally specifies additional text to append to the SSH protocol banner
 +sent by the server upon connection.
@@ -8185,10 +8415,10 @@ index 0000000..ba4d79a
 +for privilege separation.
 diff --git a/sshd_config.5 b/sshd_config.5
 deleted file mode 100644
-index 476f71c..0000000
+index 0e4ab0e..0000000
 --- a/sshd_config.5
 +++ /dev/null
-@@ -1,1736 +0,0 @@
+@@ -1,1750 +0,0 @@
 -.\"
 -.\" Author: Tatu Ylonen <ylo@cs.hut.fi>
 -.\" Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
@@ -8224,8 +8454,8 @@ index 476f71c..0000000
 -.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 -.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -.\"
--.\" $OpenBSD: sshd_config.5,v 1.211 2015/08/14 15:32:41 jmc Exp $
--.Dd $Mdocdate: August 14 2015 $
+-.\" $OpenBSD: sshd_config.5,v 1.220 2016/02/17 08:57:34 djm Exp $
+-.Dd $Mdocdate: February 17 2016 $
 -.Dt SSHD_CONFIG 5
 -.Os
 -.Sh NAME
@@ -8261,8 +8491,7 @@ index 476f71c..0000000
 -in
 -.Xr ssh_config 5
 -for how to configure the client.
--Note that environment passing is only supported for protocol 2, and
--that the
+-The
 -.Ev TERM
 -environment variable is always sent whenever the client
 -requests a pseudo-terminal as it is required by the protocol.
@@ -8417,7 +8646,7 @@ index 476f71c..0000000
 -.Dq publickey,publickey
 -will require successful authentication using two different public keys.
 -.Pp
--This option is only available for SSH protocol 2 and will yield a fatal
+-This option will yield a fatal
 -error if enabled if protocol 1 is also enabled.
 -Note that each authentication method listed should also be explicitly enabled
 -in the configuration.
@@ -8476,6 +8705,9 @@ index 476f71c..0000000
 -is taken to be an absolute path or one relative to the user's home
 -directory.
 -Multiple files may be listed, separated by whitespace.
+-Alternately this option may be set to
+-.Dq none
+-to skip checking for user keys in files.
 -The default is
 -.Dq .ssh/authorized_keys .ssh/authorized_keys2 .
 -.It Cm AuthorizedPrincipalsCommand
@@ -8561,7 +8793,6 @@ index 476f71c..0000000
 -If the argument is
 -.Dq none
 -then no banner is displayed.
--This option is only available for protocol version 2.
 -By default, no banner is displayed.
 -.It Cm ChallengeResponseAuthentication
 -Specifies whether challenge-response authentication is allowed (e.g. via
@@ -8620,10 +8851,12 @@ index 476f71c..0000000
 -.Xr sshd 8
 -cannot detect.
 -.Pp
--The default is not to
+-The default is
+-.Dq none ,
+-indicating not to
 -.Xr chroot 2 .
 -.It Cm Ciphers
--Specifies the ciphers allowed for protocol version 2.
+-Specifies the ciphers allowed.
 -Multiple ciphers must be comma-separated.
 -If the specified value begins with a
 -.Sq +
@@ -8704,7 +8937,6 @@ index 476f71c..0000000
 -.Cm ClientAliveCountMax
 -is left at the default, unresponsive SSH clients
 -will be disconnected after approximately 45 seconds.
--This option applies to protocol version 2 only.
 -.It Cm ClientAliveInterval
 -Sets a timeout interval in seconds after which if no data has been received
 -from the client,
@@ -8713,7 +8945,6 @@ index 476f71c..0000000
 -channel to request a response from the client.
 -The default
 -is 0, indicating that these messages will not be sent to the client.
--This option applies to protocol version 2 only.
 -.It Cm Compression
 -Specifies whether compression is allowed, or delayed until
 -the user has authenticated successfully.
@@ -8787,6 +9018,8 @@ index 476f71c..0000000
 -will force the use of an in-process sftp server that requires no support
 -files when used with
 -.Cm ChrootDirectory .
+-The default is
+-.Dq none .
 -.It Cm GatewayPorts
 -Specifies whether remote hosts are allowed to connect to ports
 -forwarded for the client.
@@ -8811,13 +9044,11 @@ index 476f71c..0000000
 -Specifies whether user authentication based on GSSAPI is allowed.
 -The default is
 -.Dq no .
--Note that this option applies to protocol version 2 only.
 -.It Cm GSSAPICleanupCredentials
 -Specifies whether to automatically destroy the user's credentials cache
 -on logout.
 -The default is
 -.Dq yes .
--Note that this option applies to protocol version 2 only.
 -.It Cm GSSAPIStrictAcceptorCheck
 -Determines whether to be strict about the identity of the GSSAPI acceptor
 -a client authenticates against.
@@ -8860,9 +9091,6 @@ index 476f71c..0000000
 -Specifies whether rhosts or /etc/hosts.equiv authentication together
 -with successful public key client host authentication is allowed
 -(host-based authentication).
--This option is similar to
--.Cm RhostsRSAAuthentication
--and applies to protocol version 2 only.
 -The default is
 -.Dq no .
 -.It Cm HostbasedUsesNameFromPacketOnly
@@ -8933,7 +9161,7 @@ index 476f71c..0000000
 -.Ev SSH_AUTH_SOCK
 -environment variable.
 -.It Cm HostKeyAlgorithms
--Specifies the protocol version 2 host key algorithms
+-Specifies the host key algorithms
 -that the server offers.
 -The default for this option is:
 -.Bd -literal -offset 3n
@@ -9154,8 +9382,7 @@ index 476f71c..0000000
 -Logging with a DEBUG level violates the privacy of users and is not recommended.
 -.It Cm MACs
 -Specifies the available MAC (message authentication code) algorithms.
--The MAC algorithm is used in protocol version 2
--for data integrity protection.
+-The MAC algorithm is used for data integrity protection.
 -Multiple algorithms must be comma-separated.
 -If the specified value begins with a
 -.Sq +
@@ -9211,8 +9438,9 @@ index 476f71c..0000000
 -.Bd -literal -offset indent
 -umac-64-etm@openssh.com,umac-128-etm@openssh.com,
 -hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,
+-hmac-sha1-etm@openssh.com,
 -umac-64@openssh.com,umac-128@openssh.com,
--hmac-sha2-256,hmac-sha2-512
+-hmac-sha2-256,hmac-sha2-512,hmac-sha1
 -.Ed
 -.Pp
 -The list of available MAC algorithms may also be obtained using the
@@ -9282,6 +9510,8 @@ index 476f71c..0000000
 -.Cm AuthorizedKeysCommand ,
 -.Cm AuthorizedKeysCommandUser ,
 -.Cm AuthorizedKeysFile ,
+-.Cm AuthorizedPrincipalsCommand ,
+-.Cm AuthorizedPrincipalsCommandUser ,
 -.Cm AuthorizedPrincipalsFile ,
 -.Cm Banner ,
 -.Cm ChrootDirectory ,
@@ -9325,7 +9555,15 @@ index 476f71c..0000000
 -additional failures are logged.
 -The default is 6.
 -.It Cm MaxSessions
--Specifies the maximum number of open sessions permitted per network connection.
+-Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
+-sessions permitted per network connection.
+-Multiple sessions may be established by clients that support connection
+-multiplexing.
+-Setting
+-.Cm MaxSessions
+-to 1 will effectively disable session multiplexing, whereas setting it to 0
+-will prevent all shell, login and subsystem sessions while still permitting
+-forwarding.
 -The default is 10.
 -.It Cm MaxStartups
 -Specifies the maximum number of concurrent unauthenticated connections to the
@@ -9515,6 +9753,10 @@ index 476f71c..0000000
 -Multiple versions must be comma-separated.
 -The default is
 -.Sq 2 .
+-Protocol 1 suffers from a number of cryptographic weaknesses and should
+-not be used.
+-It is only offered to support legacy devices.
+-.Pp
 -Note that the order of the protocol list does not indicate preference,
 -because the client selects among multiple protocol versions offered
 -by the server.
@@ -9549,7 +9791,6 @@ index 476f71c..0000000
 -Specifies whether public key authentication is allowed.
 -The default is
 -.Dq yes .
--Note that this option applies to protocol version 2 only.
 -.It Cm RekeyLimit
 -Specifies the maximum amount of data that may be transmitted before the
 -session key is renegotiated, optionally followed a maximum amount of
@@ -9575,7 +9816,6 @@ index 476f71c..0000000
 -.Dq default none ,
 -which means that rekeying is performed after the cipher's default amount
 -of data has been sent or received and no time based rekeying is done.
--This option applies to protocol version 2 only.
 -.It Cm RevokedKeys
 -Specifies revoked public keys file, or
 -.Dq none
@@ -9662,7 +9902,6 @@ index 476f71c..0000000
 -to force a different filesystem root on clients.
 -.Pp
 -By default no subsystems are defined.
--Note that this option applies to protocol version 2 only.
 -.It Cm SyslogFacility
 -Gives the facility code that is used when logging messages from
 -.Xr sshd 8 .
@@ -9775,14 +10014,19 @@ index 476f71c..0000000
 -the privilege of the authenticated user.
 -The goal of privilege separation is to prevent privilege
 -escalation by containing any corruption within the unprivileged processes.
--The default is
--.Dq yes .
+-The argument must be
+-.Dq yes ,
+-.Dq no ,
+-or
+-.Dq sandbox .
 -If
 -.Cm UsePrivilegeSeparation
 -is set to
 -.Dq sandbox
 -then the pre-authentication unprivileged process is subject to additional
 -restrictions.
+-The default is
+-.Dq sandbox .
 -.It Cm VersionAddendum
 -Optionally specifies additional text to append to the SSH protocol banner
 -sent by the server upon connection.

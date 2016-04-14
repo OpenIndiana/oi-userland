@@ -1,7 +1,7 @@
-From c57262f2123c44f2e306df153d6a3be1558ba228 Mon Sep 17 00:00:00 2001
+From a77f4c6668feb9c991a7985425ce949c5f323f09 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:19 -0700
-Subject: [PATCH 04/36] PAM Support
+Subject: [PATCH 03/34] PAM Support
 
 #
 # To comply to the Solaris PAM policy, the UsePAM option is changed to be
@@ -15,10 +15,10 @@ Subject: [PATCH 04/36] PAM Support
  1 file changed, 14 insertions(+)
 
 diff --git a/servconf.c b/servconf.c
-index 6c7a91e..5e8ed97 100644
+index b19d30e..c6f4bdd 100644
 --- a/servconf.c
 +++ b/servconf.c
-@@ -185,7 +185,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -199,7 +199,12 @@ fill_default_server_options(ServerOptions *options)
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -31,7 +31,7 @@ index 6c7a91e..5e8ed97 100644
  
  	/* Standard Options */
  	if (options->protocol == SSH_PROTO_UNKNOWN)
-@@ -997,8 +1002,17 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -1008,8 +1013,17 @@ process_server_config_line(ServerOptions *options, char *line,
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:

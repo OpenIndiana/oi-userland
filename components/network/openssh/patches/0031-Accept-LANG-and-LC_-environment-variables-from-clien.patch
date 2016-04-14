@@ -1,7 +1,7 @@
-From 71b520b3fdbd211fc92f455903a3c218250f44b8 Mon Sep 17 00:00:00 2001
+From af59564785eeeef3c8f9441a41c36c25cfcdd282 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH 32/36] Accept LANG and LC_* environment variables from clients
+Subject: [PATCH 31/34] Accept LANG and LC_* environment variables from clients
  by default
 
 This preserves most of the old SunSSH locale negotiation
@@ -14,7 +14,7 @@ behaviour (at least the parts that are most commonly used).
  4 files changed, 65 insertions(+), 5 deletions(-)
 
 diff --git a/servconf.c b/servconf.c
-index f8122aa..245f2fd 100644
+index 0ee50e3..b91fd7d 100644
 --- a/servconf.c
 +++ b/servconf.c
 @@ -155,7 +155,7 @@ initialize_server_options(ServerOptions *options)
@@ -26,7 +26,7 @@ index f8122aa..245f2fd 100644
  	options->permit_tun = -1;
  	options->num_permitted_opens = -1;
  	options->adm_forced_command = NULL;
-@@ -411,6 +411,25 @@ fill_default_server_options(ServerOptions *options)
+@@ -423,6 +423,25 @@ fill_default_server_options(ServerOptions *options)
  		options->max_sessions = DEFAULT_SESSIONS_MAX;
  	if (options->use_dns == -1)
  		options->use_dns = 0;
@@ -52,7 +52,7 @@ index f8122aa..245f2fd 100644
  	if (options->client_alive_interval == -1)
  		options->client_alive_interval = 0;
  	if (options->client_alive_count_max == -1)
-@@ -1770,11 +1789,15 @@ process_server_config_line(ServerOptions *options, char *line,
+@@ -1773,11 +1792,15 @@ process_server_config_line(ServerOptions *options, char *line,
  			if (strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -68,7 +68,7 @@ index f8122aa..245f2fd 100644
  			options->accept_env[options->num_accept_env++] =
  			    xstrdup(arg);
  		}
-@@ -2216,7 +2239,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+@@ -2219,7 +2242,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
  	} \
  } while(0)
  #define M_CP_STRARRAYOPT(n, num_n) do {\
@@ -78,10 +78,10 @@ index f8122aa..245f2fd 100644
  			dst->n[dst->num_n] = xstrdup(src->n[dst->num_n]); \
  	} \
 diff --git a/session.c b/session.c
-index ab0ac1c..88cd9f0 100644
+index 36f8c62..cabd1d2 100644
 --- a/session.c
 +++ b/session.c
-@@ -1019,6 +1019,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
+@@ -1043,6 +1043,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
  }
  
  /*
@@ -100,7 +100,7 @@ index ab0ac1c..88cd9f0 100644
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1180,6 +1192,16 @@ do_setup_env(Session *s, const char *shell)
+@@ -1204,6 +1216,16 @@ do_setup_env(Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -117,7 +117,7 @@ index ab0ac1c..88cd9f0 100644
  	if (!options.use_login) {
  		/* Set basic environment. */
  		for (i = 0; i < s->num_env; i++)
-@@ -1224,8 +1246,8 @@ do_setup_env(Session *s, const char *shell)
+@@ -1248,8 +1270,8 @@ do_setup_env(Session *s, const char *shell)
  		/* Normal systems set SHELL by default. */
  		child_set_env(&env, &envsize, "SHELL", shell);
  	}
@@ -129,7 +129,7 @@ index ab0ac1c..88cd9f0 100644
  #ifdef PER_SESSION_XAUTHFILE
          if (s->auth_file != NULL)
 diff --git a/sshd_config b/sshd_config
-index 0048f98..bbdc6ae 100644
+index 05317eb..83c5e01 100644
 --- a/sshd_config
 +++ b/sshd_config
 @@ -38,6 +38,10 @@ HostKey /var/ssh/ssh_host_ed25519_key
@@ -144,10 +144,10 @@ index 0048f98..bbdc6ae 100644
  
  #LoginGraceTime 2m
 diff --git a/sshd_config.4 b/sshd_config.4
-index cce3a5a..913f528 100644
+index 85c7f26..a1456db 100644
 --- a/sshd_config.4
 +++ b/sshd_config.4
-@@ -86,7 +86,18 @@ directives.
+@@ -85,7 +85,18 @@ directives.
  Be warned that some environment variables could be used to bypass restricted
  user environments.
  For this reason, care should be taken in the use of this directive.

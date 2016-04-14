@@ -1,7 +1,7 @@
-From 101a7bf94901c79603da5750d325f9de67fe3413 Mon Sep 17 00:00:00 2001
+From d9c44a1bca6f053bebcdf9eb185fbe09fd11f19e Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:38:19 -0700
-Subject: [PATCH 17/36] Enable login to a role if PAM is ok with it
+Subject: [PATCH 16/34] Enable login to a role if PAM is ok with it
 
 ---
  auth-pam.c        | 14 ++++++++++++++
@@ -13,10 +13,10 @@ Subject: [PATCH 17/36] Enable login to a role if PAM is ok with it
  6 files changed, 52 insertions(+), 1 deletion(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
-index 7bdee5c..6470d5e 100644
+index 4ca0a58..d049779 100644
 --- a/auth-pam.c
 +++ b/auth-pam.c
-@@ -1038,6 +1038,20 @@ do_pam_account(void)
+@@ -1039,6 +1039,20 @@ do_pam_account(void)
  	return (sshpam_account_status);
  }
  
@@ -52,7 +52,7 @@ index a1a2b52..6c41fd9 100644
  void do_pam_setcred(int );
  void do_pam_chauthtok(void);
 diff --git a/auth.h b/auth.h
-index a0e41a4..c336cf0 100644
+index 985053c..6883f16 100644
 --- a/auth.h
 +++ b/auth.h
 @@ -84,6 +84,9 @@ struct Authctxt {
@@ -113,10 +113,10 @@ index 5a3ef1b..b456237 100644
  
  #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
 diff --git a/monitor.c b/monitor.c
-index 7ac4c61..20ed152 100644
+index dc3e7bf..ef6b45b 100644
 --- a/monitor.c
 +++ b/monitor.c
-@@ -461,6 +461,12 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+@@ -460,6 +460,12 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
  		}
  	}
  
@@ -129,7 +129,7 @@ index 7ac4c61..20ed152 100644
  	if (!authctxt->valid)
  		fatal("%s: authenticated invalid user", __func__);
  	if (strcmp(auth_method, "unknown") == 0)
-@@ -694,12 +700,14 @@ monitor_reset_key_state(void)
+@@ -688,12 +694,14 @@ monitor_reset_key_state(void)
  {
  	/* reset state */
  	free(key_blob);
@@ -145,7 +145,7 @@ index 7ac4c61..20ed152 100644
  	hostbased_chost = NULL;
  }
  
-@@ -1146,6 +1154,11 @@ mm_answer_pam_account(int sock, Buffer *m)
+@@ -1143,6 +1151,11 @@ mm_answer_pam_account(int sock, Buffer *m)
  	if (!options.use_pam)
  		fatal("UsePAM not set, but ended up in %s anyway", __func__);
  

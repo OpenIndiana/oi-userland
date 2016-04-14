@@ -1,7 +1,7 @@
-From b60fe491735349ba901b371dc8a0d1cd5ab163da Mon Sep 17 00:00:00 2001
+From 785d51f8667359a362893f13e8762d0e814ceeda Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 15/36] Solaris Auditing support
+Subject: [PATCH 14/34] Solaris Auditing support
 
 #
 # Add Solaris Auditing configuration (--with-audit=solaris) to openssh-6.5p1.
@@ -70,11 +70,11 @@ index cbbb2df..765d4aa 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 121a261..62e6a84 100644
+index 61a97de..abc9285 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -101,7 +101,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
- 	roaming_common.o roaming_client.o
+@@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+ 	sshconnect.o sshconnect1.o sshconnect2.o mux.o
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
@@ -83,10 +83,10 @@ index 121a261..62e6a84 100644
  	auth.o auth1.o auth2.o auth-options.o session.o \
  	auth-chall.o auth2-chall.o groupaccess.o \
 diff --git a/README.platform b/README.platform
-index d198232..6949998 100644
+index 8d75c16..616200b 100644
 --- a/README.platform
 +++ b/README.platform
-@@ -68,8 +68,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
+@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian based distros these may be
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -97,7 +97,7 @@ index d198232..6949998 100644
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
  for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
-@@ -82,6 +82,9 @@ There is no official registry of 3rd party event numbers, so if this
+@@ -85,6 +85,9 @@ There is no official registry of 3rd party event numbers, so if this
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -676,10 +676,10 @@ index 0000000..abf870c
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
 diff --git a/configure.ac b/configure.ac
-index 2985819..b38b1b3 100644
+index 5dceabd..4192a45 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1547,7 +1547,7 @@ AC_ARG_WITH([libedit],
+@@ -1551,7 +1551,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -688,7 +688,7 @@ index 2985819..b38b1b3 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1584,6 +1584,13 @@ AC_ARG_WITH([audit],
+@@ -1588,6 +1588,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -703,7 +703,7 @@ index 2985819..b38b1b3 100644
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff --git a/defines.h b/defines.h
-index fa0ccba..f2c1678 100644
+index a438ddd..6196188 100644
 --- a/defines.h
 +++ b/defines.h
 @@ -635,6 +635,11 @@ struct winsize {
@@ -719,7 +719,7 @@ index fa0ccba..f2c1678 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 7e519d4..87032ec 100644
+index 418e1fd..37cb5fa 100644
 --- a/sshd.c
 +++ b/sshd.c
 @@ -2234,7 +2234,9 @@ main(int ac, char **av)

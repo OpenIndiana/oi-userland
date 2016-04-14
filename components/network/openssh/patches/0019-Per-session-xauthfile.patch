@@ -1,7 +1,7 @@
-From 885edd4c7c2e7f77debc253b1d097387bed0d96b Mon Sep 17 00:00:00 2001
+From a0027fbda837126e12d04098019a133ea83a9b75 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Tue, 22 Dec 2015 17:12:50 -0800
-Subject: [PATCH 20/36] Per-session xauthfile
+Subject: [PATCH 19/34] Per-session xauthfile
 
 This patch is to fix a X11 connection failure when a user's home directory
 is read-only.
@@ -11,15 +11,15 @@ more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
 In the future, if this fix is accepted by the upsteam in a later release, we
 will remove this patch when we upgrade to that release.
 ---
- session.c | 129 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ session.c | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
  session.h |   3 ++
- 2 files changed, 132 insertions(+)
+ 2 files changed, 137 insertions(+), 4 deletions(-)
 
 diff --git a/session.c b/session.c
-index 5a64715..ab0ac1c 100644
+index 87fddfc..36f8c62 100644
 --- a/session.c
 +++ b/session.c
-@@ -62,6 +62,10 @@
+@@ -63,6 +63,10 @@
  #include <unistd.h>
  #include <limits.h>
  
@@ -30,7 +30,7 @@ index 5a64715..ab0ac1c 100644
  #include "openbsd-compat/sys-queue.h"
  #include "xmalloc.h"
  #include "ssh.h"
-@@ -132,6 +136,11 @@ static void do_authenticated2(Authctxt *);
+@@ -133,6 +137,11 @@ static void do_authenticated2(Authctxt *);
  
  static int session_pty_req(Session *);
  
@@ -42,7 +42,7 @@ index 5a64715..ab0ac1c 100644
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1218,6 +1227,11 @@ do_setup_env(Session *s, const char *shell)
+@@ -1242,6 +1251,11 @@ do_setup_env(Session *s, const char *shell)
  	if (getenv("TZ"))
  		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
  
@@ -54,7 +54,7 @@ index 5a64715..ab0ac1c 100644
  	/* Set custom environment options from RSA authentication. */
  	if (!options.use_login) {
  		while (custom_environment) {
-@@ -2170,6 +2184,11 @@ session_x11_req(Session *s)
+@@ -2189,6 +2203,11 @@ session_x11_req(Session *s)
  {
  	int success;
  
@@ -66,10 +66,21 @@ index 5a64715..ab0ac1c 100644
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2181,13 +2200,71 @@ session_x11_req(Session *s)
+@@ -2200,19 +2219,78 @@ session_x11_req(Session *s)
  	s->screen = packet_get_int();
  	packet_check_eom();
  
+-	if (xauth_valid_string(s->auth_proto) &&
+-	    xauth_valid_string(s->auth_data))
+-		success = session_setup_x11fwd(s);
+-	else {
++	if (!xauth_valid_string(s->auth_proto) ||
++	    !xauth_valid_string(s->auth_data)) {
+ 		success = 0;
+ 		error("Invalid X11 forwarding data");
++		goto out;
++	}
++
 +#ifdef PER_SESSION_XAUTHFILE
 +	/*
 +	 * Create per session X authority file in the /tmp directory.
@@ -118,10 +129,10 @@ index 5a64715..ab0ac1c 100644
 +		error("failed to create a directory for the temporary X "
 +		    "authority file: %.100s; will use the default xauth file",
 +		    strerror(errno));
-+	}
+ 	}
 +#endif
 +
- 	success = session_setup_x11fwd(s);
++	success = session_setup_x11fwd(s);
 +
 +out:
  	if (!success) {
@@ -138,7 +149,7 @@ index 5a64715..ab0ac1c 100644
  	return success;
  }
  
-@@ -2378,6 +2455,51 @@ session_pty_cleanup(Session *s)
+@@ -2403,6 +2481,51 @@ session_pty_cleanup(Session *s)
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -190,7 +201,7 @@ index 5a64715..ab0ac1c 100644
  static char *
  sig2name(int sig)
  {
-@@ -2512,6 +2634,9 @@ session_close(Session *s)
+@@ -2542,6 +2665,9 @@ session_close(Session *s)
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -200,7 +211,7 @@ index 5a64715..ab0ac1c 100644
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2763,6 +2888,10 @@ do_cleanup(Authctxt *authctxt)
+@@ -2793,6 +2919,10 @@ do_cleanup(Authctxt *authctxt)
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  

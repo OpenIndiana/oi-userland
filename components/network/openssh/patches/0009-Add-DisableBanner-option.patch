@@ -1,16 +1,8 @@
-From debfde6b8d41a9b15452b519089ce2ee22b6addd Mon Sep 17 00:00:00 2001
+From d0fcfc84c64162fcc8db7f7a9a41912fb257c885 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:36:00 -0700
-Subject: [PATCH 10/36] Add DisableBanner option
+Subject: [PATCH 09/34] Add DisableBanner option
 
-#
-# This patch is to add a new DisableBanner option to the ssh client command,
-# which allows the ssh command to disable the display of the banner message.
-# We have contributed back this feature to the OpenSSH upstream community. For
-# more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2242.
-# In the future, if this feature is accepted by the upsteam in a later release,
-# we will remove this patch when we upgrade to that release.
-#
 ---
  readconf.c    | 31 +++++++++++++++++++++++++++++++
  readconf.h    |  9 +++++++++
@@ -19,10 +11,10 @@ Subject: [PATCH 10/36] Add DisableBanner option
  4 files changed, 65 insertions(+)
 
 diff --git a/readconf.c b/readconf.c
-index 2c63d44..d0f4068 100644
+index 0e955ae..dca9c94 100644
 --- a/readconf.c
 +++ b/readconf.c
-@@ -150,6 +150,9 @@ typedef enum {
+@@ -151,6 +151,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
@@ -30,9 +22,9 @@ index 2c63d44..d0f4068 100644
 +	oDisableBanner,
 +#endif
  	oTunnel, oTunnelDevice, oLocalCommand, oPermitLocalCommand,
- 	oVisualHostKey, oUseRoaming,
+ 	oVisualHostKey,
  	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
-@@ -255,6 +258,9 @@ static struct {
+@@ -258,6 +261,9 @@ static struct {
  	{ "controlmaster", oControlMaster },
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
@@ -42,7 +34,7 @@ index 2c63d44..d0f4068 100644
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -754,6 +760,17 @@ static const struct multistate multistate_canonicalizehostname[] = {
+@@ -786,6 +792,17 @@ static const struct multistate multistate_canonicalizehostname[] = {
  	{ NULL, -1 }
  };
  
@@ -60,9 +52,9 @@ index 2c63d44..d0f4068 100644
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -1514,6 +1531,13 @@ parse_keytypes:
- 		charptr = &options->pubkey_key_types;
- 		goto parse_keytypes;
+@@ -1561,6 +1578,13 @@ parse_keytypes:
+ 		multistate_ptr = multistate_yesnoaskconfirm;
+ 		goto parse_multistate;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -74,7 +66,7 @@ index 2c63d44..d0f4068 100644
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -1684,6 +1708,9 @@ initialize_options(Options * options)
+@@ -1732,6 +1756,9 @@ initialize_options(Options * options)
  	options->ip_qos_bulk = -1;
  	options->request_tty = -1;
  	options->proxy_use_fdpass = -1;
@@ -84,7 +76,7 @@ index 2c63d44..d0f4068 100644
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -1868,6 +1895,10 @@ fill_default_options(Options * options)
+@@ -1917,6 +1944,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -96,10 +88,10 @@ index 2c63d44..d0f4068 100644
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  	if (options->update_hostkeys == -1)
 diff --git a/readconf.h b/readconf.h
-index bb2d552..b961309 100644
+index c84d068..9aefd9e 100644
 --- a/readconf.h
 +++ b/readconf.h
-@@ -154,6 +154,9 @@ typedef struct {
+@@ -159,6 +159,9 @@ typedef struct {
  	char   *pubkey_key_types;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
@@ -109,7 +101,7 @@ index bb2d552..b961309 100644
  }       Options;
  
  #define SSH_CANONICALISE_NO	0
-@@ -179,6 +182,12 @@ typedef struct {
+@@ -184,6 +187,12 @@ typedef struct {
  #define SSH_UPDATE_HOSTKEYS_YES	1
  #define SSH_UPDATE_HOSTKEYS_ASK	2
  
@@ -123,10 +115,10 @@ index bb2d552..b961309 100644
  void     fill_default_options(Options *);
  void	 fill_default_options_for_canonicalization(Options *);
 diff --git a/ssh_config.4 b/ssh_config.4
-index 8c099eb..6325b3a 100644
+index e190f6d..b0e22bc 100644
 --- a/ssh_config.4
 +++ b/ssh_config.4
-@@ -572,6 +572,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+@@ -643,6 +643,14 @@ If set to a time in seconds, or a time in any of the formats documented in
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -142,7 +134,7 @@ index 8c099eb..6325b3a 100644
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
 diff --git a/sshconnect2.c b/sshconnect2.c
-index 7751031..95593b9 100644
+index f79c96b..a32204f 100644
 --- a/sshconnect2.c
 +++ b/sshconnect2.c
 @@ -81,6 +81,10 @@ extern char *client_version_string;
@@ -156,7 +148,7 @@ index 7751031..95593b9 100644
  /*
   * SSH2 key exchange
   */
-@@ -473,7 +477,20 @@ input_userauth_banner(int type, u_int32_t seq, void *ctxt)
+@@ -502,7 +506,20 @@ input_userauth_banner(int type, u_int32_t seq, void *ctxt)
  	debug3("input_userauth_banner");
  	raw = packet_get_string(&len);
  	lang = packet_get_string(NULL);
