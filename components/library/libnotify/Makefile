@@ -11,30 +11,40 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Till Wegmueller
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libnotify
-COMPONENT_VERSION= 0.4.5
+COMPONENT_VERSION= 0.7.6
 COMPONENT_SUMMARY= Library for desktop notifications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0799db8ea1500b65a477421a8c930cc8c8b0bbc0596e55ea1601e2542f3fb0d9
+  sha256:0ef61ca400d30e28217979bfa0e73a7406b19c32dd76150654ec5b2bdf47d837
 COMPONENT_ARCHIVE_URL= \
-  http://www.galago-project.org/files/releases/source/libnotify/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.galago-project.org/news/index.php
 COMPONENT_FMRI=	library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+# Missing files in build dir for configure without this.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_SCRIPT=       $(@D)/configure
+
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
+
+COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 build: $(BUILD_32_and_64)
 
