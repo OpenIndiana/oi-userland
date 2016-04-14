@@ -21,18 +21,18 @@
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 # Copyright 2013, Jon Tibble.  All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mbuffer
-COMPONENT_VERSION=	20150412
+COMPONENT_VERSION=	20160228
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:0c78dcb194d1f0316c51f277ea09ec20efd175bbd45f0a3f81bf1202c33301e4
+COMPONENT_ARCHIVE_HASH=	sha256:f7769f729e9b26a22a5d91922a740a0d1df6004dbe2b7a1febb0d7e4c3ef9e62
 COMPONENT_ARCHIVE_URL=	http://www.maier-komor.de/software/mbuffer/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32_and_64)
 
