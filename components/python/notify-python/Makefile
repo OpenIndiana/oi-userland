@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		notify-python
 COMPONENT_VERSION=	0.1.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.galago-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -55,10 +56,15 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
+CFLAGS += -I/usr/include/gtk-2.0
+CFLAGS += -I/usr/include/cairo
+CFLAGS += -I/usr/include/pango-1.0
+
 # There was reference to now unavailable http://trac.galago-project.org/ticket/121 
 # for the reason to remove the file
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					rm src/pynotify.c)
+					rm src/pynotify.c &&\
+					autoreconf -f -i )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
