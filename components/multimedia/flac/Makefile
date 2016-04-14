@@ -11,7 +11,7 @@
 #
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
 COMPONENT_VERSION=	1.3.1
