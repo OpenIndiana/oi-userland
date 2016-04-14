@@ -65,6 +65,11 @@ CONFIGURE_OPTIONS +=	--with-libltdl
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-openssl
 
+CONFIGURE_OPTIONS.32 +=	--with-drvpath=$(USRDIR)/nut/bin
+CONFIGURE_OPTIONS.32 +=	--with-cgipath=$(USRDIR)/nut/cgi-bin
+CONFIGURE_OPTIONS.64 +=	--with-drvpath=$(USRDIR)/nut/bin/$(MACH64)
+CONFIGURE_OPTIONS.64 +=	--with-cgipath=$(USRDIR)/nut/cgi-bin/$(MACH64)
+
 # No separate toggle for this yet
 #CONFIGURE_OPTIONS +=	--with-nut-scanner
 
