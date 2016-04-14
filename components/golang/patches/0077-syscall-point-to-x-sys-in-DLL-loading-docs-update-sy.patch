@@ -1,0 +1,70 @@
+From 77ef9c7e79a8e8d948c11330584ea205b35bb0e1 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Sat, 2 Apr 2016 00:20:13 +0000
+Subject: [PATCH 77/79] syscall: point to x/sys in DLL loading docs, update
+ syscall generator
+
+Updates the syscall generator for patchset 4 of https://golang.org/cl/21388.
+
+Updates #14959
+
+Change-Id: Icbd6df489887d3dcc076dfc73d4feb1376abaf8b
+Reviewed-on: https://go-review.googlesource.com/21428
+Reviewed-by: Alex Brainman <alex.brainman@gmail.com>
+Reviewed-on: https://go-review.googlesource.com/21680
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/syscall/dll_windows.go       | 13 +++++++++++++
+ src/syscall/mksyscall_windows.go |  4 ++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/src/syscall/dll_windows.go b/src/syscall/dll_windows.go
+index ec8d85b..453ec11 100644
+--- a/src/syscall/dll_windows.go
++++ b/src/syscall/dll_windows.go
+@@ -37,6 +37,13 @@ type DLL struct {
+ }
+ 
+ // LoadDLL loads the named DLL file into memory.
++//
++// If name is not an absolute path and is not a known system DLL used by
++// Go, Windows will search for the named DLL in many locations, causing
++// potential DLL preloading attacks.
++//
++// Use LazyDLL in golang.org/x/sys/windows for a secure way to
++// load system DLLs.
+ func LoadDLL(name string) (*DLL, error) {
+ 	namep, err := UTF16PtrFromString(name)
+ 	if err != nil {
+@@ -174,6 +181,12 @@ func (p *Proc) Call(a ...uintptr) (r1, r2 uintptr, lastErr error) {
+ // It will delay the load of the DLL until the first
+ // call to its Handle method or to one of its
+ // LazyProc's Addr method.
++//
++// LazyDLL is subject to the same DLL preloading attacks as documented
++// on LoadDLL.
++//
++// Use LazyDLL in golang.org/x/sys/windows for a secure way to
++// load system DLLs.
+ type LazyDLL struct {
+ 	mu   sync.Mutex
+ 	dll  *DLL // non nil once DLL is loaded
+diff --git a/src/syscall/mksyscall_windows.go b/src/syscall/mksyscall_windows.go
+index 546cb0d..7786d13 100644
+--- a/src/syscall/mksyscall_windows.go
++++ b/src/syscall/mksyscall_windows.go
+@@ -707,9 +707,9 @@ func (src *Source) Generate(w io.Writer) error {
+ 			}
+ 			if *sysRepo {
+ 				if packageName == "windows" {
+-					return "&LazyDLL{Name: " + arg + ", Flags: LoadLibrarySearchSystem32}"
++					return "&LazyDLL{Name: " + arg + ", System: true}"
+ 				} else {
+-					return "&windows.LazyDLL{Name: " + arg + ", Flags: windows.LoadLibrarySearchSystem32}"
++					return "&windows.LazyDLL{Name: " + arg + ", System: true}"
+ 				}
+ 			} else {
+ 				return syscalldot() + "NewLazyDLL(" + arg + ")"
+-- 
+2.7.4
+

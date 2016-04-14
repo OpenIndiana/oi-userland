@@ -1,0 +1,623 @@
+From a241a38d20d96f65116aeabd7b9a28138a0b6860 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Fri, 25 Mar 2016 06:40:58 +0000
+Subject: [PATCH 76/79] runtime, syscall: only search for Windows DLLs in the
+ System32 directory
+
+Make sure that for any DLL that Go uses itself, we only look for the
+DLL in the Windows System32 directory, guarding against DLL preloading
+attacks.
+
+(Unless the Windows version is ancient and LoadLibraryEx is
+unavailable, in which case the user probably has bigger security
+problems anyway.)
+
+This does not change the behavior of syscall.LoadLibrary or NewLazyDLL
+if the DLL name is something unused by Go itself.
+
+This change also intentionally does not add any new API surface. Instead,
+x/sys is updated with a LoadLibraryEx function and LazyDLL.Flags in:
+    https://golang.org/cl/21388
+
+Updates #14959
+
+Change-Id: I8d29200559cc19edf8dcf41dbdd39a389cd6aeb9
+Reviewed-on: https://go-review.googlesource.com/21140
+Reviewed-by: Russ Cox <rsc@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/21639
+Run-TryBot: Andrew Gerrand <adg@golang.org>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/cmd/dist/build.go                              |  1 +
+ src/go/build/deps_test.go                          |  6 +-
+ src/internal/syscall/windows/registry/syscall.go   |  2 +-
+ .../syscall/windows/registry/zsyscall_windows.go   |  5 +-
+ src/internal/syscall/windows/syscall_windows.go    |  2 +-
+ src/internal/syscall/windows/sysdll/sysdll.go      | 28 +++++++
+ src/internal/syscall/windows/zsyscall_windows.go   |  5 +-
+ src/runtime/export_windows_test.go                 |  4 +
+ src/runtime/os1_windows.go                         | 30 ++++++-
+ src/runtime/syscall_windows.go                     | 35 ++++++++
+ src/runtime/syscall_windows_test.go                | 93 ++++++++++++++++++++++
+ src/syscall/dll_windows.go                         | 14 +++-
+ src/syscall/mksyscall_windows.go                   | 48 +++++++++--
+ src/syscall/syscall_windows.go                     |  2 +-
+ src/syscall/zsyscall_windows.go                    | 27 ++++---
+ 15 files changed, 271 insertions(+), 31 deletions(-)
+ create mode 100644 src/internal/syscall/windows/sysdll/sysdll.go
+
+diff --git a/src/cmd/dist/build.go b/src/cmd/dist/build.go
+index 1658e16..60162ff 100644
+--- a/src/cmd/dist/build.go
++++ b/src/cmd/dist/build.go
+@@ -861,6 +861,7 @@ var buildorder = []string{
+ 	"sort",
+ 	"container/heap",
+ 	"encoding/base64",
++	"internal/syscall/windows/sysdll",
+ 	"syscall",
+ 	"internal/syscall/windows/registry",
+ 	"time",
+diff --git a/src/go/build/deps_test.go b/src/go/build/deps_test.go
+index 7cea949..464bc6a 100644
+--- a/src/go/build/deps_test.go
++++ b/src/go/build/deps_test.go
+@@ -128,10 +128,10 @@ var pkgDeps = map[string][]string{
+ 	// End of linear dependency definitions.
+ 
+ 	// Operating system access.
+-	"syscall":                           {"L0", "unicode/utf16"},
++	"syscall":                           {"L0", "internal/race", "internal/syscall/windows/sysdll", "unicode/utf16"},
+ 	"internal/syscall/unix":             {"L0", "syscall"},
+-	"internal/syscall/windows":          {"L0", "syscall"},
+-	"internal/syscall/windows/registry": {"L0", "syscall", "unicode/utf16"},
++	"internal/syscall/windows":          {"L0", "syscall", "internal/syscall/windows/sysdll"},
++	"internal/syscall/windows/registry": {"L0", "syscall", "internal/syscall/windows/sysdll", "unicode/utf16"},
+ 	"time":          {"L0", "syscall", "internal/syscall/windows/registry"},
+ 	"os":            {"L1", "os", "syscall", "time", "internal/syscall/windows"},
+ 	"path/filepath": {"L2", "os", "syscall"},
+diff --git a/src/internal/syscall/windows/registry/syscall.go b/src/internal/syscall/windows/registry/syscall.go
+index 38e573f..67394d8 100644
+--- a/src/internal/syscall/windows/registry/syscall.go
++++ b/src/internal/syscall/windows/registry/syscall.go
+@@ -8,7 +8,7 @@ package registry
+ 
+ import "syscall"
+ 
+-//go:generate go run $GOROOT/src/syscall/mksyscall_windows.go -output zsyscall_windows.go syscall.go
++//go:generate go run $GOROOT/src/syscall/mksyscall_windows.go -output zsyscall_windows.go -systemdll syscall.go
+ 
+ const (
+ 	_REG_OPTION_NON_VOLATILE = 0
+diff --git a/src/internal/syscall/windows/registry/zsyscall_windows.go b/src/internal/syscall/windows/registry/zsyscall_windows.go
+index 2b3de63..45a0ff7 100644
+--- a/src/internal/syscall/windows/registry/zsyscall_windows.go
++++ b/src/internal/syscall/windows/registry/zsyscall_windows.go
+@@ -4,12 +4,13 @@ package registry
+ 
+ import "unsafe"
+ import "syscall"
++import "internal/syscall/windows/sysdll"
+ 
+ var _ unsafe.Pointer
+ 
+ var (
+-	modadvapi32 = syscall.NewLazyDLL("advapi32.dll")
+-	modkernel32 = syscall.NewLazyDLL("kernel32.dll")
++	modadvapi32 = syscall.NewLazyDLL(sysdll.Add("advapi32.dll"))
++	modkernel32 = syscall.NewLazyDLL(sysdll.Add("kernel32.dll"))
+ 
+ 	procRegCreateKeyExW           = modadvapi32.NewProc("RegCreateKeyExW")
+ 	procRegDeleteKeyW             = modadvapi32.NewProc("RegDeleteKeyW")
+diff --git a/src/internal/syscall/windows/syscall_windows.go b/src/internal/syscall/windows/syscall_windows.go
+index dc8a916..c1cd4b2 100644
+--- a/src/internal/syscall/windows/syscall_windows.go
++++ b/src/internal/syscall/windows/syscall_windows.go
+@@ -6,7 +6,7 @@ package windows
+ 
+ import "syscall"
+ 
+-//go:generate go run ../../../syscall/mksyscall_windows.go -output zsyscall_windows.go syscall_windows.go
++//go:generate go run ../../../syscall/mksyscall_windows.go -output zsyscall_windows.go -systemdll syscall_windows.go
+ 
+ const GAA_FLAG_INCLUDE_PREFIX = 0x00000010
+ 
+diff --git a/src/internal/syscall/windows/sysdll/sysdll.go b/src/internal/syscall/windows/sysdll/sysdll.go
+new file mode 100644
+index 0000000..4e0018f
+--- /dev/null
++++ b/src/internal/syscall/windows/sysdll/sysdll.go
+@@ -0,0 +1,28 @@
++// Copyright 2016 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++// Package sysdll is an internal leaf package that records and reports
++// which Windows DLL names are used by Go itself. These DLLs are then
++// only loaded from the System32 directory. See Issue 14959.
++package sysdll
++
++// IsSystemDLL reports whether the named dll key (a base name, like
++// "foo.dll") is a system DLL which should only be loaded from the
++// Windows SYSTEM32 directory.
++//
++// Filenames are case sensitive, but that doesn't matter because
++// the case registered with Add is also the same case used with
++// LoadDLL later.
++//
++// It has no associated mutex and should only be mutated serially
++// (currently: during init), and not concurrent with DLL loading.
++var IsSystemDLL = map[string]bool{}
++
++// Add notes that dll is a system32 DLL which should only be loaded
++// from the Windows SYSTEM32 directory. It returns its argument back,
++// for ease of use in generated code.
++func Add(dll string) string {
++	IsSystemDLL[dll] = true
++	return dll
++}
+diff --git a/src/internal/syscall/windows/zsyscall_windows.go b/src/internal/syscall/windows/zsyscall_windows.go
+index c6f607a..f39ca0c 100644
+--- a/src/internal/syscall/windows/zsyscall_windows.go
++++ b/src/internal/syscall/windows/zsyscall_windows.go
+@@ -4,12 +4,13 @@ package windows
+ 
+ import "unsafe"
+ import "syscall"
++import "internal/syscall/windows/sysdll"
+ 
+ var _ unsafe.Pointer
+ 
+ var (
+-	modiphlpapi = syscall.NewLazyDLL("iphlpapi.dll")
+-	modkernel32 = syscall.NewLazyDLL("kernel32.dll")
++	modiphlpapi = syscall.NewLazyDLL(sysdll.Add("iphlpapi.dll"))
++	modkernel32 = syscall.NewLazyDLL(sysdll.Add("kernel32.dll"))
+ 
+ 	procGetAdaptersAddresses = modiphlpapi.NewProc("GetAdaptersAddresses")
+ 	procGetComputerNameExW   = modkernel32.NewProc("GetComputerNameExW")
+diff --git a/src/runtime/export_windows_test.go b/src/runtime/export_windows_test.go
+index 61fcef9..3d51fd2 100644
+--- a/src/runtime/export_windows_test.go
++++ b/src/runtime/export_windows_test.go
+@@ -7,3 +7,7 @@
+ package runtime
+ 
+ var TestingWER = &testingWER
++
++func LoadLibraryExStatus() (useEx, haveEx, haveFlags bool) {
++	return useLoadLibraryEx, _LoadLibraryExW != nil, _AddDllDirectory != nil
++}
+diff --git a/src/runtime/os1_windows.go b/src/runtime/os1_windows.go
+index d012034..ab378b0 100644
+--- a/src/runtime/os1_windows.go
++++ b/src/runtime/os1_windows.go
+@@ -88,8 +88,11 @@ var (
+ 
+ 	// Following syscalls are only available on some Windows PCs.
+ 	// We will load syscalls, if available, before using them.
++	_AddDllDirectory,
+ 	_AddVectoredContinueHandler,
+-	_GetQueuedCompletionStatusEx stdFunction
++	_GetQueuedCompletionStatusEx,
++	_LoadLibraryExW,
++	_ stdFunction
+ )
+ 
+ // Call a Windows function with stdcall conventions,
+@@ -110,8 +113,10 @@ func loadOptionalSyscalls() {
+ 		return stdFunction(unsafe.Pointer(f))
+ 	}
+ 	if l != 0 {
++		_AddDllDirectory = findfunc("AddDllDirectory")
+ 		_AddVectoredContinueHandler = findfunc("AddVectoredContinueHandler")
+ 		_GetQueuedCompletionStatusEx = findfunc("GetQueuedCompletionStatusEx")
++		_LoadLibraryExW = findfunc("LoadLibraryExW")
+ 	}
+ }
+ 
+@@ -121,6 +126,11 @@ func getLoadLibrary() uintptr {
+ }
+ 
+ //go:nosplit
++func getLoadLibraryEx() uintptr {
++	return uintptr(unsafe.Pointer(_LoadLibraryExW))
++}
++
++//go:nosplit
+ func getGetProcAddress() uintptr {
+ 	return uintptr(unsafe.Pointer(_GetProcAddress))
+ }
+@@ -139,6 +149,22 @@ const (
+ // in sys_windows_386.s and sys_windows_amd64.s
+ func externalthreadhandler()
+ 
++// When loading DLLs, we prefer to use LoadLibraryEx with
++// LOAD_LIBRARY_SEARCH_* flags, if available. LoadLibraryEx is not
++// available on old Windows, though, and the LOAD_LIBRARY_SEARCH_*
++// flags are not available on some versions of Windows without a
++// security patch.
++//
++// https://msdn.microsoft.com/en-us/library/ms684179(v=vs.85).aspx says:
++// "Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
++// Server 2008: The LOAD_LIBRARY_SEARCH_* flags are available on
++// systems that have KB2533623 installed. To determine whether the
++// flags are available, use GetProcAddress to get the address of the
++// AddDllDirectory, RemoveDllDirectory, or SetDefaultDllDirectories
++// function. If GetProcAddress succeeds, the LOAD_LIBRARY_SEARCH_*
++// flags can be used with LoadLibraryEx."
++var useLoadLibraryEx bool
++
+ func osinit() {
+ 	asmstdcallAddr = unsafe.Pointer(funcPC(asmstdcall))
+ 
+@@ -146,6 +172,8 @@ func osinit() {
+ 
+ 	loadOptionalSyscalls()
+ 
++	useLoadLibraryEx = (_LoadLibraryExW != nil && _AddDllDirectory != nil)
++
+ 	disableWER()
+ 
+ 	externalthreadhandlerp = funcPC(externalthreadhandler)
+diff --git a/src/runtime/syscall_windows.go b/src/runtime/syscall_windows.go
+index 8e069cd..4d8ee51 100644
+--- a/src/runtime/syscall_windows.go
++++ b/src/runtime/syscall_windows.go
+@@ -88,6 +88,41 @@ func compileCallback(fn eface, cleanstack bool) (code uintptr) {
+ 	return callbackasmAddr(n)
+ }
+ 
++const _LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800
++
++//go:linkname syscall_loadsystemlibrary syscall.loadsystemlibrary
++//go:nosplit
++func syscall_loadsystemlibrary(filename *uint16) (handle, err uintptr) {
++	c := &getg().m.syscall
++
++	if useLoadLibraryEx {
++		c.fn = getLoadLibraryEx()
++		c.n = 3
++		args := struct {
++			lpFileName *uint16
++			hFile      uintptr // always 0
++			flags      uint32
++		}{filename, 0, _LOAD_LIBRARY_SEARCH_SYSTEM32}
++		c.args = uintptr(noescape(unsafe.Pointer(&args)))
++	} else {
++		// User is on Windows XP or something ancient.
++		// The caller wanted to only load the filename DLL
++		// from the System32 directory but that facility
++		// doesn't exist, so just load it the normal way. This
++		// is a potential security risk, but so is Windows XP.
++		c.fn = getLoadLibrary()
++		c.n = 1
++		c.args = uintptr(noescape(unsafe.Pointer(&filename)))
++	}
++
++	cgocall(asmstdcallAddr, unsafe.Pointer(c))
++	handle = c.r1
++	if handle == 0 {
++		err = c.err
++	}
++	return
++}
++
+ //go:linkname syscall_loadlibrary syscall.loadlibrary
+ //go:nosplit
+ func syscall_loadlibrary(filename *uint16) (handle, err uintptr) {
+diff --git a/src/runtime/syscall_windows_test.go b/src/runtime/syscall_windows_test.go
+index 677eb5f..ee449f9 100644
+--- a/src/runtime/syscall_windows_test.go
++++ b/src/runtime/syscall_windows_test.go
+@@ -6,6 +6,8 @@ package runtime_test
+ 
+ import (
+ 	"fmt"
++	"internal/syscall/windows/sysdll"
++	"internal/testenv"
+ 	"io/ioutil"
+ 	"os"
+ 	"os/exec"
+@@ -640,3 +642,94 @@ uintptr_t cfunc(callback f, uintptr_t n) {
+ 		t.Errorf("got %d want %d", got, want)
+ 	}
+ }
++
++// See Issue 14959
++func TestDLLPreloadMitigation(t *testing.T) {
++	if _, err := exec.LookPath("gcc"); err != nil {
++		t.Skip("skipping test: gcc is missing")
++	}
++
++	dir0, err := os.Getwd()
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer os.Chdir(dir0)
++
++	const src = `
++#include <stdint.h>
++#include <windows.h>
++
++uintptr_t cfunc() {
++   SetLastError(123);
++}
++`
++	tmpdir, err := ioutil.TempDir("", "TestDLLPreloadMitigation")
++	if err != nil {
++		t.Fatal("TempDir failed: ", err)
++	}
++	defer os.RemoveAll(tmpdir)
++
++	srcname := "nojack.c"
++	err = ioutil.WriteFile(filepath.Join(tmpdir, srcname), []byte(src), 0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	name := "nojack.dll"
++	cmd := exec.Command("gcc", "-shared", "-s", "-Werror", "-o", name, srcname)
++	cmd.Dir = tmpdir
++	out, err := cmd.CombinedOutput()
++	if err != nil {
++		t.Fatalf("failed to build dll: %v - %v", err, string(out))
++	}
++	dllpath := filepath.Join(tmpdir, name)
++
++	dll := syscall.MustLoadDLL(dllpath)
++	dll.MustFindProc("cfunc")
++	dll.Release()
++
++	// Get into the directory with the DLL we'll load by base name
++	// ("nojack.dll") Think of this as the user double-clicking an
++	// installer from their Downloads directory where a browser
++	// silently downloaded some malicious DLLs.
++	os.Chdir(tmpdir)
++
++	// First before we can load a DLL from the current directory,
++	// loading it only as "nojack.dll", without an absolute path.
++	delete(sysdll.IsSystemDLL, name) // in case test was run repeatedly
++	dll, err = syscall.LoadDLL(name)
++	if err != nil {
++		t.Fatalf("failed to load %s by base name before sysdll registration: %v", name, err)
++	}
++	dll.Release()
++
++	// And now verify that if we register it as a system32-only
++	// DLL, the implicit loading from the current directory no
++	// longer works.
++	sysdll.IsSystemDLL[name] = true
++	dll, err = syscall.LoadDLL(name)
++	if err == nil {
++		dll.Release()
++		if wantLoadLibraryEx() {
++			t.Fatalf("Bad: insecure load of DLL by base name %q before sysdll registration: %v", name, err)
++		}
++		t.Skip("insecure load of DLL, but expected")
++	}
++}
++
++// wantLoadLibraryEx reports whether we expect LoadLibraryEx to work for tests.
++func wantLoadLibraryEx() bool {
++	return testenv.Builder() == "windows-amd64-gce" || testenv.Builder() == "windows-386-gce"
++}
++
++func TestLoadLibraryEx(t *testing.T) {
++	use, have, flags := runtime.LoadLibraryExStatus()
++	if use {
++		return // success.
++	}
++	if wantLoadLibraryEx() {
++		t.Fatalf("Expected LoadLibraryEx+flags to be available. (LoadLibraryEx=%v; flags=%v)",
++			have, flags)
++	}
++	t.Skipf("LoadLibraryEx not usable, but not expected. (LoadLibraryEx=%v; flags=%v)",
++		have, flags)
++}
+diff --git a/src/syscall/dll_windows.go b/src/syscall/dll_windows.go
+index c157e6d..ec8d85b 100644
+--- a/src/syscall/dll_windows.go
++++ b/src/syscall/dll_windows.go
+@@ -5,6 +5,7 @@
+ package syscall
+ 
+ import (
++	"internal/syscall/windows/sysdll"
+ 	"sync"
+ 	"sync/atomic"
+ 	"unsafe"
+@@ -26,6 +27,7 @@ func Syscall9(trap, nargs, a1, a2, a3, a4, a5, a6, a7, a8, a9 uintptr) (r1, r2 u
+ func Syscall12(trap, nargs, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 uintptr) (r1, r2 uintptr, err Errno)
+ func Syscall15(trap, nargs, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15 uintptr) (r1, r2 uintptr, err Errno)
+ func loadlibrary(filename *uint16) (handle uintptr, err Errno)
++func loadsystemlibrary(filename *uint16) (handle uintptr, err Errno)
+ func getprocaddress(handle uintptr, procname *uint8) (proc uintptr, err Errno)
+ 
+ // A DLL implements access to a single DLL.
+@@ -34,13 +36,19 @@ type DLL struct {
+ 	Handle Handle
+ }
+ 
+-// LoadDLL loads DLL file into memory.
+-func LoadDLL(name string) (dll *DLL, err error) {
++// LoadDLL loads the named DLL file into memory.
++func LoadDLL(name string) (*DLL, error) {
+ 	namep, err := UTF16PtrFromString(name)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	h, e := loadlibrary(namep)
++	var h uintptr
++	var e Errno
++	if sysdll.IsSystemDLL[name] {
++		h, e = loadsystemlibrary(namep)
++	} else {
++		h, e = loadlibrary(namep)
++	}
+ 	if e != 0 {
+ 		return nil, &DLLError{
+ 			Err:     e,
+diff --git a/src/syscall/mksyscall_windows.go b/src/syscall/mksyscall_windows.go
+index 622272a..546cb0d 100644
+--- a/src/syscall/mksyscall_windows.go
++++ b/src/syscall/mksyscall_windows.go
+@@ -57,6 +57,7 @@ import (
+ 	"io/ioutil"
+ 	"log"
+ 	"os"
++	"sort"
+ 	"strconv"
+ 	"strings"
+ 	"text/template"
+@@ -65,6 +66,8 @@ import (
+ var (
+ 	filename       = flag.String("output", "", "output file name (standard output if omitted)")
+ 	printTraceFlag = flag.Bool("trace", false, "generate print statement after every syscall")
++	systemDLL      = flag.Bool("systemdll", false, "whether all DLLs should be loaded from the Windows system directory")
++	sysRepo        = flag.Bool("xsys", false, "whether this code is for the x/sys subrepo")
+ )
+ 
+ func trim(s string) string {
+@@ -593,8 +596,14 @@ func (f *Fn) HelperName() string {
+ 
+ // Source files and functions.
+ type Source struct {
+-	Funcs []*Fn
+-	Files []string
++	Funcs   []*Fn
++	Files   []string
++	Imports []string
++}
++
++func (src *Source) Import(pkg string) {
++	src.Imports = append(src.Imports, pkg)
++	sort.Strings(src.Imports)
+ }
+ 
+ // ParseFiles parses files listed in fs and extracts all syscall
+@@ -604,6 +613,12 @@ func ParseFiles(fs []string) (*Source, error) {
+ 	src := &Source{
+ 		Funcs: make([]*Fn, 0),
+ 		Files: make([]string, 0),
++		Imports: []string{
++			"unsafe",
++		},
++	}
++	if *systemDLL {
++		src.Import("internal/syscall/windows/sysdll")
+ 	}
+ 	for _, file := range fs {
+ 		if err := src.ParseFile(file); err != nil {
+@@ -676,9 +691,30 @@ func (src *Source) ParseFile(path string) error {
+ 
+ // Generate output source file from a source set src.
+ func (src *Source) Generate(w io.Writer) error {
++	if *sysRepo && packageName != "windows" {
++		src.Import("golang.org/x/sys/windows")
++	}
++	if packageName != "syscall" {
++		src.Import("syscall")
++	}
+ 	funcMap := template.FuncMap{
+ 		"packagename": packagename,
+ 		"syscalldot":  syscalldot,
++		"newlazydll": func(dll string) string {
++			arg := "\"" + dll + ".dll\""
++			if *systemDLL {
++				arg = "sysdll.Add(" + arg + ")"
++			}
++			if *sysRepo {
++				if packageName == "windows" {
++					return "&LazyDLL{Name: " + arg + ", Flags: LoadLibrarySearchSystem32}"
++				} else {
++					return "&windows.LazyDLL{Name: " + arg + ", Flags: windows.LoadLibrarySearchSystem32}"
++				}
++			} else {
++				return syscalldot() + "NewLazyDLL(" + arg + ")"
++			}
++		},
+ 	}
+ 	t := template.Must(template.New("main").Funcs(funcMap).Parse(srcTemplate))
+ 	err := t.Execute(w, src)
+@@ -733,8 +769,10 @@ const srcTemplate = `
+ 
+ package {{packagename}}
+ 
+-import "unsafe"{{if syscalldot}}
+-import "syscall"{{end}}
++import (
++{{range .Imports}}"{{.}}"
++{{end}}
++)
+ 
+ var _ unsafe.Pointer
+ 
+@@ -746,7 +784,7 @@ var (
+ 
+ {{/* help functions */}}
+ 
+-{{define "dlls"}}{{range .DLLs}}	mod{{.}} = {{syscalldot}}NewLazyDLL("{{.}}.dll")
++{{define "dlls"}}{{range .DLLs}}	mod{{.}} = {{newlazydll .}}
+ {{end}}{{end}}
+ 
+ {{define "funcnames"}}{{range .Funcs}}	proc{{.DLLFuncName}} = mod{{.DLLName}}.NewProc("{{.DLLFuncName}}")
+diff --git a/src/syscall/syscall_windows.go b/src/syscall/syscall_windows.go
+index 1006a9b..049dc82 100644
+--- a/src/syscall/syscall_windows.go
++++ b/src/syscall/syscall_windows.go
+@@ -13,7 +13,7 @@ import (
+ 	"unsafe"
+ )
+ 
+-//go:generate go run mksyscall_windows.go -output zsyscall_windows.go syscall_windows.go security_windows.go
++//go:generate go run mksyscall_windows.go -systemdll -output zsyscall_windows.go syscall_windows.go security_windows.go
+ 
+ type Handle uintptr
+ 
+diff --git a/src/syscall/zsyscall_windows.go b/src/syscall/zsyscall_windows.go
+index 7879ba1..bb3e892 100644
+--- a/src/syscall/zsyscall_windows.go
++++ b/src/syscall/zsyscall_windows.go
+@@ -2,22 +2,25 @@
+ 
+ package syscall
+ 
+-import "unsafe"
++import (
++	"internal/syscall/windows/sysdll"
++	"unsafe"
++)
+ 
+ var _ unsafe.Pointer
+ 
+ var (
+-	modkernel32 = NewLazyDLL("kernel32.dll")
+-	modadvapi32 = NewLazyDLL("advapi32.dll")
+-	modshell32  = NewLazyDLL("shell32.dll")
+-	modmswsock  = NewLazyDLL("mswsock.dll")
+-	modcrypt32  = NewLazyDLL("crypt32.dll")
+-	modws2_32   = NewLazyDLL("ws2_32.dll")
+-	moddnsapi   = NewLazyDLL("dnsapi.dll")
+-	modiphlpapi = NewLazyDLL("iphlpapi.dll")
+-	modsecur32  = NewLazyDLL("secur32.dll")
+-	modnetapi32 = NewLazyDLL("netapi32.dll")
+-	moduserenv  = NewLazyDLL("userenv.dll")
++	modkernel32 = NewLazyDLL(sysdll.Add("kernel32.dll"))
++	modadvapi32 = NewLazyDLL(sysdll.Add("advapi32.dll"))
++	modshell32  = NewLazyDLL(sysdll.Add("shell32.dll"))
++	modmswsock  = NewLazyDLL(sysdll.Add("mswsock.dll"))
++	modcrypt32  = NewLazyDLL(sysdll.Add("crypt32.dll"))
++	modws2_32   = NewLazyDLL(sysdll.Add("ws2_32.dll"))
++	moddnsapi   = NewLazyDLL(sysdll.Add("dnsapi.dll"))
++	modiphlpapi = NewLazyDLL(sysdll.Add("iphlpapi.dll"))
++	modsecur32  = NewLazyDLL(sysdll.Add("secur32.dll"))
++	modnetapi32 = NewLazyDLL(sysdll.Add("netapi32.dll"))
++	moduserenv  = NewLazyDLL(sysdll.Add("userenv.dll"))
+ 
+ 	procGetLastError                       = modkernel32.NewProc("GetLastError")
+ 	procLoadLibraryW                       = modkernel32.NewProc("LoadLibraryW")
+-- 
+2.7.4
+

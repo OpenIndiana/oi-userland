@@ -1,0 +1,35 @@
+From 2cfbb875208f4acecfb0b72de5aebe37e8d03a35 Mon Sep 17 00:00:00 2001
+From: Robert Griesemer <gri@golang.org>
+Date: Tue, 5 Apr 2016 09:44:00 -0700
+Subject: [PATCH 74/79] crypto/dsa: eliminate invalid PublicKey early
+
+For PublicKey.P == 0, Verify will fail. Don't even try.
+
+Change-Id: I1009f2b3dead8d0041626c946633acb10086d8c8
+Reviewed-on: https://go-review.googlesource.com/21533
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/21637
+---
+ src/crypto/dsa/dsa.go | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/crypto/dsa/dsa.go b/src/crypto/dsa/dsa.go
+index b7565a6..0ecb24a 100644
+--- a/src/crypto/dsa/dsa.go
++++ b/src/crypto/dsa/dsa.go
+@@ -249,6 +249,10 @@ func Sign(rand io.Reader, priv *PrivateKey, hash []byte) (r, s *big.Int, err err
+ func Verify(pub *PublicKey, hash []byte, r, s *big.Int) bool {
+ 	// FIPS 186-3, section 4.7
+ 
++	if pub.P.Sign() == 0 {
++		return false
++	}
++
+ 	if r.Sign() < 1 || r.Cmp(pub.Q) >= 0 {
+ 		return false
+ 	}
+-- 
+2.7.4
+

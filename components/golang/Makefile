@@ -78,32 +78,32 @@ $(foreach suffix, $(SUPP_PACKAGES), $(eval $(call supp-rules,$(suffix))))
 # revisions chosen from the last commit to the respective repository at the
 # same time that this component was updated as there is no formal release
 # process for these packages.  Whenever Go is updated, these should be as well.
-GIT_COMMIT_ID_crypto=		0c93e1ff9f91f0c63bf17b123de503d023434fdd
+GIT_COMMIT_ID_crypto=		1777f3ba8c1fed80fcaec3317e3aaa4f627764d2
 GIT_COMMIT_ID_image=		baddd3465a05d84a6d8d3507547a91cb188c81ea
-GIT_COMMIT_ID_lint=		32a87160691b3c96046c0c678fe57c5bef761456
-GIT_COMMIT_ID_net=		b4e17d61b15679caf2335da776c614169a1b4643
-GIT_COMMIT_ID_sys=		d9157a9621b69ad1d8d77a1933590c416593f24f
-GIT_COMMIT_ID_text=		22af8577cc7d0b37e7fb5708399a12115bfe6900
-GIT_COMMIT_ID_tools=		ac6d9c1d842f9b6482f39f7a172e0251a0f7cbc0
-GIT_COMMIT_ID_tour=		1c790b9f8bfefe44f33fbc9aacf5a6bc06027321
+GIT_COMMIT_ID_lint=		8f348af5e29faa4262efdc14302797f23774e477
+GIT_COMMIT_ID_net=		fb93926129b8ec0056f2f458b1f519654814edf0
+GIT_COMMIT_ID_sys=		9eef40adf05b951699605195b829612bd7b69952
+GIT_COMMIT_ID_text=		5ee49cfe751141f8017047bab800d1f528ee3be1
+GIT_COMMIT_ID_tools=		5da1e91fb2cc877989e7c73748b505a0612956f2
+GIT_COMMIT_ID_tour=		41d86d51aaa4f1cf4f66e42456ba137c93cad950
 
 # Resulting hash of related git commit once archived.
-COMPONENT_ARCHIVE_HASH_crypto=	\
-	sha256:6b088fa04632857c7b6244bf887f560f9fe2efa8342072f3837e9fe556c1190e
-COMPONENT_ARCHIVE_HASH_image=	\
+GIT_HASH_crypto=	\
+	sha256:05003de0b534b6e0303dc7c2a0f88a1cd53af11acde96fa5a38bcbaf31250c5e
+GIT_HASH_image=	\
 	sha256:96951cea9d34603209961d46010610894df6c708321e1b4781d71bdd180e75b8
-COMPONENT_ARCHIVE_HASH_lint=	\
-	sha256:1b5f8c917056dc850da9220a19f907ed323c62e1f42f5a09f3648ee73a98ae6d
-COMPONENT_ARCHIVE_HASH_net=	\
-	sha256:dca84ca46ed8eb46db12c27a3b5720acacdd6d0206304453d48056d6b9688e81
-COMPONENT_ARCHIVE_HASH_sys=	\
-	sha256:267416d3f0cda4c916192e5c2587ba2a591a593a0c8dc65df3e7f5e5c791acc7
-COMPONENT_ARCHIVE_HASH_text=	\
-	sha256:8484f1a25689f0e45c11768ed054acb7b747fe5b22c23565e744ec5c40f0e4c6
-COMPONENT_ARCHIVE_HASH_tools=	\
-	sha256:a02ef6a6c344bc6c643af00a6ba0549c7442fa0111279dca601341d16683ba56
-COMPONENT_ARCHIVE_HASH_tour=	\
-	sha256:19e6a5396b7b65cece97cb203a335a2924c6cd648709d80ef8aa3c220aab8f88
+GIT_HASH_lint=	\
+	sha256:1ad5bbf9c21327c73cb67db1329aee8253e18de994302c8ce1a98581bda4da44
+GIT_HASH_net=	\
+	sha256:ca7830ac9af95232204ebc52d27c4726c32e4c0df760e039faba0224075fcb59
+GIT_HASH_sys=	\
+	sha256:b5fdef2664d43430e58250c25564b0376895eb44fbd7e292d5251e5deea8a0c8
+GIT_HASH_text=	\
+	sha256:f65d0191d15042773899efe405fd3e4168922bba2494b2e68f0408bbef23e777
+GIT_HASH_tools=	\
+	sha256:c260308533abc9ea95328eee34616f59ccef1737c51be9be6d652f538777b661
+GIT_HASH_tour=	\
+	sha256:c484f1dbdd67e5108418574d808daf223cc4c544c0f9e4bea4150978197914bc
 
 # Go package imports for lint are found in github directory.
 COMPONENT_IMPORT_SRC_lint=	github.com/golang

@@ -1,0 +1,58 @@
+From 90bf0f1e5dd1023034142efb72021a9bacb418ce Mon Sep 17 00:00:00 2001
+From: Alex Brainman <alex.brainman@gmail.com>
+Date: Tue, 5 Apr 2016 11:31:50 +1000
+Subject: [PATCH 78/79] runtime: leave directory before removing it in
+ TestDLLPreloadMitigation
+
+Fixes #15120
+
+Change-Id: I1d9a192ac163826bad8b46e8c0b0b9e218e69570
+Reviewed-on: https://go-review.googlesource.com/21520
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/21681
+Run-TryBot: Andrew Gerrand <adg@golang.org>
+Reviewed-by: Alex Brainman <alex.brainman@gmail.com>
+---
+ src/runtime/syscall_windows_test.go | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/src/runtime/syscall_windows_test.go b/src/runtime/syscall_windows_test.go
+index ee449f9..6a5e536 100644
+--- a/src/runtime/syscall_windows_test.go
++++ b/src/runtime/syscall_windows_test.go
+@@ -649,6 +649,17 @@ func TestDLLPreloadMitigation(t *testing.T) {
+ 		t.Skip("skipping test: gcc is missing")
+ 	}
+ 
++	tmpdir, err := ioutil.TempDir("", "TestDLLPreloadMitigation")
++	if err != nil {
++		t.Fatal("TempDir failed: ", err)
++	}
++	defer func() {
++		err := os.RemoveAll(tmpdir)
++		if err != nil {
++			t.Error(err)
++		}
++	}()
++
+ 	dir0, err := os.Getwd()
+ 	if err != nil {
+ 		t.Fatal(err)
+@@ -663,12 +674,6 @@ uintptr_t cfunc() {
+    SetLastError(123);
+ }
+ `
+-	tmpdir, err := ioutil.TempDir("", "TestDLLPreloadMitigation")
+-	if err != nil {
+-		t.Fatal("TempDir failed: ", err)
+-	}
+-	defer os.RemoveAll(tmpdir)
+-
+ 	srcname := "nojack.c"
+ 	err = ioutil.WriteFile(filepath.Join(tmpdir, srcname), []byte(src), 0)
+ 	if err != nil {
+-- 
+2.7.4
+

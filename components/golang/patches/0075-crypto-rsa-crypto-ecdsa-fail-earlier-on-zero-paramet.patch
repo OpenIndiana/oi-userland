@@ -1,0 +1,93 @@
+From 5b874ee8b72a0c76c990041d2ed8b53a38e2dfde Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Tue, 5 Apr 2016 20:40:40 +0000
+Subject: [PATCH 75/79] crypto/rsa, crypto/ecdsa: fail earlier on zero
+ parameters
+
+Change-Id: Ia6ed49d5ef3a256a55e6d4eaa1b4d9f0fc447013
+Reviewed-on: https://go-review.googlesource.com/21560
+Reviewed-by: Robert Griesemer <gri@golang.org>
+Reviewed-on: https://go-review.googlesource.com/21638
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Run-TryBot: Andrew Gerrand <adg@golang.org>
+---
+ src/crypto/ecdsa/ecdsa.go | 11 ++++++++---
+ src/crypto/rsa/rsa.go     |  5 ++++-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/src/crypto/ecdsa/ecdsa.go b/src/crypto/ecdsa/ecdsa.go
+index 8d66477..a01e18c 100644
+--- a/src/crypto/ecdsa/ecdsa.go
++++ b/src/crypto/ecdsa/ecdsa.go
+@@ -23,6 +23,7 @@ import (
+ 	"crypto/elliptic"
+ 	"crypto/sha512"
+ 	"encoding/asn1"
++	"errors"
+ 	"io"
+ 	"math/big"
+ )
+@@ -129,6 +130,8 @@ func fermatInverse(k, N *big.Int) *big.Int {
+ 	return new(big.Int).Exp(k, nMinus2, N)
+ }
+ 
++var errZeroParam = errors.New("zero parameter")
++
+ // Sign signs an arbitrary length hash (which should be the result of hashing a
+ // larger message) using the private key, priv. It returns the signature as a
+ // pair of integers. The security of the private key depends on the entropy of
+@@ -169,7 +172,9 @@ func Sign(rand io.Reader, priv *PrivateKey, hash []byte) (r, s *big.Int, err err
+ 	// See [NSA] 3.4.1
+ 	c := priv.PublicKey.Curve
+ 	N := c.Params().N
+-
++	if N.Sign() == 0 {
++		return nil, nil, errZeroParam
++	}
+ 	var k, kInv *big.Int
+ 	for {
+ 		for {
+@@ -179,7 +184,7 @@ func Sign(rand io.Reader, priv *PrivateKey, hash []byte) (r, s *big.Int, err err
+ 				return
+ 			}
+ 
+-			kInv = fermatInverse(k, N)
++			kInv = fermatInverse(k, N) // N != 0
+ 			r, _ = priv.Curve.ScalarBaseMult(k.Bytes())
+ 			r.Mod(r, N)
+ 			if r.Sign() != 0 {
+@@ -191,7 +196,7 @@ func Sign(rand io.Reader, priv *PrivateKey, hash []byte) (r, s *big.Int, err err
+ 		s = new(big.Int).Mul(priv.D, r)
+ 		s.Add(s, e)
+ 		s.Mul(s, kInv)
+-		s.Mod(s, N)
++		s.Mod(s, N) // N != 0
+ 		if s.Sign() != 0 {
+ 			break
+ 		}
+diff --git a/src/crypto/rsa/rsa.go b/src/crypto/rsa/rsa.go
+index 1293b78..031de0e 100644
+--- a/src/crypto/rsa/rsa.go
++++ b/src/crypto/rsa/rsa.go
+@@ -436,6 +436,9 @@ func decrypt(random io.Reader, priv *PrivateKey, c *big.Int) (m *big.Int, err er
+ 		err = ErrDecryption
+ 		return
+ 	}
++	if priv.N.Sign() == 0 {
++		return nil, ErrDecryption
++	}
+ 
+ 	var ir *big.Int
+ 	if random != nil {
+@@ -461,7 +464,7 @@ func decrypt(random io.Reader, priv *PrivateKey, c *big.Int) (m *big.Int, err er
+ 			}
+ 		}
+ 		bigE := big.NewInt(int64(priv.E))
+-		rpowe := new(big.Int).Exp(r, bigE, priv.N)
++		rpowe := new(big.Int).Exp(r, bigE, priv.N) // N != 0
+ 		cCopy := new(big.Int).Set(c)
+ 		cCopy.Mul(cCopy, rpowe)
+ 		cCopy.Mod(cCopy, priv.N)
+-- 
+2.7.4
+
