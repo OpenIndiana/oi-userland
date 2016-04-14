@@ -46,6 +46,7 @@ export WS_TOP := \
 	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
+USERLAND_ARCHIVES ?=	$(WS_TOP)/archives/
 WS_MACH =       $(WS_TOP)/$(MACH)
 WS_LOGS =       $(WS_MACH)/logs
 WS_REPO =       $(WS_MACH)/repo
