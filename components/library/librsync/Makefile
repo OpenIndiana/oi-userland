@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsync
 COMPONENT_VERSION=	0.9.7
@@ -45,9 +45,9 @@ COMPONENT_ARCHIVE_HASH_1=	\
 COMPONENT_ARCHIVE_URL_1=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS += $(COMPONENT_NAME_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D)) ; \
@@ -74,4 +74,4 @@ test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
