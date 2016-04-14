@@ -12,7 +12,7 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		easy-rsa
 COMPONENT_VERSION=	2.2.0
