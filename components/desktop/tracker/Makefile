@@ -13,28 +13,30 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tracker
 
-COMPONENT_VERSION= 0.6.96
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.10.37
 COMPONENT_SUMMARY= Desktop search tool
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a3888daaa1c12358c373b3cf3edd00a5eed1056332152bb099947767d29d9b95
+  sha256:33d9fe0aa58e2249d1907365676a8fba5686e3df0f127b499e18bf2ee170659d
 COMPONENT_ARCHIVE_URL= \
-  http://download.gnome.org/sources/$(COMPONENT_NAME)/0.6/$(COMPONENT_ARCHIVE)
+  http://download.gnome.org/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.tracker-project.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS	+= -D__EXTENSIONS__
+CFLAGS	+= -DO_NOATIME=0
+# illumos-gate provides libuuid, but not uuid.pc
+LDFLAGS += -luuid
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
                 libtoolize --force &&\
@@ -47,11 +49,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/bin
-CONFIGURE_OPTIONS+= --disable-warnings
-CONFIGURE_OPTIONS+= --enable-external-sqlite
-CONFIGURE_OPTIONS+= --disable-evolution-push-module
 
 CONFIGURE_ENV    += PERL=$(PERL)
+
+COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
