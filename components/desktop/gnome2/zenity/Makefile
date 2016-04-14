@@ -12,10 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zenity
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME graphical dialog box generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
