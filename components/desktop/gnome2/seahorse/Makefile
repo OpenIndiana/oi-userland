@@ -12,11 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse
 COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Seahorse is a GNOME application for managing encryption keys
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
