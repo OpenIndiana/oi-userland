@@ -1,0 +1,58 @@
+Upstream patch to fix issue #496. https://github.com/giampaolo/psutil/issues/496
+Pulled from https://github.com/giampaolo/psutil/commit/f1275c19ac9e77b9169ca84dfb7d7701a8a2f9d7
+
+Issue is fixed in psutil 2.2.0, but the module is pinned to >= 1.1.1, < 2.0.0
+by OpenStack requirements.
+
+Should psutil be updated to or past 2.2.0, this patch can be removed.
+
+--- psutil-1.2.1/psutil/_psutil_sunos.c.orig	2016-04-15 12:57:05.971196362 -0700
++++ psutil-1.2.1/psutil/_psutil_sunos.c	2016-04-15 12:58:51.079231642 -0700
+@@ -445,29 +445,24 @@
+         goto error;
+     }
+
+-    numcpus = sysconf(_SC_NPROCESSORS_ONLN) - 1;
+-    for (i=0; i<=numcpus; i++) {
+-        ksp = kstat_lookup(kc, "cpu_stat", i, NULL);
+-        if (ksp == NULL) {
+-            PyErr_SetFromErrno(PyExc_OSError);
+-            goto error;
+-        }
+-        if (kstat_read(kc, ksp, &cs) == -1) {
+-            PyErr_SetFromErrno(PyExc_OSError);
+-            goto error;
+-        }
+-
+-        py_cputime = Py_BuildValue("ffff",
+-                                   (float)cs.cpu_sysinfo.cpu[CPU_USER],
+-                                   (float)cs.cpu_sysinfo.cpu[CPU_KERNEL],
+-                                   (float)cs.cpu_sysinfo.cpu[CPU_IDLE],
+-                                   (float)cs.cpu_sysinfo.cpu[CPU_WAIT]);
+-        if (py_cputime == NULL)
+-            goto error;
+-        if (PyList_Append(py_retlist, py_cputime))
+-            goto error;
+-        Py_DECREF(py_cputime);
+-
++    for (ksp = kc->kc_chain; ksp != NULL; ksp = ksp->ks_next) {
++        if (strcmp(ksp->ks_module, "cpu_stat") == 0) {
++            if (kstat_read(kc, ksp, &cs) == -1) {
++                PyErr_SetFromErrno(PyExc_OSError);
++                goto error;
++            }
++            py_cputime = Py_BuildValue("ffff",
++                                       (float)cs.cpu_sysinfo.cpu[CPU_USER],
++                                       (float)cs.cpu_sysinfo.cpu[CPU_KERNEL],
++                                       (float)cs.cpu_sysinfo.cpu[CPU_IDLE],
++                                       (float)cs.cpu_sysinfo.cpu[CPU_WAIT]);
++            if (py_cputime == NULL)
++                goto error;
++            if (PyList_Append(py_retlist, py_cputime))
++                goto error;
++            Py_DECREF(py_cputime);
++            py_cputime = NULL;
++        }
+     }
+
+     kstat_close(kc);
