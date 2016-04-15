@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.2.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	service/network/mosh
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
