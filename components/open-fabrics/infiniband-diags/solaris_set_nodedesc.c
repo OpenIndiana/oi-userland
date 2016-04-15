@@ -59,7 +59,7 @@
  * building on build system without the change in
  * header files.
  */
-#ifndef	UVERBS_IOCTL_GET_NODEDESC
+#ifndef	UVERBS_NODEDESC_UPDATE_STRING
 #define	UVERBS_IOCTL_GET_NODEDESC		('v' << 8) | 0x04
 #define	UVERBS_IOCTL_SET_NODEDESC		('v' << 8) | 0x05
 #define	UVERBS_NODEDESC_UPDATE_STRING		0x00000001
