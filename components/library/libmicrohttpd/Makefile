@@ -12,7 +12,7 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.38
@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small C library that is supposed to make it easy to run an HTTP server as part of another application
 COMPONENT_CLASSIFICATION=System/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += LIBS="-lnsl -lsocket"
 
@@ -42,4 +42,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

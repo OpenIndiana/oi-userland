@@ -14,7 +14,7 @@
 # Copyright 2016 Jim Klimov. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzo
 COMPONENT_VERSION=	2.09

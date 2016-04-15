@@ -12,7 +12,7 @@
 # Copyright 2013 Adam Stevko. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libdaemon
 COMPONENT_VERSION=	0.14

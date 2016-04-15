@@ -12,7 +12,7 @@
 # Copyright 2013, Aurelien Larcher. All rights reserved.
 # 
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash-completion
 COMPONENT_VERSION=	2.1

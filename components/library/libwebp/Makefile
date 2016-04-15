@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
 COMPONENT_VERSION= 0.4.0
@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://webp.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developers.google.com/speed/webp/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

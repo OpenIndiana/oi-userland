@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.2.5

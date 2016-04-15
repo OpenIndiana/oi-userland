@@ -21,7 +21,7 @@
 # Copyright (c) 2015, Predrag Zecevic. All rights reserved.
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		protobuf
 COMPONENT_VERSION=	2.6.1
