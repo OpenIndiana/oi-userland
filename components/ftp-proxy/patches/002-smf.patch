@@ -133,7 +133,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8 ftp-proxy-OPENB
 +.Sh SOLARIS
 +.Nm
 +must be started as an
-+.Xr smf 5
++.Xr smf 7
 +service:
 +.Bd -literal -offset indent
 +svc:/network/firewall/ftp-proxy
@@ -150,7 +150,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8 ftp-proxy-OPENB
 +Properties processed by
 +.Nm
 +enable
-+.Xr smf_method 5
++.Xr smf_method 7
 +in order to configure the
 +.Nm
 +daemon are listed below.
@@ -245,7 +245,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8 ftp-proxy-OPENB
 +.Bl -tag -offset 3n -compact
 +.It Fl c Ar smf-instance
 +Shows/changes settings kept in
-+.Xr smf 5
++.Xr smf 7
 +repository for the specified
 +.Ar smf-instance
 +of the
@@ -295,7 +295,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8 ftp-proxy-OPENB
  .Sh SEE ALSO
 -.Xr pf.conf 5
 +.Xr pf.conf 5 ,
-+.Xr smf 5 ,
++.Xr smf 7 ,
 +.Xr svccfg (1M)
  .Sh CAVEATS
  .Pp
@@ -756,7 +756,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 + * X-macro table.
 + * Columns are as follows:
 + * 	value key/index 
-+ *	smf(5) property name name
++ *	smf(7) property name name
 + *	member in smf_ftppx_cfg_t structure
 + *	function which converts ASCIIZ to member type in smf_ftppx_cfg_t
 + *	function which converts member in smf_ftppx_cfg_t to ASCIIZ
@@ -858,7 +858,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +
 +/*
 + * smf_conv_out
-+ * Table of conversion functions, which convert ASCIIZ fetched from smf(5)
++ * Table of conversion functions, which convert ASCIIZ fetched from smf(7)
 + * repository to member of smf_ftppx_cfg_t structure.
 + */
 +#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
@@ -918,7 +918,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * nop_in()
 + * Dummy conversion ASCIIZ to ASCIIZ, no allocation happens. Used when
-+ * configuration is from smf(5).
++ * configuration is from smf(7).
 + */
 +static void
 +nop_in(void *asciiz, void *result)
@@ -929,7 +929,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * nop_out()
 + * Dummy conversion ASCIIZ to ASCIIZ, function allocates memory for result by
-+ * strdup(3C). Used when configuration is written to smf(5) repository.
++ * strdup(3C). Used when configuration is written to smf(7) repository.
 + */
 +static void
 +nop_out(void *asciiz, void *val)
@@ -964,7 +964,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * on_to_one()
 + * Function converts ASCIIZ value "on" to 1. Anything else yeilds a 0. Used to
-+ * read configuration from smf(5).
++ * read configuration from smf(7).
 + */
 +static void
 +on_to_one(void *asciiz, void *result)
@@ -975,7 +975,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * one_to_on()
 + * Function converts 0 to ASCIIZ string "off", anything else than 0 yeilds to
-+ * "on". Used when configuration ie being written to smf(5). Function also
++ * "on". Used when configuration ie being written to smf(7). Function also
 + * allocates memory for resulting string using strdup(3C).
 + */
 +static void
@@ -991,7 +991,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * str_to_int()
 + * Function converts integer represented as ASCIIZ to int using atoi(3C).  Used
-+ * when configuration is read from smf(5).
++ * when configuration is read from smf(7).
 + */
 +static void
 +str_to_int(void *asciiz, void *result)
@@ -1002,7 +1002,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * int_to_str()
 + * Function converts integer number to ASCIIZ using asprintf(3C). Used when
-+ * configuration is being stored to smf(5). Memory for results get allocated by
++ * configuration is being stored to smf(7). Memory for results get allocated by
 + * asprintf(3C).
 + */
 +static void
@@ -1014,7 +1014,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * str_to_uint()
 + * Function converts unsigned integer represented as ASCIIZ to int using
-+ * atoi(3C). Used when configuration is being read from smf(5) repository.
++ * atoi(3C). Used when configuration is being read from smf(7) repository.
 + */
 +static void
 +str_to_uint(void *asciiz, void *result)
@@ -1025,7 +1025,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * uint_to_str()
 + * Function converts unsigned integer to ASCIIZ using asprintf(3C).  Used when
-+ * configuration is written to smf(5). Memory for result is allocated by
++ * configuration is written to smf(7). Memory for result is allocated by
 + * asprintf(3C).
 + */
 +static void
@@ -1038,7 +1038,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 + * log_to_int()
 + * Function encodes ASCIIZ value for log property to numeric code.  String
 + * "all" gets converted to 2, string "on" to 1, anything else yeilds to 0.
-+ * It's used when configuration is being read from smf(5) repository.
++ * It's used when configuration is being read from smf(7) repository.
 + */
 +static void
 +log_to_int(void *asciiz, void *result)
@@ -1109,7 +1109,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +/*
 + * cfg_to_prop_vec()
 + * Function converts smf_ftp_cfg global variable, which holds configuration
-+ * parsed from command line arguments, to prop_vec, which is a smf(5) friendly
++ * parsed from command line arguments, to prop_vec, which is a smf(7) friendly
 + * representation of proxy configuration.
 + *
 + * Additionally, it populates gen_prop_vec to specify needed authorizations.
@@ -1189,7 +1189,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +
 +/*
 + * smf_print_ftpcfg()
-+ * Function loads ftpcfg from smf(5) repository and prints configuration to
++ * Function loads ftpcfg from smf(7) repository and prints configuration to
 + * standard output. We use `scf_simple_prop_get(3SCF)`.
 + *
 + * Returns 0 on success, -1 on error..
@@ -1340,7 +1340,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +
 +/*
 + * smf_create_ftp_instance()
-+ * Function creates a new instance in smf(5) repository.
++ * Function creates a new instance in smf(7) repository.
 + */
 +static int
 +smf_create_ftp_instance(const char *smf_instance)
@@ -1437,7 +1437,7 @@ diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPEN
 +
 +/*
 + * smf_write_ftpcfg()
-+ * Function writes proxy configuration to smf(5) repostiory.
++ * Function writes proxy configuration to smf(7) repostiory.
 + */
 +int
 +smf_write_ftpcfg(const char *smf_instance, int create)
