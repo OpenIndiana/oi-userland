@@ -14,42 +14,26 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		xchat
-COMPONENT_VERSION=	2.8.8
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://xchat.org
-COMPONENT_SUMMARY=	XChat IRC Client
+COMPONENT_NAME=		notification-daemon
+COMPONENT_VERSION=	0.4.0
+COMPONENT_REVISION=	3
+COMPONENT_PROJECT_URL=	http://www.galago-project.org/news/index.php
+COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d6d69437b5e1e45f3e66270fe369344943de8a1190e498fafa5296315a27db0
-COMPONENT_ARCHIVE_URL=	http://www.xchat.org/files/source/2.8/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+    sha256:29aaf4ed090589e69ca5dbbb9125a27c9a194e535cb3b96d26e95bd80ffea530
+COMPONENT_ARCHIVE_URL=	http://www.galago-project.org/files/releases/source/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
-
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					glib-gettextize -f &&\
-					libtoolize --copy --force &&\
-					aclocal &&\
-					$(TOUCH) NEWS &&\
-					automake -c -f && \
-					autoconf )
-
-# Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_SCRIPT=       $(@D)/configure
+PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--enable-dbus
-CONFIGURE_OPTIONS+=	--enable-ipv6
-
-CONFIGURE_ENV+=	perlpath=$(PERL)
+CONFIGURE_OPTIONS+=	--disable-static
 
 # common targets
 build:		$(BUILD_32)
