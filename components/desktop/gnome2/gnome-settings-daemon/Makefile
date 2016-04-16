@@ -12,11 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-settings-daemon
 COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	The GNOME settings daemon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
