@@ -28,15 +28,15 @@ include ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
 
 COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	4.2.4
+COMPONENT_VERSION=	5.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9432bf798e5f7123f3060f37b75b7c07f36f0091305f46473dcae9154f8cd686
+    sha256:81303fdadb4e1322a4ff2dd4b2d5c28439dd077b982bf4d142aa1ce2a21966b2
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 
-TPNO=			18537
+TPNO=			27800
 
 # We need this before the default PKG_PROTO_DIRS, so set it before we include
 # common.mk, which will append the default set.
@@ -58,8 +58,12 @@ LDFLAGS += $(CC_BITS) $(studio_NORUNPATH)
 
 COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
-COMPONENT_BUILD_ARGS += -f makefile.unix
+COMPONENT_BUILD_ARGS += -f makefile
 COMPONENT_BUILD_ARGS += STRIP="/bin/true"
+# Override component makefile flags.
+COMPONENT_BUILD_ARGS += CXX="$(CXX)"
+COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
