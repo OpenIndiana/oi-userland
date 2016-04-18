@@ -75,6 +75,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

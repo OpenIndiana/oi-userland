@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.22.1
-PERL_VERSION=		5.22
+PERL_VERSION_LOCAL=	5.22
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -77,19 +77,19 @@ CONFIGURE_OPTIONS = \
 			-de \
 			-Dmksymlinks \
 			-Ulocincpth= \
-                        -Dbin=/usr/perl5/$(PERL_VERSION)/bin \
+                        -Dbin=/usr/perl5/$(PERL_VERSION_LOCAL)/bin \
 			-Dcc="cc" \
 			-Dcf_email="discuss@solaris-userland.java.net" \
 			-Dcf_by="perl-bugs" \
 			-Dlibperl=libperl.so \
 			-Dmyhostname="localhost" \
 			-Dperl_static_inline="static" \
-			-Dprefix=/usr/perl5/$(PERL_VERSION) \
-                        -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
-			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
-			-Dsiteprefix=/usr/perl5/$(PERL_VERSION) \
-			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
-			-Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
+			-Dprefix=/usr/perl5/$(PERL_VERSION_LOCAL) \
+                        -Dprivlib=/usr/perl5/$(PERL_VERSION_LOCAL)/lib \
+			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION_LOCAL) \
+			-Dsiteprefix=/usr/perl5/$(PERL_VERSION_LOCAL) \
+			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION_LOCAL) \
+			-Dvendorprefix=/usr/perl5/$(PERL_VERSION_LOCAL) \
 			-Duseshrplib \
 			-Dusedtrace \
 			-Duse64bitall \
@@ -142,7 +142,8 @@ COMPONENT_TEST_TRANSFORMS += \
 # perl's install path for sparc is based off the value of the
 # "arch" command.  So we must package that way also.
 #
-PKG_MACROS		+=	P_ARCH=$(shell arch)
+PKG_MACROS 		+=	P_ARCH=$(shell arch)
+PKG_MACROS		+=	PERL_VERSION=$(PERL_VERSION_LOCAL)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

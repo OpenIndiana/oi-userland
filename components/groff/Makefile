@@ -77,8 +77,10 @@ COMPONENT_INSTALL_ARGS += sys_tmac_prefix=$(PROTOUSRSHARELIBDIR)/tmac/
 COMPONENT_PRE_INSTALL_ACTION = \
 	($(MKDIR) $(PROTOUSRBINDIR) )
 
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= $(PROTOUSRLIBDIR)/groff/groffer/perl_test.pl
+
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/c++-runtime

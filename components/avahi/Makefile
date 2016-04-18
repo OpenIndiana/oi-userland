@@ -100,6 +100,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libdaemon
+REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93

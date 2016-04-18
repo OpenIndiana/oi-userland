@@ -44,18 +44,11 @@ include $(WS_MAKE_RULES)/gnu-component.mk
 COMPONENT_BUILD_ENV += \
 	PATH="$(USRBINDIR):$(GNUBIN):$(USRDIR)/perl5/$(PERL_VERSION)/bin"
 
-# Adjust the '#!/usr/bin/env perl' and '#!/usr/bin/perl' at the beginning of
-# the Perl scripts to use '#!/usr/perl5/$(PERL_VERSION)/bin/perl'
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i -e 's?/usr/bin/perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
-		$(PROTOUSRBINDIR)/niceload;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i -e \
-		's?/usr/bin/env perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
-		$(PROTOUSRBINDIR)/parallel;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i -e 's?/usr/bin/perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
-		$(PROTOUSRBINDIR)/sql;
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS = \
+	$(PROTOUSRBINDIR)/niceload \
+	$(PROTOUSRBINDIR)/parallel \
+	$(PROTOUSRBINDIR)/sql
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

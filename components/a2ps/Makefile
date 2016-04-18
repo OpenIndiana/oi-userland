@@ -55,8 +55,13 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	     ln -s $$sheet ; \
 	 done)
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS = \
+	$(PROTOUSRBINDIR)/composeglyphs \
+	$(PROTOUSRBINDIR)/ogonkify
+
 REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += editor/gnu-emacs
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math

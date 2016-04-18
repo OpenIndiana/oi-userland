@@ -255,6 +255,10 @@ define COMPONENT_INSTALL_ACTION=
 	($(RM) $(NO_ELFSIGN_MOG))
 endef
 
+# clear COMPONENT_POST_INSTALL_ACTION so we can append PERL_SCRIPTS_PROCESS
+# at the end
+COMPONENT_POST_INSTALL_ACTION =
+
 #
 # Magic to deliver supplemental package source into proto area.
 #
@@ -295,6 +299,31 @@ COMPONENT_POST_INSTALL_ACTION += \
 		-asmflags -trimpath=$(PROTO_ROOT) -gcflags -trimpath=$(PROTO_ROOT) \
 		"github.com/golang/...");
 
+PERL_SCRIPTS= \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/plan9/mksyscall.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_netbsd.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksyscall_solaris.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksyscall.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_freebsd.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysctl_openbsd.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_dragonfly.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_openbsd.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_linux.pl \
+  $(PROTOUSRLIBDIR)/gocode/1.5/src/golang.org/x/sys/unix/mksysnum_darwin.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/regexp/syntax/make_perl_groups.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_freebsd.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysctl_openbsd.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksyscall.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_openbsd.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_darwin.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_netbsd.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_linux.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksyscall_solaris.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/src/syscall/mksysnum_dragonfly.pl \
+  $(PROTOUSRLIBDIR)/golang/1.5/test/errchk
+
+COMPONENT_POST_INSTALL_ACTION += $(PERL_SCRIPTS_PROCESS)
+
 # Go's test suite is currently designed to be run from the build area.
 
 # Used during the build.
@@ -309,7 +338,7 @@ REQUIRED_PACKAGES += text/gnu-sed
 # Required to build man pages.
 REQUIRED_PACKAGES += developer/documentation-tool/xml2roff
 # There's a single test script which requires perl.
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += system/header
 REQUIRED_PACKAGES += system/library
 # Used for cgo support at runtime; we don't add a package dependency since cgo

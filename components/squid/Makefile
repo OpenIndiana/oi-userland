@@ -84,6 +84,7 @@ CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
 CONFIGURE_OPTIONS += --without-nettle
 CONFIGURE_OPTIONS += --disable-arch-native
+CONFIGURE_OPTIONS += PERL=$(PERL)
 
 # Appends the following line to the end of the squid.conf configuration
 # file. This line is necessary for running squid for testing. 
@@ -91,6 +92,9 @@ CONFIGURE_OPTIONS += --disable-arch-native
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/etc/squid ; \
  	echo '\ncache_effective_user webservd' >> squid.conf)
+
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= $(PROTOUSRDIR)/squid/libexec/helper-mux.pl
 
 # To test manually follow along in the book
 # Squid Proxy Server 3.1 Beginner's Guide Page 34
@@ -131,8 +135,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

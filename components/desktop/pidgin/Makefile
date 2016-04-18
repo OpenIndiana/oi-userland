@@ -66,10 +66,7 @@ LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
 
-# Version of Perl to use.
-PERL_VERSION =  5.20
-
-CONFIGURE_ENV += "ac_cv_path_perlpath=$(USRDIR)/perl5/$(PERL_VERSION)/bin/perl"
+CONFIGURE_ENV += "ac_cv_path_perlpath=$(PERL)"
 
 CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
 CONFIGURE_OPTIONS +=	--disable-nss
@@ -100,8 +97,9 @@ REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8

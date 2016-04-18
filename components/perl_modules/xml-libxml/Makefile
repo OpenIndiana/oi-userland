@@ -37,9 +37,6 @@ COMPONENT_BUGDB=	perl-mod/xml-libxml
 
 TPNO=			22635
 
-# build threaded 5.12 support too
-PERL_VERSIONS += 5.12-mt
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
@@ -59,17 +56,14 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/\(^t\/90\).*/d" ' \
 	'-e "/\(^Hexadecimal\).*/d" '
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

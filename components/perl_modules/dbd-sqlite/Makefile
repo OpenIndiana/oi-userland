@@ -34,9 +34,6 @@ COMPONENT_BUGDB=	perl-mod/dbd-sqlite
 
 TPNO=			24450
 
-# Limit packaging to only these perls.
-PERL_VERSIONS=5.12 5.20
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
@@ -44,41 +41,34 @@ include $(WS_MAKE_RULES)/makemaker.mk
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^Running Mkbootstrap/d" ' '-e "s/mY cOmMeNt/this is executed on older perl releases only/" ' \
-	'-e "/^chmod.*\.bs$$/d" '       '-e "s/mY cOmMeNt/this is executed on older perl releases only/" ' \
+	'-e "/^Running Mkbootstrap/d" ' \
 	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' \
-	'-e "s/^PERL_DL_NONLAZY=1 \$$(PERL).*/<PERL TEST INVOCATION REMOVED>/" ' \
+	'-e "/^PERL_DL_NONLAZY/d" ' \
 	'-e "s/^\(\# sqlite_version=\)[0-9][0-9.]*/\1<USED SQLITE VERSION REMOVED>/" ' \
-	'-e "s/^\(\# \$$DBI::VERSION=\)[0-9][0-9.]*/\1<REPORTED DBI VERSION REMOVED>/" '
+	'-e "s/^\(\# \$$DBI::VERSION=\)[0-9][0-9.]*/\1<REPORTED DBI VERSION REMOVED>/" ' \
+	'-e "/^chmod/d" '
 
 # This makes the configuration process a bit more chatty
 COMPONENT_CONFIGURE_ENV += AUTOMATED_TESTING=1
+
 LICENSE=DBD-SQLite.license
+CLEAN_PATHS += $(LICENSE)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# I have to list the targets directly instead of using $(BUILD_32_AND_64) in
-# order to avoid building DBD::SQLite for perl 5.12-mt which does not have DBI
-# available
-#
 $(LICENSE): $(LICENSE).template
 	$(PERL) -pe 's/COMPONENT_VERSION/$(COMPONENT_VERSION)/g' "$<" > "$@"
 
-build:		$(BUILD_DIR)/$(MACH32)-5.12/.built \
-		$(BUILD_DIR)/$(MACH64)-5.20/.built \
+# DBI must be installed to build
+build:		$(BUILD_64) \
 		$(LICENSE)
 
-install:	$(BUILD_DIR)/$(MACH32)-5.12/.installed \
-		$(BUILD_DIR)/$(MACH64)-5.20/.installed
+install:	$(INSTALL_64)
 
-test:		$(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared \
-		$(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-clean::		$(LICENSE)
-
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += system/library

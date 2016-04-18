@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Tk
@@ -42,27 +43,25 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
 
-# override LIBS so that the Tk.so RunPATH doesn't get set.
-CONFIGURE_OPTIONS += LIBS="-lXft -lX11 -lfontconfig -lm -lc"
+# This component loves openwin.
+CONFIGURE_OPTIONS += X11INC=/usr/X11/include
+CONFIGURE_OPTIONS += X11LIB=/usr/X11/lib/64
 
-# Disbale ASLR for this module.
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-# Testing suspended until 32-bit is gone: 22909079
-#test:		$(TEST_32_and_64)
+# Tests work but require an X display and for some reason does not like
+# our test harness.  Unable to connect to X display.
+# 23107507 perl-tk tests fail to work inside the userland test framework
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig

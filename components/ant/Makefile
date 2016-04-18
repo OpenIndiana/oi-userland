@@ -63,6 +63,12 @@ COMPONENT_INSTALL_ARGS =	$(ANT_DIST_DIRS)
 COMPONENT_INSTALL_TARGETS =	dist
 COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS = \
+        $(PROTOUSRBINDIR)/antRun.pl \
+        $(PROTOUSRBINDIR)/complete-ant-cmd.pl \
+        $(PROTOUSRBINDIR)/runant.pl
+
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=		$(ANT_ENV)
 
@@ -79,5 +85,5 @@ COMPONENT_TEST_TRANSFORMS +=  \
 
 REQUIRED_PACKAGES += developer/java/junit
 REQUIRED_PACKAGES += developer/parser/antlr-2
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93

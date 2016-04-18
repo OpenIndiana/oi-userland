@@ -94,11 +94,24 @@ COMPONENT_PRE_BUILD_ACTION += export LDFLAGS=$(CMAKE_CXXFLAGS.$(BITS));
 COMPONENT_PRE_BUILD_ACTION += echo Running cmake with $(CMAKE_OPTIONS);
 COMPONENT_PRE_BUILD_ACTION += $(CMAKE) . $(CMAKE_OPTIONS);
 
+# Adjust '#!/usr/bin/perl'
+$(INSTALL_64): PERL_SCRIPTS= \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_convert_table_format \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_find_rows \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_fix_extensions \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_install_db \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_secure_installation \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_setpermission \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysql_zap \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysqlaccess \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysqld_multi \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysqldumpslow \
+	$(PROTO_DIR)/$(CMAKE_PREFIX)/bin/mysqlhotcopy
+
 REQUIRED_PACKAGES += database/mysql-56/client
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/c++-runtime

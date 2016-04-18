@@ -53,4 +53,5 @@ CFLAGS +=		-DG_IMPLEMENT_INLINES -DG_HAVE_ISO_VARARGS
 
 REQUIRED_PACKAGES += communication/im/libotr
 REQUIRED_PACKAGES += communication/im/pidgin
+REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += system/library/security/libgcrypt

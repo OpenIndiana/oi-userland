@@ -67,8 +67,11 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(LN) $(PROTOUSRBINDIR)/enscript \
 		$(PROTOUSRBINDIR)/nenscript
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS = \
+	$(PROTOUSRBINDIR)/diffpp \
+	$(PROTOUSRBINDIR)/sliceprint
 
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math

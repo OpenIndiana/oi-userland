@@ -40,21 +40,26 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
 
+COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^[mM]ake/d" ' \
+	'-e "/^Files/d" ' \
+	'-e "/^PERL/d" ' \
+	'-e "/^Running/d" ' \
+	'-e "/^chmod/d" ' \
+	'-e "/^connect /d" ' \
+	'-e "/^Testing/d" ' \
+	'-e "/NullP/d" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-# Testing suspended until consistent results: 22909079
-#test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

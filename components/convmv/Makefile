@@ -47,11 +47,9 @@ COMPONENT_TEST_TARGETS=		test
 COMPONENT_SYSTEM_TEST_TARGETS=	test
 COMPONENT_SYSTEM_TEST_ENV=	CONVMV=$(USRBINDIR)/convmv
 
-# Adjust the '#!/usr/bin/perl' at the beginning of the convmv script to use
-# '#!/usr/perl5/$(PERL_VERSION)/bin/perl'
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i -e 's?/usr/bin/perl?$(PERL)?' \
-		$(PROTOUSRBINDIR)/convmv;
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS = \
+	$(PROTOUSRBINDIR)/convmv
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

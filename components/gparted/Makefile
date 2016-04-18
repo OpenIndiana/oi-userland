@@ -51,6 +51,7 @@ REQUIRED_PACKAGES += library/desktop/c++/gtkmm
 REQUIRED_PACKAGES += library/desktop/c++/pangomm
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

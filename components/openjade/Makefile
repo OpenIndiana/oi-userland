@@ -69,6 +69,9 @@ COMPONENT_TEST_TARGETS =all
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^[mM]ake/d" '
+
 COMPONENT_INSTALL_TARGETS += install-man
 
 # Workaround broken install targets.

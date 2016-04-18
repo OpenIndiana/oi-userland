@@ -50,6 +50,5 @@ CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/slang
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93

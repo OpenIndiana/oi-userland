@@ -23,12 +23,6 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-#
-# Note that package library/perl-5/xml-parser cannot use versionless
-# packaging because this package migrated from the desktop consolidation
-# with an incorrect version number.
-#
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-Parser
@@ -42,15 +36,6 @@ COMPONENT_PROJECT_URL=	http://search.cpan.org/~toddr/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 
 TPNO=			9386
-
-###
-### Fix these IPS manifests once 5.12-mt is gone, 22909338
-###
-### Add forced IPS dependencies to all manifests: 22909291
-###
-
-# build threaded 5.12 support too
-PERL_VERSIONS += 5.12-mt
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -67,19 +52,13 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "1,/^PERL_DL_NONLAZY/d" ' \
         '-e "s|\(^Files=\).*|\1|" '
 
-PKG_MACROS +=	PERL_A=$(shell arch)
+build:		$(BUILD_64)
 
-build:		$(BUILD_32_and_64)
+install:	$(INSTALL_64)
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

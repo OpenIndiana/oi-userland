@@ -38,9 +38,6 @@ COMPONENT_BUGDB=	perl-mod/authen-pam
 
 TPNO=			9303
 
-# build threaded 5.12 support too
-PERL_VERSIONS += 5.12-mt
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
@@ -56,24 +53,19 @@ COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 # This does not have a master test file because the test must be run manually.
 COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 COMPONENT_POST_TEST_ACTION= \
     PERL5LIB=$(@D)/blib/lib:$(@D)/blib/arch $(PERL) test/PAM_NO_AUTHTOK_CHECK.pl
 
-#
 # Must have xml-parser installed for these tests to pass.
-#
 test:		
 		if tty -s; then  $(MAKE) realtest; else echo 'Skipping tests'; fi
 
-realtest:	$(TEST_32_and_64)
+realtest:	$(TEST_64)
 
 system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

@@ -42,10 +42,10 @@ LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo -lgl
 COMPONENT_PREP_ACTION = \
         cp solaris_set_nodedesc.c $(@D)/src
 
-COMPONENT_INSTALL_ENV +=	PERL=$(PERL.5.12)
+CONFIGURE_ENV += PERL=$(PERL)
+COMPONENT_INSTALL_ENV += PERL=$(PERL)
 
 LDFLAGS += -L$(PROTOUSRLIBDIR64)
-CONFIGURE_ENV +=	PERL=$(PERL.5.12)
 
 #
 # For some weird reason PKG_CONFIG is generating
@@ -68,6 +68,18 @@ COMPONENT_PRE_CONFIGURE_ACTION =\
 COMPONENT_POST_CONFIGURE_ACTION=\
 	$(SYMLINK) ../../../$(COMPONENT_SRC)/scripts/IBswcountlimits.pm $(@D)/scripts
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= \
+	$(PROTOUSRSBINDIR)/ibdiscover.pl \
+	$(PROTOUSRSBINDIR)/ibfindnodesusing.pl \
+	$(PROTOUSRSBINDIR)/ibidsverify.pl \
+	$(PROTOUSRSBINDIR)/iblinkinfo.pl \
+	$(PROTOUSRSBINDIR)/ibprintca.pl \
+	$(PROTOUSRSBINDIR)/ibprintrt.pl \
+	$(PROTOUSRSBINDIR)/ibprintswitch.pl \
+	$(PROTOUSRSBINDIR)/ibqueryerrors.pl \
+	$(PROTOUSRSBINDIR)/ibswportwatch.pl
+
 CLEANUP_FILES =\
 	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libibnetdisc.la\
 	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libibnetdisc.so \
@@ -83,8 +95,8 @@ CLEANUP_FILES =\
 	$(PROTOUSRSHAREMAN8DIR)/ibfindnodesusing.8 \
 	$(PROTOUSRINCDIR)/infiniband/ibnetdisc.h\
 
-COMPONENT_POST_INSTALL_ACTION =\
-	$(RM) $(CLEANUP_FILES);\
+COMPONENT_POST_INSTALL_ACTION+= \
+	$(RM) $(CLEANUP_FILES); \
 	$(INSTALL) -m 644 manpages/set_nodedesc.sh.8 $(PROTOUSRSHAREMAN8DIR)
 
 # common targets

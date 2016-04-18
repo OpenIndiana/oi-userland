@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COM
 
 TPNO=			17707
 
+# publish for only one version of perl
 PERL_VERSIONS = $(PERL_VERSION)
 
 # There are tests, but they fail consistently because the test samples are out
@@ -102,6 +103,9 @@ $(PROTOUSRLIBDIR)/graphviz/config6: $(INSTALL_32)
 $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)/gv.pyc: $(INSTALL_32)
 	$(PYTHON.2.7.32) -m compileall -l -d $(PYTHON.2.7.VENDOR_PACKAGES) \
 		$(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
+
+PKG_MACROS += PERL_PKG=$(PERL_PKG)
+PKG_MACROS += PERL_VERSION_NODOT=$(PERL_VERSION_NODOT)
 
 # The test infrastructure doesn't run in a VPATHed environment.
 COMPONENT_PRE_TEST_ACTION = \

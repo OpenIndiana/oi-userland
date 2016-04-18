@@ -45,6 +45,8 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
+# Test failures.  keep going
+COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS += \
@@ -59,17 +61,14 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^chmod /d" ' \
 	'-e "/^Use of uninitialized/d" '
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

@@ -37,7 +37,7 @@ TPNO=			27415
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_ENV +=	PERL=$(PERL.5.22)
+CONFIGURE_ENV +=	PERL=$(PERL)
 
 # Needed to successfully create the message files.
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
@@ -45,4 +45,4 @@ COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 # Needed to get all the localized files.
 COMPONENT_INSTALL_TARGETS += install_l10n
 
-REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += $(PERL_PKG)

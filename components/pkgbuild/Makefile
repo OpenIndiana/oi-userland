@@ -41,4 +41,4 @@ include $(WS_MAKE_RULES)/common.mk
 # Required due to patches to configure and/or automake files.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi;)
 
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)

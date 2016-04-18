@@ -75,8 +75,8 @@ CONFIGURE_OPTIONS += --with-pixbuf=$(USRDIR)
 CONFIGURE_OPTIONS += --with-xft=$(USRDIR)
 CONFIGURE_OPTIONS += PTHREAD_CFLAGS="-D_POSIX_PTHREAD_SEMANTICS"
 CONFIGURE_OPTIONS += PTHREAD_LIBS="-lc"
-CONFIGURE_OPTIONS += PERL=$(PERL.5.12)
-CONFIGURE_OPTIONS += INTLTOOL_PERL=$(PERL.5.12)
+CONFIGURE_OPTIONS += PERL=$(PERL)
+CONFIGURE_OPTIONS += INTLTOOL_PERL=$(PERL)
 
 # X extensions to support
 CONFIGURE_OPTIONS += --with-dpms-ext
@@ -136,6 +136,11 @@ for h in $(REMOVED_HACKS) ; do \
 done ; \
 rm -f $(PROTO_DIR)$(XSS_LIBDIR)/hacks/webcollage-helper );
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= \
+	$(PROTOUSRBINDIR)/xscreensaver-getimage-file \
+	$(PROTOUSRBINDIR)/xscreensaver-getimage-video \
+	$(PROTOUSRBINDIR)/xscreensaver-text
 
 REQUIRED_PACKAGES += gnome/accessibility/gnome-a11y-libs
 REQUIRED_PACKAGES += gnome/config/gconf
@@ -149,7 +154,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-component
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext

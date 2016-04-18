@@ -48,6 +48,21 @@ CPPFLAGS += -DDEFAULT_INFOPATH=\\\"$(INFOPATH)\\\"
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
+# PERL_SCRIPTS_PROCESS needs to be the last COMPONENT_POST_INSTALL_ACTION
+COMPONENT_POST_INSTALL_ACTION = 
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -m 0755 texi2html.pl $(PROTOUSRBINDIR)/texi2html;
+
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= \
+	$(PROTOUSRBINDIR)/makeinfo \
+	$(PROTOUSRBINDIR)/pod2texi \
+	$(PROTOUSRBINDIR)/texi2any \
+	$(PROTOUSRBINDIR)/texi2html
+
+COMPONENT_POST_INSTALL_ACTION += $(PERL_SCRIPTS_PROCESS)
+
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
@@ -56,10 +71,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|.*ginstall.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

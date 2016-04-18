@@ -50,6 +50,6 @@ COMPONENT_TEST_TRANSFORMS += \
 # Note that the gendiff tests will fail on Solaris, because the gendiff utility
 # is missing; this is delivered by rpm.
 
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += text/gnu-patch

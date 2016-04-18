@@ -102,6 +102,9 @@ $(IJS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = ./configure
 
+# Adjust '#!/usr/bin/perl'
+PERL_SCRIPTS= $(PROTOUSRBINDIR)/fixmswrd.pl
+
 # ASLR disabled until sufficient testing can be performed.
 ASLR_MODE= $(ASLR_DISABLE)
 
@@ -126,7 +129,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/cups
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math

@@ -40,6 +40,7 @@ CFLAGS+=		-DOSCAP_THREAD_SAFE
 
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
+# publish for only one version of perl
 PERL_VERSIONS = $(PERL_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk

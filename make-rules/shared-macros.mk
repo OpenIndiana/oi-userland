@@ -574,18 +574,22 @@ JAVA_HOME = $(JAVA8_HOME)
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION ?= 5.22
+PERL_VERSION_NODOT = $(subst .,,$(PERL_VERSION))
 
-PERL_VERSIONS = 5.12 5.20 5.22
+# Used for versionless perl packages.  Processed by ips.mk to stamp out
+# multiple packages for each version of perl listed here.  Used by
+# perl_modules/* but also used for those components that deliver a perl
+# package like graphviz and openscap.
+PERL_VERSIONS = 5.22
 
-PERL.5.12 =     /usr/perl5/5.12/bin/perl
-PERL.5.16 =	/usr/perl5/5.16/bin/perl
-PERL.5.12-mt =	/usr/perl5/5.12/bin/perl-threaded
-PERL.5.20 =     /usr/perl5/5.20/bin/perl
 PERL.5.22 =     /usr/perl5/5.22/bin/perl
 
+# Use these in a component's Makefile for building and packaging with the
+# BUILD's default perl and the package it comes from.
 PERL =          $(PERL.$(PERL_VERSION))
 PERL_PKG =	$(PERL_VERSION:5.%=runtime/perl-5%)
 
+# PERL_ARCH is perl's architecture string.  Use in ips manifests.
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # Optimally we should ask perl which C compiler was used but it doesn't
@@ -597,6 +601,31 @@ PERL_OPTIMIZE :=$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
+
+# If the component has perl scripts then the first line should probably
+# point at the userland default build perl so as not to be influenced
+# by the ips perl mediator.
+# In the component's Makefile define PERL_SCRIPTS with a list of files
+# to be editted.
+
+# Edit the leading #!/usr/bin/perl line in perl scripts to use the
+# BUILD's $(PERL).
+PERL_SCRIPT_SHEBANG_FIX_FUNC = \
+	$(GSED) -i \
+		-e '1s@/usr/bin/perl@$(PERL)@' \
+		-e '1s@/usr/perl5/bin/perl@$(PERL)@' \
+		-e '1s@/usr/bin/env\ perl@$(PERL)@' $(1);
+
+# PERL_SCRIPTS is a list of files from the calling Makefile.
+PERL_SCRIPTS_PROCESS= \
+	$(foreach s,$(PERL_SCRIPTS), \
+	        $(call PERL_SCRIPT_SHEBANG_FIX_FUNC,$(s)))
+
+# Finally if PERL_SCRIPTS is defined in a Makefile then process them here.
+# If multiple installs in the component then clear
+# COMPONENT_POST_INSTALL_ACTION =
+# and re-add $(PERL_SCRIPTS_PROCESS)
+COMPONENT_POST_INSTALL_ACTION += $(PERL_SCRIPTS_PROCESS)
 
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
