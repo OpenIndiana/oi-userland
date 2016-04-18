@@ -1,0 +1,57 @@
+# SPARC misalignment bug: 21492790
+# Internal patch.
+# Most likely not for upstream.
+--- nmap-7.01/nping/ProbeMode.cc	2015-06-27 01:21:53.000000000 -0700
++++ nmap-7.01/nping/ProbeMode.cc	2016-03-17 09:21:12.931989483 -0700
+@@ -1621,7 +1621,8 @@
+  char final_output[65535];
+  nsock_event_id ev_id;
+  struct timeval *t = (struct timeval *)nsock_gettimeofday();
+- const unsigned char *packet=NULL;
++ unsigned char *packet=NULL;
++ const unsigned char *pkt = NULL;
+  const unsigned char *link=NULL;
+  size_t linklen=0;
+  size_t packetlen=0;
+@@ -1633,8 +1634,11 @@
+  NpingTarget *trg=NULL;
+  u16 *prt=NULL;
+  u8 proto=0;
++ int r = 0;
++ unsigned char *p;
+  bool ip=false;
+- memset(final_output, 0, sizeof(final_output));
++
++ (void) std::memset(final_output, 0, sizeof(final_output));
+ 
+  nping_print(DBG_4, "nping_event_handler(): Received callback of type %s with status %s",
+                   nse_type2str(type), nse_status2str(status));
+@@ -1687,7 +1691,18 @@
+        case NSE_TYPE_PCAP_READ:
+ 
+             /* Read a packet */
+-            nse_readpcap(nse, &link, &linklen, &packet, &packetlen, NULL, &pcaptime);
++            nse_readpcap(nse, &link, &linklen, &pkt, &packetlen, NULL,
++                         &pcaptime);
++            r = posix_memalign((void**) &p, 8U, (size_t) packetlen);
++            if (r != 0) {
++              nping_warning(QT_2,
++                            "posix_memalign failed (%i). trying malloc", r);
++              p = (unsigned char*) safe_malloc(packetlen);
++            }
++
++            packet = p;
++            (void) std::memcpy(const_cast<void*>(reinterpret_cast<const void*>(packet)),
++                               const_cast<void*>(reinterpret_cast<const void*>(pkt)), packetlen);
+ 
+             /* If we are on a Ethernet network, extract the next packet protocol
+              * from the Ethernet frame. */
+@@ -1821,6 +1836,8 @@
+  } else{
+     nping_warning(QT_2, "nping_event_handler(): Unknown status code %d\n", status);
+  }
++
++ std::free(packet);
+  return;
+ 
+ } /* End of nping_event_handler() */
