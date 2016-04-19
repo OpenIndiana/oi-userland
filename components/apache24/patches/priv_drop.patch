@@ -20,9 +20,9 @@ Drops extra privilege which was given via SMF manifest file.
      const char *opt_arg;
 +    priv_set_t *tset;
      APR_OPTIONAL_FN_TYPE(ap_signal_server) *signal_server;
+     int rc = OK;
  
-     AP_MONCONTROL(0); /* turn off profiling of startup */
-@@ -788,6 +806,17 @@
+@@ -789,6 +907,17 @@
  
          ap_run_optional_fn_retrieve();
  
@@ -38,5 +38,5 @@ Drops extra privilege which was given via SMF manifest file.
 +        }
 +
          ap_main_state = AP_SQ_MS_RUN_MPM;
-         if (ap_run_mpm(pconf, plog, ap_server_conf) != OK)
-             break;
+         rc = ap_run_mpm(pconf, plog, ap_server_conf);
+ 

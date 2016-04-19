@@ -52,18 +52,3 @@ It also makes sure that both mod_ssl versions contains right RPATH.
  dnl #  end of module specific part
  APACHE_MODPATH_FINISH
  
---- acinclude.m4
-+++ acinclude.m4
-@@ -591,6 +591,12 @@
-   ])
-   if test "x$ac_cv_openssl" = "xyes"; then
-     AC_DEFINE(HAVE_OPENSSL, 1, [Define if OpenSSL is available])
-+
-+    APR_ADDTO(MOD_LDFLAGS, [$ap_openssl_libs])
-+    APR_ADDTO(LIBS, [$ap_openssl_libs])
-+    APR_SETVAR(ab_LDFLAGS, [$MOD_LDFLAGS])
-+    APACHE_SUBST(ab_CFLAGS)
-+    APACHE_SUBST(ab_LDFLAGS)
-   fi
- ])
- 

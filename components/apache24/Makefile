@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.16
+COMPONENT_VERSION=	2.4.20
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2fc18017801944cfcfde76a24f16c1276c866c2a6e512ee895f566bef9368fae
+    sha256:e77482a46e5b6971ba6181b71a3c0ed1dbf3fa83810bf767c6320f0c621261e4
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=	23618
+TPNO=	27725
 	
 CONFIGURE_DEFAULT_DIRS=no
 TEST_TARGET= $(NO_TESTS)
@@ -82,6 +82,7 @@ REQUIRED_PACKAGES += library/apr-util-15/apr-ldap
 REQUIRED_PACKAGES += library/apr-util-15/dbd-mysql
 REQUIRED_PACKAGES += library/apr-util-15/dbd-sqlite
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
