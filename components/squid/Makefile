@@ -29,14 +29,14 @@ include ../../make-rules/shared-macros.mk
 PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(USRDIR)/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.5
+COMPONENT_VERSION=      3.5.16
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:23793da6b23871765188becae59a6f4b6c3672c256ba9be90743b46a3c7921cf
+    sha256:e73d821180eed8bed230f357c680c0b19f1efa51a24725e810f2b48a2079d385
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 
-TPNO=			23264
+TPNO=			27806
 
 TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
@@ -122,9 +122,11 @@ PERL_SCRIPTS= $(PROTOUSRDIR)/squid/libexec/helper-mux.pl
 # Enter <squid server URL>:897 in your web browser and squid should complain.
 # Squid is working properly.
 
+# squid tests use cppunit. Currently this requires a version of cppunit
+# installed that have been built with the GNU version 5.3 compilers.
+
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
-	'-e "/Testsuite/p" ' \
 	'-e "/=====/p" ' \
 	'-e "/TOTAL/p" ' \
 	'-e "/SKIP/p" ' \
