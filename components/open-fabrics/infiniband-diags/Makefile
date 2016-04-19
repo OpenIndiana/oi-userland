@@ -37,7 +37,7 @@ include ../ofed-component.mk
 
 CFLAGS += -I$(PROTOUSRINCDIR)/infiniband
 
-LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo -lglib-2.0
+LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -lglib-2.0
 
 COMPONENT_PREP_ACTION = \
         cp solaris_set_nodedesc.c $(@D)/src

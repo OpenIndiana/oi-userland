@@ -1,0 +1,18 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  b116e18142b1d4ec433b67c77f389bf975cc8c42
+22741696 Explorer hangs running ibis on system with Titan cards
+
+diff -r b116e18142b1 src/init.c
+--- a/src/init.c	Tue Apr 19 10:06:00 2016 -0700
++++ b/src/init.c	Tue Apr 19 10:17:34 2016 -0700
+@@ -603,6 +603,7 @@
+ 		}
+ 		free(sysfs_dev);
+ 	}
++	sysfs_dev_list = NULL;
+ 
+ 	return num_devices;
+ }
