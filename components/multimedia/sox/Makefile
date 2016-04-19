@@ -23,10 +23,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
 COMPONENT_VERSION=	14.4.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,12 +36,22 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/sox
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+CFLAGS.32 += -D_FILE_OFFSET_BITS=64
+CFLAGS += $(CFLAGS.$(BITS))
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f )
 
 CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  +=	--disable-gomp
+# Avoid dependencies on encumbered packages
+CONFIGURE_OPTIONS  +=   --without-lame
+CONFIGURE_OPTIONS  +=   --without-twolame
+CONFIGURE_OPTIONS  +=   --without-mad
+CONFIGURE_OPTIONS  +=   --disable-dl-amrwb
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -48,7 +59,3 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
