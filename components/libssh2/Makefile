@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
-COMPONENT_VERSION=	1.4.2
+COMPONENT_VERSION=	1.7.0
 COMPONENT_PROJECT_URL=	http://www.libssh2.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:418c09061fb9c3c26fec391a35a062780b21b3199885e3b27054619582469bd3
+	sha256:e4561fd43a50539a8c2ceb37841691baf03ecb7daf043766da1b112e4280d584
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libssh2
 
-TPNO=			11357
+TPNO=			27245
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
@@ -47,6 +47,14 @@ CONFIGURE_OPTIONS +=   --disable-static
 COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -i -e 's|3|3ssh2|g' \
 		$(PROTOUSRSHAREMAN3DIR)/libssh2_sftp_fstatvfs.3;
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS 
 
 # Master test results are the same for both 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
