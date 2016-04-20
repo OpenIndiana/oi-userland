@@ -28,43 +28,10 @@ diff -pur old/cipher.c new/cipher.c
  	{ "arcfour",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 0, EVP_rc4 },
  	{ "arcfour128",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 1536, 0, EVP_rc4 },
  	{ "arcfour256",	SSH_CIPHER_SSH2, 8, 32, 0, 0, 1536, 0, EVP_rc4 },
-diff -pur old/myproposal.h new/myproposal.h
---- old/myproposal.h
-+++ new/myproposal.h
-@@ -119,9 +119,16 @@
- 	"aes128-ctr,aes192-ctr,aes256-ctr" \
- 	AESGCM_CIPHER_MODES
- 
-+#ifdef WITHOUT_CAST128
-+# define CAST128
-+#else
-+# define CAST128 "cast128-cbc"
-+#endif
-+
- #define KEX_CLIENT_ENCRYPT KEX_SERVER_ENCRYPT "," \
- 	"arcfour256,arcfour128," \
--	"aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc," \
-+	"aes128-cbc,3des-cbc,blowfish-cbc," \
-+	CAST128 \
- 	"aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se"
- 
- #define KEX_SERVER_MAC \
-diff -pur old/ssh.1 new/ssh.1
---- old/ssh.1
-+++ new/ssh.1
-@@ -788,7 +788,7 @@ options (see above).
- Both protocols support similar authentication methods,
- but protocol 2 is the default since
- it provides additional mechanisms for confidentiality
--(the traffic is encrypted using AES, 3DES, Blowfish, CAST128, or Arcfour)
-+(the traffic is encrypted using AES, 3DES, Blowfish, or Arcfour)
- and integrity (hmac-md5, hmac-sha1,
- hmac-sha2-256, hmac-sha2-512,
- umac-64, umac-128, hmac-ripemd160).
 diff -pur old/ssh_config.5 new/ssh_config.5
 --- old/ssh_config.5
 +++ new/ssh_config.5
-@@ -408,8 +408,6 @@ arcfour256
+@@ -478,8 +478,6 @@ arcfour256
  .It
  blowfish-cbc
  .It
@@ -72,15 +39,6 @@ diff -pur old/ssh_config.5 new/ssh_config.5
 -.It
  chacha20-poly1305@openssh.com
  .El
- .Pp
-@@ -419,7 +417,7 @@ chacha20-poly1305@openssh.com,
- aes128-ctr,aes192-ctr,aes256-ctr,
- aes128-gcm@openssh.com,aes256-gcm@openssh.com,
- arcfour256,arcfour128,
--aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,
-+aes128-cbc,3des-cbc,blowfish-cbc,
- aes192-cbc,aes256-cbc,arcfour
- .Ed
  .Pp
 diff -pur old/sshd.8 new/sshd.8
 --- old/sshd.8
@@ -97,7 +55,7 @@ diff -pur old/sshd.8 new/sshd.8
 diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
-@@ -469,8 +469,6 @@ arcfour256
+@@ -472,8 +472,6 @@ arcfour256
  .It
  blowfish-cbc
  .It

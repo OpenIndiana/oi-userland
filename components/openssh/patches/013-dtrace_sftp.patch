@@ -5,8 +5,8 @@
 # contribute the changes to the upstream community.
 #
 diff -pur old/Makefile.in new/Makefile.in
---- old/Makefile.in	2015-03-28 14:10:39.426859283 +0100
-+++ new/Makefile.in	2015-03-28 14:16:12.472203388 +0100
+--- old/Makefile.in
++++ new/Makefile.in
 @@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpas
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
@@ -23,18 +23,18 @@ diff -pur old/Makefile.in new/Makefile.in
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
- 	sftp-server.o sftp-common.o \
- 	roaming_common.o roaming_serv.o \
+@@ -107,7 +109,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
+ 	monitor_mm.o monitor.o monitor_wrap.o auth-krb5.o \
+ 	auth2-gss.o gss-serv.o gss-serv-krb5.o \
+ 	loginrec.o auth-pam.o auth-shadow.o auth-sia.o md5crypt.o \
+-	sftp-server.o sftp-common.o \
++	sftp-server.o sftp-common.o sftp_provider.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
--	sandbox-seccomp-filter.o sandbox-capsicum.o
-+	sandbox-seccomp-filter.o sandbox-capsicum.o sftp_provider.o
- 
- MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
- MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-pledge.o \
+ 	sandbox-solaris.o
 @@ -187,8 +189,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
- ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
- 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o
+ 	$(LD) -o $@ ssh-keyscan.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
 -sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
 -	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
@@ -63,18 +63,18 @@ diff -pur old/Makefile.in new/Makefile.in
  	rm -f regress/unittests/test_helper/*.a
  	rm -f regress/unittests/test_helper/*.o
  	rm -f regress/unittests/sshbuf/*.o
-@@ -340,6 +351,7 @@ install-files:
- 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
- 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
- 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+@@ -336,6 +347,7 @@ install-files:
+ 	$(INSTALL) -m 644 sftp-server.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/sftp-server.8
+ 	$(INSTALL) -m 644 ssh-keysign.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-keysign.8
+ 	$(INSTALL) -m 644 ssh-pkcs11-helper.8.out $(DESTDIR)$(mandir)/$(mansubdir)8/ssh-pkcs11-helper.8
 +	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
  
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 diff -pur old/sftp-server.c new/sftp-server.c
---- old/sftp-server.c	2015-03-17 06:49:20.000000000 +0100
-+++ new/sftp-server.c	2015-03-28 14:27:55.661510029 +0100
-@@ -55,6 +55,9 @@
+--- old/sftp-server.c
++++ new/sftp-server.c
+@@ -54,6 +54,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -84,7 +84,7 @@ diff -pur old/sftp-server.c new/sftp-server.c
  
  /* Our verbosity */
  static LogLevel log_level = SYSLOG_LEVEL_ERROR;
-@@ -741,14 +744,17 @@ process_read(u_int32_t id)
+@@ -740,14 +743,17 @@ process_read(u_int32_t id)
  	u_int32_t len;
  	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
@@ -104,7 +104,7 @@ diff -pur old/sftp-server.c new/sftp-server.c
  	if (len > sizeof buf) {
  		len = sizeof buf;
  		debug2("read change len %d", len);
-@@ -759,7 +765,13 @@ process_read(u_int32_t id)
+@@ -758,7 +764,13 @@ process_read(u_int32_t id)
  			error("process_read: seek failed");
  			status = errno_to_portable(errno);
  		} else {
@@ -118,7 +118,7 @@ diff -pur old/sftp-server.c new/sftp-server.c
  			if (ret < 0) {
  				status = errno_to_portable(errno);
  			} else if (ret == 0) {
-@@ -782,14 +794,16 @@ process_write(u_int32_t id)
+@@ -781,14 +793,16 @@ process_write(u_int32_t id)
  	size_t len;
  	int r, handle, fd, ret, status;
  	u_char *data;
@@ -136,7 +136,7 @@ diff -pur old/sftp-server.c new/sftp-server.c
  	fd = handle_to_fd(handle);
  
  	if (fd < 0)
-@@ -801,7 +815,14 @@ process_write(u_int32_t id)
+@@ -800,7 +814,14 @@ process_write(u_int32_t id)
  			error("process_write: seek failed");
  		} else {
  /* XXX ATOMICIO ? */
