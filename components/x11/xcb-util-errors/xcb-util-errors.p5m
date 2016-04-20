@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,6 +22,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/openchrome_drv.so
-file path=usr/lib/xorg/modules/drivers/openchrome_drv.so
-file path=usr/share/man/man7/openchrome.7
+file path=usr/include/xcb/xcb_errors.h
+link path=usr/lib/$(MACH64)/libxcb-errors.so target=libxcb-errors.so.0.0.0
+link path=usr/lib/$(MACH64)/libxcb-errors.so.0 target=libxcb-errors.so.0.0.0
+file path=usr/lib/$(MACH64)/libxcb-errors.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xcb-errors.pc
+link path=usr/lib/libxcb-errors.so target=libxcb-errors.so.0.0.0
+link path=usr/lib/libxcb-errors.so.0 target=libxcb-errors.so.0.0.0
+file path=usr/lib/libxcb-errors.so.0.0.0
+file path=usr/lib/pkgconfig/xcb-errors.pc
