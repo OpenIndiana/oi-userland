@@ -27,13 +27,13 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		augeas
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.4.0
 COMPONENT_PROJECT_URL=	http://www.augeas.net/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:80763031af76515a8ea66013ddc3c466742a15d2e907c7c8e2e3b7410262e2af
+    sha256:659fae7ac229029e60a869a3b88c616cfd51cf2fba286cdfe3af3a052cb35b30
 COMPONENT_ARCHIVE_URL=	http://download.augeas.net/$(COMPONENT_ARCHIVE)
 
-TPNO=	21660
+TPNO=	27876
 
 include $(WS_MAKE_RULES)/common.mk
 
