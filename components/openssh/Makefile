@@ -104,7 +104,7 @@ COMPONENT_PRE_BUILD_ACTION = \
 
 # Copy Solaris specific source files and generate configuration script
 COMPONENT_PREP_ACTION += \
-    ( $(CP) sources/*.c $(@D)/; \
+    ( $(CP) sources/moduli sources/*.c $(@D)/; \
       cd $(@D); autoconf; \
     )
 
