@@ -136,13 +136,13 @@ case $1 in
 	# sysidconfig/sys-unconfig arguments (-c and -u)
 '-c')
 	create_key $SSHDIR/ssh_host_rsa_key rsa
-	create_key $SSHDIR/ssh_host_dsa_key dsa
+	create_key $SSHDIR/ssh_host_ed25519_key ed25519
 	;;
 
 '-u')
 	# sysconfig unconfigure to remove the sshd host keys
 	remove_key $SSHDIR/ssh_host_rsa_key
-	remove_key $SSHDIR/ssh_host_dsa_key
+	remove_key $SSHDIR/ssh_host_ed25519_key
 	;;
 
 	# SMF arguments (start and restart [really "refresh"])
@@ -154,7 +154,7 @@ case $1 in
 	# the install media).
 	# 
 	create_key $SSHDIR/ssh_host_rsa_key rsa
-	create_key $SSHDIR/ssh_host_dsa_key dsa
+	create_key $SSHDIR/ssh_host_ed25519_key ed25519
 
 	#
 	# Make sure, that /etc/ssh/sshd_config does not contain single line
