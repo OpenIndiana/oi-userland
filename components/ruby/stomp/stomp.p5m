@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/ruby/stomp-$(RUBYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/ruby/stomp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Ruby client for the Stomp messaging protocol."
 set name=pkg.description \
     value="Ruby client for the Stomp messaging protocol. This plugin provides an interoperable wire format so that STOMP clients can communicate with any STOMP message broker to provide easy and widespread messaging interoperability among many languages, platforms and brokers."
@@ -598,6 +598,4 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)
 license stomp.license license="Apache v2.0"
 
 # force a dependency on ruby runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=ruby$(RUBYV) \
-    pkg.debug.depend.path=usr/bin
-
+depend type=require-any fmri=pkg:/runtime/ruby-21

@@ -24,6 +24,7 @@
 #
 include ../../../make-rules/shared-macros.mk
 include ../../../make-rules/shared-targets.mk
+include ../../../make-rules/ruby.mk
 
 RUBY_VERSION=       2.1
 RUBY_LIB_VERSION=   2.1.0

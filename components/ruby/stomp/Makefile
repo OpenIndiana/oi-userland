@@ -23,6 +23,7 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
+include ../../../make-rules/ruby.mk
 
 #
 # Override the inherited RUBY values in shared-macros.mk to be
