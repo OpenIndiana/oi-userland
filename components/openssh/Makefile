@@ -102,8 +102,12 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/dtrace_sftp/*.[dh] $(SOURCE_DIR); \
     )
 
-# Copy source files that are not yet part of a patch
-COMPONENT_PREP_ACTION += ($(CP) sources/*.c $(@D)/)
+# Copy Solaris specific source files and generate configuration script
+COMPONENT_PREP_ACTION += \
+    ( $(CP) sources/*.c $(@D)/; \
+      cd $(@D); autoconf; \
+    )
+
 
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
