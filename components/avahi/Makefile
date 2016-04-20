@@ -28,14 +28,12 @@ include ../../make-rules/shared-macros.mk
 PATH=$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		avahi
-COMPONENT_VERSION=	0.6.30
+COMPONENT_VERSION=	0.6.32
+TPNO=			27473
+COMPONENT_ARCHIVE_HASH=	sha256:d54991185d514a0aba54ebeb408d7575b60f5818a772e28fa0e18b98bc1db454
+COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.avahi.org/
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:f9e4316c2339d0020726edd846d01bee0c39980906db0c247479e5807457ff1f
-COMPONENT_ARCHIVE_URL=	http://www.avahi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/avahi
-
-TPNO=			7879
 
 # Depends on a Python module from Desktop that is only available 32-bit in S11.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -100,7 +98,6 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libdaemon
-REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
