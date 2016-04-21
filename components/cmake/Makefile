@@ -22,19 +22,19 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64
+BUILD_BITS=64
 # Currently only builds with gcc
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	3.3.2
+COMPONENT_VERSION=	3.5.0
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e75a178d6ebf182b048ebfe6e0657c49f0dc109779170bad7ffcb17463f2fc22
-COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.3/$(COMPONENT_ARCHIVE)
+    sha256:92c83ad8a4fd6224cf6319a60b399854f55b38ebe9d297c942408b792b1a9efa
+COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 
-TPNO=			25030
+TPNO=			27412
 
 # configure in cmake does not accept many of the options set in
 # configure.mk (CC=, CXX=, --bindir, --libdir, --sbindir).
@@ -47,32 +47,45 @@ include $(WS_MAKE_RULES)/common.mk
 # Remove undesriable /opt/csw lines from the Modules/*.cmake files.
 COMPONENT_PREP_ACTION += \
 	cd $(COMPONENT_SRC)/Modules; $(GNU_GREP) -l '/opt/csw' *.cmake | /usr/bin/xargs -I \{\} $(GSED) -i -e '/^[ ]*\/opt\/csw/d' \{\}
-# Since it's C++, force it to build as C++11 for ABI compatibility.
-CXXFLAGS += -std=c++11
+
+# The default -O3 is *MUCH* too aggressive and will break things,
+# not just in CMake but everywhere.
+# CMake sets its own Language Standard flags in the Makefile it
+# generates for itself. The Userland default Language Standard flags
+# contradict cmake.
+gcc_OPT = -O2
+
+HTTP_PROXY = http://www-proxy.us.oracle.com:80/
+HTTPS_PROXY = https://www-proxy.us.oracle.com:80/
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
 # when testing on sparc
 LD_MAP_NOEXBSS.sparc=
 
-LDFLAGS +=	$($(COMPILER)_NORUNPATH)
-
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
-CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
+CONFIGURE_ENV +=	MAKE="$(GMAKE)"
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 
 # Use system-installed third-party libraries, rather than the private
 # copies in the cmake source.
+CONFIGURE_OPTIONS =
+CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--system-curl
 CONFIGURE_OPTIONS +=	--system-expat
 CONFIGURE_OPTIONS +=	--system-zlib
 CONFIGURE_OPTIONS +=	--system-bzip2
 CONFIGURE_OPTIONS +=	--system-libarchive
+CONFIGURE_OPTIONS +=	--system-liblzma
 
-COMPONENT_BUILD_ENV +=	CC="$(CC)"	
-COMPONENT_BUILD_ENV +=	CXX="$(CXX)"	
-COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"	
-COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
+COMPONENT_BUILD_ENV +=	CC="$(CC)"
+COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
+COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_TARGETS =	all
@@ -80,6 +93,13 @@ COMPONENT_BUILD_TARGETS =	all
 # Need C and C++ compiler locations for cmake tests
 COMPONENT_TEST_ENV += CC="$(CC)"
 COMPONENT_TEST_ENV += CXX="$(CXX)"
+COMPONENT_TEST_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_TEST_ENV += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_TEST_ENV += LDFLAGS="$(LDFLAGS)"
+COMPONENT_TEST_ENV += http_proxy="$(HTTP_PROXY)"
+COMPONENT_TEST_ENV += https_proxy="$(HTTPS_PROXY)"
+COMPONENT_TEST_ENV += HTTP_PROXY="$(HTTP_PROXY)"
+COMPONENT_TEST_ENV += HTTPS_PROXY="$(HTTPS_PROXY)"
 
 COMPONENT_TEST_TARGETS =	test
 
@@ -87,10 +107,23 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
 	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"'
 
-COMPONENT_SYSTEM_TEST_ENV +=	CC="$(CC)"
-COMPONENT_SYSTEM_TEST_ENV +=	CXX="$(CXX)"
+COMPONENT_SYSTEM_TEST_ENV += CC="$(CC)"
+COMPONENT_SYSTEM_TEST_ENV += CXX="$(CXX)"
+COMPONENT_SYSTEM_TEST_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_SYSTEM_TEST_ENV += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_SYSTEM_TEST_ENV += LDFLAGS="$(LDFLAGS)"
+COMPONENT_SYSTEM_TEST_ENV += http_proxy="$(HTTP_PROXY)"
+COMPONENT_SYSTEM_TEST_ENV += https_proxy="$(HTTPS_PROXY)"
+COMPONENT_SYSTEM_TEST_ENV += HTTP_PROXY="$(HTTP_PROXY)"
+COMPONENT_SYSTEM_TEST_ENV += HTTPS_PROXY="$(HTTPS_PROXY)"
 
 COMPONENT_SYSTEM_TEST_TARGETS =	test
+
+# Install the man pages this way because we do not have Sphinx.
+COMPONENT_POST_INSTALL_ACTION += \
+	( $(MKDIR) -p $(PROTO_DIR)/usr/share ; \
+	  $(CP) -r $(COMPONENT_DIR)/files/man1 $(PROTO_DIR)/usr/share/ ; \
+	  $(CP) -r $(COMPONENT_DIR)/files/man7 $(PROTO_DIR)/usr/share/ )
 
 # Built binaries are moved aside and replaced with
 # symlinks to the system-installed binaries in /usr/bin,
