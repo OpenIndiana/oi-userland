@@ -39,6 +39,9 @@ CFLAGS += -D _NETINET_IP_H
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Rebuild the configure script so the man pages are normalized.
+COMPONENT_PREP_ACTION = (cd $(@D); autoconf);
+
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
 CONFIGURE_OPTIONS.sparc += ac_cv___attribute__=no

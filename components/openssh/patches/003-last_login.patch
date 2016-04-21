@@ -9,7 +9,7 @@
 #
 # OpenSSH normally updates lastlog when users login and reads lastlog to
 # determine the last login time of the user however on Solaris the
-# pam_unix_session(5) module handles both of these tasks so we compile
+# pam_unix_session(7) module handles both of these tasks so we compile
 # OpenSSH with --disable-lastlog to disable all lastlog references.
 # This means the sshd_config option of PrintLastLog is now ignored and
 # can't be changed so we update sshd's configuration parsing to flag
@@ -24,7 +24,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  in interactively.
 -The default is
 -.Dq yes .
-+On Solaris this option is always ignored since pam_unix_session(5)
++On Solaris this option is always ignored since pam_unix_session(7)
 +reports the last login time.
  .It Cm PrintMotd
  Specifies whether
@@ -35,7 +35,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  .Sh SEE ALSO
 -.Xr sshd 8
 +.Xr sshd 8 ,
-+.Xr pam_unix_session 5
++.Xr pam_unix_session 7
  .Sh AUTHORS
  OpenSSH is a derivative of the original and free
  ssh 1.2.12 release by Tatu Ylonen.
