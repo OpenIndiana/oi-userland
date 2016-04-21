@@ -77,3 +77,7 @@ file path=solaris_providers/lib/puppet/type/solaris_vlan.rb
 file path=solaris_providers/lib/puppet/type/svccfg.rb
 file path=solaris_providers/lib/puppet/type/vni_interface.rb
 file path=solaris_providers/lib/puppet/type/vnic.rb
+file path=solaris_providers/spec/fixtures/unit/provider/pkg/pkg_mediator/pkg_mediator.txt
+file path=solaris_providers/spec/fixtures/unit/provider/pkg/pkg_mediator/pkg_mediator_foo.txt
+file path=solaris_providers/spec/unit/provider/pkg/pkg_mediator_spec.rb
+file path=solaris_providers/spec/unit/type/pkg_mediator_spec.rb

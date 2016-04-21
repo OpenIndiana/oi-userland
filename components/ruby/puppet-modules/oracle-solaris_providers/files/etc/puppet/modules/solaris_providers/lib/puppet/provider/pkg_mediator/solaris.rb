@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:pkg_mediator).provide(:pkg_mediator) do
@@ -28,23 +28,38 @@ Puppet::Type.type(:pkg_mediator).provide(:pkg_mediator) do
     confine :operatingsystem => [:solaris]
     defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
     commands :pkg => '/usr/bin/pkg'
+    mk_resource_methods
+
+    def initialize(value={})
+      super(value)
+      @property_flush = { :set_args => [], :unset_args => [] }
+    end
+
+    def self.parse_mediator(line)
+            name, _ver_src, version, _impl_src, impl, _impl_ver = line.split("\t")
+
+            # Neither Implementation nor Version are required
+            if impl.nil? || impl.empty?
+                impl = :None
+            end
+            if version.nil? || version.empty?
+                version = :None
+            end
+
+            return { :name => name,
+                :ensure => :present,
+                :implementation => impl,
+                :version => version }
+    end
+
+    def self.get_mediator(name)
+      return self.parse_mediator(pkg(:mediator, "-H", "-F", "tsv", name))
+    end
 
     def self.instances
         pkg(:mediator, "-H", "-F", "tsv").split("\n").collect do |line|
-            name, ver_src, version, impl_src, impl, impl_ver = line.split("\t")
-            
-            # Because implementation is an optional parameter, it may not be set.
-            # If the implementation is not set, that needs to be captured in 
-            # the output.
-            if not impl
-                impl = 'None'
-            end
-
-            new(:name => name,
-                :ensure => :present,
-                :implementation => impl,
-                :version => version)
-        end 
+            new(self.parse_mediator(line))
+        end
     end
 
     def self.prefetch(resources)
@@ -60,40 +75,62 @@ Puppet::Type.type(:pkg_mediator).provide(:pkg_mediator) do
     end
 
     def exists?
-        # only compare against @resource if one is provided via manifests
-        if @property_hash[:ensure] == :present and @resource[:version] != nil
-            return (@property_hash[:ensure] == :present and \
-                   @property_hash[:version] == @resource[:version])
+        if @property_hash[:ensure] == :present and not
+          # Don't check values unless they are set in the manifest/resource
+          (  @resource[:version].nil? && @resource[:implementation].nil? )
+            # Both Version and Implementation must be expected or unspecified
+            return ((version == @resource[:version]) ||
+                     @resource[:version].nil? ) \
+                   &&
+                   ((implementation == @resource[:implementation] ||
+                     @resource[:implementation].nil?))
         end
         @property_hash[:ensure] == :present
     end
 
-    def version
-        @property_hash[:version]
-    end
-
-    def implementation
-        @property_hash[:implementation]
-    end
-
     def build_flags
-        flags = []
-        if version = @resource[:version] and version != nil
-            flags << "-V" << @resource[:version]
+        if version == @resource[:version]
+          # Current State is Correct, noop
+        elsif @resource[:version] == :None && version != :None
+          # version is set and should not be
+          @property_flush[:unset_args] << '-V'
+        elsif ! @resource[:version].nil?
+          @property_flush[:set_args] << '-V' << @resource[:version]
         end
 
-        if implementation = @resource[:implementation] and implementation != nil
-            flags << "-I" << @resource[:implementation]
+        if implementation == @resource[:implementation]
+          # Current State is Correct, noop
+        elsif @resource[:implementation] == :None && implementation != :None
+          # implementation is set and should not be
+            @property_flush[:unset_args] << '-I'
+        elsif ! @resource[:implementation].nil?
+            @property_flush[:set_args] << '-I' << @resource[:implementation]
         end
-        flags
+
+        # If there is no pre-existing resource there will be no properties
+        # defined. If we got here and set_args is 0 we have unset_args
+        # otherwise there would be no changes
+        if @property_hash[:ensure].nil? && @property_flush[:set_args].size == 0
+          raise Puppet::ResourceError.new(
+            "Cannot unset absent mediator; use ensure => :absent instead of <property> => None")
+        end
+    end
+
+    def flush
+        pkg("set-mediator", @property_flush[:set_args], @resource[:name]) if
+          @property_flush[:set_args].size > 0
+        pkg("unset-mediator", @property_flush[:unset_args], @resource[:name]) if
+          @property_flush[:unset_args].size > 0
+        @property_hash = self.class.get_mediator(resource[:name])
     end
 
     # required puppet functions
     def create
-        pkg("set-mediator", build_flags, @resource[:name])
+        build_flags
     end
 
     def destroy
-        pkg("unset-mediator", build_flags, @resource[:name])
+        # Absent mediators don't require any flag parsing, just remove them
+        pkg("unset-mediator", @resource[:name])
     end
 end
