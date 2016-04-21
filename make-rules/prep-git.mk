@@ -66,8 +66,11 @@ download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 # when complete.
 #
 # GIT CLONE ARGS
-# --depth=1 arg to git clone takes only the top level (named) commits on any
-# branches or tags. Attempts to use other commit IDs will fail.
+# A shallow clone (--depth=1) to git clone takes only the top level (named)
+# commits on any branches or tags and can cause use of other commit IDs to
+# fail.  As such, it should never be used here as it can make it impossible to
+# reliably reproduce archives created from the result since git clone (unlike
+# mercurial) currently has no way of cloning to a specific commit id.
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) --file $$@ \
 		$$(GIT_HASH$(1):%=--hash %) || \
@@ -75,7 +78,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) || \
 	(TMP_REPO=$$$$(mktemp --directory) && \
-	$(GIT) clone --depth=1 $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
+	$(GIT) clone $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
 	(cd $$$${TMP_REPO} ; $(GIT) checkout \
 	$$(GIT_COMMIT_ID$(1))) && \
 	(cd $$$${TMP_REPO} ; $(GIT) archive --format tar.gz \
