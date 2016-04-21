@@ -44,11 +44,13 @@ CONFIGURE_OPTIONS += --with-samba
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
-CONFIGURE_OPTIONS += --with-screen=slang
+CONFIGURE_OPTIONS += --with-screen=ncurses
+CONFIGURE_OPTIONS += --with-ncurses-includes=$(USRINCDIR)
+CONFIGURE_OPTIONS += --with-ncurses-libs=$(USRLIBDIR64)
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libssh2
-REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
