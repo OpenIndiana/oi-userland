@@ -1,31 +1,13 @@
-Developed in-house, not fed back - can't submit new issue
- - community seems dead.
-Solaris specific: uses internal implementation of SHA1
+Developed in-house, as the community seems to be back it can be
+provided back upstream.
 
---- pwgen-2.06/sha1num.c	2013-11-25 12:09:31.359377740 -0800
-+++ pwgen-2.06/sha1num.c	2013-11-25 12:09:26.489379943 -0800
-@@ -11,7 +11,16 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include "pwgen.h"
-+#ifdef SHA_INTERNAL
- #include "sha1.h"
-+#endif
-+#ifdef SHA_SOLARIS
-+#include <sha1.h>
-+#define sha1_context SHA1_CTX
-+#define sha1_starts SHA1Init
-+#define sha1_update SHA1Update
-+#define sha1_finish(a,b) SHA1Final(b,a)
-+#endif
- 
- sha1_context sha1_ctx;
- char *sha1_seed;
---- pwgen-2.06/configure.in	2013-12-02 02:57:12.022589524 -0800
-+++ pwgen-2.06/configure.in	2013-12-02 02:56:10.404769485 -0800
+Makes pwgen to use Solaris' implementation of SHA1.
+
+--- pwgen-2.07/configure.in.orig	Fri Apr 22 04:49:40 2016
++++ pwgen-2.07/configure.in	Fri Apr 22 04:52:17 2016
 @@ -8,4 +8,23 @@
  AC_PATH_PROG(PERL, perl, perl)
- AC_CHECK_FUNCS(drand48 getopt_long)
+ AC_CHECK_FUNCS(getopt_long)
  AC_CHECK_HEADERS(getopt.h)
 +pwgen_sha="internal"
 +SHA_OBJ=""
@@ -34,22 +16,22 @@ Solaris specific: uses internal implementation of SHA1
 +SHA_HEAD=""
 +AC_CHECK_LIB(md, SHA1Init, [pwgen_sha="solaris"])
 +if test x"$pwgen_sha" = x"internal" ; then
-+	CFLAGS="${CFLAGS} -DSHA_INTERNAL"
-+	SHA_OBJ="sha1.o"
-+	SHA_SRC="sha1.c"
-+	SHA_HEAD="sha1.h"
++    CFLAGS="${CFLAGS} -DSHA_INTERNAL"
++    SHA_OBJ="sha1.o"
++    SHA_SRC="sha1.c"
++    SHA_HEAD="sha1.h"
 +elif test x"$pwgen_sha" = x"solaris" ; then
-+	SHA_LIB="-lmd"
-+	CFLAGS="${CFLAGS} -DSHA_SOLARIS"
++    SHA_LIB="-lmd"
++    CFLAGS="${CFLAGS} -DSHA_SOLARIS"
 +fi
 +AC_SUBST(SHA_OBJ)
 +AC_SUBST(SHA_SRC)
 +AC_SUBST(SHA_LIB)
 +AC_SUBST(SHA_HEAD)
  AC_OUTPUT(Makefile)
---- pwgen-2.06/Makefile.in	2013-12-02 03:52:49.960581781 -0800
-+++ pwgen-2.06/Makefile.in	2013-12-02 03:52:25.323489891 -0800
-@@ -19,7 +19,7 @@
+--- pwgen-2.07/Makefile.in.orig	Fri Apr 22 04:52:43 2016
++++ pwgen-2.07/Makefile.in	Fri Apr 22 04:56:18 2016
+@@ -20,7 +20,7 @@
  CFLAGS = @CFLAGS@ $(WALL_OPTS)
  CPPFLAGS = @CPPFLAGS@
  ALL_CFLAGS = $(CPPFLAGS) $(DEFS) $(USE_WFLAGS) $(CFLAGS) $(XTRA_CFLAGS) 
@@ -58,7 +40,7 @@ Solaris specific: uses internal implementation of SHA1
  RM = @RM@
  MV = @MV@
  SED = @SED@
-@@ -31,9 +31,9 @@
+@@ -32,9 +32,9 @@
  .c.o:
  	$(CC) -c $(ALL_CFLAGS) $< -o $@
  
@@ -70,7 +52,7 @@ Solaris specific: uses internal implementation of SHA1
  
  
  pwgen: $(OBJS)
-@@ -127,4 +127,4 @@
+@@ -128,4 +128,4 @@
  pw_rand.o: pw_rand.c pwgen.h
  randnum.o: randnum.c pwgen.h
  sha1.o: sha1.c sha1.h 

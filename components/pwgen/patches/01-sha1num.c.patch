@@ -1,14 +1,33 @@
-Developed in-house, not fed back - can't submit new issue
- - community seems dead.
-Fixes Parfait problem file leak
+Developed in-house, as the community seems to be back it can be
+provided back upstream.
 
---- pwgen-2.06/sha1num.c	2007-07-04 16:42:19.000000000 -0700
-+++ pwgen-2.06-fixed/sha1num.c	2013-09-05 07:33:17.194749959 -0700
-@@ -54,6 +54,8 @@
+Fixes a Parfait reported issue and makes pwgen to use Solaris'
+implementation of SHA1.
+
+--- pwgen-2.07/sha1num.c.orig	Fri Apr 22 04:32:20 2016
++++ pwgen-2.07/sha1num.c	Fri Apr 22 04:45:55 2016
+@@ -11,7 +11,15 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include "pwgen.h"
+-#include "sha1.h"
++#ifdef SHA_INTERNAL
++  #include "sha1.h"
++#elif SHA_SOLARIS
++  #include <sha1.h>
++  #define sha1_context SHA1_CTX
++  #define sha1_starts SHA1Init
++  #define sha1_update SHA1Update
++  #define sha1_finish(a,b) SHA1Final(b,a)
++#endif
+ 
+ sha1_context sha1_ctx;
+ char *sha1_seed;
+@@ -54,6 +62,8 @@
  		sha1_update( &sha1_ctx, buf, i );
  	}
  
-+	fclose(f);
++  fclose(f);
 +
  	return;
  }
