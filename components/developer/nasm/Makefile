@@ -10,10 +10,10 @@
 
 #
 # Copyright 2011, 2013, EveryCity Ltd. All rights reserved.
-# Copyright 2013, Adam Stevko, All rights reserved.
+# Copyright 2016, Adam Stevko, All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nasm
 COMPONENT_VERSION=	2.11.08
@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:e76596043d67d31c61321adf4ab8e1768974c1b497b8d4e9a
 COMPONENT_PROJECT_URL=	http://www.nasm.us/
 COMPONENT_ARCHIVE_URL=	http://www.nasm.us/pub/nasm/releasebuilds/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 IPS_COMPONENT_VERSION=	2.11.8
 
