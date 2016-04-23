@@ -19,9 +19,9 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2013. Adam Stevko. All rights reserved.
+# Copyright (c) 2016. Adam Stevko. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lua
 COMPONENT_VERSION=	5.2.4
@@ -43,9 +43,9 @@ COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)tests/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS += $(LUA_TESTS)
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL= 0
 
@@ -72,9 +72,9 @@ $(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
 
 # common targets
 build:		$(BUILD_32_and_64)
-		
+
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
-		
+
 test: 		install
 		(gzip -dc $(USERLAND_ARCHIVES)$(LUA_TESTS).tar.gz | tar xopf -; \
 		cd $(LUA_TESTS); $(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) \
@@ -84,5 +84,5 @@ test: 		install
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
