@@ -8,27 +8,25 @@
 # http://www.illumos.org/license/CDDL.
 #
 
-# Copyright (c) 2013, Adam Stevko <adam.stevko@gmail.com> 
+# Copyright (c) 2016, Adam Stevko <adam.stevko@gmail.com>
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ldns
-COMPONENT_VERSION=	1.6.16
+COMPONENT_VERSION=	1.6.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:24b2f9cb05797170f2021ef0e0372d4b5225ee4199f0568a15589b5c524df695
-COMPONENT_PROJECT_URL=	http://www.nlnetlabs.nl/projects/ldns/	
-COMPONENT_ARCHIVE_URL=	http://www.nlnetlabs.nl/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)	
+COMPONENT_ARCHIVE_HASH=	sha256:8b88e059452118e8949a2752a55ce59bc71fa5bc414103e17f5b6b06f9bcc8cd
+COMPONENT_PROJECT_URL=	http://www.nlnetlabs.nl/projects/ldns/
+COMPONENT_ARCHIVE_URL=	http://www.nlnetlabs.nl/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=    --with-examples
 CONFIGURE_OPTIONS +=    --with-drill
-CONFIGURE_OPTIONS +=	--disable-static	
-CONFIGURE_OPTIONS +=	--disable-gost	
-CONFIGURE_OPTIONS +=	--disable-ecdsa
+CONFIGURE_OPTIONS +=	--disable-static
 
 build:          $(BUILD_32)
 
