@@ -104,8 +104,10 @@ def start():
         engine = sqlalchemy.create_engine(db_connection)
         if engine.url.username != '%SERVICE_USER%':
             check_call(['/usr/bin/neutron-db-manage', '--config-file',
-                        '/etc/neutron/neutron.conf', 'stamp', 'kilo'])
-            check_call(['/usr/lib/neutron/neutron-kilo-migration'])
+                        '/etc/neutron/neutron.conf', 'upgrade', 'juno'])
+            check_call(['/usr/bin/neutron-db-manage', '--config-file',
+                        '/etc/neutron/neutron.conf', 'upgrade', 'kilo'])
+
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',

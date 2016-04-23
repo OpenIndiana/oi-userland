@@ -44,7 +44,6 @@ from neutron.db import external_net_db
 from neutron.db import l3_agentschedulers_db
 from neutron.db import l3_attrs_db
 from neutron.db import l3_gwmode_db
-from neutron.db import model_base
 from neutron.db import models_v2
 from neutron.db import portbindings_db
 from neutron.db import quota_db
@@ -168,9 +167,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                                     "dhcp_agent_scheduler"]
 
     def __init__(self):
-        engine = db.get_engine()
-        model_base.BASEV2.metadata.create_all(engine)
-
         self.network_scheduler = importutils.import_object(
             cfg.CONF.network_scheduler_driver
         )
