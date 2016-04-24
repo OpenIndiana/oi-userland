@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/top
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 IPS_COMPONENT_VERSION =	3.8
 
@@ -58,4 +58,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
