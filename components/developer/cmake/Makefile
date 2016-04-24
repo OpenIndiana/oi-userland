@@ -27,7 +27,7 @@
 # now we have to disable it.
 PARFAIT_BUILD=no
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
 COMPONENT_VERSION=	2.8.12.2
@@ -54,9 +54,9 @@ LDFLAGS +=	$($(COMPILER)_NORUNPATH)
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"	
+CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"
 endif
-CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
+CONFIGURE_ENV +=	MAKE="$(GMAKE)"
 
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--datadir=/share/cmake-2.8
@@ -71,10 +71,10 @@ CONFIGURE_OPTIONS +=	--system-expat
 CONFIGURE_OPTIONS +=	--system-zlib
 CONFIGURE_OPTIONS +=	--system-bzip2
 
-COMPONENT_BUILD_ENV +=	CC="$(CC)"	
-COMPONENT_BUILD_ENV +=	CXX="$(CXX)"	
-COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"	
-COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
+COMPONENT_BUILD_ENV +=	CC="$(CC)"
+COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
+COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 COMPONENT_BUILD_TARGETS =	all
 
 ASLR_MODE = $(ASLR_ENABLE)
