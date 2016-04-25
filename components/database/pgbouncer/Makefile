@@ -13,7 +13,7 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
 COMPONENT_VERSION= 	1.5.4
