@@ -1,0 +1,25 @@
+Adding the "any" pseudo-device since Solaris supports it.
+This is an in-house patch and will eventually be sent upstream.
+
+*** libpcap-1.7.4/pcap-bpf.c	Mon Mar  9 12:22:07 2015
+--- new/pcap-bpf.c	Mon Apr 11 16:50:19 2016
+***************
+*** 2309,2314 ****
+--- 2309,2325 ----
+  int
+  pcap_platform_finddevs(pcap_if_t **alldevsp, char *errbuf)
+  {
++ 
++ #ifdef DLT_IPNET 
++ 	/*
++ 	 * Adding the "any" pseudo-device
++ 	 */
++ 	const char any_descr[] = "Pseudo-device that captures on all interfaces";
++ 	if (pcap_add_if(alldevsp, "any", IFF_UP|IFF_RUNNING,
++ 	    any_descr, errbuf) < 0)
++ 		return (-1);
++ #endif
++ 
+  	return (0);
+  }
+  

@@ -3,10 +3,10 @@ Patch status: Solaris-specific; not suitable for upstream
 
 Solaris specific documentation changes.
 
---- doc/tshark.pod
-+++ doc/tshark.pod
-@@ -488,9 +488,9 @@
- 
+--- doc/tshark.pod.~1~  2016-02-26 11:58:04.000000000 -0800
++++ doc/tshark.pod      2016-04-22 10:04:13.418143254 -0700
+@@ -488,9 +488,11 @@
+
  Network interface names should match one of the names listed in
  "B<tshark -D>" (described above); a number, as reported by
 -"B<tshark -D>", can also be used.  If you're using UNIX, "B<netstat
@@ -14,26 +14,28 @@ Solaris specific documentation changes.
 -although not all versions of UNIX support the B<-a> option to B<ifconfig>.
 +"B<tshark -D>", can also be used.  On Solaris, all network interfaces
 +that are displayed with the command "dladm show-link" or "ipadm show-if"
-+can be used with the "-i" command line option.
- 
++can be used with the "-i" command line option. An interface argument of
++"any" can be used to capture packets from all interfaces. Note that
++captures using "any" will not be done in promiscuous mode.
+
  If no interface is specified, B<TShark> searches the list of
  interfaces, choosing the first non-loopback interface if there are any
-@@ -1551,7 +1551,7 @@
- 
+@@ -1551,7 +1553,7 @@
+
  =head1 CAPTURE FILTER SYNTAX
- 
+
 -See the manual page of pcap-filter(7) or, if that doesn't exist, tcpdump(8),
 +See the manual page of pcap-filter(7) or, if that doesn't exist, tcpdump(1),
  or, if that doesn't exist, L<https://wiki.wireshark.org/CaptureFilters>.
- 
+
  =head1 READ FILTER SYNTAX
-@@ -1812,7 +1812,7 @@
+@@ -1812,7 +1814,7 @@
  =head1 SEE ALSO
- 
+
  wireshark-filter(4), wireshark(1), editcap(1), pcap(3), dumpcap(1),
 -text2pcap(1), mergecap(1), pcap-filter(7) or tcpdump(8)
 +text2pcap(1), mergecap(1), pcap-filter(7) or tcpdump(1)
- 
+
  =head1 NOTES
  
 --- doc/wireshark.pod.template
