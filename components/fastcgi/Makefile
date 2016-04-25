@@ -22,8 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-# Prefer 32-bit as default fastcgi target matters.
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
@@ -44,6 +43,11 @@ include $(WS_MAKE_RULES)/common.mk
 # https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
 LDFLAGS +=	-Wc,$(studio_NORUNPATH)
 
+# For now, install 32-bit and 64-bit binaries to the same location.  This will
+# cause problems if we ever install 32-bit and 64-bit concurrently.  This is
+# likely the safest option until we can either stop shipping 32-bit or until it
+# can be verified that the bindir path does not matter.
+CONFIGURE_BINDIR.32= $(USRBINDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi

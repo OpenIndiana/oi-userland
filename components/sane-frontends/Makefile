@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-frontends
@@ -38,7 +38,7 @@ TPNO=			8865
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-LDFLAGS += -lsane
+LDFLAGS += -lsane $(CC_BITS)
 
 CONFIGURE_OPTIONS +=	--with-sane-prefix=$(USRDIR)
 CONFIGURE_OPTIONS +=	--disable-sanetest

@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
@@ -39,6 +40,7 @@ SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # getopt doesn't use configure, override the hard-wired values in the Makefile.
+LDFLAGS += $(CC_BITS)
 COMPONENT_BUILD_ARGS+=	CC="$(CC)"
 COMPONENT_BUILD_ARGS+=	CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS+=	LDFLAGS="$(LDFLAGS)"
