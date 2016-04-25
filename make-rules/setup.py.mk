@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # $ (foreach suffix,$(VERSIONS),$(eval include $(WS_MAKE_RULES)/python-$(suffix).mk))
@@ -99,7 +99,7 @@ $(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.4/.built
 $(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.4/.installed
 endif
 ifneq ($(findstring 3.5,$(PYTHON_VERSIONS)),)
-5(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.5/.built
+$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.5/.built
 $(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.5/.installed
 endif
 
