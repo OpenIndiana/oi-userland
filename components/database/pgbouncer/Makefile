@@ -16,15 +16,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.5.4
+COMPONENT_VERSION= 	1.7.2
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:08040482f4c887e14d8c8c46fab838fff640c0f3cf231f86ad7f766b7a292280
+  sha256:de36b318fe4a2f20a5f60d1c5ea62c1ca331f6813d2c484866ecb59265a160ba
 COMPONENT_ARCHIVE_URL= \
-  http://pgfoundry.org/frs/download.php/3393/$(COMPONENT_ARCHIVE)
+  https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pgfoundry.org/projects/pgbouncer
 
 # Don't depend on host default pg_config
