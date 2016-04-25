@@ -1,0 +1,58 @@
+#-PRE
+# Solaris hints file
+# This hints file provides tty and X11 builds for Solaris.
+
+# During build, DESTDIR should be empty.  During install, DESTDIR should be the
+# root of the proto area.
+
+# GAME is not set in Makefile.utl, but we need to have it set.
+# CLIENT_HACKDIR needs to be set separately from HACKDIR, since we use it
+# as a substitution in the nethack script, and can't have the workspace
+# path embedded in that script.  The rest should have DESTDIR prepended.
+GAME=nethack
+PREFIX=/usr
+CLIENT_HACKDIR=$(PREFIX)/lib/$(GAME)
+HACKDIR=$(DESTDIR)$(CLIENT_HACKDIR)
+SHELLDIR = $(DESTDIR)$(PREFIX)/bin
+INSTDIR=$(HACKDIR)
+VARDIR = $(DESTDIR)/var/games/$(GAME)
+
+
+# Inherit CFLAGS from outside, via TOP_CFLAGS, and then do a bunch of
+# customization.
+CFLAGS=$(TOP_CFLAGS)
+CFLAGS+=-I../include
+CFLAGS+=-DX11_GRAPHICS -DUSE_XPM -DVISION_TABLES=1 -DTIMED_DELAY=1
+CFLAGS+=-DVAR_PLAYGROUND=\"$(VARDIR)\" -DLOCKDIR=\"$(VARDIR)\"
+CFLAGS+=-DCOMPRESS=\"/usr/bin/gzip\" -DCOMPRESS_EXTENSION=\".gz\"
+CFLAGS+=-DHACKDIR=\"$(HACKDIR)\"
+
+LINK=$(CC)
+
+# Build for both tty and X11
+WINSRC = $(WINTTYSRC) $(WINX11SRC)
+WINOBJ = $(WINTTYOBJ) $(WINX11OBJ)
+WINLIB = -Wl,-zignore $(WINTTYLIB) $(WINX11LIB)
+
+WINTTYLIB=-lcurses
+
+VARDATND=x11tiles NetHack.ad pet_mark.xbm pilemark.xbm rip.xpm
+
+# The installation believes it's installing to the live filesystem, so it
+# wants to set owner, group, and mode.  Prevent the first two (which won't
+# be possible in a non-root build) and give reasonable but still arbitrary
+# values for the last.
+CHOWN=true
+CHGRP=true
+GAMEPERM = 0755
+VARFILEPERM = 0644
+VARDIRPERM = 0755
+
+#-POST
+# Override WINX11LIB in Makefile.src, to remove -lXmu and add -lXpm
+WINX11LIB=-lXaw -lXext -lXt -lX11 -lXpm
+
+# We need these down here in order to override the use of lex & yacc in
+# Makefile.utl
+LEX=flex
+YACC=bison -y

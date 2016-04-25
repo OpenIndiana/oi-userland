@@ -2,14 +2,14 @@ This patch is required in order to build in 64-bit mode on Solaris.
 
 This patch will not be submitted upstream.
 
---- include/system.h.orig	Sun Dec  7 15:39:13 2003
-+++ include/system.h	Tue Jul 23 11:00:47 2013
-@@ -162,7 +162,7 @@
- # endif
- #  if defined(POSIX_TYPES) || defined(__TURBOC__)
- #   ifndef bsdi
--E int FDECL(write, (int, const void *,unsigned));
-+/* E int FDECL(write, (int, const void *,unsigned)); */
- #   endif
- #  else
- #   ifndef __MWERKS__	/* metrowerks defines write via universal headers */
+--- include/system.h	2015-12-07 00:26:01.000000000 -0800
++++ include/system.h	2016-04-14 14:53:13.263148993 -0700
+@@ -165,7 +165,7 @@ E long FDECL(lseek, (int, long, int));
+ #endif
+ #if defined(POSIX_TYPES) || defined(__TURBOC__)
+ #ifndef bsdi
+-E int FDECL(write, (int, const void *, unsigned));
++/* E int FDECL(write, (int, const void *, unsigned)); */
+ #endif
+ #else
+ #ifndef __MWERKS__ /* metrowerks defines write via universal headers */

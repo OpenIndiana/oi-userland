@@ -1,0 +1,14 @@
+The makefiles don't really allow for a proto-area-style install; this
+tweak, plus the bits in files/solaris, let this happen correctly.
+
+--- sys/unix/Makefile.top	2015-11-18 12:54:59.000000000 -0800
++++ sys/unix/Makefile.top	2016-04-14 16:37:08.807692850 -0700
+@@ -206,7 +206,7 @@
+ 	cp util/recover $(INSTDIR)
+ 	-if test -n '$(SHELLDIR)'; then rm -f $(SHELLDIR)/$(GAME); fi
+ 	if test -n '$(SHELLDIR)'; then \
+-		sed -e 's;/usr/games/lib/nethackdir;$(HACKDIR);' \
++		sed -e 's;/usr/games/lib/nethackdir;$(CLIENT_HACKDIR);' \
+ 		-e 's;HACKDIR/nethack;HACKDIR/$(GAME);' \
+ 		< sys/unix/nethack.sh \
+ 		> $(SHELLDIR)/$(GAME) ; fi

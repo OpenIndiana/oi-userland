@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -35,6 +37,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2008/172
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file sys/unix/sysconf path=etc/nethack.conf group=games mode=0664 preserve=true
 file path=usr/bin/nethack
 file path=usr/lib/nethack/Arc-fila.lev
 file path=usr/lib/nethack/Arc-filb.lev
@@ -107,15 +111,23 @@ file path=usr/lib/nethack/asmodeus.lev
 file path=usr/lib/nethack/astral.lev
 file path=usr/lib/nethack/baalz.lev
 file path=usr/lib/nethack/bigrm-1.lev
+file path=usr/lib/nethack/bigrm-10.lev
 file path=usr/lib/nethack/bigrm-2.lev
 file path=usr/lib/nethack/bigrm-3.lev
 file path=usr/lib/nethack/bigrm-4.lev
 file path=usr/lib/nethack/bigrm-5.lev
+file path=usr/lib/nethack/bigrm-6.lev
+file path=usr/lib/nethack/bigrm-7.lev
+file path=usr/lib/nethack/bigrm-8.lev
+file path=usr/lib/nethack/bigrm-9.lev
+file path=usr/lib/nethack/bogusmon
 file path=usr/lib/nethack/castle.lev
 file path=usr/lib/nethack/cmdhelp
 file path=usr/lib/nethack/data
 file path=usr/lib/nethack/dungeon
 file path=usr/lib/nethack/earth.lev
+file path=usr/lib/nethack/engrave
+file path=usr/lib/nethack/epitaph
 file path=usr/lib/nethack/fakewiz1.lev
 file path=usr/lib/nethack/fakewiz2.lev
 file path=usr/lib/nethack/fire.lev
@@ -127,6 +139,8 @@ file path=usr/lib/nethack/knox.lev
 file path=usr/lib/nethack/license
 file path=usr/lib/nethack/medusa-1.lev
 file path=usr/lib/nethack/medusa-2.lev
+file path=usr/lib/nethack/medusa-3.lev
+file path=usr/lib/nethack/medusa-4.lev
 file path=usr/lib/nethack/minefill.lev
 file path=usr/lib/nethack/minend-1.lev
 file path=usr/lib/nethack/minend-2.lev
@@ -145,6 +159,7 @@ file path=usr/lib/nethack/oracle.lev
 file path=usr/lib/nethack/oracles
 file path=usr/lib/nethack/orcus.lev
 file path=usr/lib/nethack/pet_mark.xbm
+file path=usr/lib/nethack/pilemark.xbm
 file path=usr/lib/nethack/quest.dat
 file path=usr/lib/nethack/recover mode=0555
 file path=usr/lib/nethack/rip.xpm
@@ -158,9 +173,12 @@ file path=usr/lib/nethack/soko3-1.lev
 file path=usr/lib/nethack/soko3-2.lev
 file path=usr/lib/nethack/soko4-1.lev
 file path=usr/lib/nethack/soko4-2.lev
+file path=usr/lib/nethack/symbols
+link path=usr/lib/nethack/sysconf target=../../../etc/nethack.conf
 file path=usr/lib/nethack/tower1.lev
 file path=usr/lib/nethack/tower2.lev
 file path=usr/lib/nethack/tower3.lev
+file path=usr/lib/nethack/tribute
 file path=usr/lib/nethack/valley.lev
 file path=usr/lib/nethack/water.lev
 file path=usr/lib/nethack/wizard1.lev
@@ -177,4 +195,6 @@ file path=var/games/nethack/perm group=games mode=0664 \
 file path=var/games/nethack/record group=games mode=0664 \
     original_name=SUNWnethack:var/games/nethack/record preserve=true
 dir  path=var/games/nethack/save group=games mode=0775
+file path=var/games/nethack/xlogfile group=games mode=0664 preserve=true
+#
 license dat/license license=Nethack

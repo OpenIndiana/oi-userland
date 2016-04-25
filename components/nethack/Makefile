@@ -25,17 +25,17 @@
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
+PATH=$(dir $(CC)):$(USRBINDIR)
 
 COMPONENT_NAME=		nethack
-COMPONENT_VERSION=	3.4.3
+COMPONENT_VERSION=	3.6.0
 COMPONENT_PROJECT_URL=	http://www.nethack.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-343-src.tgz
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(subst .,,$(COMPONENT_VERSION))-src.tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4
+    sha256:1ade698d8458b8d87a4721444cb73f178c74ed1b6fde537c12000f8edf2cb18a
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
-TPNO=			9239
+TPNO=			27856
 
 BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
@@ -43,32 +43,23 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
+# This file contains the configuration we need
+COMPONENT_POST_UNPACK_ACTION = $(CP) files/solaris $(SOURCE_DIR)/sys/unix/hints
+
 # Need to use Makefiles in the sys/unix directory and copy them into various
 # other directories.
 #
-COMPONENT_PREP_ACTION= (cd $(SOURCE_DIR)/sys/unix ; sh setup.sh)
+COMPONENT_PREP_ACTION= (cd $(SOURCE_DIR)/sys/unix; sh setup.sh hints/solaris)
 
-COMPONENT_INSTALL_ARGS += CHOWN=true
-COMPONENT_INSTALL_ARGS += CHGRP=true
-COMPONENT_INSTALL_ARGS += ROOT=$(PROTO_DIR)
-
-# Nethack's build infrastructure doesn't let you easily override CFLAGS.
-# Luckily, all the source files live in the same location relative to the
-# include directory, so we can just stuff a -I into CFLAGS matching what's
-# there in the Makefiles.  And we have to force this to be overridden by
-# putting -e into MAKEFLAGS.
+COMPONENT_BUILD_TARGETS = all
 COMPONENT_BUILD_ENV += CC=$(CC)
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) -I../include"
+COMPONENT_BUILD_ENV += TOP_CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += LFLAGS="$(CC_BITS)"
-COMPONENT_BUILD_ENV += MAKEFLAGS=-e
-COMPONENT_INSTALL_ENV += CC=$(CC)
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS) -I../include"
-COMPONENT_INSTALL_ENV += LFLAGS="$(CC_BITS)"
-COMPONENT_INSTALL_ENV += MAKEFLAGS=-e
 
+# Uncomment out a few lines in the resources file
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
-		-e 's/^!\(NetHack.tile_file\)/\1/' \
+		-e 's/^!\(NetHack.pilemark\)/\1/' \
 		$(COMPONENT_SRC)/win/X11/NetHack.ad \
 		> $(PROTO_DIR)/usr/lib/nethack/NetHack.ad
 
