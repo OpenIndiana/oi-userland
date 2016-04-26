@@ -1,12 +1,28 @@
 Patch to add Solaris specific paths for mod-ssl.  This patch has not
 yet been submitted upstream.
 
---- puppetlabs-apache-1.8.1/manifests/mod/ssl.pp.orig   2016-03-31 11:38:48.810710927 -0700
-+++ puppetlabs-apache-1.8.1/manifests/mod/ssl.pp        2016-03-31 11:40:38.688179788 -0700
-@@ -40,12 +40,31 @@
+--- puppetlabs-apache-1.8.1/manifests/mod/ssl.pp.orig	2016-04-25 12:42:50.344060420 -0700
++++ puppetlabs-apache-1.8.1/manifests/mod/ssl.pp	2016-04-25 12:48:12.151380956 -0700
+@@ -32,6 +32,15 @@
+     'gentoo': {
+       $ssl_mutex = 'default'
+     }
++    'solaris': {
++      if versioncmp($apache_version, '2.4') == 0 {
++        $ssl_mutex = 'default'
++      } elsif versioncmp($apache_version, '2.2') == 0 {
++        $ssl_mutex = 'file:/var/run/apache2/2.2/ssl_mutex'
++      } else {
++        $ssl_mutex = "file:/var/run/ssl_mutex"
++      }
++    }
+     'Suse': {
+       $ssl_mutex = 'default'
+     }
+@@ -40,12 +49,31 @@
      }
    }
-
+ 
 -  $session_cache = $::osfamily ? {
 -    'debian'  => "\${APACHE_RUN_DIR}/ssl_scache(512000)",
 -    'redhat'  => '/var/cache/mod_ssl/scache(512000)',
@@ -39,6 +55,5 @@ yet been submitted upstream.
 +      }
 +    }
    }
-
+ 
    ::apache::mod { 'ssl':
-
