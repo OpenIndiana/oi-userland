@@ -1,0 +1,81 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/libcroco@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A library that provides CSS parsing and manipulation"
+set name=pkg.description \
+    value="Libcroco is a general CSS parsing and manipulation library written in C for the GNOME project. It provides a CSS2 parser (SAC and CSSOM API), and a CSS2 selection engine."
+set name=com.oracle.info.description value=libcroco
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2010/143
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/bin/$(MACH64)/croco-0.6-config
+file path=usr/bin/croco-0.6-config
+file usr/bin/$(MACH64)/csslint-0.6 path=usr/bin/csslint-0.6
+file path=usr/include/libcroco-0.6/libcroco/cr-additional-sel.h
+file path=usr/include/libcroco-0.6/libcroco/cr-attr-sel.h
+file path=usr/include/libcroco-0.6/libcroco/cr-cascade.h
+file path=usr/include/libcroco-0.6/libcroco/cr-declaration.h
+file path=usr/include/libcroco-0.6/libcroco/cr-doc-handler.h
+file path=usr/include/libcroco-0.6/libcroco/cr-enc-handler.h
+file path=usr/include/libcroco-0.6/libcroco/cr-fonts.h
+file path=usr/include/libcroco-0.6/libcroco/cr-input.h
+file path=usr/include/libcroco-0.6/libcroco/cr-num.h
+file path=usr/include/libcroco-0.6/libcroco/cr-om-parser.h
+file path=usr/include/libcroco-0.6/libcroco/cr-parser.h
+file path=usr/include/libcroco-0.6/libcroco/cr-parsing-location.h
+file path=usr/include/libcroco-0.6/libcroco/cr-prop-list.h
+file path=usr/include/libcroco-0.6/libcroco/cr-pseudo.h
+file path=usr/include/libcroco-0.6/libcroco/cr-rgb.h
+file path=usr/include/libcroco-0.6/libcroco/cr-sel-eng.h
+file path=usr/include/libcroco-0.6/libcroco/cr-selector.h
+file path=usr/include/libcroco-0.6/libcroco/cr-simple-sel.h
+file path=usr/include/libcroco-0.6/libcroco/cr-statement.h
+file path=usr/include/libcroco-0.6/libcroco/cr-string.h
+file path=usr/include/libcroco-0.6/libcroco/cr-style.h
+file path=usr/include/libcroco-0.6/libcroco/cr-stylesheet.h
+file path=usr/include/libcroco-0.6/libcroco/cr-term.h
+file path=usr/include/libcroco-0.6/libcroco/cr-tknzr.h
+file path=usr/include/libcroco-0.6/libcroco/cr-token.h
+file path=usr/include/libcroco-0.6/libcroco/cr-utils.h
+file path=usr/include/libcroco-0.6/libcroco/libcroco-config.h
+file path=usr/include/libcroco-0.6/libcroco/libcroco.h
+link path=usr/lib/$(MACH64)/libcroco-0.6.so target=libcroco-0.6.so.3.0.1
+link path=usr/lib/$(MACH64)/libcroco-0.6.so.3 target=libcroco-0.6.so.3.0.1
+file path=usr/lib/$(MACH64)/libcroco-0.6.so.3.0.1
+file path=usr/lib/$(MACH64)/pkgconfig/libcroco-0.6.pc
+link path=usr/lib/libcroco-0.6.so target=libcroco-0.6.so.3.0.1
+link path=usr/lib/libcroco-0.6.so.3 target=libcroco-0.6.so.3.0.1
+file path=usr/lib/libcroco-0.6.so.3.0.1
+file path=usr/lib/pkgconfig/libcroco-0.6.pc
+license COPYING license=LGPLv2
