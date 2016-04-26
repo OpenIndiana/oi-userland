@@ -22,7 +22,7 @@
 #
 
 NAME:             emacs
-VERSION:          24.3
+VERSION:          24.5
 DESCRIPTION:      GNU Emacs editor
 LICENSE:          GPLv3
 BUGTRAQ:          solaris/utility/emacs
@@ -36,30 +36,10 @@ information needed to understand how this component is put together.
 
 - We patch the following changes to the emacs sources:
 
-	face_for_font.patch
-	    xdisp.c has a call to face_for_font(), a function that is
-	    only present when window system support is included, which is
-	    not the case for emacs-nox. This patch ifdefs the offending
-	    call away.
-
 	find.patch
 	    The rgrep function uses the GNU-specific -path option to the
 	    find command. Change the default value for the find-program
 	    variable in grep.el to use GNU find.
-
-	gtkutil.patch
-	    This fixes a bug in emacs 24.3 in which a message like the
-	    following is emitted to stderr on startup if emacs was started
-	    with a specified geometry:
-
-	    (emacs:4090): Gtk-WARNING **: gtk_window_parse_geometry() called
-	    on a window with no visible children; the window should be set up
-	    before gtk_window_parse_geometry() is called.
-
-	    This was fixed upstream: 
-
-	        https://bugzilla.redhat.com/show_bug.cgi?id=929353
-		http://bzr.savannah.gnu.org/lh/emacs/trunk/revision/111078
 
 - The emacs distribution used to have a subdirectory, src/s, which
   contained per-platform header files. We would apply the following

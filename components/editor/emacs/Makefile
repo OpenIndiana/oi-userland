@@ -20,21 +20,21 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	24.3
+COMPONENT_VERSION=	24.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0098ca3204813d69cd8412045ba33e8701fa2062f4bff56bedafc064979eef41
+    sha256:dd47d71dd2a526cf6b47cb49af793ec2e26af69a0951cc40e43ae290eacfc34e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
@@ -82,7 +82,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
-# ASLR should remain disabled for emacs (the default); 
+# ASLR should remain disabled for emacs (the default);
 # build consistently core dumps with ASLR
 ASLR_MODE = $(ASLR_DISABLE)
 
@@ -174,10 +174,10 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 # common targets
 build:          $(BUILD_32)
 
-install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed 
+install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
 test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
