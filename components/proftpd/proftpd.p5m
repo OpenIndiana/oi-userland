@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # PSARC/2011/088
@@ -35,21 +35,33 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/088
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-
+#
+# config. file
 file proftpd.conf path=etc/proftpd.conf mode=0644 overlay=allow preserve=true
+#
+# SMF(5)
 file auth_service-network-ftpd \
     path=etc/security/auth_attr.d/service-network-ftpd
 file prof_service-network-ftpd \
     path=etc/security/prof_attr.d/service-network-ftpd
 file ftp.xml path=lib/svc/manifest/network/ftp.xml
 file svc-ftp path=lib/svc/method/svc-ftp
+#
+# executables
+file path=usr/bin/ftpasswd
 file path=usr/bin/ftpcount
 file path=usr/bin/ftpdctl
+file path=usr/bin/ftpmail
+file path=usr/bin/ftpquota
 file path=usr/bin/ftptop
 file path=usr/bin/ftpwho
 file path=usr/bin/prxs
+#
+# dtrace demo
 file dtrace/example.d path=usr/demo/dtrace/ftp.d
+#
+# headers
+file path=usr/include/proftpd/ascii.h
 file path=usr/include/proftpd/auth.h
 file path=usr/include/proftpd/bindings.h
 file path=usr/include/proftpd/buildstamp.h
@@ -74,12 +86,16 @@ file path=usr/include/proftpd/fsio.h
 file path=usr/include/proftpd/ftp.h
 file path=usr/include/proftpd/glibc-glob.h
 file path=usr/include/proftpd/help.h
+file path=usr/include/proftpd/ident.h
 file path=usr/include/proftpd/inet.h
+file path=usr/include/proftpd/lastlog.h
 file path=usr/include/proftpd/libsupp.h
 file path=usr/include/proftpd/log.h
+file path=usr/include/proftpd/memcache.h
 file path=usr/include/proftpd/mkhome.h
 file path=usr/include/proftpd/mod_ctrls.h
 file path=usr/include/proftpd/mod_gss.h
+file path=usr/include/proftpd/mod_log.h
 file path=usr/include/proftpd/mod_tls.h
 file path=usr/include/proftpd/modules.h
 file path=usr/include/proftpd/netacl.h
@@ -95,29 +111,45 @@ file path=usr/include/proftpd/proctitle.h
 file path=usr/include/proftpd/proftpd.h
 file path=usr/include/proftpd/regexp.h
 file path=usr/include/proftpd/response.h
+file path=usr/include/proftpd/rlimit.h
 file path=usr/include/proftpd/scoreboard.h
 file path=usr/include/proftpd/session.h
 file path=usr/include/proftpd/sets.h
+file path=usr/include/proftpd/stash.h
 file path=usr/include/proftpd/str.h
 file path=usr/include/proftpd/support.h
 file path=usr/include/proftpd/table.h
 file path=usr/include/proftpd/throttle.h
 file path=usr/include/proftpd/timers.h
+file path=usr/include/proftpd/tpl.h
 file path=usr/include/proftpd/trace.h
+file path=usr/include/proftpd/utf8.h
 file path=usr/include/proftpd/var.h
 file path=usr/include/proftpd/version.h
 file path=usr/include/proftpd/xferlog.h
+#
+# dtrace
 file dtrace/ftp.d path=usr/lib/dtrace/ftp.d
+#
+# servicing daemon
 file usr/sbin/proftpd path=usr/lib/inet/proftpd
+#
+# pkg-config
 file path=usr/lib/pkgconfig/proftpd.pc
+#
+# modules
 file path=usr/lib/proftpd/mod_auth_gss.so
 file path=usr/lib/proftpd/mod_facl.so
 file path=usr/lib/proftpd/mod_gss.so
 file path=usr/lib/proftpd/mod_tls.so
 file path=usr/lib/proftpd/mod_wrap.so
+#
+# sbin executables
 file ftprestart.sh path=usr/sbin/ftprestart
 file path=usr/sbin/ftpscrub
 file path=usr/sbin/ftpshut
+#
+# documentation
 file doc/Configuration.html path=usr/share/doc/proftpd/Configuration.html
 file doc/modules/mod_auth_file.html \
     path=usr/share/doc/proftpd/modules/mod_auth_file.html
@@ -138,8 +170,11 @@ file doc/modules/mod_lang.html path=usr/share/doc/proftpd/modules/mod_lang.html
 file doc/contrib/mod_tls.html path=usr/share/doc/proftpd/modules/mod_tls.html
 file doc/contrib/mod_wrap.html path=usr/share/doc/proftpd/modules/mod_wrap.html
 file proftpd_migration.txt path=usr/share/doc/proftpd/proftpd_migration.txt
+#
+# .mo files
 file path=usr/share/locale/bg_BG/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/en_US/LC_MESSAGES/proftpd.mo
+file path=usr/share/locale/es_ES/LC_MESSAGES/proftpd.mo
 file usr/share/locale/fr_FR/LC_MESSAGES/proftpd.mo \
     path=usr/share/locale/fr/LC_MESSAGES/proftpd.mo
 file usr/share/locale/it_IT/LC_MESSAGES/proftpd.mo \
@@ -152,7 +187,12 @@ file usr/share/locale/ru_RU/LC_MESSAGES/proftpd.mo \
     path=usr/share/locale/ru/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/proftpd.mo
+#
+# man pages
+file path=usr/share/man/man1/ftpasswd.1
 file path=usr/share/man/man1/ftpcount.1
+file path=usr/share/man/man1/ftpmail.1
+file path=usr/share/man/man1/ftpquota.1
 file path=usr/share/man/man1/ftptop.1
 file path=usr/share/man/man1/ftpwho.1
 file path=usr/share/man/man5/proftpd.conf.5
@@ -161,8 +201,12 @@ file path=usr/share/man/man8/ftpdctl.8
 file path=usr/share/man/man8/ftpscrub.8
 file path=usr/share/man/man8/ftpshut.8
 file path=usr/share/man/man8/proftpd.8
+#
+# user/group (added by pkg)
 group groupname=ftp gid=21
 user username=ftp ftpuser=false gcos-field="FTPD Reserved UID" group=ftp uid=21
+#
+# pkg meta
 legacy pkg=SUNWftpu desc="FTP Server and Utilities" name="FTP Server, (Usr)"
 license proftpd.license license="GPLv2 (mod_gss)" \
     com.oracle.info.description="the ProFPTD GSS Engine" \
