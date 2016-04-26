@@ -1,0 +1,38 @@
+https://rt.cpan.org/Public/Bug/Display.html?id=112072
+
+--- DBD-mysql-4.033/t/05dbcreate.t	2016-02-13 13:29:56.467130717 -0800
++++ DBD-mysql-4.033/t/05dbcreate.t	2016-02-13 13:23:45.371688976 -0800
+@@ -10,7 +10,7 @@ use lib 't', '.';
+ require 'lib.pl';
+ 
+ my $dbh;
+-eval {$dbh= DBI->connect('DBI:mysql:', $test_user, $test_password,
++eval {$dbh= DBI->connect($test_dsn, $test_user, $test_password,
+                       { RaiseError => 1, PrintError => 1, AutoCommit => 0 });};
+ if ($@) {
+     diag $@;
+--- DBD-mysql-4.033/t/87async.t	2016-02-13 13:37:19.948093572 -0800
++++ DBD-mysql-4.033/t/87async.t	2016-02-13 13:36:58.066381499 -0800
+@@ -1,7 +1,6 @@
+ use strict;
+ use warnings;
+ 
+-use Test::Deep;
+ use Test::More;
+ use DBI;
+ use DBI::Const::GetInfoType;
+@@ -11,10 +10,10 @@ use vars qw($test_dsn $test_user $test_p
+ use lib 't', '.';
+ require 'lib.pl';
+ 
+-eval { use Test::Deep };
+-SKIP: {
+-    if ($!) {
+-        skip "Test::Deep is not installed!";
++BEGIN {
++    eval { require Test::Deep };
++    if ($@) {
++            plan skip_all => 'Test::Deep is not installed!';
+     }
+ }
+ my $dbh;

@@ -1,0 +1,119 @@
+From 95b210810301f0a5c87adc0d682bc8424dfb41d0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Fri, 26 Feb 2016 13:32:31 +0100
+Subject: [PATCH] Fix transferring MYSQL_TYPE_LONG values on 64-bit big endian
+ systems
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+t/40server_prepare.t test failed on s390x platform. Server-prepared
+values of types int, smallint, and tinyint are passed to application
+as 32-bit integer. The same buffer was interpreted as long integer
+by DBD::MySQL. This caused missaligned read/write and bogus
+interpretation of the values.
+
+https://rt.cpan.org/Public/Bug/Display.html?id=57266
+https://bugzilla.redhat.com/show_bug.cgi?id=1311646
+http://dev.mysql.com/doc/refman/5.7/en/mysql-stmt-fetch.html
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ dbdimp.c | 20 +++++++++++++-------
+ dbdimp.h |  5 +++--
+ 2 files changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/dbdimp.c b/dbdimp.c
+index d507588..9a1be20 100644
+--- a/dbdimp.c
++++ b/dbdimp.c
+@@ -18,6 +18,7 @@
+ #endif
+ 
+ #include "dbdimp.h"
++#include <inttypes.h> /* for PRId32 */
+ 
+ #if defined(WIN32)  &&  defined(WORD)
+ #undef WORD
+@@ -3753,8 +3754,8 @@ int dbd_describe(SV* sth, imp_sth_t* imp_sth)
+ 
+       if (DBIc_TRACE_LEVEL(imp_xxh) >= 2)
+       {
+-        PerlIO_printf(DBIc_LOGPIO(imp_xxh),"\t\ti %d col_type %d fbh->length %d\n",
+-                      i, col_type, (int) fbh->length);
++        PerlIO_printf(DBIc_LOGPIO(imp_xxh),"\t\ti %d col_type %d fbh->length %lu\n",
++                      i, col_type, fbh->length);
+         PerlIO_printf(DBIc_LOGPIO(imp_xxh),
+                       "\t\tfields[i].length %lu fields[i].max_length %lu fields[i].type %d fields[i].charsetnr %d\n",
+                       (long unsigned int) fields[i].length, (long unsigned int) fields[i].max_length, fields[i].type,
+@@ -4015,8 +4016,8 @@ process:
+ 
+         case MYSQL_TYPE_LONG:
+           if (DBIc_TRACE_LEVEL(imp_xxh) >= 2)
+-            PerlIO_printf(DBIc_LOGPIO(imp_xxh), "\t\tst_fetch int data %d, unsigned? %d\n",
+-                          (int) fbh->ldata, buffer->is_unsigned);
++            PerlIO_printf(DBIc_LOGPIO(imp_xxh), "\t\tst_fetch int data %"PRId32", unsigned? %d\n",
++                          fbh->ldata, buffer->is_unsigned);
+           if (buffer->is_unsigned)
+             sv_setuv(sv, fbh->ldata);
+           else
+@@ -4787,6 +4788,7 @@ int dbd_bind_ph(SV *sth, imp_sth_t *imp_sth, SV *param, SV *value,
+   int buffer_is_null= 0;
+   int buffer_length= slen;
+   unsigned int buffer_type= 0;
++  IV tmp;
+ #endif
+ 
+   D_imp_dbh_from_sth;
+@@ -4874,12 +4876,16 @@ int dbd_bind_ph(SV *sth, imp_sth_t *imp_sth, SV *param, SV *value,
+           if (!SvIOK(imp_sth->params[idx].value) && DBIc_TRACE_LEVEL(imp_xxh) >= 2)
+             PerlIO_printf(DBIc_LOGPIO(imp_xxh), "\t\tTRY TO BIND AN INT NUMBER\n");
+           buffer_length = sizeof imp_sth->fbind[idx].numeric_val.lval;
+-          imp_sth->fbind[idx].numeric_val.lval= SvIV(imp_sth->params[idx].value);
++
++          tmp = SvIV(imp_sth->params[idx].value);
++          if (tmp > INT32_MAX)
++	        croak("Could not bind %ld: Integer too large for MYSQL_TYPE_LONG", tmp);
++          imp_sth->fbind[idx].numeric_val.lval= tmp;
+           buffer=(void*)&(imp_sth->fbind[idx].numeric_val.lval);
+           if (DBIc_TRACE_LEVEL(imp_xxh) >= 2)
+             PerlIO_printf(DBIc_LOGPIO(imp_xxh),
+-                          "   SCALAR type %d ->%ld<- IS A INT NUMBER\n",
+-                          (int) sql_type, (long) (*buffer));
++                          "   SCALAR type %d ->%"PRId32"<- IS A INT NUMBER\n",
++                          (int) sql_type, *(int32_t *)buffer);
+           break;
+ 
+         case MYSQL_TYPE_DOUBLE:
+diff --git a/dbdimp.h b/dbdimp.h
+index 8723bcc..1ef5d72 100644
+--- a/dbdimp.h
++++ b/dbdimp.h
+@@ -22,6 +22,7 @@
+ #include <mysqld_error.h>  /* Comes MySQL */
+ 
+ #include <errmsg.h> /* Comes with MySQL-devel */
++#include <stdint.h> /* For int32_t */
+ 
+ /* For now, we hardcode this, but in the future,
+  * we can detect capabilities of the MySQL libraries
+@@ -212,7 +213,7 @@ typedef struct imp_sth_ph_st {
+ typedef struct imp_sth_phb_st {
+     union
+     {
+-      long lval;
++      int32_t lval;
+       double dval;
+     } numeric_val;
+     unsigned long   length;
+@@ -233,7 +234,7 @@ typedef struct imp_sth_fbh_st {
+     char           *data;
+     int            charsetnr;
+     double         ddata;
+-    long           ldata;
++    int32_t        ldata;
+ #if MYSQL_VERSION_ID < FIELD_CHARSETNR_VERSION 
+     unsigned int   flags;
+ #endif
+-- 
+2.5.0
+

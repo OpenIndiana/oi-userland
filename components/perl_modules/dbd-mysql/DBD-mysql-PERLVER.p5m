@@ -1,0 +1,60 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/library/perl-5/dbd-mysql-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Perl Mysql Database Interface"
+set name=pkg.description \
+    value="Mysql driver for the Perl5 Database Interface (DBI)"
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=com.oracle.info.description value="DBD::mysql Perl module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Perl
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/072
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+#file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/perllocal.pod
+file path=usr/perl5/$(PERLVER)/man/man3/Bundle::DBD::mysql.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::README.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::mysql.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::mysql::INSTALL.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Bundle/DBD/mysql.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/README.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/mysql.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/mysql/GetInfo.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/mysql/INSTALL.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/mysql/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/mysql/mysql.so
+license DBD-mysql.license license=Artistic
+
+# force a dependency on the Perl runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# force a dependency on the DBI package
+depend type=require fmri=library/perl-5/database

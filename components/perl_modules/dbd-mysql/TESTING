@@ -1,0 +1,131 @@
+================================================================================
+================================ Install mysql =================================
+================================================================================
+
+$ pkg install database/mysql-56 database/mysql-56/client
+
+
+
+================================================================================
+========================== Init database & run daemon ==========================
+================================================================================
+
+#!/bin/bash
+
+set -x
+
+MYSQL_TEST_DATADIR=/var/tmp/mysql
+MYSQL_VERSION=5.6
+MYSQL_BINDIR=/usr/mysql/$MYSQL_VERSION/bin
+MYSQL_TEST_USER=root
+MYSQL_TEST_PASSWORD=new-password
+
+rm -rf "$MYSQL_TEST_DATADIR"
+
+"$MYSQL_BINDIR/mysql_install_db" \
+        --keep-my-cnf \
+        --datadir="$MYSQL_TEST_DATADIR" \
+        --basedir=/usr/mysql/$MYSQL_VERSION
+
+# Run the daemon in background.
+#   --gdb makes it possible to terminate mysqld via Ctrl+C
+"$MYSQL_BINDIR/mysqld" \
+        --skip-networking \
+        -u $MYSQL_TEST_USER \
+        --datadir="$MYSQL_TEST_DATADIR" \
+        --socket="$MYSQL_TEST_DATADIR"/socket \
+        --pid-file="$MYSQL_TEST_DATADIR"/pid \
+        --gdb &
+
+sleep 10 # wait for db to come up
+
+"$MYSQL_BINDIR/mysqladmin" \
+        --socket "$MYSQL_TEST_DATADIR"/socket \
+        -u "$MYSQL_TEST_USER" \
+        password "$MYSQL_TEST_PASSWORD"
+
+
+
+================================================================================
+============ In perl craete DB, table, trigger and insert some data ============
+================================================================================
+
+#!/usr/perl5/5.22/bin/perl
+
+use DBI;
+
+my $dbname="perl_test_db";
+
+$dsn = "DBI:mysql:;mysql_socket=/var/tmp/mysql/socket;";
+$dbh = DBI->connect($dsn, 'root', 'new-password');
+
+# List all databases available
+say STDOUT join " : ", $dbh->func('_ListDBs');
+
+# Call mysql specific function
+bless ($dbh, "DBD::mysql::db");
+$dbh->admin('createdb', $dbname);
+
+# Connect again, this time directly to DB
+$dsn = "DBI:mysql:$dbname;mysql_socket=/var/tmp/mysql/socket;";
+$dbh = DBI->connect($dsn, 'root', 'new-password');
+
+eval { $dbh->do("DROP TABLE foo") };
+
+$dbh->do("CREATE TABLE foo (id INTEGER, name VARCHAR(20))");
+
+$dbh->do("
+CREATE TRIGGER only_even
+     BEFORE INSERT ON foo FOR EACH ROW
+     BEGIN
+          IF NEW.id % 2 = 1
+          THEN
+               SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insert only odd numbers!';
+          ELSE
+               SET NEW.id = NEW.id * 5;
+          END IF;
+     END;
+");
+
+# First fails, it's odd number
+$dbh->do("INSERT INTO foo VALUES (1, " . $dbh->quote("Tim") . ")");
+$dbh->do("INSERT INTO foo VALUES (?, ?)", undef, 2, "Jochen");
+$dbh->do("INSERT INTO foo VALUES (4, " . $dbh->quote("Pete") . ")");
+
+my $sth = $dbh->prepare("SELECT * FROM foo");
+$sth->execute();
+while (my $ref = $sth->fetchrow_hashref()) {
+        print "Found a row: id = $ref->{'id'}, name = $ref->{'name'}\n";
+}
+$sth->finish();
+
+$dbh->disconnect();
+
+
+
+================================================================================
+============================== Perl script output ==============================
+================================================================================
+
+information_schema : mysql : performance_schema : test
+DBD::mysql::db do failed: Insert only odd numbers! at ./a.pl line 39.
+Found a row: id = 10, name = Jochen
+Found a row: id = 20, name = Pete
+
+(please note that first line may vary, it just lists all currently available
+databases)
+
+
+
+================================================================================
+===================== Verify from shell the data are there =====================
+================================================================================
+
+$ echo 'select * from foo;' |
+	mysql --socket=/var/tmp/mysql/socket -u root --password=new-password perl_test_db
+
+Warning: Using a password on the command line interface can be insecure.
+id      name
+10      Jochen
+20      Pete
+
