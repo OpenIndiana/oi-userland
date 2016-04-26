@@ -1,14 +1,13 @@
 Patch to add Solaris specific elements to the main Apache
 configuration file.  This patch has not yet been submitted upstream.
 
---- puppetlabs-apache-1.4.0/manifests/init.pp.orig	2015-06-03 13:46:16.375098644 -0600
-+++ puppetlabs-apache-1.4.0/manifests/init.pp	2015-06-03 13:46:39.983927244 -0600
-@@ -281,6 +281,12 @@ class apache (
-           require => Package['httpd'],
-         }
+--- puppetlabs-apache-1.8.1/manifests/init.pp.orig	2016-02-09 08:53:22.000000000 -0800
++++ puppetlabs-apache-1.8.1/manifests/init.pp	2016-04-26 09:36:14.315166408 -0700
+@@ -305,6 +305,11 @@
+         $scriptalias          = '/usr/lib/cgi-bin'
+         $access_log_file      = 'access.log'
        }
 +      'solaris': {
-+        $pidfile              = '/system/volatile/apache2/2.4/httpd.pid'
 +        $error_log            = 'error_log'
 +        $scriptalias          = '/var/apache2/2.4/cgi-bin/'
 +        $access_log_file      = 'access_log'
