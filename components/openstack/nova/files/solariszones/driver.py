@@ -1893,13 +1893,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
             try:
                 self._uninstall(instance)
             except Exception as ex:
-                reason = zonemgr_strerr(ex)
+                reason = zonemgr_strerror(ex)
                 LOG.debug(_("Unable to uninstall instance '%s' via "
                             "zonemgr(3RAD): %s") % (name, reason))
             try:
                 self._delete_config(instance)
             except Exception as ex:
-                reason = zonemgr_strerr(ex)
+                reason = zonemgr_strerror(ex)
                 LOG.debug(_("Unable to unconfigure instance '%s' via "
                             "zonemgr(3RAD): %s") % (name, reason))
 
