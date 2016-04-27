@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
@@ -513,10 +513,6 @@ user username=openldap ftpuser=false gcos-field="OpenLDAP User" group=openldap \
     uid=75
 license openldap.license license="openldap license"
 # This dependency is because we are building against cyrus-sasl from its proto
-# area and bypassing the auto-generated dependency.  When libsasl is updated,
-# this version number really should be adjusted, but the userland-incorporation
-# will force the cyrus-sasl packaging and openldap packaging to be from the same
-# build and not just this version or later.
-# The strange version number is caused by historical versioning in ON and will
-# go away when the libsasl package name is changed to libsasl2
-depend type=require fmri=pkg:/system/library/security/libsasl@5.12.2.1.26
+# area and bypassing the auto-generated dependency.  When upstream libsasl
+# is updated, this version number must be adjusted.
+depend type=require fmri=pkg:/system/library/security/libsasl2@2.1.26

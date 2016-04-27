@@ -1,0 +1,31 @@
+# Developed in-house at Oracle
+# File bug 3239 upstream asking for a configure option to give a path or name
+# for the openldap library.
+# http://bugzilla.cyrusimap.org/show_bug.cgi?id=3929
+
+diff -rupN old/configure.in new/configure.in
+--- old/configure.in	2016-02-23 19:24:33.185997552 -0800
++++ new/configure.in	2016-02-24 10:14:11.001802600 -0800
+@@ -968,7 +968,7 @@ if test "$ldapdb" != no; then
+         CMU_OPENLDAP_API
+ 
+         if test "$cmu_cv_openldap_api" = yes; then
+-            AC_CHECK_LIB(ldap, ldap_initialize, [ cmu_link_openldap="-lldap -llber" ], [ cmu_link_openldap=no ],-llber)
++            AC_CHECK_LIB(ldap_r, ldap_initialize, [ cmu_link_openldap="-lldap_r -llber" ], [ cmu_link_openldap=no ],-llber)
+         fi
+     fi
+ 
+diff -rupN old/saslauthd/configure.in new/saslauthd/configure.in
+--- old/saslauthd/configure.in	2016-02-23 19:24:48.448493822 -0800
++++ new/saslauthd/configure.in	2016-02-24 06:26:13.041626875 -0800
+@@ -138,8 +138,8 @@ fi
+ 
+ LDAP_LIBS=""
+ if test "$with_ldap" != no; then
+-  AC_CHECK_LIB(ldap, ldap_initialize, [ AC_DEFINE(HAVE_LDAP,[],[Support for LDAP?])
+-                                        LDAP_LIBS="-lldap -llber"
++  AC_CHECK_LIB(ldap_r, ldap_initialize, [ AC_DEFINE(HAVE_LDAP,[],[Support for LDAP?])
++                                        LDAP_LIBS="-lldap_r -llber"
+ 					if test "$with_openssl" != "no"; then
+ 					    LDAP_LIBS="$LDAP_LIBS -lcrypto $LIB_RSAREF"
+ 					fi],,-llber)

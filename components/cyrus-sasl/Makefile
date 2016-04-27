@@ -54,7 +54,7 @@ SASL2.64 = $(USRLIBDIR)/sasl2/$(MACH64)
 SASL_CONFDIR = $(ETCDIR)/sasl2
 PROTO_CONFDIR = $(PROTO_DIR)$(SASL_CONFDIR)
 
-TESTS_DIR=$(PROTO_DIR)/$(SASL2)/tests
+TESTS_DIR=$(PROTO_DIR)/tests
 TESTS_32_DIR=$(TESTS_DIR)/$(MACH32)
 
 # Migrated from ON in S12, including stuff from system/header, so this
@@ -73,11 +73,18 @@ studio_MT=
 CPPFLAGS += -I$(USRINCDIR)/openldap
 LDFLAGS += $(CC_BITS)  -lscf -lresolv 
 
+# if there is no mediator, use MIT
+KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
+
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-auth-sasldb
 CONFIGURE_OPTIONS += --with-dblib=berkeley
 CONFIGURE_OPTIONS += --with-saslauthd=$(USRSBINDIR)/saslauthd
+ifeq ($(KRB5_API), solaris)
 CONFIGURE_OPTIONS += --with-gss_impl=seam
+else
+CONFIGURE_OPTIONS += --with-gss_impl=mit
+endif
 CONFIGURE_OPTIONS += --without-gnu-ld
 CONFIGURE_OPTIONS.32 += --with-plugindir=$(SASL2.32)
 CONFIGURE_OPTIONS.64 += --with-plugindir=$(SASL2.64)
@@ -88,11 +95,7 @@ CONFIGURE_OPTIONS += --with-ldap=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-sample
 CONFIGURE_OPTIONS += --enable-login
 CONFIGURE_OPTIONS += --with-configdir=$(ETCDIR)/sasl2
-
-# 23044356 must be fixed before this can be enabled
-# bugzilla.cyrusimap.org 3926 must be fixed before this can be useful
-# except for testing
-# CONFIGURE_OPTIONS += --enable-ldapdb
+CONFIGURE_OPTIONS += --enable-ldapdb
 
 PKG_PROTO_DIRS += $(SOURCE_DIR)/doc $(COMPONENT_DIR)/Solaris
 
@@ -176,7 +179,8 @@ TARBALL_DIR=sasltest
 CLEAN_PATHS += $(TARBALL_DIR)
 
 test_tarball:	sasltest.tgz
-TEST_SCRIPTS= setup_testsuite run_testsuite transform-results cleanup
+TEST_SCRIPTS= setup_testsuite run_testsuite transform-results cleanup \
+	setup-for-mit setup-for-seam
 
 sasltest.tgz:	install
 	$(MKDIR) $(TARBALL_DIR)
@@ -193,4 +197,7 @@ REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
+ifneq ($(KRB5_API), solaris)
+    REQUIRED_PACKAGES += security/kerberos-5
+endif
 REQUIRED_PACKAGES += system/library/security/gss

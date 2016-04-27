@@ -1,0 +1,241 @@
+#!/bin/ksh93 -p
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+PACKAGES_NEEDED="$SASL_PACKAGES_NEEDED \
+	service/security/kerberos-5 \
+	system/security/kerberos-5 "
+
+pkg list $PACKAGES_NEEDED > /dev/null
+if (( $? != 0 ))
+then
+	pkg install $PACKAGES_NEEDED
+fi
+
+pkg list $PACKAGES_NEEDED > /dev/null
+if (( $? != 0 ))
+then
+	echo "One or more packages failed to install"
+	exit 1
+fi
+
+
+passwd="1234"
+
+trap "echo 'A command failed, aborting.'; exit 1" ERR
+
+svcadm disable -s svc:/network/security/krb5kdc:default
+svcadm disable -s svc:/network/security/kadmin:default
+svcadm disable -s svc:/network/security/krb5_prop:default
+
+if ! $force
+then
+	ok_to_proceed "Existing KDC config will be destroyed, okay to proceed?"
+fi
+
+trap - ERR # in kdcmgr destroy fails, run it again
+yes | /usr/sbin/kdcmgr destroy > /dev/null
+if (( $? != 0 ))
+then
+	yes | /usr/sbin/kdcmgr destroy > /dev/null
+fi
+print "Existing KDC config destroyed."
+trap "echo 'A command failed, aborting.'; exit 1" ERR
+
+passwd_file=$(/usr/bin/mktemp /var/run/setup_kdc_passwd.XXXXXX)
+
+print $passwd > $passwd_file
+
+# create the master KDC
+if [[ -n $master_kdc ]]
+then
+	/usr/sbin/kdcmgr -a $admin_princ -r $realm -p $passwd_file create -m $master_kdc slave
+else
+	/usr/sbin/kdcmgr -a $admin_princ -r $realm -p $passwd_file create master
+fi
+
+rm -f $passwd_file
+
+# Optional stuff follows...
+
+# Note, this next section is adding various service principals local to
+# this system.  If you have servers running on other systems, edit this
+# section to add the services using the FQDN hostnames of those systems
+# and ouput the keytab to a non-default filename.
+# You will then either copy the non-default filename created on the
+# system you ran this script on or login to the other system and do a
+# kadmin/ktadd to add the service principal to the /etc/krb5/krb5.keytab
+# located on that server.
+
+# addprincs if not in slave mode
+if [[ -z $master_kdc ]]
+then
+	if [[ -n "$kt_config_file" ]]
+	then
+		if ! $force
+		then
+			ok_to_proceed "Existing keytab files will be modified, okay to proceed?"
+		fi
+		while read host services
+		do
+			if [[ "$host" == "#*" ]]
+			then
+				# skip comments
+				continue
+			fi
+			if [[ "$host" != "localhost" ]]
+			then
+				hostkeytab="/var/run/${host}.keytab"
+				rm -f $hostkeytab
+				kt_transfer_command[num_keytabs]="scp $hostkeytab ${host}:/etc/krb5/krb5.keytab"
+			fi
+			for service in $services
+			do
+				if [[ "$host" == "localhost" ]]
+				then
+					# add service to KDC's keytab
+					kadmin.local -q "addprinc -randkey $service/$fqdn"
+					kadmin.local -q "ktadd $service/$fqdn"
+					print "Added $service/$fqdn to /etc/krb5/krb5.keytab"
+				else
+					# add service to $host's keytab
+					kadmin.local -q "addprinc -randkey $service/$host"
+					kadmin.local -q "ktadd -k $hostkeytab $service/$host"
+					print "\nAdded $service/$host to $hostkeytab"
+				fi
+			done
+			((num_keytabs = num_keytabs + 1))
+		done < $kt_config_file
+	fi
+
+	if [[ -n "$crossrealm" ]]
+	then
+		# Setup  Cross-realm auth.
+		kadmin.local -q "addprinc -pw $passwd krbtgt/$realm@$crossrealm"
+		kadmin.local -q "addprinc -pw $passwd krbtgt/$crossrealm@$realm"
+		print "\n\nNote, /etc/krb5/krb5.conf will need to be modified to support crossrealm."
+	fi
+
+	# Optional, Add service principals on KDC
+	for srv in nfs ldap smtp imap cifs
+	do
+		# randomizes the key anyway so use the -randkey option for addprinc).
+		kadmin.local -q "addprinc -randkey $srv/$fqdn"
+		kadmin.local -q "ktadd $srv/$fqdn"
+	done
+
+
+	# "tester" needed for setup
+	kadmin.local -q "addprinc -pw $passwd tester"
+
+	# "ken" needed for test
+	echo "$passwd" | saslpasswd2 -c -p -f ./sasldb ken
+	kadmin.local -q "addprinc -pw $passwd ken"
+
+fi # addprincs if not in slave mode
+
+# turn off err trap because svcadm below may return an unimportant error
+trap "" ERR
+
+if ! egrep '^[ 	]*krb5[ 	]+390003' /etc/nfssec.conf > /dev/null
+then
+	tmpnfssec=$(/usr/bin/mktemp /tmp/nfssec.conf_XXXXX)
+	[[ -n $tmpnfssec ]] || exit 1
+	sed  -e 's/^ *# *krb5/krb5/g' /etc/nfssec.conf > $tmpnfssec
+	mv -f $tmpnfssec /etc/nfssec.conf
+	print 'Enabled krb5 sec in /etc/nfssec.conf.'
+	print 'Copy /etc/nfssec.conf to all systems doing NFS sec=krb5*.'
+	print
+fi
+
+# get time and DNS running
+
+if [[ ! -f /etc/inet/ntp.conf && -f /etc/inet/ntp.client ]]
+then
+	cp /etc/inet/ntp.client /etc/inet/ntp.conf
+fi
+if [[ -f /etc/inet/ntp.conf ]]
+then
+	svcadm enable -s svc:/network/ntp:default
+fi
+
+
+svcadm enable svc:/network/security/ktkt_warn:default
+
+if ! svcadm enable -s svc:/network/security/krb5kdc:default
+then
+	svcs -x svc:/network/security/krb5kdc:default
+    cat <<-EOF
+
+Error, the krb5kdc daemon did not start.  You will not be able to do Kerberos
+authentication.  Check your kerberos config and rerun this script.
+
+	EOF
+    exit 1
+fi
+
+if [[ -z $master_kdc ]] && ! svcadm enable -s svc:/network/security/kadmin:default
+then
+	svcs -x svc:/network/security/kadmin:default
+    cat <<-EOF
+
+Error, the kadmind daemon did not start.  You will not be able to change
+passwords or run the kadmin command.  Make sure /etc/krb5/kadm5.acl is
+configured properly and rerun this script.
+
+	EOF
+    exit 1
+fi
+
+if ! svcadm enable -s svc:/network/rpc/gss:default
+then
+	svcs -x svc:/network/rpc/gss:default
+    cat <<-EOF
+
+Error, the gss service did not start.  You will not be able to do nfssec with sec=krb5*
+
+	EOF
+    exit 1
+fi
+
+tmpccache=$(/usr/bin/mktemp /tmp/ccache_XXXXXX)
+[[ -n $tmpccache ]] || exit 1
+if ! print "$passwd" | kinit -c $tmpccache tester
+then
+	print -u2 "Warning, kinit for tester princ failed, kdc setup is not working!"
+	exit 1
+fi
+
+integer i=0
+while ((i < num_keytabs))
+do
+	if ((i == 0))
+	then
+		print "\nRun the following commands to transfer generated keytabs:"
+	fi
+	print ${kt_transfer_command[i]}
+	((i = i + 1))
+done
+
