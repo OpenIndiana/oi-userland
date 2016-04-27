@@ -26,14 +26,18 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liblogging
-COMPONENT_VERSION=	1.0.4
+COMPONENT_VERSION=	1.0.5
 COMPONENT_PROJECT_URL=	http://www.liblogging.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aceb5d2aa8bdc771ff66f407f9adf4176b654db63e34a8605795b68be537b81c
+    sha256:310dc1691279b7a669d383581fe4b0babdc7bf75c9b54a24e51e60428624890b
 COMPONENT_ARCHIVE_URL=	\
-    http://download.rsyslog.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    http://download.openpkg.org/components/cache/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+# The original download site seems to be broken, it is not possible to
+# download the archive from there
+#    http://download.rsyslog.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+# The checksum of the archive corresponds to what is written on liblogging.org
 COMPONENT_BUGDB=	service/rsyslog
-TPNO=			20535
+TPNO=			27183
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
