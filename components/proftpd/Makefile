@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
@@ -62,14 +62,15 @@ CFLAGS += -I$(USRINCDIR)/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGR
 ifeq ($(OS_VERSION), 5.11)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 endif
+LDFLAGS +=	-m$(BITS)
+LDFLAGS +=	-z guidance=nolazyload -z nolazyload -lbsm -z guidance=lazyload -z lazyload
 
 # Force immediate binding because of chroot().
-CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)/run
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/proftpd
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/proftpd/$(MACH64)
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--enable-ctrls
 CONFIGURE_OPTIONS +=	--enable-facl
@@ -96,7 +97,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # Build Solaris dtrace object files and copy to proftpd build tree.
 COMPONENT_PRE_BUILD_ACTION = \
-	(cd dtrace && make CP="$(CP)" CC="$(CC)" BD="$(BUILD_DIR)/$(MACH32)")
+	(cd dtrace && make CP="$(CP)" CC="$(CC)" BD="$(BUILD_DIR)/$(MACH$(BITS))" BITS="$(BITS)")
 
 # proftpd configure and build is not ready for run out of the source tree
 CONFIGURE_SCRIPT =	$(@D)/configure
