@@ -11,7 +11,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libid3tag
 COMPONENT_VERSION=	0.15.1b

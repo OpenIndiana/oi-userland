@@ -12,21 +12,22 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		SDL_image
-COMPONENT_VERSION=	1.2.12
-COMPONENT_PROJECT_URL=	http://www.libsdl.org/projects/SDL_image/
-COMPONENT_SUMMARY=	Simple DirectMedia Layer - Sample Image Loading Library
+COMPONENT_NAME=		SDL
+COMPONENT_VERSION=	1.2.15
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	http://www.libsdl.org/
+COMPONENT_SUMMARY=	libsdl - Simple DirectMedia Layer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b90722984561004de84847744d566809dbb9daf732a9e503b91a1b5a84e5699
-COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/projects/SDL_image/release/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=	image/library/sdl-image
-COMPONENT_LICENSE =	zlib
+    sha256:d6d316a793e5e348155f0dd93b979798933fb98aa1edebcc108829d6474aad00
+COMPONENT_ARCHIVE_URL=	http://www.libsdl.org/release/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	library/sdl
+COMPONENT_LICENSE =	LGPLv2.1
 COMPONENT_LICENSE_FILE =	COPYING
-COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
+COMPONENT_CLASSIFICATION =	System/Libraries
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -34,9 +35,15 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					$(CONFIG_SHELL) autogen.sh )
+
+
+
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--disable-png-shared
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--disable-assembly
 
 # common targets
 build:		$(BUILD_32_and_64)
