@@ -1,0 +1,50 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://sourceforge.net/p/gnu-efi/patches/37/
+
+--- ORIGINAL/Make.defaults	2016-04-15 14:10:55.425262660 -0700
++++ gnu-efi-3.0/Make.defaults	2016-04-26 11:30:19.926023537 -0700
+@@ -45,15 +45,16 @@
+ # Where to install the package. GNU-EFI will create and access
+ # lib and include under the root
+ #
+-INSTALLROOT  := /
+-PREFIX       := /usr/local
+-LIBDIR 	     := $(PREFIX)/lib
+-INSTALL	     := install
++INSTALLROOT  := $(DESTDIR)
++PREFIX       := /usr
++INSTALL	     := ginstall
+ 
+ # Host/target identification
+ OS	     := $(shell uname -s)
+ HOSTARCH     := $(shell uname -m | sed s,i[3456789]86,ia32,)
+-ARCH	     := $(shell uname -m | sed s,i[3456789]86,ia32,)
++ARCH         := $(shell isainfo -n)
++LIBDIR       := $(PREFIX)/lib/$(ARCH)
++ARCH3264     := -m64
+ 
+ # FreeBSD (and possibly others) reports amd64 instead of x86_64
+ ifeq ($(ARCH),amd64)
+@@ -64,10 +65,10 @@
+ prefix       := /usr/bin/
+ CC           := $(prefix)gcc
+ AS           := $(prefix)as
+-LD           := $(prefix)ld
++LD           := /usr/ccs/bin/gld
+ AR           := $(prefix)ar
+ RANLIB       := $(prefix)ranlib
+-OBJCOPY      := $(prefix)objcopy
++OBJCOPY	     := /usr/gnu/bin/objcopy
+ 
+ 
+ #
+@@ -109,7 +110,7 @@
+ 
+ # Generic compilation flags
+ INCDIR  += -I$(SRCDIR) -I$(TOPDIR)/inc -I$(TOPDIR)/inc/$(ARCH) \
+-           -I$(TOPDIR)/inc/protocol
++           -I$(TOPDIR)/inc/protocol -I/usr/include
+ CFLAGS  += $(ARCH3264) -O2 -fpic -Wall -fshort-wchar -fno-strict-aliasing \
+            -fno-merge-constants -ffreestanding -fno-stack-protector       \
+            -fno-stack-check

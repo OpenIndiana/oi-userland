@@ -1,0 +1,17 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://sourceforge.net/p/gnu-efi/patches/37/
+
+--- ORIGINAL/inc/x86_64/efibind.h	2015-08-20 11:13:34.298199394 -0700
++++ ./gnu-efi-3.0/inc/x86_64/efibind.h	2015-08-20 13:34:46.421775385 -0700
+@@ -58,7 +58,9 @@
+         typedef unsigned short      uint16_t;
+         typedef short               int16_t;
+         typedef unsigned char       uint8_t;
+-        typedef signed char         int8_t;
++	#ifndef _SYS_STDINT_H
++        	typedef signed char         int8_t;
++	#endif
+     #elif defined(UNIX_LP64)
+ 
+         /*  Use LP64 programming model from C_FLAGS for integer width declarations */
