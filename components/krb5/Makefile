@@ -39,6 +39,9 @@ TPNO=	26018
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
+
+LINT_FLAGS += -I$(PROTOUSRINCDIR) -I$(PROTOUSRINCDIR)/kerberosv5 -I$(COMPONENT_DIR)/Solaris
 
 # Depends on S12-only header file in ON.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -112,12 +115,12 @@ COMPONENT_PREP_ACTION= \
 	$(CP) Solaris/kadm_host_srv_names.c $(SOURCE_DIR)/src/lib/kadm5/; \
 	$(CP) Solaris/kt_findrealm.c $(SOURCE_DIR)/src/lib/krb5/keytab/; \
 	$(CP) Solaris/kt_solaris.c $(SOURCE_DIR)/src/lib/krb5/keytab/; \
-	$(CP) Solaris/kt_solaris.h $(SOURCE_DIR)/src/lib/krb5/keytab/; \
+	$(CP) Solaris/private/krb5/keytab/kt_solaris.h $(SOURCE_DIR)/src/lib/krb5/keytab/; \
 	$(CP) Solaris/libgss_stubs.c $(SOURCE_DIR)/src/lib/gssapi/mechglue/; \
 	$(CP) Solaris/missing_interfaces.c $(SOURCE_DIR)/src/lib/krb5/; \
 	$(CP) Solaris/privacy_allowed.c $(SOURCE_DIR)/src/lib/krb5/; \
 	$(CP) Solaris/prof_solaris.c $(SOURCE_DIR)/src/lib/krb5/; \
-	$(CP) Solaris/prof_solaris.h $(SOURCE_DIR)/src/lib/krb5/; \
+	$(CP) Solaris/private/krb5/prof_solaris.h $(SOURCE_DIR)/src/lib/krb5/; \
 	$(CP) Solaris/rc_mem.c $(SOURCE_DIR)/src/lib/krb5/rcache; \
 	$(CP) Solaris/rc_mem.h $(SOURCE_DIR)/src/lib/krb5/rcache; \
 	$(CP) Solaris/safechown.c $(SOURCE_DIR)/src/lib/krb5/os; \
