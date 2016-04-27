@@ -23,12 +23,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.7
+COMPONENT_VERSION=	1.8
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fb31c57e7ce7703596ef57329be7cc5c5fd741b4a0f659fea7ee6a54706b41ab
+    sha256:ff1767ec444f71e5daf8972f6f8bf68cfcca1d2f76c248eb18e8741fc91dbbd3
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gzip
 
