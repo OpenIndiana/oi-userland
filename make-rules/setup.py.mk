@@ -255,10 +255,9 @@ endif
 # Make it easy to construct a URL for a pypi source download.  This
 # construct supports an optional call to a number from
 # NUM_EXTRA_ARCHIVES for multiple archive downloads.
-PYPI_BASE = http://pypi.python.org/packages/source
-pypi_url_multi = $(shell echo $(COMPONENT_NAME_$(1)) | cut -c1)/$(COMPONENT_NAME_$(1))/$(COMPONENT_ARCHIVE_$(1))
-pypi_url_single = $(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-pypi_url = $(PYPI_BASE)/$(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
+pypi_url_multi = pypi:///$(COMPONENT_NAME_$(1))==$(COMPONENT_VERSION_$(1))
+pypi_url_single = pypi:///$(COMPONENT_NAME)==$(COMPONENT_VERSION)
+pypi_url = $(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
 
 ifneq ($(findstring 2.7, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-27
