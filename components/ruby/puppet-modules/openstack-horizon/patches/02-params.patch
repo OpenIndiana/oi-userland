@@ -2,12 +2,17 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-horizon-6.1.0/manifests/params.pp.orig	2015-04-23 15:14:49.613879625 -0600
-+++ openstack-horizon-6.1.0/manifests/params.pp	2015-04-23 15:18:41.786048628 -0600
-@@ -2,12 +2,11 @@
+--- openstack-horizon-6.1.0/manifests/params.pp.orig	2016-04-21 08:10:05.499663309 -0700
++++ openstack-horizon-6.1.0/manifests/params.pp	2016-04-21 08:10:35.317952119 -0700
+@@ -1,13 +1,16 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ # these parameters need to be accessed from several locations and
  # should be considered to be constant
  class horizon::params {
-
+ 
 -  $logdir      = '/var/log/horizon'
 -  $django_wsgi = '/usr/share/openstack-dashboard/openstack_dashboard/wsgi/django.wsgi'
 -  $manage_py   = '/usr/share/openstack-dashboard/manage.py'
@@ -20,7 +25,7 @@ CI testing.
        $http_service                = 'httpd'
        $http_modwsgi                = 'mod_wsgi'
        $package_name                = 'openstack-dashboard'
-@@ -21,6 +20,9 @@ class horizon::params {
+@@ -21,6 +24,9 @@
        $wsgi_group                  = 'dashboard'
      }
      'Debian': {
@@ -30,7 +35,7 @@ CI testing.
        $http_service                = 'apache2'
        $config_file                 = '/etc/openstack-dashboard/local_settings.py'
        $httpd_listen_config_file    = '/etc/apache2/ports.conf'
-@@ -40,8 +42,23 @@ class horizon::params {
+@@ -40,8 +46,23 @@
          }
        }
      }

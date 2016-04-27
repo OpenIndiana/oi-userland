@@ -5,10 +5,9 @@ Fixing problem with ambiguous package names
 Wildcards support
 install_options/uninstall_options features support
 
---- puppet-3.8.6/lib/puppet/provider/package/pkg.orig	2016-04-13 14:39:48.421008932 -0700
-+++ puppet-3.8.6/lib/puppet/provider/package/pkg.rb	2016-04-13 14:27:31.382336591 -0700
-@@ -1,7 +1,8 @@
-+require 'json'
+--- puppet-3.8.6/lib/puppet/provider/package/pkg.rb.orig	2016-04-19 15:09:14.789792650 -0700
++++ puppet-3.8.6/lib/puppet/provider/package/pkg.rb	2016-04-19 15:09:44.646514474 -0700
+@@ -5,7 +5,7 @@
  require 'puppet/provider/package'
  
  Puppet::Type.type(:package).provide :pkg, :parent => Puppet::Provider::Package do
@@ -17,7 +16,7 @@ install_options/uninstall_options features support
    # http://docs.oracle.com/cd/E19963-01/html/820-6572/managepkgs.html
    # A few notes before we start :
    # Opensolaris pkg has two slightly different formats (as of now.)
-@@ -14,10 +15,10 @@
+@@ -18,10 +18,10 @@
    # TODO: We still have to allow packages to specify a preferred publisher.
  
    has_feature :versionable
@@ -30,7 +29,7 @@ install_options/uninstall_options features support
  
    commands :pkg => "/usr/bin/pkg"
  
-@@ -26,7 +27,7 @@
+@@ -30,7 +30,7 @@
    defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
  
    def self.instances
@@ -39,7 +38,7 @@ install_options/uninstall_options features support
    end
  
    # The IFO flag field is just what it names, the first field can have ether
-@@ -69,6 +70,10 @@
+@@ -73,6 +73,10 @@
      {}
    end
  
@@ -50,7 +49,7 @@ install_options/uninstall_options features support
    # pkg state was present in the older version of pkg (with UFOXI) but is
    # no longer available with the IFO field version. When it was present,
    # it was used to indicate that a particular version was present (installed)
-@@ -90,29 +95,73 @@
+@@ -94,29 +98,73 @@
    # formats of output for different pkg versions.
    def self.parse_line(line)
      (case line.chomp
@@ -142,7 +141,7 @@ install_options/uninstall_options features support
    def hold
      pkg(:freeze, @resource[:name])
    end
-@@ -122,31 +171,22 @@
+@@ -126,31 +174,22 @@
      raise Puppet::Error, "Unable to unfreeze #{r[:out]}" unless [0,4].include? r[:exit]
    end
  
@@ -189,7 +188,7 @@ install_options/uninstall_options features support
    end
  
    # install the package and accept all licenses.
-@@ -162,19 +202,22 @@
+@@ -166,19 +205,22 @@
          self.uninstall if Puppet::Util::Package.versioncmp(should, is[:ensure]) < 0
        end
      end
@@ -215,7 +214,7 @@ install_options/uninstall_options features support
      cmd << @resource[:name]
      pkg cmd
    end
-@@ -187,10 +230,22 @@
+@@ -191,10 +233,22 @@
      raise Puppet::Error, "Unable to update #{r[:out]}"
    end
  

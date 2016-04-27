@@ -2,9 +2,17 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-horizon-6.1.0/manifests/wsgi/apache.pp.orig       2015-08-10 09:59:25.006128695 -0700
-+++ openstack-horizon-6.1.0/manifests/wsgi/apache.pp   2015-08-10 10:01:46.943370519 -0700
-@@ -56,6 +56,14 @@
+--- openstack-horizon-6.1.0/manifests/wsgi/apache.pp.orig	2016-04-21 08:13:33.829726153 -0700
++++ openstack-horizon-6.1.0/manifests/wsgi/apache.pp	2016-04-21 08:13:49.515281656 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ # == Class: horizon::wsgi::apache
+ #
+ # Configures Apache WSGI for Horizon.
+@@ -56,6 +60,14 @@
  #   (Optional) Description
  #   Defaults to 'horizon_ssl_vhost'.
  #
@@ -19,7 +27,7 @@ CI testing.
  # [*extra_params*]
  #   (optional) A hash of extra paramaters for apache::wsgi class.
  #   Defaults to {}
-@@ -74,6 +82,8 @@ class horizon::wsgi::apache (
+@@ -74,6 +86,8 @@
    $priority            = '15',
    $vhost_conf_name     = 'horizon_vhost',
    $vhost_ssl_conf_name = 'horizon_ssl_vhost',
@@ -27,11 +35,11 @@ CI testing.
 +  $static_alias        = '/usr/share/openstack-dashboard/static',
    $extra_params        = {},
  ) {
-
-@@ -132,7 +142,11 @@ class horizon::wsgi::apache (
+ 
+@@ -132,7 +146,11 @@
      $redirect_url   = $::horizon::params::root_url
    }
-
+ 
 -  Package['horizon'] -> Package[$::horizon::params::http_service]
 +  if $::osfamily == 'Solaris' {
 +    Package[$::horizon::params::package_name] -> Package['web/server/apache-24']
@@ -39,25 +47,25 @@ CI testing.
 +    Package['horizon'] -> Package[$::horizon::params::http_service]
 +  }
    File[$::horizon::params::config_file] ~> Service[$::horizon::params::http_service]
-
+ 
    $unix_user = $::osfamily ? {
-@@ -150,7 +164,7 @@ class horizon::wsgi::apache (
+@@ -150,7 +168,7 @@
      group   => $unix_group,
      before  => Service[$::horizon::params::http_service],
      mode    => '0751',
 -    require => Package['horizon'],
 +    require => Package[$::horizon::params::package_name],
    }
-
+ 
    file { "${::horizon::params::logdir}/horizon.log":
-@@ -159,19 +173,19 @@ class horizon::wsgi::apache (
+@@ -159,19 +177,19 @@
      group   => $unix_group,
      before  => Service[$::horizon::params::http_service],
      mode    => '0640',
 -    require => [ File[$::horizon::params::logdir], Package['horizon'] ],
 +    require => [ File[$::horizon::params::logdir], Package[$::horizon::params::package_name] ],
    }
-
+ 
    $default_vhost_conf_no_ip = {
      servername                  => $servername,
      serveraliases               => os_any2array($final_server_aliases),

@@ -2,12 +2,20 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-heat-6.1.0/manifests/api.pp.orig        2015-08-10 09:46:05.129811698 -0700
-+++ openstack-heat-6.1.0/manifests/api.pp      2015-08-10 09:47:39.509312624 -0700
-@@ -62,12 +62,22 @@ class heat::api (
+--- openstack-heat-6.1.0/manifests/api.pp.orig	2016-04-21 08:06:35.984332200 -0700
++++ openstack-heat-6.1.0/manifests/api.pp	2016-04-21 08:06:51.351553847 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ # == Class: heat::api
+ #
+ # Installs & configure the heat API service
+@@ -62,12 +66,22 @@
    include ::heat::params
    include ::heat::policy
-
+ 
 +  if ( $heat::params::api_package_name != $heat::params::common_package_name ) {
 +    ensure_packages([$heat::params::api_package_name],
 +      {
@@ -20,20 +28,20 @@ CI testing.
 +
    Heat_config<||> ~> Service['heat-api']
    Class['heat::policy'] -> Service['heat-api']
-
+ 
 -  Package['heat-api'] -> Heat_config<||>
 -  Package['heat-api'] -> Class['heat::policy']
 -  Package['heat-api'] -> Service['heat-api']
 +  Package[$::heat::params::api_package_name] -> Heat_config<||>
 +  Package[$::heat::params::api_package_name] -> Class['heat::policy']
 +  Package[$::heat::params::api_package_name] -> Service['heat-api']
-
+ 
    if $use_ssl {
      if !$cert_file {
-@@ -78,12 +88,6 @@ class heat::api (
+@@ -78,12 +92,6 @@
      }
    }
-
+ 
 -  package { 'heat-api':
 -    ensure => $package_ensure,
 -    name   => $::heat::params::api_package_name,
@@ -43,7 +51,7 @@ CI testing.
    if $manage_service {
      if $enabled {
        $service_ensure = 'running'
-@@ -99,7 +103,7 @@ class heat::api (
+@@ -99,7 +107,7 @@
      hasstatus  => true,
      hasrestart => true,
      require    => [Package['heat-common'],
@@ -51,4 +59,4 @@ CI testing.
 +                  Package[$::heat::params::api_package_name]],
      subscribe  => $::heat::subscribe_sync_db,
    }
-
+ 

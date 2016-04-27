@@ -1,10 +1,17 @@
 In-house patch to have the rabbitmq providers look in /usr/bin for
 rabbitmqadmin instead of /usr/local/bin
 
---- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb.orig  2015-11-20 07:01:01.498398940 -0800
-+++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb    2015-11-20 07:01:14.230495648 -0800
-@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_binding).pro
-
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb.orig	2016-04-21 06:32:55.385984680 -0700
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb	2016-04-21 06:37:14.452024943 -0700
+@@ -1,15 +1,19 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require 'json'
+ require 'puppet'
+ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
+ 
    if Puppet::PUPPETVERSION.to_f < 3
      commands :rabbitmqctl   => 'rabbitmqctl'
 -    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
@@ -19,10 +26,17 @@ rabbitmqadmin instead of /usr/local/bin
      end
    end
 
---- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb.orig  2015-11-20 07:29:19.574821579 -0800
-+++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb    2015-11-20 07:29:25.845150783 -0800
-@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_exchange).pr
-
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb.orig	2016-04-21 06:33:00.401594316 -0700
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb	2016-04-21 06:37:20.410206326 -0700
+@@ -1,15 +1,19 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require 'puppet'
+ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'rabbitmqctl'))
+ Puppet::Type.type(:rabbitmq_exchange).provide(:rabbitmqadmin, :parent => Puppet::Provider::Rabbitmqctl) do
+ 
    if Puppet::PUPPETVERSION.to_f < 3
      commands :rabbitmqctl   => 'rabbitmqctl'
 -    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
@@ -37,10 +51,17 @@ rabbitmqadmin instead of /usr/local/bin
      end
    end
 
---- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb.orig  2015-11-20 07:30:21.622578483 -0800
-+++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb    2015-11-20 07:30:26.940673078 -0800
-@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_queue).provi
-
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb.orig	2016-04-21 06:33:06.190244636 -0700
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb	2016-04-21 06:37:27.198708092 -0700
+@@ -1,15 +1,19 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require 'json'
+ require 'puppet'
+ Puppet::Type.type(:rabbitmq_queue).provide(:rabbitmqadmin) do
+ 
    if Puppet::PUPPETVERSION.to_f < 3
      commands :rabbitmqctl   => 'rabbitmqctl'
 -    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'

@@ -13,16 +13,18 @@ Use stricter check for 'shared' parameter
 
 Change-Id: I36149b42943238dc342f8c6e71c1261f00e01c4a
 Closes-bug: #1476680
----
- lib/puppet/provider/neutron_network/neutron.rb     |  2 +-
- spec/unit/provider/neutron_network/neutron_spec.rb | 28 +++++++++++++++++++++-
- 2 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/lib/puppet/provider/neutron_network/neutron.rb b/lib/puppet/provider/neutron_network/neutron.rb
-index b1ef753..b13ec00 100644
---- openstack-neutron-6.1.0/lib/puppet/provider/neutron_network/neutron.rb.orig
-+++ openstack-neutron-6.1.0/lib/puppet/provider/neutron_network/neutron.rb
-@@ -53,7 +53,7 @@ Puppet::Type.type(:neutron_network).provide(
+--- openstack-neutron-6.1.0/lib/puppet/provider/neutron_network/neutron.rb.orig	2016-04-21 08:24:23.864059475 -0700
++++ openstack-neutron-6.1.0/lib/puppet/provider/neutron_network/neutron.rb	2016-04-21 08:25:01.467129260 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require File.join(File.dirname(__FILE__), '..','..','..',
+                   'puppet/provider/neutron')
+ 
+@@ -53,7 +57,7 @@
    def create
      network_opts = Array.new
  
@@ -31,11 +33,17 @@ index b1ef753..b13ec00 100644
        network_opts << '--shared'
      end
  
-diff --git a/spec/unit/provider/neutron_network/neutron_spec.rb b/spec/unit/provider/neutron_network/neutron_spec.rb
-index d01a009..b3b939e 100644
---- openstack-neutron-6.1.0/spec/unit/provider/neutron_network/neutron_spec.rb.orig
-+++ openstack-neutron-6.1.0/spec/unit/provider/neutron_network/neutron_spec.rb
-@@ -31,7 +31,33 @@ describe provider_class do
+--- openstack-neutron-6.1.0/spec/unit/provider/neutron_network/neutron_spec.rb.orig	2016-04-21 08:24:29.372659168 -0700
++++ openstack-neutron-6.1.0/spec/unit/provider/neutron_network/neutron_spec.rb	2016-04-21 08:25:06.247381103 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require 'puppet'
+ require 'spec_helper'
+ require 'puppet/provider/neutron_network/neutron'
+@@ -31,7 +35,33 @@
  
    shared_examples 'neutron_network' do
  
@@ -70,6 +78,3 @@ index d01a009..b3b939e 100644
  
        it 'should call net-create with appropriate command line options' do
          provider.class.stubs(:get_tenant_id).returns(net_attrs[:tenant_id])
--- 
-1.9.1
-

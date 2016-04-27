@@ -2,9 +2,14 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-swift-6.1.0/manifests/init.pp.orig     2015-08-10 11:12:30.293187329 -0700
-+++ openstack-swift-6.1.0/manifests/init.pp     2015-08-10 11:13:32.086133292 -0700
-@@ -2,6 +2,10 @@
+--- openstack-swift-6.1.0/manifests/init.pp.orig	2016-04-21 09:04:49.670248833 -0700
++++ openstack-swift-6.1.0/manifests/init.pp	2016-04-21 09:05:19.849256812 -0700
+@@ -1,7 +1,15 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ # Install and configure base swift components
  #
  # == Parameters
  #
@@ -15,7 +20,7 @@ CI testing.
  # [*swift_hash_suffix*] string of text to be used
  #   as a salt when hashing to determine mappings in the ring.
  #   This file should be the same on every node in the cluster.
-@@ -29,6 +33,7 @@
+@@ -29,6 +37,7 @@
  # Copyright 2011 Puppetlabs Inc, unless otherwise noted.
  #
  class swift(
@@ -23,10 +28,10 @@ CI testing.
    $swift_hash_suffix,
    $package_ensure        = 'present',
    $client_package_ensure = 'present',
-@@ -49,27 +54,9 @@ class swift(
+@@ -49,27 +58,9 @@
      ensure => $client_package_ensure;
    }
-
+ 
 -  File { owner => 'swift', group => 'swift', require => Package['swift'] }
 -
 -  file { '/etc/swift':

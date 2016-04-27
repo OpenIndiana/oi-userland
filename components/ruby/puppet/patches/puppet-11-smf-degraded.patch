@@ -1,12 +1,11 @@
 Add support for degraded state in smf and remove unused variable stime.
 Submitted upstream as PUP-6095
 
-diff --git a/lib/puppet/provider/service/smf.rb b/lib/puppet/provider/service/smf.rb
---- a/lib/puppet/provider/service/smf.rb
-+++ b/lib/puppet/provider/service/smf.rb
-@@ -32,11 +32,12 @@
+--- puppet-3.8.6/lib/puppet/provider/service/smf.rb.orig	2016-04-19 14:56:32.596751150 -0700
++++ puppet-3.8.6/lib/puppet/provider/service/smf.rb	2016-04-19 14:59:32.495860166 -0700
+@@ -36,11 +36,12 @@
    end
-
+ 
    def self.instances
 -   svcs("-H").split("\n").select{|l| l !~ /^legacy_run/ }.collect do |line|
 -     state,stime,fmri = line.split(/\s+/)
@@ -19,7 +18,7 @@ diff --git a/lib/puppet/provider/service/smf.rb b/lib/puppet/provider/service/sm
                 else :stopped
                 end
       new({:name => fmri, :ensure => status})
-@@ -67,7 +68,7 @@
+@@ -71,7 +72,7 @@
    def startcmd
      self.setupservice
      case self.status
@@ -28,7 +27,7 @@ diff --git a/lib/puppet/provider/service/smf.rb b/lib/puppet/provider/service/sm
        [command(:adm), :clear, @resource[:name]]
      else
        [command(:adm), :enable, "-rs", @resource[:name]]
-@@ -108,6 +109,8 @@
+@@ -112,6 +113,8 @@
        return :stopped
      when "maintenance"
        return :maintenance

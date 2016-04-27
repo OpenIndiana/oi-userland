@@ -1,9 +1,17 @@
 Patch to add Solaris specific paths for mod-ssl.  This patch has not
 yet been submitted upstream.
 
---- puppetlabs-apache-1.8.1/manifests/mod/ssl.pp.orig	2016-04-25 12:42:50.344060420 -0700
-+++ puppetlabs-apache-1.8.1/manifests/mod/ssl.pp	2016-04-25 12:48:12.151380956 -0700
-@@ -32,6 +32,15 @@
+--- puppetlabs-apache-1.8.1/manifests/mod/ssl.pp.orig	2016-04-27 07:53:23.937888941 -0700
++++ puppetlabs-apache-1.8.1/manifests/mod/ssl.pp	2016-04-27 07:54:00.569656120 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ class apache::mod::ssl (
+   $ssl_compression         = false,
+   $ssl_cryptodevice        = 'builtin',
+@@ -32,6 +36,15 @@
      'gentoo': {
        $ssl_mutex = 'default'
      }
@@ -19,7 +27,7 @@ yet been submitted upstream.
      'Suse': {
        $ssl_mutex = 'default'
      }
-@@ -40,12 +49,31 @@
+@@ -40,12 +53,31 @@
      }
    }
  

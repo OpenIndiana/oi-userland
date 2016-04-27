@@ -1,9 +1,15 @@
 In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
---- openstack-keystone-6.1.0/manifests/params.pp.~1~	2015-05-20 15:52:29.000000000 -0600
-+++ openstack-keystone-6.1.0/manifests/params.pp	2015-06-01 13:41:27.577020809 -0600
-@@ -2,10 +2,10 @@
+
+--- openstack-keystone-6.1.0/manifests/params.pp.orig	2016-04-21 08:16:40.158969865 -0700
++++ openstack-keystone-6.1.0/manifests/params.pp	2016-04-21 08:16:54.897183391 -0700
+@@ -1,11 +1,15 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ #
  # This class contains the platform differences for keystone
  #
  class keystone::params {
@@ -15,7 +21,7 @@ CI testing.
        $package_name                 = 'keystone'
        $service_name                 = 'keystone'
        $keystone_wsgi_script_path    = '/usr/lib/cgi-bin/keystone'
-@@ -26,6 +26,7 @@ class keystone::params {
+@@ -26,6 +30,7 @@
        }
      }
      'RedHat': {
@@ -23,7 +29,7 @@ CI testing.
        $package_name                 = 'openstack-keystone'
        $service_name                 = 'openstack-keystone'
        $keystone_wsgi_script_path    = '/var/www/cgi-bin/keystone'
-@@ -34,5 +35,14 @@ class keystone::params {
+@@ -34,5 +39,14 @@
        $keystone_wsgi_script_source  = '/usr/share/keystone/keystone.wsgi'
        $paste_config                 = '/usr/share/keystone/keystone-dist-paste.ini'
      }

@@ -2,9 +2,13 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-glance-6.1.0/manifests/params.pp.orig     2015-08-10 09:37:49.703015029 -0700
-+++ openstack-glance-6.1.0/manifests/params.pp   2015-08-10 09:38:51.370489635 -0700
-@@ -1,14 +1,11 @@
+--- openstack-glance-6.1.0/manifests/params.pp.orig	2016-04-21 07:49:15.937218438 -0700
++++ openstack-glance-6.1.0/manifests/params.pp	2016-04-21 07:49:38.722449269 -0700
+@@ -1,14 +1,15 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
  # these parameters need to be accessed from several locations and
  # should be considered to be constant
  class glance::params {
@@ -22,7 +26,7 @@ CI testing.
        $api_package_name      = 'openstack-glance'
        $registry_package_name = 'openstack-glance'
        $api_service_name      = 'openstack-glance-api'
-@@ -21,6 +18,9 @@ class glance::params {
+@@ -21,6 +22,9 @@
        }
      }
      'Debian': {
@@ -32,7 +36,7 @@ CI testing.
        $api_package_name      = 'glance-api'
        $registry_package_name = 'glance-registry'
        $api_service_name      = 'glance-api'
-@@ -28,8 +28,19 @@ class glance::params {
+@@ -28,8 +32,19 @@
        $db_sync_command       = 'glance-manage --config-file=/etc/glance/glance-registry.conf db_sync'
        $pyceph_package_name   = 'python-ceph'
      }
@@ -52,4 +56,4 @@ CI testing.
 +      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
      }
    }
-
+ 

@@ -2,12 +2,20 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-heat-6.1.0/manifests/engine.pp.orig       2015-08-10 09:48:29.999206790 -0700
-+++ openstack-heat-6.1.0/manifests/engine.pp   2015-08-10 09:51:44.134426445 -0700
-@@ -109,16 +109,21 @@ class heat::engine (
+--- openstack-heat-6.1.0/manifests/engine.pp.orig	2016-04-21 08:07:38.280309372 -0700
++++ openstack-heat-6.1.0/manifests/engine.pp	2016-04-21 08:07:53.510837943 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ # == Class: heat::engine
+ #
+ #  Installs & configure the heat engine service
+@@ -109,16 +113,21 @@
    include ::heat
    include ::heat::params
-
+ 
 +  if ( $heat::params::engine_package_name != $heat::params::common_package_name ) {
 +    ensure_packages([$heat::params::engine_package_name],
 +      {
@@ -20,7 +28,7 @@ CI testing.
 +  }
 +
    Heat_config<||> ~> Service['heat-engine']
-
+ 
 -  Package['heat-engine'] -> Heat_config<||>
 -  Package['heat-engine'] -> Service['heat-engine']
 -  package { 'heat-engine':
@@ -31,10 +39,10 @@ CI testing.
 -  }
 +  Package[$::heat::params::engine_package_name] -> Heat_config<||>
 +  Package[$::heat::params::engine_package_name] -> Service['heat-engine']
-
+ 
    if $manage_service {
      if $enabled {
-@@ -143,7 +148,7 @@ class heat::engine (
+@@ -143,7 +152,7 @@
      hasrestart => true,
      require    => [ File['/etc/heat/heat.conf'],
                      Package['heat-common'],
@@ -42,4 +50,4 @@ CI testing.
 +                    Package[$::heat::params::engine_package_name]],
      subscribe  => $::heat::subscribe_sync_db,
    }
-
+ 
