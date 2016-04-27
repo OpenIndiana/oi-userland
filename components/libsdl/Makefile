@@ -24,17 +24,21 @@
 #
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
+# gcc will handle src/cpuinfo.
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	SDL
-COMPONENT_VERSION =	1.2.14
+COMPONENT_VERSION =	1.2.15
 COMPONENT_PROJECT_URL =	http://www.libsdl.org/
 COMPONENT_ARCHIVE_HASH = \
-    sha256:5d927e287034cb6bb0ebccfa382cb1d185cb113c8ab5115a0759798642eed9b6
+    sha256:d6d316a793e5e348155f0dd93b979798933fb98aa1edebcc108829d6474aad00
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/sdl
 
-TPNO = 7683
+TPNO = 28045
+
+COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
@@ -53,6 +57,7 @@ COMPONENT_POST_INSTALL_ACTION.64= \
 	$(ELFEDIT) -e "dyn:delete RUNPATH" -e "dyn:delete RPATH" \
 	  $(PROTOUSRLIBDIR64)/libSDL-1.2.so.0.*
 
+REQUIRED_PACKAGES += developer/gcc
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
