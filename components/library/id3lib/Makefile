@@ -11,7 +11,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		id3lib
 COMPONENT_VERSION=	3.8.3

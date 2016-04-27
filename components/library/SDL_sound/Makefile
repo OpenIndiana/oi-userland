@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL_sound
 COMPONENT_VERSION=	1.0.3
