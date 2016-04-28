@@ -1,0 +1,186 @@
+Fix CMake recipe and code for libphysfs to support CDROMs under Solaris
+and similar OSes (developed for OpenIndiana).
+NOTE: At this moment this patchfile is experimental - syntactically it is
+correct and does compile, but is not yet tested on hardware with a CDROM ;)
+(C) 2016 by Jim Klimov
+
+diff -Naur physfs-2.0.3-orig/CMakeLists.txt physfs-2.0.3-fixed/CMakeLists.txt
+--- physfs-2.0.3-orig/CMakeLists.txt	2012-10-23 05:41:04.000000000 +0200
++++ physfs-2.0.3-fixed/CMakeLists.txt	2016-04-27 17:35:02.459595536 +0200
+@@ -27,6 +27,7 @@
+ ENDIF(HAIKU AND NOT BEOS)
+ 
+ INCLUDE(CheckIncludeFile)
++INCLUDE(CheckIncludeFiles)
+ INCLUDE(CheckLibraryExists)
+ INCLUDE(CheckCSourceCompiles)
+ 
+@@ -154,16 +155,33 @@
+     ELSE(BEOS)
+         # !!! FIXME
+         #  AC_DEFINE([PHYSFS_HAVE_LLSEEK], 1, [define if we have llseek])
+-        CHECK_INCLUDE_FILE(sys/ucred.h HAVE_UCRED_H)
+-        IF(HAVE_UCRED_H)
++        CHECK_INCLUDE_FILE(sys/ucred.h HAVE_SYS_UCRED_H)
++
++        IF(HAVE_SYS_UCRED_H)
+             ADD_DEFINITIONS(-DPHYSFS_HAVE_SYS_UCRED_H=1)
+             SET(PHYSFS_HAVE_CDROM_SUPPORT TRUE)
+-        ENDIF(HAVE_UCRED_H)
++        ELSE(HAVE_SYS_UCRED_H)
++            # OpenIndiana at least
++            CHECK_INCLUDE_FILE(ucred.h HAVE_UCRED_H)
++            IF(HAVE_UCRED_H)
++                ADD_DEFINITIONS(-DPHYSFS_HAVE_UCRED_H=1)
++                SET(PHYSFS_HAVE_CDROM_SUPPORT TRUE)
++            ENDIF(HAVE_UCRED_H)
++        ENDIF(HAVE_SYS_UCRED_H)
+ 
+         CHECK_INCLUDE_FILE(mntent.h HAVE_MNTENT_H)
+         IF(HAVE_MNTENT_H)
+             ADD_DEFINITIONS(-DPHYSFS_HAVE_MNTENT_H=1)
+             SET(PHYSFS_HAVE_CDROM_SUPPORT TRUE)
++        ELSE(HAVE_MNTENT_H)
++            # OpenIndiana at least
++            CHECK_INCLUDE_FILE(sys/mntent.h HAVE_SOLARIS_MNTENT_H)
++            CHECK_INCLUDE_FILES("stdio.h;sys/mnttab.h" HAVE_SOLARIS_MNTTAB_H)
++            IF(HAVE_SOLARIS_MNTENT_H AND HAVE_SOLARIS_MNTTAB_H)
++                ADD_DEFINITIONS(-DPHYSFS_HAVE_SOLARIS_MNTENT_H=1)
++                ADD_DEFINITIONS(-DPHYSFS_HAVE_SOLARIS_MNTTAB_H=1)
++                SET(PHYSFS_HAVE_CDROM_SUPPORT TRUE)
++            ENDIF(HAVE_SOLARIS_MNTENT_H AND HAVE_SOLARIS_MNTTAB_H)
+         ENDIF(HAVE_MNTENT_H)
+ 
+         CHECK_INCLUDE_FILE(pthread.h HAVE_PTHREAD_H)
+diff -Naur physfs-2.0.3-orig/platform/unix.c physfs-2.0.3-fixed/platform/unix.c
+--- physfs-2.0.3-orig/platform/unix.c	2012-10-23 05:41:04.000000000 +0200
++++ physfs-2.0.3-fixed/platform/unix.c	2016-04-27 17:25:48.752834487 +0200
+@@ -28,14 +28,51 @@
+ #include <pthread.h>
+ #endif
+ 
++#if (defined PHYSFS_HAVE_SOLARIS_MNTENT_H) && (defined PHYSFS_HAVE_SOLARIS_MNTTAB_H)
++    /* Assume Solaris / OpenIndiana semantics in this block */
++# ifdef PHYSFS_HAVE_MNTENT_H
++#    undef PHYSFS_HAVE_MNTENT_H /* don't do both... */
++# endif
++#  ifdef PHYSFS_HAVE_SYS_UCRED_H
++#    undef PHYSFS_HAVE_SYS_UCRED_H /* don't do both... */
++#  endif
++#  ifdef PHYSFS_HAVE_UCRED_H
++#    undef PHYSFS_HAVE_UCRED_H /* don't do both... */
++#  endif
++# include <sys/mntent.h>
++# include <sys/mnttab.h>
++#else
++/* If either include is missing, do not consider the other one too
++ * Note: this may be unwise, but works at the moment, see also the test
++ * in CMakeLists.txt if you want to fix this and e.g. only use mnttab.h
++ */
++#  ifdef PHYSFS_HAVE_SOLARIS_MNTENT_H
++#    undef PHYSFS_HAVE_SOLARIS_MNTENT_H
++#  endif
++#  ifdef PHYSFS_HAVE_SOLARIS_MNTTAB_H
++#    undef PHYSFS_HAVE_SOLARIS_MNTTAB_H
++#  endif
++#endif
++
+ #ifdef PHYSFS_HAVE_SYS_UCRED_H
+ #  ifdef PHYSFS_HAVE_MNTENT_H
+ #    undef PHYSFS_HAVE_MNTENT_H /* don't do both... */
+ #  endif
++#  ifdef PHYSFS_HAVE_UCRED_H
++#    undef PHYSFS_HAVE_UCRED_H /* don't do both... */
++#  endif
+ #  include <sys/ucred.h>
+ #  include <sys/mount.h>
+ #endif
+ 
++#ifdef PHYSFS_HAVE_UCRED_H
++#  ifdef PHYSFS_HAVE_MNTENT_H
++#    undef PHYSFS_HAVE_MNTENT_H /* don't do both... */
++#  endif
++#  include <ucred.h>
++#  include <sys/mount.h>
++#endif
++
+ #ifdef PHYSFS_HAVE_MNTENT_H
+ #include <mntent.h>
+ #endif
+@@ -89,37 +126,69 @@
+     } /* for */
+ } /* __PHYSFS_platformDetectAvailableCDs */
+ 
+-#elif (defined PHYSFS_HAVE_MNTENT_H)
++#elif (defined PHYSFS_HAVE_MNTENT_H) || (defined PHYSFS_HAVE_SOLARIS_MNTENT_H)
+ 
+ void __PHYSFS_platformDetectAvailableCDs(PHYSFS_StringCallback cb, void *data)
+ {
+     FILE *mounts = NULL;
+-    struct mntent *ent = NULL;
+ 
++#if (defined PHYSFS_HAVE_MNTENT_H)
++    struct mntent *ent = NULL;
++# define __PHYSFS_MNTENT_FSTYPE mnt_type
++# define __PHYSFS_MNTENT_MPOINT mnt_dir
+     mounts = setmntent("/etc/mtab", "r");
++#elif (defined PHYSFS_HAVE_SOLARIS_MNTENT_H)
++    /* Assume Solaris / OpenIndiana semantics */
++    struct mnttab mntent_buf;
++    struct mnttab *ent = &mntent_buf;
++# define __PHYSFS_MNTENT_FSTYPE mnt_fstype
++# define __PHYSFS_MNTENT_MPOINT mnt_mountp
++    mounts = fopen(MNTTAB, "r");
++#endif
+     BAIL_IF_MACRO(mounts == NULL, ERR_IO_ERROR, /*return void*/);
+ 
++#if (defined PHYSFS_HAVE_MNTENT_H)
+     while ( (ent = getmntent(mounts)) != NULL )
++#elif (defined PHYSFS_HAVE_SOLARIS_MNTENT_H)
++    while ( (getmntent(mounts, ent) == 0) )
++#endif
+     {
+         int add_it = 0;
+-        if (strcmp(ent->mnt_type, "iso9660") == 0)
++        if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, "iso9660") == 0)
++            add_it = 1;
++        else if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, "udf") == 0)
++            add_it = 1;
++#if (defined PHYSFS_HAVE_SOLARIS_MNTENT_H)
++    /* Assume Solaris / OpenIndiana semantics */
++# ifndef MNTTYPE_HSFS
++# define MNTTYPE_HSFS "hsfs"
++# endif
++# ifndef MNTTYPE_AUTOFS
++# define MNTTYPE_AUTOFS "autofs"
++# endif
++        else if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, MNTTYPE_HSFS) == 0)
+             add_it = 1;
+-        else if (strcmp(ent->mnt_type, "udf") == 0)
++        else if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, MNTTYPE_AUTOFS) == 0)
+             add_it = 1;
++#endif
+ 
+         /* !!! FIXME: these might pick up floppy drives, right? */
+-        else if (strcmp(ent->mnt_type, "auto") == 0)
++        else if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, "auto") == 0)
+             add_it = 1;
+-        else if (strcmp(ent->mnt_type, "supermount") == 0)
++        else if (strcmp(ent->__PHYSFS_MNTENT_FSTYPE, "supermount") == 0)
+             add_it = 1;
+ 
+         /* add other mount types here */
+ 
+         if (add_it)
+-            cb(data, ent->mnt_dir);
++            cb(data, ent->__PHYSFS_MNTENT_MPOINT);
+     } /* while */
+ 
++#if (defined PHYSFS_HAVE_MNTENT_H)
+     endmntent(mounts);
++#else
++    fclose(mounts);
++#endif
+ 
+ } /* __PHYSFS_platformDetectAvailableCDs */
+ 
