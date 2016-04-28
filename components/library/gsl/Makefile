@@ -12,7 +12,7 @@
 # Copyright (c) 2013-2016 Louis M. Picciano. All rights reserved.
 #
 
-include $(WS_TOP)/make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= gsl
 COMPONENT_VERSION		= 2.1
@@ -45,4 +45,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
