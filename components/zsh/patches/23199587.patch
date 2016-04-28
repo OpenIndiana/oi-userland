@@ -1,0 +1,66 @@
+commit 8c29b34032ebb714d2c593286aa29e5c64be55ab
+Author: Oliver Kiddle <opk@zsh.org>
+Date:   Mon Mar 7 13:15:40 2016 +0100
+
+    38043: allow any completion widget to cycle matches for menu completion to fix reverse menu completion
+
+diff --git a/Src/Zle/compcore.c b/Src/Zle/compcore.c
+index ae3a640..ae7068f 100644
+--- a/Src/Zle/compcore.c
++++ b/Src/Zle/compcore.c
+@@ -30,10 +30,6 @@
+ #include "complete.mdh"
+ #include "compcore.pro"
+ 
+-/* The last completion widget called. */
+-
+-static Widget lastcompwidget;
+-
+ /* Flags saying what we have to do with the result. */
+ 
+ /**/
+@@ -471,8 +467,7 @@ before_complete(UNUSED(Hookdef dummy), int *lst)
+ 
+     /* If we are doing a menu-completion... */
+ 
+-    if (minfo.cur && menucmp && *lst != COMP_LIST_EXPAND && 
+-	(menucmp != 1 || !compwidget || compwidget == lastcompwidget)) {
++    if (minfo.cur && menucmp && *lst != COMP_LIST_EXPAND) {
+ 	do_menucmp(*lst);
+ 	return 1;
+     }
+@@ -481,7 +476,6 @@ before_complete(UNUSED(Hookdef dummy), int *lst)
+ 	onlyexpl = listdat.valid = 0;
+ 	return 1;
+     }
+-    lastcompwidget = compwidget;
+ 
+     /* We may have to reset the cursor to its position after the   *
+      * string inserted by the last completion. */
+diff --git a/Src/Zle/complist.c b/Src/Zle/complist.c
+index 162436b..8aeb6c3 100644
+--- a/Src/Zle/complist.c
++++ b/Src/Zle/complist.c
+@@ -3399,7 +3399,7 @@ domenuselect(Hookdef dummy, Chdata dat)
+ 	do_single(*(minfo.cur));
+     }
+     if (wasnext || broken) {
+-	menucmp = 2;
++	menucmp = 1;
+ 	showinglist = ((validlist && !nolist) ? -2 : 0);
+ 	minfo.asked = 0;
+ 	if (!noselect) {
+diff --git a/Src/Zle/zle_tricky.c b/Src/Zle/zle_tricky.c
+index cc4b7d6..a89b2a3 100644
+--- a/Src/Zle/zle_tricky.c
++++ b/Src/Zle/zle_tricky.c
+@@ -100,8 +100,7 @@ mod_export int usemenu, useglob;
+ /**/
+ mod_export int wouldinstab;
+ 
+-/* != 0 if we are in the middle of a menu completion. May be == 2 to force *
+- * menu completion even if using different widgets.                        */
++/* != 0 if we are in the middle of a menu completion. */
+ 
+ /**/
+ mod_export int menucmp;
