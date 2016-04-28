@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DBI
-COMPONENT_VERSION=	1.623
+COMPONENT_VERSION=	1.636
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:912d73f9eb0601f592aa58897d9c6787e238d9780f30ac86059c83b7085de3a1
+    sha256:8f7ddce97c04b4b7a000e65e5d05f679c964d62c8b02c94c1a7d815bb2dd676c
 COMPONENT_ARCHIVE_URL=	http://backpan.perl.org/authors/id/T/TI/TIMB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~timb/DBI/
 COMPONENT_BUGDB=	perl-mod/dbi
 
-TPNO=			17614
+TPNO=			28024	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -50,7 +50,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^chmod/d" ' \
 	'-e "/^connect /d" ' \
 	'-e "/^Testing/d" ' \
-	'-e "/NullP/d" '
+	'-e "/NullP/d" ' \
+	'-e "/^\# \-\-\- Perl/d" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
