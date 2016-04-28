@@ -1,0 +1,16 @@
+# Developed in-house. Solaris-specific; bug submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2586/
+# Need to use procfs.h instead of sys/proc.h. Otherwise it will cause build failures
+--- net-snmp/agent/mibgroup/host/data_access/swrun_procfs_psinfo.c	Tue Mar 19 22:20:09 2013
++++ net-snmp/agent/mibgroup/host/data_access/swrun_procfs_psinfo.c	Tue Mar 19 22:21:09 2013
+@@ -25,9 +25,7 @@
+ 
+ #define HAVE_SYS_PROCFS_H    /* XXX - Needs a configure check! */
+ #ifdef HAVE_SYS_PROCFS_H
+-#define _KERNEL              /* For psinfo_t */
+-#include <sys/procfs.h>
+-#undef _KERNEL
++#include <procfs.h>
+ #endif
+ #ifdef HAVE_SYS_PROC_H
+ #include <sys/proc.h>
