@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>How to further enhance XKB configuration</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><meta name="description" content="This guide is aimed to relieve one's labour to create a new (internationalized) keyboard layout. Unlike other documents this guide accents the keymap developer's point of view." /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="XKB-Enhancing"></a>How to further enhance XKB configuration</h2></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname">Kamil</span> <span class="surname">Toman</span></h3></div><div class="author"><h3 class="author"><span class="firstname">Ivan</span> <span class="othername">U.</span> <span class="surname">Pascal</span></h3></div></div></div><div><p class="releaseinfo">X Version 11, Release 7.7</p></div><div><p class="pubdate">25 November 2002</p></div><div><div class="abstract"><p>
+This guide is aimed to relieve one's labour to create a new (internationalized)
+keyboard layout. Unlike other documents this guide accents the keymap developer's point of view.
+      </p></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#Overview">Overview</a></span></dt><dt><span class="sect1"><a href="#The_Basics">The Basics</a></span></dt><dt><span class="sect1"><a href="#Enhancing_XKB_Configuration">Enhancing XKB Configuration</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Levels_And_Groups">Levels And Groups</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Defining_New_Layouts">Defining New Layouts</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Predefined_XKB_Symbol_Sets">Predefined XKB Symbol Sets</a></span></dt><dt><span class="sect2"><a href="#Key_Types">Key Types</a></span></dt><dt><span class="sect2"><a href="#Rules">Rules</a></span></dt><dt><span class="sect2"><a href="#Descriptive_Files_of_Rules">Descriptive Files of Rules</a></span></dt></dl></dd></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Overview"></a>Overview</h2></div></div></div><p>
+The developer of a new layout should read the xkb
+protocol specification (<a class="ulink" href="http://www.x.org/docs/XKB/XKBproto.pdf" target="_top">The X Keyboard Extension: Protocol Specification</a>) at least
+to clarify for himself some xkb-specific terms used in this document
+and elsewhere in xkb configuration. Also it shows wise to understand
+how the X server and a client digest their keyboard inputs
+(with and without xkb).
+    </p><p>
+A useful source is also <a class="ulink" href="http://www.tsu.ru/~pascal/en/xkb" target="_top">Ivan  Pascal's text about xkb configuration</a> often referenced throughout this
+document.
+    </p><p>
+Note that this document covers only enhancements which
+are to be made to XFree86 version 4.3 and X11R6.7.0 and above.
+    </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="The_Basics"></a>The Basics</h2></div></div></div><p>
+At the startup (or at later at user's command) X server starts its xkb
+keyboard module extension and reads data from a compiled configuration
+file.
+    </p><p>
+This compiled configuration file is prepared by the
+program <span class="command"><strong>xkbcomp</strong></span> which behaves altogether as an
+ordinary compiler (see <strong class="userinput"><code>man xkbcomp</code></strong>).
+Its input are human readable xkb configuration files which are verified and
+then composed into a useful xkb configuration. Users don't need to mess with
+<span class="command"><strong>xkbcomp</strong></span> themselves, for them it is invisible. Usually,
+it is started upon X server startup.
+    </p><p>
+As you probably already know, the xkb configuration consists of five
+main modules:
+      </p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col align="left" valign="top" /></colgroup><tbody><tr><td><p><span class="term">Keycodes</span></p></td><td><p>
+Tables that defines translation from keyboard scan codes into reasonable
+symbolic names, maximum, minimum legal keycodes, symbolic aliases and
+description of physically present LED-indicators. The primary sence of
+this component is to allow definitions of maps of symbols (see below)
+to be independent of physical keyboard scancodes. There are two main
+naming conventions for symbolic names (always four bytes long):
+
+	      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+ names which express some traditional meaning like
+<span class="keycode">&lt;SPCE&gt;</span> (stands for space bar) or
+		  </p></li><li class="listitem"><p>
+ names which express some relative positioning on a keyboard, for
+example <span class="keycode">&lt;AE01&gt;</span> (an exclamation mark on US keyboards), on
+the right there are keys <span class="keycode">&lt;AE02&gt;</span>, <span class="keycode">&lt;AE03&gt;</span>
+etc.
+		  </p></li></ul></div><p>
+
+	    </p></td></tr><tr><td><p><span class="term">Types</span></p></td><td><p>
+Types describe how the produced key is changed by active modifiers (like
+Shift, Control, Alt, ...). There are several predefined types which
+cover most of used combinations.
+	    </p></td></tr><tr><td><p><span class="term">Compat</span></p></td><td><p>
+Compatibility component defines internal behaviour of modifiers. Using
+compat component you can assign various actions (elaborately described
+in xkb specification) to key events. This is also the place where
+LED-indicators behaviour is defined.
+	    </p></td></tr><tr><td><p><span class="term">Symbols</span></p></td><td><p>
+For i18n purposes, this is the most important table. It defines what
+values (=symbols) are assigned to what keycodes (represented by their
+symbolic name, see above). There may be defined more than one value
+for each key and then it depends on a key type and on modifiers state
+(respective compat component) which value will be the resulting one.
+	    </p></td></tr><tr><td><p><span class="term">Geometry</span></p></td><td><p>
+Geometry files aren't used by xkb itself but they may be used by some
+external programs to depict a keyboard image.
+	    </p></td></tr></tbody></table></div><p>
+All these components have the files located in xkb configuration tree
+in subdirectories with the same names (usually in
+<code class="filename">/usr/lib/X11/xkb</code>).
+    </p></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Enhancing_XKB_Configuration"></a>Enhancing XKB Configuration</h2></div></div></div><p>
+Most of xkb enhancements concerns a need to define new output symbols
+for the some input key events. In other words, a need to define a new
+symbol map (for a new language, standard or just to feel more comfortable
+when typing text).
+    </p><p>
+What do you need to do? Generally, you have to define following things:
+
+      </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+ the map of symbols itself
+	  </p></li><li class="listitem"><p>
+ the rules to allow users to select the new mapping
+	  </p></li><li class="listitem"><p>
+ the description of the new layout
+	  </p></li></ul></div><p>
+
+    </p><p>
+First of all, it is good to go through existing layouts and to examine
+them if there is something you could easily adjust to fit your needs.
+Even if there is nothing similar you may get some ideas about basic
+concepts and used tricks.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Levels_And_Groups"></a>Levels And Groups</h3></div></div></div><p>
+Since XFree86 4.3.0 and X11R6.7.0 you can use
+<em class="firstterm">multi-layout</em> concept of xkb
+configuration.
+Though it is still in boundaries of xkb protocol and general ideas, the
+keymap designer must obey new rules when creating new maps. In exchange
+we get a more powerful and cleaner configuration system.
+      </p><p>
+Remember that it is the application which must decide which symbol
+matches which keycode according to effective modifier state. The X server
+itself sends only an input event message to. Of course, usually
+the general interpretation is processed by Xlib, Xaw, Motif, Qt, Gtk
+and similar libraries. The X server only supplies its mapping table
+(usually upon an application startup).
+      </p><p>
+You can think of the X server's symbol table as of a irregular table where each
+keycode has its row and where each combination of modifiers determines exactly
+one column. The resulting cell then gives the proper symbolic value. Not all
+keycodes need to bind different values for different combination of modifiers.
+<span class="keycode">&lt;ENTER&gt;</span> key, for instance, usually doesn't depend on any
+modifiers so it its row has only one column defined.
+      </p><p>
+Note that in XKB there is no prior assumption that certain modifiers are bound
+to certain columns. By editing proper files (see <a class="xref" href="#Key_Types" title="Key Types">Key Types</a>)
+this mapping can be changed as well.
+      </p><p>
+Unlike the original X protocol the XKB approach is far more
+flexible. It is comfortable to add one additional XKB term - group. You can
+think of a group as of a vector of columns per each keycode (naturally the
+dimension of this vector may differ for different keycodes). What is it good
+for? The group is not very useful unless you intend to use more than one
+logically different set of symbols (like more than one alphabet) defined in a
+single mapping table. But then, the group has a natural meaning - each symbol
+set has its own group and changing it means selecting a different one.
+XKB approach allows up to four different groups. The columns inside each group
+are called (shift) levels. The X server knows the current group and reports it
+together with modifier set and with a keycode in key events.
+      </p><p>
+To sum it up:
+
+	</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+ for each keycode XKB keyboard map contains up to four one-dimensional
+tables - groups (logically different symbol sets)
+	    </p></li><li class="listitem"><p>
+ for each group of a keycode XKB keyboard map contains some columns
+- shift levels (values reached by combinations of Shift, Ctrl, Alt, ...
+modifiers)
+	    </p></li><li class="listitem"><p>
+ different keycodes can have different number of groups
+	    </p></li><li class="listitem"><p>
+ different groups of one keycode can have different number of shift levels
+	    </p></li><li class="listitem"><p>
+ the current group number is tracked by X server
+	    </p></li></ul></div><p>
+      </p><p>
+It is clear that if you sanely define levels, groups and sanely bind
+modifiers and associated actions you can have simultaneously loaded up to
+four different symbol sets where each of them would reside in its own group.
+      </p><p>
+The multi-layout concept provides a facility to manipulate xkb groups
+and symbol definitions in a way that allows almost arbitrary composition of
+predefined symbol tables. To keep it fully functional you have to:
+
+	</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+ define all symbols only in the first group
+	    </p></li><li class="listitem"><p>
+ (re)define any modifiers with extra care to avoid strange (anisometric)
+behaviour
+	    </p></li></ul></div><p>
+
+      </p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Defining_New_Layouts"></a>Defining New Layouts</h2></div></div></div><p>
+See <a class="ulink" href="http://www.tsu.ru/~pascal/en/xkb/internals.html" target="_top">Some Words  About XKB internals</a> for explanation of used xkb terms and problems
+addressed by XKB extension.
+    </p><p>
+See <a class="ulink" href="http://www.tsu.ru/~pascal/en/xkb/gram-common.html" target="_top">Common  notes about XKB configuration files language</a> for more precise explanation of
+syntax of xkb configuration files.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Predefined_XKB_Symbol_Sets"></a>Predefined XKB Symbol Sets</h3></div></div></div><p>
+If you are about to define some European symbol map extension, you might
+want to use on of four predefined latin alphabet layouts.
+      </p><p>
+Okay, let's assume you want extend an existing keymap and you want to override
+a few keys. Let's take a simple U.K. keyboard as an example (defined in
+<code class="filename">pc/gb</code>):
+
+	</p><pre class="screen">
+partial default alphanumeric_keys
+xkb_symbols "basic" {
+  include "pc/latin"
+
+  name[Group1]="Great Britain";
+
+  key &lt;AE02&gt;  { [         2,   quotedbl,  twosuperior,    oneeighth ] };
+  key &lt;AE03&gt;  { [         3,   sterling, threesuperior,    sterling ] };
+  key &lt;AC11&gt;  { [apostrophe,         at, dead_circumflex, dead_caron] };
+  key &lt;TLDE&gt;  { [     grave,    notsign,          bar,          bar ] };
+  key &lt;BKSL&gt;  { [numbersign, asciitilde,   dead_grave,   dead_breve ] };
+  key &lt;RALT&gt;  { type[Group1]="TWO_LEVEL",
+                [ ISO_Level3_Shift, Multi_key ]   };
+
+  modifier_map Mod5   { &lt;RALT&gt; };
+};
+	</pre><p>
+
+      </p><p>
+It defines a new layout in <code class="literal">basic</code> variant as an extension of common
+latin alphabet layout. The layout (symbol set) name is set to "Great Britain".
+Then there are redefinitions of a few keycodes and a modifiers binding. As you
+can see the number of shift levels is the same for
+<span class="keycode">&lt;AE02&gt;</span>, <span class="keycode">&lt;AE03&gt;</span>,
+<span class="keycode">&lt;AC11&gt;</span>, <span class="keycode">&lt;TLDE&gt;</span> and
+<span class="keycode">&lt;BKSL&gt;</span> keys but it differs from number of shift
+levels of <span class="keycode">&lt;RALT&gt;</span>.
+      </p><p>
+Note that the <span class="keycode">&lt;RALT&gt;</span> key itself is a binding key for Mod5 and
+that it
+serves like a shift modifier for LevelThree, together with Shift
+as a multi-key. It is a good habit to respect this rule in a new similar
+layout.
+      </p><p>
+Okay, you could now define more variants of your new layout besides
+<code class="literal">basic</code> simply by including (augmenting/overriding/...) the basic
+definition and altering what may be needed.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Key_Types"></a>Key Types</h3></div></div></div><p>
+The differences in the number of columns (shift levels) are caused by
+a different types of keys (see the types definition in section basics).  Most
+keycodes have implicitly set the keytype in the included
+<span class="quote">“<span class="quote"><code class="filename">pc/latin</code></span>”</span> file to
+<span class="quote">“<span class="quote"><code class="literal">FOUR_LEVEL_ALPHABETIC</code></span>”</span>. The only exception is
+<span class="keycode">&lt;RALT&gt;</span> keycode which is explicitly set
+<span class="quote">“<span class="quote"><code class="literal">TWO_LEVEL</code></span>”</span> keytype.
+      </p><p>
+All those names refer to pre-defined shift level schemes. Usually you can
+choose a suitable shift level scheme from <code class="literal">default</code> types scheme list
+in proper xkb component's subdirectory.
+      </p><p>
+The most used schemes are:
+	</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col align="left" valign="top" /></colgroup><tbody><tr><td><p><span class="term">ONE_LEVEL</span></p></td><td><p>
+The key does not depend on any modifiers. The symbol from first level
+is always chosen.
+	      </p></td></tr><tr><td><p><span class="term">TWO_LEVEL</span></p></td><td><p>
+The key uses a modifier Shift and may have two possible values.
+The second level may be chosen by Shift modifier. If Lock modifier
+(usually Caps-lock) applies the symbol is further processed using
+system-specific capitalization rules. If both Shift+Lock modifier apply the
+symbol from the second level is taken and capitalization rules are applied
+(and usually have no effect).
+	      </p></td></tr><tr><td><p><span class="term">ALPHABETIC</span></p></td><td><p>
+The key uses modifiers Shift and Lock. It may have two possible
+values. The second level may be chosen by Shift modifier. When Lock
+modifier applies, the symbol from the first level is taken and further
+processed using system-specific capitalization rules. If both Shift+Lock
+modifier apply the symbol from the first level is taken and no
+capitalization rules applied. This is often called shift-cancels-caps
+behaviour.
+	      </p></td></tr><tr><td><p><span class="term">THREE_LEVEL</span></p></td><td><p>
+Is the same as TWO_LEVEL but it considers an extra modifier -
+LevelThree which can be used to gain the symbol value from the third
+level. If both Shift+LevelThree modifiers apply the value from the third
+level is also taken. As in TWO_LEVEL, the Lock modifier doesn't influence
+the resulting level. Only Shift and LevelThree are taken into that
+consideration. If the Lock modifier is active capitalization rules
+are applied on the resulting symbol.
+	      </p></td></tr><tr><td><p><span class="term">FOUR_LEVEL</span></p></td><td><p>
+Is the same as THREE_LEVEL but unlike LEVEL_THREE if both Shift+LevelThree
+modifiers apply the symbol is taken from the fourth level.
+	      </p></td></tr><tr><td><p><span class="term">FOUR_LEVEL_ALPHABETIC</span></p></td><td><p>
+Is similar to FOUR_LEVEL but also defines shift-cancels-caps behaviour
+as in ALPHABETIC. If Lock+LevelThree apply the symbol from the
+third level is taken and the capitalization rules are applied.
+If Lock+Shift+LevelThree apply the symbol from the third level is taken
+and no capitalization rules are applied.
+	      </p></td></tr><tr><td><p><span class="term">KEYPAD</span></p></td><td><p>
+As the name suggest this scheme is primarily used for numeric keypads.
+The scheme considers two modifiers - Shift and NumLock. If none
+of modifiers applies the symbol from the first level is taken. If either
+Shift or NumLock modifiers apply the symbol from the second level is taken.
+If both Shift+NumLock modifiers apply the symbol from the first level
+is taken. Again, shift-cancels-caps variant.
+	      </p></td></tr><tr><td><p><span class="term">FOUR_LEVEL_KEYPAD</span></p></td><td><p>
+Is similar to KEYPAD scheme but considers also LevelThree modifier.
+If LevelThree modifier applies the symbol from the third level is taken.
+If Shift+LevelThree or NumLock+LevelThree apply the symbol from the fourth
+level is taken. If all Shift+NumLock+LevelThree modifiers apply the symbol
+from the third level is taken. This also, shift-cancels-caps variant.
+	      </p></td></tr></tbody></table></div><p>
+      </p><p>
+Besides that, there are several schemes for special purposes:
+	</p><div class="variablelist"><table border="0" class="variablelist"><colgroup><col align="left" valign="top" /></colgroup><tbody><tr><td><p><span class="term">PC_BREAK</span></p></td><td><p>
+It is similar to TWO_LEVEL scheme but it considers the Control
+modifier rather than Shift. That means, the symbol from the second level
+is chosen by Control rather than by Shift.
+	      </p></td></tr><tr><td><p><span class="term">PC_SYSRQ</span></p></td><td><p>
+It is similar to TWO_LEVEL scheme but it considers the Alt modifier rather
+than Shift. That means, the symbol from the second level
+is chosen by Alt rather than by Shift.
+	      </p></td></tr><tr><td><p><span class="term">CTRL+ALT</span></p></td><td><p>
+The key uses modifiers Alt and Control. It may have two possible
+values. If only one modifier (Alt or Control) applies the symbol
+from the first level is chosen. Only if both Alt+Control modifiers apply
+the symbol from the second level is chosen.
+	      </p></td></tr><tr><td><p><span class="term">SHIFT+ALT</span></p></td><td><p>
+The key uses modifiers Shift and Alt. It may have two possible values.
+If only one modifier (Alt or Shift) applies the symbol
+from the first level is chosen. Only if both Alt+Shift modifiers apply
+the symbol from the second level is chosen.
+	      </p></td></tr></tbody></table></div><p>
+      </p><p>
+If needed, special <code class="literal">caps</code> schemes may be used.
+They redefine the standard behaviour of all
+<code class="literal">*ALPHABETIC</code> types. The layouts (maps of
+symbols) with keys defined in respective types then automatically change
+their behaviour accordingly. Possible redefinitions are:
+
+	</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>internal</p></li><li class="listitem"><p>internal_nocancel</p></li><li class="listitem"><p>shift</p></li><li class="listitem"><p>shift_nocancel</p></li></ul></div><p>
+
+None of these schemes should be used directly. They are defined merely
+for <code class="literal">'caps:'</code> xkb options (used to globally
+change the layouts behaviour).
+      </p><p>
+Don't alter any of existing key types. If you need a different behaviour
+create a new one.
+      </p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="More_On_Definitions_Of_Types"></a>More On Definitions Of Types</h4></div></div></div><p>
+When the XKB software deals with a separate type description it gets
+a complete list of modifiers that should be taken into account from the
+<code class="literal">'modifiers=&lt;list of modifiers&gt;'</code> list and expects that a set
+of <code class="literal">'map[&lt;combination of modifiers&gt;]=&lt;list of modifiers&gt;'</code>
+instructions that contain the mapping for each combination of modifiers
+mentioned in that list. Modifiers that are not explicitly listed are NOT taken
+into account
+when the resulting shift level is computed.
+If some combination is omitted the program (subroutine) should choose the first
+level for this combination (a quite reasonable behavior).
+	</p><p>
+Lets consider an example with two modifiers <span class="keysym">ModOne</span> and
+<span class="keysym">ModTwo</span>:
+
+	  </p><pre class="screen">
+type "..." {
+    modifiers = ModOne+ModTwo;
+    map[None] = Level1;
+    map[ModOne] = Level2;
+};
+	  </pre><p>
+
+In this case the map statements for <span class="keysym">ModTwo</span> only and
+<span class="keysym">ModOne+ModTwo</span> are omitted.  It means that if
+the <span class="keysym">ModTwo</span> is active the subroutine can't found
+explicit mapping for such combination an will use
+the <span class="emphasis"><em>default level</em></span> i.e. Level1.
+	</p><p>
+But in the case the type described as:
+
+	  </p><pre class="screen">
+type "..." {
+    modifiers = ModOne;
+    map[None] = Level1;
+    map[ModOne] = Level2;
+};
+	  </pre><p>
+
+the ModTwo will not be taken into account and the resulting level depends on
+the ModOne state only. That means, ModTwo alone produces the Level1 but the
+combination ModOne+ModTwo produces the Level2 as well as ModOne alone.
+	</p><p>
+What does it mean if the second modifier is the Lock? It means that in
+the first case (the Lock itself is included in the list of modifiers but
+combinations with this modifier aren't mentioned in the map statements)
+the internal capitalization rules will be applied to the symbol from the first
+level. But in the second case the capitalization will be applied to the symbol
+chosen accordingly to he first modifier - and this can be the symbol from the
+first as well as from the second level.
+	</p><p>
+Usually, all modifiers introduced in <code class="literal">'modifiers=&lt;list of modifiers&gt;'</code> list are used for shift level calculation and then
+discarded. Sometimes this is not desirable. If you want to use a modifier
+for shift level calculation but you don't want to discard it, you may
+list in '<code class="literal">preserve[&lt;combination of modifiers&gt;]=&lt;list of modifiers&gt;'</code>. That means, for a given combination all listed modifiers
+will be preserved. If the Lock modifier is preserved then the resulting
+symbol is passed to internal capitalization routine regardless whether
+it has been used for a shift level calculation or not.
+	</p><p>
+Any key type description can use both real and virtual modifiers. Since real
+modifiers always have standard names it is not necessary to explicitly declare
+them. Virtual modifiers can have arbitrary names and can be declared (prior
+using them) directly in key type definition:
+
+	  </p><pre class="screen">
+virtual_modifiers &lt;comma-separated list of modifiers&gt;  ;
+	  </pre><p>
+
+as seen in for example <code class="literal">basic</code>, <code class="literal">pc</code> or <code class="literal">mousekeys</code> key
+type definitions.
+	</p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Rules"></a>Rules</h3></div></div></div><p>
+Once you are finished with your symbol map you need to add it
+to rules file. The rules file describes how all the
+five basic keycodes, types, compat, symbols and geometry components
+should be composed to give a sensible resulting xkb configuration.
+      </p><p>
+The main advantage of rules over formerly used keymaps is a possibility
+to simply parameterize (once) fixed patterns of configurations and thus
+to elegantly allow substitutions of various local configurations
+into predefined templates.
+      </p><p>
+A pattern in a rules file (often located in
+<code class="filename">/usr/lib/X11/xkb/rules</code>)
+ can be parameterized with four other arguments:
+<code class="literal">Model</code>, <code class="literal">Layout</code>,
+<code class="literal">Variant</code> and <code class="literal">Options</code>.
+For most cases parameters <code class="literal">model</code> and
+<code class="literal">layout</code> should
+be sufficient for choosing a functional keyboard mapping.
+      </p><p>
+The rules file itself is composed of pattern lines and lines with rules. The
+pattern line starts with an exclamation mark ('<code class="literal">!</code>')
+and describes how will the xkb interpret the following lines (rules). A sample
+rules file looks like this:
+
+	</p><pre class="screen">
+! model 	                =	keycodes
+  macintosh_old	                =	macintosh
+  ...
+  *		                =	xorg
+
+! model		                =	symbols
+  hp		                =	+inet(%m)
+  microsoftpro	                =	+inet(%m)
+  geniuscomfy	                =	+inet(%m)
+
+! model	    layout[1]	        =	symbols
+  macintosh	us	        =	macintosh/us%(v[1])
+  *             *               =       pc/pc(%m)+pc/%l[1]%(v[1])
+
+! model     layout[2]	        =	symbols
+  macintosh     us              =	+macintosh/us[2]%(v[2]):2
+  *		*               =	+pc/%l[2]%(v[2]):2
+
+! option			=	types
+  caps:internal			=	+caps(internal)
+  caps:internal_nocancel	=	+caps(internal_nocancel)
+	</pre><p>
+
+      </p><p>
+Each rule defines what certain combination of values on the left side
+of equal sign ('<code class="literal">=</code>') results in. For
+example a (keyboard) model <code class="literal">macintosh_old</code>
+instructs xkb to take definitions of keycodes from
+file <code class="filename">keycodes/macintosh</code> while the rest
+of models (represented by a wild card '<code class="literal">*</code>')
+instructs it to take them from file <code class="filename">keycodes/xorg</code>.
+The wild card represents all possible values on the left side which
+were not found in any of the previous rules.  The more specialized
+(more complete) rules have higher precedence than general ones,
+i.e. the more general rules supply reasonable default values.
+      </p><p>
+As you can see some lines contain substitution parameters - the parameters
+preceded by the percent sign ('<code class="literal">%</code>').
+The first alphabetical character after the percent sign expands to the
+value which has been found on the left side. For
+example <code class="literal">+%l%(v)</code> expands
+into <code class="literal">+cz(bksl)</code> if the respective values
+on the left side were <code class="literal">cz</code> layout in
+its <code class="literal">bksl</code> variant. More, if the layout
+resp. variant parameter is followed by a pair of brackets
+('<code class="literal">[</code>', '<code class="literal">]</code>')
+it means that xkb should <span class="emphasis"><em>place the layout resp. variant into
+specified xkb group</em></span>. If the brackets are omitted the first
+group is the default value.
+      </p><p>
+So the second block of rules enhances symbol definitions for some particular
+keyboard models with extra keys (for internet, multimedia, ...) . Other models
+are left intact. Similarly, the last block overrides some key type definitions,
+so the common global behaviour ''shift cancels caps'' or ''shift doesn't cancel
+caps'' can be selected. The rest of rules produces special symbols for each
+variant <code class="literal">us</code> layout of
+<code class="literal">macintosh</code> keyboard and standard pc
+symbols in appropriate variants as a default.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Descriptive_Files_of_Rules"></a>Descriptive Files of Rules</h3></div></div></div><p>
+Now you just need to add a detailed description to
+<code class="filename">&lt;rules&gt;.xml</code>
+description file so the other users (and external programs which often parse
+this file) know what is your work about.
+      </p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Old_Descriptive_Files"></a>Old Descriptive Files</h4></div></div></div><p>
+The formerly used descriptive files were named <code class="filename">&lt;rules&gt;.lst</code>
+Its structure is very simple and quite self descriptive but such simplicity
+had also some cavities, for example there was no way how to describe local
+variants of layouts and there were problems with the localization of
+descriptions. To preserve compatibility with some older programs,
+new XML descriptive files can be converted to old format '.lst'.
+	</p><p>
+For each parameter of rules file should be described its meaning. For the rules
+file described above the <code class="filename">.lst</code> file could look like:
+
+	  </p><pre class="screen">
+! model
+  pc104		Generic 104-key PC
+  microsoft	Microsoft Natural
+  pc98		PC-98xx Series
+  macintosh     Original Macintosh
+  ...
+
+! layout
+  us		U.S. English
+  cz		Czech
+  de		German
+  ...
+
+! option
+  caps:internal		 uses internal capitalization. Shift cancels Caps
+  caps:internal_nocancel uses internal capitalization. Shift doesn't cancel Caps
+
+	  </pre><p>
+
+	</p><p>
+And that should be it. Enjoy creating your own xkb mapping.
+	</p></div></div></div></div></body></html>

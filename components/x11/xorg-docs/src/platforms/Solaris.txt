@@ -1,0 +1,87 @@
+X Window System on Solaris™
+
+David Holland
+
+XFree86 Project
+
+Marc Aurele La France
+
+XFree86 Project
+
+Alan Coopersmith
+
+Oracle Corp.
+
+X Version 11, Release 7.7
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Table of Contents
+
+The VT-switching sub-system in Solaris
+Notes for building X11R7.7 on Solaris
+Notes for running Xorg on Solaris
+Bug Notification
+
+The VT-switching sub-system in Solaris
+
+The original virtual terminal sub-system is a undocumented, and unsupported
+feature of Solaris x86 releases 2.1 through 7. It was removed in Solaris 8 and
+later releases, and was never present on Solaris SPARC. Support for this
+version of virtual terminals is only present in Xorg 1.6.x and earlier releases
+of Xorg, and has been removed in Xorg 1.7 and later. If you use this form of
+virtual terminals, you do so at YOUR OWN RISK.
+
+A new virtual terminal sub-system has been introduced in Solaris 11, and is
+also available in systems based on the OpenSolaris or illumos sources. This
+version is supported on both SPARC and x86 platforms, though SPARC support is
+limited to devices with "Coherent Console" support in the kernel frame buffer
+driver. Support for it is found only in Xorg 1.7 and later server releases.
+
+When available, the virtual terminals of Solaris work basically the same way as
+most other VT sub-systems.
+
+Notes for building X11R7.7 on Solaris
+
+ 1. Both GCC, and the Sun Studio compilers are supported by X11R7.7. The
+    minimum recommended GCC release is 3.4. Some earlier GCC's are known to not
+    work and should be avoided.
+
+    You should also make certain your version of GCC predefines `sun'. If
+    needed edit /usr/local/lib/gcc-lib/*/*/specs, and modify the *predefines:
+    line.
+
+ 2. To build X11R7.7 with GCC you need gcc and (optionally) c++filt from GNU
+    binutils. Don't install gas or ld from GNU binutils, use the one provided
+    by Sun.
+
+ 3. If you are using Sun compilers to compile the X11R7.7 distribution, you
+    need to modify your PATH appropriately so the Sun compiler tools are
+    available. Normally, they should be in /opt/SUNWspro/bin
+
+ 4. You MUST put /usr/ccs/bin at the front of your PATH. There are known
+    problems with some GNU replacements for the utilities found there, so the /
+    usr/ccs/bin versions of these programs must be found before any possible
+    GNU versions. (Most notably GNU 'ar' does not work during the build).
+
+Notes for running Xorg on Solaris
+
+ 1. Depending on the release or architecture of Solaris you are running, you
+    might need to install an OS driver for an aperture device.
+
+    Under Solaris x86 2.5 and later, there's a system driver (/dev/xsvc) that
+    provides this functionality. It will be detected automatically by the
+    server, so you don't need to install the aperture driver.
+
+    For older Solaris x86 and for Solaris SPARC releases, the source for this
+    driver is included in hw/xfree86/os-support/solaris/apSolaris.shar in the
+    xserver source distribution. Building, and installing the driver is
+    relatively straight forward. Please read its accompanying README file.
+
+ 2. Xqueue is NOT supported under Solaris.
+
+Bug Notification
+
+Bug reports should be reported at http://bugs.freedesktop.org/ using the xorg
+product or sent to <xorg@lists.freedesktop.org>.
+
