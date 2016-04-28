@@ -1,0 +1,50 @@
+Submitted upstream in
+https://bugzilla.gnome.org/show_bug.cgi?id=747478#c23
+
+From 6b754f34d278038ff9daa3672399e5eb9b07da65 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 6 Dec 2015 11:17:39 -0800
+Subject: [PATCH] gthread: add thread name support on Solaris
+
+---
+ configure.ac         | 10 ++++++++++
+ glib/gthread-posix.c |  2 ++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 339defc..ccaead2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2174,6 +2174,16 @@ AS_IF([ test x"$have_threads" = xposix], [
+              AC_DEFINE(HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID,1,
+                 [Have function pthread_setname_np(const char*)])],
+             [AC_MSG_RESULT(no)])
++        dnl Sets thread names on Solaris 11.3 & higher
++        AC_MSG_CHECKING(for pthread_setname_np(pthread_t, const char*))
++        AC_LINK_IFELSE(
++            [AC_LANG_PROGRAM(
++                [#include <pthread.h>],
++                [pthread_setname_np(pthread_self(), "example")])],
++            [AC_MSG_RESULT(yes)
++             AC_DEFINE(HAVE_PTHREAD_SETNAME_NP_WITH_TID,1,
++                [Have function pthread_setname_np(pthread_t, const char*)])],
++            [AC_MSG_RESULT(no)])
+         CPPFLAGS="$glib_save_CPPFLAGS"
+ ])
+ 
+diff --git a/glib/gthread-posix.c b/glib/gthread-posix.c
+index bd3c9a1..184cdf9 100644
+--- a/glib/gthread-posix.c
++++ b/glib/gthread-posix.c
+@@ -1231,6 +1231,8 @@ g_system_thread_set_name (const gchar *name)
+   prctl (PR_SET_NAME, name, 0, 0, 0, 0); /* on Linux */
+ #elif defined(HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID)
+   pthread_setname_np(name); /* on OS X and iOS */
++#elif defined(HAVE_PTHREAD_SETNAME_NP_WITH_TID)
++  pthread_setname_np(pthread_self(), name); /* on Solaris */
+ #endif
+ }
+ 
+-- 
+2.6.1
+

@@ -1,0 +1,22 @@
+A more correct version of this fix would be to only eliminate these flags
+for Solaris 5.12 and newer; then it would be appropriate for upstream.
+
+Not currently appropriate for upstream.
+
+--- glib-2.44.0/configure.ac	2015-04-19 12:58:06.570134367 -0700
++++ glib-2.44.0/configure.ac	2015-04-19 13:02:46.642777049 -0700
+@@ -1956,11 +1956,9 @@
+        # skip cygwin and darwin -pthread or -pthreads test
+        ;;
+     *-solaris*)
+-      # These compiler/linker flags work with both Sun Studio and gcc
+-      # Sun Studio expands -mt to -D_REENTRANT and -lthread
+-      # gcc expands -pthreads to -D_REENTRANT -D_PTHREADS -lpthread
+-      G_THREAD_CFLAGS="-D_REENTRANT -D_PTHREADS"
+-      G_THREAD_LIBS="-lpthread -lthread"
++      # After Solaris 11, no flags are needed for reentrant posix threads.
++      G_THREAD_CFLAGS=""
++      G_THREAD_LIBS=""
+       ;;
+     *)
+       for flag in pthread pthreads mt; do
