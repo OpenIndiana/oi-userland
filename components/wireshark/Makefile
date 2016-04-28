@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	2.0.2
+COMPONENT_VERSION=	2.0.3
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e921fb072085a5654d899949bb561d0687f4819f7b63ba35777bb949a9b6b9c1
+    sha256:e196376e75fe21fdef41b4eaa27ce2e1b2b561e7f7b20328a8e96657cc4465fc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
-TPNO=			27086
+TPNO=			28025
 
 # Depends on S12-only changes in ON.
 ifeq ($(BUILD_TYPE), evaluation)
