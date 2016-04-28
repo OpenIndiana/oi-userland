@@ -51,6 +51,21 @@ Getting the Bits
     directory and use 'gmake download' from that to only get it's source
     archive.
 
+    Also, when you start to work with a new archive file - update the source
+    version in an existing recipe component, or start a new one from scratch -
+    you can use 'gmake fetch' to download the archive(s) defined in the new
+    recipe, calculate the checksums and *NOT* remove the archive because its
+    actual checksum does not match the value recorded in the recipe Makefile
+    (if any) so the download is deemed corrupted while you know it is not.
+    There is also a side-effect: by framework recipe, a file in the download
+    location only depends on the component recipe Makefile. So once an archive
+    is "fetched" (downloaded and not removed), it will not be re-verified -
+    the downloading script is just not called. This is a moderate problem,
+    since the "fetch" ability is a helper for recipe-makers doing initial
+    archive downloads in a certain situation, to save some traffic and time
+    on their workstations. You can still remove files fetched by a recipe
+    using 'gmake clobber'.
+
 Building the Bits
 
     You can build individual components or the contents of the entire gate.
