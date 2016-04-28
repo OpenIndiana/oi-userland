@@ -9,36 +9,39 @@
 #
 
 #
-# Copyright (c) 2013 Louis M. Picciano. All rights reserved.
+# Copyright (c) 2013-2016 Louis M. Picciano. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include $(WS_TOP)/make-rules/shared-macros.mk
 
 COMPONENT_NAME			= gsl
-COMPONENT_VERSION		= 1.16
-COMPONENT_SUMMARY	= GSL - GNU Scientific Library
+COMPONENT_VERSION		= 2.1
+COMPONENT_SUMMARY		= GSL - GNU Scientific Library
 COMPONENT_SRC			= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:73bc2f51b90d2a780e6d266d43e487b3dbd78945dd0b04b14ca5980fe28d2f53
-COMPONENT_ARCHIVE_URL=	http://gnu.mirrorcatalogs.com/gsl/$(COMPONENT_ARCHIVE)
+	sha256:59ad06837397617f698975c494fe7b2b698739a59e2fcf830b776428938a0c66
+COMPONENT_ARCHIVE_URL	= ftp://ftp.gnu.org/gnu/gsl/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI			= library/math/gsl
+COMPONENT_CLASSIFICATION= System/Libraries
+COMPONENT_LICENSE		= GPL v3
+COMPONENT_LICENSE_FILE	= $(COMPONENT_NAME).license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
-include ../../make-rules/shared-targets.mk
+CONFIGURE_OPTIONS 	+=	--disable-static
+
+include $(WS_TOP)/make-rules/shared-targets.mk
 	
 build:		$(BUILD_32_and_64)
-#$(BUILD_64)
 
 install:	$(INSTALL_32_and_64)
-#$(INSTALL_64)
 
 test:		$(TEST_32_and_64)
-#$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
