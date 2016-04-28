@@ -46,9 +46,7 @@ COMPONENT_PREP_ACTION= \
 CONFIGURE_OPTIONS+= --docdir='$(X11_DOC_DIR)' \
 	XORG_SGML_PATH=$(PROTODIR)$(X11_SGML_DIR)
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+$(BUILD_DIR)/.postprocess:	$(INSTALL_32)
 	$(MKDIR) $(PROTO_DIR)$(X11_DOC_DIR)
 	(cd $(COMPONENT_DIR)/src && tar -cf - .) | \
 		(cd $(PROTO_DIR)$(X11_DOC_DIR) && tar -xf - )
@@ -56,6 +54,12 @@ install: $(INSTALL_32)
 		$(PROTO_DIR)$(USRSHAREMAN5DIR)/XConsortium.5
 	mv -f $(PROTO_DIR)$(USRSHAREMAN5DIR)/Standards.5 \
 		$(PROTO_DIR)$(USRSHAREMAN5DIR)/XStandards.5
+	$(TOUCH) $@
+
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32) $(BUILD_DIR)/.postprocess
 
 test: $(NO_TESTS)
 
