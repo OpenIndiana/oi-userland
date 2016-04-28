@@ -1,0 +1,147 @@
+#!/bin/ksh
+#
+# Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, and/or sell copies of the Software, and to permit persons
+# to whom the Software is furnished to do so, provided that the above
+# copyright notice(s) and this permission notice appear in all copies of
+# the Software and that both the above copyright notice(s) and this
+# permission notice appear in supporting documentation.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+# OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
+# INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+# FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+# WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+# Except as contained in this notice, the name of a copyright holder
+# shall not be used in advertising or otherwise to promote the sale, use
+# or other dealings in this Software without prior written authorization
+# of the copyright holder.
+#
+###########################################################################
+#
+
+if [ "$LUBIN" != "" ]; then
+    #
+    # Live Upgrade.
+    #
+    # No need to restart any services, we will do that at system boot
+    #
+    echo "Postinstall actions deferred until the next system boot"
+    exit 0
+elif [ "$PKG_INSTALL_ROOT" != "" -a "$PKG_INSTALL_ROOT" != "/" -a \
+       "x$postrun_alt_root_okay" != xyes ]; then
+    # 
+    # Installation to an alternate root directory
+    #
+    # Not safe to restart the services in the altroot, wait for the next
+    # system boot
+    #
+    echo "Postinstall actions deferred until the next system boot"
+    exit 0
+fi
+
+usage() {
+    echo "Usage: $0 [options] [sevices]"
+    echo
+    echo "Options:"
+    echo
+    echo "  -h, --help   display this usage information"
+    echo "  -n           test mode; print what would be done, but don't do it"
+}
+
+check_svc() {
+    svc_fmri=unknown
+    svc_state=unknown
+    svc_next_state=unknown
+    cmd_out="$(LC_ALL=C /usr/bin/svcs -l "$1" 2>&1)"
+    if [ $? != 0 ]; then
+	svc_exists=0
+	return
+    fi
+    svc_exists=1
+    svc_fmri=$(echo "$cmd_out" | /bin/grep "^fmri " | /bin/awk '{ print $2 }')
+    svc_state=$(echo "$cmd_out" | /bin/grep "^state " | /bin/awk '{ print $2 }')
+    svc_next_state=$(echo "$cmd_out" | /bin/grep "^next_state " | /bin/awk '{ print $2 }')
+}
+
+test_mode=0
+svcs_to_restart=
+svcs_to_enable=
+retval=0
+
+for arg in "${@}"; do
+    if [ "x$arg" == "x-h" -o "x$arg" == "x--help" ]; then
+	usage
+	exit 0
+    fi
+
+    if [ "x$arg" == "x-n" ]; then
+	test_mode=1
+	continue
+    fi
+
+    # sets svc_exists, svc_state, svc_fmri
+    check_svc "$arg"
+
+    if [ $svc_exists == 0 ]; then
+	echo "ERROR: smf service not found: $arg"
+	retval=1
+	continue
+    fi
+
+    if [ "$svc_state" == "online" ]; then
+	svcs_to_restart="$svcs_to_restart $svc_fmri"
+    elif [ "$svc_state" == "offline" -a "$svc_next_state" == "online" ]; then
+        # the service is still running its start method
+        svcs_to_restart="$svcs_to_restart $svc_fmri"
+    elif [ "$svc_state" == "disabled" ]; then
+	svcs_to_enable="$svcs_to_enable $svc_fmri"
+    elif [ "$svc_state" == "maintenance" ]; then
+	echo "ERROR: smf service $svc_fmri is in maintenance mode, try svcadm clear"
+	retval=1
+    else
+	echo "ERROR: smf service $svc_fmri is in $svc_state state."
+	retval=1
+    fi
+done
+
+if [ -n "$svcs_to_restart" ]; then
+    if [ $test_mode == 1 ]; then
+	echo "Restarting services [test mode, not actually restarting them]:"
+    else
+	echo "Restarting services:"
+    fi
+fi
+for fmri in $svcs_to_restart; do
+    echo "    $fmri"
+    if [ $test_mode == 0 ]; then
+	/usr/sbin/svcadm restart $fmri
+    fi
+done
+
+if [ -n "$svcs_to_enable" ]; then
+    if [ $test_mode == 1 ]; then
+	echo "Enabling services [test mode, not actually enabling them]:"
+    else
+	echo "Enabling services:"
+    fi
+fi
+for fmri in $svcs_to_enable; do
+    echo "    $fmri"
+    if [ $test_mode == 0 ]; then
+	/usr/sbin/svcadm enable $fmri
+    fi
+done
+
+return $retval

@@ -1,0 +1,180 @@
+#!/usr/bin/python2.7
+#
+# Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, and/or sell copies of the Software, and to permit persons
+# to whom the Software is furnished to do so, provided that the above
+# copyright notice(s) and this permission notice appear in all copies of
+# the Software and that both the above copyright notice(s) and this
+# permission notice appear in supporting documentation.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+# OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
+# INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
+# FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+# WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+# Except as contained in this notice, the name of a copyright holder
+# shall not be used in advertising or otherwise to promote the sale, use
+# or other dealings in this Software without prior written authorization
+# of the copyright holder.
+#
+###########################################################################
+#
+
+
+import os, sys
+import getopt
+import fnmatch, re
+
+class Usage(Exception):
+    def __init__(self, msg=None):
+        if msg:
+            self.msg = "Error: " + str(msg) + "\n\n"
+        else:
+            self.msg = ""
+        self.msg = self.msg + "Usage: find_newer.py [options] dir...\n\n"
+        self.msg = self.msg + "Options:\n"
+	self.msg = self.msg + "   --name glob  find files matching glob\n"
+        self.msg = self.msg + "   --newer ref  find files newer than a reference file"
+        self.msg = self.msg + "   -c           compare ctimes (the time the file status was last changed)\n"
+        self.msg = self.msg + "                This is the default.\n"
+        self.msg = self.msg + "   -m           compare mtimes (the time the file was last modified)\n"
+        self.msg = self.msg + "   -a           compare atimes (the time the file was last accessed)\n"
+        self.msg = self.msg + "   -f           follow symlinks\n"
+        self.msg = self.msg + "\nNote: if more than one of -c -m and -a are specified, find_newer will\n"
+        self.msg = self.msg + "compare the most recent of the given times\n"
+
+
+def get_file_time(stat, type):
+    time = None
+    if "c" in type:
+        time = stat.st_ctime;
+    if "m" in type:
+        if time:
+            if time < stat.st_mtime:
+                time = stat.st_mtime
+        else:
+            time = stat.st_mtime;
+    elif "a" in type:
+        if time:
+            if time < stat.st_atime:
+                time = stat.st_atime
+        else:
+            time = stat.st_atime;
+    return time
+
+dirs_seen = []
+def find_newer_files(dir, comp_time, ref_time, reobj, follow_links):
+    dir = os.path.abspath(dir)
+    if dir in dirs_seen:
+        print >>sys.stderr, "Warning: infinite loop of symlinks"
+        return
+    dirs_seen.append(dir)
+    for root, dirs, files in os.walk(dir):
+        for file in files:
+            try:
+                file = os.path.abspath(os.path.join(root, file))
+                stat = os.stat (file)
+                if ref_time:
+                    if get_file_time (stat, comp_time) > ref_time:
+                        if reobj:
+                            if reobj.match (file):
+                                print file
+                        else:
+                            print file
+                else:
+                    # no reference time, print all files that match the regex
+                    if reobj:
+                        if reobj.match (file):
+                            print file
+                    else:
+                        print file
+            except:
+                pass
+        if follow_links:
+            # descend into subdirectories that are really symlinks
+            for d in dirs:
+                d = os.path.join(root, d)
+                if os.path.islink(d) and os.path.lexists(d):
+                    d = os.path.abspath(os.path.join(root, os.readlink(d)))
+                    find_newer_files(d, comp_time, ref_time, reobj, follow_links)
+    
+
+def main(argv=None):
+    comp_time = []
+    follow_links = False
+    glob = None
+    ref_file = None
+
+    # parse the command line args
+    if argv is None:
+        argv = sys.argv
+    try:
+        try:
+            opts, args = getopt.getopt(argv[1:], "hcmaf", ["help", "newer=", "name="])
+        except getopt.error, msg:
+            raise Usage(msg)
+        for o, a in opts:
+            if o == "-c":
+                comp_time.append("c")
+            elif o == "-m":
+                comp_time.append("m")
+            elif o == "-a":
+                comp_time.append("a")
+            elif o in ("-h", "--help"):
+                raise Usage()
+            elif o in "-f":
+                follow_links = True
+            elif o in "--name":
+                glob = a
+            elif o in "--newer":
+                ref_file = a
+        if len(args) < 1:
+            raise Usage("invalid arguments")
+
+    except Usage, err:
+        print >>sys.stderr, err.msg
+        print >>sys.stderr, "Use --help for usage information"
+        return 2
+
+    # default: compare ctime
+    if not comp_time:
+        comp_time = ["c"]
+
+    # return stat time as floats
+    os.stat_float_times (True)
+
+    if ref_file:
+        try:
+            ref_stat = os.stat(ref_file)
+        except:
+            print >>sys.stderr, "Cannot stat reference file: %s" % ref_file
+            return 1
+        ref_time = get_file_time (ref_stat, comp_time)
+    else:
+        ref_time = None
+
+    for dir in args:
+        if not os.path.isdir(dir):
+            print >>sys.stderr, "Directory not found: %s" % dir
+            return 1
+
+        if glob:
+            regex = fnmatch.translate(glob)
+            reobj = re.compile (regex)
+        else:
+            reobj = None
+
+        find_newer_files(dir, comp_time, ref_time, reobj, follow_links)
+
+if __name__ == "__main__":
+    sys.exit(main())

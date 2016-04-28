@@ -1,0 +1,321 @@
+2015-09-21 Rohini S <rohini.s@oracle.com>
+	* Added patch desktop-cache-03-py27.diff to fix bug 21874338:
+	  21874338 Remove python 2.6 references from gimp, accerciser,
+	             notify-python and desktop-cache
+
+2014-05-07 ssadare <swaroop.sadare@oracle.com>
+	* Added patch desktop-cache-01-pixbuf-loaders-installer-maintenance.diff
+	  to fix bug 15968709:
+	  15968709 pixbuf-loaders-installer:default went into maintenance
+	* Modified patch desktop-cache-01-pixbuf-loaders-installer.diff
+	  to fix bug 18264366:
+	  18264366 ibus-sunpinyin: icons can not be loaded in language-panel
+
+2013-06-05 swaroop.sadare@oracle.com
+	* Added patch desktop-cache-01-pixbuf-loaders-installer.diff
+	  to fix bugs 16429912 & 16482493:
+	  16429912 Icons in Visual Effects tab are missing
+          16482493 'Input Method- IBus' icon missing
+
+2011-08-18 Erwann Chenede - <erwann.chenede@oracle.com>
+
+	 * configure.in: version 0.2.7
+	 * pixbuf-loaders/pixbuf-loaders-installer,
+	   icon-cache/icon-cache,
+	   mime-types-cache/mime-types-cache,
+	   gconf-cache/gconf-cache,
+	   desktop-mime-cache/desktop-mime-cache,
+	   input-method/input-method-cache: test is directory
+	   is writable. This is needed for Read Only Zone setups (ROZR)
+	   Fixes CR #7075751
+
+2011-07-25  Brian Cameron - <brian.cameron@oracle.com>
+
+	* configure.in: version 0.2.6
+	* desktop-mime-cache/desktop-mime-cache: Add the -q (quiet)
+	  argument to calls to update-desktop-database so that warning
+	  messages do not get placed into the SMF logs.   Fixes CR
+	  #7065973.
+
+2011-07-18  Laszlo (Laca) Peter  <laszlo.peter@oracle.com>
+
+	* configure.in: version 0.2.5
+
+2011-07-18  Laszlo (Laca) Peter  <laszlo.peter@oracle.com>
+
+	* desktop-mime-cache/desktop-mime-cache.xml,
+	  gconf-cache/gconf-cache.xml, icon-cache/icon-cache.xml,
+	  input-method/input-method-cache.xml,
+	  mime-types-cache/mime-types-cache.xml,
+	  pixbuf-loaders/pixbuf-loaders-installer.xml: move "dependent"
+	  element to after "dependency" elements, fixes 7068018
+
+2011-06-24 Erwann Chenede - <erwann.chenede@oracle.com>
+
+	* pixbuf-loaders/pixbuf-loaders-installer.xml
+	* icon-cache/icon-cache.xml
+	* mime-types-cache/mime-types-cache.xml
+	* gconf-cache/gconf-cache.xml
+	* desktop-mime-cache/desktop-mime-cache.xml
+	* input-method/input-method-cache.xml:
+	  added dependent close to work in ROZR setup (Read Only Zone)
+	* configure.in: bump to 0.2.4
+
+2011-02-02  Laszlo (Laca) Peter  <laszlo.peter@oracle.com>
+
+	* COPYING: Oraclify
+	* configure.in: version bump
+	* find_newer: use python 2.6
+	* desktop-mime-cache/desktop-mime-cache.xml,
+	  gconf-cache/gconf-cache.xml, icon-cache/icon-cache.xml,
+	  input-method/input-method-cache.xml,
+	  mime-types-cache/mime-types-cache.xml,
+	  pixbuf-loaders/pixbuf-loaders-installer.xml: depend on
+	  filesystem/minimal instead of filesystem/local.  Apparently
+	  minimal > local.  Otherwise it is possible that the services are
+	  started before the files they use are available.
+
+2009-05-21  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* configure.in: bump to 0.2.2
+	* restart_fmri: handle the case of offline services that are about
+	  to go online (start method is still running)
+
+2009-04-29  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* configure.in: bump to 0.2.1
+	* desktop-mime-cache/desktop-mime-cache, gconf-cache/gconf-cache,
+	  icon-cache/icon-cache, input-method/input-method-cache,
+	  mime-types-cache/mime-types-cache,
+	  pixbuf-loaders/pixbuf-loaders-installer: check if the corresponding
+	  executables exist before trying to call them.
+
+2009-04-02  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* Makefile.am: add find_newer and restart_fmri
+	* configure.in: bump to 0.2.0
+	* desktop-mime-cache/desktop-mime-cache: use find_newer
+	* find_newer: (new) script for finding files based on various
+	  filesystem stat times and names
+	* gconf-cache/gconf-cache: use find_newer
+	* icon-cache/icon-cache: use find_newer
+	* input-method/input-method-cache: use find_newer
+	* mime-types-cache/mime-types-cache: use find_newer
+	* pixbuf-loaders/pixbuf-loaders-installer: use find_newer
+	* restart_fmri: (new) script for starting/restarting smf services
+
+2009-03-13 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* */*.xml : integrated stability value patch
+
+2009-03-13 Erwann Chenede - <erwann.chenede@sun.com>
+
+	fix for 6617
+
+	* icon-cache/icon-cache.xml : added dependency on pixbuf-loaders
+	* icon-cache/icon-cache : don't stop the service as failue isn't
+	  fatal only an error in the log should be reported.
+	* configure.in : bump version to 0.1.7
+
+2009-02-02  Ghee Teo  <ghee.teo@sun.com>
+
+	Uprev to 0.1.6. Now provide 'refresh' method properly and this is the
+	one to use as svcadm restart <fmri> boiled down to a 'stop' and 'start'
+	calls for these services and is not what is required.
+	* configure.in:
+	* desktop-mime-cache/desktop-mime-cache:
+	* desktop-mime-cache/desktop-mime-cache.xml:
+	* gconf-cache/gconf-cache:
+	* gconf-cache/gconf-cache.xml:
+	* icon-cache/icon-cache:
+	* icon-cache/icon-cache.xml:
+	* input-method/input-method-cache:
+	* input-method/input-method-cache.xml:
+	* mime-types-cache/mime-types-cache:
+	* mime-types-cache/mime-types-cache.xml:
+	* pixbuf-loaders/pixbuf-loaders-installer:
+	* pixbuf-loaders/pixbuf-loaders-installer.xml:
+
+2009-01-28  Ghee Teo  <ghee.teo@sun.com>
+
+	More changes required to fix 2399.
+	Changed refresh option to restart instead to fit into SMF philosophy.
+	bumped version to 0.1.5
+	* configure.in:
+	* desktop-mime-cache/desktop-mime-cache.xml:
+	* gconf-cache/gconf-cache.xml:
+	* icon-cache/icon-cache.xml:
+	* input-method/input-method-cache.xml:
+	* mime-types-cache/mime-types-cache.xml:
+	* pixbuf-loaders/pixbuf-loaders-installer.xml:
+
+2009-01-28  Ghee Teo  <ghee.teo@sun.com>
+
+	Fixes d.o.o 2399 by adding in refresh option.
+	bump version to 0.1.4
+	* configure.in:
+	* desktop-mime-cache/desktop-mime-cache:
+	* gconf-cache/gconf-cache:
+	* icon-cache/icon-cache:
+	* input-method/input-method-cache:
+	* mime-types-cache/mime-types-cache:
+	* pixbuf-loaders/pixbuf-loaders-installer:
+
+2008-11-07 Erwann Chenede - <erwann.chenede@sun.com>
+
+       * configure.in: bump to 0.1.3
+
+2008-11-04 Erwann Chenede - <erwann.chenede@sun.com>
+
+       * icon-cache/icon-cache: fix for 4058
+
+2008-09-17  Ghee Teo <ghee.teo@sun.com>
+
+	Create new tarball with CDDL COPYING file.
+	* configure.in: bump to 0.1.2
+	* COPYING: CDDL license file.
+
+2008-06-27  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* configure.in: bump to 0.1.1
+
+2008-06-27 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* icon-cache/icon-cache : removed debug statement
+
+2008-06-15 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* */all scripts : removed unneeded -print argument
+	(suggested by Peter Tribble)
+
+2008-06-15 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* */*.xml : changes dependency from usr to fs-local
+	and added comments. Changed the classification from
+	evolving to Uncommitted (changes suggested by Dave Miner)
+	* */all scripts : removed all SMF_EXIT_MON_DEGRADE
+	to SMF_EXIT_ERR_FATAL
+
+2008-06-15 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* desktop-mime-cache/desktop-mime-cache
+	* desktop-mime-cache/desktop-mime-cache.xml
+	* gconf-cache/gconf-cache :
+	  added minor changes suggested by David Bustos
+
+2008-06-11 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* SUNWdesktop-cache.copyright
+	* SUNWdesktop-cache.spec : removed as the package
+	  is integrated in the spec-files repo now
+
+2008-06-11  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* desktop-mime-cache/desktop-mime-cache: delete bogus ``s
+	* gconf-cache/gconf-cache: s/NON_DEGRADE/MON_DEGRADE/
+	* input-method/input-method-cache: delete bogus ``s;
+	  s/NON_DEGRADE/MON_DEGRADE/; use the 64-bit gtk-query-immodules-2.0
+	  against the 64-bit immodules when generating the 64-bit config file
+	* mime-types-cache/mime-types-cache: look for new config files
+	  under /usr/share/mime/packages only; delete bogus ``s;
+	  s/NON_DEGRADE/MON_DEGRADE/
+	* pixbuf-loaders/pixbuf-loaders-installer: s/2.10.0/*/ so it's a bit
+	  more future-proof; delete bogus ``s; use the 64-bit
+	  gdk-pixbuf-query-loaders when generating the 64-bit config file
+
+2008-06-08 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* COPYING: CDDL
+
+2008-06-06  Darren Kenny  <darren.kenny@sun.com>
+
+	* gconf-cache/gconf-cache:
+	  Fix a bad merge by me...
+
+2008-06-06  Darren Kenny  <darren.kenny@sun.com>
+
+	* pixbuf-loaders/pixbuf-loaders-installer:
+	  Missed one script when updating exit codes.
+
+2008-06-06  Darren Kenny  <darren.kenny@sun.com>
+
+	* desktop-mime-cache/desktop-mime-cache:
+	* gconf-cache/gconf-cache:
+	* icon-cache/icon-cache:
+	* input-method/input-method-cache:
+	* mime-types-cache/mime-types-cache:
+	  After re-reading the smf_method manpage, I was mistaken about the exit
+	  codes - should be OK for success, and NON_DEGRADE for error here.
+
+2008-06-06  Darren Kenny  <darren.kenny@sun.com>
+
+	* desktop-mime-cache/desktop-mime-cache:
+	* icon-cache/icon-cache:
+	* input-method/input-method-cache:
+	* mime-types-cache/mime-types-cache:
+	* pixbuf-loaders/pixbuf-loaders-installer:
+	  Change exit codes to exit with ERR_FATAL on error, otherwise always
+	  NON_DEGRADE - since all went well.
+
+2008-06-06  Darren Kenny  <darren.kenny@sun.com>
+
+	* desktop-mime-cache/desktop-mime-cache:
+	* gconf-cache/gconf-cache:
+	* icon-cache/icon-cache:
+	* input-method/input-method-cache:
+	* mime-types-cache/mime-types-cache:
+	* pixbuf-loaders/pixbuf-loaders-installer:
+	  Quote "$RESULT" and use -n instead of !-z.
+	  Also moved the exit codes, were exiting non-degrade on a failure,
+	  should be exiting that on success - still missing some exits though.
+
+2008-06-06  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* gconf-cache/gconf-cache: import schemas and entries separately
+	  as the command is different and other minor changes.
+
+2008-06-05 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* pixbuf-loaders/* : initial implementation of pixbuf loaders installer
+	* mime-types-cache/* : initial implementation of mime types cache
+	* desktop-mime-cache/* : initial implementation of desktop file cache
+	* input-method/* : initial implementation of the input method cache
+	* Makefile.am
+	* configure.in : added new directories
+
+2008-06-05 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* icon-cache/TODO
+	* gconf-cache/TODO : added TODO list
+	* gconf-cache/* : initial implementation of gconf cache update
+	* Makefile.am : added new directory
+
+2008-06-05  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* icon-cache/icon-cache: update some messages/typos; set IFS just
+	  to be sure; quote "$RESULT"
+
+2008-06-05  Laszlo (Laca) Peter  <laca@sun.com>
+
+	* SUNWdesktop-cache.spec: fix %files and delete unnecessary
+	  autotools calls to speed up build
+
+2008-06-04 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* icon-cache/icon-cache: don't generate cache if the directory
+	  doesn't contain subdirectory (hence no icons).
+
+2008-06-03  Darren Kenny  <darren.kenny@sun.com>
+
+	* Makefile.am:  Add missing continuation (\) to EXTRA_DIST
+	* icon-cache/Makefile.am: Make icon-cache be SCRIPTS rather than
+	  data, to maintain executable status.
+
+2008-06-03 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* icon-cache/icon-cache: added check for missing icon cache
+	* icon-cache/Makefile.am: mixed up method and manifest
+
+2008-06-03 Erwann Chenede - <erwann.chenede@sun.com>
+
+	* initial import of the desktop cache update services
