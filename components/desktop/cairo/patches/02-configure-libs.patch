@@ -1,0 +1,45 @@
+The Solaris linker fails during the build process for 64-bit builds only
+since it attempts to link to both the build area version of libcairo
+(object file) and the installed library at the same time (because -lcairo
+shows up in various pkg-config libs and therefore is included in various
+flags at link time).
+
+Either the Solaris linker is too strict and determines duplicates in way
+that is different than the GNU linker, or libtool is failing to remove the
+'-lcairo' from the link line because it doesn't think it's the same library
+and that is the real issue.  I say this because libtool appears to remove
+the '-lcairo' from the link line for 32-bit builds, but not for 64-bit
+builds.
+
+--- cairo-1.14.2/configure.ac	2015-03-10 15:21:07.000000000 -0700
++++ cairo-1.14.2/configure.ac	2015-07-10 20:43:25.628136754 -0700
+@@ -614,6 +614,9 @@
+ 		    [test_pdf="no (requires $poppler_DEPENDENCY)"])
+   if test "x$test_pdf" = "xyes"; then
+     AC_DEFINE([CAIRO_CAN_TEST_PDF_SURFACE], 1, [Define to 1 if the PDF backend can be tested (need poppler and other dependencies for pdf2png)])
++    # Ensure cairo is omitted so that no attempt is made to link to any
++    # system-installed versions causing a multiple inclusion build failure.
++    POPPLER_LIBS=$(echo "$POPPLER_LIBS" | $SED -e 's/-lcairo //')
+   else
+     AC_MSG_WARN([PDF backend will not be tested since poppler >= $POPPLER_VERSION_REQUIRED is not available])
+   fi
+@@ -645,6 +648,9 @@
+ 		    [test_svg="no (requires $librsvg_DEPENDENCY)"])
+   if test "x$test_svg" = "xyes"; then
+     AC_DEFINE([CAIRO_CAN_TEST_SVG_SURFACE], 1, [Define to 1 if the SVG backend can be tested])
++    # Ensure cairo is omitted so that no attempt is made to link to any
++    # system-installed versions causing a multiple inclusion build failure.
++    LIBRSVG_LIBS=$(echo "$LIBRSVG_LIBS" | $SED -e 's/-lcairo //')
+   else
+     AC_MSG_WARN([SVG backend will not be tested since librsvg >= $LIBRSVG_VERSION_REQUIRED is not available])
+   fi
+@@ -850,6 +856,9 @@
+ # We use GTK+ for some utility/debugging tools
+ PKG_CHECK_MODULES(gtk, "gtk+-2.0",have_gtk=yes, have_gtk=no)
+ AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
++# Ensure cairo is omitted so that no attempt is made to link to any
++# system-installed versions causing a multiple inclusion build failure.
++gtk_LIBS=$(echo "$gtk_LIBS" | $SED -e 's/-lcairo //')
+ 
+ AC_CONFIG_FILES([
+ Makefile

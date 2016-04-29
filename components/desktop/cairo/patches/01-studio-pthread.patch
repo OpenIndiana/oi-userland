@@ -1,0 +1,41 @@
+Patch configure; it assumes gcc -pthread option when testing for pthread
+support.  Even more silly, the various configure tests will fail if there's
+any output to stderr -- warnings or not.
+
+This patch is not appropriate for upstream; a bug needs to be filed as
+their configure check needs to be completely reworked.
+
+--- cairo-1.14.2/build/configure.ac.pthread	2015-03-10 15:21:07.000000000 -0700
++++ cairo-1.14.2/build/configure.ac.pthread	2015-07-09 20:42:12.984139231 -0700
+@@ -205,7 +205,7 @@
+ 	if test "x$have_real_pthread" != "xyes"; then
+ 		dnl Give -pthread a go.
+ 		CAIRO_CHECK_PTHREAD(
+-			[real_pthread], [-pthread], [],
++			[real_pthread], [], [],
+ 			[testsuite_pthread_program],
+ 			[have_real_pthread=yes],
+ 			[have_real_pthread="no (can't link with -lpthread or -pthread)"])
+--- cairo-1.14.2/build/aclocal.cairo.m4	2015-03-10 15:21:07.000000000 -0700
++++ cairo-1.14.2/build/aclocal.cairo.m4	2015-07-10 19:47:09.816089024 -0700
+@@ -80,8 +80,7 @@
+ dnl
+ dnl Compile and link the program with the given environment setup.
+ dnl The global cairo_cc_flag is set to "yes" or "no" according as
+-dnl the link succeeded or not.  The link step must complete without
+-dnl warnings or errors to stderr.
++dnl the link succeeded or not.
+ dnl
+ dnl Perform true-action on success and false-action on failure.
+ dnl The values of CFLAGS, LIBS, LDFLAGS are saved before env-setup
+@@ -106,10 +105,6 @@
+ 		[cairo_cc_stderr=`test -f conftest.err && cat conftest.err`
+ 		 cairo_cc_flag=no])
+ 
+-	if test "x$cairo_cc_stderr" != "x"; then
+-		cairo_cc_flag=no
+-	fi
+-
+ 	if test "x$cairo_cc_flag" = "xyes"; then
+ 		ifelse([$3], , :, [$3])
+ 	else

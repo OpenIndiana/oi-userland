@@ -1,0 +1,17 @@
+Needed to avoid gmake test from failing with complaints that it
+Can't open source directory $(pwd)/build/i86/doc/public//$(pwd)/cairo-1.14.2/src
+(i.e., two complete absolute paths all run together as one).
+
+Need to investigate how to make work upstream.
+
+--- a/build/Makefile.am.gtk-doc
++++ b/build/Makefile.am.gtk-doc
+@@ -110,7 +110,7 @@ tmpl/*.sgml:
+ sgml-build.stamp: tmpl.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(DOC_MODULE)-sections.txt $(srcdir)/tmpl/*.sgml $(expand_content_files)
+ 	@echo 'gtk-doc: Building XML'
+ 	@-chmod -R u+w $(srcdir)
+-	_srcdir="`pwd`/$(DOC_SOURCE_DIR)"; \
++	_srcdir="$(DOC_SOURCE_DIR)"; \
+ 	cd $(srcdir) && gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$$_srcdir --output-format=xml --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) $(MKDB_OPTIONS)
+ 	touch sgml-build.stamp
+ 
