@@ -26,13 +26,13 @@ BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scons
-COMPONENT_VERSION=	2.3.4
+COMPONENT_VERSION=	2.5.0
 COMPONENT_PROJECT_URL=	http://www.scons.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4b57d72066fed3b6ff65a7dd9f73633c9b1c09f87520e9b3aae84b3e4864b441
+    sha256:eb296b47f23c20aec7d87d35cfa386d3508e01d1caa3040ea6f5bbab2292ace9
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
-TPNO=			22207
+TPNO=			28026
 
 # Per Q1.1.4 of the SCons FAQ, SCons is written to work with any Python
 # version >= 2.4 and < 3.0. Versions 3.0 and above are not supported at
@@ -47,13 +47,13 @@ include $(WS_MAKE_RULES)/common.mk
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -i -e 's?env python?python$(PYTHON_VERSION)?' \
-		$(PROTOUSRBINDIR)/scons-2.3.4;
+		$(PROTOUSRBINDIR)/scons-$(COMPONENT_VERSION);
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -i -e 's?env python?python$(PYTHON_VERSION)?' \
-		$(PROTOUSRBINDIR)/scons-time-2.3.4;
+		$(PROTOUSRBINDIR)/scons-time-$(COMPONENT_VERSION);
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -i -e 's?env python?python$(PYTHON_VERSION)?' \
-		$(PROTOUSRBINDIR)/sconsign-2.3.4;
+		$(PROTOUSRBINDIR)/sconsign-$(COMPONENT_VERSION);
 
 PKG_PROTO_DIRS +=	$(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
