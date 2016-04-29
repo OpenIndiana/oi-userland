@@ -1,0 +1,46 @@
+Developed in-house, not fed back.
+Solaris-specific
+plugin_dir option not set correctly in mysqld_safe for 64bit mysql packages
+
+--- a/scripts/mysqld_safe.sh
++++ b/scripts/mysqld_safe.sh
+@@ -492,29 +492,6 @@ case "$timestamp_format" in
+                    log_error "unknown data format $timestamp_format, using UTC";;
+ esac
+ 
+-#
+-# Try to find the plugin directory
+-#
+-
+-# Use user-supplied argument
+-if [ -n "${PLUGIN_DIR}" ]; then
+-  plugin_dir="${PLUGIN_DIR}"
+-else
+-  # Try to find plugin dir relative to basedir
+-  for dir in lib64/mysql/plugin lib64/plugin lib/mysql/plugin lib/plugin
+-  do
+-    if [ -d "${MY_BASEDIR_VERSION}/${dir}" ]; then
+-      plugin_dir="${MY_BASEDIR_VERSION}/${dir}"
+-      break
+-    fi
+-  done
+-  # Give up and use compiled-in default
+-  if [ -z "${plugin_dir}" ]; then
+-    plugin_dir='@pkgplugindir@'
+-  fi
+-fi
+-plugin_dir="${plugin_dir}${PLUGIN_VARIANT}"
+-
+ # A pid file is created for the mysqld_safe process. This file protects the
+ # server instance resources during race conditions.
+ safe_pid="$DATADIR/mysqld_safe.pid"
+@@ -789,7 +766,7 @@ fi
+ cmd="`mysqld_ld_preload_text`$NOHUP_NICENESS"
+ 
+ for i in  "$ledir/$MYSQLD" "$defaults" "--basedir=$MY_BASEDIR_VERSION" \
+-  "--datadir=$DATADIR" "--plugin-dir=$plugin_dir" "$USER_OPTION"
++  "--datadir=$DATADIR" "${PLUGIN_DIR:+--plugin-dir="$PLUGIN_DIR"}" "$USER_OPTION"
+ do
+   cmd="$cmd "`shell_quote_string "$i"`
+ done
+

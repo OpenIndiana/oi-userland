@@ -1,0 +1,26 @@
+Userland uses dependencies on C++ runtime libraries, disable
+the bundling of libraries in the install and packages
+
+--- a/configure.cmake	Mon Feb  1 15:31:58 2016
++++ b/configure.cmake	Tue Mar  1 07:59:05 2016
+@@ -126,7 +126,7 @@
+     "${CMAKE_SHARED_LIBRARY_C_FLAGS} -R'\$ORIGIN/../lib' -R${LIBRARY_PATH}")
+ ENDMACRO()
+ 
+-IF(CMAKE_SYSTEM_NAME MATCHES "SunOS" AND CMAKE_COMPILER_IS_GNUCC)
++IF(FALSE AND CMAKE_SYSTEM_NAME MATCHES "SunOS" AND CMAKE_COMPILER_IS_GNUCC)
+   DIRNAME(${CMAKE_CXX_COMPILER} CXX_PATH)
+   SET(LIB_SUFFIX "lib")
+   IF(SIZEOF_VOIDP EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "sparc")
+
+--- a/libmysql/CMakeLists.txt	Mon Feb  1 15:31:58 2016
++++ b/libmysql/CMakeLists.txt	Tue Mar  1 08:03:03 2016
+@@ -246,7 +246,7 @@
+ # In our special "mixed" builds, also install libstlport which will
+ # be injected into the build tree by the Sun Studio part of the build.
+ 
+-IF(CMAKE_SYSTEM_NAME MATCHES "SunOS" AND DEFINED ENV{PB2WORKDIR})
++IF(FALSE AND CMAKE_SYSTEM_NAME MATCHES "SunOS" AND DEFINED ENV{PB2WORKDIR})
+   INSTALL(FILES ${CMAKE_BINARY_DIR}/libstlport.so
+                 ${CMAKE_BINARY_DIR}/libstlport.so.1
+           DESTINATION ${INSTALL_LIBDIR} COMPONENT SharedLibraries OPTIONAL)
