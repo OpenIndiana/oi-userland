@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfuse
-COMPONENT_VERSION=	2.6
+COMPONENT_VERSION=	3.0
 COMPONENT_SRC_NAME=	confuse
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/confuse/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8d653159b152f3850a7224b3eb604955795dbd3fd6603816ee46411ea53e84a
-COMPONENT_ARCHIVE_URL=	http://bzero.se/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:f1f326d9443103036d19c32d3f3efec3a85c3b081d99534463668d29992c4648
+COMPONENT_ARCHIVE_URL=	https://github.com/martinh/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libconfuse
 
-TPNO=			6306
+TPNO=			28034
 
 TEST_TARGET= install $(TEST_32_and_64)
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
@@ -46,20 +46,27 @@ CONFIGURE_OPTIONS +=	--enable-shared
 # This is really only needed to get the test target to pass.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
 COMPONENT_TEST_DIR =		$(@D)/tests
 
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# The additional libconfuse specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 # Needed to build the test programs.
 COMPONENT_PRE_SYSTEM_TEST_ACTION += \
