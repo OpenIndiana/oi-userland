@@ -1,0 +1,42 @@
+Fixes bug 22811465 - math:exp() throws badarith exception on SPARC
+Fix was recommended by upstream Erlang/OTP team and is being applied to trunk.
+
+--- otp_src_17.5-ORIG/erts/emulator/sys/ose/sys_float.c	2016-04-19 13:16:27.190731082 +0100
++++ otp_src_17.5/erts/emulator/sys/ose/sys_float.c	2016-04-19 13:18:30.669678699 +0100
+@@ -835,10 +835,5 @@
+ int
+ matherr(struct exception *exc)
+ {
+-#if !defined(NO_FPE_SIGNALS)
+-    volatile unsigned long *fpexnp = erts_get_current_fp_exception();
+-    if (fpexnp != NULL)
+-	*fpexnp = (unsigned long)__builtin_return_address(0);
+-#endif
+     return 1;
+ }
+--- otp_src_17.5-ORIG/erts/emulator/sys/unix/sys_float.c	2016-04-19 13:16:27.187000925 +0100
++++ otp_src_17.5/erts/emulator/sys/unix/sys_float.c	2016-04-19 13:18:22.503799817 +0100
+@@ -837,11 +837,6 @@
+ int
+ matherr(struct exception *exc)
+ {
+-#if !defined(NO_FPE_SIGNALS)
+-    volatile unsigned long *fpexnp = erts_get_current_fp_exception();
+-    if (fpexnp != NULL)
+-	*fpexnp = (unsigned long)__builtin_return_address(0);
+-#endif
+     return 1;
+ }
+ 
+--- otp_src_17.5-ORIG/erts/emulator/sys/win32/sys_float.c	2016-04-19 13:16:27.187779815 +0100
++++ otp_src_17.5/erts/emulator/sys/win32/sys_float.c	2016-04-19 13:19:05.229444947 +0100
+@@ -138,8 +138,7 @@
+ int
+ matherr(struct _exception *exc)
+ {
+-    erl_fp_exception = 1;
+-    DEBUGF(("FP exception (matherr) (0x%x) (%d)\n", exc->type, erl_fp_exception));
++    DEBUGF(("FP exception (matherr) (0x%x)\n", exc->type));
+     return 1;
+ }
+ 
