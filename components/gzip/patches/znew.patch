@@ -1,163 +1,17 @@
-From b3b5611e046b93fb20aa783d6d11d986f33f91f6 Mon Sep 17 00:00:00 2001
-From: Paul Eggert <eggert <at> cs.ucla.edu>
-Date: Thu, 3 Oct 2013 21:12:09 -0700
-Subject: [PATCH] znew: avoid denial-of-service issue
+Still need to add a PATH with /usr/gnu/bin at the front, to get it to pick
+up GNU versions of utilities like chmod that use command line options that
+are not present in the Solaris supplied utilities in /usr/bin.
 
-Reported by Rich Burridge in <http://bugs.gnu.org/15522>.
-* znew.in: Rewrite to avoid the need for a temporary file in /tmp.
-That way, we avoid the need for set -C
-and worrying about denial of service.
-Use touch -r and python rather than cpmod.
-Assume cp -p works, as it's now universal.
-Quote 'echo' args better, while we're at it.
-(warn, tmp, cpmod, cpmodarg): Remove.
-(GZIP): Unset, so that we needn't test for gzip extension.
-(ext): Now always '.gz'.
-* znew.1: Document the change of implementation assumptions.
----
-diff --git a/znew.1 b/znew.1
-index dcdf84f..2a7e5e1 100644
---- a/znew.1
-+++ b/znew.1
-@@ -32,9 +32,16 @@ Keep a .Z file when it is smaller than the .gz file; implies
- .SH "SEE ALSO"
- gzip(1), zmore(1), zdiff(1), zgrep(1), zforce(1), gzexe(1), compress(1)
- .SH BUGS
--.I Znew
--does not maintain the time stamp with the -P option if
--.I cpmod(1)
--is not available and
--.I touch(1)
--does not support the -r option.
-+If the
-+.B \-P
-+option is used,
-+.I znew
-+does not maintain the time stamp if
-+.IR touch (1)
-+does not support the
-+.B \-r
-+option, and does not maintain permissions if
-+.IR chmod (1)
-+does not support the
-+.B \-\-reference
-+option.
---- gzip-1.5/znew.in	2014-04-24 14:54:00.798820086 +0200
-+++ gzip-1.5/znew.in	2014-04-24 14:53:49.388094138 +0200
-@@ -21,7 +21,7 @@
- case $1 in
- --__bindir) bindir=${2?}; shift; shift;;
- esac
--PATH=$bindir:$PATH; export PATH
+This patch is Solaris specific and will not be sent upstream.
+
+--- gzip-1.8/znew.in.orig	2016-04-27 06:31:30.480064454 -0700
++++ gzip-1.8/znew.in	2016-04-27 06:31:59.295495761 -0700
+@@ -18,6 +18,8 @@
+ # with this program; if not, write to the Free Software Foundation, Inc.,
+ # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ 
 +PATH=/usr/gnu/bin:$bindir:$PATH; export PATH
-
++
  version="znew (gzip) @VERSION@
- Copyright (C) 2010-2012 Free Software Foundation, Inc.
-@@ -58,33 +58,9 @@ new=0
- block=1024
- # block is the disk block size (best guess, need not be exact)
- 
--warn="(does not preserve modes and timestamp)"
--tmp=${TMPDIR-/tmp}/zfoo.$$
--set -C
--echo hi > $tmp || exit
--if test -z "`(${CPMOD-cpmod} $tmp $tmp) 2>&1`"; then
--  cpmod=${CPMOD-cpmod}
--  warn=""
--fi
--
--if test -z "$cpmod" && ${TOUCH-touch} -r $tmp $tmp 2>/dev/null; then
--  cpmod="${TOUCH-touch}"
--  cpmodarg="-r"
--  warn="(does not preserve file modes)"
--fi
--
--# check if GZIP env. variable uses -S or --suffix
--gzip -q $tmp
--ext=`echo $tmp* | sed "s|$tmp||"`
--rm -f $tmp*
--if test -z "$ext"; then
--  echo znew: error determining gzip extension
--  exit 1
--fi
--if test "$ext" = ".Z"; then
--  echo znew: cannot use .Z as gzip extension.
--  exit 1
--fi
-+# Beware -s or --suffix in $GZIP.
-+unset GZIP
-+ext=.gz
- 
- for arg
- do
-@@ -116,26 +92,33 @@ if test -n "$opt"; then
- fi
- 
- for i do
--  n=`echo $i | sed 's/.Z$//'`
-+  n=`echo "$i" | sed 's/.Z$//'`
-   if test ! -f "$n.Z" ; then
--    echo $n.Z not found
-+    echo "$n.Z not found"
-     res=1; continue
-   fi
-   test $keep -eq 1 && old=`wc -c < "$n.Z"`
-   if test $pipe -eq 1; then
-     if gzip -d < "$n.Z" | gzip $opt > "$n$ext"; then
-       # Copy file attributes from old file to new one, if possible.
--      test -n "$cpmod" && $cpmod $cpmodarg "$n.Z" "$n$ext" 2> /dev/null
-+      touch -r"$n.Z" -- "$n$ext" 2>/dev/null
-+      python - "$n.Z" "$n$ext" <<-EOF
-+		import os
-+		import sys
-+		import stat
-+		mode = stat.S_IMODE(os.stat(sys.argv[1]).st_mode)
-+		os.chmod(sys.argv[2], mode)
-+		EOF
-     else
--      echo error while recompressing $n.Z
-+      echo "error while recompressing $n.Z"
-       res=1; continue
-     fi
-   else
-     if test $check -eq 1; then
--      if cp -p "$n.Z" "$n.$$" 2> /dev/null || cp "$n.Z" "$n.$$"; then
-+      if cp -p "$n.Z" "$n.$$"; then
-         :
-       else
--        echo cannot backup "$n.Z"
-+        echo "cannot backup $n.Z"
-         res=1; continue
-       fi
-     fi
-@@ -143,7 +125,7 @@ for i do
-       :
-     else
-       test $check -eq 1 && mv "$n.$$" "$n.Z"
--      echo error while uncompressing $n.Z
-+      echo "error while uncompressing $n.Z"
-       res=1; continue
-     fi
-     if gzip $opt "$n"; then
-@@ -151,10 +133,10 @@ for i do
-     else
-       if test $check -eq 1; then
-         mv "$n.$$" "$n.Z" && rm -f "$n"
--        echo error while recompressing $n
-+        echo "error while recompressing $n"
-       else
-         # compress $n  (might be dangerous if disk full)
--        echo error while recompressing $n, left uncompressed
-+        echo "error while recompressing $n, left uncompressed"
-       fi
-       res=1; continue
-     fi
-@@ -175,7 +157,7 @@ for i do
-     else
-       test $pipe -eq 0 && mv "$n.$$" "$n.Z"
-       rm -f "$n$ext"
--      echo error while testing $n$ext, $n.Z unchanged
-+      echo "error while testing $n$ext, $n.Z unchanged"
-       res=1; continue
-     fi
-   elif test $pipe -eq 1; then
+ Copyright (C) 2010-2016 Free Software Foundation, Inc.
+ This is free software.  You may redistribute copies of it under the terms of
