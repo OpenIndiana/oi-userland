@@ -1,0 +1,36 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Need to add a dummy variable to struct dsa because Studio doesn't allow
+zero-sized struct/union.
+
+void function cannot return value. gcc just ignores it, but Studio considers
+it as an error.
+
+--- libpki-0.8.9/src/libpki/openssl/data_st.h	2015-11-10 13:50:27.428271277 -0800
++++ libpki-0.8.9/src/libpki/openssl/data_st.h	2016-02-05 10:23:52.741804145 -0800
+@@ -425,7 +425,9 @@
+ 		int exponent;
+ 	} rsa;
+ 	// DSA scheme parameters
+-	struct {} dsa;
++	struct {
++		int dummy;
++	} dsa;
+ 
+ #ifdef ENABLE_ECDSA
+ 	// EC scheme parameters
+--- libpki-0.8.9/src/pki_mem.c	2015-11-10 13:50:29.132816749 -0800
++++ libpki-0.8.9/src/pki_mem.c	2016-02-05 10:42:12.359660890 -0800
+@@ -322,7 +322,10 @@
+ 	if (!pnt) return;
+ 
+ 	/* If No size is provided, normal PKI_Free() is used */
+-	if ( size <= 0 ) return PKI_Free ( pnt );
++	if ( size <= 0 ) {
++		PKI_Free ( pnt );
++		return;
++	}
+ 
+ 	/* Zeroize the Memory */
+ 	memset( pnt, '\xFF', size );

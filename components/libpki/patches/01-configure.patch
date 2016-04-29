@@ -1,0 +1,38 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Need to add architectures for Oracle build environments.
+Also need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
+
+--- libpki-0.8.9/configure	2015-11-10 13:50:26.446036204 -0800
++++ libpki-0.8.9/configure	2016-03-03 14:26:17.948469807 -0800
+@@ -2529,11 +2529,20 @@
+     mybits="64"
+     mybits_install="64"
+     ;;
++  *i86pc)
++    mybits="64"
++    mybits_install="64"
++    ;;
+   *sparc*)
+     mybits="64"
+     mybits_install="64"
+     is_sparc="yes"
+     ;;
++  *sun4v*)
++    mybits="64"
++    mybits_install="64"
++    is_sparc="yes"
++    ;;
+   *aix*)
+     mybits="64"
+     mybits_install="64"
+@@ -2626,7 +2635,7 @@
+ 
+ 
+ 
+-enable_rpath=yes
++enable_rpath=no
+ 
+ # Export variables to prevent autoconf to use rpl_malloc instead
+ # of malloc (it won't link properly otherwise!) - needed for iPhone
