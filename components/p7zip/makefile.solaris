@@ -20,30 +20,24 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-OPTFLAGS=-O
+OPTFLAGS=-O -s
 
 LFS_CFLAGS = $(shell getconf LFS_CFLAGS)
 
-ALLFLAGS=${OPTFLAGS} -s -mt -m64 \
+ALLFLAGS=${OPTFLAGS} -m64 \
         -DHAVE_LONG_LONG \
         $(LFS_CFLAGS) \
         -DENV_UNIX \
         -DNDEBUG -D_REENTRANT \
+        -D_7ZIP_LARGE_PAGES \
         $(LOCAL_FLAGS)
 
-CXX=CC $(ALLFLAGS)
-CC=cc $(ALLFLAGS)
-CC_SHARED=-KPIC
-LINK_SHARED=-KPIC -G
-LDFLAGS = -norunpath
-
-LOCAL_LIBS=-lpthread
-LOCAL_LIBS_DLL=$(LOCAL_LIBS)
-
-../../../../bin/Codecs/Rar29.so ../../../../bin/7z.so : LOCAL_LIBS += -lCrun
+CXX=g++
+CC=gcc
+CC_SHARED=-fPIC
+LINK_SHARED=-fPIC -shared
 
 OBJ_CRC32=$(OBJ_CRC32_C)
-

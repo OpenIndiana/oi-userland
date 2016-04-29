@@ -1,0 +1,18 @@
+SPARC should be recognized as a 64-bit CPU.  Nothing seems to break with or
+without this patch, but a few dictionary sizes are bigger with it, and the
+banner changes to indicate the 64-bitness.
+
+This is suitable for passing upstream.
+
+--- p7zip_15.14.1/C/CpuArch.h	2016-02-16 22:27:16.000000000 -0800
++++ p7zip_15.14.1/C/CpuArch.h	2016-04-22 17:34:27.655604054 -0700
+@@ -27,7 +27,8 @@
+ #if defined(MY_CPU_AMD64) \
+     || defined(_M_IA64) \
+     || defined(__AARCH64EL__) \
+-    || defined(__AARCH64EB__)
++    || defined(__AARCH64EB__) \
++    || defined(__sparcv9)
+   #define MY_CPU_64BIT
+ #endif
+ 

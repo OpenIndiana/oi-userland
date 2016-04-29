@@ -1,17 +1,17 @@
---- p7zip_9.20.1/CPP/7zip/UI/Console/UserInputUtils.cpp.orig	2012-02-15 10:43:48.907800737 -0800
-+++ p7zip_9.20.1/CPP/7zip/UI/Console/UserInputUtils.cpp	2012-02-15 10:44:21.754378258 -0800
-@@ -78,12 +78,12 @@
+--- p7zip_15.14.1/CPP/7zip/UI/Console/UserInputUtils.cpp	Fri Jun 19 09:25:18 2015
++++ p7zip_15.14.1/CPP/7zip/UI/Console/UserInputUtils.cpp	Tue Apr 19 13:43:59 2016
+@@ -89,12 +89,12 @@
+     outStream->Flush();
+   }
  #ifdef ENV_HAVE_GETPASS
-   (*outStream) << "\nEnter password (will not be echoed) :";
-   outStream->Flush();
 -  AString oemPassword = getpass("");
 +  AString oemPassword = getpassphrase("");
-   if (verify)
+   if ( (verify) && (outStream) )
    {
      (*outStream) << "Verify password (will not be echoed) :";
-   outStream->Flush();
+     outStream->Flush();
 -    AString oemPassword2 = getpass("");
 +    AString oemPassword2 = getpassphrase("");
      if (oemPassword != oemPassword2) throw "password verification failed";
    }
- #else
+   return MultiByteToUnicodeString(oemPassword, CP_OEMCP);
