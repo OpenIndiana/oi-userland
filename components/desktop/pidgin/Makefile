@@ -80,6 +80,8 @@ CONFIGURE_OPTIONS +=	--disable-meanwhile
 CONFIGURE_OPTIONS +=	--disable-nm
 CONFIGURE_OPTIONS +=	--disable-consoleui
 CONFIGURE_OPTIONS +=	--disable-vv
+# 23200148 undo this once 23169155 Move developer/gnome/gettext to Userland
+CONFIGURE_OPTIONS +=	INTLTOOL_MERGE="$(PERL) /usr/bin/intltool-merge"
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=	V=1

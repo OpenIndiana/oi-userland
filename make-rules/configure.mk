@@ -164,6 +164,10 @@ CONFIGURE_ENV += "ac_cv_func_realloc_0_nonnull=yes"
 CONFIGURE_ENV += "NM=/usr/gnu/bin/nm"
 COMPONENT_BUILD_ENV += "ac_cv_func_realloc_0_nonnull=yes"
 
+# 23200148 undo this once 23169155 Move developer/gnome/gettext to Userland
+CONFIGURE_ENV += INTLTOOL_PERL="$(PERL)"
+COMPONENT_BUILD_ENV += INTLTOOL_PERL="$(PERL)"
+
 # configure the unpacked source for building 32 and 64 bit version
 CONFIGURE_SCRIPT ?=	$(SOURCE_DIR)/configure
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
