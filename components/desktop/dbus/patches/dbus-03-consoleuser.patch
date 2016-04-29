@@ -1,0 +1,61 @@
+Patch migrated from Desktop, where it was listed as:
+# date:2010-10-20 owner:yippi type:bug bugster:6993687
+
+aka:
+15676303 SUNBT6993687 Solaris D-Bus needs logic to recognize the "console user"
+
+Solaris-specific
+
+--- dbus-1.2.24/dbus/dbus-sysdeps-util-unix.c-orig	2010-10-19 13:27:19.672465743 -0500
++++ dbus-1.2.24/dbus/dbus-sysdeps-util-unix.c	2010-10-19 13:28:39.691609495 -0500
+@@ -54,6 +54,10 @@
+ #include <syslog.h>
+ #endif
+ 
++#ifdef __sun
++#include <pwd.h>
++#endif
++
+ #ifdef HAVE_SYS_SYSLIMITS_H
+ #include <sys/syslimits.h>
+ #endif
+@@ -542,8 +546,31 @@ _dbus_user_at_console (const char *usern
+ 
+   DBusString u, f;
+   dbus_bool_t result;
++#ifdef __sun
++  struct passwd *passwd_entry;
++#endif
+ 
+   result = FALSE;
++
++#ifdef __sun
++  passwd_entry = getpwnam (username);
++  if (passwd_entry != NULL)
++    {
++      struct stat st;
++      uid_t uid;
++
++      uid = passwd_entry->pw_uid;
++
++      if (stat ("/dev/vt/console_user", &st) == 0 && st.st_uid == uid)
++        {
++         /*
++          * Owner is allowed to take over. Before we have real
++          * ownership in HAL, assume it's the console owner.
++          */
++          result = TRUE;
++        }
++    }
++#else
+   if (!_dbus_string_init (&f))
+     {
+       _DBUS_SET_OOM (error);
+@@ -568,6 +595,7 @@ _dbus_user_at_console (const char *usern
+ 
+  out:
+   _dbus_string_free (&f);
++#endif
+ 
+   return result;
+ }
