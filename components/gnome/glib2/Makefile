@@ -101,8 +101,8 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/ERROR/p" '
 
 REQUIRED_PACKAGES += data/docbook
-REQUIRED_PACKAGES += desktop/xdg/desktop-file-utils
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += gnome/preferences/control-center
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre
