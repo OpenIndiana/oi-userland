@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gnutls
 
 COMPONENT_VERSION= 2.8.6
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= GNU transport layer security library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnu.org/gnu/gnutls/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnutls.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 PATH = /usr/gnu/bin:/usr/bin
