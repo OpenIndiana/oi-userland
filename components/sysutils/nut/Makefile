@@ -81,14 +81,11 @@ CONFIGURE_OPTIONS +=	--with-serial
 CONFIGURE_OPTIONS +=	--with-usb
 CONFIGURE_OPTIONS +=	--with-neon
 CONFIGURE_OPTIONS +=	--with-avahi
+CONFIGURE_OPTIONS +=	--with-powerman=yes
 
 # TODO: Revise NUT package when this gate provides (GNU) freeipmi >= 1.0.1
 CONFIGURE_OPTIONS +=	--with-ipmi=no
 CONFIGURE_OPTIONS +=	--with-freeipmi=no
-
-# TODO: Revise NUT package when/if this gate provides powerman
-# See https://github.com/chaos/powerman
-CONFIGURE_OPTIONS +=	--with-powerman=no
 
 # Likely we'll not have this backend working any time soon
 CONFIGURE_OPTIONS +=	--with-linux_i2c=no
@@ -96,7 +93,7 @@ CONFIGURE_OPTIONS +=	--with-macosx_ups=no
 
 # Note: Link with the correct ISA of net-snmp (for drivers) and gdlib (for cgi)
 CONFIGURE_OPTIONS +=	--with-snmp
-CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
+CONFIGURE_OPTIONS.$(BITS) +=	--with-net-snmp-config=net-snmp-config-$(BITS)
 
 CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
 CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
