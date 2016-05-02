@@ -13,7 +13,7 @@
 # Copyright 2016 Jim Klimov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	nut
 COMPONENT_VERSION=	2.7.4
