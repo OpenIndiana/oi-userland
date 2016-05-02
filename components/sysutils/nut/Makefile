@@ -56,6 +56,8 @@ CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
+
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc/nut
 CONFIGURE_OPTIONS +=	--with-hotplug-dir=/etc/hotplug
 CONFIGURE_OPTIONS +=	--with-udev-dir=/usr/lib/udev
 CONFIGURE_OPTIONS +=	--with-statepath=/var/state/ups
