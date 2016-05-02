@@ -5,6 +5,15 @@ diff --git a/configure.ac b/configure.ac
 index e16cf86..2e3c461 100644
 --- a/configure.ac
 +++ b/configure.ac
+@@ -254,7 +254,7 @@ dnl they are listed near the top by "./configure --help"
+ NUT_ARG_WITH([dev], [build and install the development files], [no])
+ NUT_ARG_WITH([serial], [build and install serial drivers], [yes])
+ NUT_ARG_WITH([usb], [build and install USB drivers], [auto])
+-NUT_ARG_WITH([doc], [build and install documentation], [no])
++NUT_ARG_WITH([doc], [build and install documentation], [man=yes])
+ NUT_ARG_WITH([avahi], [build and install Avahi support], [auto])
+ 
+ dnl ----------------------------------------------------------------------
 @@ -629,4 +629,54 @@ dnl Always check for AsciiDoc prerequisites, since even if --with-doc
  dnl is set to 'no', we may still want to build some doc targets manually
  NUT_CHECK_ASCIIDOC
@@ -515,3 +524,34 @@ index e793657..c83bd6c 100644
  HTML_MANS = \
  	$(HTML_CONF_MANS) \
  	$(HTML_CLIENT_MANS) \
+@@ -601,8 +637,7 @@ A2X_MANPAGE_OPTS = --doctype manpage --format manpage \
+ 	--xsltproc-opts "--nonet" \
+ 	--attribute mansource="Network UPS Tools" \
+ 	--attribute manversion="@PACKAGE_VERSION@" \
+-	--attribute manmanual="NUT Manual" \
+-	--destination-dir=.
++	--attribute manmanual="NUT Manual"
+ 
+ .txt.1:
+ 	$(A2X) $(A2X_MANPAGE_OPTS) $<
+diff --git a/docs/Makefile.am b/docs/Makefile.am
+index c587aa5..0620cde 100644
+--- a/docs/Makefile.am
++++ b/docs/Makefile.am
+@@ -99,13 +99,13 @@ A2X_COMMON_OPTS = $(ASCIIDOC_VERBOSE) --attribute icons \
+     --attribute=badges \
+     --attribute=external_title \
+     --attribute tree_version=@TREE_VERSION@ \
+-    -a toc -a numbered --destination-dir=.
++    -a toc -a numbered
+ 
+ .txt.html: common.xsl xhtml.xsl
+-	$(A2X) $(A2X_COMMON_OPTS) --attribute=xhtml11_format --format=xhtml --xsl-file=$(srcdir)/xhtml.xsl $<
++	$(A2X) $(A2X_COMMON_OPTS) --destination-dir=. --attribute=xhtml11_format --format=xhtml --xsl-file=$(srcdir)/xhtml.xsl $<
+ 
+ .txt.chunked: common.xsl chunked.xsl
+-	$(A2X) $(A2X_COMMON_OPTS) --attribute=chunked_format --format=chunked --xsl-file=$(srcdir)/chunked.xsl $<
++	$(A2X) $(A2X_COMMON_OPTS) --destination-dir=. --attribute=chunked_format --format=chunked --xsl-file=$(srcdir)/chunked.xsl $<
+ 
+ .txt.pdf: docinfo.xml
+ 	$(A2X) $(A2X_COMMON_OPTS) --attribute=pdf_format --format=pdf -a docinfo1 $<
