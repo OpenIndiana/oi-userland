@@ -93,7 +93,7 @@ CONFIGURE_OPTIONS +=	--with-macosx_ups=no
 
 # Note: Link with the correct ISA of net-snmp (for drivers) and gdlib (for cgi)
 CONFIGURE_OPTIONS +=	--with-snmp
-CONFIGURE_OPTIONS.$(BITS) +=	--with-net-snmp-config=net-snmp-config-$(BITS)
+CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
 
 CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
 CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
