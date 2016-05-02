@@ -1,0 +1,43 @@
+/* This is an upstream patch. Details: https://www.cups.org/strfiles.php/3438/str4551.patch
+Index: filter/raster.c
+=================================================================== */
+--- filter/raster.c	(revision 12451)
++++ filter/raster.c	(working copy)
+@@ -3,7 +3,7 @@
+  *
+  *   Raster file routines for CUPS.
+  *
+- *   Copyright 2007-2010 by Apple Inc.
++ *   Copyright 2007-2015 by Apple Inc.
+  *   Copyright 1997-2006 by Easy Software Products.
+  *
+  *   This file is part of the CUPS Imaging library.
+@@ -239,7 +240,10 @@
+   */
+ 
+   if (!cups_raster_read_header(r))
++  {
++         memset(h, 0, sizeof(cups_page_header_t));
+     return (0);
++  }
+   
+  /*
+   * Copy the header to the user-supplied buffer...
+@@ -268,7 +272,10 @@
+   */
+ 
+   if (!cups_raster_read_header(r))
++  {
++         memset(h, 0, sizeof(cups_page_header2_t));
+     return (0);
++  }
+   
+  /*
+   * Copy the header to the user-supplied buffer...
+@@ -762,7 +762,7 @@
+ 
+   cups_raster_update(r);
+ 
+-  return (1);
++  return (r->header.cupsBytesPerLine != 0 && r->header.cupsHeight != 0 && (r->header.cupsBytesPerLine % r->bpp) == 0);
+ }
