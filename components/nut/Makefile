@@ -26,8 +26,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	\
   https://github.com/networkupstools/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://networkupstools.org
-COMPONENT_FMRI=	library/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_FMRI=	system/power/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -125,8 +125,8 @@ build: $(BUILD_32_and_64)
 
 # Ensure configs etc. match 32-bit
 $(INSTALL_32): $(INSTALL_64)
-	cd $(BUILD_DIR_32)/scripts/augeas && make install DESTDIR=$(PROTO_DIR)
 
 install: $(INSTALL_32_and_64)
+	cd $(BUILD_DIR_32)/scripts/augeas && make install DESTDIR=$(PROTO_DIR)
 
 test: $(TEST_32_and_64)
