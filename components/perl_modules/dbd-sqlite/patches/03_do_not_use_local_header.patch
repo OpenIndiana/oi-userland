@@ -1,0 +1,54 @@
+Filed at https://rt.cpan.org/Public/Bug/Display.html?id=114138
+
+--- DBD-SQLite-1.50/Makefile.PL	2016-05-02 13:32:35.562004677 -0700
++++ DBD-SQLite-1.50/Makefile.PL	2016-05-02 13:31:31.215124807 -0700
+@@ -170,6 +170,7 @@ if ( 0 ) {
+ 				while ( defined($_ = <$fh>) ) {
+ 					if (/\#define\s+SQLITE_VERSION_NUMBER\s+(\d+)/) {
+ 						$version = $1;
++						$sqlite_inc = File::Spec->catdir( '', @$dir );
+ 						last;
+ 					}
+ 				}
+@@ -216,7 +217,7 @@ my @CC_INC = (
+ 	'-I$(DBI_INSTARCH_DIR)',
+ );
+ if ( $sqlite_inc ) {
+-	push @CC_INC, "-I$sqlite_inc";
++	unshift @CC_INC, "-I$sqlite_inc";
+ }
+ 
+ my @CC_DEFINE = (
+--- DBD-SQLite-1.50/sqlite3ext.h	2016-05-02 13:40:28.734661242 -0700
++++ DBD-SQLite-1.50/sqlite3ext.h	2016-05-02 13:39:16.724889276 -0700
+@@ -17,7 +17,7 @@
+ */
+ #ifndef _SQLITE3EXT_H_
+ #define _SQLITE3EXT_H_
+-#include "sqlite3.h"
++#include <sqlite3.h>
+ 
+ typedef struct sqlite3_api_routines sqlite3_api_routines;
+ 
+--- DBD-SQLite-1.50/dbdimp.h	2016-05-02 13:40:28.956772954 -0700
++++ DBD-SQLite-1.50/dbdimp.h	2016-05-02 13:39:23.563370124 -0700
+@@ -3,7 +3,7 @@
+ #define _DBDIMP_H   1
+ 
+ #include "SQLiteXS.h"
+-#include "sqlite3.h"
++#include <sqlite3.h>
+ 
+ #define MY_CXT_KEY "DBD::SQLite::_guts" XS_VERSION
+ 
+--- DBD-SQLite-1.50/SQLiteXS.h	2016-05-02 13:40:29.181387425 -0700
++++ DBD-SQLite-1.50/SQLiteXS.h	2016-05-02 13:39:36.956291908 -0700
+@@ -18,7 +18,7 @@
+ #include "dbivport.h"
+ #include <dbd_xsh.h>
+ 
+-#include "sqlite3.h"
++#include <sqlite3.h>
+ #include "fts3_tokenizer.h"
+ 
+ #endif

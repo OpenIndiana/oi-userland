@@ -7,6 +7,8 @@ DB=/var/tmp/db.sql
 C="\$dbh=DBI->connect('dbi:SQLite:$DB');"
 FILE=/usr/bin/ls
 
+$P -e 'print $DBD::SQLite::VERSION, "\n"'
+
 rm -f "$DB"
 $P -e "$C"
 if [ ! -e "$DB" ]; then
@@ -42,6 +44,7 @@ echo 'select date from mytable;' | sqlite3 "$DB"
 
 
 It should print
+ - correct DBD::SQLite version printed
  - two equal MD5 hashes
  - database description (mytable and trigger insert_blob_date)
  - current date and time
