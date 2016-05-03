@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.3.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,12 +36,12 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:6725b5534d5a3a21ec4f14d6d7b9921a0d00d08acb88fd04cd50b47b70496338
 
 COMPONENT_ARCHIVE_URL=	\
-	http://ftp.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
+	https://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ruby
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -115,17 +116,17 @@ CFLAGS +=		-DFFI_NO_RAW_API
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # common targets
 
 build:		$(BUILD_32)
 
-install:	build $(INSTALL_32)
+install:	$(INSTALL_32)
 
 # 15861 tests, 2240689 assertions, 0 failures, 0 errors, 54 skips
 test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
