@@ -789,6 +789,7 @@ CC_PIC =	$($(COMPILER)_PIC)
 # configure environment.
 CFLAGS.gcc +=	$(gcc_OPT)
 CFLAGS.gcc +=	$(gcc_XREGS)
+CFLAGS.gcc +=	-ggdb3
 
 
 # Build 32 or 64 bit objects.
