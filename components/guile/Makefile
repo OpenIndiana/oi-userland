@@ -28,11 +28,11 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
-COMPONENT_VERSION=	1.8.6
+COMPONENT_VERSION=	1.8.8
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:69a2f9491480ff756d1cc4c8ea2bdc13d40ea8ddc8f93f26957bade8219a1d86
+    sha256:c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
 
-TPNO=			8939
+TPNO=			28097
 
 include $(WS_MAKE_RULES)/gnu-component.mk
 
@@ -59,16 +59,27 @@ COMPONENT_POST_INSTALL_ACTION.32 += \
 	$(GSED) -i -e 's|$(USRBINDIR)/$(MACH32)|$(USRBINDIR)|' \
 		$(PROTOUSRBINDIR)/$(MACH32)/guile-config;
 
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# Different test results on x86 and SPARC.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-# The additional guile specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(GCC_ROOT).*$$|XXX_GCC_ROOT_XXX|g" ' \
-	'-e "/^XXX_GCC_ROOT_XXX$$/d" ' \
-	'-e "/^WARNING:/d" '
+	'-n ' \
+	'-e "/^Totals for this test run:/p" ' \
+	'-e "/^passes:/p" ' \
+	'-e "/^failures:/p" ' \
+	'-e "/^unexpected passes:/p" ' \
+	'-e "/^expected failures:/p" ' \
+	'-e "/^unresolved test cases:/p" ' \
+	'-e "/^untested test cases:/p" ' \
+	'-e "/^unsupported test cases:/p" ' \
+	'-e "/^errors:/p" ' \
+	'-e "/^Running/p" ' \
+	'-e "/^=======/p" ' \
+	'-e "/^UNRESOLVED:/p" ' \
+	'-e "/^PASS:/p" ' \
+	'-e "/^FAIL:/p" ' \
+	'-e "/failed/p" ' \
+	'-e "/passed/p" '
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
