@@ -1,0 +1,104 @@
+This patch was developed in-house.
+It is submitted upstream at https://github.com/apple/cups/issues/4813
+
+--- systemv/lp.c	Wed Mar 23 11:59:25 2016
++++ systemv/lp.c	Fri Mar 25 22:52:26 2016
+@@ -39,7 +39,87 @@
+ int	set_job_attrs(const char *command, int job_id, int num_options,
+ 	              cups_option_t *options);
+ 
++/*
++ * Transform combined arguments into separate list so that the option
++ * handling in main() can handle those properly.
++ * For example:
++ *	lp -U user -csdprinter file1
++ * would be converted to
++ *	lp -U user -c -s -dprinter file
++ *
++ * The logic used to determine the end of option is same as in main(),
++ * so that option handling in main() wouldn't upset.
++ */
++static int
++parseargs(int *acp, char **avp[])
++{
++	int	c, i, j;
++	int	argc, ac, eos;
++	char	**argv, **av;
++	int	end_options = 0;
+ 
++	argc = *acp;
++	argv = *avp;
++
++	j = argc + 1;
++	for (i = 1; i < argc; i++) {
++    		if (argv[i][0] == '-')
++			j += strlen(argv[i]);
++	}
++	if ((av = malloc(sizeof (char *) * j)) == NULL)
++		return (1);
++
++	av[0] = argv[0];
++	ac = 1;
++	for (i = 1; i < argc; i++) {
++    		if (end_options || argv[i][0] != '-' || argv[i][1] == '\0') {
++			av[ac++] = argv[i];
++			continue;
++		}
++		eos = 0;
++		for (j = 1; (c = argv[i][j]) != '\0'; j++) {
++			switch (c) {
++			case 'U': case 'd': case 'f': case 'h':
++			case 'i': case 'n': case 'o': case 'p':
++			case 'q': case 't': case 'y': case 'H':
++			case 'P': case 'S': case 'T':
++				/* take option argument */
++				(void) asprintf(&av[ac], "-%s", &argv[i][j]);
++				ac++;
++				/* option argument may be on the next */
++				if (argv[i][j + 1] == '\0') {
++					/* copy only if it's available */
++					if ((i + 1) < argc)
++						av[ac++] = argv[++i];
++				}
++				eos = 1;
++				break;
++			case '-':
++				av[ac++] = argv[i];
++				end_options = 1;
++				eos = 1;
++				break;	
++			default:
++				(void) asprintf(&av[ac], "-%c", c);
++				ac++;
++				break;
++			}
++			if (eos)
++				break;
++		}
++	}
++	av[ac] = NULL;
++	for (i = 1; i < ac; i++) {
++		/* asprintf might have failed with ENOMEM */
++		if (av[i] == NULL)
++			return (1);
++	}
++
++	*acp = ac;
++	*avp = av;
++	return (0);
++}
++
+ /*
+  * 'main()' - Parse options and send files for printing.
+  */
+@@ -65,6 +145,10 @@
+   int		silent;			/* Silent or verbose output? */
+   char		buffer[8192];		/* Copy buffer */
+ 
++  if (parseargs(&argc, &argv)) {
++    _cupsLangPrintf(stderr, _("Unable to allocate memory!"));
++    return (1);
++  }
+ 
+ #ifdef __sun
+  /*
