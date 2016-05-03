@@ -1,0 +1,148 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/drivers/serial@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT drivers: serial and simple networking"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/nut/bin/+ -> default mode 0555>
+<transform dir path=usr/nut/bin -> set group bin>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+### NUT DRIVERS : Serial or simple networked (no/few extra libs needed)
+# Note: apcupsd-ups is a network client to apcupsd project, but has
+# no special runtime dependencies (just common libsocket, libnsl...)
+file path=usr/nut/bin/$(MACH64)/apcupsd-ups
+file path=usr/nut/bin/apcupsd-ups
+
+file path=usr/nut/bin/$(MACH64)/al175
+file path=usr/nut/bin/$(MACH64)/apcsmart
+file path=usr/nut/bin/$(MACH64)/apcsmart-old
+file path=usr/nut/bin/$(MACH64)/bcmxcp
+file path=usr/nut/bin/$(MACH64)/belkin
+file path=usr/nut/bin/$(MACH64)/belkinunv
+file path=usr/nut/bin/$(MACH64)/bestfcom
+file path=usr/nut/bin/$(MACH64)/bestfortress
+file path=usr/nut/bin/$(MACH64)/bestuferrups
+file path=usr/nut/bin/$(MACH64)/bestups
+file path=usr/nut/bin/$(MACH64)/blazer_ser
+file path=usr/nut/bin/$(MACH64)/etapro
+file path=usr/nut/bin/$(MACH64)/everups
+file path=usr/nut/bin/$(MACH64)/gamatronic
+file path=usr/nut/bin/$(MACH64)/genericups
+file path=usr/nut/bin/$(MACH64)/isbmex
+file path=usr/nut/bin/$(MACH64)/ivtscd
+file path=usr/nut/bin/$(MACH64)/liebert
+file path=usr/nut/bin/$(MACH64)/liebert-esp2
+file path=usr/nut/bin/$(MACH64)/masterguard
+file path=usr/nut/bin/$(MACH64)/metasys
+file path=usr/nut/bin/$(MACH64)/mge-shut
+file path=usr/nut/bin/$(MACH64)/mge-utalk
+file path=usr/nut/bin/$(MACH64)/microdowell
+file path=usr/nut/bin/$(MACH64)/oldmge-shut
+file path=usr/nut/bin/$(MACH64)/oneac
+file path=usr/nut/bin/$(MACH64)/optiups
+file path=usr/nut/bin/$(MACH64)/powercom
+file path=usr/nut/bin/$(MACH64)/powerpanel
+file path=usr/nut/bin/$(MACH64)/rhino
+file path=usr/nut/bin/$(MACH64)/riello_ser
+file path=usr/nut/bin/$(MACH64)/safenet
+file path=usr/nut/bin/$(MACH64)/solis
+file path=usr/nut/bin/$(MACH64)/tripplite
+file path=usr/nut/bin/$(MACH64)/tripplitesu
+file path=usr/nut/bin/$(MACH64)/upscode2
+file path=usr/nut/bin/$(MACH64)/victronups
+
+file path=usr/nut/bin/al175
+file path=usr/nut/bin/apcsmart
+file path=usr/nut/bin/apcsmart-old
+file path=usr/nut/bin/bcmxcp
+file path=usr/nut/bin/belkin
+file path=usr/nut/bin/belkinunv
+file path=usr/nut/bin/bestfcom
+file path=usr/nut/bin/bestfortress
+file path=usr/nut/bin/bestuferrups
+file path=usr/nut/bin/bestups
+file path=usr/nut/bin/blazer_ser
+file path=usr/nut/bin/etapro
+file path=usr/nut/bin/everups
+file path=usr/nut/bin/gamatronic
+file path=usr/nut/bin/genericups
+file path=usr/nut/bin/isbmex
+file path=usr/nut/bin/ivtscd
+file path=usr/nut/bin/liebert
+file path=usr/nut/bin/liebert-esp2
+file path=usr/nut/bin/masterguard
+file path=usr/nut/bin/metasys
+file path=usr/nut/bin/mge-shut
+file path=usr/nut/bin/mge-utalk
+file path=usr/nut/bin/microdowell
+file path=usr/nut/bin/oldmge-shut
+file path=usr/nut/bin/oneac
+file path=usr/nut/bin/optiups
+file path=usr/nut/bin/powercom
+file path=usr/nut/bin/powerpanel
+file path=usr/nut/bin/rhino
+file path=usr/nut/bin/riello_ser
+file path=usr/nut/bin/safenet
+file path=usr/nut/bin/solis
+file path=usr/nut/bin/tripplite
+file path=usr/nut/bin/tripplitesu
+file path=usr/nut/bin/upscode2
+file path=usr/nut/bin/victronups
+
+file path=usr/share/man/man8/al175.8
+file path=usr/share/man/man8/apcsmart-old.8
+file path=usr/share/man/man8/apcsmart.8
+file path=usr/share/man/man8/apcupsd-ups.8
+file path=usr/share/man/man8/bcmxcp.8
+file path=usr/share/man/man8/belkin.8
+file path=usr/share/man/man8/belkinunv.8
+file path=usr/share/man/man8/bestfcom.8
+file path=usr/share/man/man8/bestfortress.8
+file path=usr/share/man/man8/bestuferrups.8
+file path=usr/share/man/man8/bestups.8
+file path=usr/share/man/man8/blazer_ser.8
+file path=usr/share/man/man8/etapro.8
+file path=usr/share/man/man8/everups.8
+file path=usr/share/man/man8/gamatronic.8
+file path=usr/share/man/man8/genericups.8
+file path=usr/share/man/man8/isbmex.8
+file path=usr/share/man/man8/ivtscd.8
+file path=usr/share/man/man8/liebert-esp2.8
+file path=usr/share/man/man8/liebert.8
+file path=usr/share/man/man8/masterguard.8
+file path=usr/share/man/man8/metasys.8
+file path=usr/share/man/man8/mge-shut.8
+file path=usr/share/man/man8/mge-utalk.8
+file path=usr/share/man/man8/microdowell.8
+file path=usr/share/man/man8/nutupsdrv.8
+file path=usr/share/man/man8/oneac.8
+file path=usr/share/man/man8/optiups.8
+file path=usr/share/man/man8/powercom.8
+file path=usr/share/man/man8/powerpanel.8
+file path=usr/share/man/man8/rhino.8
+file path=usr/share/man/man8/riello_ser.8
+file path=usr/share/man/man8/safenet.8
+file path=usr/share/man/man8/solis.8
+file path=usr/share/man/man8/tripplite.8
+file path=usr/share/man/man8/tripplitesu.8
+file path=usr/share/man/man8/upscode2.8
+file path=usr/share/man/man8/victronups.8

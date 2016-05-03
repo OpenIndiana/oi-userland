@@ -1,0 +1,39 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/augeas@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT Augeas config-mgmt lenses"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# This binding needs Augeas to be functional, but we don't want to require
+# installation of augtools if the end-user just installs the grouper package
+# and really only wants NUT core, not the bindings. Vice-versa, the binding
+# does not really require files from the NUT project itself.
+depend fmri=library/augeas-tools  type=conditional    predicate=library/augeas-tools
+
+### Augeas configuration licenses for NUT
+file path=usr/share/augeas/lenses/nuthostsconf.aug
+file path=usr/share/augeas/lenses/nutnutconf.aug
+file path=usr/share/augeas/lenses/nutupsconf.aug
+file path=usr/share/augeas/lenses/nutupsdconf.aug
+file path=usr/share/augeas/lenses/nutupsdusers.aug
+file path=usr/share/augeas/lenses/nutupsmonconf.aug
+file path=usr/share/augeas/lenses/nutupsschedconf.aug
+file path=usr/share/augeas/lenses/nutupssetconf.aug
