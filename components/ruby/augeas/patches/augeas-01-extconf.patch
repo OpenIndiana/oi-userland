@@ -1,0 +1,23 @@
+Fix the environment so Ruby-Augeas finds the Augeas package information.
+This has not been pushed upstream as it is Solaris-specific.
+
+--- ruby-augeas-0.5.0/ext/augeas/extconf.rb.orig	2016-04-29 14:31:16.171732595 -0600
++++ ruby-augeas-0.5.0/ext/augeas/extconf.rb	2016-04-29 14:31:39.159244851 -0600
+@@ -23,12 +23,13 @@
+ 
+ extension_name = '_augeas'
+ 
+-unless pkg_config("augeas")
+-    raise "augeas-devel not installed"
++$CFLAGS += " -I/usr/include/libxml2"
++unless have_library("augeas")
++    raise "libaugeas not installed"
+ end
+ 
+-unless pkg_config("libxml-2.0")
+-    raise "libxml2-devel not installed"
++unless have_library("xml2")
++    raise "libxml2 not installed"
+ end
+ 
+ create_makefile(extension_name)
