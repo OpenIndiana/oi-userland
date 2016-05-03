@@ -126,6 +126,5 @@ build: $(BUILD_32_and_64)
 $(INSTALL_32): $(INSTALL_64)
 
 install: $(INSTALL_32_and_64)
-	cd $(BUILD_DIR_32)/scripts/augeas && make install DESTDIR=$(PROTO_DIR)
 
 test: $(TEST_32_and_64)
