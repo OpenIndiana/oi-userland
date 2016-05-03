@@ -22,11 +22,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/nut/bin/+ -> default mode 0555>
-<transform dir path=usr/nut/bin -> set group bin>
+<transform file path=$(NUTDRVDIR)/+ -> default mode 0555>
+<transform dir path=$(NUTDRVDIR) -> set group bin>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 ### NUT DRIVERS : POWERMAN (extra LLNL libpowerman needed)
-file path=usr/nut/bin/$(MACH64)/powerman-pdu
-file path=usr/nut/bin/powerman-pdu
+file path=$(NUTDRVDIR)/$(MACH64)/powerman-pdu
+file path=$(NUTDRVDIR)/powerman-pdu
 file path=usr/share/man/man8/powerman-pdu.8

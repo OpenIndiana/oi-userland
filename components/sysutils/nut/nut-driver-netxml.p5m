@@ -22,11 +22,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/nut/bin/+ -> default mode 0555>
-<transform dir path=usr/nut/bin -> set group bin>
+<transform file path=$(NUTDRVDIR)/+ -> default mode 0555>
+<transform dir path=$(NUTDRVDIR) -> set group bin>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 ### NUT DRIVERS : HTTP/XML (extra libneon, ssl, zip, xml, ... needed)
-file path=usr/nut/bin/$(MACH64)/netxml-ups
-file path=usr/nut/bin/netxml-ups
+file path=$(NUTDRVDIR)/$(MACH64)/netxml-ups
+file path=$(NUTDRVDIR)/netxml-ups
 file path=usr/share/man/man8/netxml-ups.8

@@ -22,13 +22,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/nut/bin/+ -> default mode 0555>
-<transform dir path=usr/nut/bin -> set group bin>
+<transform file path=$(NUTDRVDIR)/+ -> default mode 0555>
+<transform dir path=$(NUTDRVDIR) -> set group bin>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 ### NUT DRIVERS : IPMI access to (blade) servers as sort of PDUs
 ### for the servers and particularly blades (extra freeipmi needed)
 # NOTE: Not built yet, not delivered yet
-#file path=usr/nut/bin/$(MACH64)/nut-ipmipsu
-#file path=usr/nut/bin/nut-ipmipsu
+#file path=$(NUTDRVDIR)/$(MACH64)/nut-ipmipsu
+#file path=$(NUTDRVDIR)/nut-ipmipsu
 #file path=usr/share/man/man8/nut-ipmipsu.8

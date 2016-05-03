@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# Called by upsmon when important shit happens
+# Env contains UPSNAME like "ups1@localhost",
+# a NOTIFYTYPE like "ONLINE", and $1="My message"
+# (C) 2000-2006,2016 by Jim Klimov
+
+LANG=C
+LC_ALL=C
+TZ=UTC
+export LANG LC_ALL TZ
+
+[ -s /etc/nut/notifyme.conf ] && . /etc/nut/notifyme.conf
+
+# By default, we send a message to root@localhost and a syslog event
+[ -n "${MAILPROG-}" ] || MAILPROG="mail"
+[ -n "${UPSMONNAMELONG-}" ] || UPSMONNAMELONG="the UPSMon-`hostname`"
+
+[ -n "${UPSMON_SYSLOGPRIO_TROUBLE-}" ] || UPSMON_SYSLOGPRIO_TROUBLE="daemon.emerg"
+[ -n "${UPSMON_SYSLOGPRIO_GOODNOW-}" ] || UPSMON_SYSLOGPRIO_GOODNOW="$UPSMON_SYSLOGPRIO_TROUBLE"
+#[ -n "${UPSMON_SYSLOGPRIO_GOODNOW-}" ] || UPSMON_SYSLOGPRIO_GOODNOW="daemon.notice"
+
+# Additionally, we can send a short SMS via email, if the admin has it set up
+# SMSMAIL="sms2mail.account@mobile.operator"
+[ -n "${SMSMAIL-}" ] || SMSMAIL=""
+[ -n "${UPSMONNAMESMS-}" ] || UPSMONNAMESMS="UPSMon@`hostname`"
+
+now="`date -u '%Y-%m-%d %H:%M:%S'`"
+message="$1"
+plea=""
+[ x"$NOTIFYTYPE" != xONLINE -a x"$NOTIFYTYPE" != xCOMMOK ] && plea="
+Please do something with power!
+My shutdown will be clean, but...
+"
+
+# 1) Alert all consoles, syslog (and maybe email - depending on syslog daemon)
+if [ -x /usr/bin/logger ]; then
+	[ -n "$plea" ] && \
+		SYSLOG_PRIO="$UPSMON_SYSLOGPRIO_TROUBLE" || \
+		SYSLOG_PRIO="$UPSMON_SYSLOGPRIO_GOODNOW"
+	/usr/bin/logger -p "$SYSLOG_PRIO" -t "upsmon.notifyme.$$" "$UPSNAME: $NOTIFYTYPE : $message (at $now)" "$plea"
+fi
+
+case "$MAILPROG" in
+    "") ;;
+    /*) ;;
+    *) MAILPROG="`which "$MAILPROG" | head -1 | egrep '^/'`" ;;
+esac
+
+[ -n "$MAILPROG" ] || exit 0
+[ -x "$MAILPROG" ] || { echo "ERROR: MAILPROG='$MAILPROG' was specified but is not executable">&2; exit 1; }
+
+# 2) send local mail so I know when the $it has hit the fan
+# If it's local power trouble in the serverroom,
+# I might go fix it before it's too late :^)
+${MAILPROG} root -s "UPS status change: $NOTIFYTYPE" << EOF
+$UPSNAME
+$now
+UPS status change: $NOTIFYTYPE
+
+$message
+$plea
+Sincerely, $UPSMONNAMELONG
+EOF
+
+if [ -n "${SMSMAIL-}" ]; then
+	# 3) Send an SMS to the admin
+	${MAILPROG} "$SMSMAIL" -s "UPS!" << EOF
+$now
+$UPSNAME: $NOTIFYTYPE
+$message
+//$UPSMONNAMESMS
+EOF
+
+fi
+

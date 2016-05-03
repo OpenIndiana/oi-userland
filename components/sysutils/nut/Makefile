@@ -44,6 +44,35 @@ CFLAGS+=$(CFLAGS.$(BITS))
 LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
 LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
+### A lot of paths are defined and exported to pkg(5) tools below,
+### so we can flexibly set up location of certain NUT components.
+
+# This is where config files are expected, INCLUDING (per convention from other
+# distros) example config files - e.g. not lost under /usr/shared/... locations
+# Also note we must not include the leading slash...
+NUTETCDIR  =	$(strip .../,,...$(ETCDIR)/nut)
+PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
+
+# Extra programs for NUT, not intended for direct user access (drivers, CGIs)
+NUTUSRDIR  =	$(strip .../,,...$(USRDIR)/nut)
+PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
+# Note that binaries reside in base or $(MACH64) subdirectories of these:
+NUTDRVDIR  =	$(NUTUSRDIR)/bin
+NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
+PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
+PKG_OPTIONS +=	-D NUTCGIDIR="$(NUTCGIDIR)"
+
+# So far I am not certain where we should deliver this one, so parametrize ;)
+NUT_AVAHI_SERVICE_FILE =	$(NUTETCDIR)/avahi-nut.service.sample
+PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_FILE="$(NUT_AVAHI_SERVICE_FILE)"
+
+# Leading slashes must also be stripped here
+NUTHOTPLUGDIR  =	$(strip .../,,...$(ETCDIR)/hotplug)
+PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
+NUTUDEVDIR  =	$(strip .../,,...$(USRLIBDIR)/udev)
+PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
+
+### Recipe bits follow...
 COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
@@ -57,9 +86,9 @@ CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/nut
-CONFIGURE_OPTIONS +=	--with-hotplug-dir=/etc/hotplug
-CONFIGURE_OPTIONS +=	--with-udev-dir=/usr/lib/udev
+CONFIGURE_OPTIONS +=	--sysconfdir=/$(NUTETCDIR)
+CONFIGURE_OPTIONS +=	--with-hotplug-dir=/$(NUTHOTPLUGDIR)
+CONFIGURE_OPTIONS +=	--with-udev-dir=/$(NUTUDEVDIR)
 CONFIGURE_OPTIONS +=	--with-statepath=/var/state/ups
 CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
 CONFIGURE_OPTIONS +=	--with-dev
@@ -67,23 +96,25 @@ CONFIGURE_OPTIONS +=	--with-libltdl
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-openssl
 
-CONFIGURE_OPTIONS.32 +=	--with-drvpath=$(USRDIR)/nut/bin
-CONFIGURE_OPTIONS.32 +=	--with-cgipath=$(USRDIR)/nut/cgi-bin
-CONFIGURE_OPTIONS.64 +=	--with-drvpath=$(USRDIR)/nut/bin/$(MACH64)
-CONFIGURE_OPTIONS.64 +=	--with-cgipath=$(USRDIR)/nut/cgi-bin/$(MACH64)
+CONFIGURE_OPTIONS.32 +=	--with-drvpath=/$(NUTDRVDIR)
+CONFIGURE_OPTIONS.32 +=	--with-cgipath=/$(NUTCGIDIR)
+CONFIGURE_OPTIONS.64 +=	--with-drvpath=/$(NUTDRVDIR)/$(MACH64)
+CONFIGURE_OPTIONS.64 +=	--with-cgipath=/$(NUTCGIDIR)/$(MACH64)
 
 # No separate toggle for this yet
-#CONFIGURE_OPTIONS +=	--with-nut-scanner
+#CONFIGURE_OPTIONS +=	--with-nut-scanner=yes
 
 # Minimize guesswork: these are features we can and do build and deliver in
 # package manifest, so the build host must have relevant packages installed
-CONFIGURE_OPTIONS +=	--with-serial
-CONFIGURE_OPTIONS +=	--with-usb
-CONFIGURE_OPTIONS +=	--with-neon
-CONFIGURE_OPTIONS +=	--with-avahi
+CONFIGURE_OPTIONS +=	--with-serial=yes
+CONFIGURE_OPTIONS +=	--with-usb=yes
+CONFIGURE_OPTIONS +=	--with-neon=yes
+CONFIGURE_OPTIONS +=	--with-avahi=yes
 CONFIGURE_OPTIONS +=	--with-powerman=yes
+CONFIGURE_OPTIONS +=	--with-cgi=yes
 
 # TODO: Revise NUT package when this gate provides (GNU) freeipmi >= 1.0.1
+# Note: we already have a p5m manifest for these products, just uncomment them
 CONFIGURE_OPTIONS +=	--with-ipmi=no
 CONFIGURE_OPTIONS +=	--with-freeipmi=no
 
@@ -93,38 +124,34 @@ CONFIGURE_OPTIONS +=	--with-macosx_ups=no
 
 # Note: Link with the correct ISA of net-snmp (for drivers) and gdlib (for cgi)
 CONFIGURE_OPTIONS +=	--with-snmp
-CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
+CONFIGURE_OPTIONS +=	--with-net-snmp-config=$(USRBINDIR)/net-snmp-config-$(BITS)
 
 CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
 CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
-# Note: the CGI binary has some linking problems (picks 32-bit GDlib since we
-# only deliver one config program) and we don't need both versions anyway.
-CONFIGURE_OPTIONS +=	--with-cgi
-#CONFIGURE_OPTIONS.32 +=	--with-cgi
-#CONFIGURE_OPTIONS.64 +=	--without-cgi
-
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
 # compiling PDFs) and probably don't require "html-chunked" chapters.
-CONFIGURE_OPTIONS.32 +=	--with-doc="man"
+CONFIGURE_OPTIONS.32 +=	--with-doc="man=yes"
 CONFIGURE_OPTIONS.64 +=	--with-doc="no"
 
+### Avoid occasionally possible hangs with chunked HTML doc, if we build it
 #CONFIGURE_OPTIONS +=	--with-doc="auto"
-### Avoid occasionally possible hangs with chunked HTML doc
+
 CONFIGURE_OPTIONS +=	ASCIIDOC_VERBOSE="-v"
 CONFIGURE_ENV     +=	ASCIIDOC_VERBOSE="-v"
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-# Temporary for tests
+# Temporary ordering for tests
 $(BUILD_32): $(BUILD_64)
 
 build: $(BUILD_32_and_64)
 
-# Ensure configs etc. match 32-bit
+# Ensure installed configs etc. match 32-bit paths
 $(INSTALL_32): $(INSTALL_64)
 
 install: $(INSTALL_32_and_64)
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service $(PROTO_DIR)/$(NUT_AVAHI_SERVICE_FILE)
 
 test: $(TEST_32_and_64)
