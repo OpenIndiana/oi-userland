@@ -62,6 +62,9 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^\-/d"'
 COMPONENT_TEST_TRANSFORMS += '-e "/^\*/d"'
 COMPONENT_TEST_TRANSFORMS += '-e "/^!/d"'
 
+# glib-2.0 and friends
+CONFIGURE_OPTIONS +=	DAEMON_LIBS="-lglib-2.0 -lgobject-2.0 -lgio-2.0"
+
 # Where the gam_server will be located
 CONFIGURE_OPTIONS    +=      --libexecdir="$(USRLIBDIR)"
 
