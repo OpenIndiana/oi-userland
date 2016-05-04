@@ -41,3 +41,7 @@ test:		$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libfuse
+REQUIRED_PACKAGES += system/library
