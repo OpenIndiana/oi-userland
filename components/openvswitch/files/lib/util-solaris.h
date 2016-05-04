@@ -20,11 +20,77 @@
  */
 
 /*
- * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 #ifndef	UTIL_SOLARIS_H
 #define	UTIL_SOLARIS_H
+
+/*
+ * While we make changes to kstat2_open, we must manually define the functions.
+ * This can be stripped out once the changes in ON appear on the build machines.
+ */
+#ifndef	_KSTAT2_H
+#define	_KSTAT2_H
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/kstat2_common.h>
+
+typedef enum kstat2_status {
+    KSTAT2_S_OK = 0,		/**< Request was successful */
+    KSTAT2_S_NO_PERM,		/**< Insufficient permissions for request */
+    KSTAT2_S_NO_MEM,		/**< Insufficient memory available */
+    KSTAT2_S_NO_SPACE,		/**< No space available for operation */
+    KSTAT2_S_INVAL_ARG,		/**< Invalid argument supplied */
+    KSTAT2_S_INVAL_STATE,	/**< Invalid state for this request */
+    KSTAT2_S_INVAL_TYPE,	/**< Invalid data type found */
+    KSTAT2_S_NOT_FOUND,		/**< Resource not found */
+    KSTAT2_S_CONC_MOD,		/**< Concurrent modification of map detected */
+    KSTAT2_S_DEL_MAP,		/**< Referenced map has been deleted */
+    KSTAT2_S_SYS_FAIL		/**< System call has failed, see errno */
+} kstat2_status_t;
+
+typedef const struct __kstat2_handle *kstat2_handle_t;
+typedef const struct __kstat2_map *kstat2_map_t;
+
+typedef struct kstat2_nv {
+	const char *const	name;		/**< Name of the pair */
+	const uint8_t		type;		/**< Value type of the pair */
+	const uint8_t		kind;		/**< Kind of the pair */
+	const uint16_t		flags;		/**< Flags of the pair */
+	union {					/**< Data value */
+		const struct __kstat2_map *const	map;
+		const uint64_t				integer;
+		struct {
+			const uint64_t *const		array;
+			const uint32_t			length;
+		} integers;
+		const char *const			string;
+		struct {
+			const char *const *const	array;
+			const uint32_t			length;
+		} strings;
+	} data;
+} *kstat2_nv_t;
+
+#define	kstat2_map  data.map    /**< sub-map member */
+#define	kstat2_integer  data.integer    /**< integer member */
+#define	kstat2_integers data.integers   /**< integers member */
+#define	kstat2_string   data.string /**< string member */
+#define	kstat2_strings  data.strings    /**< strings member */
+
+extern const char *kstat2_status_string(kstat2_status_t status);
+extern kstat2_status_t kstat2_open(kstat2_handle_t *handle, void *);
+extern kstat2_status_t kstat2_lookup_map(kstat2_handle_t handle,
+    const char *uri, kstat2_map_t *map);
+extern kstat2_status_t kstat2_update(kstat2_handle_t handle);
+extern kstat2_status_t kstat2_close(kstat2_handle_t *handle);
+
+extern kstat2_status_t kstat2_map_get(kstat2_map_t map, char *name,
+    kstat2_nv_t *nv);
+#endif  /* _KSTAT2_H */
+
 
 #include <libdladm.h>
 #include <linux/openvswitch.h>

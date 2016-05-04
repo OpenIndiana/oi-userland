@@ -3335,7 +3335,7 @@ kstat_handle_init(kstat2_handle_t *khandlep)
 {
 	kstat2_status_t	stat;
 
-	stat = kstat2_open(khandlep);
+	stat = kstat2_open(khandlep, NULL);
 	return (stat != KSTAT2_S_OK ? B_FALSE: B_TRUE);
 }
 
