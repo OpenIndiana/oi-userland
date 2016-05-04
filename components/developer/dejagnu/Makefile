@@ -23,21 +23,25 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		dejagnu
-COMPONENT_VERSION=	1.5.1
+COMPONENT_NAME=			dejagnu
+COMPONENT_VERSION=	1.6
+COMPONENT_FMRI=			developer/test/dejagnu
+COMPONENT_SUMMARY=	DejaGnu - a framework for testing other programs
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/dejagnu/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:60e747d1a4c5c7f76bee649bb9641e66f9605548b2761435aca09f88094433d2
+    sha256:00b64a618e2b6b581b16eb9131ee80f721baa2669fa0cdee93c500d1a652d763
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/dejagnu
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
@@ -52,4 +56,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
