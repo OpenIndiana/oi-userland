@@ -46,6 +46,7 @@ CONFIGURE_LIBDIR.64= $(CONFIGURE_LIBDIR.32)
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.32)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-browser=$(USRBINDIR)/firefox
+CONFIGURE_OPTIONS +=	LIBS="-lX11"
 
 # Use the HTML and CSS styling external test suite as referenced at
 # http://www.w3.org/2005/MWI/Tests/
