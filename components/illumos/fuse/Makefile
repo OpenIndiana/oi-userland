@@ -16,11 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-fusefs
-COMPONENT_VERSION=	1.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-Version-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	c48a497431e574ccb52cffacc10caaa0f030f6ce
+IPS_COMPONENT_VERSION=	1.3.1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=	sha256:29fd2dff679b4da58dbc0830730a6ac54d4a0fdeb91459d8341594db94f4c058
-COMPONENT_ARCHIVE_URL=	https://github.com/jurikm/illumos-fusefs/archive/Version-$(COMPONENT_VERSION).zip
+COMPONENT_ARCHIVE_HASH=	sha256:b96de3235e66b382a4b0e6b80ca55ef41e8abda59758f2248d31ed44177aa000
+COMPONENT_ARCHIVE_URL=	https://github.com/jurikm/illumos-fusefs/archive/$(COMPONENT_VERSION).zip
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
@@ -36,9 +37,9 @@ $(BUILD_32):    $(SOURCE_DIR)/.prep
 
 $(INSTALL_32): $(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)
-	
+
 	(cd $(@D)/kernel && dmake install)
-	
+
 	$(MKDIR) $(PROTOUSRKERNELDRVDIR) $(PROTOUSRKERNELDRVDIR64)
 
 	$(INSTALL) $(@D)/kernel/proto/$(USRKERNELDRVDIR)/fuse $(PROTOUSRKERNELDRVDIR)
