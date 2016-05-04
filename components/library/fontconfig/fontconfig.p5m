@@ -42,6 +42,10 @@ file usr/share/man/man5/fonts-conf.5 path=usr/share/man/man4/fonts.conf.4
 dir group=bin mode=0755 owner=root path=var/cache/fontconfig
 
 file path=etc/fonts/conf.avail/10-autohint.conf
+file path=etc/fonts/conf.avail/10-hinting-full.conf
+file path=etc/fonts/conf.avail/10-hinting-medium.conf
+file path=etc/fonts/conf.avail/10-hinting-none.conf
+file path=etc/fonts/conf.avail/10-hinting-slight.conf
 file path=etc/fonts/conf.avail/10-no-sub-pixel.conf
 file path=etc/fonts/conf.avail/10-scale-bitmap-fonts.conf
 file path=etc/fonts/conf.avail/10-sub-pixel-bgr.conf
@@ -70,8 +74,40 @@ file path=etc/fonts/conf.avail/70-no-bitmaps.conf
 file path=etc/fonts/conf.avail/70-yes-bitmaps.conf
 file path=etc/fonts/conf.avail/80-delicious.conf
 file path=etc/fonts/conf.avail/90-synthetic.conf
+link path=etc/fonts/conf.d/10-autohint.conf \
+    target=../conf.avail/10-autohint.conf
+link path=etc/fonts/conf.d/10-hinting-full.conf \
+    target=../conf.avail/10-hinting-full.conf
+link path=etc/fonts/conf.d/10-hinting-medium.conf \
+    target=../conf.avail/10-hinting-medium.conf
+link path=etc/fonts/conf.d/10-hinting-none.conf \
+    target=../conf.avail/10-hinting-none.conf
+link path=etc/fonts/conf.d/10-hinting-slight.conf \
+    target=../conf.avail/10-hinting-slight.conf
+link path=etc/fonts/conf.d/10-no-sub-pixel.conf \
+    target=../conf.avail/10-no-sub-pixel.conf
+link path=etc/fonts/conf.d/10-scale-bitmap-fonts.conf \
+    target=../conf.avail/10-scale-bitmap-fonts.conf
+link path=etc/fonts/conf.d/10-sub-pixel-bgr.conf \
+    target=../conf.avail/10-sub-pixel-bgr.conf
+link path=etc/fonts/conf.d/10-sub-pixel-rgb.conf \
+    target=../conf.avail/10-sub-pixel-rgb.conf
+link path=etc/fonts/conf.d/10-sub-pixel-vbgr.conf \
+    target=../conf.avail/10-sub-pixel-vbgr.conf
+link path=etc/fonts/conf.d/10-sub-pixel-vrgb.conf \
+    target=../conf.avail/10-sub-pixel-vrgb.conf
+link path=etc/fonts/conf.d/10-unhinted.conf \
+    target=../conf.avail/10-unhinted.conf
+link path=etc/fonts/conf.d/11-lcdfilter-default.conf \
+    target=../conf.avail/11-lcdfilter-default.conf
+link path=etc/fonts/conf.d/11-lcdfilter-legacy.conf \
+    target=../conf.avail/11-lcdfilter-legacy.conf
+link path=etc/fonts/conf.d/11-lcdfilter-light.conf \
+    target=../conf.avail/11-lcdfilter-light.conf
 link path=etc/fonts/conf.d/20-unhint-small-vera.conf \
     target=../conf.avail/20-unhint-small-vera.conf
+link path=etc/fonts/conf.d/25-unhint-nonlatin.conf \
+    target=../conf.avail/25-unhint-nonlatin.conf
 link path=etc/fonts/conf.d/30-metric-aliases.conf \
     target=../conf.avail/30-metric-aliases.conf
 link path=etc/fonts/conf.d/30-urw-aliases.conf \
@@ -90,6 +126,10 @@ link path=etc/fonts/conf.d/65-khmer.conf target=../conf.avail/65-khmer.conf
 link path=etc/fonts/conf.d/65-nonlatin.conf \
     target=../conf.avail/65-nonlatin.conf
 link path=etc/fonts/conf.d/69-unifont.conf target=../conf.avail/69-unifont.conf
+link path=etc/fonts/conf.d/70-no-bitmaps.conf \
+    target=../conf.avail/70-no-bitmaps.conf
+link path=etc/fonts/conf.d/70-yes-bitmaps.conf \
+    target=../conf.avail/70-yes-bitmaps.conf
 link path=etc/fonts/conf.d/80-delicious.conf \
     target=../conf.avail/80-delicious.conf
 link path=etc/fonts/conf.d/90-synthetic.conf \
@@ -115,13 +155,13 @@ file path=usr/bin/fc-validate
 file path=usr/include/fontconfig/fcfreetype.h
 file path=usr/include/fontconfig/fcprivate.h
 file path=usr/include/fontconfig/fontconfig.h
-link path=usr/lib/$(MACH64)/libfontconfig.so target=libfontconfig.so.1.8.0
-link path=usr/lib/$(MACH64)/libfontconfig.so.1 target=libfontconfig.so.1.8.0
-file path=usr/lib/$(MACH64)/libfontconfig.so.1.8.0
+link path=usr/lib/$(MACH64)/libfontconfig.so target=libfontconfig.so.1.9.1
+link path=usr/lib/$(MACH64)/libfontconfig.so.1 target=libfontconfig.so.1.9.1
+file path=usr/lib/$(MACH64)/libfontconfig.so.1.9.1
 file path=usr/lib/$(MACH64)/pkgconfig/fontconfig.pc
-link path=usr/lib/libfontconfig.so target=libfontconfig.so.1.8.0
-link path=usr/lib/libfontconfig.so.1 target=libfontconfig.so.1.8.0
-file path=usr/lib/libfontconfig.so.1.8.0
+link path=usr/lib/libfontconfig.so target=libfontconfig.so.1.9.1
+link path=usr/lib/libfontconfig.so.1 target=libfontconfig.so.1.9.1
+file path=usr/lib/libfontconfig.so.1.9.1
 file path=usr/lib/pkgconfig/fontconfig.pc
 file path=usr/share/doc/fontconfig/fontconfig-devel.pdf
 file path=usr/share/doc/fontconfig/fontconfig-devel.txt
@@ -283,6 +323,11 @@ file path=usr/share/doc/fontconfig/fontconfig-devel/fcpatternhash.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcpatternprint.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcpatternreference.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcpatternremove.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangecopy.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangecreatedouble.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangecreateinteger.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangedestroy.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcrangegetdouble.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrbasename.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrcmp.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcstrcmpignorecase.html
@@ -315,6 +360,8 @@ file path=usr/share/doc/fontconfig/fontconfig-devel/fcvaluedestroy.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcvalueequal.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcvalueprint.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/fcvaluesave.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcweightfromopentype.html
+file path=usr/share/doc/fontconfig/fontconfig-devel/fcweighttoopentype.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/ln12.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/t1.html
 file path=usr/share/doc/fontconfig/fontconfig-devel/x102.html
@@ -489,6 +536,11 @@ file path=usr/share/man/man3/FcPatternHash.3
 file path=usr/share/man/man3/FcPatternPrint.3
 file path=usr/share/man/man3/FcPatternReference.3
 file path=usr/share/man/man3/FcPatternRemove.3
+file path=usr/share/man/man3/FcRangeCopy.3
+file path=usr/share/man/man3/FcRangeCreateDouble.3
+file path=usr/share/man/man3/FcRangeCreateInteger.3
+file path=usr/share/man/man3/FcRangeDestroy.3
+file path=usr/share/man/man3/FcRangeGetDouble.3
 file path=usr/share/man/man3/FcStrBasename.3
 file path=usr/share/man/man3/FcStrCmp.3
 file path=usr/share/man/man3/FcStrCmpIgnoreCase.3
@@ -521,4 +573,7 @@ file path=usr/share/man/man3/FcValueDestroy.3
 file path=usr/share/man/man3/FcValueEqual.3
 file path=usr/share/man/man3/FcValuePrint.3
 file path=usr/share/man/man3/FcValueSave.3
+file path=usr/share/man/man3/FcWeightFromOpenType.3
+file path=usr/share/man/man3/FcWeightToOpenType.3
+file path=usr/share/man/man5/fonts-conf.5
 file path=usr/share/xml/fontconfig/fonts.dtd
