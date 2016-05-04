@@ -21,7 +21,7 @@
 # CDDL HEADER END
 #
 
-# Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 source /lib/svc/share/smf_include.sh
 
@@ -32,22 +32,26 @@ typeset -r VARDATADIR=/var/openldap/openldap-data
 typeset -r PIDFILE=${VARRUNDIR}/slapd.pid
 typeset -r CONF_FILE=/etc/openldap/slapd.conf
 typeset -r SLAPD="/usr/lib/slapd -u ${LDAPUSR} -g ${LDAPGRP} -f ${CONF_FILE}"
-
-[[ ! -f ${CONF_FILE} ]] && exit $SMF_EXIT_ERR_CONFIG
+typeset -r CONF_DIR=/etc/openldap/slapd.d
+typeset -r SLAPD_DIR="/usr/lib/slapd -u ${LDAPUSR} -g ${LDAPGRP} -F ${CONF_DIR}"
+typeset -r LDAPSERVERCFG="/usr/sbin/ldapservercfg"
+typeset -r DO_LDAPSERVERCFG="pfexec ${LDAPSERVERCFG} -a openldap"
+typeset -r FLAG_STR='olcConfigFile: /tmp/dscfg.'
 
 
 case "$1" in
 start)
-        if [[ ! -d ${VARRUNDIR} ]] ; then
-		/usr/bin/mkdir -m 700 ${VARRUNDIR} || exit $SMF_EXIT_ERR_CONFIG
-		/usr/bin/chown ${LDAPUSR}:${LDAPGRP} ${VARRUNDIR}
-        else
-		/bin/rm -f ${PIDFILE}
-	fi
+	urls=`/usr/bin/svcprop -c -p config/urls \
+	    svc:/network/ldap/server:openldap 2>/dev/null`
 
-	cd ${VARDATADIR}
-	/usr/bin/db_recover >/dev/null 2>&1
-        exec ${SLAPD} 2>&1
+	if [[ -x ${LDAPSERVERCFG} ]]; then
+		grep -q "${FLAG_STR}" ${CONF_DIR}/cn\=config.ldif
+		[[ $? -eq 0 ]] && exec ${SLAPD_DIR} -h "$urls" 2>&1
+		${DO_LDAPSERVERCFG}
+	else
+		[[ -f ${CONF_FILE} ]] || exit $SMF_EXIT_ERR_CONFIG
+		exec ${SLAPD} -h "$urls" 2>&1
+	fi
         ;;
 stop)
 	# Use the actual contract, not ${PIDFILE}
@@ -62,4 +66,3 @@ stop)
         ;;
 esac
 
-# not reached

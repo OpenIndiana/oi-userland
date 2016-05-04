@@ -1,28 +1,10 @@
 <?xml version="1.0"?>
 <!--
-CDDL HEADER START
-
-The contents of this file are subject to the terms of the
-Common Development and Distribution License (the "License").
-You may not use this file except in compliance with the License.
-
-You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-or http://www.opensolaris.org/os/licensing.
-See the License for the specific language governing permissions
-and limitations under the License.
-
-When distributing Covered Code, include this CDDL HEADER in each
-file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-If applicable, add the following below this CDDL HEADER, with the
-fields enclosed by brackets "[]" replaced with your own identifying
-information: Portions Copyright [yyyy] [name of copyright owner]
-
-CDDL HEADER END
 -->
 
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-    Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
+    Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <service_bundle type='manifest' name='SUNWopenldapr:slapd'>
@@ -38,7 +20,7 @@ CDDL HEADER END
 	  and methods within the instance.
 	-->
 
-	<instance name='openldap_24' enabled='false'>
+	<instance name='openldap' enabled='false'>
 		<!--
 		  Wait for network interfaces to be initialized.
 		-->
@@ -69,39 +51,350 @@ CDDL HEADER END
 			<method_credential
 			    user='openldap'
 			    group='openldap'
-			    privileges='basic,net_privaddr,file_dac_read,file_dac_write,file_dac_search' />
+			    privileges='basic,{net_privaddr}:389/tcp,{net_privaddr}:636/tcp' />
 		    </method_context>
 		</exec_method>
 
 		<exec_method
-			type='method'
-			name='stop'
-			exec='/lib/svc/method/ldap-olslapd stop %{restarter/contract}'
-			timeout_seconds='60' />
+		    type='method'
+		    name='stop'
+		    exec='/lib/svc/method/ldap-olslapd stop %{restarter/contract}'
+		    timeout_seconds='60' />
 
-		<property_group name='startd' type='framework'>
-			<!-- sub-process core dumps shouldn't restart
-				session -->
-			<propval name='ignore_error' type='astring'
-				value='core,signal' />
+		<property_group name='general' type='framework'>
+		    <!-- start and stop "init" instance -->
+		    <propval name='action_authorization' type='astring'
+		        value='solaris.smf.manage.name-service.ldap.server' />
+		    <propval name='value_authorization' type='astring'
+		        value='solaris.smf.value.name-service.ldap.server' />
 		</property_group>
 
-        <template>
-            <common_name>
-                <loctext xml:lang='C'>
-                    slapd - OpenLDAP LDAP server
-                </loctext>
-            </common_name>
-            <documentation>
-                <manpage title='slapd' section='8oldap'
-                    manpath='/usr/share/man' />
-                <doc_link name='openldap.org'
-                    uri='http://www.openldap.org' />
-            </documentation>
-        </template>
+		<property_group name='config' type='application'>
+		    <propval name='value_authorization' type='astring'
+		        value='solaris.smf.value.name-service.ldap.server' />
+		    <property name='urls' type='astring'>
+		        <astring_list>
+			    <value_node value='ldap:///' />
+			    <value_node value='ldaps:///' />
+			    <value_node value='ldapi:///' />
+		        </astring_list>
+		    </property>
+		</property_group>
+
+		<property_group name='cred' type='application'>
+		    <stability value='Evolving'/>
+		    <propval name='read_authorization' type='astring'
+			value='solaris.smf.read.name-service.ldap.server' />
+		    <propval name='value_authorization' type='astring'
+		        value='solaris.smf.value.name-service.ldap.server' />
+		    <propval name='backend_passwd' type='astring' value=''/>
+		    <propval name='admin_passwd' type='astring' value=''/>
+		    <propval name='proxy_passwd' type='astring' value=''/>
+		    <propval name='backend_cn' type='astring' value='Manager'/>
+		    <propval name='admin_cn' type='astring' value='admin'/>
+		    <propval name='proxy_cn' type='astring' value='proxyagent'/>
+		</property_group>
+
+		<property_group name='profile' type='application'>
+		    <property_group name='default' type='application'>
+			<propval name='server_list' type='astring' value='' />
+		        <propval name='search_base' type='astring' value='dc=example,dc=com' />
+		        <propval name='search_scope' type='astring' value='one' />
+		        <propval name='credential_level' type='astring' value='proxy' />
+		        <propval name='authentication_method' type='astring' value='tls:simple' />
+		        <property name='service_search_descriptor' type='astring'>
+			    <astring_list>
+                                <value_node value='' />
+			    </astring_list>
+		        </property>
+			<propval name='value_authorization' type='astring'
+			    value='solaris.smf.value.name-service.ldap.server' />	
+		    </property_group>
+		</property_group>
+
+		<template>
+		    <common_name>
+			<loctext xml:lang='C'>
+			    slapd - OpenLDAP LDAP server
+			</loctext>
+		    </common_name>
+		    <description>
+		        <loctext xml:lang='C'>
+			    OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
+		        </loctext>
+		    </description>
+		    <documentation>
+			<manpage title='slapd' section='8oldap'
+			    manpath='/usr/share/man' />
+			<doc_link name='openldap.org'
+			    uri='http://www.openldap.org' />
+		    </documentation>
+
+		    <pg_pattern name='config' type='application'
+		        target='this' required='true'>
+		        <description> <loctext xml:lang='C'>
+		            LDAP Name Service configuration data.
+		        </loctext> </description>
+		        <prop_pattern name='urls' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Hostname and Port
+		            </loctext> </description>
+		            <cardinality min='1'/>
+		        </prop_pattern>
+		    </pg_pattern>
+				
+		    <pg_pattern name='cred' type='application'
+		        target='this' required='true'>
+		        <description> <loctext xml:lang='C'>
+		            LDAP Name Service credential data.
+		        </loctext> </description>
+		        <prop_pattern name='backend_passwd' type='astring'
+		            required='true'>
+		        <description> <loctext xml:lang='C'>
+		            Backend Password
+		        </loctext> </description>
+		        <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='admin_passwd' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Admin Password
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='proxy_passwd' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Proxy Password
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='backend_cn' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Backend Common Name
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='admin_cn' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Admin Common Name
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='proxy_cn' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Proxy Common Name
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		    </pg_pattern>
+				
+		    <pg_pattern name='profile' type='application'
+		        target='this' required='true'>
+		        <description> <loctext xml:lang='C'>
+		            LDAP Name Service profile data.
+		        </loctext> </description>
+		    </pg_pattern>
+		    <pg_pattern name='default' type='application'
+		        target='this' required='false'>
+		        <description> <loctext xml:lang='C'>
+		            LDAP Name Service default profile data.
+		        </loctext> </description>
+		        <prop_pattern name='server_list' type='astring'
+		            required='false'>
+		            <description> <loctext xml:lang='C'>
+		                Server List
+		            </loctext> </description>
+		            <cardinality min='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='search_base' type='astring'
+		            required='true'>
+		            <description> <loctext xml:lang='C'>
+		                Search Base
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		        </prop_pattern>
+		        <prop_pattern name='search_scope' type='astring'
+		            required='false'>
+		            <description> <loctext xml:lang='C'>
+		                Search Scope
+		            </loctext> </description>
+		            <cardinality min='1' max='1'/>
+		            <constraints>
+		                <value name='base'>
+		                <description> <loctext xml:lang='C'>
+		                    Search base DN
+		                </loctext> </description>
+		                </value>
+		                <value name='one'>
+		                <description> <loctext xml:lang='C'>
+		                    Search one-level
+		                </loctext> </description>
+		                </value>
+		                <value name='sub'>
+		                <description> <loctext xml:lang='C'>
+		                    Search Subtree
+		                </loctext> </description>
+		                </value>
+		            </constraints>
+		            <choices>
+		                <value name='base'/>
+		                <value name='one'/>
+		                <value name='sub'/>
+		            </choices>
+		        </prop_pattern>
+		        <prop_pattern name='credential_level' type='astring'
+		            required='false'>
+		            <description> <loctext xml:lang='C'>
+		                Credential Level(s)
+		            </loctext> </description>
+		            <cardinality min='1'/>
+		            <constraints>
+		                <value name='anonymous'>
+		                    <description> <loctext xml:lang='C'>
+		                        Anonymous - No bind
+		                    </loctext> </description>
+		                </value>
+		                <value name='proxy'>
+		                    <description> <loctext xml:lang='C'>
+		                        Proxy - Bind with auth method and credentials
+		                    </loctext> </description>
+		                </value>
+		                <value name='self'>
+		                    <description> <loctext xml:lang='C'>
+		                        Self - Bind using Kerberos credentials (sasl/GSSAPI)
+		                    </loctext> </description>
+		                </value>
+		            </constraints>
+		            <choices>
+		            <value name='anonymous'/>
+		                <value name='proxy'/>
+		                <value name='self'/>
+		            </choices>
+		        </prop_pattern>
+		        <prop_pattern name='authentication_method' type='astring'
+		            required='false'>
+		            <description> <loctext xml:lang='C'>
+		                Authentication Method(s)
+		            </loctext> </description>
+		            <cardinality min='1'/>
+		            <constraints>
+		                <value name='none'>
+		                    <description> <loctext xml:lang='C'>
+		                        no authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='simple'>
+		                    <description> <loctext xml:lang='C'>
+		                        simple authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/CRAM-MD5'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/CRAM-MD5 authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/DIGEST-MD5'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/DIGEST-MD5 authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/DIGEST-MD5:auth-int'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/DIGEST-MD5:auth-int authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/DIGEST-MD5:auth-conf'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/DIGEST-MD5:auth-conf authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/EXTERNAL'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/EXTERNAL authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='sasl/GSSAPI'>
+		                    <description> <loctext xml:lang='C'>
+		                        sasl/GSSAPI authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:none'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:none authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:simple'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:simple authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/CRAM-MD5'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/CRAM-MD5 authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/DIGEST-MD5'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/DIGEST-MD5 authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/DIGEST-MD5:auth-int'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/DIGEST-MD5:auth-int authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/DIGEST-MD5:auth-conf'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/DIGEST-MD5:auth-conf authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/EXTERNAL'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/EXTERNAL authentication
+		                    </loctext> </description>
+		                </value>
+		                <value name='tls:sasl/GSSAPI'>
+		                    <description> <loctext xml:lang='C'>
+		                        tls:sasl/GSSAPI authentication
+		                    </loctext> </description>
+		                </value>
+		            </constraints>
+		            <choices>
+		                <value name='none'/>
+		                <value name='simple'/>
+		                <value name='sasl/CRAM-MD5'/>
+		                <value name='sasl/DIGEST-MD5'/>
+		                <value name='sasl/DIGEST-MD5:auth-int'/>
+		                <value name='sasl/DIGEST-MD5:auth-conf'/>
+		                <value name='sasl/EXTERNAL'/>
+		                <value name='sasl/GSSAPI'/>
+		                <value name='tls:none'/>
+		                <value name='tls:simple'/>
+		                <value name='tls:sasl/CRAM-MD5'/>
+		                <value name='tls:sasl/DIGEST-MD5'/>
+		                <value name='tls:sasl/DIGEST-MD5:auth-int'/>
+		                <value name='tls:sasl/DIGEST-MD5:auth-conf'/>
+		                <value name='tls:sasl/EXTERNAL'/>
+		                <value name='tls:sasl/GSSAPI'/>
+		            </choices>
+		        </prop_pattern>
+		        <prop_pattern name='service_search_descriptor' type='astring'
+		            required='false'>
+		            <description> <loctext xml:lang='C'>
+		                Service Search Descriptor(s)
+		            </loctext> </description>
+		            <cardinality min='1'/>
+		        </prop_pattern>
+		    </pg_pattern>
+		</template>
 	</instance>
 
-        <stability value='Evolving' />
+	<stability value='Evolving' />
 </service>
 
 </service_bundle>

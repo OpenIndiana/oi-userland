@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
-COMPONENT_VERSION=	2.4.30
+COMPONENT_VERSION=	2.4.44
 COMPONENT_PROJECT_URL=	http://www.openldap.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fc013e528616f8578d9f221409c48af9b8937a62005e0bec88f6f1c4c8ff3d81
+    sha256:d7de6bf3c67009c95525dde3a0212cc110d0a70b92af2af8e3ee800e81b88400
 COMPONENT_ARCHIVE_URL=	ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/openldap
 
-TPNO=			5295
+TPNO=			27074
 
 SDFVER=			sdf-2.001
 SDFBLIB=		$(BUILD_DIR_32)/${SDFVER}/blib
@@ -64,9 +64,11 @@ COMPONENT_PRE_BUILD_ACTION = \
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC) $(studio_NORUNPATH)
 
+LINT_FLAGS += -Iinclude
+
 CONFIGURE_ENV += "ac_cv_lib_net_main=no"
-CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
-CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"
+CONFIGURE_ENV += "ac_cv_lib_net_socket=no"
+CONFIGURE_ENV += "ac_cv_lib_inet_socket=no"
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIB.$(BITS))
@@ -78,8 +80,9 @@ CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-crypt
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-bdb
-CONFIGURE_OPTIONS += --enable-hdb
+CONFIGURE_OPTIONS += --disable-bdb
+CONFIGURE_OPTIONS += --disable-hdb
+CONFIGURE_OPTIONS += --enable-mdb
 CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-passwd	 
 CONFIGURE_OPTIONS += --enable-shell
@@ -120,7 +123,6 @@ COMPONENT_POST_BUILD_ACTION += \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html guide.sdf; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html index.sdf)
 
-REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os

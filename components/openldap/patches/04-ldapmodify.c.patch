@@ -1,0 +1,16 @@
+Fixes problem with ldapmodify doesn't operate as expected due to solaris renaming.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.44/clients/tools/ldapmodify.c.old	Tue Dec  1 15:57:11 2015
++++ openldap-2.4.44/clients/tools/ldapmodify.c	Tue Dec  1 15:58:52 2015
+@@ -252,7 +252,8 @@
+ 	prog = lutil_progname( "ldapmodify", argc, argv );
+ 
+ 	/* strncmp instead of strcmp since NT binaries carry .exe extension */
+-	ldapadd = ( strncasecmp( prog, "ldapadd", sizeof("ldapadd")-1 ) == 0 );
++	ldapadd = ( strncasecmp( prog, "ldapadd", sizeof("ldapadd")-1 ) == 0
++		|| strncasecmp( prog, "openldapadd", sizeof("openldapadd")-1 ) == 0 );
+ 
+ 	tool_init( ldapadd ? TOOL_ADD : TOOL_MODIFY );
+ 
