@@ -9,14 +9,13 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
-COMPONENT_VERSION=	0.26.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.28.2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte
@@ -24,8 +23,8 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f02c350340266c9515a98b8f69c72b4bdc53b352cd053624a63a7cb97ddec9bd
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.26/$(COMPONENT_ARCHIVE)
+    sha256:8d04e202b617373dfb47689e5e628febe2c58840b34cccc4af4feb88c48df903
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.28/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -43,15 +42,22 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
-# common targets
-build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
+COMPONENT_POST_INSTALL_ACTION = (mv -f $(PROTO_DIR)/usr/lib/python2.6/site-packages/gtk-2.0/vtemodule.so \
+	$(PROTO_DIR)/usr/lib/python2.6/site-packages/gtk-2.0/vtemodule-$(BITS).so)
+
+# common targets
+
+$(INSTALL_32):	$(INSTALL_64)
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
