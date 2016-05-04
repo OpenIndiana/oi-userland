@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libfuse
 COMPONENT_VERSION= 	20100615
 IPS_COMPONENT_VERSION=	2.7.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_SUMMARY=	FUSE stands for 'File system in User Space'. It provides a simple interface to allow implementation of a fully functional file system in user-space.
