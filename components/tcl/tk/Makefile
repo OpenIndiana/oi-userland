@@ -26,18 +26,20 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tk
-COMPONENT_VERSION=	8.5.12
+COMPONENT_VERSION=	8.5.19
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tk/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c453d820925bf526bbe8a0d1c17ab3168b076fcb9844bea797ad75e3b9ad9291
+    sha256:407af1de167477d598bd6166d84459a3bdccc2fb349360706154e646a9620ffa
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libtk
+COMPONENT_LICENSE=	BSD-like
+COMPONENT_LICENSE_FILE=	license.terms
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D)/unix ; autoreconf -f)
@@ -45,8 +47,8 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#This macro will help to look for the configure 
-#file at the pointed location 
+#This macro will help to look for the configure
+#file at the pointed location
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(XPG6MODE) -std=c99
@@ -63,9 +65,9 @@ COMPONENT_TEST_TARGETS = test
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tkConfig.sh 
+install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tkConfig.sh
 
-$(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)  
+$(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)
 				sed -f $(COMPONENT_DIR)/files/tksed $(PROTOUSRLIBDIR)/tkConfig.sh > \
 					$(PROTOUSRLIBDIR)/tkConfig.sh.new
 				$(MV) $(PROTOUSRLIBDIR)/tkConfig.sh.new $(PROTOUSRLIBDIR)/tkConfig.sh
@@ -82,4 +84,4 @@ $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
