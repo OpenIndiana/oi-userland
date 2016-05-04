@@ -116,3 +116,4 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/dtrace
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/management/snmp/net-snmp-57
