@@ -143,8 +143,6 @@ CONFIGURE_ENV     +=	ASCIIDOC_VERBOSE="-v"
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-# Temporary ordering for tests
-$(BUILD_32): $(BUILD_64)
 
 build: $(BUILD_32_and_64)
 
