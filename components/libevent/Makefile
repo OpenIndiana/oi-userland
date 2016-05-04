@@ -26,16 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
-COMPONENT_VERSION=	1.4.14b
-IPS_COMPONENT_VERSION=	1.4.14.2
+COMPONENT_VERSION=	2.0.22
 COMPONENT_PROJECT_URL=	http://monkey.org/~provos/libevent/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:afa61b476a222ba43fc7cca2d24849ab0bbd940124400cb699915d3c60e46301
-COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
+    sha256:71c2c49f0adadacfdbe6332a372c38cf9c8b7895bb73dabeaa53cdcc1d4e1fa3
+COMPONENT_ARCHIVE_URL=	http://github.com/libevent/libevent/releases/download/release-$(COMPONENT_VERSION)-stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libevent
 
-TPNO=			5581
+TPNO=			27840	
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,6 +48,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 #
 # /usr/bin/event_rpcgen.py
 
+CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --disable-static
 
 COMPONENT_TEST_TARGETS =	verify
@@ -60,3 +60,10 @@ COMPONENT_TEST_TRANSFORMS += \
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/cp test.sh test-script.sh/d" '
+
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

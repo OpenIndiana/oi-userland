@@ -1,0 +1,15 @@
+Fixes test failures.  
+In house patch. 
+
+--- a/evthread_pthread.c	2016-04-21 10:00:00.404456451 -0700
++++ b/evthread_pthread.c	2016-04-21 10:01:55.930683110 -0700
+@@ -91,9 +91,7 @@ evthread_posix_get_id(void)
+ 		unsigned long id;
+ #endif
+ 	} r;
+-#if _EVENT_SIZEOF_PTHREAD_T < _EVENT_SIZEOF_LONG
+ 	memset(&r, 0, sizeof(r));
+-#endif
+ 	r.thr = pthread_self();
+ 	return (unsigned long)r.id;
+ }

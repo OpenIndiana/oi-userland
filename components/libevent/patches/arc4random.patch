@@ -1,0 +1,25 @@
+Function needs extern keyword. 
+In house patch. 
+
+--- a/arc4random.c    2016-03-01 09:29:36.602447178 -0800
++++ b/arc4random.c    2016-03-01 10:17:51.627857034 -0800
+@@ -445,8 +445,8 @@ arc4random_stir(void)
+ #endif
+
+ #ifndef ARC4RANDOM_NOADDRANDOM
+-ARC4RANDOM_EXPORT void
+-arc4random_addrandom(const unsigned char *dat, int datlen)
++extern void
++arc4random_addrandom(uchar_t *dat, size_t datlen)
+ {
+        int j;
+        _ARC4_LOCK();
+@@ -477,7 +477,7 @@ arc4random(void)
+ }
+ #endif
+
+-ARC4RANDOM_EXPORT void
++extern void
+ arc4random_buf(void *_buf, size_t n)
+ {
+        unsigned char *buf = _buf;
