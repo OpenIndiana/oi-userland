@@ -24,38 +24,31 @@
 #
 # 32-bit preferred as only *-config and source generation scripts delivered.
 BUILD_BITS= 32_and_64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		wxwidgets
-COMPONENT_VERSION=	2.8.12
-COMPONENT_SRC_NAME=	wxGTK
+COMPONENT_NAME=		wxWidgets
+COMPONENT_VERSION=	3.0.2
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
+    sha256:346879dc554f3ab8d6da2704f651ecb504a22e9d31c17ef5449b129ed711585d
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
 COMPONENT_BUGDB=	library/wxwidgets
 
-TPNO=			9216
+TPNO=			28307
 
-BUILD_32_and_64 += $(BUILD_DIR_32)/contrib/.built \
-	$(BUILD_DIR_64)/contrib/.built
-INSTALL_32_and_64 += $(BUILD_DIR_32)/contrib/.installed \
-	$(BUILD_DIR_64)/contrib/.installed
+CXXFLAGS += -std=c++11
+
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
-# get rid of compiler path set in RUNPATH
-LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
-LDFLAGS += $(studio_CXXLIB_CSTD)
 
-CONFIGURE_OPTIONS += --with-gtk
-CONFIGURE_OPTIONS += --enable-gtk2
-CONFIGURE_OPTIONS += --enable-unicode
+CONFIGURE_OPTIONS += --with-gtk=2
 CONFIGURE_OPTIONS += --enable-mimetype
-CONFIGURE_OPTIONS += --enable-gui
 CONFIGURE_OPTIONS += --enable-xrc
 CONFIGURE_OPTIONS += --with-subdirs
 CONFIGURE_OPTIONS += --with-expat
@@ -65,30 +58,25 @@ CONFIGURE_OPTIONS += --without-gnomevfs
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --without-libmpack
 
-# I want to use userland's "build" target in contrib subdirectory, but I need
-# to skip the configure phase
-$(BUILD_DIR_32)/contrib/.configured \
-$(BUILD_DIR_64)/contrib/.configured:
-	$(TOUCH) $@
-
 ASLR_MODE =   $(ASLR_ENABLE)
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxcursor
-REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxxf86vm

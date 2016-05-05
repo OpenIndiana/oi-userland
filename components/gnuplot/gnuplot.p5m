@@ -38,7 +38,7 @@ set name=org.opensolaris.arc-caseid value=PSARC/2009/395
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
-file path=usr/bin/gnuplot mode=555
+file path=usr/bin/gnuplot mode=555 pkg.depend.bypass-generate=.*wx.*
 file path=usr/demo/gnuplot/1.dat
 file path=usr/demo/gnuplot/2.dat
 file path=usr/demo/gnuplot/3.dat
@@ -265,3 +265,8 @@ depend type=require fmri=__TBD \
     pkg.debug.depend.file=usr/share/fonts/TrueType/liberation/LiberationSans-Regular.ttf
 depend type=require fmri=__TBD \
     pkg.debug.depend.file=usr/share/fonts/X11/Type1/cour.pfa
+
+# Temporary enforce dependency on wxwidgets package before wxWidgets 3.0
+# gets into repo and bypass-generate rule can be removed from gnuplot
+# line above.
+depend type=require fmri=pkg:/library/graphics/wxwidgets

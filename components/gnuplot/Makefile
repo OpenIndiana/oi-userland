@@ -23,6 +23,7 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 #libreadline.so needs libcurses.so, but -z ignore will not leave a dependency.
 LD_Z_IGNORE=
@@ -39,6 +40,16 @@ COMPONENT_BUGDB=	utility/gnuplot
 
 TPNO=			8452
 
+CXXFLAGS += -std=c++11
+
+# For now we will build against wxWidgets from this workspace and not
+# against the system one (which is older).
+# See also WX_CONFIG setting below.
+WX_PROTO=$(COMPONENT_DIR)/../wxwidgets/build/prototype/$(MACH)
+CXXFLAGS += -I$(WX_PROTO)$(USRLIBDIR64)/wx/include/gtk2-unicode-3.0
+CXXFLAGS += -I$(WX_PROTO)$(USRINCDIR)/wx-3.0
+LDFLAGS += -L$(WX_PROTO)$(USRLIBDIR64)
+
 COMPONENT_BUILD_TARGETS = all info
 
 include $(WS_MAKE_RULES)/common.mk
@@ -47,7 +58,12 @@ CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS  += WX_CONFIG="$(USRBINDIR64)/wx-config"
+CONFIGURE_OPTIONS  += WX_CONFIG="$(WX_PROTO)$(USRLIBDIR64)/wx/config/gtk2-unicode-3.0"
+
+# Ensure that wxWidgets are built first.
+../wxwidgets/build/$(MACH64)/.installed:
+	(cd ../wxwidgets ; $(GMAKE) install)
+$(CONFIGURE_64): ../wxwidgets/build/$(MACH64)/.installed
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -67,7 +83,8 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/font/truetype/liberation
 REQUIRED_PACKAGES += system/font/xorg/xorg-core
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math

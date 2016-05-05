@@ -1,0 +1,40 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Workaround for:
+
+23234483 - some functions are not exported in default C++ namespace in wchar.h
+
+--- wxWidgets-3.0.2/include/wx/wxcrtbase.h
++++ wxWidgets-3.0.2/include/wx/wxcrtbase.h
+@@ -180,7 +180,7 @@
+         !(defined(__CYGWIN__) || defined(__WX_STRICT_ANSI_GCC__))
+     #define wxCRT_StrdupW _wcsdup
+ #elif defined(HAVE_WCSDUP)
+-    #define wxCRT_StrdupW wcsdup
++    #define wxCRT_StrdupW std::wcsdup
+ #endif
+ 
+ #ifdef wxHAVE_TCHAR_SUPPORT
+@@ -238,7 +238,7 @@
+ #endif
+ 
+ #ifdef HAVE_WCSNLEN
+-    #define wxCRT_StrnlenW  wcsnlen
++    #define wxCRT_StrnlenW  std::wcsnlen
+ #endif
+ 
+ /* define wxCRT_StricmpA/W and wxCRT_StrnicmpA/W for various compilers */
+@@ -262,10 +262,10 @@
+     #define wxCRT_StrnicmpW _wcsnicmp
+ #elif defined(__UNIX__)
+     #ifdef HAVE_WCSCASECMP
+-        #define wxCRT_StricmpW wcscasecmp
++        #define wxCRT_StricmpW std::wcscasecmp
+     #endif
+     #ifdef HAVE_WCSNCASECMP
+-        #define wxCRT_StrnicmpW wcsncasecmp
++        #define wxCRT_StrnicmpW std::wcsncasecmp
+     #endif
+ /* #else -- use wxWidgets implementation */
+ #endif
