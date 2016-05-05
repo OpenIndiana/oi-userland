@@ -1,0 +1,28 @@
+--- php-5.6.15/ext/ldap/config.m4.~1~	2015-10-29 12:55:01.000000000 +0300
++++ php-5.6.15/ext/ldap/config.m4	2015-11-05 09:18:42.116272308 +0300
+@@ -3,9 +3,9 @@
+ dnl
+
+ AC_DEFUN([PHP_LDAP_CHECKS], [
+-  if test -f $1/include/ldap.h; then
++  if test -f $1/include/openldap/ldap.h; then
+     LDAP_DIR=$1
+-    LDAP_INCDIR=$1/include
++    LDAP_INCDIR=$1/include/openldap
+     LDAP_LIBDIR=$1/$PHP_LIBDIR
+   elif test -f $1/include/umich-ldap/ldap.h; then
+     LDAP_DIR=$1
+@@ -119,10 +119,10 @@
+
+   if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME; then
+     PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++    PHP_ADD_LIBRARY_WITH_PATH(ldap-2.4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+
+-  elif test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/libldap.3.dylib; then
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++  elif test -f $LDAP_LIBDIR/libldap-2.4.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/libldap.3.dylib; then
++    PHP_ADD_LIBRARY_WITH_PATH(ldap-2.4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+
+   elif test -f $LDAP_LIBDIR/libssldap50.$SHLIB_SUFFIX_NAME; then
+     if test -n "$LDAP_PTHREAD"; then

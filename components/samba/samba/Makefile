@@ -44,12 +44,12 @@ export PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.1.23
+COMPONENT_VERSION=	4.2.12
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2c33291bf5454ba05e8b5fdc2c57ee010cf44d077e57a307ad2e7be9fac27cd2
+COMPONENT_ARCHIVE_HASH= sha256:b334a86a92a1c2759c0b3dce20965e7fe820f0abafee38e6fd82eb9c5cd80514
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -121,12 +121,11 @@ CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
 CONFIGURE_OPTIONS +=	--sharedstatedir=/var/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/samba
 
-CONFIGURE_OPTIONS +=	--with-static-modules=
-CONFIGURE_OPTIONS.32 +=	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex,vfs_solarisacl
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
+CONFIGURE_OPTIONS.32 +=	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS.64 +=	--with-shared-modules=idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
-CONFIGURE_OPTIONS +=	--enable-nss-wrapper
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 #CONFIGURE_OPTIONS +=	--with-system-mitkrb5
@@ -135,7 +134,7 @@ CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 CONFIGURE_OPTIONS +=	--nocache
 CONFIGURE_OPTIONS +=	--nopyo
 CONFIGURE_OPTIONS +=	--disable-rpath
-CONFIGURE_OPTIONS +=	--disable-gnutls
+#CONFIGURE_OPTIONS +=	--disable-gnutls
 CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
 
 #CONFIGURE_OPTIONS.32 +=	--with-samfs=$(PROTO_DIR)/opt/SUNWsamfs/lib

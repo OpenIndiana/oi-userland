@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtksourceview
 COMPONENT_VERSION=	2.10.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GtkSourceView
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -1,0 +1,162 @@
+From d9c44a1bca6f053bebcdf9eb185fbe09fd11f19e Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:38:19 -0700
+Subject: [PATCH 16/34] Enable login to a role if PAM is ok with it
+
+---
+ auth-pam.c        | 14 ++++++++++++++
+ auth-pam.h        |  3 +++
+ auth.h            |  3 +++
+ auth2-hostbased.c | 10 ++++++++++
+ auth2.c           |  8 ++++++++
+ monitor.c         | 15 ++++++++++++++-
+ 6 files changed, 52 insertions(+), 1 deletion(-)
+
+diff --git a/auth-pam.c b/auth-pam.c
+index 4ca0a58..d049779 100644
+--- a/auth-pam.c
++++ b/auth-pam.c
+@@ -1039,6 +1039,20 @@ do_pam_account(void)
+ 	return (sshpam_account_status);
+ }
+ 
++#ifdef HAVE_PAM_AUSER
++void
++do_pam_set_auser(const char* auser)
++{
++	if (auser != NULL) {
++		debug("PAM: setting PAM_AUSER to \"%s\"", auser);
++		sshpam_err = pam_set_item(sshpam_handle, PAM_AUSER, auser);
++		if (sshpam_err != PAM_SUCCESS)
++			error("PAM: failed to set PAM_AUSER: %s",
++			    pam_strerror(sshpam_handle, sshpam_err));
++	}
++}
++#endif
++
+ void
+ do_pam_set_tty(const char *tty)
+ {
+diff --git a/auth-pam.h b/auth-pam.h
+index a1a2b52..6c41fd9 100644
+--- a/auth-pam.h
++++ b/auth-pam.h
+@@ -35,6 +35,9 @@ void start_pam(Authctxt *);
+ void finish_pam(void);
+ u_int do_pam_account(void);
+ void do_pam_session(void);
++#ifdef HAVE_PAM_AUSER
++void do_pam_set_auser(const char *);
++#endif
+ void do_pam_set_tty(const char *);
+ void do_pam_setcred(int );
+ void do_pam_chauthtok(void);
+diff --git a/auth.h b/auth.h
+index 985053c..6883f16 100644
+--- a/auth.h
++++ b/auth.h
+@@ -84,6 +84,9 @@ struct Authctxt {
+ #ifdef PAM_ENHANCEMENT
+         char            *authmethod_name;
+ #endif 
++#ifdef HAVE_PAM_AUSER
++	char		*auser;
++#endif 
+ };
+ /*
+  * Every authentication method has to handle authentication requests for
+diff --git a/auth2-hostbased.c b/auth2-hostbased.c
+index e2327cf..c0fcc4d 100644
+--- a/auth2-hostbased.c
++++ b/auth2-hostbased.c
+@@ -85,6 +85,9 @@ userauth_hostbased(Authctxt *authctxt)
+ 	buffer_dump(&b);
+ 	buffer_free(&b);
+ #endif
++#ifdef HAVE_PAM_AUSER
++	authctxt->auser = NULL;
++#endif
+ 	pktype = key_type_from_name(pkalg);
+ 	if (pktype == KEY_UNSPEC) {
+ 		/* this is perfectly legal */
+@@ -142,6 +145,13 @@ userauth_hostbased(Authctxt *authctxt)
+ 			buffer_len(&b))) == 1)
+ 		authenticated = 1;
+ 
++#ifdef HAVE_PAM_AUSER
++	if (authenticated) {
++		authctxt->auser = cuser;
++		cuser = NULL;
++	}
++#endif
++
+ 	buffer_free(&b);
+ done:
+ 	debug2("userauth_hostbased: authenticated %d", authenticated);
+diff --git a/auth2.c b/auth2.c
+index 5a3ef1b..b456237 100644
+--- a/auth2.c
++++ b/auth2.c
+@@ -339,6 +339,14 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+ #endif
+ 	}
+ 
++#ifdef HAVE_PAM_AUSER
++	if (!use_privsep) {
++		do_pam_set_auser(authctxt->auser);
++		free(authctxt->auser);
++		authctxt->auser = NULL;	
++	}
++#endif
++
+ 	if (authenticated && options.num_auth_methods != 0) {
+ 
+ #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
+diff --git a/monitor.c b/monitor.c
+index dc3e7bf..ef6b45b 100644
+--- a/monitor.c
++++ b/monitor.c
+@@ -460,6 +460,12 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+ 		}
+ 	}
+ 
++#if defined(HAVE_PAM_AUSER) && defined(USE_PAM)
++	if (hostbased_cuser != NULL) {
++		free(hostbased_cuser);
++		hostbased_cuser = NULL;
++	}
++#endif
+ 	if (!authctxt->valid)
+ 		fatal("%s: authenticated invalid user", __func__);
+ 	if (strcmp(auth_method, "unknown") == 0)
+@@ -688,12 +694,14 @@ monitor_reset_key_state(void)
+ {
+ 	/* reset state */
+ 	free(key_blob);
++#if !defined(HAVE_PAM_AUSER) || !defined(USE_PAM)
+ 	free(hostbased_cuser);
++	hostbased_cuser = NULL;
++#endif
+ 	free(hostbased_chost);
+ 	key_blob = NULL;
+ 	key_bloblen = 0;
+ 	key_blobtype = MM_NOKEY;
+-	hostbased_cuser = NULL;
+ 	hostbased_chost = NULL;
+ }
+ 
+@@ -1143,6 +1151,11 @@ mm_answer_pam_account(int sock, Buffer *m)
+ 	if (!options.use_pam)
+ 		fatal("UsePAM not set, but ended up in %s anyway", __func__);
+ 
++#ifdef HAVE_PAM_AUSER
++	if (hostbased_cuser != NULL)
++		do_pam_set_auser(hostbased_cuser);
++#endif
++
+ 	ret = do_pam_account();
+ 
+ 	buffer_put_int(m, ret);
+-- 
+2.5.4 (Apple Git-61)
+

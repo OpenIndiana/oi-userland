@@ -1,0 +1,51 @@
+From d383529c65321d6c0fa10230b3d3f05941fd20eb Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Wed, 5 Aug 2015 12:25:15 -0700
+Subject: [PATCH 23/34] Try to create privsep chroot dir if it doesn't exist
+ yet
+
+---
+ sshd.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/sshd.c b/sshd.c
+index f34d804..a912c1c 100644
+--- a/sshd.c
++++ b/sshd.c
+@@ -1917,11 +1917,30 @@ main(int ac, char **av)
+ 
+ 	if (use_privsep) {
+ 		struct stat st;
++		int rc;
+ 
+ 		if ((stat(_PATH_PRIVSEP_CHROOT_DIR, &st) == -1) ||
+-		    (S_ISDIR(st.st_mode) == 0))
+-			fatal("Missing privilege separation directory: %s",
+-			    _PATH_PRIVSEP_CHROOT_DIR);
++		    (S_ISDIR(st.st_mode) == 0)) {
++			rc = mkdir(_PATH_PRIVSEP_CHROOT_DIR, 0755);
++			if (rc == 0) {
++				/*
++				 * If mkdir works, try stat again, so the
++				 * permissions check below can work.
++				 */
++				rc = stat(_PATH_PRIVSEP_CHROOT_DIR, &st);
++				if (rc == 0 && S_ISDIR(st.st_mode) == 0) {
++					rc = -1;
++					errno = ENOTDIR;
++				}
++			}
++
++			if (rc != 0) {
++				fatal("Failed to create privilege separation "
++				    "directory %s: %s",
++				    _PATH_PRIVSEP_CHROOT_DIR,
++				    strerror(errno));
++			}
++		}
+ 
+ #ifdef HAVE_CYGWIN
+ 		if (check_ntsec(_PATH_PRIVSEP_CHROOT_DIR) &&
+-- 
+2.5.4 (Apple Git-61)
+
