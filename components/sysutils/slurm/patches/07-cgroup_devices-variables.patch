@@ -1,0 +1,38 @@
+--- slurm-16.05.4/src/plugins/task/cgroup/task_cgroup_devices.c.orig	2016-08-14 05:22:25.069856197 +0200
++++ slurm-16.05.4/src/plugins/task/cgroup/task_cgroup_devices.c	2016-08-14 05:22:32.643839876 +0200
+@@ -432,7 +432,7 @@
+ 				int lines)
+ {
+ 
+-	int k, major, minor;
++	int k, nmajor, nminor;
+ 	char str1[256], str2[256];
+ 	struct stat fs;
+ 
+@@ -443,20 +443,20 @@
+ 	}
+ 	for (k = 0; k < lines; k++) {
+ 		stat(dev_path[k], &fs);
+-		major = (int)major(fs.st_rdev);
+-		minor = (int)minor(fs.st_rdev);
++		nmajor = (int)major(fs.st_rdev);
++		nminor = (int)minor(fs.st_rdev);
+ 		debug3("device : %s major %d, minor %d\n",
+-			dev_path[k], major, minor);
++			dev_path[k], nmajor, nminor);
+ 		memset(str1, 0, sizeof(str1));
+ 		if (S_ISBLK(fs.st_mode)) {
+-			sprintf(str1, "b %d:", major);
++			sprintf(str1, "b %d:", nmajor);
+ 			//info("device is block ");
+ 		}
+ 		if (S_ISCHR(fs.st_mode)) {
+-			sprintf(str1, "c %d:", major);
++			sprintf(str1, "c %d:", nmajor);
+ 			//info("device is character ");
+ 		}
+-		sprintf(str2, "%d rwm", minor);
++		sprintf(str2, "%d rwm", nminor);
+ 		strcat(str1, str2);
+ 		dev_major[k] = xstrdup((char *)str1);
+ 	}

@@ -1,0 +1,13 @@
+--- ./src/srun/srun_pty.c.orig	2016-05-05 22:35:16.801590759 +0200
++++ ./src/srun/srun_pty.c	2016-05-05 22:35:50.131117366 +0200
+@@ -50,6 +50,10 @@
+ #include <sys/ioctl.h>
+ #include <poll.h>
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <termios.h>
++#endif
++
+ #include "slurm/slurm_errno.h"
+ 
+ #include "src/common/log.h"

@@ -1,0 +1,13 @@
+--- slurm-16.05.4/src/slurmd/slurmstepd/task.c.orig	2016-08-14 05:54:53.275322064 +0200
++++ slurm-16.05.4/src/slurmd/slurmstepd/task.c	2016-08-14 05:55:41.973613518 +0200
+@@ -77,6 +77,10 @@
+ #define HAVE_EACCESS 1
+ #endif
+ 
++#if defined(__sun__)
++#include <limits.h>
++#endif
++
+ #include "slurm/slurm_errno.h"
+ 
+ #include "src/common/checkpoint.h"

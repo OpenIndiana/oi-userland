@@ -1,0 +1,18 @@
+--- ./src/sattach/sattach.c.orig	2016-05-05 21:15:39.224377588 +0200
++++ ./src/sattach/sattach.c	2016-05-05 21:22:38.893019342 +0200
+@@ -189,7 +189,15 @@
+ 		tcgetattr(fd, &termdefaults);
+ 		tcgetattr(fd, &term);
+ 		/* Set raw mode on local tty */
++#if defined(__sun) && defined(__SVR4)
++		term.c_iflag &= ~(IMAXBEL|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
++		term.c_oflag &= ~OPOST;
++		term.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
++		term.c_cflag &= ~(CSIZE|PARENB);
++		term.c_cflag |= CS8;
++#else
+ 		cfmakeraw(&term);
++#endif
+ 		tcsetattr(fd, TCSANOW, &term);
+ 		atexit(&_pty_restore);
+ 		xsignal_block(pty_sigarray);

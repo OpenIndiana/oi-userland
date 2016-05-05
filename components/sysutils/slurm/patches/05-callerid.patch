@@ -1,0 +1,14 @@
+--- ./src/common/callerid.c.orig	2016-05-05 20:43:58.976735863 +0200
++++ ./src/common/callerid.c	2016-05-05 20:49:50.808998633 +0200
+@@ -61,6 +61,11 @@
+ #define s6_addr32 __u6_addr.__u6_addr32
+ #endif
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <strings.h>
++#define s6_addr32 _S6_un._S6_u32
++#endif
++
+ #if HAVE_DIRENT_H
+ #  include <dirent.h>
+ #endif

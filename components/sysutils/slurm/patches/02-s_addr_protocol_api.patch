@@ -1,0 +1,40 @@
+--- ./src/common/slurm_protocol_api.c.orig	2016-05-05 18:19:06.063314231 +0200
++++ ./src/common/slurm_protocol_api.c	2016-05-05 18:26:56.897632426 +0200
+@@ -4598,13 +4598,14 @@
+ 
+ extern void slurm_setup_sockaddr(struct sockaddr_in *sin, uint16_t port)
+ {
+-	static uint32_t s_addr = NO_VAL;
++  // Clashes with macro defined common/netinet/in.h, line 281
++	static uint32_t this_s_addr = NO_VAL;
+ 
+ 	memset(sin, 0, sizeof(struct sockaddr_in));
+ 	sin->sin_family = AF_SLURM;
+ 	sin->sin_port = htons(port);
+ 
+-	if (s_addr == NO_VAL) {
++	if (this_s_addr == NO_VAL) {
+ 		/* On systems with multiple interfaces we might not
+ 		 * want to get just any address.  This is the case on
+ 		 * a Cray system with RSIP.
+@@ -4623,17 +4624,17 @@
+ 
+ 			if (!gethostname(host, MAXHOSTNAMELEN)) {
+ 				slurm_set_addr_char(sin, port, host);
+-				s_addr = sin->sin_addr.s_addr;
++				this_s_addr = sin->sin_addr.s_addr;
+ 			} else
+ 				fatal("slurm_setup_sockaddr: "
+ 				      "Can't get hostname or addr: %m");
+ 		} else
+-			s_addr = htonl(INADDR_ANY);
++			this_s_addr = htonl(INADDR_ANY);
+ 
+ 		xfree(topology_params);
+ 	}
+ 
+-	sin->sin_addr.s_addr = s_addr;
++	sin->sin_addr.s_addr = this_s_addr;
+ }
+ 
+ /* sock_bind_range()

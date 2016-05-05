@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<service_bundle type="manifest" name="slurm">
+				<service name="network/slurm" type="service" version="0">
+								<create_default_instance enabled="false"/>
+
+								<dependency name="network" grouping="require_all" restart_on="error" type="service">
+												<service_fmri value="svc:/milestone/network:default"/>
+								</dependency>
+
+								<dependency name="filesystem" grouping="require_all" restart_on="error" type="service">
+												<service_fmri value="svc:/system/filesystem/local"/>
+								</dependency>
+
+								<method_context>
+												<method_environment>
+																<envvar name="PATH" value="/usr/bin:/usr/sbin"/>
+												</method_environment>
+								</method_context>
+
+								<exec_method type="method" name="start" exec="/usr/sbin/slurmd -f %{config/config_file}" timeout_seconds="60">
+												<method_context>
+																<method_credential user='slurm' group='slurm' />
+												</method_context>
+								</exec_method>
+
+								<exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+
+								<property_group name='general' type='framework'>
+												<propval name='action_authorization' type='astring' value='solaris.smf.manage.slurm'/>
+												<propval name='value_authorization' type='astring' value='solaris.smf.value.slurm'/>	
+								</property_group>
+
+								<property_group name="startd" type="framework">
+												<propval name="duration" type="astring" value="contract"/>
+												<propval name="ignore_error" type="astring" value="core,signal"/>
+								</property_group>
+
+								<property_group name='config' type='application'>
+												<propval name="config_file" type='astring' value='/etc/slurm/slurm.conf'/>
+												<propval name='value_authorization' type='astring' value='solaris.smf.value.slurm'/>	
+								</property_group>
+
+								<stability value="Evolving"/>
+
+								<template>
+												<common_name>
+																<loctext xml:lang="C">Slurm</loctext>
+												</common_name>
+												<documentation>
+																<manpage title="slurmd" section="8" manpath="/usr/share/man"/>
+																<doc_link name="slurm.net" uri="http://slurm.net/index.php/manuals"/>
+												</documentation>
+								</template>
+				</service>
+</service_bundle>
