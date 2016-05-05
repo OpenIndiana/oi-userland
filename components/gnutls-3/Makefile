@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.4.6
+COMPONENT_VERSION=	3.4.9
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:feb559ed7fffa24d5aa40527054fae5cb7f7b66e9f2bebc2383a781dfa4d20ec
+    sha256:48594fadba33d450f796ec69526cf2bce6ff9bc3dc90fbd7bf38dc3601f57c3f
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnutls
 
-TPNO=			25396
+TPNO=			28117
 
 COMPONENT_BUILD_TARGETS = all info
 
@@ -262,7 +262,7 @@ CONFIGURE_OPTIONS.32 += --libexecdir=$(USRLIBDIR)/pkgconfig/$(COMPONENT_NAME)-3/
 CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR64)/pkgconfig/$(COMPONENT_NAME)-3/
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)/$(COMPONENT_NAME)-3/
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS += --enable-guile=no
+CONFIGURE_OPTIONS += --disable-guile
 CONFIGURE_OPTIONS += --with-included-libtasn1
 CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --disable-ecdhe
@@ -307,7 +307,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libidn
-REQUIRED_PACKAGES += library/libtasn1
 REQUIRED_PACKAGES += library/security/nettle
 REQUIRED_PACKAGES += library/security/trousers
 REQUIRED_PACKAGES += library/zlib
