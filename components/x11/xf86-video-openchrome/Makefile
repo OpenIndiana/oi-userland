@@ -68,7 +68,7 @@ COMPONENT_BUILD_ENV += \
         openchrome_drv_la_LDFLAGS_add='$(openchrome_drv_la_LDFLAGS_add)'
 
 # this is needed to set path for XvMC libraries
-# Disable as 32bit module is not installed in the right directory. 
+# Disable as 32bit module is not installed in the right directory.
 #CONFIGURE_LIBDIR.$(BITS) =   $(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 
 CONFIGURE_OPTIONS += --disable-dri
