@@ -11,13 +11,14 @@
 
 #
 # Copyright 2013 Andrzej Szeszo.  All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.3
-COMPONENT_REVISION=1
+COMPONENT_REVISION=2
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc
@@ -99,6 +100,7 @@ CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_ARCH)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
+CONFIGURE_OPTIONS+= --enable-install-libiberty
 
 # On SPARC systems, use Sun Assembler
 CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as

@@ -13,10 +13,11 @@
 # Copyright 2013 Andrzej Szeszo.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.8.5
+COMPONENT_REVISION=1
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.2
 MPC_NAME=mpc
@@ -59,9 +60,9 @@ COMPONENT_ARCHIVE_HASH_3= \
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -r $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC_BITS=
 CFLAGS=         -g -O2
@@ -98,6 +99,7 @@ CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_ARCH)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
+CONFIGURE_OPTIONS+= --enable-install-libiberty
 
 # On SPARC systems, use Sun Assembler
 CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
