@@ -1,0 +1,12 @@
+--- gst-plugins-base-1.8.1/gst/tcp/gstmultifdsink.c.orig	2016-09-05 18:52:34.896956799 +0200
++++ gst-plugins-base-1.8.1/gst/tcp/gstmultifdsink.c	2016-09-05 18:54:45.854211639 +0200
+@@ -118,6 +118,9 @@
+ #include <sys/stat.h>
+ #include <netinet/in.h>
+ 
++#if defined (__sun) && defined(__SVR4)
++#define HAVE_FIONREAD_IN_SYS_FILIO
++#endif
+ #ifdef HAVE_FIONREAD_IN_SYS_FILIO
+ #include <sys/filio.h>
+ #endif
