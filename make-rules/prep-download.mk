@@ -38,6 +38,12 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 URL_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
 		$(filter COMPONENT_ARCHIVE_URL_%, $(.VARIABLES)))
 
+# Argument to "userland-fetch" script that causes it to download and verify
+# files, but not to remove mismatches; good to save traffic when initially
+# fetching a new archive just to learn what checksum to expect in Makefile.
+#FETCH_KEEP ?= --keep
+FETCH_KEEP ?= 
+
 # Template for download rules.
 define download-rules
 ifdef COMPONENT_ARCHIVE_URL$(1)
@@ -45,10 +51,13 @@ ifdef COMPONENT_ARCHIVE_URL$(1)
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
 
+fetch::	FETCH_KEEP=--keep
+fetch::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
+
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
-	$$(FETCH) --file $$@ \
+	$$(FETCH) $$(FETCH_KEEP) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
 		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %) \
 		$$(COMPONENT_SIG_URL$(1):%=--sigurl %) \

@@ -1,0 +1,39 @@
+Process control functions rely on Linux /proc structure
+
+--- tracker-0.10.37/src/tracker-control/tracker-control-general.c.~1~	2011-12-02 13:50:04.000000000 +0400
++++ tracker-0.10.37/src/tracker-control/tracker-control-general.c	2016-04-14 02:23:06.632922445 +0300
+@@ -287,6 +287,7 @@
+ get_uid_for_pid (const gchar  *pid_as_string,
+                  gchar       **filename)
+ {
++#ifndef __sun__
+ 	GFile *f;
+ 	GFileInfo *info;
+ 	GError *error = NULL;
+@@ -320,6 +321,9 @@
+ 	g_object_unref (f);
+ 
+ 	return uid;
++#else 
++	return 0;
++#endif
+ }
+ 
+ void
+@@ -364,6 +368,7 @@
+ 		kill_option = TERM_ALL;
+ 	}
+ 
++	#ifndef __sun
+ 	/* Unless we are stopping processes or listing processes,
+ 	 * don't iterate them.
+ 	 */
+@@ -497,6 +503,8 @@
+ 			return EXIT_SUCCESS;
+ 		}
+ 	}
++	#endif
++
+ 
+ 	if (hard_reset || soft_reset) {
+ 		guint log_handler_id;

@@ -11,19 +11,22 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Adam Stevko.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ntfs-3g_ntfsprogs
-COMPONENT_VERSION= 2016.2.22
+COMPONENT_VERSION= 2016.2.22AR.1
+IPS_COMPONENT_VERSION= 2016.2.22
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= ntfsprogs - Utilities that provide access to NTFS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d7b72c05e4b3493e6095be789a760c9f5f2b141812d5b885f3190c98802f1ea0
+  sha256:2091475d439bc5889b09892b7ca97419d600436f13bf28885a29f31137ff3efd
 COMPONENT_ARCHIVE_URL= \
-  http://tuxera.com/opensource/$(COMPONENT_ARCHIVE)
+	http://jp-andre.pagesperso-orange.fr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.tuxera.com/community/ntfs-3g-download/
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -36,9 +39,8 @@ CFLAGS += -D__LITTLE_ENDIAN=1234
 CFLAGS += -D__BYTE_ORDER=1234
 
 CONFIGURE_OPTIONS += --exec-prefix=/usr
-CONFIGURE_OPTIONS += --enable-posix-acls
 CONFIGURE_OPTIONS += --enable-xattr-mappings
-CONFIGURE_OPTIONS += --disable-ntfs-3g
+CONFIGURE_OPTIONS += --with-fuse=external
 
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 

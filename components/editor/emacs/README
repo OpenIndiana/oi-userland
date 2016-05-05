@@ -1,0 +1,176 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+NAME:             emacs
+VERSION:          24.5
+DESCRIPTION:      GNU Emacs editor
+LICENSE:          GPLv3
+BUGTRAQ:          solaris/utility/emacs
+COMMENTS:         
+
+This file contains information about the emacs package within the Userland
+consolidation. Along with the comments in the Makefile, it documents any
+deviations from standard Userland or emacs practice, as well as miscellaneous
+information needed to understand how this component is put together.
+
+
+- We patch the following changes to the emacs sources:
+
+	find.patch
+	    The rgrep function uses the GNU-specific -path option to the
+	    find command. Change the default value for the find-program
+	    variable in grep.el to use GNU find.
+
+- The emacs distribution used to have a subdirectory, src/s, which
+  contained per-platform header files. We would apply the following
+  patches:
+
+    sol2-6.h: Enable the use of the native Solaris dldump()
+
+        --- sol2-6.h.~1~        2011-10-17 19:20:46.000000000 -0600
+        +++ sol2-6.h    2013-09-23 13:34:26.683033182 -0600
+        @@ -2,10 +2,17 @@
+         
+         #include "sol2-5.h"
+         
+        -#if 0 /* dldump does not handle all the extensions used by GNU ld.  */
+        +/*
+        + * Use the Solaris dldump() function to dump emacs, instead of
+        + * the generic unexelf code.
+        + *
+        + * If you encounter a problem using dldump(), please consider sending
+        + * a message to the OpenSolaris tools-linking mailing list:
+        + *      http://mail.opensolaris.org/mailman/listinfo/tools-linking
+        + */
+        +
+         #undef UNEXEC
+         #define UNEXEC unexsol.o
+        -#endif
+         
+         /* arch-tag: 71ea3857-89dc-4395-9623-77964e6ed3ca
+            (do not change this comment) */
+
+    sol2-5.h: Use the system malloc instead of the GNU malloc:
+
+        --- sol2-5.h.~1~        2011-10-17 19:20:46.000000000 -0600
+        +++ sol2-5.h    2013-09-23 13:34:26.732656398 -0600
+        @@ -17,6 +17,7 @@
+         /* This is not always necessary.  Turned off at present for testers to
+            identify any problems with gmalloc more accurately.  */
+         /* #define SYSTEM_MALLOC */
+        +#define SYSTEM_MALLOC
+         
+         /* There have problems reported with mmap at least on Solaris 2.6
+            and 2.7.  For simplicity, let's not use mmap for anything >= 2.5.
+
+  These are both handled by default by the configure process, and in fact,
+  comments from the header file appear to have been carried over. With every
+  update, we must verify that these settings stick and remain enabled.
+
+    System Malloc:
+    The information output at the end of the configure step verifies this:
+
+        Configured for `x86_64-pc-solaris2.12'.
+	...
+          Should Emacs use the GNU version of malloc?             no
+            (The GNU allocators don't work with this system configuration.)
+
+    dldump:
+    One could examine the configure script looking for the setting
+    "UNEXEC_OBJ=unexsol.o", but it seems easier/better to simply examine
+    the final executable:
+
+        % pvs -nos emacs | grep dldump
+        emacs - libc.so.1 (SUNW_1.22): dldump;
+
+- Emacs can be built as either 32-bit or 64-bit, depending on the target
+  machine. The benefit of a 64-bit emacs is that the size of the files it
+  can handle is not limited to 128MB, as it is with the 32-bit version.
+
+  For Solaris, we used to build both versions, using /usr/lib/isaexec to
+  run the 64-bit version if possible, and the 32-bit version otherwise. Note
+  that this was only done for the emacs binary itself, as there is no
+  technical need for 64-bit versions of the ancillary programs that come
+  with emacs (etags, emacsclient, etc).
+
+  Fortunately, the vast majority of the files in an emacs tree are identical,
+  regardless of the platform and/or word size, which makes this particularly
+  easy to do.
+
+  With Solaris 11, all kernels are 64-bit, and we therefore do not need
+  the 32-bit executables. As such, we only supply 64-bit emacs binaries now,
+  and the use of usr/lib/isaexec has been removed: This cuts the number of
+  builds necessary in half, and also the binary package size. It also
+  simplifies packaging, and the user's view of /usr/bin/emacs*.
+
+- There are three different toolkit options: None, Athena widgets
+  (aka Xaw, or lucid), and gtk. It would be nice to only support gtk,
+  but for purposes of minimization and user preference, we supply binaries
+  for all three. We follow the Linux model in this regard. The Xaw and no-X
+  versions are quite stable from release to release, so this isn't a large
+  burden.
+
+- In the past, we built emacs with gcc. The Makefile contained:
+
+    # This code is built with gcc. The primary reason for this is that the
+    # configure script has problems using a non-GNU cpp. I am not aware of
+    # any reason Sun Studio could not be made to work, but simply made a
+    # cost/benefit decision not to pursue it at this time
+    COMPILER =      gcc
+
+  With emacs 24.3, I removed this, and find that studio now builds
+  emacs without issue. This is something that should be reverified
+  with each update.
+
+- Remember to update resolve.deps when updating to a new version,
+  as dependencies can change. Instructions are on the Userland website.
+
+- We deliver the following packages:
+
+	gnu-emacs - Everything you need to run emacs, except the
+	    emacs binaries.
+
+	gnu-emacs-gtk - Binary for the X11 version using the GTK toolkit.
+
+	gnu-emacs-no-x11 - Pure tty emacs binary, built without
+	    any X11 linkage or other extra support (i.e. D-bus). This
+	    is the most basic emacs possible, ideal for headless server
+	    systems.
+
+	gnu-emacs-x11 - Binary for the X11 version using the Athena
+	    widget (Xaw) toolkit.
+
+	gnu-emacs-lisp - The compressed LISP files for which compiled
+	    versions are delivered by gnu-emacs. These are only needed
+	    for emacs developers and those who like to read source code.
+
+  The core gnu-emacs package is required by all of the other packages.
+  In turn, gnu-emacs requires at least one of the packages supplying an
+  emacs binary to be installed.
+
+- We do not ship any suid/sgid binaries for obvious security reasons.
+
+  We do not install the files under /var/games/emacs. The reason for
+  this is that we do not install update-game-score as setuid, and
+  therefore the game files are not usable. This the same decision made
+  by Debian, among others.

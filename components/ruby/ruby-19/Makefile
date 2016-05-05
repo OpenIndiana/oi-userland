@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	1.9.3
+COMPONENT_REVISION=	1
 COMPONENT_PATCH_VERSION=	551
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
@@ -35,7 +36,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bb5be55cd1f49c95bb05b6f587701376b53d310eb1bb7c76fbd445a1c75b51e8
 COMPONENT_ARCHIVE_URL=	\
-	http://ftp.ruby-lang.org/pub/ruby/1.9/$(COMPONENT_ARCHIVE)
+	https://cache.ruby-lang.org/pub/ruby/1.9/$(COMPONENT_ARCHIVE)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_BUGDB=	utility/ruby
 
@@ -153,7 +154,7 @@ include $(WS_MAKE_RULES)/shared-targets.mk
 
 build:		$(BUILD_32)
 
-install:	build $(INSTALL_32)
+install:	$(INSTALL_32)
 
 test:	$(TEST_32)
 

@@ -1,0 +1,1546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Fonts in X11R7.7</title><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot_9276" /><style xmlns="" type="text/css">/*
+ * Copyright (c) 2011 Gaetan Nadon
+ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * Shared stylesheet for X.Org documentation translated to HTML format
+ * http://www.sagehill.net/docbookxsl/UsingCSS.html
+ * http://www.w3schools.com/css/default.asp
+ * https://addons.mozilla.org/en-US/firefox/addon/web-developer/developers
+ * https://addons.mozilla.org/en-US/firefox/addon/font-finder/
+ */
+
+/*
+ * The sans-serif fonts are considered more legible on a computer screen
+ * http://dry.sailingissues.com/linux-equivalents-verdana-arial.html
+ *
+ */
+body {
+  font-family: "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+  /* In support of using "em" font size unit, the w3c recommended method */
+  font-size: 100%;
+}
+
+/*
+ * Selection: all elements requiring mono spaced fonts.
+ *
+ * The family names attempt to match the proportionally spaced font
+ * family names such that the same font name is used for both.
+ * We'd like to use Bitstream, for example, in both proportionally and
+ * mono spaced font text.
+ */
+.command,
+.errorcode,
+.errorname,
+.errortype,
+.filename,
+.funcsynopsis,
+.function,
+.parameter,
+.programlisting,
+.property,
+.screen,
+.structname,
+.symbol,
+.synopsis,
+.type
+{
+  font-family:  "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Courier, "Liberation Mono", Monospace;
+}
+
+/*
+ * Books have a title page, a preface, some chapters and appendices,
+ * a glossary, an index and a bibliography, in that order.
+ *
+ * An Article has no preface and no chapters. It has sections, appendices,
+ * a glossary, an index and a bibliography.
+ */
+
+/*
+ * Selection: book main title and subtitle
+ */
+div.book>div.titlepage h1.title,
+div.book>div.titlepage h2.subtitle {
+  text-align: center;
+}
+
+/*
+ * Selection: article main title and subtitle
+ */
+div.article>div.titlepage h2.title,
+div.article>div.titlepage h3.subtitle,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title {
+  text-align: center;
+}
+
+/*
+ * Selection: various types of authors and collaborators, individuals or corporate
+ *
+ * These authors are not always contained inside an authorgroup.
+ * They can be contained inside a lot of different parent types where they might
+ * not be centered.
+ * Reducing the margin at the bottom makes a visual separation between authors
+ * We specify here the ones on the title page, others may be added based on merit.
+ */
+div.titlepage .authorgroup,
+div.titlepage .author,
+div.titlepage .collab,
+div.titlepage .corpauthor,
+div.titlepage .corpcredit,
+div.titlepage .editor,
+div.titlepage .othercredit {
+  text-align: center;
+  margin-bottom: 0.25em;
+}
+
+/*
+ * Selection: the affiliation of various types of authors and collaborators,
+ * individuals or corporate.
+ */
+div.titlepage .affiliation {
+  text-align: center;
+}
+
+/*
+ * Selection: product release information (X Version 11, Release 7)
+ *
+ * The releaseinfo element can be contained inside a lot of different parent
+ * types where it might not be centered.
+ * We specify here the one on the title page, others may be added based on merit.
+ */
+div.titlepage p.releaseinfo {
+  font-weight: bold;
+  text-align: center;
+}
+
+/*
+ * Selection: publishing date
+ */
+div.titlepage .pubdate {
+  text-align: center;
+}
+
+/*
+ * The legal notices are displayed in smaller sized fonts
+ * Justification is only supported in IE and therefore not requested.
+ *
+ */
+.legalnotice {
+  font-size: small;
+  font-style: italic;
+}
+
+/*
+ * For documentation having multiple licenses, the copyright and legalnotice
+ * elements sequence cannot instantiated multiple times.
+ * The copyright notice and license text are therefore coded inside a legalnotice
+ * element. The role attribute on the paragraph is used to allow styling of the
+ * copyright notice text which should not be italicized.
+ */
+p.multiLicensing {
+  font-style: normal;
+  font-size: medium;
+}
+
+/*
+ * Selection: book or article main ToC title
+ * A paragraph is generated for the title rather than a level 2 heading.
+ * We do not want to select chapters sub table of contents, only the main one
+ */
+div.book>div.toc>p,
+div.article>div.toc>p {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+/*
+ * Selection: major sections of a book or an article
+ *
+ * Unlike books, articles do not have a titlepage element for appendix.
+ * Using the selector "div.titlepage h2.title" would be too general.
+ */
+div.book>div.preface>div.titlepage h2.title,
+div.book>div.chapter>div.titlepage h2.title,
+div.article>div.sect1>div.titlepage h2.title,
+div.article>div.section>div.titlepage h2.title,
+div.book>div.appendix>div.titlepage h2.title,
+div.article>div.appendix h2.title,
+div.glossary>div.titlepage h2.title,
+div.index>div.titlepage h2.title,
+div.bibliography>div.titlepage h2.title {
+   /* Add a border top over the major parts, just like printed books */
+   /* The Gray color is already used for the ruler over the main ToC. */
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: Gray;
+  /* Put some space between the border and the title */
+  padding-top: 0.2em;
+  text-align: center;
+}
+
+/*
+ * A Screen is a verbatim environment for displaying text that the user might
+ * see on a computer terminal. It is often used to display the results of a command.
+ *
+ * http://www.css3.info/preview/rounded-border/
+ */
+.screen {
+  background: #e0ffff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #B0C4DE;
+  border-radius: 1.0em;
+  /* Browser's vendor properties prior to CSS 3 */
+  -moz-border-radius: 1.0em;
+  -webkit-border-radius: 1.0em;
+  -khtml-border-radius: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis program listings with a light shade of gray similar to what
+ * DocBook XSL guide does: http://www.sagehill.net/docbookxsl/ProgramListings.html
+ * Found many C API docs on the web using like shades of gray.
+ */
+.programlisting {
+  background: #F4F4F4;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  padding: 0.5em;
+}
+
+/*
+ * Emphasis functions synopsis using a darker shade of gray.
+ * Add a border such that it stands out more.
+ * Set the padding so the text does not touch the border.
+ */
+.funcsynopsis, .synopsis {
+  background: #e6e6fa;
+  border-width: 1px;
+  border-style: solid;
+  border-color: Gray;
+  clear: both;
+  margin: 0.5em;
+  padding: 0.25em;
+}
+
+/*
+ * Selection: paragraphs inside synopsis
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in synopsis
+ */
+.funcsynopsis p,
+.synopsis p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Selection: variable lists, informal tables and tables
+ *
+ * Note the parameter name "variablelist.as.table" in xorg-xhtml.xsl
+ * A table with rows and columns is constructed inside div.variablelist
+ *
+ * Set the left margin so it is indented to the right
+ * Display informal tables with single line borders
+ */
+table {
+  margin-left: 0.5em;
+  border-collapse: collapse;
+}
+
+/*
+ * Selection: paragraphs inside tables
+ *
+ * Removes the default browser margin, let the container set the padding.
+ * Paragraphs are not always used in tables
+ */
+td p {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Add some space between the left and right column.
+ * The vertical alignment helps the reader associate a term
+ * with a multi-line definition.
+ */
+td, th {
+  padding-left: 1.0em;
+  padding-right: 1.0em;
+  vertical-align: top;
+}
+
+.warning {
+  border: 1px solid red;
+  background: #FFFF66;
+  padding-left: 0.5em;
+}
+</style></head><body><div class="article"><div class="titlepage"><div><div><h2 class="title"><a id="fonts"></a>Fonts in X11R7.7</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Juliusz</span> <span class="surname">Chroboczek</span></h3><code class="email">&lt;<a class="email" href="mailto:jch@freedesktop.org">jch@freedesktop.org</a>&gt;</code></div></div><div><p class="releaseinfo">X Version 11, Release 7.7</p></div><div><p class="pubdate">16 March 2012</p></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="sect1"><a href="#Introduction">Introduction</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Two_font_systems">Two font systems</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Installing_fonts">Installing fonts</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Configuring_Xft">Configuring Xft</a></span></dt><dt><span class="sect2"><a href="#Configuring_the_core_X11_fonts_system">Configuring the core X11 fonts system</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Fonts_included_with_X11">Fonts included with X11R7.7</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Standard_bitmap_fonts">Standard bitmap fonts</a></span></dt><dt><span class="sect2"><a href="#The_ClearlyU_Unicode_font_family">The ClearlyU Unicode font family</a></span></dt><dt><span class="sect2"><a href="#Standard_scalable_fonts">Standard scalable fonts</a></span></dt><dt><span class="sect2"><a href="#The_Bigelow_and__Holmes_Luxi_family">The Bigelow &amp; Holmes Luxi family</a></span></dt></dl></dd><dt><span class="sect1"><a href="#More_about_core_fonts">More about core fonts</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Core_fonts_and_internationalisation">Core fonts and internationalisation</a></span></dt><dt><span class="sect2"><a href="#Additional_notes_about_scalable_core_fonts">Additional notes about scalable core fonts</a></span></dt></dl></dd><dt><span class="sect1"><a href="#Appendix_background_and_terminology">Appendix: background and terminology</a></span></dt><dd><dl><dt><span class="sect2"><a href="#Characters_and_glyphs">Characters and glyphs</a></span></dt><dt><span class="sect2"><a href="#Font_files_fonts_and_XLFD">Font files, fonts, and XLFD</a></span></dt><dt><span class="sect2"><a href="#Unicode">Unicode</a></span></dt></dl></dd><dt><span class="sect1"><a href="#References">References</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Introduction"></a>Introduction</h2></div></div></div><p>
+This document describes the support for fonts in X11R7.7.
+<a class="xref" href="#Installing_fonts" title="Installing fonts">Installing fonts</a> is aimed at the
+casual user wishing to install fonts in X11R7.7 the rest of the
+document describes the font support in more detail.
+</p><p>
+We assume some familiarity with digital fonts.  If anything is not
+clear to you, please consult <a class="xref" href="#Appendix_background_and_terminology" title="Appendix: background and terminology">Appendix: background and terminology</a> at the
+end of this document for background information.
+</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Two_font_systems"></a>Two font systems</h3></div></div></div><p>
+X11 includes two font systems: the original core X11 fonts
+system, which is present in all implementations of X11, and the Xft
+fonts system, which may not yet be distributed with implementations of
+X11 that are not based on either XFree86 or X11R6.8 or later.
+</p><p>
+The core X11 fonts system is directly derived from the fonts system
+included with X11R1 in 1987, which could only use monochrome bitmap
+fonts.  Over the years, it has been more or less happily coerced into
+dealing with scalable fonts and rotated glyphs.
+</p><p>
+Xft was designed from the start to provide good support for scalable
+fonts, and to do so efficiently.  Unlike the core fonts system, it
+supports features such as anti-aliasing and sub-pixel rasterisation.
+Perhaps more importantly, it gives applications full control over the
+way glyphs are rendered, making fine typesetting and WYSIWIG display
+possible.  Finally, it allows applications to use fonts that are not
+installed system-wide for displaying documents with embedded fonts.
+</p><p>
+Xft is not compatible with the core fonts system: usage of Xft
+requires fairly extensive changes to toolkits (user-interface
+libraries).  While X.Org will continue to maintain the core fonts
+system, toolkit authors are encouraged to switch to Xft as soon as
+possible.
+</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Installing_fonts"></a>Installing fonts</h2></div></div></div><p>
+This section explains how to configure both Xft and the core fonts
+system to access newly-installed fonts.
+</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Configuring_Xft"></a>Configuring Xft</h3></div></div></div><p>
+Xft has no configuration mechanism itself, it relies upon the
+<a class="ulink" href="http://www.fontconfig.org/" target="_top">fontconfig</a>
+library to configure and customise fonts.  That library is
+not specific to the X Window system, and does not rely on any
+particular font output mechanism.
+</p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Installing_fonts_in_Xft"></a>Installing fonts in Xft</h4></div></div></div><p>
+Fontconfig looks for fonts in a set of well-known directories that
+include all of X11R7.7's standard font directories
+(<span class="quote">“<span class="quote"><code class="filename">/usr/share/fonts/X11/*</code></span>”</span>) by default) as well as a
+directory called <span class="quote">“<span class="quote"><code class="filename">.fonts/</code></span>”</span> in the user's home directory.
+Installing a font for use by Xft applications is as simple
+as copying a font file into one of these directories.
+
+</p><pre class="screen">
+$ cp lucbr.ttf ~/.fonts/
+</pre><p>
+
+Fontconfig will notice the new font at the next opportunity and rebuild its
+list of fonts.  If you want to trigger this update from the command
+line, you may run the command <span class="quote">“<span class="quote"><span class="command"><strong>fc-cache</strong></span></span>”</span>.
+
+</p><pre class="screen">
+$ fc-cache
+</pre><p>
+
+</p><p>
+In order to globally update the system-wide Fontconfig information on
+Unix systems, you will typically need to run this command as root:
+
+</p><pre class="screen">
+$ su -c fc-cache
+</pre><p>
+
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Fine-tuning_Xft"></a>Fine-tuning Xft</h4></div></div></div><p>
+Fontconfig's behaviour is controlled by a set of configuration
+files: a standard configuration file, <span class="quote">“<span class="quote"><code class="filename">/etc/fonts/fonts.conf</code></span>”</span>,
+a host-specific configuration file, <span class="quote">“<span class="quote"><code class="filename">/etc/fonts/local.conf</code></span>”</span>,
+and a user-specific file called <span class="quote">“<span class="quote"><code class="filename">.fonts.conf</code></span>”</span> in the user's
+home directory (this can be overridden with the
+<span class="quote">“<span class="quote"><code class="envar">FONTCONFIG_FILE</code></span>”</span> environment variable).
+</p><p>
+Every Fontconfig configuration file must start with the following
+boilerplate:
+
+</p><pre class="screen">
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE fontconfig SYSTEM "fonts.dtd"&gt;
+&lt;fontconfig&gt;
+</pre><p>
+
+In addition, every Fontconfig configuration file must end with the
+following line:
+
+</p><pre class="screen">
+&lt;/fontconfig&gt;
+</pre><p>
+
+</p><p>
+The default Fontconfig configuration file includes the directory
+<span class="quote">“<span class="quote"><code class="filename">˜/.fonts/</code></span>”</span> in the list of directories searched for font
+files, and this is where user-specific font files should be installed.
+In the unlikely case that a new font directory needs to be added, this
+can be done with the following syntax:
+
+</p><pre class="screen">
+&lt;dir&gt;/usr/local/share/fonts/&lt;/dir&gt;
+</pre><p>
+
+</p><p>
+Another useful option is the ability to disable anti-aliasing (font
+smoothing) for selected fonts.  This can be done with the following
+syntax:
+
+</p><pre class="screen">
+&lt;match target="font"&gt;
+    &lt;test qual="any" name="family"&gt;
+        &lt;string&gt;Lucida Console&lt;/string&gt;
+    &lt;/test&gt;
+    &lt;edit name="antialias" mode="assign"&gt;
+        &lt;bool&gt;false&lt;/bool&gt;
+    &lt;/edit&gt;
+&lt;/match&gt;
+</pre><p>
+
+Anti-aliasing can be disabled for all fonts by the following incantation:
+
+</p><pre class="screen">
+&lt;match target="font"&gt;
+    &lt;edit name="antialias" mode="assign"&gt;
+        &lt;bool&gt;false&lt;/bool&gt;
+    &lt;/edit&gt;
+&lt;/match&gt;
+</pre><p>
+
+</p><p>
+Xft supports sub-pixel rasterisation on LCD displays.  X11R7.7 should
+automatically enable this feature on laptops and when using an LCD
+monitor connected with a DVI cable; you can check whether this was
+done by typing
+
+</p><pre class="screen">
+$ xdpyinfo -ext RENDER | grep sub-pixel
+</pre><p>
+
+If this doesn't print anything, you will need to configure Render for
+your particular LCD hardware manually; this is done with the following
+syntax:
+
+</p><pre class="screen">
+&lt;match target="font"&gt;
+    &lt;edit name="rgba" mode="assign"&gt;
+        &lt;const&gt;rgb&lt;/const&gt;
+    &lt;/edit&gt;
+&lt;/match&gt;
+</pre><p>
+
+The string <span class="quote">“<span class="quote"><code class="literal">rgb</code></span>”</span> within the
+<span class="quote">“<span class="quote"><code class="literal">&lt;const&gt;</code></span>”</span>...<span class="quote">“<span class="quote"><code class="literal">&lt;/const&gt;</code></span>”</span>
+specifies the order of pixel components on your display, and should be
+changed to match your hardware; it can be one of <span class="quote">“<span class="quote"><code class="literal">rgb</code></span>”</span> (normal
+LCD screen), <span class="quote">“<span class="quote"><code class="literal">bgr</code></span>”</span> (backwards LCD screen), <span class="quote">“<span class="quote"><code class="literal">vrgb</code></span>”</span> (LCD
+screen rotated clockwise) or <span class="quote">“<span class="quote"><code class="literal">vbgr</code></span>”</span> (LCD screen rotated
+counterclockwise).
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Configuring_applications"></a>Configuring applications</h4></div></div></div><p>
+A growing number of applications use Xft in preference to the core
+fonts system.  Some applications, however, need to be explicitly
+configured to use Xft.
+</p><p>
+A case in point is XTerm, which can be set to use Xft by using the
+<span class="quote">“<span class="quote"><code class="literal">-fa</code></span>”</span> command line option or by setting the <span class="quote">“<span class="quote"><code class="literal">XTerm*faceName</code></span>”</span>
+resource:
+
+</p><pre class="screen">
+XTerm*faceName: Courier
+</pre><p>
+
+or
+
+</p><pre class="screen">
+$ xterm -fa "Courier"
+</pre><p>
+
+</p><p>
+For KDE applications, you should select <span class="quote">“<span class="quote">Anti-alias fonts</span>”</span> in the
+<span class="quote">“<span class="quote">Fonts</span>”</span> panel of KDE's <span class="quote">“<span class="quote">Control Center</span>”</span>.  Note that this option is
+misnamed: it switches KDE to using Xft but doesn't enable
+anti-aliasing in case it was disabled by your Xft configuration file.
+</p><p>
+Gnome applications and Mozilla Firefox will use Xft by default.
+</p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Configuring_the_core_X11_fonts_system"></a>Configuring the core X11 fonts system</h3></div></div></div><p>
+Installing fonts in the core system is a two step process.  First,
+you need to create a <span class="emphasis"><em>font directory</em></span> that contains all the
+relevant font files as well as some index files.  You then need to
+inform the X server of the existence of this new directory by
+including it in the <span class="emphasis"><em>font path</em></span>.
+</p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Installing_bitmap_fonts"></a>Installing bitmap fonts</h4></div></div></div><p>
+The X11R7.7 server can use bitmap fonts in both the cross-platform
+BDF format and the somewhat more efficient binary PCF format.
+(X11R7.7 also supports the obsolete SNF format.)
+</p><p>
+Bitmap fonts are normally distributed in the BDF format.  Before
+installing such fonts, it is desirable (but not absolutely necessary)
+to convert the font files to the PCF format.  This is done by using the
+command <span class="quote">“<span class="quote"><span class="command"><strong>bdftopcf</strong></span></span>”</span>, <span class="emphasis"><em>e.g.</em></span>
+
+</p><pre class="screen">
+$ bdftopcf courier12.bdf
+</pre><p>
+
+You may then want to compress the resulting PCF font files:
+
+</p><pre class="screen">
+$ gzip courier12.pcf
+</pre><p>
+
+</p><p>
+After the fonts have been converted, you should copy all the font
+files that you wish to make available into a arbitrary directory, say
+<span class="quote">“<span class="quote"><code class="filename">/usr/local/share/fonts/bitmap/</code></span>”</span>.  You should then create the
+index file <span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span> by running the command <span class="quote">“<span class="quote"><span class="command"><strong>mkfontdir</strong></span></span>”</span>
+(please see the <a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a>
+manual page for more information):
+
+</p><pre class="screen">
+$ mkdir /usr/local/share/fonts/bitmap/
+$ cp *.pcf.gz /usr/local/share/fonts/bitmap/
+$ mkfontdir /usr/local/share/fonts/bitmap/
+</pre><p>
+
+</p><p>
+All that remains is to tell the X server about the existence of the
+new font directory; see <a class="xref" href="#Setting_the_servers_font_path" title="Setting the server's font path">Setting the server's font path</a> below.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Installing_scalable_fonts"></a>Installing scalable fonts</h4></div></div></div><p>
+The X11R7.7 server supports scalable fonts in multiple
+formats, including Type 1, TrueType, and OpenType/CFF.
+(Earlier versions of X11 also included support for the Speedo and
+CID scalable font formats, but that is not included in current releases.)
+</p><p>
+Installing scalable fonts is very similar to installing bitmap fonts:
+you create a directory with the font files, and run <span class="quote">“<span class="quote"><span class="command"><strong>mkfontdir</strong></span></span>”</span>
+to create an index file called <span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span>.
+</p><p>
+There is, however, a big difference: <span class="quote">“<span class="quote"><span class="command"><strong>mkfontdir</strong></span></span>”</span> cannot
+automatically recognise scalable font files.  For that reason, you
+must first index all the font files in a file called
+<span class="quote">“<span class="quote"><code class="filename">fonts.scale</code></span>”</span>.  While this can be done by hand, it is best done
+by using the <span class="quote">“<span class="quote"><span class="command"><strong>mkfontscale</strong></span></span>”</span> utility.
+
+</p><pre class="screen">
+$ mkfontscale /usr/local/share/fonts/Type1/
+$ mkfontdir /usr/local/share/fonts/Type1/
+</pre><p>
+
+Under some circumstances, it may be necessary to modify the
+<span class="quote">“<span class="quote"><code class="filename">fonts.scale</code></span>”</span> file generated by <span class="command"><strong>mkfontscale</strong></span>; for more
+information, please see the <a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a> and <a class="ulink" href="mkfontscale.1.html" target="_top">mkfontscale(1)</a> manual pages and <a class="xref" href="#Core_fonts_and_internationalisation" title="Core fonts and internationalisation">Core fonts and internationalisation</a>
+later in this document.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="CID_keyed_fonts"></a>CID-keyed fonts</h4></div></div></div><p>
+The CID-keyed font format was designed by Adobe Systems for fonts
+with large character sets.  The CID-keyed format is obsolete, as it
+has been superseded by other formats such as OpenType/CFF and
+support for CID-keyed fonts has been removed from X11.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Setting_the_servers_font_path"></a>Setting the server's font path</h4></div></div></div><p>
+The list of directories where the server looks for fonts is known
+as the <span class="emphasis"><em>font path</em></span>.  Informing the server of the existence of a new
+font directory consists of putting it on the font path.
+</p><p>
+The font path is an ordered list; if a client's request matches
+multiple fonts, the first one in the font path is the one that gets
+used.  When matching fonts, the server makes two passes over the font
+path: during the first pass, it searches for an exact match; during
+the second, it searches for fonts suitable for scaling.
+</p><p>
+For best results, scalable fonts should appear in the font path before
+the bitmap fonts; this way, the server will prefer bitmap fonts to
+scalable fonts when an exact match is possible, but will avoid scaling
+bitmap fonts when a scalable font can be used.  (The <span class="quote">“<span class="quote"><code class="literal">:unscaled</code></span>”</span>
+hack, while still supported, should no longer be necessary in X11R7.7.)
+</p><p>
+You may check the font path of the running server by typing the command
+
+</p><pre class="screen">
+$ xset q
+</pre><p>
+
+</p><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Font_path_catalogue_directories"></a>Font path catalogue directories</h5></div></div></div><p>
+You can specify a special kind of font path directory in the form
+<code class="filename">catalogue:&lt;dir&gt;</code>.
+The directory specified after the <code class="filename">catalogue:</code>
+prefix will be scanned for symlinks  and  each  symlink destination will be
+added as a local font path entry.
+</p><p>
+The symlink can be suffixed by attributes such as
+'<code class="literal">unscaled</code>', which will be passed through
+to the underlying font path entry. The only exception is the newly
+introduced '<code class="literal">pri</code>' attribute, which will be
+used for ordering the font paths specified by the symlinks.
+</p><p>
+An example configuration:
+</p><pre class="screen">
+         75dpi:unscaled:pri=20 -&gt; /usr/share/X11/fonts/75dpi
+         ghostscript:pri=60 -&gt; /usr/share/fonts/default/ghostscript
+         misc:unscaled:pri=10 -&gt; /usr/share/X11/fonts/misc
+         type1:pri=40 -&gt; /usr/share/X11/fonts/Type1
+         type1:pri=50 -&gt; /usr/share/fonts/default/Type1
+</pre><p>
+</p><p>
+This will add <code class="filename">/usr/share/X11/fonts/misc</code> as the
+first font path entry with the attribute
+<code class="literal">unscaled</code>. This is functionally equivalent to
+setting the following font path:
+</p><pre class="screen">
+         /usr/share/X11/fonts/misc:unscaled,
+         /usr/share/X11/fonts/75dpi:unscaled,
+         /usr/share/X11/fonts/Type1,
+         /usr/share/fonts/default/Type1,
+         /usr/share/fonts/default/ghostscript
+</pre><p>
+</p></div><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Temporary_modification_of_the_font_path"></a>Temporary modification of the font path</h5></div></div></div><p>
+The <span class="quote">“<span class="quote"><span class="command"><strong>xset</strong></span></span>”</span> utility may be used to modify the font path for the
+current session.  The font path is set with the command <span class="command"><strong>xset fp</strong></span>;
+a new element is added to the front with <span class="command"><strong>xset +fp</strong></span>, and added to
+the end with <span class="command"><strong>xset fp+</strong></span>.  For example,
+
+</p><pre class="screen">
+$ xset +fp /usr/local/fonts/Type1
+$ xset fp+ /usr/local/fonts/bitmap
+</pre><p>
+
+</p><p>
+Conversely, an element may be removed from the front of the font path
+with <span class="quote">“<span class="quote"><span class="command"><strong>xset -fp</strong></span></span>”</span>, and removed from the end with <span class="quote">“<span class="quote"><span class="command"><strong>xset fp-</strong></span></span>”</span>.
+You may reset the font path to its default value with
+<span class="quote">“<span class="quote"><span class="command"><strong>xset fp default</strong></span></span>”</span>.
+</p><p>
+For more information, please consult the <a class="ulink" href="xset.1.html" target="_top">xset(1)</a> manual page.
+</p></div><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Permanent_modification_of_the_font_path"></a>Permanent modification of the font path</h5></div></div></div><p>
+The default font path (the one used just after server startup or
+after <span class="quote">“<span class="quote"><span class="command"><strong>xset fp default</strong></span></span>”</span>) may be specified in the
+X server's
+<span class="quote">“<span class="quote"><code class="filename">xorg.conf</code></span>”</span> file.  It is computed by appending all the
+directories mentioned in the <span class="quote">“<span class="quote"><code class="literal">FontPath</code></span>”</span> entries of the
+<span class="quote">“<span class="quote"><code class="literal">Files</code></span>”</span> section in the order in which they appear.   If no font path is specified in a config file, the server uses a default
+value specified when it was built.
+
+</p><pre class="screen">
+FontPath "/usr/local/fonts/Type1"
+...
+FontPath "/usr/local/fonts/bitmap"
+</pre><p>
+
+</p><p>
+For more information, please consult the <a class="ulink" href="xorg.conf.5.html" target="_top">xorg.conf(5)</a> manual page.
+</p></div></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Troubleshooting"></a>Troubleshooting</h4></div></div></div><p>
+If you seem to be unable to use some of the fonts you have
+installed, the first thing to check is that the <span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span> files
+are correct and that they are readable by the server (the X server
+usually runs as root, beware of NFS-mounted font directories).  If
+this doesn't help, it is quite possible that you are trying to use a
+font in a format that is not supported by your server.
+</p><p>
+X11R7.7 supports the BDF, PCF, SNF, Type 1, TrueType, and OpenType
+font formats.  However, not all X11R7.7 servers
+come with all the font backends configured in.
+</p><p>
+On most platforms, the X11R7.7 servers no longer uses font
+backends from modules that are loaded at runtime.   The built in
+font support corresponds to the functionality formerly provided by
+these modules:
+
+	  </p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+		<code class="literal">"bitmap"</code>:
+		bitmap fonts (<span class="quote">“<span class="quote"><code class="filename">*.bdf</code></span>”</span>,
+		<span class="quote">“<span class="quote"><code class="filename">*.pcf</code></span>”</span>
+		and <span class="quote">“<span class="quote"><code class="filename">*.snf</code></span>”</span>);
+	      </p></li><li class="listitem"><p>
+		<code class="literal">"freetype"</code>:
+		TrueType fonts (<span class="quote">“<span class="quote"><code class="filename">*.ttf</code></span>”</span> and
+		<span class="quote">“<span class="quote"><code class="filename">*.ttc</code></span>”</span>),
+		OpenType fonts (<span class="quote">“<span class="quote"><code class="filename">*.otf</code></span>”</span> and
+		<span class="quote">“<span class="quote"><code class="filename">*.otc</code></span>”</span>) and
+		Type 1 fonts (<span class="quote">“<span class="quote"><code class="filename">*.pfa</code></span>”</span>
+		and <span class="quote">“<span class="quote"><code class="filename">*.pfb</code></span>”</span>).
+	      </p></li></ul></div><p>
+
+</p></div></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Fonts_included_with_X11"></a>Fonts included with X11R7.7</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Standard_bitmap_fonts"></a>Standard bitmap fonts</h3></div></div></div><p>
+The Sample Implementation of X11 (SI) comes with a large number of
+bitmap fonts, including the <span class="quote">“<span class="quote"><code class="literal">fixed</code></span>”</span> family, and bitmap versions
+of Courier, Times, Helvetica and some members of the Lucida family.
+</p><p>
+In X11R7.7, a number of these fonts are provided in Unicode-encoded
+font files now.  At build time, these fonts are split into font
+files encoded according to legacy encodings, a process which allows
+us to provide the standard fonts in a number of regional encodings
+with no duplication of work.
+</p><p>
+For example, the font file
+
+</p><pre class="screen">
+/usr/share/fonts/X11/misc/6x13.bdf
+</pre><p>
+
+with XLFD
+
+</p><pre class="screen">
+-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso10646-1
+</pre><p>
+
+is a Unicode-encoded version of the standard <span class="quote">“<span class="quote"><code class="literal">fixed</code></span>”</span> font with
+added support for the Latin, Greek, Cyrillic, Georgian, Armenian, IPA
+and other scripts plus numerous technical symbols.  It contains over
+2800 glyphs, covering all characters of ISO 8859 parts 1-5,
+7-10, 13-15, as well as all European IBM and Microsoft code pages,
+KOI8, WGL4, and the repertoires of many other character sets.
+</p><p>
+This font is used at build time for generating the font files
+
+</p><pre class="screen">
+6x13-ISO8859-1.bdf
+6x13-ISO8859-2.bdf
+...
+6x13-ISO8859-15.bdf
+6x13-KOI8-R.bdf
+</pre><p>
+
+with respective XLFDs
+
+</p><pre class="screen">
+-misc-fixed-medium-r-normal--13-120-75-75-c-60-iso8859-1
+...
+-misc-fixed-medium-r-normal--13-120-75-75-c-60-iso8859-15
+-misc-fixed-medium-r-normal--13-120-75-75-c-60-koi8-r
+</pre><p>
+
+The standard short name <span class="quote">“<span class="quote"><code class="literal">fixed</code></span>”</span> is normally an alias for
+
+</p><pre class="screen">
+-misc-fixed-medium-r-normal--13-120-75-75-c-60-iso8859-1
+</pre><p>
+
+</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="The_ClearlyU_Unicode_font_family"></a>The ClearlyU Unicode font family</h3></div></div></div><p>
+The ClearlyU family of fonts provides a set of 12 pt,
+100 dpi proportional fonts with many of the glyphs needed for
+Unicode text.  Together, the fonts contain approximately 7500 glyphs.
+</p><p>
+The main ClearlyU font has the XLFD
+
+</p><pre class="screen">
+-mutt-clearlyu-medium-r-normal--17-120-100-100-p-101-iso10646-1
+</pre><p>
+
+and resides in the font file
+
+</p><pre class="screen">
+/usr/share/fonts/X11/misc/cu12.pcf.gz
+</pre><p>
+
+Additional ClearlyU fonts include
+
+</p><pre class="screen">
+-mutt-clearlyu alternate glyphs-medium-r-normal--17-120-100-100-p-91-iso10646-1
+-mutt-clearlyu pua-medium-r-normal--17-120-100-100-p-111-iso10646-1
+-mutt-clearlyu arabic extra-medium-r-normal--17-120-100-100-p-103-fontspecific-0
+-mutt-clearlyu ligature-medium-r-normal--17-120-100-100-p-141-fontspecific-0
+</pre><p>
+
+</p><p>
+The <span class="emphasis"><em>Alternate Glyphs</em></span> font contains additional glyph shapes that
+are needed for certain languages.  A second alternate glyph font will
+be provided later for cases where a character has more than one
+commonly used alternate shape (<span class="emphasis"><em>e.g.</em></span> the Urdu heh).
+</p><p>
+The <span class="emphasis"><em>PUA</em></span> font contains extra glyphs that are useful for certain
+rendering purposes.
+</p><p>
+The <span class="emphasis"><em>Arabic Extra</em></span> font contains the glyphs necessary for
+characters that don't have all of their possible shapes encoded in
+ISO 10646.  The glyphs are roughly ordered according to the order
+of the characters in the ISO 10646 standard.
+</p><p>
+The <span class="emphasis"><em>Ligature</em></span> font contains ligatures for various scripts that
+may be useful for improved presentation of text.
+</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Standard_scalable_fonts"></a>Standard scalable fonts</h3></div></div></div><p>
+X11R7.7 includes all the scalable fonts distributed with X11R6.
+</p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Standard_Type1_fonts"></a>Standard Type 1 fonts</h4></div></div></div><p>
+The IBM Courier set of fonts cover ISO 8859-1 and
+ISO 8859-2 as well as Adobe Standard Encoding.  These fonts have
+XLFD
+
+</p><pre class="screen">
+-adobe-courier-medium-*-*--0-0-0-0-m-0-*-*
+</pre><p>
+
+and reside in the font files
+
+</p><pre class="screen">
+/usr/share/fonts/X11/Type1/cour*.pfa
+</pre><p>
+
+</p><p>
+The Adobe Utopia set of fonts only cover ISO 8859-1 as well as
+Adobe Standard Encoding.  These fonts have XLFD
+
+</p><pre class="screen">
+-adobe-utopia-*-*-normal--0-0-0-0-p-0-iso8859-1
+</pre><p>
+
+and reside in the font files
+
+</p><pre class="screen">
+/usr/share/fonts/X11/Type1/UT*.pfa
+</pre><p>
+
+</p><p>
+Finally, X11R7.7 also comes with Type 1 versions of Bitstream
+Courier and Charter.  These fonts have XLFD
+
+</p><pre class="screen">
+-bitstream-courier-*-*-normal--0-0-0-0-m-0-iso8859-1
+-bitstream-charter-*-*-normal--0-0-0-0-p-0-iso8859-1
+</pre><p>
+
+and reside in the font files
+
+</p><pre class="screen">
+/usr/share/fonts/X11/Type1/c*bt_.pfb
+</pre><p>
+
+</p></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="The_Bigelow_and__Holmes_Luxi_family"></a>The Bigelow &amp; Holmes Luxi family</h3></div></div></div><p>
+X11R7.7 includes the <span class="emphasis"><em>Luxi</em></span> family of scalable fonts, in both
+TrueType and Type 1 format.  This family consists of the fonts
+<span class="emphasis"><em>Luxi Serif</em></span>, with XLFD
+
+</p><pre class="screen">
+-b&amp;h-luxi serif-medium-*-normal--*-*-*-*-p-*-*-*
+</pre><p>
+
+<span class="emphasis"><em>Luxi Sans</em></span>, with XLFD
+
+</p><pre class="screen">
+-b&amp;h-luxi sans-medium-*-normal--*-*-*-*-p-*-*-*
+</pre><p>
+
+and <span class="emphasis"><em>Luxi Mono</em></span>, with XLFD
+
+</p><pre class="screen">
+-b&amp;h-luxi mono-medium-*-normal--*-*-*-*-m-*-*-*
+</pre><p>
+
+Each of these fonts comes Roman, oblique, bold and bold oblique variants
+The TrueType version have glyphs covering the basic ASCII Unicode
+range, the Latin 1 range, as well as the <span class="emphasis"><em>Extended Latin</em></span>
+range and some additional punctuation characters.  In particular,
+these fonts include all the glyphs needed for ISO 8859 parts 1,
+2, 3, 4, 9, 13 and 15, as well as all the glyphs in the Adobe Standard
+encoding and the Windows 3.1 character set.
+</p><p>
+The glyph coverage of the Type 1 versions is somewhat reduced,
+and only covers ISO 8859 parts 1, 2 and 15 as well as the Adobe
+Standard encoding.
+</p><p>
+The Luxi fonts are original designs by Kris Holmes and Charles
+Bigelow.  Luxi fonts include seriffed, sans serif, and monospaced
+styles, in roman and oblique, and normal and bold weights. The fonts
+share stem weight, x-height, capital height, ascent and descent, for
+graphical harmony.
+</p><p>
+The character width metrics of Luxi roman and bold fonts match those
+of core fonts bundled with popular operating and window systems.
+</p><p>
+The license terms for the Luxi fonts are included in the file
+<span class="quote">“<span class="quote"><code class="filename">COPYRIGHT.BH</code></span>”</span>, as well as in the <a href="../License.html#Bigelow_Holmes_Inc_and_URW_GmbH_Luxi_font_license" class="olink">License
+document</a>.
+</p><p>
+Charles Bigelow and Kris Holmes from Bigelow and Holmes Inc.
+developed the Luxi typeface designs in Ikarus digital format.
+</p><p>
+URW++ Design and Development GmbH converted the Ikarus format fonts
+to TrueType and Type1 font programs and implemented the grid-fitting
+"hints" and kerning tables in the Luxi fonts.
+</p><p>
+For more information, please contact
+<code class="email">&lt;<a class="email" href="mailto:design@bigelowandholmes.com">design@bigelowandholmes.com</a>&gt;</code> or
+<code class="email">&lt;<a class="email" href="mailto:info@urwpp.de">info@urwpp.de</a>&gt;</code>, or consult
+<a class="ulink" href="http://www.urwpp.de" target="_top">the URW++ web site</a>.
+</p><p>
+An earlier version of the Luxi fonts was made available under the
+name <span class="emphasis"><em>Lucidux</em></span>.  This name should no longer be used due to
+trademark uncertainties, and all traces of the <span class="emphasis"><em>Lucidux</em></span>
+name have been removed from X11R7.7.
+</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="More_about_core_fonts"></a>More about core fonts</h2></div></div></div><p>
+This section describes XFree86-created enhancements to the core
+X11 fonts system that were adopted by X.Org.
+</p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Core_fonts_and_internationalisation"></a>Core fonts and internationalisation</h3></div></div></div><p>
+The scalable font backends (Type 1 and TrueType) can
+automatically re-encode fonts to the encoding specified in the
+XLFD in <span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span>.  For example, a <span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span> file can
+contain entries for the Type 1 Courier font such as
+
+</p><pre class="screen">
+cour.pfa -adobe-courier-medium-r-normal--0-0-0-0-m-0-iso8859-1
+cour.pfa -adobe-courier-medium-r-normal--0-0-0-0-m-0-iso8859-2
+</pre><p>
+
+which will lead to the font being recoded to ISO 8859-1 and
+ISO 8859-2 respectively.
+</p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="The_fontenc_layer"></a>The <span class="emphasis"><em>fontenc</em></span> layer</h4></div></div></div><p>
+Two of the scalable backends (Type 1 and the
+<span class="emphasis"><em>FreeType</em></span> TrueType backend) use a common <span class="emphasis"><em>fontenc</em></span> layer for
+font re-encoding.  This allows these backends to share their encoding
+data, and allows simple configuration of new locales independently of
+font type.
+</p><p>
+<span class="emphasis"><em>Please note:</em></span> the X-TrueType (X-TT) backend is not included
+in X11R7.7.  That functionality has been merged into the FreeType
+backend.
+</p><p>
+In the <span class="emphasis"><em>fontenc</em></span> layer, an encoding is defined by a name (such as
+<code class="literal">iso8859-1</code>), possibly a number of aliases (alternate names), and
+an ordered collection of mappings.  A mapping defines the way the
+encoding can be mapped into one of the <span class="emphasis"><em>target encodings</em></span> known to
+<span class="emphasis"><em>fontenc</em></span>; currently, these consist of Unicode, Adobe glyph names,
+and arbitrary TrueType <span class="quote">“<span class="quote">cmap</span>”</span>s.
+</p><p>
+A number of encodings are hardwired into <span class="emphasis"><em>fontenc</em></span>, and are
+therefore always available; the hardcoded encodings cannot easily be
+redefined.  These include:
+
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+ <code class="literal">iso10646-1</code>: Unicode;
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-1</code>: ISO Latin-1 (Western Europe);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-2</code>: ISO Latin-2 (Eastern Europe);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-3</code>: ISO Latin-3 (Southern Europe);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-4</code>: ISO Latin-4 (Northern Europe);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-5</code>: ISO Cyrillic;
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-6</code>: ISO Arabic;
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-7</code>: ISO Greek;
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-8</code>: ISO Hebrew;
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-9</code>: ISO Latin-5 (Turkish);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-10</code>: ISO Latin-6 (Nordic);
+</p></li><li class="listitem"><p>
+ <code class="literal">iso8859-15</code>: ISO Latin-9, or Latin-0 (Revised
+Western-European);
+</p></li><li class="listitem"><p>
+ <code class="literal">koi8-r</code>: KOI8 Russian;
+</p></li><li class="listitem"><p>
+ <code class="literal">koi8-u</code>: KOI8 Ukrainian (see RFC 2319);
+</p></li><li class="listitem"><p>
+ <code class="literal">koi8-ru</code>: KOI8 Russian/Ukrainian;
+</p></li><li class="listitem"><p>
+ <code class="literal">koi8-uni</code>: KOI8 <span class="quote">“<span class="quote">Unified</span>”</span> (Russian, Ukrainian, and
+Byelorussian);
+</p></li><li class="listitem"><p>
+ <code class="literal">koi8-e</code>: KOI8 <span class="quote">“<span class="quote">European,</span>”</span> ISO-IR-111, or ECMA-Cyrillic;
+</p></li><li class="listitem"><p>
+ <code class="literal">microsoft-symbol</code> and <code class="literal">apple-roman</code>: these are only
+likely to be useful with TrueType symbol fonts.
+</p></li></ul></div><p>
+
+</p><p>
+Additional encodings can be added by defining <span class="emphasis"><em>encoding files</em></span>.
+When a font encoding is requested that the <span class="emphasis"><em>fontenc</em></span> layer doesn't
+know about, the backend checks the directory in which the font file
+resides (not necessarily the directory with <code class="filename">fonts.dir</code>!) for a
+file named <span class="quote">“<span class="quote"><code class="filename">encodings.dir</code></span>”</span>.  If found, this file is scanned for
+the requested encoding, and the relevant encoding definition file is
+read in.  The <span class="quote">“<span class="quote"><span class="command"><strong>mkfontdir</strong></span></span>”</span> utility, when invoked with the
+<span class="quote">“<span class="quote"><code class="literal">-e</code></span>”</span> option followed by the name of a directory containing
+encoding files, can be used to automatically build <span class="quote">“<span class="quote"><code class="filename">encodings.dir</code></span>”</span>
+files.  Please see the <a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a>
+manual page for more details.
+</p><p>
+A number of encoding files for common encodings are included with
+X11R7.7.  Information on writing new encoding files can be found in
+<a class="xref" href="#Format_of_encoding_directory_files" title="Format of encoding directory files">Format of encoding directory files</a>
+and <a class="xref" href="#Format_of_encoding_files" title="Format of encoding files">Format of encoding files</a> later in this document.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Backend-specific_notes_about_fontenc"></a>Backend-specific notes about fontenc</h4></div></div></div><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="The_FreeType_backend"></a>The <span class="emphasis"><em>FreeType</em></span> backend</h5></div></div></div><p>
+For TrueType and OpenType fonts, the FreeType backend scans the
+mappings in order.  Mappings with a target of PostScript are ignored;
+mappings with a TrueType or Unicode target are checked against all the
+cmaps in the file.  The first applicable mapping is used.
+</p><p>
+For Type 1 fonts, the FreeType backend first searches for a
+mapping with a target of PostScript.  If one is found, it is used.
+Otherwise, the backend searches for a mapping with target Unicode,
+which is then composed with a built-in table mapping codes to glyph
+names.  Note that this table only covers part of the Unicode code
+points that have been assigned names by Adobe.
+</p><p>
+Specifying an encoding value of <code class="literal">adobe-fontspecific</code> for a
+Type 1 font disables the encoding mechanism.  This is useful with
+symbol and incorrectly encoded fonts (see 
+<a class="xref" href="#Hints_about_using_badly_encoded_fonts" title="Hints about using badly encoded fonts">Hints about using badly encoded fonts</a> below).
+</p><p>
+If a suitable mapping is not found, the FreeType backend defaults to
+ISO 8859-1.
+</p></div></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Format_of_encoding_directory_files"></a>Format of encoding directory files</h4></div></div></div><p>
+In order to use a font in an encoding that the font backend does
+not know about, you need to have an <span class="quote">“<span class="quote"><code class="filename">encodings.dir</code></span>”</span> file either
+in the same directory as the font file used or in a system-wide
+location (<span class="quote">“<span class="quote"><code class="filename">/usr/share/fonts/X11/encodings/</code></span>”</span> by default).
+</p><p>
+The <span class="quote">“<span class="quote"><code class="filename">encodings.dir</code></span>”</span> file has a similar format to
+<span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span>.  Its first line specifies the number of encodings,
+while every successive line has two columns, the name of the encoding,
+and the name of the encoding file; this can be relative to the current
+directory, or absolute.  Every encoding name should agree with the
+encoding name defined in the encoding file.  For example,
+</p><p>
+
+</p><pre class="screen">
+3
+mulearabic-0 /usr/share/fonts/X11/encodings/mulearabic-0.enc
+mulearabic-1 /usr/share/fonts/X11/encodings/mulearabic-1.enc
+mulearabic-2 /usr/share/fonts/X11/encodings/mulearabic-2.enc
+</pre><p>
+
+</p><p>
+The name of an encoding <span class="emphasis"><em>must</em></span> be specified in the encoding file's
+<span class="quote">“<span class="quote"><code class="literal">STARTENCODING</code></span>”</span> or <span class="quote">“<span class="quote"><code class="literal">ALIAS</code></span>”</span> line.  It is not enough to create
+an <span class="quote">“<span class="quote"><code class="filename">encodings.dir</code></span>”</span> entry.
+</p><p>
+If your platform supports it (it probably does), encoding files may be
+compressed or gzipped.
+</p><p>
+The <span class="quote">“<span class="quote"><code class="filename">encoding.dir</code></span>”</span> files are best maintained by the
+<span class="quote">“<span class="quote"><span class="command"><strong>mkfontdir</strong></span></span>”</span> utility.  Please see the <a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a> manual page for more information.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Format_of_encoding_files"></a>Format of encoding files</h4></div></div></div><p>
+The encoding files are <span class="quote">“<span class="quote">free form,</span>”</span> <span class="emphasis"><em>i.e.</em></span> any string of
+whitespace is equivalent to a single space.  Keywords are parsed in a
+non-case-sensitive manner, meaning that <span class="quote">“<span class="quote"><code class="literal">size</code></span>”</span>, <span class="quote">“<span class="quote"><code class="literal">SIZE</code></span>”</span>, and
+<span class="quote">“<span class="quote"><code class="literal">SiZE</code></span>”</span> all parse as the same keyword; on the other hand, case is
+significant in glyph names.
+</p><p>
+Numbers can be written in decimal, as in <span class="quote">“<span class="quote"><code class="literal">256</code></span>”</span>, in hexadecimal,
+as in <span class="quote">“<span class="quote"><code class="literal">0x100</code></span>”</span>, or in octal, as in <span class="quote">“<span class="quote"><code class="literal">0400</code></span>”</span>.
+</p><p>
+Comments are introduced by a hash sign <span class="quote">“<span class="quote"><code class="literal">#</code></span>”</span>.  A <span class="quote">“<span class="quote"><code class="literal">#</code></span>”</span> may
+appear at any point in a line, and all characters following the
+<span class="quote">“<span class="quote"><code class="literal">#</code></span>”</span> are ignored, up to the end of the line.
+</p><p>
+The encoding file starts with the definition of the name of the
+encoding, and possibly its alternate names (aliases):
+
+</p><pre class="screen">
+STARTENCODING mulearabic-0
+ALIAS arabic-0
+</pre><p>
+
+The name of the encoding and its aliases should be suitable for use in
+an XLFD font name, and therefore contain exactly one dash <span class="quote">“<span class="quote"><code class="literal">-</code></span>”</span>.
+</p><p>
+The encoding file may then optionally declare the size of the
+encoding.  For a linear encoding (such as ISO 8859-1), the SIZE
+line specifies the maximum code plus one:
+
+</p><pre class="screen">
+SIZE 0x2B
+</pre><p>
+
+For a matrix encoding, it should specify two numbers.  The first is
+the number of the last row plus one, the other, the highest column
+number plus one.  In the case of <span class="quote">“<span class="quote"><code class="literal">jisx0208.1990-0</code></span>”</span>
+(JIS X 0208(1990), double-byte encoding, high bit clear), it
+should be
+
+</p><pre class="screen">
+SIZE 0x75 0x80
+</pre><p>
+
+In the case of a matrix encoding, a <span class="quote">“<span class="quote"><code class="literal">FIRSTINDEX</code></span>”</span> line may be
+included to specify the minimum glyph index in an encoding.  The
+keyword <span class="quote">“<span class="quote"><code class="literal">FIRSTINDEX</code></span>”</span> is followed by two integers, the minimum row
+number followed by the minimum column number:
+
+</p><pre class="screen">
+FIRSTINDEX 0x20 0x20
+</pre><p>
+
+In the case of a linear encoding, a <span class="quote">“<span class="quote"><code class="literal">FIRSTINDEX</code></span>”</span> line is not very
+useful.  If for some reason however you chose to include on, it should
+be followed by a single integer.
+</p><p>
+Note that in most font backends inclusion of a <span class="quote">“<span class="quote"><code class="literal">FIRSTINDEX</code></span>”</span> line
+has the side effect of disabling default glyph generation, and this
+keyword should therefore be avoided unless absolutely necessary.
+</p><p>
+Codes outside the region defined by the <span class="quote">“<span class="quote"><code class="literal">SIZE</code></span>”</span> and
+<span class="quote">“<span class="quote"><code class="literal">FIRSTINDEX</code></span>”</span> lines are understood to be undefined.  Encodings
+default to linear encoding with a size of 256 (0x100).  This means
+that you must declare the size of all 16 bit encodings.
+</p><p>
+What follows is one or more mapping sections.  A mapping section
+starts with a <span class="quote">“<span class="quote"><code class="literal">STARTMAPPING</code></span>”</span> line stating the target of the mapping.
+The target may be one of:
+
+</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
+Unicode (ISO 10646):
+
+</p><pre class="screen">
+STARTMAPPING unicode
+</pre><p>
+
+</p></li><li class="listitem"><p>
+a given TrueType <span class="quote">“<span class="quote">cmap</span>”</span>:
+
+</p><pre class="screen">
+STARTMAPPING cmap 3 1
+</pre><p>
+
+</p></li><li class="listitem"><p>
+PostScript glyph names:
+
+</p><pre class="screen">
+STARTMAPPING postscript
+</pre><p>
+
+</p></li></ul></div><p>
+
+Every line in a mapping section maps one from the encoding being
+defined to the target of the mapping.  In mappings with a Unicode or
+TrueType mapping, codes are mapped to codes:
+
+</p><pre class="screen">
+0x21 0x0660
+0x22 0x0661
+...
+</pre><p>
+
+As an abbreviation, it is possible to map a contiguous range of codes
+in a single line.  A line consisting of three integers
+
+</p><pre class="screen">
+&lt;it/start/ &lt;it/end/ &lt;it/target/
+</pre><p>
+
+is an abbreviation for the range of lines
+
+</p><pre class="screen">
+<span class="emphasis"><em>start</em></span>     <span class="emphasis"><em>target</em></span>
+</pre><p>
+
+</p><pre class="screen">
+<span class="emphasis"><em>start</em></span>+1   <span class="emphasis"><em>target</em></span>+1
+</pre><p>
+
+</p><pre class="screen">
+...
+</pre><p>
+
+</p><pre class="screen">
+<span class="emphasis"><em>end</em></span>       <span class="emphasis"><em>target</em></span>+<span class="emphasis"><em>end</em></span>-<span class="emphasis"><em>start</em></span>
+</pre><p>
+
+For example, the line
+
+</p><pre class="screen">
+0x2121 0x215F 0x8140
+</pre><p>
+
+is an abbreviation for
+
+</p><pre class="screen">
+0x2121 0x8140
+0x2122 0x8141
+...
+0x215F 0x817E
+</pre><p>
+
+Codes not listed are assumed to map through the identity (<span class="emphasis"><em>i.e.</em></span> to
+the same numerical value).  In order to override this default mapping,
+you may specify a range of codes to be undefined by using an
+<span class="quote">“<span class="quote"><code class="literal">UNDEFINE</code></span>”</span> line:
+
+</p><pre class="screen">
+UNDEFINE 0x00 0x2A
+</pre><p>
+
+or, for a single code,
+
+</p><pre class="screen">
+UNDEFINE 0x1234
+</pre><p>
+
+</p><p>
+PostScript mappings are different.  Every line in a PostScript mapping
+maps a code to a glyph name
+
+</p><pre class="screen">
+0x41 A
+0x42 B
+...
+</pre><p>
+
+and codes not explicitly listed are undefined.
+</p><p>
+A mapping section ends with an <code class="literal">ENDMAPPING</code> line
+
+</p><pre class="screen">
+ENDMAPPING
+</pre><p>
+
+After all the mappings have been defined, the file ends with an
+<code class="literal">ENDENCODING</code> line
+
+</p><pre class="screen">
+ENDENCODING
+</pre><p>
+
+</p><p>
+In order to make future extensions to the format possible, lines
+starting with an unknown keyword are silently ignored, as are mapping
+sections with an unknown target.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Using_symbol_fonts"></a>Using symbol fonts</h4></div></div></div><p>
+Type 1 symbol fonts should be installed using the
+<code class="literal">adobe-fontspecific</code> encoding.
+</p><p>
+In an ideal world, all TrueType symbol fonts would be installed using
+one of the <code class="literal">microsoft-symbol</code> and <code class="literal">apple-roman</code> encodings. A
+number of symbol fonts, however, are not marked as such; such fonts
+should be installed using <code class="literal">microsoft-cp1252</code>, or, for older fonts,
+<code class="literal">microsoft-win3.1</code>.
+</p><p>
+In order to guarantee consistent results (especially between
+Type 1 and TrueType versions of the same font), it is possible to
+define a special encoding for a given font. This has already been done
+for the <code class="literal">ZapfDingbats</code> font; see the file
+<span class="quote">“<span class="quote"><code class="filename">encodings/adobe-dingbats.enc</code></span>”</span>.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Hints_about_using_badly_encoded_fonts"></a>Hints about using badly encoded fonts</h4></div></div></div><p>
+A number of text fonts are incorrectly encoded. Incorrect encoding
+is sometimes done by design, in order to make a font for an exotic
+script appear like an ordinary Western text font on systems which are
+not easily extended with new locale data.  It is often the result of
+the font designer's laziness or incompetence; for some reason, most
+people seem to find it easier to invent idiosyncratic glyph names
+rather than follow the Adobe glyph list.
+</p><p>
+There are two ways of dealing with such fonts: using them with the
+encoding they were designed for, and creating an <span class="emphasis"><em>ad hoc</em></span> encoding
+file.
+</p><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Using_fonts_with_the_designers_encoding"></a>Using fonts with the designer's encoding</h5></div></div></div><p>
+In the case of Type 1 fonts, the font designer can specify a
+default encoding; this encoding is requested by using the
+<span class="quote">“<span class="quote"><code class="literal">adobe-fontspecific</code></span>”</span> encoding in the XLFD name. Sometimes, the
+font designer omitted to specify a reasonable default encoding, in
+which case you should experiment with <span class="quote">“<span class="quote"><code class="literal">adobe-standard</code></span>”</span>,
+<span class="quote">“<span class="quote"><code class="literal">iso8859-1</code></span>”</span>, <span class="quote">“<span class="quote"><code class="literal">microsoft-cp1252</code></span>”</span>, and
+<span class="quote">“<span class="quote"><code class="literal">microsoft-win3.1</code></span>”</span>. (The encoding <span class="quote">“<span class="quote"><code class="literal">microsoft-symbol</code></span>”</span> doesn't
+make sense for Type 1 fonts).
+</p><p>
+TrueType fonts do not have a default encoding.  However, most TrueType
+fonts are designed with either Microsoft or Apple platforms in mind,
+so one of <span class="quote">“<span class="quote"><code class="literal">microsoft-symbol</code></span>”</span>, <span class="quote">“<span class="quote"><code class="literal">microsoft-cp1252</code></span>”</span>,
+<span class="quote">“<span class="quote"><code class="literal">microsoft-win3.1</code></span>”</span>, or <span class="quote">“<span class="quote"><code class="literal">apple-roman</code></span>”</span> should yield reasonable
+results.
+</p></div><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Specifying_an_ad_hoc_encoding_file"></a>Specifying an <span class="emphasis"><em>ad hoc</em></span> encoding file</h5></div></div></div><p>
+It is always possible to define an encoding file to put the glyphs
+in a font in any desired order. Again, see the
+<span class="quote">“<span class="quote"><code class="filename">encodings/adobe-dingbats.enc</code></span>”</span> file to see how this is done.
+</p></div><div class="sect4"><div class="titlepage"><div><div><h5 class="title"><a id="Specifying_font_aliases"></a>Specifying font aliases</h5></div></div></div><p>
+By following the directions above, you will find yourself with a
+number of fonts with unusual names --- with encodings such as
+<span class="quote">“<span class="quote"><code class="literal">adobe-fontspecific</code></span>”</span>, <span class="quote">“<span class="quote"><code class="literal">microsoft-win3.1</code></span>”</span> <span class="emphasis"><em>etc</em></span>.  In order
+to use these fonts with standard applications, it may be useful to
+remap them to their proper names.
+</p><p>
+This is done by writing a <span class="quote">“<span class="quote"><code class="filename">fonts.alias</code></span>”</span> file. The format of this file
+is very simple: it consists of a series of lines each mapping an alias
+name to a font name.  A <span class="quote">“<span class="quote"><code class="filename">fonts.alias</code></span>”</span> file might look as follows:
+
+</p><pre class="screen">
+"-ogonki-alamakota-medium-r-normal--0-0-0-0-p-0-iso8859-2" \
+  "-ogonki-alamakota-medium-r-normal--0-0-0-0-p-0-adobe-fontspecific"
+</pre><p>
+
+(both XLFD names on a single line).  The syntax of the
+<span class="quote">“<span class="quote"><code class="filename">fonts.alias</code></span>”</span> file is more precisely described in the
+<a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a> manual page.
+</p></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Additional_notes_about_scalable_core_fonts"></a>Additional notes about scalable core fonts</h3></div></div></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="About_the_FreeType_backend"></a>About the <span class="emphasis"><em>FreeType</em></span> backend</h4></div></div></div><p>
+The <span class="emphasis"><em>FreeType</em></span> backend (formerly <span class="emphasis"><em>xfsft</em></span>)
+is a backend based on version 2 of the FreeType library (see <a class="ulink" href="http://www.freetype.org/" target="_top">the FreeType web site</a>) and has
+the X-TT functionalities for CJKV support provided by the After X-TT
+Project (see <a class="ulink" href="http://x-tt.sourceforge.jp/" target="_top">the After X-TT Project web site</a>).  The <span class="emphasis"><em>FreeType</em></span> backend has support for the
+<span class="quote">“<span class="quote">fontenc</span>”</span> style of internationalisation (see
+<a class="xref" href="#The_fontenc_layer" title="The fontenc layer">The <span class="emphasis"><em>fontenc</em></span> layer</a>).  This backend supports TrueType font files
+(<span class="quote">“<span class="quote"><code class="filename">*.ttf</code></span>”</span>), OpenType font files (<span class="quote">“<span class="quote"><code class="filename">*.otf</code></span>”</span>), TrueType Collections
+(<span class="quote">“<span class="quote"><code class="filename">*.ttc</code></span>”</span>), OpenType Collections (<span class="quote">“<span class="quote"><code class="filename">*.otc</code></span>”</span>) and Type 1 font
+files (<span class="quote">“<span class="quote"><code class="filename">*.pfa</code></span>”</span> and <span class="quote">“<span class="quote"><code class="filename">*.pfb</code></span>”</span>).
+</p><p>
+In order to access the faces in a TrueType Collection file, the face
+number must be specified in the fonts.dir file before the filename,
+within a pair of colons, or by setting the 'fn' TTCap option.  For example,
+</p><p>
+
+</p><pre class="screen">
+:1:mincho.ttc -misc-pmincho-medium-r-normal--0-0-0-0-p-0-jisx0208.1990-0
+</pre><p>
+
+</p><p>
+refers to face 1 in the <span class="quote">“<span class="quote"><code class="filename">mincho.ttc</code></span>”</span> TrueType Collection file.
+</p><p>
+The new <span class="emphasis"><em>FreeType</em></span> backend supports the extended
+<span class="quote">“<span class="quote"><code class="filename">fonts.dir</code></span>”</span> syntax introduced by X-TrueType with a number
+of options, collectively known as <span class="quote">“<span class="quote">TTCap</span>”</span>.  A <span class="quote">“<span class="quote">TTCap</span>”</span> entry follows the
+general syntax
+</p><p>
+
+</p><pre class="screen">
+option=value:
+</pre><p>
+
+</p><p>
+and should be specified before the filename.  The new <span class="emphasis"><em>FreeType</em></span>
+almost perfectly supports TTCap options that are compatible with X-TT
+1.4.  The Automatic Italic (<span class="quote">“<span class="quote"><code class="literal">ai</code></span>”</span>), Double Strike (<span class="quote">“<span class="quote"><code class="literal">ds</code></span>”</span>) and
+Bounding box Width (<span class="quote">“<span class="quote"><code class="literal">bw</code></span>”</span>) options are indispensable in CJKV.
+For example,
+</p><p>
+
+</p><pre class="screen">
+mincho.ttc -misc-mincho-medium-r-normal--0-0-0-0-c-0-jisx0208.1990-0
+ds=y:mincho.ttc -misc-mincho-bold-r-normal--0-0-0-0-c-0-jisx0208.1990-0
+ai=0.2:mincho.ttc -misc-mincho-medium-i-normal--0-0-0-0-c-0-jisx0208.1990-0
+ds=y:ai=0.2:mincho.ttc -misc-mincho-bold-i-normal--0-0-0-0-c-0-jisx0208.1990-0
+bw=0.5:mincho.ttc -misc-mincho-medium-r-normal--0-0-0-0-c-0-jisx0201.1976-0
+bw=0.5:ds=y:mincho.ttc -misc-mincho-bold-r-normal--0-0-0-0-c-0-jisx0201.1976-0
+bw=0.5:ai=0.2:mincho.ttc -misc-mincho-medium-i-normal--0-0-0-0-c-0-jisx0201.1976-0
+bw=0.5:ds=y:ai=0.2:mincho.ttc -misc-mincho-bold-i-normal--0-0-0-0-c-0-jisx0201.1976-0
+</pre><p>
+
+</p><p>
+setup the complete combination of jisx0208 and jisx0201 using mincho.ttc
+only.  More information on the TTCap syntax is found on <a class="ulink" href="http://x-tt.sourceforge.jp/" target="_top">the After X-TT Project page</a>.
+</p><p>
+The <span class="emphasis"><em>FreeType</em></span> backend uses the <span class="emphasis"><em>fontenc</em></span> layer in order to support
+recoding of fonts; this was described in <a class="xref" href="#The_fontenc_layer" title="The fontenc layer">The <span class="emphasis"><em>fontenc</em></span> layer</a>
+and especially <a class="xref" href="#The_FreeType_backend" title="The FreeType backend">The <span class="emphasis"><em>FreeType</em></span> backend</a> earlier in this document.
+</p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a id="Delayed_glyph_rasterisation"></a>Delayed glyph rasterisation</h4></div></div></div><p>
+When loading a proportional fonts which contain a huge number of glyphs,
+the old <span class="emphasis"><em>FreeType</em></span> delayed glyph rasterisation until the time at which
+the glyph was first used.   The new FreeType (libfreetype-xtt2) has an
+improved <span class="quote">“<span class="quote">very lazy</span>”</span> metric calculation method to speed up the process when
+loading TrueType or OpenType fonts.   Although the <span class="emphasis"><em>X-TT</em></span> module also
+has this method, the "<code class="literal">vl=y</code>" TTCap option must be set if you want to
+use it.  This is the default method for <span class="emphasis"><em>FreeType</em></span> when it loads
+multi-byte fonts.   Even if you use a unicode font which has tens of
+thousands of glyphs, this delay will not be worrisome as long as you use
+the new <span class="emphasis"><em>FreeType</em></span> backend -- its <span class="quote">“<span class="quote">very lazy</span>”</span> method is super-fast.
+</p><p>
+The maximum error of bitmap position using <span class="quote">“<span class="quote">very lazy</span>”</span> method is 1 pixel,
+and is the same as that of a character-cell spacing.  When the X-TT
+backend is used with the <span class="quote">“<span class="quote"><code class="literal">vl=y</code></span>”</span> option, a chipped bitmap is displayed
+with certain fonts.  However, the new FreeType backend has minimal problem
+with this, since it corrects left- and right-side bearings using
+<span class="quote">“<span class="quote">italicAngle</span>”</span> in the TrueType/OpenType post table, and does automatic
+correction of bitmap positions when rasterisation so that chipped bitmaps
+are not displayed.  Nevertheless if you don't want to use the <span class="quote">“<span class="quote">very lazy</span>”</span>
+method when using multi-bytes fonts, set <span class="quote">“<span class="quote"><code class="literal">vl=n</code></span>”</span> in the TTCap option to
+disable it:
+</p><p>
+
+</p><pre class="screen">
+vl=n:luxirr.ttf -b&amp;h-Luxi Serif-medium-r-normal--0-0-0-0-p-0-iso10646-1
+</pre><p>
+
+</p><p>
+Of course, both backends also support an optimisation for character-cell
+fonts (fonts with all glyph metrics equal, or terminal fonts).  A font
+with an XLFD specifying a character-cell spacing <span class="quote">“<span class="quote"><code class="literal">c</code></span>”</span>, as in
+</p><p>
+
+</p><pre class="screen">
+-misc-mincho-medium-r-normal--0-0-0-0-c-0-jisx0208.1990-0
+</pre><p>
+
+</p><p>
+or
+</p><p>
+
+</p><pre class="screen">
+fs=c:mincho.ttc -misc-mincho-medium-r-normal--0-0-0-0-p-0-jisx0208.1990-0
+</pre><p>
+
+</p><p>
+will not compute the metric for each glyph, but instead
+trust the font to be a character-cell font.  You are
+encouraged to make use of this optimisation when useful, but be warned
+that not all monospaced fonts are character-cell fonts.
+</p></div></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Appendix_background_and_terminology"></a>Appendix: background and terminology</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Characters_and_glyphs"></a>Characters and glyphs</h3></div></div></div><p>
+A computer text-processing system inputs keystrokes and outputs
+<span class="emphasis"><em>glyphs</em></span>, small pictures that are assembled on paper or on a
+computer screen.  Keystrokes and glyphs do not, in general, coincide:
+for example, if the system does generate ligatures, then to the
+sequence of two keystrokes &lt;<code class="literal">f</code>&gt;&lt;<code class="literal">i</code>&gt; will typically
+correspond a single glyph.  Similarly, if the system shapes Arabic
+glyphs in a vaguely reasonable manner, then multiple different glyphs
+may correspond to a single keystroke.
+</p><p>
+The complex transformation rules from keystrokes to glyphs are usually
+factored into two simpler transformations, from keystrokes to
+<span class="emphasis"><em>characters</em></span> and from characters to glyphs.  You may want to think
+of characters as the basic unit of text that is stored <span class="emphasis"><em>e.g.</em></span> in
+the buffer of your text editor.  While the definition of a character
+is intrinsically application-specific, a number of standardised
+collections of characters have been defined.
+</p><p>
+A <span class="emphasis"><em>coded character set</em></span> is a set of characters together with a
+mapping from integer codes --- known as <span class="emphasis"><em>codepoints</em></span> --- to
+characters.  Examples of coded character sets include US-ASCII,
+ISO 8859-1, KOI8-R, and JIS X 0208(1990).
+</p><p>
+A coded character set need not use 8 bit integers to index characters.
+Many early systems used 6 bit character sets, while 16 bit (or more)
+character sets are necessary for ideographic writing systems.
+</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Font_files_fonts_and_XLFD"></a>Font files, fonts, and XLFD</h3></div></div></div><p>
+Traditionally, typographers speak about <span class="emphasis"><em>typefaces</em></span> and
+<span class="emphasis"><em>founts</em></span>.  A typeface is a particular style or design, such as
+Times Italic, while a fount is a molten-lead incarnation of a given
+typeface at a given size.
+</p><p>
+Digital fonts come in <span class="emphasis"><em>font files</em></span>.  A font file contains the
+information necessary for generating glyphs of a given typeface, and
+applications using font files may access glyph information in an
+arbitrary order.
+</p><p>
+Digital fonts may consist of bitmap data, in which case they are said
+to be <span class="emphasis"><em>bitmap fonts</em></span>.  They may also consist of a mathematical
+description of glyph shapes, in which case they are said to be
+<span class="emphasis"><em>scalable fonts</em></span>.  Common formats for scalable font files are
+<span class="emphasis"><em>Type 1</em></span> (sometimes incorrectly called <span class="emphasis"><em>ATM fonts</em></span> or
+<span class="emphasis"><em>PostScript fonts</em></span>), <span class="emphasis"><em>TrueType</em></span> and <span class="emphasis"><em>OpenType</em></span>.
+</p><p>
+The glyph data in a digital font needs to be indexed somehow.  How
+this is done depends on the font file format.  In the case of
+Type 1 fonts, glyphs are identified by <span class="emphasis"><em>glyph names</em></span>.  In the
+case of TrueType fonts, glyphs are indexed by integers corresponding
+to one of a number of indexing schemes (usually Unicode --- see below).
+</p><p>
+The X11 core fonts system uses the data in a font file to generate
+<span class="emphasis"><em>font instances</em></span>, which are collections of glyphs at a given size
+indexed according to a given encoding.
+</p><p>
+X11 core font instances are usually specified using a notation known
+as the <span class="emphasis"><em>X Logical Font Description</em></span> (XLFD).  An XLFD starts with a
+dash <span class="quote">“<span class="quote"><code class="literal">-</code></span>”</span>, and consists of fourteen fields separated by dashes,
+for example:
+
+</p><pre class="screen">
+-adobe-courier-medium-r-normal--12-120-75-75-m-70-iso8859-1
+</pre><p>
+
+Or particular interest are the last two fields <span class="quote">“<span class="quote"><code class="literal">iso8859-1</code></span>”</span>, which
+specify the font instance's encoding.
+</p><p>
+A scalable font is specified by an XLFD which contains zeroes instead
+of some fields:
+
+</p><pre class="screen">
+-adobe-courier-medium-r-normal--0-0-0-0-m-0-iso8859-1
+</pre><p>
+
+</p><p>
+X11 font instances may also be specified by short name.  Unlike an
+XLFD, a short name has no structure and is simply a conventional name
+for a font instance.  Two short names are of particular interest, as
+the server will not start if font instances with these names cannot be
+opened.  These are <span class="quote">“<span class="quote"><code class="literal">fixed</code></span>”</span>, which specifies the fallback font to
+use when the requested font cannot be opened, and <span class="quote">“<span class="quote"><code class="literal">cursor</code></span>”</span>, which
+specifies the set of glyphs to be used by the mouse pointer.
+</p><p>
+Short names are usually implemented as aliases to XLFDs; the
+standard <span class="quote">“<span class="quote"><code class="literal">fixed</code></span>”</span> and <span class="quote">“<span class="quote"><code class="literal">cursor</code></span>”</span> aliases are defined in
+
+</p><pre class="screen">
+/usr/share/font/X11/misc/fonts.alias
+</pre><p>
+
+</p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a id="Unicode"></a>Unicode</h3></div></div></div><p>
+Unicode (<a class="ulink" href="http://www.unicode.org" target="_top">http://www.unicode.org</a>) is a coded character
+set with the goal of uniquely identifying all characters for all
+scripts, current and historical.  While Unicode was explicitly not
+designed as a glyph encoding scheme, it is often possible to use it as
+such.
+</p><p>
+Unicode is an <span class="emphasis"><em>open</em></span> character set, meaning that codepoint
+assignments may be added to Unicode at any time (once specified,
+though, an assignment can never be changed).  For this reason, a
+Unicode font will be <span class="emphasis"><em>sparse</em></span>, meaning that it only defines glyphs
+for a subset of the character registry of Unicode.
+</p><p>
+The Unicode standard is defined in parallel with the international
+standard ISO 10646.  Assignments in the two standards are always
+equivalent, and we often use the terms <span class="emphasis"><em>Unicode</em></span> and
+<span class="emphasis"><em>ISO 10646</em></span> interchangeably.
+</p><p>
+When used in the X11 core fonts system, Unicode-encoded fonts should
+have the last two fields of their XLFD set to <span class="quote">“<span class="quote"><code class="literal">iso10646-1</code></span>”</span>.
+</p></div></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="References"></a>References</h2></div></div></div><p>
+X11R7.7 comes with extensive documentation in the form of manual
+pages and typeset documents.  Before installing fonts, you really should
+read the <a class="ulink" href="fontconfig.3.html" target="_top">fontconfig(3)</a> and
+<a class="ulink" href="mkfontdir.1.html" target="_top">mkfontdir(1)</a> manual pages; other
+manual pages of interest include <a class="ulink" href="X.7.html" target="_top">X(7)</a>,
+<a class="ulink" href="Xserver.1.html" target="_top">Xserver(1)</a>, <a class="ulink" href="xset.1.html" target="_top">xset(1)</a>, <a class="ulink" href="Xft.3.html" target="_top">Xft(3)</a>, <a class="ulink" href="xlsfonts.1.html" target="_top">xlsfonts(1)</a> and <a class="ulink" href="showfont.1.html" target="_top">showfont(1)</a>.  In addition, you may want to read the <a href="../xlfd/xlfd.html#xlfd" class="olink">X Logical Font Description document</a> by Jim Flowers.
+</p><p>
+The <a class="ulink" href="http://www.faqs.org/faqs/by-newsgroup/comp/comp.fonts.html" target="_top">comp.fonts FAQ</a>,
+which is unfortunately no longer being maintained, contains a wealth
+of information about digital fonts.
+</p><p>
+Xft and Fontconfig are described on
+<a class="ulink" href="http://www.fontconfig.org" target="_top">the Fontconfig site</a>.
+</p><p>
+The
+<a class="ulink" href="http://www.dcs.ed.ac.uk/home/jec/programs/xfsft/" target="_top">xfsft home page</a>
+has been superseded by this document, and is now obsolete; you may
+however still find some of the information that it contains useful.
+<a class="ulink" href="http://www.joerg-pommnitz.de/TrueType/xfsft.html" target="_top">Joerg Pommnitz' xfsft page</a>
+is the canonical source for the <span class="quote">“<span class="quote"><span class="command"><strong>ttmkfdir</strong></span></span>”</span> utility, which is the
+ancestor of <span class="command"><strong>mkfontscale</strong></span>.
+</p><p>
+<a class="ulink" href="http://www.pps.jussieu.fr/~jch/software/" target="_top">The author's software pages</a>
+might or might not contain related scribbles and development versions
+of software.
+</p><p>
+The documentation of <span class="emphasis"><em>X-TrueType</em></span> is available from <a class="ulink" href="http://x-tt.sourceforge.jp/" target="_top">the After X-TT Project page</a>.
+</p><p>
+While the <a class="ulink" href="http://www.unicode.org" target="_top">Unicode consortium site</a>
+may be of interest,  you are more likely to find what you need in
+Markus Kuhn's <a class="ulink" href="http://www.cl.cam.ac.uk/~mgk25/unicode.html" target="_top">UTF-8 and Unicode FAQ</a>.
+</p><p>
+The IETF RFC documents, available from a number of sites throughout
+the world, often provide interesting information about character set
+issues; see for example <a class="ulink" href="https://datatracker.ietf.org/doc/rfc373/" target="_top">RFC 373</a>.
+</p></div></div></body></html>

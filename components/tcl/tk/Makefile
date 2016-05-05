@@ -26,14 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tk
-COMPONENT_VERSION=	8.5.12
+COMPONENT_VERSION=	8.5.19
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tk/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c453d820925bf526bbe8a0d1c17ab3168b076fcb9844bea797ad75e3b9ad9291
+    sha256:407af1de167477d598bd6166d84459a3bdccc2fb349360706154e646a9620ffa
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libtk
+COMPONENT_LICENSE=	BSD-like
+COMPONENT_LICENSE_FILE=	license.terms
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

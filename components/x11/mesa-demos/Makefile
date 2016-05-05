@@ -11,17 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa-demos
-COMPONENT_VERSION= 8.2.0
+COMPONENT_VERSION= 8.3.0
 COMPONENT_SUMMARY= The Mesa 3-D Graphics demo applications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e4bfecb5816ddd4b7b37c1bc876b63f1f7f06fda5879221a9774d0952f90ba92
+  sha256:c173154bbd0d5fb53d732471984def42fb1b14ac85fcb834138fb9518b3e0bef
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/demos/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
@@ -34,6 +35,9 @@ COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 
 CONFIGURE_ENV += GLEW_CFLAGS="-I-have-no-GLEW-"
 CONFIGURE_ENV += GLEW_LIBS="-I-have-no-GLEW-"
+
+CONFIGURE_OPTIONS += --without-glut
+CONFIGURE_OPTIONS += --disable-osmesa
 
 build: $(BUILD_32)
 

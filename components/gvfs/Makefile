@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gvfs
 
 COMPONENT_VERSION= 1.6.7
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= GNOME virtual file system framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -51,6 +51,7 @@ LDFLAGS.32 = -L/usr/sfw/lib -R/usr/sfw/lib
 LDFLAGS.64 = -L/usr/sfw/lib/$(MACH64) -R/usr/sfw/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
 
+CONFIGURE_OPTIONS += --disable-fuse
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
 CONFIGURE_ENV+= PERL=$(PERL)

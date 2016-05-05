@@ -1,0 +1,65 @@
+From 94dc5c2ab3457fd002a10e9d2a42059a17ed83b6 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:38:26 -0700
+Subject: [PATCH 17/34] PAM setcred failures
+
+#
+# This patch contains bug fixes to the PAM credential and session operations.
+# In the original OpenSSH, the server only gives warnings and still allows
+# users to log in when pam_setcred() or pam_open_session() fail, if user auth
+# method is not keyboard-interactive or password.  This is not a correct
+# behavior. The server should just fatal out, when these functions fail.
+#
+# We have contributed back these bug fixes to the OpenSSH upstream community.
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2399
+# In the future, if these bug fixes are accepted by the upsteam in a later
+# release, we will remove this patch when we upgrade to that release.
+#
+---
+ auth-pam.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/auth-pam.c b/auth-pam.c
+index d049779..8bad498 100644
+--- a/auth-pam.c
++++ b/auth-pam.c
+@@ -1084,12 +1084,19 @@ do_pam_setcred(int init)
+ 		sshpam_cred_established = 1;
+ 		return;
+ 	}
++
++#ifdef PAM_BUGFIX
++	/* Server will fatal out when pam_setcred() failed. */
++	fatal("PAM: pam_setcred(): %s", pam_strerror(sshpam_handle,
++	    sshpam_err));
++#else /* orig */
+ 	if (sshpam_authenticated)
+ 		fatal("PAM: pam_setcred(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
+ 	else
+ 		debug("PAM: pam_setcred(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
++#endif /* PAM_BUGFIX */
+ }
+ 
+ static int
+@@ -1182,10 +1189,16 @@ do_pam_session(void)
+ 	if (sshpam_err == PAM_SUCCESS)
+ 		sshpam_session_open = 1;
+ 	else {
++#ifdef PAM_BUGFIX
++		/* Server will fatal out when pam_open_session() failed */
++		fatal("PAM: pam_open_session(): %s",
++		    pam_strerror(sshpam_handle, sshpam_err));
++#else /* orig */
+ 		sshpam_session_open = 0;
+ 		disable_forwarding();
+ 		error("PAM: pam_open_session(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
++#endif /* PAM_BUGFIX */
+ 	}
+ 
+ }
+-- 
+2.5.4 (Apple Git-61)
+

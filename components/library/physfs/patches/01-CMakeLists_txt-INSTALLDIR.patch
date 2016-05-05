@@ -1,0 +1,21 @@
+Fix CMake recipes for libphysfs to support configurable installation locations
+(C) 2016 by Jim Klimov
+
+--- a/CMakeLists.txt.orig	2012-10-23 05:41:04.000000000 +0200
++++ b/CMakeLists.txt	2016-04-27 14:24:58.171477010 +0200
+@@ -338,10 +338,12 @@
+     ENDIF(wxWidgets_FOUND)
+ ENDIF(PHYSFS_BUILD_WX_TEST)
+ 
++OPTION(CMAKE_INSTALL_LIBDIR "Relative subdir under prefix for libraries." lib)
++OPTION(CMAKE_INSTALL_BINDIR "Relative subdir under prefix for binary programs." bin)
+ INSTALL(TARGETS ${PHYSFS_INSTALL_TARGETS}
+-        RUNTIME DESTINATION bin
+-        LIBRARY DESTINATION lib${LIB_SUFFIX}
+-        ARCHIVE DESTINATION lib${LIB_SUFFIX})
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}${LIB_SUFFIX}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}${LIB_SUFFIX})
+ INSTALL(FILES physfs.h DESTINATION include)
+ 
+ FIND_PACKAGE(Doxygen)

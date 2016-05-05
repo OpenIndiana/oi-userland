@@ -37,8 +37,8 @@ PATH=/usr/bin:/usr/gnu/bin
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
-export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
-export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
+#export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
+#export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
@@ -46,6 +46,7 @@ export WS_TOP := \
 	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
+USERLAND_ARCHIVES ?=	$(WS_TOP)/archives/
 WS_MACH =       $(WS_TOP)/$(MACH)
 WS_LOGS =       $(WS_MACH)/logs
 WS_REPO =       $(WS_MACH)/repo
@@ -107,6 +108,10 @@ COMPONENT_DIR :=	$(shell pwd)
 SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
+
+ARCHLIBSUBDIR32	= 
+ARCHLIBSUBDIR64	= $(MACH64)
+ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
 # Note: the "configure.mk" file defines a similar structure independently,
 # although referring to some of the definitions from this "shared-macros.mk"
@@ -352,6 +357,7 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
+#
 # The CCACHE makefile variable should evaluate to empty string or a pathname
 # like /usr/bin/ccache depending on your PATH value and "which" implementation.
 # The assignment via ":=" is important, to only do this once in a Makefile,
@@ -363,23 +369,25 @@ export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 # is currently the default) to not even define the usage of wrapper in the
 # userland-building makefile system.
 # If you want to speed up your re-builds, you must set ENABLE_CCACHE=true.
-# For legacy reasons, the inverted CCACHE_DISABLE variable (configuration of
-# "ccache" program itself) is also supported, but direct use is discouraged.
+# For legacy reasons, the CCACHE_DISABLE and CCACHE_NODISABLE variables (from
+# configuration of the "ccache" program itself) are also supported, but direct
+# use is discouraged, since their syntax and usage are counter-intuitive.
 #
 # Still, absence of ccache in PATH is not considered a fatal error since the
 # build would just proceed well with original compiler.
 # Note: In code below we fast-track if the makefile CCACHE variable is defined
 # but fall back to shell executability tests if just envvar CCACHE is passed.
+#
 export CCACHE := $(shell \
     if test -n "$(CCACHE)" ; then \
         echo "$(CCACHE)"; \
     else \
-        if test x"$${CCACHE_DISABLE-}" = xtrue -o x"$(CCACHE_DISABLE)" = xtrue \
+        if test x"$${CCACHE_DISABLE-}" != x -o x"$(CCACHE_DISABLE)" != x \
              -o x"$${ENABLE_CCACHE-}" = xfalse -o x"$(ENABLE_CCACHE)" = xfalse \
         ; then \
                 echo "NOT USING CCACHE FOR OI-USERLAND because explicitly disabled" >&2 ; \
         else \
-            if test x"$${CCACHE_DISABLE-}" = xfalse -o x"$(CCACHE_DISABLE)" = xfalse \
+            if test x"$${CCACHE_NODISABLE-}" != x -o x"$(CCACHE_NODISABLE)" != x \
                  -o x"$${ENABLE_CCACHE-}" = xtrue -o x"$(ENABLE_CCACHE)" = xtrue \
             ; then \
                 for F in \
@@ -389,6 +397,9 @@ export CCACHE := $(shell \
                 ; do if test -n "$$F" && test -x "$$F" ; then \
                         echo "$$F" ; \
                         echo "USING CCACHE FOR OI-USERLAND: $$F" >&2 ; \
+                        if test x"$${CCACHE_DISABLE-}" != x ; then \
+                            echo "WARNING: envvar CCACHE_DISABLE is set, so effectively ccache will not act!" >&2 ; \
+                        fi; \
                         exit 0; \
                     fi; \
                 done; \
@@ -479,7 +490,7 @@ RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
 RUBY =          $(RUBY.$(RUBY_VERSION))
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
-# both the ruby version and the ruby library version are needed. 
+# both the ruby version and the ruby library version are needed.
 RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
@@ -654,7 +665,7 @@ CC_BITS =	-m$(BITS)
 # Code generation instruction set and optimization 'hints'.  Use studio_XBITS
 # and not the .arch.bits variety directly.
 studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
-studio_XBITS.sparc.64 =	
+studio_XBITS.sparc.64 =
 ifneq   ($(strip $(PARFAIT_BUILD)),yes)
 studio_XBITS.sparc.64 += -xtarget=ultra2
 endif
@@ -686,7 +697,7 @@ studio_cplusplus_C99_ENABLE = 	-xlang=c99
 studio_cplusplus_C99_DISABLE =
 
 # And this is the macro you should actually use
-studio_cplusplus_C99MODE = 
+studio_cplusplus_C99MODE =
 
 # Turn on C99 for gcc
 gcc_C99_ENABLE =	-std=c99

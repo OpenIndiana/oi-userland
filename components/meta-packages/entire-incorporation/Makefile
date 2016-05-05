@@ -15,7 +15,6 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		entire
-COMPONENT_REVISION=	1
 
 include $(WS_MAKE_RULES)/ips.mk
 

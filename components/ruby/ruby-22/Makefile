@@ -26,15 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.2.4
+COMPONENT_VERSION=	2.2.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d28bff4641e382681c58072ddc244d025ac47ff71dd9426a92fcfc3830d1773c
+    sha256:f86feaa0a578e8da0924ced3ec68b25b50d69fc9a72cc8d919bc3c73f85f87d7
 COMPONENT_ARCHIVE_URL=	\
-	http://ftp.ruby-lang.org/pub/ruby/2.2/$(COMPONENT_ARCHIVE)
+	https://cache.ruby-lang.org/pub/ruby/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ruby
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -120,7 +121,7 @@ include $(WS_MAKE_RULES)/shared-targets.mk
 
 build:		$(BUILD_32)
 
-install:	build $(INSTALL_32)
+install:	$(INSTALL_32)
 
 # 15973 tests, 2512048 assertions, 26 failures, 1 errors, 44 skips
 # Failed: FTPTest#test_abort, FTPTest#test_status, TestSprintfComb#test_format_float*
