@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
 COMPONENT_VERSION=	1.17
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://tcllib.sourceforge.net/
 COMPONENT_SUMMARY=	The standard Tcl library
 COMPONENT_FMRI=		tcl/tcllib
@@ -48,7 +49,8 @@ APPS = dtplite nns nnsd nnslog page pt tcldocstrip
 COMPONENT_POST_INSTALL_ACTION += \
         (for app in $(APPS); do \
           $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR.$(BITS))/tclsh:" $(PROTO_DIR)$(USRBINDIR.$(BITS))/$$app; \
-        done)
+        done); \
+        $(MV) $(PROTO_DIR)$(USRBINDIR.$(BITS))/{,tcl}page
 
 # common targets
 build:		$(BUILD_32_and_64)
