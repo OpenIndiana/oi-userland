@@ -64,7 +64,10 @@ COMPONENT_PREP_ACTION = \
 # Needed to get libpurple to link properly.
 LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
-CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
+
+# Look for gnutls-3 pkg-config & libraries before the defaults
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
 
 CONFIGURE_ENV += "ac_cv_path_perlpath=$(PERL)"
 

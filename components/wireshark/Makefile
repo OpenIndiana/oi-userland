@@ -54,6 +54,10 @@ PATCH_LEVEL=0
 # We don't have automake 1.14 yet. Thus need to reconfigure with older one.
 COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
+# Look for gnutls-3 pkg-config & libraries before the defaults
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
+
 CONFIGURE_BINDIR.64= $(CONFIGURE_SBINDIR.64)
 
 CONFIGURE_OPTIONS +=	--disable-usr-local
@@ -63,8 +67,8 @@ CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-qt=no
 CONFIGURE_OPTIONS +=	--with-gtk2=yes
-CONFIGURE_OPTIONS +=	PATH="$(USRDIR)/perl5/bin:$(GNUBIN):$(PATH)"
-CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
+CONFIGURE_OPTIONS +=	\
+  PATH="$(USRDIR)/perl5/bin:$(GNUBIN)/$(MACH64):$(GNUBIN):$(USRBIN.64):$(PATH)"
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is

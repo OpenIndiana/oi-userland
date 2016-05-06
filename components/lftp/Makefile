@@ -40,7 +40,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =   0
 
-CONFIGURE_ENV	+=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
+# Look for gnutls-3 pkg-config & libraries before the defaults
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
+
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 
 REQUIRED_PACKAGES += library/expat

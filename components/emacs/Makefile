@@ -72,7 +72,8 @@ LD_MAP_NOEXDATA.sparc=
 
 # The configure script runs the pkg-config command. This allows it to
 # find the non-default GnuTLS v3 library.
-CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
 
 # Never use xmkmf to find X11 libraries from autoconf. They are all available
 # from standard system locations, and we don't want the ld -L option that
