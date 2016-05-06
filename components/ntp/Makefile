@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
@@ -51,7 +51,7 @@ CFLAGS +=	 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 studio_C99MODE= $(studio_C99_ENABLE)
 CFLAGS.studio.i386 =	-preserve_argvalues=complete
 
-CONFIGURE_BINDIR.32 = $(USRSBINDIR)
+CONFIGURE_BINDIR.64 = $(USRSBINDIR)
 
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
-CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)
+CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)/$(MACH64)
 
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
