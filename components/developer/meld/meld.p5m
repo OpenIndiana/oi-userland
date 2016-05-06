@@ -19,24 +19,24 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file hardlink path=usr/lib/.*\.py$ -> default pkg.tmp.pyversion 2.X>
 #
-set name=pkg.fmri \
-    value=pkg:/developer/meld@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="meld - graphical diff and merge tool"
-set name=pkg.description \
-    value="Meld is a visual diff and merge tool. You can compare two or three files and edit them in place (diffs update dynamically). You can compare two or three folders and launch file comparisons. You can browse and view a working copy from popular version control systems such such as CVS, Subversion, Bazaar-ng and Mercurial."
-set name=com.oracle.info.description \
-    value="the meld graphical diff and merge tool"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=com.oracle.info.description value="the meld graphical diff and merge tool"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2008/189
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+#
 file path=usr/bin/meld \
     pkg.depend.runpath=/usr/lib/meld:/usr/lib/python$(PYVER):/usr/lib/python$(PYVER)/vendor-packages/gtk-2.0 \
     pkg.depend.bypass-generate=.*/checker.* \
@@ -190,4 +190,3 @@ file path=usr/share/mime/packages/meld.xml
 file path=usr/share/omf/meld/meld-C.omf
 file path=usr/share/omf/meld/meld-es.omf
 file path=usr/share/omf/meld/meld-fr.omf
-license meld.license license=GPLv2
