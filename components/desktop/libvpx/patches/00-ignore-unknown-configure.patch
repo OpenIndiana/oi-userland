@@ -1,0 +1,28 @@
+Needed because our configure.mk assumes it can blindly use unknown
+configure options and livbpx doesn't actually use GNU autoconf.
+
+Not appropriate for upstream.
+
+--- libvpx-1.4.0/build/make/configure.sh	2015-04-03 11:49:19.000000000 -0700
++++ libvpx-1.4.0/build/make/configure.sh	2015-06-12 13:11:14.117716080 -0700
+@@ -13,6 +13,11 @@
+ #
+ # Logging / Output Functions
+ #
++warn_unknown(){
++  echo "Ignoring unknown option \"$1\"."
++  echo "See $0 --help for available options."
++}
++
+ die_unknown(){
+   echo "Unknown option \"$1\"."
+   echo "See $0 --help for available options."
+@@ -567,7 +572,7 @@
+         show_help
+         ;;
+       *)
+-        die_unknown $opt
++        warn_unknown $opt
+         ;;
+     esac
+   done

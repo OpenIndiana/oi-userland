@@ -1,0 +1,33 @@
+The *_mem_map symbols only exist in an older version; this fix should be
+upstreamed.
+
+The vpx_svc_* symbols only exist if you enable experimental spatial service
+support.  This part of the patch is not appropriate for upstream.
+
+XXX file upstream bug
+
+--- libvpx-1.4.0/vpx/exports_dec	2015-04-03 11:49:19.000000000 -0700
++++ libvpx-1.4.0.new/vpx/exports_dec	2015-06-15 14:07:20.317823881 -0700
+@@ -1,10 +1,8 @@
+ text vpx_codec_dec_init_ver
+ text vpx_codec_decode
+ text vpx_codec_get_frame
+-text vpx_codec_get_mem_map
+ text vpx_codec_get_stream_info
+ text vpx_codec_peek_stream_info
+ text vpx_codec_register_put_frame_cb
+ text vpx_codec_register_put_slice_cb
+ text vpx_codec_set_frame_buffer_functions
+-text vpx_codec_set_mem_map
+--- libvpx-1.4.0/vpx/exports_enc	2015-04-03 11:49:19.000000000 -0700
++++ libvpx-1.4.0.new/vpx/exports_enc	2015-06-15 14:51:05.518298961 -0700
+@@ -7,9 +7,3 @@
+ text vpx_codec_get_global_headers
+ text vpx_codec_get_preview_frame
+ text vpx_codec_set_cx_data_buf
+-text vpx_svc_dump_statistics
+-text vpx_svc_encode
+-text vpx_svc_get_message
+-text vpx_svc_init
+-text vpx_svc_release
+-text vpx_svc_set_options
