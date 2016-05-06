@@ -85,6 +85,10 @@ PYFLAGS.sparc =
 CFLAGS += -xO5 $(PYFLAGS.$(MACH))
 LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
 
+# Use the Studio VIS SDK in order to explicitly generate nonfaulting loads
+# that allow Python to work with ADI-aware memory allocators.
+CFLAGS.studio.sparc.64 +=  -xvis
+
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 

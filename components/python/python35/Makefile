@@ -77,6 +77,10 @@ CFLAGS +=	$(CC_PIC)
 
 # for DWARF
 CFLAGS.i386 =	-preserve_argvalues=complete
+# Use the Studio VIS SDK in order to explicitly generate nonfaulting loads
+# that allow Python to work with ADI-aware memory allocators.
+CFLAGS.studio.sparc.64 =	-xvis
+
 CFLAGS +=	$(CFLAGS.$(MACH))
 
 # 16-byte memory alignment + interpretation of non-alignment prevents SIGBUS.
