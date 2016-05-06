@@ -48,3 +48,4 @@ CONFIGURE_ENV += "CC=$(CC) -I. $(CC_BITS)"
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += text/gawk
