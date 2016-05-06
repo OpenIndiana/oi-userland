@@ -1,0 +1,25 @@
+Fixes check.defs test for symbol exports to work on Solaris.
+
+The default nm check doesn't work with Solaris nm, but expects the default
+output format from BSD/GNU nm instead.   Switching it to use /usr/gnu/bin/nm
+still fails, since it finds the unexpected symbols of _PROCEDURE_LINKAGE_TABLE_
+and _etext from other sections, so instead we use the Solaris elfdump much as
+Linux overrides with objdump.
+
+Need to submit upstream.
+
+--- pango-1.38.0/pango/check.defs	Wed Mar  5 20:33:55 2014
++++ pango-1.38.0/pango/check.defs	Thu Apr 28 18:32:45 2016
+@@ -7,8 +7,11 @@
+ status=0
+ 
+ get_pango_syms='nm "$so" | grep " T " | cut -d" " -f3'
+-if [ "`uname -s`" = "Linux" ]; then
++system="`uname -s`"
++if [ "$system" = "Linux" ]; then
+ 	get_pango_syms='objdump -t "$so" | sed -n "/.*g *F *\.\(opd\|text\).* \(.*pango_.*\)$/s//\2/p"'
++elif [ "$system" = "SunOS" ]; then
++	get_pango_syms='elfdump -s "$so" | sed -n "/.* FUNC GLOB .*\.text.* \(.*pango_.*\)$/s//\1/p"'
+ fi
+ 
+ for def in $srcdir/*.def; do
