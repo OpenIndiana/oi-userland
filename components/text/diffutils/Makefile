@@ -23,10 +23,11 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
 COMPONENT_VERSION=	3.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -35,9 +36,12 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-diffutils
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
 
@@ -54,4 +58,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

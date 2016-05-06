@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
 COMPONENT_VERSION=	1.51
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -34,9 +35,12 @@ COMPONENT_BUGDB=	utility/diffstat
 
 TPNO=			5494
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS += $(CPP_LARGEFILES)
+CPPFLAGS += $(CPP_LARGEFILES)
 
 CC += $(CC_BITS)
 
@@ -56,4 +60,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
