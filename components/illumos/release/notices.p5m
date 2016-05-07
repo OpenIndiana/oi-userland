@@ -10,11 +10,16 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Aurelien Larcher
 #
 
-set name=pkg.fmri value=pkg:/consolidation/solaris_re/solaris_re-incorporation@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="This incorporation constrains packages from the solaris_re consolidation."
-set name=pkg.summary value="solaris_re consolidation incorporation"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/notices@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenIndiana Licensing"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/LICENSE path=etc/notices/LICENSE
+file files/COPYRIGHT path=etc/notices/COPYRIGHT
