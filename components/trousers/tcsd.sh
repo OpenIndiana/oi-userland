@@ -19,7 +19,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -40,7 +42,7 @@ case "$1" in
 	fi
 
 	echo /usr/lib/tcsd 
-	/usr/lib/tcsd >/dev/null 2>&1 &
+	/usr/lib/tcsd &
 	;;
 
 # Attribute exec=':kill' in manifest tcsd.xml stops the tcsd daemon.

@@ -1,0 +1,33 @@
+# Use PIC instead of PIE for Solaris.
+# The Solaris linker doesn't support the GNU '-z relro'.
+# This change was implemented in-house and is not suitable for use upstream.
+#
+--- src/tcs/Makefile.am	2014-04-24 11:05:44.000000000 -0700
++++ src/tcs/Makefile.am	2016-04-19 17:12:43.154159741 -0700
+@@ -2,7 +2,7 @@
+ 
+ CFLAGS+=-I${top_srcdir}/src/include
+ libtcs_a_LIBADD=${top_builddir}/src/tddl/libtddl.a
+-libtcs_a_CFLAGS=-DAPPID=\"TCSD\ TCS\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\" -fPIE -DPIE
++libtcs_a_CFLAGS=-DAPPID=\"TCSD\ TCS\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\" -fPIC
+ 
+ libtcs_a_SOURCES=log.c \
+ 		 tcs_caps.c \
+--- src/tcsd/Makefile.am	2014-04-24 11:05:44.000000000 -0700
++++ src/tcsd/Makefile.am	2016-05-04 18:02:23.157205060 -0700
+@@ -2,5 +2,5 @@
+ 
+-tcsd_CFLAGS=-DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include -fPIE -DPIE
++tcsd_CFLAGS=-DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include -fPIC
+ tcsd_LDADD=${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a -lpthread @CRYPTOLIB@
+-tcsd_LDFLAGS=-pie -Wl,-z,relro -Wl,-z,now
++tcsd_LDFLAGS=-fPIC -Wl,-z,now
+ 
+--- src/tddl/Makefile.am	2014-04-24 11:05:44.000000000 -0700
++++ src/tddl/Makefile.am	2016-04-19 17:10:48.959752840 -0700
+@@ -1,4 +1,4 @@
+ lib_LIBRARIES=libtddl.a
+ 
+ libtddl_a_SOURCES=tddl.c
+-libtddl_a_CFLAGS=-DAPPID=\"TCSD\ TDDL\" -I${top_srcdir}/src/include -fPIE -DPIE
++libtddl_a_CFLAGS=-DAPPID=\"TCSD\ TDDL\" -I${top_srcdir}/src/include -fPIC

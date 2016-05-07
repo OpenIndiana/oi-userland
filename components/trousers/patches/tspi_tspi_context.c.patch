@@ -1,0 +1,24 @@
+# Fix memory leak.
+# Suitable for upsteam use.
+# This change was implemented in-house.
+#
+--- src/tspi/tspi_context.c	2011-02-21 08:24:44.000000000 -0800
++++ src/tspi/tspi_context.c	2012-04-23 14:53:44.302505000 -0700
+@@ -16,7 +16,7 @@
+ #include "trousers/tss.h"
+ #include "trousers/trousers.h"
+ #include "trousers_types.h"
+-#include "trousers_types.h"
++#include "tsp_delegate.h"
+ #include "spi_utils.h"
+ #include "capabilities.h"
+ #include "tsplog.h"
+@@ -57,6 +57,8 @@
+ 
+ 	Tspi_Context_FreeMemory(tspContext, NULL);
+ 
++	__tspi_freeTable(tspContext);
++
+ 	/* close the ps file */
+ 	PS_close();
+ 

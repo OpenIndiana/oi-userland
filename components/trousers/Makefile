@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trousers
-COMPONENT_VERSION=	0.3.6
+COMPONENT_VERSION=	0.3.13
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/trousers/files/trousers/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:91025f60248af44df192e8df16fa6b0c0f1e48c54f6dc51626567ed95758b0d6
+	sha256:bb908e4a3c88a17b247a4fc8e0fff3419d8a13170fe7bdfbe0e2c5c082a276d3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tss
 
-TPNO=			8341
+TPNO=			27256
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -41,9 +41,17 @@ include $(WS_MAKE_RULES)/common.mk
 PATCH_LEVEL=0
 
 ifeq ($(OS_VERSION),5.11)
+# These libraries are in libc for S12:
 LIBS=-lnsl -lsocket
+# Use the "new" POSIX thread API (not the "draft" prototype):
 CFLAGS += "-D_POSIX_PTHREAD_SEMANTICS"
 endif
+
+# Trousers 0.3.13 requires automake/autoconf >= 1.13, but Userland default
+# is older than what is needed. So hard-coding to the next available, 1.15:
+# "--add-missing" needed to use default "compile" script.
+AUTOMAKE=/usr/bin/automake-1.15 --add-missing
+ACLOCAL=/usr/bin/aclocal-1.15
 
 LIBS += -lgen
 
@@ -72,21 +80,25 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	$(AUTOCONF))	
 
 #
-# We had to use cc as the linker (see CONFIGURE_OPTIONS above) so the 
-# .init and .fini sections get set correctly.  Because we use cc, we 
-# must pass the -m64 flag through cc to the linker when building 64 bit 
-# libraries.  We can't just add it to LDFLAGS because then it gets used 
-# when creating executables and static libs and generates lots of noise 
-# in the build logs.  LDARCHFLAG is only recognized by the Makefile in 
+# We had to use cc as the linker (see CONFIGURE_OPTIONS above) so the
+# .init and .fini sections get set correctly.  Because we use cc, we
+# must pass the -m64 flag through cc to the linker when building 64 bit
+# libraries.  We can't just add it to LDFLAGS because then it gets used
+# when creating executables and static libs and generates lots of noise
+# in the build logs.  LDARCHFLAG is only recognized by the Makefile in
 # the src/tspi directory.
 #
 COMPONENT_BUILD_ENV.64 += LDARCHFLAG="-Wl,$(CC_BITS)"
 
-COMPONENT_TEST_TARGETS = 
+# For regression testing, use STC test suite "tss".
+# It requires a machine with TPM hardware that's enabled and initialized.
+COMPONENT_TEST_TARGETS =
 
 COMPONENT_BUILD_TARGETS = all
 
-REQUIRED_PACKAGES += developer/build/automake-110
+# These are packages required for building, not for use:
+REQUIRED_PACKAGES += developer/build/automake-115
+REQUIRED_PACKAGES += developer/build/libtool
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += shell/ksh93

@@ -1,9 +1,16 @@
---- src/tcsd/svrside.c	2010-06-09 13:19:00.000000000 -0700
-+++ src/tcsd/svrside.c	2014-07-10 14:53:38.347867637 -0700
-@@ -27,6 +27,15 @@
- #include <arpa/inet.h>
+# Add ability to connect to UNIX socket and make it the default.
+# Drop Solaris privileges for security.
+# Add -h and --help options.
+# Update the event log file during startup and shutdown.
+# This change was implemented in-house and is suitable for upstream use.
+#
+--- src/tcsd/svrside.c	2014-04-24 11:05:44.000000000 -0700
++++ src/tcsd/svrside.c	2016-04-26 15:49:54.940330002 -0700
+@@ -28,6 +28,16 @@
  #include <errno.h>
  #include <getopt.h>
+ #include <sys/select.h>
++
 +#ifdef SOLARIS
 +#include <priv.h>
 +#include <fcntl.h>
@@ -16,34 +23,11 @@
  #include "trousers/tss.h"
  #include "trousers_types.h"
  #include "tcs_tsp.h"
-@@ -44,6 +53,10 @@
- static volatile int hup = 0, term = 0;
- extern char *optarg;
+@@ -54,6 +64,204 @@
+ #define MAX_IP_PROTO 2
+ #define INVALID_ADDR_STR "<Invalid client address>"
  
 +#ifdef SOLARIS
-+static int get_event_log_from_kernel(void);
-+#endif
-+
- static void
- tcsd_shutdown(void)
- {
-@@ -170,6 +183,10 @@
- 		(void)req_mgr_final();
- 		return result;
- 	}
-+#ifdef SOLARIS
-+	/* Not fatal if this fails */
-+	(void) get_event_log_from_kernel();
-+#endif
- 
- 	result = owner_evict_init();
- 	if (result != TSS_SUCCESS) {
-@@ -208,13 +225,169 @@
- }
- 
- 
-+#ifdef SOLARIS
-+
 +extern int get_device_fd(void);
 +
 +#define TPM_IOCTL_GETEVTABLE    1
@@ -56,7 +40,7 @@
 +store_eventlog(char *filename, struct tpm_evtable_ioblk *evlog)
 +{
 +	int fd;
-+	int bytes = 0;
++	unsigned int bytes = 0;
 +
 +	fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0600);
 +	if (fd == -1) {
@@ -181,163 +165,139 @@
 +	if (!nochdir)
 +		(void) chdir("/");
 +	(void) umask(0);
-+	/* Redirect stdin, stdout, and stderr to /dev/null */
-+	if (!noclose && (fd = open("/dev/null", O_RDWR, 0)) != -1) {
-+		(void) dup2(fd, STDIN_FILENO);
-+		(void) dup2(fd, STDOUT_FILENO);
-+		(void) dup2(fd, STDERR_FILENO);
-+		if (fd > 2)
-+			(void)close (fd);
-+	}
 +	return (0);
 +}
 +#endif /* !HAVE_DAEMON */
 +
- int
- main(int argc, char **argv)
- {
--	struct sockaddr_in serv_addr, client_addr;
-+	typedef union {
-+		struct sockaddr_in in;
-+		struct sockaddr_un un;
-+	} sockaddr_un_in_t;
-+	sockaddr_un_in_t serv_addr, client_addr;
-+	int rv;
- 	TSS_RESULT result;
- 	int sd, newsd, c, option_index = 0;
--	unsigned client_len;
-+	unsigned client_len, serv_len;
- 	char *hostname = NULL;
- 	struct passwd *pwd;
- 	struct hostent *client_hostent = NULL;
-@@ -245,26 +418,50 @@
- 	if ((result = tcsd_startup()))
- 		return (int)result;
- 
--	sd = socket(AF_INET, SOCK_STREAM, 0);
--	if (sd < 0) {
--		LogError("Failed socket: %s", strerror(errno));
--		return -1;
--	}
-+	if (tcsd_options.port == 0) { /* UNIX Domain socket */
-+		/* Use UNIX Domain socket instead of TCP/IP socket */
-+		sd = socket(AF_UNIX, SOCK_STREAM, 0);
-+		if (sd < 0) {
-+			LogError("Failed socket: %s", strerror(errno));
-+			return -1;
-+		}
 +
-+		memset(&serv_addr, 0, sizeof (serv_addr));
-+		serv_addr.un.sun_family = AF_UNIX;
-+		strncpy(serv_addr.un.sun_path, TCSD_DEFAULT_SOCKET,
-+			sizeof (serv_addr.un.sun_path));
-+		(void) unlink(TCSD_DEFAULT_SOCKET);
++static int
++setup_unix_socket(struct srv_sock_info ssi[])
++{
++	struct sockaddr_un serv_addr;
++	int sd, opt;
 +
-+	} else { /* TCP socket */
-+		sd = socket(AF_INET, SOCK_STREAM, 0);
-+		if (sd < 0) {
-+			LogError("Failed socket: %s", strerror(errno));
-+			return -1;
-+		}
- 
--	memset(&serv_addr, 0, sizeof (serv_addr));
--	serv_addr.sin_family = AF_INET;
--	serv_addr.sin_port = htons(tcsd_options.port);
--
--	/* If no remote_ops are defined, restrict connections to localhost
--	 * only at the socket. */
--	if (tcsd_options.remote_ops[0] == 0)
--		serv_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
--	else
--		serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
--
--	c = 1;
--	setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &c, sizeof(c));
--	if (bind(sd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
-+		memset(&serv_addr, 0, sizeof (serv_addr));
-+		serv_addr.in.sin_family = AF_INET;
-+		serv_addr.in.sin_port = htons(tcsd_options.port);
++	ssi->sd = -1;
 +
-+		/* If no remote_ops are defined, restrict connections to localhost
-+		 * only at the socket. */
-+		if (tcsd_options.remote_ops[0] == 0)
-+			serv_addr.in.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-+		else
-+			serv_addr.in.sin_addr.s_addr = htonl(INADDR_ANY);
-+
-+		c = 1;
-+		setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &c, sizeof(c));
++	// Initialization of UNIX socket.
++	sd = socket(PF_UNIX, SOCK_STREAM, 0);
++	if (sd < 0) {
++		LogWarn("Failed UNIX socket: %s", strerror(errno));
++		goto err;
 +	}
 +
-+	if (tcsd_options.port == 0) { /* UNIX Domain socket */
-+		serv_len = (unsigned)sizeof(serv_addr.un);
-+		client_len = (unsigned)sizeof(client_addr.un);
-+	} else { /* TCP socket */
-+		serv_len = (unsigned)sizeof(serv_addr.in);
-+		client_len = (unsigned)sizeof(client_addr.in);
-+	}
-+	if (bind(sd, (struct sockaddr *) &serv_addr, serv_len) < 0) {
- 		LogError("Failed bind: %s", strerror(errno));
- 		return -1;
- 	}
-@@ -285,7 +482,12 @@
- 		LogError("Failed listen: %s", strerror(errno));
- 		return -1;
- 	}
--	client_len = (unsigned)sizeof(client_addr);
++	memset(&serv_addr, 0, sizeof (serv_addr));
++	serv_addr.sun_family = AF_UNIX;
++	strncpy(serv_addr.sun_path, TCSD_DEFAULT_SOCKET,
++	    sizeof(serv_addr.sun_path));
++	/* Remove previous stale server socket, if any */
++	(void) unlink(TCSD_DEFAULT_SOCKET);
 +
-+	if (chmod(serv_addr.un.sun_path, 0666) < 0) {
-+		LogError("Failed chmod %s: %s", serv_addr.un.sun_path,
++	LogDebug("Connecting to UNIX Domain socket %s",
++	    TCSD_DEFAULT_SOCKET);
++
++
++	if (bind(sd, (struct sockaddr *) &serv_addr, sizeof (serv_addr)) < 0) {
++		LogWarn("Failed UNIX socket bind: %s", strerror(errno));
++		goto err;
++	}
++
++	if (listen(sd, TCSD_MAX_SOCKETS_QUEUED) < 0) {
++		LogWarn("Failed UNIX socket listen: %s", strerror(errno));
++		goto err;
++	}
++
++	if (chmod(serv_addr.sun_path, 0666) < 0) {
++		LogError("Failed chmod %s: %s", serv_addr.sun_path,
 +		    strerror(errno));
-+		return -1;
++		return (-1);
 +	}
- 	
- 	if (getenv("TCSD_FOREGROUND") == NULL) {
- 		if (daemon(0, 0) == -1) {
-@@ -295,6 +497,12 @@
++
++	ssi->domain = AF_UNIX;
++	ssi->sd = sd;
++	ssi->addr_len = sizeof (serv_addr);
++
++	return (0);
++
++ err:
++	if (sd != -1)
++		close(sd);
++
++	return (-1);
++}
++
+ static void close_server_socks(struct srv_sock_info *socks_info)
+ {
+ 	int i, rv;
+@@ -83,6 +291,10 @@
+ 	auth_mgr_final();
+ 	(void)req_mgr_final();
+ 	conf_file_final(&tcsd_options);
++#ifdef SOLARIS
++	/* Not fatal if this fails */
++	(void) get_event_log_from_kernel();
++#endif
+ 	EVENT_LOG_final();
+ }
+ 
+@@ -199,6 +411,10 @@
+ 		(void)req_mgr_final();
+ 		return result;
+ 	}
++#ifdef SOLARIS
++	/* Not fatal if this fails */
++	(void) get_event_log_from_kernel();
++#endif
+ 
+ 	result = owner_evict_init();
+ 	if (result != TSS_SUCCESS) {
+@@ -352,6 +568,13 @@
+ 	int i=0;
+ 
+ 	ssi[0].sd = ssi[1].sd = -1;
++
++	// By default, use UNIX socket
++	if (tcsd_options.port == 0) {
++		return (setup_unix_socket(&ssi[0]));
++	}
++
++	// Use TCP/IP socket
+ 	// Only enqueue sockets successfully bound or that weren't disabled.
+ 	if (tcsd_options.disable_ipv4) {
+ 		LogWarn("IPv4 support disabled by configuration option");
+@@ -380,11 +603,17 @@
+ 
+ 	if (getnameinfo((struct sockaddr *)client_addr, socklen, buf,
+ 						sizeof(buf), NULL, 0, 0) != 0) {
+-		LogWarn("Could not retrieve client address info");
+-		return NULL;
+-	} else {
+-		return strdup(buf);
++		if (tcsd_options.port == 0) { /* UNIX socket (always local) */
++			if (gethostname(buf, sizeof (buf)) != 0) {
++				strcpy(buf, "localhost");
++			}
++		} else {
++			LogWarn("Could not retrieve client address info");
++			return NULL;
++		}
+ 	}
++
++	return (strdup(buf));
+ }
+ 
+ void prepare_for_select(struct srv_sock_info *socks_info, int *num_fds,
+@@ -490,6 +719,14 @@
  		}
  	}
  
 +#ifdef SOLARIS
 +	/* For Solaris, drop privileges for security. */
-+	if ((rv = drop_privs()))
++	if ((rv = drop_privs())) {
++		LogError("drop_privs failed: %s", strerror(errno));
 +		return (rv);
++	}
 +#endif /* SOLARIS */
 +
  	LogInfo("%s: TCSD up and running.", PACKAGE_STRING);
- 	do {
- 		newsd = accept(sd, (struct sockaddr *) &client_addr, &client_len);
-@@ -314,20 +522,22 @@
- 		}
- 		LogDebug("accepted socket %i", newsd);
  
--		if ((client_hostent = gethostbyaddr((char *) &client_addr.sin_addr,
--						    sizeof(client_addr.sin_addr),
-+		if (tcsd_options.port != 0) { /* TCP socket */
-+			if ((client_hostent = gethostbyaddr((char *) &client_addr.in.sin_addr,
-+						    sizeof(client_addr.in.sin_addr),
- 						    AF_INET)) == NULL) {
--			char buf[16];
--                        uint32_t addr = htonl(client_addr.sin_addr.s_addr);
-+				char buf[16];
-+				uint32_t addr = htonl(client_addr.in.sin_addr.s_addr);
- 
--                        snprintf(buf, 16, "%d.%d.%d.%d", (addr & 0xff000000) >> 24,
--                                 (addr & 0x00ff0000) >> 16, (addr & 0x0000ff00) >> 8,
--                                 addr & 0x000000ff);
-+				snprintf(buf, 16, "%d.%d.%d.%d", (addr & 0xff000000) >> 24,
-+					(addr & 0x00ff0000) >> 16, (addr & 0x0000ff00) >> 8,
-+					addr & 0x000000ff);
- 
--			LogWarn("Host name for connecting IP %s could not be resolved", buf);
--			hostname = strdup(buf);
--		} else {
--			hostname = strdup(client_hostent->h_name);
-+				LogWarn("Host name for connecting IP %s could not be resolved", buf);
-+				hostname = strdup(buf);
-+			} else {
-+				hostname = strdup(client_hostent->h_name);
-+			}
- 		}
- 
- 		tcsd_thread_create(newsd, hostname);
+ 	sigemptyset(&sigmask);

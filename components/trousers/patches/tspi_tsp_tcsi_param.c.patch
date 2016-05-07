@@ -1,0 +1,22 @@
+# Fix an error from using a non-standard Linux header file.
+# This patch was developed in-house and is suitable for upstream use.
+#
+--- src/tspi/tsp_tcsi_param.c	2014-04-24 11:05:44.000000000 -0700
++++ src/tspi/tsp_tcsi_param.c	2016-04-19 08:32:30.267384276 -0700
+@@ -11,7 +11,16 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
++
++#if defined (__linux) || defined (linux) || defined (__GLIBC__)
+ #include <bits/local_lim.h>
++#elif defined (SOLARIS)
++#include <limits.h>
++#define HOST_NAME_MAX	_POSIX_HOST_NAME_MAX
++#else
++#error "Define HOST_NAME_MAX on your system"
++#endif
++
+ #include "trousers/tss.h"
+ #include "trousers/trousers.h"
+ #include "trousers_types.h"

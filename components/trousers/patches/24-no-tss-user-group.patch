@@ -1,0 +1,54 @@
+# Remove user/group tss, which is not used on Solaris.
+# This change is Solaris-specific and is not suitable for upstream use.
+# This change was implemented in-house.
+#
+--- dist/Makefile.am	2016-04-25 10:20:57.734329015 -0700
++++ dist/Makefile.am	2016-04-25 10:21:49.125800371 -0700
+@@ -4,23 +4,15 @@
+ install: install-exec-hook
+ 	if test ! -e ${DESTDIR}/@sysconfdir@/tcsd.conf; then mkdir -p ${DESTDIR}/@sysconfdir@ && cp tcsd.conf ${DESTDIR}/@sysconfdir@; fi
+ if !NOUSERCHECK
+-	/bin/chown tss:tss ${DESTDIR}/@sysconfdir@/tcsd.conf || true
+ 	/bin/chmod 0600 ${DESTDIR}/@sysconfdir@/tcsd.conf
+ endif
+ 
+ install-exec-hook:
+ 	/bin/sh -c 'if [ ! -e ${DESTDIR}/@localstatedir@/lib/tpm ];then mkdir -p ${DESTDIR}/@localstatedir@/lib/tpm; fi'
+ if !NOUSERCHECK
+-	/usr/sbin/groupadd tss || true
+-	/usr/sbin/useradd -r tss -g tss || true
+-	/bin/chown tss:tss ${DESTDIR}/@localstatedir@/lib/tpm || true
+ 	/bin/chmod 0700 ${DESTDIR}/@localstatedir@/lib/tpm
+ endif
+ 
+ uninstall-hook:
+ 	rm ${DESTDIR}/@sysconfdir@/tcsd.conf
+ 	rmdir ${DESTDIR}/@localstatedir@/lib/tpm
+-if !NOUSERCHECK
+-	/usr/sbin/userdel tss || true
+-	/usr/sbin/groupdel tss || true
+-endif
+--- dist/Makefile.in	2016-04-14 17:02:01.254097113 -0700
++++ dist/Makefile.in	2016-04-14 17:27:53.812377666 -0700
+@@ -438,21 +438,15 @@
+ 
+ install: install-exec-hook
+ 	if test ! -e ${DESTDIR}/@sysconfdir@/tcsd.conf; then mkdir -p ${DESTDIR}/@sysconfdir@ && cp tcsd.conf ${DESTDIR}/@sysconfdir@; fi
+-@NOUSERCHECK_FALSE@	/bin/chown tss:tss ${DESTDIR}/@sysconfdir@/tcsd.conf || true
+ @NOUSERCHECK_FALSE@	/bin/chmod 0600 ${DESTDIR}/@sysconfdir@/tcsd.conf
+ 
+ install-exec-hook:
+ 	/bin/sh -c 'if [ ! -e ${DESTDIR}/@localstatedir@/lib/tpm ];then mkdir -p ${DESTDIR}/@localstatedir@/lib/tpm; fi'
+-@NOUSERCHECK_FALSE@	/usr/sbin/groupadd tss || true
+-@NOUSERCHECK_FALSE@	/usr/sbin/useradd -r tss -g tss || true
+-@NOUSERCHECK_FALSE@	/bin/chown tss:tss ${DESTDIR}/@localstatedir@/lib/tpm || true
+ @NOUSERCHECK_FALSE@	/bin/chmod 0700 ${DESTDIR}/@localstatedir@/lib/tpm
+ 
+ uninstall-hook:
+ 	rm ${DESTDIR}/@sysconfdir@/tcsd.conf
+ 	rmdir ${DESTDIR}/@localstatedir@/lib/tpm
+-@NOUSERCHECK_FALSE@	/usr/sbin/userdel tss || true
+-@NOUSERCHECK_FALSE@	/usr/sbin/groupdel tss || true
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.

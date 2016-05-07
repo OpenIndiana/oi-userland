@@ -1,5 +1,10 @@
---- src/tddl/tddl.c	Mon Apr 12 22:24:21 2010
-+++ src/tddl/tddl.c.new	Thu Sep 22 12:28:25 2011
+# Define Solaris-specific device paths.
+# Add error message if path can't be opened.
+# This change was implemented in-house.
+# Except for the open() error message, it is not suitable for upstream use.
+#
+--- src/tddl/tddl.c	2014-04-24 11:05:44.000000000 -0700
++++ src/tddl/tddl.c	2016-04-22 11:21:14.166497559 -0700
 @@ -18,13 +18,17 @@
  
  #include "trousers/tss.h"
@@ -32,6 +37,15 @@
  
  int
  open_device()
+@@ -55,7 +66,7 @@
+ 		if ((tcp_device_hostname = getenv("TCSD_TCP_DEVICE_HOSTNAME")) == NULL)
+ 			tcp_device_hostname = "localhost";
+ 		if ((un_socket_device_path = getenv("TCSD_UN_SOCKET_DEVICE_PATH")) == NULL)
+-			un_socket_device_path = "/var/run/tpm/tpmd_socket:0";
++			un_socket_device_path = TCSD_DEFAULT_SOCKET;
+ 		if ((tcp_device_port_string = getenv("TCSD_TCP_DEVICE_PORT")) != NULL)
+ 			tcp_device_port = atoi(tcp_device_port_string);
+ 		else
 @@ -63,7 +74,7 @@
  	 
  		
