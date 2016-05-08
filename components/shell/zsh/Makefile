@@ -104,3 +104,8 @@ test:		$(TEST_32)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_MAKE_RULES)/depend.mk
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
