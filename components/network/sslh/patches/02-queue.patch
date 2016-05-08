@@ -1,0 +1,89 @@
+--- sslh-v1.17/common.c	2015-03-10 09:51:39.000000000 +1300
++++ tmp/sslh-v1.17/common.c	2016-02-09 11:32:15.894956392 +1300
+@@ -191,7 +191,7 @@
+ }
+ 
+ /* Store some data to write to the queue later */
+-int defer_write(struct queue *q, void* data, int data_size) 
++int defer_write(struct _queue *q, void* data, int data_size) 
+ {
+     char *p;
+     if (verbose) 
+@@ -215,7 +215,7 @@
+  * Upon success, the number of bytes written is returned.
+  * Upon failure, -1 returned (e.g. connexion closed)
+  * */
+-int flush_deferred(struct queue *q)
++int flush_deferred(struct _queue *q)
+ {
+     int n;
+ 
+@@ -267,7 +267,7 @@
+  * returns FD_STALLED if data was read, could not be written, and has been
+  * stored in temporary buffer.
+  */
+-int fd2fd(struct queue *target_q, struct queue *from_q)
++int fd2fd(struct _queue *target_q, struct _queue *from_q)
+ {
+    char buffer[BUFSIZ];
+    int target, from, size_r, size_w;
+--- sslh-v1.17/common.h	2015-03-10 09:51:39.000000000 +1300
++++ tmp/sslh-v1.17/common.h	2016-02-09 11:33:03.801863878 +1300
+@@ -69,7 +69,7 @@
+ 
+ /* A 'queue' is composed of a file descriptor (which can be read from or
+  * written to), and a queue for deferred write data */
+-struct queue {
++struct _queue {
+     int fd;
+     void *begin_deferred_data;
+     void *deferred_data;
+@@ -84,7 +84,7 @@
+     /* q[0]: queue for external connection (client);
+      * q[1]: queue for internal connection (httpd or sshd);
+      * */
+-    struct queue q[2];
++    struct _queue q[2];
+ };
+ 
+ #define FD_CNXCLOSED    0
+@@ -95,7 +95,7 @@
+ /* common.c */
+ void init_cnx(struct connection *cnx);
+ int connect_addr(struct connection *cnx, int fd_from);
+-int fd2fd(struct queue *target, struct queue *from);
++int fd2fd(struct _queue *target, struct _queue *from);
+ char* sprintaddr(char* buf, size_t size, struct addrinfo *a);
+ void resolve_name(struct addrinfo **out, char* fullname);
+ void log_connection(struct connection *cnx);
+@@ -110,8 +110,8 @@
+ 
+ int start_listen_sockets(int *sockfd[], struct addrinfo *addr_list);
+ 
+-int defer_write(struct queue *q, void* data, int data_size);
+-int flush_deferred(struct queue *q);
++int defer_write(struct _queue *q, void* data, int data_size);
++int flush_deferred(struct _queue *q);
+ 
+ extern int probing_timeout, verbose, inetd, foreground, 
+        background, transparent, numeric;
+--- sslh-v1.17/sslh-select.c	2015-03-10 09:51:39.000000000 +1300
++++ /tmp/sslh-v1.17/sslh-select.c	2016-02-09 11:34:28.904018149 +1300
+@@ -131,7 +131,7 @@
+ /* Connect queue 1 of connection to SSL; returns new file descriptor */
+ int connect_queue(struct connection *cnx, fd_set *fds_r, fd_set *fds_w)
+ {
+-    struct queue *q = &cnx->q[1];
++    struct _queue *q = &cnx->q[1];
+ 
+     q->fd = connect_addr(cnx, cnx->q[0].fd);
+     if ((q->fd != -1) && fd_is_in_range(q->fd)) {
+@@ -156,7 +156,7 @@
+ void shovel(struct connection *cnx, int active_fd, 
+             fd_set *fds_r, fd_set *fds_w)
+ {
+-    struct queue *read_q, *write_q;
++    struct _queue *read_q, *write_q;
+ 
+     read_q = &cnx->q[active_fd];
+     write_q = &cnx->q[1-active_fd];

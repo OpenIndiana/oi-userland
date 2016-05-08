@@ -1,0 +1,23 @@
+--- Makefile.patched	Tue Mar 10 09:51:39 2015
++++ sslh-v1.17/Makefile	Fri Mar 18 11:34:46 2016
+@@ -5,9 +5,9 @@
+ USELIBWRAP?=	# Use libwrap?
+ USELIBCAP=	# Use libcap?
+ COV_TEST= 	# Perform test coverage?
+-PREFIX=/usr/local
++PREFIX=/usr
+ 
+-MAN=sslh.8.gz	# man page name
++MAN=sslh.8	# man page name
+ 
+ # End of configuration -- the rest should take care of
+ # itself
+@@ -59,7 +59,7 @@
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o echosrv echosrv.o probe.o common.o $(LIBS)
+ 
+ $(MAN): sslh.pod Makefile
+-	pod2man --section=8 --release=$(VERSION) --center=" " sslh.pod | gzip -9 - > $(MAN)
++	pod2man --section=8 --release=$(VERSION) --center=" " sslh.pod > $(MAN)
+ 
+ # Create release: export clean tree and tag current
+ # configuration
