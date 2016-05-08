@@ -47,6 +47,8 @@ PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
+WS_TRANSFORMS =    $(WS_TOP)/transforms
+
 GENERATE_HISTORY= $(WS_TOOLS)/generate-history
 HISTORY=	history
 
@@ -374,6 +376,20 @@ sample-resolve.deps:
 $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
 	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
+
+#
+# Generate a set of REQUIRED_PACKAGES based on what is needed to for pkgdepend
+# to resolve properly.  Automatically append this to your Makefile for the truly
+# lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
+# You must still include packages for tools you build and test with.
+#
+REQUIRED_PACKAGES::     $(RESOLVED)
+       $(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
+       @echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
+       @$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
+               $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
+       @echo "*** Please edit your Makefile and verify the new content at the end ***"
+
 
 # lint the manifests all at once
 $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
