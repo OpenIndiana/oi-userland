@@ -314,9 +314,6 @@ COMPONENT_TEST_COMPARE = \
 # set the default env command to use for test of the component
 COMPONENT_TEST_ENV_CMD =	$(ENV)
 
-# set the default test environment (none) that we can append to later
-COMPONENT_TEST_ENV_CMD =
-
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =	$(GMAKE)
 
