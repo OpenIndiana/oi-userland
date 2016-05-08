@@ -48,3 +48,6 @@ component-environment-prep::
 	@-echo $(REQUIRED_PACKAGES:%=/%) | xargs \
                $(PFEXEC) /usr/bin/pkg install --accept -v
 
+# Short aliases for user convenience
+env-check:: component-environment-check
+env-prep:: component-environment-prep
