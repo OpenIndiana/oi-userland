@@ -13,10 +13,11 @@
 # Copyright 2013 Andrzej Szeszo.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.9.3
+COMPONENT_REVISION=1
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.3
 MPC_NAME=mpc
@@ -59,9 +60,9 @@ COMPONENT_ARCHIVE_HASH_3= \
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -r $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC_BITS=
 CFLAGS=         -g -O2
@@ -116,3 +117,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+# GCC uses installed runtime libraries
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/gfortran-4-runtime
+REQUIRED_PACKAGES += system/library/math
