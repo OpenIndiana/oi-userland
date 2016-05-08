@@ -12,23 +12,23 @@
 # Copyright 2016 Jim Klimov. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lsof
 COMPONENT_VERSION=	4.89
 COMPONENT_PROJECT_URL=	http://freecode.com/projects/util-linux
 COMPONENT_SUMMARY=	LSOF - lister of opened files
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # Theoretical upstream is ftp://lsof.itap.purdue.edu/pub/tools/unix/lsof
 # but it is not available at the time of this writing
-COMPONENT_ARCHIVE_URL=	ftp://sunsite.ualberta.ca/pub/Mirror/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:81ac2fc5fdc944793baf41a14002b6deb5a29096b387744e28f8c30a360a3718
+    sha256:5d08da7ebe049c9d9a6472d6afb81aa5af54c4733a3f8822cbc22b57867633c9
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Snatched from espeak component
 BINDIR.32=/usr/bin
@@ -66,4 +66,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
