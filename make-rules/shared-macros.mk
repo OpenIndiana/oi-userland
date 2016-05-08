@@ -109,7 +109,7 @@ SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
-ARCHLIBSUBDIR32	= 
+ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)
 ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
@@ -521,7 +521,11 @@ PERL_VERSIONS = 5.16 5.22
 PERL.5.16 =	/usr/perl5/5.16/bin/perl
 PERL.5.22 =	/usr/perl5/5.22/bin/perl
 
-PERL =          $(PERL.$(PERL_VERSION))
+POD2MAN.5.16 =	/usr/perl5/5.16/bin/pod2man
+POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
+
+PERL =		$(PERL.$(PERL_VERSION))
+POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
