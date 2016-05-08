@@ -164,3 +164,13 @@ test-clean:
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/json-c
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += network/dns/bind
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/gss

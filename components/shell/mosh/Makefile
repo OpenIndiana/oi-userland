@@ -53,3 +53,14 @@ test: $(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += utility/bash-completion 
+REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math

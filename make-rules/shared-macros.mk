@@ -989,3 +989,21 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+#
+# Packages with tools that are required to build Userland components
+#
+REQUIRED_PACKAGES += metapackages/build-essential
+
+# Only a default dependency if component being built produces binaries.
+ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
+REQUIRED_PACKAGES += system/library
+endif
+
+include $(WS_MAKE_RULES)/environment.mk
+
+# A simple rule to print the value of any macro.  Ex:
+#    $ gmake print-REQUIRED_PACKAGES
+# Note that some macros are set on a per target basis, so what you see
+# is not always what you get.
+print-%:
+	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'

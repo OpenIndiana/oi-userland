@@ -62,3 +62,5 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 test: 		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/depend.mk
+
+REQUIRED_PACKAGES += system/library

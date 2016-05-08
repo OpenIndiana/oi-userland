@@ -41,3 +41,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+REQUIRED_PACKAGES += driver/network/bpf
+REQUIRED_PACKAGES += system/library

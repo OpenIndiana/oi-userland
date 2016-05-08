@@ -33,3 +33,6 @@ build:          $(BUILD_32)
 install:        $(INSTALL_32)
 
 test:           $(TESTS_32)
+
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library

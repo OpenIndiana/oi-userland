@@ -95,3 +95,11 @@ install:	$(INSTALL_32)
 # Because of certain set up requirement, the regress test suite is ported to
 # the STC gate.
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/security/gss

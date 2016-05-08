@@ -56,3 +56,10 @@ install:	$(INSTALL_32_and_64)
 # FAIL:  0
 # XPASS: 0
 test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
