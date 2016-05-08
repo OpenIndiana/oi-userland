@@ -995,34 +995,7 @@ component-hook:
 #
 # Packages with tools that are required to build Userland components
 #
-REQUIRED_PACKAGES += developer/build/gnu-make
-REQUIRED_PACKAGES += developer/build/make
-ifeq ($(COMPILER),gcc)
-REQUIRED_PACKAGES += developer/gcc-53
-endif
-ifeq ($(COMPILER),studio)
-ifneq ($(findstring /opt/solarisstudio12.4,$(CC)),)
-# If we are setup to build with an installed compiler, require the package
-# we can uncomment this when we know that pkglint can find it.
-#REQUIRED_PACKAGES += /solarisstudio/developer/solarisstudio-124
-endif
-endif
-ifeq ($(PARFAIT_BUILD),yes)
-# uncomment this line if you need to install Parfait
-#REQUIRED_PACKAGES += developer/parfait/parfait-tools-161
-endif
-REQUIRED_PACKAGES += developer/versioning/mercurial
-REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += package/pkg
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/linker
-REQUIRED_PACKAGES += text/gawk
-REQUIRED_PACKAGES += text/gnu-grep
-REQUIRED_PACKAGES += text/gnu-sed
-REQUIRED_PACKAGES += developer/java/jdk-8
-REQUIRED_PACKAGES += security/sudo
+REQUIRED_PACKAGES += metapackages/build-essential
 
 # Only a default dependency if component being built produces binaries.
 ifneq ($(strip $(BUILD_BITS)),NO_ARCH)

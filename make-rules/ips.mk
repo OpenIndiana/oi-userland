@@ -384,11 +384,11 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
 # You must still include packages for tools you build and test with.
 #
 REQUIRED_PACKAGES::     $(RESOLVED)
-       $(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
-       @echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
-       @$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
+	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
+	@echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
+	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
                $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
-       @echo "*** Please edit your Makefile and verify the new content at the end ***"
+	@echo "*** Please edit your Makefile and verify the new content at the end ***"
 
 
 # lint the manifests all at once
