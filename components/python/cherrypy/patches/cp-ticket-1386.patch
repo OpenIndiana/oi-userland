@@ -1,18 +1,23 @@
-# This issue has been offered to upstream but not be accepted yet.
-# Please see https://bitbucket.org/cherrypy/cherrypy/issues/1386/parse_request_uri-incorrectly-parses-uri
+# This issue has been offered to upstream and merged.
+# Please see https://bitbucket.org/cherrypy/cherrypy/commits/89dbd2f00b541f8f8378eaabf2caef3e932bb805
+# HG changeset patch
+# User Yiteng Zhang <yiteng.zhang@oracle.com>
+# Date 1461887965 25200
+# Node ID 89dbd2f00b541f8f8378eaabf2caef3e932bb805
+# Parent  ea07b29deabd28d5a10b764a1a452c876692d028
+parse_request_uri() incorrectly parses URI which contains ://
 
-diff -r 252fccc270d4 cherrypy/wsgiserver/wsgiserver2.py
---- cherrypy/wsgiserver/wsgiserver2.py	Tue Sep 01 12:23:22 2015 +0100
-+++ cherrypy/wsgiserver/wsgiserver2.py	Thu Oct 22 23:16:55 2015 -0700
-@@ -125,6 +125,7 @@
+--- cherrypy/wsgiserver/wsgiserver2.py
++++ cherrypy/wsgiserver/wsgiserver2.py
+@@ -92,6 +92,7 @@
+ import traceback as traceback_
  import operator
- 
  from urllib import unquote
 +from urlparse import urlparse
  import warnings
- 
- if sys.version_info >= (3, 0):
-@@ -835,15 +836,12 @@
+ import errno
+ import logging
+@@ -830,15 +831,12 @@
          if uri == ASTERISK:
              return None, None, uri
  
@@ -30,18 +35,18 @@ diff -r 252fccc270d4 cherrypy/wsgiserver/wsgiserver2.py
              return scheme, authority, path
  
          if uri.startswith(FORWARD_SLASH):
-diff -r 252fccc270d4 cherrypy/wsgiserver/wsgiserver3.py
---- cherrypy/wsgiserver/wsgiserver3.py	Tue Sep 01 12:23:22 2015 +0100
-+++ cherrypy/wsgiserver/wsgiserver3.py	Thu Oct 22 23:16:55 2015 -0700
-@@ -100,6 +100,7 @@
- import threading
- import time
- from traceback import format_exc
+--- cherrypy/wsgiserver/wsgiserver3.py
++++ cherrypy/wsgiserver/wsgiserver3.py
+@@ -92,6 +92,8 @@
+ import traceback as traceback_
+ import errno
+ import logging
 +from urllib.parse import urlparse
- 
- if sys.version_info >= (3, 0):
-     bytestr = bytes
-@@ -813,14 +814,13 @@
++
+ try:
+     # prefer slower Python-based io module
+     import _pyio as io
+@@ -819,14 +821,13 @@
          if uri == ASTERISK:
              return None, None, uri
  
