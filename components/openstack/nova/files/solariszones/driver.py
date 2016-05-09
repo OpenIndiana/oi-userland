@@ -842,6 +842,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             if entry['device_name'] == rootmp:
                 root_ci = jsonutils.loads(entry['connection_info'])
+                # Let's make sure this is a well formed connection_info, by
+                # checking if it has a serial key that represents the volume_id.
+                # If not check to see if the block device has a volume_id, if so
+                # then assign this to the root_ci.serial.
+                #
+                # If we cannot repair the connection_info then simply do not
+                # return a root_ci and let the caller decide if they want to
+                # fail or not.
+                if root_ci.get('serial') is None:
+                    if entry.get('volume_id') is not None:
+                        root_ci['serial'] = entry['volume_id']
+                    else:
+                        LOG.debug(_("Unable to determine the volume id for "
+                                    "the connection info for the root device "
+                                    "for instance '%s'") % instance['name'])
+                        root_ci = None
+
                 continue
 
             if not recreate:
