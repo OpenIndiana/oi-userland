@@ -76,6 +76,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/python/pygobject-26
+REQUIRED_PACKAGES += library/python/pygtk2
 REQUIRED_PACKAGES += library/python/pygtk2-26
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
