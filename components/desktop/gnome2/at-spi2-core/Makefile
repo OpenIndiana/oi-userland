@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= at-spi2-core
 COMPONENT_VERSION= 2.18.3
@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -43,6 +43,7 @@ CONFIGURE_OPTIONS += --enable-xevie=no
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
+COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 $(INSTALL_32):	$(INSTALL_64)
@@ -53,3 +54,12 @@ install: $(INSTALL_32_and_64)
 
 # Tests rely on dbus running, which is not true in zones
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += text/intltool
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxtst
