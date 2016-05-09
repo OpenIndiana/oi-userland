@@ -54,9 +54,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
-# Because the IPS_COMPONENT_VERSION cannot contain letters we used '.0.5'
-# instead of 'e'.
-IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
+# Because the IPS_COMPONENT_VERSION cannot contain letters
+# ...we will use '.2' instead of 'b'.
+IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).2
 
 CFLAGS += -I$(USRINCDIR)/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_SOLARIS_DTRACE
 ifeq ($(OS_VERSION), 5.11)
