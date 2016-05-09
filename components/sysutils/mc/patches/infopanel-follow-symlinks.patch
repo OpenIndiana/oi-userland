@@ -2,43 +2,26 @@ Upstream bugID: #3278
 Synopsis: Info panel should follow symlinks
 Bug record: https://www.midnight-commander.org/ticket/3278
 
---- mc-4.8.14/src/filemanager/mountlist.c.~2~	2015-08-19 21:02:55.561319717 +0300
-+++ mc-4.8.14/src/filemanager/mountlist.c	2015-08-19 21:08:40.099970408 +0300
-@@ -1652,18 +1652,22 @@
+--- mc-4.8.17.orig/src/filemanager/mountlist.c	2016-05-09 10:42:34.560205317 +0300
++++ mc-4.8.17/src/filemanager/mountlist.c	2016-05-09 10:42:13.095772709 +0300
+@@ -1702,11 +1702,16 @@
  my_statfs (struct my_statfs *myfs_stats, const char *path)
  {
  #ifdef HAVE_INFOMOUNT_LIST
 +    const char *rpath;
      size_t len = 0;
      struct mount_entry *entry = NULL;
-     struct mount_entry *temp = mc_mount_list;
+     GSList *temp;
      struct fs_usage fs_use;
- 
-+    if ((rpath = realpath(path, NULL)) == NULL)
-+       rpath = path;
+
++    rpath = realpath(path, NULL);
++    if (rpath != NULL && path != rpath)
++        path = rpath;
 +
-     while (temp)
+     for (temp = mc_mount_list; temp != NULL; temp = g_slist_next (temp))
      {
-         size_t i;
- 
-         i = strlen (temp->me_mountdir);
--        if (i > len && (strncmp (path, temp->me_mountdir, i) == 0))
-+        if (i > len && (strncmp (rpath, temp->me_mountdir, i) == 0))
--            if (entry == NULL || IS_PATH_SEP (path[i]) || path[i] == '\0')
-+            if (entry == NULL || IS_PATH_SEP (rpath[i]) || rpath[i] == '\0')
-             {
-                 len = i;
-                 entry = temp;
-@@ -1674,7 +1679,7 @@
-     if (entry)
-     {
-         memset (&fs_use, 0, sizeof (struct fs_usage));
--        get_fs_usage (entry->me_mountdir, NULL, &fs_use);
-+        get_fs_usage (rpath, NULL, &fs_use);
- 
-         myfs_stats->type = entry->me_dev;
-         myfs_stats->typename = entry->me_type;
-@@ -1726,6 +1731,11 @@
+         struct mount_entry *me;
+@@ -1779,6 +1784,11 @@
          myfs_stats->nfree = 0;
          myfs_stats->nodes = 0;
      }
@@ -48,5 +31,5 @@ Bug record: https://www.midnight-commander.org/ticket/3278
 +        free((void *) rpath);
 +#endif /* HAVE_INFOMOUNT_LIST */
  }
- 
+
  /* --------------------------------------------------------------------------------------------- */
