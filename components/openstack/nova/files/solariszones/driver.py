@@ -185,14 +185,14 @@ def lookup_resource_property(zone, resource, prop, filter=None):
 
 def lookup_resource_property_value(zone, resource, prop, value):
     """Lookup specified property with value from specified Solaris Zone
-    resource. Returns property if matching value is found, else None
+    resource. Returns resource object if matching value is found, else None
     """
     try:
         resources = zone.getResources(zonemgr.Resource(resource))
         for resource in resources:
             for propertee in resource.properties:
                 if propertee.name == prop and propertee.value == value:
-                    return propertee
+                    return resource
         else:
             return None
     except rad.client.ObjectError:
@@ -2398,8 +2398,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         suri = self._suri_from_volume_info(connection_info)
 
+        resource_scope = [zonemgr.Property("storage", suri)]
+        if connection_info.get('serial') is not None:
+            volume = self._volume_api.get(context, connection_info['serial'])
+            if volume['bootable']:
+                resource_scope.append(zonemgr.Property("bootpri", "1"))
+
         with ZoneConfig(zone) as zc:
-            zc.addresource("device", [zonemgr.Property("storage", suri)])
+            zc.addresource("device", resource_scope)
 
         # apply the configuration to the running zone
         if zone.state == ZONE_STATE_RUNNING:
@@ -2410,8 +2416,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 LOG.error(_("Unable to attach '%s' to instance '%s' via "
                             "zonemgr(3RAD): %s") % (suri, name, reason))
                 with ZoneConfig(zone) as zc:
-                    zc.removeresources("device", [zonemgr.Property("storage",
-                                                  suri)])
+                    zc.removeresources("device", resource_scope)
                 raise
 
     def detach_volume(self, connection_info, instance, mountpoint,
@@ -2433,8 +2438,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         suri = self._suri_from_volume_info(connection_info)
 
         # Check if the specific property value exists before attempting removal
-        prop = lookup_resource_property_value(zone, "device", "storage", suri)
-        if not prop:
+        resource = lookup_resource_property_value(zone, "device", "storage",
+                                                  suri)
+        if not resource:
             LOG.warning(_("Storage resource '%s' is not attached to instance "
                         "'%s'") % (suri, name))
             return
@@ -2444,7 +2450,24 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         # apply the configuration to the running zone
         if zone.state == ZONE_STATE_RUNNING:
-            zone.apply()
+            try:
+                zone.apply()
+            except:
+                LOG.error(_("Unable to apply the detach of resource '%s' to "
+                            "running instance '%s' because the resource is "
+                            "most likely in use.") % (suri, name))
+
+                # re-add the entry to the zone configuration so that the
+                # configuration will reflect what is in cinder before we raise
+                # the exception, therefor failing the detach and leaving the
+                # volume in-use.
+                needed_props = ["storage", "bootpri"]
+                props = filter(lambda prop: prop.name in needed_props,
+                               resource.properties)
+                with ZoneConfig(zone) as zc:
+                    zc.addresource("device", props)
+
+                raise
 
     def swap_volume(self, old_connection_info, new_connection_info,
                     instance, mountpoint, resize_to):
