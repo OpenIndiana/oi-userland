@@ -73,3 +73,8 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_MAKE_RULES)/depend.mk
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
