@@ -35,18 +35,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2011/269
 
+link path=usr/lib/graphviz/python27/_gv.so target=libgv_python27.so
 file path=usr/lib/graphviz/python27/gv.py
 file path=usr/lib/graphviz/python27/libgv_python27.so
-link path=usr/lib/graphviz/python27/_gv.so target=libgv_python27.so
-link path=usr/lib/python2.7/vendor-packages/_gv.so \
-    target=../../graphviz/python27/libgv_python27.so
-link path=usr/lib/python2.7/vendor-packages/gv.py \
-    target=../../graphviz/python27/gv.py
-
-# force a dependency on the graphviz package
-depend fmri=__TBD pkg.debug.depend.file=libgraph.so.5 \
-       pkg.debug.depend.path=usr/lib type=require
-
+file usr/lib/python2.7/site-packages/_gv.so path=usr/lib/python2.7/vendor-packages/_gv.so
+file usr/lib/python2.7/site-packages/gv.py path=usr/lib/python2.7/vendor-packages/gv.py pkg.tmp.autopyc=false
 
 license COPYING license=EPL1.0
 license graphviz.license.extra license="Other Notices"
