@@ -50,7 +50,7 @@ set -f
 # Build the command line flags
 #
 shift $#
-set -- -p /var/run/ntp.pid
+set -- --pidfile /var/run/ntp.pid
 # We allow a step larger than the panic value of 17 minutes only 
 # once when ntpd starts up. If always_allow_large_step is true, 
 # then we allow this each time ntpd starts. Otherwise, we allow
@@ -60,7 +60,7 @@ set -- -p /var/run/ntp.pid
 val=`svcprop -c -p config/always_allow_large_step $SMF_FMRI`
 if [ "$val" = "true" ] || \
     [ ! -f /var/run/ntp.pid ]; then
-        set -- "$@" -g
+        set -- "$@" --panicgate
 fi
 
 # Auth was off by default in xntpd now the default is on. Better have a way
@@ -77,12 +77,12 @@ fi
 # Set up logging if requested.
 logfile=`svcprop -c -p config/logfile $SMF_FMRI`
 val=`svcprop -c -p config/verbose_logging $SMF_FMRI`
-[ "$val" = "true" ] && [ -n "$logfile" ]  && set -- "$@" -l $logfile
+[ "$val" = "true" ] && [ -n "$logfile" ]  && set -- "$@" --logfile $logfile
 
 # Register with mDNS.
 val=`svcprop -c -p config/mdnsregister $SMF_FMRI`
 mdns=`svcprop -c -p general/enabled svc:/network/dns/multicast:default`
-[ "$val" = "true" ] && [ "$mdns" = "true" ] && set -- "$@" -m
+[ "$val" = "true" ] && [ "$mdns" = "true" ] && set -- "$@" --mdns
 
 # We used to support the slewalways keyword, but that was a Sun thing
 # and not in V4. Look for "slewalways yes" and set the new slew option.
@@ -105,7 +105,7 @@ deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
 val=`svcprop -c -p config/allow_step_at_boot $SMF_FMRI`
 if [ "$val" = "true" ] && [ "$slew_always" = "true" ] && \
     [ ! -f /var/run/ntp.pid ]; then
-	set -- "$@" -G
+	set -- "$@" --force-step-once
 fi
 
 # Start the daemon. If debugging is requested, put it in the background, 
