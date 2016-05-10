@@ -1,0 +1,32 @@
+This works around the limitation of requiring root as the user. This has
+been reported to the community as NTP bug 2422 "Allow ntpd to be started as 
+non-root if appropriate POSIX capabilities are set" which although reported
+as Linux specific, is being used to track the Solaris issue as well.
+
+This particular solution is not being passed to the community as a solution
+because it is specific to Solaris and to our specific use of SMF and is not
+really suitable as a general solution.
+
+--- ntpd/ntpd.c
++++ ntpd/ntpd.c
+@@ -620,12 +620,14 @@ ntpdmain(
+ 
+ 	/* MPE lacks the concept of root */
+ # if defined(HAVE_GETUID) && !defined(MPE)
+-	uid = getuid();
+-	if (uid && !HAVE_OPT( SAVECONFIGQUIT )) {
+-		msyslog_term = TRUE;
+-		msyslog(LOG_ERR,
+-			"must be run as root, not uid %ld", (long)uid);
+-		exit(1);
++	if (!getenv("SMF_FMRI")) {
++		uid = getuid();
++		if (uid && !HAVE_OPT( SAVECONFIGQUIT )) {
++			msyslog_term = TRUE;
++			msyslog(LOG_ERR,
++				"must be run as root, not uid %ld", (long)uid);
++			exit(1);
++		}
+ 	}
+ # endif
+ 
