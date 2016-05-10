@@ -38,6 +38,8 @@ TPNO = 27742
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# examples are not being shipped and currently do not build when using Studio.
+CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-hpack-tools
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += ZLIB_LIBS=-lz
