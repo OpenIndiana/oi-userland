@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
@@ -112,7 +112,3 @@ test:		$(TEST_32_and_64)
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) $(TCLSH)
-
-include ../../make-rules/depend.mk
