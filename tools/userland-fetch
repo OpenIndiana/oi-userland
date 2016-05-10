@@ -226,7 +226,8 @@ def pypi_url(url, filename):
 		jsurl = "http://%s/pypi/%s/json" % (host, name)
 
 	try:
-		f = urlopen(jsurl)
+		# Don't wait very long for the connection
+		f = urlopen(jsurl, None, 2)
 	except HTTPError as e:
 		if e.getcode() == 404:
 			print "Unknown component '%s'" % name
@@ -281,11 +282,7 @@ def download_paths(search, filename, url):
 
 	# command line url is a fallback, so it's last
 	if url != None and url not in urls:
-		scheme, path = splittype(url)
-		if scheme == "pypi":
-			url = pypi_url(url, filename)
-		if url != None and url not in urls:
-			urls.append(url)
+		urls.append(url)
 
 	return urls
 
@@ -325,6 +322,22 @@ def download_from_paths(search_list, file_arg, url, timeout_arg, link_arg, quiet
 				print "\n    downloading...",
 			name = download(url, timeout_arg, file_arg, quiet)
 			if name == None:
+				if not quiet:
+					print "failed"
+				continue
+		elif scheme == "pypi":
+			nurl = pypi_url(url, file_arg)
+			if nurl:
+				if not quiet:
+					print "\n    translated %s to %s..." % (
+					    url, nurl),
+					print "\n    downloading...",
+			else:
+				if not quiet:
+					print "\n    unable to contact PyPI",
+				continue
+			name = download(nurl, timeout_arg, file_arg, quiet)
+			if name is None:
 				if not quiet:
 					print "failed"
 				continue
