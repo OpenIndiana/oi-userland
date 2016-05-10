@@ -26,13 +26,13 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
-COMPONENT_VERSION=	0.9.14
-COMPONENT_PROJECT_URL=	http://check.sourceforge.net/
+COMPONENT_VERSION=	0.10.0
+COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c272624645b1b738cf57fd5d81a3e4d9b722b99d6133ee3f3c4007d4d279840a
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:f5f50766aa6f8fe5a2df752666ca01a950add45079aa06416b83765b1cf71052
+COMPONENT_ARCHIVE_URL=	https://github.com/libcheck/$(COMPONENT_NAME)/files/71408/$(COMPONENT_ARCHIVE)
 
-TPNO=			19836
+TPNO=			28147
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
