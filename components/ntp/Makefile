@@ -39,11 +39,43 @@ COMPONENT_ARCHIVE_HASH=	 \
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
+# NTP tests log results in separate files. Instead of geting the output
+# of the build and test and deleting the extra lines, it is easier to just
+# cat together all of the logs. The test TEST_PROGNAME3 tests the system
+# log facility, so we have to get rid of the output because the pid is
+# different every time.
+#
+# In addition, we append the config.h file so we know if the configuration
+# ever changes. We get rid of the version number which changes every time
+# we upgrade and the system string and endian info which is different between
+# intel and SPARC.
+
+COMPONENT_TEST_CREATE_TRANSFORMS = \
+        @if [ -e $(COMPONENT_TEST_MASTER) ]; \
+        then \
+		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print '$(FIND) $(BUILD_DIR_64) -name test-\*.log | sort |\\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print ' xargs cat  | grep -v TEST_PROGNAME3 \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print '> $(COMPONENT_TEST_SNAPSHOT)' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'cat $(BUILD_DIR_64)/config.h | \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'grep -v VERSION | grep -v STR_SYSTEM | grep -v ENDIAN \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print '>> $(COMPONENT_TEST_SNAPSHOT)' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	else \
+		print 'Cannot find $(COMPONENT_TEST_MASTER)'; \
+		exit 2; \
+	fi
+
 TPNO=			20866
 
 PATCH_LEVEL = 0
 
-TEST_TARGET= $(NO_TESTS)
+TEST_TARGET= build $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS +=	 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
@@ -64,6 +96,7 @@ CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)/$(MACH64)
+CONFIGURE_OPTIONS +=	--disable-problem-tests
 
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl

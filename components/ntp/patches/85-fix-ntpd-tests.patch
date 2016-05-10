@@ -1,0 +1,29 @@
+At this time the tests for ntpd require features in the loader that are not
+available in Solaris. We can run the ntp_restrict test by supplying stubs
+for the required symbols. The scanner test is more complex.
+
+--- tests/ntpd/ntp_restrict.c
++++ tests/ntpd/ntp_restrict.c
+@@ -7,6 +7,12 @@
+ 
+ /* Helper functions */
+ 
++unsigned long current_time;
++void 
++mon_start(int);
++void
++mon_stop(int);
++
+ sockaddr_u
+ create_sockaddr_u(short sin_family, unsigned short sin_port, char* ip_addr) {
+ 	sockaddr_u sockaddr;
+--- configure
++++ configure
+@@ -37038,7 +37038,6 @@
+ case "$ntp_ept:$cross:$host" in
+  no:0:*-*-freebsd6.4) ;;
+  no:0:*-*-hpux11.23*) ;;
+- no:0:*-*-solaris*) ;;
+  *) ntp_test_ntp_restrict="yes" ;;
+ esac
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ntp_test_ntp_restrict" >&5

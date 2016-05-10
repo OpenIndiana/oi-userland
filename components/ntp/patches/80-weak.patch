@@ -1,0 +1,17 @@
+This has been submitted as NTP community bug 3021
+http://bugzilla.ntp.org/show_bug.cgi?id=3021
+This patch may be removed when NTP is upgraded to a version that has bug
+3021 fixed in it.
+
+--- sntp/unity/unity_fixture.c
++++ sntp/unity/unity_fixture.c
+@@ -16,7 +16,8 @@ UNITY_FIXTURE_T UnityFixture;
+ int (*outputChar)(int) = putchar;
+ 
+ int verbose = 0;
+-
++#pragma weak setUp
++#pragma weak tearDown
+ void setUp(void);
+ void tearDown(void);
+ void setUp(void)    { /*does nothing*/ }
