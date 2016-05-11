@@ -9,13 +9,14 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dia
 COMPONENT_VERSION=        0.97.3
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Apps/Dia
 COMPONENT_SUMMARY=        Dia Diagram Editor
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,4 +46,19 @@ install:     		$(INSTALL_32)
 
 test:			$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libart
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/intltool
