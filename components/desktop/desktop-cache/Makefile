@@ -38,6 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Make sure SMF manifests are valid
 $(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
 	@for f in files/*.xml ; do \
+	    [[ "$$f" == "files/com.oracle.solaris.gdm-temporary.xml" ]] || \
 	    (set -ex ; /usr/sbin/svccfg validate "$$f") ; \
 	done
 	$(TOUCH) $@
