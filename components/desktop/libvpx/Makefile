@@ -67,7 +67,9 @@ CONFIGURE_OPTIONS.sparc += --target=sparc-solaris-gcc
 CONFIGURE_OPTIONS.i386.32 += --target=x86-solaris-gcc
 CONFIGURE_OPTIONS.i386.64 += --target=x86_64-solaris-gcc
 
+ifneq ($(MACH), sparc)
 REQUIRED_PACKAGES += developer/yasm
+endif
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
