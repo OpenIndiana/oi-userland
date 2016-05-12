@@ -1,0 +1,18 @@
+Solaris expects a single copy of the .py files for both 32-bit and 64-bit,
+and then places 64-bit specific items in a '64/' subdirectory.  As such,
+the 32-bit and 64-bit versions of these utilities need to always load from
+/usr/lib instead of /usr/lib and /usr/lib/$(MACH64) respectively.
+
+Not appropriate for upstream.
+
+--- gobject-introspection-1.46.0/tools/g-ir-tool-template.in	Fri Sep 25 12:18:40 2015
++++ gobject-introspection-1.46.0/tools/g-ir-tool-template.in	Fri Sep 25 12:19:10 2015
+@@ -45,7 +45,7 @@
+     pylibdir = os.path.join(os.path.dirname(__file__), '..', 'lib', 'gobject-introspection')
+ else:
+     datadir = "@datarootdir@"
+-    pylibdir = os.path.join('@libdir@', 'gobject-introspection')
++    pylibdir = os.path.join('/usr/lib', 'gobject-introspection')
+ 
+ srcdir = os.getenv('UNINSTALLED_INTROSPECTION_SRCDIR', None)
+ if srcdir is not None:
