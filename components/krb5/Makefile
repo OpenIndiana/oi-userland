@@ -18,28 +18,35 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Kerberos
-COMPONENT_MINOR=	1.13
-COMPONENT_VERSION=	1.13.3
+# Encoding rule for MAJOR: MIT KerberosV5 x.y[.z] => MAJOR x
+# Encoding rule for MINOR: MIT KerberosV5 x.y[.z] => MINOR $MAJOR.y
+# Encoding rule for MICRO: MIT KerberosV5 x.y[.z] => MICRO $MINOR[.z]
+COMPONENT_MAJOR=	1
+COMPONENT_MINOR=	$(COMPONENT_MAJOR).14
+COMPONENT_MICRO=	$(COMPONENT_MINOR).2
+
+COMPONENT_VERSION=		$(COMPONENT_MICRO)
+IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
+
 COMPONENT_PROJECT_URL=	http://web.mit.edu/kerberos/
 COMPONENT_SRC=		krb5-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5d4af08ead9b7a1e9493cfd65e821234f151a46736e1ce586f886c8a8e65fabe
+	sha256:6bcad7e6778d1965e4ce4af21d2efdc15b274c5ce5c69031c58e4c954cda8b27
 COMPONENT_ARCHIVE_URL=	\
 	$(COMPONENT_PROJECT_URL)dist/krb5/$(COMPONENT_MINOR)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/kerberos
 
-TPNO=	26018
+TPNO=		27916
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS += -I$(PROTOUSRINCDIR) -I$(PROTOUSRINCDIR)/kerberosv5 -I$(COMPONENT_DIR)/Solaris
 
@@ -49,11 +56,6 @@ BUILD_32_and_64=
 INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
-
-include $(WS_MAKE_RULES)/ips.mk
-
-# Encoding rules for IPS: MIT KerberosV5 <x>.<y>[.<z>] => IPS <x>.<y>.[<z>|0].0
-IPS_COMPONENT_VERSION=	1.13.3.0
 
 # The configure script is not at the top of the source directory.
 CONFIGURE_SCRIPT=	$(SOURCE_DIR)/src/configure
@@ -70,11 +72,6 @@ CPPFLAGS += -I$(USRINCDIR)/openldap
 # If you make changes to LDFLAGS, check krb5-config and 052-krb5-config.patch.
 LDFLAGS += -lc $(LD_Z_DEFS)
 
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += DEFKTNAME="FILE:$(ETCDIR)/krb5/krb5.keytab"
 CONFIGURE_ENV += DEFCKTNAME="FILE:/var/user/%{username}/client.keytab"
 
@@ -84,9 +81,6 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS.32 += --libexecdir=$(USRLIBDIR)
 CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR)/$(MACH64)
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/kerberosv5
-# to avoid executing subprocesses from /usr/[s]bin/$(MACH64):
-CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
-CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --with-crypto-impl=openssl
 CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-prng-alg=os
@@ -188,16 +182,6 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	$(CP) $(BUILD_DIR)/$(MACH64)/lib/libkadm5clnt.so.1 \
 		$(PROTO_DIR)$(USRLIBDIR)/$(MACH64);
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:	$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# build does this always
-test:	$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += developer/test/dejagnu
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/openldap
@@ -205,7 +189,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += network/dns/bind
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
 
