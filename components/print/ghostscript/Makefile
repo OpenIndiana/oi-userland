@@ -26,11 +26,11 @@
 # for now disable it.
 PARFAIT_BUILD=no
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      9.00
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://ghostscript.com/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -39,9 +39,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ghostscript
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 PATH=/usr/bin:/usr/gnu/bin
 
@@ -108,4 +108,17 @@ install: $(VARIANTS:%=%/.installed)
 
 test: $(NO_TESTS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/toolkit/libxt
