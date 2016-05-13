@@ -53,8 +53,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
 	'-e "/^XXX_CC_XXX$$/d"'
 
+# If there is no mediator, use MIT.  Note, once all userland build systems have
+# the Userland security/kerberos-5 pkg installed this logic can be removed.
+KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
+
 REQUIRED_PACKAGES += library/python/tkinter-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += service/security/kerberos-5
+ifeq ($(KRB5_API), solaris)
+    # require the solaris version of Kerberos/GSS
+    REQUIRED_PACKAGES += service/security/kerberos-5
+else
+    # require the Userland version of Kerberos/GSS
+    REQUIRED_PACKAGES += security/kerberos-5
+endif
 REQUIRED_PACKAGES += shell/ksh93

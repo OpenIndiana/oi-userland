@@ -83,6 +83,10 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	chmod 755 config.status; \
 	./config.status)
 
+# If there is no mediator, use MIT.  Note, once all userland build systems have
+# the Userland security/kerberos-5 pkg installed this logic can be removed.
+KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
+
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += diagnostic/wireshark/wireshark-common
@@ -95,7 +99,13 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += service/security/kerberos-5
+ifeq ($(KRB5_API), solaris)
+    # require the solaris version of Kerberos/GSS
+    REQUIRED_PACKAGES += service/security/kerberos-5
+else
+    # require the Userland version of Kerberos/GSS
+    REQUIRED_PACKAGES += security/kerberos-5
+endif
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt

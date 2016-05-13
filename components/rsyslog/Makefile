@@ -43,7 +43,7 @@ COMPONENT_ARCHIVE_URL_DOC=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NA
 
 UNPACK_ARGS_DOC=		-r $(COMPONENT_SRC_DOC)
 
-# There are tests, but gmake test is currently broken. 
+# There are tests, but gmake test is currently broken.
 # It was working in the previous version, but not sure why
 # it breaks now. Leaving it at no tests for now.
 TEST_TARGET= $(NO_TESTS)
@@ -109,4 +109,5 @@ REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += library/liblogging
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93

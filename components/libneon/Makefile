@@ -70,7 +70,7 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s/copied,/copied/g"'  \
      '-e "s/ \{1,\}copied/ copied/g"'  \
      '-e "s/copied $$/copied/g"'  \
-     '-e "s/copied [0-9]\{1,\}\./copied/g"' 
+     '-e "s/copied [0-9]\{1,\}\./copied/g"'
 
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
@@ -90,10 +90,19 @@ CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
+# If there is no mediator, use MIT.  Note, once all userland build systems have
+# the Userland security/kerberos-5 pkg installed this logic can be removed.
+KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
+
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += library/libproxy
+ifeq ($(KRB5_API), solaris)
+    # require the solaris version of GSS
+    REQUIRED_PACKAGES += system/library/security/gss
+else
+    # require the Userland version of GSS
+    REQUIRED_PACKAGES += security/kerberos-5
+endif

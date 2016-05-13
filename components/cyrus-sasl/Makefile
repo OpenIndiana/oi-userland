@@ -71,7 +71,7 @@ include $(WS_MAKE_RULES)/common.mk
 studio_MT=
 
 CPPFLAGS += -I$(USRINCDIR)/openldap
-LDFLAGS += $(CC_BITS)  -lscf -lresolv 
+LDFLAGS += $(CC_BITS)  -lscf -lresolv
 
 # if there is no mediator, use MIT
 KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
@@ -169,10 +169,10 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
         $(CP) $(BUILD_DIR_64)/sample/.libs/sample-server $(TESTS_DIR) ; \
         $(CP) $(BUILD_DIR_64)/sample/.libs/sample-client $(TESTS_DIR) ;
 
-$(PROTOUSRLIBDIR)/libsasl.so.1:	$(BUILD_DIR)/$(MACH32)/lib/.libs/libsasl.so.1	
+$(PROTOUSRLIBDIR)/libsasl.so.1:	$(BUILD_DIR)/$(MACH32)/lib/.libs/libsasl.so.1
 	$(CP) $< $@
 
-$(PROTOUSRLIBDIR64)/libsasl.so.1:	$(BUILD_DIR)/$(MACH64)/lib/.libs/libsasl.so.1	
+$(PROTOUSRLIBDIR64)/libsasl.so.1:	$(BUILD_DIR)/$(MACH64)/lib/.libs/libsasl.so.1
 	$(CP) $< $@
 
 TARBALL_DIR=sasltest
@@ -199,6 +199,7 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 ifneq ($(KRB5_API), solaris)
     REQUIRED_PACKAGES += security/kerberos-5
+else
+    REQUIRED_PACKAGES += system/library/security/gss
 endif
-REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network/ldap/openldap

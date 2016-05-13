@@ -95,6 +95,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(TOUCH) $(PROTOETCDIR)/cups/command.types ; \
 	$(MV) $(PROTOUSRLIBDIR)/64 $(PROTOUSRLIBDIR)/$(MACH64)
 
+# If there is no mediator, use MIT.  Note, once all userland build systems have
+# the Userland security/kerberos-5 pkg installed this logic can be removed.
+KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
+
 REQUIRED_PACKAGES += driver/parallel/ecpp
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -103,10 +107,16 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += $(PERL_PKG)
-REQUIRED_PACKAGES += service/security/kerberos-5
+ifeq ($(KRB5_API), solaris)
+    # require the solaris version of Kerberos/GSS
+    REQUIRED_PACKAGES += service/security/kerberos-5
+    REQUIRED_PACKAGES += system/library/security/gss
+else
+    # require the Userland version of Kerberos/GSS
+    REQUIRED_PACKAGES += security/kerberos-5
+endif
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/gss
