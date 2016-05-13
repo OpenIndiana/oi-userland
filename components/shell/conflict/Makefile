@@ -23,22 +23,22 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
-COMPONENT_VERSION=	20100627
-IPS_COMPONENT_VERSION=	0.2010.6.27
+COMPONENT_VERSION=	20150705
+IPS_COMPONENT_VERSION=	0.2015.7.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e795d7d580d2a2bb5081bcf9b0efe6d86567fd29770c60de90da7c07105bfeb9
+    sha256:30e14808768a938df139a1b76f8f7397e1b3bf46a18ceabcc8b1b1a70d5ea8a9
 COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/conflict
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -53,16 +53,23 @@ CC +=	$(CC_BITS)
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_TEST_DIR =    $(BUILD_DIR_32)
+COMPONENT_TEST_CMD =    ./run_test.sh
+COMPONENT_TEST_TARGETS =
+
+# The additional conflict specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|/tmp/conflict\.......|/tmp/conflict\.xxxxxx|g" ' \
+        '-e "s|^\*\*            \$$(@D)/.*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^\*\*            /usr/bin/.*$$|XXX_CC_XXX|g" ' \
+        '-e "/^XXX_CC_XXX$$/d" '
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		build
-	@cd $(BUILD_DIR_64); ./run_test.sh
+test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
