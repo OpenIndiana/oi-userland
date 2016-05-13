@@ -24,6 +24,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
+depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
 ### NUT Command-line binaries and scripts (daemons, clients)
 
 ### Note: While nut-scanner can use snmp, neon/xml, ipmi and usb libs, it pulls
@@ -77,13 +79,13 @@ file path=usr/share/man/man8/upsrw.8
 file path=usr/share/man/man8/upssched.8
 
 # NUT starter examples are by convention across many distros delivered in /etc
-file path=$(NUTETCDIR)/hosts.conf.sample
-file path=$(NUTETCDIR)/nut.conf.sample
-file path=$(NUTETCDIR)/ups.conf.sample
-file path=$(NUTETCDIR)/upsd.conf.sample
-file path=$(NUTETCDIR)/upsd.users.sample
-file path=$(NUTETCDIR)/upsmon.conf.sample
-file path=$(NUTETCDIR)/upssched.conf.sample
+file path=$(NUTETCDIR)/hosts.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCDIR)/nut.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+file path=$(NUTETCDIR)/ups.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+file path=$(NUTETCDIR)/upsd.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCDIR)/upsd.users.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCDIR)/upsmon.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCDIR)/upssched.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
 
 # Integration with dynamically added devices (USB mostly)
 # TODO pedantic: split this off to depend on some USB/hotplug/udev package(s)?

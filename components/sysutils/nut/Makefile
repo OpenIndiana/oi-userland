@@ -46,6 +46,10 @@ LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNU
 
 ### A lot of paths are defined and exported to pkg(5) tools below,
 ### so we can flexibly set up location of certain NUT components.
+NUTUSER  =	nut
+PKG_OPTIONS +=	-D NUTUSER="$(NUTUSER)"
+NUTGROUP  =	nut
+PKG_OPTIONS +=	-D NUTGROUP="$(NUTGROUP)"
 
 # This is where config files are expected, INCLUDING (per convention from other
 # distros) example config files - e.g. not lost under /usr/shared/... locations
@@ -61,6 +65,10 @@ NUTDRVDIR  =	$(NUTUSRDIR)/bin
 NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
 PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
 PKG_OPTIONS +=	-D NUTCGIDIR="$(NUTCGIDIR)"
+
+_NUTVARDIR  =	$(strip .../,,...$(VARDIR))
+NUTSTATEDIR  =	$(_NUTVARDIR)/state/ups
+PKG_OPTIONS +=	-D NUTSTATEDIR="$(NUTSTATEDIR)"
 
 # So far I am not certain where we should deliver this one, so parametrize ;)
 NUT_AVAHI_SERVICE_FILE =	$(NUTETCDIR)/avahi-nut.service.sample
@@ -86,10 +94,12 @@ CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 
+CONFIGURE_OPTIONS +=	--with-user=$(NUTUSER)
+CONFIGURE_OPTIONS +=	--with-group=$(NUTGROUP)
 CONFIGURE_OPTIONS +=	--sysconfdir=/$(NUTETCDIR)
 CONFIGURE_OPTIONS +=	--with-hotplug-dir=/$(NUTHOTPLUGDIR)
 CONFIGURE_OPTIONS +=	--with-udev-dir=/$(NUTUDEVDIR)
-CONFIGURE_OPTIONS +=	--with-statepath=/var/state/ups
+CONFIGURE_OPTIONS +=	--with-statepath=/$(NUTSTATEDIR)
 CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
 CONFIGURE_OPTIONS +=	--with-dev
 CONFIGURE_OPTIONS +=	--with-libltdl
