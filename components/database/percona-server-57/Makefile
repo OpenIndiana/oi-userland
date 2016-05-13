@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		percona-server
 COMPONENT_VERSION=	5.7.10-3
 IPS_COMPONENT_VERSION=	5.7.10.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
@@ -75,3 +75,15 @@ COMPONENT_POST_CMAKE_ACTION=$(COMPONENT_POST_CMAKE_ACTION.$(BITS))
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/percona-server-57/client
+REQUIRED_PACKAGES += database/percona-server-57/library
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
