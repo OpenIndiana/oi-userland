@@ -1,0 +1,22 @@
+This removes a "fix" originally done for Solaris that is no longer needed
+since we fixed our stdbool.h header file to work when compiling C++
+programs:
+
+  14612 - patch for xmp.h for Solaris (don't include stdbool.h)
+  https://bugs.freedesktop.org/show_bug.cgi?id=14612
+
+XXX file upstream bug
+
+--- exempi-2.2.2/exempi/xmp.h	2014-08-31 15:03:10.000000000 -0700
++++ exempi-2.2.2.new/exempi/xmp.h	2015-07-08 11:17:12.175501827 -0700
+@@ -40,10 +40,7 @@
+ #define __EXEMPI_XMP_H_
+ 
+ #include <stdlib.h>
+-/* stdbool choke on Sun (bug #14612) */
+-#if !defined(__sun)
+ #include <stdbool.h>
+-#endif
+ #include <stdint.h>
+ 
+ #include <time.h>
