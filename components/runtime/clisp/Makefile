@@ -23,10 +23,11 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clisp
 COMPONENT_VERSION=	2.49
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://clisp.cons.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -35,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/clisp/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/clisp
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # To include correct locale header file in .../modules/regexp/gllib/regex.c
 CPPFLAGS += -I/usr/share/gettext/intl
@@ -94,6 +95,9 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
