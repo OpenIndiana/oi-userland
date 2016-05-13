@@ -1,11 +1,20 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
 
---- docs/doxygen.conf	2005-02-07 15:12:15.000000000 -0800
-+++ docs/doxygen.conf	2014-01-28 01:32:48.342337115 -0800
-@@ -34,5 +34,8 @@
-                  "*/test/*" \
-                  "*/arch/*"
+EXCLUDE_PATTERNS part was reported to upstream via:
+https://bz.apache.org/bugzilla/show_bug.cgi?id=59546
+
+--- docs/doxygen.conf
++++ docs/doxygen.conf
+@@ -31,8 +31,12 @@
+ #STRIP_FROM_PATH=/buildpath/apr
+ 
+ EXCLUDE_PATTERNS="*/acconfig.h" \
+-                 "*/test/*" \
+-                 "*/arch/*"
++                 "*/test/abts*" \
++                 "*/test/test*" \
++                 "*/include/arch/*"
  
 -GENERATE_TAGFILE=docs/dox/apr.tag
 +GENERATE_LATEX=NO
