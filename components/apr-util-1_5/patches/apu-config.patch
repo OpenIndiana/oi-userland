@@ -1,0 +1,16 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+APR-util is installed in nonstandard path. -R is required.
+
+--- apu-config.in
++++ apu-config.in
+@@ -166,7 +166,7 @@
+     --link-ld)
+     if test "$location" = "installed"; then
+         ### avoid using -L if libdir is a "standard" location like /usr/lib
+-        flags="$flags -L$libdir -l$APRUTIL_LIBNAME"
++        flags="$flags -L$libdir -R$libdir -l$APRUTIL_LIBNAME"
+     else
+         flags="$flags -L$APU_BUILD_DIR -l$APRUTIL_LIBNAME"
+     fi

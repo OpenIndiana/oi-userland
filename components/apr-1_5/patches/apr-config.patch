@@ -1,0 +1,16 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+APR is installed in nonstandard path. -R is required.
+
+--- apr-config.in
++++ apr-config.in
+@@ -183,7 +183,7 @@
+     --link-ld)
+     if test "$location" = "installed"; then
+         ### avoid using -L if libdir is a "standard" location like /usr/lib
+-        flags="$flags -L$libdir -l${APR_LIBNAME}"
++        flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
+     else
+         ### this surely can't work since the library is in .libs?
+         flags="$flags -L$APR_BUILD_DIR -l${APR_LIBNAME}"
