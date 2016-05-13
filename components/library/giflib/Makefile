@@ -20,23 +20,23 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		giflib
 COMPONENT_VERSION=	5.0.5
-COMPONENT_FMRI=     	library/giflib
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_FMRI= 	library/giflib
+COMPONENT_SRC=  	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://giflib.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:606d8a366b1c625ab60d62faeca807a799a2b9e88cbdf2a02bfcdf4429bf8609
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/giflib/files/giflib-5.x/$(COMPONENT_ARCHIVE)/download
-COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      GIFLIB - A library and utilities for processing GIFs
+COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_SUMMARY=	GIFLIB - A library and utilities for processing GIFs
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_OPTIONS+=	--enable-shared
@@ -50,5 +50,5 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
