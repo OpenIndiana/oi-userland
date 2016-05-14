@@ -787,9 +787,9 @@ diff -ur krb5-1.13.2/src/tests/gss-threads/gss-server.c krb5-1.13.2.fopen/src/te
                  if (!logfile) {
                      perror(*argv);
 diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/profile/prof_file.c
---- old/src/util/profile/prof_file.c	2016-03-31 16:44:53.634245353 -0700
-+++ patched/src/util/profile/prof_file.c	2016-03-31 20:07:34.843286876 -0700
-@@ -126,7 +126,7 @@ static int rw_access(const_profile_files
+--- krb5-1.13.2/src/util/profile/prof_file.c	2015-05-08 18:27:02.000000000 -0500
++++ krb5-1.13.2.fopen/src/util/profile/prof_file.c	2015-08-11 13:56:49.450805045 -0500
+@@ -123,7 +123,7 @@
       */
      FILE    *f;
  
@@ -798,7 +798,7 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
      if (f) {
          fclose(f);
          return 1;
-@@ -150,7 +150,7 @@ static int r_access(const_profile_filesp
+@@ -147,7 +147,7 @@
       */
      FILE    *f;
  
@@ -807,16 +807,16 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
      if (f) {
          fclose(f);
          return 1;
-@@ -355,7 +355,7 @@ errcode_t profile_update_file_data_locke
+@@ -346,7 +346,7 @@
+     }
  #endif
-     if (!isdir) {
-         errno = 0;
--        f = fopen(data->filespec, "r");
-+        f = fopen(data->filespec, "rF");
-         if (f == NULL)
-             return (errno != 0) ? errno : ENOENT;
-         set_cloexec_file(f);
-@@ -423,7 +423,7 @@ static errcode_t write_data_to_file(prf_
+     errno = 0;
+-    f = fopen(data->filespec, "r");
++    f = fopen(data->filespec, "rF");
+     if (f == NULL) {
+         retval = errno;
+         if (retval == 0)
+@@ -411,7 +411,7 @@
  
      errno = 0;
  

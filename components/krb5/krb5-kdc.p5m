@@ -21,7 +21,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through committed">
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/security/kerberos-5/kdc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Kerberos V5 Key Distribution Center (KDC)"
@@ -33,39 +33,91 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2015/144 value=PSARC/2016/244
+set name=org.opensolaris.arc-caseid value=PSARC/2015/144
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file Solaris/kadmin.xml path=lib/svc/manifest/network/security/kadmin.xml \
+file Solaris/kadmin.xml \
+    path=lib/kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/kadmin.xml \
     restart_fmri=svc:/system/manifest-import:default
 file Solaris/krb5_prop.xml \
-    path=lib/svc/manifest/network/security/krb5_prop.xml \
+    path=lib/kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/krb5_prop.xml \
     restart_fmri=svc:/system/manifest-import:default
-file Solaris/krb5kdc.xml path=lib/svc/manifest/network/security/krb5kdc.xml \
+file Solaris/krb5kdc.xml \
+    path=lib/kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/krb5kdc.xml \
     restart_fmri=svc:/system/manifest-import:default
+link path=lib/svc/manifest/network/security/kadmin.xml \
+    target=../../../../kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/kadmin.xml \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=lib/svc/manifest/network/security/krb5_prop.xml \
+    target=../../../../kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/krb5_prop.xml \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=lib/svc/manifest/network/security/krb5kdc.xml \
+    target=../../../../kerberos5/$(COMPONENT_VERSION)/svc/manifest/network/security/krb5kdc.xml \
+    mediator=kerberos5 mediator-implementation=MIT
+file usr/sbin/kadmin.local \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kadmin.local
+file usr/sbin/kadmind \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kadmind
+file usr/sbin/kdb5_ldap_util \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kdb5_ldap_util
+file usr/sbin/kdb5_util \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kdb5_util
+file usr/sbin/kprop path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kprop
+file usr/sbin/kpropd \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kpropd
+file usr/sbin/kproplog \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kproplog
+file usr/sbin/krb5kdc \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/krb5kdc
+file src/plugins/kdb/ldap/libkdb_ldap/kerberos.ldif \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/share/lib/ldif/kerberos.ldif
+file src/plugins/kdb/ldap/libkdb_ldap/kerberos.schema \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/share/lib/ldif/kerberos.schema
 dir  path=usr/lib/$(MACH64)/krb5/plugins/kdb
 file path=usr/lib/$(MACH64)/krb5/plugins/kdb/db2.so
 file path=usr/lib/$(MACH64)/krb5/plugins/kdb/kldap.so
 link path=usr/lib/$(MACH64)/libkdb_ldap.so target=libkdb_ldap.so.1.0
 link path=usr/lib/$(MACH64)/libkdb_ldap.so.1 target=libkdb_ldap.so.1.0
 file path=usr/lib/$(MACH64)/libkdb_ldap.so.1.0
+link path=usr/lib/krb5/kadmind \
+    target=../../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kadmind \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/krb5/kprop \
+    target=../../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kprop \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/krb5/kpropd \
+    target=../../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kpropd \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/krb5/krb5kdc \
+    target=../../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/krb5kdc \
+    mediator=kerberos5 mediator-implementation=MIT
 dir  path=usr/lib/krb5/plugins/kdb
 file path=usr/lib/krb5/plugins/kdb/db2.so
 file path=usr/lib/krb5/plugins/kdb/kldap.so
-link path=usr/lib/libkdb_ldap.so target=libkdb_ldap.so.1.0
-link path=usr/lib/libkdb_ldap.so.1 target=libkdb_ldap.so.1.0
+link path=usr/lib/libkdb_ldap.so target=libkdb_ldap.so.1.0 mediator=kerberos5 \
+    mediator-implementation=MIT
+link path=usr/lib/libkdb_ldap.so.1 target=libkdb_ldap.so.1.0 \
+    mediator=kerberos5 mediator-implementation=MIT
 file path=usr/lib/libkdb_ldap.so.1.0
-file usr/sbin/kadmin.local path=usr/sbin/$(MACH64)/kadmin.local
-file usr/sbin/kadmind path=usr/sbin/$(MACH64)/kadmind
-file usr/sbin/kdb5_ldap_util path=usr/sbin/$(MACH64)/kdb5_ldap_util
-file usr/sbin/kdb5_util path=usr/sbin/$(MACH64)/kdb5_util
-file usr/sbin/kprop path=usr/sbin/$(MACH64)/kprop
-file usr/sbin/kpropd path=usr/sbin/$(MACH64)/kpropd
-file usr/sbin/kproplog path=usr/sbin/$(MACH64)/kproplog
-file usr/sbin/krb5kdc path=usr/sbin/$(MACH64)/krb5kdc
-file src/plugins/kdb/ldap/libkdb_ldap/kerberos.ldif \
-    path=usr/share/lib/ldif/kerberos.ldif
-file src/plugins/kdb/ldap/libkdb_ldap/kerberos.schema \
-    path=usr/share/lib/ldif/kerberos.schema
+link path=usr/sbin/kadmin.local \
+    target=../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kadmin.local \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/sbin/kdb5_ldap_util \
+    target=../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kdb5_ldap_util \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/sbin/kdb5_util \
+    target=../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kdb5_util \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/sbin/kprop target=../lib/krb5/kprop mediator=kerberos5 \
+    mediator-implementation=MIT
+link path=usr/sbin/kproplog \
+    target=../kerberos5/$(COMPONENT_VERSION)/sbin/$(MACH64)/kproplog \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/share/lib/ldif/kerberos.ldif \
+    target=../../../kerberos5/$(COMPONENT_VERSION)/share/lib/ldif/kerberos.ldif \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/share/lib/ldif/kerberos.schema \
+    target=../../../kerberos5/$(COMPONENT_VERSION)/share/lib/ldif/kerberos.schema \
+    mediator=kerberos5 mediator-implementation=MIT
 file path=usr/share/man/man5/kadm5.acl.5
 file path=usr/share/man/man5/kdc.conf.5
 file path=usr/share/man/man8/kadmin.local.8

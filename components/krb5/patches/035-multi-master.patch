@@ -8,10 +8,10 @@
 # should look at modifying/deleting this patch.
 # Patch source: in-house
 #
-diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
---- old/src/kadmin/cli/kadmin.c	2016-03-31 16:44:43.282366236 -0700
-+++ patched/src/kadmin/cli/kadmin.c	2016-03-31 19:24:20.929551275 -0700
-@@ -255,7 +255,7 @@ kadmin_startup(int argc, char *argv[], c
+diff -u -r old/src/kadmin/cli/kadmin.c new/src/kadmin/cli/kadmin.c
+--- old/src/kadmin/cli/kadmin.c	2015-05-28 15:10:45.129616302 -0500
++++ new/src/kadmin/cli/kadmin.c	2015-05-29 13:32:41.901105712 -0500
+@@ -268,7 +268,7 @@
      char **db_args = NULL;
      int db_args_size = 0;
      char *db_name = NULL;
@@ -20,7 +20,7 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
  
      memset(&params, 0, sizeof(params));
  
-@@ -370,11 +370,6 @@ kadmin_startup(int argc, char *argv[], c
+@@ -380,11 +380,6 @@
      params.mask |= KADM5_CONFIG_REALM;
      params.realm = def_realm;
  
@@ -32,35 +32,36 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
      /*
       * Set cc to an open credentials cache, either specified by the -c
       * argument or the default.
-@@ -503,13 +498,14 @@ kadmin_startup(int argc, char *argv[], c
+@@ -515,13 +510,15 @@
      if (ccache_name) {
-         info(_("Authenticating as principal %s with existing "
-                "credentials.\n"), princstr);
+         printf(_("Authenticating as principal %s with existing "
+                  "credentials.\n"), princstr);
 -        retval = kadm5_init_with_creds(context, princstr, cc, svcname, &params,
 +        retval = kadm5_init_with_creds_mm(context, princstr, cc, svcnames,
 +                                       &params,
                                         KADM5_STRUCT_VERSION,
                                         KADM5_API_VERSION_4, db_args, &handle);
      } else if (use_anonymous) {
-         info(_("Authenticating as principal %s with password; "
-                "anonymous requested.\n"), princstr);
+         printf(_("Authenticating as principal %s with password; "
+                  "anonymous requested.\n"), princstr);
 -        retval = kadm5_init_anonymous(context, princstr, svcname, &params,
-+        retval = kadm5_init_anonymous_mm(context, princstr, svcnames, &params,
++        retval = kadm5_init_anonymous_mm(context, princstr, svcnames,
++                                      &params,
                                        KADM5_STRUCT_VERSION,
                                        KADM5_API_VERSION_4, db_args, &handle);
      } else if (use_keytab) {
-@@ -520,17 +516,20 @@ kadmin_startup(int argc, char *argv[], c
-             info(_("Authenticating as principal %s with default keytab.\n"),
-                  princstr);
-         }
+@@ -531,17 +528,20 @@
+         else
+             printf(_("Authenticating as principal %s with default keytab.\n"),
+                    princstr);
 -        retval = kadm5_init_with_skey(context, princstr, keytab_name, svcname,
 +        retval = kadm5_init_with_skey_mm(context, princstr, keytab_name,
 +                                      svcnames,
                                        &params, KADM5_STRUCT_VERSION,
                                        KADM5_API_VERSION_4, db_args, &handle);
      } else {
-         info(_("Authenticating as principal %s with password.\n"),
-              princstr);
+         printf(_("Authenticating as principal %s with password.\n"),
+                princstr);
 -        retval = kadm5_init_with_password(context, princstr, password, svcname,
 +        retval = kadm5_init_with_password_mm(context, princstr, password,
 +                                          svcnames,
@@ -127,10 +128,10 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  kadm5_ret_t    kadm5_lock(void *server_handle);
  kadm5_ret_t    kadm5_unlock(void *server_handle);
  kadm5_ret_t    kadm5_flush(void *server_handle);
-/usr/gnu/bin/diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
---- unpatched/src/lib/kadm5/clnt/client_init.c	2016-03-28 00:19:36.988270188 -0600
-+++ patched/src/lib/kadm5/clnt/client_init.c	2016-03-28 13:12:43.769371355 -0600
-@@ -55,7 +55,7 @@ enum init_type { INIT_PASS, INIT_SKEY, I
+diff -u -r old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
+--- old/src/lib/kadm5/clnt/client_init.c	2015-05-28 15:10:45.192975632 -0500
++++ new/src/lib/kadm5/clnt/client_init.c	2015-06-02 10:33:51.639341637 -0500
+@@ -55,7 +55,7 @@
  
  static kadm5_ret_t
  init_any(krb5_context context, char *client_name, enum init_type init_type,
@@ -139,7 +140,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
           kadm5_config_params *params, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle);
  
-@@ -87,8 +87,25 @@ kadm5_init_with_creds(krb5_context conte
+@@ -87,8 +87,25 @@
                        krb5_ui_4 api_version, char **db_args,
                        void **server_handle)
  {
@@ -166,7 +167,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      server_handle);
  }
  
-@@ -99,7 +116,24 @@ kadm5_init_with_password(krb5_context co
+@@ -99,7 +116,24 @@
                           krb5_ui_4 api_version, char **db_args,
                           void **server_handle)
  {
@@ -192,7 +193,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      params, struct_version, api_version, db_args,
                      server_handle);
  }
-@@ -110,8 +144,24 @@ kadm5_init_anonymous(krb5_context contex
+@@ -110,8 +144,24 @@
                       krb5_ui_4 struct_version, krb5_ui_4 api_version,
                       char **db_args, void **server_handle)
  {
@@ -218,7 +219,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      db_args, server_handle);
  }
  
-@@ -121,7 +171,23 @@ kadm5_init(krb5_context context, char *c
+@@ -121,7 +171,23 @@
             krb5_ui_4 struct_version, krb5_ui_4 api_version, char **db_args,
             void **server_handle)
  {
@@ -243,7 +244,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      params, struct_version, api_version, db_args,
                      server_handle);
  }
-@@ -133,8 +199,25 @@ kadm5_init_with_skey(krb5_context contex
+@@ -133,8 +199,25 @@
                       krb5_ui_4 api_version, char **db_args,
                       void **server_handle)
  {
@@ -270,7 +271,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      server_handle);
  }
  
-@@ -339,7 +422,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+@@ -338,7 +421,7 @@
  	}
  
  	/*
@@ -279,7 +280,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  	 *    - if iprop_port is configured, connect to iprop_port
  	 *    - if not, query remote rpc/bind
  	 *    - if that fails, try consuming iprop service on kadmin port
-@@ -512,9 +595,35 @@ cleanup:
+@@ -506,9 +589,35 @@
  	return (code);
  }
  
@@ -316,7 +317,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
           kadm5_config_params *params_in, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle)
  {
-@@ -532,6 +641,10 @@ init_any(krb5_context context, char *cli
+@@ -526,6 +635,10 @@
  
      int code = 0;
      generic_ret *r;
@@ -327,7 +328,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      initialize_ovk_error_table();
  /*      initialize_adb_error_table(); */
-@@ -599,34 +712,56 @@ init_any(krb5_context context, char *cli
+@@ -593,34 +706,56 @@
      if (code)
          goto error;
  
@@ -406,7 +407,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
      *server_handle = (void *) handle;
  
      goto cleanup;
-@@ -659,6 +794,8 @@ cleanup:
+@@ -653,6 +788,8 @@
      krb5_free_principal(handle->context, server);
      if (code)
          free(handle);
@@ -415,7 +416,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      return code;
  }
-@@ -671,46 +808,43 @@ get_init_creds(kadm5_server_handle_t han
+@@ -665,46 +802,43 @@
  {
      kadm5_ret_t code;
      krb5_ccache ccache = NULL;
@@ -493,7 +494,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      /*
       * Acquire a service ticket for svcname@realm for client, using password
-@@ -747,7 +881,7 @@ get_init_creds(kadm5_server_handle_t han
+@@ -741,7 +875,7 @@
      }
      handle->lhandle->cache_name = handle->cache_name;
  

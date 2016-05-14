@@ -14,8 +14,8 @@
 # Patch source: in-house
 #
 diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
---- no-032/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:25:17.265078167 -0600
-+++ 032/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:27:42.301681052 -0600
+--- old/src/lib/kadm5/clnt/client_init.c	2015-04-30 01:12:10.579373279 -0600
++++ new/src/lib/kadm5/clnt/client_init.c	2015-05-26 23:38:41.638267439 -0600
 @@ -299,7 +299,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
  {
  	int code = 0;
@@ -25,9 +25,9 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
  	char *iprop_svc;
  	boolean_t iprop_enable = B_FALSE;
  	char mech[] = "kerberos_v5";
-@@ -317,15 +317,13 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+@@ -316,15 +316,13 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+ 	char *server;
  	int port;
- 	struct timeval timeout;
  
 -        /* service name is service/host */
 -        server = strpbrk(service_name, "/");
@@ -44,7 +44,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
  
  	iprop_svc = strdup(KIPROP_SVC_NAME);
  	if (iprop_svc == NULL)
-@@ -516,7 +514,7 @@ cleanup:
+@@ -510,7 +508,7 @@ cleanup:
  
  static kadm5_ret_t
  init_any(krb5_context context, char *client_name, enum init_type init_type,
@@ -53,7 +53,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
           kadm5_config_params *params_in, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle)
  {
-@@ -534,7 +532,6 @@ init_any(krb5_context context, char *cli
+@@ -528,7 +526,6 @@ init_any(krb5_context context, char *cli
  
      int code = 0;
      generic_ret *r;
@@ -61,7 +61,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
  
      initialize_ovk_error_table();
  /*      initialize_adb_error_table(); */
-@@ -603,15 +600,19 @@ init_any(krb5_context context, char *cli
+@@ -597,15 +594,19 @@ init_any(krb5_context context, char *cli
          goto error;
  
      /* NULL svcname means use host-based. */
@@ -88,7 +88,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
      }
  
      /* Get credentials. */
-@@ -666,14 +667,52 @@ cleanup:
+@@ -660,14 +661,52 @@ cleanup:
  static kadm5_ret_t
  get_init_creds(kadm5_server_handle_t handle, krb5_principal client,
                 enum init_type init_type, char *pass, krb5_ccache ccache_in,
@@ -142,7 +142,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
       * Acquire a service ticket for svcname@realm for client, using password
       * pass (which could be NULL), and create a ccache to store them in.  If
       * INIT_CREDS, use the ccache we were provided instead.
-@@ -708,7 +747,7 @@ get_init_creds(kadm5_server_handle_t han
+@@ -702,7 +741,7 @@ get_init_creds(kadm5_server_handle_t han
      }
      handle->lhandle->cache_name = handle->cache_name;
  

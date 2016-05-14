@@ -1,0 +1,26 @@
+#
+# In krb5_gss_store_cred_into(), if the credential is acceptor-only, set
+# the minor status to G_STORE_ACCEPTOR_CRED_NOSUPP instead of
+# G_BAD_USAGE.
+#
+# Found by usr/ontest/lib/libgss/gss_api:gss.27.
+#
+# Accepted upstream, will be part of krb5 1.14:
+# https://github.com/krb5/krb5/commit/c0e16bb2f654038ad81602e89851f232916da051
+# Patch source: in-house
+#
+diff -pur old/src/lib/gssapi/krb5/store_cred.c new/src/lib/gssapi/krb5/store_cred.c
+--- old/src/lib/gssapi/krb5/store_cred.c	2015-06-12 08:13:27.399201700 -0700
++++ new/src/lib/gssapi/krb5/store_cred.c	2015-06-12 08:17:35.570611897 -0700
+@@ -241,7 +241,10 @@ krb5_gss_store_cred_into(OM_uint32 *mino
+     if (lifetime == 0)
+         return GSS_S_CREDENTIALS_EXPIRED;
+ 
+-    if (actual_usage != GSS_C_INITIATE && actual_usage != GSS_C_BOTH) {
++    if (actual_usage == GSS_C_ACCEPT) {
++        *minor_status = G_STORE_ACCEPTOR_CRED_NOSUPP;
++        return GSS_S_FAILURE;
++    } else if (actual_usage != GSS_C_INITIATE && actual_usage != GSS_C_BOTH) {
+         *minor_status = G_BAD_USAGE;
+         return GSS_S_FAILURE;
+     }

@@ -1897,9 +1897,9 @@ diff -pur old/src/lib/kadm5/clnt/Makefile.in new/src/lib/kadm5/clnt/Makefile.in
  RELDIR=kadm5/clnt
  
  ##DOSBUILDTOP = ..\..\..
-diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/client_init.c
---- no-028/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:39:09.439503108 -0600
-+++ 028/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:40:49.154436988 -0600
+diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
+--- old/src/lib/kadm5/clnt/client_init.c
++++ new/src/lib/kadm5/clnt/client_init.c
 @@ -44,12 +44,12 @@
  #include <iprop_hdr.h>
  #include "iprop.h"
@@ -1915,7 +1915,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
  
  enum init_type { INIT_PASS, INIT_SKEY, INIT_CREDS, INIT_ANONYMOUS };
  
-@@ -138,9 +138,385 @@ kadm5_init_with_skey(krb5_context contex
+@@ -138,9 +138,379 @@ kadm5_init_with_skey(krb5_context contex
                      server_handle);
  }
  
@@ -2096,7 +2096,6 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
 +	enum clnt_stat rpc_err_code;
 +	char *server;
 +	int port;
-+	struct timeval timeout;
 +
 +        /* service name is service/host */
 +        server = strpbrk(service_name, "/");
@@ -2157,11 +2156,6 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
 +
 +	if (iprop_svc)
 +		free(iprop_svc);
-+
-+	/* Set a one-hour timeout. */
-+	timeout.tv_sec = 3600;
-+	timeout.tv_usec = 0;
-+	(void)clnt_control(handle->clnt, CLSET_TIMEOUT, &timeout);
 +
 +	handle->lhandle->clnt = handle->clnt;
 +
@@ -2302,14 +2296,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
           kadm5_config_params *params_in, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle)
  {
-@@ -152,13 +528,13 @@ init_any(krb5_context context, char *cli
-     rpcvers_t rpc_vers;
-     krb5_ccache ccache;
-     krb5_principal client = NULL, server = NULL;
--    struct timeval timeout;
- 
-     kadm5_server_handle_t handle;
-     kadm5_config_params params_local;
+@@ -158,6 +528,7 @@ init_any(krb5_context context, char *cli
  
      int code = 0;
      generic_ret *r;
@@ -2317,7 +2304,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
  
      initialize_ovk_error_table();
  /*      initialize_adb_error_table(); */
-@@ -226,105 +602,27 @@ init_any(krb5_context context, char *cli
+@@ -225,99 +596,27 @@ init_any(krb5_context context, char *cli
      if (code)
          goto error;
  
@@ -2366,12 +2353,6 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
 +        strncpy(svcname, svcname_in, sizeof(svcname));
 +        svcname[sizeof(svcname)-1] = '\0';
      }
- 
--    /* Set a one-hour timeout. */
--    timeout.tv_sec = 3600;
--    timeout.tv_usec = 0;
--    (void)clnt_control(handle->clnt, CLSET_TIMEOUT, &timeout);
--
 -    handle->client_socket = fd;
 -    handle->lhandle->clnt = handle->clnt;
 -    handle->lhandle->client_socket = fd;
@@ -2379,7 +2360,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
 -    /* now that handle->clnt is set, we can check the handle */
 -    if ((code = _kadm5_check_handle((void *) handle)))
 -        goto error;
--
+ 
 -    /*
 -     * The RPC connection is open; establish the GSS-API
 -     * authentication context.
@@ -2438,7 +2419,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
          goto error;
      }
  
-@@ -364,31 +662,17 @@ cleanup:
+@@ -357,31 +656,17 @@ cleanup:
      return code;
  }
  
@@ -2472,7 +2453,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
      /*
       * Acquire a service ticket for svcname@realm for client, using password
       * pass (which could be NULL), and create a ccache to store them in.  If
-@@ -426,12 +710,6 @@ get_init_creds(kadm5_server_handle_t han
+@@ -419,12 +704,6 @@ get_init_creds(kadm5_server_handle_t han
  
      code = gic_iter(handle, init_type, ccache, client, pass, svcname, realm,
                      server_out);
@@ -2485,7 +2466,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
      /* Improved error messages */
      if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY) code = KADM5_BAD_PASSWORD;
      if (code == KRB5KDC_ERR_S_PRINCIPAL_UNKNOWN)
-@@ -698,6 +976,26 @@ rpc_auth(kadm5_server_handle_t handle, k
+@@ -691,6 +970,26 @@ rpc_auth(kadm5_server_handle_t handle, k
           gss_cred_id_t gss_client_creds, gss_name_t gss_target)
  {
      OM_uint32 gssstat, minor_stat;
@@ -2512,7 +2493,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
      struct rpc_gss_sec sec;
  
      /* Allow unauthenticated option for testing. */
-@@ -732,6 +1030,7 @@ rpc_auth(kadm5_server_handle_t handle, k
+@@ -725,6 +1024,7 @@ rpc_auth(kadm5_server_handle_t handle, k
                                                 GSS_C_MUTUAL_FLAG
                                                 | GSS_C_REPLAY_FLAG,
                                                 0, NULL, NULL, NULL);
@@ -2520,6 +2501,7 @@ diff -pur new/src/lib/kadm5/clnt/client_init.c patched.1/src/lib/kadm5/clnt/clie
  }
  
  kadm5_ret_t
+diff -pur old/src/lib/kadm5/clnt/client_principal.c new/src/lib/kadm5/clnt/client_principal.c
 --- old/src/lib/kadm5/clnt/client_principal.c
 +++ new/src/lib/kadm5/clnt/client_principal.c
 @@ -5,7 +5,7 @@
@@ -2955,10 +2937,10 @@ diff -pur old/src/slave/kpropd.c new/src/slave/kpropd.c
                         (caddr_t)&vers, (xdrproc_t)xdr_kdb_fullresync_result_t,
                         (caddr_t)&clnt_res, full_resync_timeout);
      if (status == RPC_PROCUNAVAIL) {
-diff -pur new/src/tests/misc/Makefile.in patched.1/src/tests/misc/Makefile.in
---- new/src/tests/misc/Makefile.in	2016-02-29 11:50:13.000000000 -0800
-+++ patched.1/src/tests/misc/Makefile.in	2016-03-19 08:15:59.222125882 -0700
-@@ -12,19 +12,17 @@ SRCS=\
+diff -pur old/src/tests/misc/Makefile.in new/src/tests/misc/Makefile.in
+--- old/src/tests/misc/Makefile.in
++++ new/src/tests/misc/Makefile.in
+@@ -12,18 +12,16 @@ SRCS=\
  	$(srcdir)/test_cxx_krb5.cpp \
  	$(srcdir)/test_cxx_k5int.cpp \
  	$(srcdir)/test_cxx_gss.cpp \
@@ -2969,16 +2951,15 @@ diff -pur new/src/tests/misc/Makefile.in patched.1/src/tests/misc/Makefile.in
  
 -check:: test_getpw test_chpw_message test_cxx_krb5 test_cxx_gss test_cxx_rpc test_cxx_k5int test_cxx_kadm5
 +check:: test_getpw test_chpw_message test_cxx_krb5 test_cxx_gss test_cxx_k5int test_cxx_kadm5
- 	$(RUN_TEST) ./test_getpw
- 	$(RUN_TEST) ./test_chpw_message
- 	$(RUN_TEST) ./test_cxx_krb5
- 	$(RUN_TEST) ./test_cxx_k5int
- 	$(RUN_TEST) ./test_cxx_gss
--	$(RUN_TEST) ./test_cxx_rpc
- 	$(RUN_TEST) ./test_cxx_kadm5
+ 	$(RUN_SETUP) $(VALGRIND) ./test_getpw
+ 	$(RUN_SETUP) $(VALGRIND) ./test_chpw_message
+ 	$(RUN_SETUP) $(VALGRIND) ./test_cxx_krb5
+ 	$(RUN_SETUP) $(VALGRIND) ./test_cxx_k5int
+ 	$(RUN_SETUP) $(VALGRIND) ./test_cxx_gss
+-	$(RUN_SETUP) $(VALGRIND) ./test_cxx_rpc
+ 	$(RUN_SETUP) $(VALGRIND) ./test_cxx_kadm5
  
  test_getpw: $(OUTPRE)test_getpw.$(OBJEXT) $(SUPPORT_DEPLIB)
- 	$(CC_LINK) $(ALL_CFLAGS) -o test_getpw $(OUTPRE)test_getpw.$(OBJEXT) $(SUPPORT_LIB)
 @@ -41,18 +39,15 @@ test_cxx_k5int: $(OUTPRE)test_cxx_k5int.
  	$(CXX_LINK) $(ALL_CXXFLAGS) -o test_cxx_k5int $(OUTPRE)test_cxx_k5int.$(OBJEXT) $(KRB5_BASE_LIBS) $(LIBS)
  test_cxx_gss: $(OUTPRE)test_cxx_gss.$(OBJEXT)
@@ -3000,9 +2981,9 @@ diff -pur new/src/tests/misc/Makefile.in patched.1/src/tests/misc/Makefile.in
 +	$(RM) test_getpw test_chpw_message test_cxx_krb5 test_cxx_gss test_cxx_k5int test_cxx_kadm5 *.o
  
 diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
---- old/src/tests/t_iprop.py	2016-02-29 11:50:13.000000000 -0800
-+++ new/src/tests/t_iprop.py	2016-04-08 11:08:10.225701596 -0700
-@@ -1,44 +1,35 @@
+--- old/src/tests/t_iprop.py
++++ new/src/tests/t_iprop.py
+@@ -1,50 +1,35 @@
  #!/usr/bin/python
  
  import os
@@ -3016,7 +2997,7 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -def wait_for_prop(kpropd, full_expected, expected_old, expected_new):
 +def wait_for_prop(kpropd, full_expected):
      output('*** Waiting for sync from kpropd\n')
--    full_seen = sleep_seen = False
+-    full_seen = sleep_seen = prodded_after_dump = False
 -    old_sno = new_sno = -1
 +    full_seen = False
      while True:
@@ -3052,14 +3033,19 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -            sleep_seen = True
          if 'load process for full propagation completed' in line:
              full_seen = True
+-        if sleep_seen and full_seen and not prodded_after_dump:
+-            # Prod the kpropd parent into getting incrementals after
+-            # it finishes a DB load.  This will be unnecessary if
+-            # kpropd is simplified to use a single process.
 +            # kpropd's child process has finished a DB load; make the parent
 +            # do another iprop request.  This will be unnecessary if kpropd
 +            # is simplified to use a single process.
-+            kpropd.send_signal(signal.SIGUSR1)
+             kpropd.send_signal(signal.SIGUSR1)
+-            prodded_after_dump = True
  
          # Detect some failure conditions.
          if 'Still waiting for full resync' in line:
-@@ -54,98 +45,28 @@ def wait_for_prop(kpropd, full_expected,
+@@ -60,92 +45,28 @@ def wait_for_prop(kpropd, full_expected,
          if 'invalid return' in line:
              fail('kadmind returned invalid result')
  
@@ -3109,13 +3095,7 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -        m = re.match(r'\tUpdate principal : (.*)$', line)
 -        if m:
 -            eprinc = entries[ser - first]
--            if eprinc == None:
--                fail('Expected dummy update entry %d' % ser)
--            elif m.group(1) != eprinc:
--                fail('Expected princ %s in update entry %d' % (eprinc, ser))
--        if line == '\tDummy entry':
--            eprinc = entries[ser - first]
--            if eprinc != None:
+-            if m.group(1) != eprinc:
 -                fail('Expected princ %s in update entry %d' % (eprinc, ser))
 -
 -# slave1 will receive updates from master, and slave2 will receive
@@ -3178,8 +3158,11 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
  
  ulog = os.path.join(realm.testdir, 'db.ulog')
  if not os.path.exists(ulog):
-@@ -155,234 +76,114 @@ if not os.path.exists(ulog):
+@@ -153,209 +74,117 @@ if not os.path.exists(ulog):
+ 
+ # Create the principal used to authenticate kpropd to kadmind.
  kiprop_princ = 'kiprop/' + hostname
++realm.addprinc(kiprop_princ)
  realm.extract_keytab(kiprop_princ, realm.keytab)
  
 -# Create the initial slave1 and slave2 databases.
@@ -3194,7 +3177,7 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -# Reinitialize the master ulog so we know exactly what to expect in
 -# it.
 -realm.run([kproplog, '-R'])
--check_ulog(1, 1, 1, [None])
+-check_ulog(0, 0, 0, [])
 +# Make some changes to the master db.
 +realm.addprinc('wakawaka')
 +# Add a principal enough to make realloc likely, but not enough to grow
@@ -3204,24 +3187,24 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 +longname = cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + c
 +realm.addprinc(longname)
 +realm.addprinc('w')
-+realm.run([kadminl, 'modprinc', '-allow_tix', 'w'])
-+realm.run([kadminl, 'modprinc', '+allow_tix', 'w'])
++realm.run_kadminl('modprinc -allow_tix w')
++realm.run_kadminl('modprinc +allow_tix w')
  
 -# Make some changes to the master DB.
 -realm.addprinc(pr1)
 -realm.addprinc(pr3)
 -realm.addprinc(pr2)
--realm.run([kadminl, 'modprinc', '-allow_tix', pr2])
--realm.run([kadminl, 'modprinc', '+allow_tix', pr2])
--check_ulog(6, 1, 6, [None, pr1, pr3, pr2, pr2, pr2])
+-realm.run_kadminl('modprinc -allow_tix ' + pr2)
+-realm.run_kadminl('modprinc +allow_tix ' + pr2)
+-check_ulog(5, 1, 5, [pr1, pr3, pr2, pr2, pr2])
 -
 -# Start kpropd for slave1 and get a full dump from master.
 -kpropd1 = realm.start_kpropd(slave1, ['-d'])
--wait_for_prop(kpropd1, True, 1, 6)
--out = realm.run([kadminl, 'listprincs'], env=slave1)
+-wait_for_prop(kpropd1, True, 0, 5)
+-out = realm.run_kadminl('listprincs', slave1)
 -if pr1 not in out or pr2 not in out or pr3 not in out:
 -    fail('slave1 does not have all principals from master')
--check_ulog(1, 6, 6, [None], slave1)
+-check_ulog(0, 0, 5, [], slave1)
 +check_serial(realm, '7')
 +
 +# Set up the kpropd acl file.
@@ -3233,23 +3216,23 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 +# Start kpropd and get a full dump from master.
 +kpropd = realm.start_kpropd(slave, ['-d'])
 +wait_for_prop(kpropd, True)
-+out = realm.run([kadminl, 'listprincs'], env=slave)
++out = realm.run_kadminl('listprincs', slave)
 +if longname not in out or 'wakawaka' not in out or 'w@' not in out:
 +    fail('Slave does not have all principals from master')
  
  # Make a change and check that it propagates incrementally.
--realm.run([kadminl, 'modprinc', '-allow_tix', pr2])
--check_ulog(7, 1, 7, [None, pr1, pr3, pr2, pr2, pr2, pr2])
+-realm.run_kadminl('modprinc -allow_tix ' + pr2)
+-check_ulog(6, 1, 6, [pr1, pr3, pr2, pr2, pr2, pr2])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, False, 6, 7)
--check_ulog(2, 6, 7, [None, pr2], slave1)
--out = realm.run([kadminl, 'getprinc', pr2], env=slave1)
-+realm.run([kadminl, 'modprinc', '-allow_tix', 'w'])
+-wait_for_prop(kpropd1, False, 5, 6)
+-check_ulog(1, 6, 6, [pr2], slave1)
+-out = realm.run_kadminl('getprinc ' + pr2, slave1)
++realm.run_kadminl('modprinc -allow_tix w')
 +check_serial(realm, '8')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, False)
 +check_serial(realm, '8', slave)
-+out = realm.run([kadminl, 'getprinc', 'w'], env=slave)
++out = realm.run_kadminl('getprinc w', slave)
  if 'Attributes: DISALLOW_ALL_TIX' not in out:
 -    fail('slave1 does not have modification from master')
 +    fail('Slave does not have modification from master')
@@ -3271,26 +3254,26 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -kpropd2 = realm.start_server([kpropd, '-d', '-D', '-P', slave2_kprop_port,
 -                              '-f', slave2_in_dump_path, '-p', kdb5_util,
 -                              '-a', acl_file, '-A', hostname], 'ready', slave2)
--wait_for_prop(kpropd2, True, 1, 7)
--check_ulog(1, 7, 7, [None], slave2)
--out = realm.run([kadminl, 'listprincs'], env=slave1)
+-wait_for_prop(kpropd2, True, 0, 6)
+-check_ulog(0, 0, 6, [], slave2)
+-out = realm.run_kadminl('listprincs', slave1)
 -if pr1 not in out or pr2 not in out or pr3 not in out:
 -    fail('slave2 does not have all principals from slave1')
 -
 -# Make another change and check that it propagates incrementally to
 -# both slaves.
--realm.run([kadminl, 'modprinc', '-maxrenewlife', '22 hours', pr1])
--check_ulog(8, 1, 8, [None, pr1, pr3, pr2, pr2, pr2, pr2, pr1])
+-realm.run_kadminl('modprinc -maxrenewlife "22 hours" ' + pr1)
+-check_ulog(7, 1, 7, [pr1, pr3, pr2, pr2, pr2, pr2, pr1])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, False, 7, 8)
--check_ulog(3, 6, 8, [None, pr2, pr1], slave1)
--out = realm.run([kadminl, 'getprinc', pr1], env=slave1)
+-wait_for_prop(kpropd1, False, 6, 7)
+-check_ulog(2, 6, 7, [pr2, pr1], slave1)
+-out = realm.run_kadminl('getprinc ' + pr1, slave1)
 -if 'Maximum renewable life: 0 days 22:00:00\n' not in out:
 -    fail('slave1 does not have modification from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 7, 8)
--check_ulog(2, 7, 8, [None, pr1], slave2)
--out = realm.run([kadminl, 'getprinc', pr1], env=slave2)
+-wait_for_prop(kpropd2, False, 6, 7)
+-check_ulog(1, 7, 7, [pr1], slave2)
+-out = realm.run_kadminl('getprinc ' + pr1, slave2)
 -if 'Maximum renewable life: 0 days 22:00:00\n' not in out:
 -    fail('slave2 does not have modification from slave1')
 -
@@ -3299,34 +3282,34 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 -# slave2 should still be in sync with slave1 after the resync, so make
 -# sure it doesn't take a full resync.
 -realm.run([kproplog, '-R'], slave1)
--check_ulog(1, 1, 1, [None], slave1)
+-check_ulog(0, 0, 0, [], slave1)
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, True, 1, 8)
--check_ulog(3, 6, 8, [None, pr2, pr1], slave1)
+-wait_for_prop(kpropd1, True, 0, 7)
+-check_ulog(2, 6, 7, [pr2, pr1], slave1)
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 8, 8)
--check_ulog(2, 7, 8, [None, pr1], slave2)
+-wait_for_prop(kpropd2, False, 7, 7)
+-check_ulog(1, 7, 7, [pr1], slave2)
 -
 -# Make another change and check that it propagates incrementally to
 -# both slaves.
 +# Make another change and check that it propagates incrementally.
- realm.run([kadminl, 'modprinc', '+allow_tix', 'w'])
--check_ulog(9, 1, 9, [None, pr1, pr3, pr2, pr2, pr2, pr2, pr1, pr2])
+ realm.run_kadminl('modprinc +allow_tix w')
+-check_ulog(8, 1, 8, [pr1, pr3, pr2, pr2, pr2, pr2, pr1, pr2])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, False, 8, 9)
--check_ulog(4, 6, 9, [None, pr2, pr1, pr2], slave1)
--out = realm.run([kadminl, 'getprinc', pr2], env=slave1)
+-wait_for_prop(kpropd1, False, 7, 8)
+-check_ulog(3, 6, 8, [pr2, pr1, pr2], slave1)
+-out = realm.run_kadminl('getprinc ' + pr2, slave1)
 +check_serial(realm, '9')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, False)
 +check_serial(realm, '9', slave)
-+out = realm.run([kadminl, 'getprinc', 'w'], env=slave)
++out = realm.run_kadminl('getprinc w', slave)
  if 'Attributes:\n' not in out:
 -    fail('slave1 does not have modification from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 8, 9)
--check_ulog(3, 7, 9, [None, pr1, pr2], slave2)
--out = realm.run([kadminl, 'getprinc', pr2], env=slave2)
+-wait_for_prop(kpropd2, False, 7, 8)
+-check_ulog(2, 7, 8, [pr1, pr2], slave2)
+-out = realm.run_kadminl('getprinc ' + pr2, slave2)
 +    fail('Slave does not have modification from master')
 +
 +# Reset the ulog on the slave side to force a full resync to the slave.
@@ -3337,111 +3320,116 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 +check_serial(realm, '9', slave)
 +
 +# Make another change and check that it propagates incrementally.
-+realm.run([kadminl, 'modprinc', '+allow_tix', 'w'])
++realm.run_kadminl('modprinc +allow_tix w')
 +check_serial(realm, '10')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, False)
 +check_serial(realm, '10', slave)
-+out = realm.run([kadminl, 'getprinc', 'w'], env=slave)
++out = realm.run_kadminl('getprinc w', slave)
  if 'Attributes:\n' not in out:
 -    fail('slave2 does not have modification from slave1')
 +    fail('Slave has different state from master')
  
  # Create a policy and check that it propagates via full resync.
- realm.run([kadminl, 'addpol', '-minclasses', '2', 'testpol'])
--check_ulog(1, 1, 1, [None])
+ realm.run_kadminl('addpol -minclasses 2 testpol')
+-check_ulog(0, 0, 0, [])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, True, 9, 1)
--check_ulog(1, 1, 1, [None], slave1)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1)
+-wait_for_prop(kpropd1, True, 8, 0)
+-check_ulog(0, 0, 0, [], slave1)
+-out = realm.run_kadminl('getpol testpol', slave1)
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, True)
 +check_serial(realm, 'None', slave)
-+out = realm.run([kadminl, 'getpol', 'testpol'], env=slave)
++out = realm.run_kadminl('getpol testpol', slave)
  if 'Minimum number of password character classes: 2' not in out:
 -    fail('slave1 does not have policy from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 9, 1)
--check_ulog(1, 1, 1, [None], slave2)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2)
+-wait_for_prop(kpropd2, True, 8, 0)
+-check_ulog(0, 0, 0, [], slave2)
+-out = realm.run_kadminl('getpol testpol', slave2)
 -if 'Minimum number of password character classes: 2' not in out:
 -    fail('slave2 does not have policy from slave1')
 +    fail('Slave does not have policy from master')
  
  # Modify the policy and test that it also propagates via full resync.
- realm.run([kadminl, 'modpol', '-minlength', '17', 'testpol'])
--check_ulog(1, 1, 1, [None])
+ realm.run_kadminl('modpol -minlength 17 testpol')
+-check_ulog(0, 0, 0, [])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, True, 1, 1)
--check_ulog(1, 1, 1, [None], slave1)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1)
+-wait_for_prop(kpropd1, True, 0, 0)
+-check_ulog(0, 0, 0, [], slave1)
+-out = realm.run_kadminl('getpol testpol', slave1)
 -if 'Minimum password length: 17' not in out:
 -    fail('slave1 does not have policy change from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 1, 1)
--check_ulog(1, 1, 1, [None], slave2)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2)
+-wait_for_prop(kpropd2, True, 0, 0)
+-check_ulog(0, 0, 0, [], slave2)
+-out = realm.run_kadminl('getpol testpol', slave2)
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, True)
 +check_serial(realm, 'None', slave)
-+out = realm.run([kadminl, 'getpol', 'testpol'], env=slave)
++out = realm.run_kadminl('getpol testpol', slave)
  if 'Minimum password length: 17' not in out:
 -    fail('slave2 does not have policy change from slave1')
 +    fail('Slave does not have policy change from master')
  
  # Delete the policy and test that it propagates via full resync.
--realm.run([kadminl, 'delpol', 'testpol'])
--check_ulog(1, 1, 1, [None])
+ realm.run_kadminl('delpol -force testpol')
+-check_ulog(0, 0, 0, [])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, True, 1, 1)
--check_ulog(1, 1, 1, [None], slave1)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1, expected_code=1)
-+realm.run([kadminl, 'delpol', '-force', 'testpol'])
+-wait_for_prop(kpropd1, True, 0, 0)
+-check_ulog(0, 0, 0, [], slave1)
+-out = realm.run_kadminl('getpol testpol', slave1)
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, True)
 +check_serial(realm, 'None', slave)
-+out = realm.run([kadminl, 'getpol', 'testpol'], env=slave, expected_code=1)
++out = realm.run_kadminl('getpol testpol', slave)
  if 'Policy does not exist' not in out:
 -    fail('slave1 did not get policy deletion from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 1, 1)
--check_ulog(1, 1, 1, [None], slave2)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2, expected_code=1)
+-wait_for_prop(kpropd2, True, 0, 0)
+-check_ulog(0, 0, 0, [], slave2)
+-out = realm.run_kadminl('getpol testpol', slave2)
 -if 'Policy does not exist' not in out:
 -    fail('slave2 did not get policy deletion from slave1')
 -
--# Modify a principal on the master and test that it propagates incrementally.
--realm.run([kadminl, 'modprinc', '-maxlife', '10 minutes', pr1])
--check_ulog(2, 1, 2, [None, pr1])
+-# Modify a principal on the master and test that it propagates via
+-# full resync.  (The master's ulog does not remember the timestamp it
+-# had at serial number 0, so it does not know that an incremental
+-# propagation is possible.)
+-realm.run_kadminl('modprinc -maxlife "10 minutes" ' + pr1)
+-check_ulog(1, 1, 1, [pr1])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, False, 1, 2)
--check_ulog(2, 1, 2, [None, pr1], slave1)
--out = realm.run([kadminl, 'getprinc', pr1], env=slave1)
+-wait_for_prop(kpropd1, True, 0, 1)
+-check_ulog(0, 0, 1, [], slave1)
+-out = realm.run_kadminl('getprinc ' + pr1, slave1)
 -if 'Maximum ticket life: 0 days 00:10:00' not in out:
 -    fail('slave1 does not have modification from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 1, 2)
--check_ulog(2, 1, 2, [None, pr1], slave2)
--out = realm.run([kadminl, 'getprinc', pr1], env=slave2)
+-wait_for_prop(kpropd2, True, 0, 1)
+-check_ulog(0, 0, 1, [], slave2)
+-out = realm.run_kadminl('getprinc ' + pr1, slave2)
 -if 'Maximum ticket life: 0 days 00:10:00' not in out:
 -    fail('slave2 does not have modification from slave1')
 -
--# Delete a principal and test that it propagates incrementally.
--realm.run([kadminl, 'delprinc', pr3])
--check_ulog(3, 1, 3, [None, pr1, pr3])
+-# Delete a principal and test that it propagates incrementally to
+-# slave1.  slave2 needs another full resync because slave1 no longer
+-# has serial number 1 in its ulog after processing its first
+-# incremental update.
+-realm.run_kadminl('delprinc -force ' + pr3)
+-check_ulog(2, 1, 2, [pr1, pr3])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, False, 2, 3)
--check_ulog(3, 1, 3, [None, pr1, pr3], slave1)
--out = realm.run([kadminl, 'getprinc', pr3], env=slave1, expected_code=1)
+-wait_for_prop(kpropd1, False, 1, 2)
+-check_ulog(1, 2, 2, [pr3], slave1)
+-out = realm.run_kadminl('getprinc ' + pr3, slave1)
 -if 'Principal does not exist' not in out:
 -    fail('slave1 does not have principal deletion from master')
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 2, 3)
--check_ulog(3, 1, 3, [None, pr1, pr3], slave2)
--out = realm.run([kadminl, 'getprinc', pr3], env=slave2, expected_code=1)
+-wait_for_prop(kpropd2, True, 1, 2)
+-check_ulog(0, 0, 2, [], slave2)
+-out = realm.run_kadminl('getprinc ' + pr3, slave2)
 -if 'Principal does not exist' not in out:
 -    fail('slave2 does not have principal deletion from slave1')
 +    fail('Slave did not get policy deletion from master')
@@ -3451,46 +3439,13 @@ diff -pur old/src/tests/t_iprop.py new/src/tests/t_iprop.py
 +# XXX Note that we only have one slave in this test, so we can't really
 +# test this.
  realm.run([kproplog, '-R'])
--check_ulog(1, 1, 1, [None])
+-check_ulog(0, 0, 0, [])
 -kpropd1.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd1, True, 3, 1)
--check_ulog(1, 1, 1, [None], slave1)
+-wait_for_prop(kpropd1, True, 2, 0)
+-check_ulog(0, 0, 0, [], slave1)
 -kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 3, 1)
--check_ulog(1, 1, 1, [None], slave2)
--
--# Stop the kprop daemons so we can test kpropd -t.
--stop_daemon(kpropd1)
--stop_daemon(kpropd2)
--
--# Test the case where no updates are needed.
--out = realm.run_kpropd_once(slave1, ['-d'])
--if 'KDC is synchronized' not in out:
--    fail('Expected synchronized from kpropd -t')
--check_ulog(1, 1, 1, [None], slave1)
--
--# Make a change on the master and fetch it incrementally.
--realm.run([kadminl, 'modprinc', '-maxlife', '5 minutes', pr1])
--check_ulog(2, 1, 2, [None, pr1])
--out = realm.run_kpropd_once(slave1, ['-d'])
--if 'Got incremental updates (sno=2 ' not in out:
--    fail('Expected full dump and synchronized from kpropd -t')
--check_ulog(2, 1, 2, [None, pr1], slave1)
--out = realm.run([kadminl, 'getprinc', pr1], env=slave1)
--if 'Maximum ticket life: 0 days 00:05:00' not in out:
--    fail('slave1 does not have modification from master after kpropd -t')
--
--# Propagate a policy change via full resync.
--realm.run([kadminl, 'addpol', '-minclasses', '3', 'testpol'])
--check_ulog(1, 1, 1, [None])
--out = realm.run_kpropd_once(slave1, ['-d'])
--if ('Full propagation transfer finished' not in out or
--    'KDC is synchronized' not in out):
--    fail('Expected full dump and synchronized from kpropd -t')
--check_ulog(1, 1, 1, [None], slave1)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1)
--if 'Minimum number of password character classes: 3' not in out:
--    fail('slave1 does not have policy from master after kpropd -t')
+-wait_for_prop(kpropd2, True, 2, 0)
+-check_ulog(0, 0, 0, [], slave2)
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, True)
@@ -3534,15 +3489,3 @@ diff -pur old/src/util/k5test.py new/src/util/k5test.py
                                   '-c', self.kadmin_ccache] + flags)
  
      def run_kadmin(self, query, **keywords):
-/usr/gnu/bin/diff -pur old/src/tests/t_ccache.py new/src/tests/t_ccache.py
---- old/src/tests/t_ccache.py     2016-04-08 09:50:18.104351949 -0700
-+++ new/src/tests/t_ccache.py 2016-04-08 09:48:10.841275532 -0700
-@@ -51,7 +51,7 @@ realm.kinit(realm.user_princ, password('
- realm.run([klist, '-s'])
- realm.kinit(realm.user_princ, password('user'), ['-l', '-1s'])
- realm.run([klist, '-s'], expected_code=1)
--realm.kinit(realm.user_princ, password('user'), ['-S', 'kadmin/admin'])
-+realm.kinit(realm.user_princ, password('user'), ['-S', 'kadmin/changepw'])
- realm.run([klist, '-s'])
- realm.run([kdestroy])
- realm.run([klist, '-s'], expected_code=1)

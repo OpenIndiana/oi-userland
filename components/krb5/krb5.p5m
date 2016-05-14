@@ -21,7 +21,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through committed">
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/security/kerberos-5@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Kerberos V5 Support"
@@ -32,24 +32,42 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2015/144 value=PSARC/2016/244
+set name=org.opensolaris.arc-caseid value=PSARC/2015/144
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir  path=etc/gss/mech.d group=sys
-file path=usr/bin/k5srvutil
-file path=usr/bin/kadmin
-file path=usr/bin/kdestroy
-file path=usr/bin/kinit
-file path=usr/bin/klist
-file path=usr/bin/kpasswd
-file path=usr/bin/krb5-config
+link path=usr/bin/kdestroy \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kdestroy \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/bin/kinit \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kinit \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/bin/klist \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/klist \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/bin/kpasswd \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kpasswd \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/bin/krb5-config \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/krb5-config \
+    mediator=kerberos5 mediator-implementation=MIT
 file path=usr/bin/kswitch
-file path=usr/bin/ktutil
-file path=usr/bin/kvno
-file path=usr/include/kerberosv5/com_err.h
+link path=usr/bin/ktutil \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/ktutil \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/bin/kvno \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kvno \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/include/gssapi/gssapi.h \
+    target=../../kerberos5/$(COMPONENT_VERSION)/include/gssapi/gssapi.h \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/include/gssapi/gssapi_ext.h \
+    target=../../kerberos5/$(COMPONENT_VERSION)/include/gssapi/gssapi_ext.h \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/include/kerberosv5/com_err.h \
+    target=../../kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/com_err.h \
+    mediator=kerberos5 mediator-implementation=MIT
 dir  path=usr/include/kerberosv5/gssapi
 file path=usr/include/kerberosv5/gssapi.h
-file path=usr/include/kerberosv5/gssapi/gssapi.h
-file path=usr/include/kerberosv5/gssapi/gssapi_ext.h
 file path=usr/include/kerberosv5/gssapi/gssapi_generic.h
 file path=usr/include/kerberosv5/gssapi/gssapi_krb5.h
 file path=usr/include/kerberosv5/gssapi/mechglue.h
@@ -60,7 +78,9 @@ file path=usr/include/kerberosv5/kadm5/kadm_err.h
 file path=usr/include/kerberosv5/kdb.h
 file path=usr/include/kerberosv5/krad.h
 dir  path=usr/include/kerberosv5/krb5
-file path=usr/include/kerberosv5/krb5.h
+link path=usr/include/kerberosv5/krb5.h \
+    target=../../kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/krb5.h \
+    mediator=kerberos5 mediator-implementation=MIT
 file path=usr/include/kerberosv5/krb5/ccselect_plugin.h
 file path=usr/include/kerberosv5/krb5/clpreauth_plugin.h
 file path=usr/include/kerberosv5/krb5/hostrealm_plugin.h
@@ -75,13 +95,49 @@ file path=usr/include/kerberosv5/krb5/pwqual_plugin.h
 dir  path=usr/include/kerberosv5/private
 dir  path=usr/include/kerberosv5/private/krb5
 dir  path=usr/include/kerberosv5/private/krb5/keytab
-file Solaris/private/krb5/keytab/kt_solaris.h \
-    path=usr/include/kerberosv5/private/krb5/keytab/kt_solaris.h
+link path=usr/include/kerberosv5/private/krb5/keytab/kt_solaris.h \
+    target=../../../../../kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/private/krb5/keytab/kt_solaris.h \
+    mediator=kerberos5 mediator-implementation=MIT
 file Solaris/private/krb5/prof_solaris.h \
     path=usr/include/kerberosv5/private/krb5/prof_solaris.h
 file path=usr/include/kerberosv5/profile.h
 file path=usr/include/kerberosv5/verto-module.h
 file path=usr/include/kerberosv5/verto.h
+file usr/bin/k5srvutil \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/k5srvutil
+file usr/bin/kadmin path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kadmin
+file usr/bin/kdestroy \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kdestroy
+file usr/bin/kinit path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kinit
+file usr/bin/klist path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/klist
+file usr/bin/kpasswd \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kpasswd
+file usr/bin/ktutil path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/ktutil
+file usr/bin/kvno path=usr/kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kvno
+file usr/bin/krb5-config path=usr/kerberos5/$(COMPONENT_VERSION)/bin/krb5-config
+file usr/include/kerberosv5/gssapi/gssapi.h \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/include/gssapi/gssapi.h
+file usr/include/kerberosv5/gssapi/gssapi_ext.h \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/include/gssapi/gssapi_ext.h
+file usr/include/kerberosv5/com_err.h \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/com_err.h
+file usr/include/kerberosv5/krb5.h \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/krb5.h
+file Solaris/private/krb5/keytab/kt_solaris.h \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/include/kerberosv5/private/krb5/keytab/kt_solaris.h
+file usr/lib/$(MACH64)/libgss.so.1 \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libgss.so.1
+file usr/lib/$(MACH64)/libkadm5clnt.so.1 \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libkadm5clnt.so.1
+file usr/lib/$(MACH64)/libkrb5.so.1 \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libkrb5.so.1
+file usr/lib/krb5/plugins/preauth/pkinit.so \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/krb5/plugins/preauth/pkinit.so
+file usr/lib/libgss.so.1 path=usr/kerberos5/$(COMPONENT_VERSION)/lib/libgss.so.1
+file usr/lib/libkadm5clnt.so.1 \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/libkadm5clnt.so.1
+file usr/lib/libkrb5.so.1 \
+    path=usr/kerberos5/$(COMPONENT_VERSION)/lib/libkrb5.so.1
 dir  path=usr/lib/$(MACH64)/krb5
 dir  path=usr/lib/$(MACH64)/krb5/plugins
 dir  path=usr/lib/$(MACH64)/krb5/plugins/authdata
@@ -94,29 +150,40 @@ file path=usr/lib/$(MACH64)/krb5/plugins/tls/k5tls.so
 link path=usr/lib/$(MACH64)/libcom_err.so target=libcom_err.so.3.0
 link path=usr/lib/$(MACH64)/libcom_err.so.3 target=libcom_err.so.3.0
 file path=usr/lib/$(MACH64)/libcom_err.so.3.0
-file path=usr/lib/$(MACH64)/libgss.so.1
+link path=usr/lib/$(MACH64)/libgss.so target=libgssapi_krb5.so.2.2 \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/$(MACH64)/libgss.so.1 \
+    target=../../kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libgss.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
 link path=usr/lib/$(MACH64)/libgssapi_krb5.so target=libgssapi_krb5.so.2.2
 link path=usr/lib/$(MACH64)/libgssapi_krb5.so.2 target=libgssapi_krb5.so.2.2
 file path=usr/lib/$(MACH64)/libgssapi_krb5.so.2.2
 link path=usr/lib/$(MACH64)/libk5crypto.so target=libk5crypto.so.3.1
 link path=usr/lib/$(MACH64)/libk5crypto.so.3 target=libk5crypto.so.3.1
 file path=usr/lib/$(MACH64)/libk5crypto.so.3.1
-file path=usr/lib/$(MACH64)/libkadm5clnt.so.1
-link path=usr/lib/$(MACH64)/libkadm5clnt_mit.so target=libkadm5clnt_mit.so.10.0
-link path=usr/lib/$(MACH64)/libkadm5clnt_mit.so.10 \
-    target=libkadm5clnt_mit.so.10.0
-file path=usr/lib/$(MACH64)/libkadm5clnt_mit.so.10.0
+link path=usr/lib/$(MACH64)/libkadm5clnt.so target=libkadm5clnt_mit.so \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/$(MACH64)/libkadm5clnt.so.1 \
+    target=../../kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libkadm5clnt.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/$(MACH64)/libkadm5clnt_mit.so target=libkadm5clnt_mit.so.9.0
+link path=usr/lib/$(MACH64)/libkadm5clnt_mit.so.9 target=libkadm5clnt_mit.so.9.0
+file path=usr/lib/$(MACH64)/libkadm5clnt_mit.so.9.0
 link path=usr/lib/$(MACH64)/libkadm5srv.so target=libkadm5srv_mit.so
-link path=usr/lib/$(MACH64)/libkadm5srv_mit.so target=libkadm5srv_mit.so.10.0
-link path=usr/lib/$(MACH64)/libkadm5srv_mit.so.10 target=libkadm5srv_mit.so.10.0
-file path=usr/lib/$(MACH64)/libkadm5srv_mit.so.10.0
+link path=usr/lib/$(MACH64)/libkadm5srv_mit.so target=libkadm5srv_mit.so.9.0
+link path=usr/lib/$(MACH64)/libkadm5srv_mit.so.9 target=libkadm5srv_mit.so.9.0
+file path=usr/lib/$(MACH64)/libkadm5srv_mit.so.9.0
 link path=usr/lib/$(MACH64)/libkdb5.so target=libkdb5.so.8.0
 link path=usr/lib/$(MACH64)/libkdb5.so.8 target=libkdb5.so.8.0
 file path=usr/lib/$(MACH64)/libkdb5.so.8.0
 link path=usr/lib/$(MACH64)/libkrad.so target=libkrad.so.0.0
 link path=usr/lib/$(MACH64)/libkrad.so.0 target=libkrad.so.0.0
 file path=usr/lib/$(MACH64)/libkrad.so.0.0
-file path=usr/lib/$(MACH64)/libkrb5.so.1
+link path=usr/lib/$(MACH64)/libkrb5.so target=libkrb5.so.3.3 \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/$(MACH64)/libkrb5.so.1 \
+    target=../../kerberos5/$(COMPONENT_VERSION)/lib/$(MACH64)/libkrb5.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
 link path=usr/lib/$(MACH64)/libkrb5.so.3 target=libkrb5.so.3.3
 file path=usr/lib/$(MACH64)/libkrb5.so.3.3
 link path=usr/lib/$(MACH64)/libkrb5support.so target=libkrb5support.so.0.1
@@ -145,33 +212,49 @@ dir  path=usr/lib/krb5/plugins/authdata
 dir  path=usr/lib/krb5/plugins/libkrb5
 dir  path=usr/lib/krb5/plugins/preauth
 file path=usr/lib/krb5/plugins/preauth/otp.so
-file path=usr/lib/krb5/plugins/preauth/pkinit.so
+link path=usr/lib/krb5/plugins/preauth/pkinit.so \
+    target=../../../../kerberos5/$(COMPONENT_VERSION)/lib/krb5/plugins/preauth/pkinit.so \
+    mediator=kerberos5 mediator-implementation=MIT
 dir  path=usr/lib/krb5/plugins/tls
 file path=usr/lib/krb5/plugins/tls/k5tls.so
 link path=usr/lib/libcom_err.so target=libcom_err.so.3.0
 link path=usr/lib/libcom_err.so.3 target=libcom_err.so.3.0
 file path=usr/lib/libcom_err.so.3.0
-file path=usr/lib/libgss.so.1
+link path=usr/lib/libgss.so target=libgssapi_krb5.so.2.2 mediator=kerberos5 \
+    mediator-implementation=MIT
+link path=usr/lib/libgss.so.1 \
+    target=../kerberos5/$(COMPONENT_VERSION)/lib/libgss.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
 link path=usr/lib/libgssapi_krb5.so target=libgssapi_krb5.so.2.2
 link path=usr/lib/libgssapi_krb5.so.2 target=libgssapi_krb5.so.2.2
 file path=usr/lib/libgssapi_krb5.so.2.2
 link path=usr/lib/libk5crypto.so target=libk5crypto.so.3.1
 link path=usr/lib/libk5crypto.so.3 target=libk5crypto.so.3.1
 file path=usr/lib/libk5crypto.so.3.1
-file path=usr/lib/libkadm5clnt.so.1
-link path=usr/lib/libkadm5clnt_mit.so target=libkadm5clnt_mit.so.10.0
-link path=usr/lib/libkadm5clnt_mit.so.10 target=libkadm5clnt_mit.so.10.0
-file path=usr/lib/libkadm5clnt_mit.so.10.0
-link path=usr/lib/libkadm5srv_mit.so target=libkadm5srv_mit.so.10.0
-link path=usr/lib/libkadm5srv_mit.so.10 target=libkadm5srv_mit.so.10.0
-file path=usr/lib/libkadm5srv_mit.so.10.0
+link path=usr/lib/libkadm5clnt.so target=libkadm5clnt_mit.so \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/libkadm5clnt.so.1 \
+    target=../kerberos5/$(COMPONENT_VERSION)/lib/libkadm5clnt.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/lib/libkadm5clnt_mit.so target=libkadm5clnt_mit.so.9.0
+link path=usr/lib/libkadm5clnt_mit.so.9 target=libkadm5clnt_mit.so.9.0
+file path=usr/lib/libkadm5clnt_mit.so.9.0
+link path=usr/lib/libkadm5srv.so target=libkadm5srv_mit.so mediator=kerberos5 \
+    mediator-implementation=MIT
+link path=usr/lib/libkadm5srv_mit.so target=libkadm5srv_mit.so.9.0
+link path=usr/lib/libkadm5srv_mit.so.9 target=libkadm5srv_mit.so.9.0
+file path=usr/lib/libkadm5srv_mit.so.9.0
 link path=usr/lib/libkdb5.so target=libkdb5.so.8.0
 link path=usr/lib/libkdb5.so.8 target=libkdb5.so.8.0
 file path=usr/lib/libkdb5.so.8.0
 link path=usr/lib/libkrad.so target=libkrad.so.0.0
 link path=usr/lib/libkrad.so.0 target=libkrad.so.0.0
 file path=usr/lib/libkrad.so.0.0
-file path=usr/lib/libkrb5.so.1
+link path=usr/lib/libkrb5.so target=libkrb5.so.3.3 mediator=kerberos5 \
+    mediator-implementation=MIT
+link path=usr/lib/libkrb5.so.1 \
+    target=../kerberos5/$(COMPONENT_VERSION)/lib/libkrb5.so.1 \
+    mediator=kerberos5 mediator-implementation=MIT
 link path=usr/lib/libkrb5.so.3 target=libkrb5.so.3.3
 file path=usr/lib/libkrb5.so.3.3
 link path=usr/lib/libkrb5support.so target=libkrb5support.so.0.1
@@ -201,6 +284,12 @@ file path=usr/lib/pkgconfig/krb5-gssapi.pc
 file path=usr/lib/pkgconfig/krb5.pc
 file path=usr/lib/pkgconfig/mit-krb5-gssapi.pc
 file path=usr/lib/pkgconfig/mit-krb5.pc
+link path=usr/sbin/k5srvutil \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/k5srvutil \
+    mediator=kerberos5 mediator-implementation=MIT
+link path=usr/sbin/kadmin \
+    target=../kerberos5/$(COMPONENT_VERSION)/bin/$(MACH64)/kadmin \
+    mediator=kerberos5 mediator-implementation=MIT
 dir  path=usr/share/et
 file path=usr/share/et/et_c.awk
 file path=usr/share/et/et_h.awk
@@ -208,119 +297,266 @@ dir  path=usr/share/examples
 dir  path=usr/share/examples/krb5
 file path=usr/share/examples/krb5/services.append
 file path=usr/share/locale/en_US/LC_MESSAGES/mit-krb5.mo
-file Solaris/man/libgss.3lib path=usr/share/man/3lib/libgss.3lib
-file Solaris/man/libkrb5.3lib path=usr/share/man/3lib/libkrb5.3lib \
-    mangler.man.stability="pass-through uncommitted"
+link path=usr/share/man/3lib/libgss.3lib target=./libgss.mit.3lib \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/libgss.3lib path=usr/share/man/3lib/libgss.mit.3lib
+link path=usr/share/man/3lib/libkrb5.3lib target=./libkrb5.mit.3lib \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/libkrb5.3lib path=usr/share/man/3lib/libkrb5.mit.3lib
+link path=usr/share/man/ja_JP.UTF-8/man5/kerberos.5 target=./kerberos.mit.5 \
+    mediator=kerberos5 mediator-implementation=MIT
 file Solaris/man/ja_JP.UTF-8/kerberos.5 \
-    path=usr/share/man/ja_JP.UTF-8/man5/kerberos.5
+    path=usr/share/man/ja_JP.UTF-8/man5/kerberos.mit.5
+link path=usr/share/man/ja_JP.UTF-8/man5/krb5envvar.5 \
+    target=./krb5envvar.mit.5 mediator=kerberos5 mediator-implementation=MIT
 file Solaris/man/ja_JP.UTF-8/krb5envvar.5 \
-    path=usr/share/man/ja_JP.UTF-8/man5/krb5envvar.5 \
-    mangler.man.stability="pass-through uncommitted"
+    path=usr/share/man/ja_JP.UTF-8/man5/krb5envvar.mit.5
+link path=usr/share/man/ja_JP.UTF-8/man7/krb5_auth_rules.7 \
+    target=./krb5_auth_rules.mit.7 mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/ja_JP.UTF-8/krb5_auth_rules.7 \
-    path=usr/share/man/ja_JP.UTF-8/man7/krb5_auth_rules.7
+    path=usr/share/man/ja_JP.UTF-8/man7/krb5_auth_rules.mit.7
 file path=usr/share/man/man1/k5srvutil.1
 file path=usr/share/man/man1/kadmin.1
-file path=usr/share/man/man1/kdestroy.1
-file path=usr/share/man/man1/kinit.1
-file path=usr/share/man/man1/klist.1
-file path=usr/share/man/man1/kpasswd.1
-file path=usr/share/man/man1/krb5-config.1 \
-    mangler.man.stability="pass-through uncommitted"
+link path=usr/share/man/man1/kdestroy.1 target=./kdestroy.mit.1 \
+    mediator=kerberos5 mediator-implementation=MIT
+file usr/share/man/man1/kdestroy.1 path=usr/share/man/man1/kdestroy.mit.1
+link path=usr/share/man/man1/kinit.1 target=./kinit.mit.1 mediator=kerberos5 \
+    mediator-implementation=MIT
+file usr/share/man/man1/kinit.1 path=usr/share/man/man1/kinit.mit.1
+link path=usr/share/man/man1/klist.1 target=./klist.mit.1 mediator=kerberos5 \
+    mediator-implementation=MIT
+file usr/share/man/man1/klist.1 path=usr/share/man/man1/klist.mit.1
+link path=usr/share/man/man1/kpasswd.1 target=./kpasswd.mit.1 \
+    mediator=kerberos5 mediator-implementation=MIT
+file usr/share/man/man1/kpasswd.1 path=usr/share/man/man1/kpasswd.mit.1
+link path=usr/share/man/man1/krb5-config.1 target=./krb5-config.mit.1 \
+    mediator=kerberos5 mediator-implementation=MIT
+file usr/share/man/man1/krb5-config.1 path=usr/share/man/man1/krb5-config.mit.1
 file path=usr/share/man/man1/kswitch.1
-file path=usr/share/man/man1/ktutil.1
-file path=usr/share/man/man1/kvno.1
+link path=usr/share/man/man1/ktutil.1 target=./ktutil.mit.1 mediator=kerberos5 \
+    mediator-implementation=MIT
+file usr/share/man/man1/ktutil.1 path=usr/share/man/man1/ktutil.mit.1
+link path=usr/share/man/man1/kvno.1 target=./kvno.mit.1 mediator=kerberos5 \
+    mediator-implementation=MIT
+file usr/share/man/man1/kvno.1 path=usr/share/man/man1/kvno.mit.1
+link path=usr/share/man/man3gss/gss_accept_sec_context.3gss \
+    target=./gss_accept_sec_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_accept_sec_context.3gss \
-    path=usr/share/man/man3gss/gss_accept_sec_context.3gss
+    path=usr/share/man/man3gss/gss_accept_sec_context.mit.3gss
+link path=usr/share/man/man3gss/gss_acquire_cred.3gss \
+    target=./gss_acquire_cred.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_acquire_cred.3gss \
-    path=usr/share/man/man3gss/gss_acquire_cred.3gss
-file Solaris/man/gss_add_cred.3gss path=usr/share/man/man3gss/gss_add_cred.3gss
+    path=usr/share/man/man3gss/gss_acquire_cred.mit.3gss
+link path=usr/share/man/man3gss/gss_add_cred.3gss \
+    target=./gss_add_cred.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
+file Solaris/man/gss_add_cred.3gss \
+    path=usr/share/man/man3gss/gss_add_cred.mit.3gss
+link path=usr/share/man/man3gss/gss_add_oid_set_member.3gss \
+    target=./gss_add_oid_set_member.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_add_oid_set_member.3gss \
-    path=usr/share/man/man3gss/gss_add_oid_set_member.3gss
+    path=usr/share/man/man3gss/gss_add_oid_set_member.mit.3gss
+link path=usr/share/man/man3gss/gss_canonicalize_name.3gss \
+    target=./gss_canonicalize_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_canonicalize_name.3gss \
-    path=usr/share/man/man3gss/gss_canonicalize_name.3gss
+    path=usr/share/man/man3gss/gss_canonicalize_name.mit.3gss
+link path=usr/share/man/man3gss/gss_compare_name.3gss \
+    target=./gss_compare_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_compare_name.3gss \
-    path=usr/share/man/man3gss/gss_compare_name.3gss
+    path=usr/share/man/man3gss/gss_compare_name.mit.3gss
+link path=usr/share/man/man3gss/gss_context_time.3gss \
+    target=./gss_context_time.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_context_time.3gss \
-    path=usr/share/man/man3gss/gss_context_time.3gss
+    path=usr/share/man/man3gss/gss_context_time.mit.3gss
+link path=usr/share/man/man3gss/gss_create_empty_oid_set.3gss \
+    target=./gss_create_empty_oid_set.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_create_empty_oid_set.3gss \
-    path=usr/share/man/man3gss/gss_create_empty_oid_set.3gss
+    path=usr/share/man/man3gss/gss_create_empty_oid_set.mit.3gss
+link path=usr/share/man/man3gss/gss_delete_sec_context.3gss \
+    target=./gss_delete_sec_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_delete_sec_context.3gss \
-    path=usr/share/man/man3gss/gss_delete_sec_context.3gss
+    path=usr/share/man/man3gss/gss_delete_sec_context.mit.3gss
+link path=usr/share/man/man3gss/gss_display_name.3gss \
+    target=./gss_display_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_display_name.3gss \
-    path=usr/share/man/man3gss/gss_display_name.3gss
+    path=usr/share/man/man3gss/gss_display_name.mit.3gss
+link path=usr/share/man/man3gss/gss_display_status.3gss \
+    target=./gss_display_status.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_display_status.3gss \
-    path=usr/share/man/man3gss/gss_display_status.3gss
+    path=usr/share/man/man3gss/gss_display_status.mit.3gss
+link path=usr/share/man/man3gss/gss_duplicate_name.3gss \
+    target=./gss_duplicate_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_duplicate_name.3gss \
-    path=usr/share/man/man3gss/gss_duplicate_name.3gss
+    path=usr/share/man/man3gss/gss_duplicate_name.mit.3gss
+link path=usr/share/man/man3gss/gss_export_name.3gss \
+    target=./gss_export_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_export_name.3gss \
-    path=usr/share/man/man3gss/gss_export_name.3gss
+    path=usr/share/man/man3gss/gss_export_name.mit.3gss
+link path=usr/share/man/man3gss/gss_export_sec_context.3gss \
+    target=./gss_export_sec_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_export_sec_context.3gss \
-    path=usr/share/man/man3gss/gss_export_sec_context.3gss
-file Solaris/man/gss_get_mic.3gss path=usr/share/man/man3gss/gss_get_mic.3gss
+    path=usr/share/man/man3gss/gss_export_sec_context.mit.3gss
+link path=usr/share/man/man3gss/gss_get_mic.3gss target=./gss_get_mic.mit.3gss \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/gss_get_mic.3gss \
+    path=usr/share/man/man3gss/gss_get_mic.mit.3gss
+link path=usr/share/man/man3gss/gss_import_name.3gss \
+    target=./gss_import_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_import_name.3gss \
-    path=usr/share/man/man3gss/gss_import_name.3gss
+    path=usr/share/man/man3gss/gss_import_name.mit.3gss
+link path=usr/share/man/man3gss/gss_import_sec_context.3gss \
+    target=./gss_import_sec_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_import_sec_context.3gss \
-    path=usr/share/man/man3gss/gss_import_sec_context.3gss
+    path=usr/share/man/man3gss/gss_import_sec_context.mit.3gss
+link path=usr/share/man/man3gss/gss_indicate_mechs.3gss \
+    target=./gss_indicate_mechs.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_indicate_mechs.3gss \
-    path=usr/share/man/man3gss/gss_indicate_mechs.3gss
+    path=usr/share/man/man3gss/gss_indicate_mechs.mit.3gss
+link path=usr/share/man/man3gss/gss_init_sec_context.3gss \
+    target=./gss_init_sec_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_init_sec_context.3gss \
-    path=usr/share/man/man3gss/gss_init_sec_context.3gss
+    path=usr/share/man/man3gss/gss_init_sec_context.mit.3gss
+link path=usr/share/man/man3gss/gss_inquire_context.3gss \
+    target=./gss_inquire_context.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_inquire_context.3gss \
-    path=usr/share/man/man3gss/gss_inquire_context.3gss
+    path=usr/share/man/man3gss/gss_inquire_context.mit.3gss
+link path=usr/share/man/man3gss/gss_inquire_cred.3gss \
+    target=./gss_inquire_cred.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_inquire_cred.3gss \
-    path=usr/share/man/man3gss/gss_inquire_cred.3gss
+    path=usr/share/man/man3gss/gss_inquire_cred.mit.3gss
+link path=usr/share/man/man3gss/gss_inquire_cred_by_mech.3gss \
+    target=./gss_inquire_cred_by_mech.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_inquire_cred_by_mech.3gss \
-    path=usr/share/man/man3gss/gss_inquire_cred_by_mech.3gss
+    path=usr/share/man/man3gss/gss_inquire_cred_by_mech.mit.3gss
+link path=usr/share/man/man3gss/gss_inquire_mechs_for_name.3gss \
+    target=./gss_inquire_mechs_for_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_inquire_mechs_for_name.3gss \
-    path=usr/share/man/man3gss/gss_inquire_mechs_for_name.3gss
+    path=usr/share/man/man3gss/gss_inquire_mechs_for_name.mit.3gss
+link path=usr/share/man/man3gss/gss_inquire_names_for_mech.3gss \
+    target=./gss_inquire_names_for_mech.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_inquire_names_for_mech.3gss \
-    path=usr/share/man/man3gss/gss_inquire_names_for_mech.3gss
+    path=usr/share/man/man3gss/gss_inquire_names_for_mech.mit.3gss
+link path=usr/share/man/man3gss/gss_oid_to_str.3gss \
+    target=./gss_oid_to_str.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_oid_to_str.3gss \
-    path=usr/share/man/man3gss/gss_oid_to_str.3gss
+    path=usr/share/man/man3gss/gss_oid_to_str.mit.3gss
+link path=usr/share/man/man3gss/gss_process_context_token.3gss \
+    target=./gss_process_context_token.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_process_context_token.3gss \
-    path=usr/share/man/man3gss/gss_process_context_token.3gss
+    path=usr/share/man/man3gss/gss_process_context_token.mit.3gss
+link path=usr/share/man/man3gss/gss_release_buffer.3gss \
+    target=./gss_release_buffer.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_release_buffer.3gss \
-    path=usr/share/man/man3gss/gss_release_buffer.3gss
+    path=usr/share/man/man3gss/gss_release_buffer.mit.3gss
+link path=usr/share/man/man3gss/gss_release_cred.3gss \
+    target=./gss_release_cred.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_release_cred.3gss \
-    path=usr/share/man/man3gss/gss_release_cred.3gss
+    path=usr/share/man/man3gss/gss_release_cred.mit.3gss
+link path=usr/share/man/man3gss/gss_release_name.3gss \
+    target=./gss_release_name.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_release_name.3gss \
-    path=usr/share/man/man3gss/gss_release_name.3gss
+    path=usr/share/man/man3gss/gss_release_name.mit.3gss
+link path=usr/share/man/man3gss/gss_release_oid.3gss \
+    target=./gss_release_oid.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_release_oid.3gss \
-    path=usr/share/man/man3gss/gss_release_oid.3gss
+    path=usr/share/man/man3gss/gss_release_oid.mit.3gss
+link path=usr/share/man/man3gss/gss_release_oid_set.3gss \
+    target=./gss_release_oid_set.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_release_oid_set.3gss \
-    path=usr/share/man/man3gss/gss_release_oid_set.3gss
+    path=usr/share/man/man3gss/gss_release_oid_set.mit.3gss
+link path=usr/share/man/man3gss/gss_store_cred.3gss \
+    target=./gss_store_cred.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_store_cred.3gss \
-    path=usr/share/man/man3gss/gss_store_cred.3gss
+    path=usr/share/man/man3gss/gss_store_cred.mit.3gss
+link path=usr/share/man/man3gss/gss_str_to_oid.3gss \
+    target=./gss_str_to_oid.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_str_to_oid.3gss \
-    path=usr/share/man/man3gss/gss_str_to_oid.3gss
+    path=usr/share/man/man3gss/gss_str_to_oid.mit.3gss
+link path=usr/share/man/man3gss/gss_test_oid_set_member.3gss \
+    target=./gss_test_oid_set_member.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_test_oid_set_member.3gss \
-    path=usr/share/man/man3gss/gss_test_oid_set_member.3gss
-file Solaris/man/gss_unwrap.3gss path=usr/share/man/man3gss/gss_unwrap.3gss
+    path=usr/share/man/man3gss/gss_test_oid_set_member.mit.3gss
+link path=usr/share/man/man3gss/gss_unwrap.3gss target=./gss_unwrap.mit.3gss \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/gss_unwrap.3gss path=usr/share/man/man3gss/gss_unwrap.mit.3gss
+link path=usr/share/man/man3gss/gss_verify_mic.3gss \
+    target=./gss_verify_mic.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_verify_mic.3gss \
-    path=usr/share/man/man3gss/gss_verify_mic.3gss
-file Solaris/man/gss_wrap.3gss path=usr/share/man/man3gss/gss_wrap.3gss
+    path=usr/share/man/man3gss/gss_verify_mic.mit.3gss
+link path=usr/share/man/man3gss/gss_wrap.3gss target=./gss_wrap.mit.3gss \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/gss_wrap.3gss path=usr/share/man/man3gss/gss_wrap.mit.3gss
+link path=usr/share/man/man3gss/gss_wrap_size_limit.3gss \
+    target=./gss_wrap_size_limit.mit.3gss mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/gss_wrap_size_limit.3gss \
-    path=usr/share/man/man3gss/gss_wrap_size_limit.3gss
-file Solaris/man/libgss.3lib path=usr/share/man/man3lib/libgss.3lib
-file Solaris/man/libkrb5.3lib path=usr/share/man/man3lib/libkrb5.3lib \
-    mangler.man.stability="pass-through uncommitted"
+    path=usr/share/man/man3gss/gss_wrap_size_limit.mit.3gss
+file Solaris/man/libgss.3lib path=usr/share/man/man3lib/libgss.mit.3lib
+file Solaris/man/libkrb5.3lib path=usr/share/man/man3lib/libkrb5.mit.3lib
 file path=usr/share/man/man5/.k5identity.5
 file path=usr/share/man/man5/.k5login.5
-file Solaris/man/gss_auth_rules.5 path=usr/share/man/man5/gss_auth_rules.5
+link path=usr/share/man/man5/gss_auth_rules.5 target=./gss_auth_rules.mit.5 \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/gss_auth_rules.5 path=usr/share/man/man5/gss_auth_rules.mit.5
 file path=usr/share/man/man5/k5identity.5
 file path=usr/share/man/man5/k5login.5
-file Solaris/man/kerberos.5 path=usr/share/man/man5/kerberos.5
+link path=usr/share/man/man5/kerberos.5 target=./kerberos.mit.5 \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/kerberos.5 path=usr/share/man/man5/kerberos.mit.5
 file path=usr/share/man/man5/krb5.conf.5
-file Solaris/man/krb5envvar.5 path=usr/share/man/man5/krb5envvar.5 \
-    mangler.man.stability="pass-through uncommitted"
-file Solaris/man/krb5_auth_rules.7 path=usr/share/man/man7/krb5_auth_rules.7
+link path=usr/share/man/man5/krb5envvar.5 target=./krb5envvar.mit.5 \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/krb5envvar.5 path=usr/share/man/man5/krb5envvar.mit.5
+link path=usr/share/man/man7/krb5_auth_rules.7 target=./krb5_auth_rules.mit.7 \
+    mediator=kerberos5 mediator-implementation=MIT
+file Solaris/man/krb5_auth_rules.7 path=usr/share/man/man7/krb5_auth_rules.mit.7
+link path=usr/share/man/zh_CN.UTF-8/man5/kerberos.5 target=./kerberos.mit.5 \
+    mediator=kerberos5 mediator-implementation=MIT
 file Solaris/man/zh_CN.UTF-8/kerberos.5 \
-    path=usr/share/man/zh_CN.UTF-8/man5/kerberos.5
+    path=usr/share/man/zh_CN.UTF-8/man5/kerberos.mit.5
+link path=usr/share/man/zh_CN.UTF-8/man5/krb5envvar.5 \
+    target=./krb5envvar.mit.5 mediator=kerberos5 mediator-implementation=MIT
 file Solaris/man/zh_CN.UTF-8/krb5envvar.5 \
-    path=usr/share/man/zh_CN.UTF-8/man5/krb5envvar.5 \
-    mangler.man.stability="pass-through uncommitted"
+    path=usr/share/man/zh_CN.UTF-8/man5/krb5envvar.mit.5
+link path=usr/share/man/zh_CN.UTF-8/man7/krb5_auth_rules.7 \
+    target=./krb5_auth_rules.mit.7 mediator=kerberos5 \
+    mediator-implementation=MIT
 file Solaris/man/zh_CN.UTF-8/krb5_auth_rules.7 \
-    path=usr/share/man/zh_CN.UTF-8/man7/krb5_auth_rules.7
+    path=usr/share/man/zh_CN.UTF-8/man7/krb5_auth_rules.mit.7
 dir  path=var/krb5/rcache group=sys mode=1777
 dir  path=var/krb5/rcache/root group=sys mode=0700 revert-tag=clone-archive=*
 license krb5.license license="BSD, BSD-like (KerberosV5)"

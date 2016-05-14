@@ -21,8 +21,8 @@ diff -pur old/src/lib/krb5/krb/t_vfy_increds.c new/src/lib/krb5/krb/t_vfy_incred
      if (*argv != NULL)
          check(krb5_parse_name(context, *argv, &princ));
 diff -pur old/src/lib/krb5/krb/t_vfy_increds.py new/src/lib/krb5/krb/t_vfy_increds.py
---- old/src/lib/krb5/krb/t_vfy_increds.py	2016-03-31 16:44:48.483714940 -0700
-+++ patched/src/lib/krb5/krb/t_vfy_increds.py	2016-03-31 19:34:30.816360770 -0700
+--- old/src/lib/krb5/krb/t_vfy_increds.py	2015-05-28 14:42:17.100176857 -0600
++++ new/src/lib/krb5/krb/t_vfy_increds.py	2015-05-28 18:03:03.977698328 -0600
 @@ -53,29 +53,31 @@ realm.run(['./t_vfy_increds'])
  realm.run(['./t_vfy_increds', '-n'])
  
@@ -55,8 +55,8 @@ diff -pur old/src/lib/krb5/krb/t_vfy_increds.py new/src/lib/krb5/krb/t_vfy_incre
 -# default (succeeding unless nofail is set), but should verify with it
 +# default (succeeding only when nofail is unset), but should verify with it
  # when it is specifically requested.
- realm.run([kadminl, 'addprinc', '-randkey', realm.nfs_princ])
- realm.run([kadminl, 'ktadd', realm.nfs_princ])
+ realm.run_kadminl('addprinc -randkey ' + realm.nfs_princ)
+ realm.run_kadminl('ktadd ' + realm.nfs_princ)
 -realm.run(['./t_vfy_increds'])
 +realm.run(['./t_vfy_increds'], expected_code=1)
  realm.run(['./t_vfy_increds', '-n'], expected_code=1)
@@ -65,7 +65,7 @@ diff -pur old/src/lib/krb5/krb/t_vfy_increds.py new/src/lib/krb5/krb/t_vfy_incre
 @@ -84,7 +86,7 @@ realm.run(['./t_vfy_increds', '-n', real
  # results with the default principal argument, but verification should
  # now fail if we request it specifically.
- realm.run([kadminl, 'change_password', '-randkey', realm.nfs_princ])
+ realm.run_kadminl('change_password -randkey ' + realm.nfs_princ)
 -realm.run(['./t_vfy_increds'])
 +realm.run(['./t_vfy_increds'], expected_code=1)
  realm.run(['./t_vfy_increds', '-n'], expected_code=1)

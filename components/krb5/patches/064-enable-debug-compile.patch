@@ -1,0 +1,25 @@
+#
+# This patch fixes a minor issue where the hostrealm plugin test program will
+# not compile non-optimized.  There is a MIT ticket which they intend on
+# fixing: Ticket #8326 hostrealm code won't compile in debug mode using Solaris
+# Studio C 
+# Patch source: in-house
+#
+diff -ur krb5-1.13.2/src/plugins/hostrealm/test/Makefile.in krb5-1.13.2.debug-build/src/plugins/hostrealm/test/Makefile.in
+--- krb5-1.13.2/src/plugins/hostrealm/test/Makefile.in
++++ krb5-1.13.2.debug-build/src/plugins/hostrealm/test/Makefile.in
+@@ -5,9 +5,10 @@
+ LIBMAJOR=0
+ LIBMINOR=0
+ RELDIR=../plugins/hostrealm/test
+-# Depends on libkrb5
+-SHLIB_EXPDEPS= $(KRB5_DEPLIB)
+-SHLIB_EXPLIBS= $(KRB5_LIB)
++# Depends on libkrb5 and libkrb5support when building non-optimized with
++# certain compilers.
++SHLIB_EXPDEPS= $(KRB5_DEPLIB) $(SUPPORT_DEPLIB)
++SHLIB_EXPLIBS= $(KRB5_LIB) $(SUPPORT_LIB)
+ 
+ STLIBOBJS=main.o
+ 
+
