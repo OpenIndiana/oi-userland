@@ -13,14 +13,6 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/communication/im/pidgin@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license pidgin.license license="GPL v2"
 
 <transform file path=usr/share/doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
@@ -28,15 +20,20 @@ license pidgin.license license="GPL v2"
 <transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-
-# Generated section:
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value='$(COMPONENT_SUMMARY)'
+set name=info.classification value='$(COMPONENT_CLASSIFICATION)'
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/gconf/schemas/purple.schemas
 file path=usr/bin/pidgin
 file path=usr/bin/purple-client-example
 file path=usr/bin/purple-remote
 file path=usr/bin/purple-send
 file path=usr/bin/purple-send-async
-file path=usr/bin/purple-url-handler
+file path=usr/bin/purple-url-handler pkg.depend.bypass-generate=.*urllib/.*
 file path=usr/include/libpurple/account.h
 file path=usr/include/libpurple/accountopt.h
 file path=usr/include/libpurple/blist.h
@@ -158,12 +155,12 @@ file path=usr/include/pidgin/minidialog.h
 file path=usr/include/pidgin/pidgin.h
 file path=usr/include/pidgin/pidginstock.h
 file path=usr/include/pidgin/pidgintooltip.h
-link path=usr/lib/libpurple-client.so target=libpurple-client.so.0.10.11
-link path=usr/lib/libpurple-client.so.0 target=libpurple-client.so.0.10.11
-file path=usr/lib/libpurple-client.so.0.10.11
-link path=usr/lib/libpurple.so target=libpurple.so.0.10.11
-link path=usr/lib/libpurple.so.0 target=libpurple.so.0.10.11
-file path=usr/lib/libpurple.so.0.10.11
+link path=usr/lib/libpurple-client.so target=libpurple-client.so.0.10.12
+link path=usr/lib/libpurple-client.so.0 target=libpurple-client.so.0.10.12
+file path=usr/lib/libpurple-client.so.0.10.12
+link path=usr/lib/libpurple.so target=libpurple.so.0.10.12
+link path=usr/lib/libpurple.so.0 target=libpurple.so.0.10.12
+file path=usr/lib/libpurple.so.0.10.12
 file path=usr/lib/perl5/i86pc-solaris-64int/perllocal.pod
 file path=usr/lib/pidgin/cap.so
 file path=usr/lib/pidgin/convcolors.so
@@ -244,12 +241,15 @@ file path=usr/share/icons/hicolor/scalable/apps/pidgin.svg
 file path=usr/share/locale/af/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/am/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ar/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/as/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ast/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/az/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/be@latin/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/bg/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/bn/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/bn_IN/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/br/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/brx/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/bs/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ca/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ca@valencia/LC_MESSAGES/pidgin.mo
@@ -263,6 +263,7 @@ file path=usr/share/locale/en_CA/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/eo/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/es/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/es_AR/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/et/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/eu/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/fa/LC_MESSAGES/pidgin.mo
@@ -283,6 +284,7 @@ file path=usr/share/locale/kk/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/km/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/kn/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ko/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/ks/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ku/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ku_IQ/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/lt/LC_MESSAGES/pidgin.mo
@@ -290,8 +292,10 @@ file path=usr/share/locale/lv/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/mai/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/mhr/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/mk/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/ml/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/mn/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/mr/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/ms_MY/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/my_MM/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/nb/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ne/LC_MESSAGES/pidgin.mo
@@ -306,6 +310,7 @@ file path=usr/share/locale/pt/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ro/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ru/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/sd/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/si/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/sk/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/sl/LC_MESSAGES/pidgin.mo
@@ -321,6 +326,7 @@ file path=usr/share/locale/tr/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/tt/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/uk/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/ur/LC_MESSAGES/pidgin.mo
+file path=usr/share/locale/uz/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/vi/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/xh/LC_MESSAGES/pidgin.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/pidgin.mo
@@ -917,6 +923,8 @@ file path=usr/share/purple/ca-certs/America_Online_Root_Certification_Authority_
 file path=usr/share/purple/ca-certs/Baltimore_CyberTrust_Root.pem
 file path=usr/share/purple/ca-certs/CAcert_Class3.pem
 file path=usr/share/purple/ca-certs/CAcert_Root.pem
+file path=usr/share/purple/ca-certs/Certum_Root_CA.pem
+file path=usr/share/purple/ca-certs/Certum_Trusted_Network_CA.pem
 file path=usr/share/purple/ca-certs/Deutsche_Telekom_Root_CA_2.pem
 file path=usr/share/purple/ca-certs/DigiCertHighAssuranceCA-3.pem
 file path=usr/share/purple/ca-certs/DigiCertHighAssuranceEVRootCA.pem
@@ -943,3 +951,4 @@ file path=usr/share/sounds/purple/login.wav
 file path=usr/share/sounds/purple/logout.wav
 file path=usr/share/sounds/purple/receive.wav
 file path=usr/share/sounds/purple/send.wav
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
