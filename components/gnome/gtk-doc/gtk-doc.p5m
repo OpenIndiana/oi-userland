@@ -1,0 +1,109 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/developer/documentation-tool/gtk-doc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A tool to generate API documentation for C code."
+set name=pkg.description \
+    value="GtkDoc is a tool used to extract API documentation from C-code like Doxygen, but handles documentation of GObject (including signals and properties) that makes it very suitable for GTK+ apps and libraries. It uses docbook for intermediate files and can produce html by default and pdf/man-pages with some extra work. "
+set name=com.oracle.info.description value="the GTK-Doc Project"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/288
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/gtkdoc-check
+file path=usr/bin/gtkdoc-depscan
+file path=usr/bin/gtkdoc-fixxref
+file path=usr/bin/gtkdoc-mkdb
+file path=usr/bin/gtkdoc-mkhtml
+file path=usr/bin/gtkdoc-mkman
+file path=usr/bin/gtkdoc-mkpdf
+file path=usr/bin/gtkdoc-mktmpl
+file path=usr/bin/gtkdoc-rebase
+file path=usr/bin/gtkdoc-scan
+file path=usr/bin/gtkdoc-scangobj
+file path=usr/bin/gtkdocize
+file path=usr/share/aclocal/gtk-doc.m4
+file path=usr/share/gtk-doc/data/devhelp2.xsl
+file path=usr/share/gtk-doc/data/gtk-doc.dcl
+file path=usr/share/gtk-doc/data/gtk-doc.dsl
+file path=usr/share/gtk-doc/data/gtk-doc.flat.make
+file path=usr/share/gtk-doc/data/gtk-doc.make
+file path=usr/share/gtk-doc/data/gtk-doc.notmpl-flat.make
+file path=usr/share/gtk-doc/data/gtk-doc.notmpl.make
+file path=usr/share/gtk-doc/data/gtk-doc.xsl
+file path=usr/share/gtk-doc/data/gtkdoc-common.pl
+file path=usr/share/gtk-doc/data/home.png
+file path=usr/share/gtk-doc/data/left-insensitive.png
+file path=usr/share/gtk-doc/data/left.png
+file path=usr/share/gtk-doc/data/right-insensitive.png
+file path=usr/share/gtk-doc/data/right.png
+file path=usr/share/gtk-doc/data/style.css
+file path=usr/share/gtk-doc/data/up-insensitive.png
+file path=usr/share/gtk-doc/data/up.png
+file path=usr/share/gtk-doc/data/version-greater-or-equal.xsl
+file path=usr/share/help/C/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/C/gtk-doc-manual/index.docbook
+file path=usr/share/help/bn_IN/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/bn_IN/gtk-doc-manual/index.docbook
+file path=usr/share/help/de/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/de/gtk-doc-manual/index.docbook
+file path=usr/share/help/el/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/el/gtk-doc-manual/index.docbook
+file path=usr/share/help/en_GB/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/en_GB/gtk-doc-manual/index.docbook
+file path=usr/share/help/es/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/es/gtk-doc-manual/index.docbook
+file path=usr/share/help/fr/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/fr/gtk-doc-manual/index.docbook
+file path=usr/share/help/gu/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/gu/gtk-doc-manual/index.docbook
+file path=usr/share/help/pt_BR/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/pt_BR/gtk-doc-manual/index.docbook
+file path=usr/share/help/sl/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/sl/gtk-doc-manual/index.docbook
+file path=usr/share/help/sv/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/sv/gtk-doc-manual/index.docbook
+file path=usr/share/help/ta/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/ta/gtk-doc-manual/index.docbook
+file path=usr/share/help/te/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/te/gtk-doc-manual/index.docbook
+file path=usr/share/help/zh_CN/gtk-doc-manual/fdl-appendix.xml
+file path=usr/share/help/zh_CN/gtk-doc-manual/index.docbook
+file path=usr/share/pkgconfig/gtk-doc.pc
+file path=usr/share/sgml/gtk-doc/gtk-doc.cat
+license gtk-doc.license license="GPLv3, FDLv1.1"
+
+
+# gtkdoc-mkhtml runs /usr/bin/openjade
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/openjade
+# gtkdoc-mk{html,man,pdf} run /usr/bin/xsltproc
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xsltproc
+# various scripts use the docbook dtds to process docbook docs
+depend type=require fmri=data/docbook/docbook-dtds
+# gtkdoc-fixxref requires syntax.vim for syntax highlighting code in docs
+depend type=require fmri=editor/vim
