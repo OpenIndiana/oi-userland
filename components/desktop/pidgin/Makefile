@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.10.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
@@ -60,6 +61,7 @@ CONFIGURE_OPTIONS+=	--disable-meanwhile
 CONFIGURE_OPTIONS+=	--disable-nm
 CONFIGURE_OPTIONS+=	--disable-consoleui
 CONFIGURE_OPTIONS+=	--disable-vv
+CONFIGURE_OPTIONS+=	--disable-gstreamer
 CONFIGURE_OPTIONS+=	--enable-perl=yes
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
