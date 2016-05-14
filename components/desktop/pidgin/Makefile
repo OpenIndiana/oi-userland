@@ -61,6 +61,7 @@ CONFIGURE_OPTIONS+=	--disable-meanwhile
 CONFIGURE_OPTIONS+=	--disable-nm
 CONFIGURE_OPTIONS+=	--disable-consoleui
 CONFIGURE_OPTIONS+=	--disable-vv
+CONFIGURE_OPTIONS+=	--disable-gstreamer
 CONFIGURE_OPTIONS+=	--enable-perl=yes
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
