@@ -1,0 +1,22 @@
+This patch fixes issues with the report not working
+when the SCE script output contains special characters.
+This patch has not been submitted upstream but
+will be by 2016-Jun-01.
+--- openscap-1.2.6/src/common/oscap_acquire.c.~1~	2016-05-09 10:10:31.879607312 -0700
++++ openscap-1.2.6/src/common/oscap_acquire.c	2016-05-09 10:15:56.086122585 -0700
+@@ -183,6 +183,15 @@
+ 			// & is a special case, we have to "escape" it manually
+ 			// (all else will eventually get handled by libxml)
+ 			oscap_string_append_string(pipe_string, "&amp;");
++                } else if (readbuf < 0x20 && !(readbuf == '\t' ||
++               readbuf == '\n' || readbuf == '\r')) {
++            // libxml doesn't tolerate most control characters
++            // in its input stream, reformat
++            char tranbuf[5];
++
++            snprintf(tranbuf, sizeof(tranbuf), "\\%03o", readbuf);
++            oscap_string_append_string(pipe_string, tranbuf);
++
+ 		} else {
+ 			oscap_string_append_char(pipe_string, readbuf);
+ 		}

@@ -1,0 +1,435 @@
+This patch implements the package_511 schema probe
+for solaris.
+This patch has not been submitted upstream but will
+be by 2016-Jul-15.
+--- openscap-1.2.6/src/OVAL/oval_enumerations.c.~3~	2016-02-23 12:20:08.398905458 -0800
++++ openscap-1.2.6/src/OVAL/oval_enumerations.c	2016-02-23 12:21:52.263496707 -0800
+@@ -516,6 +516,7 @@
+ 	{OVAL_SOLARIS_PACKAGECHECK, "packagecheck"},
+ 	{OVAL_SOLARIS_SMFPROPERTY, "smfproperty"},
+ 	{OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo"},
++	{OVAL_SOLARIS_PACKAGE511, "package511"},
+ 	{OVAL_SUBTYPE_UNKNOWN, NULL}
+ };
+ 
+--- openscap-1.2.6/src/OVAL/probes/Makefile.am.~3~	2016-02-23 12:24:40.391851036 -0800
++++ openscap-1.2.6/src/OVAL/probes/Makefile.am	2016-02-23 12:24:03.718455915 -0800
+@@ -218,6 +218,11 @@
+ probe_virtualizationinfo_SOURCES= unix/solaris/virtualizationinfo.c
+ endif
+ 
++if probe_package511_enabled
++pkglibexec_PROGRAMS += probe_package511
++probe_package511_SOURCES =unix/solaris/package511.c
++endif
++
+ endif
+ 
+ #
+--- openscap-1.2.6/src/OVAL/public/oval_types.h.~2~	2016-02-23 13:06:40.621110617 -0800
++++ openscap-1.2.6/src/OVAL/public/oval_types.h	2016-02-23 13:07:12.072800278 -0800
+@@ -240,7 +240,8 @@
+ 	OVAL_SOLARIS_NDD = OVAL_FAMILY_SOLARIS + 6,
+ 	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7,
+ 	OVAL_SOLARIS_SMFPROPERTY = OVAL_FAMILY_SOLARIS + 8,
+-	OVAL_SOLARIS_VIRTUALIZATIONINFO = OVAL_FAMILY_SOLARIS + 9
++	OVAL_SOLARIS_VIRTUALIZATIONINFO = OVAL_FAMILY_SOLARIS + 9,
++	OVAL_SOLARIS_PACKAGE511 = OVAL_FAMILY_SOLARIS + 10
+ } oval_solaris_subtype_t;
+ 
+ /// Unix subtypes
+--- openscap-1.2.6/configure.ac.~5~	2016-02-23 12:45:30.591588060 -0800
++++ openscap-1.2.6/configure.ac	2016-02-23 12:47:23.889508750 -0800
+@@ -269,6 +269,10 @@
+ probe_virtualizationinfo_req_deps_missing=
+ probe_virtualizationinfo_opt_deps_ok=yes
+ probe_virtualizationinfo_opt_deps_missing=
++probe_package511_req_deps_ok=yes
++probe_package511_req_deps_missing=
++probe_package511_opt_deps_ok=yes
++probe_package511_opt_deps_missing=
+ 
+ #
+ # env
+@@ -1365,6 +1369,8 @@
+ probe_smfproperty_enabled=$probe_smfproperty_req_deps_ok
+ AM_CONDITIONAL([probe_virtualizationinfo_enabled], test "$probe_virtualizationinfo_req_deps_ok" = yes)
+ probe_virtualizationinfo_enabled=$probe_virtualizationinfo_req_deps_ok
++AM_CONDITIONAL([probe_package511_enabled], test "$probe_package511_req_deps_ok" = yes)
++probe_package511_enabled=$probe_package511_req_deps_ok
+ 
+ AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
+ 
+@@ -1803,6 +1809,12 @@
+   probe_virtualizationinfo_table_result="NO (missing: $probe_virtualizationinfo_req_deps_missing)"
+ fi
+ printf "  %-28s %s\n" "virtualizationinfo:" "$probe_virtualizationinfo_table_result"
++if test "$probe_package511_req_deps_ok" = "yes"; then
++  probe_package511_table_result="yes"
++else
++  probe_package511_table_result="NO (missing: $probe_package511_req_deps_missing)"
++fi
++printf "  %-28s %s\n" "package511:" "$probe_package511_table_result"
+ echo
+ echo "  === configuration ==="
+ echo "  probe directory set to:      $probe_dir"
+--- openscap-1.2.6/src/OVAL/oval_probe.c.~2~	2016-02-25 13:35:49.511778373 -0800
++++ openscap-1.2.6/src/OVAL/oval_probe.c	2016-02-25 13:36:30.685802320 -0800
+@@ -94,7 +94,8 @@
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYMLINK, "symlink"),
+         OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf"),
+         OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMFPROPERTY,"smfproperty"),
+-        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo")
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo"),
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_PACKAGE511, "package511")
+ };
+ 
+ #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
++#endif
+--- openscap-1.2.6/src/OVAL/probes/unix/solaris/package511.c.~1~	2016-04-19 09:54:58.291212479 -0700
++++ openscap-1.2.6/src/OVAL/probes/unix/solaris/package511.c	2016-04-19 09:58:06.575618974 -0700
+@@ -0,0 +1,344 @@
++/**
++ * @file package511.c
++ * @brief package511 probe
++ * @author "Jacob Varughese" <jacob.varughese@oracle.com>
++ *
++ * This probe retrieves the meta data from packages.
++ */
++
++
++#include "probe-api.h"
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#if	defined(__SVR4) && defined(__sun)
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/stat.h>
++#include <ctype.h>
++#include <sys/types.h>
++#include <limits.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <rad/client/1/ips.h>
++#include "seap.h"
++#include "probe/entcmp.h"
++#include "alloc.h"
++#include "common/debug_priv.h"
++
++/* Convenience structure for the results being reported */
++
++/*
++ * package511 probe:
++ *
++ *
++ * publisher;
++ * pkgname;
++ * version;
++ * timestamp;
++ * fmri;
++ * summary;
++ * description;
++ * category;
++ * updates_available;
++ */
++
++
++/* Convenience structure for the results being reported */
++struct result_info {
++	char *publisher;
++	char *pkgname;
++	char *version;
++	char *timestamp;
++	char *fmri;
++	char *summary;
++	char *description;
++	char *category;
++	boolean_t updates_available;
++};
++
++#define STR(x) ((x == NULL) ? "" : x)
++
++static void
++report_pkg_metadata(struct result_info *res, probe_ctx *ctx)
++{
++	SEXP_t *item;
++
++	item = probe_item_create(OVAL_SOLARIS_PACKAGE511, NULL,
++	    "publisher", OVAL_DATATYPE_STRING, STR(res->publisher),
++	    "name", OVAL_DATATYPE_STRING, STR(res->pkgname),
++	    "version", OVAL_DATATYPE_VERSION, STR(res->version),
++	    "timestamp", OVAL_DATATYPE_STRING, STR(res->timestamp),
++	    "fmri", OVAL_DATATYPE_STRING, STR(res->fmri),
++	    "summary", OVAL_DATATYPE_STRING, STR(res->summary),
++	    "description", OVAL_DATATYPE_STRING, STR(res->description),
++	    "category", OVAL_DATATYPE_STRING, STR(res->category),
++	    "updates_available", OVAL_DATATYPE_BOOLEAN, res->updates_available,
++	    NULL);
++	probe_item_collect(ctx, item);
++}
++
++#if !defined(NDEBUG)
++void
++print_list(int status, char *interface,  int *name_count,
++    adr_name_t **name_list)
++{
++	int i;
++	if (status == RCE_OK) {
++		dI("Found %s\n", interface);
++	       for (i = 0; i < *name_count; i++) {
++		        const char *name = adr_name_tostr(name_list[i]);
++			dI("%s\n", name);
++		}
++	}
++}
++#endif
++
++int
++print_pkginfo(rc_instance_t *pkginfo_inst, struct result_info *r)
++{
++	rc_err_t status;
++
++	status = ips_PkgInfo_get_pkg_name(pkginfo_inst, &(r->pkgname));
++	if (status != RCE_OK) {
++		dI("PkgInfo_get_pkg_name failed.\n");
++	}
++	dI("pkg name=%s\n", r->pkgname);
++	status = ips_PkgInfo_get_summary(pkginfo_inst, &(r->summary));
++	if (status != RCE_OK) {
++		dI("PkgInfo_get_summary failed.\n");
++	} else {
++		dI("summary=%s\n", r->summary);
++	}
++	status = ips_PkgInfo_get_description(pkginfo_inst,
++	    &(r->description));
++	if (status != RCE_OK) {
++		dI("PkgInfo_get_description failed.\n");
++	} else {
++		dI("description=%s\n", r->description);
++	}
++	status = ips_PkgInfo_get_category(pkginfo_inst, &(r->category));
++	if (status != RCE_OK) {
++		dI("PkgInfo_get_category failed.\n");
++	} else {
++		dI("category=%s\n", r->category);
++	}
++	return (0);
++}
++
++int
++print_fmriinfo(rc_instance_t *fmri_inst, struct result_info *r)
++{
++		rc_err_t status;
++
++		status = ips_PkgFmri_get_name(fmri_inst, &(r->pkgname));
++		if (status != RCE_OK) {
++			dI("PkgFmri_get_name failed.\n");
++		}
++		dI("name=%s\n", r->pkgname);
++		status = ips_PkgFmri_get_version(fmri_inst, &(r->version));
++		if (status != RCE_OK) {
++			dI("PkgFmri_get_version failed.\n");
++		} else {
++			dI("version=%s\n", r->version);
++		}
++		status = ips_PkgFmri_get_timestamp(fmri_inst, &(r->timestamp));
++		if (status != RCE_OK) {
++			dI("PkgFmri_get_timestamp failed.\n");
++		} else {
++			dI("timestamp=%s\n", r->timestamp);
++		}
++		status = ips_PkgFmri_get_publisher(fmri_inst, &(r->publisher));
++		if (status != RCE_OK) {
++			dI("PkgFmri_get_publisher failed.\n");
++		} else {
++			dI("publisher=%s\n", r->publisher);
++		}
++		status = ips_PkgFmri_get_fmri(fmri_inst, NULL, NULL, NULL,
++		    NULL, NULL, &(r->fmri));
++		if (status != RCE_OK) {
++			dI("PkgFmri_get_fmri failed.\n");
++		} else {
++			dI("fmri=%s\n", r->fmri);
++		}
++		return (0);
++}
++
++static int
++collect_package_info(char *apkgname, char *aversion, char *atimestamp,
++    char *publisher, probe_ctx *ctx)
++{
++	struct result_info r;
++	rc_conn_t *conn;
++	rc_err_t status;
++	rc_instance_t *pkgimg_inst;
++	rc_instance_t *ipsmgr_inst;
++	int inst_count;
++	ips_PkgError_t* pkg_error;
++	adr_name_t **name_list;
++	adr_name_t *image_name;
++	int name_count, rc = 0;
++
++	dI("In collect_package_info");
++	memset(&r, 0, sizeof(r));
++	/* Connect to rad */
++	conn = rc_connect_unix(NULL, NULL);
++	if (conn == NULL) {
++		dI("Unable to connect to rad.\n");
++		goto error;
++	}
++
++	status = ips_IPSManager__rad_lookup(conn, _B_TRUE, &ipsmgr_inst, 0);
++	if (status != RCE_OK) {
++		dI("IPSManager lookup failed.\n");
++		goto error;
++	}
++	status = ips_IPSManager__rad_list(conn, _B_TRUE, NS_GLOB, &name_list,
++	   &name_count, 0);
++#if !defined(NDEBUG)
++	print_list(status, "IPSManager", &name_count, name_list);
++#endif
++	name_array_free(name_list, name_count);
++
++	status = ips_PkgImage__rad_list(conn, _B_TRUE, NS_GLOB, &name_list,
++	   &name_count, 0);
++	image_name = name_list[0];
++#if !defined(NDEBUG)
++	print_list(status, "PkgImage", &name_count, name_list);
++#endif
++	status = rc_lookup(conn, image_name, NULL,  _B_TRUE, &pkgimg_inst); 
++	name_array_free(name_list, name_count);
++	if (status != RCE_OK) {
++		dI("PkgImage instance lookup failed.\n");
++		goto error;
++	} else {
++		boolean_t installed = _B_TRUE;
++		boolean_t upgradable = _B_FALSE;
++		const char *fmris[1]= {apkgname};
++		rc_instance_t **pkginfo_inst;
++		rc_instance_t *pkgfmri_inst;
++		rc_instance_t **pkgfmris_inst;
++
++		status = ips_PkgImage_list_packages(pkgimg_inst, fmris, 1,
++		    NULL, NULL, 0, &installed, NULL, NULL, &upgradable, NULL,
++		    &pkgfmris_inst, &inst_count, &pkg_error);
++		if (status != RCE_OK) {
++			if (pkg_error != NULL) {
++				dI("rc = %d\n", pkg_error->ipe_error_code);	
++				dI("error = %s\n",
++				    pkg_error->ipe_error_message);
++				goto error;
++			}
++		}
++		dI("Latest revision of %s\n", fmris[0]);
++		if (print_fmriinfo(pkgfmris_inst[0], &r) > 0)
++			goto error;
++		status = ips_PkgImage_info(pkgimg_inst, fmris, 1,
++			NULL, NULL, NULL,
++			NULL, 0, NULL, &pkginfo_inst, &inst_count, &pkg_error);
++		if (status != RCE_OK) {
++			if (pkg_error != NULL) {
++				dI("rc = %d\n", pkg_error->ipe_error_code);	
++				dI("error = %s\n",
++				    pkg_error->ipe_error_message);
++			}
++			dI("PkgImage info failed.\n");
++			goto error;
++		}
++		dI("Got package count=%d\n", inst_count);
++		if (print_pkginfo(pkginfo_inst[0], &r) > 0)
++			goto error;
++		r.updates_available = upgradable;
++		dI("upgradable=%s\n", upgradable ? "true":"false"); 
++	}
++	report_pkg_metadata(&r, ctx);
++error:
++	rc_disconnect(conn);
++	return rc;
++}
++
++int
++probe_main(probe_ctx *ctx, void *arg)
++{
++	SEXP_t *probe_in, *publisher = NULL, *pkgname = NULL, *version = NULL;
++	SEXP_t *timestamp = NULL;
++	SEXP_t *publisher_val = NULL, *pkgname_val = NULL, *version_val = NULL;
++	SEXP_t *timestamp_val = NULL;
++	char *pkgname_str = NULL, *version_str = NULL, *timestamp_str = NULL;
++	char *publisher_str = NULL;
++	int rc;
++
++	probe_in = probe_ctx_getobject(ctx);
++	if (probe_in == NULL) {
++		return PROBE_ENOOBJ;
++	}
++
++	publisher = probe_obj_getent(probe_in, "publisher", 1);
++	if (publisher != NULL) {
++		publisher_val = probe_ent_getval(publisher);
++		publisher_str = SEXP_string_cstr(publisher_val);
++	}
++	if (publisher_str != NULL && strcmp(publisher_str, "") == 0)
++		publisher_str = NULL;
++	dI("publisher in context: %s.\n", (publisher_str==NULL ? "":publisher_str));
++
++	pkgname = probe_obj_getent(probe_in, "name", 1);
++	if (pkgname == NULL) {
++		dE("No pkg name in context.\n");
++		return PROBE_ENOENT;
++	}
++	pkgname_val = probe_ent_getval(pkgname);
++	if (pkgname_val == NULL) {
++		dE("Get service value failed.\n");
++		rc = PROBE_ENOVAL;
++		goto error;
++	}
++	pkgname_str = SEXP_string_cstr(pkgname_val);
++	dI("pkgname in context: %s.\n", pkgname_str);
++
++	version = probe_obj_getent(probe_in, "version", 1);
++	if (version != NULL) {
++		version_val = probe_ent_getval(version);
++		version_str = SEXP_string_cstr(version_val);
++	}
++	if (version_str != NULL && strcmp(version_str, "") == 0)
++		version_str = NULL;
++	dI("version in context: %s.\n", version_str);
++
++	timestamp = probe_obj_getent(probe_in, "timestamp", 1);
++	if (timestamp != NULL) {
++		timestamp_val = probe_ent_getval(timestamp);
++		timestamp_str = SEXP_string_cstr(timestamp_val);
++	}
++	if (timestamp_str != NULL && strcmp(timestamp_str, "") == 0)
++		timestamp_str = NULL;
++	dI("timestamp in context: %s.\n", timestamp_str);
++
++	rc = collect_package_info(pkgname_str, version_str, timestamp_str,
++	    publisher_str, ctx);
++error:
++	free(pkgname_str);
++	free(version_str);
++	free(timestamp_str);
++	free(publisher_str);
++	SEXP_free(pkgname);
++	SEXP_free(version);
++	SEXP_free(timestamp);
++	SEXP_free(publisher);
++	SEXP_free(pkgname_val);
++	SEXP_free(version_val);
++	SEXP_free(timestamp_val);
++	SEXP_free(publisher_val);
++	return rc;
++}
++#else
++
++int
++probe_main(probe_ctx *ctx, void *probe_arg)
++{
++	return PROBE_EOPNOTSUPP;
++}
++#endif

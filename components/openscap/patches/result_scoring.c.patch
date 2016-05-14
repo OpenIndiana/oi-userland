@@ -1,0 +1,31 @@
+This patch is from the community and resolves the issue when XCCDF rule
+role=unscored is set, the rule is not counted against the score of the
+benchmark. This patch will no longer be needed once we pull in the
+latest version of openscap from the cummunity.  
+
+--- openscap-1.2.6/src/XCCDF/result_scoring.c.~1~	2015-10-02 08:22:02.497343616 -0700
++++ openscap-1.2.6/src/XCCDF/result_scoring.c	2016-01-07 08:57:38.143524150 -0800
+@@ -71,7 +71,10 @@
+ 		const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *) item);
+ 		rule_result = xccdf_result_get_rule_result_by_id(test_result, rule_id);
+ 		if (rule_result == NULL) {
+-			dE("Rule result ID(%s) not fount", rule_id);
++			dE("Rule result ID(%s) not found", rule_id);
++			return NULL;
++		}
++		if (xccdf_rule_result_get_role(rule_result) == XCCDF_ROLE_UNSCORED) {
+ 			return NULL;
+ 		}
+ 
+@@ -168,7 +171,10 @@
+ 		const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *) item);
+ 		rule_result = xccdf_result_get_rule_result_by_id(test_result, rule_id);
+ 		if (rule_result == NULL) {
+-			dE("Rule result ID(%s) not fount", rule_id);
++			dE("Rule result ID(%s) not found", rule_id);
++			return NULL;
++		}
++		if (xccdf_rule_result_get_role(rule_result) == XCCDF_ROLE_UNSCORED) {
+ 			return NULL;
+ 		}
+ 

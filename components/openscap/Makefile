@@ -47,6 +47,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CPPFLAGS +=	-I$(USRINCDIR)/openldap
+RAD_CLIENT_LIB_PATH =   /usr/lib/rad/client/c/$(MACH64)
+
+LDFLAGS += -L$(RAD_CLIENT_LIB_PATH) -R$(RAD_CLIENT_LIB_PATH) -lradclient -ladr -lips_client
 
 # XXX This shouldn't be necessary, but is; investigate why.
 CFLAGS += -D_FILE_OFFSET_BITS=64
@@ -60,7 +63,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION =	\
 	$(RM) $(PROTO_DIR)/usr/share/openscap/cpe/* && \
-	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe;
+	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe; \
+	$(MV) $(PROTO_DIR)/usr/lib/python2.7/vendor-packages/64/*.py* \
+	$(PROTO_DIR)/usr/lib/python2.7/vendor-packages/ ;
 
 
 # Needed to make "gmake test" work.
@@ -81,7 +86,7 @@ ifeq ($(OS_VERSION),5.11)
 EXTRA_LIBS +=		-lnsl -lsocket
 endif
 EXTRA_LIBS +=		-lscf -ldlpi -lsec -lzonecfg -lv12n
-CONFIGURE_OPTIONS +=	LIBS="$(EXTRA_LIBS)"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS) $(EXTRA_LIBS)"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/doc/openscap/html/
 
@@ -106,5 +111,7 @@ REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/library/libv12n
+REQUIRED_PACKAGES += system/management/rad
+REQUIRED_PACKAGES += system/management/rad/client/rad-c
 REQUIRED_PACKAGES += system/zones
 REQUIRED_PACKAGES += web/curl
