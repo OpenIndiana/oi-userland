@@ -163,3 +163,16 @@ install: $(INSTALL_32_and_64)
 	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service $(PROTO_DIR)/$(NUT_AVAHI_SERVICE_FILE)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/management/powerman
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
