@@ -44,8 +44,9 @@ CFLAGS+=$(CFLAGS.$(BITS))
 #LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
 #LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
-NUTSEDSUBST =
-#NUTSEDSUBST += -e 's,\@NUTXXXDIR\@,$(NUTXXXDIR),'
+NUTSEDSUBST = -e 's,\@MACH\@,$(MACH),g' \
+	-e 's,\@MACH64\@,$(MACH64),g' -e 's,\@MACH32\@,$(MACH32),g'
+#NUTSEDSUBST += -e 's,\@NUTXXXDIR\@,$(NUTXXXDIR),g'
 ### A lot of paths are defined and exported to pkg(5) tools below,
 ### so we can flexibly set up location of certain NUT components.
 NUTUSER  =	nut
@@ -53,31 +54,31 @@ PKG_OPTIONS +=	-D NUTUSER="$(NUTUSER)"
 NUTGROUP  =	nut
 PKG_OPTIONS +=	-D NUTGROUP="$(NUTGROUP)"
 NUTSEDSUBST += \
-	-e 's,\@NUTUSER\@,$(NUTUSER),' \
-	-e 's,\@NUTGROUP\@,$(NUTGROUP),'
+	-e 's,\@NUTUSER\@,$(NUTUSER),g' \
+	-e 's,\@NUTGROUP\@,$(NUTGROUP),g'
 
 # Example data and other resources for NUT
 NUTSHAREDIR  =	$(subst .../,,...$(USRSHAREDIR)/nut)
 PKG_OPTIONS +=	-D NUTSHAREDIR="$(NUTSHAREDIR)"
-NUTSEDSUBST += -e 's,\@NUTSHAREDIR\@,$(NUTSHAREDIR),'
+NUTSEDSUBST += -e 's,\@NUTSHAREDIR\@,$(NUTSHAREDIR),g'
 
 # This is where config files are expected, INCLUDING (per convention from other
 # distros) example config files - e.g. not lost under /usr/shared/... locations
 # Also note we must not include the leading slash...
 NUTETCDIR  =	$(subst .../,,...$(ETCDIR)/nut)
 PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
-NUTSEDSUBST += -e 's,\@NUTETCDIR\@,$(NUTETCDIR),'
+NUTSEDSUBST += -e 's,\@NUTETCDIR\@,$(NUTETCDIR),g'
 
 # To be decided - where the example copies land...
 NUTETCSAMPLEDIR=	$(NUTSHAREDIR)/etc-samples
 #NUTETCSAMPLEDIR=	$(NUTETCDIR)
 PKG_OPTIONS +=	-D NUTETCSAMPLEDIR="$(NUTETCSAMPLEDIR)"
-NUTSEDSUBST += -e 's,\@NUTETCSAMPLEDIR\@,$(NUTETCSAMPLEDIR),'
+NUTSEDSUBST += -e 's,\@NUTETCSAMPLEDIR\@,$(NUTETCSAMPLEDIR),g'
 
 # Extra programs for NUT, not intended for direct user access (drivers, CGIs)
 NUTUSRDIR  =	$(subst .../,,...$(USRLIBDIR)/nut)
 PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
-NUTSEDSUBST += -e 's,\@NUTUSRDIR\@,$(NUTUSRDIR),'
+NUTSEDSUBST += -e 's,\@NUTUSRDIR\@,$(NUTUSRDIR),g'
 # Note that binaries reside in base (32-bit) or $(MACH64) subdirectories of
 # these dirs; generally 32-bit ones should suffice and be more efficient,
 # so `isaexec` is not employed in this package. The 64-bit variants are made
@@ -86,20 +87,20 @@ NUTDRVDIR  =	$(NUTUSRDIR)/bin
 NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
 PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
 PKG_OPTIONS +=	-D NUTCGIDIR="$(NUTCGIDIR)"
-NUTSEDSUBST += -e 's,\@NUTDRVDIR\@,$(NUTDRVDIR),'
-NUTSEDSUBST += -e 's,\@NUTCGIDIR\@,$(NUTCGIDIR),'
+NUTSEDSUBST += -e 's,\@NUTDRVDIR\@,$(NUTDRVDIR),g'
+NUTSEDSUBST += -e 's,\@NUTCGIDIR\@,$(NUTCGIDIR),g'
 
 _NUTVARDIR  =	$(subst .../,,...$(VARDIR))
 NUTSTATEDIR  =	$(_NUTVARDIR)/state/ups
 PKG_OPTIONS +=	-D NUTSTATEDIR="$(NUTSTATEDIR)"
-NUTSEDSUBST += -e 's,\@NUTSTATEDIR\@,$(NUTSTATEDIR),'
+NUTSEDSUBST += -e 's,\@NUTSTATEDIR\@,$(NUTSTATEDIR),g'
 
 NUTPIDPATH =	$(_NUTVARDIR)/run
 NUTRUNDIR  =	$(_NUTPIDPATH)/nut
 PKG_OPTIONS +=	-D NUTPIDPATH="$(NUTPIDPATH)"
 PKG_OPTIONS +=	-D NUTRUNDIR="$(NUTRUNDIR)"
-NUTSEDSUBST += -e 's,\@NUTPIDPATH\@,$(NUTPIDPATH),'
-NUTSEDSUBST += -e 's,\@NUTRUNDIR\@,$(NUTRUNDIR),'
+NUTSEDSUBST += -e 's,\@NUTPIDPATH\@,$(NUTPIDPATH),g'
+NUTSEDSUBST += -e 's,\@NUTRUNDIR\@,$(NUTRUNDIR),g'
 
 # So far I am not certain where we should deliver this one, so parametrize ;)
 # Currently we deliver this as a sample config file, but it may be copied (and
@@ -107,16 +108,16 @@ NUTSEDSUBST += -e 's,\@NUTRUNDIR\@,$(NUTRUNDIR),'
 NUT_AVAHI_SERVICE_FILENAME=	avahi-nut.service
 NUT_AVAHI_SERVICE_SAMPLE=	$(NUTETCSAMPLEDIR)/$(NUT_AVAHI_SERVICE_FILENAME).sample
 PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_SAMPLE="$(NUT_AVAHI_SERVICE_SAMPLE)"
-NUTSEDSUBST += -e 's,\@NUT_AVAHI_SERVICE_SAMPLE\@,$(NUT_AVAHI_SERVICE_SAMPLE),'
+NUTSEDSUBST += -e 's,\@NUT_AVAHI_SERVICE_SAMPLE\@,$(NUT_AVAHI_SERVICE_SAMPLE),g'
 
 # Leading slashes must also be stripped here
 NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
-NUTSEDSUBST += -e 's,\@NUTHOTPLUGDIR\@,$(NUTHOTPLUGDIR),'
+NUTSEDSUBST += -e 's,\@NUTHOTPLUGDIR\@,$(NUTHOTPLUGDIR),g'
 ###NUTUDEVDIR  =	$(subst .../,,...$(USRDIR)/udev)
 NUTUDEVDIR  =	$(NUTETCSAMPLEDIR)/udev
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
-NUTSEDSUBST += -e 's,\@NUTUDEVDIR\@,$(NUTUDEVDIR),'
+NUTSEDSUBST += -e 's,\@NUTUDEVDIR\@,$(NUTUDEVDIR),g'
 
 ### Recipe bits follow...
 COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
