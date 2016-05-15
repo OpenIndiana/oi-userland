@@ -65,7 +65,7 @@ file path=usr/bin/upssched-cmd preserve=renamenew
 # Note that it is practically blocked by default `nut.conf` until changed
 # by administrator. We might deliver another script in its place later on.
 # Ultimately this may get integrated with proper SMF set-up.
-file path=etc/init.d/nut owner=bin group=bin mode=755
+file path=etc/init.d/nut owner=bin group=bin mode=555
 # NUT should start generally after networking (if SNMP or NetXML is used,
 # or if this box is a client to remote upsd). Ending is trickier - could
 # want it to issue killpower late in shutdown, but have network to be able
@@ -94,33 +94,33 @@ file path=usr/share/man/man8/upssched.8
 # NUT starter examples are by convention across many distros delivered in /etc
 # Default rights inspired by scripts/Solaris/postinstall.in
 file $(NUTETCDIR)/nut.conf.sample path=$(NUTETCSAMPLEDIR)/nut.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 file $(NUTETCDIR)/ups.conf.sample path=$(NUTETCSAMPLEDIR)/ups.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 file $(NUTETCDIR)/upsd.conf.sample path=$(NUTETCSAMPLEDIR)/upsd.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 file $(NUTETCDIR)/upsd.users.sample path=$(NUTETCSAMPLEDIR)/upsd.users.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 file $(NUTETCDIR)/upsmon.conf.sample path=$(NUTETCSAMPLEDIR)/upsmon.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 file $(NUTETCDIR)/upssched.conf.sample path=$(NUTETCSAMPLEDIR)/upssched.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0640
+    group=$(NUTGROUP) owner=root mode=0440
 
 # We can actually deliver the sample configs as the ones to use,
 # at worst they have no actual information inside and do nothing.
 # Also, the daemons are disabled by default `nut.conf` contents
 file $(NUTETCDIR)/nut.conf.sample path=$(NUTETCDIR)/nut.conf \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 file $(NUTETCDIR)/ups.conf.sample path=$(NUTETCDIR)/ups.conf \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 file $(NUTETCDIR)/upsd.conf.sample path=$(NUTETCDIR)/upsd.conf \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 file $(NUTETCDIR)/upsd.users.sample path=$(NUTETCDIR)/upsd.users \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 file $(NUTETCDIR)/upsmon.conf.sample path=$(NUTETCDIR)/upsmon.conf \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 file $(NUTETCDIR)/upssched.conf.sample path=$(NUTETCDIR)/upssched.conf \
-    group=$(NUTGROUP) owner=root mode=0640 preserve=true
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
 
 # Integration with dynamically added devices (USB mostly)
 # TODO pedantic: split this off to depend on some USB/hotplug/udev package(s)?

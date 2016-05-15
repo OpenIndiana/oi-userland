@@ -213,8 +213,9 @@ $(PROTO_DIR)/$(ETCDIR)/init.d/nut: files/nut.in
 	chmod 755 $@
 
 # Ensure installed configs etc. match 32-bit paths
-$(INSTALL_32): $(INSTALL_64) $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt \
-	$(PROTO_DIR)/$(ETCDIR)/init.d/nut
+$(INSTALL_32): $(INSTALL_64) \
+  $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt \
+  $(PROTO_DIR)/$(ETCDIR)/init.d/nut
 
 install: $(INSTALL_32_and_64)
 	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service \
