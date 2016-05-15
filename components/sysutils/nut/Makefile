@@ -51,16 +51,28 @@ PKG_OPTIONS +=	-D NUTUSER="$(NUTUSER)"
 NUTGROUP  =	nut
 PKG_OPTIONS +=	-D NUTGROUP="$(NUTGROUP)"
 
+# Example data and other resources for NUT
+NUTSHAREDIR  =	$(subst .../,,...$(USRSHAREDIR)/nut)
+PKG_OPTIONS +=	-D NUTSHAREDIR="$(NUTSHAREDIR)"
+
 # This is where config files are expected, INCLUDING (per convention from other
 # distros) example config files - e.g. not lost under /usr/shared/... locations
 # Also note we must not include the leading slash...
 NUTETCDIR  =	$(subst .../,,...$(ETCDIR)/nut)
 PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
 
+# To be decided - where the example copies land...
+NUTETCSAMPLEDIR=	$(NUTSHAREDIR)/etc-samples
+#NUTETCSAMPLEDIR=	$(NUTETCDIR)
+PKG_OPTIONS +=	-D NUTETCSAMPLEDIR="$(NUTETCSAMPLEDIR)"
+
 # Extra programs for NUT, not intended for direct user access (drivers, CGIs)
 NUTUSRDIR  =	$(subst .../,,...$(USRLIBDIR)/nut)
 PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
-# Note that binaries reside in base or $(MACH64) subdirectories of these:
+# Note that binaries reside in base (32-bit) or $(MACH64) subdirectories of
+# these dirs; generally 32-bit ones should suffice and be more efficient,
+# so `isaexec` is not employed in this package. The 64-bit variants are made
+# available for theoretical chance that 32 bits won't suffice, unlikely in NUT:
 NUTDRVDIR  =	$(NUTUSRDIR)/bin
 NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
 PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
@@ -71,13 +83,17 @@ NUTSTATEDIR  =	$(_NUTVARDIR)/state/ups
 PKG_OPTIONS +=	-D NUTSTATEDIR="$(NUTSTATEDIR)"
 
 # So far I am not certain where we should deliver this one, so parametrize ;)
-NUT_AVAHI_SERVICE_FILE =	$(NUTETCDIR)/avahi-nut.service.sample
-PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_FILE="$(NUT_AVAHI_SERVICE_FILE)"
+# Currently we deliver this as a sample config file, but it may be copied (and
+# maybe adapted) into the ultimate Avahi configuration, wherever that is...
+NUT_AVAHI_SERVICE_FILENAME=	avahi-nut.service
+NUT_AVAHI_SERVICE_SAMPLE=	$(NUTETCSAMPLEDIR)/$(NUT_AVAHI_SERVICE_FILENAME).sample
+PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_SAMPLE="$(NUT_AVAHI_SERVICE_SAMPLE)"
 
 # Leading slashes must also be stripped here
 NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
-NUTUDEVDIR  =	$(subst .../,,...$(NUTUSRDIR)/udev)
+###NUTUDEVDIR  =	$(subst .../,,...$(USRDIR)/udev)
+NUTUDEVDIR  =	$(subst .../,,...$(NUTETCSAMPLEDIR)/udev)
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
 
 ### Recipe bits follow...
@@ -97,6 +113,8 @@ CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--with-user=$(NUTUSER)
 CONFIGURE_OPTIONS +=	--with-group=$(NUTGROUP)
 CONFIGURE_OPTIONS +=	--sysconfdir=/$(NUTETCDIR)
+CONFIGURE_OPTIONS +=	--sharedstatedir=/$(NUTSHAREDIR)
+CONFIGURE_OPTIONS +=	--datarootdir=/$(NUTSHAREDIR)
 CONFIGURE_OPTIONS +=	--with-hotplug-dir=/$(NUTHOTPLUGDIR)
 CONFIGURE_OPTIONS +=	--with-udev-dir=/$(NUTUDEVDIR)
 CONFIGURE_OPTIONS +=	--with-statepath=/$(NUTSTATEDIR)
@@ -146,8 +164,9 @@ CONFIGURE_OPTIONS.32 +=	--with-doc="man=yes"
 CONFIGURE_OPTIONS.64 +=	--with-doc="no"
 
 ### Avoid occasionally possible hangs with chunked HTML doc, if we build it
+### by using the verbosity option (as suggested by one of NUT docs Makefiles).
+### Not sure if it helps with just manpage builds, but does not hurt either ;)
 #CONFIGURE_OPTIONS +=	--with-doc="auto"
-
 CONFIGURE_OPTIONS +=	ASCIIDOC_VERBOSE="-v"
 CONFIGURE_ENV     +=	ASCIIDOC_VERBOSE="-v"
 
@@ -156,11 +175,20 @@ CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 build: $(BUILD_32_and_64)
 
+$(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
+	$(GSED) \
+		-e 's,\@NUTETCDIR\@,$(NUTETCDIR),' \
+		-e 's,\@NUTUDEVDIR\@,$(NUTUEDVDIR),' \
+		< $< > $@
+	$(GREP) '\@NUT' $@ && echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1
+
+
 # Ensure installed configs etc. match 32-bit paths
-$(INSTALL_32): $(INSTALL_64)
+$(INSTALL_32): $(INSTALL_64) $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt
 
 install: $(INSTALL_32_and_64)
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service $(PROTO_DIR)/$(NUT_AVAHI_SERVICE_FILE)
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service \
+		$(PROTO_DIR)/$(NUT_AVAHI_SERVICE_SAMPLE)
 
 test: $(TEST_32_and_64)
 

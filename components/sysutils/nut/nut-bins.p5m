@@ -28,24 +28,22 @@ depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) t
 
 ### NUT Command-line binaries and scripts (daemons, clients)
 
-### Note: While nut-scanner can use snmp, neon/xml, ipmi and usb libs, it pulls
-### them truly dynamically (if available) and skips otherwise. Installing all
-### the NUT driver packages should pull those libs by harder ldd requirements.
-### Conversely if you don't want those UPSes (got no drivers) why scan them? :)
+### Note: While nut-scanner can use snmp, neon/xml, ipmi and usb libs, it loads
+### them truly dynamically (if available) and skips otherwise. Installing the
+### NUT driver packages should pull their relevant libs by harder ELF reqs.
+### Reasonably, if you don't want those UPSes (got no drivers) why scan them? :)
 
 file path=usr/bin/$(MACH64)/nut-scanner
 file path=usr/bin/$(MACH64)/upsc
 file path=usr/bin/$(MACH64)/upscmd
 file path=usr/bin/$(MACH64)/upslog
 file path=usr/bin/$(MACH64)/upsrw
-file path=usr/bin/$(MACH64)/upssched-cmd
 
 file path=usr/bin/nut-scanner
 file path=usr/bin/upsc
 file path=usr/bin/upscmd
 file path=usr/bin/upslog
 file path=usr/bin/upsrw
-file path=usr/bin/upssched-cmd
 
 file path=usr/sbin/$(MACH64)/upsd
 file path=usr/sbin/$(MACH64)/upsdrvctl
@@ -58,7 +56,10 @@ file path=usr/sbin/upsmon
 file path=usr/sbin/upssched
 
 # Example notification script for UPSMON
-file files/notifyme path=$(NUTDRVDIR)/notifyme
+file files/notifyme path=$(NUTDRVDIR)/notifyme preserve=renamenew
+
+# This is an example script for handling upssched
+file path=usr/bin/upssched-cmd preserve=renamenew
 
 file path=usr/share/man/man5/hosts.conf.5
 file path=usr/share/man/man5/nut.conf.5
@@ -79,34 +80,42 @@ file path=usr/share/man/man8/upsrw.8
 file path=usr/share/man/man8/upssched.8
 
 # NUT starter examples are by convention across many distros delivered in /etc
-file path=$(NUTETCDIR)/hosts.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
-file path=$(NUTETCDIR)/nut.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
-file path=$(NUTETCDIR)/ups.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
-file path=$(NUTETCDIR)/upsd.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
-file path=$(NUTETCDIR)/upsd.users.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
-file path=$(NUTETCDIR)/upsmon.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
-file path=$(NUTETCDIR)/upssched.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+file path=$(NUTETCSAMPLEDIR)/nut.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+file path=$(NUTETCSAMPLEDIR)/ups.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+file path=$(NUTETCSAMPLEDIR)/upsd.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCSAMPLEDIR)/upsd.users.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCSAMPLEDIR)/upsmon.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0640
+file path=$(NUTETCSAMPLEDIR)/upssched.conf.sample group=$(NUTGROUP) owner=$(NUTUSER) mode=0644
+
+# We can actually deliver the sample configs as the ones to use,
+# at worst they have no actual information inside and do nothing.
+# Also, the daemons are disabled by default `nut.conf` contents
+file path=$(NUTETCDIR)/nut.conf group=$(NUTGROUP) owner=$(NUTUSER) mode=0644 preserve=true
+file path=$(NUTETCDIR)/ups.conf group=$(NUTGROUP) owner=$(NUTUSER) mode=0644 preserve=true
+file path=$(NUTETCDIR)/upsd.conf group=$(NUTGROUP) owner=$(NUTUSER) mode=0640 preserve=true
+file path=$(NUTETCDIR)/upsd.users group=$(NUTGROUP) owner=$(NUTUSER) mode=0640 preserve=true
+file path=$(NUTETCDIR)/upsmon.conf group=$(NUTGROUP) owner=$(NUTUSER) mode=0640 preserve=true
+file path=$(NUTETCDIR)/upssched.conf group=$(NUTGROUP) owner=$(NUTUSER) mode=0644 preserve=true
 
 # Integration with dynamically added devices (USB mostly)
 # TODO pedantic: split this off to depend on some USB/hotplug/udev package(s)?
-file path=$(NUTHOTPLUGDIR)/usb/libhid.usermap
-file path=$(NUTHOTPLUGDIR)/usb/libhidups
+file path=$(NUTHOTPLUGDIR)/usb/libhid.usermap preserve=renamenew
+file path=$(NUTHOTPLUGDIR)/usb/libhidups preserve=renamenew
 
 # README also suggests running `udevadm trigger --subsystem-match=usb_device`
 # Maybe on another iteration this would help us fix up illumos definitions?
-#file path=$(NUTUDEVDIR)/rules.d/52-nut-ipmipsu.rules
-file path=$(NUTUDEVDIR)/rules.d/62-nut-usbups.rules
+###TODO:IPMI### file path=$(NUTUDEVDIR)/rules.d/52-nut-ipmipsu.rules preserve=renamenew
+file path=$(NUTUDEVDIR)/rules.d/62-nut-usbups.rules preserve=renamenew
 
 # Maybe on another iteration this would help us fix up illumos definitions?
-file scripts/upower/95-upower-hid.rules path=$(NUTETCDIR)/95-upower-hid.rules.sample
+file scripts/upower/95-upower-hid.rules path=$(NUTETCSAMPLEDIR)/95-upower-hid.rules.sample
 
 # TODO pedantic: split this off to depend on avahi package?
-# Also make sure which path that would go into?
-file path=$(NUT_AVAHI_SERVICE_FILE)
+# Also make sure which path that would go into for actual installation?
+file path=$(NUT_AVAHI_SERVICE_SAMPLE)
 
 # TODO pedantic: split this off to depend on logrotate package?
-file scripts/logrotate/nutlogd path=etc/logrotate.d/nutlogd
+file scripts/logrotate/nutlogd path=etc/logrotate.d/nutlogd preserve=renamenew
 
 # TODO pedantic: split this off to depend on bash package?
 file scripts/misc/nut.bash_completion path=usr/share/bash-completion/completions/nut
-
