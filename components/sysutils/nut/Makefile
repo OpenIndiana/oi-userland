@@ -219,8 +219,6 @@ $(INSTALL_32): $(INSTALL_64) $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt \
 install: $(INSTALL_32_and_64)
 	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service \
 		$(PROTO_DIR)/$(NUT_AVAHI_SERVICE_SAMPLE)
-	$(INSTALL) -m 755 $(BUILD_DIR_32)/scripts/Solaris/nut \
-		$(PROTO_DIR)/$(ETCDIR)/init.d/nut
 
 test: $(TEST_32_and_64)
 
