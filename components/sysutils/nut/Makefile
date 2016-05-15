@@ -203,13 +203,13 @@ $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
 	$(MKDIR) -p $(@D)
 	$(GSED) $(NUTSEDSUBST) < $< > $@
 	egrep '\@(NUT|MACH)' $@ >&2 && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1 ; true
+		echo "ERROR: Some unconverted tags remain in $@" >&2 && $(RM) $@ && exit 1 ; true
 
 $(PROTO_DIR)/$(ETCDIR)/init.d/nut: files/nut.in
 	$(MKDIR) -p $(@D)
 	$(GSED) $(NUTSEDSUBST) < $< > $@
 	egrep '\@(NUT|MACH)' $@ >&2 && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1 ; true
+		echo "ERROR: Some unconverted tags remain in $@" >&2 && $(RM) $@ && exit 1 ; true
 	chmod 755 $@
 
 # Ensure installed configs etc. match 32-bit paths
