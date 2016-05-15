@@ -180,7 +180,8 @@ $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
 		-e 's,\@NUTETCDIR\@,$(NUTETCDIR),' \
 		-e 's,\@NUTUDEVDIR\@,$(NUTUEDVDIR),' \
 		< $< > $@
-	$(GREP) '\@NUT' $@ && echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1
+	grep '\@NUT' $@ && \
+		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1
 
 
 # Ensure installed configs etc. match 32-bit paths
