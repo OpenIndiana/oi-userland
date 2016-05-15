@@ -26,7 +26,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # installation of augtools if the end-user just installs the grouper package
 # and really only wants NUT core, not the bindings. Vice-versa, the binding
 # does not really require files from the NUT project itself.
-depend fmri=library/augeas-tools  type=conditional    predicate=library/augeas-tools
+# So: the main "nut.p5m" has a conditional dependency to install "nut-augeas"
+# only if "augeas-tools" are installed; while the "nut-augeas" package simply
+# requires augtools and does not depend on any of NUT packages to be present.
+depend fmri=library/augeas-tools type=require
 
 ### Augeas configuration licenses for NUT
 file path=usr/share/augeas/lenses/nuthostsconf.aug
