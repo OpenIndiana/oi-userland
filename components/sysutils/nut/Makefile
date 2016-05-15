@@ -41,8 +41,8 @@ CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CXXFLAGS+=$(CXXFLAGS.$(BITS))
 CFLAGS+=$(CFLAGS.$(BITS))
 
-LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
-LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
+#LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
+#LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
 ### A lot of paths are defined and exported to pkg(5) tools below,
 ### so we can flexibly set up location of certain NUT components.
@@ -58,7 +58,7 @@ NUTETCDIR  =	$(subst .../,,...$(ETCDIR)/nut)
 PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
 
 # Extra programs for NUT, not intended for direct user access (drivers, CGIs)
-NUTUSRDIR  =	$(subst .../,,...$(USRDIR)/nut)
+NUTUSRDIR  =	$(subst .../,,...$(USRLIBDIR)/nut)
 PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
 # Note that binaries reside in base or $(MACH64) subdirectories of these:
 NUTDRVDIR  =	$(NUTUSRDIR)/bin
