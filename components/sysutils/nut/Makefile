@@ -114,7 +114,7 @@ NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
 NUTSEDSUBST += -e 's,\@NUTHOTPLUGDIR\@,$(NUTHOTPLUGDIR),'
 ###NUTUDEVDIR  =	$(subst .../,,...$(USRDIR)/udev)
-NUTUDEVDIR  =	$(subst .../,,...$(NUTETCSAMPLEDIR)/udev)
+NUTUDEVDIR  =	$(NUTETCSAMPLEDIR)/udev)
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
 NUTSEDSUBST += -e 's,\@NUTUDEVDIR\@,$(NUTUDEVDIR),'
 
@@ -201,14 +201,14 @@ build: $(BUILD_32_and_64)
 $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
 	$(MKDIR) -p $(@D)
 	$(GSED) $(NUTSEDSUBST) < $< > $@
-	egrep '\@(NUT|MACH)' $@ && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1
+	egrep '\@(NUT|MACH)' $@ >&2 && \
+		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1 ; true
 
 $(PROTO_DIR)/$(ETCDIR)/init.d/nut: files/nut.in
 	$(MKDIR) -p $(@D)
 	$(GSED) $(NUTSEDSUBST) < $< > $@
-	egrep '\@(NUT|MACH)' $@ && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1
+	egrep '\@(NUT|MACH)' $@ >&2 && \
+		echo "ERROR: Some unconverted tags remain in $@" >&2 && exit 1 ; true
 	chmod 755 $@
 
 # Ensure installed configs etc. match 32-bit paths
