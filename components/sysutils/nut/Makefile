@@ -77,7 +77,7 @@ PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_FILE="$(NUT_AVAHI_SERVICE_FILE)"
 # Leading slashes must also be stripped here
 NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
-NUTUDEVDIR  =	$(subst .../,,...$(USRLIBDIR)/udev)
+NUTUDEVDIR  =	$(subst .../,,...$(NUTUSRDIR)/udev)
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
 
 ### Recipe bits follow...
