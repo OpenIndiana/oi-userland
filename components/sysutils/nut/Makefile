@@ -54,11 +54,11 @@ PKG_OPTIONS +=	-D NUTGROUP="$(NUTGROUP)"
 # This is where config files are expected, INCLUDING (per convention from other
 # distros) example config files - e.g. not lost under /usr/shared/... locations
 # Also note we must not include the leading slash...
-NUTETCDIR  =	$(strip .../,,...$(ETCDIR)/nut)
+NUTETCDIR  =	$(subst .../,,...$(ETCDIR)/nut)
 PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
 
 # Extra programs for NUT, not intended for direct user access (drivers, CGIs)
-NUTUSRDIR  =	$(strip .../,,...$(USRDIR)/nut)
+NUTUSRDIR  =	$(subst .../,,...$(USRDIR)/nut)
 PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
 # Note that binaries reside in base or $(MACH64) subdirectories of these:
 NUTDRVDIR  =	$(NUTUSRDIR)/bin
@@ -66,7 +66,7 @@ NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
 PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
 PKG_OPTIONS +=	-D NUTCGIDIR="$(NUTCGIDIR)"
 
-_NUTVARDIR  =	$(strip .../,,...$(VARDIR))
+_NUTVARDIR  =	$(subst .../,,...$(VARDIR))
 NUTSTATEDIR  =	$(_NUTVARDIR)/state/ups
 PKG_OPTIONS +=	-D NUTSTATEDIR="$(NUTSTATEDIR)"
 
@@ -75,9 +75,9 @@ NUT_AVAHI_SERVICE_FILE =	$(NUTETCDIR)/avahi-nut.service.sample
 PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_FILE="$(NUT_AVAHI_SERVICE_FILE)"
 
 # Leading slashes must also be stripped here
-NUTHOTPLUGDIR  =	$(strip .../,,...$(ETCDIR)/hotplug)
+NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
-NUTUDEVDIR  =	$(strip .../,,...$(USRLIBDIR)/udev)
+NUTUDEVDIR  =	$(subst .../,,...$(USRLIBDIR)/udev)
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
 
 ### Recipe bits follow...
