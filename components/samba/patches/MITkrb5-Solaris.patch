@@ -1,10 +1,11 @@
-Source: Home brewed
-Fixes issues with differences of Solaris krb5 and MIT krb5
+Source: in-house
+Up-stream Acceptability: Patch only reflects customized paths to Krb5
+  in Solaris so it is not acceptable for community.
 
---- a/wscript_configure_system_mitkrb5	2013-06-13 09:21:03.000000000 +0000
-+++ samba-4.1.12/wscript_configure_system_mitkrb5	2015-01-09 00:06:46.004441833 +0000
-@@ -30,6 +30,8 @@
-     krb5_define_syslib(conf, "gssapi", conf.env['LIB_GSSAPI'])
+--- a/wscript_configure_system_mitkrb5	2016-03-30 03:20:20.000000000 -0700
++++ samba-4.4.1/wscript_configure_system_mitkrb5	2016-04-09 06:33:07.937842880 -0700
+@@ -34,6 +34,8 @@
+         krb5_define_syslib(conf, "com_err", conf.env['LIB_GSSAPI'])
      if 'gssapi_krb5' in conf.env['LIB_GSSAPI']:
          krb5_define_syslib(conf, "gssapi_krb5", conf.env['LIB_GSSAPI'])
 +    if 'gss' in conf.env['LIB_GSSAPI']:
@@ -12,29 +13,38 @@ Fixes issues with differences of Solaris krb5 and MIT krb5
  
      vendor = conf.cmd_and_log("%(path)s --vendor" % dict(path=conf.env.KRB5_CONFIG), dict())
      conf.env.KRB5_VENDOR = vendor.strip().lower()
-@@ -52,10 +53,10 @@
+@@ -56,18 +58,18 @@
  
- conf.check_cfg(args="--cflags --libs", package="com_err", uselib_store="com_err")
+ conf.CHECK_CFG(args="--cflags --libs", package="com_err", uselib_store="com_err")
  conf.CHECK_FUNCS_IN('_et_list', 'com_err')
 -conf.CHECK_HEADERS('com_err.h', lib='com_err')
 +conf.CHECK_HEADERS('com_err.h', lib='com_err krb5')
  
  conf.CHECK_HEADERS('krb5.h krb5/locate_plugin.h', lib='krb5')
--conf.CHECK_HEADERS('gssapi.h gssapi/gssapi_generic.h gssapi/gssapi.h gssapi/gssapi_ext.h gssapi/gssapi_krb5.h', lib='gssapi')
-+conf.CHECK_HEADERS('gssapi.h gssapi/gssapi_generic.h gssapi/gssapi.h gssapi/gssapi_ext.h gssapi/gssapi_krb5.h', lib='gssapi krb5')
+ possible_gssapi_headers="gssapi.h gssapi/gssapi_generic.h gssapi/gssapi.h gssapi/gssapi_ext.h gssapi/gssapi_krb5.h gssapi/gssapi_oid.h"
+-conf.CHECK_HEADERS(possible_gssapi_headers, lib='gssapi')
++conf.CHECK_HEADERS(possible_gssapi_headers, lib='gssapi krb5')
  
  conf.CHECK_FUNCS_IN('krb5_encrypt_data', 'k5crypto')
  conf.CHECK_FUNCS_IN('des_set_key','crypto')
-@@ -80,7 +81,7 @@
+ conf.CHECK_FUNCS_IN('copy_Authenticator', 'asn1')
+ conf.CHECK_FUNCS_IN('roken_getaddrinfo_hostspec', 'roken')
+ 
+-conf.CHECK_HEADERS('profile.h')
++conf.CHECK_HEADERS('profile.h', lib='krb5')
+ 
+ if conf.CHECK_FUNCS_IN('gss_display_status', 'gssapi gssapi_krb5'):
+     have_gssapi=True
+@@ -87,7 +89,7 @@
         gsskrb5_extract_authz_data_from_sec_context
         gss_krb5_export_lucid_sec_context
         gss_import_cred gss_export_cred
 -       ''', 'gssapi gssapi_krb5')
 +       ''', 'gssapi gssapi_krb5 krb5')
+ conf.CHECK_VARIABLE('GSS_KRB5_CRED_NO_CI_FLAGS_X', headers=possible_gssapi_headers)
  conf.CHECK_FUNCS_IN('krb5_mk_req_extended krb5_kt_compare', 'krb5')
  conf.CHECK_FUNCS('''
-        krb5_set_default_in_tkt_etypes krb5_set_default_tgs_enctypes
-@@ -108,25 +109,25 @@
+@@ -122,27 +124,27 @@
  conf.CHECK_DECLS('''krb5_get_credentials_for_user
                      krb5_auth_con_set_req_cksumtype''',
                      headers='krb5.h', always=True)
@@ -51,28 +61,31 @@ Fixes issues with differences of Solaris krb5 and MIT krb5
 +conf.CHECK_VARIABLE('ENCTYPE_AES128_CTS_HMAC_SHA1_96', headers='krb5.h', lib='krb5')
 +conf.CHECK_VARIABLE('ENCTYPE_AES256_CTS_HMAC_SHA1_96', headers='krb5.h', lib='krb5')
  conf.CHECK_DECLS('KRB5_PDU_NONE', reverse=True, headers='krb5.h')
--conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'key', headers='krb5.h',
-+conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'key', headers='krb5.h', lib='krb5',
-                             define='HAVE_KRB5_KEYTAB_ENTRY_KEY')
--conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'keyblock', headers='krb5.h',
-+conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'keyblock', headers='krb5.h', lib='krb5',
-                             define='HAVE_KRB5_KEYTAB_ENTRY_KEYBLOCK')
--conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'magic', headers='krb5.h',
-+conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'magic', headers='krb5.h', lib='krb5',
-                             define='HAVE_MAGIC_IN_KRB5_ADDRESS')
--conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'addrtype', headers='krb5.h',
-+conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'addrtype', headers='krb5.h', lib='krb5',
-                             define='HAVE_ADDRTYPE_IN_KRB5_ADDRESS')
--conf.CHECK_STRUCTURE_MEMBER('krb5_ap_req', 'ticket', headers='krb5.h',
-+conf.CHECK_STRUCTURE_MEMBER('krb5_ap_req', 'ticket', headers='krb5.h', lib='krb5',
-                             define='HAVE_TICKET_POINTER_IN_KRB5_AP_REQ')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'key', headers='krb5.h',
+-                            define='HAVE_KRB5_KEYTAB_ENTRY_KEY')
++                            define='HAVE_KRB5_KEYTAB_ENTRY_KEY', lib='krb5')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_keytab_entry', 'keyblock', headers='krb5.h',
+-                            define='HAVE_KRB5_KEYTAB_ENTRY_KEYBLOCK')
++                            define='HAVE_KRB5_KEYTAB_ENTRY_KEYBLOCK', lib='krb5')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'magic', headers='krb5.h',
+-                            define='HAVE_MAGIC_IN_KRB5_ADDRESS')
++                            define='HAVE_MAGIC_IN_KRB5_ADDRESS', lib='krb5')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_address', 'addrtype', headers='krb5.h',
+-                            define='HAVE_ADDRTYPE_IN_KRB5_ADDRESS')
++                            define='HAVE_ADDRTYPE_IN_KRB5_ADDRESS', lib='krb5')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_ap_req', 'ticket', headers='krb5.h',
+-                            define='HAVE_TICKET_POINTER_IN_KRB5_AP_REQ')
++                            define='HAVE_TICKET_POINTER_IN_KRB5_AP_REQ', lib='krb5')
+ conf.CHECK_STRUCTURE_MEMBER('krb5_prompt', 'type', headers='krb5.h',
+-                            define='HAVE_KRB5_PROMPT_TYPE')
++                            define='HAVE_KRB5_PROMPT_TYPE', lib='krb5')
  
 -conf.CHECK_TYPE('krb5_encrypt_block', headers='krb5.h')
 +conf.CHECK_TYPE('krb5_encrypt_block', headers='krb5.h', lib='krb5')
  
  conf.CHECK_CODE('''
         krb5_context ctx;
-@@ -134,7 +135,7 @@
+@@ -150,7 +152,7 @@
         krb5_get_init_creds_opt_free(ctx, opt);
         ''',
      'KRB5_CREDS_OPT_FREE_REQUIRES_CONTEXT',
@@ -81,7 +94,7 @@ Fixes issues with differences of Solaris krb5 and MIT krb5
      msg="Checking whether krb5_get_init_creds_opt_free takes a context argument")
  conf.CHECK_CODE('''
         const krb5_data *pkdata;
-@@ -245,7 +246,7 @@
+@@ -261,7 +263,7 @@
  conf.CHECK_CODE('''#define KRB5_DEPRECATED 1
         #include <krb5.h>''',
     'HAVE_KRB5_DEPRECATED_WITH_IDENTIFIER', addmain=False,

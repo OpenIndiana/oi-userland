@@ -1,32 +1,50 @@
-Source: Home brewed
-Fixes issues with differences of Solaris krb5 and MIT krb5
+Source: in-house
+Up-stream Acceptability: Patch is fixing the Solaris build in consequences
+   of the "krb5" patch and is Solaris specific only.
+   It is heavily acceptable by community.
 
---- a/source3/winbindd/wscript_build	2013-12-05 09:16:48.000000000 +0000
-+++ samba-4.1.7/source3/winbindd/wscript_build	2014-06-11 17:27:43.899094852 +0000
-@@ -19,7 +19,7 @@
+--- a/source3/winbindd/wscript_build	2016-01-26 03:45:46.000000000 -0800
++++ samba-4.4.1/source3/winbindd/wscript_build	2016-04-09 17:03:33.350275673 -0700
+@@ -2,13 +2,13 @@
  
  bld.SAMBA3_LIBRARY('idmap',
-                    source=IDMAP_SRC,
--                   deps='samba-util',
-+                   deps='samba-util krb5',
-                    vars=locals(),
+                    source='idmap.c idmap_util.c',
+-                   deps='samba-util pdb',
++                   deps='samba-util pdb krb5',
                     allow_undefined_symbols=True,
                     private_library=True)
-@@ -81,7 +81,7 @@
+ 
+ bld.SAMBA3_SUBSYSTEM('IDMAP_RW',
+                      source='idmap_rw.c',
+-                     deps='samba-util')
++                     deps='samba-util krb5')
+ 
+ bld.SAMBA3_SUBSYSTEM('IDMAP_TDB_COMMON',
+                      source='idmap_tdb_common.c',
+@@ -53,7 +53,7 @@
+ bld.SAMBA3_MODULE('idmap_passdb',
+                  subsystem='idmap',
+                  source='idmap_passdb.c',
+-                 deps='samba-util samba-passdb',
++                 deps='samba-util samba-passdb krb5',
+                  init_function='',
+                  internal_module=bld.SAMBA3_IS_STATIC_MODULE('idmap_passdb'),
+                  enabled=bld.SAMBA3_IS_ENABLED_MODULE('idmap_passdb'))
+@@ -70,7 +70,7 @@
  bld.SAMBA3_MODULE('idmap_nss',
                   subsystem='idmap',
-                  source=IDMAP_NSS_SRC,
+                  source='idmap_nss.c',
 -                 deps='samba-util',
 +                 deps='samba-util krb5',
                   init_function='',
                   internal_module=bld.SAMBA3_IS_STATIC_MODULE('idmap_nss'),
                   enabled=bld.SAMBA3_IS_ENABLED_MODULE('idmap_nss'))
-@@ -89,7 +89,7 @@
+@@ -78,7 +78,7 @@
  bld.SAMBA3_MODULE('idmap_tdb',
                   subsystem='idmap',
-                  source=IDMAP_TDB_SRC,
--                 deps='samba-util tdb',
-+                 deps='samba-util tdb krb5',
+                  source='idmap_tdb.c',
+-                 deps='samba-util tdb IDMAP_TDB_COMMON',
++                 deps='samba-util tdb krb5 IDMAP_TDB_COMMON',
                   init_function='',
+                  allow_undefined_symbols=True,
                   internal_module=bld.SAMBA3_IS_STATIC_MODULE('idmap_tdb'),
-                  enabled=bld.SAMBA3_IS_ENABLED_MODULE('idmap_tdb'))

@@ -27,7 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 # Samba does not work properly on i386 when built by studio with -xO3+.
 ifeq ($(MACH), sparc)
-# standard options
+WAFOPT1	= -j64
 else
 # Both SPRO_VROOT and studio_OPT vars must use the override keyword otherwise
 # Userland will ignore it and use its default value.
@@ -37,10 +37,13 @@ else
 override studio_OPT = -xO1
 endif
 
+# parfait seems to spin on us
+export PARFAIT_BUILD=no
+
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.1.23
-TPNO=			27625
-COMPONENT_ARCHIVE_HASH= sha256:2c33291bf5454ba05e8b5fdc2c57ee010cf44d077e57a307ad2e7be9fac27cd2
+COMPONENT_VERSION=	4.4.2
+TPNO=			27969
+COMPONENT_ARCHIVE_HASH= sha256:eaecd41a85ebb9507b8db9856ada2a949376e9d53cf75664b5493658f6e5926a
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -67,42 +70,15 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # directory to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
+# Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
+PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
 # Oracle HSM is not supported on 12.0 yet but the libsam.so target should rather be commented out than removed
-# (note) change compiler bitness here when Samba became 64bits
 #$(PROTO_DIR)/opt/SUNWsamfs/lib/$(MACH64)/libsam.so: Solaris/libsam.c
 #	$(MKDIR) $(@D)
 #	$(CC.studio.64) -m64 -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
 #		-I$(COMPONENT_DIR)/Solaris/include \
 #		-o $@
-
-# Samba 4 needs extension of krb5 API, which is implemented in a Samba private
-# library libgssapi_krb5.so.  Once MIT Kerberos is updated in Solaris 12 to
-# version 1.9 or higher this extension will no longer be needed
-# see Bug 18308792 for details.
-$(PROTO_DIR)/usr/lib/samba/libgssapi_krb5.so: Solaris/dummy.c
-	$(MKDIR) $(@D)
-	$(CC.studio.32) -m32 -G $(studio_PIC) -hlibgssapi_krb5.so Solaris/dummy.c \
-		-R/usr/lib/gss \
-		-M$(COMPONENT_DIR)/Solaris/gssapi_krb5-mapfile-vers \
-		-o $@
-
-$(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so: Solaris/dummy.c
-	$(MKDIR) $(@D)
-	$(CC.studio.64) -m64 -G $(studio_PIC) -hlibgssapi_krb5.so Solaris/dummy.c \
-		-R/usr/lib/gss/$(MACH64) \
-		-M$(COMPONENT_DIR)/Solaris/gssapi_krb5-mapfile-vers \
-		-o $@
-
-$(PROTO_DIR)/usr/include/gssapi/gssapi_krb5.h: Solaris/gssapi_krb5.h
-	$(MKDIR) $(@D)
-	$(CP) Solaris/gssapi_krb5.h $@
-
-$(PROTO_DIR)/usr/bin/krb5-config:	Solaris/krb5-config
-	$(MKDIR) $(@D)
-	sed -e "s#_SAMBA_BUILD_PROTO_#$(PROTO_DIR)#" \
-	   $(COMPONENT_DIR)/Solaris/krb5-config > $@
-	$(CHMOD) 755 $@
 
 # Compiler settings
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
@@ -142,15 +118,15 @@ CONFIGURE_OPTIONS +=	--localstatedir=/var/samba
 CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
 CONFIGURE_OPTIONS +=	--sharedstatedir=/var/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/samba
-
+# Whenever getfacl is found HAVE_SOLARIS_UNIXWARE_ACLS is set and
+# vfs_solarisacl is placed into the list of the static modules
 CONFIGURE_OPTIONS +=	--with-static-modules=
 $(BUILD_DIR_SMB)/.configured:	CONFIGURE_OPTIONS += \
-	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex,vfs_solarisacl
+	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 $(BUILD_DIR_WINB)/.configured:	CONFIGURE_OPTIONS += \
 	--with-shared-modules=idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
-CONFIGURE_OPTIONS +=	--enable-nss-wrapper
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-libldap=ldap_r
 CONFIGURE_OPTIONS +=	--with-system-mitkrb5
@@ -177,6 +153,7 @@ CONFIGURE_ENV +=	LINKFLAGS="$(LD_OPTIONS) $(LDFLAGS)"
 CONFIGURE_ENV.64 +=	MACH64="$(MACH64)"
 CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV += 	INSTALL="$(INSTALL)"
 
 # Propagation of smb.conf with default settings.
 $(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
@@ -194,8 +171,7 @@ $(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
 # enough.
 
 # Prepare build dir for Samba + Winbind.
-$(BUILD_DIR_SMB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/gssapi_krb5.h \
-		$(PROTO_DIR)/usr/bin/krb5-config
+$(BUILD_DIR_SMB)/.BDprep: $(SOURCE_DIR)/.prep
 	# re-create configure dir
 	$(MKDIR) $(@D)
 	# Clone SOURCE_DIR
@@ -205,7 +181,7 @@ $(BUILD_DIR_SMB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/gs
 	$(TOUCH) $@
 
 # Configure of Samba + Winbind.
-$(BUILD_DIR_SMB)/.configured:	$(BUILD_DIR_SMB)/.BDprep $(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so
+$(BUILD_DIR_SMB)/.configured: $(BUILD_DIR_SMB)/.BDprep
 	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
 		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
@@ -231,8 +207,7 @@ $(BUILD_DIR_SMB)/.installed:	$(BUILD_DIR_SMB)/.built
 	$(TOUCH) $@
 
 # Prepare build dir for Winbind (without Samba) for different bitness.
-$(BUILD_DIR_WINB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/gssapi_krb5.h \
-		$(PROTO_DIR)/usr/bin/krb5-config
+$(BUILD_DIR_WINB)/.BDprep: $(SOURCE_DIR)/.prep
 	# re-create configure dir
 	$(MKDIR) $(@D)
 	# Clone SOURCE_DIR
@@ -242,13 +217,13 @@ $(BUILD_DIR_WINB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/g
 	$(TOUCH) $@
 
 # Configure of Winbind (without Samba) for different bitness.
-$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep $(PROTO_DIR)/usr/lib/samba/libgssapi_krb5.so
+$(BUILD_DIR_WINB)/.configured: $(BUILD_DIR_WINB)/.BDprep
 	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
 		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
 
 # Build of Winbind (without Samba) for different bitness.
-WB_TARGETS =	--targets=nss_winbind,pamsmbpass,pamwinbind
+WB_TARGETS =	--targets=nss_winbind,pamwinbind
 $(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
 	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
 	    $(WB_TARGETS) )
@@ -279,6 +254,16 @@ build:		$(BUILD_DIR_SMB)/.built $(BUILD_DIR_WINB)/.built
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 install:	$(BUILD_DIR_SMB)/.installed $(BUILD_DIR_WINB)/.installed
+	# set version of python interpreter for pkglint
+	find $(PROTO_DIR) -name \*.py -print0 | \
+	   while IFS= read -r -d $$'\0' file; do \
+		/usr/bin/sed -e '1,1s&^#!.*python[:blank:]\{0,\}$$&#!$(PYTHON.$(PYTHON_VERSION))&' \
+		   $$file > $$file.pyverset ; \
+	   done
+	find $(PROTO_DIR) -name \*.py.pyverset -print0 | \
+	   while IFS= read -r -d $$'\0' file; do \
+		$(MV) $$file `echo $$file | sed -e 's/[.]pyverset$$//'` ; \
+	   done
 
 test:		$(NO_TESTS)
 
@@ -288,20 +273,18 @@ clean::
 	$(RM) -r $(BUILD_DIR)
 
 REQUIRED_PACKAGES += library/file-monitor/gamin
+REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/security/crypto
-REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/library/security/libsasl
-REQUIRED_PACKAGES += system/library/security/libsasl2
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += system/network/ldap/openldap

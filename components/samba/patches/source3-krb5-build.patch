@@ -1,30 +1,40 @@
-Source: Home brewed
-Fixes issues with differences of Solaris krb5 and MIT krb5
+Source: in-house
+Up-stream Acceptability: Patch is fixing the Solaris build in consequences
+   of the "krb5" patch and is Solaris specific only.
+   It is heavily acceptable by community.
 
---- a/source3/wscript_build	2014-09-08 09:26:14.000000000 +0000
-+++ samba-4.1.12/source3/wscript_build	2014-10-21 18:40:58.045669267 +0000
-@@ -842,6 +842,7 @@
-                         param
-                         dbwrap
-                         samba3-util
-+                        krb5
-                         errors3''',
-                    vars=locals())
- 
-@@ -1098,7 +1099,7 @@
+--- a/source3/wscript_build	2016-03-30 03:20:20.000000000 -0700
++++ samba-4.4.1/source3/wscript_build	2016-04-09 17:34:50.562542184 -0700
+@@ -344,6 +344,7 @@
+                    lib/util_ea.c
+                    lib/background.c''',
+                    deps='''
++			krb5
+                         samba3util
+                         LIBTSOCKET
+                         NDR_MESSAGING
+@@ -774,7 +775,7 @@
  
  bld.SAMBA3_LIBRARY('trusts_util',
                     source='libsmb/trusts_util.c',
--                   deps='libcli_netlogon3 msrpc3 pdb',
-+                   deps='libcli_netlogon3 msrpc3 pdb krb5',
-                    vars=locals(),
+-                   deps='libcli_netlogon3 msrpc3 samba-passdb',
++                   deps='libcli_netlogon3 msrpc3 samba-passdb krb5',
                     private_library=True)
  
-@@ -1276,6 +1277,7 @@
-                  libsmb
-                  param
-                  KRBCLIENT
-+                 krb5
-                  ndr-standard
+ bld.SAMBA3_SUBSYSTEM('tdb-wrap3',
+@@ -1350,6 +1351,7 @@
+ bld.SAMBA3_BINARY('smbcacls',
+                  source='utils/smbcacls.c lib/util_sd.c',
+                  deps='''
++		 krb5
+                  talloc
+                  popt_samba3
                   msrpc3
-                  gpo
+@@ -1375,6 +1377,7 @@
+ bld.SAMBA3_BINARY('sharesec',
+                  source='utils/sharesec.c lib/util_sd.c',
+                  deps='''
++		 krb5
+                  talloc
+                  msrpc3
+                  libcli_lsa3
