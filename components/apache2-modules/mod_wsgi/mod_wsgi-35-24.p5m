@@ -20,24 +20,25 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/web/server/apache-24/module/apache-wsgi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="mod_wsgi plugin for Apache Web Server v2.4"
+    value=pkg:/web/server/apache-24/module/apache-wsgi-35@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Python 3.5 mod_wsgi plugin for Apache Web Server v2.4"
 set name=com.oracle.info.description \
-    value="the mod_wsgi plugin for Apache Web Server v2.4"
+    value="the Python 3.5 mod_wsgi plugin for Apache Web Server v2.4"
+set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/162
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend type=conditional \
-    fmri=web/server/apache-24/module/apache-wsgi-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-27
-depend type=conditional \
-    fmri=web/server/apache-24/module/apache-wsgi-34@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-34
+file path=usr/apache2/2.4/libexec/mod_wsgi-3.5.so \
+    pkg.linted.userland.action001.2=true
+link path=usr/apache2/2.4/libexec/mod_wsgi.so target=mod_wsgi-3.5.so \
+    mediator=python mediator-version=3.5
+license mod_wsgi.license license=Apache2.0
 
