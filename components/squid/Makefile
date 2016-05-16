@@ -43,6 +43,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
+# <getopt.h> changed between 11 & 12.
+ifeq ($(OS_VERSION), 5.11)
+CXXFLAGS +=	-Wno-write-strings
+endif
 
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 
