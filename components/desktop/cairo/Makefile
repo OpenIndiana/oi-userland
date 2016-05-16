@@ -39,6 +39,14 @@ COMPONENT_BUGDB=	library/cairo
 
 TPNO=			24139
 
+# Requires newer version of pixman from X, available in S12 but not 11.3,
+# so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 # Cairo tests currently require an X display & require more work to run properly
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
