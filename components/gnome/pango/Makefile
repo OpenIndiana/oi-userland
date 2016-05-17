@@ -38,6 +38,13 @@ COMPONENT_BUGDB=	gnome/pango
 
 TPNO=			24871
 
+# Requires harfbuzz, which we cannot build on 11.3, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 CONFIGURE_OPTIONS += --enable-gtk-doc
