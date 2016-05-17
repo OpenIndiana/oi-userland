@@ -75,6 +75,12 @@ from nova.volume.cinder import translate_volume_exception
 from nova.volume.cinder import _untranslate_volume_summary_view
 
 solariszones_opts = [
+    cfg.StrOpt('boot_volume_type',
+               default=None,
+               help='Cinder volume type to use for boot volumes'),
+    cfg.StrOpt('boot_volume_az',
+               default=None,
+               help='Cinder availability zone to use for boot volumes'),
     cfg.StrOpt('glancecache_dirname',
                default='/var/share/nova/images',
                help='Default path to Glance cache for Solaris Zones.'),
@@ -1189,13 +1195,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _create_boot_volume(self, context, instance):
         """Create a (Cinder) volume service backed boot volume"""
+        boot_vol_az = CONF.boot_volume_az
+        boot_vol_type = CONF.boot_volume_type
         try:
             vol = self._volume_api.create(
                 context,
                 instance['root_gb'],
                 instance['hostname'] + "-" + self._rootzpool_suffix,
                 "Boot volume for instance '%s' (%s)"
-                % (instance['name'], instance['uuid']))
+                % (instance['name'], instance['uuid']),
+                volume_type=boot_vol_type,
+                availability_zone=boot_vol_az)
             # TODO(npower): Polling is what nova/compute/manager also does when
             # creating a new volume, so we do likewise here.
             while True:
