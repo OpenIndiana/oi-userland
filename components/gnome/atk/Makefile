@@ -38,6 +38,14 @@ COMPONENT_BUGDB=	gnome/a11y-libs-core
 
 TPNO=			24624
 
+# Requires newer version of library/glib2, not buildable on 11.3, so do not
+# publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Workaround for build failures due to atk Makefiles not passing CFLAGS or
