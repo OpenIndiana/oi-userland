@@ -41,6 +41,13 @@ COMPONENT_BUGDB=	utility/gnu-compiler
 
 TPNO=			17028
 
+# Bootstrapping problems.  To be obsoleted soon, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32=
+INSTALL_32=
+PUBLISH_STAMP=
+endif
+
 INSTALL_TARGET=
 include $(WS_MAKE_RULES)/gnu-component.mk
 
