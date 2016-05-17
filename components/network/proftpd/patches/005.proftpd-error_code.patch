@@ -1,18 +1,3 @@
-diff --git a/include/dirtree.h b/include/dirtree.h
-index 0f41986..fe7b14b 100644
---- a/include/dirtree.h
-+++ b/include/dirtree.h
-@@ -126,6 +126,10 @@ typedef struct cmd_struc {
-   pr_table_t *notes;		/* Private data for passing/retaining between handlers */
- 
-   int cmd_id;			/* Index into commands list, for faster comparisons */
-+
-+  int error_code;               /* Stores errno of failed file transfer
-+                                 * commands. Required for Solaris auditing.
-+                                 */
- } cmd_rec;
- 
- struct config_struc {
 diff --git a/modules/mod_core.c b/modules/mod_core.c
 index e33ee11..f680748 100644
 --- a/modules/mod_core.c
@@ -154,11 +139,9 @@ index e33ee11..f680748 100644
  
      pr_response_add_err(R_550, "%s: %s", cmd->arg, strerror(xerrno));
  
-diff --git a/modules/mod_xfer.c b/modules/mod_xfer.c
-index bcfb487..41c597e 100644
---- a/modules/mod_xfer.c
-+++ b/modules/mod_xfer.c
-@@ -1190,6 +1190,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+--- a/modules/mod_xfer.c	2016-03-10 17:04:32.000000000 -0800
++++ proftpd-1.3.5b/modules/mod_xfer.c	2016-04-01 01:54:06.383804153 -0700
+@@ -1187,6 +1187,7 @@
    if (cmd->argc < 2) {
      pr_response_add_err(R_500, _("'%s' not understood"),
        pr_cmd_get_displayable_str(cmd, NULL));
@@ -166,7 +149,7 @@ index bcfb487..41c597e 100644
      errno = EINVAL;
      return PR_ERROR(cmd);
    }
-@@ -1200,6 +1201,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1197,6 +1198,7 @@
    if (!path ||
        !dir_check(cmd->tmp_pool, cmd, cmd->group, path, NULL)) {
      int xerrno = errno;
@@ -174,7 +157,7 @@ index bcfb487..41c597e 100644
  
      pr_log_debug(DEBUG8, "%s %s denied by <Limit> configuration", cmd->argv[0],
        cmd->arg);
-@@ -1232,6 +1234,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1229,6 +1231,7 @@
    if (xfer_check_limit(cmd) < 0) {
      pr_response_add_err(R_451, _("%s: Too many transfers"), cmd->arg);
      errno = EPERM;
@@ -182,7 +165,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -1244,6 +1247,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1241,6 +1244,7 @@
      pr_log_debug(DEBUG6, "AllowOverwrite denied permission for %s", cmd->arg);
      pr_response_add_err(R_550, _("%s: Overwrite permission denied"), cmd->arg);
      errno = EACCES;
@@ -190,7 +173,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -1267,6 +1271,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1264,6 +1268,7 @@
  
        /* Deliberately use EISDIR for anything non-file (e.g. directories). */
        errno = EISDIR;
@@ -198,7 +181,7 @@ index bcfb487..41c597e 100644
        return PR_ERROR(cmd);
      }
    }
-@@ -1285,6 +1290,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1282,6 +1287,7 @@
      session.restart_pos = 0L;
      session.xfer.xfer_type = STOR_DEFAULT;
      errno = EPERM;
@@ -206,7 +189,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -1306,6 +1312,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1303,6 +1309,7 @@
    /* Otherwise everthing is good */
    if (pr_table_add(cmd->notes, "mod_xfer.store-path",
        pstrdup(cmd->pool, path), 0) < 0) {
@@ -214,7 +197,7 @@ index bcfb487..41c597e 100644
      if (errno != EEXIST) {
        pr_log_pri(PR_LOG_NOTICE,
          "notice: error adding 'mod_xfer.store-path': %s", strerror(errno));
-@@ -1326,6 +1333,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1323,6 +1330,7 @@
        pr_response_add_err(R_501,
          _("REST not compatible with server configuration"));
        errno = EINVAL;
@@ -222,7 +205,7 @@ index bcfb487..41c597e 100644
        return PR_ERROR(cmd);
      }
  
-@@ -1335,6 +1343,7 @@ MODRET xfer_pre_stor(cmd_rec *cmd) {
+@@ -1332,6 +1340,7 @@
        pr_response_add_err(R_550,
          _("APPE not compatible with server configuration"));
        errno = EINVAL;
@@ -230,23 +213,23 @@ index bcfb487..41c597e 100644
        return PR_ERROR(cmd);
      }
  
-@@ -1400,6 +1409,7 @@ MODRET xfer_pre_stou(cmd_rec *cmd) {
-   tmpfd = mkstemp(filename);
-   if (tmpfd < 0) {
+@@ -1398,6 +1407,7 @@
+   stou_fd = mkstemp(filename);
+   if (stou_fd < 0) {
      int xerrno = errno;
 +    cmd->error_code = errno;
  
      pr_log_pri(PR_LOG_WARNING, "error: unable to use mkstemp(): %s",
        strerror(xerrno));
-@@ -1428,6 +1438,7 @@ MODRET xfer_pre_stou(cmd_rec *cmd) {
-   if (!filename ||
+@@ -1426,6 +1436,7 @@
+   if (filename == NULL ||
        !dir_check(cmd->tmp_pool, cmd, cmd->group, filename, NULL)) {
      int xerrno = errno;
 +    cmd->error_code = errno;
  
      /* Do not forget to delete the file created by mkstemp(3) if there is
       * an error.
-@@ -1461,12 +1472,14 @@ MODRET xfer_pre_stou(cmd_rec *cmd) {
+@@ -1459,12 +1470,14 @@
  
      /* Deliberately use EISDIR for anything non-file (e.g. directories). */
      errno = EISDIR;
@@ -261,15 +244,16 @@ index bcfb487..41c597e 100644
      if (errno != EEXIST) {
        pr_log_pri(PR_LOG_NOTICE,
          "notice: error adding 'mod_xfer.store-path': %s", strerror(errno));
-@@ -1492,6 +1505,7 @@ MODRET xfer_post_stou(cmd_rec *cmd) {
-   mode_t mode = 0666;
+@@ -1499,6 +1512,8 @@
+   perms = (0666 & ~mask);
  
-   if (pr_fsio_chmod(cmd->arg, mode) < 0) {
+   if (pr_fsio_chmod(cmd->arg, perms) < 0) {
 +    cmd->error_code = errno;
- 
++
      /* Not much to do but log the error. */
      pr_log_pri(PR_LOG_NOTICE, "error: unable to chmod '%s' to %04o: %s",
-@@ -1510,6 +1524,7 @@ MODRET xfer_pre_appe(cmd_rec *cmd) {
+       cmd->arg, perms, strerror(errno));
+@@ -1516,6 +1531,7 @@
    if (xfer_check_limit(cmd) < 0) {
      pr_response_add_err(R_451, _("%s: Too many transfers"), cmd->arg);
      errno = EPERM;
@@ -277,7 +261,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -1580,6 +1595,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1586,6 +1602,7 @@
  
      if (stor_fh) {
        if (pr_fsio_lseek(stor_fh, 0, SEEK_END) == (off_t) -1) {
@@ -285,7 +269,7 @@ index bcfb487..41c597e 100644
          pr_log_debug(DEBUG4, "unable to seek to end of '%s' for appending: %s",
            cmd->arg, strerror(errno));
          (void) pr_fsio_close(stor_fh);
-@@ -1588,6 +1604,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1594,6 +1611,7 @@
  
      } else {
        ferrno = errno;
@@ -293,7 +277,7 @@ index bcfb487..41c597e 100644
  
        (void) pr_trace_msg("fileperms", 1, "%s, user '%s' (UID %lu, GID %lu): "
          "error opening '%s': %s", cmd->argv[0], session.user,
-@@ -1601,6 +1618,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1607,6 +1625,7 @@
          O_WRONLY|(session.restart_pos ? 0 : O_TRUNC|O_CREAT));
      if (stor_fh == NULL) {
        ferrno = errno;
@@ -301,7 +285,7 @@ index bcfb487..41c597e 100644
  
        (void) pr_trace_msg("fileperms", 1, "%s, user '%s' (UID %lu, GID %lu): "
          "error opening '%s': %s", cmd->argv[0], session.user,
-@@ -1614,11 +1632,13 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1620,11 +1639,13 @@
      int xerrno = 0;
  
      if (pr_fsio_lseek(stor_fh, session.restart_pos, SEEK_SET) == -1) {
@@ -315,7 +299,7 @@ index bcfb487..41c597e 100644
        pr_log_debug(DEBUG4, "unable to stat '%s': %s", cmd->arg,
          strerror(errno));
        xerrno = errno;
-@@ -1755,6 +1775,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1761,6 +1782,7 @@
        pr_data_abort(EPERM, FALSE);
        errno = EPERM;
  #endif
@@ -323,7 +307,7 @@ index bcfb487..41c597e 100644
        return PR_ERROR(cmd);
      }
  
-@@ -1766,6 +1787,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1772,6 +1794,7 @@
      res = pr_fsio_write(stor_fh, lbuf, len);
      if (res != len) {
        int xerrno = EIO;
@@ -331,7 +315,7 @@ index bcfb487..41c597e 100644
  
        if (res < 0)
          xerrno = errno;
-@@ -1795,6 +1817,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1801,6 +1824,7 @@
  
      /* default abort errno, in case session.d et al has already gone away */
      int xerrno = ECONNABORTED;
@@ -339,7 +323,7 @@ index bcfb487..41c597e 100644
  
      stor_abort();
  
-@@ -1814,6 +1837,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1820,6 +1844,7 @@
  
      if (stor_complete() < 0) {
        int xerrno = errno;
@@ -347,7 +331,7 @@ index bcfb487..41c597e 100644
  
        _log_transfer('i', 'i');
  
-@@ -1826,12 +1850,14 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1832,12 +1857,14 @@
        if (xerrno == EDQUOT) {
          pr_response_add_err(R_552, "%s: %s", cmd->arg, strerror(xerrno));
          errno = xerrno;
@@ -362,7 +346,7 @@ index bcfb487..41c597e 100644
          return PR_ERROR(cmd);
        }
  #endif
-@@ -1845,6 +1871,7 @@ MODRET xfer_stor(cmd_rec *cmd) {
+@@ -1851,6 +1878,7 @@
          session.xfer.path_hidden) {
        if (pr_fsio_rename(session.xfer.path_hidden, session.xfer.path) != 0) {
          int xerrno = errno;
@@ -370,7 +354,7 @@ index bcfb487..41c597e 100644
  
          /* This should only fail on a race condition with a chmod/chown
           * or if STOR_APPEND is on and the permissions are squirrely.
-@@ -1947,6 +1974,7 @@ MODRET xfer_pre_retr(cmd_rec *cmd) {
+@@ -1953,6 +1981,7 @@
      pr_response_add_err(R_500, _("'%s' not understood"),
        pr_cmd_get_displayable_str(cmd, NULL));
      errno = EINVAL;
@@ -378,7 +362,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -1956,6 +1984,7 @@ MODRET xfer_pre_retr(cmd_rec *cmd) {
+@@ -1962,6 +1991,7 @@
    if (!dir ||
        !dir_check(cmd->tmp_pool, cmd, cmd->group, dir, NULL)) {
      int xerrno = errno;
@@ -386,7 +370,7 @@ index bcfb487..41c597e 100644
  
      pr_response_add_err(R_550, "%s: %s", cmd->arg, strerror(xerrno));
  
-@@ -1978,12 +2007,14 @@ MODRET xfer_pre_retr(cmd_rec *cmd) {
+@@ -1984,12 +2014,14 @@
    if (xfer_check_limit(cmd) < 0) {
      pr_response_add_err(R_451, _("%s: Too many transfers"), cmd->arg);
      errno = EPERM;
@@ -401,7 +385,7 @@ index bcfb487..41c597e 100644
  
      pr_response_add_err(R_550, "%s: %s", cmd->arg, strerror(xerrno));
  
-@@ -2000,6 +2031,7 @@ MODRET xfer_pre_retr(cmd_rec *cmd) {
+@@ -2006,6 +2038,7 @@
  
      /* Deliberately use EISDIR for anything non-file (e.g. directories). */
      errno = EISDIR;
@@ -409,7 +393,7 @@ index bcfb487..41c597e 100644
      return PR_ERROR(cmd);
    }
  
-@@ -2014,12 +2046,14 @@ MODRET xfer_pre_retr(cmd_rec *cmd) {
+@@ -2020,12 +2053,14 @@
        cmd->arg);
      session.restart_pos = 0L;
      errno = EPERM;
@@ -424,7 +408,7 @@ index bcfb487..41c597e 100644
      if (errno != EEXIST) {
        pr_log_pri(PR_LOG_NOTICE, "notice: error adding 'mod_xfer.retr-path': %s",
          strerror(errno));
-@@ -2046,6 +2080,7 @@ MODRET xfer_retr(cmd_rec *cmd) {
+@@ -2052,6 +2087,7 @@
    retr_fh = pr_fsio_open(dir, O_RDONLY);
    if (retr_fh == NULL) {
      int xerrno = errno;
@@ -432,7 +416,7 @@ index bcfb487..41c597e 100644
  
      (void) pr_trace_msg("fileperms", 1, "%s, user '%s' (UID %lu, GID %lu): "
        "error opening '%s': %s", cmd->argv[0], session.user,
-@@ -2059,6 +2094,7 @@ MODRET xfer_retr(cmd_rec *cmd) {
+@@ -2065,6 +2101,7 @@
    if (pr_fsio_stat(dir, &st) < 0) {
      /* Error stat'ing the file. */
      int xerrno = errno;
@@ -440,7 +424,7 @@ index bcfb487..41c597e 100644
      pr_fsio_close(retr_fh);
      errno = xerrno;
  
-@@ -2083,6 +2119,7 @@ MODRET xfer_retr(cmd_rec *cmd) {
+@@ -2089,6 +2126,7 @@
      if (pr_fsio_lseek(retr_fh, session.restart_pos,
          SEEK_SET) == (off_t) -1) {
        int xerrno = errno;
@@ -448,7 +432,7 @@ index bcfb487..41c597e 100644
        pr_fsio_close(retr_fh);
        errno = xerrno;
        retr_fh = NULL;
-@@ -2143,6 +2180,7 @@ MODRET xfer_retr(cmd_rec *cmd) {
+@@ -2149,6 +2187,7 @@
      retr_abort();
  
      /* Set errno to EPERM ("Operation not permitted") */
@@ -456,7 +440,7 @@ index bcfb487..41c597e 100644
      pr_data_abort(EPERM, FALSE);
      return PR_ERROR(cmd);
    }
-@@ -2174,6 +2212,7 @@ MODRET xfer_retr(cmd_rec *cmd) {
+@@ -2180,6 +2219,7 @@
         * is preserved; errno itself might be overwritten in retr_abort().
         */
        int xerrno = errno;
@@ -464,3 +448,16 @@ index bcfb487..41c597e 100644
  
        retr_abort();
        pr_data_abort(xerrno, FALSE);
+--- a/include/dirtree.h	2016-03-10 17:04:32.000000000 -0800
++++ proftpd-1.3.5b/include/dirtree.h	2016-04-01 02:00:13.315707095 -0700
+@@ -127,6 +127,10 @@
+ 
+   int cmd_id;			/* Index into commands list, for faster comparisons */
+ 
++  int error_code;		/* Stores errno of failed file transfer commands.
++				 * Required for Solaris auditing.
++				 */
++
+   /* If we detect that the client sent commands for a protocol OTHER than
+    * FTP, then this field will be FALSE; the protocol field will identify
+    * the detected protocol.
