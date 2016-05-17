@@ -1,6 +1,14 @@
---- tracker-0.10.37/src/tracker-extract/tracker-extract-gif.c.1	2016-04-14 00:08:10.550167384 +0300
-+++ tracker-0.10.37/src/tracker-extract/tracker-extract-gif.c	2016-04-14 00:08:27.953555945 +0300
-@@ -574,7 +574,7 @@
+--- tracker-0.10.37/src/tracker-extract/tracker-extract-gif.c.~1~	2011-12-02 13:50:04.000000000 +0400
++++ tracker-0.10.37/src/tracker-extract/tracker-extract-gif.c	2016-05-17 18:54:30.301922946 +0300
+@@ -552,6 +552,7 @@
+ 	GifFileType *gifFile = NULL;
+ 	gchar *filename;
+ 	int fd;
++	int errorCode; 
+ 
+ 	filename = g_filename_from_uri (uri, NULL, NULL);
+ 	size = tracker_file_get_size (filename);
+@@ -574,7 +575,7 @@
  		return;
  	}	
  
@@ -9,3 +17,12 @@
  		PrintGifError ();
  		close (fd);
  		return;
+@@ -588,7 +589,7 @@
+ 
+ 	read_metadata (preupdate, metadata, gifFile, uri);
+ 
+-	if (DGifCloseFile (gifFile) != GIF_OK) {
++	if (DGifCloseFile (gifFile, &errorCode) != GIF_OK) {
+ 		PrintGifError ();
+ 	}
+ }
