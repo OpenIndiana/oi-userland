@@ -37,6 +37,14 @@ COMPONENT_BUGDB=	utility/r
 
 TPNO=			26540
 
+# Requires newer version of system/linker from ON, available in S12 but not
+# 11.3, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 # Need to build the tests before using them.
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
