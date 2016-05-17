@@ -40,6 +40,13 @@ COMPONENT_BUGDB=	gnome/gtk+
 
 TPNO=			24778
 
+# Requires gdk-pixbuf, which we cannot build on 11.3, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 ETCDIR.64="$(ETCDIR)/$(MACH64)"
 
 include $(WS_MAKE_RULES)/gnome-component.mk
@@ -65,6 +72,7 @@ CONFIGURE_ENV += ac_cv_lib_mlib_mlib_ImageSetStruct=no
 # Tell g-ir-scanner which compiler to use since upstream Makefile forgot to
 COMPONENT_BUILD_ENV += INTROSPECTION_SCANNER_ENV='CC=$(CC_FOR_BUILD)'
 
+ifneq ($(BUILD_TYPE), evaluation)
 # Generate and install architecture-specific configuration files.
 PROTOETCGTKDIR.32=	$(PROTO_DIR)/$(ETCDIR.32)/gtk-2.0
 PROTOETCGTKDIR.64=	$(PROTO_DIR)/$(ETCDIR.64)/gtk-2.0
@@ -86,6 +94,7 @@ $(PROTOETCIMMCONF.64):
 	  $(GSED) -e "s#$(PROTO_DIR)/##" > $(PROTOETCIMMCONF.64)
 
 install: $(PROTOETCIMMCONF.32) $(PROTOETCIMMCONF.64)
+endif
 
 # Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
