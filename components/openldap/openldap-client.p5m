@@ -46,16 +46,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/openldap/ldap.conf owner=root group=openldap mode=0644 \
     overlay=allow preserve=true
 file path=etc/openldap/ldap.conf.default
-link path=usr/bin/ldapadd target=openldapmodify mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/bin/ldapdelete target=openldapdelete mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/bin/ldapmodify target=openldapmodify mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/bin/ldapmodrdn target=openldapmodrdn mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/bin/ldapsearch target=openldapsearch mediator=ldap \
-    mediator-implementation=openldap
+link path=usr/bin/ldapadd target=openldapmodify
+link path=usr/bin/ldapdelete target=openldapdelete
+link path=usr/bin/ldapmodify target=openldapmodify
+link path=usr/bin/ldapmodrdn target=openldapmodrdn
+link path=usr/bin/ldapsearch target=openldapsearch
 link path=usr/bin/openldapadd target=openldapmodify
 # The bypasses (and manual dependency on libsasl at the end of the file)
 # are required for building with the cyrus-sasl proto area because of
@@ -77,6 +72,14 @@ file usr/bin/ldapsearch path=usr/bin/openldapsearch \
 file usr/bin/ldapurl path=usr/bin/openldapurl
 file usr/bin/ldapwhoami path=usr/bin/openldapwhoami \
     pkg.depend.bypass-generate=libsasl2.so.3
+link path=usr/include/lber.h target=openldap/lber.h
+link path=usr/include/lber_types.h target=openldap/lber_types.h
+link path=usr/include/ldap.h target=openldap/ldap.h
+link path=usr/include/ldap_cdefs.h target=openldap/ldap_cdefs.h
+link path=usr/include/ldap_features.h target=openldap/ldap_features.h
+link path=usr/include/ldap_schema.h target=openldap/ldap_schema.h
+link path=usr/include/ldap_utf8.h target=openldap/ldap_utf8.h
+link path=usr/include/ldif.h target=openldap/ldif.h
 file path=usr/include/openldap/lber.h
 file path=usr/include/openldap/lber_types.h
 file path=usr/include/openldap/ldap.h
@@ -93,6 +96,7 @@ link path=usr/lib/$(MACH64)/libldap-2.4.so target=libldap-2.4.so.2.10.7
 link path=usr/lib/$(MACH64)/libldap-2.4.so.2 target=libldap-2.4.so.2.10.7
 file path=usr/lib/$(MACH64)/libldap-2.4.so.2.10.7 \
     pkg.depend.bypass-generate=libsasl2.so.3
+link path=usr/lib/$(MACH64)/libldap.so target=libldap_r-2.4.so.2.10.7
 link path=usr/lib/$(MACH64)/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.7
 link path=usr/lib/$(MACH64)/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.7
 file path=usr/lib/$(MACH64)/libldap_r-2.4.so.2.10.7 \
@@ -105,6 +109,7 @@ link path=usr/lib/liblber.so target=liblber-2.4.so.2.10.7
 link path=usr/lib/libldap-2.4.so target=libldap-2.4.so.2.10.7
 link path=usr/lib/libldap-2.4.so.2 target=libldap-2.4.so.2.10.7
 file path=usr/lib/libldap-2.4.so.2.10.7 pkg.depend.bypass-generate=libsasl2.so.3
+link path=usr/lib/libldap.so target=libldap_r-2.4.so.2.10.7
 link path=usr/lib/libldap_r-2.4.so target=libldap_r-2.4.so.2.10.7
 link path=usr/lib/libldap_r-2.4.so.2 target=libldap_r-2.4.so.2.10.7
 file path=usr/lib/libldap_r-2.4.so.2.10.7 \
@@ -120,20 +125,11 @@ link path=usr/lib/openldap/bin/ldappasswd target=../../../bin/openldappasswd
 link path=usr/lib/openldap/bin/ldapsearch target=../../../bin/openldapsearch
 link path=usr/lib/openldap/bin/ldapurl target=../../../bin/openldapurl
 link path=usr/lib/openldap/bin/ldapwhoami target=../../../bin/openldapwhoami
-link path=usr/share/man/man1/ldapadd.1 target=../man1oldap/ldapadd.1oldap \
-    mediator=ldap mediator-implementation=openldap
-link path=usr/share/man/man1/ldapdelete.1 \
-    target=../man1oldap/ldapdelete.1oldap mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/share/man/man1/ldapmodify.1 \
-    target=../man1oldap/ldapmodify.1oldap mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/share/man/man1/ldapmodrdn.1 \
-    target=../man1oldap/ldapmodrdn.1oldap mediator=ldap \
-    mediator-implementation=openldap
-link path=usr/share/man/man1/ldapsearch.1 \
-    target=../man1oldap/ldapsearch.1oldap mediator=ldap \
-    mediator-implementation=openldap
+link path=usr/share/man/man1/ldapadd.1 target=../man1oldap/ldapadd.1oldap
+link path=usr/share/man/man1/ldapdelete.1 target=../man1oldap/ldapdelete.1oldap
+link path=usr/share/man/man1/ldapmodify.1 target=../man1oldap/ldapmodify.1oldap
+link path=usr/share/man/man1/ldapmodrdn.1 target=../man1oldap/ldapmodrdn.1oldap
+link path=usr/share/man/man1/ldapsearch.1 target=../man1oldap/ldapsearch.1oldap
 link path=usr/share/man/man1/openldapadd.1 target=../man1oldap/ldapadd.1oldap
 link path=usr/share/man/man1/openldapcompare.1 \
     target=../man1oldap/ldapcompare.1oldap
