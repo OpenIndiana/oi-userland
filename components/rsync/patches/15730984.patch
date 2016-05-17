@@ -39,15 +39,19 @@ that builds are reproducible between workspaces.
  		}
  
  		/* FALLTHROUGH */
-@@ -233,7 +234,7 @@
+
+--- Originals/cleanup.c	2016-05-09 14:57:04.922251814 -0700
++++ rsync-3.1.2/cleanup.c	2016-05-09 14:58:25.902915968 -0700
+@@ -235,7 +235,7 @@
  			rprintf(FINFO,
  				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): "
- 				"about to call exit(%d)\n",
--				who_am_i(), first_code, exit_file, exit_line, exit_code);
-+				who_am_i(), first_code, basename((char *)exit_file), exit_line, exit_code);
+ 				"about to call exit(%d)%s\n",
+-				who_am_i(), first_code, exit_file, exit_line, exit_code,
++				who_am_i(), first_code, basename((char *)exit_file), exit_line, exit_code,
+ 				dry_run ? " (DRY RUN)" : "");
  		}
- 
- 		/* FALLTHROUGH */
+
+		/* FALLTHROUGH */ 
 --- rsync-3.1.0/t_stub.c.orig	Tue Jun 11 18:06:53 2013
 +++ rsync-3.1.0/t_stub.c	Mon Mar 17 14:58:24 2014
 @@ -20,6 +20,7 @@

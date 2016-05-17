@@ -125,11 +125,11 @@ use of "\&" except where it's needed at the beginning of the line.
  if the module is not read\-only).
  .IP 
  When this parameter is enabled, rsync will not attempt to map users and groups
-@@ -231,12 +231,12 @@
- used by these library functions (traditionally /etc/passwd and
- /etc/group, but perhaps additional dynamic libraries as well).
+@@ -222,12 +222,12 @@
+ being enabled (disabling name lookups).  See below for what a chroot needs in
+ order for name lookups to succeed.
  .IP 
--If you copy the necessary resources into the module\(cq\&s chroot area, you
+-If you copy library resources into the module\(cq\&s chroot area, you
 -should protect them through your OS\(cq\&s normal user/group or ACL settings (to
 -prevent the rsync module\(cq\&s user from being able to change them), and then
 -hide them from the user\(cq\&s view via \(dq\&exclude\(dq\& (see how in the discussion of
@@ -138,7 +138,7 @@ use of "\&" except where it's needed at the beginning of the line.
 +prevent the rsync module's user from being able to change them), and then
 +hide them from the user's view via "exclude" (see how in the discussion of
  that parameter).  At that point it will be safe to enable the mapping of users
--and groups by name using the \(dq\&numeric ids\(dq\& daemon parameter (see below).
+-and groups by name using this \(dq\&numeric ids\(dq\& daemon parameter.
 +and groups by name using the "numeric ids" daemon parameter (see below).
  .IP 
  Note also that you are free to setup custom user/group information in the
@@ -798,3 +798,41 @@ use of "\&" except where it's needed at the beginning of the line.
  .PP 
  .nf 
      &include /path/rsyncd.d 
+--- Originals/rsyncd.conf.5	2016-05-12 14:15:47.486937445 -0700
++++ rsync-3.1.2/rsyncd.conf.5	2016-05-12 14:24:16.445410448 -0700
+@@ -85,7 +85,7 @@
+ .PP 
+ The first parameters in the file (before a [module] header) are the
+ global parameters.
+-Rsync also allows for the use of a \(dq\&[global]\(dq\& module name to indicate the
++Rsync also allows for the use of a "global" module name to indicate the
+ start of one or more global\-parameter sections (the name must be lower case).
+ .PP 
+ You may also include any module parameters in the global part of the
+@@ -155,7 +155,7 @@
+ name contains whitespace, each internal sequence of whitespace will be
+ changed into a single space, while leading or trailing whitespace will be
+ discarded.
+-Also, the name cannot be \(dq\&global\(dq\& as that exact name indicates that
++Also, the name cannot be "global" as that exact name indicates that
+ global parameters follow (see above).
+ .PP 
+ As with GLOBAL PARAMETERS, you may use references to environment variables in
+@@ -218,7 +218,7 @@
+ The default for "use chroot" is true, and is the safer choice (especially
+ if the module is not read\-only).
+ .IP 
+-When this parameter is enabled, the \(dq\&numeric\-ids\(dq\& option will also default to
++When this parameter is enabled, the "numeric ids" option will also default to
+ being enabled (disabling name lookups).  See below for what a chroot needs in
+ order for name lookups to succeed.
+ .IP 
+@@ -241,7 +241,7 @@
+ the \fB\-\-numeric\-ids\fP command\-line option.  By default, this parameter is
+ enabled for chroot modules and disabled for non\-chroot modules.
+ Also keep in mind that uid/gid preservation requires the module to be
+-running as root (see \(dq\&uid\(dq\&) or for \(dq\&fake super\(dq\& to be configured.
++running as root (see "uid") or for "fake super" to be configured.
+ .IP 
+ A chroot\-enabled module should not have this parameter enabled unless you've
+ taken steps to ensure that the module has the necessary resources it needs
