@@ -37,6 +37,14 @@ COMPONENT_ARCHIVE_HASH= \
 
 TPNO=			24751
 
+# Requires newer version of library/glib2 which we cannot build on 11.3, so
+# do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 SYSTEM_TEST_TARGET= $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -57,6 +65,7 @@ CONFIGURE_OPTIONS += --with-x11
 COMPONENT_BUILD_ENV += CFLAGS="$(strip $(CFLAGS))"
 COMPONENT_BUILD_ENV += LDFLAGS="$(strip $(LDFLAGS))"
 
+ifneq ($(BUILD_TYPE), evaluation)
 # Generate and install architecture-specific configuration files that define
 # the set of plugins available.
 PROTOLCACHEDIR.32=	$(PROTO_DIR)/$(USRLIB.32)/gdk-pixbuf-2.0/2.10.0
@@ -79,6 +88,7 @@ $(PROTOLCACHECONF.64):
 	  $(GSED) -e "s#$(PROTO_DIR)/##" > $(PROTOLCACHECONF.64)
 
 install: $(PROTOLCACHECONF.32) $(PROTOLCACHECONF.64)
+endif
 
 # Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
