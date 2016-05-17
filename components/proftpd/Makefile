@@ -48,6 +48,14 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 TPNO_MOD_GSS=		13480
 
+# Requires 64-bit version of libwrap from ON, available in S12 but not 11.3,
+# so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 # libcheck and specific Perl Test::Unit version is required for full test
 TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
