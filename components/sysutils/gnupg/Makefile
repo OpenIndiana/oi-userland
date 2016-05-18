@@ -21,7 +21,7 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
 COMPONENT_VERSION=	2.0.28
@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 #studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -89,15 +89,15 @@ PINENTRY_MANIFEST =	manifest-$(MACH)-pinentry.depend
 
 # Work around pkgdepend bug which doesn't resolve dependencies from
 # the local workspace repo. Fortunately we only have to do this once.
-DEPENDED +=	$(WS_TOP)/components/libksba/build/$(LIBKSBA_MANIFEST)
-DEPENDED +=	$(WS_TOP)/components/libassuan/build/$(LIBASSUAN_MANIFEST)
-DEPENDED +=	$(WS_TOP)/components/gpgme/build/$(GPGME_MANIFEST)
-DEPENDED +=	$(WS_TOP)/components/pinentry/build/$(PINENTRY_MANIFEST)
+DEPENDED +=	$(WS_TOP)/components/library/libksba/build/$(LIBKSBA_MANIFEST)
+DEPENDED +=	$(WS_TOP)/components/library/libassuan/build/$(LIBASSUAN_MANIFEST)
+DEPENDED +=	$(WS_TOP)/components/sysutils/gpgme/build/$(GPGME_MANIFEST)
+DEPENDED +=	$(WS_TOP)/components/sysutils/pinentry/build/$(PINENTRY_MANIFEST)
 
-PKG_PROTO_DIRS += $(WS_TOP)/components/libksba
-PKG_PROTO_DIRS += $(WS_TOP)/components/libassuan
-PKG_PROTO_DIRS += $(WS_TOP)/components/gpgme
-PKG_PROTO_DIRS += $(WS_TOP)/components/pinentry
+PKG_PROTO_DIRS += $(WS_TOP)/components/library/libksba
+PKG_PROTO_DIRS += $(WS_TOP)/components/library/libassuan
+PKG_PROTO_DIRS += $(WS_TOP)/components/sysutils/gpgme
+PKG_PROTO_DIRS += $(WS_TOP)/components/sysutils/pinentry
 
 MAN8LIST = addgnupghome applygnupgdefaults
 
@@ -117,7 +117,16 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/pth
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += library/security/libksba
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += security/pinentry
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += web/curl
