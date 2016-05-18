@@ -130,9 +130,9 @@ int solaris_get_devname(const char *, char *, size_t);
 int solaris_get_dllower(const char *, char *, size_t);
 int solaris_get_dlprop(const char *, const char *, const char *, char *,
     size_t);
-int solaris_set_dlprop_ulong(const char *, const char *, void *);
-int solaris_set_dlprop_boolean(const char *, const char *, void *);
-int solaris_set_dlprop_string(const char *, const char *, void *);
+int solaris_set_dlprop_ulong(const char *, const char *, void *, boolean_t);
+int solaris_set_dlprop_boolean(const char *, const char *, void *, boolean_t);
+int solaris_set_dlprop_string(const char *, const char *, void *, boolean_t);
 int solaris_plumb_if(int, const char *, sa_family_t);
 int solaris_unplumb_if(int, const char *, sa_family_t);
 boolean_t dlparse_drvppa(const char *, char *, uint_t, uint_t *);
@@ -168,6 +168,7 @@ uint64_t solaris_flow_walk(void *, struct ofpbuf *, boolean_t,
 boolean_t solaris_is_uplink_class(const char *);
 boolean_t solaris_dlparse_zonelinkname(const char *, char *, zoneid_t *);
 
+void solaris_parse_cpuinfo(long int *);
 
 #define	SOLARIS_MAX_BUFSIZE	1024
 #endif	/* UTIL_SOLARIS_H */

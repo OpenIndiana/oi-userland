@@ -3,10 +3,43 @@ This patch fixes a bug in ovsthread_key_destruct__.
 This patch has not been proposed upstream but will be proposed for 2.5.
 
 diff --git a/lib/ovs-thread.c b/lib/ovs-thread.c
-index 529756f..8b76eb9 100644
+index 529756f..86a3fa4 100644
 --- a/lib/ovs-thread.c
 +++ b/lib/ovs-thread.c
-@@ -641,8 +641,10 @@ ovsthread_key_destruct__(void *slots_)
+@@ -28,6 +28,10 @@
+ #include "socket-util.h"
+ #include "util.h"
+ 
++#ifdef __sun
++#include <util-solaris.h>
++#endif
++
+ #ifdef __CHECKER__
+ /* Omit the definitions in this file because they are somewhat difficult to
+  * write without prompting "sparse" complaints, without ugliness or
+@@ -476,6 +480,13 @@ ovs_thread_stats_next_bucket(const struct ovsthread_stats *stats, size_t i)
+     return i;
+ }
+ 
++#ifdef __sun
++static void
++parse_cpuinfo(long int *n_cores)
++{
++    solaris_parse_cpuinfo(n_cores);
++}
++#else
+ 
+ /* Parses /proc/cpuinfo for the total number of physical cores on this system
+  * across all CPU packages, not counting hyper-threads.
+@@ -531,6 +542,7 @@ parse_cpuinfo(long int *n_cores)
+ 
+     *n_cores = cores;
+ }
++#endif
+ 
+ /* Returns the total number of cores on this system, or 0 if the number cannot
+  * be determined.
+@@ -641,8 +653,10 @@ ovsthread_key_destruct__(void *slots_)
      n = n_keys;
      ovs_mutex_unlock(&key_mutex);
  

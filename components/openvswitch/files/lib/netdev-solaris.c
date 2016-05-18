@@ -941,12 +941,10 @@ netdev_create_impl_etherstub(void)
 	if (error != 0) {
 		VLOG_ERR("netdev_create_impl_etherstub: failed to create %s: "
 		    "%s", NETDEV_IMPL_ETHERSTUB, ovs_strerror(error));
-
 	} else {
 		boolean_t bval = B_TRUE;
-
 		error = solaris_set_dlprop_boolean(NETDEV_IMPL_ETHERSTUB,
-		    "openvswitch", &bval);
+		    "openvswitch", &bval, B_FALSE);
 		if (error != 0) {
 			(void) solaris_delete_etherstub(NETDEV_IMPL_ETHERSTUB);
 			VLOG_ERR("netdev_create_impl_etherstub: failed to "
@@ -964,7 +962,7 @@ netdev_delete_impl_etherstub(void)
 	int		error;
 
 	error = solaris_set_dlprop_boolean(NETDEV_IMPL_ETHERSTUB,
-	    "openvswitch", &bval);
+	    "openvswitch", &bval, B_FALSE);
 	if (error != 0) {
 		VLOG_ERR("netdev_create_impl_etherstub: failed to "
 		    "set 'openvswitch' property on %s: %s: ",
@@ -982,7 +980,24 @@ netdev_delete_impl_etherstub(void)
 boolean_t
 netdev_impl_etherstub_exists(void)
 {
-	return (solaris_etherstub_exists(NETDEV_IMPL_ETHERSTUB));
+	char	prop[DLADM_PROP_VAL_MAX];
+	int	error;
+
+	error = solaris_get_dlprop(NETDEV_IMPL_ETHERSTUB, "openvswitch",
+	    "current", prop, sizeof (prop));
+	if (error == ENODEV)
+		return (B_FALSE);
+
+	/*
+	 * If the implicit etherstub exists, but the openvswitch
+	 * property is not set, then something has gone wrong.
+	 */
+	if (strcmp(prop, "1") != 0) {
+		VLOG_FATAL("%s does not have openvswitch property set",
+		    NETDEV_IMPL_ETHERSTUB);
+	}
+
+	return (B_TRUE);
 }
 
 /*
@@ -1111,7 +1126,8 @@ netdev_solaris_set_etheraddr(struct netdev *netdev_,
 	 */
 	(void) snprintf(buffer, sizeof (buffer), ETH_ADDR_FMT,
 	    ETH_ADDR_ARGS(mac));
-	error = solaris_set_dlprop_string(netdev_name, "mac-address", buffer);
+	error = solaris_set_dlprop_string(netdev_name, "mac-address", buffer,
+	    B_TRUE);
 	if (error != 0) {
 		VLOG_ERR("set etheraddr %s on %s device failed: %s",
 		    buffer, netdev_name, ovs_strerror(error));
@@ -1303,7 +1319,7 @@ netdev_solaris_set_mtu(const struct netdev *netdev_ OVS_UNUSED, int mtu)
 	/*
 	 * MTU is a datalink property.
 	 */
-	error = solaris_set_dlprop_ulong(netdev_name, "mtu", &ulval);
+	error = solaris_set_dlprop_ulong(netdev_name, "mtu", &ulval, B_TRUE);
 	if (error != 0) {
 		VLOG_ERR("set mtu on %s device failed: %s",
 		    netdev_name, ovs_strerror(error));
@@ -2379,13 +2395,6 @@ exit:
 }
 
 static int
-netdev_internal_get_stats(const struct netdev *netdev_ OVS_UNUSED,
-    struct netdev_stats *stats OVS_UNUSED)
-{
-	return (0);
-}
-
-static int
 netdev_internal_get_status(const struct netdev *netdev OVS_UNUSED,
     struct smap *smap)
 {
@@ -2467,7 +2476,7 @@ const struct netdev_class netdev_internal_class =
     NETDEV_SOLARIS_CLASS(
 	"internal",
 	netdev_solaris_construct,
-	netdev_internal_get_stats,
+	netdev_solaris_get_stats,
 	NULL,				/* set_stats */
 	NULL,				/* get_features */
 	netdev_internal_get_status);

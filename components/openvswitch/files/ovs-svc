@@ -92,7 +92,7 @@ start_ovsdb_server() {
 	typeset -r OVSDB_PIDFILE=${OVS_TMP_DIR}/ovsdb-server.pid
 
 	${OVSDB_SERVER_PATH} ${OVSDB_DATABASE} \
-	    -vconsole:emer -vsyslog:off -vfile:info \
+	    -vconsole:emer -vsyslog:off -vfile:warn \
 	    --remote=punix:${OVSDB_REMOTE} \
 	    --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
 	    --private-key=db:Open_vSwitch,SSL,private_key \
@@ -156,7 +156,7 @@ start_vswitch_server() {
 	create_ovs_tempdir
 
 	 ${PFEXEC} ${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
-	    -vconsole:emer -vsyslog:off -vfile:info --mlockall --no-chdir \
+	    -vconsole:emer -vsyslog:off -vfile:warn --mlockall --no-chdir \
 	    --log-file=${VSWITCHD_LOGFILE} \
 	    --pidfile=${VSWITCHD_PIDFILE} \
 	    --detach

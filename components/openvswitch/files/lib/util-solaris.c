@@ -826,6 +826,13 @@ solaris_get_dlprop(const char *netdev_name, const char *prop_name,
 		memcpy(prop_value, buf, prop_len);
 		break;
 	case DDLVT_BOOLEAN:
+		if (dlval->ddlv_bval == NULL) {
+			error = EINVAL;
+			goto out;
+		}
+		(void) snprintf(buf, sizeof (buf), "%d", *dlval->ddlv_bval);
+		memcpy(prop_value, buf, prop_len);
+		break;
 	case DDLVT_BOOLEANS:
 	case DDLVT_LONG:
 	case DDLVT_LONGS:
@@ -846,7 +853,7 @@ out:
 
 static int
 solaris_set_dlprop(const char *netdev_name, const char *propname, void *arg,
-    dlmgr_DLValueType_t vtype)
+    dlmgr_DLValueType_t vtype, boolean_t temp)
 {
 	dlmgr__rad_dict_string_DLValue_t *sprop_dict = NULL;
 	dlmgr_DLValue_t			*old_val = NULL;
@@ -914,18 +921,19 @@ solaris_set_dlprop(const char *netdev_name, const char *propname, void *arg,
 		break;
 	}
 
-	/* we need to add temporary flag */
-	bzero(&new_val, sizeof (new_val));
-	old_val = NULL;
-	new_val.ddlv_type = DDLVT_BOOLEAN;
-	new_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(
-	    sprop_dict, "temporary", &new_val, &old_val);
-	if (status != RCE_OK) {
-		error = EINVAL;
-		goto out;
+	if (temp) {
+		bzero(&new_val, sizeof (new_val));
+		old_val = NULL;
+		new_val.ddlv_type = DDLVT_BOOLEAN;
+		new_val.ddlv_bval = &b_true;
+		status = dlmgr__rad_dict_string_DLValue_put(
+		    sprop_dict, "temporary", &new_val, &old_val);
+		if (status != RCE_OK) {
+			error = EINVAL;
+			goto out;
+		}
+		dlmgr_DLValue_free(old_val);
 	}
-	dlmgr_DLValue_free(old_val);
 
 	status = dlmgr_Datalink_setProperties(link, sprop_dict, &derrp);
 	if (status != RCE_OK) {
@@ -945,35 +953,35 @@ out:
 
 int
 solaris_set_dlprop_boolean(const char *netdev_name, const char *propname,
-    void *arg)
+    void *arg, boolean_t temp)
 {
-	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_BOOLEAN));
+	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_BOOLEAN,
+	    temp));
 }
 
 int
 solaris_set_dlprop_ulong(const char *netdev_name, const char *propname,
-    void *arg)
+    void *arg, boolean_t temp)
 {
-	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_ULONG));
+	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_ULONG,
+	    temp));
 }
 
 int
 solaris_set_dlprop_string(const char *netdev_name, const char *propname,
-    void *arg)
+    void *arg, boolean_t temp)
 {
-	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_STRING));
+	return (solaris_set_dlprop(netdev_name, propname, arg, DDLVT_STRING,
+	    temp));
 }
 
 int
 solaris_create_vnic(const char *linkname, const char *vnicname)
 {
 	dlmgr__rad_dict_string_DLValue_t *prop = NULL;
-	dlmgr__rad_dict_string_DLValue_t *macaddr_info = NULL;
 	dlmgr_DatalinkError_t		*derrp = NULL;
 	dlmgr_DLValue_t			*old_val = NULL;
 	dlmgr_DLValue_t			name_val;
-	dlmgr_DLValue_t			type_val;
-	dlmgr_DLValue_t			macaddr_info_val;
 	rc_instance_t			*linkmgr = NULL;
 	rc_instance_t			*vnic = NULL;
 	rc_err_t			status;
@@ -998,29 +1006,6 @@ solaris_create_vnic(const char *linkname, const char *vnicname)
 	dlmgr_DLValue_free(old_val);
 	old_val = NULL;
 
-	macaddr_info = dlmgr__rad_dict_string_DLValue_create(linkmgr);
-	if (macaddr_info == NULL)
-		goto out;
-
-	bzero(&type_val, sizeof (type_val));
-	type_val.ddlv_type = DDLVT_STRING;
-	type_val.ddlv_sval = strdupa("auto");
-	status = dlmgr__rad_dict_string_DLValue_put(macaddr_info,
-	    "mac-address-type", &type_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-	old_val = NULL;
-
-	bzero(&macaddr_info_val, sizeof (macaddr_info_val));
-	macaddr_info_val.ddlv_type = DDLVT_DICTIONARY;
-	macaddr_info_val.ddlv_dval = macaddr_info;
-	status = dlmgr__rad_dict_string_DLValue_put(prop, "mac-address-info",
-	    &macaddr_info_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-
 	status = dlmgr_DatalinkManager_createVNIC(linkmgr, vnicname, prop,
 	    &vnic, &derrp);
 	if (status == RCE_SERVER_OBJECT) {
@@ -1031,7 +1016,6 @@ solaris_create_vnic(const char *linkname, const char *vnicname)
 	rc_instance_rele(vnic);
 	dlmgr_DatalinkError_free(derrp);
 out:
-	dlmgr__rad_dict_string_DLValue_free(macaddr_info);
 	dlmgr__rad_dict_string_DLValue_free(prop);
 	rc_instance_rele(linkmgr);
 	return ((status != RCE_OK) ? ENOTSUP : 0);
@@ -1041,11 +1025,8 @@ int
 solaris_modify_vnic(const char *linkname, const char *vnicname)
 {
 	dlmgr__rad_dict_string_DLValue_t *sprop_dict = NULL;
-	dlmgr__rad_dict_string_DLValue_t *macaddr_info = NULL;
 	dlmgr_DLValue_t			*old_val = NULL;
 	dlmgr_DLValue_t			new_val;
-	dlmgr_DLValue_t			type_val;
-	dlmgr_DLValue_t			macaddr_info_val;
 	rc_instance_t			*link = NULL;
 	rc_err_t			status;
 	dlmgr_DatalinkError_t   	*derrp = NULL;
@@ -1075,43 +1056,6 @@ solaris_modify_vnic(const char *linkname, const char *vnicname)
 	}
 	dlmgr_DLValue_free(old_val);
 
-	/* we need to add temporary flag */
-	bzero(&new_val, sizeof (new_val));
-	old_val = NULL;
-	new_val.ddlv_type = DDLVT_BOOLEAN;
-	new_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(
-	    sprop_dict, "temporary", &new_val, &old_val);
-	if (status != RCE_OK) {
-		error = EINVAL;
-		goto out;
-	}
-	dlmgr_DLValue_free(old_val);
-
-	macaddr_info = dlmgr__rad_dict_string_DLValue_create(link);
-	if (macaddr_info == NULL)
-		goto out;
-
-	bzero(&type_val, sizeof (type_val));
-	old_val = NULL;
-	type_val.ddlv_type = DDLVT_STRING;
-	type_val.ddlv_sval = strdupa("auto");
-	status = dlmgr__rad_dict_string_DLValue_put(macaddr_info,
-	    "mac-address-type", &type_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-
-	bzero(&macaddr_info_val, sizeof (macaddr_info_val));
-	old_val = NULL;
-	macaddr_info_val.ddlv_type = DDLVT_DICTIONARY;
-	macaddr_info_val.ddlv_dval = macaddr_info;
-	status = dlmgr__rad_dict_string_DLValue_put(sprop_dict,
-	    "mac-address-info", &macaddr_info_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-
 	status = dlmgr_Datalink_setProperties(link, sprop_dict, &derrp);
 	if (status != RCE_OK) {
 		if (status == RCE_SERVER_OBJECT) {
@@ -1123,7 +1067,6 @@ solaris_modify_vnic(const char *linkname, const char *vnicname)
 	}
 out:
 	dlmgr_DatalinkError_free(derrp);
-	dlmgr__rad_dict_string_DLValue_free(macaddr_info);
 	dlmgr__rad_dict_string_DLValue_free(sprop_dict);
 	rc_instance_rele(link);
 	return (error);
@@ -1209,36 +1152,6 @@ solaris_delete_etherstub(const char *name)
 	rc_instance_rele(linkmgr);
 
 	return ((status != RCE_OK) ? ENOTSUP : 0);
-}
-
-boolean_t
-solaris_etherstub_exists(const char *name)
-{
-	rc_instance_t	*etherstub = NULL;
-	boolean_t	exists;
-	rc_err_t	status;
-
-	status = dlmgr_Etherstub__rad_lookup(rad_conn, B_TRUE, &etherstub, 1,
-	    "name", name);
-	if (status == RCE_OK) {
-		dlmgr__rad_dict_string_DLValue_t *linkinfo = NULL;
-		dlmgr_DatalinkError_t *derrp = NULL;
-
-		status = dlmgr_Etherstub_getInfo(etherstub, NULL, 0,
-		    &linkinfo, &derrp);
-		if (status == RCE_OK) {
-			exists = _B_TRUE;
-			dlmgr__rad_dict_string_DLValue_free(linkinfo);
-		} else {
-			exists = _B_FALSE;
-			dlmgr_DatalinkError_free(derrp);
-		}
-	} else {
-		exists = _B_FALSE;
-	}
-
-	rc_instance_rele(etherstub);
-	return (exists);
 }
 
 static int
@@ -1717,7 +1630,7 @@ solaris_maxbw_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
 	const char *max_rate = NULL;
 	uint64_t maxbw;
 	char *endp = NULL;
-	int err;
+	int err = EINVAL;
 
 	smap_init(&details);
 	if (queueid == UINT32_MAX || nofports != 1)
@@ -2907,6 +2820,7 @@ flow_propval2action_settnl(char **propvals, int nval, struct ofpbuf *action)
 	 * The property value is in the format of "src:xxx" "dst:xxx"
 	 * "tun_id:0x%x" "tos:0x%x" "hoplimit:xxx"
 	 */
+	bzero(&tnl, sizeof (struct flow_tnl));
 	tnl.ip_tos = 0xff;
 	for (i = 0; i < nval; i++) {
 		(void) strlcpy(pval, propvals[i], sizeof (pval));
@@ -3692,4 +3606,73 @@ solaris_dlparse_zonelinkname(const char *name, char *link_name,
 	}
 
 	return (_B_TRUE);
+}
+
+/*
+ * Sets *n_cores to the total number of cores on this system, or 0 if the
+ * number cannot be determined.
+ */
+void
+solaris_parse_cpuinfo(long int *n_cores)
+{
+	kstat2_handle_t	handle;
+	kstat2_status_t	stat;
+	kstat2_map_t	map;
+	kstat2_nv_t	val;
+	char		kuri[1024];
+	int		coreid;
+	int		lcoreid = -1;
+	int		i;
+
+	*n_cores = 0;
+
+	stat = kstat2_open(&handle, NULL);
+	if (stat != KSTAT2_S_OK) {
+		dpif_log(1, "solaris_parse_cpuinfo kstat2_open failed (%s). "
+		    "Core count may be inaccurate.",
+		    kstat2_status_string(stat));
+		return;
+	}
+
+	for (i = 0; ; i++) {
+		(void) snprintf(kuri, sizeof (kuri),
+		    "kstat:/system/cpu/%d/info", i);
+		stat = kstat2_lookup_map(handle, kuri, &map);
+		if (stat == KSTAT2_S_OK) {
+			stat = kstat2_map_get(map, "core_id", &val);
+			if (stat != KSTAT2_S_OK) {
+				dpif_log(1, "solaris_parse_cpuinfo"
+				    "kstat2_map_get failed (%s). "
+				    "Core count may be inaccurate.",
+				    kstat2_status_string(stat));
+				*n_cores = 0;
+				break;
+			}
+
+			if (val->type != KSTAT2_NVVT_INT) {
+				dpif_log(1, "solaris_parse_cpuinfo "
+				    "kstat2 value error. "
+				    "Core count may be inaccurate.");
+				*n_cores = 0;
+				break;
+			}
+
+			coreid = val->kstat2_integer;
+			if (coreid != lcoreid) {
+				(*n_cores)++;
+				lcoreid = coreid;
+			}
+		} else if (stat == KSTAT2_S_NOT_FOUND) {
+			/* no more cores */
+			break;
+		} else {
+			dpif_log(1, "solaris_parse_cpuinfo kstat2_lookup_map "
+			    "failed (%s). Core count may be inaccurate.",
+			    kstat2_status_string(stat));
+			*n_cores = 0;
+			break;
+		}
+	}
+
+	kstat2_close(&handle);
 }
