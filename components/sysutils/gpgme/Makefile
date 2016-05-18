@@ -18,25 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Colin Ellis. All rights reserved.
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.3.3
+PATH = /usr/gnu/bin:/usr/bin
+
+COMPONENT_NAME=		gpgme
+COMPONENT_VERSION=	1.1.8
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
+COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0c7f5ffe34d0414f6951d9880a46fcc2985c487f7c36369b9f11ad41131c7786
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
+    sha256:0f73a219e0b389f25c8d9b563eb8e0a9ffd9dd038d91b572eaf0ea33beff05e2
+COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
+PATCH_LEVEL = 0
+
+CFLAGS += $(CPP_LARGEFILES)
+CFLAGS += $(XPG6MODE)
+CFLAGS += $(CPP_POSIX)
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += $(gcc_C99_ENABLE)
+
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 CONFIGURE_OPTIONS  +=		--localstatedir=/var
@@ -44,6 +55,14 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS  +=		--enable-largefile
+CONFIGURE_OPTIONS  +=		--with-pth=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS  +=		--disable-gpg-test
+CONFIGURE_OPTIONS  +=		--disable-gpgsm-test
+CONFIGURE_OPTIONS  +=		--disable-gpgconf-test
+CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg2
+CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
+CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
 CONFIGURE_OPTIONS  +=		--with-pic
 
 build: $(BUILD_32_and_64)
@@ -52,7 +71,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/pth
+REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += system/library
