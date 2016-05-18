@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Captain XNV
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libFS
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_FMRI=           x11/library/libfs
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libFS - X Font Servers library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9007fcfbd37bfa6ede4000ec4b5c2dc6dc0f52789358361b43f68e9ae4d6aed7
+  sha256:2e9d4c07026a7401d4fa4ffae86e6ac7fec83f50f3268fa85f52718e479dc4f3
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libFS-1.0.6.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libFS.license
