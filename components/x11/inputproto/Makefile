@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= inputproto
-COMPONENT_VERSION= 2.3.1
+COMPONENT_VERSION= 2.3.2
 COMPONENT_SUMMARY= headers & documentation for XInputExtension extension to the X11 protocol
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5a47ee62053a6acef3a83f506312494be1461068d0b9269d818839703b95c1d1
+  sha256:893a6af55733262058a27b38eeb1edc733669f01d404e8581b167f03c03ef31d
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
@@ -47,3 +47,5 @@ COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += text/asciidoc
