@@ -201,3 +201,4 @@ ifneq ($(KRB5_API), solaris)
     REQUIRED_PACKAGES += security/kerberos-5
 endif
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/network/ldap/openldap

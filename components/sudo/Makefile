@@ -95,4 +95,5 @@ VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/security/crypto
+REQUIRED_PACKAGES += system/network/ldap/openldap
 REQUIRED_PACKAGES += text/groff/groff-core

@@ -87,3 +87,4 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network/ldap/openldap

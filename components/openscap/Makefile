@@ -121,5 +121,6 @@ REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/library/libv12n
 REQUIRED_PACKAGES += system/management/rad
 REQUIRED_PACKAGES += system/management/rad/client/rad-c
+REQUIRED_PACKAGES += system/network/ldap/openldap
 REQUIRED_PACKAGES += system/zones
 REQUIRED_PACKAGES += web/curl

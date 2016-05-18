@@ -199,3 +199,4 @@ REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/network/ldap/openldap

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -80,3 +80,4 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/python/pyasn1-27
 REQUIRED_PACKAGES += library/python/pyasn1-modules-27
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/network/ldap/openldap

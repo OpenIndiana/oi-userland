@@ -78,4 +78,5 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/network/ldap/openldap
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi
