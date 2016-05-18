@@ -93,6 +93,7 @@ CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
 CONFIGURE_OPTIONS += no-ec2m
 CONFIGURE_OPTIONS += no-rc3
 CONFIGURE_OPTIONS += no-rc5
+CONFIGURE_OPTIONS += no-md2
 CONFIGURE_OPTIONS += no-mdc2
 CONFIGURE_OPTIONS += no-idea
 CONFIGURE_OPTIONS += no-hw_4758_cca
@@ -110,10 +111,6 @@ CONFIGURE_OPTIONS += threads
 CONFIGURE_OPTIONS += shared
 CONFIGURE_OPTIONS += fips --with-fipslibdir="$(FIPS_BUILD_DIR_$(BITS))/fips/"
 CONFIGURE_OPTIONS += --with-fipsdir="$(BUILD_DIR_$(BITS))"
-
-# MD2 is not enabled by default in OpensSSL but some software we have in
-# Userland needs it. One example is nmap.
-CONFIGURE_OPTIONS += enable-md2
 CONFIGURE_OPTIONS += no-seed
 
 # Disable SSLv2 and SSLv3 protocols
@@ -195,12 +192,6 @@ build:			$(BUILD_32_and_64)
 # We follow what we do for install in openssl/openssl-1.0.0 component. Please
 # see the comment in Makefile in there for more information.
 install:	$(INSTALL_32_and_64)
-
-# We need to modify the default lint flags to include patched opensslconf.h from
-# the build directory. If we do not do that, lint will complain about md2.h
-# which is not enabled by default but it is in our opensslconf.h.
-LFLAGS_32 := -I$(BUILD_DIR_32)/include $(LINT_FLAGS)
-LFLAGS_64 := -I$(BUILD_DIR_64)/include $(LINT_FLAGS)
 
 # Set modified lint flags for our lint library targets.
 $(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32)
