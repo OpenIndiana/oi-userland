@@ -40,3 +40,5 @@ TPNO=			5498
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
+
+PATCH_LEVEL = 2
