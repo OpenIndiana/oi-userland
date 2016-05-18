@@ -28,14 +28,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		R
-COMPONENT_VERSION=	3.2.3
+COMPONENT_VERSION=	3.2.5
 COMPONENT_PROJECT_URL=	http://www.r-project.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b93b7d878138279234160f007cb9b7f81b8a72c012a15566e9ec5395cfd9b6c1
+    sha256:60745672dce5ddc201806fa59f6d4e0ba6554d8ed78d0f9f0d79a629978f80b5
 COMPONENT_ARCHIVE_URL=	http://cran.mtu.edu/src/base/R-3/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/r
 
-TPNO=			26540
+TPNO=			28040
 
 # Requires newer version of system/linker from ON, available in S12 but not
 # 11.3, so do not publish.
