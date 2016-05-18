@@ -23,20 +23,22 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER=gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.8.3
-COMPONENT_SUBVERSION=		5
+COMPONENT_VERSION=		6.9.4
+COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
+COMPONENT_SUBVERSION=		1
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:daead80170bc6d44cf6a54b4817446cbb7211b8ee445532b64033af190265fe3
-COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
+    sha256:b7dbe07d481e3c81004930c4e169281a2d8fc067c5c5a5dd30499af60a21aa38
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
-TPNO=			17708
+TPNO=			28569
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -53,24 +55,28 @@ COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
 # directory to the build directory
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
+# Don't use rpath, or relink!
+COMPONENT_POST_CONFIGURE_ACTION = \
+        (cd $(BUILD_DIR_$(BITS)) ; \
+        $(GSED) -i \
+	-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
+	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
+	libtool)
+
 ifeq ($(OS_VERSION),5.11)
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
 endif
 
-# Show name of "error tag" as part of the warning
-CFLAGS.studio += -errtags=yes
-
-studio_C99MODE= $(studio_C99_ENABLE)
+# Prevent older versions of libMagick{Core,Wand}-6.Q16.so from the build
+# machine from being found ahead of new versions from the proto area.
+LD_OPTIONS_SO=		-L. -L../../magick/.libs
+COMPONENT_BUILD_ENV +=	LD_OPTIONS_SO="$(LD_OPTIONS_SO)"
 
 # To remove the compiler complaints about __restrict keyword,
 # -D_magickcore_restrict should be used.
-CFLAGS += -D_magickcore_restrict=
-
-# Needed to generate a decent RUNPATH for Magick.so
-#
-COMPONENT_BUILD_ARGS += LD="$(CC)"
-COMPONENT_BUILD_ARGS += LD_RUN_PATH="$(CONFIGURE_LIBDIR.$(BITS))"
+CPPFLAGS_USER += -D_magickcore_restrict=
+CONFIGURE_ENV += CPPFLAGS_USER=$(CPPFLAGS_USER)
 
 CONFIGURE_OPTIONS+= --with-modules
 CONFIGURE_OPTIONS+= --enable-shared
@@ -107,27 +113,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" ' 
 
-# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0 and
-# libMagickCore-6.Q16.so.1.0.0
-COMPONENT_POST_INSTALL_ACTION.32 += \
-	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
-	    $(PROTOUSRLIBDIR)/libMagick++-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RPATH' \
-	    $(PROTOUSRLIBDIR)/libMagick++-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
-	    $(PROTOUSRLIBDIR)/libMagickCore-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RPATH' \
-	    $(PROTOUSRLIBDIR)/libMagickCore-6.Q16.so.1.0.0
-
-COMPONENT_POST_INSTALL_ACTION.64 += \
-	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
-	    $(PROTOUSRLIBDIR64)/libMagick++-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RPATH' \
-	    $(PROTOUSRLIBDIR64)/libMagick++-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
-	    $(PROTOUSRLIBDIR64)/libMagickCore-6.Q16.so.1.0.0; \
-	$(ELFEDIT) -e 'dyn:delete RPATH' \
-	    $(PROTOUSRLIBDIR64)/libMagickCore-6.Q16.so.1.0.0
+PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += PERL_PKG=$(PERL_PKG)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -138,7 +125,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/lcms
+REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
@@ -146,6 +133,8 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/openmp
 REQUIRED_PACKAGES += x11/library/libx11
