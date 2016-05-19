@@ -14,7 +14,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcouchbase
-COMPONENT_VERSION=	2.5.8
+COMPONENT_VERSION=	2.6.0
 COMPONENT_PROJECT_URL=	http://developer.couchbase.com/documentation/server/4.0/sdks/c-2.4/c-intro.html
 COMPONENT_SUMMARY=	An library implementing Couchbase protocol
 COMPONENT_FMRI=         library/libcouchbase
@@ -22,7 +22,7 @@ COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:49a44a17184341c0b081ba1284898af339f0e71760f94875481ca9fd86dc0da6
+    sha256:9e4d5a8ccdf8451e5feb8d330c619ab3ecb60e3071cd169780d0a3599f0a2ef6
 COMPONENT_ARCHIVE_URL=	http://packages.couchbase.com/clients/c/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	ASL-2
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -43,6 +43,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/libev
+REQUIRED_PACKAGES += library/libevent
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
