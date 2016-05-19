@@ -20,21 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qunit
-COMPONENT_VERSION=	1.18.0
+COMPONENT_VERSION=	1.23.1
 COMPONENT_PROJECT_URL=	http://qunitjs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4b66ea61546142aef95c6cb135fc66d646f2d6527b5c190d8596f15424c05041
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:38f0f23e8441e1e2da6d4e90a10b85304eb52002d570e7016015d05718d4a3d5
 COMPONENT_ARCHIVE_URL=	https://github.com/jquery/qunit/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= 	javascript/qunit
 
-TPNO= 	23283
+TPNO= 	27977
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
@@ -45,18 +46,18 @@ publish: download prep
 # To run the test, you'll need to get pre-built installer of node.js for
 # Solaris at nodejs.org since node.js is not delivered as part of Solaris
 # yet. 
-# Then go to qunit's source code root, 'qunit-1.18.0',
+# Then go to qunit's source code root, such as 'qunit-1.23.1',
 # run `npm install -g grunt-cli` to have a global grunt binary,
 # and run `npm install` to get required node modules for additional grunt tasks.
 # Finally run `grunt` to start running all the test tasks.
-# However, phantomjs is not supported well in Solaris and there is not an intutive
+# However, phantomjs is not supported well in Solaris and there is not an intuitive
 # patch for fixing it, therefore `npm install` fails when it tries to install
 # phantomjs, and the test taks can't be run.
 # The phantomjs issue is discussed at:
 #
 # 	https://github.com/ariya/phantomjs/issues/10521
 #
-# These test tasks are passed sucessfully in a Mac OSX laptop. It'd be fine
+# These test tasks are passed successfully in a Mac OSX laptop. It'd be fine
 # to use QUnit in the browser.
 test:		$(NO_TESTS)
 
