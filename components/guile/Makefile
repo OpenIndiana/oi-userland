@@ -86,7 +86,5 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/gcc-3-runtime
-REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

@@ -51,7 +51,5 @@ CFLAGS += -g -fPIC
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_$(BITS))
 
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/gcc-3-runtime
-REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime

@@ -80,7 +80,5 @@ REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library/gcc-3-runtime
-REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
