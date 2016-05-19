@@ -10,23 +10,22 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXt
-COMPONENT_VERSION=        1.1.4
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.1.5
 COMPONENT_FMRI=           x11/library/toolkit/libxt
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXt - X Toolkit library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:843a97a988f5654872682a4120486d987d853a71651515472f55519ffae2dd57
+  sha256:46eeb6be780211fdd98c5109286618f6707712235fdd19df4ce1e6954f349f1a
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXt-1.1.4.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXt.license
