@@ -23,6 +23,10 @@
  */
 
 /*
+ * Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+ */
+
+/*
  * May 22, 2015
  * In version 6.8 a new packet interface has been introduced to OpenSSH,
  * while the old packet API has been provided in opacket.c.
@@ -115,15 +119,18 @@ kexgss_server(struct ssh *ssh)
 	case KEX_GSS_GEX_SHA1:
 		debug("Doing group exchange");
 		packet_read_expect(SSH2_MSG_KEXGSS_GROUPREQ);
-		min = packet_get_int();
-		nbits = packet_get_int();
-		max = packet_get_int();
-		min = MAX(DH_GRP_MIN, min);
-		max = MIN(DH_GRP_MAX, max);
+		kex->min = packet_get_int();
+		kex->nbits = packet_get_int();
+		kex->max = packet_get_int();
+		min = MAX(DH_GRP_MIN, kex->min);
+		max = MIN(DH_GRP_MAX, kex->max);
+		nbits = MAX(DH_GRP_MIN, kex->nbits);
+		nbits = MIN(DH_GRP_MAX, nbits);
 		packet_check_eom();
-		if (max < min || nbits < min || max < nbits)
+		if (kex->max < kex->min || kex->nbits < kex->min ||
+		    kex->max < kex->nbits)
 			fatal("GSS_GEX, bad parameters: %d !< %d !< %d",
-			    min, nbits, max);
+			    kex->min, kex->nbits, kex->max);
 		kex->dh = PRIVSEP(choose_dh(min, nbits, max));
 		if (kex->dh == NULL)
 			packet_disconnect("Protocol error:"
@@ -243,7 +250,7 @@ kexgss_server(struct ssh *ssh)
 		    buffer_ptr(kex->peer), buffer_len(kex->peer),
 		    buffer_ptr(kex->my), buffer_len(kex->my),
 		    NULL, 0,
-		    min, nbits, max,
+		    kex->min, kex->nbits, kex->max,
 		    kex->dh->p, kex->dh->g,
 		    dh_client_pub,
 		    kex->dh->pub_key,
