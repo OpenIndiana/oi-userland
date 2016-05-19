@@ -93,7 +93,7 @@ EXTRA_LIBS =		-lldap_r
 ifeq ($(OS_VERSION),5.11)
 EXTRA_LIBS +=		-lnsl -lsocket
 endif
-EXTRA_LIBS +=		-lscf -ldlpi -lsec -lzonecfg -lv12n
+EXTRA_LIBS +=		-lscf -ldlpi -lsec -lv12n
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS) $(EXTRA_LIBS)"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/doc/openscap/html/

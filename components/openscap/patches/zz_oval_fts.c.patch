@@ -1,0 +1,78 @@
+This patch removes the use of getzoneent and setzoneent
+which are private interfaces and is bypassing the
+non-global-zones by skipping things under /system/zones.
+This patch has not been contributed upstream but will be
+by 2016-Jul-01.
+--- openscap-1.2.6/src/OVAL/probes/oval_fts.c.~1~	2015-10-02 08:22:02.487343649 -0700
++++ openscap-1.2.6/src/OVAL/probes/oval_fts.c	2016-05-19 10:55:31.286973681 -0700
+@@ -45,7 +45,6 @@
+ #if defined(__SVR4) && defined(__sun)
+ #include "fts_sun.h"
+ #include <sys/mntent.h>
+-#include <libzonecfg.h>
+ #include <sys/avl.h>
+ #else
+ #include <fts.h>
+@@ -141,9 +140,10 @@
+ #define MNTTYPE_PROC	"proc"
+ #endif
+ 
++#define ZONES_PATH	"/system/zones/"
+ typedef struct zone_path {
+ 	avl_node_t avl_link_next;
+-	char zpath[MAXPATHLEN];
++	char zpath[1024];
+ } zone_path_t;
+ static avl_tree_t avl_tree_list;
+ 
+@@ -187,41 +187,8 @@
+ 
+ int load_zones_path_list()
+ {
+-	FILE *cookie;
+-	char *name;
+-	zone_state_t state_num;
+-	zone_path_t *temp = NULL;
+-	avl_index_t where;
+-	char rpath[MAXPATHLEN];
+-
+-	cookie = setzoneent();
+-	if (getzoneid() != GLOBAL_ZONEID)
+-		return (0);
+ 	avl_create(&avl_tree_list, compare_zoneroot,
+ 	    sizeof(zone_path_t), offsetof(zone_path_t, avl_link_next));
+-	while ((name = getzoneent(cookie)) != NULL) {
+-		if (strcmp(name, "global") == 0)
+-			continue;
+-		if (zone_get_state(name, &state_num) != Z_OK) {
+-			dE("Could not get zone state for %s\n", name);
+-			continue;
+-		} else if (state_num > ZONE_STATE_CONFIGURED) {
+-			temp = malloc(sizeof(zone_path_t));
+-			if (temp == NULL) {
+-				dE("Memory alloc failed\n");
+-				return(1);
+-			}
+-			if (zone_get_zonepath(name, rpath,
+-			    sizeof(rpath)) != Z_OK) {
+-				dE("Could not get zone path for %s\n",
+-				    name);
+-				continue;
+-			}
+-			if (realpath(rpath, temp->zpath) != NULL)
+-				avl_add(&avl_tree_list, temp);
+-		}
+-	}
+-	endzoneent(cookie);
+ 	return (0);
+ }
+ 
+@@ -241,6 +208,8 @@
+ 	zone_path_t temp;
+ 	avl_index_t where;
+ 
++	if (strnstr(path, ZONES_PATH, strlen(ZONES_PATH)) != NULL)
++		return (true);
+ 	strlcpy(temp.zpath, path, sizeof(temp.zpath));
+ 	if (avl_find(&avl_tree_list, &temp, &where) != NULL)
+ 		return (true);
