@@ -3,7 +3,7 @@
 # Copyright 2012 OpenStack Foundation
 # All Rights Reserved.
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -254,7 +254,8 @@ class DeviceManager(dhcp.DeviceManager):
             LOG.debug('Reusing existing device: %s.', interface_name)
         else:
             self.driver.plug(network.tenant_id, network.id,
-                             port.id, interface_name)
+                             port.id, interface_name, port.mac_address,
+                             network=network)
         ip_cidrs = []
         addrconf = False
         for fixed_ip in port.fixed_ips:

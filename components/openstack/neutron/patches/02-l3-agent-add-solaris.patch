@@ -1,25 +1,6 @@
 Changes to the Neutron L3 agent to port it to Solaris. These changes
 will eventually be proposed upstream.
 
---- neutron-2015.1.2/neutron/agent/l3_agent.py.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/neutron/agent/l3_agent.py	2016-01-28 23:07:42.233773807 -0800
-@@ -14,6 +14,7 @@
- #    License for the specific language governing permissions and limitations
- #    under the License.
- 
-+import platform
- import sys
- 
- from oslo_config import cfg
-@@ -46,6 +47,8 @@ def main(manager='neutron.agent.l3.agent
-     register_opts(cfg.CONF)
-     common_config.init(sys.argv[1:])
-     config.setup_logging()
-+    if platform.system() == "SunOS":
-+        manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
-     server = neutron_service.Service.create(
-         binary='neutron-l3-agent',
-         topic=topics.L3_AGENT,
 --- neutron-2015.1.2/neutron/agent/linux/daemon.py.~1~	2015-10-13 10:35:16.000000000 -0700
 +++ neutron-2015.1.2/neutron/agent/linux/daemon.py	2016-01-28 23:07:42.234372590 -0800
 @@ -18,12 +18,14 @@ import grp
@@ -75,3 +56,46 @@ will eventually be proposed upstream.
      if _IS_IPV6_ENABLED is None:
          disabled_ipv6_path = "/proc/sys/net/ipv6/conf/default/disable_ipv6"
          if os.path.exists(disabled_ipv6_path):
+*** neutron-2015.1.2/neutron/agent/l3_agent.py	2015-10-13 10:35:16.000000000 -0700
+--- new/neutron/agent/l3_agent.py	2016-05-14 07:44:53.695396597 -0700
+***************
+*** 14,19 ****
+--- 14,20 ----
+  #    License for the specific language governing permissions and limitations
+  #    under the License.
+  
++ import platform
+  import sys
+  
+  from oslo_config import cfg
+***************
+*** 24,29 ****
+--- 25,31 ----
+  from neutron.agent.linux import external_process
+  from neutron.agent.linux import interface
+  from neutron.agent.metadata import config as metadata_config
++ from neutron.agent.solaris import interface as solaris_interface
+  from neutron.common import config as common_config
+  from neutron.common import topics
+  from neutron.openstack.common import service
+***************
+*** 39,44 ****
+--- 41,47 ----
+      config.register_use_namespaces_opts_helper(conf)
+      config.register_agent_state_opts_helper(conf)
+      conf.register_opts(interface.OPTS)
++     conf.register_opts(solaris_interface.OPTS)
+      conf.register_opts(external_process.OPTS)
+  
+  
+***************
+*** 46,51 ****
+--- 49,56 ----
+      register_opts(cfg.CONF)
+      common_config.init(sys.argv[1:])
+      config.setup_logging()
++     if platform.system() == "SunOS":
++         manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
+      server = neutron_service.Service.create(
+          binary='neutron-l3-agent',
+          topic=topics.L3_AGENT,

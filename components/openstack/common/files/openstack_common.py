@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -16,17 +16,27 @@
 """ openstack_upgrade - common functions used by the various OpenStack
 components to facilitate upgrading of configuration files and MySQL
 databases/tables (if in use)
+
+Wrapper functions around ovs-vsctl(8) command used by Nova and Neutron to
+determine the lower-link needed for VNIC creation.
 """
 
+import collections
 from ConfigParser import NoOptionError
 from datetime import datetime
 import errno
 import glob
+import json
 import os
 import shutil
+from subprocess import Popen, PIPE
 import time
+import uuid
 
 import iniparse
+
+
+OVS_VSCTL_TIMEOUT = "10"
 
 
 def create_backups(directory):
@@ -230,3 +240,53 @@ def move_conf(original_file, new_file, mapping):
 
     with open(new_file, 'wb+') as fh:
         new.write(fh)
+
+
+def _val_to_py(val):
+    """Convert a json ovsdb return value to native python object"""
+    if isinstance(val, collections.Sequence) and len(val) == 2:
+        if val[0] == "uuid":
+            return uuid.UUID(val[1])
+        elif val[0] == "set":
+            return [_val_to_py(x) for x in val[1]]
+        elif val[0] == "map":
+            return {_val_to_py(x): _val_to_py(y) for x, y in val[1]}
+    return val
+
+
+def get_ovsdb_info(table, columns=None):
+    """Return a list of dictionaries where-in each dictionary captures the
+    requested (or all) column name and its value"""
+    cmd = ["/usr/sbin/ovs-vsctl", "-t", OVS_VSCTL_TIMEOUT, "-f", "json"]
+    if columns:
+        cmd.extend(["--columns", ",".join(columns)])
+    cmd.append("list")
+    cmd.append(table)
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        raise RuntimeError("Error running '%s': %s" % (" ".join(cmd), error))
+    output = output.strip().replace(r'\\', '\\')
+    try:
+        ovsinfo = json.loads(output)
+    except Exception as err:
+        raise RuntimeError("Failed to load %s as json: %s" % (output, err))
+    headings = ovsinfo['headings']
+    data = ovsinfo['data']
+    results = []
+    for record in data:
+        obj = {}
+        for pos, heading in enumerate(headings):
+            obj[heading] = _val_to_py(record[pos])
+        results.append(obj)
+    return results
+
+
+def is_ml2_plugin():
+    parser = iniparse.ConfigParser()
+    parser.readfp(open("/etc/neutron/neutron.conf"))
+    try:
+        core_plugin = parser.get("DEFAULT", "core_plugin")
+    except NoOptionError:
+        return False
+    return "ml2" in core_plugin.lower()

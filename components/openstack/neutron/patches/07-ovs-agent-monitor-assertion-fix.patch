@@ -1,0 +1,53 @@
+In-house patch to fix an issue where-in we are sending two kill events, from
+different contexts, to halt green threads and as a result we are tripping over
+an assert in Neutron OVS agent. It is tracked by
+
+  https://bugs.launchpad.net/neutron/+bug/1350903 (Ovs agent fails to kill ovsdb
+  monitor properly)
+
+and is still open.
+
+
+*** neutron-2015.1.2/neutron/agent/linux/ovsdb_monitor.py	Tue Oct 13 10:35:16 2015
+--- neutron-2015.1.2/neutron/agent/linux/ovsdb_monitor.py	Wed Mar 23 12:20:07 2016
+***************
+*** 94,101 ****
+                      eventlet.sleep()
+  
+      def _kill(self, *args, **kwargs):
+          self.data_received = False
+!         super(SimpleInterfaceMonitor, self)._kill(*args, **kwargs)
+  
+      def _read_stdout(self):
+          data = super(SimpleInterfaceMonitor, self)._read_stdout()
+--- 94,123 ----
+                      eventlet.sleep()
+  
+      def _kill(self, *args, **kwargs):
++         """Override async_process method.
++ 
++         Kill the process and the associated watcher greenthreads.
++         :param respawning: Optional, whether respawn will be subsequently
++                attempted.
++         """
+          self.data_received = False
+! 
+!         if not self._kill_event:
+!             return
+! 
+!         # Halt the greenthreads
+!         if not self._kill_event.ready():
+!             self._kill_event.send()
+! 
+!         pid = self.pid
+!         if pid:
+!             self._kill_process(pid)
+! 
+!         respawning = kwargs.get('respawning')
+!         if not respawning:
+!             # Clear the kill event to ensure the process can be
+!             # explicitly started again.
+!             self._kill_event = None
+  
+      def _read_stdout(self):
+          data = super(SimpleInterfaceMonitor, self)._read_stdout()

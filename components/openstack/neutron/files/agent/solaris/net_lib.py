@@ -17,9 +17,15 @@
 # @author: Girish Moodalbail, Oracle, Inc.
 #
 
+import eventlet
 import netaddr
 
+from oslo_log import log as logging
+
 from neutron.agent.linux import utils
+from neutron.i18n import _LE
+
+LOG = logging.getLogger(__name__)
 
 
 class CommandBase(object):
@@ -50,10 +56,10 @@ class IPInterface(CommandBase):
         return True
 
     @classmethod
-    def ipaddr_exists(cls, ifname, ipaddr):
+    def ipaddr_exists(cls, ifname, ipaddr, ifcheck=True):
 
-        if not cls.ifname_exists(ifname):
-            return False
+        if ifcheck and not cls.ifname_exists(ifname):
+                return False
 
         cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addr', ifname]
         stdout = cls.execute(cmd)
@@ -83,7 +89,7 @@ class IPInterface(CommandBase):
             if temp:
                 cmd.append('-t')
             self.execute_with_pfexec(cmd)
-        elif self.ipaddr_exists(self._ifname, ipaddr):
+        elif self.ipaddr_exists(self._ifname, ipaddr, ifcheck=False):
             return
 
         # If an address is IPv6, then to create a static IPv6 address
@@ -96,7 +102,8 @@ class IPInterface(CommandBase):
             mac_addr = stdout.splitlines()[0].strip()
             ll_addr = netaddr.EUI(mac_addr).ipv6_link_local()
 
-            if not self.ipaddr_exists(self._ifname, str(ll_addr)):
+            if not self.ipaddr_exists(self._ifname, str(ll_addr),
+                                      ifcheck=False):
                 # create a link-local address
                 cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                        str(ll_addr), self._ifname]
@@ -223,3 +230,36 @@ class Datalink(CommandBase):
         stdout = utils.execute(cmd)
 
         return stdout.splitlines()
+
+
+def _arping(iface_name, address, count):
+    # Set timeout with -w to ensure arping exits in case the interface
+    # is deleted while it is running
+    arping_cmd = ['/usr/sbin/arping', '-A', '-I', iface_name, '-c', count,
+                  '-w', 2 * count, address]
+    try:
+        utils.execute(arping_cmd, check_exit_code=False)
+    except Exception:
+        msg = _LE("Failed sending gratuitous ARP to %(addr)s on "
+                  "an interface %(iface)s")
+        LOG.exception(msg, {'addr': address, 'iface': iface_name})
+
+
+def send_ip_addr_adv_notif(iface_name, address, config):
+    """Send advance notification of an IP address assignment.
+
+    If the address is in the IPv4 family, send gratuitous ARP.
+
+    If the address is in the IPv6 family, no advance notification is
+    necessary, since the Neighbor Discovery Protocol (NDP), Duplicate
+    Address Discovery (DAD), and (for stateless addresses) router
+    advertisements (RAs) are sufficient for address resolution and
+    duplicate address detection.
+    """
+    count = config.send_arp_for_ha
+
+    def arping():
+        _arping(iface_name, address, count)
+
+    if count > 0 and netaddr.IPAddress(address).version == 4:
+        eventlet.spawn_n(arping)

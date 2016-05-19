@@ -27,6 +27,7 @@ import shutil
 import tempfile
 import uuid
 
+from openstack_common import get_ovsdb_info
 import rad.bindings.com.oracle.solaris.rad.archivemgr_1 as archivemgr
 import rad.bindings.com.oracle.solaris.rad.kstat_1 as kstat
 import rad.bindings.com.oracle.solaris.rad.zonemgr_1 as zonemgr
@@ -849,9 +850,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             if entry['device_name'] == rootmp:
                 root_ci = jsonutils.loads(entry['connection_info'])
                 # Let's make sure this is a well formed connection_info, by
-                # checking if it has a serial key that represents the volume_id.
-                # If not check to see if the block device has a volume_id, if so
-                # then assign this to the root_ci.serial.
+                # checking if it has a serial key that represents the
+                # volume_id. If not check to see if the block device has a
+                # volume_id, if so then assign this to the root_ci.serial.
                 #
                 # If we cannot repair the connection_info then simply do not
                 # return a root_ci and let the caller decide if they want to
@@ -1001,7 +1002,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             mount = entry['device_name']
             self.attach_volume(context, connection_info, instance, mount)
 
-        self._power_on(instance)
+        self._power_on(instance, network_info)
 
         if admin_password is not None:
             # Because there is no way to make sure a zone is ready upon
@@ -1332,6 +1333,201 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with ZoneConfig(zone) as zc:
             zc.setprop('capped-memory', mem_resource, '%dM' % memory_mb)
 
+    def _plug_vifs(self, instance, network_info):
+        # if the VIF is of EVS type (i.e., vif['type'] is ''),
+        # then nothing to do
+        if network_info is None or not network_info[0]['type']:
+            LOG.debug(_("VIF is an EVS type. Nothing to plug."))
+            return
+
+        # first find out all the anets for a given instance
+        try:
+            out, err = utils.execute('/usr/sbin/dladm', 'show-vnic',
+                                     '-z', instance['name'],
+                                     '-po', 'link,macaddress')
+        except Exception as reason:
+            msg = (_("Unable to get ANETs for instance '%s': %s")
+                   % (instance['name'], reason))
+            raise exception.NovaException(msg)
+
+        anetdict = {}
+        for anet_maddr in out.strip().splitlines():
+            anet, maddr = anet_maddr.strip().split(':', 1)
+            maddr = maddr.replace('\\', '')
+            maddr = ''.join(['%02x' % int(b, 16) for b in maddr.split(':')])
+            anetdict[maddr] = anet
+
+        LOG.debug(_("List of instance %s's anets: %s") % (instance['name'],
+                                                          anetdict))
+        # we now have a list of VNICs that belong to the VM
+        # we need to map the VNIC to the bridge
+        bridge = CONF.neutron.ovs_bridge
+        for vif in network_info:
+            if vif['type'] != 'ovs':
+                LOG.debug(_("VIF %s is not OVS type") % vif)
+                continue
+            vif_maddr = ''.join(['%02x' % int(b, 16) for b in
+                                 vif['address'].split(':')])
+            anet = anetdict.get(vif_maddr)
+            if anet is None:
+                LOG.error(_('Failed to add port %s connected to network %s '
+                            'to instance %s') % (vif['ovs_interfaceid'],
+                                                 vif['network']['id'],
+                                                 instance['name']))
+                continue
+            cmd = ['/usr/sbin/ovs-vsctl',
+                   '--timeout=%s' % CONF.ovs_vsctl_timeout,
+                   '--', '--if-exists', 'del-port', bridge, anet,
+                   '--', 'add-port', bridge, anet,
+                   '--', 'set', 'Interface', anet,
+                   'external-ids:iface-id=%s' % vif['id'],
+                   'external-ids:iface-status=active',
+                   'external-ids:attached-mac=%s' % vif['address'],
+                   'external-ids:vm-uuid=%s' % instance['uuid']
+                   ]
+            try:
+                out, err = utils.execute(*cmd)
+            except Exception as reason:
+                msg = (_("Failed to add VNIC '%s' with MAC address %s to "
+                         "OVS Bridge '%s': %s") % (anet, vif['address'],
+                                                   bridge, reason))
+                raise exception.NovaException(msg)
+            LOG.debug(_('Successfully added anet %s with MAC adddress %s') %
+                      (anet, vif['address']))
+
+    def _unplug_vifs(self, instance):
+        # Since we don't have VIF info here, we need to find if the anets
+        # were EVS based or OVS based by looking at the CONF setting. In
+        # EVS based cloud neutron.ovs_bridge setting will be set to the
+        # default value of 'br-int'.
+        ovs_bridge = CONF.neutron.ovs_bridge
+        if ovs_bridge == 'br-int':
+            LOG.debug(_("Instance %s doesn't have any OVS based anets") %
+                      instance['name'])
+            return
+        # remove the anets from the OVS bridge
+        cmd = ['/usr/sbin/ovs-vsctl', '--timeout=%s' % CONF.ovs_vsctl_timeout,
+               'list-ports', ovs_bridge]
+        try:
+            out, err = utils.execute(*cmd)
+        except Exception as reason:
+            msg = (_("Unable to get ANETs for instance '%s': %s")
+                   % (instance['name'], reason))
+            raise exception.NovaException(msg)
+
+        for port in out.strip().splitlines():
+            if port.split('/')[0] != instance['name']:
+                continue
+            cmd = ['/usr/sbin/ovs-vsctl',
+                   '--timeout=%s' % CONF.ovs_vsctl_timeout,
+                   '--', '--if-exists', 'del-port', ovs_bridge, port]
+            try:
+                out, err = utils.execute(*cmd)
+                LOG.debug(_('Removed port %s from the OVS bridge %s') %
+                          (port, ovs_bridge))
+            except Exception as reason:
+                LOG.warning(_("Unable to remove port %s from the OVS "
+                              "bridge %s: %s") % (port, ovs_bridge, reason))
+
+    def _set_evs_info(self, zone, brand, vifid, vif):
+        vport_uuid = vif['id']
+        evs_uuid = vif['network']['id']
+        with ZoneConfig(zone) as zc:
+            if vifid == 0:
+                tenant_id = vif['network']['meta']['tenant_id']
+                zc.setprop('global', 'tenant', tenant_id)
+                zc.setprop('anet', 'configure-allowed-address', 'false')
+                zc.setprop('anet', 'evs', evs_uuid)
+                zc.setprop('anet', 'vport', vport_uuid)
+            else:
+                zc.addresource(
+                    'anet',
+                    [zonemgr.Property('configure-allowed-address',
+                                      'false'),
+                     zonemgr.Property('evs', evs_uuid),
+                     zonemgr.Property('vport', vport_uuid)])
+
+            prop_filter = [zonemgr.Property('vport', vport_uuid)]
+            if brand == ZONE_BRAND_SOLARIS:
+                anetname = lookup_resource_property(zc.zone, 'anet',
+                                                    'linkname', prop_filter)
+            else:
+                anetid = lookup_resource_property(zc.zone, 'anet', 'id',
+                                                  prop_filter)
+                anetname = 'net%s' % anetid
+        return anetname
+
+    def _set_ovs_info(self, context, zone, brand, vifid, vif):
+        # Need to be admin to retrieve provider:network_type attribute
+        network_plugin = neutronv2_api.get_client(context, admin=True)
+        network = network_plugin.show_network(
+            vif['network']['id'])['network']
+        network_type = network['provider:network_type']
+        lower_link = None
+        if network_type == 'vxlan':
+            lower_link = 'ovs.vxlan1'
+        elif network_type in ['vlan', 'flat']:
+            physical_network = network['provider:physical_network']
+            # retrieve the other_config information from Open_vSwitch table
+            try:
+                results = get_ovsdb_info('Open_vSwitch', ['other_config'])
+            except Exception as err:
+                LOG.error(_("Failed to retrieve other_config: %s"), err)
+                raise
+
+            other_config = results[0]['other_config']
+            if not other_config:
+                msg = (_("'other_config' column in 'Open_vSwitch' OVSDB table "
+                         "is not configured. Please configure it so that "
+                         "lower-link can be determined for the instance's "
+                         "anet"))
+                LOG.error(msg)
+                raise exception.NovaException(msg)
+            bridge_mappings = other_config.get('bridge_mappings')
+            if not bridge_mappings:
+                msg = (_("'bridge_mappings' info is not set in 'other_config' "
+                         "column of 'Open_vSwitch' OVSDB table. Please "
+                         "configure it so that lower-link can be determined "
+                         "for the instance's anet"))
+                LOG.error(msg)
+                raise exception.NovaException(msg)
+            for bridge_mapping in bridge_mappings.split(','):
+                if physical_network in bridge_mapping:
+                    lower_link = bridge_mapping.split(':')[1]
+                    break
+            if not lower_link:
+                msg = (_("Failed to determine the lower_link for vif '%s'") %
+                       (vif))
+                LOG.error(msg)
+                raise exception.NovaException(msg)
+        else:
+            # TYPE_GRE and TYPE_LOCAL
+            msg = (_("Unsupported network type: %s") % network_type)
+            LOG.error(msg)
+            raise exception.NovaException(msg)
+
+        with ZoneConfig(zone) as zc:
+            if vifid == 0:
+                zc.setprop('anet', 'lower-link', lower_link)
+                zc.setprop('anet', 'configure-allowed-address', 'false')
+                zc.setprop('anet', 'mac-address', vif['address'])
+            else:
+                zc.addresource('anet',
+                    [zonemgr.Property('lower-link', lower_link),
+                     zonemgr.Property('configure-allowed-address',
+                                      'false'),
+                     zonemgr.Property('mac-address', vif['address'])])
+
+            prop_filter = [zonemgr.Property('mac-address', vif['address'])]
+            if brand == ZONE_BRAND_SOLARIS:
+                anetname = lookup_resource_property(zc.zone, 'anet',
+                                                    'linkname', prop_filter)
+            else:
+                anetid = lookup_resource_property(zc.zone, 'anet', 'id',
+                                                  prop_filter)
+                anetname = 'net%s' % anetid
+        return anetname
+
     def _set_network(self, context, name, instance, network_info, brand,
                      sc_dir):
         """add networking information to the zone."""
@@ -1348,47 +1544,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     zc.removeresources("anet", [zonemgr.Property("id", "0")])
                 return
 
-        tenant_id = None
-        network_plugin = neutronv2_api.get_client(context)
-        for netid, network in enumerate(network_info):
-            if tenant_id is None:
-                tenant_id = network['network']['meta']['tenant_id']
-            port_uuid = network['id']
-            port = network_plugin.show_port(port_uuid)['port']
-            evs_uuid = port['network_id']
-            vport_uuid = port['id']
-            ip = network['network']['subnets'][0]['ips'][0]['address']
-            ip_plen = network['network']['subnets'][0]['cidr'].split('/')[1]
-            ip = '/'.join([ip, ip_plen])
-            ip_version = network['network']['subnets'][0]['version']
-            route = network['network']['subnets'][0]['gateway']['address']
-            dns_list = network['network']['subnets'][0]['dns']
+        for vifid, vif in enumerate(network_info):
+            LOG.debug("%s", jsonutils.dumps(vif, indent=5))
+
+            # get all the info common to both EVS or OVS based VIF
+            ip = vif['network']['subnets'][0]['ips'][0]['address']
+            cidr = vif['network']['subnets'][0]['cidr']
+            ip_cidr = "%s/%s" % (ip, cidr.split('/')[1])
+            ip_version = vif['network']['subnets'][0]['version']
+            dhcp_server = \
+                vif['network']['subnets'][0]['meta'].get('dhcp_server')
+            enable_dhcp = dhcp_server is not None
+            route = vif['network']['subnets'][0]['gateway']['address']
+            dns_list = vif['network']['subnets'][0]['dns']
             nameservers = []
             for dns in dns_list:
                 if dns['type'] == 'dns':
                     nameservers.append(dns['address'])
 
-            with ZoneConfig(zone) as zc:
-                if netid == 0:
-                    zc.setprop('anet', 'configure-allowed-address', 'false')
-                    zc.setprop('anet', 'evs', evs_uuid)
-                    zc.setprop('anet', 'vport', vport_uuid)
-                else:
-                    zc.addresource(
-                        'anet',
-                        [zonemgr.Property('configure-allowed-address',
-                                          'false'),
-                         zonemgr.Property('evs', evs_uuid),
-                         zonemgr.Property('vport', vport_uuid)])
-
-                filter = [zonemgr.Property('vport', vport_uuid)]
-                if brand == ZONE_BRAND_SOLARIS:
-                    linkname = lookup_resource_property(zc.zone, 'anet',
-                                                        'linkname', filter)
-                else:
-                    id = lookup_resource_property(zc.zone, 'anet', 'id',
-                                                  filter)
-                    linkname = 'net%s' % id
+            # for EVS based VIFs the type is empty since EVS plugin
+            # doesn't support portbinding extension
+            if not vif['type']:
+                anetname = self._set_evs_info(zone, brand, vifid, vif)
+            else:
+                anetname = self._set_ovs_info(context, zone, brand, vifid, vif)
 
             # create the required sysconfig file (or skip if this is part of a
             # resize or evacuate process)
@@ -1399,26 +1578,16 @@ class SolarisZonesDriver(driver.ComputeDriver):
                               task_states.REBUILD_SPAWNING] or \
                 (tstate == task_states.REBUILD_SPAWNING and
                  instance.system_metadata['rebuilding']):
-                subnet_uuid = port['fixed_ips'][0]['subnet_id']
-                subnet = network_plugin.show_subnet(subnet_uuid)['subnet']
-
-                if subnet['enable_dhcp']:
-                    tree = sysconfig.create_ncp_defaultfixed('dhcp', linkname,
-                                                             netid, ip_version)
+                if enable_dhcp:
+                    tree = sysconfig.create_ncp_defaultfixed('dhcp', anetname,
+                        vifid, ip_version)
                 else:
                     tree = sysconfig.create_ncp_defaultfixed('static',
-                                                             linkname, netid,
-                                                             ip_version, ip,
-                                                             route,
-                                                             nameservers)
+                        anetname, vifid, ip_version, ip_cidr, route,
+                        nameservers)
 
-                fp = os.path.join(sc_dir, 'evs-network-%d.xml' % netid)
+                fp = os.path.join(sc_dir, 'zone-network-%d.xml' % vifid)
                 sysconfig.create_sc_profile(fp, tree)
-
-        if tenant_id is not None:
-            # set the tenant id
-            with ZoneConfig(zone) as zc:
-                zc.setprop('global', 'tenant', tenant_id)
 
     def _set_suspend(self, instance):
         """Use the instance name to specify the pathname for the suspend image.
@@ -1764,7 +1933,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         LOG.debug(_("Installation of instance '%s' (%s) complete") %
                   (name, instance['display_name']))
 
-    def _power_on(self, instance):
+    def _power_on(self, instance, network_info):
         """Power on a Solaris Zone."""
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -1794,6 +1963,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         try:
             zone.boot(bootargs)
+            self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to power on instance '%s' via zonemgr(3RAD): "
@@ -1909,7 +2079,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._create_config(context, instance, network_info,
                                 connection_info, sc_dir, admin_password)
             self._install(instance, image, sc_dir)
-            self._power_on(instance)
+            self._power_on(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
@@ -1962,6 +2132,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         try:
+            self._unplug_vifs(instance)
             if halt_type == 'SOFT':
                 zone.shutdown()
             else:
@@ -2136,7 +2307,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         if self._get_state(zone) == power_state.SHUTDOWN:
-            self._power_on(instance)
+            self._power_on(instance, network_info)
             return
 
         bootargs = []
@@ -2161,11 +2332,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         zc.clear_resource_props('global', ['bootargs'])
 
         try:
+            self._unplug_vifs(instance)
             if reboot_type == 'SOFT':
                 bootargs.insert(0, '-r')
                 zone.shutdown(bootargs)
             else:
                 zone.reboot(bootargs)
+            self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to reboot instance '%s' via zonemgr(3RAD): %s")
@@ -2830,7 +3003,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                            entry['mount_device'])
 
             if power_on:
-                self._power_on(instance)
+                self._power_on(instance, network_info)
 
                 if brand == ZONE_BRAND_SOLARIS:
                     return
@@ -2989,7 +3162,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 del instance.system_metadata['new_instance_volid']
                 self._volume_api.delete(context, new_rvid)
 
-        self._power_on(instance)
+        self._power_on(instance, network_info)
 
     def pause(self, instance):
         """Pause the specified instance.
@@ -3042,6 +3215,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 self._set_suspend(instance)
 
             zone.suspend()
+            self._unplug_vifs(instance)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to suspend instance '%s' via "
@@ -3075,6 +3249,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         try:
             zone.boot()
+            self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to resume instance '%s' via zonemgr(3RAD): %s")
@@ -3098,7 +3273,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                          power_state.SHUTDOWN):
             return
 
-        self._power_on(instance)
+        self._power_on(instance, network_info)
 
     def rescue(self, context, instance, network_info, image_meta,
                rescue_password):
@@ -3139,7 +3314,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         :param instance: nova.objects.instance.Instance
         """
-        self._power_on(instance)
+        self._power_on(instance, network_info)
 
     def soft_delete(self, instance):
         """Soft delete the specified instance.
@@ -3387,8 +3562,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: instance object reference
         :param network_info: instance network information
         """
-        raise NotImplementedError(_("Hypervisor driver does not support "
-                                    "post_live_migration_at_source method"))
+        self._unplug_vifs(instance)
 
     def post_live_migration_at_destination(self, context, instance,
                                            network_info,
@@ -3401,7 +3575,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param network_info: instance network information
         :param block_migration: if true, post operation of block_migration.
         """
-        pass
+        self._plug_vifs(instance, network_info)
 
     def check_instance_shared_storage_local(self, context, instance):
         """Check if instance files located on shared storage.

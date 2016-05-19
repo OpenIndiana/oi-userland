@@ -27,6 +27,7 @@ import netaddr
 from oslo.config import cfg
 from oslo_log import log as logging
 
+from neutron.agent.common import ovs_lib
 from neutron.agent.l3 import agent as l3_agent
 from neutron.agent.l3 import router_info as router
 from neutron.agent.linux import utils
@@ -102,9 +103,14 @@ class SolarisRouterInfo(router.RouterInfo):
         internal_dlname = self.get_internal_device_name(port['id'])
         # driver just returns if datalink and IP interface already exists
         self.driver.plug(port['tenant_id'], port['network_id'], port['id'],
-                         internal_dlname)
-        ip_cidrs = common_utils.fixed_ip_cidrs(port['fixed_ips'])
+                         internal_dlname, port['mac_address'])
+        fixed_ips = port['fixed_ips']
+        ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
         self.driver.init_l3(internal_dlname, ip_cidrs)
+        for fixed_ip in fixed_ips:
+            net_lib.send_ip_addr_adv_notif(internal_dlname,
+                                           fixed_ip['ip_address'],
+                                           self.agent_conf)
 
         # Since we support shared router model, we need to block the new
         # internal port from reaching other tenant's ports. However, if
@@ -318,6 +324,9 @@ class SolarisRouterInfo(router.RouterInfo):
                     ipintf.create_address(fip_cidr)
                     self.pf.add_rules([binat_rule], [interface_name,
                                                      fip_cidr.split('/')[0]])
+                    net_lib.send_ip_addr_adv_notif(interface_name,
+                                                   fip['floating_ip_address'],
+                                                   self.agent_conf)
                 except Exception as err:
                     # any exception occurred here should cause the floating IP
                     # to be set in error state
@@ -346,47 +355,18 @@ class SolarisRouterInfo(router.RouterInfo):
                 ipintf.delete_address(ip_cidr)
         return fip_statuses
 
-    # Todo(gmoodalb): need to do more work on ipv6 gateway
+    # TODO(gmoodalb): need to do more work on ipv6 gateway
     def external_gateway_added(self, ex_gw_port, external_dlname):
-
-        if not net_lib.Datalink.datalink_exists(external_dlname):
-            dl = net_lib.Datalink(external_dlname)
-            # determine the network type of the external network
-            evsname = ex_gw_port['network_id']
-            cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'l2type,vid',
-                   '-f', 'evs=%s' % evsname]
-            try:
-                stdout = utils.execute(cmd)
-            except Exception as err:
-                LOG.error(_("Failed to retrieve the network type for "
-                            "the external network, and it is required "
-                            "to create an external gateway port: %s") % err)
-                return
-            output = stdout.splitlines()[0].strip()
-            l2type, vid = output.split(':')
-            if l2type != 'flat' and l2type != 'vlan':
-                LOG.error(_("External network should be either Flat or "
-                            "VLAN based, and it is required to "
-                            "create an external gateway port"))
-                return
-            elif (l2type == 'vlan' and
-                  self.agent_conf.get("external_network_datalink", None)):
-                LOG.warning(_("external_network_datalink is deprecated in "
-                              "Juno and will be removed in the next release "
-                              "of Solaris OpenStack. Please use the evsadm "
-                              "set-controlprop subcommand to setup the "
-                              "uplink-port for an external network"))
-                # proceed with the old-style of doing things
-                mac_address = ex_gw_port['mac_address']
-                dl.create_vnic(self.agent_conf.external_network_datalink,
-                               mac_address=mac_address, vid=vid)
-            else:
-                self.driver.plug(ex_gw_port['tenant_id'],
-                                 ex_gw_port['network_id'],
-                                 ex_gw_port['id'], external_dlname)
-
+        self.driver.plug(ex_gw_port['tenant_id'], ex_gw_port['network_id'],
+                         ex_gw_port['id'], external_dlname,
+                         ex_gw_port['mac_address'],
+                         bridge=self.agent_conf.external_network_bridge)
         ip_cidrs = common_utils.fixed_ip_cidrs(ex_gw_port['fixed_ips'])
         self.driver.init_l3(external_dlname, ip_cidrs)
+        for fixed_ip in ex_gw_port['fixed_ips']:
+            net_lib.send_ip_addr_adv_notif(external_dlname,
+                                           fixed_ip['ip_address'],
+                                           self.agent_conf)
 
         # add nested anchor rule first
         anchor_option = "on %s" % external_dlname
@@ -439,7 +419,8 @@ class SolarisRouterInfo(router.RouterInfo):
 
         if net_lib.Datalink.datalink_exists(external_dlname):
             self.driver.fini_l3(external_dlname)
-            self.driver.unplug(external_dlname)
+            self.driver.unplug(external_dlname,
+                               self.agent_conf.external_network_bridge)
 
     def _process_external_gateway(self, ex_gw_port):
         # TODO(Carl) Refactor to clarify roles of ex_gw_port vs self.ex_gw_port
@@ -577,3 +558,35 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
         self.router_info[router_id] = ri
 
         ri.initialize(self.process_monitor)
+
+    def _process_router_if_compatible(self, router):
+        if (self.conf.external_network_bridge and not ovs_lib.BaseOVS().
+                bridge_exists(self.conf.external_network_bridge)):
+            LOG.error(_("The external network bridge '%s' does not exist"),
+                      self.conf.external_network_bridge)
+            return
+
+        # If namespaces are disabled, only process the router associated
+        # with the configured agent id.
+        if (not self.conf.use_namespaces and
+                router['id'] != self.conf.router_id):
+            raise n_exc.RouterNotCompatibleWithAgent(router_id=router['id'])
+
+        # Either ex_net_id or handle_internal_only_routers must be set
+        ex_net_id = (router['external_gateway_info'] or {}).get('network_id')
+        if not ex_net_id and not self.conf.handle_internal_only_routers:
+            raise n_exc.RouterNotCompatibleWithAgent(router_id=router['id'])
+
+        # If target_ex_net_id and ex_net_id are set they must be equal
+        target_ex_net_id = self._fetch_external_net_id()
+        if (target_ex_net_id and ex_net_id and ex_net_id != target_ex_net_id):
+            # Double check that our single external_net_id has not changed
+            # by forcing a check by RPC.
+            if ex_net_id != self._fetch_external_net_id(force=True):
+                raise n_exc.RouterNotCompatibleWithAgent(
+                    router_id=router['id'])
+
+        if router['id'] not in self.router_info:
+            self._process_added_router(router)
+        else:
+            self._process_updated_router(router)

@@ -90,6 +90,7 @@ COMPONENT_POST_BUILD_ACTION += \
 	 files/neutron-dhcp-agent.xml \
 	 files/neutron-l3-agent.xml \
 	 files/neutron-metadata-agent.xml \
+	 files/neutron-openvswitch-agent.xml \
 	 files/neutron-server.xml \
 	 files/neutron-upgrade.xml \
 	 $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
@@ -145,14 +146,17 @@ REQUIRED_PACKAGES += library/python/alembic-27
 REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/netaddr-27
+REQUIRED_PACKAGES += library/python/netifaces-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
 REQUIRED_PACKAGES += library/python/oslo.db-27
 REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
+REQUIRED_PACKAGES += network/arping
 REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += service/network/dnsmasq
 REQUIRED_PACKAGES += service/network/evs
+REQUIRED_PACKAGES += service/network/openvswitch
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/management/rad/client/rad-python
 REQUIRED_PACKAGES += system/network

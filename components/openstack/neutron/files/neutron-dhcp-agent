@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,10 +14,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import ConfigParser
 import os
 import re
 import sys
 
+from openstack_common import is_ml2_plugin
 import smf_include
 
 from subprocess import CalledProcessError, Popen, PIPE, check_call
@@ -33,8 +35,8 @@ def set_hostmodel(value):
         return False
     if output.strip() == value:
         return True
-    cmd = ["/usr/sbin/ipadm", "set-prop", "-t", "-p", "hostmodel=%s" % value,
-           "ipv4"]
+    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipadm", "set-prop", "-t", "-p",
+           "hostmodel=%s" % value, "ipv4"]
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     output, error = p.communicate()
     if p.returncode != 0:
@@ -54,9 +56,19 @@ def start():
     if not set_hostmodel("src-priority"):
         return smf_include.SMF_EXIT_ERR_FATAL
 
-    cmd = "/usr/lib/neutron/neutron-dhcp-agent --config-file %s " \
-        "--config-file %s" % tuple(sys.argv[2:4])
+    cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-dhcp-agent " \
+        "--config-file %s --config-file %s" % tuple(sys.argv[2:4])
     smf_include.smf_subprocess(cmd)
+
+
+def get_ovs_bridge():
+    parser = ConfigParser.ConfigParser()
+    parser.read("/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini")
+    try:
+        ovs_bridge = parser.get("ovs", "integration_bridge")
+    except ConfigParser.NoOptionError:
+        ovs_bridge = None
+    return ovs_bridge
 
 
 def stop():
@@ -78,10 +90,10 @@ def stop():
     # DHCP agent datalinks are always 15 characters in length. They start with
     # 'dh', end with '_0', and in between they are hexadecimal digits.
     prog = re.compile('dh[0-9A-Fa-f\_]{11}_0')
+    err_delete = False
     for ifname in ifnames:
-        if not prog.search(ifname):
+        if prog.search(ifname) is None:
             continue
-
         try:
             # first remove the IP
             check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
@@ -89,12 +101,18 @@ def stop():
             # next remove the VNIC
             check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
                         ifname])
+            # remove the OVS Port
+            if is_ml2_plugin():
+                check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
+                            "--if-exists", "del-port", get_ovs_bridge(),
+                            ifname])
         except CalledProcessError as err:
-            print "failed to remove datalinks used by DHCP agent: %s" % err
-            return smf_include.SMF_EXIT_ERR_FATAL
+            print "failed to remove datalink '%s' used by DHCP agent: %s" % \
+                (ifname, err)
+            err_delete = True
 
     # finally reset the hostmodel property
-    if not set_hostmodel("weak"):
+    if not set_hostmodel("weak") or err_delete:
         return smf_include.SMF_EXIT_ERR_FATAL
     return smf_include.SMF_EXIT_OK
 

@@ -14,14 +14,15 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import ConfigParser
 import os
 import re
 from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 
 import netaddr
+from openstack_common import is_ml2_plugin
 import smf_include
-
 
 from neutron.agent.solaris import packetfilter
 from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
@@ -52,7 +53,7 @@ def set_hostmodel(value):
 
 def start():
     # verify paths are valid
-    for f in sys.argv[2:5]:
+    for f in sys.argv[2:6]:
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
@@ -89,6 +90,8 @@ def start():
     cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-l3-agent " \
         "--config-file %s --config-file %s --config-file %s" % \
         tuple(sys.argv[2:5])
+    if is_ml2_plugin():
+        cmd += " --config-file %s" % sys.argv[5]
 
     # The VPNaaS shutdown should unplumb all IP tunnels it created. But
     # be paranoid and check for lingering tunnels created by OpenStack
@@ -112,6 +115,25 @@ def start():
         return smf_include.SMF_EXIT_ERR_FATAL
 
     return smf_include.smf_subprocess(cmd)
+
+
+def get_ovs_bridge(ifname):
+    # retrieve the right OVS bridge based on the interface name
+    if ifname.startswith('l3i'):
+        config_file = '/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini'
+        section = "ovs"
+        option = "integration_bridge"
+    else:
+        config_file = '/etc/neutron/l3_agent.ini'
+        section = "DEFAULT"
+        option = "external_network_bridge"
+    parser = ConfigParser.ConfigParser()
+    parser.read(config_file)
+    try:
+        ovs_bridge = parser.get(section, option)
+    except ConfigParser.NoOptionError:
+        ovs_bridge = None
+    return ovs_bridge
 
 
 def stop():
@@ -140,8 +162,9 @@ def stop():
     # with either 'l3i' or 'l3e', end with '_0', and in between they are
     # hexadecimal digits.
     prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
+    err_delete = False
     for ifname in ifnames:
-        if not prog.search(ifname):
+        if prog.search(ifname) is None:
             continue
         try:
             # first remove the IP
@@ -150,12 +173,19 @@ def stop():
             # next remove the VNIC
             check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
                         ifname])
+            # remove the OVS Port
+            if is_ml2_plugin():
+                ovs_bridge = get_ovs_bridge(ifname)
+                if ovs_bridge:
+                    check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
+                                "--if-exists", "del-port", ovs_bridge, ifname])
         except CalledProcessError as err:
-            print "failed to remove datalinks used by L3 agent: %s" % (err)
-            return smf_include.SMF_EXIT_ERR_FATAL
+            print "failed to remove datalink '%s' used by L3 agent: %s" % \
+                (ifname, err)
+            err_delete = True
 
     # finally reset the hostmodel property
-    if not set_hostmodel("weak"):
+    if not set_hostmodel("weak") or err_delete:
         return smf_include.SMF_EXIT_ERR_FATAL
     return smf_include.SMF_EXIT_OK
 

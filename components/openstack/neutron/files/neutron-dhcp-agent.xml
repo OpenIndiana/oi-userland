@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -78,6 +78,11 @@
       <service_fmri value='svc:/application/openstack/neutron/neutron-server'/>
     </dependency>
 
+     <dependency name='neutron-ovs-agent' grouping='optional_all' restart_on='none'
+       type='service'>
+       <service_fmri value='svc:/application/openstack/neutron/neutron-openvswitch-agent:default' />
+     </dependency>
+
     <logfile_attributes permissions='600'/>
 
     <exec_method timeout_seconds="60" type="method" name="start"
@@ -90,8 +95,7 @@
     <exec_method timeout_seconds="600" type="method" name="stop"
       exec="/lib/svc/method/neutron-dhcp-agent %m %{restarter/contract}">
       <method_context>
-        <!-- sys_ip_config is required to set 'hostmodel' ipadm property -->
-        <method_credential user='neutron' group='neutron' privileges='basic,sys_ip_config' />
+        <method_credential user='neutron' group='neutron'/>
       </method_context>
     </exec_method>
 

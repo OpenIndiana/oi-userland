@@ -1,33 +1,6 @@
 Changes to the Neutron DHCP agent to port it to Solaris. These changes
 will eventually be proposed upstream.
 
---- neutron-2015.1.2/neutron/agent/dhcp_agent.py.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/neutron/agent/dhcp_agent.py	2016-01-28 23:07:42.219218977 -0800
-@@ -14,9 +14,11 @@
- #    License for the specific language governing permissions and limitations
- #    under the License.
- 
-+import platform
- import sys
- 
- from oslo_config import cfg
-+from oslo_utils import importutils
- 
- from neutron.agent.common import config
- from neutron.agent.dhcp import config as dhcp_config
-@@ -37,6 +39,12 @@ def register_options():
-     cfg.CONF.register_opts(dhcp_config.DNSMASQ_OPTS)
-     cfg.CONF.register_opts(metadata_config.DRIVER_OPTS)
-     cfg.CONF.register_opts(metadata_config.SHARED_OPTS)
-+    if platform.system() == "SunOS":
-+        interface = \
-+            importutils.import_module("neutron.agent.solaris.interface")
-+    else:
-+        interface = \
-+            importutils.import_module("neutron.agent.linux.interface")
-     cfg.CONF.register_opts(interface.OPTS)
- 
- 
 --- neutron-2015.1.2/neutron/agent/linux/external_process.py.~1~	2015-10-13 10:35:16.000000000 -0700
 +++ neutron-2015.1.2/neutron/agent/linux/external_process.py	2016-01-28 23:07:42.221029379 -0800
 @@ -15,6 +15,7 @@
@@ -74,20 +47,6 @@ will eventually be proposed upstream.
          cmdline = '/proc/%s/cmdline' % pid
          try:
              with open(cmdline, "r") as f:
---- neutron-2015.1.2/neutron/agent/linux/utils.py.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/neutron/agent/linux/utils.py	2016-01-28 23:20:12.736969284 -0800
-@@ -31,7 +31,10 @@ from eventlet import greenthread
- from oslo_config import cfg
- from oslo_log import log as logging
- from oslo_log import loggers
--from oslo_rootwrap import client
-+try:
-+    from oslo_rootwrap import client
-+except:
-+    pass
- from oslo_utils import excutils
- 
- from neutron.agent.common import config
 --- neutron-2015.1.2/neutron/api/rpc/handlers/dhcp_rpc.py.~1~	2015-10-13 10:35:16.000000000 -0700
 +++ neutron-2015.1.2/neutron/api/rpc/handlers/dhcp_rpc.py	2016-01-28 23:07:42.219930998 -0800
 @@ -188,11 +188,13 @@ class DhcpRpcCallback(object):
@@ -109,3 +68,86 @@ will eventually be proposed upstream.
  
          except n_exc.NotFound as e:
              LOG.warning(e)
+*** neutron-2015.1.2/neutron/agent/linux/utils.py	2015-10-13 10:35:16.000000000 -0700
+--- new/neutron/agent/linux/utils.py	2016-05-14 07:44:40.976050014 -0700
+***************
+*** 18,23 ****
+--- 18,24 ----
+  import grp
+  import httplib
+  import os
++ import platform
+  import pwd
+  import shlex
+  import socket
+***************
+*** 31,37 ****
+  from oslo_config import cfg
+  from oslo_log import log as logging
+  from oslo_log import loggers
+! from oslo_rootwrap import client
+  from oslo_utils import excutils
+  
+  from neutron.agent.common import config
+--- 32,41 ----
+  from oslo_config import cfg
+  from oslo_log import log as logging
+  from oslo_log import loggers
+! try:
+!     from oslo_rootwrap import client
+! except:
+!     pass
+  from oslo_utils import excutils
+  
+  from neutron.agent.common import config
+***************
+*** 175,182 ****
+      """Retrieve a list of the pids of child processes of the given pid."""
+  
+      try:
+!         raw_pids = execute(['ps', '--ppid', pid, '-o', 'pid='],
+!                            log_fail_as_error=False)
+      except RuntimeError as e:
+          # Unexpected errors are the responsibility of the caller
+          with excutils.save_and_reraise_exception() as ctxt:
+--- 179,190 ----
+      """Retrieve a list of the pids of child processes of the given pid."""
+  
+      try:
+!         if platform.system() == "SunOS":
+!             raw_pids = execute(['/usr/bin/pgrep', '-P', pid],
+!                                log_fail_as_error=False)
+!         else:
+!             raw_pids = execute(['ps', '--ppid', pid, '-o', 'pid='],
+!                                log_fail_as_error=False)
+      except RuntimeError as e:
+          # Unexpected errors are the responsibility of the caller
+          with excutils.save_and_reraise_exception() as ctxt:
+*** neutron-2015.1.2/neutron/agent/dhcp_agent.py	2015-10-13 10:35:16.000000000 -0700
+--- new/neutron/agent/dhcp_agent.py	2016-05-14 07:45:04.012214835 -0700
+***************
+*** 17,27 ****
+--- 17,29 ----
+  import sys
+  
+  from oslo_config import cfg
++ from oslo_utils import importutils
+  
+  from neutron.agent.common import config
+  from neutron.agent.dhcp import config as dhcp_config
+  from neutron.agent.linux import interface
+  from neutron.agent.metadata import config as metadata_config
++ from neutron.agent.solaris import interface as solaris_interface
+  from neutron.common import config as common_config
+  from neutron.common import topics
+  from neutron.openstack.common import service
+***************
+*** 38,43 ****
+--- 40,46 ----
+      cfg.CONF.register_opts(metadata_config.DRIVER_OPTS)
+      cfg.CONF.register_opts(metadata_config.SHARED_OPTS)
+      cfg.CONF.register_opts(interface.OPTS)
++     cfg.CONF.register_opts(solaris_interface.OPTS)
+  
+  
+  def main():

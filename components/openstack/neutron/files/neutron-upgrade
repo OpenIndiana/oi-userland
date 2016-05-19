@@ -47,9 +47,28 @@ NEUTRON_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_user'),
     ('keystone_authtoken', 'admin_password'),
     ('keystone_authtoken', 'signing_dir'),
+    # Do not overwrite EVS options with OVS options since upgrade
+    # doesn't handle EVS to OVS upgrade
+    ('DEFAULT', 'core_plugin'),
+    ('DEFAULT', 'service_plugins'),
 ]
 
-L3_AGENT_EXCEPTIONS = []
+L3_AGENT_EXCEPTIONS = [
+    # Do not overwrite EVS options with OVS options since upgrade
+    # doesn't handle EVS to OVS migration
+    ('DEFAULT', 'ovs_integration_bridge'),
+    ('DEFAULT', 'interface_driver'),
+    ('DEFAULT', 'external_network_bridge'),
+    ('DEFAULT', 'evs_controller'),    
+]
+
+DHCP_AGENT_EXCEPTIONS = [
+    # Do not overwrite EVS options with OVS options since upgrade
+    # doesn't handle EVS to OVS migration
+    ('DEFAULT', 'ovs_integration_bridge'),
+    ('DEFAULT', 'interface_driver'),
+    ('DEFAULT', 'evs_controller'),
+]
 
 METADATA_AGENT_EXCEPTIONS = [
     ('DEFAULT', 'auth_url'),

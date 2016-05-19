@@ -17,29 +17,35 @@
 import os
 import sys
 
+from openstack_common import is_ml2_plugin
 import smf_include
 from subprocess import CalledProcessError, check_call
 
 
 def start():
+    cfg_files = sys.argv[2:3]
+    if is_ml2_plugin():
+        cfg_files.append("/etc/neutron/plugins/ml2/ml2_conf.ini")
+    else:
+        cfg_files.append("/etc/neutron/plugins/evs/evs_plugin.ini")
+
+    # verify paths are valid
+    for f in cfg_files:
+        if not os.path.exists(f) or not os.access(f, os.R_OK):
+            print '%s does not exist or is not readable' % f
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
     # sync the database to have the Kilo schema
-    cmd = ["/usr/bin/neutron-db-manage", "--config-file",
-           "/etc/neutron/neutron.conf", "--config-file",
-           "/etc/neutron/plugins/evs/evs_plugin.ini", "upgrade", "head"]
+    cmd = ["/usr/bin/neutron-db-manage", "--config-file", cfg_files[0],
+           "--config-file", cfg_files[1], "upgrade", "head"]
     try:
         check_call(cmd)
     except CalledProcessError as err:
         print "Unable to create database for Neutron: %s" % err
         sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
 
-    # verify paths are valid
-    for f in sys.argv[2:4]:
-        if not os.path.exists(f) or not os.access(f, os.R_OK):
-            print '%s does not exist or is not readable' % f
-            return smf_include.SMF_EXIT_ERR_CONFIG
-
-    cmd = "/usr/lib/neutron/neutron-server --config-file %s " \
-        "--config-file %s" % tuple(sys.argv[2:4])
+    cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-server --config-file %s " \
+        "--config-file %s" % tuple(cfg_files)
     smf_include.smf_subprocess(cmd)
 
 if __name__ == "__main__":

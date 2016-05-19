@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -14,17 +14,20 @@
 #
 # @author: Girish Moodalbail, Oracle, Inc.
 
-
+from openstack_common import get_ovsdb_info
 import rad.client as radcli
 import rad.connect as radcon
 import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
 
 from oslo_config import cfg
 from oslo_log import log as logging
+from oslo_serialization import jsonutils
 
+from neutron.agent.common import ovs_lib
 from neutron.agent.linux import utils
 from neutron.agent.solaris import net_lib
 from neutron.common import exceptions
+from neutron.plugins.common import constants as p_const
 
 
 LOG = logging.getLogger(__name__)
@@ -115,9 +118,48 @@ class SolarisVNICDriver(object):
         vnicname += self.VNIC_NAME_SUFFIX
         return vnicname.replace('-', '_')
 
-    def plug(self, tenant_id, network_id, port_id, datalink_name,
-             namespace=None, prefix=None, protection=False):
+    def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
+             network=None, bridge=None, namespace=None, prefix=None,
+             protection=False):
         """Plug in the interface."""
+
+        if net_lib.Datalink.datalink_exists(datalink_name):
+            LOG.info(_("Device %s already exists"), datalink_name)
+            return
+
+        if datalink_name.startswith('l3e'):
+            # verify external network parameter settings
+            dl = net_lib.Datalink(datalink_name)
+            # determine the network type of the external network
+            # TODO(gmoodalb): use EVS RAD APIs
+            evsname = network_id
+            cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'l2type,vid',
+                   '-f', 'evs=%s' % evsname]
+            try:
+                stdout = utils.execute(cmd)
+            except Exception as err:
+                LOG.error(_("Failed to retrieve the network type for "
+                            "the external network, and it is required "
+                            "to create an external gateway port: %s") % err)
+                return
+            output = stdout.splitlines()[0].strip()
+            l2type, vid = output.split(':')
+            if l2type != 'flat' and l2type != 'vlan':
+                LOG.error(_("External network should be either Flat or "
+                            "VLAN based, and it is required to "
+                            "create an external gateway port"))
+                return
+            elif (l2type == 'vlan' and
+                  self.conf.get("external_network_datalink", None)):
+                LOG.warning(_("external_network_datalink is deprecated in "
+                              "Juno and will be removed in the next release "
+                              "of Solaris OpenStack. Please use the evsadm "
+                              "set-controlprop subcommand to setup the "
+                              "uplink-port for an external network"))
+                # proceed with the old-style of doing things
+                dl.create_vnic(self.conf.external_network_datalink,
+                               mac_address=mac_address, vid=vid)
+                return
 
         try:
             evsc = self.rad_connection.get_object(evsbind.EVSController())
@@ -162,3 +204,129 @@ class SolarisVNICDriver(object):
 
         dl = net_lib.Datalink(device_name)
         dl.delete_vnic()
+
+
+class OVSInterfaceDriver(SolarisVNICDriver):
+    """Driver used to manage Solaris OVS VNICs.
+
+    This class provides methods to create/delete a Crossbow VNIC and
+    add it as a port of OVS bridge.
+    """
+
+    def __init__(self, conf):
+        self.conf = conf
+        self._neutron_client = None
+
+    @property
+    def neutron_client(self):
+        if self._neutron_client:
+            return self._neutron_client
+        from neutronclient.v2_0 import client
+        self._neutron_client = client.Client(
+            username=self.conf.admin_user,
+            password=self.conf.admin_password,
+            tenant_name=self.conf.admin_tenant_name,
+            auth_url=self.conf.auth_url,
+            auth_strategy=self.conf.auth_strategy,
+            region_name=self.conf.auth_region,
+            endpoint_type=self.conf.endpoint_type
+        )
+        return self._neutron_client
+
+    def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
+             network=None, bridge=None, namespace=None, prefix=None,
+             protection=False):
+        """Plug in the interface."""
+
+        if net_lib.Datalink.datalink_exists(datalink_name):
+            LOG.info(_("Device %s already exists"), datalink_name)
+            return
+
+        if bridge is None:
+            bridge = self.conf.ovs_integration_bridge
+
+        # check if bridge exists
+        ovs = ovs_lib.OVSBridge(bridge)
+        if not ovs.bridge_exists(bridge):
+            raise exceptions.BridgeDoesNotExist(bridge=bridge)
+
+        if network is None:
+            network = self.neutron_client.show_network(network_id)['network']
+
+        network_type = network.get('provider:network_type')
+        vid = None
+        lower_link = None
+        if network_type == p_const.TYPE_VXLAN:
+            lower_link = 'ovs.vxlan1'
+        elif network_type in [p_const.TYPE_VLAN, p_const.TYPE_FLAT]:
+            phys_network = network.get('provider:physical_network')
+            # For integration bridge the ovs agent will take care of
+            # adding the vlan id
+            if bridge != self.conf.ovs_integration_bridge:
+                vid = network.get('provider:segmentation_id')
+            # need to determine the bridge mapping
+            try:
+                results = get_ovsdb_info('Open_vSwitch', ['other_config'])
+            except Exception as err:
+                LOG.error(_("Failed to retrieve other_config from %s: %s"),
+                          bridge, err)
+                raise
+            other_config = results[0]['other_config']
+            if not other_config:
+                msg = (_("'other_config' column in 'Open_vSwitch' OVSDB table "
+                         "is not configured. Please configure it so that "
+                         "lower-link can be determined for the VNICs"))
+                raise exceptions.Invalid(message=msg)
+            bridge_mappings = other_config.get('bridge_mappings')
+            if not bridge_mappings:
+                msg = (_("'bridge_mappings' info is not set in 'other_config' "
+                         "column of 'Open_vSwitch' OVSDB table. Please "
+                         "configure it so that lower-link can be determined "
+                         "for the VNICs"))
+                raise exceptions.Invalid(message=msg)
+            for bridge_mapping in bridge_mappings.split(','):
+                if phys_network not in bridge_mapping:
+                    continue
+                lower_link = bridge_mapping.split(':')[1]
+                break
+        else:
+            # TYPE_GRE and TYPE_LOCAL
+            msg = (_("Unsupported network type: %s") % network_type)
+            LOG.error(msg)
+            raise exceptions.Invalid(message=msg)
+
+        # if lower_link is not set or empty, we need to fail
+        if not lower_link:
+            msg = (_("Failed to determine the lower_link for VNIC "
+                     "%s on physical_network %s") %
+                   (datalink_name, phys_network))
+            LOG.error(msg)
+            raise exceptions.Invalid(message=msg)
+        dl = net_lib.Datalink(datalink_name)
+        dl.create_vnic(lower_link, mac_address, vid, temp=True)
+
+        attrs = [('external_ids', {'iface-id': port_id,
+                                   'iface-status': 'active',
+                                   'attached-mac': mac_address})]
+        ovs.replace_port(datalink_name, *attrs)
+
+    def unplug(self, datalink_name, bridge=None, namespace=None, prefix=None):
+        """Unplug the interface."""
+
+        dl = net_lib.Datalink(datalink_name)
+        dl.delete_vnic()
+
+        if bridge is None:
+            bridge = self.conf.ovs_integration_bridge
+
+        # check if bridge exists
+        ovs = ovs_lib.OVSBridge(bridge)
+        if not ovs.bridge_exists(bridge):
+            raise exceptions.BridgeDoesNotExist(bridge=bridge)
+
+        try:
+            ovs.delete_port(datalink_name)
+            LOG.debug("Unplugged interface '%s'", datalink_name)
+        except RuntimeError as err:
+            LOG.error(_("Failed unplugging interface '%s': %s") %
+                      (datalink_name, err))

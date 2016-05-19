@@ -89,8 +89,8 @@ file path=etc/neutron/plugins/metaplugin/metaplugin.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/midonet/midonet.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
-file path=etc/neutron/plugins/ml2/ml2_conf.ini owner=neutron group=neutron \
-    mode=0644 overlay=allow preserve=renamenew
+file files/ml2_conf.ini path=etc/neutron/plugins/ml2/ml2_conf.ini \
+    owner=neutron group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_arista.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_brocade.ini owner=neutron \
@@ -119,7 +119,8 @@ file path=etc/neutron/plugins/oneconvergence/nvsdplugin.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/opencontrail/contrailplugin.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
-file path=etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini owner=neutron \
+file files/ovs_neutron_plugin.ini \
+    path=etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ovsvapp/ovsvapp_agent.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
@@ -143,11 +144,14 @@ file files/neutron.user_attr path=etc/user_attr.d/cloud:openstack:neutron \
 file path=lib/svc/manifest/application/openstack/neutron-dhcp-agent.xml
 file path=lib/svc/manifest/application/openstack/neutron-l3-agent.xml
 file path=lib/svc/manifest/application/openstack/neutron-metadata-agent.xml
+file path=lib/svc/manifest/application/openstack/neutron-openvswitch-agent.xml
 file path=lib/svc/manifest/application/openstack/neutron-server.xml
 file path=lib/svc/manifest/application/openstack/neutron-upgrade.xml
 file files/neutron-dhcp-agent path=lib/svc/method/neutron-dhcp-agent
 file files/neutron-l3-agent path=lib/svc/method/neutron-l3-agent
 file files/neutron-metadata-agent path=lib/svc/method/neutron-metadata-agent
+file files/neutron-openvswitch-agent \
+    path=lib/svc/method/neutron-openvswitch-agent
 file files/neutron-server path=lib/svc/method/neutron-server
 file files/neutron-upgrade path=lib/svc/method/neutron-upgrade
 file path=usr/bin/neutron-db-manage
@@ -159,6 +163,8 @@ file usr/bin/neutron-metadata-agent \
     path=usr/lib/neutron/neutron-metadata-agent mode=0555
 file usr/bin/neutron-ns-metadata-proxy \
     path=usr/lib/neutron/neutron-ns-metadata-proxy mode=0555
+file usr/bin/neutron-openvswitch-agent \
+    path=usr/lib/neutron/neutron-openvswitch-agent mode=0555
 file usr/bin/neutron-server path=usr/lib/neutron/neutron-server mode=0555
 file usr/bin/neutron-usage-audit path=usr/lib/neutron/neutron-usage-audit \
     mode=0555
@@ -965,16 +971,22 @@ depend type=origin fmri=cloud/openstack/neutron@0.2014.2.2 root-image=true
 # force a dependency on package delivering dnsmasq(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/inet/dnsmasq
 
-# force a dependency on package delivering dladm(1M)
+# force a dependency on package delivering arping(8)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/arping
+
+# force a dependency on package delivering dladm(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/dladm
 
-# force a dependency on package delivering evsadm(1M)
+# force a dependency on package delivering evsadm(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/evsadm
 
-# force a dependency on package delivering ipadm(1M)
+# force a dependency on package delivering ipadm(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipadm
 
-# force a dependency on package delivering pfctl(1M)
+# force a dependency on package delivering ovs-vsctl(8)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ovs-vsctl
+
+# force a dependency on package delivering pfctl(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/pfctl
 
 # force a dependency on cliff; pkgdepend work is needed to flush this out.

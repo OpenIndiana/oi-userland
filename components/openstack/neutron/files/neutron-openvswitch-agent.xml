@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -20,10 +20,10 @@
  operating system upgrade.  Make customizations in a different
  file.
 -->
-<service_bundle type="manifest" name="neutron-l3-agent">
+<service_bundle type="manifest" name="neutron-openvswitch-agent">
 
   <service version="1" type="service"
-    name="application/openstack/neutron/neutron-l3-agent">
+    name="application/openstack/neutron/neutron-openvswitch-agent">
 
     <dependency name='multiuser' grouping='require_all' restart_on='error'
       type='service'>
@@ -36,9 +36,10 @@
         value='svc:/application/openstack/neutron/neutron-upgrade' />
     </dependency>
 
-    <dependency name='firewall' grouping='require_all' restart_on='error'
+    <dependency name='openvswitch' grouping='require_all' restart_on='none'
       type='service'>
-      <service_fmri value='svc:/network/firewall:default' />
+      <service_fmri
+        value='svc:/application/openvswitch/vswitch-server:default' />
     </dependency>
 
     <dependency name='ntp' grouping='optional_all' restart_on='none'
@@ -51,30 +52,16 @@
       <service_fmri value='svc:/application/rabbitmq'/>
     </dependency>
 
-    <dependency name='neutron-server' grouping='optional_all' restart_on='none'
-      type='service'>
-      <service_fmri value='svc:/application/openstack/neutron/neutron-server'/>
-    </dependency>
-    
-     <dependency name='neutron-ovs-agent' grouping='optional_all' restart_on='none'
-       type='service'>
-       <service_fmri value='svc:/application/openstack/neutron/neutron-openvswitch-agent:default' />
-     </dependency>
-
     <logfile_attributes permissions='600'/>
 
     <exec_method timeout_seconds="60" type="method" name="start"
-      exec="/lib/svc/method/neutron-l3-agent %m %{config/config_path} %{config/l3_config_path} %{config/vpn_config_path} %{config/ml2_config_path}">
+      exec="/lib/svc/method/neutron-openvswitch-agent %m %{config/config_path} %{config/ovs_config_path}">
       <method_context>
-        <method_credential user='neutron' group='neutron'/>
+        <method_credential user='neutron' group='neutron' />
       </method_context>
     </exec_method>
-    <exec_method timeout_seconds="600" type="method" name="stop"
-      exec="/lib/svc/method/neutron-l3-agent %m %{restarter/contract}">
-      <method_context>
-        <method_credential user='neutron' group='neutron'/>
-      </method_context>
-    </exec_method>
+    <exec_method timeout_seconds="60" type="method" name="stop"
+      exec=":kill"/>
 
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
@@ -88,26 +75,21 @@
       <property_group name='config' type='application'>
         <propval name='config_path' type='astring'
           value='/etc/neutron/neutron.conf'/>
-        <propval name='l3_config_path' type='astring'
-          value='/etc/neutron/l3_agent.ini'/>
-        <propval name='vpn_config_path' type='astring'
-          value='/etc/neutron/vpn_agent.ini'/>
-        <propval name='ml2_config_path' type='astring'
-          value='/etc/neutron/plugins/ml2/ml2_conf.ini'/>
+        <propval name='ovs_config_path' type='astring'
+          value='/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini'/>
       </property_group>
     </instance>
 
     <template>
       <common_name>
         <loctext xml:lang="C">
-          OpenStack Neutron Layer 3 Agent
+          OpenStack Neutron Open vSwitch Agent 
         </loctext>
       </common_name>
       <description>
         <loctext xml:lang="C">
-          neutron-l3-agent is a server daemon that supports Layer 3 and NAT
-          forwarding to provide external network access for VMs on tenant
-          networks.
+          neutron-openvswitch-agent is a server daemon that uses an Open vSwitch to
+	  create L2 connectivity for instances/datalinks on the node it is running.
         </loctext>
       </description>
       <pg_pattern name='config' type='application' required='true'>
@@ -115,31 +97,7 @@
           required='true'>
           <common_name>
             <loctext xml:lang='C'>
-              Filesystem path to Neutron configuration file
-            </loctext>
-          </common_name>
-        </prop_pattern>
-        <prop_pattern name='l3_config_path' type='astring'
-          required='true'>
-          <common_name>
-            <loctext xml:lang='C'>
-              Filesystem path to Neutron L3 .ini file
-            </loctext>
-          </common_name>
-        </prop_pattern>
-        <prop_pattern name='vpn_config_path' type='astring'
-          required='true'>
-          <common_name>
-            <loctext xml:lang='C'>
-              Filesystem path to Neutron VPNaaS .ini file
-            </loctext>
-          </common_name>
-        </prop_pattern>
-        <prop_pattern name='ml2_config_path' type='astring'
-          required='true'>
-          <common_name>
-            <loctext xml:lang='C'>
-              Filesystem path to Neutron ML2 .ini file
+              Filesystem path to Neutron Open vSwitch agent configuration file
             </loctext>
           </common_name>
         </prop_pattern>
