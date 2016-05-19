@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
 COMPONENT_VERSION=	0.28.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte
@@ -64,3 +65,14 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
