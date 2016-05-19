@@ -44,4 +44,9 @@ CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/jansson
 # The test/suites/api/check-exports uses nm and expects it to be the GNU kind.
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 
+# 003-CVE-2016-4425.patch modifies jansson_config.h.in that will generate a new
+# jansson_config.h in the build subdirectory. We need to rm the one in the
+# original source so that it doesn't get in the way.
+COMPONENT_PREP_ACTION += $(RM) $(@D)/src/jansson_config.h
+
 ASLR_MODE = $(ASLR_ENABLE)
