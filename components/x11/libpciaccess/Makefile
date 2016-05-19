@@ -14,14 +14,14 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libpciaccess
-COMPONENT_VERSION=	0.13.3
+COMPONENT_NAME=	libpciaccess
+COMPONENT_VERSION=	0.13.4
 COMPONENT_PROJECT_URL=	http://xorg.freedesktop.org
 COMPONENT_SUMMARY=	scanpci and libpciaccess - generic PCI access software
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6cd76ccae4e06eee47d3ead84a118740e9406e2a9b7adc9b08e92c69ce89c2e3
+    sha256:07f864654561e4ac8629a0ef9c8f07fbc1f8592d1b6c418431593e9ba2cf2fcf
 COMPONENT_ARCHIVE_URL=	http://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	System/Hardware
 COMPONENT_FMRI=		diagnostic/scanpci
