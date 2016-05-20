@@ -23,6 +23,9 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+# All components using gobject-introspection must be built with gcc as
+# gobject-introspection 1.46 causes the build to fail when using Studio.
+COMPILER =              gcc
 include ../../make-rules/shared-macros.mk
 # Override PATH set in shared-macros.mk by setting the GNU PATH as default.
 PATH=$(GNUBIN):$(USRBINDIR)
@@ -67,6 +70,9 @@ CONFIGURE_OPTIONS	+=	--enable-dbm
 CONFIGURE_OPTIONS	+=	--disable-manpages
 CONFIGURE_OPTIONS.64	+=	--enable-doxygen-man
 CONFIGURE_OPTIONS.32	+=	--disable-doxygen-man
+# stack-protector breaks build with gcc 5.3 if not explicitly disabled until
+# fix for 23185183 is available on all build machines (s12_99 or later)
+CONFIGURE_OPTIONS	+=	--disable-stack-protector
 CONFIGURE_OPTIONS	+=	CPP="$(CC) -E"
 LDFLAGS	+=	-ldns_sd
 CONFIGURE_OPTIONS	+=	PYTHON=$(PYTHON.$(PYTHON_VERSION))
@@ -94,6 +100,8 @@ SUBDIRS = avahi-common avahi-core avahi-client avahi-glib avahi-gobject avahi-ui
 $(BUILD_32):	COMPONENT_BUILD_TARGETS		+=	SUBDIRS="$(SUBDIRS)"
 $(INSTALL_32):	COMPONENT_INSTALL_TARGETS	+=	SUBDIRS="$(SUBDIRS)"
 
+# gobject-introspection tools are used to build, not a runtime dependency
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
@@ -103,4 +111,5 @@ REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/dbus
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/libdbus
