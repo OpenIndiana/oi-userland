@@ -27,26 +27,21 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.5.48
+COMPONENT_VERSION     = 5.5.49
 COMPONENT_ARCHIVE_HASH= \
-    sha256:cc3f8745879eee0508de1a70fc2d267a2d06b7433faa8bb07a787768dcfed781
+    sha256:cd9ca49b01a76bca635f2888b9d4d30fa6583dd198994d407cdd0dd7170e9e1f
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
 
-# MySQL doesn't like cloning
+#We use cp(1) instead of cloney because we use TAR to copy files and the TAR 
+#used doesn't handle long links
 CLONEY = echo
-COMPONENT_PRE_BUILD_ACTION += \
-  $(CP) -rp $(SOURCE_DIR)/* $(@D);
+COMPONENT_PRE_BUILD_ACTION += $(CP) -rp $(SOURCE_DIR)/* $(@D);
 
 BUILD_STYLE= cmake
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-
-# Remove "-z ignore" to avoid link problem, missing C++ runtime
-# references in libmysqlclient.so
-LD_Z_IGNORE =
 
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
@@ -83,6 +78,7 @@ CMAKE_OPTIONS += -DWITH_FEDERATED_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_INNOBASE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
 CMAKE_OPTIONS += -DFEATURE_SET=community
+CMAKE_OPTIONS += -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE
 
 # Adjust '#!/usr/bin/perl'
 $(INSTALL_64): PERL_SCRIPTS= \

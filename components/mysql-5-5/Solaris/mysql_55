@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -41,6 +41,7 @@ MYSQLCNF=`getproparg mysql/cnf`
 MYSQLBIN=`getproparg mysql/bin`
 MYSQLDATA=`getproparg mysql/data`
 PIDFILE=${MYSQLDATA}/`/usr/bin/uname -n`.pid
+LOG_ERROR=${MYSQLDATA}/`/usr/bin/uname -n`.err
 
 if [ -z ${MYSQLCNF} ]; then
         echo "mysql/cnf property not set"
@@ -63,8 +64,8 @@ if [ ! -d ${MYSQLDATA} ]; then
 fi
 
 if [ ! -d ${MYSQLDATA}/mysql ]; then
-	echo ${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA}
-	${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA}
+	echo ${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA} --log-error=${LOG_ERROR}
+	${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA} --log-error=${LOG_ERROR}
 fi
 
 # refresh method for this service is not defined because mysqld by itself
@@ -76,25 +77,13 @@ mysql_start() 	{
 
 }
 
-	
-mysql_stop()	{
-	if [ -f ${PIDFILE} ]; then
-	smf_kill_contract $1 KILL 1 30
-	fi
-}
-
 case "$1" in
 'start')
 	mysql_start 
 	;;
 
-'stop')
-	mysql_stop $2
-	;;
-
-
 *)
-	echo "Usage: $0 {start|stop}"
+	echo "Usage: $0 start"
 	exit 1
 	;;
 
