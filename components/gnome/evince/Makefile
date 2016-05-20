@@ -66,6 +66,7 @@ COMPONENT_BUILD_ENV += PATH="$(PATH)"
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS += V=1
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += gnome/file-manager/nautilus
 REQUIRED_PACKAGES += image/library/libtiff

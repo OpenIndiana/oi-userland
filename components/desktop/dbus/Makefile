@@ -54,6 +54,7 @@ CONFIGURE_OPTIONS +=	--disable-static
 ASLR_MODE = $(ASLR_ENABLE)
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/documentation-tool/xmlto
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2

@@ -59,6 +59,7 @@ COMPONENT_PREP_ACTION = \
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
