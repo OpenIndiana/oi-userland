@@ -13,12 +13,14 @@
 #
 
 # NOTE: This recipe supports both "encumbered" and "license-clean"
-# builds (with or without MP3 support). See Makefile.not-encumbered
-# which includes this one as an example that could be delivered as
-# $(WS_TOP)/library/SDL2_mixer/Makefile in some other reality.
+# builds (with or without MP3 support).
+# A not-encumbered Makefile which includes this one could be delivered
+# as $(WS_TOP)/library/SDL2_mixer/Makefile in some other reality.
 # That file's contents would be just two lines like these:
 ### USE_ENCUMBERED=no
 ### include ../../encumbered/SDL2_mixer/Makefile
+# Also the other version of the component should deliver a symlink to
+# the P5M manifest.
 
 # This file (by default) provides the package with encumbered code
 # or inseparable run-time dependencies:
@@ -42,13 +44,15 @@ COMPONENT_CLASSIFICATION =	System/Multimedia Libraries
 
 ifeq ($(strip $(USE_ENCUMBERED)),yes)
 COMPONENT_SUMMARY:=$(COMPONENT_SUMMARY) (encumbered version)
-include $(WS_TOP)/make-rules/encumbered.mk
+include $(WS_MAKE_RULES)/encumbered.mk
 endif
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH.32=/usr/gnu/bin:/usr/bin
+PATH.64=/usr/gnu/bin:/usr/gnu/bin/$(MACH64):/usr/bin/$(MACH64):/usr/bin
+PATH=$(PATH.$(BITS))
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
@@ -61,11 +65,12 @@ CONFIGURE_OPTIONS +=	--enable-music-mod-mikmod --enable-music-mod-mikmod-shared
 CONFIGURE_OPTIONS +=	--enable-music-ogg-shared
 CONFIGURE_OPTIONS +=	--enable-music-flac-shared
 
+ifeq ($(strip $(USE_ENCUMBERED)),yes)
 ### Note: currently we do not serve libmad in the fully open components,
 ### it and MPEG support is reserved for encumbered components
 #CONFIGURE_OPTIONS +=	--enable-music-mp3-smpeg --enable-music-mp3-smpeg-shared
-ifeq ($(strip $(USE_ENCUMBERED)),yes)
 CONFIGURE_OPTIONS +=	--enable-music-mp3-mad-gpl
+REQUIRED_PACKAGES += library/audio/libmad
 else
 CONFIGURE_OPTIONS +=	--disable-music-mp3
 endif
@@ -76,3 +81,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/sdl2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
