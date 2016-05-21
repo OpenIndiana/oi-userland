@@ -16,13 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-openchrome
-COMPONENT_VERSION= 0.3.3
+COMPONENT_VERSION= 0.5.0
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e49e2f1e5dac86408e5a74b87038cc4082d2c3fba4e0579823161991432412ed
+  sha256:49fdd613975a332a0a64720b382420354aecaf2fcbb4920efd094d5a0ac955bb
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -42,6 +42,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoheader && \
                                         automake -a -f -c &&\
                                         autoconf )
+
+CFLAGS+= -std=gnu99
 
 # Paths to find libraries/modules to link with 
 
@@ -77,3 +79,10 @@ CONFIGURE_OPTIONS += --disable-kms
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/server/xorg
