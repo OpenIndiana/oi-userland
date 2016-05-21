@@ -43,6 +43,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
+CFLAGS+= -std=gnu99
+
 # Paths to find libraries/modules to link with 
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
@@ -77,3 +79,10 @@ CONFIGURE_OPTIONS += --disable-kms
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/server/xorg
