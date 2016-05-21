@@ -1,0 +1,36 @@
+Patch from https://bugs.freedesktop.org/show_bug.cgi?id=89160 for
+upstream bug 89160 - distutils installation puts __init__.py into wrong place
+
+Modified locally to apply to the python 2.x version.
+
+diff --git a/setup.py b/setup.py
+old mode 100755
+new mode 100644
+index 1985420..548ea67
+--- a/setup.py
++++ b/setup.py
+@@ -1,11 +1,4 @@
+-#!/usr/bin/env python
+-
+ import distutils.core      as dic
+-import distutils.dir_util  as dut
+-import distutils.file_util as fut
+-import distutils.sysconfig as dsy
+-import io
+-import os
+ import subprocess
+ import sys
+ 
+@@ -116,10 +109,10 @@ dic.setup(
+   version = pycairo_version,
+   description = "python interface for cairo",
+   ext_modules = [cairo],
++  package_dir = {"cairo" : "src"},
++  packages = ["cairo"],
+   data_files = [
+     ('include/pycairo', ['src/pycairo.h']),
+     ('lib/pkgconfig', [pkgconfig_file]),
+-    (os.path.join(dsy.get_python_lib(), 'cairo'),
+-     ['src/__init__.py']),
+     ],
+   )
