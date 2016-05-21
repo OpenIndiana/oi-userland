@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-openchrome
-COMPONENT_VERSION= 0.3.3
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 0.6.0
 COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e49e2f1e5dac86408e5a74b87038cc4082d2c3fba4e0579823161991432412ed
+  sha256:da2975c6379358de52c1257710c67eb59139a7f0a1cd28d00cc64cc3e1c02f75
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -31,17 +30,18 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-openchrome
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+CFLAGS+= -std=gnu99
 
 # Paths to find libraries/modules to link with 
 
@@ -70,9 +70,6 @@ COMPONENT_BUILD_ENV += \
 # this is needed to set path for XvMC libraries
 # Disable as 32bit module is not installed in the right directory. 
 #CONFIGURE_LIBDIR.$(BITS) =   $(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
-
-CONFIGURE_OPTIONS += --disable-dri
-CONFIGURE_OPTIONS += --disable-kms
 
 build: $(BUILD_32_and_64)
 
