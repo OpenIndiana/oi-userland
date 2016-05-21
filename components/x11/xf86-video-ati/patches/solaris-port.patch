@@ -1,0 +1,11 @@
+--- ./src/Makefile.am	Wed Mar  4 12:00:38 2015
++++ ./src/Makefile.am	Wed Mar  4 12:02:43 2015
+@@ -52,6 +52,8 @@
+ 
+ radeon_drv_la_LTLIBRARIES = radeon_drv.la
+ radeon_drv_la_LDFLAGS = -module -avoid-version
++radeon_drv_la_LDFLAGS += -R $(moduledir)
++radeon_drv_la_LIBADD += $(XORG_EXTERNS_FLAG) $(DRM_LIBS) $(LIBDRM_LIBS) -lm
+ radeon_drv_ladir = @moduledir@/drivers
+ radeon_drv_la_SOURCES = \
+ 	radeon_accel.c radeon_video.c \

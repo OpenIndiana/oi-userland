@@ -1,0 +1,16 @@
+--- ./src/radeon_probe.c	Tue Dec 24 12:13:42 2013
++++ ./src/radeon_probe.c	Mon May 11 14:27:40 2015
+@@ -109,9 +109,13 @@
+ 	return FALSE;
+     }
+ 
++#if defined (sun)
++    return FALSE;
++#else 
+     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, 0,
+ 		   "[KMS] Kernel modesetting enabled.\n");
+     return TRUE;
++#endif
+ }
+ 
+ static Bool
