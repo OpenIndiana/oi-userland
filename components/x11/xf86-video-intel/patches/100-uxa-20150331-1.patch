@@ -1,0 +1,133 @@
+From 1be5b715827ef2bbc75ef795c301a1a7ba6e5f09 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Tue, 31 Mar 2015 09:59:58 +0100
+Subject: Add TILE property support (for MST tiled monitors)
+
+Based on the patch for modesetting (and lots of work) by Dave Airlie
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+#diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+#index 633133d..f0cf481 100644
+#--- a/src/sna/sna_display.c
+#+++ b/src/sna/sna_display.c
+#@@ -3185,6 +3185,47 @@ done:
+# 	}
+# }
+# 
+#+static void
+#+sna_output_attach_tile(xf86OutputPtr output)
+#+{
+#+#if XF86_OUTPUT_VERSION >= 3
+#+	struct sna *sna = to_sna(output->scrn);
+#+	struct sna_output *sna_output = output->driver_private;
+#+	struct drm_mode_get_blob blob;
+#+	struct xf86CrtcTileInfo tile_info, *set = NULL;
+#+	char *tile;
+#+	int id;
+#+
+#+	id = find_property(sna, sna_output, "TILE");
+#+	DBG(("%s: found? TILE=%d\n", __FUNCTION__, id));
+#+	if (id == -1)
+#+		goto out;
+#+
+#+	VG_CLEAR(blob);
+#+	blob.blob_id = sna_output->prop_values[id];
+#+	blob.length = 0;
+#+	if (drmIoctl(sna->kgem.fd, DRM_IOCTL_MODE_GETPROPBLOB, &blob))
+#+		goto out;
+#+
+#+	do {
+#+		id = blob.length;
+#+		tile = alloca(id + 1);
+#+		blob.data = (uintptr_t)tile;
+#+		VG(memset(tile, 0, id));
+#+		DBG(("%s: reading %d bytes for TILE blob\n", __FUNCTION__, id));
+#+		if (drmIoctl(sna->kgem.fd, DRM_IOCTL_MODE_GETPROPBLOB, &blob))
+#+			goto out;
+#+	} while (id != blob.length);
+#+
+#+	tile[blob.length] = '\0'; /* paranoia */
+#+	DBG(("%s: TILE='%s'\n", __FUNCTION__, tile));
+#+	if (xf86OutputParseKMSTile(tile, blob.length, &tile_info))
+#+		set = &tile_info;
+#+out:
+#+	xf86OutputSetTile(output, set);
+#+#endif
+#+}
+#+
+# static bool duplicate_mode(DisplayModePtr modes, DisplayModePtr m)
+# {
+# 	if (m == NULL)
+#@@ -3281,6 +3322,7 @@ sna_output_get_modes(xf86OutputPtr output)
+# 	assert(sna_output->id);
+# 
+# 	sna_output_attach_edid(output);
+#+	sna_output_attach_tile(output);
+# 
+# 	if (output->crtc) {
+# 		struct drm_mode_crtc mode;
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index 544382a..a95b3de 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -868,6 +868,48 @@ intel_output_attach_edid(xf86OutputPtr output)
+ 	xf86OutputSetEDID(output, mon);
+ }
+ 
++static void
++intel_output_attach_tile(xf86OutputPtr output)
++{
++#if XF86_OUTPUT_VERSION >= 3
++	struct intel_output *intel_output = output->driver_private;
++	drmModeConnectorPtr koutput = intel_output->mode_output;
++	struct intel_mode *mode = intel_output->mode;
++	drmModePropertyBlobPtr blob = NULL;
++	struct xf86CrtcTileInfo tile_info, *set = NULL;
++	int i;
++
++	for (i = 0; koutput && i < koutput->count_props; i++) {
++		drmModePropertyPtr props;
++
++		props = drmModeGetProperty(mode->fd, koutput->props[i]);
++		if (!props)
++			continue;
++
++		if (!(props->flags & DRM_MODE_PROP_BLOB)) {
++			drmModeFreeProperty(props);
++			continue;
++		}
++
++		if (!strcmp(props->name, "TILE")) {
++			blob = drmModeGetPropertyBlob(mode->fd,
++						      koutput->prop_values[i]);
++		}
++		drmModeFreeProperty(props);
++	}
++
++	if (blob) {
++		if (xf86OutputParseKMSTile(blob->data,
++					   blob->length,
++					   &tile_info))
++			set = &tile_info;
++		drmModeFreePropertyBlob(blob);
++	}
++
++	xf86OutputSetTile(output, set);
++#endif
++}
++
+ static DisplayModePtr
+ intel_output_panel_edid(xf86OutputPtr output, DisplayModePtr modes)
+ {
+@@ -923,6 +965,7 @@ intel_output_get_modes(xf86OutputPtr output)
+ 	int i;
+ 
+ 	intel_output_attach_edid(output);
++	intel_output_attach_tile(output);
+ 
+ 	if (!koutput)
+ 		return Modes;
+-- 
+cgit v0.10.2
+

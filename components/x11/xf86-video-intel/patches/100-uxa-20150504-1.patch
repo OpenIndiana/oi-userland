@@ -1,0 +1,194 @@
+From 5054e2271210a52bf88b0f12c35d687ce9e8210d Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Mon, 4 May 2015 14:00:13 +0100
+Subject: Remove the driver option to delete connectors on unplugging
+
+With a MST topology change, we can find outputs may disappear. We offered
+a choice as to whether to simply disable them or completely remove them
+from the listing of available outputs.  However, clients never expected
+that their operation on any output could trigger a BadID XError (or that
+there is anyway to prevent race conditions). As such an option was made to
+disable by default, but allow testing complete removal. Now the RandR
+protocol has been clarified such that XID assigned to outputs are now
+permanent, as such the option breaks the spec, so drop it.
+
+See randrproto commit 895ee5264524c7c239ee4ef5e39c4e295323fb51
+Author: Dave Airlie <airlied@redhat.com>
+Date:   Wed Apr 22 10:58:18 2015 +1000
+
+    randrproto: clarify output XID lifetimes.
+
+    This just makes a note that randr won't make outputs disappear
+    dynamically.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Dave Airlie <airlied@redhat.com>
+
+diff --git a/src/intel_options.c b/src/intel_options.c
+index 034b591..465f739 100644
+--- a/src/intel_options.c
++++ b/src/intel_options.c
+@@ -25,7 +25,6 @@ const OptionInfoRec intel_options[] = {
+ 	{OPTION_PREFER_OVERLAY, "XvPreferOverlay", OPTV_BOOLEAN, {0}, 0},
+ 	{OPTION_HOTPLUG,	"HotPlug",	OPTV_BOOLEAN,	{0},	1},
+ 	{OPTION_REPROBE,	"ReprobeOutputs", OPTV_BOOLEAN,	{0},	0},
+-	{OPTION_DELETE_DP12,	"DeleteUnusedDP12Displays", OPTV_BOOLEAN,	{0},	0},
+ #ifdef INTEL_XVMC
+ 	{OPTION_XVMC,		"XvMC",		OPTV_BOOLEAN,	{0},	1},
+ #endif
+diff --git a/src/intel_options.h b/src/intel_options.h
+index 56ba279..492e03f 100644
+--- a/src/intel_options.h
++++ b/src/intel_options.h
+@@ -28,7 +28,6 @@ enum intel_options {
+ 	OPTION_PREFER_OVERLAY,
+ 	OPTION_HOTPLUG,
+ 	OPTION_REPROBE,
+-	OPTION_DELETE_DP12,
+ #if defined(XvMCExtension) && defined(ENABLE_XVMC)
+ 	OPTION_XVMC,
+ #define INTEL_XVMC 1
+#diff --git a/src/sna/sna.h b/src/sna/sna.h
+#index e51ee14..374754b 100644
+#--- a/src/sna/sna.h
+#+++ b/src/sna/sna.h
+#@@ -248,7 +248,6 @@ struct sna {
+# #define SNA_FLUSH_GTT		0x400
+# #define SNA_PERFORMANCE		0x1000
+# #define SNA_POWERSAVE		0x2000
+#-#define SNA_REMOVE_OUTPUTS	0x4000
+# #define SNA_HAS_FLIP		0x10000
+# #define SNA_HAS_ASYNC_FLIP	0x20000
+# #define SNA_LINEAR_FB		0x40000
+#diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+#index 3ba2df9..e96040d 100644
+#--- a/src/sna/sna_display.c
+#+++ b/src/sna/sna_display.c
+#@@ -4502,38 +4502,6 @@ skip:
+# 	return len;
+# }
+# 
+#-static void sna_output_del(xf86OutputPtr output)
+#-{
+#-	ScrnInfoPtr scrn = output->scrn;
+#-	xf86CrtcConfigPtr config = XF86_CRTC_CONFIG_PTR(scrn);
+#-	int i;
+#-
+#-	DBG(("%s(%s)\n", __FUNCTION__, output->name));
+#-	assert(to_sna_output(output));
+#-
+#-	RROutputDestroy(output->randr_output);
+#-	sna_output_destroy(output);
+#-
+#-	while (output->probed_modes)
+#-		xf86DeleteMode(&output->probed_modes, output->probed_modes);
+#-
+#-	free(output);
+#-
+#-	for (i = 0; i < config->num_output; i++)
+#-		if (config->output[i] == output)
+#-			break;
+#-	assert(i < to_sna(scrn)->mode.num_real_output);
+#-	DBG(("%s: removing output #%d of %d\n",
+#-	     __FUNCTION__, i, to_sna(scrn)->mode.num_real_output));
+#-
+#-	for (; i < config->num_output; i++) {
+#-		config->output[i] = config->output[i+1];
+#-		config->output[i]->possible_clones >>= 1;
+#-	}
+#-	config->num_output--;
+#-	to_sna(scrn)->mode.num_real_output--;
+#-}
+#-
+# static int output_rank(const void *A, const void *B)
+# {
+# 	const xf86OutputPtr *a = A;
+#@@ -4674,17 +4642,11 @@ void sna_mode_discover(struct sna *sna)
+# 		    sna_output->serial, serial));
+# 
+# 		xf86DrvMsg(sna->scrn->scrnIndex, X_INFO,
+#-			   "%s output %s\n",
+#-			   sna->flags & SNA_REMOVE_OUTPUTS ? "Removed" : "Disabled",
+#+			   "Disabled output %s\n",
+# 			   output->name);
+#-		if (sna->flags & SNA_REMOVE_OUTPUTS) {
+#-			sna_output_del(output);
+#-			i--;
+#-		} else {
+#-			sna_output->id = 0;
+#-			output->crtc = NULL;
+#-			RROutputChanged(output->randr_output, TRUE);
+#-		}
+#+		sna_output->id = 0;
+#+		output->crtc = NULL;
+#+		RROutputChanged(output->randr_output, TRUE);
+# 		changed |= 2;
+# 	}
+# 
+#diff --git a/src/sna/sna_driver.c b/src/sna/sna_driver.c
+#index 488ca9b..4e76fd0 100644
+#--- a/src/sna/sna_driver.c
+#+++ b/src/sna/sna_driver.c
+#@@ -621,9 +621,6 @@ static Bool sna_pre_init(ScrnInfoPtr scrn, int probe)
+# 	if (xf86ReturnOptValBool(sna->Options, OPTION_TILING_FB, FALSE))
+# 		sna->flags |= SNA_LINEAR_FB;
+# 
+#-	if (xf86ReturnOptValBool(sna->Options, OPTION_DELETE_DP12, FALSE))
+#-		sna->flags |= SNA_REMOVE_OUTPUTS;
+#-
+# 	if (!xf86ReturnOptValBool(sna->Options, OPTION_SWAPBUFFERS_WAIT, TRUE))
+# 		sna->flags |= SNA_NO_WAIT;
+# 	DBG(("%s: swapbuffer wait? %s\n", __FUNCTION__, sna->flags & SNA_NO_WAIT ? "disabled" : "enabled"));
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index a95b3de..0cdc8d2 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -94,8 +94,6 @@ struct intel_mode {
+ 		intel_pageflip_abort_proc abort;
+ 		void *data;
+ 	} pageflip;
+-
+-	Bool delete_dp_12_displays;
+ };
+ 
+ struct intel_pageflip {
+@@ -2248,10 +2246,6 @@ Bool intel_mode_pre_init(ScrnInfoPtr scrn, int fd, int cpp)
+ 		intel->use_pageflipping = TRUE;
+ 	}
+ 
+-	if (xf86ReturnOptValBool(intel->Options, OPTION_DELETE_DP12, FALSE)) {
+-		mode->delete_dp_12_displays = TRUE;
+-	}
+-
+ 	intel->modes = mode;
+ 	drmModeFreeResources(mode_res);
+ 	return TRUE;
+@@ -2515,12 +2509,11 @@ intel_mode_hotplug(struct intel_screen_private *intel)
+ 	int i, j;
+ 	Bool found;
+ 	Bool changed = FALSE;
+-	struct intel_mode *mode = intel->modes;
++
+ 	mode_res = drmModeGetResources(intel->drmSubFD);
+ 	if (!mode_res)
+ 		goto out;
+ 
+-restart_destroy:
+ 	for (i = 0; i < config->num_output; i++) {
+ 		xf86OutputPtr output = config->output[i];
+ 		struct intel_output *intel_output;
+@@ -2542,11 +2535,6 @@ restart_destroy:
+ 		RROutputChanged(output->randr_output, TRUE);
+ 
+ 		changed = TRUE;
+-		if (mode->delete_dp_12_displays) {
+-			RROutputDestroy(output->randr_output);
+-			xf86OutputDestroy(output);
+-			goto restart_destroy;
+-		}
+ 	}
+ 
+ 	/* find new output ids we don't have outputs for */
+-- 
+cgit v0.10.2
+

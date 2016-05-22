@@ -1,0 +1,41 @@
+From 9154dff9aedad3271f629edb1ccc9c8d273ca7bc Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sat, 2 Jul 2016 17:25:14 +0100
+Subject: DRI3 is not supported by mesa/i915
+
+Since mesa requires __DRI2_FLUSH version 4 for its DRI3 support and
+mesa/i915 only provides version 3, libGL fails to load (not even falling
+back to DRI2). Workaround this by not enabling DRI3.
+
+References: https://bugs.freedesktop.org/show_bug.cgi?id=96783
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/sna/sna_driver.c b/src/sna/sna_driver.c
+index fce64ba..455113f 100644
+--- a/src/sna/sna_driver.c
++++ b/src/sna/sna_driver.c
+@@ -437,7 +437,7 @@ static void setup_dri(struct sna *sna)
+ 
+ 	level = intel_option_cast_to_unsigned(sna->Options, OPTION_DRI, DEFAULT_DRI_LEVEL);
+ #if HAVE_DRI3
+-	if (level >= 3)
++	if (level >= 3 && sna->kgem.gen >= 040)
+ 		sna->dri3.available = !!xf86LoadSubModule(sna->scrn, "dri3");
+ #endif
+ #if HAVE_DRI2
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 8f76b34..73d7f4f 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -244,7 +244,7 @@ static void intel_check_dri_option(ScrnInfoPtr scrn)
+ 
+ 	intel->dri2 = intel->dri3 = DRI_NONE;
+ 	level = intel_option_cast_to_unsigned(intel->Options, OPTION_DRI, DEFAULT_DRI_LEVEL);
+-	if (level < 3)
++	if (level < 3 || INTEL_INFO(intel)->gen < 040)
+ 		intel->dri3 = DRI_DISABLED;
+ 	if (level < 2)
+ 		intel->dri2 = DRI_DISABLED;
+-- 
+cgit v0.10.2
+

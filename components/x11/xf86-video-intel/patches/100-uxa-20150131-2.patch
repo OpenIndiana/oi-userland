@@ -1,0 +1,490 @@
+From 6d2754b1902e8bce37818c854fb890400b27343e Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sat, 31 Jan 2015 21:32:19 +0000
+Subject: Unify Option "DRI" parsing
+
+Allow Option "DRI" "[23]" to also work with UXA.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_options.c b/src/intel_options.c
+index ff8541a..034b591 100644
+--- a/src/intel_options.c
++++ b/src/intel_options.c
+@@ -2,6 +2,10 @@
+ #include "config.h"
+ #endif
+ 
++#include <xorg-server.h>
++#include <xorgVersion.h>
++#include <xf86Parser.h>
++
+ #include "intel_options.h"
+ 
+ const OptionInfoRec intel_options[] = {
+@@ -54,3 +58,85 @@ OptionInfoPtr intel_options_get(ScrnInfoPtr scrn)
+ 
+ 	return options;
+ }
++
++Bool intel_option_cast_to_bool(OptionInfoPtr options, int id, Bool val)
++{
++#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
++	xf86getBoolValue(&val, xf86GetOptValString(options, id));
++#endif
++	return val;
++}
++
++static int
++namecmp(const char *s1, const char *s2)
++{
++	char c1, c2;
++
++	if (!s1 || *s1 == 0) {
++		if (!s2 || *s2 == 0)
++			return 0;
++		else
++			return 1;
++	}
++
++	while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
++		s1++;
++
++	while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
++		s2++;
++
++	c1 = isupper(*s1) ? tolower(*s1) : *s1;
++	c2 = isupper(*s2) ? tolower(*s2) : *s2;
++	while (c1 == c2) {
++		if (c1 == '\0')
++			return 0;
++
++		s1++;
++		while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
++			s1++;
++
++		s2++;
++		while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
++			s2++;
++
++		c1 = isupper(*s1) ? tolower(*s1) : *s1;
++		c2 = isupper(*s2) ? tolower(*s2) : *s2;
++	}
++
++	return c1 - c2;
++}
++
++unsigned intel_option_cast_to_unsigned(OptionInfoPtr options, int id, unsigned val)
++{
++#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
++	const char *str = xf86GetOptValString(options, id);
++#else
++	const char *str = NULL;
++#endif
++	unsigned v;
++
++	if (str == NULL || *str == '\0')
++		return val;
++
++	if (namecmp(str, "on") == 0)
++		return val;
++	if (namecmp(str, "true") == 0)
++		return val;
++	if (namecmp(str, "yes") == 0)
++		return val;
++
++	if (namecmp(str, "0") == 0)
++		return 0;
++	if (namecmp(str, "off") == 0)
++		return 0;
++	if (namecmp(str, "false") == 0)
++		return 0;
++	if (namecmp(str, "no") == 0)
++		return 0;
++
++	v = atoi(str);
++	if (v)
++		return v;
++
++	return val;
++}
+diff --git a/src/intel_options.h b/src/intel_options.h
+index 7e2cbd9..56ba279 100644
+--- a/src/intel_options.h
++++ b/src/intel_options.h
+@@ -51,5 +51,7 @@ enum intel_options {
+ 
+ extern const OptionInfoRec intel_options[];
+ OptionInfoPtr intel_options_get(ScrnInfoPtr scrn);
++unsigned intel_option_cast_to_unsigned(OptionInfoPtr, int id, unsigned val);
++Bool intel_option_cast_to_bool(OptionInfoPtr, int id, Bool val);
+ 
+ #endif /* INTEL_OPTIONS_H */
+diff --git a/src/sna/sna_accel.c b/src/sna/sna_accel.c
+index d545877..c11ddee 100644
+--- a/src/sna/sna_accel.c
++++ b/src/sna/sna_accel.c
+@@ -17824,11 +17824,20 @@ static bool sna_option_accel_none(struct sna *sna)
+ 	if (xf86ReturnOptValBool(sna->Options, OPTION_ACCEL_DISABLE, FALSE))
+ 		return true;
+ 
++	if (!intel_option_cast_to_bool(sna->Options,
++				       OPTION_ACCEL_METHOD,
++				       !IS_DEFAULT_ACCEL_METHOD(NOACCEL)))
++		return false;
++
++#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
+ 	s = xf86GetOptValString(sna->Options, OPTION_ACCEL_METHOD);
+ 	if (s == NULL)
+ 		return IS_DEFAULT_ACCEL_METHOD(NOACCEL);
+ 
+ 	return strcasecmp(s, "none") == 0;
++#else
++	return IS_DEFAULT_ACCEL_METHOD(NOACCEL);
++#endif
+ }
+ 
+ static bool sna_option_accel_blt(struct sna *sna)
+diff --git a/src/sna/sna_dri2.c b/src/sna/sna_dri2.c
+index 32a88c5..1a86906 100644
+--- a/src/sna/sna_dri2.c
++++ b/src/sna/sna_dri2.c
+@@ -3297,9 +3297,18 @@ static bool is_level(const char **str)
+ 	return false;
+ }
+ 
++static const char *options_get_dri(struct sna *sna)
++{
++#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
++	return xf86GetOptValString(sna->Options, OPTION_DRI);
++#else
++	return NULL;
++#endif
++}
++
+ static const char *dri_driver_name(struct sna *sna)
+ {
+-	const char *s = xf86GetOptValString(sna->Options, OPTION_DRI);
++	const char *s = options_get_dri(sna);
+ 
+ 	if (is_level(&s)) {
+ 		if (sna->kgem.gen < 030)
+@@ -3325,7 +3334,7 @@ bool sna_dri2_open(struct sna *sna, ScreenPtr screen)
+ 
+ 	if (wedged(sna)) {
+ 		xf86DrvMsg(sna->scrn->scrnIndex, X_WARNING,
+-			   "loading DRI2 whilst the GPU is wedged.\n");
++			   "loading DRI2 whilst acceleration is disabled.\n");
+ 	}
+ 
+ 	if (xf86LoaderCheckSymbol("DRI2Version"))
+diff --git a/src/sna/sna_driver.c b/src/sna/sna_driver.c
+index 6e2f221..79b62a8 100644
+--- a/src/sna/sna_driver.c
++++ b/src/sna/sna_driver.c
+@@ -395,107 +395,6 @@ static void sna_setup_capabilities(ScrnInfoPtr scrn, int fd)
+ #endif
+ }
+ 
+-static int
+-namecmp(const char *s1, const char *s2)
+-{
+-	char c1, c2;
+-
+-	if (!s1 || *s1 == 0) {
+-		if (!s2 || *s2 == 0)
+-			return 0;
+-		else
+-			return 1;
+-	}
+-
+-	while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
+-		s1++;
+-
+-	while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
+-		s2++;
+-
+-	c1 = isupper(*s1) ? tolower(*s1) : *s1;
+-	c2 = isupper(*s2) ? tolower(*s2) : *s2;
+-	while (c1 == c2) {
+-		if (c1 == '\0')
+-			return 0;
+-
+-		s1++;
+-		while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
+-			s1++;
+-
+-		s2++;
+-		while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
+-			s2++;
+-
+-		c1 = isupper(*s1) ? tolower(*s1) : *s1;
+-		c2 = isupper(*s2) ? tolower(*s2) : *s2;
+-	}
+-
+-	return c1 - c2;
+-}
+-
+-static Bool sna_option_cast_to_bool(struct sna *sna, int id, Bool val)
+-{
+-	const char *str = xf86GetOptValString(sna->Options, id);
+-
+-	if (str == NULL)
+-		return val;
+-
+-	if (*str == '\0')
+-		return TRUE;
+-
+-	if (namecmp(str, "1") == 0)
+-		return TRUE;
+-	if (namecmp(str, "on") == 0)
+-		return TRUE;
+-	if (namecmp(str, "true") == 0)
+-		return TRUE;
+-	if (namecmp(str, "yes") == 0)
+-		return TRUE;
+-
+-	if (namecmp(str, "0") == 0)
+-		return FALSE;
+-	if (namecmp(str, "off") == 0)
+-		return FALSE;
+-	if (namecmp(str, "false") == 0)
+-		return FALSE;
+-	if (namecmp(str, "no") == 0)
+-		return FALSE;
+-
+-	return val;
+-}
+-
+-static unsigned sna_option_cast_to_unsigned(struct sna *sna, int id, unsigned val)
+-{
+-	const char *str = xf86GetOptValString(sna->Options, id);
+-	unsigned v;
+-
+-	if (str == NULL || *str == '\0')
+-		return val;
+-
+-	if (namecmp(str, "on") == 0)
+-		return val;
+-	if (namecmp(str, "true") == 0)
+-		return val;
+-	if (namecmp(str, "yes") == 0)
+-		return val;
+-
+-	if (namecmp(str, "0") == 0)
+-		return 0;
+-	if (namecmp(str, "off") == 0)
+-		return 0;
+-	if (namecmp(str, "false") == 0)
+-		return 0;
+-	if (namecmp(str, "no") == 0)
+-		return 0;
+-
+-	v = atoi(str);
+-	if (v)
+-		return v;
+-
+-	return val;
+-}
+-
+ static Bool fb_supports_depth(int fd, int depth)
+ {
+ 	struct drm_i915_gem_create create;
+@@ -537,7 +436,7 @@ static void setup_dri(struct sna *sna)
+ 	sna->dri2.available = false;
+ 	sna->dri3.available = false;
+ 
+-	level = sna_option_cast_to_unsigned(sna, OPTION_DRI, ~0);
++	level = intel_option_cast_to_unsigned(sna->Options, OPTION_DRI, ~0);
+ #if HAVE_DRI3
+ 	if (level >= 3)
+ 		sna->dri3.available = !!xf86LoadSubModule(sna->scrn, "dri3");
+@@ -718,12 +617,6 @@ static Bool sna_pre_init(ScrnInfoPtr scrn, int probe)
+ 	kgem_init(&sna->kgem, fd,
+ 		  xf86GetPciInfoForEntity(pEnt->index),
+ 		  sna->info->gen);
+-	if (xf86ReturnOptValBool(sna->Options, OPTION_ACCEL_DISABLE, FALSE) ||
+-	    !sna_option_cast_to_bool(sna, OPTION_ACCEL_METHOD, TRUE)) {
+-		xf86DrvMsg(sna->scrn->scrnIndex, X_CONFIG,
+-			   "Disabling hardware acceleration.\n");
+-		sna->kgem.wedged = true;
+-	}
+ 
+ 	if (xf86ReturnOptValBool(sna->Options, OPTION_TILING_FB, FALSE))
+ 		sna->flags |= SNA_LINEAR_FB;
+diff --git a/src/sna/sna_video_textured.c b/src/sna/sna_video_textured.c
+index ea423b5..cea8887 100644
+--- a/src/sna/sna_video_textured.c
++++ b/src/sna/sna_video_textured.c
+@@ -319,7 +319,7 @@ void sna_video_textured_setup(struct sna *sna, ScreenPtr screen)
+ 
+ 	if (!sna->render.video) {
+ 		xf86DrvMsg(sna->scrn->scrnIndex, X_INFO,
+-			   "Textured video not supported on this hardware\n");
++			   "Textured video not supported on this hardware or backend\n");
+ 		return;
+ 	}
+ 
+diff --git a/src/uxa/intel_dri.c b/src/uxa/intel_dri.c
+index 83fc12c..481782f 100644
+--- a/src/uxa/intel_dri.c
++++ b/src/uxa/intel_dri.c
+@@ -1438,13 +1438,92 @@ static int has_i830_dri(void)
+ 	return access(DRI_DRIVER_PATH "/i830_dri.so", R_OK) == 0;
+ }
+ 
+-static const char *dri_driver_name(intel_screen_private *intel)
++static int
++namecmp(const char *s1, const char *s2)
++{
++	char c1, c2;
++
++	if (!s1 || *s1 == 0) {
++		if (!s2 || *s2 == 0)
++			return 0;
++		else
++			return 1;
++	}
++
++	while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
++		s1++;
++
++	while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
++		s2++;
++
++	c1 = isupper(*s1) ? tolower(*s1) : *s1;
++	c2 = isupper(*s2) ? tolower(*s2) : *s2;
++	while (c1 == c2) {
++		if (c1 == '\0')
++			return 0;
++
++		s1++;
++		while (*s1 == '_' || *s1 == ' ' || *s1 == '\t')
++			s1++;
++
++		s2++;
++		while (*s2 == '_' || *s2 == ' ' || *s2 == '\t')
++			s2++;
++
++		c1 = isupper(*s1) ? tolower(*s1) : *s1;
++		c2 = isupper(*s2) ? tolower(*s2) : *s2;
++	}
++
++	return c1 - c2;
++}
++
++static bool is_level(const char **str)
++{
++	const char *s = *str;
++	char *end;
++	unsigned val;
++
++	if (s == NULL || *s == '\0')
++		return true;
++
++	if (namecmp(s, "on") == 0)
++		return true;
++	if (namecmp(s, "true") == 0)
++		return true;
++	if (namecmp(s, "yes") == 0)
++		return true;
++
++	if (namecmp(s, "0") == 0)
++		return true;
++	if (namecmp(s, "off") == 0)
++		return true;
++	if (namecmp(s, "false") == 0)
++		return true;
++	if (namecmp(s, "no") == 0)
++		return true;
++
++	val = strtoul(s, &end, 0);
++	if (val && *end == '\0')
++		return true;
++	if (val && *end == ':')
++		*str = end + 1;
++	return false;
++}
++
++static const char *options_get_dri(intel_screen_private *intel)
+ {
+ #if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
+-	const char *s = xf86GetOptValString(intel->Options, OPTION_DRI);
+-	Bool dummy;
++	return xf86GetOptValString(intel->Options, OPTION_DRI);
++#else
++	return NULL;
++#endif
++}
++
++static const char *dri_driver_name(intel_screen_private *intel)
++{
++	const char *s = options_get_dri(intel);
+ 
+-	if (s == NULL || xf86getBoolValue(&dummy, s)) {
++	if (is_level(&s)) {
+ 		if (INTEL_INFO(intel)->gen < 030)
+ 			return has_i830_dri() ? "i830" : "i915";
+ 		else if (INTEL_INFO(intel)->gen < 040)
+@@ -1454,14 +1533,6 @@ static const char *dri_driver_name(intel_screen_private *intel)
+ 	}
+ 
+ 	return s;
+-#else
+-	if (INTEL_INFO(intel)->gen < 030)
+-		return has_i830_dri() ? "i830" : "i915";
+-	else if (INTEL_INFO(intel)->gen < 040)
+-		return "i915";
+-	else
+-		return "i965";
+-#endif
+ }
+ 
+ Bool I830DRI2ScreenInit(ScreenPtr screen)
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 2793da5..8816ee4 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -237,24 +237,17 @@ static Bool I830GetEarlyOptions(ScrnInfoPtr scrn)
+ 	return TRUE;
+ }
+ 
+-static Bool intel_option_cast_string_to_bool(intel_screen_private *intel,
+-					     int id, Bool val)
+-{
+-#if XORG_VERSION_CURRENT >= XORG_VERSION_NUMERIC(1,7,99,901,0)
+-	xf86getBoolValue(&val, xf86GetOptValString(intel->Options, id));
+-	return val;
+-#else
+-	return val;
+-#endif
+-}
+-
+ static void intel_check_dri_option(ScrnInfoPtr scrn)
+ {
+ 	intel_screen_private *intel = intel_get_screen_private(scrn);
++	unsigned level;
+ 
+ 	intel->dri2 = intel->dri3 = DRI_NONE;
+-	if (!intel_option_cast_string_to_bool(intel, OPTION_DRI, TRUE))
+-		intel->dri2 = intel->dri3 = DRI_DISABLED;
++	level = intel_option_cast_to_unsigned(intel->Options, OPTION_DRI, ~0);
++	if (level < 3)
++		intel->dri3 = DRI_DISABLED;
++	if (level < 2)
++		intel->dri2 = DRI_DISABLED;
+ 
+ 	if (scrn->depth != 16 && scrn->depth != 24 && scrn->depth != 30) {
+ 		xf86DrvMsg(scrn->scrnIndex, X_CONFIG,
+@@ -372,7 +365,7 @@ static Bool can_accelerate_blt(struct intel_screen_private *intel)
+ 		return FALSE;
+ 
+ 	if (xf86ReturnOptValBool(intel->Options, OPTION_ACCEL_DISABLE, FALSE) ||
+-	    !intel_option_cast_string_to_bool(intel, OPTION_ACCEL_METHOD, TRUE)) {
++	    !intel_option_cast_to_bool(intel->Options, OPTION_ACCEL_METHOD, TRUE)) {
+ 		xf86DrvMsg(intel->scrn->scrnIndex, X_CONFIG,
+ 			   "Disabling hardware acceleration.\n");
+ 		return FALSE;
+-- 
+cgit v0.10.2
+

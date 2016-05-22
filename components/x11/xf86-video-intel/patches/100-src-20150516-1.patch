@@ -1,0 +1,27 @@
+From aa44ba990a4c49fcfc5ed7dbf9968e3c622ffa0a Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sat, 16 May 2015 22:05:05 +0100
+Subject: intel: Prevent crash with X -configure
+
+When run with -configure, xf86configptr is NULL, so be careful and do
+not dereference it.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_module.c b/src/intel_module.c
+index 2a3b016..689c0dd 100644
+--- a/src/intel_module.c
++++ b/src/intel_module.c
+@@ -514,6 +514,9 @@ static enum accel_method { NOACCEL, SNA, UXA } get_accel_method(void)
+ 	if (hosted())
+ 		return SNA;
+ 
++	if (xf86configptr == NULL) /* X -configure */
++		return SNA;
++
+ 	dev = _xf86findDriver("intel", xf86configptr->conf_device_lst);
+ 	if (dev && dev->dev_option_lst) {
+ 		const char *s;
+-- 
+cgit v0.10.2
+

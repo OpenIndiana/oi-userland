@@ -1,0 +1,91 @@
+From 26ba2ba6e7169a099558092f31eaf97944cc3562 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 6 Feb 2015 23:03:11 +0000
+Subject: uxa/present: Fix flip_count for aborting on failed flip request
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index b2e1c72..83d20c8 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -1678,7 +1678,7 @@ intel_do_pageflip(intel_screen_private *intel,
+ 	 * attempts to schedule a second flip before processing the first
+ 	 * is a bug. Punt it back to the caller.
+ 	 */
+-	if (mode->pageflip.handler)
++	if (mode->flip_count)
+ 		return FALSE;
+ 
+ 	/*
+@@ -1705,6 +1705,7 @@ intel_do_pageflip(intel_screen_private *intel,
+ 	 */
+ 	mode->fe_msc = 0;
+ 	mode->fe_usec = 0;
++	memset(&mode->pageflip, 0, sizeof(mode->pageflip));
+ 
+ 	flags = DRM_MODE_PAGE_FLIP_EVENT;
+ 	if (async)
+@@ -1734,6 +1735,8 @@ intel_do_pageflip(intel_screen_private *intel,
+ 			goto error_undo;
+ 		}
+ 
++		mode->flip_count++;
++
+ 		if (drmModePageFlip(mode->fd,
+ 				    crtc_id(crtc),
+ 				    new_fb_id,
+@@ -1742,7 +1745,6 @@ intel_do_pageflip(intel_screen_private *intel,
+ 			intel_drm_abort_seq(scrn, seq);
+ 			goto error_undo;
+ 		}
+-		mode->flip_count++;
+ 	}
+ 
+ 	mode->old_fb_id = mode->fb_id;
+@@ -1999,15 +2001,13 @@ intel_drm_handler(int fd, uint32_t frame, uint32_t sec, uint32_t usec, void *use
+ static void
+ intel_pageflip_complete(struct intel_mode *mode)
+ {
+-	/* Release framebuffer */
+-	drmModeRmFB(mode->fd, mode->old_fb_id);
+-
+ 	if (!mode->pageflip.handler)
+ 		return;
+ 
++	/* Release framebuffer */
++	drmModeRmFB(mode->fd, mode->old_fb_id);
+ 	mode->pageflip.handler(mode->fe_msc, mode->fe_usec,
+ 			       mode->pageflip.data);
+-	memset(&mode->pageflip, 0, sizeof(mode->pageflip));
+ }
+ 
+ /*
+@@ -2047,6 +2047,7 @@ intel_pageflip_handler(ScrnInfoPtr scrn, xf86CrtcPtr crtc,
+ 
+ 	if (!mode)
+ 		return;
++
+ 	intel_pageflip_complete(mode);
+ }
+ 
+@@ -2062,14 +2063,12 @@ intel_pageflip_abort(ScrnInfoPtr scrn, xf86CrtcPtr crtc, void *data)
+ 	if (!mode)
+ 		return;
+ 
+-	/* Release framebuffer */
+-	drmModeRmFB(mode->fd, mode->old_fb_id);
+-
+ 	if (!mode->pageflip.abort)
+ 		return;
+ 
++	/* Release framebuffer */
++	drmModeRmFB(mode->fd, mode->old_fb_id);
+ 	mode->pageflip.abort(mode->pageflip.data);
+-	memset(&mode->pageflip, 0, sizeof(mode->pageflip));
+ }
+ 
+ /*
+-- 
+cgit v0.10.2
+

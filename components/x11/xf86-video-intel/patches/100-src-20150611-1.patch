@@ -1,0 +1,50 @@
+From 6651a03e627d5ad0f96a0da07b598b9cb8945793 Mon Sep 17 00:00:00 2001
+From: Damien Lespiau <damien.lespiau@intel.com>
+Date: Thu, 11 Jun 2015 10:06:45 +0100
+Subject: Add Broxton PCI ids
+
+Syncs up to
+
+kernel commit ee87697f8bc4da0aea6fe1a825c734fb5e4a5b3b
+Author: Damien Lespiau <damien.lespiau@intel.com>
+Date:   Fri May 15 19:43:56 2015 +0100
+
+    drm/i915/bxt: Update the Broxton PCI ids
+
+and, importantly, including
+
+kernel commit 1347f5b46a270db1991625f9f57af91e23a4b512
+Author: Damien Lespiau <damien.lespiau@intel.com>
+Date:   Tue Mar 17 11:39:27 2015 +0200
+
+    drm/i915/bxt: Add BXT PCI id
+
+Signed-off-by: Damien Lespiau <damien.lespiau@intel.com>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_module.c b/src/intel_module.c
+index 689c0dd..d3dca83 100644
+--- a/src/intel_module.c
++++ b/src/intel_module.c
+@@ -126,6 +126,9 @@ static const struct intel_device_info intel_skylake_info = {
+ 	.gen = 0110,
+ };
+ 
++static const struct intel_device_info intel_broxton_info = {
++	.gen = 0111,
++};
+ 
+ static const SymTabRec intel_chipsets[] = {
+ 	{PCI_CHIP_I810,				"i810"},
+@@ -324,6 +327,8 @@ static const struct pci_id_match intel_device_match[] = {
+ 
+ 	INTEL_SKL_IDS(&intel_skylake_info),
+ 
++	INTEL_BXT_IDS(&intel_broxton_info),
++
+ 	INTEL_VGA_DEVICE(PCI_MATCH_ANY, &intel_generic_info),
+ #endif
+ 
+-- 
+cgit v0.10.2
+

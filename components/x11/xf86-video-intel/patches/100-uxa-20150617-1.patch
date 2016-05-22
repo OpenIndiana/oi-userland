@@ -1,0 +1,189 @@
+From b24e7581bd1e5a0215cb73ec87093ebf03c20278 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 17 Jun 2015 17:55:04 +0100
+Subject: backlight: Factor known names into preferred interfaces
+
+Since the /sys/device/backlight never turned up we face an issue with
+disambiguating the backlight on multi-GPU devices. Both intel_backlight
+and nv_backlight are presented are raw interfaces, and on modern systems
+the ACPI interface is defunct, so we need a way to distinguish them. So,
+we fallback to our priority table of known interfaces and rank them
+accordingly, first by class (platform, native, raw) and then by priority.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/backlight.c b/src/backlight.c
+index c65e466..d020a7c 100644
+--- a/src/backlight.c
++++ b/src/backlight.c
+@@ -152,12 +152,9 @@ int backlight_open(struct backlight *b, char *iface)
+ 	return param.curval;
+ }
+ 
+-enum backlight_type backlight_exists(const char *iface)
++int backlight_exists(const char *iface)
+ {
+-	if (iface != NULL)
+-		return BL_NONE;
+-
+-	return BL_PLATFORM;
++	return iface == NULL;
+ }
+ 
+ int backlight_on(struct backlight *b)
+@@ -250,10 +247,10 @@ static const char *known_interfaces[] = {
+ 	"intel_backlight",
+ };
+ 
+-static enum backlight_type __backlight_type(const char *iface)
++static int __backlight_type(const char *iface)
+ {
+ 	char buf[1024];
+-	int fd, v;
++	int fd, v, i;
+ 
+ 	v = -1;
+ 	fd = __backlight_open(iface, "type", O_RDONLY);
+@@ -267,39 +264,41 @@ static enum backlight_type __backlight_type(const char *iface)
+ 		buf[v] = '\0';
+ 
+ 		if (strcmp(buf, "raw") == 0)
+-			v = BL_RAW;
++			v = BL_RAW << 8;
+ 		else if (strcmp(buf, "platform") == 0)
+-			v = BL_PLATFORM;
++			v = BL_PLATFORM << 8;
+ 		else if (strcmp(buf, "firmware") == 0)
+-			v = BL_FIRMWARE;
++			v = BL_FIRMWARE << 8;
+ 		else
+-			v = BL_NAMED;
++			v = BL_NAMED << 8;
+ 	} else
+-		v = BL_NAMED;
++		v = BL_NAMED << 8;
+ 
+-	if (v == BL_NAMED) {
+-		int i;
+-		for (i = 0; i < ARRAY_SIZE(known_interfaces); i++) {
+-			if (strcmp(iface, known_interfaces[i]) == 0)
+-				break;
+-		}
+-		v += i;
++	for (i = 0; i < ARRAY_SIZE(known_interfaces); i++) {
++		if (strcmp(iface, known_interfaces[i]) == 0)
++			break;
+ 	}
++	v += i;
+ 
+ 	return v;
+ }
+ 
+-enum backlight_type backlight_exists(const char *iface)
++static int __backlight_exists(const char *iface)
+ {
+ 	if (__backlight_read(iface, "brightness") < 0)
+-		return BL_NONE;
++		return -1;
+ 
+ 	if (__backlight_read(iface, "max_brightness") <= 0)
+-		return BL_NONE;
++		return -1;
+ 
+ 	return __backlight_type(iface);
+ }
+ 
++int backlight_exists(const char *iface)
++{
++	return __backlight_exists(iface) != -1;
++}
++
+ static int __backlight_init(struct backlight *b, char *iface, int fd)
+ {
+ 	b->fd = fd_move_cloexec(fd_set_nonblock(fd));
+@@ -405,7 +404,10 @@ __backlight_find(void)
+ 			continue;
+ 
+ 		/* Fallback to priority list of known iface for old kernels */
+-		v = backlight_exists(de->d_name);
++		v = __backlight_exists(de->d_name);
++		if (v < 0)
++			continue;
++
+ 		if (v < best_type) {
+ 			char *copy = strdup(de->d_name);
+ 			if (copy) {
+@@ -422,14 +424,17 @@ __backlight_find(void)
+ 
+ int backlight_open(struct backlight *b, char *iface)
+ {
+-	int level;
++	int level, type;
+ 
+ 	if (iface == NULL)
+ 		iface = __backlight_find();
+ 	if (iface == NULL)
+ 		goto err;
+ 
+-	b->type = __backlight_type(iface);
++	type = __backlight_type(iface);
++	if (type < 0)
++		goto err;
++	b->type = type >> 8;
+ 
+ 	b->max = __backlight_read(iface, "max_brightness");
+ 	if (b->max <= 0)
+@@ -549,7 +554,10 @@ char *backlight_find_for_device(struct pci_device *pci)
+ 		if (*de->d_name == '.')
+ 			continue;
+ 
+-		v = backlight_exists(de->d_name);
++		v = __backlight_exists(de->d_name);
++		if (v < 0)
++			continue;
++
+ 		if (v < best_type) {
+ 			char *copy = strdup(de->d_name);
+ 			if (copy) {
+diff --git a/src/backlight.h b/src/backlight.h
+index bb0e28b..ba17755 100644
+--- a/src/backlight.h
++++ b/src/backlight.h
+@@ -43,7 +43,7 @@ struct backlight {
+ 	int pid, fd;
+ };
+ 
+-enum backlight_type backlight_exists(const char *iface);
++int backlight_exists(const char *iface);
+ 
+ void backlight_init(struct backlight *backlight);
+ int backlight_open(struct backlight *backlight, char *iface);
+diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+index efc5fc9..53eb9ca 100644
+--- a/src/sna/sna_display.c
++++ b/src/sna/sna_display.c
+@@ -767,7 +767,7 @@ has_user_backlight_override(xf86OutputPtr output)
+ 	if (*str == '\0')
+ 		return (char *)str;
+ 
+-	if (backlight_exists(str) == BL_NONE) {
++	if (!backlight_exists(str)) {
+ 		xf86DrvMsg(output->scrn->scrnIndex, X_ERROR,
+ 			   "Unrecognised backlight control interface '%s'\n",
+ 			   str);
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index 0cdc8d2..8bf0184 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -192,7 +192,7 @@ intel_output_backlight_init(xf86OutputPtr output)
+ 
+ 	str = xf86GetOptValString(intel->Options, OPTION_BACKLIGHT);
+ 	if (str != NULL) {
+-		if (backlight_exists(str) != BL_NONE) {
++		if (backlight_exists(str)) {
+ 			intel_output->backlight_active_level =
+ 				backlight_open(&intel_output->backlight,
+ 					       strdup(str));
+-- 
+cgit v0.10.2
+

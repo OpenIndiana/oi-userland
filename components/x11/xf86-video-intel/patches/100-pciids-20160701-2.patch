@@ -1,0 +1,51 @@
+From 784dc0228a61661ecb1c3e7b2279bf3811d1309d Mon Sep 17 00:00:00 2001
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Date: Tue, 28 Jun 2016 17:02:32 -0700
+Subject: pciids: Removing PCI IDs that are no longer listed as Kabylake.
+
+This is unusual. Usually IDs listed on early stages of platform
+definition are kept there as reserved for later use.
+
+However these IDs here are not listed anymore in any of steppings
+and devices IDs tables for Kabylake on configurations overview
+section of BSpec.
+
+So it is better removing them before they become used in any
+other future platform.
+
+It reflects kernel:
+commit a922eb8d4581c883c37ce6e12dca9ff2cb1ea723
+Author: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Date:   Thu Jun 23 14:50:36 2016 -0700
+    drm/i915: Removing PCI IDs that are no longer listed as Kabylake.
+
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/i915_pciids.h b/src/i915_pciids.h
+index 87dde1c..33466bf 100644
+--- a/src/i915_pciids.h
++++ b/src/i915_pciids.h
+@@ -325,15 +325,10 @@
+ #define INTEL_KBL_GT3_IDS(info) \
+ 	INTEL_VGA_DEVICE(0x5923, info), /* ULT GT3 */ \
+ 	INTEL_VGA_DEVICE(0x5926, info), /* ULT GT3 */ \
+-	INTEL_VGA_DEVICE(0x5927, info), /* ULT GT3 */ \
+-	INTEL_VGA_DEVICE(0x592B, info), /* Halo GT3 */ \
+-	INTEL_VGA_DEVICE(0x592A, info) /* SRV GT3 */
++	INTEL_VGA_DEVICE(0x5927, info) /* ULT GT3 */
+ 
+ #define INTEL_KBL_GT4_IDS(info) \
+-	INTEL_VGA_DEVICE(0x5932, info), /* DT  GT4 */ \
+-	INTEL_VGA_DEVICE(0x593B, info), /* Halo GT4 */ \
+-	INTEL_VGA_DEVICE(0x593A, info), /* SRV GT4 */ \
+-	INTEL_VGA_DEVICE(0x593D, info)  /* WKS GT4 */
++	INTEL_VGA_DEVICE(0x593B, info) /* Halo GT4 */
+ 
+ #define INTEL_KBL_IDS(info) \
+ 	INTEL_KBL_GT1_IDS(info), \
+-- 
+cgit v0.10.2
+

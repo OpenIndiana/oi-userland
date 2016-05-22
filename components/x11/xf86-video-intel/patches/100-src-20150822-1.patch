@@ -1,0 +1,45 @@
+From f3e14ec8de1f7c62862d80251c7a11ede0d2dc0e Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Sat, 22 Aug 2015 12:15:15 +0100
+Subject: list: Consolidate the two list_for_each_from_safe()
+
+We can use the same macro on top of the xorg list.h interloper as well
+as the private version, so do so.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_list.h b/src/intel_list.h
+index 4d7a1e5..c8a3187 100644
+--- a/src/intel_list.h
++++ b/src/intel_list.h
+@@ -347,11 +347,6 @@ list_is_empty(const struct list *head)
+ 	 &pos->member != (head);					\
+ 	 pos = tmp, tmp = __container_of(pos->member.next, tmp, member))
+ 
+-#define list_for_each_entry_safe_from(pos, tmp, head, member)		\
+-    for (tmp = __container_of(pos->member.next, pos, member);		\
+-	 &pos->member != (head);					\
+-	 pos = tmp, tmp = __container_of(pos->member.next, tmp, member))
+-
+ #else
+ 
+ #include <list.h>
+@@ -401,12 +396,12 @@ static inline void list_move_tail(struct list *list, struct list *head)
+ 	 &pos->member != (head);					\
+ 	 pos = __container_of(pos->member.prev, pos, member))
+ 
++#endif
++
+ #define list_for_each_entry_safe_from(pos, tmp, head, member)		\
+     for (tmp = __container_of(pos->member.next, pos, member);		\
+ 	 &pos->member != (head);					\
+-	 pos = tmp)
+-
+-#endif
++	 pos = tmp, tmp = __container_of(tmp->member.next, tmp, member))
+ 
+ #undef container_of
+ #define container_of(ptr, type, member) \
+-- 
+cgit v0.10.2
+

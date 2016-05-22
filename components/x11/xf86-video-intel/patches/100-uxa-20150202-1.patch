@@ -1,0 +1,61 @@
+From 70cb682662f9c54bcc7cc0eda029c21efbb4947f Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Mon, 2 Feb 2015 10:03:33 +0000
+Subject: uxa/dri2: Recreate the triple buffer across a mode change
+
+If the mode changes whilst we have a pending flip, we may reinstall the
+previous scanout buffer as our next back buffer despite it no longer
+matching.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel.h b/src/uxa/intel.h
+index 55f74e5..37b23e9 100644
+--- a/src/uxa/intel.h
++++ b/src/uxa/intel.h
+@@ -415,6 +415,11 @@ typedef struct _DRI2FrameEvent {
+ 	DRI2BufferPtr front;
+ 	DRI2BufferPtr back;
+ 
++	/* current scanout for triple buffer */
++	int old_width;
++	int old_height;
++	int old_pitch;
++	int old_tiling;
+ 	dri_bo *old_buffer;
+ } DRI2FrameEventRec, *DRI2FrameEventPtr;
+ 
+diff --git a/src/uxa/intel_dri.c b/src/uxa/intel_dri.c
+index 481782f..32622ad 100644
+--- a/src/uxa/intel_dri.c
++++ b/src/uxa/intel_dri.c
+@@ -709,7 +709,14 @@ i830_dri2_del_frame_event(DRI2FrameEventPtr info)
+ 		I830DRI2DestroyBuffer(NULL, info->back);
+ 
+ 	if (info->old_buffer) {
+-		if (info->intel->back_buffer == NULL)
++		/* Check that the old buffer still matches the front buffer
++		 * in case a mode change occurred before we woke up.
++		 */
++		if (info->intel->back_buffer == NULL &&
++		    info->old_width  == info->intel->scrn->virtualX &&
++		    info->old_height == info->intel->scrn->virtualY &&
++		    info->old_pitch  == info->intel->front_pitch &&
++		    info->old_tiling == info->intel->front_tiling)
+ 			info->intel->back_buffer = info->old_buffer;
+ 		else
+ 			dri_bo_unreference(info->old_buffer);
+@@ -895,6 +902,10 @@ queue_flip(struct intel_screen_private *intel,
+ 
+ #if DRI2INFOREC_VERSION >= 6
+ 	if (intel->use_triple_buffer && allocate_back_buffer(intel)) {
++		info->old_width  = intel->scrn->virtualX;
++		info->old_height = intel->scrn->virtualY;
++		info->old_pitch  = intel->front_pitch;
++		info->old_tiling = intel->front_tiling;
+ 		info->old_buffer = intel->front_buffer;
+ 		dri_bo_reference(info->old_buffer);
+ 
+-- 
+cgit v0.10.2
+

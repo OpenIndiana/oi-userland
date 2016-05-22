@@ -1,0 +1,17 @@
+diff -u src/backlight.c src/backlight.c
+--- a/src/backlight.c	2014-11-19 00:50:39.000000000 +0300
++++ b/src/backlight.c	2016-01-16 01:19:53.907788346 +0300
+@@ -34,6 +34,12 @@
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ 
++#if MAJOR_IN_MKDEV
++#include <sys/mkdev.h>
++#elif MAJOR_IN_SYSMACROS
++#include <sys/sysmacros.h>
++#endif
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+

@@ -1,0 +1,309 @@
+From 76be8782729052904a0a7222b1b66569636523a6 Mon Sep 17 00:00:00 2001
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 9 Jun 2015 21:14:35 +0200
+Subject: Fix typos found with codespell v1.7
+
+To get codespell v1.7 check [2].
+
+[1] https://github.com/lucasdemarchi/codespell
+[2] https://github.com/lucasdemarchi/codespell/releases
+
+Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
+
+diff --git a/NEWS b/NEWS
+index 604b9cc..0e20033 100644
+--- a/NEWS
++++ b/NEWS
+@@ -21,7 +21,7 @@ should make one more snapshot before an imminent release.
+    Before kernel 3.19, O_NONBLOCK support is broken and so we must avoid
+    reading if we are not expecting an event.
+ 
+- * Backwards compatibilty fix for fake triple buffering with PRIME and
++ * Backwards compatibility fix for fake triple buffering with PRIME and
+    Xorg-1.15
+    https://bugs.freedesktop.org/show_bug.cgi?id=85144#c12
+ 
+@@ -51,7 +51,7 @@ should make one more snapshot before an imminent release.
+ Snapshot 2.99.916 (2014-09-08)
+ ==============================
+ Quick update for MST in UXA - we need to hook up the RandR outputs for
+-dynamicaly added connectors.
++dynamically added connectors.
+ 
+ 
+ Snapshot 2.99.915 (2014-09-08)
+@@ -503,7 +503,7 @@ release.
+    backlight property is queried whilst the connector is disabled
+    https://bugs.freedesktop.org/show_bug.cgi?id=70406
+ 
+- * Pad GETCONNECTOR ioctl for compatability between 32/64-bit userspace
++ * Pad GETCONNECTOR ioctl for compatibility between 32/64-bit userspace
+    and kernel
+ 
+  * Handle long glyph runs correctly
+@@ -523,7 +523,7 @@ snapshot beforehand to push out the bug fixes from the last week.
+ 
+  * Fix video output using sprites when changing the image size
+ 
+- * Apply more restrictive tile constaints for 915g class devices
++ * Apply more restrictive tile constraints for 915g class devices
+    https://bugs.launchpad.net/ubuntu/+source/xserver-xorg-video-intel/+bug/1232546
+ 
+  * Ensure all overlapping rectangles are drawn for XRenderFillRectangles
+@@ -1132,7 +1132,7 @@ operation.
+  * Explicitly prevent ring-switching for synchronized rendering to
+    scanouts (for vsync).
+ 
+- * Clip dirty region to slave pixmaps (otherwise UDL is nigh unusuable)
++ * Clip dirty region to slave pixmaps (otherwise UDL is nigh unusable)
+    https://bugs.freedesktop.org/show_bug.cgi?id=59539
+ 
+ 
+@@ -1226,7 +1226,7 @@ Release 2.20.15 (2012-12-03)
+ ============================
+ And lo, enabling more of the common acceleration paths for gen4 revealed
+ another lurking bug - something is wrong with how we prepare Y-tiling
+-surfaces for rendering. For the time being, we can surreptiously disable
++surfaces for rendering. For the time being, we can surreptitiously disable
+ them for gen4 and avoid hitting GPU hangs.
+ 
+  * Avoid clobbering the render state after failing to convert the
+@@ -1515,7 +1515,7 @@ Release 2.20.5 (2012-08-26)
+ Another silly bug found, another small bugfix release. The goal was for
+ the driver to bind to all Intel devices supported by the kernel.
+ Unfortunately we were too successful and started claiming Pouslbo,
+-Medfield and Cedarview devices which are still encumbered by propietary
++Medfield and Cedarview devices which are still encumbered by proprietary
+ IP and not supported by this driver.
+ 
+ Bugs fixed since 2.20.4:
+diff --git a/man/intel.man b/man/intel.man
+index 1751520..91fc6df 100644
+--- a/man/intel.man
++++ b/man/intel.man
+@@ -431,11 +431,11 @@ First DVI SDVO output
+ Second DVI SDVO output
+ 
+ .SS "TMDS-1", "TMDS-2", "HDMI-1", "HDMI-2"
+-DVI/HDMI outputs. Avaliable common properties include:
++DVI/HDMI outputs. Available common properties include:
+ .TP
+ \fBBROADCAST_RGB\fP - method used to set RGB color range
+ Adjusting this property allows you to set RGB color range on each
+-channel in order to match HDTV requirment(default 0 for full
++channel in order to match HDTV requirement(default 0 for full
+ range). Setting 1 means RGB color range is 16-235, 0 means RGB color
+ range is 0-255 on each channel.  (Full range is 0-255, not 16-235)
+ 
+diff --git a/src/legacy/i810/i810_common.h b/src/legacy/i810/i810_common.h
+index 4cc10e8..8355708 100644
+--- a/src/legacy/i810/i810_common.h
++++ b/src/legacy/i810/i810_common.h
+@@ -52,7 +52,7 @@
+ 
+ #define ALIGN(i,m) (((i) + (m) - 1) & ~((m) - 1))
+ 
+-/* Using usleep() makes things noticably slow. */
++/* Using usleep() makes things noticeably slow. */
+ #if 0
+ #define DELAY(x) usleep(x)
+ #else
+@@ -185,7 +185,7 @@ enum {
+  *    - zbuffer linear offset and pitch -- also invarient
+  *    - drawing origin in back and depth buffers.
+  *
+- * Keep the depth/back buffer state here to acommodate private buffers
++ * Keep the depth/back buffer state here to accommodate private buffers
+  * in the future.
+  */
+ #define I810_DESTREG_DI0  0		/* CMD_OP_DESTBUFFER_INFO (2 dwords) */
+diff --git a/src/legacy/i810/i810_hwmc.c b/src/legacy/i810/i810_hwmc.c
+index 7cb9c1a..58661b0 100644
+--- a/src/legacy/i810/i810_hwmc.c
++++ b/src/legacy/i810/i810_hwmc.c
+@@ -171,7 +171,7 @@ static XF86MCAdaptorPtr ppAdapt[1] =
+  *
+  *  I810InitMC
+  *
+- *  Initialize the hardware motion compenstation extention for this 
++ *  Initialize the hardware motion compensation extension for this
+  *  hardware. The initialization routines want the address of the pointers
+  *  to the structures, not the address of the structures. This means we
+  *  allocate (or create static?) the pointer memory and pass that 
+diff --git a/src/legacy/i810/i810_reg.h b/src/legacy/i810/i810_reg.h
+index 54faeb3..fa091c5 100644
+--- a/src/legacy/i810/i810_reg.h
++++ b/src/legacy/i810/i810_reg.h
+@@ -245,7 +245,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  * not sure they refer to local (graphics) memory.
+  *
+  * These details are for the local memory control registers,
+- * (pp301-310).  The test machines are not equiped with local memory,
++ * (pp301-310).  The test machines are not equipped with local memory,
+  * so nothing is tested.  Only a single row seems to be supported.
+  */
+ #define DRAM_ROW_TYPE      0x3000
+diff --git a/src/legacy/i810/xvmc/I810XvMC.c b/src/legacy/i810/xvmc/I810XvMC.c
+index e6b63d3..a538e99 100644
+--- a/src/legacy/i810/xvmc/I810XvMC.c
++++ b/src/legacy/i810/xvmc/I810XvMC.c
+@@ -61,7 +61,7 @@ static int event_base;
+ // Arguments: pI810XvMC private data structure from the current context.
+ // Notes: We faked the drmMapBufs for the i810's security so now we have
+ //   to insert an allocated page into the correct spot in the faked
+-//   list to keep up appearences.
++//   list to keep up appearances.
+ //   Concept for this function was taken from Mesa sources.
+ // Returns: drmBufPtr containing the information about the allocated page.
+ ***************************************************************************/
+@@ -188,7 +188,7 @@ _X_EXPORT Status XvMCCreateContext(Display *display, XvPortID port,
+ 
+   /* Check for drm */
+   if(! drmAvailable()) {
+-    printf("Direct Rendering is not avilable on this system!\n");
++    printf("Direct Rendering is not available on this system!\n");
+     return BadAlloc;
+   }
+ 
+@@ -3279,7 +3279,7 @@ _X_EXPORT Status XvMCSyncSurface(Display *display,XvMCSurface *surface) {
+ //   display - Connection to X server
+ //   surface - Surface to flush
+ // Info:
+-//   This command is a noop for i810 becuase we always dispatch buffers in
++//   This command is a noop for i810 because we always dispatch buffers in
+ //   render. There is little gain to be had with 4k buffers.
+ // Returns: Status
+ ***************************************************************************/
+diff --git a/src/render_program/exa_wm.g4i b/src/render_program/exa_wm.g4i
+index 5d3d45b..587b581 100644
+--- a/src/render_program/exa_wm.g4i
++++ b/src/render_program/exa_wm.g4i
+@@ -57,7 +57,7 @@ define(`mask_dw_dy', `g6.4<0,1,0>F')
+ define(`mask_wo',    `g6.12<0,1,0>F')
+ 
+ /*
+- * Local variables. Pairs must be aligned on even reg boundry
++ * Local variables. Pairs must be aligned on even reg boundary
+  */
+ 
+ /* this holds the X dest coordinates */
+diff --git a/src/sna/brw/brw_eu_emit.c b/src/sna/brw/brw_eu_emit.c
+index 00c984d..2f33022 100644
+--- a/src/sna/brw/brw_eu_emit.c
++++ b/src/sna/brw/brw_eu_emit.c
+@@ -700,7 +700,7 @@ push_if_stack(struct brw_compile *p, struct brw_instruction *inst)
+  *
+  * When the matching 'else' instruction is reached (presumably by
+  * countdown of the instruction count patched in by our ELSE/ENDIF
+- * functions), the relevent flags are inverted.
++ * functions), the relevant flags are inverted.
+  *
+  * When the matching 'endif' instruction is reached, the flags are
+  * popped off.  If the stack is now empty, normal execution resumes.
+diff --git a/src/sna/gen7_render.c b/src/sna/gen7_render.c
+index 6c0e7f4..74bac5a 100644
+--- a/src/sna/gen7_render.c
++++ b/src/sna/gen7_render.c
+@@ -808,7 +808,7 @@ gen7_emit_cc(struct sna *sna, uint32_t blend_offset)
+ 
+ 	DBG(("%s: blend = %x\n", __FUNCTION__, blend_offset));
+ 
+-	/* XXX can have upto 8 blend states preload, selectable via
++	/* XXX can have up to 8 blend states preload, selectable via
+ 	 * Render Target Index. What other side-effects of Render Target Index?
+ 	 */
+ 
+diff --git a/src/sna/gen8_render.c b/src/sna/gen8_render.c
+index 660fc5a..3d7f3a5 100644
+--- a/src/sna/gen8_render.c
++++ b/src/sna/gen8_render.c
+@@ -900,7 +900,7 @@ gen8_emit_cc(struct sna *sna, uint32_t blend)
+ 	assert(blend / GEN8_BLENDFACTOR_COUNT > 0);
+ 	assert(blend % GEN8_BLENDFACTOR_COUNT > 0);
+ 
+-	/* XXX can have upto 8 blend states preload, selectable via
++	/* XXX can have up to 8 blend states preload, selectable via
+ 	 * Render Target Index. What other side-effects of Render Target Index?
+ 	 */
+ 
+diff --git a/src/sna/kgem_debug_gen4.c b/src/sna/kgem_debug_gen4.c
+index 9b80dc8..8e6e47b 100644
+--- a/src/sna/kgem_debug_gen4.c
++++ b/src/sna/kgem_debug_gen4.c
+@@ -598,7 +598,7 @@ int kgem_gen4_decode_3d(struct kgem *kgem, uint32_t offset)
+ 		assert(len == 7);
+ 		kgem_debug_print(data, offset, 0,
+ 			  "3DSTATE_DEPTH_BUFFER\n");
+-		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Seperate Stencil %d\n",
++		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Separate Stencil %d\n",
+ 			  get_965_surfacetype(data[1] >> 29),
+ 			  get_965_depthformat((data[1] >> 18) & 0x7),
+ 			  (data[1] & 0x0001ffff) + 1,
+diff --git a/src/sna/kgem_debug_gen5.c b/src/sna/kgem_debug_gen5.c
+index 8b55dd9..f1b1275 100644
+--- a/src/sna/kgem_debug_gen5.c
++++ b/src/sna/kgem_debug_gen5.c
+@@ -573,7 +573,7 @@ int kgem_gen5_decode_3d(struct kgem *kgem, uint32_t offset)
+ 		assert(len == 7);
+ 		kgem_debug_print(data, offset, 0,
+ 			  "3DSTATE_DEPTH_BUFFER\n");
+-		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Seperate Stencil %d\n",
++		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Separate Stencil %d\n",
+ 			  get_965_surfacetype(data[1] >> 29),
+ 			  get_965_depthformat((data[1] >> 18) & 0x7),
+ 			  (data[1] & 0x0001ffff) + 1,
+diff --git a/src/sna/kgem_debug_gen6.c b/src/sna/kgem_debug_gen6.c
+index 7ef55d3..579c5d5 100644
+--- a/src/sna/kgem_debug_gen6.c
++++ b/src/sna/kgem_debug_gen6.c
+@@ -985,7 +985,7 @@ int kgem_gen6_decode_3d(struct kgem *kgem, uint32_t offset)
+ 		assert(len == 7);
+ 		kgem_debug_print(data, offset, 0,
+ 			  "3DSTATE_DEPTH_BUFFER\n");
+-		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Seperate Stencil %d\n",
++		kgem_debug_print(data, offset, 1, "%s, %s, pitch = %d bytes, %stiled, HiZ %d, Separate Stencil %d\n",
+ 			  get_965_surfacetype(data[1] >> 29),
+ 			  get_965_depthformat((data[1] >> 18) & 0x7),
+ 			  (data[1] & 0x0001ffff) + 1,
+diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+index 965c35c..f58eb8d 100644
+--- a/src/sna/sna_display.c
++++ b/src/sna/sna_display.c
+@@ -5476,7 +5476,7 @@ sna_set_cursor_position(ScrnInfoPtr scrn, int x, int y)
+ 
+ 			rotate_coord_back(crtc->rotation, sna->cursor.size, &xhot, &yhot);
+ 
+-			/* cursor will have 0.5 added to it already so floor is sufficent */
++			/* cursor will have 0.5 added to it already so floor is sufficient */
+ 			arg.x = floor(v.v[0]) - xhot;
+ 			arg.y = floor(v.v[1]) - yhot;
+ 		} else {
+diff --git a/src/sna/sna_trapezoids_boxes.c b/src/sna/sna_trapezoids_boxes.c
+index b41121b..bbf8375 100644
+--- a/src/sna/sna_trapezoids_boxes.c
++++ b/src/sna/sna_trapezoids_boxes.c
+@@ -198,7 +198,7 @@ composite_aligned_boxes(struct sna *sna,
+ 	if (op == PictOpClear && sna->clear)
+ 		src = sna->clear;
+ 
+-	DBG(("%s: clipped extents (%d, %d), (%d, %d);  now offset by (%d, %d), orgin (%d, %d)\n",
++	DBG(("%s: clipped extents (%d, %d), (%d, %d);  now offset by (%d, %d), origin (%d, %d)\n",
+ 	     __FUNCTION__,
+ 	     clip.extents.x1, clip.extents.y1,
+ 	     clip.extents.x2, clip.extents.y2,
+diff --git a/src/uxa/intel_memory.c b/src/uxa/intel_memory.c
+index 0c6cf30..b2d7a36 100644
+--- a/src/uxa/intel_memory.c
++++ b/src/uxa/intel_memory.c
+@@ -42,7 +42,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  * This is the video memory allocator.  Our memory allocation is different from
+  * other graphics chips, where you have a fixed amount of graphics memory
+  * available that you want to put to the best use.  Instead, we have almost no
+- * memory pre-allocated, and we have to choose an appropriate amount of sytem
++ * memory pre-allocated, and we have to choose an appropriate amount of system
+  * memory to use.
+  *
+  * The allocations we might do:
+-- 
+cgit v0.10.2
+

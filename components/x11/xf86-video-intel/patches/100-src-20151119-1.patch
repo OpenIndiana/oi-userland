@@ -1,0 +1,51 @@
+From c446a7ccc783e3ca00b4b15d017c6e3af66dc646 Mon Sep 17 00:00:00 2001
+From: Wayne Boyer <wayne.boyer@intel.com>
+Date: Wed, 18 Nov 2015 10:39:42 -0800
+Subject: Add Kabylake PCI IDs
+
+Add the Kabylake PCI IDs based on the following kernel patches:
+
+commit d97044b661d0d56b2a2ae9b2b95ab0b359b417dc
+Author: Deepak S <deepak.s@intel.com>
+Date:   Wed Oct 28 12:19:51 2015 -0700
+
+    drm/i915/kbl: Add Kabylake PCI ID
+
+commit 8b10c0cf21ec84618d4bf02c73c0543500ece68d
+Author: Deepak S <deepak.s@intel.com>
+Date:   Wed Oct 28 12:21:12 2015 -0700
+
+    drm/i915/kbl: Add Kabylake GT4 PCI ID
+
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Wayne Boyer <wayne.boyer@intel.com>
+[ickle: Copy across the real i915_pciids.h from the kernel]
+
+diff --git a/src/intel_module.c b/src/intel_module.c
+index d3dca83..60835b9 100644
+--- a/src/intel_module.c
++++ b/src/intel_module.c
+@@ -130,6 +130,10 @@ static const struct intel_device_info intel_broxton_info = {
+ 	.gen = 0111,
+ };
+ 
++static const struct intel_device_info intel_kabylake_info = {
++	.gen = 0112,
++};
++
+ static const SymTabRec intel_chipsets[] = {
+ 	{PCI_CHIP_I810,				"i810"},
+ 	{PCI_CHIP_I810_DC100,			"i810-dc100"},
+@@ -329,6 +333,8 @@ static const struct pci_id_match intel_device_match[] = {
+ 
+ 	INTEL_BXT_IDS(&intel_broxton_info),
+ 
++	INTEL_KBL_IDS(&intel_kabylake_info),
++
+ 	INTEL_VGA_DEVICE(PCI_MATCH_ANY, &intel_generic_info),
+ #endif
+ 
+-- 
+cgit v0.10.2
+

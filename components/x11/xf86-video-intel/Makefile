@@ -35,8 +35,6 @@ CONFIGURE_DEFAULT_DIRS = no
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATCH_LEVEL=0
-
 LDFLAGS += -lm -lsocket
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
@@ -82,7 +80,7 @@ CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --enable-sna 
+CONFIGURE_OPTIONS += --disable-sna 
 CONFIGURE_OPTIONS += --enable-uxa
 CONFIGURE_OPTIONS += --enable-rendernode
 CONFIGURE_OPTIONS += --enable-create2
@@ -103,3 +101,25 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxshmfence
+REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/library/libxv
+REQUIRED_PACKAGES += x11/library/libxvmc
+REQUIRED_PACKAGES += x11/library/xcb-util
+REQUIRED_PACKAGES += x11/server/xorg

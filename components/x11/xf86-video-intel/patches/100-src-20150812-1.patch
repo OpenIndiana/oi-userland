@@ -1,0 +1,32 @@
+From 656c0a6946f3bd99ee89486d34bcde8d09af2307 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 12 Aug 2015 12:31:27 +0100
+Subject: list: Add missing ';' for the compatiblity macro for intermediate
+ xorg
+
+Reported-by: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_list.h b/src/intel_list.h
+index df912a8..4d7a1e5 100644
+--- a/src/intel_list.h
++++ b/src/intel_list.h
+@@ -396,13 +396,13 @@ static inline void list_move_tail(struct list *list, struct list *head)
+ #define list_last_entry(ptr, type, member) \
+     list_entry((ptr)->prev, type, member)
+ 
+-#define list_for_each_entry_reverse(pos, head, member)				\
++#define list_for_each_entry_reverse(pos, head, member)			\
+     for (pos = __container_of((head)->prev, pos, member);		\
+ 	 &pos->member != (head);					\
+ 	 pos = __container_of(pos->member.prev, pos, member))
+ 
+ #define list_for_each_entry_safe_from(pos, tmp, head, member)		\
+-    for (tmp = __container_of(pos->member.next, pos, member)		\
++    for (tmp = __container_of(pos->member.next, pos, member);		\
+ 	 &pos->member != (head);					\
+ 	 pos = tmp)
+ 
+-- 
+cgit v0.10.2
+
