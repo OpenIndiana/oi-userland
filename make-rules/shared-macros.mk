@@ -540,22 +540,61 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
+# Config magic for Postgres/EnterpriseDB/...
+# Default DB version is the oldest one, for hopefully best built complatibility
 PG_VERSION ?=   9.3
+PG_IMPLEM ?=    postgres
 PG_VERNUM =     $(subst .,,$(PG_VERSION))
-PG_HOME =       /usr/postgres/$(PG_VERSION)
+# For dependencies, including REQUIRED_PACKAGES if needed
+PG_BASEPKG =    database/$(PG_IMPLEM)-$(PG_VERNUM)
+
+PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
 PG_BINDIR.32 =  $(PG_HOME)/bin
 PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_BINDIR =     $(PG_BINDIR.$(BITS))
 PG_INCDIR =     $(PG_HOME)/include
 PG_MANDIR =     $(PG_HOME)/man
 PG_SHAREDIR =   $(PG_HOME)/share
 PG_DOCDIR =     $(PG_HOME)/doc
 PG_LIBDIR.32 =  $(PG_HOME)/lib
 PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
+PG_LIBDIR =     $(PG_LIBDIR.$(BITS))
 PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
 PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
+PG_CONFIG =     $(PG_CONFIG.$(BITS))
 
 PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
 PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
+PKG_MACROS +=   PG_BASEPKG=$(PG_BASEPKG)
+
+# Config magic for MySQL/MariaDB/Percona/...
+# Default DB version is the oldest one, for hopefully best built compatibility
+# NOTE: At this time the gate does not provide a recipe for actual "mysql"
+# The "/usr/mysql/*" trees are mediated to preferred MariaDB or Percona variant
+MYSQL_VERSION ?=   5.5
+MYSQL_IMPLEM ?=    mariadb
+MYSQL_VERNUM =     $(subst .,,$(MYSQL_VERSION))
+# For dependencies, including REQUIRED_PACKAGES if needed
+MYSQL_BASEPKG =    database/$(MYSQL_IMPLEM)-$(MYSQL_VERNUM)
+
+MYSQL_HOME =       $(USRDIR)/$(MYSQL_IMPLEM)/$(MYSQL_VERSION)
+MYSQL_BINDIR.32 =  $(MYSQL_HOME)/bin
+MYSQL_BINDIR.64 =  $(MYSQL_HOME)/bin/$(MACH64)
+MYSQL_BINDIR =     $(MYSQL_BINDIR.$(BITS))
+MYSQL_INCDIR =     $(MYSQL_HOME)/include
+MYSQL_MANDIR =     $(MYSQL_HOME)/man
+MYSQL_SHAREDIR =   $(MYSQL_HOME)/share
+MYSQL_DOCDIR =     $(MYSQL_HOME)/doc
+MYSQL_LIBDIR.32 =  $(MYSQL_HOME)/lib
+MYSQL_LIBDIR.64 =  $(MYSQL_HOME)/lib/$(MACH64)
+MYSQL_LIBDIR =     $(MYSQL_LIBDIR.$(BITS))
+MYSQL_CONFIG.32 =  $(MYSQL_BINDIR.32)/mysql_config
+MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
+MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
+
+PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
+PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
+PKG_MACROS +=   MYSQL_BASEPKG=$(MYSQL_BASEPKG)
 
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
