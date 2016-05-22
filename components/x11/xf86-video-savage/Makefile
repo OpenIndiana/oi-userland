@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-savage
-COMPONENT_VERSION= 2.3.7
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.3.8
 COMPONENT_SUMMARY= xf86-video-savage - S3 Savage video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:041d4205c9222c1780fba6e0e397a559aed393b7a7991b58fa79ba8cccc54a44
+  sha256:fdcea4a86532bceb50095eaf0fe2f38bbfa160e98463b815f4b549eb9985fa63
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -63,3 +62,9 @@ CONFIGURE_OPTIONS += --disable-dri
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/server/xorg
