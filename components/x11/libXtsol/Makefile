@@ -65,3 +65,6 @@ install: $(INSTALL_32_and_64)
 test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
