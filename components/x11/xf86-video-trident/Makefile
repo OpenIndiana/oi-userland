@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-trident
-COMPONENT_VERSION= 1.3.6
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.3.7
 COMPONENT_SUMMARY= xf86-video-trident - Trident video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6a58e3f3034abd8803af8a5c7dd5a6a4a28ed4fdac742ffb05518caaddc28104
+  sha256:ecd518de627a0d49e17c158bfc72ab657386c6907c91ef89fa09332558e413ae
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -60,3 +59,9 @@ LD_OPTIONS= \
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/server/xorg
