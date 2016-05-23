@@ -164,11 +164,8 @@ CONFIGURE_OPTIONS +=	--with-neon=yes
 CONFIGURE_OPTIONS +=	--with-avahi=yes
 CONFIGURE_OPTIONS +=	--with-powerman=yes
 CONFIGURE_OPTIONS +=	--with-cgi=yes
-
-# TODO: Revise NUT package when this gate provides (GNU) freeipmi >= 1.0.1
-# Note: we already have a p5m manifest for these products, just uncomment them
-CONFIGURE_OPTIONS +=	--with-ipmi=no
-CONFIGURE_OPTIONS +=	--with-freeipmi=no
+CONFIGURE_OPTIONS +=	--with-ipmi=yes
+CONFIGURE_OPTIONS +=	--with-freeipmi=yes
 
 # Likely we'll not have this backend working any time soon
 CONFIGURE_OPTIONS +=	--with-linux_i2c=no
@@ -233,5 +230,6 @@ REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/management/freeipmi
 REQUIRED_PACKAGES += system/management/powerman
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
