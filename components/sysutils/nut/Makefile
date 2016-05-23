@@ -205,7 +205,7 @@ $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
 	egrep '\@(NUT|MACH)' $@ >&2 && \
 		echo "ERROR: Some unconverted tags remain in $@" >&2 && $(RM) $@ && exit 1 ; true
 
-$(PROTO_DIR)/$(ETCDIR)/init.d/nut: files/nut.in
+$(PROTO_DIR)/lib/svc/method/svc-nut: files/nut.in
 	$(MKDIR) -p $(@D)
 	$(GSED) $(NUTSEDSUBST) < $< > $@
 	egrep '\@(NUT|MACH)' $@ >&2 && \
@@ -215,7 +215,7 @@ $(PROTO_DIR)/$(ETCDIR)/init.d/nut: files/nut.in
 # Ensure installed configs etc. match 32-bit paths
 $(INSTALL_32): $(INSTALL_64) \
   $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt \
-  $(PROTO_DIR)/$(ETCDIR)/init.d/nut
+  $(PROTO_DIR)/lib/svc/method/svc-nut
 
 install: $(INSTALL_32_and_64)
 	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service \

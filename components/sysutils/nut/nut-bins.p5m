@@ -64,14 +64,13 @@ file path=usr/bin/upssched-cmd preserve=renamenew
 # Init-scripts for NUT, not perfect - but better than nothing for a start
 # Note that it is practically blocked by default `nut.conf` until changed
 # by administrator. We might deliver another script in its place later on.
-# Ultimately this may get integrated with proper SMF set-up.
-file path=etc/init.d/nut owner=bin group=bin mode=555
 # NUT should start generally after networking (if SNMP or NetXML is used,
 # or if this box is a client to remote upsd). Ending is trickier - could
 # want it to issue killpower late in shutdown, but have network to be able
-# to do so (for remote UPSes).
-link target=../init.d/nut path=etc/rc2.d/S90nut
-link target=../init.d/nut path=etc/rc0.d/K49nut
+# to do so (for remote UPSes). This can be tuned in XML manifest by user.
+file path=lib/svc/method/svc-nut owner=bin group=bin mode=555
+file files/nut.xml path=var/svc/manifest/application/nut.xml \
+     restart_fmri=svc:/system/manifest-import:default
 
 file path=usr/share/man/man5/hosts.conf.5
 file path=usr/share/man/man5/nut.conf.5
