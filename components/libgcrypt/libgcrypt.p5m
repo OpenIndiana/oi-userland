@@ -20,9 +20,11 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<include libgcrypt-15.p5m.abi_transition>
 set name=pkg.fmri \
     value=pkg:/system/library/security/libgcrypt@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="libgcrypt - cryptographic library"
@@ -41,14 +43,16 @@ file usr/bin/libgcrypt-config path=usr/bin/$(MACH64)/libgcrypt-config
 file path=usr/bin/dumpsexp
 file path=usr/bin/hmac256
 file usr/bin/$(MACH32)/libgcrypt-config path=usr/bin/libgcrypt-config
-file path=usr/include/gcrypt-module.h
+file path=usr/bin/mpicalc
 file path=usr/include/gcrypt.h
-link path=usr/lib/$(MACH64)/libgcrypt.so target=libgcrypt.so.11.8.2
-link path=usr/lib/$(MACH64)/libgcrypt.so.11 target=libgcrypt.so.11.8.2
-file path=usr/lib/$(MACH64)/libgcrypt.so.11.8.2
-link path=usr/lib/libgcrypt.so target=libgcrypt.so.11.8.2
-link path=usr/lib/libgcrypt.so.11 target=libgcrypt.so.11.8.2
-file path=usr/lib/libgcrypt.so.11.8.2
+link path=usr/lib/$(MACH64)/libgcrypt.so target=libgcrypt.so.20.0.4
+link path=usr/lib/$(MACH64)/libgcrypt.so.20 target=libgcrypt.so.20.0.4
+file path=usr/lib/$(MACH64)/libgcrypt.so.20.0.4
+link path=usr/lib/libgcrypt.so target=libgcrypt.so.20.0.4
+link path=usr/lib/libgcrypt.so.20 target=libgcrypt.so.20.0.4
+file path=usr/lib/libgcrypt.so.20.0.4
 file path=usr/share/aclocal/libgcrypt.m4
+file path=usr/share/info/gcrypt.info
+file path=usr/share/man/man1/hmac256.1
 license COPYING license=GPLv2
 license COPYING.LIB license=LGPLv2.1

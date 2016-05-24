@@ -26,46 +26,25 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.6.4
+COMPONENT_VERSION=	1.5.3
 COMPONENT_PROJECT_URL=  ftp://ftp.gnupg.org/gcrypt/libgcrypt/ 
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c9bc2c7fe2e5f4ea13b0c74f9d24bcbb1ad889bb39297d8082aebf23f4336026
+    sha256:bcf5334e7da352c45de6aec5d2084ce9a1d30029ff4a4a5da13f1848874759d1
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgcrypt
 
-TPNO=			26276
+TPNO=			7588
 
 COMPONENT_BUILD_TARGETS = all info
 
 include $(WS_MAKE_RULES)/common.mk
-#
-# Any improvements made by the upstream to enable compilation of
-# libgcrypt library on Solaris primarily reference GNU tools.  The
-# library assembly source code contains ANSI notations currently not
-# supported by Solaris C language preprocessor, cpp(1). Heavy manual
-# patching in a potentially dangerous area would be needed to allow use
-# of Solaris Studio as the component compiler.
-COMPILER =		gcc
-
-#
-# The gcc deliverred with Solaris prior the gcc version 5.3 uses
-# different assembler versions on x86 and SPARC platforms. This causes
-# compilation issues. The GCC_ROOT explicitly sets the version of the
-# compiler to version 5.3 which resolves this problem. The line should
-# be removed once gcc on both platforms starts using the same assembler.
-GCC_ROOT = /usr/gcc/5.3
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-maintainer-mode 
-CONFIGURE_OPTIONS += --disable-asm
-CONFIGURE_OPTIONS += --enable-threads=posix
+CONFIGURE_OPTIONS += --disable-asm 
 CONFIGURE_OPTIONS += --enable-ciphers=arcfour:blowfish:des:aes:twofish:serpent:rfc2268:seed:camellia:cast5
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-include ../../make-rules/shared-targets.mk
 
 #
 # The following target is used during switch of the incompatible libgcrypt.11
@@ -74,15 +53,13 @@ include ../../make-rules/shared-targets.mk
 # deliver a subset of the library (the shared objects only and the second
 # level links) to satisfy the ABI compatibility requirements during the ABI
 # upgrade period.
-$(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.installed:
-	$(GMAKE) -C $(WS_COMPONENTS)/libgcrypt-15 install
+$(COMPONENT_DIR)/../libgcrypt/build/$(MACH32)/.installed \
+$(COMPONENT_DIR)/../libgcrypt/build/$(MACH64)/.installed:
+	$(GMAKE) install
 
-$(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.FRC_%:
-	$(GMAKE) -C $(WS_COMPONENTS)/libgcrypt-15 $(@F:.FRC_%=%)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install: $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.installed
-
-clean clobber:: % : $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.FRC_%
+include ../../make-rules/shared-targets.mk
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -91,6 +68,13 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL/p" ' \
         '-e "/All/p" '
 
+LIBGCRYPT_PROTO_USRLIB = \
+	$(WS_COMPONENTS)/libgcrypt/build/prototype/$(MACH)$(USRLIB)
+COMPONENT_POST_INSTALL_ACTION = \
+	$(INSTALL) -D -m 644 \
+		$(BUILD_DIR)/$(MACH$(BITS))/src/.libs/libgcrypt.so.11.8.2 \
+		-t $(LIBGCRYPT_PROTO_USRLIB); \
+	(cd $(LIBGCRYPT_PROTO_USRLIB); $(RM) -f libgcrypt.so.11; \
+	$(LN) -s -f libgcrypt.so.11.8.2 libgcrypt.so.11)
+
 REQUIRED_PACKAGES += library/security/libgpg-error
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
