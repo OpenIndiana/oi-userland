@@ -28,16 +28,16 @@ include ../../make-rules/shared-macros.mk
 PATH= $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.5.3
+COMPONENT_VERSION=	1.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0db040c5b07e69cfe9a0b4566c8e90151ebacfe122c97c452f11386654aefcc9
+    sha256:b09de4197ac280b102080e09eaec6211d081efff1963bf7821cf8f4f9916099d
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			21167
+TPNO=			27398
 
 # Although building and running the GpgME tests is enabled, GpgME's
 # Test Harness is not suitable for running in an automated test
@@ -81,6 +81,6 @@ CONFIGURE_OPTIONS  +=		--with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
 
-REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += shell/ksh93
