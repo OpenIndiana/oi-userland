@@ -27,12 +27,12 @@
 
 diff --git a/include/drm/drm.h b/include/drm/drm.h
 index 8adb9d5..f9bedd0 100644
---- a/include/drm/drm.h
-+++ b/include/drm/drm.h
-@@ -54,10 +54,39 @@ typedef int32_t  __s32;
- typedef uint32_t __u32;
+--- a/include/drm/drm.h	2016-04-28 03:44:16.000000000 +0300
++++ b/include/drm/drm.h	2016-05-24 10:27:22.341573589 +0300
+@@ -55,10 +55,36 @@
  typedef int64_t  __s64;
  typedef uint64_t __u64;
+ typedef size_t   __kernel_size_t;
 +#if defined(__SOLARIS__) || defined(__sun)
 +#include <sys/types32.h>
 +typedef unsigned long long drm_handle_t;
@@ -63,13 +63,10 @@ index 8adb9d5..f9bedd0 100644
 +
 +#endif /* __Solaris__ or __sun */
 +
-+
-+
-+
  #define DRM_NAME	"drm"	  /**< Name in kernel, /dev, and /proc */
  #define DRM_MIN_ORDER	5	  /**< At least 2^5 bytes = 32 bytes */
  #define DRM_MAX_ORDER	22	  /**< Up to 2^22 bytes = 4MB */
-@@ -210,12 +239,13 @@ struct drm_ctx_priv_map {
+@@ -210,12 +236,13 @@
   * \sa drmAddMap().
   */
  struct drm_map {
@@ -86,7 +83,7 @@ index 8adb9d5..f9bedd0 100644
  	int mtrr;		 /**< MTRR slot used */
  	/*   Private data */
  };
-@@ -322,18 +352,22 @@ enum drm_dma_flags {
+@@ -322,18 +349,22 @@
   *
   * \sa drmAddBufs().
   */
@@ -116,7 +113,7 @@ index 8adb9d5..f9bedd0 100644
  	unsigned long agp_start; /**<
  				  * Start address of where the AGP buffers are
  				  * in the AGP aperture
-@@ -379,6 +413,7 @@ struct drm_buf_map {
+@@ -379,6 +410,7 @@
  	void *virtual;		/**< Mmap'd area in user-virtual */
  #endif
  	struct drm_buf_pub *list;	/**< Buffer information */
@@ -124,8 +121,6 @@ index 8adb9d5..f9bedd0 100644
  };
  
  /**
-diff --git a/include/drm/i915_drm.h b/include/drm/i915_drm.h
-index af3ce17..96d391d 100644
 --- a/include/drm/i915_drm.h
 +++ b/include/drm/i915_drm.h
 @@ -75,6 +75,7 @@ typedef struct _drm_i915_sarea {
