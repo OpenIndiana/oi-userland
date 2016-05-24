@@ -26,12 +26,10 @@ COMPONENT_ARCHIVE_URL= \
   http://hal.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://hal.freedesktop.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --enable-multiuser=no
 
 build: $(BUILD_32)

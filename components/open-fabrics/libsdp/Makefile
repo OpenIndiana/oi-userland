@@ -30,14 +30,14 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b72d4d84c7a02207c261082d1837757f8c131942193ceaf017daf684d61e8be1
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN3FILES = libsdp.3lib
 MAN4FILES = libsdp.conf.4
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 SUFFIX.64 = $(MACH64)
 
@@ -45,8 +45,7 @@ CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
 LIBS += -lsocket -lnsl
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libdir=/usr/lib/secure/$(SUFFIX.$(BITS))
+CONFIGURE_LIBDIR.$(BITS)=$(CONFIGURE_EXECPREFIX)$(LIBDIR)/secure/$(SUFFIX.$(BITS))
 
 CLEANUP_DIRS =	$(PROTOUSRBINDIR)/linux
 CLEANUP_FILES =\
@@ -70,4 +69,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

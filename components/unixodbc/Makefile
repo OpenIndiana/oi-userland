@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	ftp://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/unixodbc
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -54,9 +54,9 @@ PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
 
 LD_OPTIONS += -lsocket -lresolv -lnsl -lgen
 
-CONFIGURE_OPTIONS  +=	--includedir=$(CONFIGURE_PREFIX)/include/odbc
-CONFIGURE_OPTIONS  +=	--localstatedir=/var
-CONFIGURE_OPTIONS  +=	--sysconfdir=/etc/odbc
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/odbc
+CONFIGURE_SYSCONFDIR=/etc/odbc
+
 CONFIGURE_OPTIONS  +=	--x-includes="$(CONFIGURE_PREFIX)/include"
 CONFIGURE_OPTIONS  +=	--x-libraries="$(X11LIB.$(BITS))"
 CONFIGURE_OPTIONS  +=	--enable-shared
@@ -104,8 +104,4 @@ install: $(INSTALL_32_and_64)
 	$(RM) -f $(COMPONENT_DIR)/unixODBC.pc.1
 
 test: $(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

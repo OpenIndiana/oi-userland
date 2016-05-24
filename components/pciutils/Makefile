@@ -26,11 +26,11 @@ COMPONENT_SUMMARY=	The PCI Utilities are a collection of programs for inspecting
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_BUILD_GMAKE_ARGS += CC=$(CC) 
+COMPONENT_BUILD_GMAKE_ARGS += CC=$(CC)
 COMPONENT_BUILD_GMAKE_ARGS += OPT="-O2 -DBYTE_ORDER=1234 -DLITTLE_ENDIAN=1234"
 COMPONENT_BUILD_GMAKE_ARGS += PREFIX="/usr"
 

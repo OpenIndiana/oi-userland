@@ -31,9 +31,9 @@ COMPONENT_LICENSE=      BSD,GPLv2
 COMPONENT_LICENSE_FILE= lz4.license
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 BINDIR.32=/usr/bin
 BINDIR.64=/usr/bin/$(MACH64)

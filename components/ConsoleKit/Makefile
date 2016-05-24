@@ -29,9 +29,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		library/xdg/consolekit
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -45,9 +45,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-pam-module
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security

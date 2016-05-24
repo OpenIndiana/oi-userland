@@ -30,9 +30,9 @@ COMPONENT_LICENSE = MIT
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/nghttp2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-python-bindings

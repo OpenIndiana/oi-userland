@@ -24,15 +24,14 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8754669b8220aa1f151b920360029d5ea28c42bec55769059676725fe28397b8
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/pyorbit/2.24/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 gcc_OPT		= -O2
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 
 # common targets
@@ -42,4 +41,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

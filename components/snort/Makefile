@@ -35,9 +35,9 @@ COMPONENT_PROJECT_URL=	http://www.snort.org/
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort/files/OLD%20STUFF%20THAT%20YOU%20SHOULDNT%20USE/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/snort
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -69,6 +69,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

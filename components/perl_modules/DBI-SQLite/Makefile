@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_URL= \
   http://search.cpan.org/CPAN/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-SQLite/lib/DBD/SQLite.pm
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:          $(BUILD_32)
 
@@ -35,6 +35,3 @@ install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

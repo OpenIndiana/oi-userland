@@ -32,8 +32,8 @@ COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COM
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 COMPONENT_BUGDB=	utility/foomatic
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CACHE_FILE=$(PROTOUSRLIBDIR)/lp/caches/SUNWfoomatic.cache
 
@@ -60,4 +60,4 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

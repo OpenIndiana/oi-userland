@@ -66,7 +66,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk
-
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

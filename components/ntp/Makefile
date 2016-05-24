@@ -40,9 +40,9 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS=
 
@@ -50,10 +50,11 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
 
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/inet
+CONFIGURE_BINDIR.$(BITS) = $(CONFIGURE_SBINDIR.$(BITS))
+CONFIGURE_LIBEXECDIR.$(BITS) =   $(CONFIGURE_LIBDIR.$(BITS))/inet
+
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-debugging
@@ -64,12 +65,9 @@ CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 COMPONENT_INSTALL_ENV += PATH=/usr/gnu/bin:/usr/bin
 
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk

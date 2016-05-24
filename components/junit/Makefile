@@ -33,22 +33,22 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/junit
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS=
 
 # These ARGS override what is set in build.xml
-COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
+COMPONENT_BUILD_ARGS    += -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_TARGETS += dist
 
 # common targets
 build:		$(BUILD_32)
-	
-install:	build	
+
+install:	build
 
 # Testing is run as part of the build.
 # To really test AFTER you have installed the resulting package do:
@@ -59,7 +59,4 @@ install:	build
 #
 # OK (22 tests)
 test:		$(NO_TESTS)
-		
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk

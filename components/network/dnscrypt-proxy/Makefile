@@ -30,14 +30,12 @@ COMPONENT_LICENSE= ISC
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/Services
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 build: $(BUILD_32)
 

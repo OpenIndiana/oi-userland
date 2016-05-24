@@ -43,7 +43,7 @@ PKG_OPTIONS += -I $(COMPONENT_DIR)
 
 # We need to be able to return from void functions
 # CC += $(studio_FEATURES_EXTENSIONS)
-# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
+# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
@@ -92,8 +92,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Generate configuration scripts
 $(HPLIP_VARIANT)/.built: COMPONENT_PREP_ACTION = \
 		(cd $(@D) ; autoconf )
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	$(RM) $(ROOTPPDCACHE)

@@ -26,8 +26,8 @@ download::
 	pkg:/system/library/math@0.5.11,5.11-0.134:20100302T055623Z \
 	system/library/math/header-math@0.5.11,5.11-0.134:20100302T055635Z
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:	prep
 

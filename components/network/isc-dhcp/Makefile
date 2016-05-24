@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
 COMPONENT_BUGDB=	service/dhcp-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Parallel build fails
 COMPONENT_BUILD_ARGS =
@@ -46,12 +46,11 @@ COMPONENT_BUILD_ARGS =
 CONFIGURE_SCRIPT	= $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION+=	$(CP) -R $(SOURCE_DIR)/* $(@D)/
 
-CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
-CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
-CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/inet
+CONFIGURE_SBINDIR.$(BITS) = $(CONFIGURE_LIBDIR.$(BITS))/inet
+
 CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
-
 
 # Disable message in omapip/errwarn.c.
 CPPFLAGS  +=	        -DNOMINUM
@@ -63,11 +62,8 @@ build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:	$(TEST_32)
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
 
-include $(WS_TOP)/make-rules/depend.mk

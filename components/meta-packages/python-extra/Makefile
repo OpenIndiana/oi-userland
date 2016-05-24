@@ -18,7 +18,7 @@ COMPONENT_NAME=		python-extra
 COMPONENT_VERSION=	2.6.9
 COMPONENT_SUMMARY=	Supplemental Python libraries and utilities
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

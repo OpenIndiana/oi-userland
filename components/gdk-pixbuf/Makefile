@@ -27,9 +27,12 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
@@ -39,9 +42,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
 				automake -a -f -c --gnu &&\
 				autoconf )
 
-
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --with-x11
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used

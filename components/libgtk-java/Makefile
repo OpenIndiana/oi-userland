@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,13 +42,12 @@ CPPFLAGS += -I$(JAVA_HOME)/include/solaris
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-docbasedir=/usr/share/lib/java/javadoc/java-gnome
 CONFIGURE_OPTIONS += --with-macrobasedir=/usr/share/lib/java/javadoc/java-gnome
 CONFIGURE_OPTIONS += --with-jardir=/usr/share/lib/java
 CONFIGURE_OPTIONS += --with-srcjar
 CONFIGURE_OPTIONS += --with-srcjardir=/usr/share/lib/java/src/java-gnome
-CONFIGURE_OPTIONS += --without-gcj-compile               
+CONFIGURE_OPTIONS += --without-gcj-compile
 
 CONFIGURE_OPTIONS += JAVA_HOME=$(JAVA_HOME)
 

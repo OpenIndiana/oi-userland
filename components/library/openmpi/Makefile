@@ -13,33 +13,39 @@
 # Copyright 2013-2016 Aurelien Larcher.  All rights reserved.
 #
 
+# TODO: Verify if these lines are needed?
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../../make-rules/shared-macros.mk
 MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	1.10
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).2
+COMPONENT_VERSION =			$(OPENMPI_VERSION_MAJOR).2
 COMPONENT_FMRI = library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
 COMPONENT_SRC_NAME =		openmpi
-COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
+COMPONENT_SRC =				$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE =			$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:01db467676cb5d974166591d403a8ffe38dfac4becb67071f59971e86bef0f63
+	sha256:01db467676cb5d974166591d403a8ffe38dfac4becb67071f59971e86bef0f63
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
-COMPONENT_SUMMARY =     	OpenMPI - High Performance Message Passing Library
+COMPONENT_SUMMARY = 		OpenMPI - High Performance Message Passing Library
 COMPONENT_LICENSE_FILE = 	$(COMPONENT_SRC_NAME).license
 COMPONENT_LICENSE      = 	BSD 2-Clause
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_PREFIX   =    $(MPI_PREFIX)
+CONFIGURE_PREFIX   =	$(MPI_PREFIX)
 
 CONFIGURE_OPTIONS+=	--bindir=$(MPI_BINDIR)
 CONFIGURE_OPTIONS+=	--datadir=$(MPI_DATADIR)
@@ -59,7 +65,7 @@ CONFIGURE_OPTIONS+=	--with-wrapper-cflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-cxxflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-libs="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
 CONFIGURE_OPTIONS+=	--with-wrapper-fcflags="-L$(MPI_LIBDIR) -R$(MPI_LIBDIR)"
-CONFIGURE_OPTIONS+= ompi_cv_fortran_ignore_tkr_data=0
+CONFIGURE_OPTIONS+=	ompi_cv_fortran_ignore_tkr_data=0
 
 #COMPONENT_POST_CONFIGURE_ACTION += sed -i -e 's/-export-dynamic//g' $(SOURCE_DIR)/ompi/mpi/cxx/Makefile
 
@@ -82,9 +88,3 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile
 	$(CP) $(BUILD_DIR)/modulefile.64 $(PROTO_MODULE_PATH)/64/$(COMPONENT_VERSION)
 
 test:	$(TEST_32)
-
-
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

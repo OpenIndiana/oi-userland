@@ -43,9 +43,9 @@ COMPONENT_LICENSE = Apache 2.0 license
 COMPONENT_LICENSE_FILE = imagemagick.license
 COMPONENT_BUGDB=	utility/imagemagick
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
@@ -78,10 +78,10 @@ CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 CONFIGURE_OPTIONS+= --with-fontconfig=no
-# Configure option 'with-gs-font-dir' is required because some build systems might 
+# Configure option 'with-gs-font-dir' is required because some build systems might
 # not have ghostscript fonts installed.
 CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
-CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
+CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
@@ -111,12 +111,9 @@ install:	$(INSTALL_32_and_64)
 	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
-# can be run only after ImageMagick is actually installed and this is not 
+# can be run only after ImageMagick is actually installed and this is not
 # possible, so the tests are not invoked.
 #
 test:		$(NO_TESTS)
 	@echo "Tests can be run only after ImageMagick is installed."
 
-BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

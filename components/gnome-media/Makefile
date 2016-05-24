@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_LICENSE= GPLv2, LGPLv2.1, FDL1.1
 COMPONENT_LICENSE_FILE= gnome-media.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -48,7 +48,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 					cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gstmix
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
@@ -62,6 +61,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

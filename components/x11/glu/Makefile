@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/glu/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -44,7 +44,7 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 LDFLAGS= -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
+                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR)
 
 build: $(BUILD_32_and_64)
 

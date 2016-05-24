@@ -24,9 +24,9 @@ PERL_VERSIONS = 5.16
 # Illumos component, no explicit version
 COMPONENT_VERSION= 5.11
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/ips.mk
-include ../../../make-rules/makemaker.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/makemaker.mk
 
 CLEAN_PATHS=required-pkgs.mk
 
@@ -60,7 +60,7 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
-install: $(INSTALL_32) 
+install: $(INSTALL_32)
 
 build: $(BUILD_32)
 

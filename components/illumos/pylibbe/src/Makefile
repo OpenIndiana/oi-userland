@@ -22,7 +22,7 @@ MAPFILE=mapfile-vers
 
 LDFLAGS+= -Wl,-M$(MAPFILE)
 
-all: libbe_py_26.so libbe_py_27.so 
+all: libbe_py_26.so libbe_py_27.so
 
 libbe_py_26.so: libbe_py_26.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared $<  -lpython2.6 $(LIBS) -o $@
@@ -36,7 +36,7 @@ libbe_py_26.o: libbe_py.c Makefile
 libbe_py_27.o: libbe_py.c Makefile
 	$(CC) -c $(CFLAGS) libbe_py.c -fPIC -DPIC -I/usr/include/python2.7 -o $@
 
-clean: 
+clean:
 	rm -fr $(OBJS) $(TGTS)
 
 install:

@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://otr.cypherpunks.ca/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         aclocal -I. && \
@@ -39,8 +39,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 build: $(BUILD_32_and_64)
 

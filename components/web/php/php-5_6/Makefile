@@ -20,9 +20,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:b4ed7ab574b689fd6d6494fde954826c06efc85c505e017b8d776c7c7f479590
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -180,6 +180,6 @@ CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

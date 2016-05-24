@@ -32,9 +32,9 @@ PG_VERSION=	9.3
 # Don't depend on host default pg_config
 PATH=		$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV	+=	USE_PGXS=0
 

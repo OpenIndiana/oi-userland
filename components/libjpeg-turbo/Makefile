@@ -29,9 +29,9 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -46,13 +46,13 @@ CONFIGURE_OPTIONS+=	--disable-static
 # Allow for build with different API compliance
 CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.JPEG$(JPEG_API_VERSION))
 CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS+= --includedir=$(CONFIGURE_INCLUDEDIR)/libjpeg$(JPEG_API_VERSION)-turbo
-CONFIGURE_OPTIONS.32+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin
-CONFIGURE_OPTIONS.32+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib
+CONFIGURE_INCLUDEDIR= $(CONFIGURE_INCLUDEROOTDIR)/libjpeg$(JPEG_API_VERSION)-turbo
+CONFIGURE_BINDIR.32 = $(CONFIGURE_EXECPREFIX)$(LIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin
+CONFIGURE_LIBDIR.32 = $(CONFIGURE_EXECPREFIX)$(LIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib
 # Autoconf infers the build type incorrectly from the host triplet
 CONFIGURE_OPTIONS.64+= --build=x86_64-solaris2.11
-CONFIGURE_OPTIONS.64+= --bindir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin/$(MACH64)
-CONFIGURE_OPTIONS.64+= --libdir=$(USRLIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib/$(MACH64)
+CONFIGURE_BINDIR.64 = $(CONFIGURE_EXECPREFIX)$(LIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/bin/$(MACH64)
+CONFIGURE_LIBDIR.64 = $(CONFIGURE_EXECPREFIX)$(LIBDIR)/libjpeg$(JPEG_API_VERSION)-turbo/lib/$(MACH64)
 
 # Define rules for each API build
 BUILD_DIR_32_6 =		$(BUILD_DIR)/$(MACH32)/6

@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-coreutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 # We need the GNU grep command to configure/build.
@@ -43,15 +43,16 @@ PATH=/usr/gnu/bin:/usr/bin
 PATCH_LEVEL=		0
 
 CONFIGURE_PREFIX	 =	/usr/gnu
-CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
-CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_LIBDIR.32	 =	$(USRLIBDIR)
+CONFIGURE_LIBDIR.64	 =	$(USRLIBDIR64)
+
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_POST_INSTALL_ACTION +=	( cp $(COMPONENT_DIR)/files/*.1  \
-	$(PROTO_DIR)/usr/gnu/share/man/man1/ ) 
+	$(PROTO_DIR)/usr/gnu/share/man/man1/ )
 
 # common targets
 build:		$(BUILD_32)
@@ -76,4 +77,4 @@ test:		install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:5ba6f5772f8d00f445209356a7daf83c5bca2da5acd10de517ad2359ae95bc10
 COMPONENT_ARCHIVE_URL_1= http://llvm.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_PREFIX= /usr/clang/3.4
 

@@ -69,6 +69,10 @@ CFLAGS += -I/usr/include/kerberosv5/
 # libraries that it needs.
 LDFLAGS += -B direct -z nolazyload
 
+CONFIGURE_LIBEXECDIR.$(BITS) =	$(CONFIGURE_LIBDIR.$(BITS))/ssh
+CONFIGURE_SBINDIR.$(BITS)    =	$(CONFIGURE_LIBDIR.$(BITS))/ssh
+CONFIGURE_SYSCONFDIR         =	$(ETCDIR)/ssh
+
 CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
@@ -81,10 +85,6 @@ CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
-CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
 
 # common targets

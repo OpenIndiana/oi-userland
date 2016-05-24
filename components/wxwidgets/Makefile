@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_
 COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
 COMPONENT_BUGDB=	library/wxwidgets
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
@@ -64,7 +64,7 @@ CONFIGURE_OPTIONS += --without-gnomevfs
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --without-libmpack
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # I want to use userland's "build" target in contrib subdirectory, but I need
 # to skip the configure phase
@@ -81,8 +81,5 @@ install:	$(INSTALL_32_and_64) \
 		$(BUILD_DIR_32)/contrib/.installed \
 		$(BUILD_DIR_64)/contrib/.installed
 
-test: 		$(NO_TESTS)
+test 		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

@@ -29,17 +29,19 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/levent/files/libevent/lib
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
 
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2
 
 # Setup event-config.h file to support 32 & 64 bit.
 #
 COMPONENT_POST_INSTALL_ACTION= \
-            ($(MV) $(PROTO_DIR)/usr/include/libevent2/event2/event-config.h $(PROTO_DIR)/usr/include/libevent2/event2/event-config-$(BITS).h )
+	($(MV) $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config.h \
+	    $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config-$(BITS).h )
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -49,6 +51,3 @@ install:	$(INSTALL_32_and_64)
 # util/getaddrinfo fails (https://github.com/libevent/libevent/issues/134)
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

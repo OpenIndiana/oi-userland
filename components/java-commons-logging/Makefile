@@ -23,8 +23,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-bin.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:3f758805c7290d9c6d22d1451587c9f7232744aef4c984e88aa683cdea0587bd
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/commons/logging/binaries/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:
 

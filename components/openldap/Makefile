@@ -46,9 +46,9 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMPONENT_ARCHIVE_1)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -56,11 +56,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_PRE_BUILD_ACTION = \
 	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR_32); \
-	 cd $(BUILD_DIR_32); \
+	 cd $(BUILD_DIR_32) && \
 	 gzip -dc $(COMPONENT_ARCHIVE_1) | tar xopf -; \
 	 rm $(COMPONENT_ARCHIVE_1); \
-	  cd $(SDFVER); $(PERL) Makefile.PL; \
-		$(GMAKE))
+	 cd $(SDFVER) && $(PERL) Makefile.PL; \
+	 $(GMAKE))
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
@@ -69,12 +69,10 @@ CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
 CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --localstatedir=/var/openldap
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
-CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
+CONFIGURE_LOCALSTATEDIR = /var/openldap
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+CONFIGURE_DOCDIR = $(USRSHAREDOCDIR)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --disable-dynamic
@@ -84,7 +82,7 @@ CONFIGURE_OPTIONS += --enable-bdb
 CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-ldap
-CONFIGURE_OPTIONS += --enable-passwd	 
+CONFIGURE_OPTIONS += --enable-passwd
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
@@ -115,7 +113,3 @@ install:	$(INSTALL_32_and_64)
 # build does this always
 test:	$(TEST_32_and_64)
 
-	
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

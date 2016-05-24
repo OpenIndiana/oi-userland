@@ -71,10 +71,7 @@ CUNIT_TESTDIR=CUnit/Sources/Test
 CUNIT_TESTBIN=test_cunit
 
 test: $(TEST_32_and_64)
-	pushd $(BUILD_DIR_32)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
-	pushd $(BUILD_DIR_64)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd; 
+	pushd $(BUILD_DIR_32)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd;
+	pushd $(BUILD_DIR_64)/$(CUNIT_TESTDIR); ./$(CUNIT_TESTBIN); popd;
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 

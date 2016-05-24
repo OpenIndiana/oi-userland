@@ -38,7 +38,6 @@ PATH = /usr/gnu/bin:/usr/bin
 
 CPPFLAGS += -I/usr/include/gmp
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-guile=no
 CONFIGURE_OPTIONS += --disable-camellia
 CONFIGURE_OPTIONS += --without-p11-kit

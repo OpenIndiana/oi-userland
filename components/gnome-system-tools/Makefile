@@ -25,26 +25,27 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:39f37363001b1cc2f5d2f5d2d7024a7a36e7dd227862b1dd9ce8c3325157ea7c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.14/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
+					aclocal -I. && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
+					automake -a -f -c &&\
+					autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION = \
+					(chmod -R u+r $(SOURCE_DIR) && \
+					cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
 CONFIGURE_ENV += GKSU_CFLAGS="`pkg-config libgksu2 --cflags`"
@@ -64,4 +65,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

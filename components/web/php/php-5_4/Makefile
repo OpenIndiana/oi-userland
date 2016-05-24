@@ -21,9 +21,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:25bc4723955f4e352935258002af14a14a9810b491a19400d76fcdfa9d04b28f
 COMPONENT_ARCHIVE_URL=	http://ru2.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -175,7 +175,7 @@ COMPONENT_PRE_INSTALL_ACTION+= \
 	  )
 
 # Environment Variables
-COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" 
+COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
 CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
@@ -199,7 +199,7 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 #$(BUILD_DIR)/$(MACH64).cgi/.installed:      BITS=64
 
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 # \
 #    $(BUILD_DIR)/$(MACH32).cgi/.built \
 #    $(BUILD_DIR)/$(MACH64).cgi/.built

@@ -36,10 +36,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bzip
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
-#include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+#include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -55,8 +55,8 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
 
 COMPONENT_PRE_BUILD_ACTION= \
-	(cd $(@D) ; \
-	    cp ../../oldapi.c . )
+	(cd $(@D) && \
+	 cp ../../oldapi.c . )
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -68,17 +68,13 @@ $(INSTALL_64):
 
 install:	build $(INSTALL_32_and_64)
 	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
-	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
+	cd $(PROTOUSRLIBDIR) && rm -f libbz2.so && ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
-	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
+	cd $(PROTOUSRLIBDIR64) && rm -f libbz2.so && ln -s libbz2.so.1 libbz2.so
 #	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

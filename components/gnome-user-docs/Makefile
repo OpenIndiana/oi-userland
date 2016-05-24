@@ -28,14 +28,17 @@ COMPONENT_CLASSIFICATION=Desktop (GNOME)/Documentation
 COMPONENT_LICENSE=	FDL1.1
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && for f in gnome2-user-guide/bg/*.xml gnome2-user-guide/zh_CN/*.xml; do \
-					dos2unix -ascii $$f $$f ; done) 
+COMPONENT_PREP_ACTION = \
+	( cd $(@D) && \
+	  for f in gnome2-user-guide/bg/*.xml gnome2-user-guide/zh_CN/*.xml; do \
+	    dos2unix -ascii $$f $$f ; \
+	  done)
 
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
@@ -48,6 +51,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

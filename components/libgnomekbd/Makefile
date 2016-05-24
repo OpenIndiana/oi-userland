@@ -31,13 +31,11 @@ COMPONENT_FMRI = library/gnome/libgnomekbd
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LIB
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 build: $(BUILD_32_and_64)
 

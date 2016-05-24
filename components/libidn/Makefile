@@ -39,9 +39,9 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
@@ -58,9 +58,8 @@ FIND = /usr/bin/find
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/idn
+
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-csharp
@@ -72,10 +71,9 @@ CONFIGURE_OPTIONS  +=		--disable-gtk-doc
 CONFIGURE_OPTIONS  +=		--enable-java
 CONFIGURE_OPTIONS  +=		--with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-html-dir=$(CONFIGURE_PREFIX)/share/doc
 CONFIGURE_OPTIONS  +=		--with-pic
 
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc
+PROTOUSRSHAREDOCDIR = $(PROTO_DIR)/$(CONFIGURE_DOCDIR)
 IDNDOCDIR = $(PROTOUSRSHAREDOCDIR)/idn
 HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html
@@ -83,7 +81,7 @@ DOCLIST = libidn-components.pdf libidn.pdf
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   TLD_FILE=$(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
-else 
+else
   TLD_FILE=$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 endif
 
@@ -125,7 +123,4 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

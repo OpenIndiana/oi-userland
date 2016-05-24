@@ -23,12 +23,12 @@ COMPONENT_FMRI=		network/openvpn/easy-rsa
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	easy-rsa.license
 COMPONENT_SUMMARY=	Simple shell based CA utility
-COMPONENT_PROJECT_URL=	https://github.com/OpenVPN/easy-rsa	
+COMPONENT_PROJECT_URL=	https://github.com/OpenVPN/easy-rsa
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.net/community/releases/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 

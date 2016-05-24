@@ -27,6 +27,10 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 
+# TODO: Verify if these are needed?
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -36,17 +40,15 @@ CFLAGS += -I/usr/X11/include
 
 COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
 					cp -r $(SOURCE_DIR)/* $(@D) && \
-                                        cd $(@D) && libtoolize --force &&\
-                                        aclocal -I ./m4 &&\
+					cd $(@D) && libtoolize --force &&\
+					aclocal -I ./m4 &&\
 					gtkdocize &&\
-                                        autoheader &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+					autoheader &&\
+					automake -a -f -c --gnu &&\
+					autoconf )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --enable-shm
 CONFIGURE_OPTIONS += --with-gdktarget=x11
 CONFIGURE_OPTIONS += --enable-explicit-deps=yes

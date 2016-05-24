@@ -25,15 +25,13 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:dd4817103d23745d00c735dd137951552ba7b576cb8f68e6a529d06661e9b6a1
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 gcc_OPT		= -O2
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+=  PERL=$(PERL)
 
@@ -44,6 +42,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

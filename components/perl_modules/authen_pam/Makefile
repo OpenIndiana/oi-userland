@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_URL=	\
     http://search.cpan.org/CPAN/authors/id/N/NI/NIKIP/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~nikip/Authen-PAM-0.16/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/makemaker.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/makemaker.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -44,8 +44,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        autoconf )
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
+				autoconf )
 
 
 COMPONENT_TEST_TARGETS = test
@@ -54,6 +54,3 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

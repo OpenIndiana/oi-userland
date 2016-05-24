@@ -64,17 +64,16 @@ COMPONENT_PREP_ACTION =	\
 
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Build docs just once (for one ARCH), parameter varies from version to version
-CONFIGURE_OPTIONS.32 +=	--with-documentation --with-docs
-CONFIGURE_OPTIONS.64 +=	--without-documentation --without-docs
+CONFIGURE_PREFIX   =	$(COMPONENT_USR_DIR)
 
 CONFIGURE_OPTIONS +=	--enable-static=no
 CONFIGURE_OPTIONS +=	--with-libsodium
 
-CONFIGURE_PREFIX   =	$(COMPONENT_USR_DIR)
+# Build docs just once (for one ARCH), parameter varies from version to version
+CONFIGURE_OPTIONS.32 +=	--with-documentation --with-docs
+CONFIGURE_OPTIONS.64 +=	--without-documentation --without-docs
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 build: $(BUILD_32_and_64)
 

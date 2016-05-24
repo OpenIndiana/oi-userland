@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH_1= \
   sha256:6deec433ea1a34278b6538e8765f0b58fbc861e2befd119f8a0d54bd6a95d5f7
 COMPONENT_ARCHIVE_URL_1= http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -55,8 +55,6 @@ COMPONENT_POST_UNPACK_ACTION += (cd $(COMPONENT_SRC)/icons && $(UNPACK) $(USERLA
 
 CONFIGURE_ENV	+= LIBS="-lm"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1

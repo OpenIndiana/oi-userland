@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS+=-I/usr/include/ncurses
 
@@ -42,11 +42,11 @@ LDFLAGS.64=	$(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D) && \
 			cd $(@D) && autoconf
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc 
+
 CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static 
-CONFIGURE_OPTIONS+=	--with-pic 
-CONFIGURE_OPTIONS+=	--with-curses=ncurses 
+CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+=	--with-pic
+CONFIGURE_OPTIONS+=	--with-curses=ncurses
 
 CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"

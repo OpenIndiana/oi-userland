@@ -38,12 +38,12 @@ COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)
 
 COMPONENT_BUGDB=	utility/stunnel
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# need /usr/perl5/bin on path to access pod2man perl script, used by 
-# the build to create docs. 
+# need /usr/perl5/bin on path to access pod2man perl script, used by
+# the build to create docs.
 # Perl 5.10 pod2man does not recognize "-u" argument.
 COMPONENT_BUILD_ENV +=  PATH=/usr/perl5/5.16/bin:$(PATH)
 
@@ -54,7 +54,6 @@ CPPFLAGS += -DMACH64='\"$(MACH64)\"'
 
 CONFIGURE_OPTIONS +=	--disable-fips
 CONFIGURE_OPTIONS +=	--enable-ipv6
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
@@ -77,6 +76,3 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

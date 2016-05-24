@@ -22,15 +22,15 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
     sha256:c97da36d2e56a2d7b6e4f896241785acc95e97eb9557465fd66ba2a155a7b201
-COMPONENT_ARCHIVE_URL=  http://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE) 
+COMPONENT_ARCHIVE_URL=  http://xorg.freedesktop.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= x11/library/libdmx
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -45,5 +45,5 @@ test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

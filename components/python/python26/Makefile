@@ -35,12 +35,12 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/python
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# Need to preserve timestamp for Grammar files.  If the pickle files are older, 
-# Python will try to rebuild them.  
+# Need to preserve timestamp for Grammar files.  If the pickle files are older,
+# Python will try to rebuild them.
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
@@ -76,7 +76,6 @@ CPPFLAGS +=	$(shell pkg-config --cflags-only-I libffi)
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
@@ -96,7 +95,7 @@ COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/python2.6/pyconfig.h include/python2.6/pyconfig-$(BITS).h ; \
              $(TOUCH) lib/python2.6/lib2to3/*.pickle)
-                
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -122,4 +121,4 @@ test:				$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

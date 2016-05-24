@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/slrn/files/slrn/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/slrn
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
@@ -47,7 +47,6 @@ CONFIGURE_SCRIPT = $(@D)/configure
 # implementation (GNU mkdir will understand --version option).
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-server-file=/etc/nntpserver
 CONFIGURE_OPTIONS +=	--with-slrnpull=/var/spool/slrnpull
 CONFIGURE_OPTIONS +=	--enable-spool
@@ -65,6 +64,3 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

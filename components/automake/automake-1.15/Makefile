@@ -37,18 +37,18 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/automake
 COMPONENT_SUMMARY=	A Makefile generator
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/ 
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	GPLv2 FDLv1.3
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_DOCDIR =  $(CONFIGURE_DATAROOTDIR)/doc/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 CONFIGURE_OPTIONS  +=	--program-transform-name=s/$$/-$(COMPONENT_VERSION)/
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 # common targets
@@ -60,4 +60,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

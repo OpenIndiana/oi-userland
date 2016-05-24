@@ -54,8 +54,6 @@ LIBS = -lsocket -lnsl -lpkcs11
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
 CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
 CONFIGURE_OPTIONS  +=		--disable-glibtest

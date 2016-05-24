@@ -32,17 +32,15 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
-# (--with-ssl) as wget doesn't work for secure connections with gnutls. 
+# (--with-ssl) as wget doesn't work for secure connections with gnutls.
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man page wget.1
 # can be automatically generated
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-ssl=openssl
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
 build:		$(BUILD_32_and_64)

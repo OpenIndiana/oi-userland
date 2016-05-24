@@ -30,9 +30,9 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/X11
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -45,14 +45,13 @@ COMPONENT_PREP_ACTION =         ( cd  $(@D) &&\
 
 SAMPLE_CONFIGS = $(BUILD_DIR)/.sample-configs
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
+CONFIGURE_BINDIR.$(BITS) = $(CONFIGURE_SBINDIR.$(BITS))
+
 CONFIGURE_OPTIONS+= --enable-shared=yes
 CONFIGURE_OPTIONS+= --enable-static=no
 CONFIGURE_OPTIONS+= --with-xdmconfigdir=/etc/X11/xdm
 CONFIGURE_OPTIONS+= --with-piddir=/var/run/xdm
 CONFIGURE_OPTIONS+= --with-authdir=/var/run/xdm
-CONFIGURE_OPTIONS+= --bindir=/usr/sbin
 CONFIGURE_OPTIONS+= --with-xrdb=/usr/bin/xrdb
 CONFIGURE_OPTIONS+= --with-default-session=command='/usr/bin/xterm -ls'
 

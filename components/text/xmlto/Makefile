@@ -11,7 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# 
+#
 
 include ../../../make-rules/shared-macros.mk
 
@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://fedorahosted.org/releases/x/m/xmlto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://fedorahosted.org/xmlto/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += GETOPT=/usr/gnu/bin/getopt
 

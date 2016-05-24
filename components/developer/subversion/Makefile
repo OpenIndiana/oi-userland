@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
@@ -133,13 +133,13 @@ CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --enable-shared 
+CONFIGURE_OPTIONS += --enable-shared
 #CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-libtool-lock 
+CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-ssl 
+CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
 CONFIGURE_OPTIONS += --with-apr=/usr/apr
@@ -183,5 +183,5 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

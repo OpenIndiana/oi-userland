@@ -27,9 +27,9 @@ COMPONENT_LICENSE=	GPLv2+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	task spooler is a Unix batch system where the tasks spooled run one after the other
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV  = CC=$(CC)
 COMPONENT_BUILD_ENV += LDFLAGS="-lsocket -lnsl"
@@ -39,6 +39,3 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

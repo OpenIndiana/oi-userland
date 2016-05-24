@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:767eaebce2941737b43368225ec54598b3055ca78b4dc50c4092f5fcdc0bdfe7
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Heals libgstvideoscale core dump
 gcc_OPT = -O2
@@ -41,6 +41,3 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

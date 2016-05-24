@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://www.cosc.canterbury.ac.nz/greg.ewing/python/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.cosc.canterbury.ac.nz/~greg/python/Pyrex/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32)
 

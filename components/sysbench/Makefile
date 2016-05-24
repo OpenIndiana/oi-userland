@@ -27,20 +27,21 @@ COMPONENT_ARCHIVE_URL=  \
 	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://github.com/akopytov/sysbench
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION+=        (cd $(@D) && libtoolize -c && $(ACLOCAL))
 
 COMPONENT_POST_INSTALL_ACTION+= \
         $(CP) $(COMPONENT_SRC)/doc/manual.xml $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)
 
+CONFIGURE_BINDIR.32 = /usr/benchmarks/sysbench/bin
+
 CONFIGURE_OPTIONS +=    --with-mysql=/usr/mariadb/5.5
 CONFIGURE_OPTIONS +=    --enable-largefile
-CONFIGURE_OPTIONS +=    --bindir=/usr/benchmarks/sysbench/bin
 
-install: $(INSTALL_32) 
+install: $(INSTALL_32)
 
 build: $(BUILD_32)
 

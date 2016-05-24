@@ -30,9 +30,9 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION= System/Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,14 +41,13 @@ gcc_OPT=-O2
 # This is necessary to pass tests
 ENV=/usr/bin/env -i
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --with-confdir=/etc/fonts
 CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
 CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
 CONFIGURE_OPTIONS+= --with-cache-dir=/var/cache/fontconfig
 
 $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
-	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d 
+	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d
 	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.avail
 	$(MKDIR) $(PROTO_DIR)/etc/fonts/conf.d
 	$(MV) $(PROTO_DIR)/usr/share/fontconfig/conf.avail $(PROTO_DIR)/etc/fonts/conf.avail

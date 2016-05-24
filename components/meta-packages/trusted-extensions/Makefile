@@ -18,7 +18,7 @@ COMPONENT_NAME=		trusted-extensions
 COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	Trusted Extensions
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

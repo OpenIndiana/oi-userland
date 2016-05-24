@@ -47,10 +47,6 @@ COMPONENT_PREP_ACTION = \
             autoheader; \
             autoconf )
 
-# Needed to installed most of the files into the proto area.
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-
 # common targets
 build:		$(BUILD_32)
 
@@ -63,12 +59,12 @@ install:	$(INSTALL_32)
 #
 # To test privoxy, follow the instructions in the privoxy quick start guide:
 # http://www.privoxy.org/user-manual/quickstart.html
-# 
+#
 # Privoxy is disabled by default, so make sure to enable it if necessary:
 # 	# svcs privoxy
 #	# svcadm enable privoxy
-# You may need to set the forward address in /etc/privoxy/config to the 
-# Oracle proxy to access pages in your web browser with privoxy running. 
+# You may need to set the forward address in /etc/privoxy/config to the
+# Oracle proxy to access pages in your web browser with privoxy running.
 
 test: 		$(NO_TESTS)
 

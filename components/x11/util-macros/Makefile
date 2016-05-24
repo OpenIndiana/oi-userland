@@ -30,13 +30,11 @@ COMPONENT_PROJECT_URL = https://x.org
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xorg-macros.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 build: $(BUILD_32)
 

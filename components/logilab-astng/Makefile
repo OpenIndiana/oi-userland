@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/python-logilab-astng/$(COMPONENT_ARCHIVE)/9383047bfe2be4405af491fbe5c7f1c6/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-astng
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 
 # common targets
 
@@ -46,7 +46,7 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # The tests are run using python 2.7 only and require that
-# the python-27 package is installed (does not have to be the default python). 
+# the python-27 package is installed (does not have to be the default python).
 # Testing using python-26 is done manually, since it requires
 # downloading and installing the unittest2 component (not part of Solaris).
 # which provides python 2.7 functionality to the unittest python library
@@ -65,7 +65,7 @@ COMPONENT_PRE_TEST_ACTION = ( $(GMAKE) -C \
 
 COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-# Run pytest-2.7 from logilab-common's proto area for now, until the 
+# Run pytest-2.7 from logilab-common's proto area for now, until the
 # new version of logilab-common containing pytest is in CBE.
 # Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
 COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)
@@ -79,11 +79,8 @@ COMPONENT_TEST_ARGS =
 # x86:
 # 242 test cases, 4 failures, 8 skipped
 # 6 modules OK (3 failed)
-# failures: unittest_builder [2/55], unittest_lookup [1/21], 
+# failures: unittest_builder [2/55], unittest_lookup [1/21],
 # unittest_inference [1/75]
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

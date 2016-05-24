@@ -58,9 +58,9 @@ COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 UNPACK_ARGS_2=  -r $(COMPONENT_SRC_2)
 PKG_PROTO_DIRS +=       $(COMPONENT_SRC_2)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
@@ -70,9 +70,9 @@ COMPONENT_BUILD_ENV +=	"HOME=/tmp"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
-# The HiPE portion is a bit sensitive, and only seems to work 64-bit on 
+# The HiPE portion is a bit sensitive, and only seems to work 64-bit on
 # amd64 (thus the variant.arch tagging in erlang.p5m). erts/config.log
-# can be very interesting if issues occur. 
+# can be very interesting if issues occur.
 CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
@@ -81,7 +81,7 @@ CONFIGURE_OPTIONS.64 += LIBS="-m64"
 CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
 
 # Needed for 'set name=info.source-url' action in erlang-doc.p5m
-PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2) 
+PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2)
 
 # Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
 # to copy files and our tar doesn't handle long links by default.  Between
@@ -134,6 +134,3 @@ clean::
 
 test:	$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

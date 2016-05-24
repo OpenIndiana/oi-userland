@@ -29,21 +29,20 @@ COMPONENT_CLASSIFICATION=Desktop (GNOME)/Window Managers
 COMPONENT_LICENSE_FILE=	compiz.license
 COMPONENT_LICENSE=	MIT, LGPLv2.1, GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf &&\
-                                        intltoolize )
+					intltoolize )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnome
 CONFIGURE_OPTIONS+=	--disable-kde
 CONFIGURE_OPTIONS+=	--disable-kde4
@@ -60,6 +59,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

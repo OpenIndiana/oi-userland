@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/neon
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 
@@ -45,9 +45,6 @@ CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --mandir=/usr/share/man
-CONFIGURE_OPTIONS += --infodir=/usr/share/info
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-webdav
@@ -68,7 +65,4 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

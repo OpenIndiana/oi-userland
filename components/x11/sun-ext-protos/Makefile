@@ -24,7 +24,7 @@ COMPONENT_LICENSE_FILE= sun-ext-protos.license
 COMPONENT_CLASSIFICATION= Development/X11
 
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

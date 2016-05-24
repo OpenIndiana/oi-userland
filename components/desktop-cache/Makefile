@@ -26,13 +26,11 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS = --libdir=/lib
-CONFIGURE_OPTIONS += --datadir=/usr/share
-CONFIGURE_OPTIONS += --sysconfdir=/lib
+CONFIGURE_SYSCONFDIR = /lib
 
 build: $(BUILD_32)
 

@@ -62,7 +62,7 @@ CC += $(CC_BITS)
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
 LDFLAGS += -lc
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+
 CONFIGURE_OPTIONS  +=		--enable-shared
 
 # Build the readline examples as well.

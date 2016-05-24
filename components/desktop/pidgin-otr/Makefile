@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f4b59eef4a94b1d29dbe0c106dd00cdc630e47f18619fc754e5afbf5724ebac4
 COMPONENT_ARCHIVE_URL=	http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -37,8 +37,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
@@ -53,4 +51,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

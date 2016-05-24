@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/u/unittest2/$(COMPONENT_ARCHIVE)#md5=a0af5cac92bbbfa0c3b0e99571390e0f
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/unittest2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32)
 

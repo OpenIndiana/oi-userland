@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1fdfed1aef2c22a29a9abc00eae67752854e466a66cee2a8c1c278277e832d66
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,8 +41,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 
 CPPFLAGS = -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\" -I/usr/include/firefox -I/usr/include/firefox/nspr
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-update-mime-database
 CONFIGURE_ENV+= 	CPPFLAGS="$(CPPFLAGS)"
 

@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/c/cssutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/cssutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./setup.py test
@@ -48,7 +48,7 @@ COMPONENT_PRE_BUILD_ACTION = \
 		-name *.py -exec $(GSED) -i -e 's///g' "{}" \; ;
 
 # After we have done each Python build, copy it to its own version specific
-# source hierarchy and then adjust the shebang lines as needed, before we 
+# source hierarchy and then adjust the shebang lines as needed, before we
 # build for Python 2.6. Note that this assumes we are only doing Python 2.7
 # and Python 2.6, and we are doing them in that order.
 COMPONENT_POST_BUILD_ACTION = \
@@ -78,4 +78,4 @@ test:           $(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

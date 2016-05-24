@@ -27,7 +27,7 @@ COMPONENT_VERSION=	0.10.0
 COMPONENT_FMRI=     	library/c++/libwpd
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libwpd
-COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents 
+COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:9d8ba780cb9c0aed7859c59a602138d8ab360b40f6aa655e42f5f769f2cfd32c
@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libwpd/files/libwpd/libwp
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
@@ -47,8 +47,4 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 

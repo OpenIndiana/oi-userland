@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = Desktop (GNOME)/Sessions
 COMPONENT_LICENSE = GPLv2, LGPLv2
 COMPONENT_LICENSE_FILE = gnome-session.license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -47,11 +47,8 @@ COMPONENT_PREP_ACTION = 	( cd  $(@D) &&\
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-                                        
-LDFLAGS += -lsecdb  -lsocket  -lnsl
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
+LDFLAGS += -lsecdb  -lsocket  -lnsl
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 

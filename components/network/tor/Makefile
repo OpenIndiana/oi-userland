@@ -28,15 +28,13 @@ COMPONENT_ARCHIVE_URL=	https://www.torproject.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	BSD, OPEN DATA LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-bufferevents
 CONFIGURE_OPTIONS+=	--enable-buf-freelists
 #CONFIGURE_OPTIONS+=	--enable-linker-hardening
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
@@ -46,10 +44,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/security/openssl

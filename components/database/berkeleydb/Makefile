@@ -44,7 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Berkeley DB uses TCLSH to run all the test suite test cases.
 # Per the test suite instructions in the BDB build manual, the tclsh
@@ -54,15 +54,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # for test (--enable-test)
 
 COMPONENT_POST_TEST_ACTION = \
-        (cd $(@D); \
-        echo "source test/tcl/test.tcl" > $(@D)/run_bdb.tcl; \
-        echo "$(RUN)" >> $(@D)/run_bdb.tcl; \
-        cd $(@D); \
+	(cd $(@D); \
+	echo "source test/tcl/test.tcl" > $(@D)/run_bdb.tcl; \
+	echo "$(RUN)" >> $(@D)/run_bdb.tcl; \
+	cd $(@D); \
 	$(CP) include.tcl include.tcl.orig; \
 	$(GSED) \
 	    's;set tclsh_path .*;set tclsh_path '$(TCLSH)';' \
 	    < include.tcl.orig > include.tcl; \
-        $(ENV) $(TCLSH) run_bdb.tcl)
+	$(ENV) $(TCLSH) run_bdb.tcl)
 
 CONFIGURE_SCRIPT = dist/configure
 
@@ -79,7 +79,6 @@ CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-cxx
@@ -108,7 +107,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 		$(CP) berkeleydb.license $(PROTOUSRDIR)/docs/LICENSE
 
-test:		$(TEST_32_and_64) 
+test:		$(TEST_32_and_64)
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std

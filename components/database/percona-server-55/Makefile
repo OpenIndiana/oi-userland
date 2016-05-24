@@ -10,7 +10,7 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# 
+#
 
 include ../../../make-rules/shared-macros.mk
 
@@ -26,9 +26,9 @@ COMPONENT_PROJECT_URL=	http://www.percona.com/
 COMPONENT_ARCHIVE_HASH=	sha256:00d5d882977d5dbfbf8d0467cbca5c1636401f5027bcfefa158c796abea3279e
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/percona-server/5.5

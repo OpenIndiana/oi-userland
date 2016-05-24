@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:33ab38780e9abb71506230e331e9c3534444b5ed3f17046f0b6371a00df686fb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -40,7 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					autoheader &&\
 					automake -a -f -c --gnu &&\
 					autoconf )
-					
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 gcc_OPT		= -O2
@@ -48,9 +48,6 @@ gcc_OPT		= -O2
 LDFLAGS+=       -L/usr/lib/mps -R/usr/lib/mps
 LDFLAGS+=	-lgmodule-2.0 -lgthread-2.0
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-nss=yes
 CONFIGURE_OPTIONS+=	--enable-smime=yes
 CONFIGURE_OPTIONS+=	--with-sunldap=/usr
@@ -70,4 +67,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

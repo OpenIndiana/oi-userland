@@ -30,21 +30,16 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_DEFAULT_DIRS=no
 
+CONFIGURE_INCLUDEDIR= $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS+= --includedir=$(CONFIGURE_INCLUDEDIR)/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS.32+= --bindir=$(USRLIBDIR)/$(COMPONENT_NAME)/bin
-CONFIGURE_OPTIONS.32+= --libdir=$(USRLIBDIR)/$(COMPONENT_NAME)/lib
-CONFIGURE_OPTIONS.64+= --bindir=$(USRLIBDIR)/$(COMPONENT_NAME)/bin/$(MACH64)
-CONFIGURE_OPTIONS.64+= --libdir=$(USRLIBDIR)/$(COMPONENT_NAME)/lib/$(MACH64)
-
 
 build:		$(BUILD_32_and_64)
 

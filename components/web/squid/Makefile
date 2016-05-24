@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) &&\
 					libtoolize --copy --force &&\
@@ -53,11 +53,14 @@ CFLAGS += $(CPP_LARGEFILES)
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
 
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
-CONFIGURE_OPTIONS += --localstatedir=/var/squid
-CONFIGURE_OPTIONS += --sharedstatedir=/var/squid
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
-CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
+CONFIGURE_LIBEXECDIR.32 = $(CONFIGURE_PREFIX)/libexec
+CONFIGURE_LIBEXECDIR.64 = $(CONFIGURE_PREFIX)/libexec/$(MACH64)
+
+CONFIGURE_LOCALSTATEDIR=/var/squid
+CONFIGURE_SHAREDSTATEDIR=$(CONFIGURE_LOCALSTATEDIR)
+CONFIGURE_MANDIR = $(CONFIGURE_PREFIX)/man
+CONFIGURE_SYSCONFDIR = $(ETCDIR)/squid
+
 CONFIGURE_OPTIONS += --enable-arp-acl
 CONFIGURE_OPTIONS += --enable-auth
 CONFIGURE_OPTIONS += --enable-auth-basic
@@ -99,9 +102,9 @@ COMPONENT_POST_BUILD_ACTION= \
                  $(CP) files/squid.conf.default $(@D)/src)
 
 # common targets
-build:		$(BUILD_32) 
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32)
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly
@@ -134,4 +137,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

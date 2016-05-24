@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_FMRI=		runtime/dosbox
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					aclocal -I. && \
@@ -38,8 +38,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf )
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
@@ -51,6 +49,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

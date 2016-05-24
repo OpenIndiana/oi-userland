@@ -57,14 +57,14 @@ COMPONENT_TEST_TARGETS=	test
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/lib/
+CONFIGURE_BINDIR.32 =	$(CONFIGURE_EXECPREFIX)/lib/
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_EXECPREFIX)/lib/$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-libevent=/usr/lib/
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
+CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/$(MACH64)
+
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-docs
 CONFIGURE_OPTIONS +=	--disable-coverage
-CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -75,10 +75,6 @@ install:	$(INSTALL_32_and_64)
 
 # t/whitespace.t fails
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += SUNWcs

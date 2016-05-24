@@ -35,21 +35,21 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/tidy
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
-#tree.js, treeview.js, tidyenum_8h.html are installed 
+#tree.js, treeview.js, tidyenum_8h.html are installed
 #from files directory manually as doxygen didn't generate them.
-#This needs to be fixed later. 
+#This needs to be fixed later.
 
 COMPONENT_PREP_ACTION =  \
         (cd $(SOURCE_DIR); doxygen htmldoc/doxygen.cfg)
 
-CONFIGURE_OPTIONS  +=       --disable-static 
-CONFIGURE_OPTIONS  +=       --enable-access 
-CONFIGURE_OPTIONS  +=       --enable-utf16 
+CONFIGURE_OPTIONS  +=       --disable-static
+CONFIGURE_OPTIONS  +=       --enable-access
+CONFIGURE_OPTIONS  +=       --enable-utf16
 CONFIGURE_OPTIONS  +=       --enable-asian
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -77,7 +77,3 @@ install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
 		$(CP) -r $(SOURCE_DIR)/htmldoc/api $(PROTODOCDIR)
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

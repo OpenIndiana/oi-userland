@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ircii.warped.com/old/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ircii
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to correctly include <curses.h> and <term.h> when compiling the
 # various C source files.
@@ -73,8 +73,5 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:           $(NO_TESTS)
+test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

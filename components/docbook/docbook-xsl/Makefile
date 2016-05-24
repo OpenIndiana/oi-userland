@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:cea88089e88a5b01554b123d1d89278763eab4e8e42974853a112a54bb76905d
 COMPONENT_ARCHIVE_URL_1= http://sourceforge.net/projects/docbook/files/docbook-xsl-doc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # we don't use $(USERLAND_UNPACK) because it can't unpack files to existing directory
 COMPONENT_POST_UNPACK_ACTION += /usr/gnu/bin/tar xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)

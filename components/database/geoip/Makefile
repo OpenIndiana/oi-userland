@@ -30,7 +30,6 @@ CONFIGURE_OPTIONS +=	--no-recursion
 CONFIGURE_OPTIONS +=	--enable-libtool-lock
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_SCRIPT   =	$(@D)/configure

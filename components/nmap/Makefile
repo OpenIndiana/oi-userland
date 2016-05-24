@@ -35,11 +35,11 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/nmap
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# Can't use the Studio compilers as they don't support the GNU 
+# Can't use the Studio compilers as they don't support the GNU
 # __attribute__ extension
 COMPILER =	gcc
 
@@ -51,14 +51,13 @@ CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_32)
-CONFIGURE_OPTIONS  +=   --localstatedir=/var 
-CONFIGURE_OPTIONS  +=   --without-localdirs 
-CONFIGURE_OPTIONS  +=   --with-zenmap 
+CONFIGURE_OPTIONS  +=   --without-localdirs
+CONFIGURE_OPTIONS  +=   --with-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
-CONFIGURE_OPTIONS  +=   --with-liblua 
-CONFIGURE_OPTIONS  +=   --with-ncat 
+CONFIGURE_OPTIONS  +=   --with-liblua
+CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 
 # pkgdepend doesn't like the first line of a Python script to be:
@@ -69,11 +68,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # common targets
 build:		$(BUILD_32)
-		
-install:	$(INSTALL_32) 
+
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

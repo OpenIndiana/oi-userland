@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.broadwayinfo.com/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_LIBDIR.32=/usr/lib/firefox/browser/plugins
 

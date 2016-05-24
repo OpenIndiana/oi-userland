@@ -39,13 +39,13 @@ COMPONENT_BUGDB=	utility/rpm
 
 TPNO=			17824
 
-include ../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 # Do not clean the sources (set in prep.mk)
 #
 CLEAN_PATHS=
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
@@ -53,17 +53,16 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Common targets
 #
+
+# Just create the build directory, which is needed for publishing.
+# There is nothing to actually build.
+#
 build:
-	# Just create the build directory, which is needed for publishing.
-	# There is nothing to actually build.
-	#
-	$(RM) -r $(BUILD_DIR) ; $(MKDIR) $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR)
+	$(MKDIR) $(BUILD_DIR)
 
 install:
 	@echo "Nothing to install."
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

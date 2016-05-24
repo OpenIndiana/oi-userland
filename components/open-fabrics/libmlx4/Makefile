@@ -30,8 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ac3aa335d5749a8edc471630b1f5049122c8b7b66bab88c299e255122028e19c
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/libmlx4/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 # --disable-libcheck is not a supported option for this component
@@ -68,4 +68,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -24,13 +24,11 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c585773743b1df8a04b1be7f7d90eecdf22681490d6810be54c81a7ae152191e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.10/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -39,6 +37,3 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

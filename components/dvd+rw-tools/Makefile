@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_FMRI=		media/dvd+rw-tools
 COMPONENT_CLASSIFICATION=	System/Media
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -DI_KNOW_ALL_ABOUT_SUDO
@@ -38,7 +38,7 @@ CFLAGS += -DI_KNOW_ALL_ABOUT_SUDO
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += CXX=$(CXX)
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-                                        
+
 # common targets
 build:                $(BUILD_32)
 
@@ -46,6 +46,3 @@ install:        $(INSTALL_32)
 
 test:                $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

@@ -28,18 +28,17 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-ipv6
-CONFIGURE_OPTIONS+=	--with-openssl=/usr
+CONFIGURE_OPTIONS+=	--with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS+=	--disable-credssp
 CONFIGURE_OPTIONS+=	--disable-smartcard
 CONFIGURE_OPTIONS+=	--with-sound=oss
@@ -51,6 +50,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

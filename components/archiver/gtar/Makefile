@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -44,14 +44,17 @@ PATCH_LEVEL=0
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
+# Note: This explicit (lack of) bitness in the path was here originally...
+# Maybe it causes problems, maybe the program is smart to install differently?
+CONFIGURE_LIBEXECDIR.$(BITS)=/usr/sbin
+
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Failed tests: 
+# Failed tests:
 #25: terminal input FAILED (iotty.at:29)
 #87: incremental dump when the parent directory is unreadable FAILED (listed03.at:27)
 

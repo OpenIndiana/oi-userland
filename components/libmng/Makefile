@@ -57,29 +57,30 @@ COMPONENT_ARCHIVE_URL_5 = http://www.libpng.org/pub/mng/spec/index.html
 
 COMPONENT_BUGDB=	library/libmng
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms2`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --enable-shared 
-CONFIGURE_OPTIONS += --disable-static 
-CONFIGURE_OPTIONS += --disable-libtool-lock 
-CONFIGURE_OPTIONS += --enable-largefile 
-CONFIGURE_OPTIONS += --enable-buildso 
-CONFIGURE_OPTIONS += --enable-read 
-CONFIGURE_OPTIONS += --enable-write 
-CONFIGURE_OPTIONS += --enable-display 
-CONFIGURE_OPTIONS += --enable-dynamic 
-CONFIGURE_OPTIONS += --enable-chunks 
-CONFIGURE_OPTIONS += --enable-storechunks 
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-libtool-lock
+CONFIGURE_OPTIONS += --enable-largefile
+CONFIGURE_OPTIONS += --enable-buildso
+CONFIGURE_OPTIONS += --enable-read
+CONFIGURE_OPTIONS += --enable-write
+CONFIGURE_OPTIONS += --enable-display
+CONFIGURE_OPTIONS += --enable-dynamic
+CONFIGURE_OPTIONS += --enable-chunks
+CONFIGURE_OPTIONS += --enable-storechunks
 CONFIGURE_OPTIONS += --with-lcms
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-jpeg
@@ -101,8 +102,4 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
 test:	$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

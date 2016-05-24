@@ -27,12 +27,12 @@ COMPONENT_ARCHIVE_URL= \
   http://www.jedrea.com/chmlib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.jedrea.com/chmlib/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
-# COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+# COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 build: $(BUILD_32_and_64)
 

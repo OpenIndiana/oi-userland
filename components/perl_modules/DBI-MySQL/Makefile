@@ -40,9 +40,9 @@ COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-mysql/lib/DBD/mysql.pm
 # Don't depend on host default MySQL
 PATH=/usr/mariadb/5.5/bin:/usr/sbin:/usr/bin:/usr/perl5/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -53,6 +53,3 @@ install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

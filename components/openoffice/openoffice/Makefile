@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openoffice
 COMPONENT_VERSION=      4.1.1
 COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=  http://openoffice.apache.org/ 
+COMPONENT_PROJECT_URL=  http://openoffice.apache.org/
 COMPONENT_SUMMARY=	Apache OpenOffice Suite
 COMPONENT_SRC=		aoo-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	apache-openoffice-$(COMPONENT_VERSION)-r1617669-src.tar.bz2
@@ -151,9 +151,9 @@ COMPONENT_ARCHIVE_URL_31=http://ooo-extras.apache-extras.org.codespot.com/files/
 
 NUM_EXTRA_ARCHIVES=1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(GCC_ROOT)/bin:/opt/openoffice/bin:/usr/gnu/bin:/usr/bin
 

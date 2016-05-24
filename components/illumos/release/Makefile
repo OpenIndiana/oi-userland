@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           release
-COMPONENT_VERSION=        0.$(PKG_SOLARIS_VERSION)	
-COMPONENT_SUMMARY=        OpenIndiana Release Files 
+COMPONENT_VERSION=        0.$(PKG_SOLARIS_VERSION)
+COMPONENT_SUMMARY=        OpenIndiana Release Files
 COMPONENT_PROJECT_URL=    http://www.openindiana.org/
 COMPONENT_FMRI=           release
 COMPONENT_CLASSIFICATION= System/Core
 COMPONENT_LICENSE=        CDDLv1.0
-COMPONENT_LICENSE_FILE=   $(COMPONENT_NAME).license	
+COMPONENT_LICENSE_FILE=   $(COMPONENT_NAME).license
 
 include $(WS_MAKE_RULES)/ips.mk
 

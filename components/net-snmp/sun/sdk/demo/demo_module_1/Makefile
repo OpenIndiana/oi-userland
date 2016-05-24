@@ -16,7 +16,7 @@
 #
 #
 # Makefile to generate demo_module_1.so
-# 
+#
 # usage:
 # setenv CC /usr/bin/cc (or correct path)
 # "make" : generate library for 64bit

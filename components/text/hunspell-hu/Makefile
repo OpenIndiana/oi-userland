@@ -31,8 +31,8 @@ COMPONENT_ARCHIVE_HASH=        \
     sha256:0a1ab4672bf75acc1c29c4b3fbcab5d10b7883ba1e7fc25e8054d2209f0352c2
 COMPONENT_ARCHIVE_URL=   https://sourceforge.net/projects/magyarispell/files/Magyar%20Ispell/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell

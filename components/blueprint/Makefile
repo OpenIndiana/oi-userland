@@ -29,20 +29,18 @@ COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 # Missing files in build dir for gmake install without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 $(BUILD_DIR_32)/.installed_pixmaps:	$(BUILD_32)
 	$(RM) -fr $(PROTO_DIR)/usr/share/pixmaps
-	$(MKDIR) -p $(PROTO_DIR)/usr/share/pixmaps 
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/pixmaps
 	for i in `find $(SOURCE_DIR)/icons/48x48 -name "*.png"`; do \
 		echo "Installing $$i to $(PROTO_DIR)/usr/share/pixmaps with blueprint- prefix "; \
 		i_base=`basename $$i`; \

@@ -35,14 +35,12 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bison
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_LIBDIR.32 =   $(GNULIB)
 CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
-
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -58,4 +56,4 @@ test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

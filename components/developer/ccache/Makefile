@@ -33,11 +33,9 @@ COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 CFLAGS  +=			-D_GNU_SOURCE -D__EXTENSIONS__
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:          $(BUILD_32_and_64)
@@ -48,4 +46,4 @@ test:           $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
     sha256:f3d90ae9dcf423fa116962bb22346101a45105914fc47e3d7b7c4202560eb917
 
-# Using our own special version of the source tarball. It's not clear 
+# Using our own special version of the source tarball. It's not clear
 # where the source archive came from.  The community web has the
 # following for the source download link:
 #        http://downloads.sourceforge.net/areca/areca-7.1-src.zip
@@ -41,9 +41,9 @@ COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/areca
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS += install -buildfile build.xml
 COMPONENT_BUILD_ENV += ANT_OPTS="-Dfile.encoding=iso-8859-1"
@@ -56,6 +56,3 @@ install:	build
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

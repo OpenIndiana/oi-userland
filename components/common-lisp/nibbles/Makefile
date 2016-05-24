@@ -27,12 +27,12 @@ COMPONENT_LICENSE=	MIT-like
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	nibbles is a library for accessing multibyte integers from octet arrays and streams
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/common-lisp.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/common-lisp.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

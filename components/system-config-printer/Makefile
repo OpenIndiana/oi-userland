@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://cyberelk.net/tim/data/$(COMPONENT_NAME)/1.0.x/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cyberelk.net/tim/software/system-config-printer/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -I/usr/X11/include
 
@@ -44,8 +44,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
                                         autoconf )
 
 CONFIGURE_SCRIPT = $(@D)/configure
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt

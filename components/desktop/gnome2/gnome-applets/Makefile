@@ -27,16 +27,17 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
+COMPONENT_PREP_ACTION = \
+					( cd $(@D) && \
+					libtoolize --automake --copy --force && \
 					aclocal -I./m4 && \
-                                        autoheader && \
+					autoheader && \
 					automake  -Wno-portability -a -f -c &&\
 					autoconf )
 
@@ -44,8 +45,6 @@ CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 CONFIGURE_ENV	+= LIBGWEATHER_LIBS="-lgweather -lm"
 CONFIGURE_ENV	+= LIBS="-lm"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-gstreamer=0.10
 CONFIGURE_OPTIONS+= --enable-stickynotes
 CONFIGURE_OPTIONS+= --disable-scrollkeeper

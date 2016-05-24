@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher 
+# Copyright (c) 2015, Aurelien Larcher
 #
 include ../../make-rules/shared-macros.mk
 
@@ -37,17 +37,17 @@ COMPONENT_BUGDB=	      utility/lcms2
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
+CONFIGURE_INCLUDEDIR =	$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
 
-CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --with-zlib
-CONFIGURE_OPTIONS  +=           --with-pic
+CONFIGURE_OPTIONS  +=	--enable-shared
+CONFIGURE_OPTIONS  +=	--disable-static
+CONFIGURE_OPTIONS  +=	--with-zlib
+CONFIGURE_OPTIONS  +=	--with-pic
 
 
 build: $(BUILD_32_and_64)
@@ -56,7 +56,4 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

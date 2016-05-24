@@ -27,8 +27,8 @@ COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/awstats/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://awstats.sourceforge.net/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 
@@ -42,7 +42,7 @@ $(INSTALL_32):  $(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/awstats
 	mv $(BUILD_DIR_32)/README.TXT $(BUILD_DIR_32)/tools $(PROTO_DIR)/usr/lib/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/doc/awstats
-	mv $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/share/doc/awstats 
+	mv $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/share/doc/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/awstats
 	mv $(BUILD_DIR_32)/wwwroot/* $(PROTO_DIR)/usr/share/awstats
 	$(TOUCH) $(@)

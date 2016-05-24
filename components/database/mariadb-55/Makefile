@@ -25,9 +25,9 @@ COMPONENT_PROJECT_URL=	http://www.mariadb.org/
 COMPONENT_ARCHIVE_HASH=	sha256:34592bb9fcd4057f5c979726d4c9e9085c19d9789ccf8ab423305e07f41093c5
 COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/mariadb/5.5

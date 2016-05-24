@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:95e3857bd0b5162cf8d1eda8c78b741eef968c3e3ac6c1195aaac2a4e2574fb7
 COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.8/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,9 +41,7 @@ COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 				automake -a -c -f &&\
 				autoconf)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
 CONFIGURE_OPTIONS+=	--enable-mp
 CONFIGURE_OPTIONS+=	--enable-default-binary
 CONFIGURE_OPTIONS+=	--enable-mmx=no

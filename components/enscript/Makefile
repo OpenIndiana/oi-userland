@@ -47,9 +47,9 @@ COMPONENT_ARCHIVE_HASH_2=	\
     sha256:64d5b1ed1044202cda1ddcd591a966d1faff58d60156c4368d485f0405d7a9ee
 COMPONENT_ARCHIVE_URL_2= http://home.raxnet.net/downloads/viewcvs/php.st
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 1
 
@@ -62,9 +62,6 @@ COMPONENT_PREP_ACTION = \
 # There are patches that change a Makefile.am and configure.in
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -fiv);
 
-# Needed so that enscript can find the enscript.cfg file.
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
-
 CONFIGURE_OPTIONS +=	--with-media=Letter
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
@@ -76,6 +73,3 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

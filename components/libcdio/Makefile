@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_FMRI= 	library/audio/libcdio
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -40,7 +40,6 @@ CPPFLAGS += -D_FILE_OFFSET_BITS=64
 
 LDFLAGS += -lhal -ldbus-1
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-cpp-progs
 CONFIGURE_OPTIONS+=	--disable-cxx
 CONFIGURE_OPTIONS+=	--disable-static

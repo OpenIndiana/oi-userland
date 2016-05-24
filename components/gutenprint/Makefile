@@ -32,11 +32,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/gimp-print/gutenprint-5.2/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gutenprint
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=    --enable-escputil
 CONFIGURE_OPTIONS +=    --without-gimp2
 CONFIGURE_OPTIONS +=    --enable-cups-1_2-enhancements
@@ -57,7 +56,3 @@ install:	$(INSTALL_32)
 # the tests mostly pass, but it can't find several drivers for ppd files
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-
-include ../../make-rules/depend.mk

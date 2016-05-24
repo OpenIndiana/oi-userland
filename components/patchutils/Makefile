@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://cyberelk.net/tim/data/patchutils/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cyberelk.net/tim/software/patchutils/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 

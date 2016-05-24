@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xterm
 COMPONENT_VERSION= 318
-COMPONENT_SUMMARY= xterm - terminal emulator for X 
+COMPONENT_SUMMARY= xterm - terminal emulator for X
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
@@ -30,9 +30,9 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= xterm.license
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

@@ -46,7 +46,7 @@
 #
 # Revision 1.1  2003/07/23 15:53:28  rr144420
 # new makefiles for building sun directory
-# 
+#
 #
 SUBDIRS		= agent
 BUILDREV_SRCS   = sma_buildrev.c
@@ -62,7 +62,7 @@ buildrevs:$(BUILDREV_PROGS)
 	$(CC) $< -o $@
 
 subdirs:
-	echo "SUBDIRS:  $(MAKE) CFGPREFIX=$(CFGPREFIX) CFGLIB64=$(CFGLIB64) CFGLIB=$(CFGLIB) CC=$(CC) DEBUG=$(DEBUG) ARCH=$(ARCH)" ; 
+	echo "SUBDIRS:  $(MAKE) CFGPREFIX=$(CFGPREFIX) CFGLIB64=$(CFGLIB64) CFGLIB=$(CFGLIB) CC=$(CC) DEBUG=$(DEBUG) ARCH=$(ARCH)" ;
 	@if test "$(SUBDIRS)" != ""; then \
 		it="$(SUBDIRS)" ; \
 		for i in $$it ; do       \

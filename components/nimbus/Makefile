@@ -36,9 +36,9 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 TAR=/usr/gnu/bin/tar
@@ -59,8 +59,6 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/nimbus-media-play-rtl
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT=$(SOURCE_DIR)/autogen.sh
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 # Use tar to avoid replacing issues
 $(INSTALL_GTK3_THEME):	$(INSTALL_32_and_64)

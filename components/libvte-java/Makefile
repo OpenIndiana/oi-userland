@@ -26,16 +26,14 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:abe3c300572decaad35f926bdeb129054dc7312a9dbf7c1cba2dcb715a53eb39
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.12/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS +=	-I/usr/java/include -I/usr/java/include/solaris
 
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-docbasedir=/usr/share/lib/java/javadoc/java-gnome
 CONFIGURE_OPTIONS+=	--with-jardir=/usr/share/lib/java
 CONFIGURE_OPTIONS+=	--with-srcjar
@@ -53,6 +51,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

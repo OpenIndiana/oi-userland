@@ -32,12 +32,14 @@ COMPONENT_ARCHIVE_HASH=	sha256:ab1d26da2bfd38db34dd991a9c5d93034ef1373d01f9d5a09
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf -f -i)
+
+CONFIGURE_SBINDIR.$(BITS) = $(CONFIGURE_LIBDIR.$(BITS))/rsyslog
 
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-cached-man-pages
@@ -45,7 +47,6 @@ CONFIGURE_OPTIONS +=    --enable-mail
 #CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
 CONFIGURE_OPTIONS +=    --enable-gnutls
 CONFIGURE_OPTIONS +=    --disable-klog
-CONFIGURE_OPTIONS +=    --sbindir=/usr/lib/rsyslog
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -60,4 +61,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

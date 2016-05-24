@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/gdm/2.30/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.gnome.org/Projects/GDM
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/box-openindiana.png $(@D)/gui/simple-greeter/box.png &&\
@@ -51,13 +51,10 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/box-openindiana.png $
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 LDFLAGS += -lsecdb
-                                        
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS += --with-pam-prefix=/etc
+CONFIGURE_OPTIONS += --with-pam-prefix=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-scrollkeeper
 CONFIGURE_OPTIONS += --with-default-path=/usr/bin
 CONFIGURE_OPTIONS += --enable-rbac-shutdown=solaris.system.shutdown

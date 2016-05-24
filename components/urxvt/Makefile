@@ -25,9 +25,9 @@ COMPONENT_PROJECT_URL=	http://software.schmorp.de/pkg/rxvt-unicode.html
 COMPONENT_ARCHIVE_1=	tabbedex
 COMPONENT_ARCHIVE_URL_1=	https://raw.github.com/stepb/urxvt-tabbedex/master/tabbedex
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
 

@@ -28,13 +28,11 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_FMRI=		desktop/xdg/xdg-user-dirs-gtk
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 # common targets
 build:		$(BUILD_32)
@@ -43,6 +41,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

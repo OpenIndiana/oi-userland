@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://pyyaml.org/download/pyyaml/PyYAML-3.11.tar.gz
 COMPONENT_PROJECT_URL = http://pyyaml.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += LDFLAGS=$(LDFLAGS)
 

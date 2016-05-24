@@ -35,20 +35,19 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-			                libtoolize --force && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
+					libtoolize --force && \
 					intltoolize --force --copy --automake && \
 					aclocal -I. && \
 					automake -a -f -c &&\
 					autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE))
+					cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
 CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps
@@ -74,10 +73,6 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer

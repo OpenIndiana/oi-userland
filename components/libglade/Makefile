@@ -30,13 +30,11 @@ COMPONENT_LICENSE = LGPLv2
 COMPONENT_FMRI = library/desktop/libglade
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -D__EXTENSIONS__
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 

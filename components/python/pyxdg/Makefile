@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:81e883e0b9517d624e8b0499eb267b82a815c0b7146d5269f364988ae031279d
 COMPONENT_ARCHIVE_URL=	http://people.freedesktop.org/~takluyver/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:          $(BUILD_NO_ARCH)
@@ -34,4 +34,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

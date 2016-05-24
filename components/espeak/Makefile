@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = Applications/Universal Access
 COMPONENT_LICENSE = GPLv3
 COMPONENT_LICENSE_FILE = License.txt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS += -fpermissive
 
@@ -44,7 +44,7 @@ LIBDIR.32=/usr/lib
 LIBDIR.64=/usr/lib/$(MACH64)
 
 COMPONENT_COMMON_ARGS += -C $(BUILD_DIR_$(BITS))/src
-COMPONENT_COMMON_ARGS += EXTRA_LIBS=-lm 
+COMPONENT_COMMON_ARGS += EXTRA_LIBS=-lm
 COMPONENT_COMMON_ARGS += AUDIO=sada
 COMPONENT_COMMON_ARGS += BINDIR=$(BINDIR.$(BITS))
 COMPONENT_COMMON_ARGS += LIBDIR=$(LIBDIR.$(BITS))

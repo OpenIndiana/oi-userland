@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/extras/python-logilab-common/$(COMPONENT_ARCHIVE)/a745888475d988300a76b0c87a5f4381/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-common
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 
 # rename pytest to its versioned name; mediated links (depending on
 # the python version) in the manifest will create the link from pytest
@@ -54,9 +54,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
-	
+
 # The tests are run using python 2.7 only and require that the
-# python-27 package is installed (does not have to be the default python). 
+# python-27 package is installed (does not have to be the default python).
 # Testing using python-26 is done manually, since it requires
 # downloading and installing the unittest2 component (not part of Solaris).
 # which provides python 2.7 functionality to the unittest python library
@@ -75,6 +75,3 @@ COMPONENT_TEST_ARGS =
 
 test:	$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

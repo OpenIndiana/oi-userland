@@ -26,13 +26,13 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:08f887018fa5e447cf184d03bae3fe2c05fdb7583bed6768e3b4d66392fc18dd
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
+COMPONENT_PREP_ACTION =	( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
 					cd $(@D)  &&\
 					libtoolize --copy --force &&\
 					intltoolize --force --copy &&\
@@ -41,9 +41,9 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
 					autoheader &&\
 					automake -c -f -a )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION =	(cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -52,9 +52,6 @@ CFLAGS += -Icore -Iui
 CFLAGS += -I/usr/X11/include -I/usr/include/freetype2 -DANSICPP -D__EXTENSIONS__
 LDFLAGS +=  -L/usr/X11/lib -R/usr/X11/lib -lXrender
 LDFLAGS += -lgthread-2.0
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
@@ -65,6 +62,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

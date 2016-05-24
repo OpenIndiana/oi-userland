@@ -37,17 +37,19 @@ COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 COMPONENT_BUGDB=	utility/sudo
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
+
+CONFIGURE_LIBEXECDIR.$(BITS)=	$(CONFIGURE_LIBDIR.$(BITS))/sudo
 
 CONFIGURE_OPTIONS +=	--disable-hardening
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
-CONFIGURE_OPTIONS +=	--with-pam 
+CONFIGURE_OPTIONS +=	--with-pam
 CONFIGURE_OPTIONS +=	--with-pam-login
 CONFIGURE_OPTIONS +=	--disable-pam-session
 CONFIGURE_OPTIONS +=	--with-tty-tickets
@@ -55,7 +57,6 @@ CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-bsm-audit
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/sudo
 CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
@@ -75,6 +76,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

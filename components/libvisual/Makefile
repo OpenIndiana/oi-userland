@@ -30,9 +30,9 @@ COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_FMRI = library/desktop/libvisual
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # This is necessary fro mapfile to be found
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -46,13 +46,12 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoconf )
 
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
-             $(MV) include/libvisual-0.4/libvisual/lvconfig.h include/libvisual-0.4/libvisual/lvconfig-$(BITS).h ) 
+             $(MV) include/libvisual-0.4/libvisual/lvconfig.h include/libvisual-0.4/libvisual/lvconfig-$(BITS).h )
 
 build: $(BUILD_32_and_64)
 

@@ -62,11 +62,12 @@ CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--libexecdir=$(USRBINDIR)
-CONFIGURE_OPTIONS  +=		--datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+# Note: even though this recipe is currently only 32-bit, our common
+# configure.mk only defines this value with bitness. So follow suit...
+CONFIGURE_LIBEXECDIR.$(BITS) = $(CONFIGURE_BINDIR.$(BITS))
+#CONFIGURE_LIBEXECDIR.32 = $(USRBINDIR)
+#CONFIGURE_LIBEXECDIR.64 = $(USRBINDIR64)
+
 CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--enable-largefile
 CONFIGURE_OPTIONS  +=		--disable-selinux-support

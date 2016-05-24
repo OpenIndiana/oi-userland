@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://pdsh.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://code.google.com/p/pdsh/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # To find ncurses
 LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib

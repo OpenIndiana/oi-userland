@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL= \
   http://www.mielke.cc/brltty/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mielke.cc/brltty/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/bin:/usr/gnu/bin
 
@@ -45,9 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 ICU_CONFIG.32=/usr/bin/icu-config
 ICU_CONFIG.64=/usr/bin/$(MACH64)/icu-config
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS += --disable-tcl-bindings
-CONFIGURE_OPTIONS += --localstatedir=/var/lib
 CONFIGURE_OPTIONS += --disable-speech-support
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"

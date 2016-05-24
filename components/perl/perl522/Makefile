@@ -47,9 +47,9 @@ COMPONENT_CLASSIFICATION=	Development/Perl
 COMPONENT_LICENSE=	Artistic
 COMPONENT_LICENSE_FILE=	Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LD_B_DIRECT=		""
 
@@ -79,7 +79,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
-			-Uuselargefiles 
+			-Uuselargefiles
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 
@@ -101,8 +101,5 @@ test:		$(TEST_32)
 	#		re/subst.t
 	#		re/substT.t
 	#		re/subst_wamp.t
-	# 		
+	#
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -53,11 +53,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 # DNS libraries are in usr/lib/dns - Override settings from configure.mk
 CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib/dns
+CONFIGURE_SBINDIR.$(BITS)=$(CONFIGURE_BINDIR.$(BITS))
 
 CONFIGURE_OPTIONS +=	--with-libtool
-CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--enable-threads=yes
 CONFIGURE_OPTIONS +=	--enable-devpoll=yes
@@ -75,7 +73,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 .PHONY: build
 build:		$(BUILD_32)
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # Install.
 #
@@ -160,10 +158,6 @@ test-version:
 .PHONY: test-clean
 test-clean:
 	$(RM) $(TEST_32) $(FULL_TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libedit

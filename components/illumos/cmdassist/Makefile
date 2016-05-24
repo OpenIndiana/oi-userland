@@ -28,9 +28,9 @@ COMPONENT_LICENSE=	CDDL
 COMPONENT_FMRI=		gnome/cmdassist
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Documentation
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

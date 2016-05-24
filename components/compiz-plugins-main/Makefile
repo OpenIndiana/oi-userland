@@ -24,21 +24,20 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:28988060199a46cb92d010075de0bf822a72d4fcb93a12205c06824c0e6da1cf
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf &&\
 					find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-schemas
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
@@ -51,6 +50,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

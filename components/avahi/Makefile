@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://avahi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://avahi.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += (cd $(@D) &&\
 	        aclocal -I common &&\
@@ -40,8 +40,6 @@ LDFLAGS += -ldns_sd
 
 CONFIGURE_OPTIONS+= --with-avahi-user=daemon
 CONFIGURE_OPTIONS+= --with-avahi-group=other
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --with-distro=none
 CONFIGURE_OPTIONS+= --disable-gtk3
 CONFIGURE_OPTIONS+= --disable-qt3

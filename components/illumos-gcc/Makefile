@@ -21,9 +21,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:373d39fe19299da26e0a4e124e1a2f97565a2535c8fabf9bd
 ILLUMOS_VERSION=	gcc-4.4.4-il-3
 COMPONENT_ARCHIVE_URL=	https://github.com/illumos/gcc/tarball/$(ILLUMOS_VERSION)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC_BITS=
 CFLAGS=		-g -O2

@@ -45,8 +45,6 @@ CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -55,7 +53,3 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

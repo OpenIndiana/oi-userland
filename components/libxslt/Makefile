@@ -36,11 +36,11 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxslt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-LINT_FLAGS +=	-I/usr/include/libxml2 
+LINT_FLAGS +=	-I/usr/include/libxml2
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -68,13 +68,13 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
 # After we have built/installed libxslt, rebuild/install the python
 # support for python 2.7
 COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
-                                PYTHON=$(PYTHON.2.7.$(BITS)) \
-                                PYTHON_VERSION=2.7 \
-                                PYTHON_INCLUDES=/usr/include/python2.7 \
-                                PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                install)
+	(cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
+				PYTHON=$(PYTHON.2.7.$(BITS)) \
+				PYTHON_VERSION=2.7 \
+				PYTHON_INCLUDES=/usr/include/python2.7 \
+				PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
+				PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
+				install)
 
 
 
@@ -86,8 +86,4 @@ install:	$(INSTALL_32_and_64)
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
 

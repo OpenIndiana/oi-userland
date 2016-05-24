@@ -34,26 +34,23 @@ COMPONENT_BUGDB=	utility/xorriso
 
 CPPFLAGS+=		-I./test
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --sysconfdir=/etc/gnu
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/gnu
+
+CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 
 # The tarball for this version already has a config.status file so remove it.
 COMPONENT_PREP_ACTION = \
 	 (cd $(@D) ; test -f config.status && rm config.status)
 
-build:          $(BUILD_32)
+build:		$(BUILD_32)
 
-install:        $(INSTALL_32)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

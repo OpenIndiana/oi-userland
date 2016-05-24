@@ -55,7 +55,7 @@ COMPONENT_ARCHIVE_URL_3= http://www.oasis-open.org/docbook/sgml/4.1/$(COMPONENT_
 UNPACK_ARGS_3+=-r $(COMPONENT_SRC_3)
 
 COMPONENT_SRC_4= 4.1.2-xml
-COMPONENT_ARCHIVE_4=   docbkx412.zip 
+COMPONENT_ARCHIVE_4=   docbkx412.zip
 COMPONENT_ARCHIVE_HASH_4= \
     sha256:30f0644064e0ea71751438251940b1431f46acada814a062870f486c772e7772
 COMPONENT_ARCHIVE_URL_4= http://www.oasis-open.org/docbook/xml/4.1.2/$(COMPONENT_ARCHIVE_4)
@@ -122,8 +122,8 @@ CLEAN_PATHS+=$(BUILD_DIR)
 
 COMPONENT_PREP_ACTION= ( $(GSED) -i -e's,\(NAMELEN\ \ *\)44,\1256,' $(COMPONENT_DIR)/*/docbook.dcl )
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

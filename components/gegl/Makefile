@@ -32,9 +32,9 @@ GEGLDOCDIR = $(PROTO_DIR)/usr/share/doc/$(COMPONENT_NAME)
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,9 +42,6 @@ CFLAGS += -std=gnu99
 CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
 CONFIGURE_OPTIONS+= --without-libspiro
 CONFIGURE_OPTIONS+= --without-libavformat
 CONFIGURE_OPTIONS+= --without-libv4l

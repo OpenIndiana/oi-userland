@@ -34,17 +34,17 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://fedorahosted.org/releases/h/a/hal-cups-utils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hal-cups
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 USED_PYTHON=$(PYTHON.2.6.32)
 
 CONFIGURE_ENV += PYTHON=$(USED_PYTHON)
 
-CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/hal
+CONFIGURE_DATAROOTDIR=$(ETCDIR)
+CONFIGURE_LIBEXECDIR.$(BITS)=$(CONFIGURE_LIBDIR.$(BITS))/hal
 
 # Since we patch Makefile.am, we have to rebuild the autoconf generated files
 # Just running automake does not work, since our automake is different from the one
@@ -54,7 +54,7 @@ COMPONENT_PREP_ACTION = ( \
 	ACLOCAL=$(ACLOCAL) AUTOMAKE=$(AUTOMAKE) autoreconf; \
 	cd $(SOURCE_DIR); \
 	$(PERL) -pi -e 's,^\#!.*?python,\#!$(USED_PYTHON), if $$.==1' systemv/hal_lpadmin ; \
-) 
+)
 
 build:		$(BUILD_32)
 
@@ -62,6 +62,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

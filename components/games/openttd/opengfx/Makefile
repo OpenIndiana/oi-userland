@@ -29,8 +29,8 @@ COMPONENT_CLASSIFICATION="Applications/Games"
 CONFIGURE_DEFAULT_DIRS=no
 CONFIGURE_PREFIX=/usr
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 OPENTTD_SHARE_DIR=$(CONFIGURE_PREFIX)/share/openttd
 PKG_OPTIONS +=	-D OPENTTD_SHARE_DIR="$(OPENTTD_SHARE_DIR)"
@@ -44,4 +44,4 @@ install: build
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

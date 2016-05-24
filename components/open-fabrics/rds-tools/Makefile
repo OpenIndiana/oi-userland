@@ -30,8 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:31b5924f73bed59e513470586c69ebe92eeb708fcc61a0519045fcf7954233a3
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 CPPFLAGS +=	-I$(PROTO_DIR)/usr/include
@@ -66,4 +66,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

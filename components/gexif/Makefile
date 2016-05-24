@@ -24,16 +24,16 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:beed223c55fc32ba7bf2f91e69e6daf2087c8b44ccfd9191c34058bacd776c24
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libexif/files/gexif/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
 					intltoolize --copy --force --automake && \
 					automake -a -f -c &&\
 					autoconf )
@@ -45,6 +45,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

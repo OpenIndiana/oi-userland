@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = BSD-like
 COMPONENT_LICENSE_FILE = LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared

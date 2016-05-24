@@ -54,21 +54,97 @@
 #	COMPONENT_BUILD_TARGETS, COMPONENT_INSTALL_TARGETS
 #	COMPONENT_TEST_TARGETS
 #
+# Common values for USRDIR BINDIR BINDIR LIBDIR MACH64 and so on are defined
+# in shared-macros.mk - so it should be included in your recipe too.
+#
 
-CONFIGURE_PREFIX =	/usr
+CONFIGURE_PREFIX =	$(USRDIR)
 
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_SBINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
-CONFIGURE_SBINDIR.64 =	$(CONFIGURE_PREFIX)/sbin/$(MACH64)
-CONFIGURE_MANDIR =	$(CONFIGURE_PREFIX)/share/man
-CONFIGURE_LOCALEDIR =	$(CONFIGURE_PREFIX)/share/locale
+# Note: definitions below specifically rely on $(CONFIGURE_PREFIX) rather
+# than e.g. $(USRBINDIR64) in order for certain components to be able to
+# deliver their whole trees into dedicated subdirectories for each version
+# (databases, compilers, etc.) by just redefining CONFIGURE_PREFIX once in
+# their recipe.
+CONFIGURE_EXECPREFIX =	$(CONFIGURE_PREFIX)
+CONFIGURE_BINDIR.32 =	$(CONFIGURE_EXECPREFIX)$(BINDIR)
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_EXECPREFIX)$(BINDIR)/$(MACH64)
+CONFIGURE_LIBDIR.32 =	$(CONFIGURE_EXECPREFIX)$(LIBDIR)
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_EXECPREFIX)$(LIBDIR)/$(MACH64)
+# Note: Some components redefine their $(CONFIGURE_LIBEXECDIR.$(BITS))=$(CONFIGURE_BINDIR.$(BITS))
+CONFIGURE_LIBEXECDIR.32 =	$(CONFIGURE_LIBDIR.32)
+CONFIGURE_LIBEXECDIR.64 =	$(CONFIGURE_LIBDIR.64)
+CONFIGURE_SBINDIR.32 =	$(CONFIGURE_EXECPREFIX)$(SBINDIR)
+CONFIGURE_SBINDIR.64 =	$(CONFIGURE_EXECPREFIX)$(SBINDIR)/$(MACH64)
+CONFIGURE_DATAROOTDIR=	$(CONFIGURE_PREFIX)/share
+CONFIGURE_DATADIR=	$(CONFIGURE_DATAROOTDIR)
+CONFIGURE_MANDIR =	$(CONFIGURE_DATAROOTDIR)/man
+CONFIGURE_LOCALEDIR =	$(CONFIGURE_DATAROOTDIR)/locale
+
+# Note: CONFIGURE_INCLUDEROOTDIR is not meant to be redefined by components -
+# it is just the common base value for CONFIGURE_INCLUDEDIR which actually
+# sets the argument to configure script and may be customized by components
+CONFIGURE_INCLUDEROOTDIR =	$(CONFIGURE_PREFIX)/include
+# This is often redefined by components to become similar to:
+#   CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+CONFIGURE_INCLUDEDIR =	$(CONFIGURE_INCLUDEROOTDIR)
+
+# Note: Very few components have architecture-dependent configs.
+# Those recipes should set them BEFORE including this file, typically to:
+#   CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+#   CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
+CONFIGURE_SYSCONFDIR =	$(ETCDIR)
+
 # all texinfo documentation seems to go to /usr/share/info no matter what
 CONFIGURE_INFODIR =	/usr/share/info
-CONFIGURE_INCLUDEDIR =	/usr/include
 
+# A few component recipes override the doc dir as e.g. /usr/share/doc and
+# install in subdir of that - or into that root directly
+CONFIGURE_DOCDIR =	$(CONFIGURE_DATAROOTDIR)/doc/$(COMPONENT_NAME)
+CONFIGURE_DOCDIR_HTML =	$(CONFIGURE_DOCDIR)
+CONFIGURE_DOCDIR_DVI =	$(CONFIGURE_DOCDIR)
+CONFIGURE_DOCDIR_PDF =	$(CONFIGURE_DOCDIR)
+CONFIGURE_DOCDIR_PS  =	$(CONFIGURE_DOCDIR)
+
+# A few components override these statedirs; a common choice then is
+#   CONFIGURE_LOCALSTATEDIR=/var/lib
+CONFIGURE_LOCALSTATEDIR =	$(VARDIR)
+# Sometimes but not necessarily (so must be explicit) some components set
+#   CONFIGURE_SHAREDSTATEDIR=$(CONFIGURE_LOCALSTATEDIR)
+CONFIGURE_SHAREDSTATEDIR =	$(VARDIR)
+
+# These optional variables enable certain blocks in this makefile
+# that additionally (re-)define some values and options
+CONFIGURE_PROTO_DIRS?=yes
+CONFIGURE_DEFAULT_DIRS?=yes
+CONFIGURE_DEFAULT_EXTRA_DIRS?=yes
+CONFIGURE_DEFAULT_STATE_DIRS?=yes
+
+ifeq ($(CONFIGURE_PROTO_DIRS),yes)
+# Redefine the relevant pieces of PROTO*DIR trees to match possible
+# customizations for `configure`'d components
+PROTOUSRDIR =   $(PROTO_DIR)/$(CONFIGURE_PREFIX)
+PROTOUSRBINDIR =    $(PROTO_DIR)/$(CONFIGURE_BINDIR.32)
+PROTOUSRBINDIR32 =  $(PROTO_DIR)/$(CONFIGURE_BINDIR.32)
+PROTOUSRBINDIR64 =  $(PROTO_DIR)/$(CONFIGURE_BINDIR.64)
+PROTOUSRSBINDIR =   $(PROTO_DIR)/$(CONFIGURE_SBINDIR.32)
+PROTOUSRSBINDIR32 = $(PROTO_DIR)/$(CONFIGURE_SBINDIR.32)
+PROTOUSRSBINDIR64 = $(PROTO_DIR)/$(CONFIGURE_SBINDIR.64)
+PROTOUSRLIBDIR =    $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)
+PROTOUSRLIBDIR64 =  $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)
+PROTOUSRINCDIR =    $(PROTO_DIR)/$(CONFIGURE_INCLUDEDIR)
+PROTOUSRSHAREDIR =      $(PROTO_DIR)/$(CONFIGURE_DATAROOTDIR)
+PROTOUSRSHAREMANDIR =   $(PROTO_DIR)/$(CONFIGURE_MANDIR)
+PROTOUSRSHAREMAN1DIR =  $(PROTOUSRSHAREMANDIR)/man1
+PROTOUSRSHAREMAN1MDIR = $(PROTOUSRSHAREMANDIR)/man1m
+PROTOUSRSHAREMAN3DIR =  $(PROTOUSRSHAREMANDIR)/man3
+PROTOUSRSHAREMAN4DIR =  $(PROTOUSRSHAREMANDIR)/man4
+PROTOUSRSHAREMAN5DIR =  $(PROTOUSRSHAREMANDIR)/man5
+PROTOUSRSHAREDOCDIR =   $(PROTO_DIR)/$(CONFIGURE_DOCDIR)
+PROTOUSRSHARELOCALEDIR =    $(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
+endif
+
+# Note: we start with = here, and so IGNORE envvars that a component
+# recipe might define before including this file.
 CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CXX="$(CXX)"
@@ -109,8 +185,9 @@ endif
 
 endif
 
-CONFIGURE_DEFAULT_DIRS?=yes
 
+# Note: we start with += here, and so INHERIT options that a component
+# recipe might define before including this file. Ordering might matter.
 CONFIGURE_OPTIONS += CC="$(CC)"
 CONFIGURE_OPTIONS += CXX="$(CXX)"
 CONFIGURE_OPTIONS += F77="$(F77)"
@@ -122,13 +199,65 @@ CONFIGURE_OPTIONS += FCFLAGS="$(FCFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
+# (root of) architecture-independent files
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 ifeq ($(CONFIGURE_DEFAULT_DIRS),yes)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+# user executables
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+# object code libraries
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+# system admin executables
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 endif
+
+# For legacy purposes that fenced the 4 lines defined above,
+# this definition below is fenced separately, so individual
+# components can easily elect to un-select these lines.
+# It is assumed that generally "configure" guesses these
+# values from "prefix" correctly - :
+ifeq ($(CONFIGURE_DEFAULT_EXTRA_DIRS),yes)
+# (root of) architecture-dependent files (for us it's usually same as PREFIX)
+CONFIGURE_OPTIONS += --exec-prefix=$(CONFIGURE_EXECPREFIX)
+# program executables (for us it's usually same as LIB)
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))
+# (root of) C header files
+CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)
+# locale-dependent data
+CONFIGURE_OPTIONS += --localedir=$(CONFIGURE_LOCALEDIR)
+# read-only architecture-independent data root and actual data (usually same)
+CONFIGURE_OPTIONS += --datarootdir=$(CONFIGURE_DATAROOTDIR)
+CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_DATADIR)
+# man documentation
+CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+# info (and tex?) documentation
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+# other documentation types
+CONFIGURE_OPTIONS += --docdir=$(CONFIGURE_DOCDIR)
+CONFIGURE_OPTIONS += --htmldir=$(CONFIGURE_DOCDIR_HTML)
+CONFIGURE_OPTIONS += --dvidir=$(CONFIGURE_DOCDIR_DVI)
+CONFIGURE_OPTIONS += --pdfdir=$(CONFIGURE_DOCDIR_PDF)
+CONFIGURE_OPTIONS += --psdir=$(CONFIGURE_DOCDIR_PS)
+endif
+
+# Components that do define custom dirs are likely to encroach
+# on these two, hence the separate fencing. Alternately these
+# components can upgrade to define CONFIGURE_SHAREDSTATEDIR as they need :)
+ifeq ($(CONFIGURE_DEFAULT_STATE_DIRS),yes)
+# read-only single-machine data, usually /etc
+ifneq ($(CONFIGURE_SYSCONFDIR.$(BITS)),)
+CONFIGURE_OPTIONS +=    --sysconfdir=$(CONFIGURE_SYSCONFDIR.$(BITS))
+else
+CONFIGURE_OPTIONS +=    --sysconfdir=$(CONFIGURE_SYSCONFDIR)
+endif
+# modifiable single-machine data, often /var, sometimes /var/lib
+CONFIGURE_OPTIONS +=    --localstatedir=$(CONFIGURE_LOCALSTATEDIR)
+# Note: Some components define --sharedstatedir=DIR individually,
+# usually as "/var/$(COMPONENT_NAME)"
+CONFIGURE_OPTIONS +=    --sharedstatedir=$(CONFIGURE_SHAREDSTATEDIR)
+endif
+
+# Other configure options for the current bitness
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)

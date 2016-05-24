@@ -25,22 +25,22 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:7d6238b23a68ffff47634e3d5d503801d75db9be4251d831e12b927a47d0bc42
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.10/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 COMPONENT_CONFIGURE_ENV += PYTHON=$(PYTHON)
 COMPONENT_CONFIGURE_ENV += PERL=$(PERL)
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python2.6:' \
-        $(PROTO_DIR)/usr/bin/accerciser )
+COMPONENT_POST_INSTALL_ACTION = ( \
+	$(GSED) -e 's:\#!/usr/bin/env python:\#!/usr/bin/python2.6:' \
+	   -i $(PROTO_DIR)/usr/bin/accerciser )
 
 # common targets
 build:		$(BUILD_32)
@@ -49,6 +49,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

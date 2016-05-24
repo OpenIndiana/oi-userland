@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bash
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
@@ -76,7 +76,6 @@ TEST_PATH = "PATH=$(BUILD_DIR_32):$(GNUBIN):$(USRBINDIR)"
 
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  += 		--enable-alias
 CONFIGURE_OPTIONS  += 		--enable-arith-for-command
 CONFIGURE_OPTIONS  += 		--enable-array-variables
@@ -117,7 +116,6 @@ CONFIGURE_OPTIONS  += 		--enable-nls
 CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
 CONFIGURE_OPTIONS  += 		--with-curses
 CONFIGURE_OPTIONS  += 		--with-installed-readline=no
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_32)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)

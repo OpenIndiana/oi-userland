@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright (c) 2012, Adam Stevko <adam.stevko@gmail.com> 
+# Copyright (c) 2012, Adam Stevko <adam.stevko@gmail.com>
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH= sha256:a8cb07b12bcd04c98f4ffc1c68b79547f5dd4e23ddccb1329
 COMPONENT_PROJECT_URL=	http://www.dest-unreach.org/socat/
 COMPONENT_ARCHIVE_URL=	http://www.dest-unreach.org/socat/download/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:          $(BUILD_32)
 

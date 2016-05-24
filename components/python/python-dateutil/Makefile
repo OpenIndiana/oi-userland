@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)#md5=0dcb1de5e5cad69490a3b6ab63f0cfa5
 COMPONENT_PROJECT_URL = https://pypi.python.org/python-dateutil/$(COMPONENT_VERSION)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32)
 

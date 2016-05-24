@@ -48,10 +48,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
 
 LDFLAGS += -lsecdb
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS+= --disable-update-mimedb
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV += EXTRA_CORE_MODULES="gnome-vfs-2.0 libgnomeui-2.0"
 

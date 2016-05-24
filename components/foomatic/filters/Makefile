@@ -33,16 +33,16 @@ COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 COMPONENT_BUGDB=	utility/foomatic
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS +=	--prefix=$(USRLIBDIR)/lp
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
-CONFIGURE_OPTIONS +=	--bindir=$(USRLIBDIR)/lp/bin
+CONFIGURE_PREFIX=$(USRLIBDIR)/lp
+CONFIGURE_SYSCONFDIR=$(ETCDIR)/gnu
+
 CONFIGURE_OPTIONS +=	--with-echo=wecho
 CONFIGURE_OPTIONS +=	--with-file-converter="a2ps -1 -q -c -B @@--medium=@@PAGESIZE@@ -o -"
-CONFIGURE_OPTIONS +=	--with-execpath=$(USRLIBDIR)/lp/bin:$(USRBINDIR):$(BINDIR)
+CONFIGURE_OPTIONS +=	--with-execpath=$(CONFIGURE_BINDIR.32):$(USRBINDIR):$(BINDIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
@@ -58,4 +58,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

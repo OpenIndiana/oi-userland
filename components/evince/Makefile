@@ -1,5 +1,3 @@
-#! /usr/bin/sh
-#
 #
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
@@ -32,18 +30,15 @@ COMPONENT_SUMMARY=	GNOME PDF document viewer
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += \
     cd $(@D); autoreconf --install --force
 
 # For GNU gettext
 CONFIGURE_ENV += PATH=/usr/gnu/bin:$(PATH)
-
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 build:		$(BUILD_32)
 

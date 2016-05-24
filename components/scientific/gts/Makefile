@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:c23f72ab74bbf65599f8c0b599d6336fabe1ec2a09c19b705
 COMPONENT_ARCHIVE_URL=	http://gts.sourceforge.net/tarballs/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=     	GNU Triangulated Surface Library 
+COMPONENT_SUMMARY=     	GNU Triangulated Surface Library
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -41,7 +41,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
-CONFIGURE_OPTIONS+=	--includedir=$(USRINCDIR)/$(COMPONENT_NAME)
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 

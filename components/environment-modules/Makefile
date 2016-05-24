@@ -34,7 +34,7 @@ COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=	$(USRLIBDIR)
@@ -42,8 +42,9 @@ CONFIGURE_PREFIX=	$(USRLIBDIR)
 CONFIGURE_DEFAULT_DIRS=	no
 
 # Need to workaround a bug in the install system: specify the bindir path
-CONFIGURE_OPTIONS+=	--bindir=$(CONFIGURE_PREFIX)/Modules/$(COMPONENT_VERSION)/bin
-CONFIGURE_OPTIONS+=	--mandir=$(USRSHAREMANDIR)
+CONFIGURE_BINDIR.32=	$(CONFIGURE_PREFIX)/Modules/$(COMPONENT_VERSION)/bin
+CONFIGURE_MANDIR   =	$(USRSHAREMANDIR)
+
 CONFIGURE_OPTIONS+=	--enable-versioning
 CONFIGURE_OPTIONS+=	--enable-logging
 CONFIGURE_OPTIONS+=	--with-module-path=$(MODULE_PATH)
@@ -62,6 +63,3 @@ install:	$(INSTALL_32)
 test:	$(NO_TESTS)
 
 
-BUILD_PKG_DEPENDENCIES=     $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

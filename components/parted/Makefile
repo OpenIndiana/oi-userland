@@ -23,8 +23,8 @@ COMPONENT_SUMMARY= GNU Parted - Partition Editor
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.gnu.org/software/parted/
 
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 clobber: clean
 
