@@ -48,12 +48,9 @@ CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_PREP_ACTION = \
 	 (cd $(@D) ; test -f config.status && rm config.status)
 
-build:          $(BUILD_32)
+build:		$(BUILD_32)
 
-install:        $(INSTALL_32)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

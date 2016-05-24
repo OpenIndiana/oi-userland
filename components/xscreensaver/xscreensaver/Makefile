@@ -103,8 +103,4 @@ install:	$(INSTALL_32) ../rss-glx/build/i86/.built
 	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)$(USRSHAREDIR)/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
 

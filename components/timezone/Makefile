@@ -59,5 +59,3 @@ clean:
 
 clobber: clean
 
-include $(WS_MAKE_RULES)/depend.mk
-

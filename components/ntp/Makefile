@@ -65,12 +65,9 @@ CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 COMPONENT_INSTALL_ENV += PATH=/usr/gnu/bin:/usr/bin
 
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk

@@ -35,13 +35,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf &&\
-                                        intltoolize )
+					intltoolize )
 
 CONFIGURE_OPTIONS+=	--enable-gnome
 CONFIGURE_OPTIONS+=	--disable-kde
@@ -59,6 +59,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

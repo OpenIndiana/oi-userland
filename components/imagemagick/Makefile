@@ -117,6 +117,3 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 	@echo "Tests can be run only after ImageMagick is installed."
 
-BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

@@ -48,15 +48,11 @@ CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 # We have our own pre-Solarified man pages.
 CONFIGURE_OPTIONS +=	--without-man-pages
 
+PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:	$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
-include $(WS_MAKE_RULES)/depend.mk

@@ -56,6 +56,3 @@ test: build
 	@cd $(BUILD_DIR_32); $(MAKE) check
 	@cd $(BUILD_DIR_64); $(MAKE) check
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

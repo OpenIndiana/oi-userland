@@ -84,4 +84,3 @@ test:	$(NO_TESTS)
 clobber clean::
 	$(RM) -r $(BUILD_DIR)
 
-include $(WS_MAKE_RULES)/depend.mk

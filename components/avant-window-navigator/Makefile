@@ -31,13 +31,12 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-CONFIGURE_OPTIONS+=        --with-desktop=gnome
+CONFIGURE_OPTIONS+=	--with-desktop=gnome
 
 # common targets
-build:		        $(BUILD_32)
+build:		$(BUILD_32)
 
-install:     		$(INSTALL_32)
+install:	$(INSTALL_32)
 
-test:			$(NO_TESTS)
+test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk

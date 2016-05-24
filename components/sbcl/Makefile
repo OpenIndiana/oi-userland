@@ -56,6 +56,3 @@ install:	$(INSTALL_32)
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) sbcl
-
-include $(WS_MAKE_RULES)/depend.mk

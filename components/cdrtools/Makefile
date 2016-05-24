@@ -40,12 +40,9 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
 
-build:          $(BUILD_32)
+build:		$(BUILD_32)
 
-install:        $(INSTALL_32)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

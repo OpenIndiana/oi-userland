@@ -76,10 +76,6 @@ CONFIGURE_OPTIONS +=	--enable-user=root
 CONFIGURE_OPTIONS +=	--enable-group=root
 CONFIGURE_OPTIONS +=	--enable-solaris
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
-test:	$(NO_TESTS)
-
-include $(WS_MAKE_RULES)/depend.mk
+test:		$(NO_TESTS)

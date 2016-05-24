@@ -39,4 +39,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk

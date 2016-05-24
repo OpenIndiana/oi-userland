@@ -31,7 +31,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 					gnome-doc-common &&\
 					libtoolize --force &&\
 					intltoolize --force --copy &&\
@@ -41,9 +41,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					$(TOUCH) pixmaps/side.png )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION =	(cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
@@ -59,4 +59,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk

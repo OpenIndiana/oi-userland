@@ -52,6 +52,3 @@ install:	$(INSTALL_32)
 test:		install
 	@cd $(BUILD_DIR_32)/regression; PATH=/usr/gnu/bin:/usr/bin $(MAKE) test
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

@@ -54,8 +54,5 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:		$(NO_TESTS)
 
-test:	$(NO_TESTS)
-
-include $(WS_MAKE_RULES)/depend.mk

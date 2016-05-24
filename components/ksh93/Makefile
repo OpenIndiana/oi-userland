@@ -152,11 +152,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
-
 PKG_PROTO_DIRS +=   $(COMPONENT_DIR)/files
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/attpackagemake.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/depend.mk

@@ -93,6 +93,3 @@ install:	$(INSTALL_32_and_64)
 # Some tests fail because memcached is not running.
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

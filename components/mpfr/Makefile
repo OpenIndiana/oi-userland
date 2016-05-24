@@ -90,26 +90,27 @@ PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
 COMPONENT_POST_INSTALL_ACTION = \
-    ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
-      $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
-      $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
-      $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
-      $(CP) -fp $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
-      $(RM) -f $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
-      $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
-	$(PROTOUSRSHAREHTMLDIR)/ ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ )
+	( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
+	  $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
+	  $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
+	  $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
+	  $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
+	    $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
+	    $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
+	  $(CP) -fp $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed \
+	    $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
+	  $(RM) -f $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
+	  $(GSED) -e "s/MACH64/$(MACH64)/g" \
+	    $(COMPONENT_DIR)/Solaris/libmpfr-64.pc > \
+	    $(COMPONENT_DIR)/libmpfr.pc ; \
+	  $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
+	    $(PROTOUSRSHAREHTMLDIR)/ ; \
+	  $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.pc \
+	    $(PROTOPKGCONFIGDIR) ; \
+	  $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmpfr.pc \
+	    $(PROTOPKGCONFIGDIR64) ; \
+	  $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
+	    $(PROTOUSRSHAREMAN3DIR)/ )
 
 # common targets
 build: $(BUILD_32_and_64)
@@ -117,8 +118,4 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 

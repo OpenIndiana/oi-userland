@@ -62,11 +62,8 @@ build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:	$(TEST_32)
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
 
-include $(WS_MAKE_RULES)/depend.mk

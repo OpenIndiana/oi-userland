@@ -43,9 +43,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION =	(cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_OPTIONS+=	--enable-xevie=no
 CONFIGURE_OPTIONS+=	--disable-gtk-doc
@@ -59,6 +59,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

@@ -32,13 +32,11 @@ COMPONENT_ARCHIVE_HASH=	sha256:486f660579bb0fb4f6b927ded7531cb1f99685c6663973777
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/smartmontools/files/smartmontools/6.2/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
-
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_PRE_CONFIGURE_ACTION = \
+    ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS +=	--enable-attributelog
 CONFIGURE_OPTIONS +=	--enable-savestates
@@ -52,8 +50,4 @@ build:		$(BUILD_32)
 test:		$(TEST_32)
 
 install:	$(INSTALL_32)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 

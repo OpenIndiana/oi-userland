@@ -76,10 +76,6 @@ install:	$(INSTALL_32_and_64)
 # t/whitespace.t fails
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

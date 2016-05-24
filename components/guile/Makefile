@@ -51,6 +51,3 @@ install:	$(INSTALL_32_and_64)
 # FAIL: time.test: strptime: GNU %s format: gmtoff on EST+5
 test:		 $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

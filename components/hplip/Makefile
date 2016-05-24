@@ -93,8 +93,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 $(HPLIP_VARIANT)/.built: COMPONENT_PREP_ACTION = \
 		(cd $(@D) ; autoconf )
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
 $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	$(RM) $(ROOTPPDCACHE)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/lp/caches

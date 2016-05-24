@@ -42,6 +42,8 @@ include $(WS_MAKE_RULES)/ips.mk
 export SHELL
 SHELL=/bin/sh
 
+# TODO: fix up for PATH.32 vs PATH.64?
+# TODO: Rewrite from backticks to gmake $(shell) keyword?
 CFLAGS +=		`pkg-config --cflags libmpfr`
 
 CONFIGURE_OPTIONS  +=		--disable-static
@@ -58,6 +60,3 @@ install:	$(INSTALL_32_and_64)
 
 test: install	$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

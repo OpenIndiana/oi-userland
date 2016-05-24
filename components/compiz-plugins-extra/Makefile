@@ -30,10 +30,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
+					autoheader && \
+					libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf &&\
 					find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
@@ -50,6 +50,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

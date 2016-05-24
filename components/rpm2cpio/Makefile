@@ -53,17 +53,16 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Common targets
 #
+
+# Just create the build directory, which is needed for publishing.
+# There is nothing to actually build.
+#
 build:
-	# Just create the build directory, which is needed for publishing.
-	# There is nothing to actually build.
-	#
-	$(RM) -r $(BUILD_DIR) ; $(MKDIR) $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR)
+	$(MKDIR) $(BUILD_DIR)
 
 install:
 	@echo "Nothing to install."
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

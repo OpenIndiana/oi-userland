@@ -56,7 +56,3 @@ install:	$(INSTALL_32)
 # the tests mostly pass, but it can't find several drivers for ppd files
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-
-include $(WS_MAKE_RULES)/depend.mk

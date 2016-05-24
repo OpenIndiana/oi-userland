@@ -40,7 +40,8 @@ CONFIGURE_OPTIONS+=	--disable-static
 # Setup event-config.h file to support 32 & 64 bit.
 #
 COMPONENT_POST_INSTALL_ACTION= \
-            ($(MV) $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config.h $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config-$(BITS).h )
+	($(MV) $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config.h \
+	    $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config-$(BITS).h )
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -50,6 +51,3 @@ install:	$(INSTALL_32_and_64)
 # util/getaddrinfo fails (https://github.com/libevent/libevent/issues/134)
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

@@ -40,7 +40,7 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_BUILD_ARGS=
 
 # These ARGS override what is set in build.xml
-COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
+COMPONENT_BUILD_ARGS    += -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_TARGETS += dist
@@ -60,6 +60,3 @@ install:	build
 # OK (22 tests)
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

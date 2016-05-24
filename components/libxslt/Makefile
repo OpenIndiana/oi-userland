@@ -68,13 +68,13 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
 # After we have built/installed libxslt, rebuild/install the python
 # support for python 2.7
 COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
-                                PYTHON=$(PYTHON.2.7.$(BITS)) \
-                                PYTHON_VERSION=2.7 \
-                                PYTHON_INCLUDES=/usr/include/python2.7 \
-                                PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                install)
+	(cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
+				PYTHON=$(PYTHON.2.7.$(BITS)) \
+				PYTHON_VERSION=2.7 \
+				PYTHON_INCLUDES=/usr/include/python2.7 \
+				PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
+				PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
+				install)
 
 
 
@@ -86,8 +86,4 @@ install:	$(INSTALL_32_and_64)
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 

@@ -44,8 +44,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        autoconf )
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
+				autoconf )
 
 
 COMPONENT_TEST_TARGETS = test
@@ -54,6 +54,3 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

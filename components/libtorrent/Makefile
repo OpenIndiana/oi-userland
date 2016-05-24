@@ -40,11 +40,11 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) && \
-	    autoreconf -f -I./scripts -I. )
+	(cd $(@D) && \
+	 autoreconf -f -I./scripts -I. )
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
@@ -66,6 +66,3 @@ install:	$(INSTALL_32_and_64)
 COMPONENT_TEST_ENV +=	"LDFLAGS=-lnsl -lcppunit -lsocket -lz"
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

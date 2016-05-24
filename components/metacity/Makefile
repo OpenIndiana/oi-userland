@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
+COMPONENT_PREP_ACTION =	( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
 					cd $(@D)  &&\
 					libtoolize --copy --force &&\
 					intltoolize --force --copy &&\
@@ -41,9 +41,9 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
 					autoheader &&\
 					automake -c -f -a )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION =	(cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -62,6 +62,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

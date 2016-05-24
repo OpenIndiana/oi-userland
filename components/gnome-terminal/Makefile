@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+COMPONENT_PREP_ACTION =	( cd $(@D)  && \
 					intltoolize --force --copy --automake &&\
 					libtoolize --copy --force &&\
 					aclocal -I . &&\
@@ -40,9 +40,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoheader &&\
 					automake -c -f -a )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
+					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_LOCALSTATEDIR=/var/lib
 
@@ -57,6 +57,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

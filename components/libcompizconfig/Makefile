@@ -36,14 +36,14 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 # Missing files in build dir without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
 					rm -f ltmain.sh &&\
-			                libtoolize --automake --copy --force && \
+					libtoolize --automake --copy --force && \
 					intltoolize --force --copy &&\
 					aclocal -I. && \
-				        autoheader && \
+					autoheader && \
 					automake -a -f -c &&\
 					autoconf )
 
@@ -56,6 +56,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

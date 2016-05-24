@@ -103,7 +103,3 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
 test:	$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-

@@ -81,8 +81,5 @@ install:	$(INSTALL_32_and_64) \
 		$(BUILD_DIR_32)/contrib/.installed \
 		$(BUILD_DIR_64)/contrib/.installed
 
-test: 		$(NO_TESTS)
+test 		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

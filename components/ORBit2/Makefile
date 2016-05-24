@@ -34,12 +34,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = \
+				  ( cd $(@D) && \
+				    aclocal -I. && \
+				    autoheader && \
+				    libtoolize --automake --copy --force && \
+				    automake -a -f -c &&\
+				    autoconf )
 
 # Without this includes are rewritten with 64-bit files,
 # and we don't want this
@@ -52,6 +53,3 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

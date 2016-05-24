@@ -56,11 +56,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_PRE_BUILD_ACTION = \
 	 ( $(CP) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) $(BUILD_DIR_32); \
-	 cd $(BUILD_DIR_32); \
+	 cd $(BUILD_DIR_32) && \
 	 gzip -dc $(COMPONENT_ARCHIVE_1) | tar xopf -; \
 	 rm $(COMPONENT_ARCHIVE_1); \
-	  cd $(SDFVER); $(PERL) Makefile.PL; \
-		$(GMAKE))
+	 cd $(SDFVER) && $(PERL) Makefile.PL; \
+	 $(GMAKE))
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
@@ -113,7 +113,3 @@ install:	$(INSTALL_32_and_64)
 # build does this always
 test:	$(TEST_32_and_64)
 
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk

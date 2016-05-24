@@ -38,8 +38,9 @@ COMPONENT_CONFIGURE_ENV += PERL=$(PERL)
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python2.6:' \
-        $(PROTO_DIR)/usr/bin/accerciser )
+COMPONENT_POST_INSTALL_ACTION = ( \
+	$(GSED) -e 's:\#!/usr/bin/env python:\#!/usr/bin/python2.6:' \
+	   -i $(PROTO_DIR)/usr/bin/accerciser )
 
 # common targets
 build:		$(BUILD_32)
@@ -48,6 +49,3 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
