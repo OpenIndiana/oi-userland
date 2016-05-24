@@ -1,0 +1,28 @@
+This problem has been reported to the NTP community as NTP bug 3058 -
+http://bugzilla.ntp.org/show_bug.cgi?id=3058 
+"fetch_timestamp fails to account for alignment."
+
+This patch may be removed when upgrading to a version of NTP with bug 3058 
+fixed.
+
+--- ntpd/ntp_io.c
++++ ntpd/ntp_io.c
+@@ -3289,7 +3289,8 @@ fetch_timestamp(
+ 	struct timespec *	tsp;
+ #endif
+ #ifdef HAVE_TIMESTAMP
+-	struct timeval *	tvp;
++	struct timeval 		tvhold;
++	struct timeval *	 tvp = &tvhold;
+ #endif
+ 	unsigned long		ticks;
+ 	double			fuzz;
+@@ -3349,7 +3350,7 @@ fetch_timestamp(
+ #endif	/* HAVE_TIMESTAMPNS */
+ #ifdef HAVE_TIMESTAMP
+ 			case SCM_TIMESTAMP:
+-				tvp = (struct timeval *)CMSG_DATA(cmsghdr);
++				memcpy(&tvhold, CMSG_DATA(cmsghdr), sizeof(tvhold));
+ 				if (sys_tick > measured_tick &&
+ 				    sys_tick > 1e-6) {
+ 					ticks = (unsigned long)((tvp->tv_usec * 1e-6) /
