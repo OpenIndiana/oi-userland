@@ -1,0 +1,23 @@
+--- webkitgtk-2.12.2/Source/JavaScriptCore/heap/MachineStackMarker.cpp.1	2016-05-20 14:12:30.703629673 +0300
++++ webkitgtk-2.12.2/Source/JavaScriptCore/heap/MachineStackMarker.cpp	2016-05-20 14:37:33.493310619 +0300
+@@ -52,11 +52,7 @@
+ #include <sys/mman.h>
+ #include <unistd.h>
+ 
+-#if OS(SOLARIS)
+-#include <thread.h>
+-#else
+ #include <pthread.h>
+-#endif
+ 
+ #if HAVE(PTHREAD_NP_H)
+ #include <pthread_np.h>
+@@ -483,7 +479,7 @@
+     return sizeof(CONTEXT);
+ #elif USE(PTHREADS)
+     pthread_attr_init(&regs.attribute);
+-#if HAVE(PTHREAD_NP_H) || OS(NETBSD)
++#if HAVE(PTHREAD_NP_H) || OS(NETBSD) || OS(SOLARIS)
+ #if !OS(OPENBSD)
+     // e.g. on FreeBSD 5.4, neundorf@kde.org
+     pthread_attr_get_np(platformThread, &regs.attribute);
