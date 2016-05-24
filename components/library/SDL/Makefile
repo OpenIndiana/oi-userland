@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL
 COMPONENT_VERSION=	1.2.15
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl - Simple DirectMedia Layer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +40,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-assembly
+CONFIGURE_OPTIONS +=	--disable-rpath
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -47,3 +48,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

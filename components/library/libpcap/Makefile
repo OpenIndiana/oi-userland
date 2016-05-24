@@ -41,4 +41,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += driver/network/bpf
+REQUIRED_PACKAGES += system/library

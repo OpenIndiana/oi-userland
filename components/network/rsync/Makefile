@@ -35,13 +35,16 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rsync
 
+# TODO: Test if this line can be removed? :
 COPYRIGHT_FILE=	rsync.copyright
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# TODO: Test if this line can be removed? :
 CONFIGURE_OPTIONS  +=		--prefix=/usr
+
 CONFIGURE_OPTIONS  +=		--with-included-popt
 CONFIGURE_OPTIONS  +=		--enable-xattr-support
 
@@ -52,6 +55,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

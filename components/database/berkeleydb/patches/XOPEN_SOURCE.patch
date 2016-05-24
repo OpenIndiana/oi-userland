@@ -1,0 +1,37 @@
+diff -ur db-5.3.21-orig/lang/sql/generated/sqlite3.c db-5.3.21/lang/sql/generated/sqlite3.c
+--- db-5.3.21-orig/lang/sql/generated/sqlite3.c	2016-05-10 12:03:27.489953804 +0300
++++ db-5.3.21/lang/sql/generated/sqlite3.c	2016-05-10 12:08:00.223727135 +0300
+@@ -428,7 +428,7 @@
+ **
+ ** See also ticket #2741.
+ */
+-#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && SQLITE_THREADSAFE
++#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && !defined(__sun__) && SQLITE_THREADSAFE
+ #  define _XOPEN_SOURCE 500  /* Needed to enable pthread recursive mutexes */
+ #endif
+ 
+diff -ur db-5.3.21-orig/lang/sql/sqlite/src/sqliteInt.h db-5.3.21/lang/sql/sqlite/src/sqliteInt.h
+--- db-5.3.21-orig/lang/sql/sqlite/src/sqliteInt.h	2016-05-10 12:03:27.617144980 +0300
++++ db-5.3.21/lang/sql/sqlite/src/sqliteInt.h	2016-05-10 12:07:23.858684468 +0300
+@@ -187,7 +187,7 @@
+ **
+ ** See also ticket #2741.
+ */
+-#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && SQLITE_THREADSAFE
++#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && !defined(__sun__) && SQLITE_THREADSAFE
+ #  define _XOPEN_SOURCE 500  /* Needed to enable pthread recursive mutexes */
+ #endif
+ 
+diff -ur db-5.3.21-orig/util/db_sql_codegen/sqlite/sqliteInt.h db-5.3.21/util/db_sql_codegen/sqlite/sqliteInt.h
+--- db-5.3.21-orig/util/db_sql_codegen/sqlite/sqliteInt.h	2016-05-10 12:03:27.665233798 +0300
++++ db-5.3.21/util/db_sql_codegen/sqlite/sqliteInt.h	2016-05-10 12:06:33.285165625 +0300
+@@ -168,7 +168,7 @@
+ **
+ ** See also ticket #2741.
+ */
+-#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && SQLITE_THREADSAFE
++#if !defined(_XOPEN_SOURCE) && !defined(__DARWIN__) && !defined(__APPLE__) && !defined(__sun__) && SQLITE_THREADSAFE
+ #  define _XOPEN_SOURCE 500  /* Needed to enable pthread recursive mutexes */
+ #endif
+ 
+Only in db-5.3.21-orig/util/db_sql_codegen/sqlite: sqliteInt.h.1

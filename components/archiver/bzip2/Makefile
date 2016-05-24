@@ -55,8 +55,8 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
 
 COMPONENT_PRE_BUILD_ACTION= \
-	(cd $(@D) ; \
-	    cp ../../oldapi.c . )
+	(cd $(@D) && \
+	 cp ../../oldapi.c . )
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -68,14 +68,13 @@ $(INSTALL_64):
 
 install:	build $(INSTALL_32_and_64)
 	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
-	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
+	cd $(PROTOUSRLIBDIR) && rm -f libbz2.so && ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
-	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
+	cd $(PROTOUSRLIBDIR64) && rm -f libbz2.so && ln -s libbz2.so.1 libbz2.so
 #	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

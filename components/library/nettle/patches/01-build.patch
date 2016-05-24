@@ -1,0 +1,49 @@
+--- nettle-3.2/config.make.in.1	2016-05-06 17:17:27.771208697 +0300
++++ nettle-3.2/config.make.in	2016-05-06 17:17:45.725651355 +0300
+@@ -12,6 +12,7 @@
+ LIBOBJS = @LIBOBJS@
+ EMULATOR = @EMULATOR@
+ NM = @NM@
++LINK_SHARED_FLAG = @LINK_SHARED_FLAG@
+ 
+ OBJEXT = @OBJEXT@
+ EXEEXT = @EXEEXT@
+--- nettle-2.7/configure.ac.~1~	2013-04-24 17:26:53.000000000 +0400
++++ nettle-2.7/configure.ac	2016-05-06 18:45:40.292691231 +0300
+@@ -411,17 +411,24 @@
+     # Sun's ld uses -h to set the soname, and this option is passed
+     # through by both Sun's compiler and gcc. Might not work with GNU
+     # ld, but it's unusual to use GNU ld on Solaris.
++
++    if test x$GCC = xyes ; then
++        LINK_SHARED_FLAG=-shared ;
++    else 
++        LINK_SHARED_FLAG=-G;
++    fi
++
+     LIBNETTLE_FORLINK=libnettle.so
+     LIBNETTLE_SONAME='$(LIBNETTLE_FORLINK).$(LIBNETTLE_MAJOR)'
+     LIBNETTLE_FILE='$(LIBNETTLE_SONAME).$(LIBNETTLE_MINOR)'
+-    LIBNETTLE_LINK='$(CC) $(CFLAGS) $(LDFLAGS) -G -h $(LIBNETTLE_SONAME)'
++    LIBNETTLE_LINK='$(CC) $(CFLAGS) $(LDFLAGS) $(LINK_SHARED_FLAG) -h $(LIBNETTLE_SONAME)'
+     LIBNETTLE_LIBS=''
+ 
+     LIBHOGWEED_FORLINK=libhogweed.so
+     LIBHOGWEED_SONAME='$(LIBHOGWEED_FORLINK).$(LIBHOGWEED_MAJOR)'
+     LIBHOGWEED_FILE='$(LIBHOGWEED_SONAME).$(LIBHOGWEED_MINOR)'
+-    LIBHOGWEED_LINK='$(CC) $(CFLAGS) $(LDFLAGS) -L. -G -h $(LIBHOGWEED_SONAME)'
+-    LIBHOGWEED_LIBS='-lnettle -lgmp'
++    LIBHOGWEED_LINK='$(CC) $(CFLAGS) $(LDFLAGS) $(LINK_SHARED_FLAG) -h $(LIBHOGWEED_SONAME)'
++    LIBHOGWEED_LIBS='libnettle.so -lgmp'
+     ;;
+   *)
+     LIBNETTLE_FORLINK=libnettle.so
+@@ -563,6 +570,8 @@
+ 
+ AC_SUBST(SHLIBCFLAGS)
+ 
++AC_SUBST(LINK_SHARED_FLAG)
++
+ AC_SUBST(LIBNETTLE_MAJOR)
+ AC_SUBST(LIBNETTLE_MINOR)
+ AC_SUBST(LIBNETTLE_FORLINK)

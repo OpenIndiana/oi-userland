@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
 COMPONENT_VERSION=	2.25
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -59,6 +60,6 @@ install:	$(INSTALL_32_and_64)
 #
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

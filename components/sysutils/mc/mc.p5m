@@ -22,22 +22,22 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri value=pkg:/file/mc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell"
-set name=pkg.summary value="The GNU Midnight Commander file manager"
-set name=com.oracle.info.description value="The GNU Midnight Commander file manager"
-set name=com.oracle.info.tpno value=13150
-set name=info.classification \
-    value="org.opensolaris.category.2008:Desktop (GNOME)/File Managers"
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/202
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-file path=usr/bin/mc
 file path=usr/bin/$(MACH64)/mc
+link path=usr/bin/$(MACH64)/mcdiff target=mc
+link path=usr/bin/$(MACH64)/mcedit target=mc
+link path=usr/bin/$(MACH64)/mcview target=mc
+file path=usr/bin/mc
+link path=usr/bin/mcdiff target=mc
+link path=usr/bin/mcedit target=mc
+link path=usr/bin/mcview target=mc
 file ABOUT-NLS path=usr/share/doc/mc/ABOUT-NLS
 file AUTHORS path=usr/share/doc/mc/AUTHORS
 file COPYING path=usr/share/doc/mc/COPYING
@@ -56,17 +56,26 @@ file path=usr/share/locale/ca/LC_MESSAGES/mc.mo
 file path=usr/share/locale/cs/LC_MESSAGES/mc.mo
 file path=usr/share/locale/da/LC_MESSAGES/mc.mo
 file path=usr/share/locale/de/LC_MESSAGES/mc.mo
+file path=usr/share/locale/de_CH/LC_MESSAGES/mc.mo
 file path=usr/share/locale/el/LC_MESSAGES/mc.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/mc.mo
 file path=usr/share/locale/eo/LC_MESSAGES/mc.mo
 file path=usr/share/locale/es/LC_MESSAGES/mc.mo
+file path=usr/share/locale/et/LC_MESSAGES/mc.mo
 file path=usr/share/locale/eu/LC_MESSAGES/mc.mo
+file path=usr/share/locale/fa/LC_MESSAGES/mc.mo
 file path=usr/share/locale/fi/LC_MESSAGES/mc.mo
 file path=usr/share/locale/fr/LC_MESSAGES/mc.mo
+file path=usr/share/locale/fr_CA/LC_MESSAGES/mc.mo
 file path=usr/share/locale/gl/LC_MESSAGES/mc.mo
+file path=usr/share/locale/hr/LC_MESSAGES/mc.mo
 file path=usr/share/locale/hu/LC_MESSAGES/mc.mo
+file path=usr/share/locale/ia/LC_MESSAGES/mc.mo
+file path=usr/share/locale/id/LC_MESSAGES/mc.mo
 file path=usr/share/locale/it/LC_MESSAGES/mc.mo
 file path=usr/share/locale/ja/LC_MESSAGES/mc.mo
+file path=usr/share/locale/ka/LC_MESSAGES/mc.mo
+file path=usr/share/locale/kk/LC_MESSAGES/mc.mo
 file path=usr/share/locale/ko/LC_MESSAGES/mc.mo
 file path=usr/share/locale/lt/LC_MESSAGES/mc.mo
 file path=usr/share/locale/lv/LC_MESSAGES/mc.mo
@@ -82,36 +91,63 @@ file path=usr/share/locale/sk/LC_MESSAGES/mc.mo
 file path=usr/share/locale/sl/LC_MESSAGES/mc.mo
 file path=usr/share/locale/sr/LC_MESSAGES/mc.mo
 file path=usr/share/locale/sv/LC_MESSAGES/mc.mo
+file path=usr/share/locale/szl/LC_MESSAGES/mc.mo
 file path=usr/share/locale/ta/LC_MESSAGES/mc.mo
+file path=usr/share/locale/te/LC_MESSAGES/mc.mo
 file path=usr/share/locale/tr/LC_MESSAGES/mc.mo
 file path=usr/share/locale/uk/LC_MESSAGES/mc.mo
 file path=usr/share/locale/vi/LC_MESSAGES/mc.mo
 file path=usr/share/locale/wa/LC_MESSAGES/mc.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/mc.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/mc.mo
+file path=usr/share/man/es/man1/mc.1
+file path=usr/share/man/hu/man1/mc.1
+file path=usr/share/man/it/man1/mc.1
 file path=usr/share/man/man1/mc.1
 file path=usr/share/man/man1/mcedit.1
 file path=usr/share/man/man1/mcview.1
+file path=usr/share/man/pl/man1/mc.1
+file path=usr/share/man/ru/man1/mc.1
+file path=usr/share/man/sr/man1/mc.1
 file path=usr/share/mc/bin/mc-wrapper.csh
 file path=usr/share/mc/bin/mc-wrapper.sh
 file path=usr/share/mc/bin/mc.csh
 file path=usr/share/mc/bin/mc.sh
 file path=usr/share/mc/edit.indent.rc
+file path=usr/share/mc/examples/macros.d/macro.0.sh
+file path=usr/share/mc/examples/macros.d/macro.1.sh
+file path=usr/share/mc/examples/macros.d/macro.3.sh
+file path=usr/share/mc/examples/macros.d/macro.4.sh
+file path=usr/share/mc/examples/macros.d/macro.5.sh
+file path=usr/share/mc/examples/macros.d/macro.6.sh
+file path=usr/share/mc/examples/macros.d/macro.7.sh
+file path=usr/share/mc/ext.d/archive.sh
+file path=usr/share/mc/ext.d/doc.sh
+file path=usr/share/mc/ext.d/image.sh
+file path=usr/share/mc/ext.d/misc.sh
+file path=usr/share/mc/ext.d/package.sh
+file path=usr/share/mc/ext.d/sound.sh
+file path=usr/share/mc/ext.d/text.sh
+file path=usr/share/mc/ext.d/video.sh
+file path=usr/share/mc/ext.d/web.sh
 file path=usr/share/mc/extfs.d/README
 file path=usr/share/mc/extfs.d/README.extfs
 file path=usr/share/mc/extfs.d/a+ mode=0555
 file path=usr/share/mc/extfs.d/apt+ mode=0555
 file path=usr/share/mc/extfs.d/audio mode=0555
 file path=usr/share/mc/extfs.d/bpp mode=0555
+file path=usr/share/mc/extfs.d/changesetfs mode=0555
 file path=usr/share/mc/extfs.d/deb mode=0555
 file path=usr/share/mc/extfs.d/deba mode=0555
 file path=usr/share/mc/extfs.d/debd mode=0555
 file path=usr/share/mc/extfs.d/dpkg+ mode=0555
+file path=usr/share/mc/extfs.d/gitfs+ mode=0555
 file path=usr/share/mc/extfs.d/hp48+ mode=0555
 file path=usr/share/mc/extfs.d/iso9660 mode=0555
 file path=usr/share/mc/extfs.d/lslR mode=0555
 file path=usr/share/mc/extfs.d/mailfs mode=0555
 file path=usr/share/mc/extfs.d/patchfs mode=0555
+file path=usr/share/mc/extfs.d/patchsetfs mode=0555
 file path=usr/share/mc/extfs.d/rpm mode=0555
 file path=usr/share/mc/extfs.d/rpms+ mode=0555
 file path=usr/share/mc/extfs.d/s3+ mode=0555 pkg.depend.bypass-generate=.*
@@ -126,6 +162,7 @@ file path=usr/share/mc/extfs.d/uc1541 mode=0555 pkg.depend.bypass-generate=.*
 file path=usr/share/mc/extfs.d/ucab mode=0555
 file path=usr/share/mc/extfs.d/uha mode=0555
 file path=usr/share/mc/extfs.d/ulha mode=0555
+file path=usr/share/mc/extfs.d/ulib mode=0555
 file path=usr/share/mc/extfs.d/urar mode=0555
 file path=usr/share/mc/extfs.d/uzip mode=0555
 file path=usr/share/mc/extfs.d/uzoo mode=0555
@@ -145,21 +182,7 @@ file path=usr/share/mc/fish/mv
 file path=usr/share/mc/fish/rmdir
 file path=usr/share/mc/fish/send
 file path=usr/share/mc/fish/unlink
-file path=usr/share/mc/mc.charsets
-file path=usr/share/mc/mc.ext
-file path=usr/share/mc/mcedit.menu
-file path=usr/share/mc/hints/mc.hint
-file path=usr/share/mc/hints/mc.hint.cs
-file path=usr/share/mc/hints/mc.hint.en_GB
-file path=usr/share/mc/hints/mc.hint.es
-file path=usr/share/mc/hints/mc.hint.hu
-file path=usr/share/mc/hints/mc.hint.it
-file path=usr/share/mc/hints/mc.hint.nl
-file path=usr/share/mc/hints/mc.hint.pl
-file path=usr/share/mc/hints/mc.hint.ru
-file path=usr/share/mc/hints/mc.hint.sr
-file path=usr/share/mc/hints/mc.hint.uk
-file path=usr/share/mc/hints/mc.hint.zh
+file path=usr/share/mc/fish/utime
 file path=usr/share/mc/help/mc.hlp
 file path=usr/share/mc/help/mc.hlp.es
 file path=usr/share/mc/help/mc.hlp.hu
@@ -167,12 +190,63 @@ file path=usr/share/mc/help/mc.hlp.it
 file path=usr/share/mc/help/mc.hlp.pl
 file path=usr/share/mc/help/mc.hlp.ru
 file path=usr/share/mc/help/mc.hlp.sr
-file path=usr/share/mc/mc.keymap
+file path=usr/share/mc/hints/mc.hint
+file path=usr/share/mc/hints/mc.hint.ar
+file path=usr/share/mc/hints/mc.hint.az
+file path=usr/share/mc/hints/mc.hint.be
+file path=usr/share/mc/hints/mc.hint.bg
+file path=usr/share/mc/hints/mc.hint.ca
+file path=usr/share/mc/hints/mc.hint.cs
+file path=usr/share/mc/hints/mc.hint.da
+file path=usr/share/mc/hints/mc.hint.de
+file path=usr/share/mc/hints/mc.hint.de_CH
+file path=usr/share/mc/hints/mc.hint.el
+file path=usr/share/mc/hints/mc.hint.en_GB
+file path=usr/share/mc/hints/mc.hint.eo
+file path=usr/share/mc/hints/mc.hint.es
+file path=usr/share/mc/hints/mc.hint.et
+file path=usr/share/mc/hints/mc.hint.eu
+file path=usr/share/mc/hints/mc.hint.fa
+file path=usr/share/mc/hints/mc.hint.fi
+file path=usr/share/mc/hints/mc.hint.fr
+file path=usr/share/mc/hints/mc.hint.fr_CA
+file path=usr/share/mc/hints/mc.hint.gl
+file path=usr/share/mc/hints/mc.hint.hr
+file path=usr/share/mc/hints/mc.hint.hu
+file path=usr/share/mc/hints/mc.hint.ia
+file path=usr/share/mc/hints/mc.hint.id
+file path=usr/share/mc/hints/mc.hint.it
+file path=usr/share/mc/hints/mc.hint.it_IT
+file path=usr/share/mc/hints/mc.hint.ja
+file path=usr/share/mc/hints/mc.hint.ka
+file path=usr/share/mc/hints/mc.hint.kk
+file path=usr/share/mc/hints/mc.hint.ko
+file path=usr/share/mc/hints/mc.hint.lt
+file path=usr/share/mc/hints/mc.hint.nl
+file path=usr/share/mc/hints/mc.hint.pl
+file path=usr/share/mc/hints/mc.hint.pt
+file path=usr/share/mc/hints/mc.hint.pt_BR
+file path=usr/share/mc/hints/mc.hint.ro
+file path=usr/share/mc/hints/mc.hint.ru
+file path=usr/share/mc/hints/mc.hint.sk
+file path=usr/share/mc/hints/mc.hint.sl
+file path=usr/share/mc/hints/mc.hint.sr
+file path=usr/share/mc/hints/mc.hint.sv
+file path=usr/share/mc/hints/mc.hint.sv_SE
+file path=usr/share/mc/hints/mc.hint.szl
+file path=usr/share/mc/hints/mc.hint.te
+file path=usr/share/mc/hints/mc.hint.tr
+file path=usr/share/mc/hints/mc.hint.uk
+file path=usr/share/mc/hints/mc.hint.zh
+file path=usr/share/mc/hints/mc.hint.zh_CN
+file path=usr/share/mc/mc.charsets
 file path=usr/share/mc/mc.default.keymap
 file path=usr/share/mc/mc.emacs.keymap
+file path=usr/share/mc/mc.ext
+link path=usr/share/mc/mc.keymap target=mc.default.keymap
 file path=usr/share/mc/mc.lib
 file path=usr/share/mc/mc.menu
-file path=usr/share/mc/mc.menu.sr
+file path=usr/share/mc/mcedit.menu
 file path=usr/share/mc/sfs.ini
 file path=usr/share/mc/skins/dark.ini
 file path=usr/share/mc/skins/darkfar.ini
@@ -192,15 +266,20 @@ file path=usr/share/mc/skins/modarin256.ini
 file path=usr/share/mc/skins/modarin256root-defbg.ini
 file path=usr/share/mc/skins/modarin256root.ini
 file path=usr/share/mc/skins/nicedark.ini
+file path=usr/share/mc/skins/sand256.ini
+file path=usr/share/mc/skins/xoria256.ini
+file files/zenburn.ini path=usr/share/mc/skins/zenburn.ini
 file path=usr/share/mc/syntax/PKGBUILD.syntax
 file path=usr/share/mc/syntax/Syntax
 file path=usr/share/mc/syntax/ada95.syntax
+file path=usr/share/mc/syntax/as.syntax
 file path=usr/share/mc/syntax/aspx.syntax
 file path=usr/share/mc/syntax/assembler.syntax
 file path=usr/share/mc/syntax/awk.syntax
 file path=usr/share/mc/syntax/c.syntax
 file path=usr/share/mc/syntax/cabal.syntax
 file path=usr/share/mc/syntax/changelog.syntax
+file path=usr/share/mc/syntax/cmake.syntax
 file path=usr/share/mc/syntax/cs.syntax
 file path=usr/share/mc/syntax/css.syntax
 file path=usr/share/mc/syntax/cxx.syntax
@@ -211,6 +290,7 @@ file path=usr/share/mc/syntax/debian-control.syntax
 file path=usr/share/mc/syntax/debian-description.syntax
 file path=usr/share/mc/syntax/debian-sources-list.syntax
 file path=usr/share/mc/syntax/diff.syntax
+file path=usr/share/mc/syntax/dlink.syntax
 file path=usr/share/mc/syntax/dos.syntax
 file path=usr/share/mc/syntax/ebuild.syntax
 file path=usr/share/mc/syntax/eiffel.syntax
@@ -218,15 +298,18 @@ file path=usr/share/mc/syntax/erlang.syntax
 file path=usr/share/mc/syntax/f90.syntax
 file path=usr/share/mc/syntax/filehighlight.syntax
 file path=usr/share/mc/syntax/fortran.syntax
+file path=usr/share/mc/syntax/go.syntax
 file path=usr/share/mc/syntax/haskell.syntax
 file path=usr/share/mc/syntax/html.syntax
 file path=usr/share/mc/syntax/idl.syntax
 file path=usr/share/mc/syntax/ini.syntax
 file path=usr/share/mc/syntax/j.syntax
+file path=usr/share/mc/syntax/jal.syntax
 file path=usr/share/mc/syntax/java.syntax
 file path=usr/share/mc/syntax/js.syntax
 file path=usr/share/mc/syntax/latex.syntax
 file path=usr/share/mc/syntax/lisp.syntax
+file path=usr/share/mc/syntax/lkr.syntax
 file path=usr/share/mc/syntax/lsm.syntax
 file path=usr/share/mc/syntax/lua.syntax
 file path=usr/share/mc/syntax/m4.syntax
@@ -264,10 +347,4 @@ file path=usr/share/mc/syntax/vhdl.syntax
 file path=usr/share/mc/syntax/xml.syntax
 file path=usr/share/mc/syntax/yum-repo.syntax
 file path=usr/share/mc/syntax/yxx.syntax
-license mc.license license=GPLv3
-link path=usr/bin/$(MACH64)/mcdiff target=mc
-link path=usr/bin/$(MACH64)/mcedit target=mc
-link path=usr/bin/$(MACH64)/mcview target=mc
-link path=usr/bin/mcdiff target=mc
-link path=usr/bin/mcedit target=mc
-link path=usr/bin/mcview target=mc
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)

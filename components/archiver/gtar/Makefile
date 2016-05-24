@@ -59,3 +59,10 @@ install:	$(INSTALL_32_and_64)
 #87: incremental dump when the parent directory is unreadable FAILED (listed03.at:27)
 
 test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/gzip
+REQUIRED_PACKAGES += network/ssh
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/extended-system-utilities
+REQUIRED_PACKAGES += system/library

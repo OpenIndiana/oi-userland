@@ -1,0 +1,126 @@
+This is a guide to explain various useful targets in Userland component
+Makefiles.  There is a set of targets that all Makefiles must include, plus
+some addtional targets that are there for convenience.
+
+component-environment-check::
+  This target is an optional target that will be included in most Makefiles
+  automatically.  It is defined in $(WS_MAKE_RULES)/environment.mk which is
+  included by $(WS_MAKE_RULES)/shares-macros.mk.  It reports on some interesting
+  information about the current environment and whether or not it is suitable
+  to build, publish, or test the component.
+
+component-environment-prep::
+  This target is an optional target that will be included in most Makefiles
+  automatically.  It is defined in $(WS_MAKE_RULES)/environment.mk which is
+  included by $(WS_MAKE_RULES)/shares-macros.mk.  It uses the REQUIRE_PACKAGES
+  macro contents to attempt to install any required packages in the current
+  environment.  It should never by used by developers to update any public
+  build machines as those are managed by dedicated staff. To use this target
+  user has to be assigned "Software Installation" or "Primary Administrator"
+  profile.
+
+download::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  This target depends on your component Makefile, so changes to your
+  component Makefile will automatically trigger a re-download and subsequent
+  build steps that depend on it.  You can use the MAKEFILE_PREREQ macro to
+  override this behaviour and avoid rebuilding with each Makefile change.  This
+  macro should only be used in the calling environment via something like:
+    $ gmake MAKEFILE_PREREQ= install
+
+unpack::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  This target depends on the previously described "download" target,
+  This target will unpack any downloaded source archives.  It is an interim
+  step in the source code preparation phase of the build.
+
+patch::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  This target depends on the previously described "unpack" target,
+  This target will patch any unpacked source.  It is an interim step in the
+  source code preparation phase of the build.
+
+prep::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is 
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  It depends on the previously described "download" target, as well
+  as internal interim targets to unpack source archives and apply patches to
+  the unpacked source.
+
+build::
+  This target must be present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  defined in the individual component Makefiles, but most Makefile fragments
+  under $(WS_MAKE_RULES) include targets that allow the definitions to depend
+  on one of several convenience macros $(BUILD_32), $(BUILD_64),
+  $(BUILD_32_and_64), and $(BUILD_NO_ARCH) to build 32-bit support, 64-bit
+  support, both 32 and 64 bit support, or architecture neutral support.  The
+  macro used will depend on the component.
+
+install::
+  This target must be present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  defined in the individual component Makefiles, but most Makefile fragments
+  under $(WS_MAKE_RULES) include targets that allow the definitions to depend
+  on one of several convenience macros $(INSTALL_32), $(INSTALL_64),
+  $(INSTALL_32_and_64), and $(INSTALL_NO_ARCH) to install 32-bit support, 64-bit
+  support, both 32 and 64 bit support, or architecture neutral support.  The
+  macro used will depend on the component and corresponds to the build target
+  macro used.
+
+pkglint::
+  This target is an optional target is automatically defined in each Makefile
+  by the inclusion of $(WS_MAKE_RULES)/prep.mk.  It will run the build steps
+  necessary to pkglint the manifests for a component.
+
+publish::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
+  on the previously described 'install' target and will perform a series of
+  internal, intermediate steps to use the component package manifests to
+  generate and publish packages for that component.
+
+clean::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  often automatically defined by including one of the $(WS_MAKE_RULES)
+  Makefile fragments.  It cleans up any files created by building the component
+  with the exception of any downloaded files.
+
+clobber::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  often automatically defined by including one of the $(WS_MAKE_RULES)
+  Makefile fragments.  It depends on the previously described 'clean' target
+  and additionally cleans up any downloaded source archives.  In addition,
+  when done from the top level or component sub-directory, it will do a find
+  of 'manifest-*.published' and clean those up; these can be left over from
+  components that were published but then 'hg rm'd before the next clobber.
+
+REQUIRED_PACKAGES::
+  This target is present in all component Makefiles.  It is automatically
+  defined by including $(WS_MAKE_RULES)/ips.mk.  It is a convenience that can
+  be used to generate the set of REQUIRED_PACKAGES that is needed by the
+  'pkgdepend resolve' portion of package generation and publication (publish
+  target).  It automatically appends to the component Makefile, but the results
+  should be manually verified.
+
+env-check::
+  This target serves as an alias for component-environment-check target. It exists
+  only for user convenience.
+
+env-prep::
+  This target serves as an alias for component-environment-prep target. It exists
+  only for user convenience.
+
+print-VAR
+  This target will print contents of variable VAR and also provide information
+  about variable origin and variable flavor.

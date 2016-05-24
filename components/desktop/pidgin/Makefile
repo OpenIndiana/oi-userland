@@ -15,15 +15,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.10.11
+COMPONENT_VERSION=	2.10.12
 COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.pidgin.im
+COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
+COMPONENT_FMRI=		communication/im/pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f2ae211341fc77efb9945d40e9932aa535cdf3a6c8993fe7919fca8cc1c04007
+    sha256:2c7523f0fefe89749c03b2b738ab9f7bd186da435be4762f1487eee31e77ffdd
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	pidgin.license
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -31,16 +35,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-			                libtoolize --force && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && \
+					libtoolize --force && \
 					intltoolize --force --copy --automake && \
 					aclocal -I. && \
 					automake -a -f -c &&\
 					autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE))
+					cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
+					cd $(@D)/po-sun && $(MAKE))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
@@ -70,6 +74,32 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtkspell
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-keyring
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/python-2/python-dbus-26
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += system/network/avahi
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxscrnsaver

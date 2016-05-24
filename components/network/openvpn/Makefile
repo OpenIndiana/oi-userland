@@ -42,3 +42,9 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+REQUIRED_PACKAGES += driver/network/header-tun
+REQUIRED_PACKAGES += library/lzo
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

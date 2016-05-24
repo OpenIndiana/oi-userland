@@ -63,6 +63,6 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

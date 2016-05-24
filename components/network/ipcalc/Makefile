@@ -50,3 +50,5 @@ $(BUILD_DIR)/%/.installed: $(BUILD_32)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+REQUIRED_PACKAGES += runtime/perl-522

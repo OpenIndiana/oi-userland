@@ -30,3 +30,5 @@ include $(WS_MAKE_RULES)/ips.mk
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+REQUIRED_PACKAGES += system/library

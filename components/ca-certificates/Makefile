@@ -17,16 +17,16 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
-COMPONENT_VERSION= 3.15.5
+COMPONENT_VERSION= 3.23
 COMPONENT_REVISION=1
 IPS_COMPONENT_VERSION=	1.0
 COMPONENT_SUMMARY= Common CA certificates
 COMPONENT_SRC= nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1442c85624b7de74c7745132a65aa0de47d280c4f01f293d111bc0b6d8271f43
+  sha256:94b383e31c9671e9dfcca81084a8a813817e8f05a57f54533509b318d26e11cf
 COMPONENT_ARCHIVE_URL= \
-  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_15_5_RTM/src/$(COMPONENT_ARCHIVE)
+  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_23_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -67,6 +67,7 @@ $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt: $(SOURCE_DIR)/.prep
 
 $(INSTALL_32):	$(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/etc/certs/CA $(PROTO_DIR)/etc/openssl/certs
+	$(CP) $(BUILD_DIR_32)/ca-bundle.crt $(PROTO_DIR)/etc/certs/ca-certificates.crt
 	$(CP) $(BUILD_DIR_32)/*.pem $(PROTO_DIR)/etc/certs/CA/
 	cd $(PROTO_DIR)/etc/certs/CA &&\
 	for i in *.pem ; do  \

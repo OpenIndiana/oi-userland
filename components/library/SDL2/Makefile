@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
 COMPONENT_VERSION=	2.0.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +40,8 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_PREP_ACTION = \
 			( cd $(@D) && $(CONFIG_SHELL) autogen.sh )
 
+CONFIGURE_OPTIONS += --disable-rpath
+
 # common targets
 build:		$(BUILD_32_and_64)
 
@@ -46,6 +49,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

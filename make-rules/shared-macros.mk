@@ -109,7 +109,7 @@ SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
-ARCHLIBSUBDIR32	= 
+ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)
 ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
 
@@ -318,9 +318,6 @@ COMPONENT_TEST_COMPARE = \
 # set the default env command to use for test of the component
 COMPONENT_TEST_ENV_CMD =	$(ENV)
 
-# set the default test environment (none) that we can append to later
-COMPONENT_TEST_ENV_CMD =
-
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =	$(GMAKE)
 
@@ -528,7 +525,11 @@ PERL_VERSIONS = 5.16 5.22
 PERL.5.16 =	/usr/perl5/5.16/bin/perl
 PERL.5.22 =	/usr/perl5/5.22/bin/perl
 
-PERL =          $(PERL.$(PERL_VERSION))
+POD2MAN.5.16 =	/usr/perl5/5.16/bin/pod2man
+POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
+
+PERL =		$(PERL.$(PERL_VERSION))
+POD2MAN =	$(POD2MAN.$(PERL_VERSION))
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
@@ -996,3 +997,21 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+#
+# Packages with tools that are required to build Userland components
+#
+REQUIRED_PACKAGES += metapackages/build-essential
+
+# Only a default dependency if component being built produces binaries.
+ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
+REQUIRED_PACKAGES += system/library
+endif
+
+include $(WS_MAKE_RULES)/environment.mk
+
+# A simple rule to print the value of any macro.  Ex:
+#    $ gmake print-REQUIRED_PACKAGES
+# Note that some macros are set on a per target basis, so what you see
+# is not always what you get.
+print-%:
+	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
