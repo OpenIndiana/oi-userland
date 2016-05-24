@@ -49,7 +49,7 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-REQUIRED_PACKAGES += utility/bash-completion 
+REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
