@@ -60,6 +60,8 @@ TESTS_32_DIR=$(TESTS_DIR)/$(MACH32)
 # Migrated from ON in S12, including stuff from system/header, so this
 # cannot be installed on an S11 box.
 ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
 
@@ -197,9 +199,6 @@ REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
-ifneq ($(KRB5_API), solaris)
-    REQUIRED_PACKAGES += security/kerberos-5
-else
-    REQUIRED_PACKAGES += system/library/security/gss
-endif
+REQUIRED_PACKAGES += security/kerberos-5
+REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network/ldap/openldap

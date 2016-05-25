@@ -108,22 +108,13 @@ COMPONENT_PREP_ACTION += \
       cd $(@D); autoconf; \
     )
 
-# If there is no mediator, use MIT.  Note, once all userland build systems have
-# the Userland security/kerberos-5 pkg installed this logic can be removed.
-KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
-
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-ifeq ($(KRB5_API), solaris)
-    # require the solaris version of Kerberos/GSS
-    REQUIRED_PACKAGES += service/security/kerberos-5
-    REQUIRED_PACKAGES += system/library/security/gss
-else
-    # require the Userland version of Kerberos/GSS
-    REQUIRED_PACKAGES += security/kerberos-5
-endif
+REQUIRED_PACKAGES += security/kerberos-5
+REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += text/groff/groff-core
