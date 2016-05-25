@@ -61,6 +61,14 @@ PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
+
+# Depends on openvswitch, available in S12 but not 11.3, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_NO_ARCH=
+INSTALL_NO_ARCH=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
