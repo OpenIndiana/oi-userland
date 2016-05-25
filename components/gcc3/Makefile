@@ -85,6 +85,7 @@ COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_TARGETS = bootstrap
 
 # common targets
+ifneq ($(BUILD_TYPE), evaluation)
 $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 	(cd $(@D) ; for file in libstdc++.la libsupc++.la ; do \
 		$(MV) usr/gcc/3.4/lib/$$file usr/gcc/3.4/lib/$$file.orig ; \
@@ -95,6 +96,7 @@ $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 	$(TOUCH) $@
 
 install:	$(PROTO_DIR)/.sedded
+endif
 
 
 REQUIRED_PACKAGES += developer/assembler
