@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -109,23 +109,45 @@ class SolarisFibreChannel(object):
         for wwpn in wwpns:
             self.execute('/usr/sbin/fcadm', 'force-lip', wwpn)
 
-    def _get_device_path(self, wwn):
-        """Get the Device Name of the WWN"""
+    def _get_device_path(self, wwn, target_lun):
+        """Get the Device path for the specified LUN.
+
+        The output of CMD below is like this:
+
+        OS Device Name: /dev/rdsk/c0t600C0FF0000000000036223AE73EB705d0s2
+               HBA Port WWN: 210100e08b27a8a1
+                       Remote Port WWN: 256000c0ffc03622
+                               LUN: 0
+                       Remote Port WWN: 216000c0ff803622
+                               LUN: 0
+               HBA Port WWN: 210000e08b07a8a1
+                       Remote Port WWN: 256000c0ffc03622
+                               LUN: 0
+                       Remote Port WWN: 216000c0ff803622
+                               LUN: 0
+               Vendor: SUN
+               Product: StorEdge 3510
+               Device Type: Disk device
+        ......
+        """
         try:
             out, err = self.execute('/usr/sbin/fcinfo', 'logical-unit', '-v')
         except putils.ProcessExecutionError as err:
             return None
 
-        host_dev = None
+        host_device = None
         remote_port = None
         if out is not None:
             for line in [l.strip() for l in out.splitlines()]:
                 if line.startswith("OS Device Name:"):
-                    host_dev = line.split()[-1]
+                    host_device = line.split()[-1]
                 if line.startswith("Remote Port WWN:"):
                     remote_port = line.split()[-1]
-                if remote_port == wwn:
-                    return host_dev
+                if line.startswith("LUN:"):
+                    lun = line.split()[-1]
+                    if remote_port.upper() == wwn and \
+                       int(lun) == int(target_lun):
+                        return host_device
 
         return None
 
@@ -133,28 +155,30 @@ class SolarisFibreChannel(object):
         """Attach the volume to instance_name.
 
         connection_properties for Fibre Channel must include:
-        target_portal - ip and optional port
-        target_iqn - iSCSI Qualified Name
+        target_wwn - Specified port WWNs
         target_lun - LUN id of the volume
         """
         device_info = {'type': 'block'}
         target_wwn = connection_properties['target_wwn']
-        # Check for multiple target_wwn values in a list
+        target_lun = connection_properties['target_lun']
+        wwns = []
         if isinstance(target_wwn, list):
-            wwn = target_wwn[0]
+            wwns = target_wwn
+        else:
+            wwns.append(target_wwn)
 
         # The scsi_vhci disk node is not always present immediately.
         # Sometimes we need to reinitialize the connection to trigger
         # a refresh.
         for i in range(1, scan_tries):
-            LOG.debug("Looking for Fibre Channel device")
-            host_dev = self._get_device_path(wwn)
+            # initiator needs time to refresh the LU list
+            time.sleep(i * 2)
+            host_device = self._get_device_path(wwns[0], target_lun)
 
-            if host_dev is not None and os.path.exists(host_dev):
+            if host_device is not None and os.path.exists(host_device):
                 break
             else:
                 self._refresh_connection()
-                time.sleep(i ** 2)
         else:
             msg = _("Fibre Channel volume device not found.")
             LOG.error(msg)
@@ -170,5 +194,5 @@ class SolarisFibreChannel(object):
                                        disk_name)
             host_device = '%ss0' % tmp_dev_name[0]
 
-        device_info['path'] = host_dev
+        device_info['path'] = host_device
         return device_info

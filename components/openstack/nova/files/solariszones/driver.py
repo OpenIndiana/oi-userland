@@ -1124,15 +1124,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
         elif driver_type == 'fibre_channel':
             data = connection_info['data']
             target_wwn = data['target_wwn']
-            # Check for multiple target_wwn values in a list
-            if isinstance(target_wwn, list):
-                target_wwn = target_wwn[0]
             # Ensure there's a fibre channel HBA.
             hbas = self._get_fc_hbas()
             if not hbas:
-                LOG.error(_("Cannot attach Fibre Channel volume '%s' because "
-                          "no Fibre Channel HBA initiators were found")
-                          % (target_wwn))
+                LOG.error(_("Cannot attach Fibre Channel volume because "
+                          "no Fibre Channel HBA initiators were found"))
                 raise exception.InvalidVolume(
                     reason="No host Fibre Channel initiator found")
 
@@ -1145,21 +1141,35 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 utils.execute('/usr/sbin/fcinfo', 'remote-port',
                               '-p', wwpn)
 
-            # Use suriadm(1M) to generate a Fibre Channel storage URI.
-            try:
-                out, err = utils.execute('/usr/sbin/suriadm', 'lookup-uri',
-                                         '-p', 'target=naa.%s' % target_wwn,
-                                         '-p', 'lun=%s' % target_lun)
-            except processutils.ProcessExecutionError as ex:
-                reason = ex.stderr
-                LOG.error(_("Lookup failure of Fibre Channel volume '%s', lun "
-                          "%s: %s") % (target_wwn, target_lun, reason))
-                raise
-
-            lines = out.split('\n')
-            # Use the long form SURI on the second output line.
-            suri = lines[1].strip()
+            suri = self._lookup_fc_volume_suri(target_wwn, target_lun)
         return suri
+
+    def _lookup_fc_volume_suri(self, target_wwn, target_lun):
+        """Searching the LU based URI for the FC LU. """
+        wwns = []
+        if isinstance(target_wwn, list):
+            wwns = target_wwn
+        else:
+            wwns.append(target_wwn)
+
+        for _none in range(3):
+            for wwn in wwns:
+                try:
+                    out, err = utils.execute('/usr/sbin/suriadm', 'lookup-uri',
+                                             '-p', 'target=naa.%s' % wwn,
+                                             '-p', 'lun=%s' % target_lun)
+                    for line in [l.strip() for l in out.splitlines()]:
+                        if line.startswith("lu:luname.naa."):
+                            return line
+                except processutils.ProcessExecutionError as ex:
+                    reason = ex.stderr
+                    LOG.debug(_("Failed to lookup-uri for volume '%s', lun "
+                              "%s: %s") % (wwn, target_lun, reason))
+            greenthread.sleep(2)
+        else:
+            msg = _("Unable to lookup URI of Fibre Channel volume "
+                    "with lun '%s'." % target_lun)
+            raise exception.InvalidVolume(reason=msg)
 
     def _set_global_properties(self, name, extra_specs, brand):
         """Set Solaris Zone's global properties if supplied via flavor."""

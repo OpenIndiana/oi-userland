@@ -965,13 +965,17 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
 
         return status
 
-    def check_for_setup_error(self):
-        """Check the setup error."""
-        wwns = self._get_wwns()
-        if not wwns:
+    def do_setup(self, context):
+        """Check wwns and setup the target group."""
+        self.wwns = self._get_wwns()
+        if not self.wwns:
             msg = (_("Could not determine fibre channel world wide "
                      "node names."))
             raise exception.VolumeBackendAPIException(data=msg)
+
+        self.tg = 'tg-wwn-%s' % self.wwns[0]
+        if not self._check_tg(self.tg):
+            self._setup_tg(self.tg)
 
     def _get_wwns(self):
         """Get the FC port WWNs of the host."""
@@ -986,19 +990,45 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
 
         return wwns
 
-    def _check_wwn_tg(self, wwn):
-        """Check if the target group 'tg-wwn-xxx' exists."""
-        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg')
+    def _get_target_wwns(self, tg):
+        """Get the target members in the tg."""
+        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg',
+                                    '-v', tg)
 
+        wwns = []
         for line in [l.strip() for l in out.splitlines()]:
-            if line.startswith("Target Group:") and wwn in line:
-                tg = line.split()[-1]
-                break
-        else:
-            LOG.debug(_("The target group 'tg-wwn-%s' doesn't exist.") % wwn)
-            tg = None
+            if line.startswith("Member:"):
+                wwn = line.split()[-1]
+                target_wwn = wwn.split('.')[-1]
+                wwns.append(target_wwn)
+        return wwns
 
-        return tg
+    def _setup_tg(self, tg):
+        """Setup the target group."""
+        self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', tg)
+
+        # Add free target wwns into the target group
+        for wwn in self.wwns:
+            if not self._target_in_tg(wwn, None):
+                target_wwn = 'wwn.%s' % wwn
+                try:
+                    self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                                       target_wwn)
+                    self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member',
+                                       '-g', tg, target_wwn)
+                    self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
+                                       target_wwn)
+                    assert self._check_target(wwn, 'Channel') == 'Online'
+
+                except:
+                    LOG.error(_LE("Failed to add and online the target '%s'.")
+                              % (target_wwn))
+
+        target_wwns = self._get_target_wwns(tg)
+        if not target_wwns:
+            msg = (_("No target members exist in the target group '%s'.")
+                   % tg)
+            raise exception.VolumeBackendAPIException(data=msg)
 
     def _only_lu(self, lu):
         """Check if the LU is the only one."""
@@ -1025,12 +1055,18 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                                         '-v', tg)
         else:
             (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg', '-v')
-
         for line in [l.strip() for l in out.splitlines()]:
             if line.startswith("Member:") and target in line:
                 return True
-        LOG.debug(_("The target '%s' is not in any target group.") % target)
+        LOG.debug(_("The target '%s' is not in %s target group.") %
+                  (target, tg if tg else 'any'))
         return False
+
+    def _force_lip_wwn(self):
+        """Force the link to reinitialize."""
+        target_wwns = self._get_target_wwns(self.tg)
+        for target_wwn in target_wwns:
+            self._stmf_execute('/usr/sbin/fcadm', 'force-lip', target_wwn)
 
     def create_export(self, context, volume):
         """Export the volume."""
@@ -1047,7 +1083,6 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                 raise exception.VolumeBackendAPIException(data=msg)
 
         zvol = self._get_zvol_path(volume)
-
         # Create a Logical Unit (LU)
         self._stmf_execute('/usr/sbin/stmfadm', 'create-lu', zvol)
         luid = self._get_luid(volume)
@@ -1056,55 +1091,28 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                    % volume['name'])
             raise exception.VolumeBackendAPIException(data=msg)
 
-        wwns = self._get_wwns()
-        wwn = wwns[0]
-        target_group = self._check_wwn_tg(wwn)
-        if target_group is None:
-            target_group = 'tg-wwn-%s' % wwn
-            if self._target_in_tg(wwn, None):
-                msg = (_("Target WWN '%s' has been found in another"
-                         "target group, so it will not be added "
-                         "into the expected target group '%s'.") %
-                       (wwn, target_group))
-                raise exception.VolumeBackendAPIException(data=msg)
-
-            # Create a target group for the wwn
-            self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
-
-            # Enable the target and add it to the 'tg-wwn-xxx' group
-            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
-                               'wwn.%s' % wwn)
-            self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                               target_group, 'wwn.%s' % wwn)
-
+        # setup the target group if it doesn't exist.
+        if not self._check_tg(self.tg):
+            self._setup_tg(self.tg)
         # Add a logical unit view entry
-        # TODO(Strony): replace the auto assigned LUN with '-n' option
-        if luid is not None:
-            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-t',
-                               target_group, luid)
-            self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
-                               'wwn.%s' % wwn)
-        assert self._target_in_tg(wwn, target_group)
+        self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-t',
+                           self.tg, luid)
+        self._force_lip_wwn()
 
     def remove_export(self, context, volume):
         """Remove an export for a volume."""
         luid = self._get_luid(volume)
 
         if luid is not None:
-            wwns = self._get_wwns()
-            wwn = wwns[0]
-            target_wwn = 'wwn.%s' % wwn
-            target_group = 'tg-wwn-%s' % wwn
+            target_group = self.tg
             view_lun = self._get_view_and_lun(luid)
             if view_lun['view']:
                 self._stmf_execute('/usr/sbin/stmfadm', 'remove-view', '-l',
                                    luid, view_lun['view'])
 
-            # Remove the target group when only one LU exists.
+            # Remove the target group when the LU to be deleted is last one
+            # exposed by the target group.
             if self._only_lu(luid):
-                if self._check_target(target_wwn, 'Channel') == 'Online':
-                    self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
-                                       target_wwn)
                 if self._check_tg(target_group):
                     self._stmf_execute('/usr/sbin/stmfadm', 'delete-tg',
                                        target_group)
@@ -1120,12 +1128,6 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
         :target_lun:           the lun assigned to the LU for the view entry
 
         """
-        wwns = self._get_wwns()
-        if not wwns:
-            msg = (_("Could not determine fibre channel world wide "
-                     "node names."))
-            raise exception.VolumeBackendAPIException(data=msg)
-
         luid = self._get_luid(volume)
         if not luid:
             msg = (_("Failed to get logic unit for volume '%s'")
@@ -1135,7 +1137,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
         properties = {}
 
         properties['target_discovered'] = True
-        properties['target_wwn'] = wwns
+        properties['target_wwn'] = self._get_target_wwns(self.tg)
         view_lun = self._get_view_and_lun(luid)
         if view_lun['lun'] is not None:
             properties['target_lun'] = view_lun['lun']
