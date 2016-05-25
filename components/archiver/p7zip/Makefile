@@ -29,13 +29,12 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		p7zip
-COMPONENT_VERSION=	9.20.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	15.14.1
 COMPONENT_PROJECT_URL=	http://p7zip.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:49557e7ffca08100f9fc687f4dfc5aea703ca207640c76d9dee7b66f03cb4782
+    sha256:699db4da3621904113e040703220abb1148dfef477b55305e2f14a4f1f8f25d4
 COMPONENT_ARCHIVE_URL=	\
     http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/p7zip
@@ -62,13 +61,10 @@ COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ARGS += BUILD_FLAGS="$(CPP_LARGEFILES) $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS)"
 
-$(SOURCE_DIR)/DOCS/copying.txt $(SOURCE_DIR)/DOCS/unRarLicense.txt: prep
+$(SOURCE_DIR)/DOC/copying.txt $(SOURCE_DIR)/DOC/unRarLicense.txt: prep
 
-$(BUILD_DIR)/%: $(SOURCE_DIR)/DOCS/%
+$(BUILD_DIR)/%: $(SOURCE_DIR)/DOC/%
 	$(CP) $< $@
-
-$(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt
-	$(CP) $(SOURCE_DIR)/DOCS/copying.txt $@
 
 # common targets
 build:		$(BUILD_32_and_64)
