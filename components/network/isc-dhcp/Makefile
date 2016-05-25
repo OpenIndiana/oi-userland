@@ -23,9 +23,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.3.3-P1
-COMPONENT_REVISION=	1
-IPS_COMPONENT_VERSION=	4.3.3.1
+COMPONENT_VERSION=	4.3.4
+IPS_COMPONENT_VERSION=	4.3.4
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,7 +32,7 @@ COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
+    sha256:f5115aee3dd3e6925de4ba47b80ab732ba48b481c8364b6ebade2d43698d607e
 COMPONENT_BUGDB=	service/dhcp-server
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -63,11 +62,10 @@ build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:	$(TEST_32)
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
