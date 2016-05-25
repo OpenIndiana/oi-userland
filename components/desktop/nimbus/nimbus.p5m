@@ -27,6 +27,63 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # This optionally brings in unico gtk3 engine if gtk3 is installed
 depend type=conditional fmri=gnome/theme/gtk3-engines/unico predicate=library/desktop/gtk3
 
+depend type=require fmri=gnome/theme/gnome-icon-theme
+
+link path=usr/share/icons/nimbus/16x16/status/image-missing.png target=../../../gnome/16x16/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
+link path=usr/share/icons/nimbus/20x20/status/image-missing.png target=../../../gnome/20x20/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
+link path=usr/share/icons/nimbus/24x24/status/image-missing.png target=../../../gnome/24x24/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
+link path=usr/share/icons/nimbus/32x32/status/image-missing.png target=../../../gnome/32x32/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
+link path=usr/share/icons/nimbus/48x48/status/image-missing.png target=../../../gnome/48x48/status/gtk-missing-image.png pkg.linted.userland.action002.0=true
+
+# Something like 
+# grep -E '/(go-down|go-up|go-previous|go-next|edit|bookmarks)'  nimbus.p5m  |grep path |grep icons/ | \
+#   gawk -F '=' ' {  PT=$NF; PT1=$NF; gsub(".png","-symbolic.png",PT1); n=split($NF, a, "/"); TGT=a[n];print "hardlink path="PT1" target="TGT; }'  |grep usr/share
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-copy-symbolic.png target=edit-copy.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-cut-symbolic.png target=edit-cut.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-delete-symbolic.png target=edit-delete.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-find-replace-symbolic.png target=edit-find-replace.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-find-symbolic.png target=edit-find.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-font-symbolic.png target=edit-font.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-paste-symbolic.png target=edit-paste.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-redo-symbolic.png target=edit-redo.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-revert-symbolic.png target=edit-revert.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-undelete-symbolic.png target=edit-undelete.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-undo-symbolic.png target=edit-undo.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/edit-symbolic.png target=edit.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/editdelete-symbolic.png target=editdelete.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/editpaste-symbolic.png target=editpaste.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/go-down-symbolic.png target=go-down.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/go-next-symbolic.png target=go-next.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/go-previous-symbolic.png target=go-previous.png
+hardlink path=usr/share/icons/nimbus/16x16/actions/go-up-symbolic.png target=go-up.png
+hardlink path=usr/share/icons/nimbus/16x16/places/edittrash-symbolic.png target=edittrash.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-copy-symbolic.png target=edit-copy.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-cut-symbolic.png target=edit-cut.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-delete-symbolic.png target=edit-delete.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-find-replace-symbolic.png target=edit-find-replace.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-find-symbolic.png target=edit-find.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-font-symbolic.png target=edit-font.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-paste-symbolic.png target=edit-paste.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-redo-symbolic.png target=edit-redo.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-revert-symbolic.png target=edit-revert.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-undelete-symbolic.png target=edit-undelete.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-undo-symbolic.png target=edit-undo.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/edit-symbolic.png target=edit.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/editdelete-symbolic.png target=editdelete.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/editpaste-symbolic.png target=editpaste.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/go-down-symbolic.png target=go-down.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/go-next-symbolic.png target=go-next.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/go-previous-symbolic.png target=go-previous.png
+hardlink path=usr/share/icons/nimbus/24x24/actions/go-up-symbolic.png target=go-up.png
+hardlink path=usr/share/icons/nimbus/24x24/places/edittrash-symbolic.png target=edittrash.png
+hardlink path=usr/share/icons/nimbus/32x32/places/edittrash-symbolic.png target=edittrash.png
+hardlink path=usr/share/icons/nimbus/36x36/actions/edit-symbolic.png target=edit.png
+hardlink path=usr/share/icons/nimbus/36x36/places/edittrash-symbolic.png target=edittrash.png
+hardlink path=usr/share/icons/nimbus/48x48/actions/edit-symbolic.png target=edit.png
+hardlink path=usr/share/icons/nimbus/48x48/places/edittrash-symbolic.png target=edittrash.png
+hardlink path=usr/share/icons/nimbus/72x72/places/edittrash-symbolic.png target=edittrash.png
+
+
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/engines/libnimbus.so
 file path=usr/lib/gtk-2.0/2.10.0/engines/libnimbus.so
 link path=usr/share/icons/nimbus/12x12/actions/add.png target=list-add.png
