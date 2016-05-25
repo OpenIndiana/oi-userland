@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
