@@ -52,10 +52,6 @@ PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 # We patch auto* files, so regenerate headers and configure
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoheader ; autoconf -f)
 
-# we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
-# python-config
-CC +=	$(CFLAGS)
-
 C99MODE=
 CPPFLAGS +=	-IPython
 
@@ -78,10 +74,22 @@ CFLAGS +=	$(CC_PIC)
 # Use of xprofile requires that the same options be used during compilation and
 # linking.  The targets chosen are based on Solaris 11 minimum supported system
 # requirements.
+#
+# We bypass the profile build for one file (ceval.c; see the DTrace patch)
+# and reduce the optimization level for that same file to work around a
+# problem (see bug 23467236) where Python would core dump on sparc when
+# run under DTrace.
 COMPONENT_BUILD_TARGETS = profile-opt
 XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
 PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
 PYFLAGS.sparc =
+CEVAL_PATSUBST.i386 =	
+CEVAL_PATSUBST.sparc =	"-xprofile=\%"
+CEVAL_PATSUBST =	$(CEVAL_PATSUBST.$(MACH))
+CEVAL_CFLAGS.i386 =	$(CFLAGS)
+CEVAL_CFLAGS.sparc =	$(subst -xO5,-xO4,$(CFLAGS))
+CEVAL_CFLAGS =		$(CEVAL_CFLAGS.$(MACH))
+
 CFLAGS += -xO5 $(PYFLAGS.$(MACH))
 LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
 
@@ -114,6 +122,8 @@ CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV  +=		PATH="$(PATH)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
+COMPONENT_BUILD_ENV  +=		CEVAL_CFLAGS="$(CEVAL_CFLAGS)"
+COMPONENT_BUILD_ENV  +=		CEVAL_PATSUBST="$(CEVAL_PATSUBST)"
 
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.7/lib-dynload

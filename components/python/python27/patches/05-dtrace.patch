@@ -36,7 +36,7 @@ integrated into the main tree.
 +	dtrace -o $@ $(DFLAGS) -C -h -s $(srcdir)/Python/python.d
 +
 +Python/ceval.o: Python/ceval.c Python/python.h
-+	$(CC) -c -I. -IPython $(BASECFLAGS) $(EXTRA_CFLAGS) $(CPPFLAGS) $(CFLAGSFORSHARED) $(CFLAGS) -DPy_BUILD_CORE -o $@ $<
++	$(patsubst $(CEVAL_PATSUBST),,$(CC) -c -I. -IPython $(BASECFLAGS) $(EXTRA_CFLAGS) $(CPPFLAGS) $(CFLAGSFORSHARED) $(CEVAL_CFLAGS)) -DPy_BUILD_CORE -o $@ $<
 +
 +Python/dtrace.o: $(srcdir)/Python/python.d Python/ceval.o
 +	dtrace -o $@ $(DFLAGS) -C -G -s $(srcdir)/Python/python.d Python/ceval.o
