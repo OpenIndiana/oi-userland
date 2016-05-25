@@ -36,6 +36,14 @@ COMPONENT_BUGDB=	library/libgcrypt
 
 TPNO=			26276
 
+# Requires new pkgmogrify feature, available in S12 but not 11.3, so do not
+# publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 COMPONENT_BUILD_TARGETS = all info
 
 include $(WS_MAKE_RULES)/common.mk
@@ -80,7 +88,9 @@ $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.installed:
 $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.FRC_%:
 	$(GMAKE) -C $(WS_COMPONENTS)/libgcrypt-15 $(@F:.FRC_%=%)
 
+ifneq ($(BUILD_TYPE), evaluation)
 install: $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.installed
+endif
 
 clean clobber:: % : $(WS_COMPONENTS)/libgcrypt-15/build/$(MACH$(BITS))/.FRC_%
 
