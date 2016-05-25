@@ -37,6 +37,14 @@ COMPONENT_ARCHIVE_HASH= \
 
 TPNO=			25403
 
+# Requires newer version of library/glib2, not buildable on 11.3, so do not
+# publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Not compatible with Python 3.x.
