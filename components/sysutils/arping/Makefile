@@ -53,7 +53,7 @@ CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 # lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
 # libpcap device enumeration.
 LD_B_DIRECT=
-ASLR_MODE =	$(ASLR_ENABLE)
+#ASLR_MODE =	$(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)
