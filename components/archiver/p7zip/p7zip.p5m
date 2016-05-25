@@ -20,6 +20,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -35,12 +36,27 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2007/617
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/lib/p7zip/7z path=usr/bin/7z
-file usr/lib/p7zip/7za path=usr/bin/7za
-file usr/lib/p7zip/7zr path=usr/bin/7zr
+
+file usr/lib/p7zip/$(MACH32)/7z path=usr/bin/$(MACH32)/7z
+file usr/lib/p7zip/$(MACH32)/7za path=usr/bin/$(MACH32)/7za
+file usr/lib/p7zip/$(MACH32)/7zr path=usr/bin/$(MACH32)/7zr
+
+file usr/lib/p7zip/$(MACH64)/7z path=usr/bin/$(MACH64)/7z
+file usr/lib/p7zip/$(MACH64)/7za path=usr/bin/$(MACH64)/7za
+file usr/lib/p7zip/$(MACH64)/7zr path=usr/bin/$(MACH64)/7zr
+
+hardlink path=usr/bin/7z target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/7za target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/7zr target=../lib/isaexec pkg.linted.userland.action002.0=true
+
 file contrib/gzip-like_CLI_wrapper_for_7z/p7zip path=usr/bin/p7zip
-file usr/lib/p7zip/7z.so path=usr/lib/7z/7z.so
-file usr/lib/p7zip/Codecs/Rar29.so path=usr/lib/7z/Codecs/Rar29.so
+
+file usr/lib/p7zip/$(MACH32)/7z.so path=usr/lib/7z/7z.so
+file usr/lib/p7zip/$(MACH32)/Codecs/Rar29.so path=usr/lib/7z/Codecs/Rar29.so
+
+file usr/lib/p7zip/$(MACH64)/7z.so path=usr/lib/$(MACH64)/7z/7z.so
+file usr/lib/p7zip/$(MACH64)/Codecs/Rar29.so path=usr/lib/$(MACH64)/7z/Codecs/Rar29.so
+
 file path=usr/share/doc/p7zip/ChangeLog
 file path=usr/share/doc/p7zip/DOCS/7zC.txt
 file path=usr/share/doc/p7zip/DOCS/7zFormat.txt
@@ -91,11 +107,14 @@ file path=usr/share/doc/p7zip/DOCS/lzma.txt
 file path=usr/share/doc/p7zip/DOCS/readme.txt
 file path=usr/share/doc/p7zip/DOCS/unRarLicense.txt
 file path=usr/share/doc/p7zip/README
+
 file usr/man/man1/7z.1 path=usr/share/man/man1/7z.1 \
     mangler.man.stability=Committed
 file usr/man/man1/7za.1 path=usr/share/man/man1/7za.1
 file usr/man/man1/7zr.1 path=usr/share/man/man1/7zr.1
+
 file contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 \
     path=usr/share/man/man1/p7zip.1
+
 license copying.txt license=LGPLv2.1+
 license unRarLicense.txt license=unRAR
