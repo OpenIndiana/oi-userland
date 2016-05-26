@@ -31,6 +31,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_INSTALL_ENV+= PREFIX="/usr"
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
