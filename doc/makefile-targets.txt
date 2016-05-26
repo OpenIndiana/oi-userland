@@ -80,13 +80,25 @@ pkglint::
   by the inclusion of $(WS_MAKE_RULES)/prep.mk.  It will run the build steps
   necessary to pkglint the manifests for a component.
 
-publish::
+pre-publish::
   This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
   automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
   on the previously described 'install' target and will perform a series of
   internal, intermediate steps to use the component package manifests to
-  generate and publish packages for that component.
+  generate and validate consistency of packages for that component.
+
+  NOTE: The pre-publish target aims to help a recipe developer to make sure
+  that the recipe can produce a valid package without actually pushing its
+  bits into his or her repository (allows to experiment, saves some time, and
+  avoids polluting the repository with known-bad code during development cycles).
+
+publish::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
+  on the previously described 'pre-publish' target and will actually publish
+  packages for that component to the repository configured in $(WS_REPO).
 
 clean::
   This target is present in all Makefiles.  It can be used at the top level
