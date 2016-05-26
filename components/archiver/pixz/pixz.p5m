@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability Uncommitted>
@@ -38,6 +39,10 @@ set name=info.upstream value="Dave Vasilevsky <dave@vasilevsky.ca>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/358
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file pixz path=usr/bin/pixz
+
+file usr/bin/pixz path=usr/bin/$(MACH32)/pixz
+file path=usr/bin/$(MACH64)/pixz
+hardlink path=usr/bin/pixz target=../lib/isaexec pkg.linted.userland.action002.0=true
+
 file pixz.1 path=usr/share/man/man1/pixz.1
 license LICENSE license=BSD-like

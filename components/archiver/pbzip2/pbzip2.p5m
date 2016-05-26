@@ -11,6 +11,7 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013, Adam Stevko. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -22,9 +23,18 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license pbzip2.license license="pbzip2 license"
+license COPYING license="pbzip2 license"
 
-file path=usr/bin/pbzip2
+file path=usr/bin/$(MACH32)/pbzip2
+link path=usr/bin/$(MACH32)/pbunzip2 target=./pbzip2
+link path=usr/bin/$(MACH32)/pbzcat target=./pbzip2
+
+file path=usr/bin/$(MACH64)/pbzip2
+link path=usr/bin/$(MACH64)/pbunzip2 target=./pbzip2
+link path=usr/bin/$(MACH64)/pbzcat target=./pbzip2
+
+hardlink path=usr/bin/pbzip2 target=../lib/isaexec pkg.linted.userland.action002.0=true
 link path=usr/bin/pbunzip2 target=./pbzip2
 link path=usr/bin/pbzcat target=./pbzip2
+
 file path=usr/share/man/man1/pbzip2.1

@@ -21,12 +21,14 @@
 
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbzip2
 COMPONENT_VERSION=	1.1.13
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://compression.ca/pbzip2/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,22 +37,32 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/pbzip2/1.1/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pbzip2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-build:		$(BUILD_32)
+# Trailing flags are those our CXXFLAGS override in original project Makefile
+CXXFLAGS += $(CPP_LARGEFILES) -DUSE_STACKSIZE_CUSTOMIZATION -pthread -D_POSIX_PTHREAD_SEMANTICS
 
-install:	$(INSTALL_32)
+COMPONENT_POST_INSTALL_ACTION = \
+	( $(MKDIR) $(PROTOUSRBINDIR)/$(MACH$(BITS)) && \
+	  $(MV) $(PROTOUSRBINDIR)/pbzip2 $(PROTOUSRBINDIR)/$(MACH$(BITS))/pbzip2 )
+
+COMPONENT_BUILD_ARGS += CC="$(CC)"
+COMPONENT_BUILD_ARGS += CXX="$(CXX)"
+COMPONENT_BUILD_ARGS += CXXFLAGS="$(CXXFLAGS)"
+
+# common targets
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
