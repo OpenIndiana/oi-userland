@@ -145,3 +145,20 @@ test:				$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/object-file
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

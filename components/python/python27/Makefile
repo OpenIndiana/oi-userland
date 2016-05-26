@@ -40,8 +40,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# Need to preserve timestamp for Grammar files.  If the pickle files are older, 
-# Python will try to rebuild them.  
+# Need to preserve timestamp for Grammar files.  If the pickle files are older,
+# Python will try to rebuild them.
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
@@ -128,3 +128,22 @@ test:				$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/python-2/pip-27
+REQUIRED_PACKAGES += library/python-2/tkinter-27
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-27/tests
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
