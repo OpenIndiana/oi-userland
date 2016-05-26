@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Adam Stevko
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -21,10 +21,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
-
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/icons/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
 file path=usr/bin/transmission-cli
 file path=usr/bin/transmission-create
@@ -89,6 +85,7 @@ file path=usr/share/locale/ka/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/kk/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/ko/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/ku/LC_MESSAGES/transmission-gtk.mo
+file path=usr/share/locale/ky/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/li/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/lt/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/lv/LC_MESSAGES/transmission-gtk.mo
@@ -97,6 +94,7 @@ file path=usr/share/locale/ml/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/mr/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/ms/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/mt/LC_MESSAGES/transmission-gtk.mo
+file path=usr/share/locale/my/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/nb/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/nds/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/nl/LC_MESSAGES/transmission-gtk.mo
@@ -114,6 +112,7 @@ file path=usr/share/locale/sl/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/sq/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/sr/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/sv/LC_MESSAGES/transmission-gtk.mo
+file path=usr/share/locale/sw/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/ta_LK/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/te/LC_MESSAGES/transmission-gtk.mo
 file path=usr/share/locale/th/LC_MESSAGES/transmission-gtk.mo
@@ -144,26 +143,32 @@ file path=usr/share/transmission/web/javascript/dialog.js
 file path=usr/share/transmission/web/javascript/file-row.js
 file path=usr/share/transmission/web/javascript/formatter.js
 file path=usr/share/transmission/web/javascript/inspector.js
-file path=usr/share/transmission/web/javascript/jquery/jquery.contextmenu.min.js
-file path=usr/share/transmission/web/javascript/jquery/jquery.form.js
-file path=usr/share/transmission/web/javascript/jquery/jquery.form.min.js
+file path=usr/share/transmission/web/javascript/jquery/jquery-migrate.min.js
+file path=usr/share/transmission/web/javascript/jquery/jquery-ui.min.js
 file path=usr/share/transmission/web/javascript/jquery/jquery.min.js
 file path=usr/share/transmission/web/javascript/jquery/jquery.transmenu.min.js
-file path=usr/share/transmission/web/javascript/jquery/jqueryui-1.8.16.min.js
+file path=usr/share/transmission/web/javascript/jquery/jquery.ui-contextmenu.min.js
 file path=usr/share/transmission/web/javascript/jquery/json2.min.js
+file path=usr/share/transmission/web/javascript/notifications.js
 file path=usr/share/transmission/web/javascript/prefs-dialog.js
 file path=usr/share/transmission/web/javascript/remote.js
 file path=usr/share/transmission/web/javascript/torrent-row.js
 file path=usr/share/transmission/web/javascript/torrent.js
 file path=usr/share/transmission/web/javascript/transmission.js
+file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_flat_0_aaaaaa_40x100.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_flat_75_ffffff_40x100.png
+file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_glass_55_fbf9ee_1x400.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_glass_65_ffffff_1x400.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_glass_75_dadada_1x400.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_glass_75_e6e6e6_1x400.png
+file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_glass_95_fef1ec_1x400.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-bg_highlight-soft_75_cccccc_1x100.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-icons_222222_256x240.png
+file path=usr/share/transmission/web/style/jqueryui/images/ui-icons_2e83ff_256x240.png
 file path=usr/share/transmission/web/style/jqueryui/images/ui-icons_454545_256x240.png
-file path=usr/share/transmission/web/style/jqueryui/jqueryui-1.8.16.css
+file path=usr/share/transmission/web/style/jqueryui/images/ui-icons_888888_256x240.png
+file path=usr/share/transmission/web/style/jqueryui/images/ui-icons_cd0a0a_256x240.png
+file path=usr/share/transmission/web/style/jqueryui/jquery-ui.min.css
 file path=usr/share/transmission/web/style/transmission/common.css
 file path=usr/share/transmission/web/style/transmission/images/arrow-down.png
 file path=usr/share/transmission/web/style/transmission/images/arrow-up.png
