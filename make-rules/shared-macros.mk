@@ -57,6 +57,10 @@ WS_LICENSES =   $(WS_TOP)/licenses
 WS_INCORPORATIONS =     $(WS_TOP)/incorporations
 WS_LINT_CACHE = $(WS_MACH)/pkglint-cache
 
+# If you have some customization to apply to common recipes on your build host,
+# you can put then into this file.
+-include $(WS_MAKE_RULES)/custom-macros-pre.mk
+
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
 # we don't want the builds or ./configure's failing as well.
@@ -1011,3 +1015,7 @@ include $(WS_MAKE_RULES)/environment.mk
 # is not always what you get.
 print-%:
 	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
+
+# If you have some customization to apply to common recipes on your build host,
+# you can put then into this file.
+-include $(WS_MAKE_RULES)/custom-macros-post.mk
