@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# PAM configuration for the SSH user authentication type of 'none' which is
+# used when no authentication is required at all.  This PAM fragment prevents 
+# authentication using sshd-none to avoid unnecessary interaction with
+# failed logins tracking in certain SSH and PAM configurations.  If SSH
+# logins are desired without any authentication then this is possible by
+# configuring both the sshd_config(5) options 'PasswordAuthentication' and
+# 'PermitEmptyPasswords' to be 'yes' and using either the 'password' or
+# 'keyboard-interactive' user authentication methods.
+#
+auth		definitive	pam_deny.so.1
+account		definitive	pam_deny.so.1
+session		definitive	pam_deny.so.1
+password	definitive	pam_deny.so.1
