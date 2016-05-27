@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.12.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,6 +35,9 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS += --enable-python=python2.7
+
+CONFIGURE_ENV += PERL=$(PERL)
+CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
 build:          $(BUILD_32)
 
