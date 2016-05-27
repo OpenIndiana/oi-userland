@@ -188,7 +188,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # not available in the stand-alone environment of wanboot.
 COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; \
+      $(LN) -fs $(COMPONENT_DIR)/../common/engines/pkcs11/*.[ch]	$(@D)/engines; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
 
 # Enable ASLR for this component

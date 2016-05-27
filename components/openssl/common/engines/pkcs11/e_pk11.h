@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.h */
@@ -89,17 +89,14 @@ extern "C" {
  * (if there is one) or a new one is created to handle the request
  * (if the list is empty). See pk11_get_session() on how it is done.
  */
-typedef struct PK11_st_SESSION
-	{
+typedef struct PK11_st_SESSION {
 	struct PK11_st_SESSION	*next;
 	CK_SESSION_HANDLE	session;	/* PK11 session handle */
 	pid_t			pid;		/* Current process ID */
 	CK_BBOOL		persistent;	/* is that a keystore object? */
-	union
-		{
+	union {
 #ifndef OPENSSL_NO_RSA
-		struct
-			{
+		struct {
 			CK_OBJECT_HANDLE	rsa_pub_key; /* pub handle */
 			CK_OBJECT_HANDLE	rsa_priv_key; /* priv handle */
 			RSA			*rsa_pub; /* pub key addr */
@@ -107,36 +104,33 @@ typedef struct PK11_st_SESSION
 			BIGNUM			*rsa_e_num; /* pub exponent */
 			RSA			*rsa_priv; /* priv key addr */
 			BIGNUM			*rsa_d_num; /* priv exponent */
-			} u_RSA;
+		} u_RSA;
 #endif /* OPENSSL_NO_RSA */
 #ifndef OPENSSL_NO_DSA
-		struct
-			{
+		struct {
 			CK_OBJECT_HANDLE	dsa_pub_key; /* pub handle */
 			CK_OBJECT_HANDLE	dsa_priv_key; /* priv handle */
 			DSA			*dsa_pub; /* pub key addr */
 			BIGNUM			*dsa_pub_num; /* pub key */
 			DSA			*dsa_priv; /* priv key addr */
 			BIGNUM			*dsa_priv_num; /* priv key */
-			} u_DSA;
+		} u_DSA;
 #endif /* OPENSSL_NO_DSA */
 #ifndef OPENSSL_NO_DH
-		struct
-			{
+		struct {
 			CK_OBJECT_HANDLE	dh_key; /* key handle */
 			DH			*dh; /* dh key addr */
 			BIGNUM			*dh_priv_num; /* priv dh key */
-			} u_DH;
+		} u_DH;
 #endif /* OPENSSL_NO_DH */
-		struct
-			{
+		struct {
 			CK_OBJECT_HANDLE	cipher_key; /* key handle */
 			unsigned char		key[PK11_KEY_LEN_MAX];
 			int			key_len; /* priv key len */
 			int			encrypt; /* 1/0 enc/decr */
-			} u_cipher;
-		} opdata_u;
-	} PK11_SESSION;
+		} u_cipher;
+	} opdata_u;
+} PK11_SESSION;
 
 #define	opdata_rsa_pub_key	opdata_u.u_RSA.rsa_pub_key
 #define	opdata_rsa_priv_key	opdata_u.u_RSA.rsa_priv_key
@@ -177,8 +171,7 @@ typedef struct PK11_st_SESSION
  * To provide locking granularity in multithreaded environment, the groups are
  * further split into types with each type having a separate session cache.
  */
-typedef enum PK11_OPTYPE_ENUM
-	{
+typedef enum PK11_OPTYPE_ENUM {
 	OP_RAND,
 	OP_RSA,
 	OP_DSA,
@@ -186,26 +179,24 @@ typedef enum PK11_OPTYPE_ENUM
 	OP_CIPHER,
 	OP_DIGEST,
 	OP_MAX
-	} PK11_OPTYPE;
+} PK11_OPTYPE;
 
 /*
  * This structure contains the heads of the lists forming the object caches
  * and locks associated with the lists.
  */
-typedef struct PK11_st_CACHE
-	{
+typedef struct PK11_st_CACHE {
 	PK11_SESSION *head;
 	pthread_mutex_t *lock;
-	} PK11_CACHE;
+} PK11_CACHE;
 
 /* structure for tracking handles of asymmetric key objects */
-typedef struct PK11_active_st
-	{
+typedef struct PK11_active_st {
 	CK_OBJECT_HANDLE h;
 	unsigned int refcnt;
 	struct PK11_active_st *prev;
 	struct PK11_active_st *next;
-	} PK11_active;
+} PK11_active;
 
 extern pthread_mutex_t *find_lock[];
 extern PK11_active *active_list[];

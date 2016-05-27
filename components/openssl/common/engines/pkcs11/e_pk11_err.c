@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11_err.c */
@@ -249,12 +249,12 @@ static ERR_STRING_DATA pk11_engine_lib_name[] =
 
 static void
 ERR_load_pk11_strings(void)
-	{
-	if (pk11_lib_error_code == 0)
+{
+	if (pk11_lib_error_code == 0) {
 		pk11_lib_error_code = ERR_get_next_error_library();
+	}
 
-	if (pk11_error_init)
-		{
+	if (pk11_error_init) {
 		pk11_error_init = 0;
 #ifndef OPENSSL_NO_ERR
 		ERR_load_strings(pk11_lib_error_code, pk11_str_functs);
@@ -266,14 +266,13 @@ ERR_load_pk11_strings(void)
 		    ERR_PACK(pk11_lib_error_code, 0, 0);
 		ERR_load_strings(0, pk11_engine_lib_name);
 #endif
-		}
 	}
+}
 
 static void
 ERR_unload_pk11_strings(void)
-	{
-	if (pk11_error_init == 0)
-		{
+{
+	if (pk11_error_init == 0) {
 #ifndef OPENSSL_NO_ERR
 		ERR_unload_strings(pk11_lib_error_code, pk11_str_functs);
 		ERR_unload_strings(pk11_lib_error_code, pk11_str_reasons);
@@ -284,23 +283,24 @@ ERR_unload_pk11_strings(void)
 #endif
 
 		pk11_error_init = 1;
-		}
 	}
+}
 
 void
 ERR_pk11_error(int function, int reason, char *file, int line)
-	{
-	if (pk11_lib_error_code == 0)
+{
+	if (pk11_lib_error_code == 0) {
 		pk11_lib_error_code = ERR_get_next_error_library();
-	ERR_PUT_error(pk11_lib_error_code, function, reason, file, line);
 	}
+	ERR_PUT_error(pk11_lib_error_code, function, reason, file, line);
+}
 
 void
 PK11err_add_data(int function, int reason, CK_RV rv)
-	{
+{
 	char tmp_buf[20];
 
 	PK11err(function, reason);
 	(void) snprintf(tmp_buf, sizeof (tmp_buf), "%lx", rv);
 	ERR_add_error_data(2, "PK11 CK_RV=0X", tmp_buf);
-	}
+}
