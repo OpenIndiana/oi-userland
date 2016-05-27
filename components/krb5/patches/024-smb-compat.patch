@@ -4,7 +4,6 @@
 # stress testing.  The CRs in order:
 #
 # 15580724 SUNBT6868908 Solaris acceptors should have returned KRB5KRB_AP_...
-# 15648322 SUNBT6959251 coredump in gss_release_name+0x36
 # 20416772 spnego_gss_accept_sec_context issue with incorrect KRB OID
 # 16005842 Should retry SMB authentication upgrade to account for network...
 # 15579598 SUNBT6867208 Windows client cannot recover from KRB5KRB_AP_ERR_SKEW..
@@ -68,13 +67,15 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/krb5/accept_sec_context
          code -= ERROR_TABLE_BASE_krb5;
          if (code < 0 || code > KRB_ERR_MAX)
              code = 60 /* KRB_ERR_GENERIC */;
-diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c krb5-1.13.3/src/lib/gssapi/spnego/spnego_mech.c
---- krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c
-+++ krb5-1.13.3/src/lib/gssapi/spnego/spnego_mech.c
-@@ -190,6 +190,13 @@
+
+diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/spnego_mech.c
+--- new/src/lib/gssapi/spnego/spnego_mech.c	2016-02-29 11:50:13.000000000 -0800
++++ patched/src/lib/gssapi/spnego/spnego_mech.c	2016-03-18 21:55:31.131280297 -0700
+@@ -191,7 +190,14 @@ static const gss_OID_set_desc spnego_oid
  };
  const gss_OID_set_desc * const gss_mech_set_spnego = spnego_oidsets+0;
  
+ static int make_NegHints(OM_uint32 *, gss_buffer_t *);
 +/* encoded OID octet string for NTLMSSP security mechanism */
 +#define GSS_MECH_NTLMSSP_OID_LENGTH 10
 +#define GSS_MECH_NTLMSSP_OID "\053\006\001\004\001\202\067\002\002\012"
@@ -82,19 +83,10 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c kr
 +	GSS_MECH_NTLMSSP_OID_LENGTH, GSS_MECH_NTLMSSP_OID
 +};
 +
- static int make_NegHints(OM_uint32 *, spnego_gss_cred_id_t, gss_buffer_t *);
  static int put_neg_hints(unsigned char **, gss_buffer_t, unsigned int);
  static OM_uint32
-@@ -1237,7 +1244,7 @@
- 					&hintNameBuf,
- 					&hintNameType);
- 	if (major_status != GSS_S_COMPLETE) {
--		gss_release_name(&minor, &hintName);
-+		gss_release_name(&minor, &hintKerberosName);
- 		return (major_status);
- 	}
- 	gss_release_name(&minor, &hintKerberosName);
-@@ -1380,6 +1387,7 @@
+ acc_ctx_hints(OM_uint32 *, gss_ctx_id_t *, spnego_gss_cred_id_t,
+@@ -1325,6 +1387,7 @@ acc_ctx_new(OM_uint32 *minor_status,
  	gss_buffer_desc der_mechTypes;
  	gss_OID mech_wanted;
  	spnego_gss_ctx_id_t sc = NULL;
@@ -102,7 +94,7 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c kr
  
  	ret = GSS_S_DEFECTIVE_TOKEN;
  	der_mechTypes.length = 0;
-@@ -1403,6 +1411,24 @@
+@@ -1348,6 +1411,24 @@ acc_ctx_new(OM_uint32 *minor_status,
  		goto cleanup;
  	}
  	/*
@@ -127,15 +119,15 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c kr
  	 * Select the best match between the list of mechs
  	 * that the initiator requested and the list that
  	 * the acceptor will support.
-@@ -3136,6 +3162,7 @@
- 	int		found = 0;
- 	OM_uint32 major_status = GSS_S_COMPLETE, tmpmin;
+@@ -3072,6 +3163,7 @@ static OM_uint32
  	gss_OID_set mechs, goodmechs;
+	gss_OID_set_desc except_attrs;
+	gss_OID_desc attr_oids[2];
 +	char *msinterop = getenv("MS_INTEROP");
  
- 	major_status = gss_indicate_mechs(minor_status, &mechs);
- 
-@@ -3150,6 +3177,15 @@
+	attr_oids[0] = *GSS_C_MA_DEPRECATED;
+	attr_oids[1] = *GSS_C_MA_NOT_DFLT_MECH;
+@@ -3108,6 +3177,15 @@ get_available_mechs(OM_uint32 *minor_sta
  		return (major_status);
  	}
  
@@ -151,7 +143,7 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c kr
  	for (i = 0; i < mechs->count && major_status == GSS_S_COMPLETE; i++) {
  		if ((mechs->elements[i].length
  		    != spnego_mechanism.mech_type.length) ||
-@@ -3165,6 +3201,25 @@
+@@ -3123,6 +3201,25 @@ get_available_mechs(OM_uint32 *minor_sta
  		}
  	}
  
@@ -177,7 +169,7 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/spnego/spnego_mech.c kr
  	/*
  	 * If the caller wanted a list of creds returned,
  	 * trim the list of mechanisms down to only those
-@@ -3740,9 +3795,17 @@
+@@ -3698,9 +3795,17 @@ negotiate_mech(gss_OID_set supported, gs
  	for (i = 0; i < received->count; i++) {
  		gss_OID mech_oid = &received->elements[i];
  
