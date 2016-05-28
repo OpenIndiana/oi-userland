@@ -1,0 +1,73 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/gnome/dconf@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The GNOME configuration framework"
+set name=com.oracle.info.description value=dconf
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/317
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/dconf
+file path=usr/include/dconf-dbus-1/dconf-dbus-1.h
+file path=usr/include/dconf/client/dconf-client.h
+file path=usr/include/dconf/common/dconf-changeset.h
+file path=usr/include/dconf/common/dconf-error.h
+file path=usr/include/dconf/common/dconf-paths.h
+file path=usr/include/dconf/dconf.h
+file path=usr/lib/$(MACH64)/gio/modules/libdconfsettings.so
+link path=usr/lib/$(MACH64)/libdconf-dbus-1.so target=libdconf-dbus-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libdconf-dbus-1.so.0 target=libdconf-dbus-1.so.0.0.0
+file path=usr/lib/$(MACH64)/libdconf-dbus-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libdconf.so target=libdconf.so.1.0.0
+link path=usr/lib/$(MACH64)/libdconf.so.1 target=libdconf.so.1.0.0
+file path=usr/lib/$(MACH64)/libdconf.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/dconf-dbus-1.pc
+file path=usr/lib/$(MACH64)/pkgconfig/dconf.pc
+file usr/lib/$(MACH64)/dconf-service path=usr/lib/dconf-service mode=0555
+file path=usr/lib/gio/modules/libdconfsettings.so
+link path=usr/lib/libdconf-dbus-1.so target=libdconf-dbus-1.so.0.0.0
+link path=usr/lib/libdconf-dbus-1.so.0 target=libdconf-dbus-1.so.0.0.0
+file path=usr/lib/libdconf-dbus-1.so.0.0.0
+link path=usr/lib/libdconf.so target=libdconf.so.1.0.0
+link path=usr/lib/libdconf.so.1 target=libdconf.so.1.0.0
+file path=usr/lib/libdconf.so.1.0.0
+file path=usr/lib/pkgconfig/dconf-dbus-1.pc
+file path=usr/lib/pkgconfig/dconf.pc
+file path=usr/share/bash-completion/completions/dconf
+file path=usr/share/dbus-1/services/ca.desrt.dconf.service
+file path=usr/share/man/man1/dconf-service.1
+file path=usr/share/man/man1/dconf.1
+file path=usr/share/man/man7/dconf.7
+file path=usr/share/vala/vapi/dconf.deps
+file path=usr/share/vala/vapi/dconf.vapi
+license COPYING license=LGPLv2.1
+
+# Older versions of vala deliver a usr/share/vala/vapi/dconf.vapi file
+# that conflicts with the one installed here
+depend type=optional fmri=developer/vala@0.30.0
