@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.5.34
+COMPONENT_VERSION=	5.5.36
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:af88884416a92619de842ad0fd23f7f7e8140efb0b9194f98a38a78781e5851c
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:e1bbe33d6b4da66b15c483131520a9fc505eeb6629fa70c5cfba79590a1d0801
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -187,3 +187,24 @@ COMPONENT_INSTALL_TARGETS = install-sapi
 build:		$(BUILD_32_and_64) 
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/uw-imap
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libmcrypt
+REQUIRED_PACKAGES += text/aspell
+REQUIRED_PACKAGES += text/tidy
+REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += web/server/apache-24
