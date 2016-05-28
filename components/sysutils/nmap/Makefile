@@ -21,17 +21,23 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
-COMPONENT_VERSION=		6.25
+COMPONENT_VERSION=		7.12
 COMPONENT_PROJECT_URL=	http://nmap.org/
+COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Administration and Configuration
+COMPONENT_SUMMARY=		Network exploration tool and security / port scanner
+COMPONENT_DESCRIPTION=	Nmap is useful for inventorying the network, managing \
+service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:42c54fd5cc5f05e5df909757d62307102a8ff1dfaf5c2626b1cb5f2ecd009e57
+	sha256:63df082a87c95a189865d37304357405160fc6333addcf5b84204c95e0539b04
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=		utility/nmap
 COMPONENT_LICENSE=		GPLv2,OpenSSL,SSLeay
@@ -41,6 +47,10 @@ COMPONENT_LICENSE_FILE=	nmap.license
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
+PKG_OPTIONS +=	-D PYTHON_VERSION="$(PYTHON_VERSION)"
+PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
 
 # Can't use the Studio compilers as they don't support the GNU 
 # __attribute__ extension
@@ -68,12 +78,14 @@ CONFIGURE_OPTIONS  +=   --with-ndiff
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
 COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -e 's?env python?python$(PYTHON_VERSION)?' \
-                -i $(PROTOUSRBINDIR)/uninstall_zenmap
+                -i $(PROTOUSRBINDIR)/uninstall_zenmap && \
+        $(GSED) -e 's?env python?python$(PYTHON_VERSION)?' \
+                -i $(PROTOUSRBINDIR)/uninstall_ndiff
 
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
