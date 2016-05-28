@@ -14,10 +14,10 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=      5.6.20
+COMPONENT_VERSION=      5.6.22
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5ac7bf7caec7a79b18cf458e786fd1609ad2da771224b80bc15cc6f01b22bf1f
+COMPONENT_ARCHIVE_HASH= sha256:90da8a80cc52fa699cf2bfa4c6fa737c772df7c92b81ef483460aa3b1e9f88c6
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -67,3 +67,7 @@ COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/php-56/php-common

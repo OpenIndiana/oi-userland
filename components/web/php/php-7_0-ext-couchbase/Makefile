@@ -67,3 +67,7 @@ COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += library/libcouchbase
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/php-70/php-common
