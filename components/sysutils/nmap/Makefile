@@ -52,10 +52,6 @@ PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 PKG_OPTIONS +=	-D PYTHON_VERSION="$(PYTHON_VERSION)"
 PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
 
-# Can't use the Studio compilers as they don't support the GNU 
-# __attribute__ extension
-COMPILER =	gcc
-
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D) && \
 	  cd $(@D)/libdnet-stripped && autoconf )
