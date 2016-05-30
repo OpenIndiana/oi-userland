@@ -32,30 +32,31 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-group groupname=pof-svc gid=252
-user group=pof-svc username=pof-svc uid=252 gcos-field="Passive Fingerprinter daemon user" ftpuser=false shell="/bin/false" home="/var/lib/p0f"
-
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file files/exec_attr.p0f path=etc/security/exec_attr.d/diagnostic:p0f
+# IDs reserved on http://wiki.openindiana.org/oi/UIDs+and+GIDs
+group groupname=p0f gid=76
+user group=p0f username=p0f uid=76 gcos-field="Passive Fingerprinter daemon user" \
+    ftpuser=false shell="/bin/false" home="/var/lib/p0f"
+
+dir path=var/lib/p0f owner=p0f group=p0f mode=0770
 
 # Nobody (source or recipe) bothered to make an "install" action
 # so we snatch files from the build directly
 file i86/p0f \
-        path=usr/sbin/p0f owner=root group=bin mode=0555
+     path=usr/sbin/p0f owner=root group=bin mode=0555
 file i86/p0f-debug \
-        path=usr/sbin/p0f-debug owner=root group=bin mode=0555
+     path=usr/sbin/p0f-debug owner=root group=bin mode=0555
 file docs/README \
-        path=usr/share/p0f/README
+     path=usr/share/p0f/README
 file p0f.fp \
-        path=usr/share/p0f/p0f.fp
+     path=usr/share/p0f/p0f.fp
 
 # Jim Klimov's additions for Solaris integration
 # The XML manifest also includes some notes on needed SMF and ZONE privileges
 # as well as setting dependency order
-dir path=var/lib/p0f owner=pof-svc group=pof-svc mode=0770
+file files/exec_attr.p0f path=etc/security/exec_attr.d/diagnostic:p0f
 file p0f.sh \
-        path=usr/sbin/p0f.sh owner=root group=bin mode=0555
+     path=usr/sbin/p0f.sh owner=root group=bin mode=0555
 file p0f-daemon.xml \
-        path=var/svc/manifest/network/p0f-daemon.xml
-
+     path=lib/svc/manifest/network/p0f-daemon.xml

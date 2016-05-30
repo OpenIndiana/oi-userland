@@ -9,8 +9,10 @@
 #
 
 #
-# Fixes to make it compile under Solaris and run under SMF Copyright (c) 2011-2015 by Jim Klimov
-# Build/package procedure ported to OI/Hipster Copyright (c) 2015-2016 Jim Klimov
+# Fixes to make it compile under Solaris and run under SMF -
+#   Copyright (c) 2011-2016 by Jim Klimov
+# Build/package procedure ported to OI/Hipster -
+#   Copyright (c) 2015-2016 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
