@@ -50,6 +50,8 @@ CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--disable-pp-build
 CONFIGURE_OPTIONS +=	--disable-gui-build
 CONFIGURE_OPTIONS +=	--disable-qt4
+# bye, bye SANE backends
+CONFIGURE_OPTIONS +=	--disable-scan-build
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
@@ -62,10 +64,10 @@ HPIJS_VARIANT = $(BUILD_DIR)/$(MACH32)-hpijs
 
 VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
 
-# We build two variants: for the CUPS/SANE support
+# We build two variants: for the CUPS support
 # and for the HPIJS only support
 
-# use these options for the CUPS/SANE support
+# use these options for the CUPS support
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=$(USRSHAREDIR)/cups/model/SUNWhplip
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-libusb01_build
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-fax-build
@@ -113,12 +115,10 @@ $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	$(PYTHON.$(PYTHON_VERSION)) -m compileall $(PROTO_DIR)/usr/share/hplip/
 	$(TOUCH) $@
 
-PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
-#
 # Since it looks like you can't build HPLIP with both HPIJS and CUPS support
 # and seperate the HPIJS and CUPS PPD data, we need to replicate the code and
 # build it twice.  Once for the HPIJS support used by LP and once for the rest
-# of the support used for CUPS and SANE.
+# of the support used for CUPS
 #
 configure: $(VARIANTS:%=%/.configured)
 
@@ -131,17 +131,11 @@ test:	$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += print/cups
-REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
-REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
-REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/management/snmp/net-snmp-57
