@@ -1,12 +1,13 @@
 Fixes against p0f-3.06b (updated for 3.09b) to have it compile and work
-properly under Solaris. Also integrates with Solaris 10+ SMF serices.
+properly under Solaris/illumos. Also integrates with Solaris 10+ SMF serices.
 Fixes licensed under the terms of MIT License.
-Copyright (c) 2011-2015 by Jim Klimov
+Copyright (c) 2011-2016 by Jim Klimov - see https://github.com/jimklimov/p0f
 
-diff -Naur p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
+diff --git p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
+index b1579f1..5fd72f8 100644
 --- p0f-3.09b-orig/docs/README	2014-05-20 06:14:50.000000000 +0400
 +++ p0f-3.09b-jimfork/docs/README	2015-06-18 03:47:00.571266864 +0300
-@@ -125,9 +125,15 @@
+@@ -125,9 +125,15 @@ verbose packet parsing and signature matching information will be written to
  stderr. This is useful when troubleshooting problems, but that's about it.
  
  The tool should compile cleanly under any reasonably new version of Linux,
@@ -25,7 +26,7 @@ diff -Naur p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
  
  Once you have the binary compiled, you should be aware of the following
  command-line options:
-@@ -786,8 +792,8 @@
+@@ -786,8 +792,8 @@ You should treat the output from this tool as advisory; the fingerprinting can
  be gambled with some minor effort, and it's also possible to evade it altogether
  (e.g. with excessive IP fragmentation or bad TCP checksums). Plan accordingly.
  
@@ -36,7 +37,7 @@ diff -Naur p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
  the tool continuously. This greatly minimizes the consequences of any mishaps -
  and mishaps in C just tend to happen.
  
-@@ -892,6 +898,7 @@
+@@ -892,6 +898,7 @@ including:
    Matthew Dempsky
    Jason DePriest
    Dalibor Dukic
@@ -44,10 +45,11 @@ diff -Naur p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
    Mark Martinec
    Damien Miller
    Josh Newton
-diff -Naur p0f-3.09b-orig/alloc-inl.h p0f-3.09b-jimfork/alloc-inl.h
+diff --git p0f-3.09b-orig/alloc-inl.h p0f-3.09b-jimfork/alloc-inl.h
+index 7dd17d6..85b53e3 100644
 --- p0f-3.09b-orig/alloc-inl.h	2012-03-28 00:05:04.000000000 +0400
 +++ p0f-3.09b-jimfork/alloc-inl.h	2015-06-18 03:47:00.569491472 +0300
-@@ -473,10 +473,18 @@
+@@ -473,10 +473,18 @@ static inline void TRK_ck_free(void* ptr, const char* file,
  
  #endif /* ^!DEBUG_BUILD */
  
@@ -67,7 +69,8 @@ diff -Naur p0f-3.09b-orig/alloc-inl.h p0f-3.09b-jimfork/alloc-inl.h
      _tmp = ck_alloc(_len + 1); \
      snprintf((char*)_tmp, _len + 1, _str); \
      _tmp; \
-diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
+diff --git p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
+index f674433..8561307 100755
 --- p0f-3.09b-orig/build.sh	2014-05-20 07:27:23.000000000 +0400
 +++ p0f-3.09b-jimfork/build.sh	2015-06-18 03:47:00.570367498 +0300
 @@ -8,12 +8,21 @@
@@ -93,7 +96,7 @@ diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
                -I/opt/local/include/ -DVERSION=\"$VERSION\" $CFLAGS"
  
  BASIC_LDFLAGS="-L/usr/local/lib/ -L/opt/local/lib $LDFLAGS"
-@@ -23,13 +32,42 @@
+@@ -23,13 +32,42 @@ USE_CFLAGS="-fstack-protector-all -fPIE -D_FORTIFY_SOURCE=2 -g -ggdb \
  
  USE_LDFLAGS="-Wl,-z,relro -pie $BASIC_LDFLAGS"
  
@@ -143,7 +146,7 @@ diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
  
  OBJFILES="api.c process.c fp_tcp.c fp_mtu.c fp_http.c readfp.c"
  
-@@ -101,7 +137,7 @@
+@@ -101,7 +139,7 @@ rm -f COMPILER-WARNINGS 2>/dev/null
  
  echo -n "[*] Checking for a sane build environment... "
  
@@ -152,7 +155,7 @@ diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
  
    echo "FAIL (bad permissions)"
    echo
-@@ -326,6 +362,8 @@
+@@ -326,6 +364,8 @@ if [ ! -x "$PROGNAME" ]; then
    echo
    echo "Well, something went horribly wrong, sorry. Here's the output from GCC:"
    echo
@@ -161,10 +164,11 @@ diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
    cat "$TMP.log"
    echo
    echo "Sorry! You may want to ping <lcamtuf@coredump.cx> about this."
-diff -Naur p0f-3.09b-orig/fp_http.c p0f-3.09b-jimfork/fp_http.c
+diff --git p0f-3.09b-orig/fp_http.c p0f-3.09b-jimfork/fp_http.c
+index f6faa53..98c54a3 100644
 --- p0f-3.09b-orig/fp_http.c	2012-01-17 10:06:07.000000000 +0400
 +++ p0f-3.09b-jimfork/fp_http.c	2015-06-18 03:47:00.571989513 +0300
-@@ -507,14 +507,22 @@
+@@ -507,14 +507,22 @@ static u8* dump_sig(u8 to_srv, struct http_sig* hsig) {
  
    u8* val;
  
@@ -189,10 +193,11 @@ diff -Naur p0f-3.09b-orig/fp_http.c p0f-3.09b-jimfork/fp_http.c
    RETF("%u:", hsig->http_ver);
  
    for (i = 0; i < hsig->hdr_cnt; i++) {
-diff -Naur p0f-3.09b-orig/fp_tcp.c p0f-3.09b-jimfork/fp_tcp.c
+diff --git p0f-3.09b-orig/fp_tcp.c p0f-3.09b-jimfork/fp_tcp.c
+index 7ca35fd..6544965 100644
 --- p0f-3.09b-orig/fp_tcp.c	2012-05-11 21:33:00.000000000 +0400
 +++ p0f-3.09b-jimfork/fp_tcp.c	2015-06-18 03:47:00.572631716 +0300
-@@ -768,9 +768,17 @@
+@@ -768,9 +768,17 @@ static u8* dump_sig(struct packet_data* pk, struct tcp_sig* ts, u16 syn_mss) {
    u32 i;
    u8  dist = guess_dist(pk->ttl);
  
@@ -211,9 +216,11 @@ diff -Naur p0f-3.09b-orig/fp_tcp.c p0f-3.09b-jimfork/fp_tcp.c
      ret = DFL_ck_realloc_kb(ret, rlen + _len + 1); \
      snprintf((char*)ret + rlen, _len + 1, _par); \
      rlen += _len; \
-diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
---- p0f-3.09b-orig/p0f-daemon.xml	1970-01-01 03:00:00.000000000 +0300
-+++ p0f-3.09b-jimfork/p0f-daemon.xml	2015-06-18 03:47:00.572998246 +0300
+diff --git p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
+new file mode 100644
+index 0000000..0954366
+--- /dev/null
++++ p0f-3.09b-jimfork/p0f-daemon.xml	2016-05-30 14:27:00.572998246 +0100
 @@ -0,0 +1,130 @@
 +<?xml version='1.0'?>
 +<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
@@ -221,7 +228,7 @@ diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
 +	=== LICENSE
 +        This manifest is distributed under the following MIT License terms:
 +
-+	Copyright (c) 2013 Jim Klimov, JSC COS&HT
++	Copyright (c) 2013-2016 Jim Klimov, JSC COS&HT
 +	Published at:
 +		https://github.com/jimklimov/p0f
 +
@@ -279,7 +286,7 @@ diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
 +
 +	No reconfiguration is needed for an exclusive-IP zone nor the global
 +	zone, this service manifest includes all the needed privileges for
-+	the service (valid as of Solaris 10u10 release).
++	the service (statement valid as of Solaris 10u10 release).
 +-->
 +<service_bundle type='manifest' name='export'>
 +  <service name='network/p0f-daemon' type='service' version='0'>
@@ -309,13 +316,13 @@ diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
 +      <service_fmri value='svc:/network/milter-greylist:default'/>
 +    </dependent>
 +-->
-+    <exec_method name='start' type='method' exec='/usr/sbin/p0f.sh -d' timeout_seconds='120'>
++    <exec_method name='start' type='method' exec='/usr/sbin/p0f.sh %m' timeout_seconds='120'>
 +      <method_context>
 +            <method_credential
 +            user='root'
 +            group='root'
 +            limit_privileges=':default'
-+           privileges='basic,net_icmpaccess,net_rawaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'/>
++	    privileges='basic,net_icmpaccess,net_rawaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'/>
 +<!--   ### The set of privileges above allows the SMF-ized daemon to access
 +       ### the low-level networking. Normally SMF services are prohibited
 +       ### from such intimacy with the OS in order to improve security.
@@ -345,7 +352,8 @@ diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
 +    </template>
 +  </service>
 +</service_bundle>
-diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
+diff --git p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
+index 7f17587..048b682 100644
 --- p0f-3.09b-orig/p0f.c	2014-11-08 06:55:17.000000000 +0300
 +++ p0f-3.09b-jimfork/p0f.c	2015-06-18 03:47:00.573916124 +0300
 @@ -15,7 +15,9 @@
@@ -393,7 +401,7 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
  #include <pcap.h>
  
  #ifdef NET_BPF
-@@ -52,6 +72,73 @@
+@@ -52,6 +73,73 @@
  #include "fp_http.h"
  #include "p0f.h"
  
@@ -467,7 +475,7 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
  #ifndef PF_INET6
  #  define PF_INET6          10
  #endif /* !PF_INET6 */
-@@ -129,30 +196,28 @@
+@@ -130,30 +218,28 @@ static void usage(void) {
  "Operating mode and output settings:\n"
  "\n"
  "  -f file   - read fingerprint database from 'file' (%s)\n"
@@ -507,19 +515,22 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
      CONN_MAX_AGE, HOST_IDLE_LIMIT, MAX_CONN,  MAX_HOSTS);
  
    exit(1);
-@@ -524,6 +589,58 @@
+@@ -525,6 +611,70 @@ static void prepare_pcap(void) {
  
      if (!pt) FATAL("pcap_open_live: %s", pcap_err);
  
 +#if defined (SOLARIS) || defined(__sun__)
-+    {
-+    int temp_fd = pcap_get_selectable_fd(pt);
++    { /* scope for Solaris */
++        int temp_fd = pcap_get_selectable_fd(pt);
 +/* Snatched from Solaris snoop */
 +#ifdef I_PUSH
-+    SAYF("[+] Trying to enable bufmod for libpcap on Solaris\n");
-+    if (ioctl(temp_fd, I_PUSH, "bufmod") < 0)
-+        SAYF("[-] ioctl() with I_PUSH \"bufmod\" returned an error (%d): %s\n",
-+            errno, strerror(errno) );
++        SAYF("[+] Trying to enable bufmod for libpcap on Solaris\n");
++        if (ioctl(temp_fd, I_PUSH, "bufmod") < 0) {
++            if (ioctl(temp_fd, I_PUSH, "bufmod") < 0) {
++                SAYF("[-] ioctl() with I_PUSH \"bufmod\" returned an error (%d): %s\n",
++                    errno, strerror(errno) );
++            }
++        }
 +#endif
 +/*
 + * When libpcap uses BPF we must enable "immediate mode" to
@@ -529,44 +540,53 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
 + * and nmap: http://seclists.org/nmap-dev/2008/q3/284
 + */
 +#ifdef BIOCIMMEDIATE
-+       {
-+       uint_t on = 1;
-+       SAYF("[+] Trying to enable BIOCIMMEDIATE mode for libpcap\n");
-+       if (strioctl(temp_fd, BIOCIMMEDIATE, -1, sizeof (uint_t), (char*) &on) < 0)
-+            SAYF("[-] ioctl() with BIOCIMMEDIATE returned an error (%d): %s\n",
-+                  errno, strerror(errno) );
-+       }
-+#endif /* BIOCIMMEDIATE */
++        { /* scope */
++            uint_t on = 1;
++            SAYF("[+] Trying to enable BIOCIMMEDIATE mode for libpcap\n");
++            if (ioctl(temp_fd, BIOCIMMEDIATE, &on) < 0) {
++                if (strioctl(temp_fd, BIOCIMMEDIATE, -1, sizeof (on), (char*) &on) < 0) {
++                    SAYF("[-] ioctl() with BIOCIMMEDIATE returned an error (%d): %s\n",
++                        errno, strerror(errno) );
++                }
++            }
++        } /* scope */
++#endif /* sun && BIOCIMMEDIATE */
 +/*
 + * Under Solaris, select() keeps waiting until the next packet,
 + * because it is buffered, so we have to set timeout and
 + * chunk size to zero
 + */
-+       {
-+       uint_t size_zero = 0;
-+       struct timeval time_zero = {0, 0};
++        { /* scope */
++            uint_t size_zero = 0;
++            struct timeval time_zero = {0, 0};
 +
 +#ifdef SBIOCSCHUNK
-+        SAYF("[+] Trying to enable SBIOCSCHUNK mode for libpcap\n");
-+        if (strioctl(temp_fd, SBIOCSCHUNK, -1, sizeof (uint_t), (char*) &size_zero) < 0)
-+            SAYF("[-] ioctl() with SBIOCSCHUNK returned an error (%d): %s\n",
-+                  errno, strerror(errno) );
-+#endif
++            SAYF("[+] Trying to enable SBIOCSCHUNK mode for libpcap\n");
++            if (ioctl(temp_fd, SBIOCSCHUNK, &size_zero) < 0) {
++                if (strioctl(temp_fd, SBIOCSCHUNK, -1, sizeof (size_zero), (char*) &size_zero) < 0) {
++                    SAYF("[-] ioctl() with SBIOCSCHUNK returned an error (%d): %s\n",
++                        errno, strerror(errno) );
++                }
++            }
++#endif /* sun && SBIOCSCHUNK */
 +
 +#ifdef SBIOCSTIME
-+        SAYF("[+] Trying to enable SBIOCSTIME mode for libpcap\n");
-+        if (strioctl(temp_fd, SBIOCSTIME, -1, sizeof (struct timeval), (char*) &time_zero) < 0)
-+            SAYF("[-] ioctl() with SBIOCSTIME returned an error (%d): %s\n",
-+                  errno, strerror(errno) );
-+#endif
-+        }
-+    }
++            SAYF("[+] Trying to enable SBIOCSTIME mode for libpcap\n");
++            if (ioctl(temp_fd, SBIOCSTIME, &time_zero) < 0) {
++                if (strioctl(temp_fd, SBIOCSTIME, -1, sizeof (time_zero), (char*) &time_zero) < 0) {
++                    SAYF("[-] ioctl() with SBIOCSTIME returned an error (%d): %s\n",
++                        errno, strerror(errno) );
++                }
++            }
++#endif /* sun && SBIOCSTIME */
++        } /* scope */
++    } /* scope for Solaris */
 +#endif /* __sun__ */
 +
    }
  
    link_type = pcap_datalink(pt);
-@@ -942,6 +1051,13 @@
+@@ -943,6 +1093,13 @@ poll_again:
  
            if (i < 0) PFATAL("read() on API socket fails despite POLLIN.");
  
@@ -580,7 +600,7 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
            ctable[cur]->in_off += i;
  
            /* Query in place? Compute response and prepare to send it back. */
-@@ -950,8 +1066,7 @@
+@@ -951,8 +1108,7 @@ poll_again:
  
              handle_query(&ctable[cur]->in_data, &ctable[cur]->out_data);
              pfds[cur].events = (POLLOUT | POLLERR | POLLHUP);
@@ -590,20 +610,27 @@ diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
  
        }
  
-diff -Naur p0f-3.09b-orig/p0f.sh p0f-3.09b-jimfork/p0f.sh
---- p0f-3.09b-orig/p0f.sh	1970-01-01 03:00:00.000000000 +0300
-+++ p0f-3.09b-jimfork/p0f.sh	2015-06-18 03:47:00.574189026 +0300
-@@ -0,0 +1,88 @@
-+#!/bin/bash
+diff --git p0f-3.09b-orig/p0f.sh p0f-3.09b-jimfork/p0f.sh
+new file mode 100755
+index 0000000..eb41f0e
+--- /dev/null
++++ p0f-3.09b-jimfork/p0f.sh	2016-05-30 14:27:00.574189026 +0100
+@@ -0,0 +1,142 @@
++#!/sbin/sh
 +
 +### This script allows to run the p0f program with preset options, i.e.
 +### for integration with Solaris SMF or default poking on command-line.
 +### Instructions for SMF integration are in the manifest file p0f-daemon.xml.
++### It may also be used as the init-script for the service (tested only under
++### Solaris, and suffers from its limited system shell syntax requirements).
++### Note: Even though it is a valid SMF method, it does not concern much about
++### neither SMF_FMRI, svcprops (config files in use for portability and easier
++### backup), nor including the SMF library (might only use the exit codes...)
 +
 +###	=== LICENSE
 +###	This script is distributed under the following MIT License terms:
 +###
-+###	Copyright (c) 2013 Jim Klimov, JSC COS&HT
++###	Copyright (c) 2013-2016 by Jim Klimov, JSC COS&HT
 +###	Published at:
 +###		https://github.com/jimklimov/p0f
 +###
@@ -630,24 +657,25 @@ diff -Naur p0f-3.09b-orig/p0f.sh p0f-3.09b-jimfork/p0f.sh
 +
 +### Overridables (via config file)
 +### OS User to run the daemon as:
-+[ x"$P0F_RUNAS" = x ] && P0F_RUNAS="pof-svc"
++[ x"$P0F_RUNAS" = x ] && P0F_RUNAS=p0f
 +
 +### Data directory which contains the log and UNIX-socket files (below).
 +### While the default "/var/tmp" should do the trick and let the service
 +### run with little hassle, it is probably insecure and should be changed
 +### to a dedicated directory in a particular installation.
-+[ x"$P0F_DATADIR" = x ] && P0F_DATADIR="/var/lib/p0f"
-+# [ x"$P0F_DATADIR" = x ] && P0F_DATADIR="/var/tmp"
++[ x"$P0F_DATADIR" = x ] && \
++	for D in "/var/lib/p0f" "/var/p0f" "/var/tmp" "/tmp"; do
++		[ -d "$D" ] && P0F_DATADIR="$D" && break
++	done
++
++[ x"$P0F_BINDIR" = x ] && P0F_BINDIR="`dirname "$0"`"
 +
 +### The binary to use (should be in the PATH defined below):
 +[ x"$P0F_BIN" = x ] && P0F_BIN=p0f
 +# [ x"$P0F_BIN" = x ] && P0F_BIN=p0f-debug
 +
-+### The basic set of options as provided in the package:
-+P0F_OPTIONS_PKG="-u ${P0F_RUNAS} -o ${P0F_DATADIR}/p0f.log -s ${P0F_DATADIR}/p0f.sock"
-+
 +### The set of options and BPF filter definition for per-installation tweaking:
-+# P0F_OPTIONS="-i e1000g0"
++# P0F_OPTIONS="-i e1000g0 -f /etc/p0f.fp"
 +# P0F_OPTIONS="-i /dev/net/vnic1"
 +# P0F_BPF="'(src net not 192.168.0.0/16 and src net not 172.16.0.0/12 and src net not 10.0.0.0/8)'"
 +P0F_OPTIONS=""
@@ -658,31 +686,80 @@ diff -Naur p0f-3.09b-orig/p0f.sh p0f-3.09b-jimfork/p0f.sh
 +### made for a distribution/site-provided default config as well as its local
 +### overrides for a particular host.
 +if [ x"$P0F_OVERRIDE" != xno ]; then
-+	[ -s /etc/default/p0f.packaged ] && . /etc/default/p0f.packaged
-+	[ -s /etc/default/p0f ] && . /etc/default/p0f
-+	[ x"$P0F_CONFIG" != x ] && [ -s "$P0F_CONFIG" ] && . "$P0F_CONFIG"
++	for F in /etc/default/p0f.packaged /etc/default/p0f "$P0F_CONFIG"; do
++		[ x"$F" != x ] && [ -s "$F" ] && \
++		echo "Sourcing p0f config file: '$F'" && . "$F"
++	done
 +fi
 +
-+[ x"$DEBUG" != x ] && echo "=== Running as: `id`"
-+chown -R "${P0F_RUNAS}" "${P0F_DATADIR}/" || true
++### The basic set of options as provided in the package:
++P0F_OPTIONS_PKG="-u ${P0F_RUNAS} -o ${P0F_DATADIR}/p0f.log -s ${P0F_DATADIR}/p0f.sock"
 +
-+### This ugly block allows to use either P0F_BPF or command-line param,
-+### with spaces:
-+IFS="	"
-+P0F_BPF="`echo "$P0F_BPF" | sed 's/	/ /g'`"
-+CMD_OPT="`echo "$P0F_BIN	$P0F_OPTIONS_PKG	$P0F_OPTIONS" | sed 's/ /	/g'`"
-+##############
++[ x"$DEBUG" != x ] && echo "=== p0f script running as: `id`; binary should change to ${P0F_RUNAS}"
++chown -R root:root "${P0F_DATADIR}"/p0f*
++#chown -R "${P0F_RUNAS}" "${P0F_DATADIR}"/
 +
-+### Call the program:
-+PATH="`dirname "$0"`:/usr/sbin:$PATH" \
-+LD_LIBRARY_PATH=/usr/ucblib:$LD_LIBRARY_PATH \
-+	$CMD_OPT "$@" $P0F_BPF
++PATH="`dirname $0`:$P0F_BINDIR:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:$PATH"
++LD_LIBRARY_PATH="/usr/ucblib:$LD_LIBRARY_PATH"
++export PATH LD_LIBRARY_PATH
++
++case "$1" in
++	start)
++		"$P0F_BIN" $P0F_OPTIONS_PKG $P0F_OPTIONS -d \
++			${P0F_BPF:+"$P0F_BPF"}
++		;;
++	stop|restart) # Note: for the SMF exec-method a ":kill" suffices
++		_PID="`ps -ef | egrep -v 'grep|tail' | grep "$P0F_BIN" | awk '{ if ( $1 == "'${P0F_RUNAS}'" ) { print $2 } }'`"
++		RES=0
++		if [ x"$_PID" != x ]; then
++			echo "Stopping p0f process PID(s): $_PID ..."
++			kill -15 $_PID
++			RES=$?
++		fi
++		if [ x"$1" = xrestart ]; then
++			echo "Restarting p0f process..."
++			"$P0F_BIN" $P0F_OPTIONS_PKG $P0F_OPTIONS -d \
++				${P0F_BPF:+"$P0F_BPF"}
++			RES=$?
++		fi
++		exit $RES
++		;;
++	state|status)
++		[ -x /bin/svcs ] && /bin/svcs -p p0f-daemon
++		ps -ef | egrep -v 'grep|tail' | \
++			awk '{ if ( $1 == "'"$P0F_RUNAS"'" ) { print $0 } }' | \
++			grep "$P0F_BIN"
++		RES=$?
++		if [ "$RES" = 0 ]; then
++			echo "Status: [--OK--]"
++		else
++			echo "Status: [-FAIL-]"
++		fi
++		exit $RES
++		;;
++	*) # Pass command-line to p0f after generic setup
++		if echo "$*" | egrep -i '(^| |\()(tcp|udp|src|dst|host|net|port)($| |\))' >/dev/null; then
++			# Packet filtering rule is on command-line, override config
++			"$P0F_BIN" $P0F_OPTIONS_PKG $P0F_OPTIONS "$@"
++			RES=$?
++		else
++			# Process command-line and use config default packet filter
++			"$P0F_BIN" $P0F_OPTIONS_PKG $P0F_OPTIONS \
++				"$@" ${P0F_BPF:+"$P0F_BPF"}
++			RES=$?
++		fi
++		exit $RES
++		;;
++esac
 +
 +### NOTE: To specify a BPF expression if one is in the config file already,
 +### use the override switch, i.e.
-+###	P0F_OVERRIDE=no /usr/sbin/p0f.sh 'host 4.2.2.4'
-+### To daemonize use "-d"...
-diff -Naur p0f-3.09b-orig/readfp.c p0f-3.09b-jimfork/readfp.c
++### 	P0F_OVERRIDE=no /usr/sbin/p0f.sh 'host 4.2.2.4'
++### To daemonize use "-d" (or "start" as the single parameter)...
++
++exit 0
+diff --git p0f-3.09b-orig/readfp.c p0f-3.09b-jimfork/readfp.c
+index 34a3cac..3478bad 100644
 --- p0f-3.09b-orig/readfp.c	2012-01-14 21:48:40.000000000 +0400
 +++ p0f-3.09b-jimfork/readfp.c	2015-06-18 03:47:00.574540669 +0300
 @@ -17,7 +17,21 @@
@@ -708,8 +785,10 @@ diff -Naur p0f-3.09b-orig/readfp.c p0f-3.09b-jimfork/readfp.c
  #include <netinet/in.h>
  #include <sys/types.h>
  #include <sys/stat.h>
-diff -Naur p0f-3.09b-orig/stdint-replacement.h p0f-3.09b-jimfork/stdint-replacement.h
---- p0f-3.09b-orig/stdint-replacement.h	1970-01-01 03:00:00.000000000 +0300
+diff --git p0f-3.09b-orig/stdint-replacement.h p0f-3.09b-jimfork/stdint-replacement.h
+new file mode 100644
+index 0000000..2734894
+--- /dev/null
 +++ p0f-3.09b-jimfork/stdint-replacement.h	2015-06-18 03:47:00.574787216 +0300
 @@ -0,0 +1,21 @@
 +/*
@@ -733,7 +812,8 @@ diff -Naur p0f-3.09b-orig/stdint-replacement.h p0f-3.09b-jimfork/stdint-replacem
 +#include <sys/int_const.h>
 +
 +#endif	/* _SYS_STDINT_H */
-diff -Naur p0f-3.09b-orig/tools/Makefile p0f-3.09b-jimfork/tools/Makefile
+diff --git p0f-3.09b-orig/tools/Makefile p0f-3.09b-jimfork/tools/Makefile
+index 5f74322..5366e6b 100644
 --- p0f-3.09b-orig/tools/Makefile	2012-01-04 13:34:28.000000000 +0400
 +++ p0f-3.09b-jimfork/tools/Makefile	2015-06-18 03:47:00.575017266 +0300
 @@ -9,7 +9,7 @@
@@ -745,10 +825,11 @@ diff -Naur p0f-3.09b-orig/tools/Makefile p0f-3.09b-jimfork/tools/Makefile
  TARGETS = p0f-client p0f-sendsyn p0f-sendsyn6
  
  all: $(TARGETS)
-diff -Naur p0f-3.09b-orig/tools/p0f-client.c p0f-3.09b-jimfork/tools/p0f-client.c
+diff --git p0f-3.09b-orig/tools/p0f-client.c p0f-3.09b-jimfork/tools/p0f-client.c
+index 77db4ac..abaeaa3 100644
 --- p0f-3.09b-orig/tools/p0f-client.c	2014-05-20 06:14:35.000000000 +0400
 +++ p0f-3.09b-jimfork/tools/p0f-client.c	2015-06-18 03:47:00.575379947 +0300
-@@ -89,7 +89,7 @@
+@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
    static struct p0f_api_query q;
    static struct p0f_api_response r;
  
@@ -757,7 +838,7 @@ diff -Naur p0f-3.09b-orig/tools/p0f-client.c p0f-3.09b-jimfork/tools/p0f-client.
  
    s32  sock;
    time_t ut;
-@@ -117,14 +117,14 @@
+@@ -117,14 +117,14 @@ int main(int argc, char** argv) {
  
    if (sock < 0) PFATAL("Call to socket() failed.");
  
