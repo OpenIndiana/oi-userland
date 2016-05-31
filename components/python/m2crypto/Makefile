@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		M2Crypto
-COMPONENT_VERSION=	0.21.1
+COMPONENT_VERSION=	0.24.0
 COMPONENT_PROJECT_URL=	http://chandlerproject.org/Projects/MeTooCrypto/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:25b94498505c2d800ee465db0cc1aff097b1615adc3ac042a1c85ceca264fc0a
+    sha256:80a56441a1d2c0cf27e725be7554c92598b938fc8767ee2c71fdbc2fdc055ee8
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/M/M2Crypto/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/m2crypto
 
-TPNO=			4424
+TPNO=			28340
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

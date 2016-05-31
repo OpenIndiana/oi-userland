@@ -20,27 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycurl
-COMPONENT_VERSION=	7.19.5.1
+COMPONENT_VERSION=	7.43.0
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6e9770f80459757f73bd71af82fbb29cd398b38388cdf1beab31ea91a331bc6c
+    sha256:aa975c19b79b6aa6c0518c0cc2ae33528900478f0b500531dbcdbf05beec584c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
-IPS_COMPONENT_VERSION=  7.19.5.1
-
-TPNO=			24764
-
-# upstream not Python 3.5 ready
-PYTHON_VERSIONS=        $(PYTHON2_VERSIONS) 3.4
+TPNO=			28055
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
