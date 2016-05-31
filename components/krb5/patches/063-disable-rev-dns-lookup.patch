@@ -28,10 +28,10 @@ diff -ur krb5-1.13.2/src/man/krb5.conf.man krb5-1.13.2.rev-dns-disable/src/man/k
  .TP
  .B \fBrealm_try_domains\fP
  Indicate whether a host\(aqs domain components should be used to
-diff -ur krb5-1.13.2/src/tests/t_sn2princ.py krb5-1.13.2.rev-dns-disable/src/tests/t_sn2princ.py
---- krb5-1.13.2/src/tests/t_sn2princ.py
-+++ krb5-1.13.2.rev-dns-disable/src/tests/t_sn2princ.py
-@@ -6,10 +6,12 @@
+diff -pur krb5-1.14.2/src/tests/t_sn2princ.py krb5-1.14.2.rev-dns-disable/src/tests/t_sn2princ.py
+--- krb5-1.14.2/src/tests/t_sn2princ.py     2016-05-29 21:41:37.484247675 -0700
++++ krb5-1.14.2.rev-dns-disable/src/tests/t_sn2princ.py     2016-05-29 21:41:18.309183555 -0700
+@@ -6,10 +6,12 @@ offline = (len(args) > 0 and args[0] !=
  conf = {'domain_realm': {'kerberos.org': 'R1',
                           'example.com': 'R2',
                           'mit.edu': 'R3'}}
@@ -44,7 +44,7 @@ diff -ur krb5-1.13.2/src/tests/t_sn2princ.py krb5-1.13.2.rev-dns-disable/src/tes
  no_rdns = realm.special_env('no_rdns', False, krb5_conf=no_rdns_conf)
  no_canon = realm.special_env('no_canon', False, krb5_conf=no_canon_conf)
  
-@@ -30,6 +32,10 @@
+@@ -30,6 +32,10 @@ def testnc(host, princhost, princrealm):
      # Test with the host-based name type with canonicalization disabled.
      testbase(host, 'srv-hst', princhost, princrealm, env=no_canon)
  
@@ -55,26 +55,35 @@ diff -ur krb5-1.13.2/src/tests/t_sn2princ.py krb5-1.13.2.rev-dns-disable/src/tes
  def testnr(host, princhost, princrealm):
      # Test with the host-based name type with reverse lookup disabled.
      testbase(host, 'srv-hst', princhost, princrealm, env=no_rdns)
-@@ -89,6 +95,11 @@
- testnr(oname + ':123', fname + ':123', 'R1')
- testnr(oname + ':xyZ', fname + ':xyZ', 'R1')
+@@ -69,7 +75,6 @@ if offline:
+ # and reverse resolving to these names.
+ oname = 'ptr-mismatch.kerberos.org'
+ fname = 'www.kerberos.org'
+-rname = 'kerberos-org.mit.edu'
  
-+# Test forward+reverse lookup canonicalization (rdns=true).
-+testr(oname, rname, 'R3')
-+testr(oname + ':123', rname + ':123', 'R3')
-+testr(oname + ':xyZ', rname + ':xyZ', 'R3')
-+
- # Verify reverse resolution before testing for it.
+ # Verify forward resolution before testing for it.
  try:
+@@ -91,13 +96,20 @@ try:
      names = socket.getnameinfo(sockaddr, socket.NI_NAMEREQD)
-@@ -97,9 +108,9 @@
- if names[0].lower() != rname:
-     skip_rest('%s reverse resolves to %s, not %s' % (oname, names[0], rname))
+ except socket.gaierror:
+     skip_rest('reverse sn2princ tests', 'cannot reverse resolve %s' % oname)
+-if names[0].lower() != rname:
++rname = names[0].lower()
++if rname == fname:
+     skip_rest('reverse sn2princ tests',
+-              '%s reverse resolves to %s, not %s' % (oname, names[0], rname))
++              '%s reverse resolves to %s '
++             'which should be different from %s' % (oname, rname, fname))
  
 -# Test default canonicalization (forward and reverse lookup).
 -test(oname, rname, 'R3')
 -test(oname + ':123', rname + ':123', 'R3')
 -test(oname + ':xyZ', rname + ':xyZ', 'R3')
++# Test forward+reverse lookup canonicalization (rdns=true).
++testr(oname, rname, 'R3')
++testr(oname + ':123', rname + ':123', 'R3')
++testr(oname + ':xyZ', rname + ':xyZ', 'R3')
++
 +# Test default canonicalization (forward lookup).
 +test(oname, fname, 'R1')
 +test(oname + ':123', fname + ':123', 'R1')
