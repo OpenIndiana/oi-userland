@@ -80,18 +80,14 @@ CONFIGURE_OPTIONS +=	--with-pic
 
 $(BUILD_DIR_32_1)/.configured:	CONFIGURE_OPTIONS+=--with-vpx
 
-COMPONENT_PREP_ACTION =	(cd $(@D) ; autoreconf -if)
+COMPONENT_PREP_ACTION =	(cd $(SOURCE_DIR) && autoreconf -if && \
+	cd $(SOURCE_DIR_2) && autoreconf -if )
 
 COMPONENT_TEST_CMD = \
 	cmake -DBUILD_TEST=1 .; \
 	(cd $(@D)/tests; gmake); \
 	ctest .
 COMPONENT_TEST_TARGETS =
-
-# Macros to configure, build, and install the old version for the time being.
-$(SOURCE_DIR_2)/.prep:
-	$(COMPONENT_PREP_ACTION)
-	$(TOUCH) $@
 
 COMPONENT_PRE_CONFIGURE_ACTION_2 = \
 	($(CLONEY) $(SOURCE_DIR_2) $(@D))
@@ -112,9 +108,6 @@ BUILD_64 +=	$(BUILD_DIR_64_2)/.built
 
 INSTALL_32 +=	$(BUILD_DIR_32_2)/.installed
 INSTALL_64 +=	$(BUILD_DIR_64_2)/.installed
-
-# Cause the old version to be prepped at all
-$(SOURCE_DIR_1)/.prep: $(SOURCE_DIR_2)/.prep
 
 # install the old version first
 $(BUILD_DIR_32)/.installed:     $(BUILD_DIR_32_2)/.installed
