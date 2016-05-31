@@ -1,0 +1,52 @@
+Copy the scan.l file to the build directory so that the .c file can be
+successfully generated.
+
+Run help2man on the flex file in the build directory to generate the man page.
+
+Make sure that we always use /usr/gnu/bin/m4 rather than what is available
+via the M4 environment variable or what's in the PATH environment variable.
+
+These changes have been sent upstream. See email thread starting at:
+
+  https://sourceforge.net/p/flex/mailman/message/35103749/
+
+--- flex-2.6.1/src/Makefile.am.orig	2016-05-19 06:21:16.631609293 -0700
++++ flex-2.6.1/src/Makefile.am	2016-05-19 14:19:29.394717203 -0700
+@@ -87,7 +87,7 @@
+ 	mv skel.c.tmp $(srcdir)/skel.c
+ 
+ stage1scan.l: scan.l
+-	cp $(srcdir)/scan.l $(srcdir)/stage1scan.l
++	cp $(srcdir)/scan.l $(top_builddir)/src/stage1scan.l
+ 
+ stage1scan.c: stage1scan.l stage1flex$(EXEEXT)
+ 	$(top_builddir)/src/stage1flex$(EXEEXT) -o $@ $<
+--- flex-2.6.1/doc/Makefile.am.orig	2016-05-19 06:45:26.670565152 -0700
++++ flex-2.6.1/doc/Makefile.am	2016-05-19 06:45:45.734263762 -0700
+@@ -26,5 +26,5 @@
+ 	for i in $(dist_man_MANS) ; do \
+ 	$(help2man) --name='$(PACKAGE_NAME)' \
+ 	--section=`echo $$i | sed -e 's/.*\.\([^.]*\)$$/\1/'` \
+-	 $(top_srcdir)/src/flex$(EXEEXT) > $$i || rm -f $$i ; \
++	 $(top_builddir)/src/flex$(EXEEXT) > $$i || rm -f $$i ; \
+ 	done
+--- flex-2.6.1/src/main.c.orig	2016-05-19 14:36:18.569346881 -0700
++++ flex-2.6.1/src/main.c	2016-05-20 07:59:04.169569771 -0700
+@@ -348,6 +348,7 @@
+ 
+     /* Setup the filter chain. */
+     output_chain = filter_create_int(NULL, filter_tee_header, headerfilename);
++#ifndef __sun
+     if ( !(m4 = getenv("M4"))) {
+ 	    char *slash;
+ 		m4 = M4;
+@@ -389,6 +390,9 @@
+ 		}
+ 	}
+     filter_create_ext(output_chain, m4, "-P", 0);
++#else
++    filter_create_ext(output_chain, "/usr/gnu/bin/m4", "-P", 0);
++#endif
+     filter_create_int(output_chain, filter_fix_linedirs, NULL);
+ 
+     /* For debugging, only run the requested number of filters. */
