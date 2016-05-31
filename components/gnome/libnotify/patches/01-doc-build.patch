@@ -1,0 +1,13 @@
+Fix builds outside of source tree for documentation.  Potentially applicable to be sent upstream
+
+--- libnotify-0.7.6/docs/Makefile.am	2011-08-16 04:52:04.000000000 -0700
++++ libnotify-0.7.6/docs/Makefile.am	2015-06-25 22:00:14.211074742 -0700
+@@ -12,7 +12,7 @@
+ htmldoc_DATA = notification-spec.html
+ 
+ notification-spec.html: $(SPEC_XML_FILES)
+-	$(XMLTO) $(XMLTO_FLAGS) xhtml-nochunks -m $(top_srcdir)/docs/config.xsl notification-spec.xml
++	$(XMLTO) $(XMLTO_FLAGS) xhtml-nochunks -m $(top_srcdir)/docs/config.xsl $(top_srcdir)/docs/notification-spec.xml
+ 
+ endif # DOCBOOK_DOCS_ENABLED
+ 

@@ -1,0 +1,61 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/libnotify@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Desktop notifications library"
+set name=pkg.description \
+    value="libnotify is a library that sends desktop notifications to a notification daemon, as defined in the Desktop Notifications spec. These notifications can be used to inform the user about an event or display some form of information without getting in the user's way."
+set name=com.oracle.info.description value=libnotify-4
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/336
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/notify-send-4
+file path=usr/include/libnotify-4/libnotify/notification.h
+file path=usr/include/libnotify-4/libnotify/notify-enum-types.h
+file path=usr/include/libnotify-4/libnotify/notify-features.h
+file path=usr/include/libnotify-4/libnotify/notify.h
+file usr/lib/$(MACH64)/libnotify-4/girepository-1.0/Notify-0.7.typelib \
+    path=usr/lib/$(MACH64)/girepository-1.0/Notify-0.7.typelib
+link path=usr/lib/$(MACH64)/libnotify-4/libnotify.so target=libnotify.so.4.0.0
+link path=usr/lib/$(MACH64)/libnotify-4/libnotify.so.4 target=libnotify.so.4.0.0
+file path=usr/lib/$(MACH64)/libnotify-4/libnotify.so.4.0.0
+file usr/lib/$(MACH64)/libnotify-4/pkgconfig/libnotify.pc \
+    path=usr/lib/$(MACH64)/pkgconfig/libnotify-4/libnotify.pc
+file usr/lib/libnotify-4/girepository-1.0/Notify-0.7.typelib \
+    path=usr/lib/girepository-1.0/Notify-0.7.typelib
+link path=usr/lib/libnotify-4/libnotify.so target=libnotify.so.4.0.0
+link path=usr/lib/libnotify-4/libnotify.so.4 target=libnotify.so.4.0.0
+file path=usr/lib/libnotify-4/libnotify.so.4.0.0
+file usr/lib/libnotify-4/pkgconfig/libnotify.pc \
+    path=usr/lib/pkgconfig/libnotify-4/libnotify.pc
+file path=usr/share/gir-1.0/Notify-0.7.gir
+license COPYING license=LGPLv2.1
