@@ -1,0 +1,78 @@
+.\" Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+.\" 
+.\" CDDL HEADER START
+.\" 
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\" 
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\" 
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\" 
+.\" CDDL HEADER END
+.TH glib-compile-schemas 8S "25 May 2016"
+.SH NAME
+.PP
+svc:/application/desktop-cache/glib-compile-schemas \- GSettings schema compilation service
+.SH DESCRIPTION
+.PP
+The
+.B svc:/application/desktop-cache/glib-compile-schemas
+transient
+.BR smf (7)
+service runs
+.BR glib-compile-schemas (1)
+when necessary to update the gschemas.compiled file with the information from
+the
+.B GSettings
+XML schema and vendor override files in the
+.I /usr/share/glib-2.0/schemas
+directory.
+.PP
+Because GNOME recommends using
+.BR dconf (7)
+profiles to make site overrides, the
+.B glib-compile-schemas
+service usually needs to be run only when installing or updating new
+application packages.  Packages that deliver files into the
+.I /usr/share/glib-2.0/schemas
+directory should set a
+.I restart_fmri
+attribute with the value
+.B svc:/application/desktop-cache/glib-compile-schemas:default
+on such files.
+.PP
+This service has no configurable properties.
+.PP
+Administrative actions on this service, such as enabling, disabling, or
+requesting restart, can be performed using \fBsvcadm\fR(8). The status of the
+service can be queried using the \fBsvcs\fR(1) command.
+.SH FILES
+.TP 30
+.B /usr/share/glib-2.0/schemas/*.schema.xml
+GSettings XML schema files
+.TP 30
+.B /usr/share/glib-2.0/schemas/*.gschema.override
+GSettings vendor override files
+.TP 30
+.B /usr/share/glib-2.0/schemas/gschemas.compiled
+GSettings compiled data file
+.SH SEE ALSO
+.PP
+.BR glib-compile-schemas (1),
+.BR svcs (1),
+.BR attributes (7),
+.BR dconf (7),
+.BR pkg (7),
+.BR smf (7),
+.BR svcadm (8)
+.PP
+https://wiki.gnome.org/Projects/dconf/SystemAdministrators

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # SMF service manifests
@@ -56,6 +56,14 @@
 # GNOME gdk-pixbuf image loader modules
 <transform file path=usr/lib.*/gdk-pixbuf-.*/.*/loaders/.*.so$ -> \
     default restart_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
+
+# GNOME GSettings schemas & overrides
+<transform file link hardlink path=usr/share/glib-2\.0/schemas/.* -> \
+    default restart_fmri svc:/application/desktop-cache/glib-compile-schemas:default>
+
+# GNOME GIO modules
+<transform file link hardlink path=usr/lib.*/gio/modules/.*\.so$ -> \
+    default restart_fmri svc:/application/desktop-cache/gio-module-cache:default>
 
 # RAD
 <transform file path=usr/lib/rad/.* -> add restart_fmri \

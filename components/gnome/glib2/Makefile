@@ -74,6 +74,16 @@ COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(COMPILER))
 CONFIGURE_ENV += PATH="$(PATH):/usr/sbin"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH):/usr/sbin"
 
+# Make sure SMF manifests are valid
+$(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
+	@for f in files/*.xml ; do \
+	    (set -ex ; /usr/sbin/svccfg validate "$$f") ; \
+	done
+	$(TOUCH) $@
+
+validate-smf:	$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
+build:		$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
+
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
 # then all shell options get exported to child invocations of bash,
@@ -108,5 +118,6 @@ REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
