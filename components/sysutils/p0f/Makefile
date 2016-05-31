@@ -66,7 +66,9 @@ $(BUILD_DIR)/%/.built: $(SOURCE_DIR)/.prep
 # in the sources, so we do not make a 64-bit build
 build:		$(BUILD_32)
 
-install:	build
+# Note: there is essentially no install recipe in the original project
+# So we fake it here, and the p5m manifest plucks files directly from builddir
+install:	$(BUILD_32)
 	$(TOUCH) $(INSTALL_32)
 
 test:		$(NO_TESTS)
