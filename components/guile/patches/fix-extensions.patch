@@ -1,0 +1,144 @@
+Correctly load guile extensions from /usr/lib or /usr/lib/[amd64,sparcv9]
+depending upon whether we are running the 32-bit or 64-bit version of guile.
+
+Changes taken from the guile version 2.X source code and wedged back into
+the legacy guile version 1.8.X that we have in Userland/Solaris.
+
+--- guile-1.8.8/libguile/Makefile.in.orig	2016-05-27 06:40:28.338873668 -0700
++++ guile-1.8.8/libguile/Makefile.in	2016-05-27 06:39:08.467267379 -0700
+@@ -2512,6 +2512,8 @@
+ 	@echo '#define SCM_PKGDATA_DIR "$(pkgdatadir)"' >> libpath.tmp
+ 	@echo '#define SCM_LIBRARY_DIR "$(pkgdatadir)/$(GUILE_EFFECTIVE_VERSION)"'>>libpath.tmp
+ 	@echo '#define SCM_SITE_DIR "$(pkgdatadir)/site"' >> libpath.tmp
++	@echo '#define SCM_LIB_DIR "$(libdir)"' >> libpath.tmp
++	@echo '#define SCM_EXTENSIONS_DIR "$(pkglibdir)/$(GUILE_EFFECTIVE_VERSION)/extensions"' >> libpath.tmp
+ 	@echo '#define SCM_BUILD_INFO { \' >> libpath.tmp
+ 	@echo '	{ "srcdir", "'"`cd @srcdir@; pwd`"'" }, \' >> libpath.tmp
+ 	@echo ' { "top_srcdir",    "@top_srcdir_absolute@" }, \' >> libpath.tmp
+--- guile-1.8.8/libguile/dynl.c.orig	2016-05-26 08:40:55.811650834 -0700
++++ guile-1.8.8/libguile/dynl.c	2016-05-26 08:41:02.492307609 -0700
+@@ -47,6 +47,7 @@
+ #include <string.h>
+ 
+ #include "libguile/_scm.h"
++#include "libguile/libpath.h"
+ #include "libguile/dynl.h"
+ #include "libguile/smob.h"
+ #include "libguile/keywords.h"
+@@ -70,12 +71,76 @@
+ */
+ /* njrev: not threadsafe, protection needed as described above */
+ 
++/* LT_PATH_SEP-separated extension library search path, searched last */
++static char *system_extensions_path;
++
+ static void *
+ sysdep_dynl_link (const char *fname, const char *subr)
+ {
+   lt_dlhandle handle;
+-  handle = lt_dlopenext (fname);
+-  if (NULL == handle)
++  if (fname == NULL)
++    /* Return a handle for the program as a whole.  */
++    handle = lt_dlopen (NULL);
++  else
++    {
++      handle = lt_dlopenext (fname);
++
++      if (handle == NULL
++#ifdef LT_DIRSEP_CHAR
++          && strchr (fname, LT_DIRSEP_CHAR) == NULL
++#endif
++          && strchr (fname, '/') == NULL)
++        {
++          /* FNAME contains no directory separators and was not in the
++             usual library search paths, so now we search for it in
++             SYSTEM_EXTENSIONS_PATH. */
++          char *fname_attempt
++            = scm_gc_malloc (strlen (system_extensions_path)
++                             + strlen (fname) + 2,
++                             "dynl fname_attempt");
++          char *path;  /* remaining path to search */
++          char *end;   /* end of current path component */
++          char *s;
++
++          /* Iterate over the components of SYSTEM_EXTENSIONS_PATH */
++          for (path = system_extensions_path;
++               *path != '\0';
++               path = (*end == '\0') ? end : (end + 1))
++            {
++              /* Find end of path component */
++              end = strchr (path, LT_PATHSEP_CHAR);
++              if (end == NULL)
++                end = strchr (path, '\0');
++
++              /* Skip empty path components */
++              if (path == end)
++                continue;
++
++              /* Construct FNAME_ATTEMPT, starting with path component */
++              s = fname_attempt;
++              memcpy (s, path, end - path);
++              s += end - path;
++
++              /* Append directory separator, but avoid duplicates */
++              if (s[-1] != '/'
++#ifdef LT_DIRSEP_CHAR
++                  && s[-1] != LT_DIRSEP_CHAR
++#endif
++                  )
++                *s++ = '/';
++
++              /* Finally, append FNAME (including null terminator) */
++              strcpy (s, fname);
++
++              /* Try to load it, and terminate the search if successful */
++              handle = lt_dlopenext (fname_attempt);
++              if (handle != NULL)
++                break;
++            }
++        }
++    }
++
++  if (handle == NULL)
+     {
+       SCM fn;
+       SCM msg;
+@@ -112,7 +177,37 @@
+ static void
+ sysdep_dynl_init ()
+ {
++  char *env;
++
+   lt_dlinit ();
++
++  /* Initialize 'system_extensions_path' from
++     $GUILE_SYSTEM_EXTENSIONS_PATH, or if that's not set:
++     <SCM_LIB_DIR> <LT_PATHSEP_CHAR> <SCM_EXTENSIONS_DIR>.
++
++     'lt_dladdsearchdir' can't be used because it is searched before
++     the system-dependent search path, which is the one 'libtool
++     --mode=execute -dlopen' fiddles with (info "(libtool) Libltdl
++     Interface").  See
++     <http://lists.gnu.org/archive/html/guile-devel/2010-11/msg00095.html>.
++
++     The environment variables $LTDL_LIBRARY_PATH and $LD_LIBRARY_PATH
++     can't be used because they would be propagated to subprocesses
++     which may cause problems for other programs.  See
++     <http://lists.gnu.org/archive/html/guile-devel/2012-09/msg00037.html> */
++
++  env = getenv ("GUILE_SYSTEM_EXTENSIONS_PATH");
++  if (env)
++    system_extensions_path = env;
++  else
++    {
++      system_extensions_path
++        = scm_gc_malloc (strlen (SCM_LIB_DIR)
++                         + strlen (SCM_EXTENSIONS_DIR) + 2,
++                         "system_extensions_path");
++      sprintf (system_extensions_path, "%s%c%s",
++               SCM_LIB_DIR, LT_PATHSEP_CHAR, SCM_EXTENSIONS_DIR);
++    }
+ }
+ 
+ scm_t_bits scm_tc16_dynamic_obj;
