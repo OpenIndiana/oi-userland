@@ -15,6 +15,8 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform file path=etc/.* -> default preserve true>
+
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -24,6 +26,39 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+legacy pkg=SUNWimagick \
+    desc="ImageMagick - Image Manipulation Utilities and Libraries" \
+    name="ImageMagick - Image Manipulation Utilities and Libraries"
+
+#
+# Compatibility links
+#
+link path=usr/sfw/bin/Magick++-config target=../../bin/Magick++-config
+link path=usr/sfw/bin/Magick-config target=../../bin/Magick-config
+link path=usr/sfw/bin/animate target=../../bin/animate
+link path=usr/sfw/bin/composite target=../../bin/composite
+link path=usr/sfw/bin/conjure target=../../bin/conjure
+link path=usr/sfw/bin/convert target=../../bin/convert
+link path=usr/sfw/bin/display target=../../bin/display
+link path=usr/sfw/bin/identify target=../../bin/identify
+link path=usr/sfw/bin/import target=../../bin/import
+link path=usr/sfw/bin/mogrify target=../../bin/mogrify
+link path=usr/sfw/bin/montage target=../../bin/montage
+
+file path=etc/ImageMagick-6/coder.xml
+file path=etc/ImageMagick-6/colors.xml
+file path=etc/ImageMagick-6/delegates.xml
+file path=etc/ImageMagick-6/log.xml
+file path=etc/ImageMagick-6/magic.xml
+file path=etc/ImageMagick-6/mime.xml
+file path=etc/ImageMagick-6/policy.xml
+file path=etc/ImageMagick-6/quantization-table.xml
+file path=etc/ImageMagick-6/thresholds.xml
+file path=etc/ImageMagick-6/type-apple.xml
+file path=etc/ImageMagick-6/type-dejavu.xml
+file path=etc/ImageMagick-6/type-ghostscript.xml
+file path=etc/ImageMagick-6/type-windows.xml
+file path=etc/ImageMagick-6/type.xml
 file path=usr/bin/$(MACH64)/Magick++-config
 file path=usr/bin/$(MACH64)/Magick-config
 file path=usr/bin/$(MACH64)/MagickCore-config
@@ -56,19 +91,6 @@ file path=usr/bin/import
 file path=usr/bin/mogrify
 file path=usr/bin/montage
 file path=usr/bin/stream
-file path=usr/etc/ImageMagick-6/coder.xml
-file path=usr/etc/ImageMagick-6/colors.xml
-file path=usr/etc/ImageMagick-6/delegates.xml
-file path=usr/etc/ImageMagick-6/log.xml
-file path=usr/etc/ImageMagick-6/magic.xml
-file path=usr/etc/ImageMagick-6/mime.xml
-file path=usr/etc/ImageMagick-6/policy.xml
-file path=usr/etc/ImageMagick-6/quantization-table.xml
-file path=usr/etc/ImageMagick-6/thresholds.xml
-file path=usr/etc/ImageMagick-6/type-dejavu.xml
-file path=usr/etc/ImageMagick-6/type-ghostscript.xml
-file path=usr/etc/ImageMagick-6/type-windows.xml
-file path=usr/etc/ImageMagick-6/type.xml
 file path=usr/include/ImageMagick-6/Magick++.h
 file path=usr/include/ImageMagick-6/Magick++/Blob.h
 file path=usr/include/ImageMagick-6/Magick++/ChannelMoments.h
@@ -87,7 +109,6 @@ file path=usr/include/ImageMagick-6/Magick++/STL.h
 file path=usr/include/ImageMagick-6/Magick++/TypeMetric.h
 file path=usr/include/ImageMagick-6/magick/ImageMagick.h
 file path=usr/include/ImageMagick-6/magick/MagickCore.h
-file path=usr/include/ImageMagick-6/magick/PreRvIcccm.h
 file path=usr/include/ImageMagick-6/magick/accelerate.h
 file path=usr/include/ImageMagick-6/magick/animate.h
 file path=usr/include/ImageMagick-6/magick/annotate.h
@@ -313,6 +334,7 @@ file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vips.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.so
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/webp.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.so
@@ -320,15 +342,16 @@ file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.so
+file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xtrn.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.so
 file path=usr/lib/$(MACH64)/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.so
 link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so \
-    target=libMagick++-6.Q16.so.5.0.0
-link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.5 \
-    target=libMagick++-6.Q16.so.5.0.0
-file path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0
+    target=libMagick++-6.Q16.so.6.0.0
+link path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.6 \
+    target=libMagick++-6.Q16.so.6.0.0
+file path=usr/lib/$(MACH64)/libMagick++-6.Q16.so.6.0.0
 link path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so \
     target=libMagickCore-6.Q16.so.2.0.0
 link path=usr/lib/$(MACH64)/libMagickCore-6.Q16.so.2 \
@@ -459,6 +482,7 @@ file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vid.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/viff.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/vips.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wbmp.so
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/webp.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/wpg.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/x.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xbm.so
@@ -466,13 +490,14 @@ file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xc.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xcf.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xpm.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xps.so
+file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xtrn.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/xwd.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/ycbcr.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/coders/yuv.so
 file path=usr/lib/ImageMagick-$(COMPONENT_VERSION)/modules-Q16/filters/analyze.so
-link path=usr/lib/libMagick++-6.Q16.so target=libMagick++-6.Q16.so.5.0.0
-link path=usr/lib/libMagick++-6.Q16.so.5 target=libMagick++-6.Q16.so.5.0.0
-file path=usr/lib/libMagick++-6.Q16.so.5.0.0
+link path=usr/lib/libMagick++-6.Q16.so target=libMagick++-6.Q16.so.6.0.0
+link path=usr/lib/libMagick++-6.Q16.so.6 target=libMagick++-6.Q16.so.6.0.0
+file path=usr/lib/libMagick++-6.Q16.so.6.0.0
 link path=usr/lib/libMagickCore-6.Q16.so target=libMagickCore-6.Q16.so.2.0.0
 link path=usr/lib/libMagickCore-6.Q16.so.2 target=libMagickCore-6.Q16.so.2.0.0
 file path=usr/lib/libMagickCore-6.Q16.so.2.0.0
@@ -509,7 +534,9 @@ file path=usr/share/doc/ImageMagick-6/LICENSE
 file path=usr/share/doc/ImageMagick-6/NEWS.txt
 file path=usr/share/doc/ImageMagick-6/images/ImageMagick.ico
 file path=usr/share/doc/ImageMagick-6/images/affine.png
+file path=usr/share/doc/ImageMagick-6/images/annotate.png
 file path=usr/share/doc/ImageMagick-6/images/arc.png
+file path=usr/share/doc/ImageMagick-6/images/atop.gif
 file path=usr/share/doc/ImageMagick-6/images/background.jpg
 file path=usr/share/doc/ImageMagick-6/images/black.png
 file path=usr/share/doc/ImageMagick-6/images/bluebells_clipped.jpg
@@ -520,6 +547,7 @@ file path=usr/share/doc/ImageMagick-6/images/button.gif
 file path=usr/share/doc/ImageMagick-6/images/configure.jpg
 file path=usr/share/doc/ImageMagick-6/images/cylinder_shaded.png
 file path=usr/share/doc/ImageMagick-6/images/difference.png
+file path=usr/share/doc/ImageMagick-6/images/donate.png
 file path=usr/share/doc/ImageMagick-6/images/examples.jpg
 file path=usr/share/doc/ImageMagick-6/images/frame.jpg
 file path=usr/share/doc/ImageMagick-6/images/fuzzy-magick.png
@@ -535,9 +563,11 @@ file path=usr/share/doc/ImageMagick-6/images/logo.jpg
 file path=usr/share/doc/ImageMagick-6/images/logo.png
 file path=usr/share/doc/ImageMagick-6/images/montage.jpg
 file path=usr/share/doc/ImageMagick-6/images/navy.png
+file path=usr/share/doc/ImageMagick-6/images/networkredux.png
 file path=usr/share/doc/ImageMagick-6/images/objects.gif
 file path=usr/share/doc/ImageMagick-6/images/objects.jpg
 file path=usr/share/doc/ImageMagick-6/images/objects.png
+file path=usr/share/doc/ImageMagick-6/images/over.gif
 file path=usr/share/doc/ImageMagick-6/images/patterns/bricks.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/checkerboard.png
 file path=usr/share/doc/ImageMagick-6/images/patterns/circles.png
@@ -608,6 +638,7 @@ file path=usr/share/doc/ImageMagick-6/images/smile.gif
 file path=usr/share/doc/ImageMagick-6/images/sponsor.jpg
 file path=usr/share/doc/ImageMagick-6/images/sprite.jpg
 file path=usr/share/doc/ImageMagick-6/images/t-shirt.png
+file path=usr/share/doc/ImageMagick-6/images/transloadit.png
 file path=usr/share/doc/ImageMagick-6/images/wand.ico
 file path=usr/share/doc/ImageMagick-6/images/wand.png
 file path=usr/share/doc/ImageMagick-6/images/white-highlight.png
@@ -630,6 +661,7 @@ file path=usr/share/doc/ImageMagick-6/www/Magick++/Exception.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/FormatCharacters.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Future.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Geometry.html
+file path=usr/share/doc/ImageMagick-6/www/Magick++/Image++.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Image.fig
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Image.html
 file path=usr/share/doc/ImageMagick-6/www/Magick++/Image.png
@@ -658,6 +690,7 @@ file path=usr/share/doc/ImageMagick-6/www/advanced-unix-installation.html
 file path=usr/share/doc/ImageMagick-6/www/advanced-windows-installation.html
 file path=usr/share/doc/ImageMagick-6/www/animate.html
 file path=usr/share/doc/ImageMagick-6/www/api.html
+file path=usr/share/doc/ImageMagick-6/www/api/Image++.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/ImageMagick_8h-source.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/ImageMagick_8h.html
 file path=usr/share/doc/ImageMagick-6/www/api/MagickCore/MagickCore_8h-source.html
@@ -1444,6 +1477,8 @@ file path=usr/share/doc/ImageMagick-6/www/conjure.html
 file path=usr/share/doc/ImageMagick-6/www/connected-components.html
 file path=usr/share/doc/ImageMagick-6/www/contact.html
 file path=usr/share/doc/ImageMagick-6/www/convert.html
+file path=usr/share/doc/ImageMagick-6/www/css/README.txt
+file path=usr/share/doc/ImageMagick-6/www/css/magick.css
 file path=usr/share/doc/ImageMagick-6/www/display.html
 file path=usr/share/doc/ImageMagick-6/www/distribute-pixel-cache.html
 file path=usr/share/doc/ImageMagick-6/www/download.html
@@ -1454,6 +1489,7 @@ file path=usr/share/doc/ImageMagick-6/www/export.html
 file path=usr/share/doc/ImageMagick-6/www/favicon.ico
 file path=usr/share/doc/ImageMagick-6/www/formats.html
 file path=usr/share/doc/ImageMagick-6/www/fx.html
+file path=usr/share/doc/ImageMagick-6/www/gradient.html
 file path=usr/share/doc/ImageMagick-6/www/high-dynamic-range.html
 file path=usr/share/doc/ImageMagick-6/www/history.html
 file path=usr/share/doc/ImageMagick-6/www/identify.html
@@ -1461,17 +1497,19 @@ file path=usr/share/doc/ImageMagick-6/www/import.html
 file path=usr/share/doc/ImageMagick-6/www/index.html
 file path=usr/share/doc/ImageMagick-6/www/install-source.html
 file path=usr/share/doc/ImageMagick-6/www/jp2.html
+file path=usr/share/doc/ImageMagick-6/www/js/README.txt
+file path=usr/share/doc/ImageMagick-6/www/js/magick.js
 file path=usr/share/doc/ImageMagick-6/www/license.html
 file path=usr/share/doc/ImageMagick-6/www/links.html
 file path=usr/share/doc/ImageMagick-6/www/magick++.html
 file path=usr/share/doc/ImageMagick-6/www/magick-core.html
 file path=usr/share/doc/ImageMagick-6/www/magick-vector-graphics.html
 file path=usr/share/doc/ImageMagick-6/www/magick-wand.html
-file path=usr/share/doc/ImageMagick-6/www/magick.css
 file path=usr/share/doc/ImageMagick-6/www/miff.html
 file path=usr/share/doc/ImageMagick-6/www/mogrify.html
 file path=usr/share/doc/ImageMagick-6/www/montage.html
 file path=usr/share/doc/ImageMagick-6/www/motion-picture.html
+file path=usr/share/doc/ImageMagick-6/www/opencl.html
 file path=usr/share/doc/ImageMagick-6/www/openmp.html
 file path=usr/share/doc/ImageMagick-6/www/perl-magick.html
 file path=usr/share/doc/ImageMagick-6/www/porting.html
@@ -1504,9 +1542,7 @@ file path=usr/share/doc/ImageMagick-6/www/source/type.xml
 file path=usr/share/doc/ImageMagick-6/www/source/wand.c
 file path=usr/share/doc/ImageMagick-6/www/sponsors.html
 file path=usr/share/doc/ImageMagick-6/www/stream.html
-file path=usr/share/doc/ImageMagick-6/www/subversion.html
 file path=usr/share/doc/ImageMagick-6/www/support.html
-file path=usr/share/doc/ImageMagick-6/www/t-shirt.html
 file path=usr/share/doc/ImageMagick-6/www/wand.png
 file path=usr/share/doc/ImageMagick-6/www/webp.html
 file path=usr/share/man/man1/ImageMagick.1
@@ -1526,22 +1562,3 @@ file path=usr/share/man/man1/import.1
 file path=usr/share/man/man1/mogrify.1
 file path=usr/share/man/man1/montage.1
 file path=usr/share/man/man1/stream.1
-
-legacy pkg=SUNWimagick \
-    desc="ImageMagick - Image Manipulation Utilities and Libraries" \
-    name="ImageMagick - Image Manipulation Utilities and Libraries"
-license imagemagick.license license="Apache 2.0 license"
-#
-# Compatibility links
-#
-link path=usr/sfw/bin/Magick++-config target=../../bin/Magick++-config
-link path=usr/sfw/bin/Magick-config target=../../bin/Magick-config
-link path=usr/sfw/bin/animate target=../../bin/animate
-link path=usr/sfw/bin/composite target=../../bin/composite
-link path=usr/sfw/bin/conjure target=../../bin/conjure
-link path=usr/sfw/bin/convert target=../../bin/convert
-link path=usr/sfw/bin/display target=../../bin/display
-link path=usr/sfw/bin/identify target=../../bin/identify
-link path=usr/sfw/bin/import target=../../bin/import
-link path=usr/sfw/bin/mogrify target=../../bin/mogrify
-link path=usr/sfw/bin/montage target=../../bin/montage

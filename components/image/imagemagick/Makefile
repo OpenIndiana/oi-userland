@@ -20,32 +20,31 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.8.9
-COMPONENT_REVISION=		4
-COMPONENT_SUBVERSION=		10
+COMPONENT_VERSION=		6.9.4
+COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
+COMPONENT_SUBVERSION=		4
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
-COMPONENT_FMRI=	image/imagemagick
+COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
-COMPONENT_SUMMARY=	ImageMagick - Image Manipulation Utilities and Libraries
+COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cac5dda165ab603a2f56110daf41811233d93c6fdd84e94a8430e057041d8e68
-COMPONENT_ARCHIVE_URL=	http://www.imagemagick.org/download/releases/$(COMPONENT_ARCHIVE)
+    sha256:17f4ba8fa894f58cd9a489a5f297fcc714831ac5e6c6c69c4f656b55c1b5b600
+COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = Apache 2.0 license
-COMPONENT_LICENSE_FILE = imagemagick.license
-COMPONENT_BUGDB=	utility/imagemagick
+COMPONENT_LICENSE_FILE = LICENSE
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
@@ -60,20 +59,27 @@ COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
 #
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
+# Don't use rpath, or relink!
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(BUILD_DIR_$(BITS)) ; \
+	$(GSED) -i \
+	-e 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
+	-e 's|need_relink=yes|need_relink=not_on_solaris|' \
+	libtool)
+
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
 
-# Needed to generate a decent RUNPATH for Magick.so
-#
-COMPONENT_BUILD_ARGS += LD="$(CC)"
-COMPONENT_BUILD_ARGS += LD_RUN_PATH="$(CONFIGURE_LIBDIR.$(BITS))"
+# Prevent older versions of libMagick{Core,Wand}-6.Q16.so from the build
+# machine from being found ahead of new versions from the proto area.
+LD_OPTIONS_SO=		-L. -L../../magick/.libs
+COMPONENT_BUILD_ENV +=	LD_OPTIONS_SO="$(LD_OPTIONS_SO)"
+
 
 CONFIGURE_OPTIONS+= --with-modules
-CONFIGURE_OPTIONS+= --enable-shared=yes
-CONFIGURE_OPTIONS+= --enable-static=no
+CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --without-gvc
-CONFIGURE_OPTIONS+= --with-lcms2
-CONFIGURE_OPTIONS+= --without-lcms1
 CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
@@ -85,6 +91,7 @@ CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
+CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 # common targets
 #
@@ -93,22 +100,9 @@ build:		$(BUILD_32_and_64)
 # Doing it twice because /usr/lib is deep...
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0 ;\
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.5.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.5.0.0
+
+PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+PKG_MACROS += PERL_PKG=$(PERL_PKG)
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
 # can be run only after ImageMagick is actually installed and this is not 
@@ -117,6 +111,28 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 	@echo "Tests can be run only after ImageMagick is installed."
 
-BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += image/djvulibre
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += image/library/openjpeg
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/fftw-3
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libwebp
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
