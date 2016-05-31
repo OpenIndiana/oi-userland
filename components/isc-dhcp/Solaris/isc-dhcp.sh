@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -226,6 +226,9 @@ export OPTIONS="--no-pid"
 
 case "$SMF_FMRI" in
 "$DHCPD_IPV4"|"$DHCPD_IPV6")
+	# get omapi_conn_limit property value.
+	export OMAPI_CONN_LIMIT=`get_prop omapi_conn_limit`
+
 	get_common_options
 	if [ "$?" != "0" ]; then
 		exit $SMF_EXIT_ERR_CONFIG

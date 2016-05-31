@@ -1,0 +1,58 @@
+This patch is ISC's mitigation code for CVE-2016-2774 - see ISC-Bugs
+#41845. It was ported from ISC DHCP 4.3.4.
+
+--- old/./RELNOTES	Tue May 24 14:46:36 2016
++++ new/./RELNOTES	Tue May 24 14:46:35 2016
+@@ -1,6 +1,6 @@
+                 Internet Systems Consortium DHCP Distribution
+-                            Version 4.3.3-P1
+-                            01 January 2016
++			  Version 4.3.3-P1-S1
++			     29 March 2016
+ 
+                              Release Notes
+ 
+@@ -52,6 +52,12 @@
+ Consortium.  This product includes cryptographic software written
+ by Eric Young (eay@cryptsoft.com).
+ 
++			Changes since 4.3.3-P1
++
++! Add an option in site.h to limit the number of failover and control
++  connections the server will accept.  By default this is 200.
++  [ISC-Bugs #41845]
++
+ 			Changes since 4.3.3
+ 
+ ! Update the bounds checking when receiving a packet.
+--- old/includes/site.h	Tue May 24 14:46:37 2016
++++ new/includes/site.h	Tue May 24 14:46:36 2016
+@@ -292,6 +292,12 @@
+    this option will be removed at some time. */
+ /* #define INCLUDE_OLD_DHCP_ISC_ERROR_CODES */
+ 
++/* Limit the value of a file descriptor the serve will use
++   when accepting a connecting request.  This can be used to
++   limit the number of TCP connections that the server will
++   allow at one time.  A value of 0 means there is no limit.*/
++#define MAX_FD_VALUE 200
++
+ /* Include definitions for various options.  In general these
+    should be left as is, but if you have already defined one
+    of these and prefer your definition you can comment the 
+--- old/omapip/listener.c	Tue May 24 14:46:37 2016
++++ new/omapip/listener.c	Tue May 24 14:46:36 2016
+@@ -233,7 +233,12 @@
+ 			return ISC_R_NORESOURCES;
+ 		return ISC_R_UNEXPECTED;
+ 	}
+-	
++
++	if ((MAX_FD_VALUE != 0) && (socket > MAX_FD_VALUE)) {
++		close(socket);
++		return (ISC_R_NORESOURCES);
++	}
++
+ #if defined (TRACING)
+ 	/* If we're recording a trace, remember the connection. */
+ 	if (trace_record ()) {

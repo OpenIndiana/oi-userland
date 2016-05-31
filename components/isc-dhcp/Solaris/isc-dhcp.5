@@ -1,4 +1,6 @@
-.TH isc-dhcp 5 "17 May 2011" "SunOS 5.11"
+'\" te
+.\" Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+.TH isc-dhcp 5 "17 May 2016" "SunOS 5.12"
 .SH NAME
 isc\-dhcp \- ISC Dynamic Host Configuration Protocol Software
 
@@ -89,6 +91,25 @@ optional parameter that allows users to specify one or more network
 interfaces on which dhcpd should serve DHCP requests. This property
 matches the "if0" command-line option of dhcpd.  Note that the
 interface names must be seperated by a comma.  Please see Example 4.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+omapi_conn_limit
+.ad
+.sp .6
+.RS 4n
+Value used to limit the number of failover and control connections
+accepted by the server - the default is 200. Only positive integer
+values are permissible; a value of 0 means there is no limit. Please see
+Example 5.
+.LP
+NOTE: This property will be removed in the event ISC removes the
+underlying functionality. The ISC recommends that customers implement
+one or more of the work arounds documented in ISC's Knowledge Base
+article \fB\fIAA-01354\fR (https://kb.isc.org/article/AA-01354).
 .RE
 
 .sp
@@ -250,6 +271,17 @@ To verify that the property values are set type:
 
 example# svccfg -s dhcp/server:ipv4 listprop config/listen_ifnames
 config/listen_ifnames  astring  "bge0" "bge1" 
+.fi
+.in -2
+
+\fBExample 5 \fR Limiting the number of failover and control connections
+in dhcpd to 1000.
+
+.in +2
+.nf
+example# svccfg -s dhcp/server:ipv4 setprop config/omapi_conn_limit = 1000
+example# svccfg -s dhcp/server:ipv4 refresh
+example# svcadm restart dhcp/server:ipv4
 .fi
 .in -2
 

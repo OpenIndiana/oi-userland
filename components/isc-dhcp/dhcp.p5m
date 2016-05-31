@@ -37,12 +37,13 @@ set name=org.opensolaris.arc-caseid value=PSARC/2011/043 value=PSARC/2015/160 \
     value=PSARC/2016/201
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/inet/dhcpd.conf.example group=sys
-file dhcp_auths path=etc/security/auth_attr.d/service%2Fnetwork%2Fisc-dhcp
-file isc-dhcp-relay.xml path=lib/svc/manifest/network/dhcp/isc-dhcp-relay.xml \
-    group=sys mode=0444
-file isc-dhcp-server.xml \
+file Solaris/dhcp_auths \
+    path=etc/security/auth_attr.d/service%2Fnetwork%2Fisc-dhcp
+file Solaris/isc-dhcp-relay.xml \
+    path=lib/svc/manifest/network/dhcp/isc-dhcp-relay.xml group=sys mode=0444
+file Solaris/isc-dhcp-server.xml \
     path=lib/svc/manifest/network/dhcp/isc-dhcp-server.xml group=sys mode=0444
-file isc-dhcp path=lib/svc/method/isc-dhcp mode=0555
+file Solaris/isc-dhcp.sh path=lib/svc/method/isc-dhcp mode=0555
 file path=usr/include/dhcpctl/dhcpctl.h
 file path=usr/include/omapip/alloc.h
 file path=usr/include/omapip/buffer.h
@@ -59,8 +60,10 @@ link path=usr/lib/$(MACH64)/libomapi.so target=libomapi.so.1
 file path=usr/lib/$(MACH64)/libomapi.so.1
 file path=usr/lib/$(MACH64)/llib-ldhcpctl.ln
 file path=usr/lib/$(MACH64)/llib-lomapi.ln
-file SmfDHCPStates.html path=usr/lib/help/auths/locale/SmfDHCPStates.html
-file SmfValueDHCP.html path=usr/lib/help/auths/locale/SmfValueDHCP.html
+file Solaris/SmfDHCPStates.html \
+    path=usr/lib/help/auths/locale/C/SmfDHCPStates.html mode=0444
+file Solaris/SmfValueDHCP.html \
+    path=usr/lib/help/auths/locale/C/SmfValueDHCP.html mode=0444
 file path=usr/lib/inet/dhcpd
 file path=usr/lib/inet/dhcrelay
 link path=usr/lib/libdhcpctl.so target=libdhcpctl.so.1
@@ -79,7 +82,7 @@ file path=usr/share/man/man5/dhcp-eval.5
 file path=usr/share/man/man5/dhcp-options.5
 file path=usr/share/man/man5/dhcpd.conf.5
 file path=usr/share/man/man5/dhcpd.leases.5
-file isc-dhcp.5 path=usr/share/man/man5/isc-dhcp.5
+file Solaris/isc-dhcp.5 path=usr/share/man/man5/isc-dhcp.5
 file path=usr/share/man/man8/dhcpd.8
 file path=usr/share/man/man8/dhcrelay.8
 #
