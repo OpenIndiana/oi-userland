@@ -1,0 +1,82 @@
+Ultimately, this should be resolved by a proper fix for this upstream bug:
+
+  726571 should use Makefile.introspection 
+
+The patch below a simpler fix that does the minimum necessary to make
+introspection builds work.
+
+--- gstreamer-1.4.5/common/m4/introspection.m4	2014-10-19 04:41:57.000000000 -0700
++++ gstreamer-1.4.5/common/m4/introspection.m4	2015-06-02 12:37:14.807600738 -0700
+@@ -49,12 +49,14 @@
+     AC_MSG_RESULT([$found_introspection])
+ 
+     INTROSPECTION_SCANNER=
++    INTROSPECTION_SCANNER_ENV=
+     INTROSPECTION_COMPILER=
+     INTROSPECTION_GENERATE=
+     INTROSPECTION_GIRDIR=
+     INTROSPECTION_TYPELIBDIR=
+     if test "x$found_introspection" = "xyes"; then
+        INTROSPECTION_SCANNER=`$PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0`
++       INTROSPECTION_SCANNER_ENV='CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" CC="$(CC)"'
+        INTROSPECTION_COMPILER=`$PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0`
+        INTROSPECTION_GENERATE=`$PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0`
+        INTROSPECTION_GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
+@@ -64,6 +66,7 @@
+        INTROSPECTION_MAKEFILE=`$PKG_CONFIG --variable=datadir gobject-introspection-1.0`/gobject-introspection-1.0/Makefile.introspection
+     fi
+     AC_SUBST(INTROSPECTION_SCANNER)
++    AC_SUBST(INTROSPECTION_SCANNER_ENV)
+     AC_SUBST(INTROSPECTION_COMPILER)
+     AC_SUBST(INTROSPECTION_GENERATE)
+     AC_SUBST(INTROSPECTION_GIRDIR)
+--- gstreamer-1.4.5/gst/Makefile.am	2014-10-19 04:41:00.000000000 -0700
++++ gstreamer-1.4.5/gst/Makefile.am	2015-06-02 12:56:24.258153713 -0700
+@@ -288,6 +288,7 @@
+ 
+ Gst-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstreamer-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace Gst \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--warn-all \
+--- gstreamer-1.4.5/libs/gst/base/Makefile.am	2014-10-19 04:41:00.000000000 -0700
++++ gstreamer-1.4.5/libs/gst/base/Makefile.am	2015-06-02 12:57:13.922191032 -0700
+@@ -78,6 +78,7 @@
+ GstBase-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstbase-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstBase \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--warn-all \
+--- gstreamer-1.4.5/libs/gst/check/Makefile.am	2014-10-19 04:41:47.000000000 -0700
++++ gstreamer-1.4.5/libs/gst/check/Makefile.am	2015-06-02 12:56:45.804941977 -0700
+@@ -141,6 +141,7 @@
+ GstCheck-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstcheck-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstCheck \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gstreamer-1.4.5/libs/gst/controller/Makefile.am	2014-10-19 04:41:00.000000000 -0700
++++ gstreamer-1.4.5/libs/gst/controller/Makefile.am	2015-06-02 12:56:54.306083740 -0700
+@@ -50,6 +50,7 @@
+ GstController-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstcontroller-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstController \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--warn-all \
+--- gstreamer-1.4.5/libs/gst/net/Makefile.am	2014-10-19 04:41:00.000000000 -0700
++++ gstreamer-1.4.5/libs/gst/net/Makefile.am	2015-06-02 12:57:07.788011768 -0700
+@@ -49,6 +49,7 @@
+ GstNet-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstnet-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstNet \
+ 		--strip-prefix=Gst \
+ 		--warn-all \
