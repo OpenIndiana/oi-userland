@@ -15,16 +15,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash-completion
-COMPONENT_VERSION=	2.1
+COMPONENT_VERSION=	2.3
 COMPONENT_FMRI=		utility/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).orig.tar.bz2
-COMPONENT_ARCHIVE_HASH = \
-    sha256:2b606804a7d5f823380a882e0f7b6c8a37b0e768e72c3d4107c51fbe8a46ae4f
-COMPONENT_ARCHIVE_URL=	http://ftp.de.debian.org/debian/pool/main/b/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://github.com/scop/bash-completion
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:b2e081af317f3da4fff3a332bfdbebeb5514ebc6c2d2a9cf781180acab15e8e9
+COMPONENT_ARCHIVE_URL=	https://github.com/scop/bash-completion/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
-COMPONENT_SUMMARY=	Debian extensions to bash standard completion
+COMPONENT_SUMMARY=	Programmable completion functions for bash
+COMPONENT_CLASSIFICATION=	System/Shells
 
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
