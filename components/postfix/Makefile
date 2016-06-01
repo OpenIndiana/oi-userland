@@ -55,8 +55,8 @@ AUXLIBS +=	-ldb-5.3
 CCARGS +=	-DHAS_SQLITE
 AUXLIBS +=	-lsqlite3
 # LDAP
-CCARGS +=	-DHAS_LDAP
-AUXLIBS +=	-lldap
+CCARGS +=	-DHAS_LDAP -I/usr/include/openldap
+AUXLIBS +=	-lldap_r-2.4 -llber-2.4
 
 # pcre-config is run as part of the setup, so we need to find the 64-bit
 # version so it will provide a 64-bit runpath, o/w pkglint gives warnings.
@@ -73,8 +73,10 @@ COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/network/ldap/openldap
