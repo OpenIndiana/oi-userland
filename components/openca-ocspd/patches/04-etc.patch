@@ -1,0 +1,63 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Need to use appropriate paths on Solaris.
+
+--- openca-ocspd-3.1.2/etc/ca.d/self-certs.xml	2015-11-10 13:31:41.488330851 -0800
++++ openca-ocspd-3.1.2/etc/ca.d/self-certs.xml	2016-05-02 13:16:41.626691944 -0700
+@@ -14,9 +14,9 @@
+    <!--
+    <pki:caCertUrl>ldap://ldap.dartmouth.edu:389/cn=Dartmouth CertAuth1, o=Dartmouth College, C=US, dc=dartmouth, dc=edu?cACertificate;binary</pki:caCertUrl>
+    -->
+-   <pki:caCertUrl>etc/ocspd/certs/cacert.pem</pki:caCertUrl>
++   <pki:caCertUrl>/etc/ocspd/certs/cacert.pem</pki:caCertUrl>
+    <!-- <pki:caCertUrl>/usr/local/openca-ocspd/etc/ocspd/certs/cacert.pem</pki:caCertUrl> -->
+-   <pki:crlUrl>etc/ocspd/crls/crl.pem</pki:crlUrl>
++   <pki:crlUrl>/etc/ocspd/crls/crl.pem</pki:crlUrl>
+    <!-- Use serverCertUrl if your OCSP server has only one private
+         keypair (configured in the ocsp.xml -> token ) but different
+         certificates issued by different CAs. This is the cert that
+--- openca-ocspd-3.1.2/etc/ocspd.xml.in	2015-11-10 13:31:41.502549439 -0800
++++ openca-ocspd-3.1.2/etc/ocspd.xml.in	2016-03-15 15:36:10.455463843 -0700
+@@ -5,16 +5,16 @@
+    <pki:general>
+       <!-- Directory where configurations about libPKI token (e.g., token.d/,
+            hsm.d/, etc... ) are located -->
+-      <pki:pkiConfigDir>@prefix@/etc/ocspd/pki</pki:pkiConfigDir>
++      <pki:pkiConfigDir>/etc/ocspd/pki</pki:pkiConfigDir>
+       <!-- Name of the token configuration to be used for the server, check
+            the libPKI documentations for more details -->
+       <pki:token>ocspServerToken</pki:token>
+       <!-- Directory containing all the configuration files for the supported
+            CAs -->
+-      <pki:caConfigDir>@prefix@/etc/ocspd/ca.d</pki:caConfigDir>
++      <pki:caConfigDir>/etc/ocspd/ca.d</pki:caConfigDir>
+       <!-- File where the server will write its own Process id (PID) into
+            upon startup -->
+-      <pki:pidFile>@prefix@/var/run/ocspd.pid</pki:pidFile>
++      <pki:pidFile>/var/run/ocspd.pid</pki:pidFile>
+       <!-- Number of threads to be pre-spawned -->
+       <pki:spawnThreads>10</pki:spawnThreads>
+       <!-- Auto Reload Timeout (secs) -->
+--- openca-ocspd-3.1.2/etc/token.d/software.xml.in	2015-11-10 13:31:41.529632712 -0800
++++ openca-ocspd-3.1.2/etc/token.d/software.xml.in	2016-04-08 11:21:38.576873784 -0700
+@@ -8,14 +8,14 @@
+   <!-- HSM specification for server token -->
+   <!-- <pki:hsm>software</pki:hsm> -->
+   <!-- Private key identifier (URI - file:// id:// etc.. ) -->
+-  <pki:keypair>file://@prefix@/etc/ocspd/private/key.pem</pki:keypair>
++  <pki:keypair>file:///etc/ocspd/private/key.pem</pki:keypair>
+   <!-- Certificate identifier (URI) -->
+-  <pki:cert>file://@prefix@/etc/ocspd/certs/cert.pem</pki:cert>
++  <pki:cert>file:///etc/ocspd/certs/cert.pem</pki:cert>
+   <!-- CA Certificate -->
+-  <pki:cacert>file://@prefix@/etc/ocspd/certs/cacert.pem</pki:cacert>
++  <pki:cacert>file:///etc/ocspd/certs/cacert.pem</pki:cacert>
+   <!-- Certificates -->
+-  <pki:othercerts>file:://@prefix@/etc/ocspd/certs/other-certs.pem</pki:othercerts>
+-  <pki:trustedcerts>file:://@prefix@/etc/ocspd/certs/trusted-certs.pem</pki:trustedcerts>
++  <!-- <pki:othercerts>file::///etc/ocspd/certs/other-certs.pem</pki:othercerts> -->
++  <!-- <pki:trustedcerts>file::///etc/ocspd/certs/trusted-certs.pem</pki:trustedcerts> -->
+   <!-- passin is used to specify the method for reading the token
+        password. The following options are available:
+          none ...... : do not prompt for any password

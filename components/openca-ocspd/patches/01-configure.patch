@@ -1,0 +1,59 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Need to add architectures and use an appropriate path for Oracle build
+environments.
+
+The default user/group should be daemon/daemon on Solaris.
+
+--- openca-ocspd-3.1.2/configure	2015-11-10 13:31:40.892916326 -0800
++++ openca-ocspd-3.1.2/configure	2016-05-04 14:52:19.134435130 -0700
+@@ -2331,7 +2331,7 @@
+ 
+ 
+ mybits=""
+-if [ `uname -m` = "x86_64" ] ; then
++if [ `uname -m` = "x86_64" ] || [ `uname -m` = "i86pc" ] || [ `uname -m` = "sun4v" ]; then
+ 	mybits="64";
+ fi
+ 
+@@ -3092,6 +3092,7 @@
+ arch_target=
+ 
+ case "$target" in
++	i386-pc-*)        arch_target=x86_64 ;;
+ 	i*86-*)           arch_target=x86 ;;
+ 	x86_64-*)         arch_target=x86_64 ;;
+ 	sparc*-*)         arch_target=Sparc ;;
+@@ -13023,8 +13024,19 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: with libpki-prefix     : $libpki_prefix " >&5
+ $as_echo "with libpki-prefix     : $libpki_prefix " >&6; }
+ 
++case `uname -m`  in
++  "i86pc")
++  mach64=amd64
++  ;;
++  "sun4v")
++  mach64=sparcv9
++  ;;
++  *)
++  ;;
++esac
++
+ if [ "x$libpki_prefix" != x ]; then
+-        libpki_path=$libpki_prefix/lib
++        libpki_path=$libpki_prefix/lib/${mach64}
+         libpki_config="${libpki_prefix}/bin/libpki-config"
+ else
+         # Extract the first word of "libpki-config", so it can be a program name with args.
+@@ -13152,8 +13164,8 @@
+ 
+ 
+ 
+-default_user=nobody
+-default_group=nobody
++default_user=daemon
++default_group=daemon
+ 
+ if [ "x$DIST_NAME" = "xUbuntu" ] ; then
+ 	default_user=www-data

@@ -1,0 +1,58 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Need to set an appropriate etc directory path.
+
+Should not install an init script because Solaris uses an SMF service.
+
+Need to include $(top_srcdir)/src/ocspd/includes because not all headers are
+available in $(top_builddir)/src/ocspd/includes.
+
+--- openca-ocspd-3.1.2/etc/Makefile.in	2015-11-10 13:31:41.475359746 -0800
++++ openca-ocspd-3.1.2/etc/Makefile.in	2016-03-04 13:30:46.052651164 -0800
+@@ -268,7 +268,7 @@
+ top_srcdir = @top_srcdir@
+ user = @user@
+ TOP = ..
+-etc_prefix = $(DESTDIR)${exec_prefix}/etc
++etc_prefix = $(DESTDIR)/etc
+ lib_prefix = $(DESTDIR)@libdir@
+ var_prefix = $(DESTDIR)${exec_prefix}/var
+ doc_prefix = $(DESTDIR)${datadir}/openca-prqpd
+@@ -306,8 +306,6 @@
+ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+ 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+ $(am__aclocal_m4_deps):
+-ocspd: $(top_builddir)/config.status $(srcdir)/ocspd.in
+-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ ocspd.xml: $(top_builddir)/config.status $(srcdir)/ocspd.xml.in
+ 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ 
+@@ -472,7 +470,6 @@
+ install-data-local:
+ 	@$(NORMAL_INSTALL)
+ 	$(mkinstalldirs) $(etc_prefix); \
+-	$(mkinstalldirs) $(etc_prefix)/init.d; \
+ 	$(mkinstalldirs) $(etc_prefix)/ocspd; \
+ 	$(mkinstalldirs) $(etc_prefix)/ocspd/certs; \
+ 	$(mkinstalldirs) $(etc_prefix)/ocspd/crls; \
+@@ -487,8 +484,6 @@
+ 	      $(INSTALL_DATA) $$file $(etc_prefix)/ocspd; \
+ 	    fi \
+ 	  done ;
+-	@ $(INSTALL_DATA) ocspd $(etc_prefix)/init.d/; \
+-	$(CHMOD) +x $(etc_prefix)/init.d/ocspd ;
+ 	@for file in token.d/*.xml ; do \
+ 	    if test -f $$file ; then \
+ 		$(INSTALL_DATA) $$file $(etc_prefix)/ocspd/pki/token.d ; \
+--- openca-ocspd-3.1.2/src/ocspd/Makefile.in	Tue Nov 10 13:31:41 2015
++++ openca-ocspd-3.1.2/src/ocspd/Makefile.in	Wed Jan 27 14:36:14 2016
+@@ -118,7 +118,7 @@
+ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+ am__v_at_0 = @
+ am__v_at_1 = 
+-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/ocspd/includes
++DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/ocspd/includes  -I$(top_srcdir)/src/ocspd/includes
+ depcomp = $(SHELL) $(top_srcdir)/build/depcomp
+ am__depfiles_maybe = depfiles
+ am__mv = mv -f

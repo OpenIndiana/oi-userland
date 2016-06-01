@@ -1,0 +1,28 @@
+#!/usr/sbin/sh
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+CONF_FILE=/etc/ocspd/ocspd.xml;
+PIDFILE=$SMF_SYSVOL_FS/ocspd.pid;
+
+case "$1" in
+'start')
+	/usr/sbin/ocspd -c "$CONF_FILE" -d
+	;;
+
+'restart')
+	if [ -f "$PIDFILE" ]; then
+		/usr/bin/kill -HUP `/usr/bin/cat $PIDFILE`
+        fi
+	;;
+
+*)
+	echo "Usage: $0 { start | restart }"
+	exit 1
+	;;
+esac
+
+exit $?

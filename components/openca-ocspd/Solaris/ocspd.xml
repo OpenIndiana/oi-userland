@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle
+  SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+ Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+	NOTE:  This service manifest is not editable; its contents will
+	be overwritten by package or patch operations, including
+	operating system upgrade.  Make customizations in a different
+	file.
+-->
+
+<service_bundle type='manifest' name='ocsp'>
+
+<service
+    name='application/security/ocsp'
+    type='service'
+    version='1'>
+
+	<create_default_instance enabled='false' />
+
+	<single_instance/>
+
+	<!-- Wait for network interfaces to be initialized. -->
+	<dependency
+	    name='network'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/milestone/network:default'/>
+	</dependency>
+
+	<!-- Wait for all local filesystems to be mounted. -->
+	<dependency
+	    name='filesystem-local'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
+
+	<exec_method
+	    type="method"
+	    name="start"
+	    exec='/lib/svc/method/svc-ocspd start'
+	    timeout_seconds="60">
+	</exec_method>
+
+	<exec_method
+	    type="method"
+	    name="stop"
+	    exec=":kill"
+	    timeout_seconds="60">
+	</exec_method>
+
+	<exec_method
+	    type='method'
+	    name='restart'
+	    exec='/lib/svc/method/svc-ocspd restart'
+	    timeout_seconds='60'>
+	</exec_method>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>OCSP responder</loctext>
+		</common_name>
+		<documentation>
+			<manpage
+			    title='ocspd'
+			    section='3'
+			    manpath='/usr/share/man'/>
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
