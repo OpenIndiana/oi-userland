@@ -51,6 +51,7 @@ endif
 
 CONFIGURE_BINDIR.32= $(USRLIB.32)/pam_pkcs11
 CONFIGURE_BINDIR.64= $(USRLIB.64)/pam_pkcs11
+CPPFLAGS += -I$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)/security
 CONFIGURE_OPTIONS += --with-pcsclite=no
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
@@ -60,5 +61,7 @@ CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/network/ldap/openldap 
