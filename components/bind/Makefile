@@ -68,7 +68,7 @@ CONFIGURE_BINDIR.64 =	$(CONFIGURE_SBINDIR.64)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--with-randomdev=/dev/random
-CONFIGURE_OPTIONS +=	--with-gssapi=$(USRDIR)
+CONFIGURE_OPTIONS +=	--with-gssapi=krb5-config
 
 # Compiler and compiler options:
 # - configure will add "-mt" to CC which is already set in CFLAGS, so override.
@@ -163,6 +163,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += network/dns/bind
+REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
