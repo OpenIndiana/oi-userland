@@ -1,0 +1,72 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/libgxps@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A GObject-based library for handling and rendering XPS documents"
+set name=pkg.description \
+    value="libgxps is a GObject-based library for handling and rendering XPS documents.  OpenXPS or XPS stands for XML Paper Specification. It is based on XML and it's a new electronic paper format originally developed by Microsoft and it serves as a PDF alternative. XPS files are usually created using 'Microsoft XPS Document Writer' in Windows environments. It is now standardized as an open standard document format."
+set name=com.oracle.info.description value=$(COMPONENT_NAME)
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/340
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/xpstojpeg
+file path=usr/bin/xpstopdf
+file path=usr/bin/xpstopng
+file path=usr/bin/xpstops
+file path=usr/bin/xpstosvg
+dir  path=usr/include/libgxps
+file path=usr/include/libgxps/gxps-document-structure.h
+file path=usr/include/libgxps/gxps-document.h
+file path=usr/include/libgxps/gxps-error.h
+file path=usr/include/libgxps/gxps-file.h
+file path=usr/include/libgxps/gxps-links.h
+file path=usr/include/libgxps/gxps-page.h
+file path=usr/include/libgxps/gxps-version.h
+file path=usr/include/libgxps/gxps.h
+file path=usr/lib/$(MACH64)/girepository-1.0/GXPS-0.1.typelib
+link path=usr/lib/$(MACH64)/libgxps.so target=libgxps.so.2.1.1
+link path=usr/lib/$(MACH64)/libgxps.so.2 target=libgxps.so.2.1.1
+file path=usr/lib/$(MACH64)/libgxps.so.2.1.1
+file path=usr/lib/$(MACH64)/pkgconfig/libgxps.pc
+file path=usr/lib/girepository-1.0/GXPS-0.1.typelib
+link path=usr/lib/libgxps.so target=libgxps.so.2.1.1
+link path=usr/lib/libgxps.so.2 target=libgxps.so.2.1.1
+file path=usr/lib/libgxps.so.2.1.1
+file path=usr/lib/pkgconfig/libgxps.pc
+file path=usr/share/gir-1.0/GXPS-0.1.gir
+file path=usr/share/man/man1/xpstojpeg.1
+file path=usr/share/man/man1/xpstopdf.1
+file path=usr/share/man/man1/xpstopng.1
+file path=usr/share/man/man1/xpstops.1
+file path=usr/share/man/man1/xpstosvg.1
+license COPYING license=LGPLv2.1
