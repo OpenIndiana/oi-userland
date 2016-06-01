@@ -1,0 +1,130 @@
+#
+# This patch fixes an issue where the k5identity built-in ccache selection
+# plugin is calling fopen() for a .k5identity file located in a user's home
+# directory.  The problem with this is that this behavior can cause gssd to
+# hang when trying to estabish a gss security context on behalf of a user whose
+# home dir is NFS sec=krb5 protected.  Since the plugin implementation does not
+# provide a means of setting a plugin to disabled state by default we are
+# disabling the k5identity plugin from being registered which basically
+# disables the plugin completely.
+#
+# This problem has been reported to MIT via this ticket:
+# 8420 built in plugins need a method to disable/enable by default
+# Once the fix for 8420 is in Userland then:
+# 23514346 The k5identity tests should be re-enabled when MIT ticket 8420 is fixed upstream
+# should also be addressed.
+#
+# Patch source: in-house
+#
+diff -ur krb5-1.14.2/src/lib/krb5/ccache/ccselect.c krb5-1.14.2-23301407/src/lib/krb5/ccache/ccselect.c
+--- krb5-1.14.2/src/lib/krb5/ccache/ccselect.c
++++ krb5-1.14.2-23301407/src/lib/krb5/ccache/ccselect.c
+@@ -59,12 +59,17 @@
+     krb5_plugin_initvt_fn *modules = NULL, *mod;
+     size_t count;
+ 
+-#ifndef _WIN32
++    /*
++     * This plugin tries to access a .k5identity file in a user's home dir
++     * which causes the Solaris gssd to hang when that home dir is shared as a
++     * sec=krb5 protected NFS share so we are disabling this for now.
++     */
++#if 0 /* ************ Begin IFDEF'ed OUT ***************************** */
+     ret = k5_plugin_register(context, PLUGIN_INTERFACE_CCSELECT, "k5identity",
+                              ccselect_k5identity_initvt);
+     if (ret != 0)
+         goto cleanup;
+-#endif
++#endif /* ************** END IFDEF'ed OUT ***************************** */
+ 
+     ret = k5_plugin_register(context, PLUGIN_INTERFACE_CCSELECT, "realm",
+                              ccselect_realm_initvt);
+diff -ur krb5-1.14.2/src/man/krb5.conf.man krb5-1.14.2-23301407/src/man/krb5.conf.man
+--- krb5-1.14.2/src/man/krb5.conf.man
++++ krb5-1.14.2-23301407/src/man/krb5.conf.man
+@@ -943,10 +943,6 @@
+ disabled with the disable tag):
+ .INDENT 0.0
+ .TP
+-.B \fBk5identity\fP
+-Uses a .k5identity file in the user\(aqs home directory to select a
+-client principal
+-.TP
+ .B \fBrealm\fP
+ Uses the service realm to guess an appropriate cache from the
+ collection
+diff -ur krb5-1.14.2/src/tests/gssapi/t_ccselect.py krb5-1.14.2-23301407/src/tests/gssapi/t_ccselect.py
+--- krb5-1.14.2/src/tests/gssapi/t_ccselect.py
++++ krb5-1.14.2-23301407/src/tests/gssapi/t_ccselect.py
+@@ -103,22 +103,24 @@
+ r1.kinit(bob, password('bob'))
+ 
+ # Try some cache selections using .k5identity.
+-k5id = open(os.path.join(r1.testdir, '.k5identity'), 'w')
+-k5id.write('%s realm=%s\n' % (alice, r1.realm))
+-k5id.write('%s service=ho*t host=%s\n' % (zaphod, hostname))
+-k5id.write('noprinc service=bogus')
+-k5id.close()
+-output = r1.run(['./t_ccselect', host1])
+-if output != (alice + '\n'):
+-    fail('alice not chosen via .k5identity realm line.')
+-output = r2.run(['./t_ccselect', gssserver])
+-if output != (zaphod + '\n'):
+-    fail('zaphod not chosen via .k5identity service/host line.')
+-output = r1.run(['./t_ccselect', refserver])
+-if output != (bob + '\n'):
+-    fail('bob not chosen via primary cache when no .k5identity line matches.')
+-output = r1.run(['./t_ccselect', 'h:bogus@' + hostname], expected_code=1)
+-if 'Can\'t find client principal noprinc' not in output:
+-    fail('Expected error not seen when k5identity selects bad principal.')
++#k5id = open(os.path.join(r1.testdir, '.k5identity'), 'w')
++#k5id.write('%s realm=%s\n' % (alice, r1.realm))
++#k5id.write('%s service=ho*t host=%s\n' % (zaphod, hostname))
++#k5id.write('noprinc service=bogus')
++#k5id.close()
++#output = r1.run(['./t_ccselect', host1])
++#if output != (alice + '\n'):
++#    fail('alice not chosen via .k5identity realm line.')
++#output = r2.run(['./t_ccselect', gssserver])
++#if output != (zaphod + '\n'):
++#    fail('zaphod not chosen via .k5identity service/host line.')
++#output = r1.run(['./t_ccselect', refserver])
++#if output != (bob + '\n'):
++#    fail('bob not chosen via primary cache when no .k5identity line matches.')
++#output = r1.run(['./t_ccselect', 'h:bogus@' + hostname], expected_code=1)
++#if 'Can\'t find client principal noprinc' not in output:
++#    fail('Expected error not seen when k5identity selects bad principal.')
++sys.stderr.write("Support of k5identity ccselect plugin disabled, skipping "
++    "k5identity tests...\n");
+ 
+ success('GSSAPI credential selection tests')
+diff -ur krb5-1.14.2/src/tests/gssapi/t_client_keytab.py krb5-1.14.2-23301407/src/tests/gssapi/t_client_keytab.py
+--- krb5-1.14.2/src/tests/gssapi/t_client_keytab.py
++++ krb5-1.14.2-23301407/src/tests/gssapi/t_client_keytab.py
+@@ -21,15 +21,17 @@
+ realm.run([kdestroy])
+ 
+ # Test 2: no name/cache specified, pick principal from k5identity
+-k5idname = os.path.join(realm.testdir, '.k5identity')
+-k5id = open(k5idname, 'w')
+-k5id.write('%s service=host host=%s\n' % (bob, hostname))
+-k5id.close()
+-out = realm.run(['./t_ccselect', gssserver])
+-if bob not in out:
+-    fail('Authenticated as wrong principal')
+-os.remove(k5idname)
+-realm.run([kdestroy])
++#k5idname = os.path.join(realm.testdir, '.k5identity')
++#k5id = open(k5idname, 'w')
++#k5id.write('%s service=host host=%s\n' % (bob, hostname))
++#k5id.close()
++#out = realm.run(['./t_ccselect', gssserver])
++#if bob not in out:
++#    fail('Authenticated as wrong principal')
++#os.remove(k5idname)
++#realm.run([kdestroy])
++sys.stderr.write("Support of k5identity ccselect plugin disabled, skipping "
++    "Test 2...\n");
+ 
+ # Test 3: no name/cache specified, default ccache has name but no creds
+ realm.run(['./ccinit', realm.ccache, bob])
