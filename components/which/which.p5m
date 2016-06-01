@@ -36,9 +36,14 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2007/049
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/gwhich target=../gnu/bin/which facet.compat.gnulinks=true
+link path=usr/bin/which target=../gnu/bin/which mediator=which \
+    mediator-implementation=gnu mediator-priority=vendor
 file path=usr/gnu/bin/which
 file path=usr/gnu/share/man/man1/which.1
 file path=usr/share/info/which.info
 link path=usr/share/man/man1/gwhich.1 \
     target=../../../gnu/share/man/man1/which.1 facet.compat.gnulinks=all
+link path=usr/share/man/man1/which.1 \
+    target=../../../gnu/share/man/man1/which.1 mediator=which \
+    mediator-implementation=gnu mediator-priority=vendor
 license COPYING license=GPLv3
