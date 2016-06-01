@@ -1,0 +1,64 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+
+<!--
+#
+# Make sure TUN/TAP device nodes are present. This may be not needed
+# if clients such as OpenVPN are running in the global zone and so
+# tickle initialization of the drivers, but seems to be needed when
+# clients are only in local zones that use `device match` attribute
+# to get their pipes to `/dev/tun` and `/dev/tap`.
+#
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+-->
+<service_bundle type='manifest' name='export'>
+  <service name='network/tuntap' type='service' version='0'>
+    <create_default_instance enabled='false'/>
+    <single_instance/>
+    <dependency name='network' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/network:default'/>
+    </dependency>
+    <dependency name='filesystem-local' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local:default'/>
+    </dependency>
+<!-- If this service is at all enabled, it should run before these: -->
+    <dependent name="zones" grouping="optional_all" restart_on="none">
+        <service_fmri value="svc:/system/zones"/>
+        <service_fmri value="svc:/system/zone-group"/>
+        <service_fmri value="svc:/application/openvpn"/>
+    </dependent>
+    <method_context working_directory='/var/tmp'>
+      <method_credential group='root' user='root'/>
+    </method_context>
+    <exec_method name='start' type='method' exec='/lib/svc/method/svc-tuntap %m' timeout_seconds='120'/>
+    <exec_method name='restart' type='method' exec='/lib/svc/method/svc-tuntap %m' timeout_seconds='120'/>
+    <exec_method name='stop' type='method' exec='/lib/svc/method/svc-tuntap %m' timeout_seconds='120'/>
+    <property_group name='startd' type='framework'>
+      <propval name='ignore_error' type='astring' value='core,signal'/>
+      <!-- mark service as transient - so SMF won't monitor its children -->
+      <propval name='duration' type='astring' value='transient' />
+    </property_group>
+    <stability value='Unstable'/>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>Tickle /dev/tun and /dev/tap nodes</loctext>
+      </common_name>
+      <documentation>
+        <manpage title='TUN/TAP driver for OpenIndiana' section='1'/>
+      </documentation>
+    </template>
+  </service>
+</service_bundle>
