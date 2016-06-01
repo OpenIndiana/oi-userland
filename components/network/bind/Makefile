@@ -23,15 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.10.3-P4
-IPS_COMPONENT_VERSION=	9.10.3.4
+COMPONENT_VERSION=	9.10.4-P1
+IPS_COMPONENT_VERSION=	9.10.4.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
-
-# hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:2ac044b5fbdf45fb45107af0df961b3b7cb5262a3bf1948ed3fe7a170dd13e3e
+	sha256:7c3b7d1afe48a6bbead8f11f6971fb09eb57fa257dc32a088fcc20a0218131a2
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
@@ -39,6 +37,9 @@ COMPONENT_BUGDB=	service/dns-server
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+# We don't need -m32 for 32-bit builds, especially when it is passed to ld
+LD_BITS=
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -160,10 +161,6 @@ test-version:
 .PHONY: test-clean
 test-clean:
 	$(RM) $(TEST_32) $(FULL_TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libedit
