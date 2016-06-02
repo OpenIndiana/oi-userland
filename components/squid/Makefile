@@ -154,3 +154,4 @@ REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/network/ldap/openldap
