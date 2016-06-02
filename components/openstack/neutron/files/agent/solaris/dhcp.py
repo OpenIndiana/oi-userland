@@ -255,7 +255,8 @@ class DeviceManager(dhcp.DeviceManager):
         else:
             self.driver.plug(network.tenant_id, network.id,
                              port.id, interface_name, port.mac_address,
-                             network=network)
+                             network=network,
+                             vif_type=port['binding:vif_type'])
         ip_cidrs = []
         addrconf = False
         for fixed_ip in port.fixed_ips:

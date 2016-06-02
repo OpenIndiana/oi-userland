@@ -235,7 +235,7 @@ class OVSInterfaceDriver(SolarisVNICDriver):
 
     def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
              network=None, bridge=None, namespace=None, prefix=None,
-             protection=False):
+             protection=False, vif_type=None):
         """Plug in the interface."""
 
         if net_lib.Datalink.datalink_exists(datalink_name):
@@ -302,6 +302,14 @@ class OVSInterfaceDriver(SolarisVNICDriver):
                    (datalink_name, phys_network))
             LOG.error(msg)
             raise exceptions.Invalid(message=msg)
+
+        if vif_type == 'binding_failed':
+            msg = (_('Port binding has failed for %s. Ensure that '
+                     'OVS agent is running and/or bridge_mappings are '
+                     'correctly configured. Port will not have network '
+                     'connectivity') % datalink_name)
+            LOG.error(msg)
+
         dl = net_lib.Datalink(datalink_name)
         dl.create_vnic(lower_link, mac_address, vid, temp=True)
 

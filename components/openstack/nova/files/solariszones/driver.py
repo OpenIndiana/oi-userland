@@ -1346,7 +1346,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
     def _plug_vifs(self, instance, network_info):
         # if the VIF is of EVS type (i.e., vif['type'] is ''),
         # then nothing to do
-        if network_info is None or not network_info[0]['type']:
+        if not network_info or not network_info[0]['type']:
             LOG.debug(_("VIF is an EVS type. Nothing to plug."))
             return
 
@@ -1373,9 +1373,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # we need to map the VNIC to the bridge
         bridge = CONF.neutron.ovs_bridge
         for vif in network_info:
-            if vif['type'] != 'ovs':
-                LOG.debug(_("VIF %s is not OVS type") % vif)
-                continue
+            if vif['type'] == 'binding_failed':
+                LOG.error(_('Port binding has failed for VIF %s. Ensure that '
+                            'OVS agent is running and/or bridge_mappings are '
+                            'correctly configured. VM will not have network '
+                            'connectivity') % vif)
             vif_maddr = ''.join(['%02x' % int(b, 16) for b in
                                  vif['address'].split(':')])
             anet = anetdict.get(vif_maddr)

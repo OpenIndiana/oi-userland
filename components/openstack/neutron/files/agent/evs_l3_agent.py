@@ -103,7 +103,8 @@ class SolarisRouterInfo(router.RouterInfo):
         internal_dlname = self.get_internal_device_name(port['id'])
         # driver just returns if datalink and IP interface already exists
         self.driver.plug(port['tenant_id'], port['network_id'], port['id'],
-                         internal_dlname, port['mac_address'])
+                         internal_dlname, port['mac_address'],
+                         vif_type=port['binding:vif_type'])
         fixed_ips = port['fixed_ips']
         ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
         self.driver.init_l3(internal_dlname, ip_cidrs)
@@ -360,7 +361,8 @@ class SolarisRouterInfo(router.RouterInfo):
         self.driver.plug(ex_gw_port['tenant_id'], ex_gw_port['network_id'],
                          ex_gw_port['id'], external_dlname,
                          ex_gw_port['mac_address'],
-                         bridge=self.agent_conf.external_network_bridge)
+                         bridge=self.agent_conf.external_network_bridge,
+                         vif_type=ex_gw_port['binding:vif_type'])
         ip_cidrs = common_utils.fixed_ip_cidrs(ex_gw_port['fixed_ips'])
         self.driver.init_l3(external_dlname, ip_cidrs)
         for fixed_ip in ex_gw_port['fixed_ips']:
