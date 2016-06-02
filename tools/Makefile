@@ -71,4 +71,4 @@ clean:
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc
 	@$(RM) -r $(PARFAIT_TOOLS) $(MACH)
-
+	@$(RM) .gnupg/pubring.gpg~ .gnupg/secring.gpg .gnupg/trustdb.gpg

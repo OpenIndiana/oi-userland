@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 FETCH =		$(WS_TOOLS)/userland-fetch
@@ -45,7 +45,7 @@ define download-rules
 ifdef COMPONENT_ARCHIVE_URL$(1)
 
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
-CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
+CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1)) $$(notdir $$(COMPONENT_SIG_URL$(1)))
 
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
