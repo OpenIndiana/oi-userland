@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Captain XNV
+# Copyright 2015 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
