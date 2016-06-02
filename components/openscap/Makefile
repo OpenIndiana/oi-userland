@@ -57,7 +57,7 @@ CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CPPFLAGS +=	-I$(USRINCDIR)/openldap
 RAD_CLIENT_LIB_PATH =   /usr/lib/rad/client/c/$(MACH64)
 
-LDFLAGS += -L$(RAD_CLIENT_LIB_PATH) -R$(RAD_CLIENT_LIB_PATH) -lradclient -ladr -lips_client
+LDFLAGS += -L$(RAD_CLIENT_LIB_PATH) -R$(RAD_CLIENT_LIB_PATH) -lradclient -ladr -lips_client -lzonemgr_client
 
 # XXX This shouldn't be necessary, but is; investigate why.
 CFLAGS += -D_FILE_OFFSET_BITS=64

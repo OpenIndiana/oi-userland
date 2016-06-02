@@ -1,32 +1,60 @@
-This patch removes the use of getzoneent and setzoneent
-which are private interfaces and is bypassing the
-non-global-zones by skipping things under /system/zones.
-This patch has not been contributed upstream but will be
-by 2016-Jul-01.
+This patch fixes the issue with using the private
+interfaces from libzonecfg and avl.h and use the
+rad interfaces to obtain the zonepath information.
+This patch has not been contribute upstream.
 --- openscap-1.2.6/src/OVAL/probes/oval_fts.c.~1~	2015-10-02 08:22:02.487343649 -0700
-+++ openscap-1.2.6/src/OVAL/probes/oval_fts.c	2016-05-19 10:55:31.286973681 -0700
-@@ -45,7 +45,6 @@
++++ openscap-1.2.6/src/OVAL/probes/oval_fts.c	2016-05-27 11:23:22.612830759 -0700
+@@ -45,14 +45,16 @@
  #if defined(__SVR4) && defined(__sun)
  #include "fts_sun.h"
  #include <sys/mntent.h>
 -#include <libzonecfg.h>
- #include <sys/avl.h>
+-#include <sys/avl.h>
++#include <rad/radclient.h>
++#include <rad/radclient_basetypes.h>
++#include <rad/client/1/zonemgr.h>
  #else
  #include <fts.h>
-@@ -141,9 +140,10 @@
- #define MNTTYPE_PROC	"proc"
  #endif
  
-+#define ZONES_PATH	"/system/zones/"
- typedef struct zone_path {
- 	avl_node_t avl_link_next;
+ #undef OSCAP_FTS_DEBUG
+ 
++
+ static OVAL_FTS *OVAL_FTS_new()
+ {
+ 	OVAL_FTS *ofts;
+@@ -140,12 +142,7 @@
+ #ifndef MNTTYPE_PROC
+ #define MNTTYPE_PROC	"proc"
+ #endif
+-
+-typedef struct zone_path {
+-	avl_node_t avl_link_next;
 -	char zpath[MAXPATHLEN];
-+	char zpath[1024];
- } zone_path_t;
- static avl_tree_t avl_tree_list;
+-} zone_path_t;
+-static avl_tree_t avl_tree_list;
++char *top = NULL;
  
-@@ -187,41 +187,8 @@
  
+ static bool valid_remote_fs(char *fstype)
+@@ -171,80 +168,124 @@
+ 	return (true);
+ }
+ 
+-/* function to compare two avl nodes in the avl tree */
+-static int compare_zoneroot(const void *entry1, const void *entry2)
+-{
+-	zone_path_t *t1, *t2;
+-	int comp;
+-
+-	t1 = (zone_path_t *)entry1;
+-	t2 = (zone_path_t *)entry2;
+-	if ((comp = strcmp(t1->zpath, t2->zpath)) == 0) {
+-		return (0);
+-	}
+-	return (comp > 0 ? 1 : -1);
+-}
+-
  int load_zones_path_list()
  {
 -	FILE *cookie;
@@ -39,8 +67,8 @@ by 2016-Jul-01.
 -	cookie = setzoneent();
 -	if (getzoneid() != GLOBAL_ZONEID)
 -		return (0);
- 	avl_create(&avl_tree_list, compare_zoneroot,
- 	    sizeof(zone_path_t), offsetof(zone_path_t, avl_link_next));
+-	avl_create(&avl_tree_list, compare_zoneroot,
+-	    sizeof(zone_path_t), offsetof(zone_path_t, avl_link_next));
 -	while ((name = getzoneent(cookie)) != NULL) {
 -		if (strcmp(name, "global") == 0)
 -			continue;
@@ -58,21 +86,146 @@ by 2016-Jul-01.
 -				dE("Could not get zone path for %s\n",
 -				    name);
 -				continue;
--			}
++        rc_conn_t *conn;
++        rc_err_t status;
++        rc_instance_t *zone_inst;
++        adr_name_t **name_list;
++        int name_count, i, prop_count;
++        char *zone_name;
++        char *zone_state;
++        zonemgr_Resource_t global = { .zr_type = "global" };
++        zonemgr_Property_t **result;
++        zonemgr_Result_t *error;
++	const char *prop[] = {"zonepath"};
++        char *zonepath;
++        char *p;
++	char rpath[PATH_MAX];
++
++        /* Connect to rad */
++        conn = rc_connect_unix(NULL, NULL);
++        if (conn == NULL) {
++        	dE("Unable to connect to rad.\n");
++        	return (1);
++        }
++        status = zonemgr_Zone__rad_list(conn, _B_TRUE, NS_GLOB, &name_list,
++	    &name_count, 0);
++        if (status != RCE_OK) {
++		dE("Zonemgr lookup failed.\n");
++		goto error;
++	}
++	if (name_count > 0) {
++		top = calloc(name_count + 1, PATH_MAX);
++		if (top == NULL) {
++			dE("Memory error.\n");
++			return (1);
++		}
++	}
++	for (i = 0; i < name_count; i++) {
++		int rc;
++                status = rc_lookup(conn, name_list[i], NULL,  _B_TRUE,
++                    &zone_inst);
++                if (status != RCE_OK) {
++                        goto error;
++                }
++                status = zonemgr_Zone_get_name(zone_inst, &zone_name);
++                if (status != RCE_OK) {
++                        goto error;
++                }
++                dE("zone name:%s\n", zone_name);
++                status = zonemgr_Zone_get_state(zone_inst, &zone_state);
++		if (status != RCE_OK) {
++			dE("Failed to get state\n");
++                        return(1);
++                }
++                dE("zone state:%s\n", zone_state);
++                if (strcmp(zone_state, "incomplete") != 0 &&
++                    strcmp(zone_state, "running") != 0 &&
++                    strcmp(zone_state, "installed") != 0) {
++			free(zone_name);
++			free(zone_state);
++                        continue;
++		}
++                status = zonemgr_Zone_getResourceProperties(zone_inst, &global,
++                    prop, 1, &result, &prop_count, &error);
++		if (status == RCE_SERVER_OBJECT) {
++		    dE("error code:%d: %s\n",
++			 error->zr_code ? *error->zr_code : 0,
++			 error->zr_str ? error->zr_str : "");
++		} else if (status != RCE_OK) {
++		    dE("Internal RAD error: %s\n", rc_err_string(status));
++		}
++		zonepath = strdup(result[0]->zp_value);
++		dE("zonepath :%s\n", zonepath);
++		assert(prop_count == 1);
++		rpath[0] = '\0';
++		if (zonepath != NULL && strlen(zonepath) > 0 ) {
++			if ((p = strstr(zonepath, "%{zonename}")) != NULL) {
++				*p = '\0';
++				snprintf(rpath, sizeof(rpath), "%s%s",zonepath,
++				    strdup(zone_name));
++			} else {
++				snprintf(rpath, sizeof(rpath), "%s", zonepath);
+ 			}
 -			if (realpath(rpath, temp->zpath) != NULL)
 -				avl_add(&avl_tree_list, temp);
--		}
--	}
++			resolvepath(rpath, &(top[i*PATH_MAX]), ((size_t) PATH_MAX -1));
++			dE("zonepath after resolvepath:%s\n", &(top[i*PATH_MAX]));
++
+ 		}
++		zonemgr_Result_free(error);
++		zonemgr_Property_array_free(result, prop_count);
++		free(zone_name);
++		free(zone_state);
+ 	}
 -	endzoneent(cookie);
  	return (0);
++error:
++	/* disconnect from rad */
++	rc_disconnect(conn);
++	return (1);
  }
  
-@@ -241,6 +208,8 @@
- 	zone_path_t temp;
- 	avl_index_t where;
+ static void free_zones_path_list()
+ {
+-	zone_path_t *temp;
+-	void* cookie = NULL;
+-
+-	while ((temp = avl_destroy_nodes(&avl_tree_list, &cookie)) != NULL) {
+-		free(temp);
+-	}
+-	avl_destroy(&avl_tree_list);
++	free(top);
+ }
  
-+	if (strnstr(path, ZONES_PATH, strlen(ZONES_PATH)) != NULL)
-+		return (true);
- 	strlcpy(temp.zpath, path, sizeof(temp.zpath));
- 	if (avl_find(&avl_tree_list, &temp, &where) != NULL)
- 		return (true);
+ static bool valid_local_zone(char *path)
+ {
+-	zone_path_t temp;
+-	avl_index_t where;
+-
+-	strlcpy(temp.zpath, path, sizeof(temp.zpath));
+-	if (avl_find(&avl_tree_list, &temp, &where) != NULL)
+-		return (true);
++	int i;
++	char *zonepath;
+ 
++	i = 0;
++	if (top == NULL)
++		return (false);
++	zonepath = &(top[0]);
++	while (*zonepath != '\0') {
++		if (strcmp(path, zonepath) == 0)
++			return (true);
++		i++;
++		zonepath = &(top[i*PATH_MAX]);
++	}
+ 	return (false);
+ }
+ 
+@@ -890,7 +931,6 @@
+ #if defined(__SVR4) && defined(__sun)
+ 	if (load_zones_path_list() != 0) {
+ 		dE("Failed to load zones path info. Recursing non-global zones.");
+-		free_zones_path_list();
+ 	}
+ #endif
+ 	return (ofts);
