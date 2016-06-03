@@ -34,9 +34,16 @@ COMPONENT_VERSION=	2.18.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Accessibility
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1aeec77db6eb8087049af39a07f55756c55319f739d2998030fe6f4ced03ca76
-COMPONENT_BUGDB=	gnome/a11y-libraries-core
+COMPONENT_BUGDB=	gnome/a11y-libs-core
 
 TPNO=			24926
+
+# Needs updated glib2, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
 
 # Tests do not work on Solaris yet
 TEST_TARGET= $(SKIP_TEST)
