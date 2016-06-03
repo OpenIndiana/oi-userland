@@ -10,36 +10,36 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2015 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= libXfixes
-COMPONENT_VERSION= 5.0.1
-COMPONENT_SUMMARY= libXfixes - XFIXES extension client library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=           libXtst
+COMPONENT_VERSION=        1.2.2
+COMPONENT_FMRI=           x11/library/libxtst
+COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_SUMMARY=  libXtst - Client library for X Record and Test extensions
+COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:63bec085084fa3caaee5180490dd871f1eb2020ba9e9b39a30f93693ffc34767
+  sha256:ef0a7ffd577e5f1a25b1663b375679529663a1880151beaa73e9186c8309f6d9
 COMPONENT_ARCHIVE_URL= \
-  http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_FMRI = x11/library/libxfixes
-COMPONENT_CLASSIFICATION = System/X11
-COMPONENT_LICENSE = MIT
-COMPONENT_LICENSE_FILE = COPYING
+  http://www.x.org/releases/individual/lib/libXtst-1.2.2.tar.bz2
+COMPONENT_PROJECT_URL = http://www.x.org/
+COMPONENT_LICENSE=      MIT License
+COMPONENT_LICENSE_FILE= libXtst.license
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PATH=/usr/gnu/bin:/usr/bin
+
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-CONFIGURE_OPTIONS +=  --localstatedir=/var
-CONFIGURE_OPTIONS +=  --enable-shared=yes
-CONFIGURE_OPTIONS +=  --enable-static=no
-CONFIGURE_OPTIONS +=  --with-pic
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --enable-shared
 
 LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile-vers
 
@@ -47,5 +47,9 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+test: $(NO_TESTS)
+
+
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext

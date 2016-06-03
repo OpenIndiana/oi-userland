@@ -1,0 +1,64 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/man3xxf86vm/(.+)$ \
+	-> set action.hash usr/share/man/man3/%<\1> >
+
+link path=usr/X11/lib/$(MACH64)/libXxf86vm.so target=../../../lib/$(MACH64)/libXxf86vm.so
+link path=usr/X11/lib/$(MACH64)/libXxf86vm.so.1 target=../../../lib/$(MACH64)/libXxf86vm.so.1
+link path=usr/X11/lib/libXxf86vm.so target=../../lib/libXxf86vm.so
+link path=usr/X11/lib/libXxf86vm.so.1 target=../../lib/libXxf86vm.so.1
+
+file path=usr/include/X11/extensions/xf86vmode.h
+link path=usr/lib/$(MACH64)/libXxf86vm.so target=libXxf86vm.so.1.0.0
+link path=usr/lib/$(MACH64)/libXxf86vm.so.1 target=libXxf86vm.so.1.0.0
+file path=usr/lib/$(MACH64)/libXxf86vm.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xxf86vm.pc
+link path=usr/lib/libXxf86vm.so target=libXxf86vm.so.1.0.0
+link path=usr/lib/libXxf86vm.so.1 target=libXxf86vm.so.1.0.0
+file path=usr/lib/libXxf86vm.so.1.0.0
+file path=usr/lib/pkgconfig/xxf86vm.pc
+file path=usr/share/man/man3xxf86vm/XF86VM.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeAddModeLine.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeDeleteModeLine.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetAllModeLines.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetDotClocks.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetGamma.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetGammaRamp.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetGammaRampSize.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetModeLine.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetMonitor.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetPermissions.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeGetViewPort.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeLockModeSwitch.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeModModeLine.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeQueryExtension.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeQueryVersion.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSetClientVersion.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSetGamma.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSetGammaRamp.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSetViewPort.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSwitchMode.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeSwitchToMode.3
+file path=usr/share/man/man3xxf86vm/XF86VidModeValidateModeLine.3

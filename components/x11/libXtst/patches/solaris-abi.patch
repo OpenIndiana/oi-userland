@@ -1,0 +1,41 @@
+###############################################################################
+#
+# Xtst library Makefile
+#
+# Copyright (c) 2007, 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+#
+
+Solaris has always shipped libXtst as libXtst.so.1
+
+diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
+--- ./src/Makefile.am	2010-02-24 23:39:25.000000000 -0800
++++ ./src/Makefile.am	2011-02-11 16:46:10.932604094 -0800
+@@ -12,7 +12,7 @@ AM_CFLAGS = \
+ 	$(XTST_CFLAGS) \
+ 	$(CWARNFLAGS)
+ 
+-libXtst_la_LDFLAGS = -version-number 6:1:0 -no-undefined
++libXtst_la_LDFLAGS = -version-number 1 -no-undefined
+ 
+ libXtstincludedir = $(includedir)/X11/extensions
+ libXtstinclude_HEADERS = $(top_srcdir)/include/X11/extensions/XTest.h \
