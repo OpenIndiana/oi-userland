@@ -1,0 +1,39 @@
+In-house patch created as a workaround until BugID: 22985199 is completed.
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+--- pcsc-lite-1.8.14/ltmain.sh	2016-05-05 13:01:01.885421474 -0400
++++ pcsc-lite-1.8.14/ltmain.sh	2016-03-10 19:52:10.679807000 -0500
+@@ -5662,7 +5662,8 @@
+ 	func_append finalize_command " $arg"
+ 	case "$new_inherited_linker_flags " in
+ 	    *" $arg "*) ;;
+-	    * ) func_append new_inherited_linker_flags " $arg" ;;
++	    * ) func_append new_inherited_linker_flags " $arg" 
++		;;
+ 	esac
+ 	continue
+ 	;;
+@@ -6173,7 +6174,7 @@
+ 	    if test "$linkmode" = lib ; then
+ 		case "$new_inherited_linker_flags " in
+ 		    *" $deplib "*) ;;
+-		    * ) func_append new_inherited_linker_flags " $deplib" ;;
++		    * ) func_append new_inherited_linker_flags "" ;;
+ 		esac
+ 	    fi
+ 	  fi
+@@ -7145,6 +7146,13 @@
+ 	    case $deplib in
+ 	    -L*) new_libs="$deplib $new_libs" ;;
+ 	    -R*) ;;
++	     #
++            # XXX: Special case handling for sunstudio and sunlinker on 
++            #      Solaris 11 and 12 as -pthread is no longer needed and 
++	     #      if passed as an arguement/option to ld, it will error 
++            #      when parsed by ld
++            #
++            -pthread) $new_libs = "$new_libs" ;;
+ 	    *)
+ 	      # And here is the reason: when a library appears more
+ 	      # than once as an explicit dependence of a library, or

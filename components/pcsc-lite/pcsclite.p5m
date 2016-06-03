@@ -1,0 +1,55 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/security/pcsc/pcsclite@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Provides smart card services using the SCard API (PC/SC)"
+set name=pkg.description \
+    value="Provides the server functionality and middleware necessary to interact with smart cards compliant with the PC/SC specification."
+set name=com.oracle.info.description value="the PC/SC project"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification value=org.opensolaris.category.2008:System/Security
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/217 value=PSARC/2016/221
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir  path=etc/pcsc
+file Solaris/pcscd.xml path=lib/svc/manifest/application/security/pcscd.xml
+file Solaris/svc-pcscd path=lib/svc/method/svc-pcscd
+file path=usr/include/PCSC/debuglog.h
+file path=usr/include/PCSC/ifdhandler.h
+file path=usr/include/PCSC/pcsclite.h
+file path=usr/include/PCSC/reader.h
+file path=usr/include/PCSC/winscard.h
+file path=usr/include/PCSC/wintypes.h
+link path=usr/lib/$(MACH64)/libpcsclite.so target=libpcsclite.so.1.0.0
+link path=usr/lib/$(MACH64)/libpcsclite.so.1 target=libpcsclite.so.1.0.0
+file path=usr/lib/$(MACH64)/libpcsclite.so.1.0.0
+dir  path=usr/lib/$(MACH64)/pcsc/drivers
+file path=usr/lib/$(MACH64)/pkgconfig/libpcsclite.pc
+file path=usr/sbin/pcscd
+file path=usr/share/doc/pcsc-lite/README.DAEMON
+license pcsclite.license license="GPL v.3"

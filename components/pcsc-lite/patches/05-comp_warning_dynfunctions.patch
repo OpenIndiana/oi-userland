@@ -1,0 +1,119 @@
+Upstream fix that will be included in another release of pcsclite.
+
+From 4d7abdeff7808b1ab545a98733282d421e751a0e Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Sun, 20 Mar 2016 16:47:05 +0100
+Subject: [PATCH] dyn_*: Fix compiler warnings
+
+DYN_* functions now return a LONG instead of an int
+
+dyn_unix.c:59:10: warning: implicit conversion from 'LONG' (aka 'long') to 'int'
+      changes value from 2148532244 to -2146435052 [-Wconstant-conversion]
+                return SCARD_F_UNKNOWN_ERROR;
+                ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
+../src/PCSC/pcsclite.h:147:33: note: expanded from macro 'SCARD_F_UNKNOWN_ERROR'
+                                         ^~~~~~~~~~~~~~~~
+dyn_unix.c:77:10: warning: implicit conversion from 'LONG' (aka 'long') to 'int'
+      changes value from 2148532244 to -2146435052 [-Wconstant-conversion]
+                return SCARD_F_UNKNOWN_ERROR;
+                ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
+../src/PCSC/pcsclite.h:147:33: note: expanded from macro 'SCARD_F_UNKNOWN_ERROR'
+                                         ^~~~~~~~~~~~~~~~
+dyn_unix.c:105:8: warning: implicit conversion from 'LONG' (aka 'long') to 'int'
+      changes value from 2148532244 to -2146435052 [-Wconstant-conversion]
+                rv = SCARD_F_UNKNOWN_ERROR;
+                   ~ ^~~~~~~~~~~~~~~~~~~~~
+../src/PCSC/pcsclite.h:147:33: note: expanded from macro 'SCARD_F_UNKNOWN_ERROR'
+                                         ^~~~~~~~~~~~~~~~
+---
+ src/dyn_generic.h | 6 +++---
+ src/dyn_hpux.c    | 6 +++---
+ src/dyn_unix.c    | 8 ++++----
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/src/dyn_generic.h b/src/dyn_generic.h
+index 30d8225..8989908 100644
+--- a/src/dyn_generic.h
++++ b/src/dyn_generic.h
+@@ -38,8 +38,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #ifndef __dyn_generic_h__
+ #define __dyn_generic_h__
+ 
+-	int DYN_LoadLibrary(void **, char *);
+-	int DYN_CloseLibrary(void **);
+-	int DYN_GetAddress(void *, /*@out@*/ void **, const char *, int);
++	LONG DYN_LoadLibrary(void **, char *);
++	LONG DYN_CloseLibrary(void **);
++	LONG DYN_GetAddress(void *, /*@out@*/ void **, const char *, int);
+ 
+ #endif
+diff --git a/src/dyn_hpux.c b/src/dyn_hpux.c
+index 03c0392..151ce2a 100644
+--- a/src/dyn_hpux.c
++++ b/src/dyn_hpux.c
+@@ -45,7 +45,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "debuglog.h"
+ #include "dyn_generic.h"
+ 
+-int DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
++LONG DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
+ {
+ 
+ 	shl_t myHandle;
+@@ -65,7 +65,7 @@ int DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
+ 	return SCARD_S_SUCCESS;
+ }
+ 
+-int DYN_CloseLibrary(void **pvLHandle)
++LONG DYN_CloseLibrary(void **pvLHandle)
+ {
+ 
+ 	int rv;
+@@ -82,7 +82,7 @@ int DYN_CloseLibrary(void **pvLHandle)
+ 	return SCARD_S_SUCCESS;
+ }
+ 
+-int DYN_GetAddress(void *pvLHandle, void **pvFHandle, const char *pcFunction,
++LONG DYN_GetAddress(void *pvLHandle, void **pvFHandle, const char *pcFunction,
+ 	int mayfail)
+ {
+ 
+diff --git a/src/dyn_unix.c b/src/dyn_unix.c
+index 52353dd..edf8397 100644
+--- a/src/dyn_unix.c
++++ b/src/dyn_unix.c
+@@ -47,7 +47,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include "debuglog.h"
+ #include "dyn_generic.h"
+ 
+-INTERNAL int DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
++INTERNAL LONG DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
+ {
+ 	*pvLHandle = NULL;
+ #ifndef PCSCLITE_STATIC_DRIVER
+@@ -63,7 +63,7 @@ INTERNAL int DYN_LoadLibrary(void **pvLHandle, char *pcLibrary)
+ 	return SCARD_S_SUCCESS;
+ }
+ 
+-INTERNAL int DYN_CloseLibrary(void **pvLHandle)
++INTERNAL LONG DYN_CloseLibrary(void **pvLHandle)
+ {
+ #ifndef PCSCLITE_STATIC_DRIVER
+ 	int ret;
+@@ -81,11 +81,11 @@ INTERNAL int DYN_CloseLibrary(void **pvLHandle)
+ 	return SCARD_S_SUCCESS;
+ }
+ 
+-INTERNAL int DYN_GetAddress(void *pvLHandle, void **pvFHandle,
++INTERNAL LONG DYN_GetAddress(void *pvLHandle, void **pvFHandle,
+ 	const char *pcFunction, int mayfail)
+ {
+ 	char pcFunctionName[256];
+-	int rv = SCARD_S_SUCCESS;
++	LONG rv = SCARD_S_SUCCESS;
+ 
+ 	/* Some platforms might need a leading underscore for the symbol */
+ 	(void)snprintf(pcFunctionName, sizeof(pcFunctionName), "_%s", pcFunction);
+-- 
+1.9.1
+

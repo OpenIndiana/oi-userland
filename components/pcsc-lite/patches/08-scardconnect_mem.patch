@@ -1,0 +1,45 @@
+Upstream fix that will be included in the another release of pcsclite.
+
+From 2269f10c2d2c5be1308d59469722024650a19b6d Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Wed, 13 Apr 2016 18:29:53 +0200
+Subject: [PATCH] SCardConnect(): fix a Valgrind warning
+
+==19635== Memcheck, a memory error detector
+==19635== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==19635== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==19635== Command: /usr/rtests/bin/Pkcs11UnitTest.X64 pkcs11_common
+==19635==
+Running pkcs11_common
+pkcs11_common::testGetInfo==19635== Syscall param socketcall.sendto(msg) points to uninitialised byte(s)
+==19635== at 0x605A1F7: send (send.c:32)
+==19635== by 0xBC47CE6: ??? (in /lib/x86_64-linux-gnu/libpcsclite.so.1.0.0)
+==19635== by 0xBC47E22: ??? (in /lib/x86_64-linux-gnu/libpcsclite.so.1.0.0)
+==19635== by 0xBC43BBE: SCardConnect (in /lib/x86_64-linux-gnu/libpcsclite.so.1.0.0)
+...
+
+The field scConnectStruct.szReader (containing the reader name) was not
+completely initialized.
+
+Thanks to Andrey Roussev for the patch
+https://lists.alioth.debian.org/pipermail/pcsclite-muscle/Week-of-Mon-20160404/000560.html
+---
+ src/winscard_clnt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/winscard_clnt.c b/src/winscard_clnt.c
+index e36cab7..ea480de 100644
+--- a/src/winscard_clnt.c
++++ b/src/winscard_clnt.c
+@@ -794,6 +794,7 @@ LONG SCardConnect(SCARDCONTEXT hContext, LPCSTR szReader,
+ 	if (NULL == currentContextMap)
+ 		return SCARD_E_INVALID_HANDLE;
+ 
++	memset(scConnectStruct.szReader, 0, sizeof scConnectStruct.szReader);
+ 	strncpy(scConnectStruct.szReader, szReader, sizeof scConnectStruct.szReader);
+ 	scConnectStruct.szReader[sizeof scConnectStruct.szReader -1] = '\0';
+ 
+-- 
+1.9.1
+
+

@@ -1,0 +1,60 @@
+In-house patch created as a workaround until BugID: 22985199 is completed.
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+--- ccid-1.4.20/ltmain.sh	2015-08-05 05:37:57.000000000 -0400
++++ ccid-1.4.20/ltmain.sh	2016-05-09 11:29:47.649103701 -0400
+@@ -6146,7 +6146,7 @@
+ 	    func_basename "$deplib"
+             deplib_base=$func_basename_result
+ 	    case " $weak_libs " in
+-	    *" $deplib_base "*) ;;
++	    *" $deplib_base "*) ;;	    
+ 	    *) func_append deplibs " $deplib" ;;
+ 	    esac
+ 	  done
+@@ -6235,7 +6235,7 @@
+ 		    lib=$ladir/$old_library
+ 		    if test "$linkmode,$pass" = "prog,link"; then
+ 		      compile_deplibs="$deplib $compile_deplibs"
+-		      finalize_deplibs="$deplib $finalize_deplibs"
++		      finalize_deplibs="$deplib $finalize_deplibs"                   
+ 		    else
+ 		      deplibs="$deplib $deplibs"
+ 		      test "$linkmode" = lib && newdependency_libs="$deplib $newdependency_libs"
+@@ -6425,7 +6425,15 @@
+ 	  for tmp_inherited_linker_flag in $tmp_inherited_linker_flags; do
+ 	    case " $new_inherited_linker_flags " in
+ 	      *" $tmp_inherited_linker_flag "*) ;;
+-	      *) func_append new_inherited_linker_flags " $tmp_inherited_linker_flag";;
++	      #
++    	      # XXX: Special case handling for sunstudio and sunlinker on 
++             #      Solaris 11 and 12 as -pthread is no longer needed and 
++	      #      if passed as an arguement/option to ld, it will error 
++             #      when parsed by ld
++             #
++              -pthread) func_append new_inherited_linker_flags "";;
++	      *) func_append new_inherited_linker_flags " $new_inherited_linker_flag";;
++
+ 	    esac
+ 	  done
+ 	fi
+@@ -7145,9 +7153,17 @@
+ 	    case $deplib in
+ 	    -L*) new_libs="$deplib $new_libs" ;;
+ 	    -R*) ;;
++            #
++            # XXX: Special case handling for sunstudio and sunlinker on 
++            #      Solaris 11 and 12 as -pthread is no longer needed and 
++	     #      if passed as an arguement/option to ld, it will error 
++            #      when parsed by ld
++            #
++	    -mt) ;;
++            -pthread) ;;
+ 	    *)
+ 	      # And here is the reason: when a library appears more
+-	      # than once as an explicit dependence of a library, or
++	      # than once as an explicit dependence of a library, or    
+ 	      # is implicitly linked in more than once by the
+ 	      # compiler, it is considered special, and multiple
+ 	      # occurrences thereof are not removed.  Compare this

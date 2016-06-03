@@ -1,0 +1,41 @@
+Upstream fix that will be included in another release of pcsclite.
+
+From 88acbfa03b98f28567c2438ea7aca6447488c0af Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Sun, 24 Apr 2016 18:55:45 +0200
+Subject: [PATCH] Fix compiler warnings on SunOS
+
+utils.c: In function 'SendHotplugSignal':
+utils.c:97:3: warning: format '%d' expects argument of type 'int', but argument 6 has type 'pid_t' [-Wformat=]
+   Log2(PCSC_LOG_INFO, "Send hotplug signal to pcscd (pid=%d)", pid);
+   ^
+utils.c:100:4: warning: format '%d' expects argument of type 'int', but argument 6 has type 'pid_t' [-Wformat=]
+    Log3(PCSC_LOG_CRITICAL, "Can't signal pcscd (pid=%d): %s",
+    ^
+---
+ src/utils.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/utils.c b/src/utils.c
+index 7efc9b6..2619a48 100644
+--- a/src/utils.c
++++ b/src/utils.c
+@@ -94,11 +94,12 @@ int SendHotplugSignal(void)
+ 
+ 	if (pid != -1)
+ 	{
+-		Log2(PCSC_LOG_INFO, "Send hotplug signal to pcscd (pid=%d)", pid);
++		Log2(PCSC_LOG_INFO, "Send hotplug signal to pcscd (pid=%ld)",
++			(long)pid);
+ 		if (kill(pid, SIGUSR1) < 0)
+ 		{
+-			Log3(PCSC_LOG_CRITICAL, "Can't signal pcscd (pid=%d): %s",
+-				pid, strerror(errno));
++			Log3(PCSC_LOG_CRITICAL, "Can't signal pcscd (pid=%ld): %s",
++				(long)pid, strerror(errno));
+ 			return EXIT_FAILURE ;
+ 		}
+ 		(void)SYS_Sleep(1);
+-- 
+1.9.1
+

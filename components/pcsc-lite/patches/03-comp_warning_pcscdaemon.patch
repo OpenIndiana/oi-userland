@@ -1,0 +1,31 @@
+Upstream fix that will be included in another release of pcsclite.
+
+From 2360debebf1c35c8599cd2e0fc484e5f5029ab87 Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Sun, 24 Apr 2016 18:52:45 +0200
+Subject: [PATCH] Fix compiler warning on SunOS
+
+pcscdaemon.c: In function 'main':
+pcscdaemon.c:402:5: warning: format '%d' expects argument of type 'int', but argument 6 has type 'pid_t' [-Wformat=]
+     Log2(PCSC_LOG_CRITICAL,
+     ^
+---
+ src/pcscdaemon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pcscdaemon.c b/src/pcscdaemon.c
+index 624e759..099b18c 100644
+--- a/src/pcscdaemon.c
++++ b/src/pcscdaemon.c
+@@ -491,7 +491,7 @@ int main(int argc, char **argv)
+ 				Log1(PCSC_LOG_CRITICAL,
+ 					"file " PCSCLITE_CSOCK_NAME " already exists.");
+ 				Log2(PCSC_LOG_CRITICAL,
+-					"Another pcscd (pid: %d) seems to be running.", pid);
++					"Another pcscd (pid: %ld) seems to be running.", (long)pid);
+ 				return EXIT_FAILURE;
+ 			}
+ 			else
+-- 
+1.9.1
+

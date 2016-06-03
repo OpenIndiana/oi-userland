@@ -1,0 +1,41 @@
+In-house patch created for CCID data frame error handling issue seen on Solaris.
+
+The data the CCID frame says to contain will only be evaluated to see if we 
+have less data, if so then report it as an error condition. 
+
+--- ccid-1.4.20/src/commands.c	2016-05-17 10:28:40.587856908 -0400
++++ ccid-1.4.20/src/commands.c	2016-05-17 10:04:27.530080977 -0400
+@@ -1493,6 +1493,8 @@
+ 	length = sizeof(cmd);
+ 	ret = ReadPort(reader_index, &length, cmd);
+ 
++        DEBUG_CRITICAL2("LENGTH 1 is: %d ", length);
++
+ 	/* restore the original value of read timeout */
+ 	ccid_descriptor -> readTimeout = old_timeout;
+ 	CHECK_STATUS(ret)
+@@ -1543,12 +1545,21 @@
+ 		DEBUG_COMM2("New timeout: %d ms", ccid_descriptor -> readTimeout);
+ 		goto time_request;
+ 	}
+-
+-	/* we have read less (or more) data than the CCID frame says to contain */
+-	if (length-10 != dw2i(cmd, 1))
++        /****************************************************************************
++	  * we have read less (or more) data than the CCID frame says to contain       
++         * XXX - Change from original FOSS if test logic of "!=" due to line 1493     
++         *       'length' getting assigned a value of 65636 and 'cmd' appears to be     
++         *       evaluated and returned from 'sizeof' as an unsigned int, therefore         
++         *       (65536 -10) will never equal the data the CCID frame says to contain 
++         *       so, only evaluate to see if we have less data as an error condition. 
++         ****************************************************************************/
++       if (length-10 < dw2i(cmd, 1))
+ 	{
+ 		DEBUG_CRITICAL3("Can't read all data (%d out of %d expected)",
+ 			length-10, dw2i(cmd, 1));
++
++                DEBUG_CRITICAL2("LENGTH 2 is: %d ", length);
++
+ 		return_value = IFD_COMMUNICATION_ERROR;
+ 	}
+ 

@@ -1,0 +1,35 @@
+Upstream fix that will be included in another release of pcsclite.
+
+From 890f7edbd931467fd381739257ac1e1f335eb64a Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Sat, 23 Apr 2016 15:57:46 +0200
+Subject: [PATCH] readerfactory: fix compilation warning on SunOS
+
+The code uses alloca() so we #include "alloca.h"
+
+readerfactory.c: In function 'RFAddReader':
+readerfactory.c:211:2: warning: implicit declaration of function 'alloca' [-Wimplicit-function-declaration]
+  readerName = alloca(strlen(readerNameLong)+1);
+  ^
+readerfactory.c:211:15: warning: incompatible implicit declaration of built-in function 'alloca'
+  readerName = alloca(strlen(readerNameLong)+1);
+               ^
+---
+ src/readerfactory.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/readerfactory.c b/src/readerfactory.c
+index 14cd42f..df855ea 100644
+--- a/src/readerfactory.c
++++ b/src/readerfactory.c
+@@ -49,6 +49,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <pthread.h>
++#include "alloca.h"
+ 
+ #include "misc.h"
+ #include "pcscd.h"
+-- 
+1.9.1
+

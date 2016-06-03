@@ -1,0 +1,19 @@
+In-house patch created as a workaround for the hard coded /usr/local/lib
+pre-processor and linker flags in the configure file creation for Solaris.
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+--- pcsc-lite-1.8.14/configure.ac	2016-05-06 22:11:53.687836295 -0400
++++ pcsc-lite-1.8.14/configure.ac	2016-05-06 22:11:00.834314248 -0400
+@@ -22,8 +22,8 @@
+ 	CPPFLAGS="$CPPFLAGS -D_HPUX_SOURCE -D_XOPEN_SOURCE_EXTENDED"
+ 	;;
+ *-*-solaris*)
+-	CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+-	LDFLAGS="$LDFLAGS -L/usr/local/lib -R/usr/local/lib"
++	CPPFLAGS="$CPPFLAGS"
++	LDFLAGS="$LDFLAGS"
+ 	need_dash_r=1
+ 	;;
+ *-*-sunos4*)
+

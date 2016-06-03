@@ -1,0 +1,57 @@
+In-house patch created for studio compiler and userland build environment.
+This is similar to upstream patch for missing d_type field on SunOS.
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+--- pcsc-lite-1.8.14/src/configfile.c	2015-04-29 15:23:11.000000000 -0400
++++ pcsc-lite-1.8.14/src/configfile.c	2016-05-05 16:41:12.704546283 -0400
+@@ -2012,37 +2012,28 @@
+ 		while ((direntry = readdir(dir)) != NULL)
+ 		{
+ 			char filename[FILENAME_MAX];
++			struct stat st;		
+ 			int r;
+ 
+ 			snprintf(filename, sizeof(filename), "%s/%s",
+ 				readerconf_dir, direntry->d_name);
+ 
+ 			/* skip non regular files */
+-			if (direntry->d_type == DT_UNKNOWN)
+-			{
+-				struct stat st;
+ 
+-				if (lstat(filename, &st) != 0)
+-				{
+-					Log2(PCSC_LOG_DEBUG, "Skipping non statable file: %s",
+-						direntry->d_name);
+-					continue;
+-				}
+ 
+-				if (!S_ISREG(st.st_mode))
+-				{
+-					Log2(PCSC_LOG_DEBUG, "Skipping non regular file: %s",
++			if (lstat(direntry->d_name, &st) != 0)
++			{
++
++				Log2(PCSC_LOG_DEBUG, "Skipping non regular file: %s",
+ 						direntry->d_name);
+-					continue;
+-				}
++				continue;
+ 			}
+-			else
+-				if (direntry->d_type != DT_REG)
+-				{
+-					Log2(PCSC_LOG_DEBUG, "Skipping non regular file: %s",
+-						direntry->d_name);
+-					continue;
+-				}
++			if (!S_ISREG(st.st_mode))
++                        {
++                                Log2(PCSC_LOG_DEBUG, "Skipping non regular file: %s",
++                                       direntry->d_name);
++                                continue;
++                        }
+ 
+ 			/* skip files starting with . like ., .., .svn, etc */
+ 			if ('.' == direntry->d_name[0])

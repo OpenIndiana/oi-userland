@@ -1,0 +1,55 @@
+Upstream fix that will be included in another release of pcsclite.
+
+From 9d0438ae384c33276d671cdf0830fe5d51901192 Mon Sep 17 00:00:00 2001
+From: Ludovic Rousseau <ludovic.rousseau@free.fr>
+Date: Fri, 18 Mar 2016 13:29:35 +0100
+Subject: [PATCH] libusb hotplug: handle error in parsing drivers
+
+If HPReadBundleValues() returned an error (-1) it was considered as a
+correct value in HPSearchHotPluggables()
+
+We now check that at least 1 driver has been found.
+
+Thanks to Maksim Ivanov for the bug report
+https://lists.alioth.debian.org/pipermail/pcsclite-muscle/Week-of-Mon-20160314/000550.html
+---
+ src/hotplug_libusb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/hotplug_libusb.c b/src/hotplug_libusb.c
+index 71d5192..eff8519 100644
+--- a/src/hotplug_libusb.c
++++ b/src/hotplug_libusb.c
+@@ -263,19 +263,17 @@ static LONG HPReadBundleValues(void)
+ 	driverSize = listCount;
+ 	closedir(hpDir);
+ 
+-	rv = TRUE;
+ 	if (driverSize == 0)
+ 	{
+ 		Log1(PCSC_LOG_INFO, "No bundle files in pcsc drivers directory: " PCSCLITE_HP_DROPDIR);
+ 		Log1(PCSC_LOG_INFO, "Disabling USB support for pcscd");
+-		rv = FALSE;
+ 	}
+ #ifdef DEBUG_HOTPLUG
+ 	else
+ 		Log2(PCSC_LOG_INFO, "Found drivers for %d readers", listCount);
+ #endif
+ 
+-	return rv;
++	return driverSize;
+ }
+ 
+ static void HPRescanUsbBus(void)
+@@ -490,7 +488,7 @@ LONG HPSearchHotPluggables(void)
+ 		readerTracker[i].fullName = NULL;
+ 	}
+ 
+-	if (HPReadBundleValues())
++	if (HPReadBundleValues() > 0)
+ 	{
+ 		int pipefd[2];
+ 		char c;
+-- 
+1.9.1
+

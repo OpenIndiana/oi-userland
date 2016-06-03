@@ -1,0 +1,303 @@
+In-house patch created for multiple CCID usb issues seen on Solaris:
+busy loop, race condition and the closing of libusb. 
+
+This is similar to several different upstream patches for the same ccid_usb.c 
+issues to that will be fixed in a future release of ccid.
+
+--- ccid-1.4.20/src/ccid_usb.c	2016-05-17 10:28:40.585070162 -0400
++++ ccid-1.4.20/src/ccid_usb.c	2016-05-10 22:55:51.214474582 -0400
+@@ -17,10 +17,6 @@
+ 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+ 
+-/*
+- * $Id$
+- */
+-
+ #define __CCID_USB__
+ 
+ #include <stdio.h>
+@@ -178,6 +174,9 @@
+ {
+ 	int i, to_exit = TRUE;
+ 
++	if (NULL == ctx)
++		return;
++
+ 	/* if at least 1 reader is still in use we do not exit libusb */
+ 	for (i=0; i<CCID_DRIVER_MAX_READERS; i++)
+ 	{
+@@ -218,9 +217,12 @@
+ 	char infofile[FILENAME_MAX];
+ #ifndef __APPLE__
+ 	unsigned int device_vendor, device_product;
++	unsigned int device_bus = 0;
++	unsigned int device_addr = 0;
+ #else
+ 	/* 100 ms delay */
+ 	struct timespec sleep_time = { 0, 100 * 1000 * 1000 };
++	int count_libusb = 10;
+ #endif
+ 	int interface_number = -1;
+ 	int i;
+@@ -262,9 +264,11 @@
+ 		 */
+ 		if ((dirname = strstr(device, "libudev:")) != NULL)
+ 		{
+-			/* convert the interface number */
+-			interface_number = atoi(dirname + 8 /* "libudev:" */);
+-			DEBUG_COMM2("interface_number: %d", interface_number);
++			/* convert the interface number, bus and device ids */
++			if (sscanf(dirname + 8, "%d:/dev/bus/usb/%d/%d", &interface_number, &device_bus, &device_addr) == 3) {
++				DEBUG_COMM2("interface_number: %d", interface_number);
++				DEBUG_COMM3("usb bus/device: %d/%d", device_bus, device_addr);
++			}
+ 		}
+ 	}
+ #endif
+@@ -307,31 +311,19 @@
+ 		rv = libusb_init(&ctx);
+ 		if (rv != 0)
+ 		{
+-			DEBUG_CRITICAL2("libusb_init failed: %d", rv);
++			DEBUG_CRITICAL2("libusb_init failed: %s", libusb_error_name(rv));
+ 			return_value = STATUS_UNSUCCESSFUL;
+ 			goto end1;
+ 		}
+ 	}
+ 
+-#ifdef __APPLE__
+-	/* give some time to libusb to detect the new USB devices on Mac OS X */
+-	nanosleep(&sleep_time, NULL);
+-#endif
+-	cnt = libusb_get_device_list(ctx, &devs);
+-	if (cnt < 0)
+-	{
+-		DEBUG_CRITICAL("libusb_get_device_list() failed\n");
+-		return_value = STATUS_UNSUCCESSFUL;
+-		goto end1;
+-	}
+-
+ #define GET_KEYS(key, values) \
+ 	rv = LTPBundleFindValueWithKey(&plist, key, values); \
+ 	if (rv) \
+ 	{ \
+ 		DEBUG_CRITICAL2("Value/Key not defined for " key " in %s", infofile); \
+ 		return_value = STATUS_UNSUCCESSFUL; \
+-		goto end2; \
++		goto end1; \
+ 	}
+ 
+ 	GET_KEYS("ifdVendorID", &ifdVendorID)
+@@ -347,6 +339,17 @@
+ 		goto end1;
+ 	}
+ 
++#ifdef __APPLE__
++again_libusb:
++#endif
++	cnt = libusb_get_device_list(ctx, &devs);
++	if (cnt < 0)
++	{
++		DEBUG_CRITICAL("libusb_get_device_list() failed\n");
++		return_value = STATUS_UNSUCCESSFUL;
++		goto end1;
++	}
++
+ 	/* for any supported reader */
+ 	for (alias=0; alias<list_size(ifdVendorID); alias++)
+ 	{
+@@ -377,6 +380,16 @@
+ 			uint8_t bus_number = libusb_get_bus_number(dev);
+ 			uint8_t device_address = libusb_get_device_address(dev);
+ 
++#ifndef __APPLE__
++			if ((device_bus || device_addr)
++				&& ((bus_number != device_bus)
++				|| (device_address != device_addr))) {
++				/* not USB the device we are looking for */
++				continue;
++			}
++#endif
++			DEBUG_COMM3("Try device: %d/%d", bus_number, device_address);
++
+ 			int r = libusb_get_device_descriptor(dev, &desc);
+ 			if (r < 0)
+ 			{
+@@ -385,6 +398,8 @@
+ 				continue;
+ 			}
+ 
++			DEBUG_COMM3("vid/pid : %04X/%04X", desc.idVendor, desc.idProduct);
++
+ 			if (desc.idVendor == vendorID && desc.idProduct == productID)
+ 			{
+ 				int already_used;
+@@ -399,7 +414,8 @@
+ 
+ 				/* simulate a composite device as when libudev is used */
+ 				if ((GEMALTOPROXDU == readerID)
+-					|| (GEMALTOPROXSU == readerID))
++					|| (GEMALTOPROXSU == readerID)
++					|| (FEITIANR502DUAL == readerID))
+ 				{
+ 						/*
+ 						 * We can't talk to the two CCID interfaces
+@@ -496,8 +512,8 @@
+ 				r = libusb_open(dev, &dev_handle);
+ 				if (r < 0)
+ 				{
+-					DEBUG_CRITICAL4("Can't libusb_open(%d/%d): %d",
+-						bus_number, device_address, r);
++					DEBUG_CRITICAL4("Can't libusb_open(%d/%d): %s",
++						bus_number, device_address, libusb_error_name(r));
+ 
+ 					continue;
+ 				}
+@@ -522,8 +538,9 @@
+ 						if (r < 0)
+ 						{
+ 							(void)libusb_close(dev_handle);
+-							DEBUG_CRITICAL4("Can't set configuration on %d/%d: %d",
+-									bus_number, device_address, r);
++							DEBUG_CRITICAL4("Can't set configuration on %d/%d: %s",
++									bus_number, device_address,
++									libusb_error_name(r));
+ 							continue;
+ 						}
+ 					}
+@@ -534,8 +551,8 @@
+ 					{
+ #endif
+ 						(void)libusb_close(dev_handle);
+-						DEBUG_CRITICAL4("Can't get config descriptor on %d/%d: %d",
+-							bus_number, device_address, r);
++						DEBUG_CRITICAL4("Can't get config descriptor on %d/%d: %s",
++							bus_number, device_address, libusb_error_name(r));
+ 						continue;
+ 					}
+ #ifdef __APPLE__
+@@ -570,7 +587,7 @@
+ 					/* an interface was specified and it is not the
+ 					 * current one */
+ 					DEBUG_INFO3("Found interface %d but expecting %d",
+-						interface_number, interface);
++						interface, interface_number);
+ 					DEBUG_INFO3("Wrong interface for USB device %d/%d."
+ 						" Checking next one.", bus_number, device_address);
+ 
+@@ -584,8 +601,8 @@
+ 				if (r < 0)
+ 				{
+ 					(void)libusb_close(dev_handle);
+-					DEBUG_CRITICAL4("Can't claim interface %d/%d: %d",
+-						bus_number, device_address, r);
++					DEBUG_CRITICAL4("Can't claim interface %d/%d: %s",
++						bus_number, device_address, libusb_error_name(r));
+ 					claim_failed = TRUE;
+ 					interface_number = -1;
+ 					continue;
+@@ -610,7 +627,7 @@
+ 
+ 				/* reset for a next reader */
+ 				if (static_interface > 2)
+-					static_interface = 1;
++					static_interface = (FEITIANR502DUAL == readerID) ? 0: 1;
+ #endif
+ 
+ 				/* Get Endpoints values*/
+@@ -696,7 +713,23 @@
+ end:
+ 	if (usbDevice[reader_index].dev_handle == NULL)
+ 	{
++		/* free the libusb allocated list & devices */
++		libusb_free_device_list(devs, 1);
++
++#ifdef __APPLE__
++		/* give some time to libusb to detect the new USB devices on Mac OS X */
++		if (count_libusb > 0)
++		{
++			count_libusb--;
++			DEBUG_INFO2("Wait after libusb: %d", count_libusb);
++			nanosleep(&sleep_time, NULL);
++
++			goto again_libusb;
++		}
++#endif
++		/* failed */
+ 		close_libusb_if_needed();
++
+ 		if (claim_failed)
+ 			return STATUS_COMM_ERROR;
+ 		DEBUG_INFO1("Device not found?");
+@@ -715,6 +748,9 @@
+ 	/* free bundle list */
+ 	bundleRelease(&plist);
+ 
++	if (return_value != STATUS_SUCCESS)
++		close_libusb_if_needed();
++
+ 	return return_value;
+ } /* OpenUSBByName */
+ 
+@@ -868,10 +904,6 @@
+ 		if (usbDevice[reader_index].ccid.sIFD_iManufacturer)
+ 			free(usbDevice[reader_index].ccid.sIFD_iManufacturer);
+ 
+-		/* reset so that bSeq starts at 0 again */
+-		if (DriverOptions & DRIVER_OPTION_RESET_ON_CLOSE)
+-			(void)libusb_reset_device(usbDevice[reader_index].dev_handle);
+-
+ 		if (usbDevice[reader_index].ccid.arrayOfSupportedDataRates)
+ 			free(usbDevice[reader_index].ccid.arrayOfSupportedDataRates);
+ 
+@@ -1210,7 +1242,8 @@
+ 	ret = libusb_submit_transfer(transfer);
+ 	if (ret < 0) {
+ 		libusb_free_transfer(transfer);
+-		DEBUG_CRITICAL2("libusb_submit_transfer failed: %d", ret);
++		DEBUG_CRITICAL2("libusb_submit_transfer failed: %s",
++			libusb_error_name(ret));
+ 		return ret;
+ 	}
+ 
+@@ -1218,17 +1251,18 @@
+ 
+ 	while (!completed)
+ 	{
+-		ret = libusb_handle_events(ctx);
++		ret = libusb_handle_events_completed(ctx, &completed);
+ 		if (ret < 0)
+ 		{
+ 			if (ret == LIBUSB_ERROR_INTERRUPTED)
+ 				continue;
+ 			libusb_cancel_transfer(transfer);
+ 			while (!completed)
+-				if (libusb_handle_events(ctx) < 0)
++				if (libusb_handle_events_completed(ctx, &completed) < 0)
+ 					break;
+ 			libusb_free_transfer(transfer);
+-			DEBUG_CRITICAL2("libusb_handle_events failed: %d", ret);
++			DEBUG_CRITICAL2("libusb_handle_events failed: %s",
++				libusb_error_name(ret));
+ 			return ret;
+ 		}
+ 	}
+@@ -1344,7 +1378,7 @@
+ 		completed = 0;
+ 		while (!completed && !msExt->terminated)
+ 		{
+-			rv = libusb_handle_events(ctx);
++			rv = libusb_handle_events_completed(ctx, &completed);
+ 			if (rv < 0)
+ 			{
+ 				DEBUG_COMM2("libusb_handle_events err %d", rv);
+@@ -1356,7 +1390,7 @@
+ 
+ 				while (!completed && !msExt->terminated)
+ 				{
+-					if (libusb_handle_events(ctx) < 0)
++					if (libusb_handle_events_completed(ctx, &completed) < 0)
+ 						break;
+ 				}
+ 
