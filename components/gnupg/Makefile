@@ -154,4 +154,5 @@ REQUIRED_PACKAGES += security/pinentry
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/network/ldap/openldap
 REQUIRED_PACKAGES += web/curl
