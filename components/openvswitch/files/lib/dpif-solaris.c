@@ -45,6 +45,33 @@ static kstat2_handle_t	dpif_khandle;
 static boolean_t	kstat2_handle_initialized = B_FALSE;
 static struct ovs_mutex	kstat_mutex = OVS_MUTEX_INITIALIZER;
 
+#ifndef  MAC_OVS_AUX_DATA_VERSION
+/* Auxillary data from OVS if it wants to send packet directly out on a port */
+typedef struct mac_ovs_aux_data_s {
+	uint16_t	moad_ofport;
+	uint16_t	moad_ofaction;
+	mactun_info_t	moad_tuninfo;
+} mac_ovs_aux_data_t;
+
+struct ovs_tpacket_auxdata {		/* tp_macoff/tp_netoff */
+	tpkt_status_t		tp_status;
+	uint32_t		tp_len;
+	uint32_t		tp_snaplen;
+	uint16_t		tp_macoff;
+	uint16_t		tp_netoff;
+	uint16_t		tp_vlan_vci;
+	mac_ovs_aux_data_t	tp_ovs_info;
+};
+
+#define	tpacket_auxdata	ovs_tpacket_auxdata
+#define	tp_of_action	tp_ovs_info.moad_ofaction
+#define	tp_of_port	tp_ovs_info.moad_ofport
+#define	tp_tun_info	tp_ovs_info.moad_tuninfo
+#define	tp_tun_type	tp_ovs_info.moad_tuninfo.mti_type
+#define	tp_tun_id	tp_ovs_info.moad_tuninfo.mti_id
+#define	tp_tun_dstip	tp_ovs_info.moad_tuninfo.mti_dst
+#endif
+
 /* Datapath interface for the openvswitch Solaris kernel module. */
 struct dpif_solaris {
 	struct dpif dpif;
@@ -1850,7 +1877,7 @@ dpif_solaris_port_output(struct dpif_solaris *dpif, odp_port_t port_no,
 	struct msghdr			msghdr;
 	struct iovec 			iov;
 	struct cmsghdr			*cmsg;
-	struct tpacket_auxdata		auxdata;
+	struct tpacket_auxdata	auxdata;
 	char coutmsg[sizeof (auxdata) + sizeof (*cmsg) + _CMSG_HDR_ALIGNMENT];
 	size_t		nwritten;
 	ssize_t		nbytes = 0;
@@ -1885,7 +1912,6 @@ dpif_solaris_port_output(struct dpif_solaris *dpif, odp_port_t port_no,
 
 	memcpy(&auxdata, CMSG_DATA(cmsg), sizeof (auxdata));
 	auxdata.tp_of_port = port_no;
-#ifdef MAC_OVS_AUX_DATA_VERSION
 	auxdata.tp_tun_id = 0;
 	IN6_IPADDR_TO_V4MAPPED(0, &auxdata.tp_tun_dstip);
 	if (tnl != NULL) {
@@ -1893,7 +1919,6 @@ dpif_solaris_port_output(struct dpif_solaris *dpif, odp_port_t port_no,
 		auxdata.tp_tun_id = htonll(tnl->tun_id);
 		IN6_IPADDR_TO_V4MAPPED(tnl->ip_dst, &auxdata.tp_tun_dstip);
 	}
-#endif
 	memcpy(CMSG_DATA(cmsg), &auxdata, sizeof (auxdata));
 	for (nwritten = 0; nwritten < buflen; nwritten += nbytes) {
 		nbytes = sendmsg(fd, &msghdr, 0);
