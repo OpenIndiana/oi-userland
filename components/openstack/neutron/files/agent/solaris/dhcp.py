@@ -56,8 +56,7 @@ class Dnsmasq(dhcp.Dnsmasq):
             '--dhcp-hostsfile=%s' % self.get_conf_file_name('host'),
             '--addn-hosts=%s' % self.get_conf_file_name('addn_hosts'),
             '--dhcp-optsfile=%s' % self.get_conf_file_name('opts'),
-            '--leasefile-ro',
-            '--dhcp-authoritative'
+            '--dhcp-leasefile=%s' % self.get_conf_file_name('leases')
         ]
 
         possible_leases = 0
@@ -268,7 +267,7 @@ class DeviceManager(dhcp.DeviceManager):
             else:
                 addrconf = True
 
-            self.driver.init_l3(interface_name, ip_cidrs, addrconf=addrconf)
+        self.driver.init_l3(interface_name, ip_cidrs, addrconf=addrconf)
 
         return interface_name
 
