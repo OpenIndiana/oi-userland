@@ -38,6 +38,13 @@ TPNO=			24758
 # Tests do not work on Solaris yet
 TEST_TARGET= $(SKIP_TEST)
 
+# Needs gtk3, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 CONFIGURE_OPTIONS += --includedir=/usr/include/$(COMPONENT_NAME)-4/

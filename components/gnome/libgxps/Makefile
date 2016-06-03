@@ -33,10 +33,18 @@ COMPONENT_NAME=		libgxps
 COMPONENT_VERSION=	0.2.2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:39d104739bf0db43905c315de1d8002460f1a098576f4418f69294013a5820be
+COMPONENT_BUGDB=	gnome/libraries
 
 TPNO=			25452
 
 TEST_TARGET= $(SKIP_TEST)
+
+# Needs updated glib2, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 

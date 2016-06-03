@@ -35,6 +35,13 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:f0fea447e0374a73df45b498fd1701393f8e6acb39746119f8a292fb4a0cb528
 COMPONENT_BUGDB=        gnome/libraries
 
+# Needs gobject-introspection, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 TPNO=			24756
 
 include $(WS_MAKE_RULES)/gnome-component.mk
