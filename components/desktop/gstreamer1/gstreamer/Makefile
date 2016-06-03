@@ -44,6 +44,13 @@ COMPONENT_BUGDB=	gnome/multimedia
 
 TPNO=			25634
 
+# Needs gobject-introspection, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 # Supports Python 2.x only.
 PYTHON_VERSIONS= 2.7
 
