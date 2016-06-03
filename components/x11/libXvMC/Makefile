@@ -10,40 +10,36 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2015 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           libXmu
-COMPONENT_VERSION=        1.1.2
-COMPONENT_FMRI=           x11/library/libxmu
+COMPONENT_NAME=           libXvMC
+COMPONENT_VERSION=        1.0.9
+COMPONENT_FMRI=           x11/library/libxvmc
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXmu - miscellaneous utility functions for Xaw and Xt clients
+COMPONENT_SUMMARY=  libXvMC - X Video Motion Compensation library 
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:756edc7c383254eef8b4e1b733c3bf1dc061b523c9f9833ac7058378b8349d0b
+  sha256:0703d7dff6ffc184f1735ca5d4eb9dbb402b522e08e008f2f96aee16c40a5756
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXmu-1.1.2.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE_FILE= libXvMC.license
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                                        cd $(@D) &&  autoreconf -f  -i )
-CFLAGS += -I/usr/include/X11/xcms
-
-CONFIGURE_OPTIONS += --without-lint
-CONFIGURE_OPTIONS += --disable-lint-library
-
-COMPONENT_BUILD_ARGS += V=1
-
 PATH=/usr/gnu/bin:/usr/bin
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
+
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --enable-shared
 
 build: $(BUILD_32_and_64)
 
@@ -51,9 +47,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxmuu
-REQUIRED_PACKAGES += x11/library/toolkit/libxt
