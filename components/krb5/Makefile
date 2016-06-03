@@ -46,16 +46,16 @@ COMPONENT_BUGDB=	utility/kerberos
 
 TPNO=		27916
 
-include $(WS_MAKE_RULES)/common.mk
-
-LINT_FLAGS += -I$(PROTOUSRINCDIR) -I$(PROTOUSRINCDIR)/kerberosv5 -I$(COMPONENT_DIR)/Solaris
-
 # Depends on S12-only header file in ON.
 ifeq ($(BUILD_TYPE), evaluation)
 BUILD_32_and_64=
 INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
+
+include $(WS_MAKE_RULES)/common.mk
+
+LINT_FLAGS += -I$(PROTOUSRINCDIR) -I$(PROTOUSRINCDIR)/kerberosv5 -I$(COMPONENT_DIR)/Solaris
 
 # The configure script is not at the top of the source directory.
 CONFIGURE_SCRIPT=	$(SOURCE_DIR)/src/configure
