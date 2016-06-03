@@ -29,7 +29,7 @@ COMPONENT_NAME=		libpki
 COMPONENT_VERSION=	0.8.9
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/libpki/
 COMPONENT_ARCHIVE_SRC=	git
-COMPONENT_BUGDB=	utility/smartcard
+COMPONENT_BUGDB=	library/smartcard
 
 GIT_REPO= https://github.com/openca/libpki
 GIT_COMMIT_ID= b46aebc
@@ -63,6 +63,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/\# ERROR:/p" '
 
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/network/ldap/openldap

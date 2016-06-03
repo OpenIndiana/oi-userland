@@ -1,11 +1,12 @@
 Patch origin: in-house
-Patch status: Solaris-specific; not suitable for upstream
+Patch status: not Solaris-specific; suitable for upstream
 
 Need to add architectures for Oracle build environments.
-Also need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
+Need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
+Need to use an appropriate path for ldap.h.
 
 --- libpki-0.8.9/configure	2015-11-10 13:50:26.446036204 -0800
-+++ libpki-0.8.9/configure	2016-03-03 14:26:17.948469807 -0800
++++ libpki-0.8.9/configure	2016-06-02 13:02:40.284473768 -0700
 @@ -2529,11 +2529,20 @@
      mybits="64"
      mybits_install="64"
@@ -27,12 +28,76 @@ Also need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
    *aix*)
      mybits="64"
      mybits_install="64"
-@@ -2626,7 +2635,7 @@
+@@ -2627,6 +2636,10 @@
  
  
- 
--enable_rpath=yes
-+enable_rpath=no
+ enable_rpath=yes
++if [ "$myarch" = "solaris" ] ; then
++	enable_rpath=no
++fi
++	
  
  # Export variables to prevent autoconf to use rpl_malloc instead
  # of malloc (it won't link properly otherwise!) - needed for iPhone
+@@ -14891,26 +14904,37 @@
+ $as_echo_n "checking checking for ldap vendor... " >&6; };
+ 
+ if ! [ "$_prefix" = "" ] ; then
+-	if $EGREP "Sun" "$_prefix/include/ldap.h" 2>&1 >/dev/null ; then
+-	$as_echo "#define LDAP_VENDOR_SUN 1" >>confdefs.h
++	ldap_include_dir=$_prefix/include
++	if [ "$DIST_NAME" = "solaris" ] ; then
++		if [ "$DIST_VERSION" = "5.12" ] ; then
++			ldap_include_dir=$ldap_include_dir/openldap
++		else
++			if [ -d $ldap_include_dir/openldap ] ; then
++				ldap_include_dir=$ldap_include_dir/openldap
++			fi
++		fi
++	fi
+ 
+-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+-$as_echo "yes" >&6; }
+-	ldap_vendor="SUN"
+-   else
+-   	if $EGREP "OpenLDAP" "$_prefix/include/ldap.h" 2>&1 >/dev/null ; then
+-		$as_echo "#define LDAP_VENDOR_OPENLDAP 1" >>confdefs.h
++	if $EGREP "Sun" "$ldap_include_dir/ldap.h" 2>&1 >/dev/null ; then
++		$as_echo "#define LDAP_VENDOR_SUN 1" >>confdefs.h
+ 
+-		ldap_vendor="OPENLDAP"
+-		library_ldflags=-L$_prefix/lib
+-		library_ldadd=-lldap_r
+-	else
+-		as_fn_error $? "*** LDAP::No supported vendors found in ($_prefix)***" "$LINENO" 5
++		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++$as_echo "yes" >&6; }
++		ldap_vendor="SUN"
++   	else
++   		if $EGREP "OpenLDAP" "$ldap_include_dir/ldap.h" 2>&1 >/dev/null ; then
++			$as_echo "#define LDAP_VENDOR_OPENLDAP 1" >>confdefs.h
++
++			ldap_vendor="OPENLDAP"
++			library_ldflags=-L$_prefix/lib
++			library_ldadd=-lldap_r
++		else
++			as_fn_error $? "*** LDAP::No supported vendors found in ($_prefix)***" "$LINENO" 5
++		fi
+ 	fi
+-   fi
+ 
+ 	if [ "$ldap_vendor" = "SUN" ] ; then
+-    	ldap_lib=`ls "${_prefix}/lib/libldap.${shlext}" | head -n 1`;
++    		ldap_lib=`ls "${_prefix}/lib/libldap.${shlext}" | head -n 1`;
+ 		if [ -z "$ldap_lib" ] ; then
+ 			as_fn_error $? "*** LDAP: missing $_prefix/lib/libldap.$shlext!" "$LINENO" 5
+ 		fi
+@@ -14919,7 +14943,7 @@
+ 	fi
+ 
+ 	library_prefix=$_prefix;
+-	library_cflags=-I${_prefix}/include
++	library_cflags=-I$ldap_include_dir
+ 
+ old_cflags=$CFLAGS
+ old_ldflags=$LDFLAGS
