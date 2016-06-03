@@ -1,0 +1,39 @@
+Use virtinfo to determine if running in a kernel-zone when checking for zone
+No upstream facter 2.x is dead and new bugs are not being accepted.
+--- facter-2.4.6/lib/facter/util/solaris_zones.rb.orig	2016-06-01 10:44:41.516631538 -0700
++++ facter-2.4.6/lib/facter/util/solaris_zones.rb	2016-06-01 10:46:24.859533768 -0700
+@@ -186,3 +186,16 @@
+       end
+   end
+ end
++
++Facter.add("is_kernel_zone") do
++  confine :operatingsystem => :Solaris
++  setcode do
++  virtinfo = %x{/sbin/virtinfo -c current list -H -o class kernel-zone 2>&1}
++    case virtinfo.chomp!
++    when "current"
++      true
++    else
++      false
++    end
++  end
++end
+
+--- facter-2.4.6/lib/facter/util/virtual.rb.orig	2016-06-01 10:46:41.238895210 -0700
++++ facter-2.4.6/lib/facter/util/virtual.rb	2016-06-01 10:47:17.692020885 -0700
+@@ -1,5 +1,6 @@
+ require 'facter/util/posix'
+ require 'facter/util/file_read'
++require 'facter/util/solaris_zones'
+ require 'pathname'
+ 
+ module Facter::Util::Virtual
+@@ -73,6 +74,7 @@
+   end
+ 
+   def self.zone?
++    return true if Facter.value(:is_kernel_zone)
+     return true if FileTest.directory?("/.SUNWnative")
+     z = Facter::Core::Execution.exec("/sbin/zonename")
+     return false unless z

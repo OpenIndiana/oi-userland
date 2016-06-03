@@ -32,7 +32,7 @@ Upstream bug: https://tickets.puppetlabs.com/browse/FACT-660
 +Facter.add("non_global_zone") do
 +  confine :operatingsystem => :Solaris
 +  setcode do
-+      virtinfo = %x{/sbin/virtinfo list -H -o class non-global-zone 2>/dev/null}
++      virtinfo = %x{/sbin/virtinfo list | /usr/bin/nawk '/^non-global-zone/ {print $2}' 2>/dev/null}
 +      case virtinfo.chomp!
 +      when "supported", "current"
 +          virtinfo
