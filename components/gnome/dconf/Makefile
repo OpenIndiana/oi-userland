@@ -34,6 +34,13 @@ COMPONENT_BUGDB=        gnome/gconf
 
 TPNO=			25273
 
+# Needs updated glib2, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 studio_C99MODE=$(studio_C99_ENABLE)
