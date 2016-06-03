@@ -36,6 +36,13 @@ COMPONENT_BUGDB=	gnome/glib
 
 TPNO=			25285
 
+# Needs updated glib2, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Force use of gnutls-3 pkgconfig during 2.x->3.x transition
