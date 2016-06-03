@@ -6,7 +6,7 @@ Need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
 Need to use an appropriate path for ldap.h.
 
 --- libpki-0.8.9/configure	2015-11-10 13:50:26.446036204 -0800
-+++ libpki-0.8.9/configure	2016-06-02 13:02:40.284473768 -0700
++++ libpki-0.8.9/configure	2016-06-02 17:47:01.889075071 -0700
 @@ -2529,11 +2529,20 @@
      mybits="64"
      mybits_install="64"
@@ -46,7 +46,7 @@ Need to use an appropriate path for ldap.h.
 -	if $EGREP "Sun" "$_prefix/include/ldap.h" 2>&1 >/dev/null ; then
 -	$as_echo "#define LDAP_VENDOR_SUN 1" >>confdefs.h
 +	ldap_include_dir=$_prefix/include
-+	if [ "$DIST_NAME" = "solaris" ] ; then
++	if [ "$myarch" = "solaris" ] ; then
 +		if [ "$DIST_VERSION" = "5.12" ] ; then
 +			ldap_include_dir=$ldap_include_dir/openldap
 +		else
