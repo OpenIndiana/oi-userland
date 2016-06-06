@@ -1,0 +1,49 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- zlib-1.2.8/inflate.c
++++ zlib-1.2.8/inflate.c
+@@ -976,8 +976,15 @@ int flush;
+                         state->mode = BAD;
+                         break;
+                     }
+-                    while (copy--)
+-                        state->lens[state->have++] = (unsigned short)len;
++                    //while (copy--)
++                    //    state->lens[state->have++] = (unsigned short)len;
++
++                    unsigned state_have=state->have;  // Make local copy of state->have to eliminate RAW
++                    // Change from while to for loop and make local copy of "copy" so it can be unrolled:
++                    for (unsigned copy_copy=copy; copy_copy>0; copy_copy--, (state_have)++) {
++                      state->lens[state_have] = (unsigned short)len;
++                    }
++                    state->have = state_have;  // Copy back value
+                 }
+             }
+ 
+--- zlib-1.2.8/inftrees.c
++++ zlib-1.2.8/inftrees.c
+@@ -230,12 +230,22 @@
+         }
+ 
+         /* replicate for those indices with low len bits equal to huff */
++        // KPG: Create local variables so the compiler won't access via a pointer
++        unsigned char op_copy = here.op;
++        unsigned char bits_copy = here.bits;
++        unsigned short val_copy = here.val;
++
+         incr = 1U << (len - drop);
+         fill = 1U << curr;
+         min = fill;                 /* save offset to next table */
+         do {
+             fill -= incr;
+-            next[(huff >> drop) + fill] = here;
++            //next[(huff >> drop) + fill] = here;  // RAW read
++
++            // Instead of the above, storing individual elements eliminates RAW:
++            next[(huff >> drop) + fill].op = op_copy;
++            next[(huff >> drop) + fill].bits = bits_copy;
++            next[(huff >> drop) + fill].val = val_copy;
+         } while (fill != 0);
+ 
+         /* backwards increment the len-bit code huff */
