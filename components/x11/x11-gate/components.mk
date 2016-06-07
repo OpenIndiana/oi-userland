@@ -1,0 +1,292 @@
+# pre-requisite
+COMPONENTS+= util-macros
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= xproto
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= lndir
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# proto 
+COMPONENTS+= xproto
+COMPONENTS+= bigreqsproto
+COMPONENTS+= compositeproto
+COMPONENTS+= damageproto
+COMPONENTS+= dmxproto
+COMPONENTS+= dri2proto
+COMPONENTS+= dri3proto
+COMPONENTS+= evieext # evieproto in X11 gate
+COMPONENTS+= fixesproto
+COMPONENTS+= fontsproto
+COMPONENTS+= glproto
+COMPONENTS+= inputproto
+COMPONENTS+= kbproto
+COMPONENTS+= presentproto
+COMPONENTS+= printproto
+COMPONENTS+= randrproto
+COMPONENTS+= recordproto
+COMPONENTS+= renderproto
+COMPONENTS+= resourceproto
+COMPONENTS+= scrnsaverproto
+COMPONENTS+= videoproto
+COMPONENTS+= xcmiscproto
+COMPONENTS+= xextproto
+COMPONENTS+= xf86dgaproto
+COMPONENTS+= xf86driproto
+COMPONENTS+= xf86miscproto
+COMPONENTS+= xf86vidmodeproto
+COMPONENTS+= xineramaproto
+COMPONENTS+= xcb-proto # xcbproto in X11 gate
+COMPONENTS+= sun-ext-protos
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= xbitmaps
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= font-util
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# util
+COMPONENTS+= compat-links
+COMPONENTS+= imake
+COMPONENTS+= makedepend
+COMPONENTS+= xorg-cf-files
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# doc 
+COMPONENTS+= xorg-sgml-doctools
+COMPONENTS+= xorg-docs
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# lib
+COMPONENTS+= ../library/freetype
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= ../library/fontconfig
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libpthread-stubs
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libdrm
+COMPONENTS+= libfontenc
+COMPONENTS+= libpciaccess
+COMPONENTS+= libxcb
+COMPONENTS+= libxshmfence
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= xcb-util
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= xcb-util-errors
+COMPONENTS+= xcb-util-wm
+COMPONENTS+= xcb-util-renderutil
+COMPONENTS+= xcb-util-image
+COMPONENTS+= xcb-util-keysyms
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= xcb-util-cursor
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= xtrans # libxtrans in X11 gate
+COMPONENTS+= libXau
+COMPONENTS+= libXdmcp
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libX11
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libdga
+COMPONENTS+= libXext
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libdmx
+COMPONENTS+= libxkbfile
+COMPONENTS+= libFS
+COMPONENTS+= libICE
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libSM
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libXevie
+COMPONENTS+= libXfixes
+COMPONENTS+= libXi
+COMPONENTS+= libXinerama
+COMPONENTS+= libXp
+COMPONENTS+= libXrender
+COMPONENTS+= libXres
+COMPONENTS+= libXtst
+COMPONENTS+= libXv
+COMPONENTS+= libXxf86misc
+COMPONENTS+= libXxf86vm
+COMPONENTS+= libXt
+COMPONENTS+= libXScrnSaver
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libXmu
+COMPONENTS+= libXpm
+COMPONENTS+= libXvMC
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libXaw
+COMPONENTS+= libXcomposite
+COMPONENTS+= libXcursor
+COMPONENTS+= libXdamage
+COMPONENTS+= libXfont
+COMPONENTS+= libXft
+COMPONENTS+= libXpresent
+COMPONENTS+= libXrandr
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= mesa
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= libepoxy
+COMPONENTS+= glu # libglu in X11 gate
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+COMPONENTS+= freeglut
+COMPONENTS+= ../pixman
+COMPONENTS+= libxkbcommon
+#COMPONENTS+= libvdpau TBD
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# app
+COMPONENTS+= accessx
+COMPONENTS+= appres
+COMPONENTS+= bitmap
+COMPONENTS+= cmap_alloc
+COMPONENTS+= cmap_compact
+COMPONENTS+= constype
+COMPONENTS+= dispswitch
+COMPONENTS+= editres
+COMPONENTS+= fbconsole
+COMPONENTS+= fslsfonts
+COMPONENTS+= fstobdf
+COMPONENTS+= iceauth
+COMPONENTS+= ico
+COMPONENTS+= installalias
+COMPONENTS+= listres
+COMPONENTS+= luit
+COMPONENTS+= kbd_mode
+COMPONENTS+= mesa-demos
+COMPONENTS+= mkcookie
+COMPONENTS+= oclock
+COMPONENTS+= sessreg
+COMPONENTS+= setxkbmap
+COMPONENTS+= showfont
+COMPONENTS+= smproxy
+#COMPONENTS+= synergy TDB
+COMPONENTS+= winsysck
+COMPONENTS+= twm
+COMPONENTS+= viewres
+COMPONENTS+= x11perf
+COMPONENTS+= xauth
+COMPONENTS+= xbiff
+COMPONENTS+= xcalc
+COMPONENTS+= xclipboard
+COMPONENTS+= xclock
+COMPONENTS+= xcmsdb
+COMPONENTS+= xcolor
+COMPONENTS+= xcompmgr
+COMPONENTS+= transset
+COMPONENTS+= xconsole
+COMPONENTS+= xcursorgen
+COMPONENTS+= xditview
+COMPONENTS+= xdm
+COMPONENTS+= xdpyinfo
+COMPONENTS+= xdriinfo
+COMPONENTS+= xedit
+COMPONENTS+= xev
+COMPONENTS+= xeyes
+COMPONENTS+= xfd
+COMPONENTS+= xfontsel
+COMPONENTS+= xfs
+COMPONENTS+= xfsinfo
+COMPONENTS+= xgamma
+COMPONENTS+= xgc
+COMPONENTS+= xhost
+COMPONENTS+= xinit
+COMPONENTS+= xinput
+COMPONENTS+= xkbcomp
+COMPONENTS+= xkbprint
+COMPONENTS+= xkbutils
+COMPONENTS+= xkill
+COMPONENTS+= xload
+COMPONENTS+= xlock
+COMPONENTS+= xlogo
+COMPONENTS+= xlsatoms
+COMPONENTS+= xlsclients
+COMPONENTS+= xlsfonts
+COMPONENTS+= xmag_multivis
+COMPONENTS+= xmag
+COMPONENTS+= xmakemap
+COMPONENTS+= xman
+COMPONENTS+= xmodmap
+COMPONENTS+= xpr
+COMPONENTS+= xprop
+COMPONENTS+= xrandr
+COMPONENTS+= xrdb
+COMPONENTS+= xrefresh
+COMPONENTS+= xscope
+COMPONENTS+= xset
+COMPONENTS+= xsetroot
+COMPONENTS+= xstdcmap
+COMPONENTS+= xterm
+COMPONENTS+= xvidtune
+COMPONENTS+= xvinfo
+COMPONENTS+= xwd
+COMPONENTS+= xwininfo
+COMPONENTS+= xwud
+COMPONENTS+= intel-gpu-tools
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# font apps
+COMPONENTS+= bdftopcf
+COMPONENTS+= mkfontscale
+COMPONENTS+= mkfontdir
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= xorg-server
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= tigervnc
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# driver
+COMPONENTS+= xf86-input-keyboard
+COMPONENTS+= xf86-input-mouse
+COMPONENTS+= xf86-input-void
+COMPONENTS+= xf86-video-ast
+COMPONENTS+= xf86-video-mga
+COMPONENTS+= xf86-video-dummy		
+COMPONENTS+= xf86-input-acecad
+COMPONENTS+= xf86-input-synaptics
+COMPONENTS+= xf86-input-vmmouse
+COMPONENTS+= xf86-input-hotkey
+COMPONENTS+= xf86-video-ati
+COMPONENTS+= xf86-video-cirrus
+COMPONENTS+= xf86-video-intel
+COMPONENTS+= xf86-video-mach64
+COMPONENTS+= xf86-video-nv
+COMPONENTS+= xf86-video-openchrome
+COMPONENTS+= xf86-video-r128
+COMPONENTS+= xf86-video-savage
+COMPONENTS+= xf86-video-trident
+COMPONENTS+= xf86-video-vesa
+COMPONENTS+= xf86-video-vmware
+COMPONENTS+= ../meta-packages/xorg-video
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# kernel
+COMPONENTS+= #drm TBD
+COMPONENTS+= #i915 TBD
+COMPONENTS+= #mdb TBD
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+COMPONENTS+= rgb
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# data
+COMPONENTS+= rasterfile
+COMPONENTS+= ogl-select
+COMPONENTS+= workspace-patterns
+COMPONENTS+= xcursor-themes
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
+
+# font
+
+# meta-packages
+COMPONENTS+= ../meta-packages/x11-xfs-utilities
+COMPONENTS+= ../meta-packages/x11-colormap-utilities
+COMPONENTS+= ../meta-packages/x11-info-clients
+COMPONENTS+= ../meta-packages/x11-server-utilities
+COMPONENTS+= ../meta-packages/x11-xkb-utilities
+COMPONENTS+= ../meta-packages/x11-window-dump
+COMPONENTS+= ../meta-packages/x11-xt-resource-utilities
+COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
