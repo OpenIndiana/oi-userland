@@ -31,17 +31,17 @@ RUBY_LIB_VERSION=   2.1.0
 RUBY_VERSIONS=      2.1.0
 PATCH_EACH_ARCHIVE = 1
 
-COMPONENT_NAME=		mcollective
-COMPONENT_VERSION=	2.8.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz 
+COMPONENT=		mcollective
+COMPONENT_NAME=		marionette-collective
+COMPONENT_VERSION=	2.8.8
+COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:03e23d8e79ccee6394f0dd31456fb56c3ae4ca2891027062377a2aaa5b5c5fe9
-COMPONENT_ARCHIVE_URL=	https://downloads.puppetlabs.com/mcollective/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://puppetlabs.com/mcollective
+    sha256:503b26cb0beeb505bf9cd2abbb8724c67bc743ffff4fbaddc321e2a4d663b133
+COMPONENT_ARCHIVE_URL=	https://github.com/puppetlabs/marionette-collective/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/marionette-collective
 COMPONENT_BUGDB=	utility/mcollective
 
-TPNO_FRMWK=        23491
+TPNO_FRMWK=        29321
 TPNO_PKG_AGENT=    26722
 TPNO_PPT_AGENT=    26719
 TPNO_FCT_AGENT=    26723
