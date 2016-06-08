@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE_HASH= sha256:b91f97806042315a41f005e69529cb968621f73f2ddfbd138
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://alioth.debian.org/frs/download.php/file/4138/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        library/smartcard
- 
+
 TPNO =                  25484
 
 include $(WS_MAKE_RULES)/common.mk
@@ -43,12 +43,8 @@ POD2MAN_PATH = /usr/perl5/$(PERL_VERSION)/bin
 COMPONENT_BUILD_ENV +=  PATH="$(PATH):$(POD2MAN_PATH)"
 
 # binary and shared object creation both require the libusb-1.0 library
-CONFIGURE_ENV += LIBUSB_CFLAGS="-I$(USRINCDIR)/libusb-1.0" 
-CONFIGURE_ENV += LIBUSB_LIBS="-L$(USRLIBDIR64) -R$(USRLIBDIR64) -lusb-1.0" 
-
-# compiles as a 64-bit binary and 64-bit library, requires it's own headers for shared objects
-CONFIGURE_ENV += CFLAGS="$(CFLAGS) -m64 -I$(USRINCDIR)/PCSC" 
-CONFIGURE_ENV += LDFLAGS="-L$(USRLIBDIR64) -R$(USRLIBDIR64)"
+CONFIGURE_ENV += LIBUSB_CFLAGS="-I$(USRINCDIR)/libusb-1.0"
+CONFIGURE_ENV += LIBUSB_LIBS="-lusb-1.0"
 
 # configure.ac related patch needs configure script re-creation
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
@@ -56,13 +52,13 @@ COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 # enable ASLR for this component, lint warning against pcscd will occur if this is not set
 ASLR_MODE=$(ASLR_ENABLE)
 
-# options needed for configure, otherwise default will install into /usr/local   
+# options needed for configure, otherwise default will install into /usr/local
 CONFIGURE_OPTIONS +=    --exec-prefix=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=    --enable-libusb
-CONFIGURE_OPTIONS +=    --enable-confdir=$(ETCDIR)/pcsc 
+CONFIGURE_OPTIONS +=    --enable-confdir=$(ETCDIR)/pcsc
 CONFIGURE_OPTIONS +=    --enable-usbdropdir=$(USRLIBDIR64)/pcsc/drivers
 
-# required packages   
+# required packages
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
