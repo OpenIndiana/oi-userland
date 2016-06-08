@@ -120,7 +120,7 @@ class SolarisVNICDriver(object):
 
     def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
              network=None, bridge=None, namespace=None, prefix=None,
-             protection=False):
+             protection=False, vif_type=None):
         """Plug in the interface."""
 
         if net_lib.Datalink.datalink_exists(datalink_name):
