@@ -2,10 +2,10 @@ Upstream bugID: #3278
 Synopsis: Info panel should follow symlinks
 Bug record: https://www.midnight-commander.org/ticket/3278
 
-diff -Naur mc-4.8.15.orig/src/filemanager/mountlist.c mc-4.8.15/src/filemanager/mountlist.c
---- mc-4.8.15.orig/src/filemanager/mountlist.c	2015-11-06 10:11:09.000000000 +0100
-+++ mc-4.8.15/src/filemanager/mountlist.c	2015-11-13 10:04:32.267994401 +0100
-@@ -1704,11 +1704,15 @@
+diff -Naur mc-4.8.16.orig/src/filemanager/mountlist.c mc-4.8.16/src/filemanager/mountlist.c
+--- mc-4.8.16.orig/src/filemanager/mountlist.c	2016-03-12 16:45:48.000000000 +0100
++++ mc-4.8.16/src/filemanager/mountlist.c	2016-03-14 16:24:08.833958362 +0100
+@@ -1701,11 +1701,15 @@
  my_statfs (struct my_statfs *myfs_stats, const char *path)
  {
  #ifdef HAVE_INFOMOUNT_LIST
@@ -21,7 +21,7 @@ diff -Naur mc-4.8.15.orig/src/filemanager/mountlist.c mc-4.8.15/src/filemanager/
      for (temp = mc_mount_list; temp != NULL; temp = g_slist_next (temp))
      {
          struct mount_entry *me;
-@@ -1716,8 +1720,8 @@
+@@ -1713,8 +1717,8 @@
  
          me = (struct mount_entry *) temp->data;
          i = strlen (me->me_mountdir);
@@ -32,16 +32,16 @@ diff -Naur mc-4.8.15.orig/src/filemanager/mountlist.c mc-4.8.15/src/filemanager/
          {
              len = i;
              entry = me;
-@@ -1727,7 +1731,7 @@
+@@ -1724,7 +1728,7 @@
      if (entry != NULL)
      {
-         memset (&fs_use, 0, sizeof (struct fs_usage));
+         memset (&fs_use, 0, sizeof (fs_use));
 -        get_fs_usage (entry->me_mountdir, NULL, &fs_use);
 +        get_fs_usage (rpath, NULL, &fs_use);
  
          myfs_stats->type = entry->me_dev;
          myfs_stats->typename = entry->me_type;
-@@ -1781,6 +1785,11 @@
+@@ -1778,6 +1782,11 @@
          myfs_stats->nfree = 0;
          myfs_stats->nodes = 0;
      }
