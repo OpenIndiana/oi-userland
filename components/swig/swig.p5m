@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -42,7 +42,7 @@ set name=org.opensolaris.arc-caseid value=PSARC/2008/475
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/bin/ccache-swig
 file path=usr/bin/swig
-file path=usr/share/man/man1/ccache-swig.1
+file ccache-swig.1 path=usr/share/man/man1/ccache-swig.1
 file swig.1 path=usr/share/man/man1/swig.1
 file path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl/allegrocl.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl/inout_typemaps.i
@@ -121,6 +121,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/d/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/d/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/d/wrapperloader.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/director_common.swg
 file Doc/README path=usr/share/swig/$(COMPONENT_VERSION)/doc/README
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/cmdopt.html
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/cpp11.html
@@ -184,11 +185,15 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/android-class.png
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/android-simple.png
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch2.1.png
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/chapters
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/fixstyle.py
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/index.html
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/linkchecker.config
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/makechap.py
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/maketoc.py
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/margin-left.patch
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/style.css
 file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swig16.png
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swightml.book
 file path=usr/share/swig/$(COMPONENT_VERSION)/exception.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/gcj/cni.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/gcj/cni.swg
@@ -198,6 +203,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/go/exception.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/go.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/gokw.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/goruntime.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/gostring.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_common.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_except.i
@@ -516,6 +522,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/python/pytypemaps.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyuserdir.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pywstrings.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_alloc.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_array.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_auto_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_basic_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_carray.i
@@ -578,6 +585,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/r/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/Makefile.swig
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/argcargv.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/attribute.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/boost_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/carrays.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/cdata.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/cmalloc.i
@@ -620,6 +628,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/rubytypemaps.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/rubyuserdir.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/rubywstrings.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_alloc.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_array.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_basic_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_char_traits.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_common.i
@@ -637,6 +646,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_multiset.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_pair.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_queue.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_set.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_sstream.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_stack.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/std_streambuf.i
@@ -712,6 +722,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/scilab/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/_std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_alloc.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_array.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_basic_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_carray.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_char_traits.i

@@ -29,13 +29,13 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
-COMPONENT_VERSION=	3.0.5
+COMPONENT_VERSION=	3.0.8
 COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9f4cb9e8f213f041853646f58fe5e8428d63250d05f5c943b6fa759c77322a3c
+    sha256:58a475dbbd4a4d7075e5fe86d4e54c9edde39847cdb96a3053d87cb64a23a453
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 
-TPNO=			22223
+TPNO=			29192	
 
 include $(WS_MAKE_RULES)/common.mk
 
