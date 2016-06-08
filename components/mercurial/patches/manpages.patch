@@ -7,8 +7,8 @@ create this patch offline and keep a copy of it in the repo.
 
 These changes are Solaris-specific and not appropriate for upstream.
 
---- mercurial-3.7.3/doc/hg.1	Tue Mar 29 09:54:51 2016
-+++ mercurial-3.7.3/doc/hg.1	Tue Mar 29 10:26:31 2016
+--- mercurial-3.8.1/doc/hg.1	Sun May  1 12:36:17 2016
++++ mercurial-3.8.1/doc/hg.1	Sun May  1 14:28:22 2016
 @@ -3,33 +3,6 @@
  .TH HG 1 "" "" "Mercurial Manual"
  .SH NAME
@@ -1850,10 +1850,9 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  .nf
 -.ft C
--hg log \-r \(aqsort(all(), date)\(aq
--.ft P
 +.ft
-+hg log \-r 'sort(all(), date)'
+ hg log \-r "sort(all(), date)"
+-.ft P
 +.ft
  .fi
 -.UNINDENT
@@ -2078,7 +2077,13 @@ These changes are Solaris-specific and not appropriate for upstream.
  description from patch override values from message headers and
  body. Values given on command line with \-m/\-\-message and \-u/\-\-user
  override these.
-@@ -2561,37 +2534,37 @@
+@@ -2557,42 +2530,42 @@
+ resulting changeset has a different ID than the one recorded in
+ the patch. This will guard against various ways that portable
+ patch formats and mail systems might fail to transfer Mercurial
+-data or metadata. See \(aq:hg: bundle\(aq for lossless transmission.
++data or metadata. See ':hg: bundle' for lossless transmission.
+ .sp
  Use \-\-partial to ensure a changeset will be created from the patch
  even if some hunks fail to apply. Hunks that fail to apply will be
  written to a <target\-file>.rej file. Conflicts can then be resolved
@@ -2124,7 +2129,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -2598,9 +2571,9 @@
+@@ -2599,9 +2572,9 @@
  import a changeset from an hgweb server:
  .sp
  .nf
@@ -2136,7 +2141,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -2607,9 +2580,9 @@
+@@ -2608,9 +2581,9 @@
  import all the patches in an Unix\-style mbox:
  .sp
  .nf
@@ -2148,7 +2153,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -2617,35 +2590,35 @@
+@@ -2618,35 +2591,35 @@
  possible):
  .sp
  .nf
@@ -2196,7 +2201,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-p,  \-\-strip \ <NUM>
  .
-@@ -2665,7 +2638,7 @@
+@@ -2666,7 +2639,7 @@
  .TP
  .B \-\-no\-commit
  .
@@ -2205,7 +2210,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-bypass
  .
-@@ -2708,15 +2681,15 @@
+@@ -2709,15 +2682,15 @@
  guess renamed files by similarity (0<=s<=100)
  .sp
  aliases: patch
@@ -2224,7 +2229,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show new changesets found in the specified path/URL or the default
-@@ -2730,17 +2703,17 @@
+@@ -2731,17 +2704,17 @@
  status is also displayed for each bookmark like below:
  .sp
  .nf
@@ -2245,7 +2250,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBadded\fP
  .sp
-@@ -2757,7 +2730,7 @@
+@@ -2758,7 +2731,7 @@
  .B \fBchanged\fP
  .sp
  result depends on remote changesets
@@ -2254,7 +2259,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  From the point of view of pulling behavior, bookmark
  existing only in the remote repository are treated as \fBadded\fP,
-@@ -2767,15 +2740,15 @@
+@@ -2768,15 +2741,15 @@
  changesets twice if the incoming is followed by a pull.
  .sp
  Examples:
@@ -2273,7 +2278,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -2782,10 +2755,10 @@
+@@ -2783,10 +2756,10 @@
  show incoming changes excluding merges, store a bundle:
  .sp
  .nf
@@ -2286,7 +2291,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -2792,16 +2765,16 @@
+@@ -2793,16 +2766,16 @@
  briefly list changes inside a bundle:
  .sp
  .nf
@@ -2307,7 +2312,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-force
  .
-@@ -2874,23 +2847,23 @@
+@@ -2875,23 +2848,23 @@
  .B \-S,  \-\-subrepos
  .
  recurse into subrepositories
@@ -2338,7 +2343,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Initialize a new repository in the given directory. If the given
-@@ -2899,12 +2872,12 @@
+@@ -2900,12 +2873,12 @@
  If no directory is given, the current directory is used.
  .sp
  It is possible to specify an \fBssh://\fP URL as the destination.
@@ -2353,7 +2358,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-e,  \-\-ssh \ <CMD>
  .
-@@ -2917,15 +2890,15 @@
+@@ -2918,15 +2891,15 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -2372,7 +2377,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Print files under Mercurial control in the working directory whose
-@@ -2943,12 +2916,12 @@
+@@ -2944,12 +2917,12 @@
  will avoid the problem of "xargs" treating single filenames that
  contain whitespace as multiple filenames.
  .sp
@@ -2387,7 +2392,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV>
  .
-@@ -2969,7 +2942,7 @@
+@@ -2970,7 +2943,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -2396,7 +2401,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS log
-@@ -2977,9 +2950,9 @@
+@@ -2978,9 +2951,9 @@
  show revision history of entire repository or files:
  .sp
  .nf
@@ -2408,7 +2413,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Print the revision history of the specified files or the entire
-@@ -3001,12 +2974,12 @@
+@@ -3002,12 +2975,12 @@
  .sp
  With \-\-graph the revisions are shown as an ASCII art DAG with the most
  recent changeset at the top.
@@ -2425,7 +2430,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  changesets, as it will only compare the merge changeset against
  its first parent. Also, only files different from BOTH parents
  will appear in files:.
-@@ -3013,21 +2986,21 @@
+@@ -3014,21 +2987,21 @@
  .RE
  .IP Note
  .
@@ -2451,7 +2456,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3034,9 +3007,9 @@
+@@ -3035,9 +3008,9 @@
  changesets ancestral to the working directory:
  .sp
  .nf
@@ -2463,7 +2468,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3043,9 +3016,9 @@
+@@ -3044,9 +3017,9 @@
  last 10 commits on the current branch:
  .sp
  .nf
@@ -2475,7 +2480,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3052,9 +3025,9 @@
+@@ -3053,9 +3026,9 @@
  changesets showing all modifications of a file, including removals:
  .sp
  .nf
@@ -2487,7 +2492,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3061,9 +3034,9 @@
+@@ -3062,9 +3035,9 @@
  all changesets that touch a directory, with diffs, excluding merges:
  .sp
  .nf
@@ -2499,7 +2504,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3070,9 +3043,9 @@
+@@ -3071,9 +3044,9 @@
  all revision numbers that match a keyword:
  .sp
  .nf
@@ -2511,7 +2516,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3079,9 +3052,9 @@
+@@ -3080,9 +3053,9 @@
  the full hash identifier of the working directory parent:
  .sp
  .nf
@@ -2523,7 +2528,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3088,9 +3061,9 @@
+@@ -3089,9 +3062,9 @@
  list available log templates:
  .sp
  .nf
@@ -2535,7 +2540,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3097,9 +3070,9 @@
+@@ -3098,9 +3071,9 @@
  check if a given changeset is included in a tagged release:
  .sp
  .nf
@@ -2547,7 +2552,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3106,9 +3079,9 @@
+@@ -3107,9 +3080,9 @@
  find all changesets by some user in a date range:
  .sp
  .nf
@@ -2559,7 +2564,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -3115,24 +3088,24 @@
+@@ -3116,24 +3089,24 @@
  summary of all changesets after the last tag:
  .sp
  .nf
@@ -2591,7 +2596,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-follow
  .
-@@ -3221,23 +3194,23 @@
+@@ -3222,23 +3195,23 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -2622,7 +2627,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Print a list of version controlled files for the given revision.
-@@ -3253,7 +3226,7 @@
+@@ -3254,7 +3227,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -2631,7 +2636,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV>
  .
-@@ -3266,15 +3239,15 @@
+@@ -3267,15 +3240,15 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template (EXPERIMENTAL)
@@ -2650,7 +2655,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The current working directory is updated with all changes made in
-@@ -3287,16 +3260,16 @@
+@@ -3288,16 +3261,16 @@
  .sp
  \fB\-\-tool\fP can be used to specify the merge tool used for file
  merges. It overrides the HGMERGE environment variable and your
@@ -2671,7 +2676,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  will check out a clean copy of the original merge parent, losing
  all changes.
  .sp
-@@ -3303,7 +3276,7 @@
+@@ -3304,7 +3277,7 @@
  Returns 0 on success, 1 if there are unresolved files.
  .sp
  Options:
@@ -2680,7 +2685,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-force
  .
-@@ -3320,15 +3293,15 @@
+@@ -3321,15 +3294,15 @@
  .BI \-t,  \-\-tool \ <VALUE>
  .
  specify merge tool
@@ -2699,7 +2704,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show changesets not found in the specified destination repository
-@@ -3342,18 +3315,18 @@
+@@ -3343,18 +3316,18 @@
  status is also displayed for each bookmark like below:
  .sp
  .nf
@@ -2721,7 +2726,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBadded\fP
  .sp
-@@ -3374,7 +3347,7 @@
+@@ -3375,7 +3348,7 @@
  .B \fBchanged\fP
  .sp
  push with \fB\-B\fP will update it
@@ -2730,7 +2735,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  From the point of view of pushing behavior, bookmarks
  existing only in the remote repository are treated as
-@@ -3383,7 +3356,7 @@
+@@ -3384,7 +3357,7 @@
  Returns 0 if there are outgoing changes, 1 otherwise.
  .sp
  Options:
@@ -2739,7 +2744,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-force
  .
-@@ -3452,26 +3425,26 @@
+@@ -3453,26 +3426,26 @@
  .B \-S,  \-\-subrepos
  .
  recurse into subrepositories
@@ -2774,7 +2779,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  given via \-r/\-\-rev, the parent of that revision will be printed.
  If a file argument is given, the revision in which the file was
  last changed (before the working directory revision or the
-@@ -3480,20 +3453,20 @@
+@@ -3481,20 +3454,20 @@
  This command is equivalent to:
  .sp
  .nf
@@ -2799,7 +2804,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV>
  .
-@@ -3506,15 +3479,15 @@
+@@ -3507,15 +3480,15 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template
@@ -2818,7 +2823,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show definition of symbolic path name NAME. If no name is given,
-@@ -3537,29 +3510,29 @@
+@@ -3538,29 +3511,29 @@
  .IP Note
  .
  \fBdefault\fP and \fBdefault\-push\fP apply to all inbound (e.g.
@@ -2855,7 +2860,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  With no argument, show the phase name of the current revision(s).
-@@ -3567,21 +3540,21 @@
+@@ -3568,21 +3541,21 @@
  With one of \-p/\-\-public, \-d/\-\-draft or \-s/\-\-secret, change the
  phase value of the specified revisions.
  .sp
@@ -2882,7 +2887,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-p,  \-\-public
  .
-@@ -3602,7 +3575,7 @@
+@@ -3603,7 +3576,7 @@
  .BI \-r,  \-\-rev \ <REV[+]>
  .
  target revision
@@ -2891,7 +2896,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS pull
-@@ -3610,9 +3583,9 @@
+@@ -3611,9 +3584,9 @@
  pull changes from the specified source:
  .sp
  .nf
@@ -2903,7 +2908,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Pull changes from a remote repository to a local one.
-@@ -3622,18 +3595,18 @@
+@@ -3623,18 +3596,18 @@
  \-R is specified). By default, this does not update the copy of the
  project in the working directory.
  .sp
@@ -2928,7 +2933,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-u,  \-\-update
  .
-@@ -3666,7 +3639,7 @@
+@@ -3667,7 +3640,7 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -2937,7 +2942,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS push
-@@ -3674,9 +3647,9 @@
+@@ -3675,9 +3648,9 @@
  push changes to the specified destination:
  .sp
  .nf
@@ -2949,9 +2954,12 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Push changesets from the local repository to the specified
-@@ -3707,13 +3680,13 @@
+@@ -3707,15 +3680,15 @@
+ If \-B/\-\-bookmark is used, the specified bookmarked revision, its
  ancestors, and the bookmark will be pushed to the remote
- repository.
+ repository. Specifying \fB.\fP is equivalent to specifying the active
+-bookmark\(aqs name.
++bookmark's name.
  .sp
 -Please see \%\fBhg help urls\fP\: for important details about \fBssh://\fP
 +Please see \fBhg help urls\fP for important details about \fBssh://\fP
@@ -2965,7 +2973,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-force
  .
-@@ -3746,7 +3719,7 @@
+@@ -3748,7 +3721,7 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -2974,7 +2982,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS recover
-@@ -3754,9 +3727,9 @@
+@@ -3756,9 +3729,9 @@
  roll back an interrupted transaction:
  .sp
  .nf
@@ -2986,7 +2994,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Recover from an interrupted commit or pull.
-@@ -3771,16 +3744,16 @@
+@@ -3773,16 +3746,16 @@
  remove the specified files on the next commit:
  .sp
  .nf
@@ -3007,7 +3015,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  \-A/\-\-after can be used to remove only files that have already
  been deleted, \-f/\-\-force can be used to force deletion, and \-Af
-@@ -3790,7 +3763,7 @@
+@@ -3792,7 +3765,7 @@
  The following table details the behavior of remove for different
  file states (columns) and option combinations (rows). The file
  states are Added [A], Clean [C], Modified [M] and Missing [!]
@@ -3016,7 +3024,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  (from branch) and Delete (from disk):
  .TS
  center;
-@@ -3859,7 +3832,7 @@
+@@ -3861,7 +3834,7 @@
  .TE
  .IP Note
  .
@@ -3025,7 +3033,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  working directory, not even if \fB\-\-force\fP is specified.
  .RE
  .sp
-@@ -3866,7 +3839,7 @@
+@@ -3868,7 +3841,7 @@
  Returns 0 on success, 1 if any warnings encountered.
  .sp
  Options:
@@ -3034,7 +3042,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-after
  .
-@@ -3887,23 +3860,23 @@
+@@ -3889,23 +3862,23 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -3065,7 +3073,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Mark dest as copies of sources; mark sources for deletion. If dest
-@@ -3915,12 +3888,12 @@
+@@ -3917,12 +3890,12 @@
  operation is recorded, but no copying is performed.
  .sp
  This command takes effect at the next commit. To undo a rename
@@ -3080,7 +3088,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-after
  .
-@@ -3941,23 +3914,23 @@
+@@ -3943,23 +3916,23 @@
  .B \-n,  \-\-dry\-run
  .
  do not perform actions, just print output
@@ -3111,7 +3119,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Merges with unresolved conflicts are often the result of
-@@ -3964,15 +3937,15 @@
+@@ -3966,15 +3939,15 @@
  non\-interactive merging using the \fBinternal:merge\fP configuration
  setting, or a command\-line merge tool like \fBdiff3\fP. The resolve
  command is used to manage the files involved in a merge, after
@@ -3132,7 +3140,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  files, discarding any previous merge attempts. Re\-merging is not
  performed for files already marked as resolved. Use \fB\-\-all/\-a\fP
  to select all unresolved files. \fB\-\-tool\fP can be used to specify
-@@ -3981,22 +3954,22 @@
+@@ -3983,22 +3956,22 @@
  contents are saved with a \fB.orig\fP suffix.
  .IP \(bu 2
  .
@@ -3160,7 +3168,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  commit after a conflicting merge.
  .RE
  .sp
-@@ -4003,7 +3976,7 @@
+@@ -4005,7 +3978,7 @@
  Returns 0 on success, 1 if any files fail a resolve attempt.
  .sp
  Options:
@@ -3169,7 +3177,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-all
  .
-@@ -4040,7 +4013,7 @@
+@@ -4042,7 +4015,7 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template (EXPERIMENTAL)
@@ -3178,7 +3186,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS revert
-@@ -4048,15 +4021,15 @@
+@@ -4050,15 +4023,15 @@
  restore files to their checkout state:
  .sp
  .nf
@@ -3198,7 +3206,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .RE
  .sp
  With no revision specified, revert the specified files or directories
-@@ -4070,21 +4043,21 @@
+@@ -4072,21 +4045,21 @@
  directories to their states as of a specific revision. Because
  revert does not change the working directory parents, this will
  cause these files to appear modified. This can be helpful to "back
@@ -3224,7 +3232,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-all
  .
-@@ -4117,7 +4090,7 @@
+@@ -4119,7 +4092,7 @@
  .B \-n,  \-\-dry\-run
  .
  do not perform actions, just print output
@@ -3233,7 +3241,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS rollback
-@@ -4125,12 +4098,12 @@
+@@ -4127,12 +4100,12 @@
  roll back the last transaction (DANGEROUS) (DEPRECATED):
  .sp
  .nf
@@ -3249,7 +3257,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  mistakes in the last commit.
  .sp
  This command should be used with care. There is only one level of
-@@ -4145,7 +4118,7 @@
+@@ -4147,7 +4120,7 @@
  .sp
  For example, the following commands are transactional, and their
  effects can be rolled back:
@@ -3258,7 +3266,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  commit
-@@ -4161,10 +4134,10 @@
+@@ -4163,10 +4136,10 @@
  .IP \(bu 2
  .
  unbundle
@@ -3271,7 +3279,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  override this protection.
  .sp
  This command is not intended for use on public repositories. Once
-@@ -4177,7 +4150,7 @@
+@@ -4179,7 +4152,7 @@
  Returns 0 on success, 1 if no rollback data is available.
  .sp
  Options:
@@ -3280,7 +3288,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-n,  \-\-dry\-run
  .
-@@ -4186,15 +4159,15 @@
+@@ -4188,15 +4161,15 @@
  .B \-f,  \-\-force
  .
  ignore safety measures
@@ -3299,7 +3307,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Print the root directory of the current repository.
-@@ -4205,9 +4178,9 @@
+@@ -4207,9 +4180,9 @@
  start stand\-alone webserver:
  .sp
  .nf
@@ -3311,7 +3319,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Start a local HTTP repository browser and pull server. You can use
-@@ -4232,7 +4205,7 @@
+@@ -4234,7 +4207,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -3320,14 +3328,16 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-A,  \-\-accesslog \ <FILE>
  .
-@@ -4301,15 +4274,15 @@
+@@ -4303,7 +4276,7 @@
  .BI \-\-certificate \ <FILE>
  .
  SSL certificate file
 -.UNINDENT
 +.RE
- .SS status
  .sp
+ [+] marked option can be specified multiple times
+ .SS status
+@@ -4311,9 +4284,9 @@
  show changed files in the working directory:
  .sp
  .nf
@@ -3339,7 +3349,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show status of files in the repository. If names are given, only
-@@ -4323,7 +4296,7 @@
+@@ -4327,7 +4300,7 @@
  unless explicitly requested with \-u/\-\-unknown or \-i/\-\-ignored.
  .IP Note
  .
@@ -3348,7 +3358,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  changed or a merge has occurred. The standard diff format does
  not report permission changes and diff only reports changes
  relative to one merge parent.
-@@ -4337,7 +4310,7 @@
+@@ -4341,7 +4314,7 @@
  The codes used to show the status of files are:
  .sp
  .nf
@@ -3357,7 +3367,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  M = modified
  A = added
  R = removed
-@@ -4346,11 +4319,11 @@
+@@ -4350,11 +4323,11 @@
  ? = not tracked
  I = ignored
    = origin of the previous file (with \-\-copies)
@@ -3371,7 +3381,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  show changes in the working directory relative to a
-@@ -4357,19 +4330,19 @@
+@@ -4361,19 +4334,19 @@
  changeset:
  .sp
  .nf
@@ -3396,7 +3406,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -4376,9 +4349,9 @@
+@@ -4380,9 +4353,9 @@
  show all changes including copies in an existing changeset:
  .sp
  .nf
@@ -3408,7 +3418,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -4385,16 +4358,16 @@
+@@ -4389,16 +4362,16 @@
  get a NUL separated list of added files, suitable for xargs:
  .sp
  .nf
@@ -3429,7 +3439,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-all
  .
-@@ -4463,23 +4436,23 @@
+@@ -4467,23 +4440,23 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template (EXPERIMENTAL)
@@ -3460,7 +3470,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This generates a brief summary of the working directory state,
-@@ -4491,7 +4464,7 @@
+@@ -4495,7 +4468,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -3469,7 +3479,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-remote
  .
-@@ -4498,15 +4471,15 @@
+@@ -4502,15 +4475,15 @@
  check for push and pull
  .sp
  aliases: sum
@@ -3488,7 +3498,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Name a particular revision using <name>.
-@@ -4527,11 +4500,11 @@
+@@ -4531,11 +4504,11 @@
  repositories).
  .sp
  Tag commits are usually made at the head of a branch. If the parent
@@ -3502,7 +3512,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Since tag names have priority over branch names during revision
  lookup, using an existing branch name as a tag name is discouraged.
-@@ -4539,7 +4512,7 @@
+@@ -4543,7 +4516,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -3511,7 +3521,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-force
  .
-@@ -4572,15 +4545,15 @@
+@@ -4576,15 +4549,15 @@
  .BI \-u,  \-\-user \ <USER>
  .
  record the specified user as committer
@@ -3530,7 +3540,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This lists both regular and local tags. When the \-v/\-\-verbose
-@@ -4590,20 +4563,20 @@
+@@ -4594,20 +4567,20 @@
  Returns 0 on success.
  .sp
  Options:
@@ -3555,7 +3565,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The tip revision (usually just called the tip) is the changeset
-@@ -4615,12 +4588,12 @@
+@@ -4619,12 +4592,12 @@
  that repository becomes the current tip. The "tip" tag is special
  and cannot be renamed or assigned to a different changeset.
  .sp
@@ -3570,7 +3580,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-p,  \-\-patch
  .
-@@ -4637,15 +4610,15 @@
+@@ -4641,15 +4614,15 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template
@@ -3589,7 +3599,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Apply one or more compressed changegroup files generated by the
-@@ -4654,32 +4627,32 @@
+@@ -4658,32 +4631,32 @@
  Returns 0 on success, 1 if an update has unresolved files.
  .sp
  Options:
@@ -3632,7 +3642,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  option, the working directory is checked for uncommitted changes; if
  none are found, the working directory is updated to the specified
  changeset.
-@@ -4686,12 +4659,12 @@
+@@ -4690,12 +4663,12 @@
  .sp
  The following rules apply when the working directory contains
  uncommitted changes:
@@ -3647,7 +3657,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  are merged into the requested changeset and the merged
  result is left uncommitted. If the requested changeset is
  not an ancestor or descendant (that is, it is on another
-@@ -4705,23 +4678,23 @@
+@@ -4709,23 +4682,23 @@
  .
  With the \-C/\-\-clean option, uncommitted changes are discarded and
  the working directory is updated to the requested changeset.
@@ -3677,7 +3687,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-C,  \-\-clean
  .
-@@ -4744,25 +4717,25 @@
+@@ -4748,25 +4721,25 @@
  specify merge tool
  .sp
  aliases: up checkout co
@@ -3708,7 +3718,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  for more information about recovery from corruption of the
  repository.
  .sp
-@@ -4772,9 +4745,9 @@
+@@ -4776,9 +4749,9 @@
  output version and copyright information:
  .sp
  .nf
@@ -3720,7 +3730,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  output version and copyright information
-@@ -4781,7 +4754,7 @@
+@@ -4785,7 +4758,7 @@
  .SH DATE FORMATS
  .sp
  Some commands allow the user to specify a date, e.g.:
@@ -3729,7 +3739,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  backout, commit, import, tag: Specify the commit date.
-@@ -4788,10 +4761,10 @@
+@@ -4792,10 +4765,10 @@
  .IP \(bu 2
  .
  log, revert, update: Select revision(s) by date.
@@ -3742,7 +3752,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  \fBWed Dec 6 13:18:29 2006\fP (local timezone assumed)
-@@ -4840,14 +4813,14 @@
+@@ -4844,14 +4817,14 @@
  .IP \(bu 2
  .
  \fBnow\fP \- right now
@@ -3761,7 +3771,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  This is the internal representation format for dates. The first number
  is the number of seconds since the epoch (1970\-01\-01 00:00 UTC). The
-@@ -4855,7 +4828,7 @@
+@@ -4859,7 +4832,7 @@
  (negative if the timezone is east of UTC).
  .sp
  The log command also accepts date ranges:
@@ -3770,7 +3780,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  \fB<DATE\fP \- at or before a given date/time
-@@ -4868,16 +4841,16 @@
+@@ -4872,16 +4845,16 @@
  .IP \(bu 2
  .
  \fB\-DAYS\fP \- within a given number of days of today
@@ -3790,7 +3800,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  executable status and other permission bits
-@@ -4890,7 +4863,7 @@
+@@ -4894,7 +4867,7 @@
  .IP \(bu 2
  .
  creation or deletion of empty files
@@ -3799,7 +3809,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Mercurial also supports the extended diff format from the git VCS
  which addresses these limitations. The git diff format is not produced
-@@ -4898,26 +4871,26 @@
+@@ -4902,26 +4875,26 @@
  format.
  .sp
  This means that when generating diffs from a Mercurial repository
@@ -3833,7 +3843,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  Windows) is searched.
  .TP
  .B HGEDITOR
-@@ -4935,9 +4908,9 @@
+@@ -4939,9 +4912,9 @@
  .TP
  .B HGENCODINGMODE
  .
@@ -3845,7 +3855,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  settings include "replace", which replaces unknown characters, and
  "ignore", which drops them. This setting can be overridden with
  the \-\-encodingmode command\-line option.
-@@ -4944,7 +4917,7 @@
+@@ -4948,7 +4921,7 @@
  .TP
  .B HGENCODINGAMBIGUOUS
  .
@@ -3854,7 +3864,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  "ambiguous" widths like accented Latin characters with East Asian
  fonts. By default, Mercurial assumes ambiguous characters are
  narrow, set this variable to "wide" if such characters cause
-@@ -4966,19 +4939,19 @@
+@@ -4970,19 +4943,19 @@
  the .hg/hgrc from the current repository is read.
  .sp
  For each element in HGRCPATH:
@@ -3878,7 +3888,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  defaults, verbose mode, debug mode, quiet mode, tracebacks, and
  localization. This can be useful when scripting against Mercurial
  in the face of existing user configuration.
-@@ -4990,11 +4963,11 @@
+@@ -4994,11 +4967,11 @@
  .
  This is a comma\-separated list of features to preserve when
  HGPLAIN is enabled. Currently the following values are supported:
@@ -3892,18 +3902,28 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBi18n\fP
  .sp
-@@ -5002,8 +4975,8 @@
+@@ -5006,16 +4979,16 @@
  .TP
  .B \fBrevsetalias\fP
  .sp
 -Don\(aqt remove revset aliases.
--.UNINDENT
 +Don't remove revset aliases.
+ .TP
+ .B \fBtemplatealias\fP
+ .sp
+-Don\(aqt remove template aliases.
++Don't remove template aliases.
+ .TP
+ .B \fBprogress\fP
+ .sp
+-Don\(aqt hide progress output.
+-.UNINDENT
++Don't hide progress output.
 +.RE
  .sp
  Setting HGPLAINEXCEPT to anything (even an empty string) will
  enable plain mode.
-@@ -5012,7 +4985,7 @@
+@@ -5024,7 +4997,7 @@
  .
  This is the string used as the author of a commit. If not set,
  available values will be considered in this order:
@@ -3912,7 +3932,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  HGUSER (deprecated)
-@@ -5028,7 +5001,7 @@
+@@ -5040,7 +5013,7 @@
  .IP \(bu 2
  .
  LOGNAME (with \fB@hostname\fP appended)
@@ -3921,7 +3941,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  (deprecated, use configuration file)
  .TP
-@@ -5051,13 +5024,13 @@
+@@ -5063,13 +5036,13 @@
  editor it uses is determined by looking at the environment
  variables HGEDITOR, VISUAL and EDITOR, in that order. The first
  non\-empty one is chosen. If all of them are empty, the editor
@@ -3937,7 +3957,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH USING ADDITIONAL FEATURES
  .sp
  Mercurial has the ability to add new features through the use of
-@@ -5070,22 +5043,22 @@
+@@ -5082,22 +5055,22 @@
  like this:
  .sp
  .nf
@@ -3965,7 +3985,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Extensions are not loaded by default for a variety of reasons:
  they can increase startup overhead; they may be meant for advanced
-@@ -5099,19 +5072,19 @@
+@@ -5111,19 +5084,19 @@
  broader scope, prepend its path with !:
  .sp
  .nf
@@ -3990,7 +4010,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B acl
  .
-@@ -5244,9 +5217,9 @@
+@@ -5252,9 +5225,9 @@
  .B zeroconf
  .
  discover and advertise repositories on the local network
@@ -4003,7 +4023,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH SPECIFYING FILE SETS
  .sp
  Mercurial supports a functional language for selecting a set of
-@@ -5253,7 +5226,7 @@
+@@ -5261,7 +5234,7 @@
  files.
  .sp
  Like other file patterns, this pattern type is indicated by a prefix,
@@ -4012,7 +4032,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  by infix operators. Parenthesis can be used for grouping.
  .sp
  Identifiers such as filenames or patterns must be quoted with single
-@@ -5264,18 +5237,18 @@
+@@ -5272,18 +5245,18 @@
  .sp
  Special characters can be used in quoted identifiers by escaping them,
  e.g., \fB\en\fP is interpreted as a newline. To prevent them from being
@@ -4035,7 +4055,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBx and y\fP
  .sp
-@@ -5289,14 +5262,14 @@
+@@ -5297,14 +5270,14 @@
  .B \fBx \- y\fP
  .sp
  Files in x but not in y.
@@ -4053,7 +4073,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBbinary()\fP
  .sp
-@@ -5304,7 +5277,7 @@
+@@ -5312,7 +5285,7 @@
  .TP
  .B \fBclean()\fP
  .sp
@@ -4062,7 +4082,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBcopied()\fP
  .sp
-@@ -5340,34 +5313,34 @@
+@@ -5348,34 +5321,34 @@
  .TP
  .B \fBignored()\fP
  .sp
@@ -4104,7 +4124,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  1k (files from 1024 to 2047 bytes)
-@@ -5380,7 +5353,7 @@
+@@ -5388,7 +5361,7 @@
  .IP \(bu 2
  .
  4k \- 1MB (files from 4096 bytes to 1048576 bytes)
@@ -4113,7 +4133,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBsubrepo([pattern])\fP
  .sp
-@@ -5392,24 +5365,24 @@
+@@ -5400,24 +5373,24 @@
  .TP
  .B \fBunknown()\fP
  .sp
@@ -4144,7 +4164,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -5416,9 +5389,9 @@
+@@ -5424,9 +5397,9 @@
  Forget files that are in .hgignore but are already tracked:
  .sp
  .nf
@@ -4156,7 +4176,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -5425,9 +5398,9 @@
+@@ -5433,9 +5406,9 @@
  Find text files that contain a string:
  .sp
  .nf
@@ -4168,7 +4188,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -5434,9 +5407,9 @@
+@@ -5442,9 +5415,9 @@
  Find C files in a non\-standard encoding:
  .sp
  .nf
@@ -4181,7 +4201,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -5443,9 +5416,9 @@
+@@ -5451,9 +5424,9 @@
  Revert copies of large binary files:
  .sp
  .nf
@@ -4194,7 +4214,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -5452,15 +5425,15 @@
+@@ -5460,15 +5433,15 @@
  Remove files listed in foo.lst that contain the letter a or b:
  .sp
  .nf
@@ -4216,7 +4236,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Ancestor
  .
-@@ -5468,7 +5441,7 @@
+@@ -5476,7 +5449,7 @@
  changesets from a given changeset. More precisely, the ancestors
  of a changeset can be defined by two properties: a parent of a
  changeset is an ancestor, and a parent of an ancestor is an
@@ -4225,7 +4245,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Bookmark
  .
-@@ -5475,7 +5448,7 @@
+@@ -5483,7 +5456,7 @@
  Bookmarks are pointers to certain commits that move when
  committing. They are similar to tags in that it is possible to use
  bookmark names in all places where Mercurial expects a changeset
@@ -4234,7 +4254,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  when you make a commit.
  .sp
  Bookmarks can be renamed, copied and deleted. Bookmarks are local,
-@@ -5487,9 +5460,9 @@
+@@ -5495,9 +5468,9 @@
  .
  (Noun) A child changeset that has been created from a parent that
  is not a head. These are known as topological branches, see
@@ -4246,7 +4266,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Branches may be created when changes are pulled from or pushed to
  a remote repository, since new heads may be created by these
-@@ -5504,7 +5477,7 @@
+@@ -5512,7 +5485,7 @@
  (Verb) The action of creating a child changeset which results in
  its parent having more than one child.
  .sp
@@ -4255,7 +4275,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Branch, anonymous
  .
-@@ -5523,19 +5496,19 @@
+@@ -5531,19 +5504,19 @@
  .TP
  .B Branch head
  .
@@ -4280,7 +4300,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Branch, named
  .
-@@ -5542,8 +5515,8 @@
+@@ -5550,8 +5523,8 @@
  A collection of changesets which have the same branch name. By
  default, children of a changeset in a named branch belong to the
  same named branch. A child can be explicitly assigned to a
@@ -4291,7 +4311,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  branches.
  .sp
  Named branches can be thought of as a kind of namespace, dividing
-@@ -5556,7 +5529,7 @@
+@@ -5564,7 +5537,7 @@
  .TP
  .B Branch tip
  .
@@ -4300,7 +4320,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Branch, topological
  .
-@@ -5606,24 +5579,24 @@
+@@ -5614,24 +5587,24 @@
  revision. This use should probably be avoided where possible, as
  changeset is much more appropriate than checkout in this context.
  .sp
@@ -4331,7 +4351,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Clone
  .
-@@ -5632,13 +5605,13 @@
+@@ -5640,13 +5613,13 @@
  .sp
  Example: "Is your clone up to date?"
  .sp
@@ -4348,7 +4368,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Commit
  .
-@@ -5663,7 +5636,7 @@
+@@ -5671,7 +5644,7 @@
  system (DVCS) can be described as a directed acyclic graph (DAG),
  consisting of nodes and edges, where nodes correspond to
  changesets and edges imply a parent \-> child relation. This graph
@@ -4357,7 +4377,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  Mercurial, the DAG is limited by the requirement for children to
  have at most two parents.
  .TP
-@@ -5673,7 +5646,7 @@
+@@ -5681,7 +5654,7 @@
  .TP
  .B Default branch
  .
@@ -4366,7 +4386,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Descendant
  .
-@@ -5681,7 +5654,7 @@
+@@ -5689,7 +5662,7 @@
  from a given changeset. More precisely, the descendants of a
  changeset can be defined by two properties: the child of a
  changeset is a descendant, and the child of a descendant is a
@@ -4375,7 +4395,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Diff
  .
-@@ -5706,7 +5679,7 @@
+@@ -5714,7 +5687,7 @@
  Mercurial, that will be recorded in the next commit. The working
  directory initially corresponds to the snapshot at an existing
  changeset, known as the parent of the working directory. See
@@ -4384,7 +4404,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  to the files introduced manually or by a merge. The repository
  metadata exists in the .hg directory inside the working directory.
  .TP
-@@ -5714,7 +5687,7 @@
+@@ -5722,7 +5695,7 @@
  .
  Changesets in the draft phase have not been shared with publishing
  repositories and may thus be safely changed by history\-modifying
@@ -4393,7 +4413,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Experimental
  .
-@@ -5722,13 +5695,13 @@
+@@ -5730,13 +5703,13 @@
  .TP
  .B Graph
  .
@@ -4411,7 +4431,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Heads are where development generally takes place and are the
  usual targets for update and merge operations.
-@@ -5740,9 +5713,9 @@
+@@ -5748,9 +5721,9 @@
  .B Head, closed branch
  .
  A changeset that marks a head as no longer interesting. The closed
@@ -4423,7 +4443,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Closed heads can be re\-opened by committing new changeset as the
  child of the changeset that marks a head as closed.
-@@ -5771,11 +5744,11 @@
+@@ -5779,11 +5752,11 @@
  .TP
  .B Immutable history
  .
@@ -4437,7 +4457,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Manifest
  .
-@@ -5792,7 +5765,7 @@
+@@ -5800,7 +5773,7 @@
  .TP
  .B Named branch
  .
@@ -4446,7 +4466,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Null changeset
  .
-@@ -5799,30 +5772,30 @@
+@@ -5807,30 +5780,30 @@
  The empty changeset. It is the parent state of newly\-initialized
  repositories and repositories with no checked out revision. It is
  thus the parent of root changesets and the effective ancestor when
@@ -4485,7 +4505,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  (Verb) The process of using a patch file to transform one
  changeset into another.
-@@ -5832,13 +5805,13 @@
+@@ -5840,13 +5813,13 @@
  .B Phase
  .
  A per\-changeset state tracking how the changeset has been or
@@ -4502,7 +4522,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Pull
  .
-@@ -5846,7 +5819,7 @@
+@@ -5854,7 +5827,7 @@
  not in the local repository are brought into the local
  repository. Note that this operation without special arguments
  only updates the repository, it does not update the files in the
@@ -4511,7 +4531,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Push
  .
-@@ -5854,7 +5827,7 @@
+@@ -5862,7 +5835,7 @@
  not in a remote repository are sent to the remote repository. Note
  that this operation only adds changesets which have been committed
  locally to the remote repository. Uncommitted changes are not
@@ -4520,7 +4540,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Repository
  .
-@@ -5867,13 +5840,13 @@
+@@ -5875,13 +5848,13 @@
  .TP
  .B Repository head
  .
@@ -4537,7 +4557,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Revision number
  .
-@@ -5882,7 +5855,7 @@
+@@ -5890,7 +5863,7 @@
  to a repository, starting with revision number 0. Note that the
  revision number may be different in each clone of a repository. To
  identify changesets uniquely between different clones, see
@@ -4546,7 +4566,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Revlog
  .
-@@ -5893,7 +5866,7 @@
+@@ -5901,7 +5874,7 @@
  .TP
  .B Rewriting history
  .
@@ -4555,7 +4575,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B Root
  .
-@@ -5903,13 +5876,13 @@
+@@ -5911,13 +5884,13 @@
  .B Secret
  .
  Changesets in the secret phase may not be shared via push, pull,
@@ -4571,7 +4591,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  will thus automatically be shared with other using push and pull.
  .TP
  .B Tip
-@@ -5921,7 +5894,7 @@
+@@ -5929,7 +5902,7 @@
  .
  The head of a given branch with the highest revision number. When
  a branch name is used as a revision identifier, it refers to the
@@ -4580,7 +4600,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  numbers may be different in different repository clones, the
  branch tip may be different in different cloned repositories.
  .TP
-@@ -5929,22 +5902,22 @@
+@@ -5937,22 +5910,22 @@
  .
  (Noun) Another synonym of changeset.
  .sp
@@ -4608,7 +4628,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH SYNTAX FOR MERCURIAL IGNORE FILES
  .SS Synopsis
  .sp
-@@ -5971,16 +5944,16 @@
+@@ -5979,16 +5952,16 @@
  .sp
  In addition, a Mercurial configuration file can reference a set of
  per\-user or global ignore files. See the \fBignore\fP configuration
@@ -4629,7 +4649,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  in .hgignore.
  .SS Syntax
  .sp
-@@ -5995,13 +5968,13 @@
+@@ -6003,13 +5976,13 @@
  To change the syntax used, use a line of the following form:
  .sp
  .nf
@@ -4646,7 +4666,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBregexp\fP
  .sp
-@@ -6010,7 +5983,7 @@
+@@ -6018,7 +5991,7 @@
  .B \fBglob\fP
  .sp
  Shell\-style glob.
@@ -4655,7 +4675,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The chosen syntax stays in effect when parsing all patterns that
  follow, until another syntax is selected.
-@@ -6022,11 +5995,11 @@
+@@ -6030,11 +6003,11 @@
  .sp
  Subdirectories can have their own .hgignore settings by adding
  \fBsubinclude:path/to/subdir/.hgignore\fP to the root \fB.hgignore\fP. See
@@ -4669,7 +4689,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .RE
  .SS Example
  .sp
-@@ -6033,7 +6006,7 @@
+@@ -6041,7 +6014,7 @@
  Here is an example ignore file.
  .sp
  .nf
@@ -4678,7 +4698,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  # use glob syntax.
  syntax: glob
  
-@@ -6044,21 +6017,21 @@
+@@ -6052,21 +6025,21 @@
  # switch to regexp syntax.
  syntax: regexp
  ^\e.pc/
@@ -4706,7 +4726,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  web
-@@ -6068,11 +6041,11 @@
+@@ -6076,11 +6049,11 @@
  .IP \(bu 2
  .
  collections
@@ -4722,7 +4742,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The \fBpaths\fP section maps URL paths to paths of repositories in the
  filesystem. hgweb will not expose the filesystem directly \- only
-@@ -6087,7 +6060,7 @@
+@@ -6095,7 +6068,7 @@
  path ends with \fB*\fP or \fB**\fP the filesystem will be searched
  recursively for repositories below that point.
  With \fB*\fP it will not recurse into the repositories it finds (except for
@@ -4731,7 +4751,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  With \fB**\fP it will also search inside repository working directories
  and possibly find subrepositories.
  .sp
-@@ -6094,15 +6067,15 @@
+@@ -6102,15 +6075,15 @@
  In this example:
  .sp
  .nf
@@ -4750,7 +4770,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  The first two entries make two repositories in different directories
-@@ -6116,7 +6089,7 @@
+@@ -6124,7 +6097,7 @@
  .
  The fourth entry will publish both \fBhttp://server/user/bob/quux/\fP
  and \fBhttp://server/user/bob/quux/testsubrepo/\fP
@@ -4759,7 +4779,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The \fBcollections\fP section is deprecated and has been superseded by
  \fBpaths\fP.
-@@ -6139,7 +6112,7 @@
+@@ -6147,7 +6120,7 @@
  \fB/log?style=atom\fP. The hyphenated URL parameter is preferred.
  .sp
  Not all templates are available for all styles. Attempting to use
@@ -4768,7 +4788,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  rendering the page.
  .sp
  Many commands take a \fB{revision}\fP URL parameter. This defines the
-@@ -6146,7 +6119,7 @@
+@@ -6154,7 +6127,7 @@
  changeset to operate on. This is commonly specified as the short,
  12 digit hexadecimal abbreviation for the full 40 character unique
  revision identifier. However, any value described by
@@ -4777,7 +4797,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Commands and URLs
  .sp
  The following web commands and their URLs are available:
-@@ -6200,7 +6173,7 @@
+@@ -6208,7 +6181,7 @@
  .sp
  The argument for \fBrev\fP can be a single revision, a revision set,
  or a literal keyword to search for in changeset data (equivalent to
@@ -4786,7 +4806,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The \fBrevcount\fP query string argument defines the maximum numbers of
  changesets to render.
-@@ -6285,7 +6258,7 @@
+@@ -6293,7 +6266,7 @@
  .sp
  Render help documentation.
  .sp
@@ -4795,7 +4815,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  is defined, that help topic will be rendered. If not, an index of
  available help topics will be rendered.
  .sp
-@@ -6348,9 +6321,9 @@
+@@ -6356,9 +6329,9 @@
  .sp
  The \fBtags\fP template is rendered.
  .SH TECHNICAL IMPLEMENTATION TOPICS
@@ -4808,7 +4828,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B bundles
  .
-@@ -6363,9 +6336,9 @@
+@@ -6375,9 +6348,9 @@
  .B revlogs
  .
  revision storage mechanism
@@ -4821,7 +4841,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH MERGE TOOLS
  .sp
  To merge files Mercurial uses merge tools.
-@@ -6375,8 +6348,8 @@
+@@ -6387,8 +6360,8 @@
  ancestor of the two file versions, so they can determine the changes
  made on both branches.
  .sp
@@ -4832,7 +4852,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Usually, the merge tool tries to automatically reconcile the files by
  combining all non\-overlapping changes that occurred separately in
-@@ -6401,7 +6374,7 @@
+@@ -6413,7 +6386,7 @@
  .sp
  There are some internal merge tools which can be used. The internal
  merge tools are:
@@ -4841,7 +4861,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fB:dump\fP
  .sp
-@@ -6464,7 +6437,7 @@
+@@ -6476,7 +6449,7 @@
  Uses the internal non\-interactive simple merge algorithm for merging
  files. It will use both left and right sides for conflict regions.
  No markers are inserted.
@@ -4850,7 +4870,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Internal tools are always available and do not require a GUI but will by default
  not handle symlinks or binary files.
-@@ -6471,7 +6444,7 @@
+@@ -6483,7 +6456,7 @@
  .SS Choosing a merge tool
  .sp
  Mercurial uses these rules when deciding which merge tool to use:
@@ -4859,7 +4879,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  If a tool has been specified with the \-\-tool option to merge or resolve, it
-@@ -6508,11 +6481,11 @@
+@@ -6520,11 +6493,11 @@
  .IP 8. 3
  .
  The merge of the file fails and must be resolved before commit.
@@ -4873,7 +4893,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  succeed because of conflicting changes Mercurial will actually execute the
  merge program. Whether to use the simple merge algorithm first can be
  controlled by the premerge setting of the merge tool. Premerge is enabled by
-@@ -6548,7 +6521,7 @@
+@@ -6560,7 +6533,7 @@
  .IP Note
  .
  Patterns specified in \fB.hgignore\fP are not rooted.
@@ -4882,7 +4902,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .RE
  .sp
  To use a plain path name without any pattern matching, start it with
-@@ -6573,8 +6546,8 @@
+@@ -6585,8 +6558,8 @@
  To read a set of patterns from a file, use \fBinclude:\fP or \fBsubinclude:\fP.
  \fBinclude:\fP will use all the patterns from the given file and treat them as if
  they had been passed in manually.  \fBsubinclude:\fP will only apply the patterns
@@ -4893,7 +4913,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  All patterns, except for \fBglob:\fP specified in command line (not for
  \fB\-I\fP or \fB\-X\fP options), can match also against directories: files
-@@ -6583,17 +6556,17 @@
+@@ -6595,17 +6568,17 @@
  Plain examples:
  .sp
  .nf
@@ -4914,7 +4934,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  glob:*.c       any name ending in ".c" in the current directory
  *.c            any name ending in ".c" in the current directory
  **.c           any name ending in ".c" in any subdirectory of the
-@@ -6601,36 +6574,36 @@
+@@ -6613,36 +6586,36 @@
  foo/*.c        any name ending in ".c" in the directory foo
  foo/**.c       any name ending in ".c" in any subdirectory of foo
                 including itself.
@@ -4959,7 +4979,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SH WORKING WITH PHASES
  .SS What are phases?
-@@ -6640,9 +6613,9 @@
+@@ -6652,9 +6625,9 @@
  (for instance, with the mq or rebase extensions).
  .sp
  Each changeset in a repository is in one of the following phases:
@@ -4972,7 +4992,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  public : changeset is visible on a public server
-@@ -6652,9 +6625,9 @@
+@@ -6664,9 +6637,9 @@
  .IP \(bu 2
  .
  secret : changeset should not be pushed, pulled, or cloned
@@ -4985,7 +5005,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  These phases are ordered (public < draft < secret) and no changeset
  can be in a lower phase than its ancestors. For instance, if a
-@@ -6668,17 +6641,17 @@
+@@ -6680,17 +6653,17 @@
  .sp
  Once changesets become public, extensions like mq and rebase will
  refuse to operate on them to prevent creating duplicate changesets.
@@ -5007,7 +5027,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS Phases and servers
  .sp
-@@ -6685,7 +6658,7 @@
+@@ -6697,7 +6670,7 @@
  Normally, all servers are \fBpublishing\fP by default. This means:
  .sp
  .nf
@@ -5016,7 +5036,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  \- all draft changesets that are pulled or cloned appear in phase
  public on the client
  
-@@ -6693,7 +6666,7 @@
+@@ -6705,7 +6678,7 @@
  client and server
  
  \- secret changesets are neither pushed, pulled, or cloned
@@ -5025,7 +5045,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP Note
  .
-@@ -6706,13 +6679,13 @@
+@@ -6718,13 +6691,13 @@
  repository to disable publishing in its configuration file:
  .sp
  .nf
@@ -5042,7 +5062,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP Note
  .
  Servers running older versions of Mercurial are treated as
-@@ -6726,17 +6699,17 @@
+@@ -6738,17 +6711,17 @@
  of the secret changeset may be communicated to the server.
  .RE
  .SS Examples
@@ -5065,7 +5085,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -6743,9 +6716,9 @@
+@@ -6755,9 +6728,9 @@
  change all secret changesets to draft:
  .sp
  .nf
@@ -5077,7 +5097,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -6752,9 +6725,9 @@
+@@ -6764,9 +6737,9 @@
  forcibly move the current changeset and descendants from public to draft:
  .sp
  .nf
@@ -5089,7 +5109,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -6761,9 +6734,9 @@
+@@ -6773,9 +6746,9 @@
  show a list of changeset revision and phase:
  .sp
  .nf
@@ -5101,7 +5121,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -6770,15 +6743,15 @@
+@@ -6782,15 +6755,15 @@
  resynchronize draft changesets relative to a remote repository:
  .sp
  .nf
@@ -5123,7 +5143,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH SPECIFYING SINGLE REVISIONS
  .sp
  Mercurial supports several ways to specify individual revisions.
-@@ -6824,18 +6797,18 @@
+@@ -6836,18 +6809,18 @@
  .sp
  Special characters can be used in quoted identifiers by escaping them,
  e.g., \fB\en\fP is interpreted as a newline. To prevent them from being
@@ -5146,7 +5166,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBx::y\fP
  .sp
-@@ -6874,18 +6847,18 @@
+@@ -6892,18 +6865,18 @@
  .B \fBx~n\fP
  .sp
  The nth first ancestor of x; \fBx~0\fP is x; \fBx~3\fP is \fBx^^^\fP.
@@ -5169,7 +5189,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBadds(pattern)\fP
  .sp
-@@ -6918,7 +6891,7 @@
+@@ -6936,7 +6909,7 @@
  .B \fBbisect(string)\fP
  .sp
  Changesets marked in the specified bisect status:
@@ -5178,7 +5198,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  \fBgood\fP, \fBbad\fP, \fBskip\fP: csets explicitly marked as good/bad/skip
-@@ -6940,7 +6913,7 @@
+@@ -6958,7 +6931,7 @@
  .IP \(bu 2
  .
  \fBcurrent\fP            : the cset currently being bisected
@@ -5187,7 +5207,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBbookmark([name])\fP
  .sp
-@@ -6985,8 +6958,8 @@
+@@ -7003,8 +6976,8 @@
  .TP
  .B \fBcontains(pattern)\fP
  .sp
@@ -5198,7 +5218,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The pattern without explicit kind like \fBglob:\fP is expected to be
  relative to the current directory and match against a file exactly
-@@ -6999,7 +6972,7 @@
+@@ -7017,7 +6990,7 @@
  .TP
  .B \fBdate(interval)\fP
  .sp
@@ -5207,7 +5227,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBdesc(string)\fP
  .sp
-@@ -7051,7 +7024,7 @@
+@@ -7069,7 +7042,7 @@
  .sp
  For performance reasons, visits only revisions mentioned in the file\-level
  filelog, rather than filtering through all changesets (much faster, but
@@ -5216,7 +5236,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  result, use \fBfile()\fP.
  .sp
  The pattern without explicit kind like \fBglob:\fP is expected to be
-@@ -7058,7 +7031,7 @@
+@@ -7076,7 +7049,7 @@
  relative to the current directory and match against a file exactly
  for efficiency.
  .sp
@@ -5225,7 +5245,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  work around it to return a non\-filtered value.
  .TP
  .B \fBfirst(set, [n])\fP
-@@ -7067,13 +7040,13 @@
+@@ -7085,13 +7058,13 @@
  .TP
  .B \fBfollow([pattern])\fP
  .sp
@@ -5241,7 +5261,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  to ensure special escape characters are handled correctly. Unlike
  \fBkeyword(string)\fP, the match is case\-sensitive.
  .TP
-@@ -7197,7 +7170,7 @@
+@@ -7215,7 +7188,7 @@
  .TP
  .B \fBpresent(set)\fP
  .sp
@@ -5250,7 +5270,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  all revisions in set.
  .sp
  If any of specified revisions is not present in the local repository,
-@@ -7211,7 +7184,7 @@
+@@ -7229,7 +7202,7 @@
  .B \fBremote([id [,path]])\fP
  .sp
  Local revision that corresponds to the given identifier in a
@@ -5259,7 +5279,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  synonym for the current local branch.
  .TP
  .B \fBremoves(pattern)\fP
-@@ -7244,7 +7217,7 @@
+@@ -7262,7 +7235,7 @@
  as \fB\-key\fP to sort in descending order.
  .sp
  The keys can be:
@@ -5268,7 +5288,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  \fBrev\fP for the revision number,
-@@ -7260,7 +7233,7 @@
+@@ -7278,7 +7251,7 @@
  .IP \(bu 2
  .
  \fBdate\fP for the commit date
@@ -5277,7 +5297,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBsubrepo([pattern])\fP
  .sp
-@@ -7286,15 +7259,15 @@
+@@ -7304,15 +7277,15 @@
  If \fIstring\fP starts with \fIre:\fP, the remainder of the string is treated as
  a regular expression. To match a user that actually contains \fIre:\fP, use
  the prefix \fIliteral:\fP.
@@ -5296,7 +5316,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  in the \fBrevsetalias\fP section of a Mercurial configuration file. Arguments
-@@ -7304,12 +7277,12 @@
+@@ -7322,12 +7295,12 @@
  For example,
  .sp
  .nf
@@ -5304,23 +5324,23 @@ These changes are Solaris-specific and not appropriate for upstream.
 +.ft
  [revsetalias]
  h = heads()
- d($1) = sort($1, date)
- rs($1, $2) = reverse(sort($1, $2))
+ d(s) = sort(s, date)
+ rs(s, k) = reverse(sort(s, k))
 -.ft P
 +.ft
  .fi
  .sp
  defines three aliases, \fBh\fP, \fBd\fP, and \fBrs\fP. \fBrs(0:tip, author)\fP is
-@@ -7319,13 +7292,13 @@
+@@ -7337,13 +7310,13 @@
  one string. For example:
  .sp
  .nf
 -.ft C
 +.ft
  [revsetalias]
--issue($1) = grep(r\(aq\ebissue[ :]?\(aq ## $1 ## r\(aq\eb|\ebbug\e(\(aq ## $1 ## r\(aq\e)\(aq)
+-issue(a1) = grep(r\(aq\ebissue[ :]?\(aq ## a1 ## r\(aq\eb|\ebbug\e(\(aq ## a1 ## r\(aq\e)\(aq)
 -.ft P
-+issue($1) = grep(r'\ebissue[ :]?' ## $1 ## r'\eb|\ebbug\e(' ## $1 ## r'\e)')
++issue(a1) = grep(r'\ebissue[ :]?' ## a1 ## r'\eb|\ebbug\e(' ## a1 ## r'\e)')
 +.ft
  .fi
  .sp
@@ -5329,9 +5349,9 @@ These changes are Solaris-specific and not appropriate for upstream.
  in this case. This matches against all of "issue 1234", "issue:1234",
  "issue1234" and "bug(1234)".
  .sp
-@@ -7332,10 +7305,10 @@
+@@ -7350,10 +7323,10 @@
  All other prefix, infix and postfix operators have lower priority than
- \fB##\fP. For example, \fB$1 ## $2~2\fP is equivalent to \fB($1 ## $2)~2\fP.
+ \fB##\fP. For example, \fBa1 ## a2~2\fP is equivalent to \fB(a1 ## a2)~2\fP.
  .sp
 -Command line equivalents for \%\fBhg log\fP\::
 +Command line equivalents for \fBhg log\fP:
@@ -5342,7 +5362,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  \-f    \->  ::.
  \-d x  \->  date(x)
  \-k x  \->  keyword(x)
-@@ -7344,19 +7317,19 @@
+@@ -7362,19 +7335,19 @@
  \-b x  \->  branch(x)
  \-P x  \->  !::x
  \-l x  \->  limit(expr, x)
@@ -5366,7 +5386,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -7363,9 +7336,9 @@
+@@ -7381,9 +7354,9 @@
  Changesets on the default branch since tag 1.5 (excluding merges):
  .sp
  .nf
@@ -5378,7 +5398,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -7372,9 +7345,9 @@
+@@ -7390,9 +7363,9 @@
  Open branch heads:
  .sp
  .nf
@@ -5390,7 +5410,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -7382,9 +7355,9 @@
+@@ -7400,9 +7373,9 @@
  \fBhgext/*\fP:
  .sp
  .nf
@@ -5403,7 +5423,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -7391,9 +7364,9 @@
+@@ -7409,9 +7382,9 @@
  Changesets committed in May 2008, sorted by user:
  .sp
  .nf
@@ -5416,7 +5436,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -7401,11 +7374,11 @@
+@@ -7419,11 +7392,11 @@
  release:
  .sp
  .nf
@@ -5431,7 +5451,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH USING MERCURIAL FROM SCRIPTS AND AUTOMATION
  .sp
  It is common for machines (as opposed to humans) to consume Mercurial.
-@@ -7415,7 +7388,7 @@
+@@ -7433,7 +7406,7 @@
  .sp
  Machines have a choice of several methods to interface with Mercurial.
  These include:
@@ -5440,7 +5460,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Executing the \fBhg\fP process
-@@ -7425,21 +7398,21 @@
+@@ -7443,21 +7416,21 @@
  .IP \(bu 2
  .
  Calling out to a command server
@@ -5468,7 +5488,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  advantage over simple \fBhg\fP process invocations in that they are
  likely more efficient. This is because there is significant overhead
  to spawn new Python processes.
-@@ -7451,14 +7424,14 @@
+@@ -7469,14 +7442,14 @@
  .RE
  .SS Environment Variables
  .sp
@@ -5486,7 +5506,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  settings that impact its encoding, verbose mode, localization, etc.
  .sp
  It is highly recommended for machines to set this variable when
-@@ -7479,7 +7452,7 @@
+@@ -7497,7 +7470,7 @@
  .B HGRCPATH
  .
  If not set, Mercurial will inherit config options from config files
@@ -5495,7 +5515,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  inheriting user or system\-wide config files.
  .sp
  When utmost control over the Mercurial configuration is desired, the
-@@ -7490,7 +7463,7 @@
+@@ -7508,7 +7481,7 @@
  consequences, as the user and system config files often define things
  like the username and extensions that may be required to interface
  with a repository.
@@ -5504,7 +5524,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Consuming Command Output
  .sp
  It is common for machines to need to parse the output of Mercurial
-@@ -7514,7 +7487,7 @@
+@@ -7532,7 +7505,7 @@
  .SS Using Templates to Control Output
  .sp
  Many \fBhg\fP commands support templatized output via the
@@ -5513,7 +5533,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Templates are useful for explicitly controlling output so that
  you get exactly the data you want formatted how you want it. For
-@@ -7552,13 +7525,13 @@
+@@ -7570,13 +7543,13 @@
  .sp
  Commands often have varying output verbosity, even when machine
  readable styles are being used (e.g. \fB\-T json\fP). Adding
@@ -5529,7 +5549,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B revsets
  .
-@@ -7566,7 +7539,7 @@
+@@ -7584,7 +7557,7 @@
  of revisions. Think of it as SQL for Mercurial repositories. Revsets
  are useful for querying repositories for specific data.
  .sp
@@ -5538,7 +5558,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B share extension
  .
-@@ -7580,8 +7553,8 @@
+@@ -7598,8 +7571,8 @@
  network. This is especially true for continuous integration (CI)
  environments.
  .sp
@@ -5549,7 +5569,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH SUBREPOSITORIES
  .sp
  Subrepositories let you nest external repositories or projects into a
-@@ -7592,7 +7565,7 @@
+@@ -7610,7 +7583,7 @@
  subrepositories.
  .sp
  Subrepositories are made of three components:
@@ -5558,7 +5578,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  Nested repository checkouts. They can appear anywhere in the
-@@ -7605,18 +7578,18 @@
+@@ -7623,18 +7596,18 @@
  subrepositories are referenced like:
  .sp
  .nf
@@ -5581,7 +5601,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  where \fBpath/to/nested\fP is the checkout location relatively to the
-@@ -7639,7 +7612,7 @@
+@@ -7657,7 +7630,7 @@
  .
  The \fB.hgsubstate\fP file should not be edited manually.
  .RE
@@ -5590,7 +5610,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Adding a Subrepository
  .sp
  If \fB.hgsub\fP does not exist, create it and add it to the parent
-@@ -7647,7 +7620,7 @@
+@@ -7665,7 +7638,7 @@
  to live in the parent repository. Edit \fB.hgsub\fP and add the
  subrepository entry as described above. At this point, the
  subrepository is tracked and the next commit will record its state in
@@ -5599,7 +5619,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Synchronizing a Subrepository
  .sp
  Subrepos do not automatically track the latest changeset of their
-@@ -7664,7 +7637,7 @@
+@@ -7682,7 +7655,7 @@
  To remove a subrepository from the parent repository, delete its
  reference from \fB.hgsub\fP, then remove its files.
  .SS Interaction with Mercurial Commands
@@ -5608,7 +5628,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B add
  .
-@@ -7699,7 +7672,7 @@
+@@ -7717,7 +7690,7 @@
  have been modified, Mercurial will abort.  Mercurial can be made
  to instead commit all modified subrepositories by specifying
  \-S/\-\-subrepos, or setting "ui.commitsubrepos=True" in a
@@ -5617,7 +5637,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  longer any modified subrepositories, it records their state and
  finally commits it in the parent repository.  The \-\-addremove
  option also honors the \-S/\-\-subrepos option.  However, Git and
-@@ -7739,7 +7712,7 @@
+@@ -7757,7 +7730,7 @@
  .B pull
  .
  pull is not recursive since it is not clear what to pull prior
@@ -5626,7 +5646,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  subrepositories changes referenced by the parent repository pulled
  changesets is expensive at best, impossible in the Subversion
  case.
-@@ -7774,7 +7747,7 @@
+@@ -7792,7 +7765,7 @@
  changeset is not available in the current subrepository, Mercurial
  will pull it in first before updating.  This means that updating
  can require network access when using subrepositories.
@@ -5635,7 +5655,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Remapping Subrepositories Sources
  .sp
  A subrepository source location may change during a project life,
-@@ -7792,12 +7765,12 @@
+@@ -7810,12 +7783,12 @@
  outgoing, incoming, tip, parents, and heads.
  .sp
  Some built\-in styles are packaged with Mercurial. These can be listed
@@ -5651,7 +5671,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  A template is a piece of text, with markup to invoke variable
-@@ -7804,16 +7777,16 @@
+@@ -7822,16 +7795,16 @@
  expansion:
  .sp
  .nf
@@ -5671,7 +5691,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B activebookmark
  .
-@@ -7831,7 +7804,7 @@
+@@ -7849,7 +7822,7 @@
  .B bookmarks
  .
  List of strings. Any bookmarks associated with the
@@ -5680,7 +5700,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B branch
  .
-@@ -7861,7 +7834,7 @@
+@@ -7879,7 +7852,7 @@
  .TP
  .B extras
  .
@@ -5689,7 +5709,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  field of this changeset.
  .TP
  .B file_adds
-@@ -7917,24 +7890,24 @@
+@@ -7935,24 +7908,24 @@
  .TP
  .B p1node
  .
@@ -5718,7 +5738,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  second parent, or \-1 if the changeset has no second parent.
  .TP
  .B parents
-@@ -7962,24 +7935,24 @@
+@@ -7980,24 +7953,24 @@
  .B tags
  .
  List of strings. Any tags associated with the changeset.
@@ -5748,7 +5768,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B addbreaks
  .
-@@ -8062,7 +8035,7 @@
+@@ -8080,7 +8053,7 @@
  .TP
  .B nonempty
  .
@@ -5757,10 +5777,10 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B obfuscate
  .
-@@ -8138,17 +8111,17 @@
+@@ -8160,17 +8133,17 @@
+ .B utf8
  .
- Any text. Returns a short representation of a user name or email
- address.
+ Any text. Converts from the local character encoding to UTF\-8.
 -.UNINDENT
 +.RE
  .sp
@@ -5778,7 +5798,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  strings. The default is a Unix date format, including the timezone:
  "Mon Sep 04 15:13:13 2006 0700".
  .TP
-@@ -8210,7 +8183,7 @@
+@@ -8232,7 +8205,7 @@
  Converts a date to the specified timezone.
  The default is local date.
  .TP
@@ -5787,7 +5807,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .
  Pad text with a
  fill character.
-@@ -8218,7 +8191,7 @@
+@@ -8240,7 +8213,7 @@
  .B revset(query[, formatargs...])
  .
  Execute a revision set query. See
@@ -5796,7 +5816,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B rstdoc(text, style)
  .
-@@ -8247,30 +8220,30 @@
+@@ -8269,27 +8242,27 @@
  .B word(number, text[, separator])
  .
  Return the nth word from a string.
@@ -5818,6 +5838,37 @@ These changes are Solaris-specific and not appropriate for upstream.
 -or a raw string prefix, \fBr\(aq...\(aq\fP.
 +or a raw string prefix, \fBr'...'\fP.
  .sp
+ New keywords and functions can be defined in the \fBtemplatealias\fP section of
+ a Mercurial configuration file:
+ .sp
+ .nf
+-.ft C
++.ft
+ <alias> = <definition>
+-.ft P
++.ft
+ .fi
+ .sp
+ Arguments of the form \fIa1\fP, \fIa2\fP, etc. are substituted from the alias into
+@@ -8298,12 +8271,12 @@
+ For example,
+ .sp
+ .nf
+-.ft C
++.ft
+ [templatealias]
+ r = rev
+ rn = "{r}:{node|short}"
+-leftpad(s, w) = pad(s, w, \(aq \(aq, True)
+-.ft P
++leftpad(s, w) = pad(s, w, ' ', True)
++.ft
+ .fi
+ .sp
+ defines two symbol aliases, \fBr\fP and \fBrn\fP, and a function alias
+@@ -8310,15 +8283,15 @@
+ \fBleftpad()\fP.
+ .sp
  Some sample command line templates:
 -.INDENT 0.0
 +.RS 0
@@ -5835,7 +5886,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8277,9 +8250,9 @@
+@@ -8325,9 +8298,9 @@
  Join the list of files with a ", ":
  .sp
  .nf
@@ -5848,7 +5899,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8286,9 +8259,9 @@
+@@ -8334,9 +8307,9 @@
  Modify each line of a commit description:
  .sp
  .nf
@@ -5861,7 +5912,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8295,9 +8268,9 @@
+@@ -8343,9 +8316,9 @@
  Format date:
  .sp
  .nf
@@ -5874,7 +5925,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8304,9 +8277,9 @@
+@@ -8352,9 +8325,9 @@
  Display date in UTC:
  .sp
  .nf
@@ -5887,7 +5938,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8313,9 +8286,9 @@
+@@ -8361,9 +8334,9 @@
  Output the description set to a fill\-width of 30:
  .sp
  .nf
@@ -5899,7 +5950,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8322,10 +8295,10 @@
+@@ -8370,10 +8343,10 @@
  Use a conditional to test for the default branch:
  .sp
  .nf
@@ -5914,7 +5965,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8332,9 +8305,9 @@
+@@ -8380,9 +8353,9 @@
  Append a newline if not empty:
  .sp
  .nf
@@ -5927,7 +5978,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8341,9 +8314,9 @@
+@@ -8389,9 +8362,9 @@
  Label the output for use with the color extension:
  .sp
  .nf
@@ -5940,7 +5991,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8350,27 +8323,27 @@
+@@ -8398,27 +8371,27 @@
  Invert the firstline filter, i.e. everything but the first line:
  .sp
  .nf
@@ -5979,7 +6030,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8377,18 +8350,18 @@
+@@ -8425,18 +8398,18 @@
  Find the previous release candidate tag, the distance and changes since the tag:
  .sp
  .nf
@@ -6005,7 +6056,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8395,9 +8368,9 @@
+@@ -8443,9 +8416,9 @@
  Show details of parent revisions:
  .sp
  .nf
@@ -6018,7 +6069,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8404,9 +8377,9 @@
+@@ -8452,9 +8425,9 @@
  Show only commit descriptions that start with "template":
  .sp
  .nf
@@ -6031,7 +6082,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -8413,34 +8386,34 @@
+@@ -8461,34 +8434,34 @@
  Print the first word of each line of a commit message:
  .sp
  .nf
@@ -6076,7 +6127,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  possible if the feature is explicitly enabled on the remote Mercurial
  server.
  .sp
-@@ -8448,7 +8421,7 @@
+@@ -8496,7 +8469,7 @@
  web.cacerts.
  .sp
  Some notes about using SSH with Mercurial:
@@ -6085,7 +6136,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  SSH requires an accessible shell account on the destination machine
-@@ -8455,63 +8428,63 @@
+@@ -8503,63 +8476,63 @@
  and a copy of hg in the remote path or specified with as remotecmd.
  .IP \(bu 2
  .
@@ -6165,7 +6216,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH EXTENSIONS
  .sp
  This section contains help for extensions that are distributed together with Mercurial. Help for other extensions is available in the help system.
-@@ -8535,7 +8508,7 @@
+@@ -8583,7 +8556,7 @@
  distinguish them.
  .sp
  The order in which access checks are performed is:
@@ -6174,7 +6225,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  Deny  list for branches (section \fBacl.deny.branches\fP)
-@@ -8548,7 +8521,7 @@
+@@ -8596,7 +8569,7 @@
  .IP 4. 3
  .
  Allow list for paths    (section \fBacl.allow\fP)
@@ -6183,7 +6234,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The allow and deny sections take key\-value pairs.
  .SS Branch\-based Access Control
-@@ -8556,7 +8529,7 @@
+@@ -8604,7 +8577,7 @@
  Use the \fBacl.deny.branches\fP and \fBacl.allow.branches\fP sections to
  have branch\-based access control. Keys in these sections can be
  either:
@@ -6192,7 +6243,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  a branch name, or
-@@ -8563,10 +8536,10 @@
+@@ -8611,10 +8584,10 @@
  .IP \(bu 2
  .
  an asterisk, to match any branch;
@@ -6205,7 +6256,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  a comma\-separated list containing users and groups, or
-@@ -8573,7 +8546,7 @@
+@@ -8621,7 +8594,7 @@
  .IP \(bu 2
  .
  an asterisk, to match anyone;
@@ -6214,7 +6265,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  You can add the "!" prefix to a user or group name to invert the sense
  of the match.
-@@ -8595,7 +8568,7 @@
+@@ -8643,7 +8616,7 @@
  .SS Example Configuration
  .sp
  .nf
@@ -6223,7 +6274,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [hooks]
  
  # Use this if you want to check access restrictions at commit time
-@@ -8671,12 +8644,12 @@
+@@ -8719,12 +8692,12 @@
  src/main/resources/** = *
  
  \&.hgtags = release_engineer
@@ -6239,7 +6290,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  be created.
  .sp
  The "!" prefix allows you to prevent anyone except a given user or group to
-@@ -8688,18 +8661,18 @@
+@@ -8736,18 +8709,18 @@
  3) Deny access to a file to anyone but user "gollum"
  .sp
  .nf
@@ -6263,7 +6314,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  lake = !@hobbit
  
  # You can also deny access based on file paths:
-@@ -8708,10 +8681,10 @@
+@@ -8756,10 +8729,10 @@
  # Empty
  
  [acl.deny]
@@ -6275,9 +6326,9 @@ These changes are Solaris-specific and not appropriate for upstream.
 -.ft P
 +.ft
  .fi
- .SS blackbox
+ .SS automv
  .sp
-@@ -8722,7 +8695,7 @@
+@@ -8781,7 +8754,7 @@
  Examples:
  .sp
  .nf
@@ -6285,8 +6336,8 @@ These changes are Solaris-specific and not appropriate for upstream.
 +.ft
  [blackbox]
  track = *
- 
-@@ -8737,7 +8710,7 @@
+ # dirty is *EXPENSIVE* (slow);
+@@ -8801,7 +8774,7 @@
  maxsize = 1.5 MB
  # rotate up to N log files when the current one gets too big
  maxfiles = 3
@@ -6295,7 +6346,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS Commands
  .SS blackbox
-@@ -8745,20 +8718,20 @@
+@@ -8809,20 +8782,20 @@
  view the recent repository events:
  .sp
  .nf
@@ -6320,7 +6371,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS bugzilla
  .sp
  hooks for integrating with the Bugzilla bug tracker
-@@ -8771,7 +8744,7 @@
+@@ -8835,7 +8808,7 @@
  hours spent working on the bug. Bugs can also be marked fixed.
  .sp
  Three basic modes of access to Bugzilla are provided:
@@ -6329,7 +6380,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  Access via the Bugzilla XMLRPC interface. Requires Bugzilla 3.4 or later.
-@@ -8783,7 +8756,7 @@
+@@ -8847,7 +8820,7 @@
  .
  Writing directly to the Bugzilla database. Only Bugzilla installations
  using MySQL are supported. Requires Python MySQLdb.
@@ -6338,7 +6389,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Writing directly to the database is susceptible to schema changes, and
  relies on a Bugzilla contrib script to send out bug change
-@@ -8811,12 +8784,12 @@
+@@ -8875,12 +8848,12 @@
  works on all supported Bugzilla versions.
  .sp
  Configuration items common to all access modes:
@@ -6353,7 +6404,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBxmlrpc\fP
  .sp
-@@ -8839,7 +8812,7 @@
+@@ -8903,7 +8876,7 @@
  .sp
  MySQL access, Bugzilla 2.16 and up to but not
  including 2.18.
@@ -6362,7 +6413,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B bugzilla.regexp
  .
-@@ -8884,7 +8857,7 @@
+@@ -8948,7 +8921,7 @@
  Template to use when formatting comments. Overrides style if
  specified. In addition to the usual Mercurial keywords, the
  extension specifies:
@@ -6371,7 +6422,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fB{bug}\fP
  .sp
-@@ -8901,7 +8874,7 @@
+@@ -8965,7 +8938,7 @@
  .B \fB{hgweb}\fP
  .sp
  Base URL for browsing Mercurial repositories.
@@ -6380,7 +6431,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Default \fBchangeset {node|short} in repo {root} refers to bug
  {bug}.\endetails:\en\et{desc|tabindent}\fP
-@@ -8918,10 +8891,10 @@
+@@ -8982,10 +8955,10 @@
  .
  Base URL for browsing Mercurial repositories. Referenced from
  templates as \fB{hgweb}\fP.
@@ -6393,7 +6444,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B bugzilla.usermap
  .
-@@ -8930,13 +8903,13 @@
+@@ -8994,13 +8967,13 @@
  line:
  .sp
  .nf
@@ -6410,7 +6461,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The \fB[usermap]\fP section is used to specify mappings of Mercurial
  committer email to Bugzilla user email. See also \fBbugzilla.usermap\fP.
-@@ -8943,7 +8916,7 @@
+@@ -9007,7 +8980,7 @@
  Contains entries of the form \fBcommitter = Bugzilla user\fP.
  .sp
  XMLRPC access mode configuration:
@@ -6419,7 +6470,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B bugzilla.bzurl
  .
-@@ -8958,22 +8931,22 @@
+@@ -9022,22 +8995,22 @@
  .B bugzilla.password
  .
  The password for Bugzilla login.
@@ -6446,7 +6497,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B bugzilla.host
  .
-@@ -9013,12 +8986,12 @@
+@@ -9077,12 +9050,12 @@
  id) and \fBuser\fP (committer bugzilla email). Default depends on
  version; from 2.18 it is "cd %(bzdir)s && perl \-T
  contrib/sendbugmail.pl %(id)s %(user)s".
@@ -6461,7 +6512,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [extensions]
  bugzilla =
  
-@@ -9025,7 +8998,7 @@
+@@ -9089,7 +9062,7 @@
  [hooks]
  # run bugzilla hook on every change pulled or pushed in here
  incoming.bugzilla = python:hgext.bugzilla.hook
@@ -6470,7 +6521,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Example configurations:
-@@ -9037,7 +9010,7 @@
+@@ -9101,7 +9074,7 @@
  with a web interface at \fBhttp://my\-project.org/hg\fP.
  .sp
  .nf
@@ -6479,7 +6530,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [bugzilla]
  bzurl=http://my\-project.org/bugzilla
  user=bugmail@my\-project.org
-@@ -9050,7 +9023,7 @@
+@@ -9114,7 +9087,7 @@
  
  [web]
  baseurl=http://my\-project.org/hg
@@ -6488,7 +6539,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  XMLRPC+email example configuration. This uses the Bugzilla at
-@@ -9062,7 +9035,7 @@
+@@ -9126,7 +9099,7 @@
  \fBbugzilla@my\-project.org\fP.
  .sp
  .nf
@@ -6497,7 +6548,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [bugzilla]
  bzurl=http://my\-project.org/bugzilla
  user=bugmail@my\-project.org
-@@ -9079,7 +9052,7 @@
+@@ -9143,7 +9116,7 @@
  
  [usermap]
  user@emaildomain.com=user.name@bugzilladomain.com
@@ -6506,7 +6557,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  MySQL example configuration. This has a local Bugzilla 3.2 installation
-@@ -9090,7 +9063,7 @@
+@@ -9154,7 +9127,7 @@
  with a web interface at \fBhttp://my\-project.org/hg\fP.
  .sp
  .nf
@@ -6515,7 +6566,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [bugzilla]
  host=localhost
  password=XYZZY
-@@ -9107,18 +9080,18 @@
+@@ -9171,18 +9144,18 @@
  
  [usermap]
  user@emaildomain.com=user.name@bugzilladomain.com
@@ -6537,7 +6588,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS censor
  .sp
-@@ -9132,14 +9105,14 @@
+@@ -9196,14 +9169,14 @@
  Typical uses for censor are due to security or legal requirements, including:
  .sp
  .nf
@@ -6555,7 +6606,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  data needs to be materialized. Some commands, like \fBhg cat\fP/\fBhg revert\fP,
  simply fail when asked to produce censored data. Others, like \fBhg verify\fP and
  \fBhg update\fP, must be capable of tolerating censored data to continue to
-@@ -9149,13 +9122,13 @@
+@@ -9213,13 +9186,13 @@
  .SS censor
  .sp
  .nf
@@ -6572,7 +6623,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV>
  .
-@@ -9164,42 +9137,42 @@
+@@ -9228,55 +9201,55 @@
  .BI \-t,  \-\-tombstone \ <TEXT>
  .
  replacement tombstone data
@@ -6610,12 +6661,28 @@ These changes are Solaris-specific and not appropriate for upstream.
  .
  replace os.environ completely
  .TP
--.B \(aqSIGHUP\(aq signal
-+.B \&'SIGHUP' signal
+-.B \(aqsetumask\(aq command
++.B \&'setumask' command
  .
- reload configuration files
+ set umask
+ .TP
+-.B \(aqvalidate\(aq command
++.B \&'validate' command
+ .
+ reload the config and check if the server is up to date
 -.UNINDENT
 +.RE
+ .SS Config
+ .sp
+ .nf
+-.ft C
++.ft
+ [chgserver]
+ idletimeout = 3600 # seconds, after which an idle server will exit
+ skiphash = False   # whether to skip config or env change checks
+-.ft P
++.ft
+ .fi
  .SS children
  .sp
  command to display child changesets (DEPRECATED)
@@ -6627,7 +6694,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Commands
  .SS children
  .sp
-@@ -9206,30 +9179,30 @@
+@@ -9283,30 +9256,30 @@
  show the children of the given or working directory revision:
  .sp
  .nf
@@ -6650,12 +6717,10 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  .nf
 -.ft C
--hg children => hg log \-r \(aqchildren()\(aq
--hg children \-r REV => hg log \-r \(aqchildren(REV)\(aq
--.ft P
 +.ft
-+hg children => hg log \-r 'children()'
-+hg children \-r REV => hg log \-r 'children(REV)'
+ hg children => hg log \-r "children()"
+ hg children \-r REV => hg log \-r "children(REV)"
+-.ft P
 +.ft
  .fi
  .sp
@@ -6668,7 +6733,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV>
  .
-@@ -9242,7 +9215,7 @@
+@@ -9319,7 +9292,7 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template
@@ -6677,7 +6742,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS churn
  .sp
  command to display statistics about repository history
-@@ -9252,9 +9225,9 @@
+@@ -9329,9 +9302,9 @@
  histogram of changes to the repository:
  .sp
  .nf
@@ -6689,7 +6754,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This command will display a histogram representing the number
-@@ -9270,7 +9243,7 @@
+@@ -9347,7 +9320,7 @@
  Examples:
  .sp
  .nf
@@ -6698,7 +6763,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  # display count of changed lines for every committer
  hg churn \-t "{author|email}"
  
-@@ -9282,7 +9255,7 @@
+@@ -9359,7 +9332,7 @@
  
  # display count of lines changed in every year
  hg churn \-f "%Y" \-s
@@ -6707,7 +6772,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  It is possible to map alternate email addresses to a main address
-@@ -9289,9 +9262,9 @@
+@@ -9366,9 +9339,9 @@
  by providing a file using the following format:
  .sp
  .nf
@@ -6719,7 +6784,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Such a file may be specified with the \-\-aliases option, otherwise
-@@ -9299,7 +9272,7 @@
+@@ -9376,7 +9349,7 @@
  Aliases will be split from the rightmost "=".
  .sp
  Options:
@@ -6728,7 +6793,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV[+]>
  .
-@@ -9344,7 +9317,7 @@
+@@ -9421,7 +9394,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -6737,7 +6802,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS clonebundles
-@@ -9357,7 +9330,7 @@
+@@ -9434,7 +9407,7 @@
  resources on the server.
  .sp
  Cloning can be a CPU and I/O intensive operation on servers. Traditionally,
@@ -6746,7 +6811,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  a bundle containing the entire repository content and sends it to the client.
  There is no caching on the server and the server will have to redundantly
  generate the same outgoing bundle in response to each clone request. For
-@@ -9365,8 +9338,8 @@
+@@ -9442,8 +9415,8 @@
  clones can make scaling the server challenging and costly.
  .sp
  This extension provides server operators the ability to offload potentially
@@ -6757,7 +6822,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  A server operator establishes a mechanism for making bundle files available
-@@ -9393,10 +9366,10 @@
+@@ -9470,10 +9443,10 @@
  .IP 7. 3
  .
  The client reconnects to the original server and performs the equivalent
@@ -6770,7 +6835,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Instead of the server generating full repository bundles for every clone
  request, it generates full bundles once and they are subsequently reused to
-@@ -9406,7 +9379,7 @@
+@@ -9483,7 +9456,7 @@
  clones to less than 1% of original.
  .sp
  To work, this extension requires the following of server operators:
@@ -6779,7 +6844,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Generating bundle files of repository content (typically periodically,
-@@ -9420,23 +9393,23 @@
+@@ -9497,23 +9470,23 @@
  .
  A process for keeping the bundles manifest in sync with available bundle
  files.
@@ -6809,7 +6874,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  operators need to be aware that newer versions of Mercurial may produce
  streaming clone bundles incompatible with older Mercurial versions.\fP
  .sp
-@@ -9449,12 +9422,12 @@
+@@ -9526,12 +9499,12 @@
  ) delimited list of entries.
  .sp
  Each line in this file defines an available bundle. Lines have the format:
@@ -6826,7 +6891,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  That is, a URL followed by an optional, space\-delimited list of key=value
  pairs describing additional properties of this bundle. Both keys and values
-@@ -9467,7 +9440,7 @@
+@@ -9544,7 +9517,7 @@
  data center closest to them.
  .sp
  The following reserved keys are currently defined:
@@ -6835,7 +6900,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B BUNDLESPEC
  .
-@@ -9474,21 +9447,21 @@
+@@ -9551,21 +9524,21 @@
  A "bundle specification" string that describes the type of the bundle.
  .sp
  These are string values that are accepted by the "\-\-type" argument of
@@ -6861,7 +6926,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  clients will still sniff the bundle type from the header of downloaded
  files.
  .sp
-@@ -9510,10 +9483,10 @@
+@@ -9587,10 +9560,10 @@
  with the clonebundles facility.
  .sp
  Value should be "true".
@@ -6874,7 +6939,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  entries are optionally sorted by client preferences
  (\fBexperimental.clonebundleprefers\fP config option). The client then attempts
  to fetch the bundle at the first URL in the remaining list.
-@@ -9523,7 +9496,7 @@
+@@ -9600,7 +9573,7 @@
  for this is that if a server is using clone bundles, it is probably doing so
  because the feature is necessary to help it scale. In other words, there
  is an assumption that clone load will be offloaded to another service and
@@ -6883,7 +6948,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  If that other service experiences issues and clients start mass falling back to
  the original Mercurial server, the added clone load could overwhelm the server
  due to unexpected load and effectively take it offline. Not having clients
-@@ -9556,10 +9529,10 @@
+@@ -9633,10 +9606,10 @@
  available, then effects are rendered with the ECMA\-48 SGR control
  function (aka ANSI escape codes).
  .sp
@@ -6898,7 +6963,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  Some may not be available for a given terminal type, and will be
  silently ignored.
  .SS Labels
-@@ -9566,8 +9539,8 @@
+@@ -9643,8 +9616,8 @@
  .sp
  Text receives color effects depending on the labels that it has. Many
  default Mercurial commands emit labelled text. You can also define
@@ -6909,7 +6974,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  that case, effects given to the last label will override any other
  effects. This includes the special "none" effect, which nullifies
  other effects.
-@@ -9575,18 +9548,18 @@
+@@ -9652,18 +9625,18 @@
  Labels are normally invisible. In order to see these labels and their
  position in the text, use the global \-\-color=debug option. The same
  anchor text may be associated to multiple labels, e.g.
@@ -6933,7 +6998,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [color]
  status.modified = blue bold underline red_background
  status.added = green bold
-@@ -9595,7 +9568,7 @@
+@@ -9672,7 +9645,7 @@
  status.unknown = magenta bold underline
  status.ignored = black bold
  
@@ -6942,7 +7007,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  status.clean = none
  status.copied = none
  
-@@ -9640,7 +9613,7 @@
+@@ -9717,7 +9690,7 @@
  shelve.name = blue bold
  
  histedit.remaining = red bold
@@ -6951,7 +7016,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS Custom colors
  .sp
-@@ -9649,18 +9622,18 @@
+@@ -9726,18 +9699,18 @@
  for your terminal type, assuming terminfo mode.  For instance:
  .sp
  .nf
@@ -6976,7 +7041,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Modes
  .sp
  By default, the color extension will use ANSI mode (or win32 mode on
-@@ -9668,19 +9641,19 @@
+@@ -9745,19 +9718,19 @@
  terminfo mode, for example), set the following configuration option:
  .sp
  .nf
@@ -7000,7 +7065,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  either using ansi mode (or auto mode), or by using less \-r (which will
  pass through all terminal control codes, not just color control
  codes).
-@@ -9691,11 +9664,11 @@
+@@ -9768,11 +9741,11 @@
  the pager is active:
  .sp
  .nf
@@ -7014,7 +7079,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If \fBpagermode\fP is not defined, the \fBmode\fP will be used.
-@@ -9709,13 +9682,13 @@
+@@ -9786,13 +9759,13 @@
  convert a foreign SCM repository to a Mercurial one.:
  .sp
  .nf
@@ -7031,7 +7096,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Mercurial [hg]
-@@ -9743,10 +9716,10 @@
+@@ -9820,10 +9793,10 @@
  .IP \(bu 2
  .
  Perforce [p4]
@@ -7044,7 +7109,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Mercurial [hg]
-@@ -9753,7 +9726,7 @@
+@@ -9830,7 +9803,7 @@
  .IP \(bu 2
  .
  Subversion [svn] (history on branches is not preserved)
@@ -7053,7 +7118,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  If no revision is given, all revisions will be converted.
  Otherwise, convert will only import up to the named revision
-@@ -9761,12 +9734,12 @@
+@@ -9838,12 +9811,12 @@
  .sp
  If no destination directory name is specified, it defaults to the
  basename of the source with \fB\-hg\fP appended. If the destination
@@ -7068,7 +7133,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-branchsort
  .
-@@ -9791,21 +9764,21 @@
+@@ -9868,21 +9841,21 @@
  try to move closed revisions as close as possible
  to parent branches, only supported by Mercurial
  sources.
@@ -7096,7 +7161,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  and can be run repeatedly to copy new commits.
  .sp
  The authormap is a simple text file that maps each source commit
-@@ -9814,9 +9787,9 @@
+@@ -9891,9 +9864,9 @@
  author mapping and the line format is:
  .sp
  .nf
@@ -7108,7 +7173,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Empty lines and lines starting with a \fB#\fP are ignored.
-@@ -9826,13 +9799,13 @@
+@@ -9903,13 +9876,13 @@
  directives:
  .sp
  .nf
@@ -7124,7 +7189,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Comment lines start with \fB#\fP. A specified path matches if it
-@@ -9865,9 +9838,9 @@
+@@ -9942,9 +9915,9 @@
  comma\-separated values:
  .sp
  .nf
@@ -7136,7 +7201,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The key is the revision ID in the source
-@@ -9887,9 +9860,9 @@
+@@ -9964,9 +9937,9 @@
  lines of the form:
  .sp
  .nf
@@ -7148,7 +7213,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  where "original_branch_name" is the name of the branch in the
-@@ -9901,7 +9874,7 @@
+@@ -9978,7 +9951,7 @@
  .sp
  The Mercurial source recognizes the following configuration
  options, which you can set on the command line with \fB\-\-config\fP:
@@ -7157,7 +7222,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.hg.ignoreerrors
  .
-@@ -9923,7 +9896,7 @@
+@@ -10000,7 +9973,7 @@
  .B convert.hg.revs
  .
  revset specifying the source revisions to convert.
@@ -7166,7 +7231,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS CVS Source
  .sp
  CVS source will use a sandbox (i.e. a checked\-out copy) from CVS
-@@ -9937,7 +9910,7 @@
+@@ -10014,7 +9987,7 @@
  sandbox is ignored.
  .sp
  The following options can be used with \fB\-\-config\fP:
@@ -7175,7 +7240,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.cvsps.cache
  .
-@@ -9988,7 +9961,7 @@
+@@ -10065,7 +10038,7 @@
  the changesets are calculated from the CVS log. The
  function is passed a list with the changeset entries, and can
  modify the changesets in\-place, or add or delete them.
@@ -7184,7 +7249,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  An additional "debugcvsps" Mercurial command allows the builtin
  changeset merging code to be run without doing a conversion. Its
-@@ -10008,7 +9981,7 @@
+@@ -10085,7 +10058,7 @@
  detection.
  .sp
  The following options can be set with \fB\-\-config\fP:
@@ -7193,7 +7258,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.svn.branches
  .
-@@ -10030,28 +10003,28 @@
+@@ -10107,28 +10080,28 @@
  use local time (as determined by the TZ
  environment variable) for changeset date/times. The default
  is False (use UTC).
@@ -7227,7 +7292,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.git.similarity
  .
-@@ -10059,7 +10032,7 @@
+@@ -10136,7 +10109,7 @@
  commit must be to be imported as renames or copies, as a
  percentage between \fB0\fP (disabled) and \fB100\fP (files must be
  identical). For example, \fB90\fP means that a delete/add pair will
@@ -7236,7 +7301,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  changed. The default is \fB50\fP.
  .TP
  .B convert.git.findcopiesharder
-@@ -10073,13 +10046,13 @@
+@@ -10150,13 +10123,13 @@
  .
  remote refs are converted as bookmarks with
  \fBconvert.git.remoteprefix\fP as a prefix followed by a /. The default
@@ -7252,7 +7317,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Perforce Source
  .sp
  The Perforce (P4) importer can be given a p4 depot path or a
-@@ -10090,7 +10063,7 @@
+@@ -10167,7 +10140,7 @@
  target may be named \fB...\-hg\fP.
  .sp
  The following options can be set with \fB\-\-config\fP:
@@ -7261,7 +7326,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.p4.encoding
  .
-@@ -10102,7 +10075,7 @@
+@@ -10179,7 +10152,7 @@
  .
  specify initial Perforce revision (a
  Perforce changelist number).
@@ -7270,7 +7335,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Mercurial Destination
  .sp
  The Mercurial destination will recognize Mercurial subrepositories in the
-@@ -10114,7 +10087,7 @@
+@@ -10191,7 +10164,7 @@
  An example showing how to convert a repository with subrepositories:
  .sp
  .nf
@@ -7279,7 +7344,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  # so convert knows the type when it sees a non empty destination
  $ hg init converted
  
-@@ -10121,11 +10094,11 @@
+@@ -10198,11 +10171,11 @@
  $ hg convert orig/sub1 converted/sub1
  $ hg convert orig/sub2 converted/sub2
  $ hg convert orig converted
@@ -7293,7 +7358,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B convert.hg.clonebranches
  .
-@@ -10144,22 +10117,22 @@
+@@ -10221,22 +10194,22 @@
  .TP
  .B convert.hg.sourcename
  .
@@ -7321,7 +7386,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-\-authors \ <FILE>
  .
-@@ -10212,7 +10185,7 @@
+@@ -10289,7 +10262,7 @@
  .B \-\-closesort
  .
  try to reorder closed revisions
@@ -7330,7 +7395,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS eol
-@@ -10226,7 +10199,7 @@
+@@ -10303,7 +10276,7 @@
  .sp
  The extension reads its configuration from a versioned \fB.hgeol\fP
  configuration file found in the root of the working directory. The
@@ -7339,7 +7404,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  configuration files. It uses two sections, \fB[patterns]\fP and
  \fB[repository]\fP.
  .sp
-@@ -10239,9 +10212,9 @@
+@@ -10316,9 +10289,9 @@
  Files with the declared format of \fBCRLF\fP or \fBLF\fP are always
  checked out and stored in the repository in that format and files
  declared to be binary (\fBBIN\fP) are left unchanged. Additionally,
@@ -7351,7 +7416,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  default behavior; it is only needed if you need to override a later,
  more general pattern.
  .sp
-@@ -10258,7 +10231,7 @@
+@@ -10335,7 +10308,7 @@
  Example versioned \fB.hgeol\fP file:
  .sp
  .nf
@@ -7360,7 +7425,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [patterns]
  **.py = native
  **.vcproj = CRLF
-@@ -10268,7 +10241,7 @@
+@@ -10345,7 +10318,7 @@
  
  [repository]
  native = LF
@@ -7369,7 +7434,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP Note
  .
-@@ -10280,12 +10253,12 @@
+@@ -10357,12 +10330,12 @@
  normal Mercurial configuration files and the \fB.hgeol\fP file, with the
  latter overriding the former. You can use that section to control the
  overall behavior. There are three settings:
@@ -7384,7 +7449,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  generate an archive where files have line endings for Windows.
  .IP \(bu 2
  .
-@@ -10299,7 +10272,7 @@
+@@ -10376,7 +10349,7 @@
  \fBeol.fix\-trailing\-newline\fP (default False) can be set to True to
  ensure that converted files end with a EOL character (either \fB\en\fP
  or \fB\er\en\fP as per the configured patterns).
@@ -7393,7 +7458,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The extension provides \fBcleverencode:\fP and \fBcleverdecode:\fP filters
  like the deprecated win32text extension does. This means that you can
-@@ -10315,7 +10288,7 @@
+@@ -10392,7 +10365,7 @@
  \fBeol.checkallhook\fP hook. These hooks are best used as
  \fBpretxnchangegroup\fP hooks.
  .sp
@@ -7402,7 +7467,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  used.
  .SS extdiff
  .sp
-@@ -10328,12 +10301,12 @@
+@@ -10405,12 +10378,12 @@
  files to compare.
  .sp
  The extdiff extension also allows you to configure new diff commands, so
@@ -7418,7 +7483,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  cdiff = gdiff \-Nprc5
  ## or the old way:
  #cmd.cdiff = gdiff
-@@ -10349,20 +10322,20 @@
+@@ -10426,20 +10399,20 @@
  # English user, be sure to put "let g:DirDiffDynamicDiffText = 1" in
  # your .vimrc
  vimdiff = gvim \-f "+next" \e
@@ -7443,7 +7508,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The extdiff extension will look in your [diff\-tools] and [merge\-tools]
-@@ -10369,17 +10342,17 @@
+@@ -10446,17 +10419,17 @@
  sections for diff tool arguments, when none are specified in [extdiff].
  .sp
  .nf
@@ -7465,7 +7530,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  needed files, so running the external diff program will actually be
  pretty fast (at least faster than having to compare the entire tree).
  .SS Commands
-@@ -10388,9 +10361,9 @@
+@@ -10465,9 +10438,9 @@
  use external program to diff repository (or selected files):
  .sp
  .nf
@@ -7477,7 +7542,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show differences between revisions for the specified files, using
-@@ -10409,7 +10382,7 @@
+@@ -10486,7 +10459,7 @@
  to its parent.
  .sp
  Options:
@@ -7486,7 +7551,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-p,  \-\-program \ <CMD>
  .
-@@ -10442,7 +10415,7 @@
+@@ -10519,7 +10492,7 @@
  .B \-S,  \-\-subrepos
  .
  recurse into subrepositories
@@ -7495,7 +7560,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS factotum
-@@ -10458,9 +10431,9 @@
+@@ -10535,9 +10508,9 @@
  By default, keys are specified as:
  .sp
  .nf
@@ -7507,7 +7572,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If the factotum extension is unable to read the required key, one will be
-@@ -10470,12 +10443,12 @@
+@@ -10547,12 +10520,12 @@
  default, these entries are:
  .sp
  .nf
@@ -7522,7 +7587,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The executable entry defines the full path to the factotum binary. The
-@@ -10490,9 +10463,9 @@
+@@ -10567,9 +10540,9 @@
  pull changes from a remote repository, merge new changes if needed.:
  .sp
  .nf
@@ -7534,7 +7599,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This finds all changes from the repository at the specified path
-@@ -10507,12 +10480,12 @@
+@@ -10584,12 +10557,12 @@
  the newly pulled changes. Local changes are then merged into the
  pulled changes. To switch the merge order, use \-\-switch\-parent.
  .sp
@@ -7549,7 +7614,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV[+]>
  .
-@@ -10557,7 +10530,7 @@
+@@ -10634,7 +10607,7 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -7557,8 +7622,66 @@ These changes are Solaris-specific and not appropriate for upstream.
 +.RE
  .sp
  [+] marked option can be specified multiple times
- .SS gpg
-@@ -10569,9 +10542,9 @@
+ .SS fsmonitor
+@@ -10649,16 +10622,16 @@
+ system, with fsmonitor it takes about 0.3 seconds.
+ .sp
+ fsmonitor requires no configuration \-\- it will tell Watchman about your
+-repository as necessary. You\(aqll need to install Watchman from
+-\%https://facebook.github.io/watchman/\: and make sure it is in your PATH.
++repository as necessary. You'll need to install Watchman from
++https://facebook.github.io/watchman/ and make sure it is in your PATH.
+ .sp
+ The following configuration options exist:
+ .sp
+ .nf
+-.ft C
++.ft
+ [fsmonitor]
+ mode = {off, on, paranoid}
+-.ft P
++.ft
+ .fi
+ .sp
+ When \fImode = off\fP, fsmonitor will disable itself (similar to not loading the
+@@ -10667,10 +10640,10 @@
+ and ensure that the results are consistent.
+ .sp
+ .nf
+-.ft C
++.ft
+ [fsmonitor]
+ timeout = (float)
+-.ft P
++.ft
+ .fi
+ .sp
+ A value, in seconds, that determines how long fsmonitor will wait for Watchman
+@@ -10677,19 +10650,19 @@
+ to return results. Defaults to \fI2.0\fP.
+ .sp
+ .nf
+-.ft C
++.ft
+ [fsmonitor]
+ blacklistusers = (list of userids)
+-.ft P
++.ft
+ .fi
+ .sp
+ A list of usernames for which fsmonitor will disable itself altogether.
+ .sp
+ .nf
+-.ft C
++.ft
+ [fsmonitor]
+ walk_on_invalidate = (boolean)
+-.ft P
++.ft
+ .fi
+ .sp
+ Whether or not to walk the whole repo ourselves when our cached state has been
+@@ -10711,9 +10684,9 @@
  verify all the signatures there may be for a particular revision:
  .sp
  .nf
@@ -7570,7 +7693,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  verify all the signatures there may be for a particular revision
-@@ -10580,9 +10553,9 @@
+@@ -10722,9 +10695,9 @@
  add a signature for the current or given revision:
  .sp
  .nf
@@ -7582,7 +7705,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If no revision is given, the parent of the working directory is used,
-@@ -10591,10 +10564,10 @@
+@@ -10733,10 +10706,10 @@
  The \fBgpg.cmd\fP config setting can be used to specify the command
  to run. A default key can be specified with \fBgpg.key\fP.
  .sp
@@ -7595,7 +7718,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-l,  \-\-local
  .
-@@ -10627,15 +10600,15 @@
+@@ -10769,15 +10742,15 @@
  .BI \-u,  \-\-user \ <USER>
  .
  record the specified user as committer
@@ -7614,7 +7737,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  list signed changesets
-@@ -10644,7 +10617,7 @@
+@@ -10786,7 +10759,7 @@
  command to view revision graphs from a shell (DEPRECATED)
  .sp
  The functionality of this extension has been include in core Mercurial
@@ -7623,7 +7746,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  This extension adds a \-\-graph option to the incoming, outgoing and log
  commands. When this options is given, an ASCII representation of the
-@@ -10655,9 +10628,9 @@
+@@ -10797,9 +10770,9 @@
  show revision history alongside an ASCII revision graph:
  .sp
  .nf
@@ -7635,7 +7758,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Print a revision history alongside a revision graph drawn with
-@@ -10666,10 +10639,10 @@
+@@ -10808,10 +10781,10 @@
  Nodes printed as an @ character are parents of the working
  directory.
  .sp
@@ -7648,7 +7771,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-f,  \-\-follow
  .
-@@ -10758,7 +10731,7 @@
+@@ -10900,7 +10873,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -7657,7 +7780,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS hgcia
-@@ -10769,7 +10742,7 @@
+@@ -10911,7 +10884,7 @@
  configure it, set the following options in your hgrc:
  .sp
  .nf
@@ -7666,7 +7789,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [cia]
  # your registered CIA user name
  user = foo
-@@ -10801,7 +10774,7 @@
+@@ -10943,7 +10916,7 @@
  [web]
  # If you want hyperlinks (optional)
  baseurl = http://server/path/to/repo
@@ -7675,7 +7798,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS hgk
  .sp
-@@ -10813,19 +10786,18 @@
+@@ -10955,19 +10928,18 @@
  .sp
  hgk consists of two parts: a Tcl script that does the displaying and
  querying of information, and an extension to Mercurial named hgk.py,
@@ -7702,7 +7825,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  hgk can make use of the extdiff extension to visualize revisions.
-@@ -10832,10 +10804,10 @@
+@@ -10974,10 +10946,10 @@
  Assuming you had already configured extdiff vdiff command, just add:
  .sp
  .nf
@@ -7715,7 +7838,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Revisions context menu will now display additional entries to fire
-@@ -10846,36 +10818,36 @@
+@@ -10988,36 +10960,36 @@
  start interactive history viewer:
  .sp
  .nf
@@ -7760,7 +7883,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  \fBhighlightonlymatchfilename\fP will only highlight files if their type could
-@@ -10890,7 +10862,7 @@
+@@ -11032,7 +11004,7 @@
  is as follows, assuming the following history:
  .sp
  .nf
@@ -7769,7 +7892,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  @  3[tip]   7c2fd3b9020c   2009\-04\-27 18:04 \-0500   durin42
  |    Add delta
  |
-@@ -10902,7 +10874,7 @@
+@@ -11044,7 +11016,7 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -7778,7 +7901,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If you were to run \fBhg histedit c561b4e977df\fP, you would see the following
-@@ -10909,7 +10881,7 @@
+@@ -11051,7 +11023,7 @@
  file open in your editor:
  .sp
  .nf
@@ -7787,7 +7910,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  pick c561b4e977df Add beta
  pick 030b686bedc4 Add gamma
  pick 7c2fd3b9020c Add delta
-@@ -10922,11 +10894,11 @@
+@@ -11064,11 +11036,11 @@
  #  p, pick = use commit
  #  e, edit = use commit, but stop for amending
  #  f, fold = use commit, but combine it with the one above
@@ -7801,7 +7924,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  In this file, lines beginning with \fB#\fP are ignored. You must specify a rule
-@@ -10935,7 +10907,7 @@
+@@ -11077,7 +11049,7 @@
  would reorganize the file to look like this:
  .sp
  .nf
@@ -7810,7 +7933,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  pick 030b686bedc4 Add gamma
  pick c561b4e977df Add beta
  fold 7c2fd3b9020c Add delta
-@@ -10948,11 +10920,11 @@
+@@ -11090,11 +11062,11 @@
  #  p, pick = use commit
  #  e, edit = use commit, but stop for amending
  #  f, fold = use commit, but combine it with the one above
@@ -7824,7 +7947,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  At which point you close the editor and \fBhistedit\fP starts working. When you
-@@ -10960,21 +10932,21 @@
+@@ -11102,21 +11074,21 @@
  those revisions together, offering you a chance to clean up the commit message:
  .sp
  .nf
@@ -7850,7 +7973,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  @  2[tip]   989b4d060121   2009\-04\-27 18:04 \-0500   durin42
  |    Add beta and delta.
  |
-@@ -10983,12 +10955,12 @@
+@@ -11125,12 +11097,12 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -7865,7 +7988,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  it had to run strip twice. Strip can be slow depending on a variety of factors,
  so you might need to be a little patient. You can choose to keep the original
  revisions by passing the \fB\-\-keep\fP flag.
-@@ -10995,20 +10967,20 @@
+@@ -11137,20 +11109,20 @@
  .sp
  The \fBedit\fP operation will drop you back to a command prompt,
  allowing you to edit files freely, or even use \fBhg record\fP to commit
@@ -7892,7 +8015,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  much work it will be to rearrange history, or that you made a mistake,
  you can use \fBhg histedit \-\-abort\fP to abandon the new changes you
  have made and return to the state before you attempted to edit your
-@@ -11018,7 +10990,7 @@
+@@ -11160,7 +11132,7 @@
  changes, such that we have the following history:
  .sp
  .nf
@@ -7901,7 +8024,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  @  6[tip]   038383181893   2009\-04\-27 18:04 \-0500   stefan
  |    Add theta
  |
-@@ -11039,7 +11011,7 @@
+@@ -11181,7 +11153,7 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -7910,7 +8033,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If you run \fBhg histedit \-\-outgoing\fP on the clone then it is the same
-@@ -11053,10 +11025,10 @@
+@@ -11195,10 +11167,10 @@
  configuration file:
  .sp
  .nf
@@ -7923,7 +8046,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  \fBhg histedit\fP attempts to automatically choose an appropriate base
-@@ -11064,10 +11036,10 @@
+@@ -11206,10 +11178,10 @@
  revset in your configuration file:
  .sp
  .nf
@@ -7936,7 +8059,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  By default each edited revision needs to be present in histedit commands.
-@@ -11075,10 +11047,10 @@
+@@ -11217,10 +11189,10 @@
  the drop to be implicit for missing commits by adding:
  .sp
  .nf
@@ -7949,7 +8072,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS Commands
  .SS histedit
-@@ -11086,15 +11058,15 @@
+@@ -11228,15 +11200,15 @@
  interactively edit changeset history:
  .sp
  .nf
@@ -7968,7 +8091,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  \fIpick\fP to [re]order a changeset
-@@ -11109,14 +11081,14 @@
+@@ -11251,14 +11223,14 @@
  \fIfold\fP to combine it with the preceding changeset
  .IP \(bu 2
  .
@@ -7986,16 +8109,16 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Specify ANCESTOR directly
-@@ -11123,7 +11095,7 @@
+@@ -11265,7 +11237,7 @@
  .IP \(bu 2
  .
  Use \-\-outgoing \-\- it will be the first linear changeset not
--included in destination. (See \%\fBhg help config.default\-push\fP\:)
-+included in destination. (See \fBhg help config.default\-push\fP)
+-included in destination. (See \%\fBhg help config.paths.default\-push\fP\:)
++included in destination. (See \fBhg help config.paths.default\-push\fP)
  .IP \(bu 2
  .
  Otherwise, the value from the "histedit.defaultrev" config option
-@@ -11131,7 +11103,7 @@
+@@ -11273,7 +11245,7 @@
  specified. The first revision returned by the revset is used. By
  default, this selects the editable history that is unique to the
  ancestry of the working directory.
@@ -8004,7 +8127,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  If you use \-\-outgoing, this command will abort if there are ambiguous
  outgoing revisions. For example, if there are multiple branches
-@@ -11139,13 +11111,13 @@
+@@ -11281,13 +11253,13 @@
  .sp
  Use "min(outgoing() and ::.)" or similar revset specification
  instead of \-\-outgoing to specify edit target revision exactly in
@@ -8022,7 +8145,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  A number of changes have been made.
-@@ -11154,9 +11126,9 @@
+@@ -11296,9 +11268,9 @@
  Start history editing from revision 3:
  .sp
  .nf
@@ -8034,7 +8157,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  An editor opens, containing the list of revisions,
-@@ -11163,11 +11135,11 @@
+@@ -11305,11 +11277,11 @@
  with specific actions specified:
  .sp
  .nf
@@ -8048,7 +8171,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Additional information about the possible actions
-@@ -11175,14 +11147,14 @@
+@@ -11317,14 +11289,14 @@
  .sp
  To remove revision 3 from the history,
  its action (at the beginning of the relevant line)
@@ -8066,7 +8189,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -11192,9 +11164,9 @@
+@@ -11334,9 +11306,9 @@
  Start history editing from revision 2:
  .sp
  .nf
@@ -8078,7 +8201,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  An editor opens, containing the list of revisions,
-@@ -11201,11 +11173,11 @@
+@@ -11343,11 +11315,11 @@
  with specific actions specified:
  .sp
  .nf
@@ -8092,7 +8215,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  To swap revision 2 and 4, its lines are swapped
-@@ -11212,15 +11184,15 @@
+@@ -11354,15 +11326,15 @@
  in the editor:
  .sp
  .nf
@@ -8113,7 +8236,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Returns 0 on success, 1 if user intervention is required (not only
  for intentional "edit" command, but also for resolving unexpected
-@@ -11227,7 +11199,7 @@
+@@ -11369,7 +11341,7 @@
  conflicts).
  .sp
  Options:
@@ -8122,7 +8245,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-\-commands \ <FILE>
  .
-@@ -11243,7 +11215,7 @@
+@@ -11385,7 +11357,7 @@
  .TP
  .B \-k,  \-\-keep
  .
@@ -8131,7 +8254,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-abort
  .
-@@ -11260,7 +11232,7 @@
+@@ -11402,7 +11374,7 @@
  .BI \-r,  \-\-rev \ <REV[+]>
  .
  first revision to be edited
@@ -8140,7 +8263,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS keyword
-@@ -11283,7 +11255,7 @@
+@@ -11425,7 +11397,7 @@
  Example:
  .sp
  .nf
@@ -8149,7 +8272,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [keyword]
  # expand keywords in every python file except those matching "x*"
  **.py =
-@@ -11292,7 +11264,7 @@
+@@ -11434,7 +11406,7 @@
  [keywordset]
  # prefer svn\- over cvs\-like default keywordmaps
  svn = True
@@ -8158,7 +8281,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP Note
  .
-@@ -11301,11 +11273,11 @@
+@@ -11443,11 +11415,11 @@
  .RE
  .sp
  For [keywordmaps] template mapping and expansion demonstration and
@@ -8172,7 +8295,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fButcdate\fP
  .sp
-@@ -11318,20 +11290,20 @@
+@@ -11460,20 +11432,20 @@
  .B \fBsvnisodate\fP
  .sp
  "2006\-09\-18 08:13:13 \-700 (Mon, 18 Sep 2006)"
@@ -8199,7 +8322,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  {desc}" expands to the first line of the changeset description.
  .SS Commands
  .SS kwdemo
-@@ -11339,9 +11311,9 @@
+@@ -11481,9 +11453,9 @@
  print [keywordmaps] configuration and an expansion example:
  .sp
  .nf
@@ -8211,7 +8334,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Show current, custom, or default keyword template maps and their
-@@ -11352,10 +11324,10 @@
+@@ -11494,10 +11466,10 @@
  .sp
  Use \-d/\-\-default to disable current configuration.
  .sp
@@ -8224,7 +8347,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-d,  \-\-default
  .
-@@ -11364,15 +11336,15 @@
+@@ -11506,15 +11478,15 @@
  .BI \-f,  \-\-rcfile \ <FILE>
  .
  read maps from rcfile
@@ -8243,7 +8366,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Run after (re)enabling keyword expansion.
-@@ -11380,7 +11352,7 @@
+@@ -11522,7 +11494,7 @@
  kwexpand refuses to run if given files contain local changes.
  .sp
  Options:
@@ -8252,7 +8375,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-I,  \-\-include \ <PATTERN[+]>
  .
-@@ -11389,7 +11361,7 @@
+@@ -11531,7 +11503,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -8261,7 +8384,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS kwfiles
-@@ -11397,9 +11369,9 @@
+@@ -11539,9 +11511,9 @@
  show files configured for keyword expansion:
  .sp
  .nf
@@ -8273,7 +8396,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  List which files in the working directory are matched by the
-@@ -11409,7 +11381,7 @@
+@@ -11551,7 +11523,7 @@
  execution by including only files that are actual candidates for
  expansion.
  .sp
@@ -8282,7 +8405,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  inclusion and exclusion of files.
  .sp
  With \-A/\-\-all and \-v/\-\-verbose the codes used to show the status
-@@ -11416,16 +11388,16 @@
+@@ -11558,16 +11530,16 @@
  of files are:
  .sp
  .nf
@@ -8302,7 +8425,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-all
  .
-@@ -11446,7 +11418,7 @@
+@@ -11588,7 +11560,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -8311,7 +8434,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS kwshrink
-@@ -11454,9 +11426,9 @@
+@@ -11596,9 +11568,9 @@
  revert expanded keywords in the working directory:
  .sp
  .nf
@@ -8323,7 +8446,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Must be run before changing/disabling active keywords.
-@@ -11464,7 +11436,7 @@
+@@ -11606,7 +11578,7 @@
  kwshrink refuses to run if given files contain local changes.
  .sp
  Options:
@@ -8332,7 +8455,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-I,  \-\-include \ <PATTERN[+]>
  .
-@@ -11473,7 +11445,7 @@
+@@ -11615,7 +11587,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -8341,7 +8464,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS largefiles
-@@ -11482,10 +11454,10 @@
+@@ -11624,10 +11596,10 @@
  .sp
  Large binary files tend to be not very compressible, not very
  diffable, and not at all mergeable. Such files are not handled
@@ -8354,7 +8477,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  problems by adding a centralized client\-server layer on top of
  Mercurial: largefiles live in a \fIcentral store\fP out on the network
  somewhere, and you only fetch the revisions that you need when you
-@@ -11497,18 +11469,18 @@
+@@ -11639,18 +11611,18 @@
  identified by the SHA\-1 hash of their contents, which is written to
  the standin. largefiles uses that revision ID to get/put largefile
  revisions from/to the central store. This saves both disk space and
@@ -8371,14 +8494,13 @@ These changes are Solaris-specific and not appropriate for upstream.
 +.ft
  $ dd if=/dev/urandom of=randomdata count=2000
  $ hg add \-\-large randomdata
--$ hg commit \-m \(aqadd randomdata as a largefile\(aq
+ $ hg commit \-m "add randomdata as a largefile"
 -.ft P
-+$ hg commit \-m 'add randomdata as a largefile'
 +.ft
  .fi
  .sp
  When you push a changeset that adds/modifies largefiles to a remote
-@@ -11525,8 +11497,8 @@
+@@ -11667,8 +11639,8 @@
  copy to the latest pulled revision (and thereby downloading any new
  largefiles).
  .sp
@@ -8389,7 +8511,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  If you know you are pulling from a non\-default location and want to
  download all the largefiles that correspond to the new changesets at
-@@ -11545,12 +11517,12 @@
+@@ -11687,12 +11659,12 @@
  If you already have large files tracked by Mercurial without the
  largefiles extension, you will need to convert your repository in
  order to benefit from largefiles. This is done with the
@@ -8405,7 +8527,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  In repositories that already have largefiles in them, any new file
-@@ -11560,20 +11532,20 @@
+@@ -11702,20 +11674,20 @@
  \-\-lfsize option to the add command (also in megabytes):
  .sp
  .nf
@@ -8430,7 +8552,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [largefiles]
  patterns =
    *.jpg
-@@ -11580,7 +11552,7 @@
+@@ -11722,7 +11694,7 @@
    re:.*\e.(png|bmp)$
    library.zip
    content/audio/*
@@ -8439,7 +8561,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Files that match one of these patterns will be added as largefiles
-@@ -11589,7 +11561,7 @@
+@@ -11731,7 +11703,7 @@
  The \fBlargefiles.minsize\fP and \fBlargefiles.patterns\fP config options
  will be ignored for any repositories not already containing a
  largefile. To add the first largefile to a repository, you must
@@ -8448,7 +8570,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  command.
  .SS Commands
  .SS lfconvert
-@@ -11597,9 +11569,9 @@
+@@ -11739,9 +11711,9 @@
  convert a normal repository to a largefiles repository:
  .sp
  .nf
@@ -8460,7 +8582,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Convert repository SOURCE to a new repository DEST, identical to
-@@ -11619,7 +11591,7 @@
+@@ -11761,7 +11733,7 @@
  this, the DEST repository can be used without largefiles at all.
  .sp
  Options:
@@ -8469,7 +8591,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-s,  \-\-size \ <SIZE>
  .
-@@ -11628,33 +11600,33 @@
+@@ -11770,33 +11742,33 @@
  .B \-\-to\-normal
  .
  convert from a largefiles repo to a normal repo
@@ -8511,7 +8633,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -11661,14 +11633,14 @@
+@@ -11803,14 +11775,14 @@
  pull largefiles on the default branch:
  .sp
  .nf
@@ -8530,7 +8652,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <VALUE[+]>
  .
-@@ -11685,7 +11657,7 @@
+@@ -11827,7 +11799,7 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -8538,8 +8660,30 @@ These changes are Solaris-specific and not appropriate for upstream.
 +.RE
  .sp
  [+] marked option can be specified multiple times
- .SS mq
-@@ -11699,10 +11671,10 @@
+ .SS logtoprocess
+@@ -11843,7 +11815,7 @@
+ prefixed with \fIOPT_\fP). The original event name is passed in the \fIEVENT\fP
+ environment variable, and the process ID of mercurial is given in \fIHGPID\fP.
+ .sp
+-So given a call \fIui.log(\(aqfoo\(aq, \(aqbar\(aq, \(aqbaz\(aq, spam=\(aqeggs\(aq), a script configured
++So given a call \fIui.log('foo', 'bar', 'baz', spam='eggs'), a script configured
+ for the \(gafoo\fP event can expect an environment with \fIMSG1=bar\fP, \fIMSG2=baz\fP, and
+ \fIOPT_SPAM=eggs\fP.
+ .sp
+@@ -11851,10 +11823,10 @@
+ For example:
+ .sp
+ .nf
+-.ft C
++.ft
+ [logtoprocess]
+ commandexception = echo "$MSG2$MSG3" > /var/log/mercurial_exceptions.log
+-.ft P
++.ft
+ .fi
+ .sp
+ would log the warning message and traceback of any failed command dispatch.
+@@ -11872,10 +11844,10 @@
  Known patches are represented as patch files in the .hg/patches
  directory. Applied patches are both patch files and changesets.
  .sp
@@ -8552,7 +8696,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  create new patch                          qnew
  import existing patch                     qimport
  
-@@ -11712,7 +11684,7 @@
+@@ -11885,7 +11857,7 @@
  add known patch to applied stack          qpush
  remove patch from applied stack           qpop
  refresh contents of top applied patch     qrefresh
@@ -8561,7 +8705,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  By default, mq will automatically use git patches when required to
-@@ -11720,29 +11692,29 @@
+@@ -11893,29 +11865,29 @@
  files creations or deletions. This behavior can be configured with:
  .sp
  .nf
@@ -8600,7 +8744,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  If the working directory contains uncommitted files, qpush, qpop and
  qgoto abort immediately. If \-f/\-\-force is used, the changes are
-@@ -11749,10 +11721,10 @@
+@@ -11922,10 +11894,10 @@
  discarded. Setting:
  .sp
  .nf
@@ -8613,7 +8757,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  make them behave as if \-\-keep\-changes were passed, and non\-conflicting
-@@ -11767,15 +11739,15 @@
+@@ -11940,15 +11912,15 @@
  print the patches already applied:
  .sp
  .nf
@@ -8632,7 +8776,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-1,  \-\-last
  .
-@@ -11784,15 +11756,15 @@
+@@ -11957,15 +11929,15 @@
  .B \-s,  \-\-summary
  .
  print first line of patch header
@@ -8651,7 +8795,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If source is local, destination will have no patches applied. If
-@@ -11805,12 +11777,12 @@
+@@ -11978,12 +11950,12 @@
  default. Use \-p <url> to change.
  .sp
  The patch directory must be a nested Mercurial repository, as
@@ -8666,7 +8810,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-pull
  .
-@@ -11839,21 +11811,21 @@
+@@ -12012,21 +11984,21 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -8693,7 +8837,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-addremove
  .
-@@ -11906,23 +11878,23 @@
+@@ -12079,23 +12051,23 @@
  .B \-S,  \-\-subrepos
  .
  recurse into subrepositories
@@ -8724,7 +8868,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The patches must not be applied, and at least one patch is required. Exact
-@@ -11930,10 +11902,10 @@
+@@ -12103,10 +12075,10 @@
  preserved in the patch directory.
  .sp
  To stop managing a patch and move it into permanent history,
@@ -8737,7 +8881,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-k,  \-\-keep
  .
-@@ -11942,23 +11914,23 @@
+@@ -12115,23 +12087,23 @@
  .BI \-r,  \-\-rev \ <REV[+]>
  .
  stop managing a revision (DEPRECATED)
@@ -8768,7 +8912,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Shows a diff which includes the current patch as well as any
-@@ -11966,8 +11938,8 @@
+@@ -12139,8 +12111,8 @@
  last refresh (thus showing what the current patch would become
  after a qrefresh).
  .sp
@@ -8779,7 +8923,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  made by the current patch without including changes made since the
  qrefresh.
  .sp
-@@ -11974,7 +11946,7 @@
+@@ -12147,7 +12119,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -8788,7 +8932,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-text
  .
-@@ -12031,7 +12003,7 @@
+@@ -12204,7 +12176,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -8797,7 +8941,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS qfinish
-@@ -12039,9 +12011,9 @@
+@@ -12212,9 +12184,9 @@
  move applied patches into repository history:
  .sp
  .nf
@@ -8809,7 +8953,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Finishes the specified revisions (corresponding to applied
-@@ -12060,20 +12032,20 @@
+@@ -12233,20 +12205,20 @@
  Returns 0 on success.
  .sp
  Options:
@@ -8834,7 +8978,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Patches must not yet be applied. Each patch will be successively
-@@ -12089,7 +12061,7 @@
+@@ -12262,7 +12234,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -8843,7 +8987,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-e,  \-\-edit
  .
-@@ -12106,21 +12078,21 @@
+@@ -12279,21 +12251,21 @@
  .BI \-l,  \-\-logfile \ <FILE>
  .
  read commit message from file
@@ -8869,7 +9013,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-keep\-changes
  .
-@@ -12133,21 +12105,21 @@
+@@ -12306,21 +12278,21 @@
  .B \-\-no\-backup
  .
  do not save backup copies of files
@@ -8896,7 +9040,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  has activated it.
  .sp
  With no arguments, print the currently active guards.
-@@ -12154,21 +12126,21 @@
+@@ -12327,21 +12299,21 @@
  With arguments, set guards for the named patch.
  .IP Note
  .
@@ -8922,7 +9066,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-l,  \-\-list
  .
-@@ -12177,15 +12149,15 @@
+@@ -12350,15 +12322,15 @@
  .B \-n,  \-\-none
  .
  drop all guards
@@ -8941,7 +9085,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Returns 0 on success.
-@@ -12194,9 +12166,9 @@
+@@ -12367,9 +12339,9 @@
  import a patch or existing changeset:
  .sp
  .nf
@@ -8953,7 +9097,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The patch is inserted into the series after the last applied
-@@ -12217,7 +12189,7 @@
+@@ -12390,7 +12362,7 @@
  under mq control). With \-g/\-\-git, patches imported with \-\-rev will
  use the git diff format. See the diffs help topic for information
  on why this is important for preserving rename/copy information
@@ -8962,7 +9106,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  from mq control.
  .sp
  To import a patch from standard input, pass \- as the patch file.
-@@ -12227,15 +12199,15 @@
+@@ -12400,15 +12372,15 @@
  To import an existing patch while renaming it:
  .sp
  .nf
@@ -8981,7 +9125,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-e,  \-\-existing
  .
-@@ -12260,7 +12232,7 @@
+@@ -12433,7 +12405,7 @@
  .B \-P,  \-\-push
  .
  qpush after importing
@@ -8990,7 +9134,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS qinit
-@@ -12268,9 +12240,9 @@
+@@ -12441,9 +12413,9 @@
  init a new queue repository (DEPRECATED):
  .sp
  .nf
@@ -9002,7 +9146,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The queue repository is unversioned by default. If
-@@ -12279,24 +12251,24 @@
+@@ -12452,24 +12424,24 @@
  an unversioned patch repository into a versioned one). You can use
  qcommit to commit changes to this queue repository.
  .sp
@@ -9033,7 +9177,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  qnew creates a new patch on top of the currently\-applied patch (if
-@@ -12312,7 +12284,7 @@
+@@ -12485,7 +12457,7 @@
  .sp
  \-e/\-\-edit, \-m/\-\-message or \-l/\-\-logfile set the patch header as
  well as the commit message. If none is specified, the header is
@@ -9042,7 +9186,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Use the \-g/\-\-git option to keep the patch in the git extended diff
  format. Read the diffs help topic for more information on why this
-@@ -12322,7 +12294,7 @@
+@@ -12495,7 +12467,7 @@
  Returns 0 on successful creation of a new patch.
  .sp
  Options:
@@ -9051,7 +9195,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-e,  \-\-edit
  .
-@@ -12367,7 +12339,7 @@
+@@ -12540,7 +12512,7 @@
  .BI \-l,  \-\-logfile \ <FILE>
  .
  read commit message from file
@@ -9060,7 +9204,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS qnext
-@@ -12375,28 +12347,28 @@
+@@ -12548,28 +12520,28 @@
  print the name of the next pushable patch:
  .sp
  .nf
@@ -9095,7 +9239,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Without argument, pops off the top of the patch stack. If given a
-@@ -12411,7 +12383,7 @@
+@@ -12584,7 +12556,7 @@
  Return 0 on success.
  .sp
  Options:
@@ -9104,7 +9248,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-all
  .
-@@ -12432,34 +12404,34 @@
+@@ -12605,34 +12577,34 @@
  .B \-\-no\-backup
  .
  do not save backup copies of files
@@ -9146,7 +9290,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  By default, abort if the working directory contains uncommitted
-@@ -12470,7 +12442,7 @@
+@@ -12643,7 +12615,7 @@
  Return 0 on success.
  .sp
  Options:
@@ -9155,7 +9299,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-\-keep\-changes
  .
-@@ -12507,15 +12479,15 @@
+@@ -12680,15 +12652,15 @@
  .B \-\-no\-backup
  .
  do not save backup copies of files
@@ -9174,7 +9318,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Supports switching between different patch queues, as well as creating
-@@ -12537,7 +12509,7 @@
+@@ -12710,7 +12682,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -9183,7 +9327,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-l,  \-\-list
  .
-@@ -12562,15 +12534,15 @@
+@@ -12735,15 +12707,15 @@
  .B \-\-purge
  .
  delete queue, and remove patch dir
@@ -9202,7 +9346,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If any file patterns are provided, the refreshed patch will
-@@ -12592,7 +12564,7 @@
+@@ -12765,7 +12737,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -9211,7 +9355,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-e,  \-\-edit
  .
-@@ -12637,7 +12609,7 @@
+@@ -12810,7 +12782,7 @@
  .BI \-l,  \-\-logfile \ <FILE>
  .
  read commit message from file
@@ -9220,7 +9364,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS qrename
-@@ -12645,9 +12617,9 @@
+@@ -12818,9 +12790,9 @@
  rename a patch:
  .sp
  .nf
@@ -9232,7 +9376,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  With one argument, renames the current patch to PATCH1.
-@@ -12654,26 +12626,26 @@
+@@ -12827,26 +12799,26 @@
  With two arguments, renames PATCH1 to PATCH2.
  .sp
  Returns 0 on success.
@@ -9267,7 +9411,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-d,  \-\-delete
  .
-@@ -12682,21 +12654,21 @@
+@@ -12855,21 +12827,21 @@
  .B \-u,  \-\-update
  .
  update queue working directory
@@ -9294,7 +9438,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-c,  \-\-copy
  .
-@@ -12721,18 +12693,18 @@
+@@ -12894,18 +12866,18 @@
  .BI \-l,  \-\-logfile \ <FILE>
  .
  read commit message from file
@@ -9317,7 +9461,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  qselect to tell mq which guards to use. A patch will be pushed if
  it has no guards or any positive guards match the currently
  selected guard, but will not be pushed if any negative guards
-@@ -12739,11 +12711,11 @@
+@@ -12912,11 +12884,11 @@
  match the current guard. For example:
  .sp
  .nf
@@ -9331,7 +9475,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This activates the "stable" guard. mq will skip foo.patch (because
-@@ -12769,7 +12741,7 @@
+@@ -12942,7 +12914,7 @@
  Returns 0 on success.
  .sp
  Options:
@@ -9340,7 +9484,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-n,  \-\-none
  .
-@@ -12786,21 +12758,21 @@
+@@ -12959,21 +12931,21 @@
  .B \-\-reapply
  .
  pop, then reapply patches
@@ -9366,7 +9510,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-m,  \-\-missing
  .
-@@ -12809,40 +12781,40 @@
+@@ -12982,40 +12954,40 @@
  .B \-s,  \-\-summary
  .
  print first line of patch header
@@ -9415,7 +9559,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-1,  \-\-first
  .
-@@ -12851,7 +12823,7 @@
+@@ -13024,7 +12996,7 @@
  .B \-s,  \-\-summary
  .
  print first line of patch header
@@ -9424,7 +9568,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS notify
  .sp
  hooks for sending email push notifications
-@@ -12859,13 +12831,13 @@
+@@ -13032,13 +13004,13 @@
  This extension implements hooks to send email notifications when
  changesets are sent from or received by the local repository.
  .sp
@@ -9440,7 +9584,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [hooks]
  # one email for each incoming changeset
  incoming.notify = python:hgext.notify.hook
-@@ -12874,7 +12846,7 @@
+@@ -13047,7 +13019,7 @@
  
  # one email for all outgoing changesets
  outgoing.notify = python:hgext.notify.hook
@@ -9449,7 +9593,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This registers the hooks. To enable notification, subscribers must
-@@ -12883,7 +12855,7 @@
+@@ -13056,7 +13028,7 @@
  multiple recipients to a single repository:
  .sp
  .nf
@@ -9458,7 +9602,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [usersubs]
  # key is subscriber email, value is a comma\-separated list of repo patterns
  user@host = pattern
-@@ -12891,7 +12863,7 @@
+@@ -13064,7 +13036,7 @@
  [reposubs]
  # key is repo pattern, value is a comma\-separated list of subscriber emails
  pattern = user@host
@@ -9467,7 +9611,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  A \fBpattern\fP is a \fBglob\fP matching the absolute path to a repository,
-@@ -12899,10 +12871,10 @@
+@@ -13072,10 +13044,10 @@
  present, is separated from the glob by a hash. Example:
  .sp
  .nf
@@ -9480,7 +9624,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This sends to \fBqa\-team@example.com\fP whenever a changeset on the \fBrelease\fP
-@@ -12913,10 +12885,10 @@
+@@ -13086,10 +13058,10 @@
  incorporated by reference:
  .sp
  .nf
@@ -9493,7 +9637,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Notifications will not be sent until the \fBnotify.test\fP value is set
-@@ -12923,7 +12895,7 @@
+@@ -13096,7 +13068,7 @@
  to \fBFalse\fP; see below.
  .sp
  Notifications content can be tweaked with the following configuration entries:
@@ -9502,7 +9646,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B notify.test
  .
-@@ -12932,8 +12904,8 @@
+@@ -13105,8 +13077,8 @@
  .B notify.sources
  .
  Space\-separated list of change sources. Notifications are activated only
@@ -9513,7 +9657,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBserve\fP
  .sp
-@@ -12954,7 +12926,7 @@
+@@ -13127,7 +13099,7 @@
  .B \fBbundle\fP
  .sp
  changesets sent via \fBhg unbundle\fP
@@ -9522,7 +9666,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Default: serve.
  .TP
-@@ -12997,7 +12969,7 @@
+@@ -13170,7 +13142,7 @@
  .TP
  .B notify.maxsubject
  .
@@ -9531,7 +9675,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B notify.diffstat
  .
-@@ -13016,11 +12988,11 @@
+@@ -13189,11 +13161,11 @@
  If set, use the committer of the first changeset in a changegroup for
  the "From" field of the notification mail. If not set, take the user
  from the pushing repo.  Default: False.
@@ -9545,7 +9689,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B email.from
  .
-@@ -13031,7 +13003,7 @@
+@@ -13204,7 +13176,7 @@
  .
  Root repository URL to combine with repository paths when making
  references. See also \fBnotify.strip\fP.
@@ -9554,7 +9698,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS pager
  .sp
  browse command output with an external pager
-@@ -13039,10 +13011,10 @@
+@@ -13212,10 +13184,10 @@
  To set the pager that should be used, set the application variable:
  .sp
  .nf
@@ -9567,7 +9711,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  If no pager is set, the pager extensions uses the environment variable
-@@ -13052,10 +13024,10 @@
+@@ -13225,10 +13197,10 @@
  pager.ignore list:
  .sp
  .nf
@@ -9580,7 +9724,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can also enable the pager only for certain commands using
-@@ -13062,10 +13034,10 @@
+@@ -13235,10 +13207,10 @@
  pager.attend. Below is the default list of commands to be paged:
  .sp
  .nf
@@ -9593,7 +9737,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Setting pager.attend to an empty value will cause all commands to be
-@@ -13078,13 +13050,13 @@
+@@ -13251,13 +13223,13 @@
  existing attend and ignore options and defaults:
  .sp
  .nf
@@ -9610,7 +9754,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  to specify them in your user configuration file.
  .sp
  To control whether the pager is used at all for an individual command,
-@@ -13091,12 +13063,12 @@
+@@ -13264,12 +13236,12 @@
  you can use \-\-pager=<value>:
  .sp
  .nf
@@ -9625,7 +9769,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS patchbomb
  .sp
-@@ -13108,7 +13080,7 @@
+@@ -13281,7 +13253,7 @@
  Each patch email has a Subject line of "[PATCH M of N] ...", using the
  first line of the changeset description as the subject text. The
  message contains two or three body parts:
@@ -9634,7 +9778,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  The changeset description.
-@@ -13117,8 +13089,8 @@
+@@ -13290,8 +13262,8 @@
  [Optional] The result of running diffstat on the patch.
  .IP \(bu 2
  .
@@ -9645,7 +9789,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Each message refers to the first in the series using the In\-Reply\-To
  and References headers, so they will show up as a sequence in threaded
-@@ -13128,7 +13100,7 @@
+@@ -13301,7 +13273,7 @@
  configuration file:
  .sp
  .nf
@@ -9654,7 +9798,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [email]
  from = My Name <my@email>
  to = recipient1, recipient2, ...
-@@ -13135,13 +13107,13 @@
+@@ -13308,13 +13280,13 @@
  cc = cc1, cc2, ...
  bcc = bcc1, bcc2, ...
  reply\-to = address1, address2, ...
@@ -9670,7 +9814,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  changesets as a patchbomb.
  .sp
  You can also either configure the method option in the email section
-@@ -13150,15 +13122,15 @@
+@@ -13323,15 +13295,15 @@
  directly from the commandline. See the [email] and [smtp] sections in
  hgrc(5) for details.
  .sp
@@ -9689,7 +9833,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can control the default inclusion of an introduction message with the
-@@ -13166,12 +13138,12 @@
+@@ -13339,12 +13311,12 @@
  overwritten by command line flags like \-\-intro and \-\-desc:
  .sp
  .nf
@@ -9704,7 +9848,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can set patchbomb to always ask for confirmation by setting
-@@ -13182,13 +13154,13 @@
+@@ -13355,13 +13327,13 @@
  send changesets by email:
  .sp
  .nf
@@ -9721,7 +9865,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  of N]" introduction, which describes the series as a whole.
  .sp
  Each patch email has a Subject line of "[PATCH M of N] ...", using
-@@ -13199,7 +13171,7 @@
+@@ -13372,7 +13344,7 @@
  With the \-d/\-\-diffstat option, if the diffstat program is
  installed, the result of running diffstat on the patch is inserted.
  .sp
@@ -9730,7 +9874,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  With the \-d/\-\-diffstat or \-\-confirm options, you will be presented
  with a final summary of all messages and asked for confirmation before
-@@ -13219,7 +13191,7 @@
+@@ -13392,7 +13364,7 @@
  With \-b/\-\-bundle, changesets are selected as for \-\-outgoing, but a
  single email containing a binary Mercurial bundle as an attachment
  will be sent. Use the \fBpatchbomb.bundletype\fP config option to
@@ -9739,7 +9883,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  With \-m/\-\-mbox, instead of previewing each patchbomb message in a
  pager or sending the messages directly, it will create a UNIX
-@@ -13238,12 +13210,12 @@
+@@ -13411,12 +13383,12 @@
  introductory message in \fB.hg/last\-email.txt\fP.
  .sp
  The default behavior of this command can be customized through
@@ -9754,7 +9898,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  hg email \-r 3000          # send patch 3000 only
  hg email \-r 3000 \-r 3001  # send patches 3000 and 3001
  hg email \-r 3000:3005     # send patches 3000 through 3005
-@@ -13264,7 +13236,7 @@
+@@ -13437,7 +13409,7 @@
  hg email \-o \-m mbox &&    # generate an mbox file ...
    formail \-s sendmail \e   # ... and use formail to send from the mbox
      \-bm \-t < mbox         # ... using sendmail
@@ -9763,7 +9907,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Before using this command, you will need to enable email in your
-@@ -13271,7 +13243,7 @@
+@@ -13444,7 +13416,7 @@
  hgrc. See the [email] section in hgrc(5) for details.
  .sp
  Options:
@@ -9772,7 +9916,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-g,  \-\-git
  .
-@@ -13388,7 +13360,7 @@
+@@ -13561,7 +13533,7 @@
  .B \-\-insecure
  .
  do not verify server certificate (ignoring web.cacerts config)
@@ -9781,7 +9925,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS purge
-@@ -13400,9 +13372,9 @@
+@@ -13573,9 +13545,9 @@
  removes files not tracked by Mercurial:
  .sp
  .nf
@@ -9793,7 +9937,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Delete files not known to Mercurial. This is useful to test local
-@@ -13409,18 +13381,18 @@
+@@ -13582,18 +13554,18 @@
  and uncommitted changes in an otherwise\-clean source tree.
  .sp
  This means that purge will delete the following by default:
@@ -9816,7 +9960,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Modified and unmodified tracked files
-@@ -13429,8 +13401,8 @@
+@@ -13602,8 +13574,8 @@
  Ignored files (unless \-\-all is specified)
  .IP \(bu 2
  .
@@ -9827,7 +9971,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  The \-\-files and \-\-dirs options can be used to direct purge to delete
  only files, only directories, or both. If neither option is given,
-@@ -13445,7 +13417,7 @@
+@@ -13618,7 +13590,7 @@
  option.
  .sp
  Options:
@@ -9836,7 +9980,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-abort\-on\-err
  .
-@@ -13478,15 +13450,15 @@
+@@ -13651,15 +13623,15 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -9857,7 +10001,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS rebase
  .sp
  command to move sets of revisions to a different ancestor
-@@ -13495,7 +13467,7 @@
+@@ -13668,7 +13640,7 @@
  repository.
  .sp
  For more information:
@@ -9866,7 +10010,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Commands
  .SS rebase
  .sp
-@@ -13502,9 +13474,9 @@
+@@ -13675,9 +13647,9 @@
  move changeset (and descendants) to a different branch:
  .sp
  .nf
@@ -9878,7 +10022,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Rebase uses repeated merging to graft changesets from one part of
-@@ -13512,18 +13484,18 @@
+@@ -13685,11 +13657,11 @@
  useful for linearizing \fIlocal\fP changes relative to a master
  development tree.
  .sp
@@ -9887,11 +10031,15 @@ These changes are Solaris-specific and not appropriate for upstream.
 +Published commits cannot be rebased (see \fBhg help phases\fP).
 +To copy commits, see \fBhg help graft\fP.
  .sp
--If you don\(aqt specify a destination changeset (\fB\-d/\-\-dest\fP),
-+If you don't specify a destination changeset (\fB\-d/\-\-dest\fP),
- rebase uses the current branch tip as the destination. (The
- destination changeset is not modified by rebasing, but new
- changesets are added as its descendants.)
+-If you don\(aqt specify a destination changeset (\fB\-d/\-\-dest\fP), rebase
+-will use the same logic as \%\fBhg merge\fP\: to pick a destination.  if
++If you don't specify a destination changeset (\fB\-d/\-\-dest\fP), rebase
++will use the same logic as \fBhg merge\fP to pick a destination.  if
+ the current branch contains exactly one other head, the other head
+ is merged with by default.  Otherwise, an explicit revision with
+ which to merge with must be provided.  (destination changeset is not
+@@ -13697,9 +13669,9 @@
+ descendants.)
  .sp
  Here are the ways to select changesets:
 -.INDENT 0.0
@@ -9903,7 +10051,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP 1. 3
  .
  Explicitly select them using \fB\-\-rev\fP.
-@@ -13539,9 +13511,9 @@
+@@ -13715,9 +13687,9 @@
  .
  If you do not specify any of \fB\-\-rev\fP, \fBsource\fP, or \fB\-\-base\fP,
  rebase will use \fB\-\-base .\fP as above.
@@ -9916,7 +10064,16 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Rebase will destroy original changesets unless you use \fB\-\-keep\fP.
  It will also move your bookmarks (even if you do).
-@@ -13557,7 +13529,7 @@
+@@ -13730,7 +13702,7 @@
+ and/or destination.
+ .sp
+ If you need to use a tool to automate merge/conflict decisions, you
+-can specify one with \fB\-\-tool\fP, see \%\fBhg help merge\-tools\fP\:.
++can specify one with \fB\-\-tool\fP, see \fBhg help merge\-tools\fP.
+ As a caveat: the tool will not be used to mediate when a file was
+ deleted, there is no hook presently available for this.
+ .sp
+@@ -13738,7 +13710,7 @@
  continued with \-\-continue/\-c or aborted with \-\-abort/\-a.
  .sp
  Examples:
@@ -9925,7 +10082,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  move "local changes" (current commit back to branching point)
-@@ -13564,9 +13536,9 @@
+@@ -13745,9 +13717,9 @@
  to the current branch tip after a pull:
  .sp
  .nf
@@ -9937,7 +10094,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -13573,9 +13545,9 @@
+@@ -13754,9 +13726,9 @@
  move a single changeset to the stable branch:
  .sp
  .nf
@@ -9949,7 +10106,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -13582,9 +13554,9 @@
+@@ -13763,9 +13735,9 @@
  splice a commit and all its descendants onto another part of history:
  .sp
  .nf
@@ -9961,7 +10118,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -13592,9 +13564,9 @@
+@@ -13773,9 +13745,9 @@
  default branch:
  .sp
  .nf
@@ -9973,7 +10130,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -13601,9 +13573,9 @@
+@@ -13782,9 +13754,9 @@
  collapse a sequence of changes into a single commit:
  .sp
  .nf
@@ -9985,7 +10142,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .IP \(bu 2
  .
-@@ -13610,17 +13582,17 @@
+@@ -13791,17 +13763,17 @@
  move a named branch while preserving its name:
  .sp
  .nf
@@ -10007,7 +10164,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-s,  \-\-source \ <REV>
  .
-@@ -13689,7 +13661,7 @@
+@@ -13870,7 +13842,7 @@
  .BI \-T,  \-\-template \ <TEMPLATE>
  .
  display with template
@@ -10016,7 +10173,16 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS record
-@@ -13701,12 +13673,12 @@
+@@ -13878,7 +13850,7 @@
+ commands to interactively select changes for commit/qrefresh (DEPRECATED)
+ .sp
+ The feature provided by this extension has been moved into core Mercurial as
+-\%\fBhg commit \-\-interactive\fP\:.
++\fBhg commit \-\-interactive\fP.
+ .SS Commands
+ .SS qrecord
+ .sp
+@@ -13885,12 +13857,12 @@
  interactively record a new patch:
  .sp
  .nf
@@ -10032,7 +10198,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  usage.
  .SS record
  .sp
-@@ -13713,15 +13685,15 @@
+@@ -13897,15 +13869,15 @@
  interactively select changes to commit:
  .sp
  .nf
@@ -10052,7 +10218,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  You will be prompted for whether to record changes to each
  modified file, and for files with multiple changes, for each
-@@ -13729,7 +13701,7 @@
+@@ -13913,7 +13885,7 @@
  possible:
  .sp
  .nf
@@ -10061,7 +10227,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  y \- record this change
  n \- skip this change
  e \- edit this change manually
-@@ -13742,13 +13714,13 @@
+@@ -13926,13 +13898,13 @@
  q \- quit, recording no changes
  
  ? \- display help
@@ -10077,7 +10243,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-addremove
  .
-@@ -13809,7 +13781,7 @@
+@@ -13993,7 +13965,7 @@
  .B \-B,  \-\-ignore\-blank\-lines
  .
  ignore changes whose lines are all blank
@@ -10086,7 +10252,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS relink
-@@ -13821,9 +13793,9 @@
+@@ -14005,9 +13977,9 @@
  recreate hardlinks between two repositories:
  .sp
  .nf
@@ -10098,7 +10264,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  When repositories are cloned locally, their data files will be
-@@ -13855,18 +13827,18 @@
+@@ -14039,18 +14011,18 @@
  lot of repositories to act like a scheme, for example:
  .sp
  .nf
@@ -10121,7 +10287,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Additionally there is support for some more complex schemas, for
-@@ -13873,10 +13845,10 @@
+@@ -14057,10 +14029,10 @@
  example used by Google Code:
  .sp
  .nf
@@ -10134,7 +10300,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The syntax is taken from Mercurial templates, and you have unlimited
-@@ -13888,7 +13860,7 @@
+@@ -14072,7 +14044,7 @@
  For convenience, the extension adds these schemes by default:
  .sp
  .nf
@@ -10143,7 +10309,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [schemes]
  py = http://hg.python.org/
  bb = https://bitbucket.org/
-@@ -13895,7 +13867,7 @@
+@@ -14079,7 +14051,7 @@
  bb+ssh = ssh://hg@bitbucket.org/
  gcode = https://{1}.googlecode.com/hg/
  kiln = https://{1}.kilnhg.com/Repo/
@@ -10152,7 +10318,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can override a predefined scheme by defining a new scheme with the
-@@ -13905,19 +13877,19 @@
+@@ -14090,19 +14062,19 @@
  share a common history between several working directories
  .SS Automatic Pooled Storage for Clones
  .sp
@@ -10176,7 +10342,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  storage instead of creating a store inside each clone.
  .TP
  .B \fBshare.poolnaming\fP
-@@ -13929,13 +13901,13 @@
+@@ -14114,13 +14086,13 @@
  root/initial changeset is identical. In this mode, the local shared
  repository is an aggregate of all encountered remote repositories.
  .sp
@@ -10193,7 +10359,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS Commands
  .SS share
  .sp
-@@ -13942,9 +13914,9 @@
+@@ -14127,9 +14099,9 @@
  create a new shared repository:
  .sp
  .nf
@@ -10205,7 +10371,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Initialize a new repository and working directory that shares its
-@@ -13962,7 +13934,7 @@
+@@ -14147,7 +14119,7 @@
  .RE
  .sp
  Options:
@@ -10214,7 +10380,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-U,  \-\-noupdate
  .
-@@ -13971,15 +13943,15 @@
+@@ -14156,15 +14128,15 @@
  .B \-B,  \-\-bookmarks
  .
  also share bookmarks
@@ -10233,7 +10399,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Copy the store data to the repo and remove the sharedpath data.
-@@ -13993,7 +13965,7 @@
+@@ -14178,7 +14150,7 @@
  .sp
  Later on, the "hg unshelve" command restores the changes saved by "hg
  shelve". Changes can be restored even after updating to a different
@@ -10242,7 +10408,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  conflicts if necessary.
  .sp
  You can have more than one shelved change outstanding at a time; each
-@@ -14005,9 +13977,9 @@
+@@ -14190,9 +14162,9 @@
  save and set aside changes from the working directory:
  .sp
  .nf
@@ -10254,7 +10420,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Shelving takes files that "hg status" reports as not clean, saves
-@@ -14035,7 +14007,7 @@
+@@ -14226,7 +14198,7 @@
  all shelved changes, use \fB\-\-cleanup\fP.
  .sp
  Options:
@@ -10263,7 +10429,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-A,  \-\-addremove
  .
-@@ -14092,7 +14064,7 @@
+@@ -14283,7 +14255,7 @@
  .BI \-X,  \-\-exclude \ <PATTERN[+]>
  .
  exclude names matching the given patterns
@@ -10272,7 +10438,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS unshelve
-@@ -14100,9 +14072,9 @@
+@@ -14291,9 +14263,9 @@
  restore a shelved change to the working directory:
  .sp
  .nf
@@ -10284,7 +10450,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  This command accepts an optional name of a shelved change to
-@@ -14133,7 +14105,7 @@
+@@ -14328,7 +14300,7 @@
  prevents from deciding exact order of them, for safety.
  .sp
  Options:
@@ -10293,7 +10459,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \-a,  \-\-abort
  .
-@@ -14154,7 +14126,7 @@
+@@ -14349,7 +14321,7 @@
  .BI \-\-date \ <DATE>
  .
  set date for temporary commits (DEPRECATED)
@@ -10302,7 +10468,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS strip
  .sp
  strip changesets and their descendants from history
-@@ -14167,9 +14139,9 @@
+@@ -14362,9 +14334,9 @@
  strip changesets and all their descendants from the repository:
  .sp
  .nf
@@ -10314,7 +10480,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  The strip command removes the specified changesets and all their
-@@ -14183,8 +14155,8 @@
+@@ -14378,8 +14350,8 @@
  completes.
  .sp
  Any stripped changesets are stored in \fB.hg/strip\-backup\fP as a
@@ -10325,7 +10491,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  where BUNDLE is the bundle file created by the strip. Note that
  the local revision numbers will in general be different after the
  restore.
-@@ -14199,7 +14171,7 @@
+@@ -14394,7 +14366,7 @@
  Return 0 on success.
  .sp
  Options:
@@ -10334,7 +10500,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-r,  \-\-rev \ <REV[+]>
  .
-@@ -14228,7 +14200,7 @@
+@@ -14423,7 +14395,7 @@
  .BI \-B,  \-\-bookmark \ <VALUE[+]>
  .
  remove revs only reachable from given bookmark
@@ -10343,7 +10509,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS transplant
-@@ -14236,7 +14208,7 @@
+@@ -14431,7 +14403,7 @@
  command to transplant changesets from another branch
  .sp
  This extension allows you to transplant changes to another parent revision,
@@ -10352,7 +10518,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Transplanted patches are recorded in .hg/transplant/transplants, as a
  map from a changeset hash to its hash in the source repository.
-@@ -14246,9 +14218,9 @@
+@@ -14441,9 +14413,9 @@
  transplant changesets from another branch:
  .sp
  .nf
@@ -10364,7 +10530,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Selected changesets will be applied on top of the current working
-@@ -14265,9 +14237,9 @@
+@@ -14460,9 +14432,9 @@
  of the form:
  .sp
  .nf
@@ -10376,7 +10542,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can rewrite the changelog message with the \-\-filter option.
-@@ -14283,17 +14255,17 @@
+@@ -14478,17 +14450,17 @@
  with \-\-branch will be transplanted.
  .sp
  Example:
@@ -10398,7 +10564,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  You can optionally mark selected transplanted changesets as merge
  changesets. You will not be prompted to transplant any ancestors
-@@ -14301,17 +14273,17 @@
+@@ -14496,17 +14468,17 @@
  normally instead of transplanting them.
  .sp
  Merge changesets may be transplanted directly by specifying the
@@ -10421,7 +10587,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .BI \-s,  \-\-source \ <REPO>
  .
-@@ -14352,7 +14324,7 @@
+@@ -14547,7 +14519,7 @@
  .BI \-\-filter \ <CMD>
  .
  filter changesets through command
@@ -10430,7 +10596,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  [+] marked option can be specified multiple times
  .SS win32mbcs
-@@ -14367,7 +14339,7 @@
+@@ -14562,7 +14534,7 @@
  operation.
  .sp
  This extension is useful for:
@@ -10439,7 +10605,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Japanese Windows users using shift_jis encoding.
-@@ -14378,10 +14350,10 @@
+@@ -14573,10 +14545,10 @@
  .
  All users who use a repository with one of problematic encodings on
  case\-insensitive file system.
@@ -10452,7 +10618,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  Any user who use only ASCII chars in path.
-@@ -14388,10 +14360,10 @@
+@@ -14583,10 +14555,10 @@
  .IP \(bu 2
  .
  Any user who do not use any of problematic encodings.
@@ -10465,7 +10631,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .IP \(bu 2
  .
  You should use single encoding in one repository.
-@@ -14401,16 +14373,16 @@
+@@ -14596,16 +14568,16 @@
  .IP \(bu 2
  .
  win32mbcs is not compatible with fixutf8 extension.
@@ -10485,7 +10651,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  It is useful for the users who want to commit with UTF\-8 log message.
-@@ -14417,8 +14389,8 @@
+@@ -14612,8 +14584,8 @@
  .SS win32text
  .sp
  perform automatic newline conversion (DEPRECATED)
@@ -10496,7 +10662,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Deprecation: The win32text extension requires each user to configure
  the extension again and again for each clone since the configuration
-@@ -14427,13 +14399,13 @@
+@@ -14622,13 +14594,13 @@
  We have therefore made the \fBeol\fP as an alternative. The \fBeol\fP
  uses a version controlled file for its configuration and each clone
  will therefore use the right settings from the start.
@@ -10513,7 +10679,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [extensions]
  win32text =
  [encode]
-@@ -14443,17 +14415,17 @@
+@@ -14638,17 +14610,17 @@
  [decode]
  ** = cleverdecode:
  # or ** = macdecode:
@@ -10534,7 +10700,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  To do the same check on a server to prevent CRLF/CR from being
-@@ -14460,11 +14432,11 @@
+@@ -14655,11 +14627,11 @@
  pushed or pulled:
  .sp
  .nf
@@ -10548,7 +10714,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS zeroconf
  .sp
-@@ -14475,33 +14447,33 @@
+@@ -14670,33 +14642,33 @@
  without knowing their actual IP address.
  .sp
  To allow other people to discover your repository using run
@@ -10591,7 +10757,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  files.
  .TP
  .B \fB.hgignore\fP
-@@ -14508,13 +14480,13 @@
+@@ -14703,13 +14675,13 @@
  .sp
  This file contains regular expressions (one per line) that
  describe file names that should be ignored by \fBhg\fP. For details,
@@ -10607,7 +10773,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fB.hgsubstate\fP
  .sp
-@@ -14529,7 +14501,7 @@
+@@ -14724,7 +14696,7 @@
  .TP
  .B \fB.hg/last\-message.txt\fP
  .sp
@@ -10616,7 +10782,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  in case the commit fails.
  .TP
  .B \fB.hg/localtags\fP
-@@ -14537,28 +14509,34 @@
+@@ -14732,28 +14704,34 @@
  This file can be used to define local tags which are not shared among
  repositories. The file format is the same as for \fB.hgtags\fP, but it is
  encoded using the local system encoding.
@@ -10658,8 +10824,8 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH COPYING
  .sp
  Copyright (C) 2005\-2016 Matt Mackall.
---- mercurial-3.7.3/doc/hgignore.5.~1~	Tue Mar 29 09:54:51 2016
-+++ mercurial-3.7.3/doc/hgignore.5	Tue Mar 29 10:26:27 2016
+--- mercurial-3.8.1/doc/hgignore.5	Sun May  1 12:36:17 2016
++++ mercurial-3.8.1/doc/hgignore.5	Sun May  1 14:28:19 2016
 @@ -3,33 +3,6 @@
  .TH HGIGNORE 5 "" "" "Mercurial Manual"
  .SH NAME
@@ -10785,8 +10951,8 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SH COPYING
  .sp
  This manual page is copyright 2006 Vadim Gelfer.
---- mercurial-3.7.3/doc/hgrc.5.~1~	Tue Mar 29 09:54:48 2016
-+++ mercurial-3.7.3/doc/hgrc.5	Tue Mar 29 10:26:32 2016
+--- mercurial-3.8.1/doc/hgrc.5	Sun May  1 12:36:14 2016
++++ mercurial-3.8.1/doc/hgrc.5	Sun May  1 14:28:23 2016
 @@ -3,33 +3,6 @@
  .TH HGRC 5 "" "" "Mercurial Manual"
  .SH NAME
@@ -11722,8 +11888,8 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Run after sending changes from local repository to another. ID of
  first changeset sent is in \fB$HG_NODE\fP. Source of operation is in
--\fB$HG_SOURCE\fP; Also see \%\fBhg help config.preoutgoing\fP\: hook.
-+\fB$HG_SOURCE\fP; Also see \fBhg help config.preoutgoing\fP hook.
+-\fB$HG_SOURCE\fP; Also see \%\fBhg help config.hooks.preoutgoing\fP\: hook.
++\fB$HG_SOURCE\fP; Also see \fBhg help config.hooks.preoutgoing\fP hook.
  .TP
  .B \fBpost\-<command>\fP
  .sp
@@ -11740,14 +11906,14 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Run after any repository transaction has been committed. At this
  point, the transaction can no longer be rolled back. The hook will run
--after the lock is released. See \%\fBhg help config.pretxnclose\fP\: docs for
-+after the lock is released. See \fBhg help config.pretxnclose\fP docs for
+-after the lock is released. See \%\fBhg help config.hooks.pretxnclose\fP\: docs for
++after the lock is released. See \fBhg help config.hooks.pretxnclose\fP docs for
  details about available variables.
  .TP
  .B \fBtxnabort\fP
  .sp
--Run when a transaction is aborted. See \%\fBhg help config.pretxnclose\fP\:
-+Run when a transaction is aborted. See \fBhg help config.pretxnclose\fP
+-Run when a transaction is aborted. See \%\fBhg help config.hooks.pretxnclose\fP\:
++Run when a transaction is aborted. See \fBhg help config.hooks.pretxnclose\fP
  docs for details about available variables.
  .TP
  .B \fBpretxnchangegroup\fP
@@ -11784,7 +11950,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Python hooks are run within the Mercurial process. Each hook is
-@@ -1258,11 +1148,11 @@
+@@ -1264,17 +1154,17 @@
  For example:
  .sp
  .nf
@@ -11796,9 +11962,7 @@ These changes are Solaris-specific and not appropriate for upstream.
 -.ft P
 +.ft
  .fi
- .sp
- This feature is only supported when using Python 2.6 or later.
-@@ -1270,7 +1160,7 @@
+ .SS \fBhttp_proxy\fP
  .sp
  Used to access web\-based Mercurial repositories through a HTTP
  proxy.
@@ -11807,16 +11971,41 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBhost\fP
  .sp
-@@ -1294,7 +1184,7 @@
+@@ -1298,11 +1188,11 @@
  .sp
  Optional. Always use the proxy, even for localhost and any entries
  in \fBhttp_proxy.no\fP. (default: False)
 -.UNINDENT
 +.RE
+ .SS \fBmerge\fP
+ .sp
+ This section specifies behavior during merges and updates.
+-.INDENT 0.0
++.RS 0
+ .TP
+ .B \fBcheckignored\fP
+ .sp
+@@ -1310,16 +1200,16 @@
+ file in the changeset being merged or updated to, and has different
+ contents. Options are \fBabort\fP, \fBwarn\fP and \fBignore\fP. With \fBabort\fP,
+ abort on such files. With \fBwarn\fP, warn on such files and back them up as
+-.orig. With \fBignore\fP, don\(aqt print a warning and back them up as
++.orig. With \fBignore\fP, don't print a warning and back them up as
+ .orig. (default: \fBabort\fP)
+ .TP
+ .B \fBcheckunknown\fP
+ .sp
+-Controls behavior when an unknown file that isn\(aqt ignored has the same name
++Controls behavior when an unknown file that isn't ignored has the same name
+ as a tracked file in the changeset being merged or updated to, and has
+ different contents. Similar to \fBmerge.checkignored\fP, except for files that
+ are not ignored. (default: \fBabort\fP)
+-.UNINDENT
++.RE
  .SS \fBmerge\-patterns\fP
  .sp
  This section specifies merge tools to associate with particular file
-@@ -1305,23 +1195,23 @@
+@@ -1330,23 +1220,23 @@
  Example:
  .sp
  .nf
@@ -11845,7 +12034,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  [merge\-tools]
  # Override stock tool location
  kdiff3.executable = ~/bin/kdiff3
-@@ -1338,13 +1228,12 @@
+@@ -1363,13 +1253,12 @@
  
  # Define new tool
  myHtmlTool.args = \-m $local $other $base $output
@@ -11861,7 +12050,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBpriority\fP
  .sp
-@@ -1355,9 +1244,6 @@
+@@ -1380,9 +1269,6 @@
  .sp
  Either just the name of the executable or its pathname.
  .sp
@@ -11871,7 +12060,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  (default: the tool name)
  .TP
  .B \fBargs\fP
-@@ -1380,7 +1266,7 @@
+@@ -1405,7 +1291,7 @@
  \fBkeep\-merge3\fP. The \fBkeep\fP option will leave markers in the file if the
  premerge fails. The \fBkeep\-merge3\fP will do the same but include information
  about the base of the merge in the marker (see internal :merge3 in
@@ -11880,7 +12069,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  (default: True)
  .TP
  .B \fBbinary\fP
-@@ -1395,7 +1281,7 @@
+@@ -1420,7 +1306,7 @@
  .B \fBcheck\fP
  .sp
  A list of merge success\-checking options:
@@ -11889,7 +12078,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBchanged\fP
  .sp
-@@ -1408,7 +1294,7 @@
+@@ -1433,7 +1319,7 @@
  .B \fBprompt\fP
  .sp
  Always prompt for merge success, regardless of success reported by tool.
@@ -11898,7 +12087,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBfixeol\fP
  .sp
-@@ -1418,44 +1304,16 @@
+@@ -1443,44 +1329,16 @@
  .B \fBgui\fP
  .sp
  This tool requires a graphical interface to run. (default: False)
@@ -11947,7 +12136,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  are preserved. When set to \fBlf\fP or \fBcrlf\fP, both files end of
  lines are ignored when patching and the result line endings are
  normalized to either LF (Unix) or CRLF (Windows). When set to
-@@ -1467,11 +1325,11 @@
+@@ -1492,11 +1350,11 @@
  .TP
  .B \fBfuzz\fP
  .sp
@@ -11961,7 +12150,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS \fBpaths\fP
  .sp
  Assigns symbolic names and behavior to repositories.
-@@ -1480,57 +1338,57 @@
+@@ -1505,57 +1363,57 @@
  location of the repository. Example:
  .sp
  .nf
@@ -12034,7 +12223,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBpublish\fP
  .sp
-@@ -1555,7 +1413,7 @@
+@@ -1580,7 +1438,7 @@
  either aborted (if checksubrepos is set to "abort") or the higher phase is
  used for the parent repository commit (if set to "follow").
  (default: follow)
@@ -12043,7 +12232,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS \fBprofiling\fP
  .sp
  Specifies profiling type, format, and file output. Two profilers are
-@@ -1562,21 +1420,21 @@
+@@ -1587,21 +1445,21 @@
  supported: an instrumenting profiler (named \fBls\fP), and a sampling
  profiler (named \fBstat\fP).
  .sp
@@ -12070,7 +12259,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  works on all platforms, but each line number it reports is the
  first line of a function. This restriction makes it difficult to
  identify the expensive parts of a non\-trivial function.
-@@ -1586,13 +1444,13 @@
+@@ -1611,13 +1469,13 @@
  Use a third\-party statistical profiler, statprof. This profiler
  currently runs only on Unix systems, and is most useful for
  profiling commands that run for longer than about 0.1 seconds.
@@ -12086,7 +12275,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBtext\fP
  .sp
-@@ -1605,7 +1463,7 @@
+@@ -1630,7 +1488,7 @@
  Format profiling data for kcachegrind use: when saving to a
  file, the generated file can directly be loaded into
  kcachegrind.
@@ -12095,7 +12284,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBfrequency\fP
  .sp
-@@ -1636,13 +1494,13 @@
+@@ -1661,13 +1519,13 @@
  This can help explain the difference between Total and Inline.
  Specific to the \fBls\fP instrumenting profiler.
  (default: 5)
@@ -12111,7 +12300,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBdelay\fP
  .sp
-@@ -1676,31 +1534,31 @@
+@@ -1701,31 +1559,31 @@
  .TP
  .B \fBclear\-complete\fP
  .sp
@@ -12150,7 +12339,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBuncompressed\fP
  .sp
-@@ -1765,11 +1623,11 @@
+@@ -1790,11 +1648,11 @@
  consider setting this option because converting \fIgeneraldelta\fP
  repositories to the exchange format required by the bundle1 data
  format can consume a lot of CPU.
@@ -12164,7 +12353,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBhost\fP
  .sp
-@@ -1794,7 +1652,7 @@
+@@ -1819,7 +1677,7 @@
  \fB[web] cacerts\fP also). For "strict", sending email is also
  aborted, if there is no configuration for mail server in
  \fB[hostfingerprints]\fP and \fB[web] cacerts\fP.  \-\-insecure for
@@ -12173,7 +12362,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBusername\fP
  .sp
-@@ -1811,7 +1669,7 @@
+@@ -1836,7 +1694,7 @@
  .sp
  Optional. The hostname that the sender can use to identify
  itself to the MTA.
@@ -12182,7 +12371,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS \fBsubpaths\fP
  .sp
  Subrepository source URLs can go stale if a remote server changes name
-@@ -1819,9 +1677,9 @@
+@@ -1844,9 +1702,9 @@
  rewrite rules of the form:
  .sp
  .nf
@@ -12194,7 +12383,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  where \fBpattern\fP is a regular expression matching a subrepository
-@@ -1830,9 +1688,9 @@
+@@ -1855,9 +1713,9 @@
  \fBreplacements\fP. For instance:
  .sp
  .nf
@@ -12206,7 +12395,12 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  rewrites \fBhttp://server/foo\-hg/\fP into \fBhttp://hg.server/foo/\fP.
-@@ -1843,7 +1701,7 @@
+@@ -1867,11 +1725,11 @@
+ are applied in definition order.
+ .SS \fBtemplatealias\fP
+ .sp
+-Alias definitions for templates. See \%\fBhg help templates\fP\: for details.
++Alias definitions for templates. See \fBhg help templates\fP for details.
  .SS \fBtrusted\fP
  .sp
  Mercurial will not use the settings in the
@@ -12215,7 +12409,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  user or to a trusted group, as various hgrc features allow arbitrary
  commands to be run. This issue is often encountered when configuring
  hooks or extensions for shared repositories or servers. However,
-@@ -1855,7 +1713,7 @@
+@@ -1883,7 +1741,7 @@
  group with name \fB*\fP. These settings must be placed in an
  \fIalready\-trusted file\fP to take effect, such as \fB$HOME/.hgrc\fP of the
  user or service running Mercurial.
@@ -12224,7 +12418,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBusers\fP
  .sp
-@@ -1864,17 +1722,17 @@
+@@ -1892,17 +1750,17 @@
  .B \fBgroups\fP
  .sp
  Comma\-separated list of trusted groups.
@@ -12245,7 +12439,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  (default: True)
  .TP
  .B \fBaskusername\fP
-@@ -1889,7 +1747,7 @@
+@@ -1917,7 +1775,7 @@
  .sp
  Whether the "clone bundles" feature is enabled.
  .sp
@@ -12254,7 +12448,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  bundle file from a URL instead of using the normal exchange mechanism.
  .sp
  This can likely result in faster and more reliable clones.
-@@ -1907,7 +1765,7 @@
+@@ -1935,7 +1793,7 @@
  clone, this would add significant and unexpected load to the server
  since the server is expecting clone operations to be offloaded to
  pre\-generated bundles. Failing fast (the default behavior) ensures
@@ -12263,7 +12457,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  fails.
  .sp
  (default: False)
-@@ -1922,17 +1780,17 @@
+@@ -1950,17 +1808,17 @@
  bundle over another.
  .sp
  The following keys are defined by Mercurial:
@@ -12284,7 +12478,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .sp
  Server operators may define custom keys.
  .sp
-@@ -1958,7 +1816,7 @@
+@@ -1986,7 +1844,7 @@
  .TP
  .B \fBfallbackencoding\fP
  .sp
@@ -12293,7 +12487,23 @@ These changes are Solaris-specific and not appropriate for upstream.
  UTF\-8. (default: ISO\-8859\-1)
  .TP
  .B \fBgraphnodetemplate\fP
-@@ -1986,7 +1844,7 @@
+@@ -2010,12 +1868,12 @@
+ .B \fBinterface\fP
+ .sp
+ Select the default interface for interactive features (default: text).
+-Possible values are \(aqtext\(aq and \(aqcurses\(aq.
++Possible values are 'text' and 'curses'.
+ .TP
+ .B \fBinterface.chunkselector\fP
+ .sp
+-Select the interface for change recording (e.g. \%\fBhg commit\fP\: \-i).
+-Possible values are \(aqtext\(aq and \(aqcurses\(aq.
++Select the interface for change recording (e.g. \fBhg commit\fP \-i).
++Possible values are 'text' and 'curses'.
+ This config overrides the interface specified by ui.interface.
+ .TP
+ .B \fBlogtemplate\fP
+@@ -2025,7 +1883,7 @@
  .B \fBmerge\fP
  .sp
  The conflict resolution program to use during a manual merge.
@@ -12302,7 +12512,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  For configuring merge tools see the \fB[merge\-tools]\fP section.
  .TP
  .B \fBmergemarkers\fP
-@@ -1993,7 +1851,7 @@
+@@ -2032,7 +1890,7 @@
  .sp
  Sets the merge conflict marker label styling. The \fBdetailed\fP
  style uses the \fBmergemarkertemplate\fP setting to style the labels.
@@ -12311,7 +12521,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  One of \fBbasic\fP or \fBdetailed\fP.
  (default: \fBbasic\fP)
  .TP
-@@ -2000,7 +1858,7 @@
+@@ -2039,7 +1897,7 @@
  .B \fBmergemarkertemplate\fP
  .sp
  The template used to print the commit description next to each conflict
@@ -12320,7 +12530,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  format.
  .sp
  Defaults to showing the hash, tags, branches, bookmarks, author, and
-@@ -2037,12 +1895,12 @@
+@@ -2076,12 +1934,12 @@
  .sp
  Check for portable filenames. Can be \fBwarn\fP, \fBignore\fP or \fBabort\fP.
  (default: \fBwarn\fP)
@@ -12335,7 +12545,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  Windows because it contains reserved parts like \fBAUX\fP, reserved
  characters like \fB:\fP, or would cause a case collision with an existing
  file).
-@@ -2049,7 +1907,7 @@
+@@ -2088,7 +1946,7 @@
  .TP
  .B \fBignore\fP
  .sp
@@ -12344,7 +12554,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBabort\fP
  .sp
-@@ -2062,9 +1920,7 @@
+@@ -2101,9 +1959,7 @@
  .B \fBfalse\fP
  .sp
  Alias for \fBignore\fP.
@@ -12355,7 +12565,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBquiet\fP
  .sp
-@@ -2128,7 +1984,7 @@
+@@ -2167,7 +2023,7 @@
  .B \fBusername\fP
  .sp
  The committer of a changeset created when running "commit".
@@ -12364,7 +12574,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  <fred@example.com>\fP. Environment variables in the
  username are expanded.
  .sp
-@@ -2140,11 +1996,11 @@
+@@ -2179,11 +2035,11 @@
  .B \fBverbose\fP
  .sp
  Increase the amount of output printed. (default: False)
@@ -12378,7 +12588,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  run through a webserver (\fBhgweb.cgi\fP and the derivatives for FastCGI
  and WSGI).
  .sp
-@@ -2160,9 +2016,9 @@
+@@ -2199,9 +2055,9 @@
  command line:
  .sp
  .nf
@@ -12390,7 +12600,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  Note that this will allow anybody to push anything to the server and
-@@ -2169,7 +2025,7 @@
+@@ -2208,7 +2064,7 @@
  that this should not be used for public servers.
  .sp
  The full set of options is:
@@ -12399,7 +12609,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBaccesslog\fP
  .sp
-@@ -2254,13 +2110,13 @@
+@@ -2288,13 +2144,13 @@
  To disable SSL verification temporarily, specify \fB\-\-insecure\fP from
  command line.
  .sp
@@ -12415,7 +12625,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  \-\-\-\-\-BEGIN CERTIFICATE\-\-\-\-\-
  \&... (certificate in base64 PEM encoding) ...
  \-\-\-\-\-END CERTIFICATE\-\-\-\-\-
-@@ -2267,7 +2123,7 @@
+@@ -2301,7 +2157,7 @@
  \-\-\-\-\-BEGIN CERTIFICATE\-\-\-\-\-
  \&... (certificate in base64 PEM encoding) ...
  \-\-\-\-\-END CERTIFICATE\-\-\-\-\-
@@ -12424,7 +12634,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .TP
  .B \fBcache\fP
-@@ -2276,7 +2132,7 @@
+@@ -2310,7 +2166,7 @@
  .TP
  .B \fBcertificate\fP
  .sp
@@ -12433,7 +12643,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBcollapse\fP
  .sp
-@@ -2333,7 +2189,7 @@
+@@ -2367,7 +2223,7 @@
  .TP
  .B \fBdescription\fP
  .sp
@@ -12442,7 +12652,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  (default: "unknown")
  .TP
  .B \fBencoding\fP
-@@ -2398,7 +2254,7 @@
+@@ -2432,7 +2288,7 @@
  .TP
  .B \fBprefix\fP
  .sp
@@ -12451,7 +12661,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBpush_ssl\fP
  .sp
-@@ -2437,7 +2293,7 @@
+@@ -2471,7 +2327,7 @@
  .sp
  Where to find the HTML templates. The default path to the HTML templates
  can be obtained from \fBhg debuginstall\fP.
@@ -12460,7 +12670,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .SS \fBwebsub\fP
  .sp
  Web substitution filter definition. You can use this section to
-@@ -2459,9 +2315,9 @@
+@@ -2493,9 +2349,9 @@
  which in turn imitates the Unix sed replacement syntax:
  .sp
  .nf
@@ -12472,7 +12682,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .sp
  You can use any separator other than "/". The final "i" is optional
-@@ -2470,12 +2326,12 @@
+@@ -2504,12 +2360,12 @@
  Examples:
  .sp
  .nf
@@ -12487,7 +12697,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .fi
  .SS \fBworker\fP
  .sp
-@@ -2482,7 +2338,7 @@
+@@ -2516,7 +2372,7 @@
  Parallel master/worker configuration. We currently perform working
  directory updates in parallel on Unix\-like systems, which greatly
  helps performance.
@@ -12496,7 +12706,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  .TP
  .B \fBnumcpus\fP
  .sp
-@@ -2493,7 +2349,7 @@
+@@ -2527,7 +2383,7 @@
  .B \fBbackgroundclose\fP
  .sp
  Whether to enable closing file handles on background threads during certain
@@ -12505,7 +12715,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  handles that have been written or appended to. By performing file closing
  on background threads, file write rate can increase substantially.
  (default: true on Windows, false elsewhere)
-@@ -2501,7 +2357,7 @@
+@@ -2535,7 +2391,7 @@
  .B \fBbackgroundcloseminfilecount\fP
  .sp
  Minimum number of files required to trigger background file closing.
@@ -12514,7 +12724,7 @@ These changes are Solaris-specific and not appropriate for upstream.
  threads.
  (default: 2048)
  .TP
-@@ -2517,18 +2373,18 @@
+@@ -2551,18 +2407,18 @@
  Number of threads to process background file closes. Only relevant if
  \fBbackgroundclose\fP is enabled.
  (default: 4)
