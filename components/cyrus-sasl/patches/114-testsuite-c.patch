@@ -1,0 +1,16 @@
+Patch origin:  in-house
+#Trivial bug but our tools don't like it
+#Filed as:  https://bugzilla.cyrusimap.org/show_bug.cgi?id=3935
+
+diff -rupN old/utils/testsuite.c new/utils/testsuite.c
+--- old/utils/testsuite.c	2016-05-02 13:39:01.104974006 -0700
++++ new/utils/testsuite.c	2016-05-03 18:13:58.163443328 -0700
+@@ -2709,7 +2709,7 @@ void create_ids(void)
+     const char challenge[] = "<1896.697170952@cyrus.andrew.cmu.edu>";
+     MD5_CTX ctx;
+     unsigned char digest[16];
+-    char digeststr[32];
++    char digeststr[33];
+ #endif
+ 
+     if (sasl_server_init(goodsasl_cb,"TestSuite")!=SASL_OK)
