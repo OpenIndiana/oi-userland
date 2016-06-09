@@ -1,0 +1,535 @@
+This is for Solaris only and not intended to go upstream.  
+
+diff -rupN old/man/sasl.3 new/man/sasl.3
+--- old/man/sasl.3	2016-05-05 14:52:17.706796235 -0700
++++ new/man/sasl.3	2016-05-05 15:00:20.057351965 -0700
+@@ -58,4 +58,4 @@ in the doc/ directory of the SASL distri
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl_authorize_t(3), sasl_auxprop(3), sasl_auxprop_getctx(3), sasl_auxprop_request(3), sasl_canon_user_t(3), sasl_callbacks(3), sasl_chalprompt_t(3), sasl_checkapop(3), sasl_checkpass(3), sasl_client_init(3), sasl_client_new(3), sasl_client_start(3), sasl_client_step(3), sasl_decode(3), sasl_dispose(3), sasl_done(3), sasl_encode(3), sasl_encodev(3), sasl_errdetail(3), sasl_errors(3), sasl_errstring(3), sasl_errors(3), sasl_getopt_t(3), sasl_getpath_t(3), sasl_getprop(3), sasl_getrealm_t(3), sasl_getsecret_t(3), sasl_getsimple_t(3), sasl_idle(3), sasl_listmech(3), sasl_log_t(3), sasl_server_init(3), sasl_server_new(3), sasl_server_start(3), sasl_server_step(3), sasl_server_userdb_checkpass_t(3), sasl_server_userdb_setpass_t(3), sasl_setpass(3), sasl_setprop(3), sasl_user_exists(3), sasl_verifyfile_t(3), sasl_global_listmech(3)
++sasl_authorize_t(3SASL), sasl_auxprop(3SASL), sasl_auxprop_getctx(3SASL), sasl_auxprop_request(3SASL), sasl_canon_user_t(3SASL), sasl_callbacks(3SASL), sasl_chalprompt_t(3SASL), sasl_checkapop(3SASL), sasl_checkpass(3SASL), sasl_client_init(3SASL), sasl_client_new(3SASL), sasl_client_start(3SASL), sasl_client_step(3SASL), sasl_decode(3SASL), sasl_dispose(3SASL), sasl_done(3SASL), sasl_encode(3SASL), sasl_encodev(3SASL), sasl_errdetail(3SASL), sasl_errors(3SASL), sasl_errstring(3SASL), sasl_errors(3SASL), sasl_getopt_t(3SASL), sasl_getpath_t(3SASL), sasl_getprop(3SASL), sasl_getrealm_t(3SASL), sasl_getsecret_t(3SASL), sasl_getsimple_t(3SASL), sasl_idle(3SASL), sasl_listmech(3SASL), sasl_log_t(3SASL), sasl_server_init(3SASL), sasl_server_new(3SASL), sasl_server_start(3SASL), sasl_server_step(3SASL), sasl_server_userdb_checkpass_t(3SASL), sasl_server_userdb_setpass_t(3SASL), sasl_setpass(3SASL), sasl_setprop(3SASL), sasl_user_exists(3SASL), sasl_verifyfile_t(3SASL), sasl_global_listmech(3SASL)
+diff -rupN old/man/sasl_authorize_t.3 new/man/sasl_authorize_t.3
+--- old/man/sasl_authorize_t.3	2016-05-05 14:52:17.706940091 -0700
++++ new/man/sasl_authorize_t.3	2016-05-05 15:00:20.066130464 -0700
+@@ -73,4 +73,4 @@ whom.
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_auxprop.3 new/man/sasl_auxprop.3
+--- old/man/sasl_auxprop.3	2016-05-05 14:52:17.707093082 -0700
++++ new/man/sasl_auxprop.3	2016-05-05 15:00:20.078649015 -0700
+@@ -86,9 +86,9 @@ in a single query against the LDAP serve
+ Property lookups take place directly after user canonicalization occurs.
+ Therefore, all requests should be registered with he context before that
+ time.  Note that requests can also be registered using the
+-sasl_auxprop_request(3) function.  Most of the functions listed below, 
++sasl_auxprop_request(3SASL) function.  Most of the functions listed below, 
+ however, require a property context which can be obtained by calling
+-sasl_auxprop_getctx(3).
++sasl_auxprop_getctx(3SASL).
+ 
+ .SH API Description
+ .TP 0.8i
+@@ -203,11 +203,11 @@ are a NULL-terminated array of values to
+ 
+ .SH "RETURN VALUE"
+ The property functions that return an int return SASL error codes.
+-See sasl_errors(3).  Those that return pointers will return a valid pointer
++See sasl_errors(3SASL).  Those that return pointers will return a valid pointer
+ on success, or NULL on any error.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_auxprop_request(3), sasl_auxprop_getctx(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_auxprop_request(3SASL), sasl_auxprop_getctx(3SASL)
+diff -rupN old/man/sasl_auxprop_getctx.3 new/man/sasl_auxprop_getctx.3
+--- old/man/sasl_auxprop_getctx.3	2016-05-05 14:52:17.707231081 -0700
++++ new/man/sasl_auxprop_getctx.3	2016-05-05 15:00:20.087190800 -0700
+@@ -55,7 +55,7 @@ sasl_auxprop_getctx \- Acquire an auxili
+ 
+ .B sasl_auxprop_getctx
+ will return an auxiliary property context for the given sasl_conn_t on which
+-the functions described in sasl_auxprop(3) can operate.
++the functions described in sasl_auxprop(3SASL) can operate.
+ 
+ .I conn
+ the sasl_conn_t for which the request is being made.
+@@ -66,4 +66,4 @@ Returns a pointer the the context on suc
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_auxprop(3), sasl_auxprop_request(3)
+\ No newline at end of file
++sasl(3SASL), sasl_auxprop(3SASL), sasl_auxprop_request(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_auxprop_request.3 new/man/sasl_auxprop_request.3
+--- old/man/sasl_auxprop_request.3	2016-05-05 14:52:17.707373758 -0700
++++ new/man/sasl_auxprop_request.3	2016-05-05 15:00:20.094923933 -0700
+@@ -58,7 +58,7 @@ will request that the SASL library obtai
+ property plugins that might be installed (such as the user's home directory
+ from an LDAP server for example).  Such lookup occurs just after username
+ canonicalization is complete.  Therefore, the request should be made before
+-the call to sasl_server_start(3), but after the call to sasl_server_new(3).
++the call to sasl_server_start(3SASL), but after the call to sasl_server_new(3SASL).
+ 
+ .I conn
+ the sasl_conn_t for which the request is being made.
+@@ -68,11 +68,11 @@ a NULL-terminated array of property name
+ array must persist until a call to sasl_dispose on the sasl_conn_t.
+ 
+ .SH "RETURN VALUE"
+-Returns SASL_OK on success.  See sasl_errors(3) for meanings of other return
++Returns SASL_OK on success.  See sasl_errors(3SASL) for meanings of other return
+ codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_auxprop(3), sasl_auxprop_getctx(3),
+-sasl_server_new(3), sasl_server_start(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_auxprop(3SASL), sasl_auxprop_getctx(3SASL),
++sasl_server_new(3SASL), sasl_server_start(3SASL)
+diff -rupN old/man/sasl_callbacks.3 new/man/sasl_callbacks.3
+--- old/man/sasl_callbacks.3	2016-05-05 14:52:17.707495442 -0700
++++ new/man/sasl_callbacks.3	2016-05-05 15:00:20.102856117 -0700
+@@ -118,8 +118,8 @@ SASL callback functions should return SA
+ RFC 4422
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_authorize_t(3), sasl_log_t(3), sasl_getpath_t(3),
+-sasl_getconfpath_t(3), sasl_verifyfile_t(3), sasl_canon_user_t(3), sasl_getsimple(3),
+-sasl_getsecret_t(3), sasl_chalprompt_t(3), sasl_getrealm_t(3),
+-sasl_authorize_t(3), sasl_server_userdb_checkpass_t(3),
+-sasl_server_userdb_setpass_t(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_authorize_t(3SASL), sasl_log_t(3SASL), sasl_getpath_t(3SASL),
++sasl_getconfpath_t(3SASL), sasl_verifyfile_t(3SASL), sasl_canon_user_t(3SASL), sasl_getsimple(3SASL),
++sasl_getsecret_t(3SASL), sasl_chalprompt_t(3SASL), sasl_getrealm_t(3SASL),
++sasl_authorize_t(3SASL), sasl_server_userdb_checkpass_t(3SASL),
++sasl_server_userdb_setpass_t(3SASL)
+diff -rupN old/man/sasl_canon_user_t.3 new/man/sasl_canon_user_t.3
+--- old/man/sasl_canon_user_t.3	2016-05-05 14:52:17.707618483 -0700
++++ new/man/sasl_canon_user_t.3	2016-05-05 15:00:20.110264220 -0700
+@@ -91,4 +91,4 @@ The output buffer, max length, and actua
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_chalprompt_t.3 new/man/sasl_chalprompt_t.3
+--- old/man/sasl_chalprompt_t.3	2016-05-05 14:52:17.707746353 -0700
++++ new/man/sasl_chalprompt_t.3	2016-05-05 15:00:20.117864078 -0700
+@@ -83,4 +83,4 @@ Length of the user's response.
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_checkapop.3 new/man/sasl_checkapop.3
+--- old/man/sasl_checkapop.3	2016-05-05 14:52:17.707865169 -0700
++++ new/man/sasl_checkapop.3	2016-05-05 15:00:20.125651354 -0700
+@@ -70,10 +70,10 @@ will check to see if the APOP mechanism
+ sasl_checkapop returns an integer which corresponds to one of the
+ following codes. SASL_OK indicates that the authentication is
+ complete. All other return codes indicate errors and should either be
+-handled or the authentication session should be quit.  See sasl_errors(3)
++handled or the authentication session should be quit.  See sasl_errors(3SASL)
+ for meanings of return codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422, RFC 1939
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3)
+\ No newline at end of file
++sasl(3SASL), sasl_errors(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_checkpass.3 new/man/sasl_checkpass.3
+--- old/man/sasl_checkpass.3	2016-05-05 14:52:17.707988458 -0700
++++ new/man/sasl_checkpass.3	2016-05-05 15:00:20.133124486 -0700
+@@ -56,16 +56,16 @@ sasl_checkpass \- Check a plaintext pass
+ .B sasl_checkpass()
+ will check a plaintext password. This is needed for protocols that had a login method before SASL (for example the LOGIN command in IMAP). The password is checked with the
+ .I pwcheck_method
+-See sasl_callbacks(3) for information on how this parameter is set.
++See sasl_callbacks(3SASL) for information on how this parameter is set.
+ 
+ .SH "RETURN VALUE"
+ sasl_checkpass returns an integer which corresponds to one of the
+ following codes. SASL_OK indicates that the authentication is
+ complete. All other return codes indicate errors and should either be
+-handled or the authentication session should be quit.  See sasl_errors(3)
++handled or the authentication session should be quit.  See sasl_errors(3SASL)
+ for meanings of return codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_callbacks(3), sasl_setpass(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_callbacks(3SASL), sasl_setpass(3SASL)
+diff -rupN old/man/sasl_client_init.3 new/man/sasl_client_init.3
+--- old/man/sasl_client_init.3	2016-05-05 14:52:17.708126760 -0700
++++ new/man/sasl_client_init.3	2016-05-05 15:00:20.141323953 -0700
+@@ -85,4 +85,4 @@ Not enough memory to complete operation
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_client_new(3), sasl_client_start(3), sasl_client_step(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_client_new(3SASL), sasl_client_start(3SASL), sasl_client_step(3SASL)
+diff -rupN old/man/sasl_client_new.3 new/man/sasl_client_new.3
+--- old/man/sasl_client_new.3	2016-05-05 14:52:17.708245858 -0700
++++ new/man/sasl_client_new.3	2016-05-05 15:00:20.151490573 -0700
+@@ -124,4 +124,4 @@ Not enough memory to complete operation
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_client_init(3), sasl_client_start(3), sasl_client_step(3), sasl_setprop(3)
++sasl(3SASL), sasl_client_init(3SASL), sasl_client_start(3SASL), sasl_client_step(3SASL), sasl_setprop(3SASL)
+diff -rupN old/man/sasl_client_start.3 new/man/sasl_client_start.3
+--- old/man/sasl_client_start.3	2016-05-05 14:52:17.708361204 -0700
++++ new/man/sasl_client_start.3	2016-05-05 15:00:20.159356503 -0700
+@@ -109,4 +109,4 @@ session should be quit.
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3), sasl_client_init(3), sasl_client_new(3), sasl_client_step(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL), sasl_client_init(3SASL), sasl_client_new(3SASL), sasl_client_step(3SASL)
+diff -rupN old/man/sasl_client_step.3 new/man/sasl_client_step.3
+--- old/man/sasl_client_step.3	2016-05-05 14:52:17.708490950 -0700
++++ new/man/sasl_client_step.3	2016-05-05 15:00:20.167216587 -0700
+@@ -102,4 +102,4 @@ should either be handled or the authenti
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3), sasl_client_init(3), sasl_client_new(3), sasl_client_start(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL), sasl_client_init(3SASL), sasl_client_new(3SASL), sasl_client_start(3SASL)
+diff -rupN old/man/sasl_decode.3 new/man/sasl_decode.3
+--- old/man/sasl_decode.3	2016-05-05 14:52:17.708605880 -0700
++++ new/man/sasl_decode.3	2016-05-05 15:00:20.177232278 -0700
+@@ -74,10 +74,10 @@ is the case simply wait for more data an
+ .PP
+ 
+ .SH "RETURN VALUE"
+-Returns SASL_OK on success. See sasl_errors(3) for meanings of other return
++Returns SASL_OK on success. See sasl_errors(3SASL) for meanings of other return
+ codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_encode(3)
+\ No newline at end of file
++sasl(3SASL), sasl_errors(3SASL), sasl_encode(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_dispose.3 new/man/sasl_dispose.3
+--- old/man/sasl_dispose.3	2016-05-05 14:52:17.708744488 -0700
++++ new/man/sasl_dispose.3	2016-05-05 15:00:20.185731873 -0700
+@@ -66,4 +66,4 @@ No return values
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_server_new(3), sasl_client_new(3)
+\ No newline at end of file
++sasl(3SASL), sasl_server_new(3SASL), sasl_client_new(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_done.3 new/man/sasl_done.3
+--- old/man/sasl_done.3	2016-05-05 14:52:17.708864958 -0700
++++ new/man/sasl_done.3	2016-05-05 15:00:20.193116299 -0700
+@@ -63,4 +63,4 @@ No return values
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_server_init(3), sasl_client_init(3)
+\ No newline at end of file
++sasl(3SASL), sasl_server_init(3SASL), sasl_client_init(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_encode.3 new/man/sasl_encode.3
+--- old/man/sasl_encode.3	2016-05-05 14:52:17.708986063 -0700
++++ new/man/sasl_encode.3	2016-05-05 15:00:20.201252736 -0700
+@@ -73,10 +73,10 @@ does the same, but for a struct iovec in
+ contains the encoded data and is allocated/freed by the library.
+ 
+ .SH "RETURN VALUE"
+-Returns SASL_OK on success.  See sasl_errors(3) for meanings of other return
++Returns SASL_OK on success.  See sasl_errors(3SASL) for meanings of other return
+ codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_decode(3)
+\ No newline at end of file
++sasl(3SASL), sasl_errors(3SASL), sasl_decode(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_encodev.3 new/man/sasl_encodev.3
+--- old/man/sasl_encodev.3	2016-05-05 14:52:17.709108332 -0700
++++ new/man/sasl_encodev.3	2016-05-05 15:00:20.208794158 -0700
+@@ -73,10 +73,10 @@ does the same, but for a struct iovec in
+ contains the encoded data and is allocated/freed by the library.
+ 
+ .SH "RETURN VALUE"
+-Returns SASL_OK on success.  See sasl_errors(3) for meanings of other return
++Returns SASL_OK on success.  See sasl_errors(3SASL) for meanings of other return
+ codes.
+ 
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_decode(3)
+\ No newline at end of file
++sasl(3SASL), sasl_errors(3SASL), sasl_decode(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_errdetail.3 new/man/sasl_errdetail.3
+--- old/man/sasl_errdetail.3	2016-05-05 14:52:17.709223980 -0700
++++ new/man/sasl_errdetail.3	2016-05-05 15:00:20.216969791 -0700
+@@ -66,4 +66,4 @@ no error has occurred, or there was an e
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3)
+\ No newline at end of file
++sasl(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_errors.3 new/man/sasl_errors.3
+--- old/man/sasl_errors.3	2016-05-05 14:52:17.709359324 -0700
++++ new/man/sasl_errors.3	2016-05-05 15:00:20.224793926 -0700
+@@ -152,4 +152,4 @@ User supplied passwords are not permitte
+ RFC 4422
+ 
+ .SH "SEE ALSO"
+-sasl(3)
++sasl(3SASL)
+diff -rupN old/man/sasl_errstring.3 new/man/sasl_errstring.3
+--- old/man/sasl_errstring.3	2016-05-05 14:52:17.709475712 -0700
++++ new/man/sasl_errstring.3	2016-05-05 15:00:20.234796334 -0700
+@@ -74,7 +74,7 @@ currently the only supported language.
+ .PP
+ It should be noted that this function is not the recommended means of
+ extracting error code information from SASL, instead application should
+-use sasl_errdetail(3), which contains this information (and more)
++use sasl_errdetail(3SASL), which contains this information (and more)
+ .PP
+ .SH "RETURN VALUE"
+ Returns the string.  If langlist is NULL, US-ASCII is used.
+@@ -82,4 +82,4 @@ Returns the string.  If langlist is NULL
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errdetail(3), sasl_errors(3)
++sasl(3SASL), sasl_errdetail(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_getconfpath_t.3 new/man/sasl_getconfpath_t.3
+--- old/man/sasl_getconfpath_t.3	2016-05-05 14:52:17.709596692 -0700
++++ new/man/sasl_getconfpath_t.3	2016-05-05 15:00:20.242563545 -0700
+@@ -65,4 +65,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_getopt_t.3 new/man/sasl_getopt_t.3
+--- old/man/sasl_getopt_t.3	2016-05-05 14:52:17.709722820 -0700
++++ new/man/sasl_getopt_t.3	2016-05-05 15:00:20.250375047 -0700
+@@ -81,4 +81,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_getpath_t.3 new/man/sasl_getpath_t.3
+--- old/man/sasl_getpath_t.3	2016-05-05 14:52:17.709842468 -0700
++++ new/man/sasl_getpath_t.3	2016-05-05 15:00:20.258277170 -0700
+@@ -65,4 +65,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_getprop.3 new/man/sasl_getprop.3
+--- old/man/sasl_getprop.3	2016-05-05 14:52:17.709964700 -0700
++++ new/man/sasl_getprop.3	2016-05-05 15:00:20.266385798 -0700
+@@ -93,4 +93,4 @@ Returns SASL_OK on success. SASL error c
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_server_new(3), sasl_client_new(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_server_new(3SASL), sasl_client_new(3SASL)
+diff -rupN old/man/sasl_getrealm_t.3 new/man/sasl_getrealm_t.3
+--- old/man/sasl_getrealm_t.3	2016-05-05 14:52:17.710102157 -0700
++++ new/man/sasl_getrealm_t.3	2016-05-05 15:00:20.274956748 -0700
+@@ -78,4 +78,4 @@ The chosen realm. (a NUL terminated stri
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3)
++sasl(3SASL), sasl_callbacks(3SASL)
+diff -rupN old/man/sasl_getsecret_t.3 new/man/sasl_getsecret_t.3
+--- old/man/sasl_getsecret_t.3	2016-05-05 14:52:17.710223772 -0700
++++ new/man/sasl_getsecret_t.3	2016-05-05 15:00:20.283529954 -0700
+@@ -71,4 +71,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_getsimple_t.3 new/man/sasl_getsimple_t.3
+--- old/man/sasl_getsimple_t.3	2016-05-05 14:52:17.710343465 -0700
++++ new/man/sasl_getsimple_t.3	2016-05-05 15:00:20.291810699 -0700
+@@ -78,4 +78,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_global_listmech.3 new/man/sasl_global_listmech.3
+--- old/man/sasl_global_listmech.3	2016-05-05 14:52:17.710459296 -0700
++++ new/man/sasl_global_listmech.3	2016-05-05 15:00:20.299520981 -0700
+@@ -62,4 +62,4 @@ uninitialized).
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_listmech(3), sasl_server_init(3), sasl_client_init(3)
++sasl(3SASL), sasl_listmech(3SASL), sasl_server_init(3SASL), sasl_client_init(3SASL)
+diff -rupN old/man/sasl_idle.3 new/man/sasl_idle.3
+--- old/man/sasl_idle.3	2016-05-05 14:52:17.710580342 -0700
++++ new/man/sasl_idle.3	2016-05-05 15:00:20.306473231 -0700
+@@ -65,4 +65,4 @@ Returns 1 if action was taken, 0 if no a
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3)
++sasl(3SASL)
+diff -rupN old/man/sasl_listmech.3 new/man/sasl_listmech.3
+--- old/man/sasl_listmech.3	2016-05-05 14:52:17.710705396 -0700
++++ new/man/sasl_listmech.3	2016-05-05 15:00:20.314091549 -0700
+@@ -94,4 +94,4 @@ Returns SASL_OK on success. SASL error c
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_server_new(3), sasl_client_new(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_server_new(3SASL), sasl_client_new(3SASL)
+diff -rupN old/man/sasl_log_t.3 new/man/sasl_log_t.3
+--- old/man/sasl_log_t.3	2016-05-05 14:52:17.710830004 -0700
++++ new/man/sasl_log_t.3	2016-05-05 15:00:20.321911997 -0700
+@@ -67,4 +67,4 @@ SASL callback functions should return SA
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_server_init.3 new/man/sasl_server_init.3
+--- old/man/sasl_server_init.3	2016-05-05 14:52:17.710955192 -0700
++++ new/man/sasl_server_init.3	2016-05-05 15:00:20.329160970 -0700
+@@ -80,4 +80,4 @@ authentication session should be quit.
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3), sasl_server_new(3), sasl_server_start(3), sasl_server_step(3)
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL), sasl_server_new(3SASL), sasl_server_start(3SASL), sasl_server_step(3SASL)
+diff -rupN old/man/sasl_server_new.3 new/man/sasl_server_new.3
+--- old/man/sasl_server_new.3	2016-05-05 14:52:17.711072994 -0700
++++ new/man/sasl_server_new.3	2016-05-05 15:00:20.336251675 -0700
+@@ -112,4 +112,4 @@ authentication session should be quit.
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_server_init(3), sasl_server_start(3), sasl_server_step(3), sasl_setprop(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_server_init(3SASL), sasl_server_start(3SASL), sasl_server_step(3SASL), sasl_setprop(3SASL)
+diff -rupN old/man/sasl_server_start.3 new/man/sasl_server_start.3
+--- old/man/sasl_server_start.3	2016-05-05 14:52:17.711201184 -0700
++++ new/man/sasl_server_start.3	2016-05-05 15:00:20.343747640 -0700
+@@ -102,4 +102,4 @@ session should be quit.
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_server_init(3), sasl_server_new(3), sasl_server_step(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_server_init(3SASL), sasl_server_new(3SASL), sasl_server_step(3SASL)
+diff -rupN old/man/sasl_server_step.3 new/man/sasl_server_step.3
+--- old/man/sasl_server_step.3	2016-05-05 14:52:17.711319117 -0700
++++ new/man/sasl_server_step.3	2016-05-05 15:00:20.351852336 -0700
+@@ -87,4 +87,4 @@ should either be handled or the authenti
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_server_init(3), sasl_server_new(3), sasl_server_start(3)
++sasl(3SASL), sasl_errors(3SASL), sasl_server_init(3SASL), sasl_server_new(3SASL), sasl_server_start(3SASL)
+diff -rupN old/man/sasl_server_userdb_checkpass_t.3 new/man/sasl_server_userdb_checkpass_t.3
+--- old/man/sasl_server_userdb_checkpass_t.3	2016-05-05 14:52:17.711445768 -0700
++++ new/man/sasl_server_userdb_checkpass_t.3	2016-05-05 15:00:20.359007902 -0700
+@@ -81,4 +81,4 @@ property context to fill in with userPas
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3), sasl_server_userdb_setpass_t(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL), sasl_server_userdb_setpass_t(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_server_userdb_setpass_t.3 new/man/sasl_server_userdb_setpass_t.3
+--- old/man/sasl_server_userdb_setpass_t.3	2016-05-05 14:52:17.711575632 -0700
++++ new/man/sasl_server_userdb_setpass_t.3	2016-05-05 15:00:20.366131543 -0700
+@@ -78,11 +78,11 @@ length of the password
+ Auxilliary Properties (not stored)
+ 
+ .I flags
+-These are the same flags that are passed to sasl_setpass(3), and are documented
++These are the same flags that are passed to sasl_setpass(3SASL), and are documented
+ on that man page.
+ 
+ .SH "RETURN VALUE"
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3), sasl_errors(3), sasl_server_userdb_checkpass_t(3), sasl_setpass(3)
+\ No newline at end of file
++sasl(3SASL), sasl_callbacks(3SASL), sasl_errors(3SASL), sasl_server_userdb_checkpass_t(3SASL), sasl_setpass(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_setpass.3 new/man/sasl_setpass.3
+--- old/man/sasl_setpass.3	2016-05-05 14:52:17.711741298 -0700
++++ new/man/sasl_setpass.3	2016-05-05 15:00:20.374977435 -0700
+@@ -88,4 +88,4 @@ Returns SASL_OK on success. SASL error c
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3), sasl_checkpass(3)
+\ No newline at end of file
++sasl(3SASL), sasl_errors(3SASL), sasl_checkpass(3SASL)
+\ No newline at end of file
+diff -rupN old/man/sasl_setprop.3 new/man/sasl_setprop.3
+--- old/man/sasl_setprop.3	2016-05-05 14:52:17.711876205 -0700
++++ new/man/sasl_setprop.3	2016-05-05 15:00:20.383737108 -0700
+@@ -80,4 +80,4 @@ Returns SASL_OK on success. SASL error c
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3)
++sasl(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_user_exists.3 new/man/sasl_user_exists.3
+--- old/man/sasl_user_exists.3	2016-05-05 14:52:17.711994172 -0700
++++ new/man/sasl_user_exists.3	2016-05-05 15:00:20.392624519 -0700
+@@ -75,4 +75,4 @@ Returns SASL_OK on success. SASL error c
+ .SH "CONFORMING TO"
+ RFC 4422
+ .SH "SEE ALSO"
+-sasl(3), sasl_errors(3)
++sasl(3SASL), sasl_errors(3SASL)
+diff -rupN old/man/sasl_verifyfile_t.3 new/man/sasl_verifyfile_t.3
+--- old/man/sasl_verifyfile_t.3	2016-05-05 14:52:17.712110518 -0700
++++ new/man/sasl_verifyfile_t.3	2016-05-05 15:00:20.400402410 -0700
+@@ -80,4 +80,4 @@ type of the file.
+ SASL callback functions should return SASL return codes. See sasl.h for a complete list. SASL_OK indicates success.
+ 
+ .SH "SEE ALSO"
+-sasl(3), sasl_callbacks(3)
++sasl(3SASL), sasl_callbacks(3SASL)
