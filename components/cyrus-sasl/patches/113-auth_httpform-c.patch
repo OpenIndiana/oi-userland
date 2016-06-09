@@ -1,0 +1,33 @@
+Patch origin: in-house
+This is a non-vulnerability Parfait error.
+Filed as https://bugzilla.cyrusimap.org/show_bug.cgi?id=3934
+
+diff -rupN old/saslauthd/auth_httpform.c new/saslauthd/auth_httpform.c
+--- old/saslauthd/auth_httpform.c	2016-05-03 18:40:11.701189626 -0700
++++ new/saslauthd/auth_httpform.c	2016-05-03 18:42:47.344382759 -0700
+@@ -85,6 +85,10 @@
+ #define MAX(p,q) ((p >= q) ? p : q)
+ #endif
+ 
++#ifndef MIN
++#define MIN(p,q) ((p <= q) ? p : q)
++#endif
++
+ /* PRIVATE DEPENDENCIES */
+ static cfile config = NULL;
+ static const char *r_host = "localhost";  /* remote host (mech_option) */
+@@ -612,11 +616,13 @@ auth_httpform (
+         return strdup(RESP_IERROR);
+     }
+ 
++    rc = MIN(rc, RESP_LEN - 1);  /* don't write past rbuf */
++    rbuf[rc] = '\0';             /* make sure str-funcs find null */
++
+     if (flags & VERBOSE) {
+         syslog(LOG_DEBUG, "auth_httpform: [%s] %s", user, rbuf);
+     }
+ 
+-    rbuf[rc] = '\0';             /* make sure str-funcs find null */
+     return build_sasl_response(rbuf);
+ }
+ 
