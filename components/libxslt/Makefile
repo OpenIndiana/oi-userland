@@ -40,7 +40,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-LINT_FLAGS +=	-I$(USRINCDIR)/libxml2 
+LINT_FLAGS +=	-I$(COMPONENT_DIR)/../libxml2/build/prototype/$(MACH)/$(USRINCDIR)/libxml2
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
