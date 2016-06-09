@@ -1,95 +1,49 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_seterror 3SASL "14 Oct 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_seterror 3sasl "14 Oct 2003" SASL "SASL man pages"
 .SH NAME
 sasl_seterror \- set the error string
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/sasl.h>
 
-\fBvoid\fR \fBsasl_seterror\fR(\fBsasl_conn_t *\fR\fIconn\fR, \fBunsigned\fR \fIflags\fR,
-     \fBconst char *\fR\fIfmt\fR, ...);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/sasl.h>
+
+.BI "void sasl_seterror(sasl_conn_t *" conn ", "
+.BI "                   unsigned " flags ", "
+.BI "                   const char *" fmt ", ...); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-The \fBsasl_seterror()\fR interface sets the error string that will be returned by \fBsasl_errdetail\fR(3SASL). Use \fBsyslog\fR(3C) style formatting, that is, use \fBprintf()\fR\(emstyle with \fB%m\fR as the most recent \fBerrno\fR error.
-.sp
-.LP
-The \fBsasl_seterror()\fR interface is primarily used by server callback functions and internal plug-ins, for example, with the \fBsasl_authorize_t\fR callback. The \fBsasl_seterror()\fR interface triggers a call to the SASL logging callback, if any, with a level of \fBSASL_LOG_FAIL\fR, unless the \fBSASL_NOLOG\fR flag is set.
-.sp
-.LP
-Make the message string sensitive to the current language setting. If there is no \fBSASL_CB_LANGUAGE\fR callback, message strings must be \fBi-default\fR. Otherwise, UTF-8 is used. Use of \fIRFC 2482\fR for mixed-language text is encouraged.
-.sp
-.LP
-If the value of \fIconn\fR is \fINULL\fR, the \fBsasl_seterror()\fR interface fails.
+The
+.B sasl_seterror()
+interface sets the error string that will be returned by sasl_errdetail(3SASL). Use syslog(3C) style formatting, that is, use printf()\(emstyle with %m as the most recent errno error.
+
+The
+.B sasl_seterror()
+interface is primarily used by server callback functions and internal plug-ins, for example, with the sasl_authorize_t callback. The 
+.B sasl_seterror()
+interface triggers a call to the SASL logging callback, if any, with a level of SASL_LOG_FAIL, unless the SASL_NOLOG flag is set.
+
+Make the message string sensitive to the current language setting. If there is no SASL_CB_LANGUAGE callback, message strings must be i-default. Otherwise, UTF-8 is used. Use of RFC 2482 for mixed-language text is encouraged.
+
+If the value of conn is NULL, the 
+.B sasl_seterror()
+interface fails.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIconn\fR\fR
-.ad
-.RS 9n
-.rt  
-The \fBsasl_conn_t\fR for which the call to \fBsasl_seterror()\fR applies.
-.RE
+.I conn
+The sasl_conn_t for which the call to sasl_seterror() applies.
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIflags\fR\fR
-.ad
-.RS 9n
-.rt  
-If set to \fBSASL_NOLOG\fR, the call to \fBsasl_seterror()\fR is not logged.
-.RE
+.I flags
+If set to SASL_NOLOG, the call to sasl_seterror() is not logged.
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIfmt\fR\fR
-.ad
-.RS 9n
-.rt  
-A \fBsyslog\fR(3C) style format string.
-.RE
+.I fmt
+A syslog(3C) style format string.
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_seterror()\fR has no return values.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+.SH "RETURN VALUES"
+sasl_seterror() has no return values.
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityCommitted
-_
-MT-LevelMT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBsasl_errdetail\fR(3SASL), \fBsyslog\fR(3C), \fBattributes\fR(7)
-.sp
-.LP
-Whistler, K. and Adams, G. \fIRFC 2482, Language Tagging in Unicode Plain Text\fR. Network Working Group. January 1999.
+.SH "SEE ALSO"
+sasl_errdetail(3SASL), syslog(3C), Whistler, K. and Adams, G. RFC 2482, Language Tagging in Unicode Plain Text. Network Working Group. January 1999.

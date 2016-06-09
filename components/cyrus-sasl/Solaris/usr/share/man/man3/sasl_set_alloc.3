@@ -1,98 +1,39 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_set_alloc 3SASL "22 Oct 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_set_alloc 3sasl "22 Oct 2003" SASL "SASL man pages"
 .SH NAME
 sasl_set_alloc \- set the memory allocation functions used by the SASL library
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/sasl.h>
 
-\fBvoid\fR \fBsasl_set_alloc\fR(\fBsasl_malloc_t *\fR\fIm\fR, \fBsasl_calloc_t *\fR\fIc\fR, \fBsasl_realloc_t *\fR\fIr\fR,
-     \fBsasl_free_t *\fR\fIf\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/sasl.h>
+
+.BI "void sasl_set_alloc(sasl_malloc_t *" m ", "
+.BI "                    sasl_calloc_t *" c ", "
+.BI "                    sasl_realloc_t *" r ", "
+.BI "                    sasl_free_t *" f "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-Use the \fBsasl_set_alloc()\fR interface to set the memory allocation routines that the SASL library and plug-ins will use.
+Use the 
+.B sasl_set_alloc()
+interface to set the memory allocation routines that the SASL library and plug-ins will use.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIc\fR\fR
-.ad
-.RS 5n
-.rt  
-A pointer to a \fBcalloc()\fR function
-.RE
+.I m
+A pointer to a malloc() function
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIf\fR\fR
-.ad
-.RS 5n
-.rt  
-A pointer to a \fBfree()\fR function
-.RE
+.I c
+A pointer to a calloc() function
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIm\fR\fR
-.ad
-.RS 5n
-.rt  
-A pointer to a\fBmalloc()\fR function
-.RE
+.I r
+A pointer to a realloc() function
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIr\fR\fR
-.ad
-.RS 5n
-.rt  
-A pointer to a \fBrealloc()\fR function
-.RE
+.I f
+A pointer to a free() function
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_set_alloc()\fR has no return values.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+.SH "RETURN VALUES"
+sasl_set_alloc() has no return values.
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityObsolete
-_
-MT-LevelUnsafe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBattributes\fR(7)
-.SH NOTES
-.sp
-.LP
-While most of \fBlibsasl\fR is MT-Safe, \fBsasl_set_*\fR modifies the global state and should be considered Unsafe.

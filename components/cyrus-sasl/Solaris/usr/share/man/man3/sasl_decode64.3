@@ -1,120 +1,53 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_decode64 3SASL "16 Sep 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_decode64 3sasl "16 Sep 2003" SASL "SASL man pages"
 .SH NAME
 sasl_decode64 \- decode base64 string
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/saslutil.h>
 
-\fBint\fR \fBsasl_decode64\fR(\fBconst char *\fR\fIin\fR, \fBunsigned\fR \fIinlen\fR, \fBchar *\fR\fIout\fR,
-     \fBunsigned\fR \fIoutmax\fR,\fBunsigned *\fR\fIoutlen\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/saslutil.h>
+
+.BI "int sasl_decode64(const char *" in ", "
+.BI "                  unsigned " inlen ", "
+.BI "                  char *" out ", "
+.BI "                  unsigned " outmax ", "
+.BI "                  unsigned *" outlen "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-Use the \fBsasl_decode64()\fR interface to decode a base64 encoded buffer.
+Use the 
+.B sasl_decode64()
+interface to decode a base64 encoded buffer.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIin\fR\fR
-.ad
-.RS 10n
-.rt  
+.I in
 Input data.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIinlen\fR\fR
-.ad
-.RS 10n
-.rt  
+.I inlen
 The length of the input data.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIout\fR\fR
-.ad
-.RS 10n
-.rt  
-The output data. The value of \fIout\fR can be the same as \fIin\fR. However, there must be enough space.
-.RE
+.I out
+The output data. The value of out can be the same as in. However, there must be enough space.
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIoutlen\fR\fR
-.ad
-.RS 10n
-.rt  
+.I outlen
 The length of the actual output.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIoutmax\fR\fR
-.ad
-.RS 10n
-.rt  
+.I outmax
 The maximum size of the output buffer.
-.RE
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_decode64()\fR returns an integer that corresponds to a SASL error code.
+.SH "RETURN VALUES"
+sasl_decode64() returns an integer that corresponds to a SASL error code.
+
 .SH ERRORS
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_OK\fR\fR
-.ad
-.RS 11n
-.rt  
-The call to \fBsasl_decode64()\fR was successful.
-.RE
+.TP 0.8i
+.B SASL_OK
+The call to sasl_decode64() was successful.
 
-.sp
-.LP
-See \fBsasl_errors\fR(3SASL) for information on SASL error codes.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+.TP 0.8i
+See sasl_errors(3SASL) for information on SASL error codes.
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityCommitted
-_
-MT-LevelMT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBsasl_errors\fR(3SASL), \fBattributes\fR(7)
+.SH "SEE ALSO"
+sasl_errors(3SASL)

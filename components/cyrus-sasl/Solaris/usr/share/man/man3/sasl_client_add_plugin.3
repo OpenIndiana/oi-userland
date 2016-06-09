@@ -1,109 +1,47 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_client_add_plugin 3SASL "12 Sep 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_client_add_plugin 3sasl "12 Sep 2003" SASL "SASL man pages"
 .SH NAME
 sasl_client_add_plugin \- add a SASL client plug-in
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/saslplug.h>
 
-\fBint\fR \fBsasl_client_add_plugin\fR(\fBconst char *\fR\fIplugname\fR,
-     \fBsasl_client_plug_init_t *\fR\fIcplugfunc\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/saslplug.h>
+
+.BI " int sasl_client_add_plugin(const char *" plugname ", "
+.BI "				 sasl_client_plug_init_t *" cplugfunc "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-Use the \fBsasl_client_add_plugin()\fR interface to add a client plug-in to the current list of client plug-ins in the SASL library.
+Use the 
+.B sasl_client_add_plugin()
+interface to add a client plug-in to the current in-memory list of client plug-ins in the SASL library.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIplugname\fR\fR
-.ad
-.RS 13n
-.rt  
+.I plugname
 The name of the client plug-in.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIcplugfunc\fR\fR
-.ad
-.RS 13n
-.rt  
-The value of \fIcplugfunc\fR is filled in by the \fBsasl_client_plug_init_t\fR structure.
-.RE
+.I cplugfunc
+The value of cplugfunc is filled in by the sasl_client_plug_init_t structure.
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_client_add_plugin()\fR returns an integer that corresponds to a SASL error code.
+.SH "RETURN VALUES"
+sasl_client_add_plugin() returns an integer that corresponds to a SASL error code.
+
 .SH ERRORS
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_OK\fR\fR
-.ad
-.RS 16n
-.rt  
-The call to \fBsasl_client_add_plugin()\fR was successful.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_BADVERS\fR\fR
-.ad
-.RS 16n
-.rt  
+.TP 0.8i
+.B SASL_OK
+The call to sasl_client_add_plugin() was successful.
+.TP 0.8i
+.B SASL_BADVERS
 Version mismatch with plug-in.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_NOMEM\fR\fR
-.ad
-.RS 16n
-.rt  
+.TP 0.8i
+.B SASL_NOMEM
 Memory shortage failure.
-.RE
 
-.sp
-.LP
-See \fBsasl_errors\fR(3SASL) for information on other SASL error codes.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+.TP 0.8i
+See sasl_errors(3SASL) for information on other SASL error codes.
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityCommitted
-_
-MT-LevelMT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBsasl_errors\fR(3SASL), \fBattributes\fR(7)
+.SH "SEE ALSO"
+sasl_errors(3SASL)

@@ -1,94 +1,39 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_utf8verify 3SASL "1 Oct 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_utf8verify 3sasl "1 Oct 2003" SASL "SASL man pages"
 .SH NAME
 sasl_utf8verify \- encode base64 string
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/saslutil.h>
 
-\fBint\fR \fBsasl_utf8verify\fR(\fBconst char *\fR\fIstr\fR, \fBunsigned\fR \fIlen\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/saslutil.h>
+
+.BI "int sasl_utf8verify(const char *" str ", "
+.BI "                    unsigned " len "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-Use the \fBsasl_utf8verify()\fR interface to verify that a string is valid UTF-8 and does not contain \fINULL\fR, a carriage return, or a linefeed. If \fIlen\fR ==0, \fBstrlen\fR(\fIstr\fR) will be used.
+Use the 
+.B sasl_utf8verify()
+interface to verify that a string is valid UTF-8 and does not contain NULL, a carriage return, or a linefeed. If len == 0, strlen(str) will be used.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIstr\fR\fR
-.ad
-.RS 7n
-.rt  
+.I str
 A string
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIlen\fR\fR
-.ad
-.RS 7n
-.rt  
+.I len
 The length of the string
-.RE
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_utf8verify()\fR returns an integer that corresponds to a SASL error code.
+.SH "RETURN VALUES"
+sasl_utf8verify() returns an integer that corresponds to a SASL error code.
+
 .SH ERRORS
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_OK\fR\fR
-.ad
-.RS 16n
-.rt  
-The call to \fBsasl_utf8verify()\fR was successful.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_BADPROT\fR\fR
-.ad
-.RS 16n
-.rt  
+.TP 0.8i
+.B SASL_OK
+The call to sasl_utf8verify() was successful.
+.TP 0.8i
+.B SASL_BADPROT
 There was invalid UTF-8, or an error was found.
-.RE
 
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
-
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityCommitted
-_
-MT-LevelMT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBattributes\fR(7)

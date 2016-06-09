@@ -1,98 +1,39 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_set_mutex 3SASL "22 Oct 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_set_mutex 3sasl "22 Oct 2003" SASL "SASL man pages"
 .SH NAME
 sasl_set_mutex \- set the mutex lock functions used by the SASL library
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/sasl.h>
 
-\fBvoid\fR \fBsasl_set_mutex\fR(\fBsasl_mutex_alloc_t *\fR\fIa\fR, \fBsasl_mutex_lock_t *\fR\fIl\fR,
-     \fBsasl_mutex_unlock_t *\fR\fIu\fR, \fBsasl_mutex_free_t *\fR\fIf\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/sasl.h>
+
+.BI "void sasl_set_mutex(sasl_mutex_alloc_t *" a ", "
+.BI "                    sasl_mutex_lock_t *" l ", "
+.BI "                    sasl_mutex_unlock_t *" u ", "
+.BI "                    sasl_mutex_free_t *" f "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-Use the \fBsasl_set_mutex()\fR interface to set the mutex lock routines that the SASL library and plug-ins will use.
+Use the
+.B sasl_set_mutex()
+interface to set the mutex lock routines that the SASL library and plug-ins will use.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIa\fR\fR
-.ad
-.RS 5n
-.rt  
+.I a
 A pointer to the mutex lock allocation function
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIf\fR\fR
-.ad
-.RS 5n
-.rt  
-A pointer to the mutex free or destroy function
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fIl\fR\fR
-.ad
-.RS 5n
-.rt  
+.I l
 A pointer to the mutex lock function
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIu\fR\fR
-.ad
-.RS 5n
-.rt  
+.I u
 A pointer to the mutex unlock function
-.RE
 
-.SH RETURN VALUES
-.sp
-.LP
-\fBsasl_set_mutex()\fR has no return values.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+.I f
+A pointer to the mutex free or destroy function
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityObsolete
-_
-MT-LevelUnsafe
-.TE
+.SH "RETURN VALUES"
+sasl_set_mutex() has no return values.
 
-.SH SEE ALSO
-.sp
-.LP
-\fBattributes\fR(7)
-.SH NOTES
-.sp
-.LP
-While most of \fBlibsasl\fR is MT-Safe, \fBsasl_set_*\fR modifies the global state and should be considered Unsafe.

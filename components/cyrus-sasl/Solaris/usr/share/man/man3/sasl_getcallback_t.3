@@ -1,131 +1,56 @@
 '\" te
 .\" Copyright (C) 1998-2003, Carnegie Mellon Univeristy.  All Rights Reserved.
 .\" Portions Copyright (C) 2003, Sun Microsystems, Inc. All Rights Reserved
-.TH sasl_getcallback_t 3SASL "27 Oct 2003" "SunOS 5.12" "Simple Authentication Security Layer Library Functions"
+.TH sasl_getcallback_t 3SASL "27 Oct 2003" SASL "SASL man pages"
 .SH NAME
 sasl_getcallback_t \- callback function to lookup a sasl_callback_t for a connection
-.SH SYNOPSIS
-.LP
-.nf
-\fBcc\fR [ \fIflag\fR ... ] \fIfile\fR ... \fB-lsasl\fR   [ \fIlibrary\fR ... ]
-#include <sasl/saslplug.h>
 
-\fBint\fR \fBsasl_getcallback_t\fR(\fBsasl_conn_t *\fR\fIconn\fR, \fBunsigned long\fR \fIcallbacknum\fR,
-     \fBint\fR \fI(**proc)\fR( ), \fBvoid **\fR\fIpcontext\fR);
+.SH SYNOPSIS
+.nf
+cc [ flag ... ] file ... -lsasl   [ library ... ]
+.B #include <sasl/saslplug.h>
+
+.BI "int sasl_getcallback_t(sasl_conn_t *" conn ", "
+.BI "               unsigned long " callbacknum ", "
+.BI "                         int (**" proc ")( ), "
+.BI "                         void **" pcontext "); "
 .fi
 
 .SH DESCRIPTION
-.sp
-.LP
-The \fBsasl_getcallback_t()\fR function is a callback to lookup a sasl_callback_t for a connection.
+The 
+.B sasl_getcallback_t()
+function is a callback to lookup a sasl_callback_t for a connection.
+
 .SH PARAMETERS
-.sp
-.ne 2
-.mk
-.na
-\fB\fIconn\fR\fR
-.ad
-.RS 15n
-.rt  
+.I conn
 The connection to lookup a callback for.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIcallbacknum\fR\fR
-.ad
-.RS 15n
-.rt  
+.I callbacknum
 The number of the callback.
-.RE
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIproc\fR\fR
-.ad
-.RS 15n
-.rt  
-Pointer to the callback function. The value of \fIproc\fR is set to \fINULL\fR upon failure.
-.RE
+.I proc
+Pointer to the callback function. The value of proc is set to NULL upon failure.
 
-.sp
-.ne 2
-.mk
-.na
-\fB\fIpcontext\fR\fR
-.ad
-.RS 15n
-.rt  
-Pointer to the callback context. The value of \fIpcontext\fR is set to \fINULL\fR upon failure.
-.RE
+.I pcontext
+Pointer to the callback context. The value of pcontext is set to NULL upon failure.
 
-.SH RETURN VALUES
-.sp
-.LP
-Like other SASL callback functions, \fBsasl_getcallback_t()\fR returns an integer that corresponds to a SASL error code. See <\fBsasl.h\fR> for a complete list of SASL error codes.
+.SH "RETURN VALUES"
+Like other SASL callback functions, 
+.B sasl_getcallback_t()
+returns an integer that corresponds to a SASL error code. See <sasl.h> for a complete list of SASL error codes.
+
 .SH ERRORS
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_OK\fR\fR
-.ad
-.RS 17n
-.rt  
-The call to \fBsasl_getcallback_t()\fR was successful.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_FAIL\fR\fR
-.ad
-.RS 17n
-.rt  
+.TP 0.8i
+.B SASL_OK
+The call to sasl_getcallback_t() was successful.
+.TP 0.8i
+.B SASL_FAIL
 Unable to find a callback of the requested type.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fBSASL_INTERACT\fR\fR
-.ad
-.RS 17n
-.rt  
+.TP 0.8i
+.B SASL_INTERACT
 The caller must use interaction to get data.
-.RE
 
-.sp
-.LP
-See \fBsasl_errors\fR(3SASL) for information on SASL error codes.
-.SH ATTRIBUTES
-.sp
-.LP
-See \fBattributes\fR(7) for descriptions of the following attributes:
-.sp
+See sasl_errors(3SASL) for information on SASL error codes.
 
-.sp
-.TS
-tab() box;
-cw(2.75i) |cw(2.75i) 
-lw(2.75i) |lw(2.75i) 
-.
-ATTRIBUTE TYPEATTRIBUTE VALUE
-_
-Availabilitysystem/library/security/libsasl
-_
-Interface StabilityCommitted
-_
-MT-LevelMT-Safe
-.TE
-
-.SH SEE ALSO
-.sp
-.LP
-\fBsasl_errors\fR(3SASL), \fBattributes\fR(7)
+.SH "SEE ALSO"
+sasl_errors(3SASL)
