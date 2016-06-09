@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -36,16 +36,21 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/658
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-0.9.6-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-0.9.6-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-0.9.6-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-0.9.6-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-0.9.6-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/__init__.py \
+    pkg.depend.bypass-generate=.*
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/_codec2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/_codec3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/_fetch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/_fetchgae.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/codec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/codec.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/colors.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/csscharsetrule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/csscomment.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssfontfacerule.py
@@ -61,72 +66,86 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssstylerule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssstylesheet.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssunknownrule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssvalue.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssvariablesdeclaration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/cssvariablesrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/marginrule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/property.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/selector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/selectorlist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css/value.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/css2productions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/cssproductions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/errorhandler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/helper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/parse.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/parse.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/prodparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/profiles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/sac.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/script.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/scripts/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/scripts/csscapture.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/scripts/csscombine.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/scripts/cssparse.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/serialize.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/serialize.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/settings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/stylesheets/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/stylesheets/medialist.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/stylesheets/mediaquery.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/stylesheets/stylesheet.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/stylesheets/stylesheetlist.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tokenize2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/basetest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_codec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_csscharsetrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_csscomment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssfontfacerule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssimportrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssmediarule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssnamespacerule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_csspagerule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssproperties.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssrulelist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssstyledeclaration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssstylerule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssstylesheet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssunknownrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssutilsimport.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssvalue.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssvariablesdeclaration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_cssvariablesrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_domimplementation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_encutils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_errorhandler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_helper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_marginrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_medialist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_mediaquery.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_parse.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_prodparser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_profiles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_properties.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_property.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_scripts_csscombine.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_selector.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_selectorlist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_serialize.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_settings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_stylesheet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_tokenize2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_value.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tests/test_x.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/tokenize2.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cssutils/util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/encutils/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/basetest.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_codec.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_csscharsetrule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_csscomment.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssfontfacerule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssimportrule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssmediarule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssnamespacerule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_csspagerule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssproperties.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssrule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssrulelist.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssstyledeclaration.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssstylerule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssstylesheet.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssunknownrule.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssutilsimport.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_cssvalue.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_domimplementation.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_encutils/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_errorhandler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_helper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_medialist.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_mediaquery.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_parse.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_prodparser.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_profiles.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_properties.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_property.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_scripts_csscombine.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_selector.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_selectorlist.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_serialize.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_settings.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_tokenize2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_util.py
-file path=usr/lib/python$(PYVER)/vendor-packages/tests/test_x.py
 #
-license cssutils.license license="LGPL v3"
+license cssutils.license license="GPLv3, LGPLv3"
 
 # cssutils was previously in the 'desktop' consolidation. This optional
 # dependency is here to facilitate the safe transfer of the package
