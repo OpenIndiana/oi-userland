@@ -80,8 +80,8 @@ KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-auth-sasldb
+CONFIGURE_OPTIONS += --with-saslauthd=/var/run/saslauthd
 CONFIGURE_OPTIONS += --with-dblib=berkeley
-CONFIGURE_OPTIONS += --with-saslauthd=$(USRSBINDIR)/saslauthd
 ifeq ($(KRB5_API), solaris)
 CONFIGURE_OPTIONS += --with-gss_impl=seam
 else
