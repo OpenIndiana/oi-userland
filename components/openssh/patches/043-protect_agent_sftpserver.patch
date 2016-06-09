@@ -1,0 +1,96 @@
+#
+# This patch is to make ssh-agent and sftp-server untraceable on Solaris
+# without using the sgid bit.  The OpenSSH upstream contains code for 
+# Linux to disable ptrace on these two programs. This patch provides the
+# equivalent Solaris implementation.
+#
+# This Solaris-specific patch has been contributed back to OpenSSH upstream.
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2584.
+# In the future, if this is accepted by the upsteam in a later release, we will
+# remove this patch when we upgrade to that release.
+#
+--- orig/config.h.in	Mon Jun  6 19:22:23 2016
++++ new/config.h.in	Mon Jun  6 19:25:05 2016
+@@ -962,6 +962,9 @@
+ /* Define to 1 if you have the `setpcred' function. */
+ #undef HAVE_SETPCRED
+ 
++/* Define to 1 if you have the `setpflags' function. */
++#undef HAVE_SETPFLAGS
++
+ /* Define to 1 if you have the `setppriv' function. */
+ #undef HAVE_SETPPRIV
+ 
+--- orig/configure.ac	Mon Jun  6 16:03:27 2016
++++ new/configure.ac	Mon Jun  6 19:17:06 2016
+@@ -899,6 +899,8 @@
+ 	else
+ 		AC_MSG_RESULT([no])
+ 	fi
++      
++	AC_CHECK_FUNCS([setpflags])
+ 	AC_CHECK_FUNCS([setppriv])
+ 	AC_CHECK_FUNCS([priv_basicset])
+ 	AC_CHECK_HEADERS([priv.h])
+--- orig/sftp-server.c	Tue Jun  7 11:16:34 2016
++++ new/sftp-server.c	Tue Jun  7 16:48:09 2016
+@@ -32,6 +32,9 @@
+ #ifdef HAVE_SYS_PRCTL_H
+ #include <sys/prctl.h>
+ #endif
++#ifdef HAVE_PRIV_H
++#include <priv.h> /* For setpflags() and __PROC_PROTECT  */
++#endif
+ 
+ #include <dirent.h>
+ #include <errno.h>
+@@ -1588,6 +1591,11 @@
+ 
+ 	log_init(__progname, log_level, log_facility, log_stderr);
+ 
++#if defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
++	/* On Solaris, we should make this process untraceable */
++	if (setpflags(__PROC_PROTECT, 1) != 0)
++		fatal("unable to make the process untraceable");
++#else 
+ #if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
+ 	/*
+ 	 * On Linux, we should try to avoid making /proc/self/{mem,maps}
+@@ -1598,6 +1606,7 @@
+ 	if (prctl(PR_SET_DUMPABLE, 0) != 0)
+ 		fatal("unable to make the process undumpable");
+ #endif /* defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE) */
++#endif
+ 
+ 	/* Drop any fine-grained privileges we don't need */
+ 	platform_pledge_sftp_server();
+--- orig/ssh-agent.c	Mon Jun  6 19:04:38 2016
++++ new/ssh-agent.c	Tue Jun  7 12:18:11 2016
+@@ -92,6 +92,10 @@
+ #include <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
+ #endif
+ 
++#if defined(HAVE_PRIV_H)
++#include <priv.h> /* For setpflags() and __PROC_PROTECT  */
++#endif
++
+ typedef enum {
+ 	AUTH_UNUSED,
+ 	AUTH_SOCKET,
+@@ -1209,10 +1213,16 @@
+ 	setegid(getgid());
+ 	setgid(getgid());
+ 
++#if defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
++	/* make it untraceable on Solaris */
++ 	(void) setpflags(__PROC_PROTECT, 1); 
++
++#else
+ #if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
+ 	/* Disable ptrace on Linux without sgid bit */
+ 	prctl(PR_SET_DUMPABLE, 0);
+ #endif
++#endif 
+ 
+ #ifdef ENABLE_OPENSSL_FIPS
+ 	fips_err = ssh_FIPS_mode_set_if_capable();
