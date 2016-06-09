@@ -1565,6 +1565,36 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 				if (err != 0)
 					goto out;
 			}
+
+			flow_mac2str(f->arp_sha, m->arp_sha, buf, rbuf,
+			    sizeof (buf), sizeof (rbuf));
+			if (strlen(buf) != 0) {
+				err = dlmgr_DLValue_fm_putstring(ddvp, ddmp,
+				    "nd-sll", buf, rbuf,
+				    dstr, sizeof (dstr));
+				if (err != 0)
+					goto out;
+			}
+
+			flow_mac2str(f->arp_tha, m->arp_tha, buf, rbuf,
+			    sizeof (buf), sizeof (rbuf));
+			if (strlen(buf) != 0) {
+				err = dlmgr_DLValue_fm_putstring(ddvp, ddmp,
+				    "nd-tll", buf, rbuf,
+				    dstr, sizeof (dstr));
+				if (err != 0)
+					goto out;
+			}
+
+			flow_addr2str(&f->nd_target, &m->nd_target, 0, 0,
+			    buf, rbuf, sizeof (buf), sizeof (rbuf));
+			if (strlen(buf) != 0) {
+				err = dlmgr_DLValue_fm_putstring(ddvp, ddmp,
+				    "nd-target", buf, rbuf,
+				    dstr, sizeof (dstr));
+				if (err != 0)
+					goto out;
+			}
 		}
 	}
 
@@ -2251,9 +2281,11 @@ solaris_flowinfo2flowmap(const char *key, dlmgr_DLValue_t *val, void *arg)
 		f->nw_tos = (uint8_t)*val->ddlv_ulval;
 	} else if (strcmp(key, "srcport") == 0) {
 		f->in_port.odp_port = (odp_port_t)*val->ddlv_ulval;
-	} else if (strcmp(key, "arp-target") == 0) {
+	} else if (strcmp(key, "arp-target") == 0 ||
+	    strcmp(key, "nd-tll") == 0) {
 		err = flow_str2mac(val->ddlv_sval, f->arp_tha, 6);
-	} else if (strcmp(key, "arp-sender") == 0) {
+	} else if (strcmp(key, "arp-sender") == 0 ||
+	    strcmp(key, "nd-sll") == 0) {
 		err = flow_str2mac(val->ddlv_sval, f->arp_sha, 6);
 	} else if (strcmp(key, "arp-op") == 0) {
 		f->nw_proto = (uint8_t)*val->ddlv_ulval;
@@ -2267,6 +2299,11 @@ solaris_flowinfo2flowmap(const char *key, dlmgr_DLValue_t *val, void *arg)
 		f->tp_src = htons((uint16_t)*val->ddlv_ulval);
 	} else if (strcmp(key, "icmp-code") == 0) {
 		f->tp_dst = htons((uint16_t)*val->ddlv_ulval);
+	} else if (strcmp(key, "nd-target") == 0) {
+		err = flow_str2addr(val->ddlv_sval, &fa, &af);
+		if (err != 0)
+			goto out;
+		bcopy(&fa, &f->nd_target, sizeof (f->nd_target));
 	} else if (strcmp(key, "tcp-flags") == 0) {
 		f->tcp_flags = htons((uint16_t)*val->ddlv_ulval);
 	}
