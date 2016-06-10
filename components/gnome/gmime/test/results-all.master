@@ -1,0 +1,39 @@
+Making check in tests
+make[2]: Entering directory '$(@D)/tests'
+make[3]: Entering directory '$(@D)/tests'
+make[4]: Entering directory '$(@D)/tests'
+failed_tests=""; \
+for test in test-iconv test-streams test-cat test-headers test-mbox test-mime test-pgp test-pgpmime; do \
+	testdatadir="data/`echo ${test} | sed -e 's/test-//'`"; \
+	testdir="$(SOURCE_DIR)/tests/${testdatadir}"; \
+	if [ ! -d "${testdir}" ]; then \
+		testdir="${testdatadir}"; \
+	./${test} -v ${testdir}; \
+		failed_tests="${failed_tests}\n ${test}"; \
+echo "Results: ${passed} tests passed; ${failed} tests failed."; \
+	echo -e "Failed tests: ${failed_tests}"; \
+	echo -e "Failed tests: ${failed_tests}"; \
+Testing charset conversion utils: passed
+Testing Stream tests: passed
+Testing Stream tests: passed
+Testing GMimeStreamCat: passed
+Testing iterating forward and backward: passed
+Testing removing all headers: passed
+Testing removing individual headers: passed
+Testing header synchronization: passed
+Testing Mbox parser: no tests performed
+Testing Mbox parser: no tests performed
+Testing addr-spec parser: passed
+Testing date parser: passed
+Testing rfc2047 encoding/decoding: passed
+Testing rfc2184 encoding/decoding: passed
+Testing quoted-strings: passed
+Testing broken rfc2047 encoding/decoding: passed
+Results: 6 tests passed; 2 tests failed.
+Failed tests: 
+Failed tests: 
+ test-pgp
+ test-pgpmime
+make[4]: Leaving directory '$(@D)/tests'
+make[3]: Leaving directory '$(@D)/tests'
+make[2]: Leaving directory '$(@D)/tests'
