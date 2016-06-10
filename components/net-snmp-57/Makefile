@@ -35,7 +35,6 @@ COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_ARCHIVE_HASH= \
     sha256:35dd20a2b17849f6d5a0a6109b4f52c1a777a3e1a00c79c4a175c520d23f3497
 COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-#COMPONENT_ARCHIVE_URL= http://ftp.ntua.gr/mirror/net-snmp/OldFiles/net-snmp-5.4.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
 TPNO=			13120
@@ -123,6 +122,8 @@ $(BUILD_DIR_32)/.docs:
 	(cd $(@D) ; $(ENV) srcdir=$(@D) $(DOXYGEN) -u $(@D)/doxygen.conf ; \
 	    $(ENV) srcdir=$(@D) $(DOXYGEN) $(@D)/doxygen.conf)
 	$(TOUCH) $@
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/security/openssl
