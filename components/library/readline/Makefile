@@ -119,3 +119,5 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		install $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += system/library
