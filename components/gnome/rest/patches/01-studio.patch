@@ -1,0 +1,28 @@
+Removes gcc-specific flag usage.
+
+configure should detect if -Wall is supported and then set an appropriate
+flags variable for use in the Makefiles.
+
+XXX file upstream bug
+--- rest-0.7.93/rest/Makefile.am	Wed Sep  3 05:01:16 2014
++++ rest-0.7.93/rest/Makefile.am	Tue May 12 18:02:56 2015
+@@ -49,7 +49,7 @@
+ librest_@API_VERSION@_la_CFLAGS = $(GLIB_CFLAGS) $(GTHREAD_CFLAGS) \
+ 		    $(SOUP_CFLAGS) $(SOUP_GNOME_CFLAGS) \
+ 		    $(XML_CFLAGS) $(GCOV_CFLAGS) \
+-		    -I$(top_srcdir) -Wall -DG_LOG_DOMAIN=\"Rest\"
++		    -I$(top_srcdir) -DG_LOG_DOMAIN=\"Rest\"
+ librest_@API_VERSION@_la_LDFLAGS = -no-undefined
+ librest_@API_VERSION@_la_LIBADD = $(GLIB_LIBS) $(GTHREAD_LIBS) \
+                     $(SOUP_LIBS) $(SOUP_GNOME_LIBS) $(XML_LIBS) \
+--- rest-0.7.93/rest-extras/Makefile.am	Wed Sep  3 05:01:16 2014
++++ rest-0.7.93/rest-extras/Makefile.am	Tue May 12 18:02:53 2015
+@@ -21,7 +21,7 @@
+ librest_extras_@API_VERSION@_la_CFLAGS = $(GLIB_CFLAGS) $(GTHREAD_CFLAGS) \
+ 		    $(SOUP_CFLAGS) $(SOUP_GNOME_CFLAGS) \
+ 		    $(XML_CFLAGS) $(GCOV_CFLAGS) \
+-		    -I$(top_srcdir) -Wall -DG_LOG_DOMAIN=\"Rest\"
++		    -I$(top_srcdir) -DG_LOG_DOMAIN=\"Rest\"
+ librest_extras_@API_VERSION@_la_LIBADD = $(GLIB_LIBS) $(GTHREAD_LIBS) \
+                     $(SOUP_LIBS) $(SOUP_GNOME_LIBS) $(XML_LIBS) \
+ 		    $(GCOV_LDFLAGS) \
