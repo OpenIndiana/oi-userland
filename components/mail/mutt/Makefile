@@ -66,3 +66,12 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libsasl
