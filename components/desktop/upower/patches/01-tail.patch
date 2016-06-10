@@ -1,0 +1,60 @@
+Assumes GNU tail is in path (or at least one that supports the specific
+option syntax).
+
+Upstream should either detect GNU tail via configure or should not use
+GNU-specific options to tail.
+
+XXX file upstream bug
+
+--- upower-0.99.3/doc/dbus/Makefile.am	2015-04-22 02:57:08.000000000 -0700
++++ upower-0.99.3/doc/dbus/Makefile.am	2015-07-07 13:09:50.587953887 -0700
+@@ -3,19 +3,19 @@
+ 
+ org.freedesktop.UPower.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.Device.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.Device.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.KbdBacklight.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.KbdBacklight.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.Wakeups.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.Wakeups.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ EXTRA_DIST = spec-to-docbook.xsl dbus-introspect-docs.dtd
+ 
+--- upower-0.99.3/doc/dbus/Makefile.in	2015-05-28 01:51:56.000000000 -0700
++++ upower-0.99.3/doc/dbus/Makefile.in	2015-07-07 13:09:58.484250364 -0700
+@@ -522,19 +522,19 @@
+ 
+ org.freedesktop.UPower.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.Device.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.Device.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.KbdBacklight.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.KbdBacklight.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ org.freedesktop.UPower.Wakeups.ref.xml : $(top_srcdir)/src/org.freedesktop.UPower.Wakeups.xml $(top_srcdir)/doc/dbus/spec-to-docbook.xsl
+ 	echo "<?xml version=\"1.0\"?>""<!DOCTYPE refentry PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd\">" > $@
+-	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | tail -n +2 >> $@
++	$(XSLTPROC) $(top_srcdir)/doc/dbus/spec-to-docbook.xsl $< | gtail -n +2 >> $@
+ 
+ clean-local :
+ 	rm -f *~ *.ref.xml
