@@ -53,3 +53,6 @@ CONFIGURE_OPTIONS += --target=$(TARGET.$(BITS))
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
