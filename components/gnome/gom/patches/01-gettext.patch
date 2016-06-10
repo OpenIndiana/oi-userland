@@ -1,0 +1,23 @@
+The gettext library check here is bogus; it doesn't even use that
+particular gettext function.
+
+The configure check should be reworked to look for GNU-compatible gettext
+the "standard way" instead of looking for a function it doesn't even use or
+need.
+
+XXX file upstream bug; patch not appropriate for upstream
+--- gom-0.3.1/configure.ac	2015-04-29 03:05:54.000000000 -0700
++++ gom-0.3.1/configure.ac	2015-06-26 15:58:48.329991900 -0700
+@@ -121,11 +121,7 @@
+ AC_DEFINE([GETTEXT_PACKAGE], [PACKAGE_TARNAME], [Define to the gettext package name.])
+ 
+ 
+-dnl gettext library
+-AC_CHECK_LIB([gettextpo], [po_message_is_format],
+-             [GETTEXT_LIBS=-lgettextpo], [
+-              AC_MSG_ERROR(Missing gettext library)])
+-
++dnl gettext library; no special libs required for Solaris.
+ AC_SUBST([GETTEXT_LIBS])
+ 
+ 
