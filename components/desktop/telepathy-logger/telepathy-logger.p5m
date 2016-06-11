@@ -1,0 +1,66 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/telepathy-logger@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A daemon for the telepathy framework"
+set name=pkg.description \
+    value="Telepathy logger is a headless observer client that logs information received by the telepathy framework.  It features pluggable backends to log different sorts of messages in different formats."
+set name=com.oracle.info.description value=telepathy-logger
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/368
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/call-event.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/entity.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/event.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/log-manager.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/log-walker.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/telepathy-logger.h
+file path=usr/include/telepathy-logger-0.2/telepathy-logger/text-event.h
+file path=usr/lib/$(MACH64)/girepository-1.0/TelepathyLogger-0.2.typelib
+link path=usr/lib/$(MACH64)/libtelepathy-logger.so \
+    target=libtelepathy-logger.so.3.3.0
+link path=usr/lib/$(MACH64)/libtelepathy-logger.so.3 \
+    target=libtelepathy-logger.so.3.3.0
+file path=usr/lib/$(MACH64)/libtelepathy-logger.so.3.3.0
+file path=usr/lib/$(MACH64)/pkgconfig/telepathy-logger-0.2.pc
+file path=usr/lib/$(MACH64)/telepathy-logger
+file path=usr/lib/girepository-1.0/TelepathyLogger-0.2.typelib
+link path=usr/lib/libtelepathy-logger.so target=libtelepathy-logger.so.3.3.0
+link path=usr/lib/libtelepathy-logger.so.3 target=libtelepathy-logger.so.3.3.0
+file path=usr/lib/libtelepathy-logger.so.3.3.0
+file path=usr/lib/pkgconfig/telepathy-logger-0.2.pc
+file path=usr/lib/telepathy-logger
+file path=usr/share/dbus-1/services/org.freedesktop.Telepathy.Client.Logger.service
+file path=usr/share/dbus-1/services/org.freedesktop.Telepathy.Logger.service
+file path=usr/share/gir-1.0/TelepathyLogger-0.2.gir
+file path=usr/share/telepathy/clients/Logger.client
+license COPYING license=GPLv2
