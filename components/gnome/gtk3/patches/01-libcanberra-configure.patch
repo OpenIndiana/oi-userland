@@ -1,0 +1,17 @@
+Likely not appropriate for upstream in current form; needs further
+investigation to see if there is a fix needed to libtool.
+
+--- gtk+-3.16.3/configure.ac	2015-07-02 15:01:30.544630866 -0700
++++ gtk+-3.16.3/configure.ac	2015-07-02 15:18:42.000041546 -0700
+@@ -1681,6 +1681,11 @@
+         if test "$have_libcanberra" = "no"; then
+             AC_MSG_ERROR([--enable-libcanberra specified, but not available])
+         fi
++
++	# Ensure gtk-3 and gdk-3 are omitted so that no attempt is made to link
++	# to any system-installed versions causing a multiple inclusion build
++	# failure.
++	LIBCANBERRA_LIBS=$(echo "$LIBCANBERRA_LIBS" | $SED -e 's/-lgtk-3//' -e 's/-lgdk-3//')
+     fi
+ fi
+ 
