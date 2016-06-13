@@ -1,0 +1,1 @@
+desktop/uhttpmock: gnome/libsoup
