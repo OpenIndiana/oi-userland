@@ -1,0 +1,13 @@
+patched for building on Solaris.  Potentially send upstream
+
+--- gst-plugins-base-1.4.5/common/m4/gst-gettext.m4	2014-07-21 01:36:35.000000000 -0700
++++ gst-plugins-base-1.4.5/common/m4/gst-gettext.m4	2015-06-02 11:14:05.097478233 -0700
+@@ -16,7 +16,7 @@
+ 
+   dnl make sure po/Makevars is kept in sync with GETTEXT_PACKAGE
+   if test -e "${srcdir}/po/Makevars"; then
+-    if ! grep -e "$1" "${srcdir}/po/Makevars"; then
++    if ! "$GREP" -e "$1" "${srcdir}/po/Makevars"; then
+       AC_MSG_ERROR([DOMAIN in po/Makevars does not match GETTEXT_PACKAGE $1])
+     fi
+   fi

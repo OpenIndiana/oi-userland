@@ -1,0 +1,80 @@
+Patch for building on Solaris.  Evaluate for sending upstream
+
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2.c	2014-10-19 04:41:09.000000000 -0700
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2.c	2015-06-15 17:42:39.471175162 -0700
+@@ -35,6 +35,10 @@
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "ext/videodev2.h"
+ #include "v4l2-utils.h"
+ 
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2allocator.c	2014-11-12 03:04:42.000000000 -0800
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2allocator.c	2015-06-15 17:42:17.710094146 -0700
+@@ -25,6 +25,10 @@
+ # define _GNU_SOURCE            /* O_CLOEXEC */
+ #endif
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "ext/videodev2.h"
+ #include "gstv4l2allocator.h"
+ #include "v4l2_calls.h"
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2bufferpool.c	2014-12-16 06:04:56.000000000 -0800
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2bufferpool.c	2015-06-15 17:43:14.243219026 -0700
+@@ -35,6 +35,10 @@
+ #include <string.h>
+ #include <unistd.h>
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "gst/video/video.h"
+ #include "gst/video/gstvideometa.h"
+ #include "gst/video/gstvideopool.h"
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2object.c	2014-12-16 06:04:56.000000000 -0800
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2object.c	2015-06-15 17:42:53.203101602 -0700
+@@ -36,6 +36,10 @@
+ #include <gudev/gudev.h>
+ #endif
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "v4l2_calls.h"
+ #include "gstv4l2tuner.h"
+ #include "gstv4l2colorbalance.h"
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2radio.c	2014-10-19 04:41:09.000000000 -0700
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2radio.c	2015-06-15 17:43:57.637287821 -0700
+@@ -42,6 +42,10 @@
+ 
+ #include <string.h>
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "gst/gst-i18n-plugin.h"
+ 
+ #include "gstv4l2tuner.h"
+--- gst-plugins-good-1.4.5/sys/v4l2/gstv4l2sink.c	2014-11-04 01:08:23.000000000 -0800
++++ gst-plugins-good-1.4.5/sys/v4l2/gstv4l2sink.c	2015-06-15 17:43:43.395888961 -0700
+@@ -53,6 +53,10 @@
+ #include <config.h>
+ #endif
+ 
++#ifdef HAVE_FIONREAD_IN_SYS_FILIO
++#include <sys/filio.h>
++#endif
++
+ #include "gst/video/gstvideometa.h"
+ 
+ #include "gstv4l2colorbalance.h"
