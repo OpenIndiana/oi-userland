@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qhull
 COMPONENT_VERSION=	7.2.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.qhull.org/
 COMPONENT_SUMMARY=	General dimension convex hull programs
 COMPONENT_DESCRIPTION=	Qhull is a general dimension convex hull program that reads a set of points from stdin, and outputs the smallest convex set that contains the points to stdout.  It also generates Delaunay triangulations, Voronoi diagrams, furthest-site Voronoi diagrams, and halfspace intersections about a point.
