@@ -27,13 +27,7 @@
 <transform file dir -> default group puppet>
 <transform file -> default mode 0444>
 <transform dir -> default mode 0755>
-# Ingest pkgsend more easily as we expect to be doing it frequently
-<transform file dir -> edit path solaris_providers etc/puppet/modules/solaris_providers>
-# Include the files we are still providing locally
-<include oracle-solaris_providers-local.frag>
-# Include the files delivered from the archive. This should probably
-# be included here directly after the migration is complete.
-<include oracle-solaris_providers-github.frag>
+<transform file dir -> edit path ^solaris_providers etc/puppet/modules/solaris_providers>
 set name=pkg.fmri \
     value=pkg:/system/management/puppet/oracle-solaris_providers@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Oracle Solaris Providers Puppet Module"
@@ -41,7 +35,6 @@ set name=pkg.description \
     value="The Oracle Solaris puppet module contains multiple types and providers for managing Solaris"
 set name=com.oracle.info.description \
     value="Oracle Solaris Providers Puppet Module"
-set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
 set name=info.repository-url \
@@ -53,7 +46,109 @@ set name=org.opensolaris.arc-caseid value=PSARC/2013/005 value=PSARC/2013/218 \
     value=PSARC/2013/221 value=PSARC/2013/288 value=PSARC/2013/426 \
     value=PSARC/2016/016
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-license puppet.license license="Apache v2.0"
+file path=solaris_providers/Gemfile
+file path=solaris_providers/LICENSE
+file path=solaris_providers/README.md
+file path=solaris_providers/Rakefile
+file path=solaris_providers/lib/puppet/provider/address_object/solaris.rb
+file path=solaris_providers/lib/puppet/provider/address_properties/solaris.rb
+file path=solaris_providers/lib/puppet/provider/boot_environment/solaris.rb
+file path=solaris_providers/lib/puppet/provider/dns/solaris.rb
+file path=solaris_providers/lib/puppet/provider/etherstub/solaris.rb
+file path=solaris_providers/lib/puppet/provider/evs/solaris.rb
+file path=solaris_providers/lib/puppet/provider/evs_ipnet/solaris.rb
+file path=solaris_providers/lib/puppet/provider/evs_properties/solaris.rb
+file path=solaris_providers/lib/puppet/provider/evs_vport/solaris.rb
+file path=solaris_providers/lib/puppet/provider/interface_properties/solaris.rb
+file path=solaris_providers/lib/puppet/provider/ip_interface/solaris.rb
+file path=solaris_providers/lib/puppet/provider/ip_tunnel/solaris.rb
+file path=solaris_providers/lib/puppet/provider/ipmp_interface/solaris.rb
+file path=solaris_providers/lib/puppet/provider/ldap/solaris.rb
+file path=solaris_providers/lib/puppet/provider/link_aggregation/solaris.rb
+file path=solaris_providers/lib/puppet/provider/link_properties/solaris.rb
+file path=solaris_providers/lib/puppet/provider/nis/solaris.rb
+file path=solaris_providers/lib/puppet/provider/nsswitch/solaris.rb
+file path=solaris_providers/lib/puppet/provider/pkg_facet/solaris.rb
+file path=solaris_providers/lib/puppet/provider/pkg_mediator/solaris.rb
+file path=solaris_providers/lib/puppet/provider/pkg_publisher/solaris.rb
+file path=solaris_providers/lib/puppet/provider/pkg_variant/solaris.rb
+file path=solaris_providers/lib/puppet/provider/protocol_properties/solaris.rb
+file path=solaris_providers/lib/puppet/provider/solaris_vlan/solaris.rb
+file path=solaris_providers/lib/puppet/provider/svccfg/solaris.rb
+file path=solaris_providers/lib/puppet/provider/vni_interface/solaris.rb
+file path=solaris_providers/lib/puppet/provider/vnic/solaris.rb
+file path=solaris_providers/lib/puppet/provider/zone/solaris.rb
+file path=solaris_providers/lib/puppet/type/address_object.rb
+file path=solaris_providers/lib/puppet/type/address_properties.rb
+file path=solaris_providers/lib/puppet/type/boot_environment.rb
+file path=solaris_providers/lib/puppet/type/dns.rb
+file path=solaris_providers/lib/puppet/type/etherstub.rb
+file path=solaris_providers/lib/puppet/type/evs.rb
+file path=solaris_providers/lib/puppet/type/evs_ipnet.rb
+file path=solaris_providers/lib/puppet/type/evs_properties.rb
+file path=solaris_providers/lib/puppet/type/evs_vport.rb
+file path=solaris_providers/lib/puppet/type/interface_properties.rb
+file path=solaris_providers/lib/puppet/type/ip_interface.rb
+file path=solaris_providers/lib/puppet/type/ip_tunnel.rb
+file path=solaris_providers/lib/puppet/type/ipmp_interface.rb
+file path=solaris_providers/lib/puppet/type/ldap.rb
+file path=solaris_providers/lib/puppet/type/link_aggregation.rb
+file path=solaris_providers/lib/puppet/type/link_properties.rb
+file path=solaris_providers/lib/puppet/type/nis.rb
+file path=solaris_providers/lib/puppet/type/nsswitch.rb
+file path=solaris_providers/lib/puppet/type/pkg_facet.rb
+file path=solaris_providers/lib/puppet/type/pkg_mediator.rb
+file path=solaris_providers/lib/puppet/type/pkg_publisher.rb
+file path=solaris_providers/lib/puppet/type/pkg_variant.rb
+file path=solaris_providers/lib/puppet/type/protocol_properties.rb
+file path=solaris_providers/lib/puppet/type/solaris_vlan.rb
+file path=solaris_providers/lib/puppet/type/svccfg.rb
+file path=solaris_providers/lib/puppet/type/vni_interface.rb
+file path=solaris_providers/lib/puppet/type/vnic.rb
+file path=solaris_providers/lib/puppet/type/zone.rb
+file path=solaris_providers/lib/puppet_x/oracle/solaris_providers/util/validation.rb
+file path=solaris_providers/metadata.json
+file path=solaris_providers/spec/acceptance/address_object_configure_spec.rb
+file path=solaris_providers/spec/acceptance/address_properties_configure_spec.rb
+file path=solaris_providers/spec/acceptance/dns_configure_spec.rb
+file path=solaris_providers/spec/acceptance/ldap_configure_spec.rb
+file path=solaris_providers/spec/acceptance/nis_configure_spec.rb
+file path=solaris_providers/spec/acceptance/nodesets/default.yml
+file path=solaris_providers/spec/acceptance/pkg_facet_configure_spec.rb
+file path=solaris_providers/spec/acceptance/pkg_mediator_configure_spec.rb
+file path=solaris_providers/spec/acceptance/pkg_publisher_configure_spec.rb
+file path=solaris_providers/spec/acceptance/pkg_variant_configure_spec.rb
+file path=solaris_providers/spec/acceptance/zone_configure_spec.rb
+file path=solaris_providers/spec/fixtures/manifests/site.pp
+file path=solaris_providers/spec/fixtures/unit/provider/pkg/pkg_mediator/pkg_mediator.txt
+file path=solaris_providers/spec/fixtures/unit/provider/pkg/pkg_mediator/pkg_mediator_foo.txt
+file path=solaris_providers/spec/fixtures/unit/provider/svccfg/svccfg/svcprop_a_f.txt
+file path=solaris_providers/spec/spec_helper.rb
+file path=solaris_providers/spec/spec_helper_acceptance.rb
+file path=solaris_providers/spec/unit/provider/address_object/address_object.rb
+file path=solaris_providers/spec/unit/provider/address_properties/address_properties.rb
+file path=solaris_providers/spec/unit/provider/dns/dns.rb
+file path=solaris_providers/spec/unit/provider/ldap/ldap.rb
+file path=solaris_providers/spec/unit/provider/nis/nis.rb
+file path=solaris_providers/spec/unit/provider/pkg/pkg_facet.rb
+file path=solaris_providers/spec/unit/provider/pkg/pkg_mediator.rb
+file path=solaris_providers/spec/unit/provider/pkg/pkg_mediator_spec.rb
+file path=solaris_providers/spec/unit/provider/pkg/pkg_publisher.rb
+file path=solaris_providers/spec/unit/provider/pkg/pkg_variant.rb
+file path=solaris_providers/spec/unit/provider/svccfg/svccfg_spec.rb
+file path=solaris_providers/spec/unit/provider/zone/zone.rb
+file path=solaris_providers/spec/unit/type/address_object_spec.rb
+file path=solaris_providers/spec/unit/type/address_properties_spec.rb
+file path=solaris_providers/spec/unit/type/dns_spec.rb
+file path=solaris_providers/spec/unit/type/ldap_spec.rb
+file path=solaris_providers/spec/unit/type/nis_spec.rb
+file path=solaris_providers/spec/unit/type/pkg_facet_spec.rb
+file path=solaris_providers/spec/unit/type/pkg_mediator_spec.rb
+file path=solaris_providers/spec/unit/type/pkg_publisher_spec.rb
+file path=solaris_providers/spec/unit/type/pkg_variant_spec.rb
+file path=solaris_providers/spec/unit/type/svccfg_spec.rb
+file path=solaris_providers/spec/unit/type/zone_spec.rb
+license apache.license license="Apache v2.0"
 
 # require puppet
 depend type=require fmri=system/management/puppet
