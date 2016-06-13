@@ -1,0 +1,143 @@
+Ultimately, this should be resolved by a proper fix for this upstream bug:
+
+  726571 should use Makefile.introspection 
+
+The patch below a simpler fix that does the minimum necessary to make
+introspection builds work.
+
+--- gstreamer-1.4.5/common/m4/introspection.m4	2014-10-19 04:41:57.000000000 -0700
++++ gstreamer-1.4.5/common/m4/introspection.m4	2015-06-02 12:37:14.807600738 -0700
+@@ -49,12 +49,14 @@
+     AC_MSG_RESULT([$found_introspection])
+ 
+     INTROSPECTION_SCANNER=
++    INTROSPECTION_SCANNER_ENV=
+     INTROSPECTION_COMPILER=
+     INTROSPECTION_GENERATE=
+     INTROSPECTION_GIRDIR=
+     INTROSPECTION_TYPELIBDIR=
+     if test "x$found_introspection" = "xyes"; then
+        INTROSPECTION_SCANNER=`$PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0`
++       INTROSPECTION_SCANNER_ENV='CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" CC="$(CC)"'
+        INTROSPECTION_COMPILER=`$PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0`
+        INTROSPECTION_GENERATE=`$PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0`
+        INTROSPECTION_GIRDIR=`$PKG_CONFIG --variable=girdir gobject-introspection-1.0`
+@@ -64,6 +66,7 @@
+        INTROSPECTION_MAKEFILE=`$PKG_CONFIG --variable=datadir gobject-introspection-1.0`/gobject-introspection-1.0/Makefile.introspection
+     fi
+     AC_SUBST(INTROSPECTION_SCANNER)
++    AC_SUBST(INTROSPECTION_SCANNER_ENV)
+     AC_SUBST(INTROSPECTION_COMPILER)
+     AC_SUBST(INTROSPECTION_GENERATE)
+     AC_SUBST(INTROSPECTION_GIRDIR)
+--- gst-plugins-base-1.4.5/gst-libs/gst/allocators/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/allocators/Makefile.am	2015-06-04 17:12:54.478315566 -0700
+@@ -25,6 +25,7 @@
+ GstAllocators-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstallocators-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstAllocators \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/app/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/app/Makefile.am	2015-06-04 17:13:35.116624781 -0700
+@@ -40,6 +40,7 @@
+ GstApp-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstapp-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstApp \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/audio/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/audio/Makefile.am	2015-06-04 17:12:46.980135146 -0700
+@@ -86,6 +86,7 @@
+ GstAudio-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstaudio-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstAudio \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--warn-all \
+--- gst-plugins-base-1.4.5/gst-libs/gst/fft/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/fft/Makefile.am	2015-06-04 17:12:59.675367891 -0700
+@@ -54,6 +54,7 @@
+ GstFft-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstfft-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstFft \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/pbutils/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/pbutils/Makefile.am	2015-06-04 17:13:07.699023960 -0700
+@@ -72,6 +72,7 @@
+ GstPbutils-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstpbutils-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstPbutils \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/riff/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/riff/Makefile.am	2015-06-04 17:13:21.587895211 -0700
+@@ -29,6 +29,7 @@
+ GstRiff-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstriff-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstRiff \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/rtp/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/rtp/Makefile.am	2015-06-04 17:13:24.116265594 -0700
+@@ -33,6 +33,7 @@
+ GstRtp-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstrtp-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstRtp \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/rtsp/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/rtsp/Makefile.am	2015-06-04 17:13:31.284296511 -0700
+@@ -59,6 +59,7 @@
+ GstRtsp-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstrtsp-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstRtsp \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/sdp/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/sdp/Makefile.am	2015-06-04 17:13:12.307563102 -0700
+@@ -22,6 +22,7 @@
+ GstSdp-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstsdp-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstSdp \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/tag/Makefile.am	2014-10-19 04:41:04.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/tag/Makefile.am	2015-06-04 17:13:42.713830718 -0700
+@@ -32,6 +32,7 @@
+ GstTag-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgsttag-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstTag \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+--- gst-plugins-base-1.4.5/gst-libs/gst/video/Makefile.am	2014-10-19 04:42:54.000000000 -0700
++++ gst-plugins-base-1.4.5/gst-libs/gst/video/Makefile.am	2015-06-04 17:13:17.312722219 -0700
+@@ -88,6 +88,7 @@
+ GstVideo-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgstvideo-@GST_API_VERSION@.la
+ 	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+ 		GST_PLUGIN_SYSTEM_PATH_1_0="" GST_PLUGIN_PATH_1_0="" GST_REGISTRY_UPDATE=no \
++		$(INTROSPECTION_SCANNER_ENV) \
+ 		$(INTROSPECTION_SCANNER) -v --namespace GstVideo \
+ 		--nsversion=@GST_API_VERSION@ \
+ 		--strip-prefix=Gst \
+
