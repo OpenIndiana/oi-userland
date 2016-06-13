@@ -26,21 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	2.0.3
+COMPONENT_VERSION=	2.0.4
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e196376e75fe21fdef41b4eaa27ce2e1b2b561e7f7b20328a8e96657cc4465fc
+    sha256:9ea9c82da9942194ebc8fc5c951a02e6d179afa7472cb6d96ca76154510de1a5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
-TPNO=			28025
-
-# Depends on S12-only changes in ON.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_64=
-INSTALL_64=
-PUBLISH_STAMP=
-endif
+TPNO=			29395
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -82,6 +75,14 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
 	./config.status)
+
+# During install libtool will relink libwireshark library so that it
+# requires libwiretap version from system and not from proto area.
+# This workaround is only needed when CBE contains older libwiretap.
+LIBWIRESHARK=$(PROTOUSRLIBDIR64)/libwireshark.so.6.1.$(MICRO_VERSION)
+COMPONENT_POST_INSTALL_ACTION = \
+	(WTAP=`$(ELFEDIT) -e dyn:dump $(LIBWIRESHARK) | grep 'libwiretap' | awk '{print $$4}'` \
+	; $(ELFEDIT) -e "dyn:value -s -with-valstr $$WTAP libwiretap.so.5" $(LIBWIRESHARK) )
 
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
