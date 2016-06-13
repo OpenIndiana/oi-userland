@@ -1,0 +1,16 @@
+g_type_init() is deprecated and is no longer necessary after glib >= 2.35.
+
+XXX file upstream bug
+
+--- libcanberra-0.30/src/canberra-gtk-play.c	2012-09-24 17:21:07.000000000 -0700
++++ libcanberra-0.30/src/canberra-gtk-play.c	2015-07-01 21:21:08.275924571 -0700
+@@ -133,7 +133,9 @@
+ 
+         setlocale(LC_ALL, "");
+ 
++#if !GLIB_CHECK_VERSION(2,35,0)
+         g_type_init();
++#endif
+ 
+         ca_proplist_create(&proplist);
+ 
