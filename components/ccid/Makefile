@@ -23,7 +23,7 @@
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
- 
+
 COMPONENT_NAME=         ccid
 COMPONENT_VERSION=      1.4.20
 COMPONENT_PROJECT_URL=  https://pcsclite.alioth.debian.org/ccid.html
@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE_HASH= sha256:400cb865bb63eed6d7668b2d971cb4644038b9b7a6cda1214
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        library/smartcard
- 
+
 TPNO =                  25483
 
 include $(WS_MAKE_RULES)/common.mk
@@ -42,18 +42,18 @@ POD2MAN_PATH = /usr/perl5/$(PERL_VERSION)/bin
 
 COMPONENT_BUILD_ENV +=  PATH="$(PATH):$(POD2MAN_PATH)"
 
-# binary and shared object creation both require the libusb-1.0 library
-CONFIGURE_ENV += LIBUSB_CFLAGS="-I$(USRINCDIR)/libusb-1.0" 
-CONFIGURE_ENV += LIBUSB_LIBS="-L$(USRLIBDIR64) -R$(USRLIBDIR64) -lusb-1.0" 
+# build against libusb-1.0 library
+CONFIGURE_ENV += LIBUSB_CFLAGS="-I$(USRINCDIR)/libusb-1.0"
+CONFIGURE_ENV += LIBUSB_LIBS="-lusb-1.0"
 
-# compiles as a 64-bit binary and 64-bit library, requires it's own headers for shared objects
-CONFIGURE_ENV += CFLAGS="$(CFLAGS) -m64 -I$(USRINCDIR)/PCSC" 
-CONFIGURE_ENV += LDFLAGS="-L$(USRLIBDIR64) -R$(USRLIBDIR64) -lpcsclite"
+# build against pcsc-lite library
+CONFIGURE_ENV += CFLAGS="$(CFLAGS) -I$(USRINCDIR)/PCSC"
+CONFIGURE_ENV += LDFLAGS="-lpcsclite"
 
-# options needed for configure, otherwise default will install into /usr/local   
+# options needed for configure, otherwise default will install into /usr/local
 CONFIGURE_OPTIONS +=    --exec-prefix=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=    --enable-libusb
 CONFIGURE_OPTIONS +=    --enable-usbdropdir=$(USRLIBDIR64)/pcsc/drivers
-   
+
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/security/pcsc/pcsclite
