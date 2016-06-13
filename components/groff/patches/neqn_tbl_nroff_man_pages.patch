@@ -1,0 +1,179 @@
+This patch comes from in-house and this is Solaris specific patch.
+neqn, tbl and nroff in groff still need to be installed with g prefix because
+ON provides these wrapper scripts. So man pages for these continue to use g prefix.
+
+diff -ruN groff-1.22.3.org/src/preproc/eqn/neqn.man groff-1.22.3/src/preproc/eqn/neqn.man
+--- groff-1.22.3.org/src/preproc/eqn/neqn.man	2014-11-04 00:38:35.233523897 -0800
++++ groff-1.22.3/src/preproc/eqn/neqn.man	2016-05-02 23:54:12.452351937 -0700
+@@ -1,6 +1,6 @@
+-.TH @G@NEQN @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
++.TH GNEQN @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
+ .SH NAME
+-@g@neqn \- format equations for ascii output
++gneqn \- format equations for ascii output
+ .
+ .
+ .\" license
+@@ -27,7 +27,7 @@
+ .SH SYNOPSIS
+ .\" --------------------------------------------------------------------
+ .
+-.B @g@neqn
++.B gneqn
+ [@g@eqn options]
+ .
+ .
+@@ -36,7 +36,7 @@
+ .\" --------------------------------------------------------------------
+ .
+ The
+-.B @g@neqn
++.B gneqn
+ program is actually just a shell script which invokes the
+ .BR @g@eqn (@MAN1EXT@)
+ command with the
+diff -ruN groff-1.22.3.org/src/preproc/tbl/tbl.man groff-1.22.3/src/preproc/tbl/tbl.man
+--- groff-1.22.3.org/src/preproc/tbl/tbl.man	2014-11-04 00:38:35.221524047 -0800
++++ groff-1.22.3/src/preproc/tbl/tbl.man	2016-05-02 23:55:21.943598161 -0700
+@@ -1,7 +1,7 @@
+ '\" t
+-.TH @G@TBL @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
++.TH GTBL @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
+ .SH NAME
+-@g@tbl \- format tables for troff
++gtbl \- format tables for troff
+ .
+ .
+ .\" license
+@@ -30,7 +30,7 @@
+ .SH SYNOPSIS
+ .\" --------------------------------------------------------------------
+ .
+-.SY @g@tbl
++.SY gtbl
+ .OP \-Cv
+ .RI [ files\~ .\|.\|.]
+ .YS
+@@ -845,7 +845,7 @@
+ .
+ .LP
+ Note that
+-.B @g@tbl
++.B gtbl
+ computes the column widths line by line, applying \[rs]w on each entry
+ which isn\[aq]t a text block.
+ .
+@@ -1003,7 +1003,7 @@
+ .SH "INTERACTION WITH @G@EQN"
+ .\" --------------------------------------------------------------------
+ .
+-.BR @g@tbl (@MAN1EXT@)
++.BR gtbl (@MAN1EXT@)
+ should always be called before
+ .BR @g@eqn (@MAN1EXT@)
+ .RB ( groff (@MAN1EXT@)
+@@ -1034,12 +1034,12 @@
+ .
+ .
+ .LP
+-.B @g@tbl
++.B gtbl
+ uses register, string, macro and diversion names beginning with the digit\~\c
+ .BR 3 .
+ .
+ When using
+-.B @g@tbl
++.B gtbl
+ you should avoid using any names beginning with a\~\c
+ .BR 3 .
+ .
+@@ -1049,7 +1049,7 @@
+ .\" --------------------------------------------------------------------
+ .
+ Since
+-.B @g@tbl
++.B gtbl
+ defines its own macros (right before each table) it is necessary to use
+ an \[oq]end-of-macro\[cq] macro.
+ .
+@@ -1075,16 +1075,16 @@
+ .
+ .LP
+ Note, however, that not all features of
+-.B @g@tbl
++.B gtbl
+ can be wrapped into a macro because
+-.B @g@tbl
++.B gtbl
+ sees the input earlier than
+ .BR @g@troff .
+ .
+ For example, number formatting with vertically aligned decimal points
+ fails if those numbers are passed on as macro parameters because
+ decimal point alignment is handled by
+-.B @g@tbl
++.B gtbl
+ itself: It only sees \[oq]\[rs]$1\[cq], \[oq]\[rs]$2\[cq], etc., and
+ therefore can\[aq]t recognize the decimal point.
+ .
+diff -ruN groff-1.22.3.org/src/roff/nroff/nroff.man groff-1.22.3/src/roff/nroff/nroff.man
+--- groff-1.22.3.org/src/roff/nroff/nroff.man	2014-11-04 00:38:35.526520234 -0800
++++ groff-1.22.3/src/roff/nroff/nroff.man	2016-05-02 23:56:10.581654158 -0700
+@@ -1,6 +1,6 @@
+-.TH @G@NROFF @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
++.TH GNROFF @MAN1EXT@ "@MDATE@" "Groff Version @VERSION@"
+ .SH NAME
+-@g@nroff \- emulate nroff command with groff
++gnroff \- emulate nroff command with groff
+ .
+ .
+ .\" --------------------------------------------------------------------
+@@ -38,7 +38,7 @@
+ .    RB "[" "\\$1" "]"
+ ..
+ 
+-.SY @g@nroff
++.SY gnroff
+ .OP \-CchipStUvwW
+ .OP \-d cs
+ .OP \-M dir
+@@ -49,10 +49,10 @@
+ .OP \-T name
+ .RI [ file\~ .\|.\|.]
+ .
+-.SY @g@nroff
++.SY gnroff
+ .B \-\-help
+ .
+-.SY @g@nroff
++.SY gnroff
+ .B \-v
+ |
+ .B \-\-version
+@@ -63,7 +63,7 @@
+ .\" --------------------------------------------------------------------
+ .
+ The
+-.B @g@nroff
++.B gnroff
+ script emulates the
+ .B nroff
+ command using groff.
+@@ -86,7 +86,7 @@
+ .B \-T
+ command line option (which overrides the environment variable)
+ specifies a (valid) device,
+-.B @g@nroff
++.B gnroff
+ checks the current locale to select a default output device.
+ .
+ It first tries the
+@@ -131,7 +131,7 @@
+ .BR @g@troff (@MAN1EXT@).
+ .
+ In addition,
+-.B @g@nroff
++.B gnroff
+ silently ignores the options
+ .BR \-e ,
+ .BR \-q ,

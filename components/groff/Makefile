@@ -26,11 +26,11 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.22.2
+COMPONENT_VERSION=	1.22.3
 COMPONENT_ARCHIVE_HASH= \
-    sha256:380864dac4772e0c0d7b1282d25d0c5fd7f63baf45c87c4657afed22a13d2076
+    sha256:3a48a9d6c97750bfbd535feeb5be0111db6406ddb7bb79fc680809cda6d828a5
 
-TPNO=			8829
+TPNO=			28205
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -40,23 +40,6 @@ PUBLISH_STAMP=
 endif
 
 include $(WS_MAKE_RULES)/gnu-component.mk
-
-# The grog.sh script needs GNU awk not the Solaris one.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's?awk?/usr/gnu/bin/awk?' \
-		$(SOURCE_DIR)/src/roff/grog/grog.sh
-
-# There are _GL_INLINE_HEADER_BEGIN and _GL_INLINE_HEADER_END definitions in
-# .../src/libs/gnulib/lib/wctype.h that are not being processed. There is
-# code in .../src/libs/gnulib/config.h that would do this, but this header
-# files is not included by wctype.h (or the C++ files that use it and fail
-# to build with the Studio compilers:
-# .../src/roff/troff/[env.cpp, input.cpp, node.cpp]
-# See CR #17959391 for more details.
-COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's/_GL_INLINE_HEADER_BEGIN//' \
-		-e 's/_GL_INLINE_HEADER_END//' \
-		$(SOURCE_DIR)/src/libs/gnulib/lib/wctype.in.h
 
 # Deliver scripts from 64-bit build to the 32-bit location.
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
@@ -78,7 +61,29 @@ COMPONENT_PRE_INSTALL_ACTION = \
 	($(MKDIR) $(PROTOUSRBINDIR) )
 
 # Adjust '#!/usr/bin/perl'
-PERL_SCRIPTS= $(PROTOUSRLIBDIR)/groff/groffer/perl_test.pl
+PERL_SCRIPTS= \
+	$(PROTOUSRSHAREDIR)/groff/$(COMPONENT_VERSION)/font/devpdf/util/BuildFoundries \
+	$(PROTOUSRLIBDIR)/groff/grog/subs.pl \
+	$(PROTOUSRLIBDIR)/groff/gpinyin/subs.pl \
+	$(PROTOUSRLIBDIR)/groff/groffer/main_subs.pl \
+	$(PROTOUSRLIBDIR)/groff/groffer/subs.pl \
+	$(PROTOUSRLIBDIR)/groff/groffer/man.pl \
+	$(PROTOUSRBINDIR)/chem \
+	$(PROTOUSRBINDIR)/roff2pdf \
+	$(PROTOUSRBINDIR)/roff2dvi \
+	$(PROTOUSRBINDIR)/roff2text \
+	$(PROTOUSRBINDIR)/roff2html \
+	$(PROTOUSRBINDIR)/groffer \
+	$(PROTOUSRBINDIR)/glilypond \
+	$(PROTOUSRBINDIR)/gperl \
+	$(PROTOUSRBINDIR)/roff2ps \
+	$(PROTOUSRBINDIR)/gpinyin \
+	$(PROTOUSRBINDIR)/roff2x \
+	$(PROTOUSRBINDIR)/gropdf \
+	$(PROTOUSRBINDIR)/grog \
+	$(PROTOUSRBINDIR)/mmroff \
+	$(PROTOUSRBINDIR)/afmtodit \
+	$(PROTOUSRBINDIR)/pdfmom
 
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
