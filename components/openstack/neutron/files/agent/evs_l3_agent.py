@@ -313,6 +313,7 @@ class SolarisRouterInfo(router.RouterInfo):
         # Loop once to ensure that floating ips are configured.
         for fip in floating_ips:
             fip_ip = fip['floating_ip_address']
+            fixed_ip = fip['fixed_ip_address']
             fip_cidr = str(fip_ip) + FLOATING_IP_CIDR_SUFFIX
             new_cidrs.add(fip_cidr)
             fixed_cidr = str(fip['fixed_ip_address']) + '/32'
@@ -341,6 +342,20 @@ class SolarisRouterInfo(router.RouterInfo):
                     except:
                         pass
                     continue
+            else:
+                existing_anchor_rules = self.pf.list_anchor_rules(
+                    [interface_name, fip_ip])
+                # check if existing fip has been reassigned
+                fip_reassigned = any([fixed_ip not in rule for rule in
+                                      existing_anchor_rules])
+                if fip_reassigned:
+                    LOG.debug("Floating ip '%s' reassigned to '%s'",
+                              fip_ip, fixed_ip)
+                    # flush rules associated with old fixed_ip and add
+                    # new rules for the new fixed_ip
+                    self.pf.remove_anchor([interface_name, fip_ip])
+                    self.pf.add_rules([binat_rule], [interface_name,
+                                                     fip_ip])
             fip_statuses[fip['id']] = (
                 l3_constants.FLOATINGIP_STATUS_ACTIVE)
 
