@@ -142,7 +142,6 @@ PERL_SCRIPTS= \
 	$(PROTOUSRBINDIR)/xscreensaver-getimage-video \
 	$(PROTOUSRBINDIR)/xscreensaver-text
 
-REQUIRED_PACKAGES += gnome/accessibility/gnome-a11y-libs
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/desktop/atk
@@ -151,7 +150,6 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-component
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += $(PERL_PKG)
