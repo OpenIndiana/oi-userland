@@ -1,0 +1,15 @@
+In-house patch to address the deprecation warning described in
+Launchpad bug 1499921. A similar upstream patch was abadoned although
+the issue still remains as of Mitaka.
+
+--- cinder-2015.1.2/etc/cinder/api-paste.ini.~1~	2015-10-13 09:27:32.000000000 -0700
++++ cinder-2015.1.2/etc/cinder/api-paste.ini	2016-05-28 20:05:58.568790609 -0700
+@@ -35,7 +35,7 @@ enabled = yes
+ paste.filter_factory = cinder.api.middleware.auth:NoAuthMiddleware.factory
+ 
+ [filter:sizelimit]
+-paste.filter_factory = cinder.api.middleware.sizelimit:RequestBodySizeLimiter.factory
++paste.filter_factory = oslo_middleware.sizelimit:RequestBodySizeLimiter.factory
+ 
+ [app:apiv1]
+ paste.app_factory = cinder.api.v1.router:APIRouter.factory

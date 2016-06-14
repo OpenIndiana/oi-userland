@@ -1,0 +1,89 @@
+This patch has been integrated into Mitaka but has not yet been
+back-ported to Kilo.
+
+commit 000aeb9df77dc61df9f597421a10a77c32bd89b0
+Author: Yusuke Hayashi <hayashi-yusuke@jp.fujitsu.com>
+Date:   Sat Aug 8 23:12:18 2015 +0900
+
+    Update deprecated version of novaclient
+    
+    Update novaclient v1.1 to v2
+    because warning messages are shown as below when executing run_test.sh:
+    
+    UserWarning: Module novaclient.v1_1 is deprecated
+    (taken as a basis for novaclient.v2).
+    The preferable way to get client class or object
+    you can find in novaclient.client module.
+    
+    Change-Id: I26602aceadac9a43d4fbaa14791bf6756eef9874
+    Partial-Bug: #1482873
+
+--- cinder-2015.1.2/cinder/compute/nova.py.~1~	2015-10-13 09:27:35.000000000 -0700
++++ cinder-2015.1.2/cinder/compute/nova.py	2016-03-03 19:10:27.797293767 -0800
+@@ -20,9 +20,9 @@ Handles all requests to Nova.
+ from novaclient import exceptions as nova_exceptions
+ from novaclient import extension
+ from novaclient import service_catalog
+-from novaclient.v1_1 import client as nova_client
+-from novaclient.v1_1.contrib import assisted_volume_snapshots
+-from novaclient.v1_1.contrib import list_extensions
++from novaclient.v2 import client as nova_client
++from novaclient.v2.contrib import assisted_volume_snapshots
++from novaclient.v2.contrib import list_extensions
+ from oslo_config import cfg
+ from oslo_log import log as logging
+ from requests import exceptions as request_exceptions
+@@ -175,6 +175,7 @@ class API(base.Base):
+     def create_volume_snapshot(self, context, volume_id, create_info):
+         nova = novaclient(context, admin_endpoint=True, privileged_user=True)
+ 
++        # pylint: disable-msg=E1101
+         nova.assisted_volume_snapshots.create(
+             volume_id,
+             create_info=create_info)
+@@ -182,6 +183,7 @@ class API(base.Base):
+     def delete_volume_snapshot(self, context, snapshot_id, delete_info):
+         nova = novaclient(context, admin_endpoint=True, privileged_user=True)
+ 
++        # pylint: disable-msg=E1101
+         nova.assisted_volume_snapshots.delete(
+             snapshot_id,
+             delete_info=delete_info)
+--- cinder-2015.1.2/cinder/tests/compute/test_nova.py.~1~	2015-10-13 09:27:35.000000000 -0700
++++ cinder-2015.1.2/cinder/tests/compute/test_nova.py	2016-03-03 19:10:48.985988475 -0800
+@@ -38,7 +38,7 @@ class NovaClientTestCase(test.TestCase):
+         self.override_config('os_privileged_user_name', 'adminuser')
+         self.override_config('os_privileged_user_password', 'strongpassword')
+ 
+-    @mock.patch('novaclient.v1_1.client.Client')
++    @mock.patch('novaclient.v2.client.Client')
+     def test_nova_client_regular(self, p_client):
+         nova.novaclient(self.ctx)
+         p_client.assert_called_once_with(
+@@ -47,7 +47,7 @@ class NovaClientTestCase(test.TestCase):
+             insecure=False, endpoint_type='publicURL', cacert=None,
+             timeout=None, extensions=nova.nova_extensions)
+ 
+-    @mock.patch('novaclient.v1_1.client.Client')
++    @mock.patch('novaclient.v2.client.Client')
+     def test_nova_client_admin_endpoint(self, p_client):
+         nova.novaclient(self.ctx, admin_endpoint=True)
+         p_client.assert_called_once_with(
+@@ -56,7 +56,7 @@ class NovaClientTestCase(test.TestCase):
+             insecure=False, endpoint_type='adminURL', cacert=None,
+             timeout=None, extensions=nova.nova_extensions)
+ 
+-    @mock.patch('novaclient.v1_1.client.Client')
++    @mock.patch('novaclient.v2.client.Client')
+     def test_nova_client_privileged_user(self, p_client):
+         nova.novaclient(self.ctx, privileged_user=True)
+         p_client.assert_called_once_with(
+@@ -65,7 +65,7 @@ class NovaClientTestCase(test.TestCase):
+             insecure=False, endpoint_type='publicURL', cacert=None,
+             timeout=None, extensions=nova.nova_extensions)
+ 
+-    @mock.patch('novaclient.v1_1.client.Client')
++    @mock.patch('novaclient.v2.client.Client')
+     def test_nova_client_custom_region(self, p_client):
+         self.override_config('os_region_name', 'farfaraway')
+         nova.novaclient(self.ctx)
