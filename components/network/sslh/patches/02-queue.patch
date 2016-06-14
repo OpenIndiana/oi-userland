@@ -1,15 +1,15 @@
---- sslh-v1.17/common.c	2015-03-10 09:51:39.000000000 +1300
-+++ tmp/sslh-v1.17/common.c	2016-02-09 11:32:15.894956392 +1300
-@@ -191,7 +191,7 @@
+--- sslh-v1.18/common.c	2016-03-30 08:19:05.000000000 +1300
++++ common.c.patched	2016-06-14 14:45:53.632680759 +1200
+@@ -237,7 +237,7 @@
  }
  
  /* Store some data to write to the queue later */
--int defer_write(struct queue *q, void* data, int data_size) 
-+int defer_write(struct _queue *q, void* data, int data_size) 
+-int defer_write(struct queue *q, void* data, int data_size)
++int defer_write(struct _queue *q, void* data, int data_size)
  {
      char *p;
-     if (verbose) 
-@@ -215,7 +215,7 @@
+     if (verbose)
+@@ -261,7 +261,7 @@
   * Upon success, the number of bytes written is returned.
   * Upon failure, -1 returned (e.g. connexion closed)
   * */
@@ -18,7 +18,7 @@
  {
      int n;
  
-@@ -267,7 +267,7 @@
+@@ -313,7 +313,7 @@
   * returns FD_STALLED if data was read, could not be written, and has been
   * stored in temporary buffer.
   */
@@ -27,8 +27,8 @@
  {
     char buffer[BUFSIZ];
     int target, from, size_r, size_w;
---- sslh-v1.17/common.h	2015-03-10 09:51:39.000000000 +1300
-+++ tmp/sslh-v1.17/common.h	2016-02-09 11:33:03.801863878 +1300
+--- sslh-v1.18/common.h	2016-03-30 08:19:05.000000000 +1300
++++ common.h.patched	2016-06-14 14:47:46.783893561 +1200
 @@ -69,7 +69,7 @@
  
  /* A 'queue' is composed of a file descriptor (which can be read from or
@@ -67,8 +67,8 @@
  
  extern int probing_timeout, verbose, inetd, foreground, 
         background, transparent, numeric;
---- sslh-v1.17/sslh-select.c	2015-03-10 09:51:39.000000000 +1300
-+++ /tmp/sslh-v1.17/sslh-select.c	2016-02-09 11:34:28.904018149 +1300
+--- sslh-v1.18/sslh-select.c	2016-03-30 08:19:05.000000000 +1300
++++ sslh-select.c.patched	2016-06-14 15:19:31.089601717 +1200
 @@ -131,7 +131,7 @@
  /* Connect queue 1 of connection to SSL; returns new file descriptor */
  int connect_queue(struct connection *cnx, fd_set *fds_r, fd_set *fds_w)

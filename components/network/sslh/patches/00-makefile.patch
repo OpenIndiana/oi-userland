@@ -1,19 +1,18 @@
---- Makefile.patched	Tue Mar 10 09:51:39 2015
-+++ sslh-v1.17/Makefile	Fri Mar 18 11:34:46 2016
-@@ -5,9 +5,9 @@
- USELIBWRAP?=	# Use libwrap?
- USELIBCAP=	# Use libcap?
- COV_TEST= 	# Perform test coverage?
--PREFIX=/usr/local
-+PREFIX=/usr
+--- sslh-v1.18/Makefile	2016-03-30 08:19:05.000000000 +1300
++++ Makefile.patched	2016-06-14 16:01:43.478208334 +1200
+@@ -11,8 +11,9 @@
+ PREFIX?=/usr
+ BINDIR?=$(PREFIX)/sbin
+ MANDIR?=$(PREFIX)/share/man/man8
++DOCDIR?=$(PREFIX)/share/doc
  
 -MAN=sslh.8.gz	# man page name
 +MAN=sslh.8	# man page name
  
  # End of configuration -- the rest should take care of
  # itself
-@@ -59,7 +59,7 @@
- 	$(CC) $(CFLAGS) $(LDFLAGS) -o echosrv echosrv.o probe.o common.o $(LIBS)
+@@ -82,7 +83,7 @@
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o echosrv echosrv.o probe.o common.o tls.o $(LIBS)
  
  $(MAN): sslh.pod Makefile
 -	pod2man --section=8 --release=$(VERSION) --center=" " sslh.pod | gzip -9 - > $(MAN)
@@ -21,3 +20,15 @@
  
  # Create release: export clean tree and tag current
  # configuration
+@@ -93,8 +94,11 @@
+ install: sslh $(MAN)
+ 	mkdir -p $(DESTDIR)/$(BINDIR)
+ 	mkdir -p $(DESTDIR)/$(MANDIR)
++	mkdir -p $(DESTDIR)/$(DOCDIR)/sslh
+ 	install -p sslh-fork $(DESTDIR)/$(BINDIR)/sslh
+ 	install -p -m 0644 $(MAN) $(DESTDIR)/$(MANDIR)/$(MAN)
++	install -p -m 0644 -t $(DESTDIR)/$(DOCDIR)/sslh *.cfg
++	install -p -m 0644 -t $(DESTDIR)/$(DOCDIR)/sslh README*
+ 
+ # "extended" install for Debian: install startup script
+ install-debian: install sslh $(MAN)
