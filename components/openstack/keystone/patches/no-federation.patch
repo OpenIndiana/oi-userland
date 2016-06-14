@@ -1,0 +1,14 @@
+In-house patch to remove the Federation extension from the default
+Keystone pipeline as this is not currently supported on Solaris.
+
+--- keystone-2015.1.2/etc/keystone-paste.ini.~1~	2015-10-13 10:18:02.000000000 -0700
++++ keystone-2015.1.2/etc/keystone-paste.ini	2016-05-28 23:30:44.744506171 -0700
+@@ -79,7 +79,7 @@ pipeline = sizelimit url_normalize reque
+ [pipeline:api_v3]
+ # The last item in this pipeline must be service_v3 or an equivalent
+ # application. It cannot be a filter.
+-pipeline = sizelimit url_normalize request_id build_auth_context token_auth admin_token_auth json_body ec2_extension_v3 s3_extension simple_cert_extension revoke_extension federation_extension oauth1_extension endpoint_filter_extension endpoint_policy_extension service_v3
++pipeline = sizelimit url_normalize request_id build_auth_context token_auth admin_token_auth json_body ec2_extension_v3 s3_extension simple_cert_extension revoke_extension oauth1_extension endpoint_filter_extension endpoint_policy_extension service_v3
+ 
+ [app:public_version_service]
+ paste.app_factory = keystone.service:public_version_app_factory

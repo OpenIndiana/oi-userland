@@ -1,0 +1,27 @@
+In-house patch to further adjust Heat's config-generator.conf file to
+account for which modules are actually imported for each service.
+These changes are have not yet been submitted upstream.
+
+--- heat-2015.1.2/config-generator.conf.~1~	2015-10-13 09:51:53.000000000 -0700
++++ heat-2015.1.2/config-generator.conf	2016-03-18 00:35:54.956692584 -0700
+@@ -1,6 +1,8 @@
+ [DEFAULT]
+ output_file = etc/heat/heat.conf.sample
+ wrap_width = 79
++namespace = heat.api.aws.ec2token
++namespace = heat.api.middleware.ssl
+ namespace = heat.common.config
+ namespace = heat.common.crypt
+ namespace = heat.common.heat_keystoneclient
+@@ -10,9 +12,8 @@ namespace = heat.engine.notification
+ namespace = heat.engine.resources
+ namespace = heat.openstack.common.eventlet_backdoor
+ namespace = heat.openstack.common.policy
+-namespace = heat.api.middleware.ssl
+-namespace = heat.api.aws.ec2token
+ namespace = keystonemiddleware.auth_token
+-namespace = oslo.messaging
+ namespace = oslo.db
+ namespace = oslo.log
++namespace = oslo.messaging
++namespace = oslo.middleware
