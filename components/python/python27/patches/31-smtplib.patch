@@ -1,0 +1,18 @@
+This patch comes from upstream:
+
+https://hg.python.org/cpython/rev/d590114c2394
+
+--- a/Lib/smtplib.py	Sun Nov 08 01:03:52 2015 -0500
++++ b/Lib/smtplib.py	Sat Jun 11 13:18:56 2016 -0700
+@@ -656,6 +656,11 @@
+             self.ehlo_resp = None
+             self.esmtp_features = {}
+             self.does_esmtp = 0
++        else:
++            # RFC 3207:
++            # 501 Syntax error (no parameters allowed)
++            # 454 TLS not available due to temporary reason
++            raise SMTPResponseException(resp, reply)
+         return (resp, reply)
+ 
+     def sendmail(self, from_addr, to_addrs, msg, mail_options=[],
