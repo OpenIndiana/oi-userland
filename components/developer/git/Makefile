@@ -23,11 +23,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	2.8.3
-COMPONENT_PROJECT_URL=	http://git-scm.com/
+COMPONENT_VERSION=	2.9.0
+COMPONENT_PROJECT_URL=	https://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:7d8e6c274a88b4a73b3c98c70d3438ec12871300ce8bb4ca179ea19fcf74aa91
+COMPONENT_ARCHIVE_HASH=	sha256:f41fa97949948fbf49af94a43d779e072a5452c6b5039d86ffa41ebab747b409
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 COMPONENT_FMRI=		developer/versioning/git
@@ -41,7 +41,7 @@ COMPONENT_CLASSIFICATION=	Development/Source Code Management
 # man pages are a separate archive
 #
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH_1 = sha256:9d25e10c2bc327fdc59820bb00075799487095059d652fb32fea1cdb3a898bc6
+COMPONENT_ARCHIVE_HASH_1 = sha256:dc85c1afa923fd709d651a49d0a720d50a3c248cb16c6c09517cceae88fe8445
 COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -77,7 +77,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(BUILD_DIR)/.manpages $(BUILD_DIR_32)/.bash-completion
+install:	$(INSTALL_32) $(BUILD_DIR)/.manpages $(BUILD_DIR_32)/.contrib
 
 # There are some known issues around I18N.
 test:	$(TEST_32)
@@ -106,10 +106,11 @@ $(BUILD_DIR)/.manpages:
 	done
 	$(TOUCH) $@
 
-$(BUILD_DIR_32)/.bash-completion:
+$(BUILD_DIR_32)/.contrib:
 	$(MKDIR) $(PROTOUSRSHAREDIR)/bash-completion/completions
+	$(CP) -RLp $(BUILD_DIR_32)/contrib/diff-highlight/diff-highlight $(PROTOUSRBINDIR)/diff-highlight
 	$(CP) -RLp $(BUILD_DIR_32)/contrib/completion/git-completion.bash $(PROTOUSRSHAREDIR)/bash-completion/completions/git
-	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -s git gitk)
+	(cd $(PROTOUSRSHAREDIR)/bash-completion/completions; $(LN) -sf git gitk)
 	$(TOUCH) $@
 
 REQUIRED_PACKAGES += SUNWcs
