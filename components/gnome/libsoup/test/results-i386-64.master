@@ -1,0 +1,527 @@
+SKIP: auth-test 1 /auth/main-tests # SKIP apache is not available
+SKIP: auth-test 2 /auth/relogin-tests # SKIP apache is not available
+SKIP: auth-test 3 /auth/pipelined-auth # SKIP apache is not available
+SKIP: auth-test 4 /auth/digest-expiration # SKIP apache is not available
+PASS: auth-test 5 /auth/select-auth
+PASS: auth-test 6 /auth/auth-close
+SKIP: auth-test 7 /auth/infinite-auth # SKIP apache is not available
+PASS: auth-test 8 /auth/disappearing-auth
+SKIP: auth-test 9 /auth/async-auth/good-password # SKIP apache is not available
+SKIP: auth-test 10 /auth/async-auth/bad-password # SKIP apache is not available
+SKIP: auth-test 11 /auth/async-auth/no-password # SKIP apache is not available
+PASS: cache-test 1 /cache/basics
+PASS: cache-test 2 /cache/cancellation
+PASS: cache-test 3 /cache/refcounting
+PASS: cache-test 4 /cache/headers
+PASS: cache-test 5 /cache/leaks
+PASS: chunk-test 1 /chunks/response
+PASS: chunk-test 2 /chunks/temporary
+PASS: chunk-test 3 /chunks/large
+PASS: chunk-test 4 /chunks/request/unstreamed
+PASS: chunk-test 5 /chunks/request/proper-streaming
+PASS: chunk-test 6 /chunks/request/hacky-streaming
+PASS: chunk-test 7 /chunks/request/proper-streaming/restart
+PASS: chunk-test 8 /chunks/request/hacky-streaming/restart
+PASS: chunk-io-test 1 /chunk-io
+PASS: coding-test 1 /coding/message/plain
+PASS: coding-test 2 /coding/message/gzip
+PASS: coding-test 3 /coding/message/deflate
+PASS: coding-test 4 /coding/message/deflate-raw
+PASS: coding-test 5 /coding/message/empty
+PASS: coding-test 6 /coding/message/gzip/with-junk
+PASS: coding-test 7 /coding/message/gzip/bad-server
+PASS: coding-test 8 /coding/message/deflate/with-junk
+PASS: coding-test 9 /coding/message/deflate/bad-server
+PASS: coding-test 10 /coding/message/deflate-raw/bad-server
+PASS: coding-test 11 /coding/request/plain
+PASS: coding-test 12 /coding/request/gzip
+PASS: coding-test 13 /coding/request/deflate
+PASS: coding-test 14 /coding/request/deflate-raw
+PASS: coding-test 15 /coding/request/empty
+PASS: coding-test 16 /coding/request/gzip/with-junk
+PASS: coding-test 17 /coding/request/gzip/bad-server
+PASS: coding-test 18 /coding/request/deflate/with-junk
+PASS: coding-test 19 /coding/request/deflate/bad-server
+PASS: coding-test 20 /coding/request/deflate-raw/bad-server
+PASS: connection-test 1 /connection/content-length-framing
+PASS: connection-test 2 /connection/persistent-connection-timeout
+PASS: connection-test 3 /connection/max-conns
+PASS: connection-test 4 /connection/non-persistent
+PASS: connection-test 5 /connection/non-idempotent
+SKIP: connection-test 6 /connection/state # SKIP apache is not available
+SKIP: connection-test 7 /connection/event # SKIP apache is not available
+PASS: context-test 1 /context/multiple
+PASS: context-test 2 /context/blocking/explicit
+PASS: context-test 3 /context/blocking/thread-default
+PASS: context-test 4 /context/nested/explicit
+PASS: context-test 5 /context/nested/thread-default
+PASS: continue-test 1 /continue/unauth_short_noexpect_nopass
+PASS: continue-test 2 /continue/unauth_long_noexpect_nopass
+PASS: continue-test 3 /continue/unauth_short_expect_nopass
+PASS: continue-test 4 /continue/unauth_long_expect_nopass
+PASS: continue-test 5 /continue/auth_short_noexpect_nopass
+PASS: continue-test 6 /continue/auth_long_noexpect_nopass
+PASS: continue-test 7 /continue/auth_short_expect_nopass
+PASS: continue-test 8 /continue/auth_long_expect_nopass
+PASS: continue-test 9 /continue/auth_short_noexpect_pass
+PASS: continue-test 10 /continue/auth_long_noexpect_pass
+PASS: continue-test 11 /continue/auth_short_expect_pass
+PASS: continue-test 12 /continue/auth_long_expect_pass
+PASS: cookies-test 1 /cookies/accept-policy
+PASS: cookies-test 2 /cookies/parsing
+PASS: date 1 /date/good/Sat, 06 Nov 2004 08:09:07 GMT
+PASS: date 2 /date/good/Sat, 06-Nov-2004 08:09:07 GMT
+PASS: date 3 /date/good/Sat, 6 Nov 2004 08:09:07 -0430
+PASS: date 4 /date/good/20041106T080907
+PASS: date 5 /date/good/2004-11-06T08:09:07
+PASS: date 6 /date/good/20041106T08:09:07
+PASS: date 7 /date/ok/Sat, 06 Nov 2004 08:09:07 GMT
+PASS: date 8 /date/ok/Sat, 6 Nov 2004 08:09:07 GMT
+PASS: date 9 /date/ok/Sat,  6 Nov 2004 08:09:07 GMT
+PASS: date 10 /date/ok/Sat, 06 Nov 2004 08:09:07
+PASS: date 11 /date/ok/06 Nov 2004 08:09:07 GMT
+PASS: date 12 /date/ok/SAT, 06 NOV 2004 08:09:07 +1000
+PASS: date 13 /date/ok/Saturday, 06-Nov-04 08:09:07 GMT
+PASS: date 14 /date/ok/Saturday, 6-Nov-04 08:09:07 GMT
+PASS: date 15 /date/ok/Saturday,  6-Nov-04 08:09:07 GMT
+PASS: date 16 /date/ok/Saturday, 06-Nov-104 08:09:07 GMT
+PASS: date 17 /date/ok/Saturday, 06-Nov-2004 08:09:07 GMT
+PASS: date 18 /date/ok/Saturday, 6-Nov-2004 08:09:07 GMT
+PASS: date 19 /date/ok/Saturday,  6-Nov-2004 08:09:07 GMT
+PASS: date 20 /date/ok/Saturday, 06-Nov-04 08:09:07
+PASS: date 21 /date/ok/06-Nov-04 08:09:07 GMT
+PASS: date 22 /date/ok/Sat Nov  6 08:09:07 2004
+PASS: date 23 /date/ok/Sat Nov 06 08:09:07 2004
+PASS: date 24 /date/ok/Sat Nov 6 08:09:07 2004
+PASS: date 25 /date/ok/Sat Nov  6 08:09:07 2004 GMT
+PASS: date 26 /date/ok/2004-11-06T08:09:07Z
+PASS: date 27 /date/ok/20041106T08:09:07Z
+PASS: date 28 /date/ok/20041106T08:09:07+00:00
+PASS: date 29 /date/ok/20041106T080907+00:00
+PASS: date 30 /date/ok/Sat, 06-Nov-2004 08:09:07 GMT
+PASS: date 31 /date/ok/Sat, 6-Nov-2004 08:09:07 GMT
+PASS: date 32 /date/ok/Sat,  6-Nov-2004 08:09:07 GMT
+PASS: date 33 /date/ok/Sat, 06-Nov-2004 08:09:07
+PASS: date 34 /date/ok/Sat, 06-Nov-04 08:09:07 GMT
+PASS: date 35 /date/ok/Sat, 6-Nov-04 08:09:07 GMT
+PASS: date 36 /date/ok/Sat,  6-Nov-04 08:09:07 GMT
+PASS: date 37 /date/ok/Sat, 06-Nov-104 08:09:07 GMT
+PASS: date 38 /date/ok/Sat, 06-Nov-04 08:09:07
+PASS: date 39 /date/ok/Sat 06-Nov-2004  08:9:07
+PASS: date 40 /date/ok/Saturday, 06-Nov-04 8:9:07 GMT
+PASS: date 41 /date/ok/Sat, 06 Nov 2004 08:09:7 GMT
+PASS: date 42 /date/ok/1099728547
+PASS: date 43 /date/bad/, 06 Nov 2004 08:09:07 GMT
+PASS: date 44 /date/bad/Sat, Nov 2004 08:09:07 GMT
+PASS: date 45 /date/bad/Sat, 06 2004 08:09:07 GMT
+PASS: date 46 /date/bad/Sat, 06 Nov 08:09:07 GMT
+PASS: date 47 /date/bad/Sat, 06 Nov 2004 :09:07 GMT
+PASS: date 48 /date/bad/Sat, 06 Nov 2004 09:07 GMT
+PASS: date 49 /date/bad/Sat, 06 Nov 2004 08::07 GMT
+PASS: date 50 /date/bad/Sat, 06 Nov 2004 08:09: GMT
+PASS: date 51 /date/bad/, 06-Nov-04 08:09:07 GMT
+PASS: date 52 /date/bad/Saturday, -Nov-04 08:09:07 GMT
+PASS: date 53 /date/bad/Saturday, Nov-04 08:09:07 GMT
+PASS: date 54 /date/bad/Saturday, 06-04 08:09:07 GMT
+PASS: date 55 /date/bad/Saturday, 06--04 08:09:07 GMT
+PASS: date 56 /date/bad/Saturday, 06-Nov- 08:09:07 GMT
+PASS: date 57 /date/bad/Saturday, 06-Nov 08:09:07 GMT
+PASS: date 58 /date/bad/Saturday, 06-Nov-04 :09:07 GMT
+PASS: date 59 /date/bad/Saturday, 06-Nov-04 09:07 GMT
+PASS: date 60 /date/bad/Saturday, 06-Nov-04 08::07 GMT
+PASS: date 61 /date/bad/Saturday, 06-Nov-04 08:09: GMT
+PASS: date 62 /date/bad/Nov  6 08:09:07 2004
+PASS: date 63 /date/bad/Sat  6 08:09:07 2004
+PASS: date 64 /date/bad/Sat Nov 08:09:07 2004
+PASS: date 65 /date/bad/Sat Nov  6 :09:07 2004
+PASS: date 66 /date/bad/Sat Nov  6 09:07 2004
+PASS: date 67 /date/bad/Sat Nov  6 08::07 2004
+PASS: date 68 /date/bad/Sat Nov  6 08:09: 2004
+PASS: date 69 /date/bad/Sat Nov  6 08:09:07
+PASS: date 70 /date/bad/Sat Nov  6 08:09:07 GMT 2004
+PASS: date 71 /date/conversions/Sat, 06 Nov 2004 08:09:07 GMT
+PASS: date 72 /date/conversions/Sat, 6 Nov 2004 08:09:07 +0000
+PASS: date 73 /date/conversions/Sat, 6 Nov 2004 08:09:07 +0430
+PASS: date 74 /date/conversions/Sat, 6 Nov 2004 08:09:07 -0430
+PASS: date 75 /date/conversions/Sat, 6 Nov 2004 08:09:07 -0000
+PASS: date 76 /date/conversions/2004-11-06T08:09:07Z
+PASS: date 77 /date/conversions/2004-11-06T08:09:07+04:30
+PASS: date 78 /date/conversions/2004-11-06T08:09:07-04:30
+PASS: date 79 /date/conversions/2004-11-06T08:09:07
+PASS: forms-test 1 /forms/hello
+PASS: forms-test 2 /forms/decode
+PASS: forms-test 3 /forms/md5/curl
+PASS: forms-test 4 /forms/md5/libsoup
+PASS: header-parsing 1 /header-parsing/request
+PASS: header-parsing 2 /header-parsing/response
+PASS: header-parsing 3 /header-parsing/qvalue
+PASS: header-parsing 4 /header-parsing/content-disposition
+PASS: header-parsing 5 /header-parsing/content-type
+PASS: header-parsing 6 /header-parsing/append-param
+PASS: header-parsing 7 /header-parsing/bad
+PASS: misc-test 1 /misc/host
+PASS: misc-test 2 /misc/msg-reuse
+PASS: misc-test 3 /misc/accept-language
+PASS: misc-test 4 /misc/aliases
+PASS: misc-test 5 /misc/idle-on-dispose
+PASS: misc-test 6 /misc/pause-abort
+PASS: misc-test 7 /misc/pause-cancel
+PASS: misc-test 8 /misc/callback-unref/msg
+PASS: misc-test 9 /misc/callback-unref/req
+PASS: misc-test 10 /misc/early-abort/msg
+PASS: misc-test 11 /misc/early-abort/req
+PASS: misc-test 12 /misc/cancel-while-reading/msg
+PASS: misc-test 13 /misc/cancel-while-reading/req/immediate
+PASS: misc-test 14 /misc/cancel-while-reading/req/delayed
+PASS: misc-test 15 /misc/cancel-while-reading/req/preemptive
+PASS: misc-test 16 /misc/stealing/async
+PASS: misc-test 17 /misc/stealing/sync
+PASS: multipart-test 1 /multipart/no
+PASS: multipart-test 2 /multipart/sync
+PASS: multipart-test 3 /multipart/async
+PASS: multipart-test 4 /multipart/async-small-reads
+PASS: no-ssl-test 1 /no-ssl/session-properties
+PASS: no-ssl-test 2 /no-ssl/request-error
+PASS: ntlm-test 1 /ntlm/retry
+PASS: ntlm-test 2 /ntlm/builtin/none
+PASS: ntlm-test 3 /ntlm/builtin/alice
+PASS: ntlm-test 4 /ntlm/builtin/bob
+PASS: ntlm-test 5 /ntlm/builtin/basic
+PASS: ntlm-test 6 /ntlm/winbind/none
+PASS: ntlm-test 7 /ntlm/winbind/alice
+PASS: ntlm-test 8 /ntlm/winbind/bob
+PASS: ntlm-test 9 /ntlm/winbind/basic
+PASS: ntlm-test 10 /ntlm/fallback/none
+PASS: ntlm-test 11 /ntlm/fallback/alice
+PASS: ntlm-test 12 /ntlm/fallback/bob
+PASS: ntlm-test 13 /ntlm/fallback/basic
+PASS: ntlm-test 14 /ntlm/ssp/none
+PASS: ntlm-test 15 /ntlm/ssp/alice
+PASS: ntlm-test 16 /ntlm/ssp/bob
+PASS: ntlm-test 17 /ntlm/ssp/basic
+SKIP: proxy-test 1 /proxy/fragment # SKIP apache is not available
+SKIP: proxy-test 2 /proxy/redirect # SKIP apache is not available
+SKIP: proxy-test 3 /proxy/async/GET -> 200 # SKIP apache is not available
+SKIP: proxy-test 4 /proxy/async/GET -> 404 # SKIP apache is not available
+SKIP: proxy-test 5 /proxy/async/GET -> 401 -> 200 # SKIP apache is not available
+SKIP: proxy-test 6 /proxy/async/GET -> 401 -> 401 # SKIP apache is not available
+SKIP: proxy-test 7 /proxy/async/GET -> 403 # SKIP apache is not available
+SKIP: proxy-test 8 /proxy/async/GET -> 200 (unproxied) # SKIP apache is not available
+SKIP: proxy-test 9 /proxy/sync/GET -> 200 # SKIP apache is not available
+SKIP: proxy-test 10 /proxy/sync/GET -> 404 # SKIP apache is not available
+SKIP: proxy-test 11 /proxy/sync/GET -> 401 -> 200 # SKIP apache is not available
+SKIP: proxy-test 12 /proxy/sync/GET -> 401 -> 401 # SKIP apache is not available
+SKIP: proxy-test 13 /proxy/sync/GET -> 403 # SKIP apache is not available
+SKIP: proxy-test 14 /proxy/sync/GET -> 200 (unproxied) # SKIP apache is not available
+SKIP: pull-api 1 /pull-api/sync-async # SKIP apache is not available
+SKIP: pull-api 2 /pull-api/async/fast # SKIP apache is not available
+SKIP: pull-api 3 /pull-api/async/slow # SKIP apache is not available
+SKIP: range-test 1 /ranges/apache # SKIP apache is not available
+PASS: range-test 2 /ranges/libsoup
+PASS: redirect-test 1 /redirect/async/msg/0-GET-301
+PASS: redirect-test 2 /redirect/async/msg/1-GET-302
+PASS: redirect-test 3 /redirect/async/msg/2-GET-303
+PASS: redirect-test 4 /redirect/async/msg/3-GET-307
+PASS: redirect-test 5 /redirect/async/msg/4-HEAD-301
+PASS: redirect-test 6 /redirect/async/msg/5-HEAD-302
+PASS: redirect-test 7 /redirect/async/msg/6-HEAD-303
+PASS: redirect-test 8 /redirect/async/msg/7-HEAD-307
+PASS: redirect-test 9 /redirect/async/msg/8-GET-300
+PASS: redirect-test 10 /redirect/async/msg/9-GET-304
+PASS: redirect-test 11 /redirect/async/msg/10-GET-305
+PASS: redirect-test 12 /redirect/async/msg/11-GET-306
+PASS: redirect-test 13 /redirect/async/msg/12-GET-308
+PASS: redirect-test 14 /redirect/async/msg/13-HEAD-300
+PASS: redirect-test 15 /redirect/async/msg/14-HEAD-304
+PASS: redirect-test 16 /redirect/async/msg/15-HEAD-305
+PASS: redirect-test 17 /redirect/async/msg/16-HEAD-306
+PASS: redirect-test 18 /redirect/async/msg/17-HEAD-308
+PASS: redirect-test 19 /redirect/async/msg/18-GET-301
+PASS: redirect-test 20 /redirect/async/msg/19-HEAD-301
+PASS: redirect-test 21 /redirect/async/msg/20-POST-301
+PASS: redirect-test 22 /redirect/async/msg/21-POST-302
+PASS: redirect-test 23 /redirect/async/msg/22-POST-303
+PASS: redirect-test 24 /redirect/async/msg/23-POST-307
+PASS: redirect-test 25 /redirect/async/msg/24-GET-302
+PASS: redirect-test 26 /redirect/async/msg/25-GET-302
+PASS: redirect-test 27 /redirect/async/msg/26-GET-302
+PASS: redirect-test 28 /redirect/async/msg/27-GET-302
+PASS: redirect-test 29 /redirect/async/req/0-GET-301
+PASS: redirect-test 30 /redirect/async/req/1-GET-302
+PASS: redirect-test 31 /redirect/async/req/2-GET-303
+PASS: redirect-test 32 /redirect/async/req/3-GET-307
+PASS: redirect-test 33 /redirect/async/req/4-HEAD-301
+PASS: redirect-test 34 /redirect/async/req/5-HEAD-302
+PASS: redirect-test 35 /redirect/async/req/6-HEAD-303
+PASS: redirect-test 36 /redirect/async/req/7-HEAD-307
+PASS: redirect-test 37 /redirect/async/req/8-GET-300
+PASS: redirect-test 38 /redirect/async/req/9-GET-304
+PASS: redirect-test 39 /redirect/async/req/10-GET-305
+PASS: redirect-test 40 /redirect/async/req/11-GET-306
+PASS: redirect-test 41 /redirect/async/req/12-GET-308
+PASS: redirect-test 42 /redirect/async/req/13-HEAD-300
+PASS: redirect-test 43 /redirect/async/req/14-HEAD-304
+PASS: redirect-test 44 /redirect/async/req/15-HEAD-305
+PASS: redirect-test 45 /redirect/async/req/16-HEAD-306
+PASS: redirect-test 46 /redirect/async/req/17-HEAD-308
+PASS: redirect-test 47 /redirect/async/req/18-GET-301
+PASS: redirect-test 48 /redirect/async/req/19-HEAD-301
+PASS: redirect-test 49 /redirect/async/req/20-POST-301
+PASS: redirect-test 50 /redirect/async/req/21-POST-302
+PASS: redirect-test 51 /redirect/async/req/22-POST-303
+PASS: redirect-test 52 /redirect/async/req/23-POST-307
+PASS: redirect-test 53 /redirect/async/req/24-GET-302
+PASS: redirect-test 54 /redirect/async/req/25-GET-302
+PASS: redirect-test 55 /redirect/async/req/26-GET-302
+PASS: redirect-test 56 /redirect/async/req/27-GET-302
+PASS: redirect-test 57 /redirect/sync/msg/0-GET-301
+PASS: redirect-test 58 /redirect/sync/msg/1-GET-302
+PASS: redirect-test 59 /redirect/sync/msg/2-GET-303
+PASS: redirect-test 60 /redirect/sync/msg/3-GET-307
+PASS: redirect-test 61 /redirect/sync/msg/4-HEAD-301
+PASS: redirect-test 62 /redirect/sync/msg/5-HEAD-302
+PASS: redirect-test 63 /redirect/sync/msg/6-HEAD-303
+PASS: redirect-test 64 /redirect/sync/msg/7-HEAD-307
+PASS: redirect-test 65 /redirect/sync/msg/8-GET-300
+PASS: redirect-test 66 /redirect/sync/msg/9-GET-304
+PASS: redirect-test 67 /redirect/sync/msg/10-GET-305
+PASS: redirect-test 68 /redirect/sync/msg/11-GET-306
+PASS: redirect-test 69 /redirect/sync/msg/12-GET-308
+PASS: redirect-test 70 /redirect/sync/msg/13-HEAD-300
+PASS: redirect-test 71 /redirect/sync/msg/14-HEAD-304
+PASS: redirect-test 72 /redirect/sync/msg/15-HEAD-305
+PASS: redirect-test 73 /redirect/sync/msg/16-HEAD-306
+PASS: redirect-test 74 /redirect/sync/msg/17-HEAD-308
+PASS: redirect-test 75 /redirect/sync/msg/18-GET-301
+PASS: redirect-test 76 /redirect/sync/msg/19-HEAD-301
+PASS: redirect-test 77 /redirect/sync/msg/20-POST-301
+PASS: redirect-test 78 /redirect/sync/msg/21-POST-302
+PASS: redirect-test 79 /redirect/sync/msg/22-POST-303
+PASS: redirect-test 80 /redirect/sync/msg/23-POST-307
+PASS: redirect-test 81 /redirect/sync/msg/24-GET-302
+PASS: redirect-test 82 /redirect/sync/msg/25-GET-302
+PASS: redirect-test 83 /redirect/sync/msg/26-GET-302
+PASS: redirect-test 84 /redirect/sync/msg/27-GET-302
+PASS: redirect-test 85 /redirect/sync/req/0-GET-301
+PASS: redirect-test 86 /redirect/sync/req/1-GET-302
+PASS: redirect-test 87 /redirect/sync/req/2-GET-303
+PASS: redirect-test 88 /redirect/sync/req/3-GET-307
+PASS: redirect-test 89 /redirect/sync/req/4-HEAD-301
+PASS: redirect-test 90 /redirect/sync/req/5-HEAD-302
+PASS: redirect-test 91 /redirect/sync/req/6-HEAD-303
+PASS: redirect-test 92 /redirect/sync/req/7-HEAD-307
+PASS: redirect-test 93 /redirect/sync/req/8-GET-300
+PASS: redirect-test 94 /redirect/sync/req/9-GET-304
+PASS: redirect-test 95 /redirect/sync/req/10-GET-305
+PASS: redirect-test 96 /redirect/sync/req/11-GET-306
+PASS: redirect-test 97 /redirect/sync/req/12-GET-308
+PASS: redirect-test 98 /redirect/sync/req/13-HEAD-300
+PASS: redirect-test 99 /redirect/sync/req/14-HEAD-304
+PASS: redirect-test 100 /redirect/sync/req/15-HEAD-305
+PASS: redirect-test 101 /redirect/sync/req/16-HEAD-306
+PASS: redirect-test 102 /redirect/sync/req/17-HEAD-308
+PASS: redirect-test 103 /redirect/sync/req/18-GET-301
+PASS: redirect-test 104 /redirect/sync/req/19-HEAD-301
+PASS: redirect-test 105 /redirect/sync/req/20-POST-301
+PASS: redirect-test 106 /redirect/sync/req/21-POST-302
+PASS: redirect-test 107 /redirect/sync/req/22-POST-303
+PASS: redirect-test 108 /redirect/sync/req/23-POST-307
+PASS: redirect-test 109 /redirect/sync/req/24-GET-302
+PASS: redirect-test 110 /redirect/sync/req/25-GET-302
+PASS: redirect-test 111 /redirect/sync/req/26-GET-302
+PASS: redirect-test 112 /redirect/sync/req/27-GET-302
+PASS: requester-test 1 /requester/simple/SoupSession
+PASS: requester-test 2 /requester/simple/SoupSessionAsync
+PASS: requester-test 3 /requester/threaded/SoupSession
+PASS: requester-test 4 /requester/threaded/SoupSessionAsync
+PASS: requester-test 5 /requester/context/SoupSession
+PASS: requester-test 6 /requester/context/SoupSessionAsync
+PASS: requester-test 7 /requester/sync/SoupSession
+PASS: requester-test 8 /requester/sync/SoupSessionSync
+PASS: requester-test 9 /requester/null-char/SoupSession
+PASS: requester-test 10 /requester/null-char/SoupSessionAsync
+PASS: requester-test 11 /requester/close/SoupSessionAsync
+PASS: requester-test 12 /requester/close/SoupSessionSync
+PASS: resource-test 1 /resource/sync/file
+PASS: resource-test 2 /resource/sync/data
+PASS: resource-test 3 /resource/sync/gresource
+PASS: resource-test 4 /resource/async/file
+PASS: resource-test 5 /resource/async/data
+PASS: resource-test 6 /resource/async/gresource
+PASS: session-test 1 /session/SoupSession
+PASS: session-test 2 /session/SoupSessionAsync
+PASS: session-test 3 /session/SoupSessionSync
+PASS: session-test 4 /session/priority
+PASS: session-test 5 /session/property
+PASS: server-auth-test 1 /server-auth/none/bad-user
+PASS: server-auth-test 2 /server-auth/none/good-user/bad-password
+PASS: server-auth-test 3 /server-auth/none/good-user/good-password
+PASS: server-auth-test 4 /server-auth/basic/bad-user
+PASS: server-auth-test 5 /server-auth/basic/good-user/bad-password
+PASS: server-auth-test 6 /server-auth/basic/good-user/good-password
+PASS: server-auth-test 7 /server-auth/digest/bad-user
+PASS: server-auth-test 8 /server-auth/digest/good-user/bad-password
+PASS: server-auth-test 9 /server-auth/digest/good-user/good-password
+PASS: server-auth-test 10 /server-auth/basic+digest/bad-user
+PASS: server-auth-test 11 /server-auth/basic+digest/good-user/bad-password
+PASS: server-auth-test 12 /server-auth/basic+digest/good-user/good-password
+PASS: server-test 1 /server/OPTIONS *
+PASS: server-test 2 /server/aliases
+PASS: server-test 3 /server/..-in-path
+PASS: server-test 4 /server/ipv6
+PASS: server-test 5 /server/multi/port
+PASS: server-test 6 /server/multi/scheme
+PASS: server-test 7 /server/multi/family
+PASS: server-test 8 /server/import/gsocket
+PASS: server-test 9 /server/import/fd
+PASS: server-test 10 /server/accept/iostream
+PASS: server-test 11 /server/fail/404
+PASS: server-test 12 /server/fail/500
+PASS: server-test 13 /server/fail/500-pause
+PASS: server-test 14 /server/early/stream
+PASS: server-test 15 /server/early/respond
+PASS: server-test 16 /server/early/multi
+PASS: server-test 17 /server/steal/CONNECT
+PASS: sniffing-test 1 /sniffing/nosniff
+PASS: sniffing-test 2 /sniffing/multiple-headers
+PASS: sniffing-test 3 /sniffing/parameters
+PASS: sniffing-test 4 /sniffing/disabled
+PASS: sniffing-test 5 /sniffing/signals/no-sniffer
+PASS: sniffing-test 6 /sniffing/signals/with-sniffer
+PASS: sniffing-test 7 /sniffing/apache-bug/binary
+PASS: sniffing-test 8 /sniffing/apache-bug/text
+PASS: sniffing-test 9 /sniffing/type/gif
+PASS: sniffing-test 10 /sniffing/type/mbox
+PASS: sniffing-test 11 /sniffing/type/html-in-text-context
+PASS: sniffing-test 12 /sniffing/type/text-binary
+PASS: sniffing-test 13 /sniffing/type/html-binary
+PASS: sniffing-test 14 /sniffing/type/ps
+PASS: sniffing-test 15 /sniffing/type/unknown-html
+PASS: sniffing-test 16 /sniffing/type/unknown-gif
+PASS: sniffing-test 17 /sniffing/type/unknown-mbox
+PASS: sniffing-test 18 /sniffing/type/unknown-binary
+PASS: sniffing-test 19 /sniffing/type/unknown-leading-space
+PASS: sniffing-test 20 /sniffing/type/xml
+PASS: sniffing-test 21 /sniffing/type/xml+xml
+PASS: sniffing-test 22 /sniffing/type/application-xml
+PASS: sniffing-test 23 /sniffing/type/html/html
+PASS: sniffing-test 24 /sniffing/type/html/rss
+PASS: sniffing-test 25 /sniffing/type/html/atom
+PASS: sniffing-test 26 /sniffing/type/html/rdf
+PASS: sniffing-test 27 /sniffing/type/image/gif
+PASS: sniffing-test 28 /sniffing/type/image/png
+PASS: sniffing-test 29 /sniffing/type/image/jpeg
+PASS: sniffing-test 30 /sniffing/type/image/webp
+PASS: sniffing-test 31 /sniffing/type/audio/wav
+PASS: sniffing-test 32 /sniffing/type/audio/aiff
+PASS: sniffing-test 33 /sniffing/type/audio/ogg
+PASS: sniffing-test 34 /sniffing/type/video/webm
+PASS: sniffing-test 35 /sniffing/type/video/mp4
+PASS: socket-test 1 /sockets/unconnected
+PASS: socket-test 2 /sockets/from-fd/client
+PASS: socket-test 3 /sockets/from-fd/server
+PASS: socket-test 4 /sockets/from-fd/bad
+PASS: ssl-test 1 /ssl/session-properties
+PASS: ssl-test 2 /ssl/tls-interaction
+PASS: ssl-test 3 /ssl/message-properties/async
+PASS: ssl-test 4 /ssl/message-properties/sync
+PASS: ssl-test 5 /ssl/strictness/async/strict/with-ca
+PASS: ssl-test 6 /ssl/strictness/async/strict/without-ca
+PASS: ssl-test 7 /ssl/strictness/async/non-strict/with-ca
+PASS: ssl-test 8 /ssl/strictness/async/non-strict/without-ca
+PASS: ssl-test 9 /ssl/strictness/sync/strict/with-ca
+PASS: ssl-test 10 /ssl/strictness/sync/strict/without-ca
+PASS: ssl-test 11 /ssl/strictness/sync/non-strict/with-ca
+PASS: ssl-test 12 /ssl/strictness/sync/non-strict/without-ca
+PASS: streaming-test 1 /streaming/chunked
+PASS: streaming-test 2 /streaming/content-length
+PASS: streaming-test 3 /streaming/eof
+PASS: timeout-test 1 /timeout/http/async
+PASS: timeout-test 2 /timeout/http/sync
+PASS: timeout-test 3 /timeout/https/async
+PASS: timeout-test 4 /timeout/https/sync
+PASS: tld-test 1 /tld/inet
+PASS: tld-test 2 /tld/non-inet
+PASS: uri-parsing 1 /uri/absolute
+PASS: uri-parsing 2 /uri/relative
+PASS: uri-parsing 3 /uri/equality
+PASS: uri-parsing 4 /uri/null
+PASS: uri-parsing 5 /uri/normalization
+PASS: uri-parsing 6 /uri/data
+PASS: websocket-test 1 /websocket/soup/handshake
+PASS: websocket-test 2 /websocket/soup/send-client-to-server
+PASS: websocket-test 3 /websocket/soup/send-server-to-client
+PASS: websocket-test 4 /websocket/soup/send-big-packets
+PASS: websocket-test 5 /websocket/soup/send-bad-data
+PASS: websocket-test 6 /websocket/soup/close-clean-client
+PASS: websocket-test 7 /websocket/soup/close-clean-server
+PASS: websocket-test 8 /websocket/soup/message-after-closing
+PASS: websocket-test 9 /websocket/soup/protocol-negotiate
+PASS: websocket-test 10 /websocket/soup/protocol-mismatch
+PASS: websocket-test 11 /websocket/soup/protocol-server-any
+PASS: websocket-test 12 /websocket/soup/protocol-client-any
+PASS: websocket-test 13 /websocket/direct/send-client-to-server
+PASS: websocket-test 14 /websocket/direct/send-server-to-client
+PASS: websocket-test 15 /websocket/direct/send-big-packets
+PASS: websocket-test 16 /websocket/direct/send-bad-data
+PASS: websocket-test 17 /websocket/direct/close-clean-client
+PASS: websocket-test 18 /websocket/direct/close-clean-server
+PASS: websocket-test 19 /websocket/direct/message-after-closing
+PASS: websocket-test 20 /websocket/direct/protocol-negotiate
+PASS: websocket-test 21 /websocket/direct/protocol-mismatch
+PASS: websocket-test 22 /websocket/direct/protocol-server-any
+PASS: websocket-test 23 /websocket/direct/protocol-client-any
+PASS: websocket-test 24 /websocket/direct/receive-fragmented
+PASS: xmlrpc-old-server-test 1 /xmlrpc-old-server/sum
+PASS: xmlrpc-old-server-test 2 /xmlrpc-old-server/countBools
+PASS: xmlrpc-old-server-test 3 /xmlrpc-old-server/md5sum
+PASS: xmlrpc-old-server-test 4 /xmlrpc-old-server/dateChange
+PASS: xmlrpc-old-server-test 5 /xmlrpc-old-server/echo
+PASS: xmlrpc-old-server-test 6 /xmlrpc-old-server/ping/empty-params
+PASS: xmlrpc-old-server-test 7 /xmlrpc-old-server/ping/no-params
+PASS: xmlrpc-old-server-test 8 /xmlrpc-old-server/fault/malformed
+PASS: xmlrpc-old-server-test 9 /xmlrpc-old-server/fault/method
+PASS: xmlrpc-old-server-test 10 /xmlrpc-old-server/fault/args
+SKIP: xmlrpc-old-test 1 /xmlrpc-old/sum # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 2 /xmlrpc-old/countBools # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 3 /xmlrpc-old/md5sum # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 4 /xmlrpc-old/dateChange # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 5 /xmlrpc-old/echo # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 6 /xmlrpc-old/ping/empty-params # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 7 /xmlrpc-old/ping/no-params # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 8 /xmlrpc-old/fault/malformed # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 9 /xmlrpc-old/fault/method # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-old-test 10 /xmlrpc-old/fault/args # SKIP php-xmlrpc is not available
+PASS: xmlrpc-server-test 1 /xmlrpc-server/variant/serializer
+PASS: xmlrpc-server-test 2 /xmlrpc-server/variant/deserializer
+PASS: xmlrpc-server-test 3 /xmlrpc-server/variant/fault
+PASS: xmlrpc-server-test 4 /xmlrpc-server/variant/sum
+PASS: xmlrpc-server-test 5 /xmlrpc-server/variant/countBools
+PASS: xmlrpc-server-test 6 /xmlrpc-server/variant/md5sum
+PASS: xmlrpc-server-test 7 /xmlrpc-server/variant/dateChange
+PASS: xmlrpc-server-test 8 /xmlrpc-server/variant/echo
+PASS: xmlrpc-server-test 9 /xmlrpc-server/variant/ping/empty-params
+PASS: xmlrpc-server-test 10 /xmlrpc-server/variant/ping/no-params
+PASS: xmlrpc-server-test 11 /xmlrpc-server/variant/fault/malformed
+PASS: xmlrpc-server-test 12 /xmlrpc-server/variant/fault/method
+PASS: xmlrpc-server-test 13 /xmlrpc-server/variant/fault/args
+PASS: xmlrpc-test 1 /xmlrpc/variant/serializer
+PASS: xmlrpc-test 2 /xmlrpc/variant/deserializer
+PASS: xmlrpc-test 3 /xmlrpc/variant/fault
+SKIP: xmlrpc-test 4 /xmlrpc/variant/sum # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 5 /xmlrpc/variant/countBools # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 6 /xmlrpc/variant/md5sum # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 7 /xmlrpc/variant/dateChange # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 8 /xmlrpc/variant/echo # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 9 /xmlrpc/variant/ping/empty-params # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 10 /xmlrpc/variant/ping/no-params # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 11 /xmlrpc/variant/fault/malformed # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 12 /xmlrpc/variant/fault/method # SKIP php-xmlrpc is not available
+SKIP: xmlrpc-test 13 /xmlrpc/variant/fault/args # SKIP php-xmlrpc is not available
+# TOTAL: 520
+# PASS:  472
+# SKIP:  48
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
