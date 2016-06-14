@@ -28,11 +28,12 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		cloudbase-init
 COMPONENT_VERSION=	0.9.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0385c905952132ce944c821ea4f57ccffd660db7965ca8a62f28600939e659c1
 
-COMPONENT_ARCHIVE_URL=	https://github.com/openstack/cloudbase-init/archive/0.9.9.tar.gz
+COMPONENT_ARCHIVE_URL=	\
+    https://github.com/openstack/cloudbase-init/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/stackforge/cloudbase-init
 COMPONENT_BUGDB=	service/cloudbase-init
 
@@ -52,7 +53,7 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
 # Copy the PKG-INFO file to the build root
 COMPONENT_PRE_BUILD_ACTION = \
-	$(CP) $(COMPONENT_DIR)/PKG-INFO $(SOURCE_DIR)
+    $(CP) $(COMPONENT_DIR)/PKG-INFO $(SOURCE_DIR)
 
 # common targets
 build:		$(BUILD_NO_ARCH)

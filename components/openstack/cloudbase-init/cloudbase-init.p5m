@@ -38,6 +38,7 @@ set name=info.upstream \
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2016/010
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file files/cloudbase-init.conf path=etc/cloudbase-init.conf
 file files/cloudbase-init.xml \
     path=lib/svc/manifest/application/cloudbase-init.xml
@@ -145,23 +146,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/version.py
 #
 license LICENSE license="Apache v2.0"
 
-# force a group dependency on the optional netaddr; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/netaddr-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
-
-# force a dependency on eventlet; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/eventlet-$(PYV)
-
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
-
 # force a dependency on netifaces; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/netifaces-$(PYV)
 
-# force a dependency on oauth; pkgdepend work is needed to flush this out.
+# force a dependency on oauthlib; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oauthlib-$(PYV)
 
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
@@ -170,9 +158,14 @@ depend type=require fmri=library/python/oslo.config-$(PYV)
 # force a dependency on oslo.log; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.log-$(PYV)
 
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
+
 # force a dependency on pyyaml; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyyaml-$(PYV)
 
+# force a dependency on requests; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/requests-$(PYV)
+
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
-
