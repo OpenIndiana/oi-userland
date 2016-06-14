@@ -1186,6 +1186,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if brand == ZONE_BRAND_SOLARIS:
             zonecfg_items.extend(
                 ['file-mac-profile', 'fs-allowed', 'limitpriv'])
+        else:
+            zonecfg_items.extend(['cpu-arch'])
 
         with ZoneConfig(zone) as zc:
             for key, value in extra_specs.iteritems():
@@ -1524,10 +1526,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 zc.setprop('anet', 'configure-allowed-address', 'false')
                 zc.setprop('anet', 'mac-address', vif['address'])
             else:
-                zc.addresource('anet',
+                zc.addresource(
+                    'anet',
                     [zonemgr.Property('lower-link', lower_link),
-                     zonemgr.Property('configure-allowed-address',
-                                      'false'),
+                     zonemgr.Property('configure-allowed-address', 'false'),
                      zonemgr.Property('mac-address', vif['address'])])
 
             prop_filter = [zonemgr.Property('mac-address', vif['address'])]
@@ -1591,11 +1593,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 (tstate == task_states.REBUILD_SPAWNING and
                  instance.system_metadata['rebuilding']):
                 if enable_dhcp:
-                    tree = sysconfig.create_ncp_defaultfixed('dhcp', anetname,
-                        vifid, ip_version)
+                    tree = sysconfig.create_ncp_defaultfixed(
+                        'dhcp', anetname, vifid, ip_version)
                 else:
-                    tree = sysconfig.create_ncp_defaultfixed('static',
-                        anetname, vifid, ip_version, ip_cidr, route,
+                    tree = sysconfig.create_ncp_defaultfixed(
+                        'static', anetname, vifid, ip_version, ip_cidr, route,
                         nameservers)
 
                 fp = os.path.join(sc_dir, 'zone-network-%d.xml' % vifid)
