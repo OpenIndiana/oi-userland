@@ -39,7 +39,7 @@ COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE_HASH=	sha256:a72781d1a043876a224ff1b0032daa4094d87565a68528759c1c2cab5482548c
 COMPONENT_ARCHIVE_URL=	http://mirrors.sonic.net/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 
-TPNO_OPENSSH=		26419
+TPNO_OPENSSH=		27414
 TPNO_GSSKEX=		20377
 
 # Because of set up requirements, test suite is in stc gate.
