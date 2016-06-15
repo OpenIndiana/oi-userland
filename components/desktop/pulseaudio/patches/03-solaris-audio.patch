@@ -1,0 +1,39 @@
+Fixes compilation of Solaris backend, but unclear if the fixes are complete or
+if the resulting code works as expected.
+
+Needs further investigation.
+
+XXX file upstream bug
+
+--- pulseaudio-6.0/src/modules/module-solaris.c	2015-06-05 14:16:44.723061189 -0700
++++ pulseaudio-6.0/src/modules/module-solaris.c	2015-06-05 14:28:00.409910003 -0700
+@@ -412,10 +412,11 @@
+                         pa_smoother_resume(u->smoother, pa_rtclock_now(), true);
+ 
+                         if (!u->source || u->source_suspended) {
++                            bool mute;
+                             if (unsuspend(u) < 0)
+                                 return -1;
+                             u->sink->get_volume(u->sink);
+-                            u->sink->get_mute(u->sink);
++                            u->sink->get_mute(u->sink, &mute);
+                         }
+                         u->sink_suspended = false;
+                     }
+@@ -1026,6 +1027,7 @@
+ 
+     /* Read mixer settings */
+     if (u->sink) {
++        bool mute;
+         if (sink_new_data.volume_is_set)
+             u->sink->set_volume(u->sink);
+         else
+@@ -1034,7 +1036,7 @@
+         if (sink_new_data.muted_is_set)
+             u->sink->set_mute(u->sink);
+         else
+-            u->sink->get_mute(u->sink);
++            u->sink->get_mute(u->sink, &mute);
+ 
+         pa_sink_put(u->sink);
+     }

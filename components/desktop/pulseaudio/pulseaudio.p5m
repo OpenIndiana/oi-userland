@@ -1,0 +1,357 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/audio/pulseaudio@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A sound system for POSIX operating systems"
+set name=pkg.description \
+    value="PulseAudio is a sound system for POSIX OSes, meaning that it is a proxy for your sound applications. It allows you to do advanced operations on your sound data as it passes between your application and your hardware. Things like transferring the audio to a different machine, changing the sample format or channel count and mixing several sounds into one are easily achieved using a sound server."
+set name=com.oracle.info.description value=pulseaudio
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Multimedia Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/389
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=etc/bash_completion.d/pacat target=pulseaudio
+link path=etc/bash_completion.d/pacmd target=pulseaudio
+link path=etc/bash_completion.d/pactl target=pulseaudio
+link path=etc/bash_completion.d/padsp target=pulseaudio
+link path=etc/bash_completion.d/paplay target=pulseaudio
+link path=etc/bash_completion.d/parec target=pulseaudio
+link path=etc/bash_completion.d/parecord target=pulseaudio
+link path=etc/bash_completion.d/pasuspender target=pulseaudio
+file path=etc/bash_completion.d/pulseaudio
+file path=etc/dbus-1/system.d/pulseaudio-system.conf
+file path=etc/pulse/client.conf
+file path=etc/pulse/daemon.conf
+file path=etc/pulse/default.pa
+file path=etc/pulse/system.pa
+file path=etc/xdg/autostart/pulseaudio.desktop
+file path=usr/bin/$(MACH64)/esdcompat
+file path=usr/bin/$(MACH64)/pacat
+file path=usr/bin/$(MACH64)/pacmd
+file path=usr/bin/$(MACH64)/pactl
+link path=usr/bin/$(MACH64)/pamon target=pacat
+link path=usr/bin/$(MACH64)/paplay target=pacat
+link path=usr/bin/$(MACH64)/parec target=pacat
+link path=usr/bin/$(MACH64)/parecord target=pacat
+file path=usr/bin/$(MACH64)/pasuspender
+file path=usr/bin/$(MACH64)/pax11publish
+file path=usr/bin/$(MACH64)/pulseaudio
+file path=usr/bin/$(MACH64)/start-pulseaudio-x11
+file path=usr/bin/esdcompat
+file path=usr/bin/pacat
+file path=usr/bin/pacmd
+file path=usr/bin/pactl
+link path=usr/bin/pamon target=pacat
+link path=usr/bin/paplay target=pacat
+link path=usr/bin/parec target=pacat
+link path=usr/bin/parecord target=pacat
+file path=usr/bin/pasuspender
+file path=usr/bin/pax11publish
+file path=usr/bin/pulseaudio
+file path=usr/bin/start-pulseaudio-x11
+file path=usr/include/pulse/cdecl.h
+file path=usr/include/pulse/channelmap.h
+file path=usr/include/pulse/context.h
+file path=usr/include/pulse/def.h
+file path=usr/include/pulse/direction.h
+file path=usr/include/pulse/error.h
+file path=usr/include/pulse/ext-device-manager.h
+file path=usr/include/pulse/ext-device-restore.h
+file path=usr/include/pulse/ext-stream-restore.h
+file path=usr/include/pulse/format.h
+file path=usr/include/pulse/gccmacro.h
+file path=usr/include/pulse/glib-mainloop.h
+file path=usr/include/pulse/introspect.h
+file path=usr/include/pulse/mainloop-api.h
+file path=usr/include/pulse/mainloop-signal.h
+file path=usr/include/pulse/mainloop.h
+file path=usr/include/pulse/operation.h
+file path=usr/include/pulse/proplist.h
+file path=usr/include/pulse/pulseaudio.h
+file path=usr/include/pulse/rtclock.h
+file path=usr/include/pulse/sample.h
+file path=usr/include/pulse/scache.h
+file path=usr/include/pulse/simple.h
+file path=usr/include/pulse/stream.h
+file path=usr/include/pulse/subscribe.h
+file path=usr/include/pulse/thread-mainloop.h
+file path=usr/include/pulse/timeval.h
+file path=usr/include/pulse/utf8.h
+file path=usr/include/pulse/util.h
+file path=usr/include/pulse/version.h
+file path=usr/include/pulse/volume.h
+file path=usr/include/pulse/xmalloc.h
+file path=usr/lib/$(MACH64)/cmake/PulseAudio/PulseAudioConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/PulseAudio/PulseAudioConfigVersion.cmake
+link path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so \
+    target=libpulse-mainloop-glib.so.0.0.5
+link path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0 \
+    target=libpulse-mainloop-glib.so.0.0.5
+file path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0.0.5
+link path=usr/lib/$(MACH64)/libpulse-simple.so target=libpulse-simple.so.0.1.0
+link path=usr/lib/$(MACH64)/libpulse-simple.so.0 target=libpulse-simple.so.0.1.0
+file path=usr/lib/$(MACH64)/libpulse-simple.so.0.1.0
+link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.18.0
+link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.18.0
+file path=usr/lib/$(MACH64)/libpulse.so.0.18.0
+file path=usr/lib/$(MACH64)/libpulsecore-$(COMPONENT_VERSION).so
+file path=usr/lib/$(MACH64)/pkgconfig/libpulse-mainloop-glib.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libpulse-simple.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libpulse.pc
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libavahi-wrap.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libcli.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/liboss-util.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libprotocol-cli.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libprotocol-http.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libprotocol-native.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libprotocol-simple.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/libraop.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/librtp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-always-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-augment-properties.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-card-restore.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-cli.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-combine-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-combine.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-console-kit.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-dbus-protocol.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-default-device-restore.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-detect.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-device-manager.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-device-restore.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-echo-cancel.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-equalizer-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-filter-apply.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-filter-heuristics.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-intended-roles.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-ladspa-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-loopback.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-match.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-fd.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-null-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-null-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-oss.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-pipe-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-pipe-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-position-event-sounds.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-raop-discover.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-raop-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-remap-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-remap-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-rescue-streams.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-role-cork.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-role-ducking.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-rtp-recv.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-rtp-send.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-rygel-media-server.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-simple-protocol-tcp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-simple-protocol-unix.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-sine-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-sine.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-solaris.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-stream-restore.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-suspend-on-idle.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-switch-on-connect.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-switch-on-port-available.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-sink-new.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-source-new.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-virtual-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-virtual-source.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-virtual-surround-sink.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-volume-restore.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-bell.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-cork-request.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-publish.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
+file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
+file path=usr/lib/$(MACH64)/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
+file path=usr/lib/cmake/PulseAudio/PulseAudioConfig.cmake
+file path=usr/lib/cmake/PulseAudio/PulseAudioConfigVersion.cmake
+link path=usr/lib/libpulse-mainloop-glib.so \
+    target=libpulse-mainloop-glib.so.0.0.5
+link path=usr/lib/libpulse-mainloop-glib.so.0 \
+    target=libpulse-mainloop-glib.so.0.0.5
+file path=usr/lib/libpulse-mainloop-glib.so.0.0.5
+link path=usr/lib/libpulse-simple.so target=libpulse-simple.so.0.1.0
+link path=usr/lib/libpulse-simple.so.0 target=libpulse-simple.so.0.1.0
+file path=usr/lib/libpulse-simple.so.0.1.0
+link path=usr/lib/libpulse.so target=libpulse.so.0.18.0
+link path=usr/lib/libpulse.so.0 target=libpulse.so.0.18.0
+file path=usr/lib/libpulse.so.0.18.0
+file path=usr/lib/libpulsecore-$(COMPONENT_VERSION).so
+file path=usr/lib/pkgconfig/libpulse-mainloop-glib.pc
+file path=usr/lib/pkgconfig/libpulse-simple.pc
+file path=usr/lib/pkgconfig/libpulse.pc
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libavahi-wrap.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libcli.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/liboss-util.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libprotocol-cli.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libprotocol-http.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libprotocol-native.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libprotocol-simple.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/libraop.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/librtp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-always-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-augment-properties.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-card-restore.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-tcp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-cli-protocol-unix.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-cli.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-combine-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-combine.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-console-kit.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-dbus-protocol.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-default-device-restore.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-detect.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-device-manager.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-device-restore.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-echo-cancel.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-equalizer-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-filter-apply.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-filter-heuristics.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-tcp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-http-protocol-unix.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-intended-roles.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-ladspa-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-loopback.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-match.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-fd.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-tcp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-native-protocol-unix.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-null-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-null-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-oss.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-pipe-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-pipe-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-position-event-sounds.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-raop-discover.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-raop-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-remap-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-remap-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-rescue-streams.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-role-cork.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-role-ducking.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-rtp-recv.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-rtp-send.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-rygel-media-server.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-simple-protocol-tcp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-simple-protocol-unix.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-sine-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-sine.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-solaris.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-stream-restore.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-suspend-on-idle.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-switch-on-connect.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-switch-on-port-available.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-sink-new.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-source-new.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-tunnel-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-virtual-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-virtual-source.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-virtual-surround-sink.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-volume-restore.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-bell.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-cork-request.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-publish.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
+file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
+file path=usr/lib/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
+file path=usr/share/locale/as/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ca/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/cs/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/de/LC_MESSAGES/pulseaudio.mo
+# Conflicts with system/locale link de_CH -> de
+# file path=usr/share/locale/de_CH/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/el/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/es/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/fi/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/fr/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/gu/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/he/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/hi/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/hu/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/id/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/it/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ja/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/kn/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ml/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/mr/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/nl/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/or/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/pa/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/pl/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/pt/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/sk/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/sr/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/sv/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ta/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/te/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/uk/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/man/man1/esdcompat.1
+file path=usr/share/man/man1/pacat.1
+file path=usr/share/man/man1/pacmd.1
+file path=usr/share/man/man1/pactl.1
+file path=usr/share/man/man1/padsp.1
+file path=usr/share/man/man1/paplay.1
+file path=usr/share/man/man1/pasuspender.1
+file path=usr/share/man/man1/pax11publish.1
+file path=usr/share/man/man1/pulseaudio.1
+file path=usr/share/man/man1/start-pulseaudio-x11.1
+file path=usr/share/man/man5/default.pa.5
+file path=usr/share/man/man5/pulse-cli-syntax.5
+file path=usr/share/man/man5/pulse-client.conf.5
+file path=usr/share/man/man5/pulse-daemon.conf.5
+file path=usr/share/vala/vapi/libpulse-mainloop-glib.deps
+file path=usr/share/vala/vapi/libpulse-mainloop-glib.vapi
+file path=usr/share/vala/vapi/libpulse-simple.deps
+file path=usr/share/vala/vapi/libpulse-simple.vapi
+file path=usr/share/vala/vapi/libpulse.deps
+file path=usr/share/vala/vapi/libpulse.vapi
+file path=usr/share/zsh/5.2/functions/Completion/Unix/_pulseaudio
+license pulseaudio.license license="GPLv2, LGPLv2.1"
