@@ -44,12 +44,12 @@ export PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.2.12
+COMPONENT_VERSION=	4.4.4
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b334a86a92a1c2759c0b3dce20965e7fe820f0abafee38e6fd82eb9c5cd80514
+COMPONENT_ARCHIVE_HASH= sha256:262f9edabbd1c0112819b5063718588c22b0ee4c1a2f648f79f233fdfba25c8b
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -215,7 +215,7 @@ $(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep
 	$(TOUCH) $@
 
 # Build of Winbind (without Samba) for different bitness.
-WB_TARGETS =	--targets=nss_winbind,pamsmbpass,pamwinbind
+WB_TARGETS =	--targets=nss_winbind,pamwinbind
 $(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
 	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
 	    $(WB_TARGETS) )
@@ -248,3 +248,21 @@ system-test:    $(NO_TESTS)
 
 clean::
 	$(RM) -r $(BUILD_DIR)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/file-monitor/gamin
+REQUIRED_PACKAGES += library/gnu-libiconv
+REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/network/avahi
