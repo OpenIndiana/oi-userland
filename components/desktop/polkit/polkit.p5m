@@ -1,0 +1,178 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/system/library/polkit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="polkit authorization toolkit"
+set name=pkg.description \
+    value="polkit is a toolkit for defining and handling authorizations for desktop software.  It is used for allowing unprivileged processes to speak to privileged processes."
+set name=com.oracle.info.description value=polkit
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/312
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/dbus-1/system.d/org.freedesktop.PolicyKit1.conf
+dir  path=etc/polkit-1/rules.d owner=_polkitd mode=700
+file path=etc/polkit-1/rules.d/50-default.rules
+file polkit.xml path=lib/svc/manifest/system/polkit.xml
+file svc-polkit path=lib/svc/method/svc-polkit
+file path=usr/bin/pk-example-frobnicate
+file path=usr/bin/pkaction
+file path=usr/bin/pkcheck
+file path=usr/bin/pkexec owner=root mode=4555
+file path=usr/bin/pkttyagent
+file path=usr/include/polkit-1/polkit/polkit.h
+file path=usr/include/polkit-1/polkit/polkitactiondescription.h
+file path=usr/include/polkit-1/polkit/polkitauthority.h
+file path=usr/include/polkit-1/polkit/polkitauthorityfeatures.h
+file path=usr/include/polkit-1/polkit/polkitauthorizationresult.h
+file path=usr/include/polkit-1/polkit/polkitcheckauthorizationflags.h
+file path=usr/include/polkit-1/polkit/polkitdetails.h
+file path=usr/include/polkit-1/polkit/polkitenumtypes.h
+file path=usr/include/polkit-1/polkit/polkiterror.h
+file path=usr/include/polkit-1/polkit/polkitidentity.h
+file path=usr/include/polkit-1/polkit/polkitimplicitauthorization.h
+file path=usr/include/polkit-1/polkit/polkitpermission.h
+file path=usr/include/polkit-1/polkit/polkitprivate.h
+file path=usr/include/polkit-1/polkit/polkitsubject.h
+file path=usr/include/polkit-1/polkit/polkitsystembusname.h
+file path=usr/include/polkit-1/polkit/polkittemporaryauthorization.h
+file path=usr/include/polkit-1/polkit/polkittypes.h
+file path=usr/include/polkit-1/polkit/polkitunixgroup.h
+file path=usr/include/polkit-1/polkit/polkitunixnetgroup.h
+file path=usr/include/polkit-1/polkit/polkitunixprocess.h
+file path=usr/include/polkit-1/polkit/polkitunixsession.h
+file path=usr/include/polkit-1/polkit/polkitunixuser.h
+file path=usr/include/polkit-1/polkitagent/polkitagent.h
+file path=usr/include/polkit-1/polkitagent/polkitagentenumtypes.h
+file path=usr/include/polkit-1/polkitagent/polkitagentlistener.h
+file path=usr/include/polkit-1/polkitagent/polkitagentsession.h
+file path=usr/include/polkit-1/polkitagent/polkitagenttextlistener.h
+file path=usr/include/polkit-1/polkitagent/polkitagenttypes.h
+file path=usr/lib/$(MACH64)/girepository-1.0/Polkit-1.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/PolkitAgent-1.0.typelib
+link path=usr/lib/$(MACH64)/libpolkit-agent-1.so \
+    target=libpolkit-agent-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libpolkit-agent-1.so.0 \
+    target=libpolkit-agent-1.so.0.0.0
+file path=usr/lib/$(MACH64)/libpolkit-agent-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libpolkit-gobject-1.so \
+    target=libpolkit-gobject-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libpolkit-gobject-1.so.0 \
+    target=libpolkit-gobject-1.so.0.0.0
+file path=usr/lib/$(MACH64)/libpolkit-gobject-1.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/polkit-agent-1.pc
+file path=usr/lib/$(MACH64)/pkgconfig/polkit-gobject-1.pc
+file path=usr/lib/girepository-1.0/Polkit-1.0.typelib
+file path=usr/lib/girepository-1.0/PolkitAgent-1.0.typelib
+link path=usr/lib/libpolkit-agent-1.so target=libpolkit-agent-1.so.0.0.0
+link path=usr/lib/libpolkit-agent-1.so.0 target=libpolkit-agent-1.so.0.0.0
+file path=usr/lib/libpolkit-agent-1.so.0.0.0
+link path=usr/lib/libpolkit-gobject-1.so target=libpolkit-gobject-1.so.0.0.0
+link path=usr/lib/libpolkit-gobject-1.so.0 target=libpolkit-gobject-1.so.0.0.0
+file path=usr/lib/libpolkit-gobject-1.so.0.0.0
+file path=usr/lib/pkgconfig/polkit-agent-1.pc
+file path=usr/lib/pkgconfig/polkit-gobject-1.pc
+file path=usr/lib/polkit-1/polkit-agent-helper-1 owner=root mode=4555
+file path=usr/lib/polkit-1/polkitd mode=0555
+file path=usr/share/dbus-1/system-services/org.freedesktop.PolicyKit1.service
+file path=usr/share/gir-1.0/Polkit-1.0.gir
+file path=usr/share/gir-1.0/PolkitAgent-1.0.gir
+file path=usr/share/gtk-doc/html/polkit-1/Identities.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitActionDescription.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitAgentListener.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitAgentSession.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitAgentTextListener.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitAuthority.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitAuthorizationResult.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitDetails.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitIdentity.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitPermission.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitSubject.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitSystemBusName.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitTemporaryAuthorization.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitUnixGroup.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitUnixNetgroup.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitUnixProcess.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitUnixSession.html
+file path=usr/share/gtk-doc/html/polkit-1/PolkitUnixUser.html
+file path=usr/share/gtk-doc/html/polkit-1/annotation-glossary.html
+file path=usr/share/gtk-doc/html/polkit-1/eggdbus-interface-org.freedesktop.PolicyKit1.AuthenticationAgent.html
+file path=usr/share/gtk-doc/html/polkit-1/eggdbus-interface-org.freedesktop.PolicyKit1.Authority.html
+file path=usr/share/gtk-doc/html/polkit-1/home.png
+file path=usr/share/gtk-doc/html/polkit-1/index.html
+file path=usr/share/gtk-doc/html/polkit-1/index.sgml
+file path=usr/share/gtk-doc/html/polkit-1/left-insensitive.png
+file path=usr/share/gtk-doc/html/polkit-1/left.png
+file path=usr/share/gtk-doc/html/polkit-1/license.html
+file path=usr/share/gtk-doc/html/polkit-1/manpages.html
+file path=usr/share/gtk-doc/html/polkit-1/overview.html
+file path=usr/share/gtk-doc/html/polkit-1/pkaction.1.html
+file path=usr/share/gtk-doc/html/polkit-1/pkcheck.1.html
+file path=usr/share/gtk-doc/html/polkit-1/pkexec.1.html
+file path=usr/share/gtk-doc/html/polkit-1/pkttyagent.1.html
+file path=usr/share/gtk-doc/html/polkit-1/polit-index.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-1-PolkitError.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-1.devhelp2
+file path=usr/share/gtk-doc/html/polkit-1/polkit-agents.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-apps.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-architecture.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-architecture.png
+file path=usr/share/gtk-doc/html/polkit-1/polkit-authentication-agent-example-wheel.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-authentication-agent-example-wheel.png
+file path=usr/share/gtk-doc/html/polkit-1/polkit-authentication-agent-example.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-authentication-agent-example.png
+file path=usr/share/gtk-doc/html/polkit-1/polkit-hierarchy.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit-intro.html
+file path=usr/share/gtk-doc/html/polkit-1/polkit.8.html
+file path=usr/share/gtk-doc/html/polkit-1/polkitd.8.html
+file path=usr/share/gtk-doc/html/polkit-1/ref-api.html
+file path=usr/share/gtk-doc/html/polkit-1/ref-authentication-agent-api.html
+file path=usr/share/gtk-doc/html/polkit-1/ref-dbus-api.html
+file path=usr/share/gtk-doc/html/polkit-1/right-insensitive.png
+file path=usr/share/gtk-doc/html/polkit-1/right.png
+file path=usr/share/gtk-doc/html/polkit-1/style.css
+file path=usr/share/gtk-doc/html/polkit-1/subjects.html
+file path=usr/share/gtk-doc/html/polkit-1/up-insensitive.png
+file path=usr/share/gtk-doc/html/polkit-1/up.png
+file path=usr/share/locale/cs/LC_MESSAGES/polkit-1.mo
+file path=usr/share/locale/da/LC_MESSAGES/polkit-1.mo
+file path=usr/share/man/man1/pkaction.1
+file path=usr/share/man/man1/pkcheck.1
+file path=usr/share/man/man1/pkexec.1
+file path=usr/share/man/man1/pkttyagent.1
+file path=usr/share/man/man8/polkit.8
+file path=usr/share/man/man8/polkitd.8
+file path=usr/share/polkit-1/actions/org.freedesktop.policykit.examples.pkexec.policy
+file path=usr/share/polkit-1/actions/org.freedesktop.policykit.policy
+dir  path=usr/share/polkit-1/rules.d owner=_polkitd mode=700
+user username=_polkitd ftpuser=false gcos-field="Polkit authorization daemon" \
+    group=daemon home-dir=/ password=NP uid=63
+license COPYING license=LGPLv2+

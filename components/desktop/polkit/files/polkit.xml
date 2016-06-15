@@ -1,0 +1,90 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle
+  SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+    CDDL HEADER START
+
+    The contents of this file are subject to the terms of the
+    Common Development and Distribution License (the "License").
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+    or http://www.opensolaris.org/os/licensing.
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing Covered Code, include this CDDL HEADER in each
+    file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+    If applicable, add the following below this CDDL HEADER, with the
+    fields enclosed by brackets "[]" replaced with your own identifying
+    information: Portions Copyright [yyyy] [name of copyright owner]
+
+    CDDL HEADER END
+
+    Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+    NOTE:  This service manifest is not editable; its contents will
+    be overwritten by package or patch operations, including
+    operating system upgrade.  Make customizations in a different
+    file.
+-->
+<service_bundle type="manifest" name="system/polkit">
+    <service version="1" type="service" name="system/polkit">
+
+        <dependency restart_on="none" type="service"
+            name="multi_user_dependency" grouping="require_all">
+            <service_fmri value="svc:/milestone/multi-user"/>
+        </dependency>
+        <dependency restart_on="none" type="service"
+            name="name-services" grouping="require_all">
+            <service_fmri value="svc:/milestone/name-services"/>
+        </dependency>
+        <dependency restart_on="restart" type="service"
+            name="dbus" grouping="require_all">
+            <service_fmri value="svc:/system/dbus"/>
+        </dependency>
+
+        <method_context>
+            <method_credential user='root' clearance='ADMIN_HIGH' />
+        </method_context>
+
+        <exec_method timeout_seconds="60" type="method" name="start"
+            exec="/lib/svc/method/svc-polkit"/>
+        <exec_method timeout_seconds="60" type="method" name="stop"
+            exec=":kill"/>
+        <exec_method timeout_seconds="60" type="method" name="refresh"
+            exec=":true"/>
+
+        <!-- Authorization -->
+        <property_group name='general' type='framework'>
+                <propval name='action_authorization' type='astring'
+                        value='solaris.smf.manage.dt.login' />
+        </property_group>
+
+	<!--
+            We do not need a duration property group, because contract is
+            the default.  Search for duration in svc.startd(1M).
+        -->
+	<property_group name='options' type='application'>
+	    <propval name='debug' type='boolean' value='false' />
+	</property_group>
+
+        <instance enabled="true" name="default"/>
+
+        <template>
+            <common_name>
+                <loctext xml:lang="C">
+                        PolKit
+                </loctext>
+            </common_name>
+            <description>
+                <loctext xml:lang="C">
+                	PolKit is a toolkit for defining and handling authorizations for desktop software.
+                </loctext>
+            </description>
+	    <documentation>
+	        <manpage title='polkitd' section='8' manpath='/usr/share/man' />
+            </documentation>
+        </template>
+    </service>
+</service_bundle>
