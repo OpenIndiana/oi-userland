@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		warlock
-COMPONENT_VERSION=	1.0.1
+COMPONENT_VERSION=	1.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:986ccfd647f89c1c8e7ebe40d159e5633818a58754b3ffdf51c4816927977791
+    sha256:7c0d17891e14cf77e13a598edecc9f4682a5bc8a219dc84c139c5ba02789ef5a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/warlock
 COMPONENT_BUGDB=	python-mod/warlock
 
-TPNO=			14503
+TPNO=			28895
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -54,4 +54,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-

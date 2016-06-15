@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		amqp
-COMPONENT_VERSION=	1.4.6
+COMPONENT_VERSION=	1.4.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ebcfc867de5a68f9f5ba14d11dbad88e6aff8435a8d39339d5ceb0e5b06de640
+    sha256:2dea4d16d073c902c3b89d9b96620fb6729ac0f7a923bbc777cb4ad827c0c61a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/celery/py-amqp/
 COMPONENT_BUGDB=	python-mod/py-amqp
 
-TPNO=			21715
+TPNO=			28701
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

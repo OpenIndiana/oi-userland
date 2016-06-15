@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmd2
-COMPONENT_VERSION=	0.6.7
+COMPONENT_VERSION=	0.6.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8e98c7a1cfd106183559240b269e7cd9fe97e8342b5c05295f591aab6fd2f4f0
+    sha256:ac780d8c31fc107bf6b4edcbcea711de4ff776d59d89bb167f8819d2d83764a8
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pythonhosted.org/cmd2/
+COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cmd2
 COMPONENT_BUGDB=	python-mod/cmd2
 
-TPNO=			15996
+TPNO=			28756
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

@@ -20,28 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lesscpy
-COMPONENT_VERSION=	0.9j
+COMPONENT_VERSION=	0.11.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fa01d435a1ab3abafba683519bdc7aca5e19399e96225e1a8bc1d660b566364d
+    sha256:640357af8599aec24462013c66043fa499de84c94c468b2b464e440a3ecf9b30
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/robotis/Lesscpy
 COMPONENT_BUGDB=	python-mod/lesscpy
 
-TPNO=			16108
-
-# Depends on ply, which is now Python 3 ready, but further testing is needed
-# to determine if lesscpy can deliver 3.x package.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
-
-# convert the 'j' in COMPONENT_VERSION to 10
-IPS_COMPONENT_VERSION = 0.9.10
+TPNO=			28868
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

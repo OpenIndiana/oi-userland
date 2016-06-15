@@ -20,21 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		d2to1
-COMPONENT_VERSION=	0.2.10
+COMPONENT_VERSION=	0.2.12.post1
+IPS_COMPONENT_VERSION=	0.2.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:90ed54749cdee1aab8daae720e3559dca97a47d071fa7f0592e75ffe869911e7
+    sha256:49ef2d16862b3efdc81fc5c32eac373b984945cde5fc02bb01a0a11ff03dd825
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/d2to1/
 COMPONENT_BUGDB=	python-mod/d2to1
 
-TPNO=			14503
+TPNO=			28726
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

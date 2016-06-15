@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nose-cover3
-COMPONENT_VERSION=	0.0.4
+COMPONENT_VERSION=	0.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a01222f15223795ac84ee25fbabe8bc1d240ac65773fac92eddb389b2772681c
+    sha256:81310a792285615418e749f6e7c60a4f2cfa6b2f13cf0d19bbf26b1f188444d1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/nose-cover3
 COMPONENT_BUGDB=	python-mod/nose-cover3
 
-TPNO=			14503
+TPNO=			29124
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

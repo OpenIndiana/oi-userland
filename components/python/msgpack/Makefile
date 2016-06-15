@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		msgpack-python
-COMPONENT_VERSION=	0.4.6
+COMPONENT_VERSION=	0.4.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:bfcc581c9dbbf07cc2f951baf30c3249a57e20dcbd60f7e6ffc43ab3cc614794
+	sha256:5e001229a54180a02dcdd59db23c9978351af55b1290c27bc549e381f43acd6b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/msgpack-python/
 COMPONENT_BUGDB=	python-mod/msgpack
 
-TPNO=			23146
+TPNO=			29203
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

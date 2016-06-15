@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cov-core
-COMPONENT_VERSION=	1.7
+COMPONENT_VERSION=	1.15.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8050c226fa73234b88e62630d64e0416c879202891309cbcdbb8b556222c3020
+    sha256:4a14c67d520fda9d42b0da6134638578caae1d374b9bb462d8de00587dba764c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cov-core
 COMPONENT_BUGDB=	python-mod/cov-core
 
-TPNO=			14503
+TPNO=			28881
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scp
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	0.10.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e51374fcc0a81903dbf2e3aeecb23fa64637cb7e1a7b21c815f3fb6358e95de2
+    sha256:18f59e48df67fac0b069591609a0f4d50d781a101ddb8ec705f0c2e3501a8386
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/jbardin/scp.py
 COMPONENT_BUGDB=	python-mod/scp
 
-TPNO=			20675
+TPNO=			29126
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

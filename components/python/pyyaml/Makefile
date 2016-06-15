@@ -20,22 +20,21 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		PyYAML
-COMPONENT_VERSION=	3.09
-IPS_COMPONENT_VERSION=	3.9
+COMPONENT_VERSION=	3.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30076d51387cca35d461c8b36408de189d31f17e44d45cd2200bbd2d02f555c1
+    sha256:c36c938a872e5ff494938b33b14aaa156cb439ec67548fcab3535bb78b0846e8
 COMPONENT_ARCHIVE_URL=	http://pyyaml.org/download/pyyaml/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pyyaml.org/wiki/PyYAML
 COMPONENT_BUGDB=	python-mod/pyyaml
 
-TPNO=			9304
+TPNO=			28704
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Routes
-COMPONENT_VERSION=	1.13
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cc03d1a357cdb7af82e3909ee8ff93cb2b2afb48aca23bfde0117d6f49f624a7
+    sha256:98c380b5dc1190b873463be07383728ada18f66d2615531963004b9d6fb90351
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://routes.groovie.org/
 COMPONENT_BUGDB=	python-mod/routes
 
-TPNO=			14503
+TPNO=			28725
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -54,4 +54,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-

@@ -1,0 +1,31 @@
+This patch makes it possible to run the automated tests
+on Solaris.
+
+It does 2 things:
+ - loads unittest instead of unittest2
+ - skips a test if redis is not installed.  redis isn't currently
+   available in Solaris so this test would fail
+
+--- kombu-3.0.35/funtests/tests/test_redis.py.orig	2016-06-14 04:29:20.765318387 -0700
++++ kombu-3.0.35/funtests/tests/test_redis.py	2016-06-14 04:27:29.793635259 -0700
+@@ -18,5 +18,9 @@ class test_redis(transport.TransportCase
+         client.info()
+ 
+     def test_cant_connect_raises_connection_error(self):
++        try:
++            import redis  # noqa
++        except ImportError:
++            raise SkipTest('redis not installed')
+         conn = self.get_connection(port=65534)
+         self.assertRaises(conn.connection_errors, conn.connect)
+--- kombu-3.0.35/funtests/transport.py.orig	2016-06-14 04:19:06.891432493 -0700
++++ kombu-3.0.35/funtests/transport.py	2016-06-14 04:19:17.169321145 -0700
+@@ -5,7 +5,7 @@ import socket
+ import string
+ import sys
+ import time
+-import unittest2 as unittest
++import unittest
+ import warnings
+ import weakref
+ 

@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		passlib
-COMPONENT_VERSION=	1.6.1
+COMPONENT_VERSION=	1.6.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:00cfb564feb2d97ebaf6b28acdc9277a0c73c3c1df7b2a7b65605c76e724177b
+    sha256:a83d34f53dc9b17aa42c9a35c3fbcc5120f3fcb07f7f8721ec45e6a27be347fc
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://passlib.googlecode.com/
 COMPONENT_BUGDB=	python-mod/passlib
 
-TPNO=			14503
+TPNO=			28706
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

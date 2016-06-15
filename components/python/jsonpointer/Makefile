@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonpointer
-COMPONENT_VERSION=	1.0
+COMPONENT_VERSION=	1.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1e4945fe8d8d53ad501a564eaf574b0ae8e038eacc8717d127b59266d0ed0201
+    sha256:9fa5dcac35eefd53e25d6cd4c310d963c9f0b897641772cd6e5e7b89df7ee0b1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/jsonpointer
 COMPONENT_BUGDB=	python-mod/jsonpointer
 
-TPNO=			14503
+TPNO=			28717
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,6 +45,9 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # Author's name uses non-ASCII characters.
 COMPONENT_BUILD_ENV	+=	LC_ALL=en_US.UTF-8
 COMPONENT_INSTALL_ENV	+=	LC_ALL=en_US.UTF-8
+
+COMPONENT_POST_INSTALL_ACTION = \
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f jsonpointer jsonpointer-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)

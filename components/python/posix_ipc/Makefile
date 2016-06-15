@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		posix_ipc
-COMPONENT_VERSION=	0.9.9
+COMPONENT_VERSION=	1.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b3b7e464ebfb524bfe50861067d7fadaa801a76c1975014c1955cc32b3f9f41e
+    sha256:9c93070374ca672725575e5c9874930c8cde69367fb90378b2255e048e31efcb
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://semanchuk.com/philip/posix_ipc/
 COMPONENT_BUGDB=	python-mod/posix_ipc
 
-TPNO=			21633
+TPNO=			29118
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

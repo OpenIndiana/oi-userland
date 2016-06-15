@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httplib2
-COMPONENT_VERSION=	0.8
+COMPONENT_VERSION=	0.9.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cee59fdaa97a40ac505bb0629bdc8ba9ba79012d099ef11d6d3a284b7e369c9c
+    sha256:c3aba1c9539711551f4d83e857b316b5134a1c4ddce98a875b7027be7dd6d988
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/httplib2/
 COMPONENT_BUGDB=	python-mod/httplib2
 
-TPNO=			14503
+TPNO=			29114
 
 # Depends on SocksiPy; for Python 2.x, the module is part of httplib2, but
 # for Python 3.x, it is separate.  Once we add this module, httplib2 will

@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlparse
-COMPONENT_VERSION=	0.1.14
+COMPONENT_VERSION=	0.1.19
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e561e31853ab9f3634a1a2bd53035f9e47dfb203d56b33cc6569047ba087daf0
+    sha256:d896be1a1c7f24bffe08d7a64e6f0176b260e281c5f3685afe7826f8bada4ee8
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/sqlparse/
 COMPONENT_BUGDB=	python-mod/sqlparse
 
-TPNO=			26000
+TPNO=			29123
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

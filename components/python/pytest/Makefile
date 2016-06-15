@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
-COMPONENT_VERSION=	2.6.4
+COMPONENT_VERSION=	2.9.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:550883b98184cef6cbb980d4d90051330aeae41075092f98ef0215719af8ef33
+    sha256:0d48d27a127644fbe7c8158157e08b35f8255045d4476df694b91eb3a8147e65
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pytest.org/latest/
 COMPONENT_BUGDB=	python-mod/pytest
 
-TPNO=			21730
+TPNO=			29208
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

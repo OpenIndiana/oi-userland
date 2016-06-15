@@ -1,0 +1,55 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/wrapt-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A Python module for decorators, wrappers and monkey patching."
+set name=pkg.description \
+    value="The aim of the wrapt module is to provide a transparent object proxy for Python, which can be used as the basis for the construction of function wrappers and decorator functions."
+set name=com.oracle.info.description value="the Python wrapt module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Graham Dumpleton"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/195
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/64/_wrappers.so
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/_wrappers.so
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/arguments.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/decorators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/importer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/wrapt/wrappers.py
+#
+license LICENSE license=BSD
+
+# force a dependency on the wrapt package
+depend type=require \
+    fmri=library/python/wrapt@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

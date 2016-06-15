@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		kombu
-COMPONENT_VERSION=	3.0.32
+COMPONENT_VERSION=	3.0.35
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d3edda02076ae04fa62d128007756f4c4298fe479119ca070a47a22afe867660
+    sha256:22ab336a17962717a5d9470547e5508d4bcf1b6ec10cd9486868daf4e5edb727
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://kombu.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/kombu
 
-TPNO=			26421
+TPNO=			29115
 
 # Depends on pyrabbit which depends on httplib2 which has its own dependency
 # issues (see its Makefile for details).  So don't build for Python 3 until
@@ -53,9 +53,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require:
-# ordereddict, importlib, amqp, anyjson, unittest2, nose-cover3
-# which haven't been integrated yet.
-test:		$(NO_TESTS)
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/funtests
+COMPONENT_TEST_ARGS =	setup.py test
+test:		$(TEST_NO_ARCH)
 
 system-test:    $(NO_TESTS)

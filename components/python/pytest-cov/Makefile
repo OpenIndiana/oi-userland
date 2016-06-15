@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest-cov
-COMPONENT_VERSION=	1.6
+COMPONENT_VERSION=	2.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2e803c89f11e0344111670349f6ef401f831e85cbd287b0c5d61917da5aac454
+    sha256:a8b22e53e7f3b971454c35df99dffe21f4749f539491e935c55d3ff7e1b284fa
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pytest-cov
 COMPONENT_BUGDB=	python-mod/pytest-plugins
 
-TPNO=			14503
+TPNO=			29122
 
 # pytest-cov itself is Python 3 ready (builds & publishes cleanly with usual
 # changes applied) but it depends on cov-core which depends on coverage which
