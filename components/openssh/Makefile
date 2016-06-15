@@ -86,7 +86,6 @@ CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-sandbox=no
 CONFIGURE_OPTIONS += --with-solaris-contracts
-CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=$(USRBINDIR)/xauth
 CONFIGURE_OPTIONS += --disable-strip
