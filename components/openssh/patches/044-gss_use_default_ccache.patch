@@ -1,0 +1,209 @@
+diff -pur old/gss-serv.c new/gss-serv.c
+--- old/gss-serv.c
++++ new/gss-serv.c
+@@ -49,6 +49,8 @@
+ #include "ssh-gss.h"
+ #include "monitor_wrap.h"
+ 
++#include <gssapi/gssapi_ext.h>
++
+ extern ServerOptions options;
+ 
+ static ssh_gssapi_client gssapi_client =
+@@ -345,16 +347,17 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_g
+ void
+ ssh_gssapi_cleanup_creds(void)
+ {
+-#ifdef USE_GSS_STORE_CRED
+-	debug("removing gssapi cred file not implemented");
+-#else
++	if (options.gss_use_default_ccache == 1) {
++		debug("removing default gssapi cred cache file "
++		    "on session cleanup not supported");
++		return;
++	}
+ 	if (gssapi_client.store.filename != NULL) {
+ 		/* Unlink probably isn't sufficient */
+ 		debug("removing gssapi cred file\"%s\"",
+ 		    gssapi_client.store.filename);
+ 		unlink(gssapi_client.store.filename);
+ 	}
+-#endif /* USE_GSS_STORE_CRED */
+ }
+ 
+ /* As user */
+@@ -363,14 +366,53 @@ ssh_gssapi_storecreds(void)
+ {
+ #ifdef USE_GSS_STORE_CRED
+ 	OM_uint32 maj_status, min_status;
++	ssh_gssapi_ccache *store = &gssapi_client.store;
++	int tmpfd;
++	gss_key_value_set_desc cred_store;
++	gss_key_value_element_desc elem;
+ 
+ 	if (gssapi_client.creds == NULL) {
+ 		debug("No credentials stored");
+ 		return;
+ 	}
+ 
+-	maj_status = gss_store_cred(&min_status, gssapi_client.creds,
+-	    GSS_C_INITIATE, &gssapi_client.mech->oid, 1, 1, NULL, NULL);
++	/* optionally storing creds to per-session ccache */
++	if (options.gss_use_default_ccache == 0) {
++		if (asprintf(&store->envval,
++		    "FILE:/tmp/krb5cc_%d_XXXXXX", geteuid()) == -1) {
++			logit("ssh_gssapi_storecreds(): out of memory");
++			return;
++		}
++		store->filename = store->envval + strlen("FILE:");
++		store->envvar = "KRB5CCNAME";
++
++		if ((tmpfd = mkstemp(store->filename)) == -1) {
++			logit("mkstemp(): %.100s", strerror(errno));
++			free(store->envval);
++			memset(store, 0, sizeof (ssh_gssapi_ccache));
++			return;
++		}
++		if (fchmod(tmpfd, S_IRUSR | S_IWUSR) == -1) {
++			logit("fchmod(): %.100s", strerror(errno));
++			unlink(store->filename);
++			free(store->envval);
++			memset(store, 0, sizeof (ssh_gssapi_ccache));
++			close(tmpfd);
++			return;
++		}
++		close(tmpfd);
++
++		cred_store.count = 1;
++		cred_store.elements = &elem;
++		elem.key = "ccache";
++		elem.value = store->filename;
++		maj_status = gss_store_cred_into(&min_status,
++		    gssapi_client.creds, GSS_C_INITIATE, 
++		    &gssapi_client.mech->oid, 1, 1, &cred_store, NULL, NULL);
++	} else {
++		maj_status = gss_store_cred(&min_status, gssapi_client.creds,
++		    GSS_C_INITIATE, &gssapi_client.mech->oid, 1, 1, NULL, NULL);
++	}
+ 
+ 	if (GSS_ERROR(maj_status)) {
+ 		Buffer b;
+@@ -398,7 +440,17 @@ ssh_gssapi_storecreds(void)
+ 		error("GSS-API error while storing delegated credentials: %s",
+ 		    buffer_ptr(&b));
+ 		buffer_free(&b);
++		if (options.gss_use_default_ccache == 0) {
++			unlink(store->filename);
++			free(store->envval);
++			memset(store, 0, sizeof (ssh_gssapi_ccache));
++		}
++		return;
+ 	}
++
++	if (options.gss_use_default_ccache == 0)
++		do_pam_putenv(store->envvar, store->envval);
++
+ #else	/* #ifdef USE_GSS_STORE_CRED */
+ 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+ 		(*gssapi_client.mech->storecreds)(&gssapi_client);
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c
++++ new/servconf.c
+@@ -170,6 +170,7 @@ initialize_server_options(ServerOptions
+ 	options->ip_qos_bulk = -1;
+ 	options->version_addendum = NULL;
+ 	options->fingerprint_hash = -1;
++	options->gss_use_default_ccache = -1;
+ #ifdef PAM_ENHANCEMENT
+ 	options->pam_service_name = NULL;
+ 	options->pam_service_prefix = NULL;
+@@ -391,6 +392,8 @@ fill_default_server_options(ServerOption
+ 		options->fwd_opts.streamlocal_bind_unlink = 0;
+ 	if (options->fingerprint_hash == -1)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
++	if (options->gss_use_default_ccache == -1)
++		options->gss_use_default_ccache = 1;
+ 
+ 	assemble_algorithms(options);
+ 
+@@ -483,7 +486,7 @@ typedef enum {
+ 	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
+ 	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
+ 	sStreamLocalBindMask, sStreamLocalBindUnlink,
+-	sAllowStreamLocalForwarding, sFingerprintHash,
++	sAllowStreamLocalForwarding, sFingerprintHash, sGssUseDefaultCCache,
+ 	sDeprecated, sUnsupported
+ } ServerOpCodes;
+ 
+@@ -548,11 +551,7 @@ static struct {
+ 	{ "gssauthentication", sGssAuthentication, SSHCFG_ALL },   /* alias */
+ 	{ "gssapikeyexchange", sGssKeyEx, SSHCFG_ALL },
+ 	{ "gsskeyex", sGssKeyEx, SSHCFG_ALL },                     /* alias */
+-#ifdef USE_GSS_STORE_CRED
+-	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
+-#else /* USE_GSS_STORE_CRED */
+  	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
+-#endif /* USE_GSS_STORE_CRED */
+ 	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
+ #else
+ 	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
+@@ -664,6 +663,7 @@ static struct {
+ 	{ "streamlocalbindunlink", sStreamLocalBindUnlink, SSHCFG_ALL },
+ 	{ "allowstreamlocalforwarding", sAllowStreamLocalForwarding, SSHCFG_ALL },
+ 	{ "fingerprinthash", sFingerprintHash, SSHCFG_GLOBAL },
++	{ "gssapiusedefaultccache", sGssUseDefaultCCache, SSHCFG_GLOBAL },
+ 	{ NULL, sBadOption, 0 }
+ };
+ 
+@@ -1359,6 +1359,10 @@ process_server_config_line(ServerOptions
+ 		intptr = &options->gss_strict_acceptor;
+ 		goto parse_flag;
+ 
++	case sGssUseDefaultCCache:
++		intptr = &options->gss_use_default_ccache;
++		goto parse_flag;
++
+ 	case sPasswordAuthentication:
+ 		intptr = &options->password_authentication;
+ 		goto parse_flag;
+@@ -2436,6 +2440,7 @@ dump_config(ServerOptions *o)
+ 	dump_cfg_fmtint(sAllowStreamLocalForwarding, o->allow_streamlocal_forwarding);
+ 	dump_cfg_fmtint(sUsePrivilegeSeparation, use_privsep);
+ 	dump_cfg_fmtint(sFingerprintHash, o->fingerprint_hash);
++	dump_cfg_fmtint(sGssUseDefaultCCache, o->gss_use_default_ccache);
+ 
+ 	/* string arguments */
+ 	dump_cfg_string(sPidFile, o->pid_file);
+diff -pur old/servconf.h new/servconf.h
+--- old/servconf.h
++++ new/servconf.h
+@@ -206,6 +206,7 @@ typedef struct {
+ #endif
+         
+ 	int	fingerprint_hash;
++	int	gss_use_default_ccache;
+ }       ServerOptions;
+ 
+ /* Information about the incoming connection as used by Match */
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -640,6 +640,18 @@ Specifies whether to automatically destr
+ on logout.
+ The default is
+ .Dq yes .
++.It Cm GSSAPIUseDefaultCCache
++Specifies whether delegated GSSAPI credentials are stored in default credential
++cache file (eg. /tmp/krb5cc_100 for a user with UID 100) or in per-session
++non-default credential cache (eg.  /tmp/krb5cc_100_HwGrDC).  Tickets in
++non-default credential cache are not directly usable for accessing
++krb5-protected NFS shares.  Non-default credential cache can be destroyed on
++logout based on 
++.Cm GSSAPICleanupCredentials 
++setting however default credential
++caches are never automatically destroyed by sshd on session logout.
++The default is 
++.Dq yes .
+ .It Cm GSSAPIStrictAcceptorCheck
+ Determines whether to be strict about the identity of the GSSAPI acceptor
+ a client authenticates against.
