@@ -1,0 +1,112 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/p11-kit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Provides a way to load and enumerate PKCS#11 modules."
+set name=pkg.description \
+    value="p11-kit provides a way to load and enumerate PKCS#11 modules. Implements a standard discoverable configuration for installed PKCS#11 modules."
+set name=com.oracle.info.description value=p11-kit
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/311
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/pkcs11/pkcs11.conf.example
+file path=usr/bin/p11-kit
+file path=usr/bin/trust
+file path=usr/include/p11-kit-1/p11-kit/deprecated.h
+file path=usr/include/p11-kit-1/p11-kit/iter.h
+file path=usr/include/p11-kit-1/p11-kit/p11-kit.h
+file path=usr/include/p11-kit-1/p11-kit/pin.h
+file path=usr/include/p11-kit-1/p11-kit/pkcs11.h
+file path=usr/include/p11-kit-1/p11-kit/pkcs11x.h
+file path=usr/include/p11-kit-1/p11-kit/remote.h
+file path=usr/include/p11-kit-1/p11-kit/uri.h
+link path=usr/lib/$(MACH64)/libp11-kit.so target=libp11-kit.so.0.1.0
+link path=usr/lib/$(MACH64)/libp11-kit.so.0 target=libp11-kit.so.0.1.0
+file path=usr/lib/$(MACH64)/libp11-kit.so.0.1.0
+link path=usr/lib/$(MACH64)/p11-kit-proxy.so target=libp11-kit.so.0.1.0
+file path=usr/lib/$(MACH64)/p11-kit/p11-kit-remote mode=0555
+file path=usr/lib/$(MACH64)/p11-kit/trust-extract-compat mode=0555
+file path=usr/lib/$(MACH64)/pkgconfig/p11-kit-1.pc
+link path=usr/lib/libp11-kit.so target=libp11-kit.so.0.1.0
+link path=usr/lib/libp11-kit.so.0 target=libp11-kit.so.0.1.0
+file path=usr/lib/libp11-kit.so.0.1.0
+link path=usr/lib/p11-kit-proxy.so target=libp11-kit.so.0.1.0
+file path=usr/lib/p11-kit/p11-kit-remote mode=0555
+file path=usr/lib/p11-kit/trust-extract-compat mode=0555
+file path=usr/lib/pkgconfig/p11-kit-1.pc
+file path=usr/lib/security/$(MACH64)/p11-kit-trust.so
+file path=usr/lib/security/p11-kit-trust.so
+file path=usr/share/gtk-doc/html/p11-kit/config-example.html
+file path=usr/share/gtk-doc/html/p11-kit/config-files.html
+file path=usr/share/gtk-doc/html/p11-kit/config.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-building-style.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-building.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-commands.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-debugging.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-paths.html
+file path=usr/share/gtk-doc/html/p11-kit/devel-testing.html
+file path=usr/share/gtk-doc/html/p11-kit/devel.html
+file path=usr/share/gtk-doc/html/p11-kit/gtk-doc.css
+file path=usr/share/gtk-doc/html/p11-kit/home.png
+file path=usr/share/gtk-doc/html/p11-kit/index.html
+file path=usr/share/gtk-doc/html/p11-kit/index.sgml
+file path=usr/share/gtk-doc/html/p11-kit/left-insensitive.png
+file path=usr/share/gtk-doc/html/p11-kit/left.png
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-Deprecated.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-Future.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-Modules.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-PIN-Callbacks.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-URIs.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit-Utilities.html
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit.devhelp2
+file path=usr/share/gtk-doc/html/p11-kit/p11-kit.html
+file path=usr/share/gtk-doc/html/p11-kit/pkcs11-conf.html
+file path=usr/share/gtk-doc/html/p11-kit/reference.html
+file path=usr/share/gtk-doc/html/p11-kit/right-insensitive.png
+file path=usr/share/gtk-doc/html/p11-kit/right.png
+file path=usr/share/gtk-doc/html/p11-kit/sharing-managed.html
+file path=usr/share/gtk-doc/html/p11-kit/sharing.html
+file path=usr/share/gtk-doc/html/p11-kit/style.css
+file path=usr/share/gtk-doc/html/p11-kit/tools.html
+file path=usr/share/gtk-doc/html/p11-kit/trust-disable.html
+file path=usr/share/gtk-doc/html/p11-kit/trust-glib-networking.html
+file path=usr/share/gtk-doc/html/p11-kit/trust-module.html
+file path=usr/share/gtk-doc/html/p11-kit/trust-nss.html
+file path=usr/share/gtk-doc/html/p11-kit/trust.html
+file path=usr/share/gtk-doc/html/p11-kit/up-insensitive.png
+file path=usr/share/gtk-doc/html/p11-kit/up.png
+file path=usr/share/man/man1/trust.1
+file path=usr/share/man/man5/pkcs11.conf.5
+file path=usr/share/man/man8/p11-kit.8
+file path=usr/share/p11-kit/modules/p11-kit-trust.module
+license p11-kit.license license=BSD-like
