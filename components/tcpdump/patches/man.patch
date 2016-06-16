@@ -5,6 +5,15 @@ Solaris specific documentation changes.
 
 --- tcpdump-4.7.4/tcpdump.1.in.orig	Thu Apr 21 11:21:42 2016
 +++ tcpdump-4.7.4/tcpdump.1.in	Thu Apr 21 11:29:23 2016
+@@ -20,7 +20,7 @@
+ .\" WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+ .\" MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ .\"
+-.TH TCPDUMP 1  "11 July 2014"
++.TH TCPDUMP 8  "11 July 2014"
+ .SH NAME
+ tcpdump \- dump traffic on a network
+ .SH SYNOPSIS
 @@ -393,7 +393,7 @@
  .I interface
  argument of ``any'' can be used to capture packets from all interfaces.
@@ -14,3 +23,23 @@ Solaris specific documentation changes.
  .IP
  If the
  .B \-D
+--- tcpdump-4.7.4//Makefile.in	2016-06-15 14:27:29.370657670 -0700
++++ tcpdump-4.7.4//Makefile.in	2016-06-15 14:26:30.183856767 -0700
+@@ -409,13 +409,13 @@ install: all
+ 	    (mkdir -p $(DESTDIR)$(sbindir); chmod 755 $(DESTDIR)$(sbindir))
+ 	$(INSTALL_PROGRAM) $(PROG) $(DESTDIR)$(sbindir)/$(PROG)
+ 	$(INSTALL_PROGRAM) $(PROG) $(DESTDIR)$(sbindir)/$(PROG).`cat ${srcdir}/VERSION`
+-	[ -d $(DESTDIR)$(mandir)/man1 ] || \
+-	    (mkdir -p $(DESTDIR)$(mandir)/man1; chmod 755 $(DESTDIR)$(mandir)/man1)
+-	$(INSTALL_DATA) $(PROG).1 $(DESTDIR)$(mandir)/man1/$(PROG).1
++	[ -d $(DESTDIR)$(mandir)/man8 ] || \
++	    (mkdir -p $(DESTDIR)$(mandir)/man8; chmod 755 $(DESTDIR)$(mandir)/man8)
++	$(INSTALL_DATA) $(PROG).1 $(DESTDIR)$(mandir)/man8/$(PROG).8
+ 
+ uninstall:
+ 	rm -f $(DESTDIR)$(sbindir)/$(PROG)
+-	rm -f $(DESTDIR)$(mandir)/man1/$(PROG).1
++	rm -f $(DESTDIR)$(mandir)/man8/$(PROG).8
+ 
+ lint: $(GENSRC)
+ 	lint -hbxn $(SRC) | \

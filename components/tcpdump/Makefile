@@ -34,9 +34,6 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 
 TPNO=			22949
 
-# Prevent macro redefinition error 
-CFLAGS += -D _NETINET_IP_H
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Rebuild the configure script so the man pages are normalized.
