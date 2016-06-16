@@ -1,0 +1,58 @@
+Changes needed to get all the tests to work with both Python 2.X and 3.X.
+
+This patch was developed in-house; it should be sent upstream.
+
+--- setuptools-git-1.1/setuptools_git/tests.py.~1~	2014-08-16 02:06:54.000000000 -0700
++++ setuptools-git-1.1/setuptools_git/tests.py	2016-06-16 11:12:06.864751220 -0700
+@@ -78,7 +78,10 @@
+                      posix(realpath('subdir/entry.txt'))]))
+ 
+     def test_nonascii_filename(self):
+-        filename = 'héhé.html'
++        if sys.version_info >= (3,):
++            filename = 'héhé.html'.encode('utf-8')
++        else:
++            filename = 'héhé.html'
+ 
+         # HFS Plus uses decomposed UTF-8
+         if sys.platform == 'darwin':
+@@ -88,11 +91,11 @@
+ 
+         self.assertEqual(
+                 [fn for fn in os.listdir(self.directory) if fn[0] != '.'],
+-                [filename])
++                [fsdecode(filename)])
+ 
+         self.assertEqual(
+                 set(self.gitlsfiles(self.directory)),
+-                set([posix(realpath(filename))]))
++                set([posix(realpath(fsdecode(filename)))]))
+ 
+     def test_utf8_filename(self):
+         if sys.version_info >= (3,):
+@@ -220,7 +223,10 @@
+                 set(['entry.txt']))
+ 
+     def test_nonascii_filename(self):
+-        filename = 'héhé.html'
++        if sys.version_info >= (3,):
++            filename = 'héhé.html'.encode('utf-8')
++        else:
++            filename = 'héhé.html'
+ 
+         # HFS Plus uses decomposed UTF-8
+         if sys.platform == 'darwin':
+@@ -230,11 +236,11 @@
+ 
+         self.assertEqual(
+                 [fn for fn in os.listdir(self.directory) if fn[0] != '.'],
+-                [filename])
++                [fsdecode(filename)])
+ 
+         self.assertEqual(
+                 set(self.listfiles(self.directory)),
+-                set([filename]))
++                set([fsdecode(filename)]))
+ 
+     def test_utf8_filename(self):
+         if sys.version_info >= (3,):

@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		setuptools-git
-COMPONENT_VERSION=	1.0
+COMPONENT_VERSION=	1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eb75844bd56bd33f7c461246cdf99e6fa50b6a8dde2c56c967db54cd47b51af4
+    sha256:047d7595546635edebef226bc566579d422ccc48a8a91c7d32d8bd174f68f831
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/wichert/setuptools-git
 COMPONENT_BUGDB=	python-mod/setuptools
 
-TPNO=			14503
+TPNO=			29314
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -44,8 +44,13 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS=	setup.py test
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# common targets
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^writing.*/d" ' \
+	'-e "s|\(Ran 1 test in\).*|\1|" ' \
+	'-e "s|\(Ran .* tests in\).*|\1|" '
+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
