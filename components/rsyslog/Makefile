@@ -111,3 +111,4 @@ REQUIRED_PACKAGES += library/liblogging
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os

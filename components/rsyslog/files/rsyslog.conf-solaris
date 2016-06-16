@@ -1,6 +1,11 @@
 # if you experience problems, check
 # http://www.rsyslog.com/doc/troubleshoot.html for assistance
 
+# The following template setting enables output matching legacy syslogd.
+# WARNING: removal will enable default rsyslog output which could
+#          break scripts parsing logging output.
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
 # rsyslog v3: load input modules
 # If you do not load inputs, nothing happens!
 
@@ -12,24 +17,22 @@ $ModLoad imsolaris	# for Solaris kernel logging
 $IncludeConfig /etc/rsyslog.d/
 
 # High priority messages to the console
-*.err;kern.notice;auth.notice			/dev/sysmsg
+*.err							/dev/sysmsg
 # Next highest priority to the messages file
-*.err;kern.debug;daemon.notice;mail.crit	/var/adm/messages
+*.err;kern.debug;daemon.notice;auth.none;mail.crit	/var/adm/messages
 
 # Preserve traditional Solaris syslog defaults
 *.alert;kern.err;daemon.err			:omusrmsg:operator
 *.alert						:omusrmsg:root
 
-# Log anything (except auth, cron, daemon & mail) of level info or higher.
-*.info;mail.none;auth.none;cron.none		-/var/log/misc.log
-
-# Log all the auth, daemon & mail messages in one place.
-auth.*						-/var/log/auth.log
-daemon.*					-/var/log/daemon.log
-mail.*						-/var/log/mail.log
+# kern.notice goes to a file until rsyslog learns how not to clutter
+# the console.
+kern.notice					-/var/log/kern.log
 
 # Everybody gets emergency messages
 *.emerg						:omusrmsg:*
+
+mail.debug					/var/log/syslog
 
 # Remote Logging (we use TCP for reliable delivery)
 # An on-disk queue is created for this action. If the remote host is

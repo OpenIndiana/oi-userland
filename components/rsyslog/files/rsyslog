@@ -2,12 +2,13 @@
 #
 
 #
-# Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2005, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
 
 SVC_FMRI=svc:/system/system-log
+SYSLOG_FMRI=${SVC_FMRI}:syslog
 DEFAULT_FMRI=${SVC_FMRI}:default
 OLD_METHOD1="kill -HUP \`cat /var/run/syslog.pid\`"
 OLD_METHOD2="kill -HUP \`cat /system/volatile/syslog.pid\`"
@@ -29,9 +30,16 @@ if [ ! -x /usr/lib/rsyslog/rsyslogd ]; then
 	exit $SMF_EXIT_ERR_CONFIG
 fi
 
-default=$(/usr/bin/svcprop -c -p general/enabled $DEFAULT_FMRI)
-if [ $default = true ]; then
+# remove once "system-log/default" as been renamed to "syslog" in ON
+default=$(/usr/bin/svcprop -c -p general/enabled $DEFAULT_FMRI 2> /dev/null)
+if [ "$default" = true ]; then
 	echo "$DEFAULT_FMRI conflicts with this instance and must be disabled first. Exiting."
+	exit $SMF_EXIT_ERR_CONFIG
+fi
+
+syslog=$(/usr/bin/svcprop -c -p general/enabled $SYSLOG_FMRI 2> /dev/null)
+if [ "$syslog" = true ]; then
+	echo "$SYSLOG_FMRI conflicts with this instance and must be disabled first. Exiting."
 	exit $SMF_EXIT_ERR_CONFIG
 fi
 
