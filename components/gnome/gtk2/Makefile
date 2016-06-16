@@ -53,13 +53,6 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 
 CFLAGS += $(CPP_XPG6MODE)
 
-# gcc defaults to assuming stacks are 8 byte aligned on x86, but some
-# important existing binaries use the 4 byte alignment from the SysV ABI
-# and may segv on instructions like MOVAPS that require correct alignment,
-# so we override the gcc defaults until gcc fixes
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=40838
-gcc_OPT.i386.32 += -mincoming-stack-boundary=2
-
 # Generate man pages.
 CONFIGURE_OPTIONS += --enable-man
 # Required for other components.

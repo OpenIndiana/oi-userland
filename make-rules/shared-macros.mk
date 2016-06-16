@@ -879,12 +879,20 @@ CXXFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 # component build with CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.
 #
 
+# gcc defaults to assuming stacks are 8 byte aligned on x86, but some
+# important existing binaries use the 4 byte alignment from the SysV ABI
+# and may segv on instructions like MOVAPS that require correct alignment,
+# so we override the gcc defaults until gcc fixes - see Oracle bug 21393975
+# or upstream bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=62281
+gcc_STACK_ALIGN.i386.32 += -mincoming-stack-boundary=2
+
 # GCC Compiler optimization flag
 gcc_OPT.sparc.32 ?=	-O3
 gcc_OPT.sparc.64 ?=	-O3
 gcc_OPT.i386.32 ?=	-O3
 gcc_OPT.i386.64 ?=	-O3
-gcc_OPT ?=		$(gcc_OPT.$(MACH).$(BITS))
+gcc_OPT ?=		$(gcc_OPT.$(MACH).$(BITS)) \
+			$(gcc_STACK_ALIGN.$(MACH).$(BITS))
 
 # GCC PIC code generation.  Use CC_PIC instead to select PIC code generation.
 gcc_PIC =	-fPIC -DPIC

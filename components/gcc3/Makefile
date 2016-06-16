@@ -68,6 +68,9 @@ LD_B_DIRECT=
 
 CFLAGS += -std=gnu89
 
+# gcc3 doesn't support -mincoming-stack-boundary, but doesn't need it either.
+gcc_STACK_ALIGN.i386.32 =
+
 CONFIGURE_PREFIX =	/usr/gcc/3.4
 CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
