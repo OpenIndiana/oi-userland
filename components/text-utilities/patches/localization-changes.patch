@@ -3,9 +3,9 @@ Set the message domain to text-utilities.
 
 These changes will not be submitted upstream.
 
---- util-linux-2.25.2/po/POTFILES.in.orig	2015-02-16 17:58:51.277504520 -0800
-+++ util-linux-2.25.2/po/POTFILES.in	2015-02-16 18:01:33.075068561 -0800
-@@ -1,29 +1,3 @@
+--- util-linux-2.28/po/POTFILES.in.orig	2016-06-09 14:25:26.035456587 -0700
++++ util-linux-2.28/po/POTFILES.in	2016-06-09 14:33:37.556681233 -0700
+@@ -1,31 +1,3 @@
 -disk-utils/addpart.c
 -disk-utils/blockdev.c
 -disk-utils/cfdisk.c
@@ -15,6 +15,8 @@ These changes will not be submitted upstream.
 -disk-utils/fdformat.c
 -disk-utils/fdisk.c
 -disk-utils/fdisk.h
+-disk-utils/fdisk-list.c
+-disk-utils/fdisk-list.h
 -disk-utils/fdisk-menu.c
 -disk-utils/fsck.c
 -disk-utils/fsck.cramfs.c
@@ -33,11 +35,11 @@ These changes will not be submitted upstream.
 -disk-utils/sfdisk.c
 -disk-utils/swaplabel.c
  include/all-io.h
- include/at.h
  include/bitops.h
-@@ -81,96 +55,6 @@
- include/xgetpass.h
- lib/at.c
+ include/blkdev.h
+@@ -81,97 +53,6 @@
+ include/widechar.h
+ include/xalloc.h
  lib/blkdev.c
 -libblkid/src/blkidP.h
 -libblkid/src/cache.c
@@ -76,6 +78,7 @@ These changes will not be submitted upstream.
 -libblkid/src/superblocks/cramfs.c
 -libblkid/src/superblocks/ddf_raid.c
 -libblkid/src/superblocks/drbd.c
+-libblkid/src/superblocks/drbdmanage.c
 -libblkid/src/superblocks/drbdproxy_datalog.c
 -libblkid/src/superblocks/exfat.c
 -libblkid/src/superblocks/ext.c
@@ -129,11 +132,11 @@ These changes will not be submitted upstream.
 -libblkid/src/topology/topology.h
 -libblkid/src/verify.c
 -libblkid/src/version.c
- lib/boottime.c
  lib/canonicalize.c
+ lib/color-names.c
  lib/colors.c
-@@ -179,24 +63,6 @@
- lib/crc64.c
+@@ -179,25 +60,6 @@
+ lib/crc32.c
  lib/env.c
  lib/exec_shell.c
 -libfdisk/src/alignment.c
@@ -146,26 +149,28 @@ These changes will not be submitted upstream.
 -libfdisk/src/init.c
 -libfdisk/src/iter.c
 -libfdisk/src/label.c
--libfdisk/src/libfdisk.h
 -libfdisk/src/partition.c
 -libfdisk/src/parttype.c
+-libfdisk/src/script.c
 -libfdisk/src/sgi.c
 -libfdisk/src/sun.c
 -libfdisk/src/table.c
 -libfdisk/src/test.c
 -libfdisk/src/utils.c
+-libfdisk/src/version.c
  lib/fileutils.c
+ lib/idcache.c
  lib/ismounted.c
- lib/langinfo.c
-@@ -206,30 +72,6 @@
- lib/match.c
+@@ -209,32 +71,6 @@
  lib/mbsalign.c
  lib/md5.c
+ lib/monotonic.c
 -libmount/python/context.c
 -libmount/python/fs.c
 -libmount/python/pylibmount.c
 -libmount/python/pylibmount.h
 -libmount/python/tab.c
+-libmount/src/btrfs.c
 -libmount/src/cache.c
 -libmount/src/context.c
 -libmount/src/context_loopdev.c
@@ -175,6 +180,7 @@ These changes will not be submitted upstream.
 -libmount/src/init.c
 -libmount/src/iter.c
 -libmount/src/lock.c
+-libmount/src/monitor.c
 -libmount/src/mountP.h
 -libmount/src/optmap.c
 -libmount/src/optstr.c
@@ -188,8 +194,8 @@ These changes will not be submitted upstream.
  lib/pager.c
  lib/path.c
  lib/procutils.c
-@@ -251,115 +93,7 @@
- lib/sysfs.c
+@@ -257,118 +93,6 @@
+ lib/timer.c
  lib/timeutils.c
  lib/ttyutils.c
 -libuuid/src/clear.c
@@ -206,15 +212,15 @@ These changes will not be submitted upstream.
 -libuuid/src/uuid.h
 -libuuid/src/uuidP.h
 -libuuid/src/uuid_time.c
- lib/xgetpass.c
 -login-utils/auth.c
 -login-utils/auth.h
+-login-utils/ch-common.c
+-login-utils/ch-common.h
 -login-utils/chfn.c
 -login-utils/chsh.c
 -login-utils/islocal.c
 -login-utils/islocal.h
 -login-utils/last.c
--login-utils/last-deprecated.c
 -login-utils/libuser.c
 -login-utils/libuser.h
 -login-utils/login.c
@@ -249,6 +255,7 @@ These changes will not be submitted upstream.
 -misc-utils/mcookie.c
 -misc-utils/namei.c
 -misc-utils/rename.c
+-misc-utils/test_uuidd.c
 -misc-utils/uuidd.c
 -misc-utils/uuidgen.c
 -misc-utils/whereis.c
@@ -268,7 +275,6 @@ These changes will not be submitted upstream.
 -sys-utils/hwclock.c
 -sys-utils/hwclock-cmos.c
 -sys-utils/hwclock.h
--sys-utils/hwclock-kd.c
 -sys-utils/hwclock-rtc.c
 -sys-utils/ipcmk.c
 -sys-utils/ipcrm.c
@@ -281,6 +287,8 @@ These changes will not be submitted upstream.
 -sys-utils/lscpu.c
 -sys-utils/lscpu-dmi.c
 -sys-utils/lscpu.h
+-sys-utils/lsipc.c
+-sys-utils/lsns.c
 -sys-utils/mount.c
 -sys-utils/mountpoint.c
 -sys-utils/nsenter.c
@@ -301,17 +309,18 @@ These changes will not be submitted upstream.
 -sys-utils/umount.c
 -sys-utils/unshare.c
 -sys-utils/wdctl.c
+-sys-utils/zramctl.c
  term-utils/agetty.c
  term-utils/mesg.c
  term-utils/script.c
---- util-linux-2.25.2/configure.orig	2015-02-16 18:03:52.241717421 -0800
-+++ util-linux-2.25.2/configure	2015-02-16 18:04:23.594933195 -0800
-@@ -4851,7 +4851,7 @@
+--- util-linux-2.28/configure.orig	2016-06-09 14:34:48.346013558 -0700
++++ util-linux-2.28/configure	2016-06-09 14:35:28.581050910 -0700
+@@ -4996,7 +4996,7 @@
  
  
  # Define the identity of the package.
 - PACKAGE='util-linux'
 + PACKAGE='text-utilities'
-  VERSION='2.25.2'
+  VERSION='2.28'
  
  

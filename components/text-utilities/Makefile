@@ -22,19 +22,20 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER= gcc
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		text-utilities
-COMPONENT_VERSION=	2.25.2
+COMPONENT_VERSION=	2.28
 COMPONENT_PROJECT_URL=	https://www.kernel.org/pub/linux/utils/util-linux
 COMPONENT_SRC=		util-linux-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e0457f715b73f4a349e1acb08cb410bf0edc9a74a3f75c357070f31f70e33cd6
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v2.25/$(COMPONENT_ARCHIVE)
+    sha256:395847e2a18a2c317170f238892751e73a57104565344f8644090c8b091014bb
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-TPNO=			21750
+TPNO=			29447
 
 TEST_TARGET= install $(TEST_64)
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
@@ -54,10 +55,6 @@ COMPONENT_PRE_INSTALL_ACTION = \
 
 # We don't need the Python bindings built.
 CONFIGURE_OPTIONS +=		--without-python
-
-# Makefile incorrectly includes gcc(1) '-fsigned-char' in AM_CFLAGS, so we
-# override it.
-COMPONENT_BUILD_ARGS +=		AM_CFLAGS=""
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
