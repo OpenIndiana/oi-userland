@@ -18,18 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Put the various bind man pages in the right directories.
-<transform file path=usr/share/man/man8/(.+)$ -> set action.hash Solaris/%<1> >
-<transform file path=usr/share/man/ja_JP.UTF-8/man8/(.+)$ -> set action.hash Solaris/ja/%<1> >
-<transform file path=usr/share/man/zh_CN.UTF-8/man8/(.+)$ -> set action.hash Solaris/zh/%<1> >
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
+# HTML documents are obtained directly from source.
 <transform file path=usr/share/doc/bind/html/(.+)$ -> \
     set action.hash doc/arm/%<1> >
-# Bypass the mangler for these files because they are pre-Solarified.
-<transform file path=usr/share/man/.+$ -> add mangler.bypass true >
 set name=pkg.fmri \
     value=pkg:/service/network/dns/bind@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="BIND DNS name server and configuration tools."
@@ -48,22 +44,41 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2009/308
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-
 # Solaris additions
 file Solaris/server.xml path=lib/svc/manifest/network/dns/server.xml
 file Solaris/dns-server.sh path=lib/svc/method/dns-server mode=0555
 
 # Tools
+file path=usr/sbin/ddns-confgen
+file path=usr/sbin/dnssec-checkds pkg.depend.bypass-generate=.*/win32api.* \
+    pkg.depend.bypass-generate=.*/win32con.*
+file path=usr/sbin/dnssec-coverage pkg.depend.bypass-generate=.*/win32api.* \
+    pkg.depend.bypass-generate=.*/win32con.*
 file path=usr/sbin/dnssec-dsfromkey
+file path=usr/sbin/dnssec-importkey
 file path=usr/sbin/dnssec-keyfromlabel
 file path=usr/sbin/dnssec-keygen
+file path=usr/sbin/dnssec-revoke
+file path=usr/sbin/dnssec-settime
 file path=usr/sbin/dnssec-signzone
+file path=usr/sbin/dnssec-verify
+file path=usr/sbin/genrandom
+file path=usr/sbin/isc-hmac-fixup
 file path=usr/sbin/named
 file path=usr/sbin/named-checkconf
 file path=usr/sbin/named-checkzone
 link path=usr/sbin/named-compilezone target=named-checkzone
+file path=usr/sbin/named-journalprint
+file path=usr/sbin/named-rrchecker
+file path=usr/sbin/nsec3hash
+file path=usr/sbin/pkcs11-destroy
+file path=usr/sbin/pkcs11-keygen
+file path=usr/sbin/pkcs11-list
+file path=usr/sbin/pkcs11-tokens
+file path=usr/sbin/rndc-confgen
+link path=usr/sbin/tsig-keygen target=ddns-confgen
 
-# Documentation
+# Standard Documentation
 file doc/arm/Bv9ARM.pdf path=usr/share/doc/bind/Bv9ARM.pdf
 file path=usr/share/doc/bind/html/Bv9ARM.ch01.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch02.html
@@ -75,41 +90,69 @@ file path=usr/share/doc/bind/html/Bv9ARM.ch07.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch08.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch09.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch10.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch11.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch12.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch13.html
 file path=usr/share/doc/bind/html/Bv9ARM.html
+file path=usr/share/doc/bind/html/man.arpaname.html
+file path=usr/share/doc/bind/html/man.ddns-confgen.html
+file path=usr/share/doc/bind/html/man.delv.html
 file path=usr/share/doc/bind/html/man.dig.html
+file path=usr/share/doc/bind/html/man.dnssec-checkds.html
+file path=usr/share/doc/bind/html/man.dnssec-coverage.html
 file path=usr/share/doc/bind/html/man.dnssec-dsfromkey.html
+file path=usr/share/doc/bind/html/man.dnssec-importkey.html
 file path=usr/share/doc/bind/html/man.dnssec-keyfromlabel.html
 file path=usr/share/doc/bind/html/man.dnssec-keygen.html
+file path=usr/share/doc/bind/html/man.dnssec-revoke.html
+file path=usr/share/doc/bind/html/man.dnssec-settime.html
 file path=usr/share/doc/bind/html/man.dnssec-signzone.html
+file path=usr/share/doc/bind/html/man.dnssec-verify.html
+file path=usr/share/doc/bind/html/man.genrandom.html
 file path=usr/share/doc/bind/html/man.host.html
+file path=usr/share/doc/bind/html/man.isc-hmac-fixup.html
 file path=usr/share/doc/bind/html/man.named-checkconf.html
 file path=usr/share/doc/bind/html/man.named-checkzone.html
+file path=usr/share/doc/bind/html/man.named-journalprint.html
+file path=usr/share/doc/bind/html/man.named-rrchecker.html
 file path=usr/share/doc/bind/html/man.named.html
+file path=usr/share/doc/bind/html/man.nsec3hash.html
 file path=usr/share/doc/bind/html/man.nsupdate.html
 file path=usr/share/doc/bind/html/man.rndc-confgen.html
 file path=usr/share/doc/bind/html/man.rndc.conf.html
 file path=usr/share/doc/bind/html/man.rndc.html
-file path=usr/share/man/ja_JP.UTF-8/man8/dnssec-dsfromkey.8
-file path=usr/share/man/ja_JP.UTF-8/man8/dnssec-keyfromlabel.8
-file path=usr/share/man/ja_JP.UTF-8/man8/dnssec-keygen.8
-file path=usr/share/man/ja_JP.UTF-8/man8/dnssec-signzone.8
-file Solaris/named.conf.5 path=usr/share/man/man5/named.conf.5
+file path=usr/share/doc/bind/html/notes.html
+file path=usr/share/man/man1/named-rrchecker.1
+file path=usr/share/man/man5/named.conf.5
+file path=usr/share/man/man8/ddns-confgen.8
+file path=usr/share/man/man8/dnssec-checkds.8
+file path=usr/share/man/man8/dnssec-coverage.8
 file path=usr/share/man/man8/dnssec-dsfromkey.8
+file path=usr/share/man/man8/dnssec-importkey.8
 file path=usr/share/man/man8/dnssec-keyfromlabel.8
 file path=usr/share/man/man8/dnssec-keygen.8
-file path=usr/share/man/man8/dnssec-makekeyset.8
-file path=usr/share/man/man8/dnssec-signkey.8
+file path=usr/share/man/man8/dnssec-revoke.8
+file path=usr/share/man/man8/dnssec-settime.8
 file path=usr/share/man/man8/dnssec-signzone.8
-file path=usr/share/man/man8/in.named.8
+file path=usr/share/man/man8/dnssec-verify.8
+file path=usr/share/man/man8/genrandom.8
+file path=usr/share/man/man8/isc-hmac-fixup.8
 file path=usr/share/man/man8/named-checkconf.8
-file path=usr/share/man/man8/named-checkzone.8
+link path=usr/share/man/man8/named-checkzone.8 target=named-compilezone.8
 file path=usr/share/man/man8/named-compilezone.8
+file path=usr/share/man/man8/named-journalprint.8
 file path=usr/share/man/man8/named.8
-file path=usr/share/man/zh_CN.UTF-8/man8/dnssec-dsfromkey.8
-file path=usr/share/man/zh_CN.UTF-8/man8/dnssec-keyfromlabel.8
-file path=usr/share/man/zh_CN.UTF-8/man8/dnssec-keygen.8
-file path=usr/share/man/zh_CN.UTF-8/man8/dnssec-signzone.8
+file path=usr/share/man/man8/nsec3hash.8
+file path=usr/share/man/man8/pkcs11-destroy.8
+file path=usr/share/man/man8/pkcs11-keygen.8
+file path=usr/share/man/man8/pkcs11-list.8
+file path=usr/share/man/man8/pkcs11-tokens.8
+file path=usr/share/man/man8/rndc-confgen.8
+link path=usr/share/man/man8/tsig-keygen.8 target=ddns-confgen.8
+file Solaris/dns-server.8s path=usr/share/man/man8s/dns-server.8s \
+    mangler.bypass=true
 legacy pkg=SUNWbind desc="BIND DNS Name server" name="BIND DNS Name server"
 legacy pkg=SUNWbindr desc="BIND Name server Manifest" \
     name="BIND Name server Manifest"
 license bind.license license="ISC license"
+

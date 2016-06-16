@@ -1,0 +1,453 @@
+'\" te
+.\" Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+.TH dns-server 5 "18 Apr 2016" "SunOS 5.12" "Standards, Environments, and Macros"
+.SH NAME
+dns-server \- Domain Name Server service
+.SH DESCRIPTION
+.sp
+.LP
+The \fBdns-server\fR service is a service management facility, under the service identifier:
+.sp
+.in +2
+.nf
+svc:/network/dns/server:default
+.fi
+.in -2
+.sp
+.LP
+The service starts, monitors and manages an instance of \fBnamed\fR(8) with command line
+options as per service properties configured in the SMF configuration
+repository.  Use \fBsvcprop\fR(1) to list the properties and
+\fBsvccfg\fR(8) to make changes.  See EXAMPLES below.
+.sp
+.LP
+Administrative actions on this service, such as enabling, disabling,
+or requesting restart, can be performed using \fBsvcadm\fR(8). The
+service's status can be queried using the \fBsvcs\fR(1) command.
+.SH SERVICE
+.sp
+.LP
+The \fBdns-server\fR SMF service supports the \fBstart\fR,
+\fBstop\fR, \fBrefresh\fR and \fBrestart\fR methods.  The methods are
+invoked using \fBsvcadm\fR(8).
+.sp
+.ne 2
+.mk
+.na
+\fB\fBstart\fR\fR
+.ad
+.RS 11n
+.rt
+Reads SMF properties and creates relevant command line, checks for existence of configuration file, and
+for rndc configuration (/etc/rndc.conf) or key (/etc/rndc.key) file (creating them if
+neither exist), starts named(8) with created options and monitors process.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBstop\fR\fR
+.ad
+.RS 11n
+.rt
+stops instance.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBrefresh\fR\fR
+.ad
+.RS 11n
+.rt
+Refreshes SMF options and sends \fBnamed\fR(8) instance a \fBSIGHUP\fR
+signal, causing it to reload named.conf.  Note, a running instance
+will not pickup any SMF option changes until a restart.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBrestart\fR\fR
+.ad
+.RS 11n
+.rt
+stops and the restarts instance.
+.RE
+
+.SH SMF PROPERTIES
+.sp
+.LP
+The following application configuration properties are available to administrators:
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIchroot_dir\fR\fR
+.ad
+.sp .6
+.RS 4n
+This option is not recommended and may be removed in a future release!
+Using \fBzones\fR(7) and Role-Based Access Control, \fBrbac\fR(7), is
+recommended rather than chroot environments.
+.sp
+\fIchroot_dir\fR specifies the directory to be used as the root
+directory after processing SMF properties and the command line
+arguments but before reading the configuration file. Use this property
+when using a \fBchroot\fR(2) environment. Synonymous to command line
+option \fB-t\fR \fIdirectory\fR.
+.sp
+This option should be used in conjunction with the start/user option
+(see below), as chrooting a process running as root does not enhance
+security on most systems; the way chroot() is defined allows a process
+with root privileges to escape a chroot jail.
+.sp
+When using \fBchroot\fR(2), \fBnamed\fR(8) is unable to disable itself
+when receiving \fBrndc\fR(8) \fBstop\fR or \fBhalt\fR
+commands. Instead, you must use the \fBsvcadm\fR(8) \fBdisable\fR
+command.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIconfiguration_file\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the configuration file to be used instead of the default,
+\fB/etc/named.conf\fR. A directory option might be specified in the
+configuration file. To ensure that reloading the configuration file
+continues to work in such a situation, \fIconfiguration_file\fR should
+be specified as an absolute pathname. This pathname should not include
+the \fIchroot_dir\fR pathname. This property is the equivalent of the
+\fB-c\fR \fIconfig-file\fR option.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIcrypto_engine\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specify an alternative crypto hardware (OpenSSL engine) for the crypto
+operations.  Equivalent command line option \fB-E\fR \fIengine-name\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIdebug_level\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the default debug level. The default is 0, which means no debugging. The higher the number the more verbose debug information becomes. Equivalent of the command line option \fB-d\fR \fIdebug_level\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIip_interfaces\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies over which IP transport, IPv4 or IPv6, BIND will transmit. Possible values are \fBIPv4\fR or \fBIPv6\fR. Any other setting assumes \fBall\fR, the default. This property is the equivalent of command line option \fB-4\fR or \fB-6\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIlisten_on_port\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the default UDP and TCP port to be used for listening to DNS requests. This property is the equivalent of the command line option \fB-p\fR \fIport\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIlistener_threads\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the number of listener worker threads to listen for incoming UDP packets on each address.  If not specified, \fBnamed\fR will calculate a default value based on the number of detected CPUs: 1 for 1 CPU, 2 for 2-4 CPUs, and the number of detected CPUs divided by 2 for values higher than 4.  If \fB\fBoptions\fR/\fIthreads\fR\fR has been set to a higher value than the number of detected CPUs, then \fBlistener_threads\fR may be increased as high as that value, but no higher.  Equivalent command line option \fB-U\fR \fI#listeners\fR'.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIserver\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the server executable to be used instead of the default server, \fB/usr/sbin/named\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBoptions\fR/\fIthreads\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the number of CPU worker threads to create. The default of 0 causes \fBnamed\fR to try and determine the number of CPUs present and create one thread per CPU. Equivalent of command line option \fB-n\fR \fI#cpus\fR.
+.RE
+
+.sp
+.LP
+In the event of a configuration error originating in one of the above
+SMF application options, an error message is logged which
+provides information about the error and the parameters that need
+correcting. \fBdns-server\fR then exits with exit code
+\fBSMF_EXIT_ERR_CONFIG\fR.  In the event of an error other than a
+configuration error, \fBdns-server\fR exits with exit code
+\fBSMF_EXIT_ERR_FATAL\fR. Both non-successful exit codes cause the start
+method, \fBsmf_method\fR(7), to place the service in the maintenance
+state, which can be observed with the \fBsvcs\fR(1) command \fBsvcs\fR
+\fB-x\fR.
+.sp
+.LP
+In addition to the properties listed above, the following property can
+be used to invoke \fBnamed\fR as a user other than root:
+.sp
+.ne 2
+.mk
+.na
+\fB\fBstart\fR/\fIuser\fR\fR
+.ad
+.sp .6
+.RS 4n
+Specifies the identity of the user that is invoking \fBnamed\fR. See
+\fBsmf_method\fR(7). Note that the user must have
+\fBsolaris.smf.manage.bind\fR authorization. Without this role the
+\fBnamed\fR will be unable to manage its SMF FMRI and \fBnamed\fR will
+automatically be restarted by the SMF after an \fBrndc\fR(8)
+\fBstop\fR or \fBhalt\fR command. See \fBEXAMPLES\fR for a sequence of
+commands that establishes the correct authorization.
+.RE
+
+.SH EXAMPLES
+.LP
+\fBExample 1 \fRConfiguring \fBnamed\fR to Transmit Only over IPv4 Networks
+.sp
+.LP
+The following command sequence configures \fBnamed\fR such that it
+will transmit only over IPv4 networks.
+
+.sp
+.in +2
+.nf
+# \fBsvccfg -s svc:network/dns/server:default setprop \e\fR
+
+\fB> options/ip_interfaces=IPv4\fR
+
+# \fBsvcadm refresh svc:network/dns/server:default\fR
+
+#
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 2 \fRListing Current Configuration File and Setting an Alternative File
+.sp
+.LP
+The following sequence of commands lists the current \fBnamed\fR
+configuration file and sets an alternative file.
+
+.sp
+.in +2
+.nf
+# \fBsvcprop -p options/configuration_file dns/server:default\fR
+
+/etc/named.conf
+
+# \fBsvccfg -s dns/server:default setprop \e
+
+> options/configuration_file=/var/named/named.conf\fR
+
+# \fBsvcadm refresh dns/server:default\fR
+
+# \fBsvcprop -p options/configuration_file dns/server:default\fR
+
+/var/named/named.conf
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 3 \fREstablishing Appropriate Authorization for \fBnamed\fR
+.sp
+.LP
+To have \fBnamed\fR start with the \fBsolaris.smf.manage.bind\fR
+authorization, perform the steps shown below.
+
+.sp
+.LP
+Add the user \fBdnsadmin\fR to the \fBsolaris.smf.manage.bind\fR role:
+
+.sp
+.in +2
+.nf
+# \fBusermod -A solaris.smf.manage.bind dnsadmin\fR
+
+\fBObserve effect of command:\fR
+
+# \fBtail -1 /etc/user_attr\fR
+
+dnsadmin::::type=normal;auths=solaris.smf.manage.bind
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+Modify the service properties:
+
+.sp
+.in +2
+.nf
+# \fBsvccfg\fR
+
+svc:> \fBselect svc:/network/dns/server:default\fR
+
+svc:/network/dns/server:default> \fBsetprop start/user = dnsadmin\fR
+
+svc:/network/dns/server:default> \fBsetprop start/group = dnsadmin\fR
+
+svc:/network/dns/server:default> \fBexit\fR
+
+# \fBsvcadm refresh svc:/network/dns/server:default\fR
+
+# \fBsvcadm restart svc:/network/dns/server:default\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+Because only root has write access to create the default process-ID
+file, \fB/var/run/named/named.pid\fR, \fBnamed\fR must be configured
+to use an alternative path for the user \fBdnsadmin\fR. Here is an
+example of how to accomplish this:
+
+.sp
+.in +2
+.nf
+# \fBmkdir /var/named/tmp\fR
+
+# \fBchown dnsadmin /var/named/tmp\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+Shown below is what you must add to \fBnamed.conf\fR to make use of
+the directory created above.
+
+.sp
+.in +2
+.nf
+# \fBhead /etc/named.conf\fR
+
+options {
+
+directory "/var/named";
+
+pid-file "/var/named/tmp/named.pid";
+
+};
+.fi
+.in -2
+.sp
+
+.SH FILES
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/named.conf\fR\fR
+.ad
+.sp .6
+.RS 4n
+default configuration file
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/rndc.conf\fR\fR
+.ad
+.sp .6
+.RS 4n
+Configuration file for \fBrndc\fR(8)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/rndc.key\fR\fR
+.ad
+.sp .6
+.RS 4n
+default key file used by \fBrndc\fR(8)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/run/named/named.pid\fR\fR
+.ad
+.sp .6
+.RS 4n
+default process-ID file
+.RE
+
+.SH ATTRIBUTES
+.sp
+.LP
+See \fBattributes\fR(5) for descriptions of the following attributes:
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i)
+lw(2.75i) |lw(2.75i)
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilityservice/network/dns/bind
+_
+Interface StabilityVolatile
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBsvcs\fR(1), \fBnamed\fR(8), \fBnamed-checkconf\fR(8),
+\fBnamed-checkzone\fR(8), \fBrndc\fR(8), \fBrndc-confgen\fR(8),
+\fBsvcadm\fR(8), \fBsvccfg\fR(8), \fBsvcprop\fR(1), \fBchroot\fR(2),
+\fBsetuid\fR(2), \fBbind\fR(3c), \fBattributes\fR(7),
+\fBsmf\fR(7), \fBsmf_method\fR(7)
+.sp
+.LP
+See the BIND 9 \fIAdministrator's Reference Manual\fR. As of the date of publication of this man page, this document is available at https://kb.isc.org/article/AA-01031\&.

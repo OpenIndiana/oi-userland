@@ -26,30 +26,36 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.6-ESV-R11
-HUMAN_VERSION=		$(COMPONENT_VERSION)-P6
-IPS_COMPONENT_VERSION=	9.6.3.11.6
+COMPONENT_VERSION=	9.10.3-P4
+HUMAN_VERSION=		$(COMPONENT_VERSION)
+IPS_COMPONENT_VERSION=	9.10.3.0.4
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:4f052195a62218c05a05033774452e6a9e329b865c01e594cc20a6adf11e0d0f
+	sha256:2ac044b5fbdf45fb45107af0df961b3b7cb5262a3bf1948ed3fe7a170dd13e3e
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sha512.asc
 COMPONENT_BUGDB=	service/dns-server
-
-TPNO=			25905
+TPNO=			26279
 
 include $(WS_MAKE_RULES)/common.mk
+
+# PYVER is important for packaging and computing requisites.
+PYTHON_VERSION =	3.4
+PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
 # Specify "configure" options and features.
 # FYI, The configure options are displayed by 'named -V'.
 CONFIGURE_OPTIONS +=	--enable-full-report
-# - Build dynamic libraries, static libraries are not shipped.
+# Python: specifying version helps with packaging.
+CONFIGURE_OPTIONS +=	--with-python=$(PYTHON.$(PYTHON_VERSION))
+# - libtool: Build dynamic libraries, static libraries are not shipped.
 CONFIGURE_OPTIONS +=	--with-libtool
-# - Use openssl, but don't check version as that is also delivered dynamically.
+# - openssl: use openssl, required for DNSSEC features.
 CONFIGURE_OPTIONS +=	--with-openssl
-CONFIGURE_OPTIONS +=	--disable-openssl-version-check
+# - pkcs11: Use openSSL pkcs11 engine (KMIP/KMS)
 CONFIGURE_OPTIONS +=	--with-pkcs11
 # - Use xml2-config found uder /usr without checking its version.
 CONFIGURE_OPTIONS +=	--with-libxml2=$(USRDIR)
@@ -61,14 +67,12 @@ CONFIGURE_OPTIONS +=	--enable-fixed-rrset
 
 # Override / set specific pathnames:
 # - DNS libraries are in usr/lib/dns - Override settings from configure.mk
-CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib/dns
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
-# - Traditionally all BIND executables are installed in sbin not bin.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_SBINDIR.64)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--with-randomdev=/dev/random
 CONFIGURE_OPTIONS +=	--with-gssapi=krb5-config
+CONFIGURE_OPTIONS +=	--with-docbook-xsl=/usr/share/sgml/docbook
 
 # Compiler and compiler options:
 # - configure will add "-mt" to CC which is already set in CFLAGS, so override.
@@ -145,24 +149,19 @@ test-named-version: install
 	 else \
 		echo '64bit version not found.'; \
 	 fi;
-	@if [ -e $(PROTO_DIR)$(CONFIGURE_SBINDIR.32)/named ]; then \
-		echo '32bit version:'; \
-		file $(PROTO_DIR)$(CONFIGURE_SBINDIR.32)/named; \
-		LD_LIBRARY_PATH=$(PROTO_DIR)$(CONFIGURE_LIBDIR.32) \
-			$(PROTO_DIR)$(CONFIGURE_SBINDIR.32)/named -V; \
-	 else \
-		echo '32bit version not found.'; \
-	 fi;
 
 test-clean:
-	$(RM) $(TEST_32_and_64)
+	$(RM) $(TEST_64)
 
 # Package dependencies
 # Created by 'gmake REQUIRED_PACKAGES', manually verified.
+REQUIRED_PACKAGES += library/json-c
+REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += network/dns/bind
+REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93

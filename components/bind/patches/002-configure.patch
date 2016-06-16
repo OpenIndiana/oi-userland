@@ -4,12 +4,11 @@ and include paths for linking with gssapi.
 Intention is to share patch with ISC for their inclusion in future
 releases of BIND.
 
-diff -r 5650ddc7a736 -r 13365deff14a configure.in
---- a/configure.in	Fri May 27 19:07:55 2016 +0100
-+++ b/configure.in	Tue May 31 12:51:40 2016 +0100
-@@ -752,6 +752,49 @@
- [  --with-gssapi=PATH      Specify path for system-supplied GSSAPI],
-     use_gssapi="$withval", use_gssapi="no")
+--- a/configure.in	Thu Jun  2 11:28:43 2016
++++ b/configure.in	Thu Jun  2 11:43:34 2016
+@@ -799,6 +799,49 @@
+ [  --with-gssapi=PATH      Specify path for system-supplied GSSAPI [[default=yes]]],
+     use_gssapi="$withval", use_gssapi="yes")
  
 +# first try using krb5-config, if that does not work then fall back to "yes" method.
 +if test "$use_gssapi" = "krb5-config"
@@ -54,10 +53,10 @@ diff -r 5650ddc7a736 -r 13365deff14a configure.in
 +    fi
 +fi
 +
- gssapidirs="/usr/local /usr/pkg /usr/kerberos /usr"
- if test "$use_gssapi" = "yes"
- then
-@@ -773,6 +816,11 @@
+ # gssapi is just the framework, we really require kerberos v5, so
+ # look for those headers (the gssapi headers must be there, too)
+ # The problem with this implementation is that it doesn't allow
+@@ -842,6 +885,11 @@
  	yes)
  		AC_MSG_ERROR([--with-gssapi must specify a path])
  		;;
@@ -69,18 +68,24 @@ diff -r 5650ddc7a736 -r 13365deff14a configure.in
  	*)
  		AC_MSG_RESULT(looking in $use_gssapi/lib)
  		USE_GSSAPI='-DGSSAPI'
-diff -r 5650ddc7a736 -r 13365deff14a configure
---- a/configure	Fri May 27 19:07:55 2016 +0100
-+++ b/configure	Tue May 31 12:51:40 2016 +0100
-@@ -794,6 +794,7 @@
- ISC_PLATFORM_KRB5HEADER
+--- a/configure	Sun Feb 28 16:29:06 2016
++++ b/configure	Thu Jun  2 03:56:59 2016
+@@ -1,5 +1,5 @@
+ #! /bin/sh
+-# Copyright (C) 2004-2015  Internet Systems Consortium, Inc. ("ISC")
++# Copyright (C) 2004-2016  Internet Systems Consortium, Inc. ("ISC")
+ # Copyright (C) 1996-2003  Internet Software Consortium.
+ #
+ # Permission to use, copy, modify, and/or distribute this software for any
+@@ -851,6 +851,7 @@
+ ISC_PLATFORM_GSSAPI_KRB5_HEADER
  ISC_PLATFORM_GSSAPIHEADER
  ISC_PLATFORM_HAVEGSSAPI
 +KRB5_CONFIG
- USE_PKCS11
- OPENSSLLINKSRCS
- OPENSSLLINKOBJS
-@@ -13519,6 +13520,133 @@
+ GEOIPLINKOBJS
+ GEOIPLINKSRCS
+ LWRES_PLATFORM_NEEDSYSSELECTH
+@@ -13975,6 +13976,133 @@
  fi
  
  
@@ -211,10 +216,10 @@ diff -r 5650ddc7a736 -r 13365deff14a configure
 +    fi
 +fi
 +
- gssapidirs="/usr/local /usr/pkg /usr/kerberos /usr"
- if test "$use_gssapi" = "yes"
- then
-@@ -13541,6 +13669,11 @@
+ # gssapi is just the framework, we really require kerberos v5, so
+ # look for those headers (the gssapi headers must be there, too)
+ # The problem with this implementation is that it doesn't allow
+@@ -14019,6 +14147,11 @@
  	yes)
  		as_fn_error $? "--with-gssapi must specify a path" "$LINENO" 5
  		;;

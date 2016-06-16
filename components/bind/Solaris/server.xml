@@ -22,7 +22,7 @@ CDDL HEADER END
 -->
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
+Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <!-- Portions Copyright 2007 Vedran Bender -->
@@ -172,6 +172,27 @@ Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
 	-->
 	<propval name='chroot_dir' type='astring' value='' />
 
+	<!--
+		listener_threads: Specifies the number of listener
+		worker threads to listen for incoming UDP packets on
+		each address.  If not specified, named will calculate
+		a default value based on the number of detected CPUs:
+		1 for 1 CPU, 2 for 2-4 CPUs, and the number of
+		detected CPUs divided by 2 for values higher than
+		4. If 'threads' has been set to a higher value than
+		the number of detected CPUs, then 'listener_threads'
+		may be increased as high as that value, but no higher.
+		Equivalent command line option '-U <integer>'.
+	-->
+	<propval name='listener_threads' type='integer' value='0' />
+
+	<!--
+		crypto_engine: Specify an alternative OpenSSL engine
+		for crypto operations.
+		Equivalent command line option '-E <engine-name>'.
+	-->
+	<propval name='crypto_engine' type='astring' value='' />
+
       </property_group>
 
 	</instance>
@@ -185,8 +206,8 @@ Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
 			</loctext>
 		</common_name>
 		<documentation>
-			<manpage title='named' section='8'
-			    manpath='/usr/man' />
+			<manpage title='dns-server' section='8s'
+ 			    manpath='/usr/man' />
 		</documentation>
 	</template>
 

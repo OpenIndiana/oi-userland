@@ -4,6 +4,10 @@ status=0; \
 (test -f unit/unittest.sh && /bin/bash unit/unittest.sh) || status=1; \
 exit $status
 make[2]: Entering directory '$(@D)/bin/tests'
+make[3]: Entering directory '$(@D)/bin/tests/atomic'
+S:$(@D)/bin/tests/atomic/.libs/t_atomic:
+E:$(@D)/bin/tests/atomic/.libs/t_atomic:
+make[3]: Leaving directory '$(@D)/bin/tests/atomic'
 make[3]: Entering directory '$(@D)/bin/tests/db'
 S:$(@D)/bin/tests/db/.libs/t_db:
 T:dns_db_load:1:A
@@ -84,15 +88,15 @@ R:PASS
 E:$(@D)/bin/tests/db/.libs/t_db:
 make[3]: Leaving directory '$(@D)/bin/tests/db'
 make[3]: Entering directory '$(@D)/bin/tests/dst'
-../genrandom 100 randomfile
+../../tools/genrandom 100 randomfile
+../../tools/genrandom 100 randomfile
 S:$(@D)/bin/tests/dst/.libs/t_dst:
 T:dst:1:A
 A:the dst module provides the capability to generate, store and retrieve public and private keys, sign and verify data using the RSA, DSA and MD5 algorithms, and compute Diffie-Hellman shared secrets.
 R:PASS
 T:dst:2:A
 A:the dst module provides the capability to verify data signed with the RSA and DSA algorithms
-$(SOURCE_DIR)/lib/dns/dst_api.c:217: fatal error: RUNTIME_CHECK(dst_initialized == isc_boolean_true) failed
-R:UNRESOLVED
+R:PASS
 E:$(@D)/bin/tests/dst/.libs/t_dst:
 make[3]: Leaving directory '$(@D)/bin/tests/dst'
 make[3]: Entering directory '$(@D)/bin/tests/master'
@@ -309,6 +313,25 @@ A:a call to dns_rbtnodechain_prev(chain, name, origin) sets name to point to the
 R:PASS
 E:$(@D)/bin/tests/rbt/.libs/t_rbt:
 make[3]: Leaving directory '$(@D)/bin/tests/rbt'
+make[3]: Entering directory '$(@D)/bin/tests/resolver'
+S:$(@D)/bin/tests/resolver/.libs/t_resolver:
+T:test_dns_resolver_create:1:A
+A:a resolver can be created successfully
+R:PASS
+T:test_dns_resolver_settimeout:1:A
+A:_settimeout() can change the timeout to a non-default
+R:PASS
+T:test_dns_resolver_gettimeout:1:A
+A:The default timeout is returned from _gettimeout()
+R:PASS
+T:test_dns_resolver_settimeout_to_default:1:A
+A:_settimeout() can change the timeout back to a default value by specifying 0 as the timeout.
+R:PASS
+T:test_dns_resolver_settimeout_over_maximum:1:A
+A:_settimeout() cannot set the value larger than the maximum.
+R:PASS
+E:$(@D)/bin/tests/resolver/.libs/t_resolver:
+make[3]: Leaving directory '$(@D)/bin/tests/resolver'
 make[3]: Entering directory '$(@D)/bin/tests/sockaddr'
 S:$(@D)/bin/tests/sockaddr/.libs/t_sockaddr:
 T:isc_sockaddr_eqaddrprefix:1:A
@@ -373,13 +396,43 @@ R:PASS
 E:$(@D)/bin/tests/timers/.libs/t_timers:
 make[3]: Leaving directory '$(@D)/bin/tests/timers'
 make[3]: Entering directory '$(@D)/bin/tests/system'
+making all in $(@D)/bin/tests/system/builtin
+make[4]: Entering directory '$(@D)/bin/tests/system/builtin'
+make[4]: Leaving directory '$(@D)/bin/tests/system/builtin'
+making all in $(@D)/bin/tests/system/dlzexternal
+make[4]: Entering directory '$(@D)/bin/tests/system/dlzexternal'
+make[4]: Leaving directory '$(@D)/bin/tests/system/dlzexternal'
+making all in $(@D)/bin/tests/system/fetchlimit
+make[4]: Entering directory '$(@D)/bin/tests/system/fetchlimit'
+make[4]: Leaving directory '$(@D)/bin/tests/system/fetchlimit'
+making all in $(@D)/bin/tests/system/filter-aaaa
+make[4]: Entering directory '$(@D)/bin/tests/system/filter-aaaa'
+make[4]: Leaving directory '$(@D)/bin/tests/system/filter-aaaa'
+making all in $(@D)/bin/tests/system/geoip
+make[4]: Entering directory '$(@D)/bin/tests/system/geoip'
+make[4]: Leaving directory '$(@D)/bin/tests/system/geoip'
 making all in $(@D)/bin/tests/system/lwresd
 make[4]: Entering directory '$(@D)/bin/tests/system/lwresd'
 make[4]: Leaving directory '$(@D)/bin/tests/system/lwresd'
+making all in $(@D)/bin/tests/system/rpz
+make[4]: Entering directory '$(@D)/bin/tests/system/rpz'
+make[4]: Leaving directory '$(@D)/bin/tests/system/rpz'
+making all in $(@D)/bin/tests/system/rsabigexponent
+make[4]: Entering directory '$(@D)/bin/tests/system/rsabigexponent'
+make[4]: Leaving directory '$(@D)/bin/tests/system/rsabigexponent'
+making all in $(@D)/bin/tests/system/statistics
+make[4]: Entering directory '$(@D)/bin/tests/system/statistics'
+make[4]: Leaving directory '$(@D)/bin/tests/system/statistics'
 making all in $(@D)/bin/tests/system/tkey
 make[4]: Entering directory '$(@D)/bin/tests/system/tkey'
 make[4]: Leaving directory '$(@D)/bin/tests/system/tkey'
+making all in $(@D)/bin/tests/system/tsiggss
+make[4]: Entering directory '$(@D)/bin/tests/system/tsiggss'
+make[4]: Leaving directory '$(@D)/bin/tests/system/tsiggss'
 if test -f ./runall.sh; then sh ./runall.sh; fi
 make[3]: Leaving directory '$(@D)/bin/tests/system'
+make[3]: Entering directory '$(@D)/bin/tests/pkcs11'
+make[3]: Nothing to be done for 'test'.
+make[3]: Leaving directory '$(@D)/bin/tests/pkcs11'
 make[2]: Leaving directory '$(@D)/bin/tests'
 make[1]: Leaving directory '$(@D)'

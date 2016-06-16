@@ -19,10 +19,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-# smf_method(5) start/stop script required for server DNS
+# smf_method(7) start/stop script required for server DNS
 
 . /lib/svc/share/smf_include.sh
 
@@ -47,13 +47,15 @@ case "$method" in
     rndc_cmd_opts="-a"
     cmdopts=""
     properties="debug_level ip_interfaces listen_on_port
-	threads chroot_dir configuration_file server"
+	threads chroot_dir configuration_file server
+	listener_threads crypto_engine"
 
     for prop in $properties
     do
 	value=`/usr/bin/svcprop -p options/${prop} ${SMF_FMRI}`
 	if [ -z "${value}" -o "${value}" = '""' ]; then
-	    continue;
+	    # Could not find property or it has no value.
+	    continue
 	fi
 
 	case $prop in
@@ -98,6 +100,15 @@ case "$method" in
 	'server')
 	    set -- `echo ${value} | /usr/bin/sed -e  's/\\\\//g'`
 	    server=$@
+	    ;;
+	'listener_threads')
+	    if [ ${value} -gt 0 ]; then
+		cmdopts="${cmdopts} -U ${value}"
+	    fi
+	    ;;
+	'crypto_engine')
+	    # Use '' to specify an empty name.
+	    cmdopts="${cmdopts} -E ${value}"
 	    ;;
 	esac
     done
