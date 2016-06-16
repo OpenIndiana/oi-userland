@@ -15,13 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
-COMPONENT_VERSION=	5.34
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.35
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6fff7ec4be743e5c042647ea9687dd0cdf48d1dd5e8e15098e5018bbd02e5e27
+    sha256:1e6c8471a9af4862f38a6dd5c6e61fe12b052d35af44b2941904c6e333586b22
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreensaver/$(COMPONENT_ARCHIVE)
 
 PATCH_LEVEL=		0
@@ -35,6 +34,8 @@ COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_D
 					chmod a+x  $(SOURCE_DIR)/install-sh && \
 					mkdir -p $(SOURCE_DIR)/mesa/GL && \
 					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL )
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -if )
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 			cp -r $(SOURCE_DIR)/* $(@D) && \
@@ -95,8 +96,29 @@ install:	$(INSTALL_32) ../rss-glx/build/i86/.built
 	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
-
-
+REQUIRED_PACKAGES += gnome/accessibility/at-spi
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libglade
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/glu
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxxf86misc
+REQUIRED_PACKAGES += x11/library/libxxf86vm
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

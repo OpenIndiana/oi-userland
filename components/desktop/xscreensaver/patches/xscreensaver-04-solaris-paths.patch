@@ -85,32 +85,32 @@ diff --git driver/Makefile.in driver/Makefile.in
 diff --git driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
 --- driver/XScreenSaver.ad.in
 +++ driver/XScreenSaver.ad.in
-@@ -91,18 +91,24 @@ GetViewPortIsFullOfLies: False
+@@ -90,18 +90,24 @@
  
  ! This is the URL loaded by the "Help" button on the splash screen,
  ! and by the "Documentation" menu item in xscreensaver-demo.
--*helpURL: http://www.jwz.org/xscreensaver/man.html
-+*helpURL: man:xscreensaver
+-*helpURL: https://www.jwz.org/xscreensaver/man.html
++*helpURL: helpURL: man:xscreensaver
  
  ! loadURL       -- how the "Help" buttons load the helpURL (/bin/sh syntax.)
  ! manualCommand -- how the "Documentation" buttons display man pages.
  !
  ! And there are so very many options to choose from!
- !
 +!   Modern GNOME:
 +!
 +*loadURL: gnome-help '%s'
 +*manualCommand: gnome-help 'man:%s'
 +!
+ !
  !   Gnome 2.4, 2.6: (yelp can't display man pages, as of 2.6.3)
  !
 -@GNOME24@*loadURL: @WITH_BROWSER@ '%s'
 -@GNOME24@*manualCommand: gnome-terminal --title '%s manual' \
 -@GNOME24@		--command '/bin/sh -c "man %s; read foo"'
 +!*loadURL: gnome-terminal --title 'xscreensaver manual' \
-+!		--command '/bin/ksh -c "man xscreensaver; read foo"'
++!              --command '/bin/ksh -c "man xscreensaver; read foo"'
 +!*manualCommand: gnome-terminal --title '%s manual' \
-+!		--command '/bin/ksh -c "man %s; read foo"'
++!              --command '/bin/ksh -c "man %s; read foo"'
  !
  !   Gnome 2.2:
  !

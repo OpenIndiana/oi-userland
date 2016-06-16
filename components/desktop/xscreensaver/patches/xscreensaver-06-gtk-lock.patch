@@ -2932,7 +2932,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  extern char *blurb(void);
  
  
-@@ -58,6 +64,7 @@ extern char *blurb(void);
+@@ -58,6 +64,7 @@
  
  #include <sys/stat.h>
  
@@ -2940,7 +2940,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  #include "auth.h"
  
  extern sigset_t block_sigchld (void);
-@@ -82,7 +89,10 @@ extern void unblock_sigchld (void);
+@@ -85,7 +92,10 @@
  #endif
  
  static int pam_conversation (int nmsgs,
@@ -2952,7 +2952,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
                               struct pam_response **resp,
                               void *closure);
  
-@@ -183,6 +193,11 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -186,6 +196,11 @@
    struct pam_conv pc;
    sigset_t set;
    struct timespec timeout;
@@ -2964,7 +2964,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  
    pc.conv = &pam_conversation;
    pc.appdata_ptr = (void *) si;
-@@ -191,6 +206,23 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -194,6 +209,23 @@
       `closure' argument to pc.conv always comes in as random garbage. */
    suns_pam_implementation_blows = (void *) si;
  
@@ -2988,7 +2988,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  
    /* Initialize PAM.
     */
-@@ -201,11 +233,35 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -204,11 +236,35 @@
               status, PAM_STRERROR (pamh, status));
    if (status != PAM_SUCCESS) goto DONE;
  
@@ -3024,7 +3024,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
    {
      char *tty = strdup (":0.0");
      status = pam_set_item (pamh, PAM_TTY, tty);
-@@ -214,6 +270,7 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -217,6 +273,7 @@
                 blurb(), tty, status, PAM_STRERROR(pamh, status));
      free (tty);
    }
@@ -3032,7 +3032,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  
    /* Try to authenticate as the current user.
       We must turn off our SIGCHLD handler for the duration of the call to
-@@ -243,7 +300,7 @@
+@@ -246,56 +303,102 @@
    timeout.tv_sec = 0;
    timeout.tv_nsec = 1;
    set = block_sigchld();
@@ -3041,10 +3041,14 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  # ifdef HAVE_SIGTIMEDWAIT
    sigtimedwait (&set, NULL, &timeout);
    /* #### What is the portable thing to do if we don't have it? */
-@@ -250,50 +307,96 @@
  # endif /* HAVE_SIGTIMEDWAIT */
    unblock_sigchld();
  
+-  if (verbose_p)
+-    fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
+-             blurb(), status, PAM_STRERROR(pamh, status));
+-
+-  if (status == PAM_SUCCESS)  /* Win! */
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +  /* Send status message to unlock dialog */
 +  if (pam_auth_status == PAM_SUCCESS)
@@ -3053,43 +3057,42 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
 +        write_to_child (si, "ul_ok", PAM_STRERROR (pamh, pam_auth_status));
 +    }
 +  else if (si->unlock_state != ul_cancel && si->unlock_state != ul_time)
-+    {
+     {
+-      int status2;
 +      write_to_child (si, "ul_fail", PAM_STRERROR (pamh, pam_auth_status));
 +    }
-   if (verbose_p)
--    fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
--             blurb(), status, PAM_STRERROR(pamh, status));
++  if (verbose_p)
 +    sleep (1);
 +#endif
  
--  if (status == PAM_SUCCESS)  /* Win! */
--    {
--      int status2;
+-      /* On most systems, it doesn't matter whether the account modules
+-         are run, or whether they fail or succeed.
 +  if (verbose_p)
 +      fprintf (stderr, "after calling pam_authenticate state is: %s\n",
 +               si->unlock_state == ul_success ? "ul_success" : "ul_fail");
- 
--      /* On most systems, it doesn't matter whether the account modules
--         are run, or whether they fail or succeed.
  
 -         On some systems, the account modules fail, because they were
 -         never configured properly, but it's necessary to run them anyway
 -         because certain PAM modules depend on side effects of the account
 -         modules having been run.
+ 
+-         And on still other systems, the account modules are actually
+-         used, and failures in them should be considered to be true!
 +  if (verbose_p)
 +    fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
 +             blurb(), pam_auth_status, PAM_STRERROR(pamh, pam_auth_status));
  
--         And on still other systems, the account modules are actually
--         used, and failures in them should be considered to be true!
+-         So:
+-         - We run the account modules on all systems.
+-         - Whether we ignore them is a configure option.
 +  if (pam_auth_status == PAM_SUCCESS)  /* Win! */
 +    {
 +      /* perform PAM account validation procedures for login user only */
 +      acct_rc   = pam_acct_mgmt(pamh, pam_flags);
  
--         So:
--         - We run the account modules on all systems.
--         - Whether we ignore them is a configure option.
+-         It's all kind of a mess.
+-       */
+-      status2 = pam_acct_mgmt (pamh, 0);
 +      /******************************************************************
 +           ignore other cases for the time being
 +           PAM_USER_UNKNOWN, PAM_AUTH_ERR, PAM_ACCT_EXPIRED
@@ -3097,15 +3100,11 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
 +           same as pam_setcred(), focus on auth. service module only
 +       *****************************************************************/
  
--         It's all kind of a mess.
--       */
--      status2 = pam_acct_mgmt (pamh, 0);
--
        if (verbose_p)
          fprintf (stderr, "%s:   pam_acct_mgmt (...) ==> %d (%s)\n",
 -                 blurb(), status2, PAM_STRERROR(pamh, status2));
 +                 blurb(), acct_rc, PAM_STRERROR(pamh, acct_rc));
- 
++
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +      /* Send status message to unlock dialog ***/
 +      if (acct_rc == PAM_SUCCESS)
@@ -3118,7 +3117,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
 +      if (verbose_p)
 +        sleep (1);
 +#endif
-+
+ 
        /* HPUX for some reason likes to make PAM defines different from
         * everyone else's. */
  #ifdef PAM_AUTHTOKEN_REQD
@@ -3152,28 +3151,28 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
 +              pam_auth_status = chauth_rc;
 +              goto DONE;
 +            }
-         }
++        }
 +      else if (acct_rc != PAM_SUCCESS)
 +        {
 +          pam_auth_status = acct_rc;
 +          write_to_child (si, "pw_acct_fail", PAM_STRERROR(pamh, acct_rc));
 +          sleep (3);
 +          goto DONE;
-+        }
+         }
  
        /* If 'configure' requested that we believe the results of PAM
-          account module failures, then obey that status code.
-@@ -291,24 +406,57 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
-          says that the Linux PAM library ignores that one, and only refreshes
-          credentials when using PAM_REINITIALIZE_CRED.
-        */
--      status2 = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
-+      setcred_rc = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
+@@ -317,26 +420,58 @@
+       status2 = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
+ #else
+       /* But Solaris requires PAM_REFRESH_CRED or extra prompts appear. */
+-      status2 = pam_setcred (pamh, PAM_REFRESH_CRED);
++      setcred_rc = pam_setcred (pamh, PAM_REFRESH_CRED);
+ #endif
+ 
        if (verbose_p)
          fprintf (stderr, "%s:   pam_setcred (...) ==> %d (%s)\n",
 -                 blurb(), status2, PAM_STRERROR(pamh, status2));
 +                 blurb(), setcred_rc, PAM_STRERROR(pamh, setcred_rc));
-+
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +      /* Send status message to unlock dialog ***/
 +      if (setcred_rc == PAM_SUCCESS)
@@ -3226,7 +3225,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
      si->unlock_state = ul_success;	     /* yay */
    else if (si->unlock_state == ul_cancel ||
             si->unlock_state == ul_time)
-@@ -334,6 +482,13 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -362,6 +497,13 @@
    const char file2[] = "/etc/pam.conf";
    struct stat st;
  
@@ -3240,7 +3239,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  # ifndef S_ISDIR
  #  define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
  # endif
-@@ -360,6 +515,8 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -388,6 +530,8 @@
                  break;
                }
            fclose (f);
@@ -3249,7 +3248,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
            if (!ok)
              {
                fprintf (stderr,
-@@ -367,9 +524,11 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -395,9 +539,11 @@
                    "%s: password authentication via PAM is unlikely to work.\n",
                         blurb(), file2, PAM_SERVICE_NAME, blurb());
              }
@@ -3261,7 +3260,7 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
    else
      {
        fprintf (stderr,
-@@ -377,15 +536,19 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -405,15 +551,19 @@
                 "%s: password authentication via PAM is unlikely to work.\n",
                 blurb(), file2, file, blurb());
      }
@@ -3283,7 +3282,6 @@ diff --git driver/passwd-pam.c driver/passwd-pam.c
  		  struct pam_response **resp,
  		  void *vsaver_info)
  {
-diff --git driver/passwd.c driver/passwd.c
 --- driver/passwd.c
 +++ driver/passwd.c
 @@ -35,6 +35,7 @@
