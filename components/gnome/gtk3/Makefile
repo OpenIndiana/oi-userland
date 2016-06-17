@@ -148,7 +148,6 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += service/image/colord
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
