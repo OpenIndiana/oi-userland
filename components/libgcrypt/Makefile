@@ -23,18 +23,28 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+
+# GCC 5.3 with the default optimization -O3 (set via shared-macros.mk),
+# inlines _gcry_cipher_ocb_get_l, double_block_cpy and double_block to
+# _gcry_cipher_ocb_authenticate on amd64. Due to a bug in GCC, the
+# inlined code is incorrect and the library produces data with errors
+# (manifested through failed 'basic' test results).  The optimization is
+# lowered down on the affected platform.  For more information see:
+# https://lists.gnupg.org/pipermail/gcrypt-devel/2016-April/003858.html
+gcc_OPT.i386.64 = -O2
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.6.4
+COMPONENT_VERSION=	1.7.0
 COMPONENT_PROJECT_URL=  ftp://ftp.gnupg.org/gcrypt/libgcrypt/ 
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c9bc2c7fe2e5f4ea13b0c74f9d24bcbb1ad889bb39297d8082aebf23f4336026
+    sha256:b0e67ea74474939913c4d9d9ef4ef5ec378efbe2bebe36389dee319c79bffa92
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgcrypt
 
-TPNO=			26276
+TPNO=			27993
 
 # Requires new pkgmogrify feature, available in S12 but not 11.3, so do not
 # publish.
@@ -56,20 +66,10 @@ include $(WS_MAKE_RULES)/common.mk
 # of Solaris Studio as the component compiler.
 COMPILER =		gcc
 
-#
-# The gcc deliverred with Solaris prior the gcc version 5.3 uses
-# different assembler versions on x86 and SPARC platforms. This causes
-# compilation issues. The GCC_ROOT explicitly sets the version of the
-# compiler to version 5.3 which resolves this problem. The line should
-# be removed once gcc on both platforms starts using the same assembler.
-GCC_ROOT = /usr/gcc/5.3
-
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-maintainer-mode 
 CONFIGURE_OPTIONS += --disable-asm
-CONFIGURE_OPTIONS += --enable-threads=posix
-CONFIGURE_OPTIONS += --enable-ciphers=arcfour:blowfish:des:aes:twofish:serpent:rfc2268:seed:camellia:cast5
 
 ASLR_MODE = $(ASLR_ENABLE)
 
