@@ -28,14 +28,15 @@ include ../../make-rules/shared-macros.mk
 PATH = $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	0.7.6
+COMPONENT_VERSION=	0.9.7
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/pinentry/
+COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:14670c18f4a042ffcbd7a937aa3f15de392816c56b472588383d8378f65b42ab
+    sha256:6398208394972bbf897c3325780195584682a0d0c164ca5a0da35b93b1e4e7b2
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			8850
+TPNO=			26271
 
 INSTALL_TARGET=
 TEST_TARGET= $(NO_TESTS)
@@ -78,10 +79,6 @@ CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
 CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
-CONFIGURE_OPTIONS  +=		--disable-glibtest
-CONFIGURE_OPTIONS  +=		--disable-gtktest
-CONFIGURE_OPTIONS  +=		--enable-threading
-CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
 CONFIGURE_OPTIONS  +=		--disable-ncurses
 
@@ -94,6 +91,6 @@ install: $(INSTALL_64)
 	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
 
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/libgpg-error

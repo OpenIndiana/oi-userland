@@ -1,0 +1,36 @@
+This patch updates the ordering of two header files in the
+pinentry-curses.c; without the fix the compilation fails with:
+"/var/tmp/userland-clone-new/components/pinentry/pinentry-0.9.7/pinentry/pinentry-curses.c", line 1028: duplicate case in switch: 13
+
+The problem is caused by the the fact, that ERR definition in
+sys/regset.h on Solaris can overwrite ERR macro defined in curses.h.
+The paths below describe the sources of the problematic macro expansion.
+
+pinentry/pinentry-curses.c:
+#include <curses.h>
+#include <signal.h>
+
+/usr/include/sys/signal.h
+  `-> #include <sys/ucontext.h>
+    `-> #include <sys/regset.h>
+      `-> #define ERR             13
+	
+/usr/include/curses.h
+  `-> #if     !defined(ERR) || ((ERR) != -1)
+      #define ERR     (-1)
+      #endif
+
+The patch was developed internally.
+
+--- ./pinentry/pinentry-curses.c.orig	Tue Jun  7 08:10:33 2016
++++ ./pinentry/pinentry-curses.c	Tue Jun  7 08:10:53 2016
+@@ -22,8 +22,8 @@
+ #include <config.h>
+ #endif
+ #include <assert.h>
+-#include <curses.h>
+ #include <signal.h>
++#include <curses.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <stdlib.h>
