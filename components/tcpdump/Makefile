@@ -36,6 +36,11 @@ TPNO=			22949
 
 include $(WS_MAKE_RULES)/common.mk
 
+ifeq ($(OS_VERSION),5.11)
+# Prevent macro redefinition error
+CFLAGS += -D _NETINET_IP_H
+endif
+
 # Rebuild the configure script so the man pages are normalized.
 COMPONENT_PREP_ACTION = (cd $(@D); autoconf);
 
