@@ -131,6 +131,7 @@ test:	$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
+# We need one Net-SNMP library on 12, the other on 11, so list both.
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += runtime/python-27
@@ -138,4 +139,5 @@ REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/management/snmp/net-snmp-57
