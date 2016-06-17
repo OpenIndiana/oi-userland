@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgpg-error
-COMPONENT_VERSION=	1.21
+COMPONENT_VERSION=	1.22
 COMPONENT_PROJECT_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:b7dbdb3cad63a740e9f0c632a1da32d4afdb694ec86c8625c98ea0691713b84d
+    sha256:f2a04ee6317bdb41a625bea23fdc7f0b5a63fb677f02447c647ed61fb9e69d7b
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgpg-error
 
-TPNO=			26277
+TPNO=			28599
 
 COMPONENT_BUILD_TARGETS = all info
 
