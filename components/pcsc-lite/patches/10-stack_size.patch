@@ -1,0 +1,17 @@
+In-house patch addressing a problem with too low thread stack size.
+
+Although this patch is not Solaris specific, it addresses Solaris
+specific problem. Fixed in upstream:
+https://anonscm.debian.org/cgit/pcsclite/PCSC.git/commit/?id=e78449ce37f453516e46d78ad0b99e01db32727b
+
+--- pcsc-lite-1.8.14/src/utils.c.orig	2016-06-17 00:40:26.540451706 -0700
++++ pcsc-lite-1.8.14/src/utils.c	2016-06-17 00:41:09.902613641 -0700
+@@ -170,7 +170,7 @@
+ 	if (ret)
+ 		goto error;
+ 
+-	if (stack_size < 0x40000)
++	if ((stack_size != 0) && (stack_size < 0x40000))
+ 	{
+ 		stack_size = 0x40000;
+ 		ret = pthread_attr_setstacksize(&attr, stack_size);
