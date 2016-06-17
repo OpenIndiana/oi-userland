@@ -37,6 +37,13 @@ COMPONENT_BUGDB=	gnome/security
 
 TPNO=			25611
 
+# Needs header updates from ON, available in S12 but not S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 studio_C99MODE=$(studio_C99_ENABLE)
