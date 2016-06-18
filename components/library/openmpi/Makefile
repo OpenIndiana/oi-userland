@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	1.10
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).2
+COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).3
 COMPONENT_FMRI = library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:01db467676cb5d974166591d403a8ffe38dfac4becb67071f59971e86bef0f63
+    sha256:681c2ed1c96d187a3c84f30811a2b143d26de74884a740e5d02ec265ef70ab00
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
@@ -81,10 +81,13 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/modulefile.32 $(BUILD_DIR)/modulefile
 	$(MKDIR) $(PROTO_MODULE_PATH)/64
 	$(CP) $(BUILD_DIR)/modulefile.64 $(PROTO_MODULE_PATH)/64/$(COMPONENT_VERSION)
 
-test:	$(TEST_32)
+test:	$(TEST_32_and_64)
 
 
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += diagnostic/cpu-counters
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
