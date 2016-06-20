@@ -18,6 +18,7 @@ COMPONENT_NAME=		php-7.0-ext-memcache
 REAL_NAME=		pecl-memcache
 GIT_COMMIT=		4991c2fff22d00dc81014cc92d2da7077ef4bc86
 COMPONENT_VERSION=	3.0.9
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(REAL_NAME)-$(GIT_COMMIT)
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcache
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -53,6 +54,7 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 #CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
+CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config

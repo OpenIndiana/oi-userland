@@ -18,6 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdebug
 COMPONENT_VERSION=	2.4.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/xdebug
 COMPONENT_SUMMARY=	Provides functions for debugging your PHP script
 COMPONENT_FMRI=		web/php-70/extension/php-xdebug
@@ -53,6 +54,7 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS     +=        CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
