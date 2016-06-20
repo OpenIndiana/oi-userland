@@ -9,16 +9,16 @@ commercial product.
 Documents should be installed under /usr/share/doc/libpki instead of
 /usr/share/libpki.
 
-Need to include $(top_srcdir)/src because not all headers are available in
-$(top_builddir)src/libpki.
-
 Configuration files should be installed under /etc/libpki.
 
-Test scripts need escapes because they are executed indirectly.
+Need to include $(top_srcdir)/src because not all headers are available in
+$(top_builddir)/src/libpki.
 
---- libpki-0.8.9/Makefile.in	Tue Nov 10 13:50:26 2015
-+++ libpki-0.8.9/Makefile.in	Fri Jan 22 15:20:53 2016
-@@ -720,8 +720,6 @@
+The option -ggdb doesn't work with Studio.
+
+--- libpki-0.8.9/Makefile.am	2016-06-01 15:47:17.703517449 -0700
++++ libpki-0.8.9/Makefile.am	2016-06-01 18:14:09.941087309 -0700
+@@ -89,8 +89,6 @@
   	src/tests/test4 \
   	src/tests/test5 \
   	src/tests/test6 \
@@ -26,10 +26,10 @@ Test scripts need escapes because they are executed indirectly.
 - 	src/tests/test8 \
  	src/tests/test9
  
- MAKEFILE = Makefile
---- libpki-0.8.9/docs/Makefile.in	2015-11-10 13:50:26.216743764 -0800
-+++ libpki-0.8.9/docs/Makefile.in	2016-04-15 10:52:12.325254362 -0700
-@@ -550,10 +550,11 @@
+ rebuild::
+--- libpki-0.8.9/docs/Makefile.am	2016-06-01 15:47:48.571731471 -0700
++++ libpki-0.8.9/docs/Makefile.am	2016-06-01 18:16:44.901744754 -0700
+@@ -36,10 +36,11 @@
  install-data-am: install-man
  	@$(NORMAL_INSTALL) ; \
          $(mkinstalldirs) $(DESTDIR)$(exec_prefix)/share; \
@@ -43,270 +43,16 @@ Test scripts need escapes because they are executed indirectly.
              fi \
            done
  
---- libpki-0.8.9/src/drivers/openssl/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/drivers/openssl/Makefile.in	Fri Nov 13 11:47:48 2015
-@@ -123,7 +123,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/drivers/engine/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/drivers/engine/Makefile.in	Fri Nov 13 11:48:47 2015
-@@ -121,7 +121,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/drivers/pkcs11/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/drivers/pkcs11/Makefile.in	Fri Nov 13 11:50:19 2015
-@@ -122,7 +122,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/drivers/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/drivers/Makefile.in	Fri Nov 13 11:51:56 2015
-@@ -120,7 +120,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/openssl/Makefile.in	Tue Nov 10 13:50:29 2015
-+++ libpki-0.8.9/src/openssl/Makefile.in	Fri Nov 13 11:53:25 2015
-@@ -140,7 +140,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/io/Makefile.in	Tue Nov 10 13:50:29 2015
-+++ libpki-0.8.9/src/io/Makefile.in	Fri Nov 13 11:56:27 2015
-@@ -127,7 +127,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/net/Makefile.in	Tue Nov 10 13:50:29 2015
-+++ libpki-0.8.9/src/net/Makefile.in	Fri Nov 13 11:58:14 2015
-@@ -122,7 +122,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/scep/Makefile.in	Tue Nov 10 13:50:26 2015
-+++ libpki-0.8.9/src/scep/Makefile.in	Fri Nov 13 12:00:02 2015
-@@ -122,7 +122,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/cms/Makefile.in	Tue Nov 10 13:50:26 2015
-+++ libpki-0.8.9/src/cms/Makefile.in	Fri Nov 13 12:01:44 2015
-@@ -119,7 +119,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/prqp/Makefile.in	Tue Nov 10 13:50:26 2015
-+++ libpki-0.8.9/src/prqp/Makefile.in	Fri Nov 13 12:03:37 2015
-@@ -122,7 +122,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/lirt/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/lirt/Makefile.in	Fri Nov 13 12:05:33 2015
-@@ -120,7 +120,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/src/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/Makefile.in	Fri Nov 13 12:58:39 2015
-@@ -84,7 +84,7 @@
- subdir = src
- DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
- 	$(top_srcdir)/build/mkinstalldirs $(srcdir)/global-vars.in \
--	$(top_srcdir)/build/depcomp $(nobase_include_HEADERS)
-+	$(top_srcdir)/build/depcomp $(include_HEADERS)
- ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
- am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
- 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-@@ -200,7 +200,7 @@
-     n|no|NO) false;; \
-     *) (install-info --version) >/dev/null 2>&1;; \
-   esac
--HEADERS = $(nobase_include_HEADERS)
-+HEADERS = $(include_HEADERS)
- RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-   distclean-recursive maintainer-clean-recursive
- am__recursive_targets = \
-@@ -487,22 +487,26 @@
- 	-I$(top_srcdir)/src/libpki \
- 	$(COND_INCLUDES)
- 
--nobase_include_HEADERS = \
--	libpki/*.h \
--	libpki/net/*.h \
--	libpki/io/*.h \
--	libpki/scep/*.h \
--	libpki/prqp/*.h \
--	libpki/lirt/*.h \
--	libpki/cms/*.h \
--	libpki/openssl/*.h \
--	libpki/drivers/*.h \
--	libpki/drivers/openssl/*.h \
--	libpki/drivers/engine/*.h \
--	libpki/drivers/pkcs11/*.h \
--	libpki/drivers/pkcs11/rsa/*.h \
--	libpki/drivers/kmf/*.h
-+include_HEADERS = $(nobase_include_HEADERS) $(src_include_HEADERS)
- 
-+nobase_include_HEADERS = libpki/*.h
-+
-+src_include_HEADERS = \
-+	$(top_srcdir)/src/libpki/*.h \
-+	$(top_srcdir)/src/libpki/net/*.h \
-+	$(top_srcdir)/src/libpki/io/*.h \
-+	$(top_srcdir)/src/libpki/scep/*.h \
-+	$(top_srcdir)/src/libpki/prqp/*.h \
-+	$(top_srcdir)/src/libpki/lirt/*.h \
-+	$(top_srcdir)/src/libpki/cms/*.h \
-+	$(top_srcdir)/src/libpki/openssl/*.h \
-+	$(top_srcdir)/src/libpki/drivers/*.h \
-+	$(top_srcdir)/src/libpki/drivers/openssl/*.h \
-+	$(top_srcdir)/src/libpki/drivers/engine/*.h \
-+	$(top_srcdir)/src/libpki/drivers/pkcs11/*.h \
-+	$(top_srcdir)/src/libpki/drivers/pkcs11/rsa/*.h \
-+	$(top_srcdir)/src/libpki/drivers/kmf/*.h
-+
- SRCS = \
- 	pki_init.c \
- 	stack.c \
-@@ -848,9 +852,9 @@
- 
- clean-libtool:
- 	-rm -rf .libs _libs
--install-nobase_includeHEADERS: $(nobase_include_HEADERS)
-+install-includeHEADERS: $(include_HEADERS)
- 	@$(NORMAL_INSTALL)
--	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
-+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
- 	if test -n "$$list"; then \
- 	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
- 	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
-@@ -867,9 +871,9 @@
- 	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
- 	done
- 
--uninstall-nobase_includeHEADERS:
-+uninstall-includeHEADERS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
-+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
- 	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
- 	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
- 
-@@ -1088,7 +1092,7 @@
- 
- info-am:
- 
--install-data-am: install-nobase_includeHEADERS
-+install-data-am: install-includeHEADERS
- 
- install-dvi: install-dvi-recursive
- 
-@@ -1135,7 +1139,7 @@
- ps-am:
- 
- uninstall-am: uninstall-binSCRIPTS uninstall-libLTLIBRARIES \
--	uninstall-nobase_includeHEADERS
-+	uninstall-includeHEADERS
- 
- .MAKE: $(am__recursive_targets) install-am install-strip
- 
-@@ -1148,13 +1152,13 @@
- 	install-data-am install-dvi install-dvi-am install-exec \
- 	install-exec-am install-html install-html-am install-info \
- 	install-info-am install-libLTLIBRARIES install-man \
--	install-nobase_includeHEADERS install-pdf install-pdf-am \
-+	install-includeHEADERS install-pdf install-pdf-am \
- 	install-ps install-ps-am install-strip installcheck \
- 	installcheck-am installdirs installdirs-am maintainer-clean \
- 	maintainer-clean-generic mostlyclean mostlyclean-compile \
- 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
- 	tags tags-am uninstall uninstall-am uninstall-binSCRIPTS \
--	uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS
-+	uninstall-libLTLIBRARIES uninstall-includeHEADERS
- 
- include $(TOP)/global-vars
- 
---- libpki-0.8.9/src/tools/Makefile.in	Tue Nov 10 13:50:28 2015
-+++ libpki-0.8.9/src/tools/Makefile.in	Fri Nov 13 13:02:54 2015
-@@ -186,7 +186,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
---- libpki-0.8.9/etc/Makefile.in	2015-11-10 13:50:29.721576908 -0800
-+++ libpki-0.8.9/etc/Makefile.in	2016-03-03 16:52:45.825183809 -0800
-@@ -340,7 +340,7 @@
- HSMS = hsm.d/*.xml
- STORES = store.d/*.xml
- CONFIGS = *.xml
+--- libpki-0.8.9/etc/Makefile.am	2016-06-01 15:47:16.927275667 -0700
++++ libpki-0.8.9/etc/Makefile.am	2016-06-07 14:20:52.853719021 -0700
+@@ -12,42 +12,42 @@
+ HSMS       = hsm.d/*.xml
+ STORES     = store.d/*.xml
+ CONFIGS    = *.xml
 -PKI_CONFIG = pki.conf
 +PKI_CONFIG = $(srcdir)/pki.conf
- EXTRA_DIST = $(PROFILES) $(TOKENS) $(HSMS) $(STORES) $(CONFIGS) $(PKI_CONFIG)
- all: all-am
  
-@@ -536,37 +536,37 @@
+ EXTRA_DIST = $(PROFILES) $(TOKENS) $(HSMS) $(STORES) $(CONFIGS) $(PKI_CONFIG)
  
  install-data-local:
  	@$(NORMAL_INSTALL) ; \
@@ -353,91 +99,48 @@ Test scripts need escapes because they are executed indirectly.
 -	@$(INSTALL_DATA) $(PKI_CONFIG) $(DESTDIR)$(exec_prefix)/etc
 +	@$(INSTALL_DATA) $(PKI_CONFIG) $(DESTDIR)/etc
  
- # Tell versions [3.59,3.63) of GNU make to not export all variables.
- # Otherwise a system limit (for SysV at least) may be exceeded.
---- libpki-0.8.9/src/tests/Makefile.in	2015-11-10 13:50:26.783174638 -0800
-+++ libpki-0.8.9/src/tests/Makefile.in	2016-02-05 14:22:47.657049798 -0800
-@@ -166,7 +166,7 @@
- am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
- am__v_at_0 = @
- am__v_at_1 = 
--DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki
-+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src/libpki -I$(top_srcdir)/src
- depcomp = $(SHELL) $(top_srcdir)/build/depcomp
- am__depfiles_maybe = depfiles
- am__mv = mv -f
-@@ -522,7 +522,7 @@
+ 
+--- libpki-0.8.9/src/Makefile.am	2016-06-01 15:47:17.732926831 -0700
++++ libpki-0.8.9/src/Makefile.am	2016-06-09 14:49:11.713859300 -0700
+@@ -27,19 +27,20 @@
+  
+ nobase_include_HEADERS = \
+ 	libpki/*.h \
+-	libpki/net/*.h \
+-	libpki/io/*.h \
+-	libpki/scep/*.h \
+-	libpki/prqp/*.h \
+-	libpki/lirt/*.h \
+-	libpki/cms/*.h \
+-	libpki/openssl/*.h \
+-	libpki/drivers/*.h \
+-	libpki/drivers/openssl/*.h \
+-	libpki/drivers/engine/*.h \
+-	libpki/drivers/pkcs11/*.h \
+-	libpki/drivers/pkcs11/rsa/*.h \
+-	libpki/drivers/kmf/*.h
++	$(top_srcdir)/src/libpki/*.h \
++	$(top_srcdir)/src/libpki/net/*.h \
++	$(top_srcdir)/src/libpki/io/*.h \
++	$(top_srcdir)/src/libpki/scep/*.h \
++	$(top_srcdir)/src/libpki/prqp/*.h \
++	$(top_srcdir)/src/libpki/lirt/*.h \
++	$(top_srcdir)/src/libpki/cms/*.h \
++	$(top_srcdir)/src/libpki/openssl/*.h \
++	$(top_srcdir)/src/libpki/drivers/*.h \
++	$(top_srcdir)/src/libpki/drivers/openssl/*.h \
++	$(top_srcdir)/src/libpki/drivers/engine/*.h \
++	$(top_srcdir)/src/libpki/drivers/pkcs11/*.h \
++	$(top_srcdir)/src/libpki/drivers/pkcs11/rsa/*.h \
++	$(top_srcdir)/src/libpki/drivers/kmf/*.h
+ 
+ SRCS = \
+ 	pki_init.c \
+--- libpki-0.8.9/src/tests/Makefile.am	2016-06-01 15:47:33.304908175 -0700
++++ libpki-0.8.9/src/tests/Makefile.am	2016-06-07 15:21:44.869944846 -0700
+@@ -73,4 +73,4 @@
  test9_SOURCES = test9.c
  test9_LDFLAGS = $(testLDFLAGS)
- test9_LDADD = $(testLDADD)
+ test9_LDADD   = $(testLDADD)
 -test9_CFLAGS = -I$(TOP) $(LIBPKI_CFLAGS) -ggdb
 +test9_CFLAGS = -I$(TOP) $(LIBPKI_CFLAGS)
- all: all-recursive
- 
- .SUFFIXES:
-@@ -570,38 +570,65 @@
- test1$(EXEEXT): $(test1_OBJECTS) $(test1_DEPENDENCIES) $(EXTRA_test1_DEPENDENCIES) 
- 	@rm -f test1$(EXEEXT)
- 	$(AM_V_CCLD)$(test1_LINK) $(test1_OBJECTS) $(test1_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test1$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test1$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test1$(EXEEXT)
- 
- test2$(EXEEXT): $(test2_OBJECTS) $(test2_DEPENDENCIES) $(EXTRA_test2_DEPENDENCIES) 
- 	@rm -f test2$(EXEEXT)
- 	$(AM_V_CCLD)$(test2_LINK) $(test2_OBJECTS) $(test2_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test2$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test2$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test2$(EXEEXT)
- 
- test3$(EXEEXT): $(test3_OBJECTS) $(test3_DEPENDENCIES) $(EXTRA_test3_DEPENDENCIES) 
- 	@rm -f test3$(EXEEXT)
- 	$(AM_V_CCLD)$(test3_LINK) $(test3_OBJECTS) $(test3_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test3$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test3$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test3$(EXEEXT)
- 
- test4$(EXEEXT): $(test4_OBJECTS) $(test4_DEPENDENCIES) $(EXTRA_test4_DEPENDENCIES) 
- 	@rm -f test4$(EXEEXT)
- 	$(AM_V_CCLD)$(test4_LINK) $(test4_OBJECTS) $(test4_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test4$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test4$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test4$(EXEEXT)
- 
- test5$(EXEEXT): $(test5_OBJECTS) $(test5_DEPENDENCIES) $(EXTRA_test5_DEPENDENCIES) 
- 	@rm -f test5$(EXEEXT)
- 	$(AM_V_CCLD)$(test5_LINK) $(test5_OBJECTS) $(test5_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test5$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test5$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test5$(EXEEXT)
- 
- test6$(EXEEXT): $(test6_OBJECTS) $(test6_DEPENDENCIES) $(EXTRA_test6_DEPENDENCIES) 
- 	@rm -f test6$(EXEEXT)
- 	$(AM_V_CCLD)$(test6_LINK) $(test6_OBJECTS) $(test6_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test6$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test6$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test6$(EXEEXT)
- 
- test7$(EXEEXT): $(test7_OBJECTS) $(test7_DEPENDENCIES) $(EXTRA_test7_DEPENDENCIES) 
- 	@rm -f test7$(EXEEXT)
- 	$(AM_V_CCLD)$(test7_LINK) $(test7_OBJECTS) $(test7_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test7$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test7$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test7$(EXEEXT)
- 
- test8$(EXEEXT): $(test8_OBJECTS) $(test8_DEPENDENCIES) $(EXTRA_test8_DEPENDENCIES) 
- 	@rm -f test8$(EXEEXT)
- 	$(AM_V_CCLD)$(test8_LINK) $(test8_OBJECTS) $(test8_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test8$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test8$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test8$(EXEEXT)
- 
- test9$(EXEEXT): $(test9_OBJECTS) $(test9_DEPENDENCIES) $(EXTRA_test9_DEPENDENCIES) 
- 	@rm -f test9$(EXEEXT)
- 	$(AM_V_CCLD)$(test9_LINK) $(test9_OBJECTS) $(test9_LDADD) $(LIBS)
-+	@gsed -i 's/$$libtool_install_magic/$$$$libtool_install_magic/g' test9$(EXEEXT)
-+	@gsed -i 's/$$libtool_execute_magic/$$$$libtool_execute_magic/g' test9$(EXEEXT)
-+	@gsed -i 's/:$$LD_LIBRARY_PATH/:$$$$LD_LIBRARY_PATH/g' test9$(EXEEXT)
- 
- mostlyclean-compile:
- 	-rm -f *.$(OBJEXT)

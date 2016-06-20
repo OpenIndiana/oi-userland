@@ -28,10 +28,8 @@ COMPONENT_SRC=$2
 export PATH=/bin:$PATH
 
 # Replace the path to that under component build dir
-gsed -i.orig 's|\"etc\"|'\""$BUILD_DIR"'/etc\"|g' $COMPONENT_SRC/src/tests/test6.c
-rm $COMPONENT_SRC/src/tests/test6.c.orig
-gsed -i.orig 's|\"etc\"|'\""$BUILD_DIR"'/etc\"|g' $COMPONENT_SRC/src/tests/test8.c
-rm $COMPONENT_SRC/src/tests/test8.c.orig
+gsed -i 's|\"etc\"|'\""$BUILD_DIR"'/etc\"|g' $COMPONENT_SRC/src/tests/test6.c
+gsed -i 's|\"etc\"|'\""$BUILD_DIR"'/etc\"|g' $COMPONENT_SRC/src/tests/test8.c
 
 # Make dirs under component build dir and copy necessary files under them
 rm -rf $BUILD_DIR/etc/hsm.d
@@ -53,3 +51,14 @@ cp -R $COMPONENT_SRC/etc/.libpki $BUILD_DIR/etc
 # Make results dir under component build dir
 rm -rf $BUILD_DIR/results
 mkdir $BUILD_DIR/results
+
+# Build test scripts
+gmake -C $BUILD_DIR/src/tests check-am
+
+# Test scripts need escapes because they are executed indirectly
+for i in {1..9}
+do
+	gsed -i 's|$libtool_install_magic|$$libtool_install_magic|g' $BUILD_DIR/src/tests/test$i
+	gsed -i 's|$libtool_execute_magic|$$libtool_execute_magic|g' $BUILD_DIR/src/tests/test$i
+	gsed -i 's|:$LD_LIBRARY_PATH|:$$LD_LIBRARY_PATH|g' $BUILD_DIR/src/tests/test$i
+done

@@ -41,6 +41,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/docs
 
+# Need to include the path below because not all headers are available in
+# $(BUILD_DIR)/src/libpki.
+CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/src
+
+# configure.in and Makefile.am patches need configure script recreation.
+COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
+
 # This is necessary because 'gmake install' tries to install some files under
 # /usr/bin without it.
 CONFIGURE_ENV +=	DESTDIR="$(PROTO_DIR)"

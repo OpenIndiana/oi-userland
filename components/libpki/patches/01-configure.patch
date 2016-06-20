@@ -2,12 +2,19 @@ Patch origin: in-house
 Patch status: not Solaris-specific; suitable for upstream
 
 Need to add architectures for Oracle build environments.
-Need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
-Need to use an appropriate path for ldap.h.
 
---- libpki-0.8.9/configure	2015-11-10 13:50:26.446036204 -0800
-+++ libpki-0.8.9/configure	2016-06-02 17:47:01.889075071 -0700
-@@ -2529,11 +2529,20 @@
+Need to disable rpath to avoid including 32-bit runpath in 64-bit binary.
+
+Need to add AC_LANG_SOURCE to resolve autoreconf warnings.
+
+Need to use an appropriate path for ldap.h.
+On S12, we build with OpenLDAP.
+On S11.3, the default is to build with OpenLDAP, but we can specifiy to build
+with Mozilla LDAP instead by using --enable-openldap=no configure option.
+
+--- libpki-0.8.9/configure.in	2016-06-01 15:47:12.987843577 -0700
++++ libpki-0.8.9/configure.in	2016-06-20 11:13:17.409345800 -0700
+@@ -36,11 +36,20 @@
      mybits="64"
      mybits_install="64"
      ;;
@@ -28,76 +35,342 @@ Need to use an appropriate path for ldap.h.
    *aix*)
      mybits="64"
      mybits_install="64"
-@@ -2627,6 +2636,10 @@
+@@ -203,11 +212,13 @@
+  *sun*) myarch=solaris
+ 		shlext=so
+ 		rpath_opt="-R "
++		enable_rpath=no
+ 		;;
+  *solaris*)
+ 		myarch=solaris
+ 		shlext=so
+ 		rpath_opt="-R "
++		enable_rpath=no
+ 		;;
+  *hpux*)        myarch=hpux
+ 		shlext=so
+@@ -545,6 +556,7 @@
  
+ ldap_vendor=
+ ldap="yes"
++openldap="yes"
+ ldap_prefix=""
+ ldap_path=""
+ ldap_cflags=""
+@@ -562,6 +574,11 @@
+ 		[enable ldap support ( default is yes)]),
+ 		ldap=$enableval, ldap=yes )
  
- enable_rpath=yes
-+if [ "$myarch" = "solaris" ] ; then
-+	enable_rpath=no
-+fi
-+	
++AC_ARG_ENABLE(openldap,
++	AC_HELP_STRING( [--enable-openldap],
++		[enable openldap support on Solaris 11.3 (default is yes)]),
++		openldap=$enableval, openldap=yes )
++
+ if [[ "x$enable_iphone" = "xyes" ]] ; then
+ 	ldap="no"
+ fi
+@@ -780,12 +797,12 @@
+ 	LDFLAGS="$mysql_ldflags $mysql_ldadd"
+ 	ok=0
  
- # Export variables to prevent autoconf to use rpl_malloc instead
- # of malloc (it won't link properly otherwise!) - needed for iPhone
-@@ -14891,26 +14904,37 @@
- $as_echo_n "checking checking for ldap vendor... " >&6; };
+-	AC_RUN_IFELSE( [
++	AC_RUN_IFELSE([AC_LANG_SOURCE([
+ 		#include <mysql.h>
+ 		int main(void) {
+ 		        MYSQL *x;
+ 		        return(0);
+-		}], [ ok=1 ], [ ok=0 ])
++		}])], [ ok=1 ], [ ok=0 ])
  
- if ! [ "$_prefix" = "" ] ; then
+ 	CFLAGS="$OLD_CFLAGS"
+ 	LDFLAGS="$OLD_LDFLAGS"
+@@ -884,12 +901,12 @@
+ 	LDFLAGS="$pg_ldflags $pg_ldadd"
+ 	ok=0
+ 
+-	AC_RUN_IFELSE( [
++	AC_RUN_IFELSE([AC_LANG_SOURCE([
+ 		#include <libpq-fe.h>
+ 		int main(void) {
+ 			PGconn *sql;
+ 		        return(0);
+-		}], [ ok=1 ], [ ok=0 ])
++		}])], [ ok=1 ], [ ok=0 ])
+ 
+ 	CFLAGS="$OLD_CFLAGS"
+ 	LDFLAGS="$OLD_LDFLAGS"
+--- libpki-0.8.9/acinclude.m4	2016-06-01 15:47:48.803434658 -0700
++++ libpki-0.8.9/acinclude.m4	2016-06-16 13:16:34.558401470 -0700
+@@ -293,12 +293,12 @@
+ 
+ dnl AC_MSG_RESULT([LD_LIBRARY_PATH=$library_path]);
+ 
+-AC_RUN_IFELSE( [
++AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #include <openssl/x509.h>
+ int main(void) {
+ 	X509 *x = NULL;
+ 	return(0);
+-}], [ ok=1 ], [ ok=0 ])
++}])], [ ok=1 ], [ ok=0 ])
+ 
+ CFLAGS=$old_cflags
+ LDFLAGS=$old_ldflags
+@@ -337,12 +337,12 @@
+ 
+ AC_MSG_CHECKING([checking for $1 support]);
+ 
+-AC_RUN_IFELSE( [
++AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #include <stdlib.h>
+ int main(void)
+ {
+         return(0);
+-}], [ _supported=yes ], [ _supported=no])
++}])], [ _supported=yes ], [ _supported=no])
+ 
+ if [[ $_supported = no ]] ; then
+         AC_MSG_RESULT([not supported]);
+@@ -367,84 +367,62 @@
+ AC_MSG_CHECKING([checking for ldap vendor]);
+ 
+ if ! [[ "$_prefix" = "" ]] ; then
 -	if $EGREP "Sun" "$_prefix/include/ldap.h" 2>&1 >/dev/null ; then
--	$as_echo "#define LDAP_VENDOR_SUN 1" >>confdefs.h
-+	ldap_include_dir=$_prefix/include
-+	if [ "$myarch" = "solaris" ] ; then
-+		if [ "$DIST_VERSION" = "5.12" ] ; then
-+			ldap_include_dir=$ldap_include_dir/openldap
-+		else
-+			if [ -d $ldap_include_dir/openldap ] ; then
-+				ldap_include_dir=$ldap_include_dir/openldap
-+			fi
-+		fi
-+	fi
- 
--	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
--$as_echo "yes" >&6; }
+-	AC_DEFINE(LDAP_VENDOR_SUN)
+-	AC_MSG_RESULT([yes])
 -	ldap_vendor="SUN"
 -   else
 -   	if $EGREP "OpenLDAP" "$_prefix/include/ldap.h" 2>&1 >/dev/null ; then
--		$as_echo "#define LDAP_VENDOR_OPENLDAP 1" >>confdefs.h
-+	if $EGREP "Sun" "$ldap_include_dir/ldap.h" 2>&1 >/dev/null ; then
-+		$as_echo "#define LDAP_VENDOR_SUN 1" >>confdefs.h
- 
+-		AC_DEFINE(LDAP_VENDOR_OPENLDAP)
 -		ldap_vendor="OPENLDAP"
--		library_ldflags=-L$_prefix/lib
--		library_ldadd=-lldap_r
--	else
--		as_fn_error $? "*** LDAP::No supported vendors found in ($_prefix)***" "$LINENO" 5
-+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-+$as_echo "yes" >&6; }
-+		ldap_vendor="SUN"
-+   	else
-+   		if $EGREP "OpenLDAP" "$ldap_include_dir/ldap.h" 2>&1 >/dev/null ; then
-+			$as_echo "#define LDAP_VENDOR_OPENLDAP 1" >>confdefs.h
+-		library_ldflags=[-L$_prefix/lib]
+-		library_ldadd=[-lldap_r]
++	dnl A directory path where ldap.h exists.
++	dnl The deafult is $_prefix/include, but it can be different depending on
++	dnl operating systems and versions.
++	ldap_include_dir=$_prefix/include
 +
++	if [[ "$myarch" = "solaris" ]] ; then
++		if [[ "$DIST_VERSION" = "5.12" ]] ; then
++			dnl On Solaris 12, we force to build with OpenLDAP.
++			AC_DEFINE(LDAP_VENDOR_OPENLDAP)
++			AC_MSG_RESULT([yes])
++			ldap_include_dir=$ldap_include_dir/openldap
 +			ldap_vendor="OPENLDAP"
-+			library_ldflags=-L$_prefix/lib
-+			library_ldadd=-lldap_r
++			library_ldflags=[-L$_prefix/lib]
++			library_ldadd=[-lldap_r]
 +		else
-+			as_fn_error $? "*** LDAP::No supported vendors found in ($_prefix)***" "$LINENO" 5
++			dnl On Solaris 11.3, the default is to build with OpenLDAP,
++			dnl but when --enable-openldap=no configure option is specified,
++			dnl we build with Mozilla LDAP instead.
++			if [[ "x$openldap" = "xyes" ]] ; then
++				AC_DEFINE(LDAP_VENDOR_OPENLDAP)
++				AC_MSG_RESULT([yes])
++				ldap_include_dir=$ldap_include_dir/openldap
++				ldap_vendor="OPENLDAP"
++				library_ldflags=[-L$_prefix/lib]
++				library_ldadd=[-lldap_r]
++			else
++				AC_DEFINE(LDAP_VENDOR_SUN)
++				AC_MSG_RESULT([yes])
++				ldap_vendor="SUN"
++				ldap_lib=`ls "${_prefix}/lib/libldap.${shlext}" | head -n 1`;
++				if [[ -z "$ldap_lib" ]] ; then
++					AC_MSG_ERROR([*** LDAP: missing $_prefix/lib/libldap.$shlext!])
++				fi
++				library_ldflags=[-L$_prefix/lib]
++				library_ldadd=[-lldap]
++			fi
 +		fi
- 	fi
+ 	else
+-		AC_MSG_ERROR([*** LDAP::No supported vendors found in ($_prefix)***])
+-	fi
 -   fi
- 
- 	if [ "$ldap_vendor" = "SUN" ] ; then
+-
+-	if [[ "$ldap_vendor" = "SUN" ]] ; then
 -    	ldap_lib=`ls "${_prefix}/lib/libldap.${shlext}" | head -n 1`;
-+    		ldap_lib=`ls "${_prefix}/lib/libldap.${shlext}" | head -n 1`;
- 		if [ -z "$ldap_lib" ] ; then
- 			as_fn_error $? "*** LDAP: missing $_prefix/lib/libldap.$shlext!" "$LINENO" 5
+-		if [[ -z "$ldap_lib" ]] ; then
+-			AC_MSG_ERROR([*** LDAP: missing $_prefix/lib/libldap.$shlext!])
++		if $EGREP "OpenLDAP" "$ldap_include_dir/ldap.h" 2>&1 >/dev/null ; then
++			AC_DEFINE(LDAP_VENDOR_OPENLDAP)
++			AC_MSG_RESULT([yes])
++			ldap_vendor="OPENLDAP"
++			library_ldflags=[-L$_prefix/lib]
++			library_ldadd=[-lldap_r]
++		else
++			AC_MSG_ERROR([*** LDAP::No supported vendors found in ($ldap_include_dir)***])
  		fi
-@@ -14919,7 +14943,7 @@
+-		library_ldflags=[-L$_prefix/lib]
+-		library_ldadd=[-lldap]
  	fi
  
  	library_prefix=$_prefix;
--	library_cflags=-I${_prefix}/include
-+	library_cflags=-I$ldap_include_dir
+-	library_cflags=[-I${_prefix}/include]
+-
+-old_cflags=$CFLAGS
+-old_ldflags=$LDFLAGS
+-old_ldadd=$LDADD
+-
+-CFLAGS=$library_cflags
+-LDFLAGS=$library_ldflags
+-LDADD=$library_ldadd
+-
+-AC_MSG_RESULT([LDAP SEARCH: CFLAGS: $library_cflags])
+-AC_MSG_RESULT([LDAP SEARCH: LDFLAGS: $library_ldflags])
+-AC_MSG_RESULT([LDAP SEARCH: LDADD: $library_ldadd])
+-
+-dnl AC_MSG_RESULT([LDAP VENDOR ===> searching for Sun])
+-   AC_EGREP_CPP( [Sun],
+-[
+-#include <ldap.h>
+-
+-int main(void) {
+-   char *p = LDAP_VENDOR_NAME;
+-   return(0);
+-}], 
+-  	[
+-	   AC_DEFINE(LDAP_VENDOR_SUN)
+-	   ldap_vendor="SUN"
+-        ])
+-
+-   if ! [[ "$ldap_vendor" = "SUN" ]] ; then
+-   	dnl AC_MSG_CHECKING([checking for OpenLDAP vendor ($_prefix) ]);
+-   	AC_EGREP_CPP( [OpenLDAP],
+-[
+-#include <ldap.h>
+-
+-int main(void) {
+-   char *p = LDAP_VENDOR_NAME;
+-   return(0);
+-}], 
+-  		[
+-		   AC_DEFINE(LDAP_VENDOR_OPENLDAP)
+-   		   dnl AC_MSG_CHECKING([checking for OpenLDAP vendor ($_prefix) ]);
+-		   ldap_vendor="OPENLDAP"
+-		])
+-   fi
+-
+-LDFLAGS=$old_ldflags
+-CFLAGS=$old_cflags
+-LDADD=$old_ldadd
++	library_cflags=[-I$ldap_include_dir]
  
- old_cflags=$CFLAGS
- old_ldflags=$LDFLAGS
+ else
+ 
+-   AC_MSG_RESULT([LDAP VENDOR ($_prefix) ===> searching for Sun])
+-   AC_EGREP_CPP( [Sun],
++	AC_MSG_RESULT([LDAP VENDOR ===> searching for Sun])
++	AC_EGREP_CPP( [Sun],
+ [
+ #include <ldap.h>
+ 
+@@ -452,15 +430,15 @@
+    char *p = LDAP_VENDOR_NAME;
+    return(0);
+ }], 
+-  	[
+-	   AC_DEFINE(LDAP_VENDOR_SUN)
+-	   ldap_vendor="SUN"
++	[
++		AC_DEFINE(LDAP_VENDOR_SUN)
++		ldap_vendor="SUN"
+ 		library_ldadd="-lldap"
+-        ])
++	])
+ 
+-   if ! [[ "x$ldap_vendor" = "SUN" ]] ; then
+-   	AC_MSG_CHECKING([checking for OpenLDAP vendor ($_prefix) ]);
+-   	AC_EGREP_CPP( [OpenLDAP],
++	if ! [[ "x$ldap_vendor" = "SUN" ]] ; then
++		AC_MSG_CHECKING([checking for OpenLDAP vendor]);
++		AC_EGREP_CPP( [OpenLDAP],
+ [
+ #include <ldap.h>
+ 
+@@ -468,16 +446,13 @@
+    char *p = LDAP_VENDOR_NAME;
+    return(0);
+ }], 
+-  		[
+-		   AC_DEFINE(LDAP_VENDOR_OPENLDAP)
+-		   ldap_vendor="OPENLDAP"
++		[
++			AC_DEFINE(LDAP_VENDOR_OPENLDAP)
++			ldap_vendor="OPENLDAP"
+ 			library_ldadd="-lldap_r"
+ 		])
+-   fi
++	fi
+ fi
+-
+-   AC_MSG_RESULT([LDAP VENDOR: $ldap_vendor]);
+-
+ ])
+ 
+ AC_DEFUN(CHECK_EC, [
+@@ -548,7 +523,7 @@
+ dnl fi
+ dnl ])
+ 
+-dnl AC_RUN_IFELSE( [
++dnl AC_RUN_IFELSE([AC_LANG_SOURCE([
+ dnl #include <openssl/ec.h>
+ dnl #include <openssl/ecdsa.h>
+ dnl #include <openssl/opensslconf.h>
+@@ -559,7 +534,7 @@
+ dnl #endif
+ dnl 	EC_KEY *d = NULL;
+ dnl 	return(0);
+-dnl }], [ 
++dnl }])], [ 
+ dnl 	AC_DEFINE([ENABLE_ECDSA], 1, [ECC Support for OpenSSL])
+ dnl 	activate_ecdsa=yes
+ dnl ], [activate_ecdsa=no])
+@@ -576,13 +551,13 @@
+ dnl fi
+ 
+ AC_DEFUN(AC_OPENSSL_OCSP,
+-[ AC_RUN_IFELSE( [
++[ AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #include <openssl/ocsp.h>
+ int main(void)
+ {
+ 	OCSP_CERTID *cid = NULL;
+ 	return(0);
+-}], [ AC_DEFINE(HAVE_OCSP) ], [ocsp_error=1])
++}])], [ AC_DEFINE(HAVE_OCSP) ], [ocsp_error=1])
+ 
+ if [[ ocsp_error = 1 ]] ; then
+ 	AC_MSG_RESULT([checking for OpenSSL OCSP support ... no])
+@@ -611,19 +586,19 @@
+ ])
+ 
+ AC_DEFUN(AC_GCC_CHECK_PRAGMA_IGNORED,
+-[ AC_RUN_IFELSE( [
++[ AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #include <stdio.h>
+ #pragma GCC diagnostic ignored "-Wconversion"
+ int main(void)
+ {
+ 	return(0);
+ }
+-],[ AC_DEFINE(HAVE_GCC_PRAGMA_IGNORED, 1, [GCC pragma ignored]) ], [])
++])],[ AC_DEFINE(HAVE_GCC_PRAGMA_IGNORED, 1, [GCC pragma ignored]) ], [])
+ 
+ ])
+ 
+ AC_DEFUN(AC_GCC_CHECK_PRAGMA_POP,
+-[ AC_RUN_IFELSE( [
++[ AC_RUN_IFELSE([AC_LANG_SOURCE([
+ #include <stdio.h>
+ #pragma GCC diagnostic ignored "-Wconversion"
+ int main(void)
+@@ -631,7 +606,7 @@
+ 	return(0);
+ }
+ #pragma GCC diagnostic pop
+-], [ AC_DEFINE(HAVE_GCC_PRAGMA_POP, 1, [GCC pragma pop]) ], [])
++])], [ AC_DEFINE(HAVE_GCC_PRAGMA_POP, 1, [GCC pragma pop]) ], [])
+ 
+ ])
+ 
