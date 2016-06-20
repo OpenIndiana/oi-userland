@@ -86,7 +86,7 @@ sub dump_mysql
     my %args = @_;
     umask(0077);
     unlink("$wd/.my.cnf");
-    open(MY, ">$wd/.my.cnf") 
+    open(MY, ">$wd/.my.cnf")
         or die "Can't open $wd/.my.cnf for writing $@";
 
     $args{db_address} = $args{db_address} || "localhost";
@@ -103,7 +103,7 @@ password=$args{db_password}
     if ($args{db_port}) {
         print MY "port=$args{db_port}\n";
     }
-    
+
     close(MY);
 
     exec("HOME='$wd' mysqldump -f --opt $args{db_name} > '$wd/$args{db_name}.sql'");
