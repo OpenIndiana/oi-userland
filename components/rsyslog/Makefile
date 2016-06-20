@@ -92,6 +92,13 @@ CONFIGURE_OPTIONS +=    --enable-gnutls
 CONFIGURE_OPTIONS +=    --disable-klog
 CONFIGURE_OPTIONS +=    --sbindir=$(USRLIBDIR)/rsyslog
 
+CONFIGURE_OPTIONS +=    --enable-imfile
+CONFIGURE_OPTIONS +=    --enable-impstats
+CONFIGURE_OPTIONS +=    --enable-mysql
+CONFIGURE_ENV     +=    "MYSQL_CONFIG=/usr/mysql/5.7/bin/mysql_config"
+CONFIGURE_OPTIONS +=    --enable-omstdout
+CONFIGURE_OPTIONS +=    --enable-omuxsock
+
 # libgcrypt is not approved.
 CONFIGURE_OPTIONS +=	--disable-libgcrypt
 CONFIGURE_OPTIONS +=	--enable-extended-tests
@@ -117,6 +124,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	     -prune -o -print0 \
 	| cpio -pd0u $(PROTODOCDIR))
 
+REQUIRED_PACKAGES += database/mysql-57/library
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libestr

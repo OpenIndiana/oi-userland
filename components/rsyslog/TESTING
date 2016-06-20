@@ -1,0 +1,298 @@
+# check version
+/usr/lib/rsyslog/rsyslogd -v
+
+
+
+# test that rsyslog does not contain our workspace path but rather relative paths
+/usr/lib/rsyslog/rsyslogd -d -n 2>&1 | grep ': source file'
+
+
+
+# Check that GSS support is compiled in. The two functions should be seen:
+nm /usr/lib/rsyslog/lmnet.so |grep AllowedSenders_GSS
+[104]   |             2097184|                   8|OBJT |GLOB |0    |25     |pAllowedSenders_GSS
+[80]    |             2097176|                   8|OBJT |LOCL |0    |25     |pLastAllowedSenders_GSS
+
+
+
+# Install prerequirements for testing
+pkg install database/mysql-57 database/mysql-57/client
+
+
+
+# Disable native syslog, enable rsyslog
+svcadm disable system/system-log:default
+sleep 5
+svcadm enable system/system-log:rsyslog
+sleep 5
+svcs -x
+
+
+
+# Logging a message should appear in dmesg and /var/adm/messages
+logger -p error "Message 1"
+dmesg | tail # should contain '2016-06-10T07:53:00+00:00 S12-99 root: [ID 702911 user.error] Message 1'
+tail /var/adm/messages
+
+======================== Create /etc/rsyslog.d/by_mail =========================
+module(load="ommail")
+
+template (name="mailBody"  type="string" string="RSYSLOG Alert\\r\\nmsg='%msg%'")
+template (name="mailSubject" type="string" string="send by mail on %hostname%")
+
+if $msg contains "send" then {
+   action(type="ommail" server="localhost" port="25"
+           mailfrom="rsyslog@localhost"
+           mailto="root@localhost"
+           subject.template="mailSubject"
+           body.enable="on"  # !!!!! should not be needed - see 23584223
+           action.execonlyonceeveryinterval="0")
+}
+================================================================================
+
+svcadm restart system/system-log:rsyslog
+yes 'd' | mail > /dev/null # delete mail messages
+logger -p error "Message 2 - send"
+mail -p # should contain our "Message 2 - send"
+
+
+
+====================== Create /etc/rsyslog.d/follow_file =======================
+module(load="imfile" mode="polling" PollingInterval="1")
+
+input(type="imfile"
+      file="/var/tmp/file_to_follow"
+      tag="foobar"
+      severity="error"
+      facility="local7")
+================================================================================
+
+svcadm restart system/system-log:rsyslog
+echo $"line created in a file\nand a second line" > /var/tmp/file_to_follow
+dmesg | tail
+#2016-06-10T09:14:20.481340+00:00 S12-99 foobar line created in a file
+#2016-06-10T09:14:20.481355+00:00 S12-99 foobar and a second line
+
+
+
+======================= Create file /etc/rsyslog.d/stats =======================
+module(
+  load="impstats"
+  interval="10"             # how often to generate stats
+  resetCounters="on"        # to get deltas (e.g. # of messages submitted in the last 10 seconds)
+  log.file="/tmp/stats"     # file to write those stats to
+  log.syslog="off"          # don't send stats through the normal processing pipeline. More on that in a bit
+)
+================================================================================
+
+rm -f /tmp/stats
+svcadm restart system/system-log:rsyslog
+sleep 15
+cat /tmp/stats # The file should be there and contain some stats
+
+
+
+======================== Create file /etc/rsyslog.d/tcp ========================
+module(load="imtcp")
+input(type="imtcp" port="6666" address="127.0.0.1")
+================================================================================
+
+svcadm restart system/system-log:rsyslog
+echo '<89>xxxxxxxxxxxx' | nc localhost 6666
+dmesg | tail # message xxxx should be visible
+
+
+
+MYSQL_TEST_DATADIR=/var/tmp/mysql
+MYSQL_VERSION=5.7
+MYSQL_BINDIR=/usr/mysql/$MYSQL_VERSION/bin
+MYSQL_TEST_USER=root
+MYSQL_TEST_PASSWORD=new-password
+
+pkill -9 mysqld
+rm -rf "$MYSQL_TEST_DATADIR"
+mkdir "$MYSQL_TEST_DATADIR"
+
+"$MYSQL_BINDIR/mysqld" --datadir="$MYSQL_TEST_DATADIR" \
+        --basedir=/usr/mysql/$MYSQL_VERSION --initialize-insecure
+
+# Run the daemon in background.
+#   --gdb makes it possible to terminate mysqld via Ctrl+C
+"$MYSQL_BINDIR/mysqld" \
+        --skip-networking \
+        -u $MYSQL_TEST_USER \
+        --datadir="$MYSQL_TEST_DATADIR" \
+        --pid-file="$MYSQL_TEST_DATADIR"/pid \
+        --user=root \
+        --gdb &
+
+sleep 10 # wait for db to come up
+
+"$MYSQL_BINDIR/mysqladmin" \
+        -u "$MYSQL_TEST_USER" \
+        password "$MYSQL_TEST_PASSWORD"
+
+echo "CREATE DATABASE Syslog;
+USE Syslog;
+CREATE TABLE SystemEvents
+(
+        ID int unsigned not null auto_increment primary key,
+        CustomerID bigint,
+        ReceivedAt datetime NULL,
+        DeviceReportedTime datetime NULL,
+        Facility smallint NULL,
+        Priority smallint NULL,
+        FromHost varchar(60) NULL,
+        Message text,
+        NTSeverity int NULL,
+        Importance int NULL,
+        EventSource varchar(60),
+        EventUser varchar(60) NULL,
+        EventCategory int NULL,
+        EventID int NULL,
+        EventBinaryData text NULL,
+        MaxAvailable int NULL,
+        CurrUsage int NULL,
+        MinUsage int NULL,
+        MaxUsage int NULL,
+        InfoUnitID int NULL ,
+        SysLogTag varchar(60),
+        EventLogType varchar(60),
+        GenericFileName VarChar(60),
+        SystemID int NULL
+);
+
+CREATE TABLE SystemEventsProperties
+(
+        ID int unsigned not null auto_increment primary key,
+        SystemEventID int NULL ,
+        ParamName varchar(255) NULL ,
+        ParamValue text NULL
+);
+" | mysql --user="$MYSQL_TEST_USER" --password="$MYSQL_TEST_PASSWORD"
+
+========================= Create /etc/rsyslog.d/mysql ==========================
+$ModLoad ommysql.so
+
+if $msg contains 'mysql' then :ommysql:localhost,Syslog,root,new-password
+================================================================================
+
+svcadm restart system/system-log:rsyslog
+logger -p error "no database"
+logger -p info "mysql database"
+echo "select Message from SystemEvents" | mysql --user="$MYSQL_TEST_USER" --password="$MYSQL_TEST_PASSWORD" -D Syslog
+# The table should contain "mysql database" entry
+
+
+
+============================= Create /var/tmp/a.py =============================
+import socket
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+sock.bind('/tmp/socksample')
+while True:
+        print('!!! ' + sock.recv(4096))
+================================================================================
+
+========================= Create /etc/rsyslog.d/socket =========================
+$ModLoad omuxsock
+$OMUxSockSocket /tmp/socksample
+*.* :omuxsock:
+================================================================================
+
+rm -f /tmp/socksample
+python /var/tmp/a.py &
+svcadm restart system/system-log:rsyslog
+logger -p info test
+# there should be output like !!! <14>Jun 13 20:05:56 S12-99 root: [ID 702911 user.info] test
+
+
+
+rm /etc/rsyslog.d/*
+
+========================= Create /etc/rsyslog.d/server =========================
+$ModLoad imudp
+$UDPServerRun 5822
+================================================================================
+svcadm restart system/system-log:rsyslog
+
+Lines denoted by '!!!' means that they apply to second (client) machine.
+Replace A.B.C.D by ip of server machine
+
+!!! ================ On second machine create /etc/rsyslog.d/client ================
+!!! *.* @A.B.C.D:5822
+!!! ================================================================================
+!!! # Disable native syslog, enable rsyslog
+!!! svcadm disable system/system-log:default
+!!! sleep 5
+!!! svcadm enable system/system-log:rsyslog
+!!! sleep 5
+!!! svcs -x
+!!!
+!!! svcadm restart system/system-log:rsyslog
+!!! logger -p error 'udp log'
+!!!
+!!! # Server should have the log
+!!! dmest | tail
+!!! 2016-06-18T23:22:56+00:00 S12-101 root: [ID 702911 user.error] udp log
+
+dmesg | tail # shoudl show 'udp log' message
+
+
+
+========================= Modify /etc/rsyslog.d/server =========================
+$ModLoad imtcp
+$InputTCPServerRun 5822
+================================================================================
+snoop -d net0 -x 0 port 5822
+
+!!! =============== On second machine replace /etc/rsyslog.d/client ================
+!!! *.* @@A.B.C.D:5822
+!!! ================================================================================
+!!! svcadm restart system/system-log:rsyslog
+!!! logger -p error 'tcp log'
+
+# Make sure snoop shows the 'tcp log' message in plain
+dmesg | tail # should show 'tcp log' message
+
+
+
+========================= Modify /etc/rsyslog.d/server =========================
+$DefaultNetstreamDriver gtls
+$DefaultNetstreamDriverCAFile /etc/rsyslog.cert/ca-cert.pem
+$DefaultNetstreamDriverCertFile /etc/rsyslog.cert/server-cert.pem
+$DefaultNetstreamDriverKeyFile /etc/rsyslog.cert/server-key.pem
+
+$ModLoad imtcp
+
+$InputTCPServerStreamDriverMode 1
+$InputTCPServerStreamDriverAuthMode anon
+$InputTCPServerRun 5822
+================================================================================
+mkdir -p /etc/rsyslog.cert
+cd /etc/rsyslog.cert
+SUBJ='/CN=server.cz.oracle.com/O=Oracle Corporation/OU=Solaris RPE/C=CZ/ST=Czech republic/L=Prague/emailAddress=root@localhost'
+openssl genrsa 2048 > ca-key.pem
+openssl req -new -x509 -nodes -days 3600 -key ca-key.pem -out ca-cert.pem -subj "$SUBJ"
+SUBJ='/CN=client.cz.oracle.com/O=Oracle Corporation/OU=Solaris RPE/C=CZ/ST=Czech republic/L=Prague/emailAddress=root@localhost'
+openssl req -newkey rsa:2048 -days 3600 -nodes -keyout server-key.pem -out server-req.pem -subj "$SUBJ"
+openssl rsa -in server-key.pem -out server-key.pem
+openssl x509 -req -in server-req.pem -days 3600 -CA ca-cert.pem -CAkey ca-key.pem -set_serial 01 -out server-cert.pem
+
+snoop -d net0 -x 0 port 5822
+# This should show no plain text message once we send it in next paragraph
+
+!!! =============== On second machine replace /etc/rsyslog.d/client ================
+!!! $DefaultNetstreamDriverCAFile /etc/rsyslog.cert/ca-cert.pem
+!!! $DefaultNetstreamDriver gtls
+!!! $ActionSendStreamDriverMode 1
+!!! $ActionSendStreamDriverAuthMode anon
+!!!
+!!! *.* @@A.B.C.D:5822
+!!! ================================================================================
+!!! mkdir -p /etc/rsyslog.cert
+!!! scp A.B.C.D:/etc/rsyslog.cert/ca-cert.pem /etc/rsyslog.cert/ca-cert.pem
+!!! svcadm restart system/system-log:rsyslog
+!!! logger -p error 'encrypted tcp log'
+
+# Make sure snoop SHOWS NO 'encrypted tcp log' message in plain
+dmesg | tail # should show 'encrypted tcp log' message
