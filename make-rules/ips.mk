@@ -426,7 +426,6 @@ $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.li
 
 # Push to the repo
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
-	@echo "PUSHING NEW PACKAGE CONTENTS TO THE REPO"
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
 
