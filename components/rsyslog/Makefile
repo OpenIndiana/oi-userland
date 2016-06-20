@@ -74,6 +74,12 @@ CFLAGS += -std=c99
 # have a self-contained eco-system, simplify things for customers and just use
 # /usr/lib/rsyslog .
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
+PKG_CONFIG_PATH = /usr/lib/pkgconfig/gnutls-3
+
+# The configure script runs the pkg-config command. This allows it to
+# find the non-default GnuTLS v3 library.
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
 
 # Rsyslog sources contain __FILE__ macros which contain full path to the workspace
 # This may appear in debug output which is not nice. By specifying the source
@@ -111,7 +117,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	     -prune -o -print0 \
 	| cpio -pd0u $(PROTODOCDIR))
 
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += library/liblogging
