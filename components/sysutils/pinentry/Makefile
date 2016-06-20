@@ -26,12 +26,12 @@ include ../../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	0.8.4
+COMPONENT_VERSION=	0.9.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/pinentry/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:359db3bf46cb743ba0b3aeef259f6107271ca888ba3e22c1cba525c9aca35612
+    sha256:6398208394972bbf897c3325780195584682a0d0c164ca5a0da35b93b1e4e7b2
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
@@ -58,12 +58,7 @@ CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
 CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
-CONFIGURE_OPTIONS  +=		--disable-glibtest
-CONFIGURE_OPTIONS  +=		--disable-gtktest
-CONFIGURE_OPTIONS  +=		--enable-threading
-CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
-CONFIGURE_OPTIONS  +=		--disable-pinentry-qt4
 CONFIGURE_OPTIONS  +=		--disable-ncurses
 
 build: $(BUILD_32)
@@ -79,6 +74,7 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += system/library
