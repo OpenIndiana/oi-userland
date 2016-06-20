@@ -26,11 +26,11 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.3.1
+COMPONENT_VERSION=	4.4.0
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fa4049f8aee283de62e283d427f2cfd35d6c369b40f7f45f947dbfd915699d63
+    sha256:ef722a54759a3bf23aad272bbf33c414c1078cad6bcd982fada93c0d7917218b
 
-TPNO=			23486	
+TPNO=			29565	
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/gnu-component.mk
