@@ -15,6 +15,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-couchbase
 COMPONENT_VERSION=	2.2.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/couchbase
 COMPONENT_SRC=		couchbase-$(COMPONENT_VERSION)beta2
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -46,6 +47,7 @@ CONFIGURE_OPTIONS     +=	--includedir=$(PHP_PREFIX)/include
 CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
+CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config

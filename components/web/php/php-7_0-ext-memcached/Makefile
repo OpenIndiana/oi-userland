@@ -16,6 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-7.0-ext-memcached
 COMPONENT_VERSION=	3.0.0
+COMPONENT_REVISION=	1
 REAL_NAME=		php-memcached
 GIT_COMMIT=		6ee96cad7be5caa1f13a1f3e5a4d5f900b9c04ce
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcached
@@ -52,6 +53,7 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS     +=	--disable-memcached-sasl
+CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
