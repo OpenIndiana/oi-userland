@@ -15,6 +15,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	7.0.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.php.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -58,6 +59,7 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS     +=	--localstatedir=$(PHP_DATADIR)
+CONFIGURE_OPTIONS     +=	--enable-maintainer-zts
 
 # SAPI modules
 CONFIGURE_OPTIONS.32  +=	--with-apxs2=$(AP_PREFIX)/bin/apxs
