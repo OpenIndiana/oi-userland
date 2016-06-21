@@ -12,23 +12,23 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	1.2.2
+COMPONENT_VERSION=	1.2.7
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5b2c510cdd7300956428c3b9bad78bd730908f6841ff15097e078133e50a5322
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/sbcl/sbcl/1.2.2/$(COMPONENT_ARCHIVE)
+	sha256:b27099d8c9fb5c63673e7dc4a83f82b4088dd0ed02e849a4d164aa1b12cc5283
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
@@ -56,6 +56,6 @@ install:	$(INSTALL_32)
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) sbcl
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/sbcl
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
