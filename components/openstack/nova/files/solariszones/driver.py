@@ -879,6 +879,25 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         return root_ci
 
+    def _set_instance_metahostid(self, instance):
+        """Attempt to get the hostid from the current configured zone and
+        return the hostid.  Otherwise return None, and do not set the hostid in
+        the instance
+        """
+        hostid = instance.system_metadata.get('hostid')
+        if hostid is not None:
+            return hostid
+
+        zone = self._get_zone_by_name(instance['name'])
+        if zone is None:
+            return None
+
+        hostid = lookup_resource_property(zone, 'global', 'hostid')
+        if hostid:
+            instance.system_metadata['hostid'] = hostid
+
+        return hostid
+
     def rebuild(self, context, instance, image_meta, injected_files,
                 admin_password, bdms, detach_block_devices,
                 attach_block_devices, network_info=None,
@@ -928,10 +947,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 msg = (_("'%s' branded zones do not currently support "
                          "evacuation.") % brand)
                 raise exception.NovaException(msg)
+        else:
+            self._power_off(instance, "HALT")
 
         instance.task_state = task_states.REBUILD_BLOCK_DEVICE_MAPPING
         instance.save(expected_task_state=[task_states.REBUILDING])
-
         root_ci = self._rebuild_block_devices(context, instance, bdms,
                                               recreate)
 
@@ -1728,6 +1748,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             self.zone_manager.create(name, None, template)
             self._set_global_properties(name, extra_specs, brand)
+            hostid = instance.system_metadata.get('hostid')
+            if hostid:
+                zone = self._get_zone_by_name(name)
+                with ZoneConfig(zone) as zc:
+                    zc.setprop('global', 'hostid', hostid)
+
             if connection_info is not None:
                 self._set_boot_device(name, connection_info, brand)
             self._set_num_cpu(name, instance['vcpus'], brand)
@@ -1944,6 +1970,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
+        self._set_instance_metahostid(instance)
+
         LOG.debug(_("Installation of instance '%s' (%s) complete") %
                   (name, instance['display_name']))
 
@@ -1953,6 +1981,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
+
+        # Attempt to update the zones hostid in the instance data, to catch
+        # those instances that might have been created without a hostid stored.
+        self._set_instance_metahostid(instance)
 
         bootargs = []
         if CONF.solariszones_boot_options:
@@ -2144,6 +2176,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
+
+        # Attempt to update the zones hostid in the instance data, to catch
+        # those instances that might have been created without a hostid stored.
+        self._set_instance_metahostid(instance)
 
         try:
             self._unplug_vifs(instance)
