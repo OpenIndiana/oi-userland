@@ -26,16 +26,17 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.1.2
+COMPONENT_VERSION=	3.2.0
 COMPONENT_PROJECT_URL=	http://www.libarchive.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:eb87eacd8fe49e8d90c8fdc189813023ccc319c5e752b01fb6ad0cc7b2c53d5e
+	sha256:7bce45fd71ff01dc20d19edd78322d4965583d81b8bed8e26cacb65d6f5baa87
 COMPONENT_ARCHIVE_URL=	\
     $(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libarchive
 
-TPNO=			24584
+TPNO=			29561
 
+TEST_TARGET= install $(TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
@@ -59,6 +60,11 @@ COMPONENT_TEST_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ENV +=	TMPDIR="$(COMPONENT_TEST_BUILD_DIR)"
 
+# Get correct libarchive.so from the proto area.
+TEST_LIBPATH.32 =       $(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
 # We need GNU awk for the following to work; hence the PATH tweak.
 # We then convert BSD-style section numbers in the libarchive man pages to
 # Solaris-style section numbers.
@@ -73,19 +79,32 @@ COMPONENT_PREP_ACTION = \
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|$(COMPONENT_TEST_BUILD_DIR).*$$|build/test|g"' \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-	'-e "s/ld: warning: symbol .* has differing sizes:$$/XXX_CC_XXX/"' \
-	'-e "s/.*value=0x[0-9a-f]\+.*$$/XXX_CC_XXX/"' \
-	'-e "s/.* definition taken$$/XXX_CC_XXX/"' \
-	'-e "s|.*Assertions checked:.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|.*recipe for target.*failed$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*\*\*\*.*Error.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d"'
+	'-n ' \
+	'-e "/ ok/p" ' \
+	'-e "/ FAIL/p" ' \
+	'-e "/Totals:/p" ' \
+	'-e "/Tests run:/p" ' \
+	'-e "/Tests failed:/p" ' \
+	'-e "/Assertions failed:/p" ' \
+	'-e "/Skips reported:/p" ' \
+	'-e "/Failing tests:/p" ' \
+	'-e "/ failure/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" ' \
+        '-e "/=========/p" ' \
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz

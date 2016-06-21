@@ -1,0 +1,44 @@
+Version related tests fail because we have:
+
+#define ZLIB_VERSION "1.2.8-T4mods"
+
+in /usr/include/zlib.h instead of the normal:
+
+#define ZLIB_VERSION "1.2.8"
+
+This patch has been submitted upstream. See:
+https://github.com/libarchive/libarchive/issues/720
+
+--- libarchive-3.2.0/tar/test/test_version.c.orig	2016-06-17 15:01:20.182487097 -0700
++++ libarchive-3.2.0/tar/test/test_version.c	2016-06-17 16:09:37.869258356 -0700
+@@ -88,7 +88,7 @@
+ 	if (*q == 'a' || *q == 'b' || *q == 'c' || *q == 'd')
+ 		++q;
+ 	/* Skip arbitrary third-party version numbers. */
+-	while (s > 0 && (*q == ' ' || *q == '/' || *q == '.' || isalnum(*q))) {
++	while (s > 0 && (*q == ' ' || *q == '-' || *q == '/' || *q == '.' || isalnum(*q))) {
+ 		++q;
+ 		--s;
+ 	}
+--- libarchive-3.2.0/cpio/test/test_option_version.c.orig	2016-06-17 16:33:58.917721419 -0700
++++ libarchive-3.2.0/cpio/test/test_option_version.c	2016-06-17 16:34:20.005855444 -0700
+@@ -75,7 +75,7 @@
+ 	if (*q == 'a' || *q == 'b' || *q == 'c' || *q == 'd')
+ 		++q;
+ 	/* Skip arbitrary third-party version numbers. */
+-	while (s > 0 && (*q == ' ' || *q == '/' || *q == '.' || isalnum(*q))) {
++	while (s > 0 && (*q == ' ' || *q == '-' || *q == '/' || *q == '.' || isalnum(*q))) {
+ 		++q;
+ 		--s;
+ 	}
+--- libarchive-3.2.0/cat/test/test_version.c.orig	2016-06-17 16:36:09.148321710 -0700
++++ libarchive-3.2.0/cat/test/test_version.c	2016-06-17 16:36:25.036590222 -0700
+@@ -83,7 +83,7 @@
+ 	if (*q == 'a' || *q == 'b' || *q == 'c' || *q == 'd')
+ 		++q;
+ 	/* Skip arbitrary third-party version numbers. */
+-	while (s > 0 && (*q == ' ' || *q == '/' || *q == '.' || isalnum(*q))) {
++	while (s > 0 && (*q == ' ' || *q == '-' || *q == '/' || *q == '.' || isalnum(*q))) {
+ 		++q;
+ 		--s;
+ 	}
