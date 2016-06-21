@@ -18,6 +18,7 @@ COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	9.5
 COMPONENT_MNR_VERSION=	3
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:7385c01dc58acba8d7ac4e6ad42782bd7c0b59272862a3a3d5fe378d4503a0b4
@@ -27,6 +28,8 @@ COMPONENT_PROJECT_URL=  http://www.postgresql.org/
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=	/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin
 
@@ -99,3 +102,17 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/postgres-95/library
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/gss
