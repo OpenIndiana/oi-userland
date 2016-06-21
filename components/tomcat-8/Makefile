@@ -26,21 +26,21 @@ BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	8.0.32
+COMPONENT_VERSION=	8.5.3
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b8f7770ae947a0c0aed9b5a6f3e2ff18fd27a07f068cc6029f019b5d4c6de560
+    sha256:d0d1ecfd88d733cf3666cc39483ea092627840cd2cfab8fae09f93b7bf05d21d
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 # Tomcat subcomponents
-COMPONENT_ARCHIVE_1= ecjsrc-4.4.2.jar
+COMPONENT_ARCHIVE_1= ecjsrc-4.5.1.jar
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:ad3daf77ab710268f88c41fba87218dcdf502b423217a3799b5227ddf03b5858
-COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.4.2-201502041700/$(COMPONENT_ARCHIVE_1)
+    sha256:101a31ee0474282a287b16c46fa6e793ede43ceecaecabbd382f6e0b1b67ef72
+COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.5.1-201509040015/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			26981
+TPNO=			29493
 
 BUILD_STYLE= ant
 TEST_TARGET= $(SKIP_TEST)
@@ -60,6 +60,7 @@ COMPONENT_PRE_BUILD_ACTION= \
 COMPONENT_PRE_BUILD_ACTION+= \
 	($(MKDIR) $(@D)/ECJ/scripts/binary/META-INF; cd $(@D)/ECJ ; \
 	    $(JAVA_HOME)/bin/jar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1); \
+	    $(GPATCH) $(GPATCH_FLAGS) < $(COMPONENT_DIR)/$(PATCH_DIR)/ECJ.ecj-patch; \
 	    $(CP) META-INF/MANIFEST.MF scripts/binary/META-INF/; \
 	    JAVA_HOME="$(JAVA_HOME)" LC_ALL="en_US.UTF-8" $(ANT) )
 
