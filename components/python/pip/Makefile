@@ -24,16 +24,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pip
-COMPONENT_VERSION=      6.0.8
+COMPONENT_VERSION=      8.1.1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0d58487a1b7f5be2e5e965c11afbea1dc44ecec8069de03491a4d0d6c85f4551
+    sha256:3e78d3066aaeb633d185a57afdccf700aa2e660436b4af618bcb6ff0fa511798
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://github.com/pypa/pip
 COMPONENT_BUGDB=	utility/pip
 
-TPNO=			21944
+TPNO=			27739
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
