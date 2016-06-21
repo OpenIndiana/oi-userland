@@ -132,7 +132,7 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 	# Boot Splash Images
 	$(CP) $(BUILD_DIR)/$(MACH)/overlay/boot/splashimage.xpm \
 	    $(BUILD_DIR)/$(MACH)/overlay/boot/solaris.xpm || true
-	
+
 	# Fix closed lc_core.h header
 	# Patch was taken from here https://www.illumos.org/issues/3853
 
@@ -565,6 +565,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/system/storage/mms@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/storage/parted@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/system/zones/brand/lx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	# Needed for MTA replacement
+	echo "<transform depend type=require fmri=pkg:/service/network/smtp/sendmail@.* -> emit depend type=require fmri=pkg:/system/mta" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform depend type=require fmri=pkg:/service/network/smtp/sendmail@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
 	  cut -c 3- | sort); do \
