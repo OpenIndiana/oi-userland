@@ -15,15 +15,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.10.12
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.11.0
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2c7523f0fefe89749c03b2b738ab9f7bd186da435be4762f1487eee31e77ffdd
+    sha256:f72613440586da3bdba6d58e718dce1b2c310adf8946de66d8077823e57b3333
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
@@ -32,6 +31,8 @@ COMPONENT_LICENSE_FILE=	pidgin.license
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -50,6 +51,7 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
+CONFIGURE_OPTIONS+=	--with-gstreamer=0.10
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps
 CONFIGURE_OPTIONS+=	--with-nss-libs=/usr/lib/mps
 CONFIGURE_OPTIONS+=	--with-nspr-includes=/usr/include/mps
@@ -75,10 +77,6 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/atk
@@ -92,9 +90,9 @@ REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nspr
-REQUIRED_PACKAGES += library/python-2/python-dbus-26
+REQUIRED_PACKAGES += library/python-2/python-dbus-27
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += SUNWcs
