@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openoffice
-COMPONENT_VERSION=      4.1.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      4.1.2
 COMPONENT_PROJECT_URL=  http://openoffice.apache.org/ 
 COMPONENT_SUMMARY=	Apache OpenOffice Suite
 COMPONENT_SRC=		aoo-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	apache-openoffice-$(COMPONENT_VERSION)-r1617669-src.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:bb89a6d2324ddfe4c475e5484fde0dea316078f6b8ff4d8a4ebc801d17f3ff9f
+COMPONENT_ARCHIVE=	apache-openoffice-$(COMPONENT_VERSION)-r1709696-src.tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:2e06774424eb564559f9e6d63ff79aa00522b210067717c5a8cfb54b3b7f1812
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/openoffice/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 
 COMPONENT_ARCHIVE_1=0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
@@ -65,9 +64,9 @@ COMPONENT_ARCHIVE_10=284e768eeda0e2898b0d5bf7e26a016e-raptor-1.4.18.tar.gz
 COMPONENT_ARCHIVE_HASH_10=md5:284e768eeda0e2898b0d5bf7e26a016e
 COMPONENT_ARCHIVE_URL_10=http://download.librdf.org/source/raptor-1.4.18.tar.gz
 
-COMPONENT_ARCHIVE_11=2b5f1ca58d6ef30f18f1415b65bed81c-CoinMP-1.6.0.tgz
-COMPONENT_ARCHIVE_HASH_11=md5:2b5f1ca58d6ef30f18f1415b65bed81c
-COMPONENT_ARCHIVE_URL_11=http://ooo-extras.apache-extras.org.codespot.com/files/2b5f1ca58d6ef30f18f1415b65bed81c-CoinMP-1.6.0.tgz
+COMPONENT_ARCHIVE_11=1cce53bf4b40ae29790d2c5c9f8b1129-CoinMP-1.7.6.tgz
+COMPONENT_ARCHIVE_HASH_11=md5:1cce53bf4b40ae29790d2c5c9f8b1129
+COMPONENT_ARCHIVE_URL_11=http://www.coin-or.org/download/source/CoinMP/CoinMP-1.7.6.tgz
 
 COMPONENT_ARCHIVE_12=2f6ecca935948f7db92d925d88d0d078-icu4c-4_0_1-src.tgz
 COMPONENT_ARCHIVE_HASH_12=md5:2f6ecca935948f7db92d925d88d0d078
@@ -151,9 +150,9 @@ COMPONENT_ARCHIVE_URL_31=http://ooo-extras.apache-extras.org.codespot.com/files/
 
 NUM_EXTRA_ARCHIVES=1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(GCC_ROOT)/bin:/opt/openoffice/bin:/usr/gnu/bin:/usr/bin
 
@@ -243,3 +242,46 @@ CONFIGURE_OPTIONS+= --with-system-zlib
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/raptor
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/mozilla-nss
+REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
