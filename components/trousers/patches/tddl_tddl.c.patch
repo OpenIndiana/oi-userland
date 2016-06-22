@@ -4,7 +4,7 @@
 # Except for the open() error message, it is not suitable for upstream use.
 #
 --- src/tddl/tddl.c	2014-04-24 11:05:44.000000000 -0700
-+++ src/tddl/tddl.c	2016-04-22 11:21:14.166497559 -0700
++++ src/tddl/tddl.c	2016-06-20 11:45:31.929095585 -0700
 @@ -18,13 +18,17 @@
  
  #include "trousers/tss.h"
@@ -23,21 +23,26 @@
  	{"/dev/tpm", TDDL_UNDEF, TDDL_UNDEF},
  	{NULL, 0, 0}
  };
-@@ -42,6 +46,13 @@
+@@ -42,6 +46,18 @@
  #include <netdb.h>
  #include <fcntl.h>
  
 +#ifdef SOLARIS
 +int
-+get_device_fd()
++get_device_fd(void)
 +{
-+	return (opened_device->fd);
++	if (opened_device != NULL) {
++		return (opened_device->fd);
++	} else {
++		LogDebug("No opened TPM device");
++		return (-1);
++	}
 +}
 +#endif
  
  int
  open_device()
-@@ -55,7 +66,7 @@
+@@ -55,7 +71,7 @@
  		if ((tcp_device_hostname = getenv("TCSD_TCP_DEVICE_HOSTNAME")) == NULL)
  			tcp_device_hostname = "localhost";
  		if ((un_socket_device_path = getenv("TCSD_UN_SOCKET_DEVICE_PATH")) == NULL)
@@ -46,7 +51,7 @@
  		if ((tcp_device_port_string = getenv("TCSD_TCP_DEVICE_PORT")) != NULL)
  			tcp_device_port = atoi(tcp_device_port_string);
  		else
-@@ -63,7 +74,7 @@
+@@ -63,7 +79,7 @@
  	 
  		
  		fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -55,7 +60,7 @@
  			struct hostent *host = gethostbyname(tcp_device_hostname);
  			if (host != NULL) {   
  				struct sockaddr_in addr;
-@@ -105,12 +116,16 @@
+@@ -105,12 +121,16 @@
  		/* tpm_device_paths is filled out in tddl.h */
  		for (i = 0; tpm_device_nodes[i].path != NULL; i++) {
  			errno = 0;
@@ -75,7 +80,7 @@
  		opened_device = &(tpm_device_nodes[i]);
  		tpm_device_nodes[i].fd = fd;
  	}
-@@ -181,11 +196,13 @@
+@@ -181,11 +201,13 @@
  			/* fall through */
  		case TDDL_TRANSMIT_IOCTL:
  			errno = 0;
@@ -89,7 +94,7 @@
  			LogInfo("Falling back to Read/Write device support.");
  			/* fall through */
  		case TDDL_TRANSMIT_RW:
-@@ -255,6 +272,7 @@
+@@ -255,6 +277,7 @@
  
  TSS_RESULT Tddli_Cancel(void)
  {
@@ -97,7 +102,7 @@
  	int rc;
  
  	if (opened_device->transmit == TDDL_TRANSMIT_IOCTL) {
-@@ -270,4 +288,7 @@
+@@ -270,4 +293,7 @@
  	} else {
  		return TDDLERR(TSS_E_NOTIMPL);
  	}

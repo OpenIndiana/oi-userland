@@ -42,7 +42,7 @@ case "$1" in
 	fi
 
 	echo /usr/lib/tcsd 
-	/usr/lib/tcsd &
+	TCSD_FOREGROUND=1 /usr/lib/tcsd &
 	;;
 
 # Attribute exec=':kill' in manifest tcsd.xml stops the tcsd daemon.
