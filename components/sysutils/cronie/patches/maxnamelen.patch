@@ -1,0 +1,78 @@
+diff -ruN cronie-1.5.0.orig/src/database.c cronie-1.5.0/src/database.c
+--- cronie-1.5.0.orig/src/database.c	2015-05-28 14:00:24.000000000 +0300
++++ cronie-1.5.0/src/database.c	2016-06-22 22:16:23.836892250 +0300
+@@ -284,7 +284,7 @@
+ static int
+ cluster_host_is_local(void)
+ {
+-	char filename[NAME_MAX+1];
++	char filename[MAXNAMLEN+1];
+ 	int is_local;
+ 	FILE *f;
+ 	char hostname[MAXHOSTNAMELEN], myhostname[MAXHOSTNAMELEN];
+@@ -380,7 +380,7 @@
+ 		}
+ 		else {
+ 			while (NULL != (dp = readdir(dir))) {
+-				char tabname[NAME_MAX + 1];
++				char tabname[MAXNAMLEN + 1];
+ 
+ 				if (not_a_crontab(dp))
+ 					continue;
+@@ -398,12 +398,12 @@
+ 		}
+ 		else {
+ 			while (NULL != (dp = readdir(dir))) {
+-				char fname[NAME_MAX + 1], tabname[NAME_MAX + 1];
++				char fname[MAXNAMLEN + 1], tabname[MAXNAMLEN + 1];
+ 
+ 				if (not_a_crontab(dp))
+ 					continue;
+ 
+-				strncpy(fname, dp->d_name, NAME_MAX);
++				strncpy(fname, dp->d_name, MAXNAMLEN);
+ 
+ 				if (!glue_strings(tabname, sizeof tabname, SPOOL_DIR,
+ 						dp->d_name, '/'))
+@@ -524,7 +524,7 @@
+ 	}
+ 	else {
+ 		while (NULL != (dp = readdir(dir))) {
+-			char tabname[NAME_MAX + 1];
++			char tabname[MAXNAMLEN + 1];
+ 
+ 			if (not_a_crontab(dp))
+ 				continue;
+@@ -551,12 +551,12 @@
+ 		is_local = cluster_host_is_local();
+ 
+ 		while (is_local && NULL != (dp = readdir(dir))) {
+-			char fname[NAME_MAX + 1], tabname[NAME_MAX + 1];
++			char fname[MAXNAMLEN + 1], tabname[MAXNAMLEN + 1];
+ 
+ 			if (not_a_crontab(dp))
+ 				continue;
+ 
+-			strncpy(fname, dp->d_name, NAME_MAX);
++			strncpy(fname, dp->d_name, MAXNAMLEN);
+ 
+ 			if (!glue_strings(tabname, sizeof tabname, SPOOL_DIR, fname, '/'))
+ 				continue;	/* XXX log? */
+@@ -633,7 +633,7 @@
+ 
+ 	len = strlen(dp->d_name);
+ 
+-	if (len >= NAME_MAX)
++	if (len >= MAXNAMLEN)
+ 		return (1);	/* XXX log? */
+ 
+ 	if ((len > 0) && (dp->d_name[len - 1] == '~'))
+@@ -660,7 +660,7 @@
+ 	}
+ 
+ 	while (NULL != (dp = readdir(dir))) {
+-		char tabname[NAME_MAX + 1];
++		char tabname[MAXNAMLEN + 1];
+ 
+ 		if ( not_a_crontab ( dp ) && strcmp(dp->d_name, CRON_HOSTNAME) != 0)
+ 			continue;

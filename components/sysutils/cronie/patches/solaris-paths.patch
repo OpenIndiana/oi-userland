@@ -1,0 +1,24 @@
+diff -ruN cronie-1.5.0.orig/src/Makefile.am cronie-1.5.0/src/Makefile.am
+--- cronie-1.5.0.orig/src/Makefile.am	2016-06-23 20:57:32.411725124 +0300
++++ cronie-1.5.0/src/Makefile.am	2013-08-26 13:16:36.000000000 +0400
+@@ -45,7 +45,7 @@
+ 			 * didn't exist last time around...) \
+ 			 * or it will be checked by inotify \
+ 			 */ \
+-	#define SPOOL_DIR	"$(SPOOL_DIR)" \
++	#define SPOOL_DIR	"$(SPOOL_DIR)/crontabs" \
+ 	\
+ 			/* CRON_HOSTNAME is file in SPOOL_DIR which, if it \
+ 			 * exists, and does not just contain a line matching \
+diff -ruN cronie-1.5.0.orig/src/pathnames.h cronie-1.5.0/src/pathnames.h
+--- cronie-1.5.0.orig/src/pathnames.h	2016-06-23 20:54:29.099320964 +0300
++++ cronie-1.5.0/src/pathnames.h	2016-06-23 20:54:08.593026553 +0300
+@@ -26,7 +26,7 @@
+ #ifndef _PATHNAMES_H_
+ #define _PATHNAMES_H_
+ 
+-#if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX)
++#if (defined(BSD)) && (BSD >= 199103) || defined(__linux) || defined(AIX) || defined(__sun__)
+ # include <paths.h>
+ #endif /*BSD*/
+ 

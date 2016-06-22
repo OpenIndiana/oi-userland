@@ -1,0 +1,26 @@
+diff -ruN cronie-1.5.0.orig/src/popen.c cronie-1.5.0/src/popen.c
+--- cronie-1.5.0.orig/src/popen.c	2015-05-28 14:01:04.000000000 +0300
++++ cronie-1.5.0/src/popen.c	2016-06-23 01:33:26.424473656 +0300
+@@ -60,6 +60,22 @@
+ 
+ #define MAX_ARGS 1024
+ 
++// illumos does not provides execvpe, so we provide our own wrapper. We do it
++// simply by looping over envp and update current process environment via
++// putenv and call execvp.
++int execvpe(const char *file, char *const argv[],
++            char *const envp[]) {
++
++    while(*envp != NULL) {
++        if(putenv(*envp) == -1) {
++            return -1;
++        }
++        envp++;
++    }
++
++    execvp(file, argv);
++}
++
+ FILE *cron_popen(char *program, const char *type, struct passwd *pw, char **jobenv) {
+ 	char *cp;
+ 	FILE *iop;
