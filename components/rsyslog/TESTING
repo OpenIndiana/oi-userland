@@ -29,6 +29,20 @@ svcs -x
 
 
 
+======================= Create /etc/rsyslog.d/filegroup ========================
+$FileGroup openldap
+*.* /var/tmp/openldap
+$ResetConfigVariables
+================================================================================
+rm -f /var/tmp/openldap
+svcadm restart system/system-log:rsyslog
+logger -p error "openldap"
+ls -l /var/tmp/openldap
+-rw-r--r--   1 root     openldap    2873 Jun 22 10:36 /var/tmp/openldap
+# Make sure that the new file has 'openldap' group
+
+
+
 # Logging a message should appear in dmesg and /var/adm/messages
 logger -p error "Message 1"
 dmesg | tail # should contain '2016-06-10T07:53:00+00:00 S12-99 root: [ID 702911 user.error] Message 1'
