@@ -1,0 +1,49 @@
+========================== Create file /var/tmp/a.pl ===========================
+use strict;
+use warnings;
+
+use CGI;
+
+my $q = CGI->new;
+
+# Process an HTTP request
+my @values  = $q->multi_param('form_field');
+my $value   = $q->param('param_name');
+
+my $fh      = $q->upload('file_field');
+
+my $riddle  = $q->cookie('riddle_name');
+my %answers = $q->cookie('answers');
+
+# Prepare various HTTP responses
+print $q->header();
+print $q->header('application/json');
+
+my $cookie1 = $q->cookie(
+    -name  => 'riddle_name',
+    -value => "The Sphynx's Question"
+);
+
+my $cookie2 = $q->cookie(
+    -name  => 'answers',
+    -value => \%answers
+);
+
+print $q->header(
+    -type    => 'image/gif',
+    -expires => '+3d',
+    -cookie  => [ $cookie1,$cookie2 ]
+);
+================================================================================
+
+$ perl /var/tmp/a.pl
+Content-Type: text/html; charset=ISO-8859-1
+
+Content-Type: application/json; charset=ISO-8859-1
+
+Set-Cookie: riddle_name=The%20Sphynx%27s%20Question; path=/
+Set-Cookie: answers=; path=/
+Expires: Sat, 25 Jun 2016 10:55:24 GMT
+Date: Wed, 22 Jun 2016 10:55:24 GMT
+Content-Type: image/gif; charset=ISO-8859-1
+

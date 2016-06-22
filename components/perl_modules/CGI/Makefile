@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		CGI
+COMPONENT_VERSION=	4.28
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:1297d3ed6616cacb4eb57860e3e743f3890111e7a63ca08849930f42f1360532
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/L/LE/LEEJO/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://search.cpan.org/~leejo/CGI
+COMPONENT_BUGDB=	perl-mod/cgi
+
+TPNO=			29151
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+
+# The test results are full of missing "Test::Entities" and "Test::Deep"
+# modules. That means we can't run all the tests, but it does not limit use of
+# the CGI perl module itself.
+COMPONENT_TEST_TARGETS = test
+
+COMPONENT_TEST_TRANSFORMS += \
+	 '-e "s/\s*[0-9][0-9]* wallclock secs (.*CPU)$$/ <TIMINGS REMOVED>/" ' \
+	 '-e "s/^\[... ... [0-9][0-9]* [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]\]/[date]/" ' \
+	 '-e "s/$(PERL_ARCH)/\$$(PERL_ARCH)/g" ' \
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
+
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
+REQUIRED_PACKAGES += system/library
