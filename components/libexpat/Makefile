@@ -26,19 +26,28 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.1.0
+COMPONENT_VERSION=	2.2.0
 COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
 COMPONENT_SRC_NAME=	expat
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86
+    sha256:d9e50ff2d19b3538bd2127902a89987474e1a4db8e43a66a4d1a712ab9a504ff
 COMPONENT_ARCHIVE_URL= \
     http://downloads.sourceforge.net/project/expat/expat/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libexpat
 
-TPNO=			5498
+TPNO=			29609
 
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 
 PATCH_LEVEL = 2
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^Expat version: /d" ' \
+	'-e "s/^make\[.*$$/[EnD]/" ' \
+	'-e "/^tests\/runtests/,/^\[EnD\]/p" ' \
+	'-e "/.*/d" '
