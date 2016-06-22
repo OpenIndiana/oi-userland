@@ -127,7 +127,7 @@ Checks 240
 # Send the RELOAD command to clamd.
 # Default: no
 #NotifyClamd /path/to/clamd.conf
-NotifyClamd /etc/clamd.conf
+NotifyClamd /etc/clamav/clamd.conf
 
 # Run command after successful database update.
 # Default: disabled
@@ -171,7 +171,7 @@ NotifyClamd /etc/clamd.conf
 # Freshclam will connect to clamd in order to get recent statistics.
 # Default: no
 #SubmitDetectionStats /path/to/clamd.conf
-#SubmitDetectionStats /etc/clamd.conf
+#SubmitDetectionStats /etc/clamav/clamd.conf
 
 # Country of origin of malware/detection statistics (for statistical
 # purposes only). The statistics collector at ClamAV.net will look up

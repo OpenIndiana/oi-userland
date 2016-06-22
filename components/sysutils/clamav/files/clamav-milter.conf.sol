@@ -118,13 +118,13 @@ ClamdSocket unix:/var/clamav/run/clamd.sock
 # Lines starting with #, : or ! are ignored.
 #
 # Default unset (no exclusion applied)
-#Whitelist /etc/whitelisted_addresses
+#Whitelist /etc/clamav/whitelisted_addresses
 
 # Messages from authenticated SMTP users matching this extended POSIX
 # regular expression (egrep-like) will not be scanned.
 # As an alternative, a file containing a plain (not regex) list of names (one
 # per line) can be specified using the prefix "file:".
-# e.g. SkipAuthenticated file:/etc/good_guys
+# e.g. SkipAuthenticated file:/etc/clamav/good_guys
 #
 # Note: this is the AUTH login name!
 #
