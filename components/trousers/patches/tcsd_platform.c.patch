@@ -1,0 +1,15 @@
+# Fix access to uninitialized memory in platform_get_runlevel()
+# Error found by Parfait.
+# This change was implemented in-house and is suitable for upstream use.
+#
+--- src/tcsd/platform.c	2014-04-24 11:05:44.000000000 -0700
++++ src/tcsd/platform.c	2016-06-22 09:54:56.854695113 -0700
+@@ -113,7 +113,7 @@
+ char
+ platform_get_runlevel()
+ {
+-	char runlevel;
++	char runlevel = 'u'; /* unknown run level */
+ 	struct utmpx ut, *utp = NULL;
+ 
+ 	MUTEX_LOCK(utmp_lock);
