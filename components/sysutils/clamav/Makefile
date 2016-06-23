@@ -25,6 +25,7 @@ ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
 else
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 endif
+COMPONENT_REVISION=	1
 ### Library files are tagged with unique per-version numbers
 COMPONENT_VERSION_LIB_MAJOR=	7
 COMPONENT_VERSION_LIB_FULL=	$(COMPONENT_VERSION_LIB_MAJOR).1.1
@@ -88,7 +89,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/clamav
 CONFIGURE_OPTIONS +=	--with-dbdir=$(VARDIR)/clamav/db
 CONFIGURE_OPTIONS +=	--with-user=clamav
 CONFIGURE_OPTIONS +=	--with-group=clamav

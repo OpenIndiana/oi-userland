@@ -6,9 +6,9 @@
 ### (C) 2016 by Jim Klimov
 ### $Id: clamav-enable.sh,v 1.1 2016/02/05 00:00:00 jim Exp $
 
-CLAMD_CONFFILE=/etc/clamd.conf
-CLAMMILT_CONFFILE=/etc/clamav-milter.conf
-FRESHCLAM_CONFFILE=/etc/freshclam.conf
+CLAMD_CONFFILE=/etc/clamav/clamd.conf
+CLAMMILT_CONFFILE=/etc/clamav/clamav-milter.conf
+FRESHCLAM_CONFFILE=/etc/clamav/freshclam.conf
 FRESHCLAM_RUNFILE="/usr/bin/freshclam.sh"
 
 ### After all, copying of configs and enablement of services should be separate:

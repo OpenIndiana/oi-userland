@@ -7,8 +7,8 @@
 ### Use to update ClamAV virus signatures from cron:
 ### 0,15,30,45 * * * *       [ -x /usr/bin/freshclam.sh ] && /usr/bin/freshclam.sh
 
-CLAMD_CONFFILE=/etc/clamd.conf
-FRESHCLAM_CONFFILE=/etc/freshclam.conf
+CLAMD_CONFFILE=/etc/clamav/clamd.conf
+FRESHCLAM_CONFFILE=/etc/clamav/freshclam.conf
 FRESHCLAM_BINFILE="/usr/bin/freshclam"
 
 ### Clumsy syntax due to portable shells:
