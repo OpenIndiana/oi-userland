@@ -1,0 +1,65 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license='GPLv2'
+
+file etc/freetds.conf path=usr/share/doc/freetds/freetds.conf.sample
+file etc/locales.conf path=usr/share/doc/freetds/locales.conf.sample
+file etc/pool.conf path=usr/share/doc/freetds/pools.conf.sample
+
+hardlink path=usr/bin/bsqldb target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/bsqlodbc target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/datacopy target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/defncopy target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/fisql target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/freebcp target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/osql target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/tdspool target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/tsql target=../lib/isaexec pkg.linted.userland.action002.0=true
+
+file path=usr/bin/$(MACH32)/bsqldb
+file path=usr/bin/$(MACH32)/bsqlodbc
+file path=usr/bin/$(MACH32)/datacopy
+file path=usr/bin/$(MACH32)/defncopy
+file path=usr/bin/$(MACH32)/fisql
+file path=usr/bin/$(MACH32)/freebcp
+file path=usr/bin/$(MACH32)/osql
+file path=usr/bin/$(MACH32)/tdspool
+file path=usr/bin/$(MACH32)/tsql
+file path=usr/bin/$(MACH64)/bsqldb
+file path=usr/bin/$(MACH64)/bsqlodbc
+file path=usr/bin/$(MACH64)/datacopy
+file path=usr/bin/$(MACH64)/defncopy
+file path=usr/bin/$(MACH64)/fisql
+file path=usr/bin/$(MACH64)/freebcp
+file path=usr/bin/$(MACH64)/osql
+file path=usr/bin/$(MACH64)/tdspool
+file path=usr/bin/$(MACH64)/tsql
+file path=usr/share/man/man1/bsqldb.1
+file path=usr/share/man/man1/bsqlodbc.1
+file path=usr/share/man/man1/datacopy.1
+file path=usr/share/man/man1/defncopy.1
+file path=usr/share/man/man1/fisql.1
+file path=usr/share/man/man1/freebcp.1
+file path=usr/share/man/man1/osql.1
+file path=usr/share/man/man1/tsql.1
+file path=usr/share/man/man5/freetds.conf.5
