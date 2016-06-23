@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	1.2.7
+COMPONENT_VERSION=	1.3.6
 COMPONENT_PROJECT_URL=	http://www.sbcl.org/
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b27099d8c9fb5c63673e7dc4a83f82b4088dd0ed02e849a4d164aa1b12cc5283
+	sha256:f017ac1bd8fe0ad56a4cfda4f7543a06a8993db8da1c9c079e188c28c551b0d9
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -34,6 +34,8 @@ COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_BUILD_ARGS  =	--prefix=/usr
 COMPONENT_BUILD_ARGS +=	--arch=x86
+COMPONENT_BUILD_ARGS +=	--with-sb-thread
+COMPONENT_BUILD_ARGS += --with-sb-core-compression
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(BUILD_DIR)
