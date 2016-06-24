@@ -29,16 +29,13 @@ include ../../make-rules/shared-macros.mk
 LD_Z_IGNORE=
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	4.6.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	5.0.3
 COMPONENT_PROJECT_URL=  http://gnuplot.info/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:6e60adb5039a3541f407c2ade670004178b376754c424c13f0be24c7960c17be
+    sha256:5f6ee35f3f22014058e999911934bfa9db28e02a2722a7001c192cd182b8c715
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/gnuplot
 
-TPNO=			8452
+TPNO=			29106
 
 CXXFLAGS += -std=c++11
 
@@ -66,6 +63,8 @@ REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-other
+REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/font/truetype/liberation
