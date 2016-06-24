@@ -23,7 +23,7 @@
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../../../make-rules/shared-macros.mk
+include ../../../../../make-rules/shared-macros.mk
 
 PROG=		mailq
 
@@ -34,7 +34,7 @@ PROTOUSRBINDIR=	../../build/prototype/$(MACH)/usr/bin
 INSTALLPROG=	$(PROG:%=$(PROTOUSRBINDIR)/%)
 
 %:		%.c
-		$(CC) $(CFLAGS) -o $@ $(ASLR_ENABLE) $<
+		$(CC) -lsecdb $(LDFLAGS) $(CFLAGS) -o $@ $<
 
 install:	$(INSTALLPROG) build
 

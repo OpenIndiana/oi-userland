@@ -49,10 +49,7 @@ set name=org.opensolaris.arc-caseid value=PSARC/2007/068 value=PSARC/2015/111
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.version-unlockable value=true
 #
-link path=etc/aliases target=./mail/aliases
-file init.d-sendmail path=etc/init.d/sendmail group=sys mode=0744 \
-    original_name=SUNWsndm:etc/init.d/sendmail \
-    pkg.linted.userland.action003.0=true preserve=true
+link path=etc/aliases target=./mail/aliases mediator=mta mediator-implementation=sendmail
 file aliases path=etc/mail/aliases mode=0644 \
     original_name=SUNWsndm:etc/mail/aliases preserve=true
 file path=etc/mail/cf/README
@@ -167,34 +164,37 @@ file smtp-sendmail.xml path=lib/svc/manifest/network/smtp-sendmail.xml \
 file sendmail-client path=lib/svc/method/sendmail-client mode=0555
 file smtp-sendmail path=lib/svc/method/smtp-sendmail mode=0555
 file sendmail_include.sh path=lib/svc/share/sendmail_include.sh mode=0444
-link path=usr/bin/mailq target=../lib/inet/mailq mediator=sendmail \
-    mediator-implementation=sendmail mediator-priority=vendor
+link path=usr/bin/mailq target=../lib/smtp/sendmail/mailq mediator=mta \
+    mediator-implementation=sendmail
+file path=usr/bin/vacation mode=0555
 file usr/sbin/mailstats path=usr/bin/mailstats mode=0555
 file usr/sbin/praliases path=usr/bin/praliases mode=0555
-file usr/bin/mailq path=usr/lib/inet/mailq mode=4555
-file usr/lib/sendmail path=usr/lib/inet/sendmail group=smmsp mode=2555 \
+file usr/bin/mailq path=usr/lib/smtp/sendmail/mailq mode=4555
+file usr/lib/sendmail path=usr/lib/smtp/sendmail/sendmail group=smmsp mode=2555 \
     restart_fmri=*sendmail*
 link path=usr/lib/mail target=../../etc/mail/cf
-link path=usr/lib/sendmail target=../lib/inet/sendmail mediator=sendmail \
-    mediator-implementation=sendmail mediator-priority=vendor
+link path=usr/lib/sendmail target=../lib/smtp/sendmail/sendmail mediator=mta \
+    mediator-implementation=sendmail
+file path=usr/lib/mail.local mode=0555
 file path=usr/lib/smrsh mode=0555
 file check-hostname.sh path=usr/sbin/check-hostname group=mail mode=0555
 file check-permissions.sh path=usr/sbin/check-permissions group=mail mode=0555
 file path=usr/sbin/editmap mode=0555
 file contrib/etrn.pl path=usr/sbin/etrn mode=0555
 file path=usr/sbin/makemap mode=0555
-link path=usr/sbin/newaliases target=../lib/inet/sendmail mediator=sendmail \
-    mediator-implementation=sendmail mediator-priority=vendor
-link path=usr/sbin/sendmail target=../lib/inet/sendmail mediator=sendmail \
-    mediator-implementation=sendmail mediator-priority=vendor
-link path=usr/share/man/man1/mailq.1 target=sendmail-mailq.1 mediator=sendmail \
-    mediator-implementation=sendmail mediator-priority=vendor
+link path=usr/sbin/newaliases target=../lib/smtp/sendmail/sendmail mediator=mta \
+    mediator-implementation=sendmail
+link path=usr/sbin/sendmail target=../lib/smtp/sendmail/sendmail mediator=mta \
+    mediator-implementation=sendmail
+link path=usr/share/man/man1/mailq.1 target=sendmail-mailq.1 mediator=mta \
+    mediator-implementation=sendmail
 file path=usr/share/man/man1/mailstats.1
 file path=usr/share/man/man1/praliases.1
+file path=usr/share/man/man1/vacation.1
 file path=usr/share/man/man1/sendmail-mailq.1
 file path=usr/share/man/man5/addresses.5
 link path=usr/share/man/man5/aliases.5 target=sendmail-aliases.5 \
-    mediator=sendmail mediator-implementation=sendmail mediator-priority=vendor
+    mediator=mta mediator-implementation=sendmail
 file path=usr/share/man/man5/forward.5
 file path=usr/share/man/man5/sendmail-aliases.5
 file path=usr/share/man/man5/sendmail.5
@@ -218,11 +218,5 @@ user username=smmsp ftpuser=false \
 legacy pkg=SUNWsndmr desc="Sendmail Configuration Files" name="Sendmail (root)"
 legacy pkg=SUNWsndmu desc="Sendmail Utilities" name="Sendmail (/usr)"
 license LICENSE license=sendmail
-# sendmail's default LDA is mail.local, so specify a dependency on its
-# package, but not at any particular version.
-depend type=group fmri=pkg:/mail/mail.local
-# If postfix is installed, make sure it is at the version where aliases.5
-# became a mediated link; otherwise, conflict.
-depend type=optional fmri=service/network/smtp/postfix@2.11.3-5.12.0.0.0.95
 depend type=require \
     fmri=pkg:/library/libmilter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

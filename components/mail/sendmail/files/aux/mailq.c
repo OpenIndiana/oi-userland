@@ -32,9 +32,12 @@
 #include <unistd.h>
 #include <sysexits.h>
 #include <errno.h>
-#include <auth_list.h>
+/* #include <auth_list.h> 
+ * Below is the only used define from this private header
+ */
+#define MAILQ_AUTH              "solaris.mail.mailq"
 
-#define	_PATH_SENDMAIL_BIN	"/usr/lib/sendmail"
+#define	_PATH_SENDMAIL_BIN	"/usr/lib/smtp/sendmail/sendmail"
 
 int
 main(int argc, char *argv[], char *envp[])

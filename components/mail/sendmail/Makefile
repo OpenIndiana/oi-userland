@@ -22,8 +22,8 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
-include ../../make-rules/shared-macros.mk
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sendmail
 COMPONENT_VERSION=	8.15.2
@@ -33,30 +33,20 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:24f94b5fd76705f15897a78932a5f2439a32b1a2fdc35769bb1a5f5d9b4db439
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 
 TPNO=			23958
 
-# Mostly but not completely migrated from ON in S12.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-BUILD_STYLE= justmake
-INSTALL_TARGET=
-include $(WS_MAKE_RULES)/common.mk
-
-# Although we build 32_and_64, everything except libmilter just wants 64,
-# which is why the macros just below only have values for 64.  libmilter
+# Although we build 32_and_64, everything except libmilter just wants 32,
+# which is why the macros just below only have values for 32.  libmilter
 # is dealt with further below.
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
-PKG_PROTO_DIRS += $(BUILD_DIR_64)/obj.SunOS.$(OS_VERSION).$(ARCH)
+PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_32)/obj.SunOS.$(OS_VERSION).$(ARCH)
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
-
-# Userland default includes -mt which links with libthread which we don't need.
-studio_MT =
 
 # We set ARCH to match sendmail's configure-like script: on x86, it simply
 # uses 'uname -m', but on sparc it shortens "sun4*" into "sun4".
@@ -79,8 +69,10 @@ CLEAN_PATHS += $(FILE_DIR)/aux/mailq
 # This appends "+Sun" to the version string, which we do for historical
 # reasons.  If we did this via patch, then we would have to revise the patch
 # with every new release, since the version string changes every time.
-COMPONENT_PREP_ACTION =	$(GSED) -i -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
-    $(COMPONENT_SRC)/sendmail/version.c
+COMPONENT_PREP_ACTION =	($(GSED) -i -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
+	$(COMPONENT_SRC)/sendmail/version.c &&\
+	cp $(COMPONENT_SRC)/devtools/M4/depend/X11.m4 \
+		$(COMPONENT_SRC)/devtools/M4/depend/Solaris.m4)
 
 # libmilter and sendmail must come before include, so appending to the default
 # value of LINT_FLAGS will not work; we must redefine it here.
@@ -103,11 +95,6 @@ $(SOURCE_DIR)/.prep:	$(SOURCE_DIR)/devtools/Site/site.config.m4
 # in its devtools/Site sub-dir, with site.config.m4 being the fallback.  So
 # create that file as part of the 'prep' phase.
 #
-# To build debug:
-# * Uncomment the following line:
-#   COMPONENT_BUILD_ENV += studio_OPT=""
-# * Uncomment the 'confOPTIMIZE' line in the recipe below, and move it
-#   before the 'endef' line:
 
 define SITE_CONFIG_M4
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_EXTENSIONS')
@@ -115,6 +102,7 @@ APPENDDEF(`conf_sendmail_ENVDEF', `-DVENDOR_DEFAULT=VENDOR_SUN')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_INIT_DOMAIN')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_SIMPLIFIED_LDAP')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DTCPWRAPPERS')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DSASL')
 APPENDDEF(`conf_sendmail_ENVDEF', `-DSTARTTLS')
 APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_LOCAL_DAEMON')
 APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_MAIL_MACRO')
@@ -125,9 +113,9 @@ APPENDDEF(`conf_sendmail_LIBS', `-lumem')
 APPENDDEF(`conf_sendmail_LIBS', `-lssl')
 APPENDDEF(`conf_sendmail_LIBS', `-lcrypto')
 APPENDDEF(`confMAPDEF', `-DLDAPMAP')
-APPENDDEF(`confLIBS', `-lldap_r-2.4 -llber-2.4 -lc')
+APPENDDEF(`confLIBS', `-lldap_r-2.4 -llber-2.4 -lsasl -lc')
 define(`confDEPEND_TYPE', `Solaris')
-define(`confINCDIRS', `-I/usr/include/openldap')
+define(`confINCDIRS', `-I/usr/include/openldap -I/usr/include/sasl')
 define(`confMKDIR', `/usr/bin/mkdir')
 define(`confMTCFLAGS', `$(CC_PIC)')
 define(`sendmailTARGET_LINKS', `')
@@ -145,6 +133,8 @@ $(SOURCE_DIR)/devtools/Site/site.config.m4:	unpack
 COMPONENT_POST_BUILD_ACTION = cd $(FILE_DIR)/aux ; \
     $(GMAKE) BITS=$(BITS) clean build
 
+COMPONENT_POST_INSTALL_ACTION += cd $(BUILD_DIR_$(BITS))/obj.SunOS.5.11.i86pc/mail.local \
+	&& $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) force-install DESTDIR=$(PROTO_DIR);
 COMPONENT_POST_INSTALL_ACTION += cd $(FILE_DIR)/aux ; $(GMAKE) install ;
 COMPONENT_POST_INSTALL_ACTION += \
     $(CP) $(FILE_DIR)/cf/domain/solaris-generic.m4 $(@D)/cf/domain/ ;
@@ -184,19 +174,24 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|$(OS_VERSION)|\\$$(OS_VERSION)|g" ' \
     '-e "s|$(ARCH)|\\$$(ARCH)|g" ' \
     '-e "s|^$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|m$(BITS)|m\\$$(BITS)|g" ' \
     '-e "/^XXX_CC_XXX\\$$/d" '
 
-INSTALL_64=
+$(INSTALL_32):	$(INSTALL_64)
 
 # common targets
+build:		$(BUILD_32_and_64)
+
 install:	$(INSTALL_32_and_64)
 
+test:		$(TEST_32_and_64)
+
 REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += $(PERL_PKG)
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/network
-REQUIRED_PACKAGES += system/network/ldap/openldap
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libsasl

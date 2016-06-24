@@ -22,7 +22,7 @@
 # Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 
 DEFAULT_FILE="/etc/default/sendmail"
-SENDMAIL="/usr/lib/inet/sendmail"
+SENDMAIL="/usr/lib/smtp/sendmail/sendmail"
 PATH="/usr/bin:/usr/sbin"
 export PATH
 
