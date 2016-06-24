@@ -48,6 +48,10 @@ CFLAGS += $(CPP_XPG6MODE)
 CFLAGS.gcc += -std=gnu11
 CFLAGS.studio += -std=c11 -xlang=c11
 
+# using the setting from shared-macros.mk results in 23665701
+# overriding it here till we can get gdm rebuilt
+gcc_STACK_ALIGN.i386.32 =
+
 # Disabled by default (temporarily disabled here because it significantly
 # increases build time).
 CONFIGURE_OPTIONS += --disable-gtk-doc
