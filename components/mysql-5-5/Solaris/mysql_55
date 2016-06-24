@@ -41,7 +41,7 @@ MYSQLCNF=`getproparg mysql/cnf`
 MYSQLBIN=`getproparg mysql/bin`
 MYSQLDATA=`getproparg mysql/data`
 PIDFILE=${MYSQLDATA}/`/usr/bin/uname -n`.pid
-LOG_ERROR=${MYSQLDATA}/`/usr/bin/uname -n`.err
+STARTTIMEOUT=180
 
 if [ -z ${MYSQLCNF} ]; then
         echo "mysql/cnf property not set"
@@ -64,9 +64,38 @@ if [ ! -d ${MYSQLDATA} ]; then
 fi
 
 if [ ! -d ${MYSQLDATA}/mysql ]; then
-	echo ${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA} --log-error=${LOG_ERROR}
-	${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA} --log-error=${LOG_ERROR}
+	echo ${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA}
+	${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA}
 fi
+
+# ping function which return success when mysqld starts accepting connections
+# or return failure in case of timeout after $STARTTIMEOUT seconds.
+# using this function in mysql_start(), method waits/blocks to mysqld is really ready,
+# which might take some time in case of recovery.
+
+mysql_pinger() {    
+    mysqld_safe_pid=$1
+    timer=$STARTTIMEOUT
+    ret=0
+    while [ $timer -gt 0 ]; do
+        sleep 1
+        ${MYSQLBIN}/mysqladmin --no-defaults --socket="/tmp/mysql.sock" --user=UNKNOWN_MYSQL_USER ping >/dev/null 2>&1 && break
+	timer=$(expr $timer - 1)
+
+	# Check if mysqld_safe is still alive, if not there is no hope
+	if ! kill -0 $mysqld_safe_pid >/dev/null 2>&1 ; then
+	    ret=1
+	    break
+	fi
+    done
+    
+    # Did we timeout?
+    if [ $timer = 0 ]; then
+	echo "MySQL Database start up timeout after ${STARTTIMEOUT}s"
+	ret=1
+    fi
+    return $ret
+}
 
 # refresh method for this service is not defined because mysqld by itself
 # cannot accept a HUP signal to reload the configuration file my.cnf
@@ -75,6 +104,12 @@ mysql_start() 	{
 	echo ${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE}
 	${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
 
+        if mysql_pinger $! ; then
+            echo "Starting service MySQL"
+        else
+            echo "Failed to start service MySQL"
+            exit $SMF_EXIT_ERR
+        fi
 }
 
 case "$1" in
