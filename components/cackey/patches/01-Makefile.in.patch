@@ -1,0 +1,48 @@
+In-house patch created to clear any merge conflicts from source in archive
+repo to build properly on Solaris. 
+
+Removed objcopy commands due to upstream bug affecting buildenv on Solaris.
+objcopy breaks sh_link and sh_info of SHT_SUNW_LDYNSYM and SHT_SUNW_symsort sections
+
+Renamed test program output to "testcackey" for internal functional testing use and
+renamed test target to "build-test" to remove ambiguity with userland buildenv test target. 
+
+Removed the test-afl.data and test.afl targets as they are not being used with our test cases
+and also contained merge conflict markers. 
+ 
+--- CACKey-0.7.4/Makefile.in	2016-06-16 10:16:46.396593461 -0400
++++ CACKey-0.7.4/Makefile.in	2016-06-23 12:16:17.380726632 -0400
+@@ -26,31 +26,13 @@
+ 
+ libcackey.@SHOBJEXT@: cackey.o
+ 	$(CC) $(SHOBJFLAGS) $(CPPFLAGS) $(CFLAGS) $(SHOBJLDFLAGS) $(LDFLAGS) -o libcackey.@SHOBJEXT@ cackey.o $(LIBS)
+-	-@WEAKENSYMS@ "libcackey.@SHOBJEXT@"
+-	-@REMOVESYMS@ "libcackey.@SHOBJEXT@"
+ 
+ libcackey_g.@SHOBJEXT@: cackey_g.o
+ 	$(CC) $(SHOBJFLAGS) $(DEBUGCPPFLAGS) $(DEBUGCFLAGS) $(SHOBJLDFLAGS) $(LDFLAGS) -o libcackey_g.@SHOBJEXT@ cackey_g.o $(LIBS)
+-	-@WEAKENSYMS@ "libcackey_g.@SHOBJEXT@"
+ 
+-test: test.c libcackey_g.@SHOBJEXT@
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o test test.c -Wl,-R,. libcackey_g.@SHOBJEXT@
++build-test: test.c libcackey_g.@SHOBJEXT@
++	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o testcackey test.c -Wl,-R,. libcackey_g.@SHOBJEXT@
+ 
+-<<<<<<< HEAD
+-=======
+-test-afl.data: test
+-	tmpLogFile='log.$(shell openssl rand -hex 16)'; \
+-		./test 2> $${tmpLogFile}; \
+-		echo -ne "$$( \
+-			grep 'Returned Value:' $${tmpLogFile} | sed 's@^.*/@@;s@ = {@ @;s@})$$@@;s@,@@g;s@ @\\x@g;s@\\@ \\@' | while IFS=' ' read -r count string; do \
+-				printf '\\x%02x\\x%02x%s' $$[$${count} / 256] $$[$${count} % 256] "$${string}"; \
+-			done \
+-		)" > test-afl.data; rm -f $${tmpLogFile}
+-
+-test-afl: test-afl.data test.c cackey.c cackey_builtin_certs.h sha1.c sha1.h md5.c md5.h asn1-x509.c asn1-x509.h config.h
+-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -DCACKEY_TEST_AFL -o test-afl test.c $(patsubst -lpcsclite,,$(LIBS))
+-
+->>>>>>> trunk
+ splint-cackey.txt: cackey.c cackey_builtin_certs.h asn1-x509.c asn1-x509.h config.h
+ 	splint $(DEBUGCPPFLAGS) -DCACKEY_PARANOID=1 -weak +posixlib -I/usr/include/PCSC -Ipkcs11 cackey.c > splint-cackey.txt
+ 

@@ -1,0 +1,129 @@
+In-house patch created to clear any merge conflicts from source in archive
+repo to build properly on Solaris.
+
+--- CACKey-0.7.4/asn1-x509.c	2016-05-19 14:16:48.225215019 -0400
++++ CACKey-0.7.4/asn1-x509.c	2015-07-16 12:20:20.000000000 -0400
+@@ -70,7 +70,6 @@
+ 	outbuf->tag = *buf_p;
+ 	buf_p++;
+ 	buflen--;
+-<<<<<<< HEAD
+ 	if (buflen == 0) {
+ 		return(-1);
+ 	}
+@@ -80,22 +79,6 @@
+ 		return(_asn1_x509_read_asn1_object(buf_p, buflen, args));
+ 	}
+ 
+-=======
+-
+-	/* NULL Tag -- no size is required */
+-	if (outbuf->tag == 0x00) {
+-		outbuf->size = 0;
+-		outbuf->asn1rep_len = 1;
+-		outbuf->asn1rep = buf;
+-
+-		return(_asn1_x509_read_asn1_object(buf_p, buflen, args));
+-	}
+-
+-	if (buflen == 0) {
+-		return(-1);
+-	}
+-
+->>>>>>> trunk
+ 	small_object_size = *buf_p;
+ 	buf_p++;
+ 	buflen--;
+@@ -112,10 +95,6 @@
+ 
+ 			buf_p++;
+ 			buflen--;
+-<<<<<<< HEAD
+-=======
+-
+->>>>>>> trunk
+ 			if (buflen == 0) {
+ 				break;
+ 			}
+@@ -128,14 +107,7 @@
+ 		return(-1);
+ 	}
+ 
+-<<<<<<< HEAD
+ 	outbuf->contents = buf_p;
+-=======
+-	if (buflen != 0) {
+-		outbuf->contents = buf_p;
+-	}
+-
+->>>>>>> trunk
+ 	outbuf->asn1rep_len = outbuf->size + (buf_p - buf);
+ 	outbuf->asn1rep = buf;
+ 
+@@ -163,41 +135,29 @@
+ 
+ 	read_ret = asn1_x509_read_asn1_object(buf, buflen, &outbuf->wholething, NULL);
+ 	if (read_ret != 0) {
+-<<<<<<< HEAD
+-=======
+ 		CACKEY_DEBUG_PRINTF("Failed at reading the contents from the wrapper")
+ 
+->>>>>>> trunk
+ 		return(-1);
+ 	}
+ 
+ 	read_ret = asn1_x509_read_asn1_object(outbuf->wholething.contents, outbuf->wholething.size, &outbuf->certificate, NULL);
+ 	if (read_ret != 0) {
+-<<<<<<< HEAD
+-=======
+ 		CACKEY_DEBUG_PRINTF("Failed at reading the certificate from the contents");
+ 
+->>>>>>> trunk
+ 		return(-1);
+ 	}
+ 
+ 	read_ret = asn1_x509_read_asn1_object(outbuf->certificate.contents, outbuf->certificate.size, &outbuf->version, &outbuf->serial_number, &outbuf->signature_algo, &outbuf->issuer, &outbuf->validity, &outbuf->subject, &outbuf->pubkeyinfo, NULL);
+ 	if (read_ret != 0) {
+-<<<<<<< HEAD
+-=======
+ 		CACKEY_DEBUG_PRINTF("Failed at reading the certificate components from the certificate");
+ 
+->>>>>>> trunk
+ 		return(-1);
+ 	}
+ 
+ 	read_ret = asn1_x509_read_asn1_object(outbuf->pubkeyinfo.contents, outbuf->pubkeyinfo.size, &outbuf->pubkey_algoid, &outbuf->pubkey, NULL);
+ 	if (read_ret != 0) {
+-<<<<<<< HEAD
+-=======
+ 		CACKEY_DEBUG_PRINTF("Failed at reading the public key from the certificate components");
+ 
+->>>>>>> trunk
+ 		return(-1);
+ 	}
+ 
+@@ -242,12 +202,9 @@
+ 
+ 	read_ret = asn1_x509_read_object(x509_der_buf, x509_der_buf_len, &x509);
+ 	if (read_ret != 0) {
+-<<<<<<< HEAD
+-=======
+ 		CACKEY_DEBUG_PRINTF("Unable to read serial number from a %lu byte buffer", x509_der_buf_len);
+ 		CACKEY_DEBUG_PRINTBUF("X.509 DER:", x509_der_buf, x509_der_buf_len);
+ 
+->>>>>>> trunk
+ 		return(-1);
+ 	}
+ 
+@@ -420,11 +377,7 @@
+ 
+ 	offset = 0;
+ 	while (1) {
+-<<<<<<< HEAD
+-		read_ret = asn1_x509_read_asn1_object(whole_thing.contents + offset, whole_thing.size - offset, &current_set, NULL);
+-=======
+ 		read_ret = asn1_x509_read_asn1_object(((unsigned char *) whole_thing.contents) + offset, whole_thing.size - offset, &current_set, NULL);
+->>>>>>> trunk
+ 		if (read_ret != 0) {
+ 			break;
+ 		}

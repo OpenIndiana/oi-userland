@@ -1,0 +1,51 @@
+In-house patch created to clear any merge conflicts from source in archive
+repo to build properly on Solaris.
+
+--- CACKey-0.7.4/configure.ac	2016-06-15 14:35:48.589770356 -0400
++++ CACKey-0.7.4/configure.ac	2016-06-15 14:23:15.465414402 -0400
+@@ -1,8 +1,4 @@
+-<<<<<<< HEAD
+-AC_INIT(cackey, 0.6.6.201207191606) 
+-=======
+ AC_INIT(cackey, 0.7.4) 
+->>>>>>> trunk
+ AC_CONFIG_HEADERS(config.h)
+ 
+ dnl Locate standard tools
+@@ -147,8 +143,6 @@
+ 	]
+ )
+ 
+-<<<<<<< HEAD
+-=======
+ dnl Option to enable DoD certs on hardware slot
+ AC_ARG_ENABLE(dod-certs-on-hw-slots, AC_HELP_STRING([--enable-dod-certs-on-hw-slots], [Specify that DoD certificates should be made available on hardware token slots]), [
+ 	dodcertsonhwslots=$enableval
+@@ -192,27 +186,6 @@
+ 	AC_DEFINE_UNQUOTED(CACKEY_PIN_COMMAND_XONLY_DEFAULT, [$pincommandxonly], [Command to run to prompt user for PIN only if DISPLAY environment variable is set])
+ fi
+ 
+-AC_ARG_WITH(readers-include-only, AC_HELP_STRING([--with-readers-include-only=<string>], [Specify a string to match in a reader to include it, all other readers will be excluded.  The user may override this with the CACKEY_READERS_INCLUDE_ONLY environment variable.]), [
+-	readers_include_only="${withval}"
+-], [
+-	readers_include_only="no"
+-])
+-
+-AC_ARG_WITH(readers-exclude, AC_HELP_STRING([--with-readers-exclude=<string>], [Specify a string to match in a reader to exclude it, all other readers will be included.  The user may override this with the CACKEY_READERS_EXCLUDE environment variable.]), [
+-	readers_exclude="${withval}"
+-], [
+-	readers_exclude="no"
+-])
+-
+-if ! test "${readers_include_only}" = 'no'; then
+-	AC_DEFINE_UNQUOTED(CACKEY_READERS_INCLUDE_ONLY_DEFAULT, [$readers_include_only], [Substring to match to include readers])
+-fi
+-
+-if ! test "${readers_exclude}" = 'no'; then
+-	AC_DEFINE_UNQUOTED(CACKEY_READERS_EXCLUDE_DEFAULT, [$readers_exclude], [Substring to match to exclude readers])
+-fi
+-
+->>>>>>> trunk
+ dnl Set version script, to limit the scope of symbols
+ DC_SETVERSIONSCRIPT(libcackey.vers, libcackey.syms)
+ 

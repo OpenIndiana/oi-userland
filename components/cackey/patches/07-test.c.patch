@@ -1,0 +1,321 @@
+In-house patch created to clear any merge conflicts from source in archive
+repo to build properly on Solaris.
+
+--- CACKey-0.7.4/test.c	2016-05-19 14:16:48.242123597 -0400
++++ CACKey-0.7.4/test.c	2015-07-16 12:20:20.000000000 -0400
+@@ -1,248 +1,11 @@
+-<<<<<<< HEAD
+ #include "mypkcs11.h"
+ 
+-=======
+->>>>>>> trunk
+ #include <sys/types.h>
+ #include <string.h>
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ 
+-<<<<<<< HEAD
+-=======
+-#ifdef CACKEY_TEST_AFL
+-#include <sys/types.h>
+-#include <fcntl.h>
+-
+-static unsigned char *inputData;
+-static unsigned long inputDataLen;
+-
+-/* Include the CACKey source */
+-#include "cackey.c"
+-
+-#undef CACKEY_DEBUG_PRINTF
+-#define CACKEY_DEBUG_PRINTF(x...) /**/
+-#undef malloc
+-#undef realloc
+-#undef strdup
+-
+-/* Fake a smartcard */
+-const SCARD_IO_REQUEST g_rgSCardT0Pci, g_rgSCardT1Pci;
+-static int scard_inTransaction = 0;
+-static LONG scard_protocol;
+-
+-
+-PCSC_API LONG SCardEstablishContext(DWORD dwScope, LPCVOID pvReserved1, LPCVOID pvReserved2, LPSCARDCONTEXT phContext) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	*phContext = 42;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardIsValidContext(SCARDCONTEXT hContext) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hContext != 42) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardListReaders(SCARDCONTEXT hContext, LPCSTR mszGroups, LPSTR mszReaders, LPDWORD pcchReaders) {
+-	static char *readers = "READER0";
+-
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hContext != 42) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	*pcchReaders = strlen(readers) + 1;
+-
+-	if (mszReaders == NULL) {
+-		return(SCARD_S_SUCCESS);
+-	}
+-
+-	memcpy(mszReaders, readers, *pcchReaders);
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardBeginTransaction(SCARDHANDLE hCard) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	if (scard_inTransaction) {
+-		return(SCARD_E_SHARING_VIOLATION);
+-	}
+-
+-	scard_inTransaction = 1;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-PCSC_API LONG SCardEndTransaction(SCARDHANDLE hCard, DWORD dwDisposition) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	scard_inTransaction = 0;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardStatus(SCARDHANDLE hCard, LPSTR mszReaderName, LPDWORD pcchReaderLen, LPDWORD pdwState, LPDWORD pdwProtocol, LPBYTE pbAtr, LPDWORD pcbAtrLen) {
+-	LONG scardlistreaders_ret;
+-
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	*pdwState = 0;
+-	scardlistreaders_ret = SCardListReaders(42, NULL, mszReaderName, pcchReaderLen);
+-	if (scardlistreaders_ret != SCARD_S_SUCCESS) {
+-		return(scardlistreaders_ret);
+-	}
+-
+-	*pdwProtocol = scard_protocol;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardConnect(SCARDCONTEXT hContext, LPCSTR szReader, DWORD dwShareMode, DWORD dwPreferredProtocols, LPSCARDHANDLE phCard, LPDWORD pdwActiveProtocol) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hContext != 42) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	if ((dwPreferredProtocols & SCARD_PROTOCOL_T0) == SCARD_PROTOCOL_T0) {
+-		*pdwActiveProtocol = SCARD_PROTOCOL_T0;
+-	} else {
+-		*pdwActiveProtocol = SCARD_PROTOCOL_T1;
+-	}
+-
+-	scard_protocol = *pdwActiveProtocol;
+-
+-	*phCard = 99;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardDisconnect(SCARDHANDLE hCard, DWORD dwDisposition) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardReconnect(SCARDHANDLE hCard, DWORD dwShareMode, DWORD dwPreferredProtocols, DWORD dwInitialization, LPDWORD pdwActiveProtocol) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	return(SCardConnect(42, NULL, dwShareMode, dwPreferredProtocols, NULL, pdwActiveProtocol));
+-}
+-
+-PCSC_API LONG SCardReleaseContext(SCARDCONTEXT hContext) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-
+-	if (hContext != 42) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-PCSC_API LONG SCardTransmit(SCARDHANDLE hCard, const SCARD_IO_REQUEST *pioSendPci, LPCBYTE pbSendBuffer, DWORD cbSendLength, SCARD_IO_REQUEST *pioRecvPci, LPBYTE pbRecvBuffer, LPDWORD pcbRecvLength) {
+-	CACKEY_DEBUG_PRINTF("Called");
+-	unsigned int bytesToRead;
+-
+-	if (hCard != 99) {
+-		return(SCARD_E_INVALID_HANDLE);
+-	}
+-
+-	if (inputDataLen <= 1) {
+-		*pcbRecvLength = 0;
+-
+-		return(SCARD_S_SUCCESS);
+-	}
+-
+-	bytesToRead = (inputData[0] << 8) | inputData[1];
+-
+-	inputData    += 2;
+-	inputDataLen -= 2;
+-
+-	if (bytesToRead > inputDataLen) {
+-		bytesToRead = inputDataLen;
+-	}
+-
+-	if (bytesToRead > *pcbRecvLength) {
+-		return(SCARD_E_INSUFFICIENT_BUFFER);
+-	}
+-
+-	*pcbRecvLength = bytesToRead;
+-
+-	memcpy(pbRecvBuffer, inputData, bytesToRead);
+-
+-	inputData += bytesToRead;
+-	inputDataLen -= bytesToRead;
+-
+-	return(SCARD_S_SUCCESS);
+-}
+-
+-static void loadTestData(const char *fileName) {
+-	ssize_t read_ret;
+-	int fd;
+-
+-	if (fileName == NULL) {
+-		goto cleanup;
+-	}
+-
+-	fd = open(fileName, O_RDONLY);
+-	if (fd < 0) {
+-		goto cleanup;
+-	}
+-
+-	inputDataLen = 16384;
+-	inputData = malloc(inputDataLen);
+-
+-	read_ret = read(fd, inputData, inputDataLen);
+-	if (read_ret < 0) {
+-		goto cleanup;
+-	}
+-
+-	inputDataLen = read_ret;
+-	inputData = realloc(inputData, inputDataLen);
+-
+-	close(fd);
+-
+-cleanup:
+-
+-	return;
+-}
+-#else
+-#include "mypkcs11.h"
+-
+-static void loadTestData(const char *filename) {
+-	return;
+-}
+-#endif
+->>>>>>> trunk
+ 
+ static char *pkcs11_attribute_to_name(CK_ATTRIBUTE_TYPE attrib) {
+ 	static char retbuf[1024];
+@@ -475,10 +238,7 @@
+ 			return(1);
+ 		}
+ 
+-<<<<<<< HEAD
+-=======
+ 		printf("    Id     : %lu\n", (unsigned long) slots[currSlot]);
+->>>>>>> trunk
+ 		printf("    Desc   : %.*s\n", 32, slotInfo.slotDescription);
+ 		printf("    ManufID: %.*s\n", 32, slotInfo.manufacturerID);
+ 		printf("    HWVers : %i.%i\n", slotInfo.hardwareVersion.major, slotInfo.hardwareVersion.minor);
+@@ -570,32 +330,19 @@
+ 
+ 	chk_rv = C_OpenSession(slots[0], CKF_SERIAL_SESSION, NULL, NULL, &hSession);
+ 	if (chk_rv == CKR_OK) {
+-<<<<<<< HEAD
+-		if ((tokenInfo.flags & CKF_LOGIN_REQUIRED) == CKF_LOGIN_REQUIRED) {
+-=======
+ 		chk_rv = C_GetTokenInfo(slots[0], &tokenInfo);
+ 		if (chk_rv != CKR_OK) {
+ 			return(1);
+ 		}
+ 
+ 		if ((tokenInfo.flags & CKF_LOGIN_REQUIRED) == CKF_LOGIN_REQUIRED && (tokenInfo.flags & CKF_PROTECTED_AUTHENTICATION_PATH) == 0) {
+->>>>>>> trunk
+ 			fgets_ret = NULL;
+ 
+ 			while (fgets_ret == NULL) {
+ 				printf("** ENTER PIN: ");
+ 				fflush(stdout);
+ 
+-<<<<<<< HEAD
+ 				fgets_ret = fgets((char *) user_pin, sizeof(user_pin), stdin);
+-=======
+-#ifdef CACKEY_TEST_AFL
+-				memcpy(user_pin, "0000000", 8);
+-				fgets_ret = (char *) user_pin;
+-#else
+-				fgets_ret = fgets((char *) user_pin, sizeof(user_pin), stdin);
+-#endif
+->>>>>>> trunk
+ 			}
+ 
+ 			if (strlen((char *) user_pin) >= 1) {
+@@ -873,22 +620,11 @@
+ 	return(0);
+ }
+ 
+-<<<<<<< HEAD
+ int main(void) {
+-=======
+-int main(int argc, char **argv) {
+->>>>>>> trunk
+ 	int retval = 0, ck_retval;
+ 
+ 	printf("Testing libcackey...\n");
+ 
+-<<<<<<< HEAD
+-=======
+-	if (argc > 1) {
+-		loadTestData(argv[1]);
+-	}
+-
+->>>>>>> trunk
+ 	ck_retval = main_pkcs11();
+ 
+ 	if (ck_retval != 0) {
