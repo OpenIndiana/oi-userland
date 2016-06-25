@@ -12,10 +12,11 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
 COMPONENT_VERSION=	1.4.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,6 +33,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
@@ -47,4 +50,19 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgnome
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/desktop/libgsf
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-keyring
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/libunique
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
