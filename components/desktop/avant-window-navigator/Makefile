@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov. All rights reserved.
+# Copyright (c) 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           avant-window-navigator
 COMPONENT_VERSION=        0.3.2.1
-COMPONENT_REVISION=       1
+COMPONENT_REVISION=       2
 COMPONENT_PROJECT_URL=    https://launchpad.net/awn
 COMPONENT_SUMMARY=        Avant Window Navigator - fully customizable dock-like navigator
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,10 +29,14 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 CONFIGURE_OPTIONS+=        --sysconfdir=/etc
 CONFIGURE_OPTIONS+=        --with-desktop=gnome
+
+CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 # common targets
 build:		        $(BUILD_32)
@@ -41,4 +45,21 @@ install:     		$(INSTALL_32)
 
 test:			$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libwnck
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += library/python-2/lxml-27
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
