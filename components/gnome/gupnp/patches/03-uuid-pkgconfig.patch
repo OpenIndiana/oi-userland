@@ -1,0 +1,29 @@
+Our libuuid doesn't provide a pkg-config file yet (CR 15586738), so add
+necessary flags and remove from pkg-config declarations. 
+
+Not appropriate for upstream.
+
+--- gupnp-0.20.14/gupnp-1.0-uninstalled.pc.in	2015-03-30 10:49:16.000000000 -0700
++++ gupnp-0.20.14/gupnp-1.0-uninstalled.pc.in	2015-07-05 21:55:15.264943555 -0700
+@@ -6,6 +6,6 @@
+ Name: gupnp-1.0
+ Description: GObject-based UPnP library
+ Version: @VERSION@
+-Libs: ${libdir}/libgupnp-1.0.la
+-Cflags: -I${includedir}
+-Requires.private: gssdp-1.0 libxml-2.0 libsoup-2.4 @UUID_LIBS@
++Libs: ${libdir}/libgupnp-1.0.la -luuid
++Cflags: -I${includedir} -I/usr/include/uuid
++Requires.private: gssdp-1.0 libxml-2.0 libsoup-2.4
+--- gupnp-0.20.14/gupnp-1.0.pc.in	2015-03-30 10:49:16.000000000 -0700
++++ gupnp-0.20.14/gupnp-1.0.pc.in	2015-07-05 21:55:46.184924124 -0700
+@@ -6,6 +6,6 @@
+ Name: gupnp-1.0
+ Description: GObject-based UPnP library
+ Version: @VERSION@
+-Libs: -L${libdir} -lgupnp-1.0
+-Cflags: -I${includedir}/gupnp-1.0
+-Requires.private: gssdp-1.0 libxml-2.0 libsoup-2.4 @UUID_LIBS@
++Libs: -L${libdir} -lgupnp-1.0 -luuid
++Cflags: -I${includedir}/gupnp-1.0 -I/usr/include/uuid
++Requires.private: gssdp-1.0 libxml-2.0 libsoup-2.4
