@@ -1540,17 +1540,22 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(msg)
             raise exception.NovaException(msg)
 
+        mtu = network['mtu']
         with ZoneConfig(zone) as zc:
             if vifid == 0:
                 zc.setprop('anet', 'lower-link', lower_link)
                 zc.setprop('anet', 'configure-allowed-address', 'false')
                 zc.setprop('anet', 'mac-address', vif['address'])
+                if mtu > 0:
+                    zc.setprop('anet', 'mtu', str(mtu))
             else:
-                zc.addresource(
-                    'anet',
-                    [zonemgr.Property('lower-link', lower_link),
-                     zonemgr.Property('configure-allowed-address', 'false'),
-                     zonemgr.Property('mac-address', vif['address'])])
+                props = [zonemgr.Property('lower-link', lower_link),
+                         zonemgr.Property('configure-allowed-address',
+                                          'false'),
+                         zonemgr.Property('mac-address', vif['address'])]
+                if mtu > 0:
+                    props.append(zonemgr.Property('mtu', str(mtu)))
+                zc.addresource('anet', props)
 
             prop_filter = [zonemgr.Property('mac-address', vif['address'])]
             if brand == ZONE_BRAND_SOLARIS:
