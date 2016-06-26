@@ -1,0 +1,84 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2016 Jim Klimov
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file hardlink path=usr/lib/.*\.py$ -> default pkg.tmp.pyversion 3.X>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-pump@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - pump and include_server (needs Python3)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=$(COMPONENT_FMRI)-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+file path=usr/bin/pump
+
+file path=usr/lib/python3.4/site-packages/include_server-3.2rc1-py3.4.egg-info
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/basics.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/basics_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/c_extensions_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/cache_basics.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/compiler_defaults.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/compress_files.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_analyzer.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_analyzer_memoizing_node.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_analyzer_memoizing_node_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_analyzer_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_server.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/include_server_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/macro_eval.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/macro_eval_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/mirror_path.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/mirror_path_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/parse_command.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/parse_command_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/parse_file.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/parse_file_test.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/run.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/setup.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/__pycache__/statistics.cpython-34.pyc
+file path=usr/lib/python3.4/site-packages/include_server/basics.py
+file path=usr/lib/python3.4/site-packages/include_server/basics_test.py
+file path=usr/lib/python3.4/site-packages/include_server/c_extensions_test.py
+file path=usr/lib/python3.4/site-packages/include_server/cache_basics.py
+file path=usr/lib/python3.4/site-packages/include_server/compiler_defaults.py
+file path=usr/lib/python3.4/site-packages/include_server/compress_files.py
+file path=usr/lib/python3.4/site-packages/include_server/distcc_pump_c_extensions.cpython-34m.so
+file path=usr/lib/python3.4/site-packages/include_server/include_analyzer.py
+file path=usr/lib/python3.4/site-packages/include_server/include_analyzer_memoizing_node.py
+file path=usr/lib/python3.4/site-packages/include_server/include_analyzer_memoizing_node_test.py
+file path=usr/lib/python3.4/site-packages/include_server/include_analyzer_test.py
+file path=usr/lib/python3.4/site-packages/include_server/include_server.py
+file path=usr/lib/python3.4/site-packages/include_server/include_server_test.py
+file path=usr/lib/python3.4/site-packages/include_server/macro_eval.py
+file path=usr/lib/python3.4/site-packages/include_server/macro_eval_test.py
+file path=usr/lib/python3.4/site-packages/include_server/mirror_path.py
+file path=usr/lib/python3.4/site-packages/include_server/mirror_path_test.py
+file path=usr/lib/python3.4/site-packages/include_server/parse_command.py
+file path=usr/lib/python3.4/site-packages/include_server/parse_command_test.py
+file path=usr/lib/python3.4/site-packages/include_server/parse_file.py
+file path=usr/lib/python3.4/site-packages/include_server/parse_file_test.py
+file path=usr/lib/python3.4/site-packages/include_server/run.py
+file path=usr/lib/python3.4/site-packages/include_server/setup.py
+file path=usr/lib/python3.4/site-packages/include_server/statistics.py
+
+file path=usr/share/doc/distcc/README.pump
+
+file path=usr/share/man/man1/include_server.1
+file path=usr/share/man/man1/pump.1
