@@ -1,0 +1,25 @@
+Fix alignment of "os_priv" attribute in structures
+libusb_device and libusb_device_handle on Solaris sparcv9.
+
+--- libusb-1.0.20/libusb/libusbi.h.orig	Sat Jun 25 20:45:07 2016
++++ libusb-1.0.20/libusb/libusbi.h	Sat Jun 25 20:45:34 2016
+@@ -353,6 +353,9 @@
+ #else
+ 	[0] /* non-standard, but usually working code */
+ #endif
++#if defined(OS_SUNOS)
++	__attribute__((aligned(8)))
++#endif
+ 	;
+ };
+ 
+@@ -370,6 +373,9 @@
+ #else
+ 	[0] /* non-standard, but usually working code */
+ #endif
++#if defined(OS_SUNOS)
++        __attribute__((aligned(8)))
++#endif 
+ 	;
+ };
+ 
