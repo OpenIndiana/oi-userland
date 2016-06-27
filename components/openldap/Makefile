@@ -78,6 +78,7 @@ CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --enable-dynamic
+CONFIGURE_OPTIONS += --enable-modules
 CONFIGURE_OPTIONS += --enable-crypt
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-bdb
@@ -109,6 +110,7 @@ LD_UNSET.32="-R$(CYRUS_SASL_ROOT)$(USRLIBDIR)"
 LD_UNSET.64="-R$(CYRUS_SASL_ROOT)$(USRLIBDIR.$(BITS))"
 LD_UNSET += $(LD_UNSET.$(BITS))
 COMPONENT_BUILD_ENV += LD_UNSET="$(LD_UNSET)"
+COMPONENT_BUILD_ENV += LTCFLAGS="-m$(BITS)"
 COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
 
 # special targets due to dependency on cyrus-sasl
