@@ -35,8 +35,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/152
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-
 file path=usr/bin/oscap
 file path=usr/include/openscap/check_engine_plugin.h
 file path=usr/include/openscap/cpe_dict.h
@@ -47,6 +45,7 @@ file path=usr/include/openscap/cvss_score.h
 file path=usr/include/openscap/ds_rds_session.h
 file path=usr/include/openscap/ds_sds_session.h
 file path=usr/include/openscap/oscap.h
+file path=usr/include/openscap/oscap_debug.h
 file path=usr/include/openscap/oscap_error.h
 file path=usr/include/openscap/oscap_reference.h
 file path=usr/include/openscap/oscap_source.h
@@ -71,12 +70,12 @@ file path=usr/include/openscap/sce_engine_api.h
 file path=usr/include/openscap/xccdf_benchmark.h
 file path=usr/include/openscap/xccdf_policy.h
 file path=usr/include/openscap/xccdf_session.h
-link path=usr/lib/$(MACH64)/libopenscap.so target=libopenscap.so.8.6.0
-link path=usr/lib/$(MACH64)/libopenscap.so.8 target=libopenscap.so.8.6.0
-file path=usr/lib/$(MACH64)/libopenscap.so.8.6.0
-link path=usr/lib/$(MACH64)/libopenscap_sce.so target=libopenscap_sce.so.8.6.0
-link path=usr/lib/$(MACH64)/libopenscap_sce.so.8 target=libopenscap_sce.so.8.6.0
-file path=usr/lib/$(MACH64)/libopenscap_sce.so.8.6.0
+link path=usr/lib/$(MACH64)/libopenscap.so target=libopenscap.so.8.8.0
+link path=usr/lib/$(MACH64)/libopenscap.so.8 target=libopenscap.so.8.8.0
+file path=usr/lib/$(MACH64)/libopenscap.so.8.8.0
+link path=usr/lib/$(MACH64)/libopenscap_sce.so target=libopenscap_sce.so.8.8.0
+link path=usr/lib/$(MACH64)/libopenscap_sce.so.8 target=libopenscap_sce.so.8.8.0
+file path=usr/lib/$(MACH64)/libopenscap_sce.so.8.8.0
 file path=usr/lib/$(MACH64)/openscap/probe_dnscache
 file path=usr/lib/$(MACH64)/openscap/probe_environmentvariable
 file path=usr/lib/$(MACH64)/openscap/probe_environmentvariable58
@@ -390,6 +389,7 @@ file path=usr/share/doc/openscap/html/oscap_8h.html
 file path=usr/share/doc/openscap/html/oscap_8h_source.html
 file path=usr/share/doc/openscap/html/oscap__acquire_8h_source.html
 file path=usr/share/doc/openscap/html/oscap__buffer_8h_source.html
+file path=usr/share/doc/openscap/html/oscap__debug_8h_source.html
 file path=usr/share/doc/openscap/html/oscap__error_8h.html
 file path=usr/share/doc/openscap/html/oscap__error_8h_source.html
 file path=usr/share/doc/openscap/html/oscap__reference_8h_source.html
@@ -506,6 +506,7 @@ file path=usr/share/doc/openscap/html/pages.html
 file path=usr/share/doc/openscap/html/partition_8c.html
 file path=usr/share/doc/openscap/html/password_8c.html
 file path=usr/share/doc/openscap/html/patch_8c.html
+file path=usr/share/doc/openscap/html/preload_8c.html
 file path=usr/share/doc/openscap/html/probe-api_8c.html
 file path=usr/share/doc/openscap/html/probe-api_8h.html
 file path=usr/share/doc/openscap/html/probe-api_8h_source.html
@@ -531,6 +532,7 @@ file path=usr/share/doc/openscap/html/reporter__priv_8h_source.html
 file path=usr/share/doc/openscap/html/result__scoring__priv_8h_source.html
 file path=usr/share/doc/openscap/html/rmd160_8h_source.html
 file path=usr/share/doc/openscap/html/routingtable_8c.html
+file path=usr/share/doc/openscap/html/rpm-helper_8h_source.html
 file path=usr/share/doc/openscap/html/rpminfo_8c.html
 file path=usr/share/doc/openscap/html/rpmverify_8c.html
 file path=usr/share/doc/openscap/html/rpmverifyfile_8c.html
@@ -637,8 +639,6 @@ file path=usr/share/doc/openscap/html/search/defines_0.html
 file path=usr/share/doc/openscap/html/search/defines_0.js
 file path=usr/share/doc/openscap/html/search/defines_1.html
 file path=usr/share/doc/openscap/html/search/defines_1.js
-file path=usr/share/doc/openscap/html/search/defines_2.html
-file path=usr/share/doc/openscap/html/search/defines_2.js
 file path=usr/share/doc/openscap/html/search/enums_0.html
 file path=usr/share/doc/openscap/html/search/enums_0.js
 file path=usr/share/doc/openscap/html/search/enums_1.html
@@ -1103,11 +1103,10 @@ file path=usr/share/doc/openscap/html/structrds__report__request__index__iterato
 file path=usr/share/doc/openscap/html/structreporter.html
 file path=usr/share/doc/openscap/html/structresult__info.html
 file path=usr/share/doc/openscap/html/structroute__info.html
-file path=usr/share/doc/openscap/html/structrpminfo__global.html
+file path=usr/share/doc/openscap/html/structrpm__probe__global.html
 file path=usr/share/doc/openscap/html/structrpminfo__rep.html
 file path=usr/share/doc/openscap/html/structrpminfo__req.html
 file path=usr/share/doc/openscap/html/structrpmverify__bhmap__t.html
-file path=usr/share/doc/openscap/html/structrpmverify__global.html
 file path=usr/share/doc/openscap/html/structrpmverify__res.html
 file path=usr/share/doc/openscap/html/structrpmverifyfile__bhmap__t.html
 file path=usr/share/doc/openscap/html/structrpmverifypackage__bhmap__t.html
@@ -1766,32 +1765,6 @@ file path=usr/share/openscap/schemas/xccdf/1.2/cpe-language_2.3.xsd
 file path=usr/share/openscap/schemas/xccdf/1.2/datatypes.dtd
 file path=usr/share/openscap/schemas/xccdf/1.2/xccdf_1.2-schematron.xsl
 file path=usr/share/openscap/schemas/xccdf/1.2/xccdf_1.2.xsd
-file path=usr/share/openscap/sectool-sce/00_integrity.sh
-file path=usr/share/openscap/sectool-sce/01_bootloader.sh
-file path=usr/share/openscap/sectool-sce/01_disk_usage.sh
-file path=usr/share/openscap/sectool-sce/01_group.sh
-file path=usr/share/openscap/sectool-sce/01_passwd.sh
-file path=usr/share/openscap/sectool-sce/01_shadow.sh
-file path=usr/share/openscap/sectool-sce/02_home_files.sh
-file path=usr/share/openscap/sectool-sce/02_root_dirs.sh
-file path=usr/share/openscap/sectool-sce/03_path.sh
-file path=usr/share/openscap/sectool-sce/04_firewall.sh
-file path=usr/share/openscap/sectool-sce/05_netserv.sh
-file path=usr/share/openscap/sectool-sce/05_openssh.sh
-file path=usr/share/openscap/sectool-sce/05_openvpn.sh
-file path=usr/share/openscap/sectool-sce/05_removed_libs.sh
-file path=usr/share/openscap/sectool-sce/05_xinetd.sh
-file path=usr/share/openscap/sectool-sce/07_log_files.sh
-file path=usr/share/openscap/sectool-sce/08_pam.sh
-file path=usr/share/openscap/sectool-sce/08_permissions.sh
-file path=usr/share/openscap/sectool-sce/09_exec_shield.sh
-file path=usr/share/openscap/sectool-sce/09_selinux.sh
-file path=usr/share/openscap/sectool-sce/09_va_randomization.sh
-file path=usr/share/openscap/sectool-sce/11_aliases.sh
-file path=usr/share/openscap/sectool-sce/12_cron.sh
-file path=usr/share/openscap/sectool-sce/14_nfs.sh
-file path=usr/share/openscap/sectool-sce/15_tcp_wrappers.sh
-file path=usr/share/openscap/sectool-sce/sectool-xccdf.xml
 file path=usr/share/openscap/xsl/legacy-fix.xsl
 file path=usr/share/openscap/xsl/legacy-fixtpl-bash.xml
 file path=usr/share/openscap/xsl/legacy-xccdf-share.xsl

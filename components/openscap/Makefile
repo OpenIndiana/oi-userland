@@ -26,13 +26,13 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
-COMPONENT_VERSION=	1.2.6
+COMPONENT_VERSION=	1.2.9
 COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
-COMPONENT_ARCHIVE_HASH= sha256:95f2345e041e9ba838ad8065b68ce0ec4b0971d7afc72d601489236bbfc0c652
+COMPONENT_ARCHIVE_HASH= sha256:20ae67ffabf90865fb2033d5c5e49bfb5fb485ffa6ff37910e8d7084c2236c74
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 
-TPNO =			25520
+TPNO =			28398
 
 # Requires newer version of system/management/rad/client/rad-c from ON,
 # available in S12 but not 11.3, so do not publish.
