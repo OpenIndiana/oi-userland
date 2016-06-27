@@ -74,7 +74,7 @@ BUILDID ?= 102
 #
 #NIGHTLYID ?= $(shell hg tip --template '{rev}\n')
 #
-NIGHTLYID ?= 1
+NIGHTLYID ?= 2
 
 #
 # Branch Identifier.  Used in the version section of the package name to
