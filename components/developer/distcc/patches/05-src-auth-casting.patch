@@ -1,0 +1,11 @@
+--- a/src/auth_distcc.c	2016-04-27 23:31:19.000000000 +0200
++++ b/src/auth_distcc.c	2016-06-27 13:46:18.303925757 +0200
+@@ -128,7 +128,7 @@
+ 
+     addr_len = sizeof(addr);
+ 
+-    if ((ret = getpeername(to_net_sd, &addr, &addr_len)) != 0) {
++    if ((ret = getpeername(to_net_sd, (struct sockaddr *)&addr, &addr_len)) != 0) {
+         rs_log_error("Failed to look up peer address using socket \"%d\": %s.",
+                      to_net_sd,
+                      hstrerror(h_errno));

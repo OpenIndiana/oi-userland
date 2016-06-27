@@ -86,10 +86,11 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--enable-rfc2553
 
 # GSS-API mutual auth
-# NOTE: May require some source chizeling, skip in first recipe iterations
-#REQUIRED_PACKAGES +=	system/kernel/security/gss system/library/security/gss service/security/gss system/header
-#CONFIGURE_OPTIONS +=	--with-auth
-CONFIGURE_OPTIONS +=	--without-auth
+### Are these needed? Or just seemed relevant because they are *gss*?
+###REQUIRED_PACKAGES +=	system/kernel/security/gss service/security/gss
+REQUIRED_PACKAGES +=	system/library/security/gss
+CFLAGS += -Wno-error=unused-but-set-variable
+CONFIGURE_OPTIONS +=	--with-auth
 
 # Support mDNS "zeroconf" peer discovery/announcement
 # NOTE: May require some source chizeling, skip in first recipe iterations
