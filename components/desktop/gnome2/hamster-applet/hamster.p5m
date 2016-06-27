@@ -22,13 +22,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/lib/python2.6/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.6/site-packages/%<\1> >
+<transform file path=usr/lib/python2.7/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.7/site-packages/%<\1> >
 <transform file path=.* -> default pkg.tmp.autopyc false>
 
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
 <transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/python2.7/vendor-packages/xdg/BaseDirectory.py type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/python2.7/vendor-packages/ORBit.so type=require
 
 file path=etc/gconf/schemas/hamster-applet.schemas
 link path=usr/bin/gnome-time-tracker target=hamster-time-tracker
@@ -37,38 +40,38 @@ file path=usr/bin/hamster-service
 file path=usr/bin/hamster-time-tracker
 file path=usr/lib/bonobo/servers/Hamster_Applet.server
 file path=usr/lib/hamster-applet/hamster-applet mode=0555
-file path=usr/lib/python2.6/vendor-packages/hamster/__init__.py
-file path=usr/lib/python2.6/vendor-packages/hamster/about.py
-file path=usr/lib/python2.6/vendor-packages/hamster/applet.py
-file path=usr/lib/python2.6/vendor-packages/hamster/charting.py
-file path=usr/lib/python2.6/vendor-packages/hamster/client.py
-file path=usr/lib/python2.6/vendor-packages/hamster/configuration.py
-file path=usr/lib/python2.6/vendor-packages/hamster/db.py
-file path=usr/lib/python2.6/vendor-packages/hamster/defs.py
-file path=usr/lib/python2.6/vendor-packages/hamster/edit_activity.py
-file path=usr/lib/python2.6/vendor-packages/hamster/external.py
-file path=usr/lib/python2.6/vendor-packages/hamster/graphics.py
-file path=usr/lib/python2.6/vendor-packages/hamster/i18n.py
-file path=usr/lib/python2.6/vendor-packages/hamster/idle.py
-file path=usr/lib/python2.6/vendor-packages/hamster/overview.py
-file path=usr/lib/python2.6/vendor-packages/hamster/overview_activities.py
-file path=usr/lib/python2.6/vendor-packages/hamster/overview_totals.py
-file path=usr/lib/python2.6/vendor-packages/hamster/preferences.py
-file path=usr/lib/python2.6/vendor-packages/hamster/pytweener.py
-file path=usr/lib/python2.6/vendor-packages/hamster/reports.py
-file path=usr/lib/python2.6/vendor-packages/hamster/stats.py
-file path=usr/lib/python2.6/vendor-packages/hamster/storage.py
-file path=usr/lib/python2.6/vendor-packages/hamster/stuff.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/__init__.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/activityentry.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/dateinput.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/dayline.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/facttree.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/rangepick.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/reportchooserdialog.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/tags.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/timechart.py
-file path=usr/lib/python2.6/vendor-packages/hamster/widgets/timeinput.py
+file path=usr/lib/python2.7/vendor-packages/hamster/__init__.py
+file path=usr/lib/python2.7/vendor-packages/hamster/about.py
+file path=usr/lib/python2.7/vendor-packages/hamster/applet.py
+file path=usr/lib/python2.7/vendor-packages/hamster/charting.py
+file path=usr/lib/python2.7/vendor-packages/hamster/client.py
+file path=usr/lib/python2.7/vendor-packages/hamster/configuration.py
+file path=usr/lib/python2.7/vendor-packages/hamster/db.py
+file path=usr/lib/python2.7/vendor-packages/hamster/defs.py
+file path=usr/lib/python2.7/vendor-packages/hamster/edit_activity.py
+file path=usr/lib/python2.7/vendor-packages/hamster/external.py
+file path=usr/lib/python2.7/vendor-packages/hamster/graphics.py
+file path=usr/lib/python2.7/vendor-packages/hamster/i18n.py
+file path=usr/lib/python2.7/vendor-packages/hamster/idle.py
+file path=usr/lib/python2.7/vendor-packages/hamster/overview.py
+file path=usr/lib/python2.7/vendor-packages/hamster/overview_activities.py
+file path=usr/lib/python2.7/vendor-packages/hamster/overview_totals.py
+file path=usr/lib/python2.7/vendor-packages/hamster/preferences.py
+file path=usr/lib/python2.7/vendor-packages/hamster/pytweener.py
+file path=usr/lib/python2.7/vendor-packages/hamster/reports.py
+file path=usr/lib/python2.7/vendor-packages/hamster/stats.py
+file path=usr/lib/python2.7/vendor-packages/hamster/storage.py
+file path=usr/lib/python2.7/vendor-packages/hamster/stuff.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/__init__.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/activityentry.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/dateinput.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/dayline.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/facttree.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/rangepick.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/reportchooserdialog.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/tags.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/timechart.py
+file path=usr/lib/python2.7/vendor-packages/hamster/widgets/timeinput.py
 file path=usr/share/applications/hamster-applet.desktop
 file path=usr/share/applications/hamster-time-tracker.desktop
 file path=usr/share/dbus-1/services/org.gnome.hamster.service

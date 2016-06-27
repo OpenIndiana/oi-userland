@@ -12,7 +12,7 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hamster-applet
 COMPONENT_VERSION=	2.32.1
@@ -32,6 +32,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION = 2.7
 PATH=/usr/gnu/bin:/usr/bin
 
 
@@ -57,3 +58,19 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/python-2/python-notify
+REQUIRED_PACKAGES += library/python-2/python-notify-27
+REQUIRED_PACKAGES += library/python-2/python-xdg-27
+REQUIRED_PACKAGES += library/python/gnome-python
+REQUIRED_PACKAGES += library/python/gnome-python-27
+REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/pyorbit-27
+REQUIRED_PACKAGES += library/python/python-dbus
+REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += library/python/python-gnome-desktop
+REQUIRED_PACKAGES += library/python/python-gnome-desktop-27
+REQUIRED_PACKAGES += runtime/python-27
