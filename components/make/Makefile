@@ -26,13 +26,13 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
-COMPONENT_VERSION=	4.1
+COMPONENT_VERSION=	4.2.1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0bc7613389650ee6a24554b52572a272f7356164fd2c4132b0bcf13123e4fca5
+    sha256:d6e262bf3601b42d2b1e4ef8310029e1dcf20083c5446b4b7aa67081fdffc589
 COMPONENT_BUGDB=	utility/gnu-make
 
-TPNO=			24441
+TPNO=			29463
 
 # the test suite needs to be configured first
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
