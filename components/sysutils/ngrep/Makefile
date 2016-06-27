@@ -37,10 +37,13 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 CONFIGURE_OPTIONS+= --enable-ipv6
 CONFIGURE_OPTIONS+= --enable-pcre
 CONFIGURE_OPTIONS+= --with-dropprivs-user=nobody
-CONFIGURE_OPTIONS+= --with-pcap-includes=/usr/include/pcap 
+CONFIGURE_OPTIONS+= --with-pcap-includes=/usr/include/pcap
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
