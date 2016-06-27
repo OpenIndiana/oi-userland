@@ -27,15 +27,15 @@ BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.3.3
+COMPONENT_VERSION=	1.3.4
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0c7f5ffe34d0414f6951d9880a46fcc2985c487f7c36369b9f11ad41131c7786
+    sha256:f6c2883cebec5608692d8730843d87f237c0964d923bbe7aa89c05f20558ad4f
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			22395
+TPNO=			28582
 
 include $(WS_MAKE_RULES)/common.mk
 
