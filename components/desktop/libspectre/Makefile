@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libspectre
-COMPONENT_VERSION=	0.2.6
+COMPONENT_VERSION=	0.2.7
 COMPONENT_PROJECT_URL=	http://libspectre.freedesktop.org
 COMPONENT_ARCHIVE_HASH= \
-	sha256:2f637c62322c8040514284c00f63a5c310a28801e7dcfbe2ba2791be4fac0dd3
+	sha256:e81b822a106beed14cf0fec70f1b890c690c2ffa150fa2eee41dc26518a6c3ec
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libspectre
 
-TPNO=			7684
+TPNO=			25619
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
