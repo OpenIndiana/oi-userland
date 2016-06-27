@@ -1,0 +1,44 @@
+--- openscap-1.2.9/src/common/debug.c.~1~	2016-04-21 04:51:58.321492428 -0700
++++ openscap-1.2.9/src/common/debug.c	2016-06-08 13:17:18.681401563 -0700
+@@ -30,7 +30,10 @@
+ # include <string.h>
+ # include <stdlib.h>
+ # include <sys/types.h>
++# include <sys/fcntl.h>
++# include <sys/stat.h>
+ # include <sys/file.h>
++# include <fcntl.h>
+ # include <unistd.h>
+ # include <time.h>
+ # include <errno.h>
+@@ -169,7 +172,11 @@
+ 	default:
+ 		l = '0';
+ 	}
++#if !defined(__SVR4) && !defined (__sun)
+ 	fprintf(__debuglog_fp, "%c: %s: ", l, program_invocation_short_name);
++#else
++	fprintf(__debuglog_fp, "%c: %ld: ", l, (long) getpid());
++#endif
+ 	for (int i = 0; i < indent; i++) {
+ 		fprintf(__debuglog_fp, "  ");
+ 	}
+@@ -186,6 +193,7 @@
+ #else
+ 	snprintf(thread_name, THREAD_NAME_LEN, "unknown");
+ #endif
++#if !defined(__SVR4) && !defined (__sun)
+ 	/* XXX: non-portable usage of pthread_t */
+ 	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
+ 		program_invocation_short_name, (long) getpid(), thread_name,
+@@ -193,6 +201,10 @@
+ #else
+ 	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
+ 		f, line, fn);
++#endif
++#else
++	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
++		f, line, fn);
+ #endif
+ }
+ 
