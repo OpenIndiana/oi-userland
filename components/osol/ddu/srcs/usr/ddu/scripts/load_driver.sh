@@ -218,7 +218,7 @@ function p5i_install
     p5i_media="$1"
     install_status=0
     if [ ! -z "${p5i_media}" ]; then
-        install_list=$(python ./p5i_install.py "\"${p5i_media}\"")  
+        install_list=$(python2.7 ./p5i_install.py "\"${p5i_media}\"")
         if [ $? != 0 ]; then
             print -u1 "Error executing: ./p5i_install.py ${p5i_media}"
             return 1

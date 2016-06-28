@@ -33,7 +33,7 @@ class ddu_repo_object(object):
         '''
         Constructor
         '''
-        
+
         self.repo_name = repo_name
         self.repo_url = repo_url
         self.repo_database = repo_database
@@ -46,5 +46,3 @@ class ddu_repo_object(object):
 
     def get_repo_database(self):
         return self.repo_database
-    
-

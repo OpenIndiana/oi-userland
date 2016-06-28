@@ -56,7 +56,7 @@ class ddu_dev_data(object):
     def get_compatible_name_string(self):
         """get device compatible string"""
         status, output = commands.getstatusoutput(
-                                  '%s/scripts/det_info.sh %s CLASS=%s' % 
+                                  '%s/scripts/det_info.sh %s CLASS=%s' %
                                   (ABSPATH, str(self.pci_path),
                                   str(self.class_code)))
         status, output_find = commands.getstatusoutput(
@@ -84,34 +84,33 @@ class ddu_dev_data(object):
 
     def get_item_id(self):
         return self.item_id
-    
+
     def get_parent_item_id(self):
         return self.parent_item_id
-    
+
     def get_description(self):
         return self.description
-    
+
     def get_device_id(self):
         return self.device_id
-    
+
     def get_class_code(self):
         return self.class_code
-    
+
     def get_pci_path(self):
         return self.pci_path
-    
+
     def get_driver_name(self):
         return self.driver_name
-    
+
     def get_instance_id(self):
         return self.instance_id
-    
+
     def get_attach_status(self):
         return self.attach_status
-    
+
     def get_vendor_id(self):
         return self.vendor_id
-    
+
     def get_device_type(self):
         return self.device_type
-

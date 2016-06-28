@@ -44,7 +44,7 @@ class RepositoryCreatedException(DDUException):
 class RepositoryNotReadyException(DDUException):
     """can not run pkg command"""
     pass
-    
+
 class RepositoryNotAvailableException(DDUException):
     """can not get data from repo"""
     def __init__(self, repo_name):
@@ -96,7 +96,7 @@ class PackageNoFound(DDUException):
 class PackageTypeInvalid(DDUException):
     """package type invalid"""
     pass
-    
+
 class PackageInstallNotAllowed(DDUException):
     """can not install package"""
     pass

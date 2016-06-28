@@ -39,7 +39,7 @@ class ddu_package_object(object):
         self.flags_64bit = flags_64bit
         self.device_descriptor = device_descriptor
         self.third_party_from_search = third_party_from_search
- 	
+
     def get_pkg_type(self):
         return self.pkg_type
 
@@ -62,5 +62,4 @@ class ddu_package_object(object):
         return self.device_descriptor
 
     def get_third_party_from_search(self):
-        return self.third_party_from_search    
-
+        return self.third_party_from_search

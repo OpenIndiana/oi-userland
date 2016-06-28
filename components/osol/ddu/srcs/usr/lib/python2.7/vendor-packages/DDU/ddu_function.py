@@ -49,7 +49,7 @@ def ddu_build_repo_list(ips_repo_list):
        repo_obj_list: a list of ddu_repo_objects, one object per repository.
 
        Dependency:
-       ${ddu directory}/scripts/pkg_relate.sh 
+       ${ddu directory}/scripts/pkg_relate.sh
     """
     if not isinstance(ips_repo_list, list) or len(ips_repo_list) == 0:
         raise ddu_errors.RepositoryNotFoundException(
@@ -91,7 +91,7 @@ def ddu_build_repo_list(ips_repo_list):
         raise ddu_errors.RepositoryNotFoundException("No repositories found")
     return repo_obj_list
 
-			
+
 def ddu_devscan(return_missing_only = True, device_type = "all"):
     """
     Do a device scan. Returns either devices missing their driver,
@@ -325,7 +325,7 @@ def ddu_package_lookup(ddu_dev_instance, repo_list):
                                  '%s/scripts/comp_lookup.sh \
                                  \"%s\" \"%s\" || \
                                  %s/scripts/comp_lookup.sh \
-                                 \"%s\" \"%s\"' % 
+                                 \"%s\" \"%s\"' %
                                  (ABSPATH, device_compatible, repo_names,
                                   ABSPATH, device_binding, repo_names))
     else:
@@ -398,7 +398,7 @@ def ddu_package_lookup(ddu_dev_instance, repo_list):
         elif package_type == "UNK"  and package_location == "":
             try:
                 logfile = open('/tmp/ddu_err.log', 'a')
-                logfile.write("No proper package found for %s" % 
+                logfile.write("No proper package found for %s" %
                                     str(device_descriptor))
                 logfile.close()
             except IOError:
@@ -447,7 +447,7 @@ def ddu_install_package(ddu_package_ob, root_install,
     if pkg_type == "PKG":
         status, output = commands.getstatusoutput(
                         "%s/scripts/pkg_relate.sh list all \
-                        | nawk -F\"\t\" \'{ print $1 }\' 2>/dev/null" % 
+                        | nawk -F\"\t\" \'{ print $1 }\' 2>/dev/null" %
                         ABSPATH)
         if status != 0:
             print >> sys.__stderr__, output
@@ -470,7 +470,7 @@ def ddu_install_package(ddu_package_ob, root_install,
                 pass
 
             raise ddu_errors.InstallPkgFail(
-                         "Error installing package: name:%s, locn:%s" % 
+                         "Error installing package: name:%s, locn:%s" %
                          (pkg_name, pkg_location))
     elif pkg_type in  ["SVR4", "DU", "P5I"]:
         status, output = commands.getstatusoutput(
@@ -488,4 +488,4 @@ def ddu_install_package(ddu_package_ob, root_install,
             raise ddu_errors.InstallUnkFail(
                              "Error installing package: name:%s, locn:%s" %
                              (pkg_name, pkg_location)
-                             )		
+                             )
