@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	7.10.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -41,6 +42,8 @@ CONFIGURE_DEFAULT_DIRS=no
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 # GDB wants the GNU utilities
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
@@ -80,7 +83,7 @@ CONFIGURE_OPTIONS += --disable-werror
 CONFIGURE_OPTIONS += --enable-plugins
 CONFIGURE_OPTIONS += --enable-tui
 CONFIGURE_OPTIONS += --without-auto-load-safe-path
-CONFIGURE_OPTIONS += --with-python=yes
+CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS.32 += --disable-largefile
@@ -143,6 +146,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
