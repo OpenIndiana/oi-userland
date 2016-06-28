@@ -9,24 +9,26 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-doc
-COMPONENT_VERSION=	1.18
+COMPONENT_VERSION=	1.25
 COMPONENT_PROJECT_URL=	http://www.gtk.org/gtk-doc/
 COMPONENT_SUMMARY=	GTK+ DocBook Documentation Generator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:785b591c561be1c8206f0d2575dc63558ea6199c3afe49cbc4efde94a6629a20
+    sha256:1ea46ed400e6501f975acaafea31479cea8f32f911dca4dff036f59e6464fd42
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -40,4 +42,6 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
