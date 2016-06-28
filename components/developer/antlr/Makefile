@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr
 COMPONENT_VERSION=	2.7.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.antlr.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -42,6 +43,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATCH_LEVEL =		0
 
 CONFIGURE_OPTIONS +=	--without-examples
@@ -49,7 +52,7 @@ CONFIGURE_OPTIONS +=	--without-examples
 # pkgdepend doesn't like the first line of a Python script to be:
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's/env python/python2.6/' \
+	$(GSED) -i -e 's/env python/python2.7/' \
 		$(BUILD_DIR_32)/scripts/pyantlr.sh
 
 COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
@@ -64,6 +67,8 @@ COMPONENT_TEST_TARGETS = test
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+
 # common targets
 build:          $(BUILD_32)
 
@@ -71,6 +76,6 @@ install:        $(INSTALL_32)
 
 test:           $(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += runtime/python-27
