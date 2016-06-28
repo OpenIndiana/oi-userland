@@ -9,13 +9,14 @@
 #
 
 #
-# Copyright (c) 2015 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		alacarte
 COMPONENT_VERSION=	0.13.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Simple menu editor for GNOME
 COMPONENT_FMRI=		desktop/xdg/menu-editor/alacarte
@@ -31,6 +32,8 @@ COMPONENT_LICENSE=	LGPLv2
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -50,6 +53,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
+CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
 
 # common targets
 build:		$(BUILD_32)
@@ -58,6 +62,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

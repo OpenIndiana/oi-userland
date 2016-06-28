@@ -22,17 +22,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/lib/python2.6/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.6/site-packages/%<\1> >
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/icons/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
+depend type=require fmri=library/python/pygtk2-27
+depend type=require fmri=gnome/gnome-menus
+
 file path=usr/bin/alacarte
-file path=usr/lib/python2.6/vendor-packages/Alacarte/MainWindow.py
-file path=usr/lib/python2.6/vendor-packages/Alacarte/MenuEditor.py
-file path=usr/lib/python2.6/vendor-packages/Alacarte/__init__.py
-file path=usr/lib/python2.6/vendor-packages/Alacarte/config.py
-file path=usr/lib/python2.6/vendor-packages/Alacarte/util.py
+file path=usr/lib/python2.7/vendor-packages/Alacarte/MainWindow.py
+file path=usr/lib/python2.7/vendor-packages/Alacarte/MenuEditor.py
+file path=usr/lib/python2.7/vendor-packages/Alacarte/__init__.py
+file path=usr/lib/python2.7/vendor-packages/Alacarte/config.py
+file path=usr/lib/python2.7/vendor-packages/Alacarte/util.py
 file path=usr/share/alacarte/alacarte.ui
 file path=usr/share/applications/alacarte.desktop
 file path=usr/share/icons/hicolor/16x16/apps/alacarte.png
