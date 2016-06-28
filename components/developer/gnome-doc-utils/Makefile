@@ -9,13 +9,14 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov. All rights reserved
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-doc-utils
 COMPONENT_VERSION=	0.20.10
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Documentation utilities for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,14 +29,20 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATH=/usr/gnu/bin:/usr/bin
 
-gcc_OPT		= -O2
+# Missing files in build dir for xml2po without this.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 CONFIGURE_ENV+=  PERL=$(PERL)
 CONFIGURE_ENV+=  PYTHON=$(PYTHON)
+CONFIGURE_ENV+=  am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
+
+COMPONENT_BUILD_ARGS += V=1
 
 # common targets
 build:		$(BUILD_32)
@@ -44,6 +51,7 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/python-2/libxml2-27
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
