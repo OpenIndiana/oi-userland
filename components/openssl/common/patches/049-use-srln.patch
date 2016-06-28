@@ -1,0 +1,115 @@
+# This patch fixes the invalid use of 64-bit instruction (srlx) by 32-bit
+# applications.  This was developed in house and submitted to the upstream:
+#    https://github.com/openssl/openssl/pull/1259
+--- a/crypto/des/asm/dest4-sparcv9.pl	2016-05-03 06:44:42.000000000 -0700
++++ b/crypto/des/asm/dest4-sparcv9.pl	2016-06-23 09:34:51.212075615 -0700
+@@ -110,7 +111,7 @@
+ 	and		$out, 7, %g4
+ 	alignaddrl	$out, %g0, $out
+ 	srl		$omask, %g4, $omask
+-	srlx		$len, 3, $len
++	srln		$len, 3, $len
+ 	movrz		%g4, 0, $omask
+ 	prefetch	[$out], 22
+ 
+@@ -211,7 +212,7 @@
+ 	and		$out, 7, %g4
+ 	alignaddrl	$out, %g0, $out
+ 	srl		$omask, %g4, $omask
+-	srlx		$len, 3, $len
++	srln		$len, 3, $len
+ 	movrz		%g4, 0, $omask
+ 	prefetch	[$out], 22
+ 
+@@ -319,7 +320,7 @@
+ 	and		$out, 7, %g4
+ 	alignaddrl	$out, %g0, $out
+ 	srl		$omask, %g4, $omask
+-	srlx		$len, 3, $len
++	srln		$len, 3, $len
+ 	movrz		%g4, 0, $omask
+ 	prefetch	[$out], 22
+ 
+@@ -471,7 +472,7 @@
+ 	and		$out, 7, %g4
+ 	alignaddrl	$out, %g0, $out
+ 	srl		$omask, %g4, $omask
+-	srlx		$len, 3, $len
++	srln		$len, 3, $len
+ 	movrz		%g4, 0, $omask
+ 	prefetch	[$out], 22
+ 
+--- a/crypto/perlasm/sparcv9_modes.pl	2016-05-03 06:44:42.000000000 -0700
++++ b/crypto/perlasm/sparcv9_modes.pl	2016-06-23 09:34:10.707332695 -0700
+@@ -75,7 +75,7 @@
+ 	srl		$omask, $ooff, $omask
+ 
+ 	alignaddrl	$out, %g0, $out
+-	srlx		$len, 4, $len
++	srln		$len, 4, $len
+ 	prefetch	[$out], 22
+ 
+ .L${bits}_cbc_enc_loop:
+@@ -185,7 +185,7 @@
+ 	and	$blk_init, 63, $blk_init	! tail
+ 	sub	$len, $blk_init, $len
+ 	add	$blk_init, 15, $blk_init	! round up to 16n
+-	srlx	$len, 4, $len
++	srln	$len, 4, $len
+ 	srl	$blk_init, 4, $blk_init
+ 
+ .L${bits}_cbc_enc_blk_loop:
+@@ -292,7 +292,7 @@
+ 	srl		$omask, $ooff, $omask
+ 
+ 	andcc		$len, 16, %g0		! is number of blocks even?
+-	srlx		$len, 4, $len
++	srln		$len, 4, $len
+ 	alignaddrl	$out, %g0, $out
+ 	bz		%icc, .L${bits}_cbc_dec_loop2x
+ 	prefetch	[$out], 22
+@@ -517,7 +517,7 @@
+ 	and	$blk_init, 63, $blk_init	! tail
+ 	sub	$len, $blk_init, $len
+ 	add	$blk_init, 15, $blk_init	! round up to 16n
+-	srlx	$len, 4, $len
++	srln	$len, 4, $len
+ 	srl	$blk_init, 4, $blk_init
+ 	sub	$len, 1, $len
+ 	add	$blk_init, 1, $blk_init
+@@ -648,7 +648,7 @@
+ 	andcc		$len, 16, %g0		! is number of blocks even?
+ 	alignaddrl	$out, %g0, $out
+ 	bz		%icc, .L${bits}_ctr32_loop2x
+-	srlx		$len, 4, $len
++	srln		$len, 4, $len
+ .L${bits}_ctr32_loop:
+ 	ldx		[$inp + 0], %o0
+ 	brz,pt		$ileft, 4f
+@@ -819,7 +819,7 @@
+ 	and	$blk_init, 63, $blk_init	! tail
+ 	sub	$len, $blk_init, $len
+ 	add	$blk_init, 15, $blk_init	! round up to 16n
+-	srlx	$len, 4, $len
++	srln	$len, 4, $len
+ 	srl	$blk_init, 4, $blk_init
+ 	sub	$len, 1, $len
+ 	add	$blk_init, 1, $blk_init
+@@ -966,7 +966,7 @@
+ $code.=<<___;
+ 	alignaddrl	$out, %g0, $out
+ 	bz		%icc, .L${bits}_xts_${dir}loop2x
+-	srlx		$len, 4, $len
++	srln		$len, 4, $len
+ .L${bits}_xts_${dir}loop:
+ 	ldx		[$inp + 0], %o0
+ 	brz,pt		$ileft, 4f
+@@ -1172,7 +1172,7 @@
+ 	and	$blk_init, 63, $blk_init	! tail
+ 	sub	$len, $blk_init, $len
+ 	add	$blk_init, 15, $blk_init	! round up to 16n
+-	srlx	$len, 4, $len
++	srln	$len, 4, $len
+ 	srl	$blk_init, 4, $blk_init
+ 	sub	$len, 1, $len
+ 	add	$blk_init, 1, $blk_init
