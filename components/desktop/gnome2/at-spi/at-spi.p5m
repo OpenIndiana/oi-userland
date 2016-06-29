@@ -22,12 +22,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
-<transform file path=usr/lib/python2.6/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.6/site-packages/%<\1> >
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
 
 file path=etc/gconf/schemas/at-spi.schemas
 file path=etc/xdg/autostart/at-spi-registryd.desktop
@@ -105,6 +102,12 @@ file path=usr/lib/python2.6/vendor-packages/pyatspi/constants.py
 file path=usr/lib/python2.6/vendor-packages/pyatspi/event.py
 file path=usr/lib/python2.6/vendor-packages/pyatspi/registry.py
 file path=usr/lib/python2.6/vendor-packages/pyatspi/utils.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/__init__.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/accessible.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/constants.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/event.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/registry.py
+file path=usr/lib/python2.7/vendor-packages/pyatspi/utils.py
 file path=usr/share/doc/at-spi-$(COMPONENT_VERSION)/reference/html/Accessibility_8idl.html
 file path=usr/share/doc/at-spi-$(COMPONENT_VERSION)/reference/html/Accessibility_8idl_source.html
 file path=usr/share/doc/at-spi-$(COMPONENT_VERSION)/reference/html/Accessibility__Accessible_8idl.html
