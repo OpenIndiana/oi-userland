@@ -47,6 +47,9 @@ PATCH_LEVEL = 0
 # Enable C99 mode + -Xc for its additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
+# suppress warning: "-features=typeof ignored when used with -Xc"
+CFLAGS.studio += -features=no%typeof
+
 # -xinline=%auto -- we like inlining where appropriate
 CFLAGS.studio += -xinline=%auto
 
@@ -81,6 +84,7 @@ CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
 CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
 CONFIGURE_OPTIONS  +=		--disable-ncurses
+CONFIGURE_OPTIONS  +=		--disable-libsecret
 
 install: $(INSTALL_64)
 	$(MKDIR) $(PROTOUSRLIBDIR)
