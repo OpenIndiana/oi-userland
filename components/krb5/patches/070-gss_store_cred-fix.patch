@@ -1,0 +1,31 @@
+#
+# This patch fixes an issue where gss_store_cred(), when called with
+# overwrite_creds is 1, is not overwriting the ccache file which causes
+# problems when trying to get service tickets and there is an expired tgt cred
+# in that ccache.
+#
+# This problem has been reported to MIT via this ticket: 8010 gss_store_cred
+# should initialize ccache and work with collections
+#
+# Patch source: in-house
+#
+
+diff -ur krb5-1.14.2/src/lib/gssapi/krb5/store_cred.c krb5-1.14.2-23587748/src/lib/gssapi/krb5/store_cred.c
+--- krb5-1.14.2/src/lib/gssapi/krb5/store_cred.c
++++ krb5-1.14.2-23587748/src/lib/gssapi/krb5/store_cred.c
+@@ -144,6 +144,15 @@
+             major_status = GSS_S_FAILURE;
+             goto cleanup;
+         }
++        if (overwrite_cred) {
++            code = krb5_cc_initialize(context, ccache,
++                                      kcred->name->princ);
++            if (code != 0) {
++                *minor_status = code;
++                major_status = GSS_S_CRED_UNAVAIL;
++                goto cleanup;
++            }
++        }
+     }
+ 
+     code = krb5_cc_copy_creds(context, kcred->ccache, ccache);
