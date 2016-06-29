@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
 COMPONENT_VERSION= 2.1.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Support for contracted braille
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)_2_1_1
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)_2_1_1.tar.gz
@@ -35,9 +35,13 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_BUILD_ARGS =
+
+COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) && cp -r python python-2.6)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
 
@@ -55,10 +59,12 @@ ENV = /usr/bin/env -i
 
 $(BUILD_DIR)/.built_python_modules:	$(INSTALL_32)
 	cd $(BUILD_DIR_32)/python && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON) setup.py build
+	cd $(BUILD_DIR_32)/python-2.6 && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON.2.6.32) setup.py build
 	$(TOUCH) $@
 
 $(BUILD_DIR)/.installed_python_modules:	$(INSTALL_32) $(BUILD_DIR)/.built_python_modules
 	cd $(BUILD_DIR_32)/python && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON) setup.py install --root $(PROTO_DIR) --install-lib /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+	cd $(BUILD_DIR_32)/python-2.6 && $(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib:/usr/lib:/lib $(PYTHON.2.6.32) setup.py install --root $(PROTO_DIR) --install-lib /usr/lib/python2.6/vendor-packages
 	$(TOUCH) $@
 
 build: $(BUILD_32_and_64)
@@ -66,3 +72,7 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64) $(BUILD_DIR)/.built_python_modules $(BUILD_DIR)/.installed_python_modules
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
