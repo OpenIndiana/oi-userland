@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
 COMPONENT_VERSION=		7.12
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -48,9 +49,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION=2.7
+
 PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 PKG_OPTIONS +=	-D PYTHON_VERSION="$(PYTHON_VERSION)"
-PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D) && \
@@ -86,11 +88,11 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/python/pygobject-26
-REQUIRED_PACKAGES += library/python/pygtk2-26
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
