@@ -27,18 +27,18 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
-COMPONENT_VERSION=	8.4.2
+COMPONENT_VERSION=	8.15.0
 COMPONENT_PROJECT_URL=	http://www.rsyslog.com/
-COMPONENT_ARCHIVE_HASH=	sha256:71c3c6dac74fba2692f9fefb092cd3d22e2bd71eb702e0da06648de51b8b7b9a
+COMPONENT_ARCHIVE_HASH=	sha256:9ed6615a8503964290471e98ed363f3975b964a34c2d4610fb815a432aadaf59
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
-TPNO=                   22636
+TPNO=                   28284
 
 # The documentation is in a separate download
 COMPONENT_SRC_DOC=		$(COMPONENT_NAME)-doc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_DOC=		$(COMPONENT_SRC_DOC).tar.gz
-COMPONENT_ARCHIVE_HASH_DOC=	sha256:21862b046b3504f136f9b8961466f2b248ac315c67de8742bd4a35c599f3dd48
+COMPONENT_ARCHIVE_HASH_DOC=	sha256:3462402165a3ff34ceff23db20382a14bd3727131994f140a004f4872a01c12a
 COMPONENT_ARCHIVE_URL_DOC=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_DOC)
 
 UNPACK_ARGS_DOC=		-r $(COMPONENT_SRC_DOC)
@@ -75,6 +75,10 @@ CFLAGS += -std=c99
 # /usr/lib/rsyslog .
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
 
+# Rsyslog sources contain __FILE__ macros which contain full path to the workspace
+# This may appear in debug output which is not nice. By specifying the source
+# path relative we force the macro to be relative path too.
+CONFIGURE_OPTIONS +=    --srcdir=../../$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-mail
 CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
@@ -89,6 +93,9 @@ CONFIGURE_OPTIONS +=	--enable-extended-tests
 # There are man pages in the tarball, which will require modification for
 # content. Also, building them from here requires python-docutils.
 CONFIGURE_OPTIONS +=	--disable-generate-man-pages
+
+# Make the build verbose, show executed commands
+COMPONENT_BUILD_ARGS += AM_DEFAULT_VERBOSITY=1
 
 # common targets
 PROTODOCDIR=	$(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)
