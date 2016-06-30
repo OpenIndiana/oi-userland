@@ -23,16 +23,16 @@
 # Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p6
-IPS_COMPONENT_VERSION=	4.2.8.6
+COMPONENT_VERSION=	4.2.8p8
+IPS_COMPONENT_VERSION=	4.2.8.8
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:583d0e1c573ace30a9c6afbea0fc52cae9c8c916dbc15c026e485a0dda4ba048
+	sha256:2ab3d0b5f0456e6311dda1cc27ab75da108762773a19e46abd938bd9407b97ee
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
@@ -40,9 +40,9 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS=
 
@@ -72,4 +72,10 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -22,18 +22,18 @@
 
 # If you do not want to configure your client to listen for multicast, comment
 # this line out. This should only be used for casual time keeping, like keeping
-# a desktop system in sync. 
+# a desktop system in sync.
 
-multicastclient 224.0.1.1
+#multicastclient 224.0.1.1
 
 # You can also use broadcast mode. Again, only use for casual timekeeping.
 
-broadcastclient
+#broadcastclient
 
 # The default is to require authentication. Without authentication you do not
-# have any control over what servers your system is getting its time from. 
-# It is possible for another system to target your system to change the time. 
-# However for casual time keeping and ease of administration authentication 
+# have any control over what servers your system is getting its time from.
+# It is possible for another system to target your system to change the time.
+# However for casual time keeping and ease of administration authentication
 # may not be necessary. Using authentication is recommended.
 
 disable auth
@@ -43,12 +43,12 @@ disable auth
 # in a causual way, one server may be enough for you. If you wish to keep it
 # to a more accurate level, 3 or more is recommended. Do not choose 2, because
 # 2 servers is an unstable configuration. By the same token 3 is only acceptable
-# if all are always available, since when a single one reboots or otherwise 
-# becomes unavailable, you have just 2. The iburst keyword specifies that 
+# if all are always available, since when a single one reboots or otherwise
+# becomes unavailable, you have just 2. The iburst keyword specifies that
 # multiple packets be sent at start-up to allow the system to more quickly
 # get the correct time at boot.
 #
-# For a list of Internet NTP servers see 
+# For a list of Internet NTP servers see
 # http://support.ntp.org/bin/view/Servers/WebHome
 # If you use this list, be sure to read, understand and abide by the rules
 # each server has published for accessing themselves.
@@ -57,28 +57,45 @@ disable auth
 # instructions for accessing these are at http://www.pool.ntp.org
 # Please consider adding your own servers to the pool if possible.
 #
-# Many ISP's also provide NTP servers for use by their customers. 
+# Many ISP's also provide NTP servers for use by their customers.
 
-# server server_name1 iburst
-# server server_name2 iburst
-# server server_name3 iburst
+server 0.openindiana.pool.ntp.org iburst
+server 1.openindiana.pool.ntp.org iburst
+server 2.openindiana.pool.ntp.org iburst
+server 3.openindiana.pool.ntp.org iburst
 
-# Always configure the drift file. It can take days for ntpd to completely 
+# Always configure the drift file. It can take days for ntpd to completely
 # stabilize and without the drift file, it has to start over on a reboot
-# of if ntpd restarts. 
+# of if ntpd restarts.
 
 driftfile /var/ntp/ntp.drift
 
-# It is always wise to configure at least the loopstats and peerstats files. 
-# Otherwise when ntpd does something you don't expect there is no way to 
-# find out why. 
+# Permit time synchronization with our time source, but do not
+# permit the source to query or modify the service on this system.
+restrict default nomodify notrap nopeer noquery
+
+# Permit all access over the loopback interface.  This could
+# be tightened as well, but to do so would effect some of
+# the administrative functions.
+restrict 127.0.0.1
+restrict ::1
+
+# It is always wise to configure at least the loopstats and peerstats files.
+# Otherwise when ntpd does something you don't expect there is no way to
+# find out why.
 
 statsdir /var/ntp/ntpstats/
 filegen peerstats file peerstats type day enable
 filegen loopstats file loopstats type day enable
 
 # To track the events regarding the system clock, the protostats file can be useful
-# as well. 
+# as well.
+
+# Disable the monitoring facility to prevent amplification attacks using ntpdc
+# monlist command when default restrict does not include the noquery flag. See
+# CVE-2013-5211 for more details.
+# Note: Monitoring will not be disabled with the limited restriction flag.
+disable monitor
 
 #filegen protostats file protostats type day enable
 
@@ -87,13 +104,13 @@ filegen loopstats file loopstats type day enable
 
 #filegen cryptostats file cryptostats type day enable
 
-# The clockstats files are only useful if a hardware reference clock is 
-# configured. See the /etc/inet/ntp.server file for more information about 
+# The clockstats files are only useful if a hardware reference clock is
+# configured. See the /etc/inet/ntp.server file for more information about
 # that.
 
 #filegen clockstats file clockstats type day enable
 
-# The sysstats and rawstats output might be useful in debugging, but are 
+# The sysstats and rawstats output might be useful in debugging, but are
 # not important otherwise.
 
 #filegen sysstats file sysstats type day enable
