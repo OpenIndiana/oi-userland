@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= GConf
 COMPONENT_VERSION= 2.32.4
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= GNOME Configuration Framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,11 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://projects.gnome.org/gconf/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-gcc_OPT = -O2
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -45,6 +45,7 @@ CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-defaults-service=no
 
 CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
+CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -57,3 +58,16 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/orbit2
+REQUIRED_PACKAGES += library/python-2/lxml-27
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += text/gnu-gettext
+REQUIRED_PACKAGES += text/intltool

@@ -6,13 +6,13 @@ diff -ur GConf-2.6.1/gconf/gconf-locale.c GConf-2.6.1.hacked/gconf/gconf-locale.
  #include <time.h>
  #include <string.h>
 +#include <stdio.h>
- 
+
  static void
  gconf_locale_cache_add (GConfLocaleCache* cache,
 @@ -189,7 +190,66 @@
   * Big mess o' cut-and-pasted code
   */
- 
+
 -/* --------------------------------------------------------------- */
 +static GHashTable *alias_table = NULL;
 +
@@ -74,15 +74,14 @@ diff -ur GConf-2.6.1/gconf/gconf-locale.c GConf-2.6.1.hacked/gconf/gconf-locale.
 +    }
 +  return lang;
 +}
- 
+
  /* Mask for components of locale spec. The ordering here is from
   * least significant to most significant
 @@ -360,6 +420,8 @@
-           category_memory[0]= '\0'; 
+           category_memory[0]= '\0';
            category_memory++;
-           
+
 +	  cp = unalias_lang (cp); /* add locale alias support */
 +
            if (strcmp (cp, "C") == 0)
              c_locale_defined= TRUE;
-           
