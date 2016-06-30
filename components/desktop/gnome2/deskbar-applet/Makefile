@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= deskbar-applet
 COMPONENT_VERSION= 2.32.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GNOME panel applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,9 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,6 +43,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					autoconf )
 
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
+CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
@@ -51,3 +55,26 @@ COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += library/desktop/evolution-data-server
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += library/python/gnome-python-27
+REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += library/python/python-gnome-desktop-27
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python2.7
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/gnu-gettext
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/intltool
+REQUIRED_PACKAGES += x11/library/libx11
