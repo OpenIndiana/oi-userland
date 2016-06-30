@@ -1,0 +1,41 @@
+#
+# Patch to allow the t_kdb.py test to test a KDC using a LDAP backend provided
+# by the Solaris OpenLDAP slapd for the KDB.  MIT have been notified and they
+# say they will update t_kdb.py to work on S12 by the 1.15 release.
+#
+# Patch source: in-house
+#
+
+--- krb5-1.14.2-23587748/src/tests/t_kdb.py
++++ krb5-1.14.2/src/tests/t_kdb.py
+@@ -14,7 +14,10 @@
+ 
+ system_slapd = which('slapd')
+ if not system_slapd:
+-    skip_rest('LDAP KDB tests', 'slapd not found')
++    if os.path.isfile('/usr/lib/slapd'):
++        system_slapd = '/usr/lib/slapd'
++    else:
++        skip_rest('LDAP KDB tests', 'slapd not found')
+ 
+ ldapdir = os.path.abspath('ldap')
+ slapd = os.path.join(ldapdir, 'slapd')
+@@ -44,6 +47,8 @@
+ core_schema = None
+ if os.path.isfile('/etc/ldap/schema/core.schema'):
+     core_schema = '/etc/ldap/schema/core.schema'
++elif os.path.isfile('/etc/openldap/schema/core.schema'):
++    core_schema = '/etc/openldap/schema/core.schema'
+ 
+ # Make a slapd config file.  This is deprecated in OpenLDAP 2.3 and
+ # later, but it's easier than using LDIF and slapadd.  Include some
+@@ -54,8 +59,7 @@
+ file.write('include %s\n' % schema)
+ if core_schema:
+     file.write('include %s\n' % core_schema)
+-file.write('moduleload back_bdb\n')
+-file.write('database bdb\n')
++file.write('database mdb\n')
+ file.write('suffix %s\n' % top_dn)
+ file.write('rootdn %s\n' % admin_dn)
+ file.write('rootpw %s\n' % admin_pw)
