@@ -1,0 +1,16 @@
+getpid() returns pid_t; format strings expected unsigned int.  gcc builds
+fail without this change.
+
+XXX file upstream bug; patch may not be correct solution
+
+--- grilo-0.2.12/libs/net/grl-net-wc.c	2014-11-18 10:47:05.000000000 -0800
++++ grilo-0.2.12/libs/net/grl-net-wc.c	2015-07-09 09:39:48.083811259 -0700
+@@ -545,7 +545,7 @@
+ 
+   /* Append record about the just written file to "grl-net-mock-data-%PID.ini"
+    * in the capture directory. */
+-  char *filename = g_strdup_printf ("grl-net-mock-data-%u.ini", getpid());
++  char *filename = g_strdup_printf ("grl-net-mock-data-%u.ini", (unsigned int) getpid());
+   path = g_build_filename (capture_dir, filename, NULL);
+   g_free (filename);
+ 
