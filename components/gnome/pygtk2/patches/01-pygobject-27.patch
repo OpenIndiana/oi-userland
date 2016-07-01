@@ -1,0 +1,99 @@
+Patch from Desktop gate to handle the way they renamed everything in pygobject
+to include "27" to avoid clashing with the python 2.6 version.  Not suitable
+for upstream, considering removal once new versions from Userland propogate
+to all build machines.
+
+--- a/configure.ac.orig	2014-10-27 00:14:12.378176408 +0530
++++ b/configure.ac	2014-10-26 23:36:49.354543148 +0530
+@@ -136,18 +136,18 @@
+   GLIB_LIBS=`echo $GLIB_LIBS | sed -e "s/$export_dynamic//"`
+ fi
+ 
+-PKG_CHECK_MODULES(PYGOBJECT, [pygobject-2.0 >= pygobject_required_version])
++PKG_CHECK_MODULES(PYGOBJECT, [pygobject27-2.0 >= pygobject_required_version])
+ 
+-PYGOBJECT_INCLUDEDIR=`$PKG_CONFIG --variable=pygtkincludedir pygobject-2.0`
++PYGOBJECT_INCLUDEDIR=`$PKG_CONFIG --variable=pygtkincludedir pygobject27-2.0`
+ AC_SUBST(PYGOBJECT_INCLUDEDIR)
+ 
+-PYGOBJECT_DATADIR=`$PKG_CONFIG --variable=datadir pygobject-2.0`
++PYGOBJECT_DATADIR=`$PKG_CONFIG --variable=datadir pygobject27-2.0`
+ AC_SUBST(PYGOBJECT_DATADIR)
+ 
+ 
+ dnl PyGObject defs
+ AC_SUBST(PYGOBJECT_DEFSDIR)
+-PYGOBJECT_DEFSDIR=`$PKG_CONFIG --variable defsdir pygobject-2.0`
++PYGOBJECT_DEFSDIR=`$PKG_CONFIG --variable defsdir pygobject27-2.0`
+ 
+ AC_MSG_CHECKING([for gio-types.defs])
+ if test -n "$PYGOBJECT_DEFSDIR" && test -e "$PYGOBJECT_DEFSDIR/gio-types.defs"; then
+@@ -160,10 +160,10 @@
+ 
+ 
+ dnl Documentation
+-PYGOBJECT_FIXXREF="$PYTHON `$PKG_CONFIG --variable=fixxref pygobject-2.0`"
++PYGOBJECT_FIXXREF="$PYTHON `$PKG_CONFIG --variable=fixxref pygobject27-2.0`"
+ AC_SUBST(PYGOBJECT_FIXXREF)
+ 
+-PYGOBJECT_PYGDOCS="`$PKG_CONFIG --variable=pygdocs pygobject-2.0`"
++PYGOBJECT_PYGDOCS="`$PKG_CONFIG --variable=pygdocs pygobject27-2.0`"
+ AC_SUBST(PYGOBJECT_PYGDOCS)
+ 
+ dnl atk
+@@ -190,7 +190,7 @@
+ AC_SUBST([CODEGENDIR])
+ 
+ AC_MSG_CHECKING([for codegen])
+-CODEGENDIR=`$PKG_CONFIG --variable codegendir pygobject-2.0`
++CODEGENDIR=`$PKG_CONFIG --variable codegendir pygobject27-2.0`
+ 
+ if test -z $CODEGENDIR; then
+   AC_MSG_ERROR([unable to find PyGObject codegen])
+@@ -203,7 +203,7 @@
+ AC_SUBST([PYGTK_CODEGEN_DEFINES])
+ 
+ gtk_version=""
+-PKG_CHECK_MODULES(PYCAIRO, [pycairo >= pycairo_required_version],
++PKG_CHECK_MODULES(PYCAIRO, [pycairo27 >= pycairo_required_version],
+         have_pycairo=true, have_pycairo=false)
+ AC_SUBST(PYCAIRO_CFLAGS)
+ AC_SUBST(PYCAIRO_LIBS)
+@@ -211,17 +211,17 @@
+   PYGTK_CODEGEN_DEFINES="-DHAVE_PYCAIRO $PYGTK_CODEGEN_DEFINES";
+   AC_DEFINE([HAVE_PYCAIRO], [1], [Define to 1 if pycairo is available])
+ 
+-  AC_DEFINE_UNQUOTED(PYCAIRO_MAJOR_VERSION, [`pkg-config --modversion pycairo | cut -d '.' -f 1`], dnl
+-                     [pycairo major version])
+-  AC_DEFINE_UNQUOTED(PYCAIRO_MINOR_VERSION, [`pkg-config --modversion pycairo | cut -d '.' -f 2`], dnl
+-                     [pycairo minor version])
+-  AC_DEFINE_UNQUOTED(PYCAIRO_MICRO_VERSION, [`pkg-config --modversion pycairo | cut -d '.' -f 3`], dnl
+-                     [pycairo micro version])
++  AC_DEFINE_UNQUOTED(PYCAIRO_MAJOR_VERSION, [`pkg-config --modversion pycairo27 | cut -d '.' -f 1`], dnl
++                     [pycairo27 major version])
++  AC_DEFINE_UNQUOTED(PYCAIRO_MINOR_VERSION, [`pkg-config --modversion pycairo27 | cut -d '.' -f 2`], dnl
++                     [pycairo27 minor version])
++  AC_DEFINE_UNQUOTED(PYCAIRO_MICRO_VERSION, [`pkg-config --modversion pycairo27 | cut -d '.' -f 3`], dnl
++                     [pycairo27 micro version])
+ 
+   dnl pangocairo
+   PKG_CHECK_MODULES(PANGOCAIRO,
+           [pangocairo >= pango_required_version,
+-           pycairo >= pycairo_required_version],
++           pycairo27 >= pycairo_required_version],
+ 	  have_pangocairo=true, have_pangocairo=false)
+   if test ! $have_pangocairo
+   then
+--- a/docs/Makefile.am.orig	2014-10-27 01:40:34.651076337 +0530
++++ b/docs/Makefile.am	2014-10-27 01:42:42.690592199 +0530
+@@ -3,8 +3,8 @@
+ REF_VERSION = $(PYGTK_MAJOR_VERSION).$(PYGTK_MINOR_VERSION)
+ FULL_VERSION = $(REF_VERSION).$(PYGTK_MICRO_VERSION)
+ 
+-HTML_STYLE = $(PYGOBJECT_DATADIR)/pygobject/xsl/ref-html-style.xsl
+-PDF_STYLE = $(PYGOBJECT_DATADIR)/pygobject/xsl/pdf-style.xsl
++HTML_STYLE = $(PYGOBJECT_DATADIR)/pygobject27/xsl/ref-html-style.xsl
++PDF_STYLE = $(PYGOBJECT_DATADIR)/pygobject27/xsl/pdf-style.xsl
+ 
+ XMLFILES = 						\
+ 	reference/pygtk2-ref.xml			\
