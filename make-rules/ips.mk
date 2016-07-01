@@ -174,6 +174,7 @@ MANIFESTS =		$(VERSIONED_MANIFESTS:%=$(MANIFEST_BASE)-%)
 
 DEPENDED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
 RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
+PRE_PUBLISHED=$(RESOLVED:%.depend.res=%.pre-published)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
@@ -185,9 +186,13 @@ IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
 
 # allow publishing to be overridden, such as when
 # a package is for one architecture only.
+PRE_PUBLISH_STAMP ?= $(BUILD_DIR)/.pre-published-$(MACH)
 PUBLISH_STAMP ?= $(BUILD_DIR)/.published-$(MACH)
 
-publish:		build install $(PUBLISH_STAMP)
+# Do all that is needed to ensure the package is consistent for publishing,
+# except actually pushing to a repo, separately from the push to the repo.
+pre-publish:	build install $(PRE_PUBLISH_STAMP)
+publish:		pre-publish $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 
@@ -412,9 +417,20 @@ FRC:
 PKGSEND_PUBLISH_OPTIONS = -s $(WS_REPO) publish --fmri-in-manifest
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGSEND_PUBLISH_OPTIONS += -T \*.py
-$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
+
+# Do all the hard work that is needed to ensure the package is consistent
+# and ready for publishing, except actually pushing bits to a repository
+$(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
+	$(CP) $< $@
+	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
+
+# Push to the repo
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
+
+$(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
+	$(TOUCH) $@
 
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
@@ -422,22 +438,22 @@ $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 print-package-names:	canonical-manifests
 	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 print-package-paths:	canonical-manifests
 	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
 	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
-		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
-		(cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
-	else ; \
+	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
+	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
+	 else ; \
 	    echo "unsafe to install package(s) automatically" ; \
-        fi
+	 fi
 
 $(RESOLVED):	install
 
