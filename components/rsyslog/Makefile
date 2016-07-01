@@ -129,7 +129,6 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += library/liblogging
-REQUIRED_PACKAGES += library/security/gss
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
