@@ -1,0 +1,14 @@
+Add missing define on Solaris.
+
+XXX file upstream bug
+
+--- mozjs-24.2.0/js/src/jit/AsmJSSignalHandlers.cpp	2013-10-29 13:40:19.000000000 -0700
++++ mozjs-24.2.0.new/js/src/jit/AsmJSSignalHandlers.cpp	2015-06-27 18:27:41.867039386 -0700
+@@ -60,6 +60,7 @@
+ # if defined(__linux__)
+ #  define XMM_sig(p,i) ((p)->uc_mcontext.fpregs->_xmm[i])
+ # else
++#  define REG_EIP EIP
+ #  define XMM_sig(p,i) ((p)->uc_mcontext.fpregs.fp_reg_set.fpchip_state.xmm[i])
+ # endif
+ # define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_EIP])

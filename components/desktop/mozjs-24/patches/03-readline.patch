@@ -1,0 +1,24 @@
+Solaris-specific hack for library dependencies.
+
+Not appropriate for upstream.
+
+--- mozjs-24.2.0/js/src/configure	2015-06-27 16:57:49.991630432 -0700
++++ mozjs-24.2.0.new/js/src/configure	2015-06-27 16:57:24.260169859 -0700
+@@ -14593,7 +14593,7 @@
+   echo $ac_n "(cached) $ac_c" 1>&6
+ else
+   ac_save_LIBS="$LIBS"
+-LIBS="-lreadline  $LIBS"
++LIBS="-lreadline -lcurses $LIBS"
+ cat > conftest.$ac_ext <<EOF
+ #line 14599 "configure"
+ #include "confdefs.h"
+@@ -14621,7 +14621,7 @@
+ fi
+ if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
+   echo "$ac_t""yes" 1>&6
+-  EDITLINE_LIBS="-lreadline"
++  EDITLINE_LIBS="-lreadline -lcurses"
+ else
+   echo "$ac_t""no" 1>&6
+ { echo "configure: error: No system readline library found." 1>&2; exit 1; }

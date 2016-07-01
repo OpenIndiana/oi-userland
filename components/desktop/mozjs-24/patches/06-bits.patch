@@ -1,0 +1,512 @@
+Backported fixes from newer upstream version to fix 32/64-bit combined builds.
+
+Not appropriate for upstream.
+
+--- mozjs-24.2.0/js/public/HashTable.h	2013-12-11 14:22:50.000000000 -0800
++++ mozjs-31.2.0/js/public/HashTable.h	2014-10-10 11:31:12.000000000 -0700
+@@ -501,1 +501,1 @@
+-#if JS_BYTES_PER_WORD == 4
++#if JS_BITS_PER_WORD == 32
+--- mozjs-24.2.0/js/public/HeapAPI.h	2013-10-29 13:40:26.000000000 -0700
++++ mozjs-31.2.0/js/public/HeapAPI.h	2014-10-10 11:31:12.000000000 -0700
+@@ -94,6 +99,7 @@
+     uintptr_t *bitmap = GetGCThingMarkBitmap(thing);
+-    *maskp = uintptr_t(1) << (bit % JS_BITS_PER_WORD);
+-    *wordp = &bitmap[bit / JS_BITS_PER_WORD];
++    const uintptr_t nbits = sizeof(*bitmap) * CHAR_BIT;
++    *maskp = uintptr_t(1) << (bit % nbits);
++    *wordp = &bitmap[bit / nbits];
+ }
+ 
+ static JS_ALWAYS_INLINE JS::shadow::ArenaHeader *
+ GetGCThingArena(void *thing)
+--- mozjs-24.2.0/js/public/TemplateLib.h	2013-10-29 13:40:26.000000000 -0700
++++ mozjs-24.2.0/js/public/TemplateLib.h	2015-06-29 13:41:04.004359799 -0700
+@@ -7,6 +7,7 @@
+ #ifndef js_TemplateLib_h
+ #define js_TemplateLib_h
+ 
++#include <limits.h>
+ #include "jstypes.h"
+ 
+ /*
+@@ -60,7 +61,7 @@
+ 
+ /* Compute the number of bits in the given unsigned type. */
+ template <class T> struct BitSize {
+-    static const size_t result = sizeof(T) * JS_BITS_PER_BYTE;
++    static const size_t result = sizeof(T) * CHAR_BIT;
+ };
+ 
+ /*
+--- mozjs-24.2.0/js/public/Utility.h	2013-12-11 14:22:50.000000000 -0800
++++ mozjs-24.2.0/js/public/Utility.h	2015-06-29 12:51:42.314214334 -0700
+@@ -312,14 +312,12 @@
+         (_log2) = 31 - js_bitscan_clz32(((unsigned int)(_n)) | 1);            \
+     JS_END_MACRO
+ 
+-#if JS_BYTES_PER_WORD == 4
++#if JS_BITS_PER_WORD == 32
+ #  define js_FloorLog2wImpl(n)                                                \
+     ((size_t)(JS_BITS_PER_WORD - 1 - js_bitscan_clz32(n)))
+-#elif JS_BYTES_PER_WORD == 8
++#else
+ #  define js_FloorLog2wImpl(n)                                                \
+     ((size_t)(JS_BITS_PER_WORD - 1 - js_bitscan_clz64(n)))
+-#else
+-# error "NOT SUPPORTED"
+ #endif
+ 
+ JS_END_EXTERN_C
+--- mozjs-24.2.0/js/src/configure	2015-06-29 11:33:21.539108937 -0700
++++ mozjs-31.2.0/js/src/configure	2014-10-10 11:49:47.000000000 -0700
+@@ -9091,80 +9448,16 @@
+   echo "$ac_t""no" 1>&6
+ fi
+ 
+-
+-echo $ac_n "checking for the size of void*""... $ac_c" 1>&6
+-echo "configure:9097: checking for the size of void*" >&5
+-if eval "test \"`echo '$''{'moz_cv_size_of_JS_BYTES_PER_WORD'+set}'`\" = set"; then
+-  echo $ac_n "(cached) $ac_c" 1>&6
+-else
+-  
+-  moz_cv_size_of_JS_BYTES_PER_WORD=
+-  for size in 4 8; do
+-    cat > conftest.$ac_ext <<EOF
+-#line 9105 "configure"
+-#include "confdefs.h"
+-
+-int main() {
+-
+-                     int a[sizeof (void*) == $size ? 1 : -1];
+-                     return 0;
+-                   
+-; return 0; }
+-EOF
+-if { (eval echo configure:9115: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+-  rm -rf conftest*
+-  moz_cv_size_of_JS_BYTES_PER_WORD=$size; break
+-else
+-  echo "configure: failed program was:" >&5
+-  cat conftest.$ac_ext >&5
+-fi
+-rm -f conftest*
+-  done
+-  if test ! "$moz_cv_size_of_JS_BYTES_PER_WORD"; then
+-    { echo "configure: error: No size found for void*" 1>&2; exit 1; }
+-  fi
+-
+-fi
+-
+-echo "$ac_t""$moz_cv_size_of_JS_BYTES_PER_WORD" 1>&6
+-cat >> confdefs.pytmp <<EOF
+-    (''' JS_BYTES_PER_WORD ''', r''' $moz_cv_size_of_JS_BYTES_PER_WORD ''')
+-EOF
+-cat >> confdefs.h <<EOF
+-#define JS_BYTES_PER_WORD $moz_cv_size_of_JS_BYTES_PER_WORD
+-EOF
+-
+-
+-if test "$moz_cv_size_of_JS_BYTES_PER_WORD" -eq "4"; then
+-  cat >> confdefs.pytmp <<\EOF
+-    (''' JS_BITS_PER_WORD_LOG2 ''', r''' 5 ''')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define JS_BITS_PER_WORD_LOG2 5
+-EOF
+-
+-elif test "$moz_cv_size_of_JS_BYTES_PER_WORD" -eq "8"; then
+-  cat >> confdefs.pytmp <<\EOF
+-    (''' JS_BITS_PER_WORD_LOG2 ''', r''' 6 ''')
+-EOF
+-cat >> confdefs.h <<\EOF
+-#define JS_BITS_PER_WORD_LOG2 6
+-EOF
+-
+-else
+-  { echo "configure: error: Unexpected JS_BYTES_PER_WORD" 1>&2; exit 1; }
+-fi
+-
+  for ac_hdr in endian.h
+   do
+        ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
+   echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
+ echo "configure:9163: checking for $ac_hdr" >&5
+   if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
+   echo $ac_n "(cached) $ac_c" 1>&6
+ else
+    cat > conftest.$ac_ext <<EOF
+ #line 9168 "configure"
+ #include "confdefs.h"
+ 
+ #include <$ac_hdr>
+--- mozjs-24.2.0/js/src/js-config.h.in	2013-12-11 14:22:50.000000000 -0800
++++ mozjs-31.2.0/js/src/js-config.h.in	2014-10-10 11:31:12.000000000 -0700
+@@ -40,16 +40,12 @@
+    useable.  See jscpucfg.h.  */
+ #undef JS_HAVE_SYS_ISA_DEFS_H
+ 
+-/* The configure script defines these if it doesn't #define
+-   JS_HAVE_STDINT_H.  */
+-#undef JS_BYTES_PER_WORD
+-
+ /* Some mozilla code uses JS-friend APIs that depend on JS_METHODJIT being
+    correct. */
+ #undef JS_METHODJIT
+ 
+ /* MOZILLA JSAPI version number components */
+ #undef MOZJS_MAJOR_VERSION
+ #undef MOZJS_MINOR_VERSION
+ 
+ #endif /* js_config_h___ */
+--- mozjs-24.2.0/js/src/jscpucfg.h	2013-10-29 13:40:20.000000000 -0700
++++ mozjs-31.2.0/js/src/jscpucfg.h	2014-10-10 11:31:12.000000000 -0700
+@@ -14,13 +14,11 @@
+ # if defined(_M_X64) || defined(_M_AMD64) || defined(_AMD64_)
+ #  define IS_LITTLE_ENDIAN 1
+ #  undef  IS_BIG_ENDIAN
+-#  define JS_BYTES_PER_WORD   8
+-#  define JS_BITS_PER_WORD_LOG2   6
+ # else  /* !(defined(_M_X64) || defined(_M_AMD64) || defined(_AMD64_)) */
+ #  error "CPU type is unknown"
+ # endif /* !(defined(_M_X64) || defined(_M_AMD64) || defined(_AMD64_)) */
+ 
+-#elif defined(_WIN32) || defined(XP_OS2)
++#elif defined(_WIN32)
+ 
+ # ifdef __WATCOMC__
+ #  define HAVE_VA_LIST_AS_ARRAY 1
+@@ -28,10 +26,8 @@
+ 
+ # define IS_LITTLE_ENDIAN 1
+ # undef  IS_BIG_ENDIAN
+-# define JS_BYTES_PER_WORD   4
+-# define JS_BITS_PER_WORD_LOG2   5
+ 
+-#elif defined(__APPLE__)
++#elif defined(__APPLE__) || defined(__powerpc__) || defined(__ppc__)
+ # if __LITTLE_ENDIAN__
+ #  define IS_LITTLE_ENDIAN 1
+ #  undef  IS_BIG_ENDIAN
+--- mozjs-24.2.0/js/src/jsfriendapi.h	2013-12-11 14:22:50.000000000 -0800
++++ mozjs-31.2.0/js/src/jsfriendapi.h	2014-10-10 11:31:12.000000000 -0700
+@@ -1660,1 +1660,1 @@
+-JS_STATIC_ASSERT(sizeof(jsid) == JS_BYTES_PER_WORD);
++JS_STATIC_ASSERT(sizeof(jsid) == sizeof(void*));
+--- mozjs-24.2.0/js/src/ds/BitArray.h	2013-10-29 13:40:26.000000000 -0700
++++ mozjs-31.2.0/js/src/ds/BitArray.h	2014-10-10 10:58:07.000000000 -0700
+@@ -7,22 +7,31 @@
+ #ifndef ds_BitArray_h
+ #define ds_BitArray_h
+ 
+-#include "jstypes.h" 
++#include "js/TemplateLib.h"
+ 
+-#include "js/TemplateLib.h" 
++#include <limits.h>
++
++#include "jstypes.h"
+ 
+ namespace js {
+ 
+ template <size_t nbits>
+-class BitArray {
++class BitArray
++{
+   private:
+-    static const size_t numSlots =
+-        nbits / JS_BITS_PER_WORD + (nbits % JS_BITS_PER_WORD == 0 ? 0 : 1);
++    static const size_t bitsPerElement = sizeof(uintptr_t) * CHAR_BIT;
++    static const size_t numSlots = nbits / bitsPerElement + (nbits % bitsPerElement == 0 ? 0 : 1);
++    static const size_t paddingBits = (numSlots * bitsPerElement) - nbits;
++    static_assert(paddingBits < bitsPerElement, "More padding bits than expected.");
++    static const uintptr_t paddingMask = uintptr_t(-1) >> paddingBits;
++
+     uintptr_t map[numSlots];
+ 
+   public:
+     void clear(bool value) {
+         memset(map, value ? 0xFF : 0, sizeof(map));
++        if (value)
++            map[numSlots - 1] &= paddingMask;
+     }
+ 
+     inline bool get(size_t offset) const {
+@@ -31,13 +40,13 @@
+         return map[index] & mask;
+     }
+ 
+-    inline void set(size_t offset) {
++    void set(size_t offset) {
+         uintptr_t index, mask;
+         getMarkWordAndMask(offset, &index, &mask);
+         map[index] |= mask;
+     }
+ 
+-    inline void unset(size_t offset) {
++    void unset(size_t offset) {
+         uintptr_t index, mask;
+         getMarkWordAndMask(offset, &index, &mask);
+         map[index] &= ~mask;
+@@ -54,8 +63,10 @@
+   private:
+     inline void getMarkWordAndMask(size_t offset,
+                                    uintptr_t *indexp, uintptr_t *maskp) const {
+-        *indexp = offset >> tl::FloorLog2<JS_BITS_PER_WORD>::result;
+-        *maskp = uintptr_t(1) << (offset & (JS_BITS_PER_WORD - 1));
++        static_assert(bitsPerElement == 32 || bitsPerElement == 64,
++                      "unexpected bitsPerElement value");
++        *indexp = offset / bitsPerElement;
++        *maskp = uintptr_t(1) << (offset % bitsPerElement);
+     }
+ };
+ 
+--- mozjs-24.2.0/js/src/frontend/BytecodeEmitter.cpp	2013-10-29 13:40:26.000000000 -0700
++++ mozjs-31.2.0/js/src/frontend/BytecodeEmitter.cpp	2014-10-10 11:31:12.000000000 -0700
+@@ -2309,19 +2606,19 @@
+                 i += JS_BIT(16);
+             if (i >= intmap_bitlen) {
+                 if (!intmap &&
+-                    i < (INTMAP_LENGTH << JS_BITS_PER_WORD_LOG2)) {
++                    size_t(i) < (INTMAP_LENGTH * JS_BITMAP_NBITS)) {
+                     intmap = intmap_space;
+-                    intmap_bitlen = INTMAP_LENGTH << JS_BITS_PER_WORD_LOG2;
++                    intmap_bitlen = INTMAP_LENGTH * JS_BITMAP_NBITS;
+                 } else {
+                     /* Just grab 8K for the worst-case bitmap. */
+                     intmap_bitlen = JS_BIT(16);
+-                    intmap = cx->pod_malloc<jsbitmap>(JS_BIT(16) >> JS_BITS_PER_WORD_LOG2);
++                    intmap = cx->pod_malloc<jsbitmap>(JS_BIT(16) / JS_BITMAP_NBITS);
+                     if (!intmap) {
+                         JS_ReportOutOfMemory(cx);
+                         return false;
+                     }
+                 }
+-                memset(intmap, 0, intmap_bitlen >> JS_BITS_PER_BYTE_LOG2);
++                memset(intmap, 0, size_t(intmap_bitlen) / CHAR_BIT);
+             }
+             if (JS_TEST_BIT(intmap, i)) {
+                 switchOp = JSOP_CONDSWITCH;
+--- mozjs-24.2.0/js/src/gc/Heap.h	2013-10-29 13:40:26.000000000 -0700
++++ mozjs-31.2.0/js/src/gc/Heap.h	2014-10-10 11:31:12.000000000 -0700
+@@ -711,12 +740,10 @@
+     }
+ 
+     uintptr_t *arenaBits(ArenaHeader *aheader) {
+-        /*
+-         * We assume that the part of the bitmap corresponding to the arena
+-         * has the exact number of words so we do not need to deal with a word
+-         * that covers bits from two arenas.
+-         */
+-        JS_STATIC_ASSERT(ArenaBitmapBits == ArenaBitmapWords * JS_BITS_PER_WORD);
++        static_assert(ArenaBitmapBits == ArenaBitmapWords * JS_BITS_PER_WORD,
++                      "We assume that the part of the bitmap corresponding to the arena "
++                      "has the exact number of words so we do not need to deal with a word "
++                      "that covers bits from two arenas.");
+ 
+         uintptr_t *word, unused;
+         getMarkWordAndMask(reinterpret_cast<Cell *>(aheader->address()), BLACK, &word, &unused);
+--- mozjs-24.2.0/js/src/jit/BaselineIC.cpp	2013-12-06 14:52:35.000000000 -0800
++++ mozjs-31.2.0/js/src/jit/BaselineIC.cpp	2014-10-10 11:31:12.000000000 -0700
+@@ -18,6 +18,8 @@
+ #include "jit/IonFrames-inl.h"
+ #include "vm/Interpreter-inl.h"
+ 
++#include "js/TemplateLib.h"
++
+ namespace js {
+ namespace jit {
+ 
+@@ -3985,11 +4761,13 @@
+ 
+     // In tempReg, calculate index of word containing bit: (idx >> logBitsPerWord)
+     masm.movePtr(idxReg, tempReg);
+-    masm.rshiftPtr(Imm32(JS_BITS_PER_WORD_LOG2), tempReg);
++    const uint32_t shift = tl::FloorLog2<(sizeof(size_t) * JS_BITS_PER_BYTE)>::result;
++    JS_ASSERT(shift == 5 || shift == 6);
++    masm.rshiftPtr(Imm32(shift), tempReg);
+     masm.loadPtr(BaseIndex(scratchReg, tempReg, ScaleFromElemWidth(sizeof(size_t))), scratchReg);
+ 
+     // Don't bother testing specific bit, if any bit is set in the word, fail.
+     masm.branchPtr(Assembler::NotEqual, scratchReg, ImmWord((size_t)0), &failureReconstructInputs);
+ 
+     // Load the value.  use scratchReg and tempReg to form a ValueOperand to load into.
+     masm.addPtr(Imm32(ArgumentsData::offsetOfArgs()), argData);
+--- mozjs-24.2.0/js/src/jit/IonCaches.cpp	2013-12-06 14:52:35.000000000 -0800
++++ mozjs-31.2.0/js/src/jit/IonCaches.cpp	2014-10-10 11:31:12.000000000 -0700
+@@ -20,6 +20,8 @@
+ 
+ #include "vm/Interpreter-inl.h"
+ 
++#include "js/TemplateLib.h"
++
+ using namespace js;
+ using namespace js::jit;
+ 
+@@ -2421,11 +3341,13 @@
+     masm.loadPtr(Address(tmpReg, offsetof(ArgumentsData, deletedBits)), tmpReg);
+ 
+     // In tempReg, calculate index of word containing bit: (idx >> logBitsPerWord)
+-    masm.rshiftPtr(Imm32(JS_BITS_PER_WORD_LOG2), indexReg);
++    const uint32_t shift = tl::FloorLog2<(sizeof(size_t) * JS_BITS_PER_BYTE)>::result;
++    JS_ASSERT(shift == 5 || shift == 6);
++    masm.rshiftPtr(Imm32(shift), indexReg);
+     masm.loadPtr(BaseIndex(tmpReg, indexReg, ScaleFromElemWidth(sizeof(size_t))), tmpReg);
+ 
+     // Don't bother testing specific bit, if any bit is set in the word, fail.
+     masm.branchPtr(Assembler::NotEqual, tmpReg, ImmWord((size_t)0), &failurePopIndex);
+ 
+     // Get the address to load from into tmpReg
+     masm.loadPrivate(Address(object(), ArgumentsObject::getDataSlotOffset()), tmpReg);
+--- mozjs-24.2.0/js/src/jscrashreport.cpp	2013-10-29 13:40:20.000000000 -0700
++++ mozjs-31.2.0/js/src/jscrashreport.cpp	2014-10-10 11:31:12.000000000 -0700
+@@ -15,10 +15,10 @@
+ using namespace js;
+ using namespace js::crash;
+ 
+-const static int stack_snapshot_max_size = 32768;
+-
+ #if defined(XP_WIN)
+ 
++static const int stack_snapshot_max_size = 32768;
++
+ #include <windows.h>
+ 
+ static bool
+@@ -46,14 +46,14 @@
+     *stack_len = len;
+ 
+     /* Get the register state. */
+-#if defined(_MSC_VER) && JS_BITS_PER_WORD == 32
++#if defined(_MSC_VER) && defined(_M_IX86)
+     /* ASM version for win2k that doesn't support RtlCaptureContext */
+     uint32_t vip, vsp, vbp;
+     __asm {
+-    Label:
++    MyLabel:
+         mov [vbp], ebp;
+         mov [vsp], esp;
+-        mov eax, [Label];
++        mov eax, [MyLabel];
+         mov [vip], eax;
+     }
+     regs->ip = vip;
+@@ -62,14 +62,16 @@
+ #else
+     CONTEXT context;
+     RtlCaptureContext(&context);
+-#if JS_BITS_PER_WORD == 32
++#if defined(_M_IX86)
+     regs->ip = context.Eip;
+     regs->sp = context.Esp;
+     regs->bp = context.Ebp;
+-#else
++#elif defined(_M_X64)
+     regs->ip = context.Rip;
+     regs->sp = context.Rsp;
+     regs->bp = context.Rbp;
++#else
++#error unknown cpu architecture
+ #endif
+ #endif
+ 
+@@ -80,9 +82,9 @@
+ 
+ #elif 0
+ 
+-#include <unistd.h>
+-#include <ucontext.h>
+ #include <sys/mman.h>
++#include <ucontext.h>
++#include <unistd.h>
+ 
+ static bool
+ GetStack(uint64_t *stack, uint64_t *stack_len, CrashRegisters *regs, char *buffer, size_t size)
+@@ -114,14 +116,16 @@
+     if (getcontext(&context) != 0)
+ 	return false;
+ 
+-#if JS_BITS_PER_WORD == 64
++#if defined(__x86_64__)
+     regs->sp = (uint64_t)context.uc_mcontext.gregs[REG_RSP];
+     regs->bp = (uint64_t)context.uc_mcontext.gregs[REG_RBP];
+     regs->ip = (uint64_t)context.uc_mcontext.gregs[REG_RIP];
+-#elif JS_BITS_PER_WORD == 32
++#elif defined(__i386__)
+     regs->sp = (uint64_t)context.uc_mcontext.gregs[REG_ESP];
+     regs->bp = (uint64_t)context.uc_mcontext.gregs[REG_EBP];
+     regs->ip = (uint64_t)context.uc_mcontext.gregs[REG_EIP];
++#else
++#error unknown cpu architecture
+ #endif
+ 
+     js_memcpy(buffer, (void *)p, len);
+--- mozjs-24.2.0/js/src/jstypes.h	2013-10-29 13:40:20.000000000 -0700
++++ mozjs-31.2.0/js/src/jstypes.h	2014-10-10 11:31:12.000000000 -0700
+@@ -244,7 +184,11 @@
+ #define JS_BITS_PER_BYTE 8
+ #define JS_BITS_PER_BYTE_LOG2 3
+ 
+-#define JS_BITS_PER_WORD (JS_BITS_PER_BYTE * JS_BYTES_PER_WORD)
++#if defined(JS_64BIT)
++# define JS_BITS_PER_WORD 64
++#else
++# define JS_BITS_PER_WORD 32
++#endif
+ 
+ /***********************************************************************
+ ** MACROS:      JS_FUNC_TO_DATA_PTR
+--- mozjs-24.2.0/js/src/jsutil.h	2013-12-11 14:22:51.000000000 -0800
++++ mozjs-31.2.0/js/src/jsutil.h	2014-10-10 11:31:12.000000000 -0700
+@@ -208,16 +214,18 @@
+ 
+ /* A bit array is an array of bits represented by an array of words (size_t). */
+ 
++static const size_t BitArrayElementBits = sizeof(size_t) * CHAR_BIT;
++
+ static inline unsigned
+ NumWordsForBitArrayOfLength(size_t length)
+ {
+-    return (length + (JS_BITS_PER_WORD - 1)) / JS_BITS_PER_WORD;
++    return (length + (BitArrayElementBits - 1)) / BitArrayElementBits;
+ }
+ 
+ static inline unsigned
+ BitArrayIndexToWordIndex(size_t length, size_t bitIndex)
+ {
+-    unsigned wordIndex = bitIndex / JS_BITS_PER_WORD;
++    unsigned wordIndex = bitIndex / BitArrayElementBits;
+     JS_ASSERT(wordIndex < length);
+     return wordIndex;
+ }
+@@ -225,7 +233,7 @@
+ static inline size_t
+ BitArrayIndexToWordMask(size_t i)
+ {
+-    return size_t(1) << (i % JS_BITS_PER_WORD);
++    return size_t(1) << (i % BitArrayElementBits);
+ }
+ 
+ static inline bool
+@@ -345,12 +321,13 @@
+ 
+ /* A jsbitmap_t is a long integer that can be used for bitmaps. */
+ typedef size_t jsbitmap;
+-#define JS_TEST_BIT(_map,_bit)  ((_map)[(_bit)>>JS_BITS_PER_WORD_LOG2] &      \
+-                                 ((jsbitmap)1<<((_bit)&(JS_BITS_PER_WORD-1))))
+-#define JS_SET_BIT(_map,_bit)   ((_map)[(_bit)>>JS_BITS_PER_WORD_LOG2] |=     \
+-                                 ((jsbitmap)1<<((_bit)&(JS_BITS_PER_WORD-1))))
+-#define JS_CLEAR_BIT(_map,_bit) ((_map)[(_bit)>>JS_BITS_PER_WORD_LOG2] &=     \
+-                                 ~((jsbitmap)1<<((_bit)&(JS_BITS_PER_WORD-1))))
++#define JS_BITMAP_NBITS (sizeof(jsbitmap) * CHAR_BIT)
++#define JS_TEST_BIT(_map,_bit)  ((_map)[(_bit)/JS_BITMAP_NBITS] &             \
++                                 (jsbitmap(1)<<((_bit)%JS_BITMAP_NBITS)))
++#define JS_SET_BIT(_map,_bit)   ((_map)[(_bit)/JS_BITMAP_NBITS] |=            \
++                                 (jsbitmap(1)<<((_bit)%JS_BITMAP_NBITS)))
++#define JS_CLEAR_BIT(_map,_bit) ((_map)[(_bit)/JS_BITMAP_NBITS] &=            \
++                                 ~(jsbitmap(1)<<((_bit)%JS_BITMAP_NBITS)))
+ 
+ /* Wrapper for various macros to stop warnings coming from their expansions. */
+ #if defined(__clang__)
+

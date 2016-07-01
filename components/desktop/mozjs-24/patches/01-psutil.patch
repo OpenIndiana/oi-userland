@@ -1,0 +1,28 @@
+Not appropriate for upstream; presumed fixed in newer versions.
+
+--- mozjs-24.2.0/js/src/build/virtualenv/populate_virtualenv.py	2013-10-29 13:40:23.000000000 -0700
++++ mozjs-24.2.0/js/src/build/virtualenv/populate_virtualenv.py	2015-06-27 16:28:50.182353664 -0700
+@@ -251,10 +251,8 @@
+         # work.
+         #
+         # We also ignore environment variables that may have been altered by
+-        # configure or a mozconfig activated in the current shell. We trust
+-        # Python is smart enough to find a proper compiler and to use the
+-        # proper compiler flags. If it isn't your Python is likely broken.
+-        IGNORE_ENV_VARIABLES = ('CC', 'CXX', 'CFLAGS', 'CXXFLAGS', 'LDFLAGS',
++        # configure or a mozconfig activated in the current shell.
++        IGNORE_ENV_VARIABLES = ('CFLAGS', 'CXXFLAGS', 'LDFLAGS',
+             'PYTHONDONTWRITEBYTECODE')
+ 
+         try:
+--- mozjs-24.2.0/js/src/python/mozbuild/mozbuild/controller/building.py	2013-10-29 13:40:25.000000000 -0700
++++ mozjs-24.2.0/js/src/python/mozbuild/mozbuild/controller/building.py	2015-06-27 16:50:05.967006567 -0700
+@@ -12,7 +12,7 @@
+ from collections import namedtuple
+ 
+ # keep in sync with psutil os support, see psutil/__init__.py
+-if sys.platform.startswith("freebsd") or sys.platform.startswith("darwin") or sys.platform.startswith("win32") or sys.platform.startswith("linux"):
++if sys.platform.startswith("freebsd") or sys.platform.startswith("darwin") or sys.platform.startswith("win32") or sys.platform.startswith("linux") or sys.platform.startswith("sunos"):
+     try:
+         import psutil
+     except ImportError:
