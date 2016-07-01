@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-	Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
-	Use is subject to license terms.
 
  CDDL HEADER START
 
@@ -22,6 +20,9 @@
  information: Portions Copyright [yyyy] [name of copyright owner]
 
  CDDL HEADER END
+
+ Copyright (c) 2006, 2016, Oracle and/or its affiliates. All rights reserved.
+
 
 	NOTE:  This service manifest is not editable; its contents will
 	be overwritten by package or patch operations, including
@@ -64,6 +65,12 @@
 		name='stop'
 		exec=':kill'
 		timeout_seconds='30' />
+
+        <exec_method
+                type='method'
+                name='refresh'
+                exec=':kill -HUP'
+                timeout_seconds='30' />
 
 	<property_group name='startd' type='framework'>
 		<!-- sub-process core dumps shouldn't restart session -->

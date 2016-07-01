@@ -65,6 +65,10 @@
 <transform file link hardlink path=usr/lib.*/gio/modules/.*\.so$ -> \
     default restart_fmri svc:/application/desktop-cache/gio-module-cache:default>
 
+# D-Bus services
+<transform file path=(etc|usr/share)/dbus-1/system(\.d|-services)/.+$ -> \
+    default refresh_fmri svc:/system/dbus:default>
+
 # RAD
 <transform file path=usr/lib/rad/.* -> add restart_fmri \
     svc:/system/rad:local>
