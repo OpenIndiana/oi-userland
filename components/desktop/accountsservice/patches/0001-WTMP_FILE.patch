@@ -1,0 +1,96 @@
+Accepted upstream: https://bugs.freedesktop.org/show_bug.cgi?id=90882
+
+From cad21b185af08b4aba79bf541549bb159a686e03 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Mon, 14 Dec 2015 18:57:27 -0800
+Subject: [PATCH] wtmp: fix wtmp file on solaris and netbsd
+
+This commit moves detection of the location
+of the wtmp file to configure and fixes that
+detection to work on Solaris and NetBSD.
+
+https://bugs.freedesktop.org/show_bug.cgi?id=90882
+---
+ configure.ac      | 30 +++++++++++++++++++++++++++---
+ src/wtmp-helper.c | 14 ++++----------
+ 2 files changed, 31 insertions(+), 13 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index db4559c..4ba53ad 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -185,9 +185,33 @@ fi
+ 
+ AC_SUBST(WARN_CFLAGS)
+ 
+-AC_CHECK_HEADERS([shadow.h utmpx.h])
+-
+-AC_CHECK_FUNCS([fgetpwent])
++AC_CHECK_HEADERS([paths.h shadow.h utmpx.h])
++
++AC_CHECK_FUNCS([fgetpwent setutxdb])
++
++wtmpx_found="no"
++AC_CHECK_DECLS([WTMPX_FILENAME], [wtmpx_found="WTMPX_FILENAME"],
++               [], [AC_INCLUDES_DEFAULT
++#include <utmpx.h>
++               ])
++if test "$wtmpx_found" = "no" ; then
++  AC_CHECK_DECLS([_PATH_WTMPX], [wtmpx_found="_PATH_WTMPX"],
++                 [], [AC_INCLUDES_DEFAULT
++#ifdef HAVE_PATHS_H
++#include <paths.h>
++#endif
++#ifdef HAVE_UTMPX_H
++#include <utmpx.h>
++#endif
++                 ])
++  if test "$wtmpx_found" = "no" ; then
++    AC_CHECK_FILE([/var/log/utx.log], [wtmpx_found='"/var/log/utx.log"'])
++    if test "$wtmpx_found" = "no" ; then
++      AC_MSG_FAILURE([Do not know which filename to watch for wtmp changes])
++    fi
++  fi
++fi
++AC_DEFINE_UNQUOTED([PATH_WTMP], [$wtmpx_found], [Path to wtmpx file])
+ 
+ dnl ---------------------------------------------------------------------------
+ dnl - gtk-doc Documentation
+diff --git a/src/wtmp-helper.c b/src/wtmp-helper.c
+index 0c29d82..83ac43b 100644
+--- a/src/wtmp-helper.c
++++ b/src/wtmp-helper.c
+@@ -56,12 +56,12 @@ user_previous_login_free (UserPreviousLogin *previous_login)
+ static gboolean
+ wtmp_helper_start (void)
+ {
+-#if defined(UTXDB_LOG)
++#if defined(HAVE_SETUTXDB)
+                 if (setutxdb (UTXDB_LOG, NULL) != 0) {
+                         return FALSE;
+                 }
+-#elif defined(WTMPX_FILENAME)
+-                if (utmpxname (WTMPX_FILENAME) != 0) {
++#elif defined(PATH_WTMP)
++                if (utmpxname (PATH_WTMP) != 0) {
+                         return FALSE;
+                 }
+ 
+@@ -212,13 +212,7 @@ wtmp_helper_entry_generator (GHashTable *users,
+ const gchar *
+ wtmp_helper_get_path_for_monitor (void)
+ {
+-#if defined(WTMPX_FILENAME)
+-        return WTMPX_FILENAME;
+-#elif defined(__FreeBSD__)
+-        return "/var/log/utx.log";
+-#else
+-#error Do not know which filename to watch for wtmp changes
+-#endif
++        return PATH_WTMP;
+ }
+ 
+ #else /* HAVE_UTMPX_H */
+-- 
+2.6.1
+
