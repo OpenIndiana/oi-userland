@@ -22,20 +22,21 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
+# Copyright (c) 2016  Adam Stevko. All rights reserverd.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 set name=pkg.fmri \
-    value=pkg:/library/ncurses@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="A CRT screen handling and optimization package."
+    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license ncurses.license license=MIT
+license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)
 
 link path=usr/bin/gcaptoinfo target=../gnu/bin/captoinfo \
     facet.compat.gnulinks=true
@@ -44,6 +45,8 @@ link path=usr/bin/ginfocmp target=../gnu/bin/infocmp facet.compat.gnulinks=true
 link path=usr/bin/ginfotocap target=../gnu/bin/infotocap \
     facet.compat.gnulinks=true
 link path=usr/bin/gncurses5-config target=../gnu/bin/ncurses5-config \
+    facet.compat.gnulinks=true
+link path=usr/bin/gncursesw5-config target=../gnu/bin/ncursesw5-config \
     facet.compat.gnulinks=true
 link path=usr/bin/greset target=../gnu/bin/reset facet.compat.gnulinks=true
 link path=usr/bin/gtic target=../gnu/bin/tic facet.compat.gnulinks=true
@@ -55,6 +58,7 @@ file path=usr/gnu/bin/$(MACH64)/clear
 file path=usr/gnu/bin/$(MACH64)/infocmp
 link path=usr/gnu/bin/$(MACH64)/infotocap target=tic
 file path=usr/gnu/bin/$(MACH64)/ncurses5-config
+hardlink path=usr/gnu/bin/$(MACH64)/ncursesw5-config target=ncurses5-config
 link path=usr/gnu/bin/$(MACH64)/reset target=tset
 file path=usr/gnu/bin/$(MACH64)/tabs
 file path=usr/gnu/bin/$(MACH64)/tic
@@ -66,6 +70,7 @@ file path=usr/gnu/bin/clear
 file path=usr/gnu/bin/infocmp
 link path=usr/gnu/bin/infotocap target=tic
 file path=usr/gnu/bin/ncurses5-config
+hardlink path=usr/gnu/bin/ncursesw5-config target=ncurses5-config
 link path=usr/gnu/bin/reset target=tset
 file path=usr/gnu/bin/tabs
 file path=usr/gnu/bin/tic
@@ -76,23 +81,66 @@ link path=usr/gnu/lib/$(MACH64)/libform.so target=libform.so.5
 file path=usr/gnu/lib/$(MACH64)/libform.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/$(MACH64)/libform.so.5 \
     target=libform.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/$(MACH64)/libformw.so target=libformw.so.5
+link path=usr/gnu/lib/$(MACH64)/libformw.so.5 target=libformw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/$(MACH64)/libformw.so.$(COMPONENT_VERSION) \
+    target=libform.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/$(MACH64)/libmenu.so target=libmenu.so.5
 file path=usr/gnu/lib/$(MACH64)/libmenu.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/$(MACH64)/libmenu.so.5 \
+    target=libmenu.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/$(MACH64)/libmenuw.so target=libmenuw.so.5
+link path=usr/gnu/lib/$(MACH64)/libmenuw.so.5 \
+    target=libmenuw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/$(MACH64)/libmenuw.so.$(COMPONENT_VERSION) \
     target=libmenu.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/$(MACH64)/libpanel.so target=libpanel.so.5
 file path=usr/gnu/lib/$(MACH64)/libpanel.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/$(MACH64)/libpanel.so.5 \
     target=libpanel.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/$(MACH64)/libpanelw.so target=libpanelw.so.5
+link path=usr/gnu/lib/$(MACH64)/libpanelw.so.5 \
+    target=libpanelw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/$(MACH64)/libpanelw.so.$(COMPONENT_VERSION) \
+    target=libpanel.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libncurses.so target=libncurses.so.5
+file usr/gnu/lib/$(MACH64)/libncurses.so.$(COMPONENT_VERSION) \
+    path=usr/lib/$(MACH64)/libncurses.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libncurses.so.5 \
+    target=libncurses.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libncursesw.so target=libncursesw.so.5
+link path=usr/lib/$(MACH64)/libncursesw.so.5 target=libncursesw.so.$(COMPONENT_VERSION)
+hardlink path=usr/lib/$(MACH64)/libncursesw.so.$(COMPONENT_VERSION) \
+    target=libncurses.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libform.so target=libform.so.5
 file path=usr/gnu/lib/libform.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libform.so.5 target=libform.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/libformw.so target=libformw.so.5
+link path=usr/gnu/lib/libformw.so.5 target=libformw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/libformw.so.$(COMPONENT_VERSION) \
+    target=libform.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libmenu.so target=libmenu.so.5
 file path=usr/gnu/lib/libmenu.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libmenu.so.5 target=libmenu.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/libmenuw.so target=libmenuw.so.5
+link path=usr/gnu/lib/libmenuw.so.5 target=libmenuw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/libmenuw.so.$(COMPONENT_VERSION) \
+    target=libmenu.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libpanel.so target=libpanel.so.5
 file path=usr/gnu/lib/libpanel.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/libpanel.so.5 target=libpanel.so.$(COMPONENT_VERSION)
+link path=usr/gnu/lib/libpanelw.so target=libpanelw.so.5
+link path=usr/gnu/lib/libpanelw.so.5 target=libpanelw.so.$(COMPONENT_VERSION)
+hardlink path=usr/gnu/lib/libpanelw.so.$(COMPONENT_VERSION) \
+    target=libpanel.so.$(COMPONENT_VERSION)
+link path=usr/lib/libncurses.so target=libncurses.so.5
+file usr/gnu/lib/libncurses.so.$(COMPONENT_VERSION) \
+    path=usr/lib/libncurses.so.$(COMPONENT_VERSION)
+link path=usr/lib/libncurses.so.5 target=libncurses.so.$(COMPONENT_VERSION)
+link path=usr/lib/libncursesw.so target=libncursesw.so.5
+link path=usr/lib/libncursesw.so.5 target=libncursesw.so.$(COMPONENT_VERSION)
+hardlink path=usr/lib/libncursesw.so.$(COMPONENT_VERSION) \
+    target=libncurses.so.$(COMPONENT_VERSION)
 link path=usr/gnu/lib/terminfo target=../share/terminfo
 file path=usr/gnu/share/man/man1/adacurses-config.1
 link path=usr/gnu/share/man/man1/adacurses.1 target=adacurses-config.1
@@ -101,6 +149,7 @@ file path=usr/gnu/share/man/man1/clear.1
 file path=usr/gnu/share/man/man1/infocmp.1m
 file path=usr/gnu/share/man/man1/infotocap.1m
 file path=usr/gnu/share/man/man1/ncurses5-config.1
+link path=usr/gnu/share/man/man1/ncursesw5-config.1 target=ncurses5-config.1
 link path=usr/gnu/share/man/man1/reset.1 target=tset.1
 file path=usr/gnu/share/man/man1/tabs.1
 file path=usr/gnu/share/man/man1/tic.1m
@@ -3625,15 +3674,6 @@ file path=usr/include/ncurses/term_entry.h
 file path=usr/include/ncurses/termcap.h
 file path=usr/include/ncurses/tic.h
 file path=usr/include/ncurses/unctrl.h
-link path=usr/lib/$(MACH64)/libncurses.so target=libncurses.so.5
-file usr/gnu/lib/$(MACH64)/libncurses.so.$(COMPONENT_VERSION) \
-    path=usr/lib/$(MACH64)/libncurses.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libncurses.so.5 \
-    target=libncurses.so.$(COMPONENT_VERSION)
-link path=usr/lib/libncurses.so target=libncurses.so.5
-file usr/gnu/lib/libncurses.so.$(COMPONENT_VERSION) \
-    path=usr/lib/libncurses.so.$(COMPONENT_VERSION)
-link path=usr/lib/libncurses.so.5 target=libncurses.so.$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/form.pc
 file path=usr/lib/$(MACH64)/pkgconfig/form_g.pc
 file path=usr/lib/$(MACH64)/pkgconfig/menu.pc

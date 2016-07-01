@@ -22,20 +22,23 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserverd.
+# Copyright (c) 2016  Adam Stevko. All rights reserverd.
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		ncurses
+COMPONENT_NAME=	ncurses
 COMPONENT_VERSION=	5.9
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
+COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/ncurses
+COMPONENT_FMRI=	library/ncurses
+COMPONENT_LICENSE=	MIT
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -80,10 +83,6 @@ build:          $(BUILD_32_and_64)
 install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += SUNWcs
