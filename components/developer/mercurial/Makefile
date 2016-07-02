@@ -28,13 +28,13 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.7.3
-COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
+COMPONENT_VERSION=	3.8.4
+COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c099c42d74e2d520b61dd372cd996b0fa7605c06617834fd7b13c79b9a9a5b30
-COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
+    sha256:4b2e3ef19d34fa1d781cb7425506a05d4b6b1172bab69d6ea78874175fdf3da6
+COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
 # Mercurial does not yet support Python 3.
@@ -55,9 +55,12 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # tests which try to check all the code in the userland gate.  And finally,
 # test the bits from the proto area, rather than rebuilding.  Given the way the
 # test suite works, the hg executable must be named "hg".
+# test_url.py script emits warning with python2.6 
+# https://bz.mercurial-scm.org/show_bug.cgi?id=5285
 TEST_BLACKLIST = \
 	test-check-code.t \
 	test-check-config.t \
+	test-devel-warnings.t \
 	test-hghave.t \
 	test-module-imports.t \
 	test-run-tests.t
@@ -111,3 +114,7 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		install $(TEST_32)
+
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
