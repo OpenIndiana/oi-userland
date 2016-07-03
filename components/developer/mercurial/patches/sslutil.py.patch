@@ -1,0 +1,58 @@
+https://bz.mercurial-scm.org/show_bug.cgi?id=5285
+
+# HG changeset patch
+# User Gregory Szorc <gregory.szorc at gmail.com>
+# Date 1467477700 25200
+#      Sat Jul 02 09:41:40 2016 -0700
+# Branch stable
+# Node ID d52f1b12afc3c3d2107d45a3113af62c12182102
+# Parent  ddbff1435e7baf66efc67c4d2a733f8035cd53d8
+sslutil: don't access message attribute in exception (issue5285)
+
+I should have ran the entire test suite on Python 2.6. Since the
+hostname matching tests are implemented in Python (not .t tests),
+it didn't uncover this warning. I'm not sure why - warnings should
+be printed regardless. This is possibly a bug in the test runner.
+But that's for another day...
+
+diff --git a/mercurial/sslutil.py b/mercurial/sslutil.py
+--- a/mercurial/sslutil.py
++++ b/mercurial/sslutil.py
+@@ -231,17 +231,17 @@ def _verifycert(cert, hostname):
+     dnsnames = []
+     san = cert.get('subjectAltName', [])
+     for key, value in san:
+         if key == 'DNS':
+             try:
+                 if _dnsnamematch(value, hostname):
+                     return
+             except wildcarderror as e:
+-                return e.message
++                return e.args[0]
+ 
+             dnsnames.append(value)
+ 
+     if not dnsnames:
+         # The subject is only checked when there is no DNS in subjectAltName.
+         for sub in cert.get('subject', []):
+             for key, value in sub:
+                 # According to RFC 2818 the most specific Common Name must
+@@ -252,17 +252,17 @@ def _verifycert(cert, hostname):
+                         value = value.encode('ascii')
+                     except UnicodeEncodeError:
+                         return _('IDN in certificate not supported')
+ 
+                     try:
+                         if _dnsnamematch(value, hostname):
+                             return
+                     except wildcarderror as e:
+-                        return e.message
++                        return e.args[0]
+ 
+                     dnsnames.append(value)
+ 
+     if len(dnsnames) > 1:
+         return _('certificate is for %s') % ', '.join(dnsnames)
+     elif len(dnsnames) == 1:
+         return _('certificate is for %s') % dnsnames[0]
+     else:
