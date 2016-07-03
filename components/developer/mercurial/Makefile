@@ -29,6 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
 COMPONENT_VERSION=	3.8.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -55,8 +56,6 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # tests which try to check all the code in the userland gate.  And finally,
 # test the bits from the proto area, rather than rebuilding.  Given the way the
 # test suite works, the hg executable must be named "hg".
-# test_url.py script emits warning with python2.6 
-# https://bz.mercurial-scm.org/show_bug.cgi?id=5285
 TEST_BLACKLIST = \
 	test-check-code.t \
 	test-check-config.t \
