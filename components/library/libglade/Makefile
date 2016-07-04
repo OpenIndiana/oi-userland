@@ -10,13 +10,14 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libglade
 COMPONENT_VERSION= 2.6.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME library for loading GLADE interfaces at runtime
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -30,9 +31,11 @@ COMPONENT_LICENSE = LGPLv2
 COMPONENT_FMRI = library/desktop/libglade
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 CFLAGS += -D__EXTENSIONS__
 
@@ -45,3 +48,12 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
