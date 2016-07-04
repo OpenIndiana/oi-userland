@@ -53,4 +53,3 @@ all:
 top_builddir = ..
 PODIR = $(top_builddir)/po
 POFILES = $(wildcard *.po)
-

@@ -1,40 +1,40 @@
 --- gnome-panel-2.32.1/gnome-panel/Makefile.am.~1~	2010-09-29 20:51:03.000000000 +0400
 +++ gnome-panel-2.32.1/gnome-panel/Makefile.am	2015-03-10 12:38:51.894270716 +0300
 @@ -15,6 +15,7 @@
- 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"	\
- 	-DBUILDERDIR=\""$(uidir)"\"				\
- 	-DICONDIR=\""$(datadir)/gnome-panel/pixmaps"\"		\
+	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"	\
+	-DBUILDERDIR=\""$(uidir)"\"				\
+	-DICONDIR=\""$(datadir)/gnome-panel/pixmaps"\"		\
 +	-DGMENU_I_KNOW_THIS_IS_UNSTABLE 			\
- 	$(DISABLE_DEPRECATED_CFLAGS)
- 
+	$(DISABLE_DEPRECATED_CFLAGS)
+
  AM_CFLAGS = $(WARN_CFLAGS)
 @@ -134,7 +135,8 @@
- 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la			\
- 	$(PANEL_LIBS)									\
- 	$(XRANDR_LIBS)									\
+	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la			\
+	$(PANEL_LIBS)									\
+	$(XRANDR_LIBS)									\
 -	$(X_LIBS)
 +	$(X_LIBS)									\
 +	-lsecdb
- 
+
  gnome_panel_LDFLAGS = -export-dynamic
- 
+
 @@ -143,12 +145,15 @@
- 	panel-ditem-editor.c		\
- 	panel-marshal.c			\
- 	panel-util.c			\
+	panel-ditem-editor.c		\
+	panel-marshal.c			\
+	panel-util.c			\
 +	panel-lockdown.c		\
 +	panel-gconf.c			\
- 	xstuff.c
- 
+	xstuff.c
+
  gnome_desktop_item_edit_LDADD = 	\
- 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la	\
- 	$(PANEL_LIBS)							\
+	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la	\
+	$(PANEL_LIBS)							\
 -	$(X_LIBS)
 +	$(X_LIBS)							\
 +	-lsecdb
- 
+
  panel_test_applets_SOURCES =		\
- 	panel-modules.c			\
+	panel-modules.c			\
 --- gnome-panel-2.30.2.orig/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 13:01:19.485602424 +0100
 +++ gnome-panel-2.30.2/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 12:47:44.055057740 +0100
 @@ -18,7 +18,6 @@
@@ -42,22 +42,22 @@
  gboolean panel_global_config_get_tooltips_enabled (void) { return FALSE; }
  #include "panel-lockdown.h"
 -gboolean panel_lockdown_get_disable_lock_screen (void) { return FALSE; }
- 
+
  static int dialogs = 0;
  static gboolean create_new = FALSE;
 @@ -103,6 +102,8 @@
- 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
- 	textdomain (GETTEXT_PACKAGE);
- 
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+
 +     panel_lockdown_init ();
 +
- 	if (!gtk_init_with_args (&argc, &argv,
- 	                         _("- Edit .desktop files"),
- 	                         options,
+	if (!gtk_init_with_args (&argc, &argv,
+	                         _("- Edit .desktop files"),
+	                         options,
 @@ -220,5 +221,7 @@
- 	if (dialogs > 0)
- 		gtk_main ();
- 
+	if (dialogs > 0)
+		gtk_main ();
+
 +    panel_lockdown_finalize ();
 +
          return 0;
@@ -66,28 +66,28 @@
 +++ gnome-panel-2.32.1/gnome-panel/menu.c	2015-01-05 18:26:37.571796313 +0300
 @@ -75,7 +75,8 @@
  static GSList *image_menu_items = NULL;
- 
+
  static GtkWidget *populate_menu_from_directory (GtkWidget          *menu,
 -						GMenuTreeDirectory *directory);
 +						GMenuTreeDirectory *directory,
 +                        gboolean           *is_hidden);
- 
+
  static void panel_load_menu_image_deferred (GtkWidget   *image_menu_item,
- 					    GtkIconSize  icon_size,
+					    GtkIconSize  icon_size,
 @@ -1276,7 +1277,8 @@
  }
- 
+
  static void
 -submenu_to_display (GtkWidget *menu)
 +submenu_to_display (GtkWidget *menu,
 +                    gboolean  *is_hidden)
  {
- 	GMenuTree           *tree;
- 	GMenuTreeDirectory  *directory;
+	GMenuTree           *tree;
+	GMenuTreeDirectory  *directory;
 @@ -1311,7 +1313,15 @@
- 	}
- 
- 	if (directory)
+	}
+
+	if (directory)
 -		populate_menu_from_directory (menu, directory);
 +        { /* It's possible that is_hidden is NULL if we end up here from the show
 +           signal, which could only happen for the top level menu. */
@@ -98,34 +98,34 @@
 +            *is_hidden = local_is_hidden;
 +        }
 +    }
- 
- 	append_callback = g_object_get_data (G_OBJECT (menu),
- 					     "panel-menu-append-callback");
+
+	append_callback = g_object_get_data (G_OBJECT (menu),
+					     "panel-menu-append-callback");
 @@ -1325,10 +1335,11 @@
  submenu_to_display_in_idle (gpointer data)
  {
- 	GtkWidget *menu = GTK_WIDGET (data);
+	GtkWidget *menu = GTK_WIDGET (data);
 +    gboolean is_hidden = FALSE;
- 
- 	g_object_set_data (G_OBJECT (menu), "panel-menu-idle-id", NULL);
- 
+
+	g_object_set_data (G_OBJECT (menu), "panel-menu-idle-id", NULL);
+
 -	submenu_to_display (menu);
 +	submenu_to_display (menu, &is_hidden);
- 
- 	return FALSE;
+
+	return FALSE;
  }
 @@ -1423,19 +1434,25 @@
  static void
  create_submenu (GtkWidget          *menu,
- 		GMenuTreeDirectory *directory,
+		GMenuTreeDirectory *directory,
 -		GMenuTreeDirectory *alias_directory)
 +		GMenuTreeDirectory *alias_directory,
 +		gboolean           *is_hidden)
  {
- 	GtkWidget *menuitem;
- 	GtkWidget *submenu;
- 	gboolean   force_categories_icon;
- 
+	GtkWidget *menuitem;
+	GtkWidget *submenu;
+	gboolean   force_categories_icon;
+
 +	submenu = create_fake_menu (directory);
 +	if (panel_lockdown_get_restrict_application_launching ()) {
 +		submenu_to_display (submenu, is_hidden);
@@ -133,57 +133,57 @@
 +		*is_hidden = FALSE;
 +	}
 +
- 	if (alias_directory)
- 		menuitem = create_submenu_entry (menu, alias_directory);
- 	else
- 		menuitem = create_submenu_entry (menu, directory);
- 	
+	if (alias_directory)
+		menuitem = create_submenu_entry (menu, alias_directory);
+	else
+		menuitem = create_submenu_entry (menu, directory);
+
 -	submenu = create_fake_menu (directory);
 -
- 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
- 
- 	/* Keep the infor that we force (or not) the icons to be visible */
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (menuitem), submenu);
+
+	/* Keep the infor that we force (or not) the icons to be visible */
 @@ -1444,15 +1461,21 @@
- 	g_object_set_data (G_OBJECT (submenu),
- 			   "panel-menu-force-icon-for-categories",
- 			   GINT_TO_POINTER (force_categories_icon));
+	g_object_set_data (G_OBJECT (submenu),
+			   "panel-menu-force-icon-for-categories",
+			   GINT_TO_POINTER (force_categories_icon));
 +
 +	if (*is_hidden) {
 +		gtk_widget_hide (menuitem);
 +	}
  }
- 
- static void 
+
+ static void
  create_header (GtkWidget       *menu,
 -	       GMenuTreeHeader *header)
 +	       GMenuTreeHeader *header,
 +	       gboolean *is_hidden)
  {
- 	GMenuTreeDirectory *directory;
- 	GtkWidget          *menuitem;
- 
+	GMenuTreeDirectory *directory;
+	GtkWidget          *menuitem;
+
 +	*is_hidden = FALSE;
- 	directory = gmenu_tree_header_get_directory (header);
- 	menuitem = create_submenu_entry (menu, directory);
- 	gmenu_tree_item_unref (directory);
+	directory = gmenu_tree_header_get_directory (header);
+	menuitem = create_submenu_entry (menu, directory);
+	gmenu_tree_item_unref (directory);
 @@ -1469,10 +1492,12 @@
  static void
  create_menuitem (GtkWidget          *menu,
- 		 GMenuTreeEntry     *entry,
+		 GMenuTreeEntry     *entry,
 -		 GMenuTreeDirectory *alias_directory)
 +		 GMenuTreeDirectory *alias_directory,
 +                                    gboolean *is_hidden)
  {
- 	GtkWidget  *menuitem;
- 	
+	GtkWidget  *menuitem;
+
 +        *is_hidden = FALSE;
- 	menuitem = panel_image_menu_item_new ();
- 
- 	g_object_set_data_full (G_OBJECT (menuitem),
+	menuitem = panel_image_menu_item_new ();
+
+	g_object_set_data_full (G_OBJECT (menuitem),
 @@ -1553,12 +1578,18 @@
- 	g_signal_connect (menuitem, "activate",
- 			  G_CALLBACK (activate_app_def), entry);
- 
+	g_signal_connect (menuitem, "activate",
+			  G_CALLBACK (activate_app_def), entry);
+
 -	gtk_widget_show (menuitem);
 +    if (entry != NULL && !panel_lockdown_is_allowed_menu_entry (entry)) {
 +        gtk_widget_hide (menuitem);
@@ -192,151 +192,151 @@
 +	    gtk_widget_show (menuitem);
 +    }
  }
- 
+
  static void
  create_menuitem_from_alias (GtkWidget      *menu,
 -			    GMenuTreeAlias *alias)
 +			    GMenuTreeAlias *alias,
 +                gboolean *is_hidden)
  {
- 	GMenuTreeItem *aliased_item;
- 
+	GMenuTreeItem *aliased_item;
+
 @@ -1568,13 +1599,15 @@
- 	case GMENU_TREE_ITEM_DIRECTORY:
- 		create_submenu (menu,
- 				GMENU_TREE_DIRECTORY (aliased_item),
+	case GMENU_TREE_ITEM_DIRECTORY:
+		create_submenu (menu,
+				GMENU_TREE_DIRECTORY (aliased_item),
 -				gmenu_tree_alias_get_directory (alias));
 +				gmenu_tree_alias_get_directory (alias),
 +                is_hidden);
- 		break;
- 
- 	case GMENU_TREE_ITEM_ENTRY:
- 		create_menuitem (menu,
- 				 GMENU_TREE_ENTRY (aliased_item),
+		break;
+
+	case GMENU_TREE_ITEM_ENTRY:
+		create_menuitem (menu,
+				 GMENU_TREE_ENTRY (aliased_item),
 -				 gmenu_tree_alias_get_directory (alias));
 +				 gmenu_tree_alias_get_directory (alias),
 +                 is_hidden);
- 		break;
- 
- 	default:
+		break;
+
+	default:
 @@ -1681,13 +1714,15 @@
- 
+
  static GtkWidget *
  populate_menu_from_directory (GtkWidget          *menu,
 -			      GMenuTreeDirectory *directory)
 +			      GMenuTreeDirectory *directory,
 +                              gboolean *is_hidden)
- {	
- 	GList    *children;
- 	GSList   *l;
- 	GSList   *items;
- 	gboolean  add_separator;
- 
+ {
+	GList    *children;
+	GSList   *l;
+	GSList   *items;
+	gboolean  add_separator;
+
 +        *is_hidden = TRUE;
- 	children = gtk_container_get_children (GTK_CONTAINER (menu));
- 	add_separator = (children != NULL);
- 	g_list_free (children);
+	children = gtk_container_get_children (GTK_CONTAINER (menu));
+	add_separator = (children != NULL);
+	g_list_free (children);
 @@ -1696,6 +1731,7 @@
- 
- 	for (l = items; l; l = l->next) {
- 		GMenuTreeItem *item = l->data;
+
+	for (l = items; l; l = l->next) {
+		GMenuTreeItem *item = l->data;
 +		gboolean is_item_hidden = TRUE;
- 
- 		if (add_separator ||
- 		    gmenu_tree_item_get_type (item) == GMENU_TREE_ITEM_SEPARATOR) {
+
+		if (add_separator ||
+		    gmenu_tree_item_get_type (item) == GMENU_TREE_ITEM_SEPARATOR) {
 @@ -1705,11 +1741,13 @@
- 
- 		switch (gmenu_tree_item_get_type (item)) {
- 		case GMENU_TREE_ITEM_DIRECTORY:
+
+		switch (gmenu_tree_item_get_type (item)) {
+		case GMENU_TREE_ITEM_DIRECTORY:
 -			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL);
 +			create_submenu (menu, GMENU_TREE_DIRECTORY (item), NULL,
 +                            &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_ENTRY:
+			break;
+
+		case GMENU_TREE_ITEM_ENTRY:
 -			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL);
 +			create_menuitem (menu, GMENU_TREE_ENTRY (item), NULL,
 +                             &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_SEPARATOR :
+			break;
+
+		case GMENU_TREE_ITEM_SEPARATOR :
 @@ -1717,11 +1755,13 @@
- 			break;
- 
- 		case GMENU_TREE_ITEM_ALIAS:
+			break;
+
+		case GMENU_TREE_ITEM_ALIAS:
 -			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item));
 +			create_menuitem_from_alias (menu, GMENU_TREE_ALIAS (item),
 +                                        &is_item_hidden);
- 			break;
- 
- 		case GMENU_TREE_ITEM_HEADER:
+			break;
+
+		case GMENU_TREE_ITEM_HEADER:
 -			create_header (menu, GMENU_TREE_HEADER (item));
 +			create_header (menu, GMENU_TREE_HEADER (item),
 +                           &is_item_hidden);
- 			break;
- 
- 		default:
+			break;
+
+		default:
 @@ -1729,6 +1769,10 @@
- 		}
- 
- 		gmenu_tree_item_unref (item);
+		}
+
+		gmenu_tree_item_unref (item);
 +
 +        if (!is_item_hidden) {
 +            *is_hidden = FALSE;
 +        }
- 	}
- 
- 	g_slist_free (items);
+	}
+
+	g_slist_free (items);
 --- gnome-panel-2.30.2.orig/gnome-panel/launcher.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/launcher.c	2010-12-27 12:47:44.045078620 +0100
 @@ -105,6 +105,9 @@
- 	g_return_if_fail (launcher != NULL);
- 	g_return_if_fail (launcher->key_file != NULL);
- 
+	g_return_if_fail (launcher != NULL);
+	g_return_if_fail (launcher->key_file != NULL);
+
 +    if (panel_lockdown_is_forbidden_launcher (launcher))
 +        return;
 +
- 	/* FIXME panel_ditem_launch() should be enough for this! */
- 	url = panel_key_file_get_string (launcher->key_file, "URL");
- 
+	/* FIXME panel_ditem_launch() should be enough for this! */
+	url = panel_key_file_get_string (launcher->key_file, "URL");
+
 @@ -136,6 +139,9 @@
- 	g_return_if_fail (launcher != NULL);
- 	g_return_if_fail (launcher->key_file != NULL);
- 
+	g_return_if_fail (launcher != NULL);
+	g_return_if_fail (launcher->key_file != NULL);
+
 +    if (panel_lockdown_is_forbidden_launcher (launcher))
 +        return;
 +
- 	if (panel_global_config_get_enable_animations ())
- 		xstuff_zoom_animate (widget,
- 				     button_widget_get_pixbuf (BUTTON_WIDGET (widget)),
+	if (panel_global_config_get_enable_animations ())
+		xstuff_zoom_animate (widget,
+				     button_widget_get_pixbuf (BUTTON_WIDGET (widget)),
 @@ -253,6 +259,8 @@
- 		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (dialog);
  }
- 
+
 +static void panel_recheck_launcher (Launcher *launcher);
 +
  static void
  free_launcher (gpointer data)
  {
 @@ -266,6 +274,8 @@
- 		g_free (launcher->location);
- 	launcher->location = NULL;
- 
+		g_free (launcher->location);
+	launcher->location = NULL;
+
 +	panel_lockdown_notify_remove (G_CALLBACK (panel_recheck_launcher), launcher);
 +
- 	g_free (launcher);
+	g_free (launcher);
  }
- 
+
 @@ -410,6 +420,19 @@
- 
+
  }
- 
+
 +static void
 +panel_recheck_launcher (Launcher *launcher)
 +{
 +	if (!launcher || !launcher->button)
 +		return;
-+	
++
 +    if (panel_lockdown_is_forbidden_launcher (launcher)) {
 +        gtk_widget_hide (launcher->button);
 +    } else {
@@ -348,55 +348,55 @@
  create_launcher (const char *location)
  {
 @@ -488,7 +511,11 @@
- 					      FALSE,
- 					      PANEL_ORIENTATION_TOP);
- 
+					      FALSE,
+					      PANEL_ORIENTATION_TOP);
+
 -	gtk_widget_show (launcher->button);
 +    if (panel_lockdown_is_forbidden_launcher (launcher)) {
 +        gtk_widget_hide (launcher->button);
 +    } else {
 +	    gtk_widget_show (launcher->button);
 +    }
- 
- 	/*gtk_drag_dest_set (GTK_WIDGET (launcher->button),
- 			   GTK_DEST_DEFAULT_ALL,
+
+	/*gtk_drag_dest_set (GTK_WIDGET (launcher->button),
+			   GTK_DEST_DEFAULT_ALL,
 @@ -515,6 +542,8 @@
- 					  G_CALLBACK (destroy_launcher),
- 					  launcher);
- 
+					  G_CALLBACK (destroy_launcher),
+					  launcher);
+
 +	panel_lockdown_notify_add (G_CALLBACK (panel_recheck_launcher), launcher);
 +
- 	return launcher;
+	return launcher;
  }
- 
+
 @@ -813,6 +842,12 @@
- 	/* setup button according to ditem */
- 	setup_button (launcher);
- 
+	/* setup button according to ditem */
+	setup_button (launcher);
+
 +    if (panel_lockdown_is_forbidden_launcher (launcher)) {
 +        gtk_widget_hide (launcher->button);
 +    } else {
 +	    gtk_widget_show (launcher->button);
 +    }
 +
- 	return launcher;
+	return launcher;
  }
- 
+
 @@ -901,6 +936,10 @@
- 	if (file != NULL)
- 		panel_key_file_set_string (key_file, "Exec", file);
- 	panel_key_file_set_string (key_file, "Type", "Application");
+	if (file != NULL)
+		panel_key_file_set_string (key_file, "Exec", file);
+	panel_key_file_set_string (key_file, "Type", "Application");
 +
 +    if (panel_lockdown_is_forbidden_key_file (key_file))
 +        return; /* Application being dragged is forbidden so just return */
 +
- 	panel_ditem_editor_sync_display (PANEL_DITEM_EDITOR (dialog));
- 
- 	panel_ditem_register_save_uri_func (PANEL_DITEM_EDITOR (dialog),
+	panel_ditem_editor_sync_display (PANEL_DITEM_EDITOR (dialog));
+
+	panel_ditem_register_save_uri_func (PANEL_DITEM_EDITOR (dialog),
 @@ -957,17 +996,18 @@
- 	location = panel_make_unique_desktop_uri (NULL, exec_or_uri);
- 
- 	error = NULL;
+	location = panel_make_unique_desktop_uri (NULL, exec_or_uri);
+
+	error = NULL;
 -	if (panel_key_file_to_file (key_file, location, &error)) {
 -		panel_launcher_create (toplevel, position, location);
 -	} else {
@@ -420,9 +420,9 @@
 +                   g_error_free (error);
 +           }
 +    }
- 	g_key_file_free (key_file);
+	g_key_file_free (key_file);
  }
- 
+
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-action-button.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/panel-action-button.c	2010-12-27 12:47:44.039866740 +0100
 @@ -207,8 +207,11 @@
@@ -437,36 +437,36 @@
 +				    gtk_get_current_event_time ());
 +    }
  }
- 
+
  /* Search For Files
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-addto.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/panel-addto.c	2010-12-27 12:47:44.038546226 +0100
 @@ -571,9 +571,10 @@
- 						dialog, NULL);
+						dialog, NULL);
  }
- 
+
 -static void panel_addto_make_application_list (GSList             **parent_list,
 +static gint panel_addto_make_application_list (GSList             **parent_list,
- 					       GMenuTreeDirectory  *directory,
- 					       const char          *filename);
+					       GMenuTreeDirectory  *directory,
+					       const char          *filename);
 +static void panel_addto_dialog_free_item_info (PanelAddtoItemInfo *item_info);
- 
+
  static void
  panel_addto_prepend_directory (GSList             **parent_list,
 @@ -581,6 +582,7 @@
- 			       const char          *filename)
+			       const char          *filename)
  {
- 	PanelAddtoAppList *data;
+	PanelAddtoAppList *data;
 +    gint entries_added = 0;
- 
- 	data = g_new0 (PanelAddtoAppList, 1);
- 
+
+	data = g_new0 (PanelAddtoAppList, 1);
+
 @@ -600,9 +602,16 @@
- 	 * So the iid is built when we select the row.
- 	 */
- 
+	 * So the iid is built when we select the row.
+	 */
+
 -	*parent_list = g_slist_prepend (*parent_list, data);
--			
+-
 -	panel_addto_make_application_list (&data->children, directory, filename);
 +	entries_added = panel_addto_make_application_list (&data->children, directory, filename);
 +	if (entries_added > 0) {
@@ -479,27 +479,27 @@
 +		g_free (data);
 +	}
  }
- 
+
  static void
 @@ -624,12 +633,13 @@
- 	*parent_list = g_slist_prepend (*parent_list, data);
+	*parent_list = g_slist_prepend (*parent_list, data);
  }
- 
+
 -static void
 +static gint
  panel_addto_prepend_alias (GSList         **parent_list,
- 			   GMenuTreeAlias  *alias,
- 			   const char      *filename)
+			   GMenuTreeAlias  *alias,
+			   const char      *filename)
  {
- 	GMenuTreeItem *aliased_item;
+	GMenuTreeItem *aliased_item;
 +    gint entry = 0;
- 
- 	aliased_item = gmenu_tree_alias_get_item (alias);
- 
+
+	aliased_item = gmenu_tree_alias_get_item (alias);
+
 @@ -641,9 +651,14 @@
- 		break;
- 
- 	case GMENU_TREE_ITEM_ENTRY:
+		break;
+
+	case GMENU_TREE_ITEM_ENTRY:
 -		panel_addto_prepend_entry (parent_list,
 -					   GMENU_TREE_ENTRY (aliased_item),
 -					   filename);
@@ -511,63 +511,63 @@
 +					    filename);
 +            entry = 1;
 +        }
- 		break;
- 
- 	default:
+		break;
+
+	default:
 @@ -651,15 +666,17 @@
- 	}
- 
- 	gmenu_tree_item_unref (aliased_item);
+	}
+
+	gmenu_tree_item_unref (aliased_item);
 +    return entry;
  }
- 
+
 -static void
 +static gint
  panel_addto_make_application_list (GSList             **parent_list,
- 				   GMenuTreeDirectory  *directory,
- 				   const char          *filename)
+				   GMenuTreeDirectory  *directory,
+				   const char          *filename)
  {
- 	GSList *items;
- 	GSList *l;
+	GSList *items;
+	GSList *l;
 +    gint number_entries = 0;
- 
- 	items = gmenu_tree_directory_get_contents (directory);
- 
+
+	items = gmenu_tree_directory_get_contents (directory);
+
 @@ -670,11 +687,15 @@
- 			break;
- 
- 		case GMENU_TREE_ITEM_ENTRY:
+			break;
+
+		case GMENU_TREE_ITEM_ENTRY:
 -			panel_addto_prepend_entry (parent_list, l->data, filename);
 +            if (panel_lockdown_is_allowed_menu_entry (l->data)) {
 +			    panel_addto_prepend_entry (parent_list, l->data, filename);
 +                number_entries = number_entries + 1;
 +            }
- 			break;
- 
- 		case GMENU_TREE_ITEM_ALIAS:
+			break;
+
+		case GMENU_TREE_ITEM_ALIAS:
 -			panel_addto_prepend_alias (parent_list, l->data, filename);
 +			number_entries = number_entries +
 +                    panel_addto_prepend_alias (parent_list, l->data, filename);
- 			break;
- 
- 		default:
+			break;
+
+		default:
 @@ -687,6 +708,8 @@
- 	g_slist_free (items);
- 
- 	*parent_list = g_slist_reverse (*parent_list);
+	g_slist_free (items);
+
+	*parent_list = g_slist_reverse (*parent_list);
 +
 +    return number_entries;
  }
- 
+
  static void
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-lockdown.c	2010-02-09 13:32:08.000000000 +0100
 +++ gnome-panel-2.30.2/gnome-panel/panel-lockdown.c	2010-12-27 12:59:35.878172712 +0100
 @@ -28,13 +28,21 @@
- 
+
  #include <string.h>
  #include "panel-gconf.h"
 +#include <libpanel-util/panel-keyfile.h>
- 
+
 -#define N_LISTENERS 6
 +#include <exec_attr.h>
 +#include <user_attr.h>
@@ -575,7 +575,7 @@
 +#include <pwd.h>
 +
 +#define N_LISTENERS 8
- 
+
  #define PANEL_GLOBAL_LOCKDOWN_DIR    "/apps/panel/global"
  #define DESKTOP_GNOME_LOCKDOWN_DIR   "/desktop/gnome/lockdown"
  #define PANEL_GLOBAL_LOCKED_DOWN_KEY PANEL_GLOBAL_LOCKDOWN_DIR  "/locked_down"
@@ -592,13 +592,13 @@
 +        guint   restrict_application_launching : 1;
 +
 +        GSList *allowed_applications;
- 
+
          GSList *disabled_applets;
- 
+
 @@ -56,6 +68,12 @@
          GSList *closures;
  } PanelLockdown;
- 
+
 +static const gchar *command_line_execs[] = {
 +    "/usr/bin/gnome-terminal",
 +    "/usr/bin/xterm"
@@ -606,14 +606,14 @@
 +#define NUMBER_COMMAND_LINE_EXECS   2
 +
  static PanelLockdown panel_lockdown = { 0, };
- 
- 
+
+
 @@ -63,9 +81,17 @@
  panel_lockdown_invoke_closures (PanelLockdown *lockdown)
  {
          GSList *l;
 +        GSList *copy = NULL;
- 
+
 -        for (l = lockdown->closures; l; l = l->next)
 +		copy = g_slist_copy (lockdown->closures);
 +        for (l = copy; l != NULL; l = l->next) {
@@ -625,12 +625,12 @@
 +		}
 +        g_slist_free (copy);
  }
- 
+
  static void
 @@ -166,6 +192,50 @@
          panel_lockdown_invoke_closures (lockdown);
  }
- 
+
 +static void
 +restrict_application_launching_notify (GConfClient   *client,
 +                                       guint          cnxn_id,
@@ -681,7 +681,7 @@
 @@ -215,9 +285,43 @@
          return retval;
  }
- 
+
 +static GSList *
 +panel_lockdown_load_allowed_applications (PanelLockdown *lockdown,
 +                                          GConfClient   *client,
@@ -707,7 +707,7 @@
  void
  panel_lockdown_init (void)
  {
-+	if (panel_lockdown_is_user_authorized()) 
++	if (panel_lockdown_is_user_authorized())
 +        {
 +            panel_lockdown.locked_down = FALSE;
 +            panel_lockdown.disable_command_line = FALSE;
@@ -721,12 +721,12 @@
 +
          GConfClient *client;
          int          i = 0;
- 
+
 @@ -273,6 +377,18 @@
                                                        client,
                                                        i++);
- 
-+        panel_lockdown.restrict_application_launching = 
+
++        panel_lockdown.restrict_application_launching =
 +                panel_lockdown_load_bool (&panel_lockdown,
 +                                          client,
 +                                          RESTRICT_APPLICATION_LAUNCHING_KEY,
@@ -739,12 +739,12 @@
 +                                                          i++);
 +
          g_assert (i == N_LISTENERS);
- 
+
          panel_lockdown.initialized = TRUE;
 @@ -294,6 +410,13 @@
          g_slist_free (panel_lockdown.disabled_applets);
          panel_lockdown.disabled_applets = NULL;
- 
+
 +        for (l = panel_lockdown.allowed_applications; l; l = l->next) {
 +                g_free (l->data);
 +        }
@@ -758,7 +758,7 @@
 @@ -371,6 +494,36 @@
          return FALSE;
  }
- 
+
 +gboolean
 +panel_lockdown_get_restrict_application_launching (void)
 +{
@@ -793,7 +793,7 @@
  panel_lockdown_notify_find (GSList    *closures,
                              GCallback  callback_func,
 @@ -440,3 +593,243 @@
- 
+
          g_closure_unref (closure);
  }
 +
@@ -987,7 +987,7 @@
 +            }
 +            rolename = strtok(NULL, ",");
 +        }
-+     
++
 +        free_userattr(userattr);
 +        cached_root = TRUE;
 +    }
@@ -1041,30 +1041,30 @@
 @@ -25,8 +25,11 @@
  #ifndef __PANEL_LOCKDOWN_H__
  #define __PANEL_LOCKDOWN_H__
- 
+
 +#include <libgnome/gnome-desktop-item.h>
  #include <glib.h>
  #include <glib-object.h>
 +#include <gmenu-tree.h>
 +#include "launcher.h"
- 
+
  G_BEGIN_DECLS
- 
+
 @@ -39,13 +42,64 @@
  gboolean panel_lockdown_get_disable_log_out      (void);
  gboolean panel_lockdown_get_disable_force_quit   (void);
- 
+
 +gboolean panel_lockdown_get_restrict_application_launching (void);
 +GSList  *panel_lockdown_get_allowed_applications (void);
 +
  gboolean panel_lockdown_is_applet_disabled (const char *iid);
 +gboolean panel_lockdown_is_allowed_application (const gchar *app);
- 
+
  void panel_lockdown_notify_add    (GCallback callback_func,
                                     gpointer  user_data);
  void panel_lockdown_notify_remove (GCallback callback_func,
                                     gpointer  user_data);
- 
+
 +gchar *panel_lockdown_get_stripped_exec               (const gchar *full_exec);
 +gchar *panel_lockdown_get_exec_from_ditem             (GnomeDesktopItem *ditem);
 +gboolean panel_lockdown_ditem_in_allowed_applications (GnomeDesktopItem *ditem);
@@ -1113,22 +1113,22 @@
 +#define ROOT_ROLE "root"
 +
  G_END_DECLS
- 
+
  #endif /* __PANEL_LOCKDOWN_H__ */
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-menu-bar.c	2010-06-22 19:27:02.000000000 +0200
 +++ gnome-panel-2.30.2/gnome-panel/panel-menu-bar.c	2010-12-27 12:47:44.040378527 +0100
 @@ -69,6 +69,8 @@
- 	PROP_ORIENTATION,
+	PROP_ORIENTATION,
  };
- 
+
 +static GObjectClass *parent_class = NULL;
 +
  static void panel_menu_bar_update_text_gravity (PanelMenuBar *menubar);
- 
+
  static gboolean
 @@ -132,6 +134,32 @@
  }
- 
+
  static void
 +panel_menu_bar_parent_set (GtkWidget *widget,
 +                          GtkWidget *previous_parent);
@@ -1158,19 +1158,19 @@
 +static void
  panel_menu_bar_init (PanelMenuBar *menubar)
  {
- 	GtkWidget *image;
+	GtkWidget *image;
 @@ -164,6 +192,8 @@
- 			       menubar->priv->desktop_item);
- 
- 	panel_menu_bar_setup_tooltip (menubar);
+			       menubar->priv->desktop_item);
+
+	panel_menu_bar_setup_tooltip (menubar);
 +    panel_lockdown_notify_add (G_CALLBACK (panel_menubar_recreate_menus),
 +                               menubar);
- 
- 	panel_menu_bar_update_text_gravity (menubar);
- 	g_signal_connect (menubar, "screen-changed",
+
+	panel_menu_bar_update_text_gravity (menubar);
+	g_signal_connect (menubar, "screen-changed",
 @@ -172,6 +202,15 @@
  }
- 
+
  static void
 +panel_menu_bar_finalize (GObject *object)
 +{
@@ -1182,30 +1182,30 @@
 +
 +static void
  panel_menu_bar_get_property (GObject	*object,
- 			     guint	 prop_id,
- 			     GValue	*value,
+			     guint	 prop_id,
+			     GValue	*value,
 @@ -274,10 +313,13 @@
- 
- 	gobject_class->get_property = panel_menu_bar_get_property;
+
+	gobject_class->get_property = panel_menu_bar_get_property;
          gobject_class->set_property = panel_menu_bar_set_property;
 +	gobject_class->finalize = panel_menu_bar_finalize;
- 
- 	widget_class->parent_set = panel_menu_bar_parent_set;
- 	widget_class->size_allocate = panel_menu_bar_size_allocate;
- 
+
+	widget_class->parent_set = panel_menu_bar_parent_set;
+	widget_class->size_allocate = panel_menu_bar_size_allocate;
+
 +	parent_class = g_type_class_peek_parent (klass);
 +
- 	g_type_class_add_private (klass, sizeof (PanelMenuBarPrivate));
- 
- 	g_object_class_install_property (
+	g_type_class_add_private (klass, sizeof (PanelMenuBarPrivate));
+
+	g_object_class_install_property (
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-menu-items.c	2010-12-27 13:01:19.490005304 +0100
 +++ gnome-panel-2.30.2/gnome-panel/panel-menu-items.c	2010-12-27 12:47:44.059419355 +0100
 @@ -158,6 +158,21 @@
- 	char      *icon;
- 	char      *name;
- 	char      *comment;
+	char      *icon;
+	char      *name;
+	char      *comment;
 +	GnomeDesktopItem *ditem;
-+ 
++
 +	/* If restricted application, then don't append */
 +	if (g_path_is_absolute (path))
 +		ditem = gnome_desktop_item_new_from_file (path, 0, NULL);
@@ -1219,31 +1219,31 @@
 +	if (ditem != NULL) {
 +		gnome_desktop_item_unref (ditem);
 +	}
- 
- 	path_freeme = NULL;
- 
+
+	path_freeme = NULL;
+
 @@ -1116,7 +1131,7 @@
- 	return places_menu;
+	return places_menu;
  }
- 
+
 -static void
 +void
  panel_place_menu_item_recreate_menu (GtkWidget *widget)
  {
- 	PanelPlaceMenuItem *place_item;
+	PanelPlaceMenuItem *place_item;
 @@ -1224,7 +1239,7 @@
- 	return desktop_menu;
+	return desktop_menu;
  }
- 
+
 -static void
 +void
  panel_desktop_menu_item_recreate_menu (PanelDesktopMenuItem *desktop_item)
  {
- 	if (desktop_item->priv->menu) {
+	if (desktop_item->priv->menu) {
 @@ -1592,8 +1607,11 @@
- 		tooltip = NULL;
- 	}
- 
+		tooltip = NULL;
+	}
+
 -	item = panel_menu_items_create_action_item_full (PANEL_ACTION_LOGOUT,
 -							 label, tooltip);
 +    if (!panel_lockdown_get_disable_log_out ()) {
@@ -1251,39 +1251,38 @@
 +							    label, tooltip);
 +    }
 +
- 	g_free (label);
- 	g_free (tooltip);
- 
+	g_free (label);
+	g_free (tooltip);
+
 @@ -1619,5 +1637,21 @@
  panel_menu_item_activate_desktop_file (GtkWidget  *menuitem,
- 				       const char *path)
+				       const char *path)
  {
 +	GnomeDesktopItem *ditem;
-+ 
++
 +	if (g_path_is_absolute (path))
 +		ditem = gnome_desktop_item_new_from_file (path, 0, NULL);
 +	else
 +		ditem = gnome_desktop_item_new_from_basename (path, 0, NULL);
-+ 
++
 +	if (ditem != NULL && panel_lockdown_is_forbidden_ditem (ditem)) {
 +		gnome_desktop_item_unref (ditem);
 +		return;		/* Don't launch as it's a forbidden desktop file */
 +	}
-+ 
++
 +	if (ditem != NULL) {
 +		gnome_desktop_item_unref (ditem);
 +	}
 +
- 	panel_launch_desktop_file (path, menuitem_to_screen (menuitem), NULL);
+	panel_launch_desktop_file (path, menuitem_to_screen (menuitem), NULL);
  }
 --- gnome-panel-2.30.2.orig/gnome-panel/panel-menu-items.h	2010-02-09 13:32:08.000000000 +0100
 +++ gnome-panel-2.30.2/gnome-panel/panel-menu-items.h	2010-12-27 12:47:44.039156167 +0100
 @@ -90,6 +90,8 @@
  void panel_menu_items_append_lock_logout (GtkWidget *menu);
  void panel_menu_item_activate_desktop_file (GtkWidget  *menuitem,
- 					    const char *path);
+					    const char *path);
 +void panel_place_menu_item_recreate_menu (GtkWidget *widget);
 +void panel_desktop_menu_item_recreate_menu (PanelDesktopMenuItem *desktop_item);
- 
+
  G_END_DECLS
- 

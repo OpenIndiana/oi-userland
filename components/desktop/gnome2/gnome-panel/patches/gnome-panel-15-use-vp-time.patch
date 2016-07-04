@@ -6,21 +6,21 @@ diff -urN -x'*.orig' gnome-panel-2.30.2/applets/clock/clock.c ../SUNWgnome-panel
  #include <math.h>
  #include <locale.h>
 +#include <stdlib.h>
- 
+
  #include <panel-applet.h>
  #include <panel-applet-gconf.h>
 @@ -1647,7 +1648,10 @@
- 	can_set = can_set_system_time ();
- 
- 	if (cd->time_settings_button)
+	can_set = can_set_system_time ();
+
+	if (cd->time_settings_button)
 -		gtk_widget_set_sensitive (cd->time_settings_button, can_set);
 +		if (can_set)
 +			gtk_widget_set_sensitive (cd->time_settings_button, can_set);
 +		else // hide widget rather than make it insensitive
 +			gtk_widget_hide (cd->time_settings_button);
- 
- 	if (cd->set_time_button) {
- 		gtk_widget_set_sensitive (cd->set_time_button, can_set != 0); 
+
+	if (cd->set_time_button) {
+		gtk_widget_set_sensitive (cd->set_time_button, can_set != 0);
 @@ -1848,14 +1852,12 @@
  static void
  run_time_settings (GtkWidget *unused, ClockData *cd)
@@ -40,5 +40,5 @@ diff -urN -x'*.orig' gnome-panel-2.30.2/applets/clock/clock.c ../SUNWgnome-panel
 +    }
 +    refresh_clock_timeout (cd);
  }
- 
+
  static void
