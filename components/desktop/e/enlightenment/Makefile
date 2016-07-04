@@ -20,27 +20,34 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		terminology
-COMPONENT_VERSION=	0.8.0
-COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_NAME=		enlightenment
+COMPONENT_VERSION=	0.19.3
+COMPONENT_FMRI=     	desktop/window-manager/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://enlightenment.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7a10d44b023cf6134c2483304e4ad33bea6df0f11266aec482f54fa67a3ce628
+COMPONENT_ARCHIVE_HASH=	sha256:9d2e3c9e25dd48a8f5948d9c7757863d40f7b5bdbc13fdca5a72fb050e048dec
 COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      Enlightenment - The best terminal emulator written with the EFL
+COMPONENT_SUMMARY=      Enlightenment - The Compositing Window Manager and Desktop Shell
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-# Need to regenerate configure and Makefiles as 1.13 is used.
+CONFIGURE_OPTIONS+=	--enable-shared
+CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS+=	--disable-temperature
+CONFIGURE_OPTIONS+=	--disable-device-udev
+CONFIGURE_OPTIONS+=     --disable-mount-udisks
+CONFIGURE_OPTIONS+=     --disable-device-hal
+
+# Need to regenerate configure
 COMPONENT_PRE_CONFIGURE_ACTION= pushd $(SOURCE_DIR); aclocal -I m4 --install && autoconf && automake -a; popd;
 
 
@@ -50,7 +57,10 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/e/efl
+REQUIRED_PACKAGES += library/e/elementary
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/xcb-util-keysyms

@@ -18,40 +18,30 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		evas_generic_loaders
-COMPONENT_VERSION=	1.12.0
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/e/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_NAME=		terminology
+COMPONENT_VERSION=	0.8.0
+COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://enlightenment.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c531c82845b656cb8ea8e2db1e413509d9b4558450be6c5ee27da0cdc781376e
-COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/libs/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      GPLv2
+COMPONENT_ARCHIVE_HASH=	sha256:7a10d44b023cf6134c2483304e4ad33bea6df0f11266aec482f54fa67a3ce628
+COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      Enlightenment - Evas external binary executable loaders
+COMPONENT_SUMMARY=      Enlightenment - The best terminal emulator written with the EFL
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I m4 &&\
-					automake -c -f -a &&\
-					autoconf )
 
-
-CONFIGURE_OPTIONS+=	--enable-poppler
-CONFIGURE_OPTIONS+=	--enable-spectre
-CONFIGURE_OPTIONS+=	--disable-libraw # adding libraw requires a bump of libjpeg
-CONFIGURE_OPTIONS+=	--enable-svg
-CONFIGURE_OPTIONS+=	--enable-gstreamer
+# Need to regenerate configure and Makefiles as 1.13 is used.
+COMPONENT_PRE_CONFIGURE_ACTION= pushd $(SOURCE_DIR); aclocal -I m4 --install && autoconf && automake -a; popd;
 
 
 build: $(BUILD_32)
@@ -60,7 +50,7 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += library/e/efl
+REQUIRED_PACKAGES += library/e/elementary
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

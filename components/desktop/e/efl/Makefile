@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.12.3
@@ -39,19 +39,23 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATCH_LEVEL=0
 
 CONFIGURE_OPTIONS+=	CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
-CONFIGURE_OPTIONS+=	--enable-fribidi 
+CONFIGURE_OPTIONS+=	--enable-fribidi
 CONFIGURE_OPTIONS+=	--with-opengl=full
 # OpenGL ES 2.0 headers marked not present if x11/library/mesa not installed
 CONFIGURE_OPTIONS+=	--enable-lua-old
 CONFIGURE_OPTIONS+=	--disable-pulseaudio # Not packaged
-CONFIGURE_OPTIONS+=	--disable-physics # Disable physics since bullet is missing 
-CONFIGURE_OPTIONS+=	--enable-gstreamer # Select series 0.10 over 1.0 
-CONFIGURE_OPTIONS+=	--disable-gstreamer1 # Select series 0.10 over 1.0 
+CONFIGURE_OPTIONS+=	--disable-physics # Disable physics since bullet is missing
+CONFIGURE_OPTIONS+=	--enable-gstreamer # Select series 0.10 over 1.0
+CONFIGURE_OPTIONS+=	--disable-gstreamer1 # Select series 0.10 over 1.0
 CONFIGURE_OPTIONS+=	--disable-doc # Broken in 1.8.2
 CONFIGURE_OPTIONS+=     --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba
+
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 
 # Need to regenerate configure and Makefiles as 1.14 is used.
@@ -61,7 +65,7 @@ CONFIGURE_OPTIONS+=     --enable-i-really-know-what-i-am-doing-and-that-this-wil
 COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
 
 # pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp; 
+COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
 
 build: $(BUILD_32)
 
@@ -69,7 +73,37 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/fribidi
+REQUIRED_PACKAGES += library/giflib
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxp
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxscrnsaver
+REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/library/mesa

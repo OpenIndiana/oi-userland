@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expedite
 COMPONENT_VERSION=	1.7.9
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/e/expedite
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,6 +40,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION=2.7
+
 PATCH_LEVEL=0
 
 CONFIGURE_OPTIONS+=	--enable-opengl-x11
@@ -46,7 +49,7 @@ CONFIGURE_OPTIONS+=	--enable-software-x11
 CONFIGURE_OPTIONS+=	--with-x
 
 # pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/expedite-cmp; 
+COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/expedite-cmp;
 
 
 build: $(BUILD_32)
@@ -55,7 +58,9 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += library/e/efl
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
