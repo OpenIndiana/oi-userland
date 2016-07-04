@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright (c) 2014 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eog
 COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/EyeOfGnome
 COMPONENT_SUMMARY=	GNOME image viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,6 +28,8 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,14 +44,14 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					autoheader &&\
 					automake -a -f -c --gnu &&\
 					autoconf )
-					
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
-CONFIGURE_EENV+=	PYTHON=$(PYTHON)
+CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
@@ -60,6 +62,22 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += image/library/libexif
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
