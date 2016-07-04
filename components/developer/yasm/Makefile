@@ -20,7 +20,7 @@
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yasm
 COMPONENT_VERSION=	1.3.0
@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f
 COMPONENT_ARCHIVE_URL=	http://www.tortall.net/projects/yasm/releases/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32_and_64)
 
@@ -41,4 +41,4 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
