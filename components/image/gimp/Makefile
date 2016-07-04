@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.8.16
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gimp.org/
 COMPONENT_SUMMARY=	The Gimp image editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.8/$(COMPONENT_ARCHIV
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -49,7 +51,8 @@ CONFIGURE_OPTIONS+=	--enable-mp
 CONFIGURE_OPTIONS+=	--enable-default-binary
 CONFIGURE_OPTIONS+=	--enable-mmx=no
 CONFIGURE_OPTIONS+=	--with-lcms=2
-#CONFIGURE_OPTIONS+=	--enable-glibtest=no
+
+CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
 # common targets
 build:		$(BUILD_32)
@@ -76,12 +79,12 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libpoppler
-REQUIRED_PACKAGES += library/python/pygobject-26
+REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2
-REQUIRED_PACKAGES += library/python/pygtk2-26
+REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
