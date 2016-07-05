@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.3.22
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_VERSION=	6.3.26
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:09093168552119e962617f86f2713564cf6e3fe7fd32d6799aa0b87df28f1e89
-COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
+    sha256:79b4c54cdbaf02c1a9a691d9948fcb1a77a1591a813e904283a8b614b757e850
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/branch_6.3/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
 
-TPNO=			8416
+TPNO=			29615
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,8 +50,13 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTO_DIR)$(USRBIN.32)/fetchmailconf
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-	'-e "/^XXX_CC_XXX$$/d"'
+	'-n ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/^=======/p" ' \
+	'-e "/were not run/p" ' \
+	'-e "/passed/p" '
 
 REQUIRED_PACKAGES += library/python/tkinter-27
 REQUIRED_PACKAGES += library/security/openssl
