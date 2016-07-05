@@ -95,7 +95,7 @@ To switch back to the default non-FIPS-140 version, use the following command:
 Reboot is required to enforce the change system-wide.
 .sp
 .LP
-See \fIManaging Encryption and Certificates in Oracle Solaris 11.2\fR for more details.
+See \fIManaging Encryption and Certificates in Oracle Solaris\fR for more details.
 .sp
 .LP
 When the FIPS-140 version of OpenSSL is activated, an application can run in FIPS-140 mode or non-FIPS-140 mode. An application must explicitly call \fBFIPS_mode_set()\fR in order to activate FIPS-140 mode.
@@ -129,29 +129,18 @@ EVP_PKEY *ENGINE_load_public_key(ENGINE *e,
 
 .sp
 .LP
-\fBkey_id\fR, formerly for filenames only, can be now also set to a \fBPKCS#11 URI\fR. The \fBEVP_PKEY\fR structure is newly allocated and caller is responsible to free the structure later. To avoid clashes with existing filenames, \fBfile://\fR prefix for filenames is now also accepted but only when the PKCS#11 engine is in use. The PKCS#11 URI specification follows:
+\fBkey_id\fR, formerly for filenames only, can be now also set to a \fBPKCS#11 URI\fR. The \fBEVP_PKEY\fR structure is newly allocated and caller is responsible to free the structure later. See the \fBpkcs11_parse_uri\fR(7) man page for the PKCS#11 URI attributes supported by Solaris.
 .sp
-.in +2
-.nf
-pkcs11:[token=<label>][:manuf=<label>][;serial=<label>]
-   [;model=<label>][;object=<label>]
-   [;objecttype=(public|private|cert)]
-   [;passphrasedialog=(builtin|exec:<file>)]
-.fi
-.in -2
 
 .sp
 .LP
-The ordering of keywords is not significant. The PKCS#11 engine uses the keystore for the slot chosen for public key operations, which is \fBmetaslot\fR on a standard configured machine. Currently, the PKCS#11 engine ignores the \fBobjecttype\fR keyword. The only mandatory keyword is \fBobject\fR which is the key object label. For information on how to use a different, possibly hardware, keystore with \fBmetaslot\fR, see \fBlibpkcs11\fR(3LIB).
+The PKCS#11 engine uses the keystore for the slot chosen for public key operations, which is \fBmetaslot\fR on a standard configured machine. The only mandatory keyword is \fBobject\fR which is the key object label. For information on how to use a different, possibly hardware, keystore with \fBmetaslot\fR, see \fBlibpkcs11\fR(3LIB).
 .sp
 .LP
-The token PIN is provided by way of the \fBpassphrasedialog\fR keyword and is either read from the terminal (\fBbuiltin\fR) or from the output of an external command (\fBexec:<file>\fR). The PIN is used to log into the token and by default is deleted from the memory then. The keyword \fBpin\fR is intentionally not provided due to inherent security problems of possible use of a password in the process arguments.
+Due to fork safety issues the application must re-login if the child continues to use the PKCS#11 engine. It is done inside of the engine automatically if fork is detected.  Alternatively, an environment variable \fBOPENSSL_PKCS11_PIN_CACHING_POLICY\fR can be used to allow the PIN to be cached in memory and reused in the child. It can be set to \fBnone\fR which is the default, \fBmemory\fR to store the PIN in memory, and \fBmlocked-memory\fR to keep the PIN in a locked page using \fBmlock\fR(3C). \fBPRIV_PROC_LOCK_MEMORY\fR privilege is required in that case.
 .sp
 .LP
-Due to fork safety issues the application must re-login if the child continues to use the PKCS#11 engine. It is done inside of the engine automatically if fork is detected and in that case, \fBexec:<file>\fR option of the \fBpassphrasedialog\fR keyword can be used. Alternatively, an environment variable \fBOPENSSL_PKCS11_PIN_CACHING_POLICY\fR can be used to allow the PIN to be cached in memory and reused in the child. It can be set to \fBnone\fR which is the default, \fBmemory\fR to store the PIN in memory, and \fBmlocked-memory\fR to keep the PIN in a locked page using \fBmlock\fR(3C). \fBPRIV_PROC_LOCK_MEMORY\fR privilege is required in that case.
-.sp
-.LP
-Sensitive parts of private keys are never read from the token to the process memory no matter whether the key is tagged with sensitive flag or not. The PKCS#11 engine uses the public components as a search key to get a PKCS#11 object handle to the private key.
+The PKCS#11 engine uses the public components as a search key to get a PKCS#11 object handle to the private key.
 .sp
 .LP
 To use the RSA keys by reference, high level API functions such as \fBRSA_public_decrypt()\fR, \fBEVP_PKEY_set1_RSA()\fR, or \fBEVP_SignInit()\fR must be used. Low level functions might go around the engine and fail to make use of the feature.
@@ -174,7 +163,7 @@ The following example generates and prints a public key stored in an already ini
 .nf
 $ \fBpktool gencert keystore=pkcs11 label=mykey \
    subject="CN=test" keytype=rsa keylen=1024 serial=01\fR
-$ \fBopenssl rsa -in "pkcs11:object=mykey;passphrasedialog=builtin"\
+$ \fBopenssl rsa -in "pkcs11:object=mykey?pin-source=builtin-dialog"\
    -pubout -text -engine pkcs11 -inform e\fR
 .fi
 .in -2
@@ -202,7 +191,7 @@ Interface StabilityPass-through Uncommitted
 .SH SEE ALSO
 .sp
 .LP
-\fBcrle\fR(1), \fBcryptoadm\fR(8), \fBlibpkcs11\fR(3LIB), \fBattributes\fR(7), \fBprivileges\fR(7)
+\fBcrle\fR(1), \fBcryptoadm\fR(8), \fBlibpkcs11\fR(3LIB), \fBpkcs11_parse_uri\fR(7), \fBattributes\fR(7), \fBprivileges\fR(7)
 .sp
 .LP
 \fB/usr/share/man/man1openssl/openssl.1openssl\fR, \fB/usr/share/man/man1openssl/CRYPTO_num_locks.3openssl\fR, \fB/usr/share/man/man3openssl/engine.3\fR, \fB/usr/share/man/man3openssl/evp.3\fR

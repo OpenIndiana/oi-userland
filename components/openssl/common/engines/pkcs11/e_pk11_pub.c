@@ -252,7 +252,7 @@ pk11_active_add(CK_OBJECT_HANDLE h, PK11_OPTYPE type)
 	if (h == CK_INVALID_HANDLE) {
 		PK11err(PK11_F_ACTIVE_ADD, PK11_R_INVALID_HANDLE);
 		return (-1);
-		}
+	}
 
 	/* search for entry in the active list */
 	if ((entry = pk11_active_find(h, type)) != NULL) {
@@ -1190,138 +1190,185 @@ err:
 	return (ret);
 }
 
-#define	MAXATTR	1024
+
 /*
- * Load RSA private key from a file or get its PKCS#11 handle if stored in the
- * PKCS#11 token.
+ * Get a key from a file whose name is 'keyid'.
+ * 'keyid' may or may not contain the file URI prefix, "file://".
  */
-/* ARGSUSED */
-EVP_PKEY *
-pk11_load_privkey(ENGINE* e, const char *privkey_id,
-    UI_METHOD *ui_method, void *callback_data)
+static EVP_PKEY *
+common_get_key_from_file(PK11_SESSION *sp, const char *keyid,
+    CK_BBOOL is_private)
 {
-	EVP_PKEY *pkey = NULL;
-	FILE *privkey;
-	CK_OBJECT_HANDLE  h_priv_key = CK_INVALID_HANDLE;
-	RSA *rsa = NULL;
-	PK11_SESSION *sp;
-	/* Anything else below is needed for the key by reference extension. */
-	const char *file;
-	int ret;
-	pkcs11_uri uri_struct;
-	CK_RV rv;
-	CK_BBOOL is_token = CK_TRUE;
-	CK_BBOOL rollback = CK_FALSE;
-	CK_BYTE attr_data[8][MAXATTR];
-	CK_OBJECT_CLASS key_class = CKO_PRIVATE_KEY;
+	const char	*filename;
+	FILE		*fd;
+	RSA		*rsa = NULL;
+	EVP_PKEY	*pkey = NULL;
+	CK_OBJECT_HANDLE  h_key = CK_INVALID_HANDLE;
+
+	if (strncmp(keyid, FILE_URI_PREFIX, strlen(FILE_URI_PREFIX)) == 0) {
+		/* file URI: skip the "file://" prefix */
+		filename = keyid + strlen(FILE_URI_PREFIX);
+	} else {
+		/* assume keyid is a filename without file URI prefix */
+		filename = keyid;
+	}
+
+	if ((fd = fopen(filename, read_mode_flags)) == NULL) {
+		/* 'keyid' was not a file */
+		return (NULL);
+	}
+
+	if (is_private) {
+		pkey = PEM_read_PrivateKey(fd, NULL, NULL, NULL);
+	} else {
+		pkey = PEM_read_PUBKEY(fd, NULL, NULL, NULL);
+	}
+	(void) fclose(fd);
+	if (pkey == NULL) {
+		return (NULL);
+	}
+	rsa = EVP_PKEY_get1_RSA(pkey);
+	if (rsa == NULL) {
+		goto err;
+	}
+
+	/*
+	 * This will always destroy the RSA object since we have a new
+	 * RSA structure here.
+	 */
+	if (is_private) {
+		(void) pk11_check_new_rsa_key_priv(sp, rsa);
+		h_key = sp->opdata_rsa_priv_key =
+		    pk11_get_private_rsa_key(rsa, sp);
+	} else {
+		(void) pk11_check_new_rsa_key_pub(sp, rsa);
+		h_key = sp->opdata_rsa_pub_key =
+		    pk11_get_public_rsa_key(rsa, sp);
+	}
+	if (h_key == CK_INVALID_HANDLE) {
+		goto err;
+	}
+
+	return (pkey);
+
+err:
+	if (rsa != NULL) {
+		RSA_free(rsa);
+	}
+	if (pkey != NULL) {
+		EVP_PKEY_free(pkey);
+	}
+	return (NULL);
+}
+
+#define	MAXATTR	1024
+
+/*
+ * Get a key from a token.
+ * uri_struct->object is required.
+ */
+static EVP_PKEY *
+common_get_key_from_token(ENGINE *e, PK11_SESSION *sp,
+    pkcs11_uri_t *uri_struct, CK_BBOOL is_private)
+{
+	EVP_PKEY	*pkey = NULL;
+	RSA		*rsa = NULL;
+	CK_RV		rv;
+	CK_BBOOL	is_token = CK_TRUE;
+	CK_OBJECT_CLASS	key_class;
+	CK_BYTE		attr_data[2][MAXATTR];
+	CK_ATTRIBUTE	search_templ[] = {
+				{CKA_TOKEN, &is_token, sizeof (is_token)},
+				{CKA_CLASS, &key_class, sizeof (key_class)},
+				{CKA_LABEL, NULL, 0}
+			};
 	CK_OBJECT_HANDLE ks_key = CK_INVALID_HANDLE;	/* key in keystore */
-
-	/* We look for private keys only. */
-	CK_ATTRIBUTE search_templ[] = {
-		{CKA_TOKEN, &is_token, sizeof (is_token)},
-		{CKA_CLASS, &key_class, sizeof (key_class)},
-		{CKA_LABEL, NULL, 0}
-	};
-
+	CK_BBOOL	rollback = CK_FALSE;
 	/*
 	 * These public attributes are needed to initialize the OpenSSL RSA
 	 * structure with something we can use to look up the key. Note that we
 	 * never ask for private components.
 	 */
-	CK_ATTRIBUTE get_templ[] = {
+	CK_ATTRIBUTE	get_templ[] = {
 		{CKA_MODULUS, (void *)attr_data[0], MAXATTR},		/* n */
 		{CKA_PUBLIC_EXPONENT, (void *)attr_data[1], MAXATTR},	/* e */
 	};
 
-	if ((sp = pk11_get_session(OP_RSA)) == NULL) {
+	/* make sure that the correct token was specified */
+	if (pk11_check_token_attrs(uri_struct) == 0) {
+		return (NULL);
+	}
+	/* The "object" token is mandatory in the PKCS#11 URI. */
+	if (uri_struct->object == NULL) {
+		PK11err(PK11_F_LOAD_PRIVKEY, PK11_R_MISSING_OBJECT_LABEL);
 		return (NULL);
 	}
 
-	/*
-	 * The next function will decide whether we are going to access keys in
-	 * the token or read them from plain files. It all depends on what is in
-	 * the 'privkey_id' parameter.
-	 */
-	ret = pk11_process_pkcs11_uri(privkey_id, &uri_struct, &file);
-	if (ret == 0) {
+	/* login to the session */
+	if (pk11_token_login(sp->session, &pk11_login_done,
+	    uri_struct, is_private) == 0) {
+		return (NULL);
+	}
+
+	/* find a private/public object with the matching CKA_LABEL */
+	key_class = is_private ? CKO_PRIVATE_KEY: CKO_PUBLIC_KEY;
+	search_templ[2].pValue = uri_struct->object;
+	search_templ[2].ulValueLen = strlen(search_templ[2].pValue);
+	if (find_one_object(OP_RSA, sp->session, search_templ, 3,
+	    &ks_key) == 0) {
 		goto err;
 	}
 
-	/* We will try to access a key from a PKCS#11 token. */
-	if (ret == 1) {
-		if (pk11_check_token_attrs(&uri_struct) == 0) {
-			goto err;
-		}
+	/*
+	 * Free the structure now. Note that we use uri_struct's field
+	 * directly in the template so we can't free until find is done.
+	 */
+	pkcs11_free_uri(uri_struct);
 
-		search_templ[2].pValue = uri_struct.object;
-		search_templ[2].ulValueLen = strlen(search_templ[2].pValue);
-
-		if (pk11_token_login(sp->session, &pk11_login_done,
-		    &uri_struct, CK_TRUE) == 0) {
-			goto err;
-		}
-
-		/*
-		 * Now let's try to find the key in the token. It is a failure
-		 * if we can't find it.
-		 */
-		if (find_one_object(OP_RSA, sp->session, search_templ, 3,
-		    &ks_key) == 0) {
-			goto err;
-		}
-
-		/*
-		 * Free the structure now. Note that we use uri_struct's field
-		 * directly in the template so we cannot free it until the find
-		 * is done.
-		 */
-		pk11_free_pkcs11_uri(&uri_struct, 0);
-
-		/*
-		 * We might have a cache hit which we could confirm according to
-		 * the 'n'/'e' params, RSA public pointer as NULL, and non-NULL
-		 * RSA private pointer. However, it is easier just to recreate
-		 * everything. We expect the keys to be loaded once and used
-		 * many times. We do not check the return value because even in
-		 * case of failure the sp structure will have both key pointer
-		 * and object handle cleaned and pk11_destroy_object() reports
-		 * the failure to the OpenSSL error message buffer.
-		 */
+	/*
+	 * We might have a cache hit which we could confirm according to
+	 * the 'n'/'e' params. However, it is easier just to recreate
+	 * everything. We expect the keys to be loaded once and used
+	 * many times. We do not check the return value because even in
+	 * case of failure the sp structure will have both key pointer
+	 * and object handle cleaned and pk11_destroy_object() reports
+	 * the failure to the OpenSSL error message buffer.
+	 */
+	if (is_private) {
 		(void) pk11_destroy_rsa_object_priv(sp, CK_TRUE);
-
 		sp->opdata_rsa_priv_key = ks_key;
-		/* This object shall not be deleted on a cache miss. */
+		/* This object should not be deleted on a cache miss. */
 		sp->persistent = CK_TRUE;
+		rsa = sp->opdata_rsa_priv = RSA_new_method(e);
+	} else {
+		(void) pk11_destroy_rsa_object_pub(sp, CK_TRUE);
+		sp->opdata_rsa_pub_key = ks_key;
+		rsa = sp->opdata_rsa_pub = RSA_new_method(e);
+	}
+	if (rsa == NULL) {
+		goto err;
+	}
 
-		if ((rsa = sp->opdata_rsa_priv = RSA_new_method(e)) == NULL) {
-			goto err;
-		}
+	if ((rv = pFuncList->C_GetAttributeValue(sp->session, ks_key,
+	    get_templ, 2)) != CKR_OK) {
+		PK11err_add_data(
+		    is_private ? PK11_F_LOAD_PRIVKEY : PK11_F_LOAD_PUBKEY,
+		    PK11_R_GETATTRIBUTVALUE, rv);
+		goto err;
+	}
 
-		if ((rv = pFuncList->C_GetAttributeValue(sp->session, ks_key,
-		    get_templ, 2)) != CKR_OK) {
-			PK11err_add_data(PK11_F_LOAD_PRIVKEY,
-			    PK11_R_GETATTRIBUTVALUE, rv);
-			goto err;
-		}
-
-		/*
-		 * Cache the RSA private structure pointer. We do not use it now
-		 * for key-by-ref keys but let's do it for consistency reasons.
-		 */
+	/* Cache the RSA structure pointer. */
+	if (is_private) {
 		sp->opdata_rsa_priv = rsa;
+	} else {
+		sp->opdata_rsa_pub = rsa;
+	}
 
-		/*
-		 * We do not use pk11_get_private_rsa_key() here so we must take
-		 * care of handle management ourselves.
-		 */
-		KEY_HANDLE_REFHOLD(ks_key, OP_RSA, CK_FALSE, rollback, err);
+	/* We only export the non-sensitive key components: n and e */
+	attr_to_BN(&get_templ[0], attr_data[0], &rsa->n);
+	attr_to_BN(&get_templ[1], attr_data[1], &rsa->e);
 
-		/*
-		 * Those are the sensitive components we do not want to export
-		 * from the token at all: rsa->(d|p|q|dmp1|dmq1|iqmp).
-		 */
-		attr_to_BN(&get_templ[0], attr_data[0], &rsa->n);
-		attr_to_BN(&get_templ[1], attr_data[1], &rsa->e);
+	if (is_private) {
 		/*
 		 * Must have 'n'/'e' components in the session structure as
 		 * well. They serve as a public look-up key for the private key
@@ -1329,155 +1376,23 @@ pk11_load_privkey(ENGINE* e, const char *privkey_id,
 		 */
 		attr_to_BN(&get_templ[0], attr_data[0], &sp->opdata_rsa_n_num);
 		attr_to_BN(&get_templ[1], attr_data[1], &sp->opdata_rsa_e_num);
-
-		if ((pkey = EVP_PKEY_new()) == NULL) {
-			goto err;
-		}
-
-		if (EVP_PKEY_set1_RSA(pkey, rsa) == 0) {
-			goto err;
-		}
-	} else {
-		if ((privkey = fopen(file, read_mode_flags)) != NULL) {
-			pkey = PEM_read_PrivateKey(privkey, NULL, NULL, NULL);
-			(void) fclose(privkey);
-			if (pkey != NULL) {
-				rsa = EVP_PKEY_get1_RSA(pkey);
-				if (rsa != NULL) {
-					(void) pk11_check_new_rsa_key_priv(sp,
-					    rsa);
-
-					h_priv_key = sp->opdata_rsa_priv_key =
-					    pk11_get_private_rsa_key(rsa, sp);
-					if (h_priv_key == CK_INVALID_HANDLE) {
-						goto err;
-					}
-				} else {
-					goto err;
-				}
-			}
-		}
 	}
 
-	pk11_return_session(sp, OP_RSA);
-	return (pkey);
-err:
-	if (rsa != NULL) {
-		RSA_free(rsa);
+	if ((pkey = EVP_PKEY_new()) == NULL) {
+		goto err;
 	}
-	if (pkey != NULL) {
-		EVP_PKEY_free(pkey);
-		pkey = NULL;
-	}
-	return (pkey);
-}
-
-/* Load RSA public key from a file or load it from the PKCS#11 token. */
-/* ARGSUSED */
-EVP_PKEY *
-pk11_load_pubkey(ENGINE* e, const char *pubkey_id,
-    UI_METHOD *ui_method, void *callback_data)
-{
-	EVP_PKEY *pkey = NULL;
-	FILE *pubkey;
-	CK_OBJECT_HANDLE  h_pub_key = CK_INVALID_HANDLE;
-	RSA *rsa = NULL;
-	PK11_SESSION *sp;
-	/* everything else below needed for key by reference extension */
-	int ret;
-	const char *file;
-	pkcs11_uri uri_struct;
-	CK_RV rv;
-	CK_BBOOL is_token = CK_TRUE;
-	CK_BYTE attr_data[2][MAXATTR];
-	CK_OBJECT_CLASS key_class = CKO_PUBLIC_KEY;
-	CK_OBJECT_HANDLE ks_key = CK_INVALID_HANDLE;	/* key in keystore */
-
-	CK_ATTRIBUTE search_templ[] = {
-		{CKA_TOKEN, &is_token, sizeof (is_token)},
-		{CKA_CLASS, &key_class, sizeof (key_class)},
-		{CKA_LABEL, NULL, 0}
-	};
-
-	/*
-	 * These public attributes are needed to initialize OpenSSL RSA
-	 * structure with something we can use to look up the key.
-	 */
-	CK_ATTRIBUTE get_templ[] = {
-		{CKA_MODULUS, (void *)attr_data[0], MAXATTR},		/* n */
-		{CKA_PUBLIC_EXPONENT, (void *)attr_data[1], MAXATTR},	/* e */
-	};
-
-	if ((sp = pk11_get_session(OP_RSA)) == NULL) {
-		return (NULL);
-	}
-
-	ret = pk11_process_pkcs11_uri(pubkey_id, &uri_struct, &file);
-
-	if (ret == 0) {
+	if (EVP_PKEY_set1_RSA(pkey, rsa) == 0) {
 		goto err;
 	}
 
-	if (ret == 1) {
-		if (pk11_check_token_attrs(&uri_struct) == 0) {
-			goto err;
-		}
-
-		search_templ[2].pValue = uri_struct.object;
-		search_templ[2].ulValueLen = strlen(search_templ[2].pValue);
-
-		if (pk11_token_login(sp->session, &pk11_login_done,
-		    &uri_struct, CK_FALSE) == 0) {
-			goto err;
-		}
-
-		if (find_one_object(OP_RSA, sp->session, search_templ, 3,
-		    &ks_key) == 0) {
-			goto err;
-		}
-
+	if (is_private) {
 		/*
-		 * Free the structure now. Note that we use uri_struct's field
-		 * directly in the template so we can't free until find is done.
+		 * We do not use pk11_get_private_rsa_key() here so we must
+		 * take care of handle management ourselves.
 		 */
-		pk11_free_pkcs11_uri(&uri_struct, 0);
-		/*
-		 * We load a new public key so we will create a new RSA
-		 * structure. No cache hit is possible.
-		 */
-		(void) pk11_destroy_rsa_object_pub(sp, CK_TRUE);
-		sp->opdata_rsa_pub_key = ks_key;
-
-		if ((rsa = sp->opdata_rsa_pub = RSA_new_method(e)) == NULL) {
-			goto err;
-		}
-
-		if ((rv = pFuncList->C_GetAttributeValue(sp->session, ks_key,
-		    get_templ, 2)) != CKR_OK) {
-			PK11err_add_data(PK11_F_LOAD_PUBKEY,
-			    PK11_R_GETATTRIBUTVALUE, rv);
-			goto err;
-		}
-
-		/*
-		 * Cache the RSA public structure pointer.
-		 */
-		sp->opdata_rsa_pub = rsa;
-
-		/*
-		 * These are the sensitive components we do not want to export
-		 * from the token at all: rsa->(d|p|q|dmp1|dmq1|iqmp).
-		 */
-		attr_to_BN(&get_templ[0], attr_data[0], &rsa->n);
-		attr_to_BN(&get_templ[1], attr_data[1], &rsa->e);
-
-		if ((pkey = EVP_PKEY_new()) == NULL) {
-			goto err;
-		}
-
-		if (EVP_PKEY_set1_RSA(pkey, rsa) == 0) {
-			goto err;
-		}
+		KEY_HANDLE_REFHOLD(ks_key, OP_RSA, CK_FALSE, rollback, err);
+	} else {
+		CK_OBJECT_HANDLE h_pub_key;
 
 		/*
 		 * Create a session object from it so that when calling
@@ -1496,46 +1411,83 @@ pk11_load_pubkey(ENGINE* e, const char *pubkey_id,
 		if (h_pub_key == CK_INVALID_HANDLE) {
 			goto err;
 		}
-	} else {
-		if ((pubkey = fopen(file, read_mode_flags)) != NULL) {
-			pkey = PEM_read_PUBKEY(pubkey, NULL, NULL, NULL);
-			(void) fclose(pubkey);
-			if (pkey != NULL) {
-				rsa = EVP_PKEY_get1_RSA(pkey);
-				if (rsa != NULL) {
-					/*
-					 * This will always destroy the RSA
-					 * object since we have a new RSA
-					 * structure here.
-					 */
-					(void) pk11_check_new_rsa_key_pub(sp,
-					    rsa);
 
-					h_pub_key = sp->opdata_rsa_pub_key =
-					    pk11_get_public_rsa_key(rsa, sp);
-					if (h_pub_key == CK_INVALID_HANDLE) {
-						EVP_PKEY_free(pkey);
-						pkey = NULL;
-					}
-				} else {
-					EVP_PKEY_free(pkey);
-					pkey = NULL;
-				}
-			}
-		}
 	}
 
-	pk11_return_session(sp, OP_RSA);
 	return (pkey);
+
 err:
 	if (rsa != NULL) {
 		RSA_free(rsa);
+		sp->opdata_rsa_priv = NULL;
+		sp->opdata_rsa_pub = NULL;
 	}
 	if (pkey != NULL) {
 		EVP_PKEY_free(pkey);
+	}
+	return (NULL);
+}
+
+
+/*
+ * Load an RSA key from a file or get its PKCS#11 handle if stored in the
+ * PKCS#11 token.
+ */
+static EVP_PKEY *
+common_load_key(ENGINE *e, const char *keyid, CK_BBOOL is_private)
+{
+	EVP_PKEY	*pkey;
+	PK11_SESSION	*sp;
+	int		ret;
+	pkcs11_uri_t	uri_struct;
+
+	if ((sp = pk11_get_session(OP_RSA)) == NULL) {
+		return (NULL);
+	}
+
+	/*
+	 * pkcs11_parse_uri() returns
+	 * - PK11_URI_OK if keyid is a valid PKCS#11 URI
+	 * - PK11_NOT_PKCS11_URI if keyid is not a PKCS#11 URI
+	 * - other return code if keyid is badly formatted
+	 */
+	ret = pkcs11_parse_uri(keyid, &uri_struct);
+	if (ret == PK11_URI_OK) {
+		/* PKCS#11 URI: try to find a key from a PKCS#11 token */
+		pkey = common_get_key_from_token(e, sp, &uri_struct,
+		    is_private);
+	} else if (ret == PK11_NOT_PKCS11_URI) {
+		/* Not PKCS#11 URI: assume it is a file */
+		pkey = common_get_key_from_file(sp, keyid, is_private);
+	} else {
+		/* hard failure */
 		pkey = NULL;
 	}
+
+	pk11_return_session(sp, OP_RSA);
+
 	return (pkey);
+}
+
+/*
+ * Load RSA private key from a file or get its PKCS#11 handle if stored in the
+ * PKCS#11 token.
+ */
+/* ARGSUSED */
+EVP_PKEY *
+pk11_load_privkey(ENGINE* e, const char *privkey_id,
+    UI_METHOD *ui_method, void *callback_data)
+{
+	return (common_load_key(e, privkey_id, B_TRUE /* is_private */));
+}
+
+/* Load RSA public key from a file or load it from the PKCS#11 token. */
+/* ARGSUSED */
+EVP_PKEY *
+pk11_load_pubkey(ENGINE* e, const char *pubkey_id,
+    UI_METHOD *ui_method, void *callback_data)
+{
+	return (common_load_key(e, pubkey_id, B_FALSE /* is_private */));
 }
 
 /*

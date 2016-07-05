@@ -68,6 +68,7 @@
 
 #include <security/cryptoki.h>
 #include <security/pkcs11.h>
+#include <cryptoutil.h>
 #include "e_pk11.h"
 #include "e_pk11_uri.h"
 
@@ -114,7 +115,7 @@ pk11_get_pin(char *dialog, char **pin)
 	/* Initialize as an error. */
 	*pin = NULL;
 
-	if (strcmp(dialog, BUILTIN_SPEC) == 0) {
+	if (dialog == PK11_URI_BUILTIN_DIALOG) {
 		/* The getpassphrase() function is not MT safe. */
 		(void) pthread_mutex_lock(uri_lock);
 		/* Note that OpenSSL is not localized at all. */
@@ -122,7 +123,7 @@ pk11_get_pin(char *dialog, char **pin)
 		if (*pin == NULL) {
 			PK11err(PK11_F_GET_PIN, PK11_R_COULD_NOT_READ_PIN);
 			(void) pthread_mutex_unlock(uri_lock);
-			goto err;
+			return (0);
 		} else {
 			char *pw;
 
@@ -134,7 +135,7 @@ pk11_get_pin(char *dialog, char **pin)
 			if ((pw = strdup(*pin)) == NULL) {
 				PK11err(PK11_F_GET_PIN, PK11_R_MALLOC_FAILURE);
 				(void) pthread_mutex_unlock(uri_lock);
-				goto err;
+				return (0);
 			}
 			/* Zero the internal buffer to get rid of the PIN. */
 			memset(*pin, 0, strlen(*pin));
@@ -143,215 +144,48 @@ pk11_get_pin(char *dialog, char **pin)
 		}
 	} else {
 		/*
-		 * This is the "exec:" case. We will get the PIN from the output
-		 * of an external command.
+		 * This is the command case: "<cmd>|". We will get the PIN from
+		 * the output of an external command.
 		 */
-		if (strncmp(dialog, EXEC_SPEC, strlen(EXEC_SPEC)) == 0) {
-			dialog += strlen(EXEC_SPEC);
-			if ((*pin = run_askpass(dialog)) == NULL) {
-				goto err;
+		if (dialog[strlen(dialog) - 1] == '|') {
+			char	*buf;
+
+			/* duplicate the command without tailing '|' */
+			buf = strndup(dialog, strlen(dialog) - 1);
+			if (buf == NULL) {
+				PK11err(PK11_F_GET_PIN, PK11_R_MALLOC_FAILURE);
+				return (0);
+			}
+			*pin = run_askpass(buf);
+			free(buf);
+			if (*pin == NULL) {
+				return (0);
 			}
 		} else {
 			/*
-			 * Invalid specification in the passphrasedialog
-			 * keyword.
+			 * Invalid specification in the pin-source keyword.
 			 */
 			PK11err(PK11_F_GET_PIN, PK11_R_BAD_PASSPHRASE_SPEC);
-			goto err;
+			return (0);
 		}
 	}
 
 	return (1);
-err:
-	return (0);
 }
+
 
 /*
- * Process the PKCS#11 URI and get the PIN. It uses information from the
- * passphrasedialog keyword to get the PIN. If passphrasedialog is not present
- * it is not considered an error since it depends on the token attributes
- * whether C_Login() is required. The function expects an allocated 'uri_struct'
- * structure.
- *
- * Returns:
- *	0 if URI is not valid at all, or if we could not get the PIN
- * 	1 if all is OK
- *	2 if the URI is not the PKCS#11 URI. In that case, put the string
- *	pointer to the filename to "*file". Note that the pointer just points
- *	inside of the "uristr", possibly skipping the file:// prefix if present.
+ * strncmp() the attributes given by PKCS#11 URI against tokenInfo.
+ * It return 0 if they match.  'len' is the length of each field enforced
+ * by PKCS#11 CK_TOKEN_INFO.
  */
-int
-pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
-	const char **file)
-{
-	char *uristr2, *l1, *l2, *tok, *name;
+#define	URI_MATCH_TOKENINFO(URI_name, tokenInfo_name, len) \
+	strncmp((char *)uri_struct->URI_name, \
+	    (char *)token_info->tokenInfo_name, \
+	    strlen((char *)uri_struct->URI_name) > (len) ? (len) : \
+	    strlen((char *)uri_struct->URI_name))
+#define	TOKEN_MODEL_SIZE	16
 
-	/* Check the "file://" case. */
-	if (strncmp(uristr, FILE_URI_PREFIX, strlen(FILE_URI_PREFIX)) == 0) {
-		*file = uristr + strlen(FILE_URI_PREFIX);
-		return (2);
-	}
-
-	/*  This is the "pkcs11:" case. */
-	if (strncmp(uristr, PK11_URI_PREFIX, strlen(PK11_URI_PREFIX)) != 0) {
-		/* Not PKCS#11 URI at all, could be a filename. */
-		*file = (const char *)uristr;
-		return (2);
-	} else {
-		/* Dup the string and skip over the pkcs11: prefix then. */
-		uristr2 = strdup(uristr + strlen(PK11_URI_PREFIX));
-		if (uristr2 == NULL) {
-			PK11err(PK11_F_CHECK_TOKEN_ATTRS,
-			    PK11_R_MALLOC_FAILURE);
-			goto err;
-		}
-	}
-
-	/* Initialize the structure. */
-	memset(uri_struct, 0, sizeof (*uri_struct));
-
-	/*
-	 * Using strtok_r() would silently skip over multiple semicolons. We
-	 * must check that before moving on. We must also avoid ';' as the first
-	 * and the last character in the URI.
-	 */
-	if (strstr(uristr2, ";;") != NULL || uristr2[0] == ';' ||
-	    (strlen(uristr2) > 0 && uristr2[strlen(uristr2) - 1] == ';')) {
-		goto bad_uri;
-	}
-
-	tok = strtok_r(uristr2, ";", &l1);
-	for (; tok != NULL; tok = strtok_r(NULL, ";", &l1)) {
-		/* "tok" is not empty so there will be something in "name". */
-		name = strtok_r(tok, "=", &l2);
-		/* Check whether there is '=' at all. */
-		if (l2 == NULL) {
-			goto bad_uri;
-		}
-
-		/*
-		 * Fill out the URI structure. We do not accept duplicit
-		 * attributes.
-		 */
-		if (strcmp(name, PK11_TOKEN) == 0) {
-			if (uri_struct->token == NULL) {
-				if ((uri_struct->token = strdup(l2)) == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_MANUF) == 0) {
-			if (uri_struct->manuf == NULL) {
-				if ((uri_struct->manuf = strdup(l2)) == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_SERIAL) == 0) {
-			if (uri_struct->serial == NULL) {
-				if ((uri_struct->serial = strdup(l2)) == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_MODEL) == 0) {
-			if (uri_struct->model == NULL) {
-				if ((uri_struct->model = strdup(l2)) == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_OBJECT) == 0) {
-			if (uri_struct->object == NULL) {
-				if ((uri_struct->object = strdup(l2)) == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_OBJECTTYPE) == 0) {
-			if (uri_struct->objecttype == NULL) {
-				uri_struct->objecttype = strdup(l2);
-				if (uri_struct->objecttype == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else if (strcmp(name, PK11_ASKPASS) == 0) {
-			if (uri_struct->askpass == NULL) {
-				uri_struct->askpass = strdup(l2);
-				if (uri_struct->askpass == NULL) {
-					goto no_mem;
-				}
-			} else {
-				goto bad_uri;
-			}
-		} else {
-			goto bad_uri;
-		}
-	}
-
-	/* The "object" token is mandatory in the PKCS#11 URI. */
-	if (uri_struct->object == NULL) {
-		PK11err(PK11_F_LOAD_PRIVKEY, PK11_R_MISSING_OBJECT_LABEL);
-		goto err;
-	}
-
-	free(uristr2);
-	return (1);
-bad_uri:
-	PK11err(PK11_F_LOAD_PRIVKEY, PK11_R_INVALID_PKCS11_URI);
-	if (uristr2 != NULL) {
-		free(uristr2);
-	}
-	return (0);
-no_mem:
-	PK11err(PK11_F_LOAD_PRIVKEY, PK11_R_MALLOC_FAILURE);
-err:
-	pk11_free_pkcs11_uri(uri_struct, CK_FALSE);
-	if (uristr2 != NULL) {
-		free(uristr2);
-	}
-	return (0);
-}
-
-/*
- * Free the PKCS11 URI structure and anything that might be inside.
- */
-void
-pk11_free_pkcs11_uri(pkcs11_uri *uri_struct, CK_BBOOL free_uri_itself)
-{
-	if (uri_struct->token != NULL) {
-		free(uri_struct->token);
-	}
-	if (uri_struct->manuf != NULL) {
-		free(uri_struct->manuf);
-	}
-	if (uri_struct->serial != NULL) {
-		free(uri_struct->serial);
-	}
-	if (uri_struct->model != NULL) {
-		free(uri_struct->model);
-	}
-	if (uri_struct->object != NULL) {
-		free(uri_struct->object);
-	}
-	if (uri_struct->objecttype != NULL) {
-		free(uri_struct->objecttype);
-	}
-	if (uri_struct->askpass != NULL) {
-		free(uri_struct->askpass);
-	}
-
-	if (free_uri_itself == CK_TRUE) {
-		OPENSSL_free(uri_struct);
-	}
-}
 
 /*
  * While our keystore is always the one used by the pubkey slot (which is
@@ -367,7 +201,7 @@ pk11_free_pkcs11_uri(pkcs11_uri *uri_struct, CK_BBOOL free_uri_itself)
  *	0 on failure
  */
 int
-pk11_check_token_attrs(pkcs11_uri *uri_struct)
+pk11_check_token_attrs(pkcs11_uri_t *uri_struct)
 {
 	CK_RV rv;
 	static CK_TOKEN_INFO_PTR token_info = NULL;
@@ -390,35 +224,27 @@ pk11_check_token_attrs(pkcs11_uri *uri_struct)
 	}
 
 	if (uri_struct->token != NULL) {
-		if (strncmp(uri_struct->token, (char *)token_info->label,
-		    strlen(uri_struct->token) > 32 ? 32 :
-		    strlen(uri_struct->token)) != 0) {
+		if (URI_MATCH_TOKENINFO(token, label, TOKEN_LABEL_SIZE) != 0) {
 			goto urierr;
 		}
 	}
 
 	if (uri_struct->manuf != NULL) {
-		if (strncmp(uri_struct->manuf,
-		    (char *)token_info->manufacturerID,
-		    strlen(uri_struct->manuf) > 32 ? 32 :
-		    strlen(uri_struct->manuf)) != 0) {
+		if (URI_MATCH_TOKENINFO(manuf, manufacturerID,
+		    TOKEN_MANUFACTURER_SIZE) != 0) {
 			goto urierr;
 		}
 	}
 
 	if (uri_struct->model != NULL) {
-		if (strncmp(uri_struct->model, (char *)token_info->model,
-		    strlen(uri_struct->model) > 16 ? 16 :
-		    strlen(uri_struct->model)) != 0) {
+		if (URI_MATCH_TOKENINFO(model, model, TOKEN_MODEL_SIZE) != 0) {
 			goto urierr;
 		}
 	}
 
 	if (uri_struct->serial != NULL) {
-		if (strncmp(uri_struct->serial,
-		    (char *)token_info->serialNumber,
-		    strlen(uri_struct->serial) > 16 ? 16 :
-		    strlen(uri_struct->serial)) != 0) {
+		if (URI_MATCH_TOKENINFO(serial, serialNumber,
+		    TOKEN_SERIAL_SIZE) != 0) {
 			goto urierr;
 		}
 	}
@@ -585,14 +411,16 @@ err:
  */
 int
 pk11_token_login(CK_SESSION_HANDLE session, CK_BBOOL *login_done,
-    pkcs11_uri *uri_struct, CK_BBOOL is_private)
+    pkcs11_uri_t *uri_struct, CK_BBOOL is_private)
 {
-	CK_RV rv;
+	CK_RV	rv;
+	int	ret = 0;
+	char	*pin = NULL;
 
 	if ((pubkey_token_flags & CKF_TOKEN_INITIALIZED) == 0) {
 		PK11err(PK11_F_TOKEN_LOGIN,
 		    PK11_R_TOKEN_NOT_INITIALIZED);
-		goto err;
+		return (0);
 	}
 
 	/*
@@ -606,7 +434,16 @@ pk11_token_login(CK_SESSION_HANDLE session, CK_BBOOL *login_done,
 	    is_private == CK_TRUE) && ~pubkey_token_flags &
 	    CKF_USER_PIN_INITIALIZED) {
 		PK11err(PK11_F_TOKEN_LOGIN, PK11_R_TOKEN_PIN_NOT_SET);
-		goto err;
+		return (0);
+	}
+
+	/*
+	 * If token does not require login we take it as the login was done.
+	 */
+	if (!(pubkey_token_flags & CKF_LOGIN_REQUIRED) &&
+	    (is_private == CK_FALSE)) {
+		*login_done = CK_TRUE;
+		return (1);
 	}
 
 	/*
@@ -619,109 +456,99 @@ pk11_token_login(CK_SESSION_HANDLE session, CK_BBOOL *login_done,
 	 * lock, making future unlocking impossible. We lock right before
 	 * C_Login().
 	 */
-	if (pubkey_token_flags & CKF_LOGIN_REQUIRED || is_private == CK_TRUE) {
-		if (*login_done == CK_FALSE &&
-		    uri_struct->askpass == NULL) {
+	if (*login_done == CK_FALSE && uri_struct->pinfile == NULL) {
+		PK11err(PK11_F_TOKEN_LOGIN, PK11_R_TOKEN_PIN_NOT_PROVIDED);
+		return (0);
+	}
+
+	if (*login_done == CK_FALSE && uri_struct->pinfile != NULL) {
+		/*
+		 * 'pin' is allocated by pk11_get_pin().
+		 * Note: don't call pk11_get_pin() with uri_lock held.
+		 */
+		if (pk11_get_pin(uri_struct->pinfile, &pin) == 0) {
 			PK11err(PK11_F_TOKEN_LOGIN,
 			    PK11_R_TOKEN_PIN_NOT_PROVIDED);
-			goto err;
+			return (0);
 		}
-
-		if (*login_done == CK_FALSE &&
-		    uri_struct->askpass != NULL) {
-			if (pk11_get_pin(uri_struct->askpass,
-			    &uri_struct->pin) == 0) {
-				PK11err(PK11_F_TOKEN_LOGIN,
-				    PK11_R_TOKEN_PIN_NOT_PROVIDED);
-				goto err;
-			}
-		}
-
-		/*
-		 * Note that what we are logging into is the keystore from
-		 * pubkey_SLOTID because we work with OP_RSA session type here.
-		 * That also means that we can work with only one keystore in
-		 * the engine.
-		 *
-		 * We must make sure we do not try to login more than once.
-		 * Also, see the comment above on locking strategy.
-		 */
-		(void) pthread_mutex_lock(uri_lock);
-		if (*login_done == CK_FALSE) {
-			if ((rv = pFuncList->C_Login(session,
-			    CKU_USER, (CK_UTF8CHAR*)uri_struct->pin,
-			    strlen(uri_struct->pin))) != CKR_OK) {
-				PK11err_add_data(PK11_F_TOKEN_LOGIN,
-				    PK11_R_TOKEN_LOGIN_FAILED, rv);
-				goto err_locked;
-			}
-
-			*login_done = CK_TRUE;
-
-			/*
-			 * Cache the passphrasedialog for possible child (which
-			 * would need to relogin).
-			 */
-			if (passphrasedialog == NULL &&
-			    uri_struct->askpass != NULL) {
-				passphrasedialog =
-				    strdup(uri_struct->askpass);
-
-				if (passphrasedialog == NULL) {
-					PK11err_add_data(PK11_F_TOKEN_LOGIN,
-					    PK11_R_MALLOC_FAILURE, rv);
-					goto err_locked;
-				}
-			}
-
-			/*
-			 * Check the PIN caching policy. Note that user might
-			 * have provided a PIN even when no PIN was required -
-			 * in that case we always remove the PIN from memory.
-			 */
-			if (pk11_get_pin_caching_policy() ==
-			    POLICY_WRONG_VALUE) {
-				PK11err(PK11_F_TOKEN_LOGIN,
-				    PK11_R_PIN_CACHING_POLICY_INVALID);
-				goto err_locked;
-			}
-
-			if (pk11_get_pin_caching_policy() != POLICY_NONE) {
-				if (pk11_cache_pin(uri_struct->pin) == 0) {
-					goto err_locked;
-				}
-			}
-		}
-		(void) pthread_mutex_unlock(uri_lock);
-	} else {
-		/*
-		 * If token does not require login we take it as the
-		 * login was done.
-		 */
-		*login_done = CK_TRUE;
 	}
 
 	/*
-	 * If we raced at pk11_get_pin() we must make sure that all threads that
-	 * called pk11_get_pin() will erase the PIN from memory, not just the
-	 * one that called C_Login(). Note that if we were supposed to cache the
-	 * PIN it was already cached by now so filling "uri_struct.pin" with
-	 * zero bytes is always OK since pk11_cache_pin() makes a copy of it.
+	 * Note that what we are logging into is the keystore from
+	 * pubkey_SLOTID because we work with OP_RSA session type here.
+	 * That also means that we can work with only one keystore in
+	 * the engine.
+	 *
+	 * We must make sure we do not try to login more than once.
+	 * Also, see the comment above on locking strategy.
 	 */
-	if (uri_struct->pin != NULL) {
-		memset(uri_struct->pin, 0, strlen(uri_struct->pin));
+	(void) pthread_mutex_lock(uri_lock);
+	if (*login_done == CK_TRUE) {
+		ret = 1;
+		goto exit_locked;
 	}
 
-	return (1);
+	if ((rv = pFuncList->C_Login(session, CKU_USER,
+	    (CK_UTF8CHAR *)pin, strlen(pin))) != CKR_OK) {
+		PK11err_add_data(PK11_F_TOKEN_LOGIN,
+		    PK11_R_TOKEN_LOGIN_FAILED, rv);
+		goto exit_locked;
+	}
 
-err_locked:
+	*login_done = CK_TRUE;
+
+	/*
+	 * Cache the passphrasedialog for possible child (which
+	 * would need to relogin).
+	 */
+	if (passphrasedialog == NULL) {
+		if (uri_struct->pinfile == PK11_URI_BUILTIN_DIALOG) {
+			passphrasedialog = PK11_URI_BUILTIN_DIALOG;
+		} else if (uri_struct->pinfile != NULL) {
+			passphrasedialog = strdup(uri_struct->pinfile);
+			if (passphrasedialog == NULL) {
+				PK11err_add_data(PK11_F_TOKEN_LOGIN,
+				    PK11_R_MALLOC_FAILURE, rv);
+				goto exit_locked;
+			}
+		}
+	}
+
+	/*
+	 * Check the PIN caching policy. Note that user might
+	 * have provided a PIN even when no PIN was required -
+	 * in that case we always remove the PIN from memory.
+	 */
+	if (pk11_get_pin_caching_policy() == POLICY_WRONG_VALUE) {
+		PK11err(PK11_F_TOKEN_LOGIN, PK11_R_PIN_CACHING_POLICY_INVALID);
+		goto exit_locked;
+	}
+
+	if (pk11_get_pin_caching_policy() != POLICY_NONE) {
+		if (pk11_cache_pin(pin) == 0) {
+			goto exit_locked;
+		}
+	}
+
+	ret = 1;
+
+exit_locked:
 	(void) pthread_mutex_unlock(uri_lock);
-err:
-	/* Always get rid of the PIN. */
-	if (uri_struct->pin != NULL) {
-		memset(uri_struct->pin, 0, strlen(uri_struct->pin));
+
+	/*
+	 * If we raced at pk11_get_pin() we must make sure that all
+	 * threads that called pk11_get_pin() will erase the PIN from
+	 * memory, not just the one that called C_Login(). Note that if
+	 * we were supposed to cache the PIN it was already cached by
+	 * now so filling "uri_struct.pin" with zero bytes is always OK
+	 * since pk11_cache_pin() makes a copy of it.
+	 */
+	if (pin != NULL) {
+		memset(pin, 0, strlen(pin));
+		OPENSSL_free(pin);
 	}
-	return (0);
+
+	return (ret);
 }
 
 /*
@@ -754,7 +581,7 @@ pk11_token_relogin(CK_SESSION_HANDLE session)
 		if (token_pin != NULL) {
 			pin = token_pin;
 		} else if (pk11_get_pin(passphrasedialog, &pin) == 0) {
-			goto err;
+			return (0);
 		}
 
 		(void) pthread_mutex_lock(uri_lock);
@@ -763,7 +590,7 @@ pk11_token_relogin(CK_SESSION_HANDLE session)
 			PK11err_add_data(PK11_F_TOKEN_RELOGIN,
 			    PK11_R_TOKEN_LOGIN_FAILED, rv);
 			(void) pthread_mutex_unlock(uri_lock);
-			goto err;
+			return (0);
 		}
 		(void) pthread_mutex_unlock(uri_lock);
 
@@ -775,8 +602,6 @@ pk11_token_relogin(CK_SESSION_HANDLE session)
 	}
 
 	return (1);
-err:
-	return (0);
 }
 
 /*

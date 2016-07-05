@@ -52,12 +52,15 @@
 #define	E_PK11_URI_H
 
 #include <security/pkcs11t.h>
+#include <cryptoutil.h>
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
 /* PKCS#11 URI related prefixes and attributes. */
+/* define until cryptotuil.h is updated on the system */
+#ifndef	PK11_URI_PREFIX
 #define	PK11_URI_PREFIX		"pkcs11:"
 #define	FILE_URI_PREFIX		"file://"
 #define	PK11_TOKEN		"token"
@@ -66,7 +69,15 @@ extern "C" {
 #define	PK11_MODEL		"model"
 #define	PK11_OBJECT		"object"
 #define	PK11_OBJECTTYPE		"objecttype"
+#endif
+
+/* OLD PKCS#11 URI supported by OpenSSL pkcs11 engine */
 #define	PK11_ASKPASS		"passphrasedialog"
+
+#ifndef	PK11_URI_BUILTIN_DIALOG
+/* Use buitin passphrase dialog as a PIN source */
+#define	PK11_URI_BUILTIN_DIALOG		((char *)-1)
+#endif
 
 /* PIN caching policy. */
 #define	POLICY_NOT_INITIALIZED	0
@@ -80,31 +91,18 @@ extern "C" {
  */
 #define	PK11_MAX_PIN_LEN	256
 
-/* Add new attributes of the PKCS#11 URI here. */
-typedef struct pkcs11_uri_struct {
-	char	*object;	/* object label, the only mandatory info */
-	char	*objecttype;	/* (private|public|cert), currently unused */
-	char	*token;		/* token label */
-	char	*manuf;		/* manufacturer label */
-	char	*serial;	/* serial number label */
-	char	*model;		/* model label */
-	char	*askpass;	/* full path to the command to get the PIN */
-	/* Not part of the PKCS11 URI itself. */
-	char	*pin;		/* token PIN */
-} pkcs11_uri;
-
 /* For URI processing. */
 extern pthread_mutex_t *uri_lock;
 
 int pk11_get_pin(char *dialog, char **pin);
 int pk11_get_pin_caching_policy(void);
-int pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
+int pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri_t *uri_struct,
 	const char **file);
-int pk11_check_token_attrs(pkcs11_uri *uri_struct);
-void pk11_free_pkcs11_uri(pkcs11_uri *uri_struct, CK_BBOOL free_uri_itself);
+int pk11_check_token_attrs(pkcs11_uri_t *uri_struct);
+void pk11_free_pkcs11_uri(pkcs11_uri_t *uri_struct, CK_BBOOL free_uri_itself);
 int pk11_cache_pin(char *pin);
 int pk11_token_login(CK_SESSION_HANDLE session, CK_BBOOL *login_done,
-	pkcs11_uri *uri_struct, CK_BBOOL is_private);
+	pkcs11_uri_t *uri_struct, CK_BBOOL is_private);
 int pk11_token_relogin(CK_SESSION_HANDLE session);
 
 #ifdef	__cplusplus
