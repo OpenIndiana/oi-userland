@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus-python
 COMPONENT_VERSION=	1.2.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=	Python bindings for D-Bus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,9 +40,9 @@ BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
 
-# Avoid overwriting python2.6 files in /usr/share
-$(VARIANT_PYTHON26)/$(MACH32)/.installed:       $(VARIANT_PYTHON27)/$(MACH32)/.installed
-$(VARIANT_PYTHON26)/$(MACH64)/.installed:       $(VARIANT_PYTHON27)/$(MACH64)/.installed
+# Avoid overwriting python2.7 files in /usr/share
+$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
+$(VARIANT_PYTHON27)/$(MACH64)/.installed:       $(VARIANT_PYTHON26)/$(MACH64)/.installed
 
 $(VARIANT_PYTHON26)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
