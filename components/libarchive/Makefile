@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.2.0
+COMPONENT_VERSION=	3.2.1
 COMPONENT_PROJECT_URL=	http://www.libarchive.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:7bce45fd71ff01dc20d19edd78322d4965583d81b8bed8e26cacb65d6f5baa87
+	sha256:72ee1a4e3fd534525f13a0ba1aa7b05b203d186e0c6072a8a4738649d0b3cfd2
 COMPONENT_ARCHIVE_URL=	\
     $(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libarchive
 
-TPNO=			29561
+TPNO=			29683
 
 TEST_TARGET= install $(TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
