@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/hal
 # used by hal-cups-utils maintainer
 COMPONENT_PREP_ACTION = ( \
 	cd $(@D); \
-	ACLOCAL=$(ACLOCAL) AUTOMAKE=$(AUTOMAKE) autoreconf; \
+	ACLOCAL=aclocal-1.11 AUTOMAKE=aclocal-1.11 autoreconf; \
 	cd $(SOURCE_DIR); \
 	$(PERL) -pi -e 's,^\#!.*?python,\#!$(USED_PYTHON), if $$.==1' systemv/hal_lpadmin ; \
 ) 
@@ -59,6 +59,7 @@ COMPONENT_PREP_ACTION = ( \
 # ASLR disabled until sufficient testing can be performed.
 ASLR_MODE= $(ASLR_DISABLE)
 
+REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += system/hal
