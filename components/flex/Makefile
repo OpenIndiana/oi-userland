@@ -58,5 +58,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
 
+REQUIRED_PACKAGES += developer/documentation-tool/help2man
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += system/library/math
