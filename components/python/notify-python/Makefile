@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		notify-python
 COMPONENT_VERSION=	0.1.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.galago-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,6 +39,10 @@ BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+
+# Avoid overwriting python2.7 files in /usr/share
+$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
+$(VARIANT_PYTHON27)/$(MACH64)/.installed:       $(VARIANT_PYTHON26)/$(MACH64)/.installed
 
 $(VARIANT_PYTHON26)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
@@ -78,4 +82,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += system/library
