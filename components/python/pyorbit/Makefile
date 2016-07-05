@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyorbit
 COMPONENT_VERSION=	2.24.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -39,8 +39,8 @@ BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
 
-# Avoid overwriting python2.6 files in /usr/share
-$(VARIANT_PYTHON26)/$(MACH32)/.installed:       $(VARIANT_PYTHON27)/$(MACH32)/.installed
+# Avoid overwriting python2.7 files in /usr/share
+$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
 
 $(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
