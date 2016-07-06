@@ -45,6 +45,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.4.4
+COMPONENT_REVISION=	1
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
@@ -66,6 +67,8 @@ BUILD_DIR_SMB		= $(BUILD_DIR)/samba
 BUILD_DIR_WINB		= $(BUILD_DIR)/winbind
 
 include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 # directory to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
@@ -143,6 +146,8 @@ CONFIGURE_ENV += 	CC="$(CC)"
 CONFIGURE_ENV += 	CPP="$(CC) -E"
 CONFIGURE_ENV += 	AWK=gawk
 CONFIGURE_ENV += 	PERL=$(PERL)
+CONFIGURE_ENV += 	PYTHON=$(PYTHON)
+CONFIGURE_ENV += 	python_LDFLAGS="-m$(BITS) -fPIC -DPIC"
 CONFIGURE_ENV += 	PYTHONDIR="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += 	PYTHONARCHDIR="$(PYTHON_VENDOR_PACKAGES)/samba"
 CONFIGURE_ENV += 	LD="$(LD)"
@@ -177,23 +182,23 @@ $(BUILD_DIR_SMB)/.BDprep:	$(SOURCE_DIR)/.prep
 	# Clone SOURCE_DIR
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	# clenup of clone
-	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf distclean $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Configure of Samba + Winbind.
 $(BUILD_DIR_SMB)/.configured:	$(BUILD_DIR_SMB)/.BDprep
 	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.32) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
+		$(CONFIGURE_ENV.32) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
 	$(TOUCH) $@
 
 # Build of Samba + Winbind.
 $(BUILD_DIR_SMB)/.built:	$(BUILD_DIR_SMB)/.configured
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf build $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Install of Samba + Winbind.
 $(BUILD_DIR_SMB)/.installed:	$(BUILD_DIR_SMB)/.built
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/
 	$(TOUCH) $@
 
@@ -204,20 +209,20 @@ $(BUILD_DIR_WINB)/.BDprep:	$(SOURCE_DIR)/.prep
 	# Clone SOURCE_DIR
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	# clenup of clone
-	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf distclean $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Configure of Winbind (without Samba) for different bitness.
 #$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep $(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so
 $(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep
 	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.64) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.64) )
+		$(CONFIGURE_ENV.64) $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.64) )
 	$(TOUCH) $@
 
 # Build of Winbind (without Samba) for different bitness.
 WB_TARGETS =	--targets=nss_winbind,pamwinbind
 $(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
+	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf build $(WAFOPT1) \
 	    $(WB_TARGETS) )
 	$(TOUCH) $@
 
@@ -260,7 +265,7 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus
