@@ -47,6 +47,14 @@ UNPACK_ARGS_DOC=		-r $(COMPONENT_SRC_DOC)
 # It was working in the previous version, but not sure why
 # it breaks now. Leaving it at no tests for now.
 TEST_TARGET= $(NO_TESTS)
+
+# Requires mysql-57 not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Automake fix, regenerates configure file to get rid of the
