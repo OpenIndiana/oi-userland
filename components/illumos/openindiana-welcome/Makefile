@@ -29,6 +29,8 @@ COMPONENT_CLASSIFICATION= System/Text Tools
 
 PKG_MACROS+=	GIT_REPO="$(GIT_REPO)"
 
+PYTHON_VERSION=2.7
+
 GIT=git
 GIT_REPO=https://github.com/OpenIndiana/openindiana-welcome
 GIT_BRANCH=master
@@ -38,6 +40,8 @@ PATH=/usr/gnu/bin:/usr/bin
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
+
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
