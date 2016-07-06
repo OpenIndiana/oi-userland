@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXt
 COMPONENT_VERSION=        1.1.4
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/toolkit/libxt
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXt - X Toolkit library
@@ -35,6 +36,9 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
+
+# https://bugs.freedesktop.org/show_bug.cgi?id=6569
+LD_B_DIRECT=
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
