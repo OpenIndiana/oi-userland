@@ -10,12 +10,14 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2016 Till Wegmueller
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gucharmap
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION =	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Gucharmap
 COMPONENT_SUMMARY=	GNOME character map utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,12 +51,15 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
