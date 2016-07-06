@@ -38,6 +38,13 @@ COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			26271
 
+# Requires updated version of gtk2, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 INSTALL_TARGET=
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -87,12 +94,14 @@ CONFIGURE_OPTIONS  +=		--disable-ncurses
 CONFIGURE_OPTIONS  +=		--disable-libsecret
 
 install: $(INSTALL_64)
+ifneq ($(BUILD_TYPE), evaluation)
 	$(MKDIR) $(PROTOUSRLIBDIR)
 	if test -f $(PROTOUSRBINDIR)/pinentry-curses ; then \
 	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-gtk-2 ; then \
 	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBDIR)/ ; fi
 	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
+endif
 
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
