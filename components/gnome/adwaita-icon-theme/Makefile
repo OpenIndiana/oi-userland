@@ -35,6 +35,13 @@ COMPONENT_BUGDB=        gnome/themes
 
 TPNO=			25252
 
+# Needs gtk3, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_NO_ARCH=
+INSTALL_NO_ARCH=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Assumes GNU xgettext in PATH
