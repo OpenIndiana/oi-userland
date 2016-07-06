@@ -1,6 +1,6 @@
---- apache-tomcat-6.0.36-src/build.xml
-+++ apache-tomcat-6.0.36-src/build.xml
-@@ -487,13 +487,6 @@
+--- apache-tomcat-6.0.45-src/build.xml.~1~	2016-02-01 21:09:39.000000000 +0300
++++ apache-tomcat-6.0.45-src/build.xml	2016-07-06 10:28:37.168514551 +0300
+@@ -515,13 +515,6 @@
  
    <target name="deploy" depends="build-only,build-docs,warn.dbcp">
  
@@ -14,10 +14,11 @@
      <!-- Copy scripts -->
      <copy todir="${tomcat.build}/bin">
        <fileset dir="bin">
-@@ -777,41 +770,6 @@
+@@ -956,42 +949,6 @@
            description="Download (and build as necessary) dependent components"
            depends="build-manifests">
  
+-    <!-- Download Apache Tomcat Native -->
 -    <antcall target="downloadfile-2">
 -      <param name="sourcefile.1" value="${tomcat-native.loc.1}"/>
 -      <param name="sourcefile.2" value="${tomcat-native.loc.2}"/>
@@ -32,7 +33,7 @@
 -      <param name="destdir" value="${tomcat-native.home}"/>
 -    </antcall>
 -
--    <!-- Download Commons Daemon -->
+-    <!-- Download Apache Commons Daemon -->
 -    <antcall target="downloadgz-2">
 -      <param name="sourcefile.1" value="${commons-daemon.bin.loc.1}"/>
 -      <param name="sourcefile.2" value="${commons-daemon.bin.loc.2}"/>
@@ -56,7 +57,7 @@
      <!-- Build Tomcat DBCP bundle -->
      <antcall target="downloadgz-2">
        <param name="sourcefile.1" value="${commons-pool-src.loc.1}"/>
-@@ -823,6 +781,11 @@
+@@ -1003,6 +960,11 @@
        <param name="sourcefile.2" value="${commons-dbcp-src.loc.2}"/>
        <param name="destfile" value="${commons-dbcp.home}/build.xml" />
      </antcall>
@@ -66,18 +67,24 @@
 +      <arg value="cat ../../jdbc41.patch | gpatch -d ${commons-dbcp.home} -p0" />
 +    </exec>
      <mkdir dir="${tomcat-dbcp.home}"/>
-     <antcall target="build-tomcat-dbcp">
-       <param name="basedir" value="${tomcat-dbcp.home}" />
-@@ -836,15 +799,9 @@
+     <antcall target="build-tomcat-dbcp" />
+ 
+@@ -1014,13 +976,6 @@
        <param name="destdir" value="${jdt.home}"/>
      </antcall>
  
+-    <!-- Download NSIS (Nullsoft Scriptable Install System) -->
 -    <antcall target="downloadzip">
 -      <param name="sourcefile" value="${nsis.loc}"/>
 -      <param name="destfile" value="${nsis.exe}"/>
 -      <param name="destdir" value="${nsis.home}/.."/>
 -    </antcall>
 -
+     <!-- Libraries used for testing. JUnit, Hamcrest -->
+     <antcall target="downloadfile">
+       <param name="sourcefile" value="${junit.loc}"/>
+@@ -1036,7 +991,7 @@
+ 
    </target>
  
 -  <target name="build-tomcat-dbcp" unless="jdk16.present"
