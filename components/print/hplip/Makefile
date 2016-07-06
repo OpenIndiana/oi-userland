@@ -21,10 +21,11 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
 COMPONENT_VERSION=      3.15.9
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -36,6 +37,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION=2.7
+
 PKG_OPTIONS += -I $(COMPONENT_DIR)
 
 # Enable ASLR for this component
@@ -43,7 +46,7 @@ PKG_OPTIONS += -I $(COMPONENT_DIR)
 
 # We need to be able to return from void functions
 # CC += $(studio_FEATURES_EXTENSIONS)
-# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
+# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
@@ -54,6 +57,7 @@ CONFIGURE_OPTIONS +=	--disable-gui-build
 CONFIGURE_OPTIONS +=	--disable-qt4
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
 LDFLAGS+= -lnsl
 
@@ -81,8 +85,6 @@ $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-hpcups-install
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-doc-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-only-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-install
-
-install: COMPONENT_INSTALL_ENV += halpredir=/etc/hal/fdi/preprobe/10osvendor
 
 COMPONENT_INSTALL_ARGS += -e
 
@@ -130,3 +132,16 @@ install: $(BUILD_DIR)/.allvariantsinstalled
 
 # empty test target
 test:	$(NO_TESTS)
+
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
