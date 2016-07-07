@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
 COMPONENT_VERSION=	6.3.26
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
@@ -45,6 +45,8 @@ CONFIGURE_OPTIONS  +=		--with-kerberos5
 CONFIGURE_OPTIONS  +=		--with-ssl
 CONFIGURE_OPTIONS  +=		--enable-NTLM
 
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+
 # We don't have any .so files, so we want to ship the .py and .pyc files in
 # the same place as we would for 32-bit.
 PYTHON_VENDOR_PACKAGES.64 =	$(PYTHON_VENDOR_PACKAGES.32)
@@ -61,6 +63,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/python-2/tkinter-27
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += system/library

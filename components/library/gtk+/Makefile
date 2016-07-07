@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gtk+
 
 COMPONENT_VERSION= 2.24.30
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -80,7 +81,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/print/open-printing
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math

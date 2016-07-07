@@ -29,8 +29,6 @@ COMPONENT_CLASSIFICATION= System/Text Tools
 
 PKG_MACROS+=	GIT_REPO="$(GIT_REPO)"
 
-PYTHON_VERSION=2.7
-
 GIT=git
 GIT_REPO=https://github.com/OpenIndiana/openindiana-welcome
 GIT_BRANCH=master

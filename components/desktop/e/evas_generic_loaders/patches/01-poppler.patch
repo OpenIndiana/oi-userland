@@ -1,0 +1,73 @@
+--- evas_generic_loaders-1.12.0/configure.ac.~1~	2014-11-10 14:27:00.000000000 +0300
++++ evas_generic_loaders-1.12.0/configure.ac	2015-03-24 18:16:40.754839975 +0300
+@@ -73,13 +73,23 @@
+       [have_poppler="no"])
+
+    if test "x${have_poppler}" = "xno" ; then
+-      PKG_CHECK_EXISTS([poppler >= 0.20],
++      PKG_CHECK_EXISTS([poppler >= 0.20 poppler < 0.30 ],
+          [
+-          poppler_pc="poppler >= 0.20"
++          poppler_pc="poppler >= 0.20 poppler < 0.30"
+           AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+           have_poppler="yes"
+          ],
+          [have_poppler="no"])
++   fi
++
++   if test "x${have_poppler}" = "xno" ; then
++      PKG_CHECK_EXISTS([poppler >= 0.30 ],
++         [
++          poppler_pc="poppler >= 0.30"
++          AC_DEFINE(HAVE_POPPLER_030, 1, [Have poppler 0.30])
++          have_poppler="yes"
++         ],
++         [have_poppler="no"])
+    fi
+
+    if test "x${have_poppler}" = "xyes" ; then
+--- evas_generic_loaders-1.12.0/config.h.in	2014-11-10 14:27:20.000000000 +0300
++++ evas_generic_loaders-1.12.0/config.h.in	2015-03-24 18:14:12.461601941 +0300
+@@ -18,6 +18,9 @@
+ /* Have poppler 0.20 */
+ #undef HAVE_POPPLER_020
+
++/* Have poppler 0.30 */
++#undef HAVE_POPPLER_030
++
+ /* Have shm_open() call */
+ #undef HAVE_SHM_OPEN
+
+--- evas_generic_loaders-1.12.0/src/bin/pdf/main.cpp.~1~	2013-12-11 17:56:58.000000000 +0400
++++ evas_generic_loaders-1.12.0/src/bin/pdf/main.cpp	2015-03-24 18:21:22.309224072 +0300
+@@ -62,10 +62,12 @@
+    if (!eina_init())
+      goto del_global_param;
+
++#ifndef HAVE_POPPLER_030
+    if (globalParams->getAntialias())
+      globalParams->setAntialias((char *)"yes");
+    if (globalParams->getVectorAntialias())
+      globalParams->setVectorAntialias((char *)"yes");
++#endif
+
+    pdfdoc = new PDFDoc(new GooString(file), NULL);
+    if (!pdfdoc)
+@@ -161,7 +163,7 @@
+    if (!output_dev)
+      return;
+
+-#ifdef HAVE_POPPLER_020
++#if defined (HAVE_POPPLER_020) || defined (HAVE_POPPLER_030)
+    output_dev->startDoc(pdfdoc);
+ #else
+    output_dev->startDoc(pdfdoc->getXRef());
+@@ -170,7 +172,7 @@
+    if (dpi <= 0.0) dpi = DEF_DPI;
+
+
+-#ifdef HAVE_POPPLER_020
++#if defined (HAVE_POPPLER_020) || defined (HAVE_POPPLER_030)
+    page->displaySlice(output_dev, dpi, dpi,
+                       0, false, false,
+                       0, 0, width, height,

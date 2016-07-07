@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		itstool
 COMPONENT_VERSION=	2.0.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ITS Tool allows you to translate your XML documents with PO files using rules from the W3C Internationalization Tag Set
 COMPONENT_PROJECT_URL=	http://itstool.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,6 +58,5 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/python-2/libxml2-27
+REQUIRED_PACKAGES += runtime/python-27

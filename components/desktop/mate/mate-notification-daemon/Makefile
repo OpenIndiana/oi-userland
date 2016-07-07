@@ -45,8 +45,6 @@ CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-gnome-distributor="The OpenIndiana Project"
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
 
-PYTHON_VERSION = 2.7
-
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 
 COMPONENT_BUILD_ENV += CC="$(CC)"

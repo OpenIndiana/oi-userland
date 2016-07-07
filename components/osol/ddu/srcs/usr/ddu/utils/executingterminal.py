@@ -1,4 +1,4 @@
-#! /usr/bin/python2.6
+#! /usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -31,7 +31,7 @@ import gtk
 try:
     import vte
 except ImportError:
-    sys.path.append('/usr/lib/python2.6/vendor-packages/gtk-2.0')
+    sys.path.append('/usr/lib/python2.7/vendor-packages/gtk-2.0')
     import vte
 
 

@@ -31,8 +31,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-PYTHON_VERSION=2.7
-
 COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) && cp -r python python-2.6)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \

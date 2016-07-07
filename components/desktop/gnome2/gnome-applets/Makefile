@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-applets
 COMPONENT_VERSION= 2.32.1.1
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= GNOME panel applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,6 +41,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					autoconf )
 
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
+CONFIGURE_ENV	+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV	+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV	+= LIBGWEATHER_LIBS="-lgweather -lm"
 CONFIGURE_ENV	+= LIBS="-lm"
 
@@ -57,3 +59,36 @@ COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += desktop/character-map/gucharmap
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
+REQUIRED_PACKAGES += gnome/applet/deskbar-applet
+REQUIRED_PACKAGES += gnome/applet/gnome-netstatus
+REQUIRED_PACKAGES += gnome/applet/quick-lounge-applet
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += gnome/gnome-panel
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gnome-desktop
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libgweather
+REQUIRED_PACKAGES += library/desktop/libwnck
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libbonobo
+REQUIRED_PACKAGES += library/libgtop
+REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygobject
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/pygtk2
+REQUIRED_PACKAGES += library/python/python-gnome-desktop-27
+REQUIRED_PACKAGES += library/python/python-gnome-desktop
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11

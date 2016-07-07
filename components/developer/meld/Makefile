@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
 COMPONENT_VERSION=	1.8.6
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
@@ -55,6 +55,8 @@ PATH=/usr/gnu/bin:/usr/bin
 PKG_OPTIONS +=		-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
+COMPONENT_BUILD_ENV += PYTHON=$(PYTHON)
+
 # Meld has no configure however it honors DESTDIR which is necessary so
 # we don't try to install into roots /usr but rather our proto areas usr
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
@@ -66,6 +68,5 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += runtime/python-27
