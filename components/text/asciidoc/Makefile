@@ -10,13 +10,14 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	asciidoc
 COMPONENT_VERSION= 	8.6.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Text based document generation tool
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -30,11 +31,17 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PYTHON_VERSION=2.7
+
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -a  $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_OPTIONS +=  --sysconfdir=/etc
 
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += runtime/python-27
