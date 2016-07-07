@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-proto
 COMPONENT_VERSION=	1.11
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	x11/header/xcb-protocols
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,7 +40,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_ENV += PYTHON=$(PYTHON.$(BITS))
+PYTHON_VERSION=2.7
+
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 build: $(BUILD_32_and_64)
 
@@ -47,7 +50,5 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += runtime/python-27
