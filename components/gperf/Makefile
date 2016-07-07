@@ -26,11 +26,11 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gperf
-COMPONENT_VERSION=	3.0.3
+COMPONENT_VERSION=	3.0.4
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:63287527c8d9e27e801cf0804436f3494bd569db05d49dcdd2a942ae72fa9055
+    sha256:767112a204407e62dbc3106647cf839ed544f3cf5d0f0523aaa2508623aad63e
 
-TPNO=			8589
+TPNO=			28116
 
 # must build tests before use
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
@@ -64,8 +64,11 @@ COMPONENT_SYSTEM_TEST_ARGS = GPERF=$(USRBINDIR)/gperf
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|../src/gperf|gperf|g" ' \
 	'-e "s|/usr/bin/gperf|gperf|g" ' \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+	'-e "s|^.*$(CC).*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
