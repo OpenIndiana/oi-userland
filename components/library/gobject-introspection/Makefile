@@ -21,6 +21,7 @@ COMPONENT_NAME= gobject-introspection
 COMPONENT_VERSION_MAJOR= 1
 COMPONENT_VERSION_MINOR= 43
 COMPONENT_VERSION_MICRO= 3
+COMPONENT_REVISION=1
 COMPONENT_VERSION_DL= $(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
 COMPONENT_VERSION= $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
 COMPONENT_SUMMARY= Introspection for GObject libraries
@@ -35,6 +36,8 @@ COMPONENT_PROJECT_URL = http://live.gnome.org/GObjectIntrospection
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PYTHON_VERSION=2.7
 
 COMPONENT_POST_UNPACK_ACTION = \
         /usr/bin/find $(SOURCE_DIR) -name *.py \
