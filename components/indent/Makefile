@@ -26,12 +26,12 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		indent
-COMPONENT_VERSION=	2.2.9
+COMPONENT_VERSION=	2.2.10
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b9387bda5639ed54cf91bd607ab055624a07414f7f6882a75be97fd776ce466
+    sha256:8a9b41be5bfcab5d8c1be74204b10ae78789fc3deabea0775fdced8677292639
 COMPONENT_BUGDB=	utility/gnu-indent
 
-TPNO=			12225
+TPNO=			28115
 
 TEST_TARGET= install $(TEST_64)
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
@@ -41,6 +41,15 @@ include $(WS_MAKE_RULES)/gnu-component.mk
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+
+# Previous versions of indent included a pre-made indent.1 man page that
+# was then easy to patch. Now we need to forceably create indent.1 from
+# indent.1.in. We also need to copy ../doc/version.texi into the man
+# directory in the build area so that it's correctly included when
+# texinfo2man processes the indent.texinfo file.
+COMPONENT_POST_BUILD_ACTION = \
+	$(CP) $(SOURCE_DIR)/doc/version.texi $(BUILD_DIR_$(BITS))/man/ ; \
+	cd $(BUILD_DIR_$(BITS))/man ; $(GMAKE) -B indent.1
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
