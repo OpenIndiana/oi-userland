@@ -13,11 +13,12 @@
 # Copyright (c) 2015 Jim Klimov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-connection-manager
 COMPONENT_NAME_SHORT=	gcm
 COMPONENT_VERSION=	1.1.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://kuthulu.com/gcm
 COMPONENT_SRC=		$(COMPONENT_NAME_SHORT)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION)_all.tgz
@@ -30,8 +31,10 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
@@ -54,6 +57,9 @@ install:	$(BUILD_DIR)/.installed Makefile
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/desktop/vte
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/expect
