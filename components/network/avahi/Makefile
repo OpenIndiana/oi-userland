@@ -13,11 +13,11 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.6.31
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -27,9 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   http://avahi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://avahi.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 COMPONENT_PREP_ACTION += (cd $(@D) &&\
 	        aclocal -I common &&\
@@ -69,3 +71,19 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libdaemon
+REQUIRED_PACKAGES += library/python-2/python-twisted-27
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/dbus
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
