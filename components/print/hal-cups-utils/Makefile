@@ -22,10 +22,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hal-cups-utils
 COMPONENT_VERSION=	0.6.19
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://fedorahosted.org/hal-cups-utils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -34,12 +35,14 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://fedorahosted.org/releases/h/a/hal-cups-utils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hal-cups
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSION=2.7
 
 PATCH_LEVEL = 0
-USED_PYTHON=$(PYTHON.2.6.32)
+USED_PYTHON=$(PYTHON)
 
 CONFIGURE_ENV += PYTHON=$(USED_PYTHON)
 
@@ -62,6 +65,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += service/hal
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
