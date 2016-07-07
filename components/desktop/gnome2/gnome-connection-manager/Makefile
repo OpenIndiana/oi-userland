@@ -34,8 +34,6 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSION=2.7
-
 CLEAN_PATHS+= $(BUILD_DIR)
 
 # rules are very simple, because the project is a script - just deliver and run

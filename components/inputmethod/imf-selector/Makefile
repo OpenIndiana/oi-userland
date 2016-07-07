@@ -34,8 +34,6 @@ clobber: clean
 $(SOURCE_DIR)/.prep:	Makefile
 	$(TOUCH) $@
 
-PYTHON_VERSION=2.7
-
 PATH=/usr/gnu/bin:/usr/bin
 
 # Missing files in build dir for configure without this.

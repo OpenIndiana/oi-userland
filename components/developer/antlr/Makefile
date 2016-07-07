@@ -43,8 +43,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_VERSION=2.7
-
 PATCH_LEVEL =		0
 
 CONFIGURE_OPTIONS +=	--without-examples

@@ -37,8 +37,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_VERSION=2.7
-
 COMPONENT_POST_UNPACK_ACTION = \
         /usr/bin/find $(SOURCE_DIR) -name *.py \
                 -exec $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' "{}" \; ;

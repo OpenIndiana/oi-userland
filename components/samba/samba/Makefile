@@ -68,8 +68,6 @@ BUILD_DIR_WINB		= $(BUILD_DIR)/winbind
 
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSION=2.7
-
 # directory to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)

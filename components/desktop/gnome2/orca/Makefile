@@ -30,8 +30,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSION=2.7
-
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc

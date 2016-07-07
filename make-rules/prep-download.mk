@@ -64,7 +64,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		$$(if $$(COMPONENT_FETCH_USER_AGENT$(1)),--user-agent $$(COMPONENT_FETCH_USER_AGENT$(1)))
 	$$(TOUCH) $$@
 
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 
 endif
 endef

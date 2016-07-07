@@ -45,7 +45,6 @@ CONFIGURE_OPTIONS+= --with-gtk=2.0
 CONFIGURE_OPTIONS+= --with-default-wm 
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
 
-PYTHON_VERSION = 2.7
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV.64 += NSS_LIBS="-L/usr/lib/mps/64"
 

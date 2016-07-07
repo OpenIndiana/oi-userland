@@ -43,8 +43,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSION=2.7
-
 # GDB wants the GNU utilities
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 

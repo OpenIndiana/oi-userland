@@ -29,8 +29,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_VERSION=2.7
-
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \

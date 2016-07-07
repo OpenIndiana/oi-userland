@@ -31,8 +31,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_VERSION=2.7
-
 PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
