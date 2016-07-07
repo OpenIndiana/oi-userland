@@ -20,7 +20,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
 
 link path=usr/node/6/bin/npm target=../lib/node_modules/npm/bin/npm-cli.js
 link path=usr/bin/node target=../node/6/bin/node mediator=nodejs mediator-version=6
@@ -400,7 +400,6 @@ file path=usr/node/6/lib/node_modules/npm/lib/install/is-extraneous.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/is-fs-access-available.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/mutate-into-logical-tree.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/node.js
-file path=usr/node/6/lib/node_modules/npm/lib/install/prune-tree.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/read-shrinkwrap.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/save.js
 file path=usr/node/6/lib/node_modules/npm/lib/install/update-package-json.js
@@ -461,6 +460,8 @@ file path=usr/node/6/lib/node_modules/npm/lib/utils/link.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/locker.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/map-to-registry.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/module-name.js
+file path=usr/node/6/lib/node_modules/npm/lib/utils/no-progress-while-running.js
+file path=usr/node/6/lib/node_modules/npm/lib/utils/output.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/package-id.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/parse-json.js
 file path=usr/node/6/lib/node_modules/npm/lib/utils/pulse-till-done.js
@@ -547,14 +548,10 @@ file path=usr/node/6/lib/node_modules/npm/man/man7/npm-scope.7
 file path=usr/node/6/lib/node_modules/npm/man/man7/npm-scripts.7
 file path=usr/node/6/lib/node_modules/npm/man/man7/removing-npm.7
 file path=usr/node/6/lib/node_modules/npm/man/man7/semver.7
-file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/.npmignore
-file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/.travis.yml
-file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/CONTRIBUTING.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/abbrev.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/abbrev/test.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansi-regex/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansi-regex/license
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansi-regex/package.json
@@ -567,7 +564,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/ansistyles/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansistyles/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansistyles/ansistyles.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/ansistyles/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/aproba/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/aproba/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/aproba/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/aproba/index.js
@@ -579,6 +575,14 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/archy/examples/beep.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/archy/examples/multi_line.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/archy/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/archy/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/CHANGES.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/LICENSE.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/asap.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/browser-asap.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/browser-raw.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/asap/raw.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/chownr/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/chownr/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/chownr/chownr.js
@@ -636,14 +640,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/dezalgo.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/CHANGES.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/LICENSE.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/asap.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/browser-asap.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/browser-raw.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/node_modules/asap/raw.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/dezalgo/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/editor/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/editor/README.markdown
@@ -725,23 +721,22 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/fstream/lib/socket-reader
 file path=usr/node/6/lib/node_modules/npm/node_modules/fstream/lib/writer.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/fstream/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/changelog.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/common.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/glob.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/fs.realpath/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/fs.realpath/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/fs.realpath/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/fs.realpath/old.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/fs.realpath/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/minimatch.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/example.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/.npmignore
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/LICENSE.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/Makefile
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/example.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/balanced-match/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/glob/node_modules/minimatch/node_modules/brace-expansion/node_modules/concat-map/.travis.yml
@@ -765,7 +760,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.j
 file path=usr/node/6/lib/node_modules/npm/node_modules/graceful-fs/legacy-streams.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/graceful-fs/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/graceful-fs/polyfills.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/has-unicode/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/has-unicode/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/has-unicode/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/has-unicode/index.js
@@ -898,14 +892,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.clonedeep/node_mod
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.clonedeep/node_modules/lodash._baseclone/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.clonedeep/node_modules/lodash._baseclone/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.clonedeep/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.isarray/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.isarray/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.isarray/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.isarray/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.keys/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.keys/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.keys/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.keys/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.restparam/LICENSE.txt
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.restparam/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/lodash.restparam/index.js
@@ -972,13 +958,9 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/AUTHORS
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/DEPS
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/OWNERS
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/PRESUBMIT.py \
-    pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/PRESUBMIT.py pkg.tmp.autopyc=false
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/aosp_manifest.xml
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py \
-    pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/buildbot_run.py pkg.tmp.autopyc=false
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/commit_queue/OWNERS
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/commit_queue/README
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/buildbot/commit_queue/cq_config.json
@@ -986,138 +968,52 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/codereview.s
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/data/win/large-pdb-shim.cc
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp.bat
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py \
-    pkg.tmp.autopyc=false
-file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyptest.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSNew.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSProject.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSToolFile.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSUserFile.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSUtil.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSVersion.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/common.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/__init__.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/analyzer.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/android.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/cmake.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/dump_dependency_json.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/eclipse.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/gypd.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/gypsh.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/make.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/input.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/msvs_emulation.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/ninja_syntax.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/ordered_dict.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/simple_copy.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcode_emulation.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcode_ninja.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcodeproj_file.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xml_fix.py \
-    pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyp_main.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/gyptest.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSNew.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSProject.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSToolFile.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSUserFile.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSUtil.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/MSVSVersion.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/__init__.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/common.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/common_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/__init__.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/analyzer.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/android.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/cmake.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/dump_dependency_json.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/eclipse.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/gypd.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/gypsh.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/make.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/xcode_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/input.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/input_test.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/msvs_emulation.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/ninja_syntax.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/ordered_dict.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/simple_copy.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcode_emulation.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcode_ninja.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xcodeproj_file.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/pylib/gyp/xml_fix.py pkg.tmp.autopyc=false
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/samples/samples
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/samples/samples.bat
-file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/setup.py \
-    pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/setup.py pkg.tmp.autopyc=false
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/README
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/Xcode/README
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/Xcode/Specifications/gyp.pbfilespec
@@ -1128,18 +1024,10 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/emacs/
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/emacs/run-unit-tests.sh
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/emacs/testdata/media.gyp.fontified
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/graphviz.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py \
-    pkg.tmp.autopyc=false
-file \
-    path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py \
-    pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/graphviz.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_gyp.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_sln.py pkg.tmp.autopyc=false
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/gyp/tools/pretty_vcproj.py pkg.tmp.autopyc=false
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/lib/build.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/lib/clean.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/lib/configure.js
@@ -1198,6 +1086,92 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/min
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/minimatch/node_modules/sigmund/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/minimatch/node_modules/sigmund/sigmund.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/minimatch/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/log.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/History.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/examples/beep/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/examples/clear/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/examples/cursorPosition.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/examples/progress/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/lib/ansi.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/lib/newlines.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/ansi/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/CHANGES.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/History.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/License
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/Makefile
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/Readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/node_modules/delegates/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/tracker-base.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/tracker-group.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/tracker-stream.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/are-we-there-yet/tracker.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/example.png
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._baseslice/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._baseslice/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._baseslice/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._baseslice/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._basetostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._basetostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._basetostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash._basetostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._baseslice/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._baseslice/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._baseslice/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._baseslice/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._basetostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._basetostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._basetostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash._basetostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._baseslice/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._baseslice/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._baseslice/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._baseslice/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._basetostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._basetostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._basetostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash._basetostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/node_modules/gauge/progress-bar.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/npmlog/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/path-array/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/path-array/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/node-gyp/node_modules/path-array/History.md
@@ -1710,6 +1684,7 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/npm-install-checks/LICENS
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-install-checks/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-install-checks/index.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-install-checks/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npm-package-arg/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-package-arg/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-package-arg/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-package-arg/README.md
@@ -1819,23 +1794,10 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/npm-user-validate/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-user-validate/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-user-validate/npm-user-validate.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npm-user-validate/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/.travis.yml
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/CHANGELOG.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/example.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/log.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/.jshintrc
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/.npmignore
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/History.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/examples/beep/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/examples/clear/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/examples/cursorPosition.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/examples/progress/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/lib/ansi.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/lib/newlines.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/ansi/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/.npmignore
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/CHANGES.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/LICENSE
@@ -1853,48 +1815,72 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-w
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/tracker-group.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/tracker-stream.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/are-we-there-yet/tracker.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/console-control-strings/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/console-control-strings/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/console-control-strings/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/console-control-strings/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/CHANGELOG.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/example.png
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.repeat/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.repeat/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.repeat/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.repeat/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/node_modules/lodash.tostring/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.pad/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.repeat/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.repeat/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.repeat/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.repeat/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/node_modules/lodash.tostring/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padend/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.repeat/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.repeat/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.repeat/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.repeat/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/LICENSE
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/index.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/node_modules/lodash.tostring/package.json
-file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/lodash.padstart/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/base-theme.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/error.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/has-color.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/has-color/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/has-color/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/has-color/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/object-assign/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/object-assign/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/object-assign/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/object-assign/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/CHANGELOG.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/LICENSE.txt
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/signal-exit/signals.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/node_modules/number-is-nan/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/node_modules/number-is-nan/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/node_modules/number-is-nan/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/node_modules/number-is-nan/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/code-point-at/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/node_modules/number-is-nan/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/node_modules/number-is-nan/license
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/node_modules/number-is-nan/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/node_modules/number-is-nan/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/node_modules/is-fullwidth-code-point/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/string-width/readme.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/wide-align/.npmignore
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/wide-align/LICENSE
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/wide-align/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/wide-align/align.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/node_modules/wide-align/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/package.json
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/plumbing.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/process.js
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/progress-bar.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/render-template.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/set-immediate.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/set-interval.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/spin.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/template-item.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/theme-set.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/themes.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/gauge/wide-truncate.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/set-blocking/CHANGELOG.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/set-blocking/LICENSE.txt
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/set-blocking/README.md
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/set-blocking/index.js
+file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/node_modules/set-blocking/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/npmlog/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/once/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/once/README.md
@@ -1995,7 +1981,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-json/node_mo
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-json/node_modules/json-parse-helpfulerror/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-json/package.json
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-json/read-json.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-tree/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-tree/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-tree/README.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/read-package-tree/package.json
@@ -2012,19 +1997,6 @@ file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/.npmignor
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/.travis.yml
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/LICENSE
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/README.md
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/base.css
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/index.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/_stream_duplex.js.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/_stream_passthrough.js.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/_stream_readable.js.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/_stream_transform.js.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/_stream_writable.js.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/lib/index.html
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/prettify.css
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/prettify.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/sort-arrow-sprite.png
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov-report/sorter.js
-file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/coverage/lcov.info
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/doc/stream.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/doc/wg-meetings/2015-01-30.md
 file path=usr/node/6/lib/node_modules/npm/node_modules/readable-stream/duplex.js
@@ -2818,4 +2790,3 @@ file path=usr/node/6/lib/node_modules/npm/scripts/update-authors.sh
 file path=usr/node/6/share/doc/node/gdbinit
 file path=usr/node/6/share/man/man1/node.1
 file path=usr/node/6/share/systemtap/tapset/node.stp
-
