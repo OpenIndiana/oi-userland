@@ -11,6 +11,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov
+# Copyright 2016 Till Wegmueller
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -31,6 +32,9 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
 file path=etc/gconf/schemas/gucharmap.schemas preserve=true
+link path=usr/bin/$(MACH64)/charmap target=gucharmap
+link path=usr/bin/$(MACH64)/gnome-character-map target=gucharmap
+file path=usr/bin/$(MACH64)/gucharmap
 link path=usr/bin/charmap target=gucharmap
 link path=usr/bin/gnome-character-map target=gucharmap
 file path=usr/bin/gucharmap
@@ -46,6 +50,10 @@ file path=usr/include/gucharmap-2.0/gucharmap/gucharmap-script-codepoint-list.h
 file path=usr/include/gucharmap-2.0/gucharmap/gucharmap-type-builtins.h
 file path=usr/include/gucharmap-2.0/gucharmap/gucharmap-unicode-info.h
 file path=usr/include/gucharmap-2.0/gucharmap/gucharmap.h
+link path=usr/lib/$(MACH64)/libgucharmap.so target=libgucharmap.so.7.0.0
+link path=usr/lib/$(MACH64)/libgucharmap.so.7 target=libgucharmap.so.7.0.0
+file path=usr/lib/$(MACH64)/libgucharmap.so.7.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/gucharmap-2.pc
 link path=usr/lib/libgucharmap.so target=libgucharmap.so.7.0.0
 link path=usr/lib/libgucharmap.so.7 target=libgucharmap.so.7.0.0
 file path=usr/lib/libgucharmap.so.7.0.0
