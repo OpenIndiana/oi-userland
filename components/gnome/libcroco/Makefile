@@ -31,6 +31,7 @@ COMPONENT_VERSION=	0.6.8
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/Libcroco
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ea6e1b858c55219cefd7109756bff5bc1a774ba7a55f7d3ccd734d6b871b8570
+COMPONENT_BUGDB=	gnome/libraries
 
 TPNO=			24633
 
