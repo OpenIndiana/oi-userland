@@ -31,6 +31,7 @@ COMPONENT_VERSION=	0.9.8
 COMPONENT_PROJECT_URL=	https://developer.gnome.org/glibmm/stable/
 COMPONENT_ARCHIVE_HASH= \
     sha256:c9ab5fd3872fbe245fbc35347acf4a95063111f81d54c43df3af662dad0a03d5
+COMPONENT_BUGDB=        gnome/libraries
 
 TPNO=			24639
 
