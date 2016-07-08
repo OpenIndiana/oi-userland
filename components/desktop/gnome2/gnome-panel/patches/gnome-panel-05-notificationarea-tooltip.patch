@@ -4,25 +4,25 @@
 @@ -51,6 +51,11 @@ struct _NaTrayPrivate
    GtkWidget *box;
    GtkWidget *frame;
-
+ 
 +  gulong query_tooltip_id;
 +  gboolean tooltip_enabled;
 +
 +  GSList *icons;
 +
    guint idle_redraw_id;
-
+ 
    GtkOrientation orientation;
 @@ -146,12 +155,20 @@ tray_removed (NaTrayManager *manager,
                TraysScreen   *trays_screen)
  {
    NaTray *tray;
 +  NaTrayPrivate *priv;
-
+ 
    tray = g_hash_table_lookup (trays_screen->icon_table, icon);
    if (tray == NULL)
      return;
-
+ 
 +  priv = tray->priv;
 +
    g_assert (tray->priv->trays_screen == trays_screen);
@@ -31,7 +31,7 @@
 +  if (g_slist_length (priv->icons) == 0) {
 +    priv->tooltip_enabled=TRUE;
 +  }
-
+ 
    g_hash_table_remove (trays_screen->icon_table, icon);
    /* this will also destroy the tip associated to this icon */
 @@ -727,3 +744,36 @@ na_tray_force_redraw (NaTray *tray)
@@ -45,7 +45,7 @@
 +                              gint            y,
 +                              gboolean        keyboard_mode,
 +                              GtkTooltip     *tooltip,
-+                              gpointer        user_data)
++                              gpointer        user_data)     
 +{
 +  NaTray        *tray = (NaTray*)user_data;
 +  NaTrayPrivate *priv;
@@ -54,7 +54,7 @@
 +
 +  gtk_tooltip_set_markup (tooltip, "Area where notification icons appear");
 +
-+  return ( priv->tooltip_enabled );
++  return ( priv->tooltip_enabled ); 
 +}
 +
 +void
@@ -77,21 +77,22 @@ diff -ruN gnome-panel-2.27.4.orig/applets/notification_area/main.c gnome-panel-2
 @@ -243,6 +243,8 @@ on_applet_realized (GtkWidget *widget,
    g_signal_connect (applet, "destroy",
                      G_CALLBACK (applet_destroy), data);
-
+ 
 +  na_tray_set_tooltip (GTK_WIDGET (applet), tray);
 +
    gtk_container_add (GTK_CONTAINER (applet), GTK_WIDGET (tray));
    gtk_widget_show (GTK_WIDGET (tray));
-
+ 
 diff -ruN gnome-panel-2.29.92.orig/applets/notification_area/na-tray.c gnome-panel-2.29.92/applets/notification_area/na-tray.c
 --- gnome-panel-2.29.92.orig/applets/notification_area/na-tray.c	2010-03-11 22:19:45.828748555 +0000
 +++ gnome-panel-2.29.92/applets/notification_area/na-tray.c	2010-03-11 22:20:57.182639083 +0000
 @@ -244,6 +244,9 @@
    gtk_box_pack_start (GTK_BOX (priv->box), icon, FALSE, FALSE, 0);
    gtk_box_reorder_child (GTK_BOX (priv->box), icon, position);
-
+ 
 +  priv->icons = g_slist_append (priv->icons, icon);
 +  priv->tooltip_enabled = FALSE;
 +
    gtk_widget_show (icon);
  }
+ 

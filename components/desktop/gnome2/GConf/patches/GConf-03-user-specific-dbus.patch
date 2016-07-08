@@ -5,7 +5,7 @@
          char *ior;
          GError *error = NULL;
 +        const char *dbus_address = NULL;
-
+ 
          /* if the bus isn't running and we don't want to start gconfd then
           * we don't want to autolaunch the bus either, so bail early.
           */
@@ -17,7 +17,7 @@
 @@ -2440,6 +2441,31 @@
                  return NULL;
          }
-
+ 
 +	if ( dbus_address != NULL ) {
 +            if (strncmp(dbus_address, "unix:path=", sizeof ("unix:path="))) {
 +                const char *start_addr = dbus_address + sizeof ("unix:path=") - 1;
@@ -44,5 +44,5 @@
 +        }
 +
          g_type_init ();
-
+ 
          connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
