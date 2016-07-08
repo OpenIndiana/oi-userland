@@ -55,6 +55,12 @@ extern "C" {
  * We use the extension here to communicate with the driver
  * (for correct debugfs reporting)
  */
+
+enum sq_sw_state {
+	FLUSH_SQ_IN_PROGRESS = 0,
+	FLUSH_SQ_IN_FLIGHT   = 1,
+};
+
 typedef struct sif_sq_sw {
 	struct psif_sq_sw d;	/* Hardware visible descriptor */
 	/* separate the cache lines */
@@ -62,7 +68,17 @@ typedef struct sif_sq_sw {
 	__u16 last_seq;		/* Last used sq seq.num (req. sq->lock) */
 	/* Last sq seq.number seen in a compl (req. cq->lock) */
 	volatile __u16 head_seq;
+	__u16 trusted_seq;
+	__u8 tsl;
+	volatile __u64 flags;
 }sif_sq_sw_t;
+
+enum rq_sw_state {
+	FLUSH_RQ_IN_PROGRESS = 0,
+	FLUSH_RQ_IN_FLIGHT   = 1,
+	FLUSH_RQ_FIRST_TIME  = 2,
+	RQ_IS_INVALIDATED    = 3,
+};
 
 typedef struct sif_rq_sw {
 	struct psif_rq_sw d;	/* Hardware visible descriptor */
@@ -71,7 +87,14 @@ typedef struct sif_rq_sw {
 	/* current length of queue as #posted - #completed */
 	volatile uint32_t length;
 	__u32 next_seq; 	/* First unused sequence number */
+	volatile __u64 flags;
 }sif_rq_sw_t;
+
+enum cq_sw_state {
+	CQ_POLLING_NOT_ALLOWED = 0,
+	CQ_POLLING_IGNORED_SEQ = 1,
+	FLUSH_SQ_FIRST_TIME    = 2,
+};
 
 typedef struct sif_cq_sw {
 	struct psif_cq_sw d;	/* Hardware visible descriptor */
@@ -88,6 +111,7 @@ typedef struct sif_cq_sw {
 	__u32 miss_cnt;
 	/* Number of times 1 or more in-flight completions was seen */
 	__u32 miss_occ;
+	volatile __u64 flags;
 }sif_cq_sw_t;
 
 #ifdef __cplusplus

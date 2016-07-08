@@ -53,8 +53,8 @@ extern "C" {
  *   features are available.
  *
  */
-#define	SIF_UVERBS_ABI_MAJOR_VERSION	3
-#define	SIF_UVERBS_ABI_MINOR_VERSION	4
+#define	SIF_UVERBS_ABI_MAJOR_VERSION	4
+#define	SIF_UVERBS_ABI_MINOR_VERSION	0
 
 /* Bw comp */
 #define	SIF_UVERBS_VERSION(x, y) ((x) << 8 | (y))
