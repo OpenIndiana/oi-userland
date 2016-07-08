@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -54,7 +54,7 @@ COMPONENT_PRE_TEST_ACTION= \
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
-COMPONENT_TEST_ENV= PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
+COMPONENT_TEST_ENV= PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
 # Master test results are the same for both 32-bit and 64-bit, 
 # for all versions of Python, so override
@@ -75,7 +75,7 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION= \
 	fi
 COMPONENT_SYSTEM_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_SYSTEM_TEST_ARGS= ./selftest.py
-COMPONENT_SYSTEM_TEST_ENV= PYTHONPATH=$(PYTHON_VENDOR_PACKAGES.32)
+COMPONENT_SYSTEM_TEST_ENV= PYTHONPATH=$(PYTHON_VENDOR_PACKAGES)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

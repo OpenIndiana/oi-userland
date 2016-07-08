@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -43,10 +43,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
-# The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the
-# $(PYTHON_VENDOR_PACKAGES) variable for 64bit Python is wrong.
-# Everything works fine if we just add the 32bit path.
-COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_TEST_CMD = $(SHELL)
 COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
 

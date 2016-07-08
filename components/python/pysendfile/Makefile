@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -46,7 +46,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 COMPONENT_TEST_ARGS=	test/test_sendfile.py
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ENV=	PATH=$(PROTO_DIR)/usr/bin
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_TEST_ENV +=	PYTHON_VERSION=$(PYTHON_VERSION)
 
 # common targets
