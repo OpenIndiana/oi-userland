@@ -32,6 +32,7 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
+CONFIGURE_ENV+=		PERL=$(PERL)
 
 # common targets
 build:		$(BUILD_32)

@@ -9,15 +9,15 @@
      if test -x "$with_python/bin/python"
      then
 @@ -559,11 +558,13 @@
-	    fi
-	fi
+ 	    fi
+ 	fi
      fi
 -    if test "$with_python" != ""
 -    then
 -        pythondir='$(PYTHON_SITE_PACKAGES)'
 -    else
 -        pythondir='$(libdir)/python$(PYTHON_VERSION)/vendor-packages'
-+    if test -z "$pythondir"; then
++    if test -z "$pythondir"; then 
 +        if test "$with_python" != ""
 +        then
 +            pythondir='$(PYTHON_SITE_PACKAGES)'
