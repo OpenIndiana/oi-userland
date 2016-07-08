@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 2.2.4
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = media/vlc
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
@@ -168,7 +169,7 @@ CONFIGURE_OPTIONS += --enable-glspectrum
 CONFIGURE_OPTIONS += --enable-bonjour
 CONFIGURE_OPTIONS += --disable-udev
 CONFIGURE_OPTIONS += --enable-mtp
-CONFIGURE_OPTIONS += --disable-upnp
+CONFIGURE_OPTIONS += --enable-upnp
 
 # Misc
 CONFIGURE_OPTIONS += --enable-libxml2
@@ -183,3 +184,65 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += audio/faad2
+REQUIRED_PACKAGES += audio/twolame
+REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/libtheora
+REQUIRED_PACKAGES += codec/speex
+REQUIRED_PACKAGES += image/library/libjpeg6-turbo
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += image/library/sdl-image
+REQUIRED_PACKAGES += library/audio/liba52
+REQUIRED_PACKAGES += library/audio/libdca
+REQUIRED_PACKAGES += library/audio/libmad
+REQUIRED_PACKAGES += library/audio/libmpcdec
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/fribidi
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += library/libebml
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libmtp
+REQUIRED_PACKAGES += library/libnotify
+REQUIRED_PACKAGES += library/libogg
+REQUIRED_PACKAGES += library/libsamplerate
+REQUIRED_PACKAGES += library/libssh2
+REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/opus
+REQUIRED_PACKAGES += library/qt4
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/speexdsp
+REQUIRED_PACKAGES += library/video/libass
+REQUIRED_PACKAGES += library/video/libdvbpsi
+REQUIRED_PACKAGES += library/video/libdvdnav
+REQUIRED_PACKAGES += library/video/libdvdread
+REQUIRED_PACKAGES += library/video/libmatroska
+REQUIRED_PACKAGES += library/video/libmpeg2
+REQUIRED_PACKAGES += library/video/libschroedinger
+REQUIRED_PACKAGES += library/video/libvpx
+REQUIRED_PACKAGES += library/video/x264
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libupnp
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network/avahi
+REQUIRED_PACKAGES += video/ffmpeg
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxpm
+REQUIRED_PACKAGES += x11/library/xcb-util-keysyms
