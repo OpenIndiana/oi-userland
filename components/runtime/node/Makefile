@@ -10,21 +10,22 @@
 
 #
 # Copyright 2015 EveryCity Ltd. All rights reserved.
+# Copyright 2016 Andreas Wacknitz
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		node
 COMPONENT_FMRI=		runtime/nodejs
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	0.12.7
+COMPONENT_VERSION=	0.12.15
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_LICENSE_FILE=	node.license	
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b23d64df051c9c969b0c583f802d5d71de342e53067127a5061415be7e12f39d
+COMPONENT_ARCHIVE_HASH=	sha256:c446d40d9b0eb876dab9a87c3dbd1935dc85155d2ad991b36ddd6c5ca3825a5e
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -34,7 +35,7 @@ include $(WS_TOP)/make-rules/ips.mk
 # Include /usr/sbin for dtrace
 PATH=/usr/bin:/usr/gnu/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin
 
-CONFIG_SHELL =	/usr/bin/python
+CONFIG_SHELL =	$(PYTHON)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -46,3 +47,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
