@@ -223,7 +223,7 @@ def get_vpn_interfaces():
     return vpn_tunnels
 
 
-def disable_services():
+def disable_smf_services():
     """Disable IPsec Policy/IKE smf(5) services using rad(1).
     """
     ike_svc = "network/ipsec/ike"
@@ -281,7 +281,7 @@ def shutdown_vpn():
         ifs = get_vpn_interfaces()
         if ifs:
             whack_ike_rules()
-            disable_services()
+            disable_smf_services()
             delete_tunnels(ifs, False)
 
 
@@ -448,15 +448,16 @@ class BaseSolaris():
         self.logging_level = cfg.CONF.solaris.logger_level
         self.generate_config(vpnservice)
         self.dump_config()
-        LOG.info("Configuring vpn-service: %s." % vpnservice)
+        LOG.debug("Configuring router: %s" % process_id)
+        LOG.debug("Configuring vpn-service: %s." % vpnservice)
 
     def dump_config(self):
         if not self.vpnservice:
-            LOG.warn("No VPNs configured.")
+            LOG.info("No VPNs configured.")
             return
 
         connections = self.vpnservice['ipsec_site_connections']
-        LOG.warn("New VPN configuration:")
+        LOG.info("New VPN configuration:")
         for site in connections:
             LOG.info("Site ID: \"%s\"" % site['id'])
             LOG.info("\tTenant ID: \"%s\"" % site['tenant_id'])
@@ -470,7 +471,7 @@ class BaseSolaris():
     def translate_dialect(self):
         if not self.vpnservice:
             return
-        LOG.warn("Generating Solaris IKE/IPsec config files.")
+        LOG.info("Generating Solaris IKE/IPsec config files.")
         for ipsec_site_conn in self.vpnservice['ipsec_site_connections']:
             self._dialect(ipsec_site_conn, 'initiator')
             self._dialect(ipsec_site_conn['ikepolicy'], 'ike_version')
@@ -526,7 +527,6 @@ class BaseSolaris():
         """Generate IPsec configuration files using templates.
         """
         template = _get_template(template_file)
-
         return template.render(
             {'vpnservice': vpnservice,
              'state_path': cfg.CONF.state_path})
@@ -554,7 +554,7 @@ class BaseSolaris():
         LOG.debug("Getting status of IKE daemon")
         global being_shutdown
         if being_shutdown:
-            LOG.warn("VPNaaS being shutdown")
+            LOG.info("VPNaaS being shutdown")
             return False
 
         # IKE is running. Update status of all connections
@@ -630,7 +630,7 @@ class BaseSolaris():
            This should be revisited if we support more than one router.
         """
         if not self.vpnservice:
-            LOG.warn("No VPNs configured.")
+            LOG.info("No VPNs configured.")
             return
 
         status_changed_vpn_services = []
@@ -641,7 +641,8 @@ class BaseSolaris():
                 'status': new_state,
                 'updated_pending_status': True
             }
-        status_changed_vpn_services.append(new_status)
+            status_changed_vpn_services.append(new_status)
+
         self.agent_rpc.update_status(
             self.context,
             status_changed_vpn_services)
@@ -657,21 +658,21 @@ class BaseSolaris():
         global restarting
 
         if not self.vpnservice:
-            LOG.warn("No VPNs configured.")
+            LOG.info("No VPNs configured.")
             return True
 
         if restarting:
-            LOG.warn("IKE restarting")
+            LOG.info("IKE restarting")
             return True
         self.ike_was_running = self.ike_running
         if not self.get_status():
             if being_shutdown:
                 self.ikeadm_fails = 0
             else:
-                LOG.warn("IKE daemon is not running.")
+                LOG.info("IKE daemon is not running.")
                 self.ikeadm_fails += 1
             if self.ikeadm_fails > self.ikeadm_maxfails:
-                LOG.warn("IKE daemon still not running, something's wrong.")
+                LOG.info("IKE daemon still not running, something's wrong.")
                 restarting = True
                 being_shutdown = True
                 self.mark_connections(constants.DOWN)
@@ -683,7 +684,7 @@ class BaseSolaris():
             return False
 
         if self.ike_running and not self.ike_was_running:
-            LOG.warn("IKE daemon has been restarted")
+            LOG.info("IKE daemon has been restarted")
             self.mark_connections(constants.ACTIVE)
             return True
         for connection_id in self.connection_ids:
@@ -750,7 +751,7 @@ class SolarisIPsecProcess(BaseSolaris):
     """
     def __init__(self, conf, process_id,
                  vpnservice, namespace):
-        LOG.warn("Configuring IPsec/IKE")
+        LOG.info("Configuring IPsec/IKE")
         super(SolarisIPsecProcess, self).__init__(
             conf, process_id,
             vpnservice, namespace)
@@ -810,6 +811,10 @@ class SolarisIPsecProcess(BaseSolaris):
             self.conf.solaris.ikev2_secret_template,
             self.vpnservice)
 
+    def start_ipsec(self):
+        self.service_setprops()
+        self.enable_smf_services()
+
     def add_tunnels(self):
         """Add tunnel interfaces using dladm(1m) and
            ipadm(1m).
@@ -847,14 +852,14 @@ class SolarisIPsecProcess(BaseSolaris):
             except processutils.ProcessExecutionError as stderr:
                 m = re.search('object already exists', str(stderr))
                 if m:
-                    LOG.warn("Tunnel with Outer IP: %s -> %s, Inner: "
+                    LOG.info("Tunnel with Outer IP: %s -> %s, Inner: "
                              "%s -> %s already exists."
                              % (o_local, o_remote, i_local, i_remote))
                 else:
-                    LOG.warn("Error adding tunnel - Outer IP: %s -> %s,"
+                    LOG.info("Error adding tunnel - Outer IP: %s -> %s,"
                              "Inner: %s -> %s"
                              % (o_local, o_remote, i_local, i_remote))
-                    LOG.warn("\"%s\"" % stderr)
+                    LOG.info("\"%s\"" % stderr)
                     self.badboys.append(site)
                     continue
 
@@ -867,11 +872,11 @@ class SolarisIPsecProcess(BaseSolaris):
                 stdout, stderr = processutils.execute(*cmd)
             except processutils.ProcessExecutionError as stderr:
                 if re.search('Interface already exists', str(stderr)):
-                    LOG.warn("Tunnel interface: '%s' already exists." %
+                    LOG.info("Tunnel interface: '%s' already exists." %
                              tun_name)
                 else:
-                    LOG.warn("Error creating tunnel")
-                    LOG.warn("\"%s\"" % stderr)
+                    LOG.info("Error creating tunnel")
+                    LOG.info("\"%s\"" % stderr)
                     self.badboys.append(site)
                     continue
             cmd = ['/usr/bin/pfexec', 'ipadm', 'create-addr', '-t',  '-T',
@@ -880,8 +885,8 @@ class SolarisIPsecProcess(BaseSolaris):
             try:
                 stdout, stderr = processutils.execute(*cmd)
             except processutils.ProcessExecutionError as stderr:
-                LOG.warn("Error creating tunnel")
-                LOG.warn("\"%s\"" % stderr)
+                LOG.info("Error creating tunnel")
+                LOG.info("\"%s\"" % stderr)
                 self.badboys.append(site)
                 continue
 
@@ -893,9 +898,9 @@ class SolarisIPsecProcess(BaseSolaris):
             except processutils.ProcessExecutionError as stderr:
                 m = re.search('entry exists', str(stderr))
                 if m:
-                    LOG.warn("Route already exists.")
+                    LOG.info("Route already exists.")
                 else:
-                    LOG.warn("Error adding route.")
+                    LOG.info("Error adding route.")
                     self.badboys.append(site)
                     continue
 
@@ -943,7 +948,7 @@ class SolarisIPsecProcess(BaseSolaris):
                         ifname = addrobj.split('/')[0]
                         break
             if not ifname:
-                LOG.warn("Failed to find IP interface corresponding to "
+                LOG.info("Failed to find IP interface corresponding to "
                          "VPN subnet: %s. Skipping bypass rule for '%s'" %
                          (subnet['cidr'], tun_name))
                 continue
@@ -998,7 +1003,7 @@ class SolarisIPsecProcess(BaseSolaris):
         try:
             status, stderr = processutils.execute(*cmd)
         except processutils.ProcessExecutionError as stderr:
-            LOG.warn("IKE daemon does not appear to be running.")
+            LOG.info("IKE daemon does not appear to be running.")
             LOG.debug("\"%s\"" % stderr)
             return False
 
@@ -1022,7 +1027,7 @@ class SolarisIPsecProcess(BaseSolaris):
            require property setting. If we are not running, we
            don't need to disable stuff. See self.start(), self.stop()
         """
-        LOG.warn("Restarting VPNaaS")
+        LOG.info("Restarting VPNaaS")
         self.stop()
         self.start()
         return
@@ -1030,15 +1035,13 @@ class SolarisIPsecProcess(BaseSolaris):
     def start(self):
         """Start VPNaaS.
         """
-        LOG.warn("Start")
+        LOG.info("Start")
         if not self.vpnservice:
-            LOG.warn("No VPNs configured.")
+            LOG.info("No VPNs configured.")
             return
 
-        LOG.warn("Starting VPNaaS")
+        LOG.info("Starting VPNaaS")
         self.ensure_configs()
-        self.service_setprops()
-        self.enable_services()
         self.add_tunnels()
 
     def stop(self):
@@ -1048,7 +1051,7 @@ class SolarisIPsecProcess(BaseSolaris):
         self.flush_sas()
         self.mark_connections(constants.DOWN)
         LOG.debug("Disable IPsec policy and IKE SMF(5) services")
-        disable_services()
+        disable_smf_services()
 
     def flush_sas(self):
         """Flush IPsec SAs, this should be done with rad(1) eventually.
@@ -1119,7 +1122,7 @@ class SolarisIPsecProcess(BaseSolaris):
 
         rad_connection.close()
 
-    def enable_services(self):
+    def enable_smf_services(self):
         """Enable IPsec Policy/IKE smf(5) services using rad(1).
         """
         LOG.info("Enabling IPsec policy.")
@@ -1138,7 +1141,7 @@ class SolarisIPsecProcess(BaseSolaris):
         instance.enable(True)
 
         if self.packet_logging:
-            LOG.warn("Enabling IPsec packet logger.")
+            LOG.info("Enabling IPsec packet logger.")
             instance = rad_connection.get_object(
                 smfb.Instance(),
                 rad.client.ADRGlobPattern({'service': self.ipsec_svc,
@@ -1296,15 +1299,18 @@ class IPsecDriver(device_drivers.DeviceDriver):
                 new_status = self.copy_process_status(process)
 
                 if not self.check_connection_cache(process, new_status):
-                    LOG.debug("Connection Cache stale.")
+                    LOG.debug("Connection Cache has been updated.")
 
                 status_changed_vpn_services.append(new_status)
+
+                self.unset_updated_pending_status(process)
+                self.unset_cache_status(process)
                 self.process_status_cache[process.id] = (
                     self.copy_process_status(process))
-                self.unset_updated_pending_status(process)
 
         if status_changed_vpn_services:
-            LOG.warn("Updating VPN Site status in database.")
+            LOG.info("Status of VPN services have changed %s" %
+                     status_changed_vpn_services)
             self.agent_rpc.update_status(context, status_changed_vpn_services)
 
     @lockutils.synchronized('vpn-agent', 'neutron-')
@@ -1316,6 +1322,10 @@ class IPsecDriver(device_drivers.DeviceDriver):
         """Configure IPsec, IKE, tunnels on this router.
         """
         LOG.info("Configuring VPNaaS on router: \"%s\"" % process_id)
+        if not vpnservice:
+            LOG.info("No VPNs configured")
+            return
+
         process = self.processes.get(process_id)
         if not process or not process.namespace:
             namespace = ""
@@ -1326,6 +1336,7 @@ class IPsecDriver(device_drivers.DeviceDriver):
             self.processes[process_id] = process
         elif vpnservice:
             process.generate_config(vpnservice)
+
         return process
 
     def create_router(self, process_id):
@@ -1370,14 +1381,17 @@ class IPsecDriver(device_drivers.DeviceDriver):
            nothing gets updated.
         """
         if process.updated_pending_status:
-            LOG.debug("updated_pending_status: True")
+            LOG.debug("Status of VPN services have changed")
             return True
+
         if process.status != previous_status['status']:
             LOG.debug("Current Router status != Previous status")
+            LOG.debug("%s/%s" % (process.status, previous_status['status']))
             return True
         ps = previous_status['ipsec_site_connections']
         if process.connection_status != ps:
             LOG.debug("Current VPN status != Previous status")
+            LOG.debug("%s/%s" % (process.connection_status, ps))
             return True
 
         found_previous_connection = False
@@ -1391,20 +1405,29 @@ class IPsecDriver(device_drivers.DeviceDriver):
 
             for new_ipsec_site_conn in process.connection_ids:
                 if ipsec_site_conn == new_ipsec_site_conn:
-                    LOG.debug("Found entry for ID: '%s'" %
+                    LOG.debug("Found existing entry for ID: '%s'" %
                               new_ipsec_site_conn)
                     found_previous_connection = True
             if not found_previous_connection:
-                LOG.debug("Unable to find entry for ID: '%s'" %
+                LOG.debug("Unable to find existing entry for ID: '%s'" %
                           ipsec_site_conn)
+                ps[ipsec_site_conn]['status'] = constants.DOWN
+                ps[ipsec_site_conn]['updated_pending_status'] = True
                 return True
             continue
 
         return False
 
+    def unset_cache_status(self, process):
+        self.process_status_cache[process.id]['updated_pending_status'] = False
+        cache = self.process_status_cache[process.id]
+        for pending in cache['ipsec_site_connections'].values():
+            pending['updated_pending_status'] = False
+
     def unset_updated_pending_status(self, process):
         process.updated_pending_status = False
         for connection_status in process.connection_status.values():
+            LOG.debug("Unset Pending Status %s" % connection_status)
             connection_status['updated_pending_status'] = False
 
     def copy_process_status(self, process):
@@ -1433,13 +1456,17 @@ class IPsecDriver(device_drivers.DeviceDriver):
                 "Checking connection cache of router ID: \"%s\"" % process_id)
             stale_entries = []
             cache = self.process_status_cache[process_id]
+            if not cache[IPSEC_CONNS]:
+                LOG.debug("No cache")
+                return False
+
             for site_conn in cache[IPSEC_CONNS]:
                 status = cache[IPSEC_CONNS][site_conn]['status']
                 LOG.debug(
                     "Cache has [%s] entry for site ID: \"%s\""
                     % (status, site_conn))
                 if site_conn not in process.connection_ids:
-                    LOG.warn(
+                    LOG.info(
                         "Site connection \"%s\" appears to have been deleted."
                         % site_conn)
                     return_value = False
@@ -1449,10 +1476,13 @@ class IPsecDriver(device_drivers.DeviceDriver):
                     }
                     stale_entries.append(site_conn)
 
-            for badboy in stale_entries:
-                cache[IPSEC_CONNS].pop(badboy)
+            if stale_entries:
+                for badboy in stale_entries:
+                    LOG.debug("Remove stale entry from connection cache: %s" %
+                              badboy)
+                    cache[IPSEC_CONNS].pop(badboy)
 
-            return return_value
+        return return_value
 
     @lockutils.synchronized('vpn-agent', 'neutron-')
     def sync(self, context, routers):
@@ -1528,22 +1558,19 @@ class IPsecDriver(device_drivers.DeviceDriver):
               vpn_0_site_2/v4b static   ok   -- 192.168.80.1->192.168.100.1
               vpn_0_site_2/v4c static   ok   -- 192.168.80.1->192.168.101.1
         """
-        LOG.warn("Neutron: Syncing VPN configuration.")
         try:
+            LOG.info("Getting VPN configuration from neutron")
             vpnservices = self.agent_rpc.get_vpn_services_on_host(
                 context, self.host)
         except:
-            LOG.warn("No VPN")
+            LOG.info("VPNaaS not enabled.")
             return
 
         router_ids = [vpnservice['router_id'] for vpnservice in vpnservices]
         global existing_tunnels
         delete_tunnels(existing_tunnels)
+        whack_ike_rules()
         existing_tunnels = []
-
-        # This is a list of one or more vpn-service objects.
-        vpnservices = self.agent_rpc.get_vpn_services_on_host(
-            context, self.host)
 
         # Remove old configuration files.
         try:
@@ -1557,6 +1584,18 @@ class IPsecDriver(device_drivers.DeviceDriver):
         remote_ips = {}
         vpn_cnt = 0
         site_cnt = 0
+
+        # If there are no vpn-services defined, we can bail out here.
+        # But we still need to check and delete any sub-processes that
+        # may have been created last time sync() was called.
+        if not vpnservices:
+            LOG.info("No VPNs configured")
+            for process in self.processes:
+                del process
+            self.process_status_cache['process_id'] = {}
+            self.processes = {}
+            disable_smf_services()
+            return
 
         for vpnservice in vpnservices:
             ex_ip = vpnservice['external_ip']
@@ -1584,25 +1623,29 @@ class IPsecDriver(device_drivers.DeviceDriver):
                 if tun_name not in existing_tunnels:
                     existing_tunnels.append(tun_name)
 
+        new_vpnservice_status = []
+
         for vpnservice in vpnservices:
             process = self.enable_vpn(
                 vpnservice['router_id'], vpnservice=vpnservice)
-
+            self.vpnservice = vpnservice
             process.update()
+            new_status = {
+                'id': vpnservice['id'],
+                'status': constants.ACTIVE,
+                'updated_pending_status': True,
+                'ipsec_site_connections': {}
+            }
+            new_vpnservice_status.append(new_status)
 
-        for router in routers:
-            # We are using router id as process_id
-            process_id = router['id']
-            if process_id not in router_ids:
-                process = self.enable_vpn(process_id)
-                self.destroy_router(process_id)
+        LOG.debug("Updating status of all vpnservices: %s" %
+                  new_vpnservice_status)
+        self.agent_rpc.update_status(
+            self.context, new_vpnservice_status)
 
-        process_ids = [process_id
-                       for process_id in self.processes
-                       if process_id not in router_ids]
-        for process_id in process_ids:
-            LOG.info("Deleting VPNaaS on router: \"%s\"" % process_id)
-            self.destroy_router(process_id)
+        # Call start routine that sets up tunnels and
+        # enables smf(5) services.
+        process.start_ipsec()
 
 
 class SolarisIPsecDriver(IPsecDriver):
