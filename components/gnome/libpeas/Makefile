@@ -96,5 +96,6 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/lua/lgi-52
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27

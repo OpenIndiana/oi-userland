@@ -132,6 +132,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	     -prune -o -print0 \
 	| cpio -pd0u $(PROTODOCDIR))
 
+REQUIRED_PACKAGES += database/mysql-57
 REQUIRED_PACKAGES += database/mysql-57/library
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/json-c

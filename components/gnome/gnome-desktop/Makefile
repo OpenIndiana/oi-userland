@@ -65,6 +65,7 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 COMPONENT_BUILD_ENV += PATH=$(GNUBIN):$(PATH)
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 
+REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
