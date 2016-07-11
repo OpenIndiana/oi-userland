@@ -35,6 +35,13 @@ COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 
 TPNO=			29221
 
+# Requires new pkgmogrify feature, not available in S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
