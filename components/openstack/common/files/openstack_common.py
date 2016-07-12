@@ -29,7 +29,7 @@ import glob
 import json
 import os
 import shutil
-from subprocess import Popen, PIPE
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 import time
 import uuid
 
@@ -290,3 +290,27 @@ def is_ml2_plugin():
     except NoOptionError:
         return False
     return "ml2" in core_plugin.lower()
+
+
+def kill_contract(attempts, interval, ctid):
+    """ Keeps issuing SIGTERM to contract-id at specified intervals until
+    either the contract is empty or the specified number of attempts are made.
+    Returns 0 if pkill failed, 1 if contract was successfully emptied and 2
+    if attempts were exhausted before the contract could be emptied.
+    """
+    for _ in xrange(attempts):
+        # Kill the SMF contract
+        try:
+            check_call(["/usr/bin/pkill", "-c", ctid])
+        except CalledProcessError as err:
+            print "failed to kill the SMF contract: %s" % err
+            return 0
+        time.sleep(interval)
+        try:
+            # check if contract is empty
+            check_call(["/usr/bin/pgrep", "-c", ctid], stdout=PIPE,
+                       stderr=PIPE)
+        except:
+            # contract is empty
+            return 1
+    return 2

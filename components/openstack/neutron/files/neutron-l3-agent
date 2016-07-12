@@ -21,7 +21,7 @@ from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 
 import netaddr
-from openstack_common import is_ml2_plugin
+from openstack_common import is_ml2_plugin, kill_contract
 import smf_include
 
 from neutron.agent.solaris import packetfilter
@@ -51,12 +51,65 @@ def set_hostmodel(value):
     return True
 
 
+def cleanup_l3_agent_datalinks():
+    cmd = ["/usr/sbin/dladm", "show-link", "-p", "-o", "link"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve datalink names"
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    dlnames = output.splitlines()
+    # L3 agent datalinks are always 15 characters in length. They start
+    # with either 'l3i' or 'l3e', end with '_0', and in between they are
+    # hexadecimal digits.
+    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
+    retcode = smf_include.SMF_EXIT_OK
+    is_ml2 = is_ml2_plugin()
+    for dlname in dlnames:
+        if prog.search(dlname) is None:
+            continue
+        try:
+            # first remove the IP
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
+                        dlname])
+        except:
+            # It is possible that the IP was already deleted but not the
+            # datalink. So we continue and try and delete the datalink.
+            pass
+        try:
+            # next remove the VNIC
+            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
+                        dlname])
+            # remove the OVS Port
+            if is_ml2:
+                ovs_bridge = get_ovs_bridge(dlname)
+                if ovs_bridge:
+                    check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
+                                "--if-exists", "del-port", ovs_bridge, dlname])
+        except CalledProcessError as err:
+            print "failed to remove datalink '%s' used by L3 agent: %s" % \
+                (dlname, err)
+            retcode = smf_include.SMF_EXIT_ERR_FATAL
+    return retcode
+
+
 def start():
     # verify paths are valid
     for f in sys.argv[2:6]:
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # We need to remove VNICs associated with L3 agent if any were left over.
+    # Before that, we need to first remove the PF rules added under
+    # _auto/neutron:l3:agent anchor and then remove the IP interfaces on which
+    # the rules were applied.
+    pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
+    pf.remove_anchor_recursively()
+    ret_code = cleanup_l3_agent_datalinks()
+    if ret_code != smf_include.SMF_EXIT_OK:
+        return ret_code
 
     # System-wide forwarding (either ipv4 or ipv6 or both) must be enabled
     # before neutron-l3-agent can be started.
@@ -117,9 +170,9 @@ def start():
     return smf_include.smf_subprocess(cmd)
 
 
-def get_ovs_bridge(ifname):
+def get_ovs_bridge(dlname):
     # retrieve the right OVS bridge based on the interface name
-    if ifname.startswith('l3i'):
+    if dlname.startswith('l3i'):
         config_file = '/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini'
         section = "ovs"
         option = "integration_bridge"
@@ -138,11 +191,16 @@ def get_ovs_bridge(ifname):
 
 def stop():
     shutdown_vpn()
-    try:
-        # first kill the SMF contract
-        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
-    except CalledProcessError as err:
-        print "failed to kill the SMF contract: %s" % (err)
+    # Keep issuing SIGTERM until the contract is empty. This way we will catch
+    # any child processes missed because they were getting forked.
+    # 50 attempts will be made at intervals of 2 seconds. Typically, we
+    # will only need 0 or 1 additional attempt before the contract is empty but
+    # we chose to err on the side of caution. In the worst case, we will use
+    # 100 seconds in the below loop which will leave 500 seconds (timeout is
+    # 600s) for the other cleanup tasks, after which the service will be put to
+    # maintenance state if the contract was not killed successfully.
+    if not kill_contract(50, 2, sys.argv[2]):
+        return smf_include.SMF_EXIT_ERR_FATAL
 
     # We need to first remove the PF rules added under _auto/neutron:l3:agent
     # anchor and then remove the IP interfaces on which the rules were applied.
@@ -150,42 +208,10 @@ def stop():
     pf.remove_anchor_recursively()
 
     # remove VNICs associated with L3 agent
-    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP interface names"
-        return smf_include.SMF_EXIT_ERR_CONFIG
-
-    ifnames = output.splitlines()
-    # L3 agent datalinks are always 15 characters in length. They start
-    # with either 'l3i' or 'l3e', end with '_0', and in between they are
-    # hexadecimal digits.
-    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
-    err_delete = False
-    for ifname in ifnames:
-        if prog.search(ifname) is None:
-            continue
-        try:
-            # first remove the IP
-            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
-                        ifname])
-            # next remove the VNIC
-            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
-                        ifname])
-            # remove the OVS Port
-            if is_ml2_plugin():
-                ovs_bridge = get_ovs_bridge(ifname)
-                if ovs_bridge:
-                    check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
-                                "--if-exists", "del-port", ovs_bridge, ifname])
-        except CalledProcessError as err:
-            print "failed to remove datalink '%s' used by L3 agent: %s" % \
-                (ifname, err)
-            err_delete = True
+    ret_code = cleanup_l3_agent_datalinks()
 
     # finally reset the hostmodel property
-    if not set_hostmodel("weak") or err_delete:
+    if not set_hostmodel("weak") or ret_code != smf_include.SMF_EXIT_OK:
         return smf_include.SMF_EXIT_ERR_FATAL
     return smf_include.SMF_EXIT_OK
 

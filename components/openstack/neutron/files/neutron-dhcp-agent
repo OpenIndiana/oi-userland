@@ -19,7 +19,7 @@ import os
 import re
 import sys
 
-from openstack_common import is_ml2_plugin
+from openstack_common import is_ml2_plugin, kill_contract
 import smf_include
 
 from subprocess import CalledProcessError, Popen, PIPE, check_call
@@ -45,12 +45,59 @@ def set_hostmodel(value):
     return True
 
 
+def cleanup_dhcp_agent_datalinks():
+    cmd = ["/usr/sbin/dladm", "show-link", "-p", "-o", "link"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve datalink names"
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    dlnames = output.splitlines()
+    # DHCP agent datalinks are always 15 characters in length. They start with
+    # 'dh', end with '_0', and in between they are hexadecimal digits.
+    prog = re.compile('dh[0-9A-Fa-f\_]{11}_0')
+    ret_code = smf_include.SMF_EXIT_OK
+    ovs_bridge = None
+    if is_ml2_plugin():
+        ovs_bridge = get_ovs_bridge()
+    for dlname in dlnames:
+        if prog.search(dlname) is None:
+            continue
+        try:
+            # first remove the IP
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
+                        dlname])
+        except:
+            # It is possible that the IP was already deleted but not the
+            # datalink. So we continue and try and delete the datalink.
+            pass
+        try:
+            # next remove the VNIC
+            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
+                        dlname])
+            # remove the OVS Port
+            if ovs_bridge:
+                check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
+                            "--if-exists", "del-port", ovs_bridge, dlname])
+        except CalledProcessError as err:
+            print "failed to remove datalink '%s' used by DHCP agent: %s" % \
+                (dlname, err)
+            ret_code = smf_include.SMF_EXIT_ERR_FATAL
+    return ret_code
+
+
 def start():
     # verify paths are valid
     for f in sys.argv[2:4]:
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # remove VNICs associated with DHCP agent if any were left over.
+    ret_code = cleanup_dhcp_agent_datalinks()
+    if ret_code != smf_include.SMF_EXIT_OK:
+        return ret_code
 
     # set the hostmodel property if necessary
     if not set_hostmodel("src-priority"):
@@ -72,47 +119,22 @@ def get_ovs_bridge():
 
 
 def stop():
-    try:
-        # first kill the SMF contract
-        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
-    except CalledProcessError as err:
-        print "failed to kill the SMF contract: %s" % err
+    # Keep issuing SIGTERM until the contract is empty. This way we will catch
+    # any child processes missed because they were getting forked.
+    # 50 attempts will be made at intervals of 2 seconds. Typically, we
+    # will only need 0 or 1 additional attempt before the contract is empty but
+    # we chose to err on the side of caution. In the worst case, we will use
+    # 100 seconds in the below loop which will leave 500 seconds (timeout is
+    # 600s) for the other cleanup tasks, after which the service will be put to
+    # maintenance state if the contract was not killed successfully.
+    if not kill_contract(50, 2, sys.argv[2]):
         return smf_include.SMF_EXIT_ERR_FATAL
 
-    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP interface names"
-        return smf_include.SMF_EXIT_ERR_FATAL
-
-    ifnames = output.splitlines()
-    # DHCP agent datalinks are always 15 characters in length. They start with
-    # 'dh', end with '_0', and in between they are hexadecimal digits.
-    prog = re.compile('dh[0-9A-Fa-f\_]{11}_0')
-    err_delete = False
-    for ifname in ifnames:
-        if prog.search(ifname) is None:
-            continue
-        try:
-            # first remove the IP
-            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
-                        ifname])
-            # next remove the VNIC
-            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
-                        ifname])
-            # remove the OVS Port
-            if is_ml2_plugin():
-                check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
-                            "--if-exists", "del-port", get_ovs_bridge(),
-                            ifname])
-        except CalledProcessError as err:
-            print "failed to remove datalink '%s' used by DHCP agent: %s" % \
-                (ifname, err)
-            err_delete = True
+    # remove VNICs associated with DHCP agent
+    ret_code = cleanup_dhcp_agent_datalinks()
 
     # finally reset the hostmodel property
-    if not set_hostmodel("weak") or err_delete:
+    if not set_hostmodel("weak") or ret_code != smf_include.SMF_EXIT_OK:
         return smf_include.SMF_EXIT_ERR_FATAL
     return smf_include.SMF_EXIT_OK
 
