@@ -50,23 +50,6 @@ TEST_TARGET = $(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
-# Delete this when build servers are installed with an updated versions of
-# gst-plugins-base
-GST_BASE = $(WS_COMPONENTS)/desktop/gstreamer1/gst-plugins-base/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(GST_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(GST_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-CPPFLAGS += -I$(GST_BASE)/usr/include/gstreamer-1.0
-LD_OPTIONS.32 += -L $(GST_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(GST_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-DEPENDED += $(WS_TOP)/components/desktop/gstreamer1/gst-plugins-base/build/manifest-$(MACH)-gst-plugins-base.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../../desktop/gstreamer1/gst-plugins-base/Makefile)
-# end Delete
-
 CONFIGURE_OPTION += --disable-static
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-glib
