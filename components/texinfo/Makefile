@@ -26,14 +26,15 @@ BUILD_BITS= 64
 # using gcc makes parfait happy.
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
-
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	6.0
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_VERSION=	6.1
+COMPONENT_PROJECT_URL=	https://www.gnu.org/software/texinfo/ 
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11ba4358696e8be3b3c7cfc88b89cf69525791aeabf0ee0a59ca58ebbd3471e4
+    sha256:02582b6d9b0552f1cb1312be6bd7023e9799603c3b2320fa68a36029e4cbafbb
+COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 
-TPNO_TEXINFO=		26645
+TPNO_TEXINFO=		27244
 TPNO_TEXI2HTML=		9089
 
 include $(WS_MAKE_RULES)/gnu-component.mk
@@ -80,3 +81,4 @@ REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
