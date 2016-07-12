@@ -156,6 +156,8 @@ file files/neutron-openvswitch-agent \
     path=lib/svc/method/neutron-openvswitch-agent
 file files/neutron-server path=lib/svc/method/neutron-server
 file files/neutron-upgrade path=lib/svc/method/neutron-upgrade
+file files/evs/migrate/migrate-evs-to-ovs path=usr/bin/migrate-evs-to-ovs \
+    mode=0555
 file path=usr/bin/neutron-db-manage
 file path=usr/lib/neutron/evs-neutron-migration mode=0555
 file usr/bin/neutron-dhcp-agent path=usr/lib/neutron/neutron-dhcp-agent \
@@ -1011,10 +1013,6 @@ depend type=require fmri=library/python/keystoneclient-$(PYV)
 
 # force a dependency on keystonemiddleware; used via a paste.deploy filter
 depend type=require fmri=library/python/keystonemiddleware-$(PYV)
-
-# force a dependency on neutronclient; pkgdepend work is needed to flush this
-# out.
-depend type=require fmri=library/python/neutronclient-$(PYV)
 
 # force a dependency on novaclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/novaclient-$(PYV)

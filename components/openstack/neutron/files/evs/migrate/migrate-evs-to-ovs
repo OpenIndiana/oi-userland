@@ -1,0 +1,1631 @@
+#!/usr/bin/python2.7
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+#
+# There are four aspects to migrate an OpenStack cloud running Neutron EVS
+# to Neutron ML2 + OVS and they are enumerated below. This script needs to
+# be run on each of the nodes that is either -- compute, controller, or
+# network -- and the script infers the role of the node based on the SMF
+# services running and does one or more of the operations enumerated below.
+#
+# 1. Populate Neutron ML2 tables
+# ------------------------------
+# Neutron ML2 plugin uses a different set of tables to manage various
+# network types and mechanism drivers underneath it. The names of these
+# tables start with ml2_* and the content of these tables will need to be
+# inferred from other Neutron tables and from EVS controller
+#
+# 2. Update existing configuration files
+# --------------------------------------
+# Following files need to be updated for various Neutron services.
+#  - /etc/neutron/neutron.conf
+#   - change core_plugin option to neutron.plugins.ml2.plugin.Ml2Plugin
+#
+#  - /etc/neutron/dhcp_agent.ini
+#   - change interface_driver option to \
+#    neutron.agent.solaris.interface.SolarisOVSInterfaceDriver
+#   - set ovs_integration_bridge to br_int0
+#
+#  - /etc/neutron/l3_agent.ini
+#   - change interface_driver option to \
+#       neutron.agent.solaris.interface.SolarisOVSInterfaceDriver
+#   - set ovs_integration_bridge to br_int0
+#   - set external_network_bridge to br_ex0
+#   - add service tenant's neutron user credentials to communicate with
+#       neutron-server
+#
+# Following files need to be updated on every node where nova-compute runs.
+#  - /etc/nova/nova.conf
+#    The only change to this file is to add an ovs_bridge
+#    option set to 'br_int0' (default OVS bridge to which various VNICs
+#    (Neutron ports) are added)
+#
+# 3. Create new configuration files
+# ---------------------------------
+# Following new file needs to be created on the node running neutron-server.
+#  - /etc/neutron/plugins/ml2/ml2_conf.ini
+#
+# Following new file needs to be created on every node running either
+# nova-compute, neutron-dhcp-agent, or neutron-l3-agent.
+#  - /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+#
+# The majority of the contents of the file is inferred from EVS controller
+#
+# 4. Migrate all the VMs from EVS to OVS
+# --------------------------------------
+# The anets of each VM, spawned in Neutron EVS cloud, has one global(tenant)
+# and two anet(evs and vport) properites that are EVS specific. We will need
+# to clear those properties. Before we do that, we will need to first fetch
+# the information (MAC address, lower-link, and such) from EVS controller
+# for a given anet which is uniquely identified by <tenant, evs, vport> and
+# explicitly set corresponding anet properties. This step needs to be
+# repeated for other EVS based anets, if any, in the VM.
+#
+
+import argparse
+from collections import OrderedDict
+from datetime import datetime
+import iniparse
+import netaddr as na
+import netifaces as ni
+import os
+import pwd
+import re
+from shutil import copy2, move
+import signal
+import socket
+import sqlalchemy as sa
+from subprocess import check_output, check_call, CalledProcessError, PIPE
+import sys
+import uuid
+
+import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evscntl
+import rad.bindings.com.oracle.solaris.rad.zonemgr_1 as zonemgr
+import rad.client as radcli
+import rad.connect as radcon
+
+from oslo_db.sqlalchemy import session
+from neutronclient.v2_0 import client as neutron_client
+from neutron.extensions import portbindings
+from neutron.openstack.common import uuidutils
+
+# SMF services
+SVC_NOVA_COMPUTE = 'nova-compute:default'
+SVC_NEUTRON_SERVER = 'neutron-server:default'
+SVC_DHCP_AGENT = 'neutron-dhcp-agent:default'
+SVC_L3_AGENT = 'neutron-l3-agent:default'
+SVC_METADATA_AGENT = 'neutron-metadata-agent:default'
+SVC_OVS_AGENT = 'neutron-openvswitch-agent:default'
+SVC_VSWITCH_SERVER = 'vswitch-server:default'
+SVC_OVSDB_SERVER = 'ovsdb-server:default'
+SVC_NEUTRON_UPGRADE = 'neutron-upgrade:default'
+
+
+ALL_SVCS = [SVC_NEUTRON_SERVER, SVC_DHCP_AGENT, SVC_L3_AGENT, SVC_NOVA_COMPUTE]
+curnode_svcs = []
+
+# conf files
+NEUTRON_CONF = '/etc/neutron/neutron.conf'
+ML2_INI = '/etc/neutron/plugins/ml2/ml2_conf.ini'
+OVS_INI = '/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini'
+EVS_INI = '/etc/neutron/plugins/evs/evs_plugin.ini'
+DHCP_INI = '/etc/neutron/dhcp_agent.ini'
+L3_INI = '/etc/neutron/l3_agent.ini'
+METADATA_INI = '/etc/neutron/metadata_agent.ini'
+NOVA_CONF = '/etc/nova/nova.conf'
+
+# constants
+ML2_PLUGIN = 'neutron.plugins.ml2.plugin.Ml2Plugin'
+OVS_INTFC_DRIVER = 'neutron.agent.solaris.interface.OVSInterfaceDriver'
+OVS_INT_BRIDGE = 'br_int0'
+OVS_EXT_BRIDGE = 'br_ex0'
+VXLAN_UPLINK_PORT = 'ovs.vxlan1'
+FLAT_PHYS_NET = 'flatnet'
+RABBITMQ_DEFAULT_USERID = 'guest'
+RABBITMQ_DEFAULT_PASSWORD = 'guest'
+L2_TYPE_VLAN = 'vlan'
+L2_TYPE_VXLAN = 'vxlan'
+L2_TYPE_FLAT = 'flat'
+UID_NEUTRON = 84
+UID_NOVA = 85
+
+# file ownership
+file_owner = {
+    NEUTRON_CONF: UID_NEUTRON,
+    ML2_INI: UID_NEUTRON,
+    OVS_INI: UID_NEUTRON,
+    EVS_INI: UID_NEUTRON,
+    DHCP_INI: UID_NEUTRON,
+    L3_INI: UID_NEUTRON,
+    METADATA_INI: UID_NEUTRON,
+    NOVA_CONF: UID_NOVA
+}
+
+# LOGGING LEVELS
+LOG_DEBUG = 'DEBUG:'
+LOG_INFO = 'INFO:'
+LOG_WARN = 'WARN:'
+LOG_ERROR = 'ERROR:'
+
+HOSTNAME = socket.gethostname().split('.')[0]
+
+evsutil = None
+l2type = None
+external_network_datalink = None
+
+
+def log_msg(level, msg, oneliner=True):
+    if oneliner:
+        msg = msg.replace('\n', ' ')
+        msg = re.sub(r'\s\s+', ' ', msg)
+    print level, msg
+
+
+class ZoneConfig(object):
+    """ZoneConfig - context manager for access zone configurations.
+    Automatically opens the configuration for a zone and commits any changes
+    before exiting
+    """
+    def __init__(self, zone):
+        """zone is a zonemgr object representing either a kernel zone or
+        non-global zone.
+        """
+        self.zone = zone
+        self.editing = False
+
+    def __enter__(self):
+        """enables the editing of the zone."""
+        try:
+            self.zone.editConfig()
+            self.editing = True
+            return self
+        except:
+            raise
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """looks for any kind of exception before exiting.  If one is found,
+        cancel any configuration changes and reraise the exception.  If not,
+        commit the new configuration.
+        """
+        if exc_type is not None and self.editing:
+            # We received some kind of exception.  Cancel the config and raise.
+            self.zone.cancelConfig()
+            raise
+        else:
+            # commit the config
+            try:
+                self.zone.commitConfig()
+            except:
+                raise
+
+    def get_resources(self, resource_type):
+        """Get list of resources of specified type
+        """
+        try:
+            return self.zone.getResources(zonemgr.Resource(resource_type))
+        except:
+            raise
+
+    def set_resource_prop(self, resource, prop, value, rsc_filter=None):
+        """sets a property for an existing resource.
+        """
+        try:
+            if isinstance(resource, basestring):
+                resource = zonemgr.Resource(resource, rsc_filter)
+            self.zone.setResourceProperties(resource,
+                                            [zonemgr.Property(prop, value)])
+        except:
+            raise
+
+    def clear_resource_props(self, resource, props, rsc_filter=None):
+        """Clear property values of a given resource
+        """
+        try:
+            if isinstance(resource, basestring):
+                resource = zonemgr.Resource(resource, rsc_filter)
+            self.zone.clearResourceProperties(resource, props)
+        except:
+            raise
+
+    def lookup_resource_property(self, resource, prop, rsc_filter=None):
+        """Lookup specified property from specified Solaris Zone resource."""
+        try:
+            if isinstance(resource, basestring):
+                resource = zonemgr.Resource(resource, rsc_filter)
+            val = self.zone.getResourceProperties(resource, [prop])
+        except radcli.ObjectError:
+            return None
+        except Exception:
+            raise
+        return val[0].value if val else None
+
+
+class ZoneUtil(object):
+    """Zone utility functions like getting list of zones, zone names etc.
+    """
+    def __init__(self):
+        self.rc = radcon.connect_unix()
+
+    def get_zone_by_name(self, name):
+            """Return a Solaris Zones object via RAD by name."""
+            try:
+                zone = self.rc.get_object(
+                    zonemgr.Zone(), radcli.ADRGlobPattern({'name': name}))
+            except radcli.NotFoundError:
+                return None
+            except Exception:
+                raise
+            return zone
+
+    def _get_zone_objects(self):
+        """Return a list of all Solaris Zones objects via RAD."""
+        return self.rc.list_objects(zonemgr.Zone())
+
+    def get_zone_names(self):
+        """Return the names of all the instances known to the virtualization
+        layer, as a list.
+        """
+        instances_list = []
+        for zone in self._get_zone_objects():
+            instances_list.append(self.rc.get_object(zone).name)
+        return instances_list
+
+
+class EVSUtil():
+    """Use to access EVS info.
+    """
+    def __init__(self):
+        ctl_locn = self._get_evs_controller()
+        try:
+            self.rad_uri = radcon.RadURI(ctl_locn)
+        except ValueError as err:
+            raise SystemExit(_("Specified evs_controller is invalid: %s"), err)
+        try:
+            self._rc = self.rad_uri.connect()
+        except:
+            raise SystemExit(_("Cannot connect to EVS Controller"))
+        try:
+            self._evs_contr = self._rc.get_object(evscntl.EVSController())
+        except:
+            raise SystemExit(_("Failed to get EVS Controller"))
+        self.l2type = self._evs_contr.getProperty('l2-type')[0].current_value
+        self._evsinfo = None
+        self._vportinfo = None
+        self._l2rangeinfo = None
+        self._evs_cache = {}
+        # _global_vlanrange_to_nw_uplink does not contain host specific entries
+        # and is of the form:
+        # {comma separated vlanrange strings: (physical n/w name, uplink port)}
+        self._global_vlanrange_to_nw_uplink = {}
+        # _local_vlanrange_to_uplink contains only this host specific entries
+        # and is of the form:
+        # {comma separated vlanrange strings: uplink port}
+        self._local_vlanrange_to_uplink = {}
+        # global uplink port for flatnet
+        self._global_flat_nw_uplink = None
+        # local uplink port for flatnet
+        self._local_flat_nw_uplink = None
+
+    def _get_evs_controller(self):
+        if (set(curnode_svcs) &
+                set([SVC_NOVA_COMPUTE, SVC_DHCP_AGENT, SVC_L3_AGENT])):
+            try:
+                evsc = check_output(['/usr/sbin/evsadm', 'show-prop', '-co',
+                                     'value', '-p', 'controller']).strip()
+            except:
+                raise SystemExit(_("Could not determine EVS Controller "
+                                   "RAD URI"))
+            return evsc.strip()
+
+        assert SVC_NEUTRON_SERVER in curnode_svcs
+        # get evs_controller from EVS_INI
+        config = iniparse.ConfigParser()
+        config.readfp(open(EVS_INI))
+        try:
+            evsc = config.get("EVS", "evs_controller")
+        except:
+            return 'ssh://evsuser@localhost'
+        return evsc.strip()
+
+    @property
+    def evsinfo(self):
+        if not self._evsinfo:
+            self._evsinfo = self._evs_contr.getEVSInfo()
+        return self._evsinfo
+
+    @property
+    def vportinfo(self):
+        if not self._vportinfo:
+            self._vportinfo = self._evs_contr.getVPortInfo()
+        return self._vportinfo
+
+    @property
+    def l2rangeinfo(self):
+        if not self._l2rangeinfo:
+            self._l2rangeinfo = self._evs_contr.getL2TypeIdRange()
+        return self._l2rangeinfo
+
+    @property
+    def global_flat_nw_uplink(self):
+        if not self._global_flat_nw_uplink:
+            self.get_global_vlanrange_uplink_map()
+        return self._global_flat_nw_uplink
+
+    @property
+    def local_flat_nw_uplink(self):
+        if not self._local_flat_nw_uplink:
+            self.get_local_vlanrange_uplink_map()
+        return self._local_flat_nw_uplink
+
+    def _get_vport(self, tenant_name, evs_uuid, vport_uuid):
+        pat = radcli.ADRGlobPattern({'tenant': tenant_name,
+                                     'evsuuid': evs_uuid,
+                                     'uuid': vport_uuid})
+        adrnames = self._rc.list_objects(evscntl.VPort(), pat)
+        if not adrnames:
+            return None
+        return self._rc.get_object(adrnames[0])
+
+    def get_macaddr(self, tenant_name, evs_uuid, vport_uuid):
+        vport = self._get_vport(tenant_name, evs_uuid, vport_uuid)
+        return vport.getProperty('macaddr')[0].current_value
+
+    def _get_evs(self, tenant_name, evs_uuid):
+        if evs_uuid in self._evs_cache:
+            return self._evs_cache[evs_uuid]
+        pat = radcli.ADRGlobPattern({'tenant': tenant_name,
+                                     'uuid': evs_uuid})
+        adrnames = self._rc.list_objects(evscntl.EVS(), pat)
+        if not adrnames:
+            return None
+        evs = self._rc.get_object(adrnames[0])
+        self._evs_cache[evs_uuid] = evs
+        return evs
+
+    def get_global_vlanrange_nw_uplink_map(self):
+        if self._global_vlanrange_to_nw_uplink:
+            return self._global_vlanrange_to_nw_uplink
+        i = 1
+        for l2ri in self.l2rangeinfo:
+            if l2ri.host or l2ri.name != 'uplink-port':
+                continue
+            uplink_port = l2ri.value
+            for range_prop in l2ri.range:
+                if range_prop.name != 'vlan-range':
+                    if range_prop.name == 'flat-range':
+                        self._global_flat_nw_uplink = uplink_port
+                    continue
+                phys_nw = 'physnet' + str(i)
+                vlanrange = range_prop.value
+                self._global_vlanrange_to_nw_uplink[vlanrange] = (phys_nw,
+                                                                  uplink_port)
+                i += 1
+        return self._global_vlanrange_to_nw_uplink
+
+    def get_local_vlanrange_uplink_map(self):
+        if self._local_vlanrange_to_uplink:
+            return self._local_vlanrange_to_uplink
+        for l2ri in self.l2rangeinfo:
+            if not l2ri.host:
+                continue
+            l2ri_hostname = l2ri.host.split('.')[0]
+            if l2ri_hostname != HOSTNAME or l2ri.name != 'uplink-port':
+                continue
+            uplink_port = l2ri.value
+            for range_prop in l2ri.range:
+                if range_prop.name != 'vlan-range':
+                    if range_prop.name == 'flat-range':
+                        self._local_flat_nw_uplink = uplink_port
+                    continue
+                vlanrange = range_prop.value
+                self._local_vlanrange_to_uplink[vlanrange] = uplink_port
+        return self._local_vlanrange_to_uplink
+
+    def _get_vlanrange_dict_val(self, vlanrangedict, vlanid):
+        """Each key in vlanrangedict is of the form
+        'vid_start_1-vid_end_1,vid_start_2-vid_end_2'..
+        This method parses the keys and finds the one which contains the
+        required vlanid and returns its corresponding dictionary value.
+        """
+        for vlan_ranges_str, value in vlanrangedict.iteritems():
+            vlan_ranges = vlan_ranges_str.split(',')
+            for vlan_range_str in vlan_ranges:
+                vlan_range = vlan_range_str.split("-")
+                vlan_start = int(vlan_range[0])
+                if len(vlan_range) == 2:
+                    vlan_end = int(vlan_range[1]) + 1
+                else:
+                    vlan_end = vlan_start + 1
+                if vlanid in xrange(vlan_start, vlan_end):
+                    return value
+
+    def get_uplink_port(self, tenant_name, evs_uuid):
+        """ For VXLAN the uplink port is always ovs.vxlan1.
+        For flat, we can return local or global uplink port after executing
+        get_local_vlanrange_uplink_map() or get_global_vlanrange_uplink_map().
+        For vlan, to find we first find the vlan-id associated
+        with this evs. Then check which l2range object contains this vlan-id
+        for this host and get the corresponding uplink-port.
+        """
+        if l2type == L2_TYPE_VXLAN:
+            return VXLAN_UPLINK_PORT
+        elif l2type == L2_TYPE_FLAT:
+            if self.local_flat_nw_uplink:
+                return self.local_flat_nw_uplink
+            return self.global_flat_nw_uplink
+        assert l2type == L2_TYPE_VLAN
+        evs = self._get_evs(tenant_name, evs_uuid)
+        vlanid = int(evs.getProperty('vlanid')[0].current_value)
+        val = self._get_vlanrange_dict_val(
+            self.get_local_vlanrange_uplink_map(), vlanid)
+        if val:
+            return val
+        val = self._get_vlanrange_dict_val(
+            self.get_global_vlanrange_nw_uplink_map(), vlanid)[1]
+        return val
+
+    def get_vni_range_list(self):
+        vni_ranges_list = []
+        for l2ri in self.l2rangeinfo:
+            if l2ri.host:
+                continue
+            for range_prop in l2ri.range:
+                if range_prop.name != 'vxlan-range':
+                    continue
+                vni_ranges_list += range_prop.value.split(',')
+        return vni_ranges_list
+
+    def get_vxlan_addrs_and_uplinks(self):
+        local_vxlan_addr, local_uplink_port = '', ''
+        global_vxlan_addr, global_uplink_port = '', ''
+        for l2ri in self.l2rangeinfo:
+            if l2ri.host:
+                if l2ri.host.split('.')[0] != HOSTNAME:
+                    # Don't care about other hosts' configurations
+                    continue
+                if l2ri.name == 'vxlan-addr':
+                    local_vxlan_addr = l2ri.value
+                    # if we found -h vxlan-addr, we don't need the other values
+                    break
+                elif l2ri.name == 'uplink-port':
+                    for range_prop in l2ri.range:
+                        if range_prop.name == 'vxlan-range':
+                            local_uplink_port = l2ri.value
+                            break
+            else:
+                if l2ri.name == 'vxlan_addr' and l2ri.value != '0.0.0.0':
+                    global_vxlan_addr = l2ri.value
+                else:
+                    for range_prop in l2ri.range:
+                        if range_prop.name == 'vxlan-range':
+                            global_uplink_port = l2ri.value
+                            break
+            if local_vxlan_addr and local_uplink_port and global_vxlan_addr \
+                    and global_uplink_port:
+                break
+        return (local_vxlan_addr, local_uplink_port, global_vxlan_addr,
+                global_uplink_port)
+
+
+def get_db_connection():
+    config = iniparse.ConfigParser()
+    config.readfp(open(NEUTRON_CONF))
+    if config.has_option('database', 'connection'):
+        connection = config.get('database', 'connection')
+    else:
+        raise SystemExit(_("Connection url for target DB not found."))
+    return connection
+
+
+class DBEVSToMl2(object):
+    def __init__(self):
+        self._table_names = ['ml2_network_segments', 'ml2_vxlan_allocations',
+                             'ml2_vlan_allocations', 'ml2_port_bindings',
+                             'ml2_port_binding_levels']
+        self._vif_type = portbindings.VIF_TYPE_OVS
+        self._driver_type = 'openvswitch'
+        # _vlan_xrange_to_nw is a list of tuples to hold the mapping from
+        # vlan-id to physical_network. The tuple format is
+        # (xrange(vid_range_start, vid_range_end), physical_network).
+        self._vlan_xrange_to_nw = []
+
+    def __call__(self):
+        connection = get_db_connection()
+        engine = session.create_engine(connection)
+        metadata = sa.MetaData()
+        self._check_db_schema_version(engine, metadata)
+        # Autoload the ports table to ensure that foreign keys to it and
+        # the network table can be created for the new tables.
+        sa.Table('ports', metadata, autoload=True, autoload_with=engine)
+        metadata.create_all(engine)
+        self._clear_tables(engine, metadata)
+        self._get_vlanrange_mapping()
+        self._migrate_network_segments(engine, metadata)
+        self._migrate_vlan_allocations(engine)
+        self._migrate_vxlan_allocations(engine)
+        self._migrate_port_bindings(engine, metadata)
+        self._add_router_extra_attributes(engine, metadata)
+
+    def _check_db_schema_version(self, engine, metadata):
+        """Check that current version of the db schema is supported."""
+        supported_schema_version = 'kilo'
+        version_table = sa.Table(
+            'alembic_version', metadata, autoload=True, autoload_with=engine)
+        versions = [v[0] for v in engine.execute(version_table.select())]
+        if not versions:
+            raise ValueError(_("Missing version in alembic_versions table"))
+        elif len(versions) > 1:
+            raise ValueError(_("Multiple versions in alembic_versions table:"
+                               " %s") % versions)
+        current_version = versions[0]
+        if current_version != supported_schema_version:
+            raise SystemError(_("Unsupported database schema %(current)s. "
+                                "Please migrate your database to one of "
+                                " following versions: %(supported)s")
+                              % {'current': current_version,
+                                 'supported': supported_schema_version}
+                              )
+
+    def _clear_tables(self, engine, metadata):
+        for tbl_name in self._table_names:
+            sa.Table(tbl_name, metadata, autoload=True, autoload_with=engine)
+            tbl = metadata.tables[tbl_name]
+            engine.execute(tbl.delete())
+
+    def _get_vlanrange_mapping(self):
+        vlanrange_to_nw_uplink = evsutil.get_global_vlanrange_nw_uplink_map()
+        # mapping from vlan-id to physical_network
+        for vlan_ranges_str, (nw, _) in vlanrange_to_nw_uplink.iteritems():
+            vlan_ranges = vlan_ranges_str.split(',')
+            for vlan_range_str in vlan_ranges:
+                vlan_range = vlan_range_str.split("-")
+                vlan_start = int(vlan_range[0])
+                if len(vlan_range) == 2:
+                    vlan_end = int(vlan_range[1]) + 1
+                else:
+                    vlan_end = vlan_start + 1
+                self._vlan_xrange_to_nw.append((xrange(vlan_start, vlan_end),
+                                                nw))
+
+    def _get_phys_net(self, l2type, vid):
+        if l2type == L2_TYPE_VLAN:
+            for vid_range, phys in self._vlan_xrange_to_nw:
+                if vid in vid_range:
+                    return phys
+        elif l2type == L2_TYPE_FLAT:
+            return FLAT_PHYS_NET
+        return None
+
+    def _add_router_extra_attributes(self, engine, metadata):
+        routers = engine.execute("SELECT id FROM routers")
+        routers = list(routers)
+        records = []
+        for router in routers:
+            router_ext_attr = {}
+            router_ext_attr['router_id'] = router[0]
+            router_ext_attr['distributed'] = 0
+            router_ext_attr['service_router'] = 0
+            router_ext_attr['ha'] = 0
+            router_ext_attr['ha_vr_id'] = 0
+            records.append(router_ext_attr)
+
+        if records:
+            sa.Table('router_extra_attributes', metadata, autoload=True,
+                     autoload_with=engine)
+            router_ea = metadata.tables['router_extra_attributes']
+            engine.execute(router_ea.insert(), records)
+
+    def _migrate_network_segments(self, engine, metadata):
+        records = []
+        for evsinfo in evsutil.evsinfo:
+            segment = dict(id=uuidutils.generate_uuid())
+            segment['network_id'] = evsinfo.uuid
+            segment['segmentation_id'] = None
+            for prop in evsinfo.props:
+                if prop.name == 'l2-type':
+                    segment['network_type'] = prop.value
+                elif prop.name == 'vlanid' or prop.name == 'vni':
+                    segment['segmentation_id'] = int(prop.value)
+            phys_net = self._get_phys_net(segment['network_type'],
+                                          segment['segmentation_id'])
+            segment['physical_network'] = phys_net
+            records.append(segment)
+        if records:
+            sa.Table('ml2_network_segments', metadata, autoload=True,
+                     autoload_with=engine)
+            ml2_network_segments = metadata.tables['ml2_network_segments']
+            engine.execute(ml2_network_segments.insert(), records)
+
+    def _migrate_vxlan_allocations(self, engine):
+        vnis = []
+        for evsinfo in evsutil.evsinfo:
+            pdict = dict((prop.name, prop.value) for prop in evsinfo.props)
+            if L2_TYPE_VXLAN not in pdict.values():
+                continue
+            vnis.append(int(pdict['vni']))
+        records = [dict(vxlan_vni=vni, allocated=True) for vni in vnis]
+        if records:
+            metadata = sa.MetaData()
+            sa.Table('ml2_vxlan_allocations', metadata, autoload=True,
+                     autoload_with=engine)
+            vxlan_allocations = metadata.tables['ml2_vxlan_allocations']
+            engine.execute(vxlan_allocations.insert(), records)
+
+    def _migrate_vlan_allocations(self, engine):
+        vid_allocated_map = OrderedDict()
+        # initially set 'allocated' to False for all vids
+        for vid_range, _ in self._vlan_xrange_to_nw:
+            for vid in vid_range:
+                vid_allocated_map[vid] = False
+        for evsinfo in evsutil.evsinfo:
+            pdict = dict((prop.name, prop.value) for prop in evsinfo.props)
+            if L2_TYPE_VLAN not in pdict.values():
+                continue
+            vid = int(pdict['vlanid'])
+            vid_allocated_map[vid] = True
+        records = [
+            dict(physical_network=self._get_phys_net(L2_TYPE_VLAN, vid),
+                 vlan_id=vid, allocated=alloc)
+            for vid, alloc in vid_allocated_map.iteritems()
+        ]
+        if records:
+            metadata = sa.MetaData()
+            sa.Table('ml2_vlan_allocations', metadata, autoload=True,
+                     autoload_with=engine)
+            vlan_allocations = metadata.tables['ml2_vlan_allocations']
+            engine.execute(vlan_allocations.insert(), records)
+
+    def _get_port_segment_map(self, engine):
+        port_segments = engine.execute("""
+            SELECT ports_network.port_id, ml2_network_segments.id AS segment_id
+              FROM ml2_network_segments, (
+                SELECT ports.id AS port_id, ports.network_id
+                  FROM ports
+              ) AS ports_network
+              WHERE ml2_network_segments.network_id = ports_network.network_id
+        """)
+        return dict(x for x in port_segments)
+
+    def _migrate_port_bindings(self, engine, metadata):
+        ml2_bindings = []
+        ml2_binding_levels = []
+        port_segment_map = self._get_port_segment_map(engine)
+        metadata = sa.MetaData()
+        for vportinfo in evsutil.vportinfo:
+            binding = {}
+            binding['port_id'] = vportinfo.uuid
+            binding['host'] = vportinfo.hostname
+            if vportinfo.hostname:
+                binding['vif_type'] = self._vif_type
+                binding['vif_details'] = '{"port_filter": false, ' \
+                    '"ovs_hybrid_plug": false}'
+                ml2_bindings.append(binding)
+                binding_level = {}
+                binding_level['port_id'] = vportinfo.uuid
+                binding_level['host'] = vportinfo.hostname
+                binding_level['level'] = 0
+                binding_level['driver'] = self._driver_type
+                segment_id = port_segment_map.get(binding_level['port_id'])
+                if segment_id:
+                    binding_level['segment_id'] = segment_id
+                ml2_binding_levels.append(binding_level)
+            else:
+                binding['vif_type'] = 'unbound'
+                binding['vif_details'] = ''
+                ml2_bindings.append(binding)
+        if ml2_bindings:
+            sa.Table('ml2_port_bindings', metadata, autoload=True,
+                     autoload_with=engine)
+            ml2_port_bindings = metadata.tables['ml2_port_bindings']
+            engine.execute(ml2_port_bindings.insert(), ml2_bindings)
+        if ml2_binding_levels:
+            sa.Table('ml2_port_binding_levels', metadata, autoload=True,
+                     autoload_with=engine)
+            ml2_port_binding_lvls = metadata.tables['ml2_port_binding_levels']
+            engine.execute(ml2_port_binding_lvls.insert(), ml2_binding_levels)
+
+
+class NovaVmEVSToOVS(object):
+    def _zc_get_evs_vport_vals(self, zc, anet_rsc):
+        """Get mac-address and lower-link for this anet from evs.
+        """
+        mac_addr, uplink_port = None, None
+        tenant_name = zc.lookup_resource_property('global', 'tenant')
+        evs_uuid = zc.lookup_resource_property(anet_rsc, 'evs')
+        vport_uuid = zc.lookup_resource_property(anet_rsc, 'vport')
+        if not evs_uuid or not vport_uuid:
+            return mac_addr, uplink_port
+        mac_addr = evsutil.get_macaddr(tenant_name, evs_uuid, vport_uuid)
+        uplink_port = evsutil.get_uplink_port(tenant_name, evs_uuid)
+        return mac_addr, uplink_port
+
+    def migrate(self, zone):
+        """Update zonecfg by deleting evs-specific and adding ovs-specific conf
+        """
+        installed_port_uuids = []
+        with ZoneConfig(zone) as zc:
+            brand = zc.lookup_resource_property('global', 'brand')
+            anet_update_failed = False
+            for anet_rsc in zc.get_resources('anet'):
+                mac_addr, lower_link = self._zc_get_evs_vport_vals(zc,
+                                                                   anet_rsc)
+                if not mac_addr or not lower_link:
+                    anet_update_failed = True
+                    msg = "Failed to get ovs info for zone"
+                    log_msg(LOG_ERROR, msg)
+                    continue
+                if zone.state == 'installed':
+                    vport_uuid = zc.lookup_resource_property(anet_rsc, 'vport')
+                    if vport_uuid:
+                        installed_port_uuids.append(vport_uuid)
+                fname = 'id' if brand == 'solaris-kz' else 'linkname'
+                fvalue = zc.lookup_resource_property(anet_rsc, fname)
+                zc.clear_resource_props(anet_rsc, ['evs', 'vport'])
+                rsc_filter = [zonemgr.Property(fname, fvalue)]
+                zc.set_resource_prop('anet', 'mac-address', mac_addr,
+                                     rsc_filter)
+                zc.set_resource_prop('anet', 'lower-link', lower_link,
+                                     rsc_filter)
+
+            if not anet_update_failed:
+                zc.clear_resource_props('global', ['tenant'])
+        return installed_port_uuids
+
+    def get_neutron_conn_params(self):
+        neutron_conn = {}
+        config = iniparse.ConfigParser()
+        config.readfp(open(NOVA_CONF))
+        neutron_conn['username'] = config.get('neutron', 'admin_username')
+        neutron_conn['password'] = config.get('neutron', 'admin_password')
+        neutron_conn['tenant'] = config.get('neutron', 'admin_tenant_name')
+        neutron_conn['auth_url'] = config.get('keystone_authtoken', 'auth_uri')
+        return neutron_conn
+
+
+class ConfigEVSToOVS():
+    def __init__(self):
+        # These are the configuration changes that are fixed, i.e., don't
+        # require extra computation. The data structure format is:
+        # _fixed = {config_file: [(section, param_name, param_value),]}
+        self._fixed = {
+            NEUTRON_CONF: [('DEFAULT', 'core_plugin', ML2_PLUGIN)],
+            ML2_INI: [('ml2_type_flat', 'flat_networks', 'flatnet')],
+            DHCP_INI: [('DEFAULT', 'interface_driver', OVS_INTFC_DRIVER),
+                       ('DEFAULT', 'ovs_integration_bridge', OVS_INT_BRIDGE)],
+            L3_INI: [('DEFAULT', 'interface_driver', OVS_INTFC_DRIVER),
+                     ('DEFAULT', 'ovs_integration_bridge', OVS_INT_BRIDGE),
+                     ('DEFAULT', 'external_network_bridge', OVS_EXT_BRIDGE)],
+            NOVA_CONF: [('neutron', 'ovs_bridge', OVS_INT_BRIDGE)]
+        }
+        # Config changes that are fixed depending on the l2-type
+        if l2type == L2_TYPE_VXLAN:
+            self._fixed[ML2_INI] += [('ml2', 'tenant_network_types', 'vxlan')]
+            self._fixed[OVS_INI] = [('ovs', 'enable_tunneling', 'True'),
+                                    ('agent', 'tunnel_types', 'vxlan')]
+        elif l2type == L2_TYPE_VLAN:
+            self._fixed[ML2_INI] += [('ml2', 'tenant_network_types', 'vlan')]
+        else:
+            assert l2type == L2_TYPE_FLAT
+            self._fixed[ML2_INI] += [('ml2', 'tenant_network_types', 'flat')]
+        self._vxlan_local_ip = None
+        self._bridge_mappings = None
+
+    def _read_config(self, conf_file):
+        config = iniparse.ConfigParser()
+        config.readfp(open(conf_file))
+        return config
+
+    def _write_config(self, conf_file, config):
+        with open(conf_file, 'wb+') as fp:
+            config.write(fp)
+
+    def _do_fixed(self, conf_file, config):
+        orig_conf_file = conf_file.replace('.migr', '')
+        if orig_conf_file not in self._fixed:
+            return
+        for sec, key, val in self._fixed[orig_conf_file]:
+            config.set(sec, key, val)
+
+    def _do_ml2_vlan_range(self, config):
+        vlanrange_to_nw_uplink = evsutil.get_global_vlanrange_nw_uplink_map()
+        nw_vlan_str_list = []
+        for vlan_ranges_str, (nw, _) in vlanrange_to_nw_uplink.iteritems():
+            vlan_ranges = vlan_ranges_str.split(',')
+            for vlan_range_str in vlan_ranges:
+                vlan_range = vlan_range_str.split("-")
+                vlan_start = vlan_end = vlan_range[0]
+                if len(vlan_range) == 2:
+                    vlan_end = vlan_range[1]
+                nw_vlan_str = nw + ":" + vlan_start + ":" + vlan_end
+                nw_vlan_str_list.append(nw_vlan_str)
+        nw_vlan_strs = ",".join(nw_vlan_str_list)
+        config.set('ml2_type_vlan', 'network_vlan_ranges', nw_vlan_strs)
+
+    def _do_ml2_vni_range(self, config):
+        vni_ranges_list = evsutil.get_vni_range_list()
+        vni_ranges_list = [vr.replace('-', ':') for vr in vni_ranges_list]
+        vni_ranges = ",".join(vni_ranges_list)
+        config.set('ml2_type_vxlan', 'vni_ranges', vni_ranges)
+
+    @property
+    def bridge_mappings(self):
+        if self._bridge_mappings:
+            return self._bridge_mappings
+        bridge_mappings = []
+        global_nw_uplink_map = evsutil.get_global_vlanrange_nw_uplink_map()
+        local_uplink_map = evsutil.get_local_vlanrange_uplink_map()
+        # Any local uplink ports should have the same vlan-range boundaries
+        # as the global ones. This is expected in an openstack deployment but
+        # is not enforced by evs itself. So we raise a warning if we encounter
+        # a local uplink-port for a vlan-range whose boundaries are different
+        # from any that are defined globally.
+        errs = set(local_uplink_map.keys()) - set(global_nw_uplink_map.keys())
+        if errs:
+            errs = ','.join(errs)
+            msg = """Found the following incorrect vlan_ranges that were not
+            added to bridge_mappings in ovs_neutron_plugin.ini. Please update
+            manually if necessary - %s""" % errs
+            log_msg(LOG_WARN, msg)
+        for vlanranges_str, (nw, uplink) in global_nw_uplink_map.iteritems():
+            uplink = local_uplink_map.get(vlanranges_str, uplink)
+            bridge_mappings.append(nw + ':' + uplink)
+        if evsutil.local_flat_nw_uplink:
+            bridge_mappings.append(FLAT_PHYS_NET + ':' +
+                                   evsutil.local_flat_nw_uplink)
+        elif evsutil.global_flat_nw_uplink:
+            bridge_mappings.append(FLAT_PHYS_NET + ':' +
+                                   evsutil.global_flat_nw_uplink)
+        self._bridge_mappings = ','.join(bridge_mappings)
+        return self._bridge_mappings
+
+    def _get_rabbit_host(self, conf_file):
+        config = self._read_config(conf_file)
+        host = 'localhost'
+        if config.has_option('DEFAULT', 'rabbit_host'):
+            host = config.get('DEFAULT', 'rabbit_host')
+        elif config.has_option('oslo_messaging_rabbit', 'rabbit_host'):
+            host = config.get('oslo_messaging_rabbit', 'rabbit_host')
+
+        port = '5672'
+        if config.has_option('DEFAULT', 'rabbit_port'):
+            port = config.get('DEFAULT', 'rabbit_port')
+        elif config.has_option('oslo_messaging_rabbit', 'rabbit_port'):
+            port = config.get('oslo_messaging_rabbit', 'rabbit_port')
+
+        hosts = ':'.join([host, port])
+        if config.has_option('DEFAULT', 'rabbit_hosts'):
+            hosts = config.get('DEFAULT', 'rabbit_hosts')
+        elif config.has_option('oslo_messaging_rabbit', 'rabbit_hosts'):
+            hosts = config.get('oslo_messaging_rabbit', 'rabbit_hosts')
+
+        userid = RABBITMQ_DEFAULT_USERID
+        if config.has_option('DEFAULT', 'rabbit_userid'):
+            userid = config.get('DEFAULT', 'rabbit_userid')
+        elif config.has_option('oslo_messaging_rabbit', 'rabbit_userid'):
+            userid = config.get('oslo_messaging_rabbit', 'rabbit_userid')
+
+        passwd = RABBITMQ_DEFAULT_PASSWORD
+        if config.has_option('DEFAULT', 'rabbit_password'):
+            passwd = config.get('DEFAULT', 'rabbit_password')
+        elif config.has_option('oslo_messaging_rabbit', 'rabbit_password'):
+            passwd = config.get('oslo_messaging_rabbit', 'rabbit_password')
+        passwd += '\n'
+
+        return (host, hosts, userid, passwd)
+
+    def _do_rabbit_host(self, config):
+        if SVC_NOVA_COMPUTE in curnode_svcs:
+            (host, hosts, userid, passwd) = self._get_rabbit_host(NOVA_CONF)
+        elif set([SVC_DHCP_AGENT, SVC_L3_AGENT]) & set(curnode_svcs):
+            (host, hosts, userid, passwd) = self._get_rabbit_host(NEUTRON_CONF)
+        else:
+            return
+        if not config.has_section('oslo_messaging_rabbit'):
+            config.add_section('oslo_messaging_rabbit')
+        config.set('oslo_messaging_rabbit', 'rabbit_host', host)
+        config.set('oslo_messaging_rabbit', 'rabbit_hosts', hosts)
+        config.set('oslo_messaging_rabbit', 'rabbit_userid', userid)
+        config.set('oslo_messaging_rabbit', 'rabbit_password', passwd)
+
+    def _get_local_ip(self, if_str='', subnet_str=''):
+        if not if_str and not subnet_str:
+            return None
+        for iface in ni.interfaces():
+            if if_str:
+                if iface != if_str:
+                    continue
+                # Only IPv4 addresses, not considering IPv6 since OVS
+                # doesn't support IPv6 VXLANs
+                for addrinfo in ni.ifaddresses(iface)[ni.AF_INET]:
+                    addr = addrinfo['addr']
+                    if subnet_str:
+                        if na.IPAddress(addr) in na.IPNetwork(subnet_str):
+                            return addr
+                    else:
+                        if addr != '127.0.0.1':
+                            return addr
+                break
+            else:
+                for addrinfo in ni.ifaddresses(iface)[ni.AF_INET]:
+                    addr = addrinfo['addr']
+                    if na.IPAddress(addr) in na.IPNetwork(subnet_str):
+                        return addr
+        return None
+
+    def _get_vxlan_local_ip(self):
+        """Returns the local_ip for vxlan_endpoint. It is found as follows:
+        1. If host specific vxlan-addr is present, use it.
+        2. If local uplink-port and global vxlan-addr(subnet) is present, use
+        the first IP address on that uplink-port which is in the subnet.
+        3. If local uplink-port, use the first IP on the uplink-port.
+        4. If global uplink-port and global vxlan-addr(subnet), use first
+        IP address on that uplink-port which is in the subnet.
+        5. If global vxlan-addr is configured only, use the first IP address
+        on any interface that is in the subnet of global vxlan-addr.
+        """
+        if self._vxlan_local_ip:
+            return self._vxlan_local_ip
+        (laddr, lup, gaddr, gup) = evsutil.get_vxlan_addrs_and_uplinks()
+        if laddr:
+            self._vxlan_local_ip = laddr
+        elif lup:
+            self._vxlan_local_ip = self._get_local_ip(lup, gaddr)
+        else:
+            self._vxlan_local_ip = self._get_local_ip(gup, gaddr)
+        return self._vxlan_local_ip
+
+    def _do_neutron_credentials(self, config, input_file, section):
+        neutron_cfg = self._read_config(input_file)
+        tenant = None
+        if neutron_cfg.has_option(section, 'admin_tenant_name'):
+            tenant = neutron_cfg.get(section, 'admin_tenant_name')
+            config.set('DEFAULT', 'admin_tenant_name', tenant)
+        user = None
+        if neutron_cfg.has_option(section, 'admin_user'):
+            user = neutron_cfg.get(section, 'admin_user')
+            config.set('DEFAULT', 'admin_user', user)
+        passwd = None
+        if neutron_cfg.has_option(section, 'admin_password'):
+            passwd = neutron_cfg.get(section, 'admin_password')
+            config.set('DEFAULT', 'admin_password', passwd)
+        auth_uri_option = ('auth_uri' if input_file == NEUTRON_CONF else
+                           'auth_url')
+        if neutron_cfg.has_option(section, auth_uri_option):
+            auth_url = neutron_cfg.get(section, auth_uri_option)
+            config.set('DEFAULT', 'auth_url', auth_url)
+        if neutron_cfg.has_option(section, 'auth_region'):
+            auth_region = neutron_cfg.get(section, 'auth_region')
+            config.set('DEFAULT', 'auth_region', auth_region)
+
+        if any('%SERVICE_' in val for val in [tenant, user, passwd]):
+            msg = "Neutron credentials are incomplete in %s" % L3_INI
+            log_msg(LOG_WARN, msg)
+
+    def _backup_file(self, orig_file):
+        today = datetime.now().strftime("%Y%m%d%H%M%S")
+        new_file = orig_file + '.' + today
+        try:
+            self._copy_file(orig_file, new_file)
+            msg = "Backed up current %s in %s" % (orig_file, new_file)
+            log_msg(LOG_DEBUG, msg)
+        except (IOError, OSError):
+            msg = "Unable to create a backup of %s" % orig_file
+            log_msg(LOG_WARN, msg)
+
+    def _copy_file(self, orig_file, new_file):
+        copy2(orig_file, new_file)
+        uid = file_owner[orig_file]
+        os.chown(new_file, uid, uid)
+
+    def update_neutron_conf(self):
+        self._backup_file(NEUTRON_CONF)
+        msg = "Updating %s" % NEUTRON_CONF
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(NEUTRON_CONF, NEUTRON_CONF + '.migr')
+        conf_file = NEUTRON_CONF + '.migr'
+        config = self._read_config(conf_file)
+        self._do_fixed(conf_file, config)
+        service_plugins = 'router'
+        if config.has_option('DEFAULT', 'service_plugins'):
+            service_plugins = config.get('DEFAULT', 'service_plugins')
+            if service_plugins:
+                service_plugins = 'router,' + service_plugins
+            else:
+                service_plugins = 'router'
+        config.set('DEFAULT', 'service_plugins', service_plugins)
+        self._write_config(conf_file, config)
+        move(conf_file, NEUTRON_CONF)
+
+    def update_ml2_conf_ini(self):
+        """
+        Reference target configuration state:
+        [ml2]
+        type_drivers = flat,vlan,vxlan
+        tenant_network_types = vlan
+        mechanism_drivers = openvswitch
+        [ml2_type_flat]
+        flat_networks = external
+        [ml2_type_vlan]
+        network_vlan_ranges = physnet1:300:400,extnet:240:240
+        [ml2_type_gre]
+        [ml2_type_vxlan]
+        [securitygroup]
+        enable_security_group = False
+        enable_ipset = False
+        """
+        self._backup_file(ML2_INI)
+        msg = "Updating %s" % ML2_INI
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(ML2_INI, ML2_INI + '.migr')
+        conf_file = ML2_INI + '.migr'
+        config = self._read_config(conf_file)
+        self._do_fixed(conf_file, config)
+        if l2type == L2_TYPE_VXLAN:
+            self._do_ml2_vni_range(config)
+        elif l2type == L2_TYPE_VLAN:
+            self._do_ml2_vlan_range(config)
+        self._write_config(conf_file, config)
+        move(conf_file, ML2_INI)
+
+    def update_ovs_neutron_plugin_ini(self):
+        """
+        Reference target configuration state:
+        [ovs]
+        integration_bridge = br_int0
+        bridge_mappings = physnet1:l3stub0 (for VLAN)
+        local_ip = A.B.C.D (for VXLAN)
+        enable_tunneling = True (for VXLAN)
+        [agent]
+        root_helper =
+        tunnel_types = vxlan (for VXLAN)
+        [securitygroup]
+        enable_security_group = False
+        """
+        self._backup_file(OVS_INI)
+        msg = "Updating %s" % OVS_INI
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(OVS_INI, OVS_INI + '.migr')
+        conf_file = OVS_INI + '.migr'
+        config = self._read_config(conf_file)
+        self._do_fixed(conf_file, config)
+        if l2type == L2_TYPE_VXLAN:
+            local_ip = self._get_vxlan_local_ip()
+            if local_ip:
+                config.set('ovs', 'local_ip', local_ip)
+            else:
+                msg = """Could not determine IP address for VXLAN endpoint.
+                Manually set the local_ip option in ovs_neutron_plugin.ini"""
+                log_msg(LOG_WARN, msg)
+        else:
+            config.set('ovs', 'bridge_mappings', self.bridge_mappings)
+        self._do_rabbit_host(config)
+        self._write_config(conf_file, config)
+        move(conf_file, OVS_INI)
+
+    def update_dhcp_agent_ini(self):
+        self._backup_file(DHCP_INI)
+        msg = "Updating %s" % DHCP_INI
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(DHCP_INI, DHCP_INI + '.migr')
+        conf_file = DHCP_INI + '.migr'
+        config = self._read_config(conf_file)
+        self._do_fixed(conf_file, config)
+        self._write_config(conf_file, config)
+        move(conf_file, DHCP_INI)
+
+    def update_l3_agent_ini(self):
+        self._backup_file(L3_INI)
+        msg = "Updating %s" % L3_INI
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(L3_INI, L3_INI + '.migr')
+        conf_file = L3_INI + '.migr'
+        config = self._read_config(conf_file)
+        if l2type == L2_TYPE_VLAN:
+            global external_network_datalink
+            if config.has_option('DEFAULT', 'external_network_datalink'):
+                external_network_datalink = \
+                    config.get('DEFAULT', 'external_network_datalink')
+                if not external_network_datalink:
+                    external_network_datalink = None
+            else:
+                external_network_datalink = 'net0'
+        self._do_fixed(conf_file, config)
+        if is_svc_online(SVC_METADATA_AGENT):
+            self._do_neutron_credentials(config, METADATA_INI, "DEFAULT")
+        else:
+            self._do_neutron_credentials(config, NEUTRON_CONF,
+                                         "keystone_authtoken")
+        self._write_config(conf_file, config)
+        move(conf_file, L3_INI)
+
+    def update_nova_conf(self):
+        self._backup_file(NOVA_CONF)
+        msg = "Updating %s" % NOVA_CONF
+        log_msg(LOG_DEBUG, msg)
+        self._copy_file(NOVA_CONF, NOVA_CONF + '.migr')
+        conf_file = NOVA_CONF + '.migr'
+        config = self._read_config(conf_file)
+        self._do_fixed(conf_file, config)
+        self._write_config(conf_file, config)
+        move(conf_file, NOVA_CONF)
+
+    def update_Open_vSwitch_other_config(self):
+        bm_str = "other_config:bridge_mappings=" + self.bridge_mappings
+        try:
+            check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl', 'set',
+                        'Open_vSwitch', '.', bm_str])
+            msg = """Successfully set other_config column in Open_vSwitch table
+            with value %s.""" % bm_str
+            log_msg(LOG_DEBUG, msg)
+        except:
+            msg = """Failed to set other_config column in Open_vSwitch table
+            with value %s.""" % bm_str
+            log_msg(LOG_WARN, msg)
+
+
+def enable_svc(svcname, exit_on_fail=False):
+    msg = "Enabling service: %s" % svcname
+    log_msg(LOG_INFO, msg)
+    cmd = ['/usr/bin/pfexec', '/usr/sbin/svcadm', 'enable', '-s']
+    cmd.append(svcname)
+    try:
+        check_call(cmd, stdout=PIPE, stderr=PIPE)
+    except CalledProcessError as err:
+        msg = """Failed to enable %s: %s.
+        Please verify "and manually enable the service""" % (svcname, err)
+        log_msg(LOG_ERROR, msg)
+        if exit_on_fail:
+            msg = "Exiting..."
+            log_msg(LOG_INFO, msg)
+            sys.exit()
+
+
+def disable_svc(svcname):
+    msg = "Disabling service: %s" % svcname
+    log_msg(LOG_INFO, msg)
+    try:
+        check_call(['/usr/bin/pfexec', '/usr/sbin/svcadm', 'disable', '-s',
+                    svcname], stdout=PIPE, stderr=PIPE)
+    except CalledProcessError as err:
+        msg = "Failed to disable %s: %s." % (svcname, err)
+        log_msg(LOG_ERROR, msg)
+
+
+def nova_evs_to_ovs(migr_conf_obj):
+    # step-1: disable nova-compute
+    disable_svc(SVC_NOVA_COMPUTE)
+
+    # step-2: update zones' config
+    migr_vm = NovaVmEVSToOVS()
+    neutron_conn = migr_vm.get_neutron_conn_params()
+    zoneutil = ZoneUtil()
+    for name in zoneutil.get_zone_names():
+        zone = zoneutil.get_zone_by_name(name)
+        if not zone:
+            msg = "skipping EVS-OVS migration of VM %s; not found" % name
+            log_msg(LOG_DEBUG, msg)
+            continue
+        if zone.state == 'incomplete':
+            msg = """skipping EVS-OVS migration of VM %s; It is in 'incomplete'
+            state""" % name
+            log_msg(LOG_DEBUG, msg)
+            continue
+        with ZoneConfig(zone) as zc:
+            tenant_name = zc.lookup_resource_property('global', 'tenant')
+            if not tenant_name:
+                msg = """skipping EVS-OVS migration of non-openstack
+                managed VM %s""" % name
+                log_msg(LOG_DEBUG, msg)
+                continue
+            try:
+                uuid.UUID(tenant_name)
+            except:
+                msg = """skipping EVS-OVS migration of non-openstack
+                managed VM %s""" % name
+                log_msg(LOG_DEBUG, msg)
+                continue
+        msg = "Performing EVS-OVS migration of VM: %s" % name
+        log_msg(LOG_INFO, msg)
+
+        # step 2.1: migrate zone config
+        installed_port_uuids = migr_vm.migrate(zone)
+        # step 2.2: shutdown
+        if zone.state == 'running':
+            try:
+                msg = "Shutting down VM: %s, after modifying zone's config" % \
+                    name
+                log_msg(LOG_DEBUG, msg)
+                zone.shutdown()
+            except Exception as ex:
+                msg = """ Failed to shutdown instance %s. The zone's config
+                has been modified to OVS. Manually start the VM""" % name
+                log_msg(LOG_WARN, msg)
+        if installed_port_uuids:
+            nc = neutron_client.Client(
+                username=neutron_conn['username'],
+                password=neutron_conn['password'],
+                tenant_name=neutron_conn['tenant'],
+                auth_url=neutron_conn['auth_url'])
+            for vport_uuid in installed_port_uuids:
+                port_req_body = {'port': {'binding:host_id': HOSTNAME}}
+                nc.update_port(vport_uuid, port_req_body)
+
+    # step-3: change nova.conf
+    migr_conf_obj.update_nova_conf()
+
+    # we will enable the service later
+
+
+def dhcp_evs_to_ovs(migr_conf_obj):
+    # step-1: disable neutron-dhcp-agent
+    disable_svc(SVC_DHCP_AGENT)
+
+    # step-2: change dhcp_agent.ini
+    migr_conf_obj.update_dhcp_agent_ini()
+
+    # we will enable the service later
+
+
+def add_ovs_bridge(bridge_name):
+    try:
+        check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl', '--',
+                    '--may-exist', 'add-br', bridge_name], stdout=PIPE,
+                   stderr=PIPE)
+        msg = "Created %s ovs bridge" % bridge_name
+        log_msg(LOG_DEBUG, msg)
+        if bridge_name == OVS_EXT_BRIDGE:
+            check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl',
+                        'br-set-external-id', OVS_EXT_BRIDGE, 'bridge-id',
+                        OVS_EXT_BRIDGE])
+    except CalledProcessError as err:
+        msg = "Failed to create %s ovs bridge: %s" % (bridge_name, err)
+        log_msg(LOG_ERROR, msg)
+
+
+def l3_evs_to_ovs(migr_conf_obj):
+    # step-1: disable neutron-l3-agent
+    disable_svc(SVC_L3_AGENT)
+
+    # step-2: change l3_agent.ini and ovs_neutron_plugin.ini
+    migr_conf_obj.update_l3_agent_ini()
+
+    # step-3: create external network bridge
+    add_ovs_bridge(OVS_EXT_BRIDGE)
+
+    # we will enable the service later
+
+
+def neutron_evs_to_ovs(migr_conf_obj):
+    # step-1: disable neutron-server
+    disable_svc(SVC_NEUTRON_SERVER)
+
+    # step-2: migrate DB to ml2
+    migr_ml2 = DBEVSToMl2()
+    migr_ml2()
+
+    # step-3: change ml2_conf.ini and neutron.conf
+    migr_conf_obj.update_ml2_conf_ini()
+    migr_conf_obj.update_neutron_conf()
+
+    # step-4: enable neutron-server
+    enable_svc(SVC_NEUTRON_SERVER)
+
+
+def is_svc_online(svc, exit_on_maintenance=False):
+    try:
+        state = check_output(['/usr/bin/svcs', '-H', '-o', 'state', svc],
+                             stderr=PIPE)
+    except:
+        return False
+    if exit_on_maintenance and state.strip() == 'maintenance':
+        msg = """Unable to perform EVS to OVS migration as %s is in maintenance
+            state. Please fix the errors and clear the svc before running
+            migration""" % svc
+        log_msg(LOG_ERROR, msg)
+        sys.exit()
+    return state.strip() == 'online'
+
+
+def create_backup_be():
+    msg = "Creating backup BE"
+    log_msg(LOG_INFO, msg)
+    boot_envs = check_output(['/usr/sbin/beadm', 'list', '-H'],
+                             stderr=PIPE)
+    for be in boot_envs.splitlines():
+        be_fields = be.split(';')
+        if 'N' in be_fields[2]:
+            curr_be = be_fields[0]
+            backup_be = curr_be + '-backup-ovs-upgrade'
+            break
+    msg = "Active BE is: %s" % curr_be
+    log_msg(LOG_DEBUG, msg)
+    try:
+        check_call(['/usr/sbin/beadm', 'create', backup_be], stdout=PIPE,
+                   stderr=PIPE)
+        msg = "Created backup BE: " + backup_be
+        log_msg(LOG_DEBUG, msg)
+    except:
+        msg = "Backup BE already exists: " + backup_be
+        log_msg(LOG_DEBUG, msg)
+
+
+def get_node_svcs():
+    global curnode_svcs
+    for svc in ALL_SVCS:
+        if is_svc_online(svc):
+            curnode_svcs.append(svc)
+
+
+def get_default_gateways():
+    def_gws = set()
+    routes = check_output(['/usr/bin/pfexec', '/usr/bin/netstat',
+                           '-arn']).splitlines()
+    for route in routes:
+        route = route.strip()
+        elems = route.split()
+        if elems and elems[0] == 'default':
+            def_gws.add(elems[1])
+    return def_gws
+
+
+def add_uplink_to_br(uplink, bridge):
+    def add_ips_and_gws_to_port(port):
+        if ips:
+            check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'create-ip',
+                        port], stdout=PIPE)
+        aconf_configured = False
+        for ip in ips:
+            msg = "Adding IP %s to %s" % (ip, port)
+            log_msg(LOG_DEBUG, msg)
+            addrtype_addr = ip.split(':')
+            addrtype, addr = addrtype_addr[0], addrtype_addr[1]
+            if addrtype == 'static':
+                check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm',
+                            'create-addr', '-T',  addrtype, '-a', addr, port],
+                           stdout=PIPE)
+            elif addrtype == 'addrconf':
+                if not aconf_configured:
+                    check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm',
+                                'create-addr', '-T', addrtype, port],
+                               stdout=PIPE)
+                    aconf_configured = True
+            else:
+                check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm',
+                            'create-addr', '-T', addrtype, port], stdout=PIPE)
+        new_gateways = get_default_gateways()
+        removed_gateways = old_gateways - new_gateways
+        for gw in removed_gateways:
+            # simple check for IPv6 address
+            if ':' in gw:
+                continue
+            msg = "Adding default gateway %s" % gw
+            log_msg(LOG_DEBUG, msg)
+            check_call(['/usr/bin/pfexec', '/usr/sbin/route', 'add', 'default',
+                        gw], stdout=PIPE)
+
+    msg = "Migrating %s link to OVS bridge: %s" % (uplink, bridge)
+    log_msg(LOG_DEBUG, msg)
+    # Store IP and gateway info
+    ips = []
+    old_gateways = get_default_gateways()
+    try:
+        ips = check_output(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'show-addr',
+                            '-po', 'type,addr',
+                            uplink], stderr=PIPE).splitlines()
+        check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'delete-ip',
+                    uplink], stdout=PIPE, stderr=PIPE)
+    except CalledProcessError as err:
+        pass
+
+    try:
+        check_call(['/usr/bin/pfexec', '/usr/sbin/dladm', 'set-linkprop', '-p',
+                    'openvswitch=on', uplink], stdout=PIPE, stderr=PIPE)
+    except CalledProcessError as err:
+        msg = """Failed to set openvswitch property=on for %s - link is busy.
+        Follow the below steps to migrate link to OVS bridge manually.
+        1. Remove any flows, IP etc. so that link is unused.
+        2. dladm set-linkprop -p openvswitch=on %s
+        3. ovs-vsctl -- --may-exist add-port %s %s
+        4. Replumb IPs, if existed before on %s, on %s.""" % \
+            (uplink, uplink, bridge, uplink, uplink, bridge)
+        log_msg(LOG_ERROR, msg, oneliner=False)
+    # add uplink to bridge
+    check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl', '--', '--may-exist',
+                'add-port', bridge, uplink])
+    try:
+        add_ips_and_gws_to_port(bridge)
+    except CalledProcessError as err:
+        msg = """Failed to configure the IPs(%s) on br_ex0 VNIC. Manually
+        configure the IPs and set default gateway""" % ips
+        log_msg(LOG_ERROR, msg)
+
+
+def get_uplink_ports_for_int_bridge(migr_conf_obj):
+    int_uplinks = set()
+    for mapping in migr_conf_obj.bridge_mappings.split(','):
+        if not mapping:
+            continue
+        uplink = mapping.split(':')[1]
+        int_uplinks.add(uplink)
+    return int_uplinks
+
+
+def get_uplink_ports_for_ext_bridge(migr_conf_obj):
+    ext_uplink = None
+    if l2type == L2_TYPE_VLAN and external_network_datalink is not None:
+        ext_uplink = external_network_datalink
+        return ext_uplink
+
+    connection = get_db_connection()
+    engine = session.create_engine(connection)
+    extnet_name = None
+    tmp = engine.execute("""
+        SELECT physical_network FROM ml2_network_segments WHERE network_id in
+        (SELECT network_id FROM externalnetworks)
+    """)
+    tmp = list(tmp)
+    if tmp:
+        extnet_name = tmp[0][0]
+
+    for mapping in migr_conf_obj.bridge_mappings.split(','):
+        if not mapping:
+            continue
+        map_items = mapping.split(':')
+        nw_name, uplink = map_items[0], map_items[1]
+        if nw_name == extnet_name:
+            ext_uplink = uplink
+            break
+    return ext_uplink
+
+
+def main():
+    # help text
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter, description='''
+    Migration script to migrate OpenStack Cloud based on EVS to an
+    OpenStack cloud based on OVS. There are four steps to migration.
+
+        -- Populate Neutron ML2 tables
+        -- Replace EVS information in existing configuration files with OVS
+           (neutron.conf, dhcp_agent.ini, l3_agent.ini, and nova.conf)
+        -- Add OVS information to new configuration files
+           (ml2_conf.ini and ovs_neutron_agent.ini)
+        -- Clear EVS information in Zones and populate the anets for OVS
+    ''')
+    parser.parse_args()
+
+    signal.signal(signal.SIGHUP, signal.SIG_IGN)
+    try:
+        out = check_output(['/usr/bin/pfexec', '/usr/bin/svcprop', '-p',
+                            'config/evs2ovs', SVC_NEUTRON_UPGRADE],
+                           stderr=PIPE)
+        if out.strip() == 'done':
+            msg = "Migration has already run on this node."
+            log_msg(LOG_INFO, msg)
+            return
+    except:
+        pass
+
+    # get the current node services
+    get_node_svcs()
+    if not curnode_svcs:
+        msg = "Nothing to migrate on this node. Quitting."
+        log_msg(LOG_INFO, msg)
+        return
+
+    msg = """The script has determined that following services - %s - are
+    online and the system will be migrated based on these services.""" % \
+        ', '.join(curnode_svcs)
+    log_msg(LOG_INFO, msg)
+
+    # Create backup BE
+    create_backup_be()
+
+    # Even if nova-compute is the only svc on this node, make sure neutron
+    # is also installed.
+    if not set(curnode_svcs) - set([SVC_NOVA_COMPUTE]):
+        try:
+            check_call(['pkg', 'info', 'neutron'], stdout=PIPE, stderr=PIPE)
+        except:
+            msg = "cloud/openstack/neutron pkg not found."
+            log_msg(LOG_ERROR, msg)
+            msg = """cloud/openstack/neutron pkg needs to be installed on this
+            node before migration."""
+            log_msg(LOG_INFO, msg)
+            return
+
+    # If nova-compute is running on this node, we can execute everything as
+    # root. Else, this is a network node and we can execute everything as
+    # neutron user.
+    if SVC_NOVA_COMPUTE not in curnode_svcs:
+        msg = "Changing user to neutron"
+        log_msg(LOG_DEBUG, msg)
+        os.setgid(UID_NEUTRON)
+        os.setuid(UID_NEUTRON)
+
+    global evsutil
+    evsutil = EVSUtil()
+    global l2type
+    l2type = evsutil.l2type
+    msg = "l2type = %s" % l2type
+    log_msg(LOG_DEBUG, msg)
+    migr_conf_obj = ConfigEVSToOVS()
+
+    # step-0: add ovs integration bridge, update conf and enable
+    # neutron-openvswitch-agent. No step-0 if the node has only neutron-server.
+    if set(curnode_svcs) - set([SVC_NEUTRON_SERVER]):
+        if not is_svc_online(SVC_OVSDB_SERVER, exit_on_maintenance=True):
+            enable_svc(SVC_OVSDB_SERVER, exit_on_fail=True)
+        if not is_svc_online(SVC_VSWITCH_SERVER, exit_on_maintenance=True):
+            enable_svc(SVC_VSWITCH_SERVER, exit_on_fail=True)
+        add_ovs_bridge(OVS_INT_BRIDGE)
+        migr_conf_obj.update_ovs_neutron_plugin_ini()
+        if l2type != L2_TYPE_VXLAN or SVC_L3_AGENT in curnode_svcs:
+            migr_conf_obj.update_Open_vSwitch_other_config()
+        # we will enable the OVS agent later
+
+    svc_func_map = {
+        SVC_NEUTRON_SERVER: neutron_evs_to_ovs,
+        SVC_DHCP_AGENT: dhcp_evs_to_ovs,
+        SVC_L3_AGENT: l3_evs_to_ovs,
+        SVC_NOVA_COMPUTE: nova_evs_to_ovs
+    }
+
+    for svc in curnode_svcs:
+        msg = "Current migration based on svc: %s" % svc
+        log_msg(LOG_INFO, msg)
+        svc_func_map[svc](migr_conf_obj)
+
+    # At this point we have disabled all the services that we are interested
+    # in. Now we need to add the right uplink-port to the OVS bridges.
+    if l2type == L2_TYPE_VXLAN:
+        # check if there are any left over evs-vxlan datalinks
+        output = check_output(['/usr/sbin/dladm', 'show-vxlan', '-po', 'link'],
+                              stderr=PIPE)
+        if len(output.strip().splitlines()) != 0:
+            msg = """There are other VXLAN datalinks present and as a result
+            OVS agent will go into maintenance. Please remove these datalinks
+            and clear the OVS agent service."""
+            log_msg(LOG_WARN, msg)
+    else:
+        assert l2type == L2_TYPE_VLAN or l2type == L2_TYPE_FLAT
+        int_uplinks = get_uplink_ports_for_int_bridge(migr_conf_obj)
+        # add the uplink-ports to integration bridge
+        for uplink in int_uplinks:
+            add_uplink_to_br(uplink, OVS_INT_BRIDGE)
+
+    # enable all services
+    enable_svc(SVC_OVS_AGENT)
+    for svc in curnode_svcs:
+        if svc == SVC_L3_AGENT:
+            # add the port to br_ex0
+            ext_uplink = get_uplink_ports_for_ext_bridge(migr_conf_obj)
+            if ext_uplink:
+                add_uplink_to_br(ext_uplink, OVS_EXT_BRIDGE)
+        enable_svc(svc)
+    msg = "Migration Successful"
+    log_msg(LOG_INFO, msg)
+    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
+                SVC_NEUTRON_UPGRADE, 'setprop', 'config/evs2ovs', '=',
+                'astring:', 'done'], stdout=PIPE, stderr=PIPE)
+    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
+                SVC_NEUTRON_UPGRADE, 'refresh'], stdout=PIPE, stderr=PIPE)
+    msg = "Exiting..."
+    log_msg(LOG_INFO, msg)
+
+
+if __name__ == "__main__":
+    main()

@@ -155,6 +155,7 @@ REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/netaddr-27
 REQUIRED_PACKAGES += library/python/netifaces-27
+REQUIRED_PACKAGES += library/python/neutronclient-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
 REQUIRED_PACKAGES += library/python/oslo.db-27
 REQUIRED_PACKAGES += library/python/simplejson-27
