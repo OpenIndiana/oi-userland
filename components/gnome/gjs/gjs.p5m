@@ -1,0 +1,83 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/gjs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A Javascript binding for GNOME"
+set name=pkg.description \
+    value="Gjs is based on the Spidermonkey javascript engine and the GObject introspection framework."
+set name=com.oracle.info.description value=$(COMPONENT_NAME)
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/413
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/gjs target=gjs-console
+file path=usr/bin/gjs-console
+file path=usr/include/gjs-1.0/gi/arg.h
+file path=usr/include/gjs-1.0/gi/boxed.h
+file path=usr/include/gjs-1.0/gi/closure.h
+file path=usr/include/gjs-1.0/gi/enumeration.h
+file path=usr/include/gjs-1.0/gi/foreign.h
+file path=usr/include/gjs-1.0/gi/function.h
+file path=usr/include/gjs-1.0/gi/fundamental.h
+file path=usr/include/gjs-1.0/gi/gerror.h
+file path=usr/include/gjs-1.0/gi/gtype.h
+file path=usr/include/gjs-1.0/gi/interface.h
+file path=usr/include/gjs-1.0/gi/keep-alive.h
+file path=usr/include/gjs-1.0/gi/ns.h
+file path=usr/include/gjs-1.0/gi/object.h
+file path=usr/include/gjs-1.0/gi/param.h
+file path=usr/include/gjs-1.0/gi/repo.h
+file path=usr/include/gjs-1.0/gi/union.h
+file path=usr/include/gjs-1.0/gi/value.h
+file path=usr/include/gjs-1.0/gjs/byteArray.h
+file path=usr/include/gjs-1.0/gjs/compat.h
+file path=usr/include/gjs-1.0/gjs/context.h
+file path=usr/include/gjs-1.0/gjs/coverage.h
+file path=usr/include/gjs-1.0/gjs/gjs-module.h
+file path=usr/include/gjs-1.0/gjs/gjs.h
+file path=usr/include/gjs-1.0/gjs/importer.h
+file path=usr/include/gjs-1.0/gjs/jsapi-util.h
+file path=usr/include/gjs-1.0/gjs/mem.h
+file path=usr/include/gjs-1.0/gjs/native.h
+file path=usr/include/gjs-1.0/gjs/runtime.h
+file path=usr/include/gjs-1.0/gjs/type-module.h
+file path=usr/lib/$(MACH64)/gjs/girepository-1.0/GjsPrivate-1.0.typelib
+link path=usr/lib/$(MACH64)/libgjs.so target=libgjs.so.0.0.0
+link path=usr/lib/$(MACH64)/libgjs.so.0 target=libgjs.so.0.0.0
+file path=usr/lib/$(MACH64)/libgjs.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/gjs-1.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gjs-internals-1.0.pc
+file path=usr/lib/gjs/girepository-1.0/GjsPrivate-1.0.typelib
+link path=usr/lib/libgjs.so target=libgjs.so.0.0.0
+link path=usr/lib/libgjs.so.0 target=libgjs.so.0.0.0
+file path=usr/lib/libgjs.so.0.0.0
+file path=usr/lib/pkgconfig/gjs-1.0.pc
+file path=usr/lib/pkgconfig/gjs-internals-1.0.pc
+license COPYING.LGPL license=LGPLv2
+license COPYING license=gjs

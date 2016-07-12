@@ -1,0 +1,22 @@
+Use standard datatype instead of Linux/BSD "bit type".
+
+XXX file upstream bug
+
+--- gjs-1.43.3/gjs/coverage.cpp	2014-12-21 09:37:11.000000000 -0800
++++ gjs-1.43.3/gjs/coverage.cpp	2015-06-27 19:39:27.290756286 -0700
+@@ -485,13 +485,13 @@
+      * we have some profiling data that suggests a good size to
+      * preallocate to. */
+     GArray *c_side_array = g_array_new(TRUE, TRUE, array_element_size);
+-    u_int32_t js_array_len;
++    uint32_t js_array_len;
+ 
+     if (element_clear_func)
+         g_array_set_clear_func(c_side_array, element_clear_func);
+ 
+     if (JS_GetArrayLength(context, js_array, &js_array_len)) {
+-        u_int32_t i = 0;
++        uint32_t i = 0;
+         for (; i < js_array_len; ++i) {
+             jsval element;
+             if (!JS_GetElement(context, js_array, i, &element)) {
