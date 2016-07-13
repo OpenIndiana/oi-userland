@@ -1,0 +1,16 @@
+gcc build fails complaining %u expects unsigned int, but getpid() returns
+pid_t -- which is an int on Solaris now (historically a long).
+
+This patch should be sent upstream.
+
+--- evince-3.16.0/libdocument/ev-file-helpers.c	2014-11-29 01:40:15.000000000 -0800
++++ evince-3.16.0.new/libdocument/ev-file-helpers.c	2015-07-08 13:57:33.999990934 -0700
+@@ -88,7 +88,7 @@
+                 const gchar *prgname;
+ 
+                 prgname = g_get_prgname ();
+-                dirname = g_strdup_printf ("%s-%u", prgname ? prgname : "unknown", getpid ());
++                dirname = g_strdup_printf ("%s-%u", prgname ? prgname : "unknown", (unsigned int) getpid ());
+                 tmp_dir = g_build_filename (g_get_tmp_dir (), dirname, NULL);
+                 g_free (dirname);
+         }
