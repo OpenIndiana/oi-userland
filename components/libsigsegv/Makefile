@@ -26,12 +26,12 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
-COMPONENT_VERSION=	2.6
+COMPONENT_VERSION=	2.10
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c18b3b0975ec7e0a6af03a9533d7ffbdc500bb146e0ca338a6174b1346d655bb
+    sha256:8460a4a3dd4954c3d96d7a4f5dd5bc4d9b76f5754196aa245287553b26d2199a    
 COMPONENT_BUGDB=	library/libsigsegv
 
-TPNO=			8453
+TPNO=			29089
 
 include $(WS_MAKE_RULES)/gnu-component.mk
 

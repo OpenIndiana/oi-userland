@@ -4,23 +4,22 @@
 # /proc interface as described in the proc(4) manual page.
 # See libsigsegv bug: https://savannah.gnu.org/bugs/?42187
 #
-diff -r -u libsigsegv-2.6/configure.orig libsigsegv-2.6/configure
---- libsigsegv-2.6/configure.orig	2008-08-24 15:58:15.000000000 -0700
-+++ libsigsegv-2.6/configure	2014-04-10 11:02:03.212637829 -0700
-@@ -15596,8 +15596,8 @@
- _ACEOF
+diff -Naru libsigsegv-2.10.original/configure libsigsegv-2.10/configure
+--- libsigsegv-2.10.original/configure	2011-04-03 08:50:50.000000000 -0700
++++ libsigsegv-2.10/configure	2016-05-12 19:05:26.396147574 -0700
+@@ -14601,20 +14601,19 @@
  
  
--{ $as_echo "$as_me:$LINENO: checking for PIOCMAP in sys/procfs.h" >&5
+ 
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for PIOCMAP in sys/procfs.h" >&5
 -$as_echo_n "checking for PIOCMAP in sys/procfs.h... " >&6; }
-+{ $as_echo "$as_me:$LINENO: checking for prmap_t in procfs.h" >&5
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for prmap_t in procfs.h" >&5
 +$as_echo_n "checking for prmap_t in procfs.h... " >&6; }
- if test "${sv_cv_procfsvma+set}" = set; then
+ if ${sv_cv_procfsvma+:} false; then :
    $as_echo_n "(cached) " >&6
  else
-@@ -15608,12 +15608,11 @@
- cat confdefs.h >>conftest.$ac_ext
- cat >>conftest.$ac_ext <<_ACEOF
+ 
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
 -#include <sys/procfs.h>
 +#include <procfs.h>
@@ -33,28 +32,28 @@ diff -r -u libsigsegv-2.6/configure.orig libsigsegv-2.6/configure
    return 0;
  }
  _ACEOF
-diff -r -u libsigsegv-2.6/configure.ac.orig libsigsegv-2.6/configure.ac
---- libsigsegv-2.6/configure.ac.orig	2014-04-10 10:55:23.907673765 -0700
-+++ libsigsegv-2.6/configure.ac	2014-04-10 11:02:35.810560742 -0700
-@@ -619,9 +619,9 @@
-    STACK_DIRECTION = 0 => spaghetti stack.])
+diff -Naru libsigsegv-2.10.original/configure.ac libsigsegv-2.10/configure.ac
+--- libsigsegv-2.10.original/configure.ac	2011-04-03 08:30:16.000000000 -0700
++++ libsigsegv-2.10/configure.ac	2016-05-12 19:08:31.848947387 -0700
+@@ -648,9 +648,9 @@
+ dnl Requires AC_CANONICAL_HOST.
  
  dnl Determination of the stack's virtual memory area.
--AC_CACHE_CHECK([for PIOCMAP in sys/procfs.h], sv_cv_procfsvma, [
+-AC_CACHE_CHECK([for PIOCMAP in sys/procfs.h], [sv_cv_procfsvma], [
 -  AC_TRY_LINK([#include <sys/procfs.h>],
 -    [int x = PIOCNMAP + PIOCMAP; prmap_t y;],
 +AC_CACHE_CHECK([for prmap_t in procfs.h], sv_cv_procfsvma, [
 +  AC_TRY_LINK([#include <procfs.h>],
 +    [ prmap_t y;],
-     sv_cv_procfsvma=yes, sv_cv_procfsvma=no)
+     [sv_cv_procfsvma=yes], [sv_cv_procfsvma=no])
  ])
- AC_CHECK_FUNCS([mincore])
-diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma-procfs.c
---- libsigsegv-2.6/src/stackvma-procfs.c.orig	2014-04-10 11:05:58.957104341 -0700
-+++ libsigsegv-2.6/src/stackvma-procfs.c	2014-04-10 10:49:41.584900672 -0700
-@@ -19,8 +19,9 @@
- #include <unistd.h> /* open, close */
+ AC_CHECK_FUNCS([mquery mincore])
+diff -Naru libsigsegv-2.10.original/src/stackvma-procfs.c libsigsegv-2.10/src/stackvma-procfs.c
+--- libsigsegv-2.10.original/src/stackvma-procfs.c	2009-08-16 04:10:00.000000000 -0700
++++ libsigsegv-2.10/src/stackvma-procfs.c	2016-05-12 19:11:17.173911686 -0700
+@@ -20,8 +20,9 @@
  #include <fcntl.h> /* open */
+ #include <string.h> /* memcpy */
  #include <sys/types.h>
 +#include <sys/stat.h>
  #include <sys/mman.h> /* mmap, munmap */
@@ -63,7 +62,7 @@ diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma
  
  #include "stackvma-simple.c"
  
-@@ -43,10 +44,7 @@
+@@ -44,10 +45,7 @@
  int
  sigsegv_get_vma (unsigned long address, struct vma_struct *vma)
  {
@@ -74,7 +73,7 @@ diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma
    size_t memneed;
  #if HAVE_MMAP_ANON
  # define zero_fd -1
-@@ -58,6 +56,7 @@
+@@ -59,6 +57,7 @@
    int zero_fd;
  # define map_flags 0
  #endif
@@ -82,7 +81,7 @@ diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma
    void *auxmap;
    unsigned long auxmap_start;
    unsigned long auxmap_end;
-@@ -71,26 +70,14 @@
+@@ -72,26 +71,14 @@
    if (pagesize == 0)
      init_pagesize ();
  
@@ -112,7 +111,7 @@ diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma
    /* Allocate memneed bytes of memory.
       We cannot use alloca here, because we are low on stack space.
       We also cannot use malloc here, because a malloc() call may have been
-@@ -112,7 +99,7 @@
+@@ -113,7 +100,7 @@
    auxmap_end = auxmap_start + memneed;
    maps = (prmap_t *) auxmap;
  
