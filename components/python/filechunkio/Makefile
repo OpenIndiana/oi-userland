@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		filechunkio
-COMPONENT_VERSION=	1.5
+COMPONENT_VERSION=	1.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:882ad497d2ed6dc2cc76e6c2a0ec71ea3df5f33ce69bd87f311d6f59d023b473
+    sha256:163948052cd274daddfcde9cec9cb5e04ac19d7bb91606cdc6a305b0428a0e70
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/fabian/filechunkio
 COMPONENT_BUGDB=	python-mod/filechunkio
 
-TPNO=			14503
+TPNO=			29376
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -53,4 +53,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-

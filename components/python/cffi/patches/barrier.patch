@@ -1,0 +1,36 @@
+In-house (for now) patch to allow cffi 1.5.2 to compile with both
+Studio and on SPARC.
+
+--- cffi-1.5.2/c/call_python.c.~1~	2016-02-13 07:33:29.000000000 -0800
++++ cffi-1.5.2/c/call_python.c	2016-05-18 10:10:49.505449785 -0700
+@@ -150,7 +150,8 @@ static int _update_cache_to_call_python(
+ #if (defined(WITH_THREAD) && !defined(_MSC_VER) &&   \
+      !defined(__amd64__) && !defined(__x86_64__) &&   \
+      !defined(__i386__) && !defined(__i386))
+-# define read_barrier()  __sync_synchronize()
++# include <mbarrier.h>
++# define read_barrier()  __compiler_barrier()
+ #else
+ # define read_barrier()  (void)0
+ #endif
+--- cffi-1.5.2/cffi/_embedding.h.~1~	2016-02-13 07:33:29.000000000 -0800
++++ cffi-1.5.2/cffi/_embedding.h	2016-05-18 10:15:53.285798295 -0700
+@@ -32,12 +32,14 @@ static _cffi_call_python_fnptr _cffi_cal
+ 
+ 
+ #ifndef _MSC_VER
+-   /* --- Assuming a GCC not infinitely old --- */
+-# define cffi_compare_and_swap(l,o,n)  __sync_bool_compare_and_swap(l,o,n)
+-# define cffi_write_barrier()          __sync_synchronize()
++# include <atomic.h>
++# include <mbarrier.h>
++# define cffi_compare_and_swap(l,o,n) \
++                               (atomic_cas_ptr((l), (o), (n)), *(l) == (n))
++# define cffi_write_barrier()          __compiler_barrier()
+ # if !defined(__amd64__) && !defined(__x86_64__) &&   \
+      !defined(__i386__) && !defined(__i386)
+-#   define cffi_read_barrier()         __sync_synchronize()
++#   define cffi_read_barrier()         __compiler_barrier()
+ # else
+ #   define cffi_read_barrier()         (void)0
+ # endif

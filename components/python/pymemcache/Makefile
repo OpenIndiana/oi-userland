@@ -26,11 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pymemcache
-COMPONENT_VERSION=	1.3.2
+COMPONENT_VERSION=	1.3.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b5eeecb5deeed099318f8e92520051ea7ed0f4f61eb6b3eba6b999836cc3bddb
+	sha256:549aba771cdfdf44f320beeaf605cddd6adf32ba6e54f48d569a81b6c63a970e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/pinterest/pymemcache
 COMPONENT_BUGDB=	python-mod/pymemcache

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rfc3986
-COMPONENT_VERSION=	0.2.0
+COMPONENT_VERSION=	0.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8a7b3f6cfdfb969c2e876513e87c30ebe1e4bdc9fae4a63c701eee88bbec9b22
+    sha256:b94638db542896ccf89dc62785ec26dbcbd6a97d337f64e02615b164b974f2e5
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/sigmavirus24/rfc3986
 COMPONENT_BUGDB=	python-mod/rfc3986
 
-TPNO=			20390
+TPNO=			29486
 
 # UnicodeDecodeError issues; not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

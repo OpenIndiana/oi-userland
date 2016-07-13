@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyparsing
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	2.1.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0007cd3f008eba4a203f1f6b4b133ddc352552c8808b694c88c23db56416e4e4
+    sha256:a9234dea79b50d49b92a994132cd1c84e873f3936db94977a66f0a4159b1797c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pyparsing/
 COMPONENT_BUGDB=	python-mod/pyparsing
 
-TPNO=			15999
+TPNO=			29066
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -50,4 +50,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-

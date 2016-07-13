@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		WebTest
-COMPONENT_VERSION=	2.0.6
+COMPONENT_VERSION=	2.0.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cf74621cf8694fc89b7ac61e1aace02a649080f03ab6e43e256f32ca3a09d452
+    sha256:3dc92ecd7604e21fc7c97578e4c43aff2a67cebdd4884a2aa804d85e85b34b55
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/WebTest
 COMPONENT_BUGDB=	python-mod/webtest
 
-TPNO=			14503
+TPNO=			28712
 
 # Depends on paste.deploy, which depends on paste, which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

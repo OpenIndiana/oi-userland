@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyrabbit
-COMPONENT_VERSION=	1.0.1
+COMPONENT_VERSION=	1.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7bc2b89fb332f62f4aaa891b1a4c8bfa38b32d154d44403afc83f00755528bdc
+    sha256:50b8995fbfde14820ddc97292312c8f0c77054748c2b018138d03d94e400c39c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/bkjones/pyrabbit
 COMPONENT_BUGDB=	python-mod/pyrabbit
 
-TPNO=			14503
+TPNO=			29383
 
 # pyrabbit itself is Python 3 ready: builds & publishes cleanly.  But it
 # depends on httplib2 which has its own dependency issues (see its Makefile
@@ -56,4 +56,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-

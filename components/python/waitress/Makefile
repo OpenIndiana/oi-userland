@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		waitress
-COMPONENT_VERSION=	0.8.5
+COMPONENT_VERSION=	0.9.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:302efc3e8b0f7e43da58fdbb67f13c088d09dc378e55ad19078cfbf02ef44228
+    sha256:5368b6f2c51823b60e01cd762610385cc2951b25cbf0e930445215d2527acbb4
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/waitress
 COMPONENT_BUGDB=	python-mod/waitress
 
-TPNO=			14503
+TPNO=			29067
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -56,7 +56,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests requires the coverage, nose and unittest2 packages.
+# SleepyThreadTests will fail due to the need for elevated privileges.
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
