@@ -26,27 +26,28 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipython
-COMPONENT_VERSION=	1.1.0
+COMPONENT_VERSION=	5.0.0
 COMPONENT_PROJECT_URL=	http://ipython.org/
+COMPONENT_SUMMARY=	Enhanced interactive Python shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:6c4e4a65225ab45be923f6bd0b71b604ddf8acd769c4e2818fac89793cdf91be
+    sha256:7ec0737169c74056c7fc8298246db5478a2d6c90cfd19c3253222112357545df
 COMPONENT_ARCHIVE_URL=	http://archive.ipython.org/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	python-mod/ipython
+COMPONENT_FMRI=	library/python/ipython
+COMPONENT_CLASSIFICATION=	Development/Python
+COMPONENT_LICENSE=	BSD
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSIONS=2.7 3.4
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
 		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
-
-# Unpack the ipython man pages.
-#COMPONENT_POST_UNPACK_ACTION = \
-#	(cd $(SOURCE_DIR)/docs/man; /usr/bin/gunzip * )
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -57,6 +58,5 @@ install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
