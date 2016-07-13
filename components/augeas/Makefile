@@ -27,13 +27,13 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		augeas
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	1.5.0
 COMPONENT_PROJECT_URL=	http://www.augeas.net/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:659fae7ac229029e60a869a3b88c616cfd51cf2fba286cdfe3af3a052cb35b30
+    sha256:223bb6e6fe3e9e92277dafd5d34e623733eb969a72a382998d204feab253f73f
 COMPONENT_ARCHIVE_URL=	http://download.augeas.net/$(COMPONENT_ARCHIVE)
 
-TPNO=	27876
+TPNO=	29439
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -70,7 +70,7 @@ CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
 # other than "test." 
 unexport SHELLOPTS
 
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += system/library
