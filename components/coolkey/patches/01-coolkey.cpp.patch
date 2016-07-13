@@ -1,0 +1,548 @@
+In-house patch created to avoid the multiple declaration for log variable. 
+This is necessary only when building the component with Solaris Studio.
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+Other modifications were introduced to keep this in sync with upstream patches
+of the coolkey.cpp source file.
+
+For example, the addition of RSA, EC, or both mechanisms support the variance 
+of different types of smart cards, where some cards support only EC, some only RSA.
+
+--- ORIGINAL/./src/coolkey/coolkey.cpp	2016-06-24 16:07:19.284028543 -0400
++++ ././src/coolkey/coolkey.cpp	2016-06-27 13:38:03.637785724 -0400
+@@ -34,15 +34,19 @@
+ #include "cky_base.h"
+ #include "params.h"
+ 
+-#define NULL 0
+ 
+ /* static module data --------------------------------  */
+-
+-static Log *log = NULL;
++  
++// XXX - Solaris studio compiler specific 
++// changed variable name from "log" to "mylog" as we need to 
++// avoid multiple declarations of a variable named "log" 
++static Log *mylog = NULL;
+ 
+ static SlotList *slotList = NULL;
+ 
+-static OSLock finalizeLock(false);
++static OSLock *finalizeLock = NULL;
++#define FINALIZE_GETLOCK() if (finalizeLock) finalizeLock->getLock();
++#define FINALIZE_RELEASELOCK() if (finalizeLock) finalizeLock->releaseLock();
+ 
+ static CK_BBOOL initialized = FALSE;
+ static CK_BBOOL finalizing = FALSE;
+@@ -68,11 +72,25 @@
+ /**********************************************************************
+  ************************** MECHANISM TABLE ***************************
+  **********************************************************************/
+-static MechInfo
+-mechanismList[] = {
++
++static const MechInfo
++rsaMechanismList[] = {
+     {CKM_RSA_PKCS, { 1024, 4096, CKF_HW | CKF_SIGN | CKF_DECRYPT } }
+ };
+-static unsigned int numMechanisms = sizeof(mechanismList)/sizeof(MechInfo);
++
++static const MechInfo
++ecMechanismList[] = {
++    {CKM_ECDSA,{256,521,CKF_HW | CKF_SIGN | CKF_EC_F_P}},{ CKM_ECDSA_SHA1, {256, 521, CKF_HW | CKF_SIGN | CKF_EC_F_P}},{ CKM_ECDH1_DERIVE,{256, 521, CKF_HW | CKF_DERIVE | CKF_EC_F_P} }
++};
++static const MechInfo
++allMechanismList[] = {
++    {CKM_RSA_PKCS, { 1024, 4096, CKF_HW | CKF_SIGN | CKF_DECRYPT } },
++    {CKM_ECDSA,{256,521,CKF_HW | CKF_SIGN | CKF_EC_F_P}},{ CKM_ECDSA_SHA1, {256, 521, CKF_HW | CKF_SIGN | CKF_EC_F_P}},{ CKM_ECDH1_DERIVE,{256, 521, CKF_HW | CKF_DERIVE | CKF_EC_F_P} }
++};
++
++unsigned int numRSAMechanisms = sizeof(rsaMechanismList)/sizeof(MechInfo);
++unsigned int numECMechanisms = sizeof(ecMechanismList)/sizeof(MechInfo);
++unsigned int numAllMechanisms = sizeof(allMechanismList)/sizeof(MechInfo);
+ 
+ /* ------------------------------------------------------------ */
+ 
+@@ -86,11 +104,11 @@
+     for (i = 0; i < ulCount; ++i) {
+ 	CK_ATTRIBUTE_PTR pT = pTemplate + i;
+ 	if (pT->pValue && pT->ulValueLen == 4) {
+-	    log->log(
++	    mylog->log(
+ 	    "template [%02lu] type: %04lx, pValue: %08lx, ulValueLen: %08lx, value: %lu\n", 
+ 	             i, pT->type, pT->pValue, pT->ulValueLen, *(CK_ULONG_PTR)pT->pValue);
+ 	} else 
+-	    log->log("template [%02lu] type: %04lx, pValue: %08lx, ulValueLen: %08lx\n", 
++	    mylog->log("template [%02lu] type: %04lx, pValue: %08lx, ulValueLen: %08lx\n", 
+ 	             i, pT->type, pT->pValue, pT->ulValueLen);
+     }
+ }
+@@ -101,7 +119,7 @@
+ #define NOTSUPPORTED(name, args) \
+ CK_RV name args \
+ { \
+-    log->log(#name " called (notSupported)\n"); \
++    mylog->log(#name " called (notSupported)\n"); \
+     return CKR_FUNCTION_NOT_SUPPORTED; \
+ }
+ 
+@@ -112,11 +130,11 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED; \
+     } \
+     try { \
+-	log->log(#name " called\n"); \
++	mylog->log(#name " called\n"); \
+ 	slotList->name2 use_args ; \
+ 	return CKR_OK; \
+     } catch(PKCS11Exception& e) { \
+-        e.log(log); \
++        e.log(mylog); \
+         return e.getCRV(); \
+     } \
+ }
+@@ -164,7 +182,6 @@
+ NOTSUPPORTED(C_GenerateKeyPair, (CK_SESSION_HANDLE,CK_MECHANISM_PTR,CK_ATTRIBUTE_PTR,CK_ULONG,CK_ATTRIBUTE_PTR,CK_ULONG,CK_OBJECT_HANDLE_PTR,CK_OBJECT_HANDLE_PTR))
+ NOTSUPPORTED(C_WrapKey, (CK_SESSION_HANDLE,CK_MECHANISM_PTR,CK_OBJECT_HANDLE,CK_OBJECT_HANDLE,CK_BYTE_PTR,CK_ULONG_PTR))
+ NOTSUPPORTED(C_UnwrapKey, (CK_SESSION_HANDLE,CK_MECHANISM_PTR,CK_OBJECT_HANDLE,CK_BYTE_PTR,CK_ULONG,CK_ATTRIBUTE_PTR,CK_ULONG,CK_OBJECT_HANDLE_PTR))
+-NOTSUPPORTED(C_DeriveKey, (CK_SESSION_HANDLE,CK_MECHANISM_PTR,CK_OBJECT_HANDLE,CK_ATTRIBUTE_PTR,CK_ULONG,CK_OBJECT_HANDLE_PTR))
+ NOTSUPPORTED(C_GetFunctionStatus, (CK_SESSION_HANDLE))
+ NOTSUPPORTED(C_CancelFunction, (CK_SESSION_HANDLE))
+ 
+@@ -198,6 +215,10 @@
+ SUPPORTED(C_GenerateRandom, generateRandom,
+   (CK_SESSION_HANDLE hSession ,CK_BYTE_PTR data,CK_ULONG dataLen),
+   (hSession, data, dataLen))
++SUPPORTED(C_DeriveKey,derive,
++  (CK_SESSION_HANDLE hSession, CK_MECHANISM_PTR pMechanism,
++  CK_OBJECT_HANDLE hBaseKey, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount, CK_OBJECT_HANDLE_PTR phKey ),
++  (hSession, pMechanism, hBaseKey, pTemplate, ulAttributeCount, phKey))
+ 
+ /* non-specialized functions supported with the slot directly */
+ 
+@@ -208,11 +229,13 @@
+     if( initialized ) {
+         return CKR_CRYPTOKI_ALREADY_INITIALIZED;
+     }
+-    if (!finalizeLock.isValid()) {
++    if (finalizeLock && !finalizeLock->isValid()) {
+ 	return CKR_CANT_LOCK;
+     }
+     CK_C_INITIALIZE_ARGS* initArgs = (CK_C_INITIALIZE_ARGS*) pInitArgs;
++    OSLock::setThreadSafe(0);
+     if( initArgs != NULL ) {
++	bool needThreads;
+ 	/* work around a bug in NSS where the library parameters are only
+ 	 * send if locking is requested */
+ 	if (initArgs->LibraryParameters) {
+@@ -220,28 +243,38 @@
+ 	} else {
+ 	    Params::ClearParams();
+ 	}
+-        if( (initArgs->flags & CKF_OS_LOCKING_OK) || initArgs->LockMutex ){
++  	needThreads = ((initArgs->flags & CKF_OS_LOCKING_OK) != 0);
++	OSLock::setThreadSafe(needThreads);
++	/* don't get a finalize lock unless someone initializes us asking
++	 * us to use threads */
++	if (needThreads && !finalizeLock) {
++	    finalizeLock = new OSLock(true);
++	    if (finalizeLock == NULL) return CKR_HOST_MEMORY;
++	}
++	/* only support OS LOCKING threads */
++        if( ((initArgs->flags & CKF_OS_LOCKING_OK) == 0) 
++						&& initArgs->LockMutex ){
+             throw PKCS11Exception(CKR_CANT_LOCK);
+         }
+     }
+     char * logFileName = getenv("COOL_KEY_LOG_FILE");
+     if (logFileName) {
+ 	if (strcmp(logFileName,"SYSLOG") == 0) {
+-	    log = new SysLog();
++	    mylog = new SysLog();
+ 	} else {
+-	    log = new FileLog(logFileName);
++	    mylog = new FileLog(logFileName);
+ 	}
+     } else {
+-	log = new DummyLog();
++	mylog = new DummyLog();
+     }
+-    log->log("Initialize called, hello %d\n", 5);
+-    CKY_SetName("coolkey");
+-    slotList = new SlotList(log);
++    mylog->log("Initialize called, hello %d\n", 5);
++    CKY_SetName((char *) "coolkey");
++    slotList = new SlotList(mylog);
+     initialized = TRUE;
+     return CKR_OK;
+   } catch(PKCS11Exception &e) {
+-        if( log )
+-            e.log(log);
++        if( mylog )
++            e.log(mylog);
+         return e.getReturnValue();
+   }
+ }
+@@ -254,14 +287,14 @@
+     }
+     // XXX cleanup all data structures !!!
+     //delete sessionManager;
+-    log->log("Finalizing...\n");
++    mylog->log("Finalizing...\n");
+     // don't race the setting of finalizing. If C_WaitEvent gets passed
+     // the finalizing call first, we know it will set waitEvent before
+     // we can get the lock, so we only need to protect setting finalizing
+     // to true.
+-    finalizeLock.getLock();
++    FINALIZE_GETLOCK();
+     finalizing = TRUE;
+-    finalizeLock.releaseLock();
++    FINALIZE_RELEASELOCK();
+     if (waitEvent) {
+ 	/* we're waiting on a slot event, shutdown first to allow
+ 	 * the wait function to complete before we pull the rug out.
+@@ -272,11 +305,11 @@
+ 	}
+     } 
+     delete slotList;
+-    delete log;
+-    finalizeLock.getLock();
++    delete mylog;
++    FINALIZE_GETLOCK();
+     finalizing = FALSE;
+     initialized = FALSE;
+-    finalizeLock.releaseLock();
++    FINALIZE_RELEASELOCK();
+     return CKR_OK;
+ }
+ 
+@@ -287,7 +320,7 @@
+     if( ! initialized ) {
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+-    log->log("C_GetInfo called\n");
++    mylog->log("C_GetInfo called\n");
+     ckInfo.manufacturerID[31] = ' ';
+     ckInfo.libraryDescription[31] = ' ';
+     *p = ckInfo;
+@@ -302,12 +335,12 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("Called C_GetSlotInfo\n");
++        mylog->log("Called C_GetSlotInfo\n");
+         slotList->validateSlotID(slotID);
+         return slotList->getSlot(
+             slotIDToIndex(slotID))->getSlotInfo(pSlotInfo);
+     } catch( PKCS11Exception &excep ) {
+-        excep.log(log);
++        excep.log(mylog);
+         return excep.getCRV();
+     }
+ }
+@@ -319,12 +352,12 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_GetTokenInfo called\n");
++        mylog->log("C_GetTokenInfo called\n");
+         slotList->validateSlotID(slotID);
+         return slotList->getSlot(
+             slotIDToIndex(slotID))->getTokenInfo(pTokenInfo);
+     } catch( PKCS11Exception &excep ) {
+-        excep.log(log);
++        excep.log(mylog);
+         return excep.getCRV();
+     }
+ }
+@@ -333,23 +366,47 @@
+ C_GetMechanismList(CK_SLOT_ID slotID, CK_MECHANISM_TYPE_PTR pMechanismList,
+     CK_ULONG_PTR pulCount)
+ {
++
++    const MechInfo *mechanismList = NULL;
++    unsigned int numMechanisms = 0;
++
++
+     if( ! initialized ) {
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+         CK_RV rv = CKR_OK;
+ 
+-        log->log("C_GetMechanismList called\n");
++        mylog->log("C_GetMechanismList called\n");
+         if( pulCount == NULL ) {
+             throw PKCS11Exception(CKR_ARGUMENTS_BAD);
+         }
+ 
+         slotList->validateSlotID(slotID);
+-        if( ! slotList->getSlot(
+-            slotIDToIndex(slotID))->isTokenPresent() ) {
++
++        Slot *slot = slotList->getSlot(slotIDToIndex(slotID));
++
++        if( ! slot ||  ! slot->isTokenPresent() ) {
+             return CKR_TOKEN_NOT_PRESENT;
+         }
+ 
++	switch (slot->getAlgs()) {
++	case ALG_ECC|ALG_RSA:
++            mechanismList = allMechanismList;
++            numMechanisms = numAllMechanisms;
++	    break;
++	case ALG_ECC:
++            mechanismList = ecMechanismList;
++            numMechanisms = numECMechanisms;
++	    break;
++	case ALG_NONE:
++	case ALG_RSA:
++	default:
++            mechanismList = rsaMechanismList;
++            numMechanisms = numRSAMechanisms;
++	    break;
++	}
++  
+         if( pMechanismList != NULL ) {
+             if( *pulCount < numMechanisms ) {
+                 rv = CKR_BUFFER_TOO_SMALL;
+@@ -362,11 +419,11 @@
+ 
+         *pulCount = numMechanisms;
+             
+-        log->log("C_GetMechanismList returning %d\n", rv);
++        mylog->log("C_GetMechanismList returning %d\n", rv);
+         return rv;
+ 
+     } catch(PKCS11Exception &excep ) {
+-        excep.log(log);
++        excep.log(mylog);
+         return excep.getCRV();
+     }
+ 
+@@ -376,30 +433,56 @@
+ C_GetMechanismInfo(CK_SLOT_ID slotID, CK_MECHANISM_TYPE type,
+     CK_MECHANISM_INFO_PTR pInfo)
+ {
++    const MechInfo *mechanismList = NULL;
++    unsigned int numMechanisms = 0;
++
+     if( ! initialized ) {
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
++
++
+     try {
+-        log->log("C_GetMechanismInfo called\n");
++        mylog->log("C_GetMechanismInfo called\n");
+         if( pInfo == NULL ) {
+             throw PKCS11Exception(CKR_ARGUMENTS_BAD);
+         }
+         slotList->validateSlotID(slotID);
+-        if( ! slotList->getSlot(slotIDToIndex(slotID))->isTokenPresent() ) {
++
++
++        Slot *slot = slotList->getSlot(slotIDToIndex(slotID));
++
++        if( ! slot ||  ! slot->isTokenPresent() ) {
+             return CKR_TOKEN_NOT_PRESENT;
+         }
+ 
++	switch (slot->getAlgs()) {
++	case ALG_ECC|ALG_RSA:
++            mechanismList = allMechanismList;
++            numMechanisms = numAllMechanisms;
++	    break;
++	case ALG_ECC:
++            mechanismList = ecMechanismList;
++            numMechanisms = numECMechanisms;
++	    break;
++	case ALG_NONE:
++	case ALG_RSA:
++	default:
++            mechanismList = rsaMechanismList;
++            numMechanisms = numRSAMechanisms;
++	    break;
++	}
++
+         for(unsigned int i=0; i < numMechanisms; ++i ) {
+             if( mechanismList[i].mech == type ) {
+                 *pInfo = mechanismList[i].info;
+-                log->log("C_GetMechanismInfo got info about %d\n", type);
++                mylog->log("C_GetMechanismInfo got info about %d\n", type);
+                 return CKR_OK;
+             }
+         }
+-        log->log("C_GetMechanismInfo failed to find info about %d\n", type);
++        mylog->log("C_GetMechanismInfo failed to find info about %d\n", type);
+         return CKR_MECHANISM_INVALID; // mechanism not in the list
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -412,7 +495,7 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_OpenSession called\n");
++        mylog->log("C_OpenSession called\n");
+         slotList->validateSlotID(slotID);
+ #ifdef LATER  // the CSP isn't setting this bit right now.
+         if( ! (flags & CKF_SERIAL_SESSION) ) {
+@@ -430,7 +513,7 @@
+         return CKR_OK;
+ 
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -442,13 +525,13 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_CloseSession(0x%x) called\n", hSession);
++        mylog->log("C_CloseSession(0x%x) called\n", hSession);
+         // !!!XXX Hack
+         // If nothing else, we need to logout the token when all
+         // its sessions are closed.
+         return CKR_OK;
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -460,14 +543,14 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_CloseAllSessions(0x%x) called\n", slotID);
++        mylog->log("C_CloseAllSessions(0x%x) called\n", slotID);
+         slotList->validateSlotID(slotID);
+         // !!!XXX Hack
+         // If nothing else, we need to logout the token when all
+         // its sessions are closed.
+         return CKR_OK;
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -481,7 +564,7 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_FindObjectsInit called, %lu templates\n", ulCount);
++        mylog->log("C_FindObjectsInit called, %lu templates\n", ulCount);
+ 	dumpTemplates(pTemplate, ulCount);
+ 
+         if( pTemplate == NULL && ulCount != 0 ) {
+@@ -490,7 +573,7 @@
+         slotList->findObjectsInit(hSession, pTemplate, ulCount);
+         return CKR_OK;
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -504,22 +587,22 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_FindObjects called, max objects = %lu\n", ulMaxObjectCount );
++        mylog->log("C_FindObjects called, max objects = %lu\n", ulMaxObjectCount );
+         if( phObject == NULL && ulMaxObjectCount != 0 ) {
+             throw PKCS11Exception(CKR_ARGUMENTS_BAD);
+         }
+         slotList->findObjects(hSession, phObject, ulMaxObjectCount,
+             pulObjectCount);
+ 	count = *pulObjectCount;
+-        log->log("returned %lu objects:", count );
++        mylog->log("returned %lu objects:", count );
+ 	CK_ULONG i;
+ 	for (i = 0; i < count; ++i) {
+-	    log->log(" 0x%08lx", phObject[i]);
++	    mylog->log(" 0x%08lx", phObject[i]);
+ 	}
+-        log->log("\n" );
++        mylog->log("\n" );
+         return CKR_OK;
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -542,7 +625,7 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_Login called\n");
++        mylog->log("C_Login called\n");
+         if( userType != CKU_USER ) {
+             throw PKCS11Exception(CKR_USER_TYPE_INVALID);
+         }
+@@ -552,7 +635,7 @@
+         slotList->login(hSession, pPin, ulPinLen);
+         return CKR_OK;
+     } catch(PKCS11Exception &e) {
+-        e.log(log);
++        e.log(mylog);
+         return e.getCRV();
+     }
+ }
+@@ -566,7 +649,7 @@
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     try {
+-        log->log("C_GetAttributeValue called, %lu templates for object 0x%08lx\n", ulCount, hObject);
++        mylog->log("C_GetAttributeValue called, %lu templates for object 0x%08lx\n", ulCount, hObject);
+ 	dumpTemplates(pTemplate, ulCount);
+         if( pTemplate == NULL && ulCount != 0 ) {
+             throw PKCS11Exception(CKR_ARGUMENTS_BAD);
+@@ -576,7 +659,7 @@
+         return CKR_OK;
+     } catch(PKCS11Exception& e) {
+ 	CK_RV rv = e.getCRV();
+-        e.log(log);
++        e.log(mylog);
+ 	if (rv == CKR_ATTRIBUTE_TYPE_INVALID ||
+ 	    rv == CKR_BUFFER_TOO_SMALL) {
+ 	    dumpTemplates(pTemplate, ulCount);
+@@ -595,24 +678,24 @@
+ CK_RV
+ C_WaitForSlotEvent(CK_FLAGS flags, CK_SLOT_ID_PTR pSlot, CK_VOID_PTR pReserved)
+ {
+-    finalizeLock.getLock();
++    FINALIZE_GETLOCK();
+     if( ! initialized ) {
+-        finalizeLock.releaseLock();
++	FINALIZE_RELEASELOCK();
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     if (finalizing) {
+-        finalizeLock.releaseLock();
++	FINALIZE_RELEASELOCK();
+         return CKR_CRYPTOKI_NOT_INITIALIZED;
+     }
+     waitEvent = TRUE;
+-    finalizeLock.releaseLock();
++    FINALIZE_RELEASELOCK();
+     try {
+-        log->log("C_WaitForSlotEvent called\n");
++        mylog->log("C_WaitForSlotEvent called\n");
+         slotList->waitForSlotEvent(flags, pSlot, pReserved);
+         waitEvent = FALSE;
+         return CKR_OK;
+     } catch(PKCS11Exception& e) {
+-        e.log(log);
++        e.log(mylog);
+         waitEvent = FALSE;
+         return e.getCRV();
+     }

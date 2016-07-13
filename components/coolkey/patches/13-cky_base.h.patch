@@ -1,0 +1,53 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Adds header definitions for buffer mangement issues.
+
+--- ORIGINAL/./src/libckyapplet/cky_base.h	2016-06-24 16:08:04.151696616 -0400
++++ ././src/libckyapplet/cky_base.h	2016-06-24 12:38:03.044096949 -0400
+@@ -170,9 +170,15 @@
+ /* append a short in applet order */
+ CKYStatus CKYBuffer_AppendShort(CKYBuffer *buf, unsigned short val);
+ 
++/* append a short in little endian order */
++CKYStatus CKYBuffer_AppendShortLE(CKYBuffer *buf, unsigned short val);
++
+ /* append a long in applet order */
+ CKYStatus CKYBuffer_AppendLong(CKYBuffer *buf, unsigned long val);
+ 
++/* append a long in little endian order */
++CKYStatus CKYBuffer_AppendLongLE(CKYBuffer *buf, unsigned long val);
++
+ /* append data. the data starts at data and extends len bytes */
+ CKYStatus CKYBuffer_AppendData(CKYBuffer *buf, const CKYByte *data, CKYSize len);
+ 
+@@ -210,12 +216,18 @@
+ CKYStatus CKYBuffer_SetShort(CKYBuffer *buf, CKYOffset offset, unsigned short val);
+ CKYStatus CKYBuffer_SetLong(CKYBuffer *buf, CKYOffset offset, unsigned long val);
+ 
++/* These functions work in little endian order */
++CKYStatus CKYBuffer_SetShortLE(CKYBuffer *buf, CKYOffset offset, unsigned short val);
++CKYStatus CKYBuffer_SetLongLE(CKYBuffer *buf, CKYOffset offset, unsigned long val);
+ /* read a character from offset. If offset is beyond the end of the buffer,
+  * then the function returns '0' */
+ CKYByte CKYBuffer_GetChar(const CKYBuffer *buf, CKYOffset offset);
+ /* These functions work in applet order */
+ unsigned short CKYBuffer_GetShort(const CKYBuffer *buf, CKYOffset offset);
+ unsigned long CKYBuffer_GetLong(const CKYBuffer *buf, CKYOffset offset);
++/* These functions work in little endian order */
++unsigned short CKYBuffer_GetShortLE(const CKYBuffer *buf, CKYOffset offset);
++unsigned long CKYBuffer_GetLongLE(const CKYBuffer *buf, CKYOffset offset);
+ 
+ /* clear out all the data in a buffer */
+ void CKYBuffer_Zero(CKYBuffer *buf);
+@@ -266,9 +278,10 @@
+ /* set Le in the APDU header to the amount of bytes expected to be
+  * returned. */
+ CKYStatus CKYAPDU_SetReceiveLen(CKYAPDU *apdu, CKYByte recvlen);
++CKYStatus CKYAPDU_AppendReceiveLen(CKYAPDU *apdu, CKYByte recvlen);
+ 
+ /* set the parent loadmodule name */
+-void CKY_SetName(char *name);
++void CKY_SetName(const char *name);
+ 
+ CKY_END_PROTOS
+     

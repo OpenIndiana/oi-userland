@@ -1,0 +1,218 @@
+Upstream fixes already included in the latest updates to coolkey v1.1.0
+
+Addresses cache directory, memory leak and compiler issues.
+Added MAP_FILE definiton for Solaris.
+
+--- ORIGINAL/./src/coolkey/machdep.cpp	2016-06-24 16:07:19.527102431 -0400
++++ ././src/coolkey/machdep.cpp	2016-06-27 13:36:57.607064368 -0400
+@@ -33,8 +33,18 @@
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+ #include <pthread.h>
++#include <string.h>
++#include <stdlib.h>
+ #endif
+ 
++bool OSLock::needThread = 0;
++
++// Solaris specific - MAP_FILE needs to be defined
++#ifndef	MAP_FILE
++#define MAP_FILE	0
++#endif
++
++
+ #ifdef _WIN32
+ //
+ // Windows functions to grab a named shared memory segment of a specific size,
+@@ -121,6 +131,10 @@
+ 
+ OSLock::OSLock(bool exceptionAllowed)
+ {
++    if (!needThread) {
++	lockData = NULL;
++	return;
++    }
+     lockData = new OSLockData;
+     if (lockData) {
+ 	InitializeCriticalSection(&lockData->mutex);
+@@ -185,12 +199,20 @@
+ #define MAP_INHERIT 0
+ #endif
+ 
++#ifndef BASEPATH
++#ifdef MAC
++#define BASEPATH "/var"
++#else
++#define BASEPATH "/var/cache"
++#endif
++#endif
++
+ #ifdef FULL_CLEANUP
+ #define RESERVED_OFFSET 256
+-#define MEMSEGPATH "/tmp/.pk11ipc"
++#define MEMSEGPATH BASEPATH"/coolkey-lock"
+ #else 
+ #define RESERVED_OFFSET 0
+-#define MEMSEGPATH "/tmp/.pk11ipc1"
++#define MEMSEGPATH BASEPATH"/coolkey"
+ #endif
+ 
+ struct SHMemData {
+@@ -208,11 +230,6 @@
+ #ifdef FULL_CLEANUP
+ 	flock(fd,LOCK_EX);
+ 	unsigned long ref = --(*(unsigned long *)addr); 
+-#ifdef notdef
+-	if (ref == 0) {
+-	    unlink(path);
+-	}
+-#endif
+ 	flock(fd, LOCK_UN);
+ #endif
+ 	munmap(addr,size+RESERVED_OFFSET);
+@@ -225,6 +242,73 @@
+     }
+ }
+ 
++/*
++ * The cache directory is shared and accessible by anyone, make
++ * sure the cache file we are opening is really a valid cache file.
++ */
++int safe_open(char *path, int flags, int mode, int size)
++{
++    struct stat buf;
++    int fd, ret;
++
++    fd = open (path, flags|O_NOFOLLOW, mode);
++
++    if (fd < 0) {
++	return fd;
++    }
++
++    ret = fstat(fd, &buf);
++    if (ret < 0) {
++	close (fd);
++	return ret;
++    }
++
++    /* our cache files are pretty specific, make sure we are looking
++     * at the correct one */
++
++    /* first, we should own the file ourselves, don't open a file
++     * that someone else wanted us to see. */
++    if (buf.st_uid != getuid()) {
++	close(fd);
++	errno = EACCES;
++	return -1;
++    }
++
++    /* next, there should only be one link in this file. Don't
++     * use this code to trash another file */
++    if (buf.st_nlink != 1) {
++	close(fd);
++	errno = EMLINK;
++	return -1;
++    }
++
++    /* next, This better be a regular file */
++    if (!S_ISREG(buf.st_mode)) {
++	close(fd);
++	errno = EACCES;
++	return -1;
++    }
++
++    /* if the permissions don't match, something is wrong */
++    if ((buf.st_mode & 03777) != mode) {
++	close(fd);
++	errno = EACCES;
++	return -1;
++    }
++
++    /* finally the file should be the correct size. This 
++     * check isn't so much to protect from an attack, as it is to
++     * detect a corrupted cache file */
++    if (buf.st_size != size) {
++	close(fd);
++	errno = EACCES;
++	return -1;
++    }
++
++    /* OK, the file checked out, ok to continue */
++    return fd;
++}
++
+ SHMem::SHMem(): shmemData(0) {}
+ 
+ SHMem *
+@@ -248,7 +332,7 @@
+ 	return NULL;
+     }
+     int mask = umask(0);
+-    int ret = mkdir (MEMSEGPATH, 0777);
++    int ret = mkdir (MEMSEGPATH, 01777);
+     umask(mask);
+     if ((ret == -1) && (errno != EEXIST)) {
+ 	delete shmemData;
+@@ -264,21 +348,16 @@
+     shmemData->path[sizeof(MEMSEGPATH)-1] = '/';
+     strcpy(&shmemData->path[sizeof(MEMSEGPATH)],name);
+ 
+-    int mode = 0777;
+-    if (strcmp(name,"token_names") != 0) {
+-	/* each user gets his own uid array */
+-    	sprintf(uid_str, "-%u",getuid());
+-    	strcat(shmemData->path,uid_str);
+-	mode = 0700;
+-    } 
++    sprintf(uid_str, "-%u",getuid());
++    strcat(shmemData->path,uid_str);
++    int mode = 0600;
++
+     shmemData->fd = open(shmemData->path, 
+ 		O_CREAT|O_RDWR|O_EXCL|O_APPEND|O_EXLOCK, mode);
+-    if (shmemData->fd  < 0) {
+-	needInit = false;
+-	shmemData->fd = open(shmemData->path,O_RDWR|O_EXLOCK, mode);
+-    }  else {
++    if (shmemData->fd >= 0) {
+ 	char *buf;
+ 	int len = size+RESERVED_OFFSET;
++	int ret;
+ 
+ 	buf = (char *)calloc(1,len);
+ 	if (!buf) {
+@@ -289,8 +368,23 @@
+ 	    delete shmemData;
+ 	    return NULL;
+ 	}
+-	write(shmemData->fd,buf,len);
++	ret = write(shmemData->fd,buf,len);
++	if (ret != len) {
++	    unlink(shmemData->path);
++#ifdef FULL_CLEANUP
++	    flock(shmemData->fd, LOCK_UN);
++#endif
++	    free(buf);
++	    delete shmemData;
++	    return NULL;
++	}
++	
+ 	free(buf);
++    } else if (errno == EEXIST) {
++	needInit = false;
++
++	shmemData->fd = safe_open(shmemData->path,O_RDWR|O_EXLOCK, mode,
++				  size+RESERVED_OFFSET);
+     }
+     if (shmemData->fd < 0) {
+ 	delete shmemData;
+@@ -358,6 +452,9 @@
+     int rc;
+ 
+     lockData = NULL;
++    if (!needThread) {
++	return;
++    }
+ #ifdef MAC
+     if (!OSLock_attr_init) {
+ 	rc = pthread_mutexattr_init(&OSLock_attr);

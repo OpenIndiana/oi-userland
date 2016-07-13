@@ -1,0 +1,116 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Adds header definitions for PKCS11 object handling issues.
+ 
+--- ORIGINAL/./src/coolkey/object.h	2016-06-24 16:07:19.916341445 -0400
++++ ././src/coolkey/object.h	2016-06-24 12:56:39.367675143 -0400
+@@ -49,7 +49,7 @@
+ 				CKYBuffer_Size(&cpy.value));
+ 	return *this;
+     }
+-    PKCS11Attribute() { CKYBuffer_InitEmpty(&value); }
++    PKCS11Attribute() : type(0){ CKYBuffer_InitEmpty(&value); }
+     PKCS11Attribute(CK_ATTRIBUTE_TYPE type_, const CKYBuffer *value_)
+         : type(type_) { CKYBuffer_InitFromCopy(&value, value_); }
+     ~PKCS11Attribute() { CKYBuffer_FreeData(&value); }
+@@ -57,6 +57,11 @@
+ 
+ class PKCS11Object {
+   public:
++    enum KeyType {
++        rsa,
++        ecc,
++        unknown
++    };
+ 
+     typedef list<PKCS11Attribute> AttributeList;
+     typedef AttributeList::iterator AttributeIter;
+@@ -75,18 +80,20 @@
+     PKCS11Object &operator=(PKCS11Object &cpy) { return *this; } //Disallow
+ 
+   protected :
+-    CKYBuffer pubKey; 
+     char *name;
++    KeyType keyType;
++    CKYBuffer pubKey;
+ 
+   public:
+     PKCS11Object(unsigned long muscleObjID, CK_OBJECT_HANDLE handle);
+     PKCS11Object(unsigned long muscleObjID, const CKYBuffer *data,
+         CK_OBJECT_HANDLE handle);
+-    ~PKCS11Object() { delete label; delete name; CKYBuffer_FreeData(&pubKey); }
++    ~PKCS11Object() { delete label; delete name; CKYBuffer_FreeData(&pubKey);
++			attributes.clear(); }
+ 
+     PKCS11Object(const PKCS11Object& cpy) :
+         attributes(cpy.attributes), muscleObjID(cpy.muscleObjID),
+-        handle(cpy.handle), label(NULL),  name(NULL) { 
++        handle(cpy.handle), label(NULL),  name(NULL), keyType(cpy.keyType) { 
+ 			CKYBuffer_InitFromCopy(&pubKey,&cpy.pubKey); }
+ 
+ 
+@@ -116,14 +123,15 @@
+     const CKYBuffer *getPubKey(void) const {
+ 	return &pubKey;
+     }
++
++    KeyType getKeyType() const { return keyType;}
++    void setKeyType(KeyType theType) { keyType = theType; }
+ };
+ 
+ class Key : public PKCS11Object {
+-
+   public:
+     Key(unsigned long muscleObjID, const CKYBuffer *data, CK_OBJECT_HANDLE handle);
+     void completeKey(const PKCS11Object &cert);
+-	
+ };
+ 
+ class Cert : public PKCS11Object {
+@@ -134,17 +142,17 @@
+ 
+ class CACPrivKey : public PKCS11Object {
+   public:
+-    CACPrivKey(CKYByte instance, const PKCS11Object &cert);
++    CACPrivKey(CKYByte instance, const PKCS11Object &cert, bool isPIV);
+ };
+ 
+ class CACPubKey : public PKCS11Object {
+   public:
+-    CACPubKey(CKYByte instance, const PKCS11Object &cert);
++    CACPubKey(CKYByte instance, const PKCS11Object &cert, bool isPIV);
+ };
+ 
+ class CACCert : public PKCS11Object {
+   public:
+-    CACCert(CKYByte instance, const CKYBuffer *derCert);
++    CACCert(CKYByte instance, const CKYBuffer *derCert, bool isPIV);
+ };
+ 
+ class Reader : public PKCS11Object {
+@@ -153,6 +161,25 @@
+ 		const char *reader, const CKYBuffer *cardATR, bool isCoolkey);
+ };
+ 
++class SecretKey : public PKCS11Object {
++    public: 
++      SecretKey(unsigned long muscleObjID, CK_OBJECT_HANDLE handle, CKYBuffer *secretKeyBuffer, CK_ATTRIBUTE_PTR pTemplate, CK_ULONG ulAttributeCount);
++    private:
++      void adjustToKeyValueLength(CKYBuffer * secretKeyBuffer,CK_ULONG valueLength);
++
++};
++
++class DEREncodedSignature  {
++
++  protected :
++    CKYBuffer derEncodedSignature;
++  public:
++    DEREncodedSignature(const CKYBuffer *derSig);
++    ~DEREncodedSignature();
++    int getRawSignature(CKYBuffer *rawSig, unsigned int keySize);
++
++};
++
+ class AttributeMatch {
+ 
+   private:

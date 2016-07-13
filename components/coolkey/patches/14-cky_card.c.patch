@@ -1,0 +1,154 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Addresses various SCARD API and APDU issues.
+
+--- ORIGINAL/./src/libckyapplet/cky_card.c	2016-06-24 16:08:04.287949643 -0400
++++ ././src/libckyapplet/cky_card.c	2016-06-24 12:53:46.337857570 -0400
+@@ -129,6 +129,7 @@
+     SCardGetStatusChangeFn SCardGetStatusChange;
+     SCardCancelFn SCardCancel;
+     SCARD_IO_REQUEST *SCARD_PCI_T0_;
++    SCARD_IO_REQUEST *SCARD_PCI_T1_;
+ } SCard;
+ 
+ #define GET_ADDRESS(library, scard, name) \
+@@ -195,6 +196,12 @@
+     if( status != CKYSUCCESS ) {
+         goto fail;
+     }
++
++    status = ckyShLibrary_getAddress( library,
++        (void**) &scard->SCARD_PCI_T1_, MAKE_DLL_SYMBOL(g_rgSCardT1Pci));
++    if( status != CKYSUCCESS ) {
++        goto fail;
++    }
+     return scard;
+ 
+ fail:
+@@ -837,6 +844,11 @@
+     rv = ctx->scard->SCardGetStatusChange(ctx->context, timeout, 
+ 							readers, readerCount);
+     if (rv != SCARD_S_SUCCESS) {
++	if ((rv == SCARD_E_NO_SERVICE) || (rv == SCARD_E_SERVICE_STOPPED)) {
++	    /* if we were stopped, don't reuse the old context, 
++	     * pcsc-lite hangs */
++	    ckyCardContext_release(ctx); 
++	} 
+ 	ctx->lastError = rv;
+ 	return CKYSCARDERR;
+     }
+@@ -884,6 +896,7 @@
+     SCARDHANDLE      cardHandle;
+     unsigned long    lastError;
+     CKYBool           inTransaction;
++    unsigned long    protocol;
+ };
+ 
+ static void
+@@ -894,6 +907,7 @@
+     conn->cardHandle = 0;
+     conn->lastError = 0;
+     conn->inTransaction = 0;
++    conn->protocol = SCARD_PROTOCOL_T0;
+ }
+ 
+ CKYCardConnection *
+@@ -934,14 +948,13 @@
+ {
+     CKYStatus ret;
+     unsigned long rv;
+-    unsigned long protocol;
+ 
+     ret = CKYCardConnection_Disconnect(conn);
+     if (ret != CKYSUCCESS) {
+ 	return ret;
+     }
+     rv = conn->scard->SCardConnect( conn->ctx->context, readerName,
+-	SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0, &conn->cardHandle, &protocol);
++	SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &conn->cardHandle, &conn->protocol);
+     if (rv != SCARD_S_SUCCESS) {
+ 	conn->lastError = rv;
+ 	return CKYSCARDERR;
+@@ -978,7 +991,7 @@
+     unsigned long protocol;
+ 
+     rv = conn->scard->SCardReconnect(conn->cardHandle,
+-	SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0, init, &protocol);
++	SCARD_SHARE_SHARED, SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1 , init, &protocol);
+     if (rv != SCARD_S_SUCCESS) {
+ 	conn->lastError = rv;
+ 	return CKYSCARDERR;
+@@ -1039,10 +1052,17 @@
+ 	return ret;
+     }
+ 
+-    rv = conn->scard->SCardTransmit(conn->cardHandle, 
+-	conn->scard->SCARD_PCI_T0_,
+-	CKYBuffer_Data(&apdu->apduBuf), CKYBuffer_Size(&apdu->apduBuf), 
+-	NULL, response->data, &response->len);
++    if( conn->protocol == SCARD_PROTOCOL_T0 ) { 
++        rv = conn->scard->SCardTransmit(conn->cardHandle, 
++            conn->scard->SCARD_PCI_T0_,
++	    CKYBuffer_Data(&apdu->apduBuf), CKYBuffer_Size(&apdu->apduBuf), 
++	    NULL, response->data, &response->len);
++    }  else  {
++        rv = conn->scard->SCardTransmit(conn->cardHandle,
++            conn->scard->SCARD_PCI_T1_,
++            CKYBuffer_Data(&apdu->apduBuf), CKYBuffer_Size(&apdu->apduBuf),
++            NULL, response->data, &response->len);
++    } 
+ 
+     if (rv != SCARD_S_SUCCESS) {
+ 	conn->lastError =rv;
+@@ -1057,25 +1077,39 @@
+ 							CKYBuffer *response)
+ {
+     CKYStatus ret;
++    CKYBuffer getResponse;
++    CKYSize size = 0;
+ 
+     ret = CKYCardConnection_TransmitAPDU(conn, apdu, response);
+     if (ret != CKYSUCCESS) {
+ 	return ret;
+     }
++    CKYBuffer_InitEmpty(&getResponse);
+ 
+-    if (CKYBuffer_Size(response) == 2 && CKYBuffer_GetChar(response,0) == 0x61) {
++    /* automatically handle the response data protocol */
++    while ((ret == CKYSUCCESS) &&
++	   (size = CKYBuffer_Size(response)) >= 2 &&
++	   (CKYBuffer_GetChar(response,size-2) == 0x61)) {
+ 	/* get the response */
+ 	CKYAPDU getResponseAPDU;
+ 
++	CKYBuffer_Zero(&getResponse);
+ 	CKYAPDU_Init(&getResponseAPDU);
+ 	CKYAPDU_SetCLA(&getResponseAPDU, 0x00);
+ 	CKYAPDU_SetINS(&getResponseAPDU, 0xc0);
+ 	CKYAPDU_SetP1(&getResponseAPDU, 0x00);
+ 	CKYAPDU_SetP2(&getResponseAPDU, 0x00);
+-	CKYAPDU_SetReceiveLen(&getResponseAPDU, CKYBuffer_GetChar(response,1));
+-	ret = CKYCardConnection_TransmitAPDU(conn, &getResponseAPDU, response);
++	CKYAPDU_SetReceiveLen(&getResponseAPDU, 
++					CKYBuffer_GetChar(response,size-1));
++	ret = CKYCardConnection_TransmitAPDU(conn, &getResponseAPDU,
++					&getResponse);
+ 	CKYAPDU_FreeData(&getResponseAPDU);
++	if ((ret == CKYSUCCESS) && (CKYBuffer_Size(&getResponse) >= 2)) {
++	    CKYBuffer_Resize(response, size-2);
++	    CKYBuffer_AppendCopy(response,&getResponse);
++	}
+     }
++    CKYBuffer_FreeData(&getResponse);
+     return ret;
+ }
+ 
+@@ -1086,7 +1120,7 @@
+     unsigned long readerLen = 0;
+     unsigned long protocol;
+     unsigned long rv;
+-    CKYSize atrLen;
++    CKYSize atrLen = 0;
+     char *readerStr;
+     CKYStatus ret;
+ 

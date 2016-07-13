@@ -1,0 +1,21 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Addresses thread lock issue.
+
+--- ORIGINAL/./src/coolkey/machdep.h	2016-06-24 16:07:19.701019060 -0400
++++ ././src/coolkey/machdep.h	2016-06-24 12:29:02.439594078 -0400
+@@ -40,12 +40,14 @@
+ class OSLock {
+ private:
+    OSLockData *lockData;
++   static bool needThread;
+ public:
+    OSLock(bool exceptionAllowed = true);
+    ~OSLock();
+    bool isValid();
+    void getLock();
+    void releaseLock();
++   static void setThreadSafe(bool thread) { needThread = thread; }
+ };
+ 
+ typedef unsigned long OSTime;

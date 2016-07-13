@@ -1,0 +1,209 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Adds header definitons for ADPU fixes.
+
+--- ORIGINAL/./src/libckyapplet/cky_applet.h	2016-06-24 16:09:45.867985533 -0400
++++ ././src/libckyapplet/cky_applet.h	2016-06-24 12:37:33.151017365 -0400
+@@ -43,6 +43,8 @@
+ #define CKYISO_MORE_MASK	    0xff00  /* More data mask */
+ #define CKYISO_MORE		    0x6300  /* More data available */
+ #define CKYISO_DATA_INVALID	    0x6984
++#define CKYISO_CONDITION_NOT_SATISFIED 0x6985  /* AKA not logged in (CAC)*/
++#define CKYISO_SECURITY_NOT_SATISFIED  0x6982  /* AKA not logged in (PIV)*/
+ /* Applet Defined Return codes */
+ #define CKYISO_NO_MEMORY_LEFT        0x9c01  /* There have been memory 
+                                              * problems on the card */
+@@ -71,6 +73,16 @@
+ #define CKYISO_INTERNAL_ERROR        0x9cff  /* Reserved for debugging, 
+ 					     * shouldn't happen */
+ 
++#define CAC_INVALID_PARAMS	    0x6a83
++#define CAC_TAG_FILE			1
++#define CAC_VALUE_FILE			2
++
++
++#define CAC_TAG_CARDURL			0xf3
++#define CAC_TAG_CERTIFICATE		0x70
++#define CAC_TAG_CERTINFO		0x71
++#define CAC_TLV_APP_PKI			0x04
++
+ /*
+  * Pin Constants as used by our applet
+  */
+@@ -192,6 +204,14 @@
+     CKYByte         size;
+ } CKYAppletArgReadObject;
+ 
++typedef struct _CKYAppletArgWriteObject {
++    unsigned long objectID;
++    CKYOffset     offset;
++    CKYByte       size;
++    CKYBuffer     *data;
++
++} CKYAppletArgWriteObject;
++
+ typedef struct _CKYAppletArgComputeCrypt {
+     CKYByte   keyNumber;
+     CKYByte   mode;
+@@ -201,6 +221,47 @@
+     const CKYBuffer *sig;
+ } CKYAppletArgComputeCrypt;
+ 
++typedef struct _CKYAppletArgComputeECCSignature {
++    CKYByte   keyNumber;
++    CKYByte   location;
++    const CKYBuffer *data;
++    const CKYBuffer *sig;
++} CKYAppletArgComputeECCSignature;
++
++typedef struct _CKYAppletArgComputeECCKeyAgreement {
++    CKYByte keyNumber;
++    CKYByte location;
++    const CKYBuffer *publicValue;
++    const CKYBuffer *secretKey;
++} CKYAppletArgComputeECCKeyAgreement;
++
++
++typedef struct _CACAppletArgReadFile {
++    CKYByte   type;
++    CKYByte   count;
++    unsigned short offset;
++} CACAppletArgReadFile;
++
++typedef struct _PIVAppletArgSignDecrypt {
++     CKYByte	alg;   
++     CKYByte	key;   
++     CKYByte	chain;   
++     CKYSize	len;   
++     CKYBuffer  *buf;
++} PIVAppletArgSignDecrypt;
++
++typedef struct _pivUnwrapState {
++     CKYByte	tag;
++     CKYByte	length;
++     int	length_bytes;
++} PIVUnwrapState;
++
++typedef struct _PIVAppletRespSignDecrypt {
++     PIVUnwrapState tag_1;
++     PIVUnwrapState tag_2;
++     CKYBuffer  *buf;
++} PIVAppletRespSignDecrypt;
++
+ /* fills in an APDU from a structure -- form of all the generic factories*/
+ typedef CKYStatus (*CKYAppletFactory)(CKYAPDU *apdu, const void *param);
+ /* fills in an a structure from a response -- form of all the fill structures*/
+@@ -250,6 +311,8 @@
+ /* param == CKYByte * (pointer to pinNumber) */
+ CKYStatus CKYAppletFactory_Logout(CKYAPDU *apdu, const void *param);
+ /* Future add WriteObject */
++/* parm == CKYAppletArgWriteObject */
++CKYStatus CKYAppletFactory_WriteObject(CKYAPDU *apdu, const void *param);
+ /* param == CKYAppletArgCreateObject */
+ CKYStatus CKYAppletFactory_CreateObject(CKYAPDU *apdu, const void *param);
+ /* param == CKYAppletArgDeleteObject */
+@@ -310,7 +373,6 @@
+ /* Single value fills: Byte, Short, & Long */
+ /* param == CKYByte * */
+ CKYStatus CKYAppletFill_Byte(const CKYBuffer *response, CKYSize size, void *param);
+-/* param == CKYByte * */
+ CKYStatus CKYAppletFill_Short(const CKYBuffer *response, CKYSize size, void *param);
+ CKYStatus CKYAppletFill_Long(const CKYBuffer *response, CKYSize size, void *param);
+ 
+@@ -336,7 +398,7 @@
+  *   Sends the ADPU to the card through the connection conn.
+  *   Checks that the response was valid (returning the responce code in apduRC.
+  *   Formats the response data into fillArg with fillFunc
+- * nonce and apduRC can be NULL (no nonce is added, not status returned 
++ * nonce and apduRC can be NULL (no nonce is added, no status returned 
+  * legal values for afArg are depened on afFunc.
+  * legal values for fillArg are depened on fillFunc.
+  */
+@@ -352,7 +414,7 @@
+  *   into function calls, with input and output parameters.
+  *   The application is still responsible for 
+  *      1) creating a connection to the card, 
+- *      2) Getting a tranaction long,  then
++ *      2) Getting a transaction lock,  then
+  *      3) selecting  the appropriate applet (or Card manager). 
+  *   Except for those calls that have been noted, the appropriate applet 
+  *   is the CoolKey applet.
+@@ -441,9 +503,17 @@
+ /* Select the CAC card manager.  Can happen with either applet selected */
+ CKYStatus CACApplet_SelectCardManager(CKYCardConnection *conn, 
+ 							CKYISOStatus *apduRC);
+-/* Can happen with either applet selected */
+-CKYStatus CACApplet_SelectPKI(CKYCardConnection *conn, CKYByte instance,
+-			      CKYISOStatus *apduRC);
++/* Select the CAC CC container. Can happen with either applet selected */
++CKYStatus CACApplet_SelectCCC(CKYCardConnection *conn, CKYISOStatus *apduRC);
++/* Select an old CAC applet and fill in the cardAID */
++CKYStatus CACApplet_SelectPKI(CKYCardConnection *conn, CKYBuffer *cardAid,
++			      CKYByte instance, CKYISOStatus *apduRC);
++/* read a TLV file */
++CKYStatus CACApplet_ReadFile(CKYCardConnection *conn, CKYByte type, 
++			     CKYBuffer *buffer, CKYISOStatus *apduRC);
++CKYStatus CACApplet_SelectFile(CKYCardConnection *conn, unsigned short ef,
++			     CKYISOStatus *apduRC);
++
+ /* must happen with PKI applet selected */
+ CKYStatus CACApplet_SignDecrypt(CKYCardConnection *conn, const CKYBuffer *data,
+ 		CKYBuffer *result, CKYISOStatus *apduRC);
+@@ -457,9 +527,18 @@
+ 				   CKYISOStatus *apduRC);
+ 
+ /*CKYStatus CACApplet_GetProperties(); */
+-CKYStatus CACApplet_VerifyPIN(CKYCardConnection *conn, const char *pin,
+-				   CKYISOStatus *apduRC);
++CKYStatus CACApplet_VerifyPIN(CKYCardConnection *conn, const char *pin, 
++				int local, CKYISOStatus *apduRC);
+ 
++/* Select a PIV applet  */
++CKYStatus PIVApplet_Select(CKYCardConnection *conn, CKYISOStatus *apduRC);
++
++CKYStatus PIVApplet_GetCertificate(CKYCardConnection *conn, CKYBuffer *cert,
++				   int tag, CKYISOStatus *apduRC);
++CKYStatus PIVApplet_SignDecrypt(CKYCardConnection *conn, CKYByte key,
++				   unsigned int keySize, int derive,
++                                   const CKYBuffer *data, CKYBuffer *result, 
++                                   CKYISOStatus *apduRC);
+ /*
+  * There are 3 read commands:
+  *  
+@@ -482,6 +561,17 @@
+ CKYStatus CKYApplet_ReadObjectFull(CKYCardConnection *conn, 
+ 		unsigned long objectID, CKYOffset offset, CKYSize size,
+ 		 const CKYBuffer *nonce, CKYBuffer *data, CKYISOStatus *apduRC);
++/*
++ * There is 1 write command:
++ * CKYApplet_WriteObjectFull can write an entire data object. It makes multiple
++ * apdu calls in order to write the full amount into the buffer. The buffer is
++ * overwritten.
++*/
++
++CKYStatus CKYApplet_WriteObjectFull(CKYCardConnection *conn,
++        unsigned long objectID, CKYOffset offset, CKYSize size,
++        const CKYBuffer *nonce, const CKYBuffer *data, CKYISOStatus *apduRC);
++
+ CKYStatus CKYApplet_ListObjects(CKYCardConnection *conn, CKYByte seq,
+ 		CKYAppletRespListObjects *lop, CKYISOStatus *apduRC);
+ CKYStatus CKYApplet_GetStatus(CKYCardConnection *conn, 
+@@ -509,6 +599,18 @@
+ CKYStatus CKYApplet_GetBuiltinACL(CKYCardConnection *conn,
+ 	 	CKYAppletRespGetBuiltinACL *gba, CKYISOStatus *apduRC);
+ 
++/** ECC commands
++ * *                                                  */
++
++CKYStatus CKYApplet_ComputeECCSignature(CKYCardConnection *conn, CKYByte keyNumber,
++    const CKYBuffer *data, CKYBuffer *sig,
++    CKYBuffer *result, const CKYBuffer *nonce, CKYISOStatus *apduRC);
++
++CKYStatus
++CKYApplet_ComputeECCKeyAgreement(CKYCardConnection *conn, CKYByte keyNumber,
++    const CKYBuffer *publicValue, CKYBuffer *sharedSecret,
++    CKYBuffer *result, const CKYBuffer *nonce, CKYISOStatus *apduRC);
++
+ 
+ /*
+  * deprecates 0.x functions

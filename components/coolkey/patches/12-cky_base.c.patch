@@ -1,0 +1,183 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Addresses various buffer management issues in the coolkey library.
+
+--- ORIGINAL/./src/libckyapplet/cky_base.c	2016-06-24 16:08:04.062060228 -0400
++++ ././src/libckyapplet/cky_base.c	2016-06-24 12:46:18.558329391 -0400
+@@ -41,6 +41,7 @@
+     buf->data = NULL;
+     buf->size = 0;
+     buf->len = 0;
++    buf->reserved = NULL; /* make coverity happy */
+ } 
+ 
+ /*
+@@ -220,6 +221,22 @@
+     return CKYSUCCESS;
+ }
+ 
++/* append a short in network order */
++CKYStatus
++CKYBuffer_AppendShortLE(CKYBuffer *buf, unsigned short val)
++{
++    CKYStatus ret;
++
++    ret = CKYBuffer_Reserve(buf, buf->len + 2);
++    if (ret != CKYSUCCESS) {
++	return ret;
++    }
++    buf->data[buf->len+1] = (CKYByte) ((val >> 8) & 0xff);
++    buf->data[buf->len+0] = (CKYByte) ((val >> 0) & 0xff);
++    buf->len += 2;
++    return CKYSUCCESS;
++}
++
+ /* append a long in applet order */
+ CKYStatus
+ CKYBuffer_AppendLong(CKYBuffer *buf, unsigned long val)
+@@ -238,6 +255,24 @@
+     return CKYSUCCESS;
+ }
+ 
++/* append a long in applet order */
++CKYStatus
++CKYBuffer_AppendLongLE(CKYBuffer *buf, unsigned long val)
++{
++    CKYStatus ret;
++
++    ret = CKYBuffer_Reserve(buf, buf->len + 4);
++    if (ret != CKYSUCCESS) {
++	return ret;
++    }
++    buf->data[buf->len+3] = (CKYByte) ((val >> 24) & 0xff);
++    buf->data[buf->len+2] = (CKYByte) ((val >> 16) & 0xff);
++    buf->data[buf->len+1] = (CKYByte) ((val >>  8) & 0xff);
++    buf->data[buf->len+0] = (CKYByte) ((val >>  0) & 0xff);
++    buf->len += 4;
++    return CKYSUCCESS;
++}
++
+ CKYStatus
+ CKYBuffer_Replace(CKYBuffer *buf, CKYOffset offset, const CKYByte *data, CKYSize len)
+ {
+@@ -351,6 +386,22 @@
+ }
+ 
+ CKYStatus
++CKYBuffer_SetShortLE(CKYBuffer *buf, CKYOffset offset, unsigned short val)
++{
++    CKYStatus ret;
++
++    if (buf->len < offset+2) {
++	ret = CKYBuffer_Resize(buf,offset+2);
++	if (ret != CKYSUCCESS) {
++	    return ret;
++	}
++    }
++    buf->data[offset+1] = (CKYByte) ((val >> 8) & 0xff);
++    buf->data[offset+0] = (CKYByte) ((val >> 0) & 0xff);
++    return CKYSUCCESS;
++}
++
++CKYStatus
+ CKYBuffer_SetLong(CKYBuffer *buf, CKYOffset offset, unsigned long val)
+ {
+     CKYStatus ret;
+@@ -368,6 +419,24 @@
+     return CKYSUCCESS;
+ }
+ 
++CKYStatus
++CKYBuffer_SetLongLE(CKYBuffer *buf, CKYOffset offset, unsigned long val)
++{
++    CKYStatus ret;
++
++    if (buf->len < offset+4) {
++	ret = CKYBuffer_Resize(buf,offset+4);
++	if (ret != CKYSUCCESS) {
++	    return ret;
++	}
++    }
++    buf->data[offset+3] = (CKYByte) ((val >> 24) & 0xff);
++    buf->data[offset+2] = (CKYByte) ((val >> 16) & 0xff);
++    buf->data[offset+1] = (CKYByte) ((val >>  8) & 0xff);
++    buf->data[offset+0] = (CKYByte) ((val >>  0) & 0xff);
++    return CKYSUCCESS;
++}
++
+ CKYByte
+ CKYBuffer_GetChar(const CKYBuffer *buf, CKYOffset offset)
+ {
+@@ -388,6 +457,18 @@
+     val |= ((unsigned short)buf->data[offset+1]) << 0;
+     return val;
+ }
++
++unsigned short
++CKYBuffer_GetShortLE(const CKYBuffer *buf, CKYOffset offset)
++{
++    unsigned short val;
++    if (buf->len < offset+2) {
++	return 0;
++    }
++    val  = ((unsigned short)buf->data[offset+1]) << 8;
++    val |= ((unsigned short)buf->data[offset+0]) << 0;
++    return val;
++}
+ 	
+ unsigned long
+ CKYBuffer_GetLong(const CKYBuffer *buf, CKYOffset offset)
+@@ -402,6 +483,20 @@
+     val |= ((unsigned long)buf->data[offset+3]) << 0;
+     return val;
+ }
++
++unsigned long
++CKYBuffer_GetLongLE(const CKYBuffer *buf, CKYOffset offset)
++{
++    unsigned long val;
++    if (buf->len < offset+4) {
++	return 0;
++    }
++    val  = ((unsigned long)buf->data[offset+3]) << 24;
++    val |= ((unsigned long)buf->data[offset+2]) << 16;
++    val |= ((unsigned long)buf->data[offset+1]) << 8;
++    val |= ((unsigned long)buf->data[offset+0]) << 0;
++    return val;
++}
+ 	
+ CKYStatus
+ CKYBuffer_Resize(CKYBuffer *buf, CKYSize newLen)
+@@ -479,6 +574,7 @@
+     assert(sizeof(CKYAPDU) == sizeof(CKYAPDUPublic));
+ #endif
+    ckyBuffer_initBuffer(&apdu->apduBuf);
++   apdu->reserved = NULL;
+    return CKYBuffer_Resize(&apdu->apduBuf, CKYAPDU_MIN_LEN);
+ }
+ 
+@@ -489,6 +585,7 @@
+     assert(sizeof(CKYAPDU) == sizeof(CKYAPDUPublic));
+ #endif
+     ckyBuffer_initBuffer(&apdu->apduBuf);
++    apdu->reserved = NULL;
+     if (len > CKYAPDU_MAX_DATA_LEN) {
+ 	return CKYDATATOOLONG;
+     }
+@@ -616,8 +713,15 @@
+     return CKYBuffer_SetChar(&apdu->apduBuf, CKY_LE_OFFSET, recvlen);
+ }
+ 
++CKYStatus
++CKYAPDU_AppendReceiveLen(CKYAPDU *apdu, CKYByte recvlen)
++{
++    return CKYBuffer_AppendChar(&apdu->apduBuf, recvlen);
++}
++
++
+ void
+-CKY_SetName(char *p)
++CKY_SetName(const char *p)
+ {
+ }
+     

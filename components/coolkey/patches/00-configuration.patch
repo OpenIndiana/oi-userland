@@ -1,0 +1,78 @@
+In-house patch created to remove the /pkcs11 subdir from "pkcs11dir" definition as 
+Solaris does not use that convention for its pkcs11 libraries. 
+
+Fixed erroneous blank line found in coolkeypk11.sym file creation which causes an
+error with studio compiler and sun linker.
+
+Added 64-fit flag for c++ and ld linking to solaris section of aclocal.m4
+
+This patch is Solaris buildenv specific and may not be suitable for upstream.
+
+--- ORIGINAL/./src/coolkey/Makefile.am	2016-06-28 12:42:38.792849194 -0400
++++ ././src/coolkey/Makefile.am	2016-07-01 13:08:51.779577934 -0400
+@@ -22,11 +22,7 @@
+ SUBDIRS = 
+ AM_CPP_FLAGS =
+ EXTRA_DIST = coolkeypk11.def coolkeypk11.rc
+-if IS_WINDOWS
+ pkcs11dir = $(libdir)
+-else
+-pkcs11dir = $(libdir)/pkcs11
+-endif
+ pkcs11_LTLIBRARIES = libcoolkeypk11.la
+ 
+ libcoolkeypk11_la_SOURCES = \
+@@ -63,8 +59,14 @@
+ # their .def file. So convert a very general, easy to work an any platform
+ # coreconf .def file to a simplistic but acceptable libtool .sym file
+ #
++# XXX - Solaris ld and studio compiler specific
++#       remove erroneous blank line that is being created in the coolkeypk11.sym file
++#
++# OLD: grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,' > $@
++# NEW: grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,;/^$$/d' > $@
++#
+ coolkeypk11.sym: coolkeypk11.def
+-	grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,' > $@
++	grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,;/^$$/d' > $@
+ 
+ clean-generic:
+ 	rm -f coolkeypk11.sym
+--- ORIGINAL/./src/coolkey/Makefile.in	2016-06-28 16:25:08.703866375 -0400
++++ ././src/coolkey/Makefile.in	2016-07-01 14:47:35.479891544 -0400
+@@ -241,7 +241,7 @@
+ SUBDIRS = 
+ AM_CPP_FLAGS = 
+ EXTRA_DIST = coolkeypk11.def coolkeypk11.rc
+-@IS_WINDOWS_FALSE@pkcs11dir = $(libdir)/pkcs11
++@IS_WINDOWS_FALSE@pkcs11dir = $(libdir)
+ @IS_WINDOWS_TRUE@pkcs11dir = $(libdir)
+ pkcs11_LTLIBRARIES = libcoolkeypk11.la
+ libcoolkeypk11_la_SOURCES = \
+@@ -717,8 +717,14 @@
+ # their .def file. So convert a very general, easy to work an any platform
+ # coreconf .def file to a simplistic but acceptable libtool .sym file
+ #
++# XXX - Solaris ld and studio compiler specific
++#       remove erroneous blank line that is being created in the coolkeypk11.sym file
++#
++# OLD: grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,' > $@
++# NEW: grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,;/^$$/d' > $@
++#
+ coolkeypk11.sym: coolkeypk11.def
+-	grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,' > $@
++	grep -v ';+' $< | grep -v ';-' | sed -e 's; DATA ;;' -e 's,;;,,' -e 's,;.*,,;/^$$/d' > $@
+ 
+ clean-generic:
+ 	rm -f coolkeypk11.sym
+--- ORIGINAL/./aclocal.m4	2016-06-29 00:23:04.484933583 -0400
++++ ././aclocal.m4	2016-06-29 08:09:30.082985198 -0400
+@@ -3575,7 +3575,7 @@
+ 	_LT_AC_TAGVAR(no_undefined_flag, $1)=' -zdefs'
+ 	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G${allow_undefined_flag}  -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
+ 	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
+-	$CC -G${allow_undefined_flag}  ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
++	$CC -G -m64 ${allow_undefined_flag}  ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
+ 
+ 	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
+ 	_LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no

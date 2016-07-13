@@ -1,0 +1,353 @@
+Upstream fixes already included in the latest community updates to coolkey v1.1.0
+
+Addresses APDU applet issues with card management.
+
+--- ORIGINAL/./src/libckyapplet/cky_factory.c	2016-06-24 16:08:04.366910071 -0400
++++ ././src/libckyapplet/cky_factory.c	2016-06-24 12:38:22.645520956 -0400
+@@ -25,12 +25,13 @@
+  * special commands can be issued at any time 
+  */
+ CKYStatus
+-CKYAPDUFactory_SelectFile(CKYAPDU *apdu, const CKYBuffer *AID)
++CKYAPDUFactory_SelectFile(CKYAPDU *apdu, CKYByte p1, CKYByte p2,
++			  const CKYBuffer *AID)
+ {
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_ISO7816);
+     CKYAPDU_SetINS(apdu, CKY_INS_SELECT_FILE);
+-    CKYAPDU_SetP1(apdu, 0x04);
+-    CKYAPDU_SetP2(apdu, 0x00);
++    CKYAPDU_SetP1(apdu, p1);
++    CKYAPDU_SetP2(apdu, p2);
+     return CKYAPDU_SetSendDataBuffer(apdu, AID);
+ }
+ 
+@@ -61,7 +62,6 @@
+     CKYAPDU_SetP2(apdu, 0x7f);
+     return CKYAPDU_SetReceiveLen(apdu, CKY_SIZE_GET_CPLCDATA);
+ }
+-
+ /*
+  * applet commands must be issued with the appplet selected.
+  */
+@@ -131,6 +131,7 @@
+     return ret;
+ }
+ 
++
+ CKYStatus
+ CKYAPDUFactory_ComputeCryptFinal(CKYAPDU *apdu, CKYByte keyNumber, 
+ 		CKYByte location, const CKYBuffer *data, const CKYBuffer *sig)
+@@ -182,6 +183,49 @@
+ }
+ 
+ CKYStatus
++CKYAPDUFactory_ComputeECCKeyAgreementOneStep(CKYAPDU *apdu, CKYByte keyNumber,
++                             CKYByte location,
++                            const CKYBuffer *publicData, const CKYBuffer *secretKey)
++{
++    CKYStatus ret      = CKYINVALIDARGS;
++    CKYSize   len;
++    CKYBuffer buf;
++
++    if (!publicData)
++        return ret;
++
++    if (!(len = CKYBuffer_Size(publicData)))
++        return ret;
++
++    CKYAPDU_SetCLA(apdu, CKY_CLASS_COOLKEY);
++    CKYAPDU_SetINS(apdu, CKY_INS_COMPUTE_ECC_KEY_AGREEMENT);
++    CKYAPDU_SetP1(apdu, keyNumber);
++    CKYAPDU_SetP2(apdu, CKY_CIPHER_ONE_STEP);
++
++    CKYBuffer_InitEmpty(&buf);
++
++    ret = CKYBuffer_Reserve(&buf, 3);
++
++    if (ret == CKYSUCCESS)
++        ret = CKYBuffer_AppendChar(&buf, location);
++    if (ret == CKYSUCCESS)
++        ret = CKYBuffer_AppendShort(&buf, (unsigned short)len);
++    if (ret == CKYSUCCESS)
++        ret = CKYAPDU_SetSendDataBuffer(apdu, &buf);
++    if (ret == CKYSUCCESS)
++        ret = CKYAPDU_AppendSendDataBuffer(apdu, publicData);
++    if (ret == CKYSUCCESS && secretKey && 0 < (len = CKYBuffer_Size(secretKey))) {
++        CKYBuffer_Resize(&buf,2);
++        CKYBuffer_SetShort(&buf, 0, (unsigned short)len);
++        ret = CKYAPDU_AppendSendDataBuffer(apdu, &buf);
++        if (ret == CKYSUCCESS)
++            ret = CKYAPDU_AppendSendDataBuffer(apdu, secretKey);
++    }
++    CKYBuffer_FreeData(&buf);
++    return ret;
++}
++
++CKYStatus
+ CKYAPDUFactory_ComputeCryptOneStep(CKYAPDU *apdu, CKYByte keyNumber, CKYByte mode,
+ 				CKYByte direction, CKYByte location,
+ 				const CKYBuffer *idata, const CKYBuffer *sig)
+@@ -190,8 +234,11 @@
+     CKYSize   len;
+     CKYBuffer buf;
+ 
+-    if (!idata || !(len = CKYBuffer_Size(idata)) || location != CKY_DL_APDU)
+-    	return ret;
++    if (!idata)
++        return ret;
++
++    if (!(len = CKYBuffer_Size(idata)) && location != CKY_DL_OBJECT)
++        return ret;
+ 
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_COOLKEY);
+     CKYAPDU_SetINS(apdu, CKY_INS_COMPUTE_CRYPT);
+@@ -314,8 +361,6 @@
+     return CKYSUCCESS;
+ }
+ 
+-/* Future add WriteObject */
+-
+ CKYStatus
+ CKYAPDUFactory_CreateObject(CKYAPDU *apdu, unsigned long objectID, CKYSize size,
+     unsigned short readACL, unsigned short writeACL, unsigned short deleteACL)
+@@ -383,6 +428,49 @@
+ }
+ 
+ CKYStatus
++CKYAPDUFactory_ComputeECCSignatureOneStep(CKYAPDU *apdu, CKYByte keyNumber,
++                             CKYByte location,
++                            const CKYBuffer *idata, const CKYBuffer *sig)
++{
++    CKYStatus ret      = CKYINVALIDARGS;
++    CKYSize   len;
++    CKYBuffer buf;
++
++    if (!idata)
++        return ret;
++
++    if (!(len = CKYBuffer_Size(idata)) && location != CKY_DL_OBJECT)
++        return ret;
++
++    CKYAPDU_SetCLA(apdu, CKY_CLASS_COOLKEY);
++    CKYAPDU_SetINS(apdu, CKY_INS_COMPUTE_ECC_SIGNATURE);
++    CKYAPDU_SetP1(apdu, keyNumber);
++    CKYAPDU_SetP2(apdu, CKY_CIPHER_ONE_STEP);
++
++    CKYBuffer_InitEmpty(&buf);
++
++    ret = CKYBuffer_Reserve(&buf, 3);
++
++    if (ret == CKYSUCCESS)
++        ret = CKYBuffer_AppendChar(&buf, location);
++    if (ret == CKYSUCCESS)
++        ret = CKYBuffer_AppendShort(&buf, (unsigned short)len);
++    if (ret == CKYSUCCESS)
++        ret = CKYAPDU_SetSendDataBuffer(apdu, &buf);
++    if (ret == CKYSUCCESS)
++        ret = CKYAPDU_AppendSendDataBuffer(apdu, idata);
++    if (ret == CKYSUCCESS && sig && 0 < (len = CKYBuffer_Size(sig))) {
++        CKYBuffer_Resize(&buf,2);
++        CKYBuffer_SetShort(&buf, 0, (unsigned short)len);
++        ret = CKYAPDU_AppendSendDataBuffer(apdu, &buf);
++        if (ret == CKYSUCCESS)
++            ret = CKYAPDU_AppendSendDataBuffer(apdu, sig);
++    }
++    CKYBuffer_FreeData(&buf);
++    return ret;
++}
++
++CKYStatus
+ CKYAPDUFactory_ReadObject(CKYAPDU *apdu, unsigned long objectID, 
+ 						CKYOffset offset, CKYByte size)
+ {
+@@ -419,6 +507,58 @@
+ }
+ 
+ CKYStatus
++CKYAPDUFactory_WriteObject(CKYAPDU *apdu, unsigned long objectID,
++                                    CKYOffset offset,CKYSize size,CKYBuffer *data)
++{
++    CKYBuffer buf;
++    CKYStatus ret = CKYSUCCESS;
++    unsigned short dataSize = 0;
++
++    CKYAPDU_SetCLA(apdu, CKY_CLASS_COOLKEY);
++    CKYAPDU_SetINS(apdu, CKY_INS_WRITE_OBJ);
++    CKYAPDU_SetP1(apdu, 0x00);
++    CKYAPDU_SetP2(apdu, 0x00);
++    CKYBuffer_InitEmpty(&buf);
++
++    dataSize = (unsigned short) CKYBuffer_Size(data);
++
++    if(!dataSize) {
++        ret = CKYINVALIDARGS;
++        goto fail;
++    }
++
++    ret = CKYBuffer_AppendLong(&buf,objectID);
++    if (ret != CKYSUCCESS) {
++        goto fail;
++    }
++    ret = CKYBuffer_AppendLong(&buf,offset);
++    if (ret != CKYSUCCESS) {
++        goto fail;
++    }
++    ret = CKYBuffer_AppendChar(&buf, size);
++    if (ret != CKYSUCCESS) {
++        goto fail;
++    }
++
++    ret = CKYAPDU_SetSendDataBuffer(apdu,&buf);
++
++    if (ret != CKYSUCCESS) {
++        goto fail;
++    }
++
++    ret = CKYAPDU_AppendSendDataBuffer(apdu, data);
++
++    if (ret != CKYSUCCESS) {
++        goto fail;
++    }
++
++fail:
++    CKYBuffer_FreeData(&buf);
++    return ret;
++
++}
++
++CKYStatus
+ CKYAPDUFactory_ListObjects(CKYAPDU *apdu, CKYByte sequence)
+ {
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_COOLKEY);
+@@ -519,11 +659,11 @@
+ }
+ 
+ CKYStatus
+-CACAPDUFactory_SignDecrypt(CKYAPDU *apdu, const CKYBuffer *data)
++CACAPDUFactory_SignDecrypt(CKYAPDU *apdu, CKYByte type, const CKYBuffer *data)
+ {
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_ISO7816);
+     CKYAPDU_SetINS(apdu, CAC_INS_SIGN_DECRYPT);
+-    CKYAPDU_SetP1(apdu, 0x00);
++    CKYAPDU_SetP1(apdu, type);
+     CKYAPDU_SetP2(apdu, 0x00);
+     return CKYAPDU_SetSendDataBuffer(apdu, data);
+ }
+@@ -539,6 +679,35 @@
+ }
+ 
+ CKYStatus
++CACAPDUFactory_ReadFile(CKYAPDU *apdu, unsigned short offset, 	
++					CKYByte type, CKYByte count)
++{
++    CKYStatus ret;
++    CKYBuffer buf;
++
++    CKYBuffer_InitEmpty(&buf);
++    CKYAPDU_SetCLA(apdu, CKY_CLASS_GLOBAL_PLATFORM);
++    CKYAPDU_SetINS(apdu, CAC_INS_READ_FILE);
++    CKYAPDU_SetP1(apdu, (offset >> 8) & 0xff);
++    CKYAPDU_SetP2(apdu, offset & 0xff);
++    ret = CKYBuffer_Reserve(&buf, 2);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    }
++    ret = CKYBuffer_AppendChar(&buf, type);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    }
++    ret = CKYBuffer_AppendChar(&buf, count);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    } 
++    ret = CKYAPDU_SetSendDataBuffer(apdu, &buf);
++fail:
++    CKYBuffer_FreeData(&buf);
++    return ret;
++}
++CKYStatus
+ CACAPDUFactory_GetProperties(CKYAPDU *apdu)
+ {
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_ISO7816);
+@@ -549,7 +718,7 @@
+ }
+ 
+ CKYStatus
+-CACAPDUFactory_VerifyPIN(CKYAPDU *apdu, const char *pin)
++CACAPDUFactory_VerifyPIN(CKYAPDU *apdu, CKYByte keyRef, const char *pin)
+ {
+     CKYStatus ret;
+     CKYSize size;
+@@ -557,7 +726,7 @@
+     CKYAPDU_SetCLA(apdu, CKY_CLASS_ISO7816);
+     CKYAPDU_SetINS(apdu, CAC_INS_VERIFY_PIN);
+     CKYAPDU_SetP1(apdu, 0x00);
+-    CKYAPDU_SetP2(apdu, 0x00);
++    CKYAPDU_SetP2(apdu, keyRef);
+     /* no pin, send an empty buffer */
+     if (!pin) {
+     	return CKYAPDU_SetReceiveLen(apdu, 0);
+@@ -578,3 +747,63 @@
+     return ret;
+ 
+ }
++
++CKYStatus
++PIVAPDUFactory_SignDecrypt(CKYAPDU *apdu, CKYByte chain, CKYByte alg, 
++			   CKYByte key, int len, const CKYBuffer *data)
++{
++    CKYStatus ret;
++    CKYAPDU_SetCLA(apdu, chain ? CKY_CLASS_ISO7816_CHAIN :
++				  CKY_CLASS_ISO7816);
++    CKYAPDU_SetINS(apdu, PIV_INS_GEN_AUTHENTICATE);
++    CKYAPDU_SetP1(apdu, alg);
++    CKYAPDU_SetP2(apdu, key);
++    ret =  CKYAPDU_SetSendDataBuffer(apdu, data);
++    if (ret == CKYSUCCESS && chain == 0 && len != 0) {
++	if (len >= 256) len = 0;
++	ret = CKYAPDU_AppendReceiveLen(apdu, len);
++    }
++    return ret;
++}
++
++CKYStatus
++PIVAPDUFactory_GetData(CKYAPDU *apdu, const CKYBuffer *object, CKYByte count)
++{
++    CKYStatus ret;
++    CKYBuffer buf;
++    CKYByte objectSize;
++
++    CKYBuffer_InitEmpty(&buf);
++    CKYAPDU_SetCLA(apdu, CKY_CLASS_ISO7816);
++    CKYAPDU_SetINS(apdu, 0xcb);
++    CKYAPDU_SetP1(apdu, 0x3f);
++    CKYAPDU_SetP2(apdu, 0xff);
++
++    objectSize = CKYBuffer_Size(object);
++
++    ret = CKYBuffer_Reserve(&buf, 2+objectSize);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    }
++    ret = CKYBuffer_AppendChar(&buf, 0x5c);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    }
++    ret = CKYBuffer_AppendChar(&buf, objectSize);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    } 
++    ret = CKYBuffer_AppendCopy(&buf, object);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    } 
++    ret = CKYAPDU_SetSendDataBuffer(apdu, &buf);
++    if (ret != CKYSUCCESS) {
++	    goto fail;
++    } 
++    ret = CKYAPDU_AppendReceiveLen(apdu, count);
++fail:
++    CKYBuffer_FreeData(&buf);
++    return ret;
++}
++
