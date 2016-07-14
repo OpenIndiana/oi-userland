@@ -21,18 +21,18 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# HPLIP support for CUPS
+<transform file path=usr/lib/cups/backend/.* -> default mode 0555>
+<transform file path=usr/lib/cups/filter/.* -> default mode 0555>
+<transform dir file path=usr/lib/lp/? -> default group lp>
+<transform dir file path=usr/share/ppd/? -> default group lp>
+
+# hplip install its PYTHON modules into usr/share/hplip so it brings problems:
 <transform file path=usr/share/hplip/.+\.py$ -> default mode 0555>
 <transform file path=usr/share/hplip/.+\.py$ -> default pkg.depend.bypass-generate .*>
 <transform file path=usr/share/hplip/.+\.py$ -> default pkg.linted.userland.action001.3 true>
 <transform file path=usr/share/hplip/.+\.pyc$ -> default mode 0555>
 
-# HPLIP support for CUPS
-<transform file path=usr/lib/cups/backend/.* -> default mode 0555>
-<transform dir file path=usr/lib/lp/? -> default group lp>
-<transform dir file path=usr/share/ppd/? -> default group lp>
-
-# HPIJS support for LP
-<transform file path=usr/lib/cups/filter/.* -> default mode 0555>
 <transform file path=usr/lib/cups/backend/hpfax -> default pkg.depend.bypass-generate .*>
 <transform file path=usr/lib/cups/backend/hpfax -> default pkg.linted.userland.action001.3 true>
 <transform file path=usr/lib/cups/filter/hpps -> default pkg.depend.bypass-generate .*>
@@ -54,8 +54,9 @@
 # package metadata
 set name=pkg.fmri \
     value=pkg:/print/filter/hplip@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="hpijs - HP InkJet Server"
-set name=com.oracle.info.description value="the hpijs HP InkJet Server"
+set name=pkg.summary value="hplip - HP Linux Printing"
+set name=com.oracle.info.description \
+    value="Support of HP InkJet, Laser printers for CUPS."
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Printing "
@@ -63,7 +64,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2004/262
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/sfw/bin/hpijs target=../../bin/hpijs
 legacy pkg=SUNWhpijs desc="hpijs - HP InkJet Server" \
     name="hpijs - HP InkJet Server"
 license hplip.license license=GPLv2
