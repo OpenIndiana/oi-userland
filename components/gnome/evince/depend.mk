@@ -1,1 +1,1 @@
-desktop/evince:	desktop/poppler desktop/libspectre gnome/gnome-desktop
+gnome/evince:	desktop/poppler desktop/libspectre gnome/gnome-desktop
