@@ -23,6 +23,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS = 	64_and_32
 COMPILER =	gcc
 
 include ../../../make-rules/shared-macros.mk
@@ -41,33 +42,22 @@ COMPONENT_BUGDB=	library/libjpeg
 
 TPNO=			9298
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS +=		$(CC_BITS)
 
-CONFIGURE_OPTIONS +=	--prefix=$(PROTO_DIR)/usr
+CONFIGURE_OPTIONS +=	--prefix=$(PROTOUSRDIR)
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
-COMPONENT_INSTALL_ARGS +=	INSTALL_DATA="ginstall -D"
-COMPONENT_INSTALL_ARGS +=	INSTALL_LIB="ginstall -D"
-COMPONENT_INSTALL_ARGS +=	INSTALL_PROGRAM="ginstall -D"
+CONFIGURE_ENV += INSTALL="$(INSTALL) -D"
+
+# Prevent libtool from embedding runpath (via -R).
+COMPONENT_POST_CONFIGURE_ACTION += \
+	$(GSED) -i -e 's/hardcode_into_libs=yes/hardcode_into_libs=no/' $(@D)/libtool; \
+	$(GSED) -i -e 's/hardcode_libdir_flag_spec=.*/hardcode_libdir_flag_spec=""/' $(@D)/libtool;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
