@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
-COMPONENT_VERSION=	3.2.4
+COMPONENT_VERSION=	3.2.6
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ffeb967edb549e67da0bd5f44f729a2022de9fdde65dfd80d2a7204d7f75332e
+    sha256:a4c59c2fe1fcbd3aba5b183f7841aff1b94ff7435cc29f1d8bbe7fc21d38e0cb
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_FMRI=		developer/ccache
@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	"GPLv3,murmurhash,papowell/jhweiss,PostgreSQL,Python,zlib"
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
-CFLAGS  +=			-D_GNU_SOURCE -D__EXTENSIONS__
+CFLAGS  +=			-D_GNU_SOURCE -D__EXTENSIONS__ --std=c99
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

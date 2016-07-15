@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright (c) 2015 Jim Klimov
+# Copyright (c) 2015-2016 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -35,7 +35,8 @@ file README.html path=usr/share/ccache/readme.html
 # Softlinks to simplify builds - just prepend /usr/lib/ccache to PATH
 # NOTE: Since these are softlinks, a certain relative directory structure
 # is expected (like rooting at /usr) when the package is installed.
-# You can turn off ccache without  paths by exporting CCACHE_DISABLE=1
+# You can turn off ccache without changing runtime PATHs by exporting
+# CCACHE_DISABLE=1 before a build
 link target=../../bin/ccache path=usr/lib/ccache/gcc
 link target=../../bin/ccache path=usr/lib/ccache/g++
 link target=../../bin/ccache path=usr/lib/ccache/cc
