@@ -20,8 +20,8 @@ COMPONENT_VERSION=	3.1
 # Versioning is complicated: samba.org/ftp has 2.x versions as newest,
 # while newest github release is 3.1 from 2008, and there is recent HEAD
 # So we take a randomly newest Git snapshot as of package review:
-COMPONENT_GIT_DATE=	20160427
-COMPONENT_GIT_REV=	544904c
+COMPONENT_GIT_DATE=	20160712
+COMPONENT_GIT_REV=	c8eac97
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0.$(COMPONENT_GIT_DATE)
 COMPONENT_PROJECT_URL=	http://distcc.samba.org/
 
@@ -31,7 +31,7 @@ COMPONENT_SRC= distcc-distcc-$(COMPONENT_GIT_REV)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 
 COMPONENT_ARCHIVE_HASH=	\
-  sha256:6f0ae295e2652b44af91086125ca6df254c72bf5283dc5a10a5bf273c45ed05e
+  sha256:13268ca2f6fee14647610e137c68eef14b2686aad251b3c89da81a0593b2698d
 COMPONENT_ARCHIVE_URL= \
   https://codeload.github.com/distcc/distcc/legacy.tar.gz/$(COMPONENT_GIT_REV)
 
