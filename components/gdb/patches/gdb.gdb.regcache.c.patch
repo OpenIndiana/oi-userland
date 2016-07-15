@@ -1,6 +1,9 @@
---- gdb-7.6/gdb/regcache.c	2013-03-07 10:59:54.000000000 -0800
-+++ gdb-7.6/gdb/regcache.c	2013-10-06 14:00:22.264723200 -0700
-@@ -206,6 +206,8 @@
+# Patch required for Solaris.  
+# Will contribute upstream if possible; will need to #ifdef SOLARIS.
+
+--- gdb-7.11-orig/gdb/regcache.c	Tue Feb  9 19:19:39 2016
++++ gdb-7.11/gdb/regcache.c	Thu Mar 10 16:31:27 2016
+@@ -213,6 +213,8 @@
    /* If this is a read-write cache, which thread's registers is
       it connected to?  */
    ptid_t ptid;
@@ -9,15 +12,15 @@
  };
  
  static struct regcache *
-@@ -220,6 +222,7 @@
-   regcache = XMALLOC (struct regcache);
+@@ -227,6 +229,7 @@
+   regcache = XNEW (struct regcache);
    regcache->descr = descr;
    regcache->readonly_p = readonly_p;
 +  regcache->from_corefile = 0;
    if (readonly_p)
      {
        regcache->registers
-@@ -1435,3 +1438,18 @@
+@@ -1557,3 +1560,18 @@
  	   &maintenanceprintlist);
  
  }

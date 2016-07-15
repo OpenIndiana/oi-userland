@@ -1,6 +1,6 @@
---- gdb-7.6/bfd/elf.c	2013-03-08 09:13:31.000000000 -0800
-+++ gdb-7.6/bfd/elf.c	2013-10-09 17:18:34.783717730 -0700
-@@ -8088,7 +8088,10 @@
+--- gdb-7.11-orig/bfd/elf.c	Tue Feb  9 19:19:39 2016
++++ gdb-7.11/bfd/elf.c	Tue Jun  7 14:34:18 2016
+@@ -8654,7 +8654,10 @@
  static bfd_boolean
  elfcore_grok_prfpreg (bfd *abfd, Elf_Internal_Note *note)
  {
@@ -11,7 +11,7 @@
  }
  
  /* Linux dumps the Intel SSE regs in a note named "LINUX" with a note
-@@ -8341,7 +8344,6 @@
+@@ -8919,7 +8922,6 @@
  }
  #endif /* defined (HAVE_PSTATUS_T) */
  
@@ -19,7 +19,7 @@
  static bfd_boolean
  elfcore_grok_lwpstatus (bfd *abfd, Elf_Internal_Note *note)
  {
-@@ -8423,7 +8425,6 @@
+@@ -9001,7 +9003,6 @@
  
    return elfcore_maybe_make_sect (abfd, ".reg2", sect);
  }
@@ -27,7 +27,7 @@
  
  static bfd_boolean
  elfcore_grok_win32pstatus (bfd *abfd, Elf_Internal_Note *note)
-@@ -8534,14 +8535,17 @@
+@@ -9112,14 +9113,17 @@
        return TRUE;
  #endif
  
@@ -48,7 +48,7 @@
  #endif
  
      case NT_FPREGSET:		/* FIXME: rename to NT_PRFPREG */
-@@ -8881,6 +8885,297 @@
+@@ -9483,7 +9487,298 @@
    return TRUE;
  }
  
@@ -58,7 +58,7 @@
 +#include <sys/regset.h>
 +#include <sys/auxv.h>
 +
-+static bfd_boolean
+ static bfd_boolean
 +elfcore_grok_solaris_note (bfd *abfd, Elf_Internal_Note *note)
 +{
 +  asection *sect;
@@ -343,20 +343,21 @@
 +  return TRUE;
 +}
 +
- static bfd_boolean
++static bfd_boolean
  elfcore_grok_openbsd_note (bfd *abfd, Elf_Internal_Note *note)
  {
-@@ -9657,6 +9952,13 @@
- 	      if (! elfcore_grok_spu_note (abfd, &in))
- 		return FALSE;
- 	    }
-+	  else if (CONST_STRNEQ (in.namedata, "CORE"))
-+	    {
-+	      if (! elfcore_grok_solaris_note (abfd, &in))
-+		return FALSE;
-+	      if (! elfcore_grok_note (abfd, &in))
-+		return FALSE;
-+	    }
- 	  else
- 	    {
- 	      if (! elfcore_grok_note (abfd, &in))
+   if (note->type == NT_OPENBSD_PROCINFO)
+@@ -10282,7 +10577,12 @@
+ 	      GROKER_ELEMENT ("NetBSD-CORE", elfcore_grok_netbsd_note),
+ 	      GROKER_ELEMENT ( "OpenBSD", elfcore_grok_openbsd_note),
+ 	      GROKER_ELEMENT ("QNX", elfcore_grok_nto_note),
+-	      GROKER_ELEMENT ("SPU/", elfcore_grok_spu_note)
++	      GROKER_ELEMENT ("SPU/", elfcore_grok_spu_note),
++#ifdef SOLARIS
++	      GROKER_ELEMENT ("CORE", elfcore_grok_solaris_note),
++#else
++	      GROKER_ELEMENT ("CORE", elfcore_grok_note)
++#endif
+ 	    };
+ #undef GROKER_ELEMENT
+ 	    int i;

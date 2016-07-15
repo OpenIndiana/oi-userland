@@ -1,6 +1,9 @@
---- gdb-7.6/bfd/elf32-i386.c	2013-02-20 19:02:29.000000000 -0800
-+++ gdb-7.6/bfd/elf32-i386.c	2013-10-08 09:04:26.769608447 -0700
-@@ -434,6 +434,45 @@
+# Solaris-specific ELF information.
+# Will contribute upstream if possible.
+
+--- gdb-7.11-orig/bfd/elf32-i386.c	Wed Feb 24 01:55:15 2016
++++ gdb-7.11/bfd/elf32-i386.c	Thu Mar 10 13:12:46 2016
+@@ -442,6 +442,45 @@
        offset = 28;
        size = bfd_get_32 (abfd, note->descdata + 8);
      }
@@ -46,7 +49,7 @@
    else
      {
        switch (note->descsz)
-@@ -476,6 +515,31 @@
+@@ -484,6 +523,31 @@
        elf_tdata (abfd)->core->command
  	= _bfd_elfcore_strndup (abfd, note->descdata + 25, 81);
      }
@@ -78,7 +81,7 @@
    else
      {
        switch (note->descsz)
-@@ -507,6 +571,83 @@
+@@ -515,6 +579,83 @@
    return TRUE;
  }
  
@@ -162,7 +165,7 @@
  /* Functions for the i386 ELF linker.
  
     In order to gain some understanding of code in this file without
-@@ -5053,6 +5194,7 @@
+@@ -5790,6 +5931,7 @@
  #define elf_backend_gc_mark_hook	      elf_i386_gc_mark_hook
  #define elf_backend_gc_sweep_hook	      elf_i386_gc_sweep_hook
  #define elf_backend_grok_prstatus	      elf_i386_grok_prstatus

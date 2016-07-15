@@ -1,17 +1,9 @@
---- gdb-7.6/gdb/sol-thread.c	2012-12-31 22:32:50.000000000 -0800
-+++ gdb-7.6/gdb/sol-thread.c	2013-08-22 12:03:52.780558508 -0700
-@@ -588,6 +588,10 @@
-   td_err_e err;
-   ptid_t ptid;
+# Patch required for Solaris.
+# Will contribute upstream if possible.
 
-+  /* Don't attempt to use thread_db for remote targets.  */
-+  if (!(target_can_run (&current_target) || core_bfd))
-+    return;
-+
-   /* Do nothing if we couldn't load libthread_db.so.1.  */
-   if (p_td_ta_new == NULL)
-     return;
-@@ -1224,7 +1224,7 @@
+--- gdb-7.11-orig/gdb/sol-thread.c	Tue Feb  9 19:19:39 2016
++++ gdb-7.11/gdb/sol-thread.c	Thu Mar 10 16:43:30 2016
+@@ -1244,7 +1244,7 @@
  
    init_sol_thread_ops ();
  

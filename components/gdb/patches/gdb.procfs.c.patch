@@ -1,6 +1,9 @@
---- gdb-7.6/gdb/procfs.c	2012-12-31 22:32:49.000000000 -0800
-+++ gdb-7.6/gdb/procfs.c	2013-08-15 00:05:56.550245791 -0700
-@@ -159,20 +159,33 @@
+# Patch required for Solaris.
+# Will contribute upstream if possible; if so, may need to #ifdef SOLARIS.
+
+--- gdb-7.11-orig/gdb/procfs.c	Tue Feb  9 19:19:39 2016
++++ gdb-7.11/gdb/procfs.c	Thu Mar 10 13:12:47 2016
+@@ -158,21 +158,34 @@
  		   gdb_byte *endptr, CORE_ADDR *typep, CORE_ADDR *valp)
  {
    enum bfd_endian byte_order = gdbarch_byte_order (target_gdbarch ());
@@ -33,13 +36,14 @@
       it will be zero extended, as expected.  */
 -  *valp = extract_unsigned_integer (ptr, 8, byte_order);
 -  ptr += 8;
-+
+ 
 +  *valp = extract_unsigned_integer (ptr, sizeof_auxv_field, byte_order);
 +  ptr += sizeof_auxv_field;
- 
++
    *readptr = ptr;
    return 1;
-@@ -347,7 +360,7 @@
+ }
+@@ -341,7 +354,7 @@
  #  define AS_PROC_NAME_FMT     "/proc/%d/as"
  #  define MAP_PROC_NAME_FMT    "/proc/%d/map"
  #  define STATUS_PROC_NAME_FMT "/proc/%d/status"
@@ -48,7 +52,7 @@
  # endif
  /* the name of the proc status struct depends on the implementation */
  typedef pstatus_t   gdb_prstatus_t;
-@@ -355,11 +368,11 @@
+@@ -349,11 +362,11 @@
  #else /* ! NEW_PROC_API */
  /* format strings for /proc paths */
  # ifndef CTL_PROC_NAME_FMT

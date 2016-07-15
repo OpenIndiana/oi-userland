@@ -32,21 +32,51 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	7.6
+COMPONENT_VERSION=	7.11
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8070389a5dcc104eb0be483d582729f98ed4d761ad19cedd3f17b5d2502faa36
+    sha256:9382f5534aa0754169e1e09b5f1a3b77d1fa8c59c1e57617e06af37cb29c669a
 
-TPNO=			17258
+TPNO=			27358
 
-TEST_TARGET= $(NO_TESTS)
+# The traditional output from gmake test omits some
+# test results information that is contained in the 
+# build/<arch>/gdb/testsuite/gdb.sum file, so use that file instead
+# for test results comparison.
+COMPONENT_POST_TEST_ACTION += \
+	( $(MV) $(COMPONENT_TEST_OUTPUT) $(COMPONENT_TEST_OUTPUT)-orig ; \
+	$(CP) $(BUILD_DIR_64)/gdb/testsuite/gdb.sum $(COMPONENT_TEST_OUTPUT) )
+
+# Results output is different on Intel vs. SPARC.
+# Note that comparisons against master results 
+# are not clean since results will still vary.
+COMPONENT_TEST_MASTER = \
+        $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+
+# Test transforms retain only relevant results output.
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/^FAIL/p" ' \
+        '-e "/^KFAIL/p" ' \
+        '-e "/^PASS/p" ' \
+        '-e "/^UNRESOLVED/p" ' \
+        '-e "/^UNSUPPORTED/p" ' \
+        '-e "/^UNTESTED/p" ' \
+        '-e "/^XFAIL/p" ' \
+        '-e "/^\# of /p" '
+
+# Test results vary from run to run and machine to machine,
+# so master test results will not match, and are not
+# appropriate for a full Userland test run
+$(SKIP_TEST_AT_TOP_LEVEL)
+
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 
 # GDB wants the GNU utilities
-PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl5/bin
+PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl/$(PERL_VERSION)/bin
 
 # Specify the C Standard to use when building
-CC += -std=gnu89
+CC += -std=gnu99
 
 CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
 CFLAGS_sparc +=	-mno-unaligned-doubles
@@ -67,12 +97,24 @@ CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=yes
 CONFIGURE_OPTIONS += --with-libexpat-prefix=$(USRLIBDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --with-system-zlib
+
 
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
 COMPONENT_PRE_CONFIGURE_ACTION = \
   ( cd  $(SOURCE_DIR)/gdb/features ; \
     $(GMAKE) all )
+
+# Ensure PATH is set during build;
+# need /usr/perl5/$(PERL_VERSION)/bin from PATH to access 
+# pod2man perl script, used to create manpages
+COMPONENT_BUILD_ENV += PATH=$(PATH)
+
+# build the manpages
+COMPONENT_POST_BUILD_ACTION = \
+	( cd $(BUILD_DIR_64)/gdb/doc ; \
+	$(GMAKE) man )
 
 COMPONENT_POST_INSTALL_ACTION = \
   ( cd  $(PROTOUSRDIR)/share/gdb/python/gdb ; \
@@ -102,16 +144,14 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdb.info-7  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info-1  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
-      $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/gdbint.info-2  \
-	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/annotate.info  \
 	$(PROTOUSRSHAREDIR)/info/ ; \
       $(INSTALL) -m 0644 $(SOURCE_DIR)/gdb/doc/stabs.info  \
-	$(PROTOUSRSHAREDIR)/info/ )
+	$(PROTOUSRSHAREDIR)/info/ ; \
+      $(MKDIR) $(PROTOGNUSHAREMAN1) ; \
+      $(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
+      $(INSTALL) -m 0444 $(BUILD_DIR_64)/gdb/doc/gdb.1 \
+	$(PROTOUSRSHAREMAN1DIR) )
 
 # Disable ASLR: it's a debugger and we do not want to risk
 # altering the results of the debugging experiment.
