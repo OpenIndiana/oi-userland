@@ -1,0 +1,16 @@
+This patch has been taken from community and it addresses format string vulnerability in a2ps component.
+
+Patch source:
+http://www.openwall.com/lists/oss-security/2015/11/16/4
+
+--- a2ps-4.14/lib/output.c	Fri Dec 28 17:58:21 2007
++++ a2ps-4.14_copy/lib/output.c	Wed May 18 23:11:57 2016
+@@ -525,7 +525,7 @@
+ 		     expand_user_string (job, FIRST_FILE (job),
+ 					 (const uchar *) "Expand: requirement",
+ 					 (const uchar *) token));
+-	output (dest, expansion);
++	output (dest, "%s", expansion);
+ 	continue;
+       }
+ 
