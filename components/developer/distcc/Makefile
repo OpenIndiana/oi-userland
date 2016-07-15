@@ -53,7 +53,11 @@ COMPONENT_PREP_ACTION = \
 
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_POST_INSTALL_ACTION =	( cd $(PROTOUSRSHAREMAN1DIR) && for F in *.gz ; do [ -s "$$F" ] && gzip -cd < "$$F" > `basename "$$F" .gz` ; done )
+COMPONENT_POST_INSTALL_ACTION =	( \
+    cd $(PROTOUSRSHAREMAN1DIR) && \
+    for F in *.gz ; do \
+        [ -s "$$F" ] && gzip -cd < "$$F" > `basename "$$F" .gz` ; \
+    done )
 
 # Find the <config.h> as included by some sources - must be before GCC plugin dir
 CFLAGS += -I$(BUILD_DIR_$(BITS))/src
@@ -107,16 +111,21 @@ CONFIGURE_OPTIONS +=	--with-gtk
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)
+	$(GSED) -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
+	    < $(COMPONENT_DIR)/files/distcc-top.py \
+	    > $(PROTOUSRBINDIR)/distcc-top && $(CHMOD) +x $(PROTOUSRBINDIR)/distcc-top
 
 test:           $(NO_TESTS)
 
-# Auto-generated contents below.  Please manually verify and remove this comment
+# The python version required for distcc-top.py seems to be "any 2.x"
+# so we do not add one to REQUIRED_PACKAGES (a system with IPS will
+# likely have a suitable Python anyway) and so we just specify the
+# special one needed for distcc-pump.
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libgnome
 REQUIRED_PACKAGES += library/desktop/libgnomeui
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/popt
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

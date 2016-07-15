@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/env python
 # NOTE: For OI-Userland packaging, we specify a specific version of Python
 
 # http://code.activestate.com/recipes/577933-distcc-top/
