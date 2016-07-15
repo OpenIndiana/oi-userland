@@ -56,6 +56,8 @@ POD2MAN_PATH = /usr/perl5/$(PERL_VERSION)/bin
 
 COMPONENT_BUILD_ENV +=  PATH="$(PATH):$(POD2MAN_PATH)"
 
+COMPONENT_PRE_BUILD_ACTION = $(CP) $(COMPONENT_SRC)/docs/ocspd.3.pod $(@D)/docs
+
 REQUIRED_PACKAGES += library/security/ocsp/libpki
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
