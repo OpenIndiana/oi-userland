@@ -97,9 +97,8 @@ CFLAGS += -Wno-error=unused-but-set-variable
 CONFIGURE_OPTIONS +=	--with-auth
 
 # Support mDNS "zeroconf" peer discovery/announcement
-# NOTE: May require some source chizeling, skip in first recipe iterations
-#CONFIGURE_OPTIONS +=	--with-avahi
-CONFIGURE_OPTIONS +=	--without-avahi
+REQUIRED_PACKAGES +=	system/network/avahi
+CONFIGURE_OPTIONS +=	--with-avahi
 
 # GUIs for monitoring
 CONFIGURE_OPTIONS +=	--with-gnome
