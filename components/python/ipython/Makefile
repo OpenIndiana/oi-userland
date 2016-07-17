@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipython
 COMPONENT_VERSION=	5.0.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://ipython.org/
 COMPONENT_SUMMARY=	Enhanced interactive Python shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
