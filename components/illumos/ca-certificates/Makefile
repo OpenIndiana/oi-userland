@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
@@ -29,8 +29,8 @@ COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_23_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 
@@ -79,3 +79,9 @@ $(INSTALL_32):	$(BUILD_32)
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-grep
