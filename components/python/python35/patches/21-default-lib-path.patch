@@ -1,0 +1,41 @@
+This patch was developed in-house.  It has been submitted upstream:
+http://bugs.python.org/issue23287
+
+--- Python-3.5.0a4/Lib/ctypes/util.py.~1~	2015-04-20 00:37:51.000000000 -0700
++++ Python-3.5.0a4/Lib/ctypes/util.py	2015-04-20 14:14:06.541902625 -0700
+@@ -175,23 +175,11 @@
+ 
+     elif sys.platform == "sunos5":
+ 
+-        def _findLib_crle(name, is64):
+-            if not os.path.exists('/usr/bin/crle'):
+-                return None
+-
++        def _findLib_path(name, is64):
+             if is64:
+-                cmd = 'env LC_ALL=C /usr/bin/crle -64 2>/dev/null'
++                paths = "/lib/64:/usr/lib/64"
+             else:
+-                cmd = 'env LC_ALL=C /usr/bin/crle 2>/dev/null'
+-
+-            with contextlib.closing(os.popen(cmd)) as f:
+-                for line in f.readlines():
+-                    line = line.strip()
+-                    if line.startswith('Default Library Path (ELF):'):
+-                        paths = line.split()[4]
+-
+-            if not paths:
+-                return None
++                paths = "/lib:/usr/lib"
+ 
+             for dir in paths.split(":"):
+                 libfile = os.path.join(dir, "lib%s.so" % name)
+@@ -201,7 +189,7 @@
+             return None
+ 
+         def find_library(name, is64 = False):
+-            return _get_soname(_findLib_crle(name, is64) or _findLib_gcc(name))
++            return _get_soname(_findLib_path(name, is64) or _findLib_gcc(name))
+ 
+     else:
+ 
