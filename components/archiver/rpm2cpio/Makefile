@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 # The version of rpm2cpio.pl delivered in Userland does not seem to be
 # available in the form of a compressed source tarball, so it is
@@ -33,37 +33,41 @@ include ../../make-rules/shared-macros.mk
 #
 COMPONENT_NAME=		rpm2cpio
 COMPONENT_VERSION=	1.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	utility/rpm
 
 TPNO=			17824
 
-include ../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 # Do not clean the sources (set in prep.mk)
 #
 CLEAN_PATHS=
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CLEAN_PATHS+= $(BUILD_DIR)
+CLEAN_PATHS+= $(BUILD_DIR_32)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Common targets
 #
-build:
+
+$(BUILD_32):
 	# Just create the build directory, which is needed for publishing.
 	# There is nothing to actually build.
 	#
-	$(RM) -r $(BUILD_DIR) ; $(MKDIR) $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR_32) ; $(MKDIR) $(BUILD_DIR_32)
+	$(TOUCH) $@
 
-install:
+$(INSTALL_32):
 	@echo "Nothing to install."
+	$(TOUCH) $@
 
+build: $(BUILD_32)
+install: $(INSTALL_32)
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/perl-522
