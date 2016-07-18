@@ -1,0 +1,23 @@
+The Studio C compiler doesn't understand '-v' or '--version' options
+when doing:
+
+  $ mutt -v
+
+This problem has been fixed upstream. See:
+https://dev.mutt.org/trac/ticket/3852
+
+--- mutt-1.6.1/Makefile.in.orig	2016-07-08 06:23:52.142383932 -0700
++++ mutt-1.6.1/Makefile.in	2016-07-08 11:02:13.004791220 -0700
+@@ -1306,9 +1306,9 @@
+ 
+ conststrings.c: txt2c config.status
+ 	( \
+-		$(CC) -v || \
+-		$(CC) --version || \
+-		$(CC) -V || \
++		($(CC) -v >/dev/null 2>&1 && $(CC) -v) || \
++		($(CC) --version >/dev/null 2>&1 && $(CC) --version) || \
++		($(CC) -V >/dev/null 2>&1 && $(CC) -V) || \
+ 		echo "unknown compiler"; \
+ 	) 2>&1 | ${srcdir}/txt2c.sh cc_version >conststrings_c
+ 	echo "$(CFLAGS)" | ${srcdir}/txt2c.sh cc_cflags >>conststrings_c
