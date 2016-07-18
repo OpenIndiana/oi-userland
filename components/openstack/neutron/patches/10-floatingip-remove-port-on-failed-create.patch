@@ -1,0 +1,35 @@
+Patch to make call to plugin's delete_port() when floatingip creation fails
+after the plugin has created the port. These changes will eventually be
+proposed upstream.
+
+*** neutron-2015.1.2/neutron/db/l3_db.py	Tue Oct 13 10:35:16 2015
+--- new/neutron/db/l3_db.py	Wed Jul 13 23:51:38 2016
+***************
+*** 954,963 ****
+                  floating_ip_address=floating_ip_address,
+                  floating_port_id=external_port['id'])
+              fip['tenant_id'] = tenant_id
+!             # Update association with internal port
+!             # and define external IP address
+!             self._update_fip_assoc(context, fip,
+!                                    floatingip_db, external_port)
+              context.session.add(floatingip_db)
+  
+          return self._make_floatingip_dict(floatingip_db)
+--- 954,969 ----
+                  floating_ip_address=floating_ip_address,
+                  floating_port_id=external_port['id'])
+              fip['tenant_id'] = tenant_id
+!             try:
+!                 # Update association with internal port
+!                 # and define external IP address
+!                 self._update_fip_assoc(context, fip,
+!                                        floatingip_db, external_port)
+!             except:
+!                 with excutils.save_and_reraise_exception():
+!                     self._core_plugin.delete_port(context.elevated(),
+!                                                   external_port['id'],
+!                                                   l3_port_check=False)
+              context.session.add(floatingip_db)
+  
+          return self._make_floatingip_dict(floatingip_db)
