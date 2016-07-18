@@ -722,6 +722,8 @@ INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
+GAS =		/usr/gnu/bin/as
+STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 
 INS.dir=        $(INSTALL) -d $@
