@@ -1,15 +1,12 @@
-This patch was written in-house, but ported from Python 2.7; it is unclear
-from the version history why these lines were dropped in version 3.  The
-patch has not yet been submitted upstream, but submission is planned.
-
---- Python-3.4.2/Lib/test/test_gdb.py.~1~	2014-10-08 01:18:13.000000000 -0700
-+++ Python-3.4.2/Lib/test/test_gdb.py	2015-02-06 16:00:58.802170301 -0800
-@@ -34,6 +34,8 @@
- if gdb_major_version < 7:
-     raise unittest.SkipTest("gdb versions before 7.0 didn't support python embedding"
-                             " Saw:\n" + gdb_version.decode('ascii', 'replace'))
+--- Python-3.4.5/Lib/test/test_gdb.py.orig	2016-07-18 23:25:29.032391547 +0300
++++ Python-3.4.5/Lib/test/test_gdb.py	2016-07-18 23:25:35.780074223 +0300
+@@ -50,6 +50,9 @@
+                             % (gdb_major_version, gdb_minor_version,
+                                gdb_version))
+ 
 +if sys.platform.startswith("sunos"):
 +    raise unittest.SkipTest("test doesn't work very well on Solaris")
- 
++
  if not sysconfig.is_python_build():
      raise unittest.SkipTest("test_gdb only works on source builds at the moment.")
+ 
