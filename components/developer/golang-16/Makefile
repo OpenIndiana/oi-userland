@@ -28,19 +28,18 @@ include ../../../make-rules/shared-macros.mk
 
 PATCH_EACH_ARCHIVE= 1
 
-COMPONENT_NAME=				golang
-COMPONENT_VERSION=			1.6.2
+COMPONENT_NAME=			golang
+COMPONENT_VERSION=		1.6.3
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | gsed -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
-COMPONENT_FMRI=				developer/golang
-COMPONENT_CLASSIFICATION= 	Development/Other Languages
-COMPONENT_SUMMARY=			The Go Programming Language
-COMPONENT_SRC=				$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_FMRI=			developer/golang
+COMPONENT_CLASSIFICATION=	Development/Other Languages
+COMPONENT_SUMMARY=		The Go Programming Language
+COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
-COMPONENT_ARCHIVE=			go$(COMPONENT_VERSION).src.tar.gz
+COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	 \
-	sha256:787b0b750d037016a30c6ed05a8a70a91b2e9db4bd9b1a2453aa502a63f1bccc
-COMPONENT_LICENSE=			BSD-style, Patent Grant
+COMPONENT_ARCHIVE_HASH=		sha256:6326aeed5f86cf18f16d6dc831405614f855e2d416a91fd3fdc334f772345b00
+COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		$(COMPONENT_NAME).license
 
 # Go has a number of supplementary tools and packages that are located in
