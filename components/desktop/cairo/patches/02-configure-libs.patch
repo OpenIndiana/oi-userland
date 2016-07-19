@@ -19,7 +19,7 @@ builds.
      AC_DEFINE([CAIRO_CAN_TEST_PDF_SURFACE], 1, [Define to 1 if the PDF backend can be tested (need poppler and other dependencies for pdf2png)])
 +    # Ensure cairo is omitted so that no attempt is made to link to any
 +    # system-installed versions causing a multiple inclusion build failure.
-+    POPPLER_LIBS=$(echo "$POPPLER_LIBS" | $SED -e 's/-lcairo //')
++    POPPLER_LIBS=$(echo "$POPPLER_LIBS " | $SED -e 's/-lcairo //g')
    else
      AC_MSG_WARN([PDF backend will not be tested since poppler >= $POPPLER_VERSION_REQUIRED is not available])
    fi
@@ -29,7 +29,7 @@ builds.
      AC_DEFINE([CAIRO_CAN_TEST_SVG_SURFACE], 1, [Define to 1 if the SVG backend can be tested])
 +    # Ensure cairo is omitted so that no attempt is made to link to any
 +    # system-installed versions causing a multiple inclusion build failure.
-+    LIBRSVG_LIBS=$(echo "$LIBRSVG_LIBS" | $SED -e 's/-lcairo //')
++    LIBRSVG_LIBS=$(echo "$LIBRSVG_LIBS " | $SED -e 's/-lcairo //g')
    else
      AC_MSG_WARN([SVG backend will not be tested since librsvg >= $LIBRSVG_VERSION_REQUIRED is not available])
    fi
@@ -39,7 +39,7 @@ builds.
  AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
 +# Ensure cairo is omitted so that no attempt is made to link to any
 +# system-installed versions causing a multiple inclusion build failure.
-+gtk_LIBS=$(echo "$gtk_LIBS" | $SED -e 's/-lcairo //')
++gtk_LIBS=$(echo "$gtk_LIBS " | $SED -e 's/-lcairo //g')
  
  AC_CONFIG_FILES([
  Makefile
