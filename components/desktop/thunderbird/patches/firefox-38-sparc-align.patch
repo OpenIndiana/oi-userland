@@ -1,0 +1,69 @@
+Adds asm("ta 6") which suppresses bus error caused by misalignment.
+
+diff --git a/js/xpconnect/src/XPCShellImpl.cpp b/js/xpconnect/src/XPCShellImpl.cpp
+--- a/js/xpconnect/src/XPCShellImpl.cpp
++++ b/js/xpconnect/src/XPCShellImpl.cpp
+@@ -1320,16 +1320,22 @@ GetCurrentWorkingDirectory(nsAString& wo
+     return true;
+ }
+ 
+ static JSSecurityCallbacks shellSecurityCallbacks;
+ 
+ int
+ XRE_XPCShellMain(int argc, char** argv, char** envp)
+ {
++
++#if defined (__GNUC__) && (defined(__sparc) || defined(__sparc__))
++    // make unaligned memory access no crash
++    asm ( "ta 6" );
++#endif
++
+     JSRuntime* rt;
+     JSContext* cx;
+     int result = 0;
+     nsresult rv;
+ 
+     gErrFile = stderr;
+     gOutFile = stdout;
+     gInFile = stdin;
+diff --git a/memory/mozjemalloc/jemalloc.c b/memory/mozjemalloc/jemalloc.c
+--- a/memory/mozjemalloc/jemalloc.c
++++ b/memory/mozjemalloc/jemalloc.c
+@@ -5551,16 +5551,22 @@ malloc_init(void)
+ #endif
+ 
+ #if !defined(MOZ_MEMORY_WINDOWS)
+ static
+ #endif
+ bool
+ malloc_init_hard(void)
+ {
++
++#if defined (__GNUC__) && (defined(__sparc) || defined(__sparc__))
++    // make unaligned memory access no crash
++    asm ( "ta 6" );
++#endif
++
+ 	unsigned i;
+ 	char buf[PATH_MAX + 1];
+ 	const char *opts;
+ 	long result;
+ #ifndef MOZ_MEMORY_WINDOWS
+ 	int linklen;
+ #endif
+ #ifdef MOZ_MEMORY_DARWIN
+diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
+--- a/toolkit/xre/nsAppRunner.cpp
++++ b/toolkit/xre/nsAppRunner.cpp
+@@ -4255,6 +4255,11 @@
+ int
+ XREMain::XRE_main(int argc, char* argv[], const nsXREAppData* aAppData)
+ {
++#if defined (__GNUC__) && (defined(__sparc) || defined(__sparc__))
++    // make unaligned memory access no crash
++    asm ( "ta 6" );
++#endif
++
+   ScopedLogging log;
+ 
+ #if defined(MOZ_SANDBOX) && defined(XP_LINUX) && !defined(ANDROID)

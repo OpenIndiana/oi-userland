@@ -1,0 +1,16 @@
+REG_EIP is already defined elsewhere for Linux.
+Can potentially send upstream.
+
+diff --git a/js/src/asmjs/AsmJSSignalHandlers.cpp b/js/src/asmjs/AsmJSSignalHandlers.cpp
+--- a/js/src/asmjs/AsmJSSignalHandlers.cpp
++++ b/js/src/asmjs/AsmJSSignalHandlers.cpp
+@@ -116,6 +116,9 @@
+ # define R14_sig(p) ((p)->sc_r14)
+ # define R15_sig(p) ((p)->sc_r15)
+ #elif defined(__linux__) || defined(SOLARIS)
++# if defined(SOLARIS)
++#  define REG_EIP EIP
++# endif 
+ # if defined(__linux__)
+ #  define XMM_sig(p,i) ((p)->uc_mcontext.fpregs->_xmm[i])
+ #  define EIP_sig(p) ((p)->uc_mcontext.gregs[REG_EIP])

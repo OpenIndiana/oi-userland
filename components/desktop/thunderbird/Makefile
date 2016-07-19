@@ -26,62 +26,65 @@
 # parfait is a bit unhappy (22527218)
 export PARFAIT_BUILD=no
 
-COMPILER =	gcc
+BUILD_BITS = 32
+COMPILER = gcc
 
 include ../../../make-rules/shared-macros.mk
+GCC_ROOT = /usr/gcc/4.8
+
 
 COMPONENT_NAME=		thunderbird
-COMPONENT_VERSION=	38.5.0
+COMPONENT_VERSION=	45.1.0
 COMPONENT_PROJECT_URL=	http://www.mozilla.com/thunderbird
-COMPONENT_SRC=		comm-esr38
-COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME).source.tar.bz2
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7da187d4d5df17b1457bd93b584f78f5e41d2094f87c14e74ee9d8064de25d0d
-MOZILLA_FTP = 		http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+    sha256:8ae9ebe536895d69d99f412f2b3aba645b7dd839e520959330da13892d672309
+MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	tbird/mailer
 
-TPNO=			26829
+TPNO=			27834	
 
-LIGHTNING_VERSION=	lightning-4.0.5
+LIGHTNING_VERSION=	lightning-4.7.1
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
 # http://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/31.6.0/linux-i686/xpi/
 # https://ftp.mozilla.org/pub/calendar/lightning/candidates/4.0.5-candidates/build1/linux-i686/
 # We could download and unpack them individually, but instead I've created
-# a compressed tarball of them, and made that available locally for download.
+# a compressed tarball of them, and made them available from the internal
+# Userland mirror. So these need to be re-created by hand each time we rev.
 # Downloading them individually can be a problem because firefox/thunderbird 
 # collide due to different files with identical .xpi names. 
-COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC_NAME)-xpi.tar.gz
+COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:eeb85b3e5ef7a97abff831f3aa895c2034cb8f039bb3383dba3a5f495e1fe93f
+    sha256:04269456df31de93e5af4b3ee14faf108278e8a885330e3c5c3504ccfb3a6381
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 =		$(LIGHTNING_VERSION)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_2 = \
-    sha256:96f263984b1e939215a614dea21fda479eb4babf1574141728b9dbf273067893
+    sha256:5bab9f0f879bdae9a312c5612b089c932c0400db89346c9c38b5c41623410e75
 COMPONENT_ARCHIVE_URL_2 = 	$(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_2)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
 	fr gl he hu id is it ja ko lt nb-NO nl nn-NO pa-IN pl \
 	pt-BR pt-PT ro ru sk sl sq sv-SE tr uk zh-CN zh-TW
 
+# Do not use Firefox patches until Firefox is updated to 45.1.1. 
+
 # Firefox and Thunderbird share the same firefox*.patch patches. Copy these 
 # patches from the Firefox patches directory and the Thunderbird patches to a 
 # directory of all files (patches-all), except for Firefox patches 42 and 46, 
-# which don't get applied in Thunderbird.
-PATCH_DIR=patches-all
-CLEAN_PATHS += $(PATCH_DIR)
-COPY_COMMON_FILES_1:= $(shell mkdir -p $(PATCH_DIR))
-COPY_COMMON_FILES_2:=  \
-    $(shell /usr/bin/rsync -ac patches/* ../firefox/patches/* $(PATCH_DIR))
-COPY_COMMON_FILES_3:= \
-    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch $(PATCH_DIR)/firefox*46*.patch)
+# which don't get applied in Thunderbird. (libxul and dtrace patches)
+#PATCH_DIR=patches-all
+#CLEAN_PATHS += $(PATCH_DIR)
+#COPY_COMMON_FILES_1:= $(shell mkdir -p $(PATCH_DIR))
+#COPY_COMMON_FILES_2:=  \
+#    $(shell /usr/bin/rsync -ac patches/* ../firefox/patches/* $(PATCH_DIR))
+#COPY_COMMON_FILES_3:= \
+#    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch $(PATCH_DIR)/firefox*46*.patch)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Depends on libsmbclient but samba is on the do-not-publish list, so this
 # must be too.
@@ -90,8 +93,6 @@ BUILD_32=
 INSTALL_32=
 PUBLISH_STAMP=
 endif
-
-include $(WS_MAKE_RULES)/ips.mk
 
 # /usr/sbin needed for dtrace.
 PATH =         $(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
@@ -138,7 +139,7 @@ CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 # -L.../dist/bin needs to be set otherwise it will report missing libnss3.so, 
 # libssl3.so, etc, while linking.
-CONFIGURE_ENV +=	LDFLAGS="$(LD_Z_IGNORE) -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
+CONFIGURE_ENV +=	LDFLAGS="$(LD_Z_IGNORE) -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
 
 CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
 CONFIGURE_ENV +=	"CC=$(CC)"
@@ -164,19 +165,19 @@ COMPONENT_POST_BUILD_ACTION = \
 
 # Path to lightning extension directory
 LIGHTNING_EXT_DIR = \
-	$(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}
+	$(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}
 
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) -r $(BUILD_DIR_32)/dist/bin/distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103} \
+	$(CP) -r $(BUILD_DIR_32)/dist/bin/distribution/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103}/* \
 		$(LIGHTNING_EXT_DIR) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
         $(RM) -rf xpi ; \
-        /usr/bin/tar xvf $(COMPONENT_ARCHIVE_1) > /dev/null 2>&1 ; \
-	/usr/bin/tar xvf $(COMPONENT_ARCHIVE_2) > /dev/null 2>&1 ; \
+        $(TAR) xvf $(COMPONENT_ARCHIVE_1) > /dev/null 2>&1 ; \
+	$(TAR) xvf $(COMPONENT_ARCHIVE_2) > /dev/null 2>&1 ; \
         list1='$(LANG_LIST)' ; for f in $$list1 ; do \
             $(CP) xpi/$$f.xpi \
-                $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
+                $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
 	    unzip xpi-lightning/$(LIGHTNING_VERSION).$$f.linux-i686.xpi \
 		chrome/calendar-$$f/\* chrome/lightning-$$f/\* -d \
 		    $(LIGHTNING_EXT_DIR)/ ; \
@@ -201,17 +202,8 @@ COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/\(^TEST-PASS\).*/d" '
 
+# Do not use firefox patches until firefox is update to 45.1.1.
 $(SOURCE_DIR)/.patched-firefox-%: GPATCH_FLAGS += -d $(@D)/mozilla
-
-configure:	$(CONFIGURE_32)
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TEST_32)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
