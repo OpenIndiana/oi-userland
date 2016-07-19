@@ -1,0 +1,60 @@
+#
+# This patch contains changes to the card_eventmgr.1 and 
+# pkcs11_make_hash_link.1 man pages.  The changes are Solaris only, so they
+# will not be contributed back to upstream. 
+#
+--- pam_pkcs11-0.6.8_ORIG/doc/card_eventmgr.1	Sat Oct 23 11:36:37 2010
++++ pam_pkcs11-0.6.8_NEW/doc/card_eventmgr.1	Fri Jul  1 14:46:36 2016
+@@ -2,7 +2,7 @@
+ .SH NAME
+ card_eventmgr \- PCSC\-Lite Event Manager
+ .SH SYNTAX
+-.B card_eventmgr
++.B /usr/lib/pam_pkcs11/card_eventmgr
+ .RB [ debug ]
+ .RB [[ no ] daemon ]
+ .RB [ timeout=\fI<msecs>\fP ]
+@@ -32,7 +32,7 @@
+ .TP 
+ .BI config_file= "<configuration file>"
+ Sets de configuration file. Default value is
+-.IR /etc/pam_pkcs11/card_eventmgr.conf .
++.IR /etc/security/pam_pkcs11/card_eventmgr.conf .
+ .TP
+ .BI pidfile= <pidfile>
+ Store the
+@@ -49,7 +49,7 @@
+ to use
+ .BR kill .
+ .SH FILES
+-\fI/etc/pam_pkcs11/card_eventmgr.conf\fP 
++\fI/etc/security/pam_pkcs11/card_eventmgr.conf\fP 
+ .SH EXAMPLES
+ To run this program the standard way type:
+ .P
+@@ -81,5 +81,4 @@
+ Ludovic Rousseau <ludovic.rousseau@free.fr>
+ .SH "SEE ALSO"
+ .BR pam_pkcs11 (8),
+-.BR pkcs11_eventmgr (1),
+ README.eventmgr, PAM\-PKCS11 User Manual
+--- pam_pkcs11-0.6.8_ORIG/doc/pkcs11_make_hash_link.1	Sat Oct 23 11:36:37 2010
++++ pam_pkcs11-0.6.8_NEW/doc/pkcs11_make_hash_link.1	Fri Jul  1 16:23:13 2016
+@@ -4,7 +4,7 @@
+ pkcs11_make_hash_link \- SmartCard PKCS#11 create a CA certificate link
+ .SH "SYNTAX"
+ .LP 
+-pkcs11_make_hash_link
++/etc/security/pam_pkcs11/pkcs11_make_hash_link
+ .SH "DESCRIPTION"
+ .LP 
+ pkcs11_make_hash_link creates a symbolic hash-link for each CA certificate
+@@ -11,7 +11,7 @@
+ and each CRL in the given directory.
+ .SH "EXAMPLE"
+ .nf
+-$ cd /etc/pam_pkcs11/cacerts
++$ cd /etc/security/pam_pkcs11/cacerts
+ $ ls \-l
+ total 4
+ \-rw\-r\-\-r\-\- 1 root root 985 avr  4  2007 testCA\-cacert.der

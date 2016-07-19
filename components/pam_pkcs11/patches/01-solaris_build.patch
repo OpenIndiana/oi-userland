@@ -1,0 +1,28 @@
+#
+# This patch contains changes for Solaris build.   This is for Solaris only,
+# so we will not contribute back this change to the upstream community. 
+#
+--- pam_pkcs11-0.6.8_ORIG/configure.in	Sat Apr  7 10:09:19 2012
++++ pam_pkcs11-0.6.8_NEW/configure.in	Wed Jul 13 15:12:01 2016
+@@ -96,7 +96,7 @@
+   AC_CHECK_LIB( ldap, ldap_init,
+ 	[
+ 	with_ldap=yes
+-	LIBS="$LIBS -lldap"
++	LIBS="$LIBS -lldap_r"
+ 	],[
+ 	AC_MSG_WARN([Cannot find LDAP libraries. LDAP support disabled])
+ 	with_ldap=no
+--- pam_pkcs11-0.6.8_ORIG/src/pam_pkcs11/Makefile.am	Sat Oct 23 11:36:36 2010
++++ pam_pkcs11-0.6.8_NEW/src/pam_pkcs11/Makefile.am	Wed Jul 13 15:30:48 2016
+@@ -2,8 +2,8 @@
+ 
+ MAINTAINERCLEANFILES = Makefile.in
+ 
+-AM_CFLAGS = -Wall -fno-strict-aliasing $(CRYPTO_CFLAGS)
+-AM_CPPFLAGS = -Wall -fno-strict-aliasing $(CRYPTO_CFLAGS)
++AM_CFLAGS = -v -fno-strict-aliasing $(CRYPTO_CFLAGS)
++AM_CPPFLAGS = -v -fno-strict-aliasing $(CRYPTO_CFLAGS)
+ 
+ pamdir=$(libdir)/security
+ 

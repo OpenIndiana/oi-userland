@@ -37,9 +37,10 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2006/283
+set name=org.opensolaris.arc-caseid value=PSARC/2006/283 value=PSARC/2016/427
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir  path=etc/security/pam_pkcs11/cacerts
+file path=etc/security/pam_pkcs11/card_eventmgr.conf.example
 dir  path=etc/security/pam_pkcs11/crls
 # The other example files such as pam_d.login.example and
 # pam_pkcs11.conf.example, are intentionally omitted here either because the
@@ -47,11 +48,11 @@ dir  path=etc/security/pam_pkcs11/crls
 # configuration.
 file path=etc/security/pam_pkcs11/digest_mapping.example
 file path=etc/security/pam_pkcs11/mail_mapping.example
-file usr/lib/pam_pkcs11/make_hash_link.sh \
-    path=etc/security/pam_pkcs11/make_hash_link.sh mode=0555
 file pam_pkcs11.conf path=etc/security/pam_pkcs11/pam_pkcs11.conf mode=0644 \
     original_name=SUNWpampkcs11:etc/security/pam_pkcs11/pam_pkcs11.conf \
     preserve=renamenew
+file usr/lib/pam_pkcs11/pkcs11_make_hash_link \
+    path=etc/security/pam_pkcs11/pkcs11_make_hash_link mode=0555
 file path=etc/security/pam_pkcs11/subject_mapping.example
 file usr/lib/$(MACH64)/pam_pkcs11/ldap_mapper.so \
     path=usr/lib/pam_pkcs11/$(MACH64)/ldap_mapper.so
@@ -60,6 +61,8 @@ file usr/lib/$(MACH64)/pam_pkcs11/opensc_mapper.so \
 file usr/lib/$(MACH64)/pam_pkcs11/openssh_mapper.so \
     path=usr/lib/pam_pkcs11/$(MACH64)/openssh_mapper.so
 link path=usr/lib/pam_pkcs11/64 target=$(MACH64)
+file usr/lib/$(MACH64)/pam_pkcs11/card_eventmgr \
+    path=usr/lib/pam_pkcs11/card_eventmgr mode=0555
 file path=usr/lib/pam_pkcs11/ldap_mapper.so
 file path=usr/lib/pam_pkcs11/opensc_mapper.so
 file path=usr/lib/pam_pkcs11/openssh_mapper.so
@@ -70,9 +73,18 @@ file usr/lib/$(MACH64)/pam_pkcs11/pklogin_finder \
 file usr/lib/$(MACH64)/security/pam_pkcs11.so \
     path=usr/lib/security/$(MACH64)/pam_pkcs11.so
 file path=usr/lib/security/pam_pkcs11.so
+file doc/README.eventmgr path=usr/share/doc/pam_pkcs11/README.eventmgr
 file doc/mappers_api.html path=usr/share/doc/pam_pkcs11/mappers_api.html
 file doc/pam_pkcs11.html path=usr/share/doc/pam_pkcs11/pam_pkcs11.html
+file path=usr/share/locale/de/LC_MESSAGES/pam_pkcs11.mo
 file path=usr/share/locale/fr/LC_MESSAGES/pam_pkcs11.mo
-file files/pam_pkcs11.7 path=usr/share/man/man7/pam_pkcs11.7
+file path=usr/share/locale/nl/LC_MESSAGES/pam_pkcs11.mo
+file path=usr/share/locale/pl/LC_MESSAGES/pam_pkcs11.mo
+file path=usr/share/locale/pt_br/LC_MESSAGES/pam_pkcs11.mo
+file path=usr/share/locale/ru/LC_MESSAGES/pam_pkcs11.mo
+file path=usr/share/locale/tr/LC_MESSAGES/pam_pkcs11.mo
+file path=usr/share/man/man1/card_eventmgr.1
+file path=usr/share/man/man1/pkcs11_make_hash_link.1
+file files/pam_pkcs11.7 path=usr/share/man/man8/pam_pkcs11.7
 #
 license pam_pkcs11.license license=LGPLv2.1

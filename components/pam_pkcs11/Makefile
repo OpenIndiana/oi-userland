@@ -28,14 +28,14 @@ BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pam_pkcs11
-COMPONENT_VERSION=	0.6.0
-COMPONENT_PROJECT_URL=	http://www.opensc-project.org/
+COMPONENT_VERSION=	0.6.8
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/opensc/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:170db26eb9610dde5d3307771ed0e0e14cc0778aaacd3b3d4e71240ccb61cec6
+    sha256:9d942e542ef35d0e1f990d9ff5bf9df0af84c828ed081add2eb1b4d84f0efbda
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/pam-pkcs11
 
-TPNO=			17173
+TPNO=			28155
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -53,15 +53,21 @@ CONFIGURE_BINDIR.32= $(USRLIB.32)/pam_pkcs11
 CONFIGURE_BINDIR.64= $(USRLIB.64)/pam_pkcs11
 CPPFLAGS += -I$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)/security
-CONFIGURE_OPTIONS += --with-pcsclite=no
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --with-confdir=/etc/security/pam_pkcs11
+CONFIGURE_OPTIONS += --docdir=/etc/security/pam_pkcs11
 CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
+CONFIGURE_OPTIONS += PCSC_CFLAGS="-I /usr/include/PCSC"
+CONFIGURE_OPTIONS.32 += --with-pcsclite=no
+CONFIGURE_OPTIONS.64 += --with-pcsclite=yes
+
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/pcsc/pcsclite
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/network/ldap/openldap 
