@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
 COMPONENT_VERSION=	1.14.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,7 +28,7 @@ COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARC
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -43,7 +44,6 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-gtk=2.0
-CONFIGURE_OPTIONS+= --with-default-wm
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/themes/3.20/$(COMPON
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
+COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

@@ -9,65 +9,71 @@
 #
 
 #
-# Copyright 2016 Till Wegmueller
-# Copyright 2016 Ken Mays
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		caja
-COMPONENT_VERSION=	1.14.1
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
-COMPONENT_SUMMARY=	File manager for the MATE desktop
+COMPONENT_NAME=		pluma
+COMPONENT_VERSION=	1.14.0
+COMPONENT_PROJECT_URL=	http://mate-desktop.org/
+COMPONENT_SUMMARY=	MATE text editor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2e7445a8ba77ff9fa7748645bdbe3b54d158db807fa40db25425d47101dd0dc2
+    sha256:9e6f33bb335439f6684ea71e52fb5da3991431c6f6a2081d90049fd541d9f662
 COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Accessories
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_FMRI=         editor/pluma
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+LDFLAGS += -lnsl -lsocket
+
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					libtoolize --copy --force &&\
+					glib-gettextize -f &&\
+					intltoolize --force --copy &&\
+					aclocal -I m4 &&\
+					automake -c -f -a &&\
+					autoconf )
+
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
 
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
+CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += image/library/libexif
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtksourceview
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/spell-checking/enchant
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxrender
