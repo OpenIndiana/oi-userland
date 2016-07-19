@@ -26,11 +26,11 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rrdtool
-COMPONENT_VERSION=      1.4.9
-COMPONENT_ARCHIVE_HASH= sha256:3e2826e0d60aaf85313da35b3c0d3a926748fe482b4ada766a325a83b60125cc
+COMPONENT_VERSION=      1.6.0
+COMPONENT_ARCHIVE_HASH= sha256:cd948e89cd2d8825fab4a6fb0323f810948d934af7d92c9ee8b5e9e1350e52d7
 COMPONENT_ARCHIVE_URL=  http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://oss.oetiker.ch/rrdtool/
-TPNO=                   21430 
+TPNO=                   29102 
 
 PYTHON_VERSION=         2.7
 PYTHON_VERSIONS=        2.7

@@ -1,20 +1,18 @@
 # PERL and LUA setup for generating 64-bit binaries
-# The first three changes are Solaris-specific,
-# The last two changes are copied from Desktop consolidation,
-# not for upstream
+# Not for upstream, Solaris-specific
 
---- rrdtool-1.4.9/configure.ac 	Wed Apr 15 15:32:19 2015
-+++ rrdtool-1.4.9/configure.ac 	Wed Apr 15 16:32:20 2015
-@@ -555,8 +555,6 @@ PERL_VERSION
- CONFIGURE_PART(Prep for Building Language Bindings)
-   
+--- rrdtool-1.6.0/configure.ac  2016-05-19 16:38:31.633135607 -0700
++++ rrdtool-1.6.0/configure.ac  2016-05-20 12:59:35.178966221 -0700
+@@ -614,8 +614,6 @@
+ AM_CONDITIONAL(ENABLE_RPATH,[test "x$enable_rpath" = "xyes"])
+ 
  dnl Check for Perl and friends
 -PATH=$PATH:/usr/perl5/bin
 -export PATH
  AC_PATH_PROG(PERL, perl, no)
  AC_PATH_PROG(POD2MAN, pod2man, no)
  AC_PATH_PROG(POD2HTML, pod2html, no)
-@@ -607,7 +605,7 @@ PERL_SETUP
+@@ -666,7 +664,7 @@
  test "$langpref" = '$(DESTDIR)NONE' && langpref='$(DESTDIR)'$ac_default_prefix
  test "$langpref" = "NONE" && langpref=$ac_default_prefix
  
@@ -23,57 +21,39 @@
  
  dnl pass additional perl options when generating Makefile from Makefile.PL
  AC_ARG_ENABLE(perl-site-install,
-@@ -629,6 +627,22 @@ PERL_SETUP
+@@ -688,6 +686,22 @@
     if test ! -z "$PERLLDFLAGS"; then
         PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS LDFLAGS=$PERLLDFLAGS"
     fi
 +
 +   if test ! -z "$PERLLIB"; then
-+	PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS LIB=$PERLLIB"
++       PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS LIB=$PERLLIB"
 +   fi
 +
 +   if test ! -z "$PERLINSTALLMAN3DIR"; then
-+	PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLMAN3DIR=$PERLINSTALLMAN3DIR"
++        PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLMAN3DIR=$PERLINSTALLMAN3DIR"
 +   fi
 +
 +   if test ! -z "$PERLINSTALLSITEMAN3DIR"; then
-+	PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLSITEMAN3DIR=$PERLINSTALLSITEMAN3DIR"
++        PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLSITEMAN3DIR=$PERLINSTALLSITEMAN3DIR"
 +   fi
 +
 +   if test ! -z "$PERLINSTALLVENDORMAN3DIR"; then
-+	PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLVENDORMAN3DIR=$PERLINSTALLVENDORMAN3DIR"
++        PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS INSTALLVENDORMAN3DIR=$PERLINSTALLVENDORMAN3DIR"
 +   fi
  fi
-         
+ 
  AC_ARG_WITH(perl-options,
-@@ -736,8 +750,15 @@ LUA_EOF
-       LIBS=
-       lua_havelib=no
-       LUA_HAVE_COMPAT51=DONT_HAVE_COMPAT51
--      AC_SEARCH_LIBS(lua_call, lua$lua_vdot lua$lua_vndot lua,
--        [AC_SEARCH_LIBS(luaL_register, lua$lua_vdot lua$lua_vndot lua,
-+         if test "$lua_vndot" = "52"; then
-+        CALL_FUNC=lua_callk
-+        REG_FUNC=luaL_setfuncs
-+      else
-+        CALL_FUNC=lua_call
-+        REG_FUNC=lua_register
-+      fi
-+      AC_SEARCH_LIBS($CALL_FUNC, lua$lua_vdot lua$lua_vndot lua,
-+        [AC_SEARCH_LIBS($REG_FUNC, lua$lua_vdot lua$lua_vndot lua,
-           [lua_havelib=LUA$lua_vndot],
-           [AC_SEARCH_LIBS(luaL_module, lualib$lua_vndot lualib$lua_vdot lualib,
-             [lua_havelib=$lua_vndot; $LUA -l compat-5.1 2>/dev/null;
-@@ -774,7 +795,12 @@ LUA_SETUP
+@@ -833,7 +847,12 @@
            done
          fi
  
--        LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot"
-+	if test ! -z "$LUARRDLIBDIR"; then
-+         LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot/$LUARRDLIBDIR"
-+	else
-+	  LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot"
-+	fi
+-        LUA_RRD_LIBDIR="$libdir/lua/$lua_vdot"
++	 if test ! -z "$LUARRDLIBDIR"; then
++          LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot/$LUARRDLIBDIR"
++        else
++          LUA_RRD_LIBDIR="$langpref/lib/lua/$lua_vdot"
++        fi
 +
          # if lua 5.0 can't find compat-5.1, force installation of
          # compat-5.1.lua together with RRDtool.
