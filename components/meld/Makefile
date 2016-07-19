@@ -26,27 +26,29 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_VERSION=	1.8.6
-COMPONENT_PROJECT_URL=	http://meld.sourceforge.net/
+COMPONENT_VERSION=	3.16.1
+COMPONENT_PROJECT_URL=	http://meldmerge.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:af96682b8f4bf3ad4221c853b1516218d62a17ff43c38f4a83e7e8ac6736e8a5
+    sha256:1bec697aa1ababa315ca8241ade65dc68ea87f0d316632f590975afcf967cfab
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.8/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.16/$(COMPONENT_ARCHIVE)
 
-TPNO=			21932
+TPNO=			30088
 
-BUILD_STYLE= justmake
+# We just need to build one version.
+PYTHON_VERSIONS =       2.7
+
+BUILD_STYLE= setup.py
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Needed to find the GNU version of install.
+# Needed to find GNU xgettext.
 PATH =			$(GNUBIN):$(USRBINDIR)
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
-# Meld has no configure however it honors DESTDIR which is necessary so
-# we don't try to install into /usr but rather our proto areas usr
-COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
+PYTHON_DATA =		/usr
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
