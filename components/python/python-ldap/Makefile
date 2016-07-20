@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ldap
-COMPONENT_VERSION=	2.4.10
+COMPONENT_VERSION=	2.4.25
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:67cc7801bf24c29386ab99966ceb68d6a60fa9e0566cc95a4fbb2c4695a8ce54
+    sha256:62d00dbc86f3f9b21beacd9b826e8f9895f900637a60a6d4e7ab59a1cdc64e56
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.python-ldap.org/
 COMPONENT_BUGDB=	python-mod/python-ldap
 
-TPNO=			14503
+TPNO=			29571
 
 # This module has syntax issues and thus is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

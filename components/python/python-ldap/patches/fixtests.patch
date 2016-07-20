@@ -15,19 +15,41 @@ Commentary from Doug:
   The answer being yes.  And the constants are not defined in the latest
   version of python-ldap. 
 
---- python-ldap-2.4.10/Tests/runtests.sh.orig	2013-08-27 06:55:02.811070599 -0700
-+++ python-ldap-2.4.10/Tests/runtests.sh	2013-08-29 14:08:44.244509377 -0700
-@@ -13,7 +13,7 @@
- failed=
- for test in t_*.py;  do
-     echo "$test:"
--    PYTHONPATH="../build/lib.$plat_specifier" $PYTHON "$test" "$@" || 
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- /dev/null	Mon May 23 12:50:16 2016
++++ new/Tests/runtests.sh	Mon May 23 12:50:16 2016
+@@ -0,0 +1,26 @@
++#!/bin/sh
++#
++# This script runs all the t_*.py tests in the current directory,
++# preparing PYTHONPATH to use the most recent local build
++#
++# Run with -v option for verbose
++#
++
++set -e
++: ${PYTHON:="python"}
++plat_specifier=`$PYTHON -c 'import sys,distutils.util; \
++        print(distutils.util.get_platform()+"-"+sys.version[0:3])'`
++failed=
++for test in t_*.py;  do
++    echo "$test:"
 +    PYTHONPATH="$PYTHONPATH" $PYTHON "$test" "$@" || 
-         failed="$failed $test"
- done
++        failed="$failed $test"
++done
++
++if test -n "$failed"; then
++   echo "Tests that failed:$failed" >&2
++   exit 1
++else
++   echo "All tests passed. Yay."
++   exit 0
++fi
  
---- python-ldap-2.4.10/Tests/slapd.py.orig	2013-08-27 06:55:17.348745615 -0700
-+++ python-ldap-2.4.10/Tests/slapd.py	2013-08-30 15:45:41.532814947 -0700
+--- python-ldap-2.4.25/Tests/slapd.py.orig	Fri May  6 13:26:21 2016
++++ python-ldap-2.4.25/Tests/slapd.py	Fri May  6 13:31:14 2016
 @@ -4,7 +4,7 @@
  and talking to it with ldapsearch/ldapadd.
  """
@@ -72,8 +94,8 @@ Commentary from Doug:
                  "-x",
                  "-D", self.get_root_dn(),
                  "-w", self.get_root_password(),
---- python-ldap-2.4.10/Tests/t_cext.py.orig	2013-08-27 06:55:30.369505885 -0700
-+++ python-ldap-2.4.10/Tests/t_cext.py	2013-09-04 10:39:22.688268552 -0700
+--- python-ldap-2.4.25/Tests/t_cext.py.orig	Fri May  6 13:26:21 2016
++++ python-ldap-2.4.25/Tests/t_cext.py	Fri May  6 13:31:14 2016
 @@ -1,6 +1,6 @@
  
  import unittest, slapd
