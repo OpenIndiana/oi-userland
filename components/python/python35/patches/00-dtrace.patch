@@ -1011,17 +1011,17 @@ new file mode 100755
 +if __name__ == '__main__':
 +    test_main()
 +
---- Python-3.5.0a4/Lib/test/test_sys.py.~1~	2015-04-20 00:37:52.000000000 -0700
-+++ Python-3.5.0a4/Lib/test/test_sys.py	2015-04-20 12:38:22.235939749 -0700
-@@ -868,6 +868,7 @@
+--- Python-3.5.2/Lib/test/test_sys.py.~1~	2016-06-25 14:38:37.000000000 -0700
++++ Python-3.5.2/Lib/test/test_sys.py	2016-07-07 15:09:04.689495337 -0700
+@@ -882,6 +882,7 @@
          self.assertEqual(sys.getsizeof(True, -1), size('') + self.longdigit)
  
      def test_objecttypes(self):
 +        import dtrace
          # check all types defined in Objects/
+         calcsize = struct.calcsize
          size = test.support.calcobjsize
-         vsize = test.support.calcvobjsize
-@@ -896,13 +897,17 @@
+@@ -911,13 +912,17 @@
              return inner
          check(get_cell().__closure__[0], size('P'))
          # code
@@ -1042,8 +1042,8 @@ new file mode 100755
          # complex
          check(complex(0,1), size('2d'))
          # method_descriptor (descriptor object)
---- Python-3.5.1rc1/Makefile.pre.in.~1~	2015-11-22 22:19:07.000000000 -0800
-+++ Python-3.5.1rc1/Makefile.pre.in	2015-12-04 07:32:55.999196503 -0800
+--- Python-3.5.2/Makefile.pre.in.~1~	2016-06-25 14:38:37.000000000 -0700
++++ Python-3.5.2/Makefile.pre.in	2016-07-07 15:10:50.572816003 -0700
 @@ -57,6 +57,13 @@
  # Use this to make a link between python$(VERSION) and python in $(BINDIR)
  LN=		@LN@
@@ -1058,7 +1058,7 @@ new file mode 100755
  # Portable install script (configure doesn't always guess right)
  INSTALL=	@INSTALL@
  INSTALL_PROGRAM=@INSTALL_PROGRAM@
-@@ -611,7 +618,7 @@
+@@ -618,7 +625,7 @@
  	$(AR) $(ARFLAGS) $@ $(MODOBJS)
  	$(RANLIB) $@
  
@@ -1067,7 +1067,7 @@ new file mode 100755
  	if test $(INSTSONAME) != $(LDLIBRARY); then \
  		$(BLDSHARED) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
  		$(LN) -f $(INSTSONAME) $@; \
-@@ -622,9 +629,8 @@
+@@ -629,9 +636,8 @@
  libpython3.so:	libpython$(LDVERSION).so
  	$(BLDSHARED) $(NO_AS_NEEDED) -o $@ -Wl,-h$@ $^
  
@@ -1079,7 +1079,7 @@ new file mode 100755
  
  libpython$(VERSION).sl: $(LIBRARY_OBJS)
  	$(LDSHARED) -o $@ $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST)
-@@ -729,12 +735,18 @@
+@@ -740,12 +746,18 @@
  		$(MODULE_OBJS) \
  		$(SIGNAL_OBJS) \
  		$(MODOBJS) \
@@ -1098,7 +1098,7 @@ new file mode 100755
  
  Modules/getpath.o: $(srcdir)/Modules/getpath.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) -DPYTHONPATH='"$(PYTHONPATH)"' \
-@@ -868,6 +880,46 @@
+@@ -890,6 +902,46 @@
  Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
  	$(PYTHON) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h > Objects/typeslots.inc
  
@@ -1145,7 +1145,7 @@ new file mode 100755
  ############################################################################
  # Header files
  
-@@ -1582,6 +1634,11 @@
+@@ -1608,6 +1660,11 @@
  	find build -name '*.py[co]' -exec rm -f {} ';' || true
  	-rm -f pybuilddir.txt
  	-rm -f Lib/lib2to3/*Grammar*.pickle
@@ -1157,7 +1157,7 @@ new file mode 100755
  	-rm -f Programs/_testembed Programs/_freeze_importlib
  	-rm -rf build
  
-@@ -1615,6 +1672,11 @@
+@@ -1642,6 +1699,11 @@
  				     -o -name '*.orig' -o -name '*.rej' \
  				     -o -name '*.bak' ')' \
  				     -exec rm -f {} ';'
@@ -1339,7 +1339,7 @@ new file mode 100755
  
 --- Python-3.5.0rc2/Objects/frameobject.c.~1~	2015-08-25 10:19:14.000000000 -0700
 +++ Python-3.5.0rc2/Objects/frameobject.c	2015-09-02 11:31:53.362348226 -0700
-@@ -737,6 +737,15 @@
+@@ -735,6 +735,15 @@
      f->f_executing = 0;
      f->f_gen = NULL;
  
@@ -1355,8 +1355,8 @@ new file mode 100755
      _PyObject_GC_TRACK(f);
      return f;
  }
---- Python-3.5.0a4/Objects/typeobject.c.~1~	2015-04-20 00:37:53.000000000 -0700
-+++ Python-3.5.0a4/Objects/typeobject.c	2015-04-20 12:55:28.246913689 -0700
+--- Python-3.5.2/Objects/typeobject.c.~1~	2016-06-25 14:38:38.000000000 -0700
++++ Python-3.5.2/Objects/typeobject.c	2016-07-07 15:17:01.001120208 -0700
 @@ -4,6 +4,10 @@
  #include "frameobject.h"
  #include "structmember.h"
@@ -1368,7 +1368,7 @@ new file mode 100755
  #include <ctype.h>
  
  
-@@ -934,8 +938,29 @@
+@@ -916,8 +920,29 @@
  PyType_GenericAlloc(PyTypeObject *type, Py_ssize_t nitems)
  {
      PyObject *obj;
@@ -1399,7 +1399,7 @@ new file mode 100755
  
      if (PyType_IS_GC(type))
          obj = _PyObject_GC_Malloc(size);
-@@ -957,6 +982,23 @@
+@@ -939,6 +964,23 @@
  
      if (PyType_IS_GC(type))
          _PyObject_GC_TRACK(obj);
@@ -1423,7 +1423,7 @@ new file mode 100755
      return obj;
  }
  
-@@ -1077,9 +1119,56 @@
+@@ -1059,9 +1101,56 @@
      return 0;
  }
  
@@ -1480,8 +1480,8 @@ new file mode 100755
      PyTypeObject *type, *base;
      destructor basedealloc;
      PyThreadState *tstate = PyThreadState_GET();
---- Python-3.5.0rc2/Python/ceval.c.~1~	2015-08-25 10:19:14.000000000 -0700
-+++ Python-3.5.0rc2/Python/ceval.c	2015-09-02 11:33:12.745496843 -0700
+--- Python-3.5.2/Python/ceval.c.~1~	2016-06-25 14:38:38.000000000 -0700
++++ Python-3.5.2/Python/ceval.c	2016-07-08 06:34:15.786356054 -0700
 @@ -20,6 +20,13 @@
  
  #include <ctype.h>
@@ -1619,7 +1619,7 @@ new file mode 100755
          switch (opcode) {
  
          /* BEWARE!
-@@ -3573,6 +3648,10 @@
+@@ -3625,6 +3700,10 @@
  
      /* pop frame */
  exit_eval_frame:
@@ -1630,7 +1630,7 @@ new file mode 100755
      Py_LeaveRecursiveCall();
      f->f_executing = 0;
      tstate->frame = f->f_back;
-@@ -4323,6 +4402,57 @@
+@@ -4375,6 +4454,57 @@
      return result;
  }
  
@@ -1688,7 +1688,7 @@ new file mode 100755
  PyObject *
  _PyEval_CallTracing(PyObject *func, PyObject *args)
  {
-@@ -4340,6 +4470,51 @@
+@@ -4392,6 +4522,51 @@
      return result;
  }
  
@@ -1740,8 +1740,8 @@ new file mode 100755
  /* See Objects/lnotab_notes.txt for a description of how tracing works. */
  static int
  maybe_call_line_trace(Py_tracefunc func, PyObject *obj,
---- Python-3.5.0a4/configure.~1~	2015-04-20 00:37:53.000000000 -0700
-+++ Python-3.5.0a4/configure	2015-04-20 12:58:28.386851213 -0700
+--- Python-3.5.2/configure.~1~	2016-06-25 14:38:39.000000000 -0700
++++ Python-3.5.2/configure	2016-07-08 06:36:50.661156099 -0700
 @@ -642,6 +642,11 @@
  MACHDEP_OBJS
  DYNLOADFILE
@@ -1754,7 +1754,7 @@ new file mode 100755
  THREADOBJ
  LDLAST
  USE_THREAD_MODULE
-@@ -824,6 +829,7 @@
+@@ -828,6 +833,7 @@
  with_tsc
  with_pymalloc
  with_valgrind
@@ -1762,7 +1762,7 @@ new file mode 100755
  with_fpectl
  with_libm
  with_libc
-@@ -1512,6 +1518,7 @@
+@@ -1519,6 +1525,7 @@
    --with(out)-tsc         enable/disable timestamp counter profile
    --with(out)-pymalloc    disable/enable specialized mallocs
    --with-valgrind         Enable Valgrind support
@@ -1770,7 +1770,7 @@ new file mode 100755
    --with-fpectl           enable SIGFPE catching
    --with-libm=STRING      math library
    --with-libc=STRING      C library
-@@ -10866,6 +10873,174 @@
+@@ -11074,6 +11081,174 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -1945,9 +1945,9 @@ new file mode 100755
  # -I${DLINCLDIR} is added to the compile rule for importdl.o
  
  DLINCLDIR=.
---- Python-3.5.0a4/configure.ac.~1~	2015-04-20 00:37:53.000000000 -0700
-+++ Python-3.5.0a4/configure.ac	2015-04-20 12:59:58.383305870 -0700
-@@ -3129,6 +3129,62 @@
+--- Python-3.5.2/configure.ac.~1~	2016-06-25 14:38:39.000000000 -0700
++++ Python-3.5.2/configure.ac	2016-07-08 06:38:36.346837325 -0700
+@@ -3211,6 +3211,62 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -2010,9 +2010,9 @@ new file mode 100755
  # -I${DLINCLDIR} is added to the compile rule for importdl.o
  AC_SUBST(DLINCLDIR)
  DLINCLDIR=.
---- Python-3.5.0a4/pyconfig.h.in.~1~	2015-04-20 00:37:53.000000000 -0700
-+++ Python-3.5.0a4/pyconfig.h.in	2015-04-20 13:00:52.054987861 -0700
-@@ -1358,6 +1358,9 @@
+--- Python-3.5.2/pyconfig.h.in.~1~	2016-06-25 14:38:39.000000000 -0700
++++ Python-3.5.2/pyconfig.h.in	2016-07-08 06:40:11.272340748 -0700
+@@ -1360,6 +1360,9 @@
  /* Define if you want documentation strings in extension modules */
  #undef WITH_DOC_STRINGS
  
@@ -2022,9 +2022,9 @@ new file mode 100755
  /* Define if you want to use the new-style (Openstep, Rhapsody, MacOS) dynamic
     linker (dyld) instead of the old-style (NextStep) dynamic linker (rld).
     Dyld is necessary to support frameworks. */
---- Python-3.5.0a4/setup.py.~1~	2015-04-20 00:37:53.000000000 -0700
-+++ Python-3.5.0a4/setup.py	2015-04-20 13:01:49.596181289 -0700
-@@ -663,6 +663,9 @@
+--- Python-3.5.2/setup.py.~1~	2016-06-25 14:38:39.000000000 -0700
++++ Python-3.5.2/setup.py	2016-07-08 06:41:09.939900823 -0700
+@@ -690,6 +690,9 @@
          # syslog daemon interface
          exts.append( Extension('syslog', ['syslogmodule.c']) )
  

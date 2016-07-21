@@ -4,22 +4,22 @@ is a workaround for build peculiarities and to meet Studio's requirement
 that the profiling options be used at all steps of the build -- not just
 compilation.  As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-3.5.1rc1/Makefile.pre.in.~2~	2015-12-04 07:50:01.643727127 -0800
-+++ Python-3.5.1rc1/Makefile.pre.in	2015-12-04 07:52:18.287953768 -0800
-@@ -238,7 +238,7 @@
- TCLTK_LIBS=	@TCLTK_LIBS@
- 
- # The task to run while instrument when building the profile-opt target
--PROFILE_TASK=-m test.regrtest --pgo
+--- Python-3.5.2/Makefile.pre.in.~2~	2016-07-08 06:44:25.728534993 -0700
++++ Python-3.5.2/Makefile.pre.in	2016-07-08 06:53:21.459625807 -0700
+@@ -241,7 +241,7 @@
+ # The task to run while instrumented when building the profile-opt target.
+ # We exclude unittests with -x that take a rediculious amount of time to
+ # run in the instrumented training build or do not provide much value.
+-PROFILE_TASK=-m test.regrtest --pgo -x test_asyncore test_gdb test_multiprocessing_fork test_multiprocessing_forkserver test_multiprocessing_main_handling test_multiprocessing_spawn test_subprocess
 +PROFILE_TASK=	$(srcdir)/Tools/pybench/pybench.py -n 2 --with-gc --with-syscheck
  
  # report files for gcov / lcov coverage report
  COVERAGE_INFO=	$(abs_builddir)/coverage.info
-@@ -509,24 +509,33 @@
+@@ -512,24 +512,33 @@
  	$(MAKE) profile-removal
  
  build_all_generate_profile:
--	$(MAKE) all CFLAGS_NODIST="$(CFLAGS) $(PGO_PROF_GEN_FLAG)" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG)" LIBS="$(LIBS)"
+-	$(MAKE) all CFLAGS_NODIST="$(CFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LIBS="$(LIBS)"
 +	$(MAKE) all CC="$(CC) -xprofile=collect:$(XPROFILE_DIR)" \
 +	    CFLAGS_NODIST="$(CFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
 +	    LDFLAGS="$(LDFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
@@ -34,7 +34,7 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  	$(LLVM_PROF_MERGER)
  
  build_all_use_profile:
--	$(MAKE) all CFLAGS_NODIST="$(CFLAGS) $(PGO_PROF_USE_FLAG)"
+-	$(MAKE) all CFLAGS_NODIST="$(CFLAGS) $(PGO_PROF_USE_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) @LTOFLAGS@"
 +	$(MAKE) all CC="$(CC) -xprofile=use:$(XPROFILE_DIR)" \
 +	    CFLAGS_NODIST="$(CFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
 +	    LDFLAGS="$(LDFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
@@ -53,10 +53,10 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  
  coverage-lcov:
  	@echo "Creating Coverage HTML report with LCOV:"
-@@ -598,13 +607,9 @@
+@@ -605,13 +614,9 @@
  # -s, --silent or --quiet is always the first char.
  # Under BSD make, MAKEFLAGS might be " -s -v x=y".
- sharedmods: $(BUILDPYTHON) pybuilddir.txt
+ sharedmods: $(BUILDPYTHON) pybuilddir.txt Modules/_math.o
 -	@case "$$MAKEFLAGS" in \
 -	    *\ -s*|s*) quiet="-q";; \
 -	    *) quiet="";; \
@@ -68,12 +68,13 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  
  # Build static library
  # avoid long command lines, same as LIBRARY_OBJS
-@@ -1643,8 +1648,7 @@
+@@ -1669,9 +1674,7 @@
  	-rm -rf build
  
  profile-removal:
 -	find . -name '*.gc??' -exec rm -f {} ';'
 -	find . -name '*.profclang?' -exec rm -f {} ';'
+-	find . -name '*.dyn' -exec rm -f {} ';'
 +	find . -name '*profile' -exec rm -f {} ';'
  	rm -f $(COVERAGE_INFO)
  	rm -rf $(COVERAGE_REPORT)

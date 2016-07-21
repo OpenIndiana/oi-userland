@@ -1,9 +1,9 @@
 This patch was developed in-house.  It has been submitted upstream:
 http://bugs.python.org/issue23287
 
---- Python-3.5.0a4/Lib/ctypes/util.py.~1~	2015-04-20 00:37:51.000000000 -0700
-+++ Python-3.5.0a4/Lib/ctypes/util.py	2015-04-20 14:14:06.541902625 -0700
-@@ -175,23 +175,11 @@
+--- Python-3.5.2/Lib/ctypes/util.py.~1~	2016-06-25 14:38:35.000000000 -0700
++++ Python-3.5.2/Lib/ctypes/util.py	2016-07-08 07:06:45.026306406 -0700
+@@ -175,24 +175,11 @@
  
      elif sys.platform == "sunos5":
  
@@ -18,6 +18,7 @@ http://bugs.python.org/issue23287
              else:
 -                cmd = 'env LC_ALL=C /usr/bin/crle 2>/dev/null'
 -
+-            paths = None
 -            with contextlib.closing(os.popen(cmd)) as f:
 -                for line in f.readlines():
 -                    line = line.strip()
@@ -30,7 +31,7 @@ http://bugs.python.org/issue23287
  
              for dir in paths.split(":"):
                  libfile = os.path.join(dir, "lib%s.so" % name)
-@@ -201,7 +189,7 @@
+@@ -202,7 +189,7 @@
              return None
  
          def find_library(name, is64 = False):
