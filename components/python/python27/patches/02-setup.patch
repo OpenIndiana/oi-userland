@@ -1,8 +1,8 @@
 This patch modifies the setup script to support Solaris.
 As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.9/setup.py.~1~	2014-12-10 08:00:01.000000000 -0800
-+++ Python-2.7.9/setup.py	2015-02-09 18:26:09.100336009 -0800
+--- Python-2.7.12/setup.py.~1~	2016-06-25 14:49:32.000000000 -0700
++++ Python-2.7.12/setup.py	2016-07-07 13:41:05.283500122 -0700
 @@ -6,6 +6,7 @@
  import sys, os, imp, re, optparse
  from glob import glob
@@ -11,7 +11,7 @@ As it is Solaris-specific, it is not suitable for upstream.
  import sysconfig
  
  from distutils import log
-@@ -438,10 +439,13 @@
+@@ -454,10 +455,13 @@
              os.unlink(tmpfile)
  
      def detect_modules(self):
@@ -28,7 +28,7 @@ As it is Solaris-specific, it is not suitable for upstream.
          if cross_compiling:
              self.add_gcc_paths()
          self.add_multiarch_paths()
-@@ -765,6 +769,13 @@
+@@ -785,6 +789,13 @@
                                                       ['/usr/lib/termcap'],
                                                       'termcap'):
                  readline_libs.append('termcap')
@@ -42,7 +42,7 @@ As it is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('readline', ['readline.c'],
                                     library_dirs=['/usr/lib/termcap'],
                                     extra_link_args=readline_extra_link_args,
-@@ -786,7 +797,7 @@
+@@ -806,7 +817,7 @@
          # socket(2)
          exts.append( Extension('_socket', ['socketmodule.c', 'timemodule.c'],
                                 depends=['socketmodule.h'],
@@ -51,7 +51,7 @@ As it is Solaris-specific, it is not suitable for upstream.
          # Detect SSL support for the socket module (via _ssl)
          search_for_ssl_incs_in = [
                                '/usr/local/ssl/include',
-@@ -1350,8 +1361,11 @@
+@@ -1370,8 +1381,11 @@
                  # _curses_panel.so must link with panelw.
                  panel_library = 'panelw'
              curses_libs = [curses_library]
@@ -65,7 +65,7 @@ As it is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('_curses', ['_cursesmodule.c'],
                                     include_dirs = curses_incs,
                                     libraries = curses_libs) )
-@@ -1373,9 +1387,21 @@
+@@ -1393,9 +1407,21 @@
          # If the curses module is enabled, check for the panel module
          if (module_enabled(exts, '_curses') and
              self.compiler.find_library_file(lib_dirs, panel_library)):
@@ -88,7 +88,7 @@ As it is Solaris-specific, it is not suitable for upstream.
          else:
              missing.append('_curses_panel')
  
-@@ -1587,9 +1613,14 @@
+@@ -1607,9 +1633,14 @@
                  sysconfig.get_config_var('POSIX_SEMAPHORES_NOT_ENABLED')):
                  multiprocessing_srcs.append('_multiprocessing/semaphore.c')
  
@@ -103,7 +103,7 @@ As it is Solaris-specific, it is not suitable for upstream.
                                      include_dirs=["Modules/_multiprocessing"]))
          else:
              missing.append('_multiprocessing')
-@@ -2083,7 +2114,8 @@
+@@ -2103,7 +2134,8 @@
              # this option. If you want to compile ctypes with the Sun
              # compiler, please research a proper solution, instead of
              # finding some -z option for the Sun compiler.

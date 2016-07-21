@@ -7,9 +7,9 @@ http://www.jcea.es/artic/python_dtrace.htm
 Follow http://bugs.python.org/issue13405 for plans to get it
 integrated into the main tree.
 
---- Python-2.7.9/Makefile.pre.in.~1~	2014-12-10 07:59:50.000000000 -0800
-+++ Python-2.7.9/Makefile.pre.in	2014-12-11 09:17:26.137440092 -0800
-@@ -225,6 +225,7 @@
+--- Python-2.7.12/Makefile.pre.in.~1~	2016-06-25 14:49:31.000000000 -0700
++++ Python-2.7.12/Makefile.pre.in	2016-07-07 13:45:26.859336399 -0700
+@@ -233,6 +233,7 @@
  # Used of signalmodule.o is not available
  SIGNAL_OBJS=	@SIGNAL_OBJS@
  
@@ -17,7 +17,7 @@ integrated into the main tree.
  
  ##########################################################################
  # Grammar
-@@ -358,6 +359,7 @@
+@@ -366,6 +367,7 @@
  		Python/formatter_unicode.o \
  		Python/formatter_string.o \
  		Python/$(DYNLOADFILE) \
@@ -25,7 +25,7 @@ integrated into the main tree.
  		$(LIBOBJS) \
  		$(MACHDEP_OBJS) \
  		$(THREADOBJ)
-@@ -707,6 +709,18 @@
+@@ -763,6 +765,18 @@
  Python/formatter_string.o: $(srcdir)/Python/formatter_string.c \
  				$(STRINGLIB_HEADERS)
  
@@ -56,7 +56,7 @@ integrated into the main tree.
      PyObject *f_localsplus[1];	/* locals+stack, dynamically sized */
 --- Python-2.7.6/Objects/frameobject.c.~1~	2013-11-09 23:36:41.000000000 -0800
 +++ Python-2.7.6/Objects/frameobject.c	2014-05-14 12:56:06.970076859 -0700
-@@ -738,6 +738,7 @@
+@@ -736,6 +736,7 @@
      f->f_tstate = tstate;
  
      f->f_lasti = -1;
@@ -421,7 +421,7 @@ new file mode 100644
 +#pragma D attributes Evolving/Evolving/Common provider python args
 --- Python-2.7.10/Lib/test/test_sys.py.~1~	2015-05-10 10:17:04 -0800
 +++ Python-2.7.10/Lib/test/test_sys.py	2015-05-18 14:35:06 -0800
-@@ -620,7 +620,7 @@
+@@ -635,7 +635,7 @@
          nfrees = len(x.f_code.co_freevars)
          extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
                   ncells + nfrees - 1

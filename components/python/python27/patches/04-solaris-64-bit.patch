@@ -32,9 +32,9 @@ this patch.  As this is Solaris-specific, it is not suitable for upstream.
  
      def get_export_symbols (self, ext):
          """Return the list of symbols that a shared extension has to
---- Python-2.7.10/Python/import.c.~1~	2015-05-10 10:17:01 -0800
-+++ Python-2.7.10/Python/import.c	2015-05-18 14:28:34 -0700
-@@ -1292,6 +1292,57 @@
+--- Python-2.7.12/Python/import.c.~1~	2016-06-25 14:49:32.000000000 -0700
++++ Python-2.7.12/Python/import.c	2016-07-07 13:43:53.807164009 -0700
+@@ -1310,6 +1310,57 @@
  static int find_init_module(char *); /* Forward */
  static struct filedescr importhookdescr = {"", "", IMP_HOOK};
  
@@ -92,7 +92,7 @@ this patch.  As this is Solaris-specific, it is not suitable for upstream.
  static struct filedescr *
  find_module(char *fullname, char *subname, PyObject *path, char *buf,
              size_t buflen, FILE **p_fp, PyObject **p_loader)
-@@ -1306,11 +1357,10 @@
+@@ -1324,11 +1375,10 @@
      static struct filedescr fd_builtin = {"", "", C_BUILTIN};
      static struct filedescr fd_package = {"", "", PKG_DIRECTORY};
      char *name;
@@ -105,7 +105,7 @@ this patch.  As this is Solaris-specific, it is not suitable for upstream.
      if (p_loader != NULL)
          *p_loader = NULL;
  
-@@ -1517,15 +1567,17 @@
+@@ -1535,15 +1585,17 @@
                  }
              }
          }
@@ -125,7 +125,7 @@ this patch.  As this is Solaris-specific, it is not suitable for upstream.
  #if defined(PYOS_OS2) && defined(HAVE_DYNAMIC_LOADING)
              /* OS/2 limits DLLs to 8 character names (w/o
                 extension)
-@@ -1566,21 +1618,20 @@
+@@ -1584,21 +1636,20 @@
                      fp = NULL;
                  }
              }

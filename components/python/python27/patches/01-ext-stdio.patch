@@ -1,10 +1,10 @@
 This patch provides extended file stdio support.
 As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.1/Modules/python.c.orig	Tue Jun 21 21:35:45 2011
-+++ Python-2.7.1/Modules/python.c	Tue Jun 21 21:39:29 2011
+--- Python-2.7.12/Modules/python.c.~1~	2016-06-25 14:49:31.000000000 -0700
++++ Python-2.7.12/Modules/python.c	2016-07-07 13:39:38.170867069 -0700
 @@ -6,6 +6,13 @@
- #include <floatingpoint.h>
+ #include <fenv.h>
  #endif
  
 +#if defined(sun) && defined(__SVR4) && !defined(_LP64)
@@ -17,9 +17,9 @@ As it is Solaris-specific, it is not suitable for upstream.
  int
  main(int argc, char **argv)
  {
-@@ -20,5 +27,18 @@
- 	m = fpgetmask();
- 	fpsetmask(m & ~FP_X_OFL);
+@@ -17,5 +24,18 @@
+ #ifdef __FreeBSD__
+ 	fedisableexcept(FE_OVERFLOW);
  #endif
 +#ifdef USE_EXTENDED_FILE_STDIO
 +	/*
