@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmatemixer
 COMPONENT_VERSION=	1.14.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Mixer library for MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +41,7 @@ COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
+CONFIGURE_OPTIONS+= --enable-pulseaudio
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
@@ -54,4 +56,5 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/glib2
