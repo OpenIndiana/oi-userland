@@ -1,0 +1,69 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-export \- Export the contents of a container's filesystem as a tar archive
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker export\fP
+[\fB\-\-help\fP]
+[\fB\-o\fP|\fB\-\-output\fP[=\fI""\fP]]
+CONTAINER
+
+
+.SH DESCRIPTION
+.PP
+Export the contents of a container's filesystem using the full or shortened
+container ID or container name. The output is exported to STDOUT and can be
+redirected to a tar file.
+
+.PP
+Stream to a file instead of STDOUT by using \fB\-o\fP.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-o\fP, \fB\-\-output\fP=""
+  Write to a file, instead of STDOUT
+
+
+.SH EXAMPLES
+.PP
+Export the contents of the container called angry\_bell to a tar file
+called angry\_bell.tar:
+
+.PP
+.RS
+
+.nf
+# docker export angry\_bell > angry\_bell.tar
+# docker export \-\-output=angry\_bell\-latest.tar angry\_bell
+# ls \-sh angry\_bell.tar
+321M angry\_bell.tar
+# ls \-sh angry\_bell\-latest.tar
+321M angry\_bell\-latest.tar
+
+.fi
+.RE
+
+
+.SH See also
+.PP
+\fBdocker\-import(1)\fP to create an empty filesystem image
+and import the contents of the tarball into it, then optionally tag it.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+January 2015, updated by Joseph Kern (josephakern at gmail dot com)

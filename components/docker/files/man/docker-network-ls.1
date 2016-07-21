@@ -1,0 +1,198 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "OCT 2015"  ""
+
+
+.SH NAME
+.PP
+docker\-network\-ls \- list networks
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker network ls\fP
+[\fB\-f\fP|\fB\-\-filter\fP[=\fI[]\fP]]
+[\fB\-\-no\-trunc\fP[=\fItrue\fP|\fIfalse\fP]]
+[\fB\-q\fP|\fB\-\-quiet\fP[=\fItrue\fP|\fIfalse\fP]]
+[\fB\-\-help\fP]
+
+
+.SH DESCRIPTION
+.PP
+Lists all the networks the Engine \fB\fCdaemon\fR knows about. This includes the
+networks that span across multiple hosts in a cluster, for example:
+
+.PP
+.RS
+
+.nf
+    $ docker network ls
+    NETWORK ID          NAME                DRIVER
+    7fca4eb8c647        bridge              bridge
+    9f904ee27bf5        none                null
+    cf03ee007fb4        host                host
+    78b03ee04fc4        multi\-host          overlay
+
+.fi
+.RE
+
+.PP
+Use the \fB\fC\-\-no\-trunc\fR option to display the full network id:
+
+.PP
+.RS
+
+.nf
+$ docker network ls \-\-no\-trunc
+NETWORK ID                                                         NAME                DRIVER
+18a2866682b85619a026c81b98a5e375bd33e1b0936a26cc497c283d27bae9b3   none                null                
+c288470c46f6c8949c5f7e5099b5b7947b07eabe8d9a27d79a9cbf111adcbf47   host                host                
+7b369448dccbf865d397c8d2be0cda7cf7edc6b0945f77d2529912ae917a0185   bridge              bridge              
+95e74588f40db048e86320c6526440c504650a1ff3e9f7d60a497c4d2163e5bd   foo                 bridge    
+63d1ff1f77b07ca51070a8c227e962238358bd310bde1529cf62e6c307ade161   dev                 bridge
+
+.fi
+.RE
+
+.SH Filtering
+.PP
+The filtering flag (\fB\fC\-f\fR or \fB\fC\-\-filter\fR) format is a \fB\fCkey=value\fR pair. If there
+is more than one filter, then pass multiple flags (e.g. \fB\fC\-\-filter "foo=bar" \-\-filter "bif=baz"\fR).
+Multiple filter flags are combined as an \fB\fCOR\fR filter. For example,
+\fB\fC\-f type=custom \-f type=builtin\fR returns both \fB\fCcustom\fR and \fB\fCbuiltin\fR networks.
+
+.PP
+The currently supported filters are:
+.IP \n+[step]
+
+\item id (network's id)
+\item name (network's name)
+\item type (custom|builtin)
+.SS Type
+.PP
+The \fB\fCtype\fR filter supports two values; \fB\fCbuiltin\fR displays predefined networks
+(\fB\fCbridge\fR, \fB\fCnone\fR, \fB\fChost\fR), whereas \fB\fCcustom\fR displays user defined networks.
+
+.PP
+The following filter matches all user defined networks:
+
+.PP
+.RS
+
+.nf
+$ docker network ls \-\-filter type=custom
+NETWORK ID          NAME                DRIVER
+95e74588f40d        foo                 bridge
+63d1ff1f77b0        dev                 bridge
+
+.fi
+.RE
+
+.PP
+By having this flag it allows for batch cleanup. For example, use this filter
+to delete all user defined networks:
+
+.PP
+.RS
+
+.nf
+$ docker network rm `docker network ls \-\-filter type=custom \-q`
+
+.fi
+.RE
+
+.PP
+A warning will be issued when trying to remove a network that has containers
+attached.
+
+.SS Name
+.PP
+The \fB\fCname\fR filter matches on all or part of a network's name.
+
+.PP
+The following filter matches all networks with a name containing the \fB\fCfoobar\fR string.
+
+.PP
+.RS
+
+.nf
+$ docker network ls \-\-filter name=foobar
+NETWORK ID          NAME                DRIVER
+06e7eef0a170        foobar              bridge
+
+.fi
+.RE
+
+.PP
+You can also filter for a substring in a name as this shows:
+
+.PP
+.RS
+
+.nf
+$ docker ps \-\-filter name=foo
+NETWORK ID          NAME                DRIVER
+95e74588f40d        foo                 bridge
+06e7eef0a170        foobar              bridge
+
+.fi
+.RE
+
+.SS ID
+.PP
+The \fB\fCid\fR filter matches on all or part of a network's ID.
+
+.PP
+The following filter matches all networks with a name containing the
+\fB\fC06e7eef01700\fR string.
+
+.PP
+.RS
+
+.nf
+$ docker network ls \-\-filter id=63d1ff1f77b07ca51070a8c227e962238358bd310bde1529cf62e6c307ade161
+NETWORK ID          NAME                DRIVER
+63d1ff1f77b0        dev                 bridge
+
+.fi
+.RE
+
+.PP
+You can also filter for a substring in a ID as this shows:
+
+.PP
+.RS
+
+.nf
+$ docker ps \-\-filter id=95e74588f40d
+NETWORK ID          NAME                DRIVER
+95e74588f40d        foo                 bridge
+
+$ docker ps \-\-filter id=95e
+NETWORK ID          NAME                DRIVER
+95e74588f40d        foo                 bridge
+
+.fi
+.RE
+
+
+.SH OPTIONS
+.PP
+\fB\-f\fP, \fB\-\-filter\fP=\fI[]\fP
+  filter output based on conditions provided.
+
+.PP
+\fB\-\-no\-trunc\fP=\fItrue\fP|\fIfalse\fP
+  Do not truncate the output
+
+.PP
+\fB\-q\fP, \fB\-\-quiet\fP=\fItrue\fP|\fIfalse\fP
+  Only display numeric IDs
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+
+.SH HISTORY
+.PP
+OCT 2015, created by Mary Anthony 
+\[la]mary@docker.com\[ra]

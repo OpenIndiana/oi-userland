@@ -1,0 +1,151 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-events \- Get real time events from the server
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker events\fP
+[\fB\-\-help\fP]
+[\fB\-f\fP|\fB\-\-filter\fP[=\fI[]\fP]]
+[\fB\-\-since\fP[=\fISINCE\fP]]
+[\fB\-\-until\fP[=\fIUNTIL\fP]]
+
+
+.SH DESCRIPTION
+.PP
+Get event information from the Docker daemon. Information can include historical
+information and real\-time information.
+
+.PP
+Docker containers will report the following events:
+
+.PP
+.RS
+
+.nf
+attach, commit, copy, create, destroy, die, exec\_create, exec\_start, export, kill, oom, pause, rename, resize, restart, start, stop, top, unpause
+
+.fi
+.RE
+
+.PP
+and Docker images will report:
+
+.PP
+.RS
+
+.nf
+delete, import, pull, push, tag, untag
+
+.fi
+.RE
+
+
+.SH OPTIONS
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-f\fP, \fB\-\-filter\fP=[]
+   Provide filter values (i.e., 'event=stop')
+
+.PP
+\fB\-\-since\fP=""
+   Show all events created since timestamp
+
+.PP
+\fB\-\-until\fP=""
+   Stream events until this timestamp
+
+.PP
+The \fB\fC\-\-since\fR and \fB\fC\-\-until\fR parameters can be Unix timestamps, date formatted
+timestamps, or Go duration strings (e.g. \fB\fC10m\fR, \fB\fC1h30m\fR) computed
+relative to the client machine’s time. If you do not provide the \-\-since option,
+the command returns only new and/or live events.  Supported formats for date
+formatted time stamps include RFC3339Nano, RFC3339, \fB\fC2006\-01\-02T15:04:05\fR,
+\fB\fC2006\-01\-02T15:04:05.999999999\fR, \fB\fC2006\-01\-02Z07:00\fR, and \fB\fC2006\-01\-02\fR. The local
+timezone on the client will be used if you do not provide either a \fB\fCZ\fR or a
+\fB\fC+\-00:00\fR timezone offset at the end of the timestamp.  When providing Unix
+timestamps enter seconds[.nanoseconds], where seconds is the number of seconds
+that have elapsed since January 1, 1970 (midnight UTC/GMT), not counting leap
+seconds (aka Unix epoch or Unix time), and the optional .nanoseconds field is a
+fraction of a second no more than nine digits long.
+
+
+.SH EXAMPLES
+.SH Listening for Docker events
+.PP
+After running docker events a container 786d698004576 is started and stopped
+(The container name has been shortened in the output below):
+
+.PP
+.RS
+
+.nf
+# docker events
+2015\-01\-28T20:21:31.000000000\-08:00 59211849bc10: (from whenry/testimage:latest) start
+2015\-01\-28T20:21:31.000000000\-08:00 59211849bc10: (from whenry/testimage:latest) die
+2015\-01\-28T20:21:32.000000000\-08:00 59211849bc10: (from whenry/testimage:latest) stop
+
+.fi
+.RE
+
+.SH Listening for events since a given date
+.PP
+Again the output container IDs have been shortened for the purposes of this document:
+
+.PP
+.RS
+
+.nf
+# docker events \-\-since '2015\-01\-28'
+2015\-01\-28T20:25:38.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) create
+2015\-01\-28T20:25:38.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) start
+2015\-01\-28T20:25:39.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) create
+2015\-01\-28T20:25:39.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) start
+2015\-01\-28T20:25:40.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) die
+2015\-01\-28T20:25:42.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) stop
+2015\-01\-28T20:25:45.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) start
+2015\-01\-28T20:25:45.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) die
+2015\-01\-28T20:25:46.000000000\-08:00 c21f6c22ba27: (from whenry/testimage:latest) stop
+
+.fi
+.RE
+
+.PP
+The following example outputs all events that were generated in the last 3 minutes,
+relative to the current time on the client machine:
+
+.PP
+.RS
+
+.nf
+# docker events \-\-since '3m'
+2015\-05\-12T11:51:30.999999999Z07:00  4386fb97867d: (from ubuntu\-1:14.04) die
+2015\-05\-12T15:52:12.999999999Z07:00  4386fb97867d: (from ubuntu\-1:14.04) stop
+2015\-05\-12T15:53:45.999999999Z07:00  7805c1d35632: (from redis:2.8) die
+2015\-05\-12T15:54:03.999999999Z07:00  7805c1d35632: (from redis:2.8) stop
+
+.fi
+.RE
+
+.PP
+If you do not provide the \-\-since option, the command returns only new and/or
+live events.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+June 2015, updated by Brian Goff 
+\[la]cpuguy83@gmail.com\[ra]
+October 2015, updated by Mike Brown 
+\[la]mikebrow@gmail.com\[ra]

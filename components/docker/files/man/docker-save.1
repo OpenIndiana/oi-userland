@@ -1,0 +1,68 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-save \- Save an image(s) to a tar archive (streamed to STDOUT by default)
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker save\fP
+[\fB\-\-help\fP]
+[\fB\-o\fP|\fB\-\-output\fP[=\fIOUTPUT\fP]]
+IMAGE [IMAGE...]
+
+
+.SH DESCRIPTION
+.PP
+Produces a tarred repository to the standard output stream. Contains all
+parent layers, and all tags + versions, or specified repo:tag.
+
+.PP
+Stream to a file instead of STDOUT by using \fB\-o\fP.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-o\fP, \fB\-\-output\fP=""
+   Write to a file, instead of STDOUT
+
+
+.SH EXAMPLES
+.PP
+Save all fedora repository images to a fedora\-all.tar and save the latest
+fedora image to a fedora\-latest.tar:
+
+.PP
+.RS
+
+.nf
+$ docker save fedora > fedora\-all.tar
+$ docker save \-\-output=fedora\-latest.tar fedora:latest
+$ ls \-sh fedora\-all.tar
+721M fedora\-all.tar
+$ ls \-sh fedora\-latest.tar
+367M fedora\-latest.tar
+
+.fi
+.RE
+
+
+.SH See also
+.PP
+\fBdocker\-load(1)\fP to load an image from a tar archive on STDIN.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+November 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]

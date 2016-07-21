@@ -1,0 +1,233 @@
+#!/usr/bin/python2.7
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+import grp
+import os
+from subprocess import Popen, PIPE, check_call, CalledProcessError
+import sys
+import traceback
+
+import smf_include
+
+DOCKER_EXEC="/usr/bin/docker"
+MKDIR="/usr/bin/mkdir"
+SVCADM="/usr/sbin/svcadm"
+SVCCFG="/usr/sbin/svccfg"
+SVCPROP="/usr/bin/svcprop"
+ZFS="/usr/sbin/zfs"
+
+DOCKER_SVC = 'svc:/application/docker/docker'
+DOCKER_ROOT="/var/run/docker"
+DOCKER_MOUNTPOINT="/var/lib/docker"
+
+
+class SvcDockerException(Exception):
+    pass
+
+
+class SvcDockerCmd(object):
+    def __init__(self, cmd):
+        self.cmd = cmd
+
+    def run(self, expect_nonzero=None):
+        p = Popen(self.cmd, stdout=PIPE, stderr=PIPE)
+        output, error = p.communicate()
+        if not expect_nonzero and p.returncode != 0:
+            raise SvcDockerException(error)
+        return output
+
+
+def _get_docker_prop(pname):
+    try:
+        output = SvcDockerCmd([SVCPROP, '-p', pname, DOCKER_SVC]).run()
+        return output.strip('"').strip()
+    except SvcDockerException as e:
+        print "Unable to retrieve property '%s': %s" % (pname, e)
+        sys.exit(1)
+
+
+def _set_docker_prop(pname, pval):
+    try:
+        SvcDockerCmd(
+            [SVCCFG, '-s', DOCKER_SVC, 'setprop', pname, '=', pval]).run()
+        SvcDockerCmd(cmd = [SVCADM, 'refresh', 'docker']).run()
+    except SvcDockerException as e:
+        print "Unable to set property '%s', value '%s': %s" % \
+            (pname, pval, e)
+        sys.exit(1)
+
+
+def _get_root_pool():
+    try:
+        return SvcDockerCmd(
+            [ZFS, 'list', '-Ho', 'name', '/']).run().split('/')[0]
+    except SvcDockerException as e:
+        print "Unable to get root pool: %s" % e
+        sys.exit(1)
+
+
+def _fsname_in_active_be(fsname):
+    try:
+        root_ds = SvcDockerCmd(
+            [ZFS, 'list', '-r', '-Ho', 'name', '/']).run().split()[0]
+        return fsname.startswith(root_ds)
+    except SvcDockerException as e:
+        print "Unable to get active root dataset: %s" % e
+        sys.exit(1)
+
+
+def _fsname_exists(fsname):
+    try:
+        SvcDockerCmd([ZFS, 'list', fsname]).run()
+        return True
+    except SvcDockerException as e:
+        if "does not exist" in str(e):
+            return False
+        print "Unable to list dataset: %s" % e
+        sys.exit(1)
+
+
+def _get_mounted_dataset():
+    if not os.path.exists(DOCKER_MOUNTPOINT):
+        return None
+    try:
+        return SvcDockerCmd(
+            [ZFS, 'list', '-Ho', 'name', DOCKER_MOUNTPOINT]).run().strip()
+    except SvcDockerException as e:
+        print "Unable to get mounted Docker dataset: %s" % e
+        sys.exit(1)
+
+
+def _get_dataset_mountpoint(fsname):
+    try:
+        return SvcDockerCmd(
+            [ZFS, 'list', '-Ho', 'mountpoint', fsname]).run().strip()
+    except SvcDockerException as e:
+        print "Unable to get mountpoint for dataset: %s" % e
+        sys.exit(1)
+
+
+def _mount_dataset(fsname):
+    try:
+        return SvcDockerCmd([ZFS, 'mount', fsname]).run()
+    except SvcDockerException as e:
+        print "Unable to mount Docker root: %s" % e
+        sys.exit(1)
+
+
+def _unmount_dataset(fsname):
+    try:
+        return SvcDockerCmd([ZFS, 'unmount', fsname]).run()
+    except SvcDockerException as e:
+        print "Unable to unmount Docker root: %s" % e
+        sys.exit(1)
+
+
+def _set_ds_props_for_varshare(fsname):
+    # If in VARSHARE (default), make sure we turn setuid/exec/xattr on
+    # (off by default in VARSHARE).
+    for prop in ['setuid', 'exec', 'xattr']:
+        try:
+            SvcDockerCmd([ZFS, 'set', prop + '=on', fsname]).run()
+        except SvcDockerException as e:
+            print "Failed to set '%s' prop on dataset '%s': %s" % \
+                (prop, fsname, error)
+            sys.exit(1)
+
+
+def _create_docker_dir():
+    if not os.path.exists(DOCKER_ROOT):
+        try:
+            os.mkdir(DOCKER_ROOT, 0770)
+        except OSError as e:
+            print "Unable to create dir '%s': %s" % (DOCKER_ROOT, e)
+            sys.exit(1)
+
+
+def _init_dataset(fsname):
+    if not fsname:
+        # Default to 'docker' in varshare
+        fsname = os.path.join(_get_root_pool(), "VARSHARE/docker")
+        _set_docker_prop("config/fsname", fsname)
+
+    if _fsname_in_active_be(fsname):
+        print "config/fsname cannot be child of active root dataset"
+        sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
+
+    if _fsname_exists(fsname):
+        if _get_mounted_dataset() != fsname:
+            if _get_dataset_mountpoint(fsname) != DOCKER_MOUNTPOINT:
+                print "Configured dataset '%s' mountpoint must be '%s'" % \
+                    (fsname, DOCKER_MOUNTPOINT)
+                sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
+            _mount_dataset(fsname)
+        if fsname.startswith('rpool/VARSHARE/'):
+            _set_ds_props_for_varshare(fsname)
+    else:
+        # Dataset doesn't exist, try and create it. This may fail if
+        # /var/lib/docker is not empty, or if another dataset is mounted there.
+        try:
+            SvcDockerCmd(
+                [ZFS, 'create', '-o', 'mountpoint=' + DOCKER_MOUNTPOINT,
+                 '-o', 'setuid=on', '-o', 'exec=on', '-o', 'xattr=on',
+                 '-o', 'compression=on', fsname]).run()
+        except SvcDockerException as e:
+            print "Failed to create dataset '%s' on %s: %s" % \
+                (DOCKER_MOUNTPOINT, fsname, e)
+            sys.exit(1)
+
+
+def start():
+    # Setup /var/lib/docker and the root dataset
+    _create_docker_dir()
+    fsname = _get_docker_prop("config/fsname")
+    _init_dataset(fsname)
+
+    # Setup environment variables for the daemon
+    for p in ['http_proxy', 'https_proxy']:
+        v = _get_docker_prop("config/%s" % p)
+        if v:
+            os.putenv(p, v)
+
+    # Set up the service command line to execut the daemon
+    dcmd = DOCKER_EXEC + ' daemon'
+    if _get_docker_prop('config/debug') == 'true':
+        dcmd += ' -D'
+    dcmd += ' --exec-root="%s"' % DOCKER_ROOT
+    dcmd += ' --graph="%s"' % DOCKER_MOUNTPOINT
+    dcmd += ' --pidfile="%s/docker.pid"' % DOCKER_ROOT
+    dcmd += ' --storage-opt zfs.fsname=' + fsname
+
+    smf_include.smf_subprocess(dcmd)
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
+def stop():
+    # First, kill off the SMF contract
+    try:
+        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
+    except CalledProcessError as e:
+        # 1 is returncode if no SMF contract processes were matched,
+        # meaning they have already terminated.
+        if e.returncode != 1:
+            print "failed to kill the SMF contract: %s" % e
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    # Now unmount the root dataset from /var/lib/docker
+    _unmount_dataset(DOCKER_MOUNTPOINT)
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
+    try:
+        smf_include.smf_main()
+    except RuntimeError:
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+    except Exception as err:
+        print 'Unknown error:  %s' % err
+        print
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)

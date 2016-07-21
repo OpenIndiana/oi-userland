@@ -1,0 +1,130 @@
+#!/usr/bin/python2.7
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+import argparse
+import os
+from subprocess import Popen, PIPE
+import sys
+
+
+DOCKERFILE = """FROM scratch
+ADD %(archive)s /
+LABEL vendor="Oracle USA"
+LABEL com.oracle.solaris.version.release="beta"
+LABEL com.oracle.solaris.version.branch="%(osversion)s"
+CMD /bin/bash
+"""
+
+class DockerSupportCmd(object):
+    def __init__(self, cmd, verbose=False):
+        self.cmd = cmd
+        self.verbose = verbose
+
+    def run(self, expect_nonzero=None):
+        if self.verbose:
+            out = None
+        else:
+            out = PIPE
+        p = Popen(self.cmd, stdout=out, stderr=PIPE)
+        output, error = p.communicate()
+        if not expect_nonzero and p.returncode != 0:
+            raise RuntimeError(error)
+        return output
+
+
+def docker_is_online():
+    try:
+        return DockerSupportCmd(['/usr/bin/svcs', '-Ho', 'state',
+            'docker']).run().strip() == 'online'
+    except Exception as err:
+        raise RuntimeError("Unable to determine version: %s" % err)
+
+
+def get_os_version():
+    try:
+        output = DockerSupportCmd(['/usr/bin/pkg', 'info', 'entire']).run()
+        for line in map(str.strip, output.splitlines()):
+            if line.startswith("Branch"):
+                return line.split(":")[1].strip()
+    except Exception as err:
+        raise RuntimeError("Unable to determine version: %s" % err)
+
+
+def create_rootfs_archive(profile=None):
+    # we'll build the default archive, make sure we don't clobber one
+    if os.path.exists("rootfs.tar.gz"):
+        raise RuntimeError("archive already exists 'rootfs.tar.gz'")
+
+    # build here with mkimage, send output to stdout
+    cmd = ['/usr/lib/brand/solaris-oci/mkimage-solaris']
+    if profile is not None:
+        if not os.path.exists(profile):
+            raise RuntimeError("'%s' not found" % profile)
+        cmd.extend(['-c', profile])
+    try:
+        DockerSupportCmd(cmd, verbose=True).run()
+        return "rootfs.tar.gz"
+    except Exception as err:
+        raise RuntimeError("mkimage-solaris failure: %s" % err)
+
+
+def create_base_image(args):
+    if not docker_is_online():
+        raise SystemExit("Docker service not online, is Docker configured?")
+
+    if os.path.exists("Dockerfile"):
+        raise SystemExit("Dockerfile already exists in working directory.")
+
+    try:
+        print "Creating container rootfs from host publishers..."
+        rootfs = create_rootfs_archive(args.profile)
+    except Exception as err:
+        raise SystemExit("Failed to create rootfs: %s" % err)
+
+    osversion = get_os_version()
+    with open("Dockerfile", "w") as dockerfile:
+        dockerfile.write(
+            DOCKERFILE % {"archive": rootfs, "osversion": osversion})
+
+    tag = "solaris:%s" % osversion
+    print "Creating Docker base image '%s'..." % tag
+    try: 
+        DockerSupportCmd(
+            ["/usr/bin/docker", "build", "-t", tag, "."], verbose=True).run()
+        DockerSupportCmd(
+            ["/usr/bin/docker", "tag", tag, "solaris:latest"]).run()
+    except Exception as err:
+        raise SystemExit("Failed image build: %s" % err)
+    print "Build complete."
+
+
+def build_parser():
+    parser_main = argparse.ArgumentParser()
+    parser_main.add_argument("-v", "--version", action="version",
+        version="%(prog)s 0.1")
+
+    subparsers = parser_main.add_subparsers(title="sub-commands", metavar="")
+
+    parser_create = subparsers.add_parser("create-base-image",
+        help="create a base image from host publisher content",
+        usage=argparse.SUPPRESS)
+    parser_create.add_argument("-p", "--profile",
+        help="TEMPORARY: optional syconfig profile")
+
+    parser_create.set_defaults(func=create_base_image)
+
+    return parser_main
+
+
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+    if not vars(args):
+        raise SystemExit(parser.print_help())
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

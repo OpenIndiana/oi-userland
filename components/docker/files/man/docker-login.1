@@ -1,0 +1,90 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-login \- Register or log in to a Docker registry.
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker login\fP
+[\fB\-e\fP|\fB\-\-email\fP[=\fIEMAIL\fP]]
+[\fB\-\-help\fP]
+[\fB\-p\fP|\fB\-\-password\fP[=\fIPASSWORD\fP]]
+[\fB\-u\fP|\fB\-\-username\fP[=\fIUSERNAME\fP]]
+[SERVER]
+
+
+.SH DESCRIPTION
+.PP
+Register or log in to a Docker Registry located on the specified
+\fB\fCSERVER\fR.  You can specify a URL or a \fB\fChostname\fR for the \fB\fCSERVER\fR value. If you
+do not specify a \fB\fCSERVER\fR, the command uses Docker's public registry located at
+\fB\fChttps://registry\-1.docker.io/\fR by default.  To get a username/password for Docker's public registry, create an account on Docker Hub.
+
+.PP
+\fB\fCdocker login\fR requires user to use \fB\fCsudo\fR or be \fB\fCroot\fR, except when:
+.IP \(bu 2
+
+\item connecting to  a remote daemon, such as a \fB\fCdocker\-machine\fR provisioned \fB\fCdocker engine\fR.
+\item user is added to the \fB\fCdocker\fR group.  This will impact the security of your system; the \fB\fCdocker\fR group is \fB\fCroot\fR equivalent.  See 
+\[la]https://docs.docker.com/articles/security/#docker-daemon-attack-surface\[ra] for details.
+.PP
+You can log into any public or private repository for which you have
+credentials.  When you log in, the command stores encoded credentials in
+\fB\fC$HOME/.docker/config.json\fR on Linux or \fB\fC%USERPROFILE%/.docker/config.json\fR on Windows.
+
+.PP
+.RS
+
+.PP
+\fBNote\fP: When running \fB\fCsudo docker login\fR credentials are saved in \fB\fC/root/.docker/config.json\fR.
+.RE
+
+
+.SH OPTIONS
+.PP
+\fB\-e\fP, \fB\-\-email\fP=""
+   Email
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-p\fP, \fB\-\-password\fP=""
+   Password
+
+.PP
+\fB\-u\fP, \fB\-\-username\fP=""
+   Username
+
+
+.SH EXAMPLES
+.SH Login to a registry on your localhost
+.PP
+.RS
+
+.nf
+# docker login localhost:8080
+
+.fi
+.RE
+
+
+.SH See also
+.PP
+\fBdocker\-logout(1)\fP to log out from a Docker registry.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+April 2015, updated by Mary Anthony for v2 
+\[la]mary@docker.com\[ra]
+November 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

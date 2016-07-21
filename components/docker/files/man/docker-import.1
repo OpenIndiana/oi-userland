@@ -1,0 +1,134 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-import \- Create an empty filesystem image and import the contents of the tarball (.tar, .tar.gz, .tgz, .bzip, .tar.xz, .txz) into it, then optionally tag it.
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker import\fP
+[\fB\-c\fP|\fB\-\-change\fP[=\fI[]\fP]]
+[\fB\-m\fP|\fB\-\-message\fP[=\fIMESSAGE\fP]]
+[\fB\-\-help\fP]
+file|URL|\fB\-\fP[REPOSITORY[:TAG]]
+
+
+.SH OPTIONS
+.PP
+\fB\-c\fP, \fB\-\-change\fP=[]
+   Apply specified Dockerfile instructions while importing the image
+   Supported Dockerfile instructions: \fB\fCCMD\fR|\fB\fCENTRYPOINT\fR|\fB\fCENV\fR|\fB\fCEXPOSE\fR|\fB\fCONBUILD\fR|\fB\fCUSER\fR|\fB\fCVOLUME\fR|\fB\fCWORKDIR\fR
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-m\fP, \fB\-\-message\fP=""
+   Set commit message for imported image
+
+
+.SH DESCRIPTION
+.PP
+Create a new filesystem image from the contents of a tarball (\fB\fC.tar\fR,
+\fB\fC.tar.gz\fR, \fB\fC.tgz\fR, \fB\fC.bzip\fR, \fB\fC.tar.xz\fR, \fB\fC.txz\fR) into it, then optionally tag it.
+
+
+.SH EXAMPLES
+.SH Import from a remote location
+.PP
+.RS
+
+.nf
+# docker import http://example.com/exampleimage.tgz example/imagerepo
+
+.fi
+.RE
+
+.SH Import from a local file
+.PP
+Import to docker via pipe and stdin:
+
+.PP
+.RS
+
+.nf
+# cat exampleimage.tgz | docker import \- example/imagelocal
+
+.fi
+.RE
+
+.PP
+Import with a commit message
+
+.PP
+.RS
+
+.nf
+# cat exampleimage.tgz | docker import \-\-message "New image imported from tarball" \- exampleimagelocal:new
+
+.fi
+.RE
+
+.PP
+Import to a Docker image from a local file.
+
+.PP
+.RS
+
+.nf
+# docker import /path/to/exampleimage.tgz 
+
+.fi
+.RE
+
+.SH Import from a local file and tag
+.PP
+Import to docker via pipe and stdin:
+
+.PP
+.RS
+
+.nf
+# cat exampleimageV2.tgz | docker import \- example/imagelocal:V\-2.0
+
+.fi
+.RE
+
+.SH Import from a local directory
+.PP
+.RS
+
+.nf
+# tar \-c . | docker import \- exampleimagedir
+
+.fi
+.RE
+
+.SH Apply specified Dockerfile instructions while importing the image
+.PP
+This example sets the docker image ENV variable DEBUG to true by default.
+
+.PP
+.RS
+
+.nf
+# tar \-c . | docker import \-c="ENV DEBUG true" \- exampleimagedir
+
+.fi
+.RE
+
+
+.SH See also
+.PP
+\fBdocker\-export(1)\fP to export the contents of a filesystem as a tar archive to STDOUT.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]

@@ -1,0 +1,99 @@
+.TH "CONFIG.JSON" "5" " Docker User Manuals" "Docker Community" "JANUARY 2016"  ""
+
+
+.SH NAME
+.PP
+HOME/.docker/config.json \- Default Docker configuration file
+
+
+.SH INTRODUCTION
+.PP
+By default, the Docker command line stores its configuration files in a
+directory called \fB\fC.docker\fR within your \fB\fCHOME\fR directory.  Docker manages most of
+the files in the configuration directory and you should not modify them.
+However, you \fIcan modify\fP the \fB\fCconfig.json\fR file to control certain aspects of
+how the \fB\fCdocker\fR command behaves.
+
+.PP
+Currently, you can modify the \fB\fCdocker\fR command behavior using environment
+variables or command\-line options. You can also use options within
+\fB\fCconfig.json\fR to modify some of the same behavior. When using these
+mechanisms, you must keep in mind the order of precedence among them. Command
+line options override environment variables and environment variables override
+properties you specify in a \fB\fCconfig.json\fR file.
+
+.PP
+The \fB\fCconfig.json\fR file stores a JSON encoding of several properties:
+.IP \n+[step]
+
+\item 
+.PP
+The \fB\fCHttpHeaders\fR property specifies a set of headers to include in all messages
+sent from the Docker client to the daemon. Docker does not try to interpret or
+understand these header; it simply puts them into the messages. Docker does not
+allow these headers to change any headers it sets for itself.
+\item 
+.PP
+The \fB\fCpsFormat\fR property specifies the default format for \fB\fCdocker ps\fR output.
+When the \fB\fC\-\-format\fR flag is not provided with the \fB\fCdocker ps\fR command,
+Docker's client uses this property. If this property is not set, the client
+falls back to the default table format. For a list of supported formatting
+directives, see \fBdocker\-ps(1)\fP.
+\item 
+.PP
+The \fB\fCdetachKeys\fR property specifies the default key sequence which
+detaches the container. When the \fB\fC\-\-detach\-keys\fR flag is not provide
+with the \fB\fCdocker attach\fR, \fB\fCdocker exec\fR, \fB\fCdocker run\fR or \fB\fCdocker
+start\fR, Docker's client uses this property. If this property is not
+set, the client falls back to the default sequence \fB\fCctrl\-p,ctrl\-q\fR.
+\item 
+.PP
+The \fB\fCimagesFormat\fR property  specifies the default format for \fB\fCdocker images\fR
+output. When the \fB\fC\-\-format\fR flag is not provided with the \fB\fCdocker images\fR
+command, Docker's client uses this property. If this property is not set, the
+client falls back to the default table format. For a list of supported
+formatting directives, see \fBdocker\-images(1)\fP.
+.PP
+You can specify a different location for the configuration files via the
+\fB\fCDOCKER\_CONFIG\fR environment variable or the \fB\fC\-\-config\fR command line option. If
+both are specified, then the \fB\fC\-\-config\fR option overrides the \fB\fCDOCKER\_CONFIG\fR
+environment variable:
+
+.PP
+.RS
+
+.nf
+docker \-\-config \~/testconfigs/ ps
+
+.fi
+.RE
+
+.PP
+This command instructs Docker to use the configuration files in the
+\fB\fC\~/testconfigs/\fR directory when running the \fB\fCps\fR command.
+
+.SH Examples
+.PP
+Following is a sample \fB\fCconfig.json\fR file:
+
+.PP
+.RS
+
+.nf
+{
+  "HttpHeaders": {
+    "MyHeader": "MyValue"
+  },
+  "psFormat": "table {{.ID}}\\\\t{{.Image}}\\\\t{{.Command}}\\\\t{{.Labels}}",
+  "imagesFormat": "table {{.ID}}\\\\t{{.Repository}}\\\\t{{.Tag}}\\\\t{{.CreatedAt}}",
+  "detachKeys": "ctrl\-e,e"
+}
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+January 2016, created by Moxiegirl 
+\[la]mary@docker.com\[ra]

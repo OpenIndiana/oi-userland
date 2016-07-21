@@ -1,0 +1,105 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-commit \- Create a new image from a container's changes
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker commit\fP
+[\fB\-a\fP|\fB\-\-author\fP[=\fIAUTHOR\fP]]
+[\fB\-c\fP|\fB\-\-change\fP[=[\fIDOCKERFILE INSTRUCTIONS\fP]]]
+[\fB\-\-help\fP]
+[\fB\-m\fP|\fB\-\-message\fP[=\fIMESSAGE\fP]]
+[\fB\-p\fP|\fB\-\-pause\fP[=\fItrue\fP]]
+CONTAINER [REPOSITORY[:TAG]]
+
+
+.SH DESCRIPTION
+.PP
+Create a new image from an existing container specified by name or
+container ID.  The new image will contain the contents of the
+container filesystem, \fIexcluding\fP any data volumes.
+
+.PP
+While the \fB\fCdocker commit\fR command is a convenient way of extending an
+existing image, you should prefer the use of a Dockerfile and \fB\fCdocker
+build\fR for generating images that you intend to share with other
+people.
+
+
+.SH OPTIONS
+.PP
+\fB\-a\fP, \fB\-\-author\fP=""
+   Author (e.g., "John Hannibal Smith 
+\[la]hannibal@a-team.com\[ra]")
+
+.PP
+\fB\-c\fP , \fB\-\-change\fP=[]
+   Apply specified Dockerfile instructions while committing the image
+   Supported Dockerfile instructions: \fB\fCCMD\fR|\fB\fCENTRYPOINT\fR|\fB\fCENV\fR|\fB\fCEXPOSE\fR|\fB\fCLABEL\fR|\fB\fCONBUILD\fR|\fB\fCUSER\fR|\fB\fCVOLUME\fR|\fB\fCWORKDIR\fR
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-m\fP, \fB\-\-message\fP=""
+   Commit message
+
+.PP
+\fB\-p\fP, \fB\-\-pause\fP=\fItrue\fP|\fIfalse\fP
+   Pause container during commit. The default is \fItrue\fP.
+
+
+.SH EXAMPLES
+.SH Creating a new image from an existing container
+.PP
+An existing Fedora based container has had Apache installed while running
+in interactive mode with the bash shell. Apache is also running. To
+create a new image run \fB\fCdocker ps\fR to find the container's ID and then run:
+
+.PP
+.RS
+
+.nf
+# docker commit \-m="Added Apache to Fedora base image" \\
+  \-a="A D Ministrator" 98bd7fc99854 fedora/fedora\_httpd:20
+
+.fi
+.RE
+
+.PP
+Note that only a\-z0\-9\-\_. are allowed when naming images from an
+existing container.
+
+.SH Apply specified Dockerfile instructions while committing the image
+.PP
+If an existing container was created without the DEBUG environment
+variable set to "true", you can create a new image based on that
+container by first getting the container's ID with \fB\fCdocker ps\fR and
+then running:
+
+.PP
+.RS
+
+.nf
+# docker commit \-c="ENV DEBUG true" 98bd7fc99854 debug\-image
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and in
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+July 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+Oct 2014, updated by Daniel, Dao Quang Minh <daniel at nitrous dot io>
+June 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

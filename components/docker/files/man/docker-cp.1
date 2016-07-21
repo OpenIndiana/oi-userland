@@ -1,0 +1,267 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-cp \- Copy files/folders between a container and the local filesystem.
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker cp\fP
+[\fB\-\-help\fP]
+CONTAINER:SRC\_PATH DEST\_PATH|\-
+
+.PP
+\fBdocker cp\fP
+[\fB\-\-help\fP]
+SRC\_PATH|\- CONTAINER:DEST\_PATH
+
+
+.SH DESCRIPTION
+.PP
+The \fB\fCdocker cp\fR utility copies the contents of \fB\fCSRC\_PATH\fR to the \fB\fCDEST\_PATH\fR.
+You can copy from the container's file system to the local machine or the
+reverse, from the local filesystem to the container. If \fB\fC\-\fR is specified for
+either the \fB\fCSRC\_PATH\fR or \fB\fCDEST\_PATH\fR, you can also stream a tar archive from
+\fB\fCSTDIN\fR or to \fB\fCSTDOUT\fR. The \fB\fCCONTAINER\fR can be a running or stopped container.
+The \fB\fCSRC\_PATH\fR or \fB\fCDEST\_PATH\fR be a file or directory.
+
+.PP
+The \fB\fCdocker cp\fR command assumes container paths are relative to the container's
+\fB\fC/\fR (root) directory. This means supplying the initial forward slash is optional;
+The command sees \fB\fCcompassionate\_darwin:/tmp/foo/myfile.txt\fR and
+\fB\fCcompassionate\_darwin:tmp/foo/myfile.txt\fR as identical. Local machine paths can
+be an absolute or relative value. The command interprets a local machine's
+relative paths as relative to the current working directory where \fB\fCdocker cp\fR is
+run.
+
+.PP
+The \fB\fCcp\fR command behaves like the Unix \fB\fCcp \-a\fR command in that directories are
+copied recursively with permissions preserved if possible. Ownership is set to
+the user and primary group at the destination. For example, files copied to a
+container are created with \fB\fCUID:GID\fR of the root user. Files copied to the local
+machine are created with the \fB\fCUID:GID\fR of the user which invoked the \fB\fCdocker cp\fR
+command.  If you specify the \fB\fC\-L\fR option, \fB\fCdocker cp\fR follows any symbolic link
+in the \fB\fCSRC\_PATH\fR.
+
+.PP
+Assuming a path separator of \fB\fC/\fR, a first argument of \fB\fCSRC\_PATH\fR and second
+argument of \fB\fCDEST\_PATH\fR, the behavior is as follows:
+.IP \n+[step]
+
+\item \fB\fCSRC\_PATH\fR specifies a file
+.IP \n+[step]
+
+\item \fB\fCDEST\_PATH\fR does not exist
+.IP \n+[step]
+
+\item the file is saved to a file created at \fB\fCDEST\_PATH\fR
+\item \fB\fCDEST\_PATH\fR does not exist and ends with \fB\fC/\fR
+.IP \n+[step]
+
+\item Error condition: the destination directory must exist.
+\item \fB\fCDEST\_PATH\fR exists and is a file
+.IP \n+[step]
+
+\item the destination is overwritten with the source file's contents
+\item \fB\fCDEST\_PATH\fR exists and is a directory
+.IP \n+[step]
+
+\item the file is copied into this directory using the basename from
+\fB\fCSRC\_PATH\fR
+\item \fB\fCSRC\_PATH\fR specifies a directory
+.IP \n+[step]
+
+\item \fB\fCDEST\_PATH\fR does not exist
+.IP \n+[step]
+
+\item \fB\fCDEST\_PATH\fR is created as a directory and the \fIcontents\fP of the source
+directory are copied into this directory
+\item \fB\fCDEST\_PATH\fR exists and is a file
+.IP \n+[step]
+
+\item Error condition: cannot copy a directory to a file
+\item \fB\fCDEST\_PATH\fR exists and is a directory
+.IP \n+[step]
+
+\item \fB\fCSRC\_PATH\fR does not end with \fB\fC/.\fR
+.IP \n+[step]
+
+\item the source directory is copied into this directory
+\item \fB\fCSRC\_PATH\fR does end with \fB\fC/.\fR
+.IP \n+[step]
+
+\item the \fIcontent\fP of the source directory is copied into this
+directory
+.PP
+The command requires \fB\fCSRC\_PATH\fR and \fB\fCDEST\_PATH\fR to exist according to the above
+rules. If \fB\fCSRC\_PATH\fR is local and is a symbolic link, the symbolic link, not
+the target, is copied by default. To copy the link target and not the link,
+specify the \fB\fC\-L\fR option.
+
+.PP
+A colon (\fB\fC:\fR) is used as a delimiter between \fB\fCCONTAINER\fR and its path. You can
+also use \fB\fC:\fR when specifying paths to a \fB\fCSRC\_PATH\fR or \fB\fCDEST\_PATH\fR on a local
+machine, for example  \fB\fCfile:name.txt\fR. If you use a \fB\fC:\fR in a local machine path,
+you must be explicit with a relative or absolute path, for example:
+
+.PP
+.RS
+
+.nf
+`/path/to/file:name.txt` or `./file:name.txt`
+
+.fi
+.RE
+
+.PP
+It is not possible to copy certain system files such as resources under
+\fB\fC/proc\fR, \fB\fC/sys\fR, \fB\fC/dev\fR, and mounts created by the user in the container.
+
+.PP
+Using \fB\fC\-\fR as the \fB\fCSRC\_PATH\fR streams the contents of \fB\fCSTDIN\fR as a tar archive.
+The command extracts the content of the tar to the \fB\fCDEST\_PATH\fR in container's
+filesystem. In this case, \fB\fCDEST\_PATH\fR must specify a directory. Using \fB\fC\-\fR as
+\fB\fCDEST\_PATH\fR streams the contents of the resource as a tar archive to \fB\fCSTDOUT\fR.
+
+
+.SH OPTIONS
+.PP
+\fB\-L\fP, \fB\-\-follow\-link\fP=\fItrue\fP|\fIfalse\fP
+  Follow symbol link in SRC\_PATH
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+
+.SH EXAMPLES
+.PP
+Suppose a container has finished producing some output as a file it saves
+to somewhere in its filesystem. This could be the output of a build job or
+some other computation. You can copy these outputs from the container to a
+location on your local host.
+
+.PP
+If you want to copy the \fB\fC/tmp/foo\fR directory from a container to the
+existing \fB\fC/tmp\fR directory on your host. If you run \fB\fCdocker cp\fR in your \fB\fC\~\fR
+(home) directory on the local host:
+
+.PP
+.RS
+
+.nf
+$ docker cp compassionate\_darwin:tmp/foo /tmp
+
+.fi
+.RE
+
+.PP
+Docker creates a \fB\fC/tmp/foo\fR directory on your host. Alternatively, you can omit
+the leading slash in the command. If you execute this command from your home
+directory:
+
+.PP
+.RS
+
+.nf
+$ docker cp compassionate\_darwin:tmp/foo tmp
+
+.fi
+.RE
+
+.PP
+If \fB\fC\~/tmp\fR does not exist, Docker will create it and copy the contents of
+\fB\fC/tmp/foo\fR from the container into this new directory. If \fB\fC\~/tmp\fR already
+exists as a directory, then Docker will copy the contents of \fB\fC/tmp/foo\fR from
+the container into a directory at \fB\fC\~/tmp/foo\fR.
+
+.PP
+When copying a single file to an existing \fB\fCLOCALPATH\fR, the \fB\fCdocker cp\fR command
+will either overwrite the contents of \fB\fCLOCALPATH\fR if it is a file or place it
+into \fB\fCLOCALPATH\fR if it is a directory, overwriting an existing file of the same
+name if one exists. For example, this command:
+
+.PP
+.RS
+
+.nf
+$ docker cp sharp\_ptolemy:/tmp/foo/myfile.txt /test
+
+.fi
+.RE
+
+.PP
+If \fB\fC/test\fR does not exist on the local machine, it will be created as a file
+with the contents of \fB\fC/tmp/foo/myfile.txt\fR from the container. If \fB\fC/test\fR
+exists as a file, it will be overwritten. Lastly, if \fB\fC/test\fR exists as a
+directory, the file will be copied to \fB\fC/test/myfile.txt\fR.
+
+.PP
+Next, suppose you want to copy a file or folder into a container. For example,
+this could be a configuration file or some other input to a long running
+computation that you would like to place into a created container before it
+starts. This is useful because it does not require the configuration file or
+other input to exist in the container image.
+
+.PP
+If you have a file, \fB\fCconfig.yml\fR, in the current directory on your local host
+and wish to copy it to an existing directory at \fB\fC/etc/my\-app.d\fR in a container,
+this command can be used:
+
+.PP
+.RS
+
+.nf
+$ docker cp config.yml myappcontainer:/etc/my\-app.d
+
+.fi
+.RE
+
+.PP
+If you have several files in a local directory \fB\fC/config\fR which you need to copy
+to a directory \fB\fC/etc/my\-app.d\fR in a container:
+
+.PP
+.RS
+
+.nf
+$ docker cp /config/. myappcontainer:/etc/my\-app.d
+
+.fi
+.RE
+
+.PP
+The above command will copy the contents of the local \fB\fC/config\fR directory into
+the directory \fB\fC/etc/my\-app.d\fR in the container.
+
+.PP
+Finally, if you want to copy a symbolic link into a container, you typically
+want to  copy the linked target and not the link itself. To copy the target, use
+the \fB\fC\-L\fR option, for example:
+
+.PP
+.RS
+
+.nf
+$ ln \-s /tmp/somefile /tmp/somefile.ln
+$ docker cp \-L /tmp/somefile.ln myappcontainer:/tmp/
+
+.fi
+.RE
+
+.PP
+This command copies content of the local \fB\fC/tmp/somefile\fR into the file
+\fB\fC/tmp/somefile.ln\fR in the container. Without \fB\fC\-L\fR option, the \fB\fC/tmp/somefile.ln\fR
+preserves its symbolic link but not its content.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+May 2015, updated by Josh Hawn 
+\[la]josh.hawn@docker.com\[ra]

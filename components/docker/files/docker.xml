@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+ Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+-->
+<service_bundle type="manifest" name="docker">
+
+  <service version="1" type="service"
+    name="application/docker/docker">
+
+    <create_default_instance enabled="false"/>
+
+    <dependency name='multiuser' grouping='require_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/milestone/multi-user:default' />
+    </dependency>
+
+    <dependency name='zones' grouping='require_all' restart_on='none'
+      type='service'>
+      <service_fmri 
+        value='svc:/system/zones:default' />
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
+
+    <exec_method type="method" name="start" timeout_seconds="120"
+      exec="/lib/svc/method/svc-docker %m"/>
+
+    <exec_method type="method" name="stop" timeout_seconds="60"
+      exec="/lib/svc/method/svc-docker %m %{restarter/contract}"/>
+ 
+    <!-- to start/stop/refresh the service -->
+    <property_group name='general' type='framework'>
+      <propval name='action_authorization' type='astring'
+        value='solaris.smf.manage.docker' />
+      <propval name='value_authorization' type='astring'
+        value='solaris.smf.value.docker' />
+    </property_group>
+   
+    <property_group name="config" type="application">
+      <propval name='http_proxy' type='astring' value=''
+        override='true'/>
+      <propval name='https_proxy' type='astring' value=''
+        override='true'/>
+      <propval name='fsname' type='astring' value=''
+        override='true'/>
+      <propval name='debug' type='boolean' value='false' />
+      <propval name='action_authorization' type='astring'
+        value='solaris.smf.manage.docker' />
+      <propval name='value_authorization' type='astring'
+        value='solaris.smf.value.docker' />
+    </property_group>
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C">
+          Docker Container Engine for Solaris
+        </loctext>
+      </common_name>
+      <description>
+        <loctext xml:lang="C">
+          Executes and monitors the Docker Container Engine.
+        </loctext>
+      </description>
+    </template>
+  </service>
+</service_bundle>

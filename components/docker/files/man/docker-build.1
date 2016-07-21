@@ -1,0 +1,458 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-build \- Build a new image from the source code at PATH
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker build\fP
+[\fB\-\-build\-arg\fP[=\fI[]\fP]]
+[\fB\-\-cpu\-shares\fP[=\fI0\fP]]
+[\fB\-\-cgroup\-parent\fP[=\fICGROUP\-PARENT\fP]]
+[\fB\-\-help\fP]
+[\fB\-f\fP|\fB\-\-file\fP[=\fIPATH/Dockerfile\fP]]
+[\fB\-\-force\-rm\fP]
+[\fB\-\-isolation\fP[=\fIdefault\fP]]
+[\fB\-\-no\-cache\fP]
+[\fB\-\-pull\fP]
+[\fB\-q\fP|\fB\-\-quiet\fP]
+[\fB\-\-rm\fP[=\fItrue\fP]]
+[\fB\-t\fP|\fB\-\-tag\fP[=\fI[]\fP]]
+[\fB\-m\fP|\fB\-\-memory\fP[=\fIMEMORY\fP]]
+[\fB\-\-memory\-swap\fP[=\fILIMIT\fP]]
+[\fB\-\-shm\-size\fP[=\fISHM\-SIZE\fP]]
+[\fB\-\-cpu\-period\fP[=\fI0\fP]]
+[\fB\-\-cpu\-quota\fP[=\fI0\fP]]
+[\fB\-\-cpuset\-cpus\fP[=\fICPUSET\-CPUS\fP]]
+[\fB\-\-cpuset\-mems\fP[=\fICPUSET\-MEMS\fP]]
+[\fB\-\-ulimit\fP[=\fI[]\fP]]
+PATH | URL | \-
+
+
+.SH DESCRIPTION
+.PP
+This will read the Dockerfile from the directory specified in \fBPATH\fP.
+It also sends any other files and directories found in the current
+directory to the Docker daemon. The contents of this directory would
+be used by \fBADD\fP commands found within the Dockerfile.
+
+.PP
+Warning, this will send a lot of data to the Docker daemon depending
+on the contents of the current directory. The build is run by the Docker
+daemon, not by the CLI, so the whole context must be transferred to the daemon.
+The Docker CLI reports "Sending build context to Docker daemon" when the context is sent to
+the daemon.
+
+.PP
+When the URL to a tarball archive or to a single Dockerfile is given, no context is sent from
+the client to the Docker daemon. In this case, the Dockerfile at the root of the archive and
+the rest of the archive will get used as the context of the build.  When a Git repository is
+set as the \fBURL\fP, the repository is cloned locally and then sent as the context.
+
+
+.SH OPTIONS
+.PP
+\fB\-f\fP, \fB\-\-file\fP=\fIPATH/Dockerfile\fP
+   Path to the Dockerfile to use. If the path is a relative path and you are
+   building from a local directory, then the path must be relative to that
+   directory. If you are building from a remote URL pointing to either a
+   tarball or a Git repository, then the path must be relative to the root of
+   the remote context. In all cases, the file must be within the build context.
+   The default is \fIDockerfile\fP.
+
+.PP
+\fB\-\-build\-arg\fP=\fIvariable\fP
+   name and value of a \fBbuildarg\fP.
+
+.PP
+For example, if you want to pass a value for \fB\fChttp\_proxy\fR, use
+   \fB\fC\-\-build\-arg=http\_proxy="http://some.proxy.url"\fR
+
+.PP
+Users pass these values at build\-time. Docker uses the \fB\fCbuildargs\fR as the
+   environment context for command(s) run via the Dockerfile's \fB\fCRUN\fR instruction
+   or for variable expansion in other Dockerfile instructions. This is not meant
+   for passing secret values. 
+\[la]/reference/builder/#arg\[ra]
+
+.PP
+\fB\-\-force\-rm\fP=\fItrue\fP|\fIfalse\fP
+   Always remove intermediate containers, even after unsuccessful builds. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-isolation\fP="\fIdefault\fP"
+   Isolation specifies the type of isolation technology used by containers.
+
+.PP
+\fB\-\-no\-cache\fP=\fItrue\fP|\fIfalse\fP
+   Do not use cache when building the image. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-\-pull\fP=\fItrue\fP|\fIfalse\fP
+   Always attempt to pull a newer version of the image. The default is \fIfalse\fP.
+
+.PP
+\fB\-q\fP, \fB\-\-quiet\fP=\fItrue\fP|\fIfalse\fP
+   Suppress the build output and print image ID on success. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-rm\fP=\fItrue\fP|\fIfalse\fP
+   Remove intermediate containers after a successful build. The default is \fItrue\fP.
+
+.PP
+\fB\-t\fP, \fB\-\-tag\fP=""
+   Repository names (and optionally with tags) to be applied to the resulting image in case of success.
+
+.PP
+\fB\-m\fP, \fB\-\-memory\fP=\fIMEMORY\fP
+  Memory limit
+
+.PP
+\fB\-\-memory\-swap\fP=\fILIMIT\fP
+   A limit value equal to memory plus swap. Must be used with the  \fB\-m\fP
+(\fB\-\-memory\fP) flag. The swap \fB\fCLIMIT\fR should always be larger than \fB\-m\fP
+(\fB\-\-memory\fP) value.
+
+.PP
+The format of \fB\fCLIMIT\fR is \fB\fC<number>[<unit>]\fR. Unit can be \fB\fCb\fR (bytes),
+\fB\fCk\fR (kilobytes), \fB\fCm\fR (megabytes), or \fB\fCg\fR (gigabytes). If you don't specify a
+unit, \fB\fCb\fR is used. Set LIMIT to \fB\fC\-1\fR to enable unlimited swap.
+
+.PP
+\fB\-\-shm\-size\fP=\fISHM\-SIZE\fP
+  Size of \fB\fC/dev/shm\fR. The format is \fB\fC<number><unit>\fR. \fB\fCnumber\fR must be greater than \fB\fC0\fR.
+  Unit is optional and can be \fB\fCb\fR (bytes), \fB\fCk\fR (kilobytes), \fB\fCm\fR (megabytes), or \fB\fCg\fR (gigabytes). If you omit the unit, the system uses bytes.
+  If you omit the size entirely, the system uses \fB\fC64m\fR.
+
+.PP
+\fB\-\-cpu\-shares\fP=\fI0\fP
+  CPU shares (relative weight).
+
+.PP
+By default, all containers get the same proportion of CPU cycles.
+  CPU shares is a 'relative weight', relative to the default setting of 1024.
+  This default value is defined here:
+
+.PP
+.RS
+
+.nf
+   cat /sys/fs/cgroup/cpu/cpu.shares
+   1024
+
+.fi
+.RE
+
+.PP
+You can change this proportion by adjusting the container's CPU share
+  weighting relative to the weighting of all other running containers.
+
+.PP
+To modify the proportion from the default of 1024, use the \fB\-\-cpu\-shares\fP
+  flag to set the weighting to 2 or higher.
+
+.PP
+.RS
+
+.nf
+  Container   CPU share    Flag             
+  {C0}        60% of CPU  \-\-cpu\-shares=614 (614 is 60% of 1024)
+  {C1}        40% of CPU  \-\-cpu\-shares=410 (410 is 40% of 1024)
+
+.fi
+.RE
+
+.PP
+The proportion is only applied when CPU\-intensive processes are running.
+  When tasks in one container are idle, the other containers can use the
+  left\-over CPU time. The actual amount of CPU time used varies depending on
+  the number of containers running on the system.
+
+.PP
+For example, consider three containers, where one has \fB\-\-cpu\-shares=1024\fP and
+  two others have \fB\-\-cpu\-shares=512\fP. When processes in all three
+  containers attempt to use 100% of CPU, the first container would receive
+  50% of the total CPU time. If you add a fourth container with \fB\-\-cpu\-shares=1024\fP,
+  the first container only gets 33% of the CPU. The remaining containers
+  receive 16.5%, 16.5% and 33% of the CPU.
+
+.PP
+.RS
+
+.nf
+  Container   CPU share   Flag                CPU time            
+  {C0}        100%        \-\-cpu\-shares=1024   33%
+  {C1}        50%         \-\-cpu\-shares=512    16.5%
+  {C2}        50%         \-\-cpu\-shares=512    16.5%
+  {C4}        100%        \-\-cpu\-shares=1024   33%
+
+.fi
+.RE
+
+.PP
+On a multi\-core system, the shares of CPU time are distributed across the CPU
+  cores. Even if a container is limited to less than 100% of CPU time, it can
+  use 100% of each individual CPU core.
+
+.PP
+For example, consider a system with more than three cores. If you start one
+  container \fB{C0}\fP with \fB\-\-cpu\-shares=512\fP running one process, and another container
+  \fB{C1}\fP with \fB\-\-cpu\-shares=1024\fP running two processes, this can result in the following
+  division of CPU shares:
+
+.PP
+.RS
+
+.nf
+  PID    container    CPU    CPU share
+  100    {C0}         0      100% of CPU0
+  101    {C1}         1      100% of CPU1
+  102    {C1}         2      100% of CPU2
+
+.fi
+.RE
+
+.PP
+\fB\-\-cpu\-period\fP=\fI0\fP
+  Limit the CPU CFS (Completely Fair Scheduler) period.
+
+.PP
+Limit the container's CPU usage. This flag causes the kernel to restrict the
+  container's CPU usage to the period you specify.
+
+.PP
+\fB\-\-cpu\-quota\fP=\fI0\fP
+  Limit the CPU CFS (Completely Fair Scheduler) quota.
+
+.PP
+By default, containers run with the full CPU resource. This flag causes the
+kernel to restrict the container's CPU usage to the quota you specify.
+
+.PP
+\fB\-\-cpuset\-cpus\fP=\fICPUSET\-CPUS\fP
+  CPUs in which to allow execution (0\-3, 0,1).
+
+.PP
+\fB\-\-cpuset\-mems\fP=\fICPUSET\-MEMS\fP
+  Memory nodes (MEMs) in which to allow execution (0\-3, 0,1). Only effective on
+  NUMA systems.
+
+.PP
+For example, if you have four memory nodes on your system (0\-3), use \fB\fC\-\-cpuset\-mems=0,1\fR
+to ensure the processes in your Docker container only use memory from the first
+two memory nodes.
+
+.PP
+\fB\-\-cgroup\-parent\fP=\fICGROUP\-PARENT\fP
+  Path to \fB\fCcgroups\fR under which the container's \fB\fCcgroup\fR are created.
+
+.PP
+If the path is not absolute, the path is considered relative to the \fB\fCcgroups\fR path of the init process.
+Cgroups are created if they do not already exist.
+
+.PP
+\fB\-\-ulimit\fP=[]
+  Ulimit options
+
+.PP
+For more information about \fB\fCulimit\fR see 
+\[la]https://docs.docker.com/reference/commandline/run/#setting-ulimits-in-a-container\[ra]
+
+
+.SH EXAMPLES
+.SH Building an image using a Dockerfile located inside the current directory
+.PP
+Docker images can be built using the build command and a Dockerfile:
+
+.PP
+.RS
+
+.nf
+docker build .
+
+.fi
+.RE
+
+.PP
+During the build process Docker creates intermediate images. In order to
+keep them, you must explicitly set \fB\fC\-\-rm=false\fR.
+
+.PP
+.RS
+
+.nf
+docker build \-\-rm=false .
+
+.fi
+.RE
+
+.PP
+A good practice is to make a sub\-directory with a related name and create
+the Dockerfile in that directory. For example, a directory called mongo may
+contain a Dockerfile to create a Docker MongoDB image. Likewise, another
+directory called httpd may be used to store Dockerfiles for Apache web
+server images.
+
+.PP
+It is also a good practice to add the files required for the image to the
+sub\-directory. These files will then be specified with the \fB\fCCOPY\fR or \fB\fCADD\fR
+instructions in the \fB\fCDockerfile\fR.
+
+.PP
+Note: If you include a tar file (a good practice), then Docker will
+automatically extract the contents of the tar file specified within the \fB\fCADD\fR
+instruction into the specified target.
+
+.SH Building an image and naming that image
+.PP
+A good practice is to give a name to the image you are building. Note that
+only a\-z0\-9\-\_. should be used for consistency.  There are no hard rules here but it is best to give the names consideration.
+
+.PP
+The \fB\-t\fP/\fB\-\-tag\fP flag is used to rename an image. Here are some examples:
+
+.PP
+Though it is not a good practice, image names can be arbitrary:
+
+.PP
+.RS
+
+.nf
+docker build \-t myimage .
+
+.fi
+.RE
+
+.PP
+A better approach is to provide a fully qualified and meaningful repository,
+name, and tag (where the tag in this context means the qualifier after
+the ":"). In this example we build a JBoss image for the Fedora repository
+and give it the version 1.0:
+
+.PP
+.RS
+
+.nf
+docker build \-t fedora/jboss:1.0 .
+
+.fi
+.RE
+
+.PP
+The next example is for the "whenry" user repository and uses Fedora and
+JBoss and gives it the version 2.1 :
+
+.PP
+.RS
+
+.nf
+docker build \-t whenry/fedora\-jboss:v2.1 .
+
+.fi
+.RE
+
+.PP
+If you do not provide a version tag then Docker will assign \fB\fClatest\fR:
+
+.PP
+.RS
+
+.nf
+docker build \-t whenry/fedora\-jboss .
+
+.fi
+.RE
+
+.PP
+When you list the images, the image above will have the tag \fB\fClatest\fR.
+
+.PP
+You can apply multiple tags to an image. For example, you can apply the \fB\fClatest\fR
+tag to a newly built image and add another tag that references a specific
+version.
+For example, to tag an image both as \fB\fCwhenry/fedora\-jboss:latest\fR and
+\fB\fCwhenry/fedora\-jboss:v2.1\fR, use the following:
+
+.PP
+.RS
+
+.nf
+docker build \-t whenry/fedora\-jboss:latest \-t whenry/fedora\-jboss:v2.1 .
+
+.fi
+.RE
+
+.PP
+So renaming an image is arbitrary but consideration should be given to
+a useful convention that makes sense for consumers and should also take
+into account Docker community conventions.
+
+.SH Building an image using a URL
+.PP
+This will clone the specified GitHub repository from the URL and use it
+as context. The Dockerfile at the root of the repository is used as
+Dockerfile. This only works if the GitHub repository is a dedicated
+repository.
+
+.PP
+.RS
+
+.nf
+docker build github.com/scollier/purpletest
+
+.fi
+.RE
+
+.PP
+Note: You can set an arbitrary Git repository via the \fB\fCgit://\fR schema.
+
+.SH Building an image using a URL to a tarball'ed context
+.PP
+This will send the URL itself to the Docker daemon. The daemon will fetch the
+tarball archive, decompress it and use its contents as the build context.  The
+Dockerfile at the root of the archive and the rest of the archive will get used
+as the context of the build. If you pass an \fB\-f PATH/Dockerfile\fP option as well,
+the system will look for that file inside the contents of the tarball.
+
+.PP
+.RS
+
+.nf
+docker build \-f dev/Dockerfile https://10.10.10.1/docker/context.tar.gz
+
+.fi
+.RE
+
+.PP
+Note: supported compression formats are 'xz', 'bzip2', 'gzip' and 'identity' (no compression).
+
+.SH Specify isolation technology for container (\-\-isolation)
+.PP
+This option is useful in situations where you are running Docker containers on
+Windows. The \fB\fC\-\-isolation=<value>\fR option sets a container's isolation
+technology. On Linux, the only supported is the \fB\fCdefault\fR option which uses
+Linux namespaces. On Microsoft Windows, you can specify these values:
+.IP \n+[step]
+
+\item \fB\fCdefault\fR: Use the value specified by the Docker daemon's \fB\fC\-\-exec\-opt\fR . If the \fB\fCdaemon\fR does not specify an isolation technology, Microsoft Windows uses \fB\fCprocess\fR as its default value.
+\item \fB\fCprocess\fR: Namespace isolation only.
+\item \fB\fChyperv\fR: Hyper\-V hypervisor partition\-based isolation.
+.PP
+Specifying the \fB\fC\-\-isolation\fR flag without a value is the same as setting \fB\fC\-\-isolation="default"\fR.
+
+
+.SH HISTORY
+.PP
+March 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+June 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

@@ -1,0 +1,126 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-pull \- Pull an image or a repository from a registry
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker pull\fP
+[\fB\-a\fP|\fB\-\-all\-tags\fP]
+[\fB\-\-help\fP]
+NAME[:TAG] | [REGISTRY\_HOST[:REGISTRY\_PORT]/]NAME[:TAG]
+
+
+.SH DESCRIPTION
+.PP
+This command pulls down an image or a repository from a registry. If
+there is more than one image for a repository (e.g., fedora) then all
+images for that repository name can be pulled down including any tags
+(see the option \fB\-a\fP or \fB\-\-all\-tags\fP).
+
+.PP
+If you do not specify a \fB\fCREGISTRY\_HOST\fR, the command uses Docker's public
+registry located at \fB\fCregistry\-1.docker.io\fR by default.
+
+
+.SH OPTIONS
+.PP
+\fB\-a\fP, \fB\-\-all\-tags\fP=\fItrue\fP|\fIfalse\fP
+   Download all tagged images in the repository. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+
+.SH EXAMPLE
+.SH Pull a repository with multiple images with the \-a|\-\-all\-tags option set to true.
+.PP
+Note that if the  image is previously downloaded then the status would be
+\fB\fCStatus: Image is up to date for fedora\fR.
+
+.PP
+.RS
+
+.nf
+$ docker pull \-\-all\-tags fedora
+Pulling repository fedora
+ad57ef8d78d7: Download complete
+105182bb5e8b: Download complete
+511136ea3c5a: Download complete
+73bd853d2ea5: Download complete
+
+Status: Downloaded newer image for fedora
+
+$ docker images
+REPOSITORY   TAG         IMAGE ID        CREATED      SIZE
+fedora       rawhide     ad57ef8d78d7    5 days ago   359.3 MB
+fedora       20          105182bb5e8b    5 days ago   372.7 MB
+fedora       heisenbug   105182bb5e8b    5 days ago   372.7 MB
+fedora       latest      105182bb5e8b    5 days ago   372.7 MB
+
+.fi
+.RE
+
+.SH Pull a repository with the \-a|\-\-all\-tags option set to false (this is the default).
+.PP
+.RS
+
+.nf
+$ docker pull debian
+Using default tag: latest
+latest: Pulling from library/debian
+2c49f83e0b13: Pull complete 
+4a5e6db8c069: Pull complete 
+
+Status: Downloaded newer image for debian:latest
+
+$ docker images
+REPOSITORY   TAG         IMAGE ID        CREATED      SIZE
+debian       latest     4a5e6db8c069     5 days ago   125.1 MB
+
+.fi
+.RE
+
+.SH Pull an image, manually specifying path to Docker's public registry and tag
+.PP
+Note that if the  image is previously downloaded then the status would be
+\fB\fCStatus: Image is up to date for registry.hub.docker.com/fedora:20\fR
+
+.PP
+.RS
+
+.nf
+$ docker pull registry.hub.docker.com/fedora:20
+Pulling repository fedora
+3f2fed40e4b0: Download complete 
+511136ea3c5a: Download complete 
+fd241224e9cf: Download complete 
+
+Status: Downloaded newer image for registry.hub.docker.com/fedora:20
+
+$ docker images
+REPOSITORY   TAG         IMAGE ID        CREATED      SIZE
+fedora       20          3f2fed40e4b0    4 days ago   372.7 MB
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+August 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+April 2015, updated by John Willis 
+\[la]john.willis@docker.com\[ra]
+April 2015, updated by Mary Anthony for v2 
+\[la]mary@docker.com\[ra]
+September 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

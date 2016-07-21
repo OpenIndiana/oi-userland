@@ -1,0 +1,124 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-attach \- Attach to a running container
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker attach\fP
+[\fB\-\-detach\-keys\fP[=\fI[]\fP]]
+[\fB\-\-help\fP]
+[\fB\-\-no\-stdin\fP]
+[\fB\-\-sig\-proxy\fP[=\fItrue\fP]]
+CONTAINER
+
+
+.SH DESCRIPTION
+.PP
+The \fBdocker attach\fP command allows you to attach to a running container using
+the container's ID or name, either to view its ongoing output or to control it
+interactively.  You can attach to the same contained process multiple times
+simultaneously, screen sharing style, or quickly view the progress of your
+detached process.
+
+.PP
+To stop a container, use \fB\fCCTRL\-c\fR. This key sequence sends \fB\fCSIGKILL\fR to the
+container. You can detach from the container (and leave it running) using a
+configurable key sequence. The default sequence is \fB\fCCTRL\-p CTRL\-q\fR. You
+configure the key sequence using the \fB\-\-detach\-keys\fP option or a configuration
+file. See \fBconfig\-json(5)\fP for documentation on using a configuration file.
+
+.PP
+It is forbidden to redirect the standard input of a \fB\fCdocker attach\fR command while
+attaching to a tty\-enabled container (i.e.: launched with \fB\fC\-t\fR).
+
+
+.SH OPTIONS
+.PP
+\fB\-\-detach\-keys\fP=""
+    Override the key sequence for detaching a container. Format is a single character \fB\fC[a\-Z]\fR or \fB\fCctrl\-<value>\fR where \fB\fC<value>\fR is one of: \fB\fCa\-z\fR, \fB\fC@\fR, \fB\fC^\fR, \fB\fC[\fR, \fB\fC,\fR or \fB\fC\_\fR.
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-\-no\-stdin\fP=\fItrue\fP|\fIfalse\fP
+   Do not attach STDIN. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-sig\-proxy\fP=\fItrue\fP|\fIfalse\fP
+   Proxy all received signals to the process (non\-TTY mode only). SIGCHLD, SIGKILL, and SIGSTOP are not proxied. The default is \fItrue\fP.
+
+
+.SH Override the detach sequence
+.PP
+If you want, you can configure a override the Docker key sequence for detach.
+This is is useful if the Docker default sequence conflicts with key squence you
+use for other applications. There are two ways to defines a your own detach key
+sequence, as a per\-container override or as a configuration property on  your
+entire configuration.
+
+.PP
+To override the sequence for an individual container, use the
+\fB\fC\-\-detach\-keys="<sequence>"\fR flag with the \fB\fCdocker attach\fR command. The format of
+the \fB\fC<sequence>\fR is either a letter [a\-Z], or the \fB\fCctrl\-\fR combined with any of
+the following:
+.IP \n+[step]
+
+\item \fB\fCa\-z\fR (a single lowercase alpha character )
+\item \fB\fC@\fR (ampersand)
+\item \fB\fC[\fR (left bracket)
+\item \fB\fC\\\\\fR (two backward slashes)
+\item \fB\fC\_\fR (underscore)
+\item \fB\fC^\fR (caret)
+.PP
+These \fB\fCa\fR, \fB\fCctrl\-a\fR, \fB\fCX\fR, or \fB\fCctrl\-\\\\\fR values are all examples of valid key
+sequences. To configure a different configuration default key sequence for all
+containers, see \fBdocker(1)\fP.
+
+
+.SH EXAMPLES
+.SH Attaching to a container
+.PP
+In this example the top command is run inside a container, from an image called
+fedora, in detached mode. The ID from the container is passed into the \fBdocker
+attach\fP command:
+
+.PP
+.RS
+
+.nf
+# ID=$(sudo docker run \-d fedora /usr/bin/top \-b)
+# sudo docker attach $ID
+top \- 02:05:52 up  3:05,  0 users,  load average: 0.01, 0.02, 0.05
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.1%us,  0.2%sy,  0.0%ni, 99.7%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:    373572k total,   355560k used,    18012k free,    27872k buffers
+Swap:   786428k total,        0k used,   786428k free,   221740k cached
+
+PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+1 root      20   0 17200 1116  912 R    0  0.3   0:00.03 top
+
+top \- 02:05:55 up  3:05,  0 users,  load average: 0.01, 0.02, 0.05
+Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+Cpu(s):  0.0%us,  0.2%sy,  0.0%ni, 99.8%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:    373572k total,   355244k used,    18328k free,    27872k buffers
+Swap:   786428k total,        0k used,   786428k free,   221776k cached
+
+PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+1 root      20   0 17208 1144  932 R    0  0.3   0:00.03 top
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]

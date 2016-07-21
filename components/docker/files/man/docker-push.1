@@ -1,0 +1,88 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-push \- Push an image or a repository to a registry
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker push\fP
+[\fB\-\-help\fP]
+NAME[:TAG] | [REGISTRY\_HOST[:REGISTRY\_PORT]/]NAME[:TAG]
+
+
+.SH DESCRIPTION
+.PP
+This command pushes an image or a repository to a registry. If you do not
+specify a \fB\fCREGISTRY\_HOST\fR, the command uses Docker's public registry located at
+\fB\fCregistry\-1.docker.io\fR by default.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+
+.SH EXAMPLES
+
+.SH Pushing a new image to a registry
+.PP
+First save the new image by finding the container ID (using \fBdocker ps\fP)
+and then committing it to a new image name.  Note that only a\-z0\-9\-\_. are
+allowed when naming images:
+
+.PP
+.RS
+
+.nf
+# docker commit c16378f943fe rhel\-httpd
+
+.fi
+.RE
+
+.PP
+Now, push the image to the registry using the image ID. In this example the
+registry is on host named \fB\fCregistry\-host\fR and listening on port \fB\fC5000\fR. To do
+this, tag the image with the host name or IP address, and the port of the
+registry:
+
+.PP
+.RS
+
+.nf
+# docker tag rhel\-httpd registry\-host:5000/myadmin/rhel\-httpd
+# docker push registry\-host:5000/myadmin/rhel\-httpd
+
+.fi
+.RE
+
+.PP
+Check that this worked by running:
+
+.PP
+.RS
+
+.nf
+# docker images
+
+.fi
+.RE
+
+.PP
+You should see both \fB\fCrhel\-httpd\fR and \fB\fCregistry\-host:5000/myadmin/rhel\-httpd\fR
+listed.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+April 2015, updated by Mary Anthony for v2 
+\[la]mary@docker.com\[ra]
+June 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

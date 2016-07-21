@@ -1,0 +1,223 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "OCT 2015"  ""
+
+
+.SH NAME
+.PP
+docker\-network\-create \- create a new network
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker network create\fP
+[\fB\-\-aux\-address\fP=\fImap[]\fP]
+[\fB\-d\fP|\fB\-\-driver\fP=\fIDRIVER\fP]
+[\fB\-\-gateway\fP=\fI[]\fP]
+[\fB\-\-help\fP]
+[\fB\-\-internal\fP]
+[\fB\-\-ip\-range\fP=\fI[]\fP]
+[\fB\-\-ipam\-driver\fP=\fIdefault\fP]
+[\fB\-\-ipam\-opt\fP=\fImap[]\fP]
+[\fB\-o\fP|\fB\-\-opt\fP=\fImap[]\fP]
+[\fB\-\-subnet\fP=\fI[]\fP]
+NETWORK\-NAME
+
+
+.SH DESCRIPTION
+.PP
+Creates a new network. The \fB\fCDRIVER\fR accepts \fB\fCbridge\fR or \fB\fCoverlay\fR which are the
+built\-in network drivers. If you have installed a third party or your own custom
+network driver you can specify that \fB\fCDRIVER\fR here also. If you don't specify the
+\fB\fC\-\-driver\fR option, the command automatically creates a \fB\fCbridge\fR network for you.
+When you install Docker Engine it creates a \fB\fCbridge\fR network automatically. This
+network corresponds to the \fB\fCdocker0\fR bridge that Engine has traditionally relied
+on. When launch a new container with  \fB\fCdocker run\fR it automatically connects to
+this bridge network. You cannot remove this default bridge network but you can
+create new ones using the \fB\fCnetwork create\fR command.
+
+.PP
+.RS
+
+.nf
+$ docker network create \-d bridge my\-bridge\-network
+
+.fi
+.RE
+
+.PP
+Bridge networks are isolated networks on a single Engine installation. If you
+want to create a network that spans multiple Docker hosts each running an
+Engine, you must create an \fB\fCoverlay\fR network. Unlike \fB\fCbridge\fR networks overlay
+networks require some pre\-existing conditions before you can create one. These
+conditions are:
+.IP \n+[step]
+
+\item Access to a key\-value store. Engine supports Consul, Etcd, and Zookeeper (Distributed store) key\-value stores.
+\item A cluster of hosts with connectivity to the key\-value store.
+\item A properly configured Engine \fB\fCdaemon\fR on each host in the cluster.
+.PP
+The \fB\fCdocker daemon\fR options that support the \fB\fCoverlay\fR network are:
+.IP \n+[step]
+
+\item \fB\fC\-\-cluster\-store\fR
+\item \fB\fC\-\-cluster\-store\-opt\fR
+\item \fB\fC\-\-cluster\-advertise\fR
+.PP
+To read more about these options and how to configure them, see 
+\[la]https://www.docker.com/engine/userguide/networking/get-started-overlay.md\[ra].
+
+.PP
+It is also a good idea, though not required, that you install Docker Swarm on to
+manage the cluster that makes up your network. Swarm provides sophisticated
+discovery and server management that can assist your implementation.
+
+.PP
+Once you have prepared the \fB\fCoverlay\fR network prerequisites you simply choose a
+Docker host in the cluster and issue the following to create the network:
+
+.PP
+.RS
+
+.nf
+$ docker network create \-d overlay my\-multihost\-network
+
+.fi
+.RE
+
+.PP
+Network names must be unique. The Docker daemon attempts to identify naming
+conflicts but this is not guaranteed. It is the user's responsibility to avoid
+name conflicts.
+
+.SH Connect containers
+.PP
+When you start a container use the \fB\fC\-\-net\fR flag to connect it to a network.
+This adds the \fB\fCbusybox\fR container to the \fB\fCmynet\fR network.
+
+.PP
+.RS
+
+.nf
+$ docker run \-itd \-\-net=mynet busybox
+
+.fi
+.RE
+
+.PP
+If you want to add a container to a network after the container is already
+running use the \fB\fCdocker network connect\fR subcommand.
+
+.PP
+You can connect multiple containers to the same network. Once connected, the
+containers can communicate using only another container's IP address or name.
+For \fB\fCoverlay\fR networks or custom plugins that support multi\-host connectivity,
+containers connected to the same multi\-host network but launched from different
+Engines can also communicate in this way.
+
+.PP
+You can disconnect a container from a network using the \fB\fCdocker network
+disconnect\fR command.
+
+.SH Specifying advanced options
+.PP
+When you create a network, Engine creates a non\-overlapping subnetwork for the
+network by default. This subnetwork is not a subdivision of an existing network.
+It is purely for ip\-addressing purposes. You can override this default and
+specify subnetwork values directly using the the \fB\fC\-\-subnet\fR option. On a
+\fB\fCbridge\fR network you can only create a single subnet:
+
+.PP
+.RS
+
+.nf
+docker network create \-d bridge \-\-subnet=192.168.0.0/16 br0
+
+.fi
+.RE
+
+.PP
+Additionally, you also specify the \fB\fC\-\-gateway\fR \fB\fC\-\-ip\-range\fR and \fB\fC\-\-aux\-address\fR options.
+
+.PP
+.RS
+
+.nf
+network create \-\-driver=bridge \-\-subnet=172.28.0.0/16 \-\-ip\-range=172.28.5.0/24 \-\-gateway=172.28.5.254 br0
+
+.fi
+.RE
+
+.PP
+If you omit the \fB\fC\-\-gateway\fR flag the Engine selects one for you from inside a
+preferred pool. For \fB\fCoverlay\fR networks and for network driver plugins that
+support it you can create multiple subnetworks.
+
+.PP
+.RS
+
+.nf
+docker network create \-d overlay
+  \-\-subnet=192.168.0.0/16 \-\-subnet=192.170.0.0/16
+  \-\-gateway=192.168.0.100 \-\-gateway=192.170.0.100
+  \-\-ip\-range=192.168.1.0/24
+  \-\-aux\-address a=192.168.1.5 \-\-aux\-address b=192.168.1.6
+  \-\-aux\-address a=192.170.1.5 \-\-aux\-address b=192.170.1.6
+  my\-multihost\-network
+
+.fi
+.RE
+
+.PP
+Be sure that your subnetworks do not overlap. If they do, the network create fails and Engine returns an error.
+
+.SS Network internal mode
+.PP
+By default, when you connect a container to an \fB\fCoverlay\fR network, Docker also connects a bridge network to it to provide external connectivity.
+If you want to create an externally isolated \fB\fCoverlay\fR network, you can specify the \fB\fC\-\-internal\fR option.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-aux\-address\fP=map[]
+  Auxiliary ipv4 or ipv6 addresses used by network driver
+
+.PP
+\fB\-d\fP, \fB\-\-driver\fP=\fIDRIVER\fP
+  Driver to manage the Network bridge or overlay. The default is bridge.
+
+.PP
+\fB\-\-gateway\fP=[]
+  ipv4 or ipv6 Gateway for the master subnet
+
+.PP
+\fB\-\-help\fP
+  Print usage
+
+.PP
+\fB\-\-internal\fP
+  Restricts external access to the network
+
+.PP
+\fB\-\-ip\-range\fP=[]
+  Allocate container ip from a sub\-range
+
+.PP
+\fB\-\-ipam\-driver\fP=\fIdefault\fP
+  IP Address Management Driver
+
+.PP
+\fB\-\-ipam\-opt\fP=map[]
+  Set custom IPAM driver options
+
+.PP
+\fB\-o\fP, \fB\-\-opt\fP=map[]
+  Set custom driver options
+
+.PP
+\fB\-\-subnet\fP=[]
+  Subnet in CIDR format that represents a network segment
+
+
+.SH HISTORY
+.PP
+OCT 2015, created by Mary Anthony 
+\[la]mary@docker.com\[ra]

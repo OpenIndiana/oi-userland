@@ -1,0 +1,93 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-tag \- Tag an image into a repository
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker tag\fP
+[\fB\-\-help\fP]
+IMAGE[:TAG] [REGISTRY\_HOST/][USERNAME/]NAME[:TAG]
+
+
+.SH DESCRIPTION
+.PP
+Assigns a new alias to an image in a registry. An alias refers to the
+entire image name including the optional \fB\fCTAG\fR after the ':'.
+
+.PP
+If you do not specify a \fB\fCREGISTRY\_HOST\fR, the command uses Docker's public
+registry located at \fB\fCregistry\-1.docker.io\fR by default.
+
+
+.SH "OPTIONS"
+.PP
+\fB\-\-help\fP
+   Print usage statement.
+
+.PP
+\fBREGISTRY\_HOST\fP
+   The hostname of the registry if required. This may also include the port
+separated by a ':'
+
+.PP
+\fBUSERNAME\fP
+   The username or other qualifying identifier for the image.
+
+.PP
+\fBNAME\fP
+   The image name.
+
+.PP
+\fBTAG\fP
+   The tag you are assigning to the image.  Though this is arbitrary it is
+recommended to be used for a version to distinguish images with the same name.
+Also, for consistency tags should only include a\-z0\-9\-\_. .
+Note that here TAG is a part of the overall name or "tag".
+
+
+.SH EXAMPLES
+.SH Giving an image a new alias
+.PP
+Here is an example of aliasing an image (e.g., 0e5574283393) as "httpd" and
+tagging it into the "fedora" repository with "version1.0":
+
+.PP
+.RS
+
+.nf
+docker tag 0e5574283393 fedora/httpd:version1.0
+
+.fi
+.RE
+
+.SH Tagging an image for a private repository
+.PP
+To push an image to a private registry and not the central Docker
+registry you must tag it with the registry hostname and port (if needed).
+
+.PP
+.RS
+
+.nf
+docker tag 0e5574283393 myregistryhost:5000/fedora/httpd:version1.0
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+July 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+April 2015, updated by Mary Anthony for v2 
+\[la]mary@docker.com\[ra]
+June 2015, updated by Sally O'Malley 
+\[la]somalley@redhat.com\[ra]

@@ -1,0 +1,81 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JULY 2015"  ""
+
+
+.SH NAME
+.PP
+docker\-volume\-create \- Create a new volume
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker volume create\fP
+[\fB\-d\fP|\fB\-\-driver\fP[=\fIDRIVER\fP]]
+[\fB\-\-help\fP]
+[\fB\-\-name\fP[=\fINAME\fP]]
+[\fB\-o\fP|\fB\-\-opt\fP[=\fI[]\fP]]
+
+
+.SH DESCRIPTION
+.PP
+Creates a new volume that containers can consume and store data in. If a name is not specified, Docker generates a random name. You create a volume and then configure the container to use it, for example:
+
+.PP
+.RS
+
+.nf
+  $ docker volume create \-\-name hello
+  hello
+  $ docker run \-d \-v hello:/world busybox ls /world
+
+.fi
+.RE
+
+.PP
+The mount is created inside the container's \fB\fC/src\fR directory. Docker doesn't not support relative paths for mount points inside the container.
+
+.PP
+Multiple containers can use the same volume in the same time period. This is useful if two containers need access to shared data. For example, if one container writes and the other reads the data.
+
+.SH Driver specific options
+.PP
+Some volume drivers may take options to customize the volume creation. Use the \fB\fC\-o\fR or \fB\fC\-\-opt\fR flags to pass driver options:
+
+.PP
+.RS
+
+.nf
+  $ docker volume create \-\-driver fake \-\-opt tardis=blue \-\-opt timey=wimey
+
+.fi
+.RE
+
+.PP
+These options are passed directly to the volume driver. Options for
+different volume drivers may do different things (or nothing at all).
+
+.PP
+\fINote\fP: The built\-in \fB\fClocal\fR volume driver does not currently accept any options.
+
+
+.SH OPTIONS
+.PP
+\fB\-d\fP, \fB\-\-driver\fP="\fIlocal\fP"
+  Specify volume driver name
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-\-name\fP=""
+  Specify volume name
+
+.PP
+\fB\-o\fP, \fB\-\-opt\fP=[]
+  Set driver specific options
+
+
+.SH HISTORY
+.PP
+July 2015, created by Brian Goff 
+\[la]cpuguy83@gmail.com\[ra]

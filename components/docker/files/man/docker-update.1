@@ -1,0 +1,122 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-update \- Update resource configs of one or more containers
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker update\fP
+[\fB\-\-blkio\-weight\fP[=\fI[BLKIO\-WEIGHT]\fP]]
+[\fB\-\-cpu\-shares\fP[=\fI0\fP]]
+[\fB\-\-cpu\-period\fP[=\fI0\fP]]
+[\fB\-\-cpu\-quota\fP[=\fI0\fP]]
+[\fB\-\-cpuset\-cpus\fP[=\fICPUSET\-CPUS\fP]]
+[\fB\-\-cpuset\-mems\fP[=\fICPUSET\-MEMS\fP]]
+[\fB\-\-help\fP]
+[\fB\-\-kernel\-memory\fP[=\fIKERNEL\-MEMORY\fP]]
+[\fB\-m\fP|\fB\-\-memory\fP[=\fIMEMORY\fP]]
+[\fB\-\-memory\-reservation\fP[=\fIMEMORY\-RESERVATION\fP]]
+[\fB\-\-memory\-swap\fP[=\fIMEMORY\-SWAP\fP]]
+CONTAINER [CONTAINER...]
+
+
+.SH DESCRIPTION
+.PP
+The \fB\fCdocker update\fR command dynamically updates container resources.  Use this
+command to prevent containers from consuming too many resources from their
+Docker host.  With a single command, you can place limits on a single
+container or on many. To specify more than one container, provide
+space\-separated list of container names or IDs.
+
+.PP
+With the exception of the \fB\fC\-\-kernel\-memory\fR value, you can specify these
+options on a running or a stopped container. You can only update
+\fB\fC\-\-kernel\-memory\fR on a stopped container. When you run \fB\fCdocker update\fR on
+stopped container, the next time you restart it, the container uses those
+values.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-blkio\-weight\fP=0
+   Block IO weight (relative weight) accepts a weight value between 10 and 1000.
+
+.PP
+\fB\-\-cpu\-shares\fP=0
+   CPU shares (relative weight)
+
+.PP
+\fB\-\-cpu\-period\fP=0
+   Limit the CPU CFS (Completely Fair Scheduler) period
+
+.PP
+\fB\-\-cpu\-quota\fP=0
+   Limit the CPU CFS (Completely Fair Scheduler) quota
+
+.PP
+\fB\-\-cpuset\-cpus\fP=""
+   CPUs in which to allow execution (0\-3, 0,1)
+
+.PP
+\fB\-\-cpuset\-mems\fP=""
+   Memory nodes(MEMs) in which to allow execution (0\-3, 0,1). Only effective on NUMA systems.
+
+.PP
+\fB\-\-help\fP
+   Print usage statement
+
+.PP
+\fB\-\-kernel\-memory\fP=""
+   Kernel memory limit (format: \fB\fC<number>[<unit>]\fR, where unit = b, k, m or g)
+
+.PP
+Note that you can not update kernel memory to a running container, it can only
+be updated to a stopped container, and affect after it's started.
+
+.PP
+\fB\-m\fP, \fB\-\-memory\fP=""
+   Memory limit (format: <number><optional unit>, where unit = b, k, m or g)
+
+.PP
+\fB\-\-memory\-reservation\fP=""
+   Memory soft limit (format: <number>[<unit>], where unit = b, k, m or g)
+
+.PP
+\fB\-\-memory\-swap\fP=""
+   Total memory limit (memory + swap)
+
+
+.SH EXAMPLES
+.PP
+The following sections illustrate ways to use this command.
+
+.SS Update a container with cpu\-shares=512
+.PP
+To limit a container's cpu\-shares to 512, first identify the container
+name or ID. You can use \fBdocker ps\fP to find these values. You can also
+use the ID returned from the \fBdocker run\fP command.  Then, do the following:
+
+.PP
+.RS
+
+.nf
+$ docker update \-\-cpu\-shares 512 abebf7571666
+
+.fi
+.RE
+
+.SS Update a container with cpu\-shares and memory
+.PP
+To update multiple resource configurations for multiple containers:
+
+.PP
+.RS
+
+.nf
+$ docker update \-\-cpu\-shares 512 \-m 300M abebf7571666 hopeful\_morse
+
+.fi
+.RE

@@ -1,0 +1,84 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-logs \- Fetch the logs of a container
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker logs\fP
+[\fB\-f\fP|\fB\-\-follow\fP]
+[\fB\-\-help\fP]
+[\fB\-\-since\fP[=\fISINCE\fP]]
+[\fB\-t\fP|\fB\-\-timestamps\fP]
+[\fB\-\-tail\fP[=\fI"all"\fP]]
+CONTAINER
+
+
+.SH DESCRIPTION
+.PP
+The \fBdocker logs\fP command batch\-retrieves whatever logs are present for
+a container at the time of execution. This does not guarantee execution
+order when combined with a docker run (i.e., your run may not have generated
+any logs at the time you execute docker logs).
+
+.PP
+The \fBdocker logs \-\-follow\fP command combines commands \fBdocker logs\fP and
+\fBdocker attach\fP. It will first return all logs from the beginning and
+then continue streaming new output from the container’s stdout and stderr.
+
+.PP
+\fBWarning\fP: This command works only for the \fBjson\-file\fP or \fBjournald\fP
+logging drivers.
+
+
+.SH OPTIONS
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-f\fP, \fB\-\-follow\fP=\fItrue\fP|\fIfalse\fP
+   Follow log output. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-since\fP=""
+   Show logs since timestamp
+
+.PP
+\fB\-t\fP, \fB\-\-timestamps\fP=\fItrue\fP|\fIfalse\fP
+   Show timestamps. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-tail\fP="\fIall\fP"
+   Output the specified number of lines at the end of logs (defaults to all logs)
+
+.PP
+The \fB\fC\-\-since\fR option can be Unix timestamps, date formated timestamps, or Go
+duration strings (e.g. \fB\fC10m\fR, \fB\fC1h30m\fR) computed relative to the client machine’s
+time. Supported formats for date formated time stamps include RFC3339Nano,
+RFC3339, \fB\fC2006\-01\-02T15:04:05\fR, \fB\fC2006\-01\-02T15:04:05.999999999\fR,
+\fB\fC2006\-01\-02Z07:00\fR, and \fB\fC2006\-01\-02\fR. The local timezone on the client will be
+used if you do not provide either a \fB\fCZ\fR or a \fB\fC+\-00:00\fR timezone offset at the
+end of the timestamp.  When providing Unix timestamps enter
+seconds[.nanoseconds], where seconds is the number of seconds that have elapsed
+since January 1, 1970 (midnight UTC/GMT), not counting leap  seconds (aka Unix
+epoch or Unix time), and the optional .nanoseconds field is a fraction of a
+second no more than nine digits long. You can combine the \fB\fC\-\-since\fR option with
+either or both of the \fB\fC\-\-follow\fR or \fB\fC\-\-tail\fR options.
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+July 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
+April 2015, updated by Ahmet Alp Balkan 
+\[la]ahmetalpbalkan@gmail.com\[ra]
+October 2015, updated by Mike Brown 
+\[la]mikebrow@gmail.com\[ra]

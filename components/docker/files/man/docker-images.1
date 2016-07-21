@@ -1,0 +1,171 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-images \- List images
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker images\fP
+[\fB\-\-help\fP]
+[\fB\-a\fP|\fB\-\-all\fP]
+[\fB\-\-digests\fP]
+[\fB\-f\fP|\fB\-\-filter\fP[=\fI[]\fP]]
+[\fB\-\-no\-trunc\fP]
+[\fB\-q\fP|\fB\-\-quiet\fP]
+[REPOSITORY[:TAG]]
+
+
+.SH DESCRIPTION
+.PP
+This command lists the images stored in the local Docker repository.
+
+.PP
+By default, intermediate images, used during builds, are not listed. Some of the
+output, e.g., image ID, is truncated, for space reasons. However the truncated
+image ID, and often the first few characters, are enough to be used in other
+Docker commands that use the image ID. The output includes repository, tag, image
+ID, date created and the virtual size.
+
+.PP
+The title REPOSITORY for the first title may seem confusing. It is essentially
+the image name. However, because you can tag a specific image, and multiple tags
+(image instances) can be associated with a single name, the name is really a
+repository for all tagged images of the same name. For example consider an image
+called fedora. It may be tagged with 18, 19, or 20, etc. to manage different
+versions.
+
+
+.SH OPTIONS
+.PP
+\fB\-a\fP, \fB\-\-all\fP=\fItrue\fP|\fIfalse\fP
+   Show all images (by default filter out the intermediate image layers). The default is \fIfalse\fP.
+
+.PP
+\fB\-\-digests\fP=\fItrue\fP|\fIfalse\fP
+   Show image digests. The default is \fIfalse\fP.
+
+.PP
+\fB\-f\fP, \fB\-\-filter\fP=[]
+   Filters the output. The dangling=true filter finds unused images. While label=com.foo=amd64 filters for images with a com.foo value of amd64. The label=com.foo filter finds images with the label com.foo of any value.
+
+.PP
+\fB\-\-format\fP="\fITEMPLATE\fP"
+   Pretty\-print containers using a Go template.
+   Valid placeholders:
+      .ID \- Image ID
+      .Repository \- Image repository
+      .Tag \- Image tag
+      .Digest \- Image digest
+      .CreatedSince \- Elapsed time since the image was created.
+      .CreatedAt \- Time when the image was created..
+      .Size \- Image disk size.
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-\-no\-trunc\fP=\fItrue\fP|\fIfalse\fP
+   Don't truncate output. The default is \fIfalse\fP.
+
+.PP
+\fB\-q\fP, \fB\-\-quiet\fP=\fItrue\fP|\fIfalse\fP
+   Only show numeric IDs. The default is \fIfalse\fP.
+
+
+.SH EXAMPLES
+.SH Listing the images
+.PP
+To list the images in a local repository (not the registry) run:
+
+.PP
+.RS
+
+.nf
+docker images
+
+.fi
+.RE
+
+.PP
+The list will contain the image repository name, a tag for the image, and an
+image ID, when it was created and its virtual size. Columns: REPOSITORY, TAG,
+IMAGE ID, CREATED, and SIZE.
+
+.PP
+The \fB\fCdocker images\fR command takes an optional \fB\fC[REPOSITORY[:TAG]]\fR argument
+that restricts the list to images that match the argument. If you specify
+\fB\fCREPOSITORY\fRbut no \fB\fCTAG\fR, the \fB\fCdocker images\fR command lists all images in the
+given repository.
+
+.PP
+.RS
+
+.nf
+docker images java
+
+.fi
+.RE
+
+.PP
+The \fB\fC[REPOSITORY[:TAG]]\fR value must be an "exact match". This means that, for example,
+\fB\fCdocker images jav\fR does not match the image \fB\fCjava\fR.
+
+.PP
+If both \fB\fCREPOSITORY\fR and \fB\fCTAG\fR are provided, only images matching that
+repository and tag are listed.  To find all local images in the "java"
+repository with tag "8" you can use:
+
+.PP
+.RS
+
+.nf
+docker images java:8
+
+.fi
+.RE
+
+.PP
+To get a verbose list of images which contains all the intermediate images
+used in builds use \fB\-a\fP:
+
+.PP
+.RS
+
+.nf
+docker images \-a
+
+.fi
+.RE
+
+.PP
+Previously, the docker images command supported the \-\-tree and \-\-dot arguments,
+which displayed different visualizations of the image data. Docker core removed
+this functionality in the 1.7 version. If you liked this functionality, you can
+still find it in the third\-party dockviz tool: 
+\[la]https://github.com/justone/dockviz\[ra].
+
+.SH Listing only the shortened image IDs
+.PP
+Listing just the shortened image IDs. This can be useful for some automated
+tools.
+
+.PP
+.RS
+
+.nf
+docker images \-q
+
+.fi
+.RE
+
+
+.SH HISTORY
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]

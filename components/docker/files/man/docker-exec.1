@@ -1,0 +1,86 @@
+.TH "DOCKER" "1" " Docker User Manuals" "Docker Community" "JUNE 2014"  ""
+
+
+.SH NAME
+.PP
+docker\-exec \- Run a command in a running container
+
+
+.SH SYNOPSIS
+.PP
+\fBdocker exec\fP
+[\fB\-d\fP|\fB\-\-detach\fP]
+[\fB\-\-detach\-keys\fP[=\fI[]\fP]]
+[\fB\-\-help\fP]
+[\fB\-i\fP|\fB\-\-interactive\fP]
+[\fB\-\-privileged\fP]
+[\fB\-t\fP|\fB\-\-tty\fP]
+[\fB\-u\fP|\fB\-\-user\fP[=\fIUSER\fP]]
+CONTAINER COMMAND [ARG...]
+
+
+.SH DESCRIPTION
+.PP
+Run a process in a running container.
+
+.PP
+The command started using \fB\fCdocker exec\fR will only run while the container's primary
+process (\fB\fCPID 1\fR) is running, and will not be restarted if the container is restarted.
+
+.PP
+If the container is paused, then the \fB\fCdocker exec\fR command will wait until the
+container is unpaused, and then run
+
+
+.SH OPTIONS
+.PP
+\fB\-d\fP, \fB\-\-detach\fP=\fItrue\fP|\fIfalse\fP
+   Detached mode: run command in the background. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-detach\-keys\fP=""
+  Override the key sequence for detaching a container. Format is a single character \fB\fC[a\-Z]\fR or \fB\fCctrl\-<value>\fR where \fB\fC<value>\fR is one of: \fB\fCa\-z\fR, \fB\fC@\fR, \fB\fC^\fR, \fB\fC[\fR, \fB\fC,\fR or \fB\fC\_\fR.
+
+.PP
+\fB\-\-help\fP
+  Print usage statement
+
+.PP
+\fB\-i\fP, \fB\-\-interactive\fP=\fItrue\fP|\fIfalse\fP
+   Keep STDIN open even if not attached. The default is \fIfalse\fP.
+
+.PP
+\fB\-\-privileged\fP=\fItrue\fP|\fIfalse\fP
+   Give the process extended 
+\[la]http://man7.org/linux/man-pages/man7/capabilities.7.html\[ra]
+when running in a container. The default is \fIfalse\fP.
+
+.PP
+Without this flag, the process run by \fB\fCdocker exec\fR in a running container has
+the same capabilities as the container, which may be limited. Set
+\fB\fC\-\-privileged\fR to give all capabilities to the process.
+
+.PP
+\fB\-t\fP, \fB\-\-tty\fP=\fItrue\fP|\fIfalse\fP
+   Allocate a pseudo\-TTY. The default is \fIfalse\fP.
+
+.PP
+\fB\-u\fP, \fB\-\-user\fP=""
+   Sets the username or UID used and optionally the groupname or GID for the specified command.
+
+.PP
+The followings examples are all valid:
+   \-\-user [user | user:group | uid | uid:gid | user:gid | uid:group ]
+
+.PP
+Without this argument the command will be run as root in the container.
+
+.PP
+The \fB\-t\fP option is incompatible with a redirection of the docker client
+standard input.
+
+
+.SH HISTORY
+.PP
+November 2014, updated by Sven Dowideit 
+\[la]SvenDowideit@home.org.au\[ra]
