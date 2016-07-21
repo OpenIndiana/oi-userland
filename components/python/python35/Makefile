@@ -25,17 +25,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.5.1
+COMPONENT_VERSION=	3.5.2
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c6d57c0c366d9060ab6c0cdf889ebf3d92711d466cc0119c441dbf2746f725c9
+    sha256:0010f56100b9b74259ebcd5d4b295a32324b58b517403a10d1a2aa7cb22bca40
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_BUGDB=	utility/python
-
-TPNO=			25978
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -76,27 +72,27 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 CFLAGS +=	$(CC_PIC)
 
 # for DWARF
-CFLAGS.i386 =	-preserve_argvalues=complete
+#CFLAGS.i386 =	-preserve_argvalues=complete
 # Use the Studio VIS SDK in order to explicitly generate nonfaulting loads
 # that allow Python to work with ADI-aware memory allocators.
-CFLAGS.studio.sparc.64 =	-xvis
+#CFLAGS.studio.sparc.64 =	-xvis
 
-CFLAGS +=	$(CFLAGS.$(MACH))
+#CFLAGS +=	$(CFLAGS.$(MACH))
 
 # 16-byte memory alignment + interpretation of non-alignment prevents SIGBUS.
-studio_ALIGN.sparc.64 = -xmemalign=16i
+#studio_ALIGN.sparc.64 = -xmemalign=16i
 
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.
 # Use of xprofile requires that the same options be used during compilation and
 # linking.  The targets chosen are based on Solaris 11 minimum supported system
 # requirements.
-COMPONENT_BUILD_TARGETS = profile-opt
-XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
-PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
-PYFLAGS.sparc =
-CFLAGS += -xO5 $(PYFLAGS.$(MACH))
-LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
+#COMPONENT_BUILD_TARGETS = profile-opt
+#XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
+#PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
+#PYFLAGS.sparc =
+#CFLAGS += -xO5 $(PYFLAGS.$(MACH))
+#LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
 
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
@@ -113,7 +109,6 @@ CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-dtrace
 CONFIGURE_OPTIONS  +=		--with-system-expat
 CONFIGURE_OPTIONS  +=		--with-system-ffi
-CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
 CONFIGURE_OPTIONS  +=		--bindir=/usr/bin
@@ -122,10 +117,8 @@ CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
-CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
-COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV  +=		PATH="$(PATH)"
 
 # Some tests have non-ASCII characters encoded for international domain names;
@@ -159,7 +152,7 @@ COMPONENT_INSTALL_ARGS +=	-e
 # Note that once Python 3.5 has been integrated and propagated to build
 # machines, then the LD_LIBRARY_PATH setting and PROTO_DIR prefix below
 # can both be removed.
-COMPONENT_POST_INSTALL_ACTION= \
+#COMPONENT_POST_INSTALL_ACTION= \
     (cd $(PROTOUSRLIBDIR)/python3.5 ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
 	-e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata.py config-3.5m/Makefile; \
@@ -186,7 +179,7 @@ COMPONENT_TEST_ENV += PATH="$(SPRO_VROOT)/bin:$(PATH)"
 COMPONENT_TEST_TARGETS = test < /dev/null
 # Some different values for system testing.
 COMPONENT_SYSTEM_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
-COMPONENT_SYSTEM_TEST_TARGETS = 
+COMPONENT_SYSTEM_TEST_TARGETS =
 COMPONENT_SYSTEM_TEST_CMD=    $(PYTHON.3.5)
 COMPONENT_SYSTEM_TEST_ARGS=   /usr/lib/python3.5/test/regrtest.py -v -uall,-network
 

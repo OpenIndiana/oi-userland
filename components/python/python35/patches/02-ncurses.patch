@@ -1,0 +1,15 @@
+--- Python-3.5.1.orig/setup.py  2016-07-17 16:13:35.486856804 +0300
++++ Python-3.5.1/setup.py       2016-07-17 16:45:51.659507576 +0300
+@@ -1306,7 +1306,11 @@
+         curses_defines = []
+         curses_includes = []
+         panel_library = 'panel'
+-        if curses_library == 'ncursesw':
++
++        if host_platform == 'sunos5':
++            curses_library = 'ncurses'
++
++        if curses_library == 'ncursesw':
+             curses_defines.append(('HAVE_NCURSESW', '1'))
+             curses_includes.append('/usr/include/ncursesw')
+             # Bug 1464056: If _curses.so links with ncursesw,
