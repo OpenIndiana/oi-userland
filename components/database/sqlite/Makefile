@@ -24,17 +24,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= sqlite
-COMPONENT_VERSION		= 3.8.11.1
-TARBALL_VERSION			= 3081101
+COMPONENT_VERSION		= 3.13.0
+TARBALL_VERSION			= 3130000
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:fb99b0ac038c4a7e48b44b61836cb41d4eeba36b4d0ee757beeab59031a1d3b6
-COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2015/$(COMPONENT_ARCHIVE)
+	sha256:e2797026b3310c9d08bd472f6d430058c6dd139ff9d4e30289884ccd9744086b
+COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2016/$(COMPONENT_ARCHIVE)
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         libtoolize --copy --force &&\
@@ -50,6 +50,7 @@ COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
 CFLAGS			+= -DSQLITE_SECURE_DELETE 
+CFLAGS			+= -DSQLITE_ENABLE_DBSTAT_VTAB
 CFLAGS			+= -DSQLITE_ENABLE_FTS3 
 CFLAGS			+= -DUSE_PREAD 
 CFLAGS			+= -DHAVE_USLEEP
@@ -67,14 +68,11 @@ CONFIGURE_OPTIONS	+= --enable-threadsafe
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --disable-static
 
-include ../../../make-rules/shared-targets.mk
+build:		$(BUILD_32_and_64)
 
-build:		$(BUILD_32) $(BUILD_64)
+install:	$(INSTALL_32_and_64)
 
-install:	$(INSTALL_32) $(INSTALL_64)
+test:		$(TEST_32_and_64)
 
-test:		$(TEST_32) $(TEST_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += system/library
