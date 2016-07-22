@@ -16,21 +16,22 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
-
-COMPONENT_VERSION= 2.6.7
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.10.11
 COMPONENT_SUMMARY= PTLib Class Library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:b8add72c24e52cf1d76fcee6dbf6f96b69e5c09a64ecb0d0d06b2c17b4ee26c9
-COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/ptlib/2.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_FMRI=library/desktop/ptlib
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= \
+  sha256:3a17f01d66301663f76130b425d93c2730f2a33df666982165166ff4653dc2c9
+COMPONENT_ARCHIVE_URL= \
+  http://ftp.gnome.org/pub/gnome/sources/ptlib/2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE= MPLv1.0
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf &&\
 		cd $(@D)&& aclocal && autoconf)
@@ -49,6 +50,7 @@ CONFIGURE_OPTIONS += --enable-http
 CONFIGURE_OPTIONS += --enable-httpforms
 CONFIGURE_OPTIONS += --enable-httpsvc
 CONFIGURE_OPTIONS += --enable-v4l2
+CONFIGURE_OPTIONS += --enable-lua
 
 ENV += -i
 
@@ -57,3 +59,11 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime

@@ -13,14 +13,14 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/ptlib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license ptlib.license license="MPLv1.0"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Generated section:
 link path=usr/bin/ptlib-config target=../share/ptlib/make/ptlib-config
@@ -29,6 +29,7 @@ file path=usr/include/ptclib/asnber.h
 file path=usr/include/ptclib/asner.h
 file path=usr/include/ptclib/asnper.h
 file path=usr/include/ptclib/asnxer.h
+file path=usr/include/ptclib/cli.h
 file path=usr/include/ptclib/cypher.h
 file path=usr/include/ptclib/delaychan.h
 file path=usr/include/ptclib/dtmf.h
@@ -42,6 +43,7 @@ file path=usr/include/ptclib/httpsvc.h
 file path=usr/include/ptclib/inetmail.h
 file path=usr/include/ptclib/inetprot.h
 file path=usr/include/ptclib/ipacl.h
+file path=usr/include/ptclib/lua.h
 file path=usr/include/ptclib/memfile.h
 file path=usr/include/ptclib/mime.h
 file path=usr/include/ptclib/modem.h
@@ -76,6 +78,7 @@ file path=usr/include/ptclib/socks.h
 file path=usr/include/ptclib/telnet.h
 file path=usr/include/ptclib/threadpool.h
 file path=usr/include/ptclib/url.h
+file path=usr/include/ptclib/vcard.h
 file path=usr/include/ptclib/vsdl.h
 file path=usr/include/ptclib/vxml.h
 file path=usr/include/ptclib/xmpp.h
@@ -132,6 +135,7 @@ file path=usr/include/ptlib/sound.h
 file path=usr/include/ptlib/svcproc.h
 file path=usr/include/ptlib/syncpoint.h
 file path=usr/include/ptlib/syncthrd.h
+file path=usr/include/ptlib/syslog.h
 file path=usr/include/ptlib/tcpsock.h
 file path=usr/include/ptlib/textfile.h
 file path=usr/include/ptlib/thread.h
@@ -153,6 +157,7 @@ file path=usr/include/ptlib/unix/ptlib/icmpsock.h
 file path=usr/include/ptlib/unix/ptlib/ipdsock.h
 file path=usr/include/ptlib/unix/ptlib/ipsock.h
 file path=usr/include/ptlib/unix/ptlib/maccoreaudio.h
+file path=usr/include/ptlib/unix/ptlib/mail.h
 file path=usr/include/ptlib/unix/ptlib/mutex.h
 file path=usr/include/ptlib/unix/ptlib/pdirect.h
 file path=usr/include/ptlib/unix/ptlib/pipechan.h
@@ -181,12 +186,14 @@ file path=usr/include/ptlib/vconvert.h
 file path=usr/include/ptlib/video.h
 file path=usr/include/ptlib/videoio.h
 file path=usr/include/ptlib/videoio1394dc.h
-link path=usr/lib/libpt.so target=libpt.so.2.6.7
-file path=usr/lib/libpt.so.2.6.7
+file path=usr/include/ptlib/wxstring.h
+link path=usr/lib/libpt.so target=libpt.so.$(COMPONENT_VERSION)
+file path=usr/lib/libpt.so.$(COMPONENT_VERSION)
 file path=usr/lib/libpt_s.a
 file path=usr/lib/pkgconfig/ptlib.pc
-file path=usr/lib/ptlib-2.6.7/devices/sound/sunaudio_pwplugin.so
-file path=usr/lib/ptlib-2.6.7/devices/videoinput/v4l2_pwplugin.so
+file path=usr/lib/ptlib-$(COMPONENT_VERSION)/devices/sound/pulse_pwplugin.so
+file path=usr/lib/ptlib-$(COMPONENT_VERSION)/devices/sound/sunaudio_pwplugin.so
+file path=usr/lib/ptlib-$(COMPONENT_VERSION)/devices/videoinput/v4l2_pwplugin.so
 file path=usr/share/ptlib/make/common.mak
 file path=usr/share/ptlib/make/lib.mak
 file path=usr/share/ptlib/make/plugins.mak
