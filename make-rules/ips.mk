@@ -203,7 +203,7 @@ $(GENERATED).p5m:	install
 		cat $(METADATA_TEMPLATE) - >$@
 
 # copy the canonical manifest(s) to the build tree
-$(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
+$(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests install
 	cat $(METADATA_TEMPLATE) $< >$@
 
 # The text of a transform that will emit a dependency conditional on the
@@ -233,7 +233,7 @@ $(WS_TOP)/transforms/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/python,$(ver)))
 
 # Build Python version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python
+$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python install
 	$(PKGMOGRIFY) -D PYV=### $(WS_TOP)/transforms/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -257,7 +257,7 @@ $(WS_TOP)/transforms/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/perl,$(ver)))
 
 # Build Perl version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
+$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl install
 	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -279,7 +279,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
         PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
             RUBYV=$(subst .,,$(1))
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m install
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
 	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
 	fi
@@ -303,14 +303,14 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
 #
-$(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
+$(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby install
 	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
 ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 # auto-generate file/directory list
-$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR) install
 	(cat $(METADATA_TEMPLATE); \
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
@@ -330,7 +330,7 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 else
 # mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) install
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
@@ -378,7 +378,7 @@ sample-resolve.deps:
 
 
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) install
 	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
 
