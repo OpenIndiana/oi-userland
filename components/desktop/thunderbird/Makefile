@@ -84,8 +84,6 @@ LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
 #COPY_COMMON_FILES_3:= \
 #    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch $(PATCH_DIR)/firefox*46*.patch)
 
-include $(WS_MAKE_RULES)/common.mk
-
 # Depends on libsmbclient but samba is on the do-not-publish list, so this
 # must be too.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -93,6 +91,8 @@ BUILD_32=
 INSTALL_32=
 PUBLISH_STAMP=
 endif
+
+include $(WS_MAKE_RULES)/common.mk
 
 # /usr/sbin needed for dtrace.
 PATH =         $(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
