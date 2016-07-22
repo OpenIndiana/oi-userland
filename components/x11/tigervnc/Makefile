@@ -36,13 +36,15 @@ PATCH_PATTERN = [0-9][0-9]*.patch
 
 XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc11-xorg111.patch
 XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc11-xorg112.patch
-XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg114.patch
+XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg117.patch
+XORG_ADDITIONAL_PATCH_4 = $(PATCH_DIR)/tigervnc11-xorg118.patch
 
-XORG_SERVER_VERSION= 1.14.7
+XORG_SERVER_VERSION= 1.18.4
+XORG_SERVER_PATCH= xserver118.patch
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
@@ -50,10 +52,11 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	$(COMPONENT_PREP_ACTION)
 	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
-	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver114.patch
+	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/$(XORG_SERVER_PATCH)
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_4) 
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -75,12 +78,13 @@ LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
 LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
-COMPONENT_PREP_ACTION =        (cd $(@D) &&\
-					aclocal -I m4 && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = \
+    ( cd $(@D) && \
+      aclocal -I m4 && \
+      autoheader && \
+      libtoolize --automake --copy --force && \
+      automake -a -f -c &&\
+      autoconf )
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -94,8 +98,10 @@ CONFIGURE_LIBDIR = /usr/lib/vnc
 # I don't know why, but it just doesn't work without this
 gcc_OPT= 
 
+CPPFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I/usr/include/pixman-1
+CPPFLAGS += -I/usr/include/mesa
 CPPFLAGS += -I/usr/include/xorg
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -194,6 +200,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/xmlto
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxau
 REQUIRED_PACKAGES += x11/library/libxdmcp
@@ -201,3 +208,4 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfont
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/server/xserver-common
+REQUIRED_PACKAGES += x11/server/xorg
