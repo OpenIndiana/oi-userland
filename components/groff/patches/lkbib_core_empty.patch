@@ -1,0 +1,16 @@
+This patch comes from in-house and has been submitted upstream:
+https://savannah.gnu.org/bugs/?48433
+
+--- groff-1.22.3/src/libs/libbib/index.cpp.org	2014-11-04 17:38:35.183524522 +0900
++++ groff-1.22.3/src/libs/libbib/index.cpp	2016-07-07 09:41:11.572149218 +0900
+@@ -158,6 +158,10 @@
+   }
+   mtime = sb.st_mtime;
+   int size = int(sb.st_size);
++  if (size == 0) {
++    error("`%1' is an empty file", name);
++    return 0;
++  }
+   char *addr;
+   map_addr = mapread(fd, size);
+   if (map_addr) {
