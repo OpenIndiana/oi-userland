@@ -257,6 +257,15 @@ PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
+
+# Odd django failures on S11; OpenStack is back-ported to 11.3 anyway, so no
+# need to include it in evaluation builds.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_NO_ARCH=
+INSTALL_NO_ARCH=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -331,6 +340,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 # contained in /usr rather than having a separate spot in /var for the
 # webservd user to write compressed assets to as they get used.
 #
+ifneq ($(BUILD_TYPE), evaluation)
 .PHONY:	xstatic
 xstatic:	$(PROTO_DIR) build
 	for xs_archive in $$(ls -d XStatic-* | grep -v .tar.gz); do \
@@ -345,12 +355,15 @@ xstatic:	$(PROTO_DIR) build
 		    --root $(PROTO_DIR); \
 		cd ../; \
 	done
+endif
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
+ifneq ($(BUILD_TYPE), evaluation)
 # make sure all of the xstatic modules are built
 install:	$(INSTALL_NO_ARCH) xstatic
+endif
 
 test:		$(NO_TESTS)
 
