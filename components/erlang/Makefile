@@ -69,7 +69,8 @@ include $(WS_MAKE_RULES)/common.mk
 # Fix 64-bit linking.
 LDFLAGS += $(CC_BITS)
 
-CPPFLAGS += "-I/usr/include/gd2"
+CXXFLAGS += -std=c++11
+
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 # The HiPE portion is a bit sensitive, and only seems to work 64-bit on
@@ -87,6 +88,17 @@ CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -rp $(SOURCE_DIR)/. $(@D))
 CONFIGURE_SCRIPT =		$(@D)/configure
+
+# We need to re-run the nested configure script for the wx sub-component so
+# that it will properly detect wxWidgets support by adding -std=c++11 to $(CXX)
+# (workaround for the configure script ignoring CXXFLAGS) and with ERL_TOP set
+# so that the wx component knows we're building inside the erlang source tree.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(@D)/lib/wx; $(ENV) $(CONFIGURE_ENV) \
+		CXX="$(CXX) -std=c++11" \
+		ERL_TOP="$(@D)" \
+		$(CONFIG_SHELL) \
+		./configure $(CONFIGURE_OPTIONS))
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
@@ -110,9 +122,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
 
+REQUIRED_PACKAGES += library/graphics/wxwidgets
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/mesa
