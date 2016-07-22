@@ -1,0 +1,438 @@
+--- unix/xserver/hw/vnc/xf86vncModule.cc	Tue Nov 11 15:19:42 2014
++++ unix/xserver/hw/vnc/xf86vncModule.cc	Tue Nov 11 15:19:54 2014
+@@ -53,8 +53,6 @@
+ {
+     vncExtensionInitWithParams,
+     "VNC",
+-    NULL,
+-    NULL,
+     NULL
+ };
+ 
+--- unix/xserver/hw/vnc/xvnc.cc	Tue Nov 11 15:17:14 2014
++++ unix/xserver/hw/vnc/xvnc.cc	Tue Nov 11 15:19:34 2014
+@@ -54,7 +54,6 @@
+ #include "servermd.h"
+ #include "fb.h"
+ #include "mi.h"
+-#include "mibstore.h"
+ #include "colormapst.h"
+ #include "gcstruct.h"
+ #include "input.h"
+@@ -266,7 +265,7 @@
+ }
+ 
+ void
+-OsVendorFatalError()
++OsVendorFatalError(const char *f, va_list args)
+ {
+ }
+ 
+@@ -1134,9 +1133,9 @@
+ #endif
+ 
+ static Bool
+-vfbCloseScreen(int index, ScreenPtr pScreen)
++vfbCloseScreen(ScreenPtr pScreen)
+ {
+-    vfbScreenInfoPtr pvfb = &vfbScreens[index];
++    vfbScreenInfoPtr pvfb = &vfbScreens[pScreen->myNum];
+     int i;
+  
+     pScreen->CloseScreen = pvfb->closeScreen;
+@@ -1148,13 +1147,13 @@
+     for (i = 0; i < MAXSCREENS; i++)
+ 	InstalledMaps[i] = NULL;
+ 
+-    return pScreen->CloseScreen(index, pScreen);
++    return pScreen->CloseScreen(pScreen);
+ }
+ 
+ static Bool
+-vfbScreenInit(int index, ScreenPtr pScreen, int argc, char **argv)
++vfbScreenInit(ScreenPtr pScreen, int argc, char **argv)
+ {
+-    vfbScreenInfoPtr pvfb = &vfbScreens[index];
++    vfbScreenInfoPtr pvfb = &vfbScreens[pScreen->myNum];
+     int dpi;
+     int ret;
+     void *pbits;
+@@ -1166,8 +1165,8 @@
+ 
+     pbits = vfbAllocateFramebufferMemory(&pvfb->fb);
+     if (!pbits) return FALSE;
+-    vncFbptr[index] = pbits;
+-    vncFbstride[index] = pvfb->fb.paddedWidth;
++    vncFbptr[pScreen->myNum] = pbits;
++    vncFbstride[pScreen->myNum] = pvfb->fb.paddedWidth;
+ 
+     miSetPixmapDepths();
+ 
+--- unix/xserver/hw/vnc/vncExtInit.cc	Mon Nov 24 14:53:43 2014
++++ unix/xserver/hw/vnc/vncExtInit.cc	Mon Nov 24 14:54:56 2014
+@@ -62,14 +62,14 @@
+ 
+   extern void vncExtensionInit();
+   static void vncResetProc(ExtensionEntry* extEntry);
+-  static void vncBlockHandler(pointer data, OSTimePtr t, pointer readmask);
+-  static void vncWakeupHandler(pointer data, int nfds, pointer readmask);
+-  static void vncClientStateChange(CallbackListPtr*, pointer, pointer);
++  static void vncBlockHandler(void *data, OSTimePtr t, void *readmask);
++  static void vncWakeupHandler(void *data, int nfds, void *readmask);
++  static void vncClientStateChange(CallbackListPtr*, void *, void *);
+   static void SendSelectionChangeEvent(Atom selection);
+   static int ProcVncExtDispatch(ClientPtr client);
+   static int SProcVncExtDispatch(ClientPtr client);
+-  static void vncSelectionCallback(CallbackListPtr *callbacks, pointer data,
+-				   pointer args);
++  static void vncSelectionCallback(CallbackListPtr *callbacks, void *data,
++				   void *args);
+ 
+   extern char *display;
+   extern char *listenaddr;
+@@ -280,7 +280,7 @@
+ {
+ }
+ 
+-static void vncSelectionCallback(CallbackListPtr *callbacks, pointer data, pointer args)
++static void vncSelectionCallback(CallbackListPtr *callbacks, void *data, void *args)
+ {
+   SelectionInfoRec *info = (SelectionInfoRec *) args;
+   Selection *selection = info->selection;
+@@ -294,7 +294,7 @@
+ // selections have changed, and if so, notify any interested X clients.
+ //
+ 
+-static void vncBlockHandler(pointer data, OSTimePtr timeout, pointer readmask)
++static void vncBlockHandler(void *data, OSTimePtr timeout, void *readmask)
+ {
+   fd_set* fds = (fd_set*)readmask;
+ 
+@@ -303,7 +303,7 @@
+       desktop[scr]->blockHandler(fds);
+ }
+ 
+-static void vncWakeupHandler(pointer data, int nfds, pointer readmask)
++static void vncWakeupHandler(void *data, int nfds, void *readmask)
+ {
+   fd_set* fds = (fd_set*)readmask;
+ 
+@@ -314,7 +314,7 @@
+   }
+ }
+ 
+-static void vncClientStateChange(CallbackListPtr*, pointer, pointer p)
++static void vncClientStateChange(CallbackListPtr*, void *, void *p)
+ {
+   ClientPtr client = ((NewClientInfoRec*)p)->client;
+   if (client->clientState == ClientStateGone) {
+@@ -380,7 +380,7 @@
+ 
+ 
+ static CARD32 queryConnectTimerCallback(OsTimerPtr timer,
+-                                        CARD32 now, pointer arg)
++                                        CARD32 now, void *arg)
+ {
+   if (queryConnectTimeout)
+     queryConnectDesktop->approveConnection(queryConnectId, false, "The attempt to prompt the user to accept the connection failed");
+--- unix/xserver/hw/vnc/xvnc.cc	Mon Nov 24 14:57:24 2014
++++ unix/xserver/hw/vnc/xvnc.cc	Mon Nov 24 14:57:54 2014
+@@ -682,7 +682,7 @@
+ 	    curpmap = (ColormapPtr) LookupIDByType(pmap->pScreen->defColormap,
+ 						   RT_COLORMAP);
+ #else
+-	    dixLookupResourceByType((pointer *) &curpmap, pmap->pScreen->defColormap,
++	    dixLookupResourceByType((void **) &curpmap, pmap->pScreen->defColormap,
+ 				    RT_COLORMAP, serverClient, DixUnknownAccess);
+ #endif
+ 	    (*pmap->pScreen->InstallColormap)(curpmap);
+@@ -1298,7 +1298,7 @@
+ } /* end vfbScreenInit */
+ 
+ 
+-static void vfbClientStateChange(CallbackListPtr*, pointer, pointer) {
++static void vfbClientStateChange(CallbackListPtr*, void *, void *) {
+   dispatchException &= ~DE_RESET;
+ }
+ 
+--- unix/xserver/hw/vnc/XserverDesktop.cc	Mon Nov 24 14:58:13 2014
++++ unix/xserver/hw/vnc/XserverDesktop.cc	Mon Nov 24 14:58:29 2014
+@@ -182,7 +182,7 @@
+ {
+   pScreen = pScreen_;
+   int i;
+-  pointer retval;
++  void *retval;
+ 
+ #if XORG >= 17
+ #define dixLookupResource dixLookupResourceByType
+@@ -438,7 +438,7 @@
+ }
+ 
+ CARD32 XserverDesktop::deferredUpdateTimerCallback(OsTimerPtr timer,
+-                                                   CARD32 now, pointer arg)
++                                                   CARD32 now, void *arg)
+ {
+   XserverDesktop* desktop = (XserverDesktop*)arg;
+   desktop->deferredUpdateTimerSet = false;
+@@ -536,7 +536,7 @@
+   }
+ }
+ 
+-static CARD32 dummyTimerCallback(OsTimerPtr timer, CARD32 now, pointer arg) {
++static CARD32 dummyTimerCallback(OsTimerPtr timer, CARD32 now, void *arg) {
+   return 0;
+ }
+ 
+--- unix/xserver/hw/vnc/xf86vncModule.cc	Mon Nov 24 14:58:54 2014
++++ unix/xserver/hw/vnc/xf86vncModule.cc	Mon Nov 24 14:59:14 2014
+@@ -72,11 +72,11 @@
+ 
+ _X_EXPORT XF86ModuleData vncModuleData = { &vncVersRec, vncSetup, NULL };
+ 
+-static pointer
+-vncSetup(pointer module, pointer opts, int *errmaj, int *errmin) {
++static void * 
++vncSetup(void *module, void *opts, int *errmaj, int *errmin) {
+     LoadExtension(&vncExt, FALSE);
+     /* Need a non-NULL return value to indicate success */
+-    return (pointer)1;
++    return (void *)1;
+ }
+ 
+ static void vncExtensionInitWithParams(INITARGS)
+--- unix/xserver/hw/vnc/XserverDesktop.h	Mon Nov 24 15:03:14 2014
++++ unix/xserver/hw/vnc/XserverDesktop.h	Mon Nov 24 15:03:25 2014
+@@ -119,7 +119,7 @@
+ private:
+   void setColourMapEntries(int firstColour, int nColours);
+   static CARD32 deferredUpdateTimerCallback(OsTimerPtr timer, CARD32 now,
+-                                            pointer arg);
++                                            void *arg);
+   void deferUpdate();
+   ScreenPtr pScreen;
+   InputDevice *inputDevice;
+--- unix/xserver/include/extinit.h	Tue Nov 25 13:19:05 2014
++++ unix/xserver/include/extinit.h	Wed Dec  3 13:59:04 2014
+@@ -183,7 +183,7 @@
+ 
+ #if defined(PRESENT)
+ #include <X11/extensions/presentproto.h>
+-#include "presentext.h"
++#include "../present/presentext.h"
+ #endif
+ 
+ #endif
+--- unix/xserver/hw/vnc/vncHooks.cc	Thu Dec  4 13:51:12 2014
++++ unix/xserver/hw/vnc/vncHooks.cc	Thu Dec  4 14:00:53 2014
+@@ -116,7 +116,7 @@
+ 
+ // screen functions
+ 
+-static Bool vncHooksCloseScreen(int i, ScreenPtr pScreen);
++static Bool vncHooksCloseScreen(ScreenPtr pScreen);
+ static Bool vncHooksCreateGC(GCPtr pGC);
+ static void vncHooksCopyWindow(WindowPtr pWin, DDXPointRec ptOldOrg,
+                                RegionPtr pOldRegion);
+@@ -335,7 +335,7 @@
+ // CloseScreen - unwrap the screen functions and call the original CloseScreen
+ // function
+ 
+-static Bool vncHooksCloseScreen(int i, ScreenPtr pScreen_)
++static Bool vncHooksCloseScreen(ScreenPtr pScreen_)
+ {
+   SCREEN_UNWRAP(pScreen_, CloseScreen);
+ 
+@@ -366,7 +366,7 @@
+ 
+   DBGPRINT((stderr,"vncHooksCloseScreen: unwrapped screen functions\n"));
+ 
+-  return (*pScreen->CloseScreen)(i, pScreen);
++  return (*pScreen->CloseScreen)(pScreen);
+ }
+ 
+ // CreateGC - wrap the "GC funcs"
+@@ -534,7 +534,7 @@
+ static void vncHooksBlockHandler(ScreenPtr pScreen_, void *pTimeout,
+                                  void *pReadmask)
+ {
+-  SCREEN_UNWRAP(screenInfo.screens[i], BlockHandler);
++  SCREEN_UNWRAP(pScreen_, BlockHandler);
+ 
+   vncHooksScreen->desktop->ignoreHooks(true);
+ 
+--- unix/xserver/hw/vnc/XserverDesktop.cc	Thu Dec  4 14:04:16 2014
++++ unix/xserver/hw/vnc/XserverDesktop.cc	Thu Dec  4 14:04:24 2014
+@@ -48,7 +48,7 @@
+ #define public c_public
+ #define class c_class
+ 
+-extern char *display;
++extern const char *display;
+ 
+ #include "colormapst.h"
+ #ifdef RANDR
+--- unix/xserver/hw/vnc/Input.cc	Thu Dec  4 14:05:44 2014
++++ unix/xserver/hw/vnc/Input.cc	Thu Dec  4 14:06:26 2014
+@@ -1120,7 +1120,7 @@
+ }
+ #endif
+ 
+-static void keyboardBell(int percent, DeviceIntPtr device, pointer ctrl,
++static void keyboardBell(int percent, DeviceIntPtr device, void *ctrl,
+ 			 int class_)
+ {
+ 	if (percent > 0)
+--- unix/xserver/hw/vnc/xvnc.cc	Thu Dec  4 14:07:02 2014
++++ unix/xserver/hw/vnc/xvnc.cc	Thu Dec  4 14:09:11 2014
+@@ -99,7 +99,7 @@
+                        "See http://www.tigervnc.org for information on TigerVNC.\n")
+ 
+ 
+-extern char *display;
++extern const char *display;
+ extern int monitorResolution;
+ 
+ #define VFB_DEFAULT_WIDTH  1024
+--- unix/xserver/hw/vnc/vncHooks.cc	Thu Dec  4 14:14:29 2014
++++ unix/xserver/hw/vnc/vncHooks.cc	Thu Dec  4 14:14:53 2014
+@@ -88,8 +88,8 @@
+ } vncHooksScreenRec, *vncHooksScreenPtr;
+ 
+ typedef struct {
+-    GCFuncs *wrappedFuncs;
+-    GCOps *wrappedOps;
++    const GCFuncs *wrappedFuncs;
++    const GCOps *wrappedOps;
+ } vncHooksGCRec, *vncHooksGCPtr;
+ 
+ #if XORG == 15
+--- unix/xserver/hw/vnc/vncHooks.cc	Fri Dec  5 06:28:23 2014
++++ unix/xserver/hw/vnc/vncHooks.cc	Fri Dec  5 06:30:28 2014
+@@ -133,8 +133,8 @@
+ 				  DeviceIntPtr pDev,
+ #endif
+ 				  ScreenPtr pScreen, CursorPtr cursor);
+-static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
+-                                 pointer pReadmask);
++static void vncHooksBlockHandler(ScreenPtr pScreen_, void *pTimeout,
++                                 void *pReadmask);
+ #ifdef RENDER
+ static void vncHooksComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, 
+ 			      PicturePtr pDst, INT16 xSrc, INT16 ySrc, INT16 xMask, 
+@@ -152,7 +152,7 @@
+ static void vncHooksChangeGC(GCPtr pGC, unsigned long mask);
+ static void vncHooksCopyGC(GCPtr src, unsigned long mask, GCPtr dst);
+ static void vncHooksDestroyGC(GCPtr pGC);
+-static void vncHooksChangeClip(GCPtr pGC, int type, pointer pValue,int nrects);
++static void vncHooksChangeClip(GCPtr pGC, int type, void *pValue,int nrects);
+ static void vncHooksDestroyClip(GCPtr pGC);
+ static void vncHooksCopyClip(GCPtr dst, GCPtr src);
+ 
+@@ -204,10 +204,10 @@
+                                 int count, unsigned short *chars);
+ static void vncHooksImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x,
+                                   int y, unsigned int nglyph,
+-                                  CharInfoPtr *ppci, pointer pglyphBase);
++                                  CharInfoPtr *ppci, void *pglyphBase);
+ static void vncHooksPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x,
+                                  int y, unsigned int nglyph,
+-                                 CharInfoPtr *ppci, pointer pglyphBase);
++                                 CharInfoPtr *ppci, void *pglyphBase);
+ static void vncHooksPushPixels(GCPtr pGC, PixmapPtr pBitMap,
+                                DrawablePtr pDrawable, int w, int h, int x,
+                                int y);
+@@ -531,14 +531,14 @@
+ // BlockHandler - ignore any changes during the block handler - it's likely
+ // these are just drawing the cursor.
+ 
+-static void vncHooksBlockHandler(int i, pointer blockData, pointer pTimeout,
+-                                 pointer pReadmask)
++static void vncHooksBlockHandler(ScreenPtr pScreen_, void *pTimeout,
++                                 void *pReadmask)
+ {
+   SCREEN_UNWRAP(pScreen_, BlockHandler);
+ 
+   vncHooksScreen->desktop->ignoreHooks(true);
+ 
+-  (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
++  (*pScreen->BlockHandler) (pScreen, pTimeout, pReadmask);
+ 
+   vncHooksScreen->desktop->ignoreHooks(false);
+ 
+@@ -681,7 +681,7 @@
+   GCFuncUnwrapper u(pGC);
+   (*pGC->funcs->DestroyGC) (pGC);
+ }
+-static void vncHooksChangeClip(GCPtr pGC, int type, pointer pValue, int nrects)
++static void vncHooksChangeClip(GCPtr pGC, int type, void *pValue, int nrects)
+ {
+   GCFuncUnwrapper u(pGC);
+   (*pGC->funcs->ChangeClip) (pGC, type, pValue, nrects);
+@@ -1543,7 +1543,7 @@
+ 
+ static void vncHooksImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x,
+                                   int y, unsigned int nglyph,
+-                                  CharInfoPtr *ppci, pointer pglyphBase)
++                                  CharInfoPtr *ppci, void *pglyphBase)
+ {
+   GC_OP_UNWRAPPER(pDrawable, pGC, ImageGlyphBlt);
+ 
+@@ -1569,7 +1569,7 @@
+ 
+ static void vncHooksPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x,
+                                  int y, unsigned int nglyph,
+-                                 CharInfoPtr *ppci, pointer pglyphBase)
++                                 CharInfoPtr *ppci, void *pglyphBase)
+ {
+   GC_OP_UNWRAPPER(pDrawable, pGC, PolyGlyphBlt);
+ 
+--- unix/xserver/hw/vnc/vncHooks.cc	Fri Dec  5 07:32:40 2014
++++ unix/xserver/hw/vnc/vncHooks.cc	Fri Dec  5 07:33:20 2014
+@@ -721,7 +721,7 @@
+   }
+   GCPtr pGC;
+   vncHooksGCPtr vncHooksGC;
+-  GCFuncs* oldFuncs;
++  const GCFuncs* oldFuncs;
+   ScreenPtr pScreen;
+ };
+ 
+--- unix/xserver/hw/vnc/xorg-version.h	Fri Feb 27 13:30:48 2015
++++ unix/xserver/hw/vnc/xorg-version.h	Fri Feb 27 13:31:33 2015
+@@ -40,6 +40,14 @@
+ #define XORG 111
+ #elif XORG_VERSION_CURRENT < ((1 * 10000000) + (12 * 100000) + (99 * 1000))
+ #define XORG 112
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (13 * 100000) + (99 * 1000))
++#define XORG 113
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (14 * 100000) + (99 * 1000))
++#define XORG 114
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (16 * 100000) + (99 * 1000))
++#define XORG 116
++#elif XORG_VERSION_CURRENT < ((1 * 10000000) + (17 * 100000) + (99 * 1000))
++#define XORG 117
+ #else
+ #error "X.Org newer than 1.10 is not supported"
+ #endif
+--- unix/xserver/hw/vnc/xvnc.cc	Mon Jan  5 12:36:45 2015
++++ unix/xserver/hw/vnc/xvnc.cc	Fri Feb 27 13:48:20 2015
+@@ -92,6 +92,8 @@
+ #if XORG >= 110
+ #define Xalloc malloc
+ #define Xfree free
++#define xalloc malloc
++#define xfree free
+ #endif
+ 
+ #define XVNCVERSION "TigerVNC 1.1.0"
+--- unix/xserver/hw/vnc/Input.cc	Mon Jan  5 12:36:45 2015
++++ unix/xserver/hw/vnc/Input.cc	Fri Feb 27 13:46:43 2015
+@@ -65,6 +65,7 @@
+ 
+ #if XORG >= 110
+ #define Xfree free
++#define xfree free
+ #endif
+ 
+ using namespace rdr;
