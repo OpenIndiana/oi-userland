@@ -2993,9 +2993,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param power_on: True if the instance should be powered on, False
                          otherwise
         """
-        if not resize_instance:
-            raise NotImplementedError()
-
         samehost = (migration['dest_node'] == migration['source_node'])
         if samehost:
             instance.system_metadata['old_vm_state'] = vm_states.RESIZED
