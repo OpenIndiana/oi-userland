@@ -36,13 +36,29 @@ COMPONENT_BUGDB=	utility/docker-engine
 
 TPNO=			27475
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+# Remove the conditional when BUILD_ARCH is removed above.
+ifeq ($(strip $(BUILD_ARCH)),$(MACH))
+BUILD_TARGET=
+INSTALL_TARGET=
+endif
+TEST_TARGET= $(NO_TESTS)
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# Requires S12-only changes from ON.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Go-based components are not currently compatible with ASLR.
+ASLR_MODE= $(ASLR_DISABLE)
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
 
+# Remove the conditional when BUILD_ARCH is removed above.
+ifeq ($(strip $(BUILD_ARCH)),$(MACH))
+ifneq ($(BUILD_TYPE), evaluation)
 # common targets
 build:		$(SOURCE_DIR)/.prep
 	cd $(SOURCE_DIR); DOCKER_GITCOMMIT=6f2305e \
@@ -51,8 +67,8 @@ build:		$(SOURCE_DIR)/.prep
 
 install:	FRC
 	$(TOUCH) $(SOURCE_DIR)/.installed
-
-test:		$(NO_TESTS)
+endif
+endif
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += system/core-os
