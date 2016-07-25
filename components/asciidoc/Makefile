@@ -26,13 +26,13 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asciidoc
-COMPONENT_VERSION=	8.6.8
+COMPONENT_VERSION=	8.6.9
 COMPONENT_PROJECT_URL=	http://www.methods.co.nz/asciidoc/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ffb67f59dccaf6f15db72fcd04fdf21a2f9b703d31f94fcd0c49a424a9fcfbc4
+    sha256:78db9d0567c8ab6570a6eff7ffdf84eadd91f2dfc0a92a2d0105d323cab4e1f0
 COMPONENT_ARCHIVE_URL=	 http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-TPNO=			14505
+TPNO=			30220
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
