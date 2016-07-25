@@ -1080,7 +1080,7 @@ class ConfigEVSToOVS():
         self._write_config(conf_file, config)
         move(conf_file, ML2_INI)
 
-    def update_ovs_neutron_plugin_ini(self):
+    def update_ovs_neutron_plugin_ini(self, bmap_reqd):
         """
         Reference target configuration state:
         [ovs]
@@ -1109,7 +1109,7 @@ class ConfigEVSToOVS():
                 msg = """Could not determine IP address for VXLAN endpoint.
                 Manually set the local_ip option in ovs_neutron_plugin.ini"""
                 log_msg(LOG_WARN, msg)
-        else:
+        if bmap_reqd:
             config.set('ovs', 'bridge_mappings', self.bridge_mappings)
         self._do_rabbit_host(config)
         self._write_config(conf_file, config)
@@ -1572,8 +1572,11 @@ def main():
         if not is_svc_online(SVC_VSWITCH_SERVER, exit_on_maintenance=True):
             enable_svc(SVC_VSWITCH_SERVER, exit_on_fail=True)
         add_ovs_bridge(OVS_INT_BRIDGE)
-        migr_conf_obj.update_ovs_neutron_plugin_ini()
-        if l2type != L2_TYPE_VXLAN or SVC_L3_AGENT in curnode_svcs:
+        # bridge_mappings is only required if l2-type is VLAN or FLAT or if
+        # neutron-l3-agent is running on this node.
+        bmap_reqd = (l2type != L2_TYPE_VXLAN) or (SVC_L3_AGENT in curnode_svcs)
+        migr_conf_obj.update_ovs_neutron_plugin_ini(bmap_reqd)
+        if bmap_reqd:
             migr_conf_obj.update_Open_vSwitch_other_config()
         # we will enable the OVS agent later
 
