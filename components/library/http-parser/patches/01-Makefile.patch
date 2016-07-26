@@ -1,0 +1,25 @@
+--- a/Makefile	2016-03-04 20:27:05.000000000 +0000
++++ b/Makefile	2016-05-18 22:45:06.275666214 +0100
+@@ -56,7 +56,6 @@
+ 
+ INSTALL ?= install
+ PREFIX ?= $(DESTDIR)/usr/local
+-LIBDIR = $(PREFIX)/lib
+ INCLUDEDIR = $(PREFIX)/include
+ 
+ ifneq (darwin,$(PLATFORM))
+@@ -125,12 +124,12 @@
+ install: library
+ 	$(INSTALL) -D  http_parser.h $(INCLUDEDIR)/http_parser.h
+ 	$(INSTALL) -D $(SONAME) $(LIBDIR)/$(SONAME)
+-	ln -s $(LIBDIR)/$(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
++	ln -s $(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 
+ install-strip: library
+ 	$(INSTALL) -D  http_parser.h $(INCLUDEDIR)/http_parser.h
+ 	$(INSTALL) -D -s $(SONAME) $(LIBDIR)/$(SONAME)
+-	ln -s $(LIBDIR)/$(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
++	ln -s $(SONAME) $(LIBDIR)/libhttp_parser.$(SOEXT)
+ 
+ uninstall:
+ 	rm $(INCLUDEDIR)/http_parser.h

@@ -179,13 +179,14 @@ def main():
 	user_agent_arg = None
 	file_arg = None
 	link_arg = False
+	keep_arg = False
 	hash_arg = None
 	url_arg = None
 	search_list = list()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "a:f:h:ls:u:",
-			["file=", "link", "hash=", "search=", "url=",
+		opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
+			["file=", "link", "keep", "hash=", "search=", "url=",
 			"user-agent="])
 	except getopt.GetoptError, err:
 		print str(err)
@@ -198,6 +199,8 @@ def main():
 			file_arg = arg
 		elif opt in [ "-l", "--link" ]:
 			link_arg = True
+		elif opt in [ "-k", "--keep" ]:
+			keep_arg = True
 		elif opt in [ "-h", "--hash" ]:
 			hash_arg = arg
 		elif opt in [ "-s", "--search" ]:
@@ -255,10 +258,14 @@ def main():
 			print "    actual:   %s" % realhash
 			print "    payload:  %s" % payloadhash
 
-		try:
-			os.remove(name)
-		except OSError:
-			pass
+		if keep_arg == False:
+			try:
+				print "\nWARN: Removing the corrupt downloaded file"
+				os.remove(name)
+			except OSError:
+				pass
+		else:
+			print "\nINFO: Keeping the downloaded file because asked to"
 
 	sys.exit(1)
 

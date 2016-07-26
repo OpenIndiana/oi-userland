@@ -5,27 +5,14 @@ This is an in-house patch, and has not been submitted upstream, since the
 Config->RbConfig change has already been made in a newer version, and the
 remainder of the changes are Solaris-specific.
 
---- graphviz-2.28.0/config/config_ruby.rb	Fri Feb 18 13:25:56 2011
-+++ graphviz-2.28.0/config/config_ruby.rb	Tue Jul  1 14:45:16 2014
-@@ -1,16 +1,16 @@
- require 'rbconfig'
- 
--CONFIG = Config::MAKEFILE_CONFIG
-+CONFIG = RbConfig::MAKEFILE_CONFIG
- 
+--- graphviz-2.38.0/config/config_ruby.rb.~1~	2016-05-09 19:04:10.761066135 +0300
++++ graphviz-2.38.0/config/config_ruby.rb	2016-05-09 19:06:35.321688578 +0300
+@@ -5,7 +5,7 @@
  
  case ARGV[0]
- when "INCLUDES"
--    puts Config::expand(CONFIG["archdir"])
+ when "archdir"
+-    puts RbConfig::expand(CONFIG["archdir"])
 +    puts "#{RbConfig::expand(CONFIG['rubyhdrdir'])} -I#{RbConfig::expand(CONFIG['rubyhdrdir'])}/#{RbConfig::expand(CONFIG['arch'])}"
  when "lib"
--    puts Config::expand(CONFIG["libdir"])
-+    puts RbConfig::expand(CONFIG["libdir"])
- when "archsitelib"
--    puts Config::expand(CONFIG["sitearchdir"])
-+    puts RbConfig::expand(CONFIG["vendorarchdir"])
- when "sitelib"
--    puts Config::expand(CONFIG["sitedir"])
-+    puts RbConfig::expand(CONFIG["vendordir"])
- end
- 
+     puts RbConfig::expand(CONFIG["libdir"])
+ when "vendorarchdir"

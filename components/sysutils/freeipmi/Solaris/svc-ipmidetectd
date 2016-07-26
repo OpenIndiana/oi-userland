@@ -1,0 +1,100 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+# Copyright 2016 Jim Klimov
+#
+#	ident	"@(#)svc-ipmidetectd	1.1	09/08/14 SMI"
+
+# These are the SMF start/stop/restart methods for ipmidetectd.
+
+# smf(5)
+. /lib/svc/share/smf_include.sh
+
+[ -n "${SMF_FMRI-}" ] || \
+SMF_FMRI="svc:/system/freeipmi/ipmidetectd"
+
+if [ $# -eq 0 ]; then
+	# No arguments provided - report current status (use "-c" option to
+	# svcprop to get the current properties, otherwise false will result)
+	if [ "`/usr/bin/svcs -Ho STATE $SMF_FMRI`" = "enabled" ]
+	then
+		echo "svc-ipmidetectd: ipmidetectd is enabled"
+	else
+		echo "svc-ipmidetectd: ipmidetectd is disabled"
+	fi
+else
+	case "$1" in
+	'start')
+		# ipmidetectd requires the presence of a BMC character device
+		# to run.  If one is not detected, then disable the service
+		# and exit.
+		# UPDATE: Actually it can also work over network, so our SMF
+		# manifest default (in XML) is BMCDEVREQ="false".
+
+		[ -n "$SMF_FMRI" ] && \
+			BMCDEV="`/usr/bin/svcprop -p config/bmcdev "$SMF_FMRI"`" \
+			&& [ -n "$BMCDEV" ] \
+		|| BMCDEV="/dev/ipmi0"
+		# NOTE: OpenSolaris legacy (proprietary driver) used and required /dev/bmc
+		[ -n "$SMF_FMRI" ] && \
+			BMCDEVREQ="`/usr/bin/svcprop -p config/bmcdev-required "$SMF_FMRI"`" \
+			&& [ -n "$BMCDEVREQ" ] \
+		|| BMCDEVREQ="true"
+
+		if [ ! -c "$BMCDEV" ]; then
+			if [ "$BMCDEVREQ" = true ]; then
+				echo "$0:  No BMC device found at \"$BMCDEV\": disabling $SMF_FMRI as the device is required in config."
+				/usr/sbin/svcadm disable $SMF_FMRI
+				exit $SMF_EXIT_OK
+			else
+				echo "$0:  No BMC device found at \"$BMCDEV\"; config of $SMF_FMRI says we do not require one."
+			fi
+		fi
+
+		props="`/usr/sbin/svccfg -s $SMF_FMRI listprop config/options | \
+			/usr/bin/nawk '{  for (i = 3; i <= NF; i++) printf $i" " }'`"
+		props="`echo "$props" | sed -e 's/.\(.*\)/\1/' -e 's/\(.*\)./\1/'`"
+
+		if [ -z "$props" ]; then
+			echo "ipmidetectd needs to be configured. Set options as \
+			svccfg -s $SMF_FMRI setprop \
+				config/options '\"-c /etc/freeipmi/ipmidetectd.conf\"'"
+			exit $SMF_EXIT_ERR_CONFIG
+		fi
+
+		echo "The ipmidetectd is configured with options \"$props\"."
+		echo "If $SMF_FMRI is in maintenance state, ipmidetectd failed to start - check if configuration file correct."
+
+		/usr/sbin/ipmidetectd $props > /dev/null 2>&1 &
+		;;
+
+	* )
+		echo "Usage: $0 start"
+		exit $SMF_EXIT_ERR_FATAL
+		;;
+	esac
+fi
+
+exit $SMF_EXIT_OK

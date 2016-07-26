@@ -1,0 +1,174 @@
+From d0fcfc84c64162fcc8db7f7a9a41912fb257c885 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:00 -0700
+Subject: [PATCH 09/34] Add DisableBanner option
+
+---
+ readconf.c    | 31 +++++++++++++++++++++++++++++++
+ readconf.h    |  9 +++++++++
+ ssh_config.4  |  8 ++++++++
+ sshconnect2.c | 17 +++++++++++++++++
+ 4 files changed, 65 insertions(+)
+
+diff --git a/readconf.c b/readconf.c
+index 0e955ae..dca9c94 100644
+--- a/readconf.c
++++ b/readconf.c
+@@ -151,6 +151,9 @@ typedef enum {
+ 	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
+ 	oSendEnv, oControlPath, oControlMaster, oControlPersist,
+ 	oHashKnownHosts,
++#ifdef DISABLE_BANNER 
++	oDisableBanner,
++#endif
+ 	oTunnel, oTunnelDevice, oLocalCommand, oPermitLocalCommand,
+ 	oVisualHostKey,
+ 	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
+@@ -258,6 +261,9 @@ static struct {
+ 	{ "controlmaster", oControlMaster },
+ 	{ "controlpersist", oControlPersist },
+ 	{ "hashknownhosts", oHashKnownHosts },
++#ifdef DISABLE_BANNER
++	{ "disablebanner", oDisableBanner },
++#endif
+ 	{ "tunnel", oTunnel },
+ 	{ "tunneldevice", oTunnelDevice },
+ 	{ "localcommand", oLocalCommand },
+@@ -786,6 +792,17 @@ static const struct multistate multistate_canonicalizehostname[] = {
+ 	{ NULL, -1 }
+ };
+ 
++#ifdef DISABLE_BANNER
++static const struct multistate multistate_disablebanner[] = {
++	{ "true",			SSH_DISABLEBANNER_YES },
++	{ "false",			SSH_DISABLEBANNER_NO },
++	{ "yes",			SSH_DISABLEBANNER_YES },
++	{ "no",				SSH_DISABLEBANNER_NO },
++	{ "in-exec-mode",		SSH_DISABLEBANNER_INEXECMODE },
++	{ NULL, -1 }
++}; 
++#endif
++
+ /*
+  * Processes a single option line as used in the configuration files. This
+  * only sets those values that have not already been set.
+@@ -1561,6 +1578,13 @@ parse_keytypes:
+ 		multistate_ptr = multistate_yesnoaskconfirm;
+ 		goto parse_multistate;
+ 
++#ifdef DISABLE_BANNER
++	case oDisableBanner:
++	        intptr = &options->disable_banner;
++                multistate_ptr = multistate_disablebanner;
++                goto parse_multistate; 
++#endif
++
+ 	case oDeprecated:
+ 		debug("%s line %d: Deprecated option \"%s\"",
+ 		    filename, linenum, keyword);
+@@ -1732,6 +1756,9 @@ initialize_options(Options * options)
+ 	options->ip_qos_bulk = -1;
+ 	options->request_tty = -1;
+ 	options->proxy_use_fdpass = -1;
++#ifdef DISABLE_BANNER
++	options->disable_banner = -1;
++#endif
+ 	options->ignored_unknown = NULL;
+ 	options->num_canonical_domains = 0;
+ 	options->num_permitted_cnames = 0;
+@@ -1917,6 +1944,10 @@ fill_default_options(Options * options)
+ 		options->canonicalize_fallback_local = 1;
+ 	if (options->canonicalize_hostname == -1)
+ 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
++#ifdef DISABLE_BANNER
++	if (options->disable_banner == -1)
++		options->disable_banner = 0;
++#endif
+ 	if (options->fingerprint_hash == -1)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ 	if (options->update_hostkeys == -1)
+diff --git a/readconf.h b/readconf.h
+index c84d068..9aefd9e 100644
+--- a/readconf.h
++++ b/readconf.h
+@@ -159,6 +159,9 @@ typedef struct {
+ 	char   *pubkey_key_types;
+ 
+ 	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
++#ifdef DISABLE_BANNER
++        int     disable_banner; /* Disable display of banner */
++#endif
+ }       Options;
+ 
+ #define SSH_CANONICALISE_NO	0
+@@ -184,6 +187,12 @@ typedef struct {
+ #define SSH_UPDATE_HOSTKEYS_YES	1
+ #define SSH_UPDATE_HOSTKEYS_ASK	2
+ 
++#ifdef DISABLE_BANNER
++#define SSH_DISABLEBANNER_NO		0
++#define SSH_DISABLEBANNER_YES		1
++#define SSH_DISABLEBANNER_INEXECMODE	2
++#endif
++
+ void     initialize_options(Options *);
+ void     fill_default_options(Options *);
+ void	 fill_default_options_for_canonicalization(Options *);
+diff --git a/ssh_config.4 b/ssh_config.4
+index e190f6d..b0e22bc 100644
+--- a/ssh_config.4
++++ b/ssh_config.4
+@@ -643,6 +643,14 @@ If set to a time in seconds, or a time in any of the formats documented in
+ then the backgrounded master connection will automatically terminate
+ after it has remained idle (with no client connections) for the
+ specified time.
++.It Cm DisableBanner
++If set to yes, disables the display of the  banner  message.
++If set to in-exec-mode, disables the display of banner message when in remote 
++command mode only.
++.Pp
++The default value is no, which means that the banner is displayed unless the 
++log level  is  QUIET, FATAL, or ERROR. See also the Banner option in
++.Xr sshd_config 4 . This option applies to protocol version 2 only.
+ .It Cm DynamicForward
+ Specifies that a TCP port on the local machine be forwarded
+ over the secure channel, and the application
+diff --git a/sshconnect2.c b/sshconnect2.c
+index f79c96b..a32204f 100644
+--- a/sshconnect2.c
++++ b/sshconnect2.c
+@@ -81,6 +81,10 @@ extern char *client_version_string;
+ extern char *server_version_string;
+ extern Options options;
+ 
++#ifdef DISABLE_BANNER
++extern Buffer command;
++#endif
++
+ /*
+  * SSH2 key exchange
+  */
+@@ -502,7 +506,20 @@ input_userauth_banner(int type, u_int32_t seq, void *ctxt)
+ 	debug3("input_userauth_banner");
+ 	raw = packet_get_string(&len);
+ 	lang = packet_get_string(NULL);
++
++#ifdef DISABLE_BANNER
++	/*
++	 * Banner is a warning message according to RFC 4252. So, never print
++	 * a banner in error log level or lower. If the log level is higher,
++	 * use DisableBanner option to decide whether to display it or not.
++	 */
++	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO && 
++            (options.disable_banner == SSH_DISABLEBANNER_NO ||
++            (options.disable_banner == SSH_DISABLEBANNER_INEXECMODE &&
++            buffer_len(&command) == 0))) {
++#else
+ 	if (len > 0 && options.log_level >= SYSLOG_LEVEL_INFO) {
++#endif
+ 		if (len > 65536)
+ 			len = 65536;
+ 		msg = xmalloc(len * 4 + 1); /* max expansion from strnvis() */
+-- 
+2.5.4 (Apple Git-61)
+

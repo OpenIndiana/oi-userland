@@ -19,22 +19,27 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixz
-COMPONENT_VERSION=	1.0.2
+COMPONENT_VERSION=	1.0.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://github.com/vasi/pixz/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_PROJECT_URL=	https://github.com/vasi/$(COMPONENT_NAME)/
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:af9dac41edd6bf57953471f7fcbd4793810003bf911593ba4c84f7cccb5f74af
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/pixz/$(COMPONENT_ARCHIVE)
+    sha256:02c50746b134fa1b1aae41fcc314d7c6f1919b3d48bcdea01bf11769f83f72e8
+COMPONENT_ARCHIVE_URL=	\
+    $(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pixz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS += $(CPP_LARGEFILES)
 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
@@ -42,24 +47,19 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 
-# pixz's Makefile hard-codes some gcc-only flags in MYCFLAGS and MYLDFLAGS,
-# then appends CFLAGS & LDFLAGS to each.  Here we include their preset values
-# minus the gcc-only parts, so we can build with Studio.
-COMPONENT_BUILD_ARGS += CC="$(CC)"
-#COMPONENT_BUILD_ARGS += MYCFLAGS='$(patsubst %,-I%/include,$(LIBPREFIX)) $(OPT)'
-#COMPONENT_BUILD_ARGS += MYLDFLAGS='$(patsubst %,-L%/lib,$(LIBPREFIX)) $(OPT)'
-COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS) -lm"
+COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR) && $(AUTORECONF) -if)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(BUILD_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

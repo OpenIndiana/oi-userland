@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	numpy
-COMPONENT_VERSION= 	1.8.2
-COMPONENT_FMRI= 	library/python-2/numpy
+COMPONENT_VERSION= 	1.11.1
+COMPONENT_FMRI= 	library/python/numpy
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ce5743a3a24bf13e0373faeb240b08e48d139e6313f1b5fbfd771057c7a49dbd
+  sha256:dc4082c43979cc856a2bf352a8297ea109ccb3244d783ae067eb2ee5b0d577cd
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/$(COMPONENT_NAME)/files/NumPy/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://numpy.scipy.org/
@@ -90,7 +90,7 @@ NUMPY_WRONG_HASHBANG =\
 	distutils/system_info.py\
 	compat/setup.py
 
-COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python2\.6:\#!/usr/bin/python$(PYTHON_VERSION):' \
+COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python$(PYTHON_VERSION):\#!/usr/bin/python$(PYTHON_VERSION):' \
 	$(PROTO_DIR)/usr/bin/f2py$(PYTHON_VERSION) && \
 	( for file in $(NUMPY_WRONG_HASHBANG); do $(GSED) -i -e 's:\#!/usr/bin/env python:\#!/usr/bin/python$(PYTHON_VERSION):' \
 	$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/numpy/$${file}; done; ) );
@@ -98,3 +98,9 @@ COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/usr/bin/amd64/python2\.6:
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += library/math/openblas
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

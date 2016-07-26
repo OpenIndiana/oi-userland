@@ -40,7 +40,7 @@ include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
-COMPONENT_TEST_CMD= $(@D)/scripts-2.6/trial twisted
+COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 
 ASLR_MODE = $(ASLR_ENABLE)
@@ -50,15 +50,8 @@ build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-# There are no automated tests yet, but the built-in unit tests can be run
-# manually with:
-#
-# $ cd .../components/python/twisted/Twisted-10.1.0
-# $ ../build/i86-2.6/scripts-2.6/trial twisted
-# $ ../build/i86-2.7/scripts-2.7/trial twisted
-#
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library

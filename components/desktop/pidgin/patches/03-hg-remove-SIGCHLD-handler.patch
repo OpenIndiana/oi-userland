@@ -1,0 +1,111 @@
+
+# HG changeset patch
+# User Elliott Sales de Andrade <qulogic@pidgin.im>
+# Date 1346833606 14400
+# Node ID 161320946afdd6bc331026fa774e1f7bc680f12c
+# Parent  6fd4e9f0884e18c3f8f56612f1356f51f24e9c4e
+Remove SIGCHLD signal handler.
+
+DNS processes are already reaped in libpurple. Sound processes are
+reaped after 15 seconds. Other processes are sent through GLib and
+reaped by it. Anyway, this means we can stop preventing GStreamer
+from forking, and maybe fix a D-Bus bug, or something.
+
+Fixes #5553.
+Fixes #7902.
+
+Index: pidgin-2.10.11/pidgin/gtkmain.c
+===================================================================
+--- pidgin-2.10.11.orig/pidgin/gtkmain.c
++++ pidgin-2.10.11/pidgin/gtkmain.c
+@@ -87,10 +87,6 @@ static const int catch_sig_list[] = {
+ 	SIGINT,
+ 	SIGTERM,
+ 	SIGQUIT,
+-	SIGCHLD,
+-#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
+-	SIGALRM,
+-#endif
+ 	-1
+ };
+ 
+@@ -135,29 +131,6 @@ static int signal_sockets[2];
+ 
+ static void sighandler(int sig);
+ 
+-/*
+- * This child process reaping stuff is currently only used for processes that
+- * were forked to play sounds.  It's not needed for forked DNS child, which
+- * have their own waitpid() call.  It might be wise to move this code into
+- * gtksound.c.
+- */
+-static void
+-clean_pid(void)
+-{
+-	int status;
+-	pid_t pid;
+-
+-	do {
+-		pid = waitpid(-1, &status, WNOHANG);
+-	} while (pid != 0 && pid != (pid_t)-1);
+-
+-	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
+-		char errmsg[BUFSIZ];
+-		snprintf(errmsg, sizeof(errmsg), "Warning: waitpid() returned %d", pid);
+-		perror(errmsg);
+-	}
+-}
+-
+ static void sighandler(int sig)
+ {
+ 	ssize_t written;
+@@ -208,33 +181,8 @@ mainloop_sighandler(GIOChannel *source,
+ 		return FALSE;
+ 	}
+ 
+-	switch (sig) {
+-#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
+-/* By default, gstreamer forks when you initialize it, and waitpids for the
+- * child.  But if libpurple reaps the child rather than leaving it to
+- * gstreamer, gstreamer's initialization fails.  So, we wait a second before
+- * reaping child processes, to give gst a chance to reap it if it wants to.
+- *
+- * This is not needed in later gstreamers, which let us disable the forking.
+- * And, it breaks the world on some Real Unices.
+- */
+-	case SIGCHLD:
+-		/* Restore signal catching */
+-		signal(SIGCHLD, sighandler);
+-		alarm(1);
+-		break;
+-	case SIGALRM:
+-#else
+-	case SIGCHLD:
+-#endif
+-		clean_pid();
+-		/* Restore signal catching */
+-		signal(SIGCHLD, sighandler);
+-		break;
+-	default:
+-		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+-		purple_core_quit();
+-	}
++	purple_debug_warning("sighandler", "Caught signal %d\n", sig);
++	purple_core_quit();
+ 
+ 	return TRUE;
+ }
+Index: pidgin-2.10.11/pidgin/gtksound.c
+===================================================================
+--- pidgin-2.10.11.orig/pidgin/gtksound.c
++++ pidgin-2.10.11/pidgin/gtksound.c
+@@ -319,9 +319,6 @@ pidgin_sound_init(void)
+ 
+ #ifdef USE_GSTREAMER
+ 	purple_debug_info("sound", "Initializing sound output drivers.\n");
+-#ifdef GST_CAN_DISABLE_FORKING
+-	gst_registry_fork_set_enabled (FALSE);
+-#endif
+ 	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
+ 		purple_notify_error(NULL, _("GStreamer Failure"),
+ 					_("GStreamer failed to initialize."),

@@ -1,0 +1,41 @@
+From 41b029a3dab10a1bd3d2924a3b6c891b74102599 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:31:53 -0700
+Subject: [PATCH 02/34] Skip config check
+
+#
+# This change is to remove some misleading error messages when running
+# "gmake install". OpenSSH mixes the building and running together. Some
+# system setup checking for running the program needs to be removed, because
+# they are not suitable in a build system.  This is for Solaris only, so we
+# will not contribute back this change to the upstream community.
+#
+---
+ Makefile.in | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index d401787..c124ef6 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -291,7 +291,16 @@ install-nokeys: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files install-sysc
+ install-nosysconf: $(CONFIGFILES) $(MANPAGES) $(TARGETS) install-files
+ 
+ check-config:
+-	-$(DESTDIR)$(sbindir)/sshd -t -f $(DESTDIR)$(sysconfdir)/sshd_config
++# On Solaris, to workaround OpenSSH's unlucky mixing of 'building ssh' and
++# 'running ssh', on build machine the following requisites shouldn't be
++# enforced:
++#     1) existence of privsep user sshd
++#     2) existence of privsep directory /var/empty
++#     3) read permissions for /etc/ssh/ssh_host_[rsa,dsa]_key 
++#
++#	-$(DESTDIR)$(sbindir)/sshd -t -f $(DESTDIR)$(sysconfdir)/sshd_config
++#
++	@echo 'Oracle Solaris: skipping check-config'
+ 
+ install-files:
+ 	$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir)
+-- 
+2.5.4 (Apple Git-61)
+

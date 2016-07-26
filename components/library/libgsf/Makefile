@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libgsf
 # This is the last version which provides python gsfgnomemodule
 COMPONENT_VERSION= 1.14.21
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GNOME Structured File Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -49,8 +49,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV+=	am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-CONFIGURE_ENV+=	am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
+CONFIGURE_ENV+=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV+=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc

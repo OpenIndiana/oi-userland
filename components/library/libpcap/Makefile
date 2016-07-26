@@ -1,58 +1,45 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
+
 #
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
+# Copyright 2016 EveryCity Ltd. All rights reserved.
 #
-# CDDL HEADER END
-#
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpcap
-COMPONENT_VERSION=	1.5.1
-COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
+COMPONENT_FMRI=         library/libpcap
+COMPONENT_VERSION=      1.7.4
+COMPONENT_LICENSE=      BSD
+COMPONENT_PROJECT_URL=  http://www.tcpdump.org/
+COMPONENT_SUMMARY=	Packet Capture Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:259db4fe1e9f0b6b9c43a057ec5916dec7d0a821b00d6d6c4dff7db2445fa7e4
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libpcap
+COMPONENT_ARCHIVE_HASH=	sha256:7ad3112187e88328b85e46dce7a9b949632af18ee74d97ffc3f2b41fe7f448b0
+COMPONENT_ARCHIVE_URL=	http://www.tcpdump.org/release/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-#
-# libpcap Makefile does not use CFLAGS when building shared library
-# so we require the following line to add the -m option to CC
-#
-CC += $(CC_BITS)
-
-CFLAGS += "-DHAVE_CONFIG_H"
+COMPONENT_PRE_CONFIGURE_ACTION+=	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=  --disable-dbus
 
-# common targets
+CONFIGURE_ENV+=		ac_cv_func_getifaddrs=no
+
+LDFLAGS+=	-lnsl -lsocket
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test:	$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += driver/network/bpf
+REQUIRED_PACKAGES += system/library

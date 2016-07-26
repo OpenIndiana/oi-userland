@@ -1,0 +1,67 @@
+.\" Copyright (c) 1987, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH kbd_mode 1 "5 Aug 2011"
+.IX "kbd_mode" "" "\f3kbd_mode\f1(1) \(em keyboard translation utility" ""
+.IX "keyboard" "trans" "keyboard" "translation utility \(em \f3kbd_mode\f1(1)"
+.SH NAME
+kbd_mode \- change the keyboard translation mode
+.SH SYNOPSIS
+.B kbd_mode -a | -n |
+.B -e | -u
+.SH DESCRIPTION
+.IX "keyboard" "reset" "keyboard" "resetting input \(em \f3kbd_mode\f1(1)" ""
+.B kbd_mode
+sets the translation mode of the console's keyboard (\f3/dev/kbd\f1)
+to one of the four values defined for 
+.SB KIOCTRANS 
+in
+.BR kb (7M) .
+This is useful when a program that resets the translation mode
+terminates abnormally and fails to restore the original translation mode.
+.LP
+Note that the text console desires ASCII characters (\f3kbd_mode -a\f1), while
+.BR Xorg (1)
+desires untranslated events (\f3kbd_mode -u\f1).
+.SH OPTIONS
+.TP
+.B -a
+ASCII: the keyboard will generate simple ASCII characters.
+.TP 
+.B -n
+None: the keyboard will generate unencoded bytes
+\- a distinct value for up and down on each switch on the keyboard.
+.TP
+.B -e
+Events: the keyboard will generate firm_events
+with ASCII characters in the \fIvalue\fP field.
+.TP 
+.B -u
+Unencoded: the keyboard will generate input events
+with unencoded bytes in the \fIvalue\fP field
+such as those desired by the X server.
+.SH FILES
+.nf
+/dev/kbd
+.fi
+.SH "SEE ALSO"
+.BR kbd (1),
+.BR kb (7M)

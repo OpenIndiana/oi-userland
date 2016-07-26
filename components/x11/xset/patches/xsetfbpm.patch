@@ -1,0 +1,219 @@
+# Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
+Adds support for Solaris's Frame Buffer Power Management (fbpm) extension
+
+diff --git a/man/xset.man b/man/xset.man
+index e9f1c5e..2c81c5e 100644
+--- a/man/xset.man
++++ b/man/xset.man
+@@ -1,4 +1,5 @@
+ .\" Copyright 1988, 1998  The Open Group
++.\" Copyright (c) 1997, 1999, Oracle and/or its affiliates. All rights reserved.
+ .\"
+ .\" Permission to use, copy, modify, distribute, and sell this software and its
+ .\" documentation for any purpose is hereby granted without fee, provided that
+@@ -40,6 +41,10 @@ xset - user preference utility for X
+ 	[dpms \fIstandby\fP [\fI suspend\fP [\fI off\fP]]]
+ 	[dpms force {standby|suspend|off|on}]
+ .br
++[+fbpm] [-fbpm]
++.br
++	[fbpm force {standby|suspend|off|on}]
++.br
+ [fp=\fIpathlist\fP]
+ [-fp=\fIpathlist\fP]
+ [+fp=\fIpathlist\fP]
+@@ -138,6 +143,32 @@ The first value given is for the `standby' mode, the second is for the
+ `suspend' mode, and the third is for the `off' mode.  Setting these
+ values implicitly enables the DPMS features.  A value of zero disables
+ a particular mode.
++Note that standby is less than suspend is less than off, if this condition is not met, an error is produced.
++.PP
++.TP 8
++.B +fbpm
++Enable frame buffer power management. NOTE: FBPM timing is linked to DPMS, See DPMS for default timeout values.
++.PP
++.TP 8
++.B -fbpm
++Disable frame buffer power management. NOTE: Does not affect DPMS timeouts.
++.PP
++.TP 8
++.B fbpm force standby
++Force to standby power level.
++.PP
++.TP 8
++.B fbpm force suspend
++Force to suspend power level.
++.PP
++.TP 8
++.B fbpm force off
++Force power to off.
++.PP
++.TP 8
++.B fbpm force on
++Force power to on.
++.PP
+ .TP 8
+ .B fp= \fIpath,...\fP
+ The \fBfp=\fP sets the font path to the entries given in the path argument.
+diff --git a/xset.c b/xset.c
+index f461d4b..1629a72 100644
+--- a/xset.c
++++ b/xset.c
+@@ -65,6 +65,10 @@ in this Software without prior written authorization from The Open Group.
+ #endif
+ #ifdef DPMSExtension
+ # include <X11/extensions/dpms.h>
++# define FBPM /* need to check for fbpm.h in autoconf if we push upstream */
++# ifdef FBPM
++#  include <X11/extensions/fbpm.h>
++# endif
+ #endif /* DPMSExtension */
+ 
+ #ifdef XF86MISC
+@@ -593,6 +597,62 @@ main(int argc, char *argv[])
+ 	    }
+ 	}
+ #endif /* DPMSExtension */
++#ifdef FBPM
++	else if (strcmp(arg, "+fbpm") == 0) {	/* turn on FBPM */
++	    int             dummy;
++
++	    if (FBPMQueryExtension(dpy, &dummy, &dummy)) {
++		FBPMEnable(dpy, 0);
++	    } else {
++		fprintf(stderr,
++			"server does not have extension for +fbpm option\n");
++	    }
++	} else if (strcmp(arg, "-fbpm") == 0) {	/* shut off FBPM	 */
++	    int             dummy;
++	    
++	    if (FBPMQueryExtension(dpy, &dummy, &dummy)) {
++		FBPMDisable(dpy);
++	    } else {
++		fprintf(stderr,
++			"server does not have extension for -fbpm option\n");
++	    }
++	} else if (strcmp(arg, "fbpm") == 0) {	/* planing for force fbpm */
++	    int             dummy;
++
++	    if ((i + 1) >= argc) {
++		usage("missing arguments to -fpbm", NULL);
++	    } else {
++		/*
++		 * we are skipping the word 'force'... just
++		 * check to make sure its there
++		 */
++		arg = nextarg(i, argv);
++		if (strcmp(arg, "force") != 0) {	/* ack ! */
++		    fprintf(stderr, "bad parameter %s [needs force]\n", arg);
++		    break;
++		}
++	    }
++	    i++;
++	    arg = nextarg(i, argv);
++	    i++;
++	    if (FBPMQueryExtension(dpy, &dummy, &dummy)) {
++		if (strcmp(arg, "on") == 0) {
++		    FBPMEnable(dpy, FBPMModeOn);
++		} else if (strcmp(arg, "standby") == 0) {
++		    FBPMEnable(dpy, FBPMModeStandby);
++		} else if (strcmp(arg, "suspend") == 0) {
++		    FBPMEnable(dpy, FBPMModeSuspend);
++		} else if (strcmp(arg, "off") == 0) {
++		    FBPMEnable(dpy, FBPMModeOff);
++		} else {
++		    fprintf(stderr, "bad parameter %s\n", arg);
++		}
++	    } else {
++		fprintf(stderr,
++			"server does not have extension for fbpm option\n");
++	    }
++	}
++#endif
+ 	else if (strcmp(arg, "s") == 0) {
+ 	    if (i >= argc) {
+ 		set_saver(dpy, ALL, 0);	/* Set everything to default  */
+@@ -1483,6 +1543,46 @@ query(Display *dpy)
+ 	}
+     }
+ #endif
++#ifdef FBPM
++    {
++	int             dummy;
++	CARD16          standby, suspend, off;
++	BOOL            onoff;
++	CARD16          state;
++
++	printf("FBPM (Frame Buffer Power Management):\n");
++	if (FBPMQueryExtension(dpy, &dummy, &dummy)) {
++	    if (FBPMCapable(dpy)) {
++		FBPMInfo(dpy, &state, &onoff);
++		if (onoff) {
++		    printf("  FBPM is enabled\n");
++		    switch (state) {
++		    case FBPMModeOn:
++			printf("  Frame Buffer is on\n");
++			break;
++		    case FBPMModeStandby:
++			printf("  Frame Buffer is in standby\n");
++			break;
++		    case FBPMModeSuspend:
++			printf("  Frame Buffer is in suspend\n");
++			break;
++		    case FBPMModeOff:
++			printf("  Frame Buffer is off\n");
++			break;
++		    default:
++			printf("  Unrecognized response from server\n");
++		    }
++		} else {
++		    printf("  FBPM is disabled\n");
++		}
++	    } else {
++		printf("  System is not capable of FBPM\n");
++	    }
++	} else {
++	    printf("  Server does not have the FBPM Extension\n");
++	}
++    }
++#endif   
+ #ifdef FONTCACHE
+     {
+ 	int dummy;
+@@ -1613,6 +1713,16 @@ usage(const char *fmt, ...)
+             "\t      (also implicitly enables DPMS features) \n"
+             "\t      a timeout value of zero disables the mode \n"
+ #endif
++#ifdef FBPM
++            "    To control Frame Buffer Power Management (FBPM) features:\n"
++            "\t-fbpm      Frame Buffer Power Management features off\n"
++            "\t+fbpm      Frame Buffer Power Management features on\n"
++            "\t fbpm force on     \n"
++            "\t      force standby \n"
++            "\t      force suspend \n"
++            "\t      force off \n"
++            "\t      (also implicitly enables FBPM features) \n"
++#endif  
+ #ifdef FONTCACHE
+             "    To control font cache:\n"
+             "\t fc [hi-mark [low-mark [balance]]]\n"

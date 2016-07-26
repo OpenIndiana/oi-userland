@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -z "$GRAILS_HOME" ]; then
+    echo "Please set GRAILS_HOME environment variable to location, where Grails is installed." 1>&2
+    echo "(Default location is /usr/grails/[version], e.g. /usr/grails/1.0.3)" 1>&2
+    exit 1
+fi
+
+if [ ! -f "$GRAILS_HOME/bin/startGrails" ]; then
+    echo "GRAILS_HOME is not set properly: $GRAILS_HOME" 1>&2
+    echo "It must contain path to the directory where Grails is installed!" 1>&2
+    exit 1
+fi
+
+. "$GRAILS_HOME/bin/startGrails"
+
+startGrails org.codehaus.groovy.grails.cli.GrailsScriptRunner "$@"

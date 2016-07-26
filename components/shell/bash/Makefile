@@ -138,3 +138,6 @@ install: $(INSTALL_32_and_64)
 	    cp -Rp "en@boldquot" en_GB )
 
 test:	$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += system/library

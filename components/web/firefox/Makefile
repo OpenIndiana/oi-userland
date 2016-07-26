@@ -11,19 +11,20 @@
 
 #
 # Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-# Copyright 2013-2015 Alexander Pyhalov
+# Copyright 2013-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	45.0.1
+COMPONENT_VERSION= 	45.2.0esr
 COMPONENT_REVISION=	1
+IPS_COMPONENT_VERSION= 	45.2.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d1814ac6d8cd687696bd0d98da3bb525f6df11fe655e0d668742b21fca57d9c8
+  sha256:1a729774034231c919dc5a556e17d3342792d5347c755d8d0a4f67a07374804b
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/

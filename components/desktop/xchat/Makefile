@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xchat
 COMPONENT_VERSION=	2.8.8
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	5
 COMPONENT_PROJECT_URL=	http://xchat.org
 COMPONENT_SUMMARY=	XChat IRC Client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,6 +50,7 @@ CONFIGURE_OPTIONS+=	--enable-dbus
 CONFIGURE_OPTIONS+=	--enable-ipv6
 
 CONFIGURE_ENV+=	perlpath=$(PERL)
+CONFIGURE_ENV+=	pythonpath=$(PYTHON)
 
 # common targets
 build:		$(BUILD_32)
@@ -58,6 +59,15 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libsexy
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += x11/library/libx11

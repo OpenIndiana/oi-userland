@@ -23,13 +23,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxcb
-COMPONENT_VERSION=	1.11
+COMPONENT_VERSION=	1.11.1
 COMPONENT_FMRI=     	x11/library/libxcb
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:03635d70045b9ede90778e67516135828a57de87ac508f987024f43c03620ff7
+COMPONENT_ARCHIVE_HASH=	\
+	sha256:b720fd6c7d200e5371affdb3f049cc8f88cff9aed942ff1b824d95eedbf69d30
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -38,6 +39,9 @@ COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Libraries
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+CONFIGURE_OPTIONS+= --disable-static
+CONFIGURE_OPTIONS+= --enable-shared
 
 build: $(BUILD_32_and_64)
 
@@ -49,3 +53,7 @@ BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
 
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxdmcp

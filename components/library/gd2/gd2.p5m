@@ -1,0 +1,137 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/gd@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="GD - An open source code library for the dynamic creation of images by programmers"
+set name=pkg.summary value="The Graphics Draw Library"
+set name=com.oracle.info.description value="the GD Graphics Draw Library"
+set name=com.oracle.info.tpno value=8786
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2007/166
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license gd2.license license="GD2 License"
+
+# Scripts
+file path=usr/bin/bdftogd
+
+file usr/bin/gdlib-config path=usr/bin/$(MACH32)/gdlib-config
+file path=usr/bin/$(MACH64)/gdlib-config
+link path=usr/bin/gdlib-config target=./$(MACH32)/gdlib-config
+
+# Binaries
+file usr/bin/annotate path=usr/bin/$(MACH32)/annotate
+file usr/bin/gd2copypal path=usr/bin/$(MACH32)/gd2copypal
+file usr/bin/gd2time path=usr/bin/$(MACH32)/gd2time
+file usr/bin/gd2togif path=usr/bin/$(MACH32)/gd2togif
+file usr/bin/gd2topng path=usr/bin/$(MACH32)/gd2topng
+file usr/bin/gdcmpgif path=usr/bin/$(MACH32)/gdcmpgif
+file usr/bin/gdparttopng path=usr/bin/$(MACH32)/gdparttopng
+file usr/bin/gdtopng path=usr/bin/$(MACH32)/gdtopng
+file usr/bin/giftogd2 path=usr/bin/$(MACH32)/giftogd2
+file usr/bin/pngtogd path=usr/bin/$(MACH32)/pngtogd
+file usr/bin/pngtogd2 path=usr/bin/$(MACH32)/pngtogd2
+file usr/bin/webpng path=usr/bin/$(MACH32)/webpng
+
+file path=usr/bin/$(MACH64)/annotate
+file path=usr/bin/$(MACH64)/gd2copypal
+file path=usr/bin/$(MACH64)/gd2time
+file path=usr/bin/$(MACH64)/gd2togif
+file path=usr/bin/$(MACH64)/gd2topng
+file path=usr/bin/$(MACH64)/gdcmpgif
+file path=usr/bin/$(MACH64)/gdparttopng
+file path=usr/bin/$(MACH64)/gdtopng
+file path=usr/bin/$(MACH64)/giftogd2
+file path=usr/bin/$(MACH64)/pngtogd
+file path=usr/bin/$(MACH64)/pngtogd2
+file path=usr/bin/$(MACH64)/webpng
+
+hardlink path=usr/bin/annotate target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2copypal target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2time target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2togif target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2topng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdcmpgif target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdparttopng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdtopng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/giftogd2 target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/pngtogd target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/pngtogd2 target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/webpng target=../lib/isaexec pkg.linted=true
+
+file path=usr/include/gd2/entities.h
+file path=usr/include/gd2/gd.h
+file path=usr/include/gd2/gd_io.h
+file path=usr/include/gd2/gdcache.h
+file path=usr/include/gd2/gdfontg.h
+file path=usr/include/gd2/gdfontl.h
+file path=usr/include/gd2/gdfontmb.h
+file path=usr/include/gd2/gdfonts.h
+file path=usr/include/gd2/gdfontt.h
+file path=usr/include/gd2/gdfx.h
+file path=usr/include/gd2/gdhelpers.h
+file path=usr/include/gd2/jisx0208.h
+file path=usr/include/gd2/wbmp.h
+
+file path=usr/lib/$(MACH64)/libgd.so.3.0.0
+file path=usr/lib/$(MACH64)/llib-lgd.ln
+file path=usr/lib/libgd.so.3.0.0
+file llib-lgd path=usr/lib/llib-lgd
+file path=usr/lib/llib-lgd.ln
+
+file src/entities.html path=usr/share/doc/gd2/html/entities.html
+file Solaris/libgd2.1-extra path=usr/share/man/man1/annotate.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gd2copypal.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gd2time.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gd2togif.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gd2topng.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gdcmpgif.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gdparttopng.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/gdtopng.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/giftogd2.1
+file Solaris/libgd2.1 path=usr/share/man/man1/libgd2.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/pngtogd.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/pngtogd2.1
+file Solaris/libgd2.1-extra path=usr/share/man/man1/webpng.1
+file Solaris/libgd2.3 path=usr/share/man/man3/libgd2.3
+#
+link path=usr/lib/$(MACH64)/libgd.so target=libgd.so.3.0.0
+link path=usr/lib/$(MACH64)/libgd.so.3 target=libgd.so.3.0.0
+link path=usr/lib/libgd.so target=libgd.so.3.0.0
+link path=usr/lib/libgd.so.3 target=libgd.so.3.0.0
+
+# For legacy and backwards-compatibility reasons, deliver the previous
+# version's numbered .so's
+file path=usr/lib/$(MACH64)/libgd.so.2.0.0
+link path=usr/lib/$(MACH64)/libgd.so.2 target=libgd.so.2.0.0
+file path=usr/lib/libgd.so.2.0.0
+link path=usr/lib/libgd.so.2 target=libgd.so.2.0.0

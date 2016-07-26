@@ -58,3 +58,6 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += shell/which

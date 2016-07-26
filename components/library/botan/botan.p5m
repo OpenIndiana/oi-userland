@@ -22,9 +22,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license botan.license license='$(COMPONENT_LICENSE)'
 
-file path=bin/botan-config-1.10
-dir  path=usr/include/botan-1.10
-dir  path=usr/include/botan-1.10/botan
+file files/build.h path=usr/include/botan-1.10/botan/build.h
+
+file path=usr/bin/$(MACH64)/botan-config-1.10
+file path=usr/bin/botan-config-1.10
 file path=usr/include/botan-1.10/botan/adler32.h
 file path=usr/include/botan-1.10/botan/aes.h
 file path=usr/include/botan-1.10/botan/alg_id.h
@@ -52,7 +53,8 @@ file path=usr/include/botan-1.10/botan/botan.h
 file path=usr/include/botan-1.10/botan/bswap.h
 file path=usr/include/botan-1.10/botan/buf_comp.h
 file path=usr/include/botan-1.10/botan/buf_filt.h
-file path=usr/include/botan-1.10/botan/build.h
+file path=usr/include/botan-1.10/botan/build-32.h
+file path=usr/include/botan-1.10/botan/build-64.h
 file path=usr/include/botan-1.10/botan/bzip2.h
 file path=usr/include/botan-1.10/botan/camellia.h
 file path=usr/include/botan-1.10/botan/cascade.h
@@ -210,6 +212,7 @@ file path=usr/include/botan-1.10/botan/serpent.h
 file path=usr/include/botan-1.10/botan/sha160.h
 file path=usr/include/botan-1.10/botan/sha1_sse2.h
 file path=usr/include/botan-1.10/botan/sha1_x86_32.h
+file path=usr/include/botan-1.10/botan/sha1_x86_64.h
 file path=usr/include/botan-1.10/botan/sha2_32.h
 file path=usr/include/botan-1.10/botan/sha2_64.h
 file path=usr/include/botan-1.10/botan/skein_512.h
@@ -255,13 +258,14 @@ file path=usr/include/botan-1.10/botan/xtea.h
 file path=usr/include/botan-1.10/botan/xtea_simd.h
 file path=usr/include/botan-1.10/botan/xts.h
 file path=usr/include/botan-1.10/botan/zlib.h
-file path=usr/lib/libbotan-1.10.a
+link path=usr/lib/$(MACH64)/libbotan-1.10.so target=libbotan-1.10.so.0.9
+link path=usr/lib/$(MACH64)/libbotan-1.10.so.0 target=libbotan-1.10.so.0.9
+file path=usr/lib/$(MACH64)/libbotan-1.10.so.0.9
+file path=usr/lib/$(MACH64)/pkgconfig/botan-1.10.pc
 link path=usr/lib/libbotan-1.10.so target=libbotan-1.10.so.0.9
 link path=usr/lib/libbotan-1.10.so.0 target=libbotan-1.10.so.0.9
 file path=usr/lib/libbotan-1.10.so.0.9
 file path=usr/lib/pkgconfig/botan-1.10.pc
-dir  path=usr/share/doc/botan-$(COMPONENT_VERSION)
-dir  path=usr/share/doc/botan-$(COMPONENT_VERSION)/manual
 file path=usr/share/doc/botan-$(COMPONENT_VERSION)/manual/algos.txt
 file path=usr/share/doc/botan-$(COMPONENT_VERSION)/manual/bigint.txt
 file path=usr/share/doc/botan-$(COMPONENT_VERSION)/manual/build_log.txt

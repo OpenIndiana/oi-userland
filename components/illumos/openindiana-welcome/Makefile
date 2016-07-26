@@ -39,6 +39,8 @@ PATH=/usr/gnu/bin:/usr/bin
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
 # publish: target should appear before inclusion of ips.mk

@@ -47,6 +47,8 @@ PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
+WS_TRANSFORMS =    $(WS_TOP)/transforms
+
 GENERATE_HISTORY= $(WS_TOOLS)/generate-history
 HISTORY=	history
 
@@ -172,6 +174,7 @@ MANIFESTS =		$(VERSIONED_MANIFESTS:%=$(MANIFEST_BASE)-%)
 
 DEPENDED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
 RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
+PRE_PUBLISHED=$(RESOLVED:%.depend.res=%.pre-published)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
@@ -183,9 +186,13 @@ IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
 
 # allow publishing to be overridden, such as when
 # a package is for one architecture only.
+PRE_PUBLISH_STAMP ?= $(BUILD_DIR)/.pre-published-$(MACH)
 PUBLISH_STAMP ?= $(BUILD_DIR)/.published-$(MACH)
 
-publish:		build install $(PUBLISH_STAMP)
+# Do all that is needed to ensure the package is consistent for publishing,
+# except actually pushing to a repo, separately from the push to the repo.
+pre-publish:	build install $(PRE_PUBLISH_STAMP)
+publish:		pre-publish $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 
@@ -196,7 +203,7 @@ $(GENERATED).p5m:	install
 		cat $(METADATA_TEMPLATE) - >$@
 
 # copy the canonical manifest(s) to the build tree
-$(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
+$(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests install
 	cat $(METADATA_TEMPLATE) $< >$@
 
 # The text of a transform that will emit a dependency conditional on the
@@ -226,7 +233,7 @@ $(WS_TOP)/transforms/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/python,$(ver)))
 
 # Build Python version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python
+$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python install
 	$(PKGMOGRIFY) -D PYV=### $(WS_TOP)/transforms/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -250,7 +257,7 @@ $(WS_TOP)/transforms/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/perl,$(ver)))
 
 # Build Perl version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
+$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl install
 	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -272,7 +279,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: \
         PKG_MACROS += RUBY_VERSION=$(1) RUBY_LIB_VERSION=$(2) \
             RUBYV=$(subst .,,$(1))
 
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m install
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
 	        cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
 	fi
@@ -296,14 +303,14 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
 #
-$(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
+$(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby install
 	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
 ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 # auto-generate file/directory list
-$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR) install
 	(cat $(METADATA_TEMPLATE); \
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
@@ -323,7 +330,7 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 else
 # mogrify non-parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) install
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
@@ -371,9 +378,23 @@ sample-resolve.deps:
 
 
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) install
 	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
+
+#
+# Generate a set of REQUIRED_PACKAGES based on what is needed to for pkgdepend
+# to resolve properly.  Automatically append this to your Makefile for the truly
+# lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
+# You must still include packages for tools you build and test with.
+#
+REQUIRED_PACKAGES::     $(RESOLVED)
+	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
+	@echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
+	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
+               $(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
+	@echo "*** Please edit your Makefile and verify the new content at the end ***"
+
 
 # lint the manifests all at once
 $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
@@ -396,9 +417,20 @@ FRC:
 PKGSEND_PUBLISH_OPTIONS = -s $(WS_REPO) publish --fmri-in-manifest
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGSEND_PUBLISH_OPTIONS += -T \*.py
-$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
+
+# Do all the hard work that is needed to ensure the package is consistent
+# and ready for publishing, except actually pushing bits to a repository
+$(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
+	$(CP) $< $@
+	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
+
+# Push to the repo
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.pre-published
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
+
+$(BUILD_DIR)/.pre-published-$(MACH):	$(PRE_PUBLISHED)
+	$(TOUCH) $@
 
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
@@ -406,22 +438,22 @@ $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 print-package-names:	canonical-manifests
 	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 print-package-paths:	canonical-manifests
 	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
 	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
-		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
-		(cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
-	else ; \
+	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
+	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
+	 else ; \
 	    echo "unsafe to install package(s) automatically" ; \
-        fi
+	 fi
 
 $(RESOLVED):	install
 

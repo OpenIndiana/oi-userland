@@ -74,7 +74,7 @@ PATCH_STAMPS$(1) += $$(PATCHES$(1):$(PARFAIT_PATCH_DIR)/%=$$(SOURCE_DIR$(1))/.pa
 endif
 
 # We should unpack the source that we patch before we patch it.
-$$(PATCH_STAMPS$(1)::	$$(UNPACK_STAMP$(1)) unpack
+$$(PATCH_STAMPS$(1)):	unpack
 
 # Adding MAKEFILE_PREREQ because gmake seems to evaluate the need to patch
 # before re-unpacking if the Makefile changed.  The various stamps are

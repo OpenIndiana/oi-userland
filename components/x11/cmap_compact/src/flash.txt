@@ -1,0 +1,417 @@
+.\" 
+.\" To print: troff -ms flash.txt
+.\" 
+
+
+.ft B
+.ce 3
+=======================================================================
+||  Colormap Compaction - A Technique for Reducing Colormap Flashing ||
+=======================================================================
+.ft P
+
+
+\fBA. Introduction\fP
+
+In some situations, it is beneficial to \fIcompact\fP the \fBxnews\fP default
+colormap.  This often leads to reduced \fIcolormap flashing\fP.  Colormap
+flashing occurs when colors in two different software colormaps conflict
+with each other.  Since only one software colormap can be loaded into the
+hardware at a time, for a given pixel value you will see the color
+which is in one colormap or the other.  Which color you see depends
+on the window into which you assign the \fIcolormap focus\fP.  Typically,
+the focus is assigned to a window by moving the pointer into it.
+
+This material applies only to color devices which have a single
+hardware color LUT, such as GX.  It does not apply to monochrome screens.   
+The technique describe herein may be used on a device which
+provides multiple hardware color LUTs, such as GS or GT, but it
+is less valuable in this configuration, because the benefit will
+probably not be as pronounced as it can be on a single hardware
+color LUT device.
+
+
+\fBB. An Example of Colormap Flashing\fP
+
+Let us suppose we have two windows, window A and window B.
+Window A is attached to software colormap A; window B is attached to 
+software colormap B.  When you move the pointer into window A, colormap A 
+will be loaded into the hardware colormap.  Likewise, when you move
+the pointer into window B, colormap B will be loaded.  
+
+Let's say the pixel value 5 is drawn somewhere on the screen.  Let's also
+suppose that the color value for pixel 5 in colormap A is Red and
+the color value for pixel 5 in colormap B is Blue.  When the pointer is
+in window A, all pixels of value 5 will be displayed as Red, no matter where
+they are on the screen.  When the pointer is in window B, these same pixels
+will be displayed as Blue.  
+
+In OpenWindows, a software colormap will only displace the other in places where they
+each have allocated colors.   In places where no colors 
+have been allocated, the contents of the hardware will remain set to the previous values.
+Thus, the colors of two software colormaps can exist harmoniously together in the 
+hardware colormap only if their allocated colormap entries do not intersect.
+
+(Readers familiar with Sunview should note that this style of colormap management 
+is very different than the named colormap segment scheme used by Sunview.)
+
+Moving the pointer rapidly back and forth between windows A and B causes
+the pixels with value 5 on the screen to blink between Red and Blue.
+This is why this effect is called colormap \fIflashing\fP.
+
+The rest of this discussion will assume a basic level of familiarity
+with X11 colormap concepts.  Users should refer to O'Reilley Volume 1
+Chapter 7 "Color" for more information.
+
+
+\fBC. Why Does Colormap Flashing Happen?\fP
+
+The previous section discussed the effects and symptoms of colormap
+flashing.  But the fundamental question remains: what causes the
+colors in the two colormaps to coincide and conflict?
+
+For the purposes of the following discussion, pixel 0 is called the 
+\fIlow end\fP of the colormap and pixel 255 is called the \fIhigh end\fP.
+
+Because, for a typical device, a maximum of 256 distinct colors can be displayed 
+on a screen at once, colors are a very scarce resource.  The X11R4 standard provides
+some mechanisms for sharing colors between client programs, thus
+reducing the chance of colormap flashing.  For example, two different
+applications may share the same pixel value, and therefore the same color,
+in a single colormap.  Usually, a client program has to explicitly try
+to share colors with other clients.  Some situations in which such
+attempts break down are:
+
+.in +0.5i
+\(bu   All of the clients which are running collectively demand more 
+than 256 distinct colors.
+
+\(bu   One or more clients make no attempt at all to share colors
+with other applications.
+
+\(bu   One or more clients use read-write (modifiable) colors, which
+cannot be shared.
+.in -0.5i
+
+There are several techniques X11 client programmers can use to share 
+colors.  Most of them entail the implementation of additional code
+in the program.  What we seek to present in this document,
+is a generic technique that any OpenWindows user can take advantage of,
+regardless of whether a particular program contains explicit code
+which tries to reduce colormap flashing.
+
+Client programs ask the xnews server to grant them pixels to use by telling
+the server what colors they desire.  The server figures out where to 
+put the colors in the colormap and then tells the clients which pixels
+have been assigned to them.  This process is called \fIcolor allocation\fP.
+Unless client programs do something out of the ordinary, color allocations
+tend to gravitate toward the low end of a colormap.  This is because the 
+server always gives a client the lowest unused pixel when allocating a
+new color. 
+
+The default colormap is a colormap which all clients know about and
+can use.  By default, when a window is created, the default colormap is 
+attached it. If a client allocates a color in a colormap and indicates it to be
+\fIshareable\fP, other clients allocating the same color value are
+able to share these colors.  More sharing of colors means less color
+conflicts and less colormap flashing.  The default colormap, therefore,
+is the preferred colormap to use if you want to share colors.  Sometimes
+a program cannot use the default colormap and must allocate its
+colors in an alternate colormap.  This increases the chances of flashing
+between the colors in these two different colormaps.  Sometimes a program wants 
+to use the default colormap, but cannot because it is full.  The program is then 
+forced to use an alternate colormap.  This, again, increases the chance of flashing.
+
+To summarize, client applications would like to use the default colormap if 
+possible, but sometimes they need to or are forced to use an alternate 
+colormap.   The only way to prevent colormap flashing between two separate 
+colormaps is to make them disjoint--to ensure their color allocations not 
+intersect.
+
+
+\fBC. Types of Colormap Flashing\fP
+
+Some kinds of colormap flashing are worse than others.  For example,
+an MCAD application which flashes against a spreadsheet program
+is unpleasant, but since the flashing is usually confined to specific
+window areas, it can often be tolerated as a reality of limited
+hardware.  However, if the same MCAD application flashes against
+the root window background or the frame border colors, the effect
+is usually very pronounced.  This is very disconcerting and 
+disorienting for the user.
+
+It is specifically this latter type of colormap flashing that the
+colormap compaction attempts to solve.  Other techniques for dealing 
+with the former type of flashing exist, but they usually require
+programming changes and, therefore, are not something the end-user 
+can typically take advantage of without having specially-modified software.  
+We will therefore not deal further with this \fIwindow-to-window\fP type of
+colormap flashing.  What we 
+will proceed to address is the problem of the flashing of windows against 
+a group of colors called the \fIworkspace colors\fP.
+
+The workspace colors are colors which are in some way important
+or pervasive in a user's workspace.  They may be colors which
+cover a large area on the screen or they may be colors appear
+in frequently used applications.  Some examples of applications
+which might utilize workspace colors are:
+
+.in +0.5i
+\(bu   A window manager (e.g \fBolwm\fP), for the root background, window borders, and menus.
+
+\(bu   A toolkit (e.g. XView), for window decorations and controls.
+
+\(bu   A root image loader (e.g. \fBxsetroot\fP), for the root background image.
+
+\(bu   An oft-used application (e.g. \fBfilemgr\fP).
+.in -0.5i
+
+Which colors should be designated as workspace colors is left
+up to the user.  The only criteria for a workspace color is that it 
+be a read-only (sharable) color and that it be allocated in the default 
+colormap of a screen.
+
+To summarize, the workspace colors are the colors the user has deemed
+to be important and with which he or she would prefer not to have
+any colormap flashing.
+
+
+\fBD. Goals\fP
+
+\fIColormap compaction\fP takes advantage of the identification
+of the colors of special applications and the low-end clustering effect of
+typical applications.  It takes advantage of these
+by shoving the workspace colors up to the top of the colormap.
+In this position, there is a reduced chance of the colors flashing
+flashing with other applications.
+
+It is important that it be easy to identify the workspace colors.
+Detailed knowledge of how X11 colormaps work should not be required.
+Nor should any programming ability be required.  Lastly, we
+don't want to rely on the availability of specially adapted programs;
+the technique should work with any arbitrary program which conforms
+to the X11 standard protocol.
+
+All of these considerations lead us to the method which is described
+in the following section.
+
+
+\fBE. Instructions\fP
+
+The preceding material has been presented to give you a overall sense
+what the problem is and the general method of solution.  This section
+will show you how to apply this method in the OpenWindows environment.
+
+In a nutshell, to reduce or prevent colormap flashing, you need to run the 
+\fBxnews\fP server, perform some configuration steps, and then exit the server.
+The next time you run the server, the workspace colors  you designate
+will be put up at the high end of the default colormap.
+
+For additional details on this process, refer to \fBcmap_compact\fP(1).
+
+Prerequisites:
+
+.in +0.5i
+.ti -1.5
+\(bu   Your \fL~/.xinitrc\fP file should invoke a version of 
+\fLopenwin-sys\fP that has the following as its first line:
+
+.in +0.5i
+.ft L
+.nf
+.na
+	cmap_compact init
+.ft P
+.fi
+.ad
+.in -0.5i
+
+The \fLopenwin-sys\fP shipped with OpenWindows 3.0 contains this
+line.   If you use some other file, be sure to add this line.
+The process should never be backgrounded.
+
+.ti -1.5
+\(bu   Edit your \fL~/.openwin-menu\fP file and insert the following lines into the \fIUtilities\fP menu
+after the "Save Workspace" menu entry:
+:
+
+.in +0.5i
+.ft L
+.nf
+.na
+    "Save Colors" MENU
+	"Save" DEFAULT  $OPENWINHOME/bin/cmap_compact save
+	"Discard"       $OPENWINHOME/bin/cmap_compact discard
+    "Save Colors" END 
+.ft P
+.fi
+.ad
+.in -0.5i
+
+
+If you do not have your own customized menu file, start with a copy
+of \fL$OPENWINHOME/lib/openwin-menu\fP placed in your home directory, renamed
+to \fL.openwin-menu.\fP
+
+.in -0.5i
+
+Steps:
+
+.in 0.5i
+.ti -2.0
+1.   Run the server with the \fBopenwin\fP(1) script.  Be sure at this
+time to configure the server for all of the screens you want to 
+compact colors for.  \fBopenwin\fP will (typically) execute 
+\fI~/.openwin-init\fP, which will in turn bring up your initial
+tools and programs.
+
+.ti -2.0
+2.   If you use a program which loads a root background image (such as
+\fBxsetroot\fP(1)), make sure you run this program.  Do this for 
+every screen.
+
+.ti -2.0
+3.   Use the \fIWorkspace Properties\fP sheet to select your desired
+window border and/or root window background colors.  This property
+is available by selecting the \fIProperties\fP entry of the
+root menu.  Do this for every screen.
+
+.ti -2.0
+4.   Choose the applications whose colors you want to designate as
+workspace colors.  You do this by either quitting undesired
+applications which are on the screen or by running desired 
+applications which are not yet on the screen.  Do this for
+every screen.
+
+.ti -2.0
+5.   At this point, the only colors which are in the default colormap
+should belong to the displayed programs.  Go into the 
+\fIUtilities\fP submenu of the root menu of any screen and select the
+\fISave Colors\fP entry.  All sharable (read-only)
+colors in the default colormaps for all screens will be recorded and stored in 
+the file \fI~/.owcolors\fP.  Note: private (read-write) colors used 
+by any of these applications will be ignored and will not
+be saved.
+
+.ti -2.0
+6.   Exit the window system.
+
+.ti -2.0
+7.   Reenter the window system by rerunning \fIopenwin\fP.
+.in -0.5i
+
+When you reenter the window system, the colors that have
+been stored in \fI~/.owcolors\fP are placed at the high
+end of the default colormap.  Since this is done before
+any of the other applications are started, when these
+applications are finally started, they will find the colors
+they want waiting for them at the high end and will use
+them there.
+
+Note: If you decide to change any of the workspace colors, you should
+repeat steps 3-7.  Otherwise, you may end up with more colormap
+flashing.
+
+If, at any time, you wish to undo the effects of the colormap
+compaction, select the \fIDiscard\fP entry of the \fISave Colors\fP
+submenu.
+
+As a side-effect of colormap compaction, the NeWS color cube in the 
+StaticColor colormap gets shifted downward.  The cube is shifted down by 
+the number of workspace colors you have saved (actually, the number 
+of colors for the screen with the most colors).  This is done to avoid 
+flashing between NeWS windows and the workspace colors.  Note: the base 
+of the color cube is never shifted lower than pixel 0.
+
+The black and white pixels which are pre-allocated in the default colormap
+by the server are shifted up to the high end of the colormap.
+
+In addition, XGL (version 2.0 and greater) will recognize that 
+colormap compaction has been turned on and will adjust its 
+color cube accordingly.   XGL usually allocates its color cube
+at the high end of its colormap by default.   When colormap
+compaction is turned on, XGL will allocate its color cube at
+the low end of the colormap.
+
+
+\fBF. What if Colormap Flashing isn't Reduced?\fP
+
+Colormap compaction is a heuristic technique: it is not always effective
+in reducing colormap flashing and, in some situations, may actually
+increase colormap flashing.   The result of using colormap compaction
+is highly dependent on the applications you use and the way that you
+have configured color on your desktop.
+
+Here are some example situations in which colormap compaction does
+not succeed:
+
+.in +0.5i
+.ti -1.5
+\(bu   If you are running a program which allocates
+its colors at the high end of a non-default colormap on purpose,
+this program will end up flashing more with the workspace colors.
+
+.ti -1.5
+\(bu   If you select a large amount of workspace colors, the 
+NeWS color cube may be shifted down enough to start
+flashing more with X11 applications allocating their
+colors at the low end.  This may increase colormap flashing
+between X11 and NeWS applications.
+.in -0.5i
+
+In general, the amount of colormap flashing reduction or 
+increase afforded by colormap compaction is highly dependent
+on the set of applications you run in your environment.
+For many environments, colormap compaction will be useful.
+But there are some environments for which it is not.
+The best policy is to give it a try and see if it helps.
+If it does not help, turn it off by selecting discard on
+the "Save Colors" menu.
+
+Some other things to be aware of:
+
+.in +0.5i
+.ti -1.5
+\(bu   Colormap compaction has no effect for screens which
+have the StaticColor colormap as the default (i.e. for
+screens which have a device modifier of \fIstaticvis\fP).
+
+.ti -1.5
+\(bu   You should discard the saved workspace colors and 
+reconfigure whenever you change the device modifiers
+(\fLstaticvis\fP, \fLgrayvis\fP or \fLdefdepth\fP) used on 
+the server command line.
+
+.ti -1.5
+\(bu   You should discard the saved colors and reconfigure whenever
+you remove a screen from your configuration.
+
+.ti -1.5
+\(bu   Colormap compaction does not preclude other means of 
+inter-application color sharing which programmers may
+want to use.  For example, X11 \fIStandard Colormap
+properties\fP can be used to promote sharing among imaging
+applications that use lots of colors.  Application developers can
+use these properties in conjunction with colormap 
+compaction to achieve even less colormap flashing.
+.in -0.5i
+
+
+\fBG. Summary\fP
+
+Compacting the default colormap is the process of selecting certain application
+colors you would prefer not to flash and saving these
+colors into a file.  When the window system is reentered, these colors
+will end up at the high end of the default colormap, a preferred position
+which often decreases colormap flashing.
+
+This process may not always make sense for your situation.  Depending on the
+applications you run, it may or may not help, but it probably will.  You
+must also make sure you keep the configuration up-to-date to continue
+to derive the maximum benefits.  If, after trying colormap compaction, colormap 
+flashing on your desktop is not reduced, colormap compaction should be turned back off.
+
+
+
+	  
+

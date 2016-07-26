@@ -45,12 +45,14 @@
 <transform file path=usr/bin/krb5-config -> drop>
 
 # Remove the named files with strange deps breaking the pkglint
-#<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/run.py -> drop>
-#<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/run.pyc -> drop>
-<transform file path=usr/lib/python2.6/vendor-packages/samba/samba/external/subunit/tests/sample-script.py -> drop>
-<transform file path=usr/lib/python2.6/vendor-packages/samba/samba/external/subunit/tests/sample-script.pyc -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/subunit/run.py -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/subunit/run.pyc -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/tests/sample-script.py -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/tests/sample-script.pyc -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/tests/subunitrun.py -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/tests/subunitrun.pyc -> drop>
 
-<transform file path=usr/(.*) -> default pkg.depend.runpath "$PKGDEPEND_RUNPATH:/usr/lib/python2.6/vendor-packages/samba:/usr/lib/python2.6/vendor-packages/samba/samba:/usr/lib/python2.6/vendor-packages/samba/samba/external" >
+<transform file path=usr/(.*) -> default pkg.depend.runpath "$PKGDEPEND_RUNPATH:/usr/lib/python2.7/vendor-packages/samba:/usr/lib/python2.7/vendor-packages/samba/samba:/usr/lib/python2.7/vendor-packages/samba/samba/external:/usr/lib/python2.7/vendor-packages/samba/samba/third_party" >
 
 # Oracle HSM (SAMFS) is not yet supported on 12.0
 #<transform file path=usr/lib/samba/vfs/samfs.so -> default pkg.depend.bypass-generate .*>
@@ -72,28 +74,20 @@
 <transform file path=usr/lib/samba/private/libgse.so -> default pkg.linted.userland.action001.3 true>
 
 # mediated links macros to switch between Samba 3 and 4
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator samba >
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator-implementation 3 >
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator-priority vendor >
-
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator samba >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator-implementation 3 >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator-priority vendor >
-
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator samba >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator-implementation 3 >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator-priority vendor >
-
 <transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator samba >
 <transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator-implementation 4 >
+<transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator-priority vendor >
 
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator samba >
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator-implementation 4 >
+<transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator-priority vendor >
 
 <transform link target=.*/samba/$(MACH64)/pam_.+\.so -> default mediator samba >
 <transform link target=.*/samba/security/pam_.+\.so -> default mediator samba >
 <transform link target=.*/samba/$(MACH64)/pam_.+\.so -> default mediator-implementation 4 >
 <transform link target=.*/samba/security/pam_.+\.so -> default mediator-implementation 4 >
+<transform link target=.*/samba/security/pam_.+\.so -> default mediator-priority vendor >
+<transform link target=.*/samba/$(MACH64)/pam_.+\.so -> default mediator-priority vendor >
 
 # SMF services import (for .xml manifests)
 <transform file path=lib/svc/manifest/.+\.xml -> default restart_fmri svc:/system/manifest-import:default >

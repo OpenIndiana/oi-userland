@@ -63,16 +63,16 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Reset arguments specified as environmnent variables
 COMPONENT_BUILD_ARGS =
 
-# If we are building Python 2.7 or 3.4 support, build them and install them
-# before Python 2.6, so 2.6 is installed last and is the canonical version.
+# If we are building Python 2.6 or 3.4 support, build them and install them
+# before Python 2.7, so 2.7 is installed last and is the canonical version.
 # When we change the default, the new default should go last.
-ifneq ($(findstring 2.7,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-2.7/.built
-$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-2.7/.installed
+ifneq ($(findstring 2.6,$(PYTHON_VERSIONS)),)
+$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-2.6/.built
+$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-2.6/.installed
 endif
 ifneq ($(findstring 3.4,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-3.4/.built
-$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-3.4/.installed
+$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.4/.built
+$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.4/.installed
 endif
 
 # Create a distutils config file specific to the combination of build

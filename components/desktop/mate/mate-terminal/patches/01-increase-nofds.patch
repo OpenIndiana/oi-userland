@@ -1,0 +1,34 @@
+--- mate-terminal-1.14.0/src/terminal.c.~1~	2016-01-20 17:27:55.000000000 +0300
++++ mate-terminal-1.14.0/src/terminal.c	2016-07-26 11:56:17.940350521 +0300
+@@ -26,6 +26,7 @@
+ #include <stdlib.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <sys/resource.h>
+ 
+ #include <glib.h>
+ #include <glib/gstdio.h>
+@@ -535,6 +536,7 @@
+ 	GError *error = NULL;
+ 	char *working_directory;
+ 	int ret = EXIT_SUCCESS;
++	struct rlimit rlim;
+ 
+ 	setlocale (LC_ALL, "");
+ 
+@@ -543,6 +545,15 @@
+ 	textdomain (GETTEXT_PACKAGE);
+ 
+ 	_terminal_debug_init ();
++	
++	if (getrlimit(RLIMIT_NOFILE, &rlim) == 0)
++	{
++		rlim.rlim_cur *= 4;
++		if (rlim.rlim_cur > rlim.rlim_max)
++			rlim.rlim_cur = rlim.rlim_max;
++		setrlimit(RLIMIT_NOFILE, &rlim);
++	}
++
+ 
+ 	/* Make a NULL-terminated copy since we may need it later */
+ 	argv_copy = g_new (char *, argc + 1);
