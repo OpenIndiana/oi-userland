@@ -1,0 +1,12 @@
+diff -ruN python-prompt-toolkit-1.0.0.orig/prompt_toolkit/contrib/validators/base.py python-prompt-toolkit-1.0.0/prompt_toolkit/contrib/validators/base.py
+--- python-prompt-toolkit-1.0.0.orig/prompt_toolkit/contrib/validators/base.py	2016-05-05 17:22:22.000000000 +0300
++++ python-prompt-toolkit-1.0.0/prompt_toolkit/contrib/validators/base.py	2016-07-08 18:17:08.211019100 +0300
+@@ -21,7 +21,7 @@
+         self.move_cursor_to_end = move_cursor_to_end
+ 
+         if ignore_case:
+-            self.sentences = {s.lower() for s in self.sentences}
++            self.sentences = set([s.lower() for s in self.sentences])
+ 
+     def validate(self, document):
+         if document.text not in self.sentences:

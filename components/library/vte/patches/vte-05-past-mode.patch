@@ -1,0 +1,89 @@
+From 0117dcd74c804e37c93bdf99f29207b5e786a46b Mon Sep 17 00:00:00 2001
+From: Egmont Koblinger <egmont@gmail.com>
+Date: Tue, 6 May 2014 13:24:46 +0200
+Subject: emulation: Change bracketed paste mode to per-terminal
+
+https://bugzilla.gnome.org/show_bug.cgi?id=729533
+(cherry picked from commit 07a3f97381112dad889b99211ce655b84858ed66)
+---
+ src/vte-private.h | 2 +-
+ src/vte.c         | 8 ++++----
+ src/vteseq.c      | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/vte-private.h b/src/vte-private.h
+index 1b5bb98..ca2a7a6 100644
+--- a/src/vte-private.h
++++ b/src/vte-private.h
+@@ -219,7 +219,6 @@ struct _VteTerminalPrivate {
+ 		gboolean sendrecv_mode;	/* sendrecv mode */
+ 		gboolean insert_mode;	/* insert mode */
+ 		gboolean linefeed_mode;	/* linefeed mode */
+-		gboolean bracketed_paste_mode;
+ 		struct vte_scrolling_region {
+ 			int start, end;
+ 		} scrolling_region;	/* the region we scroll in */
+@@ -274,6 +273,7 @@
+ 	gboolean text_modified_flag;
+ 	gboolean text_inserted_flag;
+ 	gboolean text_deleted_flag;
++	gboolean bracketed_paste_mode;
+ 
+ 	/* Scrolling options. */
+ 	gboolean scroll_background;
+diff --git a/src/vte.c b/src/vte.c
+index f57a075..1803b6e 100644
+--- a/src/vte.c
++++ b/src/vte.c
+@@ -5878,10 +5878,10 @@ vte_terminal_paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
+ 				p++;
+ 			}
+ 		}
+-		if (terminal->pvt->screen->bracketed_paste_mode)
++		if (terminal->pvt->bracketed_paste_mode)
+ 			vte_terminal_feed_child(terminal, "\e[200~", -1);
+ 		vte_terminal_feed_child(terminal, paste, length);
+-		if (terminal->pvt->screen->bracketed_paste_mode)
++		if (terminal->pvt->bracketed_paste_mode)
+ 			vte_terminal_feed_child(terminal, "\e[201~", -1);
+ 		g_free(paste);
+ 	}
+@@ -13968,14 +13968,12 @@ vte_terminal_reset(VteTerminal *terminal,
+ 	pvt->normal_screen.linefeed_mode = FALSE;
+ 	pvt->normal_screen.origin_mode = FALSE;
+ 	pvt->normal_screen.reverse_mode = FALSE;
+-	pvt->normal_screen.bracketed_paste_mode = FALSE;
+ 	pvt->alternate_screen.scrolling_restricted = FALSE;
+ 	pvt->alternate_screen.sendrecv_mode = TRUE;
+ 	pvt->alternate_screen.insert_mode = FALSE;
+ 	pvt->alternate_screen.linefeed_mode = FALSE;
+ 	pvt->alternate_screen.origin_mode = FALSE;
+ 	pvt->alternate_screen.reverse_mode = FALSE;
+-	pvt->alternate_screen.bracketed_paste_mode = FALSE;
+ 	pvt->cursor_visible = TRUE;
+         /* For some reason, xterm doesn't reset alternateScroll, but we do. */
+         pvt->alternate_screen_scroll = TRUE;
+@@ -14010,6 +14008,8 @@ vte_terminal_reset(VteTerminal *terminal,
+ 	pvt->mouse_smooth_scroll_delta = 0.;
+ 	/* Clear modifiers. */
+ 	pvt->modifiers = 0;
++	/* Reset miscellaneous stuff. */
++	pvt->bracketed_paste_mode = FALSE;
+ 	/* Cause everything to be redrawn (or cleared). */
+ 	vte_terminal_maybe_scroll_to_bottom(terminal);
+ 	_vte_invalidate_all(terminal);
+diff --git a/src/vteseq.c b/src/vteseq.c
+index 28cc79b..acaf856 100644
+--- a/src/vteseq.c
++++ b/src/vteseq.c
+@@ -737,7 +737,7 @@
+ 		 GINT_TO_POINTER(TRUE),
+ 		 NULL, NULL},
+ 		/* 2004: Bracketed paste mode. */
+-		{2004, &terminal->pvt->screen->bracketed_paste_mode, NULL, NULL,
++		{2004, &terminal->pvt->bracketed_paste_mode, NULL, NULL,
+ 		 GINT_TO_POINTER(FALSE),
+ 		 GINT_TO_POINTER(TRUE),
+ 		 NULL, NULL,},
+-- 
+cgit v0.12

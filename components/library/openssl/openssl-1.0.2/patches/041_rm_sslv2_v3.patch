@@ -51,16 +51,10 @@
  # endif
 --- openssl-1.0.1/ssl/ssl.h	Tue May 26 11:13:15 2015
 +++ openssl-1.0.1/ssl/ssl.h.new	Tue May 26 11:32:09 2015
-@@ -2345,12 +2345,26 @@
+@@ -2345,10 +2345,23 @@
  /* This sets the 'default' SSL version that SSL_new() will create */
  int SSL_CTX_set_ssl_version(SSL_CTX *ctx, const SSL_METHOD *meth);
  
--# ifndef OPENSSL_NO_SSL2
--const SSL_METHOD *SSLv2_method(void); /* SSLv2 */
--const SSL_METHOD *SSLv2_server_method(void); /* SSLv2 */
--const SSL_METHOD *SSLv2_client_method(void); /* SSLv2 */
--# endif
-
 +#ifndef __has_attribute
 +# define __has_attribute(x) 0
 +#endif
@@ -74,15 +68,16 @@
 +# define DEPRECATED
 +#endif
 +
-+# ifndef OPENSSL_NO_SSL2
+ # ifndef OPENSSL_NO_SSL2_METHOD
+-const SSL_METHOD *SSLv2_method(void); /* SSLv2 */
+-const SSL_METHOD *SSLv2_server_method(void); /* SSLv2 */
+-const SSL_METHOD *SSLv2_client_method(void); /* SSLv2 */
 +DEPRECATED const SSL_METHOD *SSLv2_method(void); /* SSLv2 */
 +DEPRECATED const SSL_METHOD *SSLv2_server_method(void); /* SSLv2 */
 +DEPRECATED const SSL_METHOD *SSLv2_client_method(void); /* SSLv2 */
-+# endif
-+
+ # endif
+ 
  # ifndef OPENSSL_NO_SSL3_METHOD
- const SSL_METHOD *SSLv3_method(void); /* SSLv3 */
- const SSL_METHOD *SSLv3_server_method(void); /* SSLv3 */
 --- openssl/ssl/s3_meth.c.orig	Fri Sep 11 12:19:54 2015
 +++ openssl/ssl/s3_meth.c	Fri Sep 11 12:22:24 2015
 @@ -71,4 +71,13 @@

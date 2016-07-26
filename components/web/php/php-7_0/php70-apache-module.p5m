@@ -1,0 +1,32 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 EveryCity Ltd. All rights reserved.
+#
+
+<transform file path=.+/lib/.+\.a$ -> drop>
+<transform file path=.+/lib/.+\.la$ -> drop>
+<transform file path=.+/share/info/dir -> drop>
+set name=pkg.fmri \
+    value=pkg:/web/server/apache-22/module/apache-php70@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server 7.0"
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=http://www.php.net
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file files/php70.conf path=etc/apache2/2.2/conf.d/php70.conf mode=0644 \
+    preserve=true
+file /usr/apache2/2.2/libexec/$(MACH64)/libphp7.so \
+    path=usr/apache2/2.2/libexec/$(MACH64)/mod_php70.so
+file /usr/apache2/2.2/libexec/libphp7.so \
+    path=usr/apache2/2.2/libexec/mod_php70.so
+license php70.license license="PHP70 License"
+depend type=require fmri=pkg:/web/php-70/php-common

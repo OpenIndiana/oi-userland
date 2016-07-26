@@ -1,0 +1,20 @@
+--- libetpan-1.7/configure.ac.orig	2016-04-26 09:50:25.690464201 +0300
++++ libetpan-1.7/configure.ac	2016-04-26 09:50:34.691356833 +0300
+@@ -523,7 +523,7 @@
+   with_sasl=no
+   SASLLIBS="$SSLLIBS"
+   AC_CHECK_HEADER(sasl/sasl.h, [
+-   AC_CHECK_LIB(sasl2, sasl_client_init, with_sasl=yes, [], [$SASLLIBS])])
++   AC_CHECK_LIB(sasl, sasl_client_init, with_sasl=yes, [], [$SASLLIBS])])
+   if test "x$with_sasl" != "xyes"; then
+     CPPFLAGS="$OCPPFLAGS"
+     LDFLAGS="$OLDFLAGS"
+@@ -531,7 +531,7 @@
+ fi
+ if test "x$with_sasl" = "xyes"; then
+   AC_DEFINE([USE_SASL], 1, [Define to use SASL])
+-  SASLLIBS="-lsasl2 $SASLLIBS"
++  SASLLIBS="-lsasl $SASLLIBS"
+ else
+   AC_MSG_WARN([SASL support disabled.])
+   SASLLIBS=""

@@ -64,3 +64,6 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 download:: $(SOURCE_DIR)/.downloaded
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/python-27

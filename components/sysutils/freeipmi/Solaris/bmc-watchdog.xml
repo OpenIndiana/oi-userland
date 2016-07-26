@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+CDDL HEADER START
+
+The contents of this file are subject to the terms of the
+Common Development and Distribution License (the "License").
+You may not use this file except in compliance with the License.
+
+You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+or http://www.opensolaris.org/os/licensing.
+See the License for the specific language governing permissions
+and limitations under the License.
+
+When distributing Covered Code, include this CDDL HEADER in each
+file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+If applicable, add the following below this CDDL HEADER, with the
+fields enclosed by brackets "[]" replaced with your own identifying
+information: Portions Copyright [yyyy] [name of copyright owner]
+
+CDDL HEADER END
+-->
+
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+	Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+	Use is subject to license terms.
+	# Copyright 2016 Jim Klimov
+
+#	ident	"@(#)bmc-watchdog.xml	1.1	09/08/14 SMI"
+-->
+
+<service_bundle type='manifest' name='SUNWfreeipmir:bmc-watchdog'>
+
+	<service name='system/freeipmi/bmc-watchdog' type='service' version='1'>
+
+	<!--
+	  Configure a default instance for the service since it doesn't
+	  require additional configuration intervention before it starts.
+	-->
+		<create_default_instance enabled='false' />
+
+	<!--
+	  Wait for all usr filesystem to be mounted. bmc-watchdog is
+	  located in /usr/sbin.
+	-->
+		<dependency
+		name='filesystem-usr'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+			<service_fmri
+		value='svc:/system/filesystem/usr:default'/>
+		</dependency>
+
+	<!--
+	  Wait for syslog to be started in order to write system
+	  messages from the kernel.
+	-->
+		<dependency
+		name='syslog'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+			<service_fmri
+		value='svc:/system/system-log:default'/>
+		</dependency>
+
+	<!--
+	  The bmc-watchdog start/stop methods.
+	-->
+
+		<exec_method
+		type='method'
+		name='start'
+		exec='/lib/svc/method/svc-bmc-watchdog %m'
+		timeout_seconds='60'/>
+
+		<exec_method
+		type='method'
+		name='stop'
+		exec=':kill'
+		timeout_seconds='60' />
+
+		<property_group name='startd' type='framework'>
+		<!--
+		  Sub-process core dumps and external kill signals are not
+		  considered errors, so the service should be restarted.
+			-->
+			<propval name='ignore_error' type='astring'
+			 value='core,signal' />
+		</property_group>
+
+		<property_group name='config' type='application' >
+			<propval name='options' type='astring' value='-u 4 -p 0 -a 1 -F -P -L -S -O -i 900 -e 60'/>
+<!-- Enable scripted looping if the BMC daemon fails while the BMC Watchdog is
+  in fact started (errata applied to at least some Sun Fire X4*** models)? -->
+			<propval name='force-looping' type='boolean' value='false'/>
+			<propval name='bmcdev-required' type='boolean' value='true'/>
+			<propval name='bmcdev' type='astring' value='/dev/ipmi0'/>
+<!-- Legacy default (with proprietary driver): -->
+<!--
+			<propval name='bmcdev' type='astring' value='/dev/bmc'/>
+-->
+		</property_group>
+
+		<stability value='Unstable' />
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+				Baseboard Management Controller (BMC) watchdog timer daemon
+				</loctext>
+			</common_name>
+			<documentation>
+				<manpage title='bmc-watchdog' section='8'
+				manpath='/usr/share/man' />
+			</documentation>
+		</template>
+	</service>
+
+</service_bundle>

@@ -19,22 +19,28 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Adam Stevko. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.0.3
+COMPONENT_VERSION=	4.3.1
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
+COMPONENT_FMRI=		terminal/screen
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:78f0d5b1496084a5902586304d4a73954b2bfe33ea13edceecf21615c39e6c77
+COMPONENT_ARCHIVE_HASH=	sha256:fa4049f8aee283de62e283d427f2cfd35d6c369b40f7f45f947dbfd915699d63
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/screen
+COMPONENT_LICENSE= 	GPLv2
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--enable-colors256
 CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
@@ -57,3 +63,5 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += system/library

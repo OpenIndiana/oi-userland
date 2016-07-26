@@ -37,3 +37,5 @@ install:
 
 clean:
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+REQUIRED_PACKAGES += SUNWcs

@@ -42,3 +42,7 @@ CONFIGURE_OPTIONS += --disable-osmesa
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11

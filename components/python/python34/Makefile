@@ -26,13 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.3
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	3.4.5
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b5b3963533768d5fc325a4d7a6bd6f666726002d696f1d399ec06b043ea996b8
+    sha256:ee64b1c8a47461009abf25252332d29a4e587cb4f0c1c96aa793a3732e9d898a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/python
 
@@ -145,3 +144,20 @@ test:				$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/object-file
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

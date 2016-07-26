@@ -40,3 +40,10 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library

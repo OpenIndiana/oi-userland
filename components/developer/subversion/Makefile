@@ -29,6 +29,7 @@ PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.7.20
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -79,7 +80,7 @@ CFLAGS += $(CPP_LARGEFILES)
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( $(CLONEY) $(SOURCE_DIR) $(@D) ; \
     cd $(SOURCE_DIR) ; \
-	$(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
+	$(PYTHON) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
 COMPONENT_BUILD_TARGETS = all swig-py javahl
 COMPONENT_INSTALL_TARGETS.32 = install install-lib \
@@ -97,9 +98,9 @@ COMPONENT_INSTALL_TARGETS.64 = install install-lib \
 COMPONENT_BUILD_TARGETS = $(COMPONENT_BUILD_TARGETS.$(BITS))
 COMPONENT_INSTALL_TARGETS = $(COMPONENT_INSTALL_TARGETS.$(BITS))
 
-CONFIGURE_ENV += PYTHON="$(PYTHON.$(BITS))"
+CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
-CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
+CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += JAVA_ROOT="$(JAVA_ROOT)"
 CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
@@ -181,7 +182,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27

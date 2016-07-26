@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpng
-COMPONENT_VERSION=	1.4.17
+COMPONENT_VERSION=	1.6.21
 COMPONENT_SUMMARY=	Portable Network Graphics library
 
 include ../../../make-rules/ips.mk

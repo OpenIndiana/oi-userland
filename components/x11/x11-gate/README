@@ -1,0 +1,21 @@
+
+This directory is only intended for developers willing to rebuild the x11 gate
+for testing purposes.
+
+The provided Makefile is fairly basic, it provides targets:
+- clobber, to perform gmake clobber in each x11 component directory,
+- all, to build, install and publish all the x11 components.
+
+After the component is published successfully a file is created to skip the
+directory at next run of gmake all.
+
+Since x11 components have dependencies, there is a need to perform intermediate
+installs in the build zone.
+This is achieved with pkg update -v --no-backup-be, several requirements apply:
+- the user should have at least Software Installation profile,
+- the openindiana.org should be temporarily disabled to avoid pulling updates
+  during the build,
+- the userland publisher should be set as preferred.
+
+For now you should also empty or unlock the X-incorporation to remove version
+constraints.

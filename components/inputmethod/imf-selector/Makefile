@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= imf-selector
 COMPONENT_VERSION= 0.5.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Input Method Framework startup
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.openindiana.org
@@ -42,6 +43,8 @@ CONFIGURE_SCRIPT = $(@D)/autogen.sh
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
+CONFIGURE_ENV += PYTHON=$(PYTHON)
+
 COMPONENT_POST_INSTALL_ACTION = ( $(GSED) -i -e 's:\#!/bin/python:\#!/usr/bin/python$(PYTHON_VERSION):' $(PROTO_DIR)/usr/bin/imf-selector)
 
 clean::
@@ -55,3 +58,9 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/python/gnome-python-27
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += runtime/python-27

@@ -1,0 +1,138 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+
+# If you do not want to configure your client to listen for multicast, comment
+# this line out. This should only be used for casual time keeping, like keeping
+# a desktop system in sync.
+
+#multicastclient 224.0.1.1
+
+# You can also use broadcast mode. Again, only use for casual timekeeping.
+
+#broadcastclient
+
+# The default is to require authentication. Without authentication you do not
+# have any control over what servers your system is getting its time from.
+# It is possible for another system to target your system to change the time.
+# However for casual time keeping and ease of administration authentication
+# may not be necessary. Using authentication is recommended.
+
+disable auth
+
+# To configure NTP servers, replace the server_name with either the IP address
+# or hostname of the server you wish to use. If you just want to keep the time
+# in a causual way, one server may be enough for you. If you wish to keep it
+# to a more accurate level, 3 or more is recommended. Do not choose 2, because
+# 2 servers is an unstable configuration. By the same token 3 is only acceptable
+# if all are always available, since when a single one reboots or otherwise
+# becomes unavailable, you have just 2. The iburst keyword specifies that
+# multiple packets be sent at start-up to allow the system to more quickly
+# get the correct time at boot.
+#
+# For a list of Internet NTP servers see
+# http://support.ntp.org/bin/view/Servers/WebHome
+# If you use this list, be sure to read, understand and abide by the rules
+# each server has published for accessing themselves.
+#
+# There is also a DNS round-robin pool of public access NTP servers. The
+# instructions for accessing these are at http://www.pool.ntp.org
+# Please consider adding your own servers to the pool if possible.
+#
+# Many ISP's also provide NTP servers for use by their customers.
+
+server 0.openindiana.pool.ntp.org iburst
+server 1.openindiana.pool.ntp.org iburst
+server 2.openindiana.pool.ntp.org iburst
+server 3.openindiana.pool.ntp.org iburst
+
+# Always configure the drift file. It can take days for ntpd to completely
+# stabilize and without the drift file, it has to start over on a reboot
+# of if ntpd restarts.
+
+driftfile /var/ntp/ntp.drift
+
+# Permit time synchronization with our time source, but do not
+# permit the source to query or modify the service on this system.
+restrict default nomodify notrap nopeer noquery
+
+# Permit all access over the loopback interface.  This could
+# be tightened as well, but to do so would effect some of
+# the administrative functions.
+restrict 127.0.0.1
+restrict ::1
+
+# It is always wise to configure at least the loopstats and peerstats files.
+# Otherwise when ntpd does something you don't expect there is no way to
+# find out why.
+
+statsdir /var/ntp/ntpstats/
+filegen peerstats file peerstats type day enable
+filegen loopstats file loopstats type day enable
+
+# To track the events regarding the system clock, the protostats file can be useful
+# as well.
+
+# Disable the monitoring facility to prevent amplification attacks using ntpdc
+# monlist command when default restrict does not include the noquery flag. See
+# CVE-2013-5211 for more details.
+# Note: Monitoring will not be disabled with the limited restriction flag.
+disable monitor
+
+#filegen protostats file protostats type day enable
+
+# To see the current state of the crypto authentication protocols, enable the
+# cryptostats file.
+
+#filegen cryptostats file cryptostats type day enable
+
+# The clockstats files are only useful if a hardware reference clock is
+# configured. See the /etc/inet/ntp.server file for more information about
+# that.
+
+#filegen clockstats file clockstats type day enable
+
+# The sysstats and rawstats output might be useful in debugging, but are
+# not important otherwise.
+
+#filegen sysstats file sysstats type day enable
+#filegen rawstats file rawstats type day enable
+
+# There are several types on authentication supported by NTP. The easiest
+# to use is a set of passwords, called "keys". They should be stored
+# the /etc/inet/ntp.keys file. Each key in the ntp.keys file can be
+# assigned to certain types of trust levels. See ntpd(1m) for more
+# information on setting up key.
+
+#keys /etc/inet/ntp.keys
+#trustedkey 1
+#requestkey 1
+#controlkey 1
+
+#
+# To configure leap seconds processing, download the latest NIST leap seconds
+# file to /etc/inet, and then create a symbolic link to it from the ntp.leap
+# file. Without this file, NTP will still be able to accept leap announcements
+# from its upstream sources. If this file exists and is less than 6 months old
+# then the contents of this file will take precedence over the upstream servers.
+# The latest leap seconds file is always available at ftp://time.nist.gov/pub
+
+#leapfile /etc/inet/ntp.leap

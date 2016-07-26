@@ -1,0 +1,50 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
+set name=info.source-url value="$(COMPONENT_ARCHIVE_URL)"
+set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION)"
+set name=org.opensolaris.consolidation value="$(CONSOLIDATION)"
+
+license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
+
+depend fmri=service/opengl/ogl-select type=require
+file path=usr/bin/$(MACH64)/glewinfo pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/bin/$(MACH64)/visualinfo pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/bin/$(MACH32)/glewinfo pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/bin/$(MACH32)/visualinfo pkg.depend.bypass-generate=libGL\.so\.1
+hardlink path=usr/bin/glewinfo target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/visualinfo target=../lib/isaexec pkg.linted=true
+file path=usr/include/glew.h
+file path=usr/include/glxew.h
+file path=usr/include/wglew.h
+file path=usr/lib/$(MACH64)/libGLEW.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
+link path=usr/lib/$(MACH64)/libGLEW.so.1.13 target=libGLEW.so.1.13.0
+link path=usr/lib/$(MACH64)/libGLEW.so target=libGLEW.so.1.13
+file path=usr/lib/$(MACH64)/libGLEWmx.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
+link path=usr/lib/$(MACH64)/libGLEWmx.so.1.13 target=libGLEWmx.so.1.13.0
+link path=usr/lib/$(MACH64)/libGLEWmx.so target=libGLEWmx.so.1.13
+file path=usr/lib/$(MACH64)/pkgconfig/glew.pc
+file path=usr/lib/$(MACH64)/pkgconfig/glewmx.pc
+file path=usr/lib/libGLEW.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
+link path=usr/lib/libGLEW.so.1.13 target=libGLEW.so.1.13.0
+link path=usr/lib/libGLEW.so target=libGLEW.so.1.13
+file path=usr/lib/libGLEWmx.so.1.13.0 pkg.depend.bypass-generate=libGL\.so\.1
+link path=usr/lib/libGLEWmx.so.1.13 target=libGLEWmx.so.1.13.0
+link path=usr/lib/libGLEWmx.so target=libGLEWmx.so.1.13
+file path=usr/lib/pkgconfig/glew.pc
+file path=usr/lib/pkgconfig/glewmx.pc

@@ -1,0 +1,50 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016 Jim Klimov. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) (Base accounts and dirs)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Ensure the UID exists till the end, until after the main packages are removed
+# and in particular do not move databases and logs into lost+found on uninstall
+# Note the locked user password is NL (not NP) because it has to manage crontab
+group groupname=clamav gid=63
+user ftpuser=false gcos-field="ClamAV Reserved UID" group=clamav password=NL \
+    username=clamav uid=63
+
+# These directories can hold some content generated or downloaded at runtime
+# and can become lost+found when you un/re-install the core packages (if these
+# pkg actions are delivered there instead)
+dir group=clamav owner=clamav mode=0755 path=var/clamav
+dir group=clamav owner=clamav mode=0755 path=var/clamav/db
+dir group=clamav owner=clamav mode=0755 path=var/clamav/run
+dir group=clamav owner=clamav mode=0755 path=var/log/clamav
+link path=var/clamav/log target=../log/clamav
+
+file files/README-etc.txt path=etc/clamav/README.txt

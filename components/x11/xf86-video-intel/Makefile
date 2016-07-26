@@ -11,13 +11,14 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -36,7 +37,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-LDFLAGS += -lsocket
+LDFLAGS += -lm -lsocket
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
@@ -76,11 +77,21 @@ COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
 
 CPPFLAGS += -DXF86DRI
 
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
-CONFIGURE_OPTIONS += --disable-sna 
+CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS += --enable-sna 
 CONFIGURE_OPTIONS += --enable-uxa
+CONFIGURE_OPTIONS += --enable-rendernode
+CONFIGURE_OPTIONS += --enable-create2
+CONFIGURE_OPTIONS += --with-default-accel=uxa
+CONFIGURE_OPTIONS += --enable-kms
+#CONFIGURE_OPTIONS += --enable-tear-free
+#CONFIGURE_OPTIONS += --enable-async-swap
+CONFIGURE_OPTIONS += --enable-backlight
+CONFIGURE_OPTIONS += --enable-backlight-helper
 CONFIGURE_OPTIONS += --disable-selective-werror
 CONFIGURE_OPTIONS += --disable-silent-rules
 

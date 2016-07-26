@@ -1,0 +1,34 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 EveryCity Ltd. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/web/php-70/phpdbg@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server 7.0 (phpdbg)"
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=http://www.php.net
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/$(MACH64)/phpdbg target=../../php/7.0/bin/$(MACH64)/phpdbg \
+    mediator=php mediator-version=7.0
+link path=usr/bin/phpdbg target=../php/7.0/bin/phpdbg mediator=php \
+    mediator-version=7.0
+file path=usr/php/7.0/bin/$(MACH64)/phpdbg
+file path=usr/php/7.0/bin/phpdbg
+file path=usr/php/7.0/share/man/man1/phpdbg.1
+link path=usr/share/man/man1/phpdbg.1 \
+    target=../../../php/7.0/share/man/man1/phpdbg.1 mediator=php \
+    mediator-version=7.0
+license php70.license license="PHP70 License"
+depend type=require fmri=pkg:/web/php-70/php-common

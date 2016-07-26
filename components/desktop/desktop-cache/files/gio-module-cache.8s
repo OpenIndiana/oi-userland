@@ -1,0 +1,69 @@
+.\" Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+.\" 
+.\" CDDL HEADER START
+.\" 
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\" 
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\" 
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\" 
+.\" CDDL HEADER END
+.TH gio-module-cache 8S "25 May 2016"
+.SH NAME
+.PP
+svc:/application/desktop-cache/gio-module-cache \- GIO module cache update service
+.SH DESCRIPTION
+.PP
+The
+.B svc:/application/desktop-cache/gio-module-cache
+transient
+.BR smf (7)
+service runs
+.BR gio-querymodules (1)
+to update the giomodule.cache file with information about
+the installed GIO extension modules.
+.PP
+Packages that deliver GIO extension modules should set a
+.I restart_fmri
+attribute with the value
+.B svc:/application/desktop-cache/gio-module-cache
+on those module files.
+.PP
+This service has no configurable properties.
+.PP
+Administrative actions on this service, such as enabling, disabling, or
+requesting restart, can be performed using \fBsvcadm\fR(8). The status of
+the service can be queried using the \fBsvcs\fR(1) command.
+.SH FILES
+.TP 30
+.B /usr/lib/gio/modules/
+32-bit GIO module directory
+.TP 30
+.B /usr/lib/64/gio/modules/
+64-bit GIO module directory
+.TP 30
+.B /usr/lib/gio/modules/giomodule.cache
+32-bit GIO module cache
+.TP 30
+.B /usr/lib/64/gio/modules/giomodule.cache
+64-bit GIO module cache
+.SH SEE ALSO
+.PP
+.BR gio-querymodules (1),
+.BR svcs (1),
+.BR libgio-2\&.0 (3lib),
+.BR attributes (7),
+.BR pkg (7),
+.BR smf (7),
+.BR svcadm (8)
+

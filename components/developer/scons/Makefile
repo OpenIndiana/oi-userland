@@ -35,9 +35,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
-# The package delivery should be fixed in 2.7 (matching dirs in globs
-# as bad files and dying). Also, it is in SCons requirements ;)
-PYTHON_VERSION = 2.7
 PKG_MACROS += PYTHON_VERSION="$(PYTHON_VERSION)"
 PKG_MACROS += PYTHON_LIB="$(PYTHON_LIB)"
 

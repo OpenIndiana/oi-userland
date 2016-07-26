@@ -1,0 +1,172 @@
+From af59564785eeeef3c8f9441a41c36c25cfcdd282 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Fri, 4 Sep 2015 11:04:30 -0700
+Subject: [PATCH 31/34] Accept LANG and LC_* environment variables from clients
+ by default
+
+This preserves most of the old SunSSH locale negotiation
+behaviour (at least the parts that are most commonly used).
+---
+ servconf.c    | 27 +++++++++++++++++++++++++--
+ session.c     | 26 ++++++++++++++++++++++++--
+ sshd_config   |  4 ++++
+ sshd_config.4 | 13 ++++++++++++-
+ 4 files changed, 65 insertions(+), 5 deletions(-)
+
+diff --git a/servconf.c b/servconf.c
+index 0ee50e3..b91fd7d 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -155,7 +155,7 @@ initialize_server_options(ServerOptions *options)
+ 	options->client_alive_interval = -1;
+ 	options->client_alive_count_max = -1;
+ 	options->num_authkeys_files = 0;
+-	options->num_accept_env = 0;
++	options->num_accept_env = -1;
+ 	options->permit_tun = -1;
+ 	options->num_permitted_opens = -1;
+ 	options->adm_forced_command = NULL;
+@@ -423,6 +423,25 @@ fill_default_server_options(ServerOptions *options)
+ 		options->max_sessions = DEFAULT_SESSIONS_MAX;
+ 	if (options->use_dns == -1)
+ 		options->use_dns = 0;
++	if (options->num_accept_env == -1) {
++		options->num_accept_env = 0;
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LANG");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_ALL");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_CTYPE");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_COLLATE");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_TIME");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_NUMERIC");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_MONETARY");
++		options->accept_env[options->num_accept_env++] =
++		    xstrdup("LC_MESSAGES");
++	}
+ 	if (options->client_alive_interval == -1)
+ 		options->client_alive_interval = 0;
+ 	if (options->client_alive_count_max == -1)
+@@ -1773,11 +1792,15 @@ process_server_config_line(ServerOptions *options, char *line,
+ 			if (strchr(arg, '=') != NULL)
+ 				fatal("%s line %d: Invalid environment name.",
+ 				    filename, linenum);
++			if (options->num_accept_env == -1)
++				options->num_accept_env = 0;
+ 			if (options->num_accept_env >= MAX_ACCEPT_ENV)
+ 				fatal("%s line %d: too many allow env.",
+ 				    filename, linenum);
+ 			if (!*activep)
+ 				continue;
++			if (strcmp(arg, "none") == 0)
++				continue;
+ 			options->accept_env[options->num_accept_env++] =
+ 			    xstrdup(arg);
+ 		}
+@@ -2219,7 +2242,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+ 	} \
+ } while(0)
+ #define M_CP_STRARRAYOPT(n, num_n) do {\
+-	if (src->num_n != 0) { \
++	if (src->num_n != 0 && src->num_n != -1) { \
+ 		for (dst->num_n = 0; dst->num_n < src->num_n; dst->num_n++) \
+ 			dst->n[dst->num_n] = xstrdup(src->n[dst->num_n]); \
+ 	} \
+diff --git a/session.c b/session.c
+index 36f8c62..cabd1d2 100644
+--- a/session.c
++++ b/session.c
+@@ -1043,6 +1043,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
+ }
+ 
+ /*
++ * If the given environment variable is set in the daemon's environment,
++ * push it into the new child as well. If it is unset, do nothing.
++ */
++static void
++child_inherit_env(char ***envp, u_int *envsizep, const char *name)
++{
++	char *value;
++	if ((value = getenv(name)) != NULL)
++		child_set_env(envp, envsizep, name, value);
++}
++
++/*
+  * Reads environment variables from the given file and adds/overrides them
+  * into the environment.  If the file does not exist, this does nothing.
+  * Otherwise, it must consist of empty lines, comments (line starts with '#')
+@@ -1204,6 +1216,16 @@ do_setup_env(Session *s, const char *shell)
+ 	ssh_gssapi_do_child(&env, &envsize);
+ #endif
+ 
++	/* Default to the system-wide locale/language settings. */
++	child_inherit_env(&env, &envsize, "LANG");
++	child_inherit_env(&env, &envsize, "LC_ALL");
++	child_inherit_env(&env, &envsize, "LC_CTYPE");
++	child_inherit_env(&env, &envsize, "LC_COLLATE");
++	child_inherit_env(&env, &envsize, "LC_TIME");
++	child_inherit_env(&env, &envsize, "LC_NUMERIC");
++	child_inherit_env(&env, &envsize, "LC_MONETARY");
++	child_inherit_env(&env, &envsize, "LC_MESSAGES");
++
+ 	if (!options.use_login) {
+ 		/* Set basic environment. */
+ 		for (i = 0; i < s->num_env; i++)
+@@ -1248,8 +1270,8 @@ do_setup_env(Session *s, const char *shell)
+ 		/* Normal systems set SHELL by default. */
+ 		child_set_env(&env, &envsize, "SHELL", shell);
+ 	}
+-	if (getenv("TZ"))
+-		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
++
++	child_inherit_env(&env, &envsize, "TZ");
+ 
+ #ifdef PER_SESSION_XAUTHFILE
+         if (s->auth_file != NULL)
+diff --git a/sshd_config b/sshd_config
+index 05317eb..83c5e01 100644
+--- a/sshd_config
++++ b/sshd_config
+@@ -38,6 +38,10 @@ HostKey /var/ssh/ssh_host_ed25519_key
+ SyslogFacility AUTH
+ LogLevel INFO
+ 
++# Use the client's locale/language settings
++#AcceptEnv LANG LC_ALL LC_CTYPE LC_COLLATE LC_TIME LC_NUMERIC
++#AcceptEnv LC_MONETARY LC_MESSAGES
++
+ # Authentication:
+ 
+ #LoginGraceTime 2m
+diff --git a/sshd_config.4 b/sshd_config.4
+index 85c7f26..a1456db 100644
+--- a/sshd_config.4
++++ b/sshd_config.4
+@@ -85,7 +85,18 @@ directives.
+ Be warned that some environment variables could be used to bypass restricted
+ user environments.
+ For this reason, care should be taken in the use of this directive.
+-The default is not to accept any environment variables.
++The default is to accept only
++.Ev LANG
++and the
++.Ev LC_*
++family of environment variables. If any
++.Cm AcceptEnv
++directives are present in your config file, they will replace this default
++(ie, only the variables you list will be passed into the session's
++.Xr environ 7
++). You can also use an argument of
++.Dq none
++to specify that no environment variables should be passed.
+ .It Cm AddressFamily
+ Specifies which address family should be used by
+ .Xr sshd 1M .
+-- 
+2.5.4 (Apple Git-61)
+

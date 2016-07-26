@@ -1,0 +1,23 @@
+--- aoo-4.1.2/main/xmlsecurity/util/makefile.mk.1	2016-06-20 12:00:55.721777519 +0300
++++ aoo-4.1.2/main/xmlsecurity/util/makefile.mk	2016-06-20 12:01:24.811095052 +0300
+@@ -119,7 +119,7 @@
+ # SHL2STDLIBS+= $(XMLSECLIB) $(LIBXML2LIB) $(NSS3LIB) $(NSPR4LIB) $(PLC4LIB)
+ SHL2STDLIBS+= $(NSS3LIB) $(NSPR4LIB)
+ .ELSE
+-SHL2STDLIBS+= $(NSSCRYPTOLIBS)
++SHL2STDLIBS+= -L/usr/lib/mps -R/usr/lib/mps $(NSSCRYPTOLIBS)
+ .ENDIF
+ 
+ 
+--- aoo-4.1.2/main/xmlsecurity/source/xmlsec/nss/makefile.mk.~1~	2016-06-20 12:08:29.573679526 +0300
++++ aoo-4.1.2/main/xmlsecurity/source/xmlsec/nss/makefile.mk	2016-06-20 12:09:35.943646466 +0300
+@@ -49,6 +49,9 @@
+ .ELIF "$(GUI)" == "OS2"
+ NSS_CFLAGS = -I/@unixroot/usr/include/nss3
+ NSPR_CFLAGS = I/@unixroot/usr/include/nspr4
++.ELSE 
++NSS_CFLAGS = -I/usr/include/mps
++NSPR_CFLAGS = -I/usr/include/mps
+ .ENDIF
+ 
+ .IF "$(GUI)" == "WNT"

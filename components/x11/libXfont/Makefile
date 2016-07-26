@@ -52,3 +52,10 @@ CONFIGURE_ENV += LIB_MAN_SUFFIX=3xfont
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libfontenc

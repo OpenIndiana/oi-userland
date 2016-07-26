@@ -1,13 +1,17 @@
---- p7zip_4.55/CPP/myWindows/mySplitCommandLine.cpp.orig	Sat Apr 21 02:06:20 2007
-+++ p7zip_4.55/CPP/myWindows/mySplitCommandLine.cpp	Fri Feb 18 15:34:14 2011
-@@ -14,9 +14,11 @@
+--- p7zip_15.14.1/CPP/myWindows/mySplitCommandLine.cpp.~1~	2015-10-10 15:37:36.000000000 +0300
++++ p7zip_15.14.1/CPP/myWindows/mySplitCommandLine.cpp	2016-06-08 13:24:30.762224258 +0300
+@@ -106,9 +106,15 @@
  
    { // define P7ZIP_HOME_DIR
      static char p7zip_home_dir[MAX_PATH];
 -    AString dir,name;
 -    my_windows_split_path(arguments[0],dir,name);
 -    snprintf(p7zip_home_dir,sizeof(p7zip_home_dir),"P7ZIP_HOME_DIR=%s/",(const char *)dir);
++#if defined(_LP64) || defined (__amd64)
++    static char default_path[] = "/usr/lib/64/7z";
++#else
 +    static char default_path[] = "/usr/lib/7z";
++#endif
 +    char *env;
 +    if ((env = getenv("P7ZIP_HOME_DIR")) == NULL)
 +      env = default_path;

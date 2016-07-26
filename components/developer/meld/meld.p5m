@@ -1,0 +1,192 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Jim Klimov
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file hardlink path=usr/lib/.*\.py$ -> default pkg.tmp.pyversion 2.X>
+#
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
+set name=com.oracle.info.description value="the meld graphical diff and merge tool"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2008/189
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+#
+file path=usr/bin/meld \
+    pkg.depend.runpath=/usr/lib/meld:/usr/lib/python$(PYVER):/usr/lib/python$(PYVER)/vendor-packages/gtk-2.0 \
+    pkg.depend.bypass-generate=.*/checker.* \
+    pkg.depend.bypass-generate=.*/gobject.* \
+    pkg.depend.bypass-generate=.*/pychecker/__init__.* \
+    pkg.depend.bypass-generate=.*/pygtk.*
+file path=usr/lib/meld/meld/__init__.py
+file path=usr/lib/meld/meld/dbus_service.py
+file path=usr/lib/meld/meld/diffmap.py
+file path=usr/lib/meld/meld/diffutil.py
+file path=usr/lib/meld/meld/dirdiff.py
+file path=usr/lib/meld/meld/filediff.py
+file path=usr/lib/meld/meld/filemerge.py
+file path=usr/lib/meld/meld/filters.py
+file path=usr/lib/meld/meld/linkmap.py
+file path=usr/lib/meld/meld/matchers.py
+file path=usr/lib/meld/meld/meldapp.py
+file path=usr/lib/meld/meld/meldbuffer.py
+file path=usr/lib/meld/meld/melddoc.py
+file path=usr/lib/meld/meld/meldwindow.py
+file path=usr/lib/meld/meld/merge.py
+file path=usr/lib/meld/meld/misc.py
+file path=usr/lib/meld/meld/newdifftab.py
+file path=usr/lib/meld/meld/patchdialog.py
+file path=usr/lib/meld/meld/paths.py
+file path=usr/lib/meld/meld/preferences.py
+file path=usr/lib/meld/meld/recent.py
+file path=usr/lib/meld/meld/task.py
+file path=usr/lib/meld/meld/test_matchers.py
+file path=usr/lib/meld/meld/tree.py
+file path=usr/lib/meld/meld/ui/__init__.py
+file path=usr/lib/meld/meld/ui/emblemcellrenderer.py
+file path=usr/lib/meld/meld/ui/findbar.py
+file path=usr/lib/meld/meld/ui/gladesupport.py
+file path=usr/lib/meld/meld/ui/gnomeglade.py
+file path=usr/lib/meld/meld/ui/historyentry.py
+file path=usr/lib/meld/meld/ui/listwidget.py
+file path=usr/lib/meld/meld/ui/msgarea.py
+file path=usr/lib/meld/meld/ui/notebooklabel.py
+file path=usr/lib/meld/meld/ui/statusbar.py
+file path=usr/lib/meld/meld/ui/vcdialogs.py
+file path=usr/lib/meld/meld/ui/wraplabel.py
+file path=usr/lib/meld/meld/undo.py
+file path=usr/lib/meld/meld/util/__init__.py
+file path=usr/lib/meld/meld/util/compat.py
+file path=usr/lib/meld/meld/util/prefs.py
+file path=usr/lib/meld/meld/util/sourceviewer.py
+file path=usr/lib/meld/meld/vc/__init__.py
+file path=usr/lib/meld/meld/vc/_null.py
+file path=usr/lib/meld/meld/vc/_vc.py
+file path=usr/lib/meld/meld/vc/bzr.py
+file path=usr/lib/meld/meld/vc/cvs.py
+file path=usr/lib/meld/meld/vc/darcs.py
+file path=usr/lib/meld/meld/vc/fossil.py
+file path=usr/lib/meld/meld/vc/git.py
+file path=usr/lib/meld/meld/vc/mercurial.py
+file path=usr/lib/meld/meld/vc/monotone.py
+file path=usr/lib/meld/meld/vc/svk.py
+file path=usr/lib/meld/meld/vc/svn.py
+file path=usr/lib/meld/meld/vc/svn_17.py
+file path=usr/lib/meld/meld/vcview.py
+file path=usr/share/appdata/meld.appdata.xml
+file path=usr/share/applications/meld.desktop
+file path=usr/share/gnome/help/meld/C/meld.xml
+file path=usr/share/gnome/help/meld/es/meld.xml
+file path=usr/share/gnome/help/meld/fr/meld.xml
+file path=usr/share/icons/HighContrast/scalable/apps/meld.svg
+file path=usr/share/icons/hicolor/16x16/apps/meld.png
+file path=usr/share/icons/hicolor/22x22/apps/meld.png
+file path=usr/share/icons/hicolor/32x32/apps/meld.png
+file path=usr/share/icons/hicolor/48x48/apps/meld.png
+file path=usr/share/icons/hicolor/scalable/apps/meld.svg
+file path=usr/share/locale/ar/LC_MESSAGES/meld.mo
+file path=usr/share/locale/bg/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ca/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/meld.mo
+file path=usr/share/locale/cs/LC_MESSAGES/meld.mo
+file path=usr/share/locale/da/LC_MESSAGES/meld.mo
+file path=usr/share/locale/de/LC_MESSAGES/meld.mo
+file path=usr/share/locale/dz/LC_MESSAGES/meld.mo
+file path=usr/share/locale/el/LC_MESSAGES/meld.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/meld.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/meld.mo
+file path=usr/share/locale/eo/LC_MESSAGES/meld.mo
+file path=usr/share/locale/es/LC_MESSAGES/meld.mo
+file path=usr/share/locale/eu/LC_MESSAGES/meld.mo
+file path=usr/share/locale/fi/LC_MESSAGES/meld.mo
+file path=usr/share/locale/fr/LC_MESSAGES/meld.mo
+file path=usr/share/locale/gl/LC_MESSAGES/meld.mo
+file path=usr/share/locale/hu/LC_MESSAGES/meld.mo
+file path=usr/share/locale/id/LC_MESSAGES/meld.mo
+file path=usr/share/locale/it/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ja/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ko/LC_MESSAGES/meld.mo
+file path=usr/share/locale/nb/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ne/LC_MESSAGES/meld.mo
+file path=usr/share/locale/nl/LC_MESSAGES/meld.mo
+file path=usr/share/locale/oc/LC_MESSAGES/meld.mo
+file path=usr/share/locale/pa/LC_MESSAGES/meld.mo
+file path=usr/share/locale/pl/LC_MESSAGES/meld.mo
+file path=usr/share/locale/pt/LC_MESSAGES/meld.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ro/LC_MESSAGES/meld.mo
+file path=usr/share/locale/ru/LC_MESSAGES/meld.mo
+file path=usr/share/locale/rw/LC_MESSAGES/meld.mo
+file path=usr/share/locale/sl/LC_MESSAGES/meld.mo
+file path=usr/share/locale/sq/LC_MESSAGES/meld.mo
+file path=usr/share/locale/sr/LC_MESSAGES/meld.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/meld.mo
+file path=usr/share/locale/sv/LC_MESSAGES/meld.mo
+file path=usr/share/locale/vi/LC_MESSAGES/meld.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/meld.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/meld.mo
+file meld.1 path=usr/share/man/man1/meld.1
+file path=usr/share/meld/gtkrc
+file path=usr/share/meld/icons/button_apply0.xpm
+file path=usr/share/meld/icons/button_apply1.xpm
+file path=usr/share/meld/icons/button_copy0.xpm
+file path=usr/share/meld/icons/button_copy1.xpm
+file path=usr/share/meld/icons/button_delete.xpm
+file path=usr/share/meld/icons/emblem-meld-newer-file.png
+file path=usr/share/meld/icons/filter-ignored-24.png
+file path=usr/share/meld/icons/filter-modified-24.png
+file path=usr/share/meld/icons/filter-nonvc-24.png
+file path=usr/share/meld/icons/filter-normal-24.png
+file path=usr/share/meld/icons/meld-locked.png
+file path=usr/share/meld/icons/meld-unlocked.png
+file path=usr/share/meld/icons/meld-vc-icon.png
+file path=usr/share/meld/icons/vc-add-24.png
+file path=usr/share/meld/icons/vc-checkout-24.png
+file path=usr/share/meld/icons/vc-commit-24.png
+file path=usr/share/meld/icons/vc-icon.png
+file path=usr/share/meld/icons/vc-push-24.png
+file path=usr/share/meld/icons/vc-remove-24.png
+file path=usr/share/meld/icons/vc-resolve-24.png
+file path=usr/share/meld/icons/vc-update-24.png
+file path=usr/share/meld/ui/EditableList.ui
+file path=usr/share/meld/ui/dirdiff-ui.xml
+file path=usr/share/meld/ui/dirdiff.ui
+file path=usr/share/meld/ui/filediff-ui.xml
+file path=usr/share/meld/ui/filediff.ui
+file path=usr/share/meld/ui/findbar.ui
+file path=usr/share/meld/ui/meldapp-ui.xml
+file path=usr/share/meld/ui/meldapp.ui
+file path=usr/share/meld/ui/patch-dialog.ui
+file path=usr/share/meld/ui/preferences.ui
+file path=usr/share/meld/ui/tab-placeholder.ui
+file path=usr/share/meld/ui/vcview-ui.xml
+file path=usr/share/meld/ui/vcview.ui
+file path=usr/share/mime/packages/meld.xml
+file path=usr/share/omf/meld/meld-C.omf
+file path=usr/share/omf/meld/meld-es.omf
+file path=usr/share/omf/meld/meld-fr.omf

@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+. /lib/svc/share/smf_include.sh
+
+method="$1"
+instance="$2"
+
+server="/usr/sbin/pdns_recursor"
+
+case "$method" in
+	start)
+		cfgdir=`/usr/bin/svcprop -p options/configuration_directory "${SMF_FMRI}"`
+		$server \
+			"--socket-dir=/var/run" \
+			"--config-dir=$cfgdir"
+		result=$?
+		;;
+esac
+
+exit $result
