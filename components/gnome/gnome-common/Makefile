@@ -35,6 +35,13 @@ COMPONENT_BUGDB=	gnome/libraries
 
 TPNO=			25944
 
+# Forked from gnome/gettext, which was in Gnome in 11.3 => do-not-publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_NO_ARCH=
+INSTALL_NO_ARCH=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 REQUIRED_PACKAGES += developer/build/automake-115
