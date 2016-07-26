@@ -42,6 +42,15 @@ TPNO=			19938
 PYTHON_VERSIONS=        $(PYTHON2_VERSIONS)
 
 BUILD_STYLE= setup.py
+
+# Parent package was not version-unlockable in gnome-incorporation =>
+# do-not-publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 PYTHON_DATA = $(USRDIR)
