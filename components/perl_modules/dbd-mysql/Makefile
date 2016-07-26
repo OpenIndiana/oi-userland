@@ -32,16 +32,16 @@ BUILD_BITS = 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DBD-mysql
-COMPONENT_VERSION=	4.033
-IPS_COMPONENT_VERSION=  4033
+COMPONENT_VERSION=	4.035
+IPS_COMPONENT_VERSION=  4035
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:cc98bbcc33581fbc55b42ae681c6946b70a26f549b3c64466740dfe9a7eac91c
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/$(COMPONENT_ARCHIVE)
+	sha256:b7eca365ea16bcf4c96c2fc0221304ff9c4995e7a551886837804a8f66b61937
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MICHIELB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/perl5-dbi/DBD-mysql
 COMPONENT_BUGDB=	perl-mod/dbd-mysql
 
-TPNO=			25495
+TPNO=			30300
 
 BUILD_STYLE= makemaker
 LICENSE=DBD-mysql.license
@@ -56,7 +56,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' \
 	'-e "s/^\(\# mysql_[a-z][a-z]* is: \).*/\1<REMOVED>/" ' \
 	'-e "s/^\(\# SQL_DBMS_VER is \).*/\1<REMOVED>/" ' \
-	'-e "s/^\(\# Driver version is \).*/\1<REMOVED>/" '
+	'-e "s/^\(\# Driver version is \).*/\1<REMOVED>/" ' \
+	'-e "/chmod 644 \"mysql.bs\"/d"' \
+	'-e "/Running Mkbootstrap/d"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -127,7 +129,7 @@ COMPONENT_PRE_TEST_ACTION = ( \
 	echo "$$TEST_LINK" > "$$TEST_LINK"/test_link; \
 	\
 	: "alter the tests to use the path we just created"; \
-	$(PERL) -pi -e "s,CHANGEME,$$TEST_LINK/socket," t/mysql.mtest ;\
+	$(PERL) -pi -e "s,('testsocket' => ').*?',\$$1/$$TEST_LINK/socket'," t/mysql.mtest ;\
 	\
 	: "Initialize mysql DB"; \
 	"$(MYSQL_BINDIR)/mysql_install_db" \

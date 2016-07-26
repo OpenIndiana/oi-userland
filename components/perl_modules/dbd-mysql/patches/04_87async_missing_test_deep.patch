@@ -1,0 +1,28 @@
+Run the test only if Test::Deep is available
+
+Not accepted by upstream (instead they put Test::Deep as a requirement for
+DBD::mysql)
+https://rt.cpan.org/Public/Bug/Display.html?id=112072
+
+--- DBD-mysql-4.035/t/87async.t	2016-07-26 06:28:30.550483257 -0700
++++ DBD-mysql-4.035/t/87async.t	2016-07-26 06:27:51.584879116 -0700
+@@ -1,12 +1,18 @@
+ use strict;
+ use warnings;
+ 
+-use Test::Deep;
+ use Test::More;
+ use DBI;
+ use DBI::Const::GetInfoType;
+ use Time::HiRes;
+ 
++BEGIN {
++    eval { require Test::Deep };
++    if ($@) {
++            plan skip_all => 'Test::Deep is not installed!';
++    }
++}
++
+ use vars qw($test_dsn $test_user $test_password);
+ use lib 't', '.';
+ require 'lib.pl';

@@ -70,7 +70,7 @@ $dbh->admin('createdb', $dbname);
 $dsn = "DBI:mysql:$dbname;mysql_socket=/var/tmp/mysql/socket;";
 $dbh = DBI->connect($dsn, 'root', 'new-password');
 
-eval { $dbh->do("DROP TABLE foo") };
+eval { $dbh->do("DROP TABLE IF EXISTS foo") };
 
 $dbh->do("CREATE TABLE foo (id INTEGER, name VARCHAR(20))");
 
