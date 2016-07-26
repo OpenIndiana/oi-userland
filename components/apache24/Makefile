@@ -26,15 +26,15 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.20
+COMPONENT_VERSION=	2.4.23
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e77482a46e5b6971ba6181b71a3c0ed1dbf3fa83810bf767c6320f0c621261e4
+    sha256:b71a13f56b8061c6b4086fdcc9ffdddd904449735eadec0f0e2947e33eec91d7
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=	27725
+TPNO=	30187
 
 CONFIGURE_DEFAULT_DIRS=no
 TEST_TARGET= $(NO_TESTS)
@@ -59,6 +59,8 @@ CONFIGURE_PREFIX =	$(USRDIR)/apache2/2.4
 CONFIGURE_OPTIONS +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS +=	--enable-mpms-shared=all
 CONFIGURE_OPTIONS +=	--enable-mods-shared=all
+# workaround for a known issue with 2.4.23 (should be probably removed with 2.4.24) 
+CONFIGURE_OPTIONS +=	--enable-proxy-fdpass
 CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	--enable-cgi
 CONFIGURE_OPTIONS +=	--enable-suexec
