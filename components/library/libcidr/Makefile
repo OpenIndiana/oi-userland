@@ -1,0 +1,86 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=	libcidr
+COMPONENT_VERSION=	1.2.3
+COMPONENT_SUMMARY=	LibCIDR is a library to manipulate CIDR IP addresses
+COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	\
+  sha256:afbe266a9839775a21091b0e44daaf890a46ea4c2d3f5126b3048d82b9bfbbc4
+COMPONENT_ARCHIVE_URL=	\
+  https://www.over-yonder.net/~fullermd/projects/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.over-yonder.net/~fullermd/projects/$(COMPONENT_NAME)
+COMPONENT_FMRI=	library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENSE
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+
+CXXFLAGS+= $(CXXFLAGS.$(BITS))
+CFLAGS+= $(CFLAGS.$(BITS))
+CFLAGS+= -I$(SOURCE_DIR)/include
+CFLAGS+= -I$(SOURCE_DIR)/src/include
+
+COMPONENT_CUSTOM_ARGS += BITS="$(BITS)"
+COMPONENT_CUSTOM_ARGS += CC="$(CC)"
+COMPONENT_CUSTOM_ARGS += CXX="$(CXX)"
+COMPONENT_CUSTOM_ARGS += CPP="$(CPP)"
+COMPONENT_CUSTOM_ARGS += LD="$(LD)"
+COMPONENT_CUSTOM_ARGS += LN="$(LN)"
+COMPONENT_CUSTOM_ARGS += RM="$(RM)"
+COMPONENT_CUSTOM_ARGS += MV="$(MV)"
+COMPONENT_CUSTOM_ARGS += MKDIR="$(MKDIR)"
+COMPONENT_CUSTOM_ARGS += SED="$(GSED)"
+COMPONENT_CUSTOM_ARGS += INSTALL="$(INSTALL)"
+COMPONENT_CUSTOM_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_CUSTOM_ARGS += CPPFLAGS="$(CPPFLAGS)"
+COMPONENT_CUSTOM_ARGS += CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_CUSTOM_ARGS += LDFLAGS="$(LDFLAGS)"
+
+USRLIBDIR.32 = $(USRLIBDIR)
+USRLIBDIR.64 = $(USRLIBDIR64)
+USRBINDIR.32 = $(USRBINDIR)
+USRBINDIR.64 = $(USRBINDIR64)
+
+COMPONENT_CUSTOM_ARGS += PREFIX="$(USRDIR)"
+COMPONENT_CUSTOM_ARGS += CIDR_LIBDIR="$(USRLIBDIR.$(BITS))"
+COMPONENT_CUSTOM_ARGS += CIDR_BINDIR="$(USRBINDIR.$(BITS))"
+COMPONENT_CUSTOM_ARGS += CIDR_INCDIR="$(USRINCDIR)"
+COMPONENT_CUSTOM_ARGS += CIDR_MANDIR="$(USRSHAREMANDIR)"
+COMPONENT_CUSTOM_ARGS += CIDR_DOCDIR="$(USRSHAREDIR)/$(COMPONENT_NAME)/docs"
+COMPONENT_CUSTOM_ARGS += CIDR_EXDIR="$(USRSHAREDIR)/$(COMPONENT_NAME)/examples"
+
+COMPONENT_BUILD_ARGS += $(COMPONENT_CUSTOM_ARGS)
+COMPONENT_INSTALL_ARGS += $(COMPONENT_CUSTOM_ARGS)
+
+COMPONENT_PRE_BUILD_ACTION = \
+    ( $(CLONEY) $(SOURCE_DIR) $(@D) && \
+      cd $(@D) && \
+      ./rmgmake.sh && ./mkgmake.sh )
+
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64)
+
+test: $(TEST_32_and_64)

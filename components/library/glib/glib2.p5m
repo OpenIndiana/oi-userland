@@ -10,6 +10,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/library/glib2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,6 +26,8 @@ license COPYING license='LGPLv2'
 <transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
 <transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+depend fmri=library/glib2/charset-alias@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 file path=usr/bin/$(MACH64)/gapplication
 file path=usr/bin/$(MACH64)/gdbus
@@ -310,7 +313,6 @@ file path=usr/include/glib-2.0/gobject/gvalue.h
 file path=usr/include/glib-2.0/gobject/gvaluearray.h
 file path=usr/include/glib-2.0/gobject/gvaluecollector.h
 file path=usr/include/glib-2.0/gobject/gvaluetypes.h
-file path=usr/lib/$(MACH64)/charset.alias
 file path=usr/lib/$(MACH64)/glib-2.0/include/glibconfig.h
 file path=usr/lib/$(MACH64)/libgio-2.0.la
 link path=usr/lib/$(MACH64)/libgio-2.0.so target=libgio-2.0.so.0.4304.0
@@ -343,7 +345,6 @@ file path=usr/lib/$(MACH64)/pkgconfig/gmodule-export-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gmodule-no-export-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gobject-2.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gthread-2.0.pc
-file path=usr/lib/charset.alias
 file path=usr/lib/glib-2.0/include/glibconfig.h
 file path=usr/lib/libgio-2.0.la
 link path=usr/lib/libgio-2.0.so target=libgio-2.0.so.0.4304.0

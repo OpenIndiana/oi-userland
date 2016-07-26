@@ -11,6 +11,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -18,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= docbook-dtds
 
 COMPONENT_VERSION= 1.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUBVERSION= 30.1
 COMPONENT_SUMMARY= SGML and XML document type definitions for DocBook.
 COMPONENT_SRC= 3.0-sgml
@@ -102,6 +103,20 @@ COMPONENT_ARCHIVE_HASH_10= \
 COMPONENT_ARCHIVE_URL_10= http://www.docbook.org/xml/4.4/$(COMPONENT_ARCHIVE_10)
 UNPACK_ARGS_10+=-r $(COMPONENT_SRC_10)
 
+COMPONENT_SRC_11=4.5-sgml
+COMPONENT_ARCHIVE_11=   docbook-4.5.zip
+COMPONENT_ARCHIVE_HASH_11= \
+    sha256:8043e514e80c6c19cb146b5d37937d1305bf3abf9b0097c36df7f70f611cdf43
+COMPONENT_ARCHIVE_URL_11= http://www.docbook.org/sgml/4.5/$(COMPONENT_ARCHIVE_11)
+UNPACK_ARGS_11+=-r $(COMPONENT_SRC_11)
+
+COMPONENT_SRC_12=4.5-xml
+COMPONENT_ARCHIVE_12=   docbook-xml-4.5.zip
+COMPONENT_ARCHIVE_HASH_12= \
+    sha256:4e4e037a2b83c98c6c94818390d4bdd3f6e10f6ec62dd79188594e26190dc7b4
+COMPONENT_ARCHIVE_URL_12= http://www.docbook.org/xml/4.5/$(COMPONENT_ARCHIVE_12)
+UNPACK_ARGS_12+=-r $(COMPONENT_SRC_12)
+
 CLEAN_PATHS+=$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 CLEAN_PATHS+=$(BUILD_DIR)
 
@@ -153,6 +168,13 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(INSTALL) $(COMPONENT_DIR)/4.4-xml/*.{dtd,mod} $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 	$(INSTALL) $(COMPONENT_DIR)/4.4-xml/docbook.cat $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/catalog
 	$(INSTALL) $(COMPONENT_DIR)/4.4-xml/ent/* $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/ent
+	$(MKDIR) $(PROTO_DIR)/usr/share/sgml/docbook/sgml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+	$(INSTALL) $(COMPONENT_DIR)/4.5-sgml/*.{dcl,dtd,mod} $(PROTO_DIR)/usr/share/sgml/docbook/sgml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+	$(INSTALL) $(COMPONENT_DIR)/4.5-sgml/docbook.cat $(PROTO_DIR)/usr/share/sgml/docbook/sgml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/catalog
+	$(MKDIR) $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/ent
+	$(INSTALL) $(COMPONENT_DIR)/4.5-xml/*.{dtd,mod} $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
+	$(INSTALL) $(COMPONENT_DIR)/4.5-xml/docbook.cat $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/catalog
+	$(INSTALL) $(COMPONENT_DIR)/4.5-xml/ent/* $(PROTO_DIR)/usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)/ent
 	$(TOUCH) $@
 
 CONFIGURE_PREFIX= /usr/clang/$(COMPONENT_VERSION)

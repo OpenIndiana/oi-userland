@@ -1,0 +1,53 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-libs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - Shared libs and headers"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI)-lenses@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)	type=optional
+
+# NOTE: This is an already-available source of "charset.alias" with same
+# content (modulo the comment of what packages use the file) in glib2.
+depend fmri=library/glib2/charset-alias type=require
+#file path=usr/lib/$(MACH64)/charset.alias
+#file path=usr/lib/charset.alias
+
+file path=usr/include/augeas.h
+file path=usr/include/fa.h
+
+file path=usr/lib/$(MACH64)/pkgconfig/augeas.pc
+file path=usr/lib/pkgconfig/augeas.pc
+
+file path=usr/lib/$(MACH64)/libaugeas.so.0.20.0
+link path=usr/lib/$(MACH64)/libaugeas.so target=libaugeas.so.0.20.0
+link path=usr/lib/$(MACH64)/libaugeas.so.0 target=libaugeas.so.0.20.0
+
+file path=usr/lib/$(MACH64)/libfa.so.1.4.1
+link path=usr/lib/$(MACH64)/libfa.so target=libfa.so.1.4.1
+link path=usr/lib/$(MACH64)/libfa.so.1 target=libfa.so.1.4.1
+
+file path=usr/lib/libaugeas.so.0.20.0
+link path=usr/lib/libaugeas.so target=libaugeas.so.0.20.0
+link path=usr/lib/libaugeas.so.0 target=libaugeas.so.0.20.0
+
+file path=usr/lib/libfa.so.1.4.1
+link path=usr/lib/libfa.so target=libfa.so.1.4.1
+link path=usr/lib/libfa.so.1 target=libfa.so.1.4.1

@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openttd
 COMPONENT_VERSION=	1.5.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.openttd.org/en/
 COMPONENT_FMRI=		games/openttd/openttd-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

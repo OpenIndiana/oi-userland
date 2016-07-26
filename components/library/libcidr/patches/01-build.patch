@@ -1,0 +1,49 @@
+This patch should fix up libcidr manually-built makefiles and scripts
+to be protable into oi-userland. The conversion recipe is below:
+
+COMPONENT_PREP_ACTION = \
+    ( cd $(@D) && \
+      $(GSED) -e 's|\-Wl\,\-x|-m\$$\{BITS\}|' \
+        -e 's|^\([ \t]*L_FLAGS.*=[ \t]*\)|\1\$$\{LDFLAGS\} |' \
+        -i src/Makefile.inc && \
+      $(GSED) -e 's|\(^[ \t]*\)awk |\1\$(NAWK) |g' \
+        -e 's|echo -n \(\".*\"\)|/bin/echo \1"\\c"|' \
+        -i mkgmake.sh )
+
+//Jim Klimov
+
+diff -Naur libcidr-1.2.3-orig/mkgmake.sh libcidr-1.2.3/mkgmake.sh
+--- libcidr-1.2.3-orig/mkgmake.sh	2014-02-01 12:34:45.000000000 +0100
++++ libcidr-1.2.3/mkgmake.sh	2016-03-30 15:27:52.000000000 +0200
+@@ -25,8 +25,8 @@
+ 	*)
+ 		for i in ${MAKEFILES}; do
+ 			GMFILE=`echo ${i} | sed "s/Makefile/GNUmakefile/"`
+-			echo -n "Building ${GMFILE} from ${i}...   "
+-			awk -f tools/mkgmake.awk ${i} > ${GMFILE}
++			/bin/echo "Building ${GMFILE} from ${i}...   ""\c"
++			/usr/bin/nawk -f tools/mkgmake.awk ${i} > ${GMFILE}
+ 			echo done.
+ 		done
+ 		;;
+diff -Naur libcidr-1.2.3-orig/src/Makefile.inc libcidr-1.2.3/src/Makefile.inc
+--- libcidr-1.2.3-orig/src/Makefile.inc	2014-02-01 12:34:45.000000000 +0100
++++ libcidr-1.2.3/src/Makefile.inc	2016-03-30 15:27:52.000000000 +0200
+@@ -45,7 +45,7 @@
+ 
+ ${SHLIB_NAME}: ${SO_FILES}
+ 	@echo Linking ${SHLIB_NAME}...
+-	${CC} -shared -Wl,-x -o ${@} -Wl,-soname,${SHLIB_NAME} \
++	${CC} -shared -m${BITS} -o ${@} -Wl,-soname,${SHLIB_NAME} \
+ 			`${LORDER} ${SO_FILES} | ${TSORT}`
+ 	${LN} -sf ${SHLIB_NAME} ${SHLIB_LINK}
+ 
+@@ -69,7 +69,7 @@
+ .ifdef PROGNAME
+ # These paths wind up relative to src/{test,examples}/*
+ CFLAGS += -I../../../include
+-L_FLAGS += -g -pipe -L../..
++L_FLAGS += ${LDFLAGS} -g -pipe -L../..
+ LCIDR = ../../libcidr.so
+ 
+ CLEAN_FILES = ${O_FILES} ${PROGNAME} *core .depend

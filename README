@@ -7,13 +7,13 @@ Getting Started
     This README provides a very brief overview of the gate, how to retrieve
     a copy, and how to build it.  Detailed documentation about the Userland
     gate can be found in the 'doc' directory.  Questions or comments about
-    the gate can be addressed to oi-dev@openindiana.org. 
+    the gate can be addressed to oi-dev@openindiana.org.
 
 Overview
 
     The Userland consolidation maintains a Git repository at
 
-	https://github.com/OpenIndiana/oi-userland 
+	https://github.com/OpenIndiana/oi-userland
 
     This gate contains build recipies, patches, IPS manifests, etc. necessary
     to download, prep, build, test, package and publish open source software.
@@ -28,7 +28,7 @@ Getting the Bits
     As mentioned, the gate is stored in a Git repository.  In order to
     build or develop in the gate, you will need to clone it.  You can do so
     with the following command
-    
+
       $ git clone https://github.com/OpenIndiana/oi-userland.git /scratch/clone
 
     This will create a replica of the various pieces that are checked into the
@@ -51,9 +51,45 @@ Getting the Bits
     directory and use 'gmake download' from that to only get it's source
     archive.
 
-Building the Bits.
+Building the Bits
 
     You can build individual components or the contents of the entire gate.
+
+  Integration with ccache to speed up re-builds
+
+    If you happen to build the same sources several times (e.g. iterating
+    attempts to produce a working recipe, or maintaining an automated build
+    server), you can benefit from 'ccache' integration in 'oi-userland'.
+    Note that this feature is currently experimental and off by default.
+
+    The 'ccache' component is available as part of the project repository.
+    Once you have the resulting package installed, you can pass the 'make'
+    argument or environment variable 'ENABLE_CCACHE=true' to wrap the GNU
+    compiler invocations with the caching program - so that the same inputs
+    would re-produce same outputs quickly.
+
+    You can pre-set this variable in your user account '~/.profile' like this:
+
+       ### To speed up OI-userland re-builds
+       ENABLE_CCACHE=true
+       export ENABLE_CCACHE
+
+    Note: be wary of ccache's own CCACHE_DISABLE environment variable: any
+    value (empty, "false" etc.) is considered a "true" setting for ccache
+    booleans (and so disables the program, falling through to real compiler).
+
+  Keeping all sources in one place
+
+    The Userland consolidation tools automate download of required source
+    tarballs.  By default they are kept in each component's directory, but
+    you can centralize it by using the 'USERLAND_ARCHIVES' variable.
+
+    You can pre-set this variable in your user account '~/.profile' like
+    this (and note that the trailing slash is required):
+
+       ### For oi-userland source files
+       USERLAND_ARCHIVES="$HOME/Downloads/"
+       export USERLAND_ARCHIVES
 
   Component build
 
@@ -68,7 +104,7 @@ Building the Bits.
 
         $ cd (component-dir) ; gmake publish
 
-  Complete Top Down build  
+  Complete Top Down build
 
     Complete top down builds are also possible by simply running
 
@@ -77,6 +113,7 @@ Building the Bits.
 
     The 'publish' target will build each component and publish it to the
     workspace IPS repo.
+
     Tools to help facilitate build zone creation will be integrated
     shortly.  If the zone you create to build your workspace in does not have
     networking enabled, you can pre-download any community source archives into
@@ -85,8 +122,15 @@ Building the Bits.
       $ cd (your-workspace)/components
       $ gmake download
 
-  You can add parallelism to your builds by adding '-j (jobs)' to your gmake
-  command line arguments.
+    You can add parallelism to your builds by adding '-j (jobs)' to your gmake
+    command line arguments.  Note that if the host is constrained on resources
+    or the component source Makefiles are poorly thought out, parallel builds
+    can fail - in this case subsequent single-job (sequential) builds should
+    succeed to complete the missing build products.
 
-  The gate should only incrementally build what it needs to based on what has
-  changed since you last built it.
+    It is worth noting that the OpenIndiana Hipster build server uses the
+    'COMPONENT_BUILD_ARGS=-j4' option by default for moderate parallelization
+    of its builds.
+
+    The gate should only incrementally build what it needs to based on what has
+    changed since you last built it.
