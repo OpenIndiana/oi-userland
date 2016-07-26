@@ -35,6 +35,13 @@ COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/trunk/$(COMPONENT
 
 TPNO=			25211
 
+# Forked from gnome/gettext, which was in Gnome in 11.3 => do-not-publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_NO_ARCH=
+INSTALL_NO_ARCH=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PERL="$(PERL)"
