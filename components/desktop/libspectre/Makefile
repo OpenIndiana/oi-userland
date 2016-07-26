@@ -36,6 +36,14 @@ COMPONENT_BUGDB=	library/libspectre
 TPNO=			25619
 
 TEST_TARGET= $(NO_TESTS)
+
+# Forked from evince, which cannot be published => do-not-publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
