@@ -135,6 +135,13 @@ disabled by default. See below for hints how to enable and optionally configure 
   and/or use `export CCACHE_LOGFILE=/tmp/ccache.log` to trace its activities.
 * You can dedicate a cache directory different from the default `$HOME/.ccache`
   for example with `export CCACHE_DIR=/tmp/ccache-dir; mkdir -p $CCACHE_DIR`.
+* Note: be wary of ccache's own CCACHE_DISABLE environment variable: any
+  value (empty, "false" etc.) is considered a "true" setting for ccache
+  booleans (and so CCACHE_DISABLE=false still disables the program, falling
+  through to real compiler). This is according to the project's documentation
+  and legacy (backwards compatibility), thus not accepted by upstream as a bug.
+  To negate ccache boolean environment variable settings you can use their
+  CCACHE_NO* counterparts, e.g. `export CCACHE_NODISABLE=anything`.
 * Troubleshooting: If no files appear in the cache, verify permissions and disk
   space. Also enable the log file and/or inspect configuration with `ccache -p`
   (see above) to see details about wrapped compilations. In particular,
@@ -145,6 +152,8 @@ disabled by default. See below for hints how to enable and optionally configure 
   running `gcc -o binprog *.c`).
 * You can inspect caching statistics with `ccache -s` and wipe the cache with
   `ccache -C -z`.
+* For debugging or development of the ccache component itself, you can use a
+  custom build for oi-userland compilation with `export CCACHE=/path/to/ccache`
 * The cache directory can contain a configuration file for "ccache" program,
   which is the recommended way to provide tweaks to your setup. While exported
   environment variables (e.g. from shell profile) may work, our Makefiles do
