@@ -23,18 +23,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
-COMPONENT_VERSION=	1.4.3
+COMPONENT_VERSION=	1.7.0
 COMPONENT_PROJECT_URL=	http://www.libssh2.org/
+COMPONENT_SUMMARY=	libssh2 - client-side C library implementing the SSH2 protocol
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eac6f85f9df9db2e6386906a6227eb2cd7b3245739561cad7d6dc1d5d021b96d
+    sha256:e4561fd43a50539a8c2ceb37841691baf03ecb7daf043766da1b112e4280d584
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libssh2
+COMPONENT_FMRI=	library/libssh2
+COMPONENT_LICENSE=	BSD
+COMPONENT_CLASSIFICATION= System/Security
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
@@ -46,6 +49,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library

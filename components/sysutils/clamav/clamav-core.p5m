@@ -1,0 +1,138 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016 Jim Klimov. All rights reserved.
+#
+
+# pull the manpages out of the component dir
+<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/$(COMPONENT_FMRI)-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - core libraries and programs"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+file \
+    files/clamav.xml \
+    path=lib/svc/manifest/application/clamav.xml \
+    restart_fmri=svc:/system/manifest-import:default
+file \
+    files/freshclam.xml \
+    path=lib/svc/manifest/application/freshclam.xml \
+    restart_fmri=svc:/system/manifest-import:default
+
+file \
+    files/clamav-enable.sh \
+    path=usr/bin/clamav-enable.sh
+file \
+    files/freshclam.sh \
+    path=usr/bin/freshclam.sh
+
+file \
+    etc/clamav/clamd.conf.sample \
+    path=usr/share/clamav/clamd.conf.sample-v$(IPS_COMPONENT_VERSION)
+file \
+    files/clamd.conf.sol \
+    path=usr/share/clamav/clamd.conf.sol
+file \
+    etc/clamav/freshclam.conf.sample \
+    path=usr/share/clamav/freshclam.conf.sample-v$(IPS_COMPONENT_VERSION)
+file \
+    files/freshclam.conf.sol \
+    path=usr/share/clamav/freshclam.conf.sol
+
+file \
+    files/clamav-test.tgz \
+    path=usr/share/clamav/clamav-test.tgz
+
+file path=usr/include/clamav.h
+
+file path=usr/share/man/man5/freshclam.conf.5
+file path=usr/share/man/man5/clamd.conf.5
+file path=usr/share/man/man8/clamd.8
+file path=usr/share/man/man1/sigtool.1
+file path=usr/share/man/man1/clamdscan.1
+file path=usr/share/man/man1/freshclam.1
+file path=usr/share/man/man1/clamscan.1
+file path=usr/share/man/man1/clamsubmit.1
+file path=usr/share/man/man1/clamconf.1
+file path=usr/share/man/man1/clambc.1
+
+file usr/bin/clamconf path=usr/bin/$(MACH32)/clamconf
+file usr/bin/clamscan path=usr/bin/$(MACH32)/clamscan
+file usr/bin/clamav-config path=usr/bin/$(MACH32)/clamav-config
+file usr/bin/clamsubmit path=usr/bin/$(MACH32)/clamsubmit
+file usr/bin/sigtool path=usr/bin/$(MACH32)/sigtool
+file usr/bin/clambc path=usr/bin/$(MACH32)/clambc
+file usr/bin/freshclam path=usr/bin/$(MACH32)/freshclam
+file usr/bin/clamdscan path=usr/bin/$(MACH32)/clamdscan
+file usr/sbin/clamd path=usr/sbin/$(MACH32)/clamd
+
+file path=usr/bin/$(MACH64)/clamconf
+file path=usr/bin/$(MACH64)/clamscan
+file path=usr/bin/$(MACH64)/clamav-config
+file path=usr/bin/$(MACH64)/clamsubmit
+file path=usr/bin/$(MACH64)/sigtool
+file path=usr/bin/$(MACH64)/clambc
+file path=usr/bin/$(MACH64)/freshclam
+file path=usr/bin/$(MACH64)/clamdscan
+file path=usr/sbin/$(MACH64)/clamd
+
+hardlink path=usr/bin/clamconf target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/clamscan target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/clamav-config target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/clamsubmit target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/sigtool target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/clambc target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/clamdscan target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/freshclam target=../lib/isaexec pkg.linted=true
+hardlink path=usr/sbin/clamd target=../lib/isaexec pkg.linted=true
+
+file path=usr/lib/pkgconfig/libclamav.pc
+
+file path=usr/lib/libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamav.so target=libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamav.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+file path=usr/lib/libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamunrar_iface.so target=libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+file path=usr/lib/libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamunrar.so target=libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/libclamunrar.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)
+
+file path=usr/lib/$(MACH64)/pkgconfig/libclamav.pc
+
+file path=usr/lib/$(MACH64)/libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamav.so target=libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamav.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamav.so.$(COMPONENT_VERSION_LIB_FULL)
+file path=usr/lib/$(MACH64)/libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamunrar_iface.so target=libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamunrar_iface.so.$(COMPONENT_VERSION_LIB_FULL)
+file path=usr/lib/$(MACH64)/libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamunrar.so target=libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)
+link path=usr/lib/$(MACH64)/libclamunrar.so.$(COMPONENT_VERSION_LIB_MAJOR) target=libclamunrar.so.$(COMPONENT_VERSION_LIB_FULL)

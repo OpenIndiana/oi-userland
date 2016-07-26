@@ -1,0 +1,23 @@
+--- notify-python-0.1.1/configure.ac.1	2016-04-14 00:27:28.232651408 +0300
++++ notify-python-0.1.1/configure.ac	2016-04-14 00:28:12.474923625 +0300
+@@ -20,7 +20,8 @@
+ AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
+ 
+ PKG_CHECK_MODULES(NOTIFY_PYTHON, [pygtk-2.0 >= $PYGTK_REQUIRED
+-                                  libnotify >= $LIBNOTIFY_REQUIRED])
++                                  libnotify >= $LIBNOTIFY_REQUIRED
++				  gtk+-2.0 ])
+ AC_SUBST(NOTIFY_PYTHON_CFLAGS)
+ AC_SUBST(NOTIFY_PYTHON_LIBS)
+ 
+--- notify-python-0.1.1/src/pynotify.override.1	2016-04-14 00:31:39.309914878 +0300
++++ notify-python-0.1.1/src/pynotify.override	2016-04-14 00:32:26.650192053 +0300
+@@ -2,6 +2,7 @@
+ headers
+ #include <Python.h>
+ #include <libnotify/notify.h>
++#include <gtk/gtkwidget.h>
+ #include "pygobject.h"
+ 
+ typedef struct
+ 

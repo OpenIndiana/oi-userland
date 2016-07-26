@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='clamav'>
+  <service name='antivirus/freshclam' type='service' version='0'>
+    <single_instance/>
+    <dependency name='fs' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/milestone/multi-user-server'/>
+    </dependency>
+    <dependency name='cron' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/cron:default'/>
+    </dependency>
+    <instance name='default' enabled='false'>
+      <exec_method type='method'
+                   name='start'
+                   exec='/usr/bin/freshclam.sh --smf-enable'
+                   timeout_seconds='600'>
+        <method_context>
+          <method_credential user='clamav' group='other' />
+        </method_context>
+      </exec_method>
+      <exec_method type='method'
+                   name='stop'
+                   exec='/usr/bin/freshclam.sh --del-cron'
+                   timeout_seconds='60'>
+        <method_context>
+          <method_credential user='clamav' group='other'/>
+        </method_context>
+      </exec_method>
+      <property_group name='startd' type='framework'>
+        <propval name='duration' type='astring' value='transient' />
+      </property_group>
+      <property_group name='freshclam' type='application'>
+        <propval name='cron-schedule' type='astring' value='0,15,30,45 * * * *' />
+      </property_group>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>ClamAV - Unix anti-virus scanner</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+</service_bundle>

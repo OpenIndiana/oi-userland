@@ -1,0 +1,33 @@
+--- aoo-4.1.0/ext_libraries/coinmp/makefile.mk.~1~	2014-07-22 16:55:38.431513620 +0400
++++ aoo-4.1.0/ext_libraries/coinmp/makefile.mk	2014-07-22 16:55:47.425119409 +0400
+@@ -54,7 +54,7 @@
+ #CONFIGURE_FLAGS=--disable-pkg-config --disable-bzlib --disable-zlib CC='$(CC) $(ARCH_FLAGS)' CXX='$(CXX) $(ARCH_FLAGS)' CFLAGS='$(ARCH_FLAGS) -Wc,-arch -Wc,i386' CPPFLAGS='$(ARCH_FLAGS)' LDFLAGS='$(ARCH_FLAGS)' compiler_flags='$(ARCH_FLAGS)'
+ CONFIGURE_FLAGS=--disable-pkg-config --disable-bzlib --disable-zlib CC='$(CC) $(ARCH_FLAGS)' CXX='$(CXX) $(ARCH_FLAGS)'
+ #BUILD_ACTION= CC="$(CC) $(ARCH_FLAGS)" CPP="$(CXX) $(ARCH_FLAGS)" $(GNUMAKE) -j8
+-BUILD_ACTION= $(GNUMAKE) -j$(MAXPROCESS)
++BUILD_ACTION= $(GNUMAKE)
+ .ENDIF
+ 
+ OUT2INC+=CoinMP$/src/CoinMP.h
+--- aoo-4.1.0/main/icu/makefile.mk.~1~	2014-07-22 17:12:43.705368311 +0400
++++ aoo-4.1.0/main/icu/makefile.mk	2014-07-22 17:12:55.218392852 +0400
+@@ -100,7 +100,7 @@
+ # note the position of the single quotes.
+ 
+ BUILD_DIR=$(CONFIGURE_DIR)
+-BUILD_ACTION=$(AUGMENT_LIBRARY_PATH) $(GNUMAKE) -j$(EXTMAXPROCESS)
++BUILD_ACTION=$(AUGMENT_LIBRARY_PATH) $(GNUMAKE)
+ OUT2LIB= \
+ 	$(BUILD_DIR)$/lib$/libicudata$(DLLPOST).$(ICU_MAJOR)$(ICU_MINOR).$(ICU_MICRO) \
+ 	$(BUILD_DIR)$/lib$/libicudata$(DLLPOST).$(ICU_MAJOR)$(ICU_MINOR) \
+--- aoo-4.1.0/main/hyphen/makefile.mk.~1~	2014-07-22 17:04:09.376798536 +0400
++++ aoo-4.1.0/main/hyphen/makefile.mk	2014-07-22 17:04:19.157343199 +0400
+@@ -79,7 +79,7 @@
+ @all:
+ 	echo "Nothing to do here."
+ .ELSE
+-BUILD_ACTION=$(GNUMAKE) -j$(EXTMAXPROCESS)
++BUILD_ACTION=$(GNUMAKE)
+ OUT2INC += hyphen.h 
+ .ENDIF
+ 

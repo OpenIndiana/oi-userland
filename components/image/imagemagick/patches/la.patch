@@ -1,0 +1,48 @@
+To avoid dependency on libtool/libltdl, change "*.la" extension to "*.so".
+This also changes the path for the *.so files necessary for testing to the 
+correct location.
+This patch comes from in-house.  It has not been submitted upstream; plans
+unclear.
+
+--- ImageMagick-6.9.4/magick/module.c.~1~	2016-05-09 10:28:58.000000000 -0700
++++ ImageMagick-6.9.4/magick/module.c	2016-05-10 08:56:44.350751083 -0700
+@@ -74,7 +74,7 @@
+   Define declarations.
+ */
+ #if defined(MAGICKCORE_LTDL_DELEGATE)
+-#  define ModuleGlobExpression "*.la"
++#  define ModuleGlobExpression "*.so"
+ #else
+ #  if defined(_DEBUG)
+ #    define ModuleGlobExpression "IM_MOD_DB_*.dll"
+@@ -1480,7 +1480,7 @@
+   (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
+   assert(name != (char *) NULL);
+ #if defined(MAGICKCORE_LTDL_DELEGATE)
+-  (void) FormatLocaleString(name,MaxTextExtent,"%s.la",tag);
++  (void) FormatLocaleString(name,MaxTextExtent,"%s.so",tag);
+   (void) LocaleLower(name);
+ #else
+ #if defined(MAGICKCORE_WINDOWS_SUPPORT)
+@@ -1531,7 +1531,7 @@
+ #if !defined(MAGICKCORE_LTDL_DELEGATE)
+   (void) FormatLocaleString(name,MaxTextExtent,"%s.dll",tag);
+ #else
+-  (void) FormatLocaleString(name,MaxTextExtent,"%s.la",tag);
++  (void) FormatLocaleString(name,MaxTextExtent,"%s.so",tag);
+ #endif
+ }
+ 
+--- ImageMagick-6.8.3/common.shi.in	Sun Dec 30 08:09:07 2012
++++ ImageMagick-6.8.3/common.shi.in	Tue Sep 15 15:29:31 2015
+@@ -14,8 +14,8 @@
+ DRAWTEST="@abs_top_builddir@/tests/drawtest"
+ WANDTEST="@abs_top_builddir@/tests/wandtest"
+ LD_LIBRARY_PATH="@abs_top_builddir@/magick/.libs:${LD_LIBRARY_PATH}"
+-MAGICK_CODER_MODULE_PATH="@abs_top_builddir@/coders"
++MAGICK_CODER_MODULE_PATH="@abs_top_builddir@/coders/.libs"
+ MAGICK_CONFIGURE_PATH="@abs_top_builddir@/config:@abs_top_srcdir@/config"
+-MAGICK_FILTER_MODULE_PATH="@abs_top_builddir@/filters"
++MAGICK_FILTER_MODULE_PATH="@abs_top_builddir@/filters/.libs"
+ PATH="@abs_top_builddir@/utilities:@abs_top_builddir@/tests:${PATH}"
+ set +a

@@ -1,0 +1,241 @@
+From a0027fbda837126e12d04098019a133ea83a9b75 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Tue, 22 Dec 2015 17:12:50 -0800
+Subject: [PATCH 19/34] Per-session xauthfile
+
+This patch is to fix a X11 connection failure when a user's home directory
+is read-only.
+
+We have contributed back this fix to the OpenSSH upstream community. For
+more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
+In the future, if this fix is accepted by the upsteam in a later release, we
+will remove this patch when we upgrade to that release.
+---
+ session.c | 138 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ session.h |   3 ++
+ 2 files changed, 137 insertions(+), 4 deletions(-)
+
+diff --git a/session.c b/session.c
+index 87fddfc..36f8c62 100644
+--- a/session.c
++++ b/session.c
+@@ -63,6 +63,10 @@
+ #include <unistd.h>
+ #include <limits.h>
+ 
++#ifdef PER_SESSION_XAUTHFILE
++#include <libgen.h>
++#endif
++
+ #include "openbsd-compat/sys-queue.h"
+ #include "xmalloc.h"
+ #include "ssh.h"
+@@ -133,6 +137,11 @@ static void do_authenticated2(Authctxt *);
+ 
+ static int session_pty_req(Session *);
+ 
++#ifdef PER_SESSION_XAUTHFILE
++void   session_xauthfile_cleanup(Session *);
++void   cleanup_all_session_xauthfile();
++#endif
++
+ /* import */
+ extern ServerOptions options;
+ extern char *__progname;
+@@ -1242,6 +1251,11 @@ do_setup_env(Session *s, const char *shell)
+ 	if (getenv("TZ"))
+ 		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
+ 
++#ifdef PER_SESSION_XAUTHFILE
++        if (s->auth_file != NULL)
++                child_set_env(&env, &envsize, "XAUTHORITY", s->auth_file);
++#endif
++
+ 	/* Set custom environment options from RSA authentication. */
+ 	if (!options.use_login) {
+ 		while (custom_environment) {
+@@ -2189,6 +2203,11 @@ session_x11_req(Session *s)
+ {
+ 	int success;
+ 
++#ifdef PER_SESSION_XAUTHFILE
++	int fd;
++	char xauthdir[] = "/tmp/ssh-xauth-XXXXXX";
++#endif
++
+ 	if (s->auth_proto != NULL || s->auth_data != NULL) {
+ 		error("session_x11_req: session %d: "
+ 		    "x11 forwarding already active", s->self);
+@@ -2200,19 +2219,78 @@ session_x11_req(Session *s)
+ 	s->screen = packet_get_int();
+ 	packet_check_eom();
+ 
+-	if (xauth_valid_string(s->auth_proto) &&
+-	    xauth_valid_string(s->auth_data))
+-		success = session_setup_x11fwd(s);
+-	else {
++	if (!xauth_valid_string(s->auth_proto) ||
++	    !xauth_valid_string(s->auth_data)) {
+ 		success = 0;
+ 		error("Invalid X11 forwarding data");
++		goto out;
++	}
++
++#ifdef PER_SESSION_XAUTHFILE
++	/*
++	 * Create per session X authority file in the /tmp directory.
++	 *
++	 * If mkdtemp() or open() fails then s->auth_file remains NULL which
++	 * means that we won't set XAUTHORITY variable in child's environment
++	 * and xauth(1) will use the default location for the authority file.
++	 */
++	if (mkdtemp(xauthdir) != NULL) {
++		s->auth_file = xmalloc(MAXPATHLEN);
++		if (snprintf(s->auth_file, MAXPATHLEN, "%s/xauthfile",
++		    xauthdir) >= MAXPATHLEN) {
++			error("temporary X authority file name was too long "
++			    "for the buffer allocated");
++			success = 0;
++			goto out;
++		}
++		/*
++		 * we don't want that "creating new authority file" message to
++		 * be printed by xauth(1) so we must create that file
++		 * beforehand.
++		 */
++		if ((fd = open(s->auth_file, O_CREAT | O_EXCL | O_RDONLY,
++		    S_IRUSR | S_IWUSR)) == -1) {
++			error("failed to create the temporary X authority "
++			    "file %s: %.100s; will use the default one",
++			    s->auth_file, strerror(errno));
++			free(s->auth_file);
++			s->auth_file = NULL;
++			if (rmdir(xauthdir) == -1) {
++				error("cannot remove xauth directory "
++				    "%s: %.100s", xauthdir, strerror(errno));
++			}
++		} else {
++			if (close(fd) != 0) {
++				error("close() failed on temporary X authority "
++				    "file: %s", strerror(errno));
++				success = 0;
++				goto out;
++			}
++			debug("temporary X authority file %s created",
++			    s->auth_file);
++			debug("session number = %d", s->self);
++		}
++	} else {
++		error("failed to create a directory for the temporary X "
++		    "authority file: %.100s; will use the default xauth file",
++		    strerror(errno));
+ 	}
++#endif
++
++	success = session_setup_x11fwd(s);
++
++out:
+ 	if (!success) {
+ 		free(s->auth_proto);
+ 		free(s->auth_data);
+ 		s->auth_proto = NULL;
+ 		s->auth_data = NULL;
++#ifdef PER_SESSION_XAUTHFILE
++		free(s->auth_file);
++		s->auth_file = NULL;
++#endif
+ 	}
++
+ 	return success;
+ }
+ 
+@@ -2403,6 +2481,51 @@ session_pty_cleanup(Session *s)
+ 	PRIVSEP(session_pty_cleanup2(s));
+ }
+ 
++#ifdef PER_SESSION_XAUTHFILE
++/*
++ * We use a different temporary X authority file per session so we should
++ * remove those files when cleanup_exit() is called.
++ */
++void
++session_xauthfile_cleanup(Session *s)
++{
++	if (s == NULL || s->auth_file == NULL) {
++		return;
++	}
++
++	debug("session_xauthfile_cleanup: session %d removing %s", s->self,
++	    s->auth_file);
++
++	if (unlink(s->auth_file) == -1) {
++		error("session_xauthfile_cleanup: cannot remove xauth file "
++		    "%s: %.100s", s->auth_file, strerror(errno));
++		return;
++	}
++
++	/* dirname() will modify s->auth_file but that's ok */
++	if (rmdir(dirname(s->auth_file)) == -1) {
++		error("session_xauthfile_cleanup: "
++		    "cannot remove xauth directory %s: %.100s",
++		    s->auth_file, strerror(errno));
++		return;
++	}
++	free(s->auth_file);
++	s->auth_file = NULL;
++}
++
++/*
++ * This is called by do_cleanup() when cleanup_exit() is called. 
++ */
++void
++cleanup_all_session_xauthfile()
++{
++	int i;
++	for (i = 0; i < sessions_nalloc; i++) {
++                session_xauthfile_cleanup(&sessions[i]);
++	}
++}
++#endif
++
+ static char *
+ sig2name(int sig)
+ {
+@@ -2542,6 +2665,9 @@ session_close(Session *s)
+ 	free(s->auth_display);
+ 	free(s->auth_data);
+ 	free(s->auth_proto);
++#ifdef PER_SESSION_XAUTHFILE
++	session_xauthfile_cleanup(s);
++#endif
+ 	free(s->subsys);
+ 	if (s->env != NULL) {
+ 		for (i = 0; i < s->num_env; i++) {
+@@ -2793,6 +2919,10 @@ do_cleanup(Authctxt *authctxt)
+ 	/* remove agent socket */
+ 	auth_sock_cleanup_proc(authctxt->pw);
+ 
++#ifdef PER_SESSION_XAUTHFILE
++	cleanup_all_session_xauthfile();
++#endif
++
+ 	/*
+ 	 * Cleanup ptys/utmp only if privsep is disabled,
+ 	 * or if running in monitor.
+diff --git a/session.h b/session.h
+index 6a2f35e..276cd04 100644
+--- a/session.h
++++ b/session.h
+@@ -49,6 +49,9 @@ struct Session {
+ 	char	*auth_display;
+ 	char	*auth_proto;
+ 	char	*auth_data;
++#ifdef PER_SESSION_XAUTHFILE
++	char    *auth_file;	/* xauth(1) authority file */
++#endif
+ 	int	single_connection;
+ 
+ 	/* proto 2 */
+-- 
+2.5.4 (Apple Git-61)
+

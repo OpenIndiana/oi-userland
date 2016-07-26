@@ -1,0 +1,23 @@
+Sometimes gtk-update-icon-cache and find_newer do not agree if cache modification is necessary.
+In this case we trust find_newer to avoid calling gtk-update-icon-cache over and over again
+
+--- desktop-cache-smf-services-0.2.2/icon-cache/icon-cache.1	2016-07-06 18:41:20.108024126 +0300
++++ desktop-cache-smf-services-0.2.2/icon-cache/icon-cache	2016-07-06 18:42:07.040259341 +0300
+@@ -78,7 +78,7 @@
+ 	    echo "Icons newer than the cache found in $DIR.  Updating the cache." 
+ 	  fi
+ 	  rm -f $DIR/.icon-theme.cache
+-	  /usr/bin/gtk-update-icon-cache $DIR 
++	  /usr/bin/gtk-update-icon-cache -f $DIR 
+ 	  if [ $? -ne 0 ]; then
+ 	    echo "/usr/bin/gtk-update-icon-cache exited with an error while \
+ generating the icon cache for $DIR." 
+@@ -117,7 +117,7 @@
+ 	    echo "Icons newer than the cache found in $DIR.  Updating the cache." 
+ 	  fi
+ 	  rm -f $DIR/.icon-theme.cache
+-	  /usr/bin/gtk-update-icon-cache $DIR 
++	  /usr/bin/gtk-update-icon-cache -f  $DIR 
+ 	  if [ $? -ne 0 ]; then
+ 	    echo "/usr/bin/gtk-update-icon-cache exited with an error while \
+ generating the icon cache for $DIR." 

@@ -1,0 +1,310 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr/share/doc/ntp/(.+$) -> set action.hash html/%<\1> >
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/service/network/ntp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="Network Time Protocol v4, NTP Daemon and Utilities"
+set name=pkg.summary value="Network Time Protocol Daemon v4"
+set name=com.oracle.info.description value="the Network Time Protocol Daemon"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Services
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2009/244
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+dir path=var/ntp group=sys
+dir path=var/ntp/ntpstats group=sys
+file Solaris/ntp.client path=etc/inet/ntp.client group=sys
+file Solaris/ntp.client path=etc/inet/ntp.conf group=sys preserve=true
+file Solaris/ntp.server path=etc/inet/ntp.server group=sys
+file Solaris/auth_attr path=etc/security/auth_attr.d/ntp
+file Solaris/prof_attr path=etc/security/prof_attr.d/ntp
+file Solaris/ntp.xml path=lib/svc/manifest/network/ntp.xml
+file Solaris/ntp.sh path=lib/svc/method/ntp
+file Solaris/RtNTPMngmnt.html \
+    path=usr/lib/help/auths/locale/C/RtNTPMngmnt.html
+file Solaris/SmfNTPStates.html \
+    path=usr/lib/help/auths/locale/C/SmfNTPStates.html
+file Solaris/SmfValueNTP.html \
+    path=usr/lib/help/auths/locale/C/SmfValueNTP.html
+file path=usr/lib/inet/ntp-wait
+file path=usr/lib/inet/ntpd
+file path=usr/sbin/ntp-keygen
+file path=usr/sbin/ntpdate
+file path=usr/sbin/ntpdc
+file path=usr/sbin/ntpq
+file path=usr/sbin/ntptime
+file path=usr/sbin/ntptrace
+file path=usr/share/doc/ntp/access.html
+file path=usr/share/doc/ntp/accopt.html
+file path=usr/share/doc/ntp/assoc.html
+file path=usr/share/doc/ntp/audio.html
+file path=usr/share/doc/ntp/authentic.html
+file path=usr/share/doc/ntp/authopt.html
+file path=usr/share/doc/ntp/autokey.html
+file path=usr/share/doc/ntp/bugs.html
+file path=usr/share/doc/ntp/build.html
+file path=usr/share/doc/ntp/clock.html
+file path=usr/share/doc/ntp/clockopt.html
+file path=usr/share/doc/ntp/cluster.html
+file path=usr/share/doc/ntp/comdex.html
+file path=usr/share/doc/ntp/config.html
+file path=usr/share/doc/ntp/confopt.html
+file path=usr/share/doc/ntp/copyright.html
+file path=usr/share/doc/ntp/debug.html
+file path=usr/share/doc/ntp/decode.html
+file path=usr/share/doc/ntp/discipline.html
+file path=usr/share/doc/ntp/discover.html
+file path=usr/share/doc/ntp/drivers/driver1.html
+file path=usr/share/doc/ntp/drivers/driver10.html
+file path=usr/share/doc/ntp/drivers/driver11.html
+file path=usr/share/doc/ntp/drivers/driver12.html
+file path=usr/share/doc/ntp/drivers/driver16.html
+file path=usr/share/doc/ntp/drivers/driver18.html
+file path=usr/share/doc/ntp/drivers/driver19.html
+file path=usr/share/doc/ntp/drivers/driver20.html
+file path=usr/share/doc/ntp/drivers/driver22.html
+file path=usr/share/doc/ntp/drivers/driver26.html
+file path=usr/share/doc/ntp/drivers/driver27.html
+file path=usr/share/doc/ntp/drivers/driver28.html
+file path=usr/share/doc/ntp/drivers/driver29.html
+file path=usr/share/doc/ntp/drivers/driver3.html
+file path=usr/share/doc/ntp/drivers/driver30.html
+file path=usr/share/doc/ntp/drivers/driver31.html
+file path=usr/share/doc/ntp/drivers/driver32.html
+file path=usr/share/doc/ntp/drivers/driver33.html
+file path=usr/share/doc/ntp/drivers/driver34.html
+file path=usr/share/doc/ntp/drivers/driver35.html
+file path=usr/share/doc/ntp/drivers/driver36.html
+file path=usr/share/doc/ntp/drivers/driver37.html
+file path=usr/share/doc/ntp/drivers/driver38.html
+file path=usr/share/doc/ntp/drivers/driver39.html
+file path=usr/share/doc/ntp/drivers/driver4.html
+file path=usr/share/doc/ntp/drivers/driver40.html
+file path=usr/share/doc/ntp/drivers/driver40-ja.html
+file path=usr/share/doc/ntp/drivers/driver42.html
+file path=usr/share/doc/ntp/drivers/driver43.html
+file path=usr/share/doc/ntp/drivers/driver44.html
+file path=usr/share/doc/ntp/drivers/driver45.html
+file path=usr/share/doc/ntp/drivers/driver5.html
+file path=usr/share/doc/ntp/drivers/driver6.html
+file path=usr/share/doc/ntp/drivers/driver7.html
+file path=usr/share/doc/ntp/drivers/driver8.html
+file path=usr/share/doc/ntp/drivers/driver9.html
+file path=usr/share/doc/ntp/drivers/icons/home.gif
+file path=usr/share/doc/ntp/drivers/icons/mail2.gif
+file path=usr/share/doc/ntp/drivers/mx4200data.html
+file path=usr/share/doc/ntp/drivers/oncore-shmem.html
+file path=usr/share/doc/ntp/drivers/scripts/footer.txt
+file path=usr/share/doc/ntp/drivers/scripts/style.css
+file path=usr/share/doc/ntp/drivers/tf582_4.html
+file path=usr/share/doc/ntp/extern.html
+file path=usr/share/doc/ntp/filter.html
+file path=usr/share/doc/ntp/hints.html
+file path=usr/share/doc/ntp/hints/a-ux
+file path=usr/share/doc/ntp/hints/aix
+file path=usr/share/doc/ntp/hints/bsdi
+file path=usr/share/doc/ntp/hints/changes
+file path=usr/share/doc/ntp/hints/decosf1
+file path=usr/share/doc/ntp/hints/decosf2
+file path=usr/share/doc/ntp/hints/freebsd
+file path=usr/share/doc/ntp/hints/hpux
+file path=usr/share/doc/ntp/hints/linux
+file path=usr/share/doc/ntp/hints/mpeix
+file path=usr/share/doc/ntp/hints/notes-xntp-v3
+file path=usr/share/doc/ntp/hints/parse
+file path=usr/share/doc/ntp/hints/refclocks
+file path=usr/share/doc/ntp/hints/rs6000
+file path=usr/share/doc/ntp/hints/sco.html
+file path=usr/share/doc/ntp/hints/sgi
+file path=usr/share/doc/ntp/hints/solaris-dosynctodr.html
+file path=usr/share/doc/ntp/hints/solaris.html
+file path=usr/share/doc/ntp/hints/solaris.xtra.4023118
+file path=usr/share/doc/ntp/hints/solaris.xtra.4095849
+file path=usr/share/doc/ntp/hints/solaris.xtra.S99ntpd
+file path=usr/share/doc/ntp/hints/solaris.xtra.patchfreq
+file path=usr/share/doc/ntp/hints/sun4
+file path=usr/share/doc/ntp/hints/svr4-dell
+file path=usr/share/doc/ntp/hints/svr4_package
+file path=usr/share/doc/ntp/hints/todo
+file path=usr/share/doc/ntp/hints/vxworks.html
+file path=usr/share/doc/ntp/hints/winnt.html
+file path=usr/share/doc/ntp/history.html
+file path=usr/share/doc/ntp/howto.html
+file path=usr/share/doc/ntp/huffpuff.html
+file path=usr/share/doc/ntp/icons/home.gif
+file path=usr/share/doc/ntp/icons/mail2.gif
+file path=usr/share/doc/ntp/icons/sitemap.png
+file path=usr/share/doc/ntp/index.html
+file path=usr/share/doc/ntp/kern.html
+file path=usr/share/doc/ntp/kernpps.html
+file path=usr/share/doc/ntp/keygen.html
+file path=usr/share/doc/ntp/leap.html
+file path=usr/share/doc/ntp/miscopt.html
+file path=usr/share/doc/ntp/monopt.html
+file path=usr/share/doc/ntp/msyslog.html
+file path=usr/share/doc/ntp/ntp-wait.html
+file path=usr/share/doc/ntp/ntp_conf.html
+file path=usr/share/doc/ntp/ntpd.html
+file path=usr/share/doc/ntp/ntpdate.html
+file path=usr/share/doc/ntp/ntpdc.html
+file path=usr/share/doc/ntp/ntpdsim.html
+file path=usr/share/doc/ntp/ntpdsim_new.html
+file path=usr/share/doc/ntp/ntpq.html
+file path=usr/share/doc/ntp/ntptime.html
+file path=usr/share/doc/ntp/ntptrace.html
+file path=usr/share/doc/ntp/orphan.html
+file path=usr/share/doc/ntp/parsedata.html
+file path=usr/share/doc/ntp/parsenew.html
+file path=usr/share/doc/ntp/pic/9400n.jpg
+file path=usr/share/doc/ntp/pic/alice11.gif
+file path=usr/share/doc/ntp/pic/alice13.gif
+file path=usr/share/doc/ntp/pic/alice15.gif
+file path=usr/share/doc/ntp/pic/alice23.gif
+file path=usr/share/doc/ntp/pic/alice31.gif
+file path=usr/share/doc/ntp/pic/alice32.gif
+file path=usr/share/doc/ntp/pic/alice35.gif
+file path=usr/share/doc/ntp/pic/alice38.gif
+file path=usr/share/doc/ntp/pic/alice44.gif
+file path=usr/share/doc/ntp/pic/alice47.gif
+file path=usr/share/doc/ntp/pic/alice51.gif
+file path=usr/share/doc/ntp/pic/alice61.gif
+file path=usr/share/doc/ntp/pic/barnstable.gif
+file path=usr/share/doc/ntp/pic/beaver.gif
+file path=usr/share/doc/ntp/pic/boom3.gif
+file path=usr/share/doc/ntp/pic/boom3a.gif
+file path=usr/share/doc/ntp/pic/boom4.gif
+file path=usr/share/doc/ntp/pic/broad.gif
+file path=usr/share/doc/ntp/pic/bustardfly.gif
+file path=usr/share/doc/ntp/pic/c51.jpg
+file path=usr/share/doc/ntp/pic/description.jpg
+file path=usr/share/doc/ntp/pic/discipline.gif
+file path=usr/share/doc/ntp/pic/dogsnake.gif
+file path=usr/share/doc/ntp/pic/driver29.gif
+file path=usr/share/doc/ntp/pic/driver43_1.gif
+file path=usr/share/doc/ntp/pic/driver43_2.jpg
+file path=usr/share/doc/ntp/pic/fg6021.gif
+file path=usr/share/doc/ntp/pic/fg6039.jpg
+file path=usr/share/doc/ntp/pic/fig_3_1.gif
+file path=usr/share/doc/ntp/pic/flatheads.gif
+file path=usr/share/doc/ntp/pic/flt1.gif
+file path=usr/share/doc/ntp/pic/flt2.gif
+file path=usr/share/doc/ntp/pic/flt3.gif
+file path=usr/share/doc/ntp/pic/flt4.gif
+file path=usr/share/doc/ntp/pic/flt5.gif
+file path=usr/share/doc/ntp/pic/flt6.gif
+file path=usr/share/doc/ntp/pic/flt7.gif
+file path=usr/share/doc/ntp/pic/flt8.gif
+file path=usr/share/doc/ntp/pic/flt9.gif
+file path=usr/share/doc/ntp/pic/freq1211.gif
+file path=usr/share/doc/ntp/pic/gadget.jpg
+file path=usr/share/doc/ntp/pic/gps167.jpg
+file path=usr/share/doc/ntp/pic/group.gif
+file path=usr/share/doc/ntp/pic/hornraba.gif
+file path=usr/share/doc/ntp/pic/igclock.gif
+file path=usr/share/doc/ntp/pic/neoclock4x.gif
+file path=usr/share/doc/ntp/pic/offset1211.gif
+file path=usr/share/doc/ntp/pic/oncore_evalbig.gif
+file path=usr/share/doc/ntp/pic/oncore_remoteant.jpg
+file path=usr/share/doc/ntp/pic/oncore_utplusbig.gif
+file path=usr/share/doc/ntp/pic/oz2.gif
+file path=usr/share/doc/ntp/pic/panda.gif
+file path=usr/share/doc/ntp/pic/pd_om006.gif
+file path=usr/share/doc/ntp/pic/pd_om011.gif
+file path=usr/share/doc/ntp/pic/peer.gif
+file path=usr/share/doc/ntp/pic/pogo.gif
+file path=usr/share/doc/ntp/pic/pogo1a.gif
+file path=usr/share/doc/ntp/pic/pogo3a.gif
+file path=usr/share/doc/ntp/pic/pogo4.gif
+file path=usr/share/doc/ntp/pic/pogo5.gif
+file path=usr/share/doc/ntp/pic/pogo6.gif
+file path=usr/share/doc/ntp/pic/pogo7.gif
+file path=usr/share/doc/ntp/pic/pogo8.gif
+file path=usr/share/doc/ntp/pic/pzf509.jpg
+file path=usr/share/doc/ntp/pic/pzf511.jpg
+file path=usr/share/doc/ntp/pic/rabbit.gif
+file path=usr/share/doc/ntp/pic/radio2.jpg
+file path=usr/share/doc/ntp/pic/sheepb.jpg
+file path=usr/share/doc/ntp/pic/stack1a.jpg
+file path=usr/share/doc/ntp/pic/sx5.gif
+file path=usr/share/doc/ntp/pic/thunderbolt.jpg
+file path=usr/share/doc/ntp/pic/tonea.gif
+file path=usr/share/doc/ntp/pic/tribeb.gif
+file path=usr/share/doc/ntp/pic/wingdorothy.gif
+file path=usr/share/doc/ntp/poll.html
+file path=usr/share/doc/ntp/pps.html
+file path=usr/share/doc/ntp/prefer.html
+file path=usr/share/doc/ntp/quick.html
+file path=usr/share/doc/ntp/rate.html
+file path=usr/share/doc/ntp/rdebug.html
+file path=usr/share/doc/ntp/refclock.html
+file path=usr/share/doc/ntp/release.html
+file path=usr/share/doc/ntp/scripts/accopt.txt
+file path=usr/share/doc/ntp/scripts/audio.txt
+file path=usr/share/doc/ntp/scripts/authopt.txt
+file path=usr/share/doc/ntp/scripts/clockopt.txt
+file path=usr/share/doc/ntp/scripts/command.txt
+file path=usr/share/doc/ntp/scripts/config.txt
+file path=usr/share/doc/ntp/scripts/confopt.txt
+file path=usr/share/doc/ntp/scripts/external.txt
+file path=usr/share/doc/ntp/scripts/footer.txt
+file path=usr/share/doc/ntp/scripts/hand.txt
+file path=usr/share/doc/ntp/scripts/install.txt
+file path=usr/share/doc/ntp/scripts/manual.txt
+file path=usr/share/doc/ntp/scripts/misc.txt
+file path=usr/share/doc/ntp/scripts/miscopt.txt
+file path=usr/share/doc/ntp/scripts/monopt.txt
+file path=usr/share/doc/ntp/scripts/refclock.txt
+file path=usr/share/doc/ntp/scripts/special.txt
+file path=usr/share/doc/ntp/scripts/style.css
+file path=usr/share/doc/ntp/select.html
+file path=usr/share/doc/ntp/sitemap.html
+file path=usr/share/doc/ntp/sntp.html
+file path=usr/share/doc/ntp/stats.html
+file path=usr/share/doc/ntp/tickadj.html
+file path=usr/share/doc/ntp/warp.html
+file path=usr/share/doc/ntp/xleave.html
+file manpages/ntp-keygen.1m path=usr/share/man/man1m/ntp-keygen.1m
+file manpages/ntpd.1m path=usr/share/man/man1m/ntpd.1m
+file manpages/ntpdate.1m path=usr/share/man/man1m/ntpdate.1m mangler.man.stability="uncommitted obsolete"
+file manpages/ntpdc.1m path=usr/share/man/man1m/ntpdc.1m mangler.man.stability="uncommitted obsolete"
+file manpages/ntpq.1m path=usr/share/man/man1m/ntpq.1m
+file manpages/ntptime.1m path=usr/share/man/man1m/ntptime.1m mangler.man.stability=volatile
+file manpages/ntptrace.1m path=usr/share/man/man1m/ntptrace.1m mangler.man.stability=volatile
+file manpages/ntp.conf.4 path=usr/share/man/man4/ntp.conf.4
+file manpages/ntprc.4 path=usr/share/man/man4/ntprc.4
+file path=usr/share/ntp/lib/NTP/Util.pm
+legacy pkg=SUNWntpr \
+    desc="Network Time Protocol v4, NTP Daemon and Utilities (root)" \
+    name="Network Time Protocol Daemon v4 (root)"
+legacy pkg=SUNWntpu \
+    desc="Network Time Protocol v4, NTP Daemon and Utilities (usr)" \
+    name="Network Time Protocol Daemon v4 (usr)"
+license ntp.license license="ntp license"
+link path=usr/sbin/xntpdc target=ntpdc
+

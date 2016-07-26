@@ -19,7 +19,7 @@ COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=80
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
-COMPONENT_REVISION=1
+COMPONENT_REVISION=3
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20150609.tar.xz
@@ -116,3 +116,19 @@ build: $(BUILD_32_and_64) cacerts.out
 install: $(INSTALL_32_and_64)
 
 .NOTPARALLEL:
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/java/openjdk7
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/java/openjdk7
+REQUIRED_PACKAGES += runtime/java/openjdk7/runtime64
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/libxtst

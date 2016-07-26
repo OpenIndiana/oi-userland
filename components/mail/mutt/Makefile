@@ -26,12 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	1.6.0
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.6.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:29afb6238ab7a540c0e3a78ce25c970f975ab6c0f0bc9f919993aab772136c19
+    sha256:98b26cecc6b1713082fc880344fa345c20bd7ded6459abe18c84429c7cf8ed20
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/pub/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_BUGDB=	utility/mutt
@@ -67,3 +66,12 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libsasl

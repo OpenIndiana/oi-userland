@@ -1,0 +1,74 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/man3xp/(.+)$ \
+	-> set action.hash usr/share/man/man3/%<\1> >
+
+link path=usr/X11/lib/$(MACH64)/libXp.so target=../../../lib/$(MACH64)/libXp.so
+link path=usr/X11/lib/$(MACH64)/libXp.so.1 target=../../../lib/$(MACH64)/libXp.so.1
+link path=usr/X11/lib/libXp.so target=../../lib/libXp.so
+link path=usr/X11/lib/libXp.so.1 target=../../lib/libXp.so.1
+
+link path=usr/lib/$(MACH64)/libXp.so target=libXp.so.1.0.0
+link path=usr/lib/$(MACH64)/libXp.so.1 target=libXp.so.1.0.0
+file path=usr/lib/$(MACH64)/libXp.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/xp.pc
+link path=usr/lib/libXp.so target=libXp.so.1.0.0
+link path=usr/lib/libXp.so.1 target=libXp.so.1.0.0
+file path=usr/lib/libXp.so.1.0.0
+file path=usr/lib/pkgconfig/xp.pc
+file path=usr/share/man/man3xp/XpCancelDoc.3
+file path=usr/share/man/man3xp/XpCancelJob.3
+file path=usr/share/man/man3xp/XpCancelPage.3
+file path=usr/share/man/man3xp/XpCreateContext.3
+file path=usr/share/man/man3xp/XpDestroyContext.3
+file path=usr/share/man/man3xp/XpEndDoc.3
+file path=usr/share/man/man3xp/XpEndJob.3
+file path=usr/share/man/man3xp/XpEndPage.3
+file path=usr/share/man/man3xp/XpFreePrinterList.3
+file path=usr/share/man/man3xp/XpGetAttributes.3
+file path=usr/share/man/man3xp/XpGetContext.3
+file path=usr/share/man/man3xp/XpGetDocumentData.3
+file path=usr/share/man/man3xp/XpGetImageResolution.3
+file path=usr/share/man/man3xp/XpGetLocaleHinter.3
+file path=usr/share/man/man3xp/XpGetOneAttribute.3
+file path=usr/share/man/man3xp/XpGetPageDimensions.3
+file path=usr/share/man/man3xp/XpGetPdmStartParams.3
+file path=usr/share/man/man3xp/XpGetPrinterList.3
+file path=usr/share/man/man3xp/XpGetScreenOfContext.3
+file path=usr/share/man/man3xp/XpInputSelected.3
+file path=usr/share/man/man3xp/XpPutDocumentData.3
+file path=usr/share/man/man3xp/XpQueryExtension.3
+file path=usr/share/man/man3xp/XpQueryScreens.3
+file path=usr/share/man/man3xp/XpQueryVersion.3
+file path=usr/share/man/man3xp/XpRehashPrinterList.3
+file path=usr/share/man/man3xp/XpSelectInput.3
+file path=usr/share/man/man3xp/XpSetAttributes.3
+file path=usr/share/man/man3xp/XpSetContext.3
+file path=usr/share/man/man3xp/XpSetImageResolution.3
+file path=usr/share/man/man3xp/XpSetLocaleHinter.3
+file path=usr/share/man/man3xp/XpStartDoc.3
+file path=usr/share/man/man3xp/XpStartJob.3
+file path=usr/share/man/man3xp/XpStartPage.3
+file path=usr/share/man/man3xp/libXp.3

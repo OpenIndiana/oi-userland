@@ -80,3 +80,8 @@ COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxext

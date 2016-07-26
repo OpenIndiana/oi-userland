@@ -23,16 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-util-cursor
-COMPONENT_VERSION=	0.1.1
+COMPONENT_VERSION=	0.1.2
 COMPONENT_FMRI=     	x11/library/xcb-util-cursor
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org/XcbUtil
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:517a1febcede3bc994e356c4c066e297a12ca219063b7d39047e29c7a8860652
+COMPONENT_ARCHIVE_HASH=	sha256:ed65367b810d47ab637011585135f4a84dd12e235dddcd3b26e0cfb3be21fb3a
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): 
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Port of Xcursor functions.
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -48,3 +49,8 @@ BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
 
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/xcb-util-image
+REQUIRED_PACKAGES += x11/library/xcb-util-renderutil

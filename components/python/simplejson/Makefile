@@ -26,12 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		simplejson
-COMPONENT_VERSION=	3.6.5
+COMPONENT_VERSION=	3.8.2
 COMPONENT_PROJECT_URL=	http://undefined.org/python/#simplejson
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:2a3189f79d1c7b8a2149a0e783c0b4217fad9b30a6e7d60450f2553dc2c0e57e
+COMPONENT_ARCHIVE_HASH= sha256:d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/s/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/simplejson
 
@@ -40,9 +39,9 @@ include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 
-CFLAGS+= -std=c99	
+CFLAGS+= -std=c99
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./setup.py test
 
 #ASLR_MODE = $(ASLR_ENABLE)

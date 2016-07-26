@@ -1,0 +1,13 @@
+--- netperf-2.7.0-orig/src/nettest_omni.c	Thu May 21 17:32:44 2015
++++ netperf-2.7.0/src/nettest_omni.c	Mon Oct  5 15:36:53 2015
+@@ -73,6 +73,10 @@
+ #include <assert.h>
+ 
+ #ifndef WIN32
++#ifdef __sun
++#define _XPG4_2
++#define __EXTENSIONS__
++#endif /* __sun */
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ 

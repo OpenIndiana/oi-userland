@@ -53,3 +53,8 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxevie
+REQUIRED_PACKAGES += x11/library/libxscrnsaver

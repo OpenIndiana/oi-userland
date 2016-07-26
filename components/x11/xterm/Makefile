@@ -52,3 +52,15 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(TEST_32)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxpm
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

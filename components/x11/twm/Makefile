@@ -41,3 +41,11 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

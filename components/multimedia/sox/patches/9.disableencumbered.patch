@@ -1,0 +1,86 @@
+--- sox-14.4.1/configure.ac.~1~	2013-02-02 06:02:37.000000000 +0400
++++ sox-14.4.1/configure.ac	2016-04-19 20:33:37.556800433 +0300
+@@ -393,20 +393,11 @@
+ fi
+ 
+ # Check for libgsm
+-found_libgsm=yes
+-AC_CHECK_HEADERS(gsm/gsm.h, ,
+-    [AC_CHECK_HEADERS(gsm.h, ,found_libgsm=no)])
+-    AC_CHECK_LIB(gsm, gsm_create, GSM_LIBS="$GSM_LIBS -lgsm", found_libgsm=no)
+-if test "$found_libgsm" = yes; then
+-    AC_DEFINE(EXTERNAL_GSM, 1, [Define if you are using an external GSM library])
+-else
+-    LIBGSM_LIBADD=../libgsm/libgsm.la
+-fi
++found_libgsm=no
++LIBGSM_LIBADD=../libgsm/libgsm.la
+ AM_CONDITIONAL(EXTERNAL_GSM, test x$found_libgsm = xyes)
+ AC_SUBST(LIBGSM_LIBADD)
+ 
+-
+-
+ # Check for liblpc10
+ found_liblpc10=yes
+ AC_CHECK_HEADERS(lpc10.h, ,
+@@ -440,58 +431,11 @@
+ AC_OPTIONAL_FORMAT(flac, FLAC, [AC_CHECK_HEADER(FLAC/all.h, [AC_CHECK_DECL(FLAC_API_VERSION_CURRENT, [AC_CHECK_LIB(FLAC, FLAC__stream_encoder_new, FLAC_LIBS="-lFLAC $FLAC_LIBS $OGG_VORBIS_LIBS",using_flac=no, $FLAC_LIBS $OGG_VORBIS_LIBS)], using_flac=no, [#include <FLAC/all.h>])], using_flac=no)], using_flac=no)
+ 
+ 
+-dnl When enable_dl_amrbw, do not let add libraries to be linked in
+-dnl since they will be dlopen()'ed instead.
+ ac_sox_save_AMRWB_LIBS="$AMRWB_LIBS"
+-tmp_using_amrwb=$opt_default
+-AC_CHECK_HEADERS(opencore-amrwb/dec_if.h,
+-		 [AC_CHECK_LIB(opencore-amrwb, D_IF_init, 
+-		  AMRWB_LIBS="$AMRWB_LIBS -lopencore-amrwb", tmp_using_amrwb=no)],
+-		  [AC_CHECK_HEADERS(amrwb/dec.h, 
+-		   [AC_CHECK_LIB(amrwb, D_IF_init, 
+-		    AMRWB_LIBS="$AMRWB_LIBS -lamrwb",tmp_using_amrwb=no)], 
+-		    tmp_using_amrwb=no)])
+-AC_ARG_ENABLE(dl_amrwb,
+-	      AC_HELP_STRING([--enable-dl-amrwb], 
+-			     [Dlopen amrbw instead of linking in.]),
+-			     enable_dl_amrwb=$enableval, enable_dl_amrwb=no)
+-if test "x$using_libltdl" = "xyes" -a "x$enable_dl_amrwb" = "xyes"; then
+-  AC_DEFINE(DL_AMRWB, 1, [Define to dlopen() amrwb.]) 
+-  dnl When enable_dl_amrwb, do not let SOX_PATH_AMRWB add libraries
+-  dnl to be linked in (since they will be dlopen()'ed instead).
+-  AMRWB_LIBS="$ac_sox_save_AMRWB_LIBS"
+-  dnl Force to using regardless if headers or libraries were found.
+-  tmp_using_amrwb=yes
+-else
+-  enable_dl_amrwb="no"
+-fi
++tmp_using_amrwb=no
+ AC_OPTIONAL_FORMAT(amrwb, AMRWB, [using_amrwb=$tmp_using_amrwb])
+ 
+-dnl When enable_dl_amrnb, do not let add libraries to be linked in
+-dnl since they will be dlopen()'ed instead.
+-ac_sox_save_AMRNB_LIBS="$AMRNB_LIBS"
+-tmp_using_amrnb=$opt_default
+-AC_CHECK_HEADERS(opencore-amrnb/interf_dec.h, 
+-		 [AC_CHECK_LIB(opencore-amrnb, Decoder_Interface_init, 
+-		  AMRNB_LIBS="$AMRNB_LIBS -lopencore-amrnb", tmp_using_amrnb=no)],
+-		  [AC_CHECK_HEADER(amrnb/sp_dec.h, 
+-		   [AC_CHECK_LIB(amrnb, Decoder_Interface_init, 
+-		    AMRNB_LIBS="$AMRNB_LIBS -lamrnb", tmp_using_amrnb=no)], 
+-		    tmp_using_amrnb=no)])
+-AC_ARG_ENABLE(dl_amrnb,
+-	      AC_HELP_STRING([--enable-dl-amrnb], 
+-			     [Dlopen amrnb instead of linking in.]),
+-			     enable_dl_amrnb=$enableval, enable_dl_amrnb=no)
+-if test "x$using_libltdl" = "xyes" -a "x$enable_dl_amrnb" = "xyes"; then
+-  AC_DEFINE(DL_AMRNB, 1, [Define to dlopen() amrnb.]) 
+-  dnl When enable_dl_amrnb, do not let SOX_PATH_AMRNB add libraries
+-  dnl to be linked in (since they will be dlopen()'ed instead).
+-  AMRNB_LIBS="$ac_sox_save_AMRNB_LIBS"
+-  dnl Force to using regardless if headers or libraries were found.
+-  tmp_using_amrnb=yes
+-else
+-  enable_dl_amrnb="no"
+-fi
++tmp_using_amrnb=no
+ AC_OPTIONAL_FORMAT(amrnb, AMRNB, [using_amrnb=$tmp_using_amrnb])
+ 
+ 

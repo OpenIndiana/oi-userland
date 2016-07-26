@@ -51,6 +51,21 @@ Getting the Bits
     directory and use 'gmake download' from that to only get it's source
     archive.
 
+    Also, when you start to work with a new archive file - update the source
+    version in an existing recipe component, or start a new one from scratch -
+    you can use 'gmake fetch' to download the archive(s) defined in the new
+    recipe, calculate the checksums and *NOT* remove the archive because its
+    actual checksum does not match the value recorded in the recipe Makefile
+    (if any) so the download is deemed corrupted while you know it is not.
+    There is also a side-effect: by framework recipe, a file in the download
+    location only depends on the component recipe Makefile. So once an archive
+    is "fetched" (downloaded and not removed), it will not be re-verified -
+    the downloading script is just not called. This is a moderate problem,
+    since the "fetch" ability is a helper for recipe-makers doing initial
+    archive downloads in a certain situation, to save some traffic and time
+    on their workstations. You can still remove files fetched by a recipe
+    using 'gmake clobber'.
+
 Building the Bits
 
     You can build individual components or the contents of the entire gate.
@@ -81,8 +96,11 @@ Building the Bits
   Keeping all sources in one place
 
     The Userland consolidation tools automate download of required source
-    tarballs.  By default they are kept in each component's directory, but
-    you can centralize it by using the 'USERLAND_ARCHIVES' variable.
+    tarballs.  By older default they were kept in each component's directory,
+    but you could centralize it by using the 'USERLAND_ARCHIVES' variable.
+    Recently the defaults change to pre-initialize 'USERLAND_ARCHIVES' to
+    point into '$(WS_TOP)/archives/' unless customized by the caller - for
+    example, to share the common download area between multiple workspaces.
 
     You can pre-set this variable in your user account '~/.profile' like
     this (and note that the trailing slash is required):
@@ -90,6 +108,11 @@ Building the Bits
        ### For oi-userland source files
        USERLAND_ARCHIVES="$HOME/Downloads/"
        export USERLAND_ARCHIVES
+
+    See also the 'make-rules/shared-macros.mk' for 'INTERNAL_ARCHIVE_MIRROR',
+    'EXTERNAL_ARCHIVE_MIRROR' and envvar 'DOWNLOAD_SEARCH_PATH' to get some
+    ideas about using HTTP mirrors to e.g. reduce network load and lags if you
+    can access a country- or organization-local mirror of opensource projects.
 
   Component build
 

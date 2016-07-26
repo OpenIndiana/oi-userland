@@ -1,0 +1,112 @@
+.\" Copyright (c) 1991, 2014, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.TH cmap_alloc 1 "2 May 2014"
+.IX cmap_alloc "" "\f3cmap_alloc\f1(1) \(em colormap utility" ""
+.IX "color" "defa" "color" "default colormap allocation \(em \f3cmap_alloc\f1(1)" ""
+.SH NAME
+cmap_alloc \- allocate default colormaps for non-default visuals
+.SH SYNOPSIS
+.B cmap_alloc
+[
+.B \-display
+.I display:n.screen
+] [
+.B \-force
+] [
+.B \-allscreens
+]
+[
+.BI \-depth \ n
+] [
+.B \-visual
+.I class
+] [
+.B \-verbose
+] [
+.B
+\-help
+]
+.SH DESCRIPTION
+.LP
+.B cmap_alloc
+creates empty colormaps for non-default dynamic visuals that are suitable
+for use as default colormaps.  An X11 server has only one default colormap,
+and it is associated with the default visual.  Clients that need to access
+non-default visuals have to create their own colormaps.  This can lead
+to gratuitous colormap flashing if a lot of applications are running
+in non-default visuals.  
+.B cmap_alloc
+will create colormaps that can be used by such applications as the default
+colormap for the given visual.
+Once the colormap has been created for a given visual, it will place
+the colormap's XID into the 
+.SM RGB_DEFAULT_MAP
+property on the root window of the display.  Clients that need to access
+non-default dynamic visuals should search this property using 
+.SM XGetRGBColormaps(3x11)
+for a suitable colormap to use. 
+.SH OPTIONS
+.IP "\f3\-display \fIdisplay:n.screen\f1" 1i
+Indicates which X11 server to use.  The default is to use the value 
+set in the
+.SM DISPLAY
+environment variable.
+.IP "\f3\-force\f1" 1i
+Create a colormap even if a suitable colormap is already listed in the 
+.SM RGB_DEFAULT_MAP 
+property.
+.IP "\f3\-allscreens\f1" 1i
+Create default colormaps for all screens of the display.  Without this
+option, colormaps will only be created for the default screen.
+.IP "\f3\-depth \fIn\f1" 1i
+Create default colormaps only for those visuals that have depth
+.I n.
+The default is to create colormaps for visuals of all depths
+.IP "\f3\-visual \fIclass\f1" 1i
+Create default colormaps only for those visuals that are of class
+.I class.
+Where 
+.I class
+is one of the following:
+.SM GrayScale, PsuedoColor, DirectColor
+\.  The default is to create colormaps for all visual classes.
+.IP "\f3\-verbose\f1" 1i
+Print out diagnostic messages useful for debugging.
+.IP "\f3\-help\f1" 1i
+Print out a short usage message and exit.
+.SH "SEE ALSO"
+.BR XGetRGBColormaps (3x11),
+.BR xstdcmap (1) ,
+.BR cmap_compact (1)
+.sp
+.SH DIAGNOSTICS
+.TP 20n
+\f3can't open display ...\f1
+Error in connecting to the X11 server.  Check 
+.SM DISPLAY
+environment variable.
+.TP 20n
+\f3unknown depth\f1
+Invalid depth specified for the \f3\-depth\f1 command line option
+.TP 20n
+\f3unknown visual class\f1
+Invalid visual class specified for the \f3\-visual\f1
+command line option

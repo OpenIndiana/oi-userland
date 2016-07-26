@@ -26,13 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
-COMPONENT_VERSION=	2.28.0
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	2.38.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d3aa7973c578cae4cc26d9d6498c57ed06680cab9a4e940d0357a3c6527afc76
+    sha256:81aa238d9d4a010afa73a9d2a704fc3221c731e1e06577c2ab3496bdef67859e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/graphviz
 
@@ -50,6 +50,9 @@ CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
 CPPFLAGS +=	$(shell /usr/php/5.4/bin/php-config --includes)
 #CXX +=		$(studio_NORUNPATH)
+
+# Can't find headers without this.
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PERL=$(PERL)
@@ -83,3 +86,31 @@ COMPONENT_PRE_TEST_ACTION = \
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libpoppler
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/math/gts
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

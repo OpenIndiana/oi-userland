@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -28,13 +29,15 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		p7zip
-COMPONENT_VERSION=	9.20.1
+COMPONENT_VERSION=	15.14.1
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://p7zip.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:49557e7ffca08100f9fc687f4dfc5aea703ca207640c76d9dee7b66f03cb4782
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:699db4da3621904113e040703220abb1148dfef477b55305e2f14a4f1f8f25d4
+COMPONENT_ARCHIVE_URL=	\
+    http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/p7zip
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -46,33 +49,47 @@ COMPONENT_TEST_DIR =           $(@D)
 COMPONENT_TEST_ENV =           P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
 COMPONENT_TEST_TARGETS =       test test_7z test_7zr
 
-COMPONENT_PREP_ACTION = (cd $(@D); cp makefile.solaris_x86 makefile.machine)
+# TODO: if sparc ...
+COMPONENT_PREP_ACTION = (cd $(@D) && \
+	$(GSED) -e 's,^CC=,\#CC=,' -e 's,^CXX=,\#CXX=,' -e 's,-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE,$$(BUILD_FLAGS),' < makefile.solaris_x86 > makefile.machine && \
+	( echo 'CC=$$(BUILD_CC) $$(ALLFLAGS)'; echo 'CXX=$$(BUILD_CXX) $$(ALLFLAGS)' ) >> makefile.machine )
+
 COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
 
-$(SOURCE_DIR)/DOCS/copying.txt $(SOURCE_DIR)/DOCS/unRarLicense.txt: prep
+COMPONENT_BUILD_ARGS += BUILD_CC="$(CC)"
+COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ARGS += BUILD_FLAGS="$(CPP_LARGEFILES) $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS)"
 
-$(BUILD_DIR)/%: $(SOURCE_DIR)/DOCS/%
+$(SOURCE_DIR)/DOC/copying.txt $(SOURCE_DIR)/DOC/unRarLicense.txt: prep
+
+$(BUILD_DIR)/%: $(SOURCE_DIR)/DOC/%
 	$(CP) $< $@
 
-$(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt
-	$(CP) $(SOURCE_DIR)/DOCS/copying.txt $@
-
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
 EXTRATARGETS = \
 	$(BUILD_DIR)/copying.txt $(BUILD_DIR)/unRarLicense.txt
 
-install:	build $(INSTALL_32) $(EXTRATARGETS)
+COMPONENT_POST_INSTALL_ACTION = \
+	( $(MKDIR) $(PROTOUSRLIBDIR)/p7zip/$(MACH$(BITS)) \
+	  && $(MV) $(PROTOUSRLIBDIR)/p7zip/7z* $(PROTOUSRLIBDIR)/p7zip/$(MACH$(BITS))/ \
+	  && $(MV) $(PROTOUSRLIBDIR)/p7zip/Codecs $(PROTOUSRLIBDIR)/p7zip/$(MACH$(BITS))/ \
+	) ;
+
+install:	build $(INSTALL_32_and_64) $(EXTRATARGETS)
 
 # When p7zip's install target is run, it creates all its directories mode 555,
 # so they're impossible to remove without adding the write bit first.
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
 
 # build does this always
-test:	$(TEST_32)
+test:	$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math

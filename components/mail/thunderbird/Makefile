@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	38.6.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION= 	38.8.0
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		comm-esr38
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0417711325a4ba6fa61882bfcd9a7ce325fa0b903474e087f16e13a70be15a6b
+  sha256:690b3c16fd0cedd49cd84216eeb79361262507f7302e2b0aec862cab1c473333
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
@@ -141,3 +140,29 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test:	$(TEST_32)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/startup-notification
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

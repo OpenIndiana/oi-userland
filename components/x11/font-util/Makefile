@@ -43,3 +43,5 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += system/library

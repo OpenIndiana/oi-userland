@@ -76,3 +76,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Auto-generated contents below.  Please manually verify and remove this comment
+REQUIRED_PACKAGES += library/libmemcached
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
