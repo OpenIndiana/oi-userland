@@ -119,6 +119,9 @@ PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT
 
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
+SAMPLE_MANIFEST_DIR = 	$(COMPONENT_DIR)/manifests
+SAMPLE_MANIFEST_FILE =	$(SAMPLE_MANIFEST_DIR)/sample-manifest.p5m
+
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 ifneq ($(wildcard $(HISTORY)),)
 HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
@@ -197,10 +200,15 @@ publish:		pre-publish $(PUBLISH_STAMP)
 sample-manifest:	$(GENERATED).p5m
 
 $(GENERATED).p5m:	install
+	[ ! -d $(SAMPLE_MANIFEST_DIR) ] && $(MKDIR) $(SAMPLE_MANIFEST_DIR) || true
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
-		cat $(METADATA_TEMPLATE) - >$@
+		sed -e '/^$$/d' -e '/^#.*$$/d' -e '/^dir .*$$/d' \
+		-e '/\.la$$/d' -e '/\.pyo$$/d' -e '/usr\/lib\/python[23]\..*\.pyc$$/d' \
+		-e '/.*\/__pycache__\/.*/d'  | \
+		$(PKGFMT) | \
+		cat $(METADATA_TEMPLATE) - | \
+		$(TEE) $@ $(SAMPLE_MANIFEST_FILE) >/dev/null
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
