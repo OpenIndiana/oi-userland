@@ -1,0 +1,49 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  cebd23d5319e646324272140dd9446bc11bc7e1c
+22086045 libibmad used [s]random(3c) functions unsafely
+
+diff -r cebd23d5319e src/mad.c
+--- a/src/mad.c	Wed Jun 22 09:54:02 2016 -0700
++++ b/src/mad.c	Wed Jun 22 10:34:23 2016 -0700
+@@ -41,6 +41,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <time.h>
++#if defined(__SVR4) && defined(__sun)
++#include <pthread.h>
++#endif
+ #include <errno.h>
+ 
+ #include <infiniband/umad.h>
+@@ -48,6 +51,10 @@
+ 
+ #include "mad_internal.h"
+ 
++#if defined(__SVR4) && defined(__sun)
++static pthread_mutex_t	trid_mutex = PTHREAD_MUTEX_INITIALIZER;
++#endif
++
+ #undef DEBUG
+ #define DEBUG	if (ibdebug)	IBWARN
+ 
+@@ -63,11 +70,17 @@
+ 	static uint64_t trid;
+ 	uint64_t next;
+ 
++#if defined(__SVR4) && defined(__sun)
++	(void) pthread_mutex_lock(&trid_mutex);
++#endif
+ 	if (!trid) {
+ 		srandom((int)time(0) * getpid());
+ 		trid = random();
+ 	}
+ 	next = ++trid;
++#if defined(__SVR4) && defined(__sun)
++	(void) pthread_mutex_unlock(&trid_mutex);
++#endif
+ 	next = GET_IB_USERLAND_TID(next);
+ 	return next;
+ }
