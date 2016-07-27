@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
 COMPONENT_VERSION=	2.28.6
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -68,6 +68,11 @@ CFLAGS += $(gcc_C99_ENABLE)
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--without-ffi
+
+# Disable introspection modules in this package since we ship the modern ones
+# in the ../pygobject-3 packages instead, and they'd clash if we didn't disable.
+CONFIGURE_OPTIONS += --disable-introspection
+
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 
 CONFIGURE_ENV+=         PYTHON=$(PYTHON)
