@@ -94,52 +94,10 @@ static int sol_uverbs_drv_status = SOL_UVERBS_DRV_STATUS_UNKNOWN;
 static int sol_uverbs_minor_dev = -1;
 
 /*
- * Override verbs abi version.
- * If the build system doesn't have the intended
- * header file then override with the intended abi version.
- * These changes can be deleted once the build system has
- * the correct header file.
- */
-#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 3)
-#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
-#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	4
-
-#define	UVERBS_PSID_STR_SZ		32
-#define	UVERBS_IBDEV_NAME_SZ		64
-#define	UVERBS_HCA_DRIVER_NAME_SZ	40
-#define	UVERBS_DEVID_STR_SZ		16
-
-typedef struct sol_uverbs_hca_info_v4_s {
-	char		uverbs_hca_psid_string[UVERBS_PSID_STR_SZ];
-	uint8_t		uverbs_hca_pad1[8];
-	char		uverbs_hca_ibdev_name[UVERBS_IBDEV_NAME_SZ];
-	char		uverbs_hca_driver_name[UVERBS_HCA_DRIVER_NAME_SZ];
-	uint32_t	uverbs_hca_driver_instance;
-	uint32_t	uverbs_hca_vendorid;
-	uint16_t	uverbs_hca_deviceid;
-	uint16_t	uverbs_hca_devidx;
-	int32_t		uverbs_hca_abi_version;
-	uint64_t	uverbs_hca_fw_ver;
-	uint64_t	uverbs_hca_node_guid;
-	uint64_t	uverbs_hca_node_external_guid;
-	uint64_t	uverbs_hca_sys_image_guid;
-	uint32_t	uverbs_hca_hw_version;
-	uint8_t		uverbs_hca_pad2[4];
-	char		uverbs_hca_devid_string[UVERBS_DEVID_STR_SZ];
-	uint8_t		uverbs_hca_pad3[24];
-} sol_uverbs_hca_info_v4_t;
-#define	IB_USER_VERBS_V4_IN_V3
-#endif
-
-/*
  * Some useful definitions.
  */
 #define	SIZEOF_UVERBS_INFO	(sizeof (sol_uverbs_info_t))
-#ifdef	IB_USER_VERBS_V4_IN_V3
-#define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_info_v4_t))
-#else
 #define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_info_t))
-#endif
 #define	UVERBS_INFO(x)		((sol_uverbs_info_t *)x)
 
 /*
@@ -311,11 +269,7 @@ ibdev_cache_init()
 	int				fd, i, hca_cnt;
 	char				uverbs_devpath[MAX_OFS_DEVPATH_LEN];
 	sol_uverbs_info_t		*uverbs_infop;
-#ifdef	IB_USER_VERBS_V4_IN_V3
-	sol_uverbs_hca_info_v4_t	*hca_infop;
-#else
 	sol_uverbs_hca_info_t		*hca_infop;
-#endif
 	char 				*buf;
 	size_t				bufsize;
 	uint16_t			major, minor, sub_minor;
