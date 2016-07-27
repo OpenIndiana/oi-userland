@@ -27,7 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8
-COMPONENT_PATCH_VERSION=	7
+COMPONENT_PATCH_VERSION=	8
 COMPONENT_RC_VERSION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)p$(COMPONENT_PATCH_VERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
@@ -35,7 +35,7 @@ COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC_NAME=	ntp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:81d20c06a0b01abe3b84fac092185bf014252d38fe5e7b2758f604680a0220dc
+    sha256:2ab3d0b5f0456e6311dda1cc27ab75da108762773a19e46abd938bd9407b97ee
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
@@ -56,13 +56,17 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print '$(FIND) $(BUILD_DIR_64) -name test-\*.log | sort |\\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
-		print ' xargs cat  | grep -v TEST_PROGNAME3 \\' \
+		print ' xargs cat  | grep -v TEST_PROGNAME3 | \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'sed -e "s/4.2..p[0-9]*//" \\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print '> $(COMPONENT_TEST_SNAPSHOT)' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print 'cat $(BUILD_DIR_64)/config.h | \\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
-		print 'grep -v VERSION | grep -v STR_SYSTEM | grep -v ENDIAN \\' \
+		print 'grep -v ENDIAN | grep -v STR_SYSTEM | \\' \
+		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+		print 'grep -v VERSION | grep -v PACKAGE_STRING \\' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
 		print '>> $(COMPONENT_TEST_SNAPSHOT)' \
 		    >> $(COMPONENT_TEST_TRANSFORM_CMD); \
