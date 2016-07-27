@@ -1474,9 +1474,9 @@ diff -Nrup -x '*.orig' -x '*.rej' -x '*.*~' ../SUNWgnome-file-mgr-2.30.0-b4/naut
  /* Mouse */
  #define NAUTILUS_PREFERENCES_MOUSE_USE_EXTRA_BUTTONS 		"preferences/mouse_use_extra_buttons"
 diff -Nrup -x '*.orig' -x '*.rej' -x '*.*~' ../SUNWgnome-file-mgr-2.30.0-b4/nautilus-2.30.1/libnautilus-private/nautilus-zfs.c nautilus-2.30.1/libnautilus-private/nautilus-zfs.c
---- ../SUNWgnome-file-mgr-2.30.0-b4/nautilus-2.30.1/libnautilus-private/nautilus-zfs.c	1970-01-01 01:00:00.000000000 +0100
-+++ nautilus-2.30.1/libnautilus-private/nautilus-zfs.c	2012-01-16 09:20:11.742181824 +0000
-@@ -0,0 +1,1223 @@
+--- nautilus-2.32.2.1/libnautilus-private/nautilus-zfs.c.~1~	2016-07-27 12:43:08.114294653 +0300
++++ nautilus-2.32.2.1/libnautilus-private/nautilus-zfs.c	2016-07-27 12:45:38.631225400 +0300
+@@ -0,0 +1,1232 @@
 +/* 
 + * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 + *
@@ -1504,6 +1504,15 @@ diff -Nrup -x '*.orig' -x '*.rej' -x '*.*~' ../SUNWgnome-file-mgr-2.30.0-b4/naut
 +#include  "nautilus-global-preferences.h"
 +#define ZFS_SNAPSHOT_DIR ".zfs/snapshot/"
 +#define ZFS_BACKUP_DIR ".time-slider/rsync"
++
++#ifndef ZFS_MAXNAMELEN
++#ifdef ZFS_MAX_DATASET_NAME_LEN
++#define ZFS_MAXNAMELEN ZFS_MAX_DATASET_NAME_LEN
++#else
++#define ZFS_MAXNAMELEN 256
++#endif
++#endif
++
 +
 +char* ts_realpath (char * dir, char *resolved_name)
 +{
