@@ -227,14 +227,14 @@ $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
 # appropriate conditional dependencies into a python library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of python is on the system.
-$(WS_TOP)/transforms/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/python,$(ver)))
 
 # Build Python version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python
-	$(PKGMOGRIFY) -D PYV=### $(WS_TOP)/transforms/mkgeneric-python \
+$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
+	$(PKGMOGRIFY) -D PYV=### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -251,14 +251,14 @@ $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
 # appropriate conditional dependencies into a perl library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of perl is on the system.
-$(WS_TOP)/transforms/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/perl,$(ver)))
 
 # Build Perl version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
-	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
+$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
+	$(PKGMOGRIFY) -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -294,7 +294,7 @@ $(foreach ver,$(RUBY_VERSIONS),\
 # appropriate conditional dependencies into a ruby library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of ruby is on the system.
-$(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PREREQ)
 	$(RM) $@
 	$(foreach ver,$(RUBY_VERSIONS),\
 	        $(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
@@ -479,3 +479,6 @@ pre-prep:	required-pkgs.mk
 
 
 CLEAN_PATHS +=	required-pkgs.mk
+CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-perl
+CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-python
+CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-ruby
