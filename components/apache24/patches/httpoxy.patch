@@ -1,0 +1,39 @@
+https://www.apache.org/security/asf-httpoxy-response.txt
+http://svn.apache.org/viewvc?view=revision&revision=1753228
+http://svn.apache.org/viewvc?view=revision&revision=1753229
+
+--- docs/conf/httpd.conf.in	2016/07/18 14:00:30	1753227
++++ docs/conf/httpd.conf.in	2016/07/18 14:07:00	1753228
+@@ -283,6 +283,15 @@
+     Require all granted
+ </Directory>
+ 
++<IfModule headers_module>
++    #
++    # Avoid passing HTTP_PROXY environment to CGI's on this or any proxied
++    # backend servers which have lingering "httpoxy" defects.
++    # 'Proxy' request header is undefined by the IETF, not listed by IANA
++    #
++    RequestHeader unset Proxy early
++</IfModule>
++
+ <IfModule mime_module>
+     #
+     # TypesConfig points to the file containing the list of mappings from
+--- server/util_script.c	2016/07/18 14:00:30	1753227
++++ server/util_script.c	2016/07/18 14:07:00	1753228
+@@ -186,6 +186,14 @@
+         else if (!strcasecmp(hdrs[i].key, "Content-length")) {
+             apr_table_addn(e, "CONTENT_LENGTH", hdrs[i].val);
+         }
++        /* HTTP_PROXY collides with a popular envvar used to configure
++         * proxies, don't let clients set/override it.  But, if you must...
++         */
++#ifndef SECURITY_HOLE_PASS_PROXY
++        else if (!ap_cstr_casecmp(hdrs[i].key, "Proxy")) {
++            ;
++        }
++#endif
+         /*
+          * You really don't want to disable this check, since it leaves you
+          * wide open to CGIs stealing passwords and people viewing them
