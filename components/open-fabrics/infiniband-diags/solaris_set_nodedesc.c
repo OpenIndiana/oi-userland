@@ -54,36 +54,6 @@
 #include "ibdiag_common.h"
 #include <sys/ib/clients/of/sol_uverbs/sol_uverbs_ioctl.h>
 
-/*
- * Local defines for sol_uverbs IOCTLs, used while
- * building on build system without the change in
- * header files.
- */
-#ifndef	UVERBS_NODEDESC_UPDATE_STRING
-#define	UVERBS_IOCTL_GET_NODEDESC		('v' << 8) | 0x04
-#define	UVERBS_IOCTL_SET_NODEDESC		('v' << 8) | 0x05
-#define	UVERBS_NODEDESC_UPDATE_STRING		0x00000001
-#define	UVERBS_NODEDESC_UPDATE_HCA_STRING	0x00000002
-
-typedef struct sol_uverbs_nodedesc_s {
-	int32_t		uverbs_solaris_abi_version;
-	char		node_desc_str[64];
-	uint32_t	node_desc_update_flag;
-} sol_uverbs_nodedesc_t;
-#endif
-
-/*
- * Override verbs abi version.
- * If the build system doesn't have the intended
- * header file then override with the intended abi version.
- * These changes can be deleted once the build system has
- * the correct header file.
- */
-#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 3)
-#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
-#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	4
-#endif
-
 #define	NODEDESC_READ			0x80000000
 
 
