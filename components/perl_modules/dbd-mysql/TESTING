@@ -2,7 +2,7 @@
 ================================ Install mysql =================================
 ================================================================================
 
-$ pkg install database/mysql-56 database/mysql-56/client
+$ pkg install database/mysql-57 database/mysql-57/client
 
 
 
@@ -15,15 +15,15 @@ $ pkg install database/mysql-56 database/mysql-56/client
 set -x
 
 MYSQL_TEST_DATADIR=/var/tmp/mysql
-MYSQL_VERSION=5.6
+MYSQL_VERSION=5.7
 MYSQL_BINDIR=/usr/mysql/$MYSQL_VERSION/bin
 MYSQL_TEST_USER=root
 MYSQL_TEST_PASSWORD=new-password
 
 rm -rf "$MYSQL_TEST_DATADIR"
 
-"$MYSQL_BINDIR/mysql_install_db" \
-        --keep-my-cnf \
+"$MYSQL_BINDIR/mysqld" \
+        --initialize-insecure \
         --datadir="$MYSQL_TEST_DATADIR" \
         --basedir=/usr/mysql/$MYSQL_VERSION
 
@@ -31,7 +31,7 @@ rm -rf "$MYSQL_TEST_DATADIR"
 #   --gdb makes it possible to terminate mysqld via Ctrl+C
 "$MYSQL_BINDIR/mysqld" \
         --skip-networking \
-        -u $MYSQL_TEST_USER \
+        -u "$MYSQL_TEST_USER" \
         --datadir="$MYSQL_TEST_DATADIR" \
         --socket="$MYSQL_TEST_DATADIR"/socket \
         --pid-file="$MYSQL_TEST_DATADIR"/pid \
@@ -44,6 +44,11 @@ sleep 10 # wait for db to come up
         -u "$MYSQL_TEST_USER" \
         password "$MYSQL_TEST_PASSWORD"
 
+"$MYSQL_BINDIR/mysqladmin" \
+        --socket "$MYSQL_TEST_DATADIR"/socket \
+        -u "$MYSQL_TEST_USER" \
+        --password="$MYSQL_TEST_PASSWORD" \
+        create test
 
 
 ================================================================================

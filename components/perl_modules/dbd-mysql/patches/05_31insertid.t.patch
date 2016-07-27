@@ -1,0 +1,98 @@
+https://rt.cpan.org/Public/Bug/Display.html?id=108000
+https://bugs.mysql.com/bug.php?id=78778
+
+The fix will be available in next DBD::mysql stable release
+
+commit 85459c2f43243e41841180e554e4ef142d95d56b
+Author: Michiel Beijen <michiel.beijen@gmail.com>
+Date:   Mon Aug 1 08:10:33 2016 +0200
+
+    $dbh->{mysql_insertid} is cleared after SELECT
+    
+    Apparently, on t/31insertid.t, there is one test that fails when
+    compiled against libmysqlclient 5.7 or up; issuing a SELECT statement
+    on the same database handle that previously executed an INSERT clears
+    $dbh->{mysql_insertid}, while previously this was retained.
+      (https://rt.cpan.org/Ticket/Display.html?id=108000)
+
+--- a/Changes
++++ b/Changes
+@@ -1,3 +1,10 @@
++2016-08-01 Patrick Galbraith, Michiel Beijen, DBI/DBD community (4.035_01)
++* Apparently, on t/31insertid.t, there is one test that fails when compiled
++  against libmysqlclient 5.7 or up; issuing a SELECT statement on the same
++  database handle that previously executed an INSERT clears
++  $dbh->{mysql_insertid}, while previously this was retained.
++  (https://rt.cpan.org/Ticket/Display.html?id=108000)
++
+ 2016-07-09 Patrick Galbraith, Michiel Beijen, DBI/DBD community (4.035)
+ *  Add DBI back to configure_requires, fix by miyagawa.
+
+diff --git a/lib/DBD/mysql.pm b/lib/DBD/mysql.pm
+index 069e882..4830b9d 100644
+--- a/lib/DBD/mysql.pm
++++ b/lib/DBD/mysql.pm
+@@ -1733,10 +1733,14 @@ have impact on the I<max_length> attribute.
+ 
+ =item mysql_insertid
+ 
+-MySQL has the ability to choose unique key values automatically. If this
+-happened, the new ID will be stored in this attribute. An alternative
+-way for accessing this attribute is via $dbh->{'mysql_insertid'}.
+-(Note we are using the $dbh in this case!)
++If the statement you executed performs an INSERT, and there is an AUTO_INCREMENT
++column in the table you inserted in, this attribute holds the value stored into
++the AUTO_INCREMENT column, if that value is automatically generated, by
++storing NULL or 0 or was specified as an explicit value.
++
++Typically, you'd access the value via $sth->{mysql_insertid}. The value can
++also be accessed via $dbh->{mysql_insertid} but this can easily
++produce incorrect results in case one database handle is shared.
+ 
+ =item mysql_is_blob
+ 
+diff --git a/t/31insertid.t b/t/31insertid.t
+index 18a6d3b..f00c5a4 100644
+--- a/t/31insertid.t
++++ b/t/31insertid.t
+@@ -16,7 +16,7 @@ if ($@) {
+     plan skip_all =>
+         "no database connection";
+ }
+-plan tests => 18;
++plan tests => 19;
+ 
+ ok $dbh->do('SET @@auto_increment_offset = 1');
+ ok $dbh->do('SET @@auto_increment_increment = 1');
+@@ -38,7 +38,8 @@ ok defined $sth;
+ 
+ ok $sth->execute("Jochen");
+ 
+-is $dbh->{'mysql_insertid'}, 1, "insert id == $dbh->{mysql_insertid}";
++is $sth->{mysql_insertid}, 1, "insert id == $sth->{mysql_insertid}";
++is $dbh->{mysql_insertid}, 1, "insert id == $dbh->{mysql_insertid}";
+ 
+ ok $sth->execute("Patrick");
+ 
+@@ -53,12 +54,15 @@ ok ($max_id= $sth2->fetch());
+ 
+ ok defined $max_id;
+ 
+-cmp_ok $sth->{'mysql_insertid'}, '==', $max_id->[0], "sth insert id $sth->{'mysql_insertid'} == max(id) $max_id->[0]  in dbd_mysql_t31";
+-
+-cmp_ok $dbh->{'mysql_insertid'}, '==', $max_id->[0], "dbh insert id $dbh->{'mysql_insertid'} == max(id) $max_id->[0] in dbd_mysql_t31";
++SKIP: {
++  skip 'using libmysqlclient 5.7 or up we now have an empty dbh insertid',
++    1, if $dbh->{mysql_clientversion} >= 50700;
++  cmp_ok $dbh->{mysql_insertid}, '==', $max_id->[0],
++    "dbh insert id $dbh->{'mysql_insertid'} == max(id) $max_id->[0] in dbd_mysql_t31";
++}
++cmp_ok $sth->{mysql_insertid}, '==', $max_id->[0],
++  "sth insert id $sth->{'mysql_insertid'} == max(id) $max_id->[0]  in dbd_mysql_t31";
+ 
+ ok $sth->finish();
+-
+ ok $sth2->finish();
+-
+ ok $dbh->disconnect();
+ 

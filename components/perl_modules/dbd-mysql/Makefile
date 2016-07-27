@@ -62,7 +62,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-MYSQL_VERSION       = 5.6
+MYSQL_VERSION       = 5.7
 MYSQL_BINDIR        = $(USRDIR)/mysql/$(MYSQL_VERSION)/bin
 MYSQL_TEST_USER     = root
 MYSQL_TEST_PASSWORD = new-password
@@ -100,7 +100,7 @@ CONFIGURE_OPTIONS += --libs="$(MYSQL_LIBS) -lCrun"
 #    background task
 
 # If you want to keep mysqld running for your own testing purposes, delete all
-# the lines containing 'kill' in COMPONENT_PRE_TEST_ACTION and
+# the lines containing 'kill' in COMPONENT_PRE_TEST_ACTION and whole
 # COMPONENT_POST_TEST_ACTION. Then run "gmake test" once which will both run
 # the DB and configure the module to use it. After that you can "cd builds/..."
 # and "gmake test" directly there.
@@ -126,26 +126,27 @@ COMPONENT_PRE_TEST_ACTION = ( \
 	TEST_LINK=`mktemp -t dbd-mysql-test.XXXXXX`; \
 	$(RM) "$$TEST_LINK"; \
 	ln -s $(MYSQL_TEST_DATADIR) "$$TEST_LINK"; \
-	echo "$$TEST_LINK" > "$$TEST_LINK"/test_link; \
 	\
 	: "alter the tests to use the path we just created"; \
 	$(PERL) -pi -e "s,('testsocket' => ').*?',\$$1/$$TEST_LINK/socket'," t/mysql.mtest ;\
 	\
 	: "Initialize mysql DB"; \
-	"$(MYSQL_BINDIR)/mysql_install_db" \
-			--keep-my-cnf \
+	"$(MYSQL_BINDIR)/mysqld" \
+			--initialize-insecure \
 			--datadir="$$TEST_LINK" \
 			--basedir=/usr/mysql/$(MYSQL_VERSION) $(SILENT) ; \
+	\
+	echo "$$TEST_LINK" > "$$TEST_LINK"/test_link; \
 	\
 	: "Run the daemon in background. --gdb makes it possible to terminate mysqld via Ctrl+C"; \
 	"$(MYSQL_BINDIR)/mysqld" \
 			$(MYSQLD_VERBOSE) \
 			--skip-networking \
+			-u "$(MYSQL_TEST_USER)"\
 			--datadir="$$TEST_LINK" \
 			--socket="$$TEST_LINK"/socket \
 			--pid-file="$$TEST_LINK"/pid \
 			--gdb \
-			--log-warnings=0 \
 			$(SILENT) & \
 	: "Now wait for the database to be online"; \
 	sleep 10; \
@@ -163,6 +164,13 @@ COMPONENT_PRE_TEST_ACTION = ( \
 			-u "$(MYSQL_TEST_USER)" \
 			password "$(MYSQL_TEST_PASSWORD)" ; \
 	\
+	: "Create a database"; \
+	"$(MYSQL_BINDIR)/mysqladmin" \
+			--socket "$$TEST_LINK"/socket \
+			-u "$(MYSQL_TEST_USER)" \
+			--password="$(MYSQL_TEST_PASSWORD)" \
+			create test; \
+	\
 	: "Run job which will kill mysqld in 10 minutes"; \
 	( $(SET_X) PID=`cat "$$TEST_LINK"/pid`; sleep 600; ps -p $$PID && kill $$PID || : ) $(SILENT) & \
 	echo $$! > "$$TEST_LINK"/pid_of_guard; \
@@ -177,6 +185,6 @@ COMPONENT_POST_TEST_ACTION = ( \
 $(LICENSE): $(LICENSE).template
 	$(PERL) -pe 's/COMPONENT_VERSION/$(COMPONENT_VERSION)/g' "$<" > "$@"
 
-REQUIRED_PACKAGES += database/mysql-56/library
+REQUIRED_PACKAGES += database/mysql-57/library
 REQUIRED_PACKAGES += library/perl-5/database
 REQUIRED_PACKAGES += system/library/c++-runtime
