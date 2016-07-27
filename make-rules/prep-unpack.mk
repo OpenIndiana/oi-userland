@@ -34,7 +34,7 @@ PCK_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
 define unpack-rules
 ifdef COMPONENT_ARCHIVE$(1)
 ifdef COMPONENT_SRC$(1)
-
+$(if $$(COMPONENT_SRC$(1)),
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
 
@@ -57,6 +57,7 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zip
 REQUIRED_PACKAGES += developer/java/jdk
 REQUIRED_PACKAGES += runtime/ruby
+)
 
 endif
 endif
