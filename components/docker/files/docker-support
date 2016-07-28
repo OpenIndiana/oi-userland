@@ -97,6 +97,9 @@ def create_base_image(args):
             ["/usr/bin/docker", "tag", tag, "solaris:latest"]).run()
     except Exception as err:
         raise SystemExit("Failed image build: %s" % err)
+
+    assert os.path.exists("rootfs.tar.gz")
+    os.unlink("rootfs.tar.gz")
     print "Build complete."
 
 
