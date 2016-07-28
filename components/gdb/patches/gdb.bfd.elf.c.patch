@@ -1,5 +1,8 @@
---- gdb-7.11-orig/bfd/elf.c	Tue Feb  9 19:19:39 2016
-+++ gdb-7.11/bfd/elf.c	Tue Jun  7 14:34:18 2016
+# Solaris-specific ELF information.
+# Will contribute upstream if possible.
+
+--- gdb-7.11-orig/bfd/elf.c	2016-02-09 19:19:39.000000000 -0800
++++ gdb-7.11/bfd/elf.c	2016-07-25 23:22:10.564146882 -0700
 @@ -8654,7 +8654,10 @@
  static bfd_boolean
  elfcore_grok_prfpreg (bfd *abfd, Elf_Internal_Note *note)
@@ -48,7 +51,7 @@
  #endif
  
      case NT_FPREGSET:		/* FIXME: rename to NT_PRFPREG */
-@@ -9483,7 +9487,298 @@
+@@ -9483,6 +9487,297 @@
    return TRUE;
  }
  
@@ -58,7 +61,7 @@
 +#include <sys/regset.h>
 +#include <sys/auxv.h>
 +
- static bfd_boolean
++static bfd_boolean
 +elfcore_grok_solaris_note (bfd *abfd, Elf_Internal_Note *note)
 +{
 +  asection *sect;
@@ -216,7 +219,7 @@
 +          {
 +            if ((_bfd_elfcore_make_pseudosection (abfd, ".reg",
 +                    prgregset_size,
-+                    note->descpos + 356)) != TRUE)
++                    note->descpos + 344)) != TRUE)
 +              return FALSE;
 +          }
 +          sect = bfd_get_section_by_name (abfd, reg2_section_name);
@@ -274,7 +277,7 @@
 +          {
 +            if ((_bfd_elfcore_make_pseudosection (abfd, ".reg",
 +                    prgregset_size,
-+                    note->descpos + 356)) != TRUE)
++                    note->descpos + 344)) != TRUE)
 +              return FALSE;
 +          }
 +          sect = bfd_get_section_by_name (abfd, reg2_section_name);
@@ -343,10 +346,9 @@
 +  return TRUE;
 +}
 +
-+static bfd_boolean
+ static bfd_boolean
  elfcore_grok_openbsd_note (bfd *abfd, Elf_Internal_Note *note)
  {
-   if (note->type == NT_OPENBSD_PROCINFO)
 @@ -10282,7 +10577,12 @@
  	      GROKER_ELEMENT ("NetBSD-CORE", elfcore_grok_netbsd_note),
  	      GROKER_ELEMENT ( "OpenBSD", elfcore_grok_openbsd_note),
@@ -354,7 +356,7 @@
 -	      GROKER_ELEMENT ("SPU/", elfcore_grok_spu_note)
 +	      GROKER_ELEMENT ("SPU/", elfcore_grok_spu_note),
 +#ifdef SOLARIS
-+	      GROKER_ELEMENT ("CORE", elfcore_grok_solaris_note),
++	      GROKER_ELEMENT ("CORE", elfcore_grok_solaris_note)
 +#else
 +	      GROKER_ELEMENT ("CORE", elfcore_grok_note)
 +#endif
