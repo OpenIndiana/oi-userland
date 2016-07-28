@@ -18,7 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-desktop
 COMPONENT_VERSION=	1.14.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
