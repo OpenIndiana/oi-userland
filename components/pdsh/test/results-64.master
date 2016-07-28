@@ -1,0 +1,150 @@
+*** t0001-basic.sh ***
+ok 1 - working success
+not ok 2 - pretend known breakage # TODO known breakage
+ok 3 - pretend we have fixed a known breakage (run in sub test-lib)
+ok 4 - test runs if prerequisite is satisfied
+ok 5 - tests clean up after themselves
+ok 6 - tests clean up even on failures
+ok 7 - pdsh runs
+ok 8 - pdsh -V works
+ok 9 - pdsh -L works
+ok 10 - pdsh -h works
+ok 11 - rcmd/exec module is built
+ok 12 - pdsh -N option works
+ok 13 # skip -u option is functional (missing LONGTESTS)
+ok 14 - -f sets fanout
+ok 15 - -l sets remote username
+ok 16 - too long username fails gracefully
+ok 17 - -t sets connect timeout
+ok 18 - -u sets command timeout
+ok 19 - command timeout 0 by default
+ok 20 - -b enables batch mode
+ok 21 - pdsh -N option works
+# still have 1 known breakage(s)
+# passed all remaining 20 test(s)
+*** t0002-internal.sh ***
+ok 1 - working xstrerrorcat
+ok 2 - working pipecmd
+# passed all 2 test(s)
+*** t0003-wcoll.sh ***
+ok 1 - hostname range expansion works
+ok 2 - host range expansion does not strip leading zeros
+ok 3 - host range expansion handles mixed size suffixes
+ok 4 - host range expansion works with "," embedded in range
+ok 5 - host range expansion works with 2 sets of brackets
+ok 6 - pdsh -x option works
+ok 7 - pdsh -x option works with ranges
+ok 8 - pdsh -x option works with ranges (gnats:118)
+ok 9 - pdsh -x option works with non-numeric suffix (gnats:120)
+ok 10 - pdsh -w- reads from stdin
+ok 11 - pdsh -w- can be used with other -w args
+ok 12 - WCOLL environment variable works
+ok 13 - ranges can be embedded in wcoll files
+ok 14 - ^file works
+ok 15 - -x ^file works
+ok 16 - ^file works with other args
+ok 17 - Multiple ^file args
+ok 18 - Multiple -w^file
+ok 19 - -^file excludes hosts in file
+ok 20 - ^file errors out if file doesnt exist
+ok 21 - host exclusion with "-" works
+ok 22 - regex filtering works
+ok 23 - regex exclusion works
+ok 24 - regex exclusion works from -x
+ok 25 - multiple -w options
+ok 26 - wcoll files support #include syntax
+ok 27 - wcoll #include syntax searches dirname of orignal file
+ok 28 - wcoll #include syntax ignores malformed lines
+ok 29 - wcoll match #include exactly
+ok 30 - wcoll: #include alone fails
+# passed all 30 test(s)
+*** t0004-module-loading.sh ***
+ok 1 - PDSH_MODULE_DIR functionality
+ok 2 - module A takes precedence over B
+ok 3 - pdsh -M B ativates module B
+ok 4 - PDSH_MISC_MODULES option works
+ok 5 - -M option overrides PDSH_MISC_MODULES environment var
+not ok - 6 pdsh help string correctly displays options of loaded modules
+ok 7 - Loading conflicting module with -M causes error
+not ok - 8 Conflicting modules dont run init()
+ok 9 - Force loaded module runs init()
+ok 10 - New conflicting module does not run init() with -M
+# failed 2 among 10 test(s)
+*** t0005-rcmd_type-and-user.sh ***
+ok 1 - pdsh -l sets username for all hosts
+ok 2 - Can set remote username via user@hosts
+ok 3 - user@hosts works for a subset of hosts
+ok 4 - Can set rcmd_type via rcmd_type:hosts
+ok 5 - Can set rcmd_type and user via rcmd_type:user@hosts
+# passed all 5 test(s)
+*** t0006-pdcp.sh ***
+ok 1 - Creating pdcp link to pdsh binary
+ok 2 - Creating rpdcp link to pdsh binary
+ok 3 - pdcp runs
+ok 4 - rpdcp runs
+ok 5 - pdcp -V works
+ok 6 - pdcp -q works
+ok 7 - -e sets remote program path
+ok 8 - PDSH_REMOTE_PDCP_PATH sets remote program path
+ok 9 - -f sets fanout
+ok 10 - -l sets remote username
+ok 11 - -t sets connect timeout
+ok 12 - -u sets command timeout
+ok 13 - command timeout 0 by default
+ok 14 - Have pcptest rcmd module
+ok 15 - pdcp basic functionality
+ok 16 - rpdcp basic functionality
+ok 17 - initialize directory tree
+ok 18 - pdcp -r works
+ok 19 - rpdcp -r works
+# passed all 19 test(s)
+*** t1001-genders.sh ***
+# passed all 0 test(s)
+*** t1002-dshgroup.sh ***
+# passed all 0 test(s)
+*** t1003-slurm.sh ***
+# passed all 0 test(s)
+*** t2000-exec.sh ***
+ok 1 - exec module works
+ok 2 - exec cmd substitution works 
+ok 3 - exec module works in interactive mode
+ok 4 - exec cmd susbstitution works interactive mode
+# passed all 4 test(s)
+*** t2001-ssh.sh ***
+# passed all 0 test(s)
+*** t2002-mrsh.sh ***
+# passed all 0 test(s)
+*** t5000-dshbak.sh ***
+ok 1 - dshbak functionality
+ok 2 - dshbak -c does not coalesce different length output
+ok 3 - dshbak -c properly compresses multi-digit suffixes
+ok 4 - dshbak -c properly compresses prefix with embedded numerals
+ok 5 - dshbak -c does not strip leading zeros
+ok 6 - dshbak -c does not coalesce different zero padding
+ok 7 - dshbak -c properly coalesces zero padding of "00"
+ok 8 - dshbak -c can detect suffixes
+not ok 9 - dshbak -c can detect suffix with numeral # TODO known breakage
+ok 10 - issue 19: missing commas in dshbak header output
+ok 11 - dshbak properly joins 9,10
+ok 12 - issue 33: dshbak does not coalesce 09,10
+ok 13 - issue 33: dshbak does not coalesce 099,100
+ok 14 - dshbak -d functionality
+ok 15 - dshbak -f functionality
+ok 16 - dshbak -f without -d fails
+ok 17 - dshbak -d fails when output dir does not exist
+ok 18 - dshbak -d fails gracefully for non-writable dir
+# still have 1 known breakage(s)
+# passed all remaining 17 test(s)
+*** t6036-long-output-lines.sh ***
+ok 1 - pdsh does not truncate very long lines
+ok 2 - pdsh does not truncate even longer lines
+# passed all 2 test(s)
+pdsh test suite complete.
+106/112 tests passed.
+2 broken tests failed as expected.
+2 tests failed.
+1 test skipped.
+FAIL: runtests.sh
+===================
+1 of 1 tests failed
+===================

@@ -1,0 +1,90 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/libgenders@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="genders - a static cluster configuration database"
+set name=pkg.description \
+    value="Genders is a static cluster configuration database used for cluster configuration management. It is used by a variety of tools and scripts for management of large clusters."
+set name=com.oracle.info.description \
+    value="the genders static cluster configuration database"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/379
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/nodeattr
+file path=usr/include/genders.h
+link path=usr/lib/$(MACH64)/libgenders.so target=libgenders.so.0.3.2
+link path=usr/lib/$(MACH64)/libgenders.so.0 target=libgenders.so.0.3.2
+file path=usr/lib/$(MACH64)/libgenders.so.0.3.2
+file path=usr/lib/genders/gendlib.pl
+file path=usr/lib/genders/hostlist.pl
+link path=usr/lib/libgenders.so target=libgenders.so.0.3.2
+link path=usr/lib/libgenders.so.0 target=libgenders.so.0.3.2
+file path=usr/lib/libgenders.so.0.3.2
+file path=usr/share/man/man1/nodeattr.1
+file path=usr/share/man/man3/genders.3
+file path=usr/share/man/man3/genders_attrlist_clear.3
+file path=usr/share/man/man3/genders_attrlist_create.3
+file path=usr/share/man/man3/genders_attrlist_destroy.3
+file path=usr/share/man/man3/genders_errnum.3
+file path=usr/share/man/man3/genders_errormsg.3
+file path=usr/share/man/man3/genders_getattr.3
+file path=usr/share/man/man3/genders_getattr_all.3
+file path=usr/share/man/man3/genders_getmaxattrlen.3
+file path=usr/share/man/man3/genders_getmaxattrs.3
+file path=usr/share/man/man3/genders_getmaxnodelen.3
+file path=usr/share/man/man3/genders_getmaxvallen.3
+file path=usr/share/man/man3/genders_getnodename.3
+file path=usr/share/man/man3/genders_getnodes.3
+file path=usr/share/man/man3/genders_getnumattrs.3
+file path=usr/share/man/man3/genders_getnumnodes.3
+file path=usr/share/man/man3/genders_handle_create.3
+file path=usr/share/man/man3/genders_handle_destroy.3
+file path=usr/share/man/man3/genders_index_attrvals.3
+file path=usr/share/man/man3/genders_isattr.3
+file path=usr/share/man/man3/genders_isattrval.3
+file path=usr/share/man/man3/genders_isnode.3
+file path=usr/share/man/man3/genders_load_data.3
+file path=usr/share/man/man3/genders_nodelist_clear.3
+file path=usr/share/man/man3/genders_nodelist_create.3
+file path=usr/share/man/man3/genders_nodelist_destroy.3
+file path=usr/share/man/man3/genders_parse.3
+file path=usr/share/man/man3/genders_perror.3
+file path=usr/share/man/man3/genders_query.3
+file path=usr/share/man/man3/genders_strerror.3
+file path=usr/share/man/man3/genders_testattr.3
+file path=usr/share/man/man3/genders_testattrval.3
+file path=usr/share/man/man3/genders_testquery.3
+file path=usr/share/man/man3/genders_vallist_clear.3
+file path=usr/share/man/man3/genders_vallist_create.3
+file path=usr/share/man/man3/genders_vallist_destroy.3
+file path=usr/share/man/man3/gendlib.3
+file path=usr/share/man/man3/libgenders.3
+license COPYING license=GPLv2
