@@ -1,0 +1,79 @@
+# Source: Internal
+# Info: Written internally so this component can run its test suite on Solaris.
+# Status: This patch is offered at https://bugs.launchpad.net/ubuntu/+source/sbsigntool/+bug/1588548
+
+--- ORIGINAL/tests/Makefile.am	2016-06-21 12:11:28.281340828 -0700
++++ sbsigntool-0.6/tests/Makefile.am	2016-06-21 12:18:30.209083024 -0700
+@@ -1,33 +1,60 @@
+ 
+ AUTOMAKE_OPTIONS = parallel-tests
+ 
++if SUN_OS
++  CCLD = /usr/gnu/bin/ld
++  LINK = $(CCLD) $(AM_CFLAGS) -I. -I/usr/gnu/include -I/usr/include/ -I/usr/include/efi/x86_64 -I/usr/include/efi/ -melf_x86_64_sol2 $(AM_LDFLAGS) $(LDFLAGS) -o $@
++endif
++
+ test_key = private-key.rsa
+ test_cert = public-cert.pem
+-test_arches = x86_64 i386
+-test_images = test-x86_64.pecoff test-i386.pecoff
+ 
+-check_PROGRAMS = test-x86_64.pecoff test-i386.pecoff
++if SUN_OS
++  test_arches = x86_64
++  test_images = test-x86_64.pecoff
++  check_PROGRAMS = test-x86_64.pecoff
++  test_x86_64_pecoff_SOURCES = test.S test-x86_64_sol2.lds
++else
++  test_arches = x86_64 i386
++  test_images = test-x86_64.pecoff test-i386.pecoff
++  check_PROGRAMS = test-x86_64.pecoff test-i386.pecoff
++  test_i386_pecoff_SOURCES = test.S test-i386.lds
++  test_x86_64_pecoff_SOURCES = test.S test-x86_64.lds
++endif
++
+ check_DATA = $(test_key) $(test_cert)
+ check_SCRIPTS = test-wrapper.sh
+ 
+-test_i386_pecoff_SOURCES = test.S test-i386.lds
+-test_x86_64_pecoff_SOURCES = test.S test-x86_64.lds
+-
+-test-%.pecoff: test-%.elf
++if SUN_OS
++  test-%.pecoff: test-%.elf
++	$(OBJCOPY) -j .text -j .sdata -j .data \
++		-j .dynamic -j .dynsym  -j .rel \
++		-j .rela -j .reloc \
++		--target=efi-app-$(test_image_arch) $^ $@
++else
++  test-%.pecoff: test-%.elf
+ 	$(OBJCOPY) -j .text -j .sdata -j .data \
+ 		-j .dynamic -j .dynsym  -j .rel \
+ 		-j .rela -j .reloc \
+ 		--target=efi-app-$(test_image_arch) $^ $@
+ 	$(STRIP) $@
++endif
+ 
+ test-x86_64.pecoff: test_image_arch = x86-64
+-test-x86_64.pecoff: test_lds = $(srcdir)/test-x86_64.lds
++if SUN_OS
++  test-x86_64.pecoff: test_lds = $(srcdir)/test-x86_64_sol2.lds
++else
++  test-x86_64.pecoff: test_lds = $(srcdir)/test-x86_64.lds
++endif
+ test-x86_64.pecoff: ASFLAGS += -m64
+ test-x86_64.pecoff: LDFLAGS += -m64
+-test-i386.pecoff: test_image_arch = i386
+-test-i386.pecoff: test_lds = $(srcdir)/test-i386.lds
+-test-i386.pecoff: ASFLAGS += -m32
+-test-i386.pecoff: LDFLAGS += -m32
++
++if !SUN_OS
++  test-i386.pecoff: test_image_arch = i386
++  test-i386.pecoff: test_lds = $(srcdir)/test-i386.lds
++  test-i386.pecoff: ASFLAGS += -m32
++  test-i386.pecoff: LDFLAGS += -m32
++endif
+ 
+ test-%.elf: LDFLAGS = -nostdlib -T $(test_lds)
+ test-%.elf: test-%.$(OBJEXT) $(test_lds)

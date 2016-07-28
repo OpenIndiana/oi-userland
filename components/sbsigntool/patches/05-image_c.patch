@@ -1,0 +1,25 @@
+# Source: Internal
+# Info: Written internally to initialize buffer size and check buffer size 
+# before freeing allocation. 
+# Status: This patch is offered at https://bugs.launchpad.net/ubuntu/+source/sbsigntool/+bug/1588548
+
+--- ORIGINAL/src/image.c	2016-06-14 16:11:33.636416993 -0700
++++ sbsigntool-0.6/src/image.c	2016-06-14 17:21:43.051988811 -0700
+@@ -406,6 +406,7 @@
+ 		goto err;
+ 
+ reparse:
++	image->sigsize = 0;
+ 	rc = image_pecoff_parse(image);
+ 	if (rc)
+ 		goto err;
+@@ -478,7 +479,8 @@
+ 	/* we only support one signature at present */
+ 	if (image->sigbuf) {
+ 		fprintf(stderr, "warning: overwriting existing signature\n");
+-		talloc_free(image->sigbuf);
++		if ((int)image->sigsize > 0)
++			talloc_free(image->sigbuf);
+ 	}
+ 	image->sigbuf = sig;
+ 	image->sigsize = size;

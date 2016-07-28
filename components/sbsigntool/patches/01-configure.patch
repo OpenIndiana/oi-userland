@@ -1,0 +1,69 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://bugs.launchpad.net/ubuntu/+source/sbsigntool/+bug/1588548
+
+--- ORIGINAL/configure.ac	2016-06-13 16:45:35.871026417 -0700
++++ sbsigntool-0.6/configure.ac	2016-06-14 15:53:07.450239957 -0700
+@@ -27,25 +27,46 @@
+   HELP2MAN=:
+ fi
+ 
++OS=$(uname -s)
++AM_CONDITIONAL([SUN_OS], [test "$OS" = "SunOS"])
+ AC_MSG_CHECKING([build system endianness])
+-AC_PREPROC_IFELSE(
+-  [AC_LANG_PROGRAM([[#include <endian.h>]],
+-		   [[#if __BYTE_ORDER != __LITTLE_ENDIAN]]
+-		   [[#error]]
+-		   [[#endif]])],
+-  endian=little
+-  little_endian=1
+-  big_endian=0)
++if test "$OS" = "SunOS"; then
++  AC_PREPROC_IFELSE(
++    [AC_LANG_PROGRAM([[#include <sys/isa_defs.h>]],
++		     [[#if __BYTE_ORDER != __LITTLE_ENDIAN]]
++		     [[#error]]
++		     [[#endif]])],
++    endian=little
++    little_endian=1
++    big_endian=0)
+ 
+-AC_PREPROC_IFELSE(
+-  [AC_LANG_PROGRAM([[#include <endian.h>]],
+-		   [[#if __BYTE_ORDER != __BIG_ENDIAN]]
+-		   [[#error]]
+-		   [[#endif]])],
+-  endian=big
+-  little_endian=0
+-  big_endian=1)
++  AC_PREPROC_IFELSE(
++    [AC_LANG_PROGRAM([[#include <sys/isa_defs.h>]],
++		     [[#if __BYTE_ORDER != __BIG_ENDIAN]]
++		     [[#error]]
++		     [[#endif]])],
++    endian=big
++    little_endian=0
++    big_endian=1)
++else
++  AC_PREPROC_IFELSE(
++    [AC_LANG_PROGRAM([[#include <endian.h>]],
++		     [[#if __BYTE_ORDER != __LITTLE_ENDIAN]]
++		     [[#error]]
++		     [[#endif]])],
++    endian=little
++    little_endian=1
++    big_endian=0)
+ 
++  AC_PREPROC_IFELSE(
++    [AC_LANG_PROGRAM([[#include <endian.h>]],
++		     [[#if __BYTE_ORDER != __BIG_ENDIAN]]
++		     [[#error]]
++		     [[#endif]])],
++    endian=big
++    little_endian=0
++    big_endian=1)
++fi
+ 
+ if test x"$endian" != "xbig" -a x"$endian" != "xlittle"; then
+   AC_MSG_ERROR([Can't determine endianness; is endian.h present?])

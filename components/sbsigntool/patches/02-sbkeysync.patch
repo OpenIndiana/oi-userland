@@ -1,0 +1,26 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://bugs.launchpad.net/ubuntu/+source/sbsigntool/+bug/1588548
+
+--- ORIGINAL/src/sbkeysync.c	2016-06-13 19:05:34.431247789 -0700
++++ sbsigntool-0.6/src/sbkeysync.c	2016-06-14 15:31:58.604039546 -0700
+@@ -529,11 +529,19 @@
+ 	struct statfs statbuf;
+ 	int rc;
+ 
++#ifndef __sun
+ 	rc = statfs(mountpoint, &statbuf);
++#else
++	rc = statfs(mountpoint, &statbuf, 0, 0);
++#endif
+ 	if (rc)
+ 		return -1;
+ 
++#ifndef __sun
+ 	if (statbuf.f_type != EFIVARS_FSTYPE)
++#else
++	if (statbuf.f_fstyp != EFIVARS_FSTYPE)
++#endif
+ 		return -1;
+ 
+ 	return 0;
