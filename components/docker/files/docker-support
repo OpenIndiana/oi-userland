@@ -44,7 +44,8 @@ def docker_is_online():
 
 def get_os_version():
     try:
-        output = DockerSupportCmd(['/usr/bin/pkg', 'info', 'entire']).run()
+        output = DockerSupportCmd(['/usr/bin/pkg', 'info', '-r',
+            'osnet/osnet-incorporation']).run()
         for line in map(str.strip, output.splitlines()):
             if line.startswith("Branch"):
                 return line.split(":")[1].strip()
