@@ -1,0 +1,131 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# Various cleanup fixes.
+# 3.9.X upstream.
+--- tools/clang/tools/driver/driver.cpp	2016-01-25 12:35:13.000000000 -0800
++++ tools/clang/tools/driver/driver.cpp	2016-05-11 18:39:13.438899360 -0700
+@@ -48,6 +48,8 @@
+ #include "llvm/Support/TargetSelect.h"
+ #include "llvm/Support/Timer.h"
+ #include "llvm/Support/raw_ostream.h"
++
++#include <vector>
+ #include <memory>
+ #include <system_error>
+ using namespace clang;
+@@ -97,7 +99,7 @@
+ /// \param Edit - The override command to perform.
+ /// \param SavedStrings - Set to use for storing string representations.
+ static void ApplyOneQAOverride(raw_ostream &OS,
+-                               SmallVectorImpl<const char*> &Args,
++                               std::vector<const char*> &Args,
+                                StringRef Edit,
+                                std::set<std::string> &SavedStrings) {
+   // This does not need to be efficient.
+@@ -169,7 +171,7 @@
+ 
+ /// ApplyQAOverride - Apply a comma separate list of edits to the
+ /// input argument lists. See ApplyOneQAOverride.
+-static void ApplyQAOverride(SmallVectorImpl<const char*> &Args,
++static void ApplyQAOverride(std::vector<const char*> &Args,
+                             const char *OverrideStr,
+                             std::set<std::string> &SavedStrings) {
+   raw_ostream *OS = &llvm::errs();
+@@ -202,7 +204,7 @@
+                       void *MainAddr);
+ 
+ static void insertTargetAndModeArgs(StringRef Target, StringRef Mode,
+-                                    SmallVectorImpl<const char *> &ArgVector,
++                                    std::vector<const char *> &ArgVector,
+                                     std::set<std::string> &SavedStrings) {
+   if (!Mode.empty()) {
+     // Add the mode flag to the arguments.
+@@ -222,7 +224,7 @@
+ }
+ 
+ static void getCLEnvVarOptions(std::string &EnvValue, llvm::StringSaver &Saver,
+-                               SmallVectorImpl<const char *> &Opts) {
++                               std::vector<const char *> &Opts) {
+   llvm::cl::TokenizeWindowsCommandLine(EnvValue, Saver, Opts);
+   // The first instance of '#' should be replaced with '=' in each option.
+   for (const char *Opt : Opts)
+@@ -260,12 +262,15 @@
+ // This lets us create the DiagnosticsEngine with a properly-filled-out
+ // DiagnosticOptions instance.
+ static DiagnosticOptions *
+-CreateAndPopulateDiagOpts(ArrayRef<const char *> argv) {
+-  auto *DiagOpts = new DiagnosticOptions;
++CreateAndPopulateDiagOpts(std::vector<const char *> &Argv) {
++  auto *DiagOpts = new DiagnosticOptions();
+   std::unique_ptr<OptTable> Opts(createDriverOptTable());
+-  unsigned MissingArgIndex, MissingArgCount;
++  unsigned MissingArgIndex = 0U;
++  unsigned MissingArgCount = 0U;
++  llvm::ArrayRef<const char*> AAR(Argv.data(), Argv.size());
+   InputArgList Args =
+-      Opts->ParseArgs(argv.slice(1), MissingArgIndex, MissingArgCount);
++    Opts->ParseArgs(AAR.slice(1), MissingArgIndex, MissingArgCount);
++
+   // We ignore MissingArgCount and the return value of ParseDiagnosticArgs.
+   // Any errors that would be diagnosed here will also be diagnosed later,
+   // when the DiagnosticsEngine actually exists.
+@@ -273,12 +278,12 @@
+   return DiagOpts;
+ }
+ 
+-static void SetInstallDir(SmallVectorImpl<const char *> &argv,
++static void SetInstallDir(std::vector<const char *> &argv,
+                           Driver &TheDriver, bool CanonicalPrefixes) {
+   // Attempt to find the original path used to invoke the driver, to determine
+   // the installed path. We do this manually, because we want to support that
+   // path being a symlink.
+-  SmallString<128> InstalledPath(argv[0]);
++  SmallString<PATH_MAX> InstalledPath(argv[0]);
+ 
+   // Do a PATH lookup, if there are no directory components.
+   if (llvm::sys::path::filename(InstalledPath) == InstalledPath)
+@@ -314,10 +319,9 @@
+   if (llvm::sys::Process::FixupStandardFileDescriptors())
+     return 1;
+ 
+-  SmallVector<const char *, 256> argv;
+-  llvm::SpecificBumpPtrAllocator<char> ArgAllocator;
+-  std::error_code EC = llvm::sys::Process::GetArgumentVector(
+-      argv, llvm::makeArrayRef(argv_, argc_), ArgAllocator);
++  std::vector<const char *> argv;
++  llvm::ArrayRef<const char*> AAR = llvm::makeArrayRef(argv_, argc_);
++  std::error_code EC = llvm::sys::Process::GetArgumentVector(argv, AAR);
+   if (EC) {
+     llvm::errs() << "error: couldn't get arguments: " << EC.message() << '\n';
+     return 1;
+@@ -383,7 +387,7 @@
+     // Arguments in "CL" are prepended.
+     llvm::Optional<std::string> OptCL = llvm::sys::Process::GetEnv("CL");
+     if (OptCL.hasValue()) {
+-      SmallVector<const char *, 8> PrependedOpts;
++      std::vector<const char*> PrependedOpts;
+       getCLEnvVarOptions(OptCL.getValue(), Saver, PrependedOpts);
+ 
+       // Insert right after the program name to prepend to the argument list.
+@@ -392,11 +396,11 @@
+     // Arguments in "_CL_" are appended.
+     llvm::Optional<std::string> Opt_CL_ = llvm::sys::Process::GetEnv("_CL_");
+     if (Opt_CL_.hasValue()) {
+-      SmallVector<const char *, 8> AppendedOpts;
++      std::vector<const char*> AppendedOpts;
+       getCLEnvVarOptions(Opt_CL_.getValue(), Saver, AppendedOpts);
+ 
+       // Insert at the end of the argument list to append.
+-      argv.append(AppendedOpts.begin(), AppendedOpts.end());
++      argv.insert(argv.end(), AppendedOpts.begin(), AppendedOpts.end());
+     }
+   }
+ 
+@@ -441,7 +445,7 @@
+ 
+   std::unique_ptr<Compilation> C(TheDriver.BuildCompilation(argv));
+   int Res = 0;
+-  SmallVector<std::pair<int, const Command *>, 4> FailingCommands;
++  SmallVector<std::pair<int, const Command *>, 8> FailingCommands;
+   if (C.get())
+     Res = TheDriver.ExecuteCompilation(*C, FailingCommands);
+ 

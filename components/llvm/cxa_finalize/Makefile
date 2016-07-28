@@ -22,12 +22,10 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+export PARFAIT_BUILD=no
 COMPILER= gcc
-include ../../../make-rules/shared-macros.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_DIR := $(shell pwd)/..
 
@@ -38,10 +36,17 @@ COMPONENT_PRE_BUILD_ACTION = \
 OBJECTS = cxa_finalize-32.o cxa_finalize-64.o \
 	  cxa_finalize_pic-32.o cxa_finalize_pic-64.o
 
-include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/common.mk
+
+GCC_VERSION := 4.9
+
+# We need GCC version 4.9, and not another version.
+CC=/usr/gcc/$(GCC_VERSION)/bin/gcc
+CXX=/usr/gcc/$(GCC_VERSION)/bin/g++
 
 RELEASE_LIST=Debug+Asserts+Checks Debug+Asserts Debug Release+Debug Release Unoptimized
 
+# Keep CFLAGS simple and generic.
 CFLAGS = -g -O2 -std=c99 -Wall -Wextra -Wcast-align
 ARCH = $(shell uname -p)
 
@@ -50,7 +55,7 @@ ifeq ($(ARCH),sparc)
 endif
 
 ifeq ($(ARCH),i386)
-  CFLAGS += -mtune=opteron -march=opteron
+  CFLAGS += -mtune=opteron -march=opteron -mno-sse3 -mno-ssse3
 endif
 
 all:: $(OBJECTS)

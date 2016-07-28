@@ -1,0 +1,2506 @@
+# 23701635 clang produces amd64 opcodes, but calls 32-bit assembler by default
+# 23854357 clang should check for GNU ld
+# 22778650 clang should support OpenMP because it can
+# 24314745 clang should support PIE executables in Solaris
+# 3.9.X for upstream.
+--- tools/clang/include/clang/Driver/Options.td	2016-01-06 16:27:42.000000000 -0500
++++ tools/clang/include/clang/Driver/Options.td	2016-05-08 23:19:20.553431263 -0400
+@@ -669,6 +669,9 @@
+   Flags<[CC1Option]>, HelpText<"Form fused FP ops (e.g. FMAs): fast (everywhere)"
+   " | on (according to FP_CONTRACT pragma, default) | off (never fuse)">;
+ 
++def fabi_version_EQ : Joined<["-"], "fabi-version=">, Group<f_Group>,
++  Flags<[CC1Option]>, HelpText<"Use specified GNU C++ ABI version">;
++
+ def ffor_scope : Flag<["-"], "ffor-scope">, Group<f_Group>;
+ def fno_for_scope : Flag<["-"], "fno-for-scope">, Group<f_Group>;
+ 
+@@ -1312,6 +1315,12 @@
+ def meabi : Separate<["-"], "meabi">, Group<m_Group>, Flags<[CC1Option]>,
+   HelpText<"Set EABI type, e.g. 4, 5 or gnu (default depends on triple)">;
+ 
++// SPARC-only options.
++def mvis : Flag<["-"], "mvis">, Group<m_Group>;
++def mvis2 : Flag<["-"], "mvis2">, Group<m_Group>;
++def mvis3 : Flag<["-"], "mvis3">, Group<m_Group>;
++def mimpure_text: Flag<["-"], "mimpure-text">, Group<m_Group>;
++
+ def mmmx : Flag<["-"], "mmmx">, Group<m_x86_Features_Group>;
+ def mno_3dnowa : Flag<["-"], "mno-3dnowa">, Group<m_x86_Features_Group>;
+ def mno_3dnow : Flag<["-"], "mno-3dnow">, Group<m_x86_Features_Group>;
+@@ -1954,6 +1963,7 @@
+ 
+ def fprofile_dir : Joined<["-"], "fprofile-dir=">, Group<clang_ignored_gcc_optimization_f_Group>;
+ 
++def fuse_as_EQ : Joined<["-"], "fuse-as=">, Group<f_Group>;
+ def fuse_ld_EQ : Joined<["-"], "fuse-ld=">, Group<f_Group>;
+ 
+ defm align_functions : BooleanFFlag<"align-functions">, Group<clang_ignored_gcc_optimization_f_Group>;
+###
+--- tools/clang/lib/Driver/Multilib.cpp	2015-10-12 10:32:57.000000000 -0400
++++ tools/clang/lib/Driver/Multilib.cpp	2016-05-08 23:19:20.569431652 -0400
+@@ -171,11 +171,11 @@
+ }
+ 
+ static Multilib compose(const Multilib &Base, const Multilib &New) {
+-  SmallString<128> GCCSuffix;
++  SmallString<PATH_MAX> GCCSuffix;
+   llvm::sys::path::append(GCCSuffix, "/", Base.gccSuffix(), New.gccSuffix());
+-  SmallString<128> OSSuffix;
++  SmallString<PATH_MAX> OSSuffix;
+   llvm::sys::path::append(OSSuffix, "/", Base.osSuffix(), New.osSuffix());
+-  SmallString<128> IncludeSuffix;
++  SmallString<PATH_MAX> IncludeSuffix;
+   llvm::sys::path::append(IncludeSuffix, "/", Base.includeSuffix(),
+                           New.includeSuffix());
+ 
+###
+--- tools/clang/lib/Driver/ToolChains.cpp	2016-02-16 10:56:48.000000000 -0900
++++ tools/clang/lib/Driver/ToolChains.cpp	2016-06-30 09:27:01.031173505 -0800
+@@ -28,12 +28,15 @@
+ #include "llvm/ProfileData/InstrProf.h"
+ #include "llvm/Support/ErrorHandling.h"
+ #include "llvm/Support/FileSystem.h"
++#include "llvm/Support/Host.h"
+ #include "llvm/Support/MemoryBuffer.h"
+ #include "llvm/Support/Path.h"
+ #include "llvm/Support/Program.h"
+ #include "llvm/Support/TargetParser.h"
+ #include "llvm/Support/raw_ostream.h"
+ #include <cstdlib> // ::getenv
++#include <cstring>
++#include <cctype>
+ #include <system_error>
+ 
+ using namespace clang::driver;
+@@ -41,6 +44,15 @@
+ using namespace clang;
+ using namespace llvm::opt;
+ 
++#if defined(LLVM_ON_UNIX)
++#include <cstring>
++#include <cctype>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <dirent.h>
++#include <unistd.h>
++#endif
++
+ MachO::MachO(const Driver &D, const llvm::Triple &Triple, const ArgList &Args)
+     : ToolChain(D, Triple, Args) {
+   // We expect 'as', 'ld', etc. to be adjacent to our install dir.
+@@ -1347,6 +1359,11 @@
+     // If we have a SysRoot, try that first.
+     if (!D.SysRoot.empty()) {
+       Prefixes.push_back(D.SysRoot);
++
++      // Add Solaris-specific GCC locations.
++      if (TargetTriple.getOS() == llvm::Triple::Solaris)
++        Prefixes.push_back("/usr/gcc");
++
+       Prefixes.push_back(D.SysRoot + "/usr");
+     }
+ 
+@@ -1434,14 +1451,17 @@
+   static const char *const ARMebHFTriples[] = {
+       "armeb-linux-gnueabihf", "armebv7hl-redhat-linux-gnueabi"};
+ 
+-  static const char *const X86_64LibDirs[] = {"/lib64", "/lib"};
++  static const char *const X86_64LibDirs[] = {"/lib64", "/lib/amd64",
++                                               "/lib/64", "/lib"};
+   static const char *const X86_64Triples[] = {
+       "x86_64-linux-gnu",       "x86_64-unknown-linux-gnu",
+       "x86_64-pc-linux-gnu",    "x86_64-redhat-linux6E",
+       "x86_64-redhat-linux",    "x86_64-suse-linux",
+       "x86_64-manbo-linux-gnu", "x86_64-linux-gnu",
+       "x86_64-slackware-linux", "x86_64-linux-android",
+-      "x86_64-unknown-linux"};
++      "x86_64-unknown-linux", "x86_64-pc-solaris2.11",
++      "x86_64-pc-solaris2.12", "x86_64-pc-solaris2.13" };
++
+   static const char *const X32LibDirs[] = {"/libx32"};
+   static const char *const X86LibDirs[] = {"/lib32", "/lib"};
+   static const char *const X86Triples[] = {
+@@ -1449,7 +1469,8 @@
+       "i386-linux-gnu",       "i386-redhat-linux6E",   "i686-redhat-linux",
+       "i586-redhat-linux",    "i386-redhat-linux",     "i586-suse-linux",
+       "i486-slackware-linux", "i686-montavista-linux", "i686-linux-android",
+-      "i586-linux-gnu"};
++      "i586-linux-gnu", "i386-pc-solaris2.11", "i386-pc-solaris2.12",
++      "i386-pc-solaris2.13" };
+ 
+   static const char *const MIPSLibDirs[] = {"/lib"};
+   static const char *const MIPSTriples[] = {"mips-linux-gnu", "mips-mti-linux",
+@@ -1483,30 +1504,28 @@
+ 
+   static const char *const SPARCv8LibDirs[] = {"/lib32", "/lib"};
+   static const char *const SPARCv8Triples[] = {"sparc-linux-gnu",
+-                                               "sparcv8-linux-gnu"};
+-  static const char *const SPARCv9LibDirs[] = {"/lib64", "/lib"};
++                                               "sparcv8-linux-gnu",
++                                               "sparc-sun-solaris2.11",
++                                               "sparc-sun-solaris2.12",
++                                               "sparc-sun-solaris2.13" };
++
++  static const char *const SPARCv9LibDirs[] = {"/lib64", "/lib/sparcv9",
++                                                "/lib/64", "/lib" };
++
+   static const char *const SPARCv9Triples[] = {"sparc64-linux-gnu",
+-                                               "sparcv9-linux-gnu"};
++                                               "sparcv9-linux-gnu",
++                                               "sparcv9-sun-solaris2.11",
++                                               "sparcv9-sun-solaris2.12",
++                                               "sparcv9-sun-solaris2.13"  };
+ 
+   static const char *const SystemZLibDirs[] = {"/lib64", "/lib"};
+   static const char *const SystemZTriples[] = {
+       "s390x-linux-gnu", "s390x-unknown-linux-gnu", "s390x-ibm-linux-gnu",
+       "s390x-suse-linux", "s390x-redhat-linux"};
+ 
+-  // Solaris.
+-  static const char *const SolarisSPARCLibDirs[] = {"/gcc"};
+-  static const char *const SolarisSPARCTriples[] = {"sparc-sun-solaris2.11",
+-                                                    "i386-pc-solaris2.11"};
+-
+   using std::begin;
+   using std::end;
+ 
+-  if (TargetTriple.getOS() == llvm::Triple::Solaris) {
+-    LibDirs.append(begin(SolarisSPARCLibDirs), end(SolarisSPARCLibDirs));
+-    TripleAliases.append(begin(SolarisSPARCTriples), end(SolarisSPARCTriples));
+-    return;
+-  }
+-
+   switch (TargetTriple.getArch()) {
+   case llvm::Triple::aarch64:
+     LibDirs.append(begin(AArch64LibDirs), end(AArch64LibDirs));
+@@ -3302,69 +3321,783 @@
+ }
+ 
+ /// Solaris - Solaris tool chain which can call as(1) and ld(1) directly.
++bool Solaris::SupportsClangLibCPlusPlus = false;
+ 
+ Solaris::Solaris(const Driver &D, const llvm::Triple &Triple,
+-                 const ArgList &Args)
+-    : Generic_GCC(D, Triple, Args) {
++                 const llvm::opt::ArgList &Args)
++  : Generic_ELF(D, Triple, Args),
++  UseGnuAs(true),
++  UseGnuLd(false),
++  UseGoldLd(false),
++  UseSunLd(true),
++  UseMediatedGCCToolChainPath(false),
++  UseSpecifiedGCCToolChainPath(false),
++  IsValid(false),
++  GCCInstallDir("/usr/gcc/"),
++  GCCMajorMinor(""),
++  GCCMajorMinorMicro(""),
++  GCCInternalLibDir(""),
++  GCCInternalMultiLibDir(""),
++  GCCIncludeDirs(),
++  Assembler("/usr/gnu/bin/as"),
++  Linker("/usr/bin/ld"),
++  mtune(""),
++  march(""),
++  mcpu(""),
++  ExtraOpts() {
++    if (Arg *A = Args.getLastArg(options::OPT_gcc_toolchain)) {
++      GCCInstallDir = A->getValue();
++      if (!llvm::sys::fs::exists(GCCInstallDir))
++        D.Diag(diag::err_drv_no_such_file) << GCCInstallDir;
++      else {
++        findSpecifiedGCCToolchain(GCCInstallDir.c_str(), Triple, Args);
++
++        if (!UseSpecifiedGCCToolChainPath) {
++          D.Diag(diag::err_drv_unsupported_rtlib_for_platform)
++            << GCCInstallDir << Triple.getTriple();
++        } else {
++          findGCCIncludeDirs(Triple, Args);
++          findGCCInternalLibDir(Triple, Args);
++        }
++      }
++    } else {
++      findGCCMajorMinor();
++      findGCCMajorMinorMicro(Triple);
++      findGCCIncludeDirs(Triple, Args);
++      findGCCInternalLibDir(Triple, Args);
++    }
+ 
+-  GCCInstallation.init(Triple, Args);
++    if (Arg *A = Args.getLastArg(options::OPT_fuse_ld_EQ)) {
++      Linker = A->getValue();
++      if (Linker == "bfd")
++        Linker = "/usr/gnu/bin/ld";
++      else if (Linker == "gold")
++        Linker = "/usr/gnu/bin/ld.gold";
++
++      if ((Linker == "/usr/gnu/bin/ld") || (Linker == "/usr/gnu/bin/ld.bfd") ||
++          (Linker == "/usr/bin/gld") || (Linker == "/usr/bin/gld.bfd")) {
++        UseGnuLd = true;
++        UseGoldLd = false;
++        UseSunLd = false;
++      } else if ((Linker == "/usr/gnu/bin/ld.gold") ||
++                 (Linker == "/usr/bin/gld.gold") ||
++                 (Linker == "/usr/bin/ld.gold")) {
++        UseGnuLd = false;
++        UseSunLd = false;
++        UseGoldLd = true;
++      }
++    }
+ 
+-  path_list &Paths = getFilePaths();
+-  if (GCCInstallation.isValid())
+-    addPathIfExists(D, GCCInstallation.getInstallPath(), Paths);
++    if (Arg *A = Args.getLastArg(options::OPT_fuse_as_EQ)) {
++      Assembler = A->getValue();
++      if (Assembler == "llvm")
++        UseGnuAs = false;
++      else if ((Assembler == "/usr/gnu/bin/as") ||
++               (Assembler == "/usr/bin/gas"))
++        UseGnuAs = true;
++      else if (Assembler == "gas") {
++        Assembler = "/usr/gnu/bin/as";
++        UseGnuAs = true;
++      } else if ((Assembler == "/usr/bin/as") || (Assembler == "sun") ||
++                 (Assembler == "solaris"))
++        D.Diag(diag::err_drv_clang_unsupported) << A->getAsString(Args);
++    }
++
++    getProgramPaths().push_back(GCCInstallDir);
+ 
+-  addPathIfExists(D, getDriver().getInstalledDir(), Paths);
+   if (getDriver().getInstalledDir() != getDriver().Dir)
+-    addPathIfExists(D, getDriver().Dir, Paths);
++      getProgramPaths().push_back(getDriver().Dir);
+ 
+-  addPathIfExists(D, getDriver().SysRoot + getDriver().Dir + "/../lib", Paths);
++    llvm::Triple::ArchType Arch = Triple.getArch();
+ 
+-  std::string LibPath = "/usr/lib/";
+-  switch (Triple.getArch()) {
++    switch (Arch) {
+   case llvm::Triple::x86:
++      getFilePaths().push_back(getDriver().Dir + "/../lib");
++      getFilePaths().push_back("/usr/lib");
++      march = mtune = "i686";
++      break;
+   case llvm::Triple::sparc:
++      getFilePaths().push_back(getDriver().Dir + "/../lib");
++      getFilePaths().push_back("/usr/lib");
++      mcpu = "ultrasparc";
++      mtune = "ultrasparc";
++      march = "v8plusa";
+     break;
+   case llvm::Triple::x86_64:
+-    LibPath += "amd64/";
++      getFilePaths().push_back(getDriver().Dir + "/../lib/amd64");
++      getFilePaths().push_back("/usr/lib/amd64");
++      march = mtune = "opteron";
+     break;
+   case llvm::Triple::sparcv9:
+-    LibPath += "sparcv9/";
++      getFilePaths().push_back(getDriver().Dir + "/../lib/sparcv9");
++      getFilePaths().push_back("/usr/lib/sparcv9");
++      mcpu = "ultrasparc";
++      mtune = "ultrasparc";
++      march = "v9a";
+     break;
+   default:
+-    llvm_unreachable("Unsupported architecture");
++      getFilePaths().push_back(getDriver().Dir + "/../lib");
++      getFilePaths().push_back("/usr/lib");
++      break;
+   }
+ 
+-  addPathIfExists(D, getDriver().SysRoot + LibPath, Paths);
++    validate();
++
++    if (Args.hasArg(options::OPT_v))
++      this->print(llvm::errs());
+ }
+ 
+-Tool *Solaris::buildAssembler() const {
+-  return new tools::solaris::Assembler(*this);
++std::string Solaris::computeSysRoot() const {
++  if (!getDriver().SysRoot.empty())
++    return getDriver().SysRoot;
++
++  return std::string("/");
+ }
+ 
+-Tool *Solaris::buildLinker() const { return new tools::solaris::Linker(*this); }
++bool
++Solaris::addLibStdCXXIncludePaths(Twine Base, Twine Suffix,
++                                  StringRef GCCTriple,
++                                  StringRef GCCMultiarchTriple,
++                                  StringRef TargetMultiarchTriple,
++                                  Twine IncludeSuffix,
++                                  const llvm::opt::ArgList &DriverArgs,
++                                  llvm::opt::ArgStringList &CC1Args) const {
++  if (!llvm::sys::fs::exists(Base + Suffix))
++    return false;
+ 
+-void Solaris::AddClangCXXStdlibIncludeArgs(const ArgList &DriverArgs,
+-                                           ArgStringList &CC1Args) const {
++  addSystemInclude(DriverArgs, CC1Args, Base);
++  addSystemInclude(DriverArgs, CC1Args, Base + Suffix);
++
++  if ((GCCMultiarchTriple.empty() && TargetMultiarchTriple.empty()) ||
++      llvm::sys::fs::exists(Base + Suffix + "/" + GCCTriple + IncludeSuffix)) {
++    addSystemInclude(DriverArgs,
++                     CC1Args, Base + Suffix + "/" + GCCTriple + IncludeSuffix);
++  } else {
++    addSystemInclude(DriverArgs, CC1Args,
++                     Base + "/" + GCCMultiarchTriple + Suffix + IncludeSuffix);
++    addSystemInclude(DriverArgs, CC1Args,
++                     Base + "/" + TargetMultiarchTriple + Suffix);
++  }
++
++  addSystemInclude(DriverArgs, CC1Args, Base + "/backward");
++  addSystemInclude(DriverArgs, CC1Args, Base + Suffix + "/backward");
++  return true;
++}
++
++void
++Solaris::AddClangCXXStdlibIncludeArgs(const llvm::opt::ArgList &DriverArgs,
++                                      llvm::opt::ArgStringList &CC1Args) const {
+   if (DriverArgs.hasArg(options::OPT_nostdlibinc) ||
+       DriverArgs.hasArg(options::OPT_nostdincxx))
+     return;
+ 
+-  // Include the support directory for things like xlocale and fudged system
+-  // headers.
+-  addSystemInclude(DriverArgs, CC1Args, "/usr/include/c++/v1/support/solaris");
++  const Driver &D = getDriver();
+ 
+-  if (GCCInstallation.isValid()) {
+-    GCCVersion Version = GCCInstallation.getVersion();
+-    addSystemInclude(DriverArgs, CC1Args,
+-                     getDriver().SysRoot + "/usr/gcc/" +
+-                     Version.MajorStr + "." +
+-                     Version.MinorStr +
+-                     "/include/c++/" + Version.Text);
+-    addSystemInclude(DriverArgs, CC1Args,
+-                     getDriver().SysRoot + "/usr/gcc/" + Version.MajorStr +
+-                     "." + Version.MinorStr + "/include/c++/" +
+-                     Version.Text + "/" +
+-                     GCCInstallation.getTriple().str());
++  // Check for Clang libc++
++  if (GetCXXStdlibType(DriverArgs) == ToolChain::CST_Libcxx) {
++    if (!Solaris::SupportsClangLibCPlusPlus) {
++      D.Diag(diag::err_drv_invalid_stdlib_name) << "libc++";
++      return;
++    }
++
++    StringRef IncludePath = "/usr/include/libc++/v1";
++    if (!llvm::sys::fs::exists(IncludePath)) {
++      D.Diag(diag::err_drv_no_such_file) << IncludePath;
++      return;
++    }
++
++    addSystemInclude(DriverArgs, CC1Args, IncludePath);
++    return;
++  }
++
++  for (std::vector<std::string>::const_iterator B =
++       getGCCIncludeDirs().begin(), E = getGCCIncludeDirs().end();
++       B != E; ++B) {
++    llvm::Twine IncludePath((*B));
++    addSystemInclude(DriverArgs, CC1Args, IncludePath);
++  }
++}
++
++void
++Solaris::AddClangSystemIncludeArgs(const ArgList &DriverArgs,
++                                   ArgStringList &CC1Args) const {
++  const Driver &D = getDriver();
++
++  if (DriverArgs.hasArg(options::OPT_nostdinc))
++    return;
++
++  std::string SysRoot = computeSysRoot();
++
++  if (!DriverArgs.hasArg(options::OPT_nobuiltininc)) {
++    SmallString<PATH_MAX> P(D.ResourceDir);
++    llvm::sys::path::append(P, "/include");
++    addSystemInclude(DriverArgs, CC1Args, P.str());
++  }
++
++  if (DriverArgs.hasArg(options::OPT_nostdlibinc))
++    return;
++
++  StringRef CIncludeDirs(C_INCLUDE_DIRS);
++  if (CIncludeDirs != "") {
++    SmallVector<StringRef, 5> dirs;
++    CIncludeDirs.split(dirs, ":");
++    for (SmallVectorImpl<StringRef>::iterator I = dirs.begin(), E = dirs.end();
++         I != E; ++I) {
++      StringRef Prefix =
++        llvm::sys::path::is_absolute(*I) ? StringRef(SysRoot) : "";
++      addExternCSystemInclude(DriverArgs, CC1Args, Prefix + *I);
++    }
++  }
++
++  addExternCSystemInclude(DriverArgs, CC1Args, "/usr/include");
++}
++
++void
++Solaris::addClangTargetOptions(const ArgList &DriverArgs,
++                               ArgStringList &CC1Args) const {
++  const llvm::Triple& TT = getTriple();
++  llvm::Triple::ArchType Arch = TT.getArch();
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fuse_init_array))
++    DriverArgs.ClaimAllArgs(options::OPT_fuse_init_array);
++
++  // Always use .init_array/.fini_array on Solaris. The Solaris
++  // linker can't do .ctors/.dtors or .init/.fini for that matter.
++  CC1Args.push_back("-fuse-init-array");
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fabi_version_EQ)) {
++    StringRef V = A->getValue();
++    if (!V.empty()) {
++      std::string fabi_version = "-fabi-version=";
++      fabi_version += V.str();
++      CC1Args.push_back(DriverArgs.MakeArgString(fabi_version.c_str()));
++    } else {
++      std::string fabi_version = "-fabi-version=4";
++      CC1Args.push_back(DriverArgs.MakeArgString(fabi_version.c_str()));
++    }
++  } else {
++    CC1Args.push_back(DriverArgs.MakeArgString("-fabi-version=4"));
++  }
++
++  DriverArgs.ClaimAllArgs(options::OPT_fabi_version_EQ);
++
++  if (Arch == llvm::Triple::sparc || Arch == llvm::Triple::sparcv9) {
++    CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++    CC1Args.push_back(DriverArgs.MakeArgString("+hwcap"));
++  }
++
++  bool SeenVIS = false;
++  bool SeenVIS2 = false;
++  bool SeenVIS3 = false;
++
++  bool DoneVIS = false;
++  bool DoneVIS2 = false;
++  bool DoneVIS3 = false;
++
++  bool DoneMTune = false;
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_mtune_EQ)) {
++    StringRef V = A->getValue();
++    if (!V.empty())
++      mtune = V.str();
++    else
++      mtune = "ultrasparc";
++
++    if (Arch == llvm::Triple::sparc || Arch == llvm::Triple::sparcv9) {
++      if ((mtune == "ultrasparc") || (mtune == "ultrasparc2") ||
++          (mtune == "vis")) {
++        SeenVIS = true;
++      } else if ((mtune == "ultrasparc3") || (mtune == "vis2")) {
++        SeenVIS = true;
++        SeenVIS2 = true;
++      } else {
++        SeenVIS = true;
++        SeenVIS2 = true;
++        SeenVIS3 = true;
++      }
++
++      if (!DoneMTune) {
++        if (SeenVIS3 && !DoneVIS3) {
++          CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++          CC1Args.push_back(DriverArgs.MakeArgString("+vis3"));
++          DoneVIS3 = true;
++          DoneVIS2 = true;
++          DoneVIS = true;
++        }
++
++        if (SeenVIS2 && !DoneVIS2) {
++          CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++          CC1Args.push_back(DriverArgs.MakeArgString("+vis2"));
++          DoneVIS2 = true;
++          DoneVIS = true;
++        }
++
++        if (SeenVIS && !DoneVIS) {
++          CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++          CC1Args.push_back(DriverArgs.MakeArgString("+vis"));
++          DoneVIS = true;
++        }
++
++        DoneMTune = true;
++      }
++    }
++  }
++
++  if (Arch == llvm::Triple::sparc || Arch == llvm::Triple::sparcv9) {
++    if (Arg *A = DriverArgs.getLastArg(options::OPT_mvis)) {
++      SeenVIS = !DoneVIS;
++      if (!DoneVIS) {
++        CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++        CC1Args.push_back(DriverArgs.MakeArgString("+vis"));
++        DoneVIS = true;
++      }
++    }
++
++    if (Arg *A = DriverArgs.getLastArg(options::OPT_mvis2)) {
++      SeenVIS2 = !DoneVIS2;
++      if (!DoneVIS2) {
++        CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++        CC1Args.push_back(DriverArgs.MakeArgString("+vis2"));
++        DoneVIS2 = true;
++        DoneVIS = true;
++      }
++    }
++
++    if (Arg *A = DriverArgs.getLastArg(options::OPT_mvis3)) {
++      SeenVIS3 = !DoneVIS3;
++      if (!DoneVIS3) {
++        CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
++        CC1Args.push_back(DriverArgs.MakeArgString("+vis3"));
++        DoneVIS3 = true;
++        DoneVIS2 = true;
++        DoneVIS = true;
++      }
++    }
++  }
++}
++
++void
++Solaris::findGCCMajorMinor() const {
++  // FIXME: Add 5.X after testing the ABI.
++  static const char* const GCCMM[] = { "4.8", "4.9" };
++
++  const char* P;
++  std::string Path;
++
++  Path.reserve(std::string::size_type(PATH_MAX));
++
++  for (int I = (llvm::array_lengthof(GCCMM) - 1); I >= 0; --I) {
++    if ((P = GCCMM[I]) != NULL) {
++      Path = GCCInstallDir;
++      Path.append(P);
++      Path.append("/");
++
++      if (llvm::sys::fs::exists(Path.c_str())) {
++        GCCMajorMinor = P;
++        break;
++      }
++    }
++  }
++}
++
++void
++Solaris::findGCCMajorMinorMicro(const llvm::Triple& T) const {
++  // FIXME: Add 5.X after testing the ABI.
++  static const char* const GCCMMM[] = { "4.8.2", "4.9.3", "4.9.4" };
++
++  const char* P;
++  std::string Path;
++  std::string TripleString = llvm::sys::getDefaultTargetTriple();
++  llvm::Triple::ArchType Arch = T.getArch();
++
++  // GCC4 on Solaris is multilib 32/64.
++  // GCC5 (not supported here yet) on Solaris is multilib 64/32.
++  if (GCCMajorMinor[0] == '4') {
++    if (TripleString.find("x86_64") != std::string::npos)
++      TripleString.replace(0U, 6U, std::string("i386"));
++    else if (TripleString.find("sparcv9") != std::string::npos)
++      TripleString.replace(0U, 7U, std::string("sparc"));
++  }
++
++  Path.reserve(std::string::size_type(PATH_MAX));
++
++  for (int I = (llvm::array_lengthof(GCCMMM) - 1); I >= 0; --I) {
++    if ((P = GCCMMM[I]) != NULL) {
++      if ((P[0] == GCCMajorMinor[0]) && (P[2] == GCCMajorMinor[2])) {
++        Path = GCCInstallDir;
++        Path.append("/");
++        Path.append(GCCMajorMinor);
++        Path.append("/lib/gcc/");
++        Path.append(TripleString);
++        Path.append("/");
++        Path.append(P);
++
++        if (llvm::sys::fs::exists(Path.c_str())) {
++          std::string Test;
++          // Check if this is a real GCC installation and not just
++          // an empty directory tree
++          switch (Arch) {
++          case llvm::Triple::x86:
++          case llvm::Triple::sparc:
++            Test = Path + "/crtbegin.o";
++            break;
++          case llvm::Triple::x86_64:
++            Test = Path + "/amd64/crtbegin.o";
++            break;
++          case llvm::Triple::sparcv9:
++            Test = Path + "/sparcv9/crtbegin.o";
++            break;
++          default:
++            break;
++          }
++
++          if (llvm::sys::fs::exists(Test.c_str())) {
++            GCCMajorMinorMicro = P;
++            break;
++          }
++        }
++      }
++    }
++  }
++}
++
++void
++Solaris::findSpecifiedGCCToolchain(const char *StartingPath,
++                                   const llvm::Triple &Triple,
++                                   const llvm::opt::ArgList &Args) const {
++  DIR *TopLD = 0;
++  DIR *LibLD = 0;
++  DIR *GccLD = 0;
++  DIR *TripleLD = 0;
++  struct dirent *TopDE = 0;
++  struct dirent *LibDE = 0;
++  struct dirent *GccDE = 0;
++  struct dirent *TripleDE = 0;
++  std::string LibDir;
++  std::string GccDir;
++  std::string TripleDir;
++  std::string TripleVersionDir;
++  const char *DName;
++
++  assert(StartingPath && "Invalid GCC Toolchain starting search path!");
++
++  GCCMajorMinor = "";
++  GCCMajorMinorMicro = "";
++  UseSpecifiedGCCToolChainPath = false;
++
++  LibDir.reserve(std::string::size_type(PATH_MAX));
++  GccDir.reserve(std::string::size_type(PATH_MAX));
++  TripleDir.reserve(std::string::size_type(PATH_MAX));
++  TripleVersionDir.reserve(std::string::size_type(PATH_MAX));
++
++  if (llvm::sys::fs::exists(StartingPath) &&
++      llvm::sys::fs::is_directory(StartingPath)) {
++    TopLD = opendir(StartingPath);
++    assert(TopLD && "Cannot obtain a valid toplevel DIR handle!");
++
++    while ((TopDE = readdir(TopLD)) != NULL) {
++      if (TopDE->d_name[0] == '.')
++        continue;
++
++      DName = static_cast<const char*>(&TopDE->d_name[0]);
++      if (std::strcmp(DName, "lib") == 0) {
++        LibDir = StartingPath;
++        LibDir.append("/");
++        LibDir.append(DName);
++
++        if (!llvm::sys::fs::is_directory(LibDir.c_str()))
++          continue;
++
++        LibLD = opendir(LibDir.c_str());
++        assert(LibLD && "Could not obtain a valid lib DIR handle!");
++
++        while ((LibDE = readdir(LibLD)) != NULL) {
++          if (LibDE->d_name[0] == '.')
++            continue;
++
++          DName = static_cast<const char*>(&LibDE->d_name[0]);
++          if (std::strcmp(DName, "gcc") == 0) {
++            GccDir = LibDir;
++            GccDir.append("/");
++            GccDir.append(DName);
++
++            if (!llvm::sys::fs::is_directory(GccDir.c_str()))
++              continue;
++
++            GccLD = opendir(GccDir.c_str());
++            assert(GccLD && "Could not obtain a valid gcc DIR handle!");
++
++            while ((GccDE = readdir(GccLD)) != NULL) {
++              if (GccDE->d_name[0] == '.')
++                continue;
++
++              DName = static_cast<const char*>(&GccDE->d_name[0]);
++              TripleDir = GccDir;
++              TripleDir.append("/");
++              TripleDir.append(DName);
++
++              if (!llvm::sys::fs::is_directory(TripleDir.c_str()))
++                continue;
++
++              if ((std::strncmp(DName, "sparc", 5) == 0) ||
++                  (std::strncmp(DName, "i386", 4) == 0) ||
++                  (std::strncmp(DName, "sparcv9", 7) == 0) ||
++                  (std::strncmp(DName, "x86_64", 6) == 0)) {
++                TripleLD = opendir(TripleDir.c_str());
++                assert(TripleLD &&
++                       "Could not obtain a valid Triple DIR handle!");
++
++                while ((TripleDE = readdir(TripleLD)) != NULL) {
++                  if (TripleDE->d_name[0] == '.')
++                    continue;
++
++                  DName = static_cast<const char*>(&TripleDE->d_name[0]);
++                  TripleVersionDir = TripleDir;
++                  TripleVersionDir.append("/");
++                  TripleVersionDir.append(DName);
++
++                  if (!llvm::sys::fs::is_directory(TripleVersionDir.c_str()))
++                    continue;
++
++                  if ((std::isdigit(DName[0])) && (DName[1] == '.') &&
++                      (std::isdigit(DName[2])) && (DName[3] == '.') &&
++                      (std::isdigit(DName[4])) && (DName[5] == '\0')) {
++                    GCCMajorMinorMicro = DName;
++                    GCCMajorMinor = GCCMajorMinorMicro.substr(0, 3);
++                    UseSpecifiedGCCToolChainPath = true;
++                    goto done;
++                  }
++                }
++              }
++            }
++          }
++        }
++      }
++    }
++  }
++
++done:
++  if (TripleLD) {
++    rewinddir(TripleLD);
++    closedir(TripleLD);
++  }
++
++  if (GccLD) {
++    rewinddir(GccLD);
++    closedir(GccLD);
++  }
++
++  if (LibLD) {
++    rewinddir(LibLD);
++    closedir(LibLD);
++  }
++
++  if (TopLD) {
++    rewinddir(TopLD);
++    closedir(TopLD);
++  }
++}
++
++void
++Solaris::findGCCIncludeDirs(const llvm::Triple &Triple,
++                            const llvm::opt::ArgList &Args) const {
++  std::string GCCInstallPath;
++  if (UseSpecifiedGCCToolChainPath)
++    GCCInstallPath = GCCInstallDir;
++  else
++    GCCInstallPath = GCCInstallDir + GCCMajorMinor;
++
++  std::string GCCIncludeDir =
++    GCCInstallPath + "/include/c++/" + GCCMajorMinorMicro;
++  GCCIncludeDirs.push_back(GCCIncludeDir);
++
++  llvm::Triple::ArchType Arch = Triple.getArch();
++  GCCIncludeDir += "/";
++
++  switch (Arch) {
++  case llvm::Triple::x86:
++    GCCIncludeDir += Triple.getTriple();
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCIncludeDir += "/amd64";
++    break;
++  case llvm::Triple::sparc:
++    GCCIncludeDir += Triple.getTriple();
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCIncludeDir += "/sparcv9";
++    break;
++  case llvm::Triple::x86_64:
++    GCCIncludeDir += "i386-pc-";
++    GCCIncludeDir += Triple.getOSName();
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCIncludeDir += "/amd64";
++    break;
++  case llvm::Triple::sparcv9:
++    GCCIncludeDir += "sparc-sun-";
++    GCCIncludeDir += Triple.getOSName();
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCIncludeDir += "/sparcv9";
++    break;
++  default:
++    getDriver().Diag(diag::err_target_unsupported_arch)
++      << Triple.getArchName() << Triple.getTriple();
++    break;
++  }
++
++  GCCIncludeDirs.push_back(GCCIncludeDir);
++
++  GCCIncludeDir = GCCInstallPath + "/include/c++/" +
++    GCCMajorMinorMicro + "/backward";
++
++  GCCIncludeDirs.push_back(GCCIncludeDir);
++}
++
++void
++Solaris::findGCCInternalLibDir(const llvm::Triple &Triple,
++                               const llvm::opt::ArgList &Args) const {
++  std::string GCCInstallPath;
++  if (UseSpecifiedGCCToolChainPath)
++    GCCInstallPath = GCCInstallDir;
++  else
++    GCCInstallPath = GCCInstallDir + GCCMajorMinor;
++
++  GCCInternalLibDir = GCCInstallPath + "/lib/gcc/";
++
++  llvm::Triple::ArchType Arch = Triple.getArch();
++
++  switch (Arch) {
++  case llvm::Triple::x86:
++    GCCInternalLibDir += Triple.getTriple();
++    GCCInternalLibDir += "/";
++    GCCInternalLibDir += GCCMajorMinorMicro;
++    if (Arg *A = Args.getLastArg(options::OPT_m64)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalLibDir += "/amd64";
++    } else if (Arg *A = Args.getLastArg(options::OPT_m32)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalMultiLibDir += "/amd64";
++    } else {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalMultiLibDir += "/amd64";
++    }
++
++    break;
++  case llvm::Triple::sparc:
++    GCCInternalLibDir += Triple.getTriple();
++    GCCInternalLibDir += "/";
++    GCCInternalLibDir += GCCMajorMinorMicro;
++    if (Arg *A = Args.getLastArg(options::OPT_m64)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalLibDir += "/sparcv9";
++    } else if (Arg *A = Args.getLastArg(options::OPT_m32)) {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalMultiLibDir += "/sparcv9";
++    } else {
++      GCCInternalMultiLibDir = GCCInternalLibDir;
++      GCCInternalMultiLibDir += "/sparcv9";
++    }
++    break;
++  case llvm::Triple::x86_64:
++    GCCInternalLibDir += "i386-pc-";
++    GCCInternalLibDir += Triple.getOSName();
++    GCCInternalLibDir += "/";
++    GCCInternalLibDir += GCCMajorMinorMicro;
++    GCCInternalMultiLibDir = GCCInternalLibDir;
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCInternalLibDir += "/amd64";
++    else if (Arg *A = Args.getLastArg(options::OPT_m32))
++      GCCInternalMultiLibDir += "/amd64";
++    else
++      GCCInternalLibDir += "/amd64";
++    break;
++  case llvm::Triple::sparcv9:
++    GCCInternalLibDir += "sparc-sun-";
++    GCCInternalLibDir += Triple.getOSName();
++    GCCInternalLibDir += "/";
++    GCCInternalLibDir += GCCMajorMinorMicro;
++    GCCInternalMultiLibDir = GCCInternalLibDir;
++    if (Arg *A = Args.getLastArg(options::OPT_m64))
++      GCCInternalLibDir += "/sparcv9";
++    else if (Arg *A = Args.getLastArg(options::OPT_m32))
++      GCCInternalMultiLibDir += "/sparcv9";
++    else
++      GCCInternalLibDir += "/sparcv9";
++    break;
++  default:
++    getDriver().Diag(diag::err_target_unsupported_arch)
++      << Triple.getArchName() << Triple.getTriple();
++    break;
++  }
++}
++
++
++void
++Solaris::print(raw_ostream &OS) const {
++  OS << "UseGnuAs: " << (UseGnuAs ? "true" : "false") << "\n";
++  OS << "UseGnuLd: " << (UseGnuLd ? "true" : "false") << "\n";
++  OS << "UseGoldLd: " << (UseGoldLd ? "true" : "false") << "\n";
++  OS << "UseSunLd: " << (UseSunLd ? "true" : "false") << "\n";
++  OS << "UseMediatedGCCToolChainPath: "
++    << (UseMediatedGCCToolChainPath ? "true" : "false") << "\n";
++  OS << "UseSpecifiedGCCToolChainPath: "
++    << (UseSpecifiedGCCToolChainPath ? "true" : "false") << "\n";
++  OS << "GCCInstallDir: " << GCCInstallDir.c_str() << "\n";
++  OS << "GCCMajorMinor: " << GCCMajorMinor.c_str() << "\n";
++  OS << "GCCMajorMinorMicro: " << GCCMajorMinorMicro.c_str() << "\n";
++  OS << "GCCInternalLibDir: " << GCCInternalLibDir.c_str() << "\n";
++  OS << "GCCInternalMultiLibDir: " << GCCInternalMultiLibDir.c_str() << "\n";
++  OS << "GCCIncludeDirs: ";
++
++  if (GCCIncludeDirs.size()) {
++    std::string IncludePath;
++    for (std::vector<std::string>::const_iterator B = GCCIncludeDirs.begin(),
++         E = GCCIncludeDirs.end(); B != E; ++B) {
++      IncludePath = "-I";
++      IncludePath += (*B);
++      OS << IncludePath.c_str() << " ";
++    }
++
++    OS << "\n";
++  }
++
++  OS << "Assembler: " << Assembler.c_str() << "\n";
++  OS << "Linker: " << Linker.c_str() << "\n";
++  OS << "mtune: " << mtune.c_str() << "\n";
++  OS << "march: " << march.c_str() << "\n";
++  OS << "mcpu: " << mcpu.c_str() << "\n";
++
++  if (ExtraOpts.size()) {
++    OS << "ExtraOpts: ";
++    for (std::vector<std::string>::const_iterator B = ExtraOpts.begin(),
++         E = ExtraOpts.end(); B != E; ++B) {
++      OS << (*B).c_str() << " ";
++    }
++
++    OS << "\n";
++  }
++
++  OS << "Valid: " << (IsValid ? "true" : "false") << "\n";
++}
++
++Tool *Solaris::buildAssembler() const {
++  return new tools::solaris::Assembler(*this);
++}
++
++Tool *Solaris::buildLinker() const {
++  return new tools::solaris::Linker(*this);
++}
++
++void Solaris::validate() {
++  IsValid = llvm::sys::fs::exists(GCCInstallDir.c_str());
++  if (!IsValid) return;
++  IsValid = llvm::sys::fs::exists(GCCInternalLibDir.c_str());
++  if (!IsValid) return;
++  IsValid = llvm::sys::fs::exists(GCCInternalMultiLibDir.c_str());
++  if (!IsValid) return;
++
++  for (std::vector<std::string>::const_iterator B = GCCIncludeDirs.begin(),
++       E = GCCIncludeDirs.end(); B != E; ++B) {
++    IsValid = llvm::sys::fs::exists((*B).c_str());
++    if (!IsValid) return;
+   }
+ }
+ 
+@@ -3404,6 +4137,27 @@
+   UbuntuVivid,
+   UbuntuWily,
+   UbuntuXenial,
++  Solaris_11,
++  Solaris_11_1,
++  Solaris_11_2,
++  Solaris_11_3,
++  Solaris_11_4,
++  Solaris_11_5,
++  Solaris_11_6,
++  Solaris_11_7,
++  Solaris_11_8,
++  Solaris_11_9,
++  Solaris_12,
++  Solaris_12_1,
++  Solaris_12_2,
++  Solaris_12_3,
++  Solaris_12_4,
++  Solaris_12_5,
++  Solaris_12_6,
++  Solaris_12_7,
++  Solaris_12_8,
++  Solaris_12_9,
++  Solaris_13,
+   UnknownDistro
+ };
+ 
+@@ -3421,6 +4175,10 @@
+   return Distro >= UbuntuHardy && Distro <= UbuntuXenial;
+ }
+ 
++static bool IsSolaris(enum Distro Distro) {
++  return Distro >= Solaris_11 && Distro <= Solaris_13;
++}
++
+ static Distro DetectDistro(const Driver &D, llvm::Triple::ArchType Arch) {
+   llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> File =
+       llvm::MemoryBuffer::getFile("/etc/lsb-release");
+@@ -3488,6 +4246,59 @@
+     return UnknownDistro;
+   }
+ 
++  File = llvm::MemoryBuffer::getFile("/etc/release");
++  if (File) {
++    StringRef Data = File.get()->getBuffer();
++    SmallVector<StringRef, 8> Lines;
++    Data.split(Lines, "\n");
++    for (unsigned I = 0, S = Lines.size(); I != S; ++I) {
++      if (Lines[I].find("Oracle Solaris") != std::string::npos) {
++        if (Lines[I].find("Solaris 11.0") != std::string::npos)
++          return Solaris_11;
++        else if (Lines[I].find("Solaris 11.1") != std::string::npos)
++          return Solaris_11_1;
++        else if (Lines[I].find("Solaris 11.2") != std::string::npos)
++          return Solaris_11_2;
++        else if (Lines[I].find("Solaris 11.3") != std::string::npos)
++          return Solaris_11_3;
++        else if (Lines[I].find("Solaris 11.4") != std::string::npos)
++          return Solaris_11_4;
++        else if (Lines[I].find("Solaris 11.5") != std::string::npos)
++          return Solaris_11_5;
++        else if (Lines[I].find("Solaris 11.6") != std::string::npos)
++          return Solaris_11_6;
++        else if (Lines[I].find("Solaris 11.7") != std::string::npos)
++          return Solaris_11_7;
++        else if (Lines[I].find("Solaris 11.8") != std::string::npos)
++          return Solaris_11_8;
++        else if (Lines[I].find("Solaris 11.9") != std::string::npos)
++          return Solaris_11_9;
++        else if (Lines[I].find("Solaris 12.0") != std::string::npos)
++          return Solaris_12;
++        else if (Lines[I].find("Solaris 12.1") != std::string::npos)
++          return Solaris_12_1;
++        else if (Lines[I].find("Solaris 12.2") != std::string::npos)
++          return Solaris_12_2;
++        else if (Lines[I].find("Solaris 12.3") != std::string::npos)
++          return Solaris_12_3;
++        else if (Lines[I].find("Solaris 12.4") != std::string::npos)
++          return Solaris_12_4;
++        else if (Lines[I].find("Solaris 12.5") != std::string::npos)
++          return Solaris_12_5;
++        else if (Lines[I].find("Solaris 12.6") != std::string::npos)
++          return Solaris_12_6;
++        else if (Lines[I].find("Solaris 12.7") != std::string::npos)
++          return Solaris_12_7;
++        else if (Lines[I].find("Solaris 12.8") != std::string::npos)
++          return Solaris_12_8;
++        else if (Lines[I].find("Solaris 12.9") != std::string::npos)
++          return Solaris_12_9;
++      }
++    }
++
++    return UnknownDistro;
++  }
++
+   if (D.getVFS().exists("/etc/SuSE-release"))
+     return OpenSUSE;
+ 
+###
+--- tools/clang/lib/Driver/ToolChains.h	2016-02-16 14:56:48.000000000 -0500
++++ tools/clang/lib/Driver/ToolChains.h	2016-05-08 23:19:20.571431701 -0400
+@@ -615,24 +615,111 @@
+   Tool *buildLinker() const override;
+ };
+ 
+-class LLVM_LIBRARY_VISIBILITY Solaris : public Generic_GCC {
++class LLVM_LIBRARY_VISIBILITY Solaris : public Generic_ELF {
+ public:
+   Solaris(const Driver &D, const llvm::Triple &Triple,
+           const llvm::opt::ArgList &Args);
+ 
+-  bool IsIntegratedAssemblerDefault() const override { return true; }
++  bool IsIntegratedAssemblerDefault() const override { return !UseGnuAs; }
+ 
+-  void AddClangCXXStdlibIncludeArgs(
+-      const llvm::opt::ArgList &DriverArgs,
+-      llvm::opt::ArgStringList &CC1Args) const override;
++  std::string computeSysRoot() const;
+ 
+-  unsigned GetDefaultDwarfVersion() const override { return 2; }
++  bool addLibStdCXXIncludePaths(Twine Base, Twine Suffix,
++                                StringRef GCCTriple,
++                                StringRef GCCMultiarchTriple,
++                                StringRef TargetMultiarchTriple,
++                                Twine IncludeSuffix,
++                                const llvm::opt::ArgList &DriverArgs,
++                                llvm::opt::ArgStringList &CC1Args) const;
++
++  void addLibStdCXXIncludePaths(Twine Base, Twine TargetArchDir,
++                                const llvm::opt::ArgList &DriverArgs,
++                                llvm::opt::ArgStringList &CC1Args) const;
++
++  void AddClangCXXStdlibIncludeArgs(const llvm::opt::ArgList &DriverArgs,
++                                    llvm::opt::ArgStringList &CC1Args) const override;
++
++  void AddClangSystemIncludeArgs(const llvm::opt::ArgList &DriverArgs,
++                                 llvm::opt::ArgStringList &CC1Args) const override;
++
++  void addClangTargetOptions(const llvm::opt::ArgList &DriverArgs,
++                             llvm::opt::ArgStringList &CC1Args) const override;
++
++  void findGCCMajorMinor() const;
++  void findGCCMajorMinorMicro(const llvm::Triple &Triple) const;
++  void findGCCIncludeDirs(const llvm::Triple &Triple,
++                          const llvm::opt::ArgList &Args) const;
++  void findGCCInternalLibDir(const llvm::Triple &Triple,
++                             const llvm::opt::ArgList &Args) const;
++  void findSpecifiedGCCToolchain(const char *StartingPath,
++                                 const llvm::Triple &Triple,
++                                 const llvm::opt::ArgList &Args) const;
++
++  StringRef getAssembler() const { return Assembler.c_str(); }
++  StringRef getLinker() const { return Linker.c_str(); }
++  StringRef getGCCInstallDir() const { return GCCInstallDir.c_str(); }
++  StringRef getGCCMajorMinor() const { return GCCMajorMinor.c_str(); }
++  StringRef getMArch() const { return march.c_str(); }
++  StringRef getMTune() const { return mtune.c_str(); }
++  StringRef getMCpu() const { return mcpu.c_str(); }
++  StringRef getGCCInternalLibDir() const { return GCCInternalLibDir; }
++
++  StringRef getGCCInternalMultiLibDir() const {
++    return GCCInternalMultiLibDir;
++  }
++
++  StringRef getGCCMajorMinorMicro() const {
++    return GCCMajorMinorMicro.c_str();
++  }
++
++  const std::vector<std::string> &getGCCIncludeDirs() const {
++    return GCCIncludeDirs;
++  }
++
++  const std::vector<std::string> &getExtraOpts() const {
++    return ExtraOpts;
++  }
++
++  bool isValid() const { return IsValid; }
++
++  void print(raw_ostream &OS) const;
++
++  unsigned GetDefaultDwarfVersion() const override { return 4; }
+ 
+ protected:
+   Tool *buildAssembler() const override;
+   Tool *buildLinker() const override;
++  void validate();
++
++private:
++  bool UseGnuAs;
++  bool UseGnuLd;
++  bool UseGoldLd;
++  bool UseSunLd;
++  mutable bool UseMediatedGCCToolChainPath;
++  mutable bool UseSpecifiedGCCToolChainPath;
++  bool IsValid;
++
++protected:
++  mutable std::string GCCInstallDir;
++  mutable std::string GCCMajorMinor;
++  mutable std::string GCCMajorMinorMicro;
++  mutable std::string GCCInternalLibDir;
++  mutable std::string GCCInternalMultiLibDir;
++  mutable std::vector<std::string> GCCIncludeDirs;
++
++  mutable std::string Assembler;
++  mutable std::string Linker;
++  mutable std::string mtune;
++  mutable std::string march;
++  mutable std::string mcpu;
++
++  mutable std::vector<std::string> ExtraOpts;
++  static const char *MediatedGCCToolChainPath;
++  static bool SupportsClangLibCPlusPlus;
+ };
+ 
++
+ class LLVM_LIBRARY_VISIBILITY MinGW : public ToolChain {
+ public:
+   MinGW(const Driver &D, const llvm::Triple &Triple,
+###
+--- tools/clang/lib/Driver/Tools.cpp	2016-02-12 14:51:41.000000000 -0800
++++ tools/clang/lib/Driver/Tools.cpp	2016-07-18 19:13:48.364415520 -0700
+@@ -43,15 +43,22 @@
+ #include "llvm/Support/raw_ostream.h"
+ #include "llvm/Support/TargetParser.h"
+ 
+-#ifdef LLVM_ON_UNIX
+-#include <unistd.h> // For getuid().
+-#endif
+-
+ using namespace clang::driver;
+ using namespace clang::driver::tools;
+ using namespace clang;
+ using namespace llvm::opt;
+ 
++#ifdef LLVM_ON_UNIX
++#include <unistd.h> // For getuid().
++#endif
++
++#include <cstdlib>
++#include <climits>
++
++static std::tuple<llvm::Reloc::Model, unsigned, bool>
++ParsePICArgs(const ToolChain &ToolChain, const llvm::Triple &Triple,
++             const ArgList &Args);
++
+ static void handleTargetFeaturesGroup(const ArgList &Args,
+                                       std::vector<const char *> &Features,
+                                       OptSpecifier Group) {
+@@ -74,11 +81,15 @@
+                                          const llvm::Triple &Triple) {
+   if (Triple.getArch() == llvm::Triple::sparcv9) {
+     return llvm::StringSwitch<const char *>(Name)
++          .Case("v9", "-Av9")
++          .Case("ultrasparc", "-Av9a")
++          .Case("ultrasparc2", "-Av9a")
++          .Case("ultrasparc3", "-Av9b")
+           .Case("niagara", "-Av9b")
+           .Case("niagara2", "-Av9b")
+           .Case("niagara3", "-Av9d")
+           .Case("niagara4", "-Av9d")
+-          .Default("-Av9");
++          .Default("-Av9a");
+   } else {
+     return llvm::StringSwitch<const char *>(Name)
+           .Case("v8", "-Av8")
+@@ -89,17 +100,23 @@
+           .Case("sparclite86x", "-Asparclite")
+           .Case("sparclet", "-Asparclet")
+           .Case("tsc701", "-Asparclet")
+-          .Case("v9", "-Av8plus")
+-          .Case("ultrasparc", "-Av8plus")
+-          .Case("ultrasparc3", "-Av8plus")
++          .Case("ultrasparc", "-Av8plusa")
++          .Case("ultrasparc2", "-Av8plusa")
++          .Case("ultrasparc3", "-Av8plusb")
+           .Case("niagara", "-Av8plusb")
+           .Case("niagara2", "-Av8plusb")
+           .Case("niagara3", "-Av8plusd")
+           .Case("niagara4", "-Av8plusd")
+-          .Default("-Av8");
++          .Default("-Av8plusa");
+   }
+ }
+ 
++static void AddLibgcc(const llvm::Triple &Triple, const Driver &D,
++                      ArgStringList &CmdArgs, const ArgList &Args);
++
++static void AddLibgcc(const Driver &D, ArgStringList &CmdArgs,
++                      const ArgList &Args, const std::string& Exec);
++
+ /// CheckPreprocessingOptions - Perform some validation of preprocessing
+ /// arguments that is shared with gcc.
+ static void CheckPreprocessingOptions(const Driver &D, const ArgList &Args) {
+@@ -266,6 +283,27 @@
+     addDirectoryList(Args, CmdArgs, "-L", "LIBRARY_PATH");
+ }
+ 
++static void AddAssemblerKPIC(const ToolChain &ToolChain, const ArgList &Args,
++                             ArgStringList &CmdArgs) {
++  llvm::Reloc::Model RelocationModel;
++  unsigned PICLevel = 1;
++  bool IsPIE = false;
++
++  std::tie(RelocationModel, PICLevel, IsPIE) =
++    ParsePICArgs(ToolChain, ToolChain.getTriple(), Args);
++
++  if (ToolChain.getTriple().getOS() == llvm::Triple::Solaris) {
++    if ((RelocationModel != llvm::Reloc::Static) &&
++        (RelocationModel != llvm::Reloc::DynamicNoPIC))
++      CmdArgs.push_back("-KPIC");
++
++    return;
++  }
++
++  if (RelocationModel != llvm::Reloc::Static)
++    CmdArgs.push_back("-KPIC");
++}
++
+ /// \brief Determine whether Objective-C automated reference counting is
+ /// enabled.
+ static bool isObjCAutoRefCount(const ArgList &Args) {
+@@ -1601,8 +1639,127 @@
+   }
+ }
+ 
+-static const char *getX86TargetCPU(const ArgList &Args,
+-                                   const llvm::Triple &Triple) {
++const char *sparc::getSparcTargetCPU(const llvm::opt::ArgList &Args,
++                                     const llvm::Triple &Triple) {
++  if (const Arg *A = Args.getLastArg(options::OPT_march_EQ)) {
++    StringRef AV = A->getValue();
++    if (AV == "native") {
++      std::string CPU = llvm::sys::getHostCPUName().str();
++      if (CPU.find("UltraSPARC-IV") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9c" : "v8plusc";
++      else if (CPU.find("UltraSPARC-III") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++      else if (CPU.find("UltraSPARC-II") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++      else if (CPU.find("UltraSPARC-I") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9" : "v8plus";
++      else if (CPU.find("SPARC-T4") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-T5") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-T6") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-T7") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-M4") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-M5") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-M6") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-M7") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++    } else if (AV == "ultrasparc") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "ultrasparc2") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "ultrasparc3") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "ultrasparc4") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9c" : "v8plusc";
++    } else if (AV == "niagara") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara2") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara3") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara4") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "sparc4") {
++      return "sparc4";
++    } else if (AV == "sparc5") {
++      return "sparc5";
++    } else if (AV == "generic") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "generic32") {
++      return "v8plusa";
++    } else if (AV == "generic64") {
++      return "v9a";
++    }
++  }
++
++  if (const Arg *A = Args.getLastArg(options::OPT_mcpu_EQ)) {
++    StringRef AV = A->getValue();
++    if (AV == "native") {
++      std::string CPU = llvm::sys::getHostCPUName().str();
++      if (CPU.find("UltraSPARC-IV") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9c" : "v8plusc";
++      else if (CPU.find("UltraSPARC-III") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++      else if (CPU.find("UltraSPARC-II") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++      else if (CPU.find("UltraSPARC-I") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9" : "v8plus";
++      else if (CPU.find("SPARC-T4") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-T5") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-T6") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-T7") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-M4") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9v" : "v8plusv";
++      else if (CPU.find("SPARC-M5") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-M6") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++      else if (CPU.find("SPARC-M7") != std::string::npos)
++        return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9m" : "v8plusm";
++    } else if (AV == "ultrasparc") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "ultrasparc2") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "ultrasparc3") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "ultrasparc4") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9c" : "v8plusc";
++    } else if (AV == "niagara") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara2") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara3") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "niagara4") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9b" : "v8plusb";
++    } else if (AV == "sparc4") {
++      return "sparc4";
++    } else if (AV == "sparc5") {
++      return "sparc5";
++    } else if (AV == "generic") {
++      return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++    } else if (AV == "generic32") {
++      return "v8plusa";
++    } else if (AV == "generic64") {
++      return "v9a";
++    }
++  }
++
++  return Triple.getArch() == llvm::Triple::sparcv9 ?  "v9a" : "v8plusa";
++}
++
++const char *x86::getX86TargetCPU(const llvm::opt::ArgList &Args,
++                                 const llvm::Triple &Triple) {
+   if (const Arg *A = Args.getLastArg(options::OPT_march_EQ)) {
+     if (StringRef(A->getValue()) != "native") {
+       if (Triple.isOSDarwin() && Triple.getArchName() == "x86_64h")
+@@ -1616,7 +1773,7 @@
+     //
+     // FIXME: We should also incorporate the detected target features for use
+     // with -native.
+-    std::string CPU = llvm::sys::getHostCPUName();
++    std::string CPU = llvm::sys::getHostCPUName().str();
+     if (!CPU.empty() && CPU != "generic")
+       return Args.MakeArgString(CPU);
+   }
+@@ -1666,6 +1823,10 @@
+   if (Triple.isAndroid())
+     return Is64Bit ? "x86-64" : "i686";
+ 
++  // On Solaris return a target compatible with gas.
++  if (Triple.isOSSolaris())
++    return Is64Bit ? "opteron" : "pentium4";
++
+   // Everything else goes to x86-64 in 64-bit mode.
+   if (Is64Bit)
+     return "x86-64";
+@@ -1757,15 +1918,17 @@
+   }
+ 
+   case llvm::Triple::sparc:
+-  case llvm::Triple::sparcel:
+   case llvm::Triple::sparcv9:
++    return sparc::getSparcTargetCPU(Args, T);
++
++  case llvm::Triple::sparcel:
+     if (const Arg *A = Args.getLastArg(options::OPT_mcpu_EQ))
+       return A->getValue();
+     return "";
+ 
+   case llvm::Triple::x86:
+   case llvm::Triple::x86_64:
+-    return getX86TargetCPU(Args, T);
++    return x86::getX86TargetCPU(Args, T);
+ 
+   case llvm::Triple::hexagon:
+     return "hexagon" +
+@@ -3084,7 +3247,7 @@
+ 
+ // Fallback to user id.
+ #ifdef LLVM_ON_UNIX
+-  std::string UID = llvm::utostr(getuid());
++  std::string UID = std::to_string(static_cast<unsigned int>(getuid()));
+ #else
+   // FIXME: Windows seems to have an 'SID' that might work.
+   std::string UID = "9999";
+@@ -3263,10 +3426,12 @@
+   // ToolChain.getTriple() and Triple?
+   bool PIE = ToolChain.isPIEDefault();
+   bool PIC = PIE || ToolChain.isPICDefault();
++
+   // The Darwin/MachO default to use PIC does not apply when using -static.
+   if (ToolChain.getTriple().isOSBinFormatMachO() &&
+       Args.hasArg(options::OPT_static))
+     PIE = PIC = false;
++
+   bool IsPICLevelTwo = PIC;
+ 
+   bool KernelOrKext =
+@@ -3320,6 +3485,24 @@
+     }
+   }
+ 
++  // Solaris-specific defaults for PIE
++  if (ToolChain.getTriple().getOS() == llvm::Triple::Solaris) {
++    switch (ToolChain.getTriple().getArch()) {
++    case llvm::Triple::x86:
++      IsPICLevelTwo = false; // "-fpie"
++      break;
++    case llvm::Triple::sparc:
++    case llvm::Triple::x86_64:
++    case llvm::Triple::sparcv9:
++      IsPICLevelTwo = true; // "-fPIE"
++      break;
++
++    default:
++      break;
++    }
++  }
++
++
+   // The last argument relating to either PIC or PIE wins, and no
+   // other argument is used. If the last argument is any flavor of the
+   // '-fno-...' arguments, both PIC and PIE are disabled. Any PIE
+@@ -3336,8 +3519,8 @@
+       if (O.matches(options::OPT_fPIC) || O.matches(options::OPT_fpic) ||
+           O.matches(options::OPT_fPIE) || O.matches(options::OPT_fpie)) {
+         PIE = O.matches(options::OPT_fPIE) || O.matches(options::OPT_fpie);
+-        PIC =
+-            PIE || O.matches(options::OPT_fPIC) || O.matches(options::OPT_fpic);
++        PIC = PIE || O.matches(options::OPT_fPIC) ||
++          O.matches(options::OPT_fpic);
+         IsPICLevelTwo =
+             O.matches(options::OPT_fPIE) || O.matches(options::OPT_fPIC);
+       } else {
+@@ -3367,10 +3550,37 @@
+                        !Triple.isWatchOS()))
+     PIC = PIE = false;
+ 
++  if (ToolChain.getTriple().getOS() == llvm::Triple::Solaris) {
++    unsigned PICLevel = IsPICLevelTwo ? 2 : 1;
++    if (Arg *A = Args.getLastArg(options::OPT_shared)) {
++      PIC = true;
++      PIE = false;
++      return std::make_tuple(llvm::Reloc::PIC_, PICLevel, PIE);
++    } else if (PIE) {
++      PIC = PIE = true;
++      return std::make_tuple(llvm::Reloc::PIC_, PICLevel, PIE);
++    } else if (PIC) {
++      PIC = true;
++      PIE = IsPICLevelTwo;
++      return std::make_tuple(llvm::Reloc::PIC_, PICLevel, PIE);
++    } else if (Args.hasArg(options::OPT_static)) {
++      // Solaris doesn't to static relocations.
++      PIC = PIE = false;
++      return std::make_tuple(llvm::Reloc::DynamicNoPIC, PICLevel, PIE);
++    } else {
++      // This is a Solaris non-PIE executable.
++      // Solaris doesn't to static relocations.
++      PIC = PIE = false;
++      PICLevel = 0;
++      return std::make_tuple(llvm::Reloc::DynamicNoPIC, PICLevel, PIE);
++    }
++  }
++
+   if (Arg *A = Args.getLastArg(options::OPT_mdynamic_no_pic)) {
+     // This is a very special mode. It trumps the other modes, almost no one
+     // uses it, and it isn't even valid on any OS but Darwin.
+-    if (!ToolChain.getTriple().isOSDarwin())
++    if (!ToolChain.getTriple().isOSDarwin() &&
++        !ToolChain.getTriple().isOSSolaris())
+       ToolChain.getDriver().Diag(diag::err_drv_unsupported_opt_for_target)
+           << A->getSpelling() << ToolChain.getTriple().str();
+ 
+@@ -3404,18 +3614,6 @@
+   llvm_unreachable("Unknown Reloc::Model kind");
+ }
+ 
+-static void AddAssemblerKPIC(const ToolChain &ToolChain, const ArgList &Args,
+-                             ArgStringList &CmdArgs) {
+-  llvm::Reloc::Model RelocationModel;
+-  unsigned PICLevel;
+-  bool IsPIE;
+-  std::tie(RelocationModel, PICLevel, IsPIE) =
+-      ParsePICArgs(ToolChain, ToolChain.getTriple(), Args);
+-
+-  if (RelocationModel != llvm::Reloc::Static)
+-    CmdArgs.push_back("-KPIC");
+-}
+-
+ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
+                          const InputInfo &Output, const InputInfoList &Inputs,
+                          const ArgList &Args, const char *LinkingOutput) const {
+@@ -3713,6 +3911,14 @@
+     CmdArgs.push_back(A->getValue());
+   }
+ 
++  if (Arg *A = Args.getLastArg(options::OPT_fabi_version_EQ)) {
++    StringRef V = A->getValue();
++    CmdArgs.push_back(Args.MakeArgString("-fabi-version=" + V));
++    A->claim();
++  } else {
++    CmdArgs.push_back(Args.MakeArgString("-fabi-version=4"));
++  }
++
+   if (Arg *A = Args.getLastArg(options::OPT_fpcc_struct_return,
+                                options::OPT_freg_struct_return)) {
+     if (getToolChain().getArch() != llvm::Triple::x86) {
+@@ -4522,6 +4728,7 @@
+     // If -fmessage-length=N was not specified, determine whether this is a
+     // terminal and, if so, implicitly define -fmessage-length appropriately.
+     unsigned N = llvm::sys::Process::StandardErrColumns();
++    if (N == 0U) N = 72U;
+     CmdArgs.push_back(Args.MakeArgString(Twine(N)));
+   }
+ 
+@@ -4707,6 +4914,10 @@
+   if (Args.hasArg(options::OPT_mstack_alignment)) {
+     StringRef alignment = Args.getLastArgValue(options::OPT_mstack_alignment);
+     CmdArgs.push_back(Args.MakeArgString("-mstack-alignment=" + alignment));
++  } else {
++    if ((getToolChain().getArch() == llvm::Triple::sparc) ||
++        (getToolChain().getArch() == llvm::Triple::sparcv9))
++      CmdArgs.push_back("-mstack-alignment=16");
+   }
+ 
+   if (Args.hasArg(options::OPT_mstack_probe_size)) {
+@@ -4963,16 +5174,16 @@
+   }
+ 
+   // -fuse-cxa-atexit is default.
+-  if (!Args.hasFlag(
++  if ((!Args.hasFlag(
+           options::OPT_fuse_cxa_atexit, options::OPT_fno_use_cxa_atexit,
+           !IsWindowsCygnus && !IsWindowsGNU &&
+-              getToolChain().getTriple().getOS() != llvm::Triple::Solaris &&
+               getToolChain().getArch() != llvm::Triple::hexagon &&
+               getToolChain().getArch() != llvm::Triple::xcore &&
+               ((getToolChain().getTriple().getVendor() !=
+                 llvm::Triple::MipsTechnologies) ||
+                getToolChain().getTriple().hasEnvironment())) ||
+-      KernelOrKext)
++      KernelOrKext) &&
++      !getToolChain().getTriple().getOS() == llvm::Triple::Solaris)
+     CmdArgs.push_back("-fno-use-cxa-atexit");
+ 
+   // -fms-extensions=0 is default.
+@@ -5425,8 +5636,10 @@
+   // nice to enable this when doing a crashdump for modules as well.
+   if (Args.hasFlag(options::OPT_frewrite_includes,
+                    options::OPT_fno_rewrite_includes, false) ||
+-      (C.isForDiagnostics() && !HaveModules))
++      (C.isForDiagnostics() && !HaveModules)) {
++    if (getToolChain().getTriple().getOS() != llvm::Triple::Solaris)
+     CmdArgs.push_back("-frewrite-includes");
++  }
+ 
+   // Only allow -traditional or -traditional-cpp outside in preprocessing modes.
+   if (Arg *A = Args.getLastArg(options::OPT_traditional,
+@@ -6155,7 +6368,10 @@
+     CmdArgs.push_back("-fsyntax-only");
+   }
+ 
+-  Args.AddAllArgValues(CmdArgs, options::OPT_Wa_COMMA, options::OPT_Xassembler);
++  Args.AddAllArgValues(CmdArgs, options::OPT_Wa_COMMA,
++                       options::OPT_Xassembler);
++  Args.ClaimAllArgs(options::OPT_Wa_COMMA);
++  Args.ClaimAllArgs(options::OPT_Xassembler);
+ 
+   // Only pass -x if gcc will understand it; otherwise hope gcc
+   // understands the suffix correctly. The main use case this would go
+@@ -7383,44 +7599,362 @@
+   claimNoWarnArgs(Args);
+   ArgStringList CmdArgs;
+ 
+-  Args.AddAllArgValues(CmdArgs, options::OPT_Wa_COMMA, options::OPT_Xassembler);
++  const toolchains::Solaris &TC =
++    static_cast<const toolchains::Solaris&>(getToolChain());
++
++  if (!TC.isValid()) {
++    llvm::errs() << "Invalid GCC installation!\n";
++    return;
++  }
+ 
++  std::string EffectiveTriple = TC.ComputeLLVMTriple(Args, types::ID(0));
++  llvm::Triple ET(EffectiveTriple);
++
++  const Driver &D = TC.getDriver();
++  llvm::Triple::ArchType Arch = ET.getArch();
++  StringRef AS = TC.getAssembler();
++  bool m32 = !!Args.getLastArg(options::OPT_m32);
++
++  std::string march;
++  std::string mtune;
++  std::string mcpu;
++
++  if (Arg *A = Args.getLastArg(options::OPT_march_EQ))
++    march = A->getValue();
++  else
++    march = TC.getMArch();
++
++  if (Arg *A = Args.getLastArg(options::OPT_mtune_EQ))
++    mtune = A->getValue();
++  else
++    mtune = TC.getMTune();
++
++  if (Arg *A = Args.getLastArg(options::OPT_mcpu_EQ))
++    mcpu = A->getValue();
++  else
++    mcpu = TC.getMCpu();
++
++  if (Args.hasArg(options::OPT_v))
++    CmdArgs.push_back("-V");
++
++  switch (Arch) {
++  case llvm::Triple::x86:
++  case llvm::Triple::x86_64:
++    if (m32)
++      CmdArgs.push_back("--32");
++    else
++      CmdArgs.push_back("--64");
++    break;
++  case llvm::Triple::sparc:
++  case llvm::Triple::sparcv9:
++    if (m32) {
++      CmdArgs.push_back("-32");
++      if (march.empty())
++        march="v8plusa";
++      if (mcpu.empty())
++        mcpu="v8plusa";
++    } else {
++      CmdArgs.push_back("-64");
++      if (march.empty())
++        march="v9a";
++      if (mcpu.empty())
++        mcpu="v9a";
++    }
++    break;
++  default:
++    D.Diag(diag::err_target_unsupported_arch) << ET.getArchName()
++      << ET.getTriple();
++    break;
++  }
++
++  std::string xarch;
++
++  switch (Arch) {
++  case llvm::Triple::sparc:
++  case llvm::Triple::sparcv9:
++    xarch = "-xarch=";
++    xarch += clang::driver::tools::sparc::getSparcTargetCPU(Args, ET);
++    CmdArgs.push_back(Args.MakeArgString(xarch.c_str()));
++    AddAssemblerKPIC(TC, Args, CmdArgs);
++    CmdArgs.push_back("-no-undeclared-regs");
++    if (Args.hasArg(options::OPT_mstrict_align))
++      CmdArgs.push_back("--enforce-aligned-data");
++    break;
++  case llvm::Triple::x86:
++  case llvm::Triple::x86_64:
++    xarch = "-march=";
++    xarch += clang::driver::tools::x86::getX86TargetCPU(Args, ET);
++    CmdArgs.push_back(Args.MakeArgString(xarch.c_str()));
++    break;
++  default:
++    D.Diag(diag::err_target_unsupported_arch) << ET.getArchName()
++      << ET.getTriple();
++    break;
++  }
++
++  if (Args.hasArg(options::OPT_g_Flag) || Args.hasArg(options::OPT_g0) ||
++      Args.hasArg(options::OPT_g1) || Args.hasArg(options::OPT_g2) ||
++      Args.hasArg(options::OPT_g3))
++    CmdArgs.push_back("--gen-debug");
++
++  if (Output.isFilename()) {
+   CmdArgs.push_back("-o");
+   CmdArgs.push_back(Output.getFilename());
++  } else {
++    D.Diag(diag::err_drv_invalid_gcc_output_type) << "<unspecified>";
++    CmdArgs.push_back("-fsyntax-only");
++  }
+ 
+-  for (const auto &II : Inputs)
++  Args.AddAllArgValues(CmdArgs, options::OPT_Wa_COMMA,
++                       options::OPT_Xassembler);
++
++  for (const auto &II : Inputs) {
++    if (II.isFilename())
+     CmdArgs.push_back(II.getFilename());
++    else
++      II.getInputArg().render(Args, CmdArgs);
++  }
+ 
+-  const char *Exec = Args.MakeArgString(getToolChain().GetProgramPath("as"));
++  const char *Exec = AS.data();
+   C.addCommand(llvm::make_unique<Command>(JA, *this, Exec, CmdArgs, Inputs));
+ }
+ 
++void
++solaris::Assembler::RenderExtraToolArgs(const JobAction &JA,
++                                        llvm::opt::ArgStringList &CmdArgs) const {
++  // FIXME: IMPLEMENT
++}
++
++bool solaris::Linker::checkGnuLd(StringRef Path) const {
++  if (Path.empty()) return false;
++
++  char Buf[_POSIX_PATH_MAX+1];
++  std::string CMD = Path.str();
++  CMD += " -v 2>&1";
++
++  std::FILE *FP = ::popen(CMD.c_str(), "r");
++  if (!FP) return false;
++
++  (void) std::memset(Buf, 0, sizeof(Buf));
++  (void) std::fgets(Buf, _POSIX_PATH_MAX, FP);
++  ::pclose(FP);
++
++  return !!std::strstr(Buf, "GNU");
++}
++
+ void solaris::Linker::ConstructJob(Compilation &C, const JobAction &JA,
+                                    const InputInfo &Output,
+                                    const InputInfoList &Inputs,
+                                    const ArgList &Args,
+                                    const char *LinkingOutput) const {
++  const toolchains::Solaris& TC =
++    static_cast<const toolchains::Solaris&>(getToolChain());
++
++  if (!TC.isValid()) {
++    llvm::errs() << "Invalid GCC installation!\n";
++    return;
++  }
++
++  llvm::Triple TT = TC.getTriple();
++  std::string EffectiveTriple = TC.ComputeLLVMTriple(Args, types::ID(0));
++  llvm::Triple ET(EffectiveTriple);
++
++  const Driver &D = TC.getDriver();
++  llvm::Triple::ArchType Arch = TT.getArch();
++  bool m32 = !!Args.getLastArg(options::OPT_m32);
++
++  StringRef LD = TC.getLinker();
++  bool UseGnuLd = checkGnuLd(LD);
++
++  std::string GCCLibPath;
++  std::string YPPath;
++  GCCLibPath += "/lib/gcc/";
++  std::string LibPath = "/usr/lib/";
++  std::string ShortLibPath = "/lib/";
++  std::string ClangLibPath;
++  const char* moption;
++  std::string gldm;
++
++  if (UseGnuLd) {
++    switch (Arch) {
++    case llvm::Triple::x86:
++      if (m32)
++        gldm = "elf_i386_sol2";
++      else
++        gldm = "elf_x86_64_sol2";
++      break;
++    case llvm::Triple::x86_64:
++      if (m32)
++        gldm = "elf_i386_sol2";
++      else
++        gldm = "elf_x86_64_sol2";
++      break;
++    case llvm::Triple::sparc:
++      if (m32)
++        gldm = "elf32_sparc_sol2";
++      else
++        gldm = "elf64_sparc_sol2";
++      break;
++    case llvm::Triple::sparcv9:
++      if (m32)
++        gldm = "elf32_sparc_sol2";
++      else
++        gldm = "elf64_sparc_sol2";
++      break;
++    default:
++      break;
++    }
++  }
++
++  switch (Arch) {
++  case llvm::Triple::x86:
++    if (m32) {
++      GCCLibPath = TC.getGCCInternalLibDir().str();
++      GCCLibPath += "/";
++      moption = "-32";
++      YPPath = "/lib:/usr/lib";
++      ClangLibPath = "/usr/lib/clang/";
++    } else {
++      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath += "/";
++      LibPath += "amd64/";
++      ShortLibPath += "amd64/";
++      moption = "-64";
++      YPPath = "/lib/amd64:/usr/lib/amd64";
++      ClangLibPath = "/usr/lib/amd64/clang/";
++    }
++    break;
++  case llvm::Triple::sparc:
++    if (m32) {
++      GCCLibPath = TC.getGCCInternalLibDir().str();
++      GCCLibPath += "/";
++      moption = "-32";
++      YPPath = "/lib:/usr/lib";
++      ClangLibPath = "/usr/lib/clang/";
++    } else {
++      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath += "/";
++      LibPath += "sparcv9/";
++      ShortLibPath += "sparcv9/";
++      moption = "-64";
++      YPPath = "/lib/sparcv9:/usr/lib/sparcv9";
++      ClangLibPath = "/usr/lib/sparcv9/clang/";
++    }
++    break;
++  case llvm::Triple::x86_64:
++    if (m32) {
++      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath += "/";
++      moption = "-32";
++      YPPath = "/lib:/usr/lib";
++      ClangLibPath = "/usr/lib/clang/";
++    } else {
++      GCCLibPath = TC.getGCCInternalLibDir().str();
++      GCCLibPath += "/";
++    LibPath += "amd64/";
++      ShortLibPath += "amd64/";
++      moption = "-64";
++      YPPath = "/lib/amd64:/usr/lib/amd64";
++      ClangLibPath = "/usr/lib/amd64/clang/";
++    }
++    break;
++  case llvm::Triple::sparcv9:
++    if (m32) {
++      GCCLibPath = TC.getGCCInternalMultiLibDir().str();
++      GCCLibPath += "/";
++      moption = "-32";
++      YPPath = "/lib:/usr/lib";
++      ClangLibPath = "/usr/lib/clang/";
++    } else {
++      GCCLibPath = TC.getGCCInternalLibDir().str();
++      GCCLibPath += "/";
++      LibPath += "sparcv9/";
++      ShortLibPath += "sparcv9/";
++      moption = "-64";
++      YPPath = "/lib/sparcv9:/usr/lib/sparcv9";
++      ClangLibPath = "/usr/lib/sparcv9/clang/";
++    }
++    break;
++  default:
++    D.Diag(diag::err_target_unsupported_arch) << ET.getArchName()
++      << ET.getTriple();
++    break;
++  }
++
+   ArgStringList CmdArgs;
+ 
+-  // Demangle C++ names in errors
+-  CmdArgs.push_back("-C");
++  // THe -m flag to GNU ld is positional dependent.
++  // Do not change this ordering of options for the GNU ld.
++  if (!gldm.empty()) {
++    CmdArgs.push_back(Args.MakeArgString("-m"));
++    CmdArgs.push_back(Args.MakeArgString(gldm.c_str()));
++  }
+ 
+-  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_shared)) {
+-    CmdArgs.push_back("-e");
+-    CmdArgs.push_back("_start");
++  if (UseGnuLd) {
++    if (Args.hasArg(options::OPT_v))
++      CmdArgs.push_back(Args.MakeArgString("-v"));
++    CmdArgs.push_back(Args.MakeArgString("--as-needed"));
++  } else {
++    if (D.CCCIsCXX())
++      CmdArgs.push_back(Args.MakeArgString("-zrelax=comdat"));
+   }
+ 
++  Arg *PIEArg = Args.getLastArg(options::OPT_fPIE, options::OPT_fpie);
++  if (PIEArg) {
++    if (PIEArg->getOption().matches(options::OPT_fPIE) ||
++        PIEArg->getOption().matches(options::OPT_fpie)) {
++      CmdArgs.push_back(Args.MakeArgString("-Qy"));
++
++      if (UseGnuLd) {
++        CmdArgs.push_back(Args.MakeArgString("--pic-executable"));
++      } else {
++        CmdArgs.push_back(Args.MakeArgString("-zdirect"));
++        CmdArgs.push_back(Args.MakeArgString("-ztextwarn"));
++        CmdArgs.push_back(Args.MakeArgString("-ztype=pie"));
++        CmdArgs.push_back(Args.MakeArgString("-zaslr=enable"));
++      }
++    }
++  }
++
++  // Silence 'argument not used during compilation: -g' warning.
++  Args.ClaimAllArgs(options::OPT_g_Group);
++
++  // Silence 'argument unused during compilation: -pthread' warning.
++  Args.ClaimAllArgs(options::OPT_pthread);
++
++  // Language options
++  Args.ClaimAllArgs(options::OPT_emit_llvm);
++  Args.ClaimAllArgs(options::OPT_w);
++
++  if (Args.hasArg(options::OPT_s))
++    CmdArgs.push_back("-s");
++
++  const std::vector<std::string> &ExtraOpts = TC.getExtraOpts();
++
++  // Handle extra options
++  if (ExtraOpts.size()) {
++    for (std::vector<std::string>::const_iterator I = ExtraOpts.begin(),
++         E = ExtraOpts.end(); I != E; ++I)
++      CmdArgs.push_back((*I).c_str());
++  }
++
++  // Demangle C++ names
++  if (UseGnuLd)
++    CmdArgs.push_back("--demangle");
++  else
++    CmdArgs.push_back("-C");
++
+   if (Args.hasArg(options::OPT_static)) {
+     CmdArgs.push_back("-Bstatic");
+     CmdArgs.push_back("-dn");
+   } else {
+     CmdArgs.push_back("-Bdynamic");
++    CmdArgs.push_back("-dy");
+     if (Args.hasArg(options::OPT_shared)) {
+       CmdArgs.push_back("-shared");
+     } else {
+       CmdArgs.push_back("--dynamic-linker");
+-      CmdArgs.push_back(
+-          Args.MakeArgString(getToolChain().GetFilePath("ld.so.1")));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + "ld.so.1"));
+     }
+   }
+ 
+@@ -7431,48 +7965,264 @@
+     assert(Output.isNothing() && "Invalid output.");
+   }
+ 
+-  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nostartfiles)) {
+-    if (!Args.hasArg(options::OPT_shared))
+-      CmdArgs.push_back(
+-          Args.MakeArgString(getToolChain().GetFilePath("crt1.o")));
++  const char* Values = "values-Xa.o";
++  const char* Xpg = "values-xpg4.o";
+ 
+-    CmdArgs.push_back(Args.MakeArgString(getToolChain().GetFilePath("crti.o")));
+-    CmdArgs.push_back(
+-        Args.MakeArgString(getToolChain().GetFilePath("values-Xa.o")));
+-    CmdArgs.push_back(
+-        Args.MakeArgString(getToolChain().GetFilePath("crtbegin.o")));
++  Arg *STDArg = Args.getLastArg(options::OPT_std_EQ);
++  if (STDArg) {
++    if (STDArg->getOption().matches(options::OPT_std_EQ)) {
++      std::string Lang = STDArg->getValue();
++      if ((Lang == "c99") || (Lang == "c11") ||
++          (Lang == "c++11") || (Lang == "c++14")) {
++        Values = "values-Xc.o";
++        Xpg = "values-xpg6.o";
++      }
++    }
+   }
+ 
+-  getToolChain().AddFilePathLibArgs(Args, CmdArgs);
++  if (UseGnuLd) {
++    if (LD == "/usr/gnu/bin/ld.gold") {
++      if (Args.hasArg(options::OPT_O))
++        Args.AddAllArgs(CmdArgs, options::OPT_O);
++    } else
++      CmdArgs.push_back(Args.MakeArgString("-O"));
++  }
+ 
+-  Args.AddAllArgs(CmdArgs, {options::OPT_L, options::OPT_T_Group,
+-                            options::OPT_e, options::OPT_r});
++  if (Args.hasArg(options::OPT_v))
++    CmdArgs.push_back(Args.MakeArgString(StringRef("-V")));
+ 
+-  AddLinkerInputs(getToolChain(), Inputs, Args, CmdArgs);
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-Qy")));
+ 
+-  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
+-    if (getToolChain().getDriver().CCCIsCXX())
+-      getToolChain().AddCXXStdlibLibArgs(Args, CmdArgs);
+-    CmdArgs.push_back("-lgcc_s");
+-    CmdArgs.push_back("-lc");
++  if (LD == "/usr/bin/ld") {
++    CmdArgs.push_back(Args.MakeArgString(StringRef("-Y")));
++    CmdArgs.push_back(Args.MakeArgString(StringRef("P," + YPPath)));
++  } else {
++    CmdArgs.push_back(Args.MakeArgString(StringRef("-Y")));
++    CmdArgs.push_back(Args.MakeArgString(StringRef(YPPath)));
++  }
++
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++
++  std::string P = GCCLibPath;
++  P += "../../..";
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + P));
++
++  std::string crt1o;
++  bool S12OrHigher = false;
++
++  // We're not backporting this to S10. Until we do, that is.
++  if (EffectiveTriple.find("solaris2.11") == std::string::npos)
++    S12OrHigher = true;
++
++  if (!Args.hasArg(options::OPT_nostdlib) &&
++      !Args.hasArg(options::OPT_nostartfiles)) {
+     if (!Args.hasArg(options::OPT_shared)) {
+-      CmdArgs.push_back("-lgcc");
++      switch (Arch) {
++      case llvm::Triple::sparc:
++      case llvm::Triple::sparcv9:
++        if (S12OrHigher)
++          crt1o = LibPath;
++        else
++          crt1o = GCCLibPath;
++      case llvm::Triple::x86:
++      case llvm::Triple::x86_64:
++        crt1o = LibPath;
++        break;
++      default:
++        D.Diag(diag::err_target_unsupported_arch) << ET.getArchName()
++          << ET.getTriple();
++        break;
++      }
++
++      crt1o += "/crt1.o";
++
++      CmdArgs.push_back(Args.MakeArgString(crt1o.c_str()));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + "crti.o"));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Values));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Xpg));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + GCCLibPath));
++      CmdArgs.push_back(Args.MakeArgString("-L" + P));
++      CmdArgs.push_back(Args.MakeArgString(GCCLibPath + "crtbegin.o"));
++    } else {
++      CmdArgs.push_back(Args.MakeArgString(LibPath + "crti.o"));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Values));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Xpg));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + GCCLibPath));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + P));
++      CmdArgs.push_back(Args.MakeArgString(GCCLibPath + "crtbegin.o"));
++    }
++  } else if (Args.hasArg(options::OPT_nostdlib) &&
++             !Args.hasArg(options::OPT_nostartfiles)) {
++    if (Args.hasArg(options::OPT_shared)) {
++      CmdArgs.push_back(Args.MakeArgString(LibPath + "crti.o"));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Values));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Xpg));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + GCCLibPath));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + P));
++      CmdArgs.push_back(Args.MakeArgString(GCCLibPath + "crtbegin.o"));
++    } else {
++      CmdArgs.push_back(Args.MakeArgString(crt1o.c_str()));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + "crti.o"));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Values));
++      CmdArgs.push_back(Args.MakeArgString(LibPath + Xpg));
++      CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + GCCLibPath));
++      CmdArgs.push_back(Args.MakeArgString("-L" + P));
++    }
++  } else if (!Args.hasArg(options::OPT_nostdlib) &&
++             Args.hasArg(options::OPT_nostartfiles)) {
++    if (Args.hasArg(options::OPT_shared)) {
++      CmdArgs.push_back(Args.MakeArgString(GCCLibPath + "crtend.o"));
++    }
++  }
++
++  // Itanium C++ ABI.
++  std::string CXAFinalize;
++  bool HasSystemCXAFinalize = !S12OrHigher;
++
++  if (!Args.hasArg(options::OPT_shared)) {
++    if (PIEArg) {
++      if (PIEArg->getOption().matches(options::OPT_fPIE) ||
++          PIEArg->getOption().matches(options::OPT_fpie)) {
++        CXAFinalize = ClangLibPath + "cxa_finalize_pic.o";
++      }
++    } else {
++      CXAFinalize = ClangLibPath + "cxa_finalize.o";
++    }
++
++    HasSystemCXAFinalize = llvm::sys::fs::exists(CXAFinalize.c_str());
++
++    if (D.CCCIsCXX() && HasSystemCXAFinalize)
++      CmdArgs.push_back(Args.MakeArgString(CXAFinalize.c_str()));
++  }
++
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-L" + GCCLibPath)));
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + LibPath));
++  CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + ShortLibPath));
++
++  Args.AddAllArgs(CmdArgs, options::OPT_L);
++  const ToolChain::path_list Paths = TC.getFilePaths();
++  for (ToolChain::path_list::const_iterator B = Paths.begin(), E = Paths.end();
++       B != E; ++B) {
++    CmdArgs.push_back(Args.MakeArgString(StringRef("-L") + *B));
++
++    // Itanium C++ ABI.
++    if (!Args.hasArg(options::OPT_shared)) {
++      if (D.CCCIsCXX() && !HasSystemCXAFinalize) {
++        if (PIEArg) {
++          if (PIEArg->getOption().matches(options::OPT_fPIE) ||
++              PIEArg->getOption().matches(options::OPT_fpie)) {
++            CXAFinalize = *B + "/cxa_finalize_pic.o";
++          }
++        } else {
++          CXAFinalize = *B + "/cxa_finalize.o";
++        }
++
++        if (llvm::sys::fs::exists(CXAFinalize.c_str()))
++          CmdArgs.push_back(Args.MakeArgString(CXAFinalize.c_str()));
++      }
++    }
++  }
++
++  Args.AddAllArgs(CmdArgs, options::OPT_T_Group);
++  Args.AddAllArgs(CmdArgs, options::OPT_e);
++  Args.AddAllArgs(CmdArgs, options::OPT_s);
++  Args.AddAllArgs(CmdArgs, options::OPT_t);
++  Args.AddAllArgs(CmdArgs, options::OPT_r);
++
++  std::vector<std::string>  zoptions = Args.getAllArgValues(options::OPT_z);
++  std::string zoption;
++
++  for (std::vector<std::string>::const_iterator B = zoptions.begin(),
++       E = zoptions.end(); B != E; ++B) {
++    zoption = "-z";
++    zoption += *B;
++    CmdArgs.push_back(Args.MakeArgString(StringRef(zoption)));
++  }
++
++  if (!Args.hasArg(options::OPT_mimpure_text) &&
++      !Args.hasArg(options::OPT_fpie) &&
++      !Args.hasArg(options::OPT_fPIE))
++    CmdArgs.push_back(Args.MakeArgString(StringRef("-ztext")));
++
++  // Itanium C++ ABI.
++  if (D.CCCIsCXX()) {
++    if (!Args.hasArg(options::OPT_shared)) {
++      if (HasSystemCXAFinalize) {
++        const char* zfiniarray = "-zfiniarray=__cxa_finalize";
++        CmdArgs.push_back(Args.MakeArgString(zfiniarray));
++      }
++    }
++  }
++
++  if (LD == "/usr/gnu/bin/ld.gold") {
++    CmdArgs.push_back("-plugin");
++    std::string Plugin = D.Dir + "/../lib/LLVMgold.so";
++    CmdArgs.push_back(Args.MakeArgString(Plugin));
++  }
++
++  if (!UseGnuLd) {
++    CmdArgs.push_back(moption);
++  }
++
++  if (Arg *A = Args.getLastArg(options::OPT_rpath)) {
++    StringRef V = A->getValue();
++    if (UseGnuLd) {
++      CmdArgs.push_back(Args.MakeArgString("-rpath"));
++      CmdArgs.push_back(Args.MakeArgString(V));
++    } else {
++      CmdArgs.push_back(Args.MakeArgString("-R"));
++      CmdArgs.push_back(Args.MakeArgString(V));
++    }
++  }
++
++  AddLinkerInputs(TC, Inputs, Args, CmdArgs);
++  AddLibgcc(D, CmdArgs, Args, LD.str());
++
++  if (!Args.hasArg(options::OPT_nostdlib) &&
++      !Args.hasArg(options::OPT_nodefaultlibs)) {
++    addOpenMPRuntime(CmdArgs, TC, Args);
++
++    if (D.CCCIsCXX())
++      TC.AddCXXStdlibLibArgs(Args, CmdArgs);
++
++    CmdArgs.push_back("-lc");
+       CmdArgs.push_back("-lm");
++    CmdArgs.push_back("-lgcc_s");
++
++    if (Args.hasArg(options::OPT_static)) {
++      CmdArgs.push_back("-lgcc");
++      CmdArgs.push_back("-lgcc_eh");
+     }
++  } else if (Args.hasArg(options::OPT_nostdlib) &&
++             (!Args.hasArg(options::OPT_nodefaultlibs))) {
++    CmdArgs.push_back("-lgcc_s");
++
++    if (Args.hasArg(options::OPT_static))
++      CmdArgs.push_back("-lgcc_eh");
+   }
+ 
+-  if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nostartfiles)) {
+-    CmdArgs.push_back(
+-        Args.MakeArgString(getToolChain().GetFilePath("crtend.o")));
++  if (!Args.hasArg(options::OPT_nostdlib) &&
++      !Args.hasArg(options::OPT_nostartfiles)) {
++    CmdArgs.push_back(Args.MakeArgString(GCCLibPath + "crtend.o"));
+   }
+-  CmdArgs.push_back(Args.MakeArgString(getToolChain().GetFilePath("crtn.o")));
+ 
+-  getToolChain().addProfileRTLibs(Args, CmdArgs);
++  CmdArgs.push_back(Args.MakeArgString(LibPath + "crtn.o"));
+ 
+-  const char *Exec = Args.MakeArgString(getToolChain().GetLinkerPath());
++  TC.addProfileRTLibs(Args, CmdArgs);
++
++  Args.ClaimAllArgs(options::OPT_Wl_COMMA);
++  Args.ClaimAllArgs(options::OPT_Xlinker);
++
++  const char *Exec = LD.data();
+   C.addCommand(llvm::make_unique<Command>(JA, *this, Exec, CmdArgs, Inputs));
+ }
+ 
++void
++solaris::Linker::RenderExtraToolArgs(const JobAction &JA,
++                                     llvm::opt::ArgStringList &CmdArgs) const {
++  // FIXME: IMPLEMENT
++}
++
+ void openbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
+                                       const InputInfo &Output,
+                                       const InputInfoList &Inputs,
+@@ -8623,6 +9373,41 @@
+     CmdArgs.push_back("-ldl");
+ }
+ 
++static void AddLibgcc(const Driver &D, ArgStringList &CmdArgs,
++                      const ArgList &Args, const std::string& Exec) {
++  bool StaticLibgcc = Args.hasArg(options::OPT_static) ||
++    Args.hasArg(options::OPT_static_libgcc);
++  if (!D.CCCIsCXX())
++    CmdArgs.push_back("-lgcc");
++
++  if (StaticLibgcc) {
++    if (D.CCCIsCXX())
++      CmdArgs.push_back("-lgcc");
++  } else {
++    if ((!D.CCCIsCXX()) && ((Exec == "/usr/bin/gld") ||
++                            (Exec == "/usr/gnu/bin/ld") ||
++                            (Exec == "/usr/gnu/bin/ld.bfd") ||
++                            (Exec == "/usr/gnu/bin/ld.gold")))
++      CmdArgs.push_back("--as-needed");
++
++    CmdArgs.push_back("-lgcc_s");
++    if ((!D.CCCIsCXX()) && ((Exec == "/usr/bin/gld") ||
++                            (Exec == "/usr/gnu/bin/ld") ||
++                            (Exec == "/usr/gnu/bin/ld.bfd") ||
++                            (Exec == "/usr/gnu/bin/ld.gold")))
++      CmdArgs.push_back("--no-as-needed");
++  }
++
++  if (StaticLibgcc)
++    CmdArgs.push_back("-lgcc_eh");
++  else if (!Args.hasArg(options::OPT_shared) && D.CCCIsCXX())
++    CmdArgs.push_back("-lgcc");
++
++  if (!StaticLibgcc)
++    CmdArgs.push_back("-ldl");
++}
++
++
+ static std::string getLinuxDynamicLinker(const ArgList &Args,
+                                          const toolchains::Linux &ToolChain) {
+   const llvm::Triple::ArchType Arch = ToolChain.getArch();
+###
+--- tools/clang/lib/Driver/Tools.h	2016-01-08 06:14:31.000000000 -0900
++++ tools/clang/lib/Driver/Tools.h	2016-07-04 11:21:03.646553390 -0800
+@@ -17,6 +17,8 @@
+ #include "clang/Frontend/CodeGenOptions.h"
+ #include "llvm/ADT/Triple.h"
+ #include "llvm/Option/Option.h"
++#include "llvm/Option/Arg.h"
++#include "llvm/Option/ArgList.h"
+ #include "llvm/Support/Compiler.h"
+ 
+ namespace clang {
+@@ -38,9 +40,10 @@
+ 
+ using llvm::opt::ArgStringList;
+ 
+-SmallString<128> getCompilerRT(const ToolChain &TC,
++SmallString<PATH_MAX> getCompilerRT(const ToolChain &TC,
+                                const llvm::opt::ArgList &Args,
+-                               StringRef Component, bool Shared = false);
++                                    StringRef Component,
++                                    bool Shared = false);
+ 
+ /// \brief Clang compiler tool.
+ class LLVM_LIBRARY_VISIBILITY Clang : public Tool {
+@@ -308,6 +311,16 @@
+ bool hasPPCAbiArg(const llvm::opt::ArgList &Args, const char *Value);
+ } // end namespace ppc
+ 
++namespace sparc {
++  const char *getSparcTargetCPU(const llvm::opt::ArgList &Args,
++                                const llvm::Triple &Triple);
++} // end namespace sparc
++
++namespace x86 {
++  const char *getX86TargetCPU(const llvm::opt::ArgList &Args,
++                              const llvm::Triple &Triple);
++} // end namespace x86
++
+ /// cloudabi -- Directly call GNU Binutils linker
+ namespace cloudabi {
+ class LLVM_LIBRARY_VISIBILITY Linker : public GnuTool {
+@@ -622,25 +635,32 @@
+ 
+ /// solaris -- Directly call Solaris assembler and linker
+ namespace solaris {
+-class LLVM_LIBRARY_VISIBILITY Assembler : public Tool {
++class LLVM_LIBRARY_VISIBILITY Assembler : public GnuTool {
+ public:
+   Assembler(const ToolChain &TC)
+-      : Tool("solaris::Assembler", "assembler", TC) {}
++    : GnuTool("solaris::Assembler", "assembler", TC) {}
+ 
+   bool hasIntegratedCPP() const override { return false; }
+ 
++  virtual void RenderExtraToolArgs(const JobAction &JA,
++                                   llvm::opt::ArgStringList &CmdArgs) const;
++
+   void ConstructJob(Compilation &C, const JobAction &JA,
+                     const InputInfo &Output, const InputInfoList &Inputs,
+                     const llvm::opt::ArgList &TCArgs,
+                     const char *LinkingOutput) const override;
+ };
+ 
+-class LLVM_LIBRARY_VISIBILITY Linker : public Tool {
++class LLVM_LIBRARY_VISIBILITY Linker : public GnuTool {
+ public:
+-  Linker(const ToolChain &TC) : Tool("solaris::Linker", "linker", TC) {}
++  Linker(const ToolChain &TC)
++    : GnuTool("solaris::Linker", "linker", TC) {}
+ 
+   bool hasIntegratedCPP() const override { return false; }
+   bool isLinkJob() const override { return true; }
++  bool checkGnuLd(StringRef Path) const;
++  virtual void RenderExtraToolArgs(const JobAction &JA,
++                                   llvm::opt::ArgStringList &CmdArgs) const;
+ 
+   void ConstructJob(Compilation &C, const JobAction &JA,
+                     const InputInfo &Output, const InputInfoList &Inputs,
+###
+--- tools/clang/lib/Driver/ToolChain.cpp	2015-11-25 16:02:07.000000000 -0900
++++ tools/clang/lib/Driver/ToolChain.cpp	2016-06-30 20:26:09.406980255 -0800
+@@ -408,6 +408,34 @@
+ 
+ std::string ToolChain::ComputeLLVMTriple(const ArgList &Args,
+                                          types::ID InputType) const {
++  llvm::Triple T = getTriple();
++  if (T.isOSSolaris()) {
++    if ((!Args.getLastArg(options::OPT_m32)) &&
++        (!Args.getLastArg(options::OPT_m64))) {
++      StringRef ArchName;
++
++      switch (T.getArch()) {
++      case llvm::Triple::x86_64:
++      case llvm::Triple::sparcv9:
++        return getTripleString();
++        break;
++      case llvm::Triple::sparc:
++        ArchName = "sparcv9";
++        T.setArchName(ArchName);
++        return T.getTriple();
++        break;
++      case llvm::Triple::x86:
++        ArchName = "x86_64";
++        T.setArchName(ArchName);
++        return T.getTriple();
++        break;
++      default:
++        llvm_unreachable("Unknonwn Solaris Target Triple!");
++        break;
++      }
++    }
++  }
++
+   switch (getTriple().getArch()) {
+   default:
+     return getTripleString();
+###
+

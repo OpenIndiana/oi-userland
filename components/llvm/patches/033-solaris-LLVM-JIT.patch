@@ -1,0 +1,1636 @@
+# 23593143 lli JIT bitcode parsing creates a main function with wrong argc/argv
+# 22804878 - implement LLVM JIT on Solaris SPARC
+# 22804891 - implement LLVM JIT on Solaris Intel
+# 3.9.X for upstream.
+--- include/llvm/Support/ELFRelocs/Sparc.def	2015-06-18 07:05:15.000000000 -0800
++++ include/llvm/Support/ELFRelocs/Sparc.def	2016-06-11 11:39:24.768074060 -0800
+@@ -87,3 +87,8 @@
+ ELF_RELOC(R_SPARC_GOTDATA_OP_HIX22,  82)
+ ELF_RELOC(R_SPARC_GOTDATA_OP_LOX10,  83)
+ ELF_RELOC(R_SPARC_GOTDATA_OP,     84)
++ELF_RELOC(R_SPARC_H34,            85)
++ELF_RELOC(R_SPARC_SIZE32,         86)
++ELF_RELOC(R_SPARC_SIZE64,         87)
++ELF_RELOC(R_SPARC_WDISP10,        88)
++ELF_RELOC(R_SPARC_NUM,            89)
+--- lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h	2016-01-10 09:51:50.000000000 -0900
++++ lib/ExecutionEngine/RuntimeDyld/RuntimeDyldImpl.h	2016-06-11 21:03:29.000000000 -0800
+@@ -117,6 +117,11 @@
+     assert(StubOffset <= AllocationSize && "Not enough space allocated!");
+   }
+ 
++  void setStubOffset(unsigned Value) {
++    StubOffset = Value;
++    assert(StubOffset <= AllocationSize && "Not enough space allocated!");
++  }
++
+   uintptr_t getObjAddress() const { return ObjAddress; }
+ };
+ 
+###
+--- lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h	2015-11-23 12:47:51.000000000 -0900
++++ lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.h	2016-06-23 07:17:02.829718055 -0800
+@@ -49,6 +49,14 @@
+   void resolvePPC64Relocation(const SectionEntry &Section, uint64_t Offset,
+                               uint64_t Value, uint32_t Type, int64_t Addend);
+ 
++  void resolveSPARC3264Relocation(const SectionEntry &Section,
++                                  uint64_t Offset, uint64_t Value,
++                                  uint32_t Type, int32_t Addend);
++
++  void resolveSPARC64Relocation(const SectionEntry &Section,
++                                uint64_t Offset, uint64_t Value,
++                                uint32_t Type, int64_t Addend);
++
+   void resolveSystemZRelocation(const SectionEntry &Section, uint64_t Offset,
+                                 uint64_t Value, uint32_t Type, int64_t Addend);
+ 
+@@ -73,6 +81,10 @@
+       return 16;
+     else if (Arch == Triple::ppc64 || Arch == Triple::ppc64le)
+       return 44;
++    else if (Arch == Triple::sparc)
++      return 16;
++    else if (Arch == Triple::sparcv9)
++      return 32;
+     else if (Arch == Triple::x86_64)
+       return 6; // 2-byte jmp instruction + 32-bit relative address
+     else if (Arch == Triple::systemz)
+###
+--- lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp	2015-11-24 11:37:01.000000000 -0900
++++ lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp	2016-07-04 10:45:23.637041765 -0800
+@@ -1016,6 +1016,448 @@
+   }
+ }
+ 
++/// SPARC ELF Relocations - common to 32-bit and 64-bit.
++/// https://docs.oracle.com/cd/E19683-01/817-3677/chapter6-24/index.html
++void RuntimeDyldELF::resolveSPARC3264Relocation(const SectionEntry &Section,
++                                                uint64_t Offset,
++                                                uint64_t Value,
++                                                uint32_t Type,
++                                                int32_t Addend) {
++  uint64_t *TargetAddress =
++    reinterpret_cast<uint64_t*>(reinterpret_cast<void*>(Section.getAddress()));
++  uint64_t *TargetPtr =
++    reinterpret_cast<uint64_t*>(Section.getAddressWithOffset(Offset));
++  uint32_t Reloc = 0U;
++  uint8_t *TargetPtr8 = nullptr;
++  uint16_t *TargetPtr16 = nullptr;
++  uint32_t *TargetPtr32 = nullptr;
++  uint32_t LoadAddress = Section.getLoadAddressWithOffset(Offset) & 0xFFFFFFFF;
++  uint32_t TargetValue = 0U;
++  int32_t RS = 0;
++  int32_t RM = 0;
++
++  switch (Type) {
++  default:
++    llvm_unreachable("Unimplemented SPARC32 Relocation Type!");
++    break;
++  case ELF::R_SPARC_NONE:
++    break;
++  case ELF::R_SPARC_SIZE32:
++    *TargetPtr = Section.getSize() + Addend;
++    break;
++  case ELF::R_SPARC_RELATIVE:
++    *TargetPtr = LoadAddress + Addend;
++    break;
++  case ELF::R_SPARC_COPY:
++    Value += Addend;
++    (void) std::memcpy(TargetPtr,
++                       reinterpret_cast<void*>(static_cast<uintptr_t>(Value)),
++                       Section.getSize());
++    break;
++  case ELF::R_SPARC_8:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    Value += Addend;
++    *TargetPtr8 = Value;
++    break;
++  case ELF::R_SPARC_16:
++    TargetPtr16 = reinterpret_cast<uint16_t*>(TargetPtr);
++    Value += Addend;
++    *TargetPtr16 = Value;
++    break;
++  case ELF::R_SPARC_32:
++  case ELF::R_SPARC_GLOB_DAT:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_JMP_SLOT:
++    break;
++  case ELF::R_SPARC_TLS_DTPOFF32:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_TLS_TPOFF32:
++    Value += Addend;
++    *TargetPtr = Value - Offset;
++    break;
++  case ELF::R_SPARC_TLS_LE_HIX22:
++    Value -= Offset;
++    Value += Addend;
++    *TargetPtr = (*TargetPtr & 0xFFC00000) | ((~Value) & 0x003FFFFFLL);
++    break;
++  case ELF::R_SPARC_TLS_LE_LOX10:
++    Value -= Offset;
++    Value += Addend;
++    *TargetPtr = (*TargetPtr & 0xFFFFE000) | (Value & 0x000003FFLL);
++    break;
++  case ELF::R_SPARC_DISP8:
++    Value += Addend;
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetAddress);
++    *TargetPtr8 = (Value - reinterpret_cast<uintptr_t>(TargetPtr8));
++    break;
++  case ELF::R_SPARC_DISP16:
++    Value += Addend;
++    TargetPtr16 = reinterpret_cast<uint16_t*>(TargetAddress);
++    *TargetPtr16 = (Value - reinterpret_cast<uintptr_t>(TargetPtr16));
++    break;
++  case ELF::R_SPARC_DISP32:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetAddress);
++    *TargetPtr32 = (Value - reinterpret_cast<uintptr_t>(TargetPtr32));
++    break;
++  case ELF::R_SPARC_WDISP30:
++  case ELF::R_SPARC_WDISP22:
++  case ELF::R_SPARC_WDISP19:
++  case ELF::R_SPARC_WDISP16:
++  case ELF::R_SPARC_WDISP10:
++    switch (Type) {
++    default:
++      llvm_unreachable("Impossible default case!");
++      break;
++    case ELF::R_SPARC_WDISP30:
++      RS = 2;
++      RM = 0x3FFFFFFF;
++      break;
++    case ELF::R_SPARC_WDISP22:
++      RS = 2;
++      RM = 0x003FFFFF;
++      break;
++    case ELF::R_SPARC_WDISP19:
++      RS = 2;
++      RM = 0x0007FFFF;
++      break;
++    case ELF::R_SPARC_WDISP16:
++      RS = 2;
++      break;
++    case ELF::R_SPARC_WDISP10:
++      RS = 2;
++      break;
++    }
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    Reloc = (((Value + Addend) - LoadAddress) >> RS);
++    TargetValue = *TargetPtr32;
++
++    switch (Type) {
++    default:
++      llvm_unreachable("Impossible default case!");
++      break;
++    case ELF::R_SPARC_WDISP16:
++      TargetValue &= ~((0x3 << 20) | 0x3FFF);
++      Reloc = (((Reloc & 0xC000) << (7 - 1)) | (Reloc & 0x3FFFF));
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    case ELF::R_SPARC_WDISP10:
++      TargetValue &= ~((0x3 << 19) | (0xFF << 5));
++      Reloc = (((Reloc & 0x300) << (13 - 2)) | ((Reloc & 0xFF) | (7 - 2)));
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    case ELF::R_SPARC_WDISP30:
++    case ELF::R_SPARC_WDISP22:
++    case ELF::R_SPARC_WDISP19:
++      TargetValue &= ~RM;
++      Reloc &= RM;
++      *TargetPtr32 = TargetValue | Reloc;
++      break;
++    }
++    break;
++  case ELF::R_SPARC_HI22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_10:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_11:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_13:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_22:
++    Value += Addend;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = Value;
++    break;
++  case ELF::R_SPARC_LO10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_LM22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HIX22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x3FFFFF;
++    Reloc = Value + Addend;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc ^= ~0;
++    Reloc >>= RS;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_LOX10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    Reloc = Value + Addend;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~0x1FFF;
++    Reloc &= 0x3FF;
++    Reloc |= 0x1C00;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HH22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 42;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_HM10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 32;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_H44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 22;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_M44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 12;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_L44:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM = 0x00000FFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT10:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT10: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    RS = 0;
++    RM = 0x000003FF;
++    Reloc = (Value + Addend) >> RS;
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT13:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT13: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    RS = 0;
++    RM = 0x00001FFF;
++    Reloc = (Value + Addend) >> RS;
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_GOT22:
++    assert((Offset != static_cast<uint64_t>(-1)) &&
++           "R_SPARC_GOT22: Invalid offset!");
++    if ((Offset & 1) != 0)
++      Offset &= ~1;
++    else
++      Offset |= 1;
++
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_PC10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 0;
++    RM =0x000003FF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_PC22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_UA16:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    TargetPtr8[0] = Value >> 8U;
++    TargetPtr8[1] = Value;
++    break;
++  case ELF::R_SPARC_UA32:
++    TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++    TargetPtr8[0] = Value >> 24U;
++    TargetPtr8[1] = Value >> 16U;
++    TargetPtr8[2] = Value >> 8U;
++    TargetPtr8[3] = Value;
++    break;
++  case ELF::R_SPARC_WPLT30:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 2;
++    RM = 0x3FFFFFFF;
++    Reloc = ((Value + Addend) - LoadAddress) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    TargetValue = *TargetPtr32;
++    break;
++  }
++}
++
++/// SPARCV9 ELF Relocatinos - valid in 64-bit only.
++/// https://docs.oracle.com/cd/E19683-01/817-3677/chapter6-24-1/index.html
++void RuntimeDyldELF::resolveSPARC64Relocation(const SectionEntry &Section,
++                                              uint64_t Offset, uint64_t Value,
++                                              uint32_t Type, int64_t Addend) {
++  uint64_t *TargetAddress =
++    reinterpret_cast<uint64_t*>(reinterpret_cast<void*>(Section.getAddress()));
++  uint64_t *TargetPtr =
++    reinterpret_cast<uint64_t*>(Section.getAddressWithOffset(Offset));
++  uint32_t Reloc;
++  uintptr_t TargetPtrVal = reinterpret_cast<uintptr_t>(TargetPtr);
++  uint8_t *TargetPtr8 = nullptr;
++  uint16_t *TargetPtr16 = nullptr;
++  uint32_t *TargetPtr32 = nullptr;
++  uint64_t LoadAddress = Section.getLoadAddressWithOffset(Offset);
++  uint64_t TargetValue = 0ULL;
++  int32_t RS;
++  int32_t RM;
++
++  switch (Type) {
++  case ELF::R_SPARC_HI22:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    RS = 10;
++    RM = 0x003FFFFF;
++    Reloc = (Value + Addend) >> RS;
++    TargetValue = *TargetPtr32;
++    TargetValue &= ~RM;
++    Reloc &= RM;
++    *TargetPtr32 = TargetValue | Reloc;
++    break;
++  case ELF::R_SPARC_64:
++  case ELF::R_SPARC_GLOB_DAT:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_RELATIVE:
++    *TargetPtr = LoadAddress + Addend;
++    break;
++  case ELF::R_SPARC_OLO10:
++    TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++    *TargetPtr32 = (*TargetPtr32 & ~0x1FFF) | (((Value + Addend) & 0x3FF) +
++                                               ((Offset >> 8) & 0x1FFF));
++    break;
++  case ELF::R_SPARC_DISP64:
++    Value += Addend;
++    *TargetPtr = (Value - reinterpret_cast<uintptr_t>(TargetPtr));
++    break;
++  case ELF::R_SPARC_REGISTER:
++    Value += Addend;
++    *TargetPtr = Value;
++    break;
++  case ELF::R_SPARC_PLT64:
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": Warning: Unimplemented R_SPARC_PLT64 Relocation type.\n" ;
++    break;
++  case ELF::R_SPARC_UA64:
++    Value += Addend;
++    if (0 == (TargetPtrVal & 3)) {
++      TargetPtr32 = reinterpret_cast<uint32_t*>(TargetPtr);
++      TargetPtr32[0] = Value >> 32;
++      TargetPtr32[1] = Value;
++    } else {
++      TargetPtr8 = reinterpret_cast<uint8_t*>(TargetPtr);
++      TargetPtr8[0] = Value >> 56;
++      TargetPtr8[0] = Value >> 48;
++      TargetPtr8[0] = Value >> 40;
++      TargetPtr8[0] = Value >> 32;
++      TargetPtr8[0] = Value >> 24;
++      TargetPtr8[0] = Value >> 16;
++      TargetPtr8[0] = Value >> 8;
++      TargetPtr8[0] = Value;
++    }
++    break;
++  default:
++    resolveSPARC3264Relocation(Section, Offset, Value, Type, Addend);
++    break;
++  }
++}
++
+ void RuntimeDyldELF::resolveSystemZRelocation(const SectionEntry &Section,
+                                               uint64_t Offset, uint64_t Value,
+                                               uint32_t Type, int64_t Addend) {
+@@ -1123,6 +1565,12 @@
+   case Triple::systemz:
+     resolveSystemZRelocation(Section, Offset, Value, Type, Addend);
+     break;
++  case Triple::sparc:
++    resolveSPARC3264Relocation(Section, Offset, Value, Type, Addend);
++    break;
++  case Triple::sparcv9:
++    resolveSPARC64Relocation(Section, Offset, Value, Type, Addend);
++    break;
+   default:
+     llvm_unreachable("Unsupported CPU type!");
+   }
+@@ -1590,6 +2038,160 @@
+       else
+         addRelocationForSection(RE, Value.SectionID);
+     }
++  } else if (Arch == Triple::sparc) {
++    DEBUG(dbgs() << "This is a SPARC32 relocation.\n");
++    SectionEntry &Section = Sections[SectionID];
++    uint8_t *Target = Section.getAddressWithOffset(Offset);
++    uint32_t *TargetAddress = reinterpret_cast<uint32_t*>(Target);
++    uint8_t *SectionAddress = Section.getAddress();
++    uintptr_t StubOffset = Section.getStubOffset();
++    uintptr_t StubAddress = static_cast<uintptr_t>(-1);
++
++    if (RelType == ELF::R_SPARC_WDISP30) {
++      //  Look up for existing stub.
++      StubMap::const_iterator i = Stubs.find(Value);
++
++      if (i != Stubs.end()) {
++        DEBUG(dbgs() << " Stub function found\n");
++        StubAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddressWithOffset(i->second));
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      } else {
++        // Create a new stub function.
++        DEBUG(dbgs() << " Create a new stub function\n");
++
++        uintptr_t BaseAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddress());
++        uintptr_t StubAlignment = getStubAlignment();
++        StubAddress = BaseAddress + StubOffset;
++        StubAddress = llvm::RoundUpToAlignment(StubAddress, 4U);
++        StubOffset = StubAddress - BaseAddress;
++
++        Stubs[Value] = StubOffset;
++        uint8_t *StubTargetAddr =
++          createStubFunction(reinterpret_cast<uint8_t*>(StubAddress));
++
++        // Creating Hi and Lo relocations for the filled stub instructions.
++        RelocationEntry REhi(SectionID,
++                             StubTargetAddr - SectionAddress,
++                             ELF::R_SPARC_HI22, Value.Addend);
++        RelocationEntry RElo(SectionID,
++                             StubTargetAddr - SectionAddress + 4,
++                             ELF::R_SPARC_LO10, Value.Addend);
++
++        if (Value.SymbolName) {
++          addRelocationForSymbol(REhi, Value.SymbolName);
++          addRelocationForSymbol(RElo, Value.SymbolName);
++        } else {
++          addRelocationForSection(REhi, Value.SectionID);
++          addRelocationForSection(RElo, Value.SectionID);
++        }
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      }
++    } else {
++      uintptr_t BaseAddress =
++        reinterpret_cast<uintptr_t>(Section.getAddress());
++      uintptr_t StubAlignment = getStubAlignment();
++      StubAddress = BaseAddress + StubOffset;
++      StubAddress = llvm::RoundUpToAlignment(StubAddress, 4U);
++      StubOffset = StubAddress - BaseAddress;
++
++      RelocationEntry RE(SectionID, Offset, RelType, Addend);
++      if (Value.SymbolName)
++        addRelocationForSymbol(RE, Value.SymbolName);
++      else
++        addRelocationForSection(RE, Value.SectionID);
++
++      resolveRelocation(Section, Offset, StubOffset, RelType, 0);
++      Section.advanceStubOffset(getMaxStubSize());
++    }
++  } else if (Arch == Triple::sparcv9) {
++    DEBUG(dbgs() << "This is a SPARC64 relocation.\n");
++
++    SectionEntry &Section = Sections[SectionID];
++    uint8_t *Target = Section.getAddressWithOffset(Offset);
++    uint32_t *TargetAddress = reinterpret_cast<uint32_t*>(Target);
++    uint8_t *SectionAddress = Section.getAddress();
++    uintptr_t StubOffset = Section.getStubOffset();
++    uintptr_t StubAddress = static_cast<uintptr_t>(-1);
++
++    if (RelType == ELF::R_SPARC_WDISP30) {
++      //  Look up for existing stub.
++      StubMap::const_iterator i = Stubs.find(Value);
++      if (i != Stubs.end()) {
++        DEBUG(dbgs() << " Stub function found\n");
++
++        StubAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddressWithOffset(i->second));
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      } else {
++        // Create a new stub function.
++        DEBUG(dbgs() << " Create a new stub function\n");
++
++        uintptr_t BaseAddress =
++          reinterpret_cast<uintptr_t>(Section.getAddress());
++        uintptr_t StubAlignment = getStubAlignment();
++
++        StubAddress = BaseAddress + StubOffset;
++        StubAddress = llvm::RoundUpToAlignment(StubAddress, 8U);
++        StubOffset = StubAddress - BaseAddress;
++        Stubs[Value] = StubOffset;
++
++        uint8_t *StubTargetAddr =
++          createStubFunction(reinterpret_cast<uint8_t*>(StubAddress));
++
++        // Creating Hi and Lo relocations for the filled stub instructions.
++        RelocationEntry REhh(SectionID,
++                             StubTargetAddr - SectionAddress,
++                             ELF::R_SPARC_HH22, Value.Addend);
++        RelocationEntry REhm(SectionID,
++                             StubTargetAddr - SectionAddress + 8,
++                             ELF::R_SPARC_HM10, Value.Addend);
++        RelocationEntry RElm(SectionID,
++                             StubTargetAddr - SectionAddress + 16,
++                             ELF::R_SPARC_LM22, Value.Addend);
++        RelocationEntry RElo(SectionID,
++                             StubTargetAddr - SectionAddress + 24,
++                             ELF::R_SPARC_LO10, Value.Addend);
++
++        if (Value.SymbolName) {
++          addRelocationForSymbol(REhh, Value.SymbolName);
++          addRelocationForSymbol(REhm, Value.SymbolName);
++          addRelocationForSymbol(RElm, Value.SymbolName);
++          addRelocationForSymbol(RElo, Value.SymbolName);
++        } else {
++          addRelocationForSection(REhh, Value.SectionID);
++          addRelocationForSection(REhm, Value.SectionID);
++          addRelocationForSection(RElm, Value.SectionID);
++          addRelocationForSection(RElo, Value.SectionID);
++        }
++
++        resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++        Section.advanceStubOffset(getMaxStubSize());
++      }
++    } else {
++      uintptr_t BaseAddress =
++        reinterpret_cast<uintptr_t>(Section.getAddress());
++      uintptr_t StubAlignment = getStubAlignment();
++      StubAddress = BaseAddress + StubOffset;
++      StubAddress = llvm::RoundUpToAlignment(StubAddress, 8U);
++      StubOffset = StubAddress - BaseAddress;
++
++      RelocationEntry RE(SectionID, Offset, RelType, Addend);
++      if (Value.SymbolName)
++        addRelocationForSymbol(RE, Value.SymbolName);
++      else
++        addRelocationForSection(RE, Value.SectionID);
++
++      resolveRelocation(Section, Offset, StubAddress, RelType, 0);
++      Section.advanceStubOffset(getMaxStubSize());
++    }
+   } else if (Arch == Triple::systemz &&
+              (RelType == ELF::R_390_PLT32DBL || RelType == ELF::R_390_GOTENT)) {
+     // Create function stubs for both PLT and GOT references, regardless of
+###
+--- lib/ExecutionEngine/ExecutionEngine.cpp	2015-10-13 10:11:02.000000000 -0800
++++ lib/ExecutionEngine/ExecutionEngine.cpp	2016-07-04 21:13:53.782045325 -0800
+@@ -36,9 +36,12 @@
+ #include "llvm/Support/TargetRegistry.h"
+ #include "llvm/Support/raw_ostream.h"
+ #include "llvm/Target/TargetMachine.h"
++
++using namespace llvm;
++
+ #include <cmath>
+ #include <cstring>
+-using namespace llvm;
++#include <memory>
+ 
+ #define DEBUG_TYPE "jit"
+ 
+@@ -326,46 +329,57 @@
+   return nullptr;
+ }
+ 
++// Why is this in the anon namespace?
+ namespace {
+ class ArgvArray {
+   std::unique_ptr<char[]> Array;
+   std::vector<std::unique_ptr<char[]>> Values;
++
+ public:
++  ArgvArray() : Array(), Values() { }
++  ~ArgvArray() { }
++
+   /// Turn a vector of strings into a nice argv style array of pointers to null
+   /// terminated strings.
+   void *reset(LLVMContext &C, ExecutionEngine *EE,
+               const std::vector<std::string> &InputArgv);
+ };
+ }  // anonymous namespace
++
+ void *ArgvArray::reset(LLVMContext &C, ExecutionEngine *EE,
+                        const std::vector<std::string> &InputArgv) {
+-  Values.clear();  // Free the old contents.
+-  Values.reserve(InputArgv.size());
++  Values.clear();  // Free the old contents.
++  Values.resize(InputArgv.size() + 1);
+   unsigned PtrSize = EE->getDataLayout().getPointerSize();
+-  Array = make_unique<char[]>((InputArgv.size()+1)*PtrSize);
++  Array = make_unique<char[]>((InputArgv.size() + 1) * PtrSize);
+ 
+   DEBUG(dbgs() << "JIT: ARGV = " << (void*)Array.get() << "\n");
++
+   Type *SBytePtr = Type::getInt8PtrTy(C);
+ 
+   for (unsigned i = 0; i != InputArgv.size(); ++i) {
+-    unsigned Size = InputArgv[i].size()+1;
++    unsigned Size = InputArgv[i].size() + 1;
+     auto Dest = make_unique<char[]>(Size);
+-    DEBUG(dbgs() << "JIT: ARGV[" << i << "] = " << (void*)Dest.get() << "\n");
++
++    DEBUG(dbgs() << "JIT: ARGV[" << i << "] = " << (void*) Dest.get() << "\n");
+ 
+     std::copy(InputArgv[i].begin(), InputArgv[i].end(), Dest.get());
+-    Dest[Size-1] = 0;
++    Dest[Size - 1] = '\0';
++    GenericValue *GVP =
++      reinterpret_cast<GenericValue*>(&Array[i * PtrSize]);
+ 
+     // Endian safe: Array[i] = (PointerTy)Dest;
+-    EE->StoreValueToMemory(PTOGV(Dest.get()),
+-                           (GenericValue*)(&Array[i*PtrSize]), SBytePtr);
++    EE->StoreValueToMemory(PTOGV(Dest.get()), GVP, SBytePtr);
+     Values.push_back(std::move(Dest));
+   }
+ 
++  GenericValue *GVT =
++    reinterpret_cast<GenericValue*>(&Array[InputArgv.size() * PtrSize]);
++
+   // Null terminate it
+-  EE->StoreValueToMemory(PTOGV(nullptr),
+-                         (GenericValue*)(&Array[InputArgv.size()*PtrSize]),
+-                         SBytePtr);
+-  return Array.get();
++  EE->StoreValueToMemory(PTOGV(0L), GVT, SBytePtr);
++  void *Retval = Array.get();
++  return Retval;
+ }
+ 
+ void ExecutionEngine::runStaticConstructorsDestructors(Module &module,
+@@ -425,16 +439,17 @@
+ #endif
+ 
+ int ExecutionEngine::runFunctionAsMain(Function *Fn,
+-                                       const std::vector<std::string> &argv,
+-                                       const char * const * envp) {
++                                       const std::vector<std::string> &Argv,
++                                       const char* const *Envp) {
++  LLVMContext &Ctx = Fn->getContext();
+   std::vector<GenericValue> GVArgs;
+   GenericValue GVArgc;
+-  GVArgc.IntVal = APInt(32, argv.size());
++  GVArgc.IntVal = APInt(32, Argv.size());
+ 
+   // Check main() type
+   unsigned NumArgs = Fn->getFunctionType()->getNumParams();
+   FunctionType *FTy = Fn->getFunctionType();
+-  Type* PPInt8Ty = Type::getInt8PtrTy(Fn->getContext())->getPointerTo();
++  Type* PPInt8Ty = Type::getInt8PtrTy(Ctx)->getPointerTo();
+ 
+   // Check the argument types.
+   if (NumArgs > 3)
+@@ -451,19 +466,20 @@
+ 
+   ArgvArray CArgv;
+   ArgvArray CEnv;
++
+   if (NumArgs) {
+     GVArgs.push_back(GVArgc); // Arg #0 = argc.
+     if (NumArgs > 1) {
+       // Arg #1 = argv.
+-      GVArgs.push_back(PTOGV(CArgv.reset(Fn->getContext(), this, argv)));
++      GVArgs.push_back(PTOGV(CArgv.reset(Ctx, this, Argv)));
+       assert(!isTargetNullPtr(this, GVTOP(GVArgs[1])) &&
+              "argv[0] was null after CreateArgv");
+       if (NumArgs > 2) {
+         std::vector<std::string> EnvVars;
+-        for (unsigned i = 0; envp[i]; ++i)
+-          EnvVars.emplace_back(envp[i]);
++        for (unsigned i = 0; Envp[i]; ++i)
++          EnvVars.emplace_back(Envp[i]);
+         // Arg #2 = envp.
+-        GVArgs.push_back(PTOGV(CEnv.reset(Fn->getContext(), this, EnvVars)));
++        GVArgs.push_back(PTOGV(CEnv.reset(Ctx, this, EnvVars)));
+       }
+     }
+   }
+###
+--- lib/ExecutionEngine/MCJIT/MCJIT.cpp	2015-11-05 10:24:56.000000000 -0900
++++ lib/ExecutionEngine/MCJIT/MCJIT.cpp	2016-07-04 09:15:17.759594945 -0800
+@@ -43,34 +43,37 @@
+ }
+ 
+ ExecutionEngine*
+-MCJIT::createJIT(std::unique_ptr<Module> M,
++MCJIT::createJIT(std::unique_ptr<Module> MIn,
+                  std::string *ErrorStr,
+-                 std::shared_ptr<MCJITMemoryManager> MemMgr,
+-                 std::shared_ptr<RuntimeDyld::SymbolResolver> Resolver,
+-                 std::unique_ptr<TargetMachine> TM) {
++                 std::shared_ptr<MCJITMemoryManager> MemMgrIn,
++                 std::shared_ptr<RuntimeDyld::SymbolResolver> ResolverIn,
++                 std::unique_ptr<TargetMachine> TMIn) {
+   // Try to register the program as a source of symbols to resolve against.
+   //
+   // FIXME: Don't do this here.
+   sys::DynamicLibrary::LoadLibraryPermanently(nullptr, nullptr);
+ 
+-  if (!MemMgr || !Resolver) {
++  if (!MemMgrIn || !ResolverIn) {
+     auto RTDyldMM = std::make_shared<SectionMemoryManager>();
+-    if (!MemMgr)
+-      MemMgr = RTDyldMM;
+-    if (!Resolver)
+-      Resolver = RTDyldMM;
+-  }
+-
+-  return new MCJIT(std::move(M), std::move(TM), std::move(MemMgr),
+-                   std::move(Resolver));
+-}
+-
+-MCJIT::MCJIT(std::unique_ptr<Module> M, std::unique_ptr<TargetMachine> TM,
+-             std::shared_ptr<MCJITMemoryManager> MemMgr,
+-             std::shared_ptr<RuntimeDyld::SymbolResolver> Resolver)
+-    : ExecutionEngine(TM->createDataLayout(), std::move(M)), TM(std::move(TM)),
+-      Ctx(nullptr), MemMgr(std::move(MemMgr)),
+-      Resolver(*this, std::move(Resolver)), Dyld(*this->MemMgr, this->Resolver),
++    if (!MemMgrIn)
++      MemMgrIn = RTDyldMM;
++    if (!ResolverIn)
++      ResolverIn = RTDyldMM;
++  }
++
++  return new MCJIT(std::move(MIn), std::move(TMIn), std::move(MemMgrIn),
++                   std::move(ResolverIn));
++}
++
++MCJIT::MCJIT(std::unique_ptr<Module> MIn,
++             std::unique_ptr<TargetMachine> TMIn,
++             std::shared_ptr<MCJITMemoryManager> MemMgrIn,
++             std::shared_ptr<RuntimeDyld::SymbolResolver> ResolverIn)
++    : ExecutionEngine(TMIn->createDataLayout(), std::move(MIn)),
++      TM(std::move(TMIn)),
++      Ctx(nullptr), MemMgr(std::move(MemMgrIn)),
++      Resolver(*this, std::move(ResolverIn)),
++      Dyld(*this->MemMgr, this->Resolver),
+       ObjCache(nullptr) {
+   // FIXME: We are managing our modules, so we do not want the base class
+   // ExecutionEngine to manage them as well. To avoid double destruction
+@@ -85,6 +88,7 @@
+   std::unique_ptr<Module> First = std::move(Modules[0]);
+   Modules.clear();
+ 
++  First->setDataLayout(ExecutionEngine::getDataLayout());
+   OwnedModules.addModule(std::move(First));
+   RegisterJITEventListener(JITEventListener::createGDBRegistrationListener());
+ }
+@@ -148,7 +152,7 @@
+   legacy::PassManager PM;
+ 
+   // The RuntimeDyld will take ownership of this shortly
+-  SmallVector<char, 4096> ObjBufferSV;
++  SmallVector<char, 8192> ObjBufferSV;
+   raw_svector_ostream ObjStream(ObjBufferSV);
+ 
+   // Turn the machine code intermediate representation into bytes in memory
+@@ -158,8 +162,8 @@
+ 
+   // Initialize passes.
+   PM.run(*M);
+-  // Flush the output buffer to get the generated code into memory
+ 
++  // Flush the output buffer to get the generated code into memory
+   std::unique_ptr<MemoryBuffer> CompiledObjBuffer(
+                                 new ObjectMemoryBuffer(std::move(ObjBufferSV)));
+ 
+@@ -380,7 +384,7 @@
+   MutexGuard locked(lock);
+ 
+   Mangler Mang;
+-  SmallString<128> Name;
++  SmallString<512> Name;
+   TM->getNameWithPrefix(Name, F, Mang);
+ 
+   if (F->isDeclaration() || F->hasAvailableExternallyLinkage()) {
+@@ -391,7 +395,8 @@
+   }
+ 
+   Module *M = F->getParent();
+-  bool HasBeenAddedButNotLoaded = OwnedModules.hasModuleBeenAddedButNotLoaded(M);
++  bool HasBeenAddedButNotLoaded =
++    OwnedModules.hasModuleBeenAddedButNotLoaded(M);
+ 
+   // Make sure the relevant module has been compiled and loaded.
+   if (HasBeenAddedButNotLoaded)
+@@ -439,10 +444,11 @@
+   return nullptr;
+ }
+ 
+-GlobalVariable *MCJIT::FindGlobalVariableNamedInModulePtrSet(const char *Name,
+-                                                             bool AllowInternal,
+-                                                             ModulePtrSet::iterator I,
+-                                                             ModulePtrSet::iterator E) {
++GlobalVariable*
++MCJIT::FindGlobalVariableNamedInModulePtrSet(const char *Name,
++                                             bool AllowInternal,
++                                             ModulePtrSet::iterator I,
++                                             ModulePtrSet::iterator E) {
+   for (; I != E; ++I) {
+     GlobalVariable *GV = (*I)->getGlobalVariable(Name, AllowInternal);
+     if (GV && !GV->isDeclaration())
+@@ -453,8 +459,9 @@
+ 
+ 
+ Function *MCJIT::FindFunctionNamed(const char *FnName) {
+-  Function *F = FindFunctionNamedInModulePtrSet(
+-      FnName, OwnedModules.begin_added(), OwnedModules.end_added());
++  Function *F =
++    FindFunctionNamedInModulePtrSet(FnName, OwnedModules.begin_added(),
++                                    OwnedModules.end_added());
+   if (!F)
+     F = FindFunctionNamedInModulePtrSet(FnName, OwnedModules.begin_loaded(),
+                                         OwnedModules.end_loaded());
+@@ -464,15 +471,20 @@
+   return F;
+ }
+ 
+-GlobalVariable *MCJIT::FindGlobalVariableNamed(const char *Name, bool AllowInternal) {
+-  GlobalVariable *GV = FindGlobalVariableNamedInModulePtrSet(
+-      Name, AllowInternal, OwnedModules.begin_added(), OwnedModules.end_added());
++GlobalVariable *MCJIT::FindGlobalVariableNamed(const char *Name,
++                                               bool AllowInternal) {
++  GlobalVariable *GV =
++    FindGlobalVariableNamedInModulePtrSet(Name, AllowInternal,
++                                          OwnedModules.begin_added(),
++                                          OwnedModules.end_added());
+   if (!GV)
+-    GV = FindGlobalVariableNamedInModulePtrSet(Name, AllowInternal, OwnedModules.begin_loaded(),
+-                                        OwnedModules.end_loaded());
++    GV = FindGlobalVariableNamedInModulePtrSet(Name, AllowInternal,
++                                               OwnedModules.begin_loaded(),
++                                               OwnedModules.end_loaded());
+   if (!GV)
+-    GV = FindGlobalVariableNamedInModulePtrSet(Name, AllowInternal, OwnedModules.begin_finalized(),
+-                                        OwnedModules.end_finalized());
++    GV = FindGlobalVariableNamedInModulePtrSet(Name, AllowInternal,
++                                               OwnedModules.begin_finalized(),
++                                               OwnedModules.end_finalized());
+   return GV;
+ }
+ 
+@@ -493,41 +505,57 @@
+   // Handle some common cases first.  These cases correspond to common `main'
+   // prototypes.
+   if (RetTy->isIntegerTy(32) || RetTy->isVoidTy()) {
++    int Argc;
++    char **Argv;
++    const char **Envp;
++    GenericValue RV;
++    RV.IntVal = APInt(32, 1);
++
+     switch (ArgValues.size()) {
+     case 3:
+       if (FTy->getParamType(0)->isIntegerTy(32) &&
+           FTy->getParamType(1)->isPointerTy() &&
+           FTy->getParamType(2)->isPointerTy()) {
+         int (*PF)(int, char **, const char **) =
+-          (int(*)(int, char **, const char **))(intptr_t)FPtr;
++          (int(*)(int, char **, const char **))(uintptr_t)FPtr;
++
++        Argc = ArgValues[0].IntVal.getZExtValue();
++        assert(Argc >= 1 && "Invalid argument count!");
++
++        Argv = reinterpret_cast<char**>(ArgValues[1].PointerVal);
++        Envp = reinterpret_cast<const char**>(ArgValues[2].PointerVal);
+ 
+         // Call the function.
+-        GenericValue rv;
+-        rv.IntVal = APInt(32, PF(ArgValues[0].IntVal.getZExtValue(),
+-                                 (char **)GVTOP(ArgValues[1]),
+-                                 (const char **)GVTOP(ArgValues[2])));
+-        return rv;
++        RV.IntVal = APInt(32, PF(Argc, Argv, Envp));
++        return RV;
+       }
+       break;
+     case 2:
+       if (FTy->getParamType(0)->isIntegerTy(32) &&
+           FTy->getParamType(1)->isPointerTy()) {
+-        int (*PF)(int, char **) = (int(*)(int, char **))(intptr_t)FPtr;
++        int (*PF)(int, char **) =
++          (int(*)(int, char **))(uintptr_t)FPtr;
++
++        Argc = ArgValues[0].IntVal.getZExtValue();
++        assert(Argc >= 1 && "Invalid argument count!");
++
++        Argv = reinterpret_cast<char**>(ArgValues[1].PointerVal);
+ 
+         // Call the function.
+-        GenericValue rv;
+-        rv.IntVal = APInt(32, PF(ArgValues[0].IntVal.getZExtValue(),
+-                                 (char **)GVTOP(ArgValues[1])));
+-        return rv;
++        RV.IntVal = APInt(32,  PF(Argc, Argv));
++        return RV;
+       }
+       break;
+     case 1:
+       if (FTy->getNumParams() == 1 &&
+           FTy->getParamType(0)->isIntegerTy(32)) {
+-        GenericValue rv;
+-        int (*PF)(int) = (int(*)(int))(intptr_t)FPtr;
+-        rv.IntVal = APInt(32, PF(ArgValues[0].IntVal.getZExtValue()));
+-        return rv;
++        int (*PF)(int) = (int(*)(int))(uintptr_t)FPtr;
++        Argc = ArgValues[0].IntVal.getZExtValue();
++        assert(Argc == 1 && "Invalid argument count!");
++
++        // Call the function.
++        RV.IntVal = APInt(32, PF(Argc));
++        return RV;
+       }
+       break;
+     }
+###
+--- include/llvm/Object/ELFObjectFile.h	2016-01-12 11:56:01.000000000 -0900
++++ include/llvm/Object/ELFObjectFile.h	2016-07-03 05:39:54.209691940 -0800
+@@ -840,8 +840,9 @@
+     case ELF::EM_PPC:
+       return "ELF32-ppc";
+     case ELF::EM_SPARC:
+-    case ELF::EM_SPARC32PLUS:
+       return "ELF32-sparc";
++    case ELF::EM_SPARC32PLUS:
++      return "ELF32-sparc32plus";
+     case ELF::EM_WEBASSEMBLY:
+       return "ELF32-wasm";
+     default:
+@@ -860,7 +861,7 @@
+     case ELF::EM_S390:
+       return "ELF64-s390";
+     case ELF::EM_SPARCV9:
+-      return "ELF64-sparc";
++      return "ELF64-sparcv9";
+     case ELF::EM_MIPS:
+       return "ELF64-mips";
+     case ELF::EM_WEBASSEMBLY:
+@@ -908,8 +909,8 @@
+     return Triple::systemz;
+ 
+   case ELF::EM_SPARC:
+-  case ELF::EM_SPARC32PLUS:
+     return IsLittleEndian ? Triple::sparcel : Triple::sparc;
++  case ELF::EM_SPARC32PLUS:
+   case ELF::EM_SPARCV9:
+     return Triple::sparcv9;
+   case ELF::EM_WEBASSEMBLY:
+###
+--- tools/lli/lli.cpp	2016-01-19 15:32:09.000000000 -0900
++++ tools/lli/lli.cpp	2016-07-03 18:17:05.510434280 -0800
+@@ -54,6 +54,8 @@
+ #include "llvm/Support/raw_ostream.h"
+ #include "llvm/Transforms/Instrumentation.h"
+ #include <cerrno>
++#include <string>
++#include <vector>
+ 
+ #ifdef __CYGWIN__
+ #include <cygwin/version.h>
+@@ -66,176 +68,179 @@
+ 
+ #define DEBUG_TYPE "lli"
+ 
+-namespace {
+ 
+-  enum class JITKind { MCJIT, OrcMCJITReplacement, OrcLazy };
++enum class JITKind { MCJIT, OrcMCJITReplacement, OrcLazy };
+ 
+-  cl::opt<std::string>
+-  InputFile(cl::desc("<input bitcode>"), cl::Positional, cl::init("-"));
++static cl::opt<std::string>
++InputFile(cl::desc("<input bitcode>"), cl::Positional,
++          cl::init(std::string("-")));
++
++static cl::list<std::string>
++InputArgv(cl::ConsumeAfter, cl::desc("<program arguments>..."));
++
++static cl::opt<bool>
++ForceInterpreter("force-interpreter",
++                 cl::desc("Force interpretation: disable JIT"),
++                 cl::init(false));
++
++static cl::opt<JITKind>
++UseJITKind("jit-kind",
++           cl::desc("Choose underlying JIT kind."),
++           cl::init(JITKind::MCJIT),
++           cl::values(
++             clEnumValN(JITKind::MCJIT, "mcjit",
++                        "MCJIT"),
++             clEnumValN(JITKind::OrcMCJITReplacement,
++                        "orc-mcjit",
++                        "Orc-based MCJIT replacement"),
++             clEnumValN(JITKind::OrcLazy,
++                        "orc-lazy",
++                        "Orc-based lazy JIT."),
++             clEnumValEnd));
++
++// The MCJIT supports building for a target address space separate from
++// the JIT compilation process. Use a forked process and a copying
++// memory manager with IPC to execute using this functionality.
++static cl::opt<bool>
++RemoteMCJIT("remote-mcjit",
++            cl::desc("Execute MCJIT'ed code in a separate process."),
++            cl::init(false));
++
++// Manually specify the child process for remote execution. This overrides
++// the simulated remote execution that allocates address space for child
++// execution. The child process will be executed and will communicate with
++// lli via stdin/stdout pipes.
++static cl::opt<std::string>
++ChildExecPath("mcjit-remote-process",
++              cl::desc("Specify the filename of the process to launch "
++                       "for remote MCJIT execution.  If none is specified,"
++                       "\n\tremote execution will be simulated in-process."),
++              cl::value_desc("filename"),
++              cl::init(std::string("")));
++
++// Determine optimization level.
++static cl::opt<char>
++OptLevel("O",
++         cl::desc("Optimization level. [-O0, -O1, -O2, or -O3] "
++                  "(default = '-O2')"),
++         cl::Prefix,
++         cl::ZeroOrMore,
++         cl::init(' '));
++
++static cl::opt<std::string>
++TargetTriple("mtriple", cl::desc("Override target triple for module"));
++
++static cl::opt<std::string>
++MArch("march",
++      cl::desc("Architecture to generate assembly for (see --version)"));
++
++static cl::opt<std::string>
++MCPU("mcpu",
++     cl::desc("Target a specific cpu type (-mcpu=help for details)"),
++     cl::value_desc("cpu-name"),
++     cl::init(std::string("")));
++
++static cl::list<std::string>
++MAttrs("mattr",
++       cl::CommaSeparated,
++       cl::desc("Target specific attributes (-mattr=help for details)"),
++       cl::value_desc("a1,+a2,-a3,..."));
++
++static cl::opt<std::string>
++EntryFunc("entry-function",
++          cl::desc("Specify the entry function (default = 'main') "
++                   "of the executable"),
++          cl::value_desc("function"),
++          cl::init(std::string("main")));
++
++static cl::list<std::string>
++ExtraModules("extra-module",
++             cl::desc("Extra modules to be loaded"),
++             cl::value_desc("input bitcode"));
++
++static cl::list<std::string>
++ExtraObjects("extra-object",
++             cl::desc("Extra object files to be loaded"),
++             cl::value_desc("input object"));
++
++static cl::list<std::string>
++ExtraArchives("extra-archive",
++              cl::desc("Extra archive files to be loaded"),
++              cl::value_desc("input archive"));
++
++static cl::opt<bool>
++EnableCacheManager("enable-cache-manager",
++                   cl::desc("Use cache manager to save/load mdoules"),
++                   cl::init(false));
++
++static cl::opt<std::string>
++ObjectCacheDir("object-cache-dir",
++               cl::desc("Directory to store cached object files "
++                        "(must be user writable)"),
++               cl::init(std::string("")));
++
++static cl::opt<std::string>
++FakeArgv0("fake-argv0",
++          cl::desc("Override the 'argv[0]' value passed into the executing"
++                   " program"), cl::value_desc("executable"));
++
++static cl::opt<bool>
++DisableCoreFiles("disable-core-files", cl::Hidden,
++                 cl::desc("Disable emission of core files if possible"));
+ 
+-  cl::list<std::string>
+-  InputArgv(cl::ConsumeAfter, cl::desc("<program arguments>..."));
+-
+-  cl::opt<bool> ForceInterpreter("force-interpreter",
+-                                 cl::desc("Force interpretation: disable JIT"),
+-                                 cl::init(false));
+-
+-  cl::opt<JITKind> UseJITKind("jit-kind",
+-                              cl::desc("Choose underlying JIT kind."),
+-                              cl::init(JITKind::MCJIT),
+-                              cl::values(
+-                                clEnumValN(JITKind::MCJIT, "mcjit",
+-                                           "MCJIT"),
+-                                clEnumValN(JITKind::OrcMCJITReplacement,
+-                                           "orc-mcjit",
+-                                           "Orc-based MCJIT replacement"),
+-                                clEnumValN(JITKind::OrcLazy,
+-                                           "orc-lazy",
+-                                           "Orc-based lazy JIT."),
+-                                clEnumValEnd));
+-
+-  // The MCJIT supports building for a target address space separate from
+-  // the JIT compilation process. Use a forked process and a copying
+-  // memory manager with IPC to execute using this functionality.
+-  cl::opt<bool> RemoteMCJIT("remote-mcjit",
+-    cl::desc("Execute MCJIT'ed code in a separate process."),
+-    cl::init(false));
+-
+-  // Manually specify the child process for remote execution. This overrides
+-  // the simulated remote execution that allocates address space for child
+-  // execution. The child process will be executed and will communicate with
+-  // lli via stdin/stdout pipes.
+-  cl::opt<std::string>
+-  ChildExecPath("mcjit-remote-process",
+-                cl::desc("Specify the filename of the process to launch "
+-                         "for remote MCJIT execution.  If none is specified,"
+-                         "\n\tremote execution will be simulated in-process."),
+-                cl::value_desc("filename"), cl::init(""));
+-
+-  // Determine optimization level.
+-  cl::opt<char>
+-  OptLevel("O",
+-           cl::desc("Optimization level. [-O0, -O1, -O2, or -O3] "
+-                    "(default = '-O2')"),
+-           cl::Prefix,
+-           cl::ZeroOrMore,
+-           cl::init(' '));
+-
+-  cl::opt<std::string>
+-  TargetTriple("mtriple", cl::desc("Override target triple for module"));
+-
+-  cl::opt<std::string>
+-  MArch("march",
+-        cl::desc("Architecture to generate assembly for (see --version)"));
+-
+-  cl::opt<std::string>
+-  MCPU("mcpu",
+-       cl::desc("Target a specific cpu type (-mcpu=help for details)"),
+-       cl::value_desc("cpu-name"),
+-       cl::init(""));
+-
+-  cl::list<std::string>
+-  MAttrs("mattr",
+-         cl::CommaSeparated,
+-         cl::desc("Target specific attributes (-mattr=help for details)"),
+-         cl::value_desc("a1,+a2,-a3,..."));
+-
+-  cl::opt<std::string>
+-  EntryFunc("entry-function",
+-            cl::desc("Specify the entry function (default = 'main') "
+-                     "of the executable"),
+-            cl::value_desc("function"),
+-            cl::init("main"));
+-
+-  cl::list<std::string>
+-  ExtraModules("extra-module",
+-         cl::desc("Extra modules to be loaded"),
+-         cl::value_desc("input bitcode"));
+-
+-  cl::list<std::string>
+-  ExtraObjects("extra-object",
+-         cl::desc("Extra object files to be loaded"),
+-         cl::value_desc("input object"));
+-
+-  cl::list<std::string>
+-  ExtraArchives("extra-archive",
+-         cl::desc("Extra archive files to be loaded"),
+-         cl::value_desc("input archive"));
+-
+-  cl::opt<bool>
+-  EnableCacheManager("enable-cache-manager",
+-        cl::desc("Use cache manager to save/load mdoules"),
+-        cl::init(false));
+-
+-  cl::opt<std::string>
+-  ObjectCacheDir("object-cache-dir",
+-                  cl::desc("Directory to store cached object files "
+-                           "(must be user writable)"),
+-                  cl::init(""));
+-
+-  cl::opt<std::string>
+-  FakeArgv0("fake-argv0",
+-            cl::desc("Override the 'argv[0]' value passed into the executing"
+-                     " program"), cl::value_desc("executable"));
+-
+-  cl::opt<bool>
+-  DisableCoreFiles("disable-core-files", cl::Hidden,
+-                   cl::desc("Disable emission of core files if possible"));
+-
+-  cl::opt<bool>
+-  NoLazyCompilation("disable-lazy-compilation",
++static cl::opt<bool>
++NoLazyCompilation("disable-lazy-compilation",
+                   cl::desc("Disable JIT lazy compilation"),
+                   cl::init(false));
+ 
+-  cl::opt<Reloc::Model>
+-  RelocModel("relocation-model",
+-             cl::desc("Choose relocation model"),
+-             cl::init(Reloc::Default),
+-             cl::values(
+-            clEnumValN(Reloc::Default, "default",
+-                       "Target default relocation model"),
+-            clEnumValN(Reloc::Static, "static",
+-                       "Non-relocatable code"),
+-            clEnumValN(Reloc::PIC_, "pic",
+-                       "Fully relocatable, position independent code"),
+-            clEnumValN(Reloc::DynamicNoPIC, "dynamic-no-pic",
+-                       "Relocatable external references, non-relocatable code"),
+-            clEnumValEnd));
+-
+-  cl::opt<llvm::CodeModel::Model>
+-  CMModel("code-model",
+-          cl::desc("Choose code model"),
+-          cl::init(CodeModel::JITDefault),
+-          cl::values(clEnumValN(CodeModel::JITDefault, "default",
+-                                "Target default JIT code model"),
+-                     clEnumValN(CodeModel::Small, "small",
+-                                "Small code model"),
+-                     clEnumValN(CodeModel::Kernel, "kernel",
+-                                "Kernel code model"),
+-                     clEnumValN(CodeModel::Medium, "medium",
+-                                "Medium code model"),
+-                     clEnumValN(CodeModel::Large, "large",
+-                                "Large code model"),
+-                     clEnumValEnd));
+-
+-  cl::opt<bool>
+-  GenerateSoftFloatCalls("soft-float",
+-    cl::desc("Generate software floating point library calls"),
+-    cl::init(false));
+-
+-  cl::opt<llvm::FloatABI::ABIType>
+-  FloatABIForCalls("float-abi",
+-                   cl::desc("Choose float ABI type"),
+-                   cl::init(FloatABI::Default),
+-                   cl::values(
+-                     clEnumValN(FloatABI::Default, "default",
+-                                "Target default float ABI type"),
+-                     clEnumValN(FloatABI::Soft, "soft",
+-                                "Soft float ABI (implied by -soft-float)"),
+-                     clEnumValN(FloatABI::Hard, "hard",
+-                                "Hard float ABI (uses FP registers)"),
+-                     clEnumValEnd));
+-}
++static cl::opt<Reloc::Model>
++RelocModel("relocation-model",
++           cl::desc("Choose relocation model"),
++           cl::init(Reloc::Default),
++           cl::values(
++             clEnumValN(Reloc::Default, "default",
++                        "Target default relocation model"),
++             clEnumValN(Reloc::Static, "static",
++                        "Non-relocatable code"),
++             clEnumValN(Reloc::PIC_, "pic",
++                        "Fully relocatable, position independent code"),
++             clEnumValN(Reloc::DynamicNoPIC, "dynamic-no-pic",
++                        "Relocatable external references, non-relocatable code"),
++             clEnumValEnd));
++
++static cl::opt<llvm::CodeModel::Model>
++CMModel("code-model",
++        cl::desc("Choose code model"),
++        cl::init(CodeModel::JITDefault),
++        cl::values(clEnumValN(CodeModel::JITDefault, "default",
++                              "Target default JIT code model"),
++                   clEnumValN(CodeModel::Small, "small",
++                              "Small code model"),
++                   clEnumValN(CodeModel::Kernel, "kernel",
++                              "Kernel code model"),
++                   clEnumValN(CodeModel::Medium, "medium",
++                              "Medium code model"),
++                   clEnumValN(CodeModel::Large, "large",
++                              "Large code model"),
++                   clEnumValEnd));
++
++static cl::opt<bool>
++GenerateSoftFloatCalls("soft-float",
++                       cl::desc("Generate software floating point library calls"),
++                       cl::init(false));
++
++static cl::opt<llvm::FloatABI::ABIType>
++FloatABIForCalls("float-abi",
++                 cl::desc("Choose float ABI type"),
++                 cl::init(FloatABI::Default),
++                 cl::values(
++                   clEnumValN(FloatABI::Default, "default",
++                              "Target default float ABI type"),
++                   clEnumValN(FloatABI::Soft, "soft",
++                              "Soft float ABI (implied by -soft-float)"),
++                   clEnumValN(FloatABI::Hard, "hard",
++                              "Hard float ABI (uses FP registers)"),
++                   clEnumValEnd));
+ 
+ //===----------------------------------------------------------------------===//
+ // Object cache
+@@ -429,17 +434,17 @@
+   }
+ 
+   std::string ErrorMsg;
+-  EngineBuilder builder(std::move(Owner));
+-  builder.setMArch(MArch);
+-  builder.setMCPU(MCPU);
+-  builder.setMAttrs(MAttrs);
+-  builder.setRelocationModel(RelocModel);
+-  builder.setCodeModel(CMModel);
+-  builder.setErrorStr(&ErrorMsg);
+-  builder.setEngineKind(ForceInterpreter
++  EngineBuilder Builder(std::move(Owner));
++  Builder.setMArch(MArch);
++  Builder.setMCPU(MCPU);
++  Builder.setMAttrs(MAttrs);
++  Builder.setRelocationModel(RelocModel);
++  Builder.setCodeModel(CMModel);
++  Builder.setErrorStr(&ErrorMsg);
++  Builder.setEngineKind(ForceInterpreter
+                         ? EngineKind::Interpreter
+                         : EngineKind::JIT);
+-  builder.setUseOrcMCJITReplacement(UseJITKind == JITKind::OrcMCJITReplacement);
++  Builder.setUseOrcMCJITReplacement(UseJITKind == JITKind::OrcMCJITReplacement);
+ 
+   // If we are supposed to override the target triple, do so now.
+   if (!TargetTriple.empty())
+@@ -455,7 +460,7 @@
+ 
+     // Deliberately construct a temp std::unique_ptr to pass in. Do not null out
+     // RTDyldMM: We still use it below, even though we don't own it.
+-    builder.setMCJITMemoryManager(
++    Builder.setMCJITMemoryManager(
+       std::unique_ptr<RTDyldMemoryManager>(RTDyldMM));
+   } else if (RemoteMCJIT) {
+     errs() << "error: Remote process execution does not work with the "
+@@ -463,15 +468,15 @@
+     exit(1);
+   }
+ 
+-  builder.setOptLevel(getOptLevel());
++  Builder.setOptLevel(getOptLevel());
+ 
+   TargetOptions Options;
+   if (FloatABIForCalls != FloatABI::Default)
+     Options.FloatABIType = FloatABIForCalls;
+ 
+-  builder.setTargetOptions(Options);
++  Builder.setTargetOptions(Options);
+ 
+-  EE = builder.create();
++  EE = Builder.create();
+   if (!EE) {
+     if (!ErrorMsg.empty())
+       errs() << argv[0] << ": error creating EE: " << ErrorMsg << "\n";
+@@ -550,12 +555,16 @@
+     errs() << "warning: remote mcjit does not support lazy compilation\n";
+     NoLazyCompilation = true;
+   }
++
+   EE->DisableLazyCompilation(NoLazyCompilation);
+ 
++  std::string Argv0;
++  std::vector<std::string> ArgvVector;
++
+   // If the user specifically requested an argv[0] to pass into the program,
+   // do it now.
+-  if (!FakeArgv0.empty()) {
+-    InputFile = static_cast<std::string>(FakeArgv0);
++  if (!FakeArgv0.getValue().empty()) {
++    InputFile.setValue(FakeArgv0.getValue());
+   } else {
+     // Otherwise, if there is a .bc suffix on the executable strip it off, it
+     // might confuse the program.
+@@ -563,25 +572,59 @@
+       InputFile.erase(InputFile.length() - 3);
+   }
+ 
++  Argv0 = InputFile.getValue();
++  ArgvVector.push_back(Argv0);
++
+   // Add the module's name to the start of the vector of arguments to main().
+-  InputArgv.insert(InputArgv.begin(), InputFile);
++  ArgvVector.insert(ArgvVector.end(), InputArgv.begin(), InputArgv.end());
+ 
+   // Call the main function from M as if its signature were:
+   //   int main (int argc, char **argv, const char **envp)
+   // using the contents of Args to determine argc & argv, and the contents of
+   // EnvVars to determine envp.
+   //
+-  Function *EntryFn = Mod->getFunction(EntryFunc);
++  std::string EntryFuncName = EntryFunc.getValue();
++  LLVMContext &Ctx = Mod->getContext();
++
++  llvm::Type *PPInt8ArgvTy = llvm::Type::getInt8PtrTy(Ctx)->getPointerTo();
++  llvm::Type *PPInt8EnvpTy = llvm::Type::getInt8PtrTy(Ctx)->getPointerTo();
++  llvm::IntegerType *PInt32RetTy = llvm::Type::getInt32Ty(Ctx);
++  llvm::IntegerType *PInt32ArgcTy = llvm::Type::getInt32Ty(Ctx);
++  llvm::Type *VoidRetTy = llvm::Type::getVoidTy(Ctx);
++  llvm::Type *VoidArgTy = llvm::Type::getVoidTy(Ctx);
++
++  Constant *EC = Mod->getOrInsertFunction("main",
++                                          PInt32RetTy, PInt32ArgcTy,
++                                          PPInt8ArgvTy, PPInt8EnvpTy,
++                                          nullptr);
++
++  Function *EntryFn = dyn_cast<Function>(EC);
++  if (!EntryFn) {
++    EC = Mod->getOrInsertFunction("main", PInt32RetTy, PInt32ArgcTy,
++                                       PPInt8ArgvTy, nullptr);
++    EntryFn = dyn_cast<Function>(EC);
++  }
++
++  if (!EntryFn) {
++    EC = Mod->getOrInsertFunction("main", PInt32RetTy, nullptr);
++    EntryFn = dyn_cast<Function>(EC);
++  }
++
++  if (!EntryFn) {
++    EC = Mod->getOrInsertFunction("main", VoidRetTy, nullptr);
++    EntryFn = dyn_cast<Function>(EC);
++  }
++
+   if (!EntryFn) {
+     errs() << '\'' << EntryFunc << "\' function not found in module.\n";
+     return -1;
+   }
+ 
++  EntryFn->setCallingConv(CallingConv::C);
++
+   // Reset errno to zero on entry to main.
+   errno = 0;
+ 
+-  int Result;
+-
+   // Sanity check use of remote-jit: LLI currently only supports use of the
+   // remote JIT on Unix platforms.
+   if (RemoteMCJIT) {
+@@ -601,29 +644,48 @@
+ #endif
+   }
+ 
++  int Result = 0;
++  Constant *Exit = nullptr;
++  Function *ExitFn = nullptr;
++  void *EntryFnPtr = nullptr;
++  void *ExitFnPtr = nullptr;
++
+   if (!RemoteMCJIT) {
+     // If the program doesn't explicitly call exit, we will need the Exit
+     // function later on to make an explicit call, so get the function now.
+-    Constant *Exit = Mod->getOrInsertFunction("exit", Type::getVoidTy(Context),
+-                                                      Type::getInt32Ty(Context),
+-                                                      nullptr);
++    Exit = Mod->getOrInsertFunction("exit",
++                                    Type::getVoidTy(Context),
++                                    Type::getInt32Ty(Context),
++                                    nullptr);
++    assert(Exit && "Could not create an exit(2) Constant!");
++
++    ExitFn = cast_or_null<Function>(Exit);
++    assert(ExitFn && "Could not create an exit(2) Function!");
++
++    ExitFnPtr = EE->getPointerToFunction(ExitFn);
++    assert(ExitFnPtr && "Could not retrieve an exit(2) Function pointer!");
++    (void) ExitFnPtr;
+ 
+     // Run static constructors.
+     if (!ForceInterpreter) {
+       // Give MCJIT a chance to apply relocations and set page permissions.
+       EE->finalizeObject();
+     }
++
+     EE->runStaticConstructorsDestructors(false);
+ 
+     // Trigger compilation separately so code regions that need to be
+     // invalidated will be known.
+-    (void)EE->getPointerToFunction(EntryFn);
++    EntryFnPtr = EE->getPointerToFunction(EntryFn);
++    assert(EntryFnPtr && "Could not retrieve a main(2) Function pointer!");
++    (void) EntryFnPtr;
++
+     // Clear instruction cache before code will be executed.
+     if (RTDyldMM)
+       static_cast<SectionMemoryManager*>(RTDyldMM)->invalidateInstructionCache();
+ 
+     // Run main.
+-    Result = EE->runFunctionAsMain(EntryFn, InputArgv, envp);
++    Result = EE->runFunctionAsMain(EntryFn, ArgvVector, envp);
+ 
+     // Run static destructors.
+     EE->runStaticConstructorsDestructors(true);

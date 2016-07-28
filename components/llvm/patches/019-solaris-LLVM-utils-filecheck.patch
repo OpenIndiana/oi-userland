@@ -1,0 +1,13 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- utils/FileCheck/FileCheck.cpp	2015-11-17 14:00:52.000000000 -0500
++++ utils/FileCheck/FileCheck.cpp	2016-05-08 23:19:20.580431920 -0400
+@@ -40,7 +40,7 @@
+ 
+ static cl::opt<std::string>
+ InputFilename("input-file", cl::desc("File to check (defaults to stdin)"),
+-              cl::init("-"), cl::value_desc("filename"));
++              cl::init(std::string("-")), cl::value_desc("filename"));
+ 
+ static cl::list<std::string>
+ CheckPrefixes("check-prefix",

@@ -1,0 +1,502 @@
+# 22902339 memory corruption caused by undefined behavior in LLVM IR Module
+# Miscellaneous cleanup fixes (bitfields).
+# 3.8.X upstream. Alghouth they love bitfields.
+--- include/llvm/MC/MCSection.h	2015-12-29 04:06:16.000000000 -0500
++++ include/llvm/MC/MCSection.h	2016-05-08 23:19:20.520430461 -0400
+@@ -67,14 +67,17 @@
+ 
+ private:
+   MCSection(const MCSection &) = delete;
+-  void operator=(const MCSection &) = delete;
++  MCSection &operator=(const MCSection &) = delete;
+ 
+   MCSymbol *Begin;
+   MCSymbol *End = nullptr;
++
+   /// The alignment requirement of this section.
+   unsigned Alignment = 1;
++
+   /// The section index in the assemblers section list.
+   unsigned Ordinal = 0;
++
+   /// The index of this section in the layout order.
+   unsigned LayoutOrder;
+ 
+@@ -86,12 +89,12 @@
+ 
+   /// \brief We've seen a bundle_lock directive but not its first instruction
+   /// yet.
+-  unsigned BundleGroupBeforeFirstInst : 1;
++  bool BundleGroupBeforeFirstInst;
+ 
+   /// Whether this section has had instructions emitted into it.
+-  unsigned HasInstructions : 1;
++  bool HasInstructions;
+ 
+-  unsigned IsRegistered : 1;
++  bool IsRegistered;
+ 
+   MCDummyFragment DummyFragment;
+ 
+@@ -105,9 +108,9 @@
+   MCSection(SectionVariant V, SectionKind K, MCSymbol *Begin);
+   SectionVariant Variant;
+   SectionKind Kind;
+-  ~MCSection();
+ 
+ public:
++  virtual ~MCSection();
+   SectionKind getKind() const { return Kind; }
+ 
+   SectionVariant getVariant() const { return Variant; }
+--- include/llvm/MC/MCStreamer.h	2016-01-12 08:38:15.000000000 -0500
++++ include/llvm/MC/MCStreamer.h	2016-05-08 23:19:20.520430461 -0400
+@@ -464,6 +464,13 @@
+   ///  .size symbol, expression
+   virtual void emitELFSize(MCSymbolELF *Symbol, const MCExpr *Value);
+ 
++  /// EmitELFSize - Emit an ELF .size directive.
++  ///
++  /// This corresponds to an assembler statement such as:
++  ///  .size symbol, expression, but without a temp .label.
++  ///
++  virtual void EmitELFSize(StringRef Name);
++
+   /// \brief Emit a Linker Optimization Hint (LOH) directive.
+   /// \param Args - Arguments of the LOH.
+   virtual void EmitLOHDirective(MCLOHType Kind, const MCLOHArgs &Args) {}
+--- include/llvm/MC/MCSymbol.h	2015-10-05 05:07:05.000000000 -0700
++++ include/llvm/MC/MCSymbol.h	2016-05-09 10:02:49.488583805 -0700
+@@ -29,6 +29,23 @@
+ class MCContext;
+ class raw_ostream;
+ 
++#if 0
++/// \brief The name for a symbol.
++/// MCSymbol contains a uint64_t so is probably aligned to 8.  On a 32-bit
++/// system, the name is a pointer so isn't going to satisfy the 8 byte
++/// alignment of uint64_t.  Account for that here.
++/// Clueless. std::uin64_t aligns on 4 on 32-bit Intel (psABI).
++typedef union {
++  const StringMapEntry<bool> *NameEntry;
++  uint64_t AlignmentPadding;
++  uint64_t Buffer[2];
++} NameEntryStorageTy;
++
++static_assert(llvm::AlignOf<llvm::NameEntryStorageTy>::Alignment >=
++              llvm::AlignOf<uint64_t>::Alignment,
++              "Insufficient alignment for llvm::NameEntryStorageTy!");
++#endif
++
+ /// MCSymbol - Instances of this class represent a symbol name in the MC file,
+ /// and MCSymbols are created and uniqued by the MCContext class.  MCSymbols
+ /// should only be constructed with valid names for the object file.
+@@ -49,7 +66,7 @@
+ 
+   /// A symbol can contain an Offset, or Value, or be Common, but never more
+   /// than one of these.
+-  enum Contents : uint8_t {
++  enum Contents {
+     SymContentsUnset,
+     SymContentsOffset,
+     SymContentsVariable,
+@@ -79,48 +96,49 @@
+   /// IsTemporary - True if this is an assembler temporary label, which
+   /// typically does not survive in the .o file's symbol table.  Usually
+   /// "Lfoo" or ".foo".
+-  unsigned IsTemporary : 1;
++  bool IsTemporary;
+ 
+   /// \brief True if this symbol can be redefined.
+-  unsigned IsRedefinable : 1;
++  bool IsRedefinable;
+ 
+   /// IsUsed - True if this symbol has been used.
+-  mutable unsigned IsUsed : 1;
++  mutable bool IsUsed;
+ 
+-  mutable bool IsRegistered : 1;
++  mutable bool IsRegistered;
+ 
+   /// This symbol is visible outside this translation unit.
+-  mutable unsigned IsExternal : 1;
++  mutable bool IsExternal;
+ 
+   /// This symbol is private extern.
+-  mutable unsigned IsPrivateExtern : 1;
++  mutable bool IsPrivateExtern;
+ 
+   /// LLVM RTTI discriminator. This is actually a SymbolKind enumerator, but is
+   /// unsigned to avoid sign extension and achieve better bitpacking with MSVC.
+-  unsigned Kind : 2;
++  unsigned Kind;
+ 
+   /// True if we have created a relocation that uses this symbol.
+-  mutable unsigned IsUsedInReloc : 1;
++  mutable bool IsUsedInReloc;
+ 
+   /// This is actually a Contents enumerator, but is unsigned to avoid sign
+   /// extension and achieve better bitpacking with MSVC.
+-  unsigned SymbolContents : 2;
++  unsigned SymbolContents;
+ 
+   /// The alignment of the symbol, if it is 'common', or -1.
+   ///
+   /// The alignment is stored as log2(align) + 1.  This allows all values from
+   /// 0 to 2^31 to be stored which is every power of 2 representable by an
+   /// unsigned.
+-  enum : unsigned { NumCommonAlignmentBits = 5 };
+-  unsigned CommonAlignLog2 : NumCommonAlignmentBits;
++  enum { NumCommonAlignmentBits = 5 };
++  unsigned CommonAlignLog2;
+ 
+   /// The Flags field is used by object file implementations to store
+   /// additional per symbol information which is not easily classified.
+-  enum : unsigned { NumFlagsBits = 16 };
+-  mutable uint32_t Flags : NumFlagsBits;
++  enum { NumFlagsBits = 16 };
++
++  mutable uint32_t Flags;
+ 
+   /// Index field, for use by the object file implementation.
+-  mutable uint32_t Index = 0;
++  mutable uint32_t Index;
+ 
+   union {
+     /// The offset to apply to the fragment address to form this symbol's value.
+@@ -131,27 +149,32 @@
+ 
+     /// If non-null, the value for a variable symbol.
+     const MCExpr *Value;
++    uint64_t Buffer[4];
+   };
+ 
+ protected: // MCContext creates and uniques these.
+   friend class MCExpr;
+   friend class MCContext;
+ 
++public:
+   /// \brief The name for a symbol.
+   /// MCSymbol contains a uint64_t so is probably aligned to 8.  On a 32-bit
+   /// system, the name is a pointer so isn't going to satisfy the 8 byte
+   /// alignment of uint64_t.  Account for that here.
++  /// This implementation makes absolutely no sense whatsoever.
+   typedef union {
+     const StringMapEntry<bool> *NameEntry;
+     uint64_t AlignmentPadding;
++    uint64_t Buffer[2];
+   } NameEntryStorageTy;
+ 
+   MCSymbol(SymbolKind Kind, const StringMapEntry<bool> *Name, bool isTemporary)
+       : IsTemporary(isTemporary), IsRedefinable(false), IsUsed(false),
+         IsRegistered(false), IsExternal(false), IsPrivateExtern(false),
+         Kind(Kind), IsUsedInReloc(false), SymbolContents(SymContentsUnset),
+-        CommonAlignLog2(0), Flags(0) {
+-    Offset = 0;
++  CommonAlignLog2(0U), Flags(0U), Index(0U) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
++    Offset = 0U;
+     FragmentAndHasName.setInt(!!Name);
+     if (Name)
+       getNameEntryPtr() = Name;
+@@ -163,19 +186,25 @@
+                      MCContext &Ctx);
+ 
+ private:
+-
+   void operator delete(void *);
++
+   /// \brief Placement delete - required by std, but never called.
+   void operator delete(void*, unsigned) {
+-    llvm_unreachable("Constructor throws?");
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": this should never happend!\n";
++    abort();
+   }
++
+   /// \brief Placement delete - required by std, but never called.
+   void operator delete(void*, unsigned, bool) {
+-    llvm_unreachable("Constructor throws?");
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": this should never happend!\n";
++    abort();
+   }
+ 
+   MCSymbol(const MCSymbol &) = delete;
+-  void operator=(const MCSymbol &) = delete;
++  MCSymbol &operator=(const MCSymbol &) = delete;
++
+   MCSection *getSectionPtr(bool SetUsed = true) const {
+     if (MCFragment *F = getFragment(SetUsed)) {
+       assert(F != AbsolutePseudoFragment);
+@@ -190,6 +219,7 @@
+     NameEntryStorageTy *Name = reinterpret_cast<NameEntryStorageTy *>(this);
+     return (*(Name - 1)).NameEntry;
+   }
++
+   const StringMapEntry<bool> *&getNameEntryPtr() const {
+     return const_cast<MCSymbol*>(this)->getNameEntryPtr();
+   }
+@@ -412,6 +442,14 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<llvm::MCSymbol>::Alignment >=
++              llvm::AlignOf<uint64_t>::Alignment,
++              "Insufficient alignment for llvm::MCSymbol!");
++
++static_assert(llvm::AlignOf<llvm::MCSymbol::NameEntryStorageTy>::Alignment >=
++              llvm::AlignOf<uint64_t>::Alignment,
++              "Insufficient alignment for llvm::MCSymbol::NameEntryStorageTy!");
++
+ inline raw_ostream &operator<<(raw_ostream &OS, const MCSymbol &Sym) {
+   Sym.print(OS, nullptr);
+   return OS;
+###
+--- lib/MC/MCAsmStreamer.cpp	2015-11-12 04:33:00.000000000 -0900
++++ lib/MC/MCAsmStreamer.cpp	2016-07-07 11:33:34.645300365 -0800
+@@ -46,30 +46,37 @@
+   std::unique_ptr<MCCodeEmitter> Emitter;
+   std::unique_ptr<MCAsmBackend> AsmBackend;
+ 
+-  SmallString<128> CommentToEmit;
++  SmallString<1024> CommentToEmit;
+   raw_svector_ostream CommentStream;
+ 
+-  unsigned IsVerboseAsm : 1;
+-  unsigned ShowInst : 1;
+-  unsigned UseDwarfDirectory : 1;
++  bool IsVerboseAsm;
++  bool ShowInst;
++  bool UseDwarfDirectory;
+ 
+   void EmitRegisterName(int64_t Register);
+   void EmitCFIStartProcImpl(MCDwarfFrameInfo &Frame) override;
+   void EmitCFIEndProcImpl(MCDwarfFrameInfo &Frame) override;
+ 
+ public:
+-  MCAsmStreamer(MCContext &Context, std::unique_ptr<formatted_raw_ostream> os,
++  MCAsmStreamer(MCContext &Context,
++                std::unique_ptr<formatted_raw_ostream> os,
+                 bool isVerboseAsm, bool useDwarfDirectory,
+                 MCInstPrinter *printer, MCCodeEmitter *emitter,
+                 MCAsmBackend *asmbackend, bool showInst)
+-      : MCStreamer(Context), OSOwner(std::move(os)), OS(*OSOwner),
+-        MAI(Context.getAsmInfo()), InstPrinter(printer), Emitter(emitter),
+-        AsmBackend(asmbackend), CommentStream(CommentToEmit),
+-        IsVerboseAsm(isVerboseAsm), ShowInst(showInst),
+-        UseDwarfDirectory(useDwarfDirectory) {
++  : MCStreamer(Context),
++  OSOwner(std::move(os)),
++  OS(*OSOwner),
++  MAI(Context.getAsmInfo()),
++  InstPrinter(printer),
++  Emitter(emitter),
++  AsmBackend(asmbackend),
++  CommentStream(CommentToEmit),
++  IsVerboseAsm(isVerboseAsm),
++  ShowInst(showInst),
++  UseDwarfDirectory(useDwarfDirectory) {
+     assert(InstPrinter);
+     if (IsVerboseAsm)
+-        InstPrinter->setCommentStream(CommentStream);
++      InstPrinter->setCommentStream(CommentStream);
+   }
+ 
+   inline void EmitEOL() {
+@@ -78,6 +85,7 @@
+       OS << '\n';
+       return;
+     }
++
+     EmitCommentsAndEOL();
+   }
+ 
+@@ -145,6 +153,7 @@
+   void EmitCOFFSectionIndex(MCSymbol const *Symbol) override;
+   void EmitCOFFSecRel32(MCSymbol const *Symbol) override;
+   void emitELFSize(MCSymbolELF *Symbol, const MCExpr *Value) override;
++  void EmitELFSize(StringRef Name) override;
+   void EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                         unsigned ByteAlignment) override;
+ 
+@@ -540,6 +549,11 @@
+   OS << '\n';
+ }
+ 
++void MCAsmStreamer::EmitELFSize(StringRef Name) {
++  assert(MAI->hasDotTypeDotSizeDirective());
++  OS << "\t.size\t" << Name << ", .-" << Name << '\n';
++}
++
+ void MCAsmStreamer::EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                      unsigned ByteAlignment) {
+   OS << "\t.comm\t";
+@@ -889,7 +903,7 @@
+   if (NumFiles == Table.getMCDwarfFiles().size())
+     return FileNo;
+ 
+-  SmallString<128> FullPathName;
++  SmallString<PATH_MAX> FullPathName;
+ 
+   if (!UseDwarfDirectory && !Directory.empty()) {
+     if (sys::path::is_absolute(Filename))
+@@ -1240,7 +1254,7 @@
+ void MCAsmStreamer::AddEncodingComment(const MCInst &Inst,
+                                        const MCSubtargetInfo &STI) {
+   raw_ostream &OS = GetCommentOS();
+-  SmallString<256> Code;
++  SmallString<1024> Code;
+   SmallVector<MCFixup, 4> Fixups;
+   raw_svector_ostream VecOS(Code);
+   Emitter->encodeInstruction(Inst, VecOS, Fixups, STI);
+###
+--- lib/MC/MCSectionELF.cpp	2015-11-06 10:30:45.000000000 -0500
++++ lib/MC/MCSectionELF.cpp	2016-05-08 23:19:20.534430801 -0400
+@@ -70,33 +70,18 @@
+   OS << "\t.section\t";
+   printName(OS, getSectionName());
+ 
+-  // Handle the weird solaris syntax if desired.
+-  if (MAI.usesSunStyleELFSectionSwitchSyntax() &&
+-      !(Flags & ELF::SHF_MERGE)) {
+-    if (Flags & ELF::SHF_ALLOC)
+-      OS << ",#alloc";
+-    if (Flags & ELF::SHF_EXECINSTR)
+-      OS << ",#execinstr";
+-    if (Flags & ELF::SHF_WRITE)
+-      OS << ",#write";
+-    if (Flags & ELF::SHF_EXCLUDE)
+-      OS << ",#exclude";
+-    if (Flags & ELF::SHF_TLS)
+-      OS << ",#tls";
+-    OS << '\n';
+-    return;
+-  }
+-
+   OS << ",\"";
+   if (Flags & ELF::SHF_ALLOC)
+     OS << 'a';
+   if (Flags & ELF::SHF_EXCLUDE)
+     OS << 'e';
+-  if (Flags & ELF::SHF_EXECINSTR)
++  if ((Flags & ELF::SHF_EXECINSTR) && (Type != ELF::SHT_INIT_ARRAY) &&
++      (Type != ELF::SHT_FINI_ARRAY) && (Type != ELF::SHT_PREINIT_ARRAY))
+     OS << 'x';
+   if (Flags & ELF::SHF_GROUP)
+     OS << 'G';
+-  if (Flags & ELF::SHF_WRITE)
++  if ((Flags & ELF::SHF_WRITE) || (Type == ELF::SHT_INIT_ARRAY) ||
++      (Type == ELF::SHT_FINI_ARRAY) || (Type == ELF::SHT_PREINIT_ARRAY))
+     OS << 'w';
+   if (Flags & ELF::SHF_MERGE)
+     OS << 'M';
+--- lib/MC/MCStreamer.cpp	2015-11-04 18:59:18.000000000 -0500
++++ lib/MC/MCStreamer.cpp	2016-05-08 23:19:20.534430801 -0400
+@@ -680,6 +680,7 @@
+ void MCStreamer::EmitCOFFSymbolStorageClass(int StorageClass) {}
+ void MCStreamer::EmitCOFFSymbolType(int Type) {}
+ void MCStreamer::emitELFSize(MCSymbolELF *Symbol, const MCExpr *Value) {}
++void MCStreamer::EmitELFSize(StringRef Name) { }
+ void MCStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                        unsigned ByteAlignment) {}
+ void MCStreamer::EmitTBSSSymbol(MCSection *Section, MCSymbol *Symbol,
+####
+--- lib/MC/MCContext.cpp	2015-12-16 14:49:14.000000000 -0900
++++ lib/MC/MCContext.cpp	2016-07-07 11:27:58.976687075 -0800
+@@ -108,7 +108,7 @@
+ //===----------------------------------------------------------------------===//
+ 
+ MCSymbol *MCContext::getOrCreateSymbol(const Twine &Name) {
+-  SmallString<128> NameSV;
++  SmallString<1024> NameSV;
+   StringRef NameRef = Name.toStringRef(NameSV);
+ 
+   assert(!NameRef.empty() && "Normal symbols cannot be unnamed!");
+@@ -185,7 +185,7 @@
+   if (AllowTemporaryLabels && !IsTemporary)
+     IsTemporary = Name.startswith(MAI->getPrivateGlobalPrefix());
+ 
+-  SmallString<128> NewName = Name;
++  SmallString<1024> NewName = Name;
+   bool AddSuffix = AlwaysAddSuffix;
+   unsigned &NextUniqueID = NextID[Name];
+   for (;;) {
+@@ -207,13 +207,13 @@
+ 
+ MCSymbol *MCContext::createTempSymbol(const Twine &Name, bool AlwaysAddSuffix,
+                                       bool CanBeUnnamed) {
+-  SmallString<128> NameSV;
++  SmallString<1024> NameSV;
+   raw_svector_ostream(NameSV) << MAI->getPrivateGlobalPrefix() << Name;
+   return createSymbol(NameSV, AlwaysAddSuffix, CanBeUnnamed);
+ }
+ 
+ MCSymbol *MCContext::createLinkerPrivateTempSymbol() {
+-  SmallString<128> NameSV;
++  SmallString<1024> NameSV;
+   raw_svector_ostream(NameSV) << MAI->getLinkerPrivateGlobalPrefix() << "tmp";
+   return createSymbol(NameSV, true, false);
+ }
+@@ -277,7 +277,7 @@
+   // diagnosed by the client as an error.
+ 
+   // Form the name to look up.
+-  SmallString<64> Name;
++  SmallString<1024> Name;
+   Name += Segment;
+   Name.push_back(',');
+   Name += Section;
+####
+--- lib/MC/MCSymbol.cpp	2015-12-29 00:32:18.000000000 -0900
++++ lib/MC/MCSymbol.cpp	2016-07-07 14:33:23.830913215 -0800
+@@ -16,26 +16,42 @@
+ #include "llvm/Support/raw_ostream.h"
+ using namespace llvm;
+ 
++#include <stdlib.h>
++
+ // Only the address of this fragment is ever actually used.
+ static MCDummyFragment SentinelFragment(nullptr);
+ 
+ // Sentinel value for the absolute pseudo fragment.
+ MCFragment *MCSymbol::AbsolutePseudoFragment = &SentinelFragment;
+ 
+-void *MCSymbol::operator new(size_t s, const StringMapEntry<bool> *Name,
++void *MCSymbol::operator new(size_t S, const StringMapEntry<bool> *Name,
+                              MCContext &Ctx) {
+   // We may need more space for a Name to account for alignment.  So allocate
+   // space for the storage type and not the name pointer.
+-  size_t Size = s + (Name ? sizeof(NameEntryStorageTy) : 0);
++  unsigned NL = Name ?
++    Name->getKeyLength() + sizeof(bool) + sizeof(uint64_t) :
++    256U + sizeof(bool) + sizeof(uint64_t);
++  NL = llvm::RoundUpToAlignment(NL, alignof(uint64_t));
++  size_t Size = S + NL;
+ 
+   // For safety, ensure that the alignment of a pointer is enough for an
+   // MCSymbol.  This also ensures we don't need padding between the name and
+   // symbol.
+-  static_assert((unsigned)AlignOf<MCSymbol>::Alignment <=
+-                AlignOf<NameEntryStorageTy>::Alignment,
+-                "Bad alignment of MCSymbol");
+-  void *Storage = Ctx.allocate(Size, alignOf<NameEntryStorageTy>());
+-  NameEntryStorageTy *Start = static_cast<NameEntryStorageTy*>(Storage);
++  static_assert(llvm::AlignOf<MCSymbol>::Alignment >=
++                llvm::AlignOf<llvm::MCSymbol::NameEntryStorageTy>::Alignment,
++                "Insufficient alignment for MCSymbol::NameEntryStorageTy!");
++
++  static_assert(llvm::AlignOf<MCSymbol>::Alignment >=
++                llvm::AlignOf<uint64_t>::Alignment,
++                "Insufficient alignment for MCSymbol!");
++
++  unsigned Alignment =
++    static_cast<unsigned>(llvm::AlignOf<llvm::MCSymbol>::Alignment);
++  uint64_t *Storage =
++    reinterpret_cast<uint64_t*>(Ctx.allocate(Size, Alignment));
++  assert(Storage && "MCContext memory allocation failure!");
++
++  NameEntryStorageTy *Start = reinterpret_cast<NameEntryStorageTy*>(Storage);
+   NameEntryStorageTy *End = Start + (Name ? 1 : 0);
+   return End;
+ }

@@ -1,0 +1,23 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- lib/Transforms/Instrumentation/GCOVProfiling.cpp	2016-01-25 14:24:50.000000000 -0800
++++ lib/Transforms/Instrumentation/GCOVProfiling.cpp	2016-05-11 19:11:39.817769093 -0700
+@@ -45,10 +45,14 @@
+ #define DEBUG_TYPE "insert-gcov-profiling"
+ 
+ static cl::opt<std::string>
+-DefaultGCOVVersion("default-gcov-version", cl::init("402*"), cl::Hidden,
+-                   cl::ValueRequired);
+-static cl::opt<bool> DefaultExitBlockBeforeBody("gcov-exit-block-before-body",
+-                                                cl::init(false), cl::Hidden);
++DefaultGCOVVersion("default-gcov-version",
++                   cl::init(std::string("402*")),
++                   cl::Hidden, cl::ValueRequired);
++
++static cl::opt<bool>
++DefaultExitBlockBeforeBody("gcov-exit-block-before-body",
++                           cl::init(false),
++                           cl::Hidden);
+ 
+ GCOVOptions GCOVOptions::getDefault() {
+   GCOVOptions Options;

@@ -1,0 +1,134 @@
+# Miscellaneous fixes.
+# 3.9.X upstream.
+--- tools/clang/tools/libclang/CXLoadedDiagnostic.cpp	2015-10-20 09:23:58.000000000 -0400
++++ tools/clang/tools/libclang/CXLoadedDiagnostic.cpp	2016-05-28 16:46:50.786462237 -0400
+@@ -190,8 +190,8 @@
+ class DiagLoader : serialized_diags::SerializedDiagnosticReader {
+   enum CXLoadDiag_Error *error;
+   CXString *errorString;
+-  std::unique_ptr<CXLoadedDiagnosticSetImpl> TopDiags;
+-  SmallVector<std::unique_ptr<CXLoadedDiagnostic>, 8> CurrentDiags;
++  std::shared_ptr<CXLoadedDiagnosticSetImpl> TopDiags;
++  std::vector<std::shared_ptr<CXLoadedDiagnostic> > CurrentDiags;
+ 
+   std::error_code reportBad(enum CXLoadDiag_Error code, llvm::StringRef err) {
+     if (error)
+@@ -250,7 +250,7 @@
+ } // end anonymous namespace
+ 
+ CXDiagnosticSet DiagLoader::load(const char *file) {
+-  TopDiags = llvm::make_unique<CXLoadedDiagnosticSetImpl>();
++  TopDiags = std::make_shared<CXLoadedDiagnosticSetImpl>();
+ 
+   std::error_code EC = readDiagnostics(file);
+   if (EC) {
+@@ -268,7 +268,7 @@
+     return nullptr;
+   }
+ 
+-  return (CXDiagnosticSet)TopDiags.release();
++  return (CXDiagnosticSet)TopDiags.get();
+ }
+ 
+ std::error_code
+@@ -309,16 +309,18 @@
+ }
+ 
+ std::error_code DiagLoader::visitStartOfDiagnostic() {
+-  CurrentDiags.push_back(llvm::make_unique<CXLoadedDiagnostic>());
++  CurrentDiags.push_back(std::make_shared<CXLoadedDiagnostic>());
+   return std::error_code();
+ }
+ 
+ std::error_code DiagLoader::visitEndOfDiagnostic() {
+-  auto D = CurrentDiags.pop_back_val();
++  std::shared_ptr<CXLoadedDiagnostic> D = CurrentDiags.back();
+   if (CurrentDiags.empty())
+-    TopDiags->appendDiagnostic(std::move(D));
++    TopDiags->appendDiagnostic(D);
+   else
+-    CurrentDiags.back()->getChildDiagnostics().appendDiagnostic(std::move(D));
++    CurrentDiags.back()->getChildDiagnostics().appendDiagnostic(D);
++
++  CurrentDiags.pop_back();
+   return std::error_code();
+ }
+ 
+###
+--- tools/clang/tools/libclang/CIndexDiagnostic.h	2015-10-20 09:23:58.000000000 -0400
++++ tools/clang/tools/libclang/CIndexDiagnostic.h	2016-05-28 16:49:40.739768269 -0400
+@@ -25,7 +25,7 @@
+ class CXDiagnosticImpl;
+   
+ class CXDiagnosticSetImpl {
+-  std::vector<std::unique_ptr<CXDiagnosticImpl>> Diagnostics;
++  std::vector<std::shared_ptr<CXDiagnosticImpl>> Diagnostics;
+   const bool IsExternallyManaged;
+ public:
+   CXDiagnosticSetImpl(bool isManaged = false)
+@@ -42,7 +42,7 @@
+     return Diagnostics[i].get();
+   }
+ 
+-  void appendDiagnostic(std::unique_ptr<CXDiagnosticImpl> D);
++  void appendDiagnostic(std::shared_ptr<CXDiagnosticImpl> D);
+ 
+   bool empty() const {
+     return Diagnostics.empty();
+@@ -99,8 +99,8 @@
+   CXDiagnosticImpl(Kind k) : K(k) {}
+   CXDiagnosticSetImpl ChildDiags;
+ 
+-  void append(std::unique_ptr<CXDiagnosticImpl> D) {
+-    ChildDiags.appendDiagnostic(std::move(D));
++  void append(std::shared_ptr<CXDiagnosticImpl> D) {
++    ChildDiags.appendDiagnostic(D);
+   }
+   
+ private:
+###
+--- tools/clang/tools/libclang/CIndexDiagnostic.cpp	2015-10-20 09:23:58.000000000 -0400
++++ tools/clang/tools/libclang/CIndexDiagnostic.cpp	2016-05-28 16:53:14.353165739 -0400
+@@ -33,8 +33,8 @@
+ CXDiagnosticSetImpl::~CXDiagnosticSetImpl() {}
+ 
+ void
+-CXDiagnosticSetImpl::appendDiagnostic(std::unique_ptr<CXDiagnosticImpl> D) {
+-  Diagnostics.push_back(std::move(D));
++CXDiagnosticSetImpl::appendDiagnostic(std::shared_ptr<CXDiagnosticImpl> D) {
++  Diagnostics.push_back(D);
+ }
+ 
+ CXDiagnosticImpl::~CXDiagnosticImpl() {}
+@@ -104,9 +104,10 @@
+     if (Level != DiagnosticsEngine::Note)
+       CurrentSet = MainSet;
+ 
+-    auto Owner = llvm::make_unique<CXStoredDiagnostic>(*SD, LangOpts);
+-    CXStoredDiagnostic &CD = *Owner;
+-    CurrentSet->appendDiagnostic(std::move(Owner));
++    std::shared_ptr<CXStoredDiagnostic> Owner =
++      std::make_shared<CXStoredDiagnostic>(*SD, LangOpts);
++    CXStoredDiagnostic &CD = *Owner.get();
++    CurrentSet->appendDiagnostic(Owner);
+ 
+     if (Level != DiagnosticsEngine::Note)
+       CurrentSet = &CD.getChildDiagnostics();
+@@ -127,7 +128,7 @@
+     else
+       L = clang_getNullLocation();
+     CurrentSet->appendDiagnostic(
+-        llvm::make_unique<CXDiagnosticCustomNoteImpl>(Message, L));
++        std::make_shared<CXDiagnosticCustomNoteImpl>(Message, L));
+   }
+ 
+   void emitDiagnosticLoc(SourceLocation Loc, PresumedLoc PLoc,
+@@ -149,7 +150,7 @@
+     else
+       L = clang_getNullLocation();
+     CurrentSet->appendDiagnostic(
+-        llvm::make_unique<CXDiagnosticCustomNoteImpl>(Message, L));
++        std::make_shared<CXDiagnosticCustomNoteImpl>(Message, L));
+   }
+ 
+   CXDiagnosticSetImpl *CurrentSet;

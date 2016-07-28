@@ -1,0 +1,471 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "LIT" "1" "2016-07-10" "3.8" "LLVM"
+.SH NAME
+lit \- LLVM Integrated Tester
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+\fBlit\fP [\fIoptions\fP] [\fItests\fP]
+.SH DESCRIPTION
+.sp
+\fBlit\fP is a portable tool for executing LLVM and Clang style test
+suites, summarizing their results, and providing indication of failures.
+\fBlit\fP is designed to be a lightweight testing tool with as simple a
+user interface as possible.
+.sp
+\fBlit\fP should be run with one or more \fItests\fP to run specified on the
+command line.  Tests can be either individual test files or directories to
+search for tests (see \fI\%TEST DISCOVERY\fP).
+.sp
+Each specified test will be executed (potentially in parallel) and once all
+tests have been run \fBlit\fP will print summary information on the number
+of tests which passed or failed (see \fI\%TEST STATUS RESULTS\fP).  The
+\fBlit\fP program will execute with a non\-zero exit code if any tests
+fail.
+.sp
+By default \fBlit\fP will use a succinct progress display and will only
+print summary information for test failures.  See \fI\%OUTPUT OPTIONS\fP for
+options controlling the \fBlit\fP progress display and output.
+.sp
+\fBlit\fP also includes a number of options for controlling how tests are
+executed (specific features may depend on the particular test format).  See
+\fI\%EXECUTION OPTIONS\fP for more information.
+.sp
+Finally, \fBlit\fP also supports additional options for only running a
+subset of the options specified on the command line, see
+\fI\%SELECTION OPTIONS\fP for more information.
+.sp
+Users interested in the \fBlit\fP architecture or designing a
+\fBlit\fP testing implementation should see \fI\%LIT INFRASTRUCTURE\fP\&.
+.SH GENERAL OPTIONS
+.INDENT 0.0
+.TP
+.B \-h, \-\-help
+Show the \fBlit\fP help message.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-j N, \-\-threads=N
+Run \fBN\fP tests in parallel.  By default, this is automatically chosen to
+match the number of detected available CPUs.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-config\-prefix=NAME
+Search for \fB\fINAME\fP\fP\fB\&.cfg\fP and \fB\fINAME\fP\fP\fB\&.site.cfg\fP when searching for
+test suites, instead of \fBlit.cfg\fP and \fBlit.site.cfg\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-D NAME, \-D NAME=VALUE, \-\-param NAME, \-\-param NAME=VALUE
+Add a user defined parameter \fBNAME\fP with the given \fBVALUE\fP (or the empty
+string if not given).  The meaning and use of these parameters is test suite
+dependent.
+.UNINDENT
+.SH OUTPUT OPTIONS
+.INDENT 0.0
+.TP
+.B \-q, \-\-quiet
+Suppress any output except for test failures.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-s, \-\-succinct
+Show less output, for example don\(aqt show information on tests that pass.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-v, \-\-verbose
+Show more information on test failures, for example the entire test output
+instead of just the test result.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-a, \-\-show\-all
+Show more information about all tests, for example the entire test
+commandline and output.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-no\-progress\-bar
+Do not use curses based progress bar.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-show\-unsupported
+Show the names of unsupported tests.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-show\-xfail
+Show the names of tests that were expected to fail.
+.UNINDENT
+.SH EXECUTION OPTIONS
+.INDENT 0.0
+.TP
+.B \-\-path=PATH
+Specify an additional \fBPATH\fP to use when searching for executables in tests.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-vg
+Run individual tests under valgrind (using the memcheck tool).  The
+\fB\-\-error\-exitcode\fP argument for valgrind is used so that valgrind failures
+will cause the program to exit with a non\-zero status.
+.sp
+When this option is enabled, \fBlit\fP will also automatically provide a
+"\fBvalgrind\fP" feature that can be used to conditionally disable (or expect
+failure in) certain tests.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-vg\-arg=ARG
+When \fI\%\-\-vg\fP is used, specify an additional argument to pass to
+\fBvalgrind\fP itself.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-vg\-leak
+When \fI\%\-\-vg\fP is used, enable memory leak checks.  When this option is
+enabled, \fBlit\fP will also automatically provide a "\fBvg_leak\fP"
+feature that can be used to conditionally disable (or expect failure in)
+certain tests.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-time\-tests
+Track the wall time individual tests take to execute and includes the results
+in the summary output.  This is useful for determining which tests in a test
+suite take the most time to execute.  Note that this option is most useful
+with \fB\-j 1\fP\&.
+.UNINDENT
+.SH SELECTION OPTIONS
+.INDENT 0.0
+.TP
+.B \-\-max\-tests=N
+Run at most \fBN\fP tests and then terminate.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-max\-time=N
+Spend at most \fBN\fP seconds (approximately) running tests and then terminate.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-shuffle
+Run the tests in a random order.
+.UNINDENT
+.SH ADDITIONAL OPTIONS
+.INDENT 0.0
+.TP
+.B \-\-debug
+Run \fBlit\fP in debug mode, for debugging configuration issues and
+\fBlit\fP itself.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-show\-suites
+List the discovered test suites and exit.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-show\-tests
+List all of the discovered tests and exit.
+.UNINDENT
+.SH EXIT STATUS
+.sp
+\fBlit\fP will exit with an exit code of 1 if there are any FAIL or XPASS
+results.  Otherwise, it will exit with the status 0.  Other exit codes are used
+for non\-test related failures (for example a user error or an internal program
+error).
+.SH TEST DISCOVERY
+.sp
+The inputs passed to \fBlit\fP can be either individual tests, or entire
+directories or hierarchies of tests to run.  When \fBlit\fP starts up, the
+first thing it does is convert the inputs into a complete list of tests to run
+as part of \fItest discovery\fP\&.
+.sp
+In the \fBlit\fP model, every test must exist inside some \fItest suite\fP\&.
+\fBlit\fP resolves the inputs specified on the command line to test suites
+by searching upwards from the input path until it finds a \fBlit.cfg\fP or
+\fBlit.site.cfg\fP file.  These files serve as both a marker of test suites
+and as configuration files which \fBlit\fP loads in order to understand
+how to find and run the tests inside the test suite.
+.sp
+Once \fBlit\fP has mapped the inputs into test suites it traverses the
+list of inputs adding tests for individual files and recursively searching for
+tests in directories.
+.sp
+This behavior makes it easy to specify a subset of tests to run, while still
+allowing the test suite configuration to control exactly how tests are
+interpreted.  In addition, \fBlit\fP always identifies tests by the test
+suite they are in, and their relative path inside the test suite.  For
+appropriately configured projects, this allows \fBlit\fP to provide
+convenient and flexible support for out\-of\-tree builds.
+.SH TEST STATUS RESULTS
+.sp
+Each test ultimately produces one of the following six results:
+.sp
+\fBPASS\fP
+.INDENT 0.0
+.INDENT 3.5
+The test succeeded.
+.UNINDENT
+.UNINDENT
+.sp
+\fBXFAIL\fP
+.INDENT 0.0
+.INDENT 3.5
+The test failed, but that is expected.  This is used for test formats which allow
+specifying that a test does not currently work, but wish to leave it in the test
+suite.
+.UNINDENT
+.UNINDENT
+.sp
+\fBXPASS\fP
+.INDENT 0.0
+.INDENT 3.5
+The test succeeded, but it was expected to fail.  This is used for tests which
+were specified as expected to fail, but are now succeeding (generally because
+the feature they test was broken and has been fixed).
+.UNINDENT
+.UNINDENT
+.sp
+\fBFAIL\fP
+.INDENT 0.0
+.INDENT 3.5
+The test failed.
+.UNINDENT
+.UNINDENT
+.sp
+\fBUNRESOLVED\fP
+.INDENT 0.0
+.INDENT 3.5
+The test result could not be determined.  For example, this occurs when the test
+could not be run, the test itself is invalid, or the test was interrupted.
+.UNINDENT
+.UNINDENT
+.sp
+\fBUNSUPPORTED\fP
+.INDENT 0.0
+.INDENT 3.5
+The test is not supported in this environment.  This is used by test formats
+which can report unsupported tests.
+.UNINDENT
+.UNINDENT
+.sp
+Depending on the test format tests may produce additional information about
+their status (generally only for failures).  See the \fI\%OUTPUT OPTIONS\fP
+section for more information.
+.SH LIT INFRASTRUCTURE
+.sp
+This section describes the \fBlit\fP testing architecture for users interested in
+creating a new \fBlit\fP testing implementation, or extending an existing one.
+.sp
+\fBlit\fP proper is primarily an infrastructure for discovering and running
+arbitrary tests, and to expose a single convenient interface to these
+tests. \fBlit\fP itself doesn\(aqt know how to run tests, rather this logic is
+defined by \fItest suites\fP\&.
+.SS TEST SUITES
+.sp
+As described in \fI\%TEST DISCOVERY\fP, tests are always located inside a \fItest
+suite\fP\&.  Test suites serve to define the format of the tests they contain, the
+logic for finding those tests, and any additional information to run the tests.
+.sp
+\fBlit\fP identifies test suites as directories containing \fBlit.cfg\fP or
+\fBlit.site.cfg\fP files (see also \fI\%\-\-config\-prefix\fP).  Test suites are
+initially discovered by recursively searching up the directory hierarchy for
+all the input files passed on the command line.  You can use
+\fI\%\-\-show\-suites\fP to display the discovered test suites at startup.
+.sp
+Once a test suite is discovered, its config file is loaded.  Config files
+themselves are Python modules which will be executed.  When the config file is
+executed, two important global variables are predefined:
+.sp
+\fBlit_config\fP
+.INDENT 0.0
+.INDENT 3.5
+The global \fBlit\fP configuration object (a \fILitConfig\fP instance), which defines
+the builtin test formats, global configuration parameters, and other helper
+routines for implementing test configurations.
+.UNINDENT
+.UNINDENT
+.sp
+\fBconfig\fP
+.INDENT 0.0
+.INDENT 3.5
+This is the config object (a \fITestingConfig\fP instance) for the test suite,
+which the config file is expected to populate.  The following variables are also
+available on the \fIconfig\fP object, some of which must be set by the config and
+others are optional or predefined:
+.sp
+\fBname\fP \fI[required]\fP The name of the test suite, for use in reports and
+diagnostics.
+.sp
+\fBtest_format\fP \fI[required]\fP The test format object which will be used to
+discover and run tests in the test suite.  Generally this will be a builtin test
+format available from the \fIlit.formats\fP module.
+.sp
+\fBtest_source_root\fP The filesystem path to the test suite root.  For out\-of\-dir
+builds this is the directory that will be scanned for tests.
+.sp
+\fBtest_exec_root\fP For out\-of\-dir builds, the path to the test suite root inside
+the object directory.  This is where tests will be run and temporary output files
+placed.
+.sp
+\fBenvironment\fP A dictionary representing the environment to use when executing
+tests in the suite.
+.sp
+\fBsuffixes\fP For \fBlit\fP test formats which scan directories for tests, this
+variable is a list of suffixes to identify test files.  Used by: \fIShTest\fP\&.
+.sp
+\fBsubstitutions\fP For \fBlit\fP test formats which substitute variables into a test
+script, the list of substitutions to perform.  Used by: \fIShTest\fP\&.
+.sp
+\fBunsupported\fP Mark an unsupported directory, all tests within it will be
+reported as unsupported.  Used by: \fIShTest\fP\&.
+.sp
+\fBparent\fP The parent configuration, this is the config object for the directory
+containing the test suite, or None.
+.sp
+\fBroot\fP The root configuration.  This is the top\-most \fBlit\fP configuration in
+the project.
+.sp
+\fBpipefail\fP Normally a test using a shell pipe fails if any of the commands
+on the pipe fail. If this is not desired, setting this variable to false
+makes the test fail only if the last command in the pipe fails.
+.UNINDENT
+.UNINDENT
+.SS TEST DISCOVERY
+.sp
+Once test suites are located, \fBlit\fP recursively traverses the source
+directory (following \fItest_source_root\fP) looking for tests.  When \fBlit\fP
+enters a sub\-directory, it first checks to see if a nested test suite is
+defined in that directory.  If so, it loads that test suite recursively,
+otherwise it instantiates a local test config for the directory (see
+\fI\%LOCAL CONFIGURATION FILES\fP).
+.sp
+Tests are identified by the test suite they are contained within, and the
+relative path inside that suite.  Note that the relative path may not refer to
+an actual file on disk; some test formats (such as \fIGoogleTest\fP) define
+"virtual tests" which have a path that contains both the path to the actual
+test file and a subpath to identify the virtual test.
+.SS LOCAL CONFIGURATION FILES
+.sp
+When \fBlit\fP loads a subdirectory in a test suite, it instantiates a
+local test configuration by cloning the configuration for the parent directory
+\-\-\- the root of this configuration chain will always be a test suite.  Once the
+test configuration is cloned \fBlit\fP checks for a \fIlit.local.cfg\fP file
+in the subdirectory.  If present, this file will be loaded and can be used to
+specialize the configuration for each individual directory.  This facility can
+be used to define subdirectories of optional tests, or to change other
+configuration parameters \-\-\- for example, to change the test format, or the
+suffixes which identify test files.
+.SS TEST RUN OUTPUT FORMAT
+.sp
+The \fBlit\fP output for a test run conforms to the following schema, in
+both short and verbose modes (although in short mode no PASS lines will be
+shown).  This schema has been chosen to be relatively easy to reliably parse by
+a machine (for example in buildbot log scraping), and for other tools to
+generate.
+.sp
+Each test result is expected to appear on a line that matches:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+<result code>: <test name> (<progress info>)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where \fB<result\-code>\fP is a standard test result such as PASS, FAIL, XFAIL,
+XPASS, UNRESOLVED, or UNSUPPORTED.  The performance result codes of IMPROVED and
+REGRESSED are also allowed.
+.sp
+The \fB<test name>\fP field can consist of an arbitrary string containing no
+newline.
+.sp
+The \fB<progress info>\fP field can be used to report progress information such
+as (1/300) or can be empty, but even when empty the parentheses are required.
+.sp
+Each test result may include additional (multiline) log information in the
+following format:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+<log delineator> TEST \(aq(<test name>)\(aq <trailing delineator>
+\&... log message ...
+<log delineator>
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+where \fB<test name>\fP should be the name of a preceding reported test, \fB<log
+delineator>\fP is a string of "*" characters \fIat least\fP four characters long
+(the recommended length is 20), and \fB<trailing delineator>\fP is an arbitrary
+(unparsed) string.
+.sp
+The following is an example of a test run output which consists of four tests A,
+B, C, and D, and a log message for the failing test C:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+PASS: A (1 of 4)
+PASS: B (2 of 4)
+FAIL: C (3 of 4)
+******************** TEST \(aqC\(aq FAILED ********************
+Test \(aqC\(aq failed as a result of exit code 1.
+********************
+PASS: D (4 of 4)
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS LIT EXAMPLE TESTS
+.sp
+The \fBlit\fP distribution contains several example implementations of
+test suites in the \fIExampleTests\fP directory.
+.SH SEE ALSO
+.sp
+valgrind(1)
+.SH AUTHOR
+Maintained by The LLVM Team (http://llvm.org/).
+.SH COPYRIGHT
+2003-2016, LLVM Project
+.\" Generated by docutils manpage writer.
+.

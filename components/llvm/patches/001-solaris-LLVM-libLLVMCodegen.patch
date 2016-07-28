@@ -1,0 +1,629 @@
+# 22859423 llvm CodeGen on Intel emits a bogus .ctors section
+# 22902339 memory corruption caused by undefined behavior in LLVM IR Module
+--- include/llvm/CodeGen/CommandFlags.h	2015-12-16 14:58:30.000000000 -0500
++++ include/llvm/CodeGen/CommandFlags.h	2016-05-08 23:19:20.514430315 -0400
+@@ -38,7 +38,7 @@
+ MCPU("mcpu",
+      cl::desc("Target a specific cpu type (-mcpu=help for details)"),
+      cl::value_desc("cpu-name"),
+-     cl::init(""));
++     cl::init(std::string("")));
+ 
+ cl::list<std::string>
+ MAttrs("mattr",
+@@ -190,7 +190,7 @@
+ cl::opt<std::string>
+ TrapFuncName("trap-func", cl::Hidden,
+         cl::desc("Emit a call to trap function rather than a trap instruction"),
+-        cl::init(""));
++        cl::init(std::string("")));
+ 
+ cl::opt<bool>
+ EnablePIE("enable-pie",
+@@ -202,35 +202,42 @@
+              cl::desc("Use .ctors instead of .init_array."),
+              cl::init(false));
+ 
+-cl::opt<std::string> StopAfter("stop-after",
+-                            cl::desc("Stop compilation after a specific pass"),
+-                            cl::value_desc("pass-name"),
+-                                      cl::init(""));
+-cl::opt<std::string> StartAfter("start-after",
+-                          cl::desc("Resume compilation after a specific pass"),
+-                          cl::value_desc("pass-name"),
+-                          cl::init(""));
++cl::opt<std::string>
++StopAfter("stop-after",
++          cl::desc("Stop compilation after a specific pass"),
++          cl::value_desc("pass-name"),
++          cl::init(std::string("")));
++
++cl::opt<std::string>
++StartAfter("start-after",
++           cl::desc("Resume compilation after a specific pass"),
++           cl::value_desc("pass-name"),
++           cl::init(std::string("")));
+ 
+ cl::opt<std::string>
+-    RunPass("run-pass", cl::desc("Run compiler only for one specific pass"),
+-            cl::value_desc("pass-name"), cl::init(""));
++RunPass("run-pass", cl::desc("Run compiler only for one specific pass"),
++        cl::value_desc("pass-name"),
++        cl::init(std::string("")));
+ 
+-cl::opt<bool> DataSections("data-sections",
+-                           cl::desc("Emit data into separate sections"),
+-                           cl::init(false));
++cl::opt<bool>
++DataSections("data-sections",
++             cl::desc("Emit data into separate sections"),
++             cl::init(false));
+ 
+ cl::opt<bool>
+ FunctionSections("function-sections",
+                  cl::desc("Emit functions into separate sections"),
+                  cl::init(false));
+ 
+-cl::opt<bool> EmulatedTLS("emulated-tls",
+-                          cl::desc("Use emulated TLS model"),
+-                          cl::init(false));
+-
+-cl::opt<bool> UniqueSectionNames("unique-section-names",
+-                                 cl::desc("Give unique names to every section"),
+-                                 cl::init(true));
++cl::opt<bool>
++EmulatedTLS("emulated-tls",
++            cl::desc("Use emulated TLS model"),
++            cl::init(false));
++
++cl::opt<bool>
++UniqueSectionNames("unique-section-names",
++                   cl::desc("Give unique names to every section"),
++                   cl::init(true));
+ 
+ cl::opt<llvm::JumpTable::JumpTableType>
+ JTableType("jump-table-type",
+@@ -269,7 +276,9 @@
+ 
+ // Common utility function tightly tied to the options listed here. Initializes
+ // a TargetOptions object with CodeGen flags and returns it.
+-static inline TargetOptions InitTargetOptionsFromCodeGenFlags() {
++static inline
++__attribute__((used))
++TargetOptions InitTargetOptionsFromCodeGenFlags() {
+   TargetOptions Options;
+   Options.LessPreciseFPMADOption = EnableFPMAD;
+   Options.AllowFPOpFusion = FuseFPOps;
+###
+--- include/llvm/CodeGen/LiveInterval.h	2016-02-17 10:41:44.000000000 -0800
++++ include/llvm/CodeGen/LiveInterval.h	2016-07-08 16:53:26.422739200 -0700
+@@ -43,7 +43,7 @@
+   /// This class holds information about a machine level values, including
+   /// definition and use points.
+   ///
+-  class VNInfo {
++  class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) VNInfo {
+   public:
+     typedef BumpPtrAllocator Allocator;
+ 
+@@ -55,13 +55,11 @@
+ 
+     /// VNInfo constructor.
+     VNInfo(unsigned i, SlotIndex d)
+-      : id(i), def(d)
+-    { }
++    : id(i), def(d) { }
+ 
+     /// VNInfo construtor, copies values from orig, except for the value number.
+     VNInfo(unsigned i, const VNInfo &orig)
+-      : id(i), def(orig.def)
+-    { }
++    : id(i), def(orig.def) { }
+ 
+     /// Copy from the parameter into this VNInfo.
+     void copyFrom(VNInfo &src) {
+@@ -85,16 +83,15 @@
+   /// of live ranges, and it should be used as the primary interface for
+   /// examining live ranges around instructions.
+   class LiveQueryResult {
++  private:
+     VNInfo *const EarlyVal;
+     VNInfo *const LateVal;
+     const SlotIndex EndPoint;
+     const bool Kill;
+ 
+   public:
+-    LiveQueryResult(VNInfo *EarlyVal, VNInfo *LateVal, SlotIndex EndPoint,
+-                    bool Kill)
+-      : EarlyVal(EarlyVal), LateVal(LateVal), EndPoint(EndPoint), Kill(Kill)
+-    {}
++    LiveQueryResult(VNInfo *EV, VNInfo *LV, SlotIndex EP, bool K)
++    : EarlyVal(EV), LateVal(LV), EndPoint(EP), Kill(K) { }
+ 
+     /// Return the value that is live-in to the instruction. This is the value
+     /// that will be read by the instruction's use operands. Return NULL if no
+@@ -157,12 +154,13 @@
+     /// This represents a simple continuous liveness interval for a value.
+     /// The start point is inclusive, the end point exclusive. These intervals
+     /// are rendered as [start,end).
+-    struct Segment {
++    class Segment {
++    public:
+       SlotIndex start;  // Start point of the interval (inclusive)
+       SlotIndex end;    // End point of the interval (exclusive)
+       VNInfo *valno;    // identifier for the value contained in this segment.
+ 
+-      Segment() : valno(nullptr) {}
++      Segment() : start(), end(), valno(nullptr) { }
+ 
+       Segment(SlotIndex S, SlotIndex E, VNInfo *V)
+         : start(S), end(E), valno(V) {
+@@ -190,8 +188,9 @@
+       void dump() const;
+     };
+ 
+-    typedef SmallVector<Segment,4> Segments;
+-    typedef SmallVector<VNInfo*,4> VNInfoList;
++    typedef std::vector<Segment> Segments;
++    typedef std::vector<VNInfo*> VNInfoList;
++    typedef std::set<Segment> SegmentSet;
+ 
+     Segments segments;   // the liveness segments
+     VNInfoList valnos;   // value#'s
+@@ -199,7 +198,6 @@
+     // The segment set is used temporarily to accelerate initial computation
+     // of live ranges of physical registers in computeRegUnitRange.
+     // After that the set is flushed to the segment vector and deleted.
+-    typedef std::set<Segment> SegmentSet;
+     std::unique_ptr<SegmentSet> segmentSet;
+ 
+     typedef Segments::iterator iterator;
+@@ -219,13 +217,14 @@
+     const_vni_iterator vni_end() const   { return valnos.end(); }
+ 
+     /// Constructs a new LiveRange object.
+-    LiveRange(bool UseSegmentSet = false)
+-        : segmentSet(UseSegmentSet ? llvm::make_unique<SegmentSet>()
+-                                   : nullptr) {}
++    explicit LiveRange(bool UseSegmentSet = false)
++    : segments(), valnos(),
++    segmentSet(UseSegmentSet ? llvm::make_unique<SegmentSet>() : nullptr) { }
+ 
+     /// Constructs a new LiveRange object by copying segments and valnos from
+     /// another LiveRange.
+-    LiveRange(const LiveRange &Other, BumpPtrAllocator &Allocator) {
++    LiveRange(const LiveRange &Other, BumpPtrAllocator &Allocator)
++    : segments(), valnos(), segmentSet() {
+       assert(Other.segmentSet == nullptr &&
+              "Copying of LiveRanges with active SegmentSets is not supported");
+ 
+@@ -305,8 +304,15 @@
+     /// getNextValue - Create a new value number and return it.  MIIdx specifies
+     /// the instruction that defines the value number.
+     VNInfo *getNextValue(SlotIndex def, VNInfo::Allocator &VNInfoAllocator) {
+-      VNInfo *VNI =
+-        new (VNInfoAllocator) VNInfo((unsigned)valnos.size(), def);
++      size_t Size = sizeof(VNInfo) + valnos.size();
++      size_t Alignment = llvm::AlignOf<llvm::VNInfo>::Alignment;
++      void *Mem = VNInfoAllocator.Allocate(Size, Alignment);
++      assert(Mem && "VNInfoAllocator memory allocation failed!");
++
++      VNInfo *VNI = new (reinterpret_cast<VNInfo*>(Mem))
++        VNInfo(static_cast<unsigned>(valnos.size()), def);
++      assert(VNI && "VNInfo placement construction failed!");
++
+       valnos.push_back(VNI);
+       return VNI;
+     }
+@@ -320,8 +326,15 @@
+     /// for the Value number.
+     VNInfo *createValueCopy(const VNInfo *orig,
+                             VNInfo::Allocator &VNInfoAllocator) {
+-      VNInfo *VNI =
+-        new (VNInfoAllocator) VNInfo((unsigned)valnos.size(), *orig);
++      size_t Size = sizeof(VNInfo) + valnos.size();
++      size_t Alignment = llvm::AlignOf<llvm::VNInfo>::Alignment;
++      void *Mem = VNInfoAllocator.Allocate(Size, Alignment);
++      assert(Mem && "VNInfoAllocator memory allocation failed!");
++
++      VNInfo *VNI = new (reinterpret_cast<VNInfo*>(Mem))
++        VNInfo(static_cast<unsigned>(valnos.size()), *orig);
++      assert(VNI && "VNInfo placement construction failed!");
++
+       valnos.push_back(VNI);
+       return VNI;
+     }
+@@ -591,28 +604,26 @@
+ 
+   /// LiveInterval - This class represents the liveness of a register,
+   /// or stack slot.
+-  class LiveInterval : public LiveRange {
++  class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) LiveInterval : public LiveRange {
+   public:
+     typedef LiveRange super;
+ 
+     /// A live range for subregisters. The LaneMask specifies which parts of the
+     /// super register are covered by the interval.
+     /// (@sa TargetRegisterInfo::getSubRegIndexLaneMask()).
+-    class SubRange : public LiveRange {
++    class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) SubRange : public LiveRange {
+     public:
+       SubRange *Next;
+       LaneBitmask LaneMask;
+ 
+       /// Constructs a new SubRange object.
+-      SubRange(LaneBitmask LaneMask)
+-        : Next(nullptr), LaneMask(LaneMask) {
+-      }
++      explicit SubRange(LaneBitmask Mask = 0U)
++      : LiveRange(), Next(nullptr), LaneMask(Mask) { }
+ 
+       /// Constructs a new SubRange object by copying liveness from @p Other.
+-      SubRange(LaneBitmask LaneMask, const LiveRange &Other,
++      SubRange(LaneBitmask Mask, const LiveRange &Other,
+                BumpPtrAllocator &Allocator)
+-        : LiveRange(Other, Allocator), Next(nullptr), LaneMask(LaneMask) {
+-      }
++      : LiveRange(Other, Allocator), Next(nullptr), LaneMask(Mask) { }
+     };
+ 
+   private:
+@@ -623,7 +634,7 @@
+     float weight;        // weight of this interval
+ 
+     LiveInterval(unsigned Reg, float Weight)
+-      : SubRanges(nullptr), reg(Reg), weight(Weight) {}
++    : LiveRange(), SubRanges(nullptr), reg(Reg), weight(Weight) { }
+ 
+     ~LiveInterval() {
+       clearSubRanges();
+@@ -787,13 +798,14 @@
+     SlotIndex LastStart;
+     LiveRange::iterator WriteI;
+     LiveRange::iterator ReadI;
+-    SmallVector<LiveRange::Segment, 16> Spills;
++    std::vector<LiveRange::Segment> Spills;
+     void mergeSpills();
+ 
+   public:
+     /// Create a LiveRangeUpdater for adding segments to LR.
+     /// LR will temporarily be in an invalid state until flush() is called.
+-    LiveRangeUpdater(LiveRange *lr = nullptr) : LR(lr) {}
++    explicit LiveRangeUpdater(LiveRange *lr = nullptr)
++    : LR(lr), LastStart(), WriteI(), ReadI(), Spills() { }
+ 
+     ~LiveRangeUpdater() { flush(); }
+ 
+###
+--- lib/CodeGen/LiveInterval.cpp	2016-02-17 10:41:44.000000000 -0800
++++ lib/CodeGen/LiveInterval.cpp	2016-05-25 10:21:23.432898762 -0700
+@@ -320,10 +320,16 @@
+ VNInfo *LiveRange::createDeadDef(SlotIndex Def,
+                                   VNInfo::Allocator &VNInfoAllocator) {
+   // Use the segment set, if it is available.
+-  if (segmentSet != nullptr)
+-    return CalcLiveRangeUtilSet(this).createDeadDef(Def, VNInfoAllocator);
++  if (segmentSet != nullptr) {
++    CalcLiveRangeUtilSet CLR(this);
++    VNInfo *VNI = CLR.createDeadDef(Def, VNInfoAllocator);
++    return VNI;
++  }
++
+   // Otherwise use the segment vector.
+-  return CalcLiveRangeUtilVector(this).createDeadDef(Def, VNInfoAllocator);
++  CalcLiveRangeUtilVector CLR(this);
++  VNInfo *VNI = CLR.createDeadDef(Def, VNInfoAllocator);
++  return VNI;
+ }
+ 
+ // overlaps - Return true if the intersection of the two live ranges is
+@@ -740,10 +746,12 @@
+ 
+ void LiveRange::flushSegmentSet() {
+   assert(segmentSet != nullptr && "segment set must have been created");
+-  assert(
+-      segments.empty() &&
+-      "segment set can be used only initially before switching to the array");
+-  segments.append(segmentSet->begin(), segmentSet->end());
++  assert(segments.empty() &&
++         "segment set can be used only initially before "
++         "switching to the array");
++
++  segments.insert(segments.end(),
++                  segmentSet->begin(), segmentSet->end());
+   segmentSet = nullptr;
+   verify();
+ }
+###
+--- lib/CodeGen/LiveIntervalAnalysis.cpp	2016-01-07 17:16:35.000000000 -0800
++++ lib/CodeGen/LiveIntervalAnalysis.cpp	2016-05-25 08:48:39.699849409 -0700
+@@ -185,12 +185,19 @@
+ }
+ #endif
+ 
+-LiveInterval* LiveIntervals::createInterval(unsigned reg) {
+-  float Weight = TargetRegisterInfo::isPhysicalRegister(reg) ?
++LiveInterval* LiveIntervals::createInterval(unsigned Reg) {
++  float Weight = TargetRegisterInfo::isPhysicalRegister(Reg) ?
+                   llvm::huge_valf : 0.0F;
+-  return new LiveInterval(reg, Weight);
+-}
++  void *Mem;
++  size_t Alignment = llvm::AlignOf<uint64_t>::Alignment;
++  if (posix_memalign(&Mem, Alignment, sizeof(LiveInterval)) != 0)
++    return nullptr;
++
++  (void) std::memset(Mem, 0, sizeof(LiveInterval));
+ 
++  LiveInterval *LI = new (Mem) LiveInterval(Reg, Weight);
++  return LI;
++}
+ 
+ /// computeVirtRegInterval - Compute the live interval of a virtual register,
+ /// based on defs and uses.
+###
+--- lib/CodeGen/MachineBasicBlock.cpp	2016-01-07 01:26:32.000000000 -0900
++++ lib/CodeGen/MachineBasicBlock.cpp	2016-07-07 10:45:17.893185995 -0800
+@@ -40,12 +40,16 @@
+ #define DEBUG_TYPE "codegen"
+ 
+ MachineBasicBlock::MachineBasicBlock(MachineFunction &MF, const BasicBlock *B)
+-    : BB(B), Number(-1), xParent(&MF) {
+-  Insts.Parent = this;
++  : ilist_node_with_parent<MachineBasicBlock, MachineFunction>(),
++  BB(B), Number(-1), xParent(&MF),
++  Predecessors(), Successors(), Probs(), LiveIns(),
++  Alignment(0U), IsEHPad(false), AddressTaken(false),
++  IsEHFuncletEntry(false), IsCleanupFuncletEntry(false),
++  CachedMCSymbol(nullptr) {
++    Insts.Parent = this;
+ }
+ 
+-MachineBasicBlock::~MachineBasicBlock() {
+-}
++MachineBasicBlock::~MachineBasicBlock() { }
+ 
+ /// Return the MCSymbol for this basic block.
+ MCSymbol *MachineBasicBlock::getSymbol() const {
+@@ -525,8 +529,9 @@
+                                      BranchProbability Prob) {
+   // Probability list is either empty (if successor list isn't empty, this means
+   // disabled optimization) or has the same size as successor list.
+-  if (!(Probs.empty() && !Successors.empty()))
++  if (Probs.empty() || (Probs.size() == Successors.size()))
+     Probs.push_back(Prob);
++
+   Successors.push_back(Succ);
+   Succ->addPredecessor(this);
+ }
+###.
+--- include/llvm/CodeGen/MachineBasicBlock.h	2015-12-13 00:26:17.000000000 -0900
++++ include/llvm/CodeGen/MachineBasicBlock.h	2016-07-07 10:24:28.207403130 -0800
+@@ -125,7 +125,15 @@
+   mutable MCSymbol *CachedMCSymbol = nullptr;
+ 
+   // Intrusive list support
+-  MachineBasicBlock() {}
++  MachineBasicBlock()
++  : ilist_node_with_parent<MachineBasicBlock, MachineFunction>(),
++  Insts(), BB(nullptr), Number(-1), xParent(nullptr),
++  Predecessors(), Successors(), Probs(), LiveIns(),
++  Alignment(0U), IsEHPad(false), AddressTaken(false),
++  IsEHFuncletEntry(false), IsCleanupFuncletEntry(false),
++  CachedMCSymbol(nullptr) {
++    Insts.Parent = this;
++  }
+ 
+   explicit MachineBasicBlock(MachineFunction &MF, const BasicBlock *BB);
+ 
+###
+--- lib/CodeGen/AsmPrinter/AsmPrinter.cpp	2016-01-12 17:18:13.000000000 -0800
++++ lib/CodeGen/AsmPrinter/AsmPrinter.cpp	2016-05-25 14:27:34.764865039 -0700
+@@ -1614,6 +1614,7 @@
+ };
+ } // end namespace
+ 
++
+ /// EmitXXStructorList - Emit the ctor or dtor list taking into account the init
+ /// priority.
+ void AsmPrinter::EmitXXStructorList(const DataLayout &DL, const Constant *List,
+@@ -1667,13 +1668,14 @@
+ 
+       KeySym = getSymbol(GV);
+     }
+-    MCSection *OutputSection =
+-        (isCtor ? Obj.getStaticCtorSection(S.Priority, KeySym)
+-                : Obj.getStaticDtorSection(S.Priority, KeySym));
+-    OutStreamer->SwitchSection(OutputSection);
+-    if (OutStreamer->getCurrentSection() != OutStreamer->getPreviousSection())
+-      EmitAlignment(Align);
+-    EmitXXStructor(DL, S.Func);
++
++    // Why is this even necessary?
++    // Constructors for global statics are emitted in
++    // clang/lib/CodeGen/DeclCXX.cpp
++    // Destructors for global statics register themselves with __cxa_atexit.
++    // I.e. they do not need any kind of additional special handling.
++    // The only thing this does is duplicate constructor calls for
++    // global static initializations.
+   }
+ }
+ 
+###
+--- lib/CodeGen/CodeGenPrepare.cpp	2016-01-22 13:26:38.000000000 -0500
++++ lib/CodeGen/CodeGenPrepare.cpp	2016-05-28 13:01:43.647551022 -0400
+@@ -2445,59 +2445,67 @@
+ 
+ private:
+   /// The ordered list of actions made so far.
+-  SmallVector<std::unique_ptr<TypePromotionAction>, 16> Actions;
+-  typedef SmallVectorImpl<std::unique_ptr<TypePromotionAction>>::iterator CommitPt;
++  /// You cannot use a SmallVector here because of copy vs. move
++  /// semantics. You can't use a std::unique_ptr eiter, for the
++  /// same exact reasons.
++  std::vector<std::shared_ptr<TypePromotionAction> > Actions;
++  typedef std::vector<std::shared_ptr<TypePromotionAction>>::iterator CommitPt;
+ };
+ 
+ void TypePromotionTransaction::setOperand(Instruction *Inst, unsigned Idx,
+                                           Value *NewVal) {
+   Actions.push_back(
+-      make_unique<TypePromotionTransaction::OperandSetter>(Inst, Idx, NewVal));
++      std::make_shared<TypePromotionTransaction::OperandSetter>(Inst,
++                                                                Idx, NewVal));
+ }
+ 
+ void TypePromotionTransaction::eraseInstruction(Instruction *Inst,
+                                                 Value *NewVal) {
+   Actions.push_back(
+-      make_unique<TypePromotionTransaction::InstructionRemover>(Inst, NewVal));
++      std::make_shared<TypePromotionTransaction::InstructionRemover>(Inst,
++                                                                     NewVal));
+ }
+ 
+ void TypePromotionTransaction::replaceAllUsesWith(Instruction *Inst,
+                                                   Value *New) {
+-  Actions.push_back(make_unique<TypePromotionTransaction::UsesReplacer>(Inst, New));
++  Actions.push_back(
++    std::make_shared<TypePromotionTransaction::UsesReplacer>(Inst, New));
+ }
+ 
+ void TypePromotionTransaction::mutateType(Instruction *Inst, Type *NewTy) {
+-  Actions.push_back(make_unique<TypePromotionTransaction::TypeMutator>(Inst, NewTy));
++  Actions.push_back(
++    std::make_shared<TypePromotionTransaction::TypeMutator>(Inst, NewTy));
+ }
+ 
+ Value *TypePromotionTransaction::createTrunc(Instruction *Opnd,
+                                              Type *Ty) {
+-  std::unique_ptr<TruncBuilder> Ptr(new TruncBuilder(Opnd, Ty));
++  std::shared_ptr<TruncBuilder> Ptr(new TruncBuilder(Opnd, Ty));
+   Value *Val = Ptr->getBuiltValue();
+-  Actions.push_back(std::move(Ptr));
++  Actions.push_back(Ptr);
+   return Val;
+ }
+ 
+ Value *TypePromotionTransaction::createSExt(Instruction *Inst,
+                                             Value *Opnd, Type *Ty) {
+-  std::unique_ptr<SExtBuilder> Ptr(new SExtBuilder(Inst, Opnd, Ty));
++  std::shared_ptr<SExtBuilder> Ptr(new SExtBuilder(Inst, Opnd, Ty));
+   Value *Val = Ptr->getBuiltValue();
+-  Actions.push_back(std::move(Ptr));
++  Actions.push_back(Ptr);
+   return Val;
+ }
+ 
+ Value *TypePromotionTransaction::createZExt(Instruction *Inst,
+                                             Value *Opnd, Type *Ty) {
+-  std::unique_ptr<ZExtBuilder> Ptr(new ZExtBuilder(Inst, Opnd, Ty));
++  std::shared_ptr<ZExtBuilder> Ptr(new ZExtBuilder(Inst, Opnd, Ty));
+   Value *Val = Ptr->getBuiltValue();
+-  Actions.push_back(std::move(Ptr));
++  Actions.push_back(Ptr);
+   return Val;
+ }
+ 
+ void TypePromotionTransaction::moveBefore(Instruction *Inst,
+                                           Instruction *Before) {
+   Actions.push_back(
+-      make_unique<TypePromotionTransaction::InstructionMoveBefore>(Inst, Before));
++      std::make_shared<TypePromotionTransaction::InstructionMoveBefore>(Inst,
++                                                                        Before));
+ }
+ 
+ TypePromotionTransaction::ConstRestorationPt
+@@ -2515,8 +2523,9 @@
+ void TypePromotionTransaction::rollback(
+     TypePromotionTransaction::ConstRestorationPt Point) {
+   while (!Actions.empty() && Point != Actions.back().get()) {
+-    std::unique_ptr<TypePromotionAction> Curr = Actions.pop_back_val();
++    std::shared_ptr<TypePromotionAction> Curr = Actions.back();
+     Curr->undo();
++    Actions.pop_back();
+   }
+ }
+ 
+###
+--- lib/CodeGen/Passes.cpp	2015-12-16 03:09:48.000000000 -0800
++++ lib/CodeGen/Passes.cpp	2016-05-13 17:38:47.747582295 -0700
+@@ -31,9 +31,17 @@
+ #include "llvm/Transforms/Instrumentation.h"
+ #include "llvm/Transforms/Scalar.h"
+ #include "llvm/Transforms/Utils/SymbolRewriter.h"
+-
++#include "llvm/LinkAllPasses.h"
+ using namespace llvm;
+ 
++//===----------------------------------------------------------------------===//
++/// See the file ${top_srcdir}/include/llvm/LinkAllPasses.h for the
++/// explanation of this hack.
++namespace llvm {
++    ForcePassLinking* ForcePassLinking::FPL = new llvm::ForcePassLinking();
++} // namespace llvm
++//===----------------------------------------------------------------------===//
++
+ static cl::opt<bool> DisablePostRA("disable-post-ra", cl::Hidden,
+     cl::desc("Disable Post Regalloc"));
+ static cl::opt<bool> DisableBranchFold("disable-branch-fold", cl::Hidden,
+###
+--- lib/CodeGen/TargetLoweringObjectFileImpl.cpp	2015-11-17 22:02:15.000000000 -0800
++++ lib/CodeGen/TargetLoweringObjectFileImpl.cpp	2016-05-25 14:26:17.415867207 -0700
+@@ -360,8 +360,10 @@
+   return DataRelROSection;
+ }
+ 
+-static MCSectionELF *getStaticStructorSection(MCContext &Ctx, bool UseInitArray,
+-                                              bool IsCtor, unsigned Priority,
++static MCSectionELF *getStaticStructorSection(MCContext &Ctx,
++                                              bool UseInitArray,
++                                              bool IsCtor,
++                                              unsigned Priority,
+                                               const MCSymbol *KeySym) {
+   std::string Name;
+   unsigned Type;
+@@ -379,21 +381,34 @@
+       Type = ELF::SHT_FINI_ARRAY;
+       Name = ".fini_array";
+     }
++
+     if (Priority != 65535) {
+       Name += '.';
+-      Name += utostr(Priority);
++      Name += std::to_string(Priority);
+     }
+   } else {
+-    // The default scheme is .ctor / .dtor, so we have to invert the priority
+-    // numbering.
+-    if (IsCtor)
+-      Name = ".ctors";
+-    else
+-      Name = ".dtors";
++    if (Ctx.getObjectFileInfo()->getTargetTriple().getOS() ==
++        llvm::Triple::Solaris) {
++      // on Solaris we use .inift/.fini because the Solaris linker
++      // can't handle .ctors/.dtors.
++      if (IsCtor)
++        Name = ".init";
++      else
++        Name = ".fini";
++    } else {
++      // The default scheme is .ctor / .dtor, so we have to invert the priority
++      // numbering.
++      if (IsCtor)
++        Name = ".ctors";
++      else
++        Name = ".dtors";
++    }
++
+     if (Priority != 65535) {
+       Name += '.';
+-      Name += utostr(65535 - Priority);
++      Name += std::to_string(65535 - Priority);
+     }
++
+     Type = ELF::SHT_PROGBITS;
+   }
+ 
+###
+

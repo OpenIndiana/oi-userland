@@ -1,0 +1,74 @@
+# 17867434 clang crashed in LEXER
+# 3.9.X for upstream.
+--- tools/clang/include/clang/Lex/MacroArgs.h	2015-04-11 11:58:30.000000000 -0400
++++ tools/clang/include/clang/Lex/MacroArgs.h	2016-05-08 23:19:20.554431288 -0400
+@@ -15,13 +15,13 @@
+ #define LLVM_CLANG_LEX_MACROARGS_H
+ 
+ #include "clang/Basic/LLVM.h"
++#include "clang/Lex/Token.h"
+ #include "llvm/ADT/ArrayRef.h"
+ #include <vector>
+ 
+ namespace clang {
+   class MacroInfo;
+   class Preprocessor;
+-  class Token;
+   class SourceLocation;
+ 
+ /// MacroArgs - An instance of this class captures information about
+@@ -121,6 +121,9 @@
+   /// its freelist.
+   MacroArgs *deallocate();
+ };
++static_assert(llvm::AlignOf<MacroArgs>::Alignment >=
++                  llvm::AlignOf<Token>::Alignment,
++              "Alignment is insufficient for objects appended to MacroArgs");
+ 
+ }  // end namespace clang
+ 
+--- tools/clang/include/clang/Lex/MacroInfo.h	2015-10-22 00:59:52.000000000 -0400
++++ tools/clang/include/clang/Lex/MacroInfo.h	2016-05-08 23:19:20.554431288 -0400
+@@ -295,6 +295,10 @@
+   friend class Preprocessor;
+ };
+ 
++static_assert(llvm::AlignOf<MacroInfo>::Alignment >=
++              llvm::AlignOf<unsigned>::Alignment,
++              "Alignment is insufficient for objects appended to MacroInfo");
++
+ class DefMacroDirective;
+ 
+ /// \brief Encapsulates changes to the "macros namespace" (the location where
+@@ -315,16 +319,16 @@
+   SourceLocation Loc;
+ 
+   /// \brief MacroDirective kind.
+-  unsigned MDKind : 2;
++  unsigned MDKind;
+ 
+   /// \brief True if the macro directive was loaded from a PCH file.
+-  bool IsFromPCH : 1;
++  bool IsFromPCH;
+ 
+   // Used by VisibilityMacroDirective ----------------------------------------//
+ 
+   /// \brief Whether the macro has public visibility (when described in a
+   /// module).
+-  bool IsPublic : 1;
++  bool IsPublic;
+ 
+   MacroDirective(Kind K, SourceLocation Loc)
+       : Previous(nullptr), Loc(Loc), MDKind(K), IsFromPCH(false),
+@@ -556,6 +560,10 @@
+   unsigned getNumOverridingMacros() const { return NumOverriddenBy; }
+ };
+ 
++static_assert(llvm::AlignOf<ModuleMacro>::Alignment >=
++              llvm::AlignOf<ModuleMacro *>::Alignment,
++              "Alignment is insufficient for objects appended to ModuleMacro");
++
+ /// \brief A description of the current definition of a macro.
+ ///
+ /// The definition of a macro comprises a set of (at least one) defining
+

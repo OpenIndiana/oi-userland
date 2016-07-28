@@ -1,0 +1,1048 @@
+# 22902339 memory corruption caused by undefined behavior in LLVM IR Module
+# 24314687 static initialization of optimization passes doesn't work as
+# intended
+# 3.9.X for upstream.
+--- include/llvm/IR/BasicBlock.h	2015-11-10 18:26:42.000000000 -0800
++++ include/llvm/IR/BasicBlock.h	2016-05-28 16:37:28.925076023 -0700
+@@ -78,10 +78,11 @@
+   LLVMContext &getContext() const;
+ 
+   /// Instruction iterators...
+-  typedef InstListType::iterator iterator;
+-  typedef InstListType::const_iterator const_iterator;
+-  typedef InstListType::reverse_iterator reverse_iterator;
+-  typedef InstListType::const_reverse_iterator const_reverse_iterator;
++  typedef SymbolTableList<Instruction>::iterator iterator;
++  typedef SymbolTableList<Instruction>::const_iterator const_iterator;
++  typedef SymbolTableList<Instruction>::reverse_iterator reverse_iterator;
++  typedef SymbolTableList<Instruction>::const_reverse_iterator
++          const_reverse_iterator;
+ 
+   /// \brief Creates a new BasicBlock.
+   ///
+@@ -148,8 +149,8 @@
+   /// suitable for inserting a non-PHI instruction.
+   ///
+   /// In particular, it skips all PHIs and LandingPad instructions.
+-  iterator getFirstInsertionPt();
+-  const_iterator getFirstInsertionPt() const {
++  BasicBlock::iterator getFirstInsertionPt();
++  BasicBlock::const_iterator getFirstInsertionPt() const {
+     return const_cast<BasicBlock*>(this)->getFirstInsertionPt();
+   }
+ 
+###
+--- include/llvm/IR/Value.h	2016-02-04 08:59:45.000000000 -0800
++++ include/llvm/IR/Value.h	2016-05-29 12:21:18.779271419 -0700
+@@ -74,6 +74,7 @@
+ 
+   const unsigned char SubclassID;   // Subclass identifier (for isa/dyn_cast)
+   unsigned char HasValueHandle : 1; // Has a ValueHandle pointing to this?
++
+ protected:
+   /// \brief Hold subclass data that can be dropped.
+   ///
+@@ -113,17 +114,25 @@
+ 
+ private:
+   template <typename UseT> // UseT == 'Use' or 'const Use'
+-  class use_iterator_impl
+-      : public std::iterator<std::forward_iterator_tag, UseT *> {
++  class use_iterator_impl :
++    public std::iterator<std::forward_iterator_tag, UseT *> {
+     UseT *U;
+-    explicit use_iterator_impl(UseT *u) : U(u) {}
++
++    explicit use_iterator_impl(UseT *u)
++      : std::iterator<std::forward_iterator_tag, UseT *>(), U(u) { }
+     friend class Value;
+ 
+   public:
+-    use_iterator_impl() : U() {}
++    use_iterator_impl()
++      : std::iterator<std::forward_iterator_tag, UseT *>(), U(nullptr) { }
+ 
+-    bool operator==(const use_iterator_impl &x) const { return U == x.U; }
+-    bool operator!=(const use_iterator_impl &x) const { return !operator==(x); }
++    bool operator==(const use_iterator_impl &x) const {
++      return U == x.U;
++    }
++
++    bool operator!=(const use_iterator_impl &x) const {
++      return !operator==(x);
++    }
+ 
+     use_iterator_impl &operator++() { // Preincrement
+       assert(U && "Cannot increment end iterator!");
+@@ -150,18 +159,28 @@
+ 
+   template <typename UserTy> // UserTy == 'User' or 'const User'
+   class user_iterator_impl
+-      : public std::iterator<std::forward_iterator_tag, UserTy *> {
++  : public std::iterator<std::forward_iterator_tag, UserTy *> {
++  private:
+     use_iterator_impl<Use> UI;
+-    explicit user_iterator_impl(Use *U) : UI(U) {}
++
++    explicit user_iterator_impl(Use *U)
++      : std::iterator<std::forward_iterator_tag, UserTy *>(), UI(U) { }
+     friend class Value;
+ 
+   public:
+-    user_iterator_impl() {}
++    user_iterator_impl()
++    : std::iterator<std::forward_iterator_tag, UserTy *>(), UI() { }
+ 
+-    bool operator==(const user_iterator_impl &x) const { return UI == x.UI; }
+-    bool operator!=(const user_iterator_impl &x) const { return !operator==(x); }
++    bool operator==(const user_iterator_impl &x) const {
++      return UI == x.UI;
++    }
+ 
+-    /// \brief Returns true if this iterator is equal to user_end() on the value.
++    bool operator!=(const user_iterator_impl &x) const {
++      return !operator==(x);
++    }
++
++    /// \brief Returns true if this iterator is equal to user_end()
++    /// on the value.
+     bool atEnd() const { return *this == user_iterator_impl(); }
+ 
+     user_iterator_impl &operator++() { // Preincrement
+@@ -193,6 +212,7 @@
+ 
+ protected:
+   Value(Type *Ty, unsigned scid);
++
+ public:
+   virtual ~Value();
+ 
+###
+--- lib/IR/User.cpp	2015-09-23 18:00:49.000000000 -0700
++++ lib/IR/User.cpp	2016-05-29 12:13:16.188732011 -0700
+@@ -12,6 +12,8 @@
+ #include "llvm/IR/GlobalValue.h"
+ #include "llvm/IR/Operator.h"
+ 
++#include <cstdlib>
++
+ namespace llvm {
+ class BasicBlock;
+ 
+@@ -42,33 +44,53 @@
+ 
+ void User::allocHungoffUses(unsigned N, bool IsPhi) {
+   assert(HasHungOffUses && "alloc must have hung off uses");
+-
+-  static_assert(AlignOf<Use>::Alignment >= AlignOf<Use::UserRef>::Alignment,
+-                "Alignment is insufficient for 'hung-off-uses' pieces");
++  static_assert(AlignOf<Use>::Alignment >=
++                AlignOf<Use::UserRef>::Alignment,
++                "Insufficient alignment for 'hung-off-uses' pieces");
+   static_assert(AlignOf<Use::UserRef>::Alignment >=
+-                    AlignOf<BasicBlock *>::Alignment,
+-                "Alignment is insufficient for 'hung-off-uses' pieces");
++                AlignOf<BasicBlock*>::Alignment,
++                "Insufficient alignment for 'hung-off-uses' pieces");
+ 
+   // Allocate the array of Uses, followed by a pointer (with bottom bit set) to
+   // the User.
+   size_t size = N * sizeof(Use) + sizeof(Use::UserRef);
+   if (IsPhi)
+     size += N * sizeof(BasicBlock *);
+-  Use *Begin = static_cast<Use*>(::operator new(size));
++
++  size_t Alignment =
++    std::max<size_t>(AlignOf<Use>::Alignment,
++                     std::max<size_t>(AlignOf<BasicBlock*>::Alignment,
++                                      AlignOf<Use::UserRef>::Alignment));
++  size = llvm::RoundUpToAlignment(size, Alignment);
++  void *Mem;
++
++  if (posix_memalign(&Mem, Alignment, size) != 0) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": posix_memalign(3c) failed!\n";
++    abort();
++  }
++
++  (void) std::memset(Mem, 0, size);
++  Use *Begin = reinterpret_cast<Use*>(Mem);
+   Use *End = Begin + N;
+   (void) new(End) Use::UserRef(const_cast<User*>(this), 1);
+   setOperandList(Use::initTags(Begin, End));
+ }
+ 
+ void User::growHungoffUses(unsigned NewNumUses, bool IsPhi) {
+-  assert(HasHungOffUses && "realloc must have hung off uses");
+-
++  assert(HasHungOffUses && "alloc must have hung off uses");
+   unsigned OldNumUses = getNumOperands();
+ 
+   // We don't support shrinking the number of uses.  We wouldn't have enough
+   // space to copy the old uses in to the new space.
+   assert(NewNumUses > OldNumUses && "realloc must grow num uses");
+ 
++  if (OldNumUses >= NewNumUses) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": reallocation must grow new uses!\n";
++    abort();
++  }
++
+   Use *OldOps = getOperandList();
+   allocHungoffUses(NewNumUses, IsPhi);
+   Use *NewOps = getOperandList();
+@@ -101,7 +123,6 @@
+ 
+ MutableArrayRef<uint8_t> User::getDescriptor() {
+   assert(HasDescriptor && "Don't call otherwise!");
+-  assert(!HasHungOffUses && "Invariant!");
+ 
+   auto *DI = reinterpret_cast<DescriptorInfo *>(getIntrusiveOperands()) - 1;
+   assert(DI->SizeInBytes != 0 && "Should not have had a descriptor otherwise!");
+@@ -114,20 +135,31 @@
+ //                         User operator new Implementations
+ //===----------------------------------------------------------------------===//
+ 
+-void *User::allocateFixedOperandUser(size_t Size, unsigned Us,
+-                                     unsigned DescBytes) {
++void* LLVM_ATTRIBUTE_NOINLINE
++User::allocateFixedOperandUser(size_t Size, unsigned Us, unsigned DescBytes) {
+   assert(Us < (1u << NumUserOperandsBits) && "Too many operands");
+ 
+   static_assert(sizeof(DescriptorInfo) % sizeof(void *) == 0, "Required below");
+ 
+   unsigned DescBytesToAllocate =
+-      DescBytes == 0 ? 0 : (DescBytes + sizeof(DescriptorInfo));
++    DescBytes == 0 ?  0 : (DescBytes + sizeof(DescriptorInfo));
++  DescBytesToAllocate = llvm::RoundUpToAlignment(DescBytesToAllocate, 8U);
+   assert(DescBytesToAllocate % sizeof(void *) == 0 &&
+          "We need this to satisfy alignment constraints for Uses");
+ 
+-  uint8_t *Storage = static_cast<uint8_t *>(
+-      ::operator new(Size + sizeof(Use) * Us + DescBytesToAllocate));
+-  Use *Start = reinterpret_cast<Use *>(Storage + DescBytesToAllocate);
++  unsigned AllocSize = Size + sizeof(Use) * Us + DescBytesToAllocate;
++  AllocSize = std::max<unsigned>(AllocSize, alignof(void*));
++
++  uint8_t *Storage;
++  if (posix_memalign(reinterpret_cast<void**>(&Storage),
++                     llvm::AlignOf<uint64_t>::Alignment, AllocSize) != 0) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": posix_memalign(3c) failed!\n";
++    abort();
++  }
++
++  Use *Start = reinterpret_cast<Use*>(reinterpret_cast<void*>(
++      reinterpret_cast<uint8_t*>(Storage) + DescBytesToAllocate));
+   Use *End = Start + Us;
+   User *Obj = reinterpret_cast<User*>(End);
+   Obj->NumUserOperands = Us;
+@@ -153,7 +185,16 @@
+ 
+ void *User::operator new(size_t Size) {
+   // Allocate space for a single Use*
+-  void *Storage = ::operator new(Size + sizeof(Use *));
++  void *Storage;
++  unsigned AllocSize = Size + sizeof(Use*);
++  AllocSize = std::max<unsigned>(AllocSize, sizeof(void*));
++  if (posix_memalign(&Storage, llvm::AlignOf<uint64_t>::Alignment,
++                     AllocSize) != 0) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": posix_memalign(3c) failed!\n";
++    abort();
++  }
++
+   Use **HungOffOperandList = static_cast<Use **>(Storage);
+   User *Obj = reinterpret_cast<User *>(HungOffOperandList + 1);
+   Obj->NumUserOperands = 0;
+@@ -170,7 +211,7 @@
+ void User::operator delete(void *Usr) {
+   // Hung off uses use a single Use* before the User, while other subclasses
+   // use a Use[] allocated prior to the user.
+-  User *Obj = static_cast<User *>(Usr);
++  User *Obj = reinterpret_cast<User *>(Usr);
+   if (Obj->HasHungOffUses) {
+     assert(!Obj->HasDescriptor && "not supported!");
+ 
+@@ -178,19 +219,19 @@
+     // drop the hung off uses.
+     Use::zap(*HungOffOperandList, *HungOffOperandList + Obj->NumUserOperands,
+              /* Delete */ true);
+-    ::operator delete(HungOffOperandList);
++    std::free(reinterpret_cast<void*>(HungOffOperandList));
+   } else if (Obj->HasDescriptor) {
+     Use *UseBegin = static_cast<Use *>(Usr) - Obj->NumUserOperands;
+     Use::zap(UseBegin, UseBegin + Obj->NumUserOperands, /* Delete */ false);
+ 
+     auto *DI = reinterpret_cast<DescriptorInfo *>(UseBegin) - 1;
+-    uint8_t *Storage = reinterpret_cast<uint8_t *>(DI) - DI->SizeInBytes;
+-    ::operator delete(Storage);
++    uint64_t *Storage = reinterpret_cast<uint64_t *>(DI) - DI->SizeInBytes;
++    std::free(reinterpret_cast<void*>(Storage));
+   } else {
+-    Use *Storage = static_cast<Use *>(Usr) - Obj->NumUserOperands;
++    Use *Storage = reinterpret_cast<Use *>(Usr) - Obj->NumUserOperands;
+     Use::zap(Storage, Storage + Obj->NumUserOperands,
+              /* Delete */ false);
+-    ::operator delete(Storage);
++    std::free(reinterpret_cast<void*>(Storage));
+   }
+ }
+ 
+###
+--- include/llvm/IR/User.h	2015-12-18 23:52:49.000000000 -0900
++++ include/llvm/IR/User.h	2016-07-06 18:49:29.963198410 -0800
+@@ -40,7 +40,7 @@
+   friend struct HungoffOperandTraits;
+   virtual void anchor();
+ 
+-  LLVM_ATTRIBUTE_ALWAYS_INLINE inline static void *
++  static void* LLVM_ATTRIBUTE_NOINLINE
+   allocateFixedOperandUser(size_t, unsigned, unsigned);
+ 
+ protected:
+###
+--- include/llvm/IR/Attributes.h	2015-12-22 18:57:37.000000000 -0500
++++ include/llvm/IR/Attributes.h	2016-05-08 23:19:20.515430339 -0400
+@@ -399,20 +399,25 @@
+ 
+ public:
+   AttrBuilder()
+-      : Attrs(0), Alignment(0), StackAlignment(0), DerefBytes(0),
+-        DerefOrNullBytes(0) {}
++    : Attrs(0), TargetDepAttrs(), Alignment(0), StackAlignment(0),
++  DerefBytes(0), DerefOrNullBytes(0) { }
++
+   explicit AttrBuilder(uint64_t Val)
+-      : Attrs(0), Alignment(0), StackAlignment(0), DerefBytes(0),
+-        DerefOrNullBytes(0) {
++    : Attrs(0), TargetDepAttrs(), Alignment(0), StackAlignment(0),
++    DerefBytes(0), DerefOrNullBytes(0) {
+     addRawValue(Val);
+   }
++
+   AttrBuilder(const Attribute &A)
+-      : Attrs(0), Alignment(0), StackAlignment(0), DerefBytes(0),
+-        DerefOrNullBytes(0) {
++    : Attrs(0), TargetDepAttrs(), Alignment(0), StackAlignment(0),
++    DerefBytes(0), DerefOrNullBytes(0) {
+     addAttribute(A);
+   }
++
+   AttrBuilder(AttributeSet AS, unsigned Idx);
+ 
++  ~AttrBuilder() { }
++
+   void clear();
+ 
+   /// \brief Add an attribute to the builder.
+###
+--- include/llvm/IR/IRBuilder.h	2016-02-18 16:08:56.000000000 -0800
++++ include/llvm/IR/IRBuilder.h	2016-05-09 19:14:26.534949228 -0700
+@@ -64,13 +64,15 @@
+   ArrayRef<OperandBundleDef> DefaultOperandBundles;
+ 
+ public:
+-  IRBuilderBase(LLVMContext &context, MDNode *FPMathTag = nullptr,
++  IRBuilderBase(LLVMContext &Ctx, MDNode *FPMathTag = nullptr,
+                 ArrayRef<OperandBundleDef> OpBundles = None)
+-      : Context(context), DefaultFPMathTag(FPMathTag), FMF(),
+-        DefaultOperandBundles(OpBundles) {
+-    ClearInsertionPoint();
++  : CurDbgLocation(), BB(nullptr), InsertPt(), Context(Ctx),
++  DefaultFPMathTag(FPMathTag), FMF(), DefaultOperandBundles(OpBundles) {
++    InsertPt.reset(nullptr);
+   }
+ 
++  virtual ~IRBuilderBase() { }
++
+   //===--------------------------------------------------------------------===//
+   // Builder configuration methods
+   //===--------------------------------------------------------------------===//
+###
+--- lib/IR/IRBuilder.cpp	2015-11-18 21:56:52.000000000 -0800
++++ lib/IR/IRBuilder.cpp	2016-05-13 17:40:40.999056490 -0700
+@@ -18,8 +18,15 @@
+ #include "llvm/IR/Intrinsics.h"
+ #include "llvm/IR/LLVMContext.h"
+ #include "llvm/IR/Statepoint.h"
++#include "llvm/LinkAllIR.h"
+ using namespace llvm;
+ 
++namespace llvm {
++  /// See the file ${top_srcdir}/include/llvm/LinkAllIR.h for the
++  /// explanation for this hack.
++  ForceVMCoreLinking *ForceVMCoreLinking::FVMCL = new ForceVMCoreLinking();
++}
++
+ /// CreateGlobalString - Make a new global variable with an initializer that
+ /// has array of i8 type filled in with the nul terminated string value
+ /// specified.  If Name is specified, it is the name of the global variable
+###
+--- lib/IR/Verifier.cpp	2016-01-12 18:31:14.000000000 -0800
++++ lib/IR/Verifier.cpp	2016-05-14 07:42:08.348333940 -0700
+@@ -578,8 +578,12 @@
+ void Verifier::visitAliaseeSubExpr(SmallPtrSetImpl<const GlobalAlias*> &Visited,
+                                    const GlobalAlias &GA, const Constant &C) {
+   if (const auto *GV = dyn_cast<GlobalValue>(&C)) {
++#if 0
++    // Check the DeclarationForLinker() for all the extern symbol references.
++    // This should not happen here in any scenario.
+     Assert(!GV->isDeclarationForLinker(), "Alias must point to a definition",
+            &GA);
++#endif
+ 
+     if (const auto *GA2 = dyn_cast<GlobalAlias>(GV)) {
+       Assert(Visited.insert(GA2).second, "Aliases cannot form a cycle", &GA);
+###
+--- include/llvm/IR/Metadata.h	2016-01-11 13:37:41.000000000 -0800
++++ include/llvm/IR/Metadata.h	2016-05-10 07:11:35.580234020 -0700
+@@ -25,6 +25,7 @@
+ #include "llvm/IR/LLVMContext.h"
+ #include "llvm/IR/Value.h"
+ #include "llvm/Support/ErrorHandling.h"
++#include "llvm/Support/raw_ostream.h"
+ #include <type_traits>
+ 
+ namespace llvm {
+@@ -42,6 +43,7 @@
+ /// This is a root class for typeless data in the IR.
+ class Metadata {
+   friend class ReplaceableMetadataImpl;
++  friend class MDNode;
+ 
+   /// \brief RTTI.
+   const unsigned char SubclassID;
+@@ -51,7 +53,8 @@
+   enum StorageType { Uniqued, Distinct, Temporary };
+ 
+   /// \brief Storage flag for non-uniqued, otherwise unowned, metadata.
+-  unsigned Storage : 2;
++  unsigned Storage;
++
+   // TODO: expose remaining bits to subclasses.
+ 
+   unsigned short SubclassData16;
+@@ -91,8 +94,9 @@
+ 
+ protected:
+   Metadata(unsigned ID, StorageType Storage)
+-      : SubclassID(ID), Storage(Storage), SubclassData16(0), SubclassData32(0) {
+-  }
++    : SubclassID(ID), Storage(Storage), SubclassData16(0),
++    SubclassData32(0) { }
++
+   ~Metadata() = default;
+ 
+   /// \brief Default handling of a changed operand, which asserts.
+@@ -283,13 +287,15 @@
+   LLVMContext &Context;
+   uint64_t NextIndex;
+   SmallDenseMap<void *, std::pair<OwnerTy, uint64_t>, 4> UseMap;
++
+   /// Flag that can be set to false if this metadata should not be
+   /// RAUW'ed, e.g. if it is used as the key of a map.
+   bool CanReplace;
+ 
+ public:
+-  ReplaceableMetadataImpl(LLVMContext &Context)
+-      : Context(Context), NextIndex(0), CanReplace(true) {}
++  ReplaceableMetadataImpl(LLVMContext &Ctx)
++    : Context(Ctx), NextIndex(0), UseMap(), CanReplace(true) { }
++
+   ~ReplaceableMetadataImpl() {
+     assert(UseMap.empty() && "Cannot destroy in-use replaceable metadata");
+   }
+@@ -327,7 +333,7 @@
+ /// Because of full uniquing support, each value is only wrapped by a single \a
+ /// ValueAsMetadata object, so the lookup maps are far more efficient than
+ /// those using ValueHandleBase.
+-class ValueAsMetadata : public Metadata, ReplaceableMetadataImpl {
++class ValueAsMetadata : public Metadata, public ReplaceableMetadataImpl {
+   friend class ReplaceableMetadataImpl;
+   friend class LLVMContextImpl;
+ 
+@@ -343,6 +349,7 @@
+       : Metadata(ID, Uniqued), ReplaceableMetadataImpl(V->getContext()), V(V) {
+     assert(V && "Expected valid value");
+   }
++
+   ~ValueAsMetadata() = default;
+ 
+ public:
+@@ -396,6 +403,7 @@
+   static ConstantAsMetadata *get(Constant *C) {
+     return ValueAsMetadata::getConstant(C);
+   }
++
+   static ConstantAsMetadata *getIfExists(Constant *C) {
+     return ValueAsMetadata::getConstantIfExists(C);
+   }
+@@ -421,6 +429,7 @@
+   static LocalAsMetadata *get(Value *Local) {
+     return ValueAsMetadata::getLocal(Local);
+   }
++
+   static LocalAsMetadata *getIfExists(Value *Local) {
+     return ValueAsMetadata::getLocalIfExists(Local);
+   }
+@@ -748,6 +757,7 @@
+       : Ptr(ReplaceableUses.release()) {
+     assert(getReplaceableUses() && "Expected non-null replaceable uses");
+   }
++
+   ~ContextAndReplaceableUses() { delete getReplaceableUses(); }
+ 
+   operator LLVMContext &() { return getContext(); }
+@@ -756,11 +766,13 @@
+   bool hasReplaceableUses() const {
+     return Ptr.is<ReplaceableMetadataImpl *>();
+   }
++
+   LLVMContext &getContext() const {
+     if (hasReplaceableUses())
+       return getReplaceableUses()->getContext();
+     return *Ptr.get<LLVMContext *>();
+   }
++
+   ReplaceableMetadataImpl *getReplaceableUses() const {
+     if (hasReplaceableUses())
+       return Ptr.get<ReplaceableMetadataImpl *>();
+@@ -820,10 +832,11 @@
+ class MDNode : public Metadata {
+   friend class ReplaceableMetadataImpl;
+   friend class LLVMContextImpl;
++  friend class MDNodeFwdDecl;
++  friend class MDTuple;
+ 
+   MDNode(const MDNode &) = delete;
+   void operator=(const MDNode &) = delete;
+-  void *operator new(size_t) = delete;
+ 
+   unsigned NumOperands;
+   unsigned NumUnresolved;
+@@ -831,17 +844,21 @@
+ protected:
+   ContextAndReplaceableUses Context;
+ 
+-  void *operator new(size_t Size, unsigned NumOps);
+-  void operator delete(void *Mem);
++  static void *operator new(size_t Size, unsigned NumOps) throw();
++  static void operator delete(void *Mem) throw();
+ 
+   /// \brief Required by std, but never called.
+-  void operator delete(void *, unsigned) {
+-    llvm_unreachable("Constructor throws?");
++  static void operator delete(void *, unsigned) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": This should never be called!\n";
++    abort();
+   }
+ 
+   /// \brief Required by std, but never called.
+-  void operator delete(void *, unsigned, bool) {
+-    llvm_unreachable("Constructor throws?");
++  static void operator delete(void *, unsigned, bool) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": This should never be called!\n";
++    abort();
+   }
+ 
+   MDNode(LLVMContext &Context, unsigned ID, StorageType Storage,
+@@ -1082,6 +1099,7 @@
+       : MDNode(C, MDTupleKind, Storage, Vals) {
+     setHash(Hash);
+   }
++
+   ~MDTuple() { dropAllReferences(); }
+ 
+   void setHash(unsigned Hash) { SubclassData32 = Hash; }
+@@ -1096,12 +1114,16 @@
+   }
+ 
+ public:
++  void *operator new(size_t Size, unsigned NumOps) throw();
++  void operator delete(void *Mem) throw();
++
+   /// \brief Get the hash, if any.
+   unsigned getHash() const { return SubclassData32; }
+ 
+   static MDTuple *get(LLVMContext &Context, ArrayRef<Metadata *> MDs) {
+     return getImpl(Context, MDs, Uniqued);
+   }
++
+   static MDTuple *getIfExists(LLVMContext &Context, ArrayRef<Metadata *> MDs) {
+     return getImpl(Context, MDs, Uniqued, /* ShouldCreate */ false);
+   }
+@@ -1154,18 +1176,20 @@
+ /// An iterator that transforms an \a MDNode::iterator into an iterator over a
+ /// particular Metadata subclass.
+ template <class T>
+-class TypedMDOperandIterator
+-    : std::iterator<std::input_iterator_tag, T *, std::ptrdiff_t, void, T *> {
++class TypedMDOperandIterator : public std::iterator<std::input_iterator_tag, T *, std::ptrdiff_t, void, T *> {
++private:
+   MDNode::op_iterator I = nullptr;
+ 
+ public:
+   TypedMDOperandIterator() = default;
+   explicit TypedMDOperandIterator(MDNode::op_iterator I) : I(I) {}
+   T *operator*() const { return cast_or_null<T>(*I); }
++
+   TypedMDOperandIterator &operator++() {
+     ++I;
+     return *this;
+   }
++
+   TypedMDOperandIterator operator++(int) {
+     TypedMDOperandIterator Temp(*this);
+     ++I;
+@@ -1180,6 +1204,7 @@
+ /// This is a wrapper for \a MDTuple that makes it act like an array holding a
+ /// particular type of metadata.
+ template <class T> class MDTupleTypedArrayWrapper {
++private:
+   const MDTuple *N = nullptr;
+ 
+ public:
+###
+--- include/llvm/LinkAllIR.h	2014-01-13 01:26:24.000000000 -0800
++++ include/llvm/LinkAllIR.h	2016-07-06 07:55:18.900250515 -0800
+@@ -32,22 +32,49 @@
+ #include "llvm/Support/Program.h"
+ #include "llvm/Support/Signals.h"
+ #include "llvm/Support/TimeValue.h"
++
+ #include <cstdlib>
+ 
+-namespace {
+-  struct ForceVMCoreLinking {
++namespace llvm {
++  class ForceVMCoreLinking {
++  private:
+     ForceVMCoreLinking() {
+       // We must reference VMCore in such a way that compilers will not
+       // delete it all as dead code, even with whole program optimization,
+       // yet is effectively a NO-OP. As the compiler isn't smart enough
+       // to know that getenv() never returns -1, this will do the job.
++      // Except for the fact that your theory doesn't work.
+       if (std::getenv("bar") != (char*) -1)
+         return;
+-      (void)new llvm::Module("", llvm::getGlobalContext());
+-      (void)new llvm::UnreachableInst(llvm::getGlobalContext());
+-      (void)    llvm::createVerifierPass(); 
++
++      // Hi, GCC. Please don't throw this function away.
++      asm("");
++
++      llvm::Module *M = new llvm::Module("", llvm::getGlobalContext());
++      (void) M;
++
++      llvm::Instruction *I =
++        new llvm::UnreachableInst(llvm::getGlobalContext());
++      (void) I;
++
++      FunctionPass *FP = llvm::createVerifierPass();
++      (void) FP;
+     }
+-  } ForceVMCoreLinking;
++
++  public:
++
++    static ForceVMCoreLinking *Initialize();
++
++    ~ForceVMCoreLinking() { }
++
++  private:
++    /// Initialization of this is done in lib/IR/IRBuilder.cpp
++    /// because of initialization ordering problems with global
++    /// static variables.  The design of this static initialization
++    /// dependency chain is completely broken.
++    static ForceVMCoreLinking *FVMCL;
++  };
+ }
+ 
+ #endif
++
+###
+--- lib/IR/AttributeImpl.h	2015-08-06 02:49:17.000000000 -0700
++++ lib/IR/AttributeImpl.h	2016-05-09 16:14:24.849498745 -0700
+@@ -186,6 +186,11 @@
+   }
+ };
+ 
++static_assert(AlignOf<AttributeSetNode>::Alignment >=
++              AlignOf<Attribute>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "AttributeSetNode");
++
+ typedef std::pair<unsigned, AttributeSetNode *> IndexAttrPair;
+ 
+ //===----------------------------------------------------------------------===//
+@@ -279,6 +284,11 @@
+   void dump() const;
+ };
+ 
++static_assert(AlignOf<AttributeSetImpl>::Alignment >=
++              AlignOf<IndexAttrPair>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "AttributeSetImpl");
++
+ } // end llvm namespace
+ 
+ #endif
+###
+--- lib/IR/Attributes.cpp	2016-01-03 14:43:40.000000000 -0500
++++ lib/IR/Attributes.cpp	2016-05-08 23:19:20.532430753 -0400
+@@ -1133,8 +1133,8 @@
+ //===----------------------------------------------------------------------===//
+ 
+ AttrBuilder::AttrBuilder(AttributeSet AS, unsigned Index)
+-    : Attrs(0), Alignment(0), StackAlignment(0), DerefBytes(0),
+-      DerefOrNullBytes(0) {
++  : Attrs(0), TargetDepAttrs(), Alignment(0), StackAlignment(0),
++  DerefBytes(0), DerefOrNullBytes(0) {
+   AttributeSetImpl *pImpl = AS.pImpl;
+   if (!pImpl) return;
+ 
+@@ -1185,7 +1185,9 @@
+ }
+ 
+ AttrBuilder &AttrBuilder::addAttribute(StringRef A, StringRef V) {
+-  TargetDepAttrs[A] = V;
++  std::string AS = A.str();
++  std::string VS = V.str();
++  TargetDepAttrs[AS] = VS;
+   return *this;
+ }
+ 
+@@ -1229,9 +1231,11 @@
+ }
+ 
+ AttrBuilder &AttrBuilder::removeAttribute(StringRef A) {
+-  std::map<std::string, std::string>::iterator I = TargetDepAttrs.find(A);
++  std::string AS = A.str();
++  std::map<std::string, std::string>::iterator I = TargetDepAttrs.find(AS);
+   if (I != TargetDepAttrs.end())
+     TargetDepAttrs.erase(I);
++
+   return *this;
+ }
+ 
+@@ -1241,6 +1245,12 @@
+   assert(isPowerOf2_32(Align) && "Alignment must be a power of two.");
+   assert(Align <= 0x40000000 && "Alignment too large.");
+ 
++  if (!isPowerOf2_32(Align)) {
++    llvm::errs() << __PRETTY_FUNCTION__
++      << ": Alignment must be a power of two!\n";
++    abort();
++  }
++
+   Attrs[Attribute::Alignment] = true;
+   Alignment = Align;
+   return *this;
+@@ -1333,7 +1343,8 @@
+ }
+ 
+ bool AttrBuilder::contains(StringRef A) const {
+-  return TargetDepAttrs.find(A) != TargetDepAttrs.end();
++  std::string AS = A.str();
++  return TargetDepAttrs.find(AS) != TargetDepAttrs.end();
+ }
+ 
+ bool AttrBuilder::hasAttributes() const {
+@@ -1357,7 +1368,8 @@
+         return true;
+     } else {
+       assert(Attr.isStringAttribute() && "Invalid attribute kind!");
+-      return TargetDepAttrs.find(Attr.getKindAsString())!=TargetDepAttrs.end();
++      std::string AS = Attr.getKindAsString().str();
++      return TargetDepAttrs.find(AS) != TargetDepAttrs.end();
+     }
+   }
+ 
+###
+--- lib/IR/LegacyPassManager.cpp	2016-01-06 17:55:03.000000000 -0500
++++ lib/IR/LegacyPassManager.cpp	2016-05-08 23:19:20.532430753 -0400
+@@ -59,28 +59,27 @@
+   clEnumVal(Details   , "print pass details when it is executed"),
+                              clEnumValEnd));
+ 
+-namespace {
+-typedef llvm::cl::list<const llvm::PassInfo *, bool, PassNameParser>
+-PassOptionList;
+-}
+-
+ // Print IR out before/after specified passes.
+-static PassOptionList
+-PrintBefore("print-before",
+-            llvm::cl::desc("Print IR before specified passes"),
+-            cl::Hidden);
+-
+-static PassOptionList
+-PrintAfter("print-after",
+-           llvm::cl::desc("Print IR after specified passes"),
+-           cl::Hidden);
++static llvm::cl::list<const llvm::PassInfo *, bool, PassNameParser>
++PrintBefore(cl::Prefix, "print-before",
++            cl::desc("Print IR before specified passes"),
++            cl::value_desc("Print IR before specified passes"),
++            cl::Hidden,
++            cl::ZeroOrMore);
++
++static llvm::cl::list<const llvm::PassInfo *, bool, PassNameParser>
++PrintAfter(cl::Prefix, "print-after",
++           cl::desc("Print IR after specified passes"),
++           cl::value_desc("Print IR after specified passes"),
++           cl::Hidden,
++           cl::ZeroOrMore);
+ 
+ static cl::opt<bool>
+-PrintBeforeAll("print-before-all",
++PrintBeforeAll(cl::NormalFormatting, "print-before-all",
+                llvm::cl::desc("Print IR before each pass"),
+                cl::init(false));
+ static cl::opt<bool>
+-PrintAfterAll("print-after-all",
++PrintAfterAll(cl::NormalFormatting, "print-after-all",
+               llvm::cl::desc("Print IR after each pass"),
+               cl::init(false));
+ 
+@@ -94,8 +93,10 @@
+ /// This is a helper to determine whether to print IR before or
+ /// after a pass.
+ 
+-static bool ShouldPrintBeforeOrAfterPass(const PassInfo *PI,
+-                                         PassOptionList &PassesToPrint) {
++static bool
++ShouldPrintBeforeOrAfterPass(const PassInfo *PI,
++                             llvm::cl::list<const llvm::PassInfo *, bool,
++                             PassNameParser> &PassesToPrint) {
+   for (auto *PassInf : PassesToPrint) {
+     if (PassInf)
+       if (PassInf->getPassArgument() == PI->getPassArgument()) {
+###.
+--- lib/IR/Metadata.cpp	2016-01-11 13:37:41.000000000 -0800
++++ lib/IR/Metadata.cpp	2016-05-09 19:35:11.382012208 -0700
+@@ -429,33 +429,75 @@
+       "Alignment is insufficient after objects prepended to " #CLASS);
+ #include "llvm/IR/Metadata.def"
+ 
+-void *MDNode::operator new(size_t Size, unsigned NumOps) {
++void *MDNode::operator new(size_t Size, unsigned NumOps) throw() {
++  assert((Size >= sizeof(MDNode)) && "Insufficient size to operator new!");
++  // MDNode wants to construct its ancillary MDOperands ** BEFORE **
++  // itself.
+   size_t OpSize = NumOps * sizeof(MDOperand);
+   // uint64_t is the most aligned type we need support (ensured by static_assert
+   // above)
+   OpSize = RoundUpToAlignment(OpSize, llvm::alignOf<uint64_t>());
+-  void *Ptr = reinterpret_cast<char *>(::operator new(OpSize + Size)) + OpSize;
+-  MDOperand *O = static_cast<MDOperand *>(Ptr);
+-  for (MDOperand *E = O - NumOps; O != E; --O)
+-    (void)new (O - 1) MDOperand;
+-  return Ptr;
++  std::size_t RSize = Size + OpSize + sizeof(Metadata) + sizeof(uintptr_t);
++  RSize = RoundUpToAlignment(RSize, llvm::alignOf<uint64_t>());
++  std::size_t Alignment = llvm::alignOf<uint64_t>();
++
++  void *P;
++#if defined(_MSC_VER)
++  P = _aligned_malloc(RSize, Alignment);
++  assert(P && "_aligned_malloc failed!");
++  if (!P) return 0;
++#else
++  int R = posix_memalign(&P, Alignment, RSize);
++  assert((R == 0) && "posix_memalign failed!");
++  if (R != 0) return 0;
++#endif
++
++  (void) std::memset(P, 0, RSize);
++  unsigned char *UC = static_cast<unsigned char*>(P);
++  MDNode *MN = reinterpret_cast<MDNode*>((UC + RSize) - Size);
++
++  MDOperand *O = reinterpret_cast<MDOperand*>(MN);
++  MDOperand *MO;
++
++  for (MDOperand *E = O - NumOps; O != E; --O) {
++    MO = new (O - 1) MDOperand();
++    assert(MO && "MDOperand placement new failed!");
++  }
++
++  // We store the address of the aligned allocated buffer
++  // in the last extra element of the buffer. This address
++  // will be used by the corresponding operator delete to
++  // free the correct address.
++  uintptr_t *U = reinterpret_cast<uintptr_t*>(O - 1);
++  *U = reinterpret_cast<uintptr_t>(P);
++  return MN;
++}
++
++void MDNode::operator delete(void *Mem) throw() {
++  MDNode *MN = reinterpret_cast<MDNode *>(Mem);
++  Metadata *MTD = static_cast<Metadata*>(MN);
++  std::size_t OSize = MN->NumOperands * sizeof(MDOperand);
++  OSize = RoundUpToAlignment(OSize, llvm::alignOf<uint64_t>());
++  MDOperand *O = static_cast<MDOperand *>(Mem);
++
++  for (MDOperand *E = O - MN->NumOperands; O != E; --O) {
++    MDOperand *MO = (O - 1);
++    MO->~MDOperand();
+ }
+ 
+-void MDNode::operator delete(void *Mem) {
+-  MDNode *N = static_cast<MDNode *>(Mem);
+-  size_t OpSize = N->NumOperands * sizeof(MDOperand);
+-  OpSize = RoundUpToAlignment(OpSize, llvm::alignOf<uint64_t>());
++  MTD->~Metadata();
++  MN->~MDNode();
+ 
+-  MDOperand *O = static_cast<MDOperand *>(Mem);
+-  for (MDOperand *E = O - N->NumOperands; O != E; --O)
+-    (O - 1)->~MDOperand();
+-  ::operator delete(reinterpret_cast<char *>(Mem) - OpSize);
++  // This is the address of the allocated buffer in the
++  // extra buffer space allocated by operator new.
++  uintptr_t *U = reinterpret_cast<uintptr_t*>(O - 1);
++  std::free(reinterpret_cast<void*>(*U));
+ }
+ 
+-MDNode::MDNode(LLVMContext &Context, unsigned ID, StorageType Storage,
++MDNode::MDNode(LLVMContext &Ctx, unsigned ID, StorageType Storage,
+                ArrayRef<Metadata *> Ops1, ArrayRef<Metadata *> Ops2)
+     : Metadata(ID, Storage), NumOperands(Ops1.size() + Ops2.size()),
+-      NumUnresolved(0), Context(Context) {
++  NumUnresolved(0U), Context(Ctx) {
+   unsigned Op = 0;
+   for (Metadata *MD : Ops1)
+     setOperand(Op++, MD);
+@@ -692,6 +734,9 @@
+     llvm_unreachable("Invalid subclass of MDNode");
+ #define HANDLE_MDNODE_LEAF(CLASS)                                              \
+   case CLASS##Kind:                                                            \
++    static_assert(llvm::AlignOf<uint64_t>::Alignment >=             \
++        llvm::AlignOf<CLASS>::Alignment,                            \
++        "Insufficient alignment for objects prepended to " #CLASS); \
+     delete cast<CLASS>(this);                                                  \
+     break;
+ #include "llvm/IR/Metadata.def"
+@@ -729,6 +774,9 @@
+ #define HANDLE_MDNODE_LEAF_UNIQUABLE(CLASS)                                    \
+   case CLASS##Kind: {                                                          \
+     CLASS *SubclassThis = cast<CLASS>(this);                                   \
++    static_assert(llvm::AlignOf<uint64_t>::Alignment >=             \
++        llvm::AlignOf<CLASS>::Alignment,                            \
++        "Insufficient alignment for objects prepended to " #CLASS); \
+     std::integral_constant<bool, HasCachedHash<CLASS>::value>                  \
+         ShouldRecalculateHash;                                                 \
+     dispatchRecalculateHash(SubclassThis, ShouldRecalculateHash);              \
+@@ -744,6 +792,9 @@
+     llvm_unreachable("Invalid or non-uniquable subclass of MDNode");
+ #define HANDLE_MDNODE_LEAF_UNIQUABLE(CLASS)                                    \
+   case CLASS##Kind:                                                            \
++    static_assert(llvm::AlignOf<uint64_t>::Alignment >=             \
++        llvm::AlignOf<CLASS>::Alignment,                            \
++        "Insufficient alignment for objects prepended to " #CLASS); \
+     getContext().pImpl->CLASS##s.erase(cast<CLASS>(this));                     \
+     break;
+ #include "llvm/IR/Metadata.def"
+@@ -784,6 +835,9 @@
+     llvm_unreachable("Invalid subclass of MDNode");
+ #define HANDLE_MDNODE_LEAF(CLASS)                                              \
+   case CLASS##Kind: {                                                          \
++    static_assert(llvm::AlignOf<uint64_t>::Alignment >=             \
++        llvm::AlignOf<CLASS>::Alignment,                            \
++        "Insufficient alignment for objects prepended to " #CLASS); \
+     std::integral_constant<bool, HasCachedHash<CLASS>::value> ShouldResetHash; \
+     dispatchResetHash(cast<CLASS>(this), ShouldResetHash);                     \
+     break;                                                                     \
+@@ -1007,6 +1061,88 @@
+ }
+ 
+ //===----------------------------------------------------------------------===//
++// MDTupel implementation.
++//
++void *MDTuple::operator new(size_t Size, unsigned NumOps) throw() {
++  assert((Size >= sizeof(MDTuple)) && "Insufficient size to operator new!");
++
++  std::size_t OSize = NumOps * sizeof(MDOperand);
++  OSize = RoundUpToAlignment(OSize, llvm::alignOf<uint64_t>());
++
++  // Allocate extra space for an uintptr_t at the beginning of the
++  // buffer.  This uintptr_t is where we will store the address of
++  // the memory-aligned storage buffer. It will be plasced immediately
++  // after the last MDOperand.
++  // This address will be computed by the matching operator delete.
++  // The total amount of space allocated must include the Size
++  // parameter passed in. This parameter value is not necessarily
++  // equal to sizeof(MDTuple), it can be greater.
++  std::size_t RSize = Size + OSize + sizeof(MDTuple) + sizeof(uintptr_t);
++  RSize = RoundUpToAlignment(RSize, llvm::alignOf<uint64_t>());
++  std::size_t Alignment = llvm::alignOf<uint64_t>();
++
++  void *P;
++#if defined(_MSC_VER)
++  P = _aligned_malloc(RSize, Alignment);
++  assert(P && "_aligned_malloc failed!");
++  if (!P) return 0;
++#else
++  int R = posix_memalign(&P, Alignment, RSize);
++  assert((R == 0) && "posix_memalign failed!");
++  if (R != 0) return 0;
++#endif
++
++  (void) std::memset(P, 0, RSize);
++
++  // Set a valid pointer to the address which will be returned
++  // by this operator. This will be a pointer to a MDTuple.
++  unsigned char *UC = static_cast<unsigned char*>(P);
++  MDTuple *MDT = reinterpret_cast<MDTuple*>((UC + RSize) - Size);
++  MDNode *MN = static_cast<MDNode*>(MDT);
++
++  MDOperand *O = reinterpret_cast<MDOperand*>(MN);
++  MDOperand *MO;
++
++  for (MDOperand *E = O - NumOps; O != E; --O) {
++    MO = new (O - 1) MDOperand();
++    assert(MO && "MDOperand placement new failed!");
++  }
++
++  // We store the address of the aligned allocated buffer
++  // in the last extra element of the buffer. This address
++  // will be used by the corresponding operator delete to
++  // free the correct address.
++  uintptr_t *U = reinterpret_cast<uintptr_t*>(O - 1);
++  *U = reinterpret_cast<uintptr_t>(P);
++  return MDT;
++}
++
++void MDTuple::operator delete(void *Mem) throw() {
++  MDTuple *MDT = reinterpret_cast<MDTuple*>(Mem);
++  // UniquableMDNode *UMN = static_cast<UniquableMDNode*>(MDT);
++  MDNode *MN = static_cast<MDNode*>(MDT);
++  unsigned NumOperands = MN->getNumOperands();
++
++  std::size_t OSize = NumOperands * sizeof(MDOperand);
++  OSize = RoundUpToAlignment(OSize, llvm::alignOf<uint64_t>());
++
++  MDOperand *O =
++    reinterpret_cast<MDOperand*>(reinterpret_cast<void*>(MN));
++  for (MDOperand *E = O - NumOperands; O != E; --O) {
++    MDOperand *MO = (O - 1);
++    MO->~MDOperand();
++  }
++
++  // This is teh address of the allocated buffer in the
++  // extra space allocated by operator new in RSize.
++  uintptr_t *U = reinterpret_cast<uintptr_t*>(O - 1);
++
++  // UMN->~UniquableMDNode();
++  MDT->~MDTuple();
++  std::free(reinterpret_cast<void*>(*U));
++}
++
++//===----------------------------------------------------------------------===//
+ // NamedMDNode implementation.
+ //
+ 

@@ -1,0 +1,202 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- tools/opt/opt.cpp	2015-12-04 16:38:12.000000000 -0900
++++ tools/opt/opt.cpp	2016-07-06 13:46:06.903114750 -0800
+@@ -67,16 +67,16 @@
+ // to run over the module. This flag switches opt to use the new pass manager
+ // infrastructure, completely disabling all of the flags specific to the old
+ // pass management.
+-static cl::opt<std::string> PassPipeline(
+-    "passes",
+-    cl::desc("A textual description of the pass pipeline for optimizing"),
+-    cl::Hidden);
++static cl::opt<std::string>
++PassPipeline("passes",
++             cl::desc("A textual description of the pass pipeline for optimizing"),
++             cl::Hidden);
+ 
+ // Other command line options...
+ //
+ static cl::opt<std::string>
+ InputFilename(cl::Positional, cl::desc("<input bitcode file>"),
+-    cl::init("-"), cl::value_desc("filename"));
++    cl::init(std::string("-")), cl::value_desc("filename"));
+ 
+ static cl::opt<std::string>
+ OutputFilename("o", cl::desc("Override output filename"),
+@@ -116,25 +116,54 @@
+ StandardLinkOpts("std-link-opts",
+                  cl::desc("Include the standard link time optimizations"));
+ 
+-static cl::opt<bool>
++static cl::opt<char>
++OptLevel("O",
++         cl::desc("Optimization level. [-O1, -O2, -Os, -Oz or -O3] "
++                  "(default = '-O2')"),
++         cl::Prefix,
++         cl::Optional,
++         cl::ValueRequired,
++         cl::init('2'));
++
++static cl::opt<char>
+ OptLevelO1("O1",
+-           cl::desc("Optimization level 1. Similar to clang -O1"));
++           cl::desc("Optimization level 1. Similar to clang -O1"),
++           cl::Prefix,
++           cl::Optional,
++           cl::ValueRequired,
++           cl::init('0'));
+ 
+-static cl::opt<bool>
++static cl::opt<char>
+ OptLevelO2("O2",
+-           cl::desc("Optimization level 2. Similar to clang -O2"));
++           cl::desc("Optimization level 2. Similar to clang -O2"),
++           cl::Prefix,
++           cl::Optional,
++           cl::ValueRequired,
++           cl::init('0'));
+ 
+-static cl::opt<bool>
++static cl::opt<char>
+ OptLevelOs("Os",
+-           cl::desc("Like -O2 with extra optimizations for size. Similar to clang -Os"));
++           cl::desc("Like -O2 with extra optimizations for size. Similar to clang -Os"),
++           cl::Prefix,
++           cl::Optional,
++           cl::ValueRequired,
++           cl::init('0'));
+ 
+-static cl::opt<bool>
++static cl::opt<char>
+ OptLevelOz("Oz",
+-           cl::desc("Like -Os but reduces code size further. Similar to clang -Oz"));
++           cl::desc("Like -Os but reduces code size further. Similar to clang -Oz"),
++           cl::Prefix,
++           cl::Optional,
++           cl::ValueRequired,
++           cl::init('0'));
+ 
+-static cl::opt<bool>
++static cl::opt<char>
+ OptLevelO3("O3",
+-           cl::desc("Optimization level 3. Similar to clang -O3"));
++           cl::desc("Optimization level 3. Similar to clang -O3"),
++           cl::Prefix,
++           cl::Optional,
++           cl::ValueRequired,
++           cl::init('0'));
+ 
+ static cl::opt<std::string>
+ TargetTriple("mtriple", cl::desc("Override target triple for module"));
+@@ -158,7 +187,6 @@
+                         cl::desc("Disable the slp vectorization pass"),
+                         cl::init(false));
+ 
+-
+ static cl::opt<bool>
+ DisableSimplifyLibCalls("disable-simplify-libcalls",
+                         cl::desc("Disable simplify-libcalls"));
+@@ -179,7 +207,7 @@
+ static cl::opt<std::string>
+ DefaultDataLayout("default-data-layout",
+           cl::desc("data layout string to use if not specified by module"),
+-          cl::value_desc("layout-string"), cl::init(""));
++          cl::value_desc("layout-string"), cl::init(std::string("")));
+ 
+ static cl::opt<bool> PreserveBitcodeUseListOrder(
+     "preserve-bc-uselistorder",
+@@ -208,37 +236,37 @@
+ /// This routine adds optimization passes based on selected optimization level,
+ /// OptLevel.
+ ///
+-/// OptLevel - Optimization Level
++/// OptimLevel - Optimization Level
+ static void AddOptimizationPasses(legacy::PassManagerBase &MPM,
+                                   legacy::FunctionPassManager &FPM,
+-                                  unsigned OptLevel, unsigned SizeLevel) {
++                                  unsigned OptimLevel, unsigned SizeLevel) {
+   FPM.add(createVerifierPass()); // Verify that input is correct
+ 
+   PassManagerBuilder Builder;
+-  Builder.OptLevel = OptLevel;
++  Builder.OptLevel = OptimLevel;
+   Builder.SizeLevel = SizeLevel;
+ 
+   if (DisableInline) {
+     // No inlining pass
+-  } else if (OptLevel > 1) {
+-    Builder.Inliner = createFunctionInliningPass(OptLevel, SizeLevel);
++  } else if (OptimLevel > 1) {
++    Builder.Inliner = createFunctionInliningPass(OptimLevel, SizeLevel);
+   } else {
+     Builder.Inliner = createAlwaysInlinerPass();
+   }
+   Builder.DisableUnitAtATime = !UnitAtATime;
+   Builder.DisableUnrollLoops = (DisableLoopUnrolling.getNumOccurrences() > 0) ?
+-                               DisableLoopUnrolling : OptLevel == 0;
++                               DisableLoopUnrolling : OptimLevel == 0;
+ 
+   // This is final, unless there is a #pragma vectorize enable
+   if (DisableLoopVectorization)
+     Builder.LoopVectorize = false;
+   // If option wasn't forced via cmd line (-vectorize-loops, -loop-vectorize)
+   else if (!Builder.LoopVectorize)
+-    Builder.LoopVectorize = OptLevel > 1 && SizeLevel < 2;
++    Builder.LoopVectorize = OptimLevel > 1 && SizeLevel < 2;
+ 
+   // When #pragma vectorize is on for SLP, do the same as above
+   Builder.SLPVectorize =
+-      DisableSLPVectorization ? false : OptLevel > 1 && SizeLevel < 2;
++      DisableSLPVectorization ? false : OptimLevel > 1 && SizeLevel < 2;
+ 
+   Builder.populateFunctionPassManager(FPM);
+   Builder.populateModulePassManager(MPM);
+@@ -260,11 +288,11 @@
+ //
+ 
+ static CodeGenOpt::Level GetCodeGenOptLevel() {
+-  if (OptLevelO1)
++  if (OptLevelO1.getValue())
+     return CodeGenOpt::Less;
+-  if (OptLevelO2)
++  if (OptLevelO2.getValue())
+     return CodeGenOpt::Default;
+-  if (OptLevelO3)
++  if (OptLevelO3.getValue())
+     return CodeGenOpt::Aggressive;
+   return CodeGenOpt::None;
+ }
+@@ -492,27 +520,27 @@
+ 
+     if (OptLevelO1 && OptLevelO1.getPosition() < PassList.getPosition(i)) {
+       AddOptimizationPasses(Passes, *FPasses, 1, 0);
+-      OptLevelO1 = false;
++      OptLevelO1.setValue(false);
+     }
+ 
+     if (OptLevelO2 && OptLevelO2.getPosition() < PassList.getPosition(i)) {
+       AddOptimizationPasses(Passes, *FPasses, 2, 0);
+-      OptLevelO2 = false;
++      OptLevelO2.setValue(false);
+     }
+ 
+     if (OptLevelOs && OptLevelOs.getPosition() < PassList.getPosition(i)) {
+       AddOptimizationPasses(Passes, *FPasses, 2, 1);
+-      OptLevelOs = false;
++      OptLevelOs.setValue(false);
+     }
+ 
+     if (OptLevelOz && OptLevelOz.getPosition() < PassList.getPosition(i)) {
+       AddOptimizationPasses(Passes, *FPasses, 2, 2);
+-      OptLevelOz = false;
++      OptLevelOz.setValue(false);
+     }
+ 
+     if (OptLevelO3 && OptLevelO3.getPosition() < PassList.getPosition(i)) {
+       AddOptimizationPasses(Passes, *FPasses, 3, 0);
+-      OptLevelO3 = false;
++      OptLevelO3.setValue(false);
+     }
+ 
+     const PassInfo *PassInf = PassList[i];

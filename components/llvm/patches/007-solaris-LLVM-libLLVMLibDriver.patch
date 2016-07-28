@@ -1,0 +1,18 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X upstream.
+--- lib/LibDriver/LibDriver.cpp	2015-10-21 09:30:42.000000000 -0700
++++ lib/LibDriver/LibDriver.cpp	2016-05-12 19:17:43.286044625 -0700
+@@ -100,10 +100,11 @@
+ }
+ 
+ int llvm::libDriverMain(llvm::ArrayRef<const char*> ArgsArr) {
+-  SmallVector<const char *, 20> NewArgs(ArgsArr.begin(), ArgsArr.end());
++  std::vector<const char*> NewArgs(ArgsArr.begin(), ArgsArr.end());
+   BumpPtrAllocator Alloc;
+   StringSaver Saver(Alloc);
+-  cl::ExpandResponseFiles(Saver, cl::TokenizeWindowsCommandLine, NewArgs);
++  llvm::cl::ExpandResponseFiles(Saver, cl::TokenizeWindowsCommandLine,
++                                NewArgs);
+   ArgsArr = NewArgs;
+ 
+   LibOptTable Table;

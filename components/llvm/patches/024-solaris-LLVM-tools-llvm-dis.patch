@@ -1,0 +1,19 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X upstream.
+--- tools/llvm-dis/llvm-dis.cpp	2015-12-18 15:13:39.000000000 -0500
++++ tools/llvm-dis/llvm-dis.cpp	2016-05-08 23:19:20.579431896 -0400
+@@ -38,11 +38,12 @@
+ using namespace llvm;
+ 
+ static cl::opt<std::string>
+-InputFilename(cl::Positional, cl::desc("<input bitcode>"), cl::init("-"));
++InputFilename(cl::Positional, cl::desc("<input bitcode>"),
++              cl::init(std::string("-")));
+ 
+ static cl::opt<std::string>
+ OutputFilename("o", cl::desc("Override output filename"),
+-               cl::value_desc("filename"));
++               cl::value_desc("<output filename>"));
+ 
+ static cl::opt<bool>
+ Force("f", cl::desc("Enable binary output on terminals"));

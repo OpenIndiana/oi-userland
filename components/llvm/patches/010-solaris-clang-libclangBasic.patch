@@ -1,0 +1,304 @@
+# 23701635 clang produces amd64 opcodes, but calls 32-bit assembler by default
+# 3.9.X for upstream.
+--- tools/clang/include/clang/Basic/LangOptions.def	2016-01-06 08:42:12.000000000 -0500
++++ tools/clang/include/clang/Basic/LangOptions.def	2016-05-08 23:19:20.551431215 -0400
+@@ -140,6 +140,8 @@
+               "default struct packing maximum alignment")
+ VALUE_LANGOPT(MaxTypeAlign  , 32, 0,
+               "default maximum alignment for types")
++VALUE_LANGOPT(GXXABIVersion , 32, 0,
++              "Use specified GNU C++ Standard Library ABI version")
+ VALUE_LANGOPT(PICLevel    , 2, 0, "__PIC__ level")
+ VALUE_LANGOPT(PIELevel    , 2, 0, "__PIE__ level")
+ LANGOPT(GNUInline         , 1, 0, "GNU inline semantics")
+###
+--- tools/clang/include/clang/Basic/Version.inc.in	2010-06-25 13:33:46.000000000 -0400
++++ tools/clang/include/clang/Basic/Version.inc.in	2016-05-08 23:19:20.552431239 -0400
+@@ -4,3 +4,4 @@
+ #if @CLANG_HAS_VERSION_PATCHLEVEL@
+ #define CLANG_VERSION_PATCHLEVEL @CLANG_VERSION_PATCHLEVEL@
+ #endif
++#define CLANG_VERSION_TAGGED_STRING @CLANG_VERSION_TAGGED_STRING@
+###
+--- tools/clang/include/clang/Basic/TargetInfo.h	2015-11-17 16:15:28.000000000 -0800
++++ tools/clang/include/clang/Basic/TargetInfo.h	2016-05-13 19:02:00.975115645 -0700
+@@ -86,11 +86,11 @@
+   mutable StringRef PlatformName;
+   mutable VersionTuple PlatformMinVersion;
+ 
+-  unsigned HasAlignMac68kSupport : 1;
+-  unsigned RealTypeUsesObjCFPRet : 3;
+-  unsigned ComplexLongDoubleUsesFP2Ret : 1;
++  bool HasAlignMac68kSupport;
++  unsigned RealTypeUsesObjCFPRet;
++  bool ComplexLongDoubleUsesFP2Ret;
+ 
+-  unsigned HasBuiltinMSVaList : 1;
++  bool HasBuiltinMSVaList;
+ 
+   // TargetInfo Constructor.  Default initializes all fields.
+   TargetInfo(const llvm::Triple &T);
+###
+--- tools/clang/lib/Basic/IdentifierTable.cpp	2015-10-21 23:52:15.000000000 -0400
++++ tools/clang/lib/Basic/IdentifierTable.cpp	2016-05-08 23:19:20.562431482 -0400
+@@ -393,6 +393,11 @@
+     Profile(ID, keyword_begin(), getNumArgs());
+   }
+ };
++static_assert(
++    llvm::AlignOf<MultiKeywordSelector>::Alignment >=
++        llvm::AlignOf<IdentifierInfo *>::Alignment,
++    "Insufficient alignment for objects appended to MultiKeywordSelector");
++
+ } // end namespace clang.
+ 
+ unsigned Selector::getNumArgs() const {
+###
+--- tools/clang/lib/Basic/Targets.cpp	2016-02-19 08:40:14.000000000 -0900
++++ tools/clang/lib/Basic/Targets.cpp	2016-07-06 07:39:20.069419785 -0800
+@@ -29,10 +29,11 @@
+ #include "llvm/MC/MCSectionMachO.h"
+ #include "llvm/Support/ErrorHandling.h"
+ #include "llvm/Support/TargetParser.h"
++using namespace clang;
++
+ #include <algorithm>
+ #include <memory>
+-
+-using namespace clang;
++#include <string>
+ 
+ //===----------------------------------------------------------------------===//
+ //  Common code shared among targets.
+@@ -618,34 +619,206 @@
+ // Solaris target
+ template<typename Target>
+ class SolarisTargetInfo : public OSTargetInfo<Target> {
++private:
++  std::string ABI;
++  std::string CPU;
++
+ protected:
+-  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+-                    MacroBuilder &Builder) const override {
++  virtual void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
++                            MacroBuilder &Builder) const override {
+     DefineStd(Builder, "sun", Opts);
+     DefineStd(Builder, "unix", Opts);
+     Builder.defineMacro("__ELF__");
+     Builder.defineMacro("__svr4__");
+     Builder.defineMacro("__SVR4");
+-    // Solaris headers require _XOPEN_SOURCE to be set to 600 for C99 and
+-    // newer, but to 500 for everything else.  feature_test.h has a check to
+-    // ensure that you are not using C99 with an old version of X/Open or C89
+-    // with a new version.
+-    if (Opts.C99)
++    Builder.defineMacro("__SunOS", "1");
++
++    Builder.defineMacro("__EXTENSIONS__", "1");
++
++    if (Opts.POSIXThreads) {
++      Builder.defineMacro("_REENTRANT");
++      Builder.defineMacro("__GTHREADS", "1");
++    }
++
++    if (Opts.C99) {
+       Builder.defineMacro("_XOPEN_SOURCE", "600");
+-    else
++      Builder.defineMacro("_XPG6", "1");
++      Builder.defineMacro("__STDC_VERSION__", "199901L");
++      Builder.defineMacro("_STDC_C99", "1");
++      Builder.defineMacro("__C99FEATURES__", "1");
++    }
++
++    if (Opts.CPlusPlus11) {
++      Builder.defineMacro("__cplusplus", "201103L");
++      Builder.defineMacro("_XOPEN_SOURCE", "600");
++      Builder.defineMacro("_XPG6", "1");
++    } else if (Opts.CPlusPlus14) {
++      Builder.defineMacro("__cplusplus", "201402L");
++      Builder.defineMacro("_XOPEN_SOURCE", "700");
++      Builder.defineMacro("_XPG7", "1");
++    }
++
++    if (Opts.CPlusPlus || Opts.CPlusPlus11 || Opts.CPlusPlus14 ||
++        Opts.CPlusPlus1z) {
++      Builder.defineMacro("__STDCPP_STRICT_POINTER_SAFETY__", "1");
++      Builder.defineMacro("__STDCPP_THREADS__", "1");
++    }
++
++    if (Opts.CPlusPlus11) {
++      Builder.defineMacro("_STDC_C99", "1");
++      Builder.defineMacro("__STDC_VERSION__", "199901L");
++      Builder.defineMacro("__C99FEATURES__", "1");
++      Builder.defineMacro("__STDC_ISO_10646__", "201011L");
++      Builder.defineMacro("__STDC_MB_MIGHT_NEQ_WC__", "1");
++      Builder.defineMacro("__STDC_LIB_EXT1__", "201112L");
++    } else if (Opts.C11 || Opts.CPlusPlus14) {
++      Builder.defineMacro("__STDC_HOSTED__", "1");
++      Builder.defineMacro("__STDC_VERSION__", "201112L");
++      Builder.defineMacro("_STDC_C11", "1");
++      Builder.defineMacro("_STDC_C11_BCI", "1");
++      Builder.defineMacro("__STDC_ISO_10646__", "201011L");
++      Builder.defineMacro("__STDC_MB_MIGHT_NEQ_WC__", "1");
++      Builder.defineMacro("__STDC_LIB_EXT1__", "201112L");
++      Builder.defineMacro("__STDC_UTF_16__", "1");
++      Builder.defineMacro("__STDC_UTF_32__", "1");
++      Builder.defineMacro("__XPG7_THREAD_MODEL__", "1");
++
++      if (Opts.C11) {
++        Builder.defineMacro("__STDC_ANALYZABLE", "1");
++        Builder.defineMacro("__STDC_IEC_559__", "1");
++        Builder.defineMacro("__STDC_IEC_559_COMPLEX__", "1");
++      }
++    } else if (Opts.CPlusPlus1z) {
++      // This is bogus until C++17 is actually ratified,
++      // but we need something to identify C++17 for now.
++      Builder.defineMacro("__cplusplus", "20171231L");
++      Builder.defineMacro("__STDC_VERSION__", "201112L");
++      Builder.defineMacro("_STDC_C11", "1");
++      Builder.defineMacro("_STDC_C11_BCI", "1");
++      Builder.defineMacro("__XPG7_THREAD_MODEL__", "1");
++      Builder.defineMacro("_XOPEN_SOURCE", "700");
++      Builder.defineMacro("_XPG7", "1");
++    } else if ((!Opts.C99 && !Opts.C11) ||
++               (!Opts.CPlusPlus && !Opts.CPlusPlus11 &&
++                !Opts.CPlusPlus14 && !Opts.CPlusPlus1z)) {
+       Builder.defineMacro("_XOPEN_SOURCE", "500");
+-    if (Opts.CPlusPlus)
+-      Builder.defineMacro("__C99FEATURES__");
++      Builder.defineMacro("__STDC_VERSION__", "199409L");
++      if (Opts.CPlusPlus && !Opts.CPlusPlus11 && !Opts.CPlusPlus14 &&
++          !Opts.CPlusPlus1z)
++        Builder.defineMacro("__cplusplus", "199711L");
++    }
++
++    if ((Triple.getArchName() == "i386") || (Triple.getArchName() == "sparc"))
+     Builder.defineMacro("_LARGEFILE_SOURCE");
++    else if ((Triple.getArchName() == "x86_64") ||
++             (Triple.getArchName() == "sparcv9"))
+     Builder.defineMacro("_LARGEFILE64_SOURCE");
+-    Builder.defineMacro("__EXTENSIONS__");
+-    Builder.defineMacro("_REENTRANT");
+   }
++
+ public:
+-  SolarisTargetInfo(const llvm::Triple &Triple) : OSTargetInfo<Target>(Triple) {
++  SolarisTargetInfo(const llvm::Triple &Triple)
++    : OSTargetInfo<Target>(Triple),
++    ABI(""), CPU("") {
+     this->UserLabelPrefix = "";
++
++    llvm::Triple::ArchType Arch = Triple.getArch();
++    switch (Arch) {
++    case llvm::Triple::x86:
++    case llvm::Triple::sparc:
++      this->WCharType = this->SignedLong;
++      break;
++    case llvm::Triple::x86_64:
++    case llvm::Triple::sparcv9:
+     this->WCharType = this->SignedInt;
+-    // FIXME: WIntType should be SignedLong
++      break;
++    default:
++      this->WCharType = this->SignedInt;
++      break;
++    }
++  }
++
++  virtual const char *getStaticInitSectionSpecifier() const override {
++    return ".init";
++  }
++
++  virtual bool setCPU(const std::string &Name) {
++    CPU = Name;
++    std::transform(CPU.begin(), CPU.end(), CPU.begin(), ::tolower);
++
++    bool K = llvm::StringSwitch<bool>(Name)
++      .Case("generic", true)
++      .Case("native", true)
++      .Case("sparc4", true)
++      .Case("sparc5", true)
++      .Case("v8plus", true)
++      .Case("v8plusa", true)
++      .Case("v8plusb", true)
++      .Case("v8plusc", true)
++      .Case("v8plusd", true)
++      .Case("v8pluse", true)
++      .Case("v8plusv", true)
++      .Case("v8plusm", true)
++      .Case("v9", true)
++      .Case("v9a", true)
++      .Case("v9b", true)
++      .Case("v9c", true)
++      .Case("v9d", true)
++      .Case("v9e", true)
++      .Case("v9v", true)
++      .Case("v9m", true)
++      .Case("ultrasparc", true)
++      .Case("ultrasparc2", true)
++      .Case("ultrasparc3", true)
++      .Case("ultrasparc4", true)
++      .Case("generic32", true)
++      .Case("generic64", true)
++      .Case("i386", true)
++      .Case("i486", true)
++      .Case("i586", true)
++      .Case("i686", true)
++      .Case("pentium", true)
++      .Case("pentiumpro", true)
++      .Case("pentium2", true)
++      .Case("pentiumii", true)
++      .Case("pentium3", true)
++      .Case("pentiumiii", true)
++      .Case("pentium4", true)
++      .Case("pentiumiv", true)
++      .Case("prescott", true)
++      .Case("nocona", true)
++      .Case("core", true)
++      .Case("core2", true)
++      .Case("corei7", true)
++      .Case("l1om", true)
++      .Case("k1om", true)
++      .Case("k6", true)
++      .Case("k6_2", true)
++      .Case("athlon", true)
++      .Case("opteron", true)
++      .Case("x86-64", true)
++      .Case("X86-64", true)
++      .Case("x86_64", true)
++      .Case("X86_64", true)
++      .Case("k8", true)
++      .Case("amdfam10", true)
++      .Case("bdver1", true)
++      .Case("bdver2", true)
++      .Case("bdver3", true)
++      .Case("bdver4", true)
++      .Case("btver1", true)
++      .Case("btver2", true)
++      .Default(false);
++
++    return K;
++  }
++
++  virtual bool setABI(const std::string &Name) {
++    ABI = Name;
++    std::transform(ABI.begin(), ABI.end(), ABI.begin(), ::tolower);
++    if (ABI.find("itanium") != std::string::npos)
++      return true;
++
++    return false;
+   }
+ };
+ 
+@@ -5893,6 +6066,10 @@
+     case 'N': // Same as 'K' but zext (required for SIMode)
+     case 'O': // The constant 4096
+       return true;
++
++    case 'f':
++      info.setAllowsRegister();
++      return true;
+     }
+     return false;
+   }

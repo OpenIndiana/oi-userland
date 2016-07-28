@@ -1,0 +1,29 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- tools/llvm-as/llvm-as.cpp	2015-10-04 10:33:43.000000000 -0400
++++ tools/llvm-as/llvm-as.cpp	2016-05-08 23:19:20.579431896 -0400
+@@ -28,15 +28,21 @@
+ #include "llvm/Support/SourceMgr.h"
+ #include "llvm/Support/SystemUtils.h"
+ #include "llvm/Support/ToolOutputFile.h"
+-#include <memory>
+ using namespace llvm;
+ 
++#include <memory>
++#include <string>
++
+ static cl::opt<std::string>
+-InputFilename(cl::Positional, cl::desc("<input .llvm file>"), cl::init("-"));
++InputFilename(cl::Positional, cl::desc("<input file>"),
++              cl::NotHidden,
++              cl::Optional,
++              cl::init(std::string("-")),
++              cl::ValuePositionalNoArgs);
+ 
+ static cl::opt<std::string>
+ OutputFilename("o", cl::desc("Override output filename"),
+-               cl::value_desc("filename"));
++               cl::value_desc("<output filename>"));
+ 
+ static cl::opt<bool>
+ Force("f", cl::desc("Enable binary output on terminals"));

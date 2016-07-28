@@ -1,0 +1,149 @@
+# 22902355 clang CodeGen is affected by 22902339
+# 3.9.X upstream.
+--- tools/clang/include/clang/Sema/AttributeList.h	2015-12-02 12:07:30.000000000 -0500
++++ tools/clang/include/clang/Sema/AttributeList.h	2016-05-08 23:19:20.555431312 -0400
+@@ -475,6 +475,27 @@
+   unsigned getSemanticSpelling() const;
+ };
+ 
++static_assert(
++  llvm::AlignOf<AttributeList>::Alignment >=
++  llvm::AlignOf<ArgsUnion>::Alignment,
++  "Alignment is insufficient for objects appended to AttributeList");
++static_assert(
++  llvm::AlignOf<ArgsUnion>::Alignment >=
++  llvm::AlignOf<AvailabilityChange>::Alignment,
++  "Alignment is insufficient for objects appended to AttributeList");
++static_assert(
++  llvm::AlignOf<ArgsUnion>::Alignment >=
++  llvm::AlignOf<AttributeList::TypeTagForDatatypeData>::Alignment,
++  "Alignment is insufficient for objects appended to AttributeList");
++static_assert(
++  llvm::AlignOf<AttributeList>::Alignment >=
++  llvm::AlignOf<ParsedType>::Alignment,
++  "Alignment is insufficient for objects appended to AttributeList");
++static_assert(
++  llvm::AlignOf<AttributeList>::Alignment >=
++  llvm::AlignOf<AttributeList::PropertyData>::Alignment,
++  "Alignment is insufficient for objects appended to AttributeList");
++
+ /// A factory, from which one makes pools, from which one creates
+ /// individual attributes which are deallocated with the pool.
+ ///
+--- tools/clang/include/clang/Sema/CodeCompleteConsumer.h	2015-07-07 02:20:19.000000000 -0400
++++ tools/clang/include/clang/Sema/CodeCompleteConsumer.h	2016-05-08 23:19:20.555431312 -0400
+@@ -494,6 +494,14 @@
+   /// which is mainly useful for debugging.
+   std::string getAsString() const;
+ };
++static_assert(
++    llvm::AlignOf<CodeCompletionString>::Alignment >=
++        llvm::AlignOf<CodeCompletionString::Chunk>::Alignment,
++    "Alignment is insufficient for objects appended to CodeCompletionString");
++static_assert(
++    llvm::AlignOf<CodeCompletionString::Chunk>::Alignment >=
++        llvm::AlignOf<const char *>::Alignment,
++    "Alignment is insufficient for objects appended to CodeCompletionString");
+ 
+ /// \brief An allocator used specifically for the purpose of code completion.
+ class CodeCompletionAllocator : public llvm::BumpPtrAllocator {
+--- tools/clang/include/clang/Sema/ParsedTemplate.h	2015-06-22 19:07:51.000000000 -0400
++++ tools/clang/include/clang/Sema/ParsedTemplate.h	2016-05-08 23:19:20.555431312 -0400
+@@ -205,6 +205,10 @@
+       free(this); 
+     }
+   };
++  static_assert(
++      llvm::AlignOf<TemplateIdAnnotation>::Alignment >=
++          llvm::AlignOf<ParsedTemplateArgument>::Alignment,
++      "Alignment is insufficient for objects appended to TemplateIdAnnotation");
+ 
+   /// Retrieves the range of the given template parameter lists.
+   SourceRange getTemplateParamsRange(TemplateParameterList const *const *Params,
+--- tools/clang/lib/Sema/SemaExceptionSpec.cpp	2015-12-18 16:45:41.000000000 -0500
++++ tools/clang/lib/Sema/SemaExceptionSpec.cpp	2016-05-08 23:19:20.576431823 -0400
+@@ -998,9 +998,8 @@
+   case Expr::LambdaExprClass: {
+     const LambdaExpr *Lambda = cast<LambdaExpr>(E);
+     CanThrowResult CT = CT_Cannot;
+-    for (LambdaExpr::const_capture_init_iterator
+-             Cap = Lambda->capture_init_begin(),
+-             CapEnd = Lambda->capture_init_end();
++    for (LambdaExpr::const_capture_init_iterator Cap =
++         Lambda->capture_init_begin(), CapEnd = Lambda->capture_init_end();
+          Cap != CapEnd; ++Cap)
+       CT = mergeCanThrow(CT, canThrow(*Cap));
+     return CT;
+--- tools/clang/lib/Sema/TypeLocBuilder.cpp	2014-05-26 02:22:03.000000000 -0400
++++ tools/clang/lib/Sema/TypeLocBuilder.cpp	2016-05-08 23:19:20.576431823 -0400
+@@ -13,6 +13,8 @@
+ //===----------------------------------------------------------------------===//
+ 
+ #include "TypeLocBuilder.h"
++#include <cstring>
++#include <stdlib.h>
+ 
+ using namespace clang;
+ 
+@@ -46,14 +48,35 @@
+   assert(NewCapacity > Capacity);
+ 
+   // Allocate the new buffer and copy the old data into it.
+-  char *NewBuffer = new char[NewCapacity];
++  char *NewBuffer;
++
++#if defined(_MSC_VER)
++  NewBuffer = _aligned_malloc(NewCapacity, (size_t) BufferMaxAlignment);
++  assert(NewBuffer && "_aligned_malloc failed!");
++  if (!NewBuffer) {
++    llvm::errs() << __PRETTY_FUNCTION__ << ": _aligned_malloc failed!\n";
++    abort();
++  }
++#else
++  int R = posix_memalign((void**) &NewBuffer,
++                         (size_t) BufferMaxAlignment, NewCapacity);
++  assert((R == 0) && "posix_memalign failed!");
++  assert(NewBuffer && "posix_memalign failed!");
++  if ((R != 0) || (!NewBuffer)) {
++    llvm::errs() << __PRETTY_FUNCTION__ << ": posix_memalign failed!\n";
++    abort();
++  }
++#endif
++
++  (void) std::memset(NewBuffer, 0, NewCapacity);
++
+   unsigned NewIndex = Index + NewCapacity - Capacity;
+-  memcpy(&NewBuffer[NewIndex],
+-         &Buffer[Index],
+-         Capacity - Index);
++  (void) std::memcpy(&NewBuffer[NewIndex],
++                     &Buffer[Index],
++                     Capacity - Index);
+ 
+   if (Buffer != InlineBuffer.buffer)
+-    delete[] Buffer;
++    std::free(Buffer);
+ 
+   Buffer = NewBuffer;
+   Capacity = NewCapacity;
+--- tools/clang/lib/Sema/TypeLocBuilder.h	2015-06-22 19:07:51.000000000 -0400
++++ tools/clang/lib/Sema/TypeLocBuilder.h	2016-05-08 23:19:20.577431847 -0400
+@@ -39,7 +39,7 @@
+ #endif
+     
+   /// The inline buffer.
+-  enum { BufferMaxAlignment = llvm::AlignOf<void*>::Alignment };
++  enum { BufferMaxAlignment = llvm::AlignOf<uint64_t>::Alignment };
+   llvm::AlignedCharArray<BufferMaxAlignment, InlineCapacity> InlineBuffer;
+   unsigned NumBytesAtAlign4, NumBytesAtAlign8;
+ 
+@@ -52,7 +52,7 @@
+ 
+   ~TypeLocBuilder() {
+     if (Buffer != InlineBuffer.buffer)
+-      delete[] Buffer;
++      std::free(Buffer);
+   }
+ 
+   /// Ensures that this buffer has at least as much capacity as described.
+

@@ -1,0 +1,494 @@
+# 24312028 llvm::Twine needs copy constructors and assignment operators
+# 3.9.X for upstream.
+--- include/llvm/ADT/DenseMap.h	2015-10-01 20:46:33.000000000 -0400
++++ include/llvm/ADT/DenseMap.h	2016-05-08 23:19:20.512430267 -0400
+@@ -854,7 +854,8 @@
+ 
+       // First move the inline buckets into a temporary storage.
+       AlignedCharArrayUnion<BucketT[InlineBuckets]> TmpStorage;
+-      BucketT *TmpBegin = reinterpret_cast<BucketT *>(TmpStorage.buffer);
++      BucketT *TmpBegin =
++        reinterpret_cast<BucketT*>(reinterpret_cast<void*>(TmpStorage.buffer));
+       BucketT *TmpEnd = TmpBegin;
+ 
+       // Loop over the buckets, moving non-empty, non-tombstones into the
+@@ -938,7 +939,8 @@
+     // Note that this cast does not violate aliasing rules as we assert that
+     // the memory's dynamic type is the small, inline bucket buffer, and the
+     // 'storage.buffer' static type is 'char *'.
+-    return reinterpret_cast<const BucketT *>(storage.buffer);
++    return reinterpret_cast<const BucketT*>(
++      reinterpret_cast<const void*>(storage.buffer));
+   }
+   BucketT *getInlineBuckets() {
+     return const_cast<BucketT *>(
+@@ -947,8 +949,10 @@
+   const LargeRep *getLargeRep() const {
+     assert(!Small);
+     // Note, same rule about aliasing as with getInlineBuckets.
+-    return reinterpret_cast<const LargeRep *>(storage.buffer);
++    return reinterpret_cast<const LargeRep*>(
++      reinterpret_cast<const void*>(storage.buffer));
+   }
++
+   LargeRep *getLargeRep() {
+     return const_cast<LargeRep *>(
+       const_cast<const SmallDenseMap *>(this)->getLargeRep());
+--- include/llvm/ADT/Optional.h	2015-08-19 19:07:27.000000000 -0400
++++ include/llvm/ADT/Optional.h	2016-05-08 23:19:20.513430291 -0400
+@@ -116,17 +116,39 @@
+     reset();
+   }
+ 
+-  const T* getPointer() const { assert(hasVal); return reinterpret_cast<const T*>(storage.buffer); }
+-  T* getPointer() { assert(hasVal); return reinterpret_cast<T*>(storage.buffer); }
+-  const T& getValue() const LLVM_LVALUE_FUNCTION { assert(hasVal); return *getPointer(); }
+-  T& getValue() LLVM_LVALUE_FUNCTION { assert(hasVal); return *getPointer(); }
++  const T* getPointer() const {
++    assert(hasVal);
++    return reinterpret_cast<const T*>(storage.buffer);
++  }
++
++  T* getPointer() {
++    assert(hasVal);
++    return reinterpret_cast<T*>(storage.buffer);
++  }
++
++  const T& getValue() const LLVM_LVALUE_FUNCTION {
++    assert(hasVal);
++    return *getPointer();
++  }
++
++  T& getValue() LLVM_LVALUE_FUNCTION {
++    assert(hasVal);
++    return *getPointer();
++  }
+ 
+   explicit operator bool() const { return hasVal; }
+   bool hasValue() const { return hasVal; }
+   const T* operator->() const { return getPointer(); }
+   T* operator->() { return getPointer(); }
+-  const T& operator*() const LLVM_LVALUE_FUNCTION { assert(hasVal); return *getPointer(); }
+-  T& operator*() LLVM_LVALUE_FUNCTION { assert(hasVal); return *getPointer(); }
++  const T& operator*() const LLVM_LVALUE_FUNCTION {
++    assert(hasVal);
++    return *getPointer();
++  }
++
++  T& operator*() LLVM_LVALUE_FUNCTION {
++    assert(hasVal);
++    return *getPointer();
++  }
+ 
+   template <typename U>
+   LLVM_CONSTEXPR T getValueOr(U &&value) const LLVM_LVALUE_FUNCTION {
+--- include/llvm/ADT/Triple.h	2015-12-01 02:33:56.000000000 -0800
++++ include/llvm/ADT/Triple.h	2016-05-09 07:12:20.705509490 -0700
+@@ -127,6 +127,7 @@
+     MipsTechnologies,
+     NVIDIA,
+     CSR,
++    Sun,
+     Myriad,
+     LastVendorType = Myriad
+   };
+####
+--- include/llvm/ADT/SmallVector.h	2015-09-10 02:46:47.000000000 -0700
++++ include/llvm/ADT/SmallVector.h	2016-05-28 15:24:24.738410753 -0700
+@@ -19,6 +19,7 @@
+ #include "llvm/Support/Compiler.h"
+ #include "llvm/Support/MathExtras.h"
+ #include "llvm/Support/type_traits.h"
++
+ #include <algorithm>
+ #include <cassert>
+ #include <cstddef>
+@@ -27,6 +28,9 @@
+ #include <initializer_list>
+ #include <iterator>
+ #include <memory>
++#include <cstdio>
++#include <type_traits>
++#include <typeinfo>
+ 
+ namespace llvm {
+ 
+@@ -251,11 +255,27 @@
+ void SmallVectorTemplateBase<T, isPodLike>::grow(size_t MinSize) {
+   size_t CurCapacity = this->capacity();
+   size_t CurSize = this->size();
++
+   // Always grow, even from zero.
+   size_t NewCapacity = size_t(NextPowerOf2(CurCapacity+2));
+   if (NewCapacity < MinSize)
+     NewCapacity = MinSize;
++
++  NewCapacity = llvm::RoundUpToAlignment(NewCapacity,
++                                         llvm::alignOf<uint64_t>());
++
++#if defined(HAVE_POSIX_MEMALIGN)
++  T *NewElts;
++  size_t Alignment =
++    std::max<size_t>(llvm::AlignOf<uint64_t>::Alignment,
++                     llvm::AlignOf<T>::Alignment);
++  size_t Size = NewCapacity * sizeof(T);
++  int R = posix_memalign((void**) &NewElts, Alignment, Size);
++  assert((R == 0) && "posix_memalign failed!");
++  (void) std::memset(NewElts, 0, Size);
++#else
+   T *NewElts = static_cast<T*>(malloc(NewCapacity*sizeof(T)));
++#endif
+ 
+   // Move the elements over.
+   this->uninitialized_move(this->begin(), this->end(), NewElts);
+@@ -410,10 +430,44 @@
+       this->grow(N);
+   }
+ 
++  // This function is evil.
++  // Be very careful here with move vs. copy semantics.
+   T LLVM_ATTRIBUTE_UNUSED_RESULT pop_back_val() {
+-    T Result = ::std::move(this->back());
+-    this->pop_back();
+-    return Result;
++    if (std::is_move_constructible<T>::value &&
++        std::is_move_assignable<T>::value) {
++      T Result = std::move(this->back());
++      this->pop_back();
++      return Result;
++    } else if (std::is_copy_constructible<T>::value &&
++               std::is_copy_assignable<T>::value) {
++      T Result = this->back();
++      this->pop_back();
++      return Result;
++    }
++
++    // We can't use llvm::errs() because it has a circular
++    // dependency on llvm::SmallVector<T>.
++    if (!std::is_copy_constructible<T>::value) {
++      std::fprintf(stderr,
++                   "%s: Type %s is not copy-constructible!\n",
++                   __PRETTY_FUNCTION__, typeid(T).name());
++      abort();
++    } else if (!std::is_copy_assignable<T>::value) {
++      std::fprintf(stderr,
++                   "%s: Type %s is not copy-assignable!\n",
++                   __PRETTY_FUNCTION__, typeid(T).name());
++      abort();
++    } else if (!std::is_move_constructible<T>::value) {
++      std::fprintf(stderr,
++                   "%s: Type %s is not move-constructible!\n",
++                   __PRETTY_FUNCTION__, typeid(T).name());
++      abort();
++    } else if (!std::is_move_assignable<T>::value) {
++      std::fprintf(stderr,
++                   "%s: Type %s is not move-assignable!\n",
++                   __PRETTY_FUNCTION__, typeid(T).name());
++      abort();
++    }
+   }
+ 
+   void swap(SmallVectorImpl &RHS);
+###
+--- include/llvm/ADT/Twine.h	2016-01-10 00:27:13.000000000 -0800
++++ include/llvm/ADT/Twine.h	2016-07-16 22:13:18.628217595 -0700
+@@ -129,8 +129,7 @@
+       UHexKind
+     };
+ 
+-    union Child
+-    {
++    union Child {
+       const Twine *twine;
+       const char *cString;
+       const std::string *stdString;
+@@ -144,6 +143,7 @@
+       const unsigned long long *decULL;
+       const long long *decLL;
+       const uint64_t *uHex;
++      uint64_t buffer[1];
+     };
+ 
+   private:
+@@ -161,28 +161,32 @@
+   private:
+     /// Construct a nullary twine; the kind must be NullKind or EmptyKind.
+     explicit Twine(NodeKind Kind)
+-      : LHSKind(Kind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(Kind), RHSKind(EmptyKind) {
+       assert(isNullary() && "Invalid kind!");
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++      LHS.twine = 0L;
++      RHS.twine = 0L;
+     }
+ 
+     /// Construct a binary twine.
+-    explicit Twine(const Twine &LHS, const Twine &RHS)
+-        : LHSKind(TwineKind), RHSKind(TwineKind) {
+-      this->LHS.twine = &LHS;
+-      this->RHS.twine = &RHS;
+-      assert(isValid() && "Invalid twine!");
++    explicit Twine(const Twine &TLHS, const Twine &TRHS)
++      : LHSKind(TwineKind), RHSKind(TwineKind) {
++        (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++        (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++        this->LHS.twine = &TLHS;
++        this->RHS.twine = &TRHS;
++        assert(isValid() && "Invalid twine!");
+     }
+ 
+     /// Construct a twine from explicit values.
+-    explicit Twine(Child LHS, NodeKind LHSKind, Child RHS, NodeKind RHSKind)
+-        : LHS(LHS), RHS(RHS), LHSKind(LHSKind), RHSKind(RHSKind) {
++    explicit Twine(Child CLHS, NodeKind LHSKind, Child CRHS, NodeKind RHSKind)
++        : LHS(CLHS), RHS(CRHS), LHSKind(LHSKind), RHSKind(RHSKind) {
+       assert(isValid() && "Invalid twine!");
++      (void) memcpy(LHS.buffer, CLHS.buffer, sizeof(LHS.buffer));
++      (void) memcpy(RHS.buffer, CRHS.buffer, sizeof(RHS.buffer));
+     }
+ 
+-    /// Since the intended use of twines is as temporary objects, assignments
+-    /// when concatenating might cause undefined behavior or stack corruptions
+-    Twine &operator=(const Twine &Other) = delete;
+-
+     /// Check for the null twine.
+     bool isNull() const {
+       return getLHSKind() == NullKind;
+@@ -252,11 +256,25 @@
+     /// @{
+ 
+     /// Construct from an empty string.
+-    /*implicit*/ Twine() : LHSKind(EmptyKind), RHSKind(EmptyKind) {
++    /*implicit*/ Twine()
++    : LHS(), RHS(), LHSKind(EmptyKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       assert(isValid() && "Invalid twine!");
+     }
+ 
+-    Twine(const Twine &) = default;
++    Twine(const Twine &RHST)
++    : LHS(), RHS(), LHSKind(RHST.LHSKind), RHSKind(RHST.RHSKind) {
++      (void) memcpy(LHS.buffer, RHST.LHS.buffer, sizeof(LHS.buffer));
++      (void) memcpy(RHS.buffer, RHST.RHS.buffer, sizeof(RHS.buffer));
++    }
++
++    Twine(Twine &&RHST)
++    : LHS(), RHS(), LHSKind(RHST.LHSKind), RHSKind(RHST.RHSKind) {
++      (void) memcpy(LHS.buffer, RHST.LHS.buffer, sizeof(LHS.buffer));
++      (void) memcpy(RHS.buffer, RHST.RHS.buffer, sizeof(RHS.buffer));
++    }
+ 
+     /// Construct from a C string.
+     ///
+@@ -264,7 +282,10 @@
+     /// optimized out for string constants. This allows Twine arguments have
+     /// default "" values, without introducing unnecessary string constants.
+     /*implicit*/ Twine(const char *Str)
+-      : RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(EmptyKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       if (Str[0] != '\0') {
+         LHS.cString = Str;
+         LHSKind = CStringKind;
+@@ -276,76 +297,113 @@
+ 
+     /// Construct from an std::string.
+     /*implicit*/ Twine(const std::string &Str)
+-      : LHSKind(StdStringKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(StdStringKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.stdString = &Str;
+       assert(isValid() && "Invalid twine!");
+     }
+ 
+     /// Construct from a StringRef.
+     /*implicit*/ Twine(const StringRef &Str)
+-      : LHSKind(StringRefKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(StringRefKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.stringRef = &Str;
+       assert(isValid() && "Invalid twine!");
+     }
+ 
+     /// Construct from a SmallString.
+     /*implicit*/ Twine(const SmallVectorImpl<char> &Str)
+-      : LHSKind(SmallStringKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(SmallStringKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.smallString = &Str;
+       assert(isValid() && "Invalid twine!");
+     }
+ 
+     /// Construct from a char.
+     explicit Twine(char Val)
+-      : LHSKind(CharKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(CharKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.character = Val;
+     }
+ 
+     /// Construct from a signed char.
+     explicit Twine(signed char Val)
+-      : LHSKind(CharKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(CharKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
++      LHS.character = Val;
+       LHS.character = static_cast<char>(Val);
+     }
+ 
+     /// Construct from an unsigned char.
+     explicit Twine(unsigned char Val)
+-      : LHSKind(CharKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(CharKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.character = static_cast<char>(Val);
+     }
+ 
+     /// Construct a twine to print \p Val as an unsigned decimal integer.
+     explicit Twine(unsigned Val)
+-      : LHSKind(DecUIKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecUIKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decUI = Val;
+     }
+ 
+     /// Construct a twine to print \p Val as a signed decimal integer.
+     explicit Twine(int Val)
+-      : LHSKind(DecIKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecIKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decI = Val;
+     }
+ 
+     /// Construct a twine to print \p Val as an unsigned decimal integer.
+     explicit Twine(const unsigned long &Val)
+-      : LHSKind(DecULKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecULKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decUL = &Val;
+     }
+ 
+     /// Construct a twine to print \p Val as a signed decimal integer.
+     explicit Twine(const long &Val)
+-      : LHSKind(DecLKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecLKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decL = &Val;
+     }
+ 
+     /// Construct a twine to print \p Val as an unsigned decimal integer.
+     explicit Twine(const unsigned long long &Val)
+-      : LHSKind(DecULLKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecULLKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decULL = &Val;
+     }
+ 
+     /// Construct a twine to print \p Val as a signed decimal integer.
+     explicit Twine(const long long &Val)
+-      : LHSKind(DecLLKind), RHSKind(EmptyKind) {
++      : LHS(), RHS(), LHSKind(DecLLKind), RHSKind(EmptyKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
+       LHS.decLL = &Val;
+     }
+ 
+@@ -355,27 +413,62 @@
+     // right thing. Yet.
+ 
+     /// Construct as the concatenation of a C string and a StringRef.
+-    /*implicit*/ Twine(const char *LHS, const StringRef &RHS)
+-        : LHSKind(CStringKind), RHSKind(StringRefKind) {
+-      this->LHS.cString = LHS;
+-      this->RHS.stringRef = &RHS;
++    /*implicit*/ explicit Twine(const char *CLHS, const StringRef &SRHS)
++        : LHS(), RHS(), LHSKind(CStringKind), RHSKind(StringRefKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
++      this->LHS.cString = CLHS;
++      this->RHS.stringRef = &SRHS;
+       assert(isValid() && "Invalid twine!");
+     }
+ 
+     /// Construct as the concatenation of a StringRef and a C string.
+-    /*implicit*/ Twine(const StringRef &LHS, const char *RHS)
+-        : LHSKind(StringRefKind), RHSKind(CStringKind) {
+-      this->LHS.stringRef = &LHS;
+-      this->RHS.cString = RHS;
++    /*implicit*/ explicit Twine(const StringRef &SLHS, const char *CRHS)
++        : LHS(), RHS(), LHSKind(StringRefKind), RHSKind(CStringKind) {
++      (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++      (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++
++      this->LHS.stringRef = &SLHS;
++      this->RHS.cString = CRHS;
+       assert(isValid() && "Invalid twine!");
+     }
+ 
++    /// Assignment operators.
++    Twine &operator=(const Twine &TRHS) {
++      if (this != &TRHS) {
++        (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++        (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++        (void) memcpy(LHS.buffer, TRHS.LHS.buffer, sizeof(LHS.buffer));
++        (void) memcpy(RHS.buffer, TRHS.RHS.buffer, sizeof(RHS.buffer));
++      }
++
++      return *this;
++    }
++
++    const Twine &operator=(Twine &&TRHS) {
++      if (this != &TRHS) {
++        (void) memset(LHS.buffer, 0, sizeof(LHS.buffer));
++        (void) memset(RHS.buffer, 0, sizeof(RHS.buffer));
++        (void) memcpy(LHS.buffer, TRHS.LHS.buffer, sizeof(LHS.buffer));
++        (void) memcpy(RHS.buffer, TRHS.RHS.buffer, sizeof(RHS.buffer));
++      }
++
++      return *this;
++    }
++
+     /// Create a 'null' string, which is an empty string that always
+     /// concatenates to form another empty string.
+     static Twine createNull() {
+       return Twine(NullKind);
+     }
+ 
++    /// Create an empty string, which is an empty string that always
++    /// concatenates to form another empty string.
++    static Twine createEmpty() {
++      return Twine(EmptyKind);
++    }
++
+     /// @}
+     /// @name Numeric Conversions
+     /// @{

@@ -1,0 +1,1257 @@
+# 24314621 LLVM should build using the new CMake based build system
+# CMake parts for upstream, Solaris-specific parts no.
+--- Makefile.config.in	2015-08-07 12:44:47.000000000 -0400
++++ Makefile.config.in	2016-05-08 23:19:20.538430899 -0400
+@@ -12,6 +12,12 @@
+ #
+ #===------------------------------------------------------------------------===#
+ 
++MACH = $(shell uname -p)
++MACH64=sparcv9
++ifeq ($(MACH),i386)
++  MACH64=amd64
++endif
++
+ # Define LLVM specific info and directories based on the autoconf variables
+ LLVMPackageName   := @PACKAGE_TARNAME@
+ LLVMVersion       := @PACKAGE_VERSION@
+@@ -185,6 +191,11 @@
+ # Path to the nm program
+ NM_PATH = @NM@
+ 
++# Solaris-specific filesystem locations
++ifeq ($(findstring m32,$(CXXFLAGS)),)
++  PROJ_libdir = $(PROJ_prefix)/lib/$(MACH64)
++endif
++
+ # The pathnames of the programs we require to build
+ CMP        := @CMP@
+ CP         := @CP@
+@@ -225,6 +236,12 @@
+ 
+ LIBS       := @LIBS@
+ 
++ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++  ifeq ($(MACH),sparc)
++    LIBS += -lkstat
++  endif
++endif
++
+ # Targets that are possible to build
+ ALL_TARGETS := @ALL_TARGETS@
+ 
+@@ -347,14 +364,14 @@
+ ENABLE_EMBED_STDCXX := @ENABLE_EMBED_STDCXX@
+ 
+ # Use -fvisibility-inlines-hidden?
+-ENABLE_VISIBILITY_INLINES_HIDDEN := @ENABLE_VISIBILITY_INLINES_HIDDEN@
++ENABLE_VISIBILITY_INLINES_HIDDEN := 0
+ 
+ # Do we want to allow timestamping information into builds?
+ ENABLE_TIMESTAMPS := @ENABLE_TIMESTAMPS@
+ 
+ # This option tells the Makefiles to produce verbose output.
+ # It essentially prints the commands that make is executing
+-#VERBOSE = 1
++VERBOSE := 1
+ 
+ # Enable JIT for this platform
+ TARGET_HAS_JIT = @TARGET_HAS_JIT@
+###
+--- Makefile.rules	2015-11-09 08:10:00.000000000 -0800
++++ Makefile.rules	2016-05-28 17:08:22.413887137 -0700
+@@ -291,8 +291,8 @@
+   LD.Flags  += $(OPTIMIZE_OPTION)
+   ifdef DEBUG_SYMBOLS
+     BuildMode := $(BuildMode)+Debug
+-    CXX.Flags += -g
+-    C.Flags   += -g
++    CXX.Flags += -g3
++    C.Flags   += -g3
+     KEEP_SYMBOLS := 1
+   endif
+ else
+@@ -307,8 +307,8 @@
+     CXX.Flags += -gsplit-dwarf
+     C.Flags   += -gsplit-dwarf
+     else
+-    CXX.Flags += -g
+-    C.Flags   += -g
++    CXX.Flags += -g3
++    C.Flags   += -g3
+     endif
+     KEEP_SYMBOLS := 1
+   endif
+@@ -331,6 +331,13 @@
+  endif
+ endif
+ 
++ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++  REQUIRES_EH := 1
++  REQUIRES_FRAME_POINTER := 1
++else
++  REQUIRES_EH := 0
++endif
++
+ ifeq ($(ENABLE_WERROR),1)
+   CXX.Flags += -Werror
+   C.Flags += -Werror
+@@ -355,14 +362,16 @@
+ endif
+ 
+ # IF REQUIRES_EH=1 is specified then don't disable exceptions
+-ifndef REQUIRES_EH
++ifneq ($(REQUIRES_EH), 1)
+   CXX.Flags += -fno-exceptions
++  REQUIRES_RTTI := 0
+ else
+   # If the library requires EH, it also requires RTTI.
++  CXX.Flags += -fexceptions
+   REQUIRES_RTTI := 1
+ endif
+ 
+-ifdef REQUIRES_FRAME_POINTER
++ifeq ($(REQUIRES_FRAME_POINTER), 1)
+   CXX.Flags := $(filter-out -fomit-frame-pointer,$(CXX.Flags))
+   C.Flags   := $(filter-out -fomit-frame-pointer,$(C.Flags))
+   LD.Flags  := $(filter-out -fomit-frame-pointer,$(LD.Flags))
+@@ -371,6 +380,8 @@
+ # If REQUIRES_RTTI=1 is specified then don't disable run-time type id.
+ ifneq ($(REQUIRES_RTTI), 1)
+   CXX.Flags += -fno-rtti
++else
++  CXX.Flags += -frtti
+ endif
+ 
+ ifeq ($(ENABLE_COVERAGE),1)
+@@ -596,7 +607,7 @@
+ endif
+ 
+ ifdef SHARED_LIBRARY
+-ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW))
++ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW SunOS))
+ ifneq ($(HOST_OS),Darwin)
+   LD.Flags += $(RPATH) -Wl,'$$ORIGIN'
+ else
+@@ -646,9 +657,13 @@
+     ifeq ($(HOST_OS),SunOS)
+       LD.Flags += -Wl,-z -Wl,discard-unused=sections
+     else
+-      ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW))
++      ifneq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW SunOS))
+         LD.Flags += -Wl,--gc-sections
+       endif
++      ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++	LD.Flags += -Wl,-z -Wl,discard-unused=sections
++	LD.Flags += -Wl,-M -Wl,$(PROJ_SRC_ROOT)/mapfiles/map.gnu-sections
++      endif
+     endif
+   endif
+ endif
+@@ -660,8 +675,14 @@
+   endif
+   ifneq ($(HOST_OS), Darwin)
+     ifdef TOOLNAME
++      ifneq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
+       LD.Flags += $(RPATH) -Wl,'$$ORIGIN/../lib'
+     endif
++      ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++	LD.Flags += -Wl,-z -Wl,discard-unused=sections
++	LD.Flags += -Wl,-M -Wl,$(PROJ_SRC_ROOT)/mapfiles/map.gnu-sections
++      endif
++    endif
+   else
+     ifneq ($(DARWIN_MAJVERS),4)
+       LD.Flags += $(RPATH) -Wl,@executable_path/../lib
+@@ -1105,6 +1126,18 @@
+ clean-local::
+ 	-$(Verb) $(RM) -f $(NativeExportsFile)
+ else
++ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++# Solaris ld requires a version script rather than a plain list.
++NativeExportsFile := $(ObjDir)/$(notdir $(EXPORTED_SYMBOL_FILE)).map
++$(NativeExportsFile): $(EXPORTED_SYMBOL_FILE) $(ObjDir)/.dir
++    $(Verb) echo "{" > $@
++    $(Verb) ggrep -q '[[:alnum:]_]' $< && echo "  global:" >> $@ || :
++    $(Verb) gsed -e 's/$$/;/' -e 's/^/    /' < $< >> $@
++    $(Verb) echo "  local: *;" >> $@
++    $(Verb) echo "};" >> $@
++clean-local::
++    -$(Verb) $(RM) -f $(NativeExportsFile)
++else
+ ifeq ($(HAVE_LINK_VERSION_SCRIPT),1)
+ # Gold and BFD ld require a version script rather than a plain list.
+ NativeExportsFile := $(ObjDir)/$(notdir $(EXPORTED_SYMBOL_FILE)).map
+@@ -1134,6 +1167,7 @@
+ endif
+ endif
+ endif
++endif
+ 
+ # Now add the linker command-line options to use the native export file.
+ 
+@@ -1153,6 +1187,11 @@
+ SharedLinkOptions += $(NativeExportsFile)
+ endif
+ 
++# Solaris
++ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++LLVMLibsOptions += -Wl,-M -Wl,$(NativeExportsFile)
++endif
++
+ endif
+ 
+ ###############################################################################
+###
+--- lib/Support/CMakeLists.txt	2015-12-14 16:59:19.000000000 -0800
++++ lib/Support/CMakeLists.txt	2016-07-11 13:59:48.145404115 -0700
+@@ -28,6 +28,16 @@
+   endif( MINGW )
+ endif( NOT MSVC )
+ 
++# On Solaris, -lkstat is only needed on SPARC.
++if(CMAKE_HOST_SOLARIS)
++  set(UNAME "")
++  execute_process(COMMAND uname -p OUTPUT_VARIABLE UNAME)
++  if("${UNAME}" MATCHES "sparc")
++    message(INFO "Adding -lkstat to link line.")
++    set(system_libs ${system_libs} kstat)
++  endif()
++endif()
++
+ add_llvm_library(LLVMSupport
+   APFloat.cpp
+   APInt.cpp
+###
+--- tools/clang/include/clang/Basic/Makefile	2014-03-31 09:14:44.000000000 -0400
++++ tools/clang/include/clang/Basic/Makefile	2016-05-08 23:19:20.552431239 -0400
+@@ -16,8 +16,17 @@
+ 
+ INPUT_TDS = $(wildcard $(PROJ_SRC_DIR)/Diagnostic*.td)
+ 
++SVN_OR_RC :=
++
+ # Compute the Clang version from the LLVM version, unless specified explicitly.
+ ifndef CLANG_VERSION
++ifeq ($(LLVMVersion), $(findstring svn, $(LLVMVersion)), svn)
++  SVN_OR_RC := "svn"
++endif
++
++ifeq ($(LLVMVersion), $(findstring rc, $(LLVMVersion)), rc)
++  SVN_OR_RC := "rc"
++endif
+ CLANG_VERSION := $(subst svn,,$(LLVMVersion))
+ CLANG_VERSION := $(subst rc,,$(CLANG_VERSION))
+ endif
+@@ -26,6 +35,14 @@
+ CLANG_VERSION_MAJOR := $(word 1,$(CLANG_VERSION_COMPONENTS))
+ CLANG_VERSION_MINOR := $(word 2,$(CLANG_VERSION_COMPONENTS))
+ CLANG_VERSION_PATCHLEVEL := $(word 3,$(CLANG_VERSION_COMPONENTS))
++CLANG_VERSION_TAGGED_STRING :=
++
++ifeq ($(SVN_OR_RC),)
++  CLANG_VERSION_TAGGED_STRING := "\"\(tags/RELEASE_$(CLANG_VERSION_MAJOR)$(CLANG_VERSION_MINOR)$(CLANG_VERSION_PATCHLEVEL)/final\)\""
++else
++  CLANG_VERSION_TAGGED_STRING := "\"\(tags/RELEASE_$(CLANG_VERSION_MAJOR)$(CLANG_VERSION_MINOR)$(CLANG_VERSION_PATCHLEVEL)/$(SVN_OR_RC)\)\""
++endif
++
+ ifeq ($(CLANG_VERSION_PATCHLEVEL),)
+ CLANG_HAS_VERSION_PATCHLEVEL := 0
+ else
+@@ -67,4 +84,5 @@
+ 	           -e "s#@CLANG_VERSION_MINOR@#$(CLANG_VERSION_MINOR)#g" \
+ 	           -e "s#@CLANG_VERSION_PATCHLEVEL@#$(CLANG_VERSION_PATCHLEVEL)#g" \
+ 	           -e "s#@CLANG_HAS_VERSION_PATCHLEVEL@#$(CLANG_HAS_VERSION_PATCHLEVEL)#g" \
++		   -e "s#@CLANG_VERSION_TAGGED_STRING@#$(CLANG_VERSION_TAGGED_STRING:' '='')#g" \
+ 	           $< > $@
+###
+--- tools/clang/tools/libclang/Makefile	2015-07-07 21:00:30.000000000 -0400
++++ tools/clang/tools/libclang/Makefile	2016-05-08 23:19:20.577431847 -0400
+@@ -35,10 +35,16 @@
+ include $(CLANG_LEVEL)/Makefile
+ 
+ # Add soname to the library.
+-ifeq ($(HOST_OS), $(filter $(HOST_OS), Linux FreeBSD GNU GNU/kFreeBSD))
++ifeq ($(HOST_OS), $(filter $(HOST_OS), Linux FreeBSD GNU GNU/kFreeBSD SunOS))
+         LLVMLibsOptions += -Wl,-soname,lib$(LIBRARYNAME)$(SHLIBEXT)
+ endif
+ 
++# Extract everything necessary from Solaris *.a archives
++ifeq ($(HOST_OS), $(filter $(HOST_OS), SunOS))
++  SharedLinkOptions += -Wl,-z -Wl,rescan-now -Wl,-z -Wl,allextract
++  LLVMLibsOptions += -Wl,-z -Wl,defaultextract
++endif
++
+ ifeq ($(ENABLE_CLANG_ARCMT),1)
+   CXX.Flags += -DCLANG_ENABLE_ARCMT
+ endif
+###
+--- tools/llvm-shlib/Makefile	2014-08-01 02:16:03.000000000 -0400
++++ tools/llvm-shlib/Makefile	2016-05-08 23:19:20.579431896 -0400
+@@ -71,7 +71,10 @@
+ 
+ ifeq ($(HOST_OS),SunOS)
+     # add -z allextract ahead of other libraries on Solaris
+-    LLVMLibsOptions := -Wl,-z -Wl,allextract $(LLVMLibsOptions)
++    LLVMLibsOptions := -Wl,-z -Wl,rescan -Wl,-z -Wl,allextract $(LLVMLibsOptions)
++    LLVMLibsOptions += -Wl,-h -Wl,lib$(LIBRARYNAME)$(SHLIBEXT)
++    LLVMLibsOptions += -Wl,-z -Wl,defaultextract -Wl,-z -Wl,defs
++    LLVMLibsOptions += -lkstat
+ endif
+ 
+ ifeq ($(HOST_OS), $(filter $(HOST_OS), Cygwin MingW))
+###
+--- tools/clang/tools/libclang/CMakeLists.txt	2015-11-11 16:46:57.000000000 -0800
++++ tools/clang/tools/libclang/CMakeLists.txt	2016-05-15 17:35:29.587888133 -0700
+@@ -92,6 +92,7 @@
+ 
+   LINK_COMPONENTS
+   ${LLVM_TARGETS_TO_BUILD}
++
+   Core
+   Support
+   )
+@@ -108,6 +109,9 @@
+ 
+     set_property(TARGET libclang APPEND_STRING PROPERTY
+                  LINK_FLAGS ${LIBCLANG_LINK_FLAGS})
++  elseif(CMAKE_HOST_SOLARIS)
++    set(LIBCLANG_LINK_FLAGS " -Wl,-z -Wl,allextract -Wl,-z -Wl,defs -Bsymbolic-functions ")
++    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${LIBCLANG_LINK_FLAGS}")
+   else()
+     set_target_properties(libclang
+       PROPERTIES
+###
+--- tools/llvm-shlib/CMakeLists.txt	2015-11-04 14:11:12.000000000 -0900
++++ tools/llvm-shlib/CMakeLists.txt	2016-07-05 22:08:15.168330085 -0800
+@@ -40,12 +40,18 @@
+ 
+ add_llvm_library(LLVM SHARED DISABLE_LLVM_LINK_LLVM_DYLIB SONAME ${SOURCES})
+ 
+-list(REMOVE_DUPLICATES LIB_NAMES)
++if (LIB_NAMES)
++  list(REMOVE_DUPLICATES "LIB_NAMES")
++endif()
++
+ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux") # FIXME: It should be "GNU ld for elf"
+   # GNU ld doesn't resolve symbols in the version script.
+   set(LIB_NAMES -Wl,--whole-archive ${LIB_NAMES} -Wl,--no-whole-archive)
+ elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+   set(LIB_NAMES -Wl,-all_load ${LIB_NAMES})
++elseif(CMAKE_HOST_SOLARIS)
++  set(LIB_NAMES -Wl,-z -Wl,defs -Wl,-Bsymbolic-functions -Wl,-z -Wl,allextract ${LIB_NAMES} -Wl,-z -Wl,defaultextract)
++  # message(STATUS "LIB_NAMES: ${LIB_NAMES}")
+ endif()
+ 
+ target_link_libraries(LLVM PRIVATE ${LIB_NAMES})
+###
+--- cmake/modules/HandleLLVMOptions.cmake	2016-01-06 11:05:19.000000000 -0800
++++ cmake/modules/HandleLLVMOptions.cmake	2016-05-18 19:22:28.803960478 -0700
+@@ -132,6 +132,7 @@
+ # Pass -Wl,-z,defs. This makes sure all symbols are defined. Otherwise a DSO
+ # build might work on ELF but fail on MachO/COFF.
+ if(NOT (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR WIN32 OR CYGWIN OR
++        CMAKE_HOST_SOLARIS OR
+         ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR
+         ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD") AND
+    NOT LLVM_USE_SANITIZER)
+@@ -185,13 +186,13 @@
+   endif()
+ endif()
+ 
+-if(NOT WIN32 AND NOT CYGWIN)
++if(NOT WIN32 AND NOT CYGWIN AND NOT CMAKE_HOST_SOLARIS)
+   # MinGW warns if -fvisibility-inlines-hidden is used.
+   check_cxx_compiler_flag("-fvisibility-inlines-hidden" SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG)
+   append_if(SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG "-fvisibility-inlines-hidden" CMAKE_CXX_FLAGS)
+ endif()
+ 
+-if( CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32 )
++if( CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32 AND NOT CMAKE_HOST_SOLARIS )
+   # TODO: support other platforms and toolchains.
+   if( LLVM_BUILD_32_BITS )
+     message(STATUS "Building 32 bits executables and libraries.")
+@@ -200,10 +201,12 @@
+     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
+     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
+   endif( LLVM_BUILD_32_BITS )
+-endif( CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32 )
++endif( CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32 AND NOT CMAKE_HOST_SOLARIS )
+ 
+ if (LLVM_BUILD_STATIC)
++  if (NOT CMAKE_HOST_SOLARIS)
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
++  endif(CMAKE_HOST_SOLARIS)
+ endif()
+ 
+ if( XCODE )
+###
+--- lib/Transforms/Hello/CMakeLists.txt	2015-06-15 17:44:12.000000000 -0700
++++ lib/Transforms/Hello/CMakeLists.txt	2016-05-17 18:08:53.730103135 -0700
+@@ -1,14 +1,18 @@
+ # If we don't need RTTI or EH, there's no reason to export anything
+ # from the hello plugin.
+-if( NOT LLVM_REQUIRES_RTTI )
+-  if( NOT LLVM_REQUIRES_EH )
+-    set(LLVM_EXPORTED_SYMBOL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Hello.exports)
+-  endif()
+-endif()
++# It doesn't export anything anyway, regardless of RTTI or no RTTI.
++# Why does it need an empty linker mapfile?
++IF (NOT CMAKE_HOST_SOLARIS)
++  IF (NOT LLVM_REQUIRES_RTTI)
++    IF (NOT LLVM_REQUIRES_EH)
++      SET (LLVM_EXPORTED_SYMBOL_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Hello.exports)
++    ENDIF()
++  ENDIF()
++ENDIF()
+ 
+-if(WIN32 OR CYGWIN)
+-  set(LLVM_LINK_COMPONENTS Core Support)
+-endif()
++if(WIN32 OR CYGWIN OR CMAKE_HOST_SOLARIS)
++  SET (LLVM_LINK_COMPONENTS Core Support)
++ENDIF()
+ 
+ add_llvm_loadable_module( LLVMHello
+   Hello.cpp
+###
+--- tools/clang/tools/driver/CMakeLists.txt	2015-11-10 04:51:25.000000000 -0800
++++ tools/clang/tools/driver/CMakeLists.txt	2016-05-21 07:44:27.981263031 -0700
+@@ -1,3 +1,7 @@
++IF(CMAKE_HOST_SOLARIS)
++  include (GNUInstallDirs)
++ENDIF(CMAKE_HOST_SOLARIS)
++
+ set( LLVM_LINK_COMPONENTS
+   ${LLVM_TARGETS_TO_BUILD}
+   Analysis
+@@ -51,9 +55,15 @@
+ 
+ add_dependencies(clang clang-headers)
+ 
++IF(CMAKE_HOST_SOLARIS)
++  install(TARGETS clang
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++    COMPONENT clang)
++ELSE()
+ install(TARGETS clang
+   RUNTIME DESTINATION bin
+   COMPONENT clang)
++ENDIF()
+ 
+ if(NOT CMAKE_CONFIGURATION_TYPES)
+   add_custom_target(install-clang
+--- tools/clang/tools/scan-view/CMakeLists.txt	2015-11-13 12:34:15.000000000 -0800
++++ tools/clang/tools/scan-view/CMakeLists.txt	2016-05-21 08:48:55.352488404 -0700
+@@ -1,3 +1,7 @@
++IF(CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++ENDIF(CMAKE_HOST_SOLARIS)
++
+ option(CLANG_INSTALL_SCANVIEW "Install the scan-view tool" ON)
+ 
+ set(BinFiles
+@@ -21,7 +25,11 @@
+                          ${CMAKE_BINARY_DIR}/bin/
+                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/bin/${BinFile})
+     list(APPEND Depends ${CMAKE_BINARY_DIR}/bin/${BinFile})
++    IF(CMAKE_HOST_SOLARIS)
++      install(PROGRAMS bin/${BinFile} DESTINATION ${CMAKE_INSTALL_BINDIR})
++    ELSE()
+     install(PROGRAMS bin/${BinFile} DESTINATION bin)
++    ENDIF()
+   endforeach()
+ 
+   foreach(ShareFile ${ShareFiles})
+@@ -33,7 +41,12 @@
+                          ${CMAKE_BINARY_DIR}/share/scan-view/
+                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/share/${ShareFile})
+     list(APPEND Depends ${CMAKE_BINARY_DIR}/share/scan-view/${ShareFile})
++    IF(CMAKE_HOST_SOLARIS)
++      install(FILES share/${ShareFile} DESTINATION
++        ${CMAKE_INSTALL_DATAROOTDIR}//scan-view)
++    ELSE()
+     install(FILES share/${ShareFile} DESTINATION share/scan-view)
++    ENDIF()
+   endforeach()
+ 
+   add_custom_target(scan-view ALL DEPENDS ${Depends})
+--- tools/clang/tools/clang-check/CMakeLists.txt	2015-07-16 18:19:54.000000000 -0700
++++ tools/clang/tools/clang-check/CMakeLists.txt	2016-05-21 08:52:13.223643264 -0700
+@@ -1,3 +1,7 @@
++IF (CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++ENDIF(CMAKE_HOST_SOLARIS)
++
+ set( LLVM_LINK_COMPONENTS
+   ${LLVM_TARGETS_TO_BUILD}
+   Option
+@@ -18,5 +22,9 @@
+   clangTooling
+   )
+ 
+-install(TARGETS clang-check
+-  RUNTIME DESTINATION bin)
++IF(CMAKE_HOST_SOLARIS)
++  install(TARGETS clang-check RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++ELSE()
++  install(TARGETS clang-check RUNTIME DESTINATION bin)
++ENDIF()
++
+###
+--- tools/clang/tools/diagtool/CMakeLists.txt	2014-02-20 23:59:59.000000000 -0800
++++ tools/clang/tools/diagtool/CMakeLists.txt	2016-05-23 06:25:56.330339818 -0700
+@@ -1,6 +1,6 @@
+-set(LLVM_LINK_COMPONENTS
+-  Support
+-  )
++include(GNUInstallDirs)
++
++set(LLVM_LINK_COMPONENTS Support)
+ 
+ add_clang_executable(diagtool
+   diagtool_main.cpp
+@@ -13,11 +13,15 @@
+ 
+ target_link_libraries(diagtool
+   clangBasic
+-  clangFrontend
+-  )
++  clangFrontend)
+ 
+ if(UNIX)
+   set(CLANGXX_LINK_OR_COPY create_symlink)
+ else()
+   set(CLANGXX_LINK_OR_COPY copy)
+ endif()
++
++install(TARGETS diagtool
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        COMPONENT diagtool)
++
+--- tools/clang/tools/c-arcmt-test/CMakeLists.txt	2014-11-05 06:04:25.000000000 -0800
++++ tools/clang/tools/c-arcmt-test/CMakeLists.txt	2016-05-23 06:30:27.431481181 -0700
+@@ -1,17 +1,16 @@
+-add_clang_executable(c-arcmt-test
+-  c-arcmt-test.c
+-  )
++include(GNUInstallDirs)
++
++add_clang_executable(c-arcmt-test c-arcmt-test.c)
+ 
+ if (LLVM_BUILD_STATIC)
+-  target_link_libraries(c-arcmt-test
+-    libclang_static
+-    )
++  target_link_libraries(c-arcmt-test libclang_static)
+ else()
+-  target_link_libraries(c-arcmt-test
+-    libclang
+-    )
++  target_link_libraries(c-arcmt-test libclang)
+ endif()
+ 
+-set_target_properties(c-arcmt-test
+-  PROPERTIES
+-  LINKER_LANGUAGE CXX)
++set_target_properties(c-arcmt-test PROPERTIES LINKER_LANGUAGE CXX)
++
++install(TARGETS c-arcmt-test
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        COMPONENT c-arcmt-test)
++
+--- tools/clang/tools/arcmt-test/CMakeLists.txt	2014-01-31 10:09:49.000000000 -0800
++++ tools/clang/tools/arcmt-test/CMakeLists.txt	2016-05-23 06:29:00.860135211 -0700
+@@ -1,14 +1,16 @@
+-set(LLVM_LINK_COMPONENTS
+-  support
+-  )
++include(GNUInstallDirs)
+ 
+-add_clang_executable(arcmt-test
+-  arcmt-test.cpp
+-  )
++set(LLVM_LINK_COMPONENTS Support)
++
++add_clang_executable(arcmt-test arcmt-test.cpp)
+ 
+ target_link_libraries(arcmt-test
+   clangARCMigrate
+   clangBasic
+   clangFrontend
+-  clangLex
+-  )
++  clangLex)
++
++install(TARGETS arcmt-test
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        COMPONENT arcmt-test)
++
+###
+--- tools/clang/tools/c-index-test/CMakeLists.txt	2015-11-13 14:41:14.000000000 -0800
++++ tools/clang/tools/c-index-test/CMakeLists.txt	2016-05-23 07:56:42.716288730 -0700
+@@ -1,27 +1,18 @@
+-add_clang_executable(c-index-test
+-  c-index-test.c
+-  )
++include(GNUInstallDirs)
++
++add_clang_executable(c-index-test c-index-test.c)
+ 
+ if(NOT MSVC)
+-  set_property(
+-    SOURCE c-index-test.c
+-    PROPERTY COMPILE_FLAGS "-std=gnu89"
+-    )
++  set_property( SOURCE c-index-test.c PROPERTY COMPILE_FLAGS "-std=gnu89")
+ endif()
+ 
+ if (LLVM_BUILD_STATIC)
+-  target_link_libraries(c-index-test
+-    libclang_static
+-  )
++  target_link_libraries(c-index-test libclang_static)
+ else()
+-  target_link_libraries(c-index-test
+-    libclang
+-  )
++  target_link_libraries(c-index-test libclang)
+ endif()
+ 
+-set_target_properties(c-index-test
+-  PROPERTIES
+-  LINKER_LANGUAGE CXX)
++set_target_properties(c-index-test PROPERTIES LINKER_LANGUAGE CXX)
+ 
+ # If libxml2 is available, make it available for c-index-test.
+ if (CLANG_HAVE_LIBXML)
+@@ -31,9 +22,18 @@
+ 
+ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
+   if(INTERNAL_INSTALL_PREFIX)
+-    set(INSTALL_DESTINATION "${INTERNAL_INSTALL_PREFIX}/bin")
++    if(CMAKE_HOST_SOLARIS)
++      set(INSTALL_DESTINATION
++          "${INTERNAL_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}")
++    else()
++      set(INSTALL_DESTINATION "${INTERNAL_INSTALL_PREFIX}/bin")
++    endif()
+   else()
+-    set(INSTALL_DESTINATION bin)
++    if (CMAKE_HOST_SOLARIS)
++      set(INSTALL_DESTINATION ${CMAKE_INSTALL_BINDIR})
++    else()
++      set(INSTALL_DESTINATION bin)
++    endif()
+   endif()
+ 
+   install(TARGETS c-index-test
+@@ -48,3 +48,4 @@
+               -P "${CMAKE_BINARY_DIR}/cmake_install.cmake")
+   endif()
+ endif()
++
+###
+--- tools/llvm-lto/CMakeLists.txt	2015-10-19 08:21:46.000000000 -0700
++++ tools/llvm-lto/CMakeLists.txt	2016-05-23 06:23:43.366481218 -0700
+@@ -1,3 +1,5 @@
++include(GNUInstallDirs)
++
+ set(LLVM_LINK_COMPONENTS
+   ${LLVM_TARGETS_TO_BUILD}
+   BitWriter
+@@ -6,10 +8,11 @@
+   MC
+   Object
+   Support
+-  Target
+-  )
++  Target)
++
++add_llvm_tool(llvm-lto llvm-lto.cpp)
+ 
+-add_llvm_tool(llvm-lto
+-  llvm-lto.cpp
+-  )
++install(TARGETS llvm-lto
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++        COMPONENT llvm-lto)
+ 
+###
+--- tools/clang/tools/scan-build/CMakeLists.txt	2015-11-20 10:49:02.000000000 -0800
++++ tools/clang/tools/scan-build/CMakeLists.txt	2016-05-21 09:18:25.745824278 -0700
+@@ -38,7 +38,11 @@
+                          ${CMAKE_BINARY_DIR}/bin/
+                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/bin/${BinFile})
+     list(APPEND Depends ${CMAKE_BINARY_DIR}/bin/${BinFile})
++    if (CMAKE_HOST_SOLARIS)
++      install(PROGRAMS bin/${BinFile} DESTINATION ${CMAKE_INSTALL_BINDIR})
++    else()
+     install(PROGRAMS bin/${BinFile} DESTINATION bin)
++    endif()
+   endforeach()
+ 
+   foreach(LibexecFile ${LibexecFiles})
+@@ -50,7 +54,12 @@
+                          ${CMAKE_BINARY_DIR}/libexec/
+                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/libexec/${LibexecFile})
+     list(APPEND Depends ${CMAKE_BINARY_DIR}/libexec/${LibexecFile})
++    if (CMAKE_HOST_SOLARIS)
++      install(PROGRAMS libexec/${LibexecFile} DESTINATION
++              ${CMAKE_INSTALL_LIBEXECDIR})
++    ELSE()
+     install(PROGRAMS libexec/${LibexecFile} DESTINATION libexec)
++    ENDIF()
+   endforeach()
+ 
+   foreach(ManPage ${ManPages})
+@@ -74,9 +83,15 @@
+                          ${CMAKE_BINARY_DIR}/share/scan-build/
+                        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/share/scan-build/${ShareFile})
+     list(APPEND Depends ${CMAKE_BINARY_DIR}/share/scan-build/${ShareFile})
++    IF (CMAKE_HOST_SOLARIS)
++      install(FILES share/scan-build/${ShareFile} DESTINATION
++        ${CMAKE_INSTALL_DATAROOTDIR}/scan-build)
++    ELSE()
+     install(FILES share/scan-build/${ShareFile} DESTINATION share/scan-build)
++    ENDIF()
+   endforeach()
+ 
+   add_custom_target(scan-build ALL DEPENDS ${Depends})
+   set_target_properties(scan-build PROPERTIES FOLDER "Misc")
+ endif()
++
+--- tools/clang/tools/clang-format/CMakeLists.txt	2015-09-30 12:28:47.000000000 -0700
++++ tools/clang/tools/clang-format/CMakeLists.txt	2016-05-21 09:33:31.300900932 -0700
+@@ -1,5 +1,9 @@
+ set(LLVM_LINK_COMPONENTS support)
+ 
++if(CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++endif()
++
+ add_clang_executable(clang-format
+   ClangFormat.cpp
+   )
+@@ -19,6 +23,21 @@
+   add_subdirectory(fuzzer)
+ endif()
+ 
++if(CMAKE_HOST_SOLARIS)
++  install(TARGETS clang-format RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++  install(PROGRAMS clang-format-bbedit.applescript
++          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clang)
++  install(PROGRAMS clang-format-diff.py
++          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clang)
++  install(PROGRAMS clang-format-sublime.py
++          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clang)
++  install(PROGRAMS clang-format.el
++          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clang)
++  install(PROGRAMS clang-format.py
++          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/clang)
++  install(PROGRAMS git-clang-format
++          DESTINATION ${CMAKE_INSTALL_BINDIR})
++else()
+ install(TARGETS clang-format RUNTIME DESTINATION bin)
+ install(PROGRAMS clang-format-bbedit.applescript DESTINATION share/clang)
+ install(PROGRAMS clang-format-diff.py DESTINATION share/clang)
+@@ -26,3 +45,5 @@
+ install(PROGRAMS clang-format.el DESTINATION share/clang)
+ install(PROGRAMS clang-format.py DESTINATION share/clang)
+ install(PROGRAMS git-clang-format DESTINATION bin)
++endif()
++
+###
+--- tools/clang/CMakeLists.txt	2016-01-05 15:51:42.000000000 -0800
++++ tools/clang/CMakeLists.txt	2016-05-23 14:00:47.358240529 -0700
+@@ -1,5 +1,7 @@
+ cmake_minimum_required(VERSION 2.8.8)
+ 
++include(GNUInstallDirs)
++
+ # FIXME: It may be removed when we use 2.8.12.
+ if(CMAKE_VERSION VERSION_LESS 2.8.12)
+   # Invalidate a couple of keywords.
+@@ -84,6 +86,7 @@
+   # They are used as destination of target generators.
+   set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
+   set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib${LLVM_LIBDIR_SUFFIX})
++
+   if(WIN32 OR CYGWIN)
+     # DLL platform -- put DLLs into bin.
+     set(LLVM_SHLIB_OUTPUT_INTDIR ${LLVM_RUNTIME_OUTPUT_INTDIR})
+@@ -196,11 +199,21 @@
+ set(DEFAULT_SYSROOT "" CACHE PATH
+   "Default <path> to all compiler invocations for --sysroot=<path>." )
+ 
++if(CMAKE_HOST_SOLARIS)
++  set(CLANG_DEFAULT_OPENMP_RUNTIME "libgomp" CACHE STRING
++      "Default OpenMP runtime used by -fopenmp.")
++else()
+ set(CLANG_DEFAULT_OPENMP_RUNTIME "libomp" CACHE STRING
+   "Default OpenMP runtime used by -fopenmp.")
++endif()
+ 
++if(CMAKE_HOST_SOLARIS)
++  set(CLANG_VENDOR "Oracle Solaris" CACHE STRING
++      "Vendor-specific text for showing with version information.")
++else()
+ set(CLANG_VENDOR "" CACHE STRING
+   "Vendor-specific text for showing with version information.")
++endif()
+ 
+ if( CLANG_VENDOR )
+   add_definitions( -DCLANG_VENDOR="${CLANG_VENDOR} " )
+@@ -399,12 +412,21 @@
+     target_link_libraries(${name} ${cmake_2_8_12_INTERFACE} ${LLVM_COMMON_LIBS})
+ 
+     if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY OR ${name} STREQUAL "libclang")
++      if(CMAKE_HOST_SOLARIS)
+       install(TARGETS ${name}
+         COMPONENT ${name}
+         EXPORT ClangTargets
+-        LIBRARY DESTINATION lib${LLVM_LIBDIR_SUFFIX}
+-        ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX}
++          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++      else()
++        install(TARGETS ${name}
++          COMPONENT ${name}
++          EXPORT ClangTargets
++          LIBRARY DESTINATION lib
++          ARCHIVE DESTINATION lib
+         RUNTIME DESTINATION bin)
++      endif()
+ 
+       if (${ARG_SHARED} AND NOT CMAKE_CONFIGURATION_TYPES)
+         add_custom_target(install-${name}
+@@ -443,6 +465,26 @@
+   ${CMAKE_CURRENT_SOURCE_DIR}/include
+   )
+ 
++if (CMAKE_HOST_SOLARIS)
++  if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
++    install(DIRECTORY include/clang include/clang-c
++      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++      FILES_MATCHING
++      PATTERN "*.def"
++      PATTERN "*.h"
++      PATTERN "config.h" EXCLUDE
++      PATTERN ".svn" EXCLUDE
++      )
++
++    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/clang
++      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++      FILES_MATCHING
++      PATTERN "CMakeFiles" EXCLUDE
++      PATTERN "*.inc"
++      PATTERN "*.h"
++      )
++  endif()
++else()
+ if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
+   install(DIRECTORY include/clang include/clang-c
+     DESTINATION include
+@@ -461,12 +503,17 @@
+     PATTERN "*.h"
+     )
+ endif()
++endif()
+ 
+ if(INTERNAL_INSTALL_PREFIX)
+   set(LIBCLANG_HEADERS_INSTALL_DESTINATION "${INTERNAL_INSTALL_PREFIX}/include")
+ else()
++  if (CMAKE_HOST_SOLARIS)
++    set(LIBCLANG_HEADERS_INSTALL_DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
++  else()
+   set(LIBCLANG_HEADERS_INSTALL_DESTINATION include)
+ endif()
++endif()
+ 
+ install(DIRECTORY include/clang-c
+   COMPONENT libclang-headers
+###
+--- tools/clang/lib/Headers/CMakeLists.txt	2015-12-31 06:14:07.000000000 -0800
++++ tools/clang/lib/Headers/CMakeLists.txt	2016-05-21 09:37:34.349722741 -0700
+@@ -1,3 +1,5 @@
++include(GNUInstallDirs)
++
+ set(files
+   adxintrin.h
+   altivec.h
+@@ -101,11 +103,18 @@
+ add_custom_target(clang-headers ALL DEPENDS ${out_files})
+ set_target_properties(clang-headers PROPERTIES FOLDER "Misc")
+ 
+-install(
+-  FILES ${files} ${CMAKE_CURRENT_BINARY_DIR}/arm_neon.h
++if(CMAKE_HOST_SOLARIS)
++  install(FILES ${files} ${CMAKE_CURRENT_BINARY_DIR}/arm_neon.h
++    COMPONENT clang-headers
++    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
++    DESTINATION
++    ${CMAKE_INSTALL_LIBDIR}/clang/${CLANG_VERSION}/include)
++else()
++  install(FILES ${files} ${CMAKE_CURRENT_BINARY_DIR}/arm_neon.h
+   COMPONENT clang-headers
+   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+   DESTINATION lib${LLVM_LIBDIR_SUFFIX}/clang/${CLANG_VERSION}/include)
++endif()
+ 
+ if (NOT CMAKE_CONFIGURATION_TYPES) # don't add this for IDE's.
+   add_custom_target(install-clang-headers
+@@ -114,3 +123,4 @@
+             -DCMAKE_INSTALL_COMPONENT=clang-headers
+             -P "${CMAKE_BINARY_DIR}/cmake_install.cmake")
+ endif()
++
+--- bindings/ocaml/llvm/CMakeLists.txt	2014-12-29 19:24:07.000000000 -0800
++++ bindings/ocaml/llvm/CMakeLists.txt	2016-05-21 10:59:56.318803888 -0700
+@@ -1,3 +1,7 @@
++if (CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++endif()
++
+ add_ocaml_library(llvm
+   OCAML llvm
+   C     llvm_ocaml
+@@ -7,5 +11,10 @@
+   "${CMAKE_CURRENT_SOURCE_DIR}/META.llvm.in"
+   "${LLVM_LIBRARY_DIR}/ocaml/META.llvm")
+ 
++if (CMAKE_HOST_SOLARIS)
+ install(FILES "${LLVM_LIBRARY_DIR}/ocaml/META.llvm"
+-        DESTINATION lib/ocaml)
++          DESTINATION ${CMAKE_INSTALL_LIBDIR}/ocaml)
++else()
++  install(FILES "${LLVM_LIBRARY_DIR}/ocaml/META.llvm" DESTINATION lib/ocaml)
++endif()
++
+--- bindings/ocaml/backends/CMakeLists.txt	2014-12-29 19:24:07.000000000 -0800
++++ bindings/ocaml/backends/CMakeLists.txt	2016-05-21 11:02:23.891171801 -0700
+@@ -1,3 +1,7 @@
++if (CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++endif()
++
+ foreach(TARGET ${LLVM_TARGETS_TO_BUILD})
+   set(OCAML_LLVM_TARGET ${TARGET})
+ 
+@@ -22,6 +26,12 @@
+     "${CMAKE_CURRENT_SOURCE_DIR}/META.llvm_backend.in"
+     "${LLVM_LIBRARY_DIR}/ocaml/META.llvm_${TARGET}")
+ 
++  if (CMAKE_HOST_SOLARIS)
++    install(FILES "${LLVM_LIBRARY_DIR}/ocaml/META.llvm_${TARGET}"
++      DESTINATION ${CMAKE_INSTALL_LIBDIR}/ocaml)
++  else()
+   install(FILES "${LLVM_LIBRARY_DIR}/ocaml/META.llvm_${TARGET}"
+           DESTINATION lib/ocaml)
++  endif()
+ endforeach()
++
+###
+--- CMakeLists.txt	2016-01-13 11:03:44.000000000 -0800
++++ CMakeLists.txt	2016-07-08 05:07:23.987736754 -0700
+@@ -2,6 +2,8 @@
+ 
+ cmake_minimum_required(VERSION 2.8.12.2)
+ 
++include(GNUInstallDirs)
++
+ if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+   message(STATUS "No build type selected, default to Debug")
+   set(CMAKE_BUILD_TYPE "Debug")
+@@ -79,6 +81,16 @@
+   endif()
+ endif()
+ 
++if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++  if (NOT (${CMAKE_MAJOR_VERSION} GREATER 3))
++    if (NOT (${CMAKE_MINOR_VERSION} GREATER 6))
++      if (NOT ${CMAKE_HOST_SOLARIS} EQUAL 1)
++        message(ERROR "You must provide -DCMAKE_HOST_SOLARIS:BOOL=TRUE for CMake < 3.6.0")
++      endif()
++    endif()
++  endif()
++endif()
++
+ # Add path for custom modules
+ set(CMAKE_MODULE_PATH
+   ${CMAKE_MODULE_PATH}
+@@ -334,6 +346,12 @@
+ # Define the default arguments to use with 'lit', and an option for the user to
+ # override.
+ set(LIT_ARGS_DEFAULT "-sv")
++if (CMAKE_HOST_SOLARIS)
++  set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --threads=1")
++  set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --succinct")
++  set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --no-progress-bar")
++endif()
++
+ if (MSVC_IDE OR XCODE)
+   set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --no-progress-bar")
+ endif()
+@@ -554,20 +572,33 @@
+   ${LLVM_INCLUDE_DIR}/llvm/Support/DataTypes.h)
+ 
+ # They are not referenced. See set_output_directory().
++if(CMAKE_HOST_SOLARIS)
++  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
++      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINIR})
++  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
++      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
++  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
++      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
++else()
+ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${LLVM_BINARY_DIR}/bin )
+ set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LLVM_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX} )
+ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LLVM_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX} )
++endif()
+ 
+ set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
++
+ if (APPLE)
+   set(CMAKE_INSTALL_NAME_DIR "@rpath")
+   set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+ else(UNIX)
+   if(NOT DEFINED CMAKE_INSTALL_RPATH)
++    if (NOT CMAKE_HOST_SOLARIS)
+     set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib${LLVM_LIBDIR_SUFFIX}")
+     if(${CMAKE_SYSTEM_NAME} MATCHES "(FreeBSD|DragonFly)")
+       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,origin")
+-      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,origin")
++        set(CMAKE_SHARED_LINKER_FLAGS
++          "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,origin")
++      endif()
+     endif()
+   endif(NOT DEFINED CMAKE_INSTALL_RPATH)
+ endif()
+@@ -639,6 +670,12 @@
+   llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O2")
+ endif()
+ 
++if(CMAKE_HOST_SOLARIS)
++  llvm_replace_compiler_option(CMAKE_C_FLAGS_RELEASE "-O3" "-O0")
++  llvm_replace_compiler_option(CMAKE_CXX_FLAGS_RELEASE "-O3" "-O0")
++  llvm_replace_compiler_option(CMAKE_ASM_FLAGS_RELEASE "-O3" "-O0")
++endif()
++
+ # Put this before tblgen. Else we have a circular dependence.
+ add_subdirectory(lib/Support)
+ add_subdirectory(lib/TableGen)
+###
+--- cmake/modules/AddLLVM.cmake	2016-02-12 09:52:29.000000000 -0800
++++ cmake/modules/AddLLVM.cmake	2016-05-21 11:50:17.129351767 -0700
+@@ -2,6 +2,17 @@
+ include(LLVM-Config)
+ include(DetermineGCCCompatible)
+ 
++if (CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++endif()
++
++if (CMAKE_HOST_SOLARIS)
++  SET (LLVM_REQUIRES_EH ON)
++  SET (LLVM_ENABLE_EH ON)
++  SET (LLVM_REQUIRES_RTTI ON)
++  SET (LLVM_ENABLE_RTTI ON)
++endif(CMAKE_HOST_SOLARIS)
++
+ function(llvm_update_compile_flags name)
+   get_property(sources TARGET ${name} PROPERTY SOURCES)
+   if("${sources}" MATCHES "\\.c(;|$)")
+@@ -69,7 +80,26 @@
+       COMMENT "Creating export file for ${target_name}")
+     set_property(TARGET ${target_name} APPEND_STRING PROPERTY
+                  LINK_FLAGS " -Wl,-exported_symbols_list,${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}")
+-  elseif(LLVM_HAVE_LINK_VERSION_SCRIPT)
++  elseif(CMAKE_HOST_SOLARIS)
++    # Gold and BFD ld require a version script rather than a plain list.
++    set(native_export_file "${target_name}.exports")
++    add_custom_command(OUTPUT ${native_export_file}
++      COMMAND /usr/gnu/bin/echo "$mapfile_version 2" > ${native_export_file}
++      COMMAND /usr/gnu/bin/echo "" >> ${native_export_file}
++      COMMAND /usr/gnu/bin/echo "SYMBOL_SCOPE {" >> ${native_export_file}
++      COMMAND /usr/gnu/bin/grep -q "[[:alnum:]]" ${export_file} && /usr/gnu/bin/echo "  global:" >> ${native_export_file} || :
++      COMMAND /usr/gnu/bin/sed -e "s/$/;/" -e "s/^/    /" < ${export_file} >> ${native_export_file}
++      # COMMAND echo "  local: *;" >> ${native_export_file}
++      COMMAND /usr/gnu/bin/echo "};" >> ${native_export_file}
++      COMMAND /usr/gnu/bin/touch -am ${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}
++      DEPENDS ${export_file}
++      VERBATIM
++      COMMENT "Creating export file for ${target_name}")
++      set_property(TARGET ${target_name} APPEND_STRING PROPERTY
++                   LINK_FLAGS "  -Wl,-M,${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}")
++    set_property(TARGET ${target_name} APPEND_STRING PROPERTY
++      LINK_FLAGS "  -Wl,-M,${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}")
++  elseif(LLVM_HAVE_LINK_VERSION_SCRIPT AND NOT CMAKE_HOST_SOLARIS)
+     # Gold and BFD ld require a version script rather than a plain list.
+     set(native_export_file "${target_name}.exports")
+     # FIXME: Don't write the "local:" line on OpenBSD.
+@@ -82,13 +112,8 @@
+       DEPENDS ${export_file}
+       VERBATIM
+       COMMENT "Creating export file for ${target_name}")
+-    if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+-      set_property(TARGET ${target_name} APPEND_STRING PROPERTY
+-                   LINK_FLAGS "  -Wl,-M,${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}")
+-    else()
+       set_property(TARGET ${target_name} APPEND_STRING PROPERTY
+                    LINK_FLAGS "  -Wl,--version-script,${CMAKE_CURRENT_BINARY_DIR}/${native_export_file}")
+-    endif()
+   else()
+     set(native_export_file "${target_name}.def")
+ 
+@@ -529,11 +554,13 @@
+     ""
+     ""
+     ${ARGN})
++
+   if( BUILD_SHARED_LIBS )
+     llvm_add_library(${name} SHARED ${ARGN})
+   else()
+     llvm_add_library(${name} ${ARGN})
+   endif()
++
+   # The gtest libraries should not be installed or exported as a target
+   if ("${name}" STREQUAL gtest OR "${name}" STREQUAL gtest_main)
+     set(_is_gtest TRUE)
+@@ -546,16 +573,37 @@
+     set_target_properties( ${name} PROPERTIES EXCLUDE_FROM_ALL ON)
+   elseif(NOT _is_gtest)
+     if (NOT LLVM_INSTALL_TOOLCHAIN_ONLY OR ${name} STREQUAL "LTO")
+-      set(install_dir lib${LLVM_LIBDIR_SUFFIX})
++      if (CMAKE_HOST_SOLARIS)
++        set(install_dir ${CMAKE_INSTALL_LIBDIR})
++      else()
++        set(install_dir lib)
++      endif()
++
+       if(ARG_SHARED OR BUILD_SHARED_LIBS)
+         if(WIN32 OR CYGWIN OR MINGW)
+           set(install_type RUNTIME)
+           set(install_dir bin)
+         else()
+           set(install_type LIBRARY)
++          if (CMAKE_HOST_SOLARIS)
++            set(install_dir ${CMAKE_INSTALL_LIBDIR})
+         endif()
++        endif()
++      elseif(LLVM_BUILD_LVLM_DYLIB)
++        if (CMAKE_HOST_SOLARIS)
++          set(install_type RUNTIME)
++          set(install_dir ${CMAKE_INSTALL_BINDIR})
++        else()
++          set(install_type RUNTIME)
++          set(install_dir bin)
++        endif()
+       else()
+         set(install_type ARCHIVE)
++        if (CMAKE_HOST_SOLARIS)
++          set(install_dir ${CMAKE_INSTALL_LIBDIR})
++        else()
++          set(install_dir lib)
++        endif()
+       endif()
+ 
+       install(TARGETS ${name}
+@@ -590,13 +638,26 @@
+           # DLL platform
+           set(dlldir "bin")
+         else()
++          if (CMAKE_HOST_SOLARIS)
++            set(dlldir ${CMAKE_INSTALL_LIBDIR})
++          else()
+           set(dlldir "lib${LLVM_LIBDIR_SUFFIX}")
+         endif()
++        endif()
++
++        if (CMAKE_HOST_SOLARIS)
++          install(TARGETS ${name}
++            EXPORT LLVMExports
++            LIBRARY DESTINATION ${dlldir}
++            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++        else()
+         install(TARGETS ${name}
+           EXPORT LLVMExports
+           LIBRARY DESTINATION ${dlldir}
+           ARCHIVE DESTINATION lib${LLVM_LIBDIR_SUFFIX})
+       endif()
++      endif()
++
+       set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${name})
+     endif()
+   endif()
+@@ -700,10 +761,17 @@
+   list(FIND LLVM_TOOLCHAIN_TOOLS ${name} LLVM_IS_${name}_TOOLCHAIN_TOOL)
+   if (LLVM_IS_${name}_TOOLCHAIN_TOOL GREATER -1 OR NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
+     if( LLVM_BUILD_TOOLS )
++      if (CMAKE_HOST_SOLARIS)
+       install(TARGETS ${name}
+               EXPORT LLVMExports
+-              RUNTIME DESTINATION bin
++          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++              COMPONENT ${name})
++      else()
++        install(TARGETS ${name}
++          EXPORT LLVMExports
++          RUNTIME DESTINATION bin/${LLVM_BINDIR_SUFFIX}
+               COMPONENT ${name})
++      endif()
+ 
+       if (NOT CMAKE_CONFIGURATION_TYPES)
+         add_custom_target(install-${name}
+@@ -737,9 +805,16 @@
+   add_llvm_executable(${name} DISABLE_LLVM_LINK_LLVM_DYLIB ${ARGN})
+   set_target_properties(${name} PROPERTIES FOLDER "Utils")
+   if( LLVM_INSTALL_UTILS )
++    if (CMAKE_HOST_SOLARIS)
++    install (TARGETS ${name}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++      COMPONENT ${name})
++    else()
+     install (TARGETS ${name}
+       RUNTIME DESTINATION bin
+       COMPONENT ${name})
++    endif()
++
+     if (NOT CMAKE_CONFIGURATION_TYPES)
+       add_custom_target(install-${name}
+                         DEPENDS ${name}
+###
+--- cmake/modules/TableGen.cmake	2015-10-23 12:48:17.000000000 -0700
++++ cmake/modules/TableGen.cmake	2016-05-21 10:57:12.766140197 -0700
+@@ -2,6 +2,10 @@
+ # Extra parameters for `tblgen' may come after `ofn' parameter.
+ # Adds the name of the generated file to TABLEGEN_OUTPUT.
+ 
++if (CMAKE_HOST_SOLARIS)
++  include(GNUInstallDirs)
++endif()
++
+ function(tablegen project ofn)
+   # Validate calling context.
+   foreach(v
+@@ -138,10 +142,18 @@
+       set_target_properties(${target} PROPERTIES LINK_FLAGS -Wl,--stack,16777216)
+     endif(CMAKE_SIZEOF_VOID_P MATCHES "8")
+   endif( MINGW )
++
+   if (${project} STREQUAL LLVM AND NOT LLVM_INSTALL_TOOLCHAIN_ONLY)
++    if (CMAKE_HOST_SOLARIS)
++      install(TARGETS ${target}
++        EXPORT LLVMExports
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++    else()
+     install(TARGETS ${target}
+             EXPORT LLVMExports
+             RUNTIME DESTINATION bin)
+   endif()
++  endif()
+   set_property(GLOBAL APPEND PROPERTY LLVM_EXPORTS ${target})
+ endmacro()
++
+###

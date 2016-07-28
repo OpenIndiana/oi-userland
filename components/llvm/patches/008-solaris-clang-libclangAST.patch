@@ -1,0 +1,1178 @@
+# Miscellaenous alignment assertions and fixes.
+# Remove bitfields if possible (not always possible).
+# Upstream loves bitfields.
+# 3.9.X upstream.
+--- tools/clang/include/clang/AST/DeclCXX.h	2015-12-29 22:24:14.000000000 -0500
++++ tools/clang/include/clang/AST/DeclCXX.h	2016-05-08 23:19:20.540430947 -0400
+@@ -2120,6 +2120,10 @@
+ 
+   friend TrailingObjects;
+ };
++static_assert(
++    llvm::AlignOf<CXXCtorInitializer>::Alignment >=
++        llvm::AlignOf<VarDecl *>::Alignment,
++    "Alignment is insufficient for objects appended to CXXCtorInitializer");
+ 
+ /// \brief Represents a C++ constructor within a class.
+ ///
+--- tools/clang/include/clang/AST/DeclFriend.h	2015-12-29 17:13:13.000000000 -0500
++++ tools/clang/include/clang/AST/DeclFriend.h	2016-05-08 23:19:20.540430947 -0400
+@@ -168,6 +168,9 @@
+   friend class ASTDeclWriter;
+   friend TrailingObjects;
+ };
++static_assert(llvm::AlignOf<FriendDecl>::Alignment >=
++                  llvm::AlignOf<TemplateParameterList *>::Alignment,
++              "Alignment is insufficient for objects appended to FriendDecl");
+ 
+ /// An iterator over the friend declarations of a class.
+ class CXXRecordDecl::friend_iterator {
+--- tools/clang/include/clang/AST/DeclGroup.h	2015-12-29 17:13:13.000000000 -0500
++++ tools/clang/include/clang/AST/DeclGroup.h	2016-05-08 23:19:20.541430972 -0400
+@@ -14,6 +14,7 @@
+ #ifndef LLVM_CLANG_AST_DECLGROUP_H
+ #define LLVM_CLANG_AST_DECLGROUP_H
+ 
++#include "llvm/Support/AlignOf.h"
+ #include "llvm/Support/DataTypes.h"
+ #include "llvm/Support/TrailingObjects.h"
+ #include <cassert>
+@@ -50,6 +51,9 @@
+ 
+   friend TrailingObjects;
+ };
++static_assert(llvm::AlignOf<DeclGroup>::Alignment >=
++                  llvm::AlignOf<Decl *>::Alignment,
++              "Alignment is insufficient for objects appended to DeclGroup");
+ 
+ class DeclGroupRef {
+   // Note this is not a PointerIntPair because we need the address of the
+--- tools/clang/include/clang/AST/Decl.h	2016-01-06 17:49:11.000000000 -0500
++++ tools/clang/include/clang/AST/Decl.h	2016-05-08 23:19:20.542430996 -0400
+@@ -3713,6 +3713,9 @@
+   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
+   static bool classofKind(Kind K) { return K == Import; }
+ };
++static_assert(llvm::AlignOf<ImportDecl>::Alignment >=
++                  llvm::AlignOf<SourceLocation>::Alignment,
++              "Alignment is insufficient for objects appended to ImportDecl");
+ 
+ /// \brief Represents an empty-declaration.
+ class EmptyDecl : public Decl {
+--- tools/clang/include/clang/AST/DeclOpenMP.h	2015-12-29 17:13:13.000000000 -0500
++++ tools/clang/include/clang/AST/DeclOpenMP.h	2016-05-08 23:19:20.542430996 -0400
+@@ -85,6 +85,10 @@
+   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
+   static bool classofKind(Kind K) { return K == OMPThreadPrivate; }
+ };
++static_assert(
++    llvm::AlignOf<OMPThreadPrivateDecl>::Alignment >=
++        llvm::AlignOf<Expr *>::Alignment,
++    "Alignment is insufficient for objects appended to OMPThreadPrivateDecl");
+ 
+ }  // end namespace clang
+ 
+###
+--- tools/clang/include/clang/AST/DeclTemplate.h	2015-12-29 14:13:13.000000000 -0800
++++ tools/clang/include/clang/AST/DeclTemplate.h	2016-05-09 13:56:11.451547165 -0700
+@@ -56,11 +56,11 @@
+ 
+   /// The number of template parameters in this template
+   /// parameter list.
+-  unsigned NumParams : 31;
++  unsigned NumParams;
+ 
+   /// Whether this template parameter list contains an unexpanded parameter
+   /// pack.
+-  unsigned ContainsUnexpandedParameterPack : 1;
++  bool ContainsUnexpandedParameterPack;
+ 
+ protected:
+   size_t numTrailingObjects(OverloadToken<NamedDecl *>) const {
+@@ -138,6 +138,10 @@
+   friend TrailingObjects;
+   template <size_t N> friend class FixedSizeTemplateParameterListStorage;
+ };
++static_assert(
++    llvm::AlignOf<TemplateParameterList>::Alignment >=
++        llvm::AlignOf<NamedDecl *>::Alignment,
++    "Insufficient alignment for objects appended to TemplateParameterList");
+ 
+ /// \brief Stores a list of template parameters for a TemplateDecl and its
+ /// derived classes. Suitable for creating on the stack.
+@@ -582,6 +586,21 @@
+   Create(ASTContext &Context, const UnresolvedSetImpl &Templates,
+          const TemplateArgumentListInfo &TemplateArgs);
+ 
++  DependentFunctionTemplateSpecializationInfo(
++    const DependentFunctionTemplateSpecializationInfo &RHS)
++    : NumTemplates(RHS.NumTemplates), NumArgs(RHS.NumArgs),
++    AngleLocs(RHS.AngleLocs) { }
++
++  DependentFunctionTemplateSpecializationInfo
++    &operator=(const DependentFunctionTemplateSpecializationInfo &RHS) {
++      if (this != &RHS) {
++        NumTemplates = RHS.NumTemplates;
++        NumArgs = RHS.NumArgs;
++        AngleLocs = RHS.AngleLocs;
++      }
++      return *this;
++    }
++
+   /// \brief Returns the number of function templates that this might
+   /// be a specialization of.
+   unsigned getNumTemplates() const { return NumTemplates; }
+@@ -617,6 +636,16 @@
+   friend TrailingObjects;
+ };
+ 
++static_assert(
++  llvm::AlignOf<DependentFunctionTemplateSpecializationInfo>::Alignment >=
++  llvm::AlignOf<TemplateArgumentLoc>::Alignment,
++  "Insufficient alignment for objects appended to "
++  "DependentFunctionTemplateSpecializationInfo");
++static_assert(llvm::AlignOf<TemplateArgumentLoc>::Alignment >=
++              llvm::AlignOf<FunctionTemplateDecl *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "DependentFunctionTemplateSpecializationInfo");
++
+ /// Declaration of a redeclarable template.
+ class RedeclarableTemplateDecl : public TemplateDecl, 
+                                  public Redeclarable<RedeclarableTemplateDecl> 
+@@ -1310,6 +1339,10 @@
+   static bool classof(const Decl *D) { return classofKind(D->getKind()); }
+   static bool classofKind(Kind K) { return K == NonTypeTemplateParm; }
+ };
++static_assert(llvm::AlignOf<NonTypeTemplateParmDecl>::Alignment >=
++                  llvm::AlignOf<void *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "NonTypeTemplateParmDecl");
+ 
+ /// TemplateTemplateParmDecl - Declares a template template parameter,
+ /// e.g., "T" in
+@@ -1478,6 +1511,10 @@
+   friend class ASTDeclWriter;
+   friend TrailingObjects;
+ };
++static_assert(llvm::AlignOf<TemplateTemplateParmDecl>::Alignment >=
++                  llvm::AlignOf<TemplateParameterList *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "TemplateTemplateParmDecl");
+ 
+ /// \brief Represents the builtin template declaration which is used to
+ /// implement __make_integer_seq.  It serves no real purpose beyond existing as
+###
+--- tools/clang/include/clang/AST/ExprCXX.h	2016-01-06 14:34:54.000000000 -0800
++++ tools/clang/include/clang/AST/ExprCXX.h	2016-05-09 14:06:13.555769345 -0700
+@@ -1013,6 +1013,11 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(llvm::AlignOf<CXXDefaultArgExpr>::Alignment >=
++              llvm::AlignOf<Expr *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "CXXDefaultArgExpr");
++
+ /// \brief A use of a default initializer in a constructor or in aggregate
+ /// initialization.
+ ///
+@@ -1678,6 +1683,17 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(llvm::AlignOf<LambdaExpr>::Alignment >=
++              llvm::AlignOf<Stmt *>::Alignment,
++              "Insufficient alignment for objects appended to LambdaExpr");
++static_assert(llvm::AlignOf<Stmt *>::Alignment >=
++                  llvm::AlignOf<unsigned>::Alignment,
++              "Insufficient alignment for objects appended to LambdaExpr");
++// Code re-aligns before VarDecl *[]
++static_assert(llvm::AlignOf<LambdaExpr>::Alignment >=
++                  llvm::AlignOf<VarDecl *>::Alignment,
++              "Insufficient alignment for objects appended to LambdaExpr");
++
+ /// An expression "T()" which creates a value-initialized rvalue of type
+ /// T, which is a non-class type.  See (C++98 [5.2.3p2]).
+ class CXXScalarValueInitExpr : public Expr {
+@@ -2264,6 +2280,11 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(
++    llvm::AlignOf<TypeTraitExpr>::Alignment >=
++    llvm::AlignOf<TypeSourceInfo *>::Alignment,
++    "Insufficient alignment for objects appended to TypeTraitExpr");
++
+ /// \brief An Embarcadero array type trait, as used in the implementation of
+ /// __array_rank and __array_extent.
+ ///
+@@ -2399,7 +2420,7 @@
+ 
+ /// \brief A reference to an overloaded function set, either an
+ /// \c UnresolvedLookupExpr or an \c UnresolvedMemberExpr.
+-class OverloadExpr : public Expr {
++class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) OverloadExpr : public Expr {
+   /// \brief The common name of these declarations.
+   DeclarationNameInfo NameInfo;
+ 
+@@ -2689,6 +2710,11 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<UnresolvedLookupExpr>::Alignment >=
++              llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "UnresolvedLookupExpr");
++
+ /// \brief A qualified reference to a name whose declaration cannot
+ /// yet be resolved.
+ ///
+@@ -2834,6 +2860,11 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(llvm::AlignOf<DependentScopeDeclRefExpr>::Alignment >=
++              llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "DependentScopeDeclRefExpr");
++
+ /// Represents an expression -- generally a full-expression -- that
+ /// introduces cleanups to be run at the end of the sub-expression's
+ /// evaluation.  The most common source of expression-introduced
+@@ -2903,6 +2934,11 @@
+   child_range children() { return child_range(&SubExpr, &SubExpr + 1); }
+ };
+ 
++static_assert(llvm::AlignOf<ExprWithCleanups>::Alignment >=
++              llvm::AlignOf<ExprWithCleanups::CleanupObject>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "ExprWithCleanups");
++
+ /// \brief Describes an explicit type conversion that uses functional
+ /// notion but could not be resolved because one or more arguments are
+ /// type-dependent.
+@@ -3024,6 +3060,11 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<CXXUnresolvedConstructExpr>::Alignment >=
++              llvm::AlignOf<Expr *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "CXXUnresolvedConstructExpr");
++
+ /// \brief Represents a C++ member access expression where the actual
+ /// member referenced could not be resolved because the base
+ /// expression or the member name was dependent.
+@@ -3046,11 +3087,11 @@
+ 
+   /// \brief Whether this member expression used the '->' operator or
+   /// the '.' operator.
+-  bool IsArrow : 1;
++  bool IsArrow;
+ 
+   /// \brief Whether this member expression has info for explicit template
+   /// keyword and arguments.
+-  bool HasTemplateKWAndArgsInfo : 1;
++  bool HasTemplateKWAndArgsInfo;
+ 
+   /// \brief The location of the '->' or '.' operator.
+   SourceLocation OperatorLoc;
+@@ -3250,6 +3291,11 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(llvm::AlignOf<CXXDependentScopeMemberExpr>::Alignment >=
++              llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "CXXDependentScopeMemberExpr");
++
+ /// \brief Represents a C++ member access expression for which lookup
+ /// produced a set of overloaded functions.
+ ///
+@@ -3271,11 +3317,11 @@
+           UnresolvedMemberExpr, ASTTemplateKWAndArgsInfo, TemplateArgumentLoc> {
+   /// \brief Whether this member expression used the '->' operator or
+   /// the '.' operator.
+-  bool IsArrow : 1;
++  bool IsArrow;
+ 
+   /// \brief Whether the lookup results contain an unresolved using
+   /// declaration.
+-  bool HasUnresolvedUsing : 1;
++  bool HasUnresolvedUsing;
+ 
+   /// \brief The expression for the base pointer or class reference,
+   /// e.g., the \c x in x.f.
+@@ -3399,6 +3445,11 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<UnresolvedMemberExpr>::Alignment >=
++              llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "UnresolvedMemberExpr");
++
+ inline ASTTemplateKWAndArgsInfo *
+ OverloadExpr::getTrailingASTTemplateKWAndArgsInfo() {
+   if (!HasTemplateKWAndArgsInfo)
+@@ -3841,6 +3892,11 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<FunctionParmPackExpr>::Alignment >=
++              llvm::AlignOf<ParmVarDecl *>::Alignment,
++              "Insufficient alignment for objects appended to "
++              "FunctionParmPackExpr");
++
+ /// \brief Represents a prvalue temporary that is written into memory so that
+ /// a reference can bind to it.
+ ///
+###
+--- tools/clang/include/clang/AST/Expr.h	2016-01-07 12:59:26.000000000 -0800
++++ tools/clang/include/clang/AST/Expr.h	2016-05-09 13:48:08.744463290 -0700
+@@ -1142,6 +1142,17 @@
+   friend class ASTStmtWriter;
+ };
+ 
++static_assert(llvm::AlignOf<DeclRefExpr>::Alignment >=
++                  llvm::AlignOf<NestedNameSpecifierLoc>::Alignment,
++              "Alignment is insufficient for objects appended to DeclRefExpr");
++static_assert(llvm::AlignOf<NestedNameSpecifierLoc>::Alignment >=
++                  llvm::AlignOf<NamedDecl *>::Alignment,
++              "Alignment is insufficient for objects appended to NestedNameSpecifierLoc");
++// Code re-aligns before ASTTemplateKWAndArgsInfo
++static_assert(llvm::AlignOf<DeclRefExpr>::Alignment >=
++                  llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment,
++              "Alignment is insufficient for objects appended to DeclRefExpr");
++
+ /// \brief [C99 6.4.2.2] - A predefined identifier such as __func__.
+ class PredefinedExpr : public Expr {
+ public:
+@@ -1753,7 +1764,7 @@
+ /// Helper class for OffsetOfExpr.
+ 
+ // __builtin_offsetof(type, identifier(.identifier|[expr])*)
+-class OffsetOfNode {
++class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) OffsetOfNode {
+ public:
+   /// \brief The kind of offsetof node we have.
+   enum Kind {
+@@ -1857,7 +1868,7 @@
+ /// @endcode
+ /// we can represent and evaluate the expression @c offsetof(struct T, s[2].d).
+ 
+-class OffsetOfExpr final
++class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) OffsetOfExpr final
+     : public Expr,
+       private llvm::TrailingObjects<OffsetOfExpr, OffsetOfNode, Expr *> {
+   SourceLocation OperatorLoc, RParenLoc;
+@@ -1954,6 +1965,22 @@
+   friend TrailingObjects;
+ };
+ 
++static_assert(llvm::AlignOf<OffsetOfExpr>::Alignment >=
++                  llvm::AlignOf<OffsetOfNode*>::Alignment,
++              "Insufficient aligment for objects appended to OffsetOfExpr");
++static_assert(llvm::AlignOf<OffsetOfNode>::Alignment >=
++                  llvm::AlignOf<Expr*>::Alignment,
++              "Insufficient alignment for objects appended to OffsetOfExpr");
++
++#if 0
++static_assert(llvm::AlignOf<OffsetOfExpr>::Alignment >=
++                  llvm::AlignOf<OffsetOfExpr::OffsetOfNode *>::Alignment,
++              "Alignment is insufficient for objects appended to OffsetOfExpr");
++static_assert(llvm::AlignOf<OffsetOfExpr::OffsetOfNode>::Alignment >=
++                  llvm::AlignOf<Expr *>::Alignment,
++              "Alignment is insufficient for objects appended to OffsetOfExpr");
++#endif
++
+ /// UnaryExprOrTypeTraitExpr - expression with either a type or (unevaluated)
+ /// expression operand.  Used for sizeof/alignof (C99 6.5.3.4) and
+ /// vec_step (OpenCL 1.1 6.11.12).
+@@ -2318,24 +2345,24 @@
+   SourceLocation OperatorLoc;
+ 
+   /// IsArrow - True if this is "X->F", false if this is "X.F".
+-  bool IsArrow : 1;
++  bool IsArrow;
+ 
+   /// \brief True if this member expression used a nested-name-specifier to
+   /// refer to the member, e.g., "x->Base::f", or found its member via a using
+   /// declaration.  When true, a MemberExprNameQualifier
+   /// structure is allocated immediately after the MemberExpr.
+-  bool HasQualifierOrFoundDecl : 1;
++  bool HasQualifierOrFoundDecl;
+ 
+   /// \brief True if this member expression specified a template keyword
+   /// and/or a template argument list explicitly, e.g., x->f<int>,
+   /// x->template f, x->template f<int>.
+   /// When true, an ASTTemplateKWAndArgsInfo structure and its
+   /// TemplateArguments (if any) are present.
+-  bool HasTemplateKWAndArgsInfo : 1;
++  bool HasTemplateKWAndArgsInfo;
+ 
+   /// \brief True if this member expression refers to a method that
+   /// was resolved from an overloaded set having size greater than 1.
+-  bool HadMultipleCandidates : 1;
++  bool HadMultipleCandidates;
+ 
+   size_t numTrailingObjects(OverloadToken<MemberExprNameQualifier>) const {
+     return HasQualifierOrFoundDecl ? 1 : 0;
+@@ -2688,6 +2715,11 @@
+   // Iterators
+   child_range children() { return child_range(&Op, &Op+1); }
+ };
++static_assert(llvm::AlignOf<CastExpr>::Alignment >=
++                  llvm::AlignOf<CXXBaseSpecifier *>::Alignment,
++              "Alignment is insufficient for objects appended to CastExpr");
++// (Note that the data is actually tacked onto one of its subclasses,
++// but they'll inherit alignment)
+ 
+ /// ImplicitCastExpr - Allows us to explicitly represent implicit type
+ /// conversions, which have no direct representation in the original
+@@ -4316,6 +4348,10 @@
+     return child_range(&BaseAndUpdaterExprs[0], &BaseAndUpdaterExprs[0] + 2);
+   }
+ };
++static_assert(
++    llvm::AlignOf<DesignatedInitExpr>::Alignment >=
++        llvm::AlignOf<Stmt *>::Alignment,
++    "Alignment is insufficient for objects appended to DesignatedInitExpr");
+ 
+ /// \brief Represents an implicitly-generated value initialization of
+ /// an object of a given type.
+@@ -4808,6 +4844,10 @@
+   friend TrailingObjects;
+   friend class ASTStmtReader;
+ };
++static_assert(
++    llvm::AlignOf<PseudoObjectExpr>::Alignment >=
++        llvm::AlignOf<Expr *>::Alignment,
++    "Alignment is insufficient for objects appended to PseudoObjectExpr");
+ 
+ /// AtomicExpr - Variadic atomic builtins: __atomic_exchange, __atomic_fetch_*,
+ /// __atomic_load, __atomic_store, and __atomic_compare_exchange_*, for the
+###
+--- tools/clang/include/clang/AST/ExprObjC.h	2015-12-30 20:43:19.000000000 -0800
++++ tools/clang/include/clang/AST/ExprObjC.h	2016-05-09 14:56:41.962219122 -0700
+@@ -206,6 +206,10 @@
+   friend TrailingObjects;
+   friend class ASTStmtReader;
+ };
++static_assert(
++    llvm::AlignOf<ObjCArrayLiteral>::Alignment >=
++        llvm::AlignOf<Expr *>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCArrayLiteral");
+ 
+ /// \brief An element in an Objective-C dictionary literal.
+ ///
+@@ -260,7 +264,7 @@
+                                     ObjCDictionaryLiteral_KeyValuePair,
+                                     ObjCDictionaryLiteral_ExpansionData> {
+   /// \brief The number of elements in this dictionary literal.
+-  unsigned NumElements : 31;
++  unsigned NumElements;
+ 
+   /// \brief Determine whether this dictionary literal has any pack expansions.
+   ///
+@@ -269,11 +273,12 @@
+   /// key/value pairs, which provide the locations of the ellipses (if
+   /// any) and number of elements in the expansion (if known). If
+   /// there are no pack expansions, we optimize away this storage.
+-  unsigned HasPackExpansions : 1;
++  bool HasPackExpansions;
+ 
+   SourceRange Range;
+   ObjCMethodDecl *DictWithObjectsMethod;
+ 
++public:
+   typedef ObjCDictionaryLiteral_KeyValuePair KeyValuePair;
+   typedef ObjCDictionaryLiteral_ExpansionData ExpansionData;
+ 
+@@ -347,7 +352,14 @@
+   friend class ASTStmtWriter;
+   friend TrailingObjects;
+ };
+-
++static_assert(
++    llvm::AlignOf<ObjCDictionaryLiteral>::Alignment >=
++        llvm::AlignOf<ObjCDictionaryLiteral::KeyValuePair>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCDictionaryLiteral");
++static_assert(
++    llvm::AlignOf<ObjCDictionaryLiteral::KeyValuePair>::Alignment >=
++        llvm::AlignOf<ObjCDictionaryLiteral::ExpansionData>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCDictionaryLiteral");
+ 
+ /// ObjCEncodeExpr, used for \@encode in Objective-C.  \@encode has the same
+ /// type and behavior as StringLiteral except that the string initializer is
+@@ -1377,6 +1389,17 @@
+   friend class ASTStmtReader;
+   friend class ASTStmtWriter;
+ };
++static_assert(
++    llvm::AlignOf<ObjCMessageExpr>::Alignment >=
++        llvm::AlignOf<void *>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCMessageExpr");
++static_assert(
++    llvm::AlignOf<void *>::Alignment >= llvm::AlignOf<Expr *>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCMessageExpr");
++static_assert(
++    llvm::AlignOf<Expr *>::Alignment >=
++        llvm::AlignOf<SourceLocation>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCMessageExpr");
+ 
+ /// ObjCIsaExpr - Represent X->isa and X.isa when X is an ObjC 'id' type.
+ /// (similar in spirit to MemberExpr).
+### NO PACE
+--- tools/clang/include/clang/AST/Mangle.h	2015-12-31 00:36:54.000000000 -0500
++++ tools/clang/include/clang/AST/Mangle.h	2016-05-08 23:19:20.547431117 -0400
+@@ -129,6 +129,8 @@
+ 
+   virtual void mangleDynamicInitializer(const VarDecl *D, raw_ostream &) = 0;
+ 
++  virtual void mangleGCCDynamicInitializer(const VarDecl *D, raw_ostream &) = 0;
++
+   virtual void mangleDynamicAtExitDestructor(const VarDecl *D,
+                                              raw_ostream &) = 0;
+ 
+--- tools/clang/include/clang/AST/StmtCXX.h	2015-11-23 21:34:39.000000000 -0500
++++ tools/clang/include/clang/AST/StmtCXX.h	2016-05-08 23:19:20.547431117 -0400
+@@ -118,6 +118,9 @@
+ 
+   friend class ASTStmtReader;
+ };
++static_assert(llvm::AlignOf<CXXTryStmt>::Alignment >=
++                  llvm::AlignOf<Stmt *>::Alignment,
++              "Alignment is insufficient for objects appended to CXXTryStmt");
+ 
+ /// CXXForRangeStmt - This represents C++0x [stmt.ranged]'s ranged for
+ /// statement, represented as 'for (range-declarator : range-expression)'.
+--- tools/clang/include/clang/AST/Stmt.h	2016-01-07 15:59:26.000000000 -0500
++++ tools/clang/include/clang/AST/Stmt.h	2016-05-08 23:19:20.548431142 -0400
+@@ -862,7 +862,10 @@
+     return T->getStmtClass() == AttributedStmtClass;
+   }
+ };
+-
++static_assert(
++    llvm::AlignOf<AttributedStmt>::Alignment >=
++        llvm::AlignOf<Attr *>::Alignment,
++    "Alignment is insufficient for objects appended to AttributedStmt");
+ 
+ /// IfStmt - This represents an if/then/else.
+ ///
+@@ -2190,6 +2193,13 @@
+ 
+   friend class ASTStmtReader;
+ };
++static_assert(llvm::AlignOf<CapturedStmt>::Alignment >=
++                  llvm::AlignOf<Stmt *>::Alignment,
++              "Alignment is insufficient for objects appended to CapturedStmt");
++// Code re-aligns before Capture[]
++static_assert(llvm::AlignOf<CapturedStmt>::Alignment >=
++                  llvm::AlignOf<CapturedStmt::Capture>::Alignment,
++              "Alignment is insufficient for objects appended to CapturedStmt");
+ 
+ }  // end namespace clang
+ 
+--- tools/clang/include/clang/AST/StmtObjC.h	2015-04-02 11:29:07.000000000 -0400
++++ tools/clang/include/clang/AST/StmtObjC.h	2016-05-08 23:19:20.549431166 -0400
+@@ -250,6 +250,9 @@
+                        getStmts() + 1 + NumCatchStmts + HasFinally);
+   }
+ };
++static_assert(
++    llvm::AlignOf<ObjCAtTryStmt>::Alignment >= llvm::AlignOf<Stmt *>::Alignment,
++    "Alignment is insufficient for objects appended to ObjCAtTryStmt");
+ 
+ /// \brief Represents Objective-C's \@synchronized statement.
+ ///
+###
+--- tools/clang/include/clang/AST/TemplateBase.h	2015-12-29 10:15:14.000000000 -0800
++++ tools/clang/include/clang/AST/TemplateBase.h	2016-05-09 13:37:13.627921073 -0700
+@@ -85,8 +85,8 @@
+     // We store a decomposed APSInt with the data allocated by ASTContext if
+     // BitWidth > 64. The memory may be shared between multiple
+     // TemplateArgument instances.
+-    unsigned BitWidth : 31;
+-    unsigned IsUnsigned : 1;
++    unsigned BitWidth;
++    bool IsUnsigned;
+     union {
+       uint64_t VAL;          ///< Used to store the <= 64 bits integer value.
+       const uint64_t *pVal;  ///< Used to store the >64 bits integer value.
+@@ -113,19 +113,36 @@
+     struct A Args;
+     struct TA TemplateArg;
+     struct TV TypeOrValue;
++    uint64_t Buffer[8];
+   };
+ 
+   TemplateArgument(TemplateName, bool) = delete;
+-  
++
+ public:
+   /// \brief Construct an empty, invalid template argument.
+   TemplateArgument() {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     TypeOrValue.Kind = Null;
+     TypeOrValue.V = 0;
+   }
+ 
++
++  TemplateArgument(const TemplateArgument &RHS) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
++    (void) std::memcpy(Buffer, RHS.Buffer, sizeof(Buffer));
++  }
++
++  TemplateArgument &operator=(const TemplateArgument &RHS) {
++    if (this != &RHS) {
++      (void) std::memset(Buffer, 0, sizeof(Buffer));
++      (void) std::memcpy(Buffer, RHS.Buffer, sizeof(Buffer));
++    }
++    return *this;
++  }
++
+   /// \brief Construct a template type argument.
+   TemplateArgument(QualType T, bool isNullPtr = false) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     TypeOrValue.Kind = isNullPtr ? NullPtr : Type;
+     TypeOrValue.V = reinterpret_cast<uintptr_t>(T.getAsOpaquePtr());
+   }
+@@ -135,6 +152,7 @@
+   /// template declaration.
+   TemplateArgument(ValueDecl *D, QualType QT) {
+     assert(D && "Expected decl");
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     DeclArg.Kind = Declaration;
+     DeclArg.QT = QT.getAsOpaquePtr();
+     DeclArg.D = D;
+@@ -147,6 +165,7 @@
+   /// \brief Construct an integral constant template argument with the same
+   /// value as Other but a different type.
+   TemplateArgument(const TemplateArgument &Other, QualType Type) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     Integer = Other.Integer;
+     Integer.Type = Type.getAsOpaquePtr();
+   }
+@@ -160,6 +179,7 @@
+   ///
+   /// \param Name The template name.
+   TemplateArgument(TemplateName Name) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     TemplateArg.Kind = Template;
+     TemplateArg.Name = Name.getAsVoidPointer();
+     TemplateArg.NumExpansions = 0;
+@@ -177,6 +197,7 @@
+   /// \param NumExpansions The number of expansions that will be generated by
+   /// instantiating
+   TemplateArgument(TemplateName Name, Optional<unsigned> NumExpansions) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     TemplateArg.Kind = TemplateExpansion;
+     TemplateArg.Name = Name.getAsVoidPointer();
+     if (NumExpansions)
+@@ -191,6 +212,7 @@
+   /// lists used for dependent types and for expression; it will not
+   /// occur in a non-dependent, canonical template argument list.
+   TemplateArgument(Expr *E) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     TypeOrValue.Kind = Expression;
+     TypeOrValue.V = reinterpret_cast<uintptr_t>(E);
+   }
+@@ -200,6 +222,7 @@
+   /// We assume that storage for the template arguments provided
+   /// outlives the TemplateArgument itself.
+   explicit TemplateArgument(ArrayRef<TemplateArgument> Args) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     this->Args.Kind = Pack;
+     this->Args.Args = Args.data();
+     this->Args.NumArgs = Args.size();
+@@ -358,6 +381,20 @@
+   void Profile(llvm::FoldingSetNodeID &ID, const ASTContext &Context) const;
+ };
+ 
++static_assert(llvm::AlignOf<TemplateSpecializationType>::Alignment >=
++                  llvm::AlignOf<TemplateArgument>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "TemplateSpecializationType");
++static_assert(llvm::AlignOf<TemplateArgument>::Alignment >=
++                  llvm::AlignOf<QualType>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "TemplateSpecializationType");
++
++static_assert(llvm::AlignOf<DependentTemplateSpecializationType>::Alignment >=
++                  llvm::AlignOf<TemplateArgument>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "DependentTemplateSpecializationType");
++
+ /// Location information for a TemplateArgument.
+ struct TemplateArgumentLocInfo {
+ private:
+@@ -375,25 +412,55 @@
+     struct T Template;
+     Expr *Expression;
+     TypeSourceInfo *Declarator;
++    unsigned long Buffer[4];
+   };
+ 
+ public:
+   TemplateArgumentLocInfo();
+-  
+-  TemplateArgumentLocInfo(TypeSourceInfo *TInfo) : Declarator(TInfo) {}
+-  
+-  TemplateArgumentLocInfo(Expr *E) : Expression(E) {}
+-  
++
++  TemplateArgumentLocInfo(TypeSourceInfo *TInfo) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
++    Declarator = TInfo;
++  }
++
++  TemplateArgumentLocInfo(Expr *E) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
++    Expression = E;
++  }
++
+   TemplateArgumentLocInfo(NestedNameSpecifierLoc QualifierLoc,
+                           SourceLocation TemplateNameLoc,
+-                          SourceLocation EllipsisLoc)
+-  {
++                          SourceLocation EllipsisLoc) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
+     Template.Qualifier = QualifierLoc.getNestedNameSpecifier();
+     Template.QualifierLocData = QualifierLoc.getOpaqueData();
+     Template.TemplateNameLoc = TemplateNameLoc.getRawEncoding();
+     Template.EllipsisLoc = EllipsisLoc.getRawEncoding();
+   }
+ 
++  TemplateArgumentLocInfo(const TemplateArgumentLocInfo &RHS) {
++    (void) std::memset(Buffer, 0, sizeof(Buffer));
++    Template.Qualifier = RHS.Template.Qualifier;
++    Template.QualifierLocData = RHS.Template.QualifierLocData;
++    Template.TemplateNameLoc = RHS.Template.TemplateNameLoc;
++    Template.EllipsisLoc = RHS.Template.EllipsisLoc;
++    Expression = RHS.Expression;
++    Declarator = RHS.Declarator;
++  }
++
++    TemplateArgumentLocInfo &operator=(const TemplateArgumentLocInfo &RHS) {
++      if (this != &RHS) {
++        (void) std::memset(Buffer, 0, sizeof(Buffer));
++        Template.Qualifier = RHS.Template.Qualifier;
++        Template.QualifierLocData = RHS.Template.QualifierLocData;
++        Template.TemplateNameLoc = RHS.Template.TemplateNameLoc;
++        Template.EllipsisLoc = RHS.Template.EllipsisLoc;
++        Expression = RHS.Expression;
++        Declarator = RHS.Declarator;
++      }
++      return *this;
++    }
++
+   TypeSourceInfo *getAsTypeSourceInfo() const {
+     return Declarator;
+   }
+@@ -403,14 +470,14 @@
+   }
+ 
+   NestedNameSpecifierLoc getTemplateQualifierLoc() const {
+-    return NestedNameSpecifierLoc(Template.Qualifier, 
++    return NestedNameSpecifierLoc(Template.Qualifier,
+                                   Template.QualifierLocData);
+   }
+-  
++
+   SourceLocation getTemplateNameLoc() const {
+     return SourceLocation::getFromRawEncoding(Template.TemplateNameLoc);
+   }
+-  
++
+   SourceLocation getTemplateEllipsisLoc() const {
+     return SourceLocation::getFromRawEncoding(Template.EllipsisLoc);
+   }
+@@ -593,6 +660,10 @@
+   static const ASTTemplateArgumentListInfo *
+   Create(ASTContext &C, const TemplateArgumentListInfo &List);
+ };
++static_assert(llvm::AlignOf<ASTTemplateArgumentListInfo>::Alignment >=
++                  llvm::AlignOf<TemplateArgumentLoc>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "ASTTemplateArgumentListInfo");
+ 
+ /// \brief Represents an explicit template argument list in C++, e.g.,
+ /// the "<int>" in "sort<int>".
+@@ -601,7 +672,7 @@
+ /// as such, doesn't contain the array of TemplateArgumentLoc itself,
+ /// but expects the containing object to also provide storage for
+ /// that.
+-struct LLVM_ALIGNAS(LLVM_PTR_SIZE) ASTTemplateKWAndArgsInfo {
++struct LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) ASTTemplateKWAndArgsInfo {
+   /// \brief The source location of the left angle bracket ('<').
+   SourceLocation LAngleLoc;
+ 
+@@ -630,6 +701,18 @@
+   void copyInto(const TemplateArgumentLoc *ArgArray,
+                 TemplateArgumentListInfo &List) const;
+ };
++static_assert(llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment >=
++                  llvm::AlignOf<TemplateArgumentLoc>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "ASTTemplateKWAndArgsInfo");
++static_assert(llvm::AlignOf<ASTTemplateKWAndArgsInfo>::Alignment >=
++                  llvm::AlignOf<SourceLocation>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "ASTTemplateKWAndArgsInfo");
++static_assert(llvm::AlignOf<TemplateArgumentLoc>::Alignment >=
++                  llvm::AlignOf<SourceLocation>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "ASTTemplateKWAndArgsInfo");
+ 
+ const DiagnosticBuilder &operator<<(const DiagnosticBuilder &DB,
+                                     const TemplateArgument &Arg);
+###
+--- tools/clang/include/clang/AST/TemplateName.h	2015-12-30 01:21:02.000000000 -0500
++++ tools/clang/include/clang/AST/TemplateName.h	2016-05-08 23:19:20.550431191 -0400
+@@ -108,6 +108,10 @@
+   iterator begin() const { return getStorage(); }
+   iterator end() const { return getStorage() + size(); }
+ };
++static_assert(llvm::AlignOf<OverloadedTemplateStorage>::Alignment >=
++                  llvm::AlignOf<NamedDecl *>::Alignment,
++              "Alignment is insufficient for objects appended to "
++              "OverloadedTemplateStorage");
+ 
+ /// \brief A structure for storing an already-substituted template template
+ /// parameter pack.
+--- tools/clang/include/clang/AST/Type.h	2016-01-09 07:53:17.000000000 -0500
++++ tools/clang/include/clang/AST/Type.h	2016-05-08 23:19:20.551431215 -0400
+@@ -3324,6 +3324,30 @@
+                       const ExtProtoInfo &EPI, const ASTContext &Context);
+ };
+ 
++static_assert(
++  llvm::AlignOf<FunctionProtoType>::Alignment >=
++  llvm::AlignOf<QualType>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++// After QualType[], there can be one of 4 options: more QualType, Expr*, 2x
++// FunctionDecl*, FunctionDecl*
++static_assert(
++  llvm::AlignOf<QualType>::Alignment >= llvm::AlignOf<Expr *>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++static_assert(
++  llvm::AlignOf<QualType>::Alignment >=
++  llvm::AlignOf<FunctionDecl *>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++// And then, after any of those options, comes bool[]
++static_assert(
++  llvm::AlignOf<QualType>::Alignment >= llvm::AlignOf<bool>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++static_assert(
++  llvm::AlignOf<Expr *>::Alignment >= llvm::AlignOf<bool>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++static_assert(
++  llvm::AlignOf<FunctionDecl *>::Alignment >= llvm::AlignOf<bool>::Alignment,
++  "Alignment is insufficient for objects appended to FunctionProtoType");
++
+ /// \brief Represents the dependent type named by a dependently-scoped
+ /// typename using declaration, e.g.
+ ///   using typename Base<T>::foo;
+@@ -3985,7 +4009,7 @@
+ /// TemplateArguments, followed by a QualType representing the
+ /// non-canonical aliased type when the template is a type alias
+ /// template.
+-class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) TemplateSpecializationType
++class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) TemplateSpecializationType
+     : public Type,
+       public llvm::FoldingSetNode {
+   /// The name of the template being specialized.  This is
+@@ -3999,10 +4023,10 @@
+ 
+   /// The number of template arguments named in this class template
+   /// specialization.
+-  unsigned NumArgs : 31;
++  unsigned NumArgs;
+ 
+   /// Whether this template specialization type is a substituted type alias.
+-  bool TypeAlias : 1;
++  bool TypeAlias;
+ 
+   TemplateSpecializationType(TemplateName T,
+                              const TemplateArgument *Args,
+@@ -4108,6 +4132,14 @@
+   }
+ };
+ 
++// static_assert(llvm::AlignOf<TemplateSpecializationType>::Alignment >=
++// llvm::AlignOf<TemplateArgument>::Alignment, "Alignment is insufficient for
++// objects appended to TemplateSpecializationType");
++// static_assert(llvm::AlignOf<TemplateArgument>::Alignment >=
++// llvm::AlignOf<QualType>::Alignment, "Alignment is insufficient for objects
++// appended to TemplateSpecializationType");
++// ^ Moved after class TemplateArgument, as it is is forward declared here.
++
+ /// The injected class name of a C++ class template or class
+ /// template partial specialization.  Used to record that a type was
+ /// spelled with a bare identifier rather than as a template-id; the
+@@ -4446,6 +4478,11 @@
+   }
+ };
+ 
++// static_assert(llvm::AlignOf<DependentTemplateSpecializationType>::Alignment
++// >= llvm::AlignOf<TemplateArgument>::Alignment, "Alignment is insufficient for
++// objects appended to DependentTemplateSpecializationType");
++// ^ Moved after class TemplateArgument, as it is is forward declared here.
++
+ /// \brief Represents a pack expansion of types.
+ ///
+ /// Pack expansions are part of C++11 variadic templates. A pack
+@@ -4742,6 +4779,11 @@
+                       bool isKindOf);
+ };
+ 
++static_assert(
++  llvm::AlignOf<ObjCObjectTypeImpl>::Alignment >=
++  llvm::AlignOf<ObjCProtocolDecl *>::Alignment,
++  "Alignment is insufficient for objects appended to ObjCObjectTypeImpl");
++
+ inline QualType *ObjCObjectType::getTypeArgStorage() {
+   return reinterpret_cast<QualType *>(static_cast<ObjCObjectTypeImpl*>(this)+1);
+ }
+--- tools/clang/lib/AST/DeclBase.cpp	2016-01-06 17:49:11.000000000 -0500
++++ tools/clang/lib/AST/DeclBase.cpp	2016-05-08 23:19:20.556431336 -0400
+@@ -46,9 +46,9 @@
+ }
+ 
+ #define DECL(DERIVED, BASE)                                                    \
+-  static_assert(Decl::DeclObjAlignment >=                                      \
++  static_assert(llvm::AlignOf<uint64_t>::Alignment >=                          \
+                     llvm::AlignOf<DERIVED##Decl>::Alignment,                   \
+-                "Alignment sufficient after objects prepended to " #DERIVED);
++                "Alignment is insufficient for objects prepended to " #DERIVED);
+ #define ABSTRACT_DECL(DECL)
+ #include "clang/AST/DeclNodes.inc"
+ 
+@@ -56,12 +56,15 @@
+                          unsigned ID, std::size_t Extra) {
+   // Allocate an extra 8 bytes worth of storage, which ensures that the
+   // resulting pointer will still be 8-byte aligned.
+-  static_assert(sizeof(unsigned) * 2 >= DeclObjAlignment,
++  static_assert(sizeof(unsigned) * 2 >= llvm::AlignOf<uint64_t>::Alignment,
+                 "Decl won't be misaligned");
+-  void *Start = Context.Allocate(Size + Extra + 8);
+-  void *Result = (char*)Start + 8;
++  void *Start = Context.Allocate(Size + Extra + 8, 8U);
++  void *Result = reinterpret_cast<void*>(
++    reinterpret_cast<unsigned char*>(
++      reinterpret_cast<unsigned char*>(Start) + 8));
+ 
+-  unsigned *PrefixPtr = (unsigned *)Result - 2;
++  unsigned *PrefixPtr =
++    reinterpret_cast<unsigned*>(reinterpret_cast<unsigned*>(Result) - 2);
+ 
+   // Zero out the first 4 bytes; this is used to store the owning module ID.
+   PrefixPtr[0] = 0;
+--- tools/clang/lib/AST/Decl.cpp	2016-01-12 04:01:25.000000000 -0500
++++ tools/clang/lib/AST/Decl.cpp	2016-05-08 23:19:20.557431361 -0400
+@@ -3240,8 +3240,8 @@
+ 
+ DependentFunctionTemplateSpecializationInfo *
+ DependentFunctionTemplateSpecializationInfo::Create(
+-    ASTContext &Context, const UnresolvedSetImpl &Ts,
+-    const TemplateArgumentListInfo &TArgs) {
++  ASTContext &Context, const UnresolvedSetImpl &Ts,
++  const TemplateArgumentListInfo &TArgs) {
+   void *Buffer = Context.Allocate(
+       totalSizeToAlloc<TemplateArgumentLoc, FunctionTemplateDecl *>(
+           TArgs.size(), Ts.size()));
+diff: tools/clang/lib/AST/Expr.cpp: No such file or directory
+--- tools/clang/lib/AST/ExprCXX.cpp	2016-01-06 17:34:54.000000000 -0500
++++ tools/clang/lib/AST/ExprCXX.cpp	2016-05-08 23:19:20.558431385 -0400
+@@ -1083,7 +1083,7 @@
+     *const_cast<clang::Stmt **>(&getStoredStmts()[NumCaptures]) =
+         getCallOperator()->getBody();
+ 
+-  return static_cast<CompoundStmt *>(getStoredStmts()[NumCaptures]);
++  return reinterpret_cast<CompoundStmt *>(getStoredStmts()[NumCaptures]);
+ }
+ 
+ bool LambdaExpr::isMutable() const {
+--- tools/clang/lib/AST/ItaniumMangle.cpp	2016-01-09 07:53:17.000000000 -0500
++++ tools/clang/lib/AST/ItaniumMangle.cpp	2016-05-08 23:19:20.559431409 -0400
+@@ -162,6 +162,8 @@
+   void mangleCXXDtorComdat(const CXXDestructorDecl *D, raw_ostream &) override;
+   void mangleStaticGuardVariable(const VarDecl *D, raw_ostream &) override;
+   void mangleDynamicInitializer(const VarDecl *D, raw_ostream &Out) override;
++  void mangleGCCDynamicInitializer(const VarDecl *D, raw_ostream &Out) override;
++
+   void mangleDynamicAtExitDestructor(const VarDecl *D,
+                                      raw_ostream &Out) override;
+   void mangleSEHFilterExpression(const NamedDecl *EnclosingDecl,
+@@ -4133,6 +4135,17 @@
+   Out << "__cxx_global_var_init";
+ }
+ 
++void ItaniumMangleContextImpl::mangleGCCDynamicInitializer(const VarDecl *MD,
++                                                           raw_ostream &Out) {
++  static unsigned SEQ = 0UL;
++
++  // Mangle GCC's __static_initialiation_and_destruction_<X>
++  // .init_array function.
++  Out << "_Z41" << "__static_initialization_and_destruction_"
++    << SEQ << "ii";
++  ++SEQ;
++}
++
+ void ItaniumMangleContextImpl::mangleDynamicAtExitDestructor(const VarDecl *D,
+                                                              raw_ostream &Out) {
+   // Prefix the mangling of D with __dtor_.
+--- tools/clang/lib/AST/MicrosoftMangle.cpp	2016-01-09 07:53:17.000000000 -0500
++++ tools/clang/lib/AST/MicrosoftMangle.cpp	2016-05-08 23:19:20.560431434 -0400
+@@ -152,6 +152,8 @@
+   void mangleThreadSafeStaticGuardVariable(const VarDecl *D, unsigned GuardNum,
+                                            raw_ostream &Out) override;
+   void mangleDynamicInitializer(const VarDecl *D, raw_ostream &Out) override;
++  void mangleGCCDynamicInitializer(const VarDecl *D, raw_ostream &Out) override;
++
+   void mangleDynamicAtExitDestructor(const VarDecl *D,
+                                      raw_ostream &Out) override;
+   void mangleSEHFilterExpression(const NamedDecl *EnclosingDecl,
+@@ -2857,6 +2859,12 @@
+ }
+ 
+ void
++MicrosoftMangleContextImpl::mangleGCCDynamicInitializer(const VarDecl *D,
++                                                        raw_ostream &Out) {
++  this->mangleDynamicInitializer(D, Out);
++}
++
++void
+ MicrosoftMangleContextImpl::mangleDynamicAtExitDestructor(const VarDecl *D,
+                                                           raw_ostream &Out) {
+   // <destructor-name> ::= ?__F <name> YAXXZ
+--- tools/clang/lib/AST/NestedNameSpecifier.cpp	2015-12-27 09:34:22.000000000 -0500
++++ tools/clang/lib/AST/NestedNameSpecifier.cpp	2016-05-08 23:19:20.560431434 -0400
+@@ -445,22 +445,41 @@
+ 
+     if (BufferSize + (End - Start) > BufferCapacity) {
+       // Reallocate the buffer.
+-      unsigned NewCapacity = std::max(
+-          (unsigned)(BufferCapacity ? BufferCapacity * 2 : sizeof(void *) * 2),
+-          (unsigned)(BufferSize + (End - Start)));
+-      char *NewBuffer = static_cast<char *>(malloc(NewCapacity));
+-      if (BufferCapacity) {
+-        memcpy(NewBuffer, Buffer, BufferSize);
+-        free(Buffer);
+-      }
++      unsigned NewCapacity =
++        std::max((unsigned)(BufferCapacity ? BufferCapacity * 2
++            : sizeof(void*) * 2), (unsigned)(BufferSize + (End - Start)));
++
++      NewCapacity =
++        llvm::RoundUpToAlignment(NewCapacity, llvm::alignOf<uint64_t>());
++      unsigned Alignment = ((NewCapacity < 5) ? 4 : 8);
++      if (NewCapacity < Alignment)
++        NewCapacity = Alignment;
++
++      char *NewBuffer;
++#if defined(_MSC_VER)
++      NewBuffer = _aligned_malloc((size_t) NewCapacity, (size_t) Alignment);
++      assert(NewBuffer && "_aligned_malloc failed!");
++#else
++      int R = posix_memalign((void**) &NewBuffer, Alignment, NewCapacity);
++
++      assert((R == 0) && "posix_memalign failed!");
++      assert(NewBuffer && "Memory allocation failed!");
++#endif
++
++      if ((Buffer != 0) && (BufferSize > 0))
++        (void) std::memcpy(NewBuffer, Buffer, BufferSize);
++
++      if ((Buffer != 0) && (BufferSize > 0))
++        std::free(static_cast<void*>(Buffer));
++
+       Buffer = NewBuffer;
+       BufferCapacity = NewCapacity;
+     }
+-    
+-    memcpy(Buffer + BufferSize, Start, End - Start);
++
++    (void) std::memcpy(Buffer + BufferSize, Start, End - Start);
+     BufferSize += End-Start;
+   }
+-  
++
+   /// \brief Save a source location to the given buffer.
+   void SaveSourceLocation(SourceLocation Loc, char *&Buffer,
+                           unsigned &BufferSize, unsigned &BufferCapacity) {
+@@ -469,7 +488,7 @@
+            reinterpret_cast<char *>(&Raw) + sizeof(unsigned),
+            Buffer, BufferSize, BufferCapacity);
+   }
+-  
++
+   /// \brief Save a pointer to the given buffer.
+   void SavePointer(void *Ptr, char *&Buffer, unsigned &BufferSize,
+                    unsigned &BufferCapacity) {
+@@ -480,13 +499,13 @@
+ }
+ 
+ NestedNameSpecifierLocBuilder::
+-NestedNameSpecifierLocBuilder(const NestedNameSpecifierLocBuilder &Other) 
++NestedNameSpecifierLocBuilder(const NestedNameSpecifierLocBuilder &Other)
+   : Representation(Other.Representation), Buffer(nullptr),
+     BufferSize(0), BufferCapacity(0)
+ {
+   if (!Other.Buffer)
+     return;
+-  
++
+   if (Other.BufferCapacity == 0) {
+     // Shallow copy is okay.
+     Buffer = Other.Buffer;
+diff: tools/clang/lib/AST/Stmt.cpp: No such file or directory
+--- tools/clang/lib/AST/TemplateBase.cpp	2015-12-29 13:15:14.000000000 -0500
++++ tools/clang/lib/AST/TemplateBase.cpp	2016-05-08 23:19:20.561431458 -0400
+@@ -71,6 +71,7 @@
+ 
+ TemplateArgument::TemplateArgument(ASTContext &Ctx, const llvm::APSInt &Value,
+                                    QualType Type) {
++  (void) std::memset(Buffer, 0, sizeof(Buffer));
+   Integer.Kind = Integral;
+   // Copy the APSInt value into our decomposed form.
+   Integer.BitWidth = Value.getBitWidth();
+@@ -78,9 +79,9 @@
+   // If the value is large, we have to get additional memory from the ASTContext
+   unsigned NumWords = Value.getNumWords();
+   if (NumWords > 1) {
+-    void *Mem = Ctx.Allocate(NumWords * sizeof(uint64_t));
++    void *Mem = Ctx.Allocate(NumWords * sizeof(uint64_t), alignof(uint64_t));
+     std::memcpy(Mem, Value.getRawData(), NumWords * sizeof(uint64_t));
+-    Integer.pVal = static_cast<uint64_t *>(Mem);
++    Integer.pVal = reinterpret_cast<uint64_t *>(Mem);
+   } else {
+     Integer.VAL = Value.getZExtValue();
+   }
+@@ -420,7 +421,9 @@
+ //===----------------------------------------------------------------------===//
+ 
+ TemplateArgumentLocInfo::TemplateArgumentLocInfo() {
+-  memset((void*)this, 0, sizeof(TemplateArgumentLocInfo));
++  (void) std::memset(Buffer, 0, sizeof(Buffer));
++  Expression = nullptr;
++  Declarator = nullptr;
+ }
+ 
+ SourceRange TemplateArgumentLoc::getSourceRange() const {
+--- tools/clang/lib/AST/Type.cpp	2016-01-09 07:53:17.000000000 -0500
++++ tools/clang/lib/AST/Type.cpp	2016-05-08 23:19:20.562431482 -0400
+@@ -2466,7 +2466,10 @@
+     if (Args[I].containsUnexpandedParameterPack())
+       setContainsUnexpandedParameterPack();
+ 
+-    new (&getArgBuffer()[I]) TemplateArgument(Args[I]);
++    TemplateArgument *TA = getArgBuffer();
++    TA = &(TA[I]);
++    TA = new (TA) TemplateArgument();
++    *TA = Args[I];
+   }
+ }
+ 

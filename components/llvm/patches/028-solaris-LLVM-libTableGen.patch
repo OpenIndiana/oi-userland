@@ -1,0 +1,71 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- lib/TableGen/Main.cpp	2015-05-26 02:48:46.000000000 -0400
++++ lib/TableGen/Main.cpp	2016-05-08 23:19:20.537430874 -0400
+@@ -29,21 +29,39 @@
+ using namespace llvm;
+ 
+ static cl::opt<std::string>
+-OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"),
+-               cl::init("-"));
++OutputFilename(cl::Prefix, "o",
++               cl::desc("Output filename"),
++               cl::value_desc("filename"),
++               cl::NotHidden,
++               cl::Optional,
++               cl::init("-"),
++               cl::ValueRequired);
+ 
+ static cl::opt<std::string>
+-DependFilename("d",
++DependFilename(cl::Prefix, "d",
+                cl::desc("Dependency filename"),
+                cl::value_desc("filename"),
+-               cl::init(""));
++               cl::NotHidden,
++               cl::Optional,
++               cl::init(""),
++               cl::ValueRequired);
+ 
+ static cl::opt<std::string>
+-InputFilename(cl::Positional, cl::desc("<input file>"), cl::init("-"));
++InputFilename(cl::Positional, "<input file>",
++              cl::desc("<input file>"),
++              cl::value_desc("Input filename"),
++              cl::NotHidden,
++              cl::Optional,
++              cl::init("-"),
++              cl::ValuePositionalNoArgs);
+ 
+ static cl::list<std::string>
+-IncludeDirs("I", cl::desc("Directory of include files"),
+-            cl::value_desc("directory"), cl::Prefix);
++IncludeDirs(cl::Prefix, "I",
++            cl::desc("Directory of include files"),
++            cl::value_desc("directory"),
++            cl::NotHidden,
++            cl::ZeroOrMore,
++            cl::ValueRequired);
+ 
+ /// \brief Create a dependency file for `-d` option.
+ ///
+@@ -74,8 +92,9 @@
+   RecordKeeper Records;
+ 
+   // Parse the input file.
++  llvm::Twine TFN(InputFilename);
+   ErrorOr<std::unique_ptr<MemoryBuffer>> FileOrErr =
+-      MemoryBuffer::getFileOrSTDIN(InputFilename);
++      MemoryBuffer::getFileOrSTDIN(TFN);
+   if (std::error_code EC = FileOrErr.getError()) {
+     errs() << "Could not open input file '" << InputFilename
+            << "': " << EC.message() << "\n";
+@@ -87,7 +106,7 @@
+ 
+   // Record the location of the include directory so that the lexer can find
+   // it later.
+-  SrcMgr.setIncludeDirs(IncludeDirs);
++  SrcMgr.setIncludeDirs(IncludeDirs.getStorage());
+ 
+   TGParser Parser(SrcMgr, Records);
+ 

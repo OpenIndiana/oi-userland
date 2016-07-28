@@ -1,0 +1,33 @@
+# 24314638 LLVM CommandLine subsystem is busted
+# 3.9.X for upstream.
+--- tools/llc/llc.cpp	2015-12-07 14:21:39.000000000 -0500
++++ tools/llc/llc.cpp	2016-05-08 23:19:20.578431871 -0400
+@@ -54,13 +54,14 @@
+ // and back-end code generation options are specified with the target machine.
+ //
+ static cl::opt<std::string>
+-InputFilename(cl::Positional, cl::desc("<input bitcode>"), cl::init("-"));
++InputFilename(cl::Positional, cl::desc("<input bitcode>"),
++              cl::init(std::string("-")));
+ 
+ static cl::opt<std::string>
+ OutputFilename("o", cl::desc("Output filename"), cl::value_desc("filename"));
+ 
+ static cl::opt<unsigned>
+-TimeCompilations("time-compilations", cl::Hidden, cl::init(1u),
++TimeCompilations("time-compilations", cl::Hidden, cl::init(1U),
+                  cl::value_desc("N"),
+                  cl::desc("Repeat compilation N times for timing"));
+ 
+@@ -74,8 +75,9 @@
+          cl::desc("Optimization level. [-O0, -O1, -O2, or -O3] "
+                   "(default = '-O2')"),
+          cl::Prefix,
+-         cl::ZeroOrMore,
+-         cl::init(' '));
++         cl::Optional,
++         cl::ValueRequired,
++         cl::init('2'));
+ 
+ static cl::opt<std::string>
+ TargetTriple("mtriple", cl::desc("Override target triple for module"));

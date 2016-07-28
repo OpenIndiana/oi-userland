@@ -1,0 +1,17 @@
+# Miscellaneous fixes.
+# Not for upstream, because we only build this in DEBUG mode
+# and we neve package it.
+--- examples/ExceptionDemo/ExceptionDemo.cpp	2015-09-18 14:15:45.000000000 -0700
++++ examples/ExceptionDemo/ExceptionDemo.cpp	2016-05-11 18:59:34.443949997 -0700
+@@ -233,8 +233,9 @@
+        i != theArgNames.size();
+        ++argIndex, ++i) {
+ 
+-    argIndex->setName(theArgNames[i]);
+-    namedValues[theArgNames[i]] = argIndex;
++    std::string Name = theArgNames[i];
++    argIndex->setName(Name);
++    namedValues[Name] = &*argIndex;
+   }
+ 
+   return(ret);

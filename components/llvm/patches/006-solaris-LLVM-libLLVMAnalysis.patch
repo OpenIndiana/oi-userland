@@ -1,0 +1,118 @@
+# 22902339 memory corruption caused by undefined behavior in LLVM IR Module
+# Miscellaneous cleanup fixes.
+# Replace SmallVectorImpl | SmallVector with std::vector.
+# 3.9.X upstream.
+--- include/llvm/Analysis/BlockFrequencyInfoImpl.h	2015-12-18 12:53:24.000000000 -0900
++++ include/llvm/Analysis/BlockFrequencyInfoImpl.h	2016-07-07 10:08:31.067332185 -0800
+@@ -249,7 +249,9 @@
+     LoopData *Loop; ///< The loop this block is inside.
+     BlockMass Mass; ///< Mass distribution from the entry block.
+ 
+-    WorkingData(const BlockNode &Node) : Node(Node), Loop(nullptr) {}
++    WorkingData() : Node(), Loop(nullptr), Mass() { }
++    WorkingData(const BlockNode &Node) : Node(Node), Loop(nullptr), Mass() { }
++    ~WorkingData() { }
+ 
+     bool isLoopHeader() const { return Loop && Loop->isHeader(Node); }
+     bool isDoubleLoopHeader() const {
+@@ -332,9 +334,10 @@
+     DistType Type;
+     BlockNode TargetNode;
+     uint64_t Amount;
+-    Weight() : Type(Local), Amount(0) {}
++    Weight() : Type(Local), TargetNode(), Amount(0ULL) { }
+     Weight(DistType Type, BlockNode TargetNode, uint64_t Amount)
+-        : Type(Type), TargetNode(TargetNode), Amount(Amount) {}
++    : Type(Type), TargetNode(TargetNode), Amount(Amount) { }
++    ~Weight() { }
+   };
+ 
+   /// \brief Distribution of unscaled probability weight.
+@@ -985,7 +988,9 @@
+ 
+ template <class BT> void BlockFrequencyInfoImpl<BT>::initializeRPOT() {
+   const BlockT *Entry = &F->front();
+-  RPOT.reserve(F->size());
++  if (F->size())
++    RPOT.reserve(F->size());
++
+   std::copy(po_begin(Entry), po_end(Entry), std::back_inserter(RPOT));
+   std::reverse(RPOT.begin(), RPOT.end());
+ 
+@@ -999,7 +1004,9 @@
+     Nodes[*I] = Node;
+   }
+ 
+-  Working.reserve(RPOT.size());
++  if (RPOT.size())
++    Working.reserve(RPOT.size());
++
+   for (size_t Index = 0; Index < RPOT.size(); ++Index)
+     Working.emplace_back(Index);
+   Freqs.resize(RPOT.size());
+
+###
+--- lib/Analysis/LazyCallGraph.cpp	2015-12-27 20:54:20.000000000 -0500
++++ lib/Analysis/LazyCallGraph.cpp	2016-05-28 13:36:41.670887743 -0400
+@@ -234,7 +234,7 @@
+   ConnectedSCCs.insert(&CallerC);
+ 
+   // We build up a DFS stack of the parents chains.
+-  SmallVector<std::pair<SCC *, SCC::parent_iterator>, 8> DFSSCCs;
++  std::vector<std::pair<SCC *, SCC::parent_iterator> > DFSSCCs;
+   SmallPtrSet<SCC *, 8> VisitedSCCs;
+   int ConnectedDepth = -1;
+   SCC *C = this;
+@@ -265,7 +265,7 @@
+     // If we've found a connection anywhere below this point on the stack (and
+     // thus up the parent graph from the caller), the current node needs to be
+     // added to the connected set now that we've processed all of its parents.
+-    if ((int)DFSSCCs.size() == ConnectedDepth) {
++    if (static_cast<int>(DFSSCCs.size()) == ConnectedDepth) {
+       --ConnectedDepth; // We're finished with this connection.
+       ConnectedSCCs.insert(C);
+     } else {
+@@ -279,8 +279,9 @@
+       break; // We've walked all the parents of the caller transitively.
+ 
+     // Pop off the prior node and position to unwind the depth first recursion.
+-    std::tie(C, I) = DFSSCCs.pop_back_val();
++    std::tie(C, I) = DFSSCCs.back();
+     E = C->parent_end();
++    DFSSCCs.pop_back();
+   }
+ 
+   // Now that we have identified all of the SCCs which need to be merged into
+###
+--- lib/Analysis/CFG.cpp	2015-11-20 15:02:06.000000000 -0800
++++ lib/Analysis/CFG.cpp	2016-05-24 19:44:24.894893025 -0700
+@@ -19,6 +19,8 @@
+ 
+ using namespace llvm;
+ 
++#include <vector>
++
+ /// FindFunctionBackedges - Analyze the specified function to find all of the
+ /// loop backedges in the function and return them.  This is a relatively cheap
+ /// (compared to computing dominators and loop info) analysis.
+@@ -31,7 +33,7 @@
+     return;
+ 
+   SmallPtrSet<const BasicBlock*, 8> Visited;
+-  SmallVector<std::pair<const BasicBlock*, succ_const_iterator>, 8> VisitStack;
++  std::vector<std::pair<const BasicBlock*, succ_const_iterator> > VisitStack;
+   SmallPtrSet<const BasicBlock*, 8> InStack;
+ 
+   Visited.insert(BB);
+@@ -60,7 +62,10 @@
+       VisitStack.push_back(std::make_pair(BB, succ_begin(BB)));
+     } else {
+       // Go up one level.
+-      InStack.erase(VisitStack.pop_back_val().first);
++      std::pair<const BasicBlock*, succ_const_iterator> &Back =
++        VisitStack.back();
++      InStack.erase(Back.first);
++      VisitStack.pop_back();
+     }
+   } while (!VisitStack.empty());
+ }

@@ -1,0 +1,308 @@
+# 22777179 implement -mtune= | -march= | -mcpu= in clang SPARC
+# 22778085 LLVM is using %icc when it should be using %xcc
+# 22778089 the SPARCV9 IS implementation is incomplete
+# 22778098 LLVM should emit proc identifiers in SPARC assembler (capabilities)
+# 3.9.X for upstream.
+--- lib/Target/Sparc/Sparc.td	2015-03-27 20:03:51.000000000 -0800
++++ lib/Target/Sparc/Sparc.td	2016-06-30 08:30:11.896274715 -0800
+@@ -35,13 +35,15 @@
+ def FeatureVIS3
+   : SubtargetFeature<"vis3", "IsVIS3", "true",
+                      "Enable Visual Instruction Set extensions III">;
+-
+ def FeatureHardQuad
+   : SubtargetFeature<"hard-quad-float", "HasHardQuad", "true",
+                      "Enable quad-word floating point instructions">;
+-
+-def UsePopc : SubtargetFeature<"popc", "UsePopc", "true",
+-                               "Use the popc (population count) instruction">;
++def UsePopc
++  : SubtargetFeature<"popc", "UsePopc", "true",
++                     "Use the popc (population count) instruction">;
++def UseHWCap
++  : SubtargetFeature<"hwcap", "UseHWCap", "true",
++                      "Use SPARC Hardware Capabiliies">;
+ 
+ //===----------------------------------------------------------------------===//
+ // Register File, Calling Conv, Instruction Descriptions
+@@ -74,10 +76,46 @@
+ def : Proc<"sparclite86x",    []>;
+ def : Proc<"sparclet",        []>;
+ def : Proc<"tsc701",          []>;
+-def : Proc<"v9",              [FeatureV9]>;
+-def : Proc<"ultrasparc",      [FeatureV9, FeatureV8Deprecated, FeatureVIS]>;
++def : Proc<"generic32",       [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2]>;
++def : Proc<"generic64",       [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2]>;
++def : Proc<"v8plus",          [FeatureV9, FeatureVIS]>;
++def : Proc<"v8plusa",         [FeatureV9, FeatureVIS, FeatureV8Deprecated,
++                               FeatureVIS2]>;
++def : Proc<"v8plusb",         [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v8plusc",         [FeatureV9, FeatureV8Deprecated, FeatureVIS,
++                               FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v8plusd",         [FeatureV9, FeatureV8Deprecated, FeatureVIS,
++                               FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v8pluse",         [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v8plusm",         [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v8plusv",         [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9",              [FeatureV9, FeatureV8Deprecated, FeatureVIS]>;
++def : Proc<"v9a",             [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2]>;
++def : Proc<"v9b",             [FeatureV9, FeatureVIS, FeatureV8Deprecated,
++                               FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9c",             [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9d",             [FeatureV9, FeatureV8Deprecated,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9e",             [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9m",             [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"v9v",             [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"ultrasparc",      [FeatureV9, FeatureVIS]>;
++def : Proc<"ultrasparc2",     [FeatureV9, FeatureV8Deprecated, FeatureVIS]>;
+ def : Proc<"ultrasparc3",     [FeatureV9, FeatureV8Deprecated, FeatureVIS,
+                                FeatureVIS2]>;
++def : Proc<"ultrasparc4",     [FeatureV9, FeatureV8Deprecated, FeatureVIS,
++                               FeatureVIS2, FeatureVIS3]>;
+ def : Proc<"niagara",         [FeatureV9, FeatureV8Deprecated, FeatureVIS,
+                                FeatureVIS2]>;
+ def : Proc<"niagara2",        [FeatureV9, FeatureV8Deprecated, UsePopc,
+@@ -86,7 +124,10 @@
+                                FeatureVIS, FeatureVIS2]>;
+ def : Proc<"niagara4",        [FeatureV9, FeatureV8Deprecated, UsePopc,
+                                FeatureVIS, FeatureVIS2, FeatureVIS3]>;
+-
++def : Proc<"sparc4",          [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
++def : Proc<"sparc5",          [FeatureV9, FeatureV8Deprecated, UsePopc,
++                               FeatureVIS, FeatureVIS2, FeatureVIS3]>;
+ 
+ //===----------------------------------------------------------------------===//
+ // Declare the target which we are implementing
+###
+--- lib/Target/Sparc/SparcRegisterInfo.td	2015-10-04 01:11:22.000000000 -0800
++++ lib/Target/Sparc/SparcRegisterInfo.td	2016-06-29 17:37:09.214126550 -0800
+@@ -56,7 +56,9 @@
+ }
+ 
+ // Control Registers
+-def ICC : SparcCtrlReg<0, "ICC">; // This represents icc and xcc in 64-bit code.
++def ICC : SparcCtrlReg<0, "ICC">; // This represents icc in 32-bit code.
++def XCC : SparcCtrlReg<0, "XCC">; // This represents xcc in 64-bit code.
++
+ foreach I = 0-3 in
+   def FCC#I : SparcCtrlReg<I, "FCC"#I>;
+ 
+@@ -64,6 +66,7 @@
+ 
+ // Y register
+ def Y : SparcCtrlReg<0, "Y">, DwarfRegNum<[64]>;
++
+ // Ancillary state registers (implementation defined)
+ def ASR1 : SparcCtrlReg<1, "ASR1">;
+ def ASR2 : SparcCtrlReg<2, "ASR2">;
+###
+--- lib/Target/Sparc/SparcInstrInfo.td	2015-12-11 10:20:16.000000000 -0900
++++ lib/Target/Sparc/SparcInstrInfo.td	2016-07-02 19:46:36.045655245 -0800
+@@ -348,7 +348,7 @@
+ }
+ 
+ // GETPCX for PIC
+-let Defs = [O7] in {
++let Defs = [O7], hasSideEffects = 1 in {
+   def GETPCX : Pseudo<(outs getPCX:$getpcseq), (ins), "$getpcseq", [] >;
+ }
+ 
+###
+--- lib/Target/Sparc/SparcSubtarget.cpp	2015-09-15 08:17:27.000000000 -0800
++++ lib/Target/Sparc/SparcSubtarget.cpp	2016-06-30 08:32:19.524226970 -0800
+@@ -33,11 +33,12 @@
+   IsVIS = false;
+   HasHardQuad = false;
+   UsePopc = false;
++  UseHWCap = false;
+ 
+   // Determine default and user specified characteristics
+   std::string CPUName = CPU;
+   if (CPUName.empty())
+-    CPUName = (Is64Bit) ? "v9" : "v8";
++    CPUName = (Is64Bit) ? "v9a" : "v8plusa";
+ 
+   // Parse features string.
+   ParseSubtargetFeatures(CPUName, FS);
+###
+--- lib/Target/Sparc/SparcSubtarget.h	2015-09-10 13:49:06.000000000 -0800
++++ lib/Target/Sparc/SparcSubtarget.h	2016-06-30 08:31:39.266062160 -0800
+@@ -37,6 +37,7 @@
+   bool Is64Bit;
+   bool HasHardQuad;
+   bool UsePopc;
++  bool UseHWCap;
+   SparcInstrInfo InstrInfo;
+   SparcTargetLowering TLInfo;
+   TargetSelectionDAGInfo TSInfo;
+@@ -69,6 +70,7 @@
+   bool useDeprecatedV8Instructions() const { return V8DeprecatedInsts; }
+   bool hasHardQuad() const { return HasHardQuad; }
+   bool usePopc() const { return UsePopc; }
++  bool useHWCap() const { return UseHWCap; }
+ 
+   /// ParseSubtargetFeatures - Parses features string setting specified
+   /// subtarget options.  Definition of function is auto generated by tblgen.
+###
+--- lib/Target/Sparc/SparcISelLowering.cpp	2015-12-15 14:07:16.000000000 -0900
++++ lib/Target/Sparc/SparcISelLowering.cpp	2016-07-02 17:42:55.774845330 -0800
+@@ -3202,10 +3202,15 @@
+ SparcTargetLowering::getConstraintType(StringRef Constraint) const {
+   if (Constraint.size() == 1) {
+     switch (Constraint[0]) {
+-    default:  break;
+-    case 'r': return C_RegisterClass;
++    default:
++      break;
++    case 'f':
++    case 'r':
++      return C_RegisterClass;
++      break;
+     case 'I': // SIMM13
+       return C_Other;
++      break;
+     }
+   }
+ 
+@@ -3277,11 +3282,22 @@
+                                                   MVT VT) const {
+   if (Constraint.size() == 1) {
+     switch (Constraint[0]) {
++    case 'f':
++      if (VT == MVT::f32)
++        return std::make_pair(0U, &SP::FPRegsRegClass);
++      else if (VT == MVT::f64)
++        return std::make_pair(0U, &SP::DFPRegsRegClass);
++      else if (VT == MVT::f128)
++        return std::make_pair(0U, &SP::QFPRegsRegClass);
++      else
++        llvm_unreachable("Invalid floating-point MachineValueType!");
++      break;
+     case 'r':
+       if (VT == MVT::v2i32)
+         return std::make_pair(0U, &SP::IntPairRegClass);
+       else
+         return std::make_pair(0U, &SP::IntRegsRegClass);
++      break;
+     }
+   } else if (!Constraint.empty() && Constraint.size() <= 5
+               && Constraint[0] == '{' && *(Constraint.end()-1) == '}') {
+###
+--- lib/Target/Sparc/InstPrinter/SparcInstPrinter.cpp	2015-06-08 16:31:39.000000000 -0800
++++ lib/Target/Sparc/InstPrinter/SparcInstPrinter.cpp	2016-07-03 18:29:49.019851395 -0800
+@@ -17,9 +17,13 @@
+ #include "llvm/MC/MCInst.h"
+ #include "llvm/MC/MCRegisterInfo.h"
+ #include "llvm/MC/MCSymbol.h"
++#include "llvm/Target/TargetRegisterInfo.h"
+ #include "llvm/Support/raw_ostream.h"
+ using namespace llvm;
+ 
++#include <algorithm>
++#include <cctype>
++
+ #define DEBUG_TYPE "asm-printer"
+ 
+ // The generated AsmMatcher SparcGenAsmWriter uses "Sparc" as the target
+@@ -170,9 +174,29 @@
+   O << SPARCCondCodeToString((SPCC::CondCodes)CC);
+ }
+ 
+-bool SparcInstPrinter::printGetPCX(const MCInst *MI, unsigned opNum,
++bool SparcInstPrinter::printGetPCX(const MCInst *MI, unsigned OpNo,
+                                    const MCSubtargetInfo &STI,
+                                    raw_ostream &O) {
+-  llvm_unreachable("FIXME: Implement SparcInstPrinter::printGetPCX.");
++  const MCOperand &MO = MI->getOperand(OpNo);
++  assert(MO.isReg() && "MCOperand is not a register!");
++
++  unsigned RegNum = MO.getReg();
++  assert(TargetRegisterInfo::isPhysicalRegister(RegNum) &&
++         "MCOperand is not a physical register!");
++  assert(RegNum != SP::O7 &&
++         "Cannot assign %o7 as destination for GetPCX!");
++
++  std::string Operand = "%";
++  Operand += getRegisterName(RegNum);
++  std::transform(Operand.begin(), Operand.end(), Operand.begin(), tolower);
++
++  O << "\n\tsethi   %hi(_GLOBAL_OFFSET_TABLE_-8), "
++    << Operand.c_str() << "\n";
++  O << "\tadd   " << Operand.c_str() << ", %lo(_GLOBAL_OFFSET_TABLE_-4), "
++    << Operand.c_str() << "\n";
++  O << "\tadd   " << Operand.c_str() << ", %o7, " << Operand.c_str() << "\n";
++  O << "\tnop\n";
++
+   return true;
+ }
++
+###
+--- lib/Target/Sparc/SparcAsmPrinter.cpp	2015-10-19 16:59:43.000000000 -0800
++++ lib/Target/Sparc/SparcAsmPrinter.cpp	2016-07-03 18:07:26.477720690 -0800
+@@ -173,17 +173,16 @@
+ }
+ 
+ void SparcAsmPrinter::LowerGETPCXAndEmitMCInsts(const MachineInstr *MI,
+-                                                const MCSubtargetInfo &STI)
+-{
+-  MCSymbol *GOTLabel   =
++                                                const MCSubtargetInfo &STI) {
++  MCSymbol *GOTLabel =
+     OutContext.getOrCreateSymbol(Twine("_GLOBAL_OFFSET_TABLE_"));
+ 
+   const MachineOperand &MO = MI->getOperand(0);
+-  assert(MO.getReg() != SP::O7 &&
+-         "%o7 is assigned as destination for getpcx!");
+-
+-  MCOperand MCRegOP = MCOperand::createReg(MO.getReg());
++  unsigned RegNum = MO.getReg();
++  assert((RegNum != SP::O7 && RegNum != SP::L7) &&
++         "%o7 | %l7 are assigned as destination for getpcx!");
+ 
++  MCOperand MCRegOP = MCOperand::createReg(RegNum);
+ 
+   if (TM.getRelocationModel() != Reloc::PIC_) {
+     // Just load the address of GOT to MCRegOP.
+@@ -214,6 +213,7 @@
+       MCOperand imm = MCOperand::createExpr(MCConstantExpr::create(32,
+                                                                    OutContext));
+       EmitSHL(*OutStreamer, MCRegOP, imm, MCRegOP, STI);
++
+       // Use register %o7 to load the lower 32 bits.
+       MCOperand RegO7 = MCOperand::createReg(SP::O7);
+       EmitHiLo(*OutStreamer, GOTLabel,
+@@ -225,6 +225,12 @@
+     return;
+   }
+ 
++#if 0
++  MCInst MCI;
++  LowerSparcMachineInstrToMCInst(MI, MCI, *this);
++  const MCInstrDesc &MCID = MI->getDesc();
++#endif
++
+   MCSymbol *StartLabel = OutContext.createTempSymbol();
+   MCSymbol *EndLabel   = OutContext.createTempSymbol();
+   MCSymbol *SethiLabel = OutContext.createTempSymbol();
+@@ -417,6 +423,7 @@
+     default:
+       // See if this is a generic print operand
+       return AsmPrinter::PrintAsmOperand(MI, OpNo, AsmVariant, ExtraCode, O);
++    case 'f':
+     case 'r':
+      break;
+     }
+###

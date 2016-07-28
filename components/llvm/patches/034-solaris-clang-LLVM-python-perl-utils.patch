@@ -1,0 +1,89 @@
+# 24311726 clang's Perl and Python utilities should not use #!/usr/bin/env
+# We have our own rules about calling perl or python from a script.
+# Not for upstream because they have their own rules about the same.
+--- tools/clang/tools/clang-format/clang-format-diff.py	2015-10-07 09:00:20.000000000 -0800
++++ tools/clang/tools/clang-format/clang-format-diff.py	2016-07-06 15:23:00.886765925 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python2.7
+ #
+ #===- clang-format-diff.py - ClangFormat Diff Reformatter ----*- python -*--===#
+ #
+###
+--- utils/llvm-lit/llvm-lit.in	2015-02-13 23:11:25.000000000 -0800
++++ utils/llvm-lit/llvm-lit.in	2016-07-06 09:00:13.026877050 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python2.7
+ 
+ import os
+ import sys
+###
+--- tools/clang/tools/scan-view/bin/scan-view	2015-12-21 03:19:13.000000000 -0900
++++ tools/clang/tools/scan-view/bin/scan-view	2016-07-06 06:56:42.737952300 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python2.7
+ 
+ """The clang static analyzer results viewer.
+ """
+###
+--- tools/clang/tools/scan-build/bin/scan-build	2015-11-13 12:34:15.000000000 -0800
++++ tools/clang/tools/scan-build/bin/scan-build	2016-07-17 21:12:44.529864065 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env perl
++#!/usr/bin/perl
+ #
+ #                     The LLVM Compiler Infrastructure
+ #
+@@ -1739,19 +1739,19 @@
+ 
+ # Determine the location of ccc-analyzer.
+ my $AbsRealBin = Cwd::realpath($RealBin);
+-my $Cmd = "$AbsRealBin/../libexec/ccc-analyzer";
+-my $CmdCXX = "$AbsRealBin/../libexec/c++-analyzer";
++my $Cmd = "$AbsRealBin/../lib/ccc-analyzer";
++my $CmdCXX = "$AbsRealBin/../lib/c++-analyzer";
+ 
+ # Portability: use less strict but portable check -e (file exists) instead of
+ # non-portable -x (file is executable). On some windows ports -x just checks
+ # file extension to determine if a file is executable (see Perl language
+ # reference, perlport)
+ if (!defined $Cmd || ! -e $Cmd) {
+-  $Cmd = "$AbsRealBin/ccc-analyzer";
++  $Cmd = "$AbsRealBin/../lib/ccc-analyzer";
+   DieDiag("'ccc-analyzer' does not exist at '$Cmd'\n") if(! -e $Cmd);
+ }
+ if (!defined $CmdCXX || ! -e $CmdCXX) {
+-  $CmdCXX = "$AbsRealBin/c++-analyzer";
++  $CmdCXX = "$AbsRealBin/../lib/c++-analyzer";
+   DieDiag("'c++-analyzer' does not exist at '$CmdCXX'\n") if(! -e $CmdCXX);
+ }
+ 
+###
+--- tools/clang/tools/clang-format/git-clang-format	2015-06-19 00:23:10.000000000 -0800
++++ tools/clang/tools/clang-format/git-clang-format	2016-07-06 07:00:51.876140590 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/python2.7
+ #
+ #===- git-clang-format - ClangFormat Git Integration ---------*- python -*--===#
+ #
+###
+--- tools/clang/tools/scan-build/libexec/ccc-analyzer	2015-11-13 11:34:15.000000000 -0900
++++ tools/clang/tools/scan-build/libexec/ccc-analyzer	2016-07-06 15:30:08.133853080 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env perl
++#!/usr/bin/perl
+ #
+ #                     The LLVM Compiler Infrastructure
+ #
+###
+--- tools/clang/tools/scan-build/libexec/c++-analyzer	2015-11-13 11:34:15.000000000 -0900
++++ tools/clang/tools/scan-build/libexec/c++-analyzer	2016-07-06 15:29:59.431752970 -0800
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env perl
++#!/usr/bin/perl
+ 
+ use Cwd qw/ abs_path /;
+ use File::Basename qw/ dirname /;

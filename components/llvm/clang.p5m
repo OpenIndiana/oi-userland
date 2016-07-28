@@ -23,6 +23,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/developer/llvm/clang@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -38,13 +39,22 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/188
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/clang
-hardlink path=usr/bin/clang++ target=clang
-file path=usr/bin/clang-check
-file path=usr/bin/clang-format
-file path=usr/bin/clang-tblgen
+file usr/bin/$(MACH64)/arcmt-test path=usr/bin/arcmt-test
+file usr/bin/$(MACH64)/c-arcmt-test path=usr/bin/c-arcmt-test
+file usr/bin/$(MACH64)/c-index-test path=usr/bin/c-index-test
+hardlink path=usr/bin/clang target=clang-3.8
+hardlink path=usr/bin/clang++ target=clang-3.8
+file usr/bin/$(MACH64)/clang-3.8 path=usr/bin/clang-3.8
+file usr/bin/$(MACH64)/clang-format path=usr/bin/clang-format
+file usr/bin/$(MACH64)/diagtool path=usr/bin/diagtool
+file usr/bin/$(MACH64)/git-clang-format path=usr/bin/git-clang-format
+file usr/bin/$(MACH64)/scan-build path=usr/bin/scan-build
+file usr/bin/$(MACH64)/scan-view path=usr/bin/scan-view
 file path=usr/lib/$(MACH64)/libclang.so
+file usr/libexec/$(MACH64)/c++-analyzer path=usr/lib/c++-analyzer
+file usr/libexec/$(MACH64)/ccc-analyzer path=usr/lib/ccc-analyzer
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/Intrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__clang_cuda_runtime_wrapper.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__stddef_max_align_t.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__wmmintrin_aes.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/__wmmintrin_pclmul.h
@@ -55,21 +65,29 @@ file path=usr/lib/clang/$(COMPONENT_VERSION)/include/arm_acle.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/arm_neon.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx2intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512bwintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512cdintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512dqintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512erintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512fintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512vlbwintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512vldqintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avx512vlintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/avxintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/bmi2intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/bmiintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/cpuid.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/cuda_builtin_vars.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/emmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/f16cintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/float.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/fma4intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/fmaintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/fxsrintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/htmintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/htmxlintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/ia32intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/immintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/inttypes.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/iso646.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/limits.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/lzcntintrin.h
@@ -78,11 +96,13 @@ file path=usr/lib/clang/$(COMPONENT_VERSION)/include/mm_malloc.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/mmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/module.modulemap
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/nmmintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/pkuintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/pmmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/popcntintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/prfchwintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/rdseedintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/rtmintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/s390intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/shaintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/smmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/stdalign.h
@@ -98,10 +118,33 @@ file path=usr/lib/clang/$(COMPONENT_VERSION)/include/tmmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/unwind.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/vadefs.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/varargs.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/vecintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/wmmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/x86intrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xmmintrin.h
 file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xopintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xsavecintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xsaveintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xsaveoptintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xsavesintrin.h
+file path=usr/lib/clang/$(COMPONENT_VERSION)/include/xtestintrin.h
+$(SOLARIS_11_ONLY)file path=usr/lib/clang/$(MACH64)/cxa_finalize.o
+$(SOLARIS_11_ONLY)file path=usr/lib/clang/$(MACH64)/cxa_finalize_pic.o
+$(SOLARIS_11_ONLY)file path=usr/lib/clang/cxa_finalize.o
+$(SOLARIS_11_ONLY)file path=usr/lib/clang/cxa_finalize_pic.o
+file path=usr/lib/python2.7/vendor-packages/Reporter.py
+file path=usr/lib/python2.7/vendor-packages/ScanView.py
+file path=usr/lib/python2.7/vendor-packages/clang-format-diff.py
+file path=usr/lib/python2.7/vendor-packages/clang-format-sublime.py
+file path=usr/lib/python2.7/vendor-packages/clang-format.py
+file path=usr/share/clang/clang-format-bbedit.applescript
+file path=usr/share/clang/clang-format.el
+file path=usr/share/man/man1/clang.1
+file path=usr/share/scan-build/scanview.css
+file path=usr/share/scan-build/sorttable.js
+file path=usr/share/scan-view/FileRadar.scpt
+file path=usr/share/scan-view/GetRadarVersion.scpt
+file path=usr/share/scan-view/bugcatcher.ico
 license llvm.license license="University of Illinois/NCSA"
 depend type=require fmri=pkg:/system/header
 

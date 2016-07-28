@@ -1,0 +1,53 @@
+# 22805043 implement the LLVM Intel Solaris native assembler
+# 3.9.X for upstream.
+--- lib/Target/X86/X86TargetMachine.cpp	2015-12-04 05:53:15.000000000 -0500
++++ lib/Target/X86/X86TargetMachine.cpp	2016-05-08 23:19:20.538430899 -0400
+@@ -50,6 +50,8 @@
+ 
+   if (TT.isOSLinux() || TT.isOSNaCl())
+     return make_unique<X86LinuxNaClTargetObjectFile>();
++  if (TT.isOSSolaris())
++    return make_unique<X86SolarisTargetObjectFile>();
+   if (TT.isOSBinFormatELF())
+     return make_unique<X86ELFTargetObjectFile>();
+   if (TT.isKnownWindowsMSVCEnvironment() || TT.isWindowsCoreCLREnvironment())
+--- lib/Target/X86/X86TargetObjectFile.cpp	2015-09-03 12:41:50.000000000 -0400
++++ lib/Target/X86/X86TargetObjectFile.cpp	2016-05-08 23:19:20.538430899 -0400
+@@ -67,6 +67,19 @@
+ }
+ 
+ void
++X86SolarisTargetObjectFile::Initialize(MCContext &Ctx,
++                                       const TargetMachine &TM) {
++  TargetLoweringObjectFileELF::Initialize(Ctx, TM);
++  InitializeELF(true);
++}
++
++const MCExpr *
++X86SolarisTargetObjectFile::getDebugThreadLocalSymbol(
++  const MCSymbol *Sym) const {
++  return MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_DTPOFF,
++                                 getContext());
++}
++void
+ X86LinuxNaClTargetObjectFile::Initialize(MCContext &Ctx,
+                                          const TargetMachine &TM) {
+   TargetLoweringObjectFileELF::Initialize(Ctx, TM);
+--- lib/Target/X86/X86TargetObjectFile.h	2015-07-16 02:04:17.000000000 -0400
++++ lib/Target/X86/X86TargetObjectFile.h	2016-05-08 23:19:20.538430899 -0400
+@@ -50,6 +50,15 @@
+     void Initialize(MCContext &Ctx, const TargetMachine &TM) override;
+   };
+ 
++  /// X86SolarisTargetObjectFile - This implementation is used for Solaris
++  /// x86 and x86-64.
++  class X86SolarisTargetObjectFile : public TargetLoweringObjectFileELF {
++    void Initialize(MCContext &Ctx, const TargetMachine &TM) override;
++
++    /// \brief Describe a TLS variable address within debug info.
++    const MCExpr *getDebugThreadLocalSymbol(const MCSymbol *Sym) const override;
++  };
++
+   /// \brief This implementation is used for Windows targets on x86 and x86-64.
+   class X86WindowsTargetObjectFile : public TargetLoweringObjectFileCOFF {
+     const MCExpr *

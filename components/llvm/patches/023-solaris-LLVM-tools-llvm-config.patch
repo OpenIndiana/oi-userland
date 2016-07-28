@@ -1,0 +1,14 @@
+# Miscellaneous fixes for Solaris.
+# 3.9.X upstream.
+--- tools/llvm-config/llvm-config.cpp	2016-01-12 02:23:58.000000000 -0500
++++ tools/llvm-config/llvm-config.cpp	2016-05-23 12:20:06.121494348 -0400
+@@ -440,6 +440,9 @@
+       } else if (Arg == "--cxxflags") {
+         OS << ActiveIncludeOption << ' ' << LLVM_CXXFLAGS << '\n';
+       } else if (Arg == "--ldflags") {
++        if (HostTriple.isOSSolaris())
++          OS << LLVM_LDFLAGS << '\n';
++        else
+         OS << "-L" << ActiveLibDir << ' ' << LLVM_LDFLAGS << '\n';
+       } else if (Arg == "--system-libs") {
+         PrintSystemLibs = true;

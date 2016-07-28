@@ -1,0 +1,631 @@
+# 24306550 clang crashes in llvm::Twine::toStringRef
+# 22902355 clang CodeGen is affected by 22902339
+# 3.9.X for upstream.
+--- tools/clang/include/clang/CodeGen/CGFunctionInfo.h	2015-11-23 17:04:44.000000000 -0500
++++ tools/clang/include/clang/CodeGen/CGFunctionInfo.h	2016-05-08 23:19:20.553431263 -0400
+@@ -334,11 +334,13 @@
+ /// CGFunctionInfo - Class to encapsulate the information about a
+ /// function definition.
+ class CGFunctionInfo : public llvm::FoldingSetNode {
++public:
+   struct ArgInfo {
+     CanQualType type;
+     ABIArgInfo info;
+   };
+ 
++private:
+   /// The LLVM::CallingConv to use for this function (as specified by the
+   /// user).
+   unsigned CallingConvention : 8;
+@@ -508,6 +510,10 @@
+     }
+   }
+ };
++static_assert(
++    llvm::AlignOf<CGFunctionInfo>::Alignment >=
++        llvm::AlignOf<CGFunctionInfo::ArgInfo>::Alignment,
++    "Alignment is insufficient for objects appended to CGFunctionInfo");
+ 
+ /// CGCalleeInfo - Class to encapsulate the information about a callee to be
+ /// used during the generation of call/invoke instructions.
+###
+--- tools/clang/lib/CodeGen/CGCleanup.h	2015-12-12 00:39:21.000000000 -0500
++++ tools/clang/lib/CodeGen/CGCleanup.h	2016-05-08 23:19:20.564431531 -0400
+@@ -233,6 +233,10 @@
+   }
+ };
+ 
++static_assert(llvm::AlignOf<EHCatchScope>::Alignment >=
++              llvm::AlignOf<EHCatchScope::Handler *>::Alignment,
++              "Alignment is insufficient for objects appended to EHCatchScope");
++
+ /// A cleanup scope which generates the cleanup blocks lazily.
+ class LLVM_ALIGNAS(/*alignof(uint64_t)*/ 8) EHCleanupScope : public EHScope {
+   /// The nearest normal cleanup scope enclosing this one.
+@@ -473,6 +477,17 @@
+     return scope->getKind() == Filter;
+   }
+ };
++// Assert objects tacked on the end of EHCleanupScope won't be
++// misaligned.  NOTE: there's actually a bunch of different data
++// classes tacked on, so let's just ensure alignment good enough for
++// uint64_t bytes.
++static_assert(llvm::AlignOf<EHCleanupScope>::Alignment >=
++                  llvm::AlignOf<uint64_t>::Alignment,
++              "");
++static_assert(
++    llvm::AlignOf<EHFilterScope>::Alignment >=
++        llvm::AlignOf<llvm::Value *>::Alignment,
++    "Alignment is insufficient for objects appended to EHFilterScope");
+ 
+ /// An exceptions scope which calls std::terminate if any exception
+ /// reaches it.
+###
+--- tools/clang/lib/CodeGen/CGDeclCXX.cpp	2015-11-30 17:10:48.000000000 -0800
++++ tools/clang/lib/CodeGen/CGDeclCXX.cpp	2016-07-16 22:05:01.093846960 -0700
+@@ -23,6 +23,8 @@
+ using namespace clang;
+ using namespace CodeGen;
+ 
++static unsigned InitPriority = 65535;
++
+ static void EmitDeclInit(CodeGenFunction &CGF, const VarDecl &D,
+                          ConstantAddress DeclPtr) {
+   assert(D.hasGlobalStorage() && "VarDecl must have global storage!");
+@@ -187,21 +189,21 @@
+                                                   llvm::Constant *dtor,
+                                                   llvm::Constant *addr) {
+   // Get the destructor function type, void(*)(void).
+-  llvm::FunctionType *ty = llvm::FunctionType::get(CGM.VoidTy, false);
+-  SmallString<256> FnName;
++  llvm::FunctionType *FTy = llvm::FunctionType::get(CGM.VoidTy, false);
++  SmallString<512> FnName;
+   {
+     llvm::raw_svector_ostream Out(FnName);
+     CGM.getCXXABI().getMangleContext().mangleDynamicAtExitDestructor(&VD, Out);
+   }
+ 
+   const CGFunctionInfo &FI = CGM.getTypes().arrangeNullaryFunction();
+-  llvm::Function *fn = CGM.CreateGlobalInitOrDestructFunction(ty, FnName.str(),
+-                                                              FI,
++  llvm::Function *Fn =
++    CGM.CreateGlobalInitOrDestructFunction(FTy, FnName.str(), FI,
+                                                               VD.getLocation());
+ 
+   CodeGenFunction CGF(CGM);
+ 
+-  CGF.StartFunction(&VD, CGM.getContext().VoidTy, fn, FI, FunctionArgList());
++  CGF.StartFunction(&VD, CGM.getContext().VoidTy, Fn, FI, FunctionArgList());
+ 
+   llvm::CallInst *call = CGF.Builder.CreateCall(dtor, addr);
+  
+@@ -212,7 +214,7 @@
+ 
+   CGF.FinishFunction();
+ 
+-  return fn;
++  return Fn;
+ }
+ 
+ /// Register a global destructor using the C atexit runtime function.
+@@ -226,12 +228,12 @@
+   llvm::FunctionType *atexitTy =
+     llvm::FunctionType::get(IntTy, dtorStub->getType(), false);
+ 
+-  llvm::Constant *atexit =
++  llvm::Constant *atExit =
+     CGM.CreateRuntimeFunction(atexitTy, "atexit");
+-  if (llvm::Function *atexitFn = dyn_cast<llvm::Function>(atexit))
++  if (llvm::Function *atexitFn = dyn_cast<llvm::Function>(atExit))
+     atexitFn->setDoesNotThrow();
+ 
+-  EmitNounwindRuntimeCall(atexit, dtorStub);
++  EmitNounwindRuntimeCall(atExit, dtorStub);
+ }
+ 
+ void CodeGenFunction::EmitCXXGuardedInit(const VarDecl &D,
+@@ -248,17 +250,33 @@
+   CGM.getCXXABI().EmitGuardedInit(*this, D, DeclPtr, PerformInit);
+ }
+ 
+-llvm::Function *CodeGenModule::CreateGlobalInitOrDestructFunction(
+-    llvm::FunctionType *FTy, const Twine &Name, const CGFunctionInfo &FI,
+-    SourceLocation Loc, bool TLS) {
++llvm::Function*
++CodeGenModule::CreateGlobalInitOrDestructFunction(llvm::FunctionType *FTy,
++                                                  const Twine &Name,
++                                                  const CGFunctionInfo &FI,
++                                                  SourceLocation Loc,
++                                                  bool TLS) {
+   llvm::Function *Fn =
+     llvm::Function::Create(FTy, llvm::GlobalValue::InternalLinkage,
+                            Name, &getModule());
+-  if (!getLangOpts().AppleKext && !TLS) {
++
+     // Set the section if needed.
+-    if (const char *Section = getTarget().getStaticInitSectionSpecifier())
++  if (!getLangOpts().AppleKext && !TLS) {
++    if (const char *Section = getTarget().getStaticInitSectionSpecifier()) {
++      if (getTriple().getOS() == llvm::Triple::Solaris) {
++        std::string FNm = Fn->getName().str();
++
++        if (!CodeGenOpts.UseInitArray) {
++          if (FNm.find("_GLOBAL__sub_I_") != std::string::npos)
++            Fn->setSection(Section);
++          else if (FNm.find("_GLOBAL__I_") != std::string::npos)
+       Fn->setSection(Section);
+   }
++      } else {
++        Fn->setSection(Section);
++      }
++    }
++  }
+ 
+   SetInternalFunctionAttributes(nullptr, Fn, FI);
+ 
+@@ -267,6 +285,8 @@
+   if (!getLangOpts().Exceptions)
+     Fn->setDoesNotThrow();
+ 
++  // Solaris does not support the Sanitizer Libraries yet.
++  if (getTriple().getOS() != llvm::Triple::Solaris) {
+   if (!isInSanitizerBlacklist(Fn, Loc)) {
+     if (getLangOpts().Sanitize.hasOneOf(SanitizerKind::Address |
+                                         SanitizerKind::KernelAddress))
+@@ -278,6 +298,7 @@
+     if (getLangOpts().Sanitize.has(SanitizerKind::SafeStack))
+       Fn->addFnAttr(llvm::Attribute::SafeStack);
+   }
++  }
+ 
+   return Fn;
+ }
+@@ -289,9 +310,19 @@
+                                           llvm::GlobalVariable *GV,
+                                           llvm::Function *InitFunc,
+                                           InitSegAttr *ISA) {
+-  llvm::GlobalVariable *PtrArray = new llvm::GlobalVariable(
+-      TheModule, InitFunc->getType(), /*isConstant=*/true,
+-      llvm::GlobalValue::PrivateLinkage, InitFunc, "__cxx_init_fn_ptr");
++  std::string GVN("__cxx_init_fn_ptr");
++  if (getTriple().getOS() == llvm::Triple::Solaris) {
++    GVN += "_";
++    GVN += std::to_string(InitPriority);
++  }
++
++  llvm::GlobalVariable *PtrArray =
++    new llvm::GlobalVariable(TheModule, InitFunc->getType(),
++                             /*isConstant=*/ true,
++                             llvm::GlobalValue::PrivateLinkage,
++                             InitFunc, GVN);
++  assert(PtrArray && "Invalid Function Pointer Array!");
++
+   PtrArray->setSection(ISA->getSection());
+   addUsedGlobal(PtrArray);
+ 
+@@ -309,10 +340,23 @@
+   if (I != DelayedCXXInitPosition.end() && I->second == ~0U)
+     return;
+ 
+-  llvm::FunctionType *FTy = llvm::FunctionType::get(VoidTy, false);
+-  SmallString<256> FnName;
++  llvm::FunctionType *FTy = nullptr;
++  std::vector<llvm::Type*> ArgsVec;
++
++  if (getTriple().getOS() == llvm::Triple::Solaris) {
++    ArgsVec.push_back(IntTy);
++    ArgsVec.push_back(IntTy);
++    FTy = llvm::FunctionType::get(VoidTy, ArgsVec, false);
++  } else {
++    FTy = llvm::FunctionType::get(VoidTy, false);
++  }
++
++  SmallString<512> FnName;
+   {
+     llvm::raw_svector_ostream Out(FnName);
++    if (getTriple().getOS() == llvm::Triple::Solaris)
++      getCXXABI().getMangleContext().mangleGCCDynamicInitializer(D, Out);
++    else
+     getCXXABI().getMangleContext().mangleDynamicInitializer(D, Out);
+   }
+ 
+@@ -321,12 +365,55 @@
+       CreateGlobalInitOrDestructFunction(FTy, FnName.str(),
+                                          getTypes().arrangeNullaryFunction(),
+                                          D->getLocation());
++  Fn->setDoesNotThrow();
+ 
+   auto *ISA = D->getAttr<InitSegAttr>();
+-  CodeGenFunction(*this).GenerateCXXGlobalVarDeclInitFunc(Fn, D, Addr,
+-                                                          PerformInit);
++  if (getTriple().getOS() == llvm::Triple::Solaris) {
++    ASTContext &Ctx = getContext();
++    VarDecl *DD = const_cast<VarDecl*>(D);
++
++    assert(D && "const VarDecl is NULL?!");
++    assert(DD && "VarDecl is NULL?!");
++
++    auto *IPA = D->getAttr<InitPriorityAttr>();
++    if (!IPA) {
++      IPA = InitPriorityAttr::CreateImplicit(Ctx, /* InitPriority */ 65535);
++      DD->addAttr(IPA);
++    }
+ 
+-  llvm::GlobalVariable *COMDATKey =
++    if (!ISA && CodeGenOpts.UseInitArray) {
++      ISA = InitSegAttr::CreateImplicit(Ctx, PerformInit ?
++                                        StringRef(".init_array") :
++                                        StringRef(".fini_array"));
++      DD->addAttr(ISA);
++    }
++  }
++
++  FunctionArgList ArgList;
++  ASTContext &Ctx = getContext();
++  // We cannot allocate these dynamically because of an ill-conceived
++  // operator new overload in DeclBase.h.
++  ImplicitParamDecl IAFirst(Ctx, /*DC=*/ nullptr, D->getLocation(),
++                            /*Id=*/ nullptr, Ctx.UnsignedIntTy);
++  ImplicitParamDecl IASecond(Ctx, /*DC=*/ nullptr, D->getLocation(),
++                             /*Id=*/ nullptr, Ctx.UnsignedIntTy);
++
++  if (getTriple().getOS() == llvm::Triple::Solaris) {
++    // Add Parameters to the Function ArgumentList on Solaris
++    // for compatibility with the GCC C++ Runtime.
++    ArgList.push_back(&IAFirst);
++    ArgList.push_back(&IASecond);
++  }
++
++  CodeGenFunction CGF(*this);
++  CGF.GenerateCXXGlobalVarDeclInitFunc(Fn, D, Addr, PerformInit, ArgList);
++
++  llvm::GlobalVariable *COMDATKey;
++
++  if (getTriple().getOS() == llvm::Triple::Solaris)
++    COMDATKey = D->isExternallyVisible() ? Addr : nullptr;
++  else
++    COMDATKey =
+       supportsCOMDAT() && D->isExternallyVisible() ? Addr : nullptr;
+ 
+   if (D->getTLSKind()) {
+@@ -412,25 +499,35 @@
+         PrioE = std::upper_bound(I + 1, E, *I, GlobalInitPriorityCmp());
+ 
+       LocalCXXGlobalInits.clear();
+-      unsigned Priority = I->first.priority;
++
++      // Priority is always <= 65535 (enforced by sema).
++      unsigned Priority =
++        I->first.priority > 65535U ? 65535U : I->first.priority;
++
+       // Compute the function suffix from priority. Prepend with zeroes to make
+       // sure the function names are also ordered as priorities.
+-      std::string PrioritySuffix = llvm::utostr(Priority);
+-      // Priority is always <= 65535 (enforced by sema).
+-      PrioritySuffix = std::string(6-PrioritySuffix.size(), '0')+PrioritySuffix;
+-      llvm::Function *Fn = CreateGlobalInitOrDestructFunction(
+-          FTy, "_GLOBAL__I_" + PrioritySuffix, FI);
++      std::string PrioritySuffix = "0";
++      PrioritySuffix += std::to_string(Priority);
++      std::string FunctionName = "_GLOBAL__I_";
++      FunctionName += PrioritySuffix;
++      llvm::Twine FNm(FunctionName);
++      llvm::Function *Fn = CreateGlobalInitOrDestructFunction(FTy, FNm, FI);
+ 
+       for (; I < PrioE; ++I)
+         LocalCXXGlobalInits.push_back(I->second);
+ 
+-      CodeGenFunction(*this).GenerateCXXGlobalInitFunc(Fn, LocalCXXGlobalInits);
++      CodeGenFunction CGF(*this);
++      CGF.GenerateCXXGlobalInitFunc(Fn, LocalCXXGlobalInits);
+       AddGlobalCtor(Fn, Priority);
+     }
++
+     PrioritizedCXXGlobalInits.clear();
+   }
+ 
+-  SmallString<128> FileName;
++  if (CXXGlobalInits.empty())
++    return;
++
++  SmallString<PATH_MAX> FileName;
+   SourceManager &SM = Context.getSourceManager();
+   if (const FileEntry *MainFile = SM.getFileEntryForID(SM.getMainFileID())) {
+     // Include the filename in the symbol name. Including "sub_" matches gcc and
+@@ -444,14 +541,15 @@
+   for (size_t i = 0; i < FileName.size(); ++i) {
+     // Replace everything that's not [a-zA-Z0-9._] with a _. This set happens
+     // to be the set of C preprocessing numbers.
+-    if (!isPreprocessingNumberBody(FileName[i]))
++    if (!isPreprocessingNumberBody(FileName[i]) || (FileName[i] == '.'))
+       FileName[i] = '_';
+   }
+ 
+-  llvm::Function *Fn = CreateGlobalInitOrDestructFunction(
+-      FTy, llvm::Twine("_GLOBAL__sub_I_", FileName), FI);
++  llvm::Twine FNm("_GLOBAL__sub_I_", FileName);
++  llvm::Function *Fn = CreateGlobalInitOrDestructFunction(FTy, FNm, FI);
+ 
+-  CodeGenFunction(*this).GenerateCXXGlobalInitFunc(Fn, CXXGlobalInits);
++  CodeGenFunction CGF(*this);
++  CGF.GenerateCXXGlobalInitFunc(Fn, CXXGlobalInits);
+   AddGlobalCtor(Fn);
+ 
+   CXXGlobalInits.clear();
+@@ -473,29 +571,47 @@
+ }
+ 
+ /// Emit the code necessary to initialize the given global variable.
+-void CodeGenFunction::GenerateCXXGlobalVarDeclInitFunc(llvm::Function *Fn,
++void
++CodeGenFunction::GenerateCXXGlobalVarDeclInitFunc(llvm::Function *Fn,
+                                                        const VarDecl *D,
+                                                  llvm::GlobalVariable *Addr,
+-                                                       bool PerformInit) {
++                                                  bool PerformInit,
++                                                  const FunctionArgList &ArgList) {
+   // Check if we need to emit debug info for variable initializer.
+   if (D->hasAttr<NoDebugAttr>())
+     DebugInfo = nullptr; // disable debug info indefinitely for this function
+ 
+   CurEHLocation = D->getLocStart();
++  ASTContext &Ctx = getContext();
++
++  FunctionType::ExtInfo ExtInfo;
++  const CGFunctionInfo &FuncInfo =
++    getTypes().arrangeFreeFunctionDeclaration(Ctx.VoidTy, ArgList,
++                                              ExtInfo, /*IsVariadic=*/ false);
++  GlobalDecl GD(D);
+ 
+-  StartFunction(GlobalDecl(D), getContext().VoidTy, Fn,
+-                getTypes().arrangeNullaryFunction(),
+-                FunctionArgList(), D->getLocation(),
++  StartFunction(GD, Ctx.VoidTy, Fn, FuncInfo, ArgList, D->getLocation(),
+                 D->getInit()->getExprLoc());
+ 
+   // Use guarded initialization if the global variable is weak. This
+   // occurs for, e.g., instantiated static data members and
+   // definitions explicitly marked weak.
++  if (CGM.getTriple().getOS() == llvm::Triple::Solaris) {
++    if (Addr->hasWeakLinkage() || Addr->hasLinkOnceLinkage()) {
++      EmitCXXGuardedInit(*D, Addr, PerformInit);
++    } else {
++      EmitCXXGlobalVarDeclInit(*D, Addr, PerformInit);
++    }
++  } else {
++    // Use guarded initialization if the global variable is weak. This
++    // occurs for, e.g., instantiated static data members and
++    // definitions explicitly marked weak.
+   if (Addr->hasWeakLinkage() || Addr->hasLinkOnceLinkage()) {
+     EmitCXXGuardedInit(*D, Addr, PerformInit);
+   } else {
+     EmitCXXGlobalVarDeclInit(*D, Addr, PerformInit);
+   }
++  }
+ 
+   FinishFunction();
+ }
+@@ -504,10 +620,21 @@
+ CodeGenFunction::GenerateCXXGlobalInitFunc(llvm::Function *Fn,
+                                            ArrayRef<llvm::Function *> Decls,
+                                            Address Guard) {
+-  {
++  llvm::FunctionType *FTy = llvm::FunctionType::get(VoidTy, false);
++  ASTContext &Ctx = getContext();
++  llvm::LLVMContext &LLVMCtx = CGM.getLLVMContext();
++
++  { // Why?
+     auto NL = ApplyDebugLocation::CreateEmpty(*this);
+-    StartFunction(GlobalDecl(), getContext().VoidTy, Fn,
+-                  getTypes().arrangeNullaryFunction(), FunctionArgList());
++
++    FunctionArgList ArgList;
++    FunctionType::ExtInfo ExtInfo;
++    const CGFunctionInfo &FuncInfo =
++      getTypes().arrangeFreeFunctionDeclaration(Ctx.VoidTy, ArgList,
++                                                ExtInfo,
++                                                /*IsVariadic=*/ false);
++    StartFunction(GlobalDecl(), Ctx.VoidTy, Fn, FuncInfo, ArgList);
++
+     // Emit an artificial location for this function.
+     auto AL = ApplyDebugLocation::CreateArtificial(*this);
+ 
+@@ -525,7 +652,8 @@
+       // Mark as initialized before initializing anything else. If the
+       // initializers use previously-initialized thread_local vars, that's
+       // probably supposed to be OK, but the standard doesn't say.
+-      Builder.CreateStore(llvm::ConstantInt::get(GuardVal->getType(),1), Guard);
++      Builder.CreateStore(llvm::ConstantInt::get(GuardVal->getType(), 1),
++                          Guard);
+     }
+ 
+     RunCleanupsScope Scope(*this);
+@@ -537,9 +665,27 @@
+       EmitObjCAutoreleasePoolCleanup(token);
+     }
+ 
+-    for (unsigned i = 0, e = Decls.size(); i != e; ++i)
+-      if (Decls[i])
+-        EmitRuntimeCall(Decls[i]);
++    for (unsigned i = 0, e = Decls.size(); i != e; ++i) {
++      if (llvm::Function *FV = Decls[i]) {
++        if (CGM.getTriple().getOS() == llvm::Triple::Solaris) {
++          llvm::Value *Values[2] = { nullptr, nullptr };
++          Values[0] =
++            llvm::ConstantInt::get(llvm::Type::getInt32Ty(LLVMCtx), 1);
++          Values[1] =
++            llvm::ConstantInt::get(llvm::Type::getInt32Ty(LLVMCtx), 65535);
++          ArrayRef<llvm::Value*> ArgValues = llvm::makeArrayRef(Values);
++          llvm::CallInst *CI = EmitRuntimeCall(FV, ArgValues);
++#ifndef NDEBUG
++          llvm::Function *CIF = CI->getCalledFunction();
++          assert (CIF && "Invalid function returned in CallInst!");
++#else
++          (void) CI;
++#endif
++        } else {
++          EmitRuntimeCall(FV);
++        }
++      }
++    }
+ 
+     Scope.ForceCleanup();
+ 
+@@ -547,7 +693,7 @@
+       Builder.CreateBr(ExitBlock);
+       EmitBlock(ExitBlock);
+     }
+-  }
++  } // Why?
+ 
+   FinishFunction();
+ }
+###
+--- tools/clang/lib/CodeGen/CGExprCXX.cpp	2015-11-22 22:01:14.000000000 -0500
++++ tools/clang/lib/CodeGen/CGExprCXX.cpp	2016-05-08 23:19:20.566431579 -0400
+@@ -1203,6 +1203,10 @@
+       EmitNewDeleteCall(CGF, OperatorDelete, FPT, DeleteArgs);
+     }
+   };
++  static_assert(
++      llvm::AlignOf<CallDeleteDuringNew>::Alignment >=
++          llvm::AlignOf<RValue>::Alignment,
++      "Alignment is insufficient for objects appended to CallDeleteDuringNew");
+ 
+   /// A cleanup to call the given 'operator delete' function upon
+   /// abnormal exit from a new expression when the new expression is
+@@ -1262,6 +1266,10 @@
+       EmitNewDeleteCall(CGF, OperatorDelete, FPT, DeleteArgs);
+     }
+   };
++  static_assert(
++      llvm::AlignOf<CallDeleteDuringConditionalNew>::Alignment >=
++          llvm::AlignOf<DominatingValue<RValue>::saved_type>::Alignment,
++      "Alignment is insufficient for objects appended to CallDeleteDuringNew");
+ }
+ 
+ /// Enter a cleanup to call 'operator delete' if the initializer in a
+###
+--- tools/clang/lib/CodeGen/CodeGenFunction.h	2016-01-21 20:07:48.000000000 -0800
++++ tools/clang/lib/CodeGen/CodeGenFunction.h	2016-05-11 10:04:52.119577478 -0700
+@@ -2925,7 +2925,9 @@
+   void GenerateCXXGlobalVarDeclInitFunc(llvm::Function *Fn,
+                                         const VarDecl *D,
+                                         llvm::GlobalVariable *Addr,
+-                                        bool PerformInit);
++                                        bool PerformInit,
++                                        const FunctionArgList &ArgList =
++                                        FunctionArgList());
+ 
+   void EmitCXXConstructExpr(const CXXConstructExpr *E, AggValueSlot Dest);
+   
+###
+--- tools/clang/lib/CodeGen/CodeGenModule.cpp	2016-01-08 15:48:26.000000000 -0500
++++ tools/clang/lib/CodeGen/CodeGenModule.cpp	2016-05-08 23:19:20.567431604 -0400
+@@ -293,8 +293,16 @@
+       Error = true;
+       Diags.Report(AA->getLocation(), diag::err_cyclic_alias);
+     } else if (GV->isDeclaration()) {
+-      Error = true;
+-      Diags.Report(AA->getLocation(), diag::err_alias_to_undefined);
++      clang::Linkage L = D->getFormalLinkage();
++      const auto *FD = cast<FunctionDecl>(D);
++
++      if (!FD && ((L != clang::ExternalLinkage) &&
++                  (L != clang::UniqueExternalLinkage) &&
++                  (L != clang::InternalLinkage) &&
++                  (L != clang::VisibleNoLinkage))) {
++        Error = true;
++        Diags.Report(AA->getLocation(), diag::err_alias_to_undefined);
++      }
+     }
+ 
+     llvm::Constant *Aliasee = Alias->getAliasee();
+@@ -326,6 +334,7 @@
+       }
+     }
+   }
++
+   if (!Error)
+     return;
+ 
+@@ -1481,10 +1490,7 @@
+ 
+ void CodeGenModule::EmitGlobal(GlobalDecl GD) {
+   const auto *Global = cast<ValueDecl>(GD.getDecl());
+-
+-  // Weak references don't produce any output by themselves.
+-  if (Global->hasAttr<WeakRefAttr>())
+-    return;
++  assert(Global && "Cast to ValueDecl yields nullptr!");
+ 
+   // If this is an alias definition (which otherwise looks like a declaration)
+   // emit it now.
+@@ -1699,16 +1705,11 @@
+ void CodeGenModule::EmitGlobalDefinition(GlobalDecl GD, llvm::GlobalValue *GV) {
+   const auto *D = cast<ValueDecl>(GD.getDecl());
+ 
+-  PrettyStackTraceDecl CrashInfo(const_cast<ValueDecl *>(D), D->getLocation(), 
++  PrettyStackTraceDecl CrashInfo(const_cast<ValueDecl *>(D), D->getLocation(),
+                                  Context.getSourceManager(),
+                                  "Generating code for declaration");
+-  
+-  if (isa<FunctionDecl>(D)) {
+-    // At -O0, don't generate IR for functions with available_externally 
+-    // linkage.
+-    if (!shouldEmitFunction(GD))
+-      return;
+ 
++  if (isa<FunctionDecl>(D)) {
+     if (const auto *Method = dyn_cast<CXXMethodDecl>(D)) {
+       CompleteDIClassType(Method);
+       // Make sure to emit the definition(s) before we emit the thunks.
+@@ -1726,13 +1727,17 @@
+       return;
+     }
+ 
+-    return EmitGlobalFunctionDefinition(GD, GV);
++    EmitGlobalFunctionDefinition(GD, GV);
++    return;
++  }
++
++  if (const auto *VD = dyn_cast<VarDecl>(D)) {
++    EmitGlobalVarDefinition(VD);
++    return;
+   }
+ 
+-  if (const auto *VD = dyn_cast<VarDecl>(D))
+-    return EmitGlobalVarDefinition(VD);
+-  
+-  llvm_unreachable("Invalid argument to EmitGlobalDefinition()");
++  llvm::errs() << __PRETTY_FUNCTION__
++    << ": Invalid argument to EmitGlobalDefinition()!\n";
+ }
+ 
+ static void ReplaceUsesOfNonProtoTypeWithRealFunction(llvm::GlobalValue *Old,
+--- tools/clang/lib/CodeGen/CodeGenModule.h	2016-01-06 09:35:46.000000000 -0500
++++ tools/clang/lib/CodeGen/CodeGenModule.h	2016-05-08 23:19:20.568431628 -0400
+@@ -684,7 +684,8 @@
+                                     llvm::GlobalValue::LinkageTypes Linkage);
+ 
+   llvm::Function *
+-  CreateGlobalInitOrDestructFunction(llvm::FunctionType *ty, const Twine &name,
++  CreateGlobalInitOrDestructFunction(llvm::FunctionType *FTy,
++                                     const Twine &Name,
+                                      const CGFunctionInfo &FI,
+                                      SourceLocation Loc = SourceLocation(),
+                                      bool TLS = false);
+--- tools/clang/lib/CodeGen/EHScopeStack.h	2015-12-12 00:39:21.000000000 -0500
++++ tools/clang/lib/CodeGen/EHScopeStack.h	2016-05-08 23:19:20.568431628 -0400
+@@ -267,7 +267,8 @@
+   ~EHScopeStack() { delete[] StartOfBuffer; }
+ 
+   /// Push a lazily-created cleanup on the stack.
+-  template <class T, class... As> void pushCleanup(CleanupKind Kind, As... A) {
++  template <class T, class... As>
++  void pushCleanup(CleanupKind Kind, As... A) {
+     static_assert(llvm::AlignOf<T>::Alignment <= ScopeStackAlignment,
+                   "Cleanup's alignment is too large.");
+     void *Buffer = pushCleanup(Kind, sizeof(T));
+###
+
