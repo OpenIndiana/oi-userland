@@ -1,0 +1,43 @@
+--- mate-control-center-1.14.0/capplets/display/xrandr-capplet.c.~1~	2016-02-28 13:57:56.000000000 +0300
++++ mate-control-center-1.14.0/capplets/display/xrandr-capplet.c	2016-07-28 13:37:44.254579368 +0300
+@@ -2433,7 +2433,11 @@
+ 
+     source_filename = mate_rr_config_get_intended_filename ();
+ 
++#ifdef __sun__
++    command_line = g_strdup_printf ("/usr/bin/gksu -u root %s/mate-display-properties-install-systemwide %s %s",
++#else
+     command_line = g_strdup_printf ("pkexec %s/mate-display-properties-install-systemwide %s %s",
++#endif
+ 				    SBINDIR,
+ 				    source_filename,
+ 				    dest_basename);
+--- mate-control-center-1.14.0/capplets/display/mate-display-properties-install-systemwide.c.~1~	2016-01-30 21:03:48.000000000 +0300
++++ mate-control-center-1.14.0/capplets/display/mate-display-properties-install-systemwide.c	2016-07-28 13:37:44.255108119 +0300
+@@ -130,8 +130,10 @@
+ 	uid_t uid, euid;
+ 	const char *source_filename;
+ 	const char *dest_name;
++#ifndef __sun__
+ 	const char *pkexec_uid_str;
+ 	int pkexec_uid;
++#endif
+ 	struct stat statbuf;
+ 	int err;
+ 	int source_fd;
+@@ -197,6 +199,7 @@
+ 		return EXIT_FAILURE;
+ 	}
+ 
++#ifndef __sun__
+ 	/* We only copy files that are really owned by the calling user */
+ 
+ 	pkexec_uid_str = g_getenv ("PKEXEC_UID");
+@@ -215,6 +218,7 @@
+ 		g_print (_("%s must be owned by you\n"), source_filename);
+ 		return EXIT_FAILURE;
+ 	}
++#endif
+ 
+ 	/* We only accept basenames for the destination */
+ 
