@@ -28,9 +28,9 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(JAVA_HOME)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		libidn
-COMPONENT_VERSION=	1.32
+COMPONENT_VERSION=	1.33
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ba5d5afee2beff703a34ee094668da5c6ea5afa38784cebba8924105e185c4f5
+    sha256:44a7aab635bb721ceef6beecc4d49dfd19478325e1b47f3196f7d2acc4930e19
 COMPONENT_BUGDB=	library/libidn
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			27576
+TPNO=			30227
 
 INSTALL_TARGET=
 include $(WS_MAKE_RULES)/gnu-component.mk
