@@ -26,25 +26,28 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.10.3-P4
+COMPONENT_VERSION=	9.10.4-P2
 HUMAN_VERSION=		$(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=	9.10.3.0.4
+IPS_COMPONENT_VERSION=	9.10.4.0.2
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:2ac044b5fbdf45fb45107af0df961b3b7cb5262a3bf1948ed3fe7a170dd13e3e
+	sha256:b35b8af8fe030196d03b3e487f5ecd0c0836b5e124abc7a3ecd184740b444423
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sha512.asc
 COMPONENT_BUGDB=	service/dns-server
-TPNO=			26279
+TPNO=			30276
 
 include $(WS_MAKE_RULES)/common.mk
 
 # PYVER is important for packaging and computing requisites.
 PYTHON_VERSION =	3.4
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+
+# Some patches need configure script re-creation.
+COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -vfi);
 
 # Specify "configure" options and features.
 # FYI, The configure options are displayed by 'named -V'.

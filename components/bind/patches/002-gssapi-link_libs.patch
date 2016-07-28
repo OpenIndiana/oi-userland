@@ -1,0 +1,70 @@
+Patch file created at Oracle to use krb5-config to discover libraries
+and include paths for linking with gssapi.
+
+Intention is to share patch with ISC for their inclusion in future
+releases of BIND.
+
+--- a/configure.in	2016-07-20 13:39:39.458348472 -0700
++++ b/configure.in	2016-07-20 13:39:39.275061884 -0700
+@@ -818,6 +818,49 @@
+ [  --with-gssapi=PATH      Specify path for system-supplied GSSAPI [[default=yes]]],
+     use_gssapi="$withval", use_gssapi="yes")
+ 
++# first try using krb5-config, if that does not work then fall back to "yes" method.
++if test "$use_gssapi" = "krb5-config"
++then
++    AC_MSG_RESULT(trying krb5_config)
++    AC_PATH_PROG(KRB5_CONFIG, krb5-config)
++    gssapi_cflags=`$KRB5_CONFIG --cflags gssapi`
++    gssapi_libs=`$KRB5_CONFIG --libs gssapi`
++    saved_cppflags="$CPPFLAGS"
++    CPPFLAGS="$gssapi_cflags $CPPFLAGS"
++    AC_CHECK_HEADERS(gssapi.h gssapi/gssapi.h,
++	[ISC_PLATFORM_GSSAPIHEADER="#define ISC_PLATFORM_GSSAPIHEADER <$ac_header>"])
++    if test "$ISC_PLATFORM_GSSAPIHEADER" = ""; then
++	AC_MSG_RESULT([krb5-config: gssapi.h not found])
++	CPPFLAGS="$saved_cppflags"
++	use_gssapi="yes"
++    else
++	AC_CHECK_HEADERS(krb5/krb5.h krb5.h,
++	    [ISC_PLATFORM_KRB5HEADER="#define ISC_PLATFORM_KRB5HEADER <$ac_header>"])
++	if test "$ISC_PLATFORM_KRB5HEADER" = ""; then
++	    AC_MSG_RESULT([krb5-config: krb5.h not found])
++	    CPPFLAGS="$saved_cppflags"
++	    use_gssapi="yes"
++	else
++	    CPPFLAGS="$saved_cppflags"
++	    saved_libs="$LIBS"
++	    LIBS=$gssapi_libs
++	    AC_MSG_CHECKING([krb5-config linking as $LIBS])
++	    AC_TRY_LINK( , [gss_acquire_cred();krb5_init_context()],
++		gssapi_linked=yes, gssapi_linked=no)
++	    case $gssapi_linked in
++		yes) AC_MSG_RESULT([krb5-config: linked]);;
++		no)  AC_MSG_RESULT([krb5-config: could not determine proper GSSAPI linkage])
++		    use_gssapi="yes"
++		    ;;
++	    esac
++	    LIBS=$saved_libs
++	fi
++    fi
++    if test "$use_gssapi" = "yes"; then
++	AC_MSG_CHECKING([for GSSAPI library, non krb5-config method])
++    fi
++fi
++
+ # gssapi is just the framework, we really require kerberos v5, so
+ # look for those headers (the gssapi headers must be there, too)
+ # The problem with this implementation is that it doesn't allow
+@@ -861,6 +904,11 @@
+ 	yes)
+ 		AC_MSG_ERROR([--with-gssapi must specify a path])
+ 		;;
++	krb5-config)
++		USE_GSSAPI='-DGSSAPI'
++		DST_GSSAPI_INC="$gssapi_cflags"
++		DNS_GSSAPI_LIBS="$gssapi_libs"
++		;;
+ 	*)
+ 		AC_MSG_RESULT(looking in $use_gssapi/lib)
+ 		USE_GSSAPI='-DGSSAPI'
