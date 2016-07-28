@@ -53,17 +53,19 @@ def get_os_version():
         raise RuntimeError("Unable to determine version: %s" % err)
 
 
-def create_rootfs_archive(profile=None):
+def create_rootfs_archive(args):
     # we'll build the default archive, make sure we don't clobber one
     if os.path.exists("rootfs.tar.gz"):
         raise RuntimeError("archive already exists 'rootfs.tar.gz'")
 
     # build here with mkimage, send output to stdout
     cmd = ['/usr/lib/brand/solaris-oci/mkimage-solaris']
-    if profile is not None:
-        if not os.path.exists(profile):
-            raise RuntimeError("'%s' not found" % profile)
-        cmd.extend(['-c', profile])
+    if args.devbuild:
+        cmd.append('-D')
+    if args.profile:
+        if not os.path.exists(args.profile):
+            raise RuntimeError("'%s' not found" % args.profile)
+        cmd.extend(['-c', args.profile])
     try:
         DockerSupportCmd(cmd, verbose=True).run()
         return "rootfs.tar.gz"
@@ -80,7 +82,7 @@ def create_base_image(args):
 
     try:
         print "Creating container rootfs from host publishers..."
-        rootfs = create_rootfs_archive(args.profile)
+        rootfs = create_rootfs_archive(args)
     except Exception as err:
         raise SystemExit("Failed to create rootfs: %s" % err)
 
@@ -114,6 +116,8 @@ def build_parser():
     parser_create = subparsers.add_parser("create-base-image",
         help="create a base image from host publisher content",
         usage=argparse.SUPPRESS)
+    parser_create.add_argument("-D", "--devbuild", action="store_true",
+        help="use development build options for the package image")
     parser_create.add_argument("-p", "--profile",
         help="TEMPORARY: optional syconfig profile")
 
