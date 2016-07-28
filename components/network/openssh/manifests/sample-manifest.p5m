@@ -1,0 +1,55 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=etc/ssh/moduli
+file path=etc/ssh/ssh_config
+file path=etc/ssh/sshd_config
+file path=usr/bin/scp
+file path=usr/bin/sftp
+link path=usr/bin/slogin target=./ssh
+file path=usr/bin/ssh
+file path=usr/bin/ssh-add
+file path=usr/bin/ssh-agent
+file path=usr/bin/ssh-keygen
+file path=usr/bin/ssh-keyscan
+file path=usr/lib/dtrace/sftp.d
+file path=usr/lib/ssh/sftp-server
+file path=usr/lib/ssh/ssh-keysign
+file path=usr/lib/ssh/ssh-pkcs11-helper
+file path=usr/lib/ssh/sshd
+file path=usr/share/man/man1/scp.1
+file path=usr/share/man/man1/sftp.1
+link path=usr/share/man/man1/slogin.1 target=./ssh.1
+file path=usr/share/man/man1/ssh-add.1
+file path=usr/share/man/man1/ssh-agent.1
+file path=usr/share/man/man1/ssh-keygen.1
+file path=usr/share/man/man1/ssh-keyscan.1
+file path=usr/share/man/man1/ssh.1
+file path=usr/share/man/man1m/sftp-server.1m
+file path=usr/share/man/man1m/ssh-keysign.1m
+file path=usr/share/man/man1m/ssh-pkcs11-helper.1m
+file path=usr/share/man/man1m/sshd.1m
+file path=usr/share/man/man4/moduli.4
+file path=usr/share/man/man4/ssh_config.4
+file path=usr/share/man/man4/sshd_config.4

@@ -1,0 +1,49 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/fam.h
+file path=usr/lib/$(MACH64)/gam_server
+link path=usr/lib/$(MACH64)/libfam.so target=libfam.so.0.0.0
+link path=usr/lib/$(MACH64)/libfam.so.0 target=libfam.so.0.0.0
+file path=usr/lib/$(MACH64)/libfam.so.0.0.0
+link path=usr/lib/$(MACH64)/libgamin-1.so \
+    target=libgamin-1.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libgamin-1.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libgamin-1.so.0 \
+    target=libgamin-1.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libgamin_shared.a
+file path=usr/lib/$(MACH64)/pkgconfig/gamin.pc
+file path=usr/lib/gam_server
+link path=usr/lib/libfam.so target=libfam.so.0.0.0
+link path=usr/lib/libfam.so.0 target=libfam.so.0.0.0
+file path=usr/lib/libfam.so.0.0.0
+link path=usr/lib/libgamin-1.so target=libgamin-1.so.$(COMPONENT_VERSION)
+file path=usr/lib/libgamin-1.so.$(COMPONENT_VERSION)
+link path=usr/lib/libgamin-1.so.0 target=libgamin-1.so.$(COMPONENT_VERSION)
+file path=usr/lib/libgamin_shared.a
+file path=usr/lib/pkgconfig/gamin.pc
+file path=usr/lib/python2.7/vendor-packages/64/_gamin.so
+file path=usr/lib/python2.7/vendor-packages/64/gamin.py
+file path=usr/lib/python2.7/vendor-packages/_gamin.so
+file path=usr/lib/python2.7/vendor-packages/gamin.py
