@@ -45,13 +45,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-CC =		$(COMPONENT_DIR)/CC.sh
-
 COMPONENT_PRE_BUILD_ACTION = \
 	$(MKDIR) $(SOURCE_DIR)/64
-
-LDSHARED=	$(CC) -shared
-PYTHON_ENV +=	LDSHARED="$(LDSHARED)"
 
 # One of the tests, test_exception_switch (tests.test_cpp.CPPTests),
 # failed in 64-bit. Skip it for now.

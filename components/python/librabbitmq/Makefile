@@ -50,8 +50,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-PYTHON_ENV +=	LDSHARED="gcc -shared"
-
 # common targets
 build:		$(BUILD_32_and_64)
 

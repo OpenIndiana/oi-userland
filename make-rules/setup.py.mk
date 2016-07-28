@@ -85,6 +85,11 @@ INSTALL_32_and_64 = $(INSTALL_64)
 endif
 
 PYTHON_ENV =	CC="$(CC)"
+ifeq ($(COMPILER),gcc)
+PYTHON_ENV +=	CXX="$(CXX)"
+PYTHON_ENV +=	LDSHARED="$(CC) -shared"
+PYTHON_ENV +=	LDCXXSHARED="$(CXX) -shared"
+endif
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
 PYTHON_ENV +=	PATH="$(PATH):$(SPRO_VROOT)/bin"
 
