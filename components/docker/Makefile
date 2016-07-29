@@ -71,6 +71,7 @@ endif
 endif
 
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/golang
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/zones
