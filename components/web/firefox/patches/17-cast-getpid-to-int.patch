@@ -1,0 +1,11 @@
+--- firefox-45.2.0esr/layout/base/nsLayoutUtils.cpp.orig	Thu Jul 28 15:10:20 2016
++++ firefox-45.2.0esr/layout/base/nsLayoutUtils.cpp	Thu Jul 28 14:46:28 2016
+@@ -3322,7 +3322,7 @@
+       nsCString string("dump-");
+       // Include the process ID in the dump file name, to make sure that in an
+       // e10s setup different processes don't clobber each other's dump files.
+-      string.AppendInt(getpid());
++      string.AppendInt((int)getpid());
+       for (int paintCount : *gPaintCountStack) {
+         string.AppendLiteral("-");
+         string.AppendInt(paintCount);
