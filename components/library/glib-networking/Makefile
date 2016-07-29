@@ -10,28 +10,32 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glib-networking
-COMPONENT_VERSION= 2.28.7
+COMPONENT_VERSION= 2.42.0
 COMPONENT_SUMMARY= Network-related giomodules for glib
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:98bedfbd530c4b1b53c91025fe82290bafd289d249e4eb549c3b90d23a76021c
+  sha256:304dd9e4c0ced69094300e0b9e66cd2eaae7161b9fc3186536d11458677d820d
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.42/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_FMRI = library/glib-networking
+COMPONENT_CLASSIFICATION = System/Libraries
+COMPONENT_LICENSE = LGPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --with-ca-certificates=/etc/certs/CA
+CONFIGURE_OPTIONS += --with-ca-certificates=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 
@@ -49,3 +53,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/libproxy
+REQUIRED_PACKAGES += system/library
