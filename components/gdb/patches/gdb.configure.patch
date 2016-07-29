@@ -1,0 +1,26 @@
+# Define a macro to apply Solaris-specific changes.
+# Will contribute patch upstream if possible, patching
+# configure.ac instead.  Patching configure.ac and 
+# re-generating the configure file is currently
+# not possible because the autoconf in Solaris is newer
+# than the version currently required by gdb, autoconf 2.6.4.
+
+--- gdb-7.11-orig/configure	Wed Feb 24 01:55:15 2016
++++ gdb-7.11/configure	Fri Apr  1 17:20:01 2016
+@@ -3054,6 +3054,16 @@
+ esac
+ 
+ 
++# For arch specific stuff
++case $target in
++	*solaris*)
++		CFLAGS="$CFLAGS -DSOLARIS"
++		;;
++	*)
++		;;
++esac
++
++
+ # Check whether --enable-libquadmath was given.
+ if test "${enable_libquadmath+set}" = set; then :
+   enableval=$enable_libquadmath; ENABLE_LIBQUADMATH=$enableval
