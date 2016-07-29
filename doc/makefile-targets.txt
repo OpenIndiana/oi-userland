@@ -75,6 +75,26 @@ install::
   macro used will depend on the component and corresponds to the build target
   macro used.
 
+$(ALL_INSTALLED_STAMP):
+  This variable points to a file in the build directory that can be used by
+  recipe steps which should logically follow the "install" target.  That is,
+  for this file to be touched, the component's generic "install" rule must
+  complete successfully.  This covers doing smaller-scoped install rules of
+  the multiple sub-components, for multiple architectures and bitnesses, as
+  well as custom rules sometimes attached in ultimate recipes to happen after
+  a common "gmake install".  It is also logically different from the several
+  $(BUILD_DIR)/*/.installed files, since those mark only the completion of
+  just the "install" rule for a specific sub-component built for a specific
+  architecture and installed (into component's common $(PROTO_DIR) usually).
+  Rules which intend to run only after all manipulation of the PROTO_DIR has
+  completed, can depend on this file (and so cause its creation) rather than
+  the dynamically re-evaluated "install" rule directly -- both to save some
+  compute resources and to avoid possible invalidation of previously built
+  objects if the "install" rule of a particular recipe always does something
+  actively changing the filesystem contents (even if just touching a file).
+  In particular, the IPS packaging steps should only take place after the
+  installation prototype location has stabilized, so they depend on this file.
+
 pkglint::
   This target is an optional target is automatically defined in each Makefile
   by the inclusion of $(WS_MAKE_RULES)/prep.mk.  It will run the build steps
