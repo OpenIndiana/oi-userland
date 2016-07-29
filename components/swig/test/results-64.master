@@ -38,8 +38,9 @@ partialchecking guile testcase class_scope_weird
 partialchecking guile testcase compactdefaultargs
 partialchecking guile testcase const_const_2
 partialchecking guile testcase constant_directive
-$(SOURCE_DIR)/Examples/test-suite/guile/../constant_directive.i:23: Warning 464: Unsupported constant value.
-$(SOURCE_DIR)/Examples/test-suite/guile/../constant_directive.i:24: Warning 464: Unsupported constant value.
+$(SOURCE_DIR)/Examples/test-suite/guile/../constant_directive.i:31: Warning 464: Unsupported constant value.
+$(SOURCE_DIR)/Examples/test-suite/guile/../constant_directive.i:32: Warning 464: Unsupported constant value.
+$(SOURCE_DIR)/Examples/test-suite/guile/../constant_directive.i:42: Warning 464: Unsupported constant value.
 partialchecking guile testcase constant_pointers
 partialchecking guile testcase constover (with run test)
 partialchecking guile testcase constructor_copy
@@ -71,7 +72,6 @@ partialchecking guile testcase destructor_reprotected
 partialchecking guile testcase director_abstract
 partialchecking guile testcase director_alternating
 partialchecking guile testcase director_basic
-partialchecking guile testcase director_property
 partialchecking guile testcase director_binary_string
 partialchecking guile testcase director_classes
 partialchecking guile testcase director_classic
@@ -86,12 +86,14 @@ partialchecking guile testcase director_frob
 partialchecking guile testcase director_ignore
 partialchecking guile testcase director_keywords
 partialchecking guile testcase director_namespace_clash
+partialchecking guile testcase director_nested
 partialchecking guile testcase director_nspace
 partialchecking guile testcase director_nspace_director_name_collision
-partialchecking guile testcase director_nested
 partialchecking guile testcase director_overload
 partialchecking guile testcase director_overload2
+partialchecking guile testcase director_pass_by_value
 partialchecking guile testcase director_primitives
+partialchecking guile testcase director_property
 partialchecking guile testcase director_protected
 partialchecking guile testcase director_protected_overloaded
 partialchecking guile testcase director_redefined
@@ -115,6 +117,7 @@ partialchecking guile testcase equality
 partialchecking guile testcase evil_diamond
 partialchecking guile testcase evil_diamond_ns
 partialchecking guile testcase evil_diamond_prop
+partialchecking guile testcase exception_classname
 partialchecking guile testcase exception_order
 partialchecking guile testcase extend
 partialchecking guile testcase extend_constructor_destructor
@@ -160,9 +163,9 @@ partialchecking guile testcase li_boost_shared_ptr
 partialchecking guile testcase li_boost_shared_ptr_bits
 partialchecking guile testcase li_boost_shared_ptr_template
 partialchecking guile testcase li_boost_shared_ptr_attribute
-partialchecking guile testcase li_carrays
-partialchecking guile testcase li_cdata
-partialchecking guile testcase li_cpointer
+partialchecking guile testcase li_carrays_cpp
+partialchecking guile testcase li_cdata_cpp
+partialchecking guile testcase li_cpointer_cpp
 partialchecking guile testcase li_std_auto_ptr
 partialchecking guile testcase li_stdint
 partialchecking guile testcase li_swigtype_inout
@@ -178,6 +181,10 @@ partialchecking guile testcase minherit
 partialchecking guile testcase minherit2
 partialchecking guile testcase mixed_types
 partialchecking guile testcase multiple_inheritance
+partialchecking guile testcase multiple_inheritance_abstract
+partialchecking guile testcase multiple_inheritance_interfaces
+partialchecking guile testcase multiple_inheritance_nspace
+partialchecking guile testcase multiple_inheritance_shared_ptr
 partialchecking guile testcase name_cxx
 partialchecking guile testcase name_warnings
 partialchecking guile testcase namespace_class
@@ -243,6 +250,7 @@ partialchecking guile testcase rename1
 partialchecking guile testcase rename2
 partialchecking guile testcase rename3
 partialchecking guile testcase rename4
+partialchecking guile testcase rename_rstrip_encoder
 partialchecking guile testcase rename_scope
 partialchecking guile testcase rename_simple
 partialchecking guile testcase rename_strip_encoder
@@ -259,6 +267,7 @@ partialchecking guile testcase smart_pointer_const
 partialchecking guile testcase smart_pointer_const2
 partialchecking guile testcase smart_pointer_const_overload
 partialchecking guile testcase smart_pointer_extend
+partialchecking guile testcase smart_pointer_ignore
 partialchecking guile testcase smart_pointer_member
 partialchecking guile testcase smart_pointer_multi
 partialchecking guile testcase smart_pointer_multi_typedef
@@ -281,6 +290,7 @@ partialchecking guile testcase special_variable_macros
 partialchecking guile testcase static_array_member
 partialchecking guile testcase static_const_member
 partialchecking guile testcase static_const_member_2
+partialchecking guile testcase string_constants
 partialchecking guile testcase struct_initialization_cpp
 partialchecking guile testcase struct_value
 partialchecking guile testcase symbol_clash
@@ -298,6 +308,7 @@ partialchecking guile testcase template_default
 partialchecking guile testcase template_default2
 partialchecking guile testcase template_default_arg
 partialchecking guile testcase template_default_arg_overloaded
+partialchecking guile testcase template_default_arg_overloaded_extend
 partialchecking guile testcase template_default_arg_virtual_destructor
 partialchecking guile testcase template_default_class_parms
 partialchecking guile testcase template_default_class_parms_typedef
@@ -373,7 +384,7 @@ partialchecking guile testcase typedef_mptr
 partialchecking guile testcase typedef_reference
 partialchecking guile testcase typedef_scope
 partialchecking guile testcase typedef_sizet
-partialchecking guile testcase typedef_struct
+partialchecking guile testcase typedef_struct_cpp
 partialchecking guile testcase typedef_typedef
 partialchecking guile testcase typemap_arrays
 partialchecking guile testcase typemap_array_qualifiers
@@ -446,7 +457,7 @@ partialchecking guile testcase c_delete_function
 partialchecking guile testcase char_constant (with run test)
 partialchecking guile testcase const_const
 partialchecking guile testcase constant_expr
-partialchecking guile testcase empty
+partialchecking guile testcase empty_c
 partialchecking guile testcase enums
 partialchecking guile testcase enum_forward
 partialchecking guile testcase enum_macro
@@ -459,7 +470,7 @@ partialchecking guile testcase immutable_values
 partialchecking guile testcase inctest
 partialchecking guile testcase infinity
 partialchecking guile testcase integers (with run test)
-partialchecking guile testcase keyword_rename
+partialchecking guile testcase keyword_rename_c
 partialchecking guile testcase lextype
 partialchecking guile testcase li_carrays
 partialchecking guile testcase li_cdata
@@ -473,8 +484,8 @@ partialchecking guile testcase nested
 partialchecking guile testcase nested_extend_c
 partialchecking guile testcase nested_structs
 partialchecking guile testcase newobject2
-partialchecking guile testcase overload_extend (with run test)
-partialchecking guile testcase overload_extendc
+partialchecking guile testcase overload_extend_c (with run test)
+partialchecking guile testcase overload_extend2
 partialchecking guile testcase preproc
 partialchecking guile testcase preproc_constants_c
 partialchecking guile testcase preproc_defined
@@ -499,8 +510,10 @@ partialchecking guile testcase mod
 partialchecking guile testcase template_typedef_import
 partialchecking guile testcase multi_import
 partialchecking guile testcase guile_ext_test (with run test)
+502 guile tests passed
 partialchecking lua test-suite
 partialchecking lua testcase lua_no_module_global (with run test)
+partialchecking lua testcase lua_inherit_getitem (with run test)
 partialchecking lua testcase abstract_access (with run test)
 partialchecking lua testcase abstract_inherit
 partialchecking lua testcase abstract_inherit_ok
@@ -573,7 +586,6 @@ partialchecking lua testcase destructor_reprotected
 partialchecking lua testcase director_abstract
 partialchecking lua testcase director_alternating
 partialchecking lua testcase director_basic
-partialchecking lua testcase director_property
 partialchecking lua testcase director_binary_string
 $(SOURCE_DIR)/Examples/test-suite/lua/../director_binary_string.i:5: Warning 453: Can't apply (char *STRING,size_t LENGTH). No typemaps are defined.
 $(SOURCE_DIR)/Examples/test-suite/lua/../director_binary_string.i:6: Warning 453: Can't apply (char *STRING,size_t LENGTH). No typemaps are defined.
@@ -591,12 +603,14 @@ partialchecking lua testcase director_frob
 partialchecking lua testcase director_ignore
 partialchecking lua testcase director_keywords
 partialchecking lua testcase director_namespace_clash
+partialchecking lua testcase director_nested
 partialchecking lua testcase director_nspace
 partialchecking lua testcase director_nspace_director_name_collision
-partialchecking lua testcase director_nested
 partialchecking lua testcase director_overload
 partialchecking lua testcase director_overload2
+partialchecking lua testcase director_pass_by_value
 partialchecking lua testcase director_primitives
+partialchecking lua testcase director_property
 partialchecking lua testcase director_protected
 partialchecking lua testcase director_protected_overloaded
 partialchecking lua testcase director_redefined
@@ -620,6 +634,7 @@ partialchecking lua testcase equality (with run test)
 partialchecking lua testcase evil_diamond
 partialchecking lua testcase evil_diamond_ns
 partialchecking lua testcase evil_diamond_prop
+partialchecking lua testcase exception_classname
 partialchecking lua testcase exception_order (with run test)
 partialchecking lua testcase extend (with run test)
 partialchecking lua testcase extend_constructor_destructor (with run test)
@@ -665,10 +680,10 @@ partialchecking lua testcase li_boost_shared_ptr
 partialchecking lua testcase li_boost_shared_ptr_bits
 partialchecking lua testcase li_boost_shared_ptr_template
 partialchecking lua testcase li_boost_shared_ptr_attribute
-partialchecking lua testcase li_carrays (with run test)
-partialchecking lua testcase li_cdata
+partialchecking lua testcase li_carrays_cpp (with run test)
+partialchecking lua testcase li_cdata_cpp
 cdata.i module not supported.
-partialchecking lua testcase li_cpointer
+partialchecking lua testcase li_cpointer_cpp
 partialchecking lua testcase li_std_auto_ptr
 partialchecking lua testcase li_stdint
 partialchecking lua testcase li_swigtype_inout
@@ -684,6 +699,10 @@ partialchecking lua testcase minherit
 partialchecking lua testcase minherit2
 partialchecking lua testcase mixed_types
 partialchecking lua testcase multiple_inheritance
+partialchecking lua testcase multiple_inheritance_abstract
+partialchecking lua testcase multiple_inheritance_interfaces
+partialchecking lua testcase multiple_inheritance_nspace
+partialchecking lua testcase multiple_inheritance_shared_ptr
 partialchecking lua testcase name_cxx
 partialchecking lua testcase name_warnings
 partialchecking lua testcase namespace_class
@@ -743,6 +762,7 @@ partialchecking lua testcase rename1
 partialchecking lua testcase rename2
 partialchecking lua testcase rename3
 partialchecking lua testcase rename4
+partialchecking lua testcase rename_rstrip_encoder
 partialchecking lua testcase rename_scope
 partialchecking lua testcase rename_simple (with run test)
 partialchecking lua testcase rename_strip_encoder
@@ -759,6 +779,7 @@ partialchecking lua testcase smart_pointer_const
 partialchecking lua testcase smart_pointer_const2
 partialchecking lua testcase smart_pointer_const_overload
 partialchecking lua testcase smart_pointer_extend (with run test)
+partialchecking lua testcase smart_pointer_ignore
 partialchecking lua testcase smart_pointer_member
 partialchecking lua testcase smart_pointer_multi (with run test)
 partialchecking lua testcase smart_pointer_multi_typedef
@@ -781,6 +802,7 @@ partialchecking lua testcase special_variable_macros
 partialchecking lua testcase static_array_member
 partialchecking lua testcase static_const_member (with run test)
 partialchecking lua testcase static_const_member_2 (with run test)
+partialchecking lua testcase string_constants
 partialchecking lua testcase struct_initialization_cpp
 partialchecking lua testcase struct_value
 partialchecking lua testcase symbol_clash
@@ -798,6 +820,7 @@ partialchecking lua testcase template_default
 partialchecking lua testcase template_default2
 partialchecking lua testcase template_default_arg (with run test)
 partialchecking lua testcase template_default_arg_overloaded
+partialchecking lua testcase template_default_arg_overloaded_extend
 partialchecking lua testcase template_default_arg_virtual_destructor
 partialchecking lua testcase template_default_class_parms
 partialchecking lua testcase template_default_class_parms_typedef
@@ -873,7 +896,7 @@ partialchecking lua testcase typedef_mptr
 partialchecking lua testcase typedef_reference
 partialchecking lua testcase typedef_scope
 partialchecking lua testcase typedef_sizet
-partialchecking lua testcase typedef_struct
+partialchecking lua testcase typedef_struct_cpp
 partialchecking lua testcase typedef_typedef
 partialchecking lua testcase typemap_arrays
 partialchecking lua testcase typemap_array_qualifiers
@@ -943,7 +966,7 @@ partialchecking lua testcase c_delete_function
 partialchecking lua testcase char_constant
 partialchecking lua testcase const_const
 partialchecking lua testcase constant_expr
-partialchecking lua testcase empty
+partialchecking lua testcase empty_c
 partialchecking lua testcase enums (with run test)
 partialchecking lua testcase enum_forward
 partialchecking lua testcase enum_macro
@@ -956,7 +979,7 @@ partialchecking lua testcase immutable_values
 partialchecking lua testcase inctest
 partialchecking lua testcase infinity
 partialchecking lua testcase integers
-partialchecking lua testcase keyword_rename (with run test)
+partialchecking lua testcase keyword_rename_c (with run test)
 partialchecking lua testcase lextype
 partialchecking lua testcase li_carrays (with run test)
 partialchecking lua testcase li_cdata
@@ -972,8 +995,8 @@ partialchecking lua testcase nested
 partialchecking lua testcase nested_extend_c
 partialchecking lua testcase nested_structs
 partialchecking lua testcase newobject2 (with run test)
-partialchecking lua testcase overload_extend
-partialchecking lua testcase overload_extendc
+partialchecking lua testcase overload_extend_c
+partialchecking lua testcase overload_extend2
 partialchecking lua testcase preproc
 partialchecking lua testcase preproc_constants_c
 partialchecking lua testcase preproc_defined
@@ -997,11 +1020,11 @@ partialchecking lua testcase packageoption
 partialchecking lua testcase mod
 partialchecking lua testcase template_typedef_import
 partialchecking lua testcase multi_import (with run test)
+501 lua tests passed
 partialchecking perl5 test-suite
 partialchecking perl5 testcase primitive_types (with run test)
-partialchecking perl5 testcase li_cdata
 partialchecking perl5 testcase li_cstring
-partialchecking perl5 testcase li_cdata_carrays (with run test)
+partialchecking perl5 testcase li_cdata_carrays_cpp (with run test)
 partialchecking perl5 testcase li_reference (with run test)
 partialchecking perl5 testcase director_nestedmodule
 partialchecking perl5 testcase abstract_access
@@ -1074,7 +1097,6 @@ partialchecking perl5 testcase destructor_reprotected
 partialchecking perl5 testcase director_abstract (with run test)
 partialchecking perl5 testcase director_alternating (with run test)
 partialchecking perl5 testcase director_basic (with run test)
-partialchecking perl5 testcase director_property
 partialchecking perl5 testcase director_binary_string
 partialchecking perl5 testcase director_classes (with run test)
 partialchecking perl5 testcase director_classic (with run test)
@@ -1089,12 +1111,14 @@ partialchecking perl5 testcase director_frob (with run test)
 partialchecking perl5 testcase director_ignore (with run test)
 partialchecking perl5 testcase director_keywords
 partialchecking perl5 testcase director_namespace_clash
+partialchecking perl5 testcase director_nested (with run test)
 partialchecking perl5 testcase director_nspace
 partialchecking perl5 testcase director_nspace_director_name_collision
-partialchecking perl5 testcase director_nested (with run test)
 partialchecking perl5 testcase director_overload
 partialchecking perl5 testcase director_overload2
+partialchecking perl5 testcase director_pass_by_value
 partialchecking perl5 testcase director_primitives (with run test)
+partialchecking perl5 testcase director_property
 partialchecking perl5 testcase director_protected (with run test)
 partialchecking perl5 testcase director_protected_overloaded
 partialchecking perl5 testcase director_redefined
@@ -1118,6 +1142,7 @@ partialchecking perl5 testcase equality
 partialchecking perl5 testcase evil_diamond
 partialchecking perl5 testcase evil_diamond_ns
 partialchecking perl5 testcase evil_diamond_prop
+partialchecking perl5 testcase exception_classname
 partialchecking perl5 testcase exception_order (with run test)
 partialchecking perl5 testcase extend
 partialchecking perl5 testcase extend_constructor_destructor
@@ -1163,8 +1188,9 @@ partialchecking perl5 testcase li_boost_shared_ptr
 partialchecking perl5 testcase li_boost_shared_ptr_bits
 partialchecking perl5 testcase li_boost_shared_ptr_template
 partialchecking perl5 testcase li_boost_shared_ptr_attribute
-partialchecking perl5 testcase li_carrays (with run test)
-partialchecking perl5 testcase li_cpointer
+partialchecking perl5 testcase li_carrays_cpp (with run test)
+partialchecking perl5 testcase li_cdata_cpp
+partialchecking perl5 testcase li_cpointer_cpp
 partialchecking perl5 testcase li_std_auto_ptr
 partialchecking perl5 testcase li_stdint
 partialchecking perl5 testcase li_swigtype_inout
@@ -1180,6 +1206,10 @@ partialchecking perl5 testcase minherit (with run test)
 partialchecking perl5 testcase minherit2
 partialchecking perl5 testcase mixed_types
 partialchecking perl5 testcase multiple_inheritance (with run test)
+partialchecking perl5 testcase multiple_inheritance_abstract
+partialchecking perl5 testcase multiple_inheritance_interfaces
+partialchecking perl5 testcase multiple_inheritance_nspace
+partialchecking perl5 testcase multiple_inheritance_shared_ptr
 partialchecking perl5 testcase name_cxx
 partialchecking perl5 testcase name_warnings
 partialchecking perl5 testcase namespace_class
@@ -1239,6 +1269,7 @@ partialchecking perl5 testcase rename1
 partialchecking perl5 testcase rename2
 partialchecking perl5 testcase rename3
 partialchecking perl5 testcase rename4
+partialchecking perl5 testcase rename_rstrip_encoder
 partialchecking perl5 testcase rename_scope (with run test)
 partialchecking perl5 testcase rename_simple
 partialchecking perl5 testcase rename_strip_encoder
@@ -1255,6 +1286,7 @@ partialchecking perl5 testcase smart_pointer_const
 partialchecking perl5 testcase smart_pointer_const2
 partialchecking perl5 testcase smart_pointer_const_overload
 partialchecking perl5 testcase smart_pointer_extend
+partialchecking perl5 testcase smart_pointer_ignore
 partialchecking perl5 testcase smart_pointer_member
 partialchecking perl5 testcase smart_pointer_multi
 partialchecking perl5 testcase smart_pointer_multi_typedef
@@ -1277,6 +1309,7 @@ partialchecking perl5 testcase special_variable_macros
 partialchecking perl5 testcase static_array_member
 partialchecking perl5 testcase static_const_member
 partialchecking perl5 testcase static_const_member_2
+partialchecking perl5 testcase string_constants
 partialchecking perl5 testcase struct_initialization_cpp
 partialchecking perl5 testcase struct_value
 partialchecking perl5 testcase symbol_clash
@@ -1294,6 +1327,7 @@ partialchecking perl5 testcase template_default
 partialchecking perl5 testcase template_default2
 partialchecking perl5 testcase template_default_arg (with run test)
 partialchecking perl5 testcase template_default_arg_overloaded
+partialchecking perl5 testcase template_default_arg_overloaded_extend
 partialchecking perl5 testcase template_default_arg_virtual_destructor
 partialchecking perl5 testcase template_default_class_parms
 partialchecking perl5 testcase template_default_class_parms_typedef
@@ -1369,7 +1403,7 @@ partialchecking perl5 testcase typedef_mptr
 partialchecking perl5 testcase typedef_reference
 partialchecking perl5 testcase typedef_scope
 partialchecking perl5 testcase typedef_sizet
-partialchecking perl5 testcase typedef_struct
+partialchecking perl5 testcase typedef_struct_cpp
 partialchecking perl5 testcase typedef_typedef
 partialchecking perl5 testcase typemap_arrays
 partialchecking perl5 testcase typemap_array_qualifiers
@@ -1431,7 +1465,6 @@ partialchecking perl5 testcase smart_pointer_inherit
 partialchecking perl5 testcase template_typedef_fnc
 partialchecking perl5 testcase template_type_namespace
 partialchecking perl5 testcase template_opaque
-partialchecking perl5 testcase li_cdata
 partialchecking perl5 testcase li_cstring
 partialchecking perl5 testcase li_cdata_carrays (with run test)
 partialchecking perl5 testcase arrays
@@ -1441,7 +1474,7 @@ partialchecking perl5 testcase c_delete_function
 partialchecking perl5 testcase char_constant
 partialchecking perl5 testcase const_const
 partialchecking perl5 testcase constant_expr
-partialchecking perl5 testcase empty
+partialchecking perl5 testcase empty_c
 partialchecking perl5 testcase enums
 partialchecking perl5 testcase enum_forward
 partialchecking perl5 testcase enum_macro
@@ -1454,9 +1487,10 @@ partialchecking perl5 testcase immutable_values
 partialchecking perl5 testcase inctest (with run test)
 partialchecking perl5 testcase infinity
 partialchecking perl5 testcase integers
-partialchecking perl5 testcase keyword_rename
+partialchecking perl5 testcase keyword_rename_c
 partialchecking perl5 testcase lextype
 partialchecking perl5 testcase li_carrays (with run test)
+partialchecking perl5 testcase li_cdata
 partialchecking perl5 testcase li_cmalloc
 partialchecking perl5 testcase li_constraints
 partialchecking perl5 testcase li_cpointer
@@ -1468,8 +1502,8 @@ partialchecking perl5 testcase nested
 partialchecking perl5 testcase nested_extend_c
 partialchecking perl5 testcase nested_structs
 partialchecking perl5 testcase newobject2
-partialchecking perl5 testcase overload_extend
-partialchecking perl5 testcase overload_extendc
+partialchecking perl5 testcase overload_extend_c
+partialchecking perl5 testcase overload_extend2
 partialchecking perl5 testcase preproc (with run test)
 partialchecking perl5 testcase preproc_constants_c
 partialchecking perl5 testcase preproc_defined
@@ -1493,6 +1527,7 @@ partialchecking perl5 testcase packageoption (with run test)
 partialchecking perl5 testcase mod
 partialchecking perl5 testcase template_typedef_import
 partialchecking perl5 testcase multi_import
+505 perl5 tests passed
 partialchecking php test-suite
 partialchecking php testcase callback (with run test)
 partialchecking php testcase php_iterator (with run test)
@@ -1567,7 +1602,6 @@ partialchecking php testcase destructor_reprotected
 partialchecking php testcase director_abstract (with run test)
 partialchecking php testcase director_alternating
 partialchecking php testcase director_basic (with run test)
-partialchecking php testcase director_property
 partialchecking php testcase director_binary_string
 partialchecking php testcase director_classes
 partialchecking php testcase director_classic (with run test)
@@ -1582,12 +1616,14 @@ partialchecking php testcase director_frob (with run test)
 partialchecking php testcase director_ignore
 partialchecking php testcase director_keywords
 partialchecking php testcase director_namespace_clash
+partialchecking php testcase director_nested (with run test)
 partialchecking php testcase director_nspace
 partialchecking php testcase director_nspace_director_name_collision
-partialchecking php testcase director_nested (with run test)
 partialchecking php testcase director_overload
 partialchecking php testcase director_overload2
+partialchecking php testcase director_pass_by_value (with run test)
 partialchecking php testcase director_primitives
+partialchecking php testcase director_property
 partialchecking php testcase director_protected (with run test)
 partialchecking php testcase director_protected_overloaded
 partialchecking php testcase director_redefined
@@ -1611,6 +1647,7 @@ partialchecking php testcase equality
 partialchecking php testcase evil_diamond (with run test)
 partialchecking php testcase evil_diamond_ns (with run test)
 partialchecking php testcase evil_diamond_prop (with run test)
+partialchecking php testcase exception_classname
 partialchecking php testcase exception_order (with run test)
 partialchecking php testcase extend
 partialchecking php testcase extend_constructor_destructor
@@ -1656,9 +1693,9 @@ partialchecking php testcase li_boost_shared_ptr
 partialchecking php testcase li_boost_shared_ptr_bits
 partialchecking php testcase li_boost_shared_ptr_template
 partialchecking php testcase li_boost_shared_ptr_attribute
-partialchecking php testcase li_carrays (with run test)
-partialchecking php testcase li_cdata
-partialchecking php testcase li_cpointer
+partialchecking php testcase li_carrays_cpp (with run test)
+partialchecking php testcase li_cdata_cpp
+partialchecking php testcase li_cpointer_cpp
 partialchecking php testcase li_std_auto_ptr
 partialchecking php testcase li_stdint
 partialchecking php testcase li_swigtype_inout
@@ -1674,6 +1711,10 @@ partialchecking php testcase minherit
 partialchecking php testcase minherit2
 partialchecking php testcase mixed_types
 partialchecking php testcase multiple_inheritance
+partialchecking php testcase multiple_inheritance_abstract
+partialchecking php testcase multiple_inheritance_interfaces
+partialchecking php testcase multiple_inheritance_nspace
+partialchecking php testcase multiple_inheritance_shared_ptr
 partialchecking php testcase name_cxx
 partialchecking php testcase name_warnings
 partialchecking php testcase namespace_class
@@ -1733,6 +1774,7 @@ partialchecking php testcase rename1
 partialchecking php testcase rename2
 partialchecking php testcase rename3
 partialchecking php testcase rename4
+partialchecking php testcase rename_rstrip_encoder
 partialchecking php testcase rename_scope (with run test)
 partialchecking php testcase rename_simple
 partialchecking php testcase rename_strip_encoder
@@ -1749,6 +1791,7 @@ partialchecking php testcase smart_pointer_const
 partialchecking php testcase smart_pointer_const2
 partialchecking php testcase smart_pointer_const_overload
 partialchecking php testcase smart_pointer_extend
+partialchecking php testcase smart_pointer_ignore
 partialchecking php testcase smart_pointer_member
 partialchecking php testcase smart_pointer_multi
 partialchecking php testcase smart_pointer_multi_typedef
@@ -1771,6 +1814,7 @@ partialchecking php testcase special_variable_macros
 partialchecking php testcase static_array_member
 partialchecking php testcase static_const_member
 partialchecking php testcase static_const_member_2
+partialchecking php testcase string_constants
 partialchecking php testcase struct_initialization_cpp
 partialchecking php testcase struct_value
 partialchecking php testcase symbol_clash
@@ -1788,6 +1832,7 @@ partialchecking php testcase template_default
 partialchecking php testcase template_default2
 partialchecking php testcase template_default_arg
 partialchecking php testcase template_default_arg_overloaded
+partialchecking php testcase template_default_arg_overloaded_extend
 partialchecking php testcase template_default_arg_virtual_destructor
 partialchecking php testcase template_default_class_parms
 partialchecking php testcase template_default_class_parms_typedef
@@ -1863,7 +1908,7 @@ partialchecking php testcase typedef_mptr
 partialchecking php testcase typedef_reference (with run test)
 partialchecking php testcase typedef_scope
 partialchecking php testcase typedef_sizet
-partialchecking php testcase typedef_struct
+partialchecking php testcase typedef_struct_cpp
 partialchecking php testcase typedef_typedef
 partialchecking php testcase typemap_arrays
 partialchecking php testcase typemap_array_qualifiers
@@ -1932,7 +1977,7 @@ partialchecking php testcase c_delete_function
 partialchecking php testcase char_constant
 partialchecking php testcase const_const
 partialchecking php testcase constant_expr
-partialchecking php testcase empty
+partialchecking php testcase empty_c
 partialchecking php testcase enums
 partialchecking php testcase enum_forward
 partialchecking php testcase enum_macro
@@ -1945,7 +1990,7 @@ partialchecking php testcase immutable_values
 partialchecking php testcase inctest
 partialchecking php testcase infinity
 partialchecking php testcase integers
-partialchecking php testcase keyword_rename
+partialchecking php testcase keyword_rename_c
 partialchecking php testcase lextype
 partialchecking php testcase li_carrays (with run test)
 partialchecking php testcase li_cdata
@@ -1960,8 +2005,8 @@ partialchecking php testcase nested
 partialchecking php testcase nested_extend_c
 partialchecking php testcase nested_structs
 partialchecking php testcase newobject2
-partialchecking php testcase overload_extend
-partialchecking php testcase overload_extendc
+partialchecking php testcase overload_extend_c
+partialchecking php testcase overload_extend2
 partialchecking php testcase preproc
 partialchecking php testcase preproc_constants_c
 partialchecking php testcase preproc_defined
@@ -1985,6 +2030,7 @@ partialchecking php testcase packageoption
 partialchecking php testcase mod
 partialchecking php testcase template_typedef_import
 partialchecking php testcase multi_import
+501 php tests passed
 partialchecking python test-suite
 partialchecking python testcase argcargvtest (with run test)
 partialchecking python testcase callback (with run test)
@@ -2022,6 +2068,7 @@ partialchecking python testcase python_nondynamic (with run test)
 partialchecking python testcase python_overload_simple_cast (with run test)
 partialchecking python testcase python_pythoncode (with run test)
 partialchecking python testcase python_richcompare (with run test)
+partialchecking python testcase python_strict_unicode (with run test)
 partialchecking python testcase simutry
 partialchecking python testcase std_containers (with run test)
 partialchecking python testcase swigobject (with run test)
@@ -2096,7 +2143,6 @@ partialchecking python testcase destructor_reprotected
 partialchecking python testcase director_abstract (with run test)
 partialchecking python testcase director_alternating (with run test)
 partialchecking python testcase director_basic (with run test)
-partialchecking python testcase director_property (with run test)
 partialchecking python testcase director_binary_string
 partialchecking python testcase director_classes
 partialchecking python testcase director_classic (with run test)
@@ -2111,12 +2157,14 @@ partialchecking python testcase director_frob (with run test)
 partialchecking python testcase director_ignore
 partialchecking python testcase director_keywords (with run test)
 partialchecking python testcase director_namespace_clash
+partialchecking python testcase director_nested (with run test)
 partialchecking python testcase director_nspace
 partialchecking python testcase director_nspace_director_name_collision
-partialchecking python testcase director_nested (with run test)
 partialchecking python testcase director_overload
 partialchecking python testcase director_overload2
+partialchecking python testcase director_pass_by_value (with run test)
 partialchecking python testcase director_primitives
+partialchecking python testcase director_property (with run test)
 partialchecking python testcase director_protected (with run test)
 partialchecking python testcase director_protected_overloaded
 partialchecking python testcase director_redefined
@@ -2140,6 +2188,7 @@ partialchecking python testcase equality
 partialchecking python testcase evil_diamond
 partialchecking python testcase evil_diamond_ns
 partialchecking python testcase evil_diamond_prop
+partialchecking python testcase exception_classname (with run test)
 partialchecking python testcase exception_order (with run test)
 partialchecking python testcase extend
 partialchecking python testcase extend_constructor_destructor
@@ -2185,9 +2234,9 @@ partialchecking python testcase li_boost_shared_ptr (with run test)
 partialchecking python testcase li_boost_shared_ptr_bits (with run test)
 partialchecking python testcase li_boost_shared_ptr_template (with run test)
 partialchecking python testcase li_boost_shared_ptr_attribute
-partialchecking python testcase li_carrays (with run test)
-partialchecking python testcase li_cdata (with run test)
-partialchecking python testcase li_cpointer (with run test)
+partialchecking python testcase li_carrays_cpp (with run test)
+partialchecking python testcase li_cdata_cpp (with run test)
+partialchecking python testcase li_cpointer_cpp (with run test)
 partialchecking python testcase li_std_auto_ptr (with run test)
 partialchecking python testcase li_stdint
 partialchecking python testcase li_swigtype_inout
@@ -2203,6 +2252,10 @@ partialchecking python testcase minherit (with run test)
 partialchecking python testcase minherit2
 partialchecking python testcase mixed_types
 partialchecking python testcase multiple_inheritance
+partialchecking python testcase multiple_inheritance_abstract
+partialchecking python testcase multiple_inheritance_interfaces
+partialchecking python testcase multiple_inheritance_nspace
+partialchecking python testcase multiple_inheritance_shared_ptr
 partialchecking python testcase name_cxx
 partialchecking python testcase name_warnings
 partialchecking python testcase namespace_class (with run test)
@@ -2229,7 +2282,7 @@ partialchecking python testcase nested_template_base (with run test)
 partialchecking python testcase nested_workaround (with run test)
 partialchecking python testcase newobject1
 partialchecking python testcase null_pointer
-partialchecking python testcase operator_overload
+partialchecking python testcase operator_overload (with run test)
 partialchecking python testcase operator_overload_break
 partialchecking python testcase operator_pointer_ref
 partialchecking python testcase operbool (with run test)
@@ -2262,6 +2315,7 @@ partialchecking python testcase rename1
 partialchecking python testcase rename2
 partialchecking python testcase rename3
 partialchecking python testcase rename4
+partialchecking python testcase rename_rstrip_encoder (with run test)
 partialchecking python testcase rename_scope (with run test)
 partialchecking python testcase rename_simple
 partialchecking python testcase rename_strip_encoder (with run test)
@@ -2278,6 +2332,7 @@ partialchecking python testcase smart_pointer_const
 partialchecking python testcase smart_pointer_const2
 partialchecking python testcase smart_pointer_const_overload (with run test)
 partialchecking python testcase smart_pointer_extend (with run test)
+partialchecking python testcase smart_pointer_ignore
 partialchecking python testcase smart_pointer_member (with run test)
 partialchecking python testcase smart_pointer_multi (with run test)
 partialchecking python testcase smart_pointer_multi_typedef (with run test)
@@ -2300,6 +2355,7 @@ partialchecking python testcase special_variable_macros (with run test)
 partialchecking python testcase static_array_member
 partialchecking python testcase static_const_member
 partialchecking python testcase static_const_member_2 (with run test)
+partialchecking python testcase string_constants
 partialchecking python testcase struct_initialization_cpp
 partialchecking python testcase struct_value (with run test)
 partialchecking python testcase symbol_clash
@@ -2317,6 +2373,7 @@ partialchecking python testcase template_default
 partialchecking python testcase template_default2
 partialchecking python testcase template_default_arg (with run test)
 partialchecking python testcase template_default_arg_overloaded (with run test)
+partialchecking python testcase template_default_arg_overloaded_extend (with run test)
 partialchecking python testcase template_default_arg_virtual_destructor
 partialchecking python testcase template_default_class_parms
 partialchecking python testcase template_default_class_parms_typedef
@@ -2392,7 +2449,7 @@ partialchecking python testcase typedef_mptr
 partialchecking python testcase typedef_reference
 partialchecking python testcase typedef_scope (with run test)
 partialchecking python testcase typedef_sizet
-partialchecking python testcase typedef_struct
+partialchecking python testcase typedef_struct_cpp
 partialchecking python testcase typedef_typedef (with run test)
 partialchecking python testcase typemap_arrays (with run test)
 partialchecking python testcase typemap_array_qualifiers
@@ -2466,7 +2523,7 @@ partialchecking python testcase c_delete_function
 partialchecking python testcase char_constant
 partialchecking python testcase const_const
 partialchecking python testcase constant_expr
-partialchecking python testcase empty (with run test)
+partialchecking python testcase empty_c (with run test)
 partialchecking python testcase enums (with run test)
 partialchecking python testcase enum_forward (with run test)
 partialchecking python testcase enum_macro
@@ -2479,7 +2536,7 @@ partialchecking python testcase immutable_values
 partialchecking python testcase inctest (with run test)
 partialchecking python testcase infinity
 partialchecking python testcase integers
-partialchecking python testcase keyword_rename (with run test)
+partialchecking python testcase keyword_rename_c (with run test)
 partialchecking python testcase lextype
 partialchecking python testcase li_carrays (with run test)
 partialchecking python testcase li_cdata (with run test)
@@ -2494,8 +2551,8 @@ partialchecking python testcase nested
 partialchecking python testcase nested_extend_c
 partialchecking python testcase nested_structs
 partialchecking python testcase newobject2
-partialchecking python testcase overload_extend (with run test)
-partialchecking python testcase overload_extendc (with run test)
+partialchecking python testcase overload_extend_c (with run test)
+partialchecking python testcase overload_extend2 (with run test)
 partialchecking python testcase preproc (with run test)
 partialchecking python testcase preproc_constants_c
 partialchecking python testcase preproc_defined (with run test)
@@ -2519,8 +2576,8 @@ partialchecking python testcase packageoption
 partialchecking python testcase mod (with run test)
 partialchecking python testcase template_typedef_import (with run test)
 partialchecking python testcase multi_import (with run test)
+544 python tests passed
 partialchecking ruby test-suite
-partialchecking ruby testcase li_cdata
 partialchecking ruby testcase li_cstring (with run test)
 partialchecking ruby testcase li_factory (with run test)
 partialchecking ruby testcase li_std_functors (with run test)
@@ -2606,7 +2663,6 @@ partialchecking ruby testcase destructor_reprotected
 partialchecking ruby testcase director_abstract (with run test)
 partialchecking ruby testcase director_alternating
 partialchecking ruby testcase director_basic (with run test)
-partialchecking ruby testcase director_property
 partialchecking ruby testcase director_binary_string
 partialchecking ruby testcase director_classes
 partialchecking ruby testcase director_classic
@@ -2621,12 +2677,14 @@ partialchecking ruby testcase director_frob (with run test)
 partialchecking ruby testcase director_ignore
 partialchecking ruby testcase director_keywords
 partialchecking ruby testcase director_namespace_clash
+partialchecking ruby testcase director_nested (with run test)
 partialchecking ruby testcase director_nspace
 partialchecking ruby testcase director_nspace_director_name_collision
-partialchecking ruby testcase director_nested (with run test)
 partialchecking ruby testcase director_overload
 partialchecking ruby testcase director_overload2
+partialchecking ruby testcase director_pass_by_value
 partialchecking ruby testcase director_primitives
+partialchecking ruby testcase director_property
 partialchecking ruby testcase director_protected (with run test)
 partialchecking ruby testcase director_protected_overloaded
 partialchecking ruby testcase director_redefined
@@ -2650,6 +2708,7 @@ partialchecking ruby testcase equality
 partialchecking ruby testcase evil_diamond
 partialchecking ruby testcase evil_diamond_ns
 partialchecking ruby testcase evil_diamond_prop
+partialchecking ruby testcase exception_classname
 partialchecking ruby testcase exception_order
 partialchecking ruby testcase extend
 partialchecking ruby testcase extend_constructor_destructor
@@ -2695,8 +2754,9 @@ partialchecking ruby testcase li_boost_shared_ptr (with run test)
 partialchecking ruby testcase li_boost_shared_ptr_bits (with run test)
 partialchecking ruby testcase li_boost_shared_ptr_template (with run test)
 partialchecking ruby testcase li_boost_shared_ptr_attribute
-partialchecking ruby testcase li_carrays (with run test)
-partialchecking ruby testcase li_cpointer
+partialchecking ruby testcase li_carrays_cpp (with run test)
+partialchecking ruby testcase li_cdata_cpp
+partialchecking ruby testcase li_cpointer_cpp
 partialchecking ruby testcase li_std_auto_ptr
 partialchecking ruby testcase li_stdint
 partialchecking ruby testcase li_swigtype_inout
@@ -2712,6 +2772,10 @@ partialchecking ruby testcase minherit (with run test)
 partialchecking ruby testcase minherit2
 partialchecking ruby testcase mixed_types
 partialchecking ruby testcase multiple_inheritance
+partialchecking ruby testcase multiple_inheritance_abstract
+partialchecking ruby testcase multiple_inheritance_interfaces
+partialchecking ruby testcase multiple_inheritance_nspace
+partialchecking ruby testcase multiple_inheritance_shared_ptr
 partialchecking ruby testcase name_cxx
 partialchecking ruby testcase name_warnings
 partialchecking ruby testcase namespace_class
@@ -2771,6 +2835,7 @@ partialchecking ruby testcase rename1
 partialchecking ruby testcase rename2
 partialchecking ruby testcase rename3
 partialchecking ruby testcase rename4
+partialchecking ruby testcase rename_rstrip_encoder
 partialchecking ruby testcase rename_scope (with run test)
 partialchecking ruby testcase rename_simple
 partialchecking ruby testcase rename_strip_encoder
@@ -2787,6 +2852,7 @@ partialchecking ruby testcase smart_pointer_const (with run test)
 partialchecking ruby testcase smart_pointer_const2
 partialchecking ruby testcase smart_pointer_const_overload
 partialchecking ruby testcase smart_pointer_extend
+partialchecking ruby testcase smart_pointer_ignore
 partialchecking ruby testcase smart_pointer_member
 partialchecking ruby testcase smart_pointer_multi (with run test)
 partialchecking ruby testcase smart_pointer_multi_typedef (with run test)
@@ -2809,6 +2875,7 @@ partialchecking ruby testcase special_variable_macros
 partialchecking ruby testcase static_array_member
 partialchecking ruby testcase static_const_member
 partialchecking ruby testcase static_const_member_2 (with run test)
+partialchecking ruby testcase string_constants
 partialchecking ruby testcase struct_initialization_cpp
 partialchecking ruby testcase struct_value (with run test)
 partialchecking ruby testcase symbol_clash
@@ -2826,6 +2893,7 @@ partialchecking ruby testcase template_default
 partialchecking ruby testcase template_default2
 partialchecking ruby testcase template_default_arg
 partialchecking ruby testcase template_default_arg_overloaded
+partialchecking ruby testcase template_default_arg_overloaded_extend
 partialchecking ruby testcase template_default_arg_virtual_destructor
 partialchecking ruby testcase template_default_class_parms
 partialchecking ruby testcase template_default_class_parms_typedef
@@ -2901,7 +2969,7 @@ partialchecking ruby testcase typedef_mptr
 partialchecking ruby testcase typedef_reference
 partialchecking ruby testcase typedef_scope (with run test)
 partialchecking ruby testcase typedef_sizet
-partialchecking ruby testcase typedef_struct
+partialchecking ruby testcase typedef_struct_cpp
 partialchecking ruby testcase typedef_typedef
 partialchecking ruby testcase typemap_arrays
 partialchecking ruby testcase typemap_array_qualifiers
@@ -2963,8 +3031,8 @@ partialchecking ruby testcase smart_pointer_inherit
 partialchecking ruby testcase template_typedef_fnc
 partialchecking ruby testcase template_type_namespace (with run test)
 partialchecking ruby testcase template_opaque
-partialchecking ruby testcase li_cdata
 partialchecking ruby testcase li_cstring (with run test)
+partialchecking ruby testcase ruby_manual_proxy (with run test)
 partialchecking ruby testcase arrays (with run test)
 partialchecking ruby testcase bom_utf8
 partialchecking ruby testcase c_delete
@@ -2972,7 +3040,7 @@ partialchecking ruby testcase c_delete_function
 partialchecking ruby testcase char_constant (with run test)
 partialchecking ruby testcase const_const (with run test)
 partialchecking ruby testcase constant_expr
-partialchecking ruby testcase empty
+partialchecking ruby testcase empty_c
 partialchecking ruby testcase enums (with run test)
 partialchecking ruby testcase enum_forward
 partialchecking ruby testcase enum_macro
@@ -2985,9 +3053,10 @@ partialchecking ruby testcase immutable_values
 partialchecking ruby testcase inctest
 partialchecking ruby testcase infinity
 partialchecking ruby testcase integers (with run test)
-partialchecking ruby testcase keyword_rename
+partialchecking ruby testcase keyword_rename_c
 partialchecking ruby testcase lextype
 partialchecking ruby testcase li_carrays (with run test)
+partialchecking ruby testcase li_cdata
 partialchecking ruby testcase li_cmalloc
 partialchecking ruby testcase li_constraints
 partialchecking ruby testcase li_cpointer
@@ -2999,8 +3068,8 @@ partialchecking ruby testcase nested
 partialchecking ruby testcase nested_extend_c
 partialchecking ruby testcase nested_structs
 partialchecking ruby testcase newobject2 (with run test)
-partialchecking ruby testcase overload_extend (with run test)
-partialchecking ruby testcase overload_extendc (with run test)
+partialchecking ruby testcase overload_extend_c (with run test)
+partialchecking ruby testcase overload_extend2 (with run test)
 partialchecking ruby testcase preproc
 partialchecking ruby testcase preproc_constants_c
 partialchecking ruby testcase preproc_defined
@@ -3024,3 +3093,4 @@ partialchecking ruby testcase packageoption
 partialchecking ruby testcase mod
 partialchecking ruby testcase template_typedef_import
 partialchecking ruby testcase multi_import
+515 ruby tests passed
