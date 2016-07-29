@@ -324,6 +324,7 @@ $(BUILD_DIR_32)/.installed:       BITS=32
 $(BUILD_DIR_64)/.installed:       BITS=64
 
 # set the default target for installation of the component
+# (the argument(s) to its make or equivalent build wrapper)
 COMPONENT_INSTALL_TARGETS =	install
 
 # set the default test results directory
@@ -419,6 +420,24 @@ $(BUILD_DIR_32)/.tested:		BITS=32
 $(BUILD_DIR_64)/.tested:		BITS=64
 $(BUILD_DIR_32)/.tested-and-compared:	BITS=32
 $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
+
+# The "install" target is not a good one to depend on everywhere
+# after installation (e.g. during the packaging pipeline), because
+# each evaluation is dynamic - both slow to process, and it can
+# potentially change some files and invalidate previous steps.
+# So in later stages such as packaging (see ips.mk) we call the
+# "install" rule at most once by depending on ALL_INSTALLED_STAMP
+# filename and leave the single timestamped file to know it is over.
+# If the stamp exists, we know that the build and install rules
+# (however defined and mutilated by ultimate recipes, but usually
+# depending on "%/.installed" files in all sub-component per-MACH
+# build directories) have passed and a PROTO_DIR has probably been
+# created (although some components are known to limit themselves
+# to just building code with no actual installation implementation).
+ALL_INSTALLED_STAMP ?= $(BUILD_DIR)/.all-installed
+$(ALL_INSTALLED_STAMP): build install
+	test -d "$(PROTO_DIR)" || { echo "WARN: install completed but PROTO_DIR is missing!">&2; }
+	$(TOUCH) $@
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
