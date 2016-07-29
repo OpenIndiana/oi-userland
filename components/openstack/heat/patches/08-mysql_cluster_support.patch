@@ -1,0 +1,307 @@
+This patchset is for bug:
+
+22725887 - Heat needs to support MySQL Cluster
+
+This fixes the following aspects of Heat:
+1. Implementation of an oslo.db configuration parameter to specify the MySQL
+   storage engine (mysql_storage_engine).
+2. Replacement of hardcoded SQL statements that set the engine to "InnoDB"
+   to the above configuration value.
+3. Logic to handle SQL differences between MySQL InnoDB and MySQL Cluster (NDB).
+   This includes column lengths, constraints, foreign keys, and indexes.
+
+This has not been committed upstream, but has been filed in launchpad:
+
+https://bugs.launchpad.net/heat/+bug/1564110
+
+
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/054_stack_tags_table.py.orig	2016-07-29 12:03:45.066916862 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/054_stack_tags_table.py	2016-07-29 12:08:17.012890454 -0600
+@@ -11,10 +11,12 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
+ from heat.db.sqlalchemy import types as heat_db_types
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData(bind=migrate_engine)
+@@ -35,7 +37,7 @@ def upgrade(migrate_engine):
+                           sqlalchemy.String(36),
+                           sqlalchemy.ForeignKey('stack.id'),
+                           nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     stack_tag.create()
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/015_grizzly.py.orig	2016-07-29 12:03:53.884104708 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/015_grizzly.py	2016-07-29 12:08:35.264920866 -0600
+@@ -11,8 +11,10 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -25,7 +27,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('created_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('updated_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('template', sqlalchemy.Text),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -44,7 +46,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('aws_auth_url', sqlalchemy.Text),
+         sqlalchemy.Column('tenant_id', sqlalchemy.String(256)),
+         sqlalchemy.Column('aws_creds', sqlalchemy.Text),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -71,7 +73,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('tenant', sqlalchemy.String(256)),
+         sqlalchemy.Column('disable_rollback', sqlalchemy.Boolean,
+                           nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -88,7 +90,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('stack_id', sqlalchemy.String(36),
+                           sqlalchemy.ForeignKey('stack.id'), nullable=False),
+         sqlalchemy.Column('rsrc_metadata', sqlalchemy.Text),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -106,7 +108,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('resource_status_reason', sqlalchemy.String(255)),
+         sqlalchemy.Column('resource_type', sqlalchemy.String(255)),
+         sqlalchemy.Column('resource_properties', sqlalchemy.PickleType),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -122,7 +124,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('last_evaluated', sqlalchemy.DateTime),
+         sqlalchemy.Column('stack_id', sqlalchemy.String(36),
+                           sqlalchemy.ForeignKey('stack.id'), nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -136,7 +138,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('watch_rule_id', sqlalchemy.Integer,
+                           sqlalchemy.ForeignKey('watch_rule.id'),
+                           nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/059_sync_point.py.orig	2016-07-29 12:04:02.707922940 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/059_sync_point.py	2016-07-29 12:09:00.649161442 -0600
+@@ -11,10 +11,12 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
+ from heat.db.sqlalchemy import types as heat_db_types
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -41,7 +43,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.ForeignKeyConstraint(['stack_id'], ['stack.id'],
+                                         name='fk_stack_id'),
+ 
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     sync_point.create()
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/033_software_config.py.orig	2016-07-29 12:04:10.260632439 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/033_software_config.py	2016-07-29 12:09:20.089705318 -0600
+@@ -11,10 +11,12 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
+ from heat.db.sqlalchemy import types
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -34,7 +36,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('tenant', sqlalchemy.String(64),
+                           nullable=False,
+                           index=True),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     software_config.create()
+@@ -63,7 +65,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('tenant', sqlalchemy.String(64),
+                           nullable=False,
+                           index=True),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     software_deployment.create()
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/057_resource_uuid_to_id.py.orig	2016-07-29 12:04:19.750231791 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/057_resource_uuid_to_id.py	2016-07-28 14:01:17.581307597 -0600
+@@ -194,10 +194,11 @@ def upgrade_resource_data_post(migrate_e
+         name = inspector.get_indexes('resource_data')[0]['name']
+         sqlalchemy.Index(name, rd_table.c.resource_id).drop()
+ 
++    # Change column before it becomes a foreign key
++    rd_table.c.resource_id.alter(nullable=False)
+     cons = migrate.ForeignKeyConstraint(columns=[rd_table.c.resource_id],
+                                         refcolumns=[res_table.c.id])
+     cons.create()
+-    rd_table.c.resource_id.alter(nullable=False)
+ 
+     rd_table.c.tmp_res_uuid.drop()
+ 
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/044_snapshots.py.orig	2016-07-29 12:04:27.749158504 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/044_snapshots.py	2016-07-29 12:10:54.210544287 -0600
+@@ -11,10 +11,12 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
+ from heat.db.sqlalchemy import types
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -38,7 +40,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('tenant', sqlalchemy.String(64),
+                           nullable=False,
+                           index=True),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     sqlalchemy.Table('stack', meta, autoload=True)
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/051_service.py.orig	2016-07-29 12:04:36.470596083 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/051_service.py	2016-07-29 12:11:18.330506769 -0600
+@@ -15,8 +15,10 @@
+ 
+ import uuid
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -36,7 +38,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('created_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('updated_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('deleted_at', sqlalchemy.DateTime),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     service.create()
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/021_resource_data.py.orig	2016-07-29 12:04:51.248485607 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/021_resource_data.py	2016-07-29 12:11:47.651134656 -0600
+@@ -11,8 +11,10 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -33,7 +35,7 @@ def upgrade(migrate_engine):
+                           sqlalchemy.String(36),
+                           sqlalchemy.ForeignKey('resource.id'),
+                           nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     sqlalchemy.Table('resource', meta, autoload=True)
+--- heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/031_stack_lock.py.orig	2016-07-29 12:04:59.100720052 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/migrate_repo/versions/031_stack_lock.py	2016-07-29 12:12:03.834952665 -0600
+@@ -11,8 +11,10 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ import sqlalchemy
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sqlalchemy.MetaData()
+@@ -27,7 +29,7 @@ def upgrade(migrate_engine):
+         sqlalchemy.Column('created_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('updated_at', sqlalchemy.DateTime),
+         sqlalchemy.Column('engine_id', sqlalchemy.String(length=36)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     sqlalchemy.Table('stack', meta, autoload=True)
+--- heat-2015.1.2/heat/db/sqlalchemy/models.py.orig	2016-07-29 12:05:08.842912688 -0600
++++ heat-2015.1.2/heat/db/sqlalchemy/models.py	2016-07-29 12:15:35.087392556 -0600
+@@ -16,6 +16,7 @@ SQLAlchemy models for heat data.
+ 
+ import uuid
+ 
++from oslo_config import cfg
+ from oslo_db.sqlalchemy import models
+ from oslo_utils import timeutils
+ import six
+@@ -27,6 +28,8 @@ from sqlalchemy.orm import session as or
+ 
+ from heat.db.sqlalchemy import types
+ 
++CONF = cfg.CONF
++
+ BASE = declarative.declarative_base()
+ 
+ 
+@@ -37,7 +40,7 @@ def get_session():
+ 
+ class HeatBase(models.ModelBase, models.TimestampMixin):
+     """Base class for Heat Models."""
+-    __table_args__ = {'mysql_engine': 'InnoDB'}
++    __table_args__ = CONF.database.mysql_storage_engine
+ 
+     def expire(self, session=None, attrs=None):
+         """Expire this object ()."""

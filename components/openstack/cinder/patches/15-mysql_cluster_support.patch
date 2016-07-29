@@ -1,0 +1,758 @@
+This patchset is for bug:
+
+22725850 - Cinder needs to support MySQL Cluster
+
+This fixes the following aspects of Cinder:
+1. Implementation of an oslo.db configuration parameter to specify the MySQL
+   storage engine (mysql_storage_engine).
+2. Replacement of hardcoded SQL statements that set the engine to "InnoDB"
+   to the above configuration value.
+3. Logic to handle SQL differences between MySQL InnoDB and MySQL Cluster (NDB).
+   This includes column lengths, constraints, foreign keys, and indexes.
+
+This has not been committed upstream, but has been filed in launchpad:
+
+https://bugs.launchpad.net/cinder/+bug/1564110 
+
+
+--- cinder-2015.1.2/cinder/tests/test_migrations.py.orig	2016-07-29 11:00:01.187925033 -0600
++++ cinder-2015.1.2/cinder/tests/test_migrations.py	2016-07-29 11:04:05.631912887 -0600
+@@ -24,6 +24,7 @@ import uuid
+ 
+ from migrate.versioning import api as migration_api
+ from migrate.versioning import repository
++from oslo_config import cfg
+ from oslo_db.sqlalchemy import test_base
+ from oslo_db.sqlalchemy import test_migrations
+ from oslo_db.sqlalchemy import utils as db_utils
+@@ -32,6 +33,7 @@ import sqlalchemy
+ from cinder.db import migration
+ import cinder.db.sqlalchemy.migrate_repo
+ 
++CONF = cfg.CONF
+ 
+ class MigrationsMixin(test_migrations.WalkVersionsMixin):
+     """Test sqlalchemy-migrate migrations."""
+@@ -850,8 +852,9 @@ class TestMysqlMigrations(test_base.MySQ
+             "SELECT count(*) "
+             "from information_schema.TABLES "
+             "where TABLE_SCHEMA='openstack_citest' "
+-            "and ENGINE!='InnoDB' "
+-            "and TABLE_NAME!='migrate_version'")
++            "and ENGINE!='%(mysql_storage_engine)s' "
++            "and TABLE_NAME!='migrate_version'" %
++             dict(mysql_storage_engine=CONF.database.mysql_storage_engine))
+         count = noninnodb.scalar()
+         self.assertEqual(count, 0, "%d non InnoDB tables created" % count)
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/models.py.orig	2016-07-29 11:00:10.501447650 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/models.py	2016-07-28 13:42:21.527353348 -0600
+@@ -36,7 +36,7 @@ class CinderBase(models.TimestampMixin,
+                  models.ModelBase):
+     """Base class for Cinder Models."""
+ 
+-    __table_args__ = {'mysql_engine': 'InnoDB'}
++    __table_args__ = {'mysql_engine': CONF.database.mysql_storage_engine }
+ 
+     # TODO(rpodolyaka): reuse models.SoftDeleteMixin in the next stage
+     #                   of implementing of BP db-cleanup
+@@ -488,7 +488,7 @@ class IscsiTarget(BASE, CinderBase):
+     """Represents an iscsi target for a given host."""
+     __tablename__ = 'iscsi_targets'
+     __table_args__ = (schema.UniqueConstraint("target_num", "host"),
+-                      {'mysql_engine': 'InnoDB'})
++                      {'mysql_engine': CONF.database.mysql_storage_engine })
+     id = Column(Integer, primary_key=True)
+     target_num = Column(Integer)
+     host = Column(String(255))
+@@ -576,7 +576,7 @@ class DriverInitiatorData(BASE, models.T
+     __tablename__ = 'driver_initiator_data'
+     __table_args__ = (
+         schema.UniqueConstraint("initiator", "namespace", "key"),
+-        {'mysql_engine': 'InnoDB'}
++        {'mysql_engine': CONF.database.mysql_storage_engine }
+     )
+     id = Column(Integer, primary_key=True, nullable=False)
+     initiator = Column(String(255), index=True, nullable=False)
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/038_add_driver_initiator_data_table.py.orig	2016-07-29 11:00:18.420463823 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/038_add_driver_initiator_data_table.py	2016-07-29 11:05:16.443295143 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Column, DateTime, Integer
+ from sqlalchemy import MetaData, String, Table, UniqueConstraint
+@@ -18,6 +19,7 @@ from cinder.i18n import _LE
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -34,7 +36,7 @@ def upgrade(migrate_engine):
+         Column('key', String(length=255), nullable=False),
+         Column('value', String(length=255)),
+         UniqueConstraint('initiator', 'namespace', 'key'),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/020_add_volume_admin_metadata_table.py.orig	2016-07-29 11:00:26.045131176 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/020_add_volume_admin_metadata_table.py	2016-07-29 11:05:59.377263934 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+ from sqlalchemy import Integer, MetaData, String, Table, ForeignKey
+@@ -18,6 +19,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -37,7 +39,7 @@ def upgrade(migrate_engine):
+                nullable=False),
+         Column('key', String(length=255)),
+         Column('value', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/040_add_volume_attachment.py.orig	2016-07-29 11:00:33.982622176 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/040_add_volume_attachment.py	2016-07-29 11:06:48.928094250 -0600
+@@ -16,6 +16,7 @@
+ import datetime
+ import uuid
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ import six
+ from sqlalchemy import Boolean, Column, DateTime
+@@ -27,6 +28,7 @@ LOG = logging.getLogger(__name__)
+ 
+ CREATED_AT = datetime.datetime.now()  # noqa
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     """Add volume multi attachment table."""
+@@ -56,7 +58,7 @@ def upgrade(migrate_engine):
+         Column('detach_time', DateTime),
+         Column('attach_mode', String(length=36)),
+         Column('attach_status', String(length=255)),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     try:
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/003_glance_metadata.py.orig	2016-07-29 11:00:44.515262427 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/003_glance_metadata.py	2016-07-29 11:07:29.288662336 -0600
+@@ -12,6 +12,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Column, DateTime, Text, Boolean
+ from sqlalchemy import MetaData, Integer, String, Table, ForeignKey
+@@ -20,6 +21,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -31,11 +33,11 @@ def upgrade(migrate_engine):
+     Table('volumes',
+           meta,
+           Column('id', Integer(), primary_key=True, nullable=False),
+-          mysql_engine='InnoDB')
++          mysql_engine=CONF.database.mysql_storage_engine)
+     Table('snapshots',
+           meta,
+           Column('id', Integer(), primary_key=True, nullable=False),
+-          mysql_engine='InnoDB')
++          mysql_engine=CONF.database.mysql_storage_engine)
+     # Create new table
+     volume_glance_metadata = Table(
+         'volume_glance_metadata',
+@@ -50,7 +52,7 @@ def upgrade(migrate_engine):
+                ForeignKey('snapshots.id')),
+         Column('key', String(255)),
+         Column('value', Text),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     try:
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/008_add_backup.py.orig	2016-07-29 11:00:53.408609592 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/008_add_backup.py	2016-07-29 11:07:52.389988927 -0600
+@@ -13,6 +13,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+ from sqlalchemy import MetaData, Integer, String, Table
+@@ -21,6 +22,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -48,7 +50,7 @@ def upgrade(migrate_engine):
+         Column('service', String(length=255)),
+         Column('size', Integer()),
+         Column('object_count', Integer()),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     try:
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/015_drop_migrations_table.py.orig	2016-07-29 11:01:00.740311806 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/015_drop_migrations_table.py	2016-07-29 11:08:17.460343611 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime, Integer
+ from sqlalchemy import MetaData, String, Table
+@@ -18,6 +19,7 @@ from cinder.i18n import _LE
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ TABLE_NAME = 'migrations'
+ 
+@@ -52,7 +54,7 @@ def downgrade(migrate_engine):
+         Column('new_instance_type_id', Integer),
+         Column('instance_uuid', String(length=255), nullable=True),
+         Column('status', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/025_add_consistencygroup.py.orig	2016-07-29 11:01:06.931319374 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/025_add_consistencygroup.py	2016-07-29 11:08:57.529967194 -0600
+@@ -13,6 +13,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from migrate import ForeignKeyConstraint
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+@@ -22,6 +23,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -43,7 +45,7 @@ def upgrade(migrate_engine):
+         Column('description', String(length=255)),
+         Column('volume_type_id', String(length=255)),
+         Column('status', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -69,7 +71,7 @@ def upgrade(migrate_engine):
+         Column('name', String(length=255)),
+         Column('description', String(length=255)),
+         Column('status', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/002_quota_class.py.orig	2016-07-29 11:01:13.333257167 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/002_quota_class.py	2016-07-29 11:09:26.907320861 -0600
+@@ -12,6 +12,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from migrate import ForeignKeyConstraint
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+@@ -21,6 +22,7 @@ from cinder.i18n import _LE
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -40,7 +42,7 @@ def upgrade(migrate_engine):
+                           Column('resource',
+                                  String(length=255)),
+                           Column('hard_limit', Integer(), nullable=True),
+-                          mysql_engine='InnoDB',
++                          mysql_engine=CONF.database.mysql_storage_engine,
+                           mysql_charset='utf8',
+                           )
+ 
+@@ -65,7 +67,7 @@ def upgrade(migrate_engine):
+                          Column('in_use', Integer(), nullable=False),
+                          Column('reserved', Integer(), nullable=False),
+                          Column('until_refresh', Integer(), nullable=True),
+-                         mysql_engine='InnoDB',
++                         mysql_engine=CONF.database.mysql_storage_engine,
+                          mysql_charset='utf8',
+                          )
+ 
+@@ -96,7 +98,7 @@ def upgrade(migrate_engine):
+                                 String(length=255)),
+                          Column('delta', Integer(), nullable=False),
+                          Column('expire', DateTime(timezone=False)),
+-                         mysql_engine='InnoDB',
++                         mysql_engine=CONF.database.mysql_storage_engine,
+                          mysql_charset='utf8',
+                          )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/032_add_volume_type_projects.py.orig	2016-07-29 11:01:19.787463555 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/032_add_volume_type_projects.py	2016-07-29 11:09:52.305137688 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime, UniqueConstraint
+ from sqlalchemy import Integer, MetaData, String, Table, ForeignKey
+@@ -18,6 +19,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -44,7 +46,7 @@ def upgrade(migrate_engine):
+         Column('project_id', String(length=255)),
+         Column('deleted', Boolean(create_constraint=True, name=None)),
+         UniqueConstraint('volume_type_id', 'project_id', 'deleted'),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+     )
+ 
+     try:
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/016_drop_sm_tables.py.orig	2016-07-29 11:01:27.964276573 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/016_drop_sm_tables.py	2016-07-29 11:10:16.404751177 -0600
+@@ -12,6 +12,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime, ForeignKey
+ from sqlalchemy import Integer, MetaData, String, Table
+@@ -20,6 +21,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -58,7 +60,7 @@ def downgrade(migrate_engine):
+         Column('sr_uuid', String(length=255)),
+         Column('sr_type', String(length=255)),
+         Column('config_params', String(length=2047)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -71,7 +73,7 @@ def downgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('label', String(length=255)),
+         Column('description', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -88,7 +90,7 @@ def downgrade(migrate_engine):
+         Column('backend_id', Integer, ForeignKey('sm_backend_config.id'),
+                nullable=False),
+         Column('vdi_uuid', String(length=255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/010_add_transfers_table.py.orig	2016-07-29 11:01:37.572002193 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/010_add_transfers_table.py	2016-07-29 11:10:53.099824733 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+ from sqlalchemy import MetaData, String, Table, ForeignKey
+@@ -18,6 +19,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -39,7 +41,7 @@ def upgrade(migrate_engine):
+         Column('salt', String(length=255)),
+         Column('crypt_hash', String(length=255)),
+         Column('expires_at', DateTime(timezone=False)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/009_add_snapshot_metadata_table.py.orig	2016-07-29 11:01:45.740057328 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/009_add_snapshot_metadata_table.py	2016-07-29 11:11:37.227187391 -0600
+@@ -10,6 +10,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+ from sqlalchemy import Integer, MetaData, String, Table, ForeignKey
+@@ -18,6 +19,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -37,7 +39,7 @@ def upgrade(migrate_engine):
+                nullable=False),
+         Column('key', String(length=255)),
+         Column('value', String(length=255)),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     try:
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/018_add_qos_specs.py.orig	2016-07-29 11:01:52.386692827 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/018_add_qos_specs.py	2016-07-29 11:12:05.698971502 -0600
+@@ -14,6 +14,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime
+ from sqlalchemy import ForeignKey, MetaData, String, Table
+@@ -23,6 +24,7 @@ from cinder.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     """Add volume_type_rate_limit table."""
+@@ -40,7 +42,7 @@ def upgrade(migrate_engine):
+                ForeignKey('quality_of_service_specs.id')),
+         Column('key', String(255)),
+         Column('value', String(255)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/017_add_encryption_information.py.orig	2016-07-29 11:01:59.835986722 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/017_add_encryption_information.py	2016-07-29 11:12:38.107548537 -0600
+@@ -13,15 +13,16 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Column, ForeignKey, MetaData, Table
+ from sqlalchemy import Boolean, DateTime, Integer, String
+ 
+ from cinder.i18n import _
+ 
+-
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData(bind=migrate_engine)
+@@ -69,9 +70,9 @@ def upgrade(migrate_engine):
+         # scheme unless each volume type is associated with at most one
+         # encryption scheme.
+         Column('volume_type_id', String(length=36),
+-               ForeignKey(volume_types.c.id),
++               ForeignKey(volume_types.c.id, name='encryption_ibfk_1'),
+                primary_key=True, nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/001_cinder_init.py.orig	2016-07-29 11:02:08.740069069 -0600
++++ cinder-2015.1.2/cinder/db/sqlalchemy/migrate_repo/versions/001_cinder_init.py	2016-07-29 11:13:11.172896165 -0600
+@@ -12,15 +12,21 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++from oslo_config import cfg
+ from oslo_log import log as logging
+ from sqlalchemy import Boolean, Column, DateTime, ForeignKey
+ from sqlalchemy import Integer, MetaData, String, Table
+ 
+ from cinder.i18n import _
+ 
+-
+ LOG = logging.getLogger(__name__)
+ 
++CONF = cfg.CONF
++
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    db_string_length = 128
++else:
++    db_string_length = 255
+ 
+ def define_tables(meta):
+     migrations = Table(
+@@ -30,14 +36,14 @@ def define_tables(meta):
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('source_compute', String(length=255)),
+-        Column('dest_compute', String(length=255)),
+-        Column('dest_host', String(length=255)),
+-        Column('status', String(length=255)),
+-        Column('instance_uuid', String(length=255)),
++        Column('source_compute', String(length=db_string_length)),
++        Column('dest_compute', String(length=db_string_length)),
++        Column('dest_host', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
++        Column('instance_uuid', String(length=db_string_length)),
+         Column('old_instance_type_id', Integer),
+         Column('new_instance_type_id', Integer),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     services = Table(
+@@ -47,13 +53,13 @@ def define_tables(meta):
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('host', String(length=255)),
+-        Column('binary', String(length=255)),
+-        Column('topic', String(length=255)),
++        Column('host', String(length=db_string_length)),
++        Column('binary', String(length=db_string_length)),
++        Column('topic', String(length=db_string_length)),
+         Column('report_count', Integer, nullable=False),
+         Column('disabled', Boolean),
+-        Column('availability_zone', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('availability_zone', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     sm_flavors = Table(
+@@ -63,9 +69,9 @@ def define_tables(meta):
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('label', String(length=255)),
+-        Column('description', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('label', String(length=db_string_length)),
++        Column('description', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     sm_backend_config = Table(
+@@ -77,10 +83,10 @@ def define_tables(meta):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('flavor_id', Integer, ForeignKey('sm_flavors.id'),
+                nullable=False),
+-        Column('sr_uuid', String(length=255)),
+-        Column('sr_type', String(length=255)),
++        Column('sr_uuid', String(length=db_string_length)),
++        Column('sr_type', String(length=db_string_length)),
+         Column('config_params', String(length=2047)),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     sm_volume = Table(
+@@ -95,8 +101,8 @@ def define_tables(meta):
+                nullable=False),
+         Column('backend_id', Integer, ForeignKey('sm_backend_config.id'),
+                nullable=False),
+-        Column('vdi_uuid', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('vdi_uuid', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     snapshots = Table(
+@@ -107,15 +113,15 @@ def define_tables(meta):
+         Column('deleted', Boolean),
+         Column('id', String(length=36), primary_key=True, nullable=False),
+         Column('volume_id', String(length=36), nullable=False),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('status', String(length=255)),
+-        Column('progress', String(length=255)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
++        Column('progress', String(length=db_string_length)),
+         Column('volume_size', Integer),
+         Column('scheduled_at', DateTime),
+-        Column('display_name', String(length=255)),
+-        Column('display_description', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('display_name', String(length=db_string_length)),
++        Column('display_description', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     volume_types = Table(
+@@ -125,8 +131,8 @@ def define_tables(meta):
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('name', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('name', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     volume_metadata = Table(
+@@ -138,9 +144,9 @@ def define_tables(meta):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('volume_id', String(length=36), ForeignKey('volumes.id'),
+                nullable=False),
+-        Column('key', String(length=255)),
+-        Column('value', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('key', String(length=db_string_length)),
++        Column('value', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     volume_type_extra_specs = Table(
+@@ -152,9 +158,9 @@ def define_tables(meta):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('volume_type_id', Integer, ForeignKey('volume_types.id'),
+                nullable=False),
+-        Column('key', String(length=255)),
+-        Column('value', String(length=255)),
+-        mysql_engine='InnoDB'
++        Column('key', String(length=db_string_length)),
++        Column('value', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     volumes = Table(
+@@ -164,27 +170,27 @@ def define_tables(meta):
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+         Column('id', String(length=36), primary_key=True, nullable=False),
+-        Column('ec2_id', String(length=255)),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('host', String(length=255)),
++        Column('ec2_id', String(length=db_string_length)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
+         Column('size', Integer),
+-        Column('availability_zone', String(length=255)),
++        Column('availability_zone', String(length=db_string_length)),
+         Column('instance_uuid', String(length=36)),
+-        Column('mountpoint', String(length=255)),
+-        Column('attach_time', String(length=255)),
+-        Column('status', String(length=255)),
+-        Column('attach_status', String(length=255)),
++        Column('mountpoint', String(length=db_string_length)),
++        Column('attach_time', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
++        Column('attach_status', String(length=db_string_length)),
+         Column('scheduled_at', DateTime),
+         Column('launched_at', DateTime),
+         Column('terminated_at', DateTime),
+-        Column('display_name', String(length=255)),
+-        Column('display_description', String(length=255)),
++        Column('display_name', String(length=db_string_length)),
++        Column('display_description', String(length=db_string_length)),
+         Column('provider_location', String(length=256)),
+         Column('provider_auth', String(length=256)),
+         Column('snapshot_id', String(length=36)),
+         Column('volume_type_id', Integer),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     quotas = Table(
+@@ -194,10 +200,10 @@ def define_tables(meta):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+-        Column('project_id', String(length=255)),
+-        Column('resource', String(length=255), nullable=False),
++        Column('project_id', String(length=db_string_length)),
++        Column('resource', String(length=db_string_length), nullable=False),
+         Column('hard_limit', Integer),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+ 
+     iscsi_targets = Table(
+@@ -208,10 +214,10 @@ def define_tables(meta):
+         Column('deleted', Boolean),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('target_num', Integer),
+-        Column('host', String(length=255)),
++        Column('host', String(length=db_string_length)),
+         Column('volume_id', String(length=36), ForeignKey('volumes.id'),
+                nullable=True),
+-        mysql_engine='InnoDB'
++        mysql_engine=CONF.database.mysql_storage_engine
+     )
+     return [sm_flavors,
+             sm_backend_config,
+@@ -266,7 +272,8 @@ def upgrade(migrate_engine):
+         migrate_engine.execute(
+             "ALTER DATABASE %s DEFAULT CHARACTER SET utf8" %
+             migrate_engine.url.database)
+-        migrate_engine.execute("ALTER TABLE %s Engine=InnoDB" % table)
++        migrate_engine.execute("ALTER TABLE %(db_table)s Engine=%(mysql_storage_engine)s" % 
++                               dict(db_table=table, mysql_storage_engine=CONF.database.mysql_storage_engine))
+ 
+ 
+ def downgrade(migrate_engine):
