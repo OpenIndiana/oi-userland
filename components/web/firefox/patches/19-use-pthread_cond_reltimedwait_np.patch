@@ -1,0 +1,33 @@
+--- firefox-45.2.0esr/nsprpub/pr/src/pthreads/ptsynch.c.orig	Thu May 12 20:10:05 2016
++++ firefox-45.2.0esr/nsprpub/pr/src/pthreads/ptsynch.c	Fri Jul 29 14:13:24 2016
+@@ -245,7 +245,6 @@
+     pthread_cond_t *cv, pthread_mutex_t *ml, PRIntervalTime timeout)
+ {
+     int rv;
+-    struct timeval now;
+     struct timespec tmo;
+     PRUint32 ticks = PR_TicksPerSecond();
+ 
+@@ -252,6 +251,14 @@
+     tmo.tv_sec = (PRInt32)(timeout / ticks);
+     tmo.tv_nsec = (PRInt32)(timeout - (tmo.tv_sec * ticks));
+     tmo.tv_nsec = (PRInt32)PR_IntervalToMicroseconds(PT_NANOPERMICRO * tmo.tv_nsec);
++#ifdef	__sun
++    /*
++     * Solaris has a non-portable function to do this job better,
++     * why not use it?
++     */
++    rv = pthread_cond_reltimedwait_np(cv, ml, &tmo);
++#else	/* not __sun */
++    struct timeval now;
+ 
+     /* pthreads wants this in absolute time, off we go ... */
+     (void)GETTIMEOFDAY(&now);
+@@ -262,6 +269,7 @@
+     tmo.tv_nsec %= PT_BILLION;
+ 
+     rv = pthread_cond_timedwait(cv, ml, &tmo);
++#endif	/* __sun */
+ 
+     /* NSPR doesn't report timeouts */
+ #ifdef _PR_DCETHREADS
