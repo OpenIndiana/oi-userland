@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/libwnck/3.18/$(COM
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI=         library/desktop/libwnck
+COMPONENT_FMRI=         library/desktop/libwnck3
 
 
 include $(WS_MAKE_RULES)/prep.mk
