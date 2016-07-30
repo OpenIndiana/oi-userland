@@ -15,18 +15,18 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gtkmm
+COMPONENT_NAME= gtkmm3
 
-COMPONENT_VERSION= 2.24.4
+COMPONENT_VERSION= 3.14.0
 COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= gtkmm-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:443a2ff3fcb42a915609f1779000390c640a6d7fd19ad8816e6161053696f5ee
+  sha256:d9f528a62c6ec226fa08287c45c7465b2dce5aae5068e9ac48d30a64a378e48b
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/gtkmm/2.24/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/gtkmm/3.14/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtkmm.org/
-COMPONENT_FMRI = library/desktop/c++/gtkmm
+COMPONENT_FMRI = library/desktop/c++/gtkmm3
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
@@ -47,10 +47,9 @@ REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/desktop/c++/atkmm
 REQUIRED_PACKAGES += library/desktop/c++/cairomm
-REQUIRED_PACKAGES += library/desktop/c++/mm-common
 REQUIRED_PACKAGES += library/desktop/c++/pangomm
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
