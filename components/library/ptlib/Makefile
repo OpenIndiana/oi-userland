@@ -11,9 +11,10 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Aurelien Larcher.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.10.11
