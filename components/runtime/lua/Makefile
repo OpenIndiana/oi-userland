@@ -25,7 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lua
 COMPONENT_VERSION=	5.2.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.lua.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -82,7 +82,5 @@ test: 		install
 		$(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) \
 		$(PROTOUSRBINDIR64)/$(COMPONENT_NAME) -e"_U=true" all.lua)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
