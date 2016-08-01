@@ -1,27 +1,34 @@
 --- gdb-7.10.1/gdb/sol-thread.c.~1~	Thu Feb 19 03:58:07 2015
-+++ gdb-7.10.1/gdb/sol-thread.c	Fri Feb 26 23:04:44 2016
-@@ -246,16 +246,18 @@
++++ gdb-7.10.1/gdb/sol-thread.c	Sat Jul 30 08:27:12 2016
+@@ -246,16 +246,19 @@
    /* It's a thread.  Convert to LWP.  */
  
    val = p_td_ta_map_id2thr (main_ta, ptid_get_tid (thread_id), &th);
 -  if (val == TD_NOTHR)
-+  if (val == TD_NOTHR || val == TD_BADTH)
-     return pid_to_ptid (-1);	/* Thread must have terminated.  */
-   else if (val != TD_OK)
-     error (_("thread_to_lwp: td_ta_map_id2thr %s"), td_err_string (val));
+-    return pid_to_ptid (-1);	/* Thread must have terminated.  */
+-  else if (val != TD_OK)
+-    error (_("thread_to_lwp: td_ta_map_id2thr %s"), td_err_string (val));
++  if (val != TD_OK) {
++    warning (_("thread_to_lwp(%d): Thread exited? (td_ta_map_id2thr %s)"),
++      ptid_get_tid (thread_id), td_err_string (val));
++    return pid_to_ptid (-1);    /* Thread must have terminated.  */
++  }
  
    val = p_td_thr_get_info (&th, &ti);
 -  if (val == TD_NOTHR)
-+  if (val == TD_NOTHR || val == TD_BADTH)
-     return pid_to_ptid (-1);	/* Thread must have terminated.  */
-   else if (val != TD_OK)
-     error (_("thread_to_lwp: td_thr_get_info: %s"), td_err_string (val));
-+  else if (ti.ti_state == TD_THR_ZOMBIE)
-+    return pid_to_ptid (-1); /* Thread has terminated */
+-    return pid_to_ptid (-1);	/* Thread must have terminated.  */
+-  else if (val != TD_OK)
+-    error (_("thread_to_lwp: td_thr_get_info: %s"), td_err_string (val));
++  if (val != TD_OK || ti.ti_state == TD_THR_ZOMBIE) {
++    if (val != TD_OK)
++      warning (_("thread_to_lwp(%d): Thread exited? td_thr_get_info: %s"),
++        ptid_get_tid (thread_id),td_err_string (val));
++    return pid_to_ptid (-1);    /* Thread must have terminated.  */
++  }
  
    if (ti.ti_state != TD_THR_ACTIVE)
      {
-@@ -289,22 +291,24 @@
+@@ -289,22 +292,24 @@
      return pid_to_ptid (-1);	/* Must be a defunct LPW.  */
  
    val = p_td_ta_map_lwp2thr (main_ta, ptid_get_lwp (lwp), &th);
@@ -49,7 +56,7 @@
  
    return ptid_build (ptid_get_pid (lwp), 0 , ti.ti_tid);
  }
-@@ -400,7 +404,7 @@
+@@ -400,7 +405,7 @@
  
    rtnval = beneath->to_wait (beneath, ptid, ourstatus, options);
  
@@ -58,7 +65,7 @@
      {
        /* Map the LWP of interest back to the appropriate thread ID.  */
        rtnval = lwp_to_thread (rtnval);
-@@ -1070,6 +1074,9 @@
+@@ -1070,6 +1075,9 @@
    if (retval != TD_OK)
      return -1;
  
@@ -68,7 +75,7 @@
    ptid = ptid_build (ptid_get_pid (inferior_ptid), 0, ti.ti_tid);
    if (!in_thread_list (ptid) || is_exited (ptid))
      add_thread (ptid);
-@@ -1082,8 +1089,13 @@
+@@ -1082,8 +1090,13 @@
  {
    struct target_ops *beneath = find_target_beneath (ops);
  
@@ -84,7 +91,7 @@
  
    /* Find any new LWP's.  */
    beneath->to_update_thread_list (beneath);
-@@ -1244,7 +1256,7 @@
+@@ -1244,7 +1257,7 @@
  
    init_sol_thread_ops ();
  

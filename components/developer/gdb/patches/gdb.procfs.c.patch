@@ -1,5 +1,5 @@
 --- gdb-7.10.1/gdb/procfs.c.~1~	Sat Dec  5 07:16:45 2015
-+++ gdb-7.10.1/gdb/procfs.c	Thu Mar 10 01:20:48 2016
++++ gdb-7.10.1/gdb/procfs.c	Wed Jul 20 00:29:25 2016
 @@ -31,6 +31,7 @@
  #include "regcache.h"
  #include "inf-child.h"
@@ -474,7 +474,7 @@
  }
  
  /* =================== END, Thread "MODULE" =================== */
-@@ -3219,11 +3332,16 @@
+@@ -3219,15 +3332,28 @@
    int tid = ptid_get_lwp (inferior_ptid);
    struct gdbarch *gdbarch = get_regcache_arch (regcache);
  
@@ -494,8 +494,22 @@
 +  }
  
    gregs = proc_get_gregs (pi);
-   if (gregs == NULL)
-@@ -3634,11 +3752,24 @@
+-  if (gregs == NULL)
+-    proc_error (pi, "fetch_registers, get_gregs", __LINE__);
++  if (gregs == NULL) {
++    /*
++     * Same case for get_gregs. If we can't find the LWP on the system
++     * it exited behind our backs.
++     */
++    delete_thread (inferior_ptid);
++    destroy_procinfo (pi);
++    return;
++  }
++  //  proc_error (pi, "fetch_registers, get_gregs", __LINE__);
+ 
+   supply_gregset (regcache, (const gdb_gregset_t *) gregs);
+ 
+@@ -3634,11 +3760,24 @@
  	      case PR_SYSENTRY:
  		if (syscall_is_lwp_exit (pi, what))
  		  {
@@ -521,7 +535,7 @@
  		    return retval;
  		  }
  		else if (syscall_is_exit (pi, what))
-@@ -3772,11 +3903,24 @@
+@@ -3772,11 +3911,24 @@
  		  }
  		else if (syscall_is_lwp_exit (pi, what))
  		  {
@@ -547,7 +561,7 @@
  		    return retval;
  		  }
  		else if (0)
-@@ -4035,6 +4179,11 @@
+@@ -4035,6 +4187,11 @@
  		     __LINE__);
  #endif
  
@@ -559,7 +573,7 @@
    if (parent != NULL)
      {
        /* The presence of a parent indicates that this is an LWP.
-@@ -4043,6 +4192,7 @@
+@@ -4043,6 +4200,7 @@
  
        close_procinfo_files (pi);
      }
@@ -567,7 +581,7 @@
    pi->gregs_valid   = 0;
    pi->fpregs_valid  = 0;
  #if 0
-@@ -5294,10 +5444,34 @@
+@@ -5294,10 +5452,34 @@
  /* Return a pid for which we guarantee we will be able to find a
     'live' procinfo.  */
  
