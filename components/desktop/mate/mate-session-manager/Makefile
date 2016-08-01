@@ -17,7 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
 COMPONENT_VERSION=	1.14.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
