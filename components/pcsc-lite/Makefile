@@ -54,6 +54,7 @@ ASLR_MODE=$(ASLR_ENABLE)
 
 # options needed for configure, otherwise default will install into /usr/local
 CONFIGURE_OPTIONS +=    --exec-prefix=$(USRLIBDIR64)
+CONFIGURE_OPTIONS +=    --sbindir=$(USRLIBDIR)
 CONFIGURE_OPTIONS +=    --enable-libusb
 CONFIGURE_OPTIONS +=    --enable-confdir=$(ETCDIR)/pcsc
 CONFIGURE_OPTIONS +=    --enable-usbdropdir=$(USRLIBDIR64)/pcsc/drivers
