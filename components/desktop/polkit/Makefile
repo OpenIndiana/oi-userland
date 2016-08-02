@@ -21,35 +21,28 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS =            64_and_32
-# Also, all components using gobject-introspection must be built with gcc as
-# gobject-introspection does not produce correct results when using Studio.
-COMPILER =              gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		polkit
 COMPONENT_VERSION=	0.113
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/polkit/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:e1c095093c654951f78f8618d427faf91cf62abdefed98de40ff65eca6413c81
 COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/polkit/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sign
 COMPONENT_BUGDB=	gnome/security
 
 TPNO=			27381
 
+gcc_OPT = -O0 -ggdb
+
 # Test don't work on Solaris
 TEST_TARGET = $(SKIP_TEST)
 
-# Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
-
-include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Regenerate configure after patches/02-duktape.patch modifies configure.ac
 COMPONENT_PREP_ACTION += ( cd $(@D); autoreconf -fiv);
@@ -58,9 +51,7 @@ COMPONENT_PREP_ACTION += \
     ( /usr/sbin/svccfg validate $(COMPONENT_DIR)/files/polkit.xml );
 
 # Need C99 or later to get fpclassify() & isfinite() in <math.h>
-CFLAGS += -ggdb
 CFLAGS.gcc += -std=gnu11
-CFLAGS.studio += -std=c11 -xlang=c11
 
 # Solaris doesn't have a defined authpriv facility in syslog, so map it to
 # an unused one for now
@@ -88,8 +79,19 @@ CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 # Tell g-ir-scanner not to cache results in homedir of user running the build
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
+# gobject-introspection
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
 # SMF manifest & method
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
+
+# common targets
+build:	$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/expat
