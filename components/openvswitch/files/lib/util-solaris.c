@@ -1624,6 +1624,12 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 			goto out;
 	}
 
+	/*
+	 * when "f" is filled in by the parse_vlan() function, VLAN_CFI bit is
+	 * set blindly. Unset this bit now since we don't set this bit in
+	 * Solaris for VLAN packets.
+	 */
+	f->vlan_tci &= htons(~VLAN_CFI);
 	if ((f->vlan_tci != 0) || (m->vlan_tci != htons(0xffff))) {
 		err = dlmgr_DLValue_fm_putulong(ddvp, ddmp,
 		    "vlan-tci", ntohs(f->vlan_tci),

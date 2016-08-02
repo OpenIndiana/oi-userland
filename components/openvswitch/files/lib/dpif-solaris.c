@@ -430,7 +430,7 @@ dpif_solaris_get_stats(const struct dpif *dpif_, struct dpif_dp_stats *stats)
 				instance = zid;
 			}
 			(void) snprintf(kuri, sizeof (kuri),
-			    "kstat:/net/link/%s/%d", name, instance);
+			    "kstat:/net/%s/link/%d", name, instance);
 			stat = kstat2_lookup_map(dpif_khandle, kuri, &map);
 
 			if (stat != KSTAT2_S_OK) {
