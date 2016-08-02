@@ -48,7 +48,11 @@ PATCH_LEVEL=0
 
 CONFIGURE_PREFIX=$(USRDIR)/apr-util/1.5
 
+ifeq ($(BUILD_TYPE), evaluation)
 CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5
+else
+CONFIGURE_OPTIONS.64 +=	--with-mysql=$(USRDIR)/mysql/5.7
+endif
 CONFIGURE_OPTIONS +=	--with-expat=$(USRDIR)
 CONFIGURE_OPTIONS +=	--with-sqlite3=$(USRDIR)
 CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
@@ -58,7 +62,9 @@ CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=$(USRDIR)/apr/1.5/bin/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr=$(USRDIR)/apr/1.5/bin/$(MACH64)/apr-1-config
+ifeq ($(BUILD_TYPE), evaluation)
 CONFIGURE_OPTIONS.32 +=	MYSQL_CONFIG=$(USRDIR)/mysql/5.5/bin/$(MACH32)/mysql_config
+endif
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
@@ -78,8 +84,13 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi);
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+ifeq ($(BUILD_TYPE), evaluation)
 REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
+else
+REQUIRED_PACKAGES += database/mysql-57
+REQUIRED_PACKAGES += database/mysql-57/library
+endif
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/apr-15
