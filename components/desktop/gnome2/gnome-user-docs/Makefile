@@ -12,10 +12,11 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-user-docs
 COMPONENT_VERSION=	2.32.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME user documentation
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,6 +49,5 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
+REQUIRED_PACKAGES += system/extended-system-utilities
