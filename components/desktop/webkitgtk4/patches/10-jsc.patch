@@ -1,0 +1,19 @@
+patch from upstream for fixing community bug 147815
+https://bugs.webkit.org/show_bug.cgi?id=147815
+
+We should be able to drop this when we update to a recent version of webkitgtk
+
+--- webkitgtk-2.8.4/Source/JavaScriptCore/runtime/JSObject.cpp	2016-07-28 15:28:55.021915944 -0700
++++ webkitgtk-2.8.4/Source/JavaScriptCore/runtime/JSObject.cpp	2016-07-28 15:29:41.371731851 -0700
+@@ -1965,6 +1965,11 @@
+     }
+ }
+ 
++// Explicit instantiations needed by JSArray.cpp.
++template void JSObject::putByIndexBeyondVectorLengthWithoutAttributes<Int32Shape>(ExecState*, unsigned, JSValue);
++template void JSObject::putByIndexBeyondVectorLengthWithoutAttributes<DoubleShape>(ExecState*, unsigned, JSValue);
++template void JSObject::putByIndexBeyondVectorLengthWithoutAttributes<ContiguousShape>(ExecState*, unsigned, JSValue);
++
+ void JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, unsigned i, JSValue value, bool shouldThrow, ArrayStorage* storage)
+ {
+     VM& vm = exec->vm();

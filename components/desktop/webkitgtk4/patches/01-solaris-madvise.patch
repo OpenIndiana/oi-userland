@@ -1,0 +1,36 @@
+Solaris madvise() first parameter is caddr_t; Linux, BSDs, etc. is void*.
+The cast is safe as void and unsigned char have same alignment.
+
+file upstream bug
+
+--- webkitgtk-2.8.3/Source/bmalloc/bmalloc/VMAllocate.h	2015-04-28 03:38:00.000000000 -0700
++++ webkitgtk-2.8.3/Source/bmalloc/bmalloc/VMAllocate.h	2015-07-09 19:04:47.781960759 -0700
+@@ -134,7 +134,7 @@
+ #if BOS(DARWIN)
+     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
+ #else
+-    SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
++    SYSCALL(madvise(reinterpret_cast<char*>(p), vmSize, MADV_DONTNEED));
+ #endif
+ }
+ 
+@@ -144,7 +144,7 @@
+ #if BOS(DARWIN)
+     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
+ #else
+-    SYSCALL(madvise(p, vmSize, MADV_NORMAL));
++    SYSCALL(madvise(reinterpret_cast<char*>(p), vmSize, MADV_NORMAL));
+ #endif
+ }
+ 
+--- webkitgtk-2.8.3/Source/WTF/wtf/OSAllocatorPosix.cpp	2015-05-15 01:41:50.000000000 -0700
++++ webkitgtk-2.8.3/Source/WTF/wtf/OSAllocatorPosix.cpp	2015-07-09 19:03:50.332468626 -0700
+@@ -153,7 +153,7 @@
+ #elif HAVE(MADV_FREE_REUSE)
+     while (madvise(address, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+ #elif HAVE(MADV_FREE)
+-    while (madvise(address, bytes, MADV_FREE) == -1 && errno == EAGAIN) { }
++    while (madvise(reinterpret_cast<char*>(address), bytes, MADV_FREE) == -1 && errno == EAGAIN) { }
+ #elif HAVE(MADV_DONTNEED)
+     while (madvise(address, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+ #else

@@ -1,0 +1,26 @@
+We should be able to delete this when we update to version that has this change
+included.
+
+diff --git a/Source/cmake/FindOpenGL.cmake b/Source/cmake/FindOpenGL.cmake
+index dceb67fa63a2578b4f7ec8f4186013f1043bb53c..60721cdb92ed2c9be47053c9c4afc9c6b461fb4e 100644
+--- a/Source/cmake/FindOpenGL.cmake
++++ b/Source/cmake/FindOpenGL.cmake
+@@ -59,6 +59,7 @@ if (OPENGL_FOUND)
+     include(CMakePushCheckState)
+     CMAKE_PUSH_CHECK_STATE()
+     set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${OPENGL_INCLUDE_DIRS})
++    include(CheckIncludeFiles)
+     check_include_files("GL/glx.h" GLX_FOUND)
+     CMAKE_POP_CHECK_STATE()
+ endif ()
+--- a/Source/cmake/FindWebP.cmake	2016-07-01 15:00:14.186428253 -0700
++++ b/Source/cmake/FindWebP.cmake	2016-07-01 15:00:52.058759138 -0700
+@@ -35,6 +35,7 @@
+ if (NOT(WEBP_FOUND))
+     # Older installations of libwebp do not install a pkgconfig file, so we fall
+     # back to a manual search for a libwebp header file.
++    include(CheckIncludeFiles)
+     check_include_files("webp/decode.h" WEBP_FOUND_HEADER)
+     if (WEBP_FOUND_HEADER)
+         set(WEBP_LIBRARIES "-lwebp")
+

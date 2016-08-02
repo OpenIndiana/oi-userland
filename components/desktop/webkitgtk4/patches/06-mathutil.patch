@@ -1,0 +1,27 @@
+Ensure that limits, algorithm, etc. definitions are defined first before
+attempting to include debug.h so that appropriate feature tests work as
+expected.
+
+file upstream bug
+
+--- webkitgtk-2.8.3/Source/ThirdParty/ANGLE/src/common/mathutil.h	2015-04-08 23:54:00.000000000 -0700
++++ webkitgtk-2.8.3/Source/ThirdParty/ANGLE/src/common/mathutil.h	2015-07-10 21:15:10.772978135 -0700
+@@ -9,8 +9,6 @@
+ #ifndef LIBGLESV2_MATHUTIL_H_
+ #define LIBGLESV2_MATHUTIL_H_
+ 
+-#include "common/debug.h"
+-
+ #if defined(_WIN32)
+ #include <intrin.h>
+ #endif
+@@ -19,6 +17,8 @@
+ #include <algorithm>
+ #include <string.h>
+ 
++#include "common/debug.h"
++
+ namespace gl
+ {
+ 
+

@@ -1,0 +1,87 @@
+Restore removed SPARC code and fixup for CMake-based build.
+
+Also patch up Source/cmake/OptionsCommon.cmake and to detect these properly?
+This seems like mostly an option for detecting whether or not to enable JIT in
+Source/JavaScriptCore/CMakeLists.txt.  Since neither version of SPARC will have
+that, probably doesn't matter for now.
+
+https://bugs.webkit.org/show_bug.cgi?id=124941
+
+--- webkitgtk-2.8.4/Source/WTF/wtf/Platform.h	2015-07-07 01:16:29.000000000 -0800
++++ webkitgtk-2.8.4.new/Source/WTF/wtf/Platform.h	2016-04-26 12:39:53.230445368 -0800
+@@ -141,6 +141,23 @@
+ #define WTF_CPU_SH4 1
+ #endif
+ 
++/* CPU(SPARC32) - SPARC 32-bit */
++#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
++#define WTF_CPU_SPARC32 1
++#define WTF_CPU_BIG_ENDIAN 1
++#endif
++
++/* CPU(SPARC64) - SPARC 64-bit */
++#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
++#define WTF_CPU_SPARC64 1
++#define WTF_CPU_BIG_ENDIAN 1
++#endif
++
++/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
++#if CPU(SPARC32) || CPU(SPARC64)
++#define WTF_CPU_SPARC 1
++#endif
++
+ /* CPU(S390X) - S390 64-bit */
+ #if defined(__s390x__)
+ #define WTF_CPU_S390X 1
+@@ -340,7 +357,7 @@
+ 
+ #endif /* ARM */
+ 
+-#if CPU(ARM) || CPU(MIPS) || CPU(SH4)
++#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(SPARC)
+ #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
+ #endif
+ 
+@@ -650,6 +667,7 @@
+     || (CPU(IA64) && !CPU(IA64_32)) \
+     || CPU(ALPHA) \
+     || CPU(ARM64) \
++    || CPU(SPARC64) \
+     || CPU(S390X) \
+     || CPU(MIPS64) \
+     || CPU(PPC64) \
+--- webkitgtk-2.8.4/Source/WTF/wtf/dtoa/utils.h	2015-05-20 07:25:36.000000000 -0800
++++ webkitgtk-2.8.4.new/Source/WTF/wtf/dtoa/utils.h	2016-04-26 12:39:11.190174523 -0800
+@@ -49,7 +49,7 @@
+ defined(__ARMEL__) || \
+ defined(_MIPS_ARCH_MIPS32R2)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+-#elif CPU(MIPS) || CPU(MIPS64) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA)
++#elif CPU(MIPS) || CPU(MIPS64) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SH4) || CPU(S390) || CPU(S390X) || CPU(IA64) || CPU(SPARC) || CPU(ALPHA) || CPU(ARM64) || CPU(HPPA)
+ #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
+ #elif defined(_M_IX86) || defined(__i386__)
+ #if defined(_WIN32)
+diff -ru webkitgtk-2.8.4/CMakeLists.txt webkitgtk-2.8.4.new/CMakeLists.txt
+--- webkitgtk-2.8.4/CMakeLists.txt	2015-07-05 22:35:49.000000000 -0800
++++ webkitgtk-2.8.4.new/CMakeLists.txt	2016-04-26 12:58:53.834407468 -0800
+@@ -102,6 +102,8 @@
+     set(WTF_CPU_S390 1)
+ elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+     set(WTF_CPU_S390X 1)
++elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "sparc*")
++    set(WTF_CPU_SPARC 1)
+ else ()
+     message(FATAL_ERROR "Unknown CPU '${LOWERCASE_CMAKE_SYSTEM_PROCESSOR}'")
+ endif ()
+diff -ru webkitgtk-2.8.4/Source/JavaScriptCore/CMakeLists.txt webkitgtk-2.8.4.new/Source/JavaScriptCore/CMakeLists.txt
+--- webkitgtk-2.8.4/Source/JavaScriptCore/CMakeLists.txt	2016-04-26 13:02:17.448934063 -0800
++++ webkitgtk-2.8.4.new/Source/JavaScriptCore/CMakeLists.txt	2016-04-26 13:02:25.587721715 -0800
+@@ -1154,6 +1154,8 @@
+ elseif (WTF_CPU_S390X)
+ elseif (WTF_CPU_MIPS)
+ elseif (WTF_CPU_SH4)
++elseif (WTF_CPU_SPARC)
++elseif (WTF_CPU_SPARC64)
+ elseif (WTF_CPU_X86)
+ elseif (WTF_CPU_X86_64)
+     if (MSVC AND ENABLE_JIT)

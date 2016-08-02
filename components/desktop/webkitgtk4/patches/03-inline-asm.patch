@@ -1,0 +1,28 @@
+Solaris missing from define checks for inline-assembler calling convention.
+
+file upstream bug
+
+--- webkitgtk-2.8.3/Source/WTF/wtf/InlineASM.h	2015-04-08 23:54:00.000000000 -0700
++++ webkitgtk-2.8.3/Source/WTF/wtf/InlineASM.h	2015-07-10 20:06:11.184874609 -0700
+@@ -40,11 +40,11 @@
+ #define THUMB_FUNC_PARAM(name)
+ #endif
+ 
+-#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
++#if (OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)) && CPU(X86_64)
+ #define GLOBAL_REFERENCE(name) #name "@plt"
+ #elif CPU(X86) && COMPILER(MINGW)
+ #define GLOBAL_REFERENCE(name) "@" #name "@4"
+-#elif OS(LINUX) && CPU(X86) && defined(__PIC__)
++#elif (OS(LINUX) || OS(SOLARIS)) && CPU(X86) && defined(__PIC__)
+ #define GLOBAL_REFERENCE(name) SYMBOL_STRING(name) "@plt"
+ #else
+ #define GLOBAL_REFERENCE(name) SYMBOL_STRING(name)
+@@ -80,6 +80,7 @@
+ #if OS(DARWIN)
+ #define LOCAL_LABEL_STRING(name) "L" #name
+ #elif   OS(LINUX)               \
++     || OS(SOLARIS)             \
+      || OS(FREEBSD)             \
+      || OS(OPENBSD)             \
+      || OS(HURD)                \

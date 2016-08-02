@@ -1,0 +1,16 @@
+Define conflicts with Solaris regset.h; should either always undef first,
+or upstream should rename their #define.
+
+file upstream bug and determine desired fix.
+
+--- webkitgtk-2.8.3/Source/ThirdParty/ANGLE/src/common/debug.h	2015-04-08 23:54:00.000000000 -0700
++++ webkitgtk-2.8.3/Source/ThirdParty/ANGLE/src/common/debug.h	2015-07-10 21:14:56.355517469 -0700
+@@ -53,6 +53,7 @@
+ #endif
+ 
+ // A macro to output a function call and its arguments to the debugging log, in case of error.
++#undef ERR
+ #if defined(ANGLE_ENABLE_TRACE) || defined(ANGLE_ENABLE_PERF)
+ #define ERR(message, ...) gl::trace(false, "err: %s(%d): " message "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+ #else
+

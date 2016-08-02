@@ -1,0 +1,383 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/webkitgtk4@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A library port of the WebKit rendering engine"
+set name=pkg.description \
+    value="WebKitGTK+ is a full-featured port of the WebKit rendering engine, suitable for projects requiring any kind of web integration, from hybrid HTML/CSS applications to full-fledged web browsers."
+# pkgdepend needs help to follow the runtime generated symlinks to libGL
+set name=pkg.depend.runpath \
+    value=$PKGDEPEND_RUNPATH:usr/lib/mesa:usr/lib/mesa/$(MACH64)
+set name=com.oracle.info.description value=$(COMPONENT_NAME)
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/413
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file usr/bin/$(MACH64)/MiniBrowser path=usr/bin/MiniBrowser
+file usr/bin/$(MACH64)/jsc path=usr/bin/jsc
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSBase.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSContextRef.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSObjectRef.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSStringRef.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JSValueRef.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/JavaScript.h
+file path=usr/include/webkitgtk-4.0/JavaScriptCore/WebKitAvailability.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitAuthenticationRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitBackForwardList.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitBackForwardListItem.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitColorChooserRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitContextMenu.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitContextMenuActions.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitContextMenuItem.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitCookieManager.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitCredential.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitDefines.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitDownload.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitEditingCommands.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitEnumTypes.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitError.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitFaviconDatabase.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitFileChooserRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitFindController.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitFormSubmissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitForwardDeclarations.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitFrame.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitGeolocationPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitHitTestResult.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitJavascriptResult.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitMimeInfo.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitNavigationAction.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitNavigationPolicyDecision.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitNotification.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitNotificationPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitPlugin.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitPolicyDecision.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitPrintOperation.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitResponsePolicyDecision.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitScriptDialog.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitScriptWorld.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitSecurityManager.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitSettings.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitURIRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitURIResponse.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitURISchemeRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserContent.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserContentManager.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitUserMediaPermissionRequest.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitVersion.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebContext.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebExtension.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebHitTestResult.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebInspector.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebPage.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebResource.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebView.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWebViewBase.h
+file path=usr/include/webkitgtk-4.0/webkit2/WebKitWindowProperties.h
+file path=usr/include/webkitgtk-4.0/webkit2/webkit-web-extension.h
+file path=usr/include/webkitgtk-4.0/webkit2/webkit2.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMAttr.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMAttrUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMAudioTrack.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMAudioTrackList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMBarProp.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMBatteryManager.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMBlob.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMBlobUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCDATASection.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSRule.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSRuleList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSRuleUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSStyleDeclaration.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSStyleSheet.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCSSValue.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCharacterData.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCharacterDataUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMComment.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustom.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMCustomUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMApplicationCache.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMImplementation.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMMimeType.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMMimeTypeArray.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMNamedFlowCollection.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMPlugin.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMPluginArray.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMSecurityPolicy.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMSelection.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMSettableTokenList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMStringList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMStringMap.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMTokenList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindow.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowCSS.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowSpeechSynthesis.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDOMWindowUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDataCue.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDatabase.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDeprecated.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocument.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocumentFragment.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocumentFragmentUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocumentType.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocumentTypeUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMDocumentUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEntityReference.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEventTarget.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMEventUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMFile.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMFileList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGamepad.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGamepadList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMGeolocation.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAnchorElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAnchorElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAppletElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAreaElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAreaElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLAudioElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLBRElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLBaseElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLBaseFontElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLBodyElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLButtonElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLButtonElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLCanvasElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLCollection.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLDListElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLDetailsElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLDirectoryElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLDivElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLDocument.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLEmbedElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFieldSetElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFieldSetElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFontElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFormElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFormElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFrameElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLFrameSetElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLHRElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLHeadElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLHeadingElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLHtmlElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLHtmlElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLIFrameElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLIFrameElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLImageElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLImageElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLInputElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLInputElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLKeygenElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLIElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLabelElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLabelElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLegendElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLinkElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLLinkElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMapElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMarqueeElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMarqueeElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMediaElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMenuElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLMetaElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLModElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOListElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOListElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLObjectElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLObjectElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOptGroupElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOptionElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOptionsCollection.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLOptionsCollectionUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLParagraphElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLParamElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLPreElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLQuoteElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLScriptElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLScriptElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLSelectElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLSelectElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLStyleElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableCaptionElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableCellElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableColElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableRowElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTableSectionElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTextAreaElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTextAreaElementUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLTitleElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLUListElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHTMLVideoElement.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMHistory.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMKeyboardEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMLocation.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMediaController.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMediaError.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMediaList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMediaQueryList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMessagePort.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMouseEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMMouseEventUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNamedNodeMap.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNavigator.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNode.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNodeFilter.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNodeIterator.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNodeList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMNodeUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMObject.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformance.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceEntry.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceEntryList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceNavigation.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMPerformanceTiming.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMProcessingInstruction.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMRange.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMRangeUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMScreen.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMSpeechSynthesis.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMSpeechSynthesisEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMSpeechSynthesisUtterance.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMSpeechSynthesisVoice.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStorage.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStorageInfo.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStorageQuota.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStyleMedia.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStyleSheet.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMStyleSheetList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMText.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTextTrack.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTextTrackCue.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTextTrackCueList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTextTrackList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTimeRanges.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTouch.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTrackEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMTreeWalker.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMUIEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMUIEventUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMUserMessageHandler.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMUserMessageHandlersNamespace.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMVTTCue.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMValidityState.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMVideoPlaybackQuality.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMVideoTrack.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMVideoTrackList.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMWebKitNamedFlow.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMWebKitNamespace.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMWebKitPoint.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMWheelEvent.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMWheelEventUnstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMXPathExpression.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMXPathNSResolver.h
+file path=usr/include/webkitgtk-4.0/webkitdom/WebKitDOMXPathResult.h
+file path=usr/include/webkitgtk-4.0/webkitdom/webkitdom.h
+file path=usr/include/webkitgtk-4.0/webkitdom/webkitdomdefines-unstable.h
+file path=usr/include/webkitgtk-4.0/webkitdom/webkitdomdefines.h
+file path=usr/lib/$(MACH64)/WebKitNetworkProcess mode=0555
+file path=usr/lib/$(MACH64)/WebKitPluginProcess mode=0555
+file path=usr/lib/$(MACH64)/WebKitPluginProcess2 mode=0555
+file path=usr/lib/$(MACH64)/WebKitWebProcess mode=0555
+file path=usr/lib/$(MACH64)/girepository-1.0/JavaScriptCore-4.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/WebKit2-4.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/WebKit2WebExtension-4.0.typelib
+link path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so \
+    target=libjavascriptcoregtk-4.0.so.18
+link path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so.18 \
+    target=libjavascriptcoregtk-4.0.so.18.1.11
+file path=usr/lib/$(MACH64)/libjavascriptcoregtk-4.0.so.18.1.11
+link path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so target=libwebkit2gtk-4.0.so.37
+link path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so.37 \
+    target=libwebkit2gtk-4.0.so.37.6.7
+file path=usr/lib/$(MACH64)/libwebkit2gtk-4.0.so.37.6.7
+file path=usr/lib/$(MACH64)/pkgconfig/javascriptcoregtk-4.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/webkit2gtk-4.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/webkit2gtk-web-extension-4.0.pc
+file path=usr/lib/$(MACH64)/webkit2gtk-4.0/injected-bundle/libwebkit2gtkinjectedbundle.so
+file path=usr/share/gir-1.0/JavaScriptCore-4.0.gir
+file path=usr/share/gir-1.0/WebKit2-4.0.gir
+file path=usr/share/gir-1.0/WebKit2WebExtension-4.0.gir
+file path=usr/share/locale/ar/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/as/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/bg/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ca/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/cs/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/de/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/el/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/eo/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/es/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/et/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/eu/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/fr/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/gl/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/gu/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/he/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/hi/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/hu/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/id/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/it/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ja/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/kn/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ko/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/lt/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/lv/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ml/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/mr/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/nb/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/nl/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/or/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/pa/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/pl/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/pt/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ro/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ru/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/sl/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/sr/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/sv/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/ta/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/te/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/uk/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/vi/LC_MESSAGES/WebKit2GTK-4.0.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/WebKit2GTK-4.0.mo
+license webkit.license license=LGPLv2.1
