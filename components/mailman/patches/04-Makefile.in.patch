@@ -1,0 +1,14 @@
+This patch was developed in-house.  We need to study Mailman 3 to determine
+if the issue is still applicable, then offer it upstream if so.
+
+--- mailman-2.1.18-1/misc/Makefile.in.orig	2014-05-06 09:43:56.000000000 -0700
++++ mailman-2.1.18-1/misc/Makefile.in	2016-08-03 08:26:58.188204114 -0700
+@@ -88,7 +88,7 @@
+ 	    $(INSTALL) -m $(FILEMODE) paths.py $$dir; \
+ 	done
+ 	$(INSTALL) -m $(EXEMODE) mailman $(DESTDIR)$(SCRIPTSDIR)
+-	$(INSTALL) -m $(FILEMODE) sitelist.cfg $(DESTDIR)$(DATADIR)
++	$(INSTALL) -m $(FILEMODE) $(srcdir)/sitelist.cfg $(DESTDIR)$(DATADIR)
+ 
+ install-packages:
+ 	if [ -z "$(EMAILPKG)" -a -d $(DESTDIR)$(PYTHONLIBDIR)/email ] ; \
