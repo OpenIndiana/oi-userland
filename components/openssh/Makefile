@@ -66,6 +66,8 @@ CFLAGS += -DOPTION_DEFAULT_VALUE
 CFLAGS += -DPER_SESSION_XAUTHFILE
 CFLAGS += -DWITHOUT_CAST128
 CFLAGS += -DENABLE_OPENSSL_FIPS
+CFLAGS += -DWITHOUT_ARCFOUR
+CFLAGS += -DWITHOUT_HMAC_MD5
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
