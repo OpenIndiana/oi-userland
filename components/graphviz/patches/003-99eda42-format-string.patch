@@ -1,0 +1,34 @@
+This patch is taken from upstream and modified to adjust our currently
+released version.
+
+From 99eda421f7ddc27b14e4ac1d2126e5fe41719081 Mon Sep 17 00:00:00 2001
+From: "Emden R. Gansner" <erg@alum.mit.edu>
+Date: Mon, 24 Nov 2014 14:32:58 -0500
+Subject: [PATCH] Fix format string vulnerability in using agerr() to report
+ errors during parsing. We now use a fixed format %s, and pass the error
+ string as an argument.
+
+---
+ lib/cgraph/scan.l | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/cgraph/scan.l b/lib/cgraph/scan.l
+index 85a150a..a5872f4 100644
+--- a/lib/cgraph/scan.l
++++ b/lib/cgraph/scan.l
+@@ -225,6 +225,7 @@ ID		({NAME}|{NUMBER})
+ <hstring>([^><\n]*)		addstr(yytext);
+ .						return (yytext[0]);
+ %%
++ 
+ void yyerror(char *str)
+ {
+ 	unsigned char	xbuf[BUFSIZ];
+@@ -273,7 +274,7 @@ void yyerror(char *str)
+	agxbput (&xb, yytext);
+	agxbput (&xb,"'\n");
+-	agerr(AGWARN,agxbuse(&xb));
++	agerr(AGWARN, "%s", agxbuse(&xb));
+ 	agxbfree(&xb);
+ }
+ /* must be here to see flex's macro defns */

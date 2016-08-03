@@ -1,0 +1,33 @@
+From 495f781f91dca1fb165bbaa6abc0ced1c09535c8 Mon Sep 17 00:00:00 2001
+From: Tomas Hoger <thoger@redhat.com>
+Date: Wed, 20 May 2015 11:15:32 +0200
+Subject: [PATCH] Fix agerr() format string issue in chkNum()
+
+Commit 99eda42 fixed agerr() format string issue in yyerror(), but the
+same fix is also needed for chkNum().  In chkNum(), format string can be
+injected at least via malicious file name:
+
+  $ cat fs4-%n%s%s%s%s%s%s.dot
+  graph G { a [ weight = 0g ] }
+
+  $ dot fs4-%n%s%s%s%s%s%s.dot
+  Warning: *** %n in writable segment detected ***
+  Aborted
+---
+ lib/cgraph/scan.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/cgraph/scan.l b/lib/cgraph/scan.l
+index a5872f4..6aef10b 100644
+--- a/lib/cgraph/scan.l
++++ b/lib/cgraph/scan.l
+@@ -165,7 +165,7 @@ static int chkNum(void) {
+ 	agxbput(&xb,buf);
+ 	agxbput(&xb,fname);
+ 	agxbput(&xb, " splits into two tokens\n");
+-	agerr(AGWARN,agxbuse(&xb));
++	agerr(AGWARN, "%s", agxbuse(&xb));
+ 
+ 	agxbfree(&xb);
+ 	return 1;
+

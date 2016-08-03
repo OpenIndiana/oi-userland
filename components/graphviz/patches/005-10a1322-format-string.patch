@@ -1,0 +1,56 @@
+From 10a132289ffe4ed9a398bebca13cb41c1006bd13 Mon Sep 17 00:00:00 2001
+From: Tomas Hoger <thoger@redhat.com>
+Date: Wed, 20 May 2015 11:22:11 +0200
+Subject: [PATCH 2/2] Additional agerr() format string fixes
+
+Similar to commit 99eda42, ensure the second argument to agerr() is
+fixed string with no user inputs.  Change applied to:
+
+* cmd/tools/gmlscan.l - unclear if this can be exploited in practice, as
+  only yytext can possibly hold format string
+* lib/graph/lexer.c - format string can be injected via graph file
+  content.  Note that libgraph is deprecated as of version 2.30.0, so
+  this fix is more relevant for older graphviz versions.
+---
+ cmd/tools/gmlscan.l | 2 +-
+ lib/graph/lexer.c   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/cmd/tools/gmlscan.l b/cmd/tools/gmlscan.l
+index ea8db0f..e83ca4f 100644
+--- a/cmd/tools/gmlscan.l
++++ b/cmd/tools/gmlscan.l
+@@ -127,7 +127,7 @@ void yyerror(char *str)
+ 	return;
+     errors = 1;
+     sprintf(buf," %s in line %d near '%s'\n", str,line_num,yytext);
+-    agerr(AGWARN,buf);
++    agerr(AGWARN, "%s", buf);
+ }
+ 
+ int gmlerrors()
+diff --git a/lib/graph/lexer.c b/lib/graph/lexer.c
+index 05452c8..790563b 100644
+--- a/lib/graph/lexer.c
++++ b/lib/graph/lexer.c
+@@ -460,16 +460,16 @@ static void error_context(void)
+     if (buf < p) {
+ 	c = *p;
+ 	*p = '\0';
+-	agerr(AGPREV, buf);
++	agerr(AGPREV, "%s", buf);
+ 	*p = c;
+     }
+     agerr(AGPREV, " >>> ");
+     c = *LexPtr;
+     *LexPtr = '\0';
+-    agerr(AGPREV, p);
++    agerr(AGPREV, "%s", p);
+     *LexPtr = c;
+     agerr(AGPREV, " <<< ");
+-    agerr(AGPREV, LexPtr);
++    agerr(AGPREV, "%s", LexPtr);
+ }
+ 
+ void agerror(char *msg)
+
