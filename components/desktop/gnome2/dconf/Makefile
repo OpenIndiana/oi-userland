@@ -16,6 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dconf
 COMPONENT_VERSION=        0.24.0
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    https://wiki.gnome.org/Projects/dconf
 COMPONENT_SUMMARY=        GNOME Configuration Framework
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,3 +50,8 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
