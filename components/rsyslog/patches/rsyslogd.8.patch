@@ -1,0 +1,23 @@
+Solaris specific patch around SMF services.
+
+
+
+--- rsyslog-8.15.0/tools/rsyslogd.8_orig	2015-11-12 03:52:06.000000000 -0800
++++ rsyslog-8.15.0/tools/rsyslogd.8	2016-08-03 15:45:05.475192214 -0700
+@@ -308,3 +308,16 @@
+ .TP
+ rgerhards@adiscon.com
+ .PD
++.SH NOTES
++As of Solaris 12, rsyslog is now the default Solaris logger.
++
++When the service is enabled the first time, an attempt is made
++to see if any /etc/syslog.conf (see syslog.conf(5)),
++entries might need migrating and if
++so rsyslog is brought up in a degraded SMF state.
++
++Please visit /etc/rsyslog.conf (see rsyslog.conf(5)), and customize as needed.
++
++Then clear the service:
++
++# svcadm clear svc:/system/system-log:rsyslog
