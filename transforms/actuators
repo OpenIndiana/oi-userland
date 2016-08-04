@@ -73,6 +73,10 @@
 <transform file link hardlink path=usr/lib.*/gio/modules/.*\.so$ -> \
     default restart_fmri svc:/application/desktop-cache/gio-module-cache:default>
 
+# Dconf databases
+<transform file path=etc/dconf/.* -> \
+    default restart_fmri svc:/application/desktop-cache/dconf-update:default>
+
 # RAD
 <transform file path=usr/lib/rad/.* -> add restart_fmri \
     svc:/system/rad:local>

@@ -22,6 +22,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+dir path=etc/dconf/db
+
+file files/99-local path=etc/dconf/db/local.d/99-local preserve=true
+file files/user path=etc/dconf/profile/user preserve=true
+
+file files/dconf-update.xml path=lib/svc/manifest/application/desktop-cache/dconf-update.xml
+
 file path=usr/bin/$(MACH64)/dconf
 file path=usr/bin/dconf
 file path=usr/include/dconf-dbus-1/dconf-dbus-1.h
