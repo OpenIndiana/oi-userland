@@ -50,8 +50,6 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^SunOS\).*|\1|" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += database/sqlite-3

@@ -135,8 +135,6 @@ COMPONENT_PUBLISH_ENV  +=	LC_ALL=en_US.UTF-8
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.5/lib-dynload
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
 # neither paths from our build systems nor Studio-specific options.
 COMPONENT_PRE_INSTALL_ACTION= \

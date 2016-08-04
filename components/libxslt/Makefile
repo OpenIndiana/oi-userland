@@ -38,8 +38,6 @@ TPNO=			17982
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 LINT_FLAGS +=	-I$(COMPONENT_DIR)/../libxml2/build/prototype/$(MACH)/$(USRINCDIR)/libxml2
 
 CFLAGS +=	$(CPP_LARGEFILES)

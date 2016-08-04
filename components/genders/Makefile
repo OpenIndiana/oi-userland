@@ -37,8 +37,6 @@ TPNO=			29494
 
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 CONFIGURE_OPTIONS +=   --bindir=/usr/bin
 CONFIGURE_OPTIONS +=   --without-cplusplus-extensions
 CONFIGURE_OPTIONS +=   --without-perl-extensions

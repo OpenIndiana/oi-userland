@@ -72,8 +72,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/prototype:/d"' \
 	'-e "/argument/d"'
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(CLONEY) $(SOURCE_DIR) $(@D)

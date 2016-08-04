@@ -51,8 +51,6 @@ endif
 LDFLAGS += $(CC_BITS)
 LDFLAGS += -Wl,-zgnu-version-script-compat
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk

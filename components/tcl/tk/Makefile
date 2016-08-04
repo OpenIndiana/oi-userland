@@ -66,8 +66,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Tests began at .*$$/d"' \
 	'-e "/^Tests ended at .*$$/d"'
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 COMPONENT_POST_INSTALL_ACTION += \
 	sed -f $(COMPONENT_DIR)/files/tksed.$(BITS) \
 		$(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh > \

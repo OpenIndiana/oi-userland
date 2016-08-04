@@ -96,10 +96,6 @@ endif
 COMPONENT_BUILD_ENV += LDFLAGS="$(strip $(LDFLAGS))"
 endif
 
-# Assume that components categorized as a library do not need ASLR.
-ifeq ($(findstring library/,$(COMPONENT_BUGDB)),library/)
-ASLR_MODE= $(ASLR_NOT_APPLICABLE)
-else
 # Assume components built with ant do not need ASLR.
 ifeq ($(strip $(BUILD_STYLE)),ant)
 ASLR_MODE= $(ASLR_NOT_APPLICABLE)
@@ -109,7 +105,6 @@ ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
 ASLR_MODE= $(ASLR_ENABLE)
 endif # BUILD_BITS NO_ARCH
 endif # BUILD_STYLE ant
-endif # findstring library
 
 # Determine if we should automatically include lint libraries in build and
 # install targets based on presence of llib* files in component directory. This

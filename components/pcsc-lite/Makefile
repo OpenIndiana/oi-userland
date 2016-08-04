@@ -49,9 +49,6 @@ CONFIGURE_ENV += LIBUSB_LIBS="-lusb-1.0"
 # configure.ac related patch needs configure script re-creation
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 
-# enable ASLR for this component, lint warning against pcscd will occur if this is not set
-ASLR_MODE=$(ASLR_ENABLE)
-
 # options needed for configure, otherwise default will install into /usr/local
 CONFIGURE_OPTIONS +=    --exec-prefix=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=    --sbindir=$(USRLIBDIR)

@@ -106,8 +106,6 @@ COMPONENT_POST_BUILD_ACTION = \
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS += V=1
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff

@@ -61,6 +61,4 @@ CONFIGURE_OPTIONS +=	--with-pic
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS += V=1
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += print/filter/ghostscript

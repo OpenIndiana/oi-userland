@@ -144,8 +144,6 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s/copied $$/copied/g"'  \
      '-e "s/copied [0-9]\{1,\}\./copied/g"'
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/isl

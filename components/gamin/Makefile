@@ -85,7 +85,5 @@ $(BUILD_DIR_64)/.built: COMPONENT_POST_BUILD_ACTION = ( \
 	cp _gamin.so 64 \
 )
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27

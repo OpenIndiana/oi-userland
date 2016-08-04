@@ -192,8 +192,6 @@ sasltest.tgz:	install
 	(cd $(TARBALL_DIR) && $(CHMOD) 0777 $(TEST_SCRIPTS))
 	gtar czf sasltest.tgz $(TARBALL_DIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/build/automake-115

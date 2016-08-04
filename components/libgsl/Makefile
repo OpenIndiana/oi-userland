@@ -119,8 +119,6 @@ COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # There are known problems in libsunperf that are causing GSL test failures
 # in Solaris 12 with Studio 12.4 just on the x86 platform:
 # linalg: FAIL:   LQ_update m(5,3) [88]                             (32-bit)

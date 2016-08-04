@@ -48,5 +48,3 @@ COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 # jansson_config.h in the build subdirectory. We need to rm the one in the
 # original source so that it doesn't get in the way.
 COMPONENT_PREP_ACTION += $(RM) $(@D)/src/jansson_config.h
-
-ASLR_MODE = $(ASLR_ENABLE)

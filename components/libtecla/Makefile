@@ -45,5 +45,3 @@ studio_MT =
 
 # We have our own pre-Solarified man pages.
 CONFIGURE_OPTIONS +=	--without-man-pages
-
-ASLR_MODE =	$(ASLR_ENABLE)

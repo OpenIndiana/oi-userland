@@ -101,8 +101,6 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 $(BUILD_DIR)/$(MACH32)/.configured: CFLAGS += $(CFLAGS.shared)
 $(BUILD_DIR)/$(MACH32)/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.shared)
 $(BUILD_DIR)/$(MACH64)/.configured: CFLAGS += $(CFLAGS.shared)

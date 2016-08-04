@@ -1005,15 +1005,15 @@ ASLR_ENABLE = 		-zaslr=enable
 ASLR_DISABLE = 		-zaslr=disable
 ASLR_NOT_APPLICABLE = 	-zaslr=disable
 
-# Disable ASLR by default unless target build is NO_ARCH.
+# Enable ASLR by default unless target build is NO_ARCH.
 ifeq ($(strip $(BUILD_BITS)),NO_ARCH)
 ASLR_MODE= $(ASLR_NOT_APPLICABLE)
 else
-ASLR_MODE= $(ASLR_DISABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 endif
 
-# by default, turn off Address Space Layout Randomization for ELF executables;
-# to explicitly enable ASLR, set ASLR_MODE = $(ASLR_ENABLE)
+# by default, turn on Address Space Layout Randomization for ELF executables;
+# to explicitly disable ASLR, set ASLR_MODE = $(ASLR_DISABLE)
 # in that component's Makefile
 LD_Z_ASLR =		$(ASLR_MODE)
 

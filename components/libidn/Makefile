@@ -118,8 +118,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	    $(FIND) ./lib -type f -name "*.pl" -exec touch -acm {} + ; \
 	    $(FIND) ./lib -type f -name "*.pl" -exec chmod 0755 {} + )
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 install: $(INSTALL_32_and_64)
 	$(MKDIR) $(HTMLDOCDIR) ; \
 	list1='$(HTMLDOCLIST)' ; for f in $$list1; do \

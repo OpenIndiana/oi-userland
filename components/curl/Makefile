@@ -95,8 +95,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^debug.:/d" ' \
 	'-e "/^monitor debug.:/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/openldap

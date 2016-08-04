@@ -50,8 +50,6 @@ CONFIGURE_OPTIONS  += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  += --disable-guile
 CONFIGURE_OPTIONS  += --disable-camellia
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_TEST_TRANSFORMS += \

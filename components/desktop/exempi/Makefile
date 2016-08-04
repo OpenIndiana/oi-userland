@@ -37,8 +37,6 @@ COMPONENT_BUGDB=	library/exempi
 
 TPNO=			25504
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # disable for now since it requires boost C++ libraries
 TEST_TARGET= $(SKIP_TEST)
 

@@ -145,9 +145,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
    ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
 
-# Enable ASLR for this component
-ASLR_MODE =	$(ASLR_ENABLE)
-
 # We must make sure that openssl-fips component is built before this openssl-fips-140
 # component since in order to build FIPS-140 certified libraries, the canister
 # is needed. Note that we must unset BITS that would override the same variable

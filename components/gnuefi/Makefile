@@ -44,8 +44,6 @@ BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk 
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 include ../../make-rules/shared-targets.mk
 
 REQUIRED_PACKAGES += developer/gnu-binutils 

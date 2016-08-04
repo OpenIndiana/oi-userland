@@ -54,9 +54,6 @@ TEST_TARGET= $(NO_TESTS)
 SYSTEM_TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# Enable ASLR for this component
-ASLR_MODE           = $(ASLR_ENABLE)
-
 # MySQL being one of Oracle's own product doesn't require to have a
 # TPNO License number.
 

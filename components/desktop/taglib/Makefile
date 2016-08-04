@@ -41,8 +41,6 @@ PATCH_LEVEL= 0
 
 BUILD_STYLE= cmake
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # disable tests for now - 23214794
 TEST_TARGET= $(SKIP_TEST)
 

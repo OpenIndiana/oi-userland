@@ -98,7 +98,6 @@ LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
 LDFLAGS +=	$(LIBS)
 $(BUILD_DIR_SMB)/.configured:	LDFLAGS +=	$(LIBS4SMBD)
 
-ASLR_MODE =	$(ASLR_ENABLE)
 LD_OPTIONS += 	$(LD_B_DIRECT)
 
 # --enable-fhs should not be on

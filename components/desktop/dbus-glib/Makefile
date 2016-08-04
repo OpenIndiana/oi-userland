@@ -37,8 +37,6 @@ TPNO=			25523
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 CONFIGURE_OPTIONS +=	--sysconfdir="$(ETCDIR)"
 CONFIGURE_OPTIONS +=	--libexecdir="$(USRLIB)"
 CONFIGURE_OPTIONS +=	--localstatedir="$(VARDIR)"

@@ -92,9 +92,6 @@ $(BUILD_32_and_64): PATH = $(SPRO_VROOT)/bin:$(GNUBIN):$(USRBINDIR)
 COMPONENT_POST_INSTALL_ACTION += \
  ( $(PYTHON.$(PYTHON_VERSION)) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES) )
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # build standalone sub-components only
 SUBDIRS = avahi-common avahi-core avahi-client avahi-glib avahi-gobject avahi-ui
 $(BUILD_32):	COMPONENT_BUILD_TARGETS		+=	SUBDIRS="$(SUBDIRS)"

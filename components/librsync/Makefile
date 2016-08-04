@@ -62,8 +62,6 @@ CONFIGURE_OPTIONS  +=	--enable-shared
 
 PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master

@@ -51,8 +51,6 @@ endif
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 LDFLAGS += $(CC_BITS)
 
 # Needed for "gmake test" to work successfully.

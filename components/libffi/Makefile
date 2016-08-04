@@ -52,6 +52,4 @@ CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
 
 CONFIGURE_OPTIONS += --disable-raw-api
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

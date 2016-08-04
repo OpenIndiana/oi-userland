@@ -57,6 +57,4 @@ COMPONENT_PREP_ACTION = \
 	automake -a -c -f ; \
 	autoconf )
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += system/library/security/libgcrypt

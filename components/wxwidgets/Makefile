@@ -58,8 +58,6 @@ CONFIGURE_OPTIONS += --without-gnomevfs
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --without-libmpack
 
-ASLR_MODE =   $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff

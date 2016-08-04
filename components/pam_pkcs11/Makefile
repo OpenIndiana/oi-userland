@@ -63,9 +63,6 @@ CONFIGURE_OPTIONS += PCSC_CFLAGS="-I /usr/include/PCSC"
 CONFIGURE_OPTIONS.32 += --with-pcsclite=no
 CONFIGURE_OPTIONS.64 += --with-pcsclite=yes
 
-
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/pcsc/pcsclite

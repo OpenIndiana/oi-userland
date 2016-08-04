@@ -71,8 +71,6 @@ CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-maintainer-mode 
 CONFIGURE_OPTIONS += --disable-asm
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 include ../../make-rules/shared-targets.mk
 
 #

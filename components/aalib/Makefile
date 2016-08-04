@@ -72,8 +72,6 @@ COMPONENT_SYSTEM_TEST_TARGETS =
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math

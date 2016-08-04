@@ -51,8 +51,6 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--disable-static
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/documentation-tool/xmlto

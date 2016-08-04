@@ -73,8 +73,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	( cd $(PROTOPKGCONFIGDIR.$(BITS)) ; \
 	$(GSED) -i "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g" OpenEXR.pc )
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/c++-runtime

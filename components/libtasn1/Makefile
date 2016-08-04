@@ -43,8 +43,6 @@ CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master

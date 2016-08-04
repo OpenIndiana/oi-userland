@@ -44,8 +44,6 @@ TPNO=			29079
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 

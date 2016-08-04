@@ -191,9 +191,6 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/../common/engines/pkcs11/*.[ch]	$(@D)/engines; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
 
-# Enable ASLR for this component
-ASLR_MODE =	$(ASLR_ENABLE)
-
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
 BUILD_64 +=	$(BUILD_DIR_WANBOOT)/.built

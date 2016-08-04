@@ -269,8 +269,6 @@ CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
 CONFIGURE_OPTIONS += --disable-tests
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 include ../../make-rules/shared-targets.mk
 
 $(BUILD_DIR)/wanboot-amd64/.configured: BITS=64

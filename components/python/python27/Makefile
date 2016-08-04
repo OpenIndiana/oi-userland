@@ -168,8 +168,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 		$(CONFIG_MAKEFILE); \
 	     $(PYTHON.2.7) -m py_compile lib/python2.7/_sysconfigdata.py)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
 configure:	$(CONFIGURE_32_and_64)

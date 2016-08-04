@@ -48,9 +48,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(expected .* sec\).*\(got\).*|\1 \2 x secs|"' \
 	'-e "s|^.*\(shcomp-.*\).*|\1|"'
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # This flag controls the prep.mk behaviour to patch each archive individually
 PATCH_EACH_ARCHIVE = 1
 

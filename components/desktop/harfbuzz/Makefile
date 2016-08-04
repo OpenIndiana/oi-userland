@@ -78,8 +78,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/XERROR:/p" ' \
         '-e "/ERROR:/p" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += developer/build/autoconf
 REQUIRED_PACKAGES += developer/build/automake
 REQUIRED_PACKAGES += developer/build/gnu-make

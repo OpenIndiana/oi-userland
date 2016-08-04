@@ -40,8 +40,6 @@ TPNO=			25769
 # Required for 64-bit builds.
 LDFLAGS += $(CC_BITS)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk

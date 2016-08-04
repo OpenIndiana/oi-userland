@@ -76,8 +76,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += library/zlib

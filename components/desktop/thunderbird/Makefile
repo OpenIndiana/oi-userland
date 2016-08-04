@@ -195,8 +195,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(CP) $$f $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/cpu/sparcv8plus/libnspr_flt4.so ; \
 	done ;
 
-ASLR_MODE =	$(ASLR_ENABLE)
-
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS += \

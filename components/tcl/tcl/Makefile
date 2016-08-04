@@ -71,8 +71,6 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMER =    $(NAWK)
 COMPONENT_TEST_TRANSFORMS =     "'/append.test/ {results = 1}; /httpold.test/ {results = 0}; /if-old.test/ {results = 1}; /Tests ended at/ {results = 0}; {if (results) print $0 } '"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 COMPONENT_POST_INSTALL_ACTION += \
 	sed -f $(COMPONENT_DIR)/files/tclsed.$(BITS) \
 		$(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh > \
