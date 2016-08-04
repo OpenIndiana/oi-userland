@@ -1,0 +1,57 @@
+This breaks builds for Studio 12.4; this patch should likely be reworked to
+determine if an older version of Studio is being used and then only apply
+this fix.
+
+With that said, a better fix is likely to simply remove this logic entirely
+as has been done below (although any use of the related defines should also
+be removed as well, which is not included below).
+
+file upstream bug
+
+--- libsigc++-2.4.1/build/cxx_std.m4	Sun Sep 29 01:59:51 2013
++++ libsigc++-2.4.1/build/cxx_std.m4	Wed May  6 10:30:07 2015
+@@ -36,34 +36,3 @@
+   AS_IF([test "x${sigc_cv_cxx_has_namespace_std}" = 'xyes'],
+   [AC_DEFINE([SIGC_HAVE_NAMESPACE_STD],[1], [Defined when the libstdc++ declares the std-namespace])])
+ ])
+-
+-## SIGC_CXX_HAS_SUN_REVERSE_ITERATOR()
+-##
+-## Check for Sun libCstd style std::reverse_iterator, which demands more than just one template parameter.
+-## and #define SIGC_HAVE_SUN_REVERSE_ITERATOR if found.
+-##
+-AC_DEFUN([SIGC_CXX_HAS_SUN_REVERSE_ITERATOR],
+-[
+-  AC_REQUIRE([SIGC_CXX_HAS_NAMESPACE_STD])
+-
+-  AC_CACHE_CHECK(
+-    [for non-standard Sun libCstd reverse_iterator],
+-    [sigc_cv_cxx_has_sun_reverse_iterator],
+-  [
+-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+-    [[
+-      #include <iterator>
+-      #ifdef SIGC_HAVE_NAMESPACE_STD
+-      using namespace std;
+-      #endif
+-    ]],[[
+-      typedef reverse_iterator<char*,random_access_iterator_tag,char,char&,char*,int> ReverseIter;
+-    ]])],
+-      [sigc_cv_cxx_has_sun_reverse_iterator='yes'],
+-      [sigc_cv_cxx_has_sun_reverse_iterator='no']
+-    )
+-  ])
+-
+-  AS_IF([test "x${sigc_cv_cxx_has_sun_reverse_iterator}" = 'xyes'],
+-  [AC_DEFINE([SIGC_HAVE_SUN_REVERSE_ITERATOR], [1], [Define if the non-standard Sun reverse_iterator must be used.])])
+-])
+--- libsigc++-2.4.1/configure.ac	Sat Feb 28 00:28:49 2015
++++ libsigc++-2.4.1/configure.ac	Wed May  6 13:21:16 2015
+@@ -52,7 +52,6 @@
+ SIGC_CXX_MSVC_TEMPLATE_SPECIALIZATION_OPERATOR_OVERLOAD
+ SIGC_CXX_SELF_REFERENCE_IN_MEMBER_INITIALIZATION
+ SIGC_CXX_HAS_NAMESPACE_STD
+-SIGC_CXX_HAS_SUN_REVERSE_ITERATOR
+ 
+ AS_IF([test "x$config_error" = xyes],
+       [AC_MSG_FAILURE([[One or more of the required C++ compiler features is missing.]])])
