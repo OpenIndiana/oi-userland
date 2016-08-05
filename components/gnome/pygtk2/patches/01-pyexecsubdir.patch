@@ -1,0 +1,40 @@
+Use Solaris-specific subdirectories for 64-bit modules.
+Not suitable for upstream.
+
+diff -ur pygtk-2.24.0-orig/gtk/Makefile.am pygtk-2.24.0/gtk/Makefile.am
+--- pygtk-2.24.0-orig/gtk/Makefile.am	2011-04-01 03:37:25.000000000 -0700
++++ pygtk-2.24.0/gtk/Makefile.am	2016-08-04 18:57:49.257232962 -0700
+@@ -15,14 +15,14 @@
+ 
+ # python scripts & extension modules
+ pkgpythondir = $(pyexecdir)/gtk-2.0
+-pkgpyexecdir = $(pyexecdir)/gtk-2.0
++pkgpyexecdir = $(pyexecdir)/gtk-2.0$(pyexecsubdir)
+ 
+ # gtk python extension modules
+-pygtkexecdir = $(pkgpyexecdir)/gtk
++pygtkexecdir = $(pkgpythondir)/gtk$(pyexecsubdir)
+ pygtkexec_LTLIBRARIES =
+ 
+ # gtk python scripts
+-pygtkdir = $(pkgpythondir)/gtk
++pygtkdir = $(pkgpythondir)/gtk$(pyexecsubdir)
+ pygtk_PYTHON = 			\
+ 	__init__.py 		\
+ 	_lazyutils.py		\
+diff -ur pygtk-2.24.0-orig/Makefile.am pygtk-2.24.0/Makefile.am
+--- pygtk-2.24.0-orig/Makefile.am	2011-04-01 03:37:24.000000000 -0700
++++ pygtk-2.24.0/Makefile.am	2016-08-04 18:56:29.689005117 -0700
+@@ -50,10 +50,10 @@
+ defs_DATA =
+ 
+ # pygtk scripts
+-pkgpythondir = $(pyexecdir)/gtk-2.0
++pkgpythondir = $(pyexecdir)/gtk-2.0$(pyexecsubdir)
+ 
+ # pygtk extension modules
+-pkgpyexecdir = $(pyexecdir)/gtk-2.0
++pkgpyexecdir = $(pyexecdir)/gtk-2.0$(pyexecsubdir)
+ pkgpyexec_LTLIBRARIES =
+ 
+ # linker flags

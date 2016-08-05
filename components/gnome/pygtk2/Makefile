@@ -63,7 +63,13 @@ CONFIGURE_OPTIONS += PYTHON=$(PYTHON)
 
 # Ensure Python modules are installed into vendor package directories.
 CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES.32)
+
+PYTHON_ARCH_SUBDIR.32 =
+PYTHON_ARCH_SUBDIR.64 = /64
+PYTHON_ARCH_SUBDIR = $(PYTHON_ARCH_SUBDIR.$(BITS))
+COMPONENT_BUILD_ARGS += pyexecsubdir=$(PYTHON_ARCH_SUBDIR)
+COMPONENT_INSTALL_ARGS += pyexecsubdir=$(PYTHON_ARCH_SUBDIR)
 
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo

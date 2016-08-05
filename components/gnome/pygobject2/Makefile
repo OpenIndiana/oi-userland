@@ -45,6 +45,9 @@ PYTHON_VERSIONS= 2.7
 TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/gnome-component.mk
 
+# Needed due to patches/01-pyexecsubdir.patch modifying Makefile.am files
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+
 CONFIGURE_OPTIONS += --disable-static
 
 # Disable introspection modules in this package since we ship the modern ones
@@ -58,7 +61,13 @@ CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Ensure Python modules are installed into vendor package directories.
 CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES.32)
+
+PYTHON_ARCH_SUBDIR.32 =
+PYTHON_ARCH_SUBDIR.64 = /64
+PYTHON_ARCH_SUBDIR = $(PYTHON_ARCH_SUBDIR.$(BITS))
+COMPONENT_BUILD_ARGS += pyexecsubdir=$(PYTHON_ARCH_SUBDIR)
+COMPONENT_INSTALL_ARGS += pyexecsubdir=$(PYTHON_ARCH_SUBDIR)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi

@@ -1,0 +1,113 @@
+Use Solaris-specific subdirectories for 64-bit modules.
+Not suitable for upstream.
+
+diff -ur pygobject-2.28.6-orig/gi/Makefile.am pygobject-2.28.6/gi/Makefile.am
+--- pygobject-2.28.6-orig/gi/Makefile.am	2011-06-13 09:30:25.000000000 -0700
++++ pygobject-2.28.6/gi/Makefile.am	2016-08-04 17:34:36.614452495 -0700
+@@ -9,7 +9,7 @@
+ 
+ INCLUDES = -I$(top_srcdir)/gobject -I$(top_srcdir)/glib
+ 
+-pygidir = $(pkgpyexecdir)/gi
++pygidir = $(pkgpyexecdir)/gi$(pyexecsubdir)
+ pygi_PYTHON = \
+ 	types.py \
+ 	module.py \
+diff -ur pygobject-2.28.6-orig/gi/overrides/Makefile.am pygobject-2.28.6/gi/overrides/Makefile.am
+--- pygobject-2.28.6-orig/gi/overrides/Makefile.am	2011-06-13 09:30:25.000000000 -0700
++++ pygobject-2.28.6/gi/overrides/Makefile.am	2016-08-04 17:34:50.678153406 -0700
+@@ -2,7 +2,7 @@
+ 
+ pkgpyexecdir = $(pyexecdir)/gi
+ 
+-pygioverridesdir = $(pkgpyexecdir)/overrides
++pygioverridesdir = $(pkgpyexecdir)/overrides$(pyexecsubdir)
+ pygioverrides_PYTHON = \
+ 	GLib.py \
+ 	Gtk.py \
+diff -ur pygobject-2.28.6-orig/gi/repository/Makefile.am pygobject-2.28.6/gi/repository/Makefile.am
+--- pygobject-2.28.6-orig/gi/repository/Makefile.am	2011-06-13 09:30:25.000000000 -0700
++++ pygobject-2.28.6/gi/repository/Makefile.am	2016-08-04 17:35:12.623207412 -0700
+@@ -2,7 +2,7 @@
+ 
+ pkgpyexecdir = $(pyexecdir)/gi
+ 
+-pygirepositorydir = $(pkgpyexecdir)/repository
++pygirepositorydir = $(pkgpyexecdir)/repository$(pyexecsubdir)
+ pygirepository_PYTHON = \
+ 	__init__.py
+ 
+diff -ur pygobject-2.28.6-orig/gio/Makefile.am pygobject-2.28.6/gio/Makefile.am
+--- pygobject-2.28.6-orig/gio/Makefile.am	2011-06-13 09:33:49.000000000 -0700
++++ pygobject-2.28.6/gio/Makefile.am	2016-08-04 17:36:19.754656487 -0700
+@@ -17,7 +17,7 @@
+ pyexec_LTLIBRARIES =
+ 
+ # gio extension modules
+-pkgpyexecdir = $(pyexecdir)/gtk-2.0/gio
++pkgpyexecdir = $(pyexecdir)/gtk-2.0/gio$(pyexecsubdir)
+ pkgpyexec_LTLIBRARIES =
+ 
+ # gio python scripts
+diff -ur pygobject-2.28.6-orig/glib/Makefile.am pygobject-2.28.6/glib/Makefile.am
+--- pygobject-2.28.6-orig/glib/Makefile.am	2011-06-13 09:33:49.000000000 -0700
++++ pygobject-2.28.6/glib/Makefile.am	2016-08-04 17:35:46.776048959 -0700
+@@ -8,7 +8,7 @@
+ 
+ pkgpyexecdir = $(pyexecdir)
+ 
+-pyglibdir = $(pkgpyexecdir)/glib
++pyglibdir = $(pkgpyexecdir)/glib$(pyexecsubdir)
+ pyglib_PYTHON = 	\
+ 	__init__.py	\
+ 	option.py
+diff -ur pygobject-2.28.6-orig/gobject/Makefile.am pygobject-2.28.6/gobject/Makefile.am
+--- pygobject-2.28.6-orig/gobject/Makefile.am	2011-06-13 09:33:49.000000000 -0700
++++ pygobject-2.28.6/gobject/Makefile.am	2016-08-04 17:36:41.186640588 -0700
+@@ -7,7 +7,7 @@
+ pkgpyexecdir = $(pyexecdir)
+ 
+ # gobject python scripts
+-pygobjectdir = $(pkgpyexecdir)/gobject
++pygobjectdir = $(pkgpyexecdir)/gobject$(pyexecsubdir)
+ pygobject_PYTHON = 	\
+ 	__init__.py 	\
+ 	constants.py	\
+diff -ur pygobject-2.28.6-orig/Makefile.am pygobject-2.28.6/Makefile.am
+--- pygobject-2.28.6-orig/Makefile.am	2011-06-13 09:33:49.000000000 -0700
++++ pygobject-2.28.6/Makefile.am	2016-08-04 18:17:07.974300659 -0700
+@@ -64,12 +64,13 @@
+ pkgconfig_DATA = pygobject-$(PLATFORM_VERSION).pc
+ 
+ # python modules
+-pkgpyexecdir = $(pyexecdir)/gtk-2.0
++pkgpyexecdir = $(pyexecdir)/gtk-2.0$(pyexecsubdir)
+ pkgpyexec_PYTHON = dsextras.py
+ pkgpyexec_LTLIBRARIES =
+ 
+ # python
+-pyexec_PYTHON = pygtk.py
++toppyexecdir = $(pyexecdir)$(pyexecsubdir)
++toppyexec_PYTHON = pygtk.py
+ pyexec_LTLIBRARIES =
+ 
+ # linker flags
+@@ -80,13 +81,13 @@
+ 
+ # install pth file.
+ install-data-local:
+-	$(mkinstalldirs) $(DESTDIR)$(pythondir)
+-	echo "gtk-$(PLATFORM_VERSION)" > $(DESTDIR)$(pyexecdir)/pygtk.pth
++	$(mkinstalldirs) $(DESTDIR)$(pyexecdir)$(pyexecsubdir)
++	echo "gtk-$(PLATFORM_VERSION)" > $(DESTDIR)$(pyexecdir)$(pyexecsubdir)/pygtk.pth
+ install-exec-local:
+-	$(mkinstalldirs) $(DESTDIR)$(pyexecdir)
+-	echo "gtk-$(PLATFORM_VERSION)" > $(DESTDIR)$(pyexecdir)/pygtk.pth
++	$(mkinstalldirs) $(DESTDIR)$(pyexecdir)$(pyexecsubdir)
++	echo "gtk-$(PLATFORM_VERSION)" > $(DESTDIR)$(pyexecdir)$(pyexecsubdir)/pygtk.pth
+ uninstall-local:
+-	rm -f $(DESTDIR)$(pythondir)/pygtk.pth $(DESTDIR)$(pyexecdir)/pygtk.pth
++	rm -f $(DESTDIR)$(pythondir)/pygtk.pth $(DESTDIR)$(pyexecdir)$(pyexecsubdir)/pygtk.pth
+ 
+ EGG_NAME = $(PACKAGE)-$(PACKAGE_VERSION)-py$(PYTHON_VERSION)-$(PLATFORM).egg
+ 
