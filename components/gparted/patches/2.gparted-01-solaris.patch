@@ -47,33 +47,6 @@
  }
  
  void GParted_Core::add_node_and_mountpoint(
---- Original/Win_GParted.cc	2016-03-07 14:26:41.709974544 -0800
-+++ gparted-0.25.0/src/Win_GParted.cc	2016-03-07 14:47:13.296272589 -0800
-@@ -2175,9 +2175,14 @@
- 
- 	*succes = true ; 
- 	for ( unsigned int t = 0 ; t < selected_partition_ptr->get_mountpoints().size() ; t++ )
--		if ( std::count( mountpoints.begin(),
-+	{
-+		size_t n = 0;
-+
-+		std::count( mountpoints.begin(),
- 		                 mountpoints.end(),
--		                 selected_partition_ptr->get_mountpoints()[t] ) <= 1 )
-+				 selected_partition_ptr->get_mountpoints()[t],
-+				 n );
-+		if ( n <= 1 )
- 		{
- 			Glib::ustring cmd = "umount -v \"" + selected_partition_ptr->get_mountpoints()[t] + "\"";
- 			if ( Utils::execute_command( cmd, dummy, *error ) )
-@@ -2188,6 +2193,7 @@
- 		}
- 		else
- 			failed_mountpoints.push_back( selected_partition_ptr->get_mountpoints()[t] );
-+	}
- 
- 	if ( *succes && failed_mountpoints .size() )
- 	{
 --- Original/main.cc	2016-03-07 15:23:50.265705094 -0800
 +++ gparted-0.25.0/src/main.cc	2016-03-07 16:24:36.544239177 -0800
 @@ -20,8 +20,16 @@

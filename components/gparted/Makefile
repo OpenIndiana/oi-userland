@@ -24,6 +24,7 @@
 #
 BUILD_ARCH= i386
 BUILD_BITS= 32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gparted
@@ -36,9 +37,19 @@ COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/gparted/$(COMPONENT_AR
 TPNO=			27500
 
 TEST_TARGET= $(NO_TESTS)
+
+# Needs updated sigcpp, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32=
+INSTALL_32=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
+
+CXXFLAGS += -std=c++11
 
 # needed to find xgettext
 PATH=$(GNUBIN):$(USRBINDIR)
@@ -46,6 +57,7 @@ PATH=$(GNUBIN):$(USRBINDIR)
 REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/c++/atkmm
 REQUIRED_PACKAGES += library/desktop/c++/cairomm
 REQUIRED_PACKAGES += library/desktop/c++/gtkmm
 REQUIRED_PACKAGES += library/desktop/c++/pangomm
@@ -54,6 +66,8 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
 ifneq ($(MACH), sparc)
 REQUIRED_PACKAGES += system/storage/parted
