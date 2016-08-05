@@ -63,18 +63,11 @@ class SolarisVNICDriver(object):
 
     def __init__(self, conf):
         self.conf = conf
-        # Since there is no connect_uri() yet, we need to do this ourselves
-        # parse ssh://user@hostname
-        suh = self.conf.evs_controller.split('://')
-        if len(suh) != 2 or suh[0] != 'ssh' or not suh[1].strip():
-            raise SystemExit(_("Specified evs_controller is invalid"))
-        uh = suh[1].split('@')
-        if len(uh) != 2 or not uh[0].strip() or not uh[1].strip():
-            raise SystemExit(_("'user' and 'hostname' need to be specified "
-                               "for evs_controller"))
+        try:
+            self.rad_uri = radcon.RadURI(conf.evs_controller)
+        except ValueError as err:
+            raise SystemExit(_("Specified evs_controller is invalid: %s"), err)
 
-        # save the user and EVS controller info
-        self.uh = uh
         self._rad_connection = None
         # set the controller property for this host
         cmd = ['/usr/sbin/evsadm', 'show-prop', '-co', 'value', '-p',
@@ -91,10 +84,10 @@ class SolarisVNICDriver(object):
                 self._rad_connection._closed is None):
             return self._rad_connection
 
-        LOG.debug(_("Connecting to EVS Controller at %s as %s") %
-                  (self.uh[1], self.uh[0]))
+        LOG.debug(_("Connecting to EVS Controller at %s") %
+                  self.conf.evs_controller)
 
-        self._rad_connection = radcon.connect_ssh(self.uh[1], user=self.uh[0])
+        self._rad_connection = self.rad_uri.connect()
         return self._rad_connection
 
     def fini_l3(self, device_name):
@@ -192,8 +185,6 @@ class SolarisVNICDriver(object):
                         vport.setProperty("protection=none")
         except radcli.ObjectError as oe:
             raise EVSControllerError(oe.get_payload().errmsg)
-        finally:
-            self.rad_connection.close()
 
         dl = net_lib.Datalink(datalink_name)
         evs_vport = "%s/%s" % (network_id, port_id)

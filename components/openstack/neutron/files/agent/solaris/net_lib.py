@@ -56,11 +56,7 @@ class IPInterface(CommandBase):
         return True
 
     @classmethod
-    def ipaddr_exists(cls, ifname, ipaddr, ifcheck=True):
-
-        if ifcheck and not cls.ifname_exists(ifname):
-                return False
-
+    def ipaddr_exists(cls, ifname, ipaddr):
         cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addr', ifname]
         stdout = cls.execute(cmd)
 
@@ -82,14 +78,15 @@ class IPInterface(CommandBase):
             val.append(addr.replace("\\", ""))
         return result
 
-    def create_address(self, ipaddr, addrobjname=None, temp=True):
-        if not self.ifname_exists(self._ifname):
+    def create_address(self, ipaddr, addrobjname=None, temp=True,
+                       ifcheck=True, addrcheck=True):
+        if ifcheck and not self.ifname_exists(self._ifname):
             # create ip interface
             cmd = ['/usr/sbin/ipadm', 'create-ip', self._ifname]
             if temp:
                 cmd.append('-t')
             self.execute_with_pfexec(cmd)
-        elif self.ipaddr_exists(self._ifname, ipaddr, ifcheck=False):
+        elif addrcheck and self.ipaddr_exists(self._ifname, ipaddr):
             return
 
         # If an address is IPv6, then to create a static IPv6 address
@@ -102,8 +99,8 @@ class IPInterface(CommandBase):
             mac_addr = stdout.splitlines()[0].strip()
             ll_addr = netaddr.EUI(mac_addr).ipv6_link_local()
 
-            if not self.ipaddr_exists(self._ifname, str(ll_addr),
-                                      ifcheck=False):
+            if addrcheck and not self.ipaddr_exists(self._ifname,
+                                                    str(ll_addr)):
                 # create a link-local address
                 cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                        str(ll_addr), self._ifname]
@@ -137,8 +134,8 @@ class IPInterface(CommandBase):
             cmd.append('-t')
         self.execute_with_pfexec(cmd)
 
-    def delete_address(self, ipaddr):
-        if not self.ipaddr_exists(self._ifname, ipaddr):
+    def delete_address(self, ipaddr, addrcheck=True):
+        if addrcheck and not self.ipaddr_exists(self._ifname, ipaddr):
             return
 
         cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addrobj,addr',

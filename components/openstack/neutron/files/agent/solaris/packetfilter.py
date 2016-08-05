@@ -42,7 +42,7 @@ class PacketFilter(object):
         '''
         self.root_anchor_path = anchor_name
 
-    def _get_anchor_path(self, subanchors):
+    def get_anchor_path(self, subanchors):
         if subanchors:
             return '%s/%s' % (self.root_anchor_path, '/'.join(subanchors))
 
@@ -61,10 +61,8 @@ class PacketFilter(object):
         we need to always read the existing rules and add a new rule or
         remove an exisitng rule.
         """
-        anchor_path = self._get_anchor_path(parent_anchor)
+        anchor_path = self.get_anchor_path(parent_anchor)
         existing_anchor_rules = self.list_anchor_rules(parent_anchor)
-        LOG.debug(_('Existing anchor rules %s under %s') %
-                  (existing_anchor_rules, anchor_path))
         for rule in existing_anchor_rules:
             if child_anchor in rule:
                 LOG.debug(_('Anchor rule %s already exists') % rule)
@@ -73,10 +71,9 @@ class PacketFilter(object):
         if anchor_option:
             anchor_rule = anchor_rule + " " + anchor_option
         existing_anchor_rules.append(anchor_rule)
-        process_input = '%s\n' % '\n'.join(existing_anchor_rules)
+        process_input = '%s\n' % '\n'.join(sorted(existing_anchor_rules))
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-f', '-']
-        LOG.debug(_('Running: %s') % ' '.join(cmd))
         utils.execute(cmd, process_input=process_input)
 
     def remove_nested_anchor_rule(self, parent_anchor, child_anchor):
@@ -86,60 +83,61 @@ class PacketFilter(object):
         we need to always read the existing rules and add a new rule or
         remove an exisitng rule.
         """
-        anchor_path = self._get_anchor_path(parent_anchor)
+        anchor_path = self.get_anchor_path(parent_anchor)
         existing_anchor_rules = self.list_anchor_rules(parent_anchor)
-        LOG.debug(_('Existing anchor rules %s under %s') %
-                  (existing_anchor_rules, anchor_path))
         for rule in existing_anchor_rules:
             if child_anchor in rule:
                 break
         else:
-            LOG.debug(_('Anchor rule %s does not exist') % rule)
+            LOG.debug(_('Could not find rule with child anchor: %s') %
+                      child_anchor)
             return
         existing_anchor_rules.remove(rule)
         process_input = '%s\n' % '\n'.join(existing_anchor_rules)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-f', '-']
-        LOG.debug(_('Running: %s') % ' '.join(cmd))
         utils.execute(cmd, process_input=process_input)
 
     def list_anchor_rules(self, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sr']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
-        stdout = utils.execute(cmd)
-        anchor_rules = []
-        for anchor_rule in stdout.strip().splitlines():
-            anchor_rules.append(anchor_rule.strip())
-        return anchor_rules
+        try:
+            stdout = utils.execute(cmd)
+        except:
+            return []
+        return stdout.strip().splitlines()
 
     def list_anchors(self, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sA']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
-        stdout = utils.execute(cmd)
-        anchors = []
-        for anchor in stdout.strip().splitlines():
-            anchors.append(anchor.strip())
-        return anchors
+        try:
+            stdout = utils.execute(cmd)
+        except:
+            return []
+        return stdout.strip().splitlines()
 
     def add_table(self, name, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-t', name, '-T', 'add']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
         utils.execute(cmd)
 
     def add_table_entry(self, name, cidrs, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-t', name, '-T', 'add']
         cmd.extend(cidrs)
-        LOG.debug(_('Running: %s') % " ".join(cmd))
+        utils.execute(cmd)
+
+    def replace_table_entry(self, name, cidrs, subanchors=None):
+        anchor_path = self.get_anchor_path(subanchors)
+        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
+               '-t', name, '-T', 'replace']
+        cmd.extend(cidrs)
         utils.execute(cmd)
 
     def table_exists(self, name, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         try:
             cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                    '-t', name, '-T', 'show']
@@ -153,10 +151,9 @@ class PacketFilter(object):
             LOG.debug(_('Table %s does not exist hence returning without '
                       'deleting') % name)
             return
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-t', name, '-T', 'delete']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
         utils.execute(cmd)
 
     def remove_table_entry(self, name, cidrs, subanchors=None):
@@ -164,20 +161,17 @@ class PacketFilter(object):
             LOG.debug(_('Table %s does not exist hence returning without '
                       'deleting') % name)
             return
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-t', name, '-T', 'delete']
         cmd.extend(cidrs)
-        LOG.debug(_('Running: %s') % " ".join(cmd))
         utils.execute(cmd)
 
     def add_rules(self, rules, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
         process_input = '\n'.join(rules) + '\n'
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-f', '-']
-        LOG.debug(_('Running: %s with input %s') % (" ".join(cmd),
-                                                    process_input))
         utils.execute(cmd, process_input=process_input)
 
     def _get_rule_label(self, rule):
@@ -190,15 +184,21 @@ class PacketFilter(object):
         return keywords[i + 1]
 
     def remove_anchor(self, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+        anchor_path = self.get_anchor_path(subanchors)
 
         # retrieve all the labels for rules, we will delete the state
         # after removing the rules
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sr']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
-        stdout = utils.execute(cmd)
+        try:
+            stdout = utils.execute(cmd)
+        except:
+            # rules doesn't exist
+            return
+        rules = stdout.strip().splitlines()
+        if not rules:
+            return
         labels = []
-        for rule in stdout.strip().splitlines():
+        for rule in rules:
             label = self._get_rule_label(rule.strip())
             if label:
                 labels.append(label)
@@ -206,14 +206,12 @@ class PacketFilter(object):
         # delete the rules and tables
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
                '-F', 'all']
-        LOG.debug(_('Running: %s') % " ".join(cmd))
         utils.execute(cmd)
 
         # clear the state
         for label in labels:
             cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-k', 'label',
                    '-k', label]
-            LOG.debug(_('Running: %s') % " ".join(cmd))
             utils.execute(cmd)
 
     def _get_relative_nested_anchors(self, anchorname):
@@ -225,21 +223,25 @@ class PacketFilter(object):
                 subanchors.remove(anchor)
         return subanchors
 
-    def remove_anchor_recursively(self, subanchors=None):
-        anchor_path = self._get_anchor_path(subanchors)
+    def remove_anchor_recursively(self, subanchors=None, recurse_ctxt=False):
+        anchor_path = self.get_anchor_path(subanchors)
         cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sA']
-        LOG.debug(_('Running: %s') % ' '.join(cmd))
-        stdout = utils.execute(cmd)
-        if not stdout.strip():
+        try:
+            stdout = utils.execute(cmd)
+        except:
+            # anchors doesn't exist
+            stdout = ''
+        nested_anchors = stdout.strip().splitlines()
+        if recurse_ctxt and not nested_anchors:
             return
 
         # we have nested anchors to remove so make recursive calls
-        for nested_anchor in stdout.strip().splitlines():
+        for nested_anchor in nested_anchors:
             nested_anchor = nested_anchor.strip()
             if not nested_anchor:
                 continue
             anchor_list = self._get_relative_nested_anchors(nested_anchor)
-            self.remove_anchor_recursively(anchor_list)
+            self.remove_anchor_recursively(anchor_list, True)
             self.remove_anchor(anchor_list)
         anchor_list = self._get_relative_nested_anchors(anchor_path)
         self.remove_anchor(anchor_list)
