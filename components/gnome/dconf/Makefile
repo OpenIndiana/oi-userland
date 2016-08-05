@@ -48,6 +48,8 @@ studio_C99MODE=$(studio_C99_ENABLE)
 # Uses gcc extensions for void returns.
 CFLAGS.studio += $(studio_FEATURES_EXTENSIONS)
 
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i
 COMPONENT_TEST_TRANSFORMS += \
