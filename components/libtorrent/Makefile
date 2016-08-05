@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
@@ -36,6 +37,14 @@ COMPONENT_BUGDB=	utility/rtorrent
 TPNO=			9038
 
 TEST_TARGET= $(NO_TESTS)
+
+# Needs updated sigcpp, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -43,17 +52,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # requires an older automake to reconfigure.
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
+	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath 
-# here, otherwise -norunpath doesn't get set when creating the shared 
-# libraries (CC -G).
-CXX+=   $(studio_NORUNPATH)
-
-# this is needed or we can't compile the rak headers
-CC=$(CXX)
-
-CXXFLAGS.studio +=	-i
+CXXFLAGS += -std=c++11
 
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
@@ -68,3 +69,7 @@ REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/math
+

@@ -1,0 +1,66 @@
+Changes for successful compilation on Solaris.  
+
+Evaluate to possibly send upstream
+
+
+--- libtorrent-0.12.2/src/dht/dht_hash_map.h	2016-07-21 14:25:16.783986236 -0700
++++ libtorrent-0.12.2/src/dht/dht_hash_map.h	2016-07-21 14:25:27.729767142 -0700
+@@ -167,7 +167,7 @@
+ 
+ inline
+ DhtNode* DhtNodeList::add_node(DhtNode* n) {
+-  insert(std::make_pair<const HashString*, DhtNode*>(n, n));
++  insert(std::pair<const HashString*, DhtNode*>(n, n));
+   return n;
+ }
+ 
+--- libtorrent-0.12.2/src/torrent/data/block.h	2008-05-07 05:19:13.000000000 -0700
++++ libtorrent-0.12.2/src/torrent/data/block.h	2016-07-21 14:22:47.000352058 -0700
+@@ -37,6 +37,7 @@
+ #ifndef LIBTORRENT_BLOCK_H
+ #define LIBTORRENT_BLOCK_H
+ 
++#include <cstring>
+ #include <vector>
+ #include <torrent/common.h>
+ #include <torrent/data/block_transfer.h>
+--- libtorrent-0.12.2/src/torrent/exceptions.cc	2016-07-21 14:32:05.972670769 -0700
++++ libtorrent-0.12.2/src/torrent/exceptions.cc	2016-07-21 14:32:23.871378484 -0700
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <cerrno>
++#include <cstring>
+ 
+ #include "exceptions.h"
+ 
+--- libtorrent-0.12.2/src/torrent/object_stream.cc	2016-07-21 14:34:49.458499366 -0700
++++ libtorrent-0.12.2/src/torrent/object_stream.cc	2016-07-21 14:35:46.590821537 -0700
+@@ -38,6 +38,7 @@
+ 
+ #include <iterator>
+ #include <iostream>
++#include <cstring>
+ #include <rak/functional.h>
+ #include <rak/algorithm.h>
+ 
+--- libtorrent-0.12.2/src/data/chunk.cc	2016-07-21 14:36:43.901801737 -0700
++++ libtorrent-0.12.2/src/data/chunk.cc	2016-07-21 14:37:40.676713436 -0700
+@@ -38,6 +38,7 @@
+ 
+ #include <algorithm>
+ #include <functional>
++#include <cstring>
+ 
+ #include "torrent/exceptions.h"
+ 
+--- libtorrent-0.12.2/src/utils/diffie_hellman.cc	2016-07-21 14:41:11.573426007 -0700
++++ libtorrent-0.12.2/src/utils/diffie_hellman.cc	2016-07-21 14:41:26.800532608 -0700
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <string>
++#include <cstring>
+ 
+ #ifdef USE_OPENSSL
+ #include <openssl/bn.h>

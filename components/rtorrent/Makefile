@@ -23,9 +23,9 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
-# we really need to use studio, mostly because that's what
-# sigc++ uses, so we don't like that parfait is clang/llvm in disguise
+COMPILER= gcc
 export PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
@@ -38,6 +38,14 @@ COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHI
 TPNO=			8824
 
 TEST_TARGET= $(NO_TESTS)
+
+# Needs updated sigcpp, not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -52,24 +60,31 @@ COMPONENT_PREP_ACTION = \
 	    automake-1.11; \
 	    autoconf )
 
-# this is needed or we can't compile the rak headers
-CC=$(CXX)
+CXXFLAGS += -std=c++11
 
-LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+LDFLAGS += -L$(GNULIB64) -R$(GNULIB64)
 ifeq ($(OS_VERSION),5.11)
 LDFLAGS += -lnsl -lsocket
 endif
 
-CXXFLAGS +=	-i
-CXXFLAGS +=	-template=no%extdef
 CXXFLAGS +=	-I$(USRINCDIR)/ncurses
 CONFIGURE_OPTIONS.64 +=         --srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
+
+# Delete this when libtorrent is updated in the build servers
+LIBTORRENT_BASE = $(WS_COMPONENTS)/libtorrent/build/prototype/$(MACH)
+PKG_CONFIG_PATHS += $(LIBTORRENT_BASE)$(PKG_CONFIG_PATH.$(BITS)) 
+LD_OPTIONS += -L$(LIBTORRENT_BASE)$(USRLIB.$(BITS)) 
+CXXFLAGS += -I$(LIBTORRENT_BASE)$(USRINCDIR)/torrent 
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_$(BITS)="$(LIBTORRENT_BASE)$(USRLIB.$(BITS))" 
+#end Delete
 
 REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/libtorrent
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
