@@ -33,7 +33,7 @@ usage() {
     echo "Usage: $0 session_name"
     echo "    This script loads scripts in /etc/X11/xinit/xinitrc.d"
     echo "    and runs a session manager."
-    echo "    session_name is gnome, twm or xdm"
+    echo "    session_name is gnome, mate, twm or xdm"
 }
 
 if [ $# -ne 1 ]; then
@@ -54,6 +54,8 @@ shift
 case "$SESSION_NAME" in
 gdm|GDM|gnome|GNOME|jds|JDS)
      SESSION_MANAGER=/usr/bin/gnome-session ;;
+mate|MATE)
+     SESSION_MANAGER=/usr/bin/mate-session ;;
 tjds|TJDS|TrustedJDS|tgnome|TGNOME)
      SESSION_MANAGER='/usr/bin/gnome-session --trusted-session';;
 twm|TWM) SESSION_MANAGER=/usr/X11/bin/twm ;;

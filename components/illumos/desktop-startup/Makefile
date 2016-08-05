@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		desktop-startup
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://openindiana.org/
 COMPONENT_SUMMARY=	Desktop startup scripts in xinitrc.d
 COMPONENT_FMRI=		system/display-manager/desktop-startup
