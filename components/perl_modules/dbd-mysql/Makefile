@@ -43,10 +43,16 @@ COMPONENT_BUGDB=	perl-mod/dbd-mysql
 
 TPNO=			30300
 
+
+# MySQL 5.7 is not available in S11.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+else
 BUILD_STYLE= makemaker
 LICENSE=DBD-mysql.license
 BUILD_TARGET= $(BUILD_$(MK_BITS)) $(LICENSE)
 include $(WS_MAKE_RULES)/common.mk
+endif
 
 CLEAN_PATHS += $(LICENSE)
 
