@@ -165,7 +165,8 @@ static int dpif_solaris_get_port_by_number(struct dpif_solaris *dpif,
     OVS_REQ_RDLOCK(dpif->port_rwlock);
 static int
 dpif_solaris_get_uplink_port_info(struct dpif_solaris *dpif,
-    odp_port_t port_no, odp_port_t *uport_nop, int *xfdp);
+    odp_port_t port_no, odp_port_t *uport_nop, int *xfdp,
+    enum ovs_vport_type *vtypep);
 static void dpif_solaris_flow_remove(struct dpif_solaris *dpif,
     struct dpif_solaris_flow *flow)
     OVS_REQ_WRLOCK(dpif->flow_rwlock);
@@ -857,7 +858,8 @@ dpif_solaris_get_port_by_number(struct dpif_solaris *dpif, odp_port_t port_no,
 
 static int
 dpif_solaris_get_uplink_port_info(struct dpif_solaris *dpif,
-    odp_port_t port_no, odp_port_t *uport_nop, int *xfdp)
+    odp_port_t port_no, odp_port_t *uport_nop, int *xfdp,
+    enum ovs_vport_type *vtypep)
 {
 	struct dpif_solaris_port *port, *uport;
 
@@ -868,6 +870,9 @@ dpif_solaris_get_uplink_port_info(struct dpif_solaris *dpif,
 
 	if (port == NULL)
 		goto done;
+
+	if (vtypep != NULL)
+		*vtypep = port->vtype;
 
 	HMAP_FOR_EACH(uport, node, &dpif->ports) {
 		if (uport->is_uplink &&
@@ -1380,7 +1385,7 @@ dpif_solaris_get_priority_details(void *cookie, odp_port_t outport,
 	ovs_rwlock_unlock(&dpif->port_rwlock);
 	if (error != 0) {
 		VLOG_DBG("dpif_solaris_get_priority_details: "
-		"Error getting port %d\n", outport);
+		"failed to get port %d\n", outport);
 		return (error);
 	}
 
@@ -1388,7 +1393,7 @@ dpif_solaris_get_priority_details(void *cookie, odp_port_t outport,
 	error = netdev_get_queue(netdev, queueid, details);
 	if (error != 0) {
 		VLOG_DBG("dpif_solaris_get_priority_details: "
-		" Error getting queue %d\n", queueid);
+		"failed to get queue %d\n", queueid);
 		return (error);
 	}
 	VLOG_DBG("dpif_solaris_get_priority_details: done");
@@ -1505,7 +1510,7 @@ dpif_solaris_flow_put(struct dpif *dpif_, const struct dpif_flow_put *put)
 				}
 			} else {
 				VLOG_DBG("dpif_solaris_flow_put(): "
-				    "Error getting inport %d\n", inport);
+				    "failed to get inport %d\n", inport);
 			}
 		} else {
 			VLOG_ERR("dpif_solaris_flow_put mask %s "
@@ -1888,7 +1893,8 @@ dpif_solaris_port_output(struct dpif_solaris *dpif, odp_port_t port_no,
 	VLOG_DBG("dpif_solaris_port_output %d tunnel %ld", port_no,
 	    tnl == NULL ? 0 : tnl->tun_id);
 
-	error = dpif_solaris_get_uplink_port_info(dpif, port_no, NULL, &fd);
+	error = dpif_solaris_get_uplink_port_info(dpif, port_no, NULL,
+	    &fd, NULL);
 	if (error != 0 || fd == -1) {
 		if (may_steal) {
 			ofpbuf_delete(packet);
@@ -2085,6 +2091,7 @@ dp_solaris_execute_cb(void *aux_, struct ofpbuf *packet,
 	int type = nl_attr_type(a);
 	odp_port_t pin, pout;
 	struct flow_tnl *tnl = NULL;
+	enum ovs_vport_type vtype;
 	int err;
 
 	VLOG_DBG("dp_solaris_execute_cb type %d", type);
@@ -2101,25 +2108,34 @@ dp_solaris_execute_cb(void *aux_, struct ofpbuf *packet,
 		/*
 		 * If in_port number is OFPP_NONE, this means this packet out
 		 * request comes from the controller.
+		 *
+		 * if the in or outport is the internal port, and its uplink
+		 * can not be found, it means there is no physical uplink
+		 * added to the bridge yet, directly drop the packet.
 		 */
 		if (md->in_port.odp_port != ODPP_NONE) {
 			err = dpif_solaris_get_uplink_port_info(dpif,
-			    md->in_port.odp_port, &pin, NULL);
+			    md->in_port.odp_port, &pin, NULL, &vtype);
 			if (err != 0) {
-				VLOG_DBG("dp_solaris_execute_cb "
-				    "OVS_ACTION_ATTR_OUTPUT Error getting "
-				    "uplink for inport %d ",
-				    md->in_port.odp_port);
+				if (vtype != OVS_VPORT_TYPE_INTERNAL) {
+					VLOG_DBG("dp_solaris_execute_cb "
+					    "OVS_ACTION_ATTR_OUTPUT failed to"
+					    "get uplink for inport %d ",
+					    md->in_port.odp_port);
+				}
 				if (may_steal)
 					ofpbuf_delete(packet);
 				break;
 			}
 			err = dpif_solaris_get_uplink_port_info(dpif, port_no,
-			    &pout, NULL);
+			    &pout, NULL, &vtype);
 			if (err != 0) {
-				VLOG_DBG("dp_solaris_execute_cb "
-				    "OVS_ACTION_ATTR_OUTPUT Error getting "
-				    "uplink for outport %d ", port_no);
+				if (vtype != OVS_VPORT_TYPE_INTERNAL) {
+					VLOG_DBG("dp_solaris_execute_cb "
+					    "OVS_ACTION_ATTR_OUTPUT failed to "
+					    "get uplink for outport %d",
+					    port_no);
+				}
 				if (may_steal)
 					ofpbuf_delete(packet);
 				break;
@@ -2160,11 +2176,20 @@ dp_solaris_execute_cb(void *aux_, struct ofpbuf *packet,
 		VLOG_DBG("dp_solaris_execute_cb OVS_ACTION_ATTR_USERSPACE");
 
 		err = dpif_solaris_get_uplink_port_info(dpif,
-		    md->in_port.odp_port, &pin, NULL);
+		    md->in_port.odp_port, &pin, NULL, &vtype);
 		if (err != 0) {
-			VLOG_DBG("dp_solaris_execute_cb OVS_ACTION_ATTR_OUTPUT "
-			    "Error getting uplink for inport %d",
-			    md->in_port.odp_port);
+			if (vtype != OVS_VPORT_TYPE_INTERNAL) {
+				VLOG_DBG("dp_solaris_execute_cb "
+				    "OVS_ACTION_ATTR_USERSPACE failed to get "
+				    "uplink for inport %d",
+				    md->in_port.odp_port);
+			} else {
+				VLOG_DBG("dp_solaris_execute_cb "
+				    "OVS_ACTION_ATTR_USERSPACE from an internal"
+				    "port %d which is not associated with a "
+				    "physical uplink",
+				    md->in_port.odp_port);
+			}
 			if (may_steal)
 				ofpbuf_delete(packet);
 			break;
