@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ddu
 COMPONENT_VERSION= 1.3.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Device Driver Utility (DDU)
 COMPONENT_PROJECT_URL= http://www.openindiana.org/
 COMPONENT_FMRI= diagnostic/ddu
