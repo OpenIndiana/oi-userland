@@ -11,6 +11,7 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -26,8 +27,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/include/magic.h
 file path=usr/share/misc/magic.mgc
 
-file usr/share/man/man3/libmagic.3 path=usr/gnu/share/man/man3/libmagic.3
-file usr/share/man/man4/magic.4 path=usr/gnu/share/man/man4/magic.4
+file path=usr/share/man/man1/file.1
+file path=usr/share/man/man3/libmagic.3
+file path=usr/share/man/man4/magic.4
+
+file usr/bin/$(MACH64)/file path=usr/bin/$(MACH64)/file
+file usr/bin/file path=usr/bin/$(MACH32)/file
+# Must run the binary matching the kernel bitness
+hardlink path=usr/bin/file target=../lib/isaexec pkg.linted=true
 
 file path=usr/lib/libmagic.so.1.0.0
 link path=usr/lib/libmagic.so target=libmagic.so.1.0.0

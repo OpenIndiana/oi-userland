@@ -11,23 +11,20 @@
 
 #
 # Copyright 2016 Jim Klimov
+# Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 include ../../../make-rules/shared-macros.mk
 
-# Note: The primary component we deliver initially is libmagic here
-# There is already a "file" utility with true Unix legacy in our OS
-# Still, for the sake of completeness and to match GNU/Linux userland
-# we ALSO deliver a "gfile" built from darwinsys sources, as a bonus.
 COMPONENT_NAME=		file
-COMPONENT_FMRI=		library/magic
+COMPONENT_FMRI=		text/file
 COMPONENT_VERSION=	5.25
 COMPONENT_PROJECT_URL=	http://www.darwinsys.com/file/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:3735381563f69fb4239470b8c51b876a80425348b8285a7cded8b61d6b890eca
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/file/$(COMPONENT_ARCHIVE)
-COMPONENT_SUMMARY=	libmagic for recognizing the type of data contained in a computer file using magic numbers
-COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_SUMMARY=	utility for recognizing the type of data contained in a computer file using magic numbers
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
 
