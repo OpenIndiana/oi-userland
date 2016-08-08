@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.10.11
+COMPONENT_VERSION=	2.11.0
 COMPONENT_PROJECT_URL=	http://www.pidgin.im
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f2ae211341fc77efb9945d40e9932aa535cdf3a6c8993fe7919fca8cc1c04007
+    sha256:f72613440586da3bdba6d58e718dce1b2c310adf8946de66d8077823e57b3333
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-TPNO=			21690
+TPNO=			30500
 
 # Cyrus SASL is S12-only (at least for evaluation builds).
 ifeq ($(BUILD_TYPE), evaluation)
@@ -94,6 +94,7 @@ REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gstreamer-1
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
