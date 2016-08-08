@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evince
-COMPONENT_VERSION=	3.16.0
+COMPONENT_VERSION=	3.21.4
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Evince
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:5138e2d05ccfe5e40df0c840b34f334c1f2bc03e5456aa954e64673d504ccd04
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.16/$(COMPONENT_ARCHIVE)
+	sha256:12f0a411380b476a540a9e0629ca8ca938dad5e787e4ed1ff4f467e0356b1ffd
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.21/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/evince
-TPNO=			25616
+TPNO=			30508
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -58,48 +58,14 @@ COMPONENT_PREP_ACTION = \
 	automake -a -c -f ; \
 	autoconf )
 
-# Prevent libtool from embedding runpath (via -R) and other such annoyances.
-COMPONENT_POST_CONFIGURE_ACTION += \
-	(cd $(BUILD_DIR_$(BITS)) ; \
-	$(GSED) -i \
-	-e 's|hardcode_into_libs=yes|hardcode_into_libs=no|g' \
-	-e 's|hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' \
-	-e 's|need_relink=yes|need_relink=not_on_solaris|g' \
-	libtool)
-
-
 # For now, all things built for C++11 require gcc.
 # Also, all components using gobject-introspection must be built with gcc as
 # gobject-introspection does not produce correct results when using Studio.
 COMPILER=gcc
 CXXFLAGS += -std=c++11
 
-# Delete this when build servers are installed with gnome-desktop
-GNOME-DESKTOP_BASE = $(WS_COMPONENTS)/gnome/gnome-desktop/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(GNOME-DESKTOP_BASE)/usr/lib/pkgconfig
-PKG_CONFIG_PATHS.64 += $(GNOME-DESKTOP_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-GNOME-DESKTOP_LD_OPTIONS.32 += -L$(GNOME-DESKTOP_BASE)/usr/lib
-GNOME-DESKTOP_LD_OPTIONS.64 += -L$(GNOME-DESKTOP_BASE)/usr/lib/$(MACH64)
-GNOME-DESKTOP_LD_OPTIONS += $(GNOME-DESKTOP_LD_OPTIONS.$(BITS))
-
-# Delete this when build servers are installed with an updated libpoppler
-POPPLER_BASE = $(WS_COMPONENTS)/desktop/poppler/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(POPPLER_BASE)/usr/lib/pkgconfig
-PKG_CONFIG_PATHS.64 += $(POPPLER_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-POPPLER_LD_OPTIONS.32 += -L$(POPPLER_BASE)/usr/lib
-POPPLER_LD_OPTIONS.64 += -L$(POPPLER_BASE)/usr/lib/$(MACH64)
-POPPLER_LD_OPTIONS += $(POPPLER_LD_OPTIONS.$(BITS))
-
 CPPFLAGS +=	"-I$(USRINCDIR)/libxml2"
 LDFLAGS +=	$(CC_BITS) -lgmodule-2.0 -lm
-
-CONFIGURE_ENV += LIBGNOME_DESKTOP_CFLAGS="-I$(GNOME-DESKTOP_BASE)/usr/include/gnome-desktop-3.0"
-CONFIGURE_ENV += LIBGNOME_DESKTOP_LIBS="$(GNOME-DESKTOP_LD_OPTIONS) -lgnome-desktop-3"
-
-CONFIGURE_ENV += POPPLER_CFLAGS="-I$(POPPLER_BASE)/usr/include/poppler/glib"
-CONFIGURE_ENV += POPPLER_LIBS="$(POPPLER_LD_OPTIONS) -lpoppler-glib"
 
 CONFIGURE_OPTIONS +=	--libexecdir="$(USRLIB)"
 CONFIGURE_OPTIONS +=	--sysconfdir="$(ETCDIR)"
@@ -134,17 +100,6 @@ COMPONENT_BUILD_ARGS += V=1
 # Needed to find GNU msgfmt.
 COMPONENT_BUILD_ENV += PATH="/usr/gnu/bin:$(PATH)"
 
-POPPLER_LIBDIR.32 += $(POPPLER_BASE)/usr/lib
-POPPLER_LIBDIR.64 += $(POPPLER_BASE)/usr/lib/$(MACH64)
-POPPLER_LIBDIR += $(POPPLER_LIBDIR.$(BITS))
-
-# The poppler .la files in the poppler build prototype area have a libdir of
-# /usr/lib. This confuses linking things where we are trying to get the
-# poppler libraries from that prototype area.
-COMPONENT_PRE_BUILD_ACTION += \
-	$(RM) $(POPPLER_LIBDIR)/libpoppler.la \
-	$(POPPLER_LIBDIR)/libpoppler-glib.la ;
-
 REQUIRED_PACKAGES += archiver/unrar
 REQUIRED_PACKAGES += desktop/pdf-viewer/poppler
 REQUIRED_PACKAGES += gnome/file-manager/nautilus
@@ -152,6 +107,8 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gstreamer-1
+REQUIRED_PACKAGES += library/desktop/gstreamer-1/gst-plugins-base
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgxps
 REQUIRED_PACKAGES += library/desktop/pango
