@@ -1,17 +1,18 @@
-In-house patch to enable Solaris Zones specific vm_mode value for use by the
-ImagePropertiesFilter scheduling filter.  This patch has not yet been
+In-house patch to enable Solaris Zones and LDM specific vm_mode value for use by
+the ImagePropertiesFilter scheduling filter. This patch has not yet been
 submitted upstream.
 
 --- nova-2015.1.2/nova/compute/vm_mode.py.~1~	2015-10-13 07:52:35.000000000 -0700
-+++ nova-2015.1.2/nova/compute/vm_mode.py	2015-12-31 20:11:22.020900882 -0800
-@@ -31,8 +31,9 @@ HVM = "hvm"  # Native ABI (aka fully vir
++++ nova-2015.1.2/nova/compute/vm_mode.py	2016-08-02 14:05:48.000830684 -0700
+@@ -31,8 +31,10 @@
  XEN = "xen"  # Xen 3.0 paravirtualized
  UML = "uml"  # User Mode Linux paravirtualized
  EXE = "exe"  # Executables in containers
 +SOL = "solariszones"  # Solaris zones (non-global and kernel)
++LDM = "ldoms" # Logical Domains (Oracle VM for SPARC)
  
 -ALL = [HVM, XEN, UML, EXE]
-+ALL = [HVM, XEN, UML, EXE, SOL]
++ALL = [HVM, XEN, UML, EXE, SOL, LDM]
  
  
  def get_from_instance(instance):
