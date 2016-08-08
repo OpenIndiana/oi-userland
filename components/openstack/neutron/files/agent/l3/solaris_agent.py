@@ -618,7 +618,7 @@ class SolarisRouterInfo(router.RouterInfo):
         agent.update_fip_statuses(self, existing_floating_ips, fip_statuses)
 
 
-class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
+class L3NATAgent(l3_agent.L3NATAgentWithStateReport):
     OPTS = [
         cfg.StrOpt('external_network_datalink', default='net0',
                    help=_("Name of the datalink that connects to "
@@ -631,7 +631,7 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
     def __init__(self, host, conf=None):
         cfg.CONF.register_opts(self.OPTS)
         cfg.CONF.register_opts(interface.OPTS)
-        super(EVSL3NATAgent, self).__init__(host=host, conf=conf)
+        super(L3NATAgent, self).__init__(host=host, conf=conf)
         cfg.CONF.register_opts(neutron_vpnaas.vpn_agent_opts, 'vpnagent')
         self.service = vpn_service.VPNService(self)
         self.device_drivers = self.service.load_device_drivers(host)

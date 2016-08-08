@@ -106,8 +106,9 @@ COMPONENT_POST_BUILD_ACTION += \
     $(CP) files/evs/migrate/evs-neutron-migration.py \
 	 $(PROTO_DIR)/usr/lib/neutron/evs-neutron-migration; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent; \
-    $(CP) files/agent/evs_l3_agent.py \
-	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent; \
+    $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/l3; \
+    $(CP) files/agent/l3/solaris_agent.py \
+	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/l3; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/solaris; \
     $(CP) \
 	 files/agent/solaris/__init__.py \
