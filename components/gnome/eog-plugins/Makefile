@@ -71,12 +71,12 @@ PYTHON_VERSION = 3.5
 
 # Delete this when build servers are installed with an updated eog
 EOG_BASE = $(WS_COMPONENTS)/gnome/eog/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(EOG_BASE)$(PKG_CONFIG_PATHS.$(BITS))
+PKG_CONFIG_PATHS += $(EOG_BASE)$(PKG_CONFIG_PATH.$(BITS))
 LD_OPTIONS += -L$(EOG_BASE)$(USRLIB.$(BITS))
 CPPFLAGS += -I$(EOG_BASE)/usr/include/eog-3.0
 
 LIBCHAMPLAIN_BASE = $(WS_COMPONENTS)/gnome/libchamplain/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(LIBCHAMPLAIN_BASE)$(PKG_CONFIG_PATHS.$(BITS))
+PKG_CONFIG_PATHS += $(LIBCHAMPLAIN_BASE)$(PKG_CONFIG_PATH.$(BITS))
 LD_OPTIONS += -L$(LIBCHAMPLAIN_BASE)$(USRLIB.$(BITS))
 CPPFLAGS += -I$(LIBCHAMPLAIN_BASE)/usr/include/libchamplain-0.12 -I$(LIBCHAMPLAIN_BASE)/usr/include/libchamplain-gtk-0.12
 
