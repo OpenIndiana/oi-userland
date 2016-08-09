@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sigcpp
 COMPONENT_VERSION=	2.6.2
-COMPONENT_PROJECT_URL=	https://developer.gnome.org/gtkmm/stable/
+COMPONENT_PROJECT_URL=	https://developer.gnome.org/libsigc++/stable/
 COMPONENT_SRC=		libsigc++-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH= \
     sha256:fdace7134c31de792c17570f9049ca0657909b28c4c70ec4882f91a03de54437
