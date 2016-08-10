@@ -60,6 +60,7 @@ CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 CONFIGURE_OPTIONS += --with-dbus-daemondir=$(USRLIBDIR)
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2

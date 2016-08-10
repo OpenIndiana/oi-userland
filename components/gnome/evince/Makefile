@@ -103,6 +103,7 @@ COMPONENT_BUILD_ENV += PATH="/usr/gnu/bin:$(PATH)"
 REQUIRED_PACKAGES += archiver/unrar
 REQUIRED_PACKAGES += desktop/pdf-viewer/poppler
 REQUIRED_PACKAGES += gnome/file-manager/nautilus
+REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo

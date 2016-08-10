@@ -74,6 +74,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/variant-cleanup
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/defaults
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/depends
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale

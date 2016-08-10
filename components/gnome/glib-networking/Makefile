@@ -56,19 +56,6 @@ LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 # Assumes GNU xgettext in PATH
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 
-# Delete this when build servers are installed with gsettings-desktop-schemas
-SCHEMAS_ROOT = $(WS_COMPONENTS)/gnome/gsettings-desktop-schemas/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(SCHEMAS_ROOT)/usr/share/pkgconfig/
-CONFIGURE_ENV += GSETTINGS_DESKTOP_SCHEMAS_CFLAGS="-I$(SCHEMAS_ROOT)/usr/include/gsettings-desktop-schemas" 
-
-# special targets due to dependency on gsettings-desktop-schemas
-../gsettings-desktop-schemas/build/%/.installed:
-	(cd ../gsettings-desktop-schemas && $(GMAKE) install)
-
-$(CONFIGURE_32):       ../gsettings-desktop-schemas/build/$(MACH32)/.installed
-$(CONFIGURE_64):       ../gsettings-desktop-schemas/build/$(MACH64)/.installed
-# end of Delete
-
 CONFIGURE_OPTIONS += --with-ca-certificates=/etc/certs/ca-certificates.crt
 CONFIGURE_OPTIONS += --with-pkcs11=no
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -85,6 +72,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
+REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/glib2

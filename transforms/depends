@@ -1,0 +1,47 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+#
+# Dependency helpers for things pkgdepend(1) doesn't or can't handle
+#
+
+#
+# gsettings schema files
+#
+# Finding these requires looking in source code for calls such as:
+#   g_settings_new ("org.gnome.desktop.interface");
+# When found, add an entry such as:
+#   depend type=require fmri=__TBD \
+#       pkg.tmp.gsettings-schema=org.gnome.desktop.interface
+# You may also include pkg.debug.depend.reason=source-file.c as a reference
+# for future updates to record what source file you found the call in.
+#
+
+<transform depend fmri=__TBD pkg.tmp.gsettings-schema=(.*) -> \
+    default pkg.debug.depend.file %<1>.gschema.xml>
+<transform depend fmri=__TBD pkg.debug.depend.file=.*\.gschema\.xml$ -> \
+    delete pkg.tmp.gsettings-schema .*>
+<transform depend fmri=__TBD pkg.debug.depend.file=.*\.gschema\.xml$ -> \
+    add pkg.debug.depend.path usr/share/glib-2.0/schemas>
