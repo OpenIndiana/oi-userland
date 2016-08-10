@@ -9,9 +9,44 @@
 # directly or through a utility library.
 # Patch source: in-house
 #
-diff -pur old/src/plugins/preauth/pkinit/pkinit_clnt.c new/src/plugins/preauth/pkinit/pkinit_clnt.c
---- old/src/plugins/preauth/pkinit/pkinit_clnt.c	2015-05-08 12:37:14.618553502 -0600
-+++ new/src/plugins/preauth/pkinit/pkinit_clnt.c	2015-05-08 23:54:28.000000000 -0600
+diff --git a/src/plugins/preauth/pkinit/pkinit.h b/src/plugins/preauth/pkinit/pkinit.h
+--- a/src/plugins/preauth/pkinit/pkinit.h
++++ b/src/plugins/preauth/pkinit/pkinit.h
+@@ -27,10 +27,14 @@
+  * IF IT HAS BEEN OR IS HEREAFTER ADVISED OF THE POSSIBILITY OF
+  * SUCH DAMAGES.
+  */
++/*
++ * Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #ifndef _PKINIT_H
+ #define _PKINIT_H
+ 
++#include <k5-int.h>
+ #include <k5-platform.h>
+ #include <krb5/krb5.h>
+ #include <krb5/preauth_plugin.h>
+@@ -42,7 +46,7 @@
+ #ifndef WITHOUT_PKCS11
+ #include "pkcs11.h"
+ 
+-#define PKCS11_MODNAME "opensc-pkcs11.so"
++#define PKCS11_MODNAME "libpkcs11.so"
+ #define PK_SIGLEN_GUESS 1000
+ #define PK_NOSLOT 999999
+ #endif
+@@ -183,6 +187,7 @@ typedef struct _pkinit_identity_opts {
+     char *token_label;
+     char *cert_id_string;
+     char *cert_label;
++    char *PIN;
+ #endif
+ } pkinit_identity_opts;
+ 
+diff --git a/src/plugins/preauth/pkinit/pkinit_clnt.c b/src/plugins/preauth/pkinit/pkinit_clnt.c
+--- a/src/plugins/preauth/pkinit/pkinit_clnt.c
++++ b/src/plugins/preauth/pkinit/pkinit_clnt.c
 @@ -29,6 +29,10 @@
   * SUCH DAMAGES.
   */
@@ -23,7 +58,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_clnt.c new/src/plugins/preauth/p
  #include "k5-int.h"
  #include "pkinit.h"
  #include "k5-json.h"
-@@ -1571,6 +1575,10 @@ handle_gic_opt(krb5_context context,
+@@ -1573,6 +1577,10 @@ handle_gic_opt(krb5_context context,
              pkiDebug("Setting flag to use RSA_PROTOCOL\n");
              plgctx->opts->dh_or_rsa = RSA_PROTOCOL;
          }
@@ -34,13 +69,13 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_clnt.c new/src/plugins/preauth/p
      }
      return 0;
  }
-diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
---- old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c	2015-05-08 12:37:14.617065120 -0600
-+++ new/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c	2015-05-19 17:53:18.025396256 -0600
+diff --git a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
+--- a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
++++ b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
 @@ -29,6 +29,10 @@
   * SUCH DAMAGES.
   */
-
+ 
 +/*
 + * Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
 + */
@@ -48,7 +83,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
  #include "pkinit_crypto_openssl.h"
  #include "k5-buf.h"
  #include <dlfcn.h>
-@@ -851,6 +855,7 @@ pkinit_init_pkcs11(pkinit_identity_crypt
+@@ -916,6 +920,7 @@ pkinit_init_pkcs11(pkinit_identity_crypto_context ctx)
      ctx->slotid = PK_NOSLOT;
      ctx->token_label = NULL;
      ctx->cert_label = NULL;
@@ -56,7 +91,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
      ctx->session = CK_INVALID_HANDLE;
      ctx->p11 = NULL;
  #endif
-@@ -883,6 +888,7 @@ pkinit_fini_pkcs11(pkinit_identity_crypt
+@@ -948,6 +953,7 @@ pkinit_fini_pkcs11(pkinit_identity_crypto_context ctx)
      free(ctx->token_label);
      free(ctx->cert_id);
      free(ctx->cert_label);
@@ -64,7 +99,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
  #endif
  }
  
-@@ -3523,7 +3532,36 @@ pkinit_C_UnloadModule(void *handle)
+@@ -3548,7 +3554,36 @@ pkinit_C_UnloadModule(void *handle)
      dlclose(handle);
      return CKR_OK;
  }
@@ -76,7 +111,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
 +trim_token_label(CK_TOKEN_INFO *tinfo, char *labelstr, unsigned int labelstr_len)
 +{
 +    int i;
-+
+ 
 +    assert(labelstr_len > sizeof (tinfo->label));
 +    /*
 +     * \0 terminate labelstr in case the last char in the token label is
@@ -93,7 +128,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
 +           break;
 +    }
 +}
- 
++
 +/*
 + * This function was changed to support a PIN being passed in.  If that is the
 + * case the user will not be prompted for their PIN.
@@ -101,7 +136,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
  static krb5_error_code
  pkinit_login(krb5_context context,
               pkinit_identity_crypto_context id_cryptoctx,
-@@ -3539,6 +3577,15 @@ pkinit_login(krb5_context context,
+@@ -3564,6 +3599,15 @@ pkinit_login(krb5_context context,
      if (tip->flags & CKF_PROTECTED_AUTHENTICATION_PATH) {
          rdat.data = NULL;
          rdat.length = 0;
@@ -117,7 +152,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
      } else if (password != NULL) {
          rdat.data = strdup(password);
          rdat.length = strlen(password);
-@@ -3546,6 +3593,16 @@ pkinit_login(krb5_context context,
+@@ -3571,6 +3615,16 @@ pkinit_login(krb5_context context,
          r = KRB5_LIBOS_CANTREADPWD;
          rdat.data = NULL;
      } else {
@@ -134,7 +169,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
          if (tip->flags & CKF_USER_PIN_LOCKED)
              warning = " (Warning: PIN locked)";
          else if (tip->flags & CKF_USER_PIN_FINAL_TRY)
-@@ -3554,11 +3611,14 @@ pkinit_login(krb5_context context,
+@@ -3579,11 +3633,14 @@ pkinit_login(krb5_context context,
              warning = " (Warning: PIN count low)";
          else
              warning = "";
@@ -151,7 +186,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
  
          kprompt.prompt = prompt;
          kprompt.hidden = 1;
-@@ -3569,7 +3629,7 @@ pkinit_login(krb5_context context,
+@@ -3594,7 +3651,7 @@ pkinit_login(krb5_context context,
          k5int_set_prompt_types(context, &prompt_type);
          r = (*id_cryptoctx->prompter)(context, id_cryptoctx->prompter_data,
                                        NULL, NULL, 1, &kprompt);
@@ -160,7 +195,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
          free(prompt);
      }
  
-@@ -3582,7 +3642,7 @@ pkinit_login(krb5_context context,
+@@ -3607,7 +3664,7 @@ pkinit_login(krb5_context context,
              r = KRB5KDC_ERR_PREAUTH_FAILED;
          }
      }
@@ -169,7 +204,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
  
      return r;
  }
-@@ -3779,6 +3842,81 @@ pkinit_find_private_key(pkinit_identity_
+@@ -3804,6 +3861,81 @@ pkinit_find_private_key(pkinit_identity_crypto_context id_cryptoctx,
      r = id_cryptoctx->p11->C_FindObjects(id_cryptoctx->session, objp, 1, &count);
      id_cryptoctx->p11->C_FindObjectsFinal(id_cryptoctx->session);
      pkiDebug("found %d private keys (%s)\n", (int) count, pkinit_pkcs11_code_to_text(r));
@@ -251,7 +286,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
      if (r != CKR_OK || count < 1)
          return KRB5KDC_ERR_PREAUTH_FAILED;
      return 0;
-@@ -4174,7 +4312,10 @@ pkinit_get_certs_pkcs12(krb5_context con
+@@ -4199,7 +4331,10 @@ pkinit_get_certs_pkcs12(krb5_context context,
          } else if (id_cryptoctx->prompter == NULL) {
              /* We can't use a prompter. */
              goto cleanup;
@@ -263,7 +298,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
              /* Ask using a prompter. */
              memset(prompt_reply, '\0', sizeof(prompt_reply));
              rdat.data = prompt_reply;
-@@ -4193,7 +4334,7 @@ pkinit_get_certs_pkcs12(krb5_context con
+@@ -4218,7 +4353,7 @@ pkinit_get_certs_pkcs12(krb5_context context,
              k5int_set_prompt_types(context, &prompt_type);
              r = (*id_cryptoctx->prompter)(context, id_cryptoctx->prompter_data,
                                            NULL, NULL, 1, &kprompt);
@@ -272,7 +307,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
              if (r) {
                  pkiDebug("Failed to prompt for PKCS12 password");
                  goto cleanup;
-@@ -4501,6 +4642,11 @@ pkinit_get_certs_pkcs11(krb5_context con
+@@ -4527,6 +4662,11 @@ pkinit_get_certs_pkcs11(krb5_context context,
          if (id_cryptoctx->cert_label == NULL)
              return ENOMEM;
      }
@@ -284,9 +319,9 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c new/src/plugins
      /* Convert the ascii cert_id string into a binary blob */
      if (idopts->cert_id_string != NULL) {
          BIGNUM *bn = NULL;
-diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h new/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h
---- old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h	2015-05-08 12:37:14.618921565 -0600
-+++ new/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h	2015-05-08 23:22:37.000000000 -0600
+diff --git a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h
+--- a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h
++++ b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h
 @@ -28,6 +28,10 @@
   * SUCH DAMAGES.
   */
@@ -306,9 +341,9 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_crypto_openssl.h new/src/plugins
      /* These are crypto-specific */
      void *p11_module;
      CK_SESSION_HANDLE session;
-diff -pur old/src/plugins/preauth/pkinit/pkinit_identity.c new/src/plugins/preauth/pkinit/pkinit_identity.c
---- old/src/plugins/preauth/pkinit/pkinit_identity.c	2015-05-08 12:37:14.615376527 -0600
-+++ new/src/plugins/preauth/pkinit/pkinit_identity.c	2015-05-08 23:26:14.000000000 -0600
+diff --git a/src/plugins/preauth/pkinit/pkinit_identity.c b/src/plugins/preauth/pkinit/pkinit_identity.c
+--- a/src/plugins/preauth/pkinit/pkinit_identity.c
++++ b/src/plugins/preauth/pkinit/pkinit_identity.c
 @@ -29,6 +29,10 @@
   * SUCH DAMAGES.
   */
@@ -320,7 +355,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_identity.c new/src/plugins/preau
  #include <errno.h>
  #include <string.h>
  #include <stdio.h>
-@@ -135,6 +139,7 @@ pkinit_init_identity_opts(pkinit_identit
+@@ -135,6 +139,7 @@ pkinit_init_identity_opts(pkinit_identity_opts **idopts)
      opts->token_label = NULL;
      opts->cert_id_string = NULL;
      opts->cert_label = NULL;
@@ -328,7 +363,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_identity.c new/src/plugins/preau
  #endif
  
      *idopts = opts;
-@@ -218,9 +223,13 @@ pkinit_dup_identity_opts(pkinit_identity
+@@ -218,9 +223,13 @@ pkinit_dup_identity_opts(pkinit_identity_opts *src_opts,
          if (newopts->cert_label == NULL)
              goto cleanup;
      }
@@ -343,7 +378,7 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_identity.c new/src/plugins/preau
      *dest_opts = newopts;
      return 0;
  cleanup:
-@@ -248,6 +257,7 @@ pkinit_fini_identity_opts(pkinit_identit
+@@ -248,6 +257,7 @@ pkinit_fini_identity_opts(pkinit_identity_opts *idopts)
      free(idopts->token_label);
      free(idopts->cert_id_string);
      free(idopts->cert_label);
@@ -351,38 +386,3 @@ diff -pur old/src/plugins/preauth/pkinit/pkinit_identity.c new/src/plugins/preau
  #endif
      free(idopts);
  }
-diff -pur old/src/plugins/preauth/pkinit/pkinit.h new/src/plugins/preauth/pkinit/pkinit.h
---- old/src/plugins/preauth/pkinit/pkinit.h	2015-05-08 12:37:14.616200703 -0600
-+++ new/src/plugins/preauth/pkinit/pkinit.h	2015-05-12 23:52:10.000000000 -0600
-@@ -28,10 +28,14 @@
-  * IF IT HAS BEEN OR IS HEREAFTER ADVISED OF THE POSSIBILITY OF
-  * SUCH DAMAGES.
-  */
-+/*
-+ * Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
-+ */
-
- #ifndef _PKINIT_H
- #define _PKINIT_H
- 
-+#include <k5-int.h>
- #include <k5-platform.h>
- #include <krb5/krb5.h>
- #include <krb5/preauth_plugin.h>
-@@ -42,7 +46,7 @@
- #ifndef WITHOUT_PKCS11
- #include "pkcs11.h"
- 
--#define PKCS11_MODNAME "opensc-pkcs11.so"
-+#define PKCS11_MODNAME "libpkcs11.so"
- #define PK_SIGLEN_GUESS 1000
- #define PK_NOSLOT 999999
- #endif
-@@ -182,6 +186,7 @@ typedef struct _pkinit_identity_opts {
-     char *token_label;
-     char *cert_id_string;
-     char *cert_label;
-+    char *PIN;
- #endif
- } pkinit_identity_opts;
- 

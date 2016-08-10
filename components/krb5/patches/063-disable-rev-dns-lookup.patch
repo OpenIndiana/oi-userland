@@ -4,9 +4,9 @@
 # Solaris in this regard.  MIT will not take this change upstream.
 # Patch source: in-house
 #
-diff -ur krb5-1.13.2/src/lib/krb5/os/sn2princ.c krb5-1.13.2.rev-dns-disable/src/lib/krb5/os/sn2princ.c
---- krb5-1.13.2/src/lib/krb5/os/sn2princ.c
-+++ krb5-1.13.2.rev-dns-disable/src/lib/krb5/os/sn2princ.c
+diff --git a/src/lib/krb5/os/sn2princ.c b/src/lib/krb5/os/sn2princ.c
+--- a/src/lib/krb5/os/sn2princ.c
++++ b/src/lib/krb5/os/sn2princ.c
 @@ -36,7 +36,7 @@
  #endif
  
@@ -16,10 +16,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/os/sn2princ.c krb5-1.13.2.rev-dns-disable/src/
  #endif
  
  /*
-diff -ur krb5-1.13.2/src/man/krb5.conf.man krb5-1.13.2.rev-dns-disable/src/man/krb5.conf.man
---- krb5-1.13.2/src/man/krb5.conf.man
-+++ krb5-1.13.2.rev-dns-disable/src/man/krb5.conf.man
-@@ -463,7 +463,7 @@
+diff --git a/src/man/krb5.conf.man b/src/man/krb5.conf.man
+--- a/src/man/krb5.conf.man
++++ b/src/man/krb5.conf.man
+@@ -473,7 +473,7 @@ default, if allowed by the KDC.  The default value is false.
  If this flag is true, reverse name lookup will be used in addition
  to forward name lookup to canonicalizing hostnames for use in
  service principal names.  If \fBdns_canonicalize_hostname\fP is set
@@ -28,10 +28,10 @@ diff -ur krb5-1.13.2/src/man/krb5.conf.man krb5-1.13.2.rev-dns-disable/src/man/k
  .TP
  .B \fBrealm_try_domains\fP
  Indicate whether a host\(aqs domain components should be used to
-diff -pur krb5-1.14.2/src/tests/t_sn2princ.py krb5-1.14.2.rev-dns-disable/src/tests/t_sn2princ.py
---- krb5-1.14.2/src/tests/t_sn2princ.py     2016-05-29 21:41:37.484247675 -0700
-+++ krb5-1.14.2.rev-dns-disable/src/tests/t_sn2princ.py     2016-05-29 21:41:18.309183555 -0700
-@@ -6,10 +6,12 @@ offline = (len(args) > 0 and args[0] !=
+diff --git a/src/tests/t_sn2princ.py b/src/tests/t_sn2princ.py
+--- a/src/tests/t_sn2princ.py
++++ b/src/tests/t_sn2princ.py
+@@ -6,10 +6,12 @@ offline = (len(args) > 0 and args[0] != "no")
  conf = {'domain_realm': {'kerberos.org': 'R1',
                           'example.com': 'R2',
                           'mit.edu': 'R3'}}
@@ -55,25 +55,9 @@ diff -pur krb5-1.14.2/src/tests/t_sn2princ.py krb5-1.14.2.rev-dns-disable/src/te
  def testnr(host, princhost, princrealm):
      # Test with the host-based name type with reverse lookup disabled.
      testbase(host, 'srv-hst', princhost, princrealm, env=no_rdns)
-@@ -69,7 +75,6 @@ if offline:
- # and reverse resolving to these names.
- oname = 'ptr-mismatch.kerberos.org'
- fname = 'www.kerberos.org'
--rname = 'kerberos-org.mit.edu'
- 
- # Verify forward resolution before testing for it.
- try:
-@@ -91,13 +96,20 @@ try:
-     names = socket.getnameinfo(sockaddr, socket.NI_NAMEREQD)
- except socket.gaierror:
-     skip_rest('reverse sn2princ tests', 'cannot reverse resolve %s' % oname)
--if names[0].lower() != rname:
-+rname = names[0].lower()
-+if rname == fname:
-     skip_rest('reverse sn2princ tests',
--              '%s reverse resolves to %s, not %s' % (oname, names[0], rname))
-+              '%s reverse resolves to %s '
-+             'which should be different from %s' % (oname, rname, fname))
+@@ -96,9 +102,14 @@ if rname == fname:
+               '%s reverse resolves to %s '
+               'which should be different from %s' % (oname, rname, fname))
  
 -# Test default canonicalization (forward and reverse lookup).
 -test(oname, rname, 'R3')

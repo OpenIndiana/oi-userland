@@ -7,10 +7,10 @@
 # through kdc_max_tcp_connections.
 # Patch source: in-house
 #
-diff -pur old/src/include/k5-int.h new/src/include/k5-int.h
---- old/src/include/k5-int.h	2015-06-03 16:56:30.904839037 -0600
-+++ new/src/include/k5-int.h	2015-06-07 21:27:29.766113292 -0600
-@@ -263,6 +263,7 @@ typedef unsigned char   u_char;
+diff --git a/src/include/k5-int.h b/src/include/k5-int.h
+--- a/src/include/k5-int.h
++++ b/src/include/k5-int.h
+@@ -264,6 +264,7 @@ typedef unsigned char   u_char;
  #define KRB5_CONF_MASTER_KEY_TYPE              "master_key_type"
  #define KRB5_CONF_MAX_LIFE                     "max_life"
  #define KRB5_CONF_MAX_RENEWABLE_LIFE           "max_renewable_life"
@@ -18,10 +18,10 @@ diff -pur old/src/include/k5-int.h new/src/include/k5-int.h
  #define KRB5_CONF_MODULE                       "module"
  #define KRB5_CONF_NOADDRESSES                  "noaddresses"
  #define KRB5_CONF_NO_HOST_REFERRAL             "no_host_referral"
-diff -pur old/src/include/net-server.h new/src/include/net-server.h
---- old/src/include/net-server.h	2015-06-03 16:56:30.911020661 -0600
-+++ new/src/include/net-server.h	2015-06-07 00:39:54.939610507 -0600
-@@ -52,6 +52,7 @@ krb5_error_code loop_setup_network(verto
+diff --git a/src/include/net-server.h b/src/include/net-server.h
+--- a/src/include/net-server.h
++++ b/src/include/net-server.h
+@@ -52,6 +52,7 @@ krb5_error_code loop_setup_network(verto_ctx *ctx, void *handle,
  krb5_error_code loop_setup_signals(verto_ctx *ctx, void *handle,
                                     void (*reset)());
  void loop_free(verto_ctx *ctx);
@@ -29,9 +29,9 @@ diff -pur old/src/include/net-server.h new/src/include/net-server.h
  
  /* to be supplied by the server application */
  
-diff -pur old/src/include/osconf.hin new/src/include/osconf.hin
---- old/src/include/osconf.hin	2015-06-03 16:56:30.905987490 -0600
-+++ new/src/include/osconf.hin	2015-06-06 00:24:02.109378599 -0600
+diff --git a/src/include/osconf.hin b/src/include/osconf.hin
+--- a/src/include/osconf.hin
++++ b/src/include/osconf.hin
 @@ -94,6 +94,10 @@
  #define DEFAULT_KDC_UDP_PORTLIST "88,750"
  #define DEFAULT_KDC_TCP_PORTLIST "88"
@@ -43,9 +43,9 @@ diff -pur old/src/include/osconf.hin new/src/include/osconf.hin
  /*
   * Defaults for the KADM5 admin system.
   */
-diff -pur old/src/kdc/main.c new/src/kdc/main.c
---- old/src/kdc/main.c	2015-06-03 16:56:30.884798447 -0600
-+++ new/src/kdc/main.c	2015-06-07 00:42:33.937821705 -0600
+diff --git a/src/kdc/main.c b/src/kdc/main.c
+--- a/src/kdc/main.c
++++ b/src/kdc/main.c
 @@ -203,7 +203,8 @@ static krb5_error_code
  init_realm(kdc_realm_t *rdp, krb5_pointer aprof, char *realm, char *def_mpname,
             krb5_enctype def_enctype, char *def_udp_ports, char *def_tcp_ports,
@@ -56,7 +56,7 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
  {
      krb5_error_code     kret;
      krb5_boolean        manual;
-@@ -260,6 +261,8 @@ init_realm(kdc_realm_t *rdp, krb5_pointe
+@@ -260,6 +261,8 @@ init_realm(kdc_realm_t *rdp, krb5_pointer aprof, char *realm, char *def_mpname,
          kret = ENOMEM;
          goto whoops;
      }
@@ -65,7 +65,7 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
      /* Handle stash file */
      hierarchy[2] = KRB5_CONF_KEY_STASH_FILE;
      if (krb5_aprof_get_string(aprof, hierarchy, TRUE, &rdp->realm_stash))
-@@ -621,6 +624,7 @@ initialize_realms(krb5_context kcontext,
+@@ -621,6 +624,7 @@ initialize_realms(krb5_context kcontext, int argc, char **argv)
      char                *hostbased = NULL;
      int                  db_args_size = 0;
      char                **db_args = NULL;
@@ -73,7 +73,7 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
  
      extern char *optarg;
  
-@@ -633,6 +637,13 @@ initialize_realms(krb5_context kcontext,
+@@ -633,6 +637,13 @@ initialize_realms(krb5_context kcontext, int argc, char **argv)
          hierarchy[1] = KRB5_CONF_KDC_TCP_PORTS;
          if (krb5_aprof_get_string(aprof, hierarchy, TRUE, &default_tcp_ports))
              default_tcp_ports = 0;
@@ -87,7 +87,7 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
          hierarchy[1] = KRB5_CONF_KDC_MAX_DGRAM_REPLY_SIZE;
          if (krb5_aprof_get_int32(aprof, hierarchy, TRUE, &max_dgram_reply_size))
              max_dgram_reply_size = MAX_DGRAM_SIZE;
-@@ -694,7 +705,8 @@ initialize_realms(krb5_context kcontext,
+@@ -694,7 +705,8 @@ initialize_realms(krb5_context kcontext, int argc, char **argv)
                                          menctype, default_udp_ports,
                                          default_tcp_ports, manual,
                                          def_restrict_anon, db_args,
@@ -97,7 +97,7 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
                      if (retval) {
                          fprintf(stderr, _("%s: cannot initialize realm %s - "
                                            "see log file for details\n"),
-@@ -811,7 +823,7 @@ initialize_realms(krb5_context kcontext,
+@@ -811,7 +823,7 @@ initialize_realms(krb5_context kcontext, int argc, char **argv)
              retval = init_realm(rdatap, aprof, lrealm, mkey_name, menctype,
                                  default_udp_ports, default_tcp_ports, manual,
                                  def_restrict_anon, db_args, no_referral,
@@ -116,9 +116,9 @@ diff -pur old/src/kdc/main.c new/src/kdc/main.c
      /* Handle each realm's ports */
      for (i=0; i< shandle.kdc_numrealms; i++) {
          char *cp = shandle.kdc_realmlist[i]->realm_ports;
-diff -pur old/src/kdc/realm_data.h new/src/kdc/realm_data.h
---- old/src/kdc/realm_data.h	2015-06-03 16:56:30.885907080 -0600
-+++ new/src/kdc/realm_data.h	2015-06-06 22:52:44.710060227 -0600
+diff --git a/src/kdc/realm_data.h b/src/kdc/realm_data.h
+--- a/src/kdc/realm_data.h
++++ b/src/kdc/realm_data.h
 @@ -66,6 +66,7 @@ typedef struct __kdc_realm_data {
       */
      char                *realm_ports;   /* Per-realm KDC UDP port */
@@ -127,10 +127,10 @@ diff -pur old/src/kdc/realm_data.h new/src/kdc/realm_data.h
      /*
       * Per-realm parameters.
       */
-diff -pur old/src/lib/apputils/net-server.c new/src/lib/apputils/net-server.c
---- old/src/lib/apputils/net-server.c	2015-06-03 16:56:31.835537747 -0600
-+++ new/src/lib/apputils/net-server.c	2015-06-07 01:17:20.123103672 -0600
-@@ -345,6 +345,12 @@ loop_add_tcp_port(int port)
+diff --git a/src/lib/apputils/net-server.c b/src/lib/apputils/net-server.c
+--- a/src/lib/apputils/net-server.c
++++ b/src/lib/apputils/net-server.c
+@@ -348,6 +348,12 @@ loop_add_tcp_port(int port)
      return 0;
  }
  
@@ -143,10 +143,10 @@ diff -pur old/src/lib/apputils/net-server.c new/src/lib/apputils/net-server.c
  krb5_error_code
  loop_add_rpc_service(int port, u_long prognum,
                       u_long versnum, void (*dispatchfn)())
-diff -pur old/src/lib/krb5/os/localauth.c new/src/lib/krb5/os/localauth.c
---- old/src/lib/krb5/os/localauth.c	2015-06-03 16:56:31.860283075 -0600
-+++ new/src/lib/krb5/os/localauth.c	2015-06-03 22:18:21.968345429 -0600
-@@ -258,6 +258,49 @@ parse_mapping_value(const char *value, c
+diff --git a/src/lib/krb5/os/localauth.c b/src/lib/krb5/os/localauth.c
+--- a/src/lib/krb5/os/localauth.c
++++ b/src/lib/krb5/os/localauth.c
+@@ -258,6 +258,49 @@ parse_mapping_value(const char *value, char **type_out, char **residual_out)
      return 0;
  }
  
@@ -196,7 +196,7 @@ diff -pur old/src/lib/krb5/os/localauth.c new/src/lib/krb5/os/localauth.c
  /* Apply the default an2ln method, which translates name@defaultrealm or
   * name/defaultrealm@defaultrealm to name. */
  static krb5_error_code
-@@ -274,7 +317,8 @@ an2ln_default(krb5_context context, krb5
+@@ -274,7 +317,8 @@ an2ln_default(krb5_context context, krb5_localauth_moddata data,
      if (ret)
          return KRB5_LNAME_NOTRANS;
  

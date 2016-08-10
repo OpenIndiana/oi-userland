@@ -7,10 +7,10 @@
 # functionality as this is specific to a 3rd party migration design.
 # Patch source: in-house
 #
-diff -pur old/src/kadmin/server/Makefile.in new/src/kadmin/server/Makefile.in
---- old/src/kadmin/server/Makefile.in	2015-04-30 01:12:10.540747993 -0600
-+++ new/src/kadmin/server/Makefile.in	2015-05-20 21:20:31.285698636 -0600
-@@ -13,7 +13,7 @@ SRCS = kadm_rpc_svc.c server_stubs.c ovs
+diff --git a/src/kadmin/server/Makefile.in b/src/kadmin/server/Makefile.in
+--- a/src/kadmin/server/Makefile.in
++++ b/src/kadmin/server/Makefile.in
+@@ -13,7 +13,7 @@ SRCS = kadm_rpc_svc.c server_stubs.c ovsec_kadmd.c schpw.c misc.c ipropd_svc.c
  all:: $(PROG)
  
  $(PROG): $(OBJS) $(KADMSRV_DEPLIBS) $(KRB5_BASE_DEPLIBS) $(APPUTILS_DEPLIB) $(VERTO_DEPLIB)
@@ -19,9 +19,9 @@ diff -pur old/src/kadmin/server/Makefile.in new/src/kadmin/server/Makefile.in
  
  install::
  	$(INSTALL_PROGRAM) $(PROG) ${DESTDIR}$(SERVER_BINDIR)/$(PROG)
-diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stubs.c
---- old/src/kadmin/server/server_stubs.c	2015-04-30 01:12:10.540973547 -0600
-+++ new/src/kadmin/server/server_stubs.c	2015-05-20 21:16:21.635418741 -0600
+diff --git a/src/kadmin/server/server_stubs.c b/src/kadmin/server/server_stubs.c
+--- a/src/kadmin/server/server_stubs.c
++++ b/src/kadmin/server/server_stubs.c
 @@ -16,6 +16,7 @@
  #include <syslog.h>
  #include <adm_proto.h>  /* krb5_klog_syslog */
@@ -111,7 +111,7 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
  generic_ret *
  create_principal_2_svc(cprinc_arg *arg, struct svc_req *rqstp)
  {
-@@ -363,6 +438,8 @@ create_principal_2_svc(cprinc_arg *arg,
+@@ -364,6 +439,8 @@ create_principal_2_svc(cprinc_arg *arg, struct svc_req *rqstp)
      restriction_t               *rp;
      const char                  *errmsg = NULL;
      gss_name_t                  name = NULL;
@@ -120,7 +120,7 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
  
      xdr_free(xdr_generic_ret, (char *) &ret);
  
-@@ -387,9 +464,17 @@ create_principal_2_svc(cprinc_arg *arg,
+@@ -388,9 +465,17 @@ create_principal_2_svc(cprinc_arg *arg, struct svc_req *rqstp)
          ret.code = KADM5_FAILURE;
          goto exit_func;
      }
@@ -140,7 +140,7 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
          || kadm5int_acl_impose_restrictions(handle->context,
                                              &arg->rec, &arg->mask, rp)) {
          ret.code = KADM5_AUTH_ADD;
-@@ -408,6 +493,25 @@ create_principal_2_svc(cprinc_arg *arg,
+@@ -409,6 +494,25 @@ create_principal_2_svc(cprinc_arg *arg, struct svc_req *rqstp)
  
          if (errmsg != NULL)
              krb5_free_error_message(handle->context, errmsg);
@@ -165,8 +165,8 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
 +	}
      }
      free(prime_arg);
-     gss_release_buffer(&minor_stat, &client_name);
-@@ -431,6 +535,8 @@ create_principal3_2_svc(cprinc3_arg *arg
+ 
+@@ -433,6 +537,8 @@ create_principal3_2_svc(cprinc3_arg *arg, struct svc_req *rqstp)
      restriction_t               *rp;
      const char                  *errmsg = NULL;
      gss_name_t                  name = NULL;
@@ -175,7 +175,7 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
  
      xdr_free(xdr_generic_ret, (char *) &ret);
  
-@@ -455,9 +561,17 @@ create_principal3_2_svc(cprinc3_arg *arg
+@@ -457,9 +563,17 @@ create_principal3_2_svc(cprinc3_arg *arg, struct svc_req *rqstp)
          ret.code = KADM5_FAILURE;
          goto exit_func;
      }
@@ -195,7 +195,7 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
          || kadm5int_acl_impose_restrictions(handle->context,
                                              &arg->rec, &arg->mask, rp)) {
          ret.code = KADM5_AUTH_ADD;
-@@ -477,6 +591,24 @@ create_principal3_2_svc(cprinc3_arg *arg
+@@ -479,6 +593,24 @@ create_principal3_2_svc(cprinc3_arg *arg, struct svc_req *rqstp)
  
          if (errmsg != NULL)
              krb5_free_error_message(handle->context, errmsg);
@@ -219,10 +219,10 @@ diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stub
 +	 }
      }
      free(prime_arg);
-     gss_release_buffer(&minor_stat, &client_name);
-diff -pur old/src/lib/kadm5/srv/server_acl.c new/src/lib/kadm5/srv/server_acl.c
---- old/src/lib/kadm5/srv/server_acl.c	2015-04-30 01:12:10.576699515 -0600
-+++ new/src/lib/kadm5/srv/server_acl.c	2015-05-20 21:00:21.476861745 -0600
+ 
+diff --git a/src/lib/kadm5/srv/server_acl.c b/src/lib/kadm5/srv/server_acl.c
+--- a/src/lib/kadm5/srv/server_acl.c
++++ b/src/lib/kadm5/srv/server_acl.c
 @@ -24,6 +24,10 @@
   * or implied warranty.
   */
@@ -242,9 +242,9 @@ diff -pur old/src/lib/kadm5/srv/server_acl.c new/src/lib/kadm5/srv/server_acl.c
      { 'x',      ACL_ALL_MASK },
      { '*',      ACL_ALL_MASK },
      { '\0',     0 }
-diff -pur old/src/lib/kadm5/srv/server_acl.h new/src/lib/kadm5/srv/server_acl.h
---- old/src/lib/kadm5/srv/server_acl.h	2015-04-30 01:12:10.575948391 -0600
-+++ new/src/lib/kadm5/srv/server_acl.h	2015-05-20 21:00:26.742448675 -0600
+diff --git a/src/lib/kadm5/srv/server_acl.h b/src/lib/kadm5/srv/server_acl.h
+--- a/src/lib/kadm5/srv/server_acl.h
++++ b/src/lib/kadm5/srv/server_acl.h
 @@ -24,6 +24,10 @@
   * or implied warranty.
   */

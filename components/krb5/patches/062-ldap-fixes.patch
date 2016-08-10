@@ -27,10 +27,22 @@
 # I think we don't need a ticket for this, since it isn't really a
 # user-visible bug.
 # Patch source: in-house
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
---- krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
-@@ -125,7 +125,8 @@
+diff --git a/src/man/kdc.conf.man b/src/man/kdc.conf.man
+--- a/src/man/kdc.conf.man
++++ b/src/man/kdc.conf.man
+@@ -533,6 +533,8 @@ passwords (created by \fBkdb5_ldap_util stashsrvpw\fP) for the
+ \fBldap_kdc_dn\fP and \fBldap_kadmind_dn\fP objects, or for the
+ \fBldap_kdc_sasl_authcid\fP or \fBldap_kadmind_sasl_authcid\fP names
+ for SASL authentication.  This file must be kept secure.
++If \fBldap_service_password_file\fP is not specified the default
++of \fB@LOCALSTATEDIR@\fP\fB/krb5\fP\fB/service_passwd\fP is used.
+ .TP
+ .B \fBunlockiter\fP
+ If set to \fBtrue\fP, this DB2\-specific tag causes iteration
+diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
+--- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
++++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
+@@ -125,7 +125,8 @@ kdb5_ldap_stash_service_password(int argc, char **argv)
          }
  
          profile_get_string (util_context->profile, KDB_MODULE_SECTION, section,
@@ -40,9 +52,9 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c krb5-1.
      }
  done:
  
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
---- krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
+diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
+--- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
++++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
 @@ -32,8 +32,6 @@
  #define MAX_LEN                 1024
  #define MAX_SERVICE_PASSWD_LEN  256
@@ -52,10 +64,10 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h krb5-1.
  extern int tohex(krb5_data, krb5_data *);
  
  extern void kdb5_ldap_stash_service_password(int argc, char **argv);
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
---- krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
-@@ -176,6 +176,7 @@
+diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
+--- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
++++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
+@@ -176,6 +176,7 @@ krb5_ldap_cleanup_handles(krb5_ldap_server_info *ldap_server_info)
          ldap_server_handle = ldap_server_info->ldap_server_handles;
          ldap_server_info->ldap_server_handles = ldap_server_handle->next;
          /* ldap_unbind_s(ldap_server_handle); */
@@ -63,10 +75,10 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c krb5-1.13.3-
          free (ldap_server_handle);
          ldap_server_handle = NULL;
      }
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
---- krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
-@@ -360,6 +360,17 @@
+diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
+--- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
++++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
+@@ -360,6 +360,17 @@ krb5_ldap_read_server_params(krb5_context context, char *conf_section,
                                    &ldap_context->service_password_file);
          if (ret)
              return ret;
@@ -84,9 +96,9 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c krb5-1.13.3-ld
      }
  
      if (ldap_context->sasl_mech == NULL) {
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
---- krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
+diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
+--- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
++++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
 @@ -36,6 +36,8 @@
  #ifndef _HAVE_LDAP_MISC_H
  #define _HAVE_LDAP_MISC_H 1
@@ -96,10 +108,10 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h krb5-1.13.3-ld
  /* misc functions */
  
  krb5_boolean
-diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
---- krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
-+++ krb5-1.13.3-ldap-fix/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
-@@ -461,7 +461,8 @@
+diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
+--- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
++++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
+@@ -461,7 +461,8 @@ krb5_ldap_iterate_password_policy(krb5_context context, char *match_expr,
      }
  
  cleanup:
@@ -109,15 +121,3 @@ diff -ur krb5-1.13.3/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c krb5-1.1
      free(policy);
      ldap_msgfree(result);
      krb5_ldap_put_handle_to_pool(ldap_context, ldap_server_handle);
-diff -ur krb5-1.13.3/src/man/kdc.conf.man krb5-1.13.3.ldap-man-fix/src/man/kdc.conf.man
---- krb5-1.13.3/src/man/kdc.conf.man
-+++ krb5-1.13.3.ldap-man-fix/src/man/kdc.conf.man
-@@ -533,6 +533,8 @@
- \fBldap_kdc_dn\fP and \fBldap_kadmind_dn\fP objects, or for the
- \fBldap_kdc_sasl_authcid\fP or \fBldap_kadmind_sasl_authcid\fP names
- for SASL authentication.  This file must be kept secure.
-+If \fBldap_service_password_file\fP is not specified the default
-+of \fB@LOCALSTATEDIR@\fP\fB/krb5\fP\fB/service_passwd\fP is used.
- .TP
- .B \fBunlockiter\fP
- If set to \fBtrue\fP, this DB2\-specific tag causes iteration

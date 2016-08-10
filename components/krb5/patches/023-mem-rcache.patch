@@ -28,10 +28,10 @@
 # integrate features that don't require replay caches in the the future.
 # Patch source: in-house
 #
-diff -pur old/src/lib/krb5/krb/srv_rcache.c new/src/lib/krb5/krb/srv_rcache.c
---- old/src/lib/krb5/krb/srv_rcache.c	2015-04-09 18:09:27.385483632 -0600
-+++ new/src/lib/krb5/krb/srv_rcache.c	2015-04-15 23:30:38.449049210 -0600
-@@ -39,6 +39,7 @@ krb5_get_server_rcache(krb5_context cont
+diff --git a/src/lib/krb5/krb/srv_rcache.c b/src/lib/krb5/krb/srv_rcache.c
+--- a/src/lib/krb5/krb/srv_rcache.c
++++ b/src/lib/krb5/krb/srv_rcache.c
+@@ -39,6 +39,7 @@ krb5_get_server_rcache(krb5_context context, const krb5_data *piece,
      krb5_error_code retval;
      unsigned int i;
      struct k5buf buf = EMPTY_K5BUF;
@@ -39,7 +39,7 @@ diff -pur old/src/lib/krb5/krb/srv_rcache.c new/src/lib/krb5/krb/srv_rcache.c
  #ifdef HAVE_GETEUID
      unsigned long uid = geteuid();
  #endif
-@@ -49,19 +50,30 @@ krb5_get_server_rcache(krb5_context cont
+@@ -49,19 +50,30 @@ krb5_get_server_rcache(krb5_context context, const krb5_data *piece,
      cachetype = krb5_rc_default_type(context);
  
      k5_buf_init_dynamic(&buf);
@@ -79,9 +79,9 @@ diff -pur old/src/lib/krb5/krb/srv_rcache.c new/src/lib/krb5/krb/srv_rcache.c
  
      if (k5_buf_status(&buf) != 0)
          return ENOMEM;
-diff -pur old/src/lib/krb5/rcache/Makefile.in new/src/lib/krb5/rcache/Makefile.in
---- old/src/lib/krb5/rcache/Makefile.in	2015-04-09 18:09:27.382173687 -0600
-+++ new/src/lib/krb5/rcache/Makefile.in	2015-04-09 18:04:39.621940187 -0600
+diff --git a/src/lib/krb5/rcache/Makefile.in b/src/lib/krb5/rcache/Makefile.in
+--- a/src/lib/krb5/rcache/Makefile.in
++++ b/src/lib/krb5/rcache/Makefile.in
 @@ -13,7 +13,8 @@ STLIBOBJS = \
  	rc_none.o	\
  	rc_conv.o	\
@@ -112,9 +112,19 @@ diff -pur old/src/lib/krb5/rcache/Makefile.in new/src/lib/krb5/rcache/Makefile.i
  
  ##DOS##LIBOBJS = $(OBJS)
  
-diff -pur old/src/lib/krb5/rcache/rc_base.c new/src/lib/krb5/rcache/rc_base.c
---- old/src/lib/krb5/rcache/rc_base.c	2015-04-09 18:09:27.381750522 -0600
-+++ new/src/lib/krb5/rcache/rc_base.c	2015-04-16 16:29:05.785483477 -0600
+diff --git a/src/lib/krb5/rcache/rc-int.h b/src/lib/krb5/rcache/rc-int.h
+--- a/src/lib/krb5/rcache/rc-int.h
++++ b/src/lib/krb5/rcache/rc-int.h
+@@ -87,5 +87,6 @@ krb5_error_code krb5_rc_register_type(krb5_context, const krb5_rc_ops *);
+ 
+ extern const krb5_rc_ops krb5_rc_dfl_ops;
+ extern const krb5_rc_ops krb5_rc_none_ops;
++extern const krb5_rc_ops krb5_rc_mem_ops;
+ 
+ #endif /* __KRB5_RCACHE_INT_H__ */
+diff --git a/src/lib/krb5/rcache/rc_base.c b/src/lib/krb5/rcache/rc_base.c
+--- a/src/lib/krb5/rcache/rc_base.c
++++ b/src/lib/krb5/rcache/rc_base.c
 @@ -13,19 +13,35 @@
  #include "rc_base.h"
  #include "rc-int.h"
@@ -181,7 +191,7 @@ diff -pur old/src/lib/krb5/rcache/rc_base.c new/src/lib/krb5/rcache/rc_base.c
      k5_mutex_destroy(&rc_typelist_lock);
      for (t = typehead; t != &krb5_rc_typelist_dfl; t = t_next) {
          t_next = t->next;
-@@ -106,21 +144,38 @@ char * krb5_rc_get_type(krb5_context con
+@@ -106,21 +144,38 @@ char * krb5_rc_get_type(krb5_context context, krb5_rcache id)
  char *
  krb5_rc_default_type(krb5_context context)
  {
@@ -226,10 +236,10 @@ diff -pur old/src/lib/krb5/rcache/rc_base.c new/src/lib/krb5/rcache/rc_base.c
  }
  
  krb5_error_code
-diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
---- old/src/lib/krb5/rcache/rc_dfl.c	2015-04-09 18:09:27.382459743 -0600
-+++ new/src/lib/krb5/rcache/rc_dfl.c	2015-04-09 21:01:56.063638506 -0600
-@@ -249,6 +249,9 @@ krb5_rc_dfl_close_no_free(krb5_context c
+diff --git a/src/lib/krb5/rcache/rc_dfl.c b/src/lib/krb5/rcache/rc_dfl.c
+--- a/src/lib/krb5/rcache/rc_dfl.c
++++ b/src/lib/krb5/rcache/rc_dfl.c
+@@ -249,6 +249,9 @@ krb5_rc_dfl_close_no_free(krb5_context context, krb5_rcache id)
      struct dfl_data *t = (struct dfl_data *)id->data;
      struct authlist *q;
  
@@ -239,7 +249,7 @@ diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
      free(t->h);
      if (t->name)
          free(t->name);
-@@ -265,6 +268,7 @@ krb5_rc_dfl_close_no_free(krb5_context c
+@@ -265,6 +268,7 @@ krb5_rc_dfl_close_no_free(krb5_context context, krb5_rcache id)
      (void) krb5_rc_io_close(context, &t->d);
  #endif
      free(t);
@@ -255,9 +265,9 @@ diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
      }
      return retval;
  }
-diff -pur old/src/lib/krb5/rcache/rc_io.c new/src/lib/krb5/rcache/rc_io.c
---- old/src/lib/krb5/rcache/rc_io.c	2015-04-09 18:09:27.382337387 -0600
-+++ new/src/lib/krb5/rcache/rc_io.c	2015-04-15 02:51:37.858253777 -0600
+diff --git a/src/lib/krb5/rcache/rc_io.c b/src/lib/krb5/rcache/rc_io.c
+--- a/src/lib/krb5/rcache/rc_io.c
++++ b/src/lib/krb5/rcache/rc_io.c
 @@ -56,7 +56,10 @@ getdir(void)
  #else
          if (!(dir = getenv("TMPDIR"))) {
@@ -270,7 +280,7 @@ diff -pur old/src/lib/krb5/rcache/rc_io.c new/src/lib/krb5/rcache/rc_io.c
  #else
              dir = "/tmp";
  #endif
-@@ -164,6 +167,8 @@ krb5_rc_io_creat(krb5_context context, k
+@@ -164,6 +167,8 @@ krb5_rc_io_creat(krb5_context context, krb5_rc_iostuff *d, char **fn)
  
      GETDIR;
      if (fn && *fn) {
@@ -279,7 +289,7 @@ diff -pur old/src/lib/krb5/rcache/rc_io.c new/src/lib/krb5/rcache/rc_io.c
          if (asprintf(&d->fn, "%s%s%s", dir, PATH_SEPARATOR, *fn) < 0)
              return KRB5_RC_IO_MALLOC;
          d->fd = -1;
-@@ -227,6 +232,8 @@ krb5_rc_io_open_internal(krb5_context co
+@@ -227,6 +232,8 @@ krb5_rc_io_open_internal(krb5_context context, krb5_rc_iostuff *d, char *fn,
      char *dir;
  
      dir = getdir();
@@ -288,13 +298,3 @@ diff -pur old/src/lib/krb5/rcache/rc_io.c new/src/lib/krb5/rcache/rc_io.c
      if (full_pathname) {
          if (!(d->fn = strdup(full_pathname)))
              return KRB5_RC_IO_MALLOC;
-diff -pur old/src/lib/krb5/rcache/rc-int.h new/src/lib/krb5/rcache/rc-int.h
---- old/src/lib/krb5/rcache/rc-int.h	2015-04-09 18:09:27.381858138 -0600
-+++ new/src/lib/krb5/rcache/rc-int.h	2015-04-09 18:04:39.622200717 -0600
-@@ -87,5 +87,6 @@ krb5_error_code krb5_rc_register_type(kr
- 
- extern const krb5_rc_ops krb5_rc_dfl_ops;
- extern const krb5_rc_ops krb5_rc_none_ops;
-+extern const krb5_rc_ops krb5_rc_mem_ops;
- 
- #endif /* __KRB5_RCACHE_INT_H__ */

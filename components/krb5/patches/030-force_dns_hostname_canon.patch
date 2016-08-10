@@ -8,9 +8,9 @@
 # This patch is not meant for upstream contribution.
 # Patch source: in-house
 #
-diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
---- old/src/lib/krb5/os/sn2princ.c	2015-02-11 19:16:43.000000000 -0800
-+++ new/src/lib/krb5/os/sn2princ.c	2015-05-12 04:14:40.341673659 -0700
+diff --git a/src/lib/krb5/os/sn2princ.c b/src/lib/krb5/os/sn2princ.c
+--- a/src/lib/krb5/os/sn2princ.c
++++ b/src/lib/krb5/os/sn2princ.c
 @@ -39,6 +39,14 @@
  #define DEFAULT_RDNS_LOOKUP 1
  #endif
@@ -53,7 +53,7 @@ diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
  /* Set *name_out to the canonicalized form of name, obeying relevant
   * configuration settings.  The caller must free the result. */
  static krb5_error_code
-@@ -63,11 +91,15 @@ canon_hostname(krb5_context context, krb
+@@ -63,11 +91,15 @@ canon_hostname(krb5_context context, krb5_int32 type, const char *host,
      char namebuf[NI_MAXHOST], *copy, *p;
      int err;
      const char *canonhost;
@@ -69,7 +69,7 @@ diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
          /* Try a forward lookup of the hostname. */
          memset(&hint, 0, sizeof(hint));
          hint.ai_flags = AI_CANONNAME;
-@@ -86,6 +118,31 @@ canon_hostname(krb5_context context, krb
+@@ -86,6 +118,31 @@ canon_hostname(krb5_context context, krb5_int32 type, const char *host,
              if (!err)
                  canonhost = namebuf;
          }
@@ -101,7 +101,7 @@ diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
      }
  
      copy = strdup(canonhost);
-@@ -110,9 +167,12 @@ canon_hostname(krb5_context context, krb
+@@ -110,9 +167,12 @@ canon_hostname(krb5_context context, krb5_int32 type, const char *host,
      *canonhost_out = copy;
  
  cleanup:
@@ -115,10 +115,10 @@ diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
      return (*canonhost_out == NULL) ? ENOMEM : 0;
  }
  
-diff -pur old/src/util/k5test.py new/src/util/k5test.py
---- old/src/util/k5test.py	2015-04-28 08:02:39.179471813 -0700
-+++ new/src/util/k5test.py	2015-05-13 06:36:54.073414866 -0700
-@@ -353,6 +353,7 @@ import string
+diff --git a/src/util/k5test.py b/src/util/k5test.py
+--- a/src/util/k5test.py
++++ b/src/util/k5test.py
+@@ -364,6 +364,7 @@ import string
  import subprocess
  import sys
  import imp
@@ -126,7 +126,7 @@ diff -pur old/src/util/k5test.py new/src/util/k5test.py
  
  # Used when most things go wrong (other than programming errors) so
  # that the user sees an error message rather than a Python traceback,
-@@ -460,7 +461,19 @@ def _find_srctop():
+@@ -485,7 +486,19 @@ def _find_srctop():
  # because it explicitly prefers results containing periods and
  # krb5_sname_to_principal doesn't care.
  def _get_hostname():

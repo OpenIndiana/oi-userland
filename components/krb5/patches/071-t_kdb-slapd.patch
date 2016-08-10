@@ -6,9 +6,10 @@
 # Patch source: in-house
 #
 
---- krb5-1.14.2-23587748/src/tests/t_kdb.py
-+++ krb5-1.14.2/src/tests/t_kdb.py
-@@ -14,7 +14,10 @@
+diff --git a/src/tests/t_kdb.py b/src/tests/t_kdb.py
+--- a/src/tests/t_kdb.py
++++ b/src/tests/t_kdb.py
+@@ -14,7 +14,10 @@ if (not os.path.exists(os.path.join(plugins, 'kdb', 'kldap.so')) and
  
  system_slapd = which('slapd')
  if not system_slapd:
@@ -20,7 +21,7 @@
  
  ldapdir = os.path.abspath('ldap')
  slapd = os.path.join(ldapdir, 'slapd')
-@@ -44,6 +47,8 @@
+@@ -44,6 +47,8 @@ shutil.copy(system_slapd, slapd)
  core_schema = None
  if os.path.isfile('/etc/ldap/schema/core.schema'):
      core_schema = '/etc/ldap/schema/core.schema'
@@ -29,7 +30,7 @@
  
  # Make a slapd config file.  This is deprecated in OpenLDAP 2.3 and
  # later, but it's easier than using LDIF and slapadd.  Include some
-@@ -54,8 +59,7 @@
+@@ -54,8 +59,7 @@ file.write('pidfile %s\n' % slapd_pidfile)
  file.write('include %s\n' % schema)
  if core_schema:
      file.write('include %s\n' % core_schema)

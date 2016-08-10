@@ -7,9 +7,9 @@
 # donated.
 # Patch source: in-house
 #
-diff -pur old/src/kadmin/testing/scripts/init_db new/src/kadmin/testing/scripts/init_db
---- old/src/kadmin/testing/scripts/init_db	2015-06-10 00:50:51.127628066 -0600
-+++ new/src/kadmin/testing/scripts/init_db	2015-06-16 02:28:12.221384825 -0600
+diff --git a/src/kadmin/testing/scripts/init_db b/src/kadmin/testing/scripts/init_db
+--- a/src/kadmin/testing/scripts/init_db
++++ b/src/kadmin/testing/scripts/init_db
 @@ -215,7 +215,7 @@ changepw/kerberos@$REALM	cil
  
  EOF
@@ -19,9 +19,9 @@ diff -pur old/src/kadmin/testing/scripts/init_db new/src/kadmin/testing/scripts/
  
  # Create $K5ROOT/setup.csh to make it easy to run other programs against
  # the test db
-diff -pur old/src/kadmin/testing/util/tcl_kadm5.c new/src/kadmin/testing/util/tcl_kadm5.c
---- old/src/kadmin/testing/util/tcl_kadm5.c	2015-06-10 00:50:51.128546692 -0600
-+++ new/src/kadmin/testing/util/tcl_kadm5.c	2015-06-16 02:25:40.402115955 -0600
+diff --git a/src/kadmin/testing/util/tcl_kadm5.c b/src/kadmin/testing/util/tcl_kadm5.c
+--- a/src/kadmin/testing/util/tcl_kadm5.c
++++ b/src/kadmin/testing/util/tcl_kadm5.c
 @@ -13,8 +13,11 @@
  #include <errno.h>
  #include <stdlib.h>
@@ -34,7 +34,7 @@ diff -pur old/src/kadmin/testing/util/tcl_kadm5.c new/src/kadmin/testing/util/tc
  struct flagval {
      char *name;
      krb5_flags val;
-@@ -2504,12 +2507,14 @@ static int tcl_kadm5_get_privs(ClientDat
+@@ -2504,12 +2507,14 @@ static int tcl_kadm5_get_privs(ClientData clientData, Tcl_Interp *interp,
  
  void Tcl_kadm5_init(Tcl_Interp *interp)
  {
@@ -54,9 +54,21 @@ diff -pur old/src/kadmin/testing/util/tcl_kadm5.c new/src/kadmin/testing/util/tc
      (void) sprintf(buf, "%d", KADM5_STRUCT_VERSION);
      Tcl_SetVar(interp, "KADM5_STRUCT_VERSION", buf, TCL_GLOBAL_ONLY);
      (void) sprintf(buf, "%d", KADM5_API_VERSION_2);
-diff -pur old/src/lib/kadm5/unit-test/api.current/init-v2.exp new/src/lib/kadm5/unit-test/api.current/init-v2.exp
---- old/src/lib/kadm5/unit-test/api.current/init-v2.exp	2015-06-10 00:50:51.345973412 -0600
-+++ new/src/lib/kadm5/unit-test/api.current/init-v2.exp	2015-06-17 15:27:14.063710212 -0600
+diff --git a/src/lib/kadm5/unit-test/Makefile.in b/src/lib/kadm5/unit-test/Makefile.in
+--- a/src/lib/kadm5/unit-test/Makefile.in
++++ b/src/lib/kadm5/unit-test/Makefile.in
+@@ -103,7 +103,7 @@ unit-test-server-setup::
+ unit-test-server-cleanup::
+ 	$(ENV_SETUP) $(STOP_SERVERS_LOCAL)
+ 
+-unit-test-client-body: site.exp test-noauth test-destroy test-handle-client 
++unit-test-client-body: site.exp test-destroy test-handle-client 
+ 	$(ENV_SETUP) $(RUNTEST) --tool api RPC=1 API=$(CLNTTCL) \
+ 		KINIT=$(BUILDTOP)/clients/kinit/kinit \
+ 		KDESTROY=$(BUILDTOP)/clients/kdestroy/kdestroy \
+diff --git a/src/lib/kadm5/unit-test/api.current/init-v2.exp b/src/lib/kadm5/unit-test/api.current/init-v2.exp
+--- a/src/lib/kadm5/unit-test/api.current/init-v2.exp
++++ b/src/lib/kadm5/unit-test/api.current/init-v2.exp
 @@ -70,7 +70,7 @@ proc test102 {} {
  		[config_params {KADM5_CONFIG_ADMIN_SERVER} does.not.exist] \
  		$KADM5_STRUCT_VERSION $KADM5_API_VERSION_3 \
@@ -94,9 +106,9 @@ diff -pur old/src/lib/kadm5/unit-test/api.current/init-v2.exp new/src/lib/kadm5/
      one_line_succeed_test {
  	kadm5_init_with_creds testuser null $KADM5_CHANGEPW_SERVICE \
  		null $KADM5_STRUCT_VERSION $KADM5_API_VERSION_3 \
-diff -pur old/src/lib/kadm5/unit-test/api.current/init.exp new/src/lib/kadm5/unit-test/api.current/init.exp
---- old/src/lib/kadm5/unit-test/api.current/init.exp	2015-06-10 00:50:51.346734449 -0600
-+++ new/src/lib/kadm5/unit-test/api.current/init.exp	2015-06-16 02:25:07.155377656 -0600
+diff --git a/src/lib/kadm5/unit-test/api.current/init.exp b/src/lib/kadm5/unit-test/api.current/init.exp
+--- a/src/lib/kadm5/unit-test/api.current/init.exp
++++ b/src/lib/kadm5/unit-test/api.current/init.exp
 @@ -697,8 +697,8 @@ if {$RPC} {
      # re-extract the keytab so it is right
      exec rm $env(K5ROOT)/ovsec_adm.srvtab
@@ -108,9 +120,9 @@ diff -pur old/src/lib/kadm5/unit-test/api.current/init.exp new/src/lib/kadm5/uni
  }
  
  return ""
-diff -pur old/src/lib/kadm5/unit-test/destroy-test.c new/src/lib/kadm5/unit-test/destroy-test.c
---- old/src/lib/kadm5/unit-test/destroy-test.c	2015-06-10 00:50:51.347207985 -0600
-+++ new/src/lib/kadm5/unit-test/destroy-test.c	2015-06-12 01:15:05.073293523 -0600
+diff --git a/src/lib/kadm5/unit-test/destroy-test.c b/src/lib/kadm5/unit-test/destroy-test.c
+--- a/src/lib/kadm5/unit-test/destroy-test.c
++++ b/src/lib/kadm5/unit-test/destroy-test.c
 @@ -27,7 +27,7 @@ int main()
          exit(2);
      }
@@ -120,9 +132,9 @@ diff -pur old/src/lib/kadm5/unit-test/destroy-test.c new/src/lib/kadm5/unit-test
                           KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                           &server_handle);
          if(ret != KADM5_OK) {
-diff -pur old/src/lib/kadm5/unit-test/handle-test.c new/src/lib/kadm5/unit-test/handle-test.c
---- old/src/lib/kadm5/unit-test/handle-test.c	2015-06-10 00:50:51.347684536 -0600
-+++ new/src/lib/kadm5/unit-test/handle-test.c	2015-06-12 01:17:51.121655473 -0600
+diff --git a/src/lib/kadm5/unit-test/handle-test.c b/src/lib/kadm5/unit-test/handle-test.c
+--- a/src/lib/kadm5/unit-test/handle-test.c
++++ b/src/lib/kadm5/unit-test/handle-test.c
 @@ -30,7 +30,7 @@ int main(int argc, char *argv[])
  
      kadm5_init_krb5_context(&context);
@@ -132,9 +144,9 @@ diff -pur old/src/lib/kadm5/unit-test/handle-test.c new/src/lib/kadm5/unit-test/
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if(ret != KADM5_OK) {
-diff -pur old/src/lib/kadm5/unit-test/iter-test.c new/src/lib/kadm5/unit-test/iter-test.c
---- old/src/lib/kadm5/unit-test/iter-test.c	2015-06-10 00:50:51.347990562 -0600
-+++ new/src/lib/kadm5/unit-test/iter-test.c	2015-06-12 01:18:32.114334236 -0600
+diff --git a/src/lib/kadm5/unit-test/iter-test.c b/src/lib/kadm5/unit-test/iter-test.c
+--- a/src/lib/kadm5/unit-test/iter-test.c
++++ b/src/lib/kadm5/unit-test/iter-test.c
 @@ -22,7 +22,7 @@ int main(int argc, char **argv)
          com_err("iter-test", ret, "while initializing context");
          exit(1);
@@ -144,21 +156,9 @@ diff -pur old/src/lib/kadm5/unit-test/iter-test.c new/src/lib/kadm5/unit-test/it
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if (ret != KADM5_OK) {
-diff -pur old/src/lib/kadm5/unit-test/Makefile.in new/src/lib/kadm5/unit-test/Makefile.in
---- old/src/lib/kadm5/unit-test/Makefile.in	2015-06-10 00:50:51.344879613 -0600
-+++ new/src/lib/kadm5/unit-test/Makefile.in	2015-06-12 01:08:32.007953859 -0600
-@@ -103,7 +103,7 @@ unit-test-server-setup::
- unit-test-server-cleanup::
- 	$(ENV_SETUP) $(STOP_SERVERS_LOCAL)
- 
--unit-test-client-body: site.exp test-noauth test-destroy test-handle-client 
-+unit-test-client-body: site.exp test-destroy test-handle-client 
- 	$(ENV_SETUP) $(RUNTEST) --tool api RPC=1 API=$(CLNTTCL) \
- 		KINIT=$(BUILDTOP)/clients/kinit/kinit \
- 		KDESTROY=$(BUILDTOP)/clients/kdestroy/kdestroy \
-diff -pur old/src/lib/kadm5/unit-test/randkey-test.c new/src/lib/kadm5/unit-test/randkey-test.c
---- old/src/lib/kadm5/unit-test/randkey-test.c	2015-06-10 00:50:51.345250545 -0600
-+++ new/src/lib/kadm5/unit-test/randkey-test.c	2015-06-12 01:19:03.866788127 -0600
+diff --git a/src/lib/kadm5/unit-test/randkey-test.c b/src/lib/kadm5/unit-test/randkey-test.c
+--- a/src/lib/kadm5/unit-test/randkey-test.c
++++ b/src/lib/kadm5/unit-test/randkey-test.c
 @@ -23,7 +23,7 @@ int main()
      kadm5_init_krb5_context(&context);
  
@@ -168,9 +168,9 @@ diff -pur old/src/lib/kadm5/unit-test/randkey-test.c new/src/lib/kadm5/unit-test
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if(ret != KADM5_OK) {
-diff -pur old/src/lib/kadm5/unit-test/setkey-test.c new/src/lib/kadm5/unit-test/setkey-test.c
---- old/src/lib/kadm5/unit-test/setkey-test.c	2015-06-10 00:50:51.345023163 -0600
-+++ new/src/lib/kadm5/unit-test/setkey-test.c	2015-06-12 01:19:20.512438967 -0600
+diff --git a/src/lib/kadm5/unit-test/setkey-test.c b/src/lib/kadm5/unit-test/setkey-test.c
+--- a/src/lib/kadm5/unit-test/setkey-test.c
++++ b/src/lib/kadm5/unit-test/setkey-test.c
 @@ -119,7 +119,7 @@ main(int argc, char **argv)
          exit(1);
      }
@@ -180,9 +180,9 @@ diff -pur old/src/lib/kadm5/unit-test/setkey-test.c new/src/lib/kadm5/unit-test/
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &handle);
      if (ret) {
-diff -pur old/src/tests/dejagnu/krb-standalone/kadmin.exp new/src/tests/dejagnu/krb-standalone/kadmin.exp
---- old/src/tests/dejagnu/krb-standalone/kadmin.exp	2015-06-10 00:50:51.143889459 -0600
-+++ new/src/tests/dejagnu/krb-standalone/kadmin.exp	2015-06-17 16:39:21.177011699 -0600
+diff --git a/src/tests/dejagnu/krb-standalone/kadmin.exp b/src/tests/dejagnu/krb-standalone/kadmin.exp
+--- a/src/tests/dejagnu/krb-standalone/kadmin.exp
++++ b/src/tests/dejagnu/krb-standalone/kadmin.exp
 @@ -1050,13 +1050,16 @@ proc kadmin_test { } {
  	return
      }

@@ -14,10 +14,10 @@
 # environment variable.
 # Patch source: in-house
 #
-diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/krb5/accept_sec_context.c krb5-1.13.3/src/lib/gssapi/krb5/accept_sec_context.c
---- krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/krb5/accept_sec_context.c
-+++ krb5-1.13.3/src/lib/gssapi/krb5/accept_sec_context.c
-@@ -460,8 +460,6 @@
+diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/accept_sec_context.c
+--- a/src/lib/gssapi/krb5/accept_sec_context.c
++++ b/src/lib/gssapi/krb5/accept_sec_context.c
+@@ -454,8 +454,6 @@ kg_accept_krb5(minor_status, context_handle,
      const gss_OID_desc *mech_used = NULL;
      OM_uint32 major_status = GSS_S_FAILURE;
      OM_uint32 tmp_minor_status;
@@ -26,16 +26,16 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/krb5/accept_sec_context
      gss_cred_id_t defcred = GSS_C_NO_CREDENTIAL;
      krb5_gss_cred_id_t deleg_cred = NULL;
      krb5int_access kaccess;
-@@ -1219,6 +1217,8 @@
+@@ -1211,6 +1209,8 @@ fail:
           major_status == GSS_S_CONTINUE_NEEDED)) {
          unsigned int tmsglen;
          int toktype;
-+        krb5_data scratch;
 +        krb5_error krb_error_data;
++        krb5_data scratch;
  
          /*
           * The client is expecting a response, so we can send an
-@@ -1226,6 +1226,31 @@
+@@ -1218,6 +1218,31 @@ fail:
           */
          memset(&krb_error_data, 0, sizeof(krb_error_data));
  
@@ -67,15 +67,13 @@ diff -ur krb5-1.13.3.023-mem-rcache.patch/src/lib/gssapi/krb5/accept_sec_context
          code -= ERROR_TABLE_BASE_krb5;
          if (code < 0 || code > KRB_ERR_MAX)
              code = 60 /* KRB_ERR_GENERIC */;
-
-diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/spnego_mech.c
---- new/src/lib/gssapi/spnego/spnego_mech.c	2016-02-29 11:50:13.000000000 -0800
-+++ patched/src/lib/gssapi/spnego/spnego_mech.c	2016-03-18 21:55:31.131280297 -0700
-@@ -191,7 +190,14 @@ static const gss_OID_set_desc spnego_oid
- };
- const gss_OID_set_desc * const gss_mech_set_spnego = spnego_oidsets+0;
+diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_mech.c
+--- a/src/lib/gssapi/spnego/spnego_mech.c
++++ b/src/lib/gssapi/spnego/spnego_mech.c
+@@ -180,6 +180,13 @@ get_negTokenResp(OM_uint32 *, unsigned char *, unsigned int,
+ static int
+ is_kerb_mech(gss_OID oid);
  
- static int make_NegHints(OM_uint32 *, gss_buffer_t *);
 +/* encoded OID octet string for NTLMSSP security mechanism */
 +#define GSS_MECH_NTLMSSP_OID_LENGTH 10
 +#define GSS_MECH_NTLMSSP_OID "\053\006\001\004\001\202\067\002\002\012"
@@ -83,21 +81,23 @@ diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/
 +	GSS_MECH_NTLMSSP_OID_LENGTH, GSS_MECH_NTLMSSP_OID
 +};
 +
- static int put_neg_hints(unsigned char **, gss_buffer_t, unsigned int);
- static OM_uint32
- acc_ctx_hints(OM_uint32 *, gss_ctx_id_t *, spnego_gss_cred_id_t,
-@@ -1325,6 +1387,7 @@ acc_ctx_new(OM_uint32 *minor_status,
+ /* SPNEGO oid structure */
+ static const gss_OID_desc spnego_oids[] = {
+ 	{SPNEGO_OID_LENGTH, SPNEGO_OID},
+@@ -1325,6 +1332,7 @@ acc_ctx_new(OM_uint32 *minor_status,
  	gss_buffer_desc der_mechTypes;
  	gss_OID mech_wanted;
  	spnego_gss_ctx_id_t sc = NULL;
-+	unsigned int i;
++        unsigned int i;
  
  	ret = GSS_S_DEFECTIVE_TOKEN;
  	der_mechTypes.length = 0;
-@@ -1348,6 +1411,24 @@ acc_ctx_new(OM_uint32 *minor_status,
+@@ -1347,6 +1355,26 @@ acc_ctx_new(OM_uint32 *minor_status,
+ 		*return_token = NO_TOKEN_SEND;
  		goto cleanup;
  	}
- 	/*
++
++ 	/*
 +	 * We add KRB5_WRONG here so that old MS clients can negotiate this
 +	 * mechanism, which allows extensions in Kerberos (clock skew
 +	 * adjustment, refresh ccache).
@@ -115,19 +115,19 @@ diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/
 +			break;
 +		}
 +        }
-+	/*
++
+ 	/*
  	 * Select the best match between the list of mechs
  	 * that the initiator requested and the list that
- 	 * the acceptor will support.
-@@ -3072,6 +3163,7 @@ static OM_uint32
+@@ -3087,6 +3115,7 @@ get_available_mechs(OM_uint32 *minor_status,
  	gss_OID_set mechs, goodmechs;
-	gss_OID_set_desc except_attrs;
-	gss_OID_desc attr_oids[2];
-+	char *msinterop = getenv("MS_INTEROP");
+ 	gss_OID_set_desc except_attrs;
+ 	gss_OID_desc attr_oids[2];
++        char *msinterop = getenv("MS_INTEROP");
  
-	attr_oids[0] = *GSS_C_MA_DEPRECATED;
-	attr_oids[1] = *GSS_C_MA_NOT_DFLT_MECH;
-@@ -3108,6 +3177,15 @@ get_available_mechs(OM_uint32 *minor_sta
+ 	attr_oids[0] = *GSS_C_MA_DEPRECATED;
+ 	attr_oids[1] = *GSS_C_MA_NOT_DFLT_MECH;
+@@ -3108,6 +3137,15 @@ get_available_mechs(OM_uint32 *minor_status,
  		return (major_status);
  	}
  
@@ -143,7 +143,7 @@ diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/
  	for (i = 0; i < mechs->count && major_status == GSS_S_COMPLETE; i++) {
  		if ((mechs->elements[i].length
  		    != spnego_mechanism.mech_type.length) ||
-@@ -3123,6 +3201,25 @@ get_available_mechs(OM_uint32 *minor_sta
+@@ -3123,6 +3161,25 @@ get_available_mechs(OM_uint32 *minor_status,
  		}
  	}
  
@@ -169,7 +169,7 @@ diff -pur new/src/lib/gssapi/spnego/spnego_mech.c patched/src/lib/gssapi/spnego/
  	/*
  	 * If the caller wanted a list of creds returned,
  	 * trim the list of mechanisms down to only those
-@@ -3698,9 +3795,17 @@ negotiate_mech(gss_OID_set supported, gs
+@@ -3698,9 +3755,17 @@ negotiate_mech(gss_OID_set supported, gss_OID_set received,
  	for (i = 0; i < received->count; i++) {
  		gss_OID mech_oid = &received->elements[i];
  

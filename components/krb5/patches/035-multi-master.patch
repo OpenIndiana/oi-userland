@@ -8,10 +8,10 @@
 # should look at modifying/deleting this patch.
 # Patch source: in-house
 #
-diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
---- old/src/kadmin/cli/kadmin.c	2016-03-31 16:44:43.282366236 -0700
-+++ patched/src/kadmin/cli/kadmin.c	2016-03-31 19:24:20.929551275 -0700
-@@ -255,7 +255,7 @@ kadmin_startup(int argc, char *argv[], c
+diff --git a/src/kadmin/cli/kadmin.c b/src/kadmin/cli/kadmin.c
+--- a/src/kadmin/cli/kadmin.c
++++ b/src/kadmin/cli/kadmin.c
+@@ -255,7 +255,7 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
      char **db_args = NULL;
      int db_args_size = 0;
      char *db_name = NULL;
@@ -20,7 +20,7 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
  
      memset(&params, 0, sizeof(params));
  
-@@ -370,11 +370,6 @@ kadmin_startup(int argc, char *argv[], c
+@@ -370,11 +370,6 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
      params.mask |= KADM5_CONFIG_REALM;
      params.realm = def_realm;
  
@@ -32,7 +32,7 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
      /*
       * Set cc to an open credentials cache, either specified by the -c
       * argument or the default.
-@@ -503,13 +498,14 @@ kadmin_startup(int argc, char *argv[], c
+@@ -503,13 +498,14 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
      if (ccache_name) {
          info(_("Authenticating as principal %s with existing "
                 "credentials.\n"), princstr);
@@ -49,7 +49,7 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
                                        KADM5_STRUCT_VERSION,
                                        KADM5_API_VERSION_4, db_args, &handle);
      } else if (use_keytab) {
-@@ -520,17 +516,20 @@ kadmin_startup(int argc, char *argv[], c
+@@ -520,17 +516,20 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
              info(_("Authenticating as principal %s with default keytab.\n"),
                   princstr);
          }
@@ -72,10 +72,10 @@ diff -pur new/src/kadmin/cli/kadmin.c old/src/kadmin/cli/kadmin.c
      if (retval) {
          com_err(whoami, retval, _("while initializing %s interface"), whoami);
          if (retval == KADM5_BAD_CLIENT_PARAMS ||
-diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
---- old/src/lib/kadm5/admin.h	2015-05-28 15:10:45.095122403 -0500
-+++ new/src/lib/kadm5/admin.h	2015-05-28 15:34:35.800877732 -0500
-@@ -345,6 +345,51 @@
+diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
+--- a/src/lib/kadm5/admin.h
++++ b/src/lib/kadm5/admin.h
+@@ -345,6 +345,51 @@ kadm5_ret_t    kadm5_init_with_creds(krb5_context context,
                                       krb5_ui_4 api_version,
                                       char **db_args,
                                       void **server_handle);
@@ -127,10 +127,10 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  kadm5_ret_t    kadm5_lock(void *server_handle);
  kadm5_ret_t    kadm5_unlock(void *server_handle);
  kadm5_ret_t    kadm5_flush(void *server_handle);
-/usr/gnu/bin/diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
---- unpatched/src/lib/kadm5/clnt/client_init.c	2016-03-28 00:19:36.988270188 -0600
-+++ patched/src/lib/kadm5/clnt/client_init.c	2016-03-28 13:12:43.769371355 -0600
-@@ -55,7 +55,7 @@ enum init_type { INIT_PASS, INIT_SKEY, I
+diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
+--- a/src/lib/kadm5/clnt/client_init.c
++++ b/src/lib/kadm5/clnt/client_init.c
+@@ -55,7 +55,7 @@ enum init_type { INIT_PASS, INIT_SKEY, INIT_CREDS, INIT_ANONYMOUS };
  
  static kadm5_ret_t
  init_any(krb5_context context, char *client_name, enum init_type init_type,
@@ -139,7 +139,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
           kadm5_config_params *params, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle);
  
-@@ -87,8 +87,25 @@ kadm5_init_with_creds(krb5_context conte
+@@ -87,8 +87,25 @@ kadm5_init_with_creds(krb5_context context, char *client_name,
                        krb5_ui_4 api_version, char **db_args,
                        void **server_handle)
  {
@@ -148,7 +148,8 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +    svcnames[0] = service_name;
 +    svcnames[1] = NULL;
 +
-+    return init_any(context, client_name, INIT_CREDS, NULL, ccache,
+     return init_any(context, client_name, INIT_CREDS, NULL, ccache,
+-                    service_name, params, struct_version, api_version, db_args,
 +                    svcnames, params, struct_version, api_version, db_args,
 +                    server_handle);
 +}
@@ -160,13 +161,12 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +                      krb5_ui_4 api_version, char **db_args,
 +                      void **server_handle)
 +{
-     return init_any(context, client_name, INIT_CREDS, NULL, ccache,
--                    service_name, params, struct_version, api_version, db_args,
++    return init_any(context, client_name, INIT_CREDS, NULL, ccache,
 +                    svcnames, params, struct_version, api_version, db_args,
                      server_handle);
  }
  
-@@ -99,7 +116,24 @@ kadm5_init_with_password(krb5_context co
+@@ -99,7 +116,24 @@ kadm5_init_with_password(krb5_context context, char *client_name,
                           krb5_ui_4 api_version, char **db_args,
                           void **server_handle)
  {
@@ -192,7 +192,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      params, struct_version, api_version, db_args,
                      server_handle);
  }
-@@ -110,8 +144,24 @@ kadm5_init_anonymous(krb5_context contex
+@@ -110,8 +144,24 @@ kadm5_init_anonymous(krb5_context context, char *client_name,
                       krb5_ui_4 struct_version, krb5_ui_4 api_version,
                       char **db_args, void **server_handle)
  {
@@ -218,7 +218,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      db_args, server_handle);
  }
  
-@@ -121,7 +171,23 @@ kadm5_init(krb5_context context, char *c
+@@ -121,7 +171,23 @@ kadm5_init(krb5_context context, char *client_name, char *pass,
             krb5_ui_4 struct_version, krb5_ui_4 api_version, char **db_args,
             void **server_handle)
  {
@@ -243,7 +243,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      params, struct_version, api_version, db_args,
                      server_handle);
  }
-@@ -133,8 +199,25 @@ kadm5_init_with_skey(krb5_context contex
+@@ -133,8 +199,25 @@ kadm5_init_with_skey(krb5_context context, char *client_name,
                       krb5_ui_4 api_version, char **db_args,
                       void **server_handle)
  {
@@ -252,8 +252,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +    svcnames[0] = service_name;
 +    svcnames[1] = NULL;
 +
-     return init_any(context, client_name, INIT_SKEY, keytab, NULL,
--                    service_name, params, struct_version, api_version, db_args,
++    return init_any(context, client_name, INIT_SKEY, keytab, NULL,
 +                    svcnames, params, struct_version, api_version, db_args,
 +                    server_handle);
 +}
@@ -265,12 +264,13 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +                     krb5_ui_4 api_version, char **db_args,
 +                     void **server_handle)
 +{
-+    return init_any(context, client_name, INIT_SKEY, keytab, NULL,
+     return init_any(context, client_name, INIT_SKEY, keytab, NULL,
+-                    service_name, params, struct_version, api_version, db_args,
 +                    svcnames, params, struct_version, api_version, db_args,
                      server_handle);
  }
  
-@@ -339,7 +422,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+@@ -339,7 +422,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm5_server_handle_t handle,
  	}
  
  	/*
@@ -316,7 +316,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
           kadm5_config_params *params_in, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle)
  {
-@@ -532,6 +641,10 @@ init_any(krb5_context context, char *cli
+@@ -532,6 +641,10 @@ init_any(krb5_context context, char *client_name, enum init_type init_type,
  
      int code = 0;
      generic_ret *r;
@@ -327,7 +327,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      initialize_ovk_error_table();
  /*      initialize_adb_error_table(); */
-@@ -599,34 +712,56 @@ init_any(krb5_context context, char *cli
+@@ -599,34 +712,56 @@ init_any(krb5_context context, char *client_name, enum init_type init_type,
      if (code)
          goto error;
  
@@ -355,17 +355,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +    } else {
 +        svcname_ptr = svcnames_in;
 +    }
- 
--	code = kadm5_get_adm_host_srv_names(context, handle->params.realm,
--	    &kadmin_srv_names);
--        if (code)
--            goto error;
--	svcname = strdup(kadmin_srv_names[0]);
--	free_srv_names(kadmin_srv_names);
--	if (svcname == NULL) {
--	    code = ENOMEM;
--            goto error;
--	}
++
 +    for (i = 0; svcname_ptr[i]; i++) {
 +        /* Get credentials. */
 +        code = get_init_creds(handle, client, init_type, pass, ccache_in,
@@ -379,7 +369,17 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
 +            } else
 +                goto error;
 +        }
-+
+ 
+-	code = kadm5_get_adm_host_srv_names(context, handle->params.realm,
+-	    &kadmin_srv_names);
+-        if (code)
+-            goto error;
+-	svcname = strdup(kadmin_srv_names[0]);
+-	free_srv_names(kadmin_srv_names);
+-	if (svcname == NULL) {
+-	    code = ENOMEM;
+-            goto error;
+-	}
 +        code = _kadm5_initialize_rpcsec_gss_handle(handle, client_name,
 +                                                   svcname_ptr[i]);
 +        if (code) {
@@ -415,7 +415,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      return code;
  }
-@@ -671,46 +808,43 @@ get_init_creds(kadm5_server_handle_t han
+@@ -671,46 +808,43 @@ get_init_creds(kadm5_server_handle_t handle, krb5_principal client,
  {
      kadm5_ret_t code;
      krb5_ccache ccache = NULL;
@@ -493,7 +493,7 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
  
      /*
       * Acquire a service ticket for svcname@realm for client, using password
-@@ -747,7 +881,7 @@ get_init_creds(kadm5_server_handle_t han
+@@ -747,7 +881,7 @@ get_init_creds(kadm5_server_handle_t handle, krb5_principal client,
      }
      handle->lhandle->cache_name = handle->cache_name;
  
@@ -502,10 +502,10 @@ diff -u -r old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
                      server_out);
      /* Improved error messages */
      if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY) code = KADM5_BAD_PASSWORD;
-diff -u -r old/src/lib/kadm5/clnt/libkadm5clnt_mit.exports new/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
---- old/src/lib/kadm5/clnt/libkadm5clnt_mit.exports	2015-02-11 21:16:43.000000000 -0600
-+++ new/src/lib/kadm5/clnt/libkadm5clnt_mit.exports	2015-05-28 15:34:35.828495806 -0500
-@@ -31,6 +31,11 @@
+diff --git a/src/lib/kadm5/clnt/libkadm5clnt_mit.exports b/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
+--- a/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
++++ b/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
+@@ -31,6 +31,11 @@ kadm5_init_krb5_context
  kadm5_init_with_creds
  kadm5_init_with_password
  kadm5_init_with_skey
@@ -517,10 +517,10 @@ diff -u -r old/src/lib/kadm5/clnt/libkadm5clnt_mit.exports new/src/lib/kadm5/cln
  kadm5_lock
  kadm5_modify_policy
  kadm5_modify_principal
-diff -u -r old/src/lib/kadm5/srv/server_init.c new/src/lib/kadm5/srv/server_init.c
---- old/src/lib/kadm5/srv/server_init.c	2015-05-28 15:10:45.100182433 -0500
-+++ new/src/lib/kadm5/srv/server_init.c	2015-05-29 12:40:47.354397224 -0500
-@@ -97,6 +97,29 @@
+diff --git a/src/lib/kadm5/srv/server_init.c b/src/lib/kadm5/srv/server_init.c
+--- a/src/lib/kadm5/srv/server_init.c
++++ b/src/lib/kadm5/srv/server_init.c
+@@ -97,6 +97,29 @@ kadm5_ret_t kadm5_init_with_password(krb5_context context, char *client_name,
                        server_handle);
  }
  
@@ -550,7 +550,7 @@ diff -u -r old/src/lib/kadm5/srv/server_init.c new/src/lib/kadm5/srv/server_init
  kadm5_ret_t kadm5_init_anonymous(krb5_context context, char *client_name,
                                   char *service_name,
                                   kadm5_config_params *params,
-@@ -110,6 +133,20 @@
+@@ -110,6 +133,20 @@ kadm5_ret_t kadm5_init_anonymous(krb5_context context, char *client_name,
                        server_handle);
  }
  
@@ -571,7 +571,7 @@ diff -u -r old/src/lib/kadm5/srv/server_init.c new/src/lib/kadm5/srv/server_init
  kadm5_ret_t kadm5_init_with_creds(krb5_context context,
                                    char *client_name,
                                    krb5_ccache ccache,
-@@ -133,6 +170,22 @@
+@@ -133,6 +170,22 @@ kadm5_ret_t kadm5_init_with_creds(krb5_context context,
                        server_handle);
  }
  
@@ -594,7 +594,7 @@ diff -u -r old/src/lib/kadm5/srv/server_init.c new/src/lib/kadm5/srv/server_init
  
  kadm5_ret_t kadm5_init_with_skey(krb5_context context, char *client_name,
                                   char *keytab, char *service_name,
-@@ -155,6 +208,20 @@
+@@ -155,6 +208,20 @@ kadm5_ret_t kadm5_init_with_skey(krb5_context context, char *client_name,
                        server_handle);
  }
  
@@ -615,10 +615,10 @@ diff -u -r old/src/lib/kadm5/srv/server_init.c new/src/lib/kadm5/srv/server_init
  kadm5_ret_t kadm5_init(krb5_context context, char *client_name, char *pass,
                         char *service_name,
                         kadm5_config_params *params_in,
-diff -u -r old/src/slave/kpropd.c new/src/slave/kpropd.c
---- old/src/slave/kpropd.c	2015-05-28 15:10:45.194095824 -0500
-+++ new/src/slave/kpropd.c	2015-05-29 12:17:56.397347156 -0500
-@@ -609,7 +609,7 @@
+diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
+--- a/src/slave/kpropd.c
++++ b/src/slave/kpropd.c
+@@ -613,7 +613,7 @@ do_iprop()
      kadm5_ret_t retval;
      krb5_principal iprop_svc_principal;
      void *server_handle = NULL;
@@ -627,7 +627,7 @@ diff -u -r old/src/slave/kpropd.c new/src/slave/kpropd.c
      unsigned int pollin, backoff_time;
      int backoff_cnt = 0, reinit_cnt = 0;
      struct timeval iprop_start, iprop_end;
-@@ -639,22 +639,9 @@
+@@ -643,22 +643,9 @@ do_iprop()
      params.mask |= KADM5_CONFIG_REALM;
      params.realm = def_realm;
  
@@ -652,7 +652,7 @@ diff -u -r old/src/slave/kpropd.c new/src/slave/kpropd.c
          if (retval) {
              com_err(progname, retval,
                      _("%s: unable to get kiprop host based "
-@@ -662,15 +649,6 @@
+@@ -666,15 +653,6 @@ do_iprop()
                      progname, def_realm);
              return retval;
  	}
@@ -668,7 +668,7 @@ diff -u -r old/src/slave/kpropd.c new/src/slave/kpropd.c
      }
  
      retval = krb5_sname_to_principal(kpropd_context, NULL, KIPROP_SVC_NAME,
-@@ -714,9 +692,9 @@
+@@ -718,9 +696,9 @@ reinit:
          fprintf(stderr, _("Initializing kadm5 as client %s\n"),
                  iprop_svc_princstr);
      }
@@ -680,7 +680,7 @@ diff -u -r old/src/slave/kpropd.c new/src/slave/kpropd.c
                                    &params,
                                    KADM5_STRUCT_VERSION,
                                    KADM5_API_VERSION_4,
-@@ -1014,7 +992,7 @@
+@@ -1018,7 +996,7 @@ error:
      syslog(LOG_ERR, _("ERROR returned by master KDC, bailing.\n"));
  done:
      free(iprop_svc_princstr);

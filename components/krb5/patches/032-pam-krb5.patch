@@ -13,10 +13,10 @@
 # presented to MIT.
 # Patch source: in-house
 #
-diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_init.c
---- no-032/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:25:17.265078167 -0600
-+++ 032/src/lib/kadm5/clnt/client_init.c	2016-03-28 14:27:42.301681052 -0600
-@@ -299,7 +299,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
+--- a/src/lib/kadm5/clnt/client_init.c
++++ b/src/lib/kadm5/clnt/client_init.c
+@@ -299,7 +299,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm5_server_handle_t handle,
  {
  	int code = 0;
  	generic_ret *r;
@@ -25,7 +25,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
  	char *iprop_svc;
  	boolean_t iprop_enable = B_FALSE;
  	char mech[] = "kerberos_v5";
-@@ -317,15 +317,13 @@ _kadm5_initialize_rpcsec_gss_handle(kadm
+@@ -317,15 +317,13 @@ _kadm5_initialize_rpcsec_gss_handle(kadm5_server_handle_t handle,
  	int port;
  	struct timeval timeout;
  
@@ -53,7 +53,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
           kadm5_config_params *params_in, krb5_ui_4 struct_version,
           krb5_ui_4 api_version, char **db_args, void **server_handle)
  {
-@@ -534,7 +532,6 @@ init_any(krb5_context context, char *cli
+@@ -534,7 +532,6 @@ init_any(krb5_context context, char *client_name, enum init_type init_type,
  
      int code = 0;
      generic_ret *r;
@@ -61,7 +61,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
  
      initialize_ovk_error_table();
  /*      initialize_adb_error_table(); */
-@@ -603,15 +600,19 @@ init_any(krb5_context context, char *cli
+@@ -603,15 +600,19 @@ init_any(krb5_context context, char *client_name, enum init_type init_type,
          goto error;
  
      /* NULL svcname means use host-based. */
@@ -142,7 +142,7 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
       * Acquire a service ticket for svcname@realm for client, using password
       * pass (which could be NULL), and create a ccache to store them in.  If
       * INIT_CREDS, use the ccache we were provided instead.
-@@ -708,7 +747,7 @@ get_init_creds(kadm5_server_handle_t han
+@@ -708,7 +747,7 @@ get_init_creds(kadm5_server_handle_t handle, krb5_principal client,
      }
      handle->lhandle->cache_name = handle->cache_name;
  
@@ -151,9 +151,9 @@ diff -pur old/src/lib/kadm5/clnt/client_init.c new/src/lib/kadm5/clnt/client_ini
                      server_out);
      /* Improved error messages */
      if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY) code = KADM5_BAD_PASSWORD;
-diff -pur old/src/lib/krb5/krb/gic_pwd.c new/src/lib/krb5/krb/gic_pwd.c
---- old/src/lib/krb5/krb/gic_pwd.c	2015-04-30 01:12:10.560945822 -0600
-+++ new/src/lib/krb5/krb/gic_pwd.c	2015-04-30 14:55:26.993611965 -0600
+diff --git a/src/lib/krb5/krb/gic_pwd.c b/src/lib/krb5/krb/gic_pwd.c
+--- a/src/lib/krb5/krb/gic_pwd.c
++++ b/src/lib/krb5/krb/gic_pwd.c
 @@ -5,6 +5,17 @@
  #include "int-proto.h"
  #include "os-proto.h"
@@ -172,7 +172,7 @@ diff -pur old/src/lib/krb5/krb/gic_pwd.c new/src/lib/krb5/krb/gic_pwd.c
  krb5_error_code
  krb5_get_as_key_password(krb5_context context,
                           krb5_principal client,
-@@ -135,7 +146,7 @@ krb5_init_creds_set_password(krb5_contex
+@@ -135,7 +146,7 @@ krb5_init_creds_set_password(krb5_context context,
  
  /* Return the password expiry time indicated by enc_part2.  Set *is_last_req
   * if the information came from a last_req value. */
@@ -181,7 +181,7 @@ diff -pur old/src/lib/krb5/krb/gic_pwd.c new/src/lib/krb5/krb/gic_pwd.c
  get_expiry_times(krb5_enc_kdc_rep_part *enc_part2, krb5_timestamp *pw_exp,
                   krb5_timestamp *acct_exp, krb5_boolean *is_last_req)
  {
-@@ -288,6 +299,35 @@ krb5_get_init_creds_password(krb5_contex
+@@ -288,6 +299,35 @@ krb5_get_init_creds_password(krb5_context context,
                               const char *in_tkt_service,
                               krb5_get_init_creds_opt *options)
  {
@@ -232,10 +232,10 @@ diff -pur old/src/lib/krb5/krb/gic_pwd.c new/src/lib/krb5/krb/gic_pwd.c
      k5_clear_error(&errsave);
  
      return(ret);
-diff -pur old/src/slave/kpropd.c new/src/slave/kpropd.c
---- old/src/slave/kpropd.c	2015-04-30 01:12:10.629801044 -0600
-+++ new/src/slave/kpropd.c	2015-05-04 14:12:25.818752484 -0600
-@@ -640,6 +640,7 @@ do_iprop()
+diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
+--- a/src/slave/kpropd.c
++++ b/src/slave/kpropd.c
+@@ -644,6 +644,7 @@ do_iprop()
      params.realm = def_realm;
  
      if (master_svc_princstr == NULL) {
@@ -243,7 +243,7 @@ diff -pur old/src/slave/kpropd.c new/src/slave/kpropd.c
          retval = kadm5_get_kiprop_host_srv_name(kpropd_context, def_realm,
                                                  &master_svc_princstr);
          if (retval) {
-@@ -649,6 +650,27 @@ do_iprop()
+@@ -653,6 +654,27 @@ do_iprop()
                      progname, def_realm);
              return retval;
          }

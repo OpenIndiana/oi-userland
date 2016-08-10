@@ -11,17 +11,13 @@
 # The final commit was
 # https://github.com/krb5/krb5/commit/bd2c2a02e22c609b3c7e9f92d6634e151d14e478
 #
-# Also note that the fix to src/lib/krb5/os/expand_path.c was handled by MIT
-# via ticket 8455 k5_expand_path_tokens_extra() always returns 0 even if
-# expand_token() fails which was integrated in MIT v1.14.3.
-#
 # Patch source: in-house
 #
 
-diff -ur krb5-1.14.2/src/include/k5-trace.h krb5-1.14.2-patched/src/include/k5-trace.h
---- krb5-1.14.2/src/include/k5-trace.h
-+++ krb5-1.14.2-patched/src/include/k5-trace.h
-@@ -180,6 +180,9 @@
+diff --git a/src/include/k5-trace.h b/src/include/k5-trace.h
+--- a/src/include/k5-trace.h
++++ b/src/include/k5-trace.h
+@@ -180,6 +180,9 @@ void krb5int_trace(krb5_context context, const char *fmt, ...);
  #define TRACE_GIC_PWD_MASTER(c)                         \
      TRACE(c, "Retrying AS request with master KDC")
  
@@ -31,10 +27,10 @@ diff -ur krb5-1.14.2/src/include/k5-trace.h krb5-1.14.2-patched/src/include/k5-t
  #define TRACE_ENCTYPE_LIST_UNKNOWN(c, profvar, name)                    \
      TRACE(c, "Unrecognized enctype name in {str}: {str}", profvar, name)
  
-diff -ur krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c krb5-1.14.2-patched/src/lib/gssapi/krb5/acquire_cred.c
---- krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c
-+++ krb5-1.14.2-patched/src/lib/gssapi/krb5/acquire_cred.c
-@@ -348,6 +348,9 @@
+diff --git a/src/lib/gssapi/krb5/acquire_cred.c b/src/lib/gssapi/krb5/acquire_cred.c
+--- a/src/lib/gssapi/krb5/acquire_cred.c
++++ b/src/lib/gssapi/krb5/acquire_cred.c
+@@ -348,6 +348,9 @@ can_get_initial_creds(krb5_context context, krb5_gss_cred_id_rec *cred)
      if (cred->password != NULL)
          return TRUE;
  
@@ -44,7 +40,7 @@ diff -ur krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c krb5-1.14.2-patched/src/
      /* If we don't know the client principal yet, check for any keytab keys. */
      if (cred->name == NULL)
          return !krb5_kt_have_content(context, cred->client_keytab);
-@@ -522,6 +525,10 @@
+@@ -522,6 +525,10 @@ get_name_from_client_keytab(krb5_context context, krb5_gss_cred_id_rec *cred)
      krb5_principal princ;
  
      assert(cred->name == NULL);
@@ -55,7 +51,7 @@ diff -ur krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c krb5-1.14.2-patched/src/
      code = k5_kt_get_principal(context, cred->client_keytab, &princ);
      if (code)
          return code;
-@@ -601,9 +608,11 @@
+@@ -601,9 +608,11 @@ get_initial_cred(krb5_context context, krb5_gss_cred_id_rec *cred)
          code = krb5_get_init_creds_password(context, &creds, cred->name->princ,
                                              cred->password, NULL, NULL, 0,
                                              NULL, opt);
@@ -68,7 +64,7 @@ diff -ur krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c krb5-1.14.2-patched/src/
      }
      if (code)
          goto cleanup;
-@@ -680,10 +689,18 @@
+@@ -680,10 +689,18 @@ acquire_init_cred(krb5_context context,
              goto error;
      }
  
@@ -89,10 +85,10 @@ diff -ur krb5-1.14.2/src/lib/gssapi/krb5/acquire_cred.c krb5-1.14.2-patched/src/
      if (code)
          goto error;
  
-diff -ur krb5-1.14.2/src/lib/gssapi/krb5/iakerb.c krb5-1.14.2-patched/src/lib/gssapi/krb5/iakerb.c
---- krb5-1.14.2/src/lib/gssapi/krb5/iakerb.c
-+++ krb5-1.14.2-patched/src/lib/gssapi/krb5/iakerb.c
-@@ -454,9 +454,11 @@
+diff --git a/src/lib/gssapi/krb5/iakerb.c b/src/lib/gssapi/krb5/iakerb.c
+--- a/src/lib/gssapi/krb5/iakerb.c
++++ b/src/lib/gssapi/krb5/iakerb.c
+@@ -454,9 +454,11 @@ iakerb_init_creds_ctx(iakerb_ctx_id_t ctx,
      if (cred->password != NULL) {
          code = krb5_init_creds_set_password(ctx->k5c, ctx->icc,
                                              cred->password);
@@ -105,20 +101,10 @@ diff -ur krb5-1.14.2/src/lib/gssapi/krb5/iakerb.c krb5-1.14.2-patched/src/lib/gs
      }
      if (code != 0)
          goto cleanup;
-diff -ur krb5-1.14.2/src/lib/krb5/os/expand_path.c krb5-1.14.2-patched/src/lib/krb5/os/expand_path.c
---- krb5-1.14.2/src/lib/krb5/os/expand_path.c
-+++ krb5-1.14.2-patched/src/lib/krb5/os/expand_path.c
-@@ -537,5 +537,5 @@
- cleanup:
-     k5_buf_free(&buf);
-     free_extra_tokens(extra_tokens);
--    return 0;
-+    return ret;
- }
-diff -ur krb5-1.14.2/src/tests/gssapi/t_client_keytab.py krb5-1.14.2-patched/src/tests/gssapi/t_client_keytab.py
---- krb5-1.14.2/src/tests/gssapi/t_client_keytab.py
-+++ krb5-1.14.2-patched/src/tests/gssapi/t_client_keytab.py
-@@ -141,4 +141,14 @@
+diff --git a/src/tests/gssapi/t_client_keytab.py b/src/tests/gssapi/t_client_keytab.py
+--- a/src/tests/gssapi/t_client_keytab.py
++++ b/src/tests/gssapi/t_client_keytab.py
+@@ -141,4 +141,14 @@ if 'No credentials cache found' not in out:
      fail('Expected error not seen')
  realm.run([kdestroy, '-A'])
  

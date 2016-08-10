@@ -17,10 +17,10 @@
 # This patch is Solaris specific and not intented for upstream contribution.
 # Patch source: in-house
 #
-diff -pur old/src/kadmin/cli/kadmin.c new/src/kadmin/cli/kadmin.c
---- old/src/kadmin/cli/kadmin.c	2015-02-11 19:16:43.000000000 -0800
-+++ new/src/kadmin/cli/kadmin.c	2015-03-05 07:53:41.131383214 -0800
-@@ -282,7 +282,7 @@ kadmin_startup(int argc, char *argv[])
+diff --git a/src/kadmin/cli/kadmin.c b/src/kadmin/cli/kadmin.c
+--- a/src/kadmin/cli/kadmin.c
++++ b/src/kadmin/cli/kadmin.c
+@@ -268,7 +268,7 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
      }
  
      while ((optchar = getopt(argc, argv,
@@ -29,10 +29,10 @@ diff -pur old/src/kadmin/cli/kadmin.c new/src/kadmin/cli/kadmin.c
          switch (optchar) {
          case 'x':
              db_args_size++;
-diff -pur old/src/man/kadmin.man new/src/man/kadmin.man
---- old/src/man/kadmin.man	2015-02-11 19:16:43.000000000 -0800
-+++ new/src/man/kadmin.man	2015-03-05 07:59:17.166151676 -0800
-@@ -37,7 +37,7 @@ level margin: \\n[rst2man-indent\\n[rst2
+diff --git a/src/man/kadmin.man b/src/man/kadmin.man
+--- a/src/man/kadmin.man
++++ b/src/man/kadmin.man
+@@ -37,7 +37,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
  [\fB\-r\fP \fIrealm\fP]
  [\fB\-p\fP \fIprincipal\fP]
  [\fB\-q\fP \fIquery\fP]
@@ -40,8 +40,8 @@ diff -pur old/src/man/kadmin.man new/src/man/kadmin.man
 +[[\fB\-c\fP \fIcache_name\fP]|[\fB\-k\fP [\fB\-t\fP \fIkeytab\fP]]]
  [\fB\-w\fP \fIpassword\fP]
  [\fB\-s\fP \fIadmin_server\fP[:\fIport\fP]]
- .sp
-@@ -97,21 +97,6 @@ a password.  In this case, the default p
+ [command args...]
+@@ -99,21 +99,6 @@ a password.  In this case, the default principal will be
  Use \fIkeytab\fP to decrypt the KDC response.  This can only be used
  with the \fB\-k\fP option.
  .TP
@@ -63,9 +63,9 @@ diff -pur old/src/man/kadmin.man new/src/man/kadmin.man
  .B \fB\-c\fP \fIcredentials_cache\fP
  Use \fIcredentials_cache\fP as the credentials cache.  The
  cache should contain a service ticket for the \fBkadmin/ADMINHOST\fP
-diff -pur old/src/tests/t_pkinit.py new/src/tests/t_pkinit.py
---- new/src/tests/t_pkinit.py   2016-02-29 11:50:13.000000000 -0800
-+++ patched.1/src/tests/t_pkinit.py     2016-03-19 08:15:59.287791038 -0700
+diff --git a/src/tests/t_pkinit.py b/src/tests/t_pkinit.py
+--- a/src/tests/t_pkinit.py
++++ b/src/tests/t_pkinit.py
 @@ -73,15 +73,16 @@ if '97:' in out:
      fail('auth indicators seen in anonymous PKINIT ticket')
  

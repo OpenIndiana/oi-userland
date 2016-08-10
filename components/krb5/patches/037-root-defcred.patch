@@ -6,20 +6,19 @@
 # This is Solaris specific behavior that MIT will not take upstream.
 # Patch source: in-house
 #
-diff -u -r old/src/include/k5-int.h new/src/include/k5-int.h
---- old/src/include/k5-int.h	2015-06-03 18:20:34.239623602 -0500
-+++ new/src/include/k5-int.h	2015-06-04 12:29:26.540947840 -0500
-@@ -2294,4 +2294,6 @@
- /* Define a shorter internal name for krb5_set_error_message. */
- #define k5_setmsg krb5_set_error_message
+diff --git a/src/include/k5-int.h b/src/include/k5-int.h
+--- a/src/include/k5-int.h
++++ b/src/include/k5-int.h
+@@ -2353,4 +2353,6 @@ void k5_change_error_message_code(krb5_context ctx, krb5_error_code oldcode,
+ #define k5_prependmsg krb5_prepend_error_message
+ #define k5_wrapmsg krb5_wrap_error_message
  
 +uid_t krb5_getuid();
 +
  #endif /* _KRB5_INT_H */
-Only in new/src/lib/gssapi/krb5: .init_sec_context.c.swp
-diff -u -r old/src/lib/gssapi/krb5/init_sec_context.c new/src/lib/gssapi/krb5/init_sec_context.c
---- old/src/lib/gssapi/krb5/init_sec_context.c	2015-05-08 18:27:02.000000000 -0500
-+++ new/src/lib/gssapi/krb5/init_sec_context.c	2015-06-08 12:44:54.041616737 -0500
+diff --git a/src/lib/gssapi/krb5/init_sec_context.c b/src/lib/gssapi/krb5/init_sec_context.c
+--- a/src/lib/gssapi/krb5/init_sec_context.c
++++ b/src/lib/gssapi/krb5/init_sec_context.c
 @@ -104,6 +104,11 @@
  #endif
  #include <stdlib.h>
@@ -32,7 +31,7 @@ diff -u -r old/src/lib/gssapi/krb5/init_sec_context.c new/src/lib/gssapi/krb5/in
  
  /*
   * $Id$
-@@ -960,8 +965,11 @@
+@@ -962,8 +967,11 @@ krb5_gss_init_sec_context_ext(
          /* verify the credential, or use the default */
          /*SUPPRESS 29*/
          if (claimant_cred_handle == GSS_C_NO_CREDENTIAL) {
@@ -45,7 +44,7 @@ diff -u -r old/src/lib/gssapi/krb5/init_sec_context.c new/src/lib/gssapi/krb5/in
                  if (*context_handle == GSS_C_NO_CONTEXT)
                      krb5_free_context(context);
                  return(major_status);
-@@ -1097,3 +1105,441 @@
+@@ -1099,3 +1107,441 @@ krb5_gss_init_sec_context(minor_status, claimant_cred_handle,
                                           time_rec,
                                           &exts);
  }
@@ -487,10 +486,10 @@ diff -u -r old/src/lib/gssapi/krb5/init_sec_context.c new/src/lib/gssapi/krb5/in
 +    /* Otherwise we got non expired creds */
 +    return (GSS_S_COMPLETE);
 +}
-diff -u -r old/src/lib/krb5/keytab/Makefile.in new/src/lib/krb5/keytab/Makefile.in
---- old/src/lib/krb5/keytab/Makefile.in	2015-06-03 18:20:34.099323499 -0500
-+++ new/src/lib/krb5/keytab/Makefile.in	2015-06-04 11:49:24.702959055 -0500
-@@ -13,6 +13,7 @@
+diff --git a/src/lib/krb5/keytab/Makefile.in b/src/lib/krb5/keytab/Makefile.in
+--- a/src/lib/krb5/keytab/Makefile.in
++++ b/src/lib/krb5/keytab/Makefile.in
+@@ -13,6 +13,7 @@ STLIBOBJS= \
  	ktremove.o	\
  	ktfns.o		\
  	kt_file.o	\
@@ -498,7 +497,7 @@ diff -u -r old/src/lib/krb5/keytab/Makefile.in new/src/lib/krb5/keytab/Makefile.
  	kt_memory.o	\
  	kt_srvtab.o	\
  	read_servi.o	\
-@@ -26,6 +27,7 @@
+@@ -26,6 +27,7 @@ OBJS=	\
  	$(OUTPRE)ktremove.$(OBJEXT)	\
  	$(OUTPRE)ktfns.$(OBJEXT)	\
  	$(OUTPRE)kt_file.$(OBJEXT)	\
@@ -506,7 +505,7 @@ diff -u -r old/src/lib/krb5/keytab/Makefile.in new/src/lib/krb5/keytab/Makefile.
  	$(OUTPRE)kt_memory.$(OBJEXT)	\
  	$(OUTPRE)kt_srvtab.$(OBJEXT)	\
  	$(OUTPRE)read_servi.$(OBJEXT)	\
-@@ -39,6 +41,7 @@
+@@ -39,6 +41,7 @@ SRCS=	\
  	$(srcdir)/ktremove.c	\
  	$(srcdir)/ktfns.c	\
  	$(srcdir)/kt_file.c	\
@@ -514,10 +513,61 @@ diff -u -r old/src/lib/krb5/keytab/Makefile.in new/src/lib/krb5/keytab/Makefile.
  	$(srcdir)/kt_memory.c	\
  	$(srcdir)/kt_srvtab.c	\
  	$(srcdir)/read_servi.c	\
-diff -u -r old/src/lib/krb5/os/expand_path.c new/src/lib/krb5/os/expand_path.c
---- old/src/lib/krb5/os/expand_path.c	2015-05-08 18:27:02.000000000 -0500
-+++ new/src/lib/krb5/os/expand_path.c	2015-06-04 12:26:15.614110414 -0500
-@@ -291,7 +291,7 @@
+diff --git a/src/lib/krb5/os/Makefile.in b/src/lib/krb5/os/Makefile.in
+--- a/src/lib/krb5/os/Makefile.in
++++ b/src/lib/krb5/os/Makefile.in
+@@ -24,6 +24,7 @@ STLIBOBJS= \
+ 	gen_port.o	\
+ 	genaddrs.o	\
+ 	gen_rname.o	\
++	getuid.o	\
+ 	hostaddr.o	\
+ 	hostrealm.o	\
+ 	hostrealm_dns.o \
+@@ -49,6 +50,7 @@ STLIBOBJS= \
+ 	read_msg.o	\
+ 	read_pwd.o	\
+ 	realm_dom.o	\
++	safechown.o	\
+ 	sendto_kdc.o	\
+ 	sn2princ.o	\
+         thread_safe.o   \
+@@ -71,6 +73,7 @@ OBJS= \
+ 	$(OUTPRE)gen_port.$(OBJEXT)	\
+ 	$(OUTPRE)genaddrs.$(OBJEXT)	\
+ 	$(OUTPRE)gen_rname.$(OBJEXT)	\
++	$(OUTPRE)getuid.$(OBJEXT)	\
+ 	$(OUTPRE)hostaddr.$(OBJEXT)	\
+ 	$(OUTPRE)hostrealm.$(OBJEXT)	\
+ 	$(OUTPRE)hostrealm_dns.$(OBJEXT) \
+@@ -96,6 +99,7 @@ OBJS= \
+ 	$(OUTPRE)read_msg.$(OBJEXT)	\
+ 	$(OUTPRE)read_pwd.$(OBJEXT)	\
+ 	$(OUTPRE)realm_dom.$(OBJEXT)	\
++	$(OUTPRE)safechown.$(OBJEXT)	\
+ 	$(OUTPRE)sendto_kdc.$(OBJEXT)	\
+ 	$(OUTPRE)sn2princ.$(OBJEXT)	\
+         $(OUTPRE)thread_safe.$(OBJEXT)  \
+@@ -118,6 +122,7 @@ SRCS= \
+ 	$(srcdir)/gen_port.c	\
+ 	$(srcdir)/genaddrs.c	\
+ 	$(srcdir)/gen_rname.c	\
++	$(srcdir)/getuid.c	\
+ 	$(srcdir)/hostaddr.c	\
+ 	$(srcdir)/hostrealm.c	\
+ 	$(srcdir)/hostrealm_dns.c \
+@@ -143,6 +148,7 @@ SRCS= \
+ 	$(srcdir)/read_pwd.c	\
+ 	$(srcdir)/realm_dom.c	\
+ 	$(srcdir)/port2ip.c	\
++	$(srcdir)/safechown.c	\
+ 	$(srcdir)/sendto_kdc.c	\
+ 	$(srcdir)/sn2princ.c	\
+         $(srcdir)/thread_safe.c \
+diff --git a/src/lib/krb5/os/expand_path.c b/src/lib/krb5/os/expand_path.c
+--- a/src/lib/krb5/os/expand_path.c
++++ b/src/lib/krb5/os/expand_path.c
+@@ -291,7 +291,7 @@ static krb5_error_code
  expand_userid(krb5_context context, PTYPE param, const char *postfix,
                char **str)
  {
@@ -526,54 +576,3 @@ diff -u -r old/src/lib/krb5/os/expand_path.c new/src/lib/krb5/os/expand_path.c
          return ENOMEM;
      return 0;
  }
-diff -u -r old/src/lib/krb5/os/Makefile.in new/src/lib/krb5/os/Makefile.in
---- old/src/lib/krb5/os/Makefile.in	2015-05-08 18:27:02.000000000 -0500
-+++ new/src/lib/krb5/os/Makefile.in	2015-06-04 12:00:15.668542036 -0500
-@@ -20,6 +20,7 @@
- 	gen_port.o	\
- 	genaddrs.o	\
- 	gen_rname.o	\
-+	getuid.o	\
- 	hostaddr.o	\
- 	hostrealm.o	\
- 	hostrealm_dns.o \
-@@ -44,6 +45,7 @@
- 	read_msg.o	\
- 	read_pwd.o	\
- 	realm_dom.o	\
-+	safechown.o	\
- 	sendto_kdc.o	\
- 	sn2princ.o	\
-         thread_safe.o   \
-@@ -66,6 +68,7 @@
- 	$(OUTPRE)gen_port.$(OBJEXT)	\
- 	$(OUTPRE)genaddrs.$(OBJEXT)	\
- 	$(OUTPRE)gen_rname.$(OBJEXT)	\
-+	$(OUTPRE)getuid.$(OBJEXT)	\
- 	$(OUTPRE)hostaddr.$(OBJEXT)	\
- 	$(OUTPRE)hostrealm.$(OBJEXT)	\
- 	$(OUTPRE)hostrealm_dns.$(OBJEXT) \
-@@ -90,6 +93,7 @@
- 	$(OUTPRE)read_msg.$(OBJEXT)	\
- 	$(OUTPRE)read_pwd.$(OBJEXT)	\
- 	$(OUTPRE)realm_dom.$(OBJEXT)	\
-+	$(OUTPRE)safechown.$(OBJEXT)	\
- 	$(OUTPRE)sendto_kdc.$(OBJEXT)	\
- 	$(OUTPRE)sn2princ.$(OBJEXT)	\
-         $(OUTPRE)thread_safe.$(OBJEXT)  \
-@@ -112,6 +116,7 @@
- 	$(srcdir)/gen_port.c	\
- 	$(srcdir)/genaddrs.c	\
- 	$(srcdir)/gen_rname.c	\
-+	$(srcdir)/getuid.c	\
- 	$(srcdir)/hostaddr.c	\
- 	$(srcdir)/hostrealm.c	\
- 	$(srcdir)/hostrealm_dns.c \
-@@ -136,6 +141,7 @@
- 	$(srcdir)/read_pwd.c	\
- 	$(srcdir)/realm_dom.c	\
- 	$(srcdir)/port2ip.c	\
-+	$(srcdir)/safechown.c	\
- 	$(srcdir)/sendto_kdc.c	\
- 	$(srcdir)/sn2princ.c	\
-         $(srcdir)/thread_safe.c \

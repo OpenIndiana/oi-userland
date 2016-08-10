@@ -28,45 +28,9 @@
 # therefore should not be considered as an upstream contribution to MIT.
 # Patch source: in-house
 #
-diff -pur old/src/lib/gssapi/generic/gssapiP_generic.h new/src/lib/gssapi/generic/gssapiP_generic.h
---- old/src/lib/gssapi/generic/gssapiP_generic.h	2015-08-24 23:54:31.967668939 -0600
-+++ new/src/lib/gssapi/generic/gssapiP_generic.h	2015-08-24 23:53:45.867622444 -0600
-@@ -116,6 +116,12 @@
- #define g_seqstate_size         gssint_g_seqstate_size
- #define g_seqstate_externalize  gssint_g_seqstate_externalize
- #define g_seqstate_internalize  gssint_g_seqstate_internalize
-+#define	g_order_init		gssint_g_order_init
-+#define	g_order_check		gssint_g_order_check
-+#define	g_order_free		gssint_g_order_free
-+#define	g_queue_size		gssint_g_queue_size
-+#define	g_queue_externalize	gssint_g_queue_externalize
-+#define	g_queue_internalize	gssint_g_queue_internalize
- #define g_canonicalize_host     gssint_g_canonicalize_host
- #define g_local_host_name       gssint_g_local_host_name
- #define g_strdup                gssint_g_strdup
-@@ -185,6 +191,19 @@ long g_seqstate_externalize(g_seqnum_sta
- long g_seqstate_internalize(g_seqnum_state *state_out, unsigned char **buf,
-                             size_t *lenremain);
- 
-+gss_int32 g_order_init (void **queue, uint64_t seqnum,
-+				  int do_replay, int do_sequence, int wide);
-+
-+gss_int32 g_order_check (void **queue, uint64_t seqnum);
-+
-+void g_order_free (void **queue);
-+
-+gss_uint32 g_queue_size(void *vqueue, size_t *sizep);
-+gss_uint32 g_queue_externalize(void *vqueue, unsigned char **buf,
-+			       size_t *lenremain);
-+gss_uint32 g_queue_internalize(void **vqueue, unsigned char **buf,
-+			       size_t *lenremain);
-+
- char *g_strdup (char *str);
- 
- /** declarations of internal name mechanism functions **/
-diff -pur old/src/lib/gssapi/generic/Makefile.in new/src/lib/gssapi/generic/Makefile.in
---- old/src/lib/gssapi/generic/Makefile.in	2015-08-24 23:54:31.968226730 -0600
-+++ new/src/lib/gssapi/generic/Makefile.in	2015-08-24 23:53:45.871579061 -0600
+diff --git a/src/lib/gssapi/generic/Makefile.in b/src/lib/gssapi/generic/Makefile.in
+--- a/src/lib/gssapi/generic/Makefile.in
++++ b/src/lib/gssapi/generic/Makefile.in
 @@ -66,6 +66,7 @@ SRCS = \
  	$(srcdir)/util_buffer.c \
  	$(srcdir)/util_buffer_set.c \
@@ -91,10 +55,63 @@ diff -pur old/src/lib/gssapi/generic/Makefile.in new/src/lib/gssapi/generic/Make
  	util_set.o \
  	util_seqstate.o \
  	util_token.o \
-diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/accept_sec_context.c
---- old/src/lib/gssapi/krb5/accept_sec_context.c	2015-08-24 23:54:31.971814896 -0600
-+++ new/src/lib/gssapi/krb5/accept_sec_context.c	2015-08-24 23:53:45.848389600 -0600
-@@ -441,6 +441,7 @@ kg_accept_krb5(minor_status, context_han
+diff --git a/src/lib/gssapi/generic/deps b/src/lib/gssapi/generic/deps
+--- a/src/lib/gssapi/generic/deps
++++ b/src/lib/gssapi/generic/deps
+@@ -64,6 +64,13 @@ util_errmap.so util_errmap.po $(OUTPRE)util_errmap.$(OBJEXT): \
+   $(top_srcdir)/include/k5-thread.h $(top_srcdir)/include/krb5.h \
+   errmap.h gssapiP_generic.h gssapi_err_generic.h gssapi_ext.h \
+   gssapi_generic.h util_errmap.c
++util_ordering.so util_ordering.po $(OUTPRE)util_ordering.$(OBJEXT): \
++  $(BUILDTOP)/include/autoconf.h $(BUILDTOP)/include/gssapi/gssapi.h \
++  $(BUILDTOP)/include/gssapi/gssapi_alloc.h $(COM_ERR_DEPS) \
++  $(top_srcdir)/include/k5-buf.h $(top_srcdir)/include/k5-platform.h \
++  $(top_srcdir)/include/k5-thread.h gssapiP_generic.h \
++  gssapi_err_generic.h gssapi_ext.h gssapi_generic.h \
++  util_ordering.c
+ util_set.so util_set.po $(OUTPRE)util_set.$(OBJEXT): \
+   $(BUILDTOP)/include/autoconf.h $(BUILDTOP)/include/gssapi/gssapi.h \
+   $(BUILDTOP)/include/gssapi/gssapi_alloc.h $(COM_ERR_DEPS) \
+diff --git a/src/lib/gssapi/generic/gssapiP_generic.h b/src/lib/gssapi/generic/gssapiP_generic.h
+--- a/src/lib/gssapi/generic/gssapiP_generic.h
++++ b/src/lib/gssapi/generic/gssapiP_generic.h
+@@ -116,6 +116,12 @@
+ #define g_seqstate_size         gssint_g_seqstate_size
+ #define g_seqstate_externalize  gssint_g_seqstate_externalize
+ #define g_seqstate_internalize  gssint_g_seqstate_internalize
++#define	g_order_init		gssint_g_order_init
++#define	g_order_check		gssint_g_order_check
++#define	g_order_free		gssint_g_order_free
++#define	g_queue_size		gssint_g_queue_size
++#define	g_queue_externalize	gssint_g_queue_externalize
++#define	g_queue_internalize	gssint_g_queue_internalize
+ #define g_canonicalize_host     gssint_g_canonicalize_host
+ #define g_local_host_name       gssint_g_local_host_name
+ #define g_strdup                gssint_g_strdup
+@@ -185,6 +191,19 @@ long g_seqstate_externalize(g_seqnum_state state, unsigned char **buf,
+ long g_seqstate_internalize(g_seqnum_state *state_out, unsigned char **buf,
+                             size_t *lenremain);
+ 
++gss_int32 g_order_init (void **queue, uint64_t seqnum,
++				  int do_replay, int do_sequence, int wide);
++
++gss_int32 g_order_check (void **queue, uint64_t seqnum);
++
++void g_order_free (void **queue);
++
++gss_uint32 g_queue_size(void *vqueue, size_t *sizep);
++gss_uint32 g_queue_externalize(void *vqueue, unsigned char **buf,
++			       size_t *lenremain);
++gss_uint32 g_queue_internalize(void **vqueue, unsigned char **buf,
++			       size_t *lenremain);
++
+ char *g_strdup (char *str);
+ 
+ /** declarations of internal name mechanism functions **/
+diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/accept_sec_context.c
+--- a/src/lib/gssapi/krb5/accept_sec_context.c
++++ b/src/lib/gssapi/krb5/accept_sec_context.c
+@@ -435,6 +435,7 @@ kg_accept_krb5(minor_status, context_handle,
      char *sptr;
      OM_uint32 tmp;
      size_t md5len;
@@ -102,7 +119,7 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
      krb5_gss_cred_id_t cred = 0;
      krb5_data ap_rep, ap_req;
      unsigned int i;
-@@ -704,6 +705,7 @@ kg_accept_krb5(minor_status, context_han
+@@ -698,6 +699,7 @@ kg_accept_krb5(minor_status, context_handle,
          }
  
          gss_flags = GSS_C_MUTUAL_FLAG | GSS_C_REPLAY_FLAG | GSS_C_SEQUENCE_FLAG;
@@ -110,7 +127,7 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
      } else {
          /* gss krb5 v1 */
  
-@@ -731,14 +733,22 @@ kg_accept_krb5(minor_status, context_han
+@@ -725,14 +727,22 @@ kg_accept_krb5(minor_status, context_handle,
          }
  
          ptr = (unsigned char *) authdat->checksum->contents;
@@ -139,7 +156,7 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
  
          /*
            The following section of code attempts to implement the
-@@ -779,7 +789,7 @@ kg_accept_krb5(minor_status, context_han
+@@ -773,7 +783,7 @@ kg_accept_krb5(minor_status, context_handle,
  
          /* Read the token flags.  Remember if GSS_C_DELEG_FLAG was set, but
           * mask it out until we actually read a delegated credential. */
@@ -148,7 +165,7 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
          token_deleg_flag = (gss_flags & GSS_C_DELEG_FLAG);
          gss_flags &= ~GSS_C_DELEG_FLAG;
  
-@@ -788,8 +798,8 @@ kg_accept_krb5(minor_status, context_han
+@@ -782,8 +792,8 @@ kg_accept_krb5(minor_status, context_handle,
          i = authdat->checksum->length - 24;
          if (i && token_deleg_flag) {
              if (i >= 4) {
@@ -159,7 +176,7 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
                  i -= 4;
  
                  if (i < option.length) {
-@@ -886,6 +896,7 @@ kg_accept_krb5(minor_status, context_han
+@@ -880,6 +890,7 @@ kg_accept_krb5(minor_status, context_handle,
                                        GSS_C_DCE_STYLE | GSS_C_IDENTIFY_FLAG |
                                        GSS_C_EXTENDED_ERROR_FLAG)));
      ctx->seed_init = 0;
@@ -167,21 +184,10 @@ diff -pur old/src/lib/gssapi/krb5/accept_sec_context.c new/src/lib/gssapi/krb5/a
      ctx->cred_rcache = cred_rcache;
  
      /* XXX move this into gss_name_t */
-diff -pur old/src/lib/gssapi/krb5/gssapi_krb5.c new/src/lib/gssapi/krb5/gssapi_krb5.c
---- old/src/lib/gssapi/krb5/gssapi_krb5.c	2015-08-24 23:54:31.974446790 -0600
-+++ new/src/lib/gssapi/krb5/gssapi_krb5.c	2015-08-24 23:53:45.847910701 -0600
-@@ -938,6 +938,7 @@ static int gss_krb5mechglue_init(void)
- 
-     mech_krb5.mechNameStr = "kerberos_v5";
-     mech_krb5.mech_type = (gss_OID)gss_mech_krb5;
-+    mech_krb5.kmodName = "kmech_krb5";
-     gssint_register_mechinfo(&mech_krb5);
- 
-     mech_krb5.mechNameStr = "kerberos_v5_old";
-diff -pur old/src/lib/gssapi/krb5/gssapiP_krb5.h new/src/lib/gssapi/krb5/gssapiP_krb5.h
---- old/src/lib/gssapi/krb5/gssapiP_krb5.h	2015-08-24 23:54:31.974815169 -0600
-+++ new/src/lib/gssapi/krb5/gssapiP_krb5.h	2015-08-24 23:53:45.845950677 -0600
-@@ -204,6 +204,7 @@ typedef struct _krb5_gss_ctx_id_rec {
+diff --git a/src/lib/gssapi/krb5/gssapiP_krb5.h b/src/lib/gssapi/krb5/gssapiP_krb5.h
+--- a/src/lib/gssapi/krb5/gssapiP_krb5.h
++++ b/src/lib/gssapi/krb5/gssapiP_krb5.h
+@@ -205,6 +205,7 @@ typedef struct _krb5_gss_ctx_id_rec {
      krb5_magic magic;
      unsigned int initiate : 1;   /* nonzero if initiating, zero if accepting */
      unsigned int established : 1;
@@ -189,10 +195,21 @@ diff -pur old/src/lib/gssapi/krb5/gssapiP_krb5.h new/src/lib/gssapi/krb5/gssapiP
      unsigned int have_acceptor_subkey : 1;
      unsigned int seed_init : 1;  /* XXX tested but never actually set */
      unsigned int terminated : 1;
-diff -pur old/src/lib/gssapi/krb5/import_sec_context.c new/src/lib/gssapi/krb5/import_sec_context.c
---- old/src/lib/gssapi/krb5/import_sec_context.c	2015-08-24 23:54:31.969983292 -0600
-+++ new/src/lib/gssapi/krb5/import_sec_context.c	2015-08-24 23:53:45.845397252 -0600
-@@ -107,7 +107,6 @@ krb5_gss_import_sec_context(minor_status
+diff --git a/src/lib/gssapi/krb5/gssapi_krb5.c b/src/lib/gssapi/krb5/gssapi_krb5.c
+--- a/src/lib/gssapi/krb5/gssapi_krb5.c
++++ b/src/lib/gssapi/krb5/gssapi_krb5.c
+@@ -1046,6 +1046,7 @@ static int gss_krb5mechglue_init(void)
+ 
+     mech_krb5.mechNameStr = "kerberos_v5";
+     mech_krb5.mech_type = (gss_OID)gss_mech_krb5;
++    mech_krb5.kmodName = "kmech_krb5";
+     gssint_register_mechinfo(&mech_krb5);
+ 
+     mech_krb5.mechNameStr = "kerberos_v5_old";
+diff --git a/src/lib/gssapi/krb5/import_sec_context.c b/src/lib/gssapi/krb5/import_sec_context.c
+--- a/src/lib/gssapi/krb5/import_sec_context.c
++++ b/src/lib/gssapi/krb5/import_sec_context.c
+@@ -107,7 +107,6 @@ krb5_gss_import_sec_context(minor_status, interprocess_token, context_handle)
          krb5_free_context(context);
          return(GSS_S_FAILURE);
      }
@@ -200,9 +217,9 @@ diff -pur old/src/lib/gssapi/krb5/import_sec_context.c new/src/lib/gssapi/krb5/i
  
      ctx->mech_used = krb5_gss_convert_static_mech_oid(ctx->mech_used);
  
-diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
---- old/src/lib/gssapi/krb5/ser_sctx.c	2015-08-24 23:54:31.969825966 -0600
-+++ new/src/lib/gssapi/krb5/ser_sctx.c	2015-08-24 23:53:45.847452068 -0600
+diff --git a/src/lib/gssapi/krb5/ser_sctx.c b/src/lib/gssapi/krb5/ser_sctx.c
+--- a/src/lib/gssapi/krb5/ser_sctx.c
++++ b/src/lib/gssapi/krb5/ser_sctx.c
 @@ -150,6 +150,22 @@ kg_oid_size(kcontext, arg, sizep)
  }
  
@@ -226,7 +243,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
  kg_seqstate_externalize(kcontext, arg, buffer, lenremain)
      krb5_context        kcontext;
      g_seqnum_state      arg;
-@@ -166,6 +182,48 @@ kg_seqstate_externalize(kcontext, arg, b
+@@ -166,6 +182,48 @@ kg_seqstate_externalize(kcontext, arg, buffer, lenremain)
  }
  
  static krb5_error_code
@@ -275,7 +292,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
  kg_seqstate_internalize(kcontext, argp, buffer, lenremain)
      krb5_context        kcontext;
      g_seqnum_state      *argp;
-@@ -208,6 +266,26 @@ kg_seqstate_internalize(kcontext, argp,
+@@ -208,6 +266,26 @@ kg_seqstate_internalize(kcontext, argp, buffer, lenremain)
  }
  
  static krb5_error_code
@@ -335,7 +352,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
          *sizep += required;
      }
      return(kret);
-@@ -400,6 +482,8 @@ kg_ctx_externalize(kcontext, arg, buffer
+@@ -400,6 +482,8 @@ kg_ctx_externalize(kcontext, arg, buffer, lenremain)
                                         &bp, &remain);
              (void) krb5_ser_pack_int32((krb5_int32) ctx->established,
                                         &bp, &remain);
@@ -344,7 +361,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              (void) krb5_ser_pack_int32((krb5_int32) ctx->have_acceptor_subkey,
                                         &bp, &remain);
              (void) krb5_ser_pack_int32((krb5_int32) ctx->seed_init,
-@@ -468,9 +552,10 @@ kg_ctx_externalize(kcontext, arg, buffer
+@@ -468,9 +552,10 @@ kg_ctx_externalize(kcontext, arg, buffer, lenremain)
                                                 &bp, &remain);
  
              if (!kret && ctx->seqstate)
@@ -356,7 +373,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              if (!kret)
                  kret = krb5_externalize_opaque(kcontext,
                                                 KV5M_CONTEXT,
-@@ -482,6 +567,7 @@ kg_ctx_externalize(kcontext, arg, buffer
+@@ -482,6 +567,7 @@ kg_ctx_externalize(kcontext, arg, buffer, lenremain)
                                                 KV5M_AUTH_CONTEXT,
                                                 (krb5_pointer) ctx->auth_context,
                                                 &bp, &remain);
@@ -364,7 +381,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
  
              if (!kret)
                  kret = krb5_ser_pack_int32((krb5_int32) ctx->proto,
-@@ -501,6 +587,7 @@ kg_ctx_externalize(kcontext, arg, buffer
+@@ -501,6 +587,7 @@ kg_ctx_externalize(kcontext, arg, buffer, lenremain)
              if (!kret)
                  kret = krb5_ser_pack_int32((krb5_int32) ctx->cred_rcache,
                                             &bp, &remain);
@@ -372,7 +389,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              if (!kret) {
                  krb5_int32 i = 0;
  
-@@ -534,6 +621,7 @@ kg_ctx_externalize(kcontext, arg, buffer
+@@ -534,6 +621,7 @@ kg_ctx_externalize(kcontext, arg, buffer, lenremain)
                                                     &remain);
                  }
              }
@@ -380,7 +397,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              /* trailer */
              if (!kret)
                  kret = krb5_ser_pack_int32(KG_CONTEXT, &bp, &remain);
-@@ -611,6 +699,8 @@ kg_ctx_internalize(kcontext, argp, buffe
+@@ -611,6 +699,8 @@ kg_ctx_internalize(kcontext, argp, buffer, lenremain)
              (void) krb5_ser_unpack_int32(&ibuf, &bp, &remain);
              ctx->established = (int) ibuf;
              (void) krb5_ser_unpack_int32(&ibuf, &bp, &remain);
@@ -389,7 +406,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              ctx->have_acceptor_subkey = (int) ibuf;
              (void) krb5_ser_unpack_int32(&ibuf, &bp, &remain);
              ctx->seed_init = (int) ibuf;
-@@ -695,12 +785,13 @@ kg_ctx_internalize(kcontext, argp, buffe
+@@ -695,12 +785,13 @@ kg_ctx_internalize(kcontext, argp, buffer, lenremain)
              }
  
              if (!kret) {
@@ -404,7 +421,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              if (!kret)
                  kret = krb5_internalize_opaque(kcontext,
                                                 KV5M_CONTEXT,
-@@ -712,6 +803,7 @@ kg_ctx_internalize(kcontext, argp, buffe
+@@ -712,6 +803,7 @@ kg_ctx_internalize(kcontext, argp, buffer, lenremain)
                                                 KV5M_AUTH_CONTEXT,
                                                 (krb5_pointer *) &ctx->auth_context,
                                                 &bp, &remain);
@@ -412,7 +429,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
  
              if (!kret)
                  kret = krb5_ser_unpack_int32(&ibuf, &bp, &remain);
-@@ -731,6 +823,7 @@ kg_ctx_internalize(kcontext, argp, buffe
+@@ -731,6 +823,7 @@ kg_ctx_internalize(kcontext, argp, buffer, lenremain)
              if (!kret)
                  kret = krb5_ser_unpack_int32(&ibuf, &bp, &remain);
              ctx->cred_rcache = ibuf;
@@ -420,7 +437,7 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              /* authdata */
              if (!kret)
                  kret = krb5_ser_unpack_int32(&ibuf, &bp, &remain);
-@@ -769,6 +862,7 @@ kg_ctx_internalize(kcontext, argp, buffe
+@@ -769,6 +862,7 @@ kg_ctx_internalize(kcontext, argp, buffer, lenremain)
                          kret = 0;
                  }
              }
@@ -428,19 +445,3 @@ diff -pur old/src/lib/gssapi/krb5/ser_sctx.c new/src/lib/gssapi/krb5/ser_sctx.c
              /* Get trailer */
              if (!kret)
                  kret = krb5_ser_unpack_int32(&ibuf, &bp, &remain);
---- krb5-1.13.3/src/lib/gssapi/generic/deps
-+++ ./deps
-@@ -64,6 +64,13 @@ util_errmap.so util_errmap.po $(OUTPRE)u
-   $(top_srcdir)/include/k5-thread.h $(top_srcdir)/include/krb5.h \
-   errmap.h gssapiP_generic.h gssapi_err_generic.h gssapi_ext.h \
-   gssapi_generic.h util_errmap.c
-+util_ordering.so util_ordering.po $(OUTPRE)util_ordering.$(OBJEXT): \
-+  $(BUILDTOP)/include/autoconf.h $(BUILDTOP)/include/gssapi/gssapi.h \
-+  $(BUILDTOP)/include/gssapi/gssapi_alloc.h $(COM_ERR_DEPS) \
-+  $(top_srcdir)/include/k5-buf.h $(top_srcdir)/include/k5-platform.h \
-+  $(top_srcdir)/include/k5-thread.h gssapiP_generic.h \
-+  gssapi_err_generic.h gssapi_ext.h gssapi_generic.h \
-+  util_ordering.c
- util_set.so util_set.po $(OUTPRE)util_set.$(OBJEXT): \
-   $(BUILDTOP)/include/autoconf.h $(BUILDTOP)/include/gssapi/gssapi.h \
-   $(BUILDTOP)/include/gssapi/gssapi_alloc.h $(COM_ERR_DEPS) \

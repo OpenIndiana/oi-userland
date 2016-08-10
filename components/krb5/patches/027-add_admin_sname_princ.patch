@@ -6,9 +6,9 @@
 # https://github.com/krb5/krb5/pull/333
 # Patch source: in-house
 #
-diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_create.c
---- old/src/kadmin/dbutil/kadm5_create.c
-+++ new/src/kadmin/dbutil/kadm5_create.c
+diff --git a/src/kadmin/dbutil/kadm5_create.c b/src/kadmin/dbutil/kadm5_create.c
+--- a/src/kadmin/dbutil/kadm5_create.c
++++ b/src/kadmin/dbutil/kadm5_create.c
 @@ -44,8 +44,14 @@
  #include <kdb.h>
  #include "kdb5_util.h"
@@ -26,7 +26,7 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
  static int add_admin_princs(void *handle, krb5_context context, char *realm);
  
  #define ERR 1
-@@ -145,64 +151,11 @@ int kadm5_create_magic_princs(kadm5_conf
+@@ -145,64 +151,11 @@ int kadm5_create_magic_princs(kadm5_config_params *params,
  static int add_admin_princs(void *handle, krb5_context context, char *realm)
  {
      krb5_error_code ret = 0;
@@ -95,7 +95,7 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
          goto clean_and_exit;
  
      if ((ret = add_admin_princ(handle, context,
-@@ -218,17 +171,60 @@ static int add_admin_princs(void *handle
+@@ -218,17 +171,60 @@ static int add_admin_princs(void *handle, krb5_context context, char *realm)
                                 CHANGEPW_LIFETIME)))
          goto clean_and_exit;
  
@@ -174,7 +174,7 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
  {
      char *fullname;
      krb5_error_code ret;
-@@ -266,15 +262,7 @@ int add_admin_princ(void *handle, krb5_c
+@@ -266,15 +262,7 @@ int add_admin_princ(void *handle, krb5_context context,
  
      memset(&ent, 0, sizeof(ent));
  
@@ -191,7 +191,7 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
      ent.max_life = lifetime;
      ent.attributes = attrs;
  
-@@ -283,6 +271,7 @@ int add_admin_princ(void *handle, krb5_c
+@@ -283,6 +271,7 @@ int add_admin_princ(void *handle, krb5_context context,
          flags |= KADM5_MAX_LIFE;
      ret = kadm5_create_principal(handle, &ent, flags, NULL);
      if (ret && ret != KADM5_DUP) {
@@ -199,7 +199,7 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
          com_err(progname, ret, _("while creating principal %s"), fullname);
          krb5_free_principal(context, ent.principal);
          free(fullname);
-@@ -290,7 +279,6 @@ int add_admin_princ(void *handle, krb5_c
+@@ -290,7 +279,6 @@ int add_admin_princ(void *handle, krb5_context context,
      }
  
      krb5_free_principal(context, ent.principal);
@@ -207,9 +207,9 @@ diff -pur old/src/kadmin/dbutil/kadm5_create.c new/src/kadmin/dbutil/kadm5_creat
  
      return OK;
  }
-diff -pur old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
---- old/src/lib/kadm5/admin.h
-+++ new/src/lib/kadm5/admin.h
+diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
+--- a/src/lib/kadm5/admin.h
++++ b/src/lib/kadm5/admin.h
 @@ -64,7 +64,9 @@ KADM5INT_BEGIN_DECLS
  #define KADM5_ADMIN_SERVICE     "kadmin/admin"
  #define KADM5_CHANGEPW_SERVICE  "kadmin/changepw"

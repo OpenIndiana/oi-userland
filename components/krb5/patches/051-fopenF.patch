@@ -7,10 +7,10 @@
 # submitted to MIT until this is resolved in ON.
 # Patch source: in-house
 #
-diff -ur krb5-1.13.2/src/appl/gss-sample/gss-server.c krb5-1.13.2.fopen/src/appl/gss-sample/gss-server.c
---- krb5-1.13.2/src/appl/gss-sample/gss-server.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/appl/gss-sample/gss-server.c	2015-08-11 13:52:42.455625831 -0500
-@@ -699,7 +699,7 @@
+diff --git a/src/appl/gss-sample/gss-server.c b/src/appl/gss-sample/gss-server.c
+--- a/src/appl/gss-sample/gss-server.c
++++ b/src/appl/gss-sample/gss-server.c
+@@ -709,7 +709,7 @@ main(int argc, char **argv)
              if (!strcmp(*argv, "/dev/null")) {
                  logfile = display_file = NULL;
              } else {
@@ -19,10 +19,10 @@ diff -ur krb5-1.13.2/src/appl/gss-sample/gss-server.c krb5-1.13.2.fopen/src/appl
                  display_file = logfile;
                  if (!logfile) {
                      perror(*argv);
-diff -ur krb5-1.13.2/src/clients/ksu/authorization.c krb5-1.13.2.fopen/src/clients/ksu/authorization.c
---- krb5-1.13.2/src/clients/ksu/authorization.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/clients/ksu/authorization.c	2015-08-11 13:46:50.985382622 -0500
-@@ -100,7 +100,7 @@
+diff --git a/src/clients/ksu/authorization.c b/src/clients/ksu/authorization.c
+--- a/src/clients/ksu/authorization.c
++++ b/src/clients/ksu/authorization.c
+@@ -100,7 +100,7 @@ krb5_error_code krb5_authorization(context, principal, luser,
  
      /* k5login and k5users must be owned by target user or root */
      if (!k5login_flag){
@@ -31,7 +31,7 @@ diff -ur krb5-1.13.2/src/clients/ksu/authorization.c krb5-1.13.2.fopen/src/clien
              return 0;
          if ( fowner(login_fp, pwd->pw_uid) == FALSE) {
              fclose(login_fp);
-@@ -109,7 +109,7 @@
+@@ -109,7 +109,7 @@ krb5_error_code krb5_authorization(context, principal, luser,
      }
  
      if (!k5users_flag){
@@ -40,10 +40,10 @@ diff -ur krb5-1.13.2/src/clients/ksu/authorization.c krb5-1.13.2.fopen/src/clien
              return 0;
          }
          if ( fowner(users_fp, pwd->pw_uid) == FALSE){
-diff -ur krb5-1.13.2/src/clients/ksu/ccache.c krb5-1.13.2.fopen/src/clients/ksu/ccache.c
---- krb5-1.13.2/src/clients/ksu/ccache.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/clients/ksu/ccache.c	2015-08-11 13:27:17.131920647 -0500
-@@ -375,7 +375,7 @@
+diff --git a/src/clients/ksu/ccache.c b/src/clients/ksu/ccache.c
+--- a/src/clients/ksu/ccache.c
++++ b/src/clients/ksu/ccache.c
+@@ -375,7 +375,7 @@ krb5_get_login_princ(luser, princ_list)
  
  
      /* open ~/.k5login */
@@ -52,10 +52,10 @@ diff -ur krb5-1.13.2/src/clients/ksu/ccache.c krb5-1.13.2.fopen/src/clients/ksu/
          return 0;
      }
      /*
-diff -ur krb5-1.13.2/src/clients/ksu/heuristic.c krb5-1.13.2.fopen/src/clients/ksu/heuristic.c
---- krb5-1.13.2/src/clients/ksu/heuristic.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/clients/ksu/heuristic.c	2015-08-11 13:53:18.318187882 -0500
-@@ -222,7 +222,7 @@
+diff --git a/src/clients/ksu/heuristic.c b/src/clients/ksu/heuristic.c
+--- a/src/clients/ksu/heuristic.c
++++ b/src/clients/ksu/heuristic.c
+@@ -222,7 +222,7 @@ get_authorized_princ_names(luser, cmd, princ_list)
      k5users_flag = stat(k5users_path, &tb);
  
      if (!k5login_flag){
@@ -64,7 +64,7 @@ diff -ur krb5-1.13.2/src/clients/ksu/heuristic.c krb5-1.13.2.fopen/src/clients/k
              return 0;
          if ( fowner(login_fp, pwd->pw_uid) == FALSE){
              close_time(1 /*k5users_flag*/, (FILE *) 0 /*users_fp*/,
-@@ -231,7 +231,7 @@
+@@ -231,7 +231,7 @@ get_authorized_princ_names(luser, cmd, princ_list)
          }
      }
      if (!k5users_flag){
@@ -73,10 +73,10 @@ diff -ur krb5-1.13.2/src/clients/ksu/heuristic.c krb5-1.13.2.fopen/src/clients/k
              return 0;
  
          if ( fowner(users_fp, pwd->pw_uid) == FALSE){
-diff -ur krb5-1.13.2/src/kadmin/dbutil/dump.c krb5-1.13.2.fopen/src/kadmin/dbutil/dump.c
---- krb5-1.13.2/src/kadmin/dbutil/dump.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/kadmin/dbutil/dump.c	2015-08-11 13:41:07.987791713 -0500
-@@ -1195,7 +1195,7 @@
+diff --git a/src/kadmin/dbutil/dump.c b/src/kadmin/dbutil/dump.c
+--- a/src/kadmin/dbutil/dump.c
++++ b/src/kadmin/dbutil/dump.c
+@@ -1215,7 +1215,7 @@ current_dump_sno_in_ulog(krb5_context context, const char *ifile)
      char buf[BUFSIZ];
      FILE *f;
  
@@ -85,7 +85,7 @@ diff -ur krb5-1.13.2/src/kadmin/dbutil/dump.c krb5-1.13.2.fopen/src/kadmin/dbuti
      if (f == NULL)
          return 0;              /* aliasing other errors to ENOENT here is OK */
  
-@@ -1517,7 +1517,7 @@
+@@ -1537,7 +1537,7 @@ load_db(int argc, char **argv)
  
      /* Open the dumpfile. */
      if (dumpfile != NULL) {
@@ -94,10 +94,10 @@ diff -ur krb5-1.13.2/src/kadmin/dbutil/dump.c krb5-1.13.2.fopen/src/kadmin/dbuti
          if (f == NULL) {
              com_err(progname, errno, _("while opening %s"), dumpfile);
              goto error;
-diff -ur krb5-1.13.2/src/kadmin/server/ovsec_kadmd.c krb5-1.13.2.fopen/src/kadmin/server/ovsec_kadmd.c
---- krb5-1.13.2/src/kadmin/server/ovsec_kadmd.c	2015-08-11 14:09:05.551255648 -0500
-+++ krb5-1.13.2.fopen/src/kadmin/server/ovsec_kadmd.c	2015-08-11 13:45:04.700855296 -0500
-@@ -126,7 +126,7 @@
+diff --git a/src/kadmin/server/ovsec_kadmd.c b/src/kadmin/server/ovsec_kadmd.c
+--- a/src/kadmin/server/ovsec_kadmd.c
++++ b/src/kadmin/server/ovsec_kadmd.c
+@@ -126,7 +126,7 @@ write_pid_file(const char *pid_file)
      unsigned long pid;
      int st1, st2;
  
@@ -106,10 +106,10 @@ diff -ur krb5-1.13.2/src/kadmin/server/ovsec_kadmd.c krb5-1.13.2.fopen/src/kadmi
      if (file == NULL)
          return errno;
      pid = (unsigned long)getpid();
-diff -ur krb5-1.13.2/src/kdc/main.c krb5-1.13.2.fopen/src/kdc/main.c
---- krb5-1.13.2/src/kdc/main.c	2015-08-11 14:09:05.788213288 -0500
-+++ krb5-1.13.2.fopen/src/kdc/main.c	2015-08-11 13:40:50.652078819 -0500
-@@ -859,7 +859,7 @@
+diff --git a/src/kdc/main.c b/src/kdc/main.c
+--- a/src/kdc/main.c
++++ b/src/kdc/main.c
+@@ -859,7 +859,7 @@ write_pid_file(const char *path)
      FILE *file;
      unsigned long pid;
  
@@ -118,10 +118,10 @@ diff -ur krb5-1.13.2/src/kdc/main.c krb5-1.13.2.fopen/src/kdc/main.c
      if (file == NULL)
          return errno;
      pid = (unsigned long) getpid();
-diff -ur krb5-1.13.2/src/lib/gssapi/generic/util_errmap.c krb5-1.13.2.fopen/src/lib/gssapi/generic/util_errmap.c
---- krb5-1.13.2/src/lib/gssapi/generic/util_errmap.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/gssapi/generic/util_errmap.c	2015-08-11 13:44:48.732993167 -0500
-@@ -176,7 +176,7 @@
+diff --git a/src/lib/gssapi/generic/util_errmap.c b/src/lib/gssapi/generic/util_errmap.c
+--- a/src/lib/gssapi/generic/util_errmap.c
++++ b/src/lib/gssapi/generic/util_errmap.c
+@@ -176,7 +176,7 @@ OM_uint32 gssint_mecherrmap_map(OM_uint32 minor, const gss_OID_desc * oid)
  
  #ifdef DEBUG
      FILE *f;
@@ -130,10 +130,10 @@ diff -ur krb5-1.13.2/src/lib/gssapi/generic/util_errmap.c krb5-1.13.2.fopen/src/
      if (f == NULL)
          f = stderr;
  #endif
-diff -ur krb5-1.13.2/src/lib/gssapi/mechglue/g_initialize.c krb5-1.13.2.fopen/src/lib/gssapi/mechglue/g_initialize.c
---- krb5-1.13.2/src/lib/gssapi/mechglue/g_initialize.c	2015-08-11 14:09:05.250949351 -0500
-+++ krb5-1.13.2.fopen/src/lib/gssapi/mechglue/g_initialize.c	2015-08-11 13:38:16.832678845 -0500
-@@ -1357,7 +1357,7 @@
+diff --git a/src/lib/gssapi/mechglue/g_initialize.c b/src/lib/gssapi/mechglue/g_initialize.c
+--- a/src/lib/gssapi/mechglue/g_initialize.c
++++ b/src/lib/gssapi/mechglue/g_initialize.c
+@@ -1218,7 +1218,7 @@ loadConfigFile(const char *fileName)
  	char buffer[BUFSIZ], *oidStr;
  	FILE *confFile;
  
@@ -142,10 +142,10 @@ diff -ur krb5-1.13.2/src/lib/gssapi/mechglue/g_initialize.c krb5-1.13.2.fopen/sr
  		return;
  	}
  
-diff -ur krb5-1.13.2/src/lib/kadm5/logger.c krb5-1.13.2.fopen/src/lib/kadm5/logger.c
---- krb5-1.13.2/src/lib/kadm5/logger.c	2015-08-11 14:09:05.365604955 -0500
-+++ krb5-1.13.2.fopen/src/lib/kadm5/logger.c	2015-08-11 13:50:11.011871109 -0500
-@@ -567,7 +567,7 @@
+diff --git a/src/lib/kadm5/logger.c b/src/lib/kadm5/logger.c
+--- a/src/lib/kadm5/logger.c
++++ b/src/lib/kadm5/logger.c
+@@ -566,7 +566,7 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
                      if (cp[4] == ':' || cp[4] == '=') {
                          /* Solaris Kerberos */
                          log_control.log_entries[i].lfu_fopen_mode =
@@ -154,7 +154,7 @@ diff -ur krb5-1.13.2/src/lib/kadm5/logger.c krb5-1.13.2.fopen/src/lib/kadm5/logg
                          old_umask = umask(077);
                          f = fopen(&cp[5],
                                    log_control.log_entries[i].lfu_fopen_mode);
-@@ -802,7 +802,7 @@
+@@ -801,7 +801,7 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
                   */
                  else if (!strcasecmp(cp, "CONSOLE")) {
                      log_control.log_entries[i].ldu_filep =
@@ -163,7 +163,7 @@ diff -ur krb5-1.13.2/src/lib/kadm5/logger.c krb5-1.13.2.fopen/src/lib/kadm5/logg
                      if (log_control.log_entries[i].ldu_filep) {
                          set_cloexec_file(log_control.log_entries[i].ldu_filep);
                          log_control.log_entries[i].log_type = K_LOG_CONSOLE;
-@@ -818,7 +818,7 @@
+@@ -817,7 +817,7 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
                       */
                      if (cp[6] == '=') {
                          log_control.log_entries[i].ldu_filep =
@@ -172,7 +172,7 @@ diff -ur krb5-1.13.2/src/lib/kadm5/logger.c krb5-1.13.2.fopen/src/lib/kadm5/logg
                          if (log_control.log_entries[i].ldu_filep) {
                              set_cloexec_file(log_control.log_entries[i].ldu_filep);
                              log_control.log_entries[i].log_type = K_LOG_DEVICE;
-@@ -1157,7 +1157,7 @@
+@@ -1156,7 +1156,7 @@ krb5_klog_reopen(krb5_context kcontext)
               * In case the old logfile did not get moved out of the
               * way, open for append to prevent squashing the old logs.
               */
@@ -181,10 +181,10 @@ diff -ur krb5-1.13.2/src/lib/kadm5/logger.c krb5-1.13.2.fopen/src/lib/kadm5/logg
              if (f) {
                  set_cloexec_file(f);
                  log_control.log_entries[lindex].lfu_filep = f;
-diff -ur krb5-1.13.2/src/lib/kadm5/srv/server_acl.c krb5-1.13.2.fopen/src/lib/kadm5/srv/server_acl.c
---- krb5-1.13.2/src/lib/kadm5/srv/server_acl.c	2015-08-11 14:09:05.702364340 -0500
-+++ krb5-1.13.2.fopen/src/lib/kadm5/srv/server_acl.c	2015-08-11 13:38:00.105075682 -0500
-@@ -496,7 +496,7 @@
+diff --git a/src/lib/kadm5/srv/server_acl.c b/src/lib/kadm5/srv/server_acl.c
+--- a/src/lib/kadm5/srv/server_acl.c
++++ b/src/lib/kadm5/srv/server_acl.c
+@@ -488,7 +488,7 @@ kadm5int_acl_load_acl_file()
  
      DPRINT(DEBUG_CALLS, acl_debug_level, ("* kadm5int_acl_load_acl_file()\n"));
      /* Open the ACL file for read */
@@ -193,10 +193,10 @@ diff -ur krb5-1.13.2/src/lib/kadm5/srv/server_acl.c krb5-1.13.2.fopen/src/lib/ka
      if (afp) {
          set_cloexec_file(afp);
          alineno = 1;
-diff -ur krb5-1.13.2/src/lib/kdb/kdb_default.c krb5-1.13.2.fopen/src/lib/kdb/kdb_default.c
---- krb5-1.13.2/src/lib/kdb/kdb_default.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/kdb/kdb_default.c	2015-08-11 13:39:37.134237942 -0500
-@@ -251,9 +251,9 @@
+diff --git a/src/lib/kdb/kdb_default.c b/src/lib/kdb/kdb_default.c
+--- a/src/lib/kdb/kdb_default.c
++++ b/src/lib/kdb/kdb_default.c
+@@ -251,9 +251,9 @@ krb5_db_def_fetch_mkey_stash(krb5_context   context,
      FILE *kf = NULL;
  
  #ifdef ANSI_STDIO
@@ -208,10 +208,10 @@ diff -ur krb5-1.13.2/src/lib/kdb/kdb_default.c krb5-1.13.2.fopen/src/lib/kdb/kdb
  #endif
              return KRB5_KDB_CANTREAD_STORED;
      set_cloexec_file(kf);
-diff -ur krb5-1.13.2/src/lib/krb5/ccache/cc_dir.c krb5-1.13.2.fopen/src/lib/krb5/ccache/cc_dir.c
---- krb5-1.13.2/src/lib/krb5/ccache/cc_dir.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/ccache/cc_dir.c	2015-08-11 13:41:24.435225067 -0500
-@@ -153,7 +153,7 @@
+diff --git a/src/lib/krb5/ccache/cc_dir.c b/src/lib/krb5/ccache/cc_dir.c
+--- a/src/lib/krb5/ccache/cc_dir.c
++++ b/src/lib/krb5/ccache/cc_dir.c
+@@ -153,7 +153,7 @@ read_primary_file(krb5_context context, const char *primary_path,
      *residual_out = NULL;
  
      /* Open the file and read its first line. */
@@ -220,10 +220,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/ccache/cc_dir.c krb5-1.13.2.fopen/src/lib/krb5
      if (fp == NULL)
          return ENOENT;
      ret = fgets(buf, sizeof(buf), fp);
-diff -ur krb5-1.13.2/src/lib/krb5/ccache/ccselect_k5identity.c krb5-1.13.2.fopen/src/lib/krb5/ccache/ccselect_k5identity.c
---- krb5-1.13.2/src/lib/krb5/ccache/ccselect_k5identity.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/ccache/ccselect_k5identity.c	2015-08-11 13:26:23.773323178 -0500
-@@ -168,7 +168,7 @@
+diff --git a/src/lib/krb5/ccache/ccselect_k5identity.c b/src/lib/krb5/ccache/ccselect_k5identity.c
+--- a/src/lib/krb5/ccache/ccselect_k5identity.c
++++ b/src/lib/krb5/ccache/ccselect_k5identity.c
+@@ -168,7 +168,7 @@ k5identity_choose(krb5_context context, krb5_ccselect_moddata data,
      free(homedir);
      if (ret)
          return ret;
@@ -232,10 +232,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/ccache/ccselect_k5identity.c krb5-1.13.2.fopen
      free(filename);
      if (fp == NULL)
          return KRB5_PLUGIN_NO_HANDLE;
-diff -ur krb5-1.13.2/src/lib/krb5/keytab/kt_file.c krb5-1.13.2.fopen/src/lib/krb5/keytab/kt_file.c
---- krb5-1.13.2/src/lib/krb5/keytab/kt_file.c	2015-08-11 14:09:05.422898949 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/keytab/kt_file.c	2015-08-11 13:39:18.503152692 -0500
-@@ -1022,11 +1022,11 @@
+diff --git a/src/lib/krb5/keytab/kt_file.c b/src/lib/krb5/keytab/kt_file.c
+--- a/src/lib/krb5/keytab/kt_file.c
++++ b/src/lib/krb5/keytab/kt_file.c
+@@ -1028,11 +1028,11 @@ typedef krb5_int16  krb5_kt_vno;
  #define krb5_kt_default_vno ((krb5_kt_vno)KRB5_KT_DEFAULT_VNO)
  
  #ifdef ANSI_STDIO
@@ -251,10 +251,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/keytab/kt_file.c krb5-1.13.2.fopen/src/lib/krb
  #endif
  
  static krb5_error_code
-diff -ur krb5-1.13.2/src/lib/krb5/keytab/kt_srvtab.c krb5-1.13.2.fopen/src/lib/krb5/keytab/kt_srvtab.c
---- krb5-1.13.2/src/lib/krb5/keytab/kt_srvtab.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/keytab/kt_srvtab.c	2015-08-11 13:36:28.107510825 -0500
-@@ -342,9 +342,9 @@
+diff --git a/src/lib/krb5/keytab/kt_srvtab.c b/src/lib/krb5/keytab/kt_srvtab.c
+--- a/src/lib/krb5/keytab/kt_srvtab.c
++++ b/src/lib/krb5/keytab/kt_srvtab.c
+@@ -342,9 +342,9 @@ const struct _krb5_kt_ops krb5_kts_ops = {
  #include <stdio.h>
  
  #ifdef ANSI_STDIO
@@ -266,10 +266,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/keytab/kt_srvtab.c krb5-1.13.2.fopen/src/lib/k
  #endif
  
  /* The maximum sizes for V4 aname, realm, sname, and instance +1 */
-diff -ur krb5-1.13.2/src/lib/krb5/os/localaddr.c krb5-1.13.2.fopen/src/lib/krb5/os/localaddr.c
---- krb5-1.13.2/src/lib/krb5/os/localaddr.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/os/localaddr.c	2015-08-11 13:40:00.997639967 -0500
-@@ -368,7 +368,7 @@
+diff --git a/src/lib/krb5/os/localaddr.c b/src/lib/krb5/os/localaddr.c
+--- a/src/lib/krb5/os/localaddr.c
++++ b/src/lib/krb5/os/localaddr.c
+@@ -368,7 +368,7 @@ get_linux_ipv6_addrs ()
      FILE *f;
  
      /* _PATH_PROCNET_IFINET6 */
@@ -278,10 +278,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/os/localaddr.c krb5-1.13.2.fopen/src/lib/krb5/
      if (f) {
          char ifname[21];
          unsigned int idx, pfxlen, scope, dadstat;
-diff -ur krb5-1.13.2/src/lib/krb5/os/localauth_k5login.c krb5-1.13.2.fopen/src/lib/krb5/os/localauth_k5login.c
---- krb5-1.13.2/src/lib/krb5/os/localauth_k5login.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/os/localauth_k5login.c	2015-08-11 13:45:18.115959001 -0500
-@@ -116,7 +116,7 @@
+diff --git a/src/lib/krb5/os/localauth_k5login.c b/src/lib/krb5/os/localauth_k5login.c
+--- a/src/lib/krb5/os/localauth_k5login.c
++++ b/src/lib/krb5/os/localauth_k5login.c
+@@ -116,7 +116,7 @@ userok_k5login(krb5_context context, krb5_localauth_moddata data,
      if (ret)
          goto cleanup;
  
@@ -290,10 +290,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/os/localauth_k5login.c krb5-1.13.2.fopen/src/l
      if (fp == NULL) {
          ret = errno;
          goto cleanup;
-diff -ur krb5-1.13.2/src/lib/krb5/rcache/t_replay.c krb5-1.13.2.fopen/src/lib/krb5/rcache/t_replay.c
---- krb5-1.13.2/src/lib/krb5/rcache/t_replay.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/rcache/t_replay.c	2015-08-11 13:45:29.971685638 -0500
-@@ -66,7 +66,7 @@
+diff --git a/src/lib/krb5/rcache/t_replay.c b/src/lib/krb5/rcache/t_replay.c
+--- a/src/lib/krb5/rcache/t_replay.c
++++ b/src/lib/krb5/rcache/t_replay.c
+@@ -66,7 +66,7 @@ dump_rcache(const char *filename)
      krb5_int32 usec;
      krb5_timestamp timestamp;
  
@@ -302,10 +302,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/rcache/t_replay.c krb5-1.13.2.fopen/src/lib/kr
      if (!fp) {
          fprintf(stderr, "Can't open filename: %s\n", strerror(errno));
          return;
-diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/lib/krb5/unicode/ucdata/ucdata.c
---- krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/unicode/ucdata/ucdata.c	2015-08-11 13:43:57.692003927 -0500
-@@ -156,7 +156,7 @@
+diff --git a/src/lib/krb5/unicode/ucdata/ucdata.c b/src/lib/krb5/unicode/ucdata/ucdata.c
+--- a/src/lib/krb5/unicode/ucdata/ucdata.c
++++ b/src/lib/krb5/unicode/ucdata/ucdata.c
+@@ -156,7 +156,7 @@ _ucprop_load(char *paths, int reload)
          _ucprop_size = 0;
      }
  
@@ -314,7 +314,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
        return -1;
  
      /*
-@@ -337,7 +337,7 @@
+@@ -337,7 +337,7 @@ _uccase_load(char *paths, int reload)
          _uccase_size = 0;
      }
  
@@ -323,7 +323,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
        return -1;
  
      /*
-@@ -532,7 +532,7 @@
+@@ -532,7 +532,7 @@ _uccomp_load(char *paths, int reload)
          _uccomp_size = 0;
      }
  
@@ -332,7 +332,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
          return -1;
  
      /*
-@@ -730,7 +730,7 @@
+@@ -730,7 +730,7 @@ _ucdcmp_load(char *paths, int reload)
          _ucdcmp_size = 0;
      }
  
@@ -341,7 +341,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
          return -1;
  
      /*
-@@ -785,7 +785,7 @@
+@@ -785,7 +785,7 @@ _uckdcmp_load(char *paths, int reload)
          _uckdcmp_size = 0;
      }
  
@@ -350,7 +350,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
          return -1;
  
      /*
-@@ -1042,7 +1042,7 @@
+@@ -1042,7 +1042,7 @@ _uccmcl_load(char *paths, int reload)
          _uccmcl_size = 0;
      }
  
@@ -359,7 +359,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
          return -1;
  
      /*
-@@ -1138,7 +1138,7 @@
+@@ -1138,7 +1138,7 @@ _ucnumb_load(char *paths, int reload)
          _ucnum_size = 0;
      }
  
@@ -368,10 +368,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucdata.c krb5-1.13.2.fopen/src/
        return -1;
  
      /*
-diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/src/lib/krb5/unicode/ucdata/ucgendat.c
---- krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/krb5/unicode/ucdata/ucgendat.c	2015-08-11 13:51:21.938013410 -0500
-@@ -1296,14 +1296,14 @@
+diff --git a/src/lib/krb5/unicode/ucdata/ucgendat.c b/src/lib/krb5/unicode/ucdata/ucgendat.c
+--- a/src/lib/krb5/unicode/ucdata/ucgendat.c
++++ b/src/lib/krb5/unicode/ucdata/ucgendat.c
+@@ -1296,14 +1296,14 @@ write_cdata(char *opath)
       * Open the output file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "uctable.h", opath);
@@ -388,7 +388,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  #endif
  
-@@ -1436,7 +1436,7 @@
+@@ -1436,7 +1436,7 @@ write_cdata(char *opath)
       * Open the case.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "case.dat", opath);
@@ -397,7 +397,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  
      /*
-@@ -1513,7 +1513,7 @@
+@@ -1513,7 +1513,7 @@ write_cdata(char *opath)
       * Open the comp.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "comp.dat", opath);
@@ -406,7 +406,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
  	return;
  
      /*
-@@ -1589,7 +1589,7 @@
+@@ -1589,7 +1589,7 @@ write_cdata(char *opath)
       * Open the decomp.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "decomp.dat", opath);
@@ -415,7 +415,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  
      hdr[1] = decomps_used;
-@@ -1682,7 +1682,7 @@
+@@ -1682,7 +1682,7 @@ write_cdata(char *opath)
       * Open the kdecomp.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "kdecomp.dat", opath);
@@ -424,7 +424,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  
      hdr[1] = kdecomps_used;
-@@ -1762,7 +1762,7 @@
+@@ -1762,7 +1762,7 @@ write_cdata(char *opath)
       * Open the cmbcl.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "cmbcl.dat", opath);
@@ -433,7 +433,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  
      /*
-@@ -1836,7 +1836,7 @@
+@@ -1836,7 +1836,7 @@ write_cdata(char *opath)
       * Open the num.dat file.
       */
      snprintf(path, sizeof path, "%s" LDAP_DIRSEP "num.dat", opath);
@@ -442,7 +442,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
        return;
  
      /*
-@@ -1908,7 +1908,7 @@
+@@ -1908,7 +1908,7 @@ main(int argc, char *argv[])
                case 'x':
                  argc--;
                  argv++;
@@ -451,7 +451,7 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
                    fprintf(stderr,
                            "%s: unable to open composition exclusion file %s\n",
                            prog, argv[0]);
-@@ -1924,7 +1924,7 @@
+@@ -1924,7 +1924,7 @@ main(int argc, char *argv[])
          } else {
              if (in != stdin && in != NULL)
                fclose(in);
@@ -460,10 +460,10 @@ diff -ur krb5-1.13.2/src/lib/krb5/unicode/ucdata/ucgendat.c krb5-1.13.2.fopen/sr
                fprintf(stderr, "%s: unable to open ctype file %s\n",
                        prog, argv[0]);
              else {
-diff -ur krb5-1.13.2/src/lib/rpc/getrpcent.c krb5-1.13.2.fopen/src/lib/rpc/getrpcent.c
---- krb5-1.13.2/src/lib/rpc/getrpcent.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/rpc/getrpcent.c	2015-08-11 13:25:58.125779542 -0500
-@@ -121,7 +121,7 @@
+diff --git a/src/lib/rpc/getrpcent.c b/src/lib/rpc/getrpcent.c
+--- a/src/lib/rpc/getrpcent.c
++++ b/src/lib/rpc/getrpcent.c
+@@ -121,7 +121,7 @@ SETRPCENT_TYPE setrpcent(int f)
  	if (d == 0)
  		return;
  	if (d->rpcf == NULL) {
@@ -472,7 +472,7 @@ diff -ur krb5-1.13.2/src/lib/rpc/getrpcent.c krb5-1.13.2.fopen/src/lib/rpc/getrp
  		if (d->rpcf)
  		    set_cloexec_file(d->rpcf);
  	} else
-@@ -160,7 +160,7 @@
+@@ -160,7 +160,7 @@ getrpcent(void)
  	if (d == 0)
  		return(NULL);
  	if (d->rpcf == NULL) {
@@ -481,10 +481,10 @@ diff -ur krb5-1.13.2/src/lib/rpc/getrpcent.c krb5-1.13.2.fopen/src/lib/rpc/getrp
  		return (NULL);
  	    set_cloexec_file(d->rpcf);
  	}
-diff -ur krb5-1.13.2/src/lib/rpc/svc_auth_gssapi.c krb5-1.13.2.fopen/src/lib/rpc/svc_auth_gssapi.c
---- krb5-1.13.2/src/lib/rpc/svc_auth_gssapi.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/lib/rpc/svc_auth_gssapi.c	2015-08-11 13:52:59.222895641 -0500
-@@ -57,7 +57,7 @@
+diff --git a/src/lib/rpc/svc_auth_gssapi.c b/src/lib/rpc/svc_auth_gssapi.c
+--- a/src/lib/rpc/svc_auth_gssapi.c
++++ b/src/lib/rpc/svc_auth_gssapi.c
+@@ -57,7 +57,7 @@ void gssrpcint_printf(const char *format, ...)
      {
  	static FILE *f;
  	if (f == NULL)
@@ -493,10 +493,10 @@ diff -ur krb5-1.13.2/src/lib/rpc/svc_auth_gssapi.c krb5-1.13.2.fopen/src/lib/rpc
  	if (f) {
  	    vfprintf(f, format, ap);
  	    fflush(f);
-diff -ur krb5-1.13.2/src/plugins/audit/test/au_test.c krb5-1.13.2.fopen/src/plugins/audit/test/au_test.c
---- krb5-1.13.2/src/plugins/audit/test/au_test.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/audit/test/au_test.c	2015-08-11 13:41:56.337778968 -0500
-@@ -54,7 +54,7 @@
+diff --git a/src/plugins/audit/test/au_test.c b/src/plugins/audit/test/au_test.c
+--- a/src/plugins/audit/test/au_test.c
++++ b/src/plugins/audit/test/au_test.c
+@@ -54,7 +54,7 @@ static k5_mutex_t lock = K5_MUTEX_PARTIAL_INITIALIZER;
  static krb5_error_code
  open_au(krb5_audit_moddata *auctx)
  {
@@ -505,10 +505,10 @@ diff -ur krb5-1.13.2/src/plugins/audit/test/au_test.c krb5-1.13.2.fopen/src/plug
      if (au_fd == NULL)
          return KRB5_PLUGIN_NO_HANDLE; /* audit module is unavailable */
      k5_mutex_init(&lock);
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/adb_openclose.c krb5-1.13.2.fopen/src/plugins/kdb/db2/adb_openclose.c
---- krb5-1.13.2/src/plugins/kdb/db2/adb_openclose.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/adb_openclose.c	2015-08-11 13:51:43.944888036 -0500
-@@ -147,12 +147,12 @@
+diff --git a/src/plugins/kdb/db2/adb_openclose.c b/src/plugins/kdb/db2/adb_openclose.c
+--- a/src/plugins/kdb/db2/adb_openclose.c
++++ b/src/plugins/kdb/db2/adb_openclose.c
+@@ -147,12 +147,12 @@ osa_adb_init_db(osa_adb_db_t *dbp, char *filename, char *lockfilename,
           * POSIX systems
           */
          lockp->lockinfo.filename = strdup(lockfilename);
@@ -523,10 +523,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/adb_openclose.c krb5-1.13.2.fopen/src/p
                  == NULL) {
                  free(db);
                  return OSA_ADB_NOLOCKFILE;
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/btree/bt_debug.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/btree/bt_debug.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/btree/bt_debug.c	2015-08-11 13:57:58.472374191 -0500
-@@ -66,7 +66,7 @@
+diff --git a/src/plugins/kdb/db2/libdb2/btree/bt_debug.c b/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
+--- a/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
++++ b/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
+@@ -66,7 +66,7 @@ __bt_dinit()
  	first = 0;
  
  #ifndef TRACE_TO_STDERR
@@ -535,10 +535,22 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/btree/bt_debug.c krb5-1.13.2.fop
  		return;
  #endif
  	tracefp = stderr;
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c	2015-08-11 13:52:17.919976635 -0500
-@@ -224,7 +224,7 @@
+diff --git a/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c b/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
+--- a/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
++++ b/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
+@@ -18,7 +18,7 @@ void main(int argc, char *argv[]) {
+   FILE *fopen(), *fin;
+ 
+   unlink("test.db");
+-  if ((fin = fopen("data","r")) == NULL) {
++  if ((fin = fopen("data","rF")) == NULL) {
+     printf("Unable to open %s\n","data");
+     exit(25);
+   }
+diff --git a/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c b/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
+--- a/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
++++ b/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
+@@ -224,7 +224,7 @@ user(db)
  	int argc, i, last;
  	char *lbuf, *argv[4], buf[512];
  
@@ -547,7 +559,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c krb5-1.1
  		(void)fprintf(stderr,
  		    "/dev/tty: %s\n", strerror(errno));
  		exit(1);
-@@ -624,7 +624,7 @@
+@@ -624,7 +624,7 @@ list(db, argv)
  	FILE *fp;
  	int status;
  
@@ -556,7 +568,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c krb5-1.1
  		(void)fprintf(stderr, "%s: %s\n", argv[1], strerror(errno));
  		return;
  	}
-@@ -649,7 +649,7 @@
+@@ -649,7 +649,7 @@ rlist(db, argv)
  	void *cookie;
  
  	cookie = NULL;
@@ -565,7 +577,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c krb5-1.1
  		(void)fprintf(stderr, "%s: %s\n", argv[1], strerror(errno));
  		return;
  	}
-@@ -679,7 +679,7 @@
+@@ -679,7 +679,7 @@ load(db, argv)
  	char *lp, buf[16 * 1024];
  
  	BUGdb = db;
@@ -574,10 +586,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c krb5-1.1
  		(void)fprintf(stderr, "%s: %s\n", argv[1], strerror(errno));
  		return;
  	}
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c	2015-08-11 13:58:10.679774122 -0500
-@@ -103,7 +103,7 @@
+diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c b/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
+--- a/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
++++ b/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
+@@ -103,7 +103,7 @@ char **argv;
  	}
  
  	if ( --argc ) {
@@ -586,10 +598,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c krb5-1.1
  		i = 0;
  		while ( fgets(wp1, 8192, fp) &&
  			fgets(wp2, 8192, fp) &&
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c	2015-08-11 13:37:47.137256617 -0500
-@@ -106,7 +106,7 @@
+diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c b/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
+--- a/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
++++ b/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
+@@ -106,7 +106,7 @@ char **argv;
  	}
  
  	if ( --argc ) {
@@ -598,10 +610,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c krb5-1
  		i = 0;
  		while ( fgets(wp1, 256, fp) &&
  			fgets(wp2, 8192, fp) &&
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c	2015-08-11 13:46:12.282862828 -0500
-@@ -19,8 +19,8 @@
+diff --git a/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c b/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
+--- a/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
++++ b/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
+@@ -19,8 +19,8 @@ main(void)
      val_line = (char *)malloc(300);
      old = (char *)malloc(300);
  
@@ -612,7 +624,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c krb5
  
      passwd.bsize =  1024;
      passwd.cachesize = 1024 * 1024;
-@@ -61,8 +61,8 @@
+@@ -61,8 +61,8 @@ main(void)
  
  
  
@@ -623,7 +635,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c krb5
      get_key = (char *)malloc(100);
      get_val = (char *)malloc(300);
  
-@@ -120,8 +120,8 @@
+@@ -120,8 +120,8 @@ main(void)
      get_key = (char *)malloc(100);
      key2 = (char *)malloc(100);
  
@@ -634,7 +646,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c krb5
  
      db = dbopen("/usr/tmp/passwd.db", O_RDWR|O_BINARY, 0664, DB_HASH, &passwd);
      n = 0;
-@@ -148,8 +148,8 @@
+@@ -148,8 +148,8 @@ main(void)
      key2 = (char *)malloc(100);
      get_val = (char *)malloc(300);
  
@@ -645,22 +657,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c krb5
  
      db = dbopen("/usr/tmp/passwd.db", O_RDWR|O_BINARY, 0664, DB_HASH, &passwd);
      n = 0;
-diff -ur krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
---- krb5-1.13.2/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c	2015-08-11 13:35:18.997485992 -0500
-@@ -18,7 +18,7 @@
-   FILE *fopen(), *fin;
- 
-   unlink("test.db");
--  if ((fin = fopen("data","r")) == NULL) {
-+  if ((fin = fopen("data","rF")) == NULL) {
-     printf("Unable to open %s\n","data");
-     exit(25);
-   }
-diff -ur krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c krb5-1.13.2.fopen/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
---- krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c	2015-08-11 13:50:27.043180087 -0500
-@@ -178,7 +178,7 @@
+diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
+--- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
++++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
+@@ -178,7 +178,7 @@ done:
  
      /* set password in the file */
      old_mode = umask(0177);
@@ -669,7 +669,7 @@ diff -ur krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c krb5-1.
      if (pfile == NULL) {
          com_err(me, errno, _("Failed to open file %s: %s"), file_name,
                  strerror (errno));
-@@ -230,7 +230,7 @@
+@@ -230,7 +230,7 @@ done:
          }
  
          omask = umask(077);
@@ -678,10 +678,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c krb5-1.
          umask (omask);
          if (newfile == NULL) {
              com_err(me, errno, _("Error creating file %s"), tmp_file);
-diff -ur krb5-1.13.2/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c krb5-1.13.2.fopen/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
---- krb5-1.13.2/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c	2015-08-11 13:38:33.143752493 -0500
-@@ -87,7 +87,7 @@
+diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
+--- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
++++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
+@@ -87,7 +87,7 @@ krb5_ldap_readpassword(krb5_context context, const char *filename,
  
      *password_out = NULL;
  
@@ -690,10 +690,10 @@ diff -ur krb5-1.13.2/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c krb5-
      if (fp == NULL) {
          ret = errno;
          k5_setmsg(context, ret, _("Cannot open LDAP password file '%s': %s"),
-diff -ur krb5-1.13.2/src/plugins/locate/python/py-locate.c krb5-1.13.2.fopen/src/plugins/locate/python/py-locate.c
---- krb5-1.13.2/src/plugins/locate/python/py-locate.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/locate/python/py-locate.c	2015-08-11 13:27:01.588118726 -0500
-@@ -98,7 +98,7 @@
+diff --git a/src/plugins/locate/python/py-locate.c b/src/plugins/locate/python/py-locate.c
+--- a/src/plugins/locate/python/py-locate.c
++++ b/src/plugins/locate/python/py-locate.c
+@@ -98,7 +98,7 @@ my_init(void)
  
      Py_Initialize ();
  //    fprintf(stderr, "trying to load %s\n", SCRIPT_PATH);
@@ -702,10 +702,10 @@ diff -ur krb5-1.13.2/src/plugins/locate/python/py-locate.c krb5-1.13.2.fopen/src
      if (f == NULL) {
          if (sctx)
              krb5_set_error_message(sctx, -1,
-diff -ur krb5-1.13.2/src/plugins/preauth/otp/otp_state.c krb5-1.13.2.fopen/src/plugins/preauth/otp/otp_state.c
---- krb5-1.13.2/src/plugins/preauth/otp/otp_state.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/preauth/otp/otp_state.c	2015-08-11 13:45:35.971590182 -0500
-@@ -94,7 +94,7 @@
+diff --git a/src/plugins/preauth/otp/otp_state.c b/src/plugins/preauth/otp/otp_state.c
+--- a/src/plugins/preauth/otp/otp_state.c
++++ b/src/plugins/preauth/otp/otp_state.c
+@@ -96,7 +96,7 @@ read_secret_file(const char *secret_file, char **secret)
          return retval;
      }
  
@@ -714,10 +714,10 @@ diff -ur krb5-1.13.2/src/plugins/preauth/otp/otp_state.c krb5-1.13.2.fopen/src/p
      if (file == NULL) {
          retval = errno;
          com_err("otp", retval, "Unable to open secret file '%s'", filename);
-diff -ur krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c krb5-1.13.2.fopen/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
---- krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c	2015-08-11 14:09:05.679850166 -0500
-+++ krb5-1.13.2.fopen/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c	2015-08-11 13:47:00.667400771 -0500
-@@ -4256,7 +4256,7 @@
+diff --git a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
+--- a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
++++ b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
+@@ -4281,7 +4281,7 @@ pkinit_get_certs_pkcs12(krb5_context context,
          goto cleanup;
      }
  
@@ -726,10 +726,10 @@ diff -ur krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c krb5-1.1
      if (fp == NULL) {
          pkiDebug("Failed to open PKCS12 file '%s', error %d\n",
                   idopts->cert_filename, errno);
-diff -ur krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_lib.c krb5-1.13.2.fopen/src/plugins/preauth/pkinit/pkinit_lib.c
---- krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_lib.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/preauth/pkinit/pkinit_lib.c	2015-08-11 13:37:29.585859289 -0500
-@@ -365,7 +365,7 @@
+diff --git a/src/plugins/preauth/pkinit/pkinit_lib.c b/src/plugins/preauth/pkinit/pkinit_lib.c
+--- a/src/plugins/preauth/pkinit/pkinit_lib.c
++++ b/src/plugins/preauth/pkinit/pkinit_lib.c
+@@ -365,7 +365,7 @@ print_buffer_bin(unsigned char *buf, unsigned int len, char *filename)
      if (len <= 0 || filename == NULL)
          return;
  
@@ -738,10 +738,10 @@ diff -ur krb5-1.13.2/src/plugins/preauth/pkinit/pkinit_lib.c krb5-1.13.2.fopen/s
          return;
  
      set_cloexec_file(f);
-diff -ur krb5-1.13.2/src/plugins/tls/k5tls/openssl.c krb5-1.13.2.fopen/src/plugins/tls/k5tls/openssl.c
---- krb5-1.13.2/src/plugins/tls/k5tls/openssl.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/plugins/tls/k5tls/openssl.c	2015-08-11 13:39:50.077659500 -0500
-@@ -348,7 +348,7 @@
+diff --git a/src/plugins/tls/k5tls/openssl.c b/src/plugins/tls/k5tls/openssl.c
+--- a/src/plugins/tls/k5tls/openssl.c
++++ b/src/plugins/tls/k5tls/openssl.c
+@@ -348,7 +348,7 @@ load_anchor_file(X509_STORE *store, const char *path)
      X509_INFO *xi;
      int i;
  
@@ -750,10 +750,10 @@ diff -ur krb5-1.13.2/src/plugins/tls/k5tls/openssl.c krb5-1.13.2.fopen/src/plugi
      if (fp == NULL)
          return errno;
      sk = PEM_X509_INFO_read(fp, NULL, NULL, NULL);
-diff -ur krb5-1.13.2/src/slave/kpropd.c krb5-1.13.2.fopen/src/slave/kpropd.c
---- krb5-1.13.2/src/slave/kpropd.c	2015-08-11 14:09:06.005972821 -0500
-+++ krb5-1.13.2.fopen/src/slave/kpropd.c	2015-08-11 13:36:51.675274120 -0500
-@@ -1306,7 +1306,7 @@
+diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
+--- a/src/slave/kpropd.c
++++ b/src/slave/kpropd.c
+@@ -1310,7 +1310,7 @@ authorized_principal(krb5_context context, krb5_principal p,
      if (retval)
          return FALSE;
  
@@ -762,10 +762,10 @@ diff -ur krb5-1.13.2/src/slave/kpropd.c krb5-1.13.2.fopen/src/slave/kpropd.c
      if (acl_file == NULL)
          return FALSE;
  
-diff -ur krb5-1.13.2/src/tests/asn.1/t_trval.c krb5-1.13.2.fopen/src/tests/asn.1/t_trval.c
---- krb5-1.13.2/src/tests/asn.1/t_trval.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/tests/asn.1/t_trval.c	2015-08-11 13:26:43.068639205 -0500
-@@ -93,7 +93,7 @@
+diff --git a/src/tests/asn.1/t_trval.c b/src/tests/asn.1/t_trval.c
+--- a/src/tests/asn.1/t_trval.c
++++ b/src/tests/asn.1/t_trval.c
+@@ -93,7 +93,7 @@ int main(argc, argv)
              }
          } else {
              optflg = 0;
@@ -774,10 +774,10 @@ diff -ur krb5-1.13.2/src/tests/asn.1/t_trval.c krb5-1.13.2.fopen/src/tests/asn.1
                  fprintf(stderr,"trval: unable to open %s\n", *argv);
                  continue;
              }
-diff -ur krb5-1.13.2/src/tests/gss-threads/gss-server.c krb5-1.13.2.fopen/src/tests/gss-threads/gss-server.c
---- krb5-1.13.2/src/tests/gss-threads/gss-server.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/tests/gss-threads/gss-server.c	2015-08-11 13:38:08.680788848 -0500
-@@ -733,7 +733,7 @@
+diff --git a/src/tests/gss-threads/gss-server.c b/src/tests/gss-threads/gss-server.c
+--- a/src/tests/gss-threads/gss-server.c
++++ b/src/tests/gss-threads/gss-server.c
+@@ -733,7 +733,7 @@ main(int argc, char **argv)
              if (!strcmp(*argv, "/dev/null")) {
                  logfile = display_file = NULL;
              } else {
@@ -786,10 +786,10 @@ diff -ur krb5-1.13.2/src/tests/gss-threads/gss-server.c krb5-1.13.2.fopen/src/te
                  display_file = logfile;
                  if (!logfile) {
                      perror(*argv);
-diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/profile/prof_file.c
---- old/src/util/profile/prof_file.c	2016-03-31 16:44:53.634245353 -0700
-+++ patched/src/util/profile/prof_file.c	2016-03-31 20:07:34.843286876 -0700
-@@ -126,7 +126,7 @@ static int rw_access(const_profile_files
+diff --git a/src/util/profile/prof_file.c b/src/util/profile/prof_file.c
+--- a/src/util/profile/prof_file.c
++++ b/src/util/profile/prof_file.c
+@@ -126,7 +126,7 @@ static int rw_access(const_profile_filespec_t filespec)
       */
      FILE    *f;
  
@@ -798,7 +798,7 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
      if (f) {
          fclose(f);
          return 1;
-@@ -150,7 +150,7 @@ static int r_access(const_profile_filesp
+@@ -150,7 +150,7 @@ static int r_access(const_profile_filespec_t filespec)
       */
      FILE    *f;
  
@@ -807,7 +807,7 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
      if (f) {
          fclose(f);
          return 1;
-@@ -355,7 +355,7 @@ errcode_t profile_update_file_data_locke
+@@ -355,7 +355,7 @@ errcode_t profile_update_file_data_locked(prf_data_t data, char **ret_modspec)
  #endif
      if (!isdir) {
          errno = 0;
@@ -816,7 +816,7 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
          if (f == NULL)
              return (errno != 0) ? errno : ENOENT;
          set_cloexec_file(f);
-@@ -423,7 +423,7 @@ static errcode_t write_data_to_file(prf_
+@@ -423,7 +423,7 @@ static errcode_t write_data_to_file(prf_data_t data, const char *outfile,
  
      errno = 0;
  
@@ -825,22 +825,22 @@ diff -ur krb5-1.13.2/src/util/profile/prof_file.c krb5-1.13.2.fopen/src/util/pro
      if (!f) {
          retval = errno;
          if (retval == 0)
-diff -ur krb5-1.13.2/src/util/profile/prof_parse.c krb5-1.13.2.fopen/src/util/profile/prof_parse.c
---- krb5-1.13.2/src/util/profile/prof_parse.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/util/profile/prof_parse.c	2015-08-11 13:40:28.548611243 -0500
-@@ -212,7 +212,7 @@
-     incstate.root_section = state->root_section;
-     incstate.current_section = NULL;
+diff --git a/src/util/profile/prof_parse.c b/src/util/profile/prof_parse.c
+--- a/src/util/profile/prof_parse.c
++++ b/src/util/profile/prof_parse.c
+@@ -213,7 +213,7 @@ static errcode_t parse_include_file(const char *filename,
+     state.root_section = root_section;
+     state.current_section = NULL;
  
 -    fp = fopen(filename, "r");
 +    fp = fopen(filename, "rF");
      if (fp == NULL)
          return PROF_FAIL_INCLUDE_FILE;
-     retval = parse_file(fp, &incstate, NULL);
-diff -ur krb5-1.13.2/src/util/profile/test_parse.c krb5-1.13.2.fopen/src/util/profile/test_parse.c
---- krb5-1.13.2/src/util/profile/test_parse.c	2015-05-08 18:27:02.000000000 -0500
-+++ krb5-1.13.2.fopen/src/util/profile/test_parse.c	2015-08-11 13:41:47.994085591 -0500
-@@ -25,7 +25,7 @@
+     retval = parse_file(fp, &state, NULL);
+diff --git a/src/util/profile/test_parse.c b/src/util/profile/test_parse.c
+--- a/src/util/profile/test_parse.c
++++ b/src/util/profile/test_parse.c
+@@ -25,7 +25,7 @@ int main(argc, argv)
          exit(1);
      }
  

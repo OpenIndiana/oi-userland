@@ -9,13 +9,14 @@
 # This patch is not inteded for upstream contribution.
 # Patch source: in-house
 #
-diff -ur old/src/lib/gssapi/mechglue/g_initialize.c new/src/lib/gssapi/mechglue/g_initialize.c
---- old/src/lib/gssapi/mechglue/g_initialize.c	2014-08-06 19:07:58.000000000 +0200
-+++ new/src/lib/gssapi/mechglue/g_initialize.c	2014-08-06 19:28:42.310006486 +0200
-@@ -444,6 +444,145 @@
+diff --git a/src/lib/gssapi/mechglue/g_initialize.c b/src/lib/gssapi/mechglue/g_initialize.c
+--- a/src/lib/gssapi/mechglue/g_initialize.c
++++ b/src/lib/gssapi/mechglue/g_initialize.c
+@@ -1568,3 +1568,141 @@ addConfigEntry(const char *oidStr, const char *oid, const char *sharedLib,
+ 		g_mechList = aMech;
  }
  
- /*
++/*
 + * given a mechanism string return the mechanism oid
 + */
 +OM_uint32
@@ -153,16 +154,10 @@ diff -ur old/src/lib/gssapi/mechglue/g_initialize.c new/src/lib/gssapi/mechglue/
 +
 +	return (kmodName);
 +} /* gssint_get_kmodName */
-+
-+/*
-  * determines if the mechList needs to be updated from file
-  * and performs the update.
-  * this functions must be called with a lock of g_mechListLock
-Only in new/src/lib/gssapi/mechglue: g_initialize.c.orig
-diff -ur old/src/lib/gssapi/mechglue/mglueP.h new/src/lib/gssapi/mechglue/mglueP.h
---- old/src/lib/gssapi/mechglue/mglueP.h	2014-08-06 19:07:58.000000000 +0200
-+++ new/src/lib/gssapi/mechglue/mglueP.h	2014-08-06 19:25:49.488232250 +0200
-@@ -793,6 +793,28 @@
+diff --git a/src/lib/gssapi/mechglue/mglueP.h b/src/lib/gssapi/mechglue/mglueP.h
+--- a/src/lib/gssapi/mechglue/mglueP.h
++++ b/src/lib/gssapi/mechglue/mglueP.h
+@@ -824,6 +824,28 @@ OM_uint32 gss_add_mech_name_type
   * Sun extensions to GSS-API v2
   */
  
@@ -191,4 +186,3 @@ diff -ur old/src/lib/gssapi/mechglue/mglueP.h new/src/lib/gssapi/mechglue/mglueP
  int
  gssint_get_der_length(
  	unsigned char **,	/* buf */
-Only in new/src/lib/gssapi/mechglue: mglueP.h.orig

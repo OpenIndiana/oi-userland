@@ -15,10 +15,10 @@
 # http://mailman.mit.edu/pipermail/krbdev/2015-December/012508.html
 # Patch source: in-house
 #
-diff -pur old/src/lib/krb5/rcache/rc_conv.c new/src/lib/krb5/rcache/rc_conv.c
---- old/src/lib/krb5/rcache/rc_conv.c
-+++ new/src/lib/krb5/rcache/rc_conv.c
-@@ -55,7 +55,7 @@ krb5_rc_hash_message(krb5_context contex
+diff --git a/src/lib/krb5/rcache/rc_conv.c b/src/lib/krb5/rcache/rc_conv.c
+--- a/src/lib/krb5/rcache/rc_conv.c
++++ b/src/lib/krb5/rcache/rc_conv.c
+@@ -55,7 +55,7 @@ krb5_rc_hash_message(krb5_context context, const krb5_data *message,
      *out = NULL;
  
      /* Calculate the binary checksum. */
@@ -27,10 +27,10 @@ diff -pur old/src/lib/krb5/rcache/rc_conv.c new/src/lib/krb5/rcache/rc_conv.c
                                    message, &cksum);
      if (retval)
          return retval;
-diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
---- old/src/lib/krb5/rcache/rc_dfl.c
-+++ new/src/lib/krb5/rcache/rc_dfl.c
-@@ -391,7 +391,7 @@ parse_counted_string(char **strptr, char
+diff --git a/src/lib/krb5/rcache/rc_dfl.c b/src/lib/krb5/rcache/rc_dfl.c
+--- a/src/lib/krb5/rcache/rc_dfl.c
++++ b/src/lib/krb5/rcache/rc_dfl.c
+@@ -391,7 +391,7 @@ parse_counted_string(char **strptr, char **result)
  /*
   * Hash extension records have the format:
   *  client = <empty string>
@@ -39,7 +39,7 @@ diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
   * Spaces in the client and server string are represented with
   * with backslashes.  Client and server lengths are represented in
   * ASCII decimal (which is different from the 32-bit binary we use
-@@ -408,7 +408,7 @@ check_hash_extension(krb5_donot_replay *
+@@ -408,7 +408,7 @@ check_hash_extension(krb5_donot_replay *rep)
      /* Check if this appears to match the hash extension format. */
      if (*rep->client)
          return 0;
@@ -48,7 +48,7 @@ diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
          return 0;
  
      /* Parse out the message hash. */
-@@ -664,7 +664,7 @@ krb5_rc_io_store(krb5_context context, s
+@@ -664,7 +664,7 @@ krb5_rc_io_store(krb5_context context, struct dfl_data *t,
  
          /* Format the extension value so we know its length. */
          k5_buf_init_dynamic(&extbuf);

@@ -16,10 +16,10 @@
 #
 # Patch source: in-house
 #
-diff -ur krb5-1.14.2/src/lib/krb5/ccache/ccselect.c krb5-1.14.2-23301407/src/lib/krb5/ccache/ccselect.c
---- krb5-1.14.2/src/lib/krb5/ccache/ccselect.c
-+++ krb5-1.14.2-23301407/src/lib/krb5/ccache/ccselect.c
-@@ -59,12 +59,17 @@
+diff --git a/src/lib/krb5/ccache/ccselect.c b/src/lib/krb5/ccache/ccselect.c
+--- a/src/lib/krb5/ccache/ccselect.c
++++ b/src/lib/krb5/ccache/ccselect.c
+@@ -59,12 +59,17 @@ load_modules(krb5_context context)
      krb5_plugin_initvt_fn *modules = NULL, *mod;
      size_t count;
  
@@ -39,10 +39,10 @@ diff -ur krb5-1.14.2/src/lib/krb5/ccache/ccselect.c krb5-1.14.2-23301407/src/lib
  
      ret = k5_plugin_register(context, PLUGIN_INTERFACE_CCSELECT, "realm",
                               ccselect_realm_initvt);
-diff -ur krb5-1.14.2/src/man/krb5.conf.man krb5-1.14.2-23301407/src/man/krb5.conf.man
---- krb5-1.14.2/src/man/krb5.conf.man
-+++ krb5-1.14.2-23301407/src/man/krb5.conf.man
-@@ -943,10 +943,6 @@
+diff --git a/src/man/krb5.conf.man b/src/man/krb5.conf.man
+--- a/src/man/krb5.conf.man
++++ b/src/man/krb5.conf.man
+@@ -943,10 +943,6 @@ dynamic modules, the following built\-in modules exist (and may be
  disabled with the disable tag):
  .INDENT 0.0
  .TP
@@ -53,10 +53,10 @@ diff -ur krb5-1.14.2/src/man/krb5.conf.man krb5-1.14.2-23301407/src/man/krb5.con
  .B \fBrealm\fP
  Uses the service realm to guess an appropriate cache from the
  collection
-diff -ur krb5-1.14.2/src/tests/gssapi/t_ccselect.py krb5-1.14.2-23301407/src/tests/gssapi/t_ccselect.py
---- krb5-1.14.2/src/tests/gssapi/t_ccselect.py
-+++ krb5-1.14.2-23301407/src/tests/gssapi/t_ccselect.py
-@@ -103,22 +103,24 @@
+diff --git a/src/tests/gssapi/t_ccselect.py b/src/tests/gssapi/t_ccselect.py
+--- a/src/tests/gssapi/t_ccselect.py
++++ b/src/tests/gssapi/t_ccselect.py
+@@ -103,22 +103,24 @@ r1.run(['./t_ccselect', gssserver], expected_code=1)
  r1.kinit(bob, password('bob'))
  
  # Try some cache selections using .k5identity.
@@ -98,10 +98,10 @@ diff -ur krb5-1.14.2/src/tests/gssapi/t_ccselect.py krb5-1.14.2-23301407/src/tes
 +    "k5identity tests...\n");
  
  success('GSSAPI credential selection tests')
-diff -ur krb5-1.14.2/src/tests/gssapi/t_client_keytab.py krb5-1.14.2-23301407/src/tests/gssapi/t_client_keytab.py
---- krb5-1.14.2/src/tests/gssapi/t_client_keytab.py
-+++ krb5-1.14.2-23301407/src/tests/gssapi/t_client_keytab.py
-@@ -21,15 +21,17 @@
+diff --git a/src/tests/gssapi/t_client_keytab.py b/src/tests/gssapi/t_client_keytab.py
+--- a/src/tests/gssapi/t_client_keytab.py
++++ b/src/tests/gssapi/t_client_keytab.py
+@@ -21,15 +21,17 @@ if realm.user_princ not in out:
  realm.run([kdestroy])
  
  # Test 2: no name/cache specified, pick principal from k5identity

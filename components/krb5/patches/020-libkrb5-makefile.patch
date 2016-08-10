@@ -18,8 +18,9 @@
 #    which has not been integrated into current Solaris code yet.
 # Patch source: in-house
 #
---- ORIGINAL/src/lib/krb5/Makefile.in	2015-01-26 14:13:03.864453694 -0800
-+++ krb5-1.13/src/lib/krb5/Makefile.in	2015-01-28 16:00:48.949645899 -0800
+diff --git a/src/lib/krb5/Makefile.in b/src/lib/krb5/Makefile.in
+--- a/src/lib/krb5/Makefile.in
++++ b/src/lib/krb5/Makefile.in
 @@ -1,6 +1,6 @@
  mydir=lib$(S)krb5
  BUILDTOP=$(REL)..$(S)..
@@ -28,7 +29,7 @@
  SUBDIRS= error_tables asn.1 ccache keytab krb os rcache unicode
  WINSUBDIRS= $(SUBDIRS) posix
  DEFINES=-DLOCALEDIR=\"$(KRB5_LOCALEDIR)\"
-@@ -15,7 +15,8 @@
+@@ -15,7 +15,8 @@ DEFINES=-DLOCALEDIR=\"$(KRB5_LOCALEDIR)\"
  
  TST=if test -n "`cat DONE`" ; then
  
@@ -38,7 +39,7 @@
  
  LIBBASE=krb5
  LIBMAJOR=3
-@@ -47,10 +48,16 @@
+@@ -47,10 +48,16 @@ SUBDIROBJLISTS= \
  	$(BUILDTOP)/util/profile/OBJS.ST
  
  OBJS=\
@@ -57,7 +58,7 @@
  
  RELDIR=krb5
  SHLIB_EXPDEPS = \
-@@ -58,7 +65,7 @@
+@@ -58,7 +65,7 @@ SHLIB_EXPDEPS = \
  	$(COM_ERR_DEPLIB) $(SUPPORT_DEPLIB)
  SHLIB_EXPLIBS=-lk5crypto -lcom_err $(SUPPORT_LIB) @GEN_LIB@ $(LIBS)
  
@@ -66,9 +67,10 @@
  
  all-windows::
  
---- ORIGINAL/src/lib/krb5/keytab/Makefile.in	2014-12-01 16:58:27.760415842 -0800
-+++ krb5-1.13/src/lib/krb5/keytab/Makefile.in	2014-12-01 16:59:34.026881356 -0800
-@@ -15,7 +15,8 @@
+diff --git a/src/lib/krb5/keytab/Makefile.in b/src/lib/krb5/keytab/Makefile.in
+--- a/src/lib/krb5/keytab/Makefile.in
++++ b/src/lib/krb5/keytab/Makefile.in
+@@ -15,7 +15,8 @@ STLIBOBJS= \
  	kt_file.o	\
  	kt_memory.o	\
  	kt_srvtab.o	\
@@ -78,7 +80,7 @@
  
  OBJS=	\
  	$(OUTPRE)ktadd.$(OBJEXT)		\
-@@ -27,7 +28,8 @@
+@@ -27,7 +28,8 @@ OBJS=	\
  	$(OUTPRE)kt_file.$(OBJEXT)	\
  	$(OUTPRE)kt_memory.$(OBJEXT)	\
  	$(OUTPRE)kt_srvtab.$(OBJEXT)	\
@@ -88,7 +90,7 @@
  
  SRCS=	\
  	$(srcdir)/ktadd.c	\
-@@ -39,7 +41,8 @@
+@@ -39,7 +41,8 @@ SRCS=	\
  	$(srcdir)/kt_file.c	\
  	$(srcdir)/kt_memory.c	\
  	$(srcdir)/kt_srvtab.c	\

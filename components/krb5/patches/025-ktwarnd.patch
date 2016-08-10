@@ -7,9 +7,9 @@
 # Patch source: in-house
 #
 
-diff -Napur ORIGINAL/src/clients/kdestroy/Makefile.in krb5-1.13.1/src/clients/kdestroy/Makefile.in
---- ORIGINAL/src/clients/kdestroy/Makefile.in	2015-02-11 19:16:43.000000000 -0800
-+++ krb5-1.13.1/src/clients/kdestroy/Makefile.in	2015-04-22 09:11:09.523911895 -0700
+diff --git a/src/clients/kdestroy/Makefile.in b/src/clients/kdestroy/Makefile.in
+--- a/src/clients/kdestroy/Makefile.in
++++ b/src/clients/kdestroy/Makefile.in
 @@ -19,7 +19,7 @@ all-unix:: kdestroy
  ##WIN32##all-windows:: $(KDESTROY)
  
@@ -19,9 +19,9 @@ diff -Napur ORIGINAL/src/clients/kdestroy/Makefile.in krb5-1.13.1/src/clients/kd
  
  ##WIN32##$(KDESTROY): $(OUTPRE)kdestroy.obj $(BUILDTOP)\util\windows\$(OUTPRE)getopt.obj $(KLIB) $(CLIB) $(EXERES)
  ##WIN32##	link $(EXE_LINKOPTS) -out:$@ $**
-diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kdestroy/kdestroy.c
---- ORIGINAL/src/clients/kdestroy/kdestroy.c	2015-02-11 19:16:43.000000000 -0800
-+++ krb5-1.13.1/src/clients/kdestroy/kdestroy.c	2015-04-22 14:52:01.310510058 -0700
+diff --git a/src/clients/kdestroy/kdestroy.c b/src/clients/kdestroy/kdestroy.c
+--- a/src/clients/kdestroy/kdestroy.c
++++ b/src/clients/kdestroy/kdestroy.c
 @@ -24,6 +24,12 @@
   * or implied warranty.
   */
@@ -39,7 +39,7 @@ diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kde
  extern int optind;
  extern char *optarg;
  
-+/* 
++/*
 + * We add _rpcsys extern declariation because that ON build suppresses warning
 + * of implicit declarition, while MIT kerberos build treats the warning
 + * as an error.
@@ -49,7 +49,7 @@ diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kde
  #ifndef _WIN32
  #define GET_PROGNAME(x) (strrchr((x), '/') ? strrchr((x), '/')+1 : (x))
  #else
-@@ -82,6 +95,13 @@
+@@ -82,6 +95,13 @@ main(argc, argv)
      int quiet = 0;
      int all = 0;
  
@@ -63,7 +63,7 @@ diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kde
      setlocale(LC_ALL, "");
      progname = GET_PROGNAME(argv[0]);
  
-@@ -165,6 +185,49 @@
+@@ -165,6 +185,49 @@ main(argc, argv)
          }
      }
  
@@ -113,7 +113,7 @@ diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kde
      code = krb5_cc_destroy (kcontext, cache);
      if (code != 0) {
          com_err (progname, code, _("while destroying cache"));
-@@ -178,5 +241,17 @@
+@@ -178,5 +241,17 @@ main(argc, argv)
              errflg = 1;
          }
      }
@@ -131,9 +131,9 @@ diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kde
 +
      return errflg;
  }
-diff -Napur ORIGINAL/src/clients/kinit/Makefile.in krb5-1.13.1/src/clients/kinit/Makefile.in
---- ORIGINAL/src/clients/kinit/Makefile.in	2015-02-11 19:16:43.000000000 -0800
-+++ krb5-1.13.1/src/clients/kinit/Makefile.in	2015-04-22 09:11:09.525770418 -0700
+diff --git a/src/clients/kinit/Makefile.in b/src/clients/kinit/Makefile.in
+--- a/src/clients/kinit/Makefile.in
++++ b/src/clients/kinit/Makefile.in
 @@ -20,7 +20,7 @@ all-unix:: kinit
  ##WIN32##all-windows:: $(KINIT)
  
@@ -143,9 +143,9 @@ diff -Napur ORIGINAL/src/clients/kinit/Makefile.in krb5-1.13.1/src/clients/kinit
  
  ##WIN32##$(KINIT): $(OUTPRE)kinit.obj $(BUILDTOP)\util\windows\$(OUTPRE)getopt.lib $(KLIB) $(CLIB) $(EXERES)
  ##WIN32##	link $(EXE_LINKOPTS) -out:$@ $** advapi32.lib
-diff -Napur ORIGINAL/src/clients/kinit/kinit.c krb5-1.13.1/src/clients/kinit/kinit.c
---- ORIGINAL/src/clients/kinit/kinit.c	2015-02-11 19:16:43.000000000 -0800
-+++ krb5-1.13.1/src/clients/kinit/kinit.c	2015-04-22 14:17:16.415936121 -0700
+diff --git a/src/clients/kinit/kinit.c b/src/clients/kinit/kinit.c
+--- a/src/clients/kinit/kinit.c
++++ b/src/clients/kinit/kinit.c
 @@ -35,6 +35,7 @@
  #include <time.h>
  #include <errno.h>
@@ -173,7 +173,7 @@ diff -Napur ORIGINAL/src/clients/kinit/kinit.c krb5-1.13.1/src/clients/kinit/kin
 +    if (opts->action == RENEW) {
 +        _kwarnd_del_warning(progname, opts->principal_name);
 +        _kwarnd_add_warning(progname, opts->principal_name, my_creds.times.endtime);
-+    } else if ((opts->action == INIT_KT) || (opts->action == INIT_PW)) { 
++    } else if ((opts->action == INIT_KT) || (opts->action == INIT_PW)) {
 +        _kwarnd_add_warning(progname, opts->principal_name, my_creds.times.endtime);
 +    }
 +
@@ -187,29 +187,29 @@ diff -Napur ORIGINAL/src/clients/kinit/kinit.c krb5-1.13.1/src/clients/kinit/kin
 +
 +/* Solaris Kerberos start */
 +
-+static void 
-+_kwarnd_add_warning(char *progname, char *me, time_t endtime) 
-+{ 
-+    if (kwarn_add_warning(me, endtime) != 0) 
++static void
++_kwarnd_add_warning(char *progname, char *me, time_t endtime)
++{
++    if (kwarn_add_warning(me, endtime) != 0)
 +        fprintf(stderr, gettext(
-+            "%s:  no ktkt_warnd warning possible\n"), progname); 
-+    return; 
++            "%s:  no ktkt_warnd warning possible\n"), progname);
++    return;
 +}
 +
-+static void 
-+_kwarnd_del_warning(char *progname, char *me) 
++static void
++_kwarnd_del_warning(char *progname, char *me)
 +{
 +    if (kwarn_del_warning(me) != 0)
-+        fprintf(stderr, gettext( 
-+            "%s:  unable to delete ktkt_warnd message for %s\n"), 
-+            progname, me); 
-+    return; 
++        fprintf(stderr, gettext(
++            "%s:  unable to delete ktkt_warnd message for %s\n"),
++            progname, me);
++    return;
 +}
 +/* Solaris Kerberos end */
-diff -Napur ORIGINAL/src/lib/gssapi/Makefile.in krb5-1.13.1/src/lib/gssapi/Makefile.in
---- ORIGINAL/src/lib/gssapi/Makefile.in	2015-02-11 19:16:43.000000000 -0800
-+++ krb5-1.13.1/src/lib/gssapi/Makefile.in	2015-04-22 09:11:09.527753282 -0700
-@@ -27,7 +27,7 @@ STOBJLISTS=OBJS.ST generic/OBJS.ST mechg
+diff --git a/src/lib/gssapi/Makefile.in b/src/lib/gssapi/Makefile.in
+--- a/src/lib/gssapi/Makefile.in
++++ b/src/lib/gssapi/Makefile.in
+@@ -27,7 +27,7 @@ STOBJLISTS=OBJS.ST generic/OBJS.ST mechglue/OBJS.ST krb5/OBJS.ST spnego/OBJS.ST
  SUBDIROBJLISTS=generic/OBJS.ST mechglue/OBJS.ST krb5/OBJS.ST spnego/OBJS.ST
  SHLIB_EXPDEPS=\
  	$(KRB5_DEPLIB) $(CRYPTO_DEPLIB) $(SUPPORT_DEPLIB) $(COM_ERR_DEPLIB)
@@ -218,20 +218,19 @@ diff -Napur ORIGINAL/src/lib/gssapi/Makefile.in krb5-1.13.1/src/lib/gssapi/Makef
  RELDIR=gssapi
  
  all-unix:: all-liblinks @MAINT@ verify-calling-conventions-gssapi
-diff -Napur ORIGINAL/src/lib/gssapi/krb5/store_cred.c krb5-1.13.1/src/lib/gssapi/krb5/store_cred.c
---- ORIGINAL/src/lib/gssapi/krb5/store_cred.c	2015-04-22 08:37:33.146728757 -0700
-+++ krb5-1.13.1/src/lib/gssapi/krb5/store_cred.c	2015-04-22 14:19:34.769508399 -0700
-@@ -26,6 +26,9 @@
+diff --git a/src/lib/gssapi/krb5/store_cred.c b/src/lib/gssapi/krb5/store_cred.c
+--- a/src/lib/gssapi/krb5/store_cred.c
++++ b/src/lib/gssapi/krb5/store_cred.c
+@@ -26,6 +26,8 @@
  
  #include "k5-int.h"
  #include "gssapiP_krb5.h"
 +#include <syslog.h>
 +#include <kerberosv5/private/ktwarn.h>
-+
  
  static int
  has_unexpired_creds(krb5_gss_cred_id_t kcred,
-@@ -71,6 +74,7 @@ copy_initiator_creds(OM_uint32 *minor_st
+@@ -71,6 +73,7 @@ copy_initiator_creds(OM_uint32 *minor_status,
      krb5_context context = NULL;
      krb5_ccache ccache = NULL;
      const char *ccache_name;
@@ -239,7 +238,7 @@ diff -Napur ORIGINAL/src/lib/gssapi/krb5/store_cred.c krb5-1.13.1/src/lib/gssapi
  
      *minor_status = 0;
  
-@@ -162,6 +166,17 @@ copy_initiator_creds(OM_uint32 *minor_st
+@@ -162,6 +165,17 @@ copy_initiator_creds(OM_uint32 *minor_status,
      *minor_status = 0;
      major_status = GSS_S_COMPLETE;
  

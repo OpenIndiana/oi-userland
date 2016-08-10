@@ -15,9 +15,10 @@
 # functionality in later MIT kerberos release, 1.14 or later.
 # Patch source: in-house
 #
---- ORIGINAL/src/lib/kadm5/logger.c	2014-08-11 02:19:59.000000000 -0700
-+++ krb5-1.13.mockup/src/lib/kadm5/logger.c	2014-09-11 17:13:22.608854008 -0700
-@@ -115,6 +115,13 @@
+diff --git a/src/lib/kadm5/logger.c b/src/lib/kadm5/logger.c
+--- a/src/lib/kadm5/logger.c
++++ b/src/lib/kadm5/logger.c
+@@ -115,6 +115,13 @@ struct log_entry {
          struct log_file {
              FILE        *lf_filep;
              char        *lf_fname;
@@ -31,7 +32,7 @@
          } log_file;
          struct log_syslog {
              int         ls_facility;
-@@ -128,6 +135,11 @@
+@@ -128,6 +135,11 @@ struct log_entry {
  };
  #define lfu_filep       log_union.log_file.lf_filep
  #define lfu_fname       log_union.log_file.lf_fname
@@ -43,7 +44,7 @@
  #define lsu_facility    log_union.log_syslog.ls_facility
  #define lsu_severity    log_union.log_syslog.ls_severity
  #define ldu_filep       log_union.log_device.ld_filep
-@@ -161,6 +173,133 @@
+@@ -161,6 +173,132 @@ static struct log_entry def_log_entry;
                                   -1)
  #define DEVICE_CLOSE(d)         fclose(d)
  
@@ -65,7 +66,6 @@
 +    FILE *fp;
 +    int num_vers;
 +    mode_t old_umask;
-+
 +
 +    /*
 +     * By default we don't rotate.
@@ -138,7 +138,7 @@
 +         * Default log file creation mode should be read-only
 +         * by owner(root), but the admin can override with
 +         * chmod(1) if desired.
-+         */ 
++         */
 +
 +        old_umask = umask(077);
 +        fp = fopen(old_name, le->lfu_fopen_mode);
@@ -177,7 +177,7 @@
  
  /*
   * klog_com_err_proc()  - Handle com_err(3) messages as specified by the
-@@ -276,6 +415,8 @@
+@@ -276,6 +414,8 @@ klog_com_err_proc(const char *whoami, long int code, const char *format, va_list
      for (lindex = 0; lindex < log_control.log_nentries; lindex++) {
          switch (log_control.log_entries[lindex].log_type) {
          case K_LOG_FILE:
@@ -186,7 +186,7 @@
          case K_LOG_STDERR:
              /*
               * Files/standard error.
-@@ -360,6 +501,7 @@
+@@ -360,6 +500,7 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
      int         error;
      int         do_openlog, log_facility;
      FILE        *f;
@@ -194,7 +194,7 @@
  
      /* Initialize */
      do_openlog = 0;
-@@ -423,12 +565,66 @@
+@@ -423,12 +564,66 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
                       * Check for append/overwrite, then open the file.
                       */
                      if (cp[4] == ':' || cp[4] == '=') {
@@ -237,7 +237,7 @@
 +
 +                                if (!profile_get_string(kcontext->profile,
 +                                                        "logging", rotate_kw,
-+                                                        "period", NULL, 
++                                                        "period", NULL,
 +                                                        &time)) {
 +
 +                                    if (time != NULL) {
@@ -263,7 +263,7 @@
                          } else {
                              fprintf(stderr,"Couldn't open log file %s: %s\n",
                                      &cp[5], error_message(errno));
-@@ -880,6 +1076,8 @@
+@@ -880,6 +1075,8 @@ klog_vsyslog(int priority, const char *format, va_list arglist)
      for (lindex = 0; lindex < log_control.log_nentries; lindex++) {
          switch (log_control.log_entries[lindex].log_type) {
          case K_LOG_FILE:
