@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
 COMPONENT_VERSION=	1.14.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
