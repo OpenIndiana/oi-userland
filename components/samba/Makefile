@@ -176,12 +176,12 @@ $(BUILD_DIR_SMB)/.BDprep: $(SOURCE_DIR)/.prep
 	# Clone SOURCE_DIR
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	# clenup of clone
-	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) waf distclean $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Configure of Samba + Winbind.
 $(BUILD_DIR_SMB)/.configured: $(BUILD_DIR_SMB)/.BDprep
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
 		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
 
@@ -196,12 +196,12 @@ else
 
 # Build of Samba + Winbind.
 $(BUILD_DIR_SMB)/.built:	$(BUILD_DIR_SMB)/.configured
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Install of Samba + Winbind.
 $(BUILD_DIR_SMB)/.installed:	$(BUILD_DIR_SMB)/.built
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf install $(WAFOPT1) --destdir=$(PROTO_DIR) )
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/
 	$(TOUCH) $@
 
@@ -212,19 +212,19 @@ $(BUILD_DIR_WINB)/.BDprep: $(SOURCE_DIR)/.prep
 	# Clone SOURCE_DIR
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 	# clenup of clone
-	(cd $(@D) ; $(ENV) $(WAF_PATH) waf distclean $(WAFOPT1) )
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) waf distclean $(WAFOPT1) )
 	$(TOUCH) $@
 
 # Configure of Winbind (without Samba) for different bitness.
 $(BUILD_DIR_WINB)/.configured: $(BUILD_DIR_WINB)/.BDprep
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
 		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
 
 # Build of Winbind (without Samba) for different bitness.
 WB_TARGETS =	--targets=nss_winbind,pamwinbind
 $(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
-	(cd $(@D) ; $(ENV) $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
+	(cd $(@D) ; $(ENV) - $(WAF_PATH) LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)" waf build $(WAFOPT1) \
 	    $(WB_TARGETS) )
 	$(TOUCH) $@
 
