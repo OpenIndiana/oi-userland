@@ -76,7 +76,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/ruby.1.sedscript \
 	    > Solaris/ruby.1.sedscript.mod ; \
 	$(GSED) -e  "s/RUBY_VER/$(RUBY_VER)/" \
-	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/rbconfig.sedscript \
+	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" \
+	    -e "s/CFLAGS_GCC/$(CFLAGS.gcc)/" \
+	    -e "s/CXXFLAGS_GCC/$(CXXFLAGS.gcc)/" \
+	    Solaris/rbconfig.sedscript \
 	    > Solaris/rbconfig.sedscript.mod ; \
 	$(GSED) -i -f Solaris/ruby.1.sedscript.mod \
 	    $(PROTORUBYDIR)/share/man/man1/ruby.1 ; \

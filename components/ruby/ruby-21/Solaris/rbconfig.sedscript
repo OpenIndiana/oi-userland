@@ -25,16 +25,19 @@
 # sed script to fix the rbconfig.rb file after 
 # the configure and install of ruby
 
-# use gcc/g++ instead of build-system-specific  paths to cc or CC
+# use gcc/g++ instead of build-system-specific paths to Studio compilers cc/CC
 
 # Note that for the first two command lines below, 
 # /usr/bin/sed correctly substitutes; /usr/bin/gsed does not.  
 # Use /usr/bin/sed for this script.
 s/\'CC=.*\/cc\'/\'CC=\/usr\/bin\/gcc\'/
 s/\'CXX=.*\/CC\'/\'CXX=\/usr\/bin\/g++\'/
+s/\'CFLAGS=.[^\']*\'/\'CFLAGS=CFLAGS_GCC\'/
+s/\'CXXFLAGS=.[^\']*\'/\'CXXFLAGS=CXXFLAGS_GCC\'/
 s/CONFIG\[\"CC\"\].*$/CONFIG\[\"CC\"\] = \"\/usr\/bin\/gcc\"/
 s/CONFIG\[\"CXX\"\].*$/CONFIG\[\"CXX\"\] = \"\/usr\/bin\/g++\"/
-s/CONFIG\[\"CFLAGS\"\].*$/CONFIG\[\"CFLAGS\"\] = \"-g -O3 -fPIC\"/
+s/CONFIG\[\"CFLAGS\"\].*$/CONFIG\[\"CFLAGS\"\] = \"CFLAGS_GCC\"/
+s/CONFIG\[\"CXXFLAGS\"\].*$/CONFIG\[\"CXXFLAGS\"\] = \"CXXFLAGS_GCC\"/
 s/CONFIG\[\"CCDLFLAGS\"\].*$/CONFIG\[\"CCDLFLAGS\"\] = \"-fPIC\"/
 s/"$(CC) -G"/"$(CC) -shared"/
 s/"$(CXX) -G"/"$(CXX) -shared"/
