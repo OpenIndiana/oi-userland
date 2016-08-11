@@ -27,13 +27,13 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	3.3
+COMPONENT_VERSION=	3.4
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a25e89a8ab65fded1731e4186be1bb25cda967834b6df973599cdcd5abdfc19c
+    sha256:db53c025f2ac3d217bcf753dad6dee7b410b33d0948495ff015aaf8b91189ce2
 COMPONENT_BUGDB=	utility/gnu-diffutils
 
-TPNO=			21995
+TPNO=			30940
 
 SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
