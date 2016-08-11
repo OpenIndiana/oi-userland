@@ -198,7 +198,8 @@ ifeq ($(PYTHON_VERSION),3.5)
 SYSTEM_TEST_32_and_64 = $(SYSTEM_TEST_64)
 endif
 
-# test the built source
+# Test the built source.  If the output file shows up in the environment or
+# arguments, don't redirect stdout/stderr to it.
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
@@ -206,7 +207,7 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
 	-(cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		$(COMPONENT_TEST_CMD) $(COMPONENT_TEST_ARGS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
+		$(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_TEST_ENV)$(COMPONENT_TEST_ARGS)),,&> $(COMPONENT_TEST_OUTPUT))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
 	$(COMPONENT_TEST_PERFORM_TRANSFORM)
@@ -223,7 +224,8 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
-# test the installed system
+# Test the installed packages.  If the output file shows up in the environment
+# or arguments, don't redirect stdout/stderr to it.
 $(BUILD_DIR)/%/.system-tested-and-compared:    $(COMPONENT_SYSTEM_TEST_DEP)
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
@@ -233,7 +235,7 @@ $(BUILD_DIR)/%/.system-tested-and-compared:    $(COMPONENT_SYSTEM_TEST_DEP)
 	-(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
 		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
 		$(COMPONENT_SYSTEM_TEST_CMD) $(COMPONENT_SYSTEM_TEST_ARGS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
+		$(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_SYSTEM_TEST_ENV)$(COMPONENT_SYSTEM_TEST_ARGS)),,&> $(COMPONENT_TEST_OUTPUT))
 	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
 	$(COMPONENT_TEST_PERFORM_TRANSFORM)

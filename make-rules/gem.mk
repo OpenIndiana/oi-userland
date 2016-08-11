@@ -73,7 +73,8 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 COMPONENT_TEST_TARGETS =
 COMPONENT_SYSTEM_TEST_TARGETS = 
 
-# test the built source
+# Test the built source.  If the output file shows up in the environment or
+# arguments, don't redirect stdout/stderr to it.
 $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
@@ -82,7 +83,7 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 	    $(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 	    $(COMPONENT_TEST_CMD) \
 	    $(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-	    &> $(COMPONENT_TEST_OUTPUT)
+	    $(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_TEST_ENV)$(COMPONENT_TEST_ARGS)),,&> $(COMPONENT_TEST_OUTPUT))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
 	$(COMPONENT_TEST_PERFORM_TRANSFORM)
@@ -105,7 +106,9 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 # Test the installed packages.  The targets above depend on .built which
 # means $(CLONEY) has already run.  System-test needs cloning but not
 # building; thus ideally, we would want to depend on .cloned here and below,
-# but since we don't have that, we depend on .prep and run $(CLONEY) here.
+# but since we don't have that, we depend on .prep and run $(CLONEY) here.  If
+# the output file shows up in the environment or arguments, don't redirect
+# stdout/stderr to it.
 $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
@@ -115,7 +118,7 @@ $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	    $(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
 	    $(COMPONENT_SYSTEM_TEST_CMD) \
 	    $(COMPONENT_SYSTEM_TEST_ARGS) $(COMPONENT_SYSTEM_TEST_TARGETS)) \
-	    &> $(COMPONENT_TEST_OUTPUT)
+	    $(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_SYSTEM_TEST_ENV)$(COMPONENT_SYSTEM_TEST_ARGS)),,&> $(COMPONENT_TEST_OUTPUT))
 	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
 	$(COMPONENT_TEST_CREATE_TRANSFORMS)
 	$(COMPONENT_TEST_PERFORM_TRANSFORM)
