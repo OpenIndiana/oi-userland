@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
@@ -33,12 +33,19 @@ set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2008/767
+set name=org.opensolaris.arc-caseid value=PSARC/2008/767 value=PSARC/2016/467
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/sndfile-cmp
+file path=usr/bin/sndfile-concat
 file path=usr/bin/sndfile-convert
+file path=usr/bin/sndfile-deinterleave
 file path=usr/bin/sndfile-info
+file path=usr/bin/sndfile-interleave
+file path=usr/bin/sndfile-metadata-get
+file path=usr/bin/sndfile-metadata-set
 file path=usr/bin/sndfile-play
 file path=usr/bin/sndfile-regtest
+file path=usr/bin/sndfile-salvage
 file path=usr/include/sndfile.h
 file path=usr/include/sndfile.hh
 link path=usr/lib/$(MACH64)/libsndfile.so \
@@ -51,42 +58,32 @@ link path=usr/lib/libsndfile.so target=libsndfile.so.$(COMPONENT_VERSION)
 file path=usr/lib/libsndfile.so.$(COMPONENT_VERSION)
 link path=usr/lib/libsndfile.so.1 target=libsndfile.so.$(COMPONENT_VERSION)
 file path=usr/lib/pkgconfig/sndfile.pc
-file usr/share/doc/libsndfile1-dev/html/FAQ.html \
-    path=usr/share/doc/libsndfile/html/FAQ.html
-file usr/share/doc/libsndfile1-dev/html/api.html \
-    path=usr/share/doc/libsndfile/html/api.html
-file usr/share/doc/libsndfile1-dev/html/bugs.html \
-    path=usr/share/doc/libsndfile/html/bugs.html
-file usr/share/doc/libsndfile1-dev/html/command.html \
-    path=usr/share/doc/libsndfile/html/command.html
-file usr/share/doc/libsndfile1-dev/html/dither.html \
-    path=usr/share/doc/libsndfile/html/dither.html
-file usr/share/doc/libsndfile1-dev/html/embedded_files.html \
-    path=usr/share/doc/libsndfile/html/embedded_files.html
-file usr/share/doc/libsndfile1-dev/html/index.html \
-    path=usr/share/doc/libsndfile/html/index.html
-file usr/share/doc/libsndfile1-dev/html/libsndfile.css \
-    path=usr/share/doc/libsndfile/html/libsndfile.css
-file usr/share/doc/libsndfile1-dev/html/libsndfile.jpg \
-    path=usr/share/doc/libsndfile/html/libsndfile.jpg
-file usr/share/doc/libsndfile1-dev/html/lists.html \
-    path=usr/share/doc/libsndfile/html/lists.html
-file usr/share/doc/libsndfile1-dev/html/new_file_type.HOWTO \
-    path=usr/share/doc/libsndfile/html/new_file_type.HOWTO
-file usr/share/doc/libsndfile1-dev/html/octave.html \
-    path=usr/share/doc/libsndfile/html/octave.html
-file usr/share/doc/libsndfile1-dev/html/pkgconfig.html \
-    path=usr/share/doc/libsndfile/html/pkgconfig.html
-file usr/share/doc/libsndfile1-dev/html/sndfile_info.html \
-    path=usr/share/doc/libsndfile/html/sndfile_info.html
-file usr/share/doc/libsndfile1-dev/html/tutorial.html \
-    path=usr/share/doc/libsndfile/html/tutorial.html
-file usr/share/doc/libsndfile1-dev/html/win32.html \
-    path=usr/share/doc/libsndfile/html/win32.html
+file path=usr/share/doc/libsndfile/FAQ.html
+file path=usr/share/doc/libsndfile/api.html
+file path=usr/share/doc/libsndfile/bugs.html
+file path=usr/share/doc/libsndfile/command.html
+file path=usr/share/doc/libsndfile/dither.html
+file path=usr/share/doc/libsndfile/embedded_files.html
+file path=usr/share/doc/libsndfile/index.html
+file path=usr/share/doc/libsndfile/libsndfile.css
+file path=usr/share/doc/libsndfile/libsndfile.jpg
+file path=usr/share/doc/libsndfile/lists.html
+file path=usr/share/doc/libsndfile/new_file_type.HOWTO
+file path=usr/share/doc/libsndfile/octave.html
+file path=usr/share/doc/libsndfile/sndfile_info.html
+file path=usr/share/doc/libsndfile/tutorial.html
+file path=usr/share/doc/libsndfile/win32.html
+file path=usr/share/man/man1/sndfile-cmp.1
+file path=usr/share/man/man1/sndfile-concat.1
 file path=usr/share/man/man1/sndfile-convert.1
+file path=usr/share/man/man1/sndfile-deinterleave.1
 file path=usr/share/man/man1/sndfile-info.1
+file path=usr/share/man/man1/sndfile-interleave.1
+file path=usr/share/man/man1/sndfile-metadata-get.1
+file path=usr/share/man/man1/sndfile-metadata-set.1
 file path=usr/share/man/man1/sndfile-play.1
+file path=usr/share/man/man1/sndfile-salvage.1
 file Octave/sndfile_load.m path=usr/share/octave/site/m/sndfile_load.m
 file Octave/sndfile_play.m path=usr/share/octave/site/m/sndfile_play.m
 file Octave/sndfile_save.m path=usr/share/octave/site/m/sndfile_save.m
-license libsndfile.license license=LGPLv2.1
+license COPYING license=LGPLv2.1

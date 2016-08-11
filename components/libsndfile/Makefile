@@ -23,32 +23,52 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
-COMPONENT_VERSION=	1.0.23
+COMPONENT_VERSION=	1.0.27
 COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/libsndfile/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:54c9c375598538263395a691f9b30987a2faa3d8a166d27e6a09ba4700223d4d
+    sha256:a391952f27f4a92ceb2b4c06493ac107896ed6c76be9a613a4731f076d30fac0
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsndfile
 
-TPNO=			8890
+TPNO=			30616
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Needed for __func__ in cpp_test.cc
-CXXFLAGS += $(studio_FEATURES_EXTENSIONS)
-CFLAGS +=	$(studio_PIC)
+# Needed to get tests/header_test.c to compile successfully on SPARC.
+gcc_XREGS.sparc=	-mapp-regs
 
-# Master test results are the same for 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
+# Need to use GNU sed otherwise we get a:
+# Error : sfversion <version> and PACKAGE_VERSION <version> don't match."
+# failure from the test_wrapper.sh script.
+COMPONENT_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# The additional libsndfile specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^SunOS\).*|\1|" '
+	'-e "s|\(^SunOS\).*|\1|" ' \
+	'-e "s|^.* CC .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.* CXX .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.* CCLD .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.* CXXLD .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^config.status: .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*common.h:.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*test_strncpy_crlf.c:.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*In file included.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*psf_strlcpy_crlf (.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*\^.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*argument:.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*prototype:.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^.*warning:.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/ogg-vorbis
