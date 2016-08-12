@@ -1,0 +1,21 @@
+diff --git a/configure.ac b/configure.ac
+index 61bea43..c19a559 100644
+--- configure.ac.~
++++ configure.ac
+@@ -298,7 +298,7 @@ if test "x$tools" != "xno"; then
+ 	ignore="xcb-dri3 xcb-sync x11-xcb xshmfence x11"
+ 	PKG_CHECK_MODULES(IVO_EXTRA, [$ignore], [ivo_requires="$ivo_requires $ignore"; extra_cflags="-DDRI3"], [ignore=""])
+ 
+-	PKG_CHECK_MODULES(IVO, [$ivo_requires], [ivo="yes"], [ivo="no"])
++	PKG_CHECK_MODULES(IVO, [$ivo_requires], [ivo="yes"; extra_ldflags="-lsocket"], [ivo="no"])
+ 	AC_CHECK_HEADER([sys/timerfd.h], [], [ivo="no"])
+ 	if test "x$ivo" = "xno"; then
+ 		if test "x$tools" = "xyes"; then
+@@ -308,6 +308,7 @@ if test "x$tools" != "xno"; then
+ 	fi
+ 
+ 	IVO_CFLAGS="$IVO_CFLAGS $extra_cflags"
++	IVO_LIBS="$IVO_LIBS $extra_ldflags"
+ fi
+ if test "x$tools" != "xno"; then
+       tools_msg="$tools_msg intel-virtual-output"

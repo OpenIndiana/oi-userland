@@ -1,58 +1,86 @@
+###############################################################################
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
+# intel-gpu-tools - Intel graphics driver debug tools
 #
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
-#
-
-#
-# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=           intel-gpu-tools
-COMPONENT_VERSION=        1.3
-COMPONENT_FMRI=           x11/diagnostics/intel-gpu-tools
-COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  Intel Graphics driver debug tools
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:51d22fdb3d415a1b3b7d0a172c1bb24dec6f16116e80a9ce49873f44527f20a0
-COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_NAME = intel-gpu-tools
+COMPONENT_SRC = $(COMPONENT_NAME)
+COMPONENT_VERSION = 1.13
+COMPONENT_REVISION = $(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
+COMPONENT_SUMMARY = Intel graphics driver debug tools
+COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_ARCHIVE_URL = https://cgit.freedesktop.org/xorg/app/intel-gpu-tools/
+COMPONENT_FMRI = x11/diagnostic/$(COMPONENT_NAME)
+# COMPONENT_LICENSE = MIT
+COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_CLASSIFICATION = Applications/System Utilities
+COMPONENT_AUTOGEN_MANIFEST = yes
+
+GIT=git
+GIT_REPO=http://anongit.freedesktop.org/git/xorg/app/intel-gpu-tools
+GIT_BRANCH=master
+GIT_CHANGESET=HEAD
+
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
+
+publish: update-publish
+
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+$(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
+	[ -d $(SOURCE_DIR) ] || \
+	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+	cd $(SOURCE_DIR) ; $(GIT) checkout $(GIT_BRANCH) ; $(GIT) pull \
+	$(GIT_REPO) ; $(GIT) log -1 --format=%H > .downloaded
 
-# For Gen 4 code
-CFLAGS+= -Wno-array-bounds
+update-publish:
+	@[ -d $(SOURCE_DIR) ] || \
+	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
+	cd $(SOURCE_DIR) ; $(GIT) pull $(GIT_REPO) ; \
+		[ "$$($(GIT) log -1 --format=%H)" == "$$(cat .downloaded)" ] || \
+		( $(GIT) log -1 --format=%H > .downloaded && $(MAKE) -C $$OLDPWD publish )
 
-CONFIGURATION_ENV+= PYTHON="$(PYTHON.3.4.$(BITS))"
+CONFIGURE_DEFAULT_DIRS = no
 
-CONFIGURE_OPTIONS+= --disable-nouveau
-CONFIGURE_OPTIONS.32+= --disable-largefile
+PATCH_LEVEL = 1
+
+COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+	if ! type gtkdocize > /dev/null 2>&1; then \
+		echo "EXTRA_DIST =" > gtk-doc.make; \
+		echo "CLEANFILES =" >> gtk-doc.make; \
+	else \
+		gtkdocize || exit $?; \
+	fi; \
+                                        libtoolize --automake --copy --force && \
+                                        aclocal -Im4 && \
+                                        autoheader && \
+                                        automake -a -f -c &&\
+                                        autoconf )
+
+# Command line options to GNU autoconf configure script
+# CPPFLAGS  += -g
+CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
+
+LIBEXECSUBDIR.64 = /$(MACH64)
+LIBEXECSUBDIR = $(LIBEXECSUBDIR.$(BITS))
+# BENCHLIBEXECDIR = /usr/libexec/$(COMPONENT_NAME)/benchmarks/$(LIBEXECSUBDIR)
+# COMPONENT_COMMON_ARGS =  gem_exec_tracer_ladir='$(BENCHLIBEXECDIR)'
+
+CONFIGURE_OPTIONS += --without-libunwind
+CONFIGURE_OPTIONS += --disable-tests
+CONFIGURE_OPTIONS += --libexecdir=/usr/libexec$(LIBEXECSUBDIR)
+
+COMPONENT_BUILD_TARGETS = all
+
+$(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += diagnostic/scanpci
-REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += x11/library/libdrm
+download:: $(SOURCE_DIR)/.downloaded

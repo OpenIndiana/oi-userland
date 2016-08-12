@@ -1,0 +1,32 @@
+diff --git a/benchmarks/gem_exec_tracer.c b/benchmarks/gem_exec_tracer.c
+index f005794..8325ba3 100644
+--- a/benchmarks/gem_exec_tracer.c
++++ b/benchmarks/gem_exec_tracer.c
+@@ -49,6 +49,15 @@ static int drm_fd = -1;
+ static FILE *file;
+ 
+ #define DRM_MAJOR 226
++#ifndef __linux__
++/* from asm-generic/ioctl.h */
++#define _IOC_NRBITS    8
++#define _IOC_TYPEBITS  8
++#define _IOC_TYPEMASK  ((1 << _IOC_TYPEBITS)-1)
++#define _IOC_NRSHIFT   0
++/* #define _IOC_TYPESHIFT      (_IOC_NRSHIFT+_IOC_NRBITS) already in drm.h */
++#define _IOC_TYPE(nr)          (((nr) >> _IOC_TYPESHIFT) & _IOC_TYPEMASK)
++#endif
+ 
+ enum {
+ 	ADD_BO = 0,
+@@ -200,7 +209,11 @@ static int is_i915(int fd)
+ }
+ 
+ int
++#ifdef __linux__
+ ioctl(int fd, unsigned long request, ...)
++#else
++ioctl(int fd, int request, ...)
++#endif
+ {
+ 	va_list args;
+ 	void *argp;

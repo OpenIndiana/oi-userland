@@ -1,0 +1,19 @@
+diff --git a/lib/igt_gt.c b/lib/igt_gt.c
+index 9f8634b..643b630 100644
+--- a/lib/igt_gt.c
++++ b/lib/igt_gt.c
+@@ -337,9 +337,14 @@ void igt_stop_hang_helper(void)
+  */
+ int igt_open_forcewake_handle(void)
+ {
++/* /sys/kernel/debug only on linux */
++#ifndef __linux__
++    return -1;
++#else
+ 	if (getenv("IGT_NO_FORCEWAKE"))
+ 		return -1;
+ 	return igt_debugfs_open("i915_forcewake_user", O_WRONLY);
++#endif
+ }
+ 
+ /**
