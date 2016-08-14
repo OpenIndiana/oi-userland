@@ -76,11 +76,14 @@ if [[ "${NEED_COMPILE}" -ne 0 ]] ; then
 		exit $SMF_EXIT_ERR_FATAL
 	fi
 	if [[ ! -r "${COMPILED_FILE}" ]] ; then
-		exit $SMF_EXIT_ERR_FATAL
-	fi
+		if [[ -n "$(find ${SCHEMA_DIR} -name '*.gschema.xml')" ]] ; then
+			exit $SMF_EXIT_ERR_FATAL
+		fi
+	else
 	# Since glib-compile-schemas renames the result into place, update
 	# the file mtime after moving so it matches the directory mtime.
-	touch -c -r "${SCHEMA_DIR}" "${COMPILED_FILE}"
+		touch -c -r "${SCHEMA_DIR}" "${COMPILED_FILE}"
+	fi
 fi
 
 exit $SMF_EXIT_OK
