@@ -20,25 +20,29 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
-
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      3.1.2
+COMPONENT_VERSION=      3.1.5
+COMPONENT_SUMMARY=      The GNU Multiple Precision with IEEE Rounding Floating-Point Library
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
+COMPONENT_FMRI=					library/mpfr
+COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-    sha256:79c73f60af010a30a5c27a955a1d2d01ba095b72537dab0ecaad57f5a7bb1b6b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libmpfr
+COMPONENT_ARCHIVE_HASH= \
+  sha256:ca498c1c7a74dd37a576f353312d1e68d490978de4395fa28f1cbd46a364e658
+COMPONENT_LICENSE=			LGPLv2.1,GPLv2,FDLv1.2	
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 CLOBBER_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
@@ -96,30 +100,25 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
       $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
+				$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
+					$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
       $(CP) -fp $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
+				$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
       $(RM) -f $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
-	$(PROTOUSRSHAREHTMLDIR)/ ; \
+				$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR) ; \
+				$(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmpfr.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
+				$(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ )
+				$(PROTOUSRSHAREMAN3DIR)/ )
 
-# common targets
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += system/library
