@@ -21,23 +21,28 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mpc
-COMPONENT_VERSION=	1.0.1
-COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=           mpc
+COMPONENT_VERSION=        1.0.3
+COMPONENT_SUMMARY=        Multiprecision complex data type evaluation library
+COMPONENT_PROJECT_URL=    http://www.multiprecision.org/
+COMPONENT_FMRI=           library/mpc
+COMPONENT_CLASSIFICATION=	Development/High Performance Computing
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=    $(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ed5a815cfea525dc778df0cb37468b9c1b554aaf30d9328b1431ca705b7400ff
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mpc
+    sha256:617decc6ea09889fb08ede330917a00b16809b8db88c29c31bfbb49cbf88ecc3
+COMPONENT_LICENSE=        LGPLv2.1
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 export SHELL
 SHELL=/bin/sh
@@ -47,18 +52,14 @@ CFLAGS +=		`pkg-config --cflags libmpfr`
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 
-include ../../make-rules/shared-targets.mk
-
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 
-# common targets
 build:	$(BUILD_32_and_64)
-
 
 install:	$(INSTALL_32_and_64)	
 
-test: install	$(TEST_32_and_64)
+test: $(TEST_32_and_64)
  
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/mpfr
+REQUIRED_PACKAGES += system/library
