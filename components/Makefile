@@ -35,7 +35,7 @@ $(WS_TOP)/components/$(ENCUMBERED)components.mk:	# Makefile # $(WS_TOP)/componen
 	@echo "Generating component list..."
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
 		| sed -e 's;^$(shell pwd)/;;' \
-		| grep -f components.whitelist \
+		| /usr/xpg4/bin/grep -f components.whitelist \
 		| sed -f components.ignore \
 		| sed -e 's;^;COMPONENT_DIRS += ;g' >$@
 
