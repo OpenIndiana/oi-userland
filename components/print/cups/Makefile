@@ -60,6 +60,7 @@ CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
 CONFIGURE_OPTIONS +=	--with-cups-user=lp
 CONFIGURE_OPTIONS +=	--with-cups-group=lp
 CONFIGURE_OPTIONS +=	--with-php=no
+CONFIGURE_OPTIONS +=	--with-icondir=/usr/share/icons
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-gnutls
 CONFIGURE_OPTIONS +=	--disable-libusb
@@ -98,16 +99,16 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += image/library/libjpeg6
 REQUIRED_PACKAGES += image/library/libjpeg6-ijg
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += service/network/dns/mdns
-REQUIRED_PACKAGES += service/network/slp
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
