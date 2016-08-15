@@ -1,0 +1,3543 @@
+A new version of mpfr is expected which isn't in Solaris yet, so we
+are removing that functionality till we can get mpfr updated and
+then will revert back these changes.
+
+Not suitable for upstream
+
+--- a/data/org.gnome.calculator.gschema.xml	Fri Jan 29 15:39:20 2016
++++ b/data/org.gnome.calculator.gschema.xml	Fri Jan 29 15:40:20 2016
+@@ -22,6 +22,7 @@
+   <schema path="/org/gnome/calculator/" id="org.gnome.calculator" gettext-domain="calculator">
+     <key type="i" name="accuracy">
+       <default>9</default>
++      <range min="0" max="9"/>
+       <summary>Accuracy value</summary>
+       <description>The number of digits displayed after the numeric point</description>
+     </key>
+@@ -82,10 +83,5 @@
+       <summary>Target units</summary>
+       <description>Units to convert the current calculation into</description>
+     </key>
+-    <key type="i" name="precision">
+-      <default>2000</default>
+-      <summary>Internal precision</summary>
+-      <description>The internal precision used with the MPFR library</description>
+-    </key>
+   </schema>
+ </schemalist>
+--- a/src/Makefile.am	Fri Jan 29 15:40:46 2016
++++ b/src/Makefile.am	Fri Jan 29 15:41:34 2016
+@@ -33,8 +33,7 @@
+ 	--pkg gtk+-3.0 \
+ 	--pkg gtksourceview-3.0 \
+ 	--pkg libxml-2.0 \
+-	$(top_builddir)/lib/libcalculator.vapi \
+-	$(top_builddir)/lib/mpfr.vapi
++	$(top_builddir)/lib/libcalculator.vapi
+ 
+ gnome_calculator_CPPFLAGS = \
+ 	$(AM_CPPFLAGS) \
+@@ -54,8 +53,7 @@
+ 	--pkg gio-2.0 \
+ 	--pkg gtksourceview-3.0 \
+ 	--pkg libxml-2.0 \
+-	$(top_builddir)/lib/libcalculator.vapi \
+-	$(top_builddir)/lib/mpfr.vapi
++	$(top_builddir)/lib/libcalculator.vapi
+ 
+ gcalccmd_LDADD = \
+ 	$(top_builddir)/lib/libcalculator.la
+--- a/lib/Makefile.am	Fri Jan 29 15:42:13 2016
++++ b/lib/Makefile.am	Fri Jan 29 15:42:24 2016
+@@ -10,7 +10,6 @@
+ 
+ libcalculator_la_SOURCES = \
+ 	config.vapi \
+-	mpfr.vapi \
+ 	currency.vala \
+ 	equation.vala \
+ 	equation-lexer.vala \
+@@ -37,8 +36,7 @@
+ libcalculator_la_LIBADD = \
+ 	$(LIBCALCULATOR_LIBS) \
+ 	-lgmp \
+-	-lm \
+-	-lmpfr
++	-lm
+ 
+ EXTRA_DIST = \
+ 	libcalculator.h \
+--- a/lib/equation-parser.vala	Fri Jan 29 15:47:35 2016
++++ b/lib/equation-parser.vala	Fri Jan 29 16:00:51 2016
+@@ -78,20 +78,8 @@
+         var r = right.solve ();
+         if (r == null)
+             return null;
+-        var z = solve_r (r);
++        return solve_r (r);
+ 
+-        /* check for errors */
+-        Number.check_flags ();
+-        if (Number.error != null)
+-        {
+-            var tmpleft = right;
+-            var tmpright = right;
+-            while (tmpleft.left != null) tmpleft = tmpleft.left;
+-            while (tmpright.right != null) tmpright = tmpright.right;
+-            parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-            Number.error = null;
+-        }
+-        return z;
+     }
+ 
+     public abstract Number solve_r (Number r);
+@@ -110,20 +98,7 @@
+         var r = right.solve ();
+         if (l == null || r == null)
+             return null;
+-        var z = solve_lr (l, r);
+-
+-        /* check for errors */
+-        Number.check_flags ();
+-        if (Number.error != null)
+-        {
+-            var tmpleft = left;
+-            var tmpright = right;
+-            while (tmpleft.left != null) tmpleft = tmpleft.left;
+-            while (tmpright.right != null) tmpright = tmpright.right;
+-            parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-            Number.error = null;
+-        }
+-        return z;
++        return solve_lr (l, r);
+     }
+ 
+     public abstract Number solve_lr (Number left, Number r);
+@@ -261,18 +236,6 @@
+             value = value.multiply (t);
+         }
+ 
+-        /* check for errors */
+-        Number.check_flags ();
+-        if (Number.error != null)
+-        {
+-            var tmpleft = left;
+-            var tmpright = right;
+-            while (tmpleft.left != null) tmpleft = tmpleft.left;
+-            while (tmpright.right != null) tmpright = tmpright.right;
+-            parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-            Number.error = null;
+-        }
+-
+         return value;
+     }
+ }
+@@ -392,14 +355,6 @@
+         if (tmp != null)
+             tmp = tmp.xpowy_integer (pow);
+ 
+-        /* check for errors */
+-        Number.check_flags ();
+-        if (Number.error != null)
+-        {
+-            parser.set_error (ErrorCode.MP, Number.error);
+-            Number.error = null;
+-        }
+-
+         return tmp;
+     }
+ }
+@@ -574,17 +529,7 @@
+ 
+     public override Number solve_lr (Number l, Number r)
+     {
+-        var z = l.divide (r);
+-        if (Number.error != null)
+-        {
+-            var tmpleft = right;
+-            var tmpright = right;
+-            while (tmpleft.left != null) tmpleft = tmpleft.left;
+-            while (tmpright.right != null) tmpright = tmpright.right;
+-            parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-            Number.error = null;
+-        }
+-        return z;
++        return l.divide (r);
+     }
+ }
+ 
+@@ -604,21 +549,8 @@
+             var mod = right.solve ();
+             if (base_value == null || exponent == null || mod == null)
+                 return null;
+-            var z = base_value.modular_exponentiation (exponent, mod);
++            return base_value.modular_exponentiation (exponent, mod);
+ 
+-            /* check for errors */
+-            Number.check_flags ();
+-            if (Number.error != null)
+-            {
+-                var tmpleft = left;
+-                var tmpright = right;
+-                while (tmpleft.left != null) tmpleft = tmpleft.left;
+-                while (tmpright.right != null) tmpright = tmpright.right;
+-                parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-                Number.error = null;
+-            }
+-
+-            return z;
+         }
+         else
+         {
+@@ -626,21 +558,8 @@
+             var r = right.solve ();
+             if (l == null || r == null)
+                 return null;
+-            var z = solve_lr (l, r);
++            return solve_lr (l, r);
+ 
+-            /* check for errors */
+-            Number.check_flags ();
+-            if (Number.error != null)
+-            {
+-                var tmpleft = left;
+-                var tmpright = right;
+-                while (tmpleft.left != null) tmpleft = tmpleft.left;
+-                while (tmpright.right != null) tmpright = tmpright.right;
+-                parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-                Number.error = null;
+-            }
+-
+-            return z;
+         }
+     }
+ 
+@@ -709,21 +628,8 @@
+         if (val == null)
+             return null;
+ 
+-        var z = val.xpowy_integer (pow);
++        return val.xpowy_integer (pow);
+ 
+-        /* check for errors */
+-        Number.check_flags ();
+-        if (Number.error != null)
+-        {
+-            var tmpleft = left;
+-            var tmpright = right;
+-            while (tmpleft.left != null) tmpleft = tmpleft.left;
+-            while (tmpright.right != null) tmpright = tmpright.right;
+-            parser.set_error (ErrorCode.MP, Number.error, tmpleft.token.start_index, tmpright.token.end_index);
+-            Number.error = null;
+-        }
+-
+-        return z;
+     }
+ }
+ 
+@@ -1036,10 +942,10 @@
+         }
+ 
+         representation_base = this.representation_base;
+-        error_code = this.error;
+-        error_token = this.error_token;
+-        error_start = this.error_token_start;
+-        error_end = this.error_token_end;
++        error_code = ErrorCode.NONE; 
++        error_token = null;
++        error_start = 0;
++        error_end = 0;
+         return ans;
+     }
+ 
+--- a/lib/equation.vala	Fri Jan 29 16:01:11 2016
++++ b/lib/equation.vala	Fri Jan 29 16:02:09 2016
+@@ -117,17 +117,15 @@
+     public new Number? parse (out uint representation_base = null, out ErrorCode error_code = null, out string? error_token = null, out uint? error_start = null, out uint? error_end = null)
+     {
+         var parser = new EquationParser (this, expression);
+-        Number.error = null;
++        mp_clear_error();
+ 
+         var z = parser.parse (out representation_base, out error_code, out error_token, out error_start, out error_end);
+ 
+         /* Error during parsing */
+         if (error_code != ErrorCode.NONE)
+-        {
+             return null;
+-        }
+ 
+-        if (Number.error != null)
++        if (mp_get_error() != null)
+         {
+             error_code = ErrorCode.MP;
+             return null;
+--- a/src/gnome-calculator.vala	Fri Jan 29 16:05:17 2016
++++ b/src/gnome-calculator.vala	Fri Jan 29 16:06:27 2016
+@@ -56,7 +56,6 @@
+         var target_currency = settings.get_string ("target-currency");
+         var source_units = settings.get_string ("source-units");
+         var target_units = settings.get_string ("target-units");
+-        var precision = settings.get_int ("precision");
+ 
+         var equation = new MathEquation ();
+         equation.accuracy = accuracy;
+@@ -69,7 +68,6 @@
+         equation.target_currency = target_currency;
+         equation.source_units = source_units;
+         equation.target_units = target_units;
+-        Number.precision = precision;
+ 
+         add_action_entries (app_entries, this);
+ 
+@@ -173,7 +171,7 @@
+             }
+             else if (error == ErrorCode.MP)
+             {
+-                stderr.printf ("Error: %s\n", Number.error);
++                stderr.printf ("Error: %s\n", mp_get_error());
+                 return Posix.EXIT_FAILURE;
+             }
+             else
+--- a/src/gcalccmd.vala	Fri Jan 29 16:03:42 2016
++++ b/src/gcalccmd.vala	Fri Jan 29 16:04:56 2016
+@@ -34,18 +34,9 @@
+ 
+     result_serializer.set_representation_base (representation_base);
+     if (z != null)
+-    {
+-        var str = result_serializer.to_string (z);
+-        if (result_serializer.error != null)
+-        {
+-            stderr.printf ("%s\n", result_serializer.error);
+-            result_serializer.error = null;
+-        }
+-        else
+-            stdout.printf ("%s\n", str);
+-    }
++	stdout.printf ("%s\n", result_serializer.to_string (z));
+     else if (ret == ErrorCode.MP)
+-        stderr.printf ("Error %s\n", Number.error);
++        stderr.printf ("Error %s\n", mp_get_error());
+     else
+         stderr.printf ("Error %d\n", ret);
+ }
+--- a/lib/math-equation.vala	Fri Jan 29 16:33:36 2016
++++ b/lib/math-equation.vala	Fri Jan 29 16:39:56 2016
+@@ -786,11 +786,6 @@
+         ans_end_mark = create_mark (null, end, true);
+         apply_tag (ans_tag, start, end);
+ 
+-        if (serializer.error != null)
+-        {
+-            status = serializer.error;
+-            serializer.error = null;
+-        }
+     }
+ 
+     public new void insert (string text)
+@@ -964,13 +959,11 @@
+                 break;
+ 
+             case ErrorCode.MP:
+-                if (Number.error != null) // LEGACY, should never be run
++		if (mp_get_error () != null)
++		    solvedata.error = mp_get_error ();
++		else if (error_token != null)
+                 {
+-                    solvedata.error = Number.error;
+-                }
+-                else if (error_token != null) // should always be run
+-                {
+-                    solvedata.error = _("%s").printf (error_token);
++                    solvedata.error = _("Malformed expression at token '%s'").printf(error_token);
+                     solvedata.error_start = error_start;
+                     solvedata.error_end = error_end;
+                 }
+@@ -1015,8 +1008,6 @@
+ 
+             /* Fix thousand separator offsets in the start and end offsets of error token. */
+             error_token_fix_thousands_separator ();
+-            /* Fix missing Parenthesis before the start and after the end offsets of error token */
+-            error_token_fix_parenthesis ();
+ 
+             /* Notify the GUI about the change in error token locations. */
+             notify_property ("error-token-end");
+@@ -1087,70 +1078,6 @@
+             end.forward_chars (length);
+         }
+     }
+-
+-    /* Fix the offsets to consider starting  and ending parenthesis */
+-    private void error_token_fix_parenthesis ()
+-    {
+-        unichar c;
+-        int count = 0;
+-        int real_end = display.index_of_nth_char (error_token_end);
+-        int real_start = display.index_of_nth_char (error_token_start);
+-
+-        /* checks if there are more opening/closing parenthesis than closing/opening parenthesis */
+-        for (int i = real_start; display.get_next_char (ref i, out c) && i <= real_end;)
+-        {
+-            if (c.to_string () == "(") count++;
+-            if (c.to_string () == ")") count--;
+-        }
+-
+-        /* if there are more opening than closing parenthesis and there are closing parenthesis
+-           after the end offset, include those in the offsets */
+-        for (int i = real_end; display.get_next_char (ref i, out c) && count > 0;)
+-        {
+-            if (c.to_string () == ")")
+-            {
+-                state.error_token_end++;
+-                count--;
+-            }
+-            else
+-            {
+-                break;
+-            }
+-        }
+-
+-        /* the same for closing parenthesis */
+-        for (int i = real_start; display.get_prev_char (ref i, out c) && count < 0;)
+-        {
+-            if (c.to_string () == "(")
+-            {
+-                state.error_token_start--;
+-                count++;
+-            }
+-            else
+-            {
+-                break;
+-            }
+-        }
+-
+-        real_end = display.index_of_nth_char (error_token_end);
+-        real_start = display.index_of_nth_char (error_token_start);
+-
+-        unichar d;
+-
+-        /* if there are opening parenthesis directly before aswell as closing parenthesis directly after the offsets, include those aswell */
+-        while (display.get_next_char (ref real_end, out d) && display.get_prev_char (ref real_start, out c))
+-        {
+-            if (c.to_string () == "(" && d.to_string () == ")")
+-            {
+-                state.error_token_start--;
+-                state.error_token_end++;
+-            }
+-            else
+-            {
+-                break;
+-            }
+-        }
+-    }
+ 
+     private void* factorize_real ()
+     {
+--- a/src/math-preferences.vala	Fri Jan 29 16:40:37 2016
++++ b/src/math-preferences.vala	Fri Jan 29 16:43:30 2016
+@@ -90,7 +90,7 @@
+         var string = _("Show %d decimal _places");
+         var tokens = string.split ("%d", 2);
+ 
+-        var decimal_places_adjustment = new Gtk.Adjustment (0.0, 0.0, 100.0, 1.0, 1.0, 0.0);
++        var decimal_places_adjustment = new Gtk.Adjustment (0.0, 0.0, 9.0, 1.0, 1.0, 0.0);
+         decimal_places_spin = new Gtk.SpinButton (decimal_places_adjustment, 0.0, 0);
+ 
+         if (tokens.length > 0)
+--- a/lib/serializer.vala	Mon Feb  1 10:45:23 2016
++++ b/lib/serializer.vala	Mon Feb  1 10:46:37 2016
+@@ -32,9 +32,6 @@
+     private unichar tsep;            /* Locale specific thousands separator. */
+     private int tsep_count;          /* Number of digits between separator. */
+ 
+-    /* is set when an error (for example precision error while converting) occurs */
+-    public string? error { get; set; default = null; }
+-
+     public Serializer (DisplayFormat format, int number_base, int trailing_digits)
+     {
+         var radix_string = Posix.nl_langinfo (Posix.NLItem.RADIXCHAR);
+@@ -322,17 +319,8 @@
+ 
+             var d = t3.to_integer ();
+ 
+-            if (d < 16 && d >= 0)
+-            {
+-                string.prepend_c (digits[d]);
+-            }
+-            else
+-            {
+-                string.prepend_c ('?');
+-                error = _("Precision error");
+-                string.assign ("0");
+-                break;
+-            }
++            string.prepend_c (d < 16 ? digits[d] : '?');
++
+             n_digits++;
+ 
+             temp = t;
+--- a/tests/test-number.vala	Mon Feb  1 10:48:08 2016
++++ b/tests/test-number.vala	Mon Feb  1 10:49:35 2016
+@@ -72,6 +72,22 @@
+     pass ();
+ }
+ 
++private void test_float ()
++{
++    for (var a = -10.0f; a <= 10.0f; a += 0.5f)
++    {
++        var z = new Number.float (a);
++        if (z.to_float () != a)
++        {
++            fail ("Number.float (%f).to_float () -> %f, expected %f".printf (a, z.to_float (), a));
++            return;
++        }
++    }
++
++    pass ();
++}
++
++
+ private void test_double ()
+ {
+     for (var a = -10.0; a <= 10.0; a += 0.5)
+@@ -1074,6 +1090,7 @@
+     test_integer ();
+     test_unsigned_integer ();
+     test_fraction ();
++    test_float ();
+     test_double ();
+     test_complex ();
+     test_polar ();
+--- a/tests/test-equation.c	Mon Feb  1 12:22:33 2016
++++ b/tests/test-equation.c	Mon Feb  1 12:22:47 2016
+@@ -95,7 +95,7 @@
+ 		const gchar* _tmp1_ = NULL;
+ 		const gchar* _tmp2_ = NULL;
+ 		gchar* _tmp3_ = NULL;
+-		_tmp1_ = number_get_error ();
++		_tmp1_ = mp_get_error ();
+ 		_tmp2_ = _tmp1_;
+ 		_tmp3_ = g_strdup_printf ("ErrorCode.MP(\"%s\")", _tmp2_);
+ 		result = _tmp3_;
+
+--- a/lib/number.vala	Fri Jan 29 16:44:36 2016
++++ b/lib/number.vala	Mon Feb  1 12:02:40 2016
+@@ -27,8 +27,15 @@
+  *  THE MP USERS GUIDE.
+  */
+ 
+-using MPFR;
+ 
++/* Size of the multiple precision values */
++private const int SIZE = 1000;
++
++/* Base for numbers */
++private const int BASE = 10000;
++
++private const int T = 100;
++
+ private delegate int BitwiseFunc (int v1, int v2);
+ 
+ public enum AngleUnit
+@@ -41,37 +48,69 @@
+ /* Object for a high precision floating point number representation */
+ public class Number : Object
+ {
+-    /* real and imaginary part of a Number */
+-    private MPFloat re_num { get; set; }
+-    private MPFloat im_num { get; set; }
++    /* Sign (+1, -1) or 0 for the value zero */
++    public int re_sign;
++    public int im_sign;
+ 
+-    public static ulong precision { get; set; default = 1000; }
++    /* Exponent (to base BASE) */
++    public int re_exponent;
++    public int im_exponent;
+ 
+-    /* Stores the error msg if an error occurs during calculation. Otherwise should be null */
+-    public static string? error { get; set; default = null; }
++    /* Normalized fraction */
++    public int re_fraction[1000]; // SIZE
++    public int im_fraction[1000]; // SIZE
+ 
+     public Number.integer (int64 value)
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_signed_integer ((long)value, Round.NEAREST);
+-        re_num = tmp;
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp2;
++        if (value < 0)
++        {
++            value = -value;
++            re_sign = -1;
++        }
++        else if (value > 0)
++            re_sign = 1;
++        else
++            re_sign = 0;
++
++        while (value != 0)
++        {
++            re_fraction[re_exponent] = (int) (value % BASE);
++            re_exponent++;
++            value /= BASE;
++        }
++        for (var i = 0; i < re_exponent / 2; i++)
++        {
++            int t = re_fraction[i];
++            re_fraction[i] = re_fraction[re_exponent - i - 1];
++            re_fraction[re_exponent - i - 1] = t;
++        }
+     }
+ 
+     public Number.unsigned_integer (uint64 x)
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer ((ulong)x, Round.NEAREST);
+-        re_num = tmp;
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp2;
++        if (x == 0)
++            re_sign = 0;
++        else
++            re_sign = 1;
++
++        while (x != 0)
++        {
++            re_fraction[re_exponent] = (int) (x % BASE);
++            x = x / BASE;
++            re_exponent++;
++        }
++        for (var i = 0; i < re_exponent / 2; i++)
++        {
++            int t = re_fraction[i];
++            re_fraction[i] = re_fraction[re_exponent - i - 1];
++            re_fraction[re_exponent - i - 1] = t;
++        }
+     }
+ 
+     public Number.fraction (int64 numerator, int64 denominator)
+     {
++        mp_gcd (ref numerator, ref denominator);
++
+         if (denominator < 0)
+         {
+             numerator = -numerator;
+@@ -81,39 +120,203 @@
+         Number.integer (numerator);
+         if (denominator != 1)
+         {
+-            var tmp = re_num;
+-            tmp.divide_signed_integer (re_num, (long) denominator, Round.NEAREST);
+-            re_num = tmp;
++            var z = divide_integer (denominator);
++            re_sign = z.re_sign;
++            im_sign = z.im_sign;
++            re_exponent = z.re_exponent;
++            im_exponent = z.im_exponent;
++            for (var i = 0; i < z.re_fraction.length; i++)
++            {
++                re_fraction[i] = z.re_fraction[i];
++                im_fraction[i] = z.im_fraction[i];
++            }
+         }
+     }
+ 
+-    /* Helper constructor. Creates new Number from already existing MPFloat. */
+-    public Number.mpfloat (MPFloat value)
++    public Number.float (float value)
+     {
+-        re_num = value;
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp;
++        var z = new Number.integer (0);
++
++        if (value != 0)
++        {
++            /* CHECK SIGN */
++            var rj = 0f;
++            if (value < 0.0f)
++            {
++                z.re_sign = -1;
++                rj = -value;
++            }
++            else if (value > 0.0f)
++            {
++                z.re_sign = 1;
++                rj = value;
++            }
++
++            /* INCREASE IE AND DIVIDE RJ BY 16. */
++            var ie = 0;
++            while (rj >= 1.0f)
++            {
++                ie++;
++                rj *= 0.0625f;
++            }
++            while (rj < 0.0625f)
++            {
++                ie--;
++                rj *= 16.0f;
++            }
++
++            /*  NOW RJ IS DY DIVIDED BY SUITABLE POWER OF 16.
++             *  SET re_exponent TO 0
++             */
++            z.re_exponent = 0;
++
++            /* CONVERSION LOOP (ASSUME SINGLE-PRECISION OPS. EXACT) */
++            for (var i = 0; i < T + 4; i++)
++            {
++                rj *= BASE;
++                z.re_fraction[i] = (int) rj;
++                rj -= z.re_fraction[i];
++            }
++
++            /* NORMALIZE RESULT */
++            mp_normalize (ref z);
++
++            /* Computing MAX */
++            var ib = int.max (BASE * 7 * BASE, 32767) / 16;
++            var tp = 1;
++
++            /* NOW MULTIPLY BY 16**IE */
++            if (ie < 0)
++            {
++                var k = -ie;
++                for (var i = 1; i <= k; i++)
++                {
++                    tp <<= 4;
++                    if (tp <= ib && tp != BASE && i < k)
++                        continue;
++                    z = z.divide_integer (tp);
++                    tp = 1;
++                }
++            }
++            else if (ie > 0)
++            {
++                for (var i = 1; i <= ie; i++)
++                {
++                    tp <<= 4;
++                    if (tp <= ib && tp != BASE && i < ie)
++                        continue;
++                    z = z.multiply_integer (tp);
++                    tp = 1;
++                }
++            }
++        }
++
++        re_sign = z.re_sign;
++        im_sign = z.im_sign;
++        re_exponent = z.re_exponent;
++        im_exponent = z.im_exponent;
++        for (var i = 0; i < z.re_fraction.length; i++)
++        {
++            re_fraction[i] = z.re_fraction[i];
++            im_fraction[i] = z.im_fraction[i];
++        }
+     }
+ 
+     public Number.double (double value)
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_double (value, Round.NEAREST);
+-        re_num = tmp;
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp2;
++        var z = new Number.integer (0);
++
++        if (value != 0)
++        {
++            /* CHECK SIGN */
++            var dj = 0.0;
++            if (value < 0.0)
++            {
++                z.re_sign = -1;
++                dj = -value;
++            }
++            else if (value > 0.0)
++            {
++                z.re_sign = 1;
++                dj = value;
++            }
++
++            /* INCREASE IE AND DIVIDE DJ BY 16. */
++            var ie = 0;
++            for (ie = 0; dj >= 1.0; ie++)
++                dj *= 1.0/16.0;
++
++            for ( ; dj < 1.0/16.0; ie--)
++                dj *= 16.0;
++
++            /*  NOW DJ IS DY DIVIDED BY SUITABLE POWER OF 16
++             *  SET re_exponent TO 0
++             */
++            z.re_exponent = 0;
++
++            /* CONVERSION LOOP (ASSUME DOUBLE-PRECISION OPS. EXACT) */
++            for (var i = 0; i < T + 4; i++)
++            {
++                dj *= (double) BASE;
++                z.re_fraction[i] = (int) dj;
++                dj -= (double) z.re_fraction[i];
++            }
++
++            /* NORMALIZE RESULT */
++            mp_normalize (ref z);
++
++            /* Computing MAX */
++            var ib = int.max (BASE * 7 * BASE, 32767) / 16;
++            var tp = 1;
++
++            /* NOW MULTIPLY BY 16**IE */
++            if (ie < 0)
++            {
++                var k = -ie;
++                for (var i = 1; i <= k; ++i)
++                {
++                    tp <<= 4;
++                    if (tp <= ib && tp != BASE && i < k)
++                        continue;
++                    z = z.divide_integer (tp);
++                    tp = 1;
++                }
++            }
++            else if (ie > 0)
++            {
++                for (var i = 1; i <= ie; ++i)
++                {
++                    tp <<= 4;
++                    if (tp <= ib && tp != BASE && i < ie)
++                        continue;
++                    z = z.multiply_integer (tp);
++                    tp = 1;
++                }
++            }
++        }
++
++        re_sign = z.re_sign;
++        im_sign = z.im_sign;
++        re_exponent = z.re_exponent;
++        im_exponent = z.im_exponent;
++        for (var i = 0; i < z.re_fraction.length; i++)
++        {
++            re_fraction[i] = z.re_fraction[i];
++            im_fraction[i] = z.im_fraction[i];
++        }
+     }
+ 
+     public Number.complex (Number x, Number y)
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.@set (x.re_num, Round.NEAREST);
+-        re_num = tmp;
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.@set (y.re_num, Round.NEAREST);
+-        im_num = tmp2;
++        re_sign = x.re_sign;
++        re_exponent = x.re_exponent;
++        for (var i = 0; i < im_fraction.length; i++)
++            re_fraction[i] = x.re_fraction[i];
++
++        im_sign = y.re_sign;
++        im_exponent = y.re_exponent;
++        for (var i = 0; i < im_fraction.length; i++)
++            im_fraction[i] = y.re_fraction[i];
+     }
+ 
+     public Number.polar (Number r, Number theta, AngleUnit unit = AngleUnit.RADIANS)
+@@ -125,35 +328,28 @@
+ 
+     public Number.eulers ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.set_unsigned_integer (1, Round.NEAREST);
+-        /* e^1, since mpfr doesn't have a function to return e */
+-        tmp.exp (tmp2, Round.NEAREST);
+-        re_num = tmp;
+-        var tmp3 = MPFloat.init2 ((Precision) precision);
+-        tmp3.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp3;
++        var z = new Number.integer (1).epowy ();
++        re_sign = z.re_sign;
++        im_sign = z.im_sign;
++        re_exponent = z.re_exponent;
++        im_exponent = z.im_exponent;
++        for (var i = 0; i < z.re_fraction.length; i++)
++        {
++            re_fraction[i] = z.re_fraction[i];
++            im_fraction[i] = z.im_fraction[i];
++        }
+     }
+ 
+     public Number.i ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer (0, Round.NEAREST);
+-        tmp2.set_unsigned_integer (1, Round.NEAREST);
+-        re_num = tmp;
+-        im_num = tmp2;
++        im_sign = 1;
++        im_exponent = 1;
++        im_fraction[0] = 1;
+     }
+ 
+     public Number.pi ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.const_pi (Round.NEAREST);
+-        re_num = tmp;
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp2.set_unsigned_integer (0, Round.NEAREST);
+-        im_num = tmp2;
++        Number.double (Math.PI);
+     }
+ 
+     /* Sets z to be a uniform random number in the range [0, 1] */
+@@ -162,42 +358,123 @@
+         Number.double (Random.next_double ());
+     }
+ 
+-    ~Number ()
+-    {
+-        re_num.clear ();
+-        im_num.clear ();
+-    }
+-
+     public int64 to_integer ()
+     {
+-        return re_num.get_signed_integer (Round.NEAREST);
++        int64 z = 0;
++
++        /* |x| <= 1 */
++        if (re_sign == 0 || re_exponent <= 0)
++            return 0;
++
++        /* Multiply digits together */
++        for (var i = 0; i < re_exponent; i++)
++        {
++            var t = z;
++            z = z * BASE + re_fraction[i];
++
++            /* Check for overflow */
++            if (z <= t)
++                return 0;
++        }
++
++        /* Validate result */
++        var v = z;
++        for (var i = re_exponent - 1; i >= 0; i--)
++        {
++            /* Get last digit */
++            var digit = v - (v / BASE) * BASE;
++            if (re_fraction[i] != digit)
++                return 0;
++
++            v /= BASE;
++        }
++        if (v != 0)
++            return 0;
++
++        return re_sign * z;
+     }
+ 
+     public uint64 to_unsigned_integer ()
+     {
+-        return re_num.get_unsigned_integer (Round.NEAREST);
++        /* x <= 1 */
++        if (re_sign <= 0 || re_exponent <= 0)
++            return 0;
++
++        /* Multiply digits together */
++        uint64 z = 0;
++        for (var i = 0; i < re_exponent; i++)
++        {
++            var t = z;
++            z = z * BASE + re_fraction[i];
++
++            /* Check for overflow */
++            if (z <= t)
++                return 0;
++        }
++
++        /* Validate result */
++        var v = z;
++        for (var i = re_exponent - 1; i >= 0; i--)
++        {
++            /* Get last digit */
++            var digit = (uint64) v - (v / BASE) * BASE;
++            if (re_fraction[i] != digit)
++                return 0;
++
++            v /= BASE;
++        }
++        if (v != 0)
++            return 0;
++
++        return z;
+     }
+ 
+     public float to_float ()
+     {
+-        return re_num.get_float (Round.NEAREST);
++        if (is_zero ())
++            return 0f;
++
++        var z = 0f;
++        for (var i = 0; i < T; i++)
++        {
++            if (re_fraction[i] != 0)
++                z += re_fraction[i] * Math.powf (BASE, re_exponent - i - 1);
++        }
++
++        if (re_sign < 0)
++            return -z;
++        else
++            return z;
+     }
+ 
+     public double to_double ()
+     {
+-        return re_num.get_double (Round.NEAREST);
++        if (is_zero ())
++            return 0d;
++
++        var z = 0d;
++        for (var i = 0; i < T; i++)
++        {
++            if (re_fraction[i] != 0)
++                z += re_fraction[i] * Math.pow (BASE, re_exponent - i - 1);
++        }
++
++        if (re_sign < 0)
++            return -z;
++        else
++            return z;
+     }
+ 
+     /* Return true if the value is x == 0 */
+     public bool is_zero ()
+     {
+-        return re_num.is_zero () && im_num.is_zero ();
++        return re_sign == 0 && im_sign == 0;
+     }
+ 
+     /* Return true if x < 0 */
+     public bool is_negative ()
+     {
+-        return re_num.sgn () < 0;
++        return re_sign < 0;
+     }
+ 
+     /* Return true if x is integer */
+@@ -205,8 +482,35 @@
+     {
+         if (is_complex ())
+             return false;
++        /* Multiplication and division by 10000 is used to get around a
++         * limitation to the "fix" for Sun bugtraq bug #4006391 in the
++         * floor () routine in mp.c, when the re_exponent is less than 1.
++         */
++        var t3 = new Number.integer (10000);
++        var t1 = multiply (t3);
++        t1 = t1.divide (t3);
++        var t2 = t1.floor ();
++        return t1.equals (t2);
+ 
+-        return re_num.is_integer () != 0;
++        /* Correct way to check for integer */
++        /*
++
++        // Zero is an integer
++        if (is_zero ())
++            return true;
++
++        // fractional
++        if (re_exponent <= 0)
++            return false;
++
++        // Look for fractional components
++        for (var i = re_exponent; i < SIZE; i++)
++        {
++            if (re_fraction[i] != 0)
++                return false;
++        }
++
++        return true;*/
+     }
+ 
+     /* Return true if x is a positive integer */
+@@ -215,7 +519,7 @@
+         if (is_complex ())
+             return false;
+         else
+-            return re_num.sgn () >= 0 && is_integer ();
++            return re_sign >= 0 && is_integer ();
+     }
+ 
+     /* Return true if x is a natural number (an integer ≥ 0) */
+@@ -224,34 +528,19 @@
+         if (is_complex ())
+             return false;
+         else
+-            return re_num.sgn () > 0 && is_integer ();
++            return re_sign > 0 && is_integer ();
+     }
+ 
+     /* Return true if x has an imaginary component */
+     public bool is_complex ()
+     {
+-        return !im_num.is_zero ();
++        return im_sign != 0;
+     }
+ 
+-    /* Return error if overflow or underflow */
+-    public static void check_flags ()
+-    {
+-        if (mpfr_is_underflow () != 0)
+-        {
+-            /* Translators: Error displayed when underflow error occured */
+-            error = _("Underflow error");
+-        }
+-        else if (mpfr_is_overflow () != 0)
+-        {
+-            /* Translators: Error displayed when overflow error occured */
+-            error = _("Overflow error");
+-        }
+-    }
+-
+     /* Return true if x == y */
+     public bool equals (Number y)
+     {
+-        return re_num.is_equal (y.re_num);
++        return compare (y) == 0;
+     }
+ 
+     /* Returns:
+@@ -261,25 +550,62 @@
+      */
+     public int compare (Number y)
+     {
+-        return re_num.cmp (y.re_num);
++        if (re_sign != y.re_sign)
++        {
++            if (re_sign > y.re_sign)
++                return 1;
++            else
++                return -1;
++        }
++
++        /* x = y = 0 */
++        if (is_zero ())
++            return 0;
++
++        /* See if numbers are of different magnitude */
++        if (re_exponent != y.re_exponent)
++        {
++            if (re_exponent > y.re_exponent)
++                return re_sign;
++            else
++                return -re_sign;
++        }
++
++        /* Compare fractions */
++        for (var i = 0; i < SIZE; i++)
++        {
++            if (re_fraction[i] == y.re_fraction[i])
++                continue;
++
++            if (re_fraction[i] > y.re_fraction[i])
++                return re_sign;
++            else
++                return -re_sign;
++        }
++
++        /* x = y */
++        return 0;
+     }
+ 
+     /* Sets z = sgn (x) */
+     public Number sgn ()
+     {
+-        var z = new Number.integer (re_num.sgn ());
+-        return z;
++        if (is_zero ())
++            return new Number.integer (0);
++        else if (is_negative ())
++            return new Number.integer (-1);
++        else
++            return new Number.integer (1);
+     }
+ 
+     /* Sets z = −x */
+     public Number invert_sign ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.neg (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        var tmp_im = z.im_num;
+-        tmp_im.neg (im_num, Round.NEAREST);
+-        z.im_num = tmp_im;
++        var z = copy ();
++
++        z.re_sign = -z.re_sign;
++        z.im_sign = -z.im_sign;
++
+         return z;
+     }
+ 
+@@ -294,13 +620,13 @@
+             x_real = x_real.multiply (x_real);
+             x_im = x_im.multiply (x_im);
+             var z = x_real.add (x_im);
+-            return z.sqrt ();
++            return z.root (2);
+         }
+         else
+         {
+-            var tmp = MPFloat.init2 ((Precision) precision);
+-            tmp.abs (re_num, Round.NEAREST);
+-            var z = new Number.mpfloat (tmp);
++            var z = copy ();
++            if (z.re_sign < 0)
++                z.re_sign = -z.re_sign;
+             return z;
+         }
+     }
+@@ -311,7 +637,7 @@
+         if (is_zero ())
+         {
+             /* Translators: Error display when attempting to take argument of zero */
+-            error = _("Argument not defined for zero");
++            mperr (_("Argument not defined for zero"));
+             return new Number.integer (0);
+         }
+ 
+@@ -355,12 +681,8 @@
+     /* Sets z = ‾̅x */
+     public Number conjugate ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.neg (im_num, Round.NEAREST);
+         var z = copy ();
+-        var tmp2 = z.im_num;
+-        tmp2.clear ();
+-        z.im_num = tmp;
++        z.im_sign = -z.im_sign;
+         return z;
+     }
+ 
+@@ -368,11 +690,13 @@
+     public Number real_component ()
+     {
+         var z = copy ();
+-        var tmp = z.im_num;
+-        tmp.clear ();
+-        tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer (0, Round.NEAREST);
+-        z.im_num = tmp;
++
++        /* Clear imaginary component */
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++
+         return z;
+     }
+ 
+@@ -380,30 +704,65 @@
+     public Number imaginary_component ()
+     {
+         /* Copy imaginary component to real component */
+-        var z = copy ();
+-        var tmp = z.re_num;
+-        tmp.clear ();
+-        z.re_num = z.im_num;
+-        tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer (0, Round.NEAREST);
+-        z.im_num = tmp;
++        var z = new Number ();
++        z.re_sign = im_sign;
++        z.re_exponent = im_exponent;
++
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.re_fraction[i] = im_fraction[i];
++
++        /* Clear (old) imaginary component */
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++
+         return z;
+     }
+ 
+     public Number integer_component ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.trunc (re_num);
+-        var z = new Number.mpfloat (tmp);
++        /* Clear re_fraction */
++        var z = copy ();
++        for (var i = z.re_exponent; i < SIZE; i++)
++            z.re_fraction[i] = 0;
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++
+         return z;
++
+     }
+ 
+     /* Sets z = x mod 1 */
+     public Number fractional_component ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.frac (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
++       /* fractional component of zero is 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
++        /* All fractional */
++        if (re_exponent <= 0)
++            return this;
++
++        /* Shift fractional component */
++        var shift = re_exponent;
++        for (var i = shift; i < SIZE && re_fraction[i] == 0; i++)
++            shift++;
++        var z = new Number.integer (0);
++        z.re_sign = re_sign;
++        z.re_exponent = re_exponent - shift;
++        for (var i = 0; i < SIZE; i++)
++        {
++            if (i + shift >= SIZE)
++                z.re_fraction[i] = 0;
++            else
++                z.re_fraction[i] = re_fraction[i + shift];
++        }
++        if (z.re_fraction[0] == 0)
++            z.re_sign = 0;
++
+         return z;
+     }
+ 
+@@ -416,9 +775,36 @@
+     /* Sets z = ⌊x⌋ */
+     public Number floor ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.floor (re_num);
+-        var z = new Number.mpfloat (tmp);
++        /* Integer component of zero = 0 */
++        if (is_zero ())
++            return this;
++
++        /* If all fractional then no integer component */
++        if (re_exponent <= 0)
++        {
++            if (is_negative ())
++                return new Number.integer (-1);
++            else
++                return new Number.integer (0);
++        }
++
++        /* Clear fractional component */
++        var z = copy ();
++        var have_fraction = false;
++        for (var i = z.re_exponent; i < SIZE; i++)
++        {
++            if (z.re_fraction[i] != 0)
++                have_fraction = true;
++            z.re_fraction[i] = 0;
++        }
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++
++        if (have_fraction && is_negative ())
++            z = z.add (new Number.integer (-1));
++
+         return z;
+     }
+ 
+@@ -425,19 +811,29 @@
+     /* Sets z = ⌈x⌉ */
+     public Number ceiling ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.ceil (re_num);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        var z = floor ();
++        var f = fractional_component ();
++        if (f.is_zero ())
++            return z;
++        return z.add (new Number.integer (1));
+     }
+ 
+     /* Sets z = [x] */
+     public Number round ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.round (re_num);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        var do_floor = !is_negative ();
++
++        var f = fractional_component ();
++        f = f.multiply_integer (2);
++        f = f.abs ();
++        if (f.compare (new Number.integer (1)) >= 0)
++            do_floor = !do_floor;
++
++        if (do_floor)
++            return floor ();
++        else
++            return ceiling ();
++
+     }
+ 
+     /* Sets z = 1 ÷ x */
+@@ -482,24 +878,10 @@
+     /* Sets z = x^y */
+     public Number xpowy (Number y)
+     {
+-        /* 0^-n invalid */
+-        if (is_zero () && y.is_negative ())
++        if (y.is_integer ())
++            return xpowy_integer (y.to_integer ());
++        else
+         {
+-            /* Translators: Error displayed when attempted to raise 0 to a negative re_exponent */
+-            error = _("The power of zero is undefined for a negative exponent");
+-            return new Number.integer (0);
+-        }
+-
+-        /* 0^0 is indeterminate */
+-        if (is_zero () && y.is_zero ())
+-        {
+-            /* Translators: Error displayed when attempted to raise 0 to power of zero */
+-            error = _("Zero raised to zero is undefined");
+-            return new Number.integer (0);
+-        }
+-
+-        if (!y.is_integer ())
+-        {
+             var reciprocal = y.reciprocal ();
+             if (reciprocal.is_integer ())
+                 return root (reciprocal.to_integer ());
+@@ -506,29 +888,6 @@
+             else
+                 return pwr (y);
+         }
+-
+-        Number t;
+-        Number t2;
+-        if (y.is_negative ())
+-        {
+-            t = reciprocal ();
+-            t2 = y.invert_sign ();
+-        }
+-        else
+-        {
+-            t = this;
+-            t2 = y;
+-        }
+-
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.power (t.re_num, t2.re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        var tmp2 = z.im_num;
+-        tmp2.clear ();
+-        tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.@set (t.im_num, Round.NEAREST);
+-        z.im_num = tmp;
+-        return z;
+     }
+ 
+     /* Sets z = x^y */
+@@ -538,7 +897,7 @@
+         if (is_zero () && n < 0)
+         {
+             /* Translators: Error displayed when attempted to raise 0 to a negative re_exponent */
+-            error = _("The power of zero is undefined for a negative exponent");
++            mperr (_("The power of zero is undefined for a negative exponent"));
+             return new Number.integer (0);
+         }
+ 
+@@ -546,10 +905,22 @@
+         if (is_zero () && n == 0)
+         {
+             /* Translators: Error displayed when attempted to raise 0 to power of zero */
+-            error = _("Zero raised to zero is undefined");
++            mperr (_("Zero raised to zero is undefined"));
+             return new Number.integer (0);
+         }
+ 
++        /* x^0 = 1 */
++        if (n == 0)
++            return new Number.integer (1);
++
++        /* 0^n = 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
++        /* x^1 = x */
++        if (n == 1)
++            return this;
++
+         Number t;
+         if (n < 0)
+         {
+@@ -557,44 +928,17 @@
+             n = -n;
+         }
+         else
+-        {
+             t = this;
+-        }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.power_signed_integer (t.re_num, (long) n, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        var tmp2 = z.im_num;
+-        tmp2.clear ();
+-        tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.@set (t.im_num, Round.NEAREST);
+-        z.im_num = tmp;
+-        return z;
+-    }
+-
+-    private Number pwr (Number y)
+-    {
+-        /* (-x)^y imaginary */
+-        /* FIXME: Make complex numbers optional */
+-        /*if (re_sign < 0)
++        var z = new Number.integer (1);
++        while (n != 0)
+         {
+-            mperr (_("The power of negative numbers is only defined for integer exponents"));
+-            return new Number.integer (0);
+-        }*/
+-
+-        /* 0^y = 0, 0^-y undefined */
+-        if (is_zero ())
+-        {
+-            if (y.is_negative ())
+-                error = _("The power of zero is undefined for a negative exponent");
+-            return new Number.integer (0);
++            if (n % 2 == 1)
++                z = z.multiply (t);
++            t = t.multiply (t);
++            n = n / 2;
+         }
+-
+-        /* x^0 = 1 */
+-        if (y.is_zero ())
+-            return new Number.integer (1);
+-
+-        return y.multiply (ln ()).epowy ();
++        return z;
+     }
+ 
+     /* Sets z = n√x */
+@@ -623,10 +967,22 @@
+     /* Sets z = √x */
+     public Number sqrt ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.sqrt (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        if (is_zero ())
++            return this;
++
++        /* FIXME: Make complex numbers optional */
++        /*if (re_sign < 0)
++        {
++            mperr (_("Square root is undefined for negative values"));
++            return new Number.integer (0);
++        }*/
++        else
++        {
++            var t = root (-2);
++            var z = multiply (t);
++            return z.ext (t.re_fraction[0], z.re_fraction[0]);
++        }
++
+     }
+ 
+     /* Sets z = ln x */
+@@ -636,7 +992,7 @@
+         if (is_zero ())
+         {
+             /* Translators: Error displayed when attempting to take logarithm of zero */
+-            error = _("Logarithm of zero is undefined");
++            mperr (_("Logarithm of zero is undefined"));
+             return new Number.integer (0);
+         }
+ 
+@@ -669,7 +1025,7 @@
+         if (is_zero ())
+         {
+             /* Translators: Error displayed when attempting to take logarithm of zero */
+-            error = _("Logarithm of zero is undefined");
++            mperr (_("Logarithm of zero is undefined"));
+             return new Number.integer (0);
+         }
+ 
+@@ -691,17 +1047,17 @@
+             if (is_negative () || is_complex ())
+             {
+                 /* Translators: Error displayed when attempted take the factorial of a negative or complex number */
+-                error = _("Factorial is only defined for non-negative real numbers");
++                mperr (_("Factorial is only defined for non-negative real numbers"));
+                 return new Number.integer (0);
+             }
+ 
+-            var tmp = add (new Number.integer (1));
+-            var tmp2 = MPFloat.init2 ((Precision) precision);
++	    var val = to_double ();
+ 
+             /* Factorial(x) = Gamma(x+1) - This is the formula used to calculate Factorial.*/
+-            tmp2.gamma (tmp.re_num, Round.NEAREST);
++            var fact = Math.tgamma(val+1);
+ 
+-            return new Number.mpfloat (tmp2);
++            return new Number.double(fact);
++
+         }
+ 
+         /* Convert to integer - if couldn't be converted then the factorial would be too big anyway */
+@@ -716,41 +1072,23 @@
+     /* Sets z = x + y */
+     public Number add (Number y)
+     {
+-        if (is_complex () || y.is_complex ())
+-        {
+-            Number real_z, im_z;
+-
+-            var real_x = real_component ();
+-            var im_x = imaginary_component ();
+-            var real_y = y.real_component ();
+-            var im_y = y.imaginary_component ();
+-
+-            real_z = real_x.add_real (real_y);
+-            im_z = im_x.add_real (im_y);
+-
+-            return new Number.complex (real_z, im_z);
+-        }
+-        else
+-            return add_real (y);
++        return add_with_sign (1, y);
+     }
+ 
+-    public Number add_real (Number y)
+-    {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.add (re_num, y.re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
+-    }
+-
+     /* Sets z = x − y */
+     public Number subtract (Number y)
+     {
+-        return add (y.invert_sign ());
++        return add_with_sign (-1, y);
+     }
+ 
+     /* Sets z = x × y */
+     public Number multiply (Number y)
+     {
++        /* x*0 = 0*y = 0 */
++        if (is_zero () || y.is_zero ())
++            return new Number.integer (0);
++
++        /* (a+bi)(c+di) = (ac-bd)+(ad+bc)i */
+         if (is_complex () || y.is_complex ())
+         {
+             Number t1, t2, real_z, im_z;
+@@ -774,23 +1112,17 @@
+             return multiply_real (y);
+     }
+ 
+-    public Number multiply_real (Number y)
+-    {
+-        var z = new Number.integer (0);
+-        var tmp = z.re_num;
+-        tmp.multiply (re_num, y.re_num, Round.NEAREST);
+-        z.re_num = tmp;
+-        return z;
+-    }
+-
+     /* Sets z = x × y */
+     public Number multiply_integer (int64 y)
+     {
+-        var z = new Number.integer (0);
+-        var tmp = z.re_num;
+-        tmp.multiply_signed_integer (re_num, (long) y, Round.NEAREST);
+-        z.re_num = tmp;
+-        return z;
++        if (is_complex ())
++        {
++            var re_z = real_component ().multiply_integer_real (y);;
++            var im_z = imaginary_component ().multiply_integer_real (y);
++            return new Number.complex (re_z, im_z);
++        }
++        else
++            return multiply_integer_real (y);
+     }
+ 
+     /* Sets z = x ÷ y */
+@@ -799,31 +1131,23 @@
+         if (y.is_zero ())
+         {
+             /* Translators: Error displayed attempted to divide by zero */
+-            error = _("Division by zero is undefined");
++            mperr (_("Division by zero is undefined"));
+             return new Number.integer (0);
+         }
++        /* 0/y = 0 */
++        if (is_zero ())
++            return this;
+ 
+-        if (is_complex () || y.is_complex ())
+-        {
+-            var a = real_component ();
+-            var b = imaginary_component ();
+-            var c = y.real_component ();
+-            var d = y.imaginary_component ();
++        /* z = x × y⁻¹ */
++        /* FIXME: Set re_exponent to zero to avoid overflow in multiply??? */
++        var t = y.reciprocal ();
++        var ie = t.re_exponent;
++        t.re_exponent = 0;
++        var i = t.re_fraction[0];
++        var z = multiply (t);
++        z = z.ext (i, z.re_fraction[0]);
++        z.re_exponent += ie;
+ 
+-            var tmp = a.multiply (c).add (b.multiply (d));
+-            var tmp_2 = c.xpowy_integer (2).add (d.xpowy_integer (2));
+-            var z_1 = tmp.divide (tmp_2);
+-
+-            tmp = b.multiply (c).subtract (a.multiply (d));
+-            var z_2 = tmp.divide (tmp_2);
+-
+-            var z = new Number.complex (z_1, z_2);
+-            return z;
+-        }
+-
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.divide (re_num, y.re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+         return z;
+     }
+ 
+@@ -830,7 +1154,14 @@
+     /* Sets z = x ÷ y */
+     public Number divide_integer (int64 y)
+     {
+-        return divide (new Number.integer (y));
++        if (is_complex ())
++        {
++            var re_z = real_component ().divide_integer_real (y);
++            var im_z = imaginary_component ().divide_integer_real (y);
++            return new Number.complex (re_z, im_z);
++        }
++        else
++            return divide_integer_real (y);
+     }
+ 
+     /* Sets z = x mod y */
+@@ -839,7 +1170,7 @@
+         if (!is_integer () || !y.is_integer ())
+         {
+             /* Translators: Error displayed when attemping to do a modulus division on non-integer numbers */
+-            error = _("Modulus division is only defined for integers");
++            mperr (_("Modulus division is only defined for integers"));
+             return new Number.integer (0);
+         }
+ 
+@@ -857,7 +1188,7 @@
+     /* Sets z = x ^ y mod p */
+     public Number modular_exponentiation (Number exp, Number mod)
+     {
+-        var base_value = copy ();
++        var base_value = this.copy ();
+         if (exp.is_negative ())
+             base_value = base_value.reciprocal ();
+         var exp_value = exp.abs ();
+@@ -927,51 +1258,87 @@
+     public Number tan (AngleUnit unit = AngleUnit.RADIANS)
+     {
+         /* Check for undefined values */
+-        var x_radians = to_radians (unit);
+-        var check = x_radians.subtract (new Number.pi ().divide_integer (2)).divide (new Number.pi ());
+-
+-        if (check.is_integer ())
++        var cos_x = cos (unit);
++        if (cos_x.is_zero ())
+         {
+             /* Translators: Error displayed when tangent value is undefined */
+-            error = _("Tangent is undefined for angles that are multiples of π (180°) from π∕2 (90°)");
++            mperr (_("Tangent is undefined for angles that are multiples of π (180°) from π∕2 (90°)"));
+             return new Number.integer (0);
+         }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.tan (x_radians.re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* tan (x) = sin (x) / cos (x) */
++        return sin (unit).divide (cos_x);
+     }
+ 
+     /* Sets z = sin⁻¹ x */
+     public Number asin (AngleUnit unit = AngleUnit.RADIANS)
+     {
+-        if (compare (new Number.integer (1)) > 0 || compare (new Number.integer (-1)) < 0)
+-        {
+-            /* Translators: Error displayed when inverse sine value is undefined */
+-            error = _("Inverse sine is undefined for values outside [-1, 1]");
++        /* asin⁻¹(0) = 0 */
++        if (is_zero ())
+             return new Number.integer (0);
++
++        /* sin⁻¹(x) = tan⁻¹(x / √(1 - x²)), |x| < 1 */
++        if (re_exponent <= 0)
++        {
++            var t1 = new Number.integer (1);
++            var t2 = t1;
++            t1 = t1.subtract (this);
++            t2 = t2.add (this);
++            t2 = t1.multiply (t2);
++            t2 = t2.root (-2);
++            var z = multiply (t2);
++            z = z.atan (unit);
++            return z;
+         }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.asin (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z.from_radians (unit);
++        /* sin⁻¹(1) = π/2, sin⁻¹(-1) = -π/2 */
++        var t2 = new Number.integer (re_sign);
++        if (equals (t2))
++        {
++            var z = new Number.pi ().divide_integer (2 * t2.re_sign);
++            return z.from_radians (unit);
++        }
++
++        /* Translators: Error displayed when inverse sine value is undefined */
++        mperr (_("Inverse sine is undefined for values outside [-1, 1]"));
++        return new Number.integer (0);
+     }
+ 
+     /* Sets z = cos⁻¹ x */
+     public Number acos (AngleUnit unit = AngleUnit.RADIANS)
+     {
+-        if (compare (new Number.integer (1)) > 0 || compare (new Number.integer (-1)) < 0)
++        var pi = new Number.pi ();
++        var t1 = new Number.integer (1);
++        var n1 = new Number.integer (-1);
++
++        Number z;
++        if (compare (t1) > 0 || compare (n1) < 0)
+         {
+             /* Translators: Error displayed when inverse cosine value is undefined */
+-            error = _("Inverse cosine is undefined for values outside [-1, 1]");
+-            return new Number.integer (0);
++            mperr (_("Inverse cosine is undefined for values outside [-1, 1]"));
++            z = new Number.integer (0);
+         }
++        else if (is_zero ())
++            z = pi.divide_integer (2);
++        else if (equals (t1))
++            z = new Number.integer (0);
++        else if (equals (n1))
++            z = pi;
++        else
++        {
++            /* cos⁻¹(x) = tan⁻¹(√(1 - x²) / x) */
++            Number y;
++            var t2 = multiply (this);
++            t2 = t1.subtract (t2);
++            t2 = t2.sqrt ();
++            t2 = t2.divide (this);
++            y = t2.atan (AngleUnit.RADIANS);
++            if (re_sign > 0)
++                z = y;
++            else
++                z = y.add (pi);
++        }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.acos (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+         return z.from_radians (unit);
+     }
+ 
+@@ -978,9 +1345,63 @@
+     /* Sets z = tan⁻¹ x */
+     public Number atan (AngleUnit unit = AngleUnit.RADIANS)
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.atan (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
++        if (is_zero ())
++            return new Number.integer (0);
++
++        var t2 = this;
++        var rx = 0f;
++        if (re_exponent.abs () <= 2)
++            rx = to_float ();
++
++        /* REDUCE ARGUMENT IF NECESSARY BEFORE USING SERIES */
++        var q = 1;
++        Number z;
++        while (t2.re_exponent >= 0)
++        {
++            if (t2.re_exponent == 0 && 2 * (t2.re_fraction[0] + 1) <= BASE)
++                break;
++
++            q *= 2;
++
++            /* t = t / (√(t² + 1) + 1) */
++            z = t2.multiply (t2);
++            z = z.add (new Number.integer (1));
++            z = z.sqrt ();
++            z = z.add (new Number.integer (1));
++            t2 = t2.divide (z);
++        }
++
++        /* USE POWER SERIES NOW ARGUMENT IN (-0.5, 0.5) */
++        z = t2;
++        var t1 = t2.multiply (t2);
++
++        /* SERIES LOOP.  REDUCE T IF POSSIBLE. */
++        for (var i = 1; ; i += 2)
++        {
++            if (T + 2 + t2.re_exponent <= 1)
++                break;
++
++            t2 = t2.multiply (t1).multiply_integer (-i).divide_integer (i + 2);
++
++            z = z.add (t2);
++            if (t2.is_zero ())
++                break;
++        }
++
++        /* CORRECT FOR ARGUMENT REDUCTION */
++        z = z.multiply_integer (q);
++
++        /*  CHECK THAT RELATIVE ERROR LESS THAN 0.01 UNLESS re_exponent
++         *  OF X IS LARGE (WHEN ATAN MIGHT NOT WORK)
++         */
++        if (re_exponent.abs () <= 2)
++        {
++            float ry = z.to_float ();
++            /* THE FOLLOWING MESSAGE MAY INDICATE THAT B**(T-1) IS TOO SMALL. */
++            if (Math.fabs (ry - Math.atan (rx)) >= Math.fabs (ry) * 0.01)
++                mperr ("*** ERROR OCCURRED IN ATAN, RESULT INCORRECT ***");
++        }
++
+         return z.from_radians (unit);
+     }
+ 
+@@ -987,27 +1408,88 @@
+     /* Sets z = sinh x */
+     public Number sinh ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.sinh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* sinh (0) = 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
++        /* WORK WITH ABS (X) */
++        var abs_x = abs ();
++
++        /* If |x| < 1 USE EXP TO AVOID CANCELLATION, otherwise IF TOO LARGE EPOWY GIVES ERROR MESSAGE */
++        Number z;
++        if (abs_x.re_exponent <= 0)
++        {
++            /* ((e^|x| + 1) * (e^|x| - 1)) / e^|x| */
++            // FIXME: Solves to e^|x| - e^-|x|, why not lower branch always? */
++            var exp_x = abs_x.epowy ();
++            var a = exp_x.add (new Number.integer (1));
++            var b = exp_x.add (new Number.integer (-1));
++            z = a.multiply (b);
++            z = z.divide (exp_x);
++        }
++        else
++        {
++            /* e^|x| - e^-|x| */
++            var exp_x = abs_x.epowy ();
++            z = exp_x.reciprocal ();
++            z = exp_x.subtract (z);
++        }
++
++        /* DIVIDE BY TWO AND RESTORE re_sign */
++        z = z.divide_integer (2);
++        return z.multiply_integer (re_sign);
+     }
+ 
+     /* Sets z = cosh x */
+     public Number cosh ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.cosh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* cosh (0) = 1 */
++        if (is_zero ())
++            return new Number.integer (1);
++
++        /* cosh (x) = (e^x + e^-x) / 2 */
++        var t = abs ();
++        t = t.epowy ();
++        var z = t.reciprocal ();
++        z = t.add (z);
++        return z.divide_integer (2);
+     }
+ 
+     /* Sets z = tanh x */
+     public Number tanh ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.tanh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
++        /* tanh (0) = 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
++        var t = abs ();
++
++        /* SEE IF ABS (X) SO LARGE THAT RESULT IS +-1 */
++        var r__1 = (float) T * 0.5 * Math.log ((float) BASE);
++        var z = new Number.double (r__1);
++        if (t.compare (z) > 0)
++            return new Number.integer (re_sign);
++
++        /* If |x| >= 1/2 use ?, otherwise use ? to avoid cancellation */
++        /* |tanh (x)| = (e^|2x| - 1) / (e^|2x| + 1) */
++        t = t.multiply_integer (2);
++        if (t.re_exponent > 0)
++        {
++            t = t.epowy ();
++            z = t.add (new Number.integer (-1));
++            t = t.add (new Number.integer (1));
++            z = z.divide (t);
++        }
++        else
++        {
++            t = t.epowy ();
++            z = t.add (new Number.integer (1));
++            t = t.add (new Number.integer (-1));
++            z = t.divide (z);
++        }
++
++        /* Restore re_sign */
++        z.re_sign = re_sign * z.re_sign;
+         return z;
+     }
+ 
+@@ -1014,10 +1496,12 @@
+     /* Sets z = sinh⁻¹ x */
+     public Number asinh ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.asinh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* sinh⁻¹(x) = ln (x + √(x² + 1)) */
++        var t = multiply (this);
++        t = t.add (new Number.integer (1));
++        t = t.sqrt ();
++        t = add (t);
++        return t.ln ();
+     }
+ 
+     /* Sets z = cosh⁻¹ x */
+@@ -1028,14 +1512,16 @@
+         if (compare (t) < 0)
+         {
+             /* Translators: Error displayed when inverse hyperbolic cosine value is undefined */
+-            error = _("Inverse hyperbolic cosine is undefined for values less than one");
++            mperr (_("Inverse hyperbolic cosine is undefined for values less than one"));
+             return new Number.integer (0);
+         }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.acosh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* cosh⁻¹(x) = ln (x + √(x² - 1)) */
++        t = multiply (this);
++        t = t.add (new Number.integer (-1));
++        t = t.sqrt ();
++        t = add (t);
++        return t.ln ();
+     }
+ 
+     /* Sets z = tanh⁻¹ x */
+@@ -1045,14 +1531,17 @@
+         if (compare (new Number.integer (1)) >= 0 || compare (new Number.integer (-1)) <= 0)
+         {
+             /* Translators: Error displayed when inverse hyperbolic tangent value is undefined */
+-            error = _("Inverse hyperbolic tangent is undefined for values outside [-1, 1]");
++            mperr (_("Inverse hyperbolic tangent is undefined for values outside [-1, 1]"));
+             return new Number.integer (0);
+         }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.atanh (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* atanh (x) = 0.5 * ln ((1 + x) / (1 - x)) */
++        var n = add (new Number.integer (1));
++        var d = invert_sign ();
++        d = d.add (new Number.integer (1));
++        var z = n.divide (d);
++        z = z.ln ();
++        return z.divide_integer (2);
+     }
+ 
+     /* Sets z = boolean AND for each bit in x and z */
+@@ -1062,7 +1551,7 @@
+         is_positive_integer () || !y.is_positive_integer ())
+         {
+             /* Translators: Error displayed when boolean AND attempted on non-integer values */
+-            error = _("Boolean AND is only defined for positive integers");
++            mperr (_("Boolean AND is only defined for positive integers"));
+         }
+ 
+         return bitwise (y, (v1, v2) => { return v1 & v2; }, 0);
+@@ -1074,7 +1563,7 @@
+         if (!is_positive_integer () || !y.is_positive_integer ())
+         {
+             /* Translators: Error displayed when boolean OR attempted on non-integer values */
+-            error = _("Boolean OR is only defined for positive integers");
++            mperr (_("Boolean OR is only defined for positive integers"));
+         }
+ 
+         return bitwise (y, (v1, v2) => { return v1 | v2; }, 0);
+@@ -1086,7 +1575,7 @@
+         if (!is_positive_integer () || !y.is_positive_integer ())
+         {
+             /* Translators: Error displayed when boolean XOR attempted on non-integer values */
+-            error = _("Boolean XOR is only defined for positive integers");
++            mperr (_("Boolean XOR is only defined for positive integers"));
+         }
+ 
+         return bitwise (y, (v1, v2) => { return v1 ^ v2; }, 0);
+@@ -1098,7 +1587,7 @@
+         if (!is_positive_integer ())
+         {
+             /* Translators: Error displayed when boolean XOR attempted on non-integer values */
+-            error = _("Boolean NOT is only defined for positive integers");
++            mperr (_("Boolean NOT is only defined for positive integers"));
+         }
+ 
+         return bitwise (new Number.integer (0), (v1, v2) => { return v1 ^ 0xF; }, wordlen);
+@@ -1121,7 +1610,7 @@
+         if (!is_integer ())
+         {
+             /* Translators: Error displayed when bit shift attempted on non-integer values */
+-            error = _("Shift is only possible on integer values");
++            mperr (_("Shift is only possible on integer values"));
+             return new Number.integer (0);
+         }
+ 
+@@ -1253,60 +1742,1056 @@
+     private Number copy ()
+     {
+         var z = new Number ();
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        var tmp2 = MPFloat.init2 ((Precision) precision);
+-        tmp.@set(re_num, Round.NEAREST);
+-        tmp2.@set(im_num, Round.NEAREST);
+-        z.re_num = tmp;
+-        z.im_num = tmp2;
++        z.re_sign = re_sign;
++        z.im_sign = im_sign;
++        z.re_exponent = re_exponent;
++        z.im_exponent = im_exponent;
++        for (var i = 0; i < re_fraction.length; i++)
++        {
++            z.re_fraction[i] = re_fraction[i];
++            z.im_fraction[i] = im_fraction[i];
++        }
++
+         return z;
+     }
+ 
++    private Number add_with_sign (int y_sign, Number y)
++    {
++        if (is_complex () || y.is_complex ())
++        {
++            Number real_z, im_z;
++
++            var real_x = real_component ();
++            var im_x = imaginary_component ();
++            var real_y = y.real_component ();
++            var im_y = y.imaginary_component ();
++
++            real_z = real_x.add_real (y_sign * y.re_sign, real_y);
++            im_z = im_x.add_real (y_sign * y.im_sign, im_y);
++
++            return new Number.complex (real_z, im_z);
++        }
++        else
++            return add_real (y_sign * y.re_sign, y);
++    }
++
++
+     private Number epowy_real ()
+     {
+-        var z = copy ();
+-        var tmp = z.re_num;
+-        tmp.exp (re_num, Round.NEAREST);
+-        z.re_num = tmp;
++        /* e^0 = 1 */
++        if (is_zero ())
++            return new Number.integer (1);
++
++        /* If |x| < 1 use exp */
++        if (re_exponent <= 0)
++            return exp ();
++
++        /* NOW SAFE TO CONVERT X TO REAL */
++        var rx = to_double ();
++
++        /* SAVE re_sign AND WORK WITH ABS (X) */
++        var xs = re_sign;
++        var t2 = abs ();
++
++        /* GET fractional AND INTEGER PARTS OF ABS (X) */
++        var ix = t2.to_integer ();
++        t2 = t2.fractional_component ();
++
++        /* ATTACH re_sign TO fractional PART AND COMPUTE EXP OF IT */
++        t2.re_sign *= xs;
++        var z = t2.exp ();
++
++        /*  COMPUTE E-2 OR 1/E USING TWO EXTRA DIGITS IN CASE ABS (X) LARGE
++         *  (BUT ONLY ONE EXTRA DIGIT IF T < 4)
++         */
++        var tss = 0;
++        if (T < 4)
++            tss = T + 1;
++        else
++            tss = T + 2;
++
++        /* LOOP FOR E COMPUTATION. DECREASE T IF POSSIBLE. */
++        /* Computing MIN */
++        var t1 = new Number.integer (xs);
++
++        t2.re_sign = 0;
++        for (var i = 2 ; ; i++)
++        {
++            if (int.min (tss, tss + 2 + t1.re_exponent) <= 2)
++                break;
++
++            t1 = t1.divide_integer (i * xs);
++            t2 = t2.add (t1);
++            if (t1.is_zero ())
++                break;
++        }
++
++        /* RAISE E OR 1/E TO POWER IX */
++        if (xs > 0)
++            t2 = t2.add (new Number.integer (2));
++        t2 = t2.xpowy_integer (ix);
++
++        /* MULTIPLY EXPS OF INTEGER AND fractional PARTS */
++        z = z.multiply (t2);
++
++        /*  CHECK THAT RELATIVE ERROR LESS THAN 0.01 UNLESS ABS (X) LARGE
++         *  (WHEN EXP MIGHT OVERFLOW OR UNDERFLOW)
++         */
++        if (Math.fabs (rx) > 10.0f)
++            return z;
++        var rz = z.to_double ();
++        var r__1 = rz - Math.exp (rx);
++        if (Math.fabs (r__1) < rz * 0.01f)
++            return z;
++
++        /*  THE FOLLOWING MESSAGE MAY INDICATE THAT
++         *  B**(T-1) IS TOO SMALL, OR THAT M IS TOO SMALL SO THE
++         *  RESULT UNDERFLOWED.
++         */
++        mperr ("*** ERROR OCCURRED IN EPOWY, RESULT INCORRECT ***");
+         return z;
++
+     }
+ 
++    /*  Return e^x for |x| < 1 USING AN o (SQRt (T).m (T)) ALGORITHM
++     *  DESCRIBED IN - R. P. BRENT, THE COMPLEXITY OF MULTIPLE-
++     *  PRECISION ARITHMETIC (IN COMPLEXITY OF COMPUTATIONAL PROBLEM
++     *  SOLVING, UNIV. OF QUEENSLAND PRESS, BRISBANE, 1976, 126-165).
++     *  ASYMPTOTICALLY FASTER METHODS EXIST, BUT ARE NOT USEFUL
++     *  UNLESS T IS VERY LARGE. SEE COMMENTS TO MP_ATAN AND MPPIGL.
++     */
++    private Number exp ()
++    {
++        /* e^0 = 1 */
++        if (is_zero ())
++            return new Number.integer (1);
++
++        /* Only defined for |x| < 1 */
++        if (re_exponent > 0)
++        {
++            mperr ("*** ABS (X) NOT LESS THAN 1 IN CALL TO MP_EXP ***");
++            return new Number.integer (0);
++        }
++
++        var t1 = this;
++        var rlb = Math.log (BASE);
++
++        /* Compute approximately optimal q (and divide x by 2^q) */
++        var q = (int) (Math.sqrt (T * 0.48 * rlb) + re_exponent * 1.44 * rlb);
++
++        /* HALVE Q TIMES */
++        if (q > 0)
++        {
++            var ib = BASE << 2;
++            var ic = 1;
++            for (var i = 1; i <= q; i++)
++            {
++                ic *= 2;
++                if (ic < ib && ic != BASE && i < q)
++                    continue;
++                t1 = t1.divide_integer (ic);
++                ic = 1;
++            }
++        }
++
++        if (t1.is_zero ())
++            return new Number.integer (0);
++
++        /* Sum series, reducing t where possible */
++        var z = t1.copy ();
++        var t2 = t1;
++        for (var i = 2; T + t2.re_exponent - z.re_exponent > 0; i++)
++        {
++            t2 = t1.multiply (t2);
++            t2 = t2.divide_integer (i);
++            z = t2.add (z);
++            if (t2.is_zero ())
++                break;
++        }
++
++        /* Apply (x+1)^2 - 1 = x (2 + x) for q iterations */
++        for (var i = 1; i <= q; i++)
++        {
++            t1 = z.add (new Number.integer (2));
++            z = t1.multiply (z);
++        }
++
++        return z.add (new Number.integer (1));    
++    }
++
++    private Number pwr (Number y)
++    {
++        /* (-x)^y imaginary */
++        /* FIXME: Make complex numbers optional */
++        /*if (re_sign < 0)
++        {
++            mperr (_("The power of negative numbers is only defined for integer exponents"));
++            return new Number.integer (0);
++        }*/
++
++        /* 0^y = 0, 0^-y undefined */
++        if (is_zero ())
++        {
++            if (y.re_sign < 0)
++                mperr (_("The power of zero is undefined for a negative exponent"));
++            return new Number.integer (0);
++        }
++
++        /* x^0 = 1 */
++        if (y.is_zero ())
++            return new Number.integer (1);
++
++        return y.multiply (ln ()).epowy ();
++    }
++
+     private Number root_real (int64 n)
+     {
++        /* x^(1/1) = x */
++        if (n == 1)
++            return this;
++
++        /* x^(1/0) invalid */
++        if (n == 0)
++        {
++            mperr (_("Root must be non-zero"));
++            return new Number.integer (0);
++        }
++
++        var np = n.abs ();
++
++        /* LOSS OF ACCURACY IF NP LARGE, SO ONLY ALLOW NP <= MAX (B, 64) */
++        if (np > int.max (BASE, 64))
++        {
++            mperr ("*** ABS (N) TOO LARGE IN CALL TO ROOT ***");
++            return new Number.integer (0);
++        }
++
++        /* 0^(1/n) = 0 for positive n */
++        if (is_zero ())
++        {
++            if (n <= 0)
++                mperr (_("Negative root of zero is undefined"));
++            return new Number.integer (0);
++        }
++
++        // FIXME: Imaginary root
++        if (re_sign < 0 && np % 2 == 0)
++        {
++            mperr (_("nth root of negative number is undefined for even n"));
++            return new Number.integer (0);
++        }
++
++        /* DIVIDE re_exponent BY NP */
++        var ex = re_exponent / np;
++
++        /* Get initial approximation */
++        var t1 = copy ();
++        t1.re_exponent = 0;
++        var approximation = Math.exp (((np * ex - re_exponent) * Math.log (BASE) - Math.log (Math.fabs (t1.to_float ()))) / np);
++        t1 = new Number.double (approximation);
++        t1.re_sign = re_sign;
++        t1.re_exponent -= (int) ex;
++
++        /* MAIN ITERATION LOOP */
++        var it0 = 3;
++        var t = it0;
++        Number t2;
++        while (true)
++        {
++            /* t1 = t1 - ((t1 * ((x * t1^np) - 1)) / np) */
++            t2 = t1.xpowy_integer (np);
++            t2 = multiply (t2);
++            t2 = t2.add (new Number.integer (-1));
++            t2 = t1.multiply (t2);
++            t2 = t2.divide_integer (np);
++            t1 = t1.subtract (t2);
++
++            /*  FOLLOWING LOOP ALMOST DOUBLES T (POSSIBLE BECAUSE
++             *  NEWTONS METHOD HAS 2ND ORDER CONVERGENCE).
++             */
++            if (t >= T)
++                break;
++
++            var ts3 = t;
++            var ts2 = t;
++            t = T;
++            do
++            {
++                ts2 = t;
++                t = (t + it0) / 2;
++            } while (t > ts3);
++            t = int.min (ts2, T);
++        }
++
++        /*  NOW r (I2) IS X**(-1/NP)
++         *  CHECK THAT NEWTON ITERATION WAS CONVERGING
++         */
++        if (t2.re_sign != 0 && (t1.re_exponent - t2.re_exponent) << 1 < T - it0)
++        {
++            /*  THE FOLLOWING MESSAGE MAY INDICATE THAT B**(T-1) IS TOO SMALL,
++             *  OR THAT THE INITIAL APPROXIMATION OBTAINED USING ALOG AND EXP
++             *  IS NOT ACCURATE ENOUGH.
++             */
++            mperr ("*** ERROR OCCURRED IN ROOT, NEWTON ITERATION NOT CONVERGING PROPERLY ***");
++        }
++
++        if (n >= 0)
++        {
++            t1 = t1.xpowy_integer (n - 1);
++            return multiply (t1);
++        }
++
++        return t1;
++
++    }
++
++    /*  ROUTINE CALLED BY DIVIDE AND SQRT TO ENSURE THAT
++     *  RESULTS ARE REPRESENTED EXACTLY IN T-2 DIGITS IF THEY
++     *  CAN BE.  X IS AN MP NUMBER, I AND J ARE INTEGERS.
++     */
++    private Number ext (int i, int j)
++    {
++        if (is_zero () || T <= 2 || i == 0)
++            return this;
++
++        /* COMPUTE MAXIMUM POSSIBLE ERROR IN THE LAST PLACE */
++        var q = (j + 1) / i + 1;
++        var s = BASE * re_fraction[T - 2] + re_fraction[T - 1];
++
++        /* SET LAST TWO DIGITS TO ZERO */
+         var z = copy ();
+-        var tmp = z.re_num;
+-        tmp.root (re_num, (ulong) n, Round.NEAREST);
+-        z.re_num = tmp;
+-        return z;
++        if (s <= q)
++        {
++            z.re_fraction[T - 2] = 0;
++            z.re_fraction[T - 1] = 0;
++            return z;
++        }
++
++        if (s + q < BASE * BASE)
++            return z;
++
++        /* ROUND UP HERE */
++        z.re_fraction[T - 2] = BASE - 1;
++        z.re_fraction[T - 1] = BASE;
++
++        /* NORMALIZE X (LAST DIGIT B IS OK IN MULTIPLY_INTEGER) */
++        return z.multiply_integer (1);
+     }
+ 
++
+     private Number ln_real ()
+     {
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.log (re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
++        // ln(e^1) = 1, fixes precision loss
++        if (equals (new Number.eulers ()))
++            return new Number.integer (1);
++
++        /* LOOP TO GET APPROXIMATE Ln (X) USING SINGLE-PRECISION */
++        var t1 = copy ();
++        var z = new Number.integer (0);
++        for (var k = 0; k < 10; k++)
++        {
++            /* COMPUTE FINAL CORRECTION ACCURATELY USING LNS */
++            var t2 = t1.add (new Number.integer (-1));
++            if (t2.is_zero () || t2.re_exponent + 1 <= 0)
++                return z.add (t2.lns ());
++
++            /* REMOVE EXPONENT TO AVOID FLOATING-POINT OVERFLOW */
++            var e = t1.re_exponent;
++            t1.re_exponent = 0;
++            var rx = t1.to_double ();
++            t1.re_exponent = e;
++            var rlx = Math.log (rx) + e * Math.log (BASE);
++            t2 = new Number.double (-rlx);
++
++            /* UPDATE Z AND COMPUTE ACCURATE EXP OF APPROXIMATE LOG */
++            z = z.subtract (t2);
++            t2 = t2.epowy ();
++
++            /* COMPUTE RESIDUAL WHOSE LOG IS STILL TO BE FOUND */
++            t1 = t1.multiply (t2);
++        }
++
++        mperr ("*** ERROR IN LN, ITERATION NOT CONVERGING ***");
+         return z;
++
+     }
+ 
++    /*  RETURNS MP Y = Ln (1+X) IF X IS AN MP NUMBER SATISFYING THE
++     *  CONDITION ABS (X) < 1/B, ERROR OTHERWISE.
++     *  USES NEWTONS METHOD TO SOLVE THE EQUATION
++     *  EXP1(-Y) = X, THEN REVERSES re_sign OF Y.
++     */
++    private Number lns ()
++    {
++        /* ln (1+0) = 0 */
++        if (is_zero ())
++            return this;
++
++        /* Get starting approximation -ln (1+x) ~= -x + x^2/2 - x^3/3 + x^4/4 */
++        var t2 = copy ();
++        var t1 = divide_integer (4);
++        t1 = t1.add (new Number.fraction (-1, 3));
++        t1 = multiply (t1);
++        t1 = t1.add (new Number.fraction (1, 2));
++        t1 = multiply (t1);
++        t1 = t1.add (new Number.integer (-1));
++        var z = multiply (t1);
++
++        /* Solve using Newtons method */
++        var it0 = 5;
++        var t = it0;
++        Number t3;
++        while (true)
++        {
++            /* t3 = (e^t3 - 1) */
++            /* z = z - (t2 + t3 + (t2 * t3)) */
++            t3 = z.epowy ();
++            t3 = t3.add (new Number.integer (-1));
++            t1 = t2.multiply (t3);
++            t3 = t3.add (t1);
++            t3 = t2.add (t3);
++            z = z.subtract (t3);
++            if (t >= T)
++                break;
++
++            /*  FOLLOWING LOOP COMPUTES NEXT VALUE OF T TO USE.
++             *  BECAUSE NEWTONS METHOD HAS 2ND ORDER CONVERGENCE,
++             *  WE CAN ALMOST DOUBLE T EACH TIME.
++             */
++            var ts3 = t;
++            var ts2 = t;
++            t = T;
++            do
++            {
++                ts2 = t;
++                t = (t + it0) / 2;
++            } while (t > ts3);
++            t = ts2;
++        }
++
++        /* CHECK THAT NEWTON ITERATION WAS CONVERGING AS EXPECTED */
++        if (t3.re_sign != 0 && t3.re_exponent << 1 > it0 - T)
++            mperr ("*** ERROR OCCURRED IN LNS, NEWTON ITERATION NOT CONVERGING PROPERLY ***");
++
++        z.re_sign = -z.re_sign;
++
++        return z;
++    }
++
++    private Number add_real (int y_sign, Number y)
++    {
++        var re_sign_prod = y_sign * re_sign;
++
++        /* 0 + y = y */
++        if (is_zero ())
++        {
++            if (y_sign != y.re_sign)
++                return y.invert_sign ();
++            else
++                return y;
++        }
++        /* x + 0 = x */
++        else if (y.is_zero ())
++            return this;
++
++        var exp_diff = re_exponent - y.re_exponent;
++        var med = exp_diff.abs ();
++        var x_largest = false;
++        if (exp_diff < 0)
++            x_largest = false;
++        else if (exp_diff > 0)
++            x_largest = true;
++        else
++        {
++            /* EXPONENTS EQUAL SO COMPARE SIGNS, THEN FRACTIONS IF NEC. */
++            if (re_sign_prod < 0)
++            {
++                /* signs are not equal.  find out which mantissa is larger. */
++                int j;
++                for (j = 0; j < T; j++)
++                {
++                    int i = re_fraction[j] - y.re_fraction[j];
++                    if (i != 0)
++                    {
++                        if (i < 0)
++                            x_largest = false;
++                        else if (i > 0)
++                            x_largest = true;
++                        break;
++                    }
++                }
++
++                /* Both mantissas equal, so result is zero. */
++                if (j >= T)
++                    return new Number.integer (0);
++            }
++        }
++
++        var z = new Number.integer (0);
++        int[] big_fraction, small_fraction;
++        if (x_largest)
++        {
++            z.re_sign = re_sign;
++            z.re_exponent = re_exponent;
++            big_fraction = re_fraction;
++            small_fraction = y.re_fraction;
++        }
++        else
++        {
++            z.re_sign = y_sign;
++            z.re_exponent = y.re_exponent;
++            big_fraction = y.re_fraction;
++            small_fraction = re_fraction;
++        }
++
++        /* CLEAR GUARD DIGITS TO RIGHT OF X DIGITS */
++        for (var i = 3; i >= med; i--)
++            z.re_fraction[T + i] = 0;
++
++        if (re_sign_prod >= 0)
++        {
++            /* This is probably insufficient overflow detection, but it makes us not crash at least. */
++            if (T + 3 < med)
++            {
++                mperr (_("Overflow: the result couldn't be calculated"));
++                return new Number.integer (0);
++            }
++
++            /* HERE DO ADDITION, re_exponent (Y) >= re_exponent (X) */
++            var i = 0;
++            for (i = T + 3; i >= T; i--)
++                z.re_fraction[i] = small_fraction[i - med];
++
++            var c = 0;
++            for (; i >= med; i--)
++            {
++                c = big_fraction[i] + small_fraction[i - med] + c;
++
++                if (c < BASE)
++                {
++                    /* NO CARRY GENERATED HERE */
++                    z.re_fraction[i] = c;
++                    c = 0;
++                }
++                else
++                {
++                    /* CARRY GENERATED HERE */
++                    z.re_fraction[i] = c - BASE;
++                    c = 1;
++                }
++            }
++
++            for (; i >= 0; i--)
++            {
++                c = big_fraction[i] + c;
++                if (c < BASE)
++                {
++                    z.re_fraction[i] = c;
++                    i--;
++
++                    /* NO CARRY POSSIBLE HERE */
++                    for (; i >= 0; i--)
++                        z.re_fraction[i] = big_fraction[i];
++
++                    c = 0;
++                    break;
++                }
++
++                z.re_fraction[i] = 0;
++                c = 1;
++            }
++
++            /* MUST SHIFT RIGHT HERE AS CARRY OFF END */
++            if (c != 0)
++            {
++                for (var j = T + 3; j > 0; j--)
++                    z.re_fraction[j] = z.re_fraction[j - 1];
++                z.re_fraction[0] = 1;
++                z.re_exponent++;
++            }
++        }
++        else
++        {
++            var c = 0;
++            var i = 0;
++            for (i = T + med - 1; i >= T; i--)
++            {
++                /* HERE DO SUBTRACTION, ABS (Y) > ABS (X) */
++                z.re_fraction[i] = c - small_fraction[i - med];
++                c = 0;
++
++                /* BORROW GENERATED HERE */
++                if (z.re_fraction[i] < 0)
++                {
++                    c = -1;
++                    z.re_fraction[i] += BASE;
++                }
++            }
++
++            for (; i >= med; i--)
++            {
++                c = big_fraction[i] + c - small_fraction[i - med];
++                if (c >= 0)
++                {
++                    /* NO BORROW GENERATED HERE */
++                    z.re_fraction[i] = c;
++                    c = 0;
++                }
++                else
++                {
++                    /* BORROW GENERATED HERE */
++                    z.re_fraction[i] = c + BASE;
++                    c = -1;
++                }
++            }
++
++            for (; i >= 0; i--)
++            {
++                c = big_fraction[i] + c;
++
++                if (c >= 0)
++                {
++                    z.re_fraction[i] = c;
++                    i--;
++
++                    /* NO CARRY POSSIBLE HERE */
++                    for (; i >= 0; i--)
++                        z.re_fraction[i] = big_fraction[i];
++
++                    break;
++                }
++
++                z.re_fraction[i] = c + BASE;
++                c = -1;
++            }
++        }
++
++        mp_normalize (ref z);
++
++        return z;
++    }
++
++    private Number multiply_real (Number y)
++    {
++        /* x*0 = 0*y = 0 */
++        if (re_sign == 0 || y.re_sign == 0)
++            return new Number.integer (0);
++
++        var z = new Number.integer (0);
++        z.re_sign = re_sign * y.re_sign;
++        z.re_exponent = re_exponent + y.re_exponent;
++
++        var r = new Number.integer (0);
++
++        /* PERFORM MULTIPLICATION */
++        var c = 8;
++        for (var i = 0; i < T; i++)
++        {
++            var xi = re_fraction[i];
++
++            /* FOR SPEED, PUT THE NUMBER WITH MANY ZEROS FIRST */
++            if (xi == 0)
++                continue;
++
++            /* Computing MIN */
++            for (var j = 0; j < int.min (T, T + 3 - i); j++)
++                r.re_fraction[i+j+1] += xi * y.re_fraction[j];
++            c--;
++            if (c > 0)
++                continue;
++
++            /* CHECK FOR LEGAL BASE B DIGIT */
++            if (xi < 0 || xi >= BASE)
++            {
++                mperr ("*** ILLEGAL BASE B DIGIT IN CALL TO MULTIPLY, POSSIBLE OVERWRITING PROBLEM ***");
++                return new Number.integer (0);
++            }
++
++            /*  PROPAGATE CARRIES AT END AND EVERY EIGHTH TIME,
++             *  FASTER THAN DOING IT EVERY TIME.
++             */
++            for (var j = T + 3; j >= 0; j--)
++            {
++                int ri = r.re_fraction[j] + c;
++                if (ri < 0)
++                {
++                    mperr ("*** INTEGER OVERFLOW IN MULTIPLY, B TOO LARGE ***");
++                    return new Number.integer (0);
++                }
++                c = ri / BASE;
++                r.re_fraction[j] = ri - BASE * c;
++            }
++            if (c != 0)
++            {
++                mperr ("*** ILLEGAL BASE B DIGIT IN CALL TO MULTIPLY, POSSIBLE OVERWRITING PROBLEM ***");
++                return new Number.integer (0);
++            }
++            c = 8;
++        }
++
++        if (c != 8)
++        {
++            c = 0;
++            for (var i = T + 3; i >= 0; i--)
++            {
++                int ri = r.re_fraction[i] + c;
++                if (ri < 0)
++                {
++                    mperr ("*** INTEGER OVERFLOW IN MULTIPLY, B TOO LARGE ***");
++                    return new Number.integer (0);
++                }
++                c = ri / BASE;
++                r.re_fraction[i] = ri - BASE * c;
++            }
++
++            if (c != 0)
++            {
++                mperr ("*** ILLEGAL BASE B DIGIT IN CALL TO MULTIPLY, POSSIBLE OVERWRITING PROBLEM ***");
++                return new Number.integer (0);
++            }
++        }
++
++        /* Clear complex part */
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++
++        /* NORMALIZE AND ROUND RESULT */
++        // FIXME: Use stack variable because of mp_normalize brokeness
++        for (var i = 0; i < SIZE; i++)
++            z.re_fraction[i] = r.re_fraction[i];
++        mp_normalize (ref z);
++
++        return z;
++    }
++
++    private Number multiply_integer_real (int64 y)
++    {
++        /* x*0 = 0*y = 0 */
++        if (is_zero () || y == 0)
++            return new Number.integer (0);
++
++        /* x*1 = x, x*-1 = -x */
++        // FIXME: Why is this not working? mp_ext is using this function to do a normalization
++        /*if (y == 1 || y == -1)
++        {
++            if (y < 0)
++                z = invert_sign ();
++            else
++                z = this;
++            return z;
++        }*/
++
++        /* Copy x as z may also refer to x */
++        var z = new Number.integer (0);
++
++        if (y < 0)
++        {
++            y = -y;
++            z.re_sign = -re_sign;
++        }
++        else
++            z.re_sign = re_sign;
++        z.re_exponent = re_exponent + 4;
++
++        /* FORM PRODUCT IN ACCUMULATOR */
++        int64 c = 0;
++
++        /*  IF y*B NOT REPRESENTABLE AS AN INTEGER WE HAVE TO SIMULATE
++         *  DOUBLE-PRECISION MULTIPLICATION.
++         */
++
++        /* Computing MAX */
++        if (y >= int.max (BASE << 3, 32767 / BASE))
++        {
++            /* HERE J IS TOO LARGE FOR SINGLE-PRECISION MULTIPLICATION */
++            var j1 = y / BASE;
++            var j2 = y - j1 * BASE;
++
++            /* FORM PRODUCT */
++            for (var i = T + 3; i >= 0; i--)
++            {
++                var c1 = c / BASE;
++                var c2 = c - BASE * c1;
++                var ix = 0;
++                if (i > 3)
++                    ix = re_fraction[i - 4];
++
++                var t = j2 * ix + c2;
++                var is = t / BASE;
++                c = j1 * ix + c1 + is;
++                z.re_fraction[i] = (int) (t - BASE * is);
++            }
++        }
++        else
++        {
++            int64 ri = 0;
++            for (var i = T + 3; i >= 4; i--)
++            {
++                ri = y * re_fraction[i - 4] + c;
++                c = ri / BASE;
++                z.re_fraction[i] = (int) (ri - BASE * c);
++            }
++
++            /* CHECK FOR INTEGER OVERFLOW */
++            if (ri < 0)
++            {
++                mperr ("*** INTEGER OVERFLOW IN multiply_integer, B TOO LARGE ***");
++                return new Number.integer (0);
++            }
++
++            /* HAVE TO TREAT FIRST FOUR WORDS OF R SEPARATELY */
++            for (var i = 3; i >= 0; i--)
++            {
++                var t = c;
++                c = t / BASE;
++                z.re_fraction[i] = (int) (t - BASE * c);
++            }
++        }
++
++        /* HAVE TO SHIFT RIGHT HERE AS CARRY OFF END */
++        while (c != 0)
++        {
++            for (var i = T + 3; i >= 1; i--)
++                z.re_fraction[i] = z.re_fraction[i - 1];
++            var t = c;
++            c = t / BASE;
++            z.re_fraction[0] = (int) (t - BASE * c);
++            z.re_exponent++;
++        }
++
++        if (c < 0)
++        {
++            mperr ("*** INTEGER OVERFLOW IN multiply_integer, B TOO LARGE ***");
++            return new Number.integer (0);
++        }
++
++        z.im_sign = 0;
++        z.im_exponent = 0;
++        for (var i = 0; i < z.im_fraction.length; i++)
++            z.im_fraction[i] = 0;
++        mp_normalize (ref z);
++        return z;
++    }
++
+     private Number reciprocal_real ()
+     {
+         /* 1/0 invalid */
+         if (is_zero ())
+         {
+-            error = _("Reciprocal of zero is undefined");
++            mperr (_("Reciprocal of zero is undefined"));
+             return new Number.integer (0);
+         }
+ 
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.set_unsigned_integer (1, Round.NEAREST);
+-        tmp.divide (tmp, re_num, Round.NEAREST);
+-        var z = copy ();
+-        z.re_num.clear ();
+-        z.re_num = tmp;
+-        return z;
++        /* Start by approximating value using floating point */
++        var t1 = copy ();
++        t1.re_exponent = 0;
++        t1 = new Number.double (1.0 / t1.to_double ());
++        t1.re_exponent -= re_exponent;
++
++        var t = 3;
++        var it0 = t;
++        Number t2;
++        while (true)
++        {
++            /* t1 = t1 - (t1 * ((x * t1) - 1))   (2*t1 - t1^2*x) */
++            t2 = multiply (t1);
++            t2 = t2.add (new Number.integer (-1));
++            t2 = t1.multiply (t2);
++            t1 = t1.subtract (t2);
++            if (t >= T)
++                break;
++
++            /*  FOLLOWING LOOP ALMOST DOUBLES T (POSSIBLE
++             *  BECAUSE NEWTONS METHOD HAS 2ND ORDER CONVERGENCE).
++             */
++            var ts3 = t;
++            var ts2 = 0;
++            t = T;
++            do
++            {
++                ts2 = t;
++                t = (t + it0) / 2;
++            } while (t > ts3);
++            t = int.min (ts2, T);
++        }
++
++        /* RETURN IF NEWTON ITERATION WAS CONVERGING */
++        if (t2.re_sign != 0 && (t1.re_exponent - t2.re_exponent) << 1 < T - it0)
++        {
++            /*  THE FOLLOWING MESSAGE MAY INDICATE THAT B**(T-1) IS TOO SMALL,
++             *  OR THAT THE STARTING APPROXIMATION IS NOT ACCURATE ENOUGH.
++             */
++            mperr ("*** ERROR OCCURRED IN RECIPROCAL, NEWTON ITERATION NOT CONVERGING PROPERLY ***");
++        }
++
++        return t1;
+     }
+ 
++    private Number divide_integer_real (int64 y)
++    {
++        /* x/0 */
++        if (y == 0)
++        {
++            /* Translators: Error displayed attempted to divide by zero */
++            mperr (_("Division by zero is undefined"));
++            return new Number.integer (0);
++        }
+ 
++        /* 0/y = 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
++        /* Division by -1 or 1 just changes re_sign */
++        if (y == 1 || y == -1)
++        {
++            if (y < 0)
++                return invert_sign ();
++            else
++                return this;
++        }
++
++        var z = new Number.integer (0);
++        if (y < 0)
++        {
++            y = -y;
++            z.re_sign = -re_sign;
++        }
++        else
++            z.re_sign = re_sign;
++        z.re_exponent = re_exponent;
++
++        int64 c = 0;
++        int64 i = 0;
++
++        /*  IF y*B NOT REPRESENTABLE AS AN INTEGER HAVE TO SIMULATE
++         *  LONG DIVISION.  ASSUME AT LEAST 16-BIT WORD.
++         */
++
++        /* Computing MAX */
++        var b2 = int.max (BASE << 3, 32767 / BASE);
++        if (y < b2)
++        {
++            /* LOOK FOR FIRST NONZERO DIGIT IN QUOTIENT */
++            int64 r1 = 0;
++            do
++            {
++                c = BASE * c;
++                if (i < T)
++                    c += re_fraction[i];
++                i++;
++                r1 = c / y;
++                if (r1 < 0)
++                {
++                    mperr ("*** INTEGER OVERFLOW IN DIVIDE_INTEGER, B TOO LARGE ***");
++                    return new Number.integer (0);
++                }
++            } while (r1 == 0);
++
++            /* ADJUST re_exponent AND GET T+4 DIGITS IN QUOTIENT */
++            z.re_exponent += (int) (1 - i);
++            z.re_fraction[0] = (int) r1;
++            c = BASE * (c - y * r1);
++            int64 kh = 1;
++            if (i < T)
++            {
++                kh = T + 1 - i;
++                for (var k = 1; k < kh; k++)
++                {
++                    c += re_fraction[i];
++                    z.re_fraction[k] = (int) (c / y);
++                    c = BASE * (c - y * z.re_fraction[k]);
++                    i++;
++                }
++                if (c < 0)
++                {
++                    mperr ("*** INTEGER OVERFLOW IN DIVIDE_INTEGER, B TOO LARGE ***");
++                    return new Number.integer (0);
++                }
++            }
++
++            for (var k = kh; k < T + 4; k++)
++            {
++                z.re_fraction[k] = (int) (c / y);
++                c = BASE * (c - y * z.re_fraction[k]);
++            }
++            if (c < 0)
++            {
++                mperr ("*** INTEGER OVERFLOW IN DIVIDE_INTEGER, B TOO LARGE ***");
++                return new Number.integer (0);
++            }
++
++            mp_normalize (ref z);
++            return z;
++        }
++
++        /* HERE NEED SIMULATED DOUBLE-PRECISION DIVISION */
++        var j1 = y / BASE;
++        var j2 = y - j1 * BASE;
++
++        /* LOOK FOR FIRST NONZERO DIGIT */
++        var c2 = 0;
++        do
++        {
++            c = BASE * c + c2;
++            c2 = i < T ? re_fraction[i] : 0;
++            i++;
++        } while (c < j1 || (c == j1 && c2 < j2));
++
++        /* COMPUTE T+4 QUOTIENT DIGITS */
++        z.re_exponent += (int) (1 - i);
++        i--;
++
++        /* MAIN LOOP FOR LARGE ABS (y) CASE */
++        for (var k = 1; k <= T + 4; k++)
++        {
++            /* GET APPROXIMATE QUOTIENT FIRST */
++            var ir = c / (j1 + 1);
++
++            /* NOW REDUCE SO OVERFLOW DOES NOT OCCUR */
++            var iq = c - ir * j1;
++            if (iq >= b2)
++            {
++                /* HERE IQ*B WOULD POSSIBLY OVERFLOW SO INCREASE IR */
++                ir++;
++                iq -= j1;
++            }
++
++            iq = iq * BASE - ir * j2;
++            if (iq < 0)
++            {
++                /* HERE IQ NEGATIVE SO IR WAS TOO LARGE */
++                ir--;
++                iq += y;
++            }
++
++            if (i < T)
++                iq += re_fraction[i];
++            i++;
++            var iqj = iq / y;
++
++            /* r (K) = QUOTIENT, C = REMAINDER */
++            z.re_fraction[k - 1] = (int) (iqj + ir);
++            c = iq - y * iqj;
++
++            if (c < 0)
++            {
++                /* CARRY NEGATIVE SO OVERFLOW MUST HAVE OCCURRED */
++                mperr ("*** INTEGER OVERFLOW IN DIVIDE_INTEGER, B TOO LARGE ***");
++                return new Number.integer (0);
++            }
++        }
++
++        mp_normalize (ref z);
++
++        /* CARRY NEGATIVE SO OVERFLOW MUST HAVE OCCURRED */
++        mperr ("*** INTEGER OVERFLOW IN DIVIDE_INTEGER, B TOO LARGE ***");
++        return new Number.integer (0);
++    }
++
++
++
+     private Number from_radians (AngleUnit unit)
+     {
+         switch (unit)
+@@ -1340,23 +2825,146 @@
+         }
+     }
+ 
++    /* z = sin (x) -1 >= x >= 1, do_sin = 1
++     * z = cos (x) -1 >= x >= 1, do_sin = 0
++     */
++    private Number sin1 (bool do_sin)
++    {
++        /* sin (0) = 0, cos (0) = 1 */
++        if (is_zero ())
++        {
++            if (do_sin)
++                return new Number.integer (0);
++            else
++                return new Number.integer (1);
++        }
++
++        var t2 = multiply (this);
++        if (t2.compare (new Number.integer (1)) > 0)
++            mperr ("*** ABS (X) > 1 IN CALL TO SIN1 ***");
++
++        Number t1;
++        int i;
++        Number z;
++        if (do_sin)
++        {
++            t1 = this;
++            z = t1;
++            i = 2;
++        }
++        else
++        {
++            t1 = new Number.integer (1);
++            z = new Number.integer (0);
++            i = 1;
++        }
++
++        /* Taylor series */
++        /* POWER SERIES LOOP.  REDUCE T IF POSSIBLE */
++        var b2 = 2 * int.max (BASE, 64);
++        do
++        {
++            if (T + t1.re_exponent <= 0)
++                break;
++
++            /*  IF I*(I+1) IS NOT REPRESENTABLE AS AN INTEGER, THE FOLLOWING
++             *  DIVISION BY I*(I+1) HAS TO BE SPLIT UP.
++             */
++            t1 = t2.multiply (t1);
++            if (i > b2)
++            {
++                t1 = t1.divide_integer (-i);
++                t1 = t1.divide_integer (i + 1);
++            }
++            else
++                t1 = t1.divide_integer (-i * (i + 1));
++            z = t1.add (z);
++
++            i += 2;
++        } while (t1.re_sign != 0);
++
++        if (!do_sin)
++            z = z.add (new Number.integer (1));
++
++        return z;
++    }
++
++
+     private Number sin_real (AngleUnit unit)
+     {
++        /* sin (0) = 0 */
++        if (is_zero ())
++            return new Number.integer (0);
++
+         var x_radians = to_radians (unit);
+-        var z = new Number.integer (0);
+-        var tmp = z.re_num;
+-        tmp.sin (x_radians.re_num, Round.NEAREST);
+-        z.re_num = tmp;
++
++        var xs = x_radians.re_sign;
++        x_radians = x_radians.abs ();
++
++        /* USE SIN1 IF ABS (X) <= 1 */
++        Number z;
++        if (x_radians.compare (new Number.integer (1)) <= 0)
++            z = x_radians.sin1 (true);
++        /* FIND ABS (X) MODULO 2PI */
++        else
++        {
++            z = new Number.pi ().divide_integer (4);
++            x_radians = x_radians.divide (z);
++            x_radians = x_radians.divide_integer (8);
++            x_radians = x_radians.fractional_component ();
++
++            /* SUBTRACT 1/2, SAVE re_sign AND TAKE ABS */
++            x_radians = x_radians.add (new Number.fraction (-1, 2));
++            xs = -xs * x_radians.re_sign;
++            if (xs == 0)
++                return new Number.integer (0);
++
++            x_radians.re_sign = 1;
++            x_radians = x_radians.multiply_integer (4);
++
++            /* IF NOT LESS THAN 1, SUBTRACT FROM 2 */
++            if (x_radians.re_exponent > 0)
++                x_radians = x_radians.add (new Number.integer (-2));
++
++            if (x_radians.is_zero ())
++                return new Number.integer (0);
++
++            x_radians.re_sign = 1;
++            x_radians = x_radians.multiply_integer (2);
++
++            /*  NOW REDUCED TO FIRST QUADRANT, IF LESS THAN PI/4 USE
++             *  POWER SERIES, ELSE COMPUTE COS OF COMPLEMENT
++             */
++            if (x_radians.re_exponent > 0)
++            {
++                x_radians = x_radians.add (new Number.integer (-2));
++                x_radians = x_radians.multiply (z);
++                z = x_radians.sin1 (false);
++            }
++            else
++            {
++                x_radians = x_radians.multiply (z);
++                z = x_radians.sin1 (true);
++            }
++        }
++
++        z.re_sign = xs;
+         return z;
+     }
+ 
+     private Number cos_real (AngleUnit unit)
+     {
+-        var x_radians = to_radians (unit);
+-        var tmp = MPFloat.init2 ((Precision) precision);
+-        tmp.cos (x_radians.re_num, Round.NEAREST);
+-        var z = new Number.mpfloat (tmp);
+-        return z;
++        /* cos (0) = 1 */
++        if (is_zero ())
++            return new Number.integer (1);
++
++        /* Use power series if |x| <= 1 */
++        var z = to_radians (unit).abs ();
++        if (z.compare (new Number.integer (1)) <= 0)
++            return z.sin1 (false);
++        else
++            /* cos (x) = sin (π/2 - |x|) */
++            return new Number.pi ().divide_integer (2).subtract (z).sin (AngleUnit.RADIANS);
+     }
+ 
+     private Number bitwise (Number y, BitwiseFunc bitwise_operator, int wordlen)
+@@ -1370,7 +2978,7 @@
+             offset_out = offset1 > offset2 ? offset1 : offset2;
+         if (offset_out > 0 && (offset_out < offset1 || offset_out < offset2))
+         {
+-            error = ("Overflow. Try a bigger word size");
++            mperr ("Overflow. Try a bigger word size");
+             return new Number.integer (0);
+         }
+ 
+@@ -1420,6 +3028,29 @@
+ 
+ // FIXME: Re-add overflow and underflow detection
+ 
++static string? mp_error = null;
++
++/*  THIS ROUTINE IS CALLED WHEN AN ERROR CONDITION IS ENCOUNTERED, AND
++ *  AFTER A MESSAGE HAS BEEN WRITTEN TO STDERR.
++ */
++public void mperr (string text)
++{
++    mp_error = text;
++}
++
++/* Returns error string or null if no error */
++// FIXME: Global variable
++public string mp_get_error ()
++{
++    return mp_error;
++}
++
++/* Clear any current error */
++public void mp_clear_error ()
++{
++    mp_error = null;
++}
++
+ /* Sets z from a string representation in 'text'. */
+ public Number? mp_set_from_string (string str, int default_base = 10)
+ {
+@@ -1468,7 +3099,6 @@
+ 
+     /* Convert integer part */
+     var z = new Number.integer (0);
+-
+     while (str.get_next_char (ref index, out c))
+     {
+         var i = char_val (c, number_base);
+@@ -1600,6 +3230,73 @@
+         return null;
+ }
+ 
++/*  RETURNS K = K/GCD AND L = L/GCD, WHERE GCD IS THE
++ *  GREATEST COMMON DIVISOR OF K AND L.
++ *  SAVE INPUT PARAMETERS IN LOCAL VARIABLES
++ */
++public void mp_gcd (ref int64 k, ref int64 l)
++{
++    var i = k.abs ();
++    var j = l.abs ();
++    if (j == 0)
++    {
++        /* IF J = 0 RETURN (1, 0) UNLESS I = 0, THEN (0, 0) */
++        k = 1;
++        l = 0;
++        if (i == 0)
++            k = 0;
++        return;
++    }
++
++    /* EUCLIDEAN ALGORITHM LOOP */
++    do
++    {
++        i %= j;
++        if (i == 0)
++        {
++            k = k / j;
++            l = l / j;
++            return;
++        }
++        j %= i;
++    } while (j != 0);
++
++    /* HERE J IS THE GCD OF K AND L */
++    k = k / i;
++    l = l / i;
++}
++
++// FIXME: Is r.re_fraction large enough?  It seems to be in practise but it may be T+4 instead of T
++// FIXME: There is some sort of stack corruption/use of unitialised variables here.  Some functions are
++// using stack variables as x otherwise there are corruption errors. e.g. "Cos (45) - 1/Sqrt (2) = -0"
++// (try in scientific mode)
++public void mp_normalize (ref Number x)
++{
++    int start_index;
++
++    /* Find first non-zero digit */
++    for (start_index = 0; start_index < SIZE && x.re_fraction[start_index] == 0; start_index++);
++
++    /* Mark as zero */
++    if (start_index >= SIZE)
++    {
++        x.re_sign = 0;
++        x.re_exponent = 0;
++        return;
++    }
++
++    /* Shift left so first digit is non-zero */
++    if (start_index > 0)
++    {
++        x.re_exponent -= start_index;
++        var i = 0;
++        for (; (i + start_index) < SIZE; i++)
++            x.re_fraction[i] = x.re_fraction[i + start_index];
++        for (; i < SIZE; i++)
++            x.re_fraction[i] = 0;
++    }
++}
++
+ /* Returns true if x is cannot be represented in a binary word of length 'wordlen' */
+ public bool mp_is_overflow (Number x, int wordlen)
+ {
+
+--- gnome-calculator-3.18.2/configure.ac	2016-08-09 14:02:40.743464258 +0000
++++ gnome-calculator-3.18.2/configure.ac	2016-08-09 14:02:52.623794159 +0000
+@@ -25,9 +25,6 @@
+ 
+ AC_SUBST([GLIB_REQUIRED])
+ 
+-# FIXME We link to it too, so this check needs to be better....
+-AC_CHECK_HEADER([mpfr.h], [], [AC_MSG_ERROR([The mpfr header is missing. Please, install mpfr])])
+-
+ PKG_CHECK_MODULES(LIBCALCULATOR, [
+     glib-2.0 >= $GLIB_REQUIRED
+     gio-2.0 >= $GLIB_REQUIRED
