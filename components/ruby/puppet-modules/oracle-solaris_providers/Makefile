@@ -25,14 +25,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 
-GIT_REPO= https://github.com/oraclesolaris/puppet-solaris_providers
+GIT_REPO= https://github.com/oracle/puppet-solaris_providers
 GIT_BRANCH= v1.2.2-userland
-GIT_COMMIT_ID= 7143257
-GIT_HASH=  sha256:fe2748af083113a904f57e8b3bd2c6aa721a1774ae9fd55b569dd5ab01cf0c05
+GIT_COMMIT_ID= 519bc2aa
+GIT_HASH=  sha256:3276d213249c0e00dd90224c221bc450964f37b0ea49677fc4caecb1703b75a2
 
 COMPONENT_NAME=		puppet-solaris_providers
 COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	https://github.com/oraclesolaris/puppet-solaris_providers
+COMPONENT_PROJECT_URL=	https://github.com/oracle/puppet-solaris_providers
 # Construct our own SRC instead of using the default with GIT_COMMIT_ID
 # archive from github strips leading v from release for vN named release tags
 COMPONENT_SRC=$(COMPONENT_NAME)-$(shell echo $(GIT_BRANCH) | sed -e 's/v//')
