@@ -14,13 +14,13 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		server_install
+COMPONENT_NAME=		install-types
 COMPONENT_VERSION=	0.1
-COMPONENT_SUMMARY=	Cluster with common applications for servers
+COMPONENT_SUMMARY=	A meta-packages that install common applications for ISOs
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-#PKGLINT=/bin/true
+PKG_OPTIONS+= -I $(COMPONENT_DIR)/includes
 
 download:
 
