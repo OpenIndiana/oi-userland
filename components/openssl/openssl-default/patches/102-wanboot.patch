@@ -59,7 +59,7 @@
      pthread_mutex_t    *dynlock;
 
 @@ -446,6 +449,9 @@
-     OPENSSL_assert(ret);
+     OPENSSL_assert(ret == 0);
 
      return ((struct CRYPTO_dynlock_value *)dynlock);
 +#else
@@ -91,7 +91,7 @@
 +#ifndef    _BOOT
      int ret;
      ret = pthread_mutex_destroy((pthread_mutex_t *)dynlock);
-     OPENSSL_assert(ret);
+     OPENSSL_assert(ret == 0);
 +#endif
  }
 
