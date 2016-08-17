@@ -10,13 +10,14 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libgtop
 COMPONENT_VERSION= 2.28.5
+COMPONENT_REVISION= 1
 # Some historical artefact in package versioning
 IPS_COMPONENT_VERSION= 2.30.0
 COMPONENT_SUMMARY= Library to get system specific data
@@ -27,14 +28,16 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
+COMPONENT_CLASSIFICATION = System/Libraries
+COMPONENT_FMRI = library/libgtop
+COMPONENT_LICENSE = GPLv2
+COMPONENT_LICENSE_FILE = COPYING
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-gcc_OPT = -O2
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
@@ -49,3 +52,7 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxau
