@@ -35,7 +35,7 @@ The PKCS#11 engine has been included with ENGINE name \fBpkcs11\fR. The engine w
 The PKCS#11 engine is a dynamic engine, and it is configured to use the Oracle Solaris Cryptographic Framework. See \fBcryptoadm\fR(8) for configuration information.
 .sp
 .LP
-The PKCS#11 engine can support the following set of mechanisms: \fBCKM_AES_CBC\fR, \fBCKM_AES_ECB\fR, \fBCKM_BLOWFISH_CBC\fR, \fBCKM_DES_CBC\fR, \fBCKM_DES_ECB\fR, \fBCKM_DES3_CBC\fR, \fBCKM_DES3_ECB\fR, \fBCKM_DSA\fR, \fBCKM_MD5\fR, \fBCKM_RC4\fR, \fBCKM_RSA_PKCS\fR, \fBCKM_RSA_X_509\fR, \fBCKM_SHA_1\fR, \fBCKM_SHA224\fR, \fBCKM_SHA256\fR, \fBCKM_SHA384\fR, \fBCKM_SHA512\fR, \fBCKM_SHA224_HMAC\fR, \fBCKM_SHA224_HMAC_GENERAL\fR, and \fBCKM_SHA224_KEY_DERIVATION\fR.
+The PKCS#11 engine can support the following set of mechanisms: \fBAES-128-CBC\fR\fR, \fB \fBAES-192-CBC\fR, \fBAES-256-CBC\fR, \fBAES-128-CTR\fR, \fBAES-192-CTR\fR, \fBAES-256-CTR\fR, \fBAES-128-ECB\fR, \fBAES-192-ECB\fR, \fBAES-256-ECB\fR, \fBBF-CBC\fR, \fBDES-CBC\fR, \fBDES-ECB\fR, \fBDES-EDE3\fR, \fBDES-EDE3-CBC\fR, \fBDH\fR, \fBDSA\fR, \fBMD5\fR, \fBRAND\fR, \fBRC4\fR, \fBRSA\fR, \fBSHA1\fR, \fBSHA224\fR, \fBSHA256\fR, \fBSHA384\fR and \fBSHA512\fR.
 .sp
 .LP
 The set of mechanisms available depends on installed Crypto Framework providers. To see what mechanisms can be offloaded to the Cryptographic Framework through the PKCS#11 engine on a given machine, run the following command:
@@ -144,6 +144,29 @@ The PKCS#11 engine uses the public components as a search key to get a PKCS#11 o
 .sp
 .LP
 To use the RSA keys by reference, high level API functions such as \fBRSA_public_decrypt()\fR, \fBEVP_PKEY_set1_RSA()\fR, or \fBEVP_SignInit()\fR must be used. Low level functions might go around the engine and fail to make use of the feature.
+.SS "OpenSSL Thread and Fork Safety"
+.sp
+.LP
+OpenSSL provides the following interface for consumers to set the callback functions
+for its own implementation of locking and thread identification:
+.in +2
+    \fBCRYPTO_set_locking_callback()
+    CRYPTO_set_dynlock_create_callback()
+    CRYPTO_set_dynlock_lock_callback()
+    CRYPTO_set_dynlock_destroy_callback()
+    CRYPTO_set_add_lock_callback()
+    CRYPTO_THREADID_set_callback()
+    CRYPTO_set_id_callback()\fR
+.in
+.LP
+Setting of the callback functions by a library can lead to segmentation fault
+if the library is unloaded while other parts of the stack are still using OpenSSL.
+.LP
+In order to prevent this issue, OpenSSL on Oracle Solaris implements those locking and
+thread identification functions internally within OpenSSL.  An application or library may
+still call those functions but setting of their own callback function will be ignored.
+.sp
+.LP
 .SS "Additional Documentation"
 .sp
 .LP
