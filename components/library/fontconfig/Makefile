@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fontconfig
 COMPONENT_VERSION= 2.11.95
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=  Fontconfig - Font configuration and customization library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -62,3 +63,8 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64) $(BUILD_DIR)/.fonts_installed
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
