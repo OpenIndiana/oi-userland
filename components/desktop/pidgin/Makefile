@@ -95,6 +95,7 @@ REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gstreamer-1
+REQUIRED_PACKAGES += library/desktop/gstreamer-1/gst-plugins-good
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
