@@ -28,9 +28,10 @@ license License license='CDDL v1.0'
 <transform file path=opt/DTT/Code/.*\.rb$ -> default mode 0555>
 <transform file path=opt/DTT/Code/.*\.sh$ -> default mode 0555>
 
-# We don't depend on particular python version for examples
+# Depend on python-27 explicitly, so we can disconnect userland from
+# python-26 once and for all.
 <transform file path=opt/DTT/.*\.py$ -> default pkg.depend.bypass-generate .*>
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/python type=require
+depend fmri=runtime/python-27 type=require
 
 file path=opt/DTT/Apps/Readme
 file path=opt/DTT/Apps/httpdstat.d
