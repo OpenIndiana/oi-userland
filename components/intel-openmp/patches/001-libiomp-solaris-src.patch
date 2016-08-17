@@ -1,0 +1,973 @@
+# Source code part of the Solaris port of libiomp5.
+# Internal patch.
+# We should definitely submit this upstream.
+###
+--- src/kmp_global.c	2015-10-09 11:05:47.000000000 -0700
++++ src/kmp_global.c	2016-08-13 19:18:17.515623810 -0700
+@@ -167,7 +167,7 @@
+ #endif
+ int                 __kmp_chunk = 0;
+ int           __kmp_abort_delay = 0;
+-#if KMP_OS_LINUX && defined(KMP_TDATA_GTID)
++#if ((KMP_OS_LINUX || KMP_OS_SOLARIS) && defined(KMP_TDATA_GTID))
+ int             __kmp_gtid_mode = 3; /* use __declspec(thread) TLS to store gtid */
+ int      __kmp_adjust_gtid_mode = FALSE;
+ #elif KMP_OS_WINDOWS
+@@ -176,7 +176,7 @@
+ #else
+ int             __kmp_gtid_mode = 0; /* select method to get gtid based on #threads */
+ int      __kmp_adjust_gtid_mode = TRUE;
+-#endif /* KMP_OS_LINUX && defined(KMP_TDATA_GTID) */
++#endif /* KMP_OS_LINUX || KMP_OS_SOLARIS && defined(KMP_TDATA_GTID) */
+ #ifdef KMP_TDATA_GTID
+ #if KMP_OS_WINDOWS
+ __declspec(thread) int __kmp_gtid = KMP_GTID_DNE;
+@@ -254,7 +254,6 @@
+ int __kmp_affinity_gran_levels  = -1;
+ int __kmp_affinity_dups = TRUE;
+ enum affinity_top_method __kmp_affinity_top_method = affinity_top_method_default;
+-int      __kmp_affinity_compact      = 0;
+ int      __kmp_affinity_offset       = 0;
+ int      __kmp_affinity_verbose      = FALSE;
+ int      __kmp_affinity_warnings     = TRUE;
+@@ -267,6 +266,8 @@
+ 
+ #endif /* KMP_AFFINITY_SUPPORTED */
+ 
++int      __kmp_affinity_compact      = 0;
++
+ #if OMP_40_ENABLED
+ kmp_nested_proc_bind_t __kmp_nested_proc_bind = { NULL, 0, 0 };
+ int __kmp_affinity_num_places = 0;
+###
+--- src/kmp_csupport.c	2015-10-09 11:05:45.000000000 -0700
++++ src/kmp_csupport.c	2016-08-17 11:28:36.004655805 -0700
+@@ -695,6 +695,9 @@
+           // when running >2 threads per core (on the NAS LU benchmark).
+             __kmp_yield(TRUE);
+         #endif
++    #elif (KMP_ARCH_SPARC || KMP_ARCH_SPARC32 || KMP_ARCH_SPARC64)
++            // This is in GCC
++            __sync_synchronize();
+     #else
+         #error Unknown or unsupported architecture
+     #endif
+@@ -2139,7 +2142,9 @@
+     } else
+ # endif
+     {
+-        __kmp_direct_set[tag]((kmp_dyna_lock_t *)user_lock, gtid);
++      if (__kmp_direct_set[tag] == NULL)
++        __kmp_direct_set[tag] = __kmp_direct_set[0];
++      __kmp_direct_set[tag]((kmp_dyna_lock_t *)user_lock, gtid);
+     }
+ # if USE_ITT_BUILD
+     __kmp_itt_lock_acquired((kmp_user_lock_p)user_lock);
+@@ -2222,7 +2227,6 @@
+ __kmpc_unset_lock( ident_t *loc, kmp_int32 gtid, void **user_lock )
+ {
+ #if KMP_USE_DYNAMIC_LOCK
+-
+     int tag = KMP_EXTRACT_D_TAG(user_lock);
+ # if USE_ITT_BUILD
+     __kmp_itt_lock_releasing((kmp_user_lock_p)user_lock);
+@@ -2237,7 +2241,9 @@
+     } else
+ # endif
+     {
+-        __kmp_direct_unset[tag]((kmp_dyna_lock_t *)user_lock, gtid);
++      if (__kmp_direct_unset[tag] == NULL)
++        __kmp_direct_unset[tag] = __kmp_direct_unset[0];
++      __kmp_direct_unset[tag]((kmp_dyna_lock_t *)user_lock, gtid);
+     }
+ 
+ #else // KMP_USE_DYNAMIC_LOCK
+###
+--- src/kmp_runtime.c	2015-10-09 11:05:48.000000000 -0700
++++ src/kmp_runtime.c	2016-02-23 10:10:17.709606906 -0800
+@@ -7574,7 +7574,7 @@
+ 
+         #if KMP_ARCH_X86_64 || KMP_ARCH_PPC64 || KMP_ARCH_AARCH64
+ 
+-            #if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_WINDOWS || KMP_OS_DARWIN
++            #if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_SOLARIS || KMP_OS_WINDOWS || KMP_OS_DARWIN
+ 
+ 	    int teamsize_cutoff = 4;
+ 
+@@ -7583,6 +7583,10 @@
+                     teamsize_cutoff = 8;
+                 }
+ #endif
++
++#if KMP_ARCH_X86_64 && KMP_OS_SOLARIS
++                teamsize_cutoff = 8;
++#endif
+                 if( tree_available ) {
+                     if( team_size <= teamsize_cutoff ) {
+                         if ( atomic_available ) {
+@@ -7596,11 +7600,11 @@
+                 }
+             #else
+                 #error "Unknown or unsupported OS"
+-            #endif // KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_WINDOWS || KMP_OS_DARWIN
++            #endif // KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_SOLARIS || KMP_OS_WINDOWS || KMP_OS_DARWIN
+ 
+-        #elif KMP_ARCH_X86 || KMP_ARCH_ARM || KMP_ARCH_AARCH
++#elif KMP_ARCH_X86 || KMP_ARCH_ARM || KMP_ARCH_AARCH || KMP_ARCH_SPARC
+ 
+-            #if KMP_OS_LINUX || KMP_OS_WINDOWS
++            #if KMP_OS_LINUX || KMP_OS_SOLARIS || KMP_OS_WINDOWS
+ 
+                 // basic tuning
+ 
+--- src/kmp_environment.c	2015-10-09 11:05:46.000000000 -0700
++++ src/kmp_environment.c	2016-02-21 08:02:17.231202308 -0800
+@@ -83,7 +83,7 @@
+ #if KMP_OS_UNIX
+     #include <stdlib.h>    // getenv, setenv, unsetenv.
+     #include <string.h>    // strlen, strcpy.
+-    #if KMP_OS_LINUX || KMP_OS_FREEBSD
++    #if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_SOLARIS
+         extern char * * environ;
+     #elif KMP_OS_DARWIN
+         #include <crt_externs.h>
+###
+--- src/kmp_lock.cpp	2015-10-09 11:05:48.000000000 -0700
++++ src/kmp_lock.cpp	2016-08-12 17:20:30.072310090 -0700
+@@ -106,6 +106,9 @@
+ __forceinline static void
+ __kmp_acquire_tas_lock_timed_template( kmp_tas_lock_t *lck, kmp_int32 gtid )
+ {
++    kmp_uint32 nspins = 0U;
++    kmp_uint32 max_spins = __kmp_yield_next * 2U;
++
+     KMP_MB();
+ 
+ #ifdef USE_LOCK_PROFILE
+@@ -142,6 +145,9 @@
+             KMP_YIELD( TRUE );
+         }
+         else {
++            if (++nspins >= max_spins)
++              break;
++
+             KMP_YIELD_SPIN( spins );
+         }
+     }
+@@ -3022,13 +3028,18 @@
+ #if KMP_USE_TSX
+ 
+ // HLE lock functions - imported from the testbed runtime.
++#if (KMP_ARCH_SPARC32 || KMP_ARCH_SPARC64)
++#define HLE_ACQUIRE ".word 0xf2;"
++#define HLE_RELEASE ".word 0xf3;"
++#else
+ #define HLE_ACQUIRE ".byte 0xf2;"
+ #define HLE_RELEASE ".byte 0xf3;"
++#endif
+ 
+ static inline kmp_uint32
+ swap4(kmp_uint32 volatile *p, kmp_uint32 v)
+ {
+-    __asm__ volatile(HLE_ACQUIRE "xchg %1,%0"
++    __asm__ __volatile__(HLE_ACQUIRE "xchg %1,%0"
+                     : "+r"(v), "+m"(*p)
+                     :
+                     : "memory");
+@@ -3066,7 +3077,7 @@
+ static int
+ __kmp_release_hle_lock(kmp_dyna_lock_t *lck, kmp_int32 gtid)
+ {
+-    __asm__ volatile(HLE_RELEASE "movl %1,%0"
++    __asm__ __volatile__(HLE_RELEASE "movl %1,%0"
+                     : "=m"(*lck)
+                     : "r"(KMP_LOCK_FREE(hle))
+                     : "memory");
+###
+--- src/kmp_lock.h	2015-10-09 11:05:48.000000000 -0700
++++ src/kmp_lock.h	2016-08-17 10:02:56.297567620 -0700
+@@ -1195,7 +1195,9 @@
+ #define KMP_INIT_D_LOCK(l, seq) __kmp_direct_init[KMP_GET_D_TAG(seq)]((kmp_dyna_lock_t *)l, seq)
+ 
+ // Initializes an indirect lock with the given lock pointer and lock sequence.
+-#define KMP_INIT_I_LOCK(l, seq) __kmp_direct_init[0]((kmp_dyna_lock_t *)(l), seq)
++#define KMP_INIT_I_LOCK(l, seq) \
++  __kmp_direct_init[0]((kmp_dyna_lock_t *)(l), seq); \
++  __kmp_direct_init[1] = __kmp_direct_init[0];
+ 
+ // Returns "free" lock value for the given lock type.
+ #define KMP_LOCK_FREE(type)      (locktag_##type)
+###
+--- src/kmp_platform.h	2015-10-09 11:05:48.000000000 -0700
++++ src/kmp_platform.h	2016-08-04 19:37:07.247582315 -0700
+@@ -39,6 +39,7 @@
+ 
+ #define KMP_OS_LINUX    0
+ #define KMP_OS_FREEBSD  0
++#define KMP_OS_SOLARIS  0
+ #define KMP_OS_DARWIN   0
+ #define KMP_OS_WINDOWS  0
+ #define KMP_OS_CNK      0
+@@ -70,16 +71,21 @@
+ # define KMP_OS_FREEBSD 1
+ #endif
+ 
++#if defined(__sun) || defined(__sun__)
++# undef KMP_OS_SOLARIS
++# define KMP_OS_SOLARIS 1
++#endif
++
+ #if ( defined __bgq__ )
+ # undef KMP_OS_CNK
+ # define KMP_OS_CNK 1
+ #endif
+ 
+-#if (1 != KMP_OS_LINUX + KMP_OS_FREEBSD + KMP_OS_DARWIN + KMP_OS_WINDOWS)
++#if (1 != KMP_OS_LINUX + KMP_OS_FREEBSD + KMP_OS_SOLARIS + KMP_OS_DARWIN + KMP_OS_WINDOWS)
+ # error Unknown OS
+ #endif
+ 
+-#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_DARWIN
++#if KMP_OS_LINUX || KMP_OS_FREEBSD || KMP_OS_SOLARIS || KMP_OS_DARWIN
+ # undef KMP_OS_UNIX
+ # define KMP_OS_UNIX 1
+ #endif
+@@ -91,6 +97,7 @@
+ #define KMP_ARCH_AARCH64    0
+ #define KMP_ARCH_PPC64_BE   0
+ #define KMP_ARCH_PPC64_LE   0
++#define KMP_ARCH_SPARC      0
+ #define KMP_ARCH_PPC64 (KMP_ARCH_PPC64_LE || KMP_ARCH_PPC64_BE)
+ 
+ #if KMP_OS_WINDOWS
+@@ -121,6 +128,9 @@
+ # elif defined __aarch64__
+ #  undef KMP_ARCH_AARCH64
+ #  define KMP_ARCH_AARCH64 1
++# elif defined(__sparc) || defined(__sparc__)
++#  undef KMP_ARCH_SPARC
++#  define KMP_ARCH_SPARC 1
+ # endif
+ #endif
+ 
+@@ -160,6 +170,17 @@
+ # define KMP_ARCH_ARM 1
+ #endif
+ 
++#if defined(KMP_ARCH_SPARC)
++# undef KMP_ARCH_SPARC32
++# undef KMP_ARCH_SPARC64
++# if defined(__sparcv9) || defined(__sparc64__)
++#  define KMP_ARCH_SPARC64 1
++# endif
++# if defined(__sparc) && !defined(__sparcv9) && !defined(__sparc64__)
++#  define KMP_ARCH_SPARC32 1
++# endif
++#endif
++
+ // Intel(R) Many Integrated Core Architecture detection
+ #if defined(__MIC__) || defined(__MIC2__)
+ # define KMP_MIC  1
+@@ -178,7 +199,7 @@
+ #endif
+ 
+ // TODO: Fixme - This is clever, but really fugly
+-#if (1 != KMP_ARCH_X86 + KMP_ARCH_X86_64 + KMP_ARCH_ARM + KMP_ARCH_PPC64 + KMP_ARCH_AARCH64)
++#if (1 != KMP_ARCH_X86 + KMP_ARCH_X86_64 + KMP_ARCH_ARM + KMP_ARCH_PPC64 + KMP_ARCH_AARCH64 + KMP_ARCH_SPARC)
+ # error Unknown or unsupported architecture
+ #endif
+ 
+###
+--- src/z_Linux_util.c	2015-10-09 11:05:53.000000000 -0700
++++ src/z_Linux_util.c	2016-02-21 20:35:31.672538690 -0800
+@@ -72,9 +72,20 @@
+ #elif KMP_OS_FREEBSD
+ # include <sys/sysctl.h>
+ # include <pthread_np.h>
++#elif KMP_OS_SOLARIS
++# include <stdlib.h>
++# include <errno.h>
++# include <unistd.h>
++# include <limits.h>
++# include <stdbool.h>
++# include <strings.h>
++# include <sys/types.h>
++# include <sys/stat.h>
++# include <fcntl.h>
++# include <sys/procfs.h>
++# include <sys/loadavg.h>
+ #endif
+ 
+-
+ #include <dirent.h>
+ #include <ctype.h>
+ #include <fcntl.h>
+@@ -2101,7 +2112,7 @@
+ 
+     int r = 0;
+ 
+-    #if KMP_OS_LINUX
++    #if (KMP_OS_LINUX || KMP_OS_SOLARIS)
+ 
+         r = sysconf( _SC_NPROCESSORS_ONLN );
+ 
+@@ -2376,6 +2387,39 @@
+         // FIXME(FreeBSD*): Implement this
+         found = 1;
+ 
++    #elif KMP_OS_SOLARIS
++        const char* mpath = __kmp_str_format( "/proc/%d/map", (int) getpid());
++        if (mpath == NULL) return found;
++
++        int fd = open(mpath, O_RDONLY);
++        if (fd < 0) return found;
++
++        ssize_t nread = 0;
++        size_t mapsize = (1 << 20);
++
++        struct prmap* prmapbuf = (struct prmap*) malloc(mapsize);
++        if (prmapbuf == NULL) return found;
++
++        (void) memset(prmapbuf, 0, mapsize);
++        while ((nread += pread(fd, prmapbuf, mapsize, 0)) >= (ssize_t) mapsize)
++        {
++          mapsize *= 2U;
++          prmapbuf = (struct prmap*) realloc(prmapbuf, mapsize);
++        }
++
++        uintptr_t vaddr = (uintptr_t) addr;
++
++        for (const struct prmap* cur = prmapbuf; nread > 0;
++             nread -= sizeof(*cur), ++cur)
++        {
++          if ((vaddr >= cur->pr_vaddr) &&
++              (vaddr <= (cur->pr_vaddr + cur->pr_size)))
++            found = 1;
++        }
++
++        free(prmapbuf);
++        close(fd);
++
+     #else
+ 
+         #error "Unknown or unsupported OS"
+@@ -2388,8 +2432,20 @@
+ 
+ #ifdef USE_LOAD_BALANCE
+ 
++# if (KMP_OS_DARWIN || KMP_OS_SOLARIS)
+ 
+-# if KMP_OS_DARWIN
++// Hi, Apple.
++# ifndef LOADAVG_1MIN
++# define LOADAVG_1MIN 0
++# endif
++
++# ifndef LOADAVG_5MIN
++# define LOADAVG_5MIN 1
++# endif
++
++# ifndef LOADAVG_15MIN
++# define LOADAVG_15MIN 2
++# endif
+ 
+ // The function returns the rounded value of the system load average
+ // during given time interval which depends on the value of
+@@ -2408,12 +2464,12 @@
+     // getloadavg() may return the number of samples less than requested that is
+     // less than 3.
+     if ( __kmp_load_balance_interval < 180 && ( res >= 1 ) ) {
+-        ret_avg = averages[0];// 1 min
++        ret_avg = averages[LOADAVG_1MIN];// 1 min
+     } else if ( ( __kmp_load_balance_interval >= 180
+                   && __kmp_load_balance_interval < 600 ) && ( res >= 2 ) ) {
+-        ret_avg = averages[1];// 5 min
++        ret_avg = averages[LOADAVG_5MIN];// 5 min
+     } else if ( ( __kmp_load_balance_interval >= 600 ) && ( res == 3 ) ) {
+-        ret_avg = averages[2];// 15 min
++        ret_avg = averages[LOADAVG_15MIN];// 15 min
+     } else {// Error occurred
+         return -1;
+     }
+--- src/thirdparty/ittnotify/ittnotify_config.h	2015-10-09 11:05:58.000000000 -0700
++++ src/thirdparty/ittnotify/ittnotify_config.h	2016-02-21 09:36:01.959301778 -0800
+@@ -43,11 +43,17 @@
+ #  define ITT_OS_MAC   3
+ #endif /* ITT_OS_MAC */
+ 
++#ifndef ITT_OS_SOLARIS
++#  define ITT_OS_SOLARIS  4
++#endif /* ITT_OS_SOLARIS */
++
+ #ifndef ITT_OS
+ #  if defined WIN32 || defined _WIN32
+ #    define ITT_OS ITT_OS_WIN
+ #  elif defined( __APPLE__ ) && defined( __MACH__ )
+ #    define ITT_OS ITT_OS_MAC
++#  elif defined(__sun) || defined(__sun__)
++#    define ITT_OS ITT_OS_SOLARIS
+ #  else
+ #    define ITT_OS ITT_OS_LINUX
+ #  endif
+@@ -75,11 +81,18 @@
+ #  endif
+ #endif /* ITT_PLATFORM */
+ 
++#if (ITT_OS == ITT_OS_SOLARIS)
++# if !defined(_UNICODE)
++#   define _UNICODE
++# endif
++#endif
++
+ #if defined(_UNICODE) && !defined(UNICODE)
+ #define UNICODE
+ #endif
+ 
+ #include <stddef.h>
++
+ #if ITT_PLATFORM==ITT_PLATFORM_WIN
+ #include <tchar.h>
+ #else  /* ITT_PLATFORM==ITT_PLATFORM_WIN */
+@@ -161,6 +174,13 @@
+ #  define ITT_ARCH_PPC64  5
+ #endif /* ITT_ARCH_PPC64 */
+ 
++#ifndef ITT_ARCH_SPARC32
++#  define ITT_ARCH_SPARC32 6
++#endif /* ITT_ARCH_SPARC32 */
++
++#ifndef ITT_ARCH_SPARC64
++#  define ITT_ARCH_SPARC64 7
++#endif /* ITT_ARCH_SPARC32 */
+ 
+ #ifndef ITT_ARCH
+ #  if defined _M_IX86 || defined __i386__
+@@ -175,6 +195,10 @@
+ #    define ITT_ARCH ITT_ARCH_PPC64
+ #  elif defined __aarch64__
+ #    define ITT_ARCH ITT_ARCH_AARCH64
++#  elif defined __sparcv9
++#    define ITT_ARCH ITT_ARCH_SPARC64
++#  elif defined __sparc
++#    define ITT_ARCH ITT_ARCH_SPARC32
+ #  endif
+ #endif
+ 
+@@ -195,6 +219,7 @@
+     static char __itt_build_check_##suffix[(expr) ? 1 : -1]; \
+     __itt_build_check_##suffix[0] = 0; \
+ } while(0)
++
+ #define _ITT_BUILD_ASSERT(expr, suffix)  __ITT_BUILD_ASSERT((expr), suffix)
+ #define ITT_BUILD_ASSERT(expr)           _ITT_BUILD_ASSERT((expr), __LINE__)
+ 
+@@ -226,6 +251,13 @@
+ #ifndef _GNU_SOURCE
+ #define _GNU_SOURCE 1 /* need for PTHREAD_MUTEX_RECURSIVE */
+ #endif /* _GNU_SOURCE */
++
++#if (ITT_OS == ITT_OS_SOLARIS)
++# if !defined(__EXTENSIONS__)
++#   define __EXTENSIONS__ 1
++# endif /* __EXTENSIONS__ */
++#endif /* ITT_OS_SOLARIS */
++
+ #ifndef __USE_UNIX98
+ #define __USE_UNIX98 1 /* need for PTHREAD_MUTEX_RECURSIVE, on SLES11.1 with gcc 4.3.4 wherein pthread.h missing dependency on __USE_XOPEN2K8 */
+ #endif /*__USE_UNIX98*/
+@@ -312,7 +344,7 @@
+                           : "memory");
+     return result;
+ }
+-#elif ITT_ARCH==ITT_ARCH_ARM || ITT_ARCH==ITT_ARCH_PPC64 || ITT_ARCH==ITT_ARCH_AARCH64
++#elif ITT_ARCH==ITT_ARCH_ARM || ITT_ARCH==ITT_ARCH_PPC64 || ITT_ARCH==ITT_ARCH_AARCH64 || ITT_ARCH==ITT_ARCH_SPARC32 || ITT_ARCH==ITT_ARCH_SPARC64
+ #define __TBB_machine_fetchadd4(addr, val) __sync_fetch_and_add(addr, val)
+ #endif /* ITT_ARCH==ITT_ARCH_IA64 */
+ #ifndef ITT_SIMPLE_INIT
+--- src/thirdparty/ittnotify/ittnotify_static.c	2015-10-09 11:05:58.000000000 -0700
++++ src/thirdparty/ittnotify/ittnotify_static.c	2016-02-21 09:33:19.660164335 -0800
+@@ -56,6 +56,8 @@
+ static const char* ittnotify_lib_name = "libittnotify.dll";
+ #elif ITT_OS==ITT_OS_LINUX
+ static const char* ittnotify_lib_name = "libittnotify.so";
++#elif ITT_OS==ITT_OS_SOLARIS
++static const char* ittnotify_lib_name = "libittnotify.so";
+ #elif ITT_OS==ITT_OS_MAC
+ static const char* ittnotify_lib_name = "libittnotify.dylib";
+ #else
+###
+--- src/kmp_os.h	2015-10-09 11:05:48.000000000 -0700
++++ src/kmp_os.h	2016-08-17 10:24:55.845519915 -0700
+@@ -71,7 +71,7 @@
+ #elif defined( __clang__ )
+ # undef KMP_COMPILER_CLANG
+ # define KMP_COMPILER_CLANG 1
+-#elif defined( __GNUC__ )
++#elif defined( __GNUC__ ) || defined(__GNUG__)
+ # undef KMP_COMPILER_GCC
+ # define KMP_COMPILER_GCC 1
+ #elif defined( _MSC_VER )
+@@ -83,7 +83,8 @@
+ 
+ #include "kmp_platform.h"
+ 
+-#if (KMP_OS_LINUX || KMP_OS_WINDOWS) && !KMP_OS_CNK && !KMP_ARCH_PPC64
++#if (KMP_OS_LINUX || KMP_OS_WINDOWS) && \
++  !KMP_OS_CNK && !KMP_ARCH_PPC64
+ # define KMP_AFFINITY_SUPPORTED 1
+ # if KMP_OS_WINDOWS && KMP_ARCH_X86_64
+ #  define KMP_GROUP_AFFINITY    1
+@@ -95,9 +96,32 @@
+ # define KMP_GROUP_AFFINITY     0
+ #endif
+ 
++#if (KMP_OS_SOLARIS)
++# undef KMP_OS_UNIX
++# define KMP_OS_UNIX 1
++# undef _REENTRANT
++# define _REENTRANT 1
++# undef __EXTENSIONS__
++# define __EXTENSIONS__ 1
++# undef KMP_GOMP_COMPAT
++# define KMP_GOMP_COMPAT 1
++# undef KMP_ASM_INTRINS
++# define KMP_ASM_INTRINS 1
++# undef KMP_GOMP_COMPAT
++# define KMP_GOMP_COMPAT 1
++# undef KMP_TDATA_GTID
++# define KMP_TDATA_GTID 1
++# undef KMP_USE_ADAPTIVE_LOCKS
++# define KMP_USE_ADAPTIVE_LOCKS 1
++# undef KMP_AFFINITY_SUPPORTED
++# define KMP_AFFINITY_SUPPORTED 0
++# undef KMP_GROUP_AFFINITY
++# define KMP_GROUP_AFFINITY 0
++#endif
++
+ /* Check for quad-precision extension. */
+ #define KMP_HAVE_QUAD 0
+-#if KMP_ARCH_X86 || KMP_ARCH_X86_64
++#if (KMP_ARCH_X86 || KMP_ARCH_X86_64 || KMP_ARCH_SPARC32 || KMP_ARCH_SPARC64)
+ # if KMP_COMPILER_ICC
+    /* _Quad is already defined for icc */
+ #  undef  KMP_HAVE_QUAD
+@@ -106,8 +130,12 @@
+    /* Clang doesn't support a software-implemented
+       128-bit extended precision type yet */
+    typedef long double _Quad;
+-# elif KMP_COMPILER_GCC
+-   typedef __float128 _Quad;
++# elif (KMP_COMPILER_GCC || KMP_COMPILER_CLANG)
++#   if KMP_OS_SOLARIS
++      typedef long double _Quad;
++#   else
++      typedef __float128 _Quad;
++#   endif
+ #  undef  KMP_HAVE_QUAD
+ #  define KMP_HAVE_QUAD 1
+ # elif KMP_COMPILER_MSVC
+@@ -168,15 +196,15 @@
+ # define KMP_UINT64_SPEC     "llu"
+ #endif /* KMP_OS_UNIX */
+ 
+-#if KMP_ARCH_X86 || KMP_ARCH_ARM
++#if (KMP_ARCH_X86 || KMP_ARCH_ARM || KMP_ARCH_SPARC32)
+ # define KMP_SIZE_T_SPEC KMP_UINT32_SPEC
+-#elif KMP_ARCH_X86_64 || KMP_ARCH_PPC64 || KMP_ARCH_AARCH64
++#elif KMP_ARCH_X86_64 || KMP_ARCH_PPC64 || KMP_ARCH_AARCH64 | KMP_ARCH_SPARC64
+ # define KMP_SIZE_T_SPEC KMP_UINT64_SPEC
+ #else
+ # error "Can't determine size_t printf format specifier."
+ #endif
+ 
+-#if KMP_ARCH_X86
++#if (KMP_ARCH_X86 || KMP_ARCH_SPARC32)
+ # define KMP_SIZE_T_MAX (0xFFFFFFFF)
+ #else
+ # define KMP_SIZE_T_MAX (0xFFFFFFFFFFFFFFFF)
+@@ -194,6 +222,12 @@
+ # define KMP_UINTPTR_SPEC  "lu"
+ #endif
+ 
++#if (KMP_ARCH_X86_64 || KMP_ARCH_SPARC || KMP_ARCH_PPC || KMP_ARCH_AARCH64)
++# define BUILD_I8 1
++#else
++# undef BUILD_I8
++#endif
++
+ #ifdef BUILD_I8
+   typedef kmp_int64      kmp_int;
+   typedef kmp_uint64     kmp_uint;
+@@ -571,7 +605,8 @@
+ # endif
+ #endif /* KMP_OS_WINDOWS */
+ 
+-#if KMP_ARCH_PPC64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64
++#if KMP_ARCH_PPC64 || KMP_ARCH_ARM || KMP_ARCH_AARCH64 || \
++  KMP_ARCH_SPARC32 || KMP_ARCH_SPARC64
+ # define KMP_MB()       __sync_synchronize()
+ #endif
+ 
+@@ -626,7 +661,7 @@
+ #define TCW_SYNC_8(a,b)     (a) = (b)
+ #define TCX_SYNC_8(a,b,c)   KMP_COMPARE_AND_STORE_REL64((volatile kmp_int64 *)(volatile void *)&(a), (kmp_int64)(b), (kmp_int64)(c))
+ 
+-#if KMP_ARCH_X86
++#if (KMP_ARCH_X86 || KMP_ARCH_SPARC32)
+ // What about ARM?
+     #define TCR_PTR(a)          ((void *)TCR_4(a))
+     #define TCW_PTR(a,b)        TCW_4((a),(b))
+###
+--- /dev/null	2016-08-10 15:44:22.000000000 -0700
++++ src/kmp_solaris.h	2016-08-10 15:48:54.851814025 -0700
+@@ -0,0 +1,72 @@
++/* <copyright>
++    Copyright (c) 2016 Oracle and/or its affiliates.  All Rights Reserved.
++
++    Redistribution and use in source and binary forms, with or without
++    modification, are permitted provided that the following conditions
++    are met:
++
++      * Redistributions of source code must retain the above copyright
++        notice, this list of conditions and the following disclaimer.
++      * Redistributions in binary form must reproduce the above copyright
++        notice, this list of conditions and the following disclaimer in the
++        documentation and/or other materials provided with the distribution.
++      * Neither the name of Oracle Corporation nor the names of its
++        contributors may be used to endorse or promote products derived
++        from this software without specific prior written permission.
++
++    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
++</copyright> */
++
++/*
++ * Implementation of __rdtsc() on Solaris Intel and SPARC.
++ * On Intel, we use the rdtsc instruction.
++ * On SPARC, we read the %tick register. This _must_ be compiled as
++ * SPARCV9.
++ */
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#if defined(__i386__) || defined(__x86_64__)
++__attribute__((used, visibility("hidden")))
++static inline unsigned long long __rdtsc()
++{
++  unsigned int H = 0U;
++  unsigned int L = 0U;
++  __asm__ __volatile__ ("rdtsc" : "=a"(L), "=d"(H));
++  return ((unsigned long long) L) | ((unsigned long long) H) << 32ULL;
++}
++#endif
++
++#if defined(__sparc__)
++__attribute__((used, visibility("hidden")))
++static inline unsigned long long __rdtsc()
++{
++  unsigned long long T;
++#if defined(__sparcv9)
++  __asm__ __volatile__("rd  %%tick, %0\n\t" : "=r" (T));
++#else
++  __asm__ __volatile__("rd %%tick, %L0\n\t"
++                       "srlx %L0, 32, %H0" : "=r" (T));
++#endif
++  return T;
++}
++
++#endif /* (__sparc__) */
++
++#ifdef __cplusplus
++}
++#endif
++
+###
+--- src/kmp_stats_timing.h	2015-10-09 11:05:49.000000000 -0700
++++ src/kmp_stats_timing.h	2016-02-23 06:51:41.006922759 -0800
+@@ -36,11 +36,16 @@
+ </copyright> */
+ 
+ 
+-#include <stdint.h>
++#include <cstdint>
+ #include <string>
+ #include <limits>
++
+ #include "kmp_os.h"
+ 
++#if KMP_OS_SOLARIS
++# include "kmp_solaris.h"
++#endif
++
+ class tsc_tick_count {
+   private:
+     int64_t my_count;
+--- src/kmp_ftn_entry.h	2015-10-09 11:05:46.000000000 -0700
++++ src/kmp_ftn_entry.h	2016-02-21 07:57:59.742196067 -0800
+@@ -435,7 +435,7 @@
+                 return 0;
+             }
+             --gtid; // We keep (gtid+1) in TLS
+-        #elif KMP_OS_LINUX
++        #elif (KMP_OS_LINUX || KMP_OS_SOLARIS)
+             #ifdef KMP_TDATA_GTID
+             if ( __kmp_gtid_mode >= 3 ) {
+                 if ((gtid = __kmp_gtid) == KMP_GTID_DNE) {
+###
+--- src/kmp.h	2015-10-09 11:05:47.000000000 -0700
++++ src/kmp.h	2016-08-04 10:20:19.628625370 -0700
+@@ -126,6 +126,16 @@
+ # if !defined NSIG && defined _NSIG
+ #  define NSIG _NSIG
+ # endif
++# if KMP_OS_SOLARIS
++#  define TIMEVAL_TO_TIMESPEC(tv, ts) {       \
++      (ts)->tv_sec = (tv)->tv_sec;            \
++      (ts)->tv_nsec = (tv)->tv_usec * 1000;   \
++}
++# define TIMESPEC_TO_TIMEVAL(tv, ts) {        \
++      (tv)->tv_sec = (ts)->tv_sec;            \
++      (tv)->tv_usec = (ts)->tv_nsec / 1000;   \
++}
++# endif
+ #endif
+ 
+ #if KMP_OS_LINUX
+@@ -586,7 +596,7 @@
+ #  define KMP_CPU_SET_ITERATE(i,mask) \
+     for(i = 0; (size_t)i < KMP_CPU_SETSIZE; ++i)
+ 
+-# if KMP_OS_LINUX
++# if (KMP_OS_LINUX || KMP_OS_SOLARIS)
+ //
+ // On Linux* OS, the mask is actually a vector of length __kmp_affin_mask_size
+ // (in bytes).  It should be allocated on a word boundary.
+@@ -1084,6 +1094,9 @@
+ #elif KMP_OS_LINUX
+ #  define KMP_INIT_WAIT  1024U          /* initial number of spin-tests   */
+ #  define KMP_NEXT_WAIT   512U          /* susequent number of spin-tests */
++#elif KMP_OS_SOLARIS
++#  define KMP_INIT_WAIT    16U          /* initial number of spin-tests   */
++#  define KMP_NEXT_WAIT     8U          /* susequent number of spin-tests */
+ #elif KMP_OS_DARWIN
+ /* TODO: tune for KMP_OS_DARWIN */
+ #  define KMP_INIT_WAIT  1024U          /* initial number of spin-tests   */
+@@ -1115,6 +1128,14 @@
+ # define KMP_PPC64_PRI_MED() __asm__ volatile ("or 2, 2, 2")
+ # define KMP_PPC64_PRI_LOC_MB() __asm__ volatile ("" : : : "memory")
+ # define KMP_CPU_PAUSE() do { KMP_PPC64_PRI_LOW(); KMP_PPC64_PRI_MED(); KMP_PPC64_PRI_LOC_MB(); } while (0)
++#elif KMP_ARCH_SPARC || KMP_ARCH_SPARC32 || KMP_ARCH_SPARC64
++#define KMP_CPU_PAUSE() \
++  do { \
++    __asm__ __volatile__("rd %ccr, %g0"); \
++    __asm__ __volatile__("rd %ccr, %g0"); \
++    __asm__ __volatile__("rd %ccr, %g0"); \
++    __asm__ __volatile__("rd %ccr, %g0"); \
++  } while (0)
+ #else
+ # define KMP_CPU_PAUSE()        /* nothing to do */
+ #endif
+@@ -3015,9 +3036,16 @@
+ extern kmp_uint32 __kmp_le_4(  kmp_uint32 value, kmp_uint32 checker );
+ extern kmp_uint32 __kmp_wait_yield_4( kmp_uint32 volatile * spinner, kmp_uint32 checker, kmp_uint32 (*pred) (kmp_uint32, kmp_uint32), void * obj );
+ 
++#ifdef __cplusplus
+ class kmp_flag_32;
+ class kmp_flag_64;
+ class kmp_flag_oncore;
++#else
++  struct kmp_flag_32;
++  struct kmp_flag_64;
++  struct kmp_flag_oncore;
++#endif
++
+ extern void __kmp_wait_32(kmp_info_t *this_thr, kmp_flag_32 *flag, int final_spin
+ #if USE_ITT_BUILD
+                    , void * itt_sync_obj
+###
+--- /dev/null	2016-08-04 13:40:37.000000000 -0700
++++ src/z_Solaris_asm_i386.S	2016-08-04 13:40:19.933031646 -0700
+@@ -0,0 +1,87 @@
++/*
++ * z_Solaris_asm.s: - microtasking routines specifically
++ *                    written for Intel and SPARC platforms
++ *                    running Solaris OS
++ *
++ * <copyright>
++ *    Copyright (c) 1997-2015 Intel Corporation.  All Rights Reserved.
++ *    Copyright (c) 2016 Oracle Corporation.  All Rights Reserved.
++ *
++ *    Redistribution and use in source and binary forms, with or without
++ *    modification, are permitted provided that the following conditions
++ *    are met:
++ *
++ *      - Redistributions of source code must retain the above copyright
++ *        notice, this list of conditions and the following disclaimer.
++ *      - Redistributions in binary form must reproduce the above copyright
++ *        notice, this list of conditions and the following disclaimer in the
++ *        documentation and/or other materials provided with the distribution.
++ *      - Neither the name of Intel Corporation nor the names of its
++ *        contributors may be used to endorse or promote products derived
++ *        from this software without specific prior written permission.
++ *
++ *    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * </copyright>
++ */
++
++#include "kmp_platform.h"
++
++/*
++ * -----------------------------------------------------------------------
++ * data
++ * -----------------------------------------------------------------------
++ */
++
++#ifdef KMP_GOMP_COMPAT
++
++/*
++ * Support for unnamed common blocks.
++ *
++ * Because the symbol ".gomp_critical_user_" contains a ".", we have to
++ * put this stuff in assembly.
++ */
++
++#if KMP_ARCH_X86
++	.align 4
++        .data
++        .comm .gomp_critical_user_, 32, 8
++        .data
++        .global __kmp_unnamed_critical_addr
++
++__kmp_unnamed_critical_addr:
++	.align 4
++        .4byte .gomp_critical_user_
++        .type __kmp_unnamed_critical_addr,@object
++        .size __kmp_unnamed_critical_addr, 4
++#endif /* KMP_ARCH_X86 */
++
++#if KMP_ARCH_X86_64
++	.align 8
++        .data
++        .comm .gomp_critical_user_, 64, 8
++        .data
++        .global __kmp_unnamed_critical_addr
++
++__kmp_unnamed_critical_addr:
++	.align 8
++        .8byte .gomp_critical_user_
++        .type __kmp_unnamed_critical_addr,@object
++        .size __kmp_unnamed_critical_addr, 8
++#endif /* KMP_ARCH_X86_64 */
++
++#endif /* KMP_GOMP_COMPAT */
++
++        .section .note.GNU-stack,"",@progbits
++        .file "z_Solaris_asm_i386.s"
++
+###
+--- /dev/null	2016-08-04 19:37:00.000000000 -0700
++++ src/z_Solaris_asm_sparc.S	2016-08-04 19:29:32.273919730 -0700
+@@ -0,0 +1,80 @@
++/*
++ * z_Solaris_asm.s: - microtasking routines specifically
++ *                    written for Intel and SPARC platforms
++ *                    running Solaris OS
++ *
++ * <copyright>
++ *    Copyright (c) 1997-2015 Intel Corporation.  All Rights Reserved.
++ *    Copyright (c) 2016 Oracle Corporation.  All Rights Reserved.
++ *
++ *    Redistribution and use in source and binary forms, with or without
++ *    modification, are permitted provided that the following conditions
++ *    are met:
++ *
++ *      - Redistributions of source code must retain the above copyright
++ *        notice, this list of conditions and the following disclaimer.
++ *      - Redistributions in binary form must reproduce the above copyright
++ *        notice, this list of conditions and the following disclaimer in the
++ *        documentation and/or other materials provided with the distribution.
++ *      - Neither the name of Intel Corporation nor the names of its
++ *        contributors may be used to endorse or promote products derived
++ *        from this software without specific prior written permission.
++ *
++ *    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ *    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ *    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ *    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ *    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ *    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ *    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ *    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ *    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ *    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ *    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * </copyright>
++ */
++
++/*
++ * -----------------------------------------------------------------------
++ * macros
++ * -----------------------------------------------------------------------
++ */
++
++#include "kmp_platform.h"
++
++#ifdef KMP_GOMP_COMPAT
++
++/*
++ * Support for unnamed common blocks.
++ * Because the symbol ".gomp_critical_user_" contains a ".", we have to
++ * put this stuff in assembly.
++ */
++
++    .data
++    .align 8
++    .global .gomp_critical_user_
++    .comm .gomp_critical_user_, 64, 8
++    .type .gomp_critical_user_,@object
++    .size .gomp_critical_user_, 64
++
++    .data
++    .align 8
++    .global __kmp_unnamed_critical_addr
++    .type __kmp_unnamed_critical_addr,@object
++    .size __kmp_unnamed_critical_addr, .-__kmp_unnamed_critical_addr
++
++__kmp_unnamed_critical_addr:
++    .align 8
++#if KMP_ARCH_SPARC64
++    .xword .gomp_critical_user_
++#endif
++#if KMP_ARCH_SPARC32
++    .word .gomp_critical_user_
++#endif
++
++#endif /* KMP_GOMP_COMPAT */
++
++    .section .note.GNU-stack, "", @progbits
++    .file "z_Solaris_asm_sparc.S"
++

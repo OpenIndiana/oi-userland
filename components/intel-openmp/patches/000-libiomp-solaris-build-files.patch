@@ -1,0 +1,665 @@
+# Build system part of the Solaris port of libiomp5.
+# Internal patch.
+# We should definitely submit this upstream.
+--- cmake/GNU/CFlags.cmake	2015-10-09 11:06:04.000000000 -0700
++++ cmake/GNU/CFlags.cmake	2016-02-23 08:06:00.403360340 -0800
+@@ -41,8 +41,8 @@
+ function(append_compiler_specific_c_and_cxx_flags input_c_flags input_cxx_flags)
+     set(local_c_flags)
+     set(local_cxx_flags)
+-    append_c_and_cxx_flags("-std=c++0x") # Enables support for many C++11 (formerly known as C++0x) features. The following are the most recently added features:
+-    append_c_and_cxx_flags("-fno-exceptions") # Exception handling table generation is disabled.
++    append_c_and_cxx_flags("-std=c++11") # Enables support for many C++11 (formerly known as C++0x) features. The following are the most recently added features:
++    # append_c_and_cxx_flags("-fno-exceptions") # Exception handling table generation is disabled.
+     append_c_and_cxx_flags("-x c++") # Compile C files as C++ files
+     if(${IA32})
+         append_c_and_cxx_flags("-m32") # Generate 32 bit IA-32 architecture code
+@@ -62,6 +62,7 @@
+     if(${WINDOWS})
+     elseif(${MAC})
+     elseif(${MIC})
++    elseif(${SOLARIS})
+     else()
+         append_linker_flags("-static-libgcc") # Causes libgcc to be linked in statically
+     endif()
+###
+--- cmake/Definitions.cmake	2015-10-09 11:06:04.000000000 -0700
++++ cmake/Definitions.cmake	2016-08-17 10:22:35.811889455 -0700
+@@ -38,14 +38,29 @@
+     set(local_cpp_flags)
+ 
+     append_definitions("-D USE_ITT_BUILD")
++
+     append_definitions("-D KMP_ARCH_STR=\"\\\\\"${legal_arch}\\\\\"\"")
++    if (${PPC32})
+     append_definitions("-D BUILD_I8")
++    elseif(${PPC64})
++      append_definitions("-DBUILD_I8")
++    elseif(${SPARC32})
++      append_definitions("-DBUILD_I8")
++    elseif(${SPARC64})
++      append_definitions("-DBUILD_I8")
++    elseif(${INTEL64})
++      append_definitions("-DBUILD_I8")
++    elseif(${INTEL64} OR ${AARCH64})
++      append_definitions("-DBUILD_I8")
++    else()
++    endif()
++
+     append_definitions("-D KMP_LIBRARY_FILE=\\\\\"${lib_file}\\\\\"") # yes... you need 5 backslashes...
+     append_definitions("-D KMP_VERSION_MAJOR=${LIBOMP_VERSION}")
+     append_definitions("-D KMP_NESTED_HOT_TEAMS")
+     
+     # customize to 128 bytes for ppc64
+-    if(${PPC64})
++    if(${PPC64} OR ${SPARC64})
+     	append_definitions("-D CACHE_LINE=128")
+     else()
+     	append_definitions("-D CACHE_LINE=64")
+@@ -96,7 +111,7 @@
+ 
+     ##################
+     # Unix definitions
+-    if(${LINUX})
++    if(${LINUX} OR ${SOLARIS})
+         append_definitions("-D KMP_TDATA_GTID")
+     endif()
+ 
+@@ -165,7 +180,7 @@
+     append_definitions("-D OMP_30_ENABLED=${have_omp_30}")
+ 
+     # Architectural definitions
+-    if(${INTEL64} OR ${IA32})
++    if(${INTEL64} OR ${IA32} OR ${SPARC32} OR ${SPARC64})
+         if(${LIBOMP_USE_ADAPTIVE_LOCKS})
+             append_definitions("-D KMP_USE_ADAPTIVE_LOCKS=1")
+         else()
+###
+--- cmake/GetArchitecture.cmake	2015-10-09 11:06:04.000000000 -0700
++++ cmake/GetArchitecture.cmake	2016-02-18 13:18:06.902215860 -0800
+@@ -61,6 +61,14 @@
+         #error ARCHITECTURE=ppc64le
+     #elif defined(__powerpc64__)
+         #error ARCHITECTURE=ppc64
++    #elif defined(__sparc64__)
++        #error ARCHITECTURE=sparcv9
++    #elif defined(__sparcv9)
++        #error ARCHITECTURE=sparcv9
++    #elif defined(__sparc__)
++        #error ARCHITECTURE=sparc
++    #elif defined(__sparc)
++        #error ARCHITECTURE=sparc
+     #else
+         #error ARCHITECTURE=UnknownArchitecture
+     #endif
+--- cmake/CommonFlags.cmake	2015-10-09 11:06:04.000000000 -0700
++++ cmake/CommonFlags.cmake	2016-02-23 08:09:45.497002428 -0800
+@@ -130,15 +130,16 @@
+         # Unix based linker flags
+         else()
+             # For now, always include --version-script flag on Unix systems.
+-            append_linker_flags("-Wl,--version-script=${src_dir}/exports_so.txt") # Use exports_so.txt as version script to create versioned symbols for ELF libraries
+-            append_linker_flags("-Wl,-z,noexecstack") #  Marks the object as not requiring executable stack.
+-            append_linker_flags("-Wl,--as-needed")    #  Only adds library dependencies as they are needed. (if libomp actually uses a function from the library, then add it)
++            append_linker_flags("-Wl,-M -Wl,${src_dir}/exports_so.txt") # Use exports_so.txt as version script to create versioned symbols for ELF libraries
++            # Solaris linker can't do nxstack on shared libraries.
++            # append_linker_flags("-Wl,-z -Wl,nxstack=enable") #  Marks the object as not requiring executable stack.
++            append_linker_flags("-Wl,-z -Wl,ignore")    #  Only adds library dependencies as they are needed. (if libomp actually uses a function from the library, then add it)
+             if(NOT ${STUBS_LIBRARY})
+-                append_linker_flags("-Wl,--warn-shared-textrel") #  Warn if the linker adds a DT_TEXTREL to a shared object.
+-                append_linker_flags("-Wl,-fini=__kmp_internal_end_fini") # When creating an ELF executable or shared object, call NAME when the 
++              append_linker_flags("-Wl,-z -Wl,text") #  Warn if the linker adds a DT_TEXTREL to a shared object.
++              append_linker_flags("-Wl,-z -Wl,finiarray=__kmp_internal_end_fini") # When creating an ELF executable or shared object, call NAME when the 
+                                                                          # executable or shared object is unloaded, by setting DT_FINI to the 
+                                                                          # address of the function.  By default, the linker uses "_fini" as the function to call.
+-                append_linker_flags_library("-pthread") # link pthread library
++              append_linker_flags("-lgcc_s -lstdc++ -lc -lm -ldl") #  Warn if the linker adds a DT_TEXTREL to a shared object.
+             endif()
+         endif() # if(${OPERATING_SYSTEM}) ...
+ 
+--- cmake/HelperFunctions.cmake	2015-10-09 11:06:05.000000000 -0700
++++ cmake/HelperFunctions.cmake	2016-02-21 20:15:51.010837360 -0800
+@@ -78,6 +78,10 @@
+ function(set_legal_arch return_arch_string)
+     if(${IA32}) 
+         set(${return_arch_string} "IA-32" PARENT_SCOPE)
++    elseif(${SPARC64})
++      set(${return_arch_string} "SPARC64" PARENT_SCOPE)
++    elseif(${SPARC32})
++      set(${return_arch_string} "SPARC32" PARENT_SCOPE)
+     elseif(${INTEL64})
+         set(${return_arch_string} "Intel(R) 64" PARENT_SCOPE)
+     elseif(${MIC})
+@@ -119,6 +123,10 @@
+ function(_export_lib_dir pltfrm return_value)
+     if(${MAC})
+         set(${return_value} "${export_dir}/${pltfrm}${suffix}/lib.thin" PARENT_SCOPE)
++    elseif(${SPARC64})
++        set(${return_value} "${export_dir}/${pltfrm}${suffix}/lib/sparcv9" PARENT_SCOPE)
++    elseif(${INTEL64})
++        set(${return_value} "${export_dir}/${pltfrm}${suffix}/lib/amd64" PARENT_SCOPE)
+     else()
+         set(${return_value} "${export_dir}/${pltfrm}${suffix}/lib" PARENT_SCOPE)
+     endif()
+###
+--- src/CMakeLists.txt	2015-10-09 11:05:54.000000000 -0700
++++ src/CMakeLists.txt	2016-08-04 13:22:54.748628463 -0700
+@@ -37,6 +37,7 @@
+ 
+ #############################
+ # --- Create Common Files ---
++message(INFO ": export_cmn_files: ${export_cmn_files}")
+ add_custom_target(libomp-common ALL DEPENDS ${export_cmn_files})
+ add_custom_target(libomp-clean-common COMMAND ${CMAKE_COMMAND} -E remove -f ${export_cmn_files})
+ 
+@@ -45,6 +46,7 @@
+     add_custom_command(TARGET libomp-common POST_BUILD 
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${export_cmn_dir}
+         COMMAND ${CMAKE_COMMAND} -E copy omp.h ${export_cmn_dir}
++        COMMAND ${CMAKE_COMMAND} -E copy ompt.h ${export_cmn_dir}
+         COMMAND ${CMAKE_COMMAND} -E copy omp_lib.h ${export_cmn_dir}
+         COMMAND ${CMAKE_COMMAND} -E copy omp_lib.f ${export_cmn_dir}
+         COMMAND ${CMAKE_COMMAND} -E copy omp_lib.f90 ${export_cmn_dir}
+@@ -74,7 +76,11 @@
+ 
+ # objects depend on : .inc files and omp.h
+ # This way the *.inc and omp.h are generated before any compilations take place
+-add_custom_target(libomp-needed-headers DEPENDS kmp_i18n_id.inc kmp_i18n_default.inc omp.h)
++if (${LIBOMP_OMPT_SUPPORT})
++  add_custom_target(libomp-needed-headers DEPENDS kmp_i18n_id.inc kmp_i18n_default.inc omp.h ompt.h)
++else()
++  add_custom_target(libomp-needed-headers DEPENDS kmp_i18n_id.inc kmp_i18n_default.inc omp.h)
++endif()
+ 
+ # For Windows, there is a definitions file (.def) and resource file (.res) created using generate-def.pl and rc.exe respectively.
+ if(${WINDOWS})
+@@ -85,8 +91,8 @@
+ # Remove any cmake-automatic linking of libraries by linker, This is so linux 
+ # and mac don't include libstdc++ just because we compile c++ files.
+ if(${LIBOMP_USE_PREDEFINED_LINKER_FLAGS})
+-    set(CMAKE_C_IMPLICIT_LINK_LIBRARIES   "")
+-    set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
++    set(CMAKE_C_IMPLICIT_LINK_LIBRARIES   "-lc -lm -lrt -ldl")
++    set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "-lgcc_s -lstdc++")
+     set(CMAKE_ASM_IMPLICIT_LINK_LIBRARIES "")
+ endif()
+ 
+@@ -319,6 +325,23 @@
+ # Install rules
+ # We want to install libomp in DESTDIR/CMAKE_INSTALL_PREFIX/lib
+ # We want to install headers in DESTDIR/CMAKE_INSTALL_PREFIX/include
++if (${SOLARIS})
++  if (${SPARC64})
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/sparcv9")
++    set(INSTALL_LIBDIR "/usr/lib/sparcv9")
++    set(LIBOMP_LIBDIR_SUFFIX "/sparcv9")
++  elseif(${INTEL64})
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/amd64")
++    set(INSTALL_LIBDIR "/usr/lib/amd64")
++    set(LIBOMP_LIBDIR_SUFFIX "/amd64")
++  elseif("${LIBOMP_ARCH}" STREQUAL "32e")
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/amd64")
++    set(INSTALL_LIBDIR "/usr/lib/amd64")
++    set(LIBOMP_LIBDIR_SUFFIX "/amd64")
++  else()
++  endif()
++endif()
++
+ if(${LIBOMP_STANDALONE_BUILD})
+     set(LIBOMP_HEADERS_INSTALL_PATH include)
+ else()
+###
+--- tools/check-tools.pl	2015-10-09 11:06:08.000000000 -0700
++++ tools/check-tools.pl	2016-02-18 11:50:28.050153095 -0800
+@@ -146,7 +146,7 @@
+ 
+ sub get_gnu_make_version() {
+     my ( $rc, $stdout, $stderr, $version );
+-    my $tool = "make";
++    my $tool = "gmake";
+     my ( @ret ) = ( $tool );
+     my ( $path );
+     $rc = run( [ $tool, "--version" ], $stdout, $stderr, $path );
+@@ -413,10 +413,13 @@
+     "mac" => { c => "icc", cpp => "icpc", f => "ifort" },
+     "win" => { c => "icl", cpp => undef,  f => "ifort" },
+ };
++
+ my $gnu_compilers = {
+     "lin" => { c => "gcc", cpp =>  "g++", f => "gfortran" },
+     "mac" => { c => "gcc", cpp =>  "g++", f => "gfortran" },
++    "sol" => { c => "gcc", cpp =>  "g++", f => "gfortran" },
+ };
++
+ my $clang_compilers = {
+     "lin" => { c => "clang", cpp =>  "clang++" },
+     "mac" => { c => "clang", cpp =>  "clang++" },
+@@ -448,7 +451,7 @@
+         }; # if
+     };
+ }; # if
+-if ( $target_os eq "lin" or $target_os eq "mac" ) {
++if ( $target_os eq "lin" or $target_os eq "mac" or $target_os eq "sol" ) {
+     # check for clang/gnu tools because touch-test.c is compiled with them.
+     if ( $clang or $target_os eq "mac" ) { # OS X* >= 10.9 discarded GNU compilers.
+         push( @versions, [ "Clang C Compiler",     get_clang_compiler_version( $clang_compilers->{ $target_os }->{ c   } ) ] );
+--- tools/common.inc	2015-10-09 11:06:07.000000000 -0700
++++ tools/common.inc	2016-02-18 11:53:12.986639375 -0800
+@@ -51,6 +51,9 @@
+   ifeq ($(OS), Darwin)
+     export omp_os=macos
+   endif
++  ifeq ($(OS), SunOS)
++    export omp_os=solaris
++  endif
+ 
+ endif # !omp_os
+ 
+--- tools/src/common-defs.mk	2015-10-09 11:06:11.000000000 -0700
++++ tools/src/common-defs.mk	2016-02-18 11:42:31.074082905 -0800
+@@ -64,7 +64,7 @@
+ # Description:
+ #     The function return printable name of specified architecture, IA-32 architecture or Intel(R) 64.
+ #
+-legal_arch = $(if $(filter 32,$(1)),IA-32,$(if $(filter 32e,$(1)),Intel(R) 64,$(if $(filter l1,$(1)),L1OM,$(if $(filter arm,$(1)),ARM,$(if $(filter ppc64,$(1)),PPC64,$(if $(filter ppc64le,$(1)),PPC64LE,$(if $(filter aarch64,$(1)),AArch64,$(if $(filter mic,$(1)),Intel(R) Many Integrated Core Architecture,$(error Bad architecture specified: $(1))))))))))
++legal_arch = $(if $(filter 32,$(1)),IA-32,$(if $(filter 32e,$(1)),Intel(R) 64,$(if $(filter l1,$(1)),L1OM,$(if $(filter arm,$(1)),ARM,$(if $(filter ppc64,$(1)),PPC64,$(if $(filter ppc64le,$(1)),PPC64LE,$(if $(filter aarch64,$(1)),AArch64,$(if $(filter mic,$(1)),Intel(R) Many Integrated Core Architecture,$(if $(filter sparc, $(1)),SPARC,$(if $(filter sparcv9,$(1)),SPARCV9,$(error Bad architecture specified: $(1))))))))))))
+ 
+ # Synopsis:
+ #     var_name = $(call check_variable,var,list)
+@@ -146,14 +146,14 @@
+ # Mandatory variables passed from build.pl.
+ # --------------------------------------------------------------------------------------------------
+ 
+-os       := $(call check_variable,os,lin mac win)
+-arch     := $(call check_variable,arch,32 32e 64 arm ppc64 ppc64le aarch64 mic)
++os       := $(call check_variable,os,lin mac sol win)
++arch     := $(call check_variable,arch,32 32e 64 arm ppc64 ppc64le aarch64 sparc sparcv9 mic)
+ ifeq "$(arch)" "mic" # We want the flavor of mic (knf, knc, knl, etc.)
+     platform := $(os)_$(MIC_ARCH)
+ else
+     platform := $(os)_$(arch)
+ endif
+-platform := $(call check_variable,platform,lin_32 lin_32e lin_64 lin_arm lin_knc lin_knf mac_32 mac_32e win_32 win_32e win_64 lin_ppc64 lin_ppc64le lin_aarch64)
++platform := $(call check_variable,platform,lin_32 lin_32e lin_64 lin_arm lin_knc lin_knf mac_32 mac_32e win_32 win_32e win_64 lin_ppc64 lin_ppc64le lin_aarch64 sol_sparc sol_sparcv9 sol_i386 sol_x86_64)
+ # oa-opts means "os and arch options". They are passed to almost all perl scripts.
+ oa-opts  := --os=$(os) --arch=$(arch)
+ 
+--- tools/solaris.inc	2016-02-18 09:11:59.349587625 -0800
++++ tools/solaris.inc	2016-02-18 09:54:26.955461235 -0800
+@@ -0,0 +1,67 @@
++# <copyright>
++#    Copyright (c) 2016 Oracle and/or its affiliates.  All Rights Reserved.
++#
++#    Redistribution and use in source and binary forms, with or without
++#    modification, are permitted provided that the following conditions
++#    are met:
++#
++#      * Redistributions of source code must retain the above copyright
++#        notice, this list of conditions and the following disclaimer.
++#      * Redistributions in binary form must reproduce the above copyright
++#        notice, this list of conditions and the following disclaimer in the
++#        documentation and/or other materials provided with the distribution.
++#      * Neither the name of Oracle Corporation nor the names of its
++#        contributors may be used to endorse or promote products derived
++#        from this software without specific prior written permission.
++#
++#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++#    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++#    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++#    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++#    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++#    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++#    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++#    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++#    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++#    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++#
++# </copyright>
++
++####### Detections and Commands ###############################################
++
++# Solaris needs this additional file because uname -p is useless
++include tools/arch.inc
++
++ifndef arch
++        uname_p:=$(shell uname -p)
++        ifeq ($(uname_p),i386)
++          ifeq ($(solaris_arch),32)
++                export arch := i386
++          endif
++          ifeq ($(solaris_arch),64)
++                export arch := x86_64
++          endif
++        endif
++        ifeq ($(uname_p),sparc)
++          ifeq ($(solaris_arch),32)
++                export arch := sparc
++          endif
++          ifeq ($(solaris_arch),64)
++                export arch := sparcv9
++          endif
++        endif
++endif
++
++# Change this to 'release' for production buids.
++mode=debug
++
++CMD=sh -c
++CWD=$(shell pwd)
++CP=cp
++RM?=rm -f
++RMR?=rm -rf
++RD?=rmdir
++MD?=mkdir -p
++NUL= /dev/null
++SLASH=/
+--- tools/message-converter.pl	2015-10-09 11:06:08.000000000 -0700
++++ tools/message-converter.pl	2016-02-18 13:56:45.212141095 -0800
+@@ -504,7 +504,7 @@
+ 
+ 
+ my $generate_message;
+-if ( $target_os =~ m{\A(?:lin|mac)\z} ) {
++if ( $target_os =~ m{\A(?:lin|sol|mac)\z} ) {
+     $generate_message = \&generate_message_unix;
+ } elsif ( $target_os eq "win" ) {
+     $generate_message = \&generate_message_windows;
+--- tools/lib/Platform.pm	2015-10-09 11:06:11.000000000 -0700
++++ tools/lib/Platform.pm	2016-02-18 10:11:53.026836855 -0800
+@@ -77,6 +77,10 @@
+             $arch = "aarch64";
+         } elsif ( $arch =~ m{\Amic} ) {
+             $arch = "mic";
++        } elsif ( $arch =~ m{\Asparc} ) {
++            $arch = "sparc";
++        } elsif ( $arch =~ m{\Asparcv9} ) {
++            $arch = "sparcv9";
+         } else {
+             $arch = undef;
+         }; # if
+@@ -146,6 +150,8 @@
+     if ( defined( $os ) ) {
+         if ( $os =~ m{\A\s*(?:Linux|lin|l)\s*\z}i ) {
+             $os = "lin";
++        } elsif ( $os =~ m{\A\s*(?:SunOS|sol|Sun|Sol|s)\s*\z}i ) {
++            $os = "sol";
+         } elsif ( $os =~ m{\A\s*(?:Mac(?:\s*OS(?:\s*X)?)?|mac|m|Darwin)\s*\z}i ) {
+             $os = "mac";
+         } elsif ( $os =~ m{\A\s*(?:Win(?:dows)?(?:(?:_|\s*)?(?:NT|XP|95|98|2003))?|w)\s*\z}i ) {
+@@ -228,6 +234,10 @@
+         $_host_arch = "ppc64";
+     } elsif ( $hardware_platform eq "aarch64" ) {
+         $_host_arch = "aarch64";
++    } elsif ( $hardware_platform eq "sparc" ) {
++        $_host_arch = "sparc";
++    } elsif ( $hardware_platform eq "sparcv9" ) {
++        $_host_arch = "sparcv9";
+     } else {
+         die "Unsupported host hardware platform: \"$hardware_platform\"; stopped";
+     }; # if
+@@ -242,6 +252,9 @@
+     } elsif ( $operating_system eq "FreeBSD" ) {
+         # Host OS resembles Linux.
+         $_host_os = "lin";
++    } elsif ( $operating_system eq "SunOS" ) {
++        # Solaris resembles Linux.
++        $_host_os = "sol";
+     } elsif ( $operating_system eq "Darwin" ) {
+         $_host_os = "mac";
+     } elsif ( $operating_system eq "MS Windows" ) {
+--- tools/lib/Uname.pm	2015-10-09 11:06:11.000000000 -0700
++++ tools/lib/Uname.pm	2016-02-22 17:51:57.685796845 -0800
+@@ -54,7 +54,7 @@
+ # The workaround for Perl 5.6:
+ #
+ BEGIN {
+-    if ( $^O eq "darwin" or $^O eq "linux" ) {
++    if ( $^O eq "darwin" or $^O eq "linux" or $^O eq "solaris" ) {
+ 	require tools;
+         import tools;
+     }; # if
+@@ -67,10 +67,10 @@
+ 
+ my @posix = qw{ kernel_name fqdn kernel_release kernel_version machine };
+     # Properties supported by POSIX::uname().
+-my @linux =
++my @solaris =
+     qw{ processor hardware_platform operating_system };
+     # Properties reported by uname in Linux* OS.
+-my @base = ( @posix, @linux );
++my @base = ( @posix, @solaris );
+     # Base properties.
+ my @aux =
+     (
+@@ -158,7 +158,7 @@
+ 
+ # hardware_platform.
+ if ( 0 ) {
+-} elsif ( $^O eq "linux" or $^O eq "freebsd" ) {
++} elsif ( $^O eq "linux" or $^O eq "freebsd" or $^O eq "solaris" ) {
+     if ( 0 ) {
+     } elsif ( $values{ machine } =~ m{\Ai[3456]86\z} ) {
+         $values{ hardware_platform } = "i386";
+@@ -172,6 +172,10 @@
+         $values{ hardware_platform } = "ppc64";
+     } elsif ( $values{ machine } =~ m{\Aaarch64\z} ) {
+         $values{ hardware_platform } = "aarch64";
++    } elsif ( $values{ machine } =~ m{\Asun4v\z} ) {
++        $values{ hardware_platform } = "sparc";
++    } elsif ( $values{ machine } =~ m{\Ai86pc\z} ) {
++        $values{ hardware_platform } = "i386";
+     } else {
+         die "Unsupported machine (\"$values{ machine }\") returned by POSIX::uname(); stopped";
+     }; # if
+@@ -397,6 +401,8 @@
+     $values{ operating_system } = "MS Windows";
+ } elsif ( $values{ kernel_name } =~ m{\AFreeBSD} ) {
+     $values{ operating_system } = "FreeBSD";
++} elsif ( $values{ kernel_name } =~ m{\ASunOS} ) {
++    $values{ operating_system } = "SunOS";
+ } else {
+     die "Unsupported kernel_name (\"$values{ kernel_name }\") returned by POSIX::uname(); stopped";
+ }; # if
+###
+--- CMakeLists.txt	2015-10-09 11:06:06.000000000 -0700
++++ CMakeLists.txt	2016-08-15 11:12:39.936070302 -0700
+@@ -72,8 +72,8 @@
+ # If you want to change the compiler, then empty the build directory and rerun cmake.
+ 
+ # Build Configuration
+-set(os_possible_values lin mac win)
+-set(arch_possible_values 32e 32 arm ppc64 ppc64le aarch64 mic)
++set(os_possible_values lin sol mac win)
++set(arch_possible_values 32e 32 arm ppc64 ppc64le aarch64 sparc sparcv9 mic)
+ set(build_type_possible_values release debug relwithdebinfo)
+ set(omp_version_possible_values 41 40 30)
+ set(lib_type_possible_values normal profile stubs)
+@@ -89,7 +89,7 @@
+ if(${APPLE})
+     set(temp_os mac)
+ elseif(${UNIX})
+-    set(temp_os lin)
++    set(temp_os sol)
+ elseif(${WIN32})       
+     set(temp_os win)
+ else()
+@@ -100,9 +100,9 @@
+ get_architecture(detected_arch)
+ 
+ set(LIBOMP_OS ${temp_os} CACHE STRING
+-    "The operating system to build for (lin/mac/win)")
++    "The operating system to build for (lin/sol/mac/win)")
+ set(LIBOMP_ARCH ${detected_arch} CACHE STRING
+-    "The architecture to build for (32e/32/arm/ppc64/ppc64le/aarch64/mic).  32e is Intel(R) 64 architecture, 32 is IA-32 architecture")
++    "The architecture to build for (32e/32/arm/ppc64/ppc64le/aarch64/sparc/sparcv9/mic).  32e is Intel(R) 64 architecture, 32 is IA-32 architecture")
+ set(LIBOMP_LIB_TYPE normal CACHE STRING
+     "Performance,Profiling,Stubs library (normal/profile/stubs)")
+ set(LIBOMP_VERSION 5 CACHE STRING 
+@@ -148,12 +148,14 @@
+     "Enable debugger interface code?")
+ 
+ # OMPT-support
+-set(LIBOMP_OMPT_SUPPORT false CACHE BOOL
+-    "OMPT-support?")
+-set(LIBOMP_OMPT_BLAME true CACHE BOOL
+-    "OMPT-blame?")
+-set(LIBOMP_OMPT_TRACE true CACHE BOOL
+-    "OMPT-trace?")
++if (${SOLARIS})
++  set(LIBOMP_OMPT_SUPPORT true CACHE BOOL "OMPT-support")
++else()
++  set(LIBOMP_OMPT_SUPPORT false CACHE BOOL "OMPT-support?")
++endif()
++
++set(LIBOMP_OMPT_BLAME true CACHE BOOL "OMPT-blame?")
++set(LIBOMP_OMPT_TRACE true CACHE BOOL "OMPT-trace?")
+ 
+ # User specified flags.  These are appended to the predetermined flags found 
+ # in CommonFlags.cmake and ${CMAKE_C_COMPILER_ID}/*Flags.cmake (e.g., GNU/CFlags.cmake)
+@@ -231,6 +233,7 @@
+ # Set some useful flags variables for other parts of cmake to use
+ # Operating System
+ set(LINUX FALSE)
++set(SOLARIS FALSE)
+ set(MAC FALSE)
+ set(WINDOWS FALSE)
+ set(MIC FALSE)
+@@ -241,6 +244,9 @@
+ elseif("${LIBOMP_OS}" STREQUAL "mac")
+     set(MAC TRUE)
+     set(real_os mac)
++elseif("${LIBOMP_OS}" STREQUAL "sol")
++  set(SOLARIS TRUE)
++    set(real_os sol)
+ elseif("${LIBOMP_OS}" STREQUAL "win")
+     set(WINDOWS TRUE)
+     set(real_os win)
+@@ -257,6 +263,9 @@
+ set(PPC64BE FALSE)
+ set(PPC64LE FALSE)
+ set(PPC64 FALSE)
++set(SPARC FALSE)
++set(SPARC32 FALSE)
++set(SPARC64 FALSE)
+ if("${LIBOMP_ARCH}" STREQUAL "32")      # IA-32 architecture
+     set(IA32 TRUE)
+ elseif("${LIBOMP_ARCH}" STREQUAL "32e") # Intel(R) 64 architecture
+@@ -269,6 +278,12 @@
+ elseif("${LIBOMP_ARCH}" STREQUAL "ppc64le") # PPC64LE architecture
+     set(PPC64LE TRUE)
+     set(PPC64 TRUE)
++  elseif("${LIBOMP_ARCH}" STREQUAL "sparc") # SPARC architecture
++    set(SPARC TRUE)
++    set(SPARC32 TRUE)
++  elseif("${LIBOMP_ARCH}" STREQUAL "sparcv9") # SPARC architecture
++    set(SPARC TRUE)
++    set(SPARC64 TRUE)
+ elseif("${LIBOMP_ARCH}" STREQUAL "aarch64") # AARCH64 architecture
+     set(AARCH64 TRUE)
+ elseif("${LIBOMP_ARCH}" STREQUAL "mic") # Intel(R) Many Integrated Core Architecture
+@@ -303,6 +318,25 @@
+     set(STUBS_LIBRARY TRUE)
+ endif()
+ 
++# Re-set the libdir path now that we have a platform/arch.
++if (${SOLARIS})
++  if (${SPARC64})
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/sparcv9")
++    set(INSTALL_LIBDIR "/usr/lib/sparcv9")
++    set(LIBOMP_LIBDIR_SUFFIX "/sparcv9")
++  elseif(${INTEL64})
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/amd64")
++    set(INSTALL_LIBDIR "/usr/lib/amd64")
++    set(LIBOMP_LIBDIR_SUFFIX "/amd64")
++  elseif("${LIBOMP_ARCH}" STREQUAL "32e")
++    set(CMAKE_INSTALL_LIBDIR "/usr/lib/amd64")
++    set(INSTALL_LIBDIR "/usr/lib/amd64")
++    set(LIBOMP_LIBDIR_SUFFIX "/amd64")
++  else()
++  endif()
++endif()
++
++
+ ###############################################
+ # Features for compilation and build in general
+ 
+@@ -312,7 +346,7 @@
+ # - If COMPILER_SUPPORTS_QUAD_PRECISION is true, then a corresponding COMPILER_QUAD_TYPE must be given
+ #   This is the compiler's quad-precision data type.
+ # ** TODO: This isn't complete yet. Finish it. Requires changing macros in kmp_os.h **
+-set(LIBOMP_COMPILER_SUPPORTS_QUAD_PRECISION false CACHE BOOL
++set(LIBOMP_COMPILER_SUPPORTS_QUAD_PRECISION true CACHE BOOL
+     "*INCOMPLETE* Does the compiler support a 128-bit floating point type?")
+ set(LIBOMP_COMPILER_QUAD_TYPE "" CACHE STRING
+     "*INCOMPLETE* The quad precision data type (e.g., for gcc, __float128)")
+@@ -340,7 +374,7 @@
+ endif()
+ 
+ # - TSX based locks have __asm code which can be troublesome for some compilers.  This feature is also x86 specific.
+-if((${IA32} OR ${INTEL64} OR ${MIC}) AND NOT MSVC)
++if((${IA32} OR ${INTEL64} OR ${MIC} OR ${SPARC32} OR ${SPARC64}) AND NOT MSVC)
+     set(LIBOMP_USE_ADAPTIVE_LOCKS true CACHE BOOL
+         "Should TSX-based lock be compiled (adaptive lock in kmp_lock.cpp).  These are x86 specific.")
+ else()
+@@ -350,13 +384,13 @@
+ ##################################
+ # Error checking the configuration 
+ if(${LIBOMP_STATS} AND (${WINDOWS} OR ${MAC}))
+-    error_say("Stats-gathering functionality is only supported on x86-Linux and Intel(R) MIC Architecture")
++  error_say("Stats-gathering functionality is only supported on x86-Linux, Solaris and Intel(R) MIC Architecture")
+ endif()
+-if(${LIBOMP_STATS} AND NOT (${IA32} OR ${INTEL64} OR ${MIC}))
+-    error_say("Stats-gathering functionality is only supported on x86-Linux and Intel(R) MIC Architecture")
++if(${LIBOMP_STATS} AND NOT (${IA32} OR ${INTEL64} OR ${MIC} OR ${SOLARIS}))
++  error_say("Stats-gathering functionality is only supported on x86-Linux, Solaris and Intel(R) MIC Architecture")
+ endif()
+-if(${LIBOMP_USE_ADAPTIVE_LOCKS} AND NOT(${IA32} OR ${INTEL64} OR ${MIC}))
+-    error_say("Adaptive locks (TSX) functionality is only supported on x86 Architecture")
++if(${LIBOMP_USE_ADAPTIVE_LOCKS} AND NOT(${IA32} OR ${INTEL64} OR ${MIC} OR ${SPARC}))
++  error_say("Adaptive locks (TSX) functionality is only supported on x86 or SPARC Architecture")
+ endif()
+ if(${LIBOMP_OMPT_SUPPORT} AND ${WINDOWS})
+     error_say("OpenMP Tools Interface is not supported on Windows")
+@@ -390,6 +424,10 @@
+ 
+ ####################################
+ # Setting file extensions / suffixes
++if (${SOLARIS})
++  set(CMAKE_SHARED_LIBRARY_SUFFIX ".so.5")
++else()
++endif()
+ set(obj ${CMAKE_C_OUTPUT_EXTENSION})
+ set(lib ${CMAKE_STATIC_LIBRARY_SUFFIX})
+ set(dll ${CMAKE_SHARED_LIBRARY_SUFFIX})
+@@ -461,9 +499,11 @@
+ set(export_lib_files "${lib_file}" "${imp_file}" "${pdb_file}") 
+ set(export_mod_files "omp_lib.mod" "omp_lib_kinds.mod")
+ set(export_cmn_files "omp.h" "omp_lib.h" "omp_lib.f" "omp_lib.f90")
++set(export_ompt_files "ompt.h")
+ 
+ if(${LIBOMP_OMPT_SUPPORT})
+-    set(export_cmn_files ${export_cmn_files} "ompt.h")
++    set(export_cmn_files "${export_cmn_files}" "${export_ompt_files}")
++    message(INFO ": export_cmn_files: ${export_cmn_files}")
+ endif()
+ 
+ if("${export_lib_fat_dir}")
+###
+--- cmake/SourceFiles.cmake	2015-10-09 11:06:06.000000000 -0700
++++ cmake/SourceFiles.cmake	2016-07-30 19:11:45.593975135 -0700
+@@ -126,6 +126,14 @@
+     if(NOT ${STUBS_LIBRARY})
+         if(${WINDOWS})
+             append_asm_source_file("z_Windows_NT-586_asm.asm")
++        elseif(${SOLARIS})
++          set(UNAME "")
++          execute_process(COMMAND uname -p OUTPUT_VARIABLE UNAME)
++          if("${UNAME}" MATCHES "sparc")
++            append_asm_source_file("z_Solaris_asm_sparc.S")
++          else()
++            append_asm_source_file("z_Linux_asm.s")
++          endif()
+         else()
+             append_asm_source_file("z_Linux_asm.s")
+         endif()
