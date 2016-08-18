@@ -1,4 +1,6 @@
 # 23701635 clang produces amd64 opcodes, but calls 32-bit assembler by default
+# 24378340 clang -fopenmp must include the path to the omp.h header file
+# 24378393 clang -fopenmp must define _OPENMP to 201307
 # 3.9.X for upstream.
 --- tools/clang/include/clang/Basic/LangOptions.def	2016-01-06 08:42:12.000000000 -0500
 +++ tools/clang/include/clang/Basic/LangOptions.def	2016-05-08 23:19:20.551431215 -0400
@@ -54,8 +56,8 @@
  
  unsigned Selector::getNumArgs() const {
 ###
---- tools/clang/lib/Basic/Targets.cpp	2016-02-19 08:40:14.000000000 -0900
-+++ tools/clang/lib/Basic/Targets.cpp	2016-07-06 07:39:20.069419785 -0800
+--- tools/clang/lib/Basic/Targets.cpp	2016-05-24 12:36:54.000000000 -0700
++++ tools/clang/lib/Basic/Targets.cpp	2016-08-08 08:06:27.116982930 -0700
 @@ -29,10 +29,11 @@
  #include "llvm/MC/MCSectionMachO.h"
  #include "llvm/Support/ErrorHandling.h"
@@ -97,7 +99,7 @@
 +
 +    Builder.defineMacro("__EXTENSIONS__", "1");
 +
-+    if (Opts.POSIXThreads) {
++    if (Opts.POSIXThreads || Opts.OpenMP) {
 +      Builder.defineMacro("_REENTRANT");
 +      Builder.defineMacro("__GTHREADS", "1");
 +    }
@@ -291,7 +293,7 @@
    }
  };
  
-@@ -5893,6 +6066,10 @@
+@@ -5899,6 +6072,10 @@
      case 'N': // Same as 'K' but zext (required for SIMode)
      case 'O': // The constant 4096
        return true;

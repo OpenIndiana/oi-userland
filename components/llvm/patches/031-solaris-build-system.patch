@@ -1,4 +1,5 @@
 # 24314621 LLVM should build using the new CMake based build system
+# 24378393 clang -fopenmp must define _OPENMP to 201307
 # CMake parts for upstream, Solaris-specific parts no.
 --- Makefile.config.in	2015-08-07 12:44:47.000000000 -0400
 +++ Makefile.config.in	2016-05-08 23:19:20.538430899 -0400
@@ -786,7 +787,7 @@
    "Default <path> to all compiler invocations for --sysroot=<path>." )
  
 +if(CMAKE_HOST_SOLARIS)
-+  set(CLANG_DEFAULT_OPENMP_RUNTIME "libgomp" CACHE STRING
++  set(CLANG_DEFAULT_OPENMP_RUNTIME "libiomp5" CACHE STRING
 +      "Default OpenMP runtime used by -fopenmp.")
 +else()
  set(CLANG_DEFAULT_OPENMP_RUNTIME "libomp" CACHE STRING

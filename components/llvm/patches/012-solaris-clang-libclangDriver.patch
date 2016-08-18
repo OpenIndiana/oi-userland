@@ -2,9 +2,11 @@
 # 23854357 clang should check for GNU ld
 # 22778650 clang should support OpenMP because it can
 # 24314745 clang should support PIE executables in Solaris
+# 24378340 clang -fopenmp must include the path to the omp.h header file
+# 24378393 clang -fopenmp must define _OPENMP to 201307
 # 3.9.X for upstream.
---- tools/clang/include/clang/Driver/Options.td	2016-01-06 16:27:42.000000000 -0500
-+++ tools/clang/include/clang/Driver/Options.td	2016-05-08 23:19:20.553431263 -0400
+--- tools/clang/include/clang/Driver/Options.td	2016-01-06 13:27:42.000000000 -0800
++++ tools/clang/include/clang/Driver/Options.td	2016-07-30 10:18:25.039779680 -0700
 @@ -669,6 +669,9 @@
    Flags<[CC1Option]>, HelpText<"Form fused FP ops (e.g. FMAs): fast (everywhere)"
    " | on (according to FP_CONTRACT pragma, default) | off (never fuse)">;
@@ -15,7 +17,30 @@
  def ffor_scope : Flag<["-"], "ffor-scope">, Group<f_Group>;
  def fno_for_scope : Flag<["-"], "fno-for-scope">, Group<f_Group>;
  
-@@ -1312,6 +1315,12 @@
+@@ -959,11 +962,17 @@
+ 
+ def fobjc_sender_dependent_dispatch : Flag<["-"], "fobjc-sender-dependent-dispatch">, Group<f_Group>;
+ def fomit_frame_pointer : Flag<["-"], "fomit-frame-pointer">, Group<f_Group>;
+-def fopenmp : Flag<["-"], "fopenmp">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
+-def fno_openmp : Flag<["-"], "fno-openmp">, Group<f_Group>, Flags<[NoArgumentUnused]>;
+-def fopenmp_EQ : Joined<["-"], "fopenmp=">, Group<f_Group>;
+-def fopenmp_use_tls : Flag<["-"], "fopenmp-use-tls">, Group<f_Group>, Flags<[NoArgumentUnused]>;
+-def fnoopenmp_use_tls : Flag<["-"], "fnoopenmp-use-tls">, Group<f_Group>, Flags<[CC1Option, NoArgumentUnused]>;
++def fopenmp : Flag<["-"], "fopenmp">, Group<f_Group>,
++              Flags<[CC1Option]>, HelpText<"Enable OpenMP">;
++def fno_openmp : Flag<["-"], "fno-openmp">, Group<f_Group>,
++                 Flags<[CC1Option]>, HelpText<"Disable OpenMP">;
++def fopenmp_EQ : Joined<["-"], "fopenmp=">, Group<f_Group>,
++                 Flags<[CC1Option]>,
++                 HelpText<"Use specified OpenMP Implementation">;
++def fopenmp_use_tls : Flag<["-"], "fopenmp-use-tls">, Group<f_Group>,
++                      Flags<[CC1Option]>, HelpText<"Use OpenMP TLS">;
++def fnoopenmp_use_tls : Flag<["-"], "fnoopenmp-use-tls">, Group<f_Group>,
++                        Flags<[CC1Option]>, HelpText<"Do not use OpenMP TLS">;
+ def fno_optimize_sibling_calls : Flag<["-"], "fno-optimize-sibling-calls">, Group<f_Group>;
+ def foptimize_sibling_calls : Flag<["-"], "foptimize-sibling-calls">, Group<f_Group>;
+ def force__cpusubtype__ALL : Flag<["-"], "force_cpusubtype_ALL">;
+@@ -1312,6 +1321,12 @@
  def meabi : Separate<["-"], "meabi">, Group<m_Group>, Flags<[CC1Option]>,
    HelpText<"Set EABI type, e.g. 4, 5 or gnu (default depends on triple)">;
  
@@ -28,7 +53,7 @@
  def mmmx : Flag<["-"], "mmmx">, Group<m_x86_Features_Group>;
  def mno_3dnowa : Flag<["-"], "mno-3dnowa">, Group<m_x86_Features_Group>;
  def mno_3dnow : Flag<["-"], "mno-3dnow">, Group<m_x86_Features_Group>;
-@@ -1954,6 +1963,7 @@
+@@ -1954,6 +1969,7 @@
  
  def fprofile_dir : Joined<["-"], "fprofile-dir=">, Group<clang_ignored_gcc_optimization_f_Group>;
  
@@ -55,8 +80,8 @@
                            New.includeSuffix());
  
 ###
---- tools/clang/lib/Driver/ToolChains.cpp	2016-02-16 10:56:48.000000000 -0900
-+++ tools/clang/lib/Driver/ToolChains.cpp	2016-06-30 09:27:01.031173505 -0800
+--- tools/clang/lib/Driver/ToolChains.cpp	2016-02-16 11:56:48.000000000 -0800
++++ tools/clang/lib/Driver/ToolChains.cpp	2016-08-04 06:09:44.734198665 -0700
 @@ -28,12 +28,15 @@
  #include "llvm/ProfileData/InstrProf.h"
  #include "llvm/Support/ErrorHandling.h"
@@ -174,7 +199,7 @@
    switch (TargetTriple.getArch()) {
    case llvm::Triple::aarch64:
      LibDirs.append(begin(AArch64LibDirs), end(AArch64LibDirs));
-@@ -3302,69 +3321,783 @@
+@@ -3302,69 +3321,828 @@
  }
  
  /// Solaris - Solaris tool chain which can call as(1) and ld(1) directly.
@@ -225,8 +250,7 @@
 +      findGCCIncludeDirs(Triple, Args);
 +      findGCCInternalLibDir(Triple, Args);
 +    }
- 
--  GCCInstallation.init(Triple, Args);
++
 +    if (Arg *A = Args.getLastArg(options::OPT_fuse_ld_EQ)) {
 +      Linker = A->getValue();
 +      if (Linker == "bfd")
@@ -248,9 +272,7 @@
 +      }
 +    }
  
--  path_list &Paths = getFilePaths();
--  if (GCCInstallation.isValid())
--    addPathIfExists(D, GCCInstallation.getInstallPath(), Paths);
+-  GCCInstallation.init(Triple, Args);
 +    if (Arg *A = Args.getLastArg(options::OPT_fuse_as_EQ)) {
 +      Assembler = A->getValue();
 +      if (Assembler == "llvm")
@@ -265,7 +287,10 @@
 +                 (Assembler == "solaris"))
 +        D.Diag(diag::err_drv_clang_unsupported) << A->getAsString(Args);
 +    }
-+
+ 
+-  path_list &Paths = getFilePaths();
+-  if (GCCInstallation.isValid())
+-    addPathIfExists(D, GCCInstallation.getInstallPath(), Paths);
 +    getProgramPaths().push_back(GCCInstallDir);
  
 -  addPathIfExists(D, getDriver().getInstalledDir(), Paths);
@@ -339,12 +364,12 @@
 +                                  llvm::opt::ArgStringList &CC1Args) const {
 +  if (!llvm::sys::fs::exists(Base + Suffix))
 +    return false;
++
++  addSystemInclude(DriverArgs, CC1Args, Base);
++  addSystemInclude(DriverArgs, CC1Args, Base + Suffix);
  
 -void Solaris::AddClangCXXStdlibIncludeArgs(const ArgList &DriverArgs,
 -                                           ArgStringList &CC1Args) const {
-+  addSystemInclude(DriverArgs, CC1Args, Base);
-+  addSystemInclude(DriverArgs, CC1Args, Base + Suffix);
-+
 +  if ((GCCMultiarchTriple.empty() && TargetMultiarchTriple.empty()) ||
 +      llvm::sys::fs::exists(Base + Suffix + "/" + GCCTriple + IncludeSuffix)) {
 +    addSystemInclude(DriverArgs,
@@ -354,6 +379,11 @@
 +                     Base + "/" + GCCMultiarchTriple + Suffix + IncludeSuffix);
 +    addSystemInclude(DriverArgs, CC1Args,
 +                     Base + "/" + TargetMultiarchTriple + Suffix);
++  }
++
++  if (DriverArgs.hasArg(options::OPT_fopenmp) ||
++      DriverArgs.hasArg(options::OPT_fopenmp_EQ)) {
++    addSystemInclude(DriverArgs, CC1Args, "/usr/include/iomp5");
 +  }
 +
 +  addSystemInclude(DriverArgs, CC1Args, Base + "/backward");
@@ -441,6 +471,10 @@
 +    }
 +  }
 +
++  if (DriverArgs.hasArg(options::OPT_fopenmp) ||
++      DriverArgs.hasArg(options::OPT_fopenmp_EQ))
++    addSystemInclude(DriverArgs, CC1Args, "/usr/include/iomp5");
++
 +  addExternCSystemInclude(DriverArgs, CC1Args, "/usr/include");
 +}
 +
@@ -473,9 +507,45 @@
 +
 +  DriverArgs.ClaimAllArgs(options::OPT_fabi_version_EQ);
 +
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fopenmp))
++    CC1Args.push_back(DriverArgs.MakeArgString("-fopenmp"));
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fno_openmp))
++    CC1Args.push_back(DriverArgs.MakeArgString("-fno-openmp"));
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fopenmp_EQ)) {
++    std::string V = A->getValue();
++    if (V != "libiomp5") {
++      const Driver &D = getDriver();
++      D.Diag(diag::err_drv_unsupported_opt) << V.c_str();
++    }
++
++    std::string fompeq="-fopenmp=";
++    fompeq += V;
++    CC1Args.push_back(DriverArgs.MakeArgString(fompeq.c_str()));
++  }
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fopenmp_use_tls))
++    CC1Args.push_back(DriverArgs.MakeArgString("-fopenmp-use-tls"));
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fnoopenmp_use_tls))
++    CC1Args.push_back(DriverArgs.MakeArgString("-fnoopenmp-use-tls"));
++
++  if (Arg *A = DriverArgs.getLastArg(options::OPT_fopenmp_is_device)) {
++    CC1Args.push_back(DriverArgs.MakeArgString("-fopenmp-is-device"));
++  }
++
 +  if (Arch == llvm::Triple::sparc || Arch == llvm::Triple::sparcv9) {
 +    CC1Args.push_back(DriverArgs.MakeArgString("-target-feature"));
 +    CC1Args.push_back(DriverArgs.MakeArgString("+hwcap"));
++  }
++
++  if (Arch == llvm::Triple::x86 || Arch == llvm::Triple::x86_64) {
++    if (Arg *A = DriverArgs.getLastArg(options::OPT_fomit_frame_pointer))
++      CC1Args.push_back(DriverArgs.MakeArgString("-fomit-frame-pointer"));
++
++    if (Arg *A = DriverArgs.getLastArg(options::OPT_fno_omit_frame_pointer))
++      CC1Args.push_back(DriverArgs.MakeArgString("-fno-omit-frame-pointer"));
 +  }
 +
 +  bool SeenVIS = false;
@@ -993,7 +1063,7 @@
    }
  }
  
-@@ -3404,6 +4137,27 @@
+@@ -3404,6 +4182,27 @@
    UbuntuVivid,
    UbuntuWily,
    UbuntuXenial,
@@ -1021,7 +1091,7 @@
    UnknownDistro
  };
  
-@@ -3421,6 +4175,10 @@
+@@ -3421,6 +4220,10 @@
    return Distro >= UbuntuHardy && Distro <= UbuntuXenial;
  }
  
@@ -1032,7 +1102,7 @@
  static Distro DetectDistro(const Driver &D, llvm::Triple::ArchType Arch) {
    llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> File =
        llvm::MemoryBuffer::getFile("/etc/lsb-release");
-@@ -3488,6 +4246,59 @@
+@@ -3488,6 +4291,59 @@
      return UnknownDistro;
    }
  
@@ -1215,7 +1285,7 @@
    MinGW(const Driver &D, const llvm::Triple &Triple,
 ###
 --- tools/clang/lib/Driver/Tools.cpp	2016-02-12 14:51:41.000000000 -0800
-+++ tools/clang/lib/Driver/Tools.cpp	2016-07-18 19:13:48.364415520 -0700
++++ tools/clang/lib/Driver/Tools.cpp	2016-08-04 06:17:07.826616905 -0700
 @@ -43,15 +43,22 @@
  #include "llvm/Support/raw_ostream.h"
  #include "llvm/Support/TargetParser.h"
@@ -2053,7 +2123,7 @@
      }
    }
  
-@@ -7431,48 +7965,264 @@
+@@ -7431,48 +7965,268 @@
      assert(Output.isNothing() && "Invalid output.");
    }
  
@@ -2291,7 +2361,11 @@
 +
 +  if (!Args.hasArg(options::OPT_nostdlib) &&
 +      !Args.hasArg(options::OPT_nodefaultlibs)) {
-+    addOpenMPRuntime(CmdArgs, TC, Args);
++    if (Args.hasArg(options::OPT_fopenmp) ||
++        Args.hasArg(options::OPT_fopenmp_EQ)) {
++      addOpenMPRuntime(CmdArgs, TC, Args);
++      CmdArgs.push_back("-latomic");
++    }
 +
 +    if (D.CCCIsCXX())
 +      TC.AddCXXStdlibLibArgs(Args, CmdArgs);
@@ -2343,7 +2417,7 @@
  void openbsd::Assembler::ConstructJob(Compilation &C, const JobAction &JA,
                                        const InputInfo &Output,
                                        const InputInfoList &Inputs,
-@@ -8623,6 +9373,41 @@
+@@ -8623,6 +9377,41 @@
      CmdArgs.push_back("-ldl");
  }
  

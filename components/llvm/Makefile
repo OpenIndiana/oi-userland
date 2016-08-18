@@ -512,6 +512,7 @@ REQUIRED_PACKAGES += developer/gcc-4/gcc-common-49
 REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/libiomp5
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522

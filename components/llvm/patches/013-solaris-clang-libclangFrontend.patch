@@ -1,7 +1,18 @@
+# 24378340 clang -fopenmp must include the path to the omp.h header file
+# 24378393 clang -fopenmp must define _OPENMP to 201307
 # Solaris GCC Toolchain.
 # 3.9.X upstream.
---- tools/clang/lib/Frontend/CompilerInvocation.cpp	2016-01-12 16:01:56.000000000 -0500
-+++ tools/clang/lib/Frontend/CompilerInvocation.cpp	2016-05-08 23:19:20.574431774 -0400
+--- tools/clang/lib/Frontend/CompilerInvocation.cpp	2016-01-12 13:01:56.000000000 -0800
++++ tools/clang/lib/Frontend/CompilerInvocation.cpp	2016-08-08 08:15:38.179011582 -0700
+@@ -1424,7 +1424,7 @@
+   return DefaultVisibility;
+ }
+ 
+-static void ParseLangArgs(LangOptions &Opts, ArgList &Args, InputKind IK,
++static void ParseLangArgs(LangOptions &Opts, InputArgList &Args, InputKind IK,
+                           DiagnosticsEngine &Diags) {
+   // FIXME: Cleanup per-file based stuff.
+   LangStandard::Kind LangStd = LangStandard::lang_unspecified;
 @@ -1718,6 +1718,7 @@
    Opts.EmitAllDecls = Args.hasArg(OPT_femit_all_decls);
    Opts.PackStruct = getLastArgIntValue(Args, OPT_fpack_struct_EQ, 0, Diags);
@@ -10,6 +21,30 @@
    Opts.PICLevel = getLastArgIntValue(Args, OPT_pic_level, 0, Diags);
    Opts.PIELevel = getLastArgIntValue(Args, OPT_pie_level, 0, Diags);
    Opts.Static = Args.hasArg(OPT_static_define);
+@@ -1811,7 +1812,13 @@
+   }
+ 
+   // Check if -fopenmp is specified.
+-  Opts.OpenMP = Args.hasArg(options::OPT_fopenmp);
++  Opts.OpenMP = Args.getLastArgNoClaim(options::OPT_fopenmp) ||
++    Args.getLastArgNoClaim(options::OPT_fopenmp_EQ);
++
++  // OpenMP implies threads.
++  if (Opts.OpenMP)
++    Opts.POSIXThreads = Opts.OpenMP;
++
+   Opts.OpenMPUseTLS =
+       Opts.OpenMP && !Args.hasArg(options::OPT_fnoopenmp_use_tls);
+   Opts.OpenMPIsDevice =
+@@ -1819,7 +1826,6 @@
+ 
+   // Get the OpenMP target triples if any.
+   if (Arg *A = Args.getLastArg(options::OPT_omptargets_EQ)) {
+-
+     for (unsigned i = 0; i < A->getNumValues(); ++i) {
+       llvm::Triple TT(A->getValue(i));
+ 
+###
 --- tools/clang/lib/Frontend/InitHeaderSearch.cpp	2015-12-29 22:40:23.000000000 -0500
 +++ tools/clang/lib/Frontend/InitHeaderSearch.cpp	2016-05-08 23:19:20.575431798 -0400
 @@ -118,7 +118,7 @@
