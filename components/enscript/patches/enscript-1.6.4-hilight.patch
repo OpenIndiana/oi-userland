@@ -282,7 +282,7 @@ diff -Nru enscript-1.6.4.orig/states/hl/eiffel.st enscript-1.6.4/states/hl/eiffe
 diff -Nru enscript-1.6.4.orig/states/hl/enscript.st enscript-1.6.4/states/hl/enscript.st
 --- enscript-1.6.4.orig/states/hl/enscript.st	2003-03-05 10:31:31.000000000 +0200
 +++ enscript-1.6.4/states/hl/enscript.st	2006-01-09 22:04:22.000000000 +0200
-@@ -474,24 +474,31 @@
+@@ -472,24 +472,31 @@
    /\.m$/					matlab;
    /\.(mpl|mp|maple)$/				maple;
    /\.(scm|scheme)$/				scheme;
@@ -315,7 +315,7 @@ diff -Nru enscript-1.6.4.orig/states/hl/enscript.st enscript-1.6.4/states/hl/ens
    /\.js$/					javascript;
    /\.java$/					java;
    /\.([Pp][Aa][Ss]|[Pp][Pp]|[Pp])$/		pascal;
-@@ -530,6 +537,10 @@
+@@ -529,6 +536,10 @@
    /-\*- [Ii][Dd][Ll] -\*-/				idl;
    /-\*- [Pp][Ee][Rr][Ll] -\*-/				perl;
    /^#![ \t]*\/.*\/perl/					perl;
@@ -783,22 +783,10 @@ diff -Nru enscript-1.6.4.orig/states/hl/lua.st enscript-1.6.4/states/hl/lua.st
 +  }
 +
 +}
-diff -Nru enscript-1.6.4.orig/states/hl/mail.st enscript-1.6.4/states/hl/mail.st
---- enscript-1.6.4.orig/states/hl/mail.st	2003-03-05 09:26:33.000000000 +0200
-+++ enscript-1.6.4/states/hl/mail.st	2006-01-09 22:02:28.000000000 +0200
-@@ -27,7 +27,7 @@
-   END {
-     comment_face (true);
-   }
--  /:/ {
-+  /[ \t:]/ {
-     language_print ($0);
-     return;
-   }
 diff -Nru enscript-1.6.4.orig/states/hl/Makefile.am enscript-1.6.4/states/hl/Makefile.am
 --- enscript-1.6.4.orig/states/hl/Makefile.am	2003-03-05 09:26:33.000000000 +0200
 +++ enscript-1.6.4/states/hl/Makefile.am	2006-01-09 22:06:23.000000000 +0200
-@@ -38,7 +38,8 @@
+@@ -36,7 +36,8 @@
  matlab.st nroff.st objc.st outline.st pascal.st passthrough.st perl.st	\
  postscript.st python.st pyrex.st rfc.st scheme.st sh.st skill.st	\
  sql.st states.st synopsys.st tcl.st tcsh.st tex.st vba.st verilog.st	\
@@ -806,12 +794,12 @@ diff -Nru enscript-1.6.4.orig/states/hl/Makefile.am enscript-1.6.4/states/hl/Mak
 +vhdl.st vrml.st wmlscript.st zsh.st eiffel.st erlang.st dylan.st oz.st	\
 +lua.st oberon2.st icon.st smalltalk.st forth.st sml.st php.st ruby.st
  
- states = $(misc) $(styles) $(languages) $(highlightings)
- 
+ hldir = $(pkgdatadir)/hl
+ dist_hl_DATA = $(misc) $(styles) $(languages) $(highlightings)
 diff -Nru enscript-1.6.4.orig/states/hl/Makefile.in enscript-1.6.4/states/hl/Makefile.in
 --- enscript-1.6.4.orig/states/hl/Makefile.in	2003-03-05 09:40:07.000000000 +0200
 +++ enscript-1.6.4/states/hl/Makefile.in	2006-01-09 22:05:26.000000000 +0200
-@@ -188,7 +188,8 @@
+@@ -303,7 +303,8 @@
  matlab.st nroff.st objc.st outline.st pascal.st passthrough.st perl.st	\
  postscript.st python.st pyrex.st rfc.st scheme.st sh.st skill.st	\
  sql.st states.st synopsys.st tcl.st tcsh.st tex.st vba.st verilog.st	\
@@ -819,8 +807,8 @@ diff -Nru enscript-1.6.4.orig/states/hl/Makefile.in enscript-1.6.4/states/hl/Mak
 +vhdl.st vrml.st wmlscript.st zsh.st eiffel.st erlang.st dylan.st oz.st	\
 +lua.st oberon2.st icon.st smalltalk.st forth.st sml.st php.st ruby.st
  
- 
- states = $(misc) $(styles) $(languages) $(highlightings)
+ hldir = $(pkgdatadir)/hl
+ dist_hl_DATA = $(misc) $(styles) $(languages) $(highlightings)
 diff -Nru enscript-1.6.4.orig/states/hl/oberon2.st enscript-1.6.4/states/hl/oberon2.st
 --- enscript-1.6.4.orig/states/hl/oberon2.st	1970-01-01 02:00:00.000000000 +0200
 +++ enscript-1.6.4/states/hl/oberon2.st	2006-01-09 22:02:28.000000000 +0200

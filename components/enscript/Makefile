@@ -26,9 +26,9 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		enscript
-COMPONENT_VERSION=	1.6.4
+COMPONENT_VERSION=	1.6.6
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:45299a4db47c9c08c3649d4f62b211ae79ef5143360c264a40371a728f6ad99b
+    sha256:6d56bada6934d055b34b6c90399aa85975e66457ac5bf513427ae7fc77f5c0bb
 
 # Ruby enscript support
 COMPONENT_ARCHIVE_1=    ruby-enscript.tar.gz
@@ -39,10 +39,10 @@ COMPONENT_ARCHIVE_URL_1= http://neugierig.org/software/ruby/ruby-enscript.tar.gz
 # PHP enscript support
 COMPONENT_ARCHIVE_2=    php.st
 COMPONENT_ARCHIVE_HASH_2=	\
-    sha256:64d5b1ed1044202cda1ddcd591a966d1faff58d60156c4368d485f0405d7a9ee
-COMPONENT_ARCHIVE_URL_2= http://home.raxnet.net/downloads/viewcvs/php.st
+    sha256:3224ca9e1a9707f5a1dba2688a639c13494a805642f102279b3431214801814c
+COMPONENT_ARCHIVE_URL_2= http://ez.lbm-services.de/content/download/1631/7197/file/php.st
 
-TPNO=			4380
+TPNO=			29959
 
 include $(WS_MAKE_RULES)/gnu-component.mk
 
@@ -62,6 +62,10 @@ COMPONENT_PREP_ACTION +=(cd $(@D); ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 \
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
 
 CONFIGURE_OPTIONS +=	--with-media=Letter
+
+# Needed so that the StatesBinary parameter in /etc/enscript.cfg 
+# will be /usr/bin/states on sparc.
+CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(LN) $(PROTOUSRBINDIR)/enscript \
