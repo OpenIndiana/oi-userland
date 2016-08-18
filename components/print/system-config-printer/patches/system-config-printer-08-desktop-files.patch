@@ -1,37 +1,34 @@
 diff -urN system-config-printer-1.0.16/Makefile.am ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/Makefile.am
---- system-config-printer-1.0.16/Makefile.am	2011-08-18 12:01:16.237075298 +0000
-+++ ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/Makefile.am	2011-08-18 13:08:32.541770982 +0000
-@@ -130,14 +130,13 @@
+--- system-config-printer-1.0.16/Makefile.am.1	2016-08-18 10:36:12.239701796 +0300
++++ system-config-printer-1.0.16/Makefile.am	2016-08-18 10:38:20.640272857 +0300
+@@ -130,14 +130,14 @@
  install-desktopDATA: $(desktop_DATA)
-	mkdir -p $(DESTDIR)$(desktopdir)
-	mkdir -p $(DESTDIR)$(desktopdir)
+ 	mkdir -p $(DESTDIR)$(desktopdir)
+ 	mkdir -p $(DESTDIR)$(desktopdir)
 -	desktop-file-install --vendor redhat	\
-+	desktop-file-install 			\
-	  --dir $(DESTDIR)$(desktopdir)		\
++	desktop-file-install \
+ 	  --dir $(DESTDIR)$(desktopdir)		\
 -	  --add-category X-Red-Hat-Base		\
--	  --add-category System			\
-	  --add-category Settings		\
--	  --add-category HardwareSettings	\
--	  --add-category Printing		\
--	  --add-category GTK			\
-+	  --add-category System			\
-+	  --add-category Application		\
-+	  --add-category GNOME			\
-+	  --add-only-show-in=GNOME		\
-	  system-config-printer.desktop
-	desktop-file-install --vendor redhat	\
-	  --dir $(DESTDIR)$(desktopdir)		\
-@@ -153,9 +152,8 @@
-	  --add-category HardwareSettings	\
-	  --add-category GTK			\
-	  my-default-printer.desktop
+ 	  --add-category System			\
+ 	  --add-category Settings		\
+ 	  --add-category HardwareSettings	\
+ 	  --add-category Printing		\
+ 	  --add-category GTK			\
++          --add-only-show-in="MATE"		\
+ 	  system-config-printer.desktop
+ 	desktop-file-install --vendor redhat	\
+ 	  --dir $(DESTDIR)$(desktopdir)		\
+@@ -153,9 +153,8 @@
+ 	  --add-category HardwareSettings	\
+ 	  --add-category GTK			\
+ 	  my-default-printer.desktop
 -	desktop-file-install --vendor redhat	\
-+	desktop-file-install 			\
-	  --dir $(DESTDIR)$(autostartdir)	\
++	desktop-file-install \
+ 	  --dir $(DESTDIR)$(autostartdir)	\
 -	  --add-category X-Red-Hat-Base		\
-	  --add-category System			\
-	  --add-category Monitor		\
-	  --add-category GTK			\
+ 	  --add-category System			\
+ 	  --add-category Monitor		\
+ 	  --add-category GTK			\
 diff -urN system-config-printer-1.0.16/print-applet.desktop.in ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/print-applet.desktop.in
 --- system-config-printer-1.0.16/print-applet.desktop.in	2009-02-04 16:14:06.000000000 +0000
 +++ ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/print-applet.desktop.in	2011-08-18 12:21:10.749136057 +0000
@@ -60,4 +57,4 @@ diff -urN system-config-printer-1.0.16/system-config-printer.desktop.in ../SUNWc
 -Icon=printer
 +Icon=print-manager
  StartupNotify=true
-+NoDisplay=true
++OnlyShowIn=MATE;
