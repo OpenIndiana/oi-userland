@@ -28,7 +28,7 @@
 +   }
 +
 +   if ((ksp = kstat_lookup(kc, "cpu_info", -1, NULL))){
-+       for (ksp = kc->kc_chain; ksp; ksp = ksp->ks_next) {
++       for (ksp = kc->kc_chain; ksp && sysinfo.ncpu < GLIBTOP_NCPU; ksp = ksp->ks_next) {
 +           glibtop_entry *cpuinfo;
 +           gchar *brand;
 +           int mhz = 0;
