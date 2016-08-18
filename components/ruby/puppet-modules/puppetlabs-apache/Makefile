@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c6ddcfcafbc9d1cb459d0f7b907213a7ffee7954ed588f9c08037527a04d7aad
 COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	utility/apache
+COMPONENT_BUGDB=	utility/puppet
 
 TPNO=			27383
 
