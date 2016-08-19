@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -53,7 +54,9 @@ $(INSTALL_32): $(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/opt/onbld	&& \
 	cd $(PROTO_DIR)/opt/onbld && \
 	/usr/bin/gtar xjpf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1) && \
-	/usr/bin/gtar xjpf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_2)
+	/usr/bin/gtar xjpf $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_2) && \
+	$(CP) $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_1) $(PROTO_DIR)/opt/onbld/closed && \
+	$(CP) $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/opt/onbld/closed
 	$(TOUCH) $@
 
 build:		$(BUILD_32)
