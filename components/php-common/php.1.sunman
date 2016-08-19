@@ -1,6 +1,6 @@
 '\" te
-.\" Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
-.TH php 1 "4 Apr 2015" "SunOS 5.12" "User Commands"
+.\" Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
+.TH php 1 "19 Aug 2016" "SunOS 5.12" "User Commands"
 .SH "NAME"
 php \- PHP: Hypertext Preprocessor
 .SH "DESCRIPTION"
@@ -25,25 +25,11 @@ appropriately. Starting with PHP 5.6, Solaris provides a sample supplemental
 configuration file at /etc/apache2/2.4/samples-conf.d/php5.6.conf . To use it
 without modification, copy it into /etc/apache2/2.4/conf.d/ .
 .PP
-The web/server/apache-22/module/apache-php53 package provides PHP 5.3 as a
-server module for Apache 2.2. For PHP 5.6, an additional package is not
-required; an Apache 2.4 server module is included in the web/php-56 package.
+No additional packages are required to run Apache for PHP 5.6; 
+an Apache 2.4 server module is included in the web/php-56 package.
 Apache 2.2 support is not provided with PHP 5.6 in Solaris.
 .SH ATTRIBUTES
 See attributes(7) for descriptions of the  following  attributes:
-.sp
-.TS
-box;
-cdp-1 | cdp-1
-l | l .
-ATTRIBUTE TYPE	            ATTRIBUTE VALUE            
-=
-Availability	T{
-web/php-53, web/server/apache-22/module/apache-php53
-T}
-=
-Stability	Uncommitted
-.TE
 .sp
 .TS
 box;
@@ -60,7 +46,8 @@ Stability	Uncommitted Pass-through
 .sp
 .SH NOTES
 .LP
-PHP 5.2 may be removed in a future update.
+PHP 5.2 and PHP 5.3 are no longer supported in Solaris 12.
+PHP 5.6 is currently the only supported version.
 .LP
 Please migrate to a newer version.
 Migration documentation is available on the PHP website:
@@ -69,28 +56,16 @@ Migration documentation is available on the PHP website:
 http://php.net/manual/en/appendices.php
 .fi
 .LP
-If it is desired to keep the obsolete version of PHP
-then it should be frozen to prevent its removal by a future update.
+If it is desired to keep the obsolete version of PHP then it should  be
+frozen to prevent its removal by a future update.
 .LP
 .nf
-pkg freeze 'web/php-52*' web/server/apache-22/module/apache-php52
-pkg change-facet --no-backup-be 'version-lock\&.web/php-52*=False' \e
-    version-lock\&.web/server/apache-22/module/apache-php52=False
+pkg freeze 'web/php-53*' web/server/apache-22/module/apache-php53
+pkg change-facet --no-backup-be 'version-lock\&.web/php-53*=False' \e
+    version-lock\&.web/server/apache-22/module/apache-php53=False
 .fi
 .LP
 Please note that the freezing of packages may yield
 an unsupportable system so use with caution.
-.LP
-Before and after installing check or set the value of PHP's pkg
-mediator to the default version desired:
-.LP
-.nf
-pkg mediator
-.fi
-.LP
-To set the default version of PHP change the pkg mediator value:
-.LP
-.nf
-pkg set-mediator -V 5.3 php
 .fi
 
