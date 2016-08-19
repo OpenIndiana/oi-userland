@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
 COMPONENT_VERSION= 	45.3.0esr
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION= 	45.3.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +50,7 @@ CONFIGURE_OPTIONS +=	--enable-jemalloc
 CONFIGURE_OPTIONS +=	--disable-dtrace
 CONFIGURE_OPTIONS +=    --disable-xinerama
 CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=	--disable-pulseaudio
+CONFIGURE_OPTIONS +=	--enable-pulseaudio
 CONFIGURE_OPTIONS +=	--disable-gstreamer
 CONFIGURE_OPTIONS +=	--with-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
@@ -94,3 +95,32 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
     done )
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/toolkit/libxt
