@@ -89,6 +89,11 @@ CONFIGURE_OPTIONS +=	INTLTOOL_MERGE="$(PERL) /usr/bin/intltool-merge"
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=	V=1
 
+# Prevent build problems with package_revision.h with "hg id ..." in the main
+# pidgin Makefile, if the user has color.mode=terminfo in their ~/.hgrc file.
+COMPONENT_BUILD_ARGS += HGPLAIN=
+COMPONENT_BUILD_ARGS += HGRCPATH=/dev/null
+
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/atk
