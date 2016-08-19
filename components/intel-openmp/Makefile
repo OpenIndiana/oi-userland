@@ -42,6 +42,13 @@ TPNO = 27154
 
 BUILD_STYLE = justmake
 
+# Uses an ON header file with S12-only features.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common.mk
 
 # We are using GCC 4.9 with LLVM, use it here too for the time being.
