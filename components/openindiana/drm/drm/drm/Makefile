@@ -33,13 +33,13 @@
 #
 # Module core info
 #
-MODULE			= drm
+MODULE			= kms
 
 # MODULE_NAME - the package this module is installed in
 MODULE_NAME		= $(MODULE)
 
 # This is the package this module should be installed into
-MODULE_PKGTAIL		= drm
+MODULE_PKGTAIL		= kms
 MODULE_PKGTAIL_SET	= yes
 
 # Where are the local sources relative to the build dir
@@ -61,14 +61,14 @@ CONFIGURE_TARGETS_SET	= yes
 
 MODULE_MAKEFLAGS	= VPATH=$(REL_SOURCE_DIR) -f $(REL_SOURCE_DIR)/Makefile
 MODULE_BUILD_ENV	= $(CONFIG_ENV) PREFIX=$(MODULE_PREFIX)
-MODULE_LDFLAGS		= -ztype=kmod -znodefs  -Nmisc/agpmaster -Nmisc/gfx_private
+MODULE_LDFLAGS		= -dy -r -Nmisc/agpmaster -Nmisc/gfx_private
 
 #
 # License info
 #
 MODULE_LICENSE		= Intel license
 MODULE_LICENSE_SET	= yes
-MODULE_DESC		= the Direct Rendering Manager
+MODULE_DESC		= the Direct Rendering Manager with KMS
 MODULE_VERSION		= 1.6
 ORACLE_TPNO		= 5772
 LICENSE_FILE		= license_drm

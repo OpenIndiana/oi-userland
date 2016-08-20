@@ -490,7 +490,7 @@ void drm_put_dev(struct drm_device *dev)
 	if (dev->driver->unload)
 		dev->driver->unload(dev);
 
-	gfxp_mempool_destroy();
+	// gfxp_mempool_destroy();
 
 	if (drm_core_has_AGP(dev) && dev->agp) {
 		drm_agp_cleanup(dev);

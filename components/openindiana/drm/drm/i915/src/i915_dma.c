@@ -41,7 +41,7 @@
 #include "i915_drm.h"
 #include "i915_drv.h"
 #include "i915_io32.h"
-#include <sys/agp/agptarget_io.h>
+#include "agptarget_io.h"
 
 #define USE_PCI_DMA_API 0
 

@@ -68,7 +68,8 @@ extern "C" {
 #include <sys/ddi_impldefs.h>
 #include <sys/sunldi.h>
 #include <sys/mkdev.h>
-#include <sys/gfx_private.h>
+// local copy to enable users without upgraded <sys/gfx_private.h> to build it out of the box
+#include "gfx_private.h"
 #include <sys/agpgart.h>
 #include <sys/agp/agpdefs.h>
 #include <sys/agp/agpmaster_io.h>

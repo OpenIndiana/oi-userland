@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2006, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016 Intel-DRM/KMS Backport to OpenSolaris by Martin Bochnig opensxce@gmx.org
  */
 
 /*
@@ -236,13 +237,39 @@ drm_sun_ioremap(uint64_t paddr, size_t size, uint32_t mode)
 	else
 		return (NULL);
 
+// Either use the old way, a single combined gfxp_map_kernel_space()
+// or new 2 distinct calls of gfxp_alloc_kernel_space() and gfxp_load_kernel_space()
+// Meanwhile it turned out that using the old combined gfxp_map_kernel_space()
+// and gfxp_unmap_kernel_space() in the modern DRM gate is unstable, especially on Sandy
+#ifdef OLDSYLE_MMAP
+  #ifdef LOCALGFXPFUNCS
+	addr = (void *)drmgfxp_map_kernel_space(paddr, size, mode);
+  #else
+	addr = (void *)gfxp_map_kernel_space(paddr, size, mode);
+  #endif
+#else
+  #ifdef LOCALGFXPFUNCS
+	addr = (void *)drmgfxp_alloc_kernel_space(size);
+  #else
 	addr = (void *)gfxp_alloc_kernel_space(size);
+  #endif
+#endif
 	if(!addr)
 		return (NULL);
+#ifndef OLDSYLE_MMAP
+  #ifdef LOCALGFXPFUNCS
+	drmgfxp_load_kernel_space(paddr, size, mode, addr);
+  #else
 	gfxp_load_kernel_space(paddr, size, mode, addr);
+  #endif
+#endif
 	iomem = kmem_zalloc(sizeof(*iomem), KM_NOSLEEP);
 	if(!iomem){
+#ifdef LOCALGFXPFUNCS
+		drmgfxp_unmap_kernel_space(addr, size);
+#else
 		gfxp_unmap_kernel_space(addr, size);
+#endif
 		return (NULL);
 	}
 	iomem->addr = addr;
@@ -261,7 +288,11 @@ drm_sun_iounmap(void *addr)
 
 	list_for_each_entry(iomem, struct drm_iomem, &drm_iomem_list, head) {
 		if (iomem->addr == addr) {
+#ifdef LOCALGFXPFUNCS
+			drmgfxp_unmap_kernel_space(addr, iomem->size);
+#else
 			gfxp_unmap_kernel_space(addr, iomem->size);
+#endif
 			list_del(&iomem->head);
 			kmem_free(iomem, sizeof(*iomem));
 			break;

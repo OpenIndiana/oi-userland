@@ -60,10 +60,10 @@ unsigned int i915_fbpercrtc = 0;
 int i915_panel_ignore_lid = 1;
 unsigned int i915_powersave = 1;
 
-int i915_semaphores = -1;
+int i915_semaphores = 1;
 
-int i915_enable_rc6 = 0;
-int i915_enable_fbc = -1;
+int i915_enable_rc6 = 1;
+int i915_enable_fbc = 1;
 
 unsigned int i915_lvds_downclock = 0;
 int i915_lvds_channel_mode;
@@ -71,9 +71,9 @@ int i915_lvds_channel_mode;
 int i915_panel_use_ssc = -1;
 int i915_vbt_sdvo_panel_type = -1;
 
-bool i915_try_reset = false;
+bool i915_try_reset = true;
 bool i915_enable_hangcheck = true;
-int i915_enable_ppgtt = -1;
+int i915_enable_ppgtt = 1;
 
 int i915_disable_power_well = 1;
 int i915_enable_ips = 1;

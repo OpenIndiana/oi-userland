@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016 Intel-DRM/KMS Backport to OpenSolaris by Martin Bochnig opensxce@gmx.org
  */
 
 /*
@@ -53,9 +54,12 @@
 #include <sys/ddi.h>
 #include <sys/sunddi.h>
 #include <sys/sunldi.h>
-#include <sys/agpgart.h>
+#include "agpgart.h"
 #include <sys/time.h>
-#include <sys/gfx_private.h>
+
+// local copy to enable users without upgraded <sys/gfx_private.h> to build it out of the box
+#include "gfx_private.h"
+
 #include <sys/ddifm.h>
 #include <sys/fm/protocol.h>
 #include <sys/fm/util.h>
@@ -644,7 +648,7 @@ struct drm_gem_object {
 	pfn_t *pfnarray;
 	caddr_t gtt_map_kaddr;
 
-	struct gfxp_pmem_cookie	mempool_cookie;
+	ddi_dma_cookie_t cookie; /* placeholder maybe for later use, as filler replacement for struct gfxp_pmem_cookie  mempool_cookie; */
 
 	struct list_head seg_list;
 
@@ -1467,6 +1471,31 @@ extern void drm_debug(const char *fmt, ...);
 extern void drm_error(const char *fmt, ...);
 /* PRINTFLIKE1 */
 extern void drm_info(const char *fmt, ...);
+
+// For DEBUG output, enable here
+/*
+#ifndef DEBUG
+#define DEBUG
+#endif
+*/
+
+// Either use the old way, a single combined gfxp_map_kernel_space()
+// or new 2 distinct calls of gfxp_alloc_kernel_space() and gfxp_load_kernel_space()
+// Meanwhile it turned out that using the old combined gfxp_map_kernel_space()
+// and gfxp_unmap_kernel_space() in the modern DRM gate is unstable, especially on Sandy
+/*
+#ifndef OLDSYLE_MMAP
+#define OLDSYLE_MMAP
+#endif
+*/
+
+// local case for equal testing conditions on Illumos and Sol11.0 versus modern console 11.1/11.2/11.3/12.x
+//
+#ifndef LOCALGFXPFUNCS
+#define LOCALGFXPFUNCS
+#endif
+//
+
 
 #ifdef DEBUG
 #define	DRM_DEBUG(...)                                          \

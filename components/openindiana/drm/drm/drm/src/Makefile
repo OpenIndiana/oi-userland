@@ -69,7 +69,7 @@ C_SRCS = ati_pcigart.c \
 
 # Include kernel common rules
 
-MODULE		= drm
+MODULE		= kms
 OBJECTS		= $(C_SRCS:%.c=%.o)
 LINTS		= $(OBJECTS:%.o=%.ln)
 

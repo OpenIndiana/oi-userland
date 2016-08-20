@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2006, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016 Intel-DRM/KMS Backport to OpenSolaris by Martin Bochnig opensxce@gmx.org
  */
 
 /**
@@ -233,19 +234,47 @@ static int drm_addmap_core(struct drm_device *dev, unsigned long offset,
 		}
 
 		map->offset += dev->agp->base;
+
+// Either use the old way, a single combined gfxp_map_kernel_space()
+// or new 2 distinct calls of gfxp_alloc_kernel_space() and gfxp_load_kernel_space()
+// Meanwhile it turned out that using the old combined gfxp_map_kernel_space()
+// and gfxp_unmap_kernel_space() in the modern DRM gate is unstable, especially on Sandy
+#ifdef OLDSYLE_MMAP
+   #ifdef LOCALGFXPFUNCS
+		kvaddr = drmgfxp_map_kernel_space(map->offset, map->size, GFXP_MEMORY_WRITECOMBINED);
+   #else
+		kvaddr = gfxp_map_kernel_space(map->offset, map->size, GFXP_MEMORY_WRITECOMBINED);
+   #endif
+#else
+   #ifdef LOCALGFXPFUNCS
+		kvaddr = drmgfxp_alloc_kernel_space(map->size);
+   #else
 		kvaddr = gfxp_alloc_kernel_space(map->size);
+   #endif
+#endif
+
 		if (!kvaddr) {
 			DRM_ERROR("failed to alloc AGP aperture");
 			kfree(map, sizeof(struct drm_local_map));
 			return -EPERM;
 		}
-		gfxp_load_kernel_space(map->offset, map->size,
-		    GFXP_MEMORY_WRITECOMBINED, kvaddr);
+#ifndef OLDSYLE_MMAP
+   #ifdef LOCALGFXPFUNCS
+		drmgfxp_load_kernel_space(map->offset, map->size, GFXP_MEMORY_WRITECOMBINED, kvaddr);
+   #else
+		gfxp_load_kernel_space(map->offset, map->size, GFXP_MEMORY_WRITECOMBINED, kvaddr);
+   #endif
+#endif
+
 		map->handle = (void *)(uintptr_t)kvaddr;
 		map->umem_cookie = gfxp_umem_cookie_init(map->handle, map->size);
 		if (!map->umem_cookie) {
 			DRM_ERROR("gfxp_umem_cookie_init() failed");
+#ifdef LOCALGFXPFUNCS
+			drmgfxp_unmap_kernel_space(map->handle, map->size);
+#else
 			gfxp_unmap_kernel_space(map->handle, map->size);
+#endif
 			kfree(map, sizeof(struct drm_local_map));
 			return (-ENOMEM);
 		}
@@ -403,7 +432,11 @@ int drm_rmmap_locked(struct drm_device *dev, struct drm_local_map *map)
 		break;
 	case _DRM_AGP:
 		gfxp_umem_cookie_destroy(map->umem_cookie);
+#ifdef LOCALGFXPFUNCS
+		drmgfxp_unmap_kernel_space(map->handle, map->size);
+#else
 		gfxp_unmap_kernel_space(map->handle, map->size);
+#endif
 		break;
 	case _DRM_SCATTER_GATHER:
 		gfxp_umem_cookie_destroy(map->umem_cookie);

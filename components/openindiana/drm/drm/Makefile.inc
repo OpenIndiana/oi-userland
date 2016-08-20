@@ -35,6 +35,7 @@ MODTYPE=driver
 # e.g. i915/drm define this as "MODULE_PKGTAIL = drm"
 MODTYPE_PKGHIER		= driver/graphics
 MODTYPE_PKGHIER_SET	= yes
+MODULE_COMPILER		= gcc
 
 # PKGCLASS - Drivers/Display for framebuffers.
 MODULE_PKGCLASS		= Drivers/Display
@@ -52,7 +53,7 @@ MODTYPE_DESC	 = the $(MODULE_NAME) driver
 # MODTYPE_ADD_BUILD_TARGETS=set-elf-comments
 
 # Define common LDFLAGS
-MODTYPE_LDFLAGS	= -zstrip-class=comment  -zstrip-class=exclude
+MODTYPE_LDFLAGS	=
 
 #
 # Defines that are specific to kernel drivers
@@ -97,9 +98,9 @@ CONFIG_ENV	+= PROTOMETA="$(PROTOMETA)/$(MODULE_PKG)"
 ###############################################################
 # Where to find the common include files
 # Search first in kernel/sys
-DRM_INCL	= -I$(TOP)/open-src/kernel/sys
+DRM_INCL	= -I$(TOP)/sys
 # sys/drm should be removed after all includes properly expand to <drm/...>
-DRM_INCL	+= -I$(TOP)/open-src/kernel/sys/drm
+DRM_INCL	+= -I$(TOP)/sys/drm
 
 
 ###############################################################
@@ -183,16 +184,18 @@ KFLAGS_gcc	+= -m64
 KFLAGS_gcc	+= -FPIC
 KFLAGS_gcc	+= -mtune=generic
 KFLAGS_gcc	+= -mcmodel=kernel
-KFLAGS_gcc	+= -Werror
-KFLAGS_gcc	+= -Wfatal-errors
+#KFLAGS_gcc	+= -Werror
+#KFLAGS_gcc	+= -Wfatal-errors
 KFLAGS_gcc	+= -gdwarf-2
 KFLAGS_gcc	+= -feliminate-unused-debug-symbols
 KFLAGS_gcc	+= -gno-strict-dwarf
-KFLAGS_gcc	+= -feliminate-dwarf2-dups
+#KFLAGS_gcc	+= -feliminate-dwarf2-dups
+KFLAGS_gcc      += -ffreestanding
+KFLAGS_gcc      += -mno-red-zone
 
 ###############################################################
 
-INC_PATH	= -I. $(DRM_INCL) -I/usr/include
+INC_PATH	= -I. $(DRM_INCL) -I/usr/platform/i86pc/include -I/usr/include
 
 
 # Debug, anyone???

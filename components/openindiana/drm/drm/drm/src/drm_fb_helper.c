@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016 Intel-DRM/KMS Backport to OpenSolaris by Martin Bochnig opensxce@gmx.org
  */
 
 /*
@@ -105,10 +106,11 @@ static int drm_fb_helper_parse_command_line(struct drm_fb_helper *fb_helper)
 {
 	struct drm_device *dev = fb_helper->dev;
 	struct drm_fb_helper_connector *fb_helper_conn;
-	struct gfxp_bm_fb_info fb_info;
+	// struct gfxp_bm_fb_info fb_info;
+	struct gfxp_bm_fb_info fb_info = { 1024, 768, 32, 24 };
 	int i;
 
-	gfxp_bm_getfb_info(dev->vgatext->private, &fb_info);
+	// gfxp_bm_getfb_info(dev->vgatext->private, &fb_info);
 	for (i = 0; i < fb_helper->connector_count; i++) {
 
 		fb_helper_conn = fb_helper->connector_info[i];
@@ -935,23 +937,23 @@ int drm_gfxp_setmode(int mode)
         return ret;
 }
 
-struct gfxp_blt_ops drm_gfxp_ops = {
-        NULL,   /* blt */
-        NULL,   /* copy */
-        NULL,   /* clear */
-        drm_gfxp_setmode, /* setmode */
-};
+//struct gfxp_blt_ops drm_gfxp_ops = {
+//        NULL,   /* blt */
+//        NULL,   /* copy */
+//        NULL,   /* clear */
+//        drm_gfxp_setmode, /* setmode */
+//};
 
 void drm_register_fbops(struct drm_device *dev)
 {
-	gfxp_bm_register_fbops(dev->vgatext->private, &drm_gfxp_ops);
+	; // gfxp_bm_register_fbops(dev->vgatext->private, &drm_gfxp_ops);
 }
 
 int drm_getfb_size(struct drm_device *dev)
 {
-	struct gfxp_bm_fb_info fb_info;
+	struct gfxp_bm_fb_info fb_info = { 1024, 768, 32, 24 };
 	int size, pitch;
-        gfxp_bm_getfb_info(dev->vgatext->private, &fb_info);
+        // gfxp_bm_getfb_info(dev->vgatext->private, &fb_info);
         pitch = ALIGN(fb_info.xres * ((fb_info.depth + 7) / 8), 64);
         size = ALIGN(pitch *fb_info.yres, PAGE_SIZE);
 	return size;

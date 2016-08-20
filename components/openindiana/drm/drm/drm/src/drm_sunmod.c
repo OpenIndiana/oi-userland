@@ -40,8 +40,13 @@
 #include <sys/kmem.h>
 #include <vm/seg_kmem.h>
 
+#ifdef DEBUG
+int drm_debug_flag = 9;
+int mdb_track_enable = B_TRUE;
+#else
 int drm_debug_flag = 0;
 int mdb_track_enable = B_FALSE;
+#endif
 
 /* Identifier of this driver */
 static struct vis_identifier text_ident = { "SUNWdrm" };

@@ -40,7 +40,7 @@ MODULE			= i915
 MODULE_NAME		= $(MODULE)
 
 # This is the package this module should be installed into
-MODULE_PKGTAIL		= drm
+MODULE_PKGTAIL		= kms
 MODULE_PKGTAIL_SET	= yes
 
 # Where are the local sources relative to the build dir
@@ -62,7 +62,7 @@ CONFIGURE_TARGETS_SET	= yes
 
 MODULE_MAKEFLAGS	= VPATH=$(REL_SOURCE_DIR) -f $(REL_SOURCE_DIR)/Makefile
 MODULE_BUILD_ENV	= $(CONFIG_ENV) PREFIX=$(MODULE_PREFIX)
-MODULE_LDFLAGS		= -ztype=kmod -znodefs -Nmisc/drm
+MODULE_LDFLAGS		= -dy -r -Nmisc/kms
 
 #
 # License info

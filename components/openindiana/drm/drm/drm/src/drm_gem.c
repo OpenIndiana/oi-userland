@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016 Intel-DRM/KMS Backport to OpenSolaris by Martin Bochnig opensxce@gmx.org
  */
 
 /*
@@ -31,7 +32,217 @@
  */
 
 #include "drmP.h"
+#ifdef LOCALGFXPFUNCS
+/* Long list of headers required for using this i915-drmkms driver without having
+ * to upgrade "/platform/i86pc/kernel/misc/amd64/gfx_private".
+ * This is also helpful for stability test comparisions on Sol11.[1-3]'s modern gfxp
+ * to find out if the  local implementations of gfxp_alloc_kernel_space(),
+ * gfxp_load_kernel_space() gfxp_unload_kernel_space() and gfxp_free_kernel_space()
+ * are correct, by renaming the local functions vs. not, so they are vs. aren't also
+ * used on Sol11.[1-3] which is by default stable on Sandy.
+ */
+#include <sys/debug.h>
+#include <sys/types.h>
+#include <sys/param.h>
+#include <sys/time.h>
+#include <sys/buf.h>
+#include <sys/errno.h>
+#include <sys/systm.h>
+#include <sys/conf.h>
+#include <sys/signal.h>
+#include <sys/file.h>
+#include <sys/uio.h>
+#include <sys/ioctl.h>
+#include <sys/map.h>
+#include <sys/proc.h>
+#include <sys/user.h>
+#include <sys/mman.h>
+#include <sys/cred.h>
+#include <sys/open.h>
+#include <sys/stat.h>
+#include <sys/utsname.h>
+#include <sys/kmem.h>
+#include <sys/cmn_err.h>
+#include <sys/vnode.h>
+#include <vm/page.h>
+#include <vm/as.h>
+#include <vm/hat.h>
+#include <vm/seg.h>
 #include <vm/seg_kmem.h>
+#include "hat_i86.h"
+#include <sys/vmsystm.h>
+#include <sys/ddi.h>
+#include <sys/devops.h>
+#include <sys/sunddi.h>
+#include <sys/ddi_impldefs.h>
+#include <sys/fs/snode.h>
+#include <sys/pci.h>
+#include <sys/modctl.h>
+#include <sys/uio.h>
+#include <sys/visual_io.h>
+#include <sys/fbio.h>
+#include <sys/ddidmareq.h>
+#include <sys/kstat.h>
+#include <sys/callb.h>
+#include <sys/promif.h>
+#include <sys/atomic.h>
+
+// local copy to enable users without upgraded <sys/gfx_private.h> to build it out of the box
+#include "gfx_private.h"
+
+gfxp_kva_t
+drmgfxp_map_kernel_space(uint64_t start, size_t size, uint32_t mode)
+{
+	uint_t pgoffset;
+	uint64_t base;
+	pgcnt_t npages;
+	caddr_t cvaddr;
+	int hat_flags;
+	uint_t hat_attr;
+	pfn_t pfn;
+
+	if (size == 0)
+	        return (0);
+
+	if (mode == GFXP_MEMORY_CACHED)
+	        hat_attr = HAT_STORECACHING_OK;
+	else if (mode == GFXP_MEMORY_WRITECOMBINED)
+	        hat_attr = HAT_MERGING_OK | HAT_PLAT_NOCACHE;
+	else    /* GFXP_MEMORY_UNCACHED */
+	        hat_attr = HAT_STRICTORDER | HAT_PLAT_NOCACHE;
+	hat_flags = HAT_LOAD_LOCK;
+	pgoffset = start & PAGEOFFSET;
+	base = start - pgoffset;
+	npages = btopr(size + pgoffset);
+	cvaddr = vmem_alloc(heap_arena, ptob(npages), VM_NOSLEEP);
+	if (cvaddr == NULL)
+	        return (NULL);
+
+	pfn = btop(base);
+
+	hat_devload(kas.a_hat, cvaddr, ptob(npages), pfn,
+	    PROT_READ|PROT_WRITE|hat_attr, hat_flags);
+	return (cvaddr + pgoffset);
+}
+
+void
+drmgfxp_unmap_kernel_space(gfxp_kva_t address, size_t size)
+{
+	uint_t pgoffset;
+	caddr_t base;
+	pgcnt_t npages;
+
+	if (size == 0 || address == NULL)
+	        return;
+
+	pgoffset = (uintptr_t)address & PAGEOFFSET;
+	base = (caddr_t)address - pgoffset;
+	npages = btopr(size + pgoffset);
+	hat_unload(kas.a_hat, base, ptob(npages), HAT_UNLOAD_UNLOCK);
+	vmem_free(heap_arena, base, ptob(npages));
+}
+
+gfxp_kva_t
+drmgfxp_alloc_kernel_space(size_t size)
+{
+	uint_t pgoffset;
+	uint64_t base;
+	pgcnt_t npages;
+	caddr_t cvaddr;
+	pfn_t pfn;
+	uint64_t start = 0;
+
+	if (size == 0)
+	        return (0);
+
+	pgoffset = start & PAGEOFFSET;
+	base = start - pgoffset;
+	npages = btopr(size + pgoffset);
+	cvaddr = vmem_alloc(heap_arena, ptob(npages), VM_NOSLEEP);
+	if (cvaddr == NULL)
+	        return (NULL);
+
+	pfn = btop(base);
+
+	return (cvaddr + pgoffset);
+}
+
+void
+drmgfxp_load_kernel_space(uint64_t start, size_t size, uint32_t mode, gfxp_kva_t kvaddr)
+{
+	uint_t pgoffset;
+	uint64_t base;
+	pgcnt_t npages;
+	caddr_t cvaddr;
+	int hat_flags;
+	uint_t hat_attr;
+	pfn_t pfn;
+
+	if (size == 0)
+	        return;
+
+
+	if (mode == GFXP_MEMORY_CACHED)
+	        hat_attr = HAT_STORECACHING_OK;
+	else if (mode == GFXP_MEMORY_WRITECOMBINED)
+	        hat_attr = HAT_MERGING_OK | HAT_PLAT_NOCACHE;
+	else    /* GFXP_MEMORY_UNCACHED */
+	        hat_attr = HAT_STRICTORDER | HAT_PLAT_NOCACHE;
+	hat_flags = HAT_LOAD_LOCK;
+	pgoffset = start & PAGEOFFSET;
+	base = start - pgoffset;
+	npages = btopr(size + pgoffset);
+	cvaddr = kvaddr;
+	if (cvaddr == NULL)
+	        return;
+
+	pfn = btop(base);
+
+	hat_devload(kas.a_hat, cvaddr, ptob(npages), pfn,
+	    PROT_READ|PROT_WRITE|hat_attr, hat_flags);
+}
+
+void
+drmgfxp_unload_kernel_space(gfxp_kva_t address, size_t size)
+{
+	uint_t pgoffset;
+	caddr_t base;
+	pgcnt_t npages;
+
+	if (size == 0 || address == NULL)
+	        return;
+
+	pgoffset = (uintptr_t)address & PAGEOFFSET;
+	base = (caddr_t)address - pgoffset;
+	npages = btopr(size + pgoffset);
+	hat_unload(kas.a_hat, base, ptob(npages), HAT_UNLOAD_UNLOCK);
+}
+
+void
+drmgfxp_free_kernel_space(gfxp_kva_t address, size_t size)
+{
+	uint_t pgoffset;
+	caddr_t base;
+	pgcnt_t npages;
+
+	if (size == 0 || address == NULL)
+	        return;
+
+	pgoffset = (uintptr_t)address & PAGEOFFSET;
+	base = (caddr_t)address - pgoffset;
+	npages = btopr(size + pgoffset);
+	vmem_free(heap_arena, base, ptob(npages));
+}
+
+#else
+
+// Original headers sufficient if _not_ locally building gfxp functions inside the drm gate
+#include <vm/seg_kmem.h>
+// Commented out because on OI/Hipster not installed by any enduser-pkg
+//#include <sys/gfx_private.h>
+#include "gfx_private.h"
+
+#endif   // LOCALGFXPFUNCS
 
 /** @file drm_gem.c
  *
@@ -68,10 +279,6 @@
 #define DRM_FILE_PAGE_OFFSET_START ((0xFFFFFFFFUL >> PAGE_SHIFT) + 1)
 #define DRM_FILE_PAGE_OFFSET_SIZE ((0xFFFFFFFFUL >> PAGE_SHIFT) * 16)
 
-int drm_use_mem_pool = 0;
-/* memory pool is used for all platforms now */
-#define	HAS_MEM_POOL(gen)	((gen > 30) && (drm_use_mem_pool))
-
 /**
  * Initialize the GEM device fields
  */
@@ -82,8 +289,6 @@ drm_gem_init(struct drm_device *dev)
 
 	spin_lock_init(&dev->object_name_lock);
 	idr_list_init(&dev->object_name_idr);
-
-	gfxp_mempool_init();
 
 	return 0;
 }
@@ -99,19 +304,15 @@ drm_gem_object_free_internal(struct drm_gem_object *obj, int gen)
 {
 	if (obj->pfnarray != NULL)
 		kmem_free(obj->pfnarray, btopr(obj->real_size) * sizeof (pfn_t));
-	if (HAS_MEM_POOL(gen)) {
-		gfxp_free_mempool(&obj->mempool_cookie, obj->kaddr, obj->real_size);
-	} else {
-		(void) ddi_dma_unbind_handle(obj->dma_hdl);
-		ddi_dma_mem_free(&obj->acc_hdl);
-		ddi_dma_free_handle(&obj->dma_hdl);
-	}
+	(void) ddi_dma_unbind_handle(obj->dma_hdl);
+	ddi_dma_mem_free(&obj->acc_hdl);
+	ddi_dma_free_handle(&obj->dma_hdl);
 	obj->kaddr = NULL;
 }
 
 static ddi_dma_attr_t old_dma_attr = {
 	DMA_ATTR_V0,
-	0xff000U,			/* dma_attr_addr_lo */
+	0U,			/* dma_attr_addr_lo */
 	0xffffffffU,			/* dma_attr_addr_hi */
 	0xffffffffU,			/* dma_attr_count_max */
 	4096,				/* dma_attr_align */
@@ -204,32 +405,6 @@ err1:
 
 }
 
-/* Alloc GEM object by memory pool */
-static int
-drm_gem_object_alloc_internal_mempool(struct drm_gem_object *obj,
-				size_t size, int flag)
-{
-	int ret;
-	pgcnt_t pgcnt = btopr(size);
-
-	obj->pfnarray = kmem_zalloc(pgcnt * sizeof (pfn_t), KM_NOSLEEP);
-	if (obj->pfnarray == NULL) {
-		DRM_ERROR("Failed to allocate pfnarray ");
-		return (-1);
-	}
-
-	ret = gfxp_alloc_from_mempool(&obj->mempool_cookie, &obj->kaddr,
-					obj->pfnarray, pgcnt, flag);
-	if (ret) {
-		DRM_ERROR("Failed to alloc pages from memory pool");
-		kmem_free(obj->pfnarray, pgcnt * sizeof (pfn_t));
-		return (-1);
-	}
-
-	obj->real_size = size;
-	return (0);
-}
-
 static int
 drm_gem_object_internal(struct drm_device *dev, struct drm_gem_object *obj,
 			size_t size, int gen)
@@ -238,20 +413,9 @@ drm_gem_object_internal(struct drm_device *dev, struct drm_gem_object *obj,
 	int ret, num = 0;
 
 alloc_again:
-	if (HAS_MEM_POOL(gen)) {
-		uint32_t mode;
-		if (gen >= 60)
-			mode = GFXP_MEMORY_CACHED;
-		else
-			mode = GFXP_MEMORY_WRITECOMBINED;
-		ret = drm_gem_object_alloc_internal_mempool(obj, size, mode);
-                if (ret)
-                        return (-1);
-	} else {
-		ret = drm_gem_object_alloc_internal_normal(dev, obj, size, 0);
-		if (ret)
-			return (-1);
-	}
+	ret = drm_gem_object_alloc_internal_normal(dev, obj, size, 0);
+	if (ret)
+		return (-1);
 	tmp_pfn = hat_getpfnum(kas.a_hat, obj->kaddr);
 	if (tmp_pfn != obj->pfnarray[0]) {
 		DRM_ERROR("obj %p map incorrect 0x%lx != 0x%lx",
@@ -683,7 +847,7 @@ drm_gem_object_release(struct drm_gem_object *obj)
 	kmem_free(obj->pfnarray, btopr(obj->real_size) * sizeof (pfn_t));
 
 	if (obj->dma_hdl == NULL) {
-		gfxp_free_mempool(&obj->mempool_cookie, obj->kaddr, obj->real_size);
+		; // gfxp_free_mempool(&obj->mempool_cookie, obj->kaddr, obj->real_size);
 	} else {
 		(void) ddi_dma_unbind_handle(obj->dma_hdl);
 		ddi_dma_mem_free(&obj->acc_hdl);
@@ -704,7 +868,7 @@ drm_gem_object_free(struct kref *kref)
 	struct drm_gem_object *obj = (struct drm_gem_object *) kref;
 	struct drm_device *dev = obj->dev;
 
-//	BUG_ON(!mutex_is_locked(&dev->struct_mutex));
+	BUG_ON(!mutex_is_locked(&dev->struct_mutex));
 
 	if (dev->driver->gem_free_object != NULL)
 		dev->driver->gem_free_object(obj);
@@ -749,7 +913,13 @@ drm_gem_object_handle_free(struct drm_gem_object *obj)
 int
 drm_gem_create_mmap_offset(struct drm_gem_object *obj)
 {
+// #ifdef OLDSYLE_MMAP is not trivial to simulate here and involves dirty changes in i915_gem.c
+// therefore intentionally not added to the OLDSYLE_MMAP flow
+#ifdef LOCALGFXPFUNCS
+	obj->gtt_map_kaddr = drmgfxp_alloc_kernel_space(obj->real_size);
+#else
 	obj->gtt_map_kaddr = gfxp_alloc_kernel_space(obj->real_size);
+#endif
 	if (obj->gtt_map_kaddr == NULL) {
 		return -ENOMEM;
 	}
@@ -759,13 +929,27 @@ drm_gem_create_mmap_offset(struct drm_gem_object *obj)
 void
 drm_gem_mmap(struct drm_gem_object *obj, pfn_t pfn)
 {
+// #ifdef OLDSYLE_MMAP is not trivial to simulate here and involves dirty changes in i915_gem.c
+// therefore intentionally not added to the OLDSYLE_MMAP flow
+#ifdef LOCALGFXPFUNCS
+	drmgfxp_load_kernel_space(pfn, obj->real_size, GFXP_MEMORY_WRITECOMBINED, obj->gtt_map_kaddr);
+#else
 	gfxp_load_kernel_space(pfn, obj->real_size, GFXP_MEMORY_WRITECOMBINED, obj->gtt_map_kaddr);
+#endif
 }
 
 void
 drm_gem_release_mmap(struct drm_gem_object *obj)
 {
+#ifdef OLDSYLE_MMAP
+   ; // do nothing
+#else
+   #ifdef LOCALGFXPFUNCS
+	drmgfxp_unload_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+    #else
 	gfxp_unload_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+    #endif
+#endif
 }
 
 void
@@ -775,12 +959,24 @@ drm_gem_free_mmap_offset(struct drm_gem_object *obj)
 	umem_cookie->cvaddr = obj->kaddr;
 
 	if (obj->maplist.map->gtt_mmap == 0) {
+#ifdef OLDSYLE_MMAP
+			; // do nothing, do _not_ call gfxp_unmap_kernel_space() here!
+#else
+  #ifdef LOCALGFXPFUNCS
+		drmgfxp_free_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+  #else
 		gfxp_free_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+  #endif
+#endif
 		DRM_DEBUG("already freed, don't free more than once!");
 	}
 
 	if (obj->maplist.map->gtt_mmap == 1) {
+#ifdef LOCALGFXPFUNCS
+		drmgfxp_unmap_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+#else
 		gfxp_unmap_kernel_space(obj->gtt_map_kaddr, obj->real_size);
+#endif
 		obj->maplist.map->gtt_mmap = 0;
 	}
 
