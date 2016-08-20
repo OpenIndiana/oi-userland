@@ -28,11 +28,10 @@
 #include <sys/mdb_modapi.h>
 #include <sys/proc.h>
 
-#include <sys/drm/drmP.h>
-#include <i915/src/i915_drv.h>
-#include <i915/src/i915_drm.h>
-#include <i915/src/intel_drv.h>
-
+#include "drmP.h"
+#include "i915/src/i915_drv.h"
+#include "i915/src/i915_drm.h"
+#include "i915/src/intel_drv.h"
 
 /*
  * Defines

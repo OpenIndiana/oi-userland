@@ -40,14 +40,14 @@ MODULE			= i915
 MODULE_NAME		= $(MODULE)
 
 # This is the package this module should be installed into
-MODULE_PKGTAIL		= kms
+MODULE_PKGTAIL		= drm
 MODULE_PKGTAIL_SET	= yes
 
 # Where are the local sources relative to the build dir
 REL_SOURCE_DIR		= ../src
 
 # Where do we install the driver.
-MODULE_PREFIX		= kernel/drv/$(MACH64_i386)
+MODULE_PREFIX		= kernel/drv/$(MACH64)
 MODULE_PREFIX_SET	= yes
 
 # No upstream sources for these files, since they're Solaris-specific
@@ -62,7 +62,7 @@ CONFIGURE_TARGETS_SET	= yes
 
 MODULE_MAKEFLAGS	= VPATH=$(REL_SOURCE_DIR) -f $(REL_SOURCE_DIR)/Makefile
 MODULE_BUILD_ENV	= $(CONFIG_ENV) PREFIX=$(MODULE_PREFIX)
-MODULE_LDFLAGS		= -dy -r -Nmisc/kms
+MODULE_LDFLAGS		= -dy -r -Nmisc/drm
 
 #
 # License info
@@ -85,5 +85,5 @@ SUBDIRS 		= src
 
 clean all install lint:
 	for dir in $(SUBDIRS); do \
-	        $(MAKE) -C $$dir $(PASSDOWN_VARS) $(@); \
+	        $(MAKE) $(MODULE_BUILD_ENV) $(MODULE_MAKEFLAGS) -C $$dir $(PASSDOWN_VARS) $(@); \
 	done

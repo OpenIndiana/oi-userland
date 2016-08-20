@@ -30,18 +30,15 @@
 TOP=$(shell pwd)
 
 # Variables to always pass down to subdirs
-PASSDOWN_VARS = V="$(V)" TOP="$(TOP)" CDEBUGFLAGS="$(CDEBUGFLAGS)"
+PASSDOWN_VARS = V="$(V)" TOP="$(TOP)" CDEBUGFLAGS="$(CDEBUGFLAGS)"  CFLAGS="$(CFLAGS)"
 
 .DEFAULT: World
 
 SUBDIRS= drm i915 mdb
 
-World: clean all install lint
+World: clean all install
 
 subdirs: $(SUBDIRS)
-
-$(SUBDIRS):
-	$(MAKE) $(PASSDOWN_VARS) -C $@ $(TARGET)
 
 # Dependencies between modules
 i915: drm
@@ -50,5 +47,5 @@ i915: drm
 
 clean all install lint:
 	for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir $(PASSDOWN_VARS) $(@); \
+		$(ENV) $(MODTYPE_BUILD_ENV) $(MAKE) -C $$dir $(PASSDOWN_VARS) $(@); \
 	done

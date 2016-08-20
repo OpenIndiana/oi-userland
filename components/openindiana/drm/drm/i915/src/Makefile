@@ -112,7 +112,7 @@ LINTTAGS += -erroff=E_STATIC_UNUSED
 
 all:		$(MODULE)
 
-$(OBJECTS):
+%.o:		%.c
 		$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 		$(CTFCONVERT) $(CTFCVTFLAGS) $@
 
@@ -136,9 +136,9 @@ modlintlib:	$(MODLINTLIB_DEPS)
 clean.lint:	$(CLEAN_LINT_DEPS)
 
 install:	$(INSTALL_DEPS)
-		@print Installing $(MODULE) in $(PROTODIR)/$(PREFIX)
-		@mkdir -p $(PROTODIR)/$(PREFIX)
-		@$(INSTALL) -m 555 $(MODULE) $(PROTODIR)/$(PREFIX)
-		@print Installing $(MANSOURCE)/$(MANPAGES) in $(PROTODIR)$(MANTARGET)
-		@mkdir -p $(PROTODIR)$(ROOT_MAN_DIR)/$(MANSECTION)
-		@$(INSTALL) -m 644 $(MANSOURCE)/$(MANPAGES) $(PROTODIR)$(MANTARGET)
+		@print Installing $(MODULE) in $(DESTDIR)/$(PREFIX)
+		@mkdir -p $(DESTDIR)/$(PREFIX)
+		@$(INSTALL) -m 555 $(MODULE) $(DESTDIR)/$(PREFIX)
+		@print Installing $(MANSOURCE)/$(MANPAGES) in $(DESTDIR)$(MANTARGET)
+		@mkdir -p $(DESTDIR)$(ROOT_MAN_DIR)/$(MANSECTION)
+		@$(INSTALL) -m 644 $(MANSOURCE)/$(MANPAGES) $(DESTDIR)$(MANTARGET)

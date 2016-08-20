@@ -28,6 +28,10 @@
 #
 ###############################################################################
 
+include $(TOP)/Makefile.inc
+
+include $(TOP)/Makefile.rules
+
 
 BUILD_TYPE = 64
 
@@ -40,8 +44,7 @@ CFLAGS		+= -std=gnu11
 CFLAGS		+= -D_ELF64 -DMDB_DEBUG -D_KERNEL -D_KMDB -g -m64
 CPPFLAGS	+= -I$(TOP) -I$(TOP)/sys/drm -I$(TOP)/sys -I/usr/include
 KMOD_LDFLAGS	= -dy -r -Nmisc/kmdbmod
-SO_LDFLAGS	= $(LDFLAGS) -Wl,-z,direct -Wl,-z,text -M mapfile
-SO_LDFLAGS	+= -Wl,-z,parent=/usr/bin$(ARCHLIBSUBDIR)/mdb
+SO_LDFLAGS	= $(LDFLAGS) -Wl,-z,direct -Wl,-z,text -Wl,-Mmapfile
 CPPFLAGS	+= -O3 -m64 -Ui386 -U__i386 -g \
 	-DTEXT_DOMAIN=\"SUNW_OST_OSCMD\" -D_ERRNO_VERIFY -DMDB_DEBUG \
 	-D_KERNEL -D_ELF64
@@ -58,8 +61,7 @@ all: $(MODULES)
 .NO_PARALLEL:
 .PARALLEL: $(OBJECTS) $(LINTFILES)
 
-$(OBJECTS): $(SOURCES)
-	@print CFLAGS=$(CFLAGS)
+%.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 	$(CTFCONVERT) $(CTFCVTFLAGS) $@
 
@@ -68,16 +70,16 @@ $(KMOD): $(OBJECTS)
 	$(CTFMERGE) $(CTFMERGE_LABEL) -o $@ $(OBJECTS)
 
 $(MDBMOD): $(OBJECTS)
-	$(CC) $(CFLAGS) -fPIC -DPIC $(CPPFLAGS) -G -o $@ $(SOURCES) $(LDFLAGS) \
+	$(CC) $(CFLAGS) -fPIC -DPIC $(CPPFLAGS) -shared -o $@ $(SOURCES) $(LDFLAGS) \
 		$(SO_LDFLAGS) $(LIBS)
 
 install: $(MODULES)
-	@print Installing $(KMOD) in $(PROTODIR)$(ROOT_KMOD_DIR)
-	@print Installing $(MDBMOD) in $(PROTODIR)$(ROOT_MDB_DIR)
-	@mkdir -p $(PROTODIR)$(ROOT_KMOD_DIR)
-	@mkdir -p $(PROTODIR)$(ROOT_MDB_DIR)
-	@$(INSTALL_SCRIPT) -m 555 $(KMOD) $(PROTODIR)$(ROOT_KMOD_DIR)
-	@$(INSTALL_SCRIPT) -m 555 $(MDBMOD) $(PROTODIR)$(ROOT_MDB_DIR)
+	@print Installing $(KMOD) in $(DESTDIR)$(ROOT_KMOD_DIR)
+	@print Installing $(MDBMOD) in $(DESTDIR)$(ROOT_MDB_DIR)
+	@mkdir -p $(DESTDIR)$(ROOT_KMOD_DIR)
+	@mkdir -p $(DESTDIR)$(ROOT_MDB_DIR)
+	@$(INSTALL) -m 555 $(KMOD) $(DESTDIR)$(ROOT_KMOD_DIR)
+	@$(INSTALL) -m 555 $(MDBMOD) $(DESTDIR)$(ROOT_MDB_DIR)
 
 clean:
 	rm -f $(OBJECTS) $(BC_OBJS) $(MODULES)

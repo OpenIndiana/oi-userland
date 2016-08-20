@@ -33,20 +33,20 @@
 #
 # Module core info
 #
-MODULE			= kms
+MODULE			= drm
 
 # MODULE_NAME - the package this module is installed in
 MODULE_NAME		= $(MODULE)
 
 # This is the package this module should be installed into
-MODULE_PKGTAIL		= kms
+MODULE_PKGTAIL		= drm
 MODULE_PKGTAIL_SET	= yes
 
 # Where are the local sources relative to the build dir
 REL_SOURCE_DIR		= ../src
 
 # Where do we install the driver.
-MODULE_PREFIX		= kernel/misc/$(MACH64_i386)
+MODULE_PREFIX		= kernel/misc/$(MACH64)
 MODULE_PREFIX_SET	= yes
 
 # No upstream sources for these files, since they're Solaris-specific
@@ -78,11 +78,12 @@ LICENSE_FILE_SET	= yes
 #	Include kernel rules.
 #
 include $(TOP)/Makefile.inc
+
 include $(TOP)/Makefile.rules
 
 SUBDIRS			= src
 
 clean all install lint:
 	for dir in $(SUBDIRS); do \
-	        $(MAKE) -C $$dir $(PASSDOWN_VARS) $(@); \
+	     $(MAKE) $(MODULE_BUILD_ENV) $(MODULE_MAKEFLAGS) -C $$dir $(PASSDOWN_VARS) $(@); \
 	done

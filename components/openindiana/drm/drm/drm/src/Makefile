@@ -28,6 +28,12 @@
 ###############################################################################
 
 #TOP:sh	= hg root
+#
+#       Include kernel rules.
+#
+include $(TOP)/Makefile.inc
+
+include $(TOP)/Makefile.rules
 
 C_SRCS = ati_pcigart.c \
 	drm_agpsupport.c \
@@ -69,7 +75,7 @@ C_SRCS = ati_pcigart.c \
 
 # Include kernel common rules
 
-MODULE		= kms
+MODULE		= drm
 OBJECTS		= $(C_SRCS:%.c=%.o)
 LINTS		= $(OBJECTS:%.o=%.ln)
 
@@ -106,7 +112,7 @@ LINTTAGS += -erroff=E_STATIC_UNUSED
 
 all:		$(MODULE)
 
-$(OBJECTS):
+%.o:	%.c
 		$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 		$(CTFCONVERT) $(CTFCVTFLAGS) $@
 
@@ -130,6 +136,6 @@ modlintlib:	$(MODLINTLIB_DEPS)
 clean.lint:	$(CLEAN_LINT_DEPS)
 
 install:	$(INSTALL_DEPS)
-		@print Installing $(MODULE) in $(PROTODIR)/$(PREFIX)
-		@mkdir -p $(PROTODIR)/$(PREFIX)
-		@$(INSTALL) -m 555 $(MODULE) $(PROTODIR)/$(PREFIX)
+		@print Installing $(MODULE) in $(DESTDIR)/$(PREFIX)
+		@mkdir -p $(DESTDIR)/$(PREFIX)
+		@$(INSTALL) -m 555 $(MODULE) $(DESTDIR)/$(PREFIX)

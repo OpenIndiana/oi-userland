@@ -26,6 +26,12 @@
 #
 ###############################################################################
 
+#
+#       Include kernel rules.
+#
+include $(TOP)/Makefile.inc
+include $(TOP)/Makefile.rules
+
 SUBDIRS	= modules
 
 clean all install lint:
