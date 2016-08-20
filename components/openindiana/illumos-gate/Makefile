@@ -10,6 +10,7 @@
 
 #
 # Copyright 2013, Andrzej Szeszo
+# Copyright 2016, Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -24,48 +25,30 @@ GIT_CHANGESET=HEAD
 
 FETCH=$(WS_TOOLS)/userland-fetch
 
-NIGHTLY_OPTIONS=-nClmprt
+DEBUG=no
+
+ifeq ($(DEBUG),yes)
+NIGHTLY_OPTIONS=-nCDmprt
+else
+NIGHTLY_OPTIONS=-nCmprt
+endif
 ONNV_BUILDNUM=$(BRANCHID)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
-COMPONENT_ARCHIVE_1=		on-closed-bins-nd.$(MACH).tar.bz2
-COMPONENT_ARCHIVE_URL_1= \
-    http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1.i386= \
-    sha256:da3ca1ea24972ba6a01169265d8d38a45789ed7cc45334bfe026c108b1d2ff56
-COMPONENT_ARCHIVE_HASH_1.sparc= \
-    sha256:88b8c4032c1d759abec98e346085e0ba350fa485f28a12ff63f247e4125916e3
-COMPONENT_ARCHIVE_HASH_1=	$(COMPONENT_ARCHIVE_HASH_1.$(MACH))
-
-COMPONENT_ARCHIVE_2=		on-closed-bins.$(MACH).tar.bz2
-COMPONENT_ARCHIVE_URL_2= \
-    http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_HASH_2.i386= \
-    sha256:18e82bace8481dca62586e4bdff7f6b44fc63b41443799929e4d4b2187e98535
-COMPONENT_ARCHIVE_HASH_2.sparc= \
-    sha256:ce5425387a61dbf6842f8278771f244d2b860786a9d296b72b61e6721f8b7398
-COMPONENT_ARCHIVE_HASH_2=	$(COMPONENT_ARCHIVE_HASH_2.$(MACH))
-
-ON_REPO=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
+ON_REPO.NON_DEBUG=$(SOURCE_DIR)/packages/$(MACH)/nightly-nd/repo.redist
+ON_REPO.DEBUG=$(SOURCE_DIR)/packages/$(MACH)/nightly/repo.redist
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLOBBER_PATHS += $(SOURCE_DIR)
 
-define download-rule
-ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
-CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
-$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)): Makefile
-	$$(FETCH) --file $$@ \
-		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
-		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %)
-	$$(TOUCH) $$@
-endef
+ifeq ($(DEBUG),yes)
+MULTI_PROTO=yes
+else
+MULTI_PROTO=no
+endif
 
-$(foreach suffix,$(NUM_EXTRA_ARCHIVES),\
-	$(eval $(call download-rule,_$(suffix))))
-
-$(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
+$(SOURCE_DIR)/.downloaded: 
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_BRANCH); $(GIT) pull \
@@ -109,7 +92,9 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  (sed \
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
 	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
-	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|'; \
+	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|' \
+	    -e 's|^export ON_CLOSED_BINS=.*|export ON_CLOSED_BINS=\"/opt/onbld/closed\"|' \
+	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|'; \
 	  echo export PERL_VERSION=\"5.22\"; \
 	  echo export PERL_PKGVERS=\"-522\"; \
 	  echo export CW_NO_SHADOW=1; \
@@ -581,12 +566,27 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	done
 
 $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
-	if [ -d $(@D)/pkgrecv.dir ]; then $(RM) -r $(@D)/pkgrecv.dir; fi
+	$(RM) -r $(@D)/pkgrecv.dir
 	$(MKDIR) $(@D)/pkgrecv.dir
 
-	pkgrepo -s $(ON_REPO) rebuild
-	pkgrecv -s $(ON_REPO) -d $(@D)/pkgrecv.dir --raw \
-	  $$(pkgrecv -s $(ON_REPO) --newest | sed -f packages.ignore)
+
+ifeq ($(DEBUG),yes)
+	$(RM) -r $(@D)/pkgrepo-merged.dir
+	$(MKDIR) $(@D)/pkgrepo-merged.dir
+	pkgrepo -s $(@D)/pkgrepo-merged.dir create
+
+	pkgmerge -d $(@D)/pkgrepo-merged.dir \
+		-s variant.debug=true,$(ON_REPO.DEBUG) \
+		-s variant.debug=false,$(ON_REPO.NON_DEBUG)
+
+	pkgrepo -s $(@D)/pkgrepo-merged.dir rebuild
+	pkgrecv -s $(@D)/pkgrepo-merged.dir -d $(@D)/pkgrecv.dir --raw \
+	  $$(pkgrecv -s $(@D)/pkgrepo-merged.dir --newest | sed -f packages.ignore)
+else
+	pkgrepo -s $(ON_REPO.NON_DEBUG) rebuild
+	pkgrecv -s $(ON_REPO.NON_DEBUG) -d $(@D)/pkgrecv.dir --raw \
+	  $$(pkgrecv -s $(ON_REPO.NON_DEBUG) --newest | sed -f packages.ignore)
+endif
 
 	for pkg in $$(echo $(@D)/pkgrecv.dir/*/*); do \
 	  pkgmogrify -O $$pkg/manifest $$pkg/manifest \
@@ -606,3 +606,5 @@ clean::
 
 clobber::       clean
 	$(RM) -r $(CLOBBER_PATHS)
+
+REQUIRED_PACKAGES+= developer/illumos-closed

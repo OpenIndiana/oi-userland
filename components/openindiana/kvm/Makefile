@@ -37,17 +37,17 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 
-COMPONENT_BUILD_ARGS += KERNEL_SOURCE=$(WS_TOP)/components/illumos/illumos-gate/illumos-gate/
+COMPONENT_BUILD_ARGS += KERNEL_SOURCE=$(WS_TOP)/components/openindiana/illumos-gate/illumos-gate/
 
 COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTO_DIR)
 
 build_sparc:
 	@echo "Not available."
 
-$(BUILD_32):: $(WS_TOP)/components/illumos/illumos-gate/build/i386/.built
+$(BUILD_32):: $(WS_TOP)/components/openindiana/illumos-gate/build/i386/.built
 
-$(WS_TOP)/components/illumos/illumos-gate/build/i386/.built:
-	$(GMAKE) -C $(WS_TOP)/components/illumos/illumos-gate  build
+$(WS_TOP)/components/openindiana/illumos-gate/build/i386/.built:
+	$(GMAKE) -C $(WS_TOP)/components/openindiana/illumos-gate  build
 
 
 build_i386:	$(BUILD_32)
