@@ -70,11 +70,6 @@ PATCHES =       $(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(
 
 $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 	$(MKDIR) $(@D)
-	[ -d $(SOURCE_DIR)/closed ] || \
-          (bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) | \
-          (cd $(SOURCE_DIR); tar xf -); \
-          bzip2 -dc $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) | \
-          (cd $(SOURCE_DIR); tar xf -))
 	cd $(SOURCE_DIR) && \
         $(GIT) checkout -f && \
               $(GIT) clean -f
