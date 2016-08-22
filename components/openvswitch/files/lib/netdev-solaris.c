@@ -107,6 +107,7 @@ struct netdev_solaris {
 	int mtu;			/* datalink MTU */
 	uint8_t etheraddr[ETH_ADDR_LEN]; /* MAC address */
 
+	uint32_t kbits_rate;		/* Ingress policing rate */
 	struct tc *tc;			/* traffic control */
 };
 
@@ -1571,15 +1572,34 @@ exit:
  */
 static int
 netdev_solaris_set_policing(struct netdev *netdev_,
-    uint32_t kbits_rate OVS_UNUSED, uint32_t kbits_burst OVS_UNUSED)
+    uint32_t kbits_rate, uint32_t kbits_burst OVS_UNUSED)
 {
+	struct netdev_solaris	*netdev = netdev_solaris_cast(netdev_);
 	const char	*netdev_name = netdev_get_name(netdev_);
 	int		error = 0;
+	uint64_t	rate;
 
-	VLOG_DBG("netdev_solaris_set_policing device %s", netdev_name);
+	ovs_mutex_lock(&netdev->mutex);
 
-	/* XXXSolaris check libdladm:setlinkrop maxbw/priority */
+	if (netdev->kbits_rate == kbits_rate)
+		goto out;
 
+	VLOG_DBG("netdev_solaris_set_policing setting "
+	    "ingress_policing_rate %d kbps on device %s",
+	    kbits_rate, netdev_name);
+
+	rate = kbits_rate * 1000;
+	if ((error = solaris_set_dlprop_ulong(netdev_name, "max-bw",
+	    kbits_rate == 0 ? NULL : &rate, B_TRUE)) != 0) {
+		VLOG_ERR("set ingress_policing_rate "
+		    "%d kbps on %s failed: %s",
+		    kbits_rate, netdev_name, ovs_strerror(error));
+		goto out;
+	}
+	netdev->kbits_rate = kbits_rate;
+
+out:
+	ovs_mutex_unlock(&netdev->mutex);
 	return (error);
 }
 
