@@ -36,15 +36,15 @@ gcc_OPT.i386.64 = -O2
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
-COMPONENT_VERSION=	1.7.2
+COMPONENT_VERSION=	1.7.3
 COMPONENT_PROJECT_URL=  ftp://ftp.gnupg.org/gcrypt/libgcrypt/ 
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:3d35df906d6eab354504c05d749a9b021944cb29ff5f65c8ef9c3dd5f7b6689f
+    sha256:ddac6111077d0a1612247587be238c5294dd0ee4d76dc7ba783cc55fb0337071
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnupg.org/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgcrypt
 
-TPNO=			30110
+TPNO=			31181
 
 # Requires new pkgmogrify feature, available in S12 but not 11.3, so do not
 # publish.
