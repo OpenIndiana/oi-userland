@@ -43,6 +43,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 # Seems that we have no other way to designate that we want large file support.
 CFLAGS += $(CPP_LARGEFILES)
 
+# Need to ensure lcms custom chunk memory allocator aligns properly for all
+# of our platforms - see _cmsALIGNMEM macro in src/lcms2_internal.h and
+# _MAX_ALIGNMENT definition in per-platform sections of <sys/isa_defs.h>
+CPPFLAGS += -DCMS_PTR_ALIGNMENT=_MAX_ALIGNMENT
+
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/lcms
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static

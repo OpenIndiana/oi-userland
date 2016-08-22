@@ -1,0 +1,38 @@
+Patch from upstream git repo to allow us to specify correct alignment to fix
+24494517 lcms2 chunk allocator doesn't align properly for SPARC, causes bus errors
+
+From 51809bd437c159fda9a753959361d208ff47228b Mon Sep 17 00:00:00 2001
+From: Chris Liddell <chris.liddell@artifex.com>
+Date: Tue, 24 Mar 2015 09:03:55 +0000
+Subject: [PATCH] Allow ptr alignment to be set at build time
+
+At least some configurations of gcc on UltraSPARC require 8 byte alignment of
+memory pointers (even on 32 bit user space, where sizeof(void *) == 4).
+
+Rather than contaminate the source, provide ability to set the ptr alignment
+on the compiler command line (on Unix, using CFLAGS when calling configure).
+---
+ src/lcms2_internal.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/lcms2_internal.h b/src/lcms2_internal.h
+index 9fe91ad..1e46740 100644
+--- a/src/lcms2_internal.h
++++ b/src/lcms2_internal.h
+@@ -57,7 +57,15 @@
+ #define _cmsALIGNLONG(x) (((x)+(sizeof(cmsUInt32Number)-1)) & ~(sizeof(cmsUInt32Number)-1))
+ 
+ // Alignment to memory pointer
+-#define _cmsALIGNMEM(x)  (((x)+(sizeof(void *) - 1)) & ~(sizeof(void *) - 1))
++
++// (Ultra)SPARC with gcc requires ptr alignment of 8 bytes
++// even though sizeof(void *) is only four: for greatest flexibility
++// allow the build to specify ptr alignment.
++#ifndef CMS_PTR_ALIGNMENT
++# define CMS_PTR_ALIGNMENT sizeof(void *)
++#endif
++
++#define _cmsALIGNMEM(x)  (((x)+(CMS_PTR_ALIGNMENT - 1)) & ~(CMS_PTR_ALIGNMENT - 1))
+ 
+ // Maximum encodeable values in floating point
+ #define MAX_ENCODEABLE_XYZ  (1.0 + 32767.0/32768.0)
