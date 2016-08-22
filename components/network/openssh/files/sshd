@@ -1,0 +1,78 @@
+#!/sbin/sh
+#
+# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
+#
+
+. /lib/svc/share/ipf_include.sh
+. /lib/svc/share/smf_include.sh
+
+SSHDIR=/etc/ssh
+PIDFILE=/var/run/sshd.pid
+
+create_ipf_rules()
+{
+	FMRI=$1
+	ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
+	ipf6_file=`fmri_to_file ${FMRI} $IPF6_SUFFIX`
+	policy=`get_policy ${FMRI}`
+
+	#
+	# Get port from /etc/ssh/sshd_config
+	#
+	tports=`grep "^Port" /etc/ssh/sshd_config 2>/dev/null | \
+	    awk '{print $2}'`
+
+	echo "# $FMRI" >$ipf_file
+	echo "# $FMRI" >$ipf6_file
+	for port in $tports; do
+		generate_rules $FMRI $policy "tcp" $port $ipf_file
+		generate_rules $FMRI $policy "tcp" $port $ipf6_file _6
+	done
+}
+
+# This script is being used for two purposes: as part of an SMF
+# start/stop/refresh method, and as a sysidconfig(1M)/sys-unconfig(1M)
+# application.
+#
+# Both, the SMF methods and sysidconfig/sys-unconfig use different
+# arguments..
+
+case $1 in
+	# sysidconfig/sys-unconfig arguments (-c and -u)
+'-c')
+	/usr/bin/ssh-keygen -A
+	;;
+
+'-u')
+	# sys-unconfig(1M) knows how to remove ssh host keys, so there's
+	# nothing to do here.
+	:
+	;;
+
+	# SMF arguments (start and restart [really "refresh"])
+
+'ipfilter')
+	create_ipf_rules $2
+	;;
+
+'start')
+	#
+	# If host keys don't exist when the service is started, create
+	# them; sysidconfig is not run in every situation (such as on
+	# the install media).
+	#
+	/usr/bin/ssh-keygen -A
+
+	/usr/lib/ssh/sshd
+	;;
+
+*)
+	echo "Usage: $0 { start | restart }"
+	exit 1
+	;;
+esac
+
+exit $?
