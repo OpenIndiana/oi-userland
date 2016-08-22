@@ -100,6 +100,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += developer/base-developer-utilities
+REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
