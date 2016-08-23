@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gparted
 COMPONENT_VERSION= 0.4.5
@@ -25,15 +25,32 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gparted/files/gparted/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://gparted.org/
+COMPONENT_FMRI = desktop/administration/gparted
+COMPONENT_CLASSIFICATION = System/Administration and Configuration
+COMPONENT_LICENSE = GPLv2
+COMPONENT_LICENSE_FILE = COPYING
 
 PATH=/usr/gnu/bin:/usr/bin
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/c++/glibmm
+REQUIRED_PACKAGES += library/c++/sigcpp
+REQUIRED_PACKAGES += library/desktop/c++/atkmm
+REQUIRED_PACKAGES += library/desktop/c++/gtkmm
+REQUIRED_PACKAGES += library/desktop/c++/pangomm
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/storage/parted
