@@ -459,7 +459,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 					interface=pkg.client.api.ImageInterface("/", pkg.client.api.CURRENT_API_VERSION, progtracker, lambda x: False, None,None)
 					ret = interface.info([pkg_name],True,info_needed)
 					if ret[pkg.client.api.ImageInterface.INFO_FOUND]:
-						allowed_pubs = engine.get_param("%s.allowed_pubs" % self.name).split(" ") + ["openindiana.org","on-nightly"]
+                                                allowed_pubs = engine.get_param("%s.allowed_pubs" % self.name).split(" ") + ["openindiana.org","on-nightly","unleashed"]
 						for i in ret[pkg.client.api.ImageInterface.INFO_FOUND]:
 							if i.publisher not in allowed_pubs:
 								engine.error(_("package %(pkg)s depends on %(name)s, which comes from forbidden publisher %(publisher)s") %
