@@ -5,9 +5,8 @@ Allows fontconfig to use bitmap fonts (which may be hand-tuned for the
 specific size) instead of scalable fonts when a close match is found and
 anti-aliasing is not requested.
 
-diff -urp -x '*~' -x '*.orig' src/fcmatch.c src/fcmatch.c
---- fontconfig-2.11.1/src/fcmatch.c.~1~	2014-01-20 12:14:20.000000000 +0400
-+++ fontconfig-2.11.1/src/fcmatch.c	2015-03-25 23:42:41.118970979 +0300
+--- a/src/fcmatch.c	Thu Jun 18 09:03:11 2015
++++ b/src/fcmatch.c	Thu Jun 18 09:15:24 2015
 @@ -183,6 +183,15 @@
      if (v2 == 0)
  	return 0;
@@ -24,7 +23,7 @@ diff -urp -x '*~' -x '*.orig' src/fcmatch.c src/fcmatch.c
      if (v < 0)
  	v = -v;
      return v;
-@@ -582,6 +591,47 @@
+@@ -623,6 +632,46 @@
      return new;
  }
  
@@ -68,25 +67,24 @@ diff -urp -x '*~' -x '*.orig' src/fcmatch.c src/fcmatch.c
 +    }
 +}
 +
-+
  static FcPattern *
  FcFontSetMatchInternal (FcFontSet   **sets,
  			int	    nsets,
-@@ -594,6 +644,8 @@
-     FcPattern	    *best;
+@@ -636,6 +685,8 @@
      int		    i;
      int		    set;
-+   
-+    FcChangeFormat ( p );
- 
-     for (i = 0; i < PRI_END; i++)
- 	bestscore[i] = 0;
-@@ -848,6 +900,8 @@
-     if (result)
- 	*result = FcResultNoMatch;
  
 +    FcChangeFormat ( p );
 +
-     if (FcDebug () & FC_DBG_MATCH)
-     {
- 	printf ("Sort ");
+     for (i = 0; i < PRI_END; i++)
+ 	bestscore[i] = 0;
+     best = 0;
+@@ -876,6 +927,8 @@
+     FcBool    	    *patternLangSat;
+     FcValue	    patternLang;
+ 
++    FcChangeFormat ( p );
++
+     assert (sets != NULL);
+     assert (p != NULL);
+     assert (result != NULL);
