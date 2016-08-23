@@ -1,0 +1,22 @@
+casting to fix the build error on sparc - restricing it to sparc for now
+since x86 builds and runs fine as is.
+
+Potentially find a better fix
+
+--- yelp-3.18.0/libyelp/yelp-man-parser.c	2016-08-22 15:22:25.739238800 -0700
++++ yelp-3.18.0/libyelp/yelp-man-parser.c	2016-08-22 15:23:37.092255584 -0700
+@@ -1362,8 +1362,13 @@
+     g_regex_match_full (regex, accumulator->str,
+                         -1, offset, 0, &match_info, NULL);
+     while (g_match_info_matches (match_info)) {
+-        offset = inserter ((offset_elt_pair *)pairs->data,
++#if defined(__sparc)
++        offset = inserter ((offset_elt_pair *)(void *)pairs->data,
+                            match_info);
++#else
++	offset = inserter ((offset_elt_pair *)pairs->data,
++                           match_info);
++#endif
+ 
+         g_match_info_free (match_info);
+ 

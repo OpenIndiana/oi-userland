@@ -1,0 +1,17 @@
+Specifying libyelpcommon to link against is redundant as libyelp.la will
+already cause that to happen.  Since yelp enables --fatal-warnings for
+the Solaris linker, the build will fail since libyelpcommon is included
+multiple times.
+
+file upstream bug
+
+--- yelp-3.17.3/src/Makefile.am	2015-06-23 01:49:55.000000000 -0700
++++ yelp-3.17.3/src/Makefile.am	2015-07-15 15:33:51.709253518 -0700
+@@ -26,7 +26,6 @@
+ 
+ yelp_LDADD =					\
+ 	$(top_builddir)/libyelp/libyelp.la	\
+-	$(top_builddir)/libyelp/libyelpcommon.la	\
+ 	$(YELP_LIBS)				\
+ 	$(POPT_LIBS)
+ 

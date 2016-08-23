@@ -1,0 +1,20 @@
+Passing $ax_is_release is not only unnecessary (the related macros already
+use it by default), but wrong as it causes an invalid configuration test
+define to be generated.
+
+file upstream bug
+
+--- yelp-3.16.1/configure.ac	2015-05-11 10:33:26.000000000 -0700
++++ yelp-3.16.1/configure.ac	2015-07-02 21:59:51.040121647 -0700
+@@ -11,9 +11,9 @@
+ AM_SILENT_RULES([yes])
+ 
+ AX_IS_RELEASE([git-directory])
+-AX_CHECK_ENABLE_DEBUG([info], [YELP_DEBUG], [$ax_is_release])
++AX_CHECK_ENABLE_DEBUG([info], [YELP_DEBUG])
+ 
+-AX_COMPILER_FLAGS([], [], [$ax_is_release])
++AX_COMPILER_FLAGS()
+ # Check for programs
+ AC_PROG_CC
+ AC_PROG_CC_C_O
