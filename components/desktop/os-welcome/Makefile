@@ -34,6 +34,10 @@ COMPONENT_BUGDB=	gnome/applications
 # nothing to download ; just build & package
 BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
+
+# Depends on pygobject3, not available on S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Assumes GNU msgfmt & xgettext in PATH.
