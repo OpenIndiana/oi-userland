@@ -92,39 +92,9 @@ CONFIGURE_OPTIONS += --enable-libcanberra
 # Generate man pages
 CONFIGURE_OPTIONS += --enable-man
 CONFIGURE_OPTIONS += --with-x
-
-# Delete this when build servers are installed with an updated at-spi2-atk
-ATK_BASE = $(WS_COMPONENTS)/gnome/at-spi2-atk/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(ATK_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(ATK_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(ATK_BASE)/usr/lib 
-LD_OPTIONS.64 += -L $(ATK_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(ATK_BASE)/usr/include/at-spi2-atk/2.0
-
-REST_BASE = $(WS_COMPONENTS)/gnome/rest/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(REST_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(REST_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(REST_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(REST_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(REST_BASE)/usr/include/rest-0.7
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo. 
-DEPENDED += $(WS_TOP)/components/gnome/rest/build/manifest-$(MACH)-rest.depend
-DEPENDED += $(WS_TOP)/components/gnome/at-spi2-atk/build/manifest-$(MACH)-at-spi2-atk.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../at-spi2-atk/Makefile) 
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../rest/Makefile) 
-#end Delete
+# disable colord for now till we get colord installed on build servers
+# at which point we can delete this and add it in REQ PKGS
+CONFIGURE_OPTIONS += --enable-colord=no
 
 # Needed due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);

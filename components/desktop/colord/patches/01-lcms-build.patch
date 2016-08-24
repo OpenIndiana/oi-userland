@@ -1,0 +1,16 @@
+Upstream forgot to include LCMS_CFLAGS when building client; works on Linux
+since header file is typically installed in /usr/include instead of
+/usr/include/lcms (as it is on Solaris).
+
+Need to file upstream bug
+
+--- colord-1.1.8/client/Makefile.am	2014-09-12 01:40:27.000000000 -0700
++++ colord-1.1.8/client/Makefile.am	2015-07-07 13:43:26.845133914 -0700
+@@ -2,6 +2,7 @@
+ 	$(PIE_CFLAGS)					\
+ 	$(GLIB_CFLAGS)					\
+ 	$(GTK_CFLAGS)					\
++	$(LCMS_CFLAGS)					\
+ 	-I$(top_srcdir)					\
+ 	-I$(top_srcdir)/lib				\
+ 	-I$(top_builddir)/lib				\

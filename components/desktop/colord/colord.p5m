@@ -1,0 +1,271 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+# pie executables confuse this pkglint check due to bug 24457293
+<transform file path=usr/bin/.+ -> default pkg.linted.userland.action001.2 True>
+set name=pkg.fmri \
+    value=pkg:/service/image/colord@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A system service to manage, install, and generate color profiles"
+set name=pkg.description \
+    value="colord is a system service that makes it easy to manage, install and generate color profiles to accurately color manage input and output devices."
+set name=com.oracle.info.description value=colord
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification value=org.opensolaris.category.2008:System/Services
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/378
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/dbus-1/system.d/org.freedesktop.ColorManager.conf
+# Not useful since we don't have udev support on Solaris
+# file path=etc/udev/rules.d/69-cd-sensors.rules
+# file path=etc/udev/rules.d/95-cd-devices.rules
+file files/colord.xml path=lib/svc/manifest/system/colord.xml
+file files/svc-colord path=lib/svc/method/svc-colord
+file path=usr/bin/cd-create-profile
+file path=usr/bin/cd-fix-profile
+file path=usr/bin/cd-iccdump
+file path=usr/bin/colormgr
+file path=usr/include/colord-1/colord-private.h
+file path=usr/include/colord-1/colord-session/cd-session.h
+file path=usr/include/colord-1/colord.h
+file path=usr/include/colord-1/colord/cd-buffer.h
+file path=usr/include/colord-1/colord/cd-client-sync.h
+file path=usr/include/colord-1/colord/cd-client.h
+file path=usr/include/colord-1/colord/cd-color.h
+file path=usr/include/colord-1/colord/cd-device-sync.h
+file path=usr/include/colord-1/colord/cd-device.h
+file path=usr/include/colord-1/colord/cd-dom.h
+file path=usr/include/colord-1/colord/cd-edid.h
+file path=usr/include/colord-1/colord/cd-enum.h
+file path=usr/include/colord-1/colord/cd-icc-store.h
+file path=usr/include/colord-1/colord/cd-icc-utils.h
+file path=usr/include/colord-1/colord/cd-icc.h
+file path=usr/include/colord-1/colord/cd-interp-akima.h
+file path=usr/include/colord-1/colord/cd-interp-linear.h
+file path=usr/include/colord-1/colord/cd-interp.h
+file path=usr/include/colord-1/colord/cd-it8-utils.h
+file path=usr/include/colord-1/colord/cd-it8.h
+file path=usr/include/colord-1/colord/cd-math.h
+file path=usr/include/colord-1/colord/cd-profile-sync.h
+file path=usr/include/colord-1/colord/cd-profile.h
+file path=usr/include/colord-1/colord/cd-quirk.h
+file path=usr/include/colord-1/colord/cd-sensor-sync.h
+file path=usr/include/colord-1/colord/cd-sensor.h
+file path=usr/include/colord-1/colord/cd-transform.h
+file path=usr/include/colord-1/colord/cd-version.h
+file path=usr/lib/$(MACH64)/colord mode=0555 \
+    restart_fmri=svc:/system/colord:default
+# colord complains if colord-plugins directory is missing, even though
+# we have no plugins to put in it
+dir  path=usr/lib/$(MACH64)/colord-plugins
+file path=usr/lib/$(MACH64)/colord-sensors/libcolord_sensor_argyll.so
+file path=usr/lib/$(MACH64)/colord-sensors/libcolord_sensor_dummy.so
+file path=usr/lib/$(MACH64)/colord-session
+file path=usr/lib/$(MACH64)/girepository-1.0/Colord-1.0.typelib
+link path=usr/lib/$(MACH64)/libcolord.so target=libcolord.so.2.0.3
+link path=usr/lib/$(MACH64)/libcolord.so.2 target=libcolord.so.2.0.3
+file path=usr/lib/$(MACH64)/libcolord.so.2.0.3
+link path=usr/lib/$(MACH64)/libcolordprivate.so target=libcolordprivate.so.2.0.3
+link path=usr/lib/$(MACH64)/libcolordprivate.so.2 \
+    target=libcolordprivate.so.2.0.3
+file path=usr/lib/$(MACH64)/libcolordprivate.so.2.0.3
+file path=usr/lib/$(MACH64)/pkgconfig/colord.pc
+file path=usr/lib/girepository-1.0/Colord-1.0.typelib
+link path=usr/lib/libcolord.so target=libcolord.so.2.0.3
+link path=usr/lib/libcolord.so.2 target=libcolord.so.2.0.3
+file path=usr/lib/libcolord.so.2.0.3
+link path=usr/lib/libcolordprivate.so target=libcolordprivate.so.2.0.3
+link path=usr/lib/libcolordprivate.so.2 target=libcolordprivate.so.2.0.3
+file path=usr/lib/libcolordprivate.so.2.0.3
+file path=usr/lib/pkgconfig/colord.pc
+file path=usr/share/color/icc/colord/AdobeRGB1998.icc
+file path=usr/share/color/icc/colord/AppleRGB.icc
+file path=usr/share/color/icc/colord/BestRGB.icc
+file path=usr/share/color/icc/colord/BetaRGB.icc
+file path=usr/share/color/icc/colord/Bluish.icc
+file path=usr/share/color/icc/colord/BruceRGB.icc
+file path=usr/share/color/icc/colord/CIE-RGB.icc
+file path=usr/share/color/icc/colord/ColorMatchRGB.icc
+file path=usr/share/color/icc/colord/Crayons.icc
+file path=usr/share/color/icc/colord/DonRGB4.icc
+file path=usr/share/color/icc/colord/ECI-RGBv1.icc
+file path=usr/share/color/icc/colord/ECI-RGBv2.icc
+file path=usr/share/color/icc/colord/EktaSpacePS5.icc
+file path=usr/share/color/icc/colord/Gamma5000K.icc
+file path=usr/share/color/icc/colord/Gamma5500K.icc
+file path=usr/share/color/icc/colord/Gamma6500K.icc
+file path=usr/share/color/icc/colord/NTSC-RGB.icc
+file path=usr/share/color/icc/colord/PAL-RGB.icc
+file path=usr/share/color/icc/colord/ProPhotoRGB.icc
+file path=usr/share/color/icc/colord/SMPTE-C-RGB.icc
+file path=usr/share/color/icc/colord/SwappedRedAndGreen.icc
+file path=usr/share/color/icc/colord/WideGamutRGB.icc
+file path=usr/share/color/icc/colord/sRGB.icc
+file path=usr/share/color/icc/colord/x11-colors.icc
+file path=usr/share/colord/icons/color-munki-photo-ambient.svg
+file path=usr/share/colord/icons/color-munki-photo-attach.svg
+file path=usr/share/colord/icons/color-munki-photo-calibrate.svg
+file path=usr/share/colord/icons/color-munki-photo-projector.svg
+file path=usr/share/colord/icons/color-munki-photo-screen.svg
+file path=usr/share/colord/icons/color-munki-smile-attach.svg
+file path=usr/share/colord/icons/colorhug-attach.svg
+file path=usr/share/colord/icons/colorhug2-attach.svg
+file path=usr/share/colord/icons/dtp94-attach.svg
+file path=usr/share/colord/icons/hcfr-attach.svg
+file path=usr/share/colord/icons/huey-attach.svg
+file path=usr/share/colord/icons/i1-display3-attach.svg
+file path=usr/share/colord/icons/i1-monitor-attach.svg
+file path=usr/share/colord/icons/i1-pro-attach.svg
+file path=usr/share/colord/icons/spyder2-attach.svg
+file path=usr/share/colord/icons/spyder3-attach.svg
+file path=usr/share/colord/icons/spyder4-attach.svg
+file path=usr/share/colord/ti1/display-long.ti1
+file path=usr/share/colord/ti1/display-normal.ti1
+file path=usr/share/colord/ti1/display-short.ti1
+file path=usr/share/colord/ti1/printer-long.ti1
+file path=usr/share/colord/ti1/printer-normal.ti1
+file path=usr/share/colord/ti1/printer-short.ti1
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ColorHelper.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ColorManager.Device.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ColorManager.Profile.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ColorManager.Sensor.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ColorManager.xml
+file path=usr/share/dbus-1/services/org.freedesktop.ColorHelper.service
+file path=usr/share/dbus-1/system-services/org.freedesktop.ColorManager.service
+file path=usr/share/glib-2.0/schemas/org.freedesktop.ColorHelper.gschema.xml
+file path=usr/share/gtk-doc/html/colord/CdEdid.html
+file path=usr/share/gtk-doc/html/colord/CdIccStore.html
+file path=usr/share/gtk-doc/html/colord/ColorManager.html
+file path=usr/share/gtk-doc/html/colord/Device.html
+file path=usr/share/gtk-doc/html/colord/Profile.html
+file path=usr/share/gtk-doc/html/colord/Sensor.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-client-sync.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-client.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-color.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-device-sync.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-device.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-dom.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-icc-utils.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-icc.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-interp-akima.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-interp-linear.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-interp.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-it8-utils.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-it8.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-math.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-profile-sync.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-profile.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-sensor-sync.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-sensor.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-transform.html
+file path=usr/share/gtk-doc/html/colord/colord-cd-version.html
+file path=usr/share/gtk-doc/html/colord/colord.devhelp2
+file path=usr/share/gtk-doc/html/colord/home.png
+file path=usr/share/gtk-doc/html/colord/index.html
+file path=usr/share/gtk-doc/html/colord/index.sgml
+file path=usr/share/gtk-doc/html/colord/ix01.html
+file path=usr/share/gtk-doc/html/colord/left-insensitive.png
+file path=usr/share/gtk-doc/html/colord/left.png
+file path=usr/share/gtk-doc/html/colord/libcolord.html
+file path=usr/share/gtk-doc/html/colord/libcolordprivate.html
+file path=usr/share/gtk-doc/html/colord/license.html
+file path=usr/share/gtk-doc/html/colord/ref-dbus.html
+file path=usr/share/gtk-doc/html/colord/right-insensitive.png
+file path=usr/share/gtk-doc/html/colord/right.png
+file path=usr/share/gtk-doc/html/colord/style.css
+file path=usr/share/gtk-doc/html/colord/up-insensitive.png
+file path=usr/share/gtk-doc/html/colord/up.png
+file path=usr/share/locale/as/LC_MESSAGES/colord.mo
+file path=usr/share/locale/bg/LC_MESSAGES/colord.mo
+file path=usr/share/locale/bg_BG/LC_MESSAGES/colord.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ca/LC_MESSAGES/colord.mo
+file path=usr/share/locale/cs/LC_MESSAGES/colord.mo
+file path=usr/share/locale/da/LC_MESSAGES/colord.mo
+file path=usr/share/locale/de/LC_MESSAGES/colord.mo
+file path=usr/share/locale/el/LC_MESSAGES/colord.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/colord.mo
+file path=usr/share/locale/eo/LC_MESSAGES/colord.mo
+file path=usr/share/locale/es/LC_MESSAGES/colord.mo
+file path=usr/share/locale/eu/LC_MESSAGES/colord.mo
+file path=usr/share/locale/fa/LC_MESSAGES/colord.mo
+file path=usr/share/locale/fi/LC_MESSAGES/colord.mo
+file path=usr/share/locale/fr/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ga/LC_MESSAGES/colord.mo
+file path=usr/share/locale/gl/LC_MESSAGES/colord.mo
+file path=usr/share/locale/gu/LC_MESSAGES/colord.mo
+file path=usr/share/locale/he/LC_MESSAGES/colord.mo
+file path=usr/share/locale/hi/LC_MESSAGES/colord.mo
+file path=usr/share/locale/hr/LC_MESSAGES/colord.mo
+file path=usr/share/locale/hu/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ia/LC_MESSAGES/colord.mo
+file path=usr/share/locale/id/LC_MESSAGES/colord.mo
+file path=usr/share/locale/it/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ja/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ka/LC_MESSAGES/colord.mo
+file path=usr/share/locale/kk/LC_MESSAGES/colord.mo
+file path=usr/share/locale/kn/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ko/LC_MESSAGES/colord.mo
+file path=usr/share/locale/lt/LC_MESSAGES/colord.mo
+file path=usr/share/locale/lv/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ml/LC_MESSAGES/colord.mo
+file path=usr/share/locale/mr/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ms/LC_MESSAGES/colord.mo
+file path=usr/share/locale/nb/LC_MESSAGES/colord.mo
+file path=usr/share/locale/nb_NO/LC_MESSAGES/colord.mo
+file path=usr/share/locale/nl/LC_MESSAGES/colord.mo
+file path=usr/share/locale/nn_NO/LC_MESSAGES/colord.mo
+file path=usr/share/locale/or/LC_MESSAGES/colord.mo
+file path=usr/share/locale/pa/LC_MESSAGES/colord.mo
+file path=usr/share/locale/pl/LC_MESSAGES/colord.mo
+file path=usr/share/locale/pt/LC_MESSAGES/colord.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/colord.mo
+file path=usr/share/locale/pt_PT/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ro/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ru/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sk/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sl/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sq/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sr/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/colord.mo
+file path=usr/share/locale/sv/LC_MESSAGES/colord.mo
+file path=usr/share/locale/ta/LC_MESSAGES/colord.mo
+file path=usr/share/locale/te/LC_MESSAGES/colord.mo
+file path=usr/share/locale/th/LC_MESSAGES/colord.mo
+file path=usr/share/locale/tr/LC_MESSAGES/colord.mo
+file path=usr/share/locale/uk/LC_MESSAGES/colord.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/colord.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/colord.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/colord.mo
+file man/cd-create-profile.1 path=usr/share/man/man/cd-create-profile.1
+file man/cd-fix-profile.1 path=usr/share/man/man/cd-fix-profile.1
+file man/colormgr.1 path=usr/share/man/man/colormgr.1
+file path=usr/share/polkit-1/actions/org.freedesktop.color.policy
+file path=usr/share/vala/vapi/colord.vapi
+dir  path=var/lib/colord/icc group=daemon
+license COPYING license=GPLv2

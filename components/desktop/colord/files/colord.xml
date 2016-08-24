@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle
+  SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+    CDDL HEADER START
+
+    The contents of this file are subject to the terms of the
+    Common Development and Distribution License (the "License").
+    You may not use this file except in compliance with the License.
+
+    You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+    or http://www.opensolaris.org/os/licensing.
+    See the License for the specific language governing permissions
+    and limitations under the License.
+
+    When distributing Covered Code, include this CDDL HEADER in each
+    file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+    If applicable, add the following below this CDDL HEADER, with the
+    fields enclosed by brackets "[]" replaced with your own identifying
+    information: Portions Copyright [yyyy] [name of copyright owner]
+
+    CDDL HEADER END
+
+    Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+    NOTE:  This service manifest is not editable; its contents will
+    be overwritten by package or patch operations, including
+    operating system upgrade.  Make customizations in a different
+    file.
+-->
+<service_bundle type="manifest" name="system/colord">
+	<service version="1" type="service" name="system/colord">
+
+	<create_default_instance enabled='true' />
+
+	<single_instance />
+
+	<!-- Need / & /usr filesystems mounted -->
+	<dependency
+		name='usr'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/system/filesystem/minimal' />
+	</dependency>
+
+	<dependency
+		name='dbus'
+		type='service'
+		grouping='require_all'
+		restart_on='restart'>
+		<service_fmri value='svc:/system/dbus' />
+	</dependency>
+
+	<!-- Need to be run before gdm is started -->
+	<dependent
+		name='colord_gdm'
+		grouping='optional_all'
+		restart_on='none'>
+		<service_fmri value='svc:/application/graphical-login/gdm' />
+	</dependent>
+
+	<method_context>
+		<method_credential user='daemon' group='daemon'
+			privileges='basic,{zone}:/var/lib/colord/*' />
+	</method_context>
+
+	<exec_method timeout_seconds="60" type="method" name="start"
+		exec="/lib/svc/method/svc-colord start"/>
+	<exec_method timeout_seconds="60" type="method" name="stop"
+		exec=":kill"/>
+	<exec_method timeout_seconds="60" type="method" name="refresh"
+		exec=":true"/>
+
+	<stability value='Unstable' />
+
+	<template>
+	    <common_name>
+		<loctext xml:lang="C">Colord system service
+		</loctext>
+	    </common_name>
+
+	</template>
+    </service>
+</service_bundle>
