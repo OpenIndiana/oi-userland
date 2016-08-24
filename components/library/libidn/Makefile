@@ -20,37 +20,40 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		libidn
-COMPONENT_VERSION=	1.19
+COMPONENT_VERSION=	1.33
+COMPONENT_SUMMARY=	IDN - The Internationalized Domains Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libidn/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8ed2e936b1ae3e30b45b54ca3672deaa83ee0f4d20db5ad83dc1af7222d39f41
+    sha256:44a7aab635bb721ceef6beecc4d49dfd19478325e1b47f3196f7d2acc4930e19
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libidn
+COMPONENT_FMRI=		library/libidn
+COMPONENT_CLASSIFICATION=	System/Libraries
+COMPONENT_LICENSE=	LGPLv2.1, GPLv3, FDLv1.3
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
-LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99
+CFLAGS += -DGNULIB_defined_stdint_types
 
 GUNZIP = /usr/bin/gunzip
 TAR = /usr/bin/tar
@@ -125,7 +128,4 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += system/library
