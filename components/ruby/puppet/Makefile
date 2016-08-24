@@ -74,10 +74,10 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 PKG_OPTIONS +=	-I $(BUILD_DIR)
 
 # common targets
-build::		$(BUILD_64)
+build::		$(BUILD_NO_ARCH)
 
 # make sure facter and hiera are installed first
-install:	../facter/build/$(MACH64)/.installed ../hiera/build/$(MACH64)/.installed $(INSTALL_64)
+install:	../facter/build/$(MACH)/.installed ../hiera/build/$(MACH)/.installed $(INSTALL_NO_ARCH)
 
 clean::
 

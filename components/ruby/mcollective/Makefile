@@ -87,9 +87,9 @@ COMPONENT_POST_UNPACK_ACTION_3 += \
       < patches/03-mco-service-name
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 

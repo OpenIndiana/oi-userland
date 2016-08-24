@@ -56,9 +56,9 @@ include $(WS_MAKE_RULES)/gem.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
