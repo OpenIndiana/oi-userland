@@ -20,11 +20,11 @@
 #
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		harfbuzz
 COMPONENT_VERSION=	0.9.38
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=     	library/c++/harfbuzz
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,8 +42,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-# OI's glib is too ancient, at least 2.36 is required.
-# CONFIGURE_OPTIONS+=	--with-glib=no
 CONFIGURE_OPTIONS+=	--with-graphite2=yes
 CONFIGURE_OPTIONS+=	--with-freetype=yes
 
@@ -55,7 +53,11 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+REQUIRED_PACKAGES += library/c++/graphite2
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
