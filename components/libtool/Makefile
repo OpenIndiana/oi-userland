@@ -34,17 +34,6 @@ COMPONENT_BUGDB=	utility/libtool
 
 TPNO=			9088
 
-# For now, we want to continue to provide the libltdl.so's (and their
-# links) from libtool 1.5.22.
-#
-COMPONENT_VERSION_1 =	1.5.22
-COMPONENT_SRC_1 =	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:88e9ffaaade21c1ddaf6297723dd2fb4ca18ccaef0499a28b6e672f02c8ceb5d
-COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
-SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
-
 BUILD_TARGET=
 INSTALL_TARGET=
 include $(WS_MAKE_RULES)/gnu-component.mk
@@ -53,36 +42,15 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-# requires an older automake to reconfigure.
-COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 ./bootstrap)
+COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
 
-# Remove the hard-wired compiler locations in the LTCC and two CC lines
-# in the two versions of the libtool script.
+# Remove the hard-wired compiler locations in the LTCC and CC line
+# in the version of the libtool script.
 COMPONENT_POST_INSTALL_ACTION = \
 	cd $(PROTO_DIR)$(USRBIN.$(BITS)); \
 	$(GSED) -i \
 		-e 's|^LTCC="/.*$$|LTCC="cc"|' \
 		-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
-
-# Macros to configure, build, and install the old version for the time being.
-BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
-BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
-
-$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_32)/.configured:	BITS=32
-$(BUILD_OLD_DIR_64)/.configured:	BITS=64
-
-BUILD_32 += $(BUILD_OLD_DIR_32)/.built
-BUILD_64 += $(BUILD_OLD_DIR_64)/.built
-
-INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
-INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
-
-# install the old version first
-$(BUILD_DIR_32)/.installed:	$(BUILD_OLD_DIR_32)/.installed
-$(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
