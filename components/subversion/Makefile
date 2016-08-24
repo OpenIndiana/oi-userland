@@ -29,14 +29,14 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.9.3
+COMPONENT_VERSION=	1.9.4
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:74cd21d2f8a2a54e4dbd2389fe1605a19dbda8ba88ffc4bb0edc9a66e143cc93
+	sha256:11f738063f322b06f8c81e42bc26c33e0cb1e465539647109e534274d4a8540c
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
-TPNO=			27091
+TPNO=			30345
 
 include $(WS_MAKE_RULES)/common.mk
 
