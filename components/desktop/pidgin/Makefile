@@ -65,17 +65,15 @@ COMPONENT_PREP_ACTION = \
 LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-# Look for gnutls-3 pkg-config & libraries before the defaults
-PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
-LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
-
 CONFIGURE_ENV += "ac_cv_path_perlpath=$(PERL)"
 
 CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
-CONFIGURE_OPTIONS +=	--disable-nss
-CONFIGURE_OPTIONS +=	--enable-gnutls
-CONFIGURE_OPTIONS +=	--with-gnutls-includes=$(USRINCDIR)/gnutls-3
-CONFIGURE_OPTIONS +=	--with-gnutls-libs=$(USRLIBDIR64)/gnutls-3
+CONFIGURE_OPTIONS +=	--enable-nss
+CONFIGURE_OPTIONS +=	--with-nspr-includes=/usr/include/mps
+CONFIGURE_OPTIONS +=	--with-nspr-libs=/usr/lib/mps/64
+CONFIGURE_OPTIONS +=	--with-nss-includes=/usr/include/mps
+CONFIGURE_OPTIONS +=	--with-nss-libs=/usr/lib/mps/64
+CONFIGURE_OPTIONS +=	--disable-gnutls
 CONFIGURE_OPTIONS +=	--enable-gnome-keyring
 CONFIGURE_OPTIONS +=	--disable-gevolution
 CONFIGURE_OPTIONS +=	--enable-cap
@@ -106,11 +104,12 @@ REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
-REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/python/python-dbus-27
+REQUIRED_PACKAGES += library/security/nss
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
