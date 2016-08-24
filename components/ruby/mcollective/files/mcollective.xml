@@ -46,24 +46,8 @@
                 value='solaris.smf.value.mcollective' />
         </property_group>
 
-        <instance enabled="false" name="server">
+        <instance enabled="false" name="default">
             <!-- Server instance of service -->
-            <exec_method timeout_seconds="60" type="method" name="start"
-                exec="/lib/svc/method/mcollective %m"/>
-            <property_group name='config' type='application'>
-                <propval name='server_config_path' type='astring'
-                    value='/etc/mcollective/server.conf'/>
-            </property_group>
-
-        </instance>
-
-        <instance enabled="false" name="client">
-            <!-- Client instance of service -->
-            <property_group name='general' type='framework'>
-                <propval name='client_config_path' type='astring'
-                    value='/etc/mcollective/client.conf'/>
-            </property_group>
-
         </instance>
 
         <template>
@@ -78,7 +62,7 @@
                     service
                 -->
                 <loctext xml:lang="C">
-                        mco-svr is MCOllective server daemon
+                        mcollectived is MCollective server daemon
                 </loctext>
             </description>
         </template>
