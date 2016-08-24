@@ -134,6 +134,7 @@ OVS_INT_BRIDGE = 'br_int0'
 OVS_EXT_BRIDGE = 'br_ex0'
 VXLAN_UPLINK_PORT = 'ovs.vxlan1'
 FLAT_PHYS_NET = 'flatnet'
+EXT_VLAN_PHYS_NET = 'extnet'
 RABBITMQ_DEFAULT_USERID = 'guest'
 RABBITMQ_DEFAULT_PASSWORD = 'guest'
 L2_TYPE_VLAN = 'vlan'
@@ -165,6 +166,10 @@ HOSTNAME = socket.gethostname().split('.')[0]
 evsutil = None
 l2type = None
 external_network_datalink = None
+external_network_name = None
+external_network_vid = None
+bridge_mappings = {}
+neutron_conn = {}
 
 
 def log_msg(level, msg, oneliner=True):
@@ -361,7 +366,7 @@ class EVSUtil():
     @property
     def global_flat_nw_uplink(self):
         if not self._global_flat_nw_uplink:
-            self.get_global_vlanrange_uplink_map()
+            self.get_global_vlanrange_nw_uplink_map()
         return self._global_flat_nw_uplink
 
     @property
@@ -395,10 +400,25 @@ class EVSUtil():
         self._evs_cache[evs_uuid] = evs
         return evs
 
+    def _vid_in_vidrange(self, vid, vidrange):
+        # vidrange is of the form 1-5,10-20,30-35
+        vlan_ranges = vidrange.split(',')
+        for vlan_range_str in vlan_ranges:
+            vlan_range = vlan_range_str.split("-")
+            vlan_start = int(vlan_range[0])
+            if len(vlan_range) == 2:
+                vlan_end = int(vlan_range[1]) + 1
+            else:
+                vlan_end = vlan_start + 1
+            if vid in xrange(vlan_start, vlan_end):
+                return True
+        return False
+
     def get_global_vlanrange_nw_uplink_map(self):
         if self._global_vlanrange_to_nw_uplink:
             return self._global_vlanrange_to_nw_uplink
         i = 1
+        extnet_found = False
         for l2ri in self.l2rangeinfo:
             if l2ri.host or l2ri.name != 'uplink-port':
                 continue
@@ -408,11 +428,18 @@ class EVSUtil():
                     if range_prop.name == 'flat-range':
                         self._global_flat_nw_uplink = uplink_port
                     continue
-                phys_nw = 'physnet' + str(i)
                 vlanrange = range_prop.value
+                phys_nw = ''
+                if external_network_vid and not extnet_found:
+                    extnet_found = self._vid_in_vidrange(external_network_vid,
+                                                         vlanrange)
+                    if extnet_found:
+                        phys_nw = EXT_VLAN_PHYS_NET
+                if not phys_nw:
+                    phys_nw = 'physnet' + str(i)
+                    i += 1
                 self._global_vlanrange_to_nw_uplink[vlanrange] = (phys_nw,
                                                                   uplink_port)
-                i += 1
         return self._global_vlanrange_to_nw_uplink
 
     def get_local_vlanrange_uplink_map(self):
@@ -441,16 +468,8 @@ class EVSUtil():
         required vlanid and returns its corresponding dictionary value.
         """
         for vlan_ranges_str, value in vlanrangedict.iteritems():
-            vlan_ranges = vlan_ranges_str.split(',')
-            for vlan_range_str in vlan_ranges:
-                vlan_range = vlan_range_str.split("-")
-                vlan_start = int(vlan_range[0])
-                if len(vlan_range) == 2:
-                    vlan_end = int(vlan_range[1]) + 1
-                else:
-                    vlan_end = vlan_start + 1
-                if vlanid in xrange(vlan_start, vlan_end):
-                    return value
+            if self._vid_in_vidrange(vlanid, vlan_ranges_str):
+                return value
 
     def get_uplink_port(self, tenant_name, evs_uuid):
         """ For VXLAN the uplink port is always ovs.vxlan1.
@@ -533,8 +552,8 @@ def get_db_connection():
 class DBEVSToMl2(object):
     def __init__(self):
         self._table_names = ['ml2_network_segments', 'ml2_vxlan_allocations',
-                             'ml2_vlan_allocations', 'ml2_port_bindings',
-                             'ml2_port_binding_levels']
+                             'ml2_vlan_allocations', 'ml2_port_binding_levels',
+                             'ml2_port_bindings', 'router_extra_attributes']
         self._vif_type = portbindings.VIF_TYPE_OVS
         self._driver_type = 'openvswitch'
         # _vlan_xrange_to_nw is a list of tuples to hold the mapping from
@@ -784,16 +803,6 @@ class NovaVmEVSToOVS(object):
                 zc.clear_resource_props('global', ['tenant'])
         return installed_port_uuids
 
-    def get_neutron_conn_params(self):
-        neutron_conn = {}
-        config = iniparse.ConfigParser()
-        config.readfp(open(NOVA_CONF))
-        neutron_conn['username'] = config.get('neutron', 'admin_username')
-        neutron_conn['password'] = config.get('neutron', 'admin_password')
-        neutron_conn['tenant'] = config.get('neutron', 'admin_tenant_name')
-        neutron_conn['auth_url'] = config.get('keystone_authtoken', 'auth_uri')
-        return neutron_conn
-
 
 class ConfigEVSToOVS():
     def __init__(self):
@@ -821,7 +830,6 @@ class ConfigEVSToOVS():
             assert l2type == L2_TYPE_FLAT
             self._fixed[ML2_INI] += [('ml2', 'tenant_network_types', 'flat')]
         self._vxlan_local_ip = None
-        self._bridge_mappings = None
 
     def _read_config(self, conf_file):
         config = iniparse.ConfigParser()
@@ -859,37 +867,6 @@ class ConfigEVSToOVS():
         vni_ranges_list = [vr.replace('-', ':') for vr in vni_ranges_list]
         vni_ranges = ",".join(vni_ranges_list)
         config.set('ml2_type_vxlan', 'vni_ranges', vni_ranges)
-
-    @property
-    def bridge_mappings(self):
-        if self._bridge_mappings:
-            return self._bridge_mappings
-        bridge_mappings = []
-        global_nw_uplink_map = evsutil.get_global_vlanrange_nw_uplink_map()
-        local_uplink_map = evsutil.get_local_vlanrange_uplink_map()
-        # Any local uplink ports should have the same vlan-range boundaries
-        # as the global ones. This is expected in an openstack deployment but
-        # is not enforced by evs itself. So we raise a warning if we encounter
-        # a local uplink-port for a vlan-range whose boundaries are different
-        # from any that are defined globally.
-        errs = set(local_uplink_map.keys()) - set(global_nw_uplink_map.keys())
-        if errs:
-            errs = ','.join(errs)
-            msg = """Found the following incorrect vlan_ranges that were not
-            added to bridge_mappings in ovs_neutron_plugin.ini. Please update
-            manually if necessary - %s""" % errs
-            log_msg(LOG_WARN, msg)
-        for vlanranges_str, (nw, uplink) in global_nw_uplink_map.iteritems():
-            uplink = local_uplink_map.get(vlanranges_str, uplink)
-            bridge_mappings.append(nw + ':' + uplink)
-        if evsutil.local_flat_nw_uplink:
-            bridge_mappings.append(FLAT_PHYS_NET + ':' +
-                                   evsutil.local_flat_nw_uplink)
-        elif evsutil.global_flat_nw_uplink:
-            bridge_mappings.append(FLAT_PHYS_NET + ':' +
-                                   evsutil.global_flat_nw_uplink)
-        self._bridge_mappings = ','.join(bridge_mappings)
-        return self._bridge_mappings
 
     def _get_rabbit_host(self, conf_file):
         config = self._read_config(conf_file)
@@ -1080,7 +1057,7 @@ class ConfigEVSToOVS():
         self._write_config(conf_file, config)
         move(conf_file, ML2_INI)
 
-    def update_ovs_neutron_plugin_ini(self, bmap_reqd):
+    def update_ovs_neutron_plugin_ini(self, bmap_str):
         """
         Reference target configuration state:
         [ovs]
@@ -1109,8 +1086,8 @@ class ConfigEVSToOVS():
                 msg = """Could not determine IP address for VXLAN endpoint.
                 Manually set the local_ip option in ovs_neutron_plugin.ini"""
                 log_msg(LOG_WARN, msg)
-        if bmap_reqd:
-            config.set('ovs', 'bridge_mappings', self.bridge_mappings)
+        if bmap_str:
+            config.set('ovs', 'bridge_mappings', bmap_str)
         self._do_rabbit_host(config)
         self._write_config(conf_file, config)
         move(conf_file, OVS_INI)
@@ -1162,8 +1139,8 @@ class ConfigEVSToOVS():
         self._write_config(conf_file, config)
         move(conf_file, NOVA_CONF)
 
-    def update_Open_vSwitch_other_config(self):
-        bm_str = "other_config:bridge_mappings=" + self.bridge_mappings
+    def update_Open_vSwitch_other_config(self, bmap_str):
+        bm_str = "other_config:bridge_mappings=" + bmap_str
         try:
             check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl', 'set',
                         'Open_vSwitch', '.', bm_str])
@@ -1190,7 +1167,7 @@ def enable_svc(svcname, exit_on_fail=False):
         if exit_on_fail:
             msg = "Exiting..."
             log_msg(LOG_INFO, msg)
-            sys.exit()
+            sys.exit(1)
 
 
 def disable_svc(svcname):
@@ -1210,7 +1187,7 @@ def nova_evs_to_ovs(migr_conf_obj):
 
     # step-2: update zones' config
     migr_vm = NovaVmEVSToOVS()
-    neutron_conn = migr_vm.get_neutron_conn_params()
+    determine_neutron_conn_params()
     zoneutil = ZoneUtil()
     for name in zoneutil.get_zone_names():
         zone = zoneutil.get_zone_by_name(name)
@@ -1335,7 +1312,7 @@ def is_svc_online(svc, exit_on_maintenance=False):
             state. Please fix the errors and clear the svc before running
             migration""" % svc
         log_msg(LOG_ERROR, msg)
-        sys.exit()
+        sys.exit(1)
     return state.strip() == 'online'
 
 
@@ -1384,8 +1361,12 @@ def get_default_gateways():
 def add_uplink_to_br(uplink, bridge):
     def add_ips_and_gws_to_port(port):
         if ips:
-            check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'create-ip',
-                        port], stdout=PIPE)
+            try:
+                check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'show-if',
+                            port], stdout=PIPE, stderr=PIPE)
+            except CalledProcessError:
+                check_call(['/usr/bin/pfexec', '/usr/sbin/ipadm', 'create-ip',
+                            port], stdout=PIPE)
         aconf_configured = False
         for ip in ips:
             msg = "Adding IP %s to %s" % (ip, port)
@@ -1442,53 +1423,151 @@ def add_uplink_to_br(uplink, bridge):
         4. Replumb IPs, if existed before on %s, on %s.""" % \
             (uplink, uplink, bridge, uplink, uplink, bridge)
         log_msg(LOG_ERROR, msg, oneliner=False)
+        return
+
     # add uplink to bridge
     check_call(['/usr/bin/pfexec', '/usr/sbin/ovs-vsctl', '--', '--may-exist',
                 'add-port', bridge, uplink])
     try:
         add_ips_and_gws_to_port(bridge)
     except CalledProcessError as err:
-        msg = """Failed to configure the IPs(%s) on br_ex0 VNIC. Manually
-        configure the IPs and set default gateway""" % ips
+        msg = """Failed to configure the IPs(%s) on %s VNIC. Manually
+        configure the IPs and set default gateway""" % (ips, bridge)
         log_msg(LOG_ERROR, msg)
 
 
-def get_uplink_ports_for_int_bridge(migr_conf_obj):
-    int_uplinks = set()
-    for mapping in migr_conf_obj.bridge_mappings.split(','):
-        if not mapping:
-            continue
-        uplink = mapping.split(':')[1]
-        int_uplinks.add(uplink)
+def get_uplink_ports_for_int_bridge():
+    int_uplinks = set(bridge_mappings.values())
+    int_uplinks.discard(external_network_datalink)
     return int_uplinks
 
 
-def get_uplink_ports_for_ext_bridge(migr_conf_obj):
-    ext_uplink = None
+def get_uplink_port_for_ext_bridge():
     if l2type == L2_TYPE_VLAN and external_network_datalink is not None:
-        ext_uplink = external_network_datalink
-        return ext_uplink
+        return external_network_datalink
+    return bridge_mappings.get(external_network_name)
 
-    connection = get_db_connection()
-    engine = session.create_engine(connection)
-    extnet_name = None
-    tmp = engine.execute("""
-        SELECT physical_network FROM ml2_network_segments WHERE network_id in
-        (SELECT network_id FROM externalnetworks)
-    """)
-    tmp = list(tmp)
-    if tmp:
-        extnet_name = tmp[0][0]
 
-    for mapping in migr_conf_obj.bridge_mappings.split(','):
-        if not mapping:
-            continue
-        map_items = mapping.split(':')
-        nw_name, uplink = map_items[0], map_items[1]
-        if nw_name == extnet_name:
-            ext_uplink = uplink
-            break
-    return ext_uplink
+def determine_neutron_conn_params():
+        global neutron_conn
+        if neutron_conn:
+            return
+        config = iniparse.ConfigParser()
+        if SVC_NOVA_COMPUTE in curnode_svcs:
+            config.readfp(open(NOVA_CONF))
+            neutron_conn['username'] = config.get('neutron', 'admin_username')
+            neutron_conn['password'] = config.get('neutron', 'admin_password')
+            neutron_conn['tenant'] = config.get('neutron', 'admin_tenant_name')
+            neutron_conn['auth_url'] = \
+                config.get('keystone_authtoken', 'auth_uri')
+        else:
+            config.readfp(open(NEUTRON_CONF))
+            neutron_conn['username'] = \
+                config.get('keystone_authtoken', 'admin_user')
+            neutron_conn['password'] = \
+                config.get('keystone_authtoken', 'admin_password')
+            neutron_conn['tenant'] = \
+                config.get('keystone_authtoken', 'admin_tenant_name')
+            neutron_conn['auth_url'] = \
+                config.get('keystone_authtoken', 'auth_uri')
+
+
+def determine_external_network_name():
+    global external_network_name, external_network_vid
+    determine_neutron_conn_params()
+    nc = neutron_client.Client(username=neutron_conn['username'],
+                               password=neutron_conn['password'],
+                               tenant_name=neutron_conn['tenant'],
+                               auth_url=neutron_conn['auth_url'])
+    search_opts = {'router:external': True}
+    try:
+        external_network = nc.list_networks(**search_opts)['networks']
+    except:
+        msg = """Could not get external network information from
+        neutron-server. Make sure it is online."""
+        log_msg(LOG_ERROR, msg)
+        sys.exit(1)
+
+    if not external_network:
+        return
+    external_network = external_network[0]
+    nw_type = external_network['provider:network_type']
+    if nw_type == L2_TYPE_FLAT:
+        external_network_name = FLAT_PHYS_NET
+    else:
+        assert nw_type == L2_TYPE_VLAN
+        external_network_name = EXT_VLAN_PHYS_NET
+        external_network_vid = external_network['provider:segmentation_id']
+    msg = "External Network name is " + external_network_name
+    log_msg(LOG_DEBUG, msg)
+
+
+def determine_bridge_mappings():
+    global bridge_mappings, external_network_datalink
+    global_nw_uplink_map = evsutil.get_global_vlanrange_nw_uplink_map()
+    local_uplink_map = evsutil.get_local_vlanrange_uplink_map()
+    # Any local uplink ports should have the same vlan-range boundaries
+    # as the global ones. This is expected in an openstack deployment but
+    # is not enforced by evs itself. So we raise a warning if we encounter
+    # a local uplink-port for a vlan-range whose boundaries are different
+    # from any that are defined globally.
+    errs = set(local_uplink_map.keys()) - set(global_nw_uplink_map.keys())
+    if errs:
+        errs = ','.join(errs)
+        msg = """Found the following incorrect vlan_ranges that were not
+        added to bridge_mappings in ovs_neutron_plugin.ini. Please update
+        manually if necessary - %s""" % errs
+        log_msg(LOG_WARN, msg)
+    for vlanranges_str, (nw, uplink) in global_nw_uplink_map.iteritems():
+        uplink = local_uplink_map.get(vlanranges_str, uplink)
+        bridge_mappings[nw] = uplink
+    if evsutil.local_flat_nw_uplink:
+        bridge_mappings[FLAT_PHYS_NET] = evsutil.local_flat_nw_uplink
+    elif evsutil.global_flat_nw_uplink:
+        bridge_mappings[FLAT_PHYS_NET] = evsutil.global_flat_nw_uplink
+
+    external_network_datalink = bridge_mappings.get(external_network_name)
+    if external_network_datalink:
+        msg = "External Network datalink is " + external_network_datalink
+        log_msg(LOG_DEBUG, msg)
+    if bridge_mappings.values().count(external_network_datalink) > 1:
+        msg = """The external network datalink '%s' cannot be the uplink-port
+        of any physical network other than external network. Please satisfy
+        this condition before running migration.""" % external_network_datalink
+        log_msg(LOG_ERROR, msg)
+        sys.exit(1)
+
+    # Depending on l2type and whether l3-agent is running on this node,
+    # bridge_mappings should have the following:
+    # 1. l3-agent not in node and l2type = vxlan => no bridge mappings. This is
+    # already handled since determine_bridge_mappings() won't be called for
+    # this condition.
+    # 2. l3-agent not in node and l2type = vlan/flat => bridge mappings should
+    # not have mapping for external network.
+    # 3. l3-agent in node and l2type = vxlan => bridge mappings should have
+    # only the mapping for external network.
+    # 4. l3-agent in node and l2type = vlan/flat => bridge mappings should have
+    # all the orignial mappings.
+    if SVC_L3_AGENT not in curnode_svcs:
+        bridge_mappings.pop(external_network_name, None)
+    elif l2type == L2_TYPE_VXLAN:
+        bridge_mappings.clear()
+        if external_network_datalink:
+            bridge_mappings[external_network_name] = \
+                external_network_datalink
+
+
+def finish():
+    msg = "Migration Successful"
+    log_msg(LOG_INFO, msg)
+    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
+                SVC_NEUTRON_UPGRADE, 'setprop', 'config/evs2ovs', '=',
+                'astring:', 'done'], stdout=PIPE, stderr=PIPE)
+    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
+                SVC_NEUTRON_UPGRADE, 'refresh'], stdout=PIPE, stderr=PIPE)
+    msg = "Exiting..."
+    log_msg(LOG_INFO, msg)
+    sys.exit()
 
 
 def main():
@@ -1496,14 +1575,23 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter, description='''
     Migration script to migrate OpenStack Cloud based on EVS to an
-    OpenStack cloud based on OVS. There are four steps to migration.
+    OpenStack cloud based on OVS.
 
+    There are four steps to migration:
         -- Populate Neutron ML2 tables
         -- Replace EVS information in existing configuration files with OVS
            (neutron.conf, dhcp_agent.ini, l3_agent.ini, and nova.conf)
         -- Add OVS information to new configuration files
            (ml2_conf.ini and ovs_neutron_agent.ini)
         -- Clear EVS information in Zones and populate the anets for OVS
+
+    The nodes must be migrated in the following order:
+        -- controller node running neutron-server
+        -- all of the nodes running neutron-dhcp-agent or neutron-l3-agent
+        -- all of the compute nodes
+
+    It is advisable to run migration with nohup if using ssh over a link that
+    is also used by OpenStack.
     ''')
     parser.parse_args()
 
@@ -1564,24 +1652,49 @@ def main():
     log_msg(LOG_DEBUG, msg)
     migr_conf_obj = ConfigEVSToOVS()
 
-    # step-0: add ovs integration bridge, update conf and enable
-    # neutron-openvswitch-agent. No step-0 if the node has only neutron-server.
-    if set(curnode_svcs) - set([SVC_NEUTRON_SERVER]):
-        if not is_svc_online(SVC_OVSDB_SERVER, exit_on_maintenance=True):
-            enable_svc(SVC_OVSDB_SERVER, exit_on_fail=True)
-        if not is_svc_online(SVC_VSWITCH_SERVER, exit_on_maintenance=True):
-            enable_svc(SVC_VSWITCH_SERVER, exit_on_fail=True)
-        add_ovs_bridge(OVS_INT_BRIDGE)
-        # bridge_mappings is only required if l2-type is VLAN or FLAT or if
-        # neutron-l3-agent is running on this node.
-        bmap_reqd = (l2type != L2_TYPE_VXLAN) or (SVC_L3_AGENT in curnode_svcs)
-        migr_conf_obj.update_ovs_neutron_plugin_ini(bmap_reqd)
-        if bmap_reqd:
-            migr_conf_obj.update_Open_vSwitch_other_config()
-        # we will enable the OVS agent later
+    # step-0: Determine bridge_mappings and ensure external network datalink
+    # is not serving as uplink port for other physical networks. This is only
+    # required if l2-type is VLAN or FLAT or if neutron-l3-agent is running on
+    # this node.
+    if l2type != L2_TYPE_VXLAN or SVC_L3_AGENT in curnode_svcs:
+        determine_external_network_name()
+        determine_bridge_mappings()
 
+    # step-1: Populate ML2 tables and update Neutron and ML2 config files.
+    if SVC_NEUTRON_SERVER in curnode_svcs:
+        msg = "Current migration based on svc: %s" % SVC_NEUTRON_SERVER
+        log_msg(LOG_INFO, msg)
+        neutron_evs_to_ovs(migr_conf_obj)
+        # We have already enabled neutron-server. There is nothing else to do
+        # wrt the service.
+        curnode_svcs.remove(SVC_NEUTRON_SERVER)
+
+    # We don't need to do anything else if neutron-server is the only service
+    # we are migrating on this node.
+    if not curnode_svcs:
+        finish()
+
+    # step-2: add ovs integration bridge and update conf for
+    # neutron-openvswitch-agent.
+    if not is_svc_online(SVC_OVSDB_SERVER, exit_on_maintenance=True):
+        enable_svc(SVC_OVSDB_SERVER, exit_on_fail=True)
+    if not is_svc_online(SVC_VSWITCH_SERVER, exit_on_maintenance=True):
+        enable_svc(SVC_VSWITCH_SERVER, exit_on_fail=True)
+    add_ovs_bridge(OVS_INT_BRIDGE)
+    bmap_str = ''
+    if bridge_mappings:
+        for nw, uplink in bridge_mappings.iteritems():
+            bmap_str += nw + ':' + uplink + ','
+        bmap_str = bmap_str.strip(',')
+    if bmap_str:
+        msg = "bridge_mappings = " + bmap_str
+        log_msg(LOG_DEBUG, msg)
+        migr_conf_obj.update_Open_vSwitch_other_config(bmap_str)
+    migr_conf_obj.update_ovs_neutron_plugin_ini(bmap_str)
+    # we will enable the OVS agent later
+
+    # step-3: migrate the other services.
     svc_func_map = {
-        SVC_NEUTRON_SERVER: neutron_evs_to_ovs,
         SVC_DHCP_AGENT: dhcp_evs_to_ovs,
         SVC_L3_AGENT: l3_evs_to_ovs,
         SVC_NOVA_COMPUTE: nova_evs_to_ovs
@@ -1605,7 +1718,7 @@ def main():
             log_msg(LOG_WARN, msg)
     else:
         assert l2type == L2_TYPE_VLAN or l2type == L2_TYPE_FLAT
-        int_uplinks = get_uplink_ports_for_int_bridge(migr_conf_obj)
+        int_uplinks = get_uplink_ports_for_int_bridge()
         # add the uplink-ports to integration bridge
         for uplink in int_uplinks:
             add_uplink_to_br(uplink, OVS_INT_BRIDGE)
@@ -1615,19 +1728,12 @@ def main():
     for svc in curnode_svcs:
         if svc == SVC_L3_AGENT:
             # add the port to br_ex0
-            ext_uplink = get_uplink_ports_for_ext_bridge(migr_conf_obj)
+            ext_uplink = get_uplink_port_for_ext_bridge()
             if ext_uplink:
                 add_uplink_to_br(ext_uplink, OVS_EXT_BRIDGE)
         enable_svc(svc)
-    msg = "Migration Successful"
-    log_msg(LOG_INFO, msg)
-    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
-                SVC_NEUTRON_UPGRADE, 'setprop', 'config/evs2ovs', '=',
-                'astring:', 'done'], stdout=PIPE, stderr=PIPE)
-    check_call(['/usr/bin/pfexec', '/usr/sbin/svccfg', '-s',
-                SVC_NEUTRON_UPGRADE, 'refresh'], stdout=PIPE, stderr=PIPE)
-    msg = "Exiting..."
-    log_msg(LOG_INFO, msg)
+
+    finish()
 
 
 if __name__ == "__main__":
