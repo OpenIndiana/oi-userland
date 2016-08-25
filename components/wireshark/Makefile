@@ -36,6 +36,10 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPO
 TPNO=			30387
 
 TEST_TARGET= $(NO_TESTS)
+
+# Depends on newer cairo, which cannot be updated in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Micro version for easy libraries packaging
