@@ -40,6 +40,10 @@ COMPONENT_BUGDB=        gnome/screensaver
 TPNO=			26341
 
 TEST_TARGET = $(NO_TESTS)
+
+# Needs older version of libpng, no longer available in evaluation builds.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Enable additional warnings, since we've modified this code a lot
