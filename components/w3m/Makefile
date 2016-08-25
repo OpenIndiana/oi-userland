@@ -36,6 +36,10 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$
 TPNO=			21998
 
 SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+
+# Depends on newer cairo, which cannot be updated in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf ; automake ; aclocal ; libtoolize )
