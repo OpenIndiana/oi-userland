@@ -1,0 +1,23 @@
+#
+# Support system-test target.
+# 
+# This patch hacks sys.path in test.py to avoid importing paramiko
+# module from $(SOURCE) directory, but instead import it from PYTHONPATH.
+#
+# Patch source: in-house
+# Solaris specific, not suitable for upstream contribution.
+#
+--- old/test.py
++++ new/test.py
+@@ -27,7 +27,11 @@ import re
+ import sys
+ import unittest
+ from optparse import OptionParser
++
++# to support system-test target, honor PYTHONPATH for paramiko import
++curdir = sys.path.pop(0)
+ import paramiko
++sys.path.insert(0, curdir)
+ import threading
+ from paramiko.py3compat import PY2
+ 

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		paramiko
-COMPONENT_VERSION=	1.15.2
+COMPONENT_VERSION=	2.0.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f56a671a3eecbb76e6143e6e4ca007d503a39aa79aa9e14ade667fa53fd6e55
+	sha256:411bf90fa22b078a923ff19ef9772c1115a0953702db93549a2848acefd141dc
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/paramiko/paramiko/
 COMPONENT_BUGDB=	python-mod/paramiko
 
-TPNO=			21692
+TPNO=			31171
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,13 +43,34 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_ARGS=	./test.py
+# Master test results are the same for all versions of Python, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# set LC_ALL for unicode sftp tests test_K_utf8 and test_L_utf8_chdir
+COMPONENT_TEST_ENV=	LC_ALL=en_US.UTF-8 PYTHONPATH=$(SOURCE_DIR)
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_TEST_CMD=	$(PYTHON)
+COMPONENT_TEST_ARGS=	test.py --verbose
+
+# ============== is followed by hard-to-match tracebacks
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s/\<[.0-9]\+s\>/Xs/g"' \
+    '-e "/==============/q"'
+
+COMPONENT_SYSTEM_TEST_ENV=	LC_ALL=en_US.UTF-8
+COMPONENT_SYSTEM_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_CMD=	$(PYTHON)
+COMPONENT_SYSTEM_TEST_ARGS=	test.py --verbose
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Disable tests until cryptography is integrated and 20917217 is resolved.
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
+
+system-test:	$(SYSTEM_TEST_NO_ARCH)
+
+# locale required for unicode sftp tests
+REQUIRED_PACKAGES += system/locale
