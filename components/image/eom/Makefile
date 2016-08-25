@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eom
 COMPONENT_VERSION=	1.14.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE image viewer
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
