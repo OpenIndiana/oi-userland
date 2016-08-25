@@ -38,6 +38,10 @@ INSTALL_TARGET=
 # The upstream emacs distribution does not have tests to be run
 # from this target.
 TEST_TARGET= $(NO_TESTS)
+
+# Depends on newer cairo, which cannot be updated in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 # We patch the configure.ac file. Get the new configure generated during prep.
@@ -46,8 +50,10 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal -I m4; autoconf )
 # We build three different variants of emacs for our users.
 VARIANTS =	nox x gtk
 
+ifneq ($(BUILD_TYPE), evaluation)
 BUILD_64 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 INSTALL_64 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+endif
 
 # emacs creates a directory in usr/lib/emacs/$(COMPONENT_VERSION) that
 # contains the platform name. Although the name is platform dependent,
@@ -211,7 +217,9 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 	$(PROTO_DIR)/usr/share/man/man1/*.gz ;
 
 # common targets
+ifneq ($(BUILD_TYPE), evaluation)
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
+endif
 
 # Desktop packages differ slightly between S11 & S12: list union to allow
 # for BUILD_TYPE=evaluation and normal builds.
