@@ -71,9 +71,9 @@ ifeq ($(OS_VERSION), 5.11)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 endif
 LDFLAGS +=	-m$(BITS)
+# Force immediate (no-lazy) binding because of chroot() can loose the access into (/usr)/lib
 LDFLAGS +=	-z guidance=nolazyload -z nolazyload -lbsm
 
-# Force immediate binding because of chroot().
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
