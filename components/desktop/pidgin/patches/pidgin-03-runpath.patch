@@ -1,0 +1,24 @@
+Needed to find the NSS/NSPR libraries at runtime.
+
+These changes need to be sent upstream.
+
+--- pidgin-2.11.0/configure.ac.orig	2016-08-25 12:38:53.201285451 +0000
++++ pidgin-2.11.0/configure.ac	2016-08-25 12:39:40.190394755 +0000
+@@ -2068,7 +2068,7 @@
+ 
+ 			if test "x$ac_cv_moz_nspr_libs" != "xno"; then
+ 				have_nspr_libs="yes"
+-				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
++				NSPR_LIBS="-L$with_nspr_libs $nsprlibs -R$with_nspr_libs"
+ 			else
+ 				NSPR_CFLAGS=""
+ 				enable_nss="no"
+@@ -2166,7 +2166,7 @@
+ 				AC_DEFINE(HAVE_NSS)
+ 				AC_DEFINE(HAVE_SSL)
+ 
+-				NSS_LIBS="-L$with_nss_libs $nsslibs"
++				NSS_LIBS="-L$with_nss_libs $nsslibs -R$with_nss_libs"
+ 
+ 				if test "$enable_nss" = "static"; then
+ 					msg_nss="Mozilla NSS (static)"
