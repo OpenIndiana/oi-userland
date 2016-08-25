@@ -26,19 +26,28 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pmtools
-COMPONENT_VERSION=	1.30
+COMPONENT_VERSION=	2.0.0
 COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/pmtools/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8662103905aba2debfe36e378fb3130e4b0367eb4d271ac851317dc2b8deea90
+    sha256:5863fc9434d6a8d7311fd612cf243c29c3573aaba9caa7a8fb54154089d8baf3
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl-pmtools
-TPNO=			21964
+TPNO=			31142
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/makemaker.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_TEST_ENV +=   PATH="/usr/perl5/$(PERLVER)/bin:$(PATH)"
+COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/\s*[0-9][0-9]* wallclock secs (.*CPU)$$/ <TIMINGS REMOVED>/" ' \
+	'-e "/^PERL_DL_NONLAZY/d" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -46,8 +55,8 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
-system-test:    $(NO_TESTS)
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += system/core-os
