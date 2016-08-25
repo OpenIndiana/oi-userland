@@ -36,6 +36,7 @@ CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-password-save
 
 build:		$(BUILD_32)
 
