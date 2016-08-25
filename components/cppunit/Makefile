@@ -36,6 +36,9 @@ COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
 
 TPNO=			20676
 
+# Needs older version of libpng, no longer available in evaluation builds.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 
