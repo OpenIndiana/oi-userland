@@ -42,11 +42,16 @@ PERL_VERSIONS = $(PERL_VERSION)
 # http://graphviz.org/bugs/b2063.html
 TEST_TARGET= $(SKIP_TEST)
 
+ifneq ($(BUILD_TYPE), evaluation)
 # We want to build a couple of extra things after the installs are done, so set
 # the install targets appropriately.
 INSTALL_TARGET = $(INSTALL_$(MK_BITS))
 INSTALL_TARGET += $(PROTOUSRLIBDIR)/graphviz/config6
 INSTALL_TARGET += $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)/gv.pyc
+endif
+
+# Depends on newer cairo, which cannot be updated in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -70,6 +75,7 @@ CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ARGS += 	GREP=$(USRBINDIR)/ggrep
 
+ifneq ($(BUILD_TYPE), evaluation)
 # perl, ruby, php ship 64-bit only.
 $(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-perl=no
 $(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-ruby=no
@@ -88,6 +94,7 @@ $(INSTALL_32): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=$(USRLIBDIR)/lua/5.2
 $(INSTALL_64): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=$(USRLIBDIR)/lua/5.2/64
 # Use GNU ln, which supports the -r (--relative) option.
 COMPONENT_INSTALL_ARGS += LN_S="gln -s"
+endif
 
 # Create the config file once the 32-bit build is complete.  This runs the bits
 # we just built, so we have to set a handful of variables to the right place.
