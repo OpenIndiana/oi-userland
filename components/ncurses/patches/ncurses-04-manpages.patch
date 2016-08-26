@@ -1,0 +1,165 @@
+Normalize the five man pages that are in section 1m, adjusting them to
+be in section 8. (It's noted that Ubuntu delivered these man pages in
+section 1.)
+
+This problem will be reported upstream as ncurses 6.0 (the latest released
+version) still has these five man pages in section 1m.
+
+--- ncurses-5.7/man/captoinfo.1m.orig	2016-08-26 07:44:49.953454368 +0000
++++ ncurses-5.7/man/captoinfo.1m	2016-08-26 07:46:07.341702464 +0000
+@@ -27,8 +27,8 @@
+ .\" authorization.                                                           *
+ .\"***************************************************************************
+ .\"
+-.\" $Id: captoinfo.1m,v 1.22 2007/06/02 20:40:07 tom Exp $
+-.TH @CAPTOINFO@ 1M ""
++.\" $Id: captoinfo.8,v 1.22 2007/06/02 20:40:07 tom Exp $
++.TH @CAPTOINFO@ 8 ""
+ .ds n 5
+ .ds d @TERMINFO@
+ .SH NAME
+@@ -171,13 +171,13 @@
+ capabilities \fImeml\fR (memory lock) and \fImemu\fR (memory unlock).
+ These will be discarded with a warning message.
+ .SH NOTES
+-This utility is actually a link to \fB@TIC@\fR(1M), running in \fI-I\fR mode.
++This utility is actually a link to \fB@TIC@\fR(8), running in \fI-I\fR mode.
+ You can use other \fB@TIC@\fR options such as \fB-f\fR and  \fB-x\fR.
+ .PP
+ The trace option is not identical to SVr4's.  Under SVr4, instead of following
+ the \fB-v\fR with a trace level n, you repeat it n times.
+ .SH SEE ALSO
+-\fB@INFOCMP@\fR(1M),
++\fB@INFOCMP@\fR(8),
+ \fBcurses\fR(3X),
+ \fBterminfo\fR(\*n)
+ .PP
+--- ncurses-5.7/man/infocmp.1m.orig	2016-08-26 07:44:49.959388607 +0000
++++ ncurses-5.7/man/infocmp.1m	2016-08-26 07:46:31.079494941 +0000
+@@ -27,8 +27,8 @@
+ .\" authorization.                                                           *
+ .\"***************************************************************************
+ .\"
+-.\" $Id: infocmp.1m,v 1.44 2006/12/24 18:16:31 tom Exp $
+-.TH @INFOCMP@ 1M ""
++.\" $Id: infocmp.8,v 1.44 2006/12/24 18:16:31 tom Exp $
++.TH @INFOCMP@ 8 ""
+ .ds n 5
+ .ds d @TERMINFO@
+ .SH NAME
+@@ -413,12 +413,12 @@
+ Actual BSD curses versions will have a more restricted set.  To see only the
+ 4.4BSD set, use \fB-r\fR \fB-RBSD\fR.
+ .SH BUGS
+-The \fB-F\fR option of \fB@INFOCMP@\fR(1M) should be a \fB@TOE@\fR(1M) mode.
++The \fB-F\fR option of \fB@INFOCMP@\fR(8) should be a \fB@TOE@\fR(8) mode.
+ .SH SEE ALSO
+-\fB@CAPTOINFO@\fR(1M),
+-\fB@INFOTOCAP@\fR(1M),
+-\fB@TIC@\fR(1M),
+-\fB@TOE@\fR(1M),
++\fB@CAPTOINFO@\fR(8),
++\fB@INFOTOCAP@\fR(8),
++\fB@TIC@\fR(8),
++\fB@TOE@\fR(8),
+ \fBcurses\fR(3X),
+ \fBterminfo\fR(\*n).
+ .PP
+--- ncurses-5.7/man/infotocap.1m.orig	2016-08-26 07:44:49.965292183 +0000
++++ ncurses-5.7/man/infotocap.1m	2016-08-26 07:46:47.540521425 +0000
+@@ -27,8 +27,8 @@
+ .\" authorization.                                                           *
+ .\"***************************************************************************
+ .\"
+-.\" $Id: infotocap.1m,v 1.8 2006/12/24 20:13:56 tom Exp $
+-.TH @INFOTOCAP@ 1M ""
++.\" $Id: infotocap.8,v 1.8 2006/12/24 20:13:56 tom Exp $
++.TH @INFOTOCAP@ 8 ""
+ .ds n 5
+ .ds d @TERMINFO@
+ .SH NAME
+@@ -63,8 +63,8 @@
+ You can use other \fI@TIC@\fR options such as \fB-f\fR and  \fB-x\fR.
+ .SH SEE ALSO
+ \fBcurses\fR(3X),
+-\fB@TIC@\fR(1M),
+-\fB@INFOCMP@\fR(1M),
++\fB@TIC@\fR(8),
++\fB@INFOCMP@\fR(8),
+ \fBterminfo\fR(\*n)
+ .PP
+ This describes \fBncurses\fR
+--- ncurses-5.7/man/tic.1m.orig	2016-08-26 07:44:49.967894400 +0000
++++ ncurses-5.7/man/tic.1m	2016-08-26 07:47:03.736647461 +0000
+@@ -26,8 +26,8 @@
+ .\" authorization.                                                           *
+ .\"***************************************************************************
+ .\"
+-.\" $Id: tic.1m,v 1.44 2006/12/24 17:59:11 tom Exp $
+-.TH @TIC@ 1M ""
++.\" $Id: tic.8,v 1.44 2006/12/24 17:59:11 tom Exp $
++.TH @TIC@ 8 ""
+ .ds n 5
+ .ds d @TERMINFO@
+ .SH NAME
+@@ -92,7 +92,7 @@
+ .TP
+ \fB-C\fR
+ Force source translation to termcap format.  Note: this differs from the \fB-C\fR
+-option of \fB@INFOCMP@\fR(1M) in that it does not merely translate capability
++option of \fB@INFOCMP@\fR(8) in that it does not merely translate capability
+ names, but also translates terminfo strings to termcap format.  Capabilities
+ that are not translatable are left in the entry under their terminfo names
+ but commented out with two preceding dots.
+@@ -314,10 +314,10 @@
+ \fB\*d/?/*\fR
+ Compiled terminal description database.
+ .SH SEE ALSO
+-\fB@INFOCMP@\fR(1M),
+-\fB@CAPTOINFO@\fR(1M),
+-\fB@INFOTOCAP@\fR(1M),
+-\fB@TOE@\fR(1M),
++\fB@INFOCMP@\fR(8),
++\fB@CAPTOINFO@\fR(8),
++\fB@INFOTOCAP@\fR(8),
++\fB@TOE@\fR(8),
+ \fBcurses\fR(3X),
+ \fBterminfo\fR(\*n).
+ .PP
+--- ncurses-5.7/man/toe.1m.orig	2016-08-26 07:44:49.969668744 +0000
++++ ncurses-5.7/man/toe.1m	2016-08-26 07:47:18.430574121 +0000
+@@ -26,8 +26,8 @@
+ .\" authorization.                                                           *
+ .\"***************************************************************************
+ .\"
+-.\" $Id: toe.1m,v 1.21 2008/01/05 20:57:16 tom Exp $
+-.TH @TOE@ 1M ""
++.\" $Id: toe.8,v 1.21 2008/01/05 20:57:16 tom Exp $
++.TH @TOE@ 8 ""
+ .ds n 5
+ .ds d @TERMINFO@
+ .SH NAME
+@@ -80,7 +80,7 @@
+ specifies that (verbose) output be written to standard error,
+ showing \fBtoe\fR's progress.
+ The optional parameter \fIn\fR is a number from 1 to 10,
+-interpreted as for \fB@TIC@\fR(1M).
++interpreted as for \fB@TIC@\fR(8).
+ .TP
+ \fB-V\fR
+ reports the version of ncurses which was used in this program,
+@@ -90,10 +90,10 @@
+ \fB\*d/?/*\fR
+ Compiled terminal description database.
+ .SH SEE ALSO
+-\fB@TIC@\fR(1M),
+-\fB@INFOCMP@\fR(1M),
+-\fB@CAPTOINFO@\fR(1M),
+-\fB@INFOTOCAP@\fR(1M),
++\fB@TIC@\fR(8),
++\fB@INFOCMP@\fR(8),
++\fB@CAPTOINFO@\fR(8),
++\fB@INFOTOCAP@\fR(8),
+ \fBcurses\fR(3X),
+ \fBterminfo\fR(\*n).
+ .PP

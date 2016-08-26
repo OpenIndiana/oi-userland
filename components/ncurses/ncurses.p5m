@@ -24,6 +24,11 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+# ncurses-04-manpages.patch adjusts section 1m man pages to be in section 8.
+# If the upstream bug is ever fixed (and the patch is removed), this transform
+# should be updated or removed.
+<transform file path=(.+)/man/man8/(.+).8$ -> \
+    set action.hash %<1>/man/man1/%<2>.1m>
 <transform file path=(.+)/man/man3x/(.+).3x$ -> \
     set action.hash %<1>/man/man3/%<2>.3x>
 set name=pkg.fmri \
@@ -82,13 +87,8 @@ link path=usr/gnu/lib/libpanel.so target=libpanel.so.5
 link path=usr/gnu/lib/libpanel.so.5 target=libpanel.so.5.7
 file path=usr/gnu/lib/libpanel.so.5.7
 link path=usr/gnu/lib/terminfo target=../share/terminfo
-file path=usr/gnu/share/man/man1/captoinfo.1m
 file path=usr/gnu/share/man/man1/clear.1
-file path=usr/gnu/share/man/man1/infocmp.1m
-file path=usr/gnu/share/man/man1/infotocap.1m
 link path=usr/gnu/share/man/man1/reset.1 target=tset.1
-file path=usr/gnu/share/man/man1/tic.1m
-file path=usr/gnu/share/man/man1/toe.1m
 file path=usr/gnu/share/man/man1/tput.1
 file path=usr/gnu/share/man/man1/tset.1
 link path=usr/gnu/share/man/man3x/COLOR_PAIR.3x target=curs_color.3x
@@ -796,6 +796,11 @@ link path=usr/gnu/share/man/man3x/wvline_set.3x target=curs_border_set.3x
 file path=usr/gnu/share/man/man5/term.5
 file path=usr/gnu/share/man/man5/terminfo.5
 file path=usr/gnu/share/man/man7/term.7
+file path=usr/gnu/share/man/man8/captoinfo.8
+file path=usr/gnu/share/man/man8/infocmp.8
+file path=usr/gnu/share/man/man8/infotocap.8
+file path=usr/gnu/share/man/man8/tic.8
+file path=usr/gnu/share/man/man8/toe.8
 file path=usr/gnu/share/tabset/std
 file path=usr/gnu/share/tabset/stdcrt
 file path=usr/gnu/share/tabset/vt100
