@@ -24,11 +24,6 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-# librabbitmq will not configure with Studio compilers.  Despite
-# passing LDFLAGS explicitly, the configure script in $SRC/clib is not
-# able to find getaddrinfo in libsocket.  GCC builds with no issue.
-COMPILER=		gcc
-
 COMPONENT_NAME=		librabbitmq
 COMPONENT_VERSION=	1.6.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,14 +45,21 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+CFLAGS +=		-erroff=E_EMPTY_DECLARATION $(studio_C99_ENABLE)
+
+COMPONENT_TEST_ARGS=	setup.py build test
+COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# librabbitmq tests fail to compile; more investigation is needed.
-test:		$(NO_TESTS)
+# svc:/application/rabbitmq:default needs to be online for tests to run
+test:		$(TEST_32_and_64)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
+
 
 REQUIRED_PACKAGES += system/library

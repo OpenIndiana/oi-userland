@@ -53,9 +53,8 @@ license librabbitmq.license license="MPLv1.1, MIT"
 depend type=optional \
     fmri=library/python-2/librabbitmq-$(PYV)@1.0.1,5.12-5.12.0.0.0.41.0
 
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
+# force a dependency on amqp; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/amqp-$(PYV)
 
 # force a dependency on the librabbitmq package
 depend type=require \

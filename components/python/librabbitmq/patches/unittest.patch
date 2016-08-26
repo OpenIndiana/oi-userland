@@ -1,0 +1,26 @@
+In-house patch to account for the lack of the unittest2 package, which
+isn't needed on Solaris as there are no longer any supported Python
+versions prior to 2.7.
+
+--- librabbitmq-1.6.1/funtests/config.py.~1~	2014-01-22 12:00:13.000000000 -0800
++++ librabbitmq-1.6.1/funtests/config.py	2016-08-23 16:19:23.777341750 -0700
+@@ -7,7 +7,7 @@ BROKER_USER = os.environ.get('BROKER_USE
+ BROKER_PASSWORD = os.environ.get('BROKER_PASSWORD', 'guest')
+ 
+ from functools import partial
+-from unittest2 import TestCase
++from unittest import TestCase
+ from uuid import uuid4
+ 
+ 
+--- librabbitmq-1.6.1/librabbitmq/tests/test_functional.py.~1~	2014-11-17 06:31:29.000000000 -0800
++++ librabbitmq-1.6.1/librabbitmq/tests/test_functional.py	2016-08-23 16:20:21.437166565 -0700
+@@ -2,7 +2,7 @@ from __future__ import absolute_import
+ from __future__ import with_statement
+ 
+ import socket
+-import unittest2 as unittest
++import unittest
+ 
+ from librabbitmq import Message, Connection, ConnectionError, ChannelError
+ TEST_QUEUE = 'pyrabbit.testq'

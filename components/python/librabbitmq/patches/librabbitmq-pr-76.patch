@@ -1,0 +1,34 @@
+This upstream patch was part of the following pull request
+
+	https://github.com/celery/librabbitmq/pull/76
+
+commit 507678498bda405ac388b1e520d34c388a3e642d
+Author: Michael Verrilli <msv@pobox.com>
+Date:   Sun Sep 6 22:18:32 2015 -0400
+
+    Adding in message_count to the delivery_info. Fixes test case.
+    
+    This is an expected return value for a test case so rather than remove the test case, I'm adding the expected functionality.
+
+--- librabbitmq-1.6.1/Modules/_librabbitmq/connection.c.~2~	2016-08-24 01:53:24.951206505 -0700
++++ librabbitmq-1.6.1/Modules/_librabbitmq/connection.c	2016-08-24 01:53:24.975077805 -0700
+@@ -2104,6 +2104,7 @@ PyRabbitMQ_Connection_basic_get(PyRabbit
+     amqp_basic_get_ok_t *ok = NULL;
+     PyObject *p = NULL;
+     PyObject *delivery_info = NULL;
++    PyObject *message_count = NULL;
+ 
+     if (PyRabbitMQ_Not_Connected(self))
+         goto bail;
+@@ -2134,6 +2135,11 @@ PyRabbitMQ_Connection_basic_get(PyRabbit
+                                  ok->exchange,
+                                  ok->routing_key,
+                                  ok->redelivered);
++    /* add in the message_count */
++    message_count = PyLong_FromLong(ok->message_count);
++    PyDict_SetItemString(delivery_info, "message_count", message_count);
++    Py_XDECREF(message_count);
++    
+     if (amqp_data_in_buffer(self->conn)) {
+         if (PyRabbitMQ_recv(self, p, self->conn, 1) < 0) {
+             if (!PyErr_Occurred())

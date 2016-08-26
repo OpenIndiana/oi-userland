@@ -1,0 +1,82 @@
+This upstream patch was part of the following pull request
+
+	https://github.com/celery/librabbitmq/pull/75
+
+commit 093bc0405298c1d7ee957c306bd37514ed002112
+Author: Michael Verrilli <msv@pobox.com>
+Date:   Sun Sep 6 21:34:22 2015 -0400
+
+    Fixing tests to match librabbitmq's Message class.
+    
+    Message class' __init__(self, channel, properties, delivery_info={}, body='') does not match how it was used here. This caused most tests to fail due to a blank message being published (and then a following BAD FRAME error when trying to read it, which is very confusing at first).
+
+diff --git a/librabbitmq/tests/test_functional.py b/librabbitmq/tests/test_functional.py
+index 58c2ddf..2dc9bd6 100644
+--- a/librabbitmq/tests/test_functional.py
++++ b/librabbitmq/tests/test_functional.py
+@@ -19,7 +19,8 @@ class test_Channel(unittest.TestCase):
+ 
+     def test_send_message(self):
+         message = Message(
+-            'the quick brown fox jumps over the lazy dog',
++            channel=self.channel,
++            body='the quick brown fox jumps over the lazy dog',
+             properties=dict(content_type='application/json',
+                             content_encoding='utf-8'))
+         self.channel.basic_publish(message, TEST_QUEUE, TEST_QUEUE)
+@@ -40,7 +41,8 @@ class test_Channel(unittest.TestCase):
+ 
+     def test_basic_get_ack(self):
+         message = Message(
+-            'the quick brown fox jumps over the lazy dog',
++            channel=self.channel,
++            body='the quick brown fox jumps over the lazy dog',
+             properties=dict(content_type='application/json',
+                             content_encoding='utf-8'))
+         self.channel.basic_publish(message, TEST_QUEUE, TEST_QUEUE)
+@@ -65,9 +67,11 @@ class test_Channel(unittest.TestCase):
+         that we can fetch them with a timeout without needing to receive
+         any more messages."""
+ 
+-        message = Message('the quick brown fox jumps over the lazy dog',
+-                          properties=dict(content_type='application/json',
+-                                          content_encoding='utf-8'))
++        message = Message(
++            channel=self.channel,
++            body='the quick brown fox jumps over the lazy dog',
++            properties=dict(content_type='application/json',
++                            content_encoding='utf-8'))
+ 
+         for i in xrange(100):
+             self.channel.basic_publish(message, TEST_QUEUE, TEST_QUEUE)
+@@ -87,9 +91,11 @@ class test_Channel(unittest.TestCase):
+     def test_timeout(self):
+         """Check that our ``drain_events`` call actually times out if
+         there are no messages."""
+-        message = Message('the quick brown fox jumps over the lazy dog',
+-                          properties=dict(content_type='application/json',
+-                                          content_encoding='utf-8'))
++        message = Message(
++            channel=self.channel,
++            body='the quick brown fox jumps over the lazy dog',
++            properties=dict(content_type='application/json',
++                            content_encoding='utf-8'))
+ 
+         self.channel.basic_publish(message, TEST_QUEUE, TEST_QUEUE)
+ 
+@@ -152,9 +158,11 @@ class test_Delete(unittest.TestCase):
+         self.channel.queue_bind(self.TEST_QUEUE, self.TEST_QUEUE,
+                                 self.TEST_QUEUE)
+ 
+-        message = Message('the quick brown fox jumps over the lazy dog',
+-                          properties=dict(content_type='application/json',
+-                                          content_encoding='utf-8'))
++        message = Message(
++            channel=self.channel,
++            body='the quick brown fox jumps over the lazy dog',
++            properties=dict(content_type='application/json',
++                            content_encoding='utf-8'))
+ 
+         self.channel.basic_publish(message, self.TEST_QUEUE, self.TEST_QUEUE)
+ 
+

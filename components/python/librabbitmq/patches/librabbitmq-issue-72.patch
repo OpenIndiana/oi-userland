@@ -1,0 +1,108 @@
+This upstream patch addresses the following upstream issue
+
+	https://github.com/celery/librabbitmq/issues/72
+
+and consists of the the consolidation of the following three commits
+
+	017e25f4ecb7e87a201ec0432999a6b8dd9d434c
+	4cebef5a2bde65027fe448461a7717b81ebb1b4a
+	ca579d1ae42fe7d41afeb5c8dfd7cfd06722b281
+
+that were part of the following pull request
+
+	https://github.com/celery/librabbitmq/pull/74
+
+--- librabbitmq-1.6.1/Modules/_librabbitmq/connection.c.~1~	2014-11-17 05:37:38.000000000 -0800
++++ librabbitmq-1.6.1/Modules/_librabbitmq/connection.c	2016-08-24 01:14:26.782217730 -0700
+@@ -349,7 +349,7 @@ PyIter_ToAMQArray(amqp_connection_state_
+         }
+         else if (PyLong_Check(item) || PyInt_Check(item)) {
+             /* Int | Long */
+-            clong_value = (int64_t)PyLong_AsLong(item);
++            clong_value = (int64_t)PyLong_AsLongLong(item);
+             AMQArray_SetIntValue(&dst, clong_value);
+         }
+         else {
+@@ -581,7 +581,7 @@ AMQArray_toPyList(amqp_array_t *array)
+ {
+     register PyObject *value = NULL;
+     PyObject *list = NULL;
+-    list = PyList_New(array->num_entries);
++    list = PyList_New((PY_SIZE_TYPE) array->num_entries);
+ 
+     if (array) {
+         int i;
+@@ -732,7 +732,7 @@ amqp_basic_deliver_to_PyDict(PyObject *d
+     PyObject *value = NULL;
+ 
+     /* -- delivery_tag (PyInt)                               */
+-    value = PyLong_FROM_SSIZE_T((PY_SIZE_TYPE)delivery_tag);
++    value = PyLong_FromLongLong(delivery_tag);
+     PyDICT_SETSTR_DECREF(dest, "delivery_tag", value);
+ 
+     /* -- exchange (PyString)                                */
+@@ -1233,8 +1233,8 @@ PyRabbitMQ_recv(PyRabbitMQ_Connection *s
+     amqp_frame_t frame;
+     amqp_basic_deliver_t *deliver;
+     amqp_basic_properties_t *props;
+-    size_t body_target;
+-    size_t body_received;
++    PY_SIZE_TYPE body_target;
++    PY_SIZE_TYPE body_received;
+     PyObject *channel = NULL;
+     PyObject *consumer_tag = NULL;
+     PyObject *delivery_info = NULL;
+@@ -1288,7 +1288,7 @@ PyRabbitMQ_recv(PyRabbitMQ_Connection *s
+         }
+ 
+         /* channel */
+-        channel = PyInt_FromLong((long)frame.channel);
++        channel = PyInt_FromLong((unsigned long)frame.channel);
+ 
+         /* properties */
+         props = (amqp_basic_properties_t *)frame.payload.properties.decoded;
+@@ -1576,7 +1576,7 @@ PyRabbitMQ_Connection_queue_declare(PyRa
+ 
+     if ((ret = PyTuple_New(3)) == NULL) goto bail;
+     PyTuple_SET_ITEM(ret, 0, PyString_FromStringAndSize(ok->queue.bytes,
+-                                                        ok->queue.len));
++                                                        (PY_SIZE_TYPE)ok->queue.len));
+     PyTuple_SET_ITEM(ret, 1, PyInt_FromLong((long)ok->message_count));
+     PyTuple_SET_ITEM(ret, 2, PyInt_FromLong((long)ok->consumer_count));
+     return ret;
+@@ -1730,7 +1730,7 @@ PyRabbitMQ_Connection_basic_publish(PyRa
+     unsigned int immediate = 0;
+ 
+     char *body_buf = NULL;
+-    int *body_size = 0;
++    PY_SIZE_TYPE body_size = 0;
+ 
+     int ret = 0;
+     amqp_basic_properties_t props;
+--- librabbitmq-1.6.1/Modules/_librabbitmq/connection.h.~1~	2014-05-15 09:42:32.000000000 -0700
++++ librabbitmq-1.6.1/Modules/_librabbitmq/connection.h	2016-08-24 01:14:26.770655970 -0700
+@@ -1,6 +1,7 @@
+ #ifndef __PYLIBRABBIT_CONNECTION_H__
+ #define __PYLIBRABBIT_CONNECTION_H__
+ 
++#define PY_SSIZE_T_CLEAN
+ #include <Python.h>
+ #include <structmember.h>
+ 
+@@ -11,7 +12,6 @@
+ #  define Py_SIZE(ob)     (((PyVarObject*)(ob))->ob_size)
+ #endif
+ #if PY_VERSION_HEX >= 0x02060000 /* 2.6 and up */
+-#  define PY_SSIZE_T_CLEAN
+ #  define PY_SIZE_TYPE        Py_ssize_t
+ #  define PyLong_FROM_SSIZE_T PyLong_FromSsize_t
+ #  define PyLong_AS_SSIZE_T   PyLong_AsSsize_t
+@@ -69,7 +69,7 @@
+     } while(0)
+ 
+ #define PySTRING_FROM_AMQBYTES(member)                              \
+-        PyString_FromStringAndSize(member.bytes, member.len);       \
++        PyString_FromStringAndSize(member.bytes, (PY_SIZE_TYPE)member.len);       \
+ 
+ #define AMQTable_TO_PYKEY(table, i)                                 \
+         PySTRING_FROM_AMQBYTES(table->entries[i].key)

@@ -1,0 +1,180 @@
+Adjust definition of _PYRMQ_INLINE and _AMQP_INLINE to prevent
+E_REF_STATIC_EXTERN_INLINE warnings.
+
+Remove the testing and use of GCC-specific flags.
+
+Correct use of pointer arithmetic to prevent
+E_PTR_TO_VOID_IN_ARITHMETIC warnings.
+
+Don't regenerate amqp_framing.[ch] if the source hasn't changed.
+
+Finally, we inherit CFLAGS and LDFLAGS from the environment rather than
+using what Python was compiled with. In particular, Python 2.7 in
+Userland currently has some undesired settings such as including
+/usr/gnu/lib in the RUNPATH.
+
+--- librabbitmq-1.6.1/Modules/_librabbitmq/connection.h.~2~	2016-08-25 14:50:58.820215166 -0700
++++ librabbitmq-1.6.1/Modules/_librabbitmq/connection.h	2016-08-25 14:50:58.885646596 -0700
+@@ -44,6 +44,8 @@
+ #  define _PYRMQ_INLINE
+ # elif defined(__GNUC__) && !defined(__GNUC_STDC_INLINE__)
+ #  define _PYRMQ_INLINE extern __inline
++# elif defined(__SUNPRO_C)
++#  define _PYRMQ_INLINE static __inline
+ # else
+ #  define _PYRMQ_INLINE __inline
+ # endif
+@@ -146,7 +148,7 @@ typedef struct {
+     PyObject *weakreflist;
+ } PyRabbitMQ_Connection;
+ 
+-int
++_PYRMQ_INLINE int
+ PyDict_to_basic_properties(PyObject *, amqp_basic_properties_t *,
+                            amqp_connection_state_t, amqp_pool_t *);
+ 
+--- librabbitmq-1.6.1/clib/configure.~1~	2014-10-24 04:36:46.000000000 -0700
++++ librabbitmq-1.6.1/clib/configure	2016-08-25 14:50:58.890629993 -0700
+@@ -12432,79 +12432,6 @@ fi
+ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ 
+ 
+-_ax_cflags=$CFLAGS
+-CFLAGS="-fno-common $CFLAGS"
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler accepts '-fno-common'" >&5
+-$as_echo_n "checking if compiler accepts '-fno-common'... " >&6; }
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-int
+-main ()
+-{
+-
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_compile "$LINENO"; then :
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+-$as_echo "yes" >&6; }
+-		CFLAGS=$_ax_cflags
+-		case " $CFLAGS " in #(
+-  *[\ \	]-fno-common[\ \	]*) :
+-     ;; #(
+-  *) :
+-    CFLAGS="$CFLAGS -fno-common" ;; #(
+-  *) :
+-     ;;
+-esac
+-
+-else
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+-$as_echo "no" >&6; }
+-		CFLAGS=$_ax_cflags
+-
+-fi
+-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+-
+-
+-_ax_cflags=$CFLAGS
+-CFLAGS="-fvisibility=hidden $CFLAGS"
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler accepts '-fvisibility=hidden'" >&5
+-$as_echo_n "checking if compiler accepts '-fvisibility=hidden'... " >&6; }
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-int
+-main ()
+-{
+-
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_compile "$LINENO"; then :
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+-$as_echo "yes" >&6; }
+-		CFLAGS=$_ax_cflags
+-		case " $CFLAGS " in #(
+-  *[\ \	]-fvisibility=hidden[\ \	]*) :
+-     ;; #(
+-  *) :
+-    CFLAGS="$CFLAGS -fvisibility=hidden" ;; #(
+-  *) :
+-     ;;
+-esac
+-
+-else
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+-$as_echo "no" >&6; }
+-		CFLAGS=$_ax_cflags
+-
+-fi
+-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+-
+ _ax_ldflags=$LDFLAGS
+ LDFLAGS="-no-undefined $LDFLAGS"
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking if linker accepts '-no-undefined'" >&5
+--- librabbitmq-1.6.1/clib/librabbitmq/amqp_private.h.~1~	2014-10-24 04:36:40.000000000 -0700
++++ librabbitmq-1.6.1/clib/librabbitmq/amqp_private.h	2016-08-25 14:52:09.507960376 -0700
+@@ -57,6 +57,8 @@
+ #  define _AMQP_INLINE static
+ # elif defined(__GNUC__) && !defined(__GNUC_STDC_INLINE__)
+ #  define _AMQP_INLINE extern __inline
++# elif defined(__SUNPRO_C)
++#  define _AMQP_INLINE static __inline
+ # else
+ #  define _AMQP_INLINE __inline
+ # endif
+--- librabbitmq-1.6.1/clib/librabbitmq/amqp_tcp_socket.c.~1~	2014-10-24 04:36:40.000000000 -0700
++++ librabbitmq-1.6.1/clib/librabbitmq/amqp_tcp_socket.c	2016-08-25 14:50:58.892307461 -0700
+@@ -186,7 +186,7 @@ start:
+   bufferp = self->buffer;
+   for (i = 0; i < iovcnt; ++i) {
+     memcpy(bufferp, iov[i].iov_base, iov[i].iov_len);
+-    bufferp += iov[i].iov_len;
++    bufferp = (void *)((uintptr_t)bufferp + iov[i].iov_len);
+   }
+ 
+   ret = amqp_tcp_socket_send_inner(self, self->buffer, bytes, 0);
+--- librabbitmq-1.6.1/setup.py.~1~	2014-11-17 06:43:15.000000000 -0800
++++ librabbitmq-1.6.1/setup.py	2016-08-25 14:50:58.893190143 -0700
+@@ -2,6 +2,7 @@ import os
+ import platform
+ import sys
+ from setuptools import setup, find_packages
++from distutils.dep_util import newer
+ 
+ # --with-librabbitmq=<dir>: path to librabbitmq package if needed
+ 
+@@ -24,9 +25,16 @@ def codegen():
+     codegen = LRMQSRC('codegen.py')
+     spec = SPECPATH('amqp-rabbitmq-0.9.1.json')
+     sys.path.insert(0, SPECPATH())
++    hfile = LRMQSRC('amqp_framing.h')
++    cfile = LRMQSRC('amqp_framing.c')
++    # Don't regenerate the files if the spec file hasn't changed.  This
++    # prevents a separate install phase from unnecessarily rebuilding the
++    # extension.
++    if not (newer(spec, hfile) or newer(spec, cfile)):
++            return
+     commands = [
+-        (sys.executable, codegen, 'header', spec, LRMQSRC('amqp_framing.h')),
+-        (sys.executable, codegen, 'body', spec, LRMQSRC('amqp_framing.c')),
++        (sys.executable, codegen, 'header', spec, hfile),
++        (sys.executable, codegen, 'body', spec, cfile),
+     ]
+     restore = senv(('PYTHONPATH', SPECPATH()), sep=':')
+     try:
+@@ -133,10 +141,7 @@ def create_builder():
+                     vars[key] = vars[key].replace(
+                         '-isysroot /Developer/SDKs/MacOSX10.6.sdk', '')
+                     vars[key] = vars[key].replace('-Wall', '')
+-                restore = senv(
+-                    ('CFLAGS', vars['c']),
+-                    ('LDFLAGS', vars['ld']),
+-                )
++                restore = senv()
+                 try:
+                     os.chdir(LRMQDIST())
+                     if not os.path.isfile('config.h'):
