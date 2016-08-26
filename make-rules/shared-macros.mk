@@ -459,8 +459,8 @@ $(BUILD_DIR_32) $(BUILD_DIR_64):
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/ws/on12-tools
 
-SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
+SPRO_ROOT ?=	$(BUILD_TOOLS)/SUNWspro
+SPRO_VROOT ?=	$(SPRO_ROOT)/solarisstudio12.4
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.8.0.1
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
