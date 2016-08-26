@@ -63,7 +63,7 @@ PLATNUM ?= 0
 # the development build) of the Solaris Update is being built.
 # This is set by the gatekeepers.
 #
-BUILDID ?= 106
+BUILDID ?= 107
 
 # Each (nightly) build of the code that produces packages needs to
 # be uniquely identified so that packages produced by different
