@@ -1,0 +1,28 @@
+The sighandler() function in pidgin/gtkmain.c doesn't restore a SIGALRM
+handler.
+
+See: https://developer.pidgin.im/ticket/7902
+
+This was closed as fixed, but that doesn't seem to be the case.
+
+--- pidgin-2.11.0/pidgin/gtkmain.c.orig	2016-08-25 15:00:41.875707111 +0000
++++ pidgin-2.11.0/pidgin/gtkmain.c	2016-08-25 15:02:50.909744713 +0000
+@@ -229,13 +229,17 @@
+ 		alarm(1);
+ 		break;
+ 	case SIGALRM:
++		clean_pid();
++		/* Restore signal catching */
++		signal(SIGALRM, sighandler);
++		break;
+ #else
+ 	case SIGCHLD:
+-#endif
+ 		clean_pid();
+ 		/* Restore signal catching */
+ 		signal(SIGCHLD, sighandler);
+ 		break;
++#endif
+ 	default:
+ 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+ 		purple_core_quit();
