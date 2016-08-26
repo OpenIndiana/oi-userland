@@ -1,0 +1,24 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# Copyright 2016 by Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/network/ssh-askpass@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The SSH-AskPass GUI helper utility"
+set name=pkg.description \
+    value="An implementation of the SSH-AskPass GUI helper utility allows ssh-add to request key passphrase in an X11 session"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet \
+    value=org.opensolaris.category.2008:System/Security
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+license opensolaris.license license="CDDL"
+
+depend type=conditional fmri=pkg:/network/ssh-askpass/zenity \
+    predicate=pkg:/gnome/zenity
