@@ -1,5 +1,5 @@
---- pulseaudio-6.0/src/modules/oss/module-oss.c.~1~	2015-02-12 17:10:35.000000000 +0300
-+++ pulseaudio-6.0/src/modules/oss/module-oss.c	2017-03-03 17:17:02.886775784 +0300
+--- pulseaudio-10.0/src/modules/oss/module-oss.c.orig	2017-04-22 18:37:32.985739497 +0200
++++ pulseaudio-10.0/src/modules/oss/module-oss.c	2017-04-22 18:38:02.222257971 +0200
 @@ -32,6 +32,8 @@
   *
   */
@@ -219,7 +219,7 @@
      u->use_getospace = u->use_getispace = true;
      u->use_getodelay = true;
      u->mode = mode;
-@@ -1426,6 +1601,194 @@
+@@ -1431,6 +1606,194 @@
      if ((u->mixer_fd = pa_oss_open_mixer_for_device(u->device_name)) >= 0) {
          bool do_close = true;
  
@@ -411,10 +411,10 @@
 +        }
 +
 +#else
-         if (ioctl(fd, SOUND_MIXER_READ_DEVMASK, &u->mixer_devmask) < 0)
+         if (ioctl(u->mixer_fd, SOUND_MIXER_READ_DEVMASK, &u->mixer_devmask) < 0)
              pa_log_warn("SOUND_MIXER_READ_DEVMASK failed: %s", pa_cstrerror(errno));
          else {
-@@ -1445,11 +1808,14 @@
+@@ -1450,11 +1813,14 @@
                  do_close = false;
              }
          }
@@ -429,7 +429,7 @@
          }
      }
  
-@@ -1568,6 +1934,10 @@
+@@ -1573,6 +1939,10 @@
      if (u->fd >= 0)
          pa_close(u->fd);
  
