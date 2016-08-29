@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdvdcss
-COMPONENT_VERSION= 1.3.0
+COMPONENT_VERSION= 1.4.0
 COMPONENT_FMRI = library/video/libdvdcss
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_SUMMARY= A simple library designed for accessing DVDs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
- sha256:7c414acd520c4e4dd7267952f72d738ff50321a7869af4d75c65aefad44f1395
+  sha256:2089375984800df29a4817b37f3123c1706723342d6dab4d0a8b75c25c2c845a
 COMPONENT_ARCHIVE_URL= \
   http://download.videolan.org/pub/videolan/libdvdcss/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdvdcss.html
@@ -37,6 +37,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 
+CFLAGS+= $(CPP_LARGEFILES)
+
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
@@ -45,3 +47,5 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += system/library
