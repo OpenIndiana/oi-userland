@@ -96,9 +96,9 @@ index 8425af1..92c3b1c 100644
 +	}
 +#endif
 +
- 	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
- 		debug("PAM: password authentication accepted for %.100s",
- 		    authctxt->user);
+ 	free(fake);
+ 	if (sshpam_err == PAM_MAXTRIES)
+ 		sshpam_set_maxtries_reached(1);
 -- 
 2.5.4 (Apple Git-61)
 

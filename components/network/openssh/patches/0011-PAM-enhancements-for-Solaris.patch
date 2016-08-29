@@ -23,9 +23,9 @@ Subject: [PATCH 11/34] PAM enhancements for Solaris
  monitor_wrap.c |  18 +++++++++
  servconf.c     |  56 +++++++++++++++++++++++++++
  servconf.h     |  10 +++++
- sshd.1m        |  27 +++++++++++++
+ sshd.8         |  27 +++++++++++++
  sshd.c         |   5 +++
- sshd_config.4  |  18 ++++++++-
+ sshd_config.5  |  18 ++++++++-
  11 files changed, 379 insertions(+), 4 deletions(-)
 
 diff --git a/auth-pam.c b/auth-pam.c
@@ -581,10 +581,10 @@ index f4137af..8c86b57 100644
  	int	fingerprint_hash;
  }       ServerOptions;
  
-diff --git a/sshd.1m b/sshd.1m
+diff --git a/sshd.8 b/sshd.8
 index dac5c14..500c4d5 100644
---- a/sshd.1m
-+++ b/sshd.1m
+--- a/sshd.8
++++ b/sshd.8
 @@ -977,6 +977,33 @@ concurrently for different ports, this contains the process ID of the one
  started last).
  The content of this file is not sensitive; it can be world-readable.
@@ -635,10 +635,10 @@ index 68fd1ea..418e1fd 100644
  	/* In inetd mode, generate ephemeral key only for proto 1 connections */
  	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
  		generate_ephemeral_server_key();
-diff --git a/sshd_config.4 b/sshd_config.4
+diff --git a/sshd_config.5 b/sshd_config.5
 index 6351b43..f45ddef 100644
---- a/sshd_config.4
-+++ b/sshd_config.4
+--- a/sshd_config.5
++++ b/sshd_config.5
 @@ -1168,6 +1168,21 @@ The probability increases linearly and all connection attempts
  are refused if the number of unauthenticated connections reaches
  .Dq full
