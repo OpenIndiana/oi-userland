@@ -1,0 +1,30 @@
+Fix relaxed use of sizeof(); variant of the patch for 4.0.7 is a subset of
+the patch for 4.1.4.
+This patch would hopefully not be needed after zeromq-4.1.5 (posted to upstream)
+
+--- zeromq-4.0.7/src/tcp_address.cpp.orig	2013-11-13 18:57:50.000000000 +0100
++++ zeromq-4.0.7/src/tcp_address.cpp	2016-03-29 19:14:51.427808785 +0200
+@@ -219,7 +219,7 @@
+         memset (&ip6_addr, 0, sizeof (ip6_addr));
+         ip6_addr.sin6_family = AF_INET6;
+         memcpy (&ip6_addr.sin6_addr, &in6addr_any, sizeof (in6addr_any));
+-        out_addrlen = sizeof ip6_addr;
++        out_addrlen = sizeof (ip6_addr);
+         memcpy (out_addr, &ip6_addr, out_addrlen);
+     }
+     else {
+@@ -227,12 +227,12 @@
+         memset (&ip4_addr, 0, sizeof (ip4_addr));
+         ip4_addr.sin_family = AF_INET;
+         ip4_addr.sin_addr.s_addr = htonl (INADDR_ANY);
+-        out_addrlen = sizeof ip4_addr;
++        out_addrlen = sizeof (ip4_addr);
+         memcpy (out_addr, &ip4_addr, out_addrlen);
+     }
+     //  "*" resolves to INADDR_ANY or in6addr_any.
+     if (strcmp (interface_, "*") == 0) {
+-        zmq_assert (out_addrlen <= sizeof address);
++        zmq_assert (out_addrlen <= sizeof (address) );
+         memcpy (&address, out_addr, out_addrlen);
+         return 0;
+     }
