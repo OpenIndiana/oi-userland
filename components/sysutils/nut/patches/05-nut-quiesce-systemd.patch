@@ -1,0 +1,23 @@
+Do not complain about missing systemd stuff if we even do ask to not use it.
+Fix posted upstream so this patch should not be needed after nut-2.7.5 or so.
+
+diff --git a/configure.ac b/configure.ac
+index e16cf86..2e3c461 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1127,13 +1130,13 @@ fi
+ AM_CONDITIONAL(WITH_PKG_CONFIG, test -n "${pkgconfigdir}")
+ 
+ PKG_PROG_PKG_CONFIG
+-systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
+ AC_MSG_CHECKING(whether to install systemd files)
+ AC_ARG_WITH([systemdsystemunitdir],
+ 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files (auto)]),
+ [
+ 	case "${withval}" in
+-	yes|auto)
++	yes|auto|"")
++		systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
+ 		;;
+ 	no)
+ 		systemdsystemunitdir=""
