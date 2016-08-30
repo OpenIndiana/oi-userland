@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		netaddr
-COMPONENT_VERSION=	0.7.13
+COMPONENT_VERSION=	0.7.18
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ca42c260b49e5fd74ba9104efa6a4fca6b55316ca42714d20d2b9b8e751e0412
+    sha256:a1f5c9fcf75ac2579b9995c843dade33009543c04f218ff7c007b3c81695bd19
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/drkjam/netaddr/
 COMPONENT_BUGDB=	python-mod/netaddr
 
-TPNO=			21724
+TPNO=			31322
 
 # Depends on iPython which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -45,34 +45,25 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) netaddr netaddr-$(PYTHON_VERSION))
+	(cd $(PROTO_DIR)/usr/bin ; \
+	$(GSED) -e 's|env python|python$(PYTHON_VERSION)|' \
+	netaddr > netaddr-$(PYTHON_VERSION))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-COMPONENT_TEST_DIR=	$(@D)/lib/netaddr
-COMPONENT_TEST_ARGS=	tests/__init__.py
-COMPONENT_PRE_TEST_ACTION= \
-	(cd $(COMPONENT_TEST_DIR)/tests ; \
-	 ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
-	 ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
-
-# Master test results are the same for all Python versions, so override
-# here, rather than create multiple identical master files.
+COMPONENT_TEST_DIR =    $(COMPONENT_SRC)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# The additional netaddr specific set of transforms to be applied to the test
-# results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(Ran 28 tests in\).*|\1|" '
+	'-e "/^plugins:/d" ' \
+	'-e "s|in [0-9\.]* seconds ||g" '
 
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/python/ipython-27
