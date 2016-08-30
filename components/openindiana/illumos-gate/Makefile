@@ -98,7 +98,7 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
 	  illumos.sh && \
-	  time /opt/onbld/bin/nightly illumos.sh
+	  time $(ENV) -i /opt/onbld/bin/nightly illumos.sh
 	@[ -d $(BUILD_DIR)/$(MACH) ] || $(MKDIR) $(BUILD_DIR)/$(MACH)
 	$(TOUCH) $@
 
