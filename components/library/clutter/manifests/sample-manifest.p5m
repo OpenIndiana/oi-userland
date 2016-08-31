@@ -1,31 +1,26 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2016 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/library/desktop/clutter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Multimedia Libraries"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='LGPLv2.1'
-
-<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-
-depend fmri=service/opengl/ogl-select type=require
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/include/clutter-1.0/cally/cally-actor.h
 file path=usr/include/clutter-1.0/cally/cally-clone.h
@@ -165,7 +160,7 @@ link path=usr/lib/$(MACH64)/libclutter-glx-1.0.so \
     target=libclutter-glx-1.0.so.0.600.20
 link path=usr/lib/$(MACH64)/libclutter-glx-1.0.so.0 \
     target=libclutter-glx-1.0.so.0.600.20
-file path=usr/lib/$(MACH64)/libclutter-glx-1.0.so.0.600.20 pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/lib/$(MACH64)/libclutter-glx-1.0.so.0.600.20
 file path=usr/lib/$(MACH64)/pkgconfig/cally-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/clutter-1.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/clutter-glx-1.0.pc
@@ -178,7 +173,7 @@ file path=usr/lib/girepository-1.0/ClutterX11-1.0.typelib
 file path=usr/lib/girepository-1.0/Cogl-1.0.typelib
 link path=usr/lib/libclutter-glx-1.0.so target=libclutter-glx-1.0.so.0.600.20
 link path=usr/lib/libclutter-glx-1.0.so.0 target=libclutter-glx-1.0.so.0.600.20
-file path=usr/lib/libclutter-glx-1.0.so.0.600.20 pkg.depend.bypass-generate=libGL\.so\.1
+file path=usr/lib/libclutter-glx-1.0.so.0.600.20
 file path=usr/lib/pkgconfig/cally-1.0.pc
 file path=usr/lib/pkgconfig/clutter-1.0.pc
 file path=usr/lib/pkgconfig/clutter-glx-1.0.pc
@@ -209,15 +204,17 @@ file path=usr/share/gtk-doc/html/cally/ch02.html
 file path=usr/share/gtk-doc/html/cally/clutter-overview.html
 file path=usr/share/gtk-doc/html/cally/home.png
 file path=usr/share/gtk-doc/html/cally/index.html
-file path=usr/share/gtk-doc/html/cally/index.sgml
 file path=usr/share/gtk-doc/html/cally/ix01.html
 file path=usr/share/gtk-doc/html/cally/ix02.html
 file path=usr/share/gtk-doc/html/cally/ix03.html
 file path=usr/share/gtk-doc/html/cally/ix04.html
+file path=usr/share/gtk-doc/html/cally/left-insensitive.png
 file path=usr/share/gtk-doc/html/cally/left.png
 file path=usr/share/gtk-doc/html/cally/license.html
+file path=usr/share/gtk-doc/html/cally/right-insensitive.png
 file path=usr/share/gtk-doc/html/cally/right.png
 file path=usr/share/gtk-doc/html/cally/style.css
+file path=usr/share/gtk-doc/html/cally/up-insensitive.png
 file path=usr/share/gtk-doc/html/cally/up.png
 file path=usr/share/gtk-doc/html/clutter/ClutterAction.html
 file path=usr/share/gtk-doc/html/clutter/ClutterActor.html
@@ -342,7 +339,6 @@ file path=usr/share/gtk-doc/html/clutter/flow-layout-vertical.png
 file path=usr/share/gtk-doc/html/clutter/go01.html
 file path=usr/share/gtk-doc/html/clutter/home.png
 file path=usr/share/gtk-doc/html/clutter/index.html
-file path=usr/share/gtk-doc/html/clutter/index.sgml
 file path=usr/share/gtk-doc/html/clutter/iterating-paths.html
 file path=usr/share/gtk-doc/html/clutter/ix01.html
 file path=usr/share/gtk-doc/html/clutter/ix02.html
@@ -354,6 +350,7 @@ file path=usr/share/gtk-doc/html/clutter/ix07.html
 file path=usr/share/gtk-doc/html/clutter/ix08.html
 file path=usr/share/gtk-doc/html/clutter/ix09.html
 file path=usr/share/gtk-doc/html/clutter/ix10.html
+file path=usr/share/gtk-doc/html/clutter/left-insensitive.png
 file path=usr/share/gtk-doc/html/clutter/left.png
 file path=usr/share/gtk-doc/html/clutter/license.html
 file path=usr/share/gtk-doc/html/clutter/migrating-ClutterBehaviour.html
@@ -362,9 +359,11 @@ file path=usr/share/gtk-doc/html/clutter/migrating-ClutterPath.html
 file path=usr/share/gtk-doc/html/clutter/migration.html
 file path=usr/share/gtk-doc/html/clutter/path-alpha-func.png
 file path=usr/share/gtk-doc/html/clutter/pt10.html
+file path=usr/share/gtk-doc/html/clutter/right-insensitive.png
 file path=usr/share/gtk-doc/html/clutter/right.png
 file path=usr/share/gtk-doc/html/clutter/running-clutter.html
 file path=usr/share/gtk-doc/html/clutter/style.css
+file path=usr/share/gtk-doc/html/clutter/up-insensitive.png
 file path=usr/share/gtk-doc/html/clutter/up.png
 file path=usr/share/gtk-doc/html/clutter/using-cairo.html
 file path=usr/share/gtk-doc/html/cogl/ch01.html
@@ -402,7 +401,6 @@ file path=usr/share/gtk-doc/html/cogl/fill-rule-even-odd.png
 file path=usr/share/gtk-doc/html/cogl/fill-rule-non-zero.png
 file path=usr/share/gtk-doc/html/cogl/home.png
 file path=usr/share/gtk-doc/html/cogl/index.html
-file path=usr/share/gtk-doc/html/cogl/index.sgml
 file path=usr/share/gtk-doc/html/cogl/ix01.html
 file path=usr/share/gtk-doc/html/cogl/ix02.html
 file path=usr/share/gtk-doc/html/cogl/ix03.html
@@ -410,12 +408,15 @@ file path=usr/share/gtk-doc/html/cogl/ix04.html
 file path=usr/share/gtk-doc/html/cogl/ix05.html
 file path=usr/share/gtk-doc/html/cogl/ix06.html
 file path=usr/share/gtk-doc/html/cogl/ix07.html
+file path=usr/share/gtk-doc/html/cogl/left-insensitive.png
 file path=usr/share/gtk-doc/html/cogl/left.png
 file path=usr/share/gtk-doc/html/cogl/license.html
 file path=usr/share/gtk-doc/html/cogl/quad-indices-order.png
 file path=usr/share/gtk-doc/html/cogl/quad-indices-triangles.png
+file path=usr/share/gtk-doc/html/cogl/right-insensitive.png
 file path=usr/share/gtk-doc/html/cogl/right.png
 file path=usr/share/gtk-doc/html/cogl/style.css
+file path=usr/share/gtk-doc/html/cogl/up-insensitive.png
 file path=usr/share/gtk-doc/html/cogl/up.png
 file path=usr/share/locale/de/LC_MESSAGES/clutter-1.0.mo
 file path=usr/share/locale/fr/LC_MESSAGES/clutter-1.0.mo
