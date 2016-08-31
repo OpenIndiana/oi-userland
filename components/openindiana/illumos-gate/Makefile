@@ -572,8 +572,8 @@ ifeq ($(DEBUG),yes)
 	pkgrepo -s $(@D)/pkgrepo-merged.dir create
 
 	pkgmerge -d $(@D)/pkgrepo-merged.dir \
-		-s variant.debug=true,$(ON_REPO.DEBUG) \
-		-s variant.debug=false,$(ON_REPO.NON_DEBUG)
+		-s variant.debug.illumos=true,$(ON_REPO.DEBUG) \
+		-s variant.debug.illumos=false,$(ON_REPO.NON_DEBUG)
 
 	pkgrepo -s $(@D)/pkgrepo-merged.dir rebuild
 	pkgrecv -s $(@D)/pkgrepo-merged.dir -d $(@D)/pkgrecv.dir --raw \
