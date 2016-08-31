@@ -23,6 +23,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 include $(WS_COMPONENTS)/php/php-metadata.mk
@@ -31,11 +32,11 @@ COMPONENT_NAME=		php
 COMPONENT_VERSION=	$(UL_PHP_VERSION)
 COMPONENT_PROJECT_URL=	http://php.net/
 COMPONENT_SRC=		$(PHP_COMPONENT_SRC)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=\
-    sha256:0af0045745d61eeb74a3ea744529a2481b27cb689da720e6c0250675043724e4
+    sha256:c96980d7de1d66c821a4ee5809df0076f925b2fe0b8c362d234d92f2f0a178e2
 COMPONENT_ARCHIVE_URL=	http://php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
-TPNO=			22435
+TPNO=			29533
 
 include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/php.mk
@@ -60,6 +61,13 @@ CONFIGURE_OPTIONS +=	--with-config-file-path=$(ETCPHPDIR)
 CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=$(ETCPHPDIR)/conf.d
 # Nor does PEAR (default: $PREFIX/lib/php)
 CONFIGURE_OPTIONS +=	--with-pear=$(VARPHPDIR)/pear
+
+# icu's switch to g++
+# 21090206 icu should build C++ to C++11
+# Causes this in php forcing php to switch also
+# 23003672 PHP fails all or most tests
+CXXFLAGS += -std=c++11
+CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
 
 # Use openldap
 # This is good enough to fool configure
@@ -104,6 +112,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_TEST_ARGS += -k -i
 # different results for different architectures
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "/^make/d" '
 
 CLEAN_PATHS += proto-scripts
 
@@ -115,6 +125,8 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/dtrace
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp-57
 REQUIRED_PACKAGES += system/network/ldap/openldap
+REQUIRED_PACKAGES += text/gnu-sed
