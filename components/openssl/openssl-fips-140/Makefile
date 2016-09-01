@@ -90,7 +90,6 @@ CONFIGURE_OPTIONS += --prefix=/usr
 # We use OpenSSL install code for installing only manual pages and we do that
 # for 32-bit version only.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
-CONFIGURE_OPTIONS += no-ec2m
 CONFIGURE_OPTIONS += no-rc3
 CONFIGURE_OPTIONS += no-rc5
 CONFIGURE_OPTIONS += no-md2
@@ -167,10 +166,10 @@ download clobber clean::
 COMPONENT_PRE_BUILD_ACTION = \
     ( $(LN) -fs $(COMPONENT_DIR)/../common/engines/pkcs11/*     $(@D)/engines; \
       $(MKDIR) $(@D)/bin; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fips.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fipssyms.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/rand/fips_rand.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fipsld $(@D)/bin/; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-$(IPS_COMPONENT_VERSION)/fips/fips.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-$(IPS_COMPONENT_VERSION)/fips/fipssyms.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-$(IPS_COMPONENT_VERSION)/fips/rand/fips_rand.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-$(IPS_COMPONENT_VERSION)/fips/fipsld $(@D)/bin/; \
       $(LN) -fs $(OPENSSL_FIPS_DIR)/build/$(MACH$(BITS))/fips/fips_standalone_sha1 $(@D)/bin/; \
       $(LN) -fs $(COMPONENT_DIR)/build/$(MACH$(BITS))/fips_premain_dso $(@D)/bin/;)
 
@@ -191,10 +190,10 @@ build:			$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 # Set modified lint flags for our lint library targets.
-$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64)
-$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
+$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64) -I$(PROTOUSRINCDIR)
 
 # There are also separate STC test suites 'openssl' and 'openssl-engine'
 # for regression testing. These internal tests are unit tests only.

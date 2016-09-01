@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl-fips
 COMPONENT_VERSION =	2.0.12
-COMPONENT_SRC =		$(COMPONENT_NAME)-ecp-$(COMPONENT_VERSION)
+COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:976b264835f7f30bf6545464158613ae5246d9d46913c1ba1534b9ef552dcc3b
@@ -71,7 +71,7 @@ FIPS_PATH_64 = $(COMPONENT_DIR)/64:$(COMPONENT_DIR)/gcc:$(PATH)
 # Note: COMPONENT_ARCHIVE_HASH is a SHA256 digest used by the Userland
 # Consolidation to check the file integrity.
 OPENSSL_FIPS_HMAC_KEY = etaonrishdlcupfm
-OPENSSL_FIPS_HMAC = 3da3e6d610378ad4b6ee2638a141c17cb3a2aabf
+OPENSSL_FIPS_HMAC = 86ec30179f1bfb2edde4ababf0fb519ba7380b69
 
 # There is a broken link in the tarball which causes cp(1) to fail which would
 # fail the whole configure process. It's safer to get rid of the link than
@@ -132,7 +132,7 @@ $(BUILD_DIR)/%/.verified:	$(BUILD_DIR)/%/.installed
 	@echo Basic FIPS-140 mode verification passed.
 	$(TOUCH) $@	    	
 
-test:		$(NO_TESTS)
+test:           $(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 

@@ -90,9 +90,6 @@ CONFIGURE_OPTIONS += --prefix=/usr
 # We use OpenSSL install code for installing only manual pages and we do that
 # for 32-bit version only.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
-CONFIGURE_OPTIONS += no-ec
-CONFIGURE_OPTIONS += no-ecdh
-CONFIGURE_OPTIONS += no-ecdsa
 CONFIGURE_OPTIONS += no-rc3
 CONFIGURE_OPTIONS += no-rc5
 CONFIGURE_OPTIONS += no-md2
@@ -110,6 +107,9 @@ CONFIGURE_OPTIONS += no-hw_sureware
 CONFIGURE_OPTIONS += no-hw_ubsec
 CONFIGURE_OPTIONS += no-hw_cswift
 CONFIGURE_OPTIONS += no-seed
+
+# We don't ship GOST engine.
+CONFIGURE_OPTIONS += no-gost
 
 # Disable SSLv2 and SSLv3 protocols
 CONFIGURE_OPTIONS += no-ssl2 no-ssl2-method
@@ -154,6 +154,7 @@ $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += -DOPENSSL_NO_HEARTBEATS
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += -DOPENSSL_NO_SRP
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-cast
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-dso
+$(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-ec
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-rc4
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-ripemd
 $(BUILD_DIR_WANBOOT)/.configured:	CONFIGURE_OPTIONS += no-hw
@@ -395,10 +396,10 @@ install:	$(INSTALL_32_and_64)
 endif
 
 # Set modified lint flags for our lint library targets.
-$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32)
-$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64)
-$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
+$(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_32) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64) -I$(PROTOUSRINCDIR)
+$(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64) -I$(PROTOUSRINCDIR)
 
 # There are also separate STC test suites 'openssl' and 'openssl-engine'
 # for regression testing. These internal tests are unit tests only.
