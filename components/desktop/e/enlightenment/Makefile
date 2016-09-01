@@ -24,6 +24,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		enlightenment
 COMPONENT_VERSION=	0.19.3
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	desktop/window-manager/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
