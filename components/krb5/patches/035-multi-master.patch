@@ -291,8 +291,8 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 +{
 +    if (handle->destroy_cache && handle->cache_name) {
 +        if (krb5_cc_resolve(handle->context,
-+                            handle->cache_name, &ccache) == 0)
-+            (void) krb5_cc_destroy (handle->context, ccache);
++                            handle->cache_name, ccache) == 0)
++            (void) krb5_cc_destroy (handle->context, *ccache);
 +    }
 +
 +    free(handle->cache_name);
