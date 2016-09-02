@@ -7,10 +7,6 @@ most if not all of that code will be integrated upstream, that
 work will not be done in time to target a Solaris 12 release.
 This version is the first in hopefully many, and this patch
 will be deprecated in future release integrations. 
-
-From 556d5a4321494a176b77de580aae94017b0824fc Mon Sep 17 00:00:00 2001
-From: Jesse Butler <jesse.butler@oracle.com>
-Date: Fri, 22 Jul 2016 08:43:16 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -20,7 +16,7 @@ Subject: [PATCH] Solaris-v1.10.3
  api/server/router/container/container_routes.go    |    7 +
  api/server/server_unix.go                          |    2 +-
  container/container_solaris.go                     |  649 ++++++++++++
- container/monitor.go                               |    8 +
+ container/monitor.go                               |   46 +-
  container/state_solaris.go                         |    9 +
  contrib/docker-device-tool/device_tool.go          |    2 +-
  contrib/httpserver/Dockerfile                      |    2 +-
@@ -203,7 +199,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 189 files changed, 8789 insertions(+), 1215 deletions(-)
+ 189 files changed, 8826 insertions(+), 1216 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -1100,24 +1096,83 @@ index 0000000..fce3c7f
 +	return true
 +}
 diff --git a/container/monitor.go b/container/monitor.go
-index 09b447d..00989aa 100644
+index 09b447d..9e18b2f 100644
 --- a/container/monitor.go
 +++ b/container/monitor.go
-@@ -206,6 +206,14 @@ func (m *containerMonitor) start() error {
+@@ -7,6 +7,8 @@ import (
+ 	"sync"
+ 	"syscall"
+ 	"time"
++	"bytes"
++	"regexp"
+ 
+ 	"github.com/Sirupsen/logrus"
+ 	"github.com/docker/docker/daemon/execdriver"
+@@ -20,6 +22,10 @@ import (
+ const (
+ 	defaultTimeIncrement = 100
+ 	loggerCloseTimeout   = 10 * time.Second
++	RUNZ                 = "/usr/lib/brand/solaris-oci/runz"
++	STOPPED_STATE        = "stopped"
++	RUNNING_STATE        = "running"
++	checkStateDelay      = 2 * time.Second
+ )
+ 
+ // supervisor defines the interface that a supervisor must implement
+@@ -205,6 +211,15 @@ func (m *containerMonitor) start() error {
+ 			if m.container.RestartCount == 0 {
  				m.container.ExitCode = -1
  				m.resetContainer(false)
- 
-+				// TODO XXX Solaris: we need this because there is a situation for the zones execdriver
-+				// where we have failure cases between when the container has been started and
-+				// when its command is actually running. Since this is the only driver that has this
-+				// for now this extra check is needed.
-+				if m.container.IsRunning() {
++				// TODO XXX Solaris: When we exec runz start to start a container the Docker state
++				// machine currently works in a way that assumes the success of cmd.Start to mean
++				// a successful start of a container. This is not always true. There is the case
++				// when cmd.Start would have succeeded (leading to the container state being Running)
++				// but the container start would have failed (leading to an error that brings us
++				// to this code). This check deals with that condition.
++				if m.container.Running {
 +					afterRun = true
 +				}
-+
+ 
  				return derr.ErrorCodeCantStart.WithArgs(m.container.ID, utils.GetErrorMessage(err))
  			}
+@@ -318,7 +333,36 @@ func (m *containerMonitor) callback(processConfig *execdriver.ProcessConfig, pid
+ 		}
+ 	}
  
+-	m.container.SetRunning(pid)
++	succStart := false
++	running := regexp.MustCompile(RUNNING_STATE)
++	stopped := regexp.MustCompile(STOPPED_STATE)
++	for i := 0; i < 3; i++ {
++		time.Sleep(checkStateDelay)
++		cmd := exec.Command(RUNZ, "state", m.container.Name)
++		outBuf := new(bytes.Buffer)
++		cmd.Stdout = outBuf
++		err := cmd.Run()
++
++		if err != nil {
++			logrus.Errorf("Error getting runz state: %v", err)
++			continue
++		}
++
++		if len(running.FindString(outBuf.String())) > 0 || len(stopped.FindString(outBuf.String())) > 0 {
++			// set succStart to true if container runz state
++			// is running or if the container stopped
++			// because it exited normally.
++			// TODO: fetch exit code.
++			succStart = true
++			m.container.SetRunning(pid)
++		}
++	}
++
++	if !succStart {
++		// Container not started successfully. The error would be caught and
++		// returned by cmd.Wait() 
++		return nil
++	}
+ 
+ 	// signal that the process has started
+ 	// close channel only if not closed
 diff --git a/container/state_solaris.go b/container/state_solaris.go
 new file mode 100644
 index 0000000..645c934
@@ -3247,7 +3302,7 @@ index 0000000..25a496e
 +}
 diff --git a/daemon/execdriver/zones/driver.go b/daemon/execdriver/zones/driver.go
 new file mode 100644
-index 0000000..e0937c0
+index 0000000..b407ba5
 --- /dev/null
 +++ b/daemon/execdriver/zones/driver.go
 @@ -0,0 +1,772 @@
@@ -3909,7 +3964,7 @@ index 0000000..e0937c0
 +// Kill implements the exec driver Driver interface.
 +func (d *Driver) Kill(c *execdriver.Command, sig int) error {
 +
-+	cmd := exec.Command(RUNZ, "kill", c.Name, "9")
++	cmd := exec.Command(RUNZ, "kill", c.Name, strconv.Itoa(sig))
 +	cmd.Dir = filepath.Dir(filepath.Dir(c.Rootfs))
 +
 +	outbuf := new(bytes.Buffer)
