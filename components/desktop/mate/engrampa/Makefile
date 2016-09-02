@@ -16,6 +16,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		engrampa
 COMPONENT_VERSION=	1.14.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	MATE archive manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
