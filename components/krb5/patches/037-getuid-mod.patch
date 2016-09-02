@@ -1,0 +1,61 @@
+#
+# This patch provides support for programs like gssd to control how
+# expand_userid() determines the UID of the running process so those apps can
+# proxy for other users and thus influence the construction of the default
+# ccache path so the krb code accesses that user's ccache.  This patch in
+# conjuction with the patch that allows root to auto-acquire an init cred via
+# the system keytab also allows a process to influence that fall-back behavior.
+# See Solaris/getuid.c and search for instances of app_krb5_user_uid in ON12.
+# Eventually this patch should be removed when the various ON components that
+# rely on it are modified to remove that reliance.
+#
+# This is Solaris specific behavior that MIT will not take upstream.
+# Patch source: in-house
+#
+
+--- krb5-1.14.3-036/src/include/k5-int.h
++++ krb5-1.14.3-037/src/include/k5-int.h
+@@ -2353,4 +2353,6 @@
+ #define k5_prependmsg krb5_prepend_error_message
+ #define k5_wrapmsg krb5_wrap_error_message
+ 
++uid_t krb5_getuid();
++
+ #endif /* _KRB5_INT_H */
+--- krb5-1.14.3-036/src/lib/krb5/os/Makefile.in
++++ krb5-1.14.3-037/src/lib/krb5/os/Makefile.in
+@@ -24,6 +24,7 @@
+ 	gen_port.o	\
+ 	genaddrs.o	\
+ 	gen_rname.o	\
++	getuid.o	\
+ 	hostaddr.o	\
+ 	hostrealm.o	\
+ 	hostrealm_dns.o \
+@@ -71,6 +72,7 @@
+ 	$(OUTPRE)gen_port.$(OBJEXT)	\
+ 	$(OUTPRE)genaddrs.$(OBJEXT)	\
+ 	$(OUTPRE)gen_rname.$(OBJEXT)	\
++	$(OUTPRE)getuid.$(OBJEXT)	\
+ 	$(OUTPRE)hostaddr.$(OBJEXT)	\
+ 	$(OUTPRE)hostrealm.$(OBJEXT)	\
+ 	$(OUTPRE)hostrealm_dns.$(OBJEXT) \
+@@ -118,6 +120,7 @@
+ 	$(srcdir)/gen_port.c	\
+ 	$(srcdir)/genaddrs.c	\
+ 	$(srcdir)/gen_rname.c	\
++	$(srcdir)/getuid.c	\
+ 	$(srcdir)/hostaddr.c	\
+ 	$(srcdir)/hostrealm.c	\
+ 	$(srcdir)/hostrealm_dns.c \
+--- krb5-1.14.3-036/src/lib/krb5/os/expand_path.c
++++ krb5-1.14.3-037/src/lib/krb5/os/expand_path.c
+@@ -291,7 +291,7 @@
+ expand_userid(krb5_context context, PTYPE param, const char *postfix,
+               char **str)
+ {
+-    if (asprintf(str, "%lu", (unsigned long)getuid()) < 0)
++    if (asprintf(str, "%lu", (unsigned long)krb5_getuid()) < 0)
+         return ENOMEM;
+     return 0;
+ }

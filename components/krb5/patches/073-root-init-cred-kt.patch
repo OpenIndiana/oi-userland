@@ -1,0 +1,276 @@
+#
+# This patch provides support in kerberos for root acquiring a default cred via
+# either a root, host service principal or sam account name keys in the keytab
+# if root doesn't have a cred already.  Note that if root has a client keytab
+# provisioned then that will be used instead.
+#
+# This is Solaris specific behavior that MIT will not take upstream.
+# Patch source: in-house
+#
+
+--- a/src/lib/gssapi/krb5/acquire_cred.c
++++ b/src/lib/gssapi/krb5/acquire_cred.c
+@@ -77,6 +77,7 @@
+ #else
+ #include <strings.h>
+ #endif
++#include <ctype.h>
+ 
+ #ifdef USE_LEASH
+ #ifdef _WIN64
+@@ -88,6 +89,9 @@
+ static HANDLE hLeashDLL = INVALID_HANDLE_VALUE;
+ #endif
+ 
++/* for solaris root fallback check */
++static char defktname[BUFSIZ];
++
+ #ifndef LEAN_CLIENT
+ k5_mutex_t gssint_krb5_keytab_lock = K5_MUTEX_PARTIAL_INITIALIZER;
+ static char *krb5_gss_keytab = NULL;
+@@ -590,6 +594,151 @@
+     set_refresh_time(context, cred->ccache, refresh);
+ }
+ 
++#define	SAM_ACCOUNT_LEN 17 /* 15:hostname + 1:$ + 1:\0 */
++krb5_error_code
++get_sam_account_name(char **name)
++{
++    char *p, localname[SAM_ACCOUNT_LEN];
++
++    if (name == NULL)
++	return (EINVAL);
++
++    if (gethostname(localname, SAM_ACCOUNT_LEN) != 0)
++	return (errno);
++
++    localname[SAM_ACCOUNT_LEN - 2] = '\0';
++
++    if ((p = strchr(localname, '.')) != NULL)
++	*p = '\0';
++
++    for (p = localname; *p; p++)
++	*p = toupper(*p);
++
++    (void) strlcat(localname, "$", SAM_ACCOUNT_LEN);
++
++    *name = strdup(localname);
++    if (*name == NULL)
++	return (ENOMEM);
++
++    return (0);
++}
++
++krb5_error_code krb5_kt_find_realm(krb5_context, krb5_keytab, krb5_principal,
++                                   krb5_data *);
++
++static krb5_error_code
++get_root_initcred_keytab(krb5_context context,
++                      krb5_creds *kcreds,
++                      krb5_gss_cred_id_rec *gsscred,
++                      const char *name,
++                      krb5_int32 type,
++                      krb5_get_init_creds_opt *opt)
++{
++    krb5_principal client_princ;
++    krb5_error_code code;
++
++    if (type == KRB5_NT_SRV_HST) {
++        code = krb5_sname_to_principal(context, NULL, name, type,
++                                       &client_princ);
++    } else {
++        /* Assuming KRB5_NT_PRINCIPAL */
++        code = krb5_parse_name(context, name, &client_princ);
++    }
++    if (code)
++        return code;
++
++    if (krb5_is_referral_realm(&client_princ->realm)) {
++        krb5_data realm;
++
++        code = krb5_kt_find_realm(context, gsscred->client_keytab,
++                                  client_princ, &realm);
++        if (code == 0) {
++            krb5_free_data_contents(context, &client_princ->realm);
++            client_princ->realm.length = realm.length;
++            client_princ->realm.data = realm.data;
++        } else {
++            /* Try to set a useful error message */
++            char *princ_name = NULL;
++            char kt_name[BUFSIZ];
++
++            (void) krb5_unparse_name(context, client_princ, &princ_name);
++            (void) krb5_kt_get_name(context, gsscred->client_keytab, kt_name,
++                                    BUFSIZ);
++            krb5_set_error_message(context, code,
++                                   _("Failed to find realm for %s in "
++                                     "keytab %s"),
++                                   princ_name != NULL ? princ_name : "unknown",
++                                   kt_name);
++            krb5_free_unparsed_name(context, princ_name);
++        }
++    }
++    if (code)
++        goto cleanup;
++
++    code = krb5_get_init_creds_keytab(context, kcreds, client_princ,
++                                      gsscred->client_keytab, 0, NULL, opt);
++    if (code == 0) {
++        /* set the gsscred name to that of the princ for which an init cred was
++         * acquired. */
++        if (gsscred->name != NULL)
++            (void) kg_release_name(context, &gsscred->name);
++
++        code = kg_init_name(context, client_princ, NULL, NULL, NULL,
++                            KG_INIT_NAME_NO_COPY, &gsscred->name);
++        /* Since KG_INIT_NAME_NO_COPY is set do not free client_princ if
++         * kg_init_name succeeds. */
++        if (code == 0)
++            return 0;
++        else
++            krb5_free_cred_contents(context, kcreds);
++    }
++
++cleanup:
++    krb5_free_principal(context, client_princ);
++    return code;
++}
++
++/*
++ * This implements long time Solaris behavior where processes running as root
++ * will try to acquire an init cred via the default/system keytab.  The root,
++ * host and SAM princs are tried in that order until one succeeds or they all
++ * fail.
++ */
++static krb5_error_code
++root_init_cred_kt_fallback(krb5_context context,
++                          krb5_creds *kcreds,
++                          krb5_gss_cred_id_rec *gsscred,
++                          krb5_get_init_creds_opt *opt)
++{
++    char *sam_name = NULL;
++    krb5_error_code code;
++
++    /* Try the root/<FQDN> service princ in system keytab */
++    code = get_root_initcred_keytab(context, kcreds, gsscred, "root",
++                                    KRB5_NT_SRV_HST, opt);
++    if (code == 0)
++        goto out;
++
++    /* Try the host/<FQDN> service princ in system keytab if the root princ
++     * wasn't found */
++    code = get_root_initcred_keytab(context, kcreds, gsscred, "host",
++                                    KRB5_NT_SRV_HST, opt);
++    if (code == 0)
++        goto out;
++
++    /* Try the SAM account princ in system keytab if the host service princ
++     * wasn't found for MS interop sake */
++    code = get_sam_account_name(&sam_name);
++    if (code)
++        goto out;
++
++    code = get_root_initcred_keytab(context, kcreds, gsscred, sam_name,
++                                    KRB5_NT_PRINCIPAL, opt);
++    free(sam_name);
++out:
++    return code;
++}
++
+ /* Get initial credentials using the supplied password or client keytab. */
+ static krb5_error_code
+ get_initial_cred(krb5_context context, krb5_gss_cred_id_rec *cred)
+@@ -609,8 +758,41 @@
+                                             cred->password, NULL, NULL, 0,
+                                             NULL, opt);
+     } else if (cred->client_keytab != NULL) {
+-        code = krb5_get_init_creds_keytab(context, &creds, cred->name->princ,
+-                                          cred->client_keytab, 0, NULL, opt);
++        if (krb5_getuid() == 0) {
++            char clientktname[BUFSIZ];
++
++            /* assuming we only need to get the default keytab name once */
++            if (defktname[0] == '\0') {
++                code = krb5_kt_default_name(context, defktname,
++                                            sizeof(defktname));
++                if (code)
++                    goto cleanup;
++            }
++
++            code = krb5_kt_get_name(context, cred->client_keytab, clientktname,
++                                    sizeof(clientktname));
++            if (code)
++                goto cleanup;
++
++            /*
++             * If the client keytab name is the same as the system default
++             * keytab and we are root then we need to use the Solaris root
++             * fallback behavior in root_init_cred_kt_fallback().
++             */
++            if (strcmp(defktname, clientktname) == 0) {
++                code = root_init_cred_kt_fallback(context, &creds, cred, opt);
++            } else {
++                code = krb5_get_init_creds_keytab(context, &creds,
++                                                  cred->name->princ,
++                                                  cred->client_keytab, 0, NULL,
++                                                  opt);
++            }
++        } else {
++            code = krb5_get_init_creds_keytab(context, &creds,
++                                              cred->name->princ,
++                                              cred->client_keytab, 0, NULL,
++                                              opt);
++        }
+     } else {
+         code = KRB5_KT_NOTFOUND;
+     }
+@@ -700,6 +882,23 @@
+             krb5_clear_error_message(context);
+             code = 0;
+         }
++        /*
++         * The logic below is involved in providing support for Solaris
++         * behavior where root processes will fall back to acquiring an initial
++         * cred via the system/default keytab.  The idea is that if the
++         * client_keytab could not be resolved or it doesn't exist then set the
++         * client_keytab field to the system/default keytab.
++         */
++        if (krb5_getuid() == 0) {
++            if (cred->client_keytab == NULL ||
++                krb5_kt_have_content(context, cred->client_keytab) != 0) {
++
++                if (cred->client_keytab != NULL)
++                    krb5_kt_close(context, cred->client_keytab);
++
++                code = krb5_kt_default(context, &cred->client_keytab);
++            }
++        }
+     }
+     if (code)
+         goto error;
+--- a/src/lib/krb5/keytab/Makefile.in
++++ b/src/lib/krb5/keytab/Makefile.in
+@@ -13,6 +13,7 @@
+ 	ktremove.o	\
+ 	ktfns.o		\
+ 	kt_file.o	\
++	kt_findrealm.o	\
+ 	kt_memory.o	\
+ 	kt_srvtab.o	\
+ 	read_servi.o	\
+@@ -26,6 +27,7 @@
+ 	$(OUTPRE)ktremove.$(OBJEXT)	\
+ 	$(OUTPRE)ktfns.$(OBJEXT)	\
+ 	$(OUTPRE)kt_file.$(OBJEXT)	\
++	$(OUTPRE)kt_findrealm.$(OBJEXT)	\
+ 	$(OUTPRE)kt_memory.$(OBJEXT)	\
+ 	$(OUTPRE)kt_srvtab.$(OBJEXT)	\
+ 	$(OUTPRE)read_servi.$(OBJEXT)	\
+@@ -39,6 +41,7 @@
+ 	$(srcdir)/ktremove.c	\
+ 	$(srcdir)/ktfns.c	\
+ 	$(srcdir)/kt_file.c	\
++	$(srcdir)/kt_findrealm.c	\
+ 	$(srcdir)/kt_memory.c	\
+ 	$(srcdir)/kt_srvtab.c	\
+ 	$(srcdir)/read_servi.c	\
