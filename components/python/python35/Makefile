@@ -58,7 +58,9 @@ COMPONENT_PRE_BUILD_ACTION=($(CHMOD) +x \
 # python-config
 CC +=	$(CFLAGS)
 
-C99MODE=
+studio_C99MODE= $(studio_C99_ENABLE)
+CFLAGS += $(XPG6MODE)
+
 CPPFLAGS +=	-IPython
 
 # to find the ncurses headers

@@ -52,7 +52,9 @@ PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 # We patch auto* files, so regenerate headers and configure
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoheader ; autoconf -f)
 
-C99MODE=
+studio_C99MODE= $(studio_C99_ENABLE)
+CFLAGS += $(XPG6MODE)
+
 CPPFLAGS +=	-IPython
 
 # to find the ncurses headers
