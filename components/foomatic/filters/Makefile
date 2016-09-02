@@ -26,19 +26,23 @@ BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-filters
-COMPONENT_VERSION=	4.0.15
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f5b7b67aacedec4c0294d242cbffbe0d7d3cd0fdd2b410c055e818f25ed3bc79
+FOO_VERSION=		4.0
+# Latest foomatic-filters patchlevel where the snapshot is derived from.
+# Makes the IPS versioning monotonously growing.
+FOO_PATCHLEVEL=		17
+DAILY_VERSION=		20160212
+COMPONENT_VERSION=	$(FOO_VERSION)-$(DAILY_VERSION)
+IPS_COMPONENT_VERSION=	$(FOO_VERSION).$(FOO_PATCHLEVEL).$(DAILY_VERSION)
+TPNO=			30223
+COMPONENT_ARCHIVE_HASH=	sha256:e6f75544d61de5b36ffc4009c0729a6fb0f19245da7d05f0c236731d6f2ebecf
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+COMPONENT_PROJECT_URL=	https://wiki.linuxfoundation.org/openprinting/database/foomatic
 COMPONENT_BUGDB=	utility/foomatic
-
-TPNO=			8420
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.32= $(USRLIBDIR)/lp/bin
+CONFIGURE_BINDIR.$(BUILD_BITS)= $(USRLIBDIR)/lp/bin
 
 CONFIGURE_OPTIONS +=	--prefix=$(USRLIBDIR)/lp
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
@@ -48,7 +52,10 @@ CONFIGURE_OPTIONS +=	--with-execpath=$(USRLIBDIR)/lp/bin:$(USRBINDIR):$(BINDIR)
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
 
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+# do not install filters for PPR spooler
+COMPONENT_INSTALL_TARGETS= install-cups install-man
 
 REQUIRED_PACKAGES += print/filter/a2ps
 REQUIRED_PACKAGES += system/library/libdbus

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -32,21 +32,19 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2004/262
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file path=etc/gnu/foomatic/filter.conf preserve=renamenew
 file path=etc/gnu/foomatic/filter.conf.sample
 file path=usr/lib/cups/backend/beh
-link path=usr/lib/cups/filter/foomatic-rip target=../../lp/bin/foomatic-rip
-link path=usr/lib/lp/bin/beh target=../../cups/backend/beh
-file path=usr/lib/lp/bin/foomatic-rip
-file Solaris/wecho.sh path=usr/lib/lp/bin/wecho
-link path=usr/lib/ppr/interfaces/foomatic-rip target=../../lp/bin/foomatic-rip
-link path=usr/lib/ppr/lib/foomatic-rip target=../../lp/bin/foomatic-rip
+# drop also the LP scheduler support
+file usr/lib/lp/bin/foomatic-rip path=usr/lib/cups/filter/foomatic-rip
 file path=usr/share/man/man1/foomatic-rip.1
+#
 legacy pkg=SUNWffiltersr \
     desc="foomatic-filters - Foomatic Print Filters (root)" \
     name="foomatic-filters - Foomatic Print Filters (root)"
 legacy pkg=SUNWffiltersu \
     desc="foomatic-filters - Foomatic Print Filters (user)" \
     name="foomatic-filters - Foomatic Print Filters (user)"
-license foomatic-filters.license license=GPLv2
+license COPYING license=GPLv2
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/a2ps
