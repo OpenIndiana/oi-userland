@@ -26,21 +26,32 @@ BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db-engine
-COMPONENT_VERSION=	3.0-20080903
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:668f2020eb136359523090cc17151e6aad0c56bce0e4ae91217a9eba19eec917
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+# version (4.0) is relative to foomatic-db-engine
+#  ...do not combine foomatic-db with foomatic-db-engine of the different versions
+FOO_VERSION=		4.0
+# Latest foomatic-db-engine patchlevel where the snapshot is derived from.
+# Makes the IPS versioning monotonously growing.
+FOO_PATCHLEVEL=		12
+DAILY_VERSION=		20160721
+COMPONENT_VERSION=	$(FOO_VERSION)-$(DAILY_VERSION)
+IPS_COMPONENT_VERSION=	$(FOO_VERSION).$(FOO_PATCHLEVEL).$(DAILY_VERSION)
+TPNO=			30221
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:bb1836bb321298ddecf3a68e5e13db7b3d23c72c219c33c9b82df257b6b34f40
+COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://wiki.linuxfoundation.org/openprinting/database/foomatic
 COMPONENT_BUGDB=	utility/foomatic
-
-TPNO=			6399
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	FILEUTIL=$(BINDIR)/true
-CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu
+CONFIGURE_OPTIONS +=	TAR=/usr/gnu/bin/tar
+# foomatic-filters (pkg:/.../foomatic-rip) keeps "filter.conf" here:
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
+
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
 # the build system does not support building outside of the source tree
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D) ;
@@ -51,6 +62,9 @@ COMPONENT_PRE_CONFIGURE_ACTION += cd $(@D)/lib ; $(PERL) Makefile.PL
 # install perl modules
 COMPONENT_PRE_INSTALL_ACTION = \
  ( cd $(@D)/lib ; $(GMAKE) install_vendor DESTDIR=$(PROTO_DIR) )
+
+# publish for only one version of perl
+PERL_VERSIONS = $(PERL_VERSION)
 
 # the perl .packlist contains the path to the file as built rather than
 # as installed. Fix to be installed path, ie remove PROTO_DIR.

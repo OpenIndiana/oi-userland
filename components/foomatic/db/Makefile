@@ -26,23 +26,33 @@ BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db
-COMPONENT_VERSION=	20080903
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:a404d1243a313259490a6a29238498c438b6e8638dafeb980ab98de347957414
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+DAILY_VERSION=		20160721
+# foomatic-db creates only the daily snapshots
+COMPONENT_VERSION=	$(DAILY_VERSION)
+FOO_VERSION=		4.0
+IPS_COMPONENT_VERSION=	$(FOO_VERSION).$(DAILY_VERSION)
+TPNO=			30222
+# version (4.0) is relative to foomatic-db-engine
+#  ...do not combine foomatic-db with foomatic-db-engine of the different versions
+COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(FOO_VERSION)-$(DAILY_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:8067ec4cee262fad8a490cb2a2836a8576eff745dd74b6478899b337a020a607
+COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://wiki.linuxfoundation.org/openprinting/database/foomatic
 COMPONENT_BUGDB=	utility/foomatic
-
-TPNO=			6398
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# var is needed to check the "weird symlinks"
+PKG_MACROS += COMPONENT_DIR="$(COMPONENT_DIR)"
+# directory to search for "include" in mogrify .p5m
+PKG_OPTIONS += -I $(COMPONENT_DIR)
+
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 
-# One file is not gzipped; fix it
-COMPONENT_POST_INSTALL_ACTION = \
- gzip -c $(SOURCE_DIR)/db/source/PPD/Oce/Others/IM8530_1.PPD \
-  > $(PROTO_DIR)/usr/share/foomatic/db/source/PPD/Oce/Others/IM8530_1.ppd.gz
+CONFIGURE_OPTIONS +=	--with-drivers=NOOBSOLETES
+CONFIGURE_OPTIONS +=	INSTALL=/usr/sbin/install
+CONFIGURE_OPTIONS +=	TAR=/usr/gnu/bin/tar
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
