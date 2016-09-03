@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =		openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR = 	1.10
-COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).3
+COMPONENT_VERSION =	    	$(OPENMPI_VERSION_MAJOR).4
 COMPONENT_FMRI = library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =		http://www.open-mpi.org
@@ -27,7 +27,7 @@ COMPONENT_SRC_NAME =		openmpi
 COMPONENT_SRC =		    	$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	    	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:681c2ed1c96d187a3c84f30811a2b143d26de74884a740e5d02ec265ef70ab00
+    sha256:492332cd77d8af8ce37ab9d82964dae7ddfc1c2c60c0b417973ff7a70cd89991
 COMPONENT_ARCHIVE_URL =	http://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		$(COMPONENT_FMRI)
 
@@ -38,6 +38,10 @@ COMPONENT_LICENSE      = 	BSD 2-Clause
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk  
+
+PATH=/usr/gnu/bin:/usr/bin
+
+ENV+= -i
 
 CONFIGURE_PREFIX   =    $(MPI_PREFIX)
 
