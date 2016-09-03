@@ -16,6 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
+COMPONENT_REVISION= 1
 
 OPENJDK_BUILD_NUMBER=92
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
