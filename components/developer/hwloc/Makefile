@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          hwloc
-COMPONENT_VERSION=       1.11.3
+COMPONENT_VERSION=       1.11.4
 COMPONENT_SUMMARY=       hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=   https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=          developer/hwloc
@@ -24,7 +24,7 @@ COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=       $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=   https://www.open-mpi.org/software/hwloc/v1.11/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e7748e4412fb94cf22fd1971de939d9770e6068f7003dea107417f21146333fa
+  sha256:fdc59d06c1ddedb0fa41039bb84cb406f0570b6e66223c13a60077831d36e038
 COMPONENT_LICENSE=      BSD-2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
@@ -45,3 +45,11 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
