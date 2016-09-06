@@ -1,7 +1,7 @@
 '\" te
 .\" Portions Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
 .\" This manual page is derived from documentation obtained from the OpenSC organization (www.opensc-project.org). This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. This library is distributed in the hope that it is useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-.TH pam_pkcs11 7 "28 Oct 2015" "SunOS 5.12" "Standards, Environments, and Macros"
+.TH pam_pkcs11 7 "30 Aug 2016" "SunOS 5.12" "Standards, Environments, and Macros"
 .SH NAME
 pam_pkcs11 \- PAM Authentication Module for the PKCS#11 token libraries
 .SH SYNOPSIS
@@ -107,7 +107,7 @@ The following example illustrates how to configure the \fBpam_pkcs11\fR module f
 .el o
 Set up the PKCS#11 module.
 .sp
-On Solaris, the PKCS#11 module should be set to \fB/usr/lib/libpkcs11.so.1\fR, the PKCS#11 Cryptographic Framework library. 
+On Solaris, the PKCS#11 module should be set to \fB/usr/lib/$ISA/libpkcs11.so.1\fR, the PKCS#11 Cryptographic Framework library. 
 .RE
 .RS +4
 .TP
@@ -227,6 +227,10 @@ use_mappers = digest, cn, pwent, uid, mail, subject, null;
 .sp
 
 Some mappers do not require the specification of a mapfile, for example, the common name mapper. Other mappers require mapfiles, for example, the digest mapper. Some sample mapping files can be found in the \fB/etc/security/pam_pkcs11\fR directory.
+.sp
+.RE
+.RS +4
+The $ISA token in all the module paths is replaced by an implementation defined directory name which defines the path relative to the calling program's instruction set architecture. This allows the pam_pkcs11 module to support both 32 and 64 bit applications co-exist concurrently in the system. For example, for the "module = /usr/lib/$ISA/libpkcs11.so" option, at run time, /usr/lib/64/libpkcs11.so will be loaded for 64 bit applications and /usr/lib/32/libpkcs11.so for 32 bit applications. 
 .RE
 .SH OPTIONS
 .sp
@@ -270,7 +274,7 @@ Enable debugging output.
 .ne 2
 .mk
 .na
-\fB\fB/usr/lib/pam_pkcs11/ldap_mapper.so\fR\fR
+\fB\fB/usr/lib/pam_pkcs11/$ISA/ldap_mapper.so\fR\fR
 .ad
 .sp .6
 .RS 4n
@@ -281,7 +285,7 @@ Mapper module.
 .ne 2
 .mk
 .na
-\fB\fB/usr/lib/pam_pkcs11/opensc_mapper.so\fR\fR
+\fB\fB/usr/lib/pam_pkcs11/$ISA/opensc_mapper.so\fR\fR
 .ad
 .sp .6
 .RS 4n
@@ -292,7 +296,7 @@ Mapper module.
 .ne 2
 .mk
 .na
-\fB\fB/usr/lib/pam_pkcs11/openssh_mapper.so\fR\fR
+\fB\fB/usr/lib/pam_pkcs11/$ISA/openssh_mapper.so\fR\fR
 .ad
 .sp .6
 .RS 4n

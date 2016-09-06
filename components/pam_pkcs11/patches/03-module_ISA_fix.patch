@@ -1,0 +1,258 @@
+#
+# This patch is to add the ISA (Instruction Set Architecture) support to 
+# module paths in the pam_pkcs11.conf configuration file of the PAM_PKCS11
+# component, so that the PAM_PKCS11 module can be used for both 32 and 
+# 64 bit applications at the same time. This patch is for Solaris only. 
+#
+--- pam_pkcs11-0.6.8_ORIG/src/common/strings.h	Sat Oct 23 11:36:36 2010
++++ pam_pkcs11-0.6.8_NEW/src/common/strings.h	Thu Sep  1 13:47:52 2016
+@@ -125,6 +125,16 @@
+  */
+ M_EXTERN char *trim(const char *str);
+ 
++#ifdef MODULE_ISA_FIX
++/**
++ * Expand PAM_ISA ("/$ISA/") in a path. 
++ * For example, /usr/lib/$ISA/libpkcs11.so will be expanded to 
++ * /usr/lib/64/libpkcs11.so for 64 bit applications and to 
++ * /usr/lib/32/libpkcs11.so for 32 bit applications. 
++ */
++M_EXTERN  int expand_isa_path(const char *in, char *out, size_t out_len);
++#endif
++
+ #undef M_EXTERN
+ 
+ #endif
+--- pam_pkcs11-0.6.8_ORIG/src/common/strings.c	Sat Oct 23 11:36:36 2010
++++ pam_pkcs11-0.6.8_NEW/src/common/strings.c	Fri Sep  2 10:08:11 2016
+@@ -34,6 +34,17 @@
+ #include <unistd.h>
+ #include "strings.h"
+ 
++#ifdef MODULE_ISA_FIX
++#include <sys/param.h>
++
++#define	PAM_ISA		"/$ISA/"
++#ifdef	_LP64
++#define	PAM_ISA_DIR	"/64/"
++#else	/* !_LP64 */
++#define	PAM_ISA_DIR	"/32/"
++#endif	/* _LP64 */
++#endif
++
+ /*
+ check for null or blank string
+ */
+@@ -182,4 +193,33 @@
+         return res;
+ }
+ 
++
++#ifdef MODULE_ISA_FIX
++/*
++ * Expand PAM_ISA ("/$ISA/") in a module path. 
++ */
++int expand_isa_path(const char *in, char *out, size_t out_len) {
++        char *isa;
++        char buf[MAXPATHLEN];
++
++        if (strlcpy(buf, in, sizeof (buf)) >= sizeof (buf)) { /* too long */
++                return 1;
++	}
++
++	/* Check for Instruction Set Architecture indicator */
++	if ((isa = strstr(buf, PAM_ISA)) != NULL) {
++		*isa = '\000';
++		isa += strlen(PAM_ISA);
++		if (snprintf(out, out_len, "%s%s%s", buf, PAM_ISA_DIR,
++		    isa) >= out_len) {
++		        return 1;
++		}
++	} else if (strlcpy(out, in, out_len) >= out_len) {
++		return 1;
++	}
++
++	return 0;
++}
++#endif
++
+ #endif /* __STRINGS_C_ */
+--- pam_pkcs11-0.6.8_ORIG/src/pam_pkcs11/pam_pkcs11.c	Sat Apr  7 09:55:19 2012
++++ pam_pkcs11-0.6.8_NEW/src/pam_pkcs11/pam_pkcs11.c	Thu Sep  1 13:54:27 2016
+@@ -57,6 +57,10 @@
+ #endif
+ #define LOGNAME   "PAM-PKCS11"  /* name for log-file entries */
+ 
++#ifdef MODULE_ISA_FIX
++#include <sys/param.h>
++#endif
++
+ /*
+ * comodity function that returns 1 on null, empty o spaced string
+ */
+@@ -198,6 +202,9 @@
+   char env_temp[256] = "";
+   char **issuer, **serial;
+   const char *login_token_name = NULL;
++#ifdef MODULE_ISA_FIX
++  char real_pkcs11_modulepath[MAXPATHLEN];
++#endif
+ 
+   pam_prompt(pamh, PAM_TEXT_INFO , NULL, _("Smartcard authentification starts"));
+ 
+@@ -315,9 +322,28 @@
+     return PAM_IGNORE;
+   }
+ 
++#ifdef MODULE_ISA_FIX
++  /* get the real pkcs11 module path */  
++  rv = expand_isa_path(configuration->pkcs11_modulepath,
++      real_pkcs11_modulepath, sizeof (real_pkcs11_modulepath));
++  if (rv) {
++          pam_syslog(pamh, LOG_ERR, 
++              "load_pkcs11_module(): problem with pkcs11 module path");
++	  return PAM_AUTHINFO_UNAVAIL;
++  } else {
++          DBG1("The real PKCS11 module path is %s", real_pkcs11_modulepath);
++  }
++#endif
++
+   /* load pkcs #11 module */
+   DBG("loading pkcs #11 module...");
++
++#ifdef MODULE_ISA_FIX
++  rv = load_pkcs11_module(real_pkcs11_modulepath, &ph);
++#else
+   rv = load_pkcs11_module(configuration->pkcs11_modulepath, &ph);
++#endif
++
+   if (rv != 0) {
+     ERR2("load_pkcs11_module() failed loading %s: %s",
+ 		configuration->pkcs11_modulepath, get_error());
+--- pam_pkcs11-0.6.8_ORIG/src/pam_pkcs11/mapper_mgr.c	Sat Jul  9 05:20:48 2011
++++ pam_pkcs11-0.6.8_NEW/src/pam_pkcs11/mapper_mgr.c	Thu Sep  1 13:57:17 2016
+@@ -38,6 +38,10 @@
+ #include "../mappers/mapperlist.h"
+ #include "mapper_mgr.h"
+ 
++#ifdef MODULE_ISA_FIX
++#include <sys/param.h>
++#endif
++
+ struct mapper_listitem *root_mapper_list;
+ 
+ /*
+@@ -54,6 +58,9 @@
+ 	int old_level=get_debug_level();
+ 	const char *libname = NULL;
+ 	mapper_module * res = NULL;
++#ifdef MODULE_ISA_FIX
++	char real_libname[MAXPATHLEN];
++#endif
+ 
+ 	/* get module info */
+ 	root = scconf_find_block(ctx,NULL,"pam_pkcs11");
+@@ -93,7 +100,17 @@
+ 	    }
+ 	} else if (blk) { /* assume dynamic module */
+ 	    DBG1("Loading dynamic module for mapper '%s'",name);
++#ifdef MODULE_ISA_FIX
++	    if (expand_isa_path(libname, real_libname, sizeof (real_libname))) {
++	        DBG1("Problem in module path %s", libname);
++                return NULL;
++	    } else {
++	        DBG1("Module path is %s", real_libname);
++	    }
++	    handler= dlopen(real_libname, RTLD_NOW);
++#else
+ 	    handler= dlopen(libname,RTLD_NOW);
++#endif
+ 	    if (!handler) {
+ 		DBG3("dlopen failed for module:  %s path: %s Error: %s",name,libname,dlerror());
+ 		return NULL;
+--- pam_pkcs11-0.6.8_ORIG/src/tools/pkcs11_inspect.c	Fri Apr  6 13:08:25 2012
++++ pam_pkcs11-0.6.8_NEW/src/tools/pkcs11_inspect.c	Thu Sep  1 13:58:46 2016
+@@ -32,6 +32,10 @@
+ #include "../pam_pkcs11/pam_config.h"
+ #include "../pam_pkcs11/mapper_mgr.h"
+ 
++#ifdef MODULE_ISA_FIX
++#include <sys/param.h>
++#endif
++
+ int main(int argc, const char **argv) {
+   int i, rv;
+   pkcs11_handle_t *ph;
+@@ -39,6 +43,9 @@
+   unsigned int slot_num = 0;
+   cert_object_t **certs;
+   int cert_count;
++#ifdef MODULE_ISA_FIX
++  char real_pkcs11_modulepath[MAXPATHLEN];
++#endif
+ 
+   /* first of all check whether debugging should be enabled */
+   for (i = 0; i < argc; i++)
+@@ -67,7 +74,19 @@
+ 
+   /* load pkcs #11 module */
+   DBG("loading pkcs #11 module...");
++
++#ifdef MODULE_ISA_FIX
++  rv = expand_isa_path(configuration->pkcs11_modulepath,
++      real_pkcs11_modulepath, sizeof (real_pkcs11_modulepath));
++  if (rv) {
++      ERR("Error in the PKCS11 module path");
++      return 1;
++  }
++  rv = load_pkcs11_module(real_pkcs11_modulepath, &ph);
++#else
+   rv = load_pkcs11_module(configuration->pkcs11_modulepath, &ph);
++#endif
++
+   if (rv != 0) {
+     ERR2("load_pkcs11_module(%s) failed: %s", configuration->pkcs11_modulepath,
+       get_error());
+--- pam_pkcs11-0.6.8_ORIG/src/tools/pklogin_finder.c	Fri Apr  6 13:08:25 2012
++++ pam_pkcs11-0.6.8_NEW/src/tools/pklogin_finder.c	Thu Sep  1 13:59:18 2016
+@@ -32,6 +32,10 @@
+ #include "../pam_pkcs11/pam_config.h"
+ #include "../pam_pkcs11/mapper_mgr.h"
+ 
++#ifdef MODULE_ISA_FIX
++#include <sys/param.h>
++#endif
++
+ int main(int argc, const char **argv) {
+   int i, rv;
+   char *user = NULL;
+@@ -40,6 +44,9 @@
+   cert_object_t **certs;
+   int cert_count;
+   unsigned int slot_num = 0;
++#ifdef MODULE_ISA_FIX
++  char real_pkcs11_modulepath[MAXPATHLEN];
++#endif
+ 
+ 
+   /* first of all check whether debugging should be enabled */
+@@ -69,7 +76,19 @@
+ 
+   /* load pkcs #11 module */
+   DBG("loading pkcs #11 module...");
++
++#ifdef MODULE_ISA_FIX
++  rv = expand_isa_path(configuration->pkcs11_modulepath,
++      real_pkcs11_modulepath, sizeof (real_pkcs11_modulepath));
++  if (rv) {
++      ERR("Error in the PKCS11 module path");
++      return 1;
++  }
++  rv = load_pkcs11_module(real_pkcs11_modulepath, &ph);
++#else
+   rv = load_pkcs11_module(configuration->pkcs11_modulepath, &ph);
++#endif
++
+   if (rv != 0) {
+     DBG1("load_pkcs11_module() failed: %s", get_error());
+     return 1;
