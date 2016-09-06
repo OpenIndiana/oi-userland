@@ -1,0 +1,15 @@
+The libgnt library needs to be linked against the GNU version of libpanel.
+
+This patch should be send upstream when sanitized into an acceptable form.
+
+--- pidgin-2.11.0/configure.ac.orig	2016-09-02 14:27:14.528745431 +0000
++++ pidgin-2.11.0/configure.ac	2016-09-02 14:28:33.444799880 +0000
+@@ -688,7 +688,7 @@
+ 		# ncursesw was not found. Look for plain old ncurses
+ 		enable_consoleui=yes
+ 		AC_CHECK_LIB(ncurses, initscr, [GNT_LIBS="-lncurses"], [enable_consoleui=no])
+-		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -lpanel"],
++		AC_CHECK_LIB(panel, update_panels, [GNT_LIBS="$GNT_LIBS -L/usr/gnu/lib/64 -R/usr/gnu/lib/64 -lpanel"],
+ 		    [enable_consoleui=no], [$GNT_LIBS])
+ 		AC_DEFINE(NO_WIDECHAR, 1, [Define to 1 if you don't have wide-character support.])
+ 		if test x"$ac_ncurses_includes" != "x"; then

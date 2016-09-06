@@ -79,10 +79,30 @@ CONFIGURE_OPTIONS +=	--disable-gevolution
 CONFIGURE_OPTIONS +=	--enable-cap
 CONFIGURE_OPTIONS +=	--disable-meanwhile
 CONFIGURE_OPTIONS +=	--disable-nm
-CONFIGURE_OPTIONS +=	--disable-consoleui
+CONFIGURE_OPTIONS +=	--enable-consoleui
+CONFIGURE_OPTIONS +=	--with-ncurses-headers=/usr/include/ncurses
 CONFIGURE_OPTIONS +=	--disable-vv
 # 23200148 undo this once 23169155 Move developer/gnome/gettext to Userland
 CONFIGURE_OPTIONS +=	INTLTOOL_MERGE="$(PERL) /usr/bin/intltool-merge"
+
+# We have two implementations of libcurses in Solaris. finch needs to use the
+# ncurses one. The curses implementations in turn, use libpanel, but the
+# ncurses one is under /usr/gnu/lib. To make sure that it correctly uses that
+# one, and not the one under /usr/lib, we need to remove all occurences of
+# -L/usr/lib/$(MACH64), -L/usr/lib, -L/lib/$(MACH64) and -L/lib from all
+# Makefiles.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(@D) ; \
+	mlist=`/usr/bin/find . -name 'Makefile'` ; \
+	echo $$mlist ; \
+	for f in $$mlist ; do \
+		$(GSED) -i \
+			-e 's|-L/usr/lib/$(MACH64) ||g' \
+			-e 's|-L/usr/lib ||g' \
+			-e 's|-L/lib/$(MACH64) ||g' \
+			-e 's|-L/lib ||g' \
+			$$f ; \
+        done)
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=	V=1
@@ -106,6 +126,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += library/python/python-dbus-27
