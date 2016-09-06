@@ -26,12 +26,12 @@ BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	8.5.3
+COMPONENT_VERSION=	8.5.5
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d0d1ecfd88d733cf3666cc39483ea092627840cd2cfab8fae09f93b7bf05d21d
+    sha256:28c50366e0b8f16086ab792fbe4c3dba5a716185d0c8c143661b7fed870147c0
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 # Tomcat subcomponents
@@ -40,7 +40,7 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:101a31ee0474282a287b16c46fa6e793ede43ceecaecabbd382f6e0b1b67ef72
 COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.5.1-201509040015/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			29493
+TPNO=			31550
 
 BUILD_STYLE= ant
 TEST_TARGET= $(SKIP_TEST)
