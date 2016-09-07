@@ -26,19 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fixtures
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=	1.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4494c4862ad99ffb8354f7456f1c9a4ba68b607d9dabb912999d4ad60c7d9f54
+    sha256:3e1c61753d0fafc1429591d33ad6b828a0673a200eae63dd6ac0685479db5d36
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/python-fixtures
+COMPONENT_PROJECT_URL=	https://github.com/testing-cabal/fixtures
 COMPONENT_BUGDB=	python-mod/fixtures
 
-TPNO=		26001
-
-# Depends on testtools which is not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+TPNO=			28000
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -51,4 +48,13 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+# Run the tests in the build directory so as not to touch the source directory.
+# The tests are copied over during the build, so we don't have to do that now.
+COMPONENT_TEST_DIR = $(@D)
+COMPONENT_TEST_CMD = py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+test:		$(TEST_NO_ARCH)
+
+system-test:	$(NO_TESTS)
