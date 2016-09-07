@@ -132,7 +132,9 @@ CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 COMPONENT_PREP_ACTION += ( cd $(@D) ; NOCONFIGURE=1 $(CONFIG_SHELL) autogen.sh );
 
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libtheora
+REQUIRED_PACKAGES += codec/libvorbis
 REQUIRED_PACKAGES += codec/libvpx
 REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += codec/speex

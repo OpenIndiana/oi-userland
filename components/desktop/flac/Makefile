@@ -44,6 +44,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --enable-ogg
 
+REQUIRED_PACKAGES += codec/libogg
+REQUIRED_PACKAGES += codec/libvorbis
 REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

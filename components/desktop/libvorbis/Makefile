@@ -21,29 +21,34 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		64_and_32
+BUILD_BITS= 		32_and_64
 COMPILER=		gcc
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		speex
-COMPONENT_VERSION=	1.2rc1
-HUMAN_VERSION=		$(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=	1.2
-COMPONENT_PROJECT_URL=	http://www.speex.org/
+COMPONENT_NAME=		libvorbis
+COMPONENT_VERSION=	1.3.3
+COMPONENT_PROJECT_URL=	http://downloads.xiph.org/releases/vorbis/
 COMPONENT_ARCHIVE_HASH= \
-	sha256:342f30dc57bd4a6dad41398365baaa690429660b10d866b7d508e8f1179cb7a6
-COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
+	sha256:6d747efe7ac4ad249bf711527882cef79fb61d9194c45b5ca5498aa60f290762
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 
-TPNO=			9576
+TPNO=			9575
 
-TEST_TARGET = $(NO_TESTS)
+# gmake check works and all test pass but because of hard-coded paths
+# check with results-all.master fails
+TEST_TARGET = $(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 
-REQUIRED_PACKAGES += codec/libogg
-REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
+# Replace the following with REQUIRED_PACKAGES += codec/libogg when 
+# the build server is updated
+# The dependency isn't installed, so add it manually since pkgdepend
+# can't resolve them yet: 15708323
+DEPENDED += $(WS_TOP)/components/desktop/libogg/build/manifest-$(MACH)-libogg.depend
+REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../libogg/Makefile)
+
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += system/library/math

@@ -21,29 +21,11 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		64_and_32
-COMPILER=		gcc
-include ../../../make-rules/shared-macros.mk
-
-COMPONENT_NAME=		speex
-COMPONENT_VERSION=	1.2rc1
-HUMAN_VERSION=		$(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=	1.2
-COMPONENT_PROJECT_URL=	http://www.speex.org/
-COMPONENT_ARCHIVE_HASH= \
-	sha256:342f30dc57bd4a6dad41398365baaa690429660b10d866b7d508e8f1179cb7a6
-COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/speex/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	gnome/multimedia
-
-TPNO=			9576
-
-TEST_TARGET = $(NO_TESTS)
-
-include $(WS_MAKE_RULES)/common.mk
-
-CONFIGURE_OPTIONS += --disable-static
-
-REQUIRED_PACKAGES += codec/libogg
-REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
-REQUIRED_PACKAGES += system/library/math
+# Package split to individual packages
+set name=pkg.fmri value=pkg:/codec/ogg-vorbis@2.30.0,5.12-5.12.0.0.0.108.0
+set name=pkg.renamed value=true
+set name=org.opensolaris.consolidation \
+    incorporate=consolidation/desktop/gnome-incorporation \
+    value=$(CONSOLIDATION)
+depend type=require fmri=pkg:/codec/libogg
+depend type=require fmri=pkg:/codec/libvorbis
