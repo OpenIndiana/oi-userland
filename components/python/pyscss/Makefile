@@ -20,24 +20,24 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyScss
-COMPONENT_VERSION=	1.2.1
+COMPONENT_VERSION=	1.3.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6f486363f5fac20d218dc5d11b8af4e5b52242a59e5067f42ca227152a7df3cc
+    sha256:d0323110ecc7d3ead6b99cfec31301306928130e4d0a9eb13226bf390aba8c0e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/Kronuz/pyScss
 COMPONENT_BUGDB=	python-mod/pyscss
 
-TPNO=			20384
+TPNO=			28002
 
-# Python 3.4 has build errors.  Need to investigate...
+# Depends on python-imaging which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -47,7 +47,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pyscss pyscss-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f pyscss pyscss-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -57,9 +57,9 @@ install:	$(INSTALL_32_and_64)
 # The tarball for this version does not ship unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pytest-27
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/six-27
+REQUIRED_PACKAGES += system/library

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -48,30 +48,39 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/64/_speedups.so \
-    pkg.depend.runpath=/lib:/usr/lib
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/__main__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/_native.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/_speedups.so
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/ast.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/calculator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/compiler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/cssdefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/errors.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/expression.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/gradients.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/helpers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/images.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/layouts.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/sprites.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/extra.py
-file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/library.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/bootstrap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/configuration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/gradients.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/images.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/layouts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/compass/sprites.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/extra.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/extension/fonts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/grammar/64/_scanner.so
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/grammar/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/grammar/_scanner.so
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/grammar/expression.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/grammar/scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/legacy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/namespace.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/rule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/scss_meta.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/selector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/source.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/sourcemap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/scss/tool.py \
     pkg.depend.bypass-generate=.*/watchdog.*
@@ -80,14 +89,19 @@ file path=usr/lib/python$(PYVER)/vendor-packages/scss/util.py
 #
 license LICENSE license=MIT
 
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
+# force a group dependency on the optional python-imaging; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/python-imaging-$(PYV)
+
+# force a dependency on enum; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/enum-$(PYV)
+
+# force a dependency on pathlib; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pathlib-$(PYV)
 
 # force a dependency on the pyscss package
 depend type=require \
     fmri=library/python/pyscss@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on python-imaging; pkgdepend work is needed to flush this
-# out.
-depend type=require fmri=library/python/python-imaging-$(PYV)
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
