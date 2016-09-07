@@ -20,16 +20,20 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
 # As an earlier Python 3 version of novaclient was published, we continue
 # to do so for now by dropping the dependency on the corresponding
-# keystoneclient & oslo.utils as the latter are not Python 3 ready.
+# keystoneauth1, oslo.serialization & oslo.utils as the latter are not
+# Python 3 ready.
 #
-<transform depend fmri=library/python/keystoneclient-3\d type=require -> drop>
+<transform depend fmri=library/python/keystoneauth1-3\d type=require -> drop>
+<transform depend fmri=library/python/oslo.serialization-3\d type=require \
+    -> drop>
 <transform depend fmri=library/python/oslo.utils-3\d type=require -> drop>
+#
 set name=pkg.fmri \
     value=pkg:/library/python/novaclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -53,6 +57,7 @@ link path=usr/bin/nova target=nova-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/nova-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/api_versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/auth_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/client.py
@@ -62,20 +67,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/extension.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/auth.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/fake_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/apiclient/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/cliutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/service_catalog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v1_1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/agents.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/aggregates.py
@@ -117,6 +112,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/security_group_de
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/security_group_rules.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/security_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/server_groups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/server_migrations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/servers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/services.py
 file path=usr/lib/python$(PYVER)/vendor-packages/novaclient/v2/shell.py
@@ -137,30 +133,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_novaclient-$(COMPONENT_V
 #
 license novaclient.license license="Apache v2.0"
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
-
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
-
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
-
-# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
 # out.
-depend type=require fmri=library/python/keystoneclient-$(PYV)
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
 
 # force a dependency on the novaclient package
 depend type=require \
     fmri=library/python/novaclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -179,6 +165,3 @@ depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
-
-# force a dependency on stevedore; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/stevedore-$(PYV)

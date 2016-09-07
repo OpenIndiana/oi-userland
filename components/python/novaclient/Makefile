@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-novaclient
-COMPONENT_VERSION=	2.23.2
+COMPONENT_VERSION=	3.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:730cb006395b2df336bbfd75aa2f459375594726a50fe3b9126212ed487fcf98
+    sha256:4ce2e69270cdea96af20a8a4bb5bb47eecb7a700c3eb04213f432bcf92c8317c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-novaclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-novaclient/
 COMPONENT_BUGDB=	service/nova
 
-TPNO=			25756
+TPNO=			28577
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -44,7 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f nova nova-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f nova nova-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -53,4 +53,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
