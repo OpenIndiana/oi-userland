@@ -26,16 +26,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.versionedobjects
-COMPONENT_VERSION=	0.1.1
+COMPONENT_VERSION=	1.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dac8ef3ec789bd3f69f3f974e9f40282a411d804663eefd1ae39721f16a4c2da
+    sha256:e727d969a5a89190783bcfa10d2c0d0bfd68d2344be3eb2f1a61ff6f63d6fd59
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/oslo.versionedobjects/
+COMPONENT_PROJECT_URL=	\
+    http://docs.openstack.org/developer/oslo.versionedobjects/
 COMPONENT_BUGDB=	python-mod/oslo.versioned
 
-TPNO=			23690
+TPNO=			29103
 
 # Depends on oslo.serialization which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
@@ -53,4 +54,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

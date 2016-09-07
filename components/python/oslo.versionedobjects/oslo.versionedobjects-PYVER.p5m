@@ -41,22 +41,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.versionedobjects-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/_i18n.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/_options.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/exception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/fields.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/fixture.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/openstack/common/versionutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/safe_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_versionedobjects/test.py
 #
 license oslo.versionedobjects.license license="Apache v2.0"
 
@@ -64,32 +63,21 @@ license oslo.versionedobjects.license license="Apache v2.0"
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on fixtures; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/fixtures-$(PYV)
-
 # force a dependency on iso8601; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/iso8601-$(PYV)
 
-# force a dependency on mock; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/mock-$(PYV)
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netaddr-$(PYV)
 
-# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.concurrency-$(PYV)
-
-# force a dependency on oslo.context; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.context-$(PYV)
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-$(PYV)
 
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
 
-# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.log-$(PYV)
-
-# force a dependency on oslo.messaging; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.messaging; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
-
-# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -100,3 +88,6 @@ depend type=require \
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on webob; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/webob-$(PYV)
