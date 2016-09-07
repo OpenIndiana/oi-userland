@@ -55,7 +55,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/list_unix.go                                |    2 +-
  daemon/network.go                                  |    7 +
  daemon/selinux_unsupported.go                      |    8 +
- daemon/start.go                                    |   14 +
+ daemon/start.go                                    |   58 ++
  daemon/stats_collector_solaris.go                  |  139 +++
  daemon/stats_collector_unix.go                     |    2 +-
  daemon/stats_solaris.go                            |   82 ++
@@ -199,7 +199,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 189 files changed, 8826 insertions(+), 1216 deletions(-)
+ 189 files changed, 8870 insertions(+), 1216 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -4587,19 +4587,41 @@ index 25a56ad..4f9bbe4 100644
 +	return nil, nil
 +}
 diff --git a/daemon/start.go b/daemon/start.go
-index 418dace..7fe7b8a 100644
+index 418dace..a4c6e47 100644
 --- a/daemon/start.go
 +++ b/daemon/start.go
-@@ -1,6 +1,8 @@
+@@ -1,7 +1,10 @@
  package daemon
  
  import (
 +	"errors"
 +	"os"
  	"runtime"
++	"os/exec"
  
  	"github.com/Sirupsen/logrus"
-@@ -142,6 +144,18 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
+ 	"github.com/docker/docker/container"
+@@ -10,6 +13,8 @@ import (
+ 	containertypes "github.com/docker/engine-api/types/container"
+ )
+ 
++const SVCCFG = "/usr/sbin/svccfg"
++
+ // ContainerStart starts a container.
+ func (daemon *Daemon) ContainerStart(name string, hostConfig *containertypes.HostConfig) error {
+ 	container, err := daemon.GetContainer(name)
+@@ -109,6 +114,10 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
+ 		return err
+ 	}
+ 
++	if err := daemon.injectHostConfig(container); err != nil {
++		return err
++	}
++
+ 	// Make sure NetworkMode has an acceptable value. We do this to ensure
+ 	// backwards API compatibility.
+ 	container.HostConfig = runconfig.SetDefaultNetModeIfBlank(container.HostConfig)
+@@ -142,6 +151,18 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
  	mounts = append(mounts, container.TmpfsMounts()...)
  
  	container.Command.Mounts = mounts
@@ -4618,6 +4640,47 @@ index 418dace..7fe7b8a 100644
  	if err := daemon.waitForStart(container); err != nil {
  		return err
  	}
+@@ -170,3 +191,40 @@ func (daemon *Daemon) Cleanup(container *container.Container) {
+ 		logrus.Warnf("%s cleanup: Failed to umount volumes: %v", container.ID, err)
+ 	}
+ }
++
++// injectHostConfig() should be abstracted away.
++// This patch will only be running Solaris, hence it's harmless.
++func (daemon *Daemon) injectHostConfig(container *container.Container) error {
++	pathdnsXml := container.Root + "/dns_client.xml"
++	pathnsswitchXml := container.Root + "/ns_switch.xml"
++	repodb := container.BaseFS + "/etc/svc/repository.db"
++
++	err := exec.Command(SVCCFG, "extract", "dns/client", ">", pathdnsXml).Run()
++	if err != nil {
++		logrus.Errorf("Error exporting dns/client: %v", err)
++		return err
++	}
++
++	err = exec.Command(SVCCFG, "extract", "name-service/switch", ">", pathnsswitchXml).Run()
++	if err != nil {
++		logrus.Errorf("Error exporting name-service/switch: %v", err)
++		return err
++	}
++
++	os.Setenv("SVCCFG_REPOSITORY", repodb)
++
++	err = exec.Command(SVCCFG, "apply", pathdnsXml).Run()
++	if err != nil {
++		logrus.Errorf("Error applying dns/client: %v", err)
++	}
++
++	err = exec.Command(SVCCFG, "apply", pathnsswitchXml).Run()
++	if err != nil {
++		logrus.Errorf("Error applying name-service/switch: %v", err)
++	}
++
++	os.Remove(pathdnsXml)
++	os.Remove(pathnsswitchXml)
++
++	return err
++}
 diff --git a/daemon/stats_collector_solaris.go b/daemon/stats_collector_solaris.go
 new file mode 100644
 index 0000000..9a51b27
