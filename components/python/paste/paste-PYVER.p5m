@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -38,6 +38,7 @@ set name=info.upstream value="Ian Bicking <ianb@colorstudy.com>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/153
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/Paste-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/Paste-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/Paste-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -62,6 +63,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/paste/cgiapp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/cgitb_catcher.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/cowbell/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/paste/cowbell/bell-ascending.png
+file path=usr/lib/python$(PYVER)/vendor-packages/paste/cowbell/bell-descending.png
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/debug/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/debug/debugapp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/debug/doctest_webapp.py
@@ -109,14 +112,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/paste/url.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/urlmap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/urlparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/PySourceColor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/UserDict24.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/classinit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/classinstance.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/converters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/dateinterval.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/datetimeutil.py
-file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/doctest24.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/filemixin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/finddata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/findpackage.py
@@ -129,8 +130,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/mimeparse.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/multidict.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/quoting.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/scgiserver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/string24.py
-file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/subprocess24.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/threadedprint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/util/threadinglocal.py
@@ -163,3 +162,6 @@ depend type=require \
 
 # force a dependency on setuptools; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/setuptools-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
