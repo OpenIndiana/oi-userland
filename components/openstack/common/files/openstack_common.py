@@ -120,6 +120,9 @@ def modify_conf(old_file, mapping=None, exception_list=None):
     section/key.
     """
 
+    if not os.path.exists(old_file):
+        return
+
     new_file = old_file + '.new'
 
     # open the previous version
@@ -280,16 +283,6 @@ def get_ovsdb_info(table, columns=None):
             obj[heading] = _val_to_py(record[pos])
         results.append(obj)
     return results
-
-
-def is_ml2_plugin():
-    parser = iniparse.ConfigParser()
-    parser.readfp(open("/etc/neutron/neutron.conf"))
-    try:
-        core_plugin = parser.get("DEFAULT", "core_plugin")
-    except NoOptionError:
-        return False
-    return "ml2" in core_plugin.lower()
 
 
 def kill_contract(attempts, interval, ctid):

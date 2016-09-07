@@ -26,11 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack
-COMPONENT_VERSION=	2015.1.2
+COMPONENT_VERSION=	2016.1.1
 COMPONENT_SRC=
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/nova
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
+IPS_COMPONENT_VERSION=	0.2016.1
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk

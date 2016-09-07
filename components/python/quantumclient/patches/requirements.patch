@@ -1,0 +1,20 @@
+This patch updates the version requirement for "pbr" to allow using
+the newer version we have in the Userland gate.
+Without this patch setuptools tries to download an older version of
+pbr and if it can't the build fails.
+
+--- python-quantumclient-2.2.4.3/requirements.txt.~1~	2013-10-01 21:13:30.000000000 -0800
++++ python-quantumclient-2.2.4.3/requirements.txt	2016-08-03 12:38:05.805906059 -0800
+@@ -1,2 +1,2 @@
+-pbr>=0.5.21,<1.0
++pbr>=0.5.21
+ python-neutronclient>=2.3.0,<3
+--- python-quantumclient-2.2.4.3/setup.py.~1~	2016-08-03 12:39:44.871540311 -0800
++++ python-quantumclient-2.2.4.3/setup.py	2016-08-03 12:39:52.772238582 -0800
+@@ -19,5 +19,5 @@
+ import setuptools
+ 
+ setuptools.setup(
+-    setup_requires=['pbr>=0.5.21,<1.0'],
++    setup_requires=['pbr>=0.5.21'],
+     pbr=True)
