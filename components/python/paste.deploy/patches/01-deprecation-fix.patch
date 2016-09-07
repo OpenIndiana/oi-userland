@@ -1,0 +1,20 @@
+This in-house patch updates paste.deploy to avoid the use of
+setuptools's EntryPoint's load() method from setuptools if possible, as
+it was deprecated starting with setuptools version 11.3. This patch can
+be submitted upstream and is tracked externally via the following
+issue:
+
+	https://bitbucket.org/ianb/pastedeploy/issues/20/loadwsgi-should-account-for-entrypointload
+
+--- PasteDeploy-1.5.2/paste/deploy/loadwsgi.py.~1~	2013-05-25 13:12:05.000000000 -0700
++++ PasteDeploy-1.5.2/paste/deploy/loadwsgi.py	2016-07-30 14:43:24.375365610 -0700
+@@ -19,7 +19,8 @@ __all__ = ['loadapp', 'loadserver', 'loa
+ 
+ 
+ def import_string(s):
+-    return pkg_resources.EntryPoint.parse("x=" + s).load(False)
++    ep = pkg_resources.EntryPoint.parse("x=" + s)
++    return getattr(ep, "resolve", lambda: ep.load(require=False))()
+ 
+ 
+ def _aslist(obj):

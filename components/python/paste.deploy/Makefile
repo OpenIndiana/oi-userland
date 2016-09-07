@@ -20,24 +20,22 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		PasteDeploy
-COMPONENT_VERSION=	1.5.0
+COMPONENT_VERSION=	1.5.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:61c205633adae996cd0e306451c8a28deca0499524e2a38c65ff1570f35a8a53
+    sha256:d5858f89a255e6294e63ed46b73613c56e3b9a2d82a42f1df4d06c8421a9e3cb
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pythonpaste.org/deploy/
 COMPONENT_BUGDB=	python-mod/paste-deploy
 
-TPNO=			14503
-
-# Depends on paste which is not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+TPNO=			30217
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,5 +50,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
+system-test:	$(NO_TESTS)

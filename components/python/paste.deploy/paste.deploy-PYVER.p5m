@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -28,16 +28,19 @@ set name=pkg.fmri \
 set name=pkg.summary \
     value="Load, configure, and compose WSGI applications and servers"
 set name=pkg.description \
-    value="The Python paste.deploy module is a system for finding and configuring WSGI applications and servers."
+    value="The Python paste.deploy module provides code to load WSGI applications and servers from URIs; these URIs can refer to Python Eggs for INI-style configuration files."
 set name=com.oracle.info.description value="the Python paste.deploy module"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
+    value=org.opensolaris.category.2008:Development/Python \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream value="Alex Gronholm <alex.gronholm@nextday.fi>"
+set name=info.upstream value="Alex Gronholm <alex.gronholm@nextday.fi>" \
+    value="Ian Bicking <ian@ianbicking.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/164
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/PasteDeploy-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/PasteDeploy-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/PasteDeploy-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -57,6 +60,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/paste/deploy/paster_templates/p
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/deploy/paster_templates/paste_deploy/+package+/wsgiapp.py_tmpl
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/deploy/paster_templates/paste_deploy/docs/devel_config.ini_tmpl
 file path=usr/lib/python$(PYVER)/vendor-packages/paste/deploy/util.py
+#
 license docs/license.txt license=MIT
 
 # force the rename with an optional dependency on the old name
