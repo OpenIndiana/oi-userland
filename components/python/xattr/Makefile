@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xattr
-COMPONENT_VERSION=	0.7.4
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:16c612ac01b9b5a31967e231c7f7d32b7263f151d5e3c617c69378170054805f
+    sha256:71d08712f78ed543215e4145779a336e42acb4003b97e16d493a680cf08f1d01
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/xattr/xattr
 COMPONENT_BUGDB=	python-mod/xattr
 
-TPNO=			16912
+TPNO=			30241
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,7 +45,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 CFFI = $(WS_COMPONENTS)/python/cffi/build/prototype/$(MACH)/$(PYTHON_LIB)
 
-COMPONENT_BUILD_ENV +=          PYTHONPATH=$(CFFI)
+COMPONENT_BUILD_ENV +=		PYTHONPATH=$(CFFI)
 COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(CFFI):$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=		PYTHONPATH=$(CFFI):$(PROTO_DIR)/$(PYTHON_LIB)
 # The test suite wants to use some unicode filenames, which don't work in the C
@@ -56,7 +56,7 @@ COMPONENT_TEST_CMD =	$(PYTHON) setup.py
 COMPONENT_TEST_ARGS =	test
 
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin; $(MV) xattr xattr-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin; $(MV) xattr xattr-$(PYTHON_VERSION))
 
 # Tests run under setuptools work very hard to run in the source directory
 # itself, and will thus blow up with an VerificationError (wrong ELF class)
@@ -73,7 +73,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
