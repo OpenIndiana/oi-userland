@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eventlet
-COMPONENT_VERSION=	0.17.4
+COMPONENT_VERSION=	0.18.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8721e9714eaff8d20f2407e0d3a80069db6b57c9226c26ee9db25c541d06556d
+    sha256:74ef11d67ee5e85e009b0fced733c907620bca1ab8e6b0489d9f247405ab2685
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://eventlet.net/
 COMPONENT_BUGDB=	python-mod/eventlet
 
-TPNO=			25735
+TPNO=			28455
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -46,7 +46,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	setup.py test
 
-#Skipping this during automated tests since it hangs sometimes
+# Skipping this during automated tests since it hangs sometimes
 $(SKIP_TEST_AT_TOP_LEVEL)
 
 # common targets
@@ -56,4 +56,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
