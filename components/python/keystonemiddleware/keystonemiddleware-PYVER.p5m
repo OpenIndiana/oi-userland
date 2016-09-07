@@ -40,9 +40,9 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
@@ -50,7 +50,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/_memcache_pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/audit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_auth.py
@@ -59,11 +58,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_identity.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_memcache_crypt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_memcache_pool.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_opts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_request.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_revocations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_signing_dir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_user_plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/ec2_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/echo/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/echo/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/echo/service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/fixture.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/common/__init__.py
@@ -89,6 +94,10 @@ depend type=group fmri=library/python/python-memcached-$(PYV)
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
+
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
@@ -100,7 +109,8 @@ depend type=require \
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
 
-# force a dependency on oslo.context; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/oslo.context-$(PYV)
 
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
@@ -113,14 +123,14 @@ depend type=require fmri=library/python/oslo.serialization-$(PYV)
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
 
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
-
 # force a dependency on pycadf; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pycadf-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

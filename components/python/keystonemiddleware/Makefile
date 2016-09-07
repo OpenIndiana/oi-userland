@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keystonemiddleware
-COMPONENT_VERSION=	1.5.2
+COMPONENT_VERSION=	4.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:5f443162157946d2f33c4729d0bde55291f12963b0f1ee553984aedd8a509d51
+    sha256:65d574c0bfcd0152391ce5d32261702f9e44736c3c80f22447961d682ebc8367
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/keystonemiddleware
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/keystonemiddleware/
 COMPONENT_BUGDB=	python-mod/keystonemiddle
 
-TPNO=			25737
+TPNO=			27999
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
