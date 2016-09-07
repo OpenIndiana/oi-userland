@@ -1,14 +1,14 @@
 Patch to address 20638369.  This patch is Solaris specific and not
 suitable for upstream contribution.
 
---- Django-1.4.19/django/core/management/commands/compilemessages.py.orig	2015-03-03 12:41:29.911259727 -0700
-+++ Django-1.4.19/django/core/management/commands/compilemessages.py	2015-03-03 12:42:00.821142374 -0700
-@@ -44,7 +44,7 @@ def compile_messages(stderr, locale=None
-                     if sys.platform == 'win32': # Different shell-variable syntax
-                         cmd = 'msgfmt --check-format -o "%djangocompilemo%" "%djangocompilepo%"'
-                     else:
--                        cmd = 'msgfmt --check-format -o "$djangocompilemo" "$djangocompilepo"'
-+                        cmd = '/usr/gnu/bin/msgfmt --check-format -o "$djangocompilemo" "$djangocompilepo"'
-                     os.system(cmd)
+--- Django-1.8.5/django/core/management/commands/compilemessages.py.~1~	2015-10-05 02:19:35.750704280 -0800
++++ Django-1.8.5/django/core/management/commands/compilemessages.py	2015-10-05 02:20:57.589647207 -0800
+@@ -34,7 +34,7 @@ class Command(BaseCommand):
+     requires_system_checks = False
+     leave_locale_alone = True
  
+-    program = 'msgfmt'
++    program = '/usr/gnu/bin/msgfmt'
+     program_options = ['--check-format']
  
+     def add_arguments(self, parser):
