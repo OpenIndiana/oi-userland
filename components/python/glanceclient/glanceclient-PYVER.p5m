@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -41,9 +41,9 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/007
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/glance target=glance-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
-#
 file path=usr/bin/glance-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/_i18n.py
@@ -72,15 +72,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v1/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v1/image_members.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v1/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v1/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v1/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/image_members.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/image_schema.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/image_tags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/metadefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/schemas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glanceclient/v2/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/python_glanceclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/python_glanceclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_glanceclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -99,12 +102,6 @@ depend type=group fmri=library/python/eventlet-$(PYV)
 # force a group dependency on the optional simplejson; pkgdepend work is needed
 # to flush this out.
 depend type=group fmri=library/python/simplejson-$(PYV)
-
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
 
 # force a dependency on the glanceclient package
 depend type=require \

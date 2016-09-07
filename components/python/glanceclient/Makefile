@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-glanceclient
-COMPONENT_VERSION=	0.17.2
+COMPONENT_VERSION=	2.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:56ca8fe2c4f33d9dd9b045073bdd0dba09b1f6ef7af978175966d262678ecd0e
+    sha256:c4e791ef80e1b60997fa612e7f6ec506969bc6247b53d66988c2829c16b3617b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-glanceclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-glanceclient/
 COMPONENT_BUGDB=	service/glance
 
-TPNO=			25751
+TPNO=			29187
 
 # Depends on keystoneclient & oslo.utils which are not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -47,18 +47,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f glance glance-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f glance glance-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-#
-# Tests require:
-# hacking, discover, mox, sphinx, testrepository, testtools
-# which haven't been integrated yet.
-#
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
