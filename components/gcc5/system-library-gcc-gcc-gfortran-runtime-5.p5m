@@ -22,31 +22,26 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/system/library/gcc/gcc-c++-runtime-$(GCC_V)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GCC $(GCC_VERSION) - C++ Runtime"
+    value=pkg:/system/library/gcc/gcc-gfortran-runtime-$(GCC_MAJOR_VERSION)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GCC $(GCC_VERSION) - Fortran Runtime"
 set name=com.oracle.info.description \
-    value="the GNU Compiler Collection - C++ Runtime Libraries"
+    value="the GNU Compiler Collection - Fortran Runtime Libraries"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value=org.opensolaris.category.2008:Development/C \
-    value=org.opensolaris.category.2008:Development/C++ \
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Fortran \
     value=org.opensolaris.category.2008:Development/GNU
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/499
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=$(GCC_BASEDIR)/lib/$(MACH64)/libcilkrts.so target=libcilkrts.so.5.0.0
-link path=$(GCC_BASEDIR)/lib/$(MACH64)/libcilkrts.so.5 \
-    target=libcilkrts.so.5.0.0
-file path=$(GCC_BASEDIR)/lib/$(MACH64)/libcilkrts.so.5.0.0
-link path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.so target=libstdc++.so.6.0.21
-link path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.so.6 target=libstdc++.so.6.0.21
-file path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.so.6.0.21
-link path=$(GCC_BASEDIR)/lib/libcilkrts.so target=libcilkrts.so.5.0.0
-link path=$(GCC_BASEDIR)/lib/libcilkrts.so.5 target=libcilkrts.so.5.0.0
-file path=$(GCC_BASEDIR)/lib/libcilkrts.so.5.0.0
-link path=$(GCC_BASEDIR)/lib/libstdc++.so target=libstdc++.so.6.0.21
-link path=$(GCC_BASEDIR)/lib/libstdc++.so.6 target=libstdc++.so.6.0.21
-file path=$(GCC_BASEDIR)/lib/libstdc++.so.6.0.21
+link path=$(GCC_BASEDIR)/lib/$(MACH64)/libgfortran.so \
+    target=libgfortran.so.3.0.0
+link path=$(GCC_BASEDIR)/lib/$(MACH64)/libgfortran.so.3 \
+    target=libgfortran.so.3.0.0
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libgfortran.so.3.0.0
+link path=$(GCC_BASEDIR)/lib/libgfortran.so target=libgfortran.so.3.0.0
+link path=$(GCC_BASEDIR)/lib/libgfortran.so.3 target=libgfortran.so.3.0.0
+file path=$(GCC_BASEDIR)/lib/libgfortran.so.3.0.0
 license gmon.license license=BSD
 license FDLv1.3 license=FDLv1.3
 license COPYING.RUNTIME license="GCC Runtime Library Exception v3.1"

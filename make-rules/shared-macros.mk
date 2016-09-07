@@ -1104,7 +1104,7 @@ CLOBBER_PATHS +=	$(PROTO_DIR)
 REQUIRED_PACKAGES += developer/build/gnu-make
 REQUIRED_PACKAGES += developer/build/make
 ifeq ($(COMPILER),gcc)
-REQUIRED_PACKAGES += developer/gcc-53
+REQUIRED_PACKAGES += developer/gcc-5
 endif
 ifeq ($(COMPILER),studio)
 ifneq ($(findstring /opt/solarisstudio12.4,$(CC)),)

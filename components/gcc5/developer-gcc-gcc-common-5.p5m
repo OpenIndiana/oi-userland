@@ -26,7 +26,7 @@
 <transform file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/32/.*\.o$ -> \
     add pkg.linted.userland.action001.2 true>
 set name=pkg.fmri \
-    value=pkg:/developer/gcc/gcc-common-$(GCC_V)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/developer/gcc/gcc-common-$(GCC_MAJOR_VERSION)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GCC Common Development Files - $(GCC_VERSION)"
 set name=com.oracle.info.description \
     value="the GNU Compiler Collection - Common Development Files"
@@ -891,25 +891,29 @@ file path=$(GCC_BASEDIR)/share/man/man1/gcov.1
 file path=$(GCC_BASEDIR)/share/man/man7/fsf-funding.7
 file path=$(GCC_BASEDIR)/share/man/man7/gfdl.7
 file path=$(GCC_BASEDIR)/share/man/man7/gpl.7
-link path=usr/bin/gcov target=../gcc/$(GCC_VERSION)/bin/gcov mediator=gcc \
-    mediator-version=$(GCC_VERSION)
-link path=usr/bin/gcpp target=../gcc/$(GCC_VERSION)/bin/cpp mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+link path=usr/bin/gcov target=../gcc/$(GCC_MAJOR_VERSION)/bin/gcov \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
+link path=usr/bin/gcpp target=../gcc/$(GCC_MAJOR_VERSION)/bin/cpp mediator=gcc \
+    mediator-version=$(GCC_MAJOR_VERSION)
+# This link is temporary.  Once we have migrated everyone from the -$(GCC_MAJOR_VERSION)3 to the -$(GCC_MAJOR_VERSION)
+# package names and to /usr/gcc/5, we can obsolete the -$(GCC_MAJOR_VERSION)3 packages and remove
+# this link.
+link path=usr/gcc/5.3 target=5
 link path=usr/share/man/man1/gcov.1 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man1/gcov.1 mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_MAJOR_VERSION)/share/man/man1/gcov.1 \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
 link path=usr/share/man/man1/gcpp.1 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man1/cpp.1 mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_MAJOR_VERSION)/share/man/man1/cpp.1 \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
 link path=usr/share/man/man7/fsf-funding.7 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man7/fsf-funding.7 \
-    mediator=gcc mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_MAJOR_VERSION)/share/man/man7/fsf-funding.7 \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
 link path=usr/share/man/man7/gfdl.7 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man7/gfdl.7 mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_MAJOR_VERSION)/share/man/man7/gfdl.7 \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
 link path=usr/share/man/man7/gpl.7 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man7/gpl.7 mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_MAJOR_VERSION)/share/man/man7/gpl.7 \
+    mediator=gcc mediator-version=$(GCC_MAJOR_VERSION)
 file $(GCC_BASEDIR)/share/info/dir \
     path=var/info/usr_gcc_$(GCC_VERSION)_share_info_dir mode=0644 preserve=true
 license gmon.license license=BSD

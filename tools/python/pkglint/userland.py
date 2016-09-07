@@ -374,15 +374,18 @@ class UserlandActionChecker(base.ActionChecker):
 		type = ei.get("type");
                 elems = os.path.dirname(inspath).split("/")
 
-                path64 = False
-		for p in self.pathlist64:
-		    if (p in elems):
-		    	path64 = True
-
 		path32 = False
-		for p in self.pathlist32:
-		    if (p in elems):
+                path64 = False
+
+		# Walk through the path elements backward and at the first
+		# 32/64 bit specific element, flag it and break.
+		for p in elems[::-1]:
+		    if (p in self.pathlist32):
 		    	path32 = True
+			break
+		    if (p in self.pathlist64):
+		    	path64 = True
+			break
 
 		# ignore 64-bit executables in normal (non-32-bit-specific)
 		# locations, that's ok now.
@@ -390,7 +393,7 @@ class UserlandActionChecker(base.ActionChecker):
 			return result
 
 		if bits == 32 and path64:
-			result = _("32-bit object '%s' in 64-bit path")
+			result = _("32-bit object '%%s' in 64-bit path(%s)" % elems)
 		elif bits == 64 and not path64:
 			result = _("64-bit object '%s' in 32-bit path")
 		return result

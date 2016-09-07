@@ -18,19 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/developer/gcc/gcc-gobjc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GCC - Objective-C Compiler"
+    value=pkg:/system/library/gcc/gcc-gobjc-runtime-$(GCC_MAJOR_VERSION)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GCC $(GCC_VERSION) - Objective-C Runtime"
 set name=com.oracle.info.description \
-    value="the GNU Compiler Collection - Objective-C Compiler"
-set name=info.classification value=org.opensolaris.category.2008:Development/C \
+    value="the GNU Compiler Collection - Objective-C Runtime Libraries"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
     value=org.opensolaris.category.2008:Development/GNU \
     value="org.opensolaris.category.2008:Development/Objective C"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/499
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend type=require fmri=pkg:/developer/gcc/gcc-gobjc-$(GCC_V)
+link path=$(GCC_BASEDIR)/lib/$(MACH64)/libobjc.so target=libobjc.so.4.0.0
+link path=$(GCC_BASEDIR)/lib/$(MACH64)/libobjc.so.4 target=libobjc.so.4.0.0
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libobjc.so.4.0.0
+link path=$(GCC_BASEDIR)/lib/libobjc.so target=libobjc.so.4.0.0
+link path=$(GCC_BASEDIR)/lib/libobjc.so.4 target=libobjc.so.4.0.0
+file path=$(GCC_BASEDIR)/lib/libobjc.so.4.0.0
+license gmon.license license=BSD
+license FDLv1.3 license=FDLv1.3
+license COPYING.RUNTIME license="GCC Runtime Library Exception v3.1"
+license COPYING license=GPLv2
+license COPYING3 license=GPLv3
+license COPYING.LIB license=LGPLv2.1
+license COPYING3.LIB license=LGPLv3
