@@ -26,16 +26,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ceilometerclient
-COMPONENT_VERSION=	1.1.1
+COMPONENT_VERSION=	2.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f48e2d9ecef25ab784510fa0b299d0d73aa8f41652abf9f28393a93612416a29
+    sha256:0cb0346ea53b110f10df1e3978e2ff031777b0e70a3100d1a216aca2ea4e8f73
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-ceilometerclient
+COMPONENT_PROJECT_URL=	\
+    http://docs.openstack.org/developer/python-ceilometerclient/
 COMPONENT_BUGDB=	service/ceilometer
 
-TPNO=			25749
+TPNO=			29185
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -55,9 +56,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# tests require:
-# hacking, discover, fixtures, python-subunit, sphinx, testrepository
-# and testtools, some of which have not been integrated.
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

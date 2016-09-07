@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -61,15 +61,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/comm
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/common/apiclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/common/apiclient/fake_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/common/apiclient/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/common/cliutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/shell.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v1/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v1/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v1/meters.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v1/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/alarms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/event_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ceilometerclient/v2/events.py
@@ -93,23 +88,29 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_ceilometerclient-$(COMPO
 #
 license LICENSE license="Apache v2.0"
 
+# force a group dependency on the optional oslo.i18n; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/oslo.i18n-$(PYV)
+
 # force a group dependency on the optional simplejson; pkgdepend work is needed
 # to flush this out.
 depend type=group fmri=library/python/simplejson-$(PYV)
-
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
 
 # force a dependency on the ceilometerclient package
 depend type=require \
     fmri=library/python/ceilometerclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
+
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
