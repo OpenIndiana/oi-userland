@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dogpile.cache
-COMPONENT_VERSION=	0.5.3
+COMPONENT_VERSION=	0.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2fe8c1a329830a9ada865a69cc5ebb2c2e6f2dbda3a6d4dbf5155c7d5194344b
+    sha256:dcf99b09ddf3d8216b1b4378100eb0235619612fb0e6300ba5d74f10962d0956
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/zzzeek/dogpile.cache
 COMPONENT_BUGDB=	python-mod/dogpile.cache
 
-TPNO=			17712
+TPNO=			27907
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,4 +52,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -38,6 +38,7 @@ set name=info.upstream value="Mike Bayer https://bitbucket.org/zzzeek"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/177
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile.cache-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile.cache-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile.cache-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -53,6 +54,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/__init__
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/file.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/memcached.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/memory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/null.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/backends/redis.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/exception.py
@@ -61,7 +63,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/plugins/mako_cach
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/proxy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/region.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dogpile/cache/util.py
+#
 license LICENSE license=BSD
+
+# force a group dependency on the optional mako; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/mako-$(PYV)
+
+# force a group dependency on the optional python-memcached; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/python-memcached-$(PYV)
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
