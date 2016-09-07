@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -100,6 +100,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/instances.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/limits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/management.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/metadata.py
+file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/modules.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/quota.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/root.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/v1/security_groups.py
@@ -113,9 +114,6 @@ license LICENSE license="Apache v2.0"
 # out.
 depend type=group fmri=library/python/eventlet-$(PYV)
 
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
 # force a dependency on babel; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/babel-$(PYV)
 
@@ -125,6 +123,9 @@ depend type=require fmri=library/python/httplib2-$(PYV)
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
+
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -149,6 +150,9 @@ depend type=require fmri=library/python/six-$(PYV)
 
 # force a dependency on stevedore; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/stevedore-$(PYV)
+
+# force a dependency on swiftclient; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/swiftclient-$(PYV)
 
 # force a dependency on the troveclient package
 depend type=require \

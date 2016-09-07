@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-troveclient
-COMPONENT_VERSION=	1.0.9
+COMPONENT_VERSION=	2.1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ed9fad408c249a37e779a305cadb5cdecc656891eed27bc34b9d99f425a3fd69
+    sha256:065440a3baf785a961523baa311b3cd6806d2f32616af74aa57af2dcb0da492e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-troveclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-troveclient/
 COMPONENT_BUGDB=	service/trove
 
-TPNO=			25759
+TPNO=			29133
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -47,16 +47,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f trove trove-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f trove trove-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# tests require:
-# hacking, discover, sphinx, testrepository and testtools,
-# some of which have not been integrated.
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
