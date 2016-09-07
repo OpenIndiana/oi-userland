@@ -26,36 +26,36 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.config
-COMPONENT_VERSION=	1.9.3
+COMPONENT_VERSION=	3.9.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ab54e67776d9bbee86ba8cce9393ba3186e6e63de926e9797598dc35fe790140
+    sha256:ec7bdf4a3d85f90cf07d2fa03a20783558ad0f490d71bd8faf50bf4ee2923df1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.config
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.config/
 COMPONENT_BUGDB=	python-mod/oslo.config
 
-TPNO=			25738
+TPNO=			28362
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_POST_INSTALL_ACTION += \
-	($(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/oslo/__init__.py; \
-	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
-	 cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f oslo-config-generator oslo-config-generator-$(PYTHON_VERSION))
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_POST_INSTALL_ACTION += \
+    ($(TOUCH) $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/oslo/__init__.py; \
+     $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
+     cd $(PROTO_DIR)/usr/bin ; \
+     $(MV) -f oslo-config-generator oslo-config-generator-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
