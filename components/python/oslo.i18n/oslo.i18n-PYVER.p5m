@@ -40,18 +40,13 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/058
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.i18n-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/i18n/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/i18n/fixture.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/i18n/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/_factory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/_gettextutils.py
@@ -75,9 +70,6 @@ depend type=require fmri=library/python/babel-$(PYV)
 # force a dependency on the oslo.i18n package
 depend type=require \
     fmri=library/python/oslo.i18n@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
