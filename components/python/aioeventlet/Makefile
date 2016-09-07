@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aioeventlet
-COMPONENT_VERSION=	0.4
+COMPONENT_VERSION=	0.5.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fe78c2b227ce077b1581e2ae2c071f351111d0878ec1b0216435f6a898df79a6
+    sha256:cecb51ea220209e33b53cfb95124d90e4fcbee3ff8ba8a179a57120b8624b16a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/aioeventlet/
+COMPONENT_PROJECT_URL=	https://bitbucket.org/haypo/aioeventlet
 COMPONENT_BUGDB=	python-mod/aioeventlet
 
-TPNO=			23145
+TPNO=			30213
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
