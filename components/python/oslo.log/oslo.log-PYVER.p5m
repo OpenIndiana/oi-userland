@@ -57,26 +57,38 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/handlers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/loggers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/versionutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_log/watchers.py
 #
 license oslo.log.license license="Apache v2.0"
 
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on dateutil; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/dateutil-$(PYV)
 
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
 
-# force a dependency on oslo.context; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/oslo.context-$(PYV)
 
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
 
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
+
 # force a dependency on the oslo.log package
 depend type=require \
     fmri=library/python/oslo.log@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
 depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
