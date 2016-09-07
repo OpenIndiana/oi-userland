@@ -20,25 +20,25 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django-pyscss
-COMPONENT_VERSION=	1.0.6
+COMPONENT_VERSION=	2.0.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4575e65fa1a28529211ba22d7009e62d4f25a4ab2e7d7de14abea2e5b1c9f8f6
+    sha256:0f4844f8fd3f69f4d428a616fdcf2b650a24862dd81443ae3fba14980c7b0615
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/fusionbox/django-pyscss
 COMPONENT_BUGDB=	python-mod/django-pyscss
 
-TPNO=			20370
+TPNO=			29184
 
-# Depends on django which is not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+# Depends on pyscss which is not Python 3 ready.
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -56,4 +56,4 @@ install:	$(INSTALL_NO_ARCH)
 # information.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
