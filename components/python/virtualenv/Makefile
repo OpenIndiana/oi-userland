@@ -20,27 +20,30 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		virtualenv
-COMPONENT_VERSION=	12.0.7
+COMPONENT_VERSION=	15.0.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:d681db1766cdc8aa1b37eb18252c264b775f971166c2bf658a9618c1f3d28741
+COMPONENT_ARCHIVE_HASH=	sha256:1a74278b8adb383ce4c7619e33c753b1eb7b58dc1e449601c096ca4b76125f84
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/virtualenv
+COMPONENT_PROJECT_URL=	https://github.com/pypa/virtualenv
 COMPONENT_BUGDB=	python-mod/virtualenv
 
-TPNO=			21744
+TPNO=			29529
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_POST_INSTALL_ACTION +=	\
+    (cd $(PROTO_DIR)/usr/bin; $(MV) virtualenv virtualenv-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -50,7 +53,8 @@ install:	$(INSTALL_NO_ARCH)
 # Virtualenv has tests, but only in the source repo; not in the tarballs.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35

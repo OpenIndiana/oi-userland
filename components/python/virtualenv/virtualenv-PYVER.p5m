@@ -37,6 +37,7 @@ set name=info.upstream value=python-virtualenv@groups.google.com
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/362
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/virtualenv target=virtualenv-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/virtualenv-$(PYVER)
@@ -45,16 +46,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv.py \
     pkg.depend.bypass-generate=.*/[Cc]onfig[Pp]arser.* \
     pkg.depend.bypass-generate=.*/_winreg.* \
-    pkg.depend.bypass-generate=.*/sysconfig.* \
-    pkg.depend.bypass-generate=.*/winreg.* pkg.depend.bypass-generate=.*/zlib.*
+    pkg.depend.bypass-generate=.*/urllib.* \
+    pkg.depend.bypass-generate=.*/urlparse.* \
+    pkg.depend.bypass-generate=.*/winreg.*
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/pip-6.0.8-py2.py3-none-any.whl
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/setuptools-12.0.5-py2.py3-none-any.whl
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/argparse-1.4.0-py2.py3-none-any.whl
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/pip-8.1.1-py2.py3-none-any.whl
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/setuptools-20.3-py2.py3-none-any.whl
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/wheel-0.29.0-py2.py3-none-any.whl
 #
 license virtualenv.license license="MIT, LGPLv2.1, PSF, ZPL"
 
