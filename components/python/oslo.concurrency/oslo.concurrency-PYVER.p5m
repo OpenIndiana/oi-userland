@@ -40,27 +40,21 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/lockutils-wrapper target=lockutils-wrapper-$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 file path=usr/bin/lockutils-wrapper-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.concurrency-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/concurrency/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/concurrency/fixture/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/fixture/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/fixture/lockutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/openstack/common/fileutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/opts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/prlimit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/processutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_concurrency/watchdog.py
 #
@@ -69,6 +63,12 @@ license oslo.concurrency.license license="Apache v2.0"
 # force a group dependency on the optional eventlet; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/eventlet-$(PYV)
+
+# force a dependency on enum; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/enum-$(PYV)
+
+# force a dependency on fasteners; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/fasteners-$(PYV)
 
 # force a dependency on the oslo.concurrency package
 depend type=require \
@@ -83,10 +83,5 @@ depend type=require fmri=library/python/oslo.i18n-$(PYV)
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
 
-# force a dependency on retrying; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/retrying-$(PYV)
-
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
-
-

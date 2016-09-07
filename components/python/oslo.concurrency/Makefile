@@ -26,18 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.concurrency
-COMPONENT_VERSION=	1.8.2
+COMPONENT_VERSION=	3.7.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:149f4c972916f14c14c97d7be7b92ba59497c1bbd09c114ee3681bef0773daca
+    sha256:254a42d9f0a5f21e9d56e5fd5ca7c3e355ba22d06ea47f6eb094155242ccc0f6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.concurrency
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.concurrency/
 COMPONENT_BUGDB=	python-mod/oslo.concurren
 
-TPNO=			25717
+TPNO=			29773
 
-# Depends on oslo.utils which is Python 2 only
+# Depends on oslo.utils which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -45,8 +45,8 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION += \
-	cd $(PROTO_DIR)/usr/bin; \
-	$(MV) -f lockutils-wrapper lockutils-wrapper-$(PYTHON_VERSION)
+    (cd $(PROTO_DIR)/usr/bin; \
+     $(MV) -f lockutils-wrapper lockutils-wrapper-$(PYTHON_VERSION))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -55,8 +55,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
