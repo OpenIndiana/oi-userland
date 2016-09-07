@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		taskflow
-COMPONENT_VERSION=	0.7.1
+COMPONENT_VERSION=	1.30.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bf1f833184c12787d09ab1b587b41d4feec631f2b9d7fc55e63ef3098e74ad5b
+    sha256:ad7aec6756b1cf26d11f1971ee50075d42024cd8b1ce4d59f469791339c3b51e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://wiki.openstack.org/wiki/TaskFlow
 COMPONENT_BUGDB=	python-mod/taskflow
 
-TPNO=			25762
+TPNO=			28562
 
 # Depends on networkx which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -53,4 +53,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
