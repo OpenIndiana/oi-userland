@@ -49,6 +49,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/testtools/__init__.py
 $(PYTHON_2.7_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_compat2x.py
 $(PYTHON_3.4_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_compat3x.py
 $(PYTHON_3.5_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_compat3x.py
+file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_deferred.py
+file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_deferreddebug.py
+file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_deferredmatchers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/_spinner.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/assertions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/compat.py
@@ -75,6 +78,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/testtools/testresult/__init__.p
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/testresult/doubles.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/testresult/real.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/testsuite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/testtools/twistedsupport/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/testtools/utils.py
 #
 license testtools.license license=MIT
@@ -86,18 +90,15 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on extras; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/extras-$(PYV)
 
+# force a dependency on fixtures; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/fixtures-$(PYV)
+
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
 
-# force a dependency on python-mimeparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/python-mimeparse-$(PYV)
+# force a dependency on python-twisted; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/python-twisted-$(PYV)
 
 # force a dependency on the testtools package
 depend type=require \
     fmri=library/python/testtools@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force a dependency on traceback2; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/traceback2-$(PYV)
-
-# force a dependency on unittest2; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/unittest2-$(PYV)
