@@ -1,0 +1,83 @@
+This upstream patch addresses Launchpad bug 1552634 and removes
+erroneous deprecation warnings the non-deprecated option name is used
+in some authentication sections.
+
+commit f604a7f183a57e73b5ebcda41f39f4539b511ca2
+Author: Jens Rosenboom <j.rosenboom@x-ion.de>
+Date:   Thu Mar 3 13:18:10 2016 +0100
+
+    Swap the order of username deprecation
+    
+    The deprecation of username in favor of user-name has been reverted in
+    python-keystoneclient in [1], we should keep this in sync here.
+    
+    [1] https://review.openstack.org/247574
+    
+    Change-Id: Ia82536ecebfc5874add36f6fbc349d9a9cbf3a08
+
+diff --git a/keystoneauth1/loading/_plugins/identity/generic.py b/keystoneauth1/loading/_plugins/identity/generic.py
+index 68c4815..e35acc1 100644
+--- a/keystoneauth1/loading/_plugins/identity/generic.py
++++ b/keystoneauth1/loading/_plugins/identity/generic.py
+@@ -41,10 +41,9 @@ class Password(loading.BaseGenericLoader):
+         options = super(Password, cls).get_options()
+         options.extend([
+             loading.Opt('user-id', help='User id'),
+-            loading.Opt('user-name',
+-                        dest='username',
++            loading.Opt('username',
+                         help='Username',
+-                        deprecated=[loading.Opt('username')]),
++                        deprecated=[loading.Opt('user-name')]),
+             loading.Opt('user-domain-id', help="User's domain id"),
+             loading.Opt('user-domain-name', help="User's domain name"),
+             loading.Opt('password', secret=True, help="User's password"),
+diff --git a/keystoneauth1/loading/_plugins/identity/v2.py b/keystoneauth1/loading/_plugins/identity/v2.py
+index 215ca0f..4b510f8 100644
+--- a/keystoneauth1/loading/_plugins/identity/v2.py
++++ b/keystoneauth1/loading/_plugins/identity/v2.py
+@@ -40,11 +40,10 @@ class Password(loading.BaseV2Loader):
+         options = super(Password, self).get_options()
+ 
+         options.extend([
+-            loading.Opt('user-name',
+-                       dest='username',
+-                       deprecated=[loading.Opt('username')],
++            loading.Opt('username',
++                       deprecated=[loading.Opt('user-name')],
+                        help='Username to login with'),
+-            loading.Opt('user-id', help='User ID to longin with'),
++            loading.Opt('user-id', help='User ID to login with'),
+             loading.Opt('password', secret=True, help='Password to use'),
+         ])
+ 
+diff --git a/keystoneauth1/loading/_plugins/identity/v3.py b/keystoneauth1/loading/_plugins/identity/v3.py
+index a77415b..e31b548 100644
+--- a/keystoneauth1/loading/_plugins/identity/v3.py
++++ b/keystoneauth1/loading/_plugins/identity/v3.py
+@@ -26,10 +26,9 @@ class Password(loading.BaseV3Loader):
+ 
+         options.extend([
+             loading.Opt('user-id', help='User ID'),
+-            loading.Opt('user-name',
+-                        dest='username',
++            loading.Opt('username',
+                         help='Username',
+-                        deprecated=[loading.Opt('username')]),
++                        deprecated=[loading.Opt('user-name')]),
+             loading.Opt('user-domain-id', help="User's domain id"),
+             loading.Opt('user-domain-name', help="User's domain name"),
+             loading.Opt('password', secret=True, help="User's password"),
+diff --git a/keystoneauth1/tests/unit/loading/test_generic.py b/keystoneauth1/tests/unit/loading/test_generic.py
+index c3d8504..3973e6b 100644
+--- a/keystoneauth1/tests/unit/loading/test_generic.py
++++ b/keystoneauth1/tests/unit/loading/test_generic.py
+@@ -24,7 +24,7 @@ class PasswordTests(utils.TestCase):
+     def test_options(self):
+         opts = [o.name for o in generic.Password().get_options()]
+ 
+-        allowed_opts = ['user-name',
++        allowed_opts = ['username',
+                         'user-domain-id',
+                         'user-domain-name',
+                         'user-id',
