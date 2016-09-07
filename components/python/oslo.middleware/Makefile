@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.middleware
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=	3.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5ccf160ae5ce23f3f59b86535352e3b5a9fa35dab0edc4ede8b17438da559995
+    sha256:2d985b238182cf70c1adbe1a041eb96eacde3106751fe2c7f1cd81d57a4dbda2
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.middleware
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.middleware/
 COMPONENT_BUGDB=	python-mod/oslo.middlewar
 
-TPNO=			25765
+TPNO=			28413
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,8 +48,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
