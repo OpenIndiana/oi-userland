@@ -60,13 +60,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/cluster_templates.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/clusters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/data_sources.py
-file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/events.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/helpers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/httpclient.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/job_binaries.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/job_binary_internals.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/job_executions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/job_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/jobs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/node_group_templates.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/api/parameters.py
@@ -80,20 +79,50 @@ file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/openstack/common/a
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/openstack/common/apiclient/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/openstack/common/apiclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/openstack/common/cliutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/cluster_templates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/clusters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/data_sources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/images.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/job_binaries.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/job_templates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/job_types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/jobs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/node_group_templates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/plugins.py
+file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/osc/v1/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/saharaclient/version.py
 #
 license saharaclient.license license="Apache v2.0"
 
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
+# force a group dependency on the optional oslo.i18n; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on cliff; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/cliff-$(PYV)
+
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
 
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
 
-# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.i18n-$(PYV)
+# force a dependency on openstackclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/openstackclient-$(PYV)
+
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -103,9 +132,6 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on prettytable; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/prettytable-$(PYV)
-
-# force a dependency on requests; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/requests-$(PYV)
 
 # force a dependency on the saharaclient package
 depend type=require \
