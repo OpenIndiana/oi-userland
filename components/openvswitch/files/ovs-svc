@@ -116,24 +116,21 @@ start_ovsdb_server() {
 	fi
 }
 
-stop_vswitch_server() {
+clean_vswitch() {
         typeset BRIDGENAME
 
-        $PKILL -x -u ${OVS_USER} -z `smf_zonename` ${OVS_VSWITCHD}
-        if [[ $? -ne 0 && $? -ne 1 ]]; then
-                errlog "pkill of ${OVS_VSWITCHD} failed with $?"
-        fi
-
+	SVC_METHOD=$1
+	
         ${OVS_VSCTL} list-br |
                 while read BRIDGENAME; do
 			${PFEXEC} ${IPADM} disable-if -t ${BRIDGENAME} >/dev/null 2>&1
-                        ${OVS_CLEAN_PATH} delete-vnic ${BRIDGENAME}
-                        if [ $? -ne 0 ]; then
+                        ${OVS_CLEAN_PATH} delete-vnic ${BRIDGENAME} >/dev/null 2>&1
+                        if [[ $? -ne 0 && "$1" = 'stop' ]]; then
                                 errlog "Error $? removing ${BRIDGENAME} VNIC"
                         fi
                 done
         ${OVS_CLEAN_PATH} reset-ofports
-	if [ $? -ne 0 ]; then
+        if [ $? -ne 0 ]; then
         	errlog "Error $? resetting OF ports"
 	fi
 
@@ -146,7 +143,17 @@ stop_vswitch_server() {
         if [ $? -ne 0 ]; then
                 errlog "Error $? deleting the OVS etherstub"
         fi
+}    
 
+stop_vswitch_server() {
+        typeset BRIDGENAME
+
+        $PKILL -x -u ${OVS_USER} -z `smf_zonename` ${OVS_VSWITCHD}
+        if [[ $? -ne 0 && $? -ne 1 ]]; then
+                errlog "pkill of ${OVS_VSWITCHD} failed with $?"
+        fi
+
+        clean_vswitch stop
 }
 
 start_vswitch_server() {
@@ -155,7 +162,9 @@ start_vswitch_server() {
 
 	create_ovs_tempdir
 
-	 ${PFEXEC} ${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
+        clean_vswitch start
+
+	${PFEXEC} ${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
 	    -vconsole:emer -vsyslog:off -vfile:warn --mlockall --no-chdir \
 	    --log-file=${VSWITCHD_LOGFILE} \
 	    --pidfile=${VSWITCHD_PIDFILE} \
