@@ -20,21 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mock
-COMPONENT_VERSION=	1.0.1
-COMPONENT_PROJECT_URL=	http://www.voidspace.org.uk/python/mock/
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b839dd2d9c117c701430c149956918a423a9863b48b09c90e30a6013e7d2f44f
-COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/m/mock/$(COMPONENT_ARCHIVE)
+    sha256:1e247dbecc6ce057299eb7ee019ad68314bb93152e81d9a6110d35f4d5eca0f6
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	http://www.voidspace.org.uk/python/mock/
 COMPONENT_BUGDB=	python-mod/mock
 
-TPNO=			12679
+TPNO=			28689
 
 # mock has been subsumed into Python starting with 3.3, so no need to build
 # it for Python 3.
@@ -56,5 +57,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
