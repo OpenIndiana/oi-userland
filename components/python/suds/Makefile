@@ -20,24 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		suds
-COMPONENT_VERSION=	0.4
+COMPONENT_NAME=		suds-jurko
+COMPONENT_VERSION=	0.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d5524ae523bb9e09c57bcdbd1efae2c287d20603688ea31f6020ed180a489af0
+    sha256:29edb72fd21e3044093d86f33c66cf847c5aaab26d64cb90e69e528ef014e57f
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://fedorahosted.org/suds/
+COMPONENT_PROJECT_URL=	https://bitbucket.org/jurko/suds
 COMPONENT_BUGDB=	python-mod/suds
 
-TPNO=			14503
-
-# Import/syntax issues: not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+TPNO=			29452
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,16 +43,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# The setup_logging() routine is defined in .../suds-0.4/tests/__init__.py
-# This is called in .../suds-0.4/tests/builtin.py but is not found "as is"
-# unless the suds package is installed. So add a line to correctly import it.
-COMPONENT_PRE_TEST_ACTION = \
-	$(GSED) -i -e \
-	"/^setup/i from __init__ import setup_logging" \
-	$(SOURCE_DIR)/tests/builtin.py
-
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)/tests
-COMPONENT_TEST_ARGS =	builtin.py
+COMPONENT_TEST_ARGS =	test_suds.py
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -63,5 +53,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
