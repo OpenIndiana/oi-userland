@@ -1,0 +1,47 @@
+# Existing set of patches from the desktop gate
+# Not suitable for upstream
+
+*** a/doc/Makefile.in	Thu Jul 12 11:36:45 2012
+--- b/doc/Makefile.in	Wed Apr 27 13:37:38 2016
+***************
+*** 502,508 ****
+  @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf "$(DESTDIR)$(docdir)/$(HTML_APIDOC_INTERNALS_DIR)"
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs: $(HTML_APIDOC_DIR).stamp
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	mkdir -p "$(DESTDIR)$(docdir)"
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	find "$(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)" \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type d -exec chmod 0755 {} \; \) -or \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type f -exec chmod 0644 {} \; \)
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(unset CDPATH; cd "$(DOXYGEN_OUTPUT_DIR)" && tar cpf - "$(HTML_APIDOC_DIR)") \
+--- 502,508 ----
+  @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf "$(DESTDIR)$(docdir)/$(HTML_APIDOC_INTERNALS_DIR)"
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs: $(HTML_APIDOC_DIR).stamp
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	mkdir -p "$(DESTDIR)$(docdir)"
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	gfind "$(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)" \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type d -exec chmod 0755 {} \; \) -or \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type f -exec chmod 0644 {} \; \)
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(unset CDPATH; cd "$(DOXYGEN_OUTPUT_DIR)" && tar cpf - "$(HTML_APIDOC_DIR)") \
+***************
+*** 514,524 ****
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -f $(HTML_APIDOC_DIR).tar.gz $(HTML_APIDOC_INTERNALS_DIR).tar.gz
+  
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(DOXYGEN_UPLOAD): $(DOXYGEN_STAMPS)
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	find $(DOXYGEN_OUTPUT_DIR) \( -type d -exec chmod a+rx,go-w,g+s {} \; \) \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		-or \( -type f -exec chmod a+r {} \; \)
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/api/
+  @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/internals/
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	ssh "sf" "find /home/groups/l/li/libexif/htdocs/internals /home/groups/l/li/libexif/htdocs/api \( -type d -exec chgrp libexif {} \; -exec chmod g+rwxs,a+rx {} \; \) -or \( -type f -exec chgrp libexif {} \; -exec chmod g+rw {} \; \( -name '*.html' -or -name '*.png' -or -name '*.php' -or -name '*.jpg' -or -name '*.css' -name '*.dot' -name '*.map' \) -exec chmod a+r {} \; \)"
+  
+  all-local: $(DOXYGEN_STAMPS)
+  
+--- 514,524 ----
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -f $(HTML_APIDOC_DIR).tar.gz $(HTML_APIDOC_INTERNALS_DIR).tar.gz
+  
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(DOXYGEN_UPLOAD): $(DOXYGEN_STAMPS)
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	gfind $(DOXYGEN_OUTPUT_DIR) \( -type d -exec chmod a+rx,go-w,g+s {} \; \) \
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		-or \( -type f -exec chmod a+r {} \; \)
+  @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/api/
+  @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/internals/
+! @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	ssh "sf" "gfind /home/groups/l/li/libexif/htdocs/internals /home/groups/l/li/libexif/htdocs/api \( -type d -exec chgrp libexif {} \; -exec chmod g+rwxs,a+rx {} \; \) -or \( -type f -exec chgrp libexif {} \; -exec chmod g+rw {} \; \( -name '*.html' -or -name '*.png' -or -name '*.php' -or -name '*.jpg' -or -name '*.css' -name '*.dot' -name '*.map' \) -exec chmod a+r {} \; \)"
+  
+  all-local: $(DOXYGEN_STAMPS)
+  
