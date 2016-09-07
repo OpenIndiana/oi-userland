@@ -1,0 +1,76 @@
+In-house patch to allow the ovs_server_package to also contain the ovs_agent.
+Currently not suitable for upstream, as it likely needs to take other scenarios
+into consideration.
+
+--- openstack-neutron-8.2.0/manifests/agents/ml2/ovs.pp.orig        2016-08-07 11:35:39.738189495 -0700
++++ openstack-neutron-8.2.0/manifests/agents/ml2/ovs.pp      2016-08-07 11:37:47.112203596 -0700
+@@ -191,6 +191,24 @@ class neutron::agents::ml2::ovs (
+     fail('A value of $ovsdb_interface is incorrect. The allowed values are vsctl and native')
+   }
+
++  # If there's a separate ovs_agent_package, instantiate it.
++  # Otherwise, use the ovs_server_package and ensure it's
++  # instantiated.
++  if ( $::neutron::params::ovs_agent_package ) {
++    $ovs_agent_package = $::neutron::params::ovs_agent_package
++  } else {
++    $ovs_agent_package = $::neutron::params::ovs_server_package
++  }
++
++  if ! defined(Package[$ovs_agent_package]) {
++    package { $ovs_agent_package:
++      ensure => $package_ensure,
++      name   => $ovs_agent_package,
++      tag    => 'openstack',
++    }
++  }
++
++  Package[$ovs_agent_package] -> Neutron_agent_ovs<||>
+   Neutron_agent_ovs<||> ~> Service['neutron-ovs-agent-service']
+
+   if ($bridge_mappings != []) {
+@@ -273,26 +291,6 @@ class neutron::agents::ml2::ovs (
+     }
+   }
+
+-
+-  if $::neutron::params::ovs_agent_package {
+-    package { 'neutron-ovs-agent':
+-      ensure => $package_ensure,
+-      name   => $::neutron::params::ovs_agent_package,
+-      tag    => ['openstack', 'neutron-package'],
+-    }
+-  } else {
+-    # Some platforms (RedHat) do not provide a separate
+-    # neutron plugin ovs agent package. The configuration file for
+-    # the ovs agent is provided by the neutron ovs plugin package.
+-    if ! defined(Package['neutron-ovs-agent']) {
+-      package { 'neutron-ovs-agent':
+-        ensure => $package_ensure,
+-        name   => $::neutron::params::ovs_server_package,
+-        tag    => ['openstack', 'neutron-package'],
+-      }
+-    }
+-  }
+-
+   if $manage_service {
+     if $enabled {
+       $service_ensure = 'running'
+@@ -300,7 +298,7 @@ class neutron::agents::ml2::ovs (
+       $service_ensure = 'stopped'
+     }
+     Package['neutron'] ~> Service['neutron-ovs-agent-service']
+-    Package['neutron-ovs-agent'] ~> Service['neutron-ovs-agent-service']
++    Package[$ovs_agent_package] ~> Service['neutron-ovs-agent-service']
+   }
+
+   service { 'neutron-ovs-agent-service':
+@@ -312,7 +310,7 @@ class neutron::agents::ml2::ovs (
+   }
+
+   if $::neutron::params::ovs_cleanup_service {
+-    Package['neutron-ovs-agent'] -> Service['ovs-cleanup-service']
++    Package[$ovs_agent_package] -> Service['ovs-cleanup-service']
+     service { 'ovs-cleanup-service':
+       name   => $::neutron::params::ovs_cleanup_service,
+       enable => $enabled,

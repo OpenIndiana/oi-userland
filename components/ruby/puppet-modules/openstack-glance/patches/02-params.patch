@@ -2,9 +2,9 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-glance-6.1.0/manifests/params.pp.orig	2016-04-21 07:49:15.937218438 -0700
-+++ openstack-glance-6.1.0/manifests/params.pp	2016-04-21 07:49:38.722449269 -0700
-@@ -1,14 +1,15 @@
+--- openstack-glance-8.0.1/manifests/params.pp.orig       2016-05-06 08:03:31.669873231 -0700
++++ openstack-glance-8.0.1/manifests/params.pp   2016-05-06 08:06:03.214534543 -0700
+@@ -1,14 +1,16 @@
 +#######################################################################
 +# Oracle has modified the originally distributed contents of this file.
 +#######################################################################
@@ -12,7 +12,7 @@ CI testing.
  # these parameters need to be accessed from several locations and
  # should be considered to be constant
  class glance::params {
--
+
 -  $client_package_name = 'python-glanceclient'
 -
 -  $cache_cleaner_command = 'glance-cache-cleaner'
@@ -24,36 +24,36 @@ CI testing.
 +      $cache_cleaner_command = 'glance-cache-cleaner'
 +      $cache_pruner_command  = 'glance-cache-pruner'
        $api_package_name      = 'openstack-glance'
+       $glare_package_name    = 'openstack-glance'
        $registry_package_name = 'openstack-glance'
-       $api_service_name      = 'openstack-glance-api'
-@@ -21,6 +22,9 @@
-       }
+@@ -24,6 +26,9 @@ class glance::params {
+       $pymysql_package_name  = undef
      }
      'Debian': {
 +      $client_package_name   = 'python-glanceclient'
 +      $cache_cleaner_command = 'glance-cache-cleaner'
 +      $cache_pruner_command  = 'glance-cache-pruner'
        $api_package_name      = 'glance-api'
+       $glare_package_name    = 'glance-glare'
        $registry_package_name = 'glance-registry'
-       $api_service_name      = 'glance-api'
-@@ -28,8 +32,19 @@
-       $db_sync_command       = 'glance-manage --config-file=/etc/glance/glance-registry.conf db_sync'
-       $pyceph_package_name   = 'python-ceph'
+@@ -34,6 +39,20 @@ class glance::params {
+       $sqlite_package_name   = 'python-pysqlite2'
+       $pymysql_package_name  = 'python-pymysql'
      }
 +    'Solaris': {
 +      $client_package_name   = 'library/python/glanceclient'
-+      $pyceph_package_name   = undef
 +      $cache_cleaner_command = '/usr/lib/glance/glance-cache-cleaner'
 +      $cache_pruner_command  = '/usr/lib/glance/glance-cache-pruner'
 +      $api_package_name      = 'cloud/openstack/glance'
++      $glare_package_name    = undef
 +      $registry_package_name = 'cloud/openstack/glance'
 +      $api_service_name      = 'application/openstack/glance/glance-api'
++      $glare_service_name    = undef
 +      $registry_service_name = 'application/openstack/glance/glance-registry'
-+      $db_sync_command       = undef
++      $pyceph_package_name   = undef
++      $sqlite_package_name   = undef
++      $pymysql_package_name  = undef
 +    }
      default: {
--      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
-+      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
+       fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
      }
-   }
- 

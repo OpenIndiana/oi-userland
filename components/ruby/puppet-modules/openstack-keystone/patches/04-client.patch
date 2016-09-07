@@ -12,12 +12,13 @@ CI testing.
  # == Class: keystone::client
  #
  # Installs Keystone client.
-@@ -12,8 +16,15 @@
-   $ensure = 'present'
- ) {
- 
+@@ -19,10 +23,17 @@ class keystone::client (
+
+   include ::keystone::deps
+
 -  package { 'python-keystoneclient':
 -    ensure => $ensure,
+-    name   => $client_package_name,
 -    tag    => 'openstack',
 +  if $::osfamily == 'Solaris' {
 +    package { 'library/python/keystoneclient':
@@ -27,7 +28,9 @@ CI testing.
 +  } else {
 +    package { 'python-keystoneclient':
 +      ensure => $ensure,
++      name   => $client_package_name,
 +      tag    => 'openstack',
 +    }
    }
- }
+
+   include '::openstacklib::openstackclient'

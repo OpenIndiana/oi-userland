@@ -10,9 +10,9 @@ CI testing.
 +#######################################################################
 +
  import os
- 
+
  from django.utils.translation import ugettext_lazy as _
-@@ -76,6 +80,9 @@
+@@ -108,6 +112,9 @@ HORIZON_CONFIG = {
      'exceptions': {'recoverable': exceptions.RECOVERABLE,
                     'not_found': exceptions.NOT_FOUND,
                     'unauthorized': exceptions.UNAUTHORIZED},
@@ -20,26 +20,20 @@ CI testing.
 +    'customization_module': "<%= @overrides %>"
 +<% end %>
  }
- 
- # Specify a regular expression to validate user passwords.
-@@ -345,13 +352,6 @@
-             'filename': '<%= scope.lookupvar("horizon::params::logdir") %>/horizon.log',
-             'formatter': 'verbose',
-         },
--        'syslog': {
--            'level': '<%= @log_level %>',
--            'facility': 'local1',
--            'class': 'logging.handlers.SysLogHandler',
+
+ # If provided, a "Report Bug" link will be displayed in the site header
+@@ -616,7 +623,6 @@ LOGGING = {
+             'level': '<%= @log_level %>',
+             'facility': 'local1',
+             'class': 'logging.handlers.SysLogHandler',
 -            'address': '/dev/log',
--            'formatter': 'normal',
--        }
+             'formatter': 'normal',
+         }
      },
-     'loggers': {
-         # Logging from django.db.backends is VERY verbose, send to null
-@@ -574,14 +574,27 @@
- LOGOUT_URL = '<%= scope.lookupvar("horizon::params::root_url") %>/auth/logout/'
- LOGIN_REDIRECT_URL = '<%= scope.lookupvar("horizon::params::root_url") %>'
- 
+@@ -841,14 +847,27 @@ SECURITY_GROUP_RULES = {
+
+ SESSION_TIMEOUT = <%= @session_timeout %>
+
 -# The Ubuntu package includes pre-compressed JS and compiled CSS to allow
 -# offline compression by default.  To enable online compression, install
 -# the python-lesscpy package and disable the following option.
@@ -60,7 +54,7 @@ CI testing.
 +# online compression, install the python-lesscpy package and disable
 +# the following option.
  COMPRESS_OFFLINE = <%= @compress_offline.to_s.capitalize %>
- 
+
 -# For Glance image upload, Horizon uses the file upload support from Django
 -# so we add this option to change the directory where uploaded files are temporarily
 -# stored until they are loaded into Glance.
@@ -68,5 +62,5 @@ CI testing.
 +# Django so we add this option to change the directory where uploaded
 +# files are temporarily stored until they are loaded into Glance.
  FILE_UPLOAD_TEMP_DIR = '<%= @file_upload_temp_dir %>'
- 
+
  <% if @tuskar_ui %>

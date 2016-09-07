@@ -1,0 +1,197 @@
+Upstream patch to provide support for value transforms.  This patch
+will be in a future release of the module.
+
+https://review.openstack.org/#/c/347463/
+
+From 2075930b90d54e13e6cc9cd1ba65d1f326a409a9 Mon Sep 17 00:00:00 2001
+From: Sofer Athlan-Guyot <chem@sathlan.org>
+Date: Tue, 26 Jul 2016 17:54:07 +0200
+Subject: [PATCH] Add a way for provider to transform value in config.
+
+For instance this would enable this:
+
+    neutron_l3_agent_config {
+        'DEFAULT/router_id': value => $router_name, transform_to => 'uuid';
+    }
+
+The neutron_l3_agent_config would only have to implement this:
+
+    def to_uuid(name)
+      # code to get the uuid
+    end
+
+    def from_uuid(uuid)
+      # code to return the name
+    end
+
+Change-Id: I3b7c17590b27cd3a22c5458342d049969ade2281
+Co-Authored-By: Drew Fisher <drew.fisher@oracle.com>
+---
+ .../provider/openstack_config/ini_setting.rb       | 40 +++++++++++++++++++
+ .../notes/feature_add_transform_for_config.yaml    |  5 +++
+ .../provider/openstack_config/ini_setting_spec.rb  | 46 +++++++++++++++++++++-
+ 3 files changed, 90 insertions(+), 1 deletion(-)
+ create mode 100644 releasenotes/notes/feature_add_transform_for_config.yaml
+
+diff --git a/lib/puppet/provider/openstack_config/ini_setting.rb b/lib/puppet/provider/openstack_config/ini_setting.rb
+index 4a3265f..c96546d 100644
+--- a/lib/puppet/provider/openstack_config/ini_setting.rb
++++ b/lib/puppet/provider/openstack_config/ini_setting.rb
+@@ -10,6 +10,11 @@ Puppet::Type.type(:openstack_config).provide(
+     super
+   end
+ 
++  def create
++    resource[:value] = transform(:to, resource[:value])
++    super
++  end
++
+   def section
+     resource[:name].split('/', 2).first
+   end
+@@ -18,10 +23,33 @@ Puppet::Type.type(:openstack_config).provide(
+     resource[:name].split('/', 2).last
+   end
+ 
++  def value=(value)
++    new_value = transform(:to, value)
++
++    ini_file.set_value(section, setting, new_value)
++    ini_file.save
++  end
++
++  def value
++    value = ini_file.get_value(section, setting)
++    new_value = transform(:from, value)
++    @property_hash[:value] = new_value
++    new_value
++  end
++
+   def ensure_absent_val
+     resource[:ensure_absent_val]
+   end
+ 
++  def transform_to
++    return nil unless resource.to_hash.has_key? :transform_to
++    resource[:transform_to]
++  end
++
++  def transform_to=(value)
++    @property_hash[:transform_to] = value
++  end
++
+   def separator
+     '='
+   end
+@@ -30,4 +58,16 @@ Puppet::Type.type(:openstack_config).provide(
+     self.class.file_path
+   end
+ 
++  def transform(direction, value)
++    new_value = value
++    if !transform_to.nil? && !transform_to.empty?
++      transformation_function = "#{direction}_#{transform_to}".to_sym
++      if self.respond_to?(transformation_function)
++        new_value = send(transformation_function, value)
++      else
++        error("Cannot find transformation #{transformation_function} for #{value}")
++      end
++    end
++    new_value
++  end
+ end
+diff --git a/releasenotes/notes/feature_add_transform_for_config.yaml b/releasenotes/notes/feature_add_transform_for_config.yaml
+new file mode 100644
+index 0000000..844023a
+--- /dev/null
++++ b/releasenotes/notes/feature_add_transform_for_config.yaml
+@@ -0,0 +1,5 @@
++---
++features:
++  - Add the ability to transform values in config files.  This allows
++    operators to configure input directly at assignment by specifying
++    a 'transform_to' attribute.
+diff --git a/spec/unit/provider/openstack_config/ini_setting_spec.rb b/spec/unit/provider/openstack_config/ini_setting_spec.rb
+index 128ecd1..33a9645 100644
+--- a/spec/unit/provider/openstack_config/ini_setting_spec.rb
++++ b/spec/unit/provider/openstack_config/ini_setting_spec.rb
+@@ -20,13 +20,23 @@ describe provider_class do
+ 
+   let(:properties) do
+     {
+-      :name              => 'DEFAUL/foo',
++      :name              => 'DEFAULT/foo',
+       :value             => 'bar',
+       :ensure_absent_val => 'some_value',
+       :ensure            => :present,
+     }
+   end
+ 
++  let(:transform_properties) do
++    {
++      :name              => 'DEFAULT/foo',
++      :value             => 'bar',
++      :transform_to      => 'upper',
++      :ensure_absent_val => 'some_value',
++      :ensure            => :present,
++    }
++  end
++
+   let(:type) do
+     Puppet::Type.newtype(:test_config) do
+       newparam(:name, :namevar => true)
+@@ -36,11 +46,26 @@ describe provider_class do
+     end
+   end
+ 
++  let(:transform_type) do
++    Puppet::Type.newtype(:test_config) do
++      newparam(:name, :namevar => true)
++      newparam(:ensure)
++      newproperty(:value)
++      newparam(:ensure_absent_val)
++      newparam(:transform_to)
++    end
++  end
++
+   let(:resource) do
+     resource = type.new(properties)
+     resource
+   end
+ 
++  let(:transform_resource) do
++    resource = transform_type.new(transform_properties)
++    resource
++  end
++
+   context '#exists?' do
+     it 'ensure to present' do
+       child_conf = Class.new(provider_class) do
+@@ -66,4 +91,23 @@ describe provider_class do
+     end
+   end
+ 
++  context 'transform_to' do
++    it 'transforms a property' do
++      child_conf = Class.new(provider_class) do
++          def self.file_path
++            '/some/file/path'
++          end
++
++          def to_upper(value)
++            value.upcase!
++          end
++      end
++      provider = child_conf.new(transform_resource)
++      provider.exists?
++      provider.transform(:to, transform_resource[:value])
++      expect(transform_resource[:value]).to eq 'BAR'
++    end
++
++  end
++
+ end
+-- 
+1.9.1
+
+

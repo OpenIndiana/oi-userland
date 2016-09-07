@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-nova
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=      8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:68c8140301cfe5e4d873b57ec26ed67504a3816b15e851b8a3dedbc7ea3d53d6
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+	sha256:362dd2597e819f16e9f23dff5779e5480554bd58c6f8511bd4fa397bd7723f82
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-nova/puppet-nova-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/nova
 
-TPNO=			25377
+TPNO=			30881
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

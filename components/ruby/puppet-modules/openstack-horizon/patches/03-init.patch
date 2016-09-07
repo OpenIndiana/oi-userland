@@ -2,20 +2,12 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-horizon-6.1.0/manifests/init.pp.orig	2016-04-21 08:11:23.146692638 -0700
-+++ openstack-horizon-6.1.0/manifests/init.pp	2016-04-21 08:11:37.446431463 -0700
-@@ -1,3 +1,7 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
- # == Class: horizon
- #
- # Installs Horizon dashboard with Apache
-@@ -201,6 +205,26 @@
- #    (optional) Tuskar-UI - Deployment mode ('poc' or 'scale')
- #    Defaults to 'scale'
- #
+--- openstack-horizon-8.2.0/manifests/init.pp.orig	2016-08-07 10:59:15.528518714 -0700
++++ openstack-horizon-8.2.0/manifests/init.pp	2016-08-07 11:02:05.803099181 -0700
+@@ -268,6 +268,25 @@
+ #  [*timezone*]
+ #    (optional) The timezone of the server.
+ #    Defaults to 'UTC'.
 +#  [*docroot*]
 +#    (optional) The DocumentRoot setting
 +#    Defaults to '/var/www'
@@ -35,14 +27,13 @@ CI testing.
 +#  [*overrides*]
 +#    (optional) Python module to use for overrides
 +#
-+#
+ #
  # === Examples
  #
- #  class { 'horizon':
-@@ -251,6 +275,11 @@
-   $tuskar_ui_ironic_discoverd_url      = 'http://127.0.0.1:5050',
-   $tuskar_ui_undercloud_admin_password = undef,
-   $tuskar_ui_deployment_mode           = 'scale',
+@@ -332,6 +351,11 @@ class horizon(
+   $root_url                            = $::horizon::params::root_url,
+   $session_timeout                     = 1800,
+   $timezone                            = 'UTC',
 +  $docroot                             = '/var/www',
 +  $static_alias                        = '/usr/share/openstack-dashboard/static',
 +  $static_root                         = undef,
@@ -51,39 +42,40 @@ CI testing.
    # DEPRECATED PARAMETERS
    $can_set_mount_point                 = undef,
    $vhost_extra_params                  = undef,
-@@ -314,18 +343,16 @@
+@@ -404,16 +428,18 @@ class horizon(
      order   => '50',
    }
  
--  package { 'python-lesscpy':
--    ensure  => $package_ensure,
--  }
--
 -  exec { 'refresh_horizon_django_cache':
--    command     => "${::horizon::params::manage_py} collectstatic --noinput --clear && ${::horizon::params::manage_py} compress --force",
+-    command     => "${::horizon::params::manage_py} collectstatic --noinput --clear",
 -    refreshonly => true,
--    require     => [Package['python-lesscpy'], Package['horizon']],
+-    require     => Package['horizon'],
+-  }
 +  if $::horizon::params::manage_py {
 +    exec { 'refresh_horizon_django_cache':
-+      command     => "${::horizon::params::manage_py} collectstatic --noinput --clear && ${::horizon::params::manage_py} compress --force",
++      command     => "${::horizon::params::manage_py} collectstatic --noinput --clear",
 +      refreshonly => true,
-+      require     => [Package['python-lesscpy'], Package['horizon']],
++      require     => Package['horizon'],
++    }
+ 
+-  exec { 'refresh_horizon_django_compress':
+-    command     => "${::horizon::params::manage_py} compress --force",
+-    refreshonly => true,
+-    require     => Package['horizon'],
++    exec { 'refresh_horizon_django_compress':
++      command     => "${::horizon::params::manage_py} compress --force",
++      refreshonly => true,
++      require     => Package['horizon'],
 +    }
    }
  
--  if $compress_offline {
--    Concat[$::horizon::params::config_file] ~> Exec['refresh_horizon_django_cache']
-+  if $compress_offline and $::horizon::params::manage_py {
-+     File[$::horizon::params::config_file] ~> Exec['refresh_horizon_django_cache']
-   }
- 
-   if $configure_apache {
-@@ -338,6 +365,8 @@
+   if $compress_offline {
+@@ -433,6 +459,8 @@ class horizon(
        horizon_cert   => $horizon_cert,
        horizon_key    => $horizon_key,
        horizon_ca     => $horizon_ca,
 +      docroot        => $docroot,
 +      static_alias   => $static_alias,
        extra_params   => $vhost_extra_params,
-     }
-   }
+       redirect_type  => $redirect_type,
+       root_url       => $root_url

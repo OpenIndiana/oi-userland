@@ -1,0 +1,17 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-8.0.1/manifests/client.pp.orig       2016-07-08 12:57:08.610844762 -0700
++++ openstack-nova-8.0.1/manifests/client.pp   2016-07-08 13:01:57.491564771 -0700
+@@ -12,8 +12,9 @@ class nova::client(
+   $ensure = 'present'
+ ) {
+   include ::nova::deps
++  include ::nova::params
+
+-  package { 'python-novaclient':
++  package { "$::nova::params::nova_client_package_name":
+     ensure => $ensure,
+     tag    => ['openstack', 'nova-support-package'],
+   }

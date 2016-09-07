@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-swift
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=      8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f55632ddfc4a367a7c161af926b505595c5046344cabaf156d14407185831290
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+	sha256:ac976c04a12c8d56c688161b2f68f5a180316cbd80cf739b952f5c437f00774a
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-swift/puppet-swift-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			25378
+TPNO=			30883
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

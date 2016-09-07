@@ -26,16 +26,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-vswitch
-COMPONENT_VERSION=	4.0.0
+COMPONENT_VERSION=	4.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:5af96968aa60350cb00fce53d6f77667b49361b1edb114ce21f8f85c4272d84d
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+    sha256:bc60c847bc1fb1a4d63da39532162b1283ea6ec824591749619f698fd576eeb2
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-vswitch/puppet-vswitch-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/openvswitch
 
-TPNO=			28288
+TPNO=			30884
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-neutron
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=      8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:fc45e22bc9cf2a373e53b5d27dcce132a705d39f086522f841d550739855186a
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+	sha256:9fd93ec535281e6196fecbe72e99220a0f51fd1c4c288327e5d5daa60b3cd89b
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-neutron/puppet-neutron-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/neutron
 
-TPNO=			25376
+TPNO=			30880
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

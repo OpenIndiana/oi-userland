@@ -11,11 +11,11 @@ CI testing.
 +
  #
  class neutron::params {
- 
-@@ -153,6 +157,56 @@
-     $cliff_package      = 'python-cliff'
-     $kernel_headers     = "linux-headers-${::kernelrelease}"
- 
+
+@@ -175,6 +179,56 @@ class neutron::params {
+
+     $sqlite_package_name  = 'python-pysqlite2'
+     $pymysql_package_name = 'python-pymysql'
 +  } elsif($::osfamily == 'Solaris') {
 +    $nobody_user_group   = 'nobody'
 +    $package_name        = 'cloud/openstack/neutron'
@@ -23,10 +23,10 @@ CI testing.
 +    $client_package      = 'library/python/neutronclient'
 +    $ml2_server_package  = false
 +    $ovs_agent_package   = false
-+    $ovs_agent_service   = false
-+    $ovs_server_package  = false
++    $ovs_agent_service   = 'application/openstack/neutron/neutron-openvswitch-agent:default'
++    $ovs_server_package  = 'cloud/openstack/neutron'
 +    $ovs_cleanup_service = false
-+    $ovs_package         = false
++    $ovs_package         = 'service/network/openvswitch'
 +    $libnl_package       = false
 +    $package_provider    = 'pkg'
 +
@@ -67,5 +67,5 @@ CI testing.
 +
 +    $kernel_headers     = false
    } else {
- 
+
      fail("Unsupported osfamily ${::osfamily}")

@@ -1,0 +1,116 @@
+Upstream patch to add the transform_to getter/setter and to/from_uuid
+methods.  This patch has been modified from upstream to work with the
+Mitaka version of the module.  This patch will be in a future release
+of the module.
+
+https://review.openstack.org/#/c/347468/
+
+From 80eaa471c96fb1df690ffe2e2ea5505b8287fdda Mon Sep 17 00:00:00 2001
+From: Sofer Athlan-Guyot <sathlang@redhat.com>
+Date: Tue, 26 Jul 2016 17:59:52 +0200
+Subject: [PATCH] Transform name to uuid.
+
+Change-Id: I24553f79bdf64cf8a1c5c43572cff835591f9275
+Co-Authored-By: Drew Fisher <drew.fisher@oracle.com>
+Depends-on: I3b7c17590b27cd3a22c5458342d049969ade2281
+Depends-on: Iad0354f5babd86822e37053f3f7a1134803fd4f8
+---
+ examples/neutron_l3_with_to_uuid.pp                | 31 ++++++++++++++++++++++
+ .../neutron_l3_agent_config/ini_setting.rb         | 14 ++++++++++
+ lib/puppet/type/neutron_l3_agent_config.rb         |  2 ++
+ releasenotes/notes/add_name_to_uuid_transform.yaml |  4 +++
+ 4 files changed, 51 insertions(+)
+ create mode 100644 examples/neutron_l3_with_to_uuid.pp
+ create mode 100644 releasenotes/notes/add_name_to_uuid_transform.yaml
+
+diff --git a/examples/neutron_l3_with_to_uuid.pp b/examples/neutron_l3_with_to_uuid.pp
+new file mode 100644
+index 0000000..892e348
+--- /dev/null
++++ b/examples/neutron_l3_with_to_uuid.pp
+@@ -0,0 +1,31 @@
++#
++# This manifest is intended to demonstrate the 'transform_to' argument
++# for converting the name of a Neutron router to its UUID for
++# inclusion in l3-agent.ini
++#
++# This manifest extends the one shown in base_provision.pp
++#
++
++class { '::neutron':
++  allow_overlapping_ips => true,
++  rabbit_password       => 'password',
++  rabbit_user           => 'guest',
++  rabbit_host           => 'localhost',
++  service_plugins       => ['router']
++}
++
++class { '::neutron::server':
++  auth_password       => 'password',
++  database_connection => 'mysql://neutron:password@192.168.1.1/neutron',
++}
++
++# configure l3-agent to use the new router by name
++class { '::neutron::agents::l3':
++  enabled        => true,
++  use_namespaces => false,
++  require        => Neutron_router['demo_router'],
++}
++
++neutron_l3_agent_config {
++  'DEFAULT/router_id':  value => 'demo_router', transform_to => 'uuid';
++}
+diff --git a/lib/puppet/provider/neutron_l3_agent_config/ini_setting.rb b/lib/puppet/provider/neutron_l3_agent_config/ini_setting.rb
+index 5bb2dfc..d36fd51 100644
+--- a/lib/puppet/provider/neutron_l3_agent_config/ini_setting.rb
++++ b/lib/puppet/provider/neutron_l3_agent_config/ini_setting.rb
+@@ -1,3 +1,5 @@
++require 'puppet/provider/neutron'
++
+ Puppet::Type.type(:neutron_l3_agent_config).provide(
+   :ini_setting,
+   :parent => Puppet::Type.type(:openstack_config).provider(:ini_setting)
+@@ -7,4 +9,16 @@ Puppet::Type.type(:neutron_l3_agent_conf
+     '/etc/neutron/l3_agent.ini'
+   end
+
++  def to_uuid(name)
++    neutron = Puppet::Provider::Neutron.new
++    neutron.auth_neutron('router-show', "#{name}",
++                         '--format=value', '--column=id').chop
++  end
++
++  def from_uuid(uuid)
++    neutron = Puppet::Provider::Neutron.new
++    neutron.auth_neutron('router-show', "#{uuid}",
++                         '--format=value', '--column=name').chop
++  end
++
+ end
+diff --git a/lib/puppet/type/neutron_l3_agent_config.rb b/lib/puppet/type/neutron_l3_agent_config.rb
+index 569350f..a1569c5 100644
+--- a/lib/puppet/type/neutron_l3_agent_config.rb
++++ b/lib/puppet/type/neutron_l3_agent_config.rb
+@@ -21,6 +21,8 @@ Puppet::Type.newtype(:neutron_l3_agent_config) do
+     defaultto('<SERVICE DEFAULT>')
+   end
+ 
++  newparam(:transform_to)
++
+   autorequire(:package) do
+     'neutron'
+   end
+diff --git a/releasenotes/notes/add_name_to_uuid_transform.yaml b/releasenotes/notes/add_name_to_uuid_transform.yaml
+new file mode 100644
+index 0000000..34cd794
+--- /dev/null
++++ b/releasenotes/notes/add_name_to_uuid_transform.yaml
+@@ -0,0 +1,4 @@
++---
++features:
++  - Add the ability to specify the a name string for the router_id in
++    neutron_l3_agent_config using the transform_to argument. 
+-- 
+1.9.1
+
+

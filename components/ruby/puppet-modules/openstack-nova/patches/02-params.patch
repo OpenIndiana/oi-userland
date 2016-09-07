@@ -12,7 +12,23 @@ CI testing.
  # == Class: nova::params
  #
  # These parameters need to be accessed from several locations and
-@@ -116,8 +120,39 @@
+@@ -30,6 +34,7 @@ class nova::params {
+       $pymysql_package_name          = undef
+       $ceph_client_package_name      = 'ceph-common'
+       $genisoimage_package_name      = 'genisoimage'
++      $nova_client_package_name      = 'python-novaclient'
+       # service names
+       $api_service_name              = 'openstack-nova-api'
+       $cells_service_name            = 'openstack-nova-cells'
+@@ -90,6 +95,7 @@ class nova::params {
+       $pymysql_package_name         = 'python-pymysql'
+       $ceph_client_package_name     = 'ceph'
+       $genisoimage_package_name     = 'genisoimage'
++      $nova_client_package_name     = 'python-novaclient'
+       # service names
+       $api_service_name             = 'nova-api'
+       $cells_service_name           = 'nova-cells'
+@@ -128,8 +134,41 @@ class nova::params {
          }
        }
      }
@@ -33,6 +49,8 @@ CI testing.
 +      $tgt_package_name             = 'system/storage/iscsi/iscsi-target'
 +      $vncproxy_package_name        = 'cloud/openstack/nova'
 +      $spicehtml5proxy_package_name = undef
++      $genisoimage_package_name     = 'media/cdrtools'
++      $nova_client_package_name     = 'library/python/novaclient'
 +      # service names
 +      $api_service_name             = 'application/openstack/nova/nova-api-osapi-compute:default'
 +      $cells_service_name           = undef
@@ -49,7 +67,7 @@ CI testing.
 +    }
      default: {
 -      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
-+      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
++      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat, Debian, and Solaris")
      }
    }
- 
+

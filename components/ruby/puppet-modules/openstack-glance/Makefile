@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-glance
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=	8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1e6ff3512ccda30362fcb4c40d181ac6bb6c4532475d578b54b95319093ec981
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+	sha256:6d835786c8d8e7d683b18cf0c241bc0cb2a84622ec93f06df4f5f02b6f0c2ec0
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-glance/puppet-glance-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/glance
 
-TPNO=			25366
+TPNO=			30875
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

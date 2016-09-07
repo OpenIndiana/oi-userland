@@ -12,24 +12,14 @@ CI testing.
  # == Class: openstacklib::openstackclient
  #
  # Installs the openstackclient
-@@ -10,9 +14,16 @@
- #
+@@ -11,5 +15,9 @@
  class openstacklib::openstackclient(
    $package_ensure = 'present',
--){
--  package { 'python-openstackclient':
--    ensure => $package_ensure,
--    tag    => 'openstack',
-+) {
+ ){
+-  ensure_packages('python-openstackclient', {'ensure' => $package_ensure, tag => 'openstack'})
 +  if $::osfamily == 'Solaris' {
-+    package { 'library/python/openstackclient':
-+      ensure => $package_ensure,
-+      tag    => 'openstack',
-+    }
++    ensure_packages('library/python/openstackclient', {'ensure' => $package_ensure, tag => 'openstack'})
 +  } else {
-+    package { 'python-openstackclient':
-+      ensure => $package_ensure,
-+      tag    => 'openstack',
-+    }
-   }
++    ensure_packages('python-openstackclient', {'ensure' => $package_ensure, tag => 'openstack'})
++  }
  }

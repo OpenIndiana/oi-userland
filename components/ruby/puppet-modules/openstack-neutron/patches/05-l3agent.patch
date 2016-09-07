@@ -1,17 +1,9 @@
 In-house patch for Solaris L3 agent driver configuration variables.
 This patch is not currently suitable for upstream contribution.
 
---- openstack-neutron-6.1.0/manifests/agents/l3.pp.orig	2016-04-21 08:23:04.952418874 -0700
-+++ openstack-neutron-6.1.0/manifests/agents/l3.pp	2016-04-21 08:23:19.798506700 -0700
-@@ -1,3 +1,7 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
- # == Class: neutron::agents::l3
- #
- # Installs and configures the Neutron L3 service
-@@ -99,6 +103,14 @@
+--- openstack-neutron-8.2.0/manifests/agents/l3.pp.orig 2016-08-07 11:31:04.742484834 -0700
++++ openstack-neutron-8.2.0/manifests/agents/l3.pp       2016-08-07 11:34:02.877745750 -0700
+@@ -87,6 +87,14 @@
  #   'dvr_snat': enable DVR with centralized SNAT support (DVR for single-host, for testing only)
  #   Defaults to 'legacy'
  #
@@ -26,13 +18,22 @@ This patch is not currently suitable for upstream contribution.
  # [*allow_automatic_l3agent_failover*]
  #   DEPRECATED: Has no effect in this class. Use the same parameter in neutron::server instead.
  #
-@@ -161,6 +173,9 @@
-     'DEFAULT/enable_metadata_proxy':            value => $enable_metadata_proxy;
-     'DEFAULT/router_delete_namespaces':         value => $router_delete_namespaces;
+@@ -132,6 +141,8 @@ class neutron::agents::l3 (
+   $ha_vrrp_advert_int               = '3',
+   $agent_mode                       = 'legacy',
+   $availability_zone                = $::os_service_default,
++  $ra_confs                         = undef,
++  $allowing_forwarding              = undef,
+   # DEPRECATED PARAMETERS
+   $allow_automatic_l3agent_failover = false,
+   $use_namespaces                   = $::os_service_default,
+@@ -179,6 +190,8 @@ class neutron::agents::l3 (
      'DEFAULT/agent_mode':                       value => $agent_mode;
+     'DEFAULT/network_device_mtu':               value => $network_device_mtu;
+     'DEFAULT/use_namespaces':                   value => $use_namespaces;
 +    'DEFAULT/ra_confs':                         value => $ra_confs;
-+    'DEFAULT/allow_forwarding_between_networks':
-+                                                value => $allow_forwarding;
++    'DEFAULT/allow_forwarding_between_networks':value => $allow_forwarding_between_networks;
+     'AGENT/availability_zone':                  value => $availability_zone;
    }
- 
-   if $network_device_mtu {
+
+

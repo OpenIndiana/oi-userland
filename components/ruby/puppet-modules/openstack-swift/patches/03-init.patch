@@ -4,7 +4,7 @@ CI testing.
 
 --- openstack-swift-6.1.0/manifests/init.pp.orig	2016-04-21 09:04:49.670248833 -0700
 +++ openstack-swift-6.1.0/manifests/init.pp	2016-04-21 09:05:19.849256812 -0700
-@@ -1,7 +1,15 @@
+@@ -1,3 +1,7 @@
 +#######################################################################
 +# Oracle has modified the originally distributed contents of this file.
 +#######################################################################
@@ -12,49 +12,31 @@ CI testing.
  # Install and configure base swift components
  #
  # == Parameters
- #
-+# [*swift_hash_prefix*] string of text to be used
-+#   as a salt when hashing to determine mappings in the ring.
-+#   This file should be the same on every node in the cluster.
-+#
- # [*swift_hash_suffix*] string of text to be used
- #   as a salt when hashing to determine mappings in the ring.
- #   This file should be the same on every node in the cluster.
-@@ -29,6 +37,7 @@
- # Copyright 2011 Puppetlabs Inc, unless otherwise noted.
- #
- class swift(
-+  $swift_hash_prefix,
-   $swift_hash_suffix,
-   $package_ensure        = 'present',
-   $client_package_ensure = 'present',
-@@ -49,27 +58,9 @@
+@@ -85,27 +89,6 @@ class swift(
      ensure => $client_package_ensure;
    }
- 
+
 -  File { owner => 'swift', group => 'swift', require => Package['swift'] }
 -
 -  file { '/etc/swift':
 -    ensure => directory,
--    mode   => '2770',
 -  }
 -  user {'swift':
--    ensure => present,
+-    ensure  => present,
+-    require => Package['swift'],
 -  }
 -  file { '/var/lib/swift':
 -    ensure => directory,
 -  }
 -  file { '/var/run/swift':
--    ensure => directory,
+-    ensure                  => directory,
+-    selinux_ignore_defaults => true,
 -  }
 -
 -  file { '/etc/swift/swift.conf':
 -    ensure => file,
--    mode   => '0660',
-+  swift_config { 'swift-hash/swift_hash_path_prefix':
-+    value => $swift_hash_prefix,
-   }
+-  }
 -
-   swift_config { 'swift-hash/swift_hash_path_suffix':
-     value => $swift_hash_suffix,
-   }
+   File['/etc/swift/swift.conf'] -> Swift_config<||>
+
+   swift_config {

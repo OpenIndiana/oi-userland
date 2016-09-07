@@ -12,51 +12,19 @@ CI testing.
  # == Class: nova
  #
  # This class is used to specify configuration parameters that are common
-@@ -397,12 +401,6 @@
-   Package['nova-common'] -> Nova_config<| |> -> File['/etc/nova/nova.conf']
-   Nova_config<| |> ~> Exec['post-nova_config']
- 
--  # TODO - see if these packages can be removed
--  # they should be handled as package deps by the OS
--  package { 'python-greenlet':
--    ensure  => present,
--  }
--
-   if $install_utilities {
+@@ -511,15 +515,9 @@ class nova(
      class { '::nova::utilities': }
    }
-@@ -411,23 +409,14 @@
-   # allowing a resource to serve as a point where the configuration of nova begins
-   anchor { 'nova-start': }
- 
+
 -  package { 'python-nova':
--    ensure  => $ensure_package,
--    require => Package['python-greenlet'],
--    tag     => ['openstack'],
+-    ensure => $ensure_package,
+-    tag    => ['openstack', 'nova-package'],
 -  }
 -
    package { 'nova-common':
      ensure  => $ensure_package,
      name    => $::nova::params::common_package_name,
--    require => [Package['python-nova'], Anchor['nova-start']],
-+    require => Anchor['nova-start'],
-     tag     => ['openstack'],
+-    require => Package['python-nova'],
+     tag     => ['openstack', 'nova-package'],
    }
- 
-   file { '/etc/nova/nova.conf':
--    mode    => '0640',
--    owner   => 'nova',
--    group   => 'nova',
-     require => Package['nova-common'],
-   }
- 
-@@ -576,9 +565,6 @@
-   if $log_dir {
-     file { $log_dir:
-       ensure  => directory,
--      mode    => '0750',
--      owner   => 'nova',
--      group   => $::nova::params::nova_log_group,
-       require => Package['nova-common'],
-     }
-     nova_config { 'DEFAULT/log_dir': value => $log_dir;}
+

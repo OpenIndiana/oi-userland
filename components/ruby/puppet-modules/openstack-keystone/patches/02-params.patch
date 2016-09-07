@@ -2,26 +2,24 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-keystone-6.1.0/manifests/params.pp.orig	2016-04-21 08:16:40.158969865 -0700
-+++ openstack-keystone-6.1.0/manifests/params.pp	2016-04-21 08:16:54.897183391 -0700
-@@ -1,11 +1,15 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
- #
+--- openstack-keystone-8.2.0/manifests/params.pp.orig     2016-08-07 11:19:17.404917169 -0700
++++ openstack-keystone-8.2.0/manifests/params.pp   2016-08-07 11:22:50.916040310 -0700
+@@ -2,13 +2,13 @@
  # This class contains the platform differences for keystone
  #
  class keystone::params {
 -  $client_package_name = 'python-keystone'
- 
+   $keystone_user       = 'keystone'
+   $keystone_group      = 'keystone'
+   $keystone_wsgi_admin_script_path  = '/usr/bin/keystone-wsgi-admin'
+   $keystone_wsgi_public_script_path = '/usr/bin/keystone-wsgi-public'
    case $::osfamily {
      'Debian': {
 +      $client_package_name          = 'python-keystone'
        $package_name                 = 'keystone'
        $service_name                 = 'keystone'
        $keystone_wsgi_script_path    = '/usr/lib/cgi-bin/keystone'
-@@ -26,6 +30,7 @@
+@@ -26,6 +26,7 @@ class keystone::params {
        }
      }
      'RedHat': {
@@ -29,18 +27,22 @@ CI testing.
        $package_name                 = 'openstack-keystone'
        $service_name                 = 'openstack-keystone'
        $keystone_wsgi_script_path    = '/var/www/cgi-bin/keystone'
-@@ -34,5 +39,14 @@
-       $keystone_wsgi_script_source  = '/usr/share/keystone/keystone.wsgi'
-       $paste_config                 = '/usr/share/keystone/keystone-dist-paste.ini'
+@@ -35,5 +36,17 @@ class keystone::params {
+       $pymysql_package_name         = undef
+       $mellon_package_name          = 'mod_auth_mellon'
      }
 +    'Solaris': {
 +      $client_package_name          = 'library/python/keystoneclient'
 +      $package_name                 = 'cloud/openstack/keystone'
 +      $service_name                 = 'application/openstack/keystone:default'
-+      $keystone_wsgi_script_path    = undef
++      $keystone_wsgi_script_path    = '/usr/lib/python2.7/vendor-packages/keystone/httpd/main'
 +      $python_memcache_package_name = 'python-memcached'
++      $sqlite_package_name          = undef
 +      $service_provider             = undef
-+      $paste_config                 = undef
++      $pymysql_package_name         = undef
++      $mellon_package_name          = undef
 +    }
++
    }
  }
+

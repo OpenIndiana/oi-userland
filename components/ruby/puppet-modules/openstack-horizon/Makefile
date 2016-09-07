@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-horizon
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=      8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:45b5105ab194e1fce6ef4e781d922f430c67e7d78cf2260da4189657215c964d
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+	sha256:1f7e53b4b59b2aebb53861a4e3f9bd5178e9aa4a9dbec3dae2876927e2002e46
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-horizon/puppet-horizon-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/horizon
 
-TPNO=			25370
+TPNO=			30877
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

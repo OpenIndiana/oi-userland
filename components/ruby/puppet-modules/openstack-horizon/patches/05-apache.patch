@@ -12,7 +12,7 @@ CI testing.
  # == Class: horizon::wsgi::apache
  #
  # Configures Apache WSGI for Horizon.
-@@ -56,6 +60,14 @@
+@@ -62,6 +66,14 @@
  #   (Optional) Description
  #   Defaults to 'horizon_ssl_vhost'.
  #
@@ -27,45 +27,47 @@ CI testing.
  # [*extra_params*]
  #   (optional) A hash of extra paramaters for apache::wsgi class.
  #   Defaults to {}
-@@ -74,6 +86,8 @@
+@@ -96,6 +108,8 @@ class horizon::wsgi::apache (
    $priority            = '15',
    $vhost_conf_name     = 'horizon_vhost',
    $vhost_ssl_conf_name = 'horizon_ssl_vhost',
 +  $docroot             = '/var/www',
 +  $static_alias        = '/usr/share/openstack-dashboard/static',
    $extra_params        = {},
- ) {
- 
-@@ -132,7 +146,11 @@
-     $redirect_url   = $::horizon::params::root_url
+   $redirect_type       = 'permanent',
+   $root_url            = $::horizon::params::root_url,
+@@ -168,7 +182,11 @@ class horizon::wsgi::apache (
+     fail("Invalid redirect type '${redirect_type} provided.")
    }
- 
--  Package['horizon'] -> Package[$::horizon::params::http_service]
+
+-  Package['horizon'] -> Package['httpd']
 +  if $::osfamily == 'Solaris' {
 +    Package[$::horizon::params::package_name] -> Package['web/server/apache-24']
 +  } else {
-+    Package['horizon'] -> Package[$::horizon::params::http_service]
++    Package['horizon'] -> Package['httpd']
 +  }
-   File[$::horizon::params::config_file] ~> Service[$::horizon::params::http_service]
- 
+   File[$::horizon::params::config_file] ~> Service['httpd']
+
    $unix_user = $::osfamily ? {
-@@ -150,7 +168,7 @@
+@@ -186,7 +204,7 @@ class horizon::wsgi::apache (
      group   => $unix_group,
-     before  => Service[$::horizon::params::http_service],
+     before  => Service['httpd'],
      mode    => '0751',
 -    require => Package['horizon'],
 +    require => Package[$::horizon::params::package_name],
    }
- 
+
    file { "${::horizon::params::logdir}/horizon.log":
-@@ -159,19 +177,19 @@
+@@ -195,7 +213,7 @@ class horizon::wsgi::apache (
      group   => $unix_group,
-     before  => Service[$::horizon::params::http_service],
+     before  => Service['httpd'],
      mode    => '0640',
 -    require => [ File[$::horizon::params::logdir], Package['horizon'] ],
 +    require => [ File[$::horizon::params::logdir], Package[$::horizon::params::package_name] ],
    }
- 
+
+   $script_url = $root_url ? {
+@@ -206,13 +224,13 @@ class horizon::wsgi::apache (
    $default_vhost_conf_no_ip = {
      servername                  => $servername,
      serveraliases               => os_any2array($final_server_aliases),
@@ -75,9 +77,9 @@ CI testing.
      error_log_file              => 'horizon_error.log',
      priority                    => $priority,
      aliases                     => [{
-       alias => "${$::horizon::params::root_url}/static",
+       alias => "${root_url}/static",
 -      path  => '/usr/share/openstack-dashboard/static',
 +      path  => $static_alias,
      }],
-     port                        => 80,
+     port                        => $http_port,
      ssl_cert                    => $horizon_cert,

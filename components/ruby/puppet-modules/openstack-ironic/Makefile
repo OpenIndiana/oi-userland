@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-ironic
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=	8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f600fe731d840eaad423b3087ecef28ee62ea4b0671574611e5de4087f1b42a2
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+    sha256:fb507b05a78be13601ded35e35d5e6afc339673ad5fe1837afcc402e925c02ce
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-ironic/puppet-ironic-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/ironic
 
-TPNO=			25373
+TPNO=			30878
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

@@ -1,0 +1,35 @@
+In-house patch to remove the router_id option from configuration of
+l3-agent.  A similar patch has been already merged upstream and can be
+found here:
+
+https://review.openstack.org/#/c/340639/
+
+--- openstack-neutron-8.0.1/manifests/agents/l3.pp.orig 2016-08-02 14:15:50.741614903 -0700
++++ openstack-neutron-8.0.1/manifests/agents/l3.pp       2016-08-02 14:16:08.531341208 -0700
+@@ -26,10 +26,6 @@
+ #   (optional) Driver to interface with neutron
+ #   Defaults to OVSInterfaceDriver
+ #
+-# [*router_id*]
+-#   (optional) The ID of the external router in neutron
+-#   Defaults to $::os_service_default
+-#
+ # [*gateway_external_network_id*]
+ #   (optional) The ID of the external network in neutron
+ #   Defaults to $::os_service_default
+@@ -125,7 +121,6 @@ class neutron::agents::l3 (
+   $manage_service                   = true,
+   $debug                            = false,
+   $interface_driver                 = 'neutron.agent.linux.interface.OVSInterfaceDriver',
+-  $router_id                        = $::os_service_default,
+   $gateway_external_network_id      = $::os_service_default,
+   $handle_internal_only_routers     = $::os_service_default,
+   $metadata_port                    = $::os_service_default,
+@@ -178,7 +173,6 @@ class neutron::agents::l3 (
+     'DEFAULT/debug':                            value => $debug;
+     'DEFAULT/external_network_bridge':          value => $external_network_bridge;
+     'DEFAULT/interface_driver':                 value => $interface_driver;
+-    'DEFAULT/router_id':                        value => $router_id;
+     'DEFAULT/gateway_external_network_id':      value => $gateway_external_network_id;
+     'DEFAULT/handle_internal_only_routers':     value => $handle_internal_only_routers;
+     'DEFAULT/metadata_port':                    value => $metadata_port;

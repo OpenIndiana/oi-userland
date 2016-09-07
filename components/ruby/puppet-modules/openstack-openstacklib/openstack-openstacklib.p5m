@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -43,10 +43,20 @@ file path=etc/puppet/modules/openstacklib/LICENSE
 file path=etc/puppet/modules/openstacklib/README.md
 file path=etc/puppet/modules/openstacklib/Rakefile
 file path=etc/puppet/modules/openstacklib/checksums.json
+file path=etc/puppet/modules/openstacklib/facts.d/os_service_default.txt
+file path=etc/puppet/modules/openstacklib/lib/facter/os_package_type.rb
+file path=etc/puppet/modules/openstacklib/lib/facter/os_service_default.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/parser/functions/is_service_default.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/parser/functions/normalize_ip_for_uri.rb
 file path=etc/puppet/modules/openstacklib/lib/puppet/parser/functions/os_database_connection.rb
 file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack.rb
 file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack/auth.rb
 file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack/credentials.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack_config/ini_setting.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack_config/ruby.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/type/openstack_config.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/util/openstackconfig.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/util/openstackconfig/section.rb
 file path=etc/puppet/modules/openstacklib/manifests/db/mysql.pp
 file path=etc/puppet/modules/openstacklib/manifests/db/mysql/host_access.pp
 file path=etc/puppet/modules/openstacklib/manifests/db/postgresql.pp
@@ -54,16 +64,36 @@ file path=etc/puppet/modules/openstacklib/manifests/messaging/rabbitmq.pp
 file path=etc/puppet/modules/openstacklib/manifests/openstackclient.pp
 file path=etc/puppet/modules/openstacklib/manifests/policy.pp
 file path=etc/puppet/modules/openstacklib/manifests/policy/base.pp
+file path=etc/puppet/modules/openstacklib/manifests/policyrcd.pp
 file path=etc/puppet/modules/openstacklib/manifests/service_validation.pp
 file path=etc/puppet/modules/openstacklib/manifests/wsgi/apache.pp
 file path=etc/puppet/modules/openstacklib/metadata.json
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/catch_403-237b79f33ab3364f.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/feature_add_exclusion_to_retry_mechanism-2acb52fa25bd315c.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/ipv6_brackets-7a453aea5e091855.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/manage_policy_rc_d_file-747510db06792d52.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/mitaka-dece9d43a565e6cb.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/more_db_options-d96316ae4eb5a78c.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/retry_client-b8a0e1f9ff679281.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/notes/use-reno-1caaec4ba5aa4285.yaml
+file path=etc/puppet/modules/openstacklib/releasenotes/source/_static/.placeholder
+file path=etc/puppet/modules/openstacklib/releasenotes/source/conf.py
+file path=etc/puppet/modules/openstacklib/releasenotes/source/index.rst
+file path=etc/puppet/modules/openstacklib/releasenotes/source/mitaka.rst
+file path=etc/puppet/modules/openstacklib/releasenotes/source/unreleased.rst
+file path=etc/puppet/modules/openstacklib/setup.cfg
+file path=etc/puppet/modules/openstacklib/setup.py
 file path=etc/puppet/modules/openstacklib/spec/acceptance/mysql_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/centos-70-x64.yml
 file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/default.yml
 file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/nodepool-centos7.yml
 file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/nodepool-trusty.yml
+file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/ubuntu-server-1404-x64.yml
+file path=etc/puppet/modules/openstacklib/spec/acceptance/openstacklib_config_provider_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/acceptance/rabbitmq_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/classes/init_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/classes/openstacklib_policy_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/classes/openstacklib_policyrcd_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_mysql_host_access_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_mysql_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_postgresql_spec.rb
@@ -71,13 +101,20 @@ file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_messaging_ra
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_policy_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_service_validation_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_wsgi_apache_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/functions/is_service_default_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/functions/normalize_ip_for_uri_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/functions/os_database_connection_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/shared_examples.rb
 file path=etc/puppet/modules/openstacklib/spec/spec_helper.rb
 file path=etc/puppet/modules/openstacklib/spec/spec_helper_acceptance.rb
 file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack/auth_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack/credentials_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack_config/ini_setting_spec.rb
 file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/unit/puppet/util/openstackconfig_spec.rb
+file path=etc/puppet/modules/openstacklib/templates/policy-rc.d.erb
+file path=etc/puppet/modules/openstacklib/test-requirements.txt
+file path=etc/puppet/modules/openstacklib/tox.ini
 #
 license openstack-openstacklib.license license="Apache v2.0"
 

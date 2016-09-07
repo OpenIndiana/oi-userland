@@ -1,0 +1,110 @@
+Upstream patch to move the definition of the :neutron command into the
+top-level provider.  This patch will be in a future release of the
+module.
+
+Patch originates from:
+https://review.openstack.org/#/c/348007/
+
+From 8a85bb0860e334bced12c86771e4ef23c6731dc2 Mon Sep 17 00:00:00 2001
+From: Sofer Athlan-Guyot <sathlang@redhat.com>
+Date: Wed, 27 Jul 2016 21:17:28 +0200
+Subject: [PATCH] Put neutron provider commands in neutron.rb
+
+This allows to gain access to all neutron commands using composability,
+see[1] for an example.  It removes some redundancy as well.  Finally, it
+looks more like the openstacklib/**/openstack.rb provider code.
+
+[1] https://review.openstack.org/#/c/347468/
+
+Change-Id: Iad0354f5babd86822e37053f3f7a1134803fd4f8
+---
+ lib/puppet/provider/neutron.rb                          | 3 +++
+ lib/puppet/provider/neutron_network/neutron.rb          | 2 --
+ lib/puppet/provider/neutron_port/neutron.rb             | 2 --
+ lib/puppet/provider/neutron_router/neutron.rb           | 2 --
+ lib/puppet/provider/neutron_router_interface/neutron.rb | 2 --
+ lib/puppet/provider/neutron_subnet/neutron.rb           | 2 --
+ 6 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/lib/puppet/provider/neutron.rb b/lib/puppet/provider/neutron.rb
+index b95b175..4b6cb18 100644
+--- a/lib/puppet/provider/neutron.rb
++++ b/lib/puppet/provider/neutron.rb
+@@ -3,6 +3,9 @@ require 'puppet/util/inifile'
+ 
+ class Puppet::Provider::Neutron < Puppet::Provider
+ 
++  initvars
++  commands :neutron => 'neutron'
++
+   def self.conf_filename
+     '/etc/neutron/neutron.conf'
+   end
+diff --git a/lib/puppet/provider/neutron_network/neutron.rb b/lib/puppet/provider/neutron_network/neutron.rb
+index a0addd3..c2a78fa 100644
+--- a/lib/puppet/provider/neutron_network/neutron.rb
++++ b/lib/puppet/provider/neutron_network/neutron.rb
+@@ -11,8 +11,6 @@ Puppet::Type.type(:neutron_network).provide(
+     Assumes that the neutron service is configured on the same host.
+   EOT
+ 
+-  commands :neutron => 'neutron'
+-
+   mk_resource_methods
+ 
+   def self.neutron_type
+diff --git a/lib/puppet/provider/neutron_port/neutron.rb b/lib/puppet/provider/neutron_port/neutron.rb
+index 5aae227..67b0a6d 100644
+--- a/lib/puppet/provider/neutron_port/neutron.rb
++++ b/lib/puppet/provider/neutron_port/neutron.rb
+@@ -12,8 +12,6 @@ Puppet::Type.type(:neutron_port).provide(
+   EOT
+   #TODO No security group support
+ 
+-  commands :neutron => "neutron"
+-
+   mk_resource_methods
+ 
+   def self.instances
+diff --git a/lib/puppet/provider/neutron_router/neutron.rb b/lib/puppet/provider/neutron_router/neutron.rb
+index 0fc3e5c..074db97 100644
+--- a/lib/puppet/provider/neutron_router/neutron.rb
++++ b/lib/puppet/provider/neutron_router/neutron.rb
+@@ -11,8 +11,6 @@ Puppet::Type.type(:neutron_router).provide(
+     Assumes that the neutron service is configured on the same host.
+   EOT
+ 
+-  commands :neutron => 'neutron'
+-
+   mk_resource_methods
+ 
+   def self.do_not_manage
+diff --git a/lib/puppet/provider/neutron_router_interface/neutron.rb b/lib/puppet/provider/neutron_router_interface/neutron.rb
+index e9b541a..cc3bb71 100644
+--- a/lib/puppet/provider/neutron_router_interface/neutron.rb
++++ b/lib/puppet/provider/neutron_router_interface/neutron.rb
+@@ -17,8 +17,6 @@ Puppet::Type.type(:neutron_router_interface).provide(
+ 
+   EOT
+ 
+-  commands :neutron => 'neutron'
+-
+   mk_resource_methods
+ 
+   def self.instances
+diff --git a/lib/puppet/provider/neutron_subnet/neutron.rb b/lib/puppet/provider/neutron_subnet/neutron.rb
+index 01f6371..b2daad8 100644
+--- a/lib/puppet/provider/neutron_subnet/neutron.rb
++++ b/lib/puppet/provider/neutron_subnet/neutron.rb
+@@ -12,8 +12,6 @@ Puppet::Type.type(:neutron_subnet).provide(
+     Assumes that the neutron service is configured on the same host.
+   EOT
+ 
+-  commands :neutron => 'neutron'
+-
+   mk_resource_methods
+ 
+   def self.neutron_type
+-- 
+1.9.1
+

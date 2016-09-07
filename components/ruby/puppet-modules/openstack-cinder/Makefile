@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack-cinder
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=	8.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:75bede8811adc36d5bab0c5d41a0df3cf4d07da01b98d34715e3262baa6ab637
-COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+	sha256:d2147e542c00a1242cb58e18dabb1bcadbee92885db306bf0f48dd92081ca12c
+COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/puppet-cinder/puppet-cinder-$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/cinder
 
-TPNO=			25356
+TPNO=			30874
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk

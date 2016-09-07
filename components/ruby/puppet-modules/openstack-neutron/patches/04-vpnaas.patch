@@ -11,9 +11,9 @@ Currently unsuitable for upsteam contribution.
  #
  # Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
  #
-@@ -43,6 +47,12 @@
- # [*ipsec_status_check_interval*]
- #   (optional) Status check interval. Defaults to '60'.
+@@ -45,6 +49,12 @@
+ # [*external_network_bridge*]
+ #  (optional) Deprecated. Defaults to $::os_service_default
  #
 +# [*packet_logging*]
 +#   (optional) For the Solaris driver, enable logging discarded packets.
@@ -24,19 +24,19 @@ Currently unsuitable for upsteam contribution.
  class neutron::agents::vpnaas (
    $package_ensure              = present,
    $enabled                     = true,
-@@ -50,7 +60,9 @@
+@@ -52,7 +62,9 @@ class neutron::agents::vpnaas (
    $vpn_device_driver           = 'neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver',
    $interface_driver            = 'neutron.agent.linux.interface.OVSInterfaceDriver',
-   $external_network_bridge     = undef,
--  $ipsec_status_check_interval = '60'
-+  $ipsec_status_check_interval = '60',
+   $external_network_bridge     = $::os_service_default,
+-  $ipsec_status_check_interval = $::os_service_default
++  $ipsec_status_check_interval = $::os_service_default,
 +  $packet_logging              = undef,
 +  $logger_level                = undef
  ) {
- 
+
    include ::neutron::params
-@@ -66,6 +78,15 @@
-         name   => $::neutron::params::openswan_package,
+@@ -79,6 +91,15 @@ class neutron::agents::vpnaas (
+         }
        }
      }
 +

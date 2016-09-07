@@ -12,51 +12,16 @@ CI testing.
  # == Class: heat::api
  #
  # Installs & configure the heat API service
-@@ -62,12 +66,22 @@
-   include ::heat::params
-   include ::heat::policy
- 
-+  if ( $heat::params::api_package_name != $heat::params::common_package_name ) {
-+    ensure_packages([$heat::params::api_package_name],
-+      {
-+        ensure => $package_ensure,
-+        name   => $::heat::params::api_package_name,
-+        tag    => ['openstack'],
-+      }
-+    )
-+  }
-+
-   Heat_config<||> ~> Service['heat-api']
-   Class['heat::policy'] -> Service['heat-api']
- 
--  Package['heat-api'] -> Heat_config<||>
--  Package['heat-api'] -> Class['heat::policy']
--  Package['heat-api'] -> Service['heat-api']
-+  Package[$::heat::params::api_package_name] -> Heat_config<||>
-+  Package[$::heat::params::api_package_name] -> Class['heat::policy']
-+  Package[$::heat::params::api_package_name] -> Service['heat-api']
- 
-   if $use_ssl {
-     if !$cert_file {
-@@ -78,12 +92,6 @@
+@@ -72,12 +76,6 @@ class heat::api (
      }
    }
- 
+
 -  package { 'heat-api':
 -    ensure => $package_ensure,
 -    name   => $::heat::params::api_package_name,
--    tag    => 'openstack',
+-    tag    => ['openstack', 'heat-package'],
 -  }
 -
    if $manage_service {
      if $enabled {
        $service_ensure = 'running'
-@@ -99,7 +107,7 @@
-     hasstatus  => true,
-     hasrestart => true,
-     require    => [Package['heat-common'],
--                  Package['heat-api']],
-+                  Package[$::heat::params::api_package_name]],
-     subscribe  => $::heat::subscribe_sync_db,
-   }
- 

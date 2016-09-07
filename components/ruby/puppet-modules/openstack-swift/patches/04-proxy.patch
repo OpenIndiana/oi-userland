@@ -12,14 +12,14 @@ CI testing.
  #
  # TODO - assumes that proxy server is always a memcached server
  #
-@@ -167,17 +171,20 @@
+@@ -173,16 +177,19 @@ class swift::proxy(
      fail ('log_udp_port requires log_udp_host to be set')
    }
- 
+
 -  package { 'swift-proxy':
 -    ensure => $package_ensure,
 -    name   => $::swift::params::proxy_package_name,
--    tag    => 'openstack',
+-    tag    => ['openstack', 'swift-package'],
 +  if ( $swift::params::proxy_package_name != $swift::params::package_name ) {
 +    ensure_packages([$swift::params::proxy_package_name],
 +      {
@@ -29,12 +29,11 @@ CI testing.
 +      }
 +    )
    }
- 
+
    concat { '/etc/swift/proxy-server.conf':
      owner   => 'swift',
      group   => 'swift',
-     mode    => '0660',
 -    require => Package['swift-proxy'],
    }
- 
+
    $required_classes = split(
