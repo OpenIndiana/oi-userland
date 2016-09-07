@@ -26,19 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swift
-COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2.3.0
-COMPONENT_BE_VERSION=	2015.1
+COMPONENT_CODENAME=	mitaka
+COMPONENT_VERSION=	2.7.0
+COMPONENT_BE_VERSION=	2016.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:7225061f92597e7eaf6196c9336c5e590c7626b7e84126c51e8ca5bf5b7bdae1
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+    sha256:ef71126c2fb5e59617b94179dff710c5362ca7e7bfc63fd906e622c95410256e
+COMPONENT_ARCHIVE_URL=  https://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			25793
+TPNO=			30364
 
 PKG_VARS +=		COMPONENT_BE_VERSION
 
@@ -62,8 +62,8 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 COMPONENT_POST_INSTALL_ACTION += \
     ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
      $(CP) \
-         files/swift-*.xml \
-         $(PROTO_DIR)/lib/svc/manifest/application/openstack)
+	 files/swift-*.xml \
+	 $(PROTO_DIR)/lib/svc/manifest/application/openstack)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_CMD =	nosetests
@@ -82,10 +82,8 @@ test:		$(TEST_NO_ARCH)
 
 system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
-REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += library/python/swiftclient-27
 REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += service/memcached

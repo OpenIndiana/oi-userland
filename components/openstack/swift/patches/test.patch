@@ -21,9 +21,9 @@ is not in a form that is worth sending upstream.  To test this properly,
 the test should fork a separate process to test the lock, which should work
 regardless of the OS.
 
---- swift-2.3.0/test/sample.conf.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/test/sample.conf	2016-02-08 01:24:17.841343735 -0800
-@@ -87,17 +87,17 @@ fake_syslog = False
+--- swift-2.7.0/test/sample.conf.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/test/sample.conf	2016-08-08 19:02:28.069576150 -0700
+@@ -94,18 +94,18 @@ fake_syslog = False
  # Note that the cluster must have "sane" values for the test suite to pass
  # (for some definition of sane).
  #
@@ -33,6 +33,7 @@ regardless of the OS.
 -#max_meta_count = 90
 -#max_meta_overall_size = 4096
 -#max_header_size = 8192
+-#extra_header_count = 0
 -#max_object_name_length = 1024
 -#container_listing_limit = 10000
 -#account_listing_limit = 10000
@@ -44,6 +45,7 @@ regardless of the OS.
 +max_meta_count = 90
 +max_meta_overall_size = 4096
 +max_header_size = 8192
++extra_header_count = 0
 +max_object_name_length = 1024
 +container_listing_limit = 10000
 +account_listing_limit = 10000
@@ -52,28 +54,28 @@ regardless of the OS.
  
  # Newer swift versions default to strict cors mode, but older ones were the
  # opposite.
---- swift-2.3.0/test/unit/__init__.py.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/test/unit/__init__.py	2016-02-08 01:24:17.842339594 -0800
-@@ -817,7 +817,7 @@ def fake_http_connect(*code_iter, **kwar
+--- swift-2.7.0/test/unit/__init__.py.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/test/unit/__init__.py	2016-08-08 19:02:28.070402665 -0700
+@@ -903,7 +903,7 @@ def fake_http_connect(*code_iter, **kwar
                      etag = '"68b329da9893e34099c7d8ad5cb9c940"'
  
-             headers = swob.HeaderKeyDict({
+             headers = HeaderKeyDict({
 -                'content-length': len(self.body),
 +                'content-length': self.body.__len__(),
                  'content-type': 'x-application/test',
                  'x-timestamp': self.timestamp,
                  'x-backend-timestamp': self.timestamp,
---- swift-2.3.0/test/unit/common/test_utils.py.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/test/unit/common/test_utils.py	2016-02-08 01:24:17.844724978 -0800
-@@ -53,6 +53,7 @@ from functools import partial
+--- swift-2.7.0/test/unit/common/test_utils.py.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/test/unit/common/test_utils.py	2016-08-08 19:02:28.072989400 -0700
+@@ -54,6 +54,7 @@ from functools import partial
  from tempfile import TemporaryFile, NamedTemporaryFile, mkdtemp
  from netifaces import AF_INET6
  from mock import MagicMock, patch
 +from nose import SkipTest
+ from six.moves.configparser import NoSectionError, NoOptionError
  
- from swift.common.exceptions import (Timeout, MessageTimeout,
-                                      ConnectionTimeout, LockTimeout,
-@@ -748,6 +749,8 @@ class TestUtils(unittest.TestCase):
+ from swift.common.exceptions import Timeout, MessageTimeout, \
+@@ -916,6 +917,8 @@ class TestUtils(unittest.TestCase):
          utils.HASH_PATH_PREFIX = 'startcap'
  
      def test_lock_path(self):
@@ -82,7 +84,7 @@ regardless of the OS.
          tmpdir = mkdtemp()
          try:
              with utils.lock_path(tmpdir, 0.1):
-@@ -764,6 +767,8 @@ class TestUtils(unittest.TestCase):
+@@ -932,6 +935,8 @@ class TestUtils(unittest.TestCase):
              shutil.rmtree(tmpdir)
  
      def test_lock_path_num_sleeps(self):
@@ -91,7 +93,7 @@ regardless of the OS.
          tmpdir = mkdtemp()
          num_short_calls = [0]
          exception_raised = [False]
-@@ -788,6 +793,8 @@ class TestUtils(unittest.TestCase):
+@@ -956,6 +961,8 @@ class TestUtils(unittest.TestCase):
          self.assertTrue(exception_raised[0])
  
      def test_lock_path_class(self):
@@ -100,7 +102,7 @@ regardless of the OS.
          tmpdir = mkdtemp()
          try:
              with utils.lock_path(tmpdir, 0.1, ReplicationLockTimeout):
-@@ -1214,7 +1221,8 @@ class TestUtils(unittest.TestCase):
+@@ -1405,7 +1412,8 @@ class TestUtils(unittest.TestCase):
              }, 'server', log_route='server')
              expected_args = [((), {'address': '/dev/log',
                                     'facility': orig_sysloghandler.LOG_LOCAL3})]
@@ -110,7 +112,7 @@ regardless of the OS.
                      os.path.isfile('/dev/log') or \
                      os.path.isdir('/dev/log'):
                  # Since socket on OSX is in /var/run/syslog, there will be
-@@ -2402,6 +2410,8 @@ cluster_dfw1 = http://dfw1.host/v1/
+@@ -2726,6 +2734,8 @@ cluster_dfw1 = http://dfw1.host/v1/
                  MagicMock(side_effect=BaseException('test3')))
  
      def test_lock_file(self):
@@ -119,7 +121,7 @@ regardless of the OS.
          flags = os.O_CREAT | os.O_RDWR
          with NamedTemporaryFile(delete=False) as nt:
              nt.write("test string")
-@@ -2480,6 +2490,8 @@ cluster_dfw1 = http://dfw1.host/v1/
+@@ -2805,6 +2815,8 @@ cluster_dfw1 = http://dfw1.host/v1/
                                          os.fstat(f.fileno()).st_ino)
  
      def test_lock_file_held_on_unlink(self):
@@ -128,7 +130,7 @@ regardless of the OS.
          os_unlink = os.unlink
  
          def flocking_unlink(filename):
-@@ -2496,6 +2508,8 @@ cluster_dfw1 = http://dfw1.host/v1/
+@@ -2821,6 +2833,8 @@ cluster_dfw1 = http://dfw1.host/v1/
                      pass
  
      def test_lock_file_no_unlink_if_fail(self):
@@ -137,17 +139,17 @@ regardless of the OS.
          os_open = os.open
          with NamedTemporaryFile(delete=True) as nt:
  
---- swift-2.3.0/test/unit/obj/test_diskfile.py.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/test/unit/obj/test_diskfile.py	2016-02-08 01:24:17.846568734 -0800
+--- swift-2.7.0/test/unit/obj/test_diskfile.py.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/test/unit/obj/test_diskfile.py	2016-08-08 19:02:28.075330000 -0700
 @@ -18,6 +18,7 @@
  
- import cPickle as pickle
+ import six.moves.cPickle as pickle
  import os
 +import sys
  import errno
  import itertools
- import mock
-@@ -608,6 +609,8 @@ class DiskFileManagerMixin(BaseDiskFileT
+ from unittest.util import safe_repr
+@@ -718,6 +719,8 @@ class DiskFileManagerMixin(BaseDiskFileT
          self.assertEqual(locations, [])
  
      def test_replication_lock_on(self):
@@ -156,9 +158,9 @@ regardless of the OS.
          # Double check settings
          self.df_mgr.replication_one_per_device = True
          self.df_mgr.replication_lock_timeout = 0.1
---- swift-2.3.0/test/unit/proxy/test_server.py.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/test/unit/proxy/test_server.py	2016-02-08 01:24:17.849738022 -0800
-@@ -4263,6 +4263,9 @@ class TestObjectController(unittest.Test
+--- swift-2.7.0/test/unit/proxy/test_server.py.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/test/unit/proxy/test_server.py	2016-08-08 19:02:28.078178485 -0700
+@@ -4860,6 +4860,9 @@ class TestObjectController(unittest.Test
  
          class LargeResponseBody(object):
  
@@ -168,7 +170,7 @@ regardless of the OS.
              def __len__(self):
                  return constraints.MAX_FILE_SIZE + 1
  
-@@ -4510,6 +4513,9 @@ class TestObjectController(unittest.Test
+@@ -5107,6 +5110,9 @@ class TestObjectController(unittest.Test
  
          class LargeResponseBody(object):
  
@@ -178,7 +180,7 @@ regardless of the OS.
              def __len__(self):
                  return constraints.MAX_FILE_SIZE + 1
  
-@@ -4537,6 +4543,9 @@ class TestObjectController(unittest.Test
+@@ -5134,6 +5140,9 @@ class TestObjectController(unittest.Test
  
          class LargeResponseBody(object):
  

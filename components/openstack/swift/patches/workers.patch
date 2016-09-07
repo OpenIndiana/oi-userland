@@ -3,8 +3,8 @@ Swift configuration files for a single CPU system. The default based on
 the number of CPUs (cores) found may not be efficient on a system with
 a large number of cores. This patch is not suitable for the upstream.
 
---- swift-2.3.0/etc/account-server.conf-sample.~2~	2016-02-08 00:02:16.969218591 -0800
-+++ swift-2.3.0/etc/account-server.conf-sample	2016-02-08 00:02:17.037019168 -0800
+--- swift-2.7.0/etc/account-server.conf-sample.~2~	2016-08-08 19:02:28.015815430 -0700
++++ swift-2.7.0/etc/account-server.conf-sample	2016-08-08 19:02:28.090297810 -0700
 @@ -10,8 +10,9 @@ bind_port = 6002
  # disable_fallocate = false
  #
@@ -17,8 +17,8 @@ a large number of cores. This patch is not suitable for the upstream.
  #
  # Maximum concurrent requests per worker
  # max_clients = 1024
---- swift-2.3.0/etc/container-server.conf-sample.~2~	2016-02-08 00:02:16.969741046 -0800
-+++ swift-2.3.0/etc/container-server.conf-sample	2016-02-08 00:02:17.037565309 -0800
+--- swift-2.7.0/etc/container-server.conf-sample.~2~	2016-08-08 19:02:28.016881720 -0700
++++ swift-2.7.0/etc/container-server.conf-sample	2016-08-08 19:02:28.090842415 -0700
 @@ -10,8 +10,9 @@ bind_port = 6001
  # disable_fallocate = false
  #
@@ -31,22 +31,23 @@ a large number of cores. This patch is not suitable for the upstream.
  #
  # Maximum concurrent requests per worker
  # max_clients = 1024
---- swift-2.3.0/etc/object-server.conf-sample.~2~	2016-02-08 00:02:16.971225158 -0800
-+++ swift-2.3.0/etc/object-server.conf-sample	2016-02-08 00:02:17.038057162 -0800
-@@ -12,8 +12,9 @@ bind_port = 6000
+--- swift-2.7.0/etc/object-server.conf-sample.~2~	2016-08-08 19:02:28.018004470 -0700
++++ swift-2.7.0/etc/object-server.conf-sample	2016-08-08 19:02:28.091373715 -0700
+@@ -12,9 +12,10 @@ bind_port = 6000
  # expiring_objects_account_name = expiring_objects
  #
  # Use an integer to override the number of pre-forked processes that will
--# accept connections.
--# workers = auto
+-# accept connections.  NOTE: if servers_per_port is set, this setting is
 +# accept connections.  Use "auto" or default for the number of effective cpu
-+# cores in the system.
++# cores in the system.  NOTE: if servers_per_port is set, this setting is
+ # ignored.
+-# workers = auto
 +workers = 1
  #
- # Maximum concurrent requests per worker
- # max_clients = 1024
---- swift-2.3.0/etc/proxy-server.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
-+++ swift-2.3.0/etc/proxy-server.conf-sample	2016-02-08 00:02:17.038685067 -0800
+ # Make object-server run this many worker processes per unique port of
+ # "local" ring devices across all storage policies.  This can help provide
+--- swift-2.7.0/etc/proxy-server.conf-sample.~1~	2016-03-25 02:42:55.000000000 -0700
++++ swift-2.7.0/etc/proxy-server.conf-sample	2016-08-08 19:39:35.918794285 -0700
 @@ -23,10 +23,10 @@ bind_port = 8080
  # disallowed_sections = swift.valid_api_versions, container_quotas, tempurl
  

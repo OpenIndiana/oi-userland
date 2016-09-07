@@ -47,6 +47,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Swift (Object Storage Service)"
 set name=pkg.description \
     value="The OpenStack Object Store project, known as Swift, offers cloud storage software so that you can store and retrieve data in virtual containers"
+set name=pkg.human-version value="Mitaka $(COMPONENT_VERSION)"
 set name=com.oracle.info.description \
     value="Swift, the OpenStack object storage service"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -55,12 +56,12 @@ set name=info.classification \
     value="org.opensolaris.category.2008:System/Enterprise Management" \
     value=org.opensolaris.category.2008:System/Virtualization \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.source-url value="$(GIT_REPO) $(GIT_COMMIT_ID)"
 set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/050 \
-    value=PSARC/2015/110 value=PSARC/2015/535
+    value=PSARC/2015/110 value=PSARC/2015/535 value=PSARC/2016/455
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/security/auth_attr.d/cloud:openstack:swift
 file path=etc/security/exec_attr.d/cloud:openstack:swift
@@ -115,19 +116,20 @@ hardlink path=lib/svc/method/swift-object-updater
 file path=lib/svc/method/swift-proxy-server
 file path=lib/svc/method/swift-replicator-rsync
 file path=lib/svc/method/swift-upgrade
-file path=usr/bin/swift-account-audit
+file path=usr/bin/swift-account-audit pkg.depend.bypass-generate=.*/six.*
 file path=usr/bin/swift-account-info
 file path=usr/bin/swift-config
 file path=usr/bin/swift-container-info
-file path=usr/bin/swift-dispersion-populate
-file path=usr/bin/swift-dispersion-report
+file path=usr/bin/swift-dispersion-populate pkg.depend.bypass-generate=.*/six.*
+file path=usr/bin/swift-dispersion-report pkg.depend.bypass-generate=.*/six.*
 file path=usr/bin/swift-form-signature
 file path=usr/bin/swift-get-nodes
 file path=usr/bin/swift-object-info
 file path=usr/bin/swift-recon
 file path=usr/bin/swift-reconciler-enqueue
 file path=usr/bin/swift-ring-builder
-file path=usr/bin/swift-temp-url
+file path=usr/bin/swift-ring-builder-analyzer
+file path=usr/bin/swift-temp-url pkg.depend.bypass-generate=.*/six.*
 file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -148,6 +150,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/form_signature.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/recon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/ring_builder_analyzer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/cli/ringbuilder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/base_storage_server.py
@@ -159,6 +162,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/db_replicator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/direct_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/header_key_dict.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/http.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/internal_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/manager.py
@@ -188,6 +192,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/slo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/staticweb.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/tempauth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/tempurl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/versioned_writes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/x_profile/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/x_profile/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/x_profile/html_viewer.py
@@ -210,6 +215,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/reconciler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/replicator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/sync.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/sync_store.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/updater.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/auditor.py
@@ -248,7 +254,7 @@ file path=usr/lib/swift/swift-object-replicator
 file path=usr/lib/swift/swift-object-server
 file path=usr/lib/swift/swift-object-updater
 file path=usr/lib/swift/swift-proxy-server
-file path=usr/lib/swift/swift-recon-cron
+file path=usr/lib/swift/swift-recon-cron pkg.depend.bypass-generate=.*/six.*
 file path=usr/share/man/man1/swift-account-auditor.1
 file path=usr/share/man/man1/swift-account-info.1
 file path=usr/share/man/man1/swift-account-reaper.1
@@ -289,8 +295,9 @@ user username=swift ftpuser=false gcos-field="Openstack Swift" group=swift \
 #
 license swift.license license="Apache v2.0"
 
-# To upgrade to Kilo version, Juno version of the package must be on the system
-depend type=origin fmri=cloud/openstack/swift@2.2.2 root-image=true
+# To upgrade to the Mitaka version, the Kilo version of the package
+# must be on the system
+depend type=origin fmri=cloud/openstack/swift@2.3.0 root-image=true
 
 # force a dependency on package delivering rsync(1)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/rsync
@@ -316,6 +323,9 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on setuptools; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/setuptools-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
 
 # force a dependency on xattr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/xattr-$(PYV)
