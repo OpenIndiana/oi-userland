@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -62,7 +62,8 @@ link path=usr/demo/boto/dynamodb_load target=dynamodb_load-$(PYVER) \
 file path=usr/demo/boto/dynamodb_load-$(PYVER) mode=0555
 link path=usr/demo/boto/elbadmin target=elbadmin-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
-file path=usr/demo/boto/elbadmin-$(PYVER) mode=0555
+file path=usr/demo/boto/elbadmin-$(PYVER) mode=0555 \
+    pkg.depend.bypass-generate=.*/compat.*
 link path=usr/demo/boto/fetch_file target=fetch_file-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/demo/boto/fetch_file-$(PYVER) mode=0555
@@ -109,6 +110,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto-$(COMPONENT_VERSION)-py$(P
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/auth_handler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/awslambda/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/awslambda/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/awslambda/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/beanstalk/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/beanstalk/exception.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/beanstalk/layer1.py
@@ -129,6 +133,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudfront/logging.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudfront/object.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudfront/origin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudfront/signers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudhsm/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudhsm/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudhsm/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch/document.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch/domain.py
@@ -145,9 +152,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch2/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch2/layer2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch2/optionstatus.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearch2/search.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearchdomain/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearchdomain/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudsearchdomain/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudtrail/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudtrail/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cloudtrail/layer1.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/codedeploy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/codedeploy/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/codedeploy/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/identity/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/identity/exceptions.py
@@ -156,6 +169,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/sync/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/sync/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/cognito/sync/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/configservice/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/configservice/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/configservice/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/connection.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/contrib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/contrib/ymlmessage.py
@@ -237,6 +253,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2/tag.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2/volume.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2/volumestatus.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2/zone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2containerservice/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2containerservice/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/ec2containerservice/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/ecs/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/ecs/item.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/elasticache/__init__.py
@@ -291,9 +310,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/jsonresponse.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/kinesis/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/kinesis/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/kinesis/layer1.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/kms/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/kms/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/kms/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/logs/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/logs/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/logs/layer1.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/machinelearning/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/machinelearning/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/boto/machinelearning/layer1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/manage/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/manage/cmdshell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/manage/propget.py
@@ -481,6 +506,9 @@ depend type=optional \
 # force a dependency on the boto package
 depend type=require \
     fmri=library/python/boto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on paramiko; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/paramiko-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
