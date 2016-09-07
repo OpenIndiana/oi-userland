@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -46,8 +46,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PY
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
-file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr/builddoc.py
@@ -69,23 +67,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pbr/pbr_json.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr/testr_command.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr/util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pbr/version.py
+#
 license pbr.license license="Apache v2.0, BSD"
 
 # force a group dependency on the optional nose; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/nose-$(PYV)
 
-# force a group dependency on the optional pip; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/pip-$(PYV)
-
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/pbr-$(PYV)@0.5.21,5.12-5.12.0.0.0.41.0
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
 
 # force a dependency on the pbr package
 depend type=require \
