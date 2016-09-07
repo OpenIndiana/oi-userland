@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		alembic
-COMPONENT_VERSION=	0.7.4
+COMPONENT_VERSION=	0.8.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:550f10b2266f689778eced2fed899bfd05755737478454b97fb99385f2e780e5
+    sha256:8507fc12ccc99321da2fa117dde4b5d8664ff5ef017df7ce5e7e5051901a624a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/alembic/
+COMPONENT_PROJECT_URL=	https://bitbucket.org/zzzeek/alembic
 COMPONENT_BUGDB=	python-mod/alembic
 
-TPNO=			21714
+TPNO=			28649
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -44,7 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f alembic alembic-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f alembic alembic-$(PYTHON_VERSION))
 
 COMPONENT_PRE_TEST_ACTION=	echo "[db]" > $(SOURCE_DIR)/test.cfg
 COMPONENT_TEST_DIR=		$(SOURCE_DIR)
@@ -57,8 +57,8 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35
