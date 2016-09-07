@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		networkx
-COMPONENT_VERSION=	1.9.1
+COMPONENT_VERSION=	1.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6380eb38d0b5770d7e50813c8a48ff7c373b2187b4220339c1adce803df01c59
+    sha256:0d0e70e10dfb47601cbb3425a00e03e2a2e97477be6f80638fef91d54dd1e4b8
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://networkx.github.io/
 COMPONENT_BUGDB=	python-mod/networkx
 
-TPNO=			21625
+TPNO=			28004
 
 # Depends on python-extra (numpy) which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -59,4 +59,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
