@@ -20,24 +20,24 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django_compressor
-COMPONENT_VERSION=	1.4
+COMPONENT_VERSION=	2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b26034230efcef7d60e5267890eda656dfc49c567f27125d907eee4fe7f9a6ec
+    sha256:b1618260798e0c26ef52c8e6c14d445783756eca92f2ab1b8db8bee8ecc9b8c3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://django-compressor.readthedocs.org
 COMPONENT_BUGDB=	python-mod/django-cmpress
 
-TPNO=			21719
+TPNO=			27967
 
-# Depends on django, which is not Python 3 ready.
+# Depends on django which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -54,4 +54,4 @@ install:	$(INSTALL_NO_ARCH)
 # unittests require django-discover-runner which is not integrated
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

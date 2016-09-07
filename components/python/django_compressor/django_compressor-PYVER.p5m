@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -50,20 +50,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/compressor/css.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/cleancss.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/closure.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/css_default.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/cssmin/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/cssmin/cssmin.py
-file \
-    path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/cssmin/rcssmin.py \
-    pkg.depend.bypass-generate=.*/_rcssmin.*
-file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/csstidy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/datauri.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/jsmin/__init__.py
-file \
-    path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/jsmin/rjsmin.py \
-    pkg.depend.bypass-generate=.*/_rjsmin.*
-file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/jsmin/slimit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/yuglify.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/filters/yui.py
@@ -91,10 +83,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/compressor/templates/compressor
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/templates/compressor/js_inline.html
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/templatetags/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/templatetags/compress.py
+file path=usr/lib/python$(PYVER)/vendor-packages/compressor/test_settings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/utils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/utils/decorators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/compressor/utils/staticfiles.py
-file path=usr/lib/python$(PYVER)/vendor-packages/compressor/utils/stringformat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django_compressor-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/django_compressor-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/django_compressor-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -103,6 +95,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/django_compressor-$(COMPONENT_V
 file path=usr/lib/python$(PYVER)/vendor-packages/django_compressor-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 #
 license django_compressor.license license="BSD, MIT, Apache 2.0"
+
+# force a group dependency on the optional beautifulsoup4; pkgdepend work is
+# needed to flush this out
+depend type=group fmri=library/python/beautifulsoup4-$(PYV)
 
 # force a group dependency on the optional lxml; pkgdepend work is needed to
 # flush this out
@@ -129,3 +125,9 @@ depend type=require \
 
 # force a dependency on jinja2; pkgdepend work is needed to flush this out
 depend type=require fmri=library/python/jinja2-$(PYV)
+
+# force a dependency on rcssmin; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/rcssmin-$(PYV)
+
+# force a dependency on rjsmin; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/rjsmin-$(PYV)
