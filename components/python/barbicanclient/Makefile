@@ -26,16 +26,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-barbicanclient
-COMPONENT_VERSION=	3.0.3
+COMPONENT_VERSION=	4.0.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:959aca2ce3af2eed0f57e2fa9f0f9a484e40adc6b371e2c0fcc588aae9ca2b18
+    sha256:6dad260ddb68843fe28e8f0d106d4a4aadf766ba5131123ea18a27e9349c5d5d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/python-barbicanclient
+COMPONENT_PROJECT_URL=	\
+    http://docs.openstack.org/developer/python-barbicanclient/
 COMPONENT_BUGDB=	service/barbican
 
-TPNO=			25748
+TPNO=			29172
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
@@ -54,8 +55,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
