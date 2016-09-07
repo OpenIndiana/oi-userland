@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -50,6 +50,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_
 file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_swiftclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/__init__.py
@@ -58,7 +59,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/command_helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/multithreading.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/shell.py \
+    pkg.depend.bypass-generate=.*/six.*
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/version.py
 #
@@ -67,10 +69,6 @@ license swiftclient.license license="Apache v2.0"
 # force a group dependency on the optional keystoneclient; pkgdepend work is
 # needed to flush this out.
 depend type=group fmri=library/python/keystoneclient-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on futures; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/futures-$(PYV)

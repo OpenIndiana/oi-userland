@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-swiftclient
-COMPONENT_VERSION=	2.4.0
+COMPONENT_VERSION=	3.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e865553b3afc63a9952cfa30f155a604564cae31a40275fa2ce94c80d7affd4b
+    sha256:824b8f204c5a7764de51795256e4175fdcd655ae4df85b8ae6e6ea9ec0b41f68
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-swiftclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-swiftclient/
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			25758
+TPNO=			29374
 
-# depends on keystoneclient which is not Python 3 ready
+# Depends on keystoneclient which is not Python 3 ready
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -46,18 +47,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f swift swift-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f swift swift-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-#
-# Tests require:
-# discover, sphinx, testrepository, testtools
-# which haven't been integrated yet.
-#
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
