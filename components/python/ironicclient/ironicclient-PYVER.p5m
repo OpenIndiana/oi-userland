@@ -48,26 +48,20 @@ file path=usr/bin/ironic-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/apiclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/apiclient/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/apiclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/cliutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/filecache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/http.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/exc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/auth.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/fake_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/apiclient/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/cliutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/strutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/openstack/common/uuidutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/osc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/osc/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/osc/v1/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/osc/v1/baremetal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/v1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironicclient/v1/chassis.py
@@ -92,15 +86,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_ironicclient-$(COMPONENT
 #
 license ironicclient.license license="Apache 2.0"
 
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
+# force a dependency on appdirs; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/appdirs-$(PYV)
 
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
+# force a dependency on cliff; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/cliff-$(PYV)
 
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
+# force a dependency on dogpile.cache; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/dogpile.cache-$(PYV)
 
 # force a dependency on httplib2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/httplib2-$(PYV)
@@ -109,9 +103,13 @@ depend type=require fmri=library/python/httplib2-$(PYV)
 depend type=require \
     fmri=library/python/ironicclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
 # out.
-depend type=require fmri=library/python/keystoneclient-$(PYV)
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
+
+# force a dependency on openstackclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/openstackclient-$(PYV)
 
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
@@ -130,6 +128,3 @@ depend type=require fmri=library/python/requests-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
-
-# force a dependency on stevedore; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/stevedore-$(PYV)

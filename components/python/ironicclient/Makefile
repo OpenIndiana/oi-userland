@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ironicclient
-COMPONENT_VERSION=	0.5.1
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:91dca5039ca06d6dcd74a132a261db1d85ebf6dcdfb9d7cee4efff657f6729d6
+    sha256:bf040148956ff4db32ac879854215a4bfb8249a6cbda4258b758c2340da3c7c0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/python-ironicclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-ironicclient/
 COMPONENT_BUGDB=	service/ironic
 
-TPNO=			25753
+TPNO=			27991
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
