@@ -26,18 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-keystoneclient
-COMPONENT_VERSION=	1.3.3
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:a1ecb2fd2631a64cfb8bd6bc5adcf19bfcdc488023e05082dc73dc18013a6f7e
+    sha256:89e93551071cf29780eeafe7a61114cd36b1c2192813d3c2a58a348a6a3ac6ff
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-keystoneclient
+COMPONENT_PROJECT_URL=	\
+    http://docs.openstack.org/developer/python-keystoneclient/
 COMPONENT_BUGDB=	service/keystone
 
-TPNO=			25754
+TPNO=			28001
 
-# Depends on netaddr & python-memcached which are not Python 3 ready.
+# Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -47,19 +48,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f keystone keystone-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f keystone keystone-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-#
-# Tests require:
-# hacking, discover, fixtures, httpretty, keyring, mox3, pycrypto,
-# sphinx, testrepository, testtools
-# which haven't been integrated yet.
-#
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
