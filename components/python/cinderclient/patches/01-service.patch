@@ -1,0 +1,15 @@
+The 'service' attribute doesn't exists, which can cause horizon to throw an AttributeError exception.
+Logged as upstream bug 1579982 https://bugs.launchpad.net/horizon/+bug/1579982 and this patch
+should be removed when the upstream bug is fixed and integrated in our version of python-cinderclient.
+
+--- python-cinderclient-1.6.0/cinderclient/v2/services.py.old	2016-09-01 11:21:55.402483826 -0700
++++ python-cinderclient-1.6.0/cinderclient/v2/services.py	2016-09-01 11:21:42.665135394 -0700
+@@ -22,7 +22,7 @@
+ class Service(base.Resource):
+ 
+     def __repr__(self):
+-        return "<Service: %s>" % self.service
++        return "<Service: %s>" % self._info
+ 
+ 
+ class ServiceManager(base.ManagerWithFind):

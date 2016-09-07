@@ -20,15 +20,18 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
 # As an earlier Python 3 version of cinderclient was published, we
 # continue to do so for now by dropping the dependency on the
-# corresponding keystoneclient as the latter is not Python 3 ready.
+# corresponding keystoneclient & oslo.utils as the latter are not Python
+# 3 ready.
 #
 <transform depend fmri=library/python/keystoneclient-3\d type=require -> drop>
+<transform depend fmri=library/python/oslo.utils-3\d type=require -> drop>
+#
 set name=pkg.fmri \
     value=pkg:/library/python/cinderclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -91,6 +94,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v1/volume_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v1/volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/availability_zones.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/cgsnapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/consistencygroups.py
@@ -111,6 +115,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/volume_transfer
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/volume_type_access.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/volume_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/volumes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -130,9 +135,6 @@ depend type=group fmri=library/python/eventlet-$(PYV)
 # to flush this out.
 depend type=group fmri=library/python/simplejson-$(PYV)
 
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
 # force a dependency on babel; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/babel-$(PYV)
 
@@ -143,6 +145,9 @@ depend type=require \
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
 
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)

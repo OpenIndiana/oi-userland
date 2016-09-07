@@ -22,19 +22,20 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-cinderclient
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:59ae1fbeeda7a12ac8635a7cce9bdc5e8bd080707e2dc12d858857713db1d233
+    sha256:b00b7ffc3394b7ae3f8804a10877f7c980ff65f66d7b0d4b51bf4526933951b2
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-cinderclient/
 COMPONENT_BUGDB=	service/cinder
 
-TPNO=			25750
+TPNO=			31337
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,19 +44,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f cinder cinder-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f cinder cinder-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-#
-# Tests require:
-# pyflakes, flake8, hacking, discover, mock, python-subunit,
-# sphinx, testrepository
-# which haven't been integrated yet.
-#
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
