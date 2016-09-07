@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cliff
-COMPONENT_VERSION=	1.10.1
+COMPONENT_VERSION=	2.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ddfec39bf0de7b53666045c946d495ca070e538e5f92dc19588596c9bcc52c6e
+    sha256:6e219dc3ed80a23e3dc5c88b741f3997b8450581c1d2572bde14b2dfa556d782
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cliff
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/cliff/
 COMPONENT_BUGDB=	python-mod/cliff
 
-TPNO=			25733
+TPNO=			27989
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,9 +48,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require:
-# coverage >= 3.6, sphinx, oslosphinx
-# some of which haven't been integrated yet.
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

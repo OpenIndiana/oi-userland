@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -48,6 +48,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cliff-$(COMPONENT_VERSION)-py$(
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/app.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cliff/argparse.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/command.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/commandmanager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/complete.py
@@ -55,19 +56,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cliff/display.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/commaseparated.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/json_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/value.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cliff/formatters/yaml_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/help.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/interactive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/lister.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/show.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cliff/utils.py
 #
 license cliff.license license="Apache v2.0, MIT"
-
-# force a group dependency on the optional prettytable; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/prettytable-$(PYV)
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
@@ -77,9 +77,6 @@ depend type=optional \
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
-
 # force a dependency on the cliff package
 depend type=require \
     fmri=library/python/cliff@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -87,11 +84,11 @@ depend type=require \
 # force a dependency on cmd2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cmd2-$(PYV)
 
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
+# force a dependency on prettytable; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/prettytable-$(PYV)
 
-# force a dependency on pyparsing; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pyparsing-$(PYV)
+# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pyyaml-$(PYV)
 
 # force a dependency on setuptools; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/setuptools-$(PYV)
@@ -101,3 +98,6 @@ depend type=require fmri=library/python/six-$(PYV)
 
 # force a dependency on stevedore; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/stevedore-$(PYV)
+
+# force a dependency on unicodecsv; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/unicodecsv-$(PYV)
