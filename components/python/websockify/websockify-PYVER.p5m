@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -43,6 +43,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/websockify target=websockify-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/websockify-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/base64.js
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/util.js
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/web-socket-js/WebSocketMain.swf
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/web-socket-js/swfobject.js
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/web-socket-js/web_socket.js
+file path=usr/lib/python$(PYVER)/vendor-packages/share/websockify/include/websock.js
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -51,34 +57,27 @@ file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify/__init__.py
-# The bypasses for array, select & time are temporary until pkgdepend learns
-# about PEP 3149, new in Python 3.x; see 19510349.
+file path=usr/lib/python$(PYVER)/vendor-packages/websockify/auth_plugins.py
+file path=usr/lib/python$(PYVER)/vendor-packages/websockify/token_plugins.py
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify/websocket.py \
     pkg.depend.bypass-generate=.*/SimpleHTTPServer.* \
-    pkg.depend.bypass-generate=.*/array.* \
     pkg.depend.bypass-generate=.*/cStringIO.* \
-    pkg.depend.bypass-generate=.*/http.* pkg.depend.bypass-generate=.*/md5.* \
-    pkg.depend.bypass-generate=.*/select.* \
-    pkg.depend.bypass-generate=.*/sha.* pkg.depend.bypass-generate=.*/time.*
+    pkg.depend.bypass-generate=.*/http.* pkg.depend.bypass-generate=.*/sha.*
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify/websocketproxy.py \
     pkg.depend.bypass-generate=.*/BaseHTTPServer.* \
-    pkg.depend.bypass-generate=.*/SocketServer.* \
+    pkg.depend.bypass-generate=.*/[Ss]ocket[Ss]erver.* \
     pkg.depend.bypass-generate=.*/http.* \
-    pkg.depend.bypass-generate=.*/select.* \
-    pkg.depend.bypass-generate=.*/socketserver.* \
-    pkg.depend.bypass-generate=.*/time.* \
     pkg.depend.bypass-generate=.*/urllib.* \
     pkg.depend.bypass-generate=.*/urlparse.*
 #
 license websockify.license license="LGPL3, BSD, MIT"
 
-# force a group dependency on the optional python-extra; pkgdepend work is
-# needed to flush this out.
-$(PYTHON_2.7_ONLY)depend type=group fmri=library/python/python-extra-$(PYV)
-
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/websockify-$(PYV)@0.3.0,5.12-5.12.0.0.0.44.0
+
+# force a dependency on requests; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/requests-$(PYV)
 
 # force a dependency on the websockify package
 depend type=require \
