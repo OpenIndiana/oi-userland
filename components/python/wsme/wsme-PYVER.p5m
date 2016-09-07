@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -47,6 +47,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(P
 file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/WSME-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/wsme/__init__.py
@@ -100,11 +101,17 @@ depend type=group fmri=library/python/simplejson-$(PYV)
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on ipaddr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/ipaddr-$(PYV)
+# force a dependency on cherrypy; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/cherrypy-$(PYV)
 
-# force a dependency on ordereddict; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/ordereddict-$(PYV)
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netaddr-$(PYV)
+
+# force a dependency on pecan; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pecan-$(PYV)
+
+# force a dependency on pytz; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pytz-$(PYV)
 
 # force a dependency on setuptools; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/setuptools-$(PYV)
@@ -115,6 +122,9 @@ depend type=require fmri=library/python/simplegeneric-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on sqlalchemy; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/sqlalchemy-$(PYV)
 
 # force a dependency on webob; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/webob-$(PYV)

@@ -20,25 +20,24 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		WSME
-COMPONENT_VERSION=	0.6.4
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e4c0012b1a592c3889697259c690447dfc8edcbae5b52307709705377305e953
+    sha256:00241e4e4e40d6183f6354a8f5659b601753d49e28b6e5aca332bdf2e31188db
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/wsme
+COMPONENT_PROJECT_URL=	http://wsme.readthedocs.io/en/latest/
 COMPONENT_BUGDB=	python-mod/wsme
 
-TPNO=			21639
+TPNO=			29251
 
-# wsme requires ipaddr, which is not Python3.x compatible thus only building
-# Python 2.x
+# Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -52,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/tox-tmpl.ini for the python modules required
+# See $(COMPONENT_SRC)/tox-tmpl.ini for the Python modules required
 # to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
