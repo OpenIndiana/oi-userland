@@ -38,18 +38,15 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/058
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.serialization-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/serialization/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/serialization/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/base64.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/msgpackutils.py
 #
@@ -58,10 +55,6 @@ license oslo.serialization.license license="Apache v2.0"
 # force a group dependency on the optional anyjson; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/anyjson-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -76,9 +69,6 @@ depend type=require \
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
-
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on pytz; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pytz-$(PYV)

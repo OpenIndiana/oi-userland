@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.serialization
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	2.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:082dca272f0a941e1cdca1dc02849c5ddac65fa7d19604096be54cd41e7b4317
+    sha256:9b95fc07310fd6df8cab064f89fd15327b259dec17a2e2b9a07b9ca4d96be0c6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.serialization
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.serialization/
 COMPONENT_BUGDB=	python-mod/oslo.serial
 
-TPNO=			25743
+TPNO=			28354
 
 # Depends on oslo.utils which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
