@@ -1,0 +1,112 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/tooz-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="a coordination library for distributed systems"
+set name=pkg.description \
+    value="The Tooz project aims at centralizing the most common distributed primitives like group membership protocol, lock service and leader election by providing a coordination API helping developers to build distributed applications."
+set name=com.oracle.info.description value="the Python tooz module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source value=tooz-dev@lists.launchpad.net
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/346
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/coordination.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/_retry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/etcd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/file.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/ipc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/memcached.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/mysql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/pgsql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/redis.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/zake.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/drivers/zookeeper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/locking.py
+file path=usr/lib/python$(PYVER)/vendor-packages/tooz/utils.py
+#
+license tooz.license license="Apache v2.0"
+
+# force a group dependency on the optional pymemcache; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/pymemcache-$(PYV)
+
+# force a group dependency on the optional requests; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/requests-$(PYV)
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on enum; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/enum-$(PYV)
+
+# force a dependency on fasteners; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/fasteners-$(PYV)
+
+# force a dependency on futures; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/futures-$(PYV)
+
+# force a dependency on futurist; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/futurist-$(PYV)
+
+# force a dependency on msgpack; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/msgpack-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
+
+# force a dependency on retrying; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/retrying-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on stevedore; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/stevedore-$(PYV)
+
+# force a dependency on the tooz package
+depend type=require \
+    fmri=library/python/tooz@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
