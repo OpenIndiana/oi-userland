@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.db
-COMPONENT_VERSION=	1.7.2
+COMPONENT_VERSION=	4.7.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e10b1bc9b128aaeae652809e1659ec2d2f64e2d1a143b9c9c66eb9cfef66c02c
+    sha256:d8110193efaed5fa13b22171dfc7c1bf4aae4fcd7f1bc95186279d4598a56f49
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.db
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.db/
 COMPONENT_BUGDB=	python-mod/oslo.db
 
-TPNO=			25740
+TPNO=			28456
 
 # Depends on sqlalchemy-migrate which is not Python3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
