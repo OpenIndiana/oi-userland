@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lockfile
-COMPONENT_VERSION=	0.9.1
+COMPONENT_VERSION=	0.12.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:23da589c91f59cb7c644d5ce5df539d448341bd479917d6dde973f82e2719147
+    sha256:6aed02de03cba24efabcd600b30540140634fc06cfa603822d508d5361e9f799
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/smontanaro/pylockfile
 COMPONENT_BUGDB=	python-mod/lockfile
 
-TPNO=			14503
+TPNO=			28727
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -55,4 +55,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-
