@@ -20,23 +20,24 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django-appconf
-COMPONENT_VERSION=	0.6
+COMPONENT_VERSION=	1.0.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a88ed8fb923a53c70c2c46fbe4508b5f81646b4b01401f1568a821671b33215c
+    sha256:6a4d9aea683b4c224d97ab8ee11ad2d29a37072c0c6c509896dd9857466fb261
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://django-appconf.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/django-appconf
 
-TPNO=			14503
+TPNO=			28036
 
-# Depends on django, which is not Python 3 ready.
+# Depends on django which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -53,5 +54,4 @@ install:	$(INSTALL_NO_ARCH)
 # unittests require django-discover-runner which is not integrated
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
+system-test:	$(NO_TESTS)
