@@ -42,7 +42,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-$(PYTHON_2.7_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/trollius/base_events.py
@@ -81,12 +81,12 @@ license COPYING license="Apache 2.0"
 # force a dependency on futures; pkgdepend work is needed to flush this out.
 depend type=group fmri=library/python/futures-$(PYV)
 
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=group fmri=library/python/six-$(PYV)
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
-
-# force a dependency on ordereddict; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/ordereddict-$(PYV)
 
 # force a dependency on the trollius package
 depend type=require \

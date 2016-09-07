@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trollius
-COMPONENT_VERSION=	2.0
+COMPONENT_VERSION=	2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a8e0e2d3a3193be3e0f113253f41675d2679d23c491f32b37f4e0a736f32a28f
+    sha256:cd165d9d9578d3aadbf26e71a88d9a70c4e444792a5628dc9af255f62030cc90
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/trollius/
+COMPONENT_PROJECT_URL=	https://github.com/haypo/trollius
 COMPONENT_BUGDB=	python-mod/trollius
 
-TPNO=			26097
+TPNO=			30240
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,10 +45,10 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 #
 # The 2.7 tests pass but exit with an AttributeError: 'Nonetype" object has
-# no attribute 'items' message due to a known issue (#33) in python futures.
+# no attribute 'items' message due to a known issue (#33) in Python futures.
 #
-COMPONENT_TEST_DIR=             $(SOURCE_DIR)
-COMPONENT_TEST_ARGS=            setup.py test
+COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS=	setup.py test
 
 # common targets
 build:		$(BUILD_NO_ARCH)
