@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -42,9 +42,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/memcache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/python_memcached-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/python_memcached-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_memcached-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/python_memcached-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_memcached-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 #
-license PSF.LICENSE license=PSVv2
+license python-memcached.license license=PSFv2
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
 
 # force a dependency on the python-memcached package
 depend type=require \
