@@ -1,0 +1,18 @@
+Add Solaris' zoneinfo path to the list of paths searched for zoneinfo
+files.  The issue has been filed upstream at
+
+    https://github.com/dateutil/dateutil/issues/276
+
+and has been accepted.
+
+--- python-dateutil-2.5.3/dateutil/tz/tz.py	2016-04-29 14:55:28.420630740 -0700
++++ python-dateutil-2.5.3/dateutil/tz/tz.py	2016-04-29 15:00:00.326470815 -0700
+@@ -899,7 +899,7 @@
+ 
+ if sys.platform != "win32":
+     TZFILES = ["/etc/localtime", "localtime"]
+-    TZPATHS = ["/usr/share/zoneinfo", "/usr/lib/zoneinfo", "/etc/zoneinfo"]
++    TZPATHS = ["/usr/share/lib/zoneinfo", "/usr/share/zoneinfo", "/usr/lib/zoneinfo", "/etc/zoneinfo"]
+ else:
+     TZFILES = []
+     TZPATHS = []
