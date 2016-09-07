@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		testresources
-COMPONENT_VERSION=	0.2.7
+COMPONENT_VERSION=	1.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ad0a117383dd463827b199eaa92829b4d6a3147fbd97459820df53bae81d7231
+    sha256:e9b2c70ecade3135629e66945a7ac19c6df18c59b3d8f02e95d24bc8e066c7cf
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/testresources
+COMPONENT_PROJECT_URL=	https://github.com/testing-cabal/testrepository
 COMPONENT_BUGDB=	python-mod/testresources
 
-TPNO=			23150
+TPNO=			29128
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

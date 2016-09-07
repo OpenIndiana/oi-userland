@@ -40,21 +40,20 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
+file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/testresources-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/testresources/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/TestUtil.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/test_optimising_test_suite.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/test_resource_graph.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/test_resourced_test_case.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/test_test_loader.py
-file path=usr/lib/python$(PYVER)/vendor-packages/testresources/tests/test_test_resource.py
 #
 license testresources.license license="Apache 2.0"
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on the testresources package
 depend type=require \
