@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		urllib3
-COMPONENT_VERSION=	1.10.4
+COMPONENT_VERSION=	1.15.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:52131e6a561466f1206e1a648d9a73dda2a804d0f70e83782bd88494542ded09
+    sha256:d0a1dc60433f7e9b90b4f085f1d45753174b4594558b29eda0009abe0b82da4c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/urllib3/
+COMPONENT_PROJECT_URL=	https://github.com/shazow/urllib3
 COMPONENT_BUGDB=	python-mod/urllib3
 
-TPNO=			23153
+TPNO=			28746
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
