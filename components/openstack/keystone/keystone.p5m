@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Keystone (Identity Service)"
 set name=pkg.description \
     value="OpenStack Keystone is a service that provides Identity, Token, Catalog, and Policy services for use specifically by projects in the OpenStack family."
-set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Mitaka $(COMPONENT_VERSION)"
 set name=com.oracle.info.description \
     value="Keystone, the OpenStack identity service"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -42,7 +42,8 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/048 \
-    value=PSARC/2014/209 value=PSARC/2015/110 value=PSARC/2015/535
+    value=PSARC/2014/209 value=PSARC/2015/110 value=PSARC/2015/535 \
+    value=PSARC/2016/455
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/keystone owner=keystone group=keystone mode=0700
@@ -87,14 +88,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-p
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/V8_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/V8_backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/V8_role_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/V8_role_backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/backends/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/backends/ldap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/role_backends/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/role_backends/ldap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/role_backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/assignment/schema.py
@@ -109,29 +112,30 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/oauth1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/password.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/saml2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/totp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/routers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/backends.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/kvs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/templated.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/schema.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/clean.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cmd/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cmd/all.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cmd/cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cmd/manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/authorization.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/base64utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/_memcache_pool.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/_context_cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/backends/memcache_pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/backends/mongo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/backends/noop.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cache/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/clean.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/controller.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/dependency.py
@@ -145,13 +149,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs/backends/__
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs/backends/inmemdb.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs/backends/memcached.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs/legacy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/ldap/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/ldap/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/openssl.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/pemutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/router.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/core.py
@@ -159,38 +161,45 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_rep
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/migrate.cfg
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/044_icehouse.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/045_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/046_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/047_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/048_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/049_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/050_fk_consistent_indexes.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/051_add_id_mapping.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/052_add_auth_url_to_region.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/053_endpoint_to_region_association.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/054_add_actor_id_index.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/055_add_indexes_to_token_table.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/056_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/057_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/058_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/059_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/060_placeholder.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/061_add_parent_project.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/062_drop_assignment_role_fk.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/063_drop_region_auth_url.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/064_drop_user_and_group_fk.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/065_add_domain_config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/066_fixup_service_name_value.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/067_drop_redundant_mysql_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/067_kilo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/068_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/069_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/070_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/071_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/072_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/073_insert_assignment_inherited_pk.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/074_add_is_domain_project.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/075_confirm_config_registration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/076_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/077_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/078_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/079_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/080_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/081_add_endpoint_policy_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/082_add_federation_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/083_add_oauth1_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/084_add_revoke_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/085_add_endpoint_filtering_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/086_add_duplicate_constraint_trusts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/087_implied_roles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/088_domain_specific_roles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/089_add_root_of_all_domains.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/090_add_local_user_and_password_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/091_migrate_data_to_local_user_and_password_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/092_make_implied_roles_fks_cascaded.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/093_migrate_domains_to_projects.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/094_add_federated_user_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/095_add_integer_pkey_to_revocation_event_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/096_drop_role_name_constraint.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/097_drop_user_name_domainid_constraint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migration_helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/tokenless_auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/validation/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/validation/parameter_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/validation/validators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/wsgi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/admin_crud/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/admin_crud/core.py
@@ -202,40 +211,23 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filte
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/backends/catalog_sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/backends/sql.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/migrate_repo/migrate.cfg
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/migrate_repo/versions/001_add_endpoint_filtering_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/migrate_repo/versions/002_add_endpoint_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/routers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_filter/schema.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/backends/sql.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/migrate_repo/migrate.cfg
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/migrate_repo/versions/001_add_endpoint_policy_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/endpoint_policy/routers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/configuration.rst
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/migrate_repo/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/migrate_repo/migrate.cfg
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/migrate_repo/versions/001_example_table.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/migrate_repo/versions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/example/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/backends/sql.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/idp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/migrate_repo/migrate.cfg
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/migrate_repo/versions/001_add_identity_provider_table.py
@@ -248,13 +240,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/mig
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/migrate_repo/versions/008_add_relay_state_to_sp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/routers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/schema.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/federation/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/backends/sql.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate_repo/migrate.cfg
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate_repo/versions/001_add_oauth_tables.py
@@ -264,29 +252,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate_repo/versions/005_consumer_id_index.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/routers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/oauth1/validator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/backends/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/backends/kvs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/backends/sql.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/migrate_repo/migrate.cfg
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/migrate_repo/versions/001_revoke_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/migrate_repo/versions/002_add_audit_id_and_chain_to_revoke_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/migrate_repo/versions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/model.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/revoke/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/s3/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/s3/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/simple_cert/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/simple_cert/controllers.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/simple_cert/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/simple_cert/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/user_crud/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/user_crud/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/backends/sql.py
@@ -294,9 +274,25 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/controllers
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/credential/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/endpoint_policy/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/exception.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/hacking/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/hacking/checks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/V8_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/V8_backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/idp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/federation/utils.py
 link path=usr/lib/python$(PYVER)/vendor-packages/keystone/httpd/admin \
     target=keystone.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/httpd/keystone.py
@@ -316,23 +312,24 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/mapping_backe
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/mapping_backends/mapping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/mapping_backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/shadow_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/shadow_backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/core.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/ec2_token.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/models/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/models/revoke_model.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/models/token_model.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/notifications.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/README
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/loopingcall.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/systemd.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/versionutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/oauth1/validator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/backends/rules.py
@@ -341,9 +338,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/V8_backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/V8_backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/backends/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/backends/ldap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/backends/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/config_backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/config_backends/sql.py
@@ -351,13 +349,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/controllers.p
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/resource/schema.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystone/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/model.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/revoke/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/server/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/server/backends.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/server/common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/server/eventlet.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/server/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/_simple_cert.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/persistence/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/persistence/backends/__init__.py
@@ -377,6 +383,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/providers/pki.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/providers/pkiz.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/providers/uuid.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/backends/sql.py
@@ -384,6 +391,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/controllers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/routers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/schema.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/v2_crud/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/v2_crud/admin_crud.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/v2_crud/user_crud.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/version/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/version/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/version/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/version/service.py
 dir  path=var/lib/keystone owner=keystone group=keystone mode=0700
 dir  path=var/log/keystone owner=keystone group=keystone mode=0700
 #
@@ -393,8 +407,9 @@ user username=keystone ftpuser=false gcos-field="OpenStack Keystone" \
 #
 license keystone.license license="Apache v2.0"
 
-# To upgrade to Kilo version, Juno version of the package must be on the system
-depend type=origin fmri=cloud/openstack/keystone@0.2014.2.2 root-image=true
+# To upgrade to the Mitaka version, the Kilo version of the package must be on
+# the system
+depend type=origin fmri=cloud/openstack/keystone@0.2015.1.2 root-image=true
 
 # force a dependency on package delivering httpd(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/apache2/2.4/bin/httpd
@@ -435,10 +450,6 @@ depend type=require fmri=library/python/jsonschema-$(PYV)
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
 
-# force a dependency on keystonemiddleware; pkgdepend work is needed to flush
-# this out.
-depend type=require fmri=library/python/keystonemiddleware-$(PYV)
-
 # force a dependency on ldappool; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/ldappool-$(PYV)
 
@@ -452,12 +463,19 @@ depend type=require fmri=library/python/oauthlib-$(PYV)
 # out.
 depend type=require fmri=library/python/openstackclient-$(PYV)
 
+# force a dependency on oslo.cache; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.cache-$(PYV)
+
 # force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/oslo.concurrency-$(PYV)
 
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
+
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
 
 # force a dependency on oslo.db; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.db-$(PYV)
@@ -483,6 +501,10 @@ depend type=require fmri=library/python/oslo.policy-$(PYV)
 # this out.
 depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
+# force a dependency on oslo.service; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.service-$(PYV)
+
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
 
@@ -502,18 +524,14 @@ depend type=require fmri=library/python/pycadf-$(PYV)
 # force a dependency on python-ldap; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/python-ldap-$(PYV)
 
-# force a dependency on python-memcached; pkgdepend work is needed to flush this
-# out.
-depend type=require fmri=library/python/python-memcached-$(PYV)
-
 # force a dependency on routes; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/routes-$(PYV)
 
-# force a dependency on setuptools; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/setuptools-$(PYV)
-
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on stevedore; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/stevedore-$(PYV)
 
 # force a dependency on webob; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/webob-$(PYV)

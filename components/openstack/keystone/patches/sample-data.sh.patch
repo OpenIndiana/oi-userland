@@ -7,8 +7,8 @@ upstream
 It also includes a change to use the standard Solaris tr(1) rather than
 GNU sed.
 
---- keystone-2015.1.2/tools/sample_data.sh.~2~	2016-02-07 01:41:04.218073379 -0800
-+++ keystone-2015.1.2/tools/sample_data.sh	2016-02-07 01:44:19.119595020 -0800
+--- keystone-9.1.0/tools/sample_data.sh.~1~	2016-07-05 08:27:02.000000000 -0700
++++ keystone-9.1.0/tools/sample_data.sh	2016-08-24 02:06:51.106133355 -0700
 @@ -23,8 +23,8 @@
  # API.  It will get the admin_token (OS_TOKEN) and admin_port from
  # keystone.conf if available.
@@ -20,18 +20,24 @@ GNU sed.
  #
  # A EC2-compatible credential is created for the admin user and
  # placed in etc/ec2rc.
-@@ -37,11 +37,15 @@
- # service              ec2       admin
- # service              swift     admin
- # service              neutron   admin
+@@ -33,15 +33,19 @@
+ # -------------------------------------------------------
+ # demo                 admin     admin
+ # service              glance    service
+-# service              nova      service
++# service              nova      admin, service
+ # service              ec2       service
+ # service              swift     service
+-# service              neutron   service
 -
 -# By default, passwords used are those in the OpenStack Install and Deploy Manual.
 -# One can override these (publicly known, and hence, insecure) passwords by setting the appropriate
 -# environment variables. A common default password for all the services can be used by
 -# setting the "SERVICE_PASSWORD" environment variable.
-+# service              cinder    admin
-+# service              heat      admin
-+# service              ironic    admin
++# service              neutron   admin, service
++# service              cinder    service
++# service              heat      service
++# service              ironic    service
 +
 +# By default, passwords used are those in the OpenStack Install and Deploy
 +# Manual. One can override these (publicly known, and hence, insecure)
@@ -124,9 +130,26 @@ GNU sed.
      fi
  fi
  
-@@ -156,6 +204,29 @@ openstack role add --user neutron \
+@@ -139,6 +187,10 @@ openstack user create nova --project ser
+ 
+ openstack role add --user nova \
                     --project service \
-                    admin
++                   admin
++
++openstack role add --user nova \
++                   --project service \
+                    service
+ 
+ openstack user create ec2 --project service \
+@@ -160,8 +212,35 @@ openstack user create neutron --project
+ 
+ openstack role add --user neutron \
+                    --project service \
++                   admin
++
++openstack role add --user neutron \
++                   --project service \
+                    service
  
 +openstack user create cinder --project service \
 +                             --password "${CINDER_PASSWORD}"
@@ -154,7 +177,7 @@ GNU sed.
  #
  # Keystone service
  #
-@@ -178,24 +249,32 @@ openstack service create --name=nova \
+@@ -184,24 +263,32 @@ openstack service create --name=nova \
                           compute
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
      openstack endpoint create --region RegionOne \
@@ -195,7 +218,7 @@ GNU sed.
  fi
  
  #
-@@ -206,9 +285,9 @@ openstack service create --name=glance \
+@@ -212,9 +299,9 @@ openstack service create --name=glance \
                           image
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
      openstack endpoint create --region RegionOne  \
@@ -208,7 +231,7 @@ GNU sed.
          glance
  fi
  
-@@ -220,9 +299,9 @@ openstack service create --name=ec2 \
+@@ -226,9 +313,9 @@ openstack service create --name=ec2 \
                           ec2
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
      openstack endpoint create --region RegionOne \
@@ -221,7 +244,7 @@ GNU sed.
          ec2
  fi
  
-@@ -234,9 +313,11 @@ openstack service create --name=swift \
+@@ -240,9 +327,11 @@ openstack service create --name=swift \
                           object-store
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
      openstack endpoint create --region RegionOne \
@@ -236,7 +259,7 @@ GNU sed.
          swift
  fi
  
-@@ -248,12 +329,48 @@ openstack service create --name=neutron
+@@ -254,12 +343,48 @@ openstack service create --name=neutron
                           network
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
      openstack endpoint create --region RegionOne \

@@ -1,0 +1,61 @@
+We don't currently have pysaml2 in Solaris because of its
+dependency on pycrypto.
+
+This patch makes the pysaml2 dependency in keystone optional.
+The saml_idp_metadata command of keystone-manage and
+federation_routers are disabled if the modules that depend
+on pysaml2 cannot be loaded.
+
+This patch is not suitable for pushing upstream.
+
+--- keystone-9.0.0/keystone/version/service.py.~1~	2016-04-06 23:37:38.000000000 -0800
++++ keystone-9.0.0/keystone/version/service.py	2016-05-18 20:25:46.012718550 -0800
+@@ -26,7 +26,6 @@ from keystone.catalog import routers as
+ from keystone.common import wsgi
+ from keystone.credential import routers as credential_routers
+ from keystone.endpoint_policy import routers as endpoint_policy_routers
+-from keystone.federation import routers as federation_routers
+ from keystone.i18n import _LW
+ from keystone.identity import routers as identity_routers
+ from keystone.oauth1 import routers as oauth1_routers
+@@ -139,12 +138,17 @@ def v3_app_factory(global_conf, **local_
+                        policy_routers,
+                        resource_routers,
+                        revoke_routers,
+-                       federation_routers,
+                        oauth1_routers,
+                        # TODO(morganfainberg): Remove the simple_cert router
+                        # when PKI and PKIZ tokens are removed.
+                        simple_cert_ext]
+ 
++    try:
++        from keystone.federation import routers as federation_routers
++        all_api_routers.append(federation_routers)
++    except:
++        pass
++
+     if CONF.trust.enabled:
+         all_api_routers.append(trust_routers)
+ 
+--- keystone-9.0.0/keystone/cmd/cli.py.~1~	2016-04-06 23:37:38.000000000 -0800
++++ keystone-9.0.0/keystone/cmd/cli.py	2016-05-19 00:26:16.105127235 -0800
+@@ -32,7 +32,6 @@ from keystone.common import sql
+ from keystone.common.sql import migration_helpers
+ from keystone.common import utils
+ from keystone import exception
+-from keystone.federation import idp
+ from keystone.federation import utils as mapping_engine
+ from keystone.i18n import _, _LW, _LI
+ from keystone.server import backends
+@@ -848,6 +847,11 @@ class SamlIdentityProviderMetadata(BaseA
+ 
+     @staticmethod
+     def main():
++        try:
++            from keystone.federation import idp
++        except:
++            raise ValueError(_('saml_idp_metadata not currently supported; '
++                               'pysaml2 is required.')) 
+         metadata = idp.MetadataGenerator().generate_metadata()
+         print(metadata.to_string())
+ 
