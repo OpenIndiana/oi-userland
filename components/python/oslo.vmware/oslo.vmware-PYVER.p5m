@@ -40,28 +40,13 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/058
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.vmware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/image_transfer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/objects/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/objects/datacenter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/objects/datastore.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/pbm.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/rw_handles.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/vim.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/vmware/vim_util.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/api.py
@@ -70,17 +55,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/common/loopingcall.
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/image_transfer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/api/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/api/api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/api/api_helper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/objects/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/objects/edge_cfg_obj.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/network/nsx/nsxv/objects/loadbalancer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/objects/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/objects/datacenter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/objects/datastore.py
@@ -94,6 +68,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/5.5/pbm-messag
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/5.5/pbm-types.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/5.5/pbm.wsdl
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/5.5/pbmService.wsdl
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/6.0/core-types.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/6.0/pbm-messagetypes.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/6.0/pbm-types.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/6.0/pbm.wsdl
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_vmware/wsdl/6.0/pbmService.wsdl
 #
 license oslo.vmware.license license="Apache v2.0"
 
@@ -104,20 +83,15 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on eventlet; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/eventlet-$(PYV)
 
-# force a dependency on httplib2; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/httplib2-$(PYV)
-
 # force a dependency on netaddr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/netaddr-$(PYV)
 
-# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush
+# this out.
 depend type=require fmri=library/python/oslo.concurrency-$(PYV)
 
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
-
-# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -125,9 +99,6 @@ depend type=require fmri=library/python/oslo.utils-$(PYV)
 # force a dependency on the oslo.vmware package
 depend type=require \
     fmri=library/python/oslo.vmware@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)

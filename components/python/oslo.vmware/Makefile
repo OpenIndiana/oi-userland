@@ -26,18 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.vmware
-COMPONENT_VERSION=	0.11.2
+COMPONENT_VERSION=	2.5.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:036cf0ad6ab0d4defd743678999851d570c2ca1ff34eba916920ce54d9a5d348
+    sha256:cb1685acf7cb11be4cb72412c078d7b21350c4d34fd36e9a57361a4a51df018c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.vmware
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.vmware/
 COMPONENT_BUGDB=	python-mod/oslo.vmware
 
-TPNO=			25745
+TPNO=			29104
 
-# Depends on netaddr & suds which are not Python 3 ready.
+# Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
