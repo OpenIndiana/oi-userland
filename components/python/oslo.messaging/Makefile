@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.messaging
-COMPONENT_VERSION=	1.8.3
+COMPONENT_VERSION=	4.6.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:149d325431e2c4415edd5bdaec0cff4e9109c02e8f428382610cfa1a238692ea
+    sha256:be0499c3c2bf22f7ab3934bd2c331af6eea47f8c6508774d209a8028e9582421
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.messaging
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.messaging/
 COMPONENT_BUGDB=	python-mod/oslo.messaging
 
-TPNO=			25742
+TPNO=			27980
 
 # Depends on oslo.utils which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -51,11 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += library/python/eventlet-27
-REQUIRED_PACKAGES += library/python/oslo.config-27
+system-test:	$(NO_TESTS)
