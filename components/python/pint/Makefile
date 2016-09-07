@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Pint
-COMPONENT_VERSION=	0.6
+COMPONENT_VERSION=	0.7.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b1ab3b589ca4d78689233a007abd5a7eec4ea65302cabaed06932d20f2a9e748
+    sha256:38b97d352a6376bb4e957095c8b75c1c2aa8edbf9a7ccf058d69b147862e77ad
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/Pint/
+COMPONENT_PROJECT_URL=	https://github.com/hgrecco/pint
 COMPONENT_BUGDB=	python-mod/pint
 
-TPNO=			23148
+TPNO=			30239
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
