@@ -20,21 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonpatch
-COMPONENT_VERSION=	1.1
+COMPONENT_VERSION=	1.13
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0a5e453fa7ec05e838fc66301708115e59fc9866a1bb46ed08da33c7d0ba2e14
+    sha256:9470656a08002e309632b59772b206ce0564c9a77b44c25f05f49dd2cad248d5
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/jsonpatch
+COMPONENT_PROJECT_URL=	https://github.com/stefankoegl/python-json-patch
 COMPONENT_BUGDB=	python-mod/jsonpatch
 
-TPNO=			14503
+TPNO=			29475
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -54,5 +55,4 @@ install:	$(INSTALL_NO_ARCH)
 # jsonpatch has no tests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
+system-test:	$(NO_TESTS)
