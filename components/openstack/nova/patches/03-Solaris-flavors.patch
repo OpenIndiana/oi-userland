@@ -1,8 +1,8 @@
 In-house patch to update the default flavors for use with Solaris.
 This patch has not yet been submitted upstream.
 
---- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py.~1~	2015-10-13 07:52:44.000000000 -0700
-+++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py	2015-12-31 20:20:25.580944374 -0800
+--- nova-7e41c2cbb243b444bf275c46ea21169bbc08b2da/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py.~1~	2016-01-05 16:04:30.000000000 -0800
++++ nova-7e41c2cbb243b444bf275c46ea21169bbc08b2da/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py	2016-01-27 03:24:35.303852343 -0800
 @@ -85,17 +85,45 @@ def _create_shadow_tables(migrate_engine
              raise
  
@@ -52,7 +52,7 @@ This patch has not yet been submitted upstream.
          i = instance_types_table.insert()
 +        e = instance_type_extra_specs.insert()
 +        index = 1
-         for name, values in default_inst_types.iteritems():
+         for name, values in default_inst_types.items():
              i.execute({'name': name, 'memory_mb': values["mem"],
                          'vcpus': values["vcpus"], 'deleted': 0,
 @@ -106,6 +134,10 @@ def _populate_instance_types(instance_ty
@@ -66,7 +66,7 @@ This patch has not yet been submitted upstream.
      except Exception:
          LOG.info(repr(instance_types_table))
          LOG.exception(_LE('Exception while seeding instance_types table'))
-@@ -1548,7 +1580,7 @@ def upgrade(migrate_engine):
+@@ -1575,6 +1607,6 @@ def upgrade(migrate_engine):
      _create_shadow_tables(migrate_engine)
  
      # populate initial instance types
@@ -74,4 +74,3 @@ This patch has not yet been submitted upstream.
 +    _populate_instance_types(instance_types, instance_type_extra_specs)
  
      _create_dump_tables(migrate_engine)
- 

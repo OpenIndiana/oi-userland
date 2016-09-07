@@ -1,0 +1,113 @@
+This patch is for the removal of PyCrypto dependency in Nova. It
+consists of the result of two upstream changesets, one of which added
+support for Paramiko 2.0 and the other which removed support for
+earlier Paramiko versions and with that, the PyCrypto dependency.
+
+This patch can be removed in post-Mitaka releases.
+
+commit 6b1293fd6f5bcb35f317f36c540f543b1192928c
+Author: Sean Dague <sean@dague.net>
+Date:   Tue May 10 11:39:11 2016 -0400
+
+    Drop paramiko < 2 compat code
+    
+    This drops the paramiko < 2 compatibility code so we only need to
+    support one major version.
+    
+    Depends-On: I2369638282b4fefccd8484a5039fcfa9795069a7
+    (global requirements change)
+    
+    Change-Id: Ife4df9e64299e1182d77d568d1deed5ec3b608b3
+    Closes-Bug: #1483132
+
+commit c05b338f163e0bafbe564c6c7c593b819f2f2eac
+Author: Corey Wright <corey.wright@rackspace.com>
+Date:   Tue May 3 23:13:24 2016 -0500
+
+    crypto: Add support for Paramiko 2.x
+    
+    Only use PyCrypto/PyCryptodome work-around with Paramiko 1.x and use
+    straight-forward Paramiko interface with 2.x.
+    
+    TODO: Revert this and PyCrypto/PyCryptodome work-around when Paramiko
+    is upgraded to 2.x (ie replace `generate_keys(bits)` call with
+    `paramiko.RSAKey.generate(bits)`).
+    
+    Change If88beeb3983705621fe736995939ac20b2daf1f3 added a work-around
+    for the partially-PyCrypto-compatible PyCryptodome causing Paramiko,
+    which has a dependency on PyCrypto, to break.  This work-around
+    entails implementing Paramiko internals (ie how to generate a key) in
+    Nova in a way compatible with both PyCrypto and PyCryptodom.
+    
+    This work-around is itself a source of failure with Paramiko 2 which
+    has replaced the PyCrypto requirement with the cryptography Python
+    package.  As Paramiko no longer depends on PyCrypto, Nova doesn't have
+    an explicit PyCrypto requirement, and there's no implicit dependency
+    on PyCrypto, when Nova tries to import PyCrypto it fails.  Even if
+    PyCrypto was installed, the work-around would still fail because the
+    Paramiko interface that Nova is using as part of the work-around
+    changed with the major version change (ie 1.x => 2.x).
+    
+    Change-Id: I5d6543e690a3b4495476027fd8a4894ff8c42bf6
+    Related-Bug: #1483132
+
+--- nova-13.1.0/nova/crypto.py.~1~	2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/crypto.py	2016-07-06 18:28:56.554038265 -0700
+@@ -26,7 +26,6 @@ import base64
+ import binascii
+ import os
+ 
+-from Crypto.PublicKey import RSA
+ from cryptography import exceptions
+ from cryptography.hazmat import backends
+ from cryptography.hazmat.primitives.asymmetric import padding
+@@ -162,27 +161,8 @@ def generate_x509_fingerprint(pem_key):
+                      'Error message: %s') % ex)
+ 
+ 
+-def generate_key(bits):
+-    """Generate a paramiko RSAKey"""
+-    # NOTE(dims): pycryptodome has changed the signature of the RSA.generate
+-    # call. specifically progress_func has been dropped. paramiko still uses
+-    # pycrypto. However some projects like latest pysaml2 have switched from
+-    # pycrypto to pycryptodome as pycrypto seems to have been abandoned.
+-    # paramiko project has started transition to pycryptodome as well but
+-    # there is no release yet with that support. So at the moment depending on
+-    # which version of pysaml2 is installed, Nova is likely to break. So we
+-    # call "RSA.generate(bits)" which works on both pycrypto and pycryptodome
+-    # and then wrap it into a paramiko.RSAKey
+-    rsa = RSA.generate(bits)
+-    key = paramiko.RSAKey(vals=(rsa.e, rsa.n))
+-    key.d = rsa.d
+-    key.p = rsa.p
+-    key.q = rsa.q
+-    return key
+-
+-
+ def generate_key_pair(bits=2048):
+-    key = generate_key(bits)
++    key = paramiko.RSAKey.generate(bits)
+     keyout = six.StringIO()
+     key.write_private_key(keyout)
+     private_key = keyout.getvalue()
+--- nova-13.1.0/nova/tests/unit/test_crypto.py.~1~	2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/tests/unit/test_crypto.py	2016-07-06 18:28:56.554545025 -0700
+@@ -362,7 +362,7 @@ class KeyPairTest(test.NoDBTestCase):
+         keyin.seek(0)
+         key = paramiko.RSAKey.from_private_key(keyin)
+ 
+-        with mock.patch.object(crypto, 'generate_key') as mock_generate:
++        with mock.patch.object(paramiko.RSAKey, 'generate') as mock_generate:
+             mock_generate.return_value = key
+             (private_key, public_key, fingerprint) = crypto.generate_key_pair()
+             self.assertEqual(self.rsa_pub, public_key)
+--- nova-13.1.0/requirements.txt.~2~	2016-07-06 18:28:56.409131200 -0700
++++ nova-13.1.0/requirements.txt	2016-07-06 18:28:56.555735710 -0700
+@@ -13,7 +13,6 @@ lxml>=2.3 # BSD
+ Routes!=2.0,!=2.1,!=2.3.0,>=1.12.3;python_version=='2.7' # MIT
+ Routes!=2.0,!=2.3.0,>=1.12.3;python_version!='2.7' # MIT
+ cryptography!=1.3.0,>=1.0 # BSD/Apache-2.0
+-pycrypto>=2.6 # Public Domain
+ WebOb>=1.2.3 # MIT
+ greenlet>=0.3.2 # MIT
+ PasteDeploy>=1.5.0 # MIT

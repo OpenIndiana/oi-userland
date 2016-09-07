@@ -28,87 +28,90 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf, \
     move_conf
 
 NOVA_CONF_MAPPINGS = {
-    # Deprecated group/name for Kilo
+    # Deprecated group/name for Liberty
     ('DEFAULT', 'network_device_mtu'): (None, None),
-    ('DEFAULT', 'log-format'): (None, None),
-    ('DEFAULT', 'use-syslog'): (None, None),
-    ('cinder', 'http_timeout'): ('cinder', 'timeout'),
+    ('DEFAULT', 'vnc_keymap'): ('vnc', 'keymap'),
+    ('DEFAULT', 'vnc_enabled'): ('vnc', 'enabled'),
+    ('DEFAULT', 'xvpvncproxy_base_url'): ('vnc', 'xvpvncproxy_base_url'),
     ('ironic', 'client_log_level'): (None, None),
-    ('DEFAULT', 'amqp_durable_queues'):
-        ('oslo_messaging_qpid', 'amqp_durable_queues'),
-    ('DEFAULT', 'amqp_auto_delete'):
-        ('oslo_messaging_qpid', 'amqp_auto_delete'),
-    ('DEFAULT', 'rpc_conn_pool_size'):
-        ('oslo_messaging_qpid', 'rpc_conn_pool_size'),
-    ('DEFAULT', 'qpid_hostname'):
-        ('oslo_messaging_qpid', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'):
-        ('oslo_messaging_qpid', 'qpid_port'),
-    ('DEFAULT', 'qpid_hosts'):
-        ('oslo_messaging_qpid', 'qpid_hosts'),
-    ('DEFAULT', 'qpid_username'):
-        ('oslo_messaging_qpid', 'qpid_username'),
-    ('DEFAULT', 'qpid_password'):
-        ('oslo_messaging_qpid', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'):
-        ('oslo_messaging_qpid', 'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_heartbeat'):
-        ('oslo_messaging_qpid', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'):
-        ('oslo_messaging_qpid', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'):
-        ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
-    ('DEFAULT', 'qpid_receiver_capacity'):
-        ('oslo_messaging_qpid', 'qpid_receiver_capacity'),
-    ('DEFAULT', 'qpid_topology_version'):
-        ('oslo_messaging_qpid', 'qpid_topology_version'),
-    ('DEFAULT', 'kombu_ssl_version'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_version'),
-    ('DEFAULT', 'kombu_ssl_keyfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_keyfile'),
-    ('DEFAULT', 'kombu_ssl_certfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_certfile'),
-    ('DEFAULT', 'kombu_ssl_ca_certs'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_ca_certs'),
-    ('DEFAULT', 'kombu_reconnect_delay'):
-        ('oslo_messaging_rabbit', 'kombu_reconnect_delay'),
-    ('DEFAULT', 'rabbit_host'):
-        ('oslo_messaging_rabbit', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'):
-        ('oslo_messaging_rabbit', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_hosts'):
-        ('oslo_messaging_rabbit', 'rabbit_hosts'),
-    ('DEFAULT', 'rabbit_use_ssl'):
-        ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'):
-        ('oslo_messaging_rabbit', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'):
-        ('oslo_messaging_rabbit', 'rabbit_password'),
-    ('DEFAULT', 'rabbit_login_method'):
-        ('oslo_messaging_rabbit', 'rabbit_login_method'),
-    ('DEFAULT', 'rabbit_virtual_host'):
-        ('oslo_messaging_rabbit', 'rabbit_virtual_host'),
-    ('DEFAULT', 'rabbit_retry_backoff'):
-        ('oslo_messaging_rabbit', 'rabbit_retry_backoff'),
-    ('DEFAULT', 'rabbit_max_retries'):
-        ('oslo_messaging_rabbit', 'rabbit_max_retries'),
-    ('DEFAULT', 'rabbit_ha_queues'):
-        ('oslo_messaging_rabbit', 'rabbit_ha_queues'),
-    ('DEFAULT', 'fake_rabbit'):
-        ('oslo_messaging_rabbit', 'fake_rabbit'),
-    ('DEFAULT', 'osapi_max_request_body_size'):
-        ('oslo_middleware', 'max_request_body_size'),
-    ('neutron', 'ca_certificates_file'): ('neutron', 'cafile'),
+    ('neutron', 'admin_username'): ('neutron', 'username'),
+    ('DEFAULT', 'ssl_ca_file'): ('ssl', 'ca_file'),
+    ('osapi_v21', 'enabled'): (None, None),
+    ('DEFAULT', 'novncproxy_base_url'): ('vnc', 'novncproxy_base_url'),
     ('neutron', 'admin_user_id'): (None, None),
     ('neutron', 'admin_tenant_id'): (None, None),
+    ('DEFAULT', 'ssl_cert_file'): ('ssl', 'cert_file'),
     ('DEFAULT', 'log_format'): (None, None),
-    ('cinder', 'api_insecure'): ('cinder', 'insecure'),
+    ('DEFAULT', 'vncserver_proxyclient_address'):
+        ('vnc', 'vncserver_proxyclient_address'),
+    ('osapi_v21', 'extensions_blacklist'): (None, None),
+    ('workarounds', 'destroy_after_evacuate'): (None, None),
+    ('neutron', 'admin_tenant_name'): ('neutron', 'tenant_name'),
+    ('DEFAULT', 'osapi_compute_ext_list'): (None, None),
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('DEFAULT', 'vncserver_listen'): ('vnc', 'vncserver_listen'),
+    ('neutron', 'admin_password'): ('neutron', 'password'),
+    ('DEFAULT', 'ssl_key_file'): ('ssl', 'key_file'),
+    ('neutron', 'admin_auth_url'): ('neutron', 'auth_url'),
+    # Deprecated group/name for Mitaka
+    ('DEFAULT', 'cert_manager'): (None, None),
+    ('DEFAULT', 'compute_available_monitors'): (None, None),
+    ('DEFAULT', 'compute_manager'): (None, None),
+    ('DEFAULT', 'compute_resources'): (None, None),
+    ('DEFAULT', 'compute_stats_class'): (None, None),
+    ('DEFAULT', 'console_manager'): (None, None),
+    ('DEFAULT', 'consoleauth_manager'): (None, None),
+    ('DEFAULT', 'db_driver'): (None, None),
+    ('DEFAULT', 'memcached_servers'): (None, None),
+    ('DEFAULT', 'metadata_manager'): (None, None),
+    ('DEFAULT', 'network_api_class'): (None, None),
+    ('DEFAULT', 'network_device_mtu'): (None, None),
+    ('DEFAULT', 'osapi_compute_ext_list'): (None, None),
+    ('DEFAULT', 'scheduler_manager'): (None, None),
+    ('DEFAULT', 'security_group_api'): (None, None),
     ('DEFAULT', 'share_dhcp_address'): (None, None),
-    ('neutron', 'api_insecure'): ('neutron', 'insecure'),
-    ('cinder', 'ca_certificates_file'): ('cinder', 'cafile'),
-    ('neutron', 'url_timeout'): ('neutron', 'timeout'),
-    ('neutron', 'allow_duplicate_networks'): (None, None),
+    ('DEFAULT', 'use_syslog'): (None, None),
+    ('DEFAULT', 'vendordata_driver'): (None, None),
+    ('DEFAULT', 'volume_api_class'): (None, None),
+    ('cells', 'manager'): (None, None),
+    ('conductor', 'manager'): (None, None),
+    ('conductor', 'use_local'): (None, None),
+    ('glance', 'host'): (None, None),
+    ('glance', 'port'): (None, None),
+    ('glance', 'protocol'): (None, None),
+    ('hyperv', 'force_volumeutils_v1'): (None, None),
+    ('ironic', 'admin_auth_token'): (None, None),
+    ('ironic', 'api_version'): (None, None),
+    ('ironic', 'client_log_level'): (None, None),
+    ('libvirt', 'remove_unused_kernels'): (None, None),
+    ('osapi_v21', 'enabled'): (None, None),
+    ('osapi_v21', 'extensions_blacklist'): (None, None),
+    ('osapi_v21', 'extensions_whitelist'): (None, None),
+    ('osapi_v21', 'project_id_regex'): (None, None),
+    ('serial_console', 'listen'): (None, None),
+    ('workarounds', 'destroy_after_evacuate'): (None, None),
+    # move entries from DEFAULT.nova.virt.solariszones.driver to its own
+    # section
+    ('DEFAULT', 'boot_volume_type'): ('solariszones', 'boot_volume_type'),
+    ('DEFAULT', 'boot_volume_az'): ('solariszones', 'boot_volume_az'),
+    ('DEFAULT', 'glancecache_dirname'):
+        ('solariszones', 'glancecache_dirname'),
+    ('DEFAULT', 'live_migration_cipher'):
+        ('solariszones', 'live_migration_cipher'),
+    ('DEFAULT', 'solariszones_snapshots_directory'):
+        ('solariszones', 'solariszones_snapshots_directory'),
+    ('DEFAULT', 'zones_suspend_path'): ('solariszones', 'zones_suspend_path'),
+    ('DEFAULT', 'solariszones_boot_options'):
+    ('solariszones', 'solariszones_boot_options'),
 }
+
+
+API_PASTE_MAPPING = {
+    ('composite:osapi_compute', '/v1.1'): (None, None),
+    ('composite:osapi_compute', '/v3'): (None, None),
+}
+
 
 NOVA_CONF_EXCEPTIONS = [
     ('DEFAULT', 'ec2_workers'),
@@ -126,6 +129,12 @@ NOVA_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_password'),
     ('keystone_authtoken', 'admin_tenant_name'),
     ('neutron', 'service_metadata_proxy'),
+    ('neutron', 'username'),
+    ('neutron', 'password'),
+    ('neutron', 'tenant_name'),
+    ('neutron', 'auth_url'),
+
+
 ]
 
 
@@ -155,64 +164,10 @@ def start():
         # backup all the old configuration files
         create_backups('/etc/nova')
 
-        modify_conf('/etc/nova/api-paste.ini')
+        modify_conf('/etc/nova/api-paste.ini', API_PASTE_MAPPING)
         modify_conf('/etc/nova/logging.conf')
-
-        # It's possible that nova.conf has database.connection commented out
-        # (to use the default value).  If it is, and none of other deprecated
-        # values are set, manually set database.connection in the new conf
-        # file.
-        if os.path.exists('/etc/nova/nova.conf.new'):
-
-            # open the previous version
-            old = iniparse.ConfigParser()
-            old.readfp(open('/etc/nova/nova.conf'))
-
-            # open the new version
-            new = iniparse.ConfigParser()
-            new.readfp(open('/etc/nova/nova.conf.new'))
-
-            options = [
-                ('database', 'sql_connection'),
-                ('sql', 'connection'),
-                ('database', 'connection'),
-                ('DEFAULT', 'sql_connection')
-            ]
-            test = lambda x: old.has_section(x[0]) and \
-                old.has_option(x[0], x[1])
-
-            if not any(map(test, options)):
-                if old.has_option('DEFAULT', 'state_path'):
-                    state_path = old.get('DEFAULT', 'state_path')
-                else:
-                    state_path = '/var/lib/nova'
-
-                if old.has_option('DEFAULT', 'sqlite_db'):
-                    sqlite_db = old.get('DEFAULT', 'sqlite_db')
-                else:
-                    sqlite_db = 'nova.sqlite'
-
-                new.set('database', 'connection',
-                        'sqlite:///%s/%s' % (state_path, sqlite_db))
-
-                with open('/etc/nova/nova.conf.new', 'w+') as fh:
-                    new.write(fh)
-
         modify_conf('/etc/nova/nova.conf', NOVA_CONF_MAPPINGS,
                     NOVA_CONF_EXCEPTIONS)
-
-    config = iniparse.RawConfigParser()
-    config.read('/etc/nova/nova.conf')
-    # In certain cases the database section does not exist and the
-    # default database chosen is sqlite.
-    if config.has_section('database'):
-        db_connection = config.get('database', 'connection')
-
-        if db_connection.startswith('mysql'):
-            engine = sqlalchemy.create_engine(db_connection)
-            if engine.url.username != '%SERVICE_USER%':
-                alter_mysql_tables(engine)
-                print "altered character set to utf8 in nova tables"
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',

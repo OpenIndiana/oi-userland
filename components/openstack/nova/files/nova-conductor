@@ -15,11 +15,10 @@
 #    under the License.
 
 import os
+from subprocess import CalledProcessError, check_call
 import sys
 
 import smf_include
-
-from subprocess import CalledProcessError, check_call
 
 
 def start():
@@ -29,6 +28,14 @@ def start():
         check_call(cmd)
     except CalledProcessError as err:
         print "Unable to create database for Nova:  %s" % err
+        sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
+
+    # sync the database to make sure it's ready
+    cmd = ["/usr/bin/nova-manage", "api_db", "sync"]
+    try:
+        check_call(cmd)
+    except CalledProcessError as err:
+        print "Unable to create nova_api database for Nova:  %s" % err
         sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
 
     smf_include.smf_subprocess("/usr/lib/nova/nova-conductor")

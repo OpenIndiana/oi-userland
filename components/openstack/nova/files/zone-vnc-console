@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -20,14 +20,15 @@ import errno
 import fcntl
 import os
 import pwd
-import smf_include
 import socket
 import subprocess
 import sys
 import tempfile
 import time
 
-from oslo_config import cfg
+import smf_include
+
+import nova.conf
 
 GTF = "/usr/bin/gtf"
 SVCADM = "/usr/sbin/svcadm"
@@ -55,8 +56,7 @@ X11PORT_START = 6000
 ZLOGINOPTS = ' -e "/usr/bin/pfexec /usr/sbin/zlogin -C -E $ZONENAME"\n'
 XSTARTUP = XSTARTUPHDR + XRESOURCES + XTERM + XTERMOPTS + ZLOGINOPTS
 
-CONF = cfg.CONF
-CONF.import_opt('vncserver_listen', 'nova.vnc')
+CONF = nova.conf.CONF
 
 
 def start():
@@ -95,9 +95,9 @@ def start():
         novacfg = ConfigParser.RawConfigParser()
         novacfg.readfp(open(NOVACFG))
         try:
-            vnc_listenip = novacfg.get("DEFAULT", "vncserver_listen")
+            vnc_listenip = novacfg.get("vnc", "vncserver_listen")
         except ConfigParser.NoOptionError:
-            vnc_listenip = CONF.vncserver_listen
+            vnc_listenip = CONF.vnc.vncserver_listen
 
         with lock_available_port(vnc_listenip, VNCPORT_START, VNCPORT_END,
                                  homedir) as n:

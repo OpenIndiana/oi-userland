@@ -2,11 +2,11 @@ In-house patch to force Nova to always use our driver's snapshot
 method.  This is required until we can support Image <--> Volume
 transforms.
 
---- nova-2015.1.2/nova/api/openstack/compute/servers.py.orig    2015-11-10 14:29:33.597682730 -0700
-+++ nova-2015.1.2/nova/api/openstack/compute/servers.py  2015-11-10 14:30:21.231062292 -0700
-@@ -1072,8 +1072,10 @@ class Controller(wsgi.Controller):
+--- nova-13.1.0/nova/api/openstack/compute/servers.py.~1~	2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/api/openstack/compute/servers.py	2016-07-06 17:53:50.593003090 -0700
+@@ -1097,8 +1097,10 @@ class ServersController(wsgi.Controller)
                      context, instance.uuid)
-
+ 
          try:
 -            if self.compute_api.is_volume_backed_instance(context, instance,
 -                                                          bdms):
@@ -14,6 +14,6 @@ transforms.
 +            if hypervisor != 'solariszones' and \
 +                    self.compute_api.is_volume_backed_instance(context,
 +                                                               instance, bdms):
-                 img = instance.image_ref
-                 if not img:
-                     properties = bdms.root_metadata(
+                 authorize(context, action="create_image:allow_volume_backed")
+                 image = self.compute_api.snapshot_volume_backed(
+                                                        context,

@@ -1,0 +1,15 @@
+In-house patch as Solaris doesn't currently support security groups.
+
+--- nova-13.1.0/nova/network/neutronv2/api.py.~1~	2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/network/neutronv2/api.py	2016-07-06 18:08:27.484252690 -0700
+@@ -606,8 +606,8 @@ class API(base_api.NetworkAPI):
+         self._check_external_network_attach(context, nets)
+ 
+         security_groups = kwargs.get('security_groups', [])
+-        security_group_ids = self._process_security_groups(
+-                                    instance, neutron, security_groups)
++        # TODO(gmoodalb): Solaris doesn't currently support security groups.
++        security_group_ids = []
+ 
+         preexisting_port_ids = []
+         created_port_ids = []

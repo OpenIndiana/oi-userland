@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -27,7 +27,7 @@ DOCTYPE_STR = '<!DOCTYPE service_bundle SYSTEM "%s">' % DTD_URL
 
 
 def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
-                            route=None, nameservers=None):
+                            route=None, nameservers=None, host_routes=None):
     """ return an etree object representing fixed (static) networking
     """
     svcbundle = etree.Element("service_bundle", type="profile",
@@ -109,6 +109,26 @@ def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
             etree.SubElement(pg6, "propval", type="astring",
                              name="stateful", value="yes")
 
+    if host_routes:
+        # create the host-routes profile
+        for i, host_route in enumerate(host_routes):
+            hr_dest = host_route['cidr']
+            hr_gw = host_route['gateway']['address']
+            hr_pg_name = "route_%d_%d" % (netid, i)
+            hr_ip_version = host_route['gateway']['version']
+            if hr_ip_version == 4:
+                hr_pg_type = "ipv4_route"
+                hr_pval_type = "net_address_v4"
+            else:
+                hr_pg_type = "ipv6_route"
+                hr_pval_type = "net_address_v6"
+            pg = etree.SubElement(instance, "property_group", type=hr_pg_type,
+                                  name=hr_pg_name)
+            etree.SubElement(pg, "propval", type=hr_pval_type,
+                             name="destination", value=hr_dest)
+            etree.SubElement(pg, "propval", type=hr_pval_type,
+                             name="gateway", value=hr_gw)
+
     # create DNS profile for static configurations
     if addrtype == "static" and nameservers is not None:
         dns = etree.SubElement(svcbundle, "service", version="1",
@@ -129,25 +149,6 @@ def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
         search = etree.SubElement(pg, "property", type="astring",
                                   name="search")
         etree.SubElement(search, "astring_list")
-
-    return svcbundle
-
-
-def create_ncp_automatic():
-    """ return an etree object representing dynamic networking
-    """
-    svcbundle = etree.Element("service_bundle", type="profile",
-                              name="openstack")
-
-    # create the network/physical service profile
-    physical = etree.SubElement(svcbundle, "service", version="1",
-                                type="service", name="network/physical")
-    instance = etree.SubElement(physical, "instance", enabled="true",
-                                name="default")
-    pg = etree.SubElement(instance, "property_group", type="application",
-                          name="netcfg")
-    etree.SubElement(pg, "propval", type="astring", name="active_ncp",
-                     value="Automatic")
 
     return svcbundle
 

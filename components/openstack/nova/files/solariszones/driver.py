@@ -45,15 +45,21 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 from oslo_utils import excutils
+from oslo_utils import fileutils
 from oslo_utils import strutils
+from oslo_utils import versionutils
 from passlib.hash import sha256_crypt
 
 from nova.api.metadata import password
+from nova.compute import arch
+from nova.compute import hv_type
 from nova.compute import power_state
 from nova.compute import task_states
+from nova.compute import vm_mode
 from nova.compute import vm_states
-from nova.console import type as ctype
 from nova import conductor
+import nova.conf
+from nova.console import type as ctype
 from nova import context as nova_context
 from nova import crypto
 from nova import exception
@@ -63,7 +69,7 @@ from nova.image import glance
 from nova.network.neutronv2 import api as neutronv2_api
 from nova import objects
 from nova.objects import flavor as flavor_obj
-from nova.openstack.common import fileutils
+from nova.objects import migrate_data as migrate_data_obj
 from nova import utils
 from nova.virt import driver
 from nova.virt import event as virtevent
@@ -103,9 +109,8 @@ solariszones_opts = [
                      'metadata.'),
 ]
 
-CONF = cfg.CONF
-CONF.register_opts(solariszones_opts)
-CONF.import_opt('vncserver_proxyclient_address', 'nova.vnc')
+CONF = nova.conf.CONF
+CONF.register_opts(solariszones_opts, 'solariszones')
 LOG = logging.getLogger(__name__)
 
 # These should match the strings returned by the zone_state_str()
@@ -402,8 +407,8 @@ class ZoneConfig(object):
                 code = ex.get_payload().code
                 if (ignore_exists and
                         code == zonemgr.ErrorCode.RESOURCE_ALREADY_EXISTS):
-                    self.zone.setResourceProperties(zonemgr.Resource(
-                        resource, None), props)
+                    self.zone.setResourceProperties(
+                        zonemgr.Resource(resource, None), props)
                     return
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to create new resource '%s' for instance '%s'"
@@ -430,7 +435,6 @@ class ZoneConfig(object):
     def clear_resource_props(self, resource, props):
         """Clear property values of a given resource
         """
-
         try:
             self.zone.clearResourceProperties(zonemgr.Resource(resource, None),
                                               props)
@@ -476,7 +480,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
     capabilities = {
         "has_imagecache": False,
         "supports_recreate": True,
-        }
+        "supports_migrate_to_same_host": False
+    }
 
     def __init__(self, virtapi):
         self.virtapi = virtapi
@@ -695,7 +700,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         attempts to emulate what the virtual platform code does to
         determine a number of virtual CPUs to use.
         """
-
         # If a 'virtual-cpu' resource exists, use the minimum number of
         # CPUs defined there.
         ncpus = lookup_resource_property(zone, 'virtual-cpu', 'ncpus')
@@ -721,15 +725,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_kstat_by_name(self, kstat_class, module, instance, name):
         """Return Kstat snapshot data via RAD as a dictionary."""
-        pattern = {
-            'class':    kstat_class,
-            'module':   module,
-            'instance': instance,
-            'name':     name
-        }
+        pattern = {}
+        if kstat_class is not None:
+            pattern.update({'class': kstat_class})
+        if module is not None:
+            pattern.update({'module': module})
+        if instance is not None:
+            pattern.update({'instance': instance})
+        if name is not None:
+            pattern.update({'name': name})
+
         try:
             self.kstat_control.update()
-            kstat_object = self.rad_connection.get_object(
+            kstat_objects = self.rad_connection.list_objects(
                 kstat.Kstat(), rad.client.ADRGlobPattern(pattern))
         except Exception as reason:
             LOG.info(_("Unable to retrieve kstat object '%s:%s:%s' of class "
@@ -737,23 +745,49 @@ class SolarisZonesDriver(driver.ComputeDriver):
                      % (module, instance, name, kstat_class, reason))
             return None
 
-        kstat_data = {}
-        for named in kstat_object.fresh_snapshot().data.NAMED:
-            kstat_data[named.name] = getattr(named.value,
-                                             str(named.value.discriminant))
+        kstat_data = []
+        for kstat_object in kstat_objects:
+            object = self.rad_connection.get_object(kstat_object)
+            for named in object.fresh_snapshot().data.NAMED:
+                kstat_data.append(
+                    {named.name:
+                     getattr(named.value, str(named.value.discriminant))})
         return kstat_data
+
+    def _aggregate_kstat_statistic(self, kstat_data, statistic):
+        aggregate = 0
+        for ks in kstat_data:
+            value = ks.get(statistic)
+            if value is not None:
+                aggregate += value
+
+        return aggregate
+
+    def _get_kstat_statistic(self, kstat_data, statistic):
+        value = None
+        for ks in kstat_data:
+            value = ks.get(statistic)
+            if value is not None:
+                break
+
+        return value
 
     def _get_cpu_time(self, zone):
         """Return the CPU time used in nanoseconds."""
         if zone.id == -1:
             return 0
 
-        kstat_data = self._get_kstat_by_name('zones', 'cpu', str(zone.id),
-                                             'sys_zone_aggr')
+        kstat_data = self._get_kstat_by_name(
+            'zones', 'cpu', None, ''.join(('sys_zone_', str(zone.id))))
         if kstat_data is None:
             return 0
 
-        return kstat_data['cpu_nsec_kernel'] + kstat_data['cpu_nsec_user']
+        cpu_nsec_kernel = self._aggregate_kstat_statistic(kstat_data,
+                                                          'cpu_nsec_kernel')
+        cpu_nsec_user = self._aggregate_kstat_statistic(kstat_data,
+                                                        'cpu_nsec_user')
+
+        return cpu_nsec_kernel + cpu_nsec_user
 
     def get_info(self, instance):
         """Get the current status of an instance, by name (not ID!)
@@ -918,8 +952,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
                          This function should use the data there to guide
                          the creation of the new instance.
-        :param image_meta: image object returned by nova.image.glance that
-                           defines the image from which to boot this instance
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
         :param injected_files: User files to inject into instance.
         :param admin_password: Administrator password to set in instance.
         :param bdms: block-device-mappings to use for rebuild
@@ -955,28 +989,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
         root_ci = self._rebuild_block_devices(context, instance, bdms,
                                               recreate)
 
-        if root_ci is not None:
-            driver_type = root_ci['driver_volume_type']
-        else:
-            driver_type = 'local'
-
-        # If image_meta is provided then the --on-shared-storage option
-        # was not used.
-        if image_meta:
-            # If not then raise an exception.  But if this is a rebuild then
-            # the local storage is ok.
-            if driver_type in shared_storage and recreate:
-                msg = (_("Root device is on shared storage for instance '%s'.")
-                       % instance['name'])
-                raise exception.NovaException(msg)
-
-        else:
-            # So the root device is not expected to be local so we can move
-            # forward with building the zone.
+        if recreate:
+            if root_ci is not None:
+                driver_type = root_ci['driver_volume_type']
+            else:
+                driver_type = 'local'
             if driver_type not in shared_storage:
                 msg = (_("Root device is not on shared storage for instance "
                          "'%s'.") % instance['name'])
-
                 raise exception.NovaException(msg)
 
         if not recreate:
@@ -989,16 +1009,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         instance.save(
             expected_task_state=[task_states.REBUILD_BLOCK_DEVICE_MAPPING])
 
+        # Instead of using a boolean for 'rebuilding' scratch data, use a
+        # string because the object will translate it to a string anyways.
         if recreate:
             extra_specs = self._get_extra_specs(instance)
 
-            instance.system_metadata['rebuilding'] = False
-            self._create_config(context, instance, network_info,
-                                root_ci, None)
+            instance.system_metadata['rebuilding'] = 'false'
+            self._create_config(context, instance, network_info, root_ci, None)
             del instance.system_metadata['evac_from']
             instance.save()
         else:
-            instance.system_metadata['rebuilding'] = True
+            instance.system_metadata['rebuilding'] = 'true'
             self.spawn(context, instance, image_meta, injected_files,
                        admin_password, network_info, block_device_info)
             self.power_off(instance)
@@ -1040,7 +1061,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _fetch_image(self, context, instance):
         """Fetch an image using Glance given the instance's image_ref."""
-        glancecache_dirname = CONF.glancecache_dirname
+        glancecache_dirname = CONF.solariszones.glancecache_dirname
         fileutils.ensure_tree(glancecache_dirname)
         image = ''.join([glancecache_dirname, '/', instance['image_ref']])
         if os.path.exists(image):
@@ -1072,9 +1093,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 reason = ex.get_payload().info
             else:
                 reason = str(ex)
-            raise exception.ImageUnacceptable(
-                image_id=instance['image_ref'],
-                reason=reason)
+            raise exception.ImageUnacceptable(image_id=instance['image_ref'],
+                                              reason=reason)
 
         # Validate the image at this point to ensure:
         # - contains one deployable system
@@ -1126,13 +1146,38 @@ class SolarisZonesDriver(driver.ComputeDriver):
             data = connection_info['data']
             # suri(5) format:
             #       iscsi://<host>[:<port>]/target.<IQN>,lun.<LUN>
+            # luname-only URI format for the multipathing:
+            #       iscsi://<host>[:<port>]/luname.naa.<ID>
             # Sample iSCSI connection data values:
             # target_portal: 192.168.1.244:3260
             # target_iqn: iqn.2010-10.org.openstack:volume-a89c.....
             # target_lun: 1
-            suri = 'iscsi://%s/target.%s,lun.%d' % (data['target_portal'],
-                                                    data['target_iqn'],
-                                                    data['target_lun'])
+            suri = None
+            if 'target_iqns' in data:
+                target = data['target_iqns'][0]
+                target_lun = data['target_luns'][0]
+                try:
+                    utils.execute('/usr/sbin/iscsiadm', 'list', 'target',
+                                  '-vS', target)
+                    out, err = utils.execute('/usr/sbin/suriadm', 'lookup-uri',
+                                             '-t', 'iscsi',
+                                             '-p', 'target=%s' % target,
+                                             '-p', 'lun=%s' % target_lun)
+                    for line in [l.strip() for l in out.splitlines()]:
+                        if "luname.naa." in line:
+                            LOG.debug(_("The found luname-only URI for the "
+                                      "LUN '%s' is '%s'.") %
+                                      (target_lun, line))
+                            suri = line
+                except processutils.ProcessExecutionError as ex:
+                    reason = ex.stderr
+                    LOG.debug(_("Failed to lookup-uri for volume '%s', lun "
+                              "'%s': '%s'.") % (target, target_lun, reason))
+
+            if suri is None:
+                suri = 'iscsi://%s/target.%s,lun.%d' % (data['target_portal'],
+                                                        data['target_iqn'],
+                                                        data['target_lun'])
             # TODO(npower): need to handle CHAP authentication also
         elif driver_type == 'nfs':
             data = connection_info['data']
@@ -1158,8 +1203,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             # Invoke 'fcinfo remote-port' on all local HBA ports to trigger
             # a refresh.
             for wwpn in self._get_fc_wwpns():
-                utils.execute('/usr/sbin/fcinfo', 'remote-port',
-                              '-p', wwpn)
+                utils.execute('/usr/sbin/fcinfo', 'remote-port', '-p', wwpn)
 
             suri = self._lookup_fc_volume_suri(target_wwn, target_lun)
         return suri
@@ -1228,17 +1272,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _create_boot_volume(self, context, instance):
         """Create a (Cinder) volume service backed boot volume"""
-        boot_vol_az = CONF.boot_volume_az
-        boot_vol_type = CONF.boot_volume_type
+        boot_vol_az = CONF.solariszones.boot_volume_az
+        boot_vol_type = CONF.solariszones.boot_volume_type
         try:
             vol = self._volume_api.create(
-                context,
-                instance['root_gb'],
+                context, instance['root_gb'],
                 instance['hostname'] + "-" + self._rootzpool_suffix,
                 "Boot volume for instance '%s' (%s)"
                 % (instance['name'], instance['uuid']),
-                volume_type=boot_vol_type,
-                availability_zone=boot_vol_az)
+                volume_type=boot_vol_type, availability_zone=boot_vol_az)
             # TODO(npower): Polling is what nova/compute/manager also does when
             # creating a new volume, so we do likewise here.
             while True:
@@ -1258,8 +1300,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         volume_id = volume['id']
 
         connector = self.get_volume_connector(instance)
-        connection_info = self._volume_api.initialize_connection(
-            context, volume_id, connector)
+        connection_info = self._volume_api.initialize_connection(context,
+                                                                 volume_id,
+                                                                 connector)
         connection_info['serial'] = volume_id
 
         # Check connection_info to determine if the provided volume is
@@ -1305,8 +1348,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 raise exception.InvalidVolume(reason=msg)
 
         # Volume looks OK to use. Notify Cinder of the attachment.
-        self._volume_api.attach(context, volume_id, instance_uuid,
-                                mountpoint)
+        self._volume_api.attach(context, volume_id, instance_uuid, mountpoint)
         return connection_info
 
     def _set_boot_device(self, name, connection_info, brand):
@@ -1321,15 +1363,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
             # ZOSS device configuration is different for the solaris-kz brand
             if brand == ZONE_BRAND_SOLARIS_KZ:
                 zc.zone.setResourceProperties(
-                    zonemgr.Resource(
-                        "device",
-                        [zonemgr.Property("bootpri", "0")]),
+                    zonemgr.Resource("device",
+                                     [zonemgr.Property("bootpri", "0")]),
                     [zonemgr.Property("storage", suri)])
             else:
-                zc.addresource(
-                    ROOTZPOOL_RESOURCE,
-                    [zonemgr.Property("storage", listvalue=[suri])],
-                    ignore_exists=True)
+                zc.addresource(ROOTZPOOL_RESOURCE,
+                               [zonemgr.Property("storage", listvalue=[suri])],
+                               ignore_exists=True)
 
     def _set_num_cpu(self, name, vcpus, brand):
         """Set number of VCPUs in a Solaris Zone configuration."""
@@ -1365,11 +1405,54 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with ZoneConfig(zone) as zc:
             zc.setprop('capped-memory', mem_resource, '%dM' % memory_mb)
 
+    def _ovs_add_port(self, instance, vif, port):
+        if vif['type'] == 'binding_failed':
+            LOG.error(_('Port binding has failed for VIF %s. Ensure that '
+                        'OVS agent is running and/or bridge_mappings are '
+                        'correctly configured. VM will not have network '
+                        'connectivity') % vif)
+
+        ovs_bridge = CONF.neutron.ovs_bridge
+        cmd = ['/usr/sbin/ovs-vsctl',
+               '--timeout=%s' % CONF.ovs_vsctl_timeout,
+               '--', '--if-exists', 'del-port', ovs_bridge, port,
+               '--', 'add-port', ovs_bridge, port,
+               '--', 'set', 'Interface', port,
+               'external-ids:iface-id=%s' % vif['id'],
+               'external-ids:iface-status=active',
+               'external-ids:attached-mac=%s' % vif['address'],
+               'external-ids:vm-uuid=%s' % instance['uuid']
+               ]
+        try:
+            out, err = utils.execute(*cmd)
+        except Exception as reason:
+            msg = (_("Failed to add port '%s' with MAC address '%s' to "
+                     "OVS Bridge '%s': %s")
+                   % (port, vif['address'], ovs_bridge, reason))
+            raise exception.NovaException(msg)
+        LOG.debug(_('Successfully added port %s with MAC adddress %s') %
+                  (port, vif['address']))
+
+    def _ovs_delete_port(self, port, log_warnings=False):
+        ovs_bridge = CONF.neutron.ovs_bridge
+        cmd = ['/usr/sbin/ovs-vsctl',
+               '--timeout=%s' % CONF.ovs_vsctl_timeout,
+               '--', '--if-exists', 'del-port', ovs_bridge, port]
+        try:
+            out, err = utils.execute(*cmd)
+            LOG.debug(_('Removed port %s from the OVS bridge %s') %
+                      (port, ovs_bridge))
+        except Exception as reason:
+            msg = (_("Unable to remove port '%s' from the OVS "
+                     "bridge '%s': %s") % (port, ovs_bridge, reason))
+            if log_warnings:
+                LOG.warning(msg)
+            else:
+                raise nova.exception.NovaException(msg)
+
     def _plug_vifs(self, instance, network_info):
-        # if the VIF is of EVS type (i.e., vif['type'] is ''),
-        # then nothing to do
-        if not network_info or not network_info[0]['type']:
-            LOG.debug(_("VIF is an EVS type. Nothing to plug."))
+        if not network_info:
+            LOG.debug(_("Instance has no VIF. Nothing to plug."))
             return
 
         # first find out all the anets for a given instance
@@ -1378,7 +1461,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                      '-z', instance['name'],
                                      '-po', 'link,macaddress')
         except Exception as reason:
-            msg = (_("Unable to get ANETs for instance '%s': %s")
+            msg = (_("Unable to get interfaces for instance '%s': %s")
                    % (instance['name'], reason))
             raise exception.NovaException(msg)
 
@@ -1389,109 +1472,40 @@ class SolarisZonesDriver(driver.ComputeDriver):
             maddr = ''.join(['%02x' % int(b, 16) for b in maddr.split(':')])
             anetdict[maddr] = anet
 
-        LOG.debug(_("List of instance %s's anets: %s") % (instance['name'],
-                                                          anetdict))
+        LOG.debug(_("List of instance %s's anets: %s")
+                  % (instance['name'], anetdict))
         # we now have a list of VNICs that belong to the VM
         # we need to map the VNIC to the bridge
-        bridge = CONF.neutron.ovs_bridge
         for vif in network_info:
-            if vif['type'] == 'binding_failed':
-                LOG.error(_('Port binding has failed for VIF %s. Ensure that '
-                            'OVS agent is running and/or bridge_mappings are '
-                            'correctly configured. VM will not have network '
-                            'connectivity') % vif)
             vif_maddr = ''.join(['%02x' % int(b, 16) for b in
                                  vif['address'].split(':')])
             anet = anetdict.get(vif_maddr)
             if anet is None:
                 LOG.error(_('Failed to add port %s connected to network %s '
-                            'to instance %s') % (vif['ovs_interfaceid'],
-                                                 vif['network']['id'],
-                                                 instance['name']))
+                            'to instance %s')
+                          % (vif['ovs_interfaceid'], vif['network']['id'],
+                             instance['name']))
                 continue
-            cmd = ['/usr/sbin/ovs-vsctl',
-                   '--timeout=%s' % CONF.ovs_vsctl_timeout,
-                   '--', '--if-exists', 'del-port', bridge, anet,
-                   '--', 'add-port', bridge, anet,
-                   '--', 'set', 'Interface', anet,
-                   'external-ids:iface-id=%s' % vif['id'],
-                   'external-ids:iface-status=active',
-                   'external-ids:attached-mac=%s' % vif['address'],
-                   'external-ids:vm-uuid=%s' % instance['uuid']
-                   ]
-            try:
-                out, err = utils.execute(*cmd)
-            except Exception as reason:
-                msg = (_("Failed to add VNIC '%s' with MAC address %s to "
-                         "OVS Bridge '%s': %s") % (anet, vif['address'],
-                                                   bridge, reason))
-                raise exception.NovaException(msg)
-            LOG.debug(_('Successfully added anet %s with MAC adddress %s') %
-                      (anet, vif['address']))
+            self._ovs_add_port(instance, vif, anet)
 
     def _unplug_vifs(self, instance):
-        # Since we don't have VIF info here, we need to find if the anets
-        # were EVS based or OVS based by looking at the CONF setting. In
-        # EVS based cloud neutron.ovs_bridge setting will be set to the
-        # default value of 'br-int'.
         ovs_bridge = CONF.neutron.ovs_bridge
-        if ovs_bridge == 'br-int':
-            LOG.debug(_("Instance %s doesn't have any OVS based anets") %
-                      instance['name'])
-            return
         # remove the anets from the OVS bridge
         cmd = ['/usr/sbin/ovs-vsctl', '--timeout=%s' % CONF.ovs_vsctl_timeout,
                'list-ports', ovs_bridge]
         try:
             out, err = utils.execute(*cmd)
         except Exception as reason:
-            msg = (_("Unable to get ANETs for instance '%s': %s")
+            msg = (_("Unable to get interfaces for instance '%s': %s")
                    % (instance['name'], reason))
             raise exception.NovaException(msg)
 
         for port in out.strip().splitlines():
             if port.split('/')[0] != instance['name']:
                 continue
-            cmd = ['/usr/sbin/ovs-vsctl',
-                   '--timeout=%s' % CONF.ovs_vsctl_timeout,
-                   '--', '--if-exists', 'del-port', ovs_bridge, port]
-            try:
-                out, err = utils.execute(*cmd)
-                LOG.debug(_('Removed port %s from the OVS bridge %s') %
-                          (port, ovs_bridge))
-            except Exception as reason:
-                LOG.warning(_("Unable to remove port %s from the OVS "
-                              "bridge %s: %s") % (port, ovs_bridge, reason))
+            self._ovs_delete_port(port, log_warnings=True)
 
-    def _set_evs_info(self, zone, brand, vifid, vif):
-        vport_uuid = vif['id']
-        evs_uuid = vif['network']['id']
-        with ZoneConfig(zone) as zc:
-            if vifid == 0:
-                tenant_id = vif['network']['meta']['tenant_id']
-                zc.setprop('global', 'tenant', tenant_id)
-                zc.setprop('anet', 'configure-allowed-address', 'false')
-                zc.setprop('anet', 'evs', evs_uuid)
-                zc.setprop('anet', 'vport', vport_uuid)
-            else:
-                zc.addresource(
-                    'anet',
-                    [zonemgr.Property('configure-allowed-address',
-                                      'false'),
-                     zonemgr.Property('evs', evs_uuid),
-                     zonemgr.Property('vport', vport_uuid)])
-
-            prop_filter = [zonemgr.Property('vport', vport_uuid)]
-            if brand == ZONE_BRAND_SOLARIS:
-                anetname = lookup_resource_property(zc.zone, 'anet',
-                                                    'linkname', prop_filter)
-            else:
-                anetid = lookup_resource_property(zc.zone, 'anet', 'id',
-                                                  prop_filter)
-                anetname = 'net%s' % anetid
-        return anetname
-
-    def _set_ovs_info(self, context, zone, brand, vifid, vif):
+    def _set_ovs_info(self, context, zone, brand, first_anet, vif):
         # Need to be admin to retrieve provider:network_type attribute
         network_plugin = neutronv2_api.get_client(context, admin=True)
         network = network_plugin.show_network(
@@ -1512,17 +1526,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
             other_config = results[0]['other_config']
             if not other_config:
                 msg = (_("'other_config' column in 'Open_vSwitch' OVSDB table "
-                         "is not configured. Please configure it so that "
+                         "is not configured. Please configure it so that the "
                          "lower-link can be determined for the instance's "
-                         "anet"))
+                         "interface."))
                 LOG.error(msg)
                 raise exception.NovaException(msg)
             bridge_mappings = other_config.get('bridge_mappings')
             if not bridge_mappings:
-                msg = (_("'bridge_mappings' info is not set in 'other_config' "
-                         "column of 'Open_vSwitch' OVSDB table. Please "
-                         "configure it so that lower-link can be determined "
-                         "for the instance's anet"))
+                msg = (_("'bridge_mappings' info is not set in the "
+                         "'other_config' column of 'Open_vSwitch' OVSDB "
+                         "table. Please configure it so that the lower-link "
+                         "can be determined for the instance's interface."))
                 LOG.error(msg)
                 raise exception.NovaException(msg)
             for bridge_mapping in bridge_mappings.split(','):
@@ -1530,7 +1544,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     lower_link = bridge_mapping.split(':')[1]
                     break
             if not lower_link:
-                msg = (_("Failed to determine the lower_link for vif '%s'") %
+                msg = (_("Failed to determine the lower_link for vif '%s'.") %
                        (vif))
                 LOG.error(msg)
                 raise exception.NovaException(msg)
@@ -1542,7 +1556,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         mtu = network['mtu']
         with ZoneConfig(zone) as zc:
-            if vifid == 0:
+            if first_anet:
                 zc.setprop('anet', 'lower-link', lower_link)
                 zc.setprop('anet', 'configure-allowed-address', 'false')
                 zc.setprop('anet', 'mac-address', vif['address'])
@@ -1586,7 +1600,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         for vifid, vif in enumerate(network_info):
             LOG.debug("%s", jsonutils.dumps(vif, indent=5))
 
-            # get all the info common to both EVS or OVS based VIF
             ip = vif['network']['subnets'][0]['ips'][0]['address']
             cidr = vif['network']['subnets'][0]['cidr']
             ip_cidr = "%s/%s" % (ip, cidr.split('/')[1])
@@ -1601,12 +1614,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 if dns['type'] == 'dns':
                     nameservers.append(dns['address'])
 
-            # for EVS based VIFs the type is empty since EVS plugin
-            # doesn't support portbinding extension
-            if not vif['type']:
-                anetname = self._set_evs_info(zone, brand, vifid, vif)
-            else:
-                anetname = self._set_ovs_info(context, zone, brand, vifid, vif)
+            anetname = self._set_ovs_info(context, zone, brand, vifid == 0,
+                                          vif)
 
             # create the required sysconfig file (or skip if this is part of a
             # resize or evacuate process)
@@ -1616,14 +1625,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
                               task_states.RESIZE_MIGRATING,
                               task_states.REBUILD_SPAWNING] or \
                 (tstate == task_states.REBUILD_SPAWNING and
-                 instance.system_metadata['rebuilding']):
+                 instance.system_metadata['rebuilding'] == 'true'):
                 if enable_dhcp:
-                    tree = sysconfig.create_ncp_defaultfixed(
-                        'dhcp', anetname, vifid, ip_version)
+                    tree = sysconfig.create_ncp_defaultfixed('dhcp',
+                                                             anetname, vifid,
+                                                             ip_version)
                 else:
-                    tree = sysconfig.create_ncp_defaultfixed(
-                        'static', anetname, vifid, ip_version, ip_cidr, route,
-                        nameservers)
+                    host_routes = vif['network']['subnets'][0]['routes']
+                    tree = sysconfig.create_ncp_defaultfixed('static',
+                                                             anetname, vifid,
+                                                             ip_version,
+                                                             ip_cidr, route,
+                                                             nameservers,
+                                                             host_routes)
 
                 fp = os.path.join(sc_dir, 'zone-network-%d.xml' % vifid)
                 sysconfig.create_sc_profile(fp, tree)
@@ -1636,7 +1650,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        path = os.path.join(CONF.zones_suspend_path, '%{zonename}')
+        path = os.path.join(CONF.solariszones.zones_suspend_path,
+                            '%{zonename}')
         with ZoneConfig(zone) as zc:
             zc.addresource('suspend', [zonemgr.Property('path', path)])
 
@@ -1737,14 +1752,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                           task_states.RESIZE_MIGRATING,
                           task_states.REBUILD_SPAWNING] or \
             (tstate == task_states.REBUILD_SPAWNING and
-             instance.system_metadata['rebuilding']):
+             instance.system_metadata['rebuilding'] == 'true'):
             sc_profile = extra_specs.get('install:sc_profile')
             if sc_profile is not None:
                 if os.path.isfile(sc_profile):
                     shutil.copy(sc_profile, sc_dir)
                 elif os.path.isdir(sc_profile):
-                    shutil.copytree(sc_profile, os.path.join(sc_dir,
-                                    'sysconfig'))
+                    shutil.copytree(sc_profile,
+                                    os.path.join(sc_dir, 'sysconfig'))
 
             self._verify_sysconfig(sc_dir, instance, admin_password)
 
@@ -1789,8 +1804,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         name = instance['name']
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
-            out, err = utils.execute('/usr/sbin/svccfg', '-s',
-                                     VNC_CONSOLE_BASE_FMRI, 'add', name)
+            out, err = utils.execute('/usr/sbin/svccfg',
+                                     '-s', VNC_CONSOLE_BASE_FMRI, 'add', name)
         except processutils.ProcessExecutionError as ex:
             if self._has_vnc_console_service(instance):
                 LOG.debug(_("Ignoring attempt to create existing zone VNC "
@@ -1808,8 +1823,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._disable_vnc_console_service(instance)
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
-            out, err = utils.execute('/usr/sbin/svccfg', '-s',
-                                     VNC_CONSOLE_BASE_FMRI, 'delete', name)
+            out, err = utils.execute('/usr/sbin/svccfg',
+                                     '-s', VNC_CONSOLE_BASE_FMRI, 'delete',
+                                     name)
         except processutils.ProcessExecutionError as ex:
             if not self._has_vnc_console_service(instance):
                 LOG.debug(_("Ignoring attempt to delete a non-existent zone "
@@ -1897,8 +1913,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
-            out, err = utils.execute('/usr/sbin/svcadm', 'disable', '-s',
-                                     console_fmri)
+            out, err = utils.execute('/usr/sbin/svcadm', 'disable',
+                                     '-s', console_fmri)
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
             LOG.error(_("Unable to disable zone VNC console SMF service "
@@ -1992,7 +2008,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._set_instance_metahostid(instance)
 
         bootargs = []
-        if CONF.solariszones_boot_options:
+        if CONF.solariszones.solariszones_boot_options:
             reset_bootargs = False
             persistent = 'False'
 
@@ -2004,8 +2020,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             if meta_bootargs:
                 bootargs = ['--', str(meta_bootargs)]
-                persistent = str(instance.metadata.get('bootargs_persist',
-                                                       'False'))
+                persistent = str(
+                    instance.metadata.get('bootargs_persist', 'False'))
                 if cur_bootargs is not None and meta_bootargs != cur_bootargs:
                     with ZoneConfig(zone) as zc:
                         reset_bootargs = True
@@ -2021,7 +2037,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "%s") % (name, reason))
             raise exception.InstancePowerOnFailure(reason=reason)
         finally:
-            if CONF.solariszones_boot_options:
+            if CONF.solariszones.solariszones_boot_options:
                 if meta_bootargs and persistent.lower() == 'false':
                     # We have consumed the metadata bootargs and
                     # the user asked for them not to be persistent so
@@ -2082,8 +2098,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
                          This function should use the data there to guide
                          the creation of the new instance.
-        :param image_meta: image object returned by nova.image.glance that
-                           defines the image from which to boot this instance
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
         :param injected_files: User files to inject into instance.
         :param admin_password: Administrator password to set in instance.
         :param network_info:
@@ -2162,8 +2178,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if connection_info is not None:
             bdm_obj = objects.BlockDeviceMappingList()
             # there's only one bdm for this instance at this point
-            bdm = bdm_obj.get_by_instance_uuid(context,
-                                               instance.uuid).objects[0]
+            bdm = bdm_obj.get_by_instance_uuid(
+                context, instance.uuid).objects[0]
 
             # update the required attributes
             bdm['connection_info'] = jsonutils.dumps(connection_info)
@@ -2366,7 +2382,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             return
 
         bootargs = []
-        if CONF.solariszones_boot_options:
+        if CONF.solariszones.solariszones_boot_options:
             reset_bootargs = False
             persistent = 'False'
 
@@ -2378,8 +2394,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             if meta_bootargs:
                 bootargs = ['--', str(meta_bootargs)]
-                persistent = str(instance.metadata.get('bootargs_persist',
-                                                       'False'))
+                persistent = str(
+                    instance.metadata.get('bootargs_persist', 'False'))
                 if cur_bootargs is not None and meta_bootargs != cur_bootargs:
                     with ZoneConfig(zone) as zc:
                         reset_bootargs = True
@@ -2400,7 +2416,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                       % (name, reason))
             raise exception.InstanceRebootFailure(reason=reason)
         finally:
-            if CONF.solariszones_boot_options:
+            if CONF.solariszones.solariszones_boot_options:
                 if meta_bootargs and persistent.lower() == 'false':
                     # We have consumed the metadata bootargs and
                     # the user asked for them not to be persistent so
@@ -2502,13 +2518,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "'%s': %s" % (console_fmri, reason)))
             raise
 
-        host = CONF.vncserver_proxyclient_address
+        host = CONF.vnc.vncserver_proxyclient_address
         try:
             out, err = utils.execute('/usr/bin/svcprop', '-p', 'vnc/port',
                                      console_fmri)
             port = int(out.strip())
-            return ctype.ConsoleVNC(host=host,
-                                    port=port,
+            return ctype.ConsoleVNC(host=host, port=port,
                                     internal_access_path=None)
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
@@ -2546,41 +2561,67 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
+    def get_mks_console(self, context, instance):
+        """Get connection info for a MKS console.
+
+        :param context: security context
+        :param instance: nova.objects.instance.Instance
+
+        :returns an instance of console.type.ConsoleMKS
+        """
+        raise NotImplementedError()
+
     def _get_zone_diagnostics(self, zone):
         """Return data about Solaris Zone diagnostics."""
         if zone.id == -1:
             return None
 
         diagnostics = {}
-        id = str(zone.id)
+        zone_id = str(zone.id)
 
-        kstat_data = self._get_kstat_by_name('zone_caps', 'caps', id,
-                                             ''.join(('lockedmem_zone_', id)))
+        kstat_data = self._get_kstat_by_name(
+            'zone_caps', 'caps', zone_id,
+            ''.join(('lockedmem_zone_', zone_id)))
         if kstat_data is not None:
-            diagnostics['lockedmem'] = kstat_data['usage']
+            diagnostics['lockedmem'] = self._get_kstat_statistic(kstat_data,
+                                                                 'usage')
 
-        kstat_data = self._get_kstat_by_name('zone_caps', 'caps', id,
-                                             ''.join(('nprocs_zone_', id)))
+        kstat_data = self._get_kstat_by_name(
+            'zone_caps', 'caps', zone_id, ''.join(('nprocs_zone_', zone_id)))
         if kstat_data is not None:
-            diagnostics['nprocs'] = kstat_data['usage']
+            diagnostics['nprocs'] = self._get_kstat_statistic(kstat_data,
+                                                              'usage')
 
-        kstat_data = self._get_kstat_by_name('zone_caps', 'caps', id,
-                                             ''.join(('swapresv_zone_', id)))
+        kstat_data = self._get_kstat_by_name(
+            'zone_caps', 'caps', zone_id, ''.join(('swapresv_zone_', zone_id)))
         if kstat_data is not None:
-            diagnostics['swapresv'] = kstat_data['usage']
+            diagnostics['swapresv'] = self._get_kstat_statistic(kstat_data,
+                                                                'usage')
 
-        kstat_data = self._get_kstat_by_name('zones', 'cpu', id,
-                                             'sys_zone_aggr')
+        kstat_data = self._get_kstat_by_name('zones', 'cpu', None,
+                                             ''.join(('sys_zone_', zone_id)))
         if kstat_data is not None:
-            for key in kstat_data.keys():
-                if key not in ('class', 'crtime', 'snaptime'):
-                    diagnostics[key] = kstat_data[key]
+            for ks in kstat_data:
+                key = ks.keys()[0]
+                if key in ('class', 'crtime', 'snaptime', 'zonename'):
+                    continue
+                if key.endswith('_cur'):
+                        continue
+                if diagnostics.get(key) is None:
+                    diagnostics[key] = 0
+                else:
+                    diagnostics[key] += ks[key]
         return diagnostics
 
     def get_diagnostics(self, instance):
-        """Return data about VM diagnostics.
+        """Return diagnostics data about the given instance.
 
-        :param instance: nova.objects.instance.Instance
+        :param nova.objects.instance.Instance instance:
+            The instance to which the diagnostic data should be returned.
+
+        :return: Has a big overlap to the return value of the newer interface
+            :func:`get_instance_diagnostics`
+        :rtype: dict
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         name = instance['name']
@@ -2590,9 +2631,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
         return self._get_zone_diagnostics(zone)
 
     def get_instance_diagnostics(self, instance):
-        """Return data about VM diagnostics.
+        """Return diagnostics data about the given instance.
 
-        :param instance: nova.objects.instance.Instance
+        :param nova.objects.instance.Instance instance:
+            The instance to which the diagnostic data should be returned.
+
+        :return: Has a big overlap to the return value of the older interface
+            :func:`get_diagnostics`
+        :rtype: nova.virt.diagnostics.Diagnostics
         """
         raise NotImplementedError()
 
@@ -2709,28 +2755,137 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def swap_volume(self, old_connection_info, new_connection_info,
                     instance, mountpoint, resize_to):
-        """Replace the disk attached to the instance.
+        """Replace the volume attached to the given `instance`.
 
-        :param instance: nova.objects.instance.Instance
-        :param resize_to: This parameter is used to indicate the new volume
-                          size when the new volume lager than old volume.
-                          And the units is Gigabyte.
+        :param dict old_connection_info:
+            The volume for this connection gets detached from the given
+            `instance`.
+        :param dict new_connection_info:
+            The volume for this connection gets attached to the given
+            'instance'.
+        :param nova.objects.instance.Instance instance:
+            The instance whose volume gets replaced by another one.
+        :param str mountpoint:
+            The mountpoint in the instance where the volume for
+            `old_connection_info` is attached to.
+        :param int resize_to:
+            If the new volume is larger than the old volume, it gets resized
+            to the given size (in Gigabyte) of `resize_to`.
+
+        :return: None
         """
         raise NotImplementedError()
 
     def attach_interface(self, instance, image_meta, vif):
-        """Attach an interface to the instance.
+        """Use hotplug to add a network interface to a running instance.
 
-        :param instance: nova.objects.instance.Instance
+        The counter action to this is :func:`detach_interface`.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which will get an additional network interface.
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
+        :param nova.network.model.NetworkInfo vif:
+            The object which has the information about the interface to attach.
+
+        :raise nova.exception.NovaException: If the attach fails.
+
+        :return: None
         """
-        raise NotImplementedError()
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        ctxt = nova_context.get_admin_context()
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        anetname = self._set_ovs_info(ctxt, zone, brand, False, vif)
+
+        # apply the configuration if the vm is ACTIVE
+        if instance['vm_state'] == vm_states.ACTIVE:
+            try:
+                zone.apply()
+            except Exception as ex:
+                reason = zonemgr_strerror(ex)
+                msg = (_("Unable to attach interface to instance '%s' via "
+                         "zonemgr(3RAD): %s") % (name, reason))
+                with ZoneConfig(zone) as zc:
+                    prop_filter = [zonemgr.Property('mac-address',
+                                                    vif['address'])]
+                    zc.removeresources('anet', prop_filter)
+                raise nova.exception.NovaException(msg)
+
+            # add port to ovs bridge
+            anet = ''.join([name, '/', anetname])
+            self._ovs_add_port(instance, vif, anet)
 
     def detach_interface(self, instance, vif):
-        """Detach an interface from the instance.
+        """Use hotunplug to remove a network interface from a running instance.
 
-        :param instance: nova.objects.instance.Instance
+        The counter action to this is :func:`attach_interface`.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which gets a network interface removed.
+        :param nova.network.model.NetworkInfo vif:
+            The object which has the information about the interface to detach.
+
+        :raise nova.exception.NovaException: If the detach fails.
+
+        :return: None
         """
-        raise NotImplementedError()
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        # Check if the specific property value exists before attempting removal
+        resource = lookup_resource_property_value(zone, 'anet',
+                                                  'mac-address',
+                                                  vif['address'])
+        if not resource:
+            msg = (_("Interface with MAC address '%s' is not attached to "
+                     "instance '%s'.") % (vif['address'], name))
+            raise nova.exception.NovaException(msg)
+
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        for prop in resource.properties:
+            if brand == ZONE_BRAND_SOLARIS and prop.name == 'linkname':
+                anetname = prop.value
+                break
+            elif brand != ZONE_BRAND_SOLARIS and prop.name == 'id':
+                anetname = 'net%s' % prop.value
+                break
+
+        with ZoneConfig(zone) as zc:
+            zc.removeresources('anet', [zonemgr.Property('mac-address',
+                                                         vif['address'])])
+
+        # apply the configuration if the vm is ACTIVE
+        if instance['vm_state'] == vm_states.ACTIVE:
+            try:
+                zone.apply()
+            except:
+                msg = (_("Unable to detach interface '%s' from running "
+                         "instance '%s' because the resource is most likely "
+                         "in use.") % (anetname, name))
+                needed_props = ["lower-link", "configure-allowed-address",
+                                "mac-address", "mtu"]
+                if brand == ZONE_BRAND_SOLARIS:
+                    needed_props.append("linkname")
+                else:
+                    needed_props.append("id")
+
+                props = filter(lambda prop: prop.name in needed_props,
+                               resource.properties)
+                with ZoneConfig(zone) as zc:
+                    zc.addresource('anet', props)
+                raise nova.exception.NovaException(msg)
+
+            # remove anet from OVS bridge
+            port = ''.join([name, '/', anetname])
+            self._ovs_delete_port(port)
 
     def _cleanup_migrate_disk(self, context, instance, volume):
         """Make a best effort at cleaning up the volume that was created to
@@ -2752,10 +2907,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Transfers the disk of a running instance in multiple phases, turning
         off the instance before the end.
 
-        :param instance: nova.objects.instance.Instance
-        :param timeout: time to wait for GuestOS to shutdown
-        :param retry_interval: How often to signal guest while
-                               waiting for it to shutdown
+        :param nova.objects.instance.Instance instance:
+            The instance whose disk should be migrated.
+        :param str dest:
+            The IP address of the destination host.
+        :param nova.objects.flavor.Flavor flavor:
+            The flavor of the instance whose disk get migrated.
+        :param nova.network.model.NetworkInfo network_info:
+            The network information of the given `instance`.
+        :param dict block_device_info:
+            Information about the block devices.
+        :param int timeout:
+            The time in seconds to wait for the guest OS to shutdown.
+        :param int retry_interval:
+            How often to signal guest while waiting for it to shutdown.
+
+        :return: A list of disk information dicts in JSON format.
+        :rtype: str
         """
         LOG.debug("Starting migrate_disk_and_power_off", instance=instance)
 
@@ -2811,11 +2979,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 raise exception.ResizeError(reason=msg)
 
             vinfo = self._volume_api.get(context, volume_id)
-            newvolume = self._volume_api.create(context, orgb,
-                                                vinfo['display_name'] +
-                                                '-resized',
-                                                vinfo['display_description'],
-                                                source_volume=vinfo)
+            newvolume = self._volume_api.create(
+                context, orgb, vinfo['display_name'] + '-resized',
+                vinfo['display_description'], source_volume=vinfo)
 
             instance.system_metadata['old_instance_volid'] = volume_id
             instance.system_metadata['new_instance_volid'] = newvolume['id']
@@ -2886,7 +3052,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         metadata['disk_format'] = 'raw'
 
         update_task_state(task_state=task_states.IMAGE_PENDING_UPLOAD)
-        snapshot_directory = CONF.solariszones_snapshots_directory
+        snapshot_directory = CONF.solariszones.solariszones_snapshots_directory
         fileutils.ensure_tree(snapshot_directory)
         snapshot_name = uuid.uuid4().hex
 
@@ -2904,9 +3070,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     task_state=task_states.IMAGE_UPLOADING,
                     expected_state=task_states.IMAGE_PENDING_UPLOAD)
                 with open(out_path, 'r') as image_file:
-                    snapshot_service.update(context,
-                                            image_id,
-                                            metadata,
+                    snapshot_service.update(context, image_id, metadata,
                                             image_file)
                     LOG.info(_("Snapshot image upload complete"),
                              instance=instance)
@@ -2916,10 +3080,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     # glance server recognises them.
                     metadata['container_format'] = 'uar'
                     metadata['disk_format'] = 'zfs'
-                    snapshot_service.update(context,
-                                            image_id,
-                                            metadata,
-                                            None)
+                    snapshot_service.update(context, image_id, metadata, None)
                 except exception.Invalid:
                     LOG.warning(_("Image service rejected image metadata "
                                   "container and disk formats 'uar' and "
@@ -2976,7 +3137,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
     def finish_migration(self, context, migration, instance, disk_info,
                          network_info, image_meta, resize_instance,
                          block_device_info=None, power_on=True):
-        """Completes a resize.
+        """Completes a resize/migration.
 
         :param context: the context for the migration/resize
         :param migration: the migrate/resize information
@@ -2984,9 +3145,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param disk_info: the newly transferred disk information
         :param network_info:
            :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
-        :param image_meta: image object returned by nova.image.glance that
-                           defines the image from which this instance
-                           was created
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
         :param resize_instance: True if the instance is being resized,
                                 False otherwise
         :param block_device_info: instance volume block device info
@@ -3023,8 +3183,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     rgb = instance.root_gb
                     self._resize_disk_migration(context, instance,
                                                 root_ci['serial'],
-                                                disk_info['id'],
-                                                rgb, mount_dev)
+                                                disk_info['id'], rgb,
+                                                mount_dev)
 
             else:
                 # No need to check disk_info here, because when not on the
@@ -3050,9 +3210,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 bmap = block_device_info.get('block_device_mapping')
                 for entry in bmap:
                     if entry['mount_device'] != rootmp:
-                        self.attach_volume(context,
-                                           entry['connection_info'], instance,
-                                           entry['mount_device'])
+                        self.attach_volume(context, entry['connection_info'],
+                                           instance, entry['mount_device'])
 
             if power_on:
                 self._power_on(instance, network_info)
@@ -3081,7 +3240,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise
 
     def confirm_migration(self, context, migration, instance, network_info):
-        """Confirms a resize, destroying the source VM.
+        """Confirms a resize/migration, destroying the source VM.
 
         :param instance: nova.objects.instance.Instance
         """
@@ -3166,7 +3325,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def finish_revert_migration(self, context, instance, network_info,
                                 block_device_info=None, power_on=True):
-        """Finish reverting a resize.
+        """Finish reverting a resize/migration.
 
         :param context: the context for the finish_revert_migration
         :param instance: nova.objects.instance.Instance being migrated/resized
@@ -3217,26 +3376,52 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._power_on(instance, network_info)
 
     def pause(self, instance):
-        """Pause the specified instance.
+        """Pause the given instance.
 
-        :param instance: nova.objects.instance.Instance
+        A paused instance doesn't use CPU cycles of the host anymore. The
+        state of the VM could be stored in the memory or storage space of the
+        host, depending on the underlying hypervisor technology.
+        A "stronger" version of `pause` is :func:'suspend'.
+        The counter action for `pause` is :func:`unpause`.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which should be paused.
+
+        :return: None
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
     def unpause(self, instance):
-        """Unpause paused VM instance.
+        """Unpause the given paused instance.
 
-        :param instance: nova.objects.instance.Instance
+        The paused instance gets unpaused and will use CPU cycles of the
+        host again. The counter action for 'unpause' is :func:`pause`.
+        Depending on the underlying hypervisor technology, the guest has the
+        same state as before the 'pause'.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which should be unpaused.
+
+        :return: None
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
     def suspend(self, context, instance):
-        """suspend the specified instance.
+        """Suspend the specified instance.
 
-        :param context: the context for the suspend
-        :param instance: nova.objects.instance.Instance
+        A suspended instance doesn't use CPU cycles or memory of the host
+        anymore. The state of the instance could be persisted on the host
+        and allocate storage space this way. A "softer" way of `suspend`
+        is :func:`pause`. The counter action for `suspend` is :func:`resume`.
+
+        :param nova.context.RequestContext context:
+            The context for the suspend.
+        :param nova.objects.instance.Instance instance:
+            The instance to suspend.
+
+        :return: None
         """
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -3256,7 +3441,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceSuspendFailure(reason=reason)
 
         try:
-            new_path = os.path.join(CONF.zones_suspend_path, '%{zonename}')
+            new_path = os.path.join(CONF.solariszones.zones_suspend_path,
+                                    '%{zonename}')
             if not lookup_resource(zone, 'suspend'):
                 # add suspend if not configured
                 self._set_suspend(instance)
@@ -3275,13 +3461,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceSuspendFailure(reason=reason)
 
     def resume(self, context, instance, network_info, block_device_info=None):
-        """resume the specified instance.
+        """resume the specified suspended instance.
 
-        :param context: the context for the resume
-        :param instance: nova.objects.instance.Instance being resumed
-        :param network_info:
-           :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
-        :param block_device_info: instance volume block device info
+        The suspended instance gets resumed and will use CPU cycles and memory
+        of the host again. The counter action for 'resume' is :func:`suspend`.
+        Depending on the underlying hypervisor technology, the guest has the
+        same state as before the 'suspend'.
+
+        :param nova.context.RequestContext context:
+            The context for the resume.
+        :param nova.objects.instance.Instance instance:
+            The suspended instance to resume.
+        :param nova.network.model.NetworkInfo network_info:
+            Necessary network information for the resume.
+        :param dict block_device_info:
+            Instance volume block device info.
+
+        :return: None
         """
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -3331,7 +3527,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
                rescue_password):
         """Rescue the specified instance.
 
-        :param instance: nova.objects.instance.Instance
+        :param nova.context.RequestContext context:
+            The context for the rescue.
+        :param nova.objects.instance.Instance instance:
+            The instance being rescued.
+        :param nova.network.model.NetworkInfo network_info:
+            Necessary network information for the resume.
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
+        :param rescue_password: new root password to set for rescue.
         """
         raise NotImplementedError()
 
@@ -3368,17 +3572,44 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         self._power_on(instance, network_info)
 
+    def trigger_crash_dump(self, instance):
+        """Trigger crash dump mechanism on the given instance.
+
+        Stalling instances can be triggered to dump the crash data. How the
+        guest OS reacts in details, depends on the configuration of it.
+
+        :param nova.objects.instance.Instance instance:
+            The instance where the crash dump should be triggered.
+
+        :return: None
+        """
+        raise NotImplementedError()
+
     def soft_delete(self, instance):
         """Soft delete the specified instance.
 
-        :param instance: nova.objects.instance.Instance
+        A soft-deleted instance doesn't allocate any resources anymore, but is
+        still available as a database entry. The counter action :func:`restore`
+        uses the database entry to create a new instance based on that.
+
+        :param nova.objects.instance.Instance instance:
+            The instance to soft-delete.
+
+        :return: None
         """
         raise NotImplementedError()
 
     def restore(self, instance):
-        """Restore the specified instance.
+        """Restore the specified soft-deleted instance.
 
-        :param instance: nova.objects.instance.Instance
+        The restored instance will be automatically booted. The counter action
+        for `restore` is :func:`soft_delete`.
+
+        :param nova.objects.instance.Instance instance:
+            The soft-deleted instance which should be restored from the
+            soft-deleted data.
+
+        :return: None
         """
         raise NotImplementedError()
 
@@ -3401,7 +3632,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
     def _update_host_stats(self):
         """Update currently known host stats."""
         host_stats = {}
+
         host_stats['vcpus'] = os.sysconf('SC_NPROCESSORS_ONLN')
+
         pages = os.sysconf('SC_PHYS_PAGES')
         host_stats['memory_mb'] = self._pages_to_kb(pages) / 1024
 
@@ -3413,21 +3646,21 @@ class SolarisZonesDriver(driver.ComputeDriver):
         else:
             host_stats['local_gb'] = 0
 
-        # Account for any existing processor sets by looking at the the
-        # number of CPUs not assigned to any processor sets.
+        # Account for any existing processor sets by looking at the the number
+        # of CPUs not assigned to any processor sets.
         kstat_data = self._get_kstat_by_name('misc', 'unix', '0', 'pset')
         if kstat_data is not None:
-            host_stats['vcpus_used'] = \
-                host_stats['vcpus'] - kstat_data['ncpus']
+            unassigned = self._get_kstat_statistic(kstat_data, 'ncpus')
+            host_stats['vcpus_used'] = host_stats['vcpus'] - unassigned
         else:
             host_stats['vcpus_used'] = 0
 
-        # Subtract the number of free pages from the total to get the
-        # used.
+        # Subtract the number of free pages from the total to get the used.
         kstat_data = self._get_kstat_by_name('pages', 'unix', '0',
                                              'system_pages')
         if kstat_data is not None:
-            free_ram_mb = self._pages_to_kb(kstat_data['freemem']) / 1024
+            free_ram_mb = self._get_kstat_statistic(kstat_data, 'freemem')
+            free_ram_mb = self._pages_to_kb(free_ram_mb) / 1024
             host_stats['memory_mb_used'] = \
                 host_stats['memory_mb'] - free_ram_mb
         else:
@@ -3442,25 +3675,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         host_stats['hypervisor_type'] = 'solariszones'
         host_stats['hypervisor_version'] = \
-            utils.convert_version_to_int(HYPERVISOR_VERSION)
+            versionutils.convert_version_to_int(HYPERVISOR_VERSION)
         host_stats['hypervisor_hostname'] = self._uname[1]
 
         if self._uname[4] == 'i86pc':
-            architecture = 'x86_64'
+            architecture = arch.X86_64
         else:
-            architecture = 'sparc64'
+            architecture = arch.SPARC64
         cpu_info = {
             'arch': architecture
         }
         host_stats['cpu_info'] = jsonutils.dumps(cpu_info)
 
-        host_stats['disk_available_least'] = 0
-
-        supported_instances = [
-            (architecture, 'solariszones', 'solariszones')
+        host_stats['disk_available_least'] = free_disk_gb
+        host_stats['supported_instances'] = [
+            (architecture, hv_type.SOLARISZONES, vm_mode.SOL)
         ]
-        host_stats['supported_instances'] = \
-            jsonutils.dumps(supported_instances)
+        host_stats['numa_topology'] = None
 
         self._host_stats = host_stats
 
@@ -3491,6 +3722,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         resources['cpu_info'] = host_stats['cpu_info']
         resources['disk_available_least'] = host_stats['disk_available_least']
         resources['supported_instances'] = host_stats['supported_instances']
+        resources['numa_topology'] = host_stats['numa_topology']
         return resources
 
     def pre_live_migration(self, context, instance, block_device_info,
@@ -3502,9 +3734,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param block_device_info: instance block device information
         :param network_info: instance network information
         :param disk_info: instance disk information
-        :param migrate_data: implementation specific data dict.
+        :param migrate_data: a LiveMigrateData object
         """
-        return {}
+        return migrate_data
 
     def _live_migration(self, name, dest, dry_run=False):
         """Live migration of a Solaris kernel zone to another host."""
@@ -3513,7 +3745,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         options = []
-        live_migration_cipher = CONF.live_migration_cipher
+        live_migration_cipher = CONF.solariszones.live_migration_cipher
         if live_migration_cipher is not None:
             options.extend(['-c', live_migration_cipher])
         if dry_run:
@@ -3538,7 +3770,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             recovery method when any exception occurs.
             expected nova.compute.manager._rollback_live_migration.
         :param block_migration: if true, migrate VM disk.
-        :param migrate_data: implementation specific params.
+        :param migrate_data: a LiveMigrateData object
 
         """
         name = instance['name']
@@ -3554,6 +3786,22 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         post_method(context, instance, dest, block_migration, migrate_data)
 
+    def live_migration_force_complete(self, instance):
+        """Force live migration to complete
+
+        :param instance: Instance being live migrated
+
+        """
+        raise NotImplementedError()
+
+    def live_migration_abort(self, instance):
+        """Abort an in-progress live migration.
+
+        :param instance: instance that is live migrating
+
+        """
+        raise NotImplementedError()
+
     def rollback_live_migration_at_destination(self, context, instance,
                                                network_info,
                                                block_device_info,
@@ -3567,7 +3815,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param block_device_info: instance block device information
         :param destroy_disks:
             if true, destroy disks at destination during cleanup
-        :param migrate_data: implementation specific params
+        :param migrate_data: a LiveMigrateData object
 
         """
         pass
@@ -3579,7 +3827,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param context: security context
         :instance: instance object that was migrated
         :block_device_info: instance block device information
-        :param migrate_data: if not None, it is a dict which has data
+        :param migrate_data: a LiveMigrateData object
         """
         try:
             # These methods log if problems occur so no need to double log
@@ -3671,7 +3919,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param dst_compute_info: Info about the receiving machine
         :param block_migration: if true, prepare for block migration
         :param disk_over_commit: if true, allow disk over commit
-        :returns: a dict containing migration info (hypervisor-dependent)
+        :returns: a LiveMigrateData object (hypervisor-dependent)
         """
         src_cpu_info = jsonutils.loads(src_compute_info['cpu_info'])
         src_cpu_arch = src_cpu_info['arch']
@@ -3700,9 +3948,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             reason = (_('Disk overcommit is not currently supported.'))
             raise exception.MigrationPreCheckError(reason=reason)
 
-        dest_check_data = {
-            'hypervisor_hostname': dst_compute_info['hypervisor_hostname']
-        }
+        dest_check_data = objects.SolarisZonesLiveMigrateData()
+        dest_check_data.hypervisor_hostname = \
+            dst_compute_info['hypervisor_hostname']
         return dest_check_data
 
     def check_can_live_migrate_destination_cleanup(self, context,
@@ -3736,11 +3984,16 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.db.sqlalchemy.models.Instance
         :param dest_check_data: result of check_can_live_migrate_destination
         :param block_device_info: result of _get_instance_block_device_info
-        :returns: a dict containing migration info (hypervisor-dependent)
+        :returns: a LiveMigrateData object
         """
+        if not isinstance(dest_check_data, migrate_data_obj.LiveMigrateData):
+            obj = objects.SolarisZonesLiveMigrateData()
+            obj.from_legacy_dict(dest_check_data)
+            dest_check_data = obj
+
         self._check_local_volumes_present(block_device_info)
         name = instance['name']
-        dest = dest_check_data['hypervisor_hostname']
+        dest = dest_check_data.hypervisor_hostname
         try:
             self._live_migration(name, dest, dry_run=True)
         except Exception as ex:
@@ -3777,60 +4030,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         running the specified security group.
 
         An error should be raised if the operation cannot complete.
-
-        """
-        # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
-
-    def refresh_security_group_members(self, security_group_id):
-        """This method is called when a security group is added to an instance.
-
-        This message is sent to the virtualization drivers on hosts that are
-        running an instance that belongs to a security group that has a rule
-        that references the security group identified by `security_group_id`.
-        It is the responsibility of this method to make sure any rules
-        that authorize traffic flow with members of the security group are
-        updated and any new members can communicate, and any removed members
-        cannot.
-
-        Scenario:
-            * we are running on host 'H0' and we have an instance 'i-0'.
-            * instance 'i-0' is a member of security group 'speaks-b'
-            * group 'speaks-b' has an ingress rule that authorizes group 'b'
-            * another host 'H1' runs an instance 'i-1'
-            * instance 'i-1' is a member of security group 'b'
-
-            When 'i-1' launches or terminates we will receive the message
-            to update members of group 'b', at which time we will make
-            any changes needed to the rules for instance 'i-0' to allow
-            or deny traffic coming from 'i-1', depending on if it is being
-            added or removed from the group.
-
-        In this scenario, 'i-1' could just as easily have been running on our
-        host 'H0' and this method would still have been called.  The point was
-        that this method isn't called on the host where instances of that
-        group are running (as is the case with
-        :py:meth:`refresh_security_group_rules`) but is called where references
-        are made to authorizing those instances.
-
-        An error should be raised if the operation cannot complete.
-
-        """
-        # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
-
-    def refresh_provider_fw_rules(self):
-        """This triggers a firewall update based on database changes.
-
-        When this is called, rules have either been added or removed from the
-        datastore.  You can retrieve rules with
-        :py:meth:`nova.db.provider_fw_rule_get_all`.
-
-        Provider rules take precedence over security group rules.  If an IP
-        would be allowed by a security group ingress rule, but blocked by
-        a provider rule, then packets from the IP are dropped.  This includes
-        intra-project traffic in the case of the allow_project_net_traffic
-        flag for the libvirt-derived classes.
 
         """
         # TODO(Vek): Need to pass context in for access to auth_token
@@ -3941,48 +4140,111 @@ class SolarisZonesDriver(driver.ComputeDriver):
         pass
 
     def poll_rebooting_instances(self, timeout, instances):
-        """Poll for rebooting instances
+        """Perform a reboot on all given 'instances'.
 
-        :param timeout: the currently configured timeout for considering
-                        rebooting instances to be stuck
-        :param instances: instances that have been in rebooting state
-                          longer than the configured timeout
+        Reboots the given `instances` which are longer in the rebooting state
+        than `timeout` seconds.
+
+        :param int timeout:
+            The timeout (in seconds) for considering rebooting instances
+            to be stuck.
+        :param list instances:
+            A list of nova.objects.instance.Instance objects that have been
+            in rebooting state longer than the configured timeout.
+
+        :return: None
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
     def host_power_action(self, action):
-        """Reboots, shuts down or powers up the host."""
+        """Reboots, shuts down or powers up the host.
+
+        :param str action:
+            The action the host should perform. The valid actions are:
+            ""startup", "shutdown" and "reboot".
+
+        :return: The result of the power action
+        :rtype: : str
+        """
+
         raise NotImplementedError()
 
     def host_maintenance_mode(self, host, mode):
-        """Start/Stop host maintenance window. On start, it triggers
-        guest VMs evacuation.
+        """Start/Stop host maintenance window.
+
+        On start, it triggers the migration of all instances to other hosts.
+        Consider the combination with :func:`set_host_enabled`.
+
+        :param str host:
+            The name of the host whose maintenance mode should be changed.
+        :param bool mode:
+            If `True`, go into maintenance mode. If `False`, leave the
+            maintenance mode.
+
+        :return: "on_maintenance" if switched to maintenance mode or
+                 "off_maintenance" if maintenance mode got left.
+        :rtype: str
         """
+
         raise NotImplementedError()
 
     def set_host_enabled(self, enabled):
-        """Sets the specified host's ability to accept new instances."""
+        """Sets the ability of this host to accept new instances.
+
+        :param bool enabled:
+            If this is `True`, the host will accept new instances. If it is
+            `False`, the host won't accept new instances.
+
+        :return: If the host can accept further instances, return "enabled",
+                 if further instances shouldn't be scheduled to this host,
+                 return "disabled".
+        :rtype: str
+        """
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
     def get_host_uptime(self):
-        """Returns the result of calling "uptime" on the target host."""
+        """Returns the result of calling the Linux command `uptime` on this
+        host.
+
+        :return: A text which contains the uptime of this host since the
+                 last boot.
+        :rtype: str
+        """
         # TODO(Vek): Need to pass context in for access to auth_token
         return utils.execute('/usr/bin/uptime')[0]
 
     def plug_vifs(self, instance, network_info):
-        """Plug VIFs into networks.
+        """Plug virtual interfaces (VIFs) into the given `instance` at
+        instance boot time.
 
-        :param instance: nova.objects.instance.Instance
+        The counter action is :func:`unplug_vifs`.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which gets VIFs plugged.
+        :param nova.network.model.NetworkInfo network_info:
+            The object which contains information about the VIFs to plug.
+
+        :return: None
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         pass
 
     def unplug_vifs(self, instance, network_info):
-        """Unplug VIFs from networks.
+        # NOTE(markus_z): 2015-08-18
+        # The compute manager doesn't use this interface, which seems odd
+        # since the manager should be the controlling thing here.
+        """Unplug virtual interfaces (VIFs) from networks.
 
-        :param instance: nova.objects.instance.Instance
+        The counter action is :func:`plug_vifs`.
+
+        :param nova.objects.instance.Instance instance:
+            The instance which gets VIFs unplugged.
+        :param nova.network.model.NetworkInfo network_info:
+            The object which contains information about the VIFs to unplug.
+
+        :return: None
         """
         raise NotImplementedError()
 
@@ -4070,7 +4332,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         This is called during spawn_instance by the compute manager.
 
-        Note that the format of the return value is specific to Quantum
+        Note that the format of the return value is specific to the Neutron
         client API.
 
         :return: None, or a set of DHCP options, eg:
@@ -4099,12 +4361,40 @@ class SolarisZonesDriver(driver.ComputeDriver):
         pass
 
     def add_to_aggregate(self, context, aggregate, host, **kwargs):
-        """Add a compute host to an aggregate."""
+        """Add a compute host to an aggregate.
+
+        The counter action to this is :func:`remove_from_aggregate`
+
+        :param nova.context.RequestContext context:
+            The security context.
+        :param nova.objects.aggregate.Aggregate aggregate:
+            The aggregate which should add the given `host`
+        :param str host:
+            The name of the host to add to the given `aggregate`.
+        :param dict kwargs:
+            A free-form thingy...
+
+        :return: None
+        """
         # NOTE(jogo) Currently only used for XenAPI-Pool
         raise NotImplementedError()
 
     def remove_from_aggregate(self, context, aggregate, host, **kwargs):
-        """Remove a compute host from an aggregate."""
+        """Remove a compute host from an aggregate.
+
+        The counter action to this is :func:`add_to_aggregate`
+
+        :param nova.context.RequestContext context:
+            The security context.
+        :param nova.objects.aggregate.Aggregate aggregate:
+            The aggregate which should remove the given `host`
+        :param str host:
+            The name of the host to remove from the given `aggregate`.
+        :param dict kwargs:
+            A free-form thingy...
+
+        :return: None
+        """
         raise NotImplementedError()
 
     def undo_aggregate_operation(self, context, op, aggregate,
@@ -4129,8 +4419,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
             }
 
         """
-        connector = {'ip': self.get_host_ip_addr(),
-                     'host': CONF.host}
+        connector = {
+            'ip': self.get_host_ip_addr(),
+            'host': CONF.host
+        }
         if not self._initiator:
             self._initiator = self._get_iscsi_initiator()
 
@@ -4201,9 +4493,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             of access to instance shared disk files
         """
         bdmobj = objects.BlockDeviceMappingList
-        bdms = bdmobj.get_by_instance_uuid(
-            nova_context.get_admin_context(),
-            instance['uuid'])
+        bdms = bdmobj.get_by_instance_uuid(nova_context.get_admin_context(),
+                                           instance['uuid'])
 
         root_ci = None
         rootmp = instance['root_device_name']
@@ -4286,10 +4577,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                create_info):
         """Snapshots volumes attached to a specified instance.
 
-        :param context: request context
-        :param instance: nova.objects.instance.Instance that has the volume
-               attached
-        :param volume_id: Volume to be snapshotted
+        The counter action to this is :func:`volume_snapshot_delete`
+
+        :param nova.context.RequestContext context:
+            The security context.
+        :param nova.objects.instance.Instance  instance:
+            The instance that has the volume attached
+        :param uuid volume_id:
+            Volume to be snapshotted
         :param create_info: The data needed for nova to be able to attach
                to the volume.  This is the same data format returned by
                Cinder's initialize_connection() API call.  In the case of
@@ -4302,27 +4597,60 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def volume_snapshot_delete(self, context, instance, volume_id,
                                snapshot_id, delete_info):
-        """Snapshots volumes attached to a specified instance.
+        """Deletes a snapshot of a volume attached to a specified instance.
 
-        :param context: request context
-        :param instance: nova.objects.instance.Instance that has the volume
-               attached
-        :param volume_id: Attached volume associated with the snapshot
-        :param snapshot_id: The snapshot to delete.
-        :param delete_info: Volume backend technology specific data needed to
-               be able to complete the snapshot.  For example, in the case of
-               qcow2 backed snapshots, this would include the file being
-               merged, and the file being merged into (if appropriate).
+        The counter action to this is :func:`volume_snapshot_create`
+
+        :param nova.context.RequestContext context:
+            The security context.
+        :param nova.objects.instance.Instance instance:
+            The instance that has the volume attached.
+        :param uuid volume_id:
+            Attached volume associated with the snapshot
+        :param uuid snapshot_id:
+            The snapshot to delete.
+        :param dict delete_info:
+            Volume backend technology specific data needed to be able to
+            complete the snapshot.  For example, in the case of qcow2 backed
+            snapshots, this would include the file being merged, and the file
+            being merged into (if appropriate).
+
+        :return: None
         """
         raise NotImplementedError()
 
     def default_root_device_name(self, instance, image_meta, root_bdm):
-        """Provide a default root device name for the driver."""
+        """Provide a default root device name for the driver.
+
+        :param nova.objects.instance.Instance instance:
+            The instance to get the root device for.
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
+        :param nova.objects.BlockDeviceMapping root_bdm:
+            The description of the root device.
+        """
         raise NotImplementedError()
 
     def default_device_names_for_instance(self, instance, root_device_name,
                                           *block_device_lists):
         """Default the missing device names in the block device mapping."""
+        raise NotImplementedError()
+
+    def get_device_name_for_instance(self, instance,
+                                     bdms, block_device_obj):
+        """Get the next device name based on the block device mapping.
+
+        :param instance: nova.objects.instance.Instance that volume is
+                         requesting a device name
+        :param bdms: a nova.objects.BlockDeviceMappingList for the instance
+        :param block_device_obj: A nova.objects.BlockDeviceMapping instance
+                                 with all info about the requested block
+                                 device. device_name does not need to be set,
+                                 and should be decided by the driver
+                                 implementation if not set.
+
+        :returns: The chosen device name.
+        """
         raise NotImplementedError()
 
     def is_supported_fs_format(self, fs_type):
@@ -4346,9 +4674,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         :param context:  request context
         :param instance: nova.objects.instance.Instance to be quiesced
-        :param image_meta: image object returned by nova.image.glance that
-                           defines the image from which this instance
-                           was created
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
         """
         raise NotImplementedError()
 
@@ -4361,8 +4688,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         :param context:  request context
         :param instance: nova.objects.instance.Instance to be unquiesced
-        :param image_meta: image object returned by nova.image.glance that
-                           defines the image from which this instance
-                           was created
+        :param nova.objects.ImageMeta image_meta:
+            The metadata of the image of the instance.
         """
         raise NotImplementedError()
+
+    def network_binding_host_id(self, context, instance):
+        """Get host ID to associate with network ports.
+
+        :param context:  request context
+        :param instance: nova.objects.instance.Instance that the network
+                         ports will be associated with
+        :returns: a string representing the host ID
+        """
+        return instance.get('host')

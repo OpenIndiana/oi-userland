@@ -1,13 +1,14 @@
 The patch is to fix the issue of linuxy devices names on Solaris
 instance recorded in the bugs (19987962 and 19277019).
 
---- nova-2015.1.0/nova/compute/utils.py.~1~     2015-05-05 10:50:25.237281011 -0600
-+++ nova-2015.1.0/nova/compute/utils.py 2015-05-05 11:02:47.913482292 -0600
-@@ -133,6 +133,23 @@ def get_next_device_name(instance, devic
-     /dev/vdc is specified but the backend uses /dev/xvdc), the device
+--- nova-13.0.0.0rc2/nova/compute/utils.py.~6~	2016-03-31 01:46:45.489880535 -0800
++++ nova-13.0.0.0rc2/nova/compute/utils.py	2016-03-31 02:19:05.040013477 -0800
+@@ -137,6 +137,24 @@ def get_next_device_name(instance, devic
      name will be converted to the appropriate format.
      """
-+    if driver.compute_driver_matches('solariszones.SolarisZonesDriver'):
+ 
++    if (CONF.compute_driver and
++            CONF.compute_driver.endswith('solariszones.SolarisZonesDriver')):
 +        prefix = 'c1d'
 +        if device_name_list == []:
 +            # Return the root device (c1d0)
@@ -24,6 +25,6 @@ instance recorded in the bugs (19987962 and 19277019).
 +        diff = [i for i in range(len(used_nums) + 1) if i not in used_nums]
 +        return prefix + str(min(diff))
 +
-     is_xen = driver.compute_driver_matches('xenapi.XenAPIDriver')
-
      req_prefix = None
+     req_letter = None
+ 

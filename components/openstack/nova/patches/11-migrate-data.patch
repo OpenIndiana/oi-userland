@@ -1,0 +1,33 @@
+This in-house patch adds a subclass to LiveMigrateData to support
+Solaris kernel zone live migration. It will be proposed to the upstream
+along with the Zones driver for Nova at some point in the future.
+
+--- nova-13.1.0/nova/objects/migrate_data.py.~1~	2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/objects/migrate_data.py	2016-08-04 00:28:57.050454220 -0700
+@@ -257,3 +257,26 @@ class XenapiLiveMigrateData(LiveMigrateD
+ @obj_base.NovaObjectRegistry.register
+ class HyperVLiveMigrateData(LiveMigrateData):
+     VERSION = '1.0'
++
++
++@obj_base.NovaObjectRegistry.register
++class SolarisZonesLiveMigrateData(LiveMigrateData):
++    VERSION = '1.0'
++
++    fields = {
++        'hypervisor_hostname': fields.StringField(),
++    }
++
++    def to_legacy_dict(self, pre_migration_result=False):
++        legacy = super(SolarisZonesLiveMigrateData, self).to_legacy_dict()
++        if self.obj_attr_is_set('hypervisor_hostname'):
++            legacy['hypervisor_hostname'] = self.hypervisor_hostname
++        if pre_migration_result:
++            legacy['pre_live_migration_result'] = {}
++
++        return legacy
++
++    def from_legacy_dict(self, legacy):
++        super(SolarisZonesLiveMigrateData, self).from_legacy_dict(legacy)
++        if 'hypervisor_hostname' in legacy:
++            self.hypervisor_hostname = legacy['hypervisor_hostname']
