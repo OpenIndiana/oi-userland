@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-heatclient
-COMPONENT_VERSION=	0.4.0
+COMPONENT_VERSION=	1.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1b71e2bb5c380ac6b2e1f07b48b7b3e82e7364cc43255ed696c795ab5f8d5a1d
+    sha256:fe8f0fb4b1c2a5e641a8e79e9c743757e85b169e6df65797686fd910f3f477e8
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-heatclient
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/python-heatclient/
 COMPONENT_BUGDB=	service/heat
 
-TPNO=			25752
+TPNO=			27911
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -54,9 +54,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# tests require:
-# hacking, discover, fixtures, sphinx, testrepository, testtools,
-# testscenarios, and mox3 some of which have not been integrated.
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
