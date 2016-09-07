@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glance_store
-COMPONENT_VERSION=	0.4.0
+COMPONENT_VERSION=	0.13.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cd15e9f9a08dc8d3eeaa452682c8e53423f848eaadf064c0ee8068583aa31154
+    sha256:f3d6ca8f66a290cc31e1420ef9645ed69b36318cfcf86e50c51cbc811dfc8cc3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/openstack/glance_store
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/glance_store/
 COMPONENT_BUGDB=	python-mod/glance_store
 
-TPNO=			25736
+TPNO=			27998
 
 # Depends on oslo.vmware which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
