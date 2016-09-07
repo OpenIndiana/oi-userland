@@ -26,18 +26,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django_openstack_auth
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	2.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5ad78e5c92502f1abfb10fd101c023adf74a3e728bd42ed19ffea2185680f9a6
+    sha256:f4a525a2dd1b36b7ce5e2b2e1e010c3b4467f970604a582e81a4233a368f462b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	python-mod/openstack-auth
 
-TPNO=			25734
+TPNO=			29183
 
-# Depends on django, which is not Python 3 ready.
+# Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -54,4 +54,4 @@ install:	$(INSTALL_NO_ARCH)
 # tests require mox which hasn't been integrated yet
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
