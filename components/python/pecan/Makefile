@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pecan
-COMPONENT_VERSION=	0.8.3
+COMPONENT_VERSION=	1.0.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ca6c31e1fb98e4ae780a44a40a88eacb7a19172d3f64d4e31f32049a784a1281
+    sha256:b7c4c9c02b36ff018fc0bc7e720efc0a215e02c3d78c15c38c7829711e787341
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pecanpy.org/
 COMPONENT_BUGDB=	python-mod/pecan
 
-TPNO=			22205
+TPNO=			28113
 
 # Depends on logutils and webtest which are not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -47,7 +47,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pecan pecan-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f pecan pecan-$(PYTHON_VERSION))
 
 COMPONENT_TEST_ARGS=	setup.py test
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
@@ -58,6 +58,5 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
-
 
 REQUIRED_PACKAGES += library/python/setuptools-27
