@@ -78,9 +78,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/script/base.
 file \
     path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/script/py.py \
     pkg.depend.bypass-generate=.*/six.*
-file \
-    path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/script/sql.py \
-    pkg.depend.bypass-generate=.*/sqlparse.*
+file path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/script/sql.py
 file path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/migrate/versioning/templates/__init__.py
@@ -112,21 +110,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/sqlalchemy_migrate-$(COMPONENT_
 file path=usr/lib/python$(PYVER)/vendor-packages/sqlalchemy_migrate-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/sqlalchemy_migrate-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/sqlalchemy_migrate-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+#
 license sqlalchemy-migrate.license license=MIT
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/sqlalchemy-migrate-$(PYV)@0.7.2,5.12-5.12.0.0.0.41.0
 
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
-
 # force a dependency on the sqlalchemy-migrate package
 depend type=require \
     fmri=library/python/sqlalchemy-migrate@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force a dependency on sqlparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/sqlparse-$(PYV)
 
 # force a dependency on tempita; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/tempita-$(PYV)

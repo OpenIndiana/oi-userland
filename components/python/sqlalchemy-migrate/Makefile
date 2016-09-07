@@ -22,19 +22,20 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlalchemy-migrate
-COMPONENT_VERSION=	0.9.6
+COMPONENT_VERSION=	0.10.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c2c73d8dbeb29a96459d8622e3bac2e97cf6f74ed0564469486fe7ffe0ef3d97
+    sha256:f83c5cce9c09e5c05527279b7fe1565b32e5353342ff30b24f594fa2e5a7e003
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/stackforge/sqlalchemy-migrate
 COMPONENT_BUGDB=	python-mod/sqlalchemy-mig
 
-TPNO=			25760
+TPNO=			29239
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -46,9 +47,9 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION += \
-        (cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f migrate migrate-$(PYTHON_VERSION) ; \
-         $(MV) -f migrate-repository migrate-repository-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; \
+     $(MV) -f migrate migrate-$(PYTHON_VERSION) ; \
+     $(MV) -f migrate-repository migrate-repository-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -68,3 +69,4 @@ REQUIRED_PACKAGES += library/python/decorator-27
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
+REQUIRED_PACKAGES += library/python/sqlparse-27
