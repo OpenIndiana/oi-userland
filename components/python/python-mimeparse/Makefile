@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-mimeparse
-COMPONENT_VERSION=	0.1.4
+COMPONENT_VERSION=	1.5.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3c69a21e37e77f754e6fc09ebda70acd92c90d8a58f29a41cc0248351378ddc3
+    sha256:bef134a59598cc6aa598f84553162aa7a0c01f3f431588225bb9a208964b1827
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/dbtsai/python-mimeparse
 COMPONENT_BUGDB=	python-mod/mimeparse
 
-TPNO=			26390
+TPNO=			30215
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
