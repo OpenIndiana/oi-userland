@@ -5,9 +5,9 @@ See community bugs:
  https://bugs.launchpad.net/glance/+bug/1399851
  https://bugs.launchpad.net/glance/+bug/1417069
 
---- glance-2015.1.2/glance/api/v2/image_data.py.~1~	2015-10-13 09:38:23.000000000 -0700
-+++ glance-2015.1.2/glance/api/v2/image_data.py	2016-01-19 12:23:11.296863244 -0800
-@@ -211,6 +211,8 @@ class ResponseSerializer(wsgi.JSONRespon
+--- glance-12.0.0/glance/api/v2/image_data.py.~1~	2016-04-07 00:37:11.000000000 -0700
++++ glance-12.0.0/glance/api/v2/image_data.py	2016-06-27 18:46:02.584760065 -0700
+@@ -281,6 +281,8 @@ class ResponseSerializer(wsgi.JSONRespon
  
      def download(self, response, image):
          offset, chunk_size = 0, None
@@ -16,7 +16,7 @@ See community bugs:
          range_val = response.request.get_content_range()
  
          if range_val:
-@@ -222,6 +224,21 @@ class ResponseSerializer(wsgi.JSONRespon
+@@ -292,6 +294,21 @@ class ResponseSerializer(wsgi.JSONRespon
              if range_val.stop is not None:
                  chunk_size = range_val.stop - offset
  
@@ -38,7 +38,7 @@ See community bugs:
          response.headers['Content-Type'] = 'application/octet-stream'
  
          try:
-@@ -246,7 +263,9 @@ class ResponseSerializer(wsgi.JSONRespon
+@@ -317,7 +334,9 @@ class ResponseSerializer(wsgi.JSONRespon
              response.headers['Content-MD5'] = image.checksum
          # NOTE(markwash): "response.app_iter = ..." also erroneously resets the
          # content-length
@@ -49,9 +49,9 @@ See community bugs:
  
      def upload(self, response, result):
          response.status_int = 204
---- glance-2015.1.2/glance/common/wsgi.py.~1~	2015-10-13 09:38:23.000000000 -0700
-+++ glance-2015.1.2/glance/common/wsgi.py	2016-01-19 12:23:11.297682604 -0800
-@@ -752,7 +752,7 @@ class Request(webob.Request):
+--- glance-12.0.0/glance/common/wsgi.py.~1~	2016-04-07 00:37:13.000000000 -0700
++++ glance-12.0.0/glance/common/wsgi.py	2016-06-27 18:46:02.583921325 -0700
+@@ -762,7 +762,7 @@ class Request(webob.Request):
          return self.accept_language.best_match(langs)
  
      def get_content_range(self):
@@ -60,7 +60,7 @@ See community bugs:
          range_str = self.headers.get('Content-Range')
          if range_str is not None:
              range_ = webob.byterange.ContentRange.parse(range_str)
-@@ -761,6 +761,16 @@ class Request(webob.Request):
+@@ -771,6 +771,16 @@ class Request(webob.Request):
                  raise webob.exc.HTTPBadRequest(explanation=msg)
              return range_
  

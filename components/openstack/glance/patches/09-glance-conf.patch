@@ -3,72 +3,38 @@ to account for which modules are actually imported for each service.
 These changes are meant as a follow-on to Launchpad bug 1500361 but
 they have not yet been submitted upstream.
 
---- glance-2015.1.2/etc/oslo-config-generator/glance-api.conf.orig	Mon Mar  7 09:53:06 2016
-+++ glance-2015.1.2/etc/oslo-config-generator/glance-api.conf	Tue Mar  8 10:41:39 2016
-@@ -1,11 +1,12 @@
- [DEFAULT]
- output_file = etc/glance-api.conf.sample
- namespace = glance.api
-+namespace = glance.index
-+namespace = glance.manage
- namespace = glance.store
-+namespace = keystonemiddleware.auth_token
- namespace = oslo.concurrency
--namespace = oslo.messaging
- namespace = oslo.db
--namespace = oslo.db.concurrency
--namespace = oslo.policy
--namespace = keystonemiddleware.auth_token
- namespace = oslo.log
-+namespace = oslo.messaging
-+namespace = oslo.policy
---- glance-2015.1.2/etc/oslo-config-generator/glance-cache.conf.orig	Tue Oct 13 09:38:21 2015
-+++ glance-2015.1.2/etc/oslo-config-generator/glance-cache.conf	Wed Mar  9 23:44:29 2016
-@@ -1,5 +1,7 @@
- [DEFAULT]
- output_file = etc/glance-cache.conf.sample
- namespace = glance.cache
-+namespace = glance.store
-+namespace = oslo.concurrency
- namespace = oslo.log
+--- glance-12.0.0/etc/oslo-config-generator/glance-api.conf.~1~	2016-04-07 00:37:11.000000000 -0700
++++ glance-12.0.0/etc/oslo-config-generator/glance-api.conf	2016-07-30 00:39:05.833802230 -0700
+@@ -9,4 +9,4 @@ namespace = oslo.db.concurrency
  namespace = oslo.policy
---- glance-2015.1.2/etc/oslo-config-generator/glance-manage.conf.orig	Tue Oct 13 09:38:21 2015
-+++ glance-2015.1.2/etc/oslo-config-generator/glance-manage.conf	Thu Mar 10 01:06:41 2016
-@@ -1,6 +1,8 @@
- [DEFAULT]
- output_file = etc/glance-manage.conf.sample
- namespace = glance.manage
-+namespace = glance.store
-+namespace = oslo.concurrency
- namespace = oslo.db
--namespace = oslo.db.concurrency
- namespace = oslo.log
-+namespace = oslo.policy
---- glance-2015.1.2/etc/oslo-config-generator/glance-registry.conf.orig	Mon Mar  7 09:53:06 2016
-+++ glance-2015.1.2/etc/oslo-config-generator/glance-registry.conf	Thu Mar 10 00:57:58 2016
-@@ -2,9 +2,9 @@
- output_file = etc/glance-registry.conf.sample
- namespace = glance.registry
- namespace = glance.store
--namespace = oslo.messaging
--namespace = oslo.db
--namespace = oslo.db.concurrency
--namespace = oslo.policy
  namespace = keystonemiddleware.auth_token
-+namespace = oslo.concurrency
-+namespace = oslo.db
  namespace = oslo.log
-+namespace = oslo.messaging
-+namespace = oslo.policy
---- glance-2015.1.2/etc/oslo-config-generator/glance-scrubber.conf.orig	Tue Oct 13 09:38:21 2015
-+++ glance-2015.1.2/etc/oslo-config-generator/glance-scrubber.conf	Thu Mar 10 01:21:02 2016
-@@ -1,8 +1,7 @@
- [DEFAULT]
- output_file = etc/glance-scrubber.conf.sample
- namespace = glance.scrubber
-+namespace = glance.store
- namespace = oslo.concurrency
--namespace = oslo.db
--namespace = oslo.db.concurrency
+-namespace = oslo.middleware.cors
++namespace = oslo.middleware
+--- glance-12.0.0/etc/oslo-config-generator/glance-cache.conf.~1~	2016-04-07 00:37:11.000000000 -0700
++++ glance-12.0.0/etc/oslo-config-generator/glance-cache.conf	2016-07-30 00:39:33.080265565 -0700
+@@ -3,3 +3,5 @@ output_file = etc/glance-cache.conf.samp
+ namespace = glance.cache
  namespace = oslo.log
  namespace = oslo.policy
++namespace = glance.store
++namespace = oslo.concurrency
+--- glance-12.0.0/etc/oslo-config-generator/glance-glare.conf.~1~	2016-04-07 00:37:11.000000000 -0700
++++ glance-12.0.0/etc/oslo-config-generator/glance-glare.conf	2016-07-30 00:39:05.834807800 -0700
+@@ -6,4 +6,7 @@ namespace = oslo.db
+ namespace = oslo.db.concurrency
+ namespace = keystonemiddleware.auth_token
+ namespace = oslo.log
+-namespace = oslo.middleware.cors
++namespace = oslo.middleware
++namespace = oslo.concurrency
++namespace = oslo.messaging
++namespace = oslo.policy
+--- glance-12.0.0/etc/oslo-config-generator/glance-registry.conf.~1~	2016-04-07 00:37:11.000000000 -0700
++++ glance-12.0.0/etc/oslo-config-generator/glance-registry.conf	2016-07-30 00:39:05.835268420 -0700
+@@ -8,3 +8,5 @@ namespace = oslo.db.concurrency
+ namespace = oslo.policy
+ namespace = keystonemiddleware.auth_token
+ namespace = oslo.log
++namespace = oslo.concurrency
++namespace = oslo.middleware

@@ -4,9 +4,9 @@ Solaris-specific and not suitable for upstream.
 Convert urlsafe_encrypt() and urlsafe_decrypt() to use M2Crypto instead
 of PyCrypto.
 
---- glance-2015.1.2/glance/common/crypt.py.~1~	2015-10-13 09:38:23.000000000 -0700
-+++ glance-2015.1.2/glance/common/crypt.py	2016-01-24 16:48:24.788282369 -0800
-@@ -20,14 +20,30 @@ Routines for URL-safe encrypting/decrypt
+--- glance-12.0.0.0rc1/glance/common/crypt.py.~1~	2016-03-16 06:18:49.000000000 -0700
++++ glance-12.0.0.0rc1/glance/common/crypt.py	2016-03-30 02:26:55.580507508 -0700
+@@ -18,14 +18,28 @@ Routines for URL-safe encrypting/decrypt
  """
  
  import base64
@@ -15,13 +15,15 @@ of PyCrypto.
 -from Crypto.Cipher import AES
 -from Crypto import Random
 -from Crypto.Random import random
-+from glance.common import exception
+ from oslo_utils import encodeutils
+ import six
+-# NOTE(jokke): simplified transition to py3, behaves like py2 xrange
+-from six.moves import range
 +
 +from M2Crypto.EVP import Cipher
- # NOTE(jokke): simplified transition to py3, behaves like py2 xrange
- from six.moves import range
- 
- 
++
++from glance.common import exception
++
 +def _key_to_alg(key):
 +    """Return a M2Crypto-compatible AES-CBC algorithm name given a key."""
 +    aes_algs = {
@@ -35,14 +37,12 @@ of PyCrypto.
 +        msg = ('Invalid AES key length, %d bits') % keylen
 +        raise exception.Invalid(msg)
 +    return aes_algs[keylen]
-+
-+
- def urlsafe_encrypt(key, plaintext, blocksize=16):
-     """
-     Encrypts plaintext. Resulting ciphertext will contain URL-safe characters
-@@ -37,20 +53,12 @@ def urlsafe_encrypt(key, plaintext, bloc
  
-     :returns : Resulting ciphertext
+ 
+ def urlsafe_encrypt(key, plaintext, blocksize=16):
+@@ -39,23 +53,14 @@ def urlsafe_encrypt(key, plaintext, bloc
+ 
+     :returns: Resulting ciphertext
      """
 -    def pad(text):
 -        """
@@ -50,29 +50,34 @@ of PyCrypto.
 -        """
 -        pad_length = (blocksize - len(text) % blocksize)
 -        sr = random.StrongRandom()
--        pad = ''.join(chr(sr.randint(1, 0xFF)) for i in range(pad_length - 1))
+-        pad = b''.join(six.int2byte(sr.randint(1, 0xFF))
+-                       for i in range(pad_length - 1))
 -        # We use chr(0) as a delimiter between text and padding
--        return text + chr(0) + pad
+-        return text + b'\0' + pad
  
+     plaintext = encodeutils.to_utf8(plaintext)
+     key = encodeutils.to_utf8(key)
      # random initial 16 bytes for CBC
 -    init_vector = Random.get_random_bytes(16)
 -    cypher = AES.new(key, AES.MODE_CBC, init_vector)
--    padded = cypher.encrypt(pad(str(plaintext)))
+-    padded = cypher.encrypt(pad(six.binary_type(plaintext)))
 +    init_vector = os.urandom(16)
 +    cipher = Cipher(alg=_key_to_alg(key), key=key, iv=init_vector, op=1)
 +    padded = cipher.update(str(plaintext))
 +    padded = padded + cipher.final()
-     return base64.urlsafe_b64encode(init_vector + padded)
- 
- 
-@@ -64,6 +72,7 @@ def urlsafe_decrypt(key, ciphertext):
-     """
-     # Cast from unicode
-     ciphertext = base64.urlsafe_b64decode(str(ciphertext))
+     encoded = base64.urlsafe_b64encode(init_vector + padded)
+     if six.PY3:
+         encoded = encoded.decode('ascii')
+@@ -76,9 +81,9 @@ def urlsafe_decrypt(key, ciphertext):
+     ciphertext = encodeutils.to_utf8(ciphertext)
+     key = encodeutils.to_utf8(key)
+     ciphertext = base64.urlsafe_b64decode(ciphertext)
 -    cypher = AES.new(key, AES.MODE_CBC, ciphertext[:16])
 -    padded = cypher.decrypt(ciphertext[16:])
--    return padded[:padded.rfind(chr(0))]
+-    text = padded[:padded.rfind(b'\0')]
 +    cipher = Cipher(alg=_key_to_alg(key), key=key, iv=ciphertext[:16], op=0)
 +    padded = cipher.update(ciphertext[16:])
-+    padded = padded + cipher.final()
-+    return padded
++    text = padded + cipher.final()
+     if six.PY3:
+         text = text.decode('utf-8')
+     return text

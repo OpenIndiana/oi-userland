@@ -26,20 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glance
-COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2015.1.2
-COMPONENT_BE_VERSION=	2015.1
+COMPONENT_CODENAME=	mitaka
+COMPONENT_VERSION=	12.0.0
+COMPONENT_BE_VERSION=	2016.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e46bc6648a74a643cef3825dcd44c7e275ed3385b96cab83ef50c4c514932541
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+    sha256:42213a4cd59bbcaa5f34d09ff48494a4d9831de9f27fc8541726a685a4c4f509
+COMPONENT_ARCHIVE_URL=	https://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/glance
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			25785
+TPNO=			30299
 
 PKG_VARS +=		COMPONENT_BE_VERSION
 
@@ -85,14 +84,10 @@ REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/glance_store-27
 REQUIRED_PACKAGES += library/python/iniparse-27
-REQUIRED_PACKAGES += library/python/m2crypto-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
 REQUIRED_PACKAGES += library/python/oslo.messaging-27
-REQUIRED_PACKAGES += library/python/oslo.serialization-27
 REQUIRED_PACKAGES += library/python/oslo.utils-27
-REQUIRED_PACKAGES += library/python/osprofiler-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
-REQUIRED_PACKAGES += library/python/webob-27
 REQUIRED_PACKAGES += system/core-os

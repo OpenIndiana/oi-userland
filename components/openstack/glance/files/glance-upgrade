@@ -28,37 +28,28 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 
 GLANCE_API_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'container_formats'): ('image_format', 'container_formats'),
-    ('DEFAULT', 'disk_formats'): ('image_format', 'disk_formats'),
-    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
-    ('DEFAULT', 'rabbit_durable_queues'): ('oslo_messaging_qpid',
-                                           'amqp_durable_queues'),
-    ('DEFAULT', 'qpid_hostname'): ('oslo_messaging_qpid', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'): ('oslo_messaging_qpid', 'qpid_port'),
-    ('DEFAULT', 'qpid_username'): ('oslo_messaging_qpid', 'qpid_username'),
-    ('DEFAULT', 'qpid_password'): ('oslo_messaging_qpid', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'): ('oslo_messaging_qpid',
-                                          'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_heartbeat'): ('oslo_messaging_qpid', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'): ('oslo_messaging_qpid', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'): ('oslo_messaging_qpid',
-                                      'qpid_tcp_nodelay'),
-    ('DEFAULT', 'rabbit_host'): ('oslo_messaging_rabbit', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'): ('oslo_messaging_rabbit', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_use_ssl'): ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'): ('oslo_messaging_rabbit', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'): ('oslo_messaging_rabbit',
-                                     'rabbit_password'),
-    ('DEFAULT', 'rabbit_virtual_host'): ('oslo_messaging_rabbit',
-                                         'rabbit_virtual_host'),
-    ('task', 'eventlet_executor_pool_size'):
-        ('taskflow_executor', 'max_workers'),
-    ('DEFAULT', 'log-format'): (None, None),
+    # Deprecated from Kilo to Mitaka
     ('DEFAULT', 'log_format'): (None, None),
     ('DEFAULT', 'use-syslog'): (None, None),
-    ('glance_store', 'vmware_datacenter_path'): (None, None),
-    ('glance_store', 'vmware_datastore_name'): (None, None),
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('DEFAULT', 'notification_driver'):
+        ('oslo_messaging_notifications', 'driver'),
+    ('DEFAULT', 'notification_topics'):
+        ('oslo_messaging_notifications', 'topics'),
+    ('glance_store', 'os_region_name'):
+        ('glance_store', 'cinder_os_region_name'),
+    ('keystone_authtoken', 'auth_plugin'):
+        ('keystone_authtoken', 'auth_type'),
+    ('DEFAULT', 'scrubber_datadir'): (None, None),
+    ('DEFAULT', 'cleanup_scrubber'): (None, None),
+    ('DEFAULT', 'cleanup_scrubber_time'): (None, None),
+    ('DEFAULT', 'use_syslog_rfc_format'): (None, None),
+    ('DEFAULT', 'rpc_zmq_port'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_freq'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_ttl'): (None, None),
+    ('glance_store', 'mongodb_store_uri'): (None, None),
+    ('glance_store', 'mongodb_store_db'): (None, None),
 }
 
 GLANCE_API_EXCEPTIONS = [
@@ -125,6 +116,13 @@ GLANCE_API_EXCEPTIONS = [
     ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
 ]
 
+GLANCE_CACHE_MAPPINGS = {
+    # Deprecated group/name
+    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'use-syslog'): (None, None),
+    ('DEFAULT', 'use_syslog_rfc_format'): (None, None),
+}
+
 GLANCE_CACHE_EXCEPTIONS = [
     ('DEFAULT', 'log_file'),
     ('DEFAULT', 'image_cache_dir'),
@@ -140,27 +138,24 @@ GLANCE_CACHE_EXCEPTIONS = [
 ]
 
 GLANCE_REGISTRY_MAPPINGS = {
-    # Deprecate group/name
-    ('DEFAULT', 'rabbit_durable_queues'): ('oslo_messaging_qpid',
-                                           'rabbit_durable_queues'),
-    ('DEFAULT', 'qpid_hostname'): ('oslo_messaging_qpid', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'): ('oslo_messaging_qpid', 'qpid_port'),
-    ('DEFAULT', 'qpid_username'): ('oslo_messaging_qpid', 'qpid_username'),
-    ('DEFAULT', 'qpid_password'): ('oslo_messaging_qpid', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'): ('oslo_messaging_qpid',
-                                          'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_heartbeat'): ('oslo_messaging_qpid', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'): ('oslo_messaging_qpid', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'): ('oslo_messaging_qpid',
-                                      'qpid_tcp_nodelay'),
-    ('DEFAULT', 'rabbit_host'): ('oslo_messaging_rabbit', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'): ('oslo_messaging_rabbit', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_use_ssl'): ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'): ('oslo_messaging_rabbit', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'): ('oslo_messaging_rabbit',
-                                     'rabbit_password'),
-    ('DEFAULT', 'rabbit_virtual_host'): ('oslo_messaging_rabbit',
-                                         'rabbit_virtual_host'),
+    # Deprecated group/name
+    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'use-syslog'): (None, None),
+    ('DEFAULT', 'rpc_zmq_port'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_freq'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_ttl'): (None, None),
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('DEFAULT', 'notification_driver'):
+        ('oslo_messaging_notifications', 'driver'),
+    ('DEFAULT', 'notification_topics'):
+        ('oslo_messaging_notifications', 'topics'),
+    ('glance_store', 'mongodb_store_uri'): (None, None),
+    ('glance_store', 'mongodb_store_db'): (None, None),
+    ('glance_store', 'os_region_name'):
+        ('glance_store', 'cinder_os_region_name'),
+    ('keystone_authtoken', 'auth_plugin'):
+        ('keystone_authtoken', 'auth_type'),
 }
 
 GLANCE_REGISTRY_EXCEPTIONS = [
@@ -204,8 +199,11 @@ GLANCE_REGISTRY_EXCEPTIONS = [
     ('paste_deploy', 'flavor'),
 ]
 
-# TODO: Add mappings?
-# GLANCE_SCRUBBER_MAPPINGS
+GLANCE_SCRUBBER_MAPPINGS = {
+    # Deprecated group/name
+    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'use_syslog_rfc_format'): (None, None),
+}
 
 GLANCE_SCRUBBER_EXCEPTIONS = [
     ('DEFAULT', 'log_file'),
@@ -252,14 +250,14 @@ def start():
         modify_conf('/etc/glance/glance-api.conf', GLANCE_API_MAPPINGS,
                     GLANCE_API_EXCEPTIONS)
         modify_conf('/etc/glance/glance-api-paste.ini')
-        modify_conf('/etc/glance/glance-cache.conf',
-                    exception_list=GLANCE_CACHE_EXCEPTIONS)
+        modify_conf('/etc/glance/glance-cache.conf', GLANCE_CACHE_MAPPINGS,
+                    GLANCE_CACHE_EXCEPTIONS)
         modify_conf('/etc/glance/glance-registry.conf',
                     GLANCE_REGISTRY_MAPPINGS,
                     exception_list=GLANCE_REGISTRY_EXCEPTIONS)
         modify_conf('/etc/glance/glance-registry-paste.ini')
         modify_conf('/etc/glance/glance-scrubber.conf',
-                    exception_list=GLANCE_SCRUBBER_EXCEPTIONS)
+                    GLANCE_SCRUBBER_MAPPINGS, GLANCE_SCRUBBER_EXCEPTIONS)
 
     config = iniparse.RawConfigParser()
     config.read('/etc/glance/glance-api.conf')

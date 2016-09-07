@@ -1,0 +1,16 @@
+In-house patch to fix glance-api to not respawn a new child when it knows it is
+terminating. This patch is Solaris specific and not necassarily suitable for
+upstream.
+
+--- glance-12.0.0/glance/common/wsgi.py.~2~	2016-06-29 08:34:58.341184299 -0700
++++ glance-12.0.0/glance/common/wsgi.py		2016-06-29 08:35:31.903341381 -0700
+@@ -359,7 +359,8 @@ class Server(object):
+                 pid, status = os.wait()
+                 if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                     self._remove_children(pid)
+-                    self._verify_and_respawn_children(pid, status)
++                    if self.running:
++                        self._verify_and_respawn_children(pid, status)
+             except OSError as err:
+                 if err.errno not in (errno.EINTR, errno.ECHILD):
+                     raise

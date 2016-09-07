@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Glance (Image Service)"
 set name=pkg.description \
     value="OpenStack Glance provides services for discovering, registering, and retrieving virtual machine images. Glance has a RESTful API that allows querying of VM image metadata as well as retrieval of the actual image. VM images made available through Glance can be stored in a variety of locations from simple file systems to object-storage systems like OpenStack Swift."
-set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Mitaka $(COMPONENT_VERSION)"
 set name=com.oracle.info.description value="Glance, the OpenStack image service"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
@@ -41,7 +41,8 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/055 \
-    value=PSARC/2014/207 value=PSARC/2015/110 value=PSARC/2015/535
+    value=PSARC/2014/207 value=PSARC/2015/110 value=PSARC/2015/535 \
+    value=PSARC/2016/455
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/glance owner=glance group=glance mode=0700
@@ -62,6 +63,18 @@ file files/glance-scrubber.conf path=etc/glance/glance-scrubber.conf \
 file etc/glance-swift.conf.sample path=etc/glance/glance-swift.conf \
     owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/metadefs/README path=etc/glance/metadefs/README
+file etc/metadefs/cim-processor-allocation-setting-data.json \
+    path=etc/glance/metadefs/cim-processor-allocation-setting-data.json \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/cim-resource-allocation-setting-data.json \
+    path=etc/glance/metadefs/cim-resource-allocation-setting-data.json \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/cim-storage-allocation-setting-data.json \
+    path=etc/glance/metadefs/cim-storage-allocation-setting-data.json \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/cim-virtual-system-setting-data.json \
+    path=etc/glance/metadefs/cim-virtual-system-setting-data.json \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/metadefs/compute-aggr-disk-filter.json \
     path=etc/glance/metadefs/compute-aggr-disk-filter.json owner=glance \
     group=glance mode=0644 overlay=allow preserve=renamenew
@@ -70,6 +83,12 @@ file etc/metadefs/compute-aggr-iops-filter.json \
     group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/metadefs/compute-aggr-num-instances.json \
     path=etc/glance/metadefs/compute-aggr-num-instances.json owner=glance \
+    group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/compute-cpu-pinning.json \
+    path=etc/glance/metadefs/compute-cpu-pinning.json owner=glance \
+    group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/compute-guest-memory-backing.json \
+    path=etc/glance/metadefs/compute-guest-memory-backing.json owner=glance \
     group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/metadefs/compute-guest-shutdown.json \
     path=etc/glance/metadefs/compute-guest-shutdown.json owner=glance \
@@ -131,6 +150,11 @@ file etc/metadefs/software-runtimes.json \
 file etc/metadefs/software-webservers.json \
     path=etc/glance/metadefs/software-webservers.json owner=glance \
     group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/metadefs/storage-volume-type.json \
+    path=etc/glance/metadefs/storage-volume-type.json owner=glance \
+    group=glance mode=0644 overlay=allow preserve=renamenew
+file etc/ovf-metadata.json.sample path=etc/glance/ovf-metadata.json \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/policy.json path=etc/glance/policy.json owner=glance group=glance \
     mode=0644 overlay=allow preserve=renamenew
 file etc/property-protections-policies.conf.sample \
@@ -140,7 +164,7 @@ file etc/property-protections-roles.conf.sample \
     path=etc/glance/property-protections-roles.conf owner=glance group=glance \
     mode=0644 overlay=allow preserve=renamenew
 file etc/schema-image.json path=etc/glance/schema-image.json owner=glance \
-    group=glance
+    group=glance mode=0644 overlay=allow preserve=renamenew
 file files/glance.auth_attr \
     path=etc/security/auth_attr.d/cloud:openstack:glance group=sys
 file files/glance.exec_attr \
@@ -167,6 +191,7 @@ file usr/bin/glance-cache-cleaner path=usr/lib/glance/glance-cache-cleaner \
     mode=0555
 file usr/bin/glance-cache-pruner path=usr/lib/glance/glance-cache-pruner \
     mode=0555
+file usr/bin/glance-glare path=usr/lib/glance/glance-glare mode=0555
 file usr/bin/glance-registry path=usr/lib/glance/glance-registry mode=0555
 file usr/bin/glance-scrubber path=usr/lib/glance/glance-scrubber mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -182,6 +207,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/authorization.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/cached_images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/glare/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/glare/v0_1/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/glare/v0_1/glare.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/glare/v0_1/router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/glare/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/cache_manage.py
@@ -218,57 +248,60 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/model/metadef_tag
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/router.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/schemas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v3/router.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/versions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/artifacts/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/flows/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/flows/base_import.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/flows/convert.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/flows/introspect.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/flows/ovf_process.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/taskflow_executor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/async/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/agent_notification.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/api.py \
+    pkg.depend.bypass-generate=.*/notifier.* \
     pkg.depend.bypass-generate=.*/oslo_log.* \
-    pkg.depend.bypass-generate=.*/oslo_messaging.*
+    pkg.depend.bypass-generate=.*/osprofiler.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_cleaner.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_manage.py \
+    pkg.depend.bypass-generate=.*/prettytable.* \
+    pkg.depend.bypass-generate=.*/six.*
 file \
     path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_prefetcher.py \
     pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_pruner.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/control.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/glare.py \
+    pkg.depend.bypass-generate=.*/notifier.* \
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/osprofiler.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/manage.py \
     pkg.depend.bypass-generate=.*/oslo_db.* \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/sqlalchemy.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/registry.py \
     pkg.depend.bypass-generate=.*/oslo_log.* \
-    pkg.depend.bypass-generate=.*/oslo_messaging.*
+    pkg.depend.bypass-generate=.*/osprofiler.* \
+    pkg.depend.bypass-generate=.*/registry.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/replicator.py \
     pkg.depend.bypass-generate=.*/oslo_log.* \
-    pkg.depend.bypass-generate=.*/six.*
+    pkg.depend.bypass-generate=.*/oslo_serialization.* \
+    pkg.depend.bypass-generate=.*/six.* pkg.depend.bypass-generate=.*/webob.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/scrubber.py \
     pkg.depend.bypass-generate=.*/oslo_log.*
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/search.py \
-    pkg.depend.bypass-generate=.*/oslo_log.* \
-    pkg.depend.bypass-generate=.*/oslo_messaging.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/artifacts/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/artifacts/declarative.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/artifacts/definitions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/artifacts/loader.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/artifacts/serialization.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/config.py \
-    pkg.depend.bypass-generate=.*/oslo_concurrency.* \
-    pkg.depend.bypass-generate=.*/oslo_policy.* \
-    pkg.depend.bypass-generate=.*/paste.*
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/crypt.py \
-    pkg.depend.bypass-generate=.*/six.*
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/crypt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/glare/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/glare/declarative.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/glare/definitions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/glare/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/glare/serialization.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/jsonpatchvalidator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/location_strategy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/location_strategy/location_order.py
@@ -280,8 +313,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/scripts/image_imp
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/scripts/image_import/main.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/scripts/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/semver_db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/signature_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/store_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/swift_store_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/timeutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/trust_auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/wsme_utils.py
@@ -316,7 +352,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/simple/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/simple/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/artifacts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/glare.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/metadef_api/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/metadef_api/namespace.py
@@ -384,13 +420,23 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_re
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/039_add_changes_to_satisfy_models_metadef.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/040_add_changes_to_satisfy_metadefs_tags.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/041_add_artifact_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/042_add_changes_to_reinstall_unique_metadef_constraints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/043_add_image_created_updated_idx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/044_update_metadef_os_nova_server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/models_artifacts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/models_glare.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/models_metadef.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/domain/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/domain/proxy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/gateway.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/dependency.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/domain/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/domain/proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/gateway.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/location.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/glare/updater.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/hacking/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/hacking/checks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/i18n.py
@@ -404,20 +450,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/drivers/sqli
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/drivers/xattr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/prefetcher.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/pruner.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/listener.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/location.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/notifier.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/README
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/local.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/loopingcall.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/systemd.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/threadgroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/quota/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/__init__.py
@@ -436,19 +470,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v2/api.p
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v2/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/schema.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/scrubber.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/api/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/api/v0_1/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/api/v0_1/router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/api/v0_1/search.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/images.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/images_notification_handler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/metadefs.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/search/plugins/metadefs_notification_handler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/service.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/version.py
 dir  path=var/lib/glance owner=glance group=glance mode=0700
 dir  path=var/log/glance owner=glance group=glance mode=0700
@@ -463,31 +484,60 @@ license glance.license license="Apache v2.0"
 # to flush this out.
 depend type=group fmri=library/python/dnspython-$(PYV)
 
+# force a group dependency on the optional glanceclient; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/glanceclient-$(PYV)
+
 # force a group dependency on the optional pysendfile; pkgdepend work is needed
 # to flush this out.
 depend type=group fmri=library/python/pysendfile-$(PYV)
 
-# To upgrade to Kilo version, Juno version of the package must be on the system
-depend type=origin fmri=cloud/openstack/glance@0.2014.2.2 root-image=true
+# To upgrade to the Mitaka version, the Kilo version of the package must be on
+# the system
+depend type=origin fmri=cloud/openstack/glance@0.2015.1.2 root-image=true
+
+# force a dependency on castellan; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/castellan-$(PYV)
+
+# force a dependency on cryptography; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/cryptography-$(PYV)
+
+# force a dependency on debtcollector; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/debtcollector-$(PYV)
 
 # force a dependency on enum; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/enum-$(PYV)
 
-# force a dependency on glanceclient; pkgdepend work is needed to flush this
-# out.
-depend type=require fmri=library/python/glanceclient-$(PYV)
-
-# force a dependency on greenlet; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/greenlet-$(PYV)
+# force a dependency on futurist; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/futurist-$(PYV)
 
 # force a dependency on httplib2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/httplib2-$(PYV)
 
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iso8601-$(PYV)
+
 # force a dependency on jsonschema; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/jsonschema-$(PYV)
 
+# force a dependency on keystoneauth1; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneauth1-$(PYV)
+
+# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneclient-$(PYV)
+
 # force a dependency on keystonemiddleware; used via a paste.deploy filter
 depend type=require fmri=library/python/keystonemiddleware-$(PYV)
+
+# force a dependency on m2crypto; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/m2crypto-$(PYV)
+
+# force a dependency on monotonic; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/monotonic-$(PYV)
 
 # force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
 # out.
@@ -506,8 +556,19 @@ depend type=require fmri=library/python/oslo.i18n-$(PYV)
 # force a dependency on oslo.log; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.log-$(PYV)
 
+# force a dependency on oslo.middleware; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.middleware-$(PYV)
+
 # force a dependency on oslo.policy; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.policy-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on osprofiler; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/osprofiler-$(PYV)
 
 # force a dependency on paste; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/paste-$(PYV)
@@ -518,6 +579,9 @@ depend type=require fmri=library/python/paste.deploy-$(PYV)
 
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
+
+# force a dependency on prettytable; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/prettytable-$(PYV)
 
 # force a dependency on pyopenssl; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyopenssl-$(PYV)
@@ -540,6 +604,9 @@ depend type=require fmri=library/python/stevedore-$(PYV)
 
 # force a dependency on taskflow; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/taskflow-$(PYV)
+
+# force a dependency on webob; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/webob-$(PYV)
 
 # force a dependency on wsme; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/wsme-$(PYV)

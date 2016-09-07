@@ -64,6 +64,12 @@
     <exec_method timeout_seconds="60" type="method" name="stop"
       exec=":kill"/>
 
+    <property_group name="startd" type="framework">
+      <!-- glance-registry manages its children so we should ignore their
+           death -->
+      <propval name='ignore_error' type='astring' value='signal' />
+    </property_group>
+
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
       <property_group name='general' type='framework'>
