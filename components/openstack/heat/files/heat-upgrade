@@ -28,10 +28,26 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf, \
     move_conf
 
 HEAT_CONF_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'log-format'): (None, None),
-    ('DEFAULT', 'use-sylog'): (None, None),
+    # Deprecated group/name in Liberty
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'use_syslog'): (None, None),
+    # Deprecated group/name in Mitaka
+    ('profiler', 'profiler_enabled'): ('profiler', 'enabled'),
+    ('DEFAULT', 'instance_user'): (None, None),
     ('DEFAULT', 'list_notifier_drivers'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_freq'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_ttl'): (None, None),
+    ('DEFAULT', 'notification_driver'):
+        ('oslo_messaging_notifications', 'driver'),
+    ('DEFAULT', 'notification_topics'):
+        ('oslo_messaging_notifications', 'topics'),
+    ('DEFAULT', 'policy_default_rule'): ('oslo_policy', 'policy_default_rule'),
+    ('DEFAULT', 'policy_dirs'): ('oslo_policy', 'policy_dirs'),
+    ('DEFAULT', 'policy_file'): ('oslo_policy', 'policy_file'),
+    ('DEFAULT', 'rpc_zmq_port'): (None, None),
+    ('DEFAULT', 'use_syslog_rfc_format'): (None, None),
 }
 
 HEAT_CONF_EXCEPTIONS = [
@@ -75,19 +91,6 @@ def start():
 
         modify_conf('/etc/heat/heat.conf', HEAT_CONF_MAPPINGS,
                     HEAT_CONF_EXCEPTIONS)
-
-    config = iniparse.RawConfigParser()
-    config.read('/etc/heat/heat.conf')
-    # In certain cases the database section does not exist and the
-    # default database chosen is sqlite.
-    if config.has_section('database'):
-        db_connection = config.get('database', 'connection')
-
-        if db_connection.startswith('mysql'):
-            engine = sqlalchemy.create_engine(db_connection)
-            if engine.url.username != '%SERVICE_USER%':
-                alter_mysql_tables(engine)
-                print "altered character set to utf8 in heat tables"
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',

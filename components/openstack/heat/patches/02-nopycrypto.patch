@@ -1,22 +1,22 @@
 In-house removal of PyCrypto dependency in Heat. This patch is
 Solaris-specific and not suitable for upstream.
 
---- heat-2015.1.2/heat/common/crypt.py.~1~	2015-10-13 09:51:53.000000000 -0700
-+++ heat-2015.1.2/heat/common/crypt.py	2016-01-28 00:39:30.968509417 -0800
-@@ -13,7 +13,6 @@
- 
+--- heat-5e1c8cb19eaee7570c2e1ca96c330b8d7d77a719/heat/common/crypt.py.~2~	2016-02-02 01:40:32.301153073 -0800
++++ heat-5e1c8cb19eaee7570c2e1ca96c330b8d7d77a719/heat/common/crypt.py	2016-02-02 01:40:52.942307172 -0800
+@@ -14,7 +14,6 @@
  import base64
+ import sys
  
 -from Crypto.Cipher import AES
+ from cryptography import fernet
  from oslo_config import cfg
- 
- from heat.openstack.common.crypto import utils
-@@ -59,9 +58,11 @@ def heat_decrypt(auth_info):
-     if auth_info is None:
-         return None
-     auth = base64.b64decode(auth_info)
+ from oslo_utils import encodeutils
+@@ -88,9 +87,11 @@ def heat_decrypt(value, encryption_key=N
+     """
+     encryption_key = get_valid_encryption_key(encryption_key)
+     auth = base64.b64decode(value)
 -    iv = auth[:AES.block_size]
--    cipher = AES.new(cfg.CONF.auth_encryption_key[:32], AES.MODE_CFB, iv)
+-    cipher = AES.new(encryption_key, AES.MODE_CFB, iv)
 -    res = cipher.decrypt(auth[AES.block_size:])
 +    iv = auth[:16]
 +    cipher = Cipher(alg='aes_256_cfb', key=cfg.CONF.auth_encryption_key[:32],
@@ -26,8 +26,8 @@ Solaris-specific and not suitable for upstream.
      return res
  
  
---- heat-2015.1.2/heat/openstack/common/crypto/utils.py.~1~	2015-10-13 09:51:50.000000000 -0700
-+++ heat-2015.1.2/heat/openstack/common/crypto/utils.py	2016-01-28 00:39:30.935927064 -0800
+--- heat-5e1c8cb19eaee7570c2e1ca96c330b8d7d77a719/heat/openstack/common/crypto/utils.py.~2~	2016-02-02 01:41:07.005491185 -0800
++++ heat-5e1c8cb19eaee7570c2e1ca96c330b8d7d77a719/heat/openstack/common/crypto/utils.py	2016-02-02 01:50:03.227200903 -0800
 @@ -27,8 +27,8 @@
  
  import base64

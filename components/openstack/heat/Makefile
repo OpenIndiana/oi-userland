@@ -26,20 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		heat
-COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2015.1.2
-COMPONENT_BE_VERSION=	2015.1
+COMPONENT_CODENAME=	mitaka
+COMPONENT_VERSION=	6.0.0
+COMPONENT_BE_VERSION=	2016.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5cf5dab1496304d81b060f1ce58f0c2d36a91c5a3305a4f91ec3057ac229d6ae
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+    sha256:b89f14dc2421b94f8c322557b93959e2b6aa3dcc9cf739ef392f5f30c326b6e5
+COMPONENT_ARCHIVE_URL=	https://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/heat
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			25786
+TPNO=			30355
 
 PKG_VARS +=		COMPONENT_BE_VERSION
 
@@ -82,14 +81,15 @@ install:	$(INSTALL_NO_ARCH)
 # integrated
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
+system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/iniparse-27
+REQUIRED_PACKAGES += library/python/oslo.concurrency-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
 REQUIRED_PACKAGES += library/python/oslo.i18n-27
+REQUIRED_PACKAGES += library/python/oslo.log-27
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
