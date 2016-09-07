@@ -26,84 +26,39 @@ import sqlalchemy
 from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 IRONIC_CONF_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'amqp_durable_queues'):
-        ('oslo_messaging_qpid', 'amqp_durable_queues'),
-    ('DEFAULT', 'amqp_auto_delete'):
-        ('oslo_messaging_qpid', 'amqp_auto_delete'),
-    ('DEFAULT', 'rpc_conn_pool_size'):
-        ('oslo_messaging_qpid', 'rpc_conn_pool_size'),
-    ('DEFAULT', 'qpid_hostname'):
-        ('oslo_messaging_qpid', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'):
-        ('oslo_messaging_qpid', 'qpid_port'),
-    ('DEFAULT', 'qpid_hosts'):
-        ('oslo_messaging_qpid', 'qpid_hosts'),
-    ('DEFAULT', 'qpid_username'):
-        ('oslo_messaging_qpid', 'qpid_username'),
-    ('DEFAULT', 'qpid_password'):
-        ('oslo_messaging_qpid', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'):
-        ('oslo_messaging_qpid', 'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_tcp_nodelay'):
-        ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
-    ('DEFAULT', 'qpid_heartbeat'):
-        ('oslo_messaging_qpid', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'):
-        ('oslo_messaging_qpid', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_receiver_capacity'):
-        ('oslo_messaging_qpid', 'qpid_receiver_capacity'),
-    ('DEFAULT', 'qpid_topology_version'):
-        ('oslo_messaging_qpid', 'qpid_topology_version'),
-    ('DEFAULT', 'kombu_ssl_version'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_version'),
-    ('DEFAULT', 'kombu_ssl_keyfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_keyfile'),
-    ('DEFAULT', 'kombu_ssl_certfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_certfile'),
-    ('DEFAULT', 'kombu_ssl_ca_certs'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_ca_certs'),
-    ('DEFAULT', 'kombu_reconnect_delay'):
-        ('oslo_messaging_rabbit', 'kombu_reconnect_delay'),
-    ('DEFAULT', 'rabbit_host'):
-        ('oslo_messaging_rabbit', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'):
-        ('oslo_messaging_rabbit', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_hosts'):
-        ('oslo_messaging_rabbit', 'rabbit_hosts'),
-    ('DEFAULT', 'rabbit_use_ssl'):
-        ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'):
-        ('oslo_messaging_rabbit', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'):
-        ('oslo_messaging_rabbit', 'rabbit_password'),
-    ('DEFAULT', 'rabbit_login_method'):
-        ('oslo_messaging_rabbit', 'rabbit_login_method'),
-    ('DEFAULT', 'rabbit_virtual_host'):
-        ('oslo_messaging_rabbit', 'rabbit_virtual_host'),
-    ('DEFAULT', 'rabbit_retry_interval'):
-        ('oslo_messaging_rabbit', 'rabbit_retry_interval'),
-    ('DEFAULT', 'rabbit_retry_backoff'):
-        ('oslo_messaging_rabbit', 'rabbit_retry_backoff'),
-    ('DEFAULT', 'rabbit_max_retries'):
-        ('oslo_messaging_rabbit', 'rabbit_max_retries'),
-    ('DEFAULT', 'rabbit_ha_queues'):
-        ('oslo_messaging_rabbit', 'rabbit_ha_queues'),
-    ('DEFAULT', 'fake_rabbit'):
-        ('oslo_messaging_rabbit', 'fake_rabbit'),
-    ('keystone_authtoken', 'admin_token'): (None, None),
-    ('keystone_authtoken', 'auth_admin_prefix'): (None, None),
+    # Deprecated group/name LIBERTY
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
     ('DEFAULT', 'log_format'): (None, None),
-    ('DEFAULT', 'fake_rabbit'): (None, None),
+    ('DEFAULT', 'use_syslog'): (None, None),
+    ('agent', 'agent_pxe_append_params'): (None, None),
+    ('agent', 'agent_erase_devices_priority'):
+        ('deploy', 'erase_devices_priority'),
+    ('agent', 'agent_pxe_config_template'): (None, None),
+    ('agent', 'manage_tftp'): ('agent', 'manage_agent_boot'),
+    # Deprecated group/name MITAKA
+    ('profiler', 'profiler_enabled'): ('profiler', 'enabled'),
 }
 
 IRONIC_CONF_EXCEPTIONS = [
+    ('DEFAULT', 'auth_strategy'),
+    ('DEFAULT', 'enabled_drivers'),
+    ('DEFAULT', 'pybasedir'),
+    ('DEFAULT', 'bindir'),
+    ('DEFAULT', 'state_path'),
+    ('ai', 'server'),
+    ('ai', 'username'),
+    ('api', 'api_workers'),
+    ('database', 'connection'),
     ('keystone_authtoken', 'admin_tenant_name'),
     ('keystone_authtoken', 'admin_user'),
     ('keystone_authtoken', 'admin_password'),
+    ('keystone_authtoken', 'auth_host'),
+    ('keystone_authtoken', 'auth_uri'),
+    ('keystone_authtoken', 'identity_uri'),
     ('keystone_authtoken', 'signing_dir'),
-    ('ai', 'server'),
-    ('ai', 'username'),
+    ('solaris_ipmi', 'imagecache_dirname'),
+    ('solaris_ipmi', 'imagecache_lock_timeout'),
 ]
 
 

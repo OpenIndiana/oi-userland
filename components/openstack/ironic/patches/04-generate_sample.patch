@@ -1,8 +1,8 @@
 In-house patch to update the generate_sample script and related data
 files for use with Solaris.
 
---- ironic-2015.1.2/tools/config/generate_sample.sh.orig	2015-10-13 10:53:40.000000000 -0700
-+++ ironic-2015.1.2/tools/config/generate_sample.sh	2016-02-01 21:01:28.356560160 -0800
+--- ironic-5.1.2/tools/config/generate_sample.sh.~1~	2016-06-21 12:57:28.000000000 -0700
++++ ironic-5.1.2/tools/config/generate_sample.sh	2016-07-19 14:17:02.813964380 -0700
 @@ -1,5 +1,7 @@
  #!/usr/bin/env bash
  
@@ -11,3 +11,22 @@ files for use with Solaris.
  # Generate sample configuration for your project.
  #
  # Aside from the command line flags, it also respects a config file which
+--- ironic-5.1.2/tools/config/oslo.config.generator.rc.~1~	2016-06-21 12:57:28.000000000 -0700
++++ ironic-5.1.2/tools/config/oslo.config.generator.rc	2016-07-19 14:27:38.284860215 -0700
+@@ -1,2 +1,15 @@
+-export IRONIC_CONFIG_GENERATOR_EXTRA_LIBRARIES='oslo.db oslo.messaging oslo.middleware.cors keystonemiddleware.auth_token oslo.concurrency oslo.policy oslo.log oslo.service.service oslo.service.periodic_task oslo.service.sslutils'
++export IRONIC_CONFIG_GENERATOR_EXTRA_LIBRARIES='
++    oslo.db
++    oslo.messaging
++    oslo.middleware
++    keystonemiddleware.auth_token
++    oslo.concurrency
++    oslo.policy
++    oslo.log
++    oslo.service.service
++    oslo.service.periodic_task
++    oslo.service.sslutils
++    oslo.service.wsgi
++    oslo.versionedobjects
++'
+ export IRONIC_CONFIG_GENERATOR_EXTRA_MODULES='ironic_lib.disk_utils ironic_lib.disk_partitioner ironic_lib.utils'

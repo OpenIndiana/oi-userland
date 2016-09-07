@@ -16,11 +16,11 @@
 """
 Solaris Driver and supporting meta-classes.
 """
+from oslo_log import log as logging
 
 from ironic.drivers import base
 from ironic.drivers.modules import ipmitool
 from ironic.drivers.modules import solaris_ipmitool
-from ironic.openstack.common import log as logging
 
 LOG = logging.getLogger(__name__)
 

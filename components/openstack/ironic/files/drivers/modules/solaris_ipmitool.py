@@ -38,9 +38,12 @@ from urlparse import urlparse
 
 from lockfile import LockFile, LockTimeout
 from oslo_concurrency import processutils
-from oslo.config import cfg
-from oslo_utils import excutils
+from oslo_config import cfg
+from oslo_log import log as logging
+from oslo_service import loopingcall
+from oslo_utils import excutils, strutils
 from scp import SCPClient
+import six
 
 from ironic.common import boot_devices, exception, images, keystone, states, \
     utils
@@ -51,8 +54,7 @@ from ironic.db import api as dbapi
 from ironic.drivers import base
 from ironic.drivers.modules import ipmitool
 from ironic.drivers import utils as driver_utils
-from ironic.openstack.common import log as logging
-from ironic.openstack.common import loopingcall
+from ironic import objects
 
 PLATFORM = platform.system()
 if PLATFORM != "SunOS":
@@ -90,12 +92,6 @@ AI_OPTS = [
                help='Actual SSH Key contents to use.')
     ]
 
-AUTH_OPTS = [
-    cfg.StrOpt('auth_strategy',
-               default='keystone',
-               help='Method to use for authentication: noauth or keystone.')
-    ]
-
 SOLARIS_IPMI_OPTS = [
     cfg.StrOpt('imagecache_dirname',
                default='/var/lib/ironic/images',
@@ -109,10 +105,9 @@ LOG = logging.getLogger(__name__)
 
 CONF = cfg.CONF
 OPT_GROUP = cfg.OptGroup(name='ai',
-                         title='Options for the Automated Install driver')
+                         title='Options for the Solaris driver')
 CONF.register_group(OPT_GROUP)
 CONF.register_opts(AI_OPTS, OPT_GROUP)
-CONF.register_opts(AUTH_OPTS)
 SOLARIS_IPMI_GROUP = cfg.OptGroup(
     name="solaris_ipmi",
     title="Options defined in ironic.drivers.modules.solaris_ipmi")
@@ -144,28 +139,38 @@ OPTIONAL_PROPERTIES = {
     'install_profiles': _("List of configuration profiles to be applied "
                           "to the installation environment during an install. "
                           "Optional."),
-    'ipmi_bridging': _("bridging_type; default is \"no\". One of \"single\", "
-                       "\"dual\", \"no\". Optional."),
-    'ipmi_local_address': _("local IPMB address for bridged requests. "
-                            "Used only if ipmi_bridging is set "
-                            "to \"single\" or \"dual\". Optional."),
-    'ipmi_priv_level':
-        _("privilege level; default is ADMINISTRATOR. "
-          "One of %s. Optional.") % '. '.join(ipmitool.VALID_PRIV_LEVELS),
-    'ipmi_target_address': _("destination address for bridged request. "
-                             "Required only if ipmi_bridging is set "
-                             "to \"single\" or \"dual\"."),
-    'ipmi_target_channel': _("destination channel for bridged request. "
-                             "Required only if ipmi_bridging is set to "
-                             "\"single\" or \"dual\"."),
-    'ipmi_transit_address': _("transit address for bridged request. Required "
-                              "only if ipmi_bridging is set to \"dual\"."),
-    'ipmi_transit_channel': _("transit channel for bridged request. Required "
-                              "only if ipmi_bridging is set to \"dual\"."),
     'publishers': _("List of IPS publishers to install from, in the format "
                     "name@origin. Required if fmri property is set."),
     'sc_profiles': _("List of system configuration profiles to be applied "
-                     "to an installed system. Optional.")
+                     "to an installed system. Optional."),
+
+    'ipmi_port': _("remote IPMI RMCP port. Optional."),
+    'ipmi_priv_level':
+        _("privilege level; default is ADMINISTRATOR. "
+          "One of %s. Optional.") % '. '.join(ipmitool.VALID_PRIV_LEVELS),
+    'ipmi_bridging': _("bridging_type; default is \"no\". One of \"single\", "
+                       "\"dual\", \"no\". Optional."),
+    'ipmi_transit_channel': _("transit channel for bridged request. Required "
+                              "only if ipmi_bridging is set to \"dual\"."),
+    'ipmi_transit_address': _("transit address for bridged request. Required "
+                              "only if ipmi_bridging is set to \"dual\"."),
+    'ipmi_target_channel': _("destination channel for bridged request. "
+                             "Required only if ipmi_bridging is set to "
+                             "\"single\" or \"dual\"."),
+    'ipmi_target_address': _("destination address for bridged request. "
+                             "Required only if ipmi_bridging is set "
+                             "to \"single\" or \"dual\"."),
+    'ipmi_local_address': _("local IPMB address for bridged requests. "
+                            "Used only if ipmi_bridging is set "
+                            "to \"single\" or \"dual\". Optional."),
+    'ipmi_protocol_version': _('the version of the IPMI protocol; default '
+                               'is "2.0". One of "1.5", "2.0". Optional.'),
+    'ipmi_force_boot_device': _("Whether Ironic should specify the boot "
+                                "device to the BMC each time the server "
+                                "is turned on, eg. because the BMC is not "
+                                "capable of remembering the selected boot "
+                                "device across power cycles; default value "
+                                "is False. Optional.")
 }
 
 COMMON_PROPERTIES = REQUIRED_PROPERTIES.copy()
@@ -186,9 +191,6 @@ IPMI_PROPERTIES = [
 CPU_LOCATION = '/System/Processors/CPUs/CPU_%d/total_cores'
 
 LAST_CMD_TIME = {}
-TIMING_SUPPORT = None
-SINGLE_BRIDGE_SUPPORT = None
-DUAL_BRIDGE_SUPPORT = None
 
 
 def _ssh_execute(ssh_obj, ssh_cmd, raise_exception=True, err_msg=None):
@@ -208,7 +210,7 @@ def _ssh_execute(ssh_obj, ssh_cmd, raise_exception=True, err_msg=None):
     try:
         stdout = processutils.ssh_execute(ssh_obj, ssh_cmd)[0]
     except Exception as err:
-        LOG.debug(_("Cannot execute SSH cmd %(cmd)s. Reason: %(err)s.") %
+        LOG.error(_LE("Cannot execute SSH cmd %(cmd)s. Reason: %(err)s.") %
                   {'cmd': ssh_cmd, 'err': err})
         returncode = 1
         if raise_exception:
@@ -237,13 +239,14 @@ def _parse_driver_info(node):
     bridging_types = ['single', 'dual']
     missing_info = [key for key in REQUIRED_PROPERTIES if not info.get(key)]
     if missing_info:
-        raise exception.MissingParameterValue(
-            _("The following IPMI credentials are not supplied"
-              " to IPMI driver: %s.") % missing_info)
+        raise exception.MissingParameterValue(_(
+            "Missing the following IPMI credentials in node's"
+            " driver_info: %s.") % missing_info)
 
     address = info.get('ipmi_address')
     username = info.get('ipmi_username')
-    password = info.get('ipmi_password')
+    password = six.text_type(info.get('ipmi_password', ''))
+    dest_port = info.get('ipmi_port')
     port = info.get('ipmi_terminal_port')
     priv_level = info.get('ipmi_priv_level', 'ADMINISTRATOR')
     bridging_type = info.get('ipmi_bridging', 'no')
@@ -252,19 +255,34 @@ def _parse_driver_info(node):
     transit_address = info.get('ipmi_transit_address')
     target_channel = info.get('ipmi_target_channel')
     target_address = info.get('ipmi_target_address')
+    protocol_version = str(info.get('ipmi_protocol_version', '2.0'))
+    force_boot_device = info.get('ipmi_force_boot_device', False)
 
-    if port:
-        try:
-            port = int(port)
-        except ValueError:
-            raise exception.InvalidParameterValue(_(
-                "IPMI terminal port is not an integer."))
+    if not username:
+        LOG.warning(_LW('ipmi_username is not defined or empty for node %s: '
+                        'NULL user will be utilized.') % node.uuid)
+    if not password:
+        LOG.warning(_LW('ipmi_password is not defined or empty for node %s: '
+                        'NULL password will be utilized.') % node.uuid)
+
+    if protocol_version not in ipmitool.VALID_PROTO_VERSIONS:
+        valid_versions = ', '.join(ipmitool.VALID_PROTO_VERSIONS)
+        raise exception.InvalidParameterValue(_(
+            "Invalid IPMI protocol version value %(version)s, the valid "
+            "value can be one of %(valid_versions)s") %
+            {'version': protocol_version, 'valid_versions': valid_versions})
+
+    if port is not None:
+        port = utils.validate_network_port(port, 'ipmi_terminal_port')
+
+    if dest_port is not None:
+        dest_port = utils.validate_network_port(dest_port, 'ipmi_port')
 
     # check if ipmi_bridging has proper value
     if bridging_type == 'no':
         # if bridging is not selected, then set all bridging params to None
-        local_address = transit_channel = transit_address = \
-            target_channel = target_address = None
+        (local_address, transit_channel, transit_address, target_channel,
+         target_address) = (None,) * 5
     elif bridging_type in bridging_types:
         # check if the particular bridging option is supported on host
         if not ipmitool._is_option_supported('%s_bridge' % bridging_type):
@@ -309,6 +327,7 @@ def _parse_driver_info(node):
 
     return {
         'address': address,
+        'dest_port': dest_port,
         'username': username,
         'password': password,
         'port': port,
@@ -318,8 +337,10 @@ def _parse_driver_info(node):
         'transit_channel': transit_channel,
         'transit_address': transit_address,
         'target_channel': target_channel,
-        'target_address': target_address
-        }
+        'target_address': target_address,
+        'protocol_version': protocol_version,
+        'force_boot_device': force_boot_device
+    }
 
 
 def _exec_ipmitool(driver_info, command):
@@ -344,13 +365,21 @@ def _exec_ipmitool(driver_info, command):
     """
     LOG.debug("SolarisDeploy._exec_ipmitool:driver_info: '%s', "
               "command: '%s'" % (driver_info, command))
+    ipmi_version = ('lanplus'
+                    if driver_info['protocol_version'] == '2.0'
+                    else 'lan')
     args = ['/usr/sbin/ipmitool',
             '-I',
-            'lanplus',
+            ipmi_version,
             '-H',
             driver_info['address'],
             '-L', driver_info['priv_level']
             ]
+
+    if driver_info['dest_port']:
+        args.append('-p')
+        args.append(driver_info['dest_port'])
+
     if driver_info['username']:
         args.append('-U')
         args.append(driver_info['username'])
@@ -378,7 +407,7 @@ def _exec_ipmitool(driver_info, command):
         # NOTE(deva): ensure that no communications are sent to a BMC more
         #             often than once every min_command_interval seconds.
         time_till_next_poll = CONF.ipmi.min_command_interval - (
-                time.time() - LAST_CMD_TIME.get(driver_info['address'], 0))
+            time.time() - LAST_CMD_TIME.get(driver_info['address'], 0))
         if time_till_next_poll > 0:
             time.sleep(time_till_next_poll)
         # Resetting the list that will be utilized so the password arguments
@@ -399,7 +428,7 @@ def _exec_ipmitool(driver_info, command):
             except processutils.ProcessExecutionError as e:
                 with excutils.save_and_reraise_exception() as ctxt:
                     err_list = [x for x in ipmitool.IPMITOOL_RETRYABLE_FAILURES
-                                if x in e.message]
+                                if x in six.text_type(e)]
                     if ((time.time() > end_time) or
                         (num_tries == 0) or
                             not err_list):
@@ -443,7 +472,7 @@ def _get_node_architecture(node):
             cpu_arch, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
         except Exception as err:
             LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
-                          (err)))
+                      (err)))
             raise exception.IPMIFailure(cmd=err)
 
         propdict = {'cpu_arch': cpu_arch}
@@ -484,14 +513,12 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
     LOG.debug("_check_deploy_state() deploy_thread_state: %s" %
               (deploy_thread.state))
 
-    # Get DB instance
-    mydbapi = dbapi.get_instance()
     try:
         # Get current DB copy of node
-        cur_node = mydbapi.get_node_by_uuid(node_uuid)
+        cur_node = objects.Node.get_by_uuid(task.context, node_uuid)
     except exception.NodeNotFound:
-        LOG.info(_("During check_deploy_state, node %(node)s was not "
-                   "found and presumed deleted by another process.") %
+        LOG.info(_LI("During check_deploy_state, node %(node)s was not "
+                     "found and presumed deleted by another process.") %
                  {'node': node_uuid})
         # Thread should have stopped already, but let's make sure.
         deploy_thread.stop()
@@ -506,8 +533,8 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
                 task.node.save()
         raise loopingcall.LoopingCallDone()
     except Exception as err:
-        LOG.info(_("During check_deploy_state, node %(node)s could "
-                   "not be retrieved: %(err)s") %
+        LOG.info(_LI("During check_deploy_state, node %(node)s could "
+                     "not be retrieved: %(err)s") %
                  {'node': node_uuid, 'err': err})
         # Thread should have stopped already, but lets make sure.
         deploy_thread.stop()
@@ -538,8 +565,11 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
         if deploy_thread.state == states.DEPLOYDONE:
             cur_node.provision_state = states.ACTIVE
         elif deploy_thread.state == states.DEPLOYFAIL:
-            cur_node.last_error = "Install failed; check install.log for " + \
-                                  "more details."
+            if deploy_thread.error is not None:
+                cur_node.last_error = deploy_thread.error
+            else:
+                cur_node.last_error = "Install failed; check install.log " + \
+                                      "for more details."
             cur_node.provision_state = deploy_thread.state
         else:
             cur_node.provision_state = deploy_thread.state
@@ -566,7 +596,7 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
         raise loopingcall.LoopingCallDone()
 
     elif cur_node.provision_state == states.DEPLOYFAIL:
-        # Node deployment as for some reason failed already, exist thread
+        # Node deployment has for some reason failed already, exit thread
         LOG.debug("_check_deploy_state().deploy_failed: %s" %
                   (cur_node.provision_state))
         deploy_thread.stop()
@@ -637,8 +667,8 @@ def _image_refcount_adjust(image_path, count, release=True):
 
     if count == 0:
         # Adjusting by zero makes no sense just return
-        err_msg = _("Zero reference count adjustment attempted "
-                    "on file: %s") % (image_path)
+        err_msg = _LE("Zero reference count adjustment attempted "
+                      "on file: %s") % (image_path)
         LOG.error(err_msg)
         raise SolarisIPMIError(msg=err_msg)
 
@@ -647,8 +677,8 @@ def _image_refcount_adjust(image_path, count, release=True):
     if not os.path.exists(ref_filename):
         if count < 0:
             # Cannot decrement reference on non-existent file
-            err_msg = _("Negative reference count adjustment attempted on "
-                        "non-existent file: %s") % (image_path)
+            err_msg = _LE("Negative reference count adjustment attempted on "
+                          "non-existent file: %s") % (image_path)
             LOG.error(err_msg)
             raise SolarisIPMIError(msg=err_msg)
 
@@ -659,7 +689,7 @@ def _image_refcount_adjust(image_path, count, release=True):
     # Acquire lock on refcount file
     lock = _image_refcount_acquire_lock(image_path)
     if lock is None:
-        err_msg = _("Failed to acquire lock on image: %s") % (image_path)
+        err_msg = _LE("Failed to acquire lock on image: %s") % (image_path)
         LOG.error(err_msg)
         raise SolarisIPMIError(msg=err_msg)
 
@@ -723,7 +753,7 @@ def _fetch_uri(task, uri):
                     lock.release()
 
                 except Exception as err:
-                    LOG.error(_("Unable to fetch Glance image: id %s: %s")
+                    LOG.error(_LE("Unable to fetch Glance image: id %s: %s")
                               % (url.netloc, err))
                     raise
             else:
@@ -763,7 +793,7 @@ def _fetch_uri(task, uri):
                         lock.release()
 
                     except Exception as err:
-                        LOG.error(_("Unable to fetch image: id %s: %s")
+                        LOG.error(_LE("Unable to fetch image: id %s: %s")
                                   % (url.netloc, err))
                         raise
                 else:
@@ -772,7 +802,7 @@ def _fetch_uri(task, uri):
     except Exception as err:
         # Only remove the temporary file if exception occurs
         # as noted above Caller is responsible for its removal
-        LOG.error(_("Unable to fetch image: uri %s: %s") % (uri, err))
+        LOG.error(_LE("Unable to fetch image: uri %s: %s") % (uri, err))
         if url.scheme == "glance":
             _image_refcount_adjust(temp_uri, -1)
         else:
@@ -1241,7 +1271,7 @@ def _fetch_and_create(task, obj_type, obj_name, obj_uri, aiservice, mac,
         remote_file = os.path.join("/tmp", obj_name) + ".xml"
         aiservice.copy_remote_file(temp_file, remote_file)
     except Exception as err:
-        LOG.error(_("Fetch and create failed for %s: name: %s: %s") %
+        LOG.error(_LE("Fetch and create failed for %s: name: %s: %s") %
                   (obj_type, obj_uri, err))
         if url.scheme == "glance":
             _image_refcount_adjust(temp_file, -1)
@@ -1284,6 +1314,7 @@ class DeployStateChecker(Thread):
         self.task = task
         self.node = task.node
         self._state = states.DEPLOYWAIT
+        self._error = None
         self.ssh_connection = None
         self.running = True
 
@@ -1292,10 +1323,36 @@ class DeployStateChecker(Thread):
         """Deployment state property"""
         return self._state
 
+    @property
+    def error(self):
+        """Deployment error property"""
+        return self._error
+
     def run(self):
         """Start the thread """
         LOG.debug("DeployStateChecker.run(): Connecting...")
-        client = utils.ssh_connect(self._get_ssh_dict())
+        # Occasionally SSH connection fails, make three attempts
+        # before returning failure.
+        connection_attempt = 0
+        while (connection_attempt < 3):
+            try:
+                connection_attempt += 1
+                client = utils.ssh_connect(self._get_ssh_dict())
+                break
+            except SSHException as err:
+                if connection_attempt < 3:
+                    continue
+                else:
+                    self._state = states.DEPLOYFAIL
+                    self._error = str(err)
+                    self.stop()
+                    return
+        else:
+            self._state = states.DEPLOYFAIL
+            self._error = "Failed to establish SSH Connection with node."
+            self.stop()
+            return
+
         channel = client.invoke_shell()
         channel.settimeout(0.0)
         channel.set_combine_stderr(True)
@@ -1825,7 +1882,7 @@ class SolarisDeploy(base.DeployInterface):
         # Check if AI Service exists, log message if already removed
         if not aiservice.exists:
             # There is nothing to clean up as service removed
-            LOG.info(_("AI Service %s already removed.") % (aiservice.name))
+            LOG.info(_LI("AI Service %s already removed.") % (aiservice.name))
         else:
             for mac in driver_utils.get_node_mac_addresses(task):
                 # 1. Delete AI Client for this MAC Address
@@ -1879,6 +1936,7 @@ class SolarisManagement(base.ManagementInterface):
                 driver=self.__class__.__name__,
                 reason=_("Unable to locate usable ipmitool command in "
                          "the system path when checking ipmitool version"))
+        ipmitool._check_temp_dir()
 
     def validate(self, task):
         """Check that 'driver_info' contains IPMI credentials.
@@ -1913,7 +1971,7 @@ class SolarisManagement(base.ManagementInterface):
                         boot_devices.CDROM, boot_devices.BIOS,
                         boot_devices.SAFE]
             elif cpu_arch == 'SPARC':
-                return [boot_devices.DISK, 'wanboot']
+                return [boot_devices.DISK, boot_devices.WANBOOT]
             else:
                 raise exception.InvalidParameterValue(
                     _("Invalid node architecture of '%s'.") % (cpu_arch))
@@ -1942,6 +2000,14 @@ class SolarisManagement(base.ManagementInterface):
         publishers = task.node.driver_info.get('publishers')
         fmri = task.node.driver_info.get('fmri')
 
+        if task.node.driver_info.get('ipmi_force_boot_device', False):
+            driver_utils.force_persistent_boot(task,
+                                               device,
+                                               persistent)
+            # Reset persistent to False, in case of BMC does not support
+            # persistent or we do not have admin rights.
+            persistent = False
+
         if cpu_arch == 'x86':
             if device not in self.get_supported_boot_devices(task=task):
                 raise exception.InvalidParameterValue(_(
@@ -1951,7 +2017,7 @@ class SolarisManagement(base.ManagementInterface):
                 cmd.append("options=persistent")
         elif cpu_arch == 'SPARC':
             # Set bootmode script to network DHCP or disk
-            if device == 'wanboot':
+            if device == boot_devices.WANBOOT:
                 boot_cmd = 'set /HOST/bootmode script="'
                 script_str = 'boot net:dhcp - install'
                 if archive_uri:
@@ -2025,6 +2091,17 @@ class SolarisManagement(base.ManagementInterface):
 
         """
         LOG.debug("SolarisManagement.get_boot_device")
+        driver_info = task.node.driver_info
+        driver_internal_info = task.node.driver_internal_info
+
+        if (driver_info.get('ipmi_force_boot_device', False) and
+                driver_internal_info.get('persistent_boot_device') and
+                driver_internal_info.get('is_next_boot_persistent', True)):
+            return {
+                'boot_device': driver_internal_info['persistent_boot_device'],
+                'persistent': True
+            }
+
         cpu_arch = _get_node_architecture(task.node)
         driver_info = _parse_driver_info(task.node)
         response = {'boot_device': None, 'persistent': None}
@@ -2067,7 +2144,7 @@ class SolarisManagement(base.ManagementInterface):
             response['persistent'] = 'Options apply to all future boots' in out
         elif cpu_arch == 'SPARC':
             if "net:dhcp" in out:
-                response['boot_device'] = 'wanboot'
+                response['boot_device'] = boot_devices.WANBOOT
             else:
                 response['boot_device'] = boot_devices.DISK
         LOG.debug(response)
@@ -2141,11 +2218,26 @@ class SolarisInspect(base.InspectInterface):
 
         # Installed memory size is returned in GB, Nova assumes this is MB
         # so convert if returned in GB
-        memsize, memtype = propdict['memory_mb'].split(' ')
-        if memtype == 'GB':
-            propdict['memory_mb'] = int(memsize) * 1024
+        try:
+            size_bytes = strutils.string_to_bytes(
+                propdict['memory_mb'].replace(' ', ''))
+            propdict['memory_mb'] = int(size_bytes / float(1 << 20))
+        except ValueError:
+            # Size conversion failed, just ensure value is an int
+            propdict['memory_mb'] = int(propdict['memory_mb'])
+
+        if propdict['local_gb'] == 'Not Available':
+            del propdict['local_gb']
         else:
-            propdict['memory_mb'] = int(memsize)
+            # Local disk size can be returned with size type identifier
+            # remove identifier as this needs to be an int value
+            try:
+                size_bytes = strutils.string_to_bytes(
+                    propdict['local_gb'].replace(' ', ''))
+                propdict['local_gb'] = int(size_bytes / float(1 << 30))
+            except ValueError:
+                # Size conversion failed, just ensure value is an int
+                propdict['local_gb'] = int(propdict['local_gb'])
 
         cpu_props = self._get_cpu_cores(task, propdict['cpus'])
 
