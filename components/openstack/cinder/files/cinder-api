@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -15,12 +15,35 @@
 #    under the License.
 
 import os
+from subprocess import CalledProcessError, check_call, Popen
+import sys
 
 import smf_include
 
 
+def httpd(cmd):
+    cmd = ['/usr/apache2/2.4/bin/httpd', '-f',
+           '/var/lib/cinder/cinder.httpd.conf', '-k', cmd]
+    try:
+        Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    except CalledProcessError as err:
+        print >> sys.stderr, 'Error executing %s: %s' % (cmd, err)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
 def start():
-    smf_include.smf_subprocess("/usr/lib/cinder/cinder-api")
+    httpd('start')
+
+
+def stop():
+    httpd('stop')
+
+
+def restart():
+    httpd('restart')
+
 
 if __name__ == "__main__":
     os.putenv("LC_ALL", "C")

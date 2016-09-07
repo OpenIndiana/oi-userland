@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -58,11 +58,28 @@
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/lib/svc/method/cinder-api %m">
       <method_context>
+        <method_credential user='cinder' group='cinder'
+          privileges='basic,{zone}:/system/volatile/cinder_wsgi_*'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="stop"
+      exec="/lib/svc/method/cinder-api %m">
+      <method_context>
+        <method_credential user='cinder' group='cinder'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="restart"
+      exec="/lib/svc/method/cinder-api %m">
+      <method_context>
         <method_credential user='cinder' group='cinder' />
       </method_context>
     </exec_method>
-    <exec_method timeout_seconds="60" type="method" name="stop"
-      exec=":kill"/>
+
+    <property_group type="framework" name="startd">
+      <propval type="astring" name="ignore_error" value="core,signal"/>
+    </property_group>
 
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
@@ -72,6 +89,26 @@
         <propval name='value_authorization' type='astring'
                  value='solaris.smf.value.cinder' />
       </property_group>
+
+      <property_group name='cinder-api_stencil' type='configfile'>
+        <propval name='path' type='astring'
+          value='/var/lib/cinder/cinder.httpd.conf'/>
+        <propval name='stencil' type='astring' value='cinder-api.stencil'/>
+        <propval name='mode' type='astring' value='0444'/>
+        <propval name='owner' type='astring' value='cinder'/>
+        <propval name='group' type='astring' value='cinder'/>
+      </property_group>
+
+      <property_group name='config' type='application'>
+        <propval name='access_log' type='astring'
+          value='/var/log/cinder/cinder_access.log'/>
+        <propval name='error_log' type='astring'
+          value='/var/log/cinder/cinder_error.log'/>
+        <propval name='port' type='count' value='8776'/>
+        <propval name='servername' type='astring' value='127.0.0.1'/>
+        <propval name='use_tls' type='boolean' value='false'/>
+      </property_group>
+
     </instance>
 
     <template>
@@ -86,6 +123,75 @@
           order to provide volume management for the OpenStack Compute service.
         </loctext>
       </description>
+
+      <pg_pattern required='true' type='application' name='config'>
+        <prop_pattern required='true' type='astring' name='access_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache access log file.  Defaults to
+              /var/log/cinder/cinder_access.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='error_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache error log file.  Defaults to
+              /var/log/cinder/cinder_error.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='count' name='port'>
+          <description>
+            <loctext xml:lang='C'>
+              The port for public requests.  Default value is 8776.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='servername'>
+          <description>
+            <loctext xml:lang='C'>
+              The Apache ServerName Directive.  Hostname and port that the
+              server uses to identify itself.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded X.509 Certificate file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_ca_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              File of concatenated PEM-encoded CA Certificates for Client Auth.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_key_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded Private Key file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='boolean' name='use_tls'>
+          <description>
+            <loctext xml:lang='C'>
+              Boolean property to indicate usage of TLS.  Defaults to 'false'.
+            </loctext>
+          </description>
+        </prop_pattern>
+      </pg_pattern>
     </template>
   </service>
 </service_bundle>

@@ -2,7 +2,7 @@
 # Copyright (c) 2012 OpenStack LLC.
 # All Rights Reserved.
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -26,7 +26,7 @@ from oslo_log import log as logging
 from oslo_utils import units
 
 from cinder import exception
-from cinder.i18n import _
+from cinder.i18n import _, _LI
 from cinder.volume.drivers import nfs
 
 ZFS_NFS_VERSION = '1.0.0'
@@ -205,6 +205,19 @@ class ZfsNfsVolumeDriver(nfs.NfsDriver):
         LOG.debug('Selected %s as target nfs share.', target_share)
 
         return target_share
+
+    def extend_volume(self, volume, new_size):
+        """Extend an existing volume to the new size."""
+        LOG.info(_LI('Extending volume %s.'), volume['id'])
+        extend_by = int(new_size) - volume['size']
+        if not self._is_share_eligible(volume['provider_location'],
+                                       extend_by):
+            raise exception.ExtendVolumeError(reason='Insufficient space to'
+                                              ' extend volume %s to %sG'
+                                              % (volume['id'], new_size))
+        path = self.local_path(volume)
+        LOG.info(_LI('Resizing file to %sG.'), new_size)
+        self._execute('/usr/bin/truncate', '-s', '%sG' % new_size, path)
 
     def set_nas_security_options(self, is_new_cinder_install):
         """Secure NAS options.

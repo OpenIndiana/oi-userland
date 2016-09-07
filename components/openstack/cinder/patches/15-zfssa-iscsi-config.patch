@@ -1,0 +1,180 @@
+This patch fixes the zfssa_initator config logic around using the
+default initiator group. The patch has been submitted upstream and this
+file should be removed once Launchpad bug 1609517 is fixed.
+
+--- cinder-8.0.0/cinder/volume/drivers/zfssa/zfssaiscsi.py.~1~	2016-04-07 00:30:48.000000000 +0000
++++ cinder-8.0.0/cinder/volume/drivers/zfssa/zfssaiscsi.py	2016-09-06 16:36:32.014258306 +0000
+@@ -174,13 +174,13 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+             for initiator_group in initiator_config:
+                 zfssa_initiator_group = initiator_group
+                 for zfssa_initiator in initiator_config[zfssa_initiator_group]:
+-                    self.zfssa.create_initiator(zfssa_initiator['iqn'],
+-                                                zfssa_initiator_group + '-' +
+-                                                zfssa_initiator['iqn'],
+-                                                chapuser=
+-                                                zfssa_initiator['user'],
+-                                                chapsecret=
+-                                                zfssa_initiator['password'])
++                    self.zfssa.create_initiator(
++                        zfssa_initiator['iqn'],
++                        zfssa_initiator_group + '-' +
++                        zfssa_initiator['iqn'],
++                        chapuser=zfssa_initiator['user'],
++                        chapsecret=zfssa_initiator['password'])
++
+                     if (zfssa_initiator_group != 'default'):
+                         self.zfssa.add_to_initiatorgroup(
+                             zfssa_initiator['iqn'],
+@@ -188,36 +188,37 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         else:
+             LOG.warning(_LW('zfssa_initiator_config not found. '
+                             'Using deprecated configuration options.'))
++
++            if not lcfg.zfssa_initiator_group:
++                LOG.error(_LE('zfssa_initiator_group cannot be empty. '
++                              'Explicitly set the value "default" to use '
++                              'the the default initiator group.'))
++                raise exception.InvalidConfigurationValue(
++                    value='', option='zfssa_initiator_group')
++
+             if (not lcfg.zfssa_initiator and
+-                (not lcfg.zfssa_initiator_group and
+-                 lcfg.zfssa_initiator_group != 'default')):
++               lcfg.zfssa_initiator_group != 'default'):
+                 LOG.error(_LE('zfssa_initiator cannot be empty when '
+                               'creating a zfssa_initiator_group.'))
+                 raise exception.InvalidConfigurationValue(
+-                    value='',
+-                    option='zfssa_initiator')
+-
+-            if (lcfg.zfssa_initiator != '' and
+-                (lcfg.zfssa_initiator_group == '' or
+-                 lcfg.zfssa_initiator_group == 'default')):
+-                LOG.warning(_LW('zfssa_initiator: %(ini)s'
+-                                ' wont be used on '
+-                                'zfssa_initiator_group= %(inigrp)s.'),
+-                            {'ini': lcfg.zfssa_initiator,
+-                             'inigrp': lcfg.zfssa_initiator_group})
++                    value='', option='zfssa_initiator')
+ 
+-            # Setup initiator and initiator group
+-            if (lcfg.zfssa_initiator != '' and
+-               lcfg.zfssa_initiator_group != '' and
+-               lcfg.zfssa_initiator_group != 'default'):
+-                for initiator in lcfg.zfssa_initiator.split(','):
+-                    initiator = initiator.strip()
+-                    self.zfssa.create_initiator(
+-                        initiator, lcfg.zfssa_initiator_group + '-' +
+-                        initiator, chapuser=lcfg.zfssa_initiator_user,
+-                        chapsecret=lcfg.zfssa_initiator_password)
+-                    self.zfssa.add_to_initiatorgroup(
+-                        initiator, lcfg.zfssa_initiator_group)
++            if lcfg.zfssa_initiator != '':
++                if lcfg.zfssa_initiator_group == 'default':
++                    LOG.warning(_LW('zfssa_initiator: %(ini)s wont be used '
++                                    'on the default initiator group.'),
++                                {'ini': lcfg.zfssa_initiator})
++
++                # Setup initiator and initiator group
++                else:
++                    for initiator in lcfg.zfssa_initiator.split(','):
++                        initiator = initiator.strip()
++                        self.zfssa.create_initiator(
++                            initiator, lcfg.zfssa_initiator_group + '-' +
++                            initiator, chapuser=lcfg.zfssa_initiator_user,
++                            chapsecret=lcfg.zfssa_initiator_password)
++                        self.zfssa.add_to_initiatorgroup(
++                            initiator, lcfg.zfssa_initiator_group)
+ 
+         # Parse interfaces
+         interfaces = []
+@@ -236,8 +237,8 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         self.zfssa.add_to_targetgroup(iqn, lcfg.zfssa_target_group)
+ 
+         if lcfg.zfssa_manage_policy not in ("loose", "strict"):
+-            err_msg = (_("zfssa_manage_policy property needs to be set to"
+-                         " 'strict' or 'loose'. Current value is: %s.") %
++            err_msg = (_("zfssa_manage_policy property needs to be set to "
++                         "'strict' or 'loose'. Current value is: %s.") %
+                        lcfg.zfssa_manage_policy)
+             LOG.error(err_msg)
+             raise exception.InvalidInput(reason=err_msg)
+@@ -394,7 +395,7 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         if not self._verify_clone_size(snapshot, volume['size'] * units.Gi):
+             exception_msg = (_('Error verifying clone size on '
+                                'Volume clone: %(clone)s '
+-                               'Size: %(size)d on'
++                               'Size: %(size)d on '
+                                'Snapshot: %(snapshot)s')
+                              % {'clone': volume['name'],
+                                 'size': volume['size'],
+@@ -489,8 +490,8 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         try:
+             self.create_volume_from_snapshot(volume, zfssa_snapshot)
+         except exception.VolumeBackendAPIException:
+-            LOG.error(_LE('Clone Volume:'
+-                          '%(volume)s failed from source volume:'
++            LOG.error(_LE('Clone Volume: '
++                          '%(volume)s failed from source volume: '
+                           '%(src_vref)s'),
+                       {'volume': volume['name'],
+                        'src_vref': src_vref['name']})
+@@ -596,7 +597,7 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         cachevol_props.update(cachevol_meta)
+         cache_vol, cache_snap = None, None
+         updated_at = six.text_type(img_meta['updated_at'].isoformat())
+-        LOG.debug('Verifying cache volume %s:', cachevol_name)
++        LOG.debug('Verifying cache volume: %s', cachevol_name)
+ 
+         try:
+             cache_vol = self.zfssa.get_lun(lcfg.zfssa_pool,
+@@ -621,7 +622,7 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+                                              specs,
+                                              cachevol_props)
+         except exception.SnapshotNotFound:
+-            exception_msg = (_('Cache volume %(cache_vol)s'
++            exception_msg = (_('Cache volume %(cache_vol)s '
+                                'does not have snapshot %(cache_snap)s.'),
+                              {'cache_vol': cachevol_name,
+                               'cache_snap': cachesnap_name})
+@@ -929,7 +930,8 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+                                         'tgt_zfssa': self.tgt_zfssa,
+                                         'tgt_pool': tgt_pool,
+                                         'tgt_project': tgt_project,
+-                                        'volume': volume, 'tgt_asn': tgt_asn,
++                                        'volume': volume,
++                                        'tgt_asn': tgt_asn,
+                                         'src_zfssa': self.zfssa,
+                                         'src_asn': src_asn,
+                                         'src_pool': src_pool,
+@@ -1011,7 +1013,7 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+                                       lcfg.zfssa_cache_project,
+                                       cache['share'])
+             except exception.VolumeBackendAPIException:
+-                LOG.warning(_LW("Volume %s exists but can't be deleted"),
++                LOG.warning(_LW("Volume %s exists but can't be deleted."),
+                             cache['share'])
+ 
+     def manage_existing(self, volume, existing_ref):
+@@ -1063,8 +1065,8 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+                                      schema={"custom:cinder_managed": False})
+         except exception.VolumeBackendAPIException:
+             with excutils.save_and_reraise_exception():
+-                LOG.error(_LE("Failed to rename volume %(existing)s to"
+-                              " %(new)s. Volume unmanage failed."),
++                LOG.error(_LE("Failed to rename volume %(existing)s to "
++                              "%(new)s. Volume unmanage failed."),
+                           {'existing': volume['name'],
+                            'new': new_name})
+         return None
+@@ -1080,8 +1082,8 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+             err_msg = (_("Unknown if the volume: %s to be managed is "
+                          "already being managed by Cinder. Aborting manage "
+                          "volume. Please add 'cinder_managed' custom schema "
+-                         "property to the volume and set its value to False."
+-                         " Alternatively, set the value of cinder config "
++                         "property to the volume and set its value to False. "
++                         "Alternatively, set the value of cinder config "
+                          "policy 'zfssa_manage_policy' to 'loose' to "
+                          "remove this restriction.") % vol_name)
+             LOG.error(err_msg)

@@ -30,82 +30,84 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf, \
 
 CINDER_CONF_MAPPINGS = {
     # Deprecated group/name
-    ('DEFAULT', 'eqlx_chap_password'): ('DEFAULT', 'chap_password'),
-    ('DEFAULT', 'eqlx_use_chap'): ('DEFAULT', 'use_chap_auth'),
-    ('DEFAULT', 'eqlx_chap_login'): ('DEFAULT', 'chap_username'),
-    ('DEFAULT', 'host'): ('DEFAULT', 'backend_host'),
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'qpid_hostname'):
-        ('oslo_messaging_qpid', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'):
-        ('oslo_messaging_qpid', 'qpid_port'),
-    ('DEFAULT', 'qpid_hosts'):
-        ('oslo_messaging_qpid', 'qpid_hosts'),
-    ('DEFAULT', 'qpid_username'):
-        ('oslo_messaging_qpid', 'qpid_username'),
-    ('DEFAULT', 'qpid_password'):
-        ('oslo_messaging_qpid', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'):
-        ('oslo_messaging_qpid', 'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_heartbeat'):
-        ('oslo_messaging_qpid', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'):
-        ('oslo_messaging_qpid', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'):
-        ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
-    ('DEFAULT', 'qpid_receiver_capacity'):
-        ('oslo_messaging_qpid', 'qpid_receiver_capacity'),
-    ('DEFAULT', 'qpid_topology_version'):
-        ('oslo_messaging_qpid', 'qpid_topology_version'),
-    ('DEFAULT', 'amqp_durable_queues'):
-        ('oslo_messaging_rabbit', 'amqp_durable_queues'),
-    ('DEFAULT', 'amqp_auto_delete'):
-        ('oslo_messaging_rabbit', 'amqp_auto_delete'),
-    ('DEFAULT', 'rpc_conn_pool_size'):
-        ('oslo_messaging_rabbit', 'rpc_conn_pool_size'),
-    ('DEFAULT', 'kombu_ssl_version'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_version'),
-    ('DEFAULT', 'kombu_ssl_keyfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_keyfile'),
-    ('DEFAULT', 'kombu_ssl_certfile'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_certfile'),
-    ('DEFAULT', 'kombu_ssl_ca_certs'):
-        ('oslo_messaging_rabbit', 'kombu_ssl_ca_certs'),
-    ('DEFAULT', 'kombu_reconnect_delay'):
-        ('oslo_messaging_rabbit', 'kombu_reconnect_delay'),
-    ('DEFAULT', 'rabbit_host'):
-        ('oslo_messaging_rabbit', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'):
-        ('oslo_messaging_rabbit', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_hosts'):
-        ('oslo_messaging_rabbit', 'rabbit_hosts'),
-    ('DEFAULT', 'rabbit_use_ssl'):
-        ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'):
-        ('oslo_messaging_rabbit', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'):
-        ('oslo_messaging_rabbit', 'rabbit_password'),
-    ('DEFAULT', 'rabbit_login_method'):
-        ('oslo_messaging_rabbit', 'rabbit_login_method'),
-    ('DEFAULT', 'rabbit_virtual_host'):
-        ('oslo_messaging_rabbit', 'rabbit_virtual_host'),
-    ('DEFAULT', 'rabbit_retry_interval'):
-        ('oslo_messaging_rabbit', 'rabbit_retry_interval'),
-    ('DEFAULT', 'rabbit_retry_backoff'):
-        ('oslo_messaging_rabbit', 'rabbit_retry_backoff'),
-    ('DEFAULT', 'rabbit_max_retries'):
-        ('oslo_messaging_rabbit', 'rabbit_max_retries'),
-    ('DEFAULT', 'rabbit_ha_queues'):
-        ('oslo_messaging_rabbit', 'rabbit_ha_queues'),
-    ('DEFAULT', 'fake_rabbit'):
-        ('oslo_messaging_rabbit', 'fake_rabbit'),
-    ('DEFAULT', 'osapi_max_request_body_size'):
-        ('oslo_middleware', 'max_request_body_size'),
-    ('DEFAULT', 'log-format'): (None, None),
-    ('DEFAULT', 'use-syslog'): (None, None),
-    ('DEFAULT', 'datera_api_token'): (None, None),
-    ('DEFAULT', 'enable_v1_api'): (None, None),
-    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'host'): ('BACKEND', 'backend_host'),
+    ('DEFAULT', 'glusterfs_sparsed_volumes'):
+        ('DEFAULT', 'nas_volume_prov_type'),
+    ('DEFAULT', 'glusterfs_qcow2_volumes'):
+        ('DEFAULT', 'nas_volume_prov_type'),
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('DEFAULT', 'netapp_volume_list'):
+        ('DEFAULT', 'netapp_pool_name_search_pattern'),
+    ('DEFAULT', 'netapp_storage_pools'):
+        ('DEFAULT', 'netapp_pool_name_search_pattern'),
+    ('DEFAULT', 'netapp_eseries_host_type'):
+        ('DEFAULT', 'netapp_host_type'),
+    ('DEFAULT', 'storage_vnx_pool_name'):
+        ('DEFAULT', 'storage_vnx_pool_names'),
+    ('DEFAULT', 'notification_driver'):
+        ('oslo_messaging_notifications', 'driver'),
+    ('DEFAULT', 'notification_topics'):
+        ('oslo_messaging_notifications', 'topics'),
+    ('DEFAULT', 'hp3par_api_url'): ('DEFAULT', 'hpe3par_api_url'),
+    ('DEFAULT', 'hp3par_cpg'): ('DEFAULT', 'hp3par_cpg'),
+    ('DEFAULT', 'hp3par_cpg_snap'): ('DEFAULT', 'hpe3par_cpg_snap'),
+    ('DEFAULT', 'hp3par_debug'): ('DEFAULT', 'hpe3par_debug'),
+    ('DEFAULT', 'hp3par_iscsi_chap_enabled'):
+        ('DEFAULT', 'hpe3par_iscsi_chap_enabled'),
+    ('DEFAULT', 'hp3par_debug'): ('DEFAULT', 'hpe3par_debug'),
+    ('DEFAULT', 'hp3par_password'): ('DEFAULT', 'hpe3par_password'),
+    ('DEFAULT', 'hp3par_snapshot_expiration'):
+        ('DEFAULT', 'hpe3par_snapshot_expiration'),
+    ('DEFAULT', 'hp3par_snapshot_retention'):
+        ('DEFAULT', 'hpe3par_snapshot_retention'),
+    ('DEFAULT', 'hp3par_username'): ('DEFAULT', 'hpe3par_username'),
+    ('DEFAULT', 'hplefthand_api_url'): ('DEFAULT', 'hpelefthand_api_url'),
+    ('DEFAULT', 'hplefthand_clustername'):
+        ('DEFAULT', ' hpelefthand_clustername'),
+    ('DEFAULT', 'hplefthand_debug'): ('DEFAULT', 'hpelefthand_debug'),
+    ('DEFAULT', 'hplefthand_iscsi_chap_enabled'):
+        ('DEFAULT', ' hpelefthand_iscsi_chap_enabled'),
+    ('DEFAULT', 'hplefthand_password'): ('DEFAULT', 'hpelefthand_password'),
+    ('DEFAULT', 'hplefthand_username'): ('DEFAULT', 'hpelefthand_username'),
+    ('DEFAULT', 'hpxp_async_copy_check_interval'):
+        ('DEFAULT', 'hpexp_async_copy_check_interval'),
+    ('DEFAULT', 'hpxp_compute_target_ports'):
+        ('DEFAULT', 'hpexp_compute_target_ports'),
+    ('DEFAULT', 'hpxp_copy_check_interval'):
+        ('DEFAULT', 'hpexp_copy_check_interval'),
+    ('DEFAULT', 'hpxp_copy_speed'): ('DEFAULT', 'hpexp_copy_speed'),
+    ('DEFAULT', 'hpxp_default_copy_method'):
+        ('DEFAULT', 'hpexp_default_copy_method'),
+    ('DEFAULT', 'hpxp_group_request'): ('DEFAULT', 'hpexp_group_request'),
+    ('DEFAULT', 'hpxp_horcm_add_conf'): ('DEFAULT', 'hpexp_horcm_add_conf'),
+    ('DEFAULT', 'hpxp_horcm_name_only_discovery'):
+        ('DEFAULT', 'hpexp_horcm_name_only_discovery'),
+    ('DEFAULT', 'hpxp_horcm_numbers'): ('DEFAULT', 'hpexp_horcm_numbers'),
+    ('DEFAULT', 'hpxp_horcm_resource_name'):
+        ('DEFAULT', 'hpexp_horcm_resource_name'),
+    ('DEFAULT', 'hpxp_horcm_user'): ('DEFAULT', 'hpexp_horcm_user'),
+    ('DEFAULT', 'hpxp_ldev_range'): ('DEFAULT', 'hpexp_ldev_range'),
+    ('DEFAULT', 'hpxp_pool'): ('DEFAULT', 'hpexp_pool'),
+    ('DEFAULT', 'hpxp_storage_cli'): ('DEFAULT', 'hpexp_storage_cli'),
+    ('DEFAULT', 'hpxp_storage_id'): ('DEFAULT', 'hpexp_storage_id'),
+    ('DEFAULT', 'hpxp_target_ports'): ('DEFAULT', 'hpexp_target_ports'),
+    ('DEFAULT', 'hpxp_thin_pool'): ('DEFAULT', 'hpexp_thin_pool'),
+    ('DEFAULT', 'hpxp_zoning_request'): ('DEFAULT', 'hpexp_zoning_request'),
+    ('profiler', 'profiler_enabled'): ('profiler', 'enabled'),
+    ('DEFAULT', 'enable_v2_api'): (None, None),
+    ('DEFAULT', 'use_syslog_rfc_format'): (None, None),
+    ('DEFAULT', 'use_syslog'): (None, None),
+    ('hyperv', 'force_volumeutils_v1'): (None, None),
+    ('DEFAULT', 'rpc_zmq_port'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_freq'): (None, None),
+    ('DEFAULT', 'matchmaker_heartbeat_ttl'): (None, None),
+    ('DEFAULT', 'request_timeout'): ('DEFAULT', 'violin_request_timeout'),
+    ('DEFAULT', 'gateway_mga'): (None, None),
+    ('DEFAULT', 'gateway_mgb'): (None, None),
+    ('DEFAULT', 'use_igroups'): (None, None),
+
+
 }
 
 CINDER_CONF_EXCEPTIONS = [

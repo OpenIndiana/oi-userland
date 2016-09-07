@@ -2,10 +2,10 @@ In-house patch to cleanup backup container directories when empty.
 
 Patch may be suitable for pushing upsteam.
 
---- cinder-2015.1.0/cinder/backup/drivers/nfs.py.orig	2015-11-24 11:49:37.670852276 -0700
-+++ cinder-2015.1.0/cinder/backup/drivers/nfs.py	2015-11-24 13:31:57.282595085 -0700
-@@ -137,9 +137,21 @@ class NFSBackupDriver(chunkeddriver.Chun
-         return open(path, 'r')
+--- cinder-8.0.0/cinder/backup/drivers/posix.py.~1~	2016-04-07 00:30:48.000000000 -0700
++++ cinder-8.0.0/cinder/backup/drivers/posix.py	2016-06-10 14:44:19.856054005 -0700
+@@ -122,9 +122,21 @@ class PosixBackupDriver(chunkeddriver.Ch
+         return open(path, 'rb')
  
      def delete_object(self, container, object_name):
 -        # TODO(tbarron):  clean up the container path if it is empty

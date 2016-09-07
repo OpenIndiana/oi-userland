@@ -1,0 +1,36 @@
+This upstream patch addresses an issue with Cinder that can cause
+oslo-config-generator to fail to recognize valid namespaces. It has
+been integrated into Newton but not yet backported to Mitaka.
+
+commit 91e4fe7d0504cfded97d680832226d8ad7c68b9f
+Author: Kendall Nelson <kjnelson@us.ibm.com>
+Date:   Wed Jan 27 09:03:29 2016 -0600
+
+    Remove entry_points from setup.cfg
+    
+    The keystonemiddleware entry_point and the oslo_concurrency,
+    oslo_db_concurrency and oslo_messaging entry_points are not
+    owned by Cinder so it is possible that Keystone and Oslo could
+    move or rename the list_opts methods causing our sample
+    configuration generator to break.
+    
+    This patch removes the lines that register the entry_points since
+    they aren't actually adding anything to the sample list of
+    configuration options because the options are being added to the
+    sample file elsewhere.
+    
+    Change-Id: I186d4d9e8e565dad836543b5f6a96af1a53d4a83
+
+--- cinder-8.0.0/setup.cfg.~1~	2016-07-23 23:54:40.131686330 -0700
++++ cinder-8.0.0/setup.cfg	2016-07-23 23:55:33.014428535 -0700
+@@ -43,10 +43,6 @@ cinder.scheduler.weights =
+ 	VolumeNumberWeigher = cinder.scheduler.weights.volume_number:VolumeNumberWeigher
+ oslo.config.opts = 
+ 	cinder = cinder.opts:list_opts
+-	keystonemiddleware = keystonemiddleware.auth_token:list_opts
+-	oslo_concurrency = oslo_concurrency.opts:list_opts
+-	oslo.messaging = oslo_messaging.opts:list_opts
+-	oslo.db.concurrency = oslo.db.concurrency:list_opts
+ oslo.config.opts.defaults = 
+ 	cinder = cinder.common.config:set_middleware_defaults
+ console_scripts = 

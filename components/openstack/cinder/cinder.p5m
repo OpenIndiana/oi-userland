@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Cinder (Block Storage Service)"
 set name=pkg.description \
     value="OpenStack Cinder provides an infrastructure for managing block storage volumes in OpenStack. It allows block devices to be exposed and connected to compute instances for expanded storage, better performance and integration with enterprise storage platforms."
-set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Mitaka $(COMPONENT_VERSION)"
 set name=com.oracle.info.description \
     value="Cinder, the OpenStack block storage service"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -43,7 +43,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/054 \
     value=PSARC/2014/208 value=PSARC/2015/110 value=PSARC/2015/289 \
-    value=PSARC/2015/535 value=PSARC/2016/014
+    value=PSARC/2015/535 value=PSARC/2016/014 value=PSARC/2016/455
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=variant.opensolaris.zone value=global value=nonglobal
 #
@@ -76,6 +76,7 @@ file files/cinder-scheduler path=lib/svc/method/cinder-scheduler
 file files/cinder-upgrade path=lib/svc/method/cinder-upgrade
 file files/cinder-volume path=lib/svc/method/cinder-volume
 file files/cinder-volume-setup path=lib/svc/method/cinder-volume-setup
+file files/cinder-api.stencil path=lib/svc/stencils/cinder-api.stencil
 file path=usr/bin/cinder-manage
 file usr/bin/cinder-api path=usr/lib/cinder/cinder-api mode=0555
 file usr/bin/cinder-backup path=usr/lib/cinder/cinder-backup mode=0555
@@ -83,6 +84,7 @@ file usr/bin/cinder-scheduler path=usr/lib/cinder/cinder-scheduler mode=0555
 file usr/bin/cinder-volume path=usr/lib/cinder/cinder-volume mode=0555
 file usr/bin/cinder-volume-usage-audit \
     path=usr/lib/cinder/cinder-volume-usage-audit mode=0555
+file usr/bin/cinder-wsgi path=usr/lib/cinder/cinder-wsgi mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -98,6 +100,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/admin_actions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/availability_zones.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/cgsnapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/consistencygroups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/extended_services.py
@@ -111,6 +114,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/scheduler_hi
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/scheduler_stats.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/services.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/snapshot_actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/snapshot_manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/snapshot_unmanage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/types_extra_specs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/types_manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/used_limits.py
@@ -120,7 +125,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_host_
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_image_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_mig_status_attribute.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_replication.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_tenant_attribute.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_transfer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/contrib/volume_type_access.py
@@ -132,6 +136,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/middleware/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/middleware/fault.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/middleware/sizelimit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/openstack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/openstack/api_version_request.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/openstack/rest_api_version_history.rst
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/openstack/versioned_method.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/openstack/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/schemas/atom-link.rng
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/schemas/v1.1/extension.rng
@@ -158,18 +165,23 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/snapshot_metadata
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/snapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/views/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/views/types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/views/volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/volume_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v2/volumes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/v3/router.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/availability_zones.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/cgsnapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/consistencygroups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/limits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/qos_specs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/scheduler_stats.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/snapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/transfers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/api/views/versions.py
@@ -180,33 +192,28 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/chunkeddriver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/ceph.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/glusterfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/google.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/nfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/posix.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/swift.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/drivers/tsm.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/backup/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/README.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/exception.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/executor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/connector.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/host_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/linuxfc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/linuxscsi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/solarisfc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/initiator/solarisiscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/local_dev/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/local_dev/lvm.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/remotefs/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/brick/remotefs/remotefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/all.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_reports.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/api.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_reports.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/backup.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_reports.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/manage.py \
     pkg.depend.bypass-generate=.*/bpython.* \
     pkg.depend.bypass-generate=.*/oslo_db.* \
@@ -216,20 +223,26 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/manage.py \
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/rtstool.py \
     pkg.depend.bypass-generate=.*/rtslib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/scheduler.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_reports.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/volume.py \
-    pkg.depend.bypass-generate=.*/oslo_log.*
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_reports.*
 file \
     path=usr/lib/python$(PYVER)/vendor-packages/cinder/cmd/volume_usage_audit.py \
     pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/common/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/common/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/common/sqlalchemyutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/compute/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/compute/nova.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/config/cinder-config-generator.conf
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/config/generate_cinder_opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/consistencygroup/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/consistencygroup/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/coordination.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/base.py
@@ -245,21 +258,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_re
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/003_glance_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/004_volume_type_to_uuid.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/005_add_source_volume_column.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/005_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/006_snapshots_add_provider_location.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/007_add_volume_snapshot_fk.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/007_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/008_add_backup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/009_add_snapshot_metadata_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/010_add_transfers_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/011_add_bootable_column.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/011_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/012_add_attach_host_column.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/012_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/013_add_provider_geometry_column.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/013_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/014_add_name_id.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/014_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/015_drop_migrations_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/016_drop_sm_tables.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/017_add_encryption_information.py
@@ -278,10 +285,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_re
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/030_placeholder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/031_placeholder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/032_add_volume_type_projects.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/032_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/033_add_encryption_unique_key.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/033_sqlite_downgrade.sql
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/034_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/034_volume_type_add_desc_column.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/035_add_provider_id_column.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/036_add_provider_id_column_to_snapshots.py
@@ -289,8 +293,39 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_re
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/038_add_driver_initiator_data_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/039_add_parent_id_to_backups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/040_add_volume_attachment.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/040_sqlite_downgrade.sql
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/041_add_modified_at_column_to_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/042_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/043_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/044_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/045_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/046_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/047_add_per_volume_quota.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/048_add_allocated_in_quotas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/049_add_temp_volume_snapshot_ids_to_backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/050_add_previous_status_to_volumes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/051_add_source_cgid_column_to_consistencygroups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/052_add_provider_auth_column_to_snapshots.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/053_add_version_columns_to_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/054_add_has_dependent_backups_column_to_backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/055_add_image_volume_cache_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/056_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/057_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/058_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/059_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/060_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/061_add_snapshot_id_timestamp_to_backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/062_deleted_type_to_Integer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/062_sqlite_upgrade.sql
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/063_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/064_add_restore_volume_id_to_backups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/065_add_replication_info_to_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/066_add_allocated_id_column_to_reservations.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/067_readd_iscsi_targets_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/068_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/069_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/070_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/071_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/072_placeholder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/db/sqlalchemy/models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/exception.py
@@ -299,6 +334,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/hacking/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/hacking/checks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/image/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/image/cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/image/glance.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/image/image_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/keymgr/__init__.py
@@ -309,41 +345,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/keymgr/key_mgr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/keymgr/not_implemented_key_mgr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/backup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/cgsnapshot.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/consistencygroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/fields.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/snapshot.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/volume.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/README
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/config/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/config/generator.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/imageutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/loopingcall.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/middleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/middleware/catch_errors.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/middleware/request_id.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/periodic_task.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/base_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/base_handler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/base_weight.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/availability_zone_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/capabilities_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/extra_specs_ops.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/ignore_attempted_hosts_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/filters/json_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/scheduler/weights/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/systemd.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/openstack/common/versionutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/volume_attachment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/objects/volume_type.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/policy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/quota.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/quota_utils.py
@@ -351,22 +363,29 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/replication/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/replication/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/base_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/base_handler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/base_weight.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/evaluator/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/evaluator/evaluator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filter_scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/affinity_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/availability_zone_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/capabilities_filter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/capacity_filter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/driver_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/extra_specs_ops.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/ignore_attempted_hosts_filter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/instance_locality_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/filters/json_filter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/flows/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/flows/create_volume.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/host_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/scheduler_options.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/simple.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/weights/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/weights/capacity.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/scheduler/weights/chance.py
@@ -385,15 +404,25 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/configuration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/block_device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/blockbridge.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/cloudbyte/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/cloudbyte/cloudbyte.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/cloudbyte/options.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/coho.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/datera.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dell/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dell/dell_storagecenter_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dell/dell_storagecenter_common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dell/dell_storagecenter_fc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dell/dell_storagecenter_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/disco/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/disco/disco.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dothill/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dothill/dothill_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dothill/dothill_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dothill/dothill_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/dothill/dothill_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/drbdmanagedrv.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_cli_fc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_cli_iscsi.py
@@ -407,15 +436,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_v
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_vmax_provision_v3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_vmax_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/emc_vnx_cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/scaleio.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/emc/xtremio.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/eqlx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/fujitsu/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/fujitsu/eternus_dx_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/fujitsu/eternus_dx_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/fujitsu/eternus_dx_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/glusterfs.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/hds.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/hnas_backend.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/hus_backend.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/iscsi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hds/nfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hgst.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hbsd_basiclib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hbsd_common.py
@@ -423,19 +452,48 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/h
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hbsd_horcm.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hbsd_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hbsd_snm2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hnas_backend.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hnas_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hitachi/hnas_nfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_3par_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_3par_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_3par_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_lefthand_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_xp_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/hpe/hpe_xp_opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/huawei_18000.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/fc_zone_helper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/huawei_conf.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/huawei_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/huawei_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/rest_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/hypermetro.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/replication.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/rest_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/huawei/smartx.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/flashsystem.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/flashsystem_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/flashsystem_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/flashsystem_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/gpfs.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/ibmnas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/replication.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/ssh.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/storwize_svc_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/storwize_svc_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/storwize_svc/storwize_svc_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/ibm/xiv_ds8k.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/eonstor_ds_cli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/eonstor_ds_cli/cli_factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/eonstor_ds_cli/common_cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/infortrend_fc_cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/infortrend/infortrend_iscsi_cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lenovo/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lenovo/lenovo_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lenovo/lenovo_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lenovo/lenovo_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lenovo/lenovo_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/lvm.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/common.py
@@ -455,16 +513,36 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/da
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/nfs_7mode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/nfs_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/nfs_cmode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/performance/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/performance/perf_7mode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/performance/perf_base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/performance/perf_cmode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/dataontap/ssc_cmode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/fc_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/host_mapper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/iscsi_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/library.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/eseries/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/options.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/netapp/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/jsonrpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/nexentaedge/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/nexentaedge/iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/nexentaedge/jsonrpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/nfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/ns5/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/ns5/iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/ns5/jsonrpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/ns5/nfs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/options.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nexenta/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nfs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/nimble.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/openvstorage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/prophetstor/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/prophetstor/dpl_fc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/prophetstor/dpl_iscsi.py
@@ -476,12 +554,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/rbd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/remotefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_3par_common.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_3par_fc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_3par_iscsi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_lefthand_cliq_proxy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_lefthand_iscsi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hp_lefthand_rest_proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hpmsa_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hpmsa_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hpmsa_fc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/hp/hpmsa_iscsi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/san/san.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/scality.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/sheepdog.py
@@ -490,23 +566,22 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/solaris/_
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/solaris/nfs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/solaris/zfs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/solidfire.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/srb.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/tegile.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/tintri.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/v6000_common.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/v6000_fcp.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/v6000_iscsi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/v7000_common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/violin/v7000_fcp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vmware/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vmware/datastore.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vmware/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vmware/vmdk.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vmware/volumeops.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/vzstorage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/remotefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/smbfs.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/vhdutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/windows.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/windows/windows_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/xio.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/zfssa/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/zfssa/cinder.akwf
@@ -518,10 +593,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/drivers/zfssa/zfs
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/api/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/api/create_volume.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/api/manage_existing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/manager/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/manager/create_volume.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/manager/manage_existing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/flows/manager/manage_existing_snapshot.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/qos_specs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/rpcapi.py
@@ -538,14 +615,19 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/targets/tgt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/throttling.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/volume/volume_types.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinder/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/wsgi/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/wsgi/common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/wsgi/eventlet_server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/wsgi/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_fabric_opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_fc_san_lookup_service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_fc_zone_client_cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_fc_zone_connector_factory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_fc_zone_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/brcd_http_fc_zone_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/brocade/fc_zone_constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisco/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisco/cisco_fabric_opts.py
@@ -553,18 +635,25 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisc
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisco/cisco_fc_zone_client_cli.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisco/cisco_fc_zone_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/cisco/fc_zone_constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/driver_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/drivers/fc_zone_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/fc_common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/fc_san_lookup_service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/fc_zone_manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/fczm_constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinder/zonemanager/utils.py
 dir  path=var/lib/cinder owner=cinder group=cinder mode=0700
+dir  path=var/log/cinder owner=cinder group=cinder mode=0700
 #
 group groupname=cinder gid=81
 user username=cinder ftpuser=false gcos-field="OpenStack Cinder" group=cinder \
     home-dir=/var/lib/cinder uid=81
 #
 license cinder.license license="Apache v2.0"
+
+# force a group dependency on the optional greenlet; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/greenlet-$(PYV)
 
 # force a group dependency on the optional oslo.vmware; pkgdepend work is needed
 # to flush this out.
@@ -578,46 +667,45 @@ depend type=group fmri=library/python/pyopenssl-$(PYV)
 # flush this out.
 depend type=group fmri=library/python/pywbem-$(PYV)
 
+# force a group dependency on the optional simplejson; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/simplejson-$(PYV)
+
 # force a group dependency on the optional suds; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/suds-$(PYV)
 
-# To upgrade to Kilo version, Juno version of the package must be on the system
-depend type=origin fmri=cloud/openstack/cinder@0.2014.2.2 root-image=true
+# To upgrade to the Mitaka version, the Kilo version of the package must be on
+# the system
+depend type=origin fmri=cloud/openstack/cinder@0.2015.1.2 root-image=true
 
-# force a dependency on package delivering GNU du(1M)
+# force a dependency on package delivering GNU du(1)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/gdu
 
-# force a dependency on package delivering fcinfo(1M)
+# force a dependency on package delivering fcinfo(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/fcinfo
 
-# force a dependency on package delivering itadm(1M)
+# force a dependency on package delivering itadm(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/itadm \
     variant.opensolaris.zone=global
 
-# force a dependency on package delivering stmfadm(1M)
+# force a dependency on package delivering stmfadm(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/stmfadm \
     variant.opensolaris.zone=global
 
-# force a dependency on package delivering zfs(1M)
+# force a dependency on package delivering zfs(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/zfs
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
 
 # force a dependency on barbicanclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/barbicanclient-$(PYV)
 
+# force a dependency on enum; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/enum-$(PYV)
+
 # force a dependency on glanceclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/glanceclient-$(PYV)
-
-# force a dependency on greenlet; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/greenlet-$(PYV)
-
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
 
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
@@ -629,11 +717,11 @@ depend type=require fmri=library/python/keystonemiddleware-$(PYV)
 # force a dependency on lxml; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/lxml-$(PYV)
 
-# force a dependency on netaddr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/netaddr-$(PYV)
-
 # force a dependency on novaclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/novaclient-$(PYV)
+
+# force a dependency on os-brick; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/os-brick-$(PYV)
 
 # force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
 # out.
@@ -660,11 +748,26 @@ depend type=require fmri=library/python/oslo.messaging-$(PYV)
 # out.
 depend type=require fmri=library/python/oslo.middleware-$(PYV)
 
+# force a dependency on oslo.policy; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.policy-$(PYV)
+
+# force a dependency on oslo.reports; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.reports-$(PYV)
+
 # force a dependency on oslo.serialization; pkgdepend work is needed to flush
 # this out.
 depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
-# force a dependency on osprofiler; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.service; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.service-$(PYV)
+
+# force a dependency on oslo.versionedobjects; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.versionedobjects-$(PYV)
+
+# force a dependency on osprofiler; used via a paste.deploy filter
 depend type=require fmri=library/python/osprofiler-$(PYV)
 
 # force a dependency on paramiko; pkgdepend work is needed to flush this out.
@@ -673,15 +776,14 @@ depend type=require fmri=library/python/paramiko-$(PYV)
 # force a dependency on paste; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/paste-$(PYV)
 
-# force a dependency on paste.deploy; pkgdepend work is needed to flush this
-# out.
-depend type=require fmri=library/python/paste.deploy-$(PYV)
-
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on pyparsing; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyparsing-$(PYV)
+
+# force a dependency on pytz; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pytz-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
@@ -691,9 +793,6 @@ depend type=require fmri=library/python/retrying-$(PYV)
 
 # force a dependency on routes; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/routes-$(PYV)
-
-# force a dependency on setuptools; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
@@ -706,6 +805,9 @@ depend type=require fmri=library/python/swiftclient-$(PYV)
 
 # force a dependency on taskflow; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/taskflow-$(PYV)
+
+# force a dependency on tooz; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/tooz-$(PYV)
 
 # force a dependency on webob; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/webob-$(PYV)

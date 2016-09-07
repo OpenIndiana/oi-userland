@@ -1,0 +1,99 @@
+In-house patch to adjust cinder/opts.py to omit drivers that have
+unresolved dependencies and to add the Solaris NFS and ZFS drivers, as
+well as some missing common components.  This patch is not suitable for
+pushing upstream.
+
+--- cinder-8.0.0/cinder/config/cinder-config-generator.conf.~1~	2016-04-07 00:30:48.000000000 -0700
++++ cinder-8.0.0/cinder/config/cinder-config-generator.conf	2016-07-25 17:19:20.950619120 -0700
+@@ -22,3 +22,4 @@ namespace = oslo.service.wsgi
+ namespace = oslo.utils
+ namespace = oslo.versionedobjects
+ namespace = oslo.vmware
++namespace = oslo.db.concurrency
+--- cinder-8.0.0/cinder/opts.py.~1~	2016-04-07 00:30:48.000000000 -0700
++++ cinder-8.0.0/cinder/opts.py	2016-07-25 15:02:28.185268715 -0700
+@@ -23,7 +23,6 @@ from cinder.backup import chunkeddriver
+ from cinder.backup import driver as cinder_backup_driver
+ from cinder.backup.drivers import ceph as cinder_backup_drivers_ceph
+ from cinder.backup.drivers import glusterfs as cinder_backup_drivers_glusterfs
+-from cinder.backup.drivers import google as cinder_backup_drivers_google
+ from cinder.backup.drivers import nfs as cinder_backup_drivers_nfs
+ from cinder.backup.drivers import posix as cinder_backup_drivers_posix
+ from cinder.backup.drivers import swift as cinder_backup_drivers_swift
+@@ -31,6 +30,7 @@ from cinder.backup.drivers import tsm as
+ from cinder.backup import manager as cinder_backup_manager
+ from cinder.cmd import all as cinder_cmd_all
+ from cinder.cmd import volume as cinder_cmd_volume
++from cinder.cmd import volume_usage_audit as cinder_cmd_volumeusageaudit
+ from cinder.common import config as cinder_common_config
+ import cinder.compute
+ from cinder.compute import nova as cinder_compute_nova
+@@ -146,6 +146,10 @@ from cinder.volume.drivers.san import sa
+ from cinder.volume.drivers import scality as cinder_volume_drivers_scality
+ from cinder.volume.drivers import sheepdog as cinder_volume_drivers_sheepdog
+ from cinder.volume.drivers import smbfs as cinder_volume_drivers_smbfs
++from cinder.volume.drivers.solaris import nfs as \
++    cinder_volume_drivers_solaris_nfs
++from cinder.volume.drivers.solaris import zfs as \
++    cinder_volume_drivers_solaris_zfs
+ from cinder.volume.drivers import solidfire as cinder_volume_drivers_solidfire
+ from cinder.volume.drivers import tegile as cinder_volume_drivers_tegile
+ from cinder.volume.drivers import tintri as cinder_volume_drivers_tintri
+@@ -154,8 +158,6 @@ from cinder.volume.drivers.violin import
+ from cinder.volume.drivers.vmware import vmdk as \
+     cinder_volume_drivers_vmware_vmdk
+ from cinder.volume.drivers import vzstorage as cinder_volume_drivers_vzstorage
+-from cinder.volume.drivers.windows import windows as \
+-    cinder_volume_drivers_windows_windows
+ from cinder.volume.drivers import xio as cinder_volume_drivers_xio
+ from cinder.volume.drivers.zfssa import zfssaiscsi as \
+     cinder_volume_drivers_zfssa_zfssaiscsi
+@@ -199,6 +201,7 @@ def list_opts():
+                 cinder_volume_drivers_san_san.san_opts,
+                 cinder_volume_drivers_hitachi_hnasnfs.NFS_OPTS,
+                 cinder_wsgi_eventletserver.socket_opts,
++                cinder_volume_drivers_solaris_nfs.solaris_zfs_nfs_opts,
+                 cinder_sshutils.ssh_opts,
+                 cinder_volume_drivers_netapp_options.netapp_proxy_opts,
+                 cinder_volume_drivers_netapp_options.netapp_connection_opts,
+@@ -218,6 +221,7 @@ def list_opts():
+                 cinder_volume_drivers_fujitsu_eternusdxcommon.
+                 FJ_ETERNUS_DX_OPT_opts,
+                 cinder_volume_drivers_ibm_gpfs.gpfs_opts,
++                cinder_volume_drivers_solaris_zfs.solaris_zfs_opts,
+                 cinder_volume_drivers_violin_v7000common.violin_opts,
+                 cinder_volume_drivers_nexenta_options.NEXENTA_CONNECTION_OPTS,
+                 cinder_volume_drivers_nexenta_options.NEXENTA_ISCSI_OPTS,
+@@ -226,6 +230,8 @@ def list_opts():
+                 cinder_volume_drivers_nexenta_options.NEXENTA_RRMGR_OPTS,
+                 cinder_volume_drivers_nexenta_options.NEXENTA_EDGE_OPTS,
+                 cinder_exception.exc_log_opts,
++                cinder_common_config.core_opts,
++                cinder_common_config.debug_opts,
+                 cinder_common_config.global_opts,
+                 cinder_scheduler_weights_capacity.capacity_weight_opts,
+                 cinder_volume_drivers_sheepdog.sheepdog_opts,
+@@ -271,7 +277,6 @@ def list_opts():
+                 cinder_volume_driver.iser_opts,
+                 cinder_api_views_versions.versions_opts,
+                 cinder_volume_drivers_nimble.nimble_opts,
+-                cinder_volume_drivers_windows_windows.windows_opts,
+                 cinder_volume_drivers_san_hp_hpmsacommon.common_opts,
+                 cinder_volume_drivers_san_hp_hpmsacommon.iscsi_opts,
+                 cinder_image_glance.glance_opts,
+@@ -282,7 +287,6 @@ def list_opts():
+                 cinder_volume_drivers_remotefs.nas_opts,
+                 cinder_volume_drivers_remotefs.volume_opts,
+                 cinder_volume_drivers_emc_xtremio.XTREMIO_OPTS,
+-                cinder_backup_drivers_google.gcsbackup_service_opts,
+                 [cinder_api_middleware_auth.use_forwarded_for_opt],
+                 cinder_volume_drivers_hitachi_hbsdcommon.volume_opts,
+                 cinder_volume_drivers_infortrend_eonstor_ds_cli_commoncli.
+@@ -335,6 +339,7 @@ def list_opts():
+                 cinder_volume_drivers_quobyte.volume_opts,
+                 cinder_volume_drivers_vzstorage.vzstorage_opts,
+                 cinder_volume_drivers_nfs.nfs_opts,
++                cinder_cmd_volumeusageaudit.script_opts,
+             )),
+         ('CISCO_FABRIC_EXAMPLE',
+             itertools.chain(

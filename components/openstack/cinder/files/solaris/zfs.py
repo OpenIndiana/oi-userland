@@ -25,6 +25,8 @@ import os
 import subprocess
 import time
 
+from eventlet.green.OpenSSL import SSL
+from eventlet.green import socket
 from oslo_concurrency import processutils
 from oslo_config import cfg
 from oslo_log import log as logging
@@ -36,17 +38,13 @@ from cinder.image import image_utils
 from cinder.volume import driver
 from cinder.volume.drivers.san.san import SanDriver
 
-from eventlet.green import socket
-from eventlet.green.OpenSSL import SSL
-
+import rad.auth as rada
+import rad.bindings.com.oracle.solaris.rad.zfsmgr_1 as zfsmgr
 import rad.client as radc
 import rad.connect as radcon
-import rad.bindings.com.oracle.solaris.rad.zfsmgr_1 as zfsmgr
-import rad.auth as rada
-
 from solaris_install.target.size import Size
 
-FLAGS = cfg.CONF
+CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 solaris_zfs_opts = [
@@ -57,7 +55,7 @@ solaris_zfs_opts = [
                default='tgt-grp',
                help='iSCSI target group name.'), ]
 
-FLAGS.register_opts(solaris_zfs_opts)
+CONF.register_opts(solaris_zfs_opts)
 
 
 def connect_tls(host, port=12302, locale=None, ca_certs=None):
@@ -103,10 +101,12 @@ class ZFSVolumeDriver(SanDriver):
         1.2.2 - Introduce the ZFS RAD for volume migration enhancement
         1.2.3 - Replace volume-specific targets with one shared target in
                 the ZFSISCSIDriver
+        1.3.0 - Support the option iscsi_secondary_ip_addresses and then
+                return target_iqns, target_portals, target_luns in Mitaka
 
     """
 
-    version = "1.2.3"
+    version = "1.3.0"
     protocol = 'local'
 
     def __init__(self, *args, **kwargs):
@@ -224,7 +224,7 @@ class ZFSVolumeDriver(SanDriver):
         """Synchronously recreate an export for a logical volume."""
         pass
 
-    def create_export(self, context, volume):
+    def create_export(self, context, volume, connector):
         """Export the volume."""
         pass
 
@@ -398,60 +398,64 @@ class ZFSVolumeDriver(SanDriver):
         # Create the temporary snapshot of src volume
         self.create_snapshot(src_snapshot)
 
-        src_rc = self._get_rc_connect()
-        dst_rc = self._get_rc_connect(dst_san_info)
+        try:
+            src_rc = self._get_rc_connect()
+            dst_rc = self._get_rc_connect(dst_san_info)
 
-        src_pat = self._get_zfs_volume_name(src['name'])
-        src_vol_obj = src_rc.get_object(zfsmgr.ZfsDataset(),
-                                        radc.ADRGlobPattern({"name": src_pat}))
-        dst_pat = dst.rsplit('/', 1)[0]
-        dst_vol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(),
-                                        radc.ADRGlobPattern({"name": dst_pat}))
+            src_pat = self._get_zfs_volume_name(src['name'])
+            src_vol_obj = src_rc.get_object(zfsmgr.ZfsDataset(),
+                                            radc.ADRGlobPattern({"name":
+                                                                src_pat}))
+            dst_pat = dst.rsplit('/', 1)[0]
+            dst_vol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(),
+                                            radc.ADRGlobPattern({"name":
+                                                                dst_pat}))
 
-        send_sock_info = src_vol_obj.get_send_socket(
-            name=src_snapshot_name, socket_type=zfsmgr.SocketType.AF_INET)
-        send_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        send_sock.connect((self.hostname, int(send_sock_info.socket)))
+            send_sock_info = src_vol_obj.get_send_socket(
+                name=src_snapshot_name, socket_type=zfsmgr.SocketType.AF_INET)
+            send_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            send_sock.connect((self.hostname, int(send_sock_info.socket)))
 
-        dst_san_ip = dst_san_info.split(';')[0]
-        remote_host, alias, addresslist = socket.gethostbyaddr(dst_san_ip)
+            dst_san_ip = dst_san_info.split(';')[0]
+            remote_host, alias, addresslist = socket.gethostbyaddr(dst_san_ip)
 
-        recv_sock_info = dst_vol_obj.get_receive_socket(
-            name=dst, socket_type=zfsmgr.SocketType.AF_INET,
-            name_options=zfsmgr.ZfsRecvNameOptions.use_provided_name)
-        recv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        recv_sock.connect((remote_host, int(recv_sock_info.socket)))
+            recv_sock_info = dst_vol_obj.get_receive_socket(
+                name=dst, socket_type=zfsmgr.SocketType.AF_INET,
+                name_options=zfsmgr.ZfsRecvNameOptions.use_provided_name)
+            recv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            recv_sock.connect((remote_host, int(recv_sock_info.socket)))
 
-        # Set 4mb buffer size
-        buf_size = 4194304
-        while True:
-            # Read the data from the send stream
-            buf = send_sock.recv(buf_size)
-            if not buf:
-                break
-            # Write the data to the receive steam
-            recv_sock.send(buf)
+            # Set 4mb buffer size
+            buf_size = 4194304
+            while True:
+                # Read the data from the send stream
+                buf = send_sock.recv(buf_size)
+                if not buf:
+                    break
+                # Write the data to the receive steam
+                recv_sock.send(buf)
 
-        recv_sock.close()
-        send_sock.close()
-        time.sleep(1)
+            recv_sock.close()
+            send_sock.close()
+            time.sleep(1)
 
-        # Delete the temporary dst snapshot
-        pat = radc.ADRGlobPattern({"name": dst})
-        dst_zvol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(), pat)
-        snapshot_list = dst_zvol_obj.get_snapshots()
-        for snap in snapshot_list:
-            if 'tmp-send-snapshot'in snap:
-                dst_zvol_obj.destroy_snapshot(snap)
-                break
+            # Delete the temporary dst snapshot
+            pat = radc.ADRGlobPattern({"name": dst})
+            dst_zvol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(), pat)
+            snapshot_list = dst_zvol_obj.get_snapshots()
+            for snap in snapshot_list:
+                if 'tmp-send-snapshot'in snap:
+                    dst_zvol_obj.destroy_snapshot(snap)
+                    break
 
-        # Delete the temporary src snapshot
-        self.delete_snapshot(src_snapshot)
-        LOG.debug(("Transfered src stream'%s' to dst'%s' on the host'%s'") %
-                  (src_snapshot_name, dst, self.hostname))
+        finally:
+            # Delete the temporary src snapshot
+            self.delete_snapshot(src_snapshot)
+            LOG.debug(("Transfered src'%s' to dst'%s' on the host'%s'") %
+                      (src_snapshot_name, dst, self.hostname))
 
-        src_rc.close()
-        dst_rc.close()
+            src_rc.close()
+            dst_rc.close()
 
     def _get_zvol_path(self, volume):
         """Get the ZFS volume path."""
@@ -651,6 +655,12 @@ class STMFDriver(ZFSVolumeDriver):
                            % (target, error.stderr))
         raise exception.VolumeBackendAPIException(data=err_msg)
 
+    def _online_target(self, target, protocol):
+        """Online the target in the offline state."""
+        self._execute('/usr/sbin/stmfadm', 'online-target',
+                      target)
+        assert self._check_target(target, protocol) == 'Online'
+
     def _check_tg(self, tg):
         """Check if the target group exists."""
         try:
@@ -751,35 +761,117 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         return status
 
+    def _add_tg_member(self, target, tg, tpg):
+        """Create the target and then add it to the target group."""
+        self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
+                           target, '-t', tpg)
+        self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                           target)
+        self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                           tg, target)
+
+    def _get_target_portal(self, target):
+        """Get the current target IP address."""
+        (out, _err) = self._execute('/usr/sbin/itadm', 'list-target',
+                                    '-v', target)
+        portal = None
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("Target Address:"):
+                portal = line.split()[-1]
+                break
+        return portal
+
+    def _check_tpg(self, tpg):
+        """Verify the tpg."""
+        try:
+            (out, _err) = self._execute('/usr/sbin/itadm', 'list-tpg',
+                                        '-v', tpg)
+            return True
+        except processutils.ProcessExecutionError as error:
+            if 'not found' in error.stderr:
+                return False
+            else:
+                err_msg = (_("Failed to list the tpg '%s': '%s'")
+                           % (tpg, error.stderr))
+            raise exception.VolumeBackendAPIException(data=err_msg)
+
+    def _create_tpg(self, tpg, ip):
+        """Create the TPG for the IP address."""
+        try:
+            self._execute('/usr/sbin/itadm', 'create-tpg', tpg, ip)
+        except processutils.ProcessExecutionError as error:
+            err_msg = (_("Failed to create the tpg '%s': '%s'") %
+                        (tpg, error.stderr))
+            raise exception.VolumeBackendAPIException(data=err_msg)
+
+    def _setup_targets(self, target_ips, target_group):
+        """Setup targets for the IP addresses."""
+        for ip in target_ips:
+            tpg_name = "tpg-%s" % ip
+            if not self._check_tpg(tpg_name):
+                self._create_tpg(tpg_name, ip)
+            target_name = '%s%s-%s-%s-target' % \
+                          (self.configuration.iscsi_target_prefix,
+                           self.hostname,
+                           tpg_name,
+                           target_group)
+            target_status = self._check_target(target_name, 'iSCSI')
+            if target_status == 'Online':
+                continue
+            if target_status is None:
+                self._add_tg_member(target_name, target_group, tpg_name)
+            self._online_target(target_name, 'iSCSI')
+
     def do_setup(self, context):
         """Setup the target and target group."""
         target_group = self.configuration.zfs_target_group
+
+        if not self._check_tg(target_group):
+            self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
         target_name = '%s%s-%s-target' % \
                       (self.configuration.iscsi_target_prefix,
                        self.hostname,
                        target_group)
-
-        if not self._check_tg(target_group):
-            self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
         target_status = self._check_target(target_name, 'iSCSI')
-        if target_status == 'Online':
+        secondary_interfaces = self.configuration.iscsi_secondary_ip_addresses
+        if target_status == 'Online' and not secondary_interfaces:
             return
-
         if target_status is None:
-            # Create and add the target into the target group
-            self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
-                               target_name)
-            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
-                               target_name)
-            self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                               target_group, target_name)
+            # Create the primary target
+            if self.configuration.san_is_local:
+                primary_ip = self.configuration.iscsi_ip_address
+            else:
+                primary_ip = self.configuration.san_ip
+            tpg_name = "tpg-%s" % primary_ip
+            if not self._check_tpg(tpg_name):
+                self._create_tpg(tpg_name, primary_ip)
+            self._add_tg_member(target_name, target_group, tpg_name)
 
         # Online the target from the 'Offline' status
-        self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
-                           target_name)
-        assert self._check_target(target_name, 'iSCSI') == 'Online'
+        self._online_target(target_name, 'iSCSI')
 
-    def create_export(self, context, volume):
+        if secondary_interfaces:
+            secondary_ips = [ip for ip in secondary_interfaces if ip.strip()]
+            self._setup_targets(secondary_ips, target_group)
+
+    def _get_tg_secondary_members(self, primary_target):
+        """Get target members of the target group."""
+        tg = self.configuration.zfs_target_group
+        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg', '-v', tg)
+        targets = []
+        target_portals = []
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("Member:"):
+                target = line.split()[-1]
+                if target == primary_target:
+                    continue
+                targets.append(target)
+                target_portal = self._get_target_portal(target)
+                if target_portal:
+                    target_portals.append(target_portal)
+        return targets, target_portals
+
+    def create_export(self, context, volume, conncetor):
         """Export the volume."""
         # If the volume is already exported there is nothing to do, as we
         # simply export volumes and they are universally available.
@@ -850,12 +942,18 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
             the authentication details. Right now, either auth_method is not
             present meaning no authentication, or auth_method == `CHAP`
             meaning use CHAP with the specified credentials.
+
+        If multiple IP addresses are configured, the returns will include
+        :target_iqns, :target_portals, :target_luns, which contain lists of
+        multiple values. The main portal information is also returned in
+        :target_iqn, :target_portal, :target_lun for backward compatibility.
         """
         luid = self._get_luid(volume)
         if not luid:
             msg = (_("Failed to get LU for volume '%s'") % volume['name'])
             raise exception.VolumeBackendAPIException(data=msg)
 
+        old_target_name = True
         target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
                                 volume['name'])
         if self._check_target(target_name, 'iSCSI') is None:
@@ -863,6 +961,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                           (self.configuration.iscsi_target_prefix,
                            self.hostname,
                            self.configuration.zfs_target_group)
+            old_target_name = False
 
         properties = {}
 
@@ -882,6 +981,21 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         if view_lun['lun'] is not None:
             properties['target_lun'] = view_lun['lun']
         properties['volume_id'] = volume['id']
+
+        secondary_ifs = self.configuration.iscsi_secondary_ip_addresses
+        # The multipathing doesn't apply to the old volume-specific target
+        if not old_target_name and secondary_ifs:
+            target_portals = []
+            target_iqns = []
+            target_luns = []
+            target_portals.append(properties['target_portal'])
+            target_iqns.append(properties['target_iqn'])
+            target_luns.append(properties['target_lun'])
+            secondary_iqns, secondary_portals = self._get_tg_secondary_members(
+                                                target_name)
+            properties['target_portals'] = target_portals + secondary_portals
+            properties['target_iqns'] = target_iqns + secondary_iqns
+            properties['target_luns'] = (len(secondary_iqns) + 1) * target_luns
 
         auth = volume['provider_auth']
         if auth:
@@ -1016,10 +1130,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                                        target_wwn)
                     self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member',
                                        '-g', tg, target_wwn)
-                    self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
-                                       target_wwn)
-                    assert self._check_target(wwn, 'Channel') == 'Online'
-
+                    self._online_target(target_wwn, 'Channel')
                 except:
                     LOG.error(_LE("Failed to add and online the target '%s'.")
                               % (target_wwn))
@@ -1068,7 +1179,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
         for target_wwn in target_wwns:
             self._stmf_execute('/usr/sbin/fcadm', 'force-lip', target_wwn)
 
-    def create_export(self, context, volume):
+    def create_export(self, context, volume, connector):
         """Export the volume."""
         # If the volume is already exported there is nothing to do, as we
         # simply export volumes and they are universally available.

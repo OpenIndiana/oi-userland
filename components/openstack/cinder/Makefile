@@ -26,20 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cinder
-COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2015.1.2
-COMPONENT_BE_VERSION=	2015.1
+COMPONENT_CODENAME=	mitaka
+COMPONENT_VERSION=	8.0.0
+COMPONENT_BE_VERSION=	2016.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8baa42a3008b0bb0870df678237c0d06ab8ee148b3bf5c00c6b95cfe05c52333
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+    sha256:bd05f3c0b7b2ae098284c062d20230aecdaa47ed623cb79907c39dd1e28f8a2e
+COMPONENT_ARCHIVE_URL=	https://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/cinder
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			25784
+TPNO=			30298
 
 PKG_VARS +=		COMPONENT_BE_VERSION
 
@@ -56,39 +55,31 @@ PYTHON_VERSIONS=	2.7
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
-COMPONENT_POST_UNPACK_ACTION += \
-    $(MKDIR) $(SOURCE_DIR)/cinder/volume/drivers/zfssa; \
-    $(CP) files/zfssa/zfssaiscsi.py \
-	$(SOURCE_DIR)/cinder/volume/drivers/zfssa
-
 #
-# cinder-api, cinder-backup, cinder-scrubber, and cinder-volume depend
-# on cinder-db, and cinder-upgrade so copy all of the service
-# manifests into the proto directory for pkgdepend(1) to find.
+# cinder-api, cinder-backup, cinder-scheduler, and cinder-volume depend
+# on cinder-db and cinder-upgrade, so copy all of the service manifests
+# into the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
     ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
      $(CP) \
-         files/cinder-api.xml \
-         files/cinder-backup.xml \
-         files/cinder-db.xml \
-         files/cinder-scheduler.xml \
-         files/cinder-upgrade.xml \
-         files/cinder-volume.xml \
-         $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-     $(CP) \
-         files/solaris/solarisfc.py \
-         files/solaris/solarisiscsi.py \
-         $(PROTO_DIR)$(PYTHON_LIB)/cinder/brick/initiator; \
+	 files/cinder-api.xml \
+	 files/cinder-backup.xml \
+	 files/cinder-db.xml \
+	 files/cinder-scheduler.xml \
+	 files/cinder-upgrade.xml \
+	 files/cinder-volume.xml \
+	 $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
      $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris; \
      $(TOUCH) \
-         $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris/__init__.py; \
+	 $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris/__init__.py; \
      $(CP) \
-         files/solaris/nfs.py \
-         files/solaris/zfs.py \
-         $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris; \
-     $(CP) files/zfssa/cinder.akwf \
-         $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/zfssa); \
+	 files/solaris/nfs.py \
+	 files/solaris/zfs.py \
+	 $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris; \
+     $(CP) \
+	 files/zfssa/cinder.akwf \
+	 $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/zfssa); \
      $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
@@ -98,7 +89,7 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
