@@ -26,16 +26,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-openstackclient
-COMPONENT_VERSION=	1.0.4
+COMPONENT_VERSION=	2.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4ae6d7b35fd1da2a07959fea9639e506871abfb769c62f3692d2f2585605ac85
+    sha256:5cd301fd11ed271175b2a656c0da4148332257b52d994891e61d3535870b4ca1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-openstackclient
+COMPONENT_PROJECT_URL=	\
+    http://docs.openstack.org/developer/python-openstackclient/
 COMPONENT_BUGDB=	python-mod/osclient
 
-TPNO=			24760
+TPNO=			28403
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -47,8 +48,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f openstack openstack-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f openstack openstack-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -57,4 +57,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
