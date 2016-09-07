@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		futures
-COMPONENT_VERSION=	2.2.0
+COMPONENT_VERSION=	3.0.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:151c057173474a3a40f897165951c0e33ad04f37de65b6de547ddef107fd0ed3
+    sha256:0542525145d5afc984c88f914a0c85c77527f65946617edb5274f72406f981df
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/pythonfutures/
 COMPONENT_BUGDB=	python-mod/futures
 
-TPNO=			21622
+TPNO=			27997
 
 #
 # The futures module was integrated into Python 3.2, so we should only
