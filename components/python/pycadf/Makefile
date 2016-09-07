@@ -26,18 +26,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycadf
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	2.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:240d7775682a0f49fb580310dd6459e8a8b5f5619dfdc687f043c3fe21b48ba1
+COMPONENT_ARCHIVE_HASH=	sha256:bdb3427a28d318c6ce073b54993c2f4cc9148be498b30ad1b362ade45eb4f7fb
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/pycadf
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/pycadf/
 COMPONENT_BUGDB=	python-mod/pycadf
 
-TPNO=			25747
+TPNO=			27909
 
-# Depends on oslo.messaging which is not Python 3 ready.
+# Depends on oslo.serialization which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -53,4 +52,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
