@@ -1,0 +1,78 @@
+In-house patch to adapt Linux specific commands and command output
+parsing to Solaris. Patch may be suitable for pushing upsteam.
+
+--- os-brick-1.2.0/os_brick/remotefs/remotefs.py.~1~	2016-03-28 09:30:49.000000000 +0000
++++ os-brick-1.2.0/os_brick/remotefs/remotefs.py	2016-09-06 17:01:03.004025741 +0000
+@@ -17,6 +17,7 @@
+ 
+ import hashlib
+ import os
++import platform
+ import re
+ import tempfile
+ 
+@@ -86,14 +87,21 @@ class RemoteFsClient(object):
+                             self._get_hash_str(device_name))
+ 
+     def _read_mounts(self):
+-        (out, _err) = self._execute('mount', check_exit_code=0)
++        if platform.system() == "SunOS":
++            (out, _err) = self._execute('/usr/sbin/mount', check_exit_code=0)
++        else:
++            (out, _err) = self._execute('mount', check_exit_code=0)
+         lines = out.split('\n')
+         mounts = {}
+         for line in lines:
+             tokens = line.split()
+             if 2 < len(tokens):
+-                device = tokens[0]
+-                mnt_point = tokens[2]
++                if platform.system() == "SunOS":
++                    device = tokens[2]
++                    mnt_point = tokens[0]
++                else:
++                    device = tokens[0]
++                    mnt_point = tokens[2]
+                 mounts[mnt_point] = device
+         return mounts
+ 
+@@ -105,8 +113,12 @@ class RemoteFsClient(object):
+             LOG.info(_LI('Already mounted: %s'), mount_path)
+             return
+ 
+-        self._execute('mkdir', '-p', mount_path, check_exit_code=0)
+-        if self._mount_type == 'nfs':
++        if platform.system() == "SunOS":
++            self._execute('/usr/bin/mkdir', '-p', mount_path,
++                          check_exit_code=0)
++        else:
++            self._execute('mkdir', '-p', mount_path, check_exit_code=0)
++        if self._mount_type == 'nfs' and platform.system() != "SunOS":
+             self._mount_nfs(share, mount_path, flags)
+         elif self._mount_type == 'vzstorage':
+             self._mount_vzstorage(share, mount_path, flags)
+@@ -117,15 +129,21 @@ class RemoteFsClient(object):
+     def _do_mount(self, mount_type, share, mount_path, mount_options=None,
+                   flags=None):
+         """Mounts share based on the specified params."""
+-        mnt_cmd = ['mount', '-t', mount_type]
++        if platform.system() == "SunOS":
++            mnt_cmd = ['/usr/sbin/mount', '-F', mount_type]
++        else:
++            mnt_cmd = ['mount', '-t', mount_type]
+         if mount_options is not None:
+             mnt_cmd.extend(['-o', mount_options])
+         if flags is not None:
+             mnt_cmd.extend(flags)
+         mnt_cmd.extend([share, mount_path])
+ 
+-        self._execute(*mnt_cmd, root_helper=self.root_helper,
+-                      run_as_root=True, check_exit_code=0)
++        if platform.system() == "SunOS":
++            self._execute(*mnt_cmd, check_exit_code=0)
++        else:
++            self._execute(*mnt_cmd, root_helper=self.root_helper,
++                          run_as_root=True, check_exit_code=0)
+ 
+     def _mount_nfs(self, nfs_share, mount_path, flags=None):
+         """Mount nfs share using present mount types."""

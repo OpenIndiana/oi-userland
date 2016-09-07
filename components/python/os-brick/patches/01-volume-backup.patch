@@ -1,0 +1,139 @@
+This patch is to replace Linux-specific code with conditional checks in
+the Cinder Brick code to support Cinder backup on Solaris. Patch has
+not yet been submitted upstream.
+
+--- os-brick-1.2.0/os_brick/initiator/connector.py.~1~	2016-03-28 09:30:49.000000000 +0000
++++ os-brick-1.2.0/os_brick/initiator/connector.py	2016-09-06 16:59:42.732438933 +0000
+@@ -54,6 +54,8 @@ from os_brick.initiator import linuxfc
+ from os_brick.initiator import linuxrbd
+ from os_brick.initiator import linuxscsi
+ from os_brick.remotefs import remotefs
++from os_brick.initiator import solarisfc
++from os_brick.initiator import solarisiscsi
+ from os_brick.i18n import _, _LE, _LI, _LW
+ 
+ LOG = logging.getLogger(__name__)
+@@ -122,7 +124,10 @@ def get_connector_properties(root_helper
+     """
+ 
+     iscsi = ISCSIConnector(root_helper=root_helper)
+-    fc = linuxfc.LinuxFibreChannel(root_helper=root_helper)
++    if sys.platform == 'sunos5':
++        fc = solarisfc.SolarisFibreChannel()
++    else:
++        fc = linuxfc.LinuxFibreChannel(root_helper=root_helper)
+ 
+     props = {}
+     props['ip'] = my_ip
+@@ -284,8 +289,11 @@ class InitiatorConnector(executor.Execut
+                'of=/dev/null', 'count=1')
+         out, info = None, None
+         try:
+-            out, info = self._execute(*cmd, run_as_root=run_as_root,
+-                                      root_helper=self._root_helper)
++            if sys.platform == 'sunos5':
++                out, info = self._execute(*cmd)
++            else:
++                out, info = self._execute(*cmd, run_as_root=run_as_root,
++                                          root_helper=self._root_helper)
+         except putils.ProcessExecutionError as e:
+             LOG.error(_LE("Failed to access the device on the path "
+                           "%(path)s: %(error)s %(info)s."),
+@@ -502,7 +510,10 @@ class ISCSIConnector(InitiatorConnector)
+                  execute=putils.execute, use_multipath=False,
+                  device_scan_attempts=DEVICE_SCAN_ATTEMPTS_DEFAULT,
+                  transport='default', *args, **kwargs):
+-        self._linuxscsi = linuxscsi.LinuxSCSI(root_helper, execute)
++        if sys.platform == 'sunos5':
++            self._solarisiscsi = solarisiscsi.SolarisiSCSI()
++        else:
++            self._linuxscsi = linuxscsi.LinuxSCSI(root_helper, execute)
+         super(ISCSIConnector, self).__init__(
+             root_helper, driver=driver,
+             execute=execute,
+@@ -678,6 +689,8 @@ class ISCSIConnector(InitiatorConnector)
+ 
+     def set_execute(self, execute):
+         super(ISCSIConnector, self).set_execute(execute)
++        if sys.platform == 'sunos5':
++            return
+         self._linuxscsi.set_execute(execute)
+ 
+     def _validate_iface_transport(self, transport_iface):
+@@ -840,6 +853,9 @@ class ISCSIConnector(InitiatorConnector)
+         Note that plural keys may be used when use_multipath=True
+         """
+ 
++        if sys.platform == 'sunos5':
++            return self._solarisiscsi.connect_volume(connection_properties,
++                                                     self.device_scan_attempts)
+         device_info = {'type': 'block'}
+ 
+         host_devices, target_props = self._get_potential_volume_paths(
+@@ -912,6 +928,9 @@ class ISCSIConnector(InitiatorConnector)
+         target_iqn(s) - iSCSI Qualified Name
+         target_lun(s) - LUN id of the volume
+         """
++        if sys.platform == 'sunos5':
++            return
++
+         if self.use_multipath:
+             self._rescan_multipath()
+             host_device = multipath_device = None
+@@ -1002,6 +1021,9 @@ class ISCSIConnector(InitiatorConnector)
+ 
+     def get_initiator(self):
+         """Secure helper to read file as root."""
++        if sys.platform == 'sunos5':
++            return self._solarisiscsi.get_initiator()
++
+         file_path = '/etc/iscsi/initiatorname.iscsi'
+         try:
+             lines, _err = self._execute('cat', file_path, run_as_root=True,
+@@ -1304,8 +1326,11 @@ class FibreChannelConnector(InitiatorCon
+                  execute=putils.execute, use_multipath=False,
+                  device_scan_attempts=DEVICE_SCAN_ATTEMPTS_DEFAULT,
+                  *args, **kwargs):
+-        self._linuxscsi = linuxscsi.LinuxSCSI(root_helper, execute)
+-        self._linuxfc = linuxfc.LinuxFibreChannel(root_helper, execute)
++        if sys.platform == 'sunos5':
++            self._solarisfc = solarisfc.SolarisFibreChannel()
++        else:
++            self._linuxscsi = linuxscsi.LinuxSCSI(root_helper, execute)
++            self._linuxfc = linuxfc.LinuxFibreChannel(root_helper, execute)
+         super(FibreChannelConnector, self).__init__(
+             root_helper, driver=driver,
+             execute=execute,
+@@ -1315,6 +1340,8 @@ class FibreChannelConnector(InitiatorCon
+ 
+     def set_execute(self, execute):
+         super(FibreChannelConnector, self).set_execute(execute)
++        if sys.platform == 'sunos5':
++            return
+         self._linuxscsi.set_execute(execute)
+         self._linuxfc.set_execute(execute)
+ 
+@@ -1373,6 +1400,10 @@ class FibreChannelConnector(InitiatorCon
+         target_wwn - World Wide Name
+         target_lun - LUN id of the volume
+         """
++        if sys.platform == 'sunos5':
++            return self._solarisfc.connect_volume(connection_properties,
++                                                  self.device_scan_attempts)
++
+         LOG.debug("execute = %s", self._execute)
+         device_info = {'type': 'block'}
+ 
+@@ -1505,6 +1536,12 @@ class FibreChannelConnector(InitiatorCon
+         target_wwn - World Wide Name
+         target_lun - LUN id of the volume
+         """
++        if sys.platform == 'sunos5':
++            # There is some latency before the next time connection happens.
++            # The best practice is to offline the state of the switch now
++            # and online it at the next connection.
++            # But now, we just return without any operation.
++            return
+ 
+         devices = []
+         volume_paths = self.get_volume_paths(connection_properties)
