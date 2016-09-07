@@ -1,0 +1,49 @@
+Patch to prevent Horizon from redirecting to an non-existant logout
+page. Fixed in upstream via Launchpad bug 1558917 and changeset
+9399680106b4448c975b87a8b93f2188157a42ce.
+
+commit 9399680106b4448c975b87a8b93f2188157a42ce
+Author: Kenji Ishii <ken-ishii@sx.jp.nec.com>
+Date:   Fri Mar 18 14:37:13 2016 +0900
+
+    Fix the issue which redirect to Not Found page
+    
+    If a session is timeout and then a user request ajax request,
+    Horizon redirect to Not found page because the url is incorrect.
+    This patch fix it in the correct url.
+    
+    Change-Id: I25b9e07b4f97594d05b0cdae931af9f142a18168
+    Closes-bug: #1558917
+
+diff --git a/horizon/static/framework/framework.module.js b/horizon/static/framework/framework.module.js
+index 7a06bb0..fd6ba43 100644
+--- a/horizon/static/framework/framework.module.js
++++ b/horizon/static/framework/framework.module.js
+@@ -64,7 +64,8 @@
+       return {
+         responseError: function (error) {
+           if (error.status === 401) {
+-            $windowProvider.$get().location.replace('/auth/logout');
++            var $window = $windowProvider.$get();
++            $window.location.replace($window.WEBROOT + 'auth/logout');
+           }
+           return $q.reject(error);
+         }
+diff --git a/horizon/static/framework/framework.module.spec.js b/horizon/static/framework/framework.module.spec.js
+index d12f76a..2028cd2 100644
+--- a/horizon/static/framework/framework.module.spec.js
++++ b/horizon/static/framework/framework.module.spec.js
+@@ -36,11 +36,11 @@
+ 
+     describe('when unauthorized', function() {
+       it('should redirect to /auth/logout', inject(function($http, $httpBackend, $window) {
+-
++        $window.WEBROOT = '/dashboard/';
+         $httpBackend.when('GET', '/api').respond(401, '');
+ 
+         $http.get('/api').error(function() {
+-          expect($window.location.replace).toHaveBeenCalledWith('/auth/logout');
++          expect($window.location.replace).toHaveBeenCalledWith('/dashboard/auth/logout');
+         });
+         $httpBackend.flush();
+       }));

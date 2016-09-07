@@ -6,19 +6,22 @@ NOTE:  This patch is applied AFTER gmake install has completed rather
 than during gmake prep.  We need the xstatic functionality to collect
 all the JavaScript libraries before packaging.
 
---- /usr/lib/python2.7/vendor-packages/openstack_dashboard/static_settings.py.orig  2015-05-04 16:35:35.859239557 -0600
-+++ /usr/lib/python2.7/vendor-packages/openstack_dashboard/static_settings.py  2015-05-04 16:35:58.697407748 -0600
-@@ -17,99 +17,5 @@ distributions can edit or replace this f
- to match their distribution's standards.
+--- /usr/lib/python2.7/vendor-packages/openstack_dashboard/static_settings.py.~1~	2016-04-26 02:16:33.459370382 -0800
++++ /usr/lib/python2.7/vendor-packages/openstack_dashboard/static_settings.py	2016-04-26 02:17:12.667657098 -0800
+@@ -18,117 +18,11 @@ to match their distribution's standards.
  """
-
+ 
+ import os
+-
 -import xstatic.main
 -import xstatic.pkg.angular
 -import xstatic.pkg.angular_bootstrap
+-import xstatic.pkg.angular_gettext
 -import xstatic.pkg.angular_lrdragndrop
 -import xstatic.pkg.angular_smart_table
 -import xstatic.pkg.bootstrap_datepicker
 -import xstatic.pkg.bootstrap_scss
+-import xstatic.pkg.bootswatch
 -import xstatic.pkg.d3
 -import xstatic.pkg.font_awesome
 -import xstatic.pkg.hogan
@@ -28,12 +31,15 @@ all the JavaScript libraries before packaging.
 -import xstatic.pkg.jquery_tablesorter
 -import xstatic.pkg.jquery_ui
 -import xstatic.pkg.jsencrypt
--import xstatic.pkg.magic_search
+-import xstatic.pkg.mdi
 -import xstatic.pkg.rickshaw
+-import xstatic.pkg.roboto_fontface
 -import xstatic.pkg.spin
 -import xstatic.pkg.termjs
 -
--
+ from horizon.utils import file_discovery
+ 
+ 
  def get_staticfiles_dirs(webroot='/'):
 -    STATICFILES_DIRS = [
 -        ('horizon/lib/angular',
@@ -41,6 +47,9 @@ all the JavaScript libraries before packaging.
 -                                 root_url=webroot).base_dir),
 -        ('horizon/lib/angular',
 -            xstatic.main.XStatic(xstatic.pkg.angular_bootstrap,
+-                                 root_url=webroot).base_dir),
+-        ('horizon/lib/angular',
+-            xstatic.main.XStatic(xstatic.pkg.angular_gettext,
 -                                 root_url=webroot).base_dir),
 -        ('horizon/lib/angular',
 -            xstatic.main.XStatic(xstatic.pkg.angular_lrdragndrop,
@@ -54,6 +63,9 @@ all the JavaScript libraries before packaging.
 -        ('bootstrap',
 -            xstatic.main.XStatic(xstatic.pkg.bootstrap_scss,
 -                                 root_url=webroot).base_dir),
+-        ('horizon/lib/bootswatch',
+-         xstatic.main.XStatic(xstatic.pkg.bootswatch,
+-                              root_url=webroot).base_dir),
 -        ('horizon/lib',
 -            xstatic.main.XStatic(xstatic.pkg.d3,
 -                                 root_url=webroot).base_dir),
@@ -78,18 +90,21 @@ all the JavaScript libraries before packaging.
 -        ('horizon/lib/jsencrypt',
 -            xstatic.main.XStatic(xstatic.pkg.jsencrypt,
 -                                 root_url=webroot).base_dir),
--        ('horizon/lib/magic_search',
--            xstatic.main.XStatic(xstatic.pkg.magic_search,
--                                 root_url=webroot).base_dir),
+-        ('horizon/lib/mdi',
+-         xstatic.main.XStatic(xstatic.pkg.mdi,
+-                              root_url=webroot).base_dir),
 -        ('horizon/lib',
 -            xstatic.main.XStatic(xstatic.pkg.rickshaw,
 -                                 root_url=webroot).base_dir),
+-        ('horizon/lib/roboto_fontface',
+-         xstatic.main.XStatic(xstatic.pkg.roboto_fontface,
+-                              root_url=webroot).base_dir),
 -        ('horizon/lib',
 -            xstatic.main.XStatic(xstatic.pkg.spin,
 -                                 root_url=webroot).base_dir),
 -        ('horizon/lib',
--            xstatic.main.XStatic(xstatic.pkg.termjs,
--                                 root_url=webroot).base_dir),
+-         xstatic.main.XStatic(xstatic.pkg.termjs,
+-                              root_url=webroot).base_dir),
 -    ]
 -
 -    if xstatic.main.XStatic(xstatic.pkg.jquery_ui,
@@ -109,3 +124,6 @@ all the JavaScript libraries before packaging.
 -
 -    return STATICFILES_DIRS
 +    return []
+ 
+ 
+ def find_static_files(HORIZON_CONFIG):

@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 from django.utils.translation import ugettext_lazy as _
 
+from horizon.utils import secret_key
+
 from openstack_dashboard import exceptions
+from openstack_dashboard.settings import HORIZON_CONFIG
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -11,42 +16,36 @@ TEMPLATE_DEBUG = DEBUG
 # WEBROOT is the location relative to Webserver root
 # should end with a slash.
 WEBROOT = '/horizon/'
-STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
-# LOGIN_URL = WEBROOT + 'auth/login/'
-# LOGOUT_URL = WEBROOT + 'auth/logout/'
+#LOGIN_URL = WEBROOT + 'auth/login/'
+#LOGOUT_URL = WEBROOT + 'auth/logout/'
 #
 # LOGIN_REDIRECT_URL can be used as an alternative for
 # HORIZON_CONFIG.user_home, if user_home is not set.
 # Do not set it to '/home/', as this will cause circular redirect loop
-# LOGIN_REDIRECT_URL = WEBROOT
+#LOGIN_REDIRECT_URL = WEBROOT
 
-
-# Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
 # with the list of host/domain names that the application can serve.
 # For more information see:
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-#ALLOWED_HOSTS = ['horizon.example.com', ]
+ALLOWED_HOSTS = '*'
 
 # Set SSL proxy settings:
-# For Django 1.4+ pass this header from the proxy after terminating the SSL,
+# Pass this header from the proxy after terminating the SSL,
 # and don't forget to strip it from the client's request.
 # For more information see:
-# https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+# https://docs.djangoproject.com/en/1.8/ref/settings/#secure-proxy-ssl-header
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # If Horizon is being served through SSL, then uncomment the following two
 # settings to better secure the cookies from security exploits
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
 
-# Enable Solaris theme
-TEMPLATE_DIRS = (
-    '/usr/lib/python2.7/vendor-packages/openstack_dashboard/templates/solaris',
-)
-
-# Application files are compressed during packaging
-COMPRESS_OFFLINE = True
+# The absolute path to the directory where message files are collected.
+# The message file must have a .json file extension. When the user logins to
+# horizon, the message files collected are processed and displayed to the user.
+#MESSAGES_PATH=None
 
 # Overrides for OpenStack API versions. Use this setting to force the
 # OpenStack dashboard to use a specific API version for a given service API.
@@ -58,6 +57,7 @@ COMPRESS_OFFLINE = True
 #    "data-processing": 1.1,
 #    "identity": 3,
 #    "volume": 2,
+#    "compute": 2,
 #}
 
 # Set this to True if running on multi-domain model. When this is enabled, it
@@ -66,28 +66,31 @@ COMPRESS_OFFLINE = True
 
 # Overrides the default domain used when running on single-domain model
 # with Keystone V3. All entities will be created in the default domain.
-#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
+# NOTE: This value must be the ID of the default domain, NOT the name.
+# Also, you will most likely have a value in the keystone policy file like this
+#    "cloud_admin": "rule:admin_required and domain_id:<your domain id>"
+# This value must match the domain id specified there.
+#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'default'
+
+# Set this to True to enable panels that provide the ability for users to
+# manage Identity Providers (IdPs) and establish a set of rules to map
+# federation protocol attributes to Identity API attributes.
+# This extension requires v3.0+ of the Identity API.
+#OPENSTACK_KEYSTONE_FEDERATION_MANAGEMENT = False
 
 # Set Console type:
-# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP", "SERIAL" or
-# None. Set to None explicitly if you want to deactivate the console.
+# valid options are "AUTO"(default), "VNC", "SPICE", "RDP", "SERIAL" or None
+# Set to None explicitly if you want to deactivate the console.
 #CONSOLE_TYPE = "AUTO"
 
-# Default OpenStack Dashboard configuration.
-HORIZON_CONFIG = {
-    'user_home': 'openstack_dashboard.views.get_user_home',
-    'ajax_queue_limit': 10,
-    'auto_fade_alerts': {
-        'delay': 3000,
-        'fade_duration': 1500,
-        'types': ['alert-success', 'alert-info']
-    },
-    'help_url': "http://docs.openstack.org",
-    'exceptions': {'recoverable': exceptions.RECOVERABLE,
-                   'not_found': exceptions.NOT_FOUND,
-                   'unauthorized': exceptions.UNAUTHORIZED},
-    'customization_module': 'openstack_dashboard.overrides',
-}
+# If provided, a "Report Bug" link will be displayed in the site header
+# which links to the value of this setting (ideally a URL containing
+# information on how to report issues).
+#HORIZON_CONFIG["bug_url"] = "http://bug-report.example.com"
+
+# Show backdrop element outside the modal, do not close the modal
+# after clicking on backdrop.
+#HORIZON_CONFIG["modal_backdrop"] = "static"
 
 # Specify a regular expression to validate user passwords.
 #HORIZON_CONFIG["password_validator"] = {
@@ -107,18 +110,20 @@ HORIZON_CONFIG = {
 # including on the login form.
 #HORIZON_CONFIG["disable_password_reveal"] = False
 
+# Enable Solaris overrides
+HORIZON_CONFIG["customization_module"] = 'openstack_dashboard.overrides'
+
 LOCAL_PATH = '/var/lib/openstack_dashboard'
 
 # Set custom secret key:
 # You can either set it to a specific value or you can let horizon generate a
 # default secret key that is unique on this machine, e.i. regardless of the
-# amount of Python WSGI workers (if used behind Apache+mod_wsgi): However, there
-# may be situations where you would want to set this explicitly, e.g. when
-# multiple dashboard instances are distributed on different machines (usually
-# behind a load-balancer). Either you have to make sure that a session gets all
-# requests routed to the same dashboard instance or you set the same SECRET_KEY
-# for all of them.
-from horizon.utils import secret_key
+# amount of Python WSGI workers (if used behind Apache+mod_wsgi): However,
+# there may be situations where you would want to set this explicitly, e.g.
+# when multiple dashboard instances are distributed on different machines
+# (usually behind a load-balancer). Either you have to make sure that a session
+# gets all requests routed to the same dashboard instance or you set the same
+# SECRET_KEY for all of them.
 SECRET_KEY = secret_key.generate_or_read_from_file(
     os.path.join(LOCAL_PATH, '.secret_key_store'))
 
@@ -129,13 +134,13 @@ SECRET_KEY = secret_key.generate_or_read_from_file(
 #    'default': {
 #        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
 #        'LOCATION': '127.0.0.1:11211',
-#    }
+#    },
 #}
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
+    },
 }
 
 # Send email to the console by default
@@ -165,15 +170,34 @@ OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"
 # Determines which authentication choice to show as default.
 #WEBSSO_INITIAL_CHOICE = "credentials"
 
-# The list of authentication mechanisms
-# which include keystone federation protocols.
-# Current supported protocol IDs are 'saml2' and 'oidc'
-# which represent SAML 2.0, OpenID Connect respectively.
+# The list of authentication mechanisms which include keystone
+# federation protocols and identity provider/federation protocol
+# mapping keys (WEBSSO_IDP_MAPPING). Current supported protocol
+# IDs are 'saml2' and 'oidc'  which represent SAML 2.0, OpenID
+# Connect respectively.
 # Do not remove the mandatory credentials mechanism.
+# Note: The last two tuples are sample mapping keys to a identity provider
+# and federation protocol combination (WEBSSO_IDP_MAPPING).
 #WEBSSO_CHOICES = (
 #    ("credentials", _("Keystone Credentials")),
 #    ("oidc", _("OpenID Connect")),
-#    ("saml2", _("Security Assertion Markup Language")))
+#    ("saml2", _("Security Assertion Markup Language")),
+#    ("acme_oidc", "ACME - OpenID Connect"),
+#    ("acme_saml2", "ACME - SAML2"),
+#)
+
+# A dictionary of specific identity provider and federation protocol
+# combinations. From the selected authentication mechanism, the value
+# will be looked up as keys in the dictionary. If a match is found,
+# it will redirect the user to a identity provider and federation protocol
+# specific WebSSO endpoint in keystone, otherwise it will use the value
+# as the protocol_id when redirecting to the WebSSO by protocol endpoint.
+# NOTE: The value is expected to be a tuple formatted as:
+# (<idp_id>, <protocol_id>).
+#WEBSSO_IDP_MAPPING = {
+#    "acme_oidc": ("acme", "oidc"),
+#    "acme_saml2": ("acme", "saml2"),
+#}
 
 # Disable SSL certificate checks (useful for self-signed certificates):
 #OPENSTACK_SSL_NO_VERIFY = True
@@ -211,8 +235,14 @@ OPENSTACK_ENABLE_PASSWORD_RETRIEVE = True
 # Toggle LAUNCH_INSTANCE_LEGACY_ENABLED and LAUNCH_INSTANCE_NG_ENABLED to
 # determine the experience to enable.  Set them both to true to enable
 # both.
-#LAUNCH_INSTANCE_LEGACY_ENABLED = True
-#LAUNCH_INSTANCE_NG_ENABLED = False
+LAUNCH_INSTANCE_LEGACY_ENABLED = True
+LAUNCH_INSTANCE_NG_ENABLED = False
+
+# A dictionary of settings which can be used to provide the default values for
+# properties found in the Launch Instance modal.
+#LAUNCH_INSTANCE_DEFAULTS = {
+#    'config_drive': False,
+#}
 
 # The Xen Hypervisor has the ability to set the mount point for volumes
 # attached to instances (other Hypervisors currently do not). Setting
@@ -221,6 +251,7 @@ OPENSTACK_ENABLE_PASSWORD_RETRIEVE = True
 OPENSTACK_HYPERVISOR_FEATURES = {
     'can_set_mount_point': False,
     'can_set_password': True,
+    'requires_keypair': False,
 }
 
 # The OPENSTACK_CINDER_FEATURES settings can be used to enable optional
@@ -241,6 +272,19 @@ OPENSTACK_NEUTRON_NETWORK = {
     'enable_lb': False,
     'enable_firewall': False,
     'enable_vpn': True,
+    'enable_fip_topology_check': True,
+
+    # Neutron can be configured with a default Subnet Pool to be used for IPv4
+    # subnet-allocation. Specify the label you wish to display in the Address
+    # pool selector on the create subnet step if you want to use this feature.
+    'default_ipv4_subnet_pool_label': None,
+
+    # Neutron can be configured with a default Subnet Pool to be used for IPv6
+    # subnet-allocation. Specify the label you wish to display in the Address
+    # pool selector on the create subnet step if you want to use this feature.
+    # You must set this to enable IPv6 Prefix Delegation in a PD-capable
+    # environment.
+    'default_ipv6_subnet_pool_label': None,
 
     # The profile_support option is used to detect if an external router can be
     # configured via the dashboard. When using specific plugins the
@@ -257,7 +301,14 @@ OPENSTACK_NEUTRON_NETWORK = {
     # types in this list will be available to choose from when creating a
     # port.
     # VNIC types include 'normal', 'macvtap' and 'direct'.
-    'supported_vnic_types': ['*']
+    # Set to empty list or None to disable VNIC type selection.
+    'supported_vnic_types': ['*'],
+}
+
+# The OPENSTACK_HEAT_STACK settings can be used to disable password
+# field required while launching the stack.
+OPENSTACK_HEAT_STACK = {
+    'enable_user_pass': True,
 }
 
 # The OPENSTACK_IMAGE_BACKEND settings can be used to customize features
@@ -269,14 +320,16 @@ OPENSTACK_NEUTRON_NETWORK = {
 #        ('aki', _('AKI - Amazon Kernel Image')),
 #        ('ami', _('AMI - Amazon Machine Image')),
 #        ('ari', _('ARI - Amazon Ramdisk Image')),
+#        ('docker', _('Docker')),
 #        ('iso', _('ISO - Optical Disk Image')),
 #        ('ova', _('OVA - Open Virtual Appliance')),
 #        ('qcow2', _('QCOW2 - QEMU Emulator')),
 #        ('raw', _('Raw')),
 #        ('vdi', _('VDI - Virtual Disk Image')),
-#        ('vhd', ('VHD - Virtual Hard Disk')),
+#        ('vhd', _('VHD - Virtual Hard Disk')),
 #        ('vmdk', _('VMDK - Virtual Machine Disk')),
-#    ]
+#        ('zfs', _('ZFS - Solaris ZFS Image')),
+#    ],
 #}
 
 # The IMAGE_CUSTOM_PROPERTY_TITLES settings is used to customize the titles for
@@ -339,7 +392,7 @@ TIME_ZONE = "UTC"
 # Set this to True to display an 'Admin Password' field on the Change Password
 # form to verify that it is indeed the admin logged-in who wants to change
 # the password.
-# ENFORCE_PASSWORD_CHECK = False
+#ENFORCE_PASSWORD_CHECK = False
 
 # Modules that provide /auth routes that can be used to handle different types
 # of user authentication. Add auth plugins that require extra route handling to
@@ -355,7 +408,17 @@ TIME_ZONE = "UTC"
 
 # Path to directory containing policy.json files
 #POLICY_FILES_PATH = os.path.join(ROOT_PATH, "conf")
-# Map of local copy of service policy files
+
+# Map of local copy of service policy files.
+# Please insure that your identity policy file matches the one being used on
+# your keystone servers. There is an alternate policy file that may be used
+# in the Keystone v3 multi-domain case, policy.v3cloudsample.json.
+# This file is not included in the Horizon repository by default but can be
+# found at
+# http://git.openstack.org/cgit/openstack/keystone/tree/etc/ \
+# policy.v3cloudsample.json
+# Having matching policy files on the Horizon and Keystone servers is essential
+# for normal operation. This holds true for all services and their policy files.
 #POLICY_FILES = {
 #    'identity': 'keystone_policy.json',
 #    'compute': 'nova_policy.json',
@@ -366,16 +429,22 @@ TIME_ZONE = "UTC"
 #    'telemetry': 'ceilometer_policy.json',
 #}
 
+# TODO: (david-lyle) remove when plugins support adding settings.
+# Note: Only used when trove-dashboard plugin is configured to be used by
+# Horizon.
 # Trove user and database extension support. By default support for
 # creating users and databases on database instances is turned on.
 # To disable these extensions set the permission here to something
 # unusable such as ["!"].
-# TROVE_ADD_USER_PERMS = []
-# TROVE_ADD_DATABASE_PERMS = []
+#TROVE_ADD_USER_PERMS = []
+#TROVE_ADD_DATABASE_PERMS = []
 
-# Change this patch to the appropriate static directory containing
-# two files: _variables.scss and _styles.scss
-#CUSTOM_THEME_PATH = 'static/themes/default'
+# Change this patch to the appropriate list of tuples containing
+# a key, label and static directory containing two files:
+# _variables.scss and _styles.scss
+AVAILABLE_THEMES = [
+    ('default', 'Default', 'themes/default'),
+]
 
 LOGGING = {
     'version': 1,
@@ -384,16 +453,10 @@ LOGGING = {
     # if nothing is specified here and disable_existing_loggers is True,
     # django.db.backends will still log unless it is disabled explicitly.
     'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s %(process)d %(levelname)s %(name)s '
-                      '%(message)s'
-        },
-    },
     'handlers': {
         'null': {
             'level': 'DEBUG',
-            'class': 'django.utils.log.NullHandler',
+            'class': 'logging.NullHandler',
         },
         'console': {
             # Set the level to "DEBUG" for verbose output logging.
@@ -463,11 +526,6 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'troveclient': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
         'swiftclient': {
             'handlers': ['console'],
             'level': 'DEBUG',
@@ -496,7 +554,13 @@ LOGGING = {
             'handlers': ['null'],
             'propagate': False,
         },
-    }
+    },
+    'formatters': {
+        'verbose': {
+                'format': '%(asctime)s %(process)d %(levelname)s %(name)s '
+                          '%(message)s'
+        },
+    },
 }
 
 # 'direction' should not be specified for all_tcp/udp/icmp.
@@ -620,6 +684,9 @@ SECURITY_GROUP_RULES = {
 #
 # See Metadata Definitions on: http://docs.openstack.org/developer/glance/
 
+# TODO: (david-lyle) remove when plugins support settings natively
+# Note: This is only used when the Sahara plugin is configured and enabled
+# for use in Horizon.
 # Indicate to the Sahara data processing service whether or not
 # automatic floating IP allocation is in effect.  If it is not
 # in effect, the user will be prompted to choose a floating IP
@@ -634,6 +701,12 @@ SECURITY_GROUP_RULES = {
 # algorithms supported by Python's hashlib library.
 #OPENSTACK_TOKEN_HASH_ALGORITHM = 'md5'
 
+# Hashing tokens from Keystone keeps the Horizon session data smaller, but it
+# doesn't work in some cases when using PKI tokens.  Uncomment this value and
+# set it to False if using PKI tokens and there are 401 errors due to token
+# hashing.
+#OPENSTACK_TOKEN_HASH_ENABLED = True
+
 # AngularJS requires some settings to be made available to
 # the client side. Some settings are required by in-tree / built-in horizon
 # features. These settings must be added to REST_API_REQUIRED_SETTINGS in the
@@ -646,7 +719,8 @@ SECURITY_GROUP_RULES = {
 # the enabled panel configuration.
 # You should not add settings to this list for out of tree extensions.
 # See: https://wiki.openstack.org/wiki/Horizon/RESTAPI
-REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES']
+REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES',
+                              'LAUNCH_INSTANCE_DEFAULTS']
 
 # Additional settings can be made available to the client side for
 # extensibility by specifying them in REST_API_ADDITIONAL_SETTINGS
@@ -654,6 +728,24 @@ REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES']
 # and are not encrypted on the browser. This is an experimental API and
 # may be deprecated in the future without notice.
 #REST_API_ADDITIONAL_SETTINGS = []
+
+# DISALLOW_IFRAME_EMBED can be used to prevent Horizon from being embedded
+# within an iframe. Legacy browsers are still vulnerable to a Cross-Frame
+# Scripting (XFS) vulnerability, so this option allows extra security hardening
+# where iframes are not used in deployment. Default setting is True.
+# For more information see:
+# http://tinyurl.com/anticlickjack
+#DISALLOW_IFRAME_EMBED = True
+
+STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
+
+# Enable Solaris theme
+TEMPLATE_DIRS = (
+    '/usr/lib/python2.7/vendor-packages/openstack_dashboard/templates/solaris',
+)
+
+# Application files are compressed during packaging
+COMPRESS_OFFLINE = True
 
 # Solaris kernel(8) and boot(8) options exposed in instances panel.
 # Allows a user to set boot options during instance launch and allows a user

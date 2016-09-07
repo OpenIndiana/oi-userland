@@ -1,0 +1,81 @@
+#!/usr/bin/python2.7
+
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import os
+from subprocess import check_call, Popen, PIPE
+import sys
+import traceback
+
+import smf_include
+
+
+def start():
+    # pull out the current version of config/upgrade-id
+    p = Popen(['/usr/bin/svcprop', '-p', 'config/upgrade-id',
+               os.environ['SMF_FMRI']], stdout=PIPE, stderr=PIPE)
+    curr_ver, _err = p.communicate()
+    curr_ver = curr_ver.strip()
+
+    # extract the openstack-upgrade-id from the pkg
+    p = Popen(['/usr/bin/pkg', 'contents', '-H', '-t', 'set', '-o', 'value',
+               '-a', 'name=openstack.upgrade-id',
+               'pkg:/cloud/openstack/horizon'], stdout=PIPE, stderr=PIPE)
+    pkg_ver, _err = p.communicate()
+    pkg_ver = pkg_ver.strip()
+
+    if curr_ver == pkg_ver:
+        # No need to upgrade
+        sys.exit(smf_include.SMF_EXIT_OK)
+
+    # In versions of OpenStack prior to Mitaka, 'openstack-dashboard-http.conf'
+    # and 'openstack-dashboard-tls.conf' were delivered by the
+    # cloud/openstack/horizon package.  Look for the existence of either file
+    # in Apache's conf.d directory.  If either are found, exit the service
+    # degraded so the administrator can investigate why.
+    for filename in ['openstack-dashboard-http.conf',
+                     'openstack-dashboard-tls.conf']:
+        path = os.path.join('/etc/apache2/2.4/conf.d', filename)
+        if os.path.exists(path) or os.path.islink(path):
+            reason = '/etc/apache2/2.4/conf.d/%s found.  ' % filename + \
+                     'Starting with the Mitaka release, Horizon is now a ' + \
+                     'stand-alone service and should be configured ' + \
+                     'independently from the ' + \
+                     'svc:/network/http:apache24 service.  ' + \
+                     '/etc/apache2/2.4/conf.d/%s should be ' % filename + \
+                     'removed before restarting the ' + \
+                     'svc:/network/http:apache24 service'
+            smf_include.smf_method_exit(smf_include.SMF_EXIT_DEGRADED,
+                                        'Apache_Configured', reason)
+
+    # update the current version
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
+                'config/upgrade-id', '=', pkg_ver])
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'refresh'])
+
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
+    try:
+        smf_include.smf_main()
+    except RuntimeError:
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+    except Exception as err:
+        print 'Unknown error:  %s' % err
+        print
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)

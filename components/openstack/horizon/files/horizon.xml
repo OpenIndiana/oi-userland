@@ -1,0 +1,186 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+ Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License"); you may
+ not use this file except in compliance with the License. You may obtain
+ a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+-->
+<service_bundle type="manifest" name="horizon">
+
+  <service version="1" type="service"
+    name="application/openstack/horizon">
+
+    <dependency name='multiuser' grouping='require_all' restart_on='error'
+      type='service'>
+      <service_fmri value='svc:/milestone/multi-user:default' />
+    </dependency>
+
+    <dependency name='upgrade' grouping='require_all' restart_on='none'
+      type='service'>
+      <service_fmri
+        value='svc:/application/openstack/horizon/horizon-upgrade' />
+    </dependency>
+
+    <exec_method timeout_seconds="60" type="method" name="start"
+      exec="/lib/svc/method/horizon %m">
+      <method_context>
+        <method_credential user='webservd' group='webservd'
+          privileges='basic,{zone}:/system/volatile/openstack_dashboard_wsgi_*'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="stop"
+      exec="/lib/svc/method/horizon %m">
+      <method_context>
+        <method_credential user='webservd' group='webservd'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="restart"
+      exec="/lib/svc/method/horizon %m">
+      <method_context>
+        <method_credential user='webservd' group='webservd' />
+      </method_context>
+    </exec_method>
+
+    <property_group type="framework" name="startd">
+      <propval type="astring" name="ignore_error" value="core,signal"/>
+    </property_group>
+
+    <instance name='default' enabled='false'>
+      <!-- to start/stop/refresh the service -->
+      <property_group name='general' type='framework'>
+        <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.horizon' />
+        <propval name='value_authorization' type='astring'
+                 value='solaris.smf.value.horizon' />
+      </property_group>
+
+      <property_group name='horizon_stencil' type='configfile'>
+        <propval name='path' type='astring'
+          value='/var/lib/openstack_dashboard/openstack_dashboard.httpd.conf'/>
+        <propval name='stencil' type='astring' value='horizon.stencil'/>
+        <propval name='mode' type='astring' value='0444'/>
+        <propval name='owner' type='astring' value='webservd'/>
+        <propval name='group' type='astring' value='webservd'/>
+      </property_group>
+
+      <property_group name='horizon_use_tls_stencil' type='configfile'>
+        <propval name='path' type='astring'
+          value='/etc/openstack_dashboard/local_settings.d/use_tls.py'/>
+        <propval name='stencil' type='astring' value='use_tls.stencil'/>
+        <propval name='mode' type='astring' value='0444'/>
+        <propval name='owner' type='astring' value='root'/>
+        <propval name='group' type='astring' value='root'/>
+      </property_group>
+
+      <property_group name='config' type='application'>
+        <propval name='servername' type='astring' value='127.0.0.1'/>
+        <propval name='access_log' type='astring'
+          value='/var/log/openstack_dashboard/openstack_dashboard_access.log'/>
+        <propval name='error_log' type='astring'
+          value='/var/log/openstack_dashboard/openstack_dashboard_error.log'/>
+        <propval name='port' type='count' value='6788'/>
+        <propval name='use_tls' type='boolean' value='true'/>
+      </property_group>
+    </instance>
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C">
+          OpenStack Horizon Dashboard Service
+        </loctext>
+      </common_name>
+      <description>
+        <loctext xml:lang="C">
+          horizon provides a web-based dashboard for OpenStack.
+        </loctext>
+      </description>
+
+      <pg_pattern required='true' type='application' name='config'>
+        <prop_pattern required='true' type='astring' name='servername'>
+          <description>
+            <loctext xml:lang='C'>
+              The Apache ServerName Directive.  Hostname and port that the
+              server uses to identify itself.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='access_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache access log file.  Defaults to
+              /var/log/openstack_dashboard/openstack_dashboard_access.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='error_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache error log file.  Defaults to
+              /var/log/openstack_dashboard/openstack_dashboard_error.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='count' name='port'>
+          <description>
+            <loctext xml:lang='C'>
+              The port for requests.  Default value is 6788.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded X.509 Certificate file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_ca_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              File of concatenated PEM-encoded CA Certificates for Client authentication.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_key_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded Private Key file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='boolean' name='use_tls'>
+          <description>
+            <loctext xml:lang='C'>
+              Boolean property to indicate usage of TLS.  Defaults to 'true'.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+      </pg_pattern>
+    </template>
+  </service>
+</service_bundle>

@@ -1,17 +1,18 @@
 In-house patch to remove unneeded JS libraries.
+This patch is not suitable for pushing upstream.
 
---- horizon-2015.1.0/horizon/site_urls.py.orig      2015-05-01 14:03:57.627879183 -0600
-+++ horizon-2015.1.0/horizon/site_urls.py        2015-05-01 14:04:00.275015653 -0600
+--- horizon-9.0.1/horizon/site_urls.py.~1~	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.0.1/horizon/site_urls.py	2016-06-29 23:54:56.842020230 -0700
 @@ -22,8 +22,6 @@ from django.conf.urls import patterns
  from django.conf.urls import url
  from django.views.generic import TemplateView  # noqa
-
+ 
 -from horizon.test.jasmine import jasmine
 -
  urlpatterns = patterns(
      'horizon.views',
      url(r'^home/$', 'user_home', name='user_home')
-@@ -40,11 +38,3 @@ urlpatterns += patterns(
+@@ -40,12 +38,3 @@ urlpatterns += patterns(
          name="set_language"),
      url(r'^i18n/', include('django.conf.urls.i18n'))
  )
@@ -19,14 +20,14 @@ In-house patch to remove unneeded JS libraries.
 -if settings.DEBUG:
 -    urlpatterns += patterns(
 -        '',
--        url(r'^qunit/$',
--            TemplateView.as_view(template_name="horizon/qunit.html"),
--            name='qunit_tests'),
--        url(r'^jasmine/(.*?)$', jasmine.dispatcher))
-
---- horizon-2015.1.0/openstack_dashboard/static_settings.py.orig    2015-05-01 14:06:07.878347595 -0600
-+++ horizon-2015.1.0/openstack_dashboard/static_settings.py  2015-05-01 14:06:54.565608248 -0600
-@@ -27,7 +27,6 @@ import xstatic.pkg.bootstrap_scss
+-        url(r'^jasmine-legacy/$',
+-            TemplateView.as_view(
+-                template_name="horizon/jasmine/jasmine_legacy.html"),
+-            name='jasmine_tests'),
+-        url(r'^jasmine/.*?$', jasmine.dispatcher))
+--- horizon-9.0.1/openstack_dashboard/static_settings.py.~1~	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.0.1/openstack_dashboard/static_settings.py	2016-06-29 23:54:56.842651790 -0700
+@@ -31,7 +31,6 @@ import xstatic.pkg.bootswatch
  import xstatic.pkg.d3
  import xstatic.pkg.font_awesome
  import xstatic.pkg.hogan
@@ -34,15 +35,7 @@ In-house patch to remove unneeded JS libraries.
  import xstatic.pkg.jquery
  import xstatic.pkg.jquery_migrate
  import xstatic.pkg.jquery_quicksearch
-@@ -35,7 +34,6 @@ import xstatic.pkg.jquery_tablesorter
- import xstatic.pkg.jquery_ui
- import xstatic.pkg.jsencrypt
- import xstatic.pkg.magic_search
--import xstatic.pkg.qunit
- import xstatic.pkg.rickshaw
- import xstatic.pkg.spin
- import xstatic.pkg.termjs
-@@ -70,9 +68,6 @@ def get_staticfiles_dirs(webroot='/'):
+@@ -82,9 +81,6 @@ def get_staticfiles_dirs(webroot='/'):
          ('horizon/lib/font-awesome',
              xstatic.main.XStatic(xstatic.pkg.font_awesome,
                                   root_url=webroot).base_dir),
@@ -51,14 +44,4 @@ In-house patch to remove unneeded JS libraries.
 -                                 root_url=webroot).base_dir),
          ('horizon/lib/jquery',
              xstatic.main.XStatic(xstatic.pkg.jquery,
-                                  root_url=webroot).base_dir),
-@@ -91,9 +86,6 @@ def get_staticfiles_dirs(webroot='/'):
-         ('horizon/lib/magic_search',
-             xstatic.main.XStatic(xstatic.pkg.magic_search,
-                                  root_url=webroot).base_dir),
--        ('horizon/lib/qunit',
--            xstatic.main.XStatic(xstatic.pkg.qunit,
--                                 root_url=webroot).base_dir),
-         ('horizon/lib',
-             xstatic.main.XStatic(xstatic.pkg.rickshaw,
                                   root_url=webroot).base_dir),

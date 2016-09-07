@@ -2,69 +2,9 @@ Patch to add kernel(8) and boot(8) options to horizon.
 
 There are no plans to push this upstream.
 
---- horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/views.py.orig	2016-01-12 15:39:19.871734393 -0700
-+++ horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/views.py	2016-01-14 13:36:28.185989955 -0700
-@@ -21,6 +21,7 @@ Views for managing instances.
- """
- import logging
-
-+from django.conf import settings
- from django.core.urlresolvers import reverse
- from django.core.urlresolvers import reverse_lazy
- from django import http
-@@ -251,6 +252,14 @@ class UpdateView(workflows.WorkflowView)
-         initial = super(UpdateView, self).get_initial()
-         initial.update({'instance_id': self.kwargs['instance_id'],
-                         'name': getattr(self.get_object(), 'name', '')})
-+        if getattr(settings, 'SOLARIS_BOOTARGS', True):
-+            metadata = getattr(self.get_object(), 'metadata', '')
-+            bootargs = metadata.get('bootargs')
-+            bootargs_persist = metadata.get(
-+                'bootargs_persist', 'False').lower() == 'true'
-+
-+            initial.update({'bootargs': bootargs,
-+                            'bootargs_persist': bootargs_persist})
-         return initial
-
-
---- horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py.orig	2016-02-08 15:35:17.142181350 -0600
-+++ horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py	2016-02-08 15:35:29.148388395 -0600
-@@ -22,6 +22,7 @@ import operator
-
- from oslo_utils import units
-
-+from django.conf import settings
- from django.template.defaultfilters import filesizeformat  # noqa
- from django.utils.text import normalize_newlines  # noqa
- from django.utils.translation import ugettext_lazy as _
-@@ -872,6 +873,14 @@ class LaunchInstance(workflows.Workflow)
-             nics = self.set_network_port_profiles(request,
-                                                   context['network_id'],
-                                                   context['profile_id'])
-+        metadata = {}
-+        if getattr(settings, 'SOLARIS_BOOTARGS', True):
-+            bopts = context.get('boot_options').strip()
-+            if bopts:
-+                metadata = {
-+                    "bootargs": bopts,
-+                    "bootargs_persist": str(context.get('bootargs_persist'))
-+                }
-
-         try:
-             api.nova.server_create(request,
-@@ -888,7 +897,8 @@ class LaunchInstance(workflows.Workflow)
-                                    instance_count=int(context['count']),
-                                    admin_pass=context['admin_pass'],
-                                    disk_config=context.get('disk_config'),
--                                   config_drive=context.get('config_drive'))
-+                                   config_drive=context.get('config_drive'),
-+                                   meta=metadata)
-             return True
-         except Exception:
-             if port_profiles_supported:
---- horizon-2015.1.2/openstack_dashboard/api/nova.py.orig	2015-12-08 16:05:40.611921571 -0700
-+++ horizon-2015.1.2/openstack_dashboard/api/nova.py	2015-12-08 16:06:20.242257576 -0700
-@@ -661,6 +661,10 @@ def server_update(request, instance_id,
+--- horizon-9.0.1/openstack_dashboard/api/nova.py.~1~	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.0.1/openstack_dashboard/api/nova.py	2016-06-29 23:54:56.937162560 -0700
+@@ -741,6 +741,10 @@ def server_update(request, instance_id,
      return novaclient(request).servers.update(instance_id, name=name)
  
  
@@ -74,10 +14,10 @@ There are no plans to push this upstream.
 +
  def server_migrate(request, instance_id):
      novaclient(request).servers.migrate(instance_id)
-
---- horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/tables.py.orig	2016-02-17 09:04:25.877390975 -0600
-+++ horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/tables.py	2016-02-17 09:06:41.425616719 -0600
-@@ -390,6 +390,14 @@ class EditInstance(policy.PolicyTargetMi
+ 
+--- horizon-9.0.1/openstack_dashboard/dashboards/project/instances/tables.py.~1~	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.0.1/openstack_dashboard/dashboards/project/instances/tables.py	2016-06-29 23:54:56.938087190 -0700
+@@ -459,6 +459,14 @@ class EditInstance(policy.PolicyTargetMi
          return not is_deleting(instance)
  
  
@@ -92,11 +32,63 @@ There are no plans to push this upstream.
  class EditInstanceSecurityGroups(EditInstance):
      name = "edit_secgroups"
      verbose_name = _("Edit Security Groups")
-@@ -1065,3 +1073,7 @@ class InstancesTable(tables.DataTable):
-                        ResizeLink, LockInstance, UnlockInstance,
+@@ -1213,3 +1221,7 @@ class InstancesTable(tables.DataTable):
+                        ToggleShelve, ResizeLink, LockInstance, UnlockInstance,
                         SoftRebootInstance, RebootInstance,
-                        StopInstance, RebuildInstance, TerminateInstance)
+                        StopInstance, RebuildInstance, DeleteInstance)
 +        pos = row_actions.index(ConsoleLink)
 +        if getattr(settings, 'SOLARIS_BOOTARGS', True):
 +            row_actions = (row_actions[:pos] + (EditBootargs,) +
 +                           row_actions[pos:])
+--- horizon-9.0.1/openstack_dashboard/dashboards/project/instances/views.py.~1~	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.0.1/openstack_dashboard/dashboards/project/instances/views.py	2016-06-29 23:54:56.938661255 -0700
+@@ -255,6 +255,14 @@ class UpdateView(workflows.WorkflowView)
+         initial = super(UpdateView, self).get_initial()
+         initial.update({'instance_id': self.kwargs['instance_id'],
+                         'name': getattr(self.get_object(), 'name', '')})
++        if getattr(settings, 'SOLARIS_BOOTARGS', True):
++            metadata = getattr(self.get_object(), 'metadata', '')
++            bootargs = metadata.get('bootargs')
++            bootargs_persist = metadata.get(
++                'bootargs_persist', 'False').lower() == 'true'
++
++            initial.update({'bootargs': bootargs,
++                            'bootargs_persist': bootargs_persist})
+         return initial
+ 
+ 
+--- horizon-9.0.1/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py.~2~	2016-06-29 23:54:56.857026635 -0700
++++ horizon-9.0.1/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py	2016-06-29 23:54:56.939484170 -0700
+@@ -23,6 +23,7 @@ import operator
+ from oslo_utils import units
+ import six
+ 
++from django.conf import settings
+ from django.template.defaultfilters import filesizeformat  # noqa
+ from django.utils.text import normalize_newlines  # noqa
+ from django.utils.translation import ugettext_lazy as _
+@@ -949,6 +950,14 @@ class LaunchInstance(workflows.Workflow)
+             nics = self.set_network_port_profiles(request,
+                                                   context['network_id'],
+                                                   context['profile_id'])
++        metadata = {}
++        if getattr(settings, 'SOLARIS_BOOTARGS', True):
++            bopts = context.get('boot_options').strip()
++            if bopts:
++                metadata = {
++                    "bootargs": bopts,
++                    "bootargs_persist": str(context.get('bootargs_persist'))
++                }
+ 
+         ports = context.get('ports')
+         if ports:
+@@ -971,7 +980,8 @@ class LaunchInstance(workflows.Workflow)
+                                    instance_count=int(context['count']),
+                                    admin_pass=context['admin_pass'],
+                                    disk_config=context.get('disk_config'),
+-                                   config_drive=context.get('config_drive'))
++                                   config_drive=context.get('config_drive'),
++                                   meta=metadata)
+             return True
+         except Exception:
+             if port_profiles_supported:

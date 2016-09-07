@@ -1,15 +1,15 @@
 Internal patch to only enable the current supported boot source option (Boot
 from Image).  This patch will not be committed upstream.
 
---- horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py.orig	2016-04-12 07:19:45.259440809 -0700
-+++ horizon-2015.1.2/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py	2016-04-12 07:22:38.755245076 -0700
-@@ -153,25 +153,9 @@ class SetInstanceDetailsAction(workflows
+--- horizon-9.0.0.0rc1/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py.~1~	2016-03-30 02:39:18.483954433 -0700
++++ horizon-9.0.0.0rc1/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py	2016-03-30 02:41:14.550222691 -0700
+@@ -154,25 +154,9 @@ class SetInstanceDetailsAction(workflows
          source_type_choices = [
              ('', _("Select source")),
              ("image_id", _("Boot from image")),
 -            ("instance_snapshot_id", _("Boot from snapshot")),
          ]
--        if base.is_service_enabled(request, 'volume'):
+-        if cinder.is_volume_service_enabled(request):
 -            source_type_choices.append(("volume_id", _("Boot from volume")))
 -
 -            try:
@@ -27,6 +27,6 @@ from Image).  This patch will not be committed upstream.
 -                 _("Boot from volume snapshot (creates a new volume)")))
          self.fields['source_type'].choices = source_type_choices
 +        self.fields['source_type'].initial = source_type_choices[1][0]
- 
+
      @memoized.memoized_method
      def _get_flavor(self, flavor_id):

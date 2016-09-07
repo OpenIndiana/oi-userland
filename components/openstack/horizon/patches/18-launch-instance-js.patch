@@ -1,0 +1,63 @@
+In house patch to modify the AngularJS workflows for the
+LaunchInstanceNG wizard. This patch can be removed once we support the
+featues it disables.
+
+--- horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/launch-instance-model.service.js.1	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/launch-instance-model.service.js	2016-06-02 13:05:56.000000000 -0700
+@@ -206,7 +206,9 @@
+           novaAPI.getFlavors(true, true).then(onGetFlavors, noop),
+           novaAPI.getKeypairs().then(onGetKeypairs, noop),
+           novaAPI.getLimits().then(onGetNovaLimits, noop),
+-          securityGroup.query().then(onGetSecurityGroups, noop),
++          /* Disable security groups
++           * securityGroup.query().then(onGetSecurityGroups, noop),
++           */
+           serviceCatalog.ifTypeEnabled('network').then(getNetworks, noop),
+           serviceCatalog.ifTypeEnabled('volume').then(getVolumes, noop),
+           settings.getSetting('LAUNCH_INSTANCE_DEFAULTS').then(setDefaultValues, noop)
+--- horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/source/source.controller.js.1	2016-06-02 13:05:56.000000000 -0700
++++ horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/source/source.controller.js	2016-06-02 13:05:56.000000000 -0700
+@@ -72,9 +72,13 @@
+      */
+     ctrl.bootSourcesOptions = [
+       { type: bootSourceTypes.IMAGE, label: gettext('Image') },
+-      { type: bootSourceTypes.INSTANCE_SNAPSHOT, label: gettext('Instance Snapshot') },
+-      { type: bootSourceTypes.VOLUME, label: gettext('Volume') },
+-      { type: bootSourceTypes.VOLUME_SNAPSHOT, label: gettext('Volume Snapshot') }
++      /*
++       * Disable all sources other than 'Image'
++       *
++       * { type: bootSourceTypes.INSTANCE_SNAPSHOT, label: gettext('Instance Snapshot') },
++       * { type: bootSourceTypes.VOLUME, label: gettext('Volume') },
++       * { type: bootSourceTypes.VOLUME_SNAPSHOT, label: gettext('Volume Snapshot') }
++       */
+     ];
+ 
+     ctrl.updateBootSourceSelection = updateBootSourceSelection;
+--- horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/launch-instance-workflow.service.js.1	2016-07-21 03:24:05.000000000 -0700
++++ horizon-9.1.0/openstack_dashboard/dashboards/project/static/dashboard/project/workflow/launch-instance/launch-instance-workflow.service.js	2016-07-21 03:24:05.000000000 -0700
+@@ -67,14 +67,17 @@
+           formName: 'launchInstanceNetworkPortForm',
+           requiredServiceTypes: ['network']
+         },
++	/*
++         * Disable Security Groups.	
++         *{
++         * id: 'secgroups',
++         * title: gettext('Security Groups'),
++         * templateUrl: basePath + 'security-groups/security-groups.html',
++         * helpUrl: basePath + 'security-groups/security-groups.help.html',
++         * formName: 'launchInstanceAccessAndSecurityForm'
++         *},
++	 */
+         {
+-          id: 'secgroups',
+-          title: gettext('Security Groups'),
+-          templateUrl: basePath + 'security-groups/security-groups.html',
+-          helpUrl: basePath + 'security-groups/security-groups.help.html',
+-          formName: 'launchInstanceAccessAndSecurityForm'
+-        },
+-        {
+           id: 'keypair',
+           title: gettext('Key Pair'),
+           templateUrl: basePath + 'keypair/keypair.html',
