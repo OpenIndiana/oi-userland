@@ -1,17 +1,17 @@
 Changes to the Neutron Metadata agent to port it to Solaris. These
 changes will eventually be proposed upstream.
 
---- neutron-2015.1.0/neutron/agent/metadata/driver.py	2015-04-30 05:52:24.000000000 -0700
-+++ new/neutron/agent/metadata/driver.py	2015-10-08 16:01:14.949791035 -0700
+--- neutron-8.0.0/neutron/agent/metadata/driver.py.~1~	2016-04-07 00:44:25.000000000 -0700
++++ neutron-8.0.0/neutron/agent/metadata/driver.py	2016-05-08 22:58:35.936392260 -0700
 @@ -14,6 +14,7 @@
  #    under the License.
  
  import os
 +import platform
  
- from oslo_log import log as logging
- 
-@@ -38,10 +39,16 @@
+ from neutron.agent.common import config
+ from neutron.agent.l3 import ha_router
+@@ -36,10 +37,16 @@ class MetadataDriver(object):
      def __init__(self, l3_agent):
          self.metadata_port = l3_agent.conf.metadata_port
          self.metadata_access_mark = l3_agent.conf.metadata_access_mark
@@ -32,7 +32,7 @@ changes will eventually be proposed upstream.
  
      @classmethod
      def metadata_filter_rules(cls, port, mark):
-@@ -95,14 +102,18 @@
+@@ -96,14 +103,18 @@ class MetadataDriver(object):
              metadata_proxy_socket = conf.metadata_proxy_socket
              user, group, watch_log = (
                  cls._get_metadata_proxy_user_group_watchlog(conf))
@@ -59,40 +59,16 @@ changes will eventually be proposed upstream.
              proxy_cmd.extend(config.get_log_args(
                  conf, 'neutron-ns-metadata-proxy-%s.log' % uuid,
                  metadata_proxy_watch_log=watch_log))
-@@ -141,7 +152,7 @@
-     router = kwargs['router']
-     proxy = l3_agent.metadata_driver
-     for c, r in proxy.metadata_filter_rules(proxy.metadata_port,
--                                           proxy.metadata_access_mark):
-+                                            proxy.metadata_access_mark):
-         router.iptables_manager.ipv4['filter'].add_rule(c, r)
-     for c, r in proxy.metadata_mangle_rules(proxy.metadata_access_mark):
-         router.iptables_manager.ipv4['mangle'].add_rule(c, r)
-@@ -162,7 +173,7 @@
-     router = kwargs['router']
-     proxy = l3_agent.metadata_driver
-     for c, r in proxy.metadata_filter_rules(proxy.metadata_port,
--                                           proxy.metadata_access_mark):
-+                                            proxy.metadata_access_mark):
-         router.iptables_manager.ipv4['filter'].remove_rule(c, r)
-     for c, r in proxy.metadata_mangle_rules(proxy.metadata_access_mark):
-         router.iptables_manager.ipv4['mangle'].remove_rule(c, r)
-@@ -171,6 +182,28 @@
-     router.iptables_manager.apply()
- 
+@@ -168,3 +179,25 @@ def before_router_removed(resource, even
      proxy.destroy_monitored_metadata_proxy(l3_agent.process_monitor,
--                                          router.router['id'],
--                                          router.ns_name,
--                                          l3_agent.conf)
-+                                           router.router['id'],
-+                                           router.ns_name,
-+                                           l3_agent.conf)
+                                           router.router['id'],
+                                           l3_agent.conf)
 +
 +
 +def after_router_added_solaris(resource, event, l3_agent, **kwargs):
 +    router = kwargs['router']
 +    proxy = l3_agent.metadata_driver
-+    if not router.is_ha:
++    if not router.router['ha']:
 +        proxy.spawn_monitored_metadata_proxy(
 +            l3_agent.process_monitor,
 +            router.ns_name,
@@ -104,7 +80,7 @@ changes will eventually be proposed upstream.
 +def before_router_removed_solaris(resource, event, l3_agent, **kwargs):
 +    router = kwargs['router']
 +    proxy = l3_agent.metadata_driver
-+    if not router.is_ha:
++    if not router.router['ha']:
 +        proxy.destroy_monitored_metadata_proxy(l3_agent.process_monitor,
 +                                               router.router['id'],
 +                                               router.ns_name,

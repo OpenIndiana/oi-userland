@@ -17,12 +17,11 @@
 import ConfigParser
 import os
 import re
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 
-from openstack_common import is_ml2_plugin, kill_contract
+from openstack_common import kill_contract
 import smf_include
-
-from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 
 def set_hostmodel(value):
@@ -58,9 +57,7 @@ def cleanup_dhcp_agent_datalinks():
     # 'dh', end with '_0', and in between they are hexadecimal digits.
     prog = re.compile('dh[0-9A-Fa-f\_]{11}_0')
     ret_code = smf_include.SMF_EXIT_OK
-    ovs_bridge = None
-    if is_ml2_plugin():
-        ovs_bridge = get_ovs_bridge()
+    ovs_bridge = get_ovs_bridge()
     for dlname in dlnames:
         if prog.search(dlname) is None:
             continue
@@ -110,7 +107,7 @@ def start():
 
 def get_ovs_bridge():
     parser = ConfigParser.ConfigParser()
-    parser.read("/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini")
+    parser.read("/etc/neutron/plugins/ml2/openvswitch_agent.ini")
     try:
         ovs_bridge = parser.get("ovs", "integration_bridge")
     except ConfigParser.NoOptionError:

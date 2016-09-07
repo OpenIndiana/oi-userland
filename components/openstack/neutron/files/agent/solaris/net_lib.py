@@ -56,8 +56,10 @@ class IPInterface(CommandBase):
         return True
 
     @classmethod
-    def ipaddr_exists(cls, ifname, ipaddr):
-        cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addr', ifname]
+    def ipaddr_exists(cls, ipaddr, ifname=None):
+        cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addr']
+        if ifname:
+            cmd.append(ifname)
         stdout = cls.execute(cmd)
 
         return ipaddr in stdout
@@ -86,7 +88,7 @@ class IPInterface(CommandBase):
             if temp:
                 cmd.append('-t')
             self.execute_with_pfexec(cmd)
-        elif addrcheck and self.ipaddr_exists(self._ifname, ipaddr):
+        elif addrcheck and self.ipaddr_exists(ipaddr, self._ifname):
             return
 
         # If an address is IPv6, then to create a static IPv6 address
@@ -99,8 +101,8 @@ class IPInterface(CommandBase):
             mac_addr = stdout.splitlines()[0].strip()
             ll_addr = netaddr.EUI(mac_addr).ipv6_link_local()
 
-            if addrcheck and not self.ipaddr_exists(self._ifname,
-                                                    str(ll_addr)):
+            if addrcheck and not self.ipaddr_exists(str(ll_addr),
+                                                    self._ifname):
                 # create a link-local address
                 cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                        str(ll_addr), self._ifname]
@@ -135,7 +137,7 @@ class IPInterface(CommandBase):
         self.execute_with_pfexec(cmd)
 
     def delete_address(self, ipaddr, addrcheck=True):
-        if addrcheck and not self.ipaddr_exists(self._ifname, ipaddr):
+        if addrcheck and not self.ipaddr_exists(ipaddr, self._ifname):
             return
 
         cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addrobj,addr',
@@ -178,19 +180,6 @@ class Datalink(CommandBase):
         except Exception:
             return False
         return True
-
-    def connect_vnic(self, evsvport, tenantname=None, temp=True):
-        if self.datalink_exists(self._dlname):
-            return
-
-        cmd = ['/usr/sbin/dladm', 'create-vnic', '-c', evsvport, self._dlname]
-        if temp:
-            cmd.append('-t')
-        if tenantname:
-            cmd.append('-T')
-            cmd.append(tenantname)
-
-        self.execute_with_pfexec(cmd)
 
     def create_vnic(self, lower_link, mac_address=None, vid=None, temp=True):
         if self.datalink_exists(self._dlname):

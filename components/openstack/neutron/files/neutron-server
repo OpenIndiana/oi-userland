@@ -15,19 +15,16 @@
 #    under the License.
 
 import os
+from subprocess import CalledProcessError, check_call
 import sys
 
-from openstack_common import is_ml2_plugin
 import smf_include
-from subprocess import CalledProcessError, check_call
 
 
 def start():
     cfg_files = sys.argv[2:3]
-    if is_ml2_plugin():
-        cfg_files.append("/etc/neutron/plugins/ml2/ml2_conf.ini")
-    else:
-        cfg_files.append("/etc/neutron/plugins/evs/evs_plugin.ini")
+    # It is ML2 plugin for now, until we introduce another plugin
+    cfg_files.append("/etc/neutron/plugins/ml2/ml2_conf.ini")
 
     # verify paths are valid
     for f in cfg_files:

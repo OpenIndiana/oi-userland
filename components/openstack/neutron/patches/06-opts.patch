@@ -1,0 +1,77 @@
+In-house patch to further adjust Neutron's oslo-config-generator files
+to account for which modules are actually imported for each service and
+to include the Solaris Neutron options in the corresponding
+configuration files. This patch potentially can be sent upstream.
+
+--- neutron-8.1.2/etc/oslo-config-generator/dhcp_agent.ini.~1~	2016-06-09 18:45:29.000000000 -0700
++++ neutron-8.1.2/etc/oslo-config-generator/dhcp_agent.ini	2016-07-20 13:31:54.054132810 -0700
+@@ -5,3 +5,6 @@ wrap_width = 79
+ namespace = neutron.base.agent
+ namespace = neutron.dhcp.agent
+ namespace = oslo.log
++namespace = oslo.concurrency
++namespace = oslo.messaging
++namespace = oslo.service.service
+--- neutron-8.1.2/etc/oslo-config-generator/l3_agent.ini.~1~	2016-06-09 18:45:29.000000000 -0700
++++ neutron-8.1.2/etc/oslo-config-generator/l3_agent.ini	2016-07-20 13:32:06.220585515 -0700
+@@ -5,3 +5,7 @@ wrap_width = 79
+ namespace = neutron.base.agent
+ namespace = neutron.l3.agent
+ namespace = oslo.log
++namespace = oslo.concurrency
++namespace = oslo.messaging
++namespace = oslo.service.periodic_task
++namespace = oslo.service.service
+--- neutron-8.1.2/etc/oslo-config-generator/metadata_agent.ini.~1~	2016-06-09 18:45:36.000000000 -0700
++++ neutron-8.1.2/etc/oslo-config-generator/metadata_agent.ini	2016-07-20 17:21:11.247524910 -0700
+@@ -4,3 +4,5 @@ wrap_width = 79
+ 
+ namespace = neutron.metadata.agent
+ namespace = oslo.log
++namespace = oslo.concurrency
++namespace = oslo.messaging
+--- neutron-8.1.2/etc/oslo-config-generator/neutron.conf.~1~	2016-06-09 18:45:29.000000000 -0700
++++ neutron-8.1.2/etc/oslo-config-generator/neutron.conf	2016-07-20 00:31:17.805667675 -0700
+@@ -13,7 +13,11 @@ namespace = oslo.db
+ namespace = oslo.policy
+ namespace = oslo.concurrency
+ namespace = oslo.messaging
+-namespace = oslo.middleware.cors
++namespace = oslo.middleware
+ namespace = oslo.service.sslutils
+ namespace = oslo.service.wsgi
+ namespace = keystonemiddleware.auth_token
++namespace = oslo.reports
++namespace = oslo.service.periodic_task
++namespace = oslo.service.service
++namespace = oslo.versionedobjects
+--- neutron-8.1.2/neutron/opts.py.~1~	2016-06-09 18:45:36.000000000 -0700
++++ neutron-8.1.2/neutron/opts.py	2016-07-19 15:10:18.760175240 -0700
+@@ -23,12 +23,15 @@ import neutron.agent.dhcp.config
+ import neutron.agent.l2.extensions.manager
+ import neutron.agent.l3.config
+ import neutron.agent.l3.ha
++import neutron.agent.l3.solaris_agent
+ import neutron.agent.linux.interface
+ import neutron.agent.linux.pd
+ import neutron.agent.linux.ra
+ import neutron.agent.metadata.config
+ import neutron.agent.ovsdb.api
+ import neutron.agent.securitygroups_rpc
++import neutron.agent.solaris.interface
++import neutron.agent.solaris.ra
+ import neutron.db.agents_db
+ import neutron.db.agentschedulers_db
+ import neutron.db.dvr_mac_db
+@@ -195,7 +198,10 @@ def list_l3_agent_opts():
+              neutron.service.service_opts,
+              neutron.agent.l3.ha.OPTS,
+              neutron.agent.linux.pd.OPTS,
+-             neutron.agent.linux.ra.OPTS)
++             neutron.agent.linux.ra.OPTS,
++             neutron.agent.l3.solaris_agent.L3NATAgent.OPTS,
++             neutron.agent.solaris.interface.OPTS,
++             neutron.agent.solaris.ra.OPTS)
+          )
+     ]
+ 

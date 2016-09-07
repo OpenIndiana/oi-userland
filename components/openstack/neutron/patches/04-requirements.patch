@@ -1,57 +1,25 @@
 In-house patch to remove unnecessary dependencies from Neutron's
 requirements files. The specific reasons are as follows:
 
-jsonrpclib	Not applicable
-
 oslo.rootwrap	Not applicable to Solaris
 
 Paste		Not applicable
 
---- neutron-2015.1.2/neutron.egg-info/requires.txt.~1~	2015-10-13 10:36:16.000000000 -0700
-+++ neutron-2015.1.2/neutron.egg-info/requires.txt	2016-01-28 22:52:36.925598086 -0800
-@@ -1,12 +1,10 @@
- pbr!=0.7,<1.0,>=0.6
--Paste
- PasteDeploy>=1.5.0
- Routes!=2.0,>=1.12.3
- eventlet!=0.17.0,>=0.16.1
- greenlet>=0.3.2
- httplib2>=0.7.5
- requests!=2.4.0,>=2.2.0
--jsonrpclib
- Jinja2>=2.6 # BSD License3 clause
- keystonemiddleware<1.6.0,>=1.5.0
- netaddr>=0.7.12
-@@ -26,7 +24,6 @@ oslo.i18n<1.6.0,>=1.5.0 # Apache-2.0
- oslo.log<1.1.0,>=1.0.0 # Apache-2.0
- oslo.messaging<1.9.0,>=1.8.0 # Apache-2.0
- oslo.middleware<1.1.0,>=1.0.0 # Apache-2.0
--oslo.rootwrap<1.7.0,>=1.6.0 # Apache-2.0
- oslo.serialization<1.5.0,>=1.4.0 # Apache-2.0
- oslo.utils!=1.4.1,<1.5.0,>=1.4.0 # Apache-2.0
- python-novaclient<2.24.0,>=2.22.0
---- neutron-2015.1.2/requirements.txt.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/requirements.txt	2016-01-28 22:52:54.449783471 -0800
-@@ -3,14 +3,12 @@
+--- neutron-8.1.2/requirements.txt.~1~	2016-06-09 18:45:36.000000000 -0700
++++ neutron-8.1.2/requirements.txt	2016-07-04 17:40:16.125858350 -0700
+@@ -3,7 +3,6 @@
  # process, which may cause wedges in the gate later.
- pbr!=0.7,<1.0,>=0.6
+ pbr>=1.6 # Apache-2.0
  
--Paste
- PasteDeploy>=1.5.0
- Routes!=2.0,>=1.12.3
- eventlet!=0.17.0,>=0.16.1
- greenlet>=0.3.2
- httplib2>=0.7.5
- requests!=2.4.0,>=2.2.0
--jsonrpclib
- Jinja2>=2.6 # BSD License (3 clause)
- keystonemiddleware<1.6.0,>=1.5.0
- netaddr>=0.7.12
-@@ -30,7 +28,6 @@ oslo.i18n<1.6.0,>=1.5.0 # Apache-2.0
- oslo.log<1.1.0,>=1.0.0 # Apache-2.0
- oslo.messaging<1.9.0,>=1.8.0 # Apache-2.0
- oslo.middleware<1.1.0,>=1.0.0 # Apache-2.0
--oslo.rootwrap<1.7.0,>=1.6.0 # Apache-2.0
- oslo.serialization<1.5.0,>=1.4.0 # Apache-2.0
- oslo.utils!=1.4.1,<1.5.0,>=1.4.0 # Apache-2.0
- 
+-Paste # MIT
+ PasteDeploy>=1.5.0 # MIT
+ Routes!=2.0,!=2.1,!=2.3.0,>=1.12.3;python_version=='2.7' # MIT
+ Routes!=2.0,!=2.3.0,>=1.12.3;python_version!='2.7' # MIT
+@@ -37,7 +36,6 @@ oslo.messaging>=4.0.0 # Apache-2.0
+ oslo.middleware>=3.0.0 # Apache-2.0
+ oslo.policy>=0.5.0 # Apache-2.0
+ oslo.reports>=0.6.0 # Apache-2.0
+-oslo.rootwrap>=2.0.0 # Apache-2.0
+ oslo.serialization>=1.10.0 # Apache-2.0
+ oslo.service>=1.0.0 # Apache-2.0
+ oslo.utils>=3.5.0 # Apache-2.0

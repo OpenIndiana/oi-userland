@@ -1,0 +1,38 @@
+In-house patch to include the (public) Solaris VPNaaS options in the
+corresponding configuration files. This patch potentially can be sent
+upstream.
+
+--- neutron-vpnaas-8.0.0/neutron_vpnaas/opts.py.~1~	2016-04-07 00:44:22.000000000 -0700
++++ neutron-vpnaas-8.0.0/neutron_vpnaas/opts.py	2016-06-19 23:06:51.215920180 -0700
+@@ -15,6 +15,7 @@ import neutron.services.provider_configu
+ import neutron_vpnaas.services.vpn.agent
+ import neutron_vpnaas.services.vpn.device_drivers.ipsec
+ import neutron_vpnaas.services.vpn.device_drivers.strongswan_ipsec
++import neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec
+ 
+ 
+ def list_agent_opts():
+@@ -27,7 +28,9 @@ def list_agent_opts():
+          neutron_vpnaas.services.vpn.device_drivers.strongswan_ipsec.
+          strongswan_opts),
+         ('pluto',
+-         neutron_vpnaas.services.vpn.device_drivers.ipsec.pluto_opts)
++         neutron_vpnaas.services.vpn.device_drivers.ipsec.pluto_opts),
++        ('solaris',
++         neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec.solaris_opts)
+     ]
+ 
+ 
+--- neutron-vpnaas-8.0.0/neutron_vpnaas/services/vpn/agent.py.~1~	2016-04-07 00:44:22.000000000 -0700
++++ neutron-vpnaas-8.0.0/neutron_vpnaas/services/vpn/agent.py	2016-06-19 23:14:24.505511035 -0700
+@@ -37,7 +37,9 @@ vpn_agent_opts = [
+                        'neutron_vpnaas.services.vpn.device_drivers.'
+                        'fedora_strongswan_ipsec.FedoraStrongSwanDriver, '
+                        'neutron_vpnaas.services.vpn.device_drivers.'
+-                       'libreswan_ipsec.LibreSwanDriver'],
++                       'libreswan_ipsec.LibreSwanDriver, '
++                       'neutron_vpnaas.services.vpn.device_drivers.'
++                       'solaris_ipsec.SolarisIPsecDriver'],
+         help=_("The vpn device drivers Neutron will use")),
+ ]
+ cfg.CONF.register_opts(vpn_agent_opts, 'vpnagent')

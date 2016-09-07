@@ -1,4 +1,3 @@
-#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -12,6 +11,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+
 #
 # Based on neutron/services/vpn/device_drivers/ipsec.py written in 2013
 # by Nachi Ueno, NTT I3, Inc.
@@ -43,7 +43,7 @@
 # /etc/neutron/l3_agent.ini
 #
 # The [default] section of this file contains a router_id which
-# is required for the EVS and VPNaaS. Currently only a single
+# is required for Solaris L3 agent and VPNaaS. Currently only a single
 # router_id is supported.
 # e.g.
 #
@@ -80,44 +80,46 @@
 # Adding "Debug = True" to the [default] section will cause LOG.debug()
 # messages to be logged in addition to LOG.info() and LOG.warn().
 #
+
 import abc
 import copy
 import errno
-import iniparse
-import jinja2
 import logging
-import netaddr
 import os
 import re
 import shutil
-import six
 import socket
 import struct
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 import threading
 import time
 import traceback
 import unicodedata
+
+import iniparse
+import jinja2
+import netaddr
+from netaddr import IPNetwork
+from oslo_concurrency import lockutils, processutils
+from oslo_config import cfg
 import oslo_messaging
+from oslo_service import loopingcall
+import six
+
 import rad.bindings.com.oracle.solaris.rad.smf_1 as smfb
 import rad.client
 import rad.connect
 
-from oslo.config import cfg
-from oslo import messaging
-from oslo_concurrency import lockutils, processutils
-from netaddr import IPNetwork
-from neutron.agent.solaris import packetfilter
 from neutron.agent.linux import ip_lib, utils
+from neutron.agent.solaris import packetfilter
 from neutron.common import rpc as n_rpc
-from neutron_vpnaas.db.vpn import vpn_db
 from neutron import context
-from neutron.openstack.common import loopingcall
 from neutron.plugins.common import constants
 from neutron.plugins.common import utils as plugin_utils
+from neutron_vpnaas.db.vpn import vpn_db
 from neutron_vpnaas.services.vpn.common import topics
 from neutron_vpnaas.services.vpn import device_drivers
-from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 LOG = logging.getLogger(__name__)
 TEMPLATE_PATH = os.path.dirname(__file__)
@@ -1212,7 +1214,7 @@ class IPsecDriver(device_drivers.DeviceDriver):
     """
     RPC_API_VERSION = '1.0'
 
-    target = messaging.Target(version=RPC_API_VERSION)
+    target = oslo_messaging.Target(version=RPC_API_VERSION)
 
     def __init__(self, vpn_service, host):
         self.conf = vpn_service.conf
@@ -1499,7 +1501,7 @@ class IPsecDriver(device_drivers.DeviceDriver):
 
            The code below loops through the list of routers configured
            and enables the VPNs on them. Currently Solaris only supports
-           a single router in any one EVS. It will be a short list ...
+           a single router in Neutron. It will be a short list ...
 
            We no longer have access to the previous configuration. The new
            configuration may well be different, so we have to delete

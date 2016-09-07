@@ -20,15 +20,12 @@ import re
 from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 
-import netaddr
-from openstack_common import is_ml2_plugin, kill_contract
+from openstack_common import kill_contract
 import smf_include
 
 from neutron.agent.solaris import packetfilter
 from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
-    get_vpn_interfaces
-from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
-    shutdown_vpn
+    get_vpn_interfaces, shutdown_vpn
 
 
 def set_hostmodel(value):
@@ -65,7 +62,6 @@ def cleanup_l3_agent_datalinks():
     # hexadecimal digits.
     prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
     retcode = smf_include.SMF_EXIT_OK
-    is_ml2 = is_ml2_plugin()
     for dlname in dlnames:
         if prog.search(dlname) is None:
             continue
@@ -82,11 +78,10 @@ def cleanup_l3_agent_datalinks():
             check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
                         dlname])
             # remove the OVS Port
-            if is_ml2:
-                ovs_bridge = get_ovs_bridge(dlname)
-                if ovs_bridge:
-                    check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
-                                "--if-exists", "del-port", ovs_bridge, dlname])
+            ovs_bridge = get_ovs_bridge(dlname)
+            if ovs_bridge:
+                check_call(["/usr/bin/pfexec", "/usr/sbin/ovs-vsctl", "--",
+                            "--if-exists", "del-port", ovs_bridge, dlname])
         except CalledProcessError as err:
             print "failed to remove datalink '%s' used by L3 agent: %s" % \
                 (dlname, err)
@@ -136,15 +131,9 @@ def start():
               "enabled before enabling neutron-l3-agent"
         return smf_include.SMF_EXIT_ERR_CONFIG
 
-    # remove any stale PF rules under _auto/neutron:l3:agent anchor
-    pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
-    pf.remove_anchor_recursively()
-
     cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-l3-agent " \
-        "--config-file %s --config-file %s --config-file %s" % \
-        tuple(sys.argv[2:5])
-    if is_ml2_plugin():
-        cmd += " --config-file %s" % sys.argv[5]
+        "--config-file %s --config-file %s --config-file %s " \
+        "--config-file %s" % tuple(sys.argv[2:6])
 
     # The VPNaaS shutdown should unplumb all IP tunnels it created. But
     # be paranoid and check for lingering tunnels created by OpenStack
@@ -173,7 +162,7 @@ def start():
 def get_ovs_bridge(dlname):
     # retrieve the right OVS bridge based on the interface name
     if dlname.startswith('l3i'):
-        config_file = '/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini'
+        config_file = '/etc/neutron/plugins/ml2/openvswitch_agent.ini'
         section = "ovs"
         option = "integration_bridge"
     else:

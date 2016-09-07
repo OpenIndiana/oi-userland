@@ -1,107 +1,115 @@
 Changes to the Neutron DHCP agent to port it to Solaris. These changes
 will eventually be proposed upstream.
 
---- neutron-2015.1.2/neutron/agent/linux/external_process.py.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/neutron/agent/linux/external_process.py	2016-01-28 23:07:42.221029379 -0800
-@@ -15,6 +15,7 @@
- import abc
- import collections
- import os.path
-+import platform
- import six
- 
- import eventlet
-@@ -86,9 +87,17 @@ class ProcessManager(MonitoredProcess):
-                 cmd_callback = self.default_cmd_callback
-             cmd = cmd_callback(self.get_pid_file_name())
- 
--            ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
--            ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env,
--                                     run_as_root=self.run_as_root)
-+            if self.namespace:
-+                ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
-+                ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env,
-+                                         run_as_root=self.run_as_root)
-+            else:
-+                env_params = []
-+                if self.cmd_addl_env:
-+                    env_params = (['/usr/bin/env'] +
-+                                  ['%s=%s' % pair for pair in
-+                                   self.cmd_addl_env.items()])
-+                utils.execute(env_params + list(cmd))
-         elif reload_cfg:
-             self.reload_cfg()
- 
-@@ -131,6 +140,14 @@ class ProcessManager(MonitoredProcess):
-         if pid is None:
-             return False
- 
-+        if platform.system() == "SunOS":
-+            cmd = ['/usr/bin/pargs', '-l', pid]
-+            try:
-+                exec_out = utils.execute(cmd)
-+            except RuntimeError:
-+                return False
-+            return self.uuid in exec_out
-+
-         cmdline = '/proc/%s/cmdline' % pid
-         try:
-             with open(cmdline, "r") as f:
---- neutron-2015.1.2/neutron/api/rpc/handlers/dhcp_rpc.py.~1~	2015-10-13 10:35:16.000000000 -0700
-+++ neutron-2015.1.2/neutron/api/rpc/handlers/dhcp_rpc.py	2016-01-28 23:07:42.219930998 -0800
-@@ -188,11 +188,13 @@ class DhcpRpcCallback(object):
-                 for fixed_ip in port['fixed_ips']:
-                     if fixed_ip['subnet_id'] in dhcp_enabled_subnet_ids:
-                         dhcp_enabled_subnet_ids.remove(fixed_ip['subnet_id'])
--                port['fixed_ips'].extend(
--                    [dict(subnet_id=s) for s in dhcp_enabled_subnet_ids])
--
--                retval = plugin.update_port(context, port['id'],
--                                            dict(port=port))
-+                if dhcp_enabled_subnet_ids:
-+                    port['fixed_ips'].extend(
-+                        [dict(subnet_id=s) for s in dhcp_enabled_subnet_ids])
-+                    retval = plugin.update_port(context, port['id'],
-+                                                dict(port=port))
-+                else:
-+                    retval = port
- 
-         except n_exc.NotFound as e:
-             LOG.warning(e)
-*** neutron-2015.1.2/neutron/agent/linux/utils.py	2015-10-13 10:35:16.000000000 -0700
---- new/neutron/agent/linux/utils.py	2016-05-14 07:44:40.976050014 -0700
+*** neutron-8.0.0/neutron/agent/linux/external_process.py	2016-04-07 00:44:25.000000000 -0700
+--- new//neutron/agent/linux/external_process.py	2016-05-24 10:42:23.157427654 -0700
 ***************
-*** 18,23 ****
---- 18,24 ----
+*** 15,20 ****
+--- 15,21 ----
+  import abc
+  import collections
+  import os.path
++ import platform
+  
+  import eventlet
+  from oslo_concurrency import lockutils
+***************
+*** 87,95 ****
+                  cmd_callback = self.default_cmd_callback
+              cmd = cmd_callback(self.get_pid_file_name())
+  
+!             ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
+!             ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env,
+!                                      run_as_root=self.run_as_root)
+          elif reload_cfg:
+              self.reload_cfg()
+  
+--- 88,104 ----
+                  cmd_callback = self.default_cmd_callback
+              cmd = cmd_callback(self.get_pid_file_name())
+  
+!             if self.namespace:
+!                 ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
+!                 ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env,
+!                                          run_as_root=self.run_as_root)
+!             else:
+!                 env_params = []
+!                 if self.cmd_addl_env:
+!                     env_params = (['/usr/bin/env'] +
+!                                   ['%s=%s' % pair for pair in
+!                                    self.cmd_addl_env.items()])
+!                 utils.execute(env_params + list(cmd))
+          elif reload_cfg:
+              self.reload_cfg()
+  
+***************
+*** 100,106 ****
+          pid = self.pid
+  
+          if self.active:
+!             if get_stop_command:
+                  cmd = get_stop_command(self.get_pid_file_name())
+                  ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
+                  ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env)
+--- 109,115 ----
+          pid = self.pid
+  
+          if self.active:
+!             if get_stop_command and self.namespace:
+                  cmd = get_stop_command(self.get_pid_file_name())
+                  ip_wrapper = ip_lib.IPWrapper(namespace=self.namespace)
+                  ip_wrapper.netns.execute(cmd, addl_env=self.cmd_addl_env)
+***************
+*** 137,142 ****
+--- 146,159 ----
+          if pid is None:
+              return False
+  
++         if platform.system() == "SunOS":
++             cmd = ['/usr/bin/pargs', '-l', pid]
++             try:
++                 exec_out = utils.execute(cmd)
++             except RuntimeError:
++                 return False
++             return self.uuid in exec_out
++ 
+          cmdline = '/proc/%s/cmdline' % pid
+          try:
+              with open(cmdline, "r") as f:
+*** neutron-8.0.0/neutron/agent/linux/utils.py	2016-04-07 00:44:35.000000000 -0700
+--- new/neutron/agent/linux/utils.py	2016-05-22 15:59:48.178297663 -0700
+***************
+*** 17,22 ****
+--- 17,23 ----
+  import glob
   import grp
-  import httplib
   import os
 + import platform
   import pwd
   import shlex
   import socket
 ***************
-*** 31,37 ****
+*** 30,36 ****
+  from eventlet import greenthread
   from oslo_config import cfg
   from oslo_log import log as logging
-  from oslo_log import loggers
 ! from oslo_rootwrap import client
   from oslo_utils import excutils
-  
-  from neutron.agent.common import config
---- 32,41 ----
+  import six
+  from six.moves import http_client as httplib
+--- 31,40 ----
+  from eventlet import greenthread
   from oslo_config import cfg
   from oslo_log import log as logging
-  from oslo_log import loggers
 ! try:
 !     from oslo_rootwrap import client
 ! except:
 !     pass
   from oslo_utils import excutils
-  
-  from neutron.agent.common import config
+  import six
+  from six.moves import http_client as httplib
 ***************
-*** 175,182 ****
+*** 184,191 ****
       """Retrieve a list of the pids of child processes of the given pid."""
   
       try:
@@ -110,7 +118,7 @@ will eventually be proposed upstream.
       except RuntimeError as e:
           # Unexpected errors are the responsibility of the caller
           with excutils.save_and_reraise_exception() as ctxt:
---- 179,190 ----
+--- 188,199 ----
       """Retrieve a list of the pids of child processes of the given pid."""
   
       try:
@@ -123,31 +131,65 @@ will eventually be proposed upstream.
       except RuntimeError as e:
           # Unexpected errors are the responsibility of the caller
           with excutils.save_and_reraise_exception() as ctxt:
-*** neutron-2015.1.2/neutron/agent/dhcp_agent.py	2015-10-13 10:35:16.000000000 -0700
---- new/neutron/agent/dhcp_agent.py	2016-05-14 07:45:04.012214835 -0700
+*** neutron-8.0.0/neutron/agent/dhcp_agent.py	2016-04-07 00:44:25.000000000 -0700
+--- new/neutron/agent/dhcp_agent.py	2016-05-24 10:43:14.037828809 -0700
 ***************
-*** 17,27 ****
---- 17,29 ----
-  import sys
-  
-  from oslo_config import cfg
-+ from oslo_utils import importutils
-  
-  from neutron.agent.common import config
+*** 23,28 ****
+--- 23,29 ----
   from neutron.agent.dhcp import config as dhcp_config
   from neutron.agent.linux import interface
   from neutron.agent.metadata import config as metadata_config
 + from neutron.agent.solaris import interface as solaris_interface
   from neutron.common import config as common_config
   from neutron.common import topics
-  from neutron.openstack.common import service
+  from neutron import service as neutron_service
 ***************
-*** 38,43 ****
---- 40,46 ----
-      cfg.CONF.register_opts(metadata_config.DRIVER_OPTS)
-      cfg.CONF.register_opts(metadata_config.SHARED_OPTS)
-      cfg.CONF.register_opts(interface.OPTS)
-+     cfg.CONF.register_opts(solaris_interface.OPTS)
+*** 37,43 ****
+      conf.register_opts(dhcp_config.DNSMASQ_OPTS)
+      conf.register_opts(metadata_config.DRIVER_OPTS)
+      conf.register_opts(metadata_config.SHARED_OPTS)
+!     conf.register_opts(interface.OPTS)
   
   
   def main():
+--- 38,45 ----
+      conf.register_opts(dhcp_config.DNSMASQ_OPTS)
+      conf.register_opts(metadata_config.DRIVER_OPTS)
+      conf.register_opts(metadata_config.SHARED_OPTS)
+!     cfg.CONF.register_opts(interface.OPTS)
+!     cfg.CONF.register_opts(solaris_interface.OPTS)
+  
+  
+  def main():
+*** neutron-8.0.0/neutron/agent/linux/dhcp.py	2016-04-07 00:44:35.000000000 -0700
+--- new/neutron/agent/linux/dhcp.py	2016-05-24 10:42:44.985389698 -0700
+***************
+*** 16,21 ****
+--- 16,22 ----
+  import abc
+  import collections
+  import os
++ import platform
+  import re
+  import shutil
+  import time
+***************
+*** 108,114 ****
+      def __init__(self, d):
+          super(NetModel, self).__init__(d)
+  
+!         self._ns_name = "%s%s" % (NS_PREFIX, self.id)
+  
+      @property
+      def namespace(self):
+--- 109,118 ----
+      def __init__(self, d):
+          super(NetModel, self).__init__(d)
+  
+!         if platform.system() == "SunOS":
+!             self._ns_name = None
+!         else:
+!             self._ns_name = "%s%s" % (NS_PREFIX, self.id)
+  
+      @property
+      def namespace(self):

@@ -27,36 +27,36 @@ include ../../../make-rules/shared-macros.mk
 include ../../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		neutron
-COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2015.1.2
-COMPONENT_BE_VERSION=	2015.1
+COMPONENT_CODENAME=	mitaka
+COMPONENT_VERSION=	8.1.2
+COMPONENT_BE_VERSION=	2016.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3ff282d75e86ea25f64e97e24b2960e7ffaeef7cf4a69c16d20ffe18065d0ef0
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+    sha256:a3fdeed1421e1586bbdabd046474f1060bff4751257eacd90489f9e1b6eeff9d
+COMPONENT_ARCHIVE_URL=	https://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/neutron
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 IPS_PKG_NAME=		cloud/openstack/neutron
 
-TPNO=			25791
-TPNO_VPNAAS=		27275
-
-NUM_EXTRA_ARCHIVES=	1
+TPNO=			30361
+TPNO_VPNAAS=		30362
 
 COMPONENT_NAME_1=	neutron-vpnaas
-COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION)
+COMPONENT_VERSION_1=	8.1.2
+COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
-    sha256:969d0d098db2d5df33d3008d3139821330bafcc7d7e684472db8b4c23b2126e6
-COMPONENT_ARCHIVE_URL_1=	http://launchpad.net/neutron/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE_1)
+    sha256:3852d8bf27c49c1beb0813a327d10e50b185f26e4479ad168498c4a2c6c97dd2
+COMPONENT_ARCHIVE_URL_1=https://tarballs.openstack.org/$(COMPONENT_NAME_1)/$(COMPONENT_ARCHIVE_1)
 COMPONENT_SIG_URL_1=	$(COMPONENT_ARCHIVE_URL_1).asc
 SOURCE_DIR_1=		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
+
 DEVICE_DRIVERS=		neutron_vpnaas/services/vpn/device_drivers
 DEVICE_TEMPLATE=	$(DEVICE_DRIVERS)/template/solaris
 
+PKG_PROTO_DIRS =	$(SOURCE_DIR_1)
 PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -80,10 +80,25 @@ PYTHON_VERSIONS=	2.7
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
+install-vpnaas: $(SOURCE_DIR_1)/.installed
+
+$(SOURCE_DIR_1)/.installed:
+	(cd $(SOURCE_DIR_1); \
+	 $(ENV) \
+	     HOME=$(BUILD_DIR)/config-$* \
+	     PROTO_DIR=$(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%) \
+	     $(COMPONENT_BUILD_ENV) \
+	     $(PYTHON.$(BITS)) ./setup.py build \
+		 --build-base $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%); \
+	 $(ENV) \
+	     HOME=$(BUILD_DIR)/config-$* \
+	     PROTO_DIR=$(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%) \
+	     $(COMPONENT_BUILD_ENV) \
+	     $(PYTHON.$(BITS)) ./setup.py install $(COMPONENT_INSTALL_ARGS))
+	$(TOUCH) $(SOURCE_DIR_1)/.installed
+
 # move all the proper files into place and construct .pyc files for them
 COMPONENT_POST_BUILD_ACTION += \
-    $(GPATCH) -d $(SOURCE_DIR_1) $(GPATCH_FLAGS) \
-	< vpnaas_patches/01-vpn_db_add_solaris.patch; \
     (cd $(SOURCE_DIR_1) ; \
 	$(ENV) PROTO_DIR=$(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%) \
 	    HOME=$(BUILD_DIR)/config-$* $(COMPONENT_BUILD_ENV) \
@@ -102,10 +117,6 @@ COMPONENT_POST_BUILD_ACTION += \
 	 files/neutron-server.xml \
 	 files/neutron-upgrade.xml \
 	 $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-    $(MKDIR) $(PROTO_DIR)/usr/lib/neutron; \
-    $(CP) files/evs/migrate/evs-neutron-migration.py \
-	 $(PROTO_DIR)/usr/lib/neutron/evs-neutron-migration; \
-    $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/l3; \
     $(CP) files/agent/l3/solaris_agent.py \
 	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/l3; \
@@ -114,27 +125,21 @@ COMPONENT_POST_BUILD_ACTION += \
 	 files/agent/solaris/__init__.py \
 	 files/agent/solaris/dhcp.py \
 	 files/agent/solaris/interface.py \
+	 files/agent/solaris/namespace_manager.py \
 	 files/agent/solaris/net_lib.py \
 	 files/agent/solaris/packetfilter.py \
+	 files/agent/solaris/pd.py \
 	 files/agent/solaris/ra.py \
 	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/solaris; \
-    $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs; \
-    $(TOUCH) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs/__init__.py; \
-    $(CP) files/evs/plugin.py $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs; \
-    $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs/migrate; \
-    $(CP) \
-	 files/evs/migrate/__init__.py \
-	 files/evs/migrate/havana_api.py \
-	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs/migrate; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/$(DEVICE_TEMPLATE); \
     $(CP) files/services/vpn/device_drivers/solaris_ipsec.py \
 	$(PROTO_DIR)/$(PYTHON_LIB)/$(DEVICE_DRIVERS); \
     $(CP) \
-	files/services/vpn/device_drivers/template/solaris/ikev2.secret.template \
+	files/services/vpn/device_drivers/template/solaris/ike.secret.template \
 	files/services/vpn/device_drivers/template/solaris/ike.template \
+	files/services/vpn/device_drivers/template/solaris/ikev2.secret.template \
 	files/services/vpn/device_drivers/template/solaris/ikev2.template \
 	files/services/vpn/device_drivers/template/solaris/ipsecinit.conf.template \
-	files/services/vpn/device_drivers/template/solaris/ike.secret.template \
 	$(PROTO_DIR)/$(PYTHON_LIB)/$(DEVICE_TEMPLATE)
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -143,30 +148,24 @@ COMPONENT_POST_INSTALL_ACTION += \
 # common targets
 build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_NO_ARCH)
+install:	$(INSTALL_NO_ARCH) install-vpnaas
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
-
+system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
-REQUIRED_PACKAGES += library/python/alembic-27
 REQUIRED_PACKAGES += library/python/eventlet-27
-REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/netaddr-27
-REQUIRED_PACKAGES += library/python/netifaces-27
-REQUIRED_PACKAGES += library/python/neutronclient-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
-REQUIRED_PACKAGES += library/python/oslo.db-27
+REQUIRED_PACKAGES += library/python/oslo.log-27
+REQUIRED_PACKAGES += library/python/oslo.messaging-27
+REQUIRED_PACKAGES += library/python/oslo.utils-27
 REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += library/python/six-27
-REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += network/arping
 REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += service/network/dnsmasq
-REQUIRED_PACKAGES += service/network/evs
 REQUIRED_PACKAGES += service/network/openvswitch
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/management/rad/client/rad-python
 REQUIRED_PACKAGES += system/network

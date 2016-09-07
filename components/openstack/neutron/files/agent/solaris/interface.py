@@ -15,9 +15,6 @@
 # @author: Girish Moodalbail, Oracle, Inc.
 
 from openstack_common import get_ovsdb_info
-import rad.client as radcli
-import rad.connect as radcon
-import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
 
 from oslo_config import cfg
 from oslo_log import log as logging
@@ -33,23 +30,32 @@ from neutron.plugins.common import constants as p_const
 LOG = logging.getLogger(__name__)
 
 OPTS = [
-    cfg.StrOpt('evs_controller', default='ssh://evsuser@localhost',
-               help=_("An URI that specifies an EVS controller"))
+    cfg.StrOpt('admin_user',
+               help=_("Admin username")),
+    cfg.StrOpt('admin_password',
+               help=_("Admin password"),
+               secret=True),
+    cfg.StrOpt('admin_tenant_name',
+               help=_("Admin tenant name")),
+    cfg.StrOpt('auth_url',
+               help=_("Authentication URL")),
+    cfg.StrOpt('auth_strategy', default='keystone',
+               help=_("The type of authentication to use")),
+    cfg.StrOpt('auth_region',
+               help=_("Authentication region")),
+    cfg.StrOpt('endpoint_type',
+               default='publicURL',
+               help=_("Network service endpoint type to pull from "
+                      "the keystone catalog")),
 ]
 
 
-class EVSControllerError(exceptions.NeutronException):
-    message = _("EVS controller: %(errmsg)s")
+class OVSInterfaceDriver(object):
+    """Driver used to manage Solaris OVS VNICs.
 
-    def __init__(self, evs_errmsg):
-        super(EVSControllerError, self).__init__(errmsg=evs_errmsg)
-
-
-class SolarisVNICDriver(object):
-    """Driver used to manage Solaris EVS VNICs.
-
-    This class provides methods to create/delete an EVS VNIC and
-    plumb/unplumb ab IP interface and addresses on the EVS VNIC.
+    This class provides methods to create/delete a Crossbow VNIC and
+    add it as a port of OVS bridge.
+    TODO(gmoodalb): More methods to implement here for MITAKA??
     """
 
     # TODO(gmoodalb): dnsmasq uses old style `ifreq', so 16 is the maximum
@@ -63,32 +69,23 @@ class SolarisVNICDriver(object):
 
     def __init__(self, conf):
         self.conf = conf
-        try:
-            self.rad_uri = radcon.RadURI(conf.evs_controller)
-        except ValueError as err:
-            raise SystemExit(_("Specified evs_controller is invalid: %s"), err)
-
-        self._rad_connection = None
-        # set the controller property for this host
-        cmd = ['/usr/sbin/evsadm', 'show-prop', '-co', 'value', '-p',
-               'controller']
-        stdout = utils.execute(cmd)
-        if conf.evs_controller != stdout.strip():
-            cmd = ['/usr/sbin/evsadm', 'set-prop', '-p',
-                   'controller=%s' % (conf.evs_controller)]
-            utils.execute(cmd)
+        self._neutron_client = None
 
     @property
-    def rad_connection(self):
-        if (self._rad_connection is not None and
-                self._rad_connection._closed is None):
-            return self._rad_connection
-
-        LOG.debug(_("Connecting to EVS Controller at %s") %
-                  self.conf.evs_controller)
-
-        self._rad_connection = self.rad_uri.connect()
-        return self._rad_connection
+    def neutron_client(self):
+        if self._neutron_client:
+            return self._neutron_client
+        from neutronclient.v2_0 import client
+        self._neutron_client = client.Client(
+            username=self.conf.admin_user,
+            password=self.conf.admin_password,
+            tenant_name=self.conf.admin_tenant_name,
+            auth_url=self.conf.auth_url,
+            auth_strategy=self.conf.auth_strategy,
+            region_name=self.conf.auth_region,
+            endpoint_type=self.conf.endpoint_type
+        )
+        return self._neutron_client
 
     def fini_l3(self, device_name):
         ipif = net_lib.IPInterface(device_name)
@@ -113,120 +110,7 @@ class SolarisVNICDriver(object):
 
     def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
              network=None, bridge=None, namespace=None, prefix=None,
-             protection=False, vif_type=None):
-        """Plug in the interface."""
-
-        if net_lib.Datalink.datalink_exists(datalink_name):
-            LOG.info(_("Device %s already exists"), datalink_name)
-            return
-
-        if datalink_name.startswith('l3e'):
-            # verify external network parameter settings
-            dl = net_lib.Datalink(datalink_name)
-            # determine the network type of the external network
-            # TODO(gmoodalb): use EVS RAD APIs
-            evsname = network_id
-            cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'l2type,vid',
-                   '-f', 'evs=%s' % evsname]
-            try:
-                stdout = utils.execute(cmd)
-            except Exception as err:
-                LOG.error(_("Failed to retrieve the network type for "
-                            "the external network, and it is required "
-                            "to create an external gateway port: %s") % err)
-                return
-            output = stdout.splitlines()[0].strip()
-            l2type, vid = output.split(':')
-            if l2type != 'flat' and l2type != 'vlan':
-                LOG.error(_("External network should be either Flat or "
-                            "VLAN based, and it is required to "
-                            "create an external gateway port"))
-                return
-            elif (l2type == 'vlan' and
-                  self.conf.get("external_network_datalink", None)):
-                LOG.warning(_("external_network_datalink is deprecated in "
-                              "Juno and will be removed in the next release "
-                              "of Solaris OpenStack. Please use the evsadm "
-                              "set-controlprop subcommand to setup the "
-                              "uplink-port for an external network"))
-                # proceed with the old-style of doing things
-                dl.create_vnic(self.conf.external_network_datalink,
-                               mac_address=mac_address, vid=vid)
-                return
-
-        try:
-            evsc = self.rad_connection.get_object(evsbind.EVSController())
-            vports_info = evsc.getVPortInfo("vport=%s" % (port_id))
-            if vports_info:
-                vport_info = vports_info[0]
-                # This is to handle HA when the 1st DHCP/L3 agent is down and
-                # the second DHCP/L3 agent tries to connect its VNIC to EVS, we
-                # will end up in "vport in use" error. So, we need to reset the
-                # vport before we connect the VNIC to EVS.
-                if vport_info.status == evsbind.VPortStatus.USED:
-                    LOG.debug(_("Retrieving EVS: %s"), vport_info.evsuuid)
-                    pat = radcli.ADRGlobPattern({'uuid': network_id,
-                                                 'tenant': tenant_id})
-                    evs_objs = self.rad_connection.list_objects(evsbind.EVS(),
-                                                                pat)
-                    if evs_objs:
-                        evs = self.rad_connection.get_object(evs_objs[0])
-                        evs.resetVPort(port_id, "force=yes")
-
-                if not protection:
-                    LOG.debug(_("Retrieving VPort: %s"), port_id)
-                    pat = radcli.ADRGlobPattern({'uuid': port_id,
-                                                 'tenant': tenant_id,
-                                                 'evsuuid': network_id})
-                    vport_objs = self.rad_connection.list_objects(
-                        evsbind.VPort(), pat)
-                    if vport_objs:
-                        vport = self.rad_connection.get_object(vport_objs[0])
-                        vport.setProperty("protection=none")
-        except radcli.ObjectError as oe:
-            raise EVSControllerError(oe.get_payload().errmsg)
-
-        dl = net_lib.Datalink(datalink_name)
-        evs_vport = "%s/%s" % (network_id, port_id)
-        dl.connect_vnic(evs_vport, tenant_id)
-
-    def unplug(self, device_name, namespace=None, prefix=None):
-        """Unplug the interface."""
-
-        dl = net_lib.Datalink(device_name)
-        dl.delete_vnic()
-
-
-class OVSInterfaceDriver(SolarisVNICDriver):
-    """Driver used to manage Solaris OVS VNICs.
-
-    This class provides methods to create/delete a Crossbow VNIC and
-    add it as a port of OVS bridge.
-    """
-
-    def __init__(self, conf):
-        self.conf = conf
-        self._neutron_client = None
-
-    @property
-    def neutron_client(self):
-        if self._neutron_client:
-            return self._neutron_client
-        from neutronclient.v2_0 import client
-        self._neutron_client = client.Client(
-            username=self.conf.admin_user,
-            password=self.conf.admin_password,
-            tenant_name=self.conf.admin_tenant_name,
-            auth_url=self.conf.auth_url,
-            auth_strategy=self.conf.auth_strategy,
-            region_name=self.conf.auth_region,
-            endpoint_type=self.conf.endpoint_type
-        )
-        return self._neutron_client
-
-    def plug(self, tenant_id, network_id, port_id, datalink_name, mac_address,
-             network=None, bridge=None, namespace=None, prefix=None,
-             protection=False, vif_type=None):
+             protection=False, mtu=None, vif_type=None):
         """Plug in the interface."""
 
         if net_lib.Datalink.datalink_exists(datalink_name):
@@ -312,6 +196,10 @@ class OVSInterfaceDriver(SolarisVNICDriver):
     def unplug(self, datalink_name, bridge=None, namespace=None, prefix=None):
         """Unplug the interface."""
 
+        # remove any IP addresses on top of this datalink, otherwise we will
+        # get 'device busy' error while deleting the datalink
+        self.fini_l3(datalink_name)
+
         dl = net_lib.Datalink(datalink_name)
         dl.delete_vnic()
 
@@ -329,3 +217,43 @@ class OVSInterfaceDriver(SolarisVNICDriver):
         except RuntimeError as err:
             LOG.error(_("Failed unplugging interface '%s': %s") %
                       (datalink_name, err))
+
+    @property
+    def use_gateway_ips(self):
+        """Whether to use gateway IPs instead of unique IP allocations.
+
+        In each place where the DHCP agent runs, and for each subnet for
+        which DHCP is handling out IP addresses, the DHCP port needs -
+        at the Linux level - to have an IP address within that subnet.
+        Generally this needs to be a unique Neutron-allocated IP
+        address, because the subnet's underlying L2 domain is bridged
+        across multiple compute hosts and network nodes, and for HA
+        there may be multiple DHCP agents running on that same bridged
+        L2 domain.
+
+        However, if the DHCP ports - on multiple compute/network nodes
+        but for the same network - are _not_ bridged to each other,
+        they do not need each to have a unique IP address.  Instead
+        they can all share the same address from the relevant subnet.
+        This works, without creating any ambiguity, because those
+        ports are not all present on the same L2 domain, and because
+        no data within the network is ever sent to that address.
+        (DHCP requests are broadcast, and it is the network's job to
+        ensure that such a broadcast will reach at least one of the
+        available DHCP servers.  DHCP responses will be sent _from_
+        the DHCP port address.)
+
+        Specifically, for networking backends where it makes sense,
+        the DHCP agent allows all DHCP ports to use the subnet's
+        gateway IP address, and thereby to completely avoid any unique
+        IP address allocation.  This behaviour is selected by running
+        the DHCP agent with a configured interface driver whose
+        'use_gateway_ips' property is True.
+
+        When an operator deploys Neutron with an interface driver that
+        makes use_gateway_ips True, they should also ensure that a
+        gateway IP address is defined for each DHCP-enabled subnet,
+        and that the gateway IP address doesn't change during the
+        subnet's lifetime.
+        """
+        return False

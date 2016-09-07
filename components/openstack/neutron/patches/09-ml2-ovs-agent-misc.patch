@@ -1,0 +1,244 @@
+Changes to Neutron Open vSwitch agent support code to port it to
+Solaris. These changes will eventually be proposed upstream.
+
+--- neutron-8.1.2/neutron/agent/linux/ovsdb_monitor.py.~1~	2016-06-09 18:45:29.000000000 -0700
++++ neutron-8.1.2/neutron/agent/linux/ovsdb_monitor.py	2016-07-04 16:19:23.483846060 -0700
+@@ -12,6 +12,8 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++import platform
++
+ import eventlet
+ from oslo_log import log as logging
+ from oslo_serialization import jsonutils
+@@ -40,7 +42,8 @@ class OvsdbMonitor(async_process.AsyncPr
+             cmd.append(','.join(columns))
+         if format:
+             cmd.append('--format=%s' % format)
+-        super(OvsdbMonitor, self).__init__(cmd, run_as_root=True,
++        run_as_root = (False if platform.system() == "SunOS" else True)
++        super(OvsdbMonitor, self).__init__(cmd, run_as_root=run_as_root,
+                                            respawn_interval=respawn_interval,
+                                            log_output=True,
+                                            die_on_error=True)
+--- neutron-8.1.2/neutron/plugins/ml2/drivers/openvswitch/agent/openflow/ovs_ofctl/main.py.~1~	2016-06-09 18:45:30.000000000 -0700
++++ neutron-8.1.2/neutron/plugins/ml2/drivers/openvswitch/agent/openflow/ovs_ofctl/main.py	2016-07-04 16:19:23.482403960 -0700
+@@ -14,6 +14,8 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++import platform
++
+ from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
+     import br_int
+ from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
+@@ -28,9 +30,14 @@ def init_config():
+ 
+ 
+ def main():
+-    bridge_classes = {
+-        'br_int': br_int.OVSIntegrationBridge,
+-        'br_phys': br_phys.OVSPhysicalBridge,
+-        'br_tun': br_tun.OVSTunnelBridge,
+-    }
++    if platform.system() == "SunOS":
++        bridge_classes = {
++            'br_int': br_int.SolarisOVSIntegrationBridge
++        }
++    else:
++        bridge_classes = {
++            'br_int': br_int.OVSIntegrationBridge,
++            'br_phys': br_phys.OVSPhysicalBridge,
++            'br_tun': br_tun.OVSTunnelBridge,
++        }
+     ovs_neutron_agent.main(bridge_classes)
+--- neutron-8.1.2/neutron/plugins/ml2/drivers/openvswitch/agent/openflow/ovs_ofctl/br_int.py	2016-06-09 18:45:36.000000000 -0700
++++ new/neutron/plugins/ml2/drivers/openvswitch/agent/openflow/ovs_ofctl/br_int.py	2016-07-11 10:56:56.936780790 -0700
+@@ -185,3 +185,168 @@
+     def delete_arp_spoofing_allow_rules(self, port):
+         self.delete_flows(table_id=constants.ARP_SPOOF_TABLE,
+                           in_port=port)
++
++
++class SolarisOVSIntegrationBridge(OVSIntegrationBridge):
++    """Solaris openvswitch agent br_int0 specific logic."""
++
++    def setup_default_table(self):
++        self.install_normal()
++        self.setup_canary_table()
++
++    def setup_default_tunnel_table(self, tun_ofport, arp_responder_enabled):
++        #
++        # Add flows for inbound packets
++        #
++
++        # Table 0 (default) will sort incoming traffic depending on in_port.
++        # Forward all the packets coming in from all the ports of the bridge
++        # to respective learning tables (LEARN_FROM_TUN or LEARN_FROM_PORTS).
++        self.add_flow(priority=1,
++                      in_port=tun_ofport,
++                      actions="resubmit(,%s)" %
++                      constants.LEARN_FROM_TUN)
++        self.add_flow(priority=0, actions="drop")
++
++        # LEARN_FROM_TUN table will have a single flow using a learn action to
++        # dynamically set-up flows in UCAST_TO_TUN corresponding to remote mac
++        # addresses
++        learned_flow = ("table=%s,"
++                        "priority=1,"
++                        "hard_timeout=300,"
++                        "NXM_NX_TUN_ID[],"
++                        "NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],"
++                        "load:NXM_NX_TUN_IPV4_SRC[]->NXM_NX_TUN_IPV4_DST[],"
++                        "output:NXM_OF_IN_PORT[]" %
++                        constants.UCAST_TO_TUN)
++
++        # Once remote mac addresses are learned, packets are sent to
++        # INBOUND_UCAST_BUM_TABLE where the packets are triaged based on
++        # whether they are unicast or broadcast/multicast and sent to
++        # respective tables either for forwarding or flooding
++        self.add_flow(table=constants.LEARN_FROM_TUN,
++                      priority=1,
++                      actions="learn(%s),resubmit(,%s)" %
++                      (learned_flow, constants.INBOUND_UCAST_BUM_TABLE))
++
++        # INBOUND_UCAST_TABLE handles forwarding the packet to the right port
++        self.add_flow(table=constants.INBOUND_UCAST_BUM_TABLE,
++                      priority=0,
++                      dl_dst="00:00:00:00:00:00/01:00:00:00:00:00",
++                      actions="resubmit(,%s)" % constants.INBOUND_UCAST_TABLE)
++
++        # INBOUND_BUM_TABLE handles flooding for broadcast/unknown-unicast/
++        # multicast packets
++        self.add_flow(table=constants.INBOUND_UCAST_BUM_TABLE,
++                      priority=0,
++                      dl_dst="01:00:00:00:00:00/01:00:00:00:00:00",
++                      actions="resubmit(,%s)" % constants.INBOUND_BUM_TABLE)
++
++        # INBOUND_UCAST_TABLE has flows dynamically added by learn action of
++        # a flow in LEARN_FROM_PORTS table. These flows forward a packet to a
++        # port that matches the destination MAC address. If no flow matches,
++        # then the packet will be resubmitted to INBOUND_BUM_TABLE for
++        # flooding.
++        self.add_flow(table=constants.INBOUND_UCAST_TABLE,
++                      priority=0,
++                      actions="resubmit(,%s)" % constants.INBOUND_BUM_TABLE)
++        self.add_flow(table=constants.INBOUND_BUM_TABLE,
++                      priority=0,
++                      actions="drop")
++
++        # Egress unicast will be handled in table UCAST_TO_TUN, where remote
++        # mac addresses will be learned. For now, just add a default flow that
++        # will resubmit unknown unicasts to table FLOOD_TO_TUN to treat them
++        # as broadcasts/multicasts
++        self.add_flow(table=constants.UCAST_TO_TUN,
++                      priority=0,
++                      actions="resubmit(,%s)" %
++                      constants.FLOOD_TO_TUN)
++
++        # FLOOD_TO_TUN will handle flooding to tunnels based on segmentation
++        # id. For now, add a default drop action
++        self.add_flow(table=constants.FLOOD_TO_TUN,
++                      priority=0, actions="drop")
++
++        #
++        # add flows for outbound packets
++        #
++
++        # LEARN_FROM_PORTS table will have a single flow using two learn
++        # actions to dynamically set-up flows in INBOUND_UCAST_TABLE and
++        # UCAST_TO_TUN corresponding to local mac addresses
++        learned_flow = ("table=%s,"
++                        "priority=1,"
++                        "hard_timeout=300,"
++                        "NXM_NX_TUN_ID[],"
++                        "NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],"
++                        "output:NXM_OF_IN_PORT[]")
++        self.add_flow(table=constants.LEARN_FROM_PORTS,
++                      priority=1,
++                      actions="learn(%s),learn(%s),resubmit(,%s)" %
++                      (learned_flow % constants.INBOUND_UCAST_TABLE,
++                       learned_flow % constants.UCAST_TO_TUN,
++                        constants.OUTBOUND_UCAST_BUM_TABLE))
++
++        # Once local MAC addresses are learned, packets are sent to
++        # OUTBOUND_UCAST_BUM_TABLE where the packet is triaged based on whether
++        # they are unicast or broadcast/multicast and sent to respective tables
++        # either for forwarding or for flooding
++        self.add_flow(table=constants.OUTBOUND_UCAST_BUM_TABLE,
++                      priority=0,
++                      dl_dst="00:00:00:00:00:00/01:00:00:00:00:00",
++                      actions="resubmit(,%s)" % constants.UCAST_TO_TUN)
++        # Broadcasts/multicasts go to table FLOOD_TO_TUN that handles flooding
++        self.add_flow(table=constants.OUTBOUND_UCAST_BUM_TABLE,
++                      priority=0,
++                      dl_dst="01:00:00:00:00:00/01:00:00:00:00:00",
++                      actions="resubmit(,%s)" % constants.FLOOD_TO_TUN)
++
++    @staticmethod
++    def _ofport_set_to_str(ports_set):
++        return ",".join(map(str, ports_set))
++
++    def provision_local_vlan(self, port, lvid, segmentation_id):
++        pass
++
++    def reclaim_local_vlan(self, port, segmentation_id):
++        pass
++
++    @staticmethod
++    def _dvr_to_src_mac_table_id(network_type):
++        pass
++
++    def install_dvr_to_src_mac(self, network_type, vlan_tag, gateway_mac,
++                               dst_mac, dst_port):
++        pass
++
++    def delete_dvr_to_src_mac(self, network_type, vlan_tag, dst_mac):
++        pass
++
++    def add_dvr_mac_vlan(self, mac, port):
++        pass
++
++    def remove_dvr_mac_vlan(self, mac):
++        pass
++
++    def add_dvr_mac_tun(self, mac, port):
++        pass
++
++    def remove_dvr_mac_tun(self, mac, port):
++        pass
++
++    def install_icmpv6_na_spoofing_protection(self, port, ip_addresses):
++        pass
++
++    def install_arp_spoofing_protection(self, port, ip_addresses):
++        pass
++
++    def delete_arp_spoofing_protection(self, port):
++        pass
++
++    def delete_arp_spoofing_allow_rules(self, port):
++        pass
++
++    def set_allowed_macs_for_port(self, port, mac_addresses=None,
++                                  allow_all=False):
++        pass
+--- neutron-8.1.2/neutron/plugins/ml2/drivers/openvswitch/agent/common/constants.py	2016-06-09 18:45:30.000000000 -0700
++++ new/neutron/plugins/ml2/drivers/openvswitch/agent/common/constants.py	2016-07-11 13:50:42.542106187 -0700
+@@ -77,6 +77,15 @@
+ VXLAN_TUN_TO_LV = 4
+ GENEVE_TUN_TO_LV = 6
+ 
++# Solaris specific additional OpenFlow tables to steer packets to/from VNICs
++# on top of VXLAN datalink.
++LEARN_FROM_PORTS = 2
++# Broadcast/Unknown Unicast/Multicast (BUM) tables
++OUTBOUND_UCAST_BUM_TABLE = 3
++INBOUND_UCAST_BUM_TABLE = 11
++INBOUND_UCAST_TABLE = 12
++INBOUND_BUM_TABLE = 13
++
+ DVR_NOT_LEARN = 9
+ LEARN_FROM_TUN = 10
+ UCAST_TO_TUN = 20

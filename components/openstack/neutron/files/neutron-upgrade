@@ -20,23 +20,26 @@ from subprocess import check_call, Popen, PIPE
 import sys
 import traceback
 
-import iniparse
 import smf_include
-import sqlalchemy
 
 from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 
 NEUTRON_CONF_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'nova_api_insecure'): ('nova', 'insecure'),
-    ('DEFAULT', 'nova_ca_certificates_file'): ('nova', 'cafile'),
-    ('DEFAULT', 'nova_region_name'): ('nova', 'region_name'),
-    ('DEFAULT', 'max_request_body_size'):
-        ('oslo_middleware', 'max_request_body_size'),
-    ('DEFAULT', 'use-syslog'): (None, None),
-    ('DEFAULT', 'log-format'): (None, None),
+    # Deprecated group/name for Liberty
+    ('DEFAULT', 'use_syslog'): (None, None),
     ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'rpc_thread_pool_size'):
+        ('DEFAULT', 'executor_thread_pool_size'),
+    ('ml2_sriov', 'agent_required'): (None, None),
+    # Deprecated group/name for Mitaka
+    ('ml2', 'segment_mtu'): ('DEFAULT', 'global_physnet_mtu'),
+    ('DEFAULT', 'nova_region_name'): ('nova', 'region_name'),
+    ('DEFAULT', 'nova_admin_username'): ('nova', 'username'),
+    ('DEFAULT', 'nova_admin_tenant_id'): ('nova', 'tenant_id'),
+    ('DEFAULT', 'nova_admin_tenant_name'): ('nova', 'tenant_name'),
+    ('DEFAULT', 'nova_admin_password'): ('nova', 'password'),
+    ('DEFAULT', 'nova_admin_auth_url'): ('nova', 'auth_url'),
 }
 
 NEUTRON_CONF_EXCEPTIONS = [
@@ -59,7 +62,7 @@ L3_AGENT_EXCEPTIONS = [
     ('DEFAULT', 'ovs_integration_bridge'),
     ('DEFAULT', 'interface_driver'),
     ('DEFAULT', 'external_network_bridge'),
-    ('DEFAULT', 'evs_controller'),    
+    ('DEFAULT', 'evs_controller'),
 ]
 
 DHCP_AGENT_EXCEPTIONS = [
@@ -77,6 +80,21 @@ METADATA_AGENT_EXCEPTIONS = [
     ('DEFAULT', 'admin_user'),
     ('DEFAULT', 'admin_password'),
     ('DEFAULT', 'metadata_workers'),
+]
+
+OPENVSWITCH_AGENT_EXCEPTIONS = [
+    ('ovs', 'integration_bridge'),
+    ('ovs', 'tunnel_bridge'),
+    ('securitygroup', 'enable_security_group'),
+    ('securitygroup', 'enable_ipset'),
+]
+
+ML2_CONF_EXCEPTION = [
+    ('ml2', 'type_drivers'),
+    ('ml2', 'tenant_network_types'),
+    ('ml2', 'mechanism_drivers'),
+    ('securitygroup', 'enable_security_group'),
+    ('securitygroup', 'enable_ipset'),
 ]
 
 
@@ -98,8 +116,10 @@ def start():
         # No need to upgrade
         sys.exit(smf_include.SMF_EXIT_OK)
 
+    # TODO: Kilo EVS check. If upgrade is from Kilo running EVS,
+    # fail the upgrade.
+
     # look for any .new files
-    db_connection = None
     if glob.glob('/etc/neutron/*.new'):
         # the versions are different, so perform an upgrade
         # modify the configuration files
@@ -116,19 +136,20 @@ def start():
         modify_conf('/etc/neutron/metadata_agent.ini', mapping=None,
                     exception_list=METADATA_AGENT_EXCEPTIONS)
 
-    config = iniparse.RawConfigParser()
-    config.read('/etc/neutron/neutron.conf')
-    if config.has_section('database'):
-        db_connection = config.get('database', 'connection')
-        engine = sqlalchemy.create_engine(db_connection)
-        if engine.url.username != '%SERVICE_USER%':
-            check_call(['/usr/bin/neutron-db-manage', '--config-file',
-                        '/etc/neutron/neutron.conf', 'stamp', 'havana'])
-            check_call(['/usr/bin/neutron-db-manage', '--config-file',
-                        '/etc/neutron/neutron.conf', 'upgrade', 'juno'])
-            check_call(['/usr/bin/neutron-db-manage', '--config-file',
-                        '/etc/neutron/neutron.conf', 'upgrade', 'kilo'])
+    # look for any .new files for ml2 plugin
+    if glob.glob('/etc/neutron/plugins/ml2/*.new'):
+        # modify the configuration files
 
+        # backup all the old configuration files
+        create_backups('/etc/neutron/plugins/ml2')
+
+        modify_conf('/etc/neutron/plugins/ml2/openvswitch_agent.ini',
+                    mapping=None,
+                    exception_list=OPENVSWITCH_AGENT_EXCEPTIONS)
+
+        modify_conf('/etc/neutron/plugins/ml2/ml2_conf.ini',
+                    mapping=None,
+                    exception_list=ML2_CONF_EXCEPTION)
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
