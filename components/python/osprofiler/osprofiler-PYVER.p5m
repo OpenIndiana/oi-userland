@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -45,6 +45,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/__init__.py
@@ -59,20 +60,24 @@ file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/cmd/exc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/cmd/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/cmd/template.html
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/notifier.py
+file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/parsers/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/parsers/ceilometer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/profiler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/sqlalchemy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/osprofiler/web.py
 #
-license LICENSE license="Apache v2.0"
-
-# force a dependency on argparse; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/argparse-$(PYV)
+license osprofiler.license license="Apache v2.0"
 
 # force a dependency on ceilometerclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/ceilometerclient-$(PYV)
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
 
 # force a dependency on the osprofiler package
 depend type=require \

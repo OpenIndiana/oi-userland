@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		osprofiler
-COMPONENT_VERSION=	0.3.0
+COMPONENT_VERSION=	1.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7d7e1d0b93ce96901f7a307a712196273818a8f20e59916ff099589b48f53207
+    sha256:62447e1ed954587036e1fa62b9f7d5f9d23b585f6fd0bf7a4c3b7926880f7f0d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://github.com/stackforge/osprofiler
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/osprofiler/
 COMPONENT_BUGDB=	python-mod/osprofiler
 
-TPNO=			20382
+TPNO=			28662
 
 # Depends on ceilometerclient, which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -47,16 +47,15 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f osprofiler osprofiler-$(PYTHON_VERSION))
+    (cd $(PROTO_DIR)/usr/bin ; $(MV) -f osprofiler osprofiler-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
