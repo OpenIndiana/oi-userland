@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.utils
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	3.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f90e1d52542225031bc7e3d9bdc1b1270a80388e30285532124586e45e9317f6
+    sha256:c0e935b86e72facc02264271ed09dd9c5879d52452d7a1b4a116a6c7d05077aa
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.utils
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.utils/
 COMPONENT_BUGDB=	python-mod/oslo.utils
 
-TPNO=			25744
+TPNO=			28358
 
 # Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -51,8 +51,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

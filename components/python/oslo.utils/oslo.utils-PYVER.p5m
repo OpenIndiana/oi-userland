@@ -38,38 +38,31 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/058
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.utils-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/encodeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/excutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/netutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/reflection.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/strutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/timeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/units.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo/utils/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/encodeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/eventletutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/excutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/fileutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/fixture.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/fnmatch.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/imageutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/importutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/netutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/reflection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/secretutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/timeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/units.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/uuidutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_utils/versionutils.py
 #
 license oslo.utils.license license="Apache v2.0"
 
@@ -77,8 +70,18 @@ license oslo.utils.license license="Apache v2.0"
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
+# force a dependency on debtcollector; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/debtcollector-$(PYV)
+
+# force a dependency on funcsigs; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/funcsigs-$(PYV)
+
 # force a dependency on iso8601; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/iso8601-$(PYV)
+
+# force a dependency on monotonic; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/monotonic-$(PYV)
 
 # force a dependency on netaddr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/netaddr-$(PYV)
@@ -93,8 +96,11 @@ depend type=require fmri=library/python/oslo.i18n-$(PYV)
 depend type=require \
     fmri=library/python/oslo.utils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)
+# force a dependency on pytz; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pytz-$(PYV)
+
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
