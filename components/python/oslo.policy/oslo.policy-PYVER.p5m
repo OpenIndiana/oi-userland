@@ -25,8 +25,9 @@
 
 set name=pkg.fmri \
     value=pkg:/library/python/oslo.policy-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="The Oslo Policy library provides support for RBAC policy enforcement across all Openstack services"
+set name=pkg.summary value="Oslo Policy Library"
+set name=pkg.description \
+    value="The Oslo Policy library provides support for RBAC policy enforcement across all OpenStack services."
 set name=com.oracle.info.description value="the Python oslo.policy module"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
@@ -45,20 +46,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo.policy-$(COMPONENT_VERSION
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.policy-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.policy-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/_cache_handler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/_checks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/_parser.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/openstack/common/fileutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/fixture.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_policy/shell.py
 #
 license oslo.policy.license license="Apache v2.0"
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
 
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
@@ -70,5 +67,8 @@ depend type=require fmri=library/python/oslo.i18n-$(PYV)
 depend type=require \
     fmri=library/python/oslo.policy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.serialization-$(PYV)
+# force a dependency on requests; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)

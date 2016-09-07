@@ -26,19 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.policy
-COMPONENT_VERSION=	0.3.2
+COMPONENT_VERSION=	1.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e69a5c559f95bcbf91eb0ea9f16aa65f0fe5fccc7fa03693d4cc991b76e969a6
+    sha256:24d5ecdf4e10f33a9fb2e8784876f73276637d8663c33f594e8efc99e179016a
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.policy
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.policy/
 COMPONENT_BUGDB=	python-mod/oslo.policy
 
-TPNO=			25889
+TPNO=			28452
 
 # Depends on oslo.serialization which is not Python 3 ready.
-PYTHON_VERSIONS =       $(PYTHON2_VERSIONS)
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -51,8 +51,10 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
+
+REQUIRED_PACKAGES += library/python/oslo.serialization-27
