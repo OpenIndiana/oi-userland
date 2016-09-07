@@ -51,9 +51,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_context/fixture.py
 #
 license oslo.context.license license="Apache v2.0"
 
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
 # force a dependency on the oslo.context package
 depend type=require \
     fmri=library/python/oslo.context@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force a dependency on pbr; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pbr-$(PYV)

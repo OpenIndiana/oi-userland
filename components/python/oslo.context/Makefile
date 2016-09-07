@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.context
-COMPONENT_VERSION=	0.2.0
+COMPONENT_VERSION=	2.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30bee9680a2bf5f947227cfd5996cebb17fd8c8e3013e5a594f7a7accb2947dd
+    sha256:8c9fbbf56d3f37cf00a039cac3455cffeb6588f61537e36a36ce9447c4be72ec
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.context
+COMPONENT_PROJECT_URL=	http://docs.openstack.org/developer/oslo.context/
 COMPONENT_BUGDB=	python-mod/oslo.context
 
-TPNO=			25739
+TPNO=			28365
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,8 +48,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# See $(COMPONENT_SRC)/test-requirements.txt for the Python modules
 # required to execute unittests.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
