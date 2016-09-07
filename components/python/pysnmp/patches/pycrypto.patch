@@ -1,0 +1,178 @@
+Remove use of pycrypto, and replace with PyCA cryptography.  This has not
+been submitted upstream.
+
+--- pysnmp-4.3.2/pysnmp/proto/secmod/eso/priv/des3.py	2016-02-13 11:38:14.000000000 -0800
++++ pysnmp-4.3.2/pysnmp/proto/secmod/eso/priv/des3.py	2016-07-01 12:44:37.333145737 -0700
+@@ -21,9 +21,12 @@
+     sha1 = sha.new
+ 
+ try:
+-    from Crypto.Cipher import DES3
++    from cryptography.hazmat.backends import default_backend
++    from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
+ except ImportError:
+     DES3 = None
++else:
++    DES3 = True
+ 
+ random.seed()
+ 
+@@ -109,7 +112,9 @@
+             encryptKey, snmpEngineBoots
+             )
+ 
+-        des3Obj = DES3.new(des3Key, DES3.MODE_CBC, iv)
++        des3Obj = Cipher(
++            algorithms.TripleDES(des3Key), modes.CBC(iv),
++            backend=default_backend()).encryptor()
+ 
+         privParameters = univ.OctetString(salt)
+ 
+@@ -117,11 +122,12 @@
+         cipherblock = iv
+         ciphertext = null
+         while plaintext:
+-            cipherblock = des3Obj.encrypt(
++            cipherblock = des3Obj.update(
+                 univ.OctetString(map(lambda x, y: x^y, univ.OctetString(cipherblock).asNumbers(), univ.OctetString(plaintext[:8]).asNumbers())).asOctets()
+                 )
+             ciphertext = ciphertext + cipherblock
+             plaintext = plaintext[8:]
++        ciphertext = ciphertext + des3Obj.finalize()
+ 
+         return univ.OctetString(ciphertext), privParameters
+ 
+@@ -145,14 +151,17 @@
+                 errorIndication=errind.decryptionError
+                 )
+ 
+-        des3Obj = DES3.new(des3Key, DES3.MODE_CBC, iv)
++        des3Obj = Cipher(
++            algorithms.TripleDES(des3Key), modes.CBC(iv),
++            backend=default_backend()).decryptor()
+ 
+         plaintext = null
+         ciphertext = encryptedData.asOctets()
+         cipherblock = iv
+         while ciphertext:
+-            plaintext = plaintext + univ.OctetString(map(lambda x, y: x ^ y, univ.OctetString(cipherblock).asNumbers(), univ.OctetString(des3Obj.decrypt(ciphertext[:8])).asNumbers())).asOctets()
++            plaintext = plaintext + univ.OctetString(map(lambda x, y: x ^ y, univ.OctetString(cipherblock).asNumbers(), univ.OctetString(des3Obj.update(ciphertext[:8])).asNumbers())).asOctets()
+             cipherblock = ciphertext[:8]
+             ciphertext = ciphertext[8:]
++        plaintext = plaintext + des3Obj.finalize()
+ 
+         return plaintext
+--- pysnmp-4.3.2/pysnmp/proto/secmod/rfc3414/priv/des.py	2016-02-13 11:38:14.000000000 -0800
++++ pysnmp-4.3.2/pysnmp/proto/secmod/rfc3414/priv/des.py	2016-07-01 12:48:29.221094169 -0700
+@@ -13,9 +13,12 @@
+ from sys import version_info
+ 
+ try:
+-    from Crypto.Cipher import DES
++    from cryptography.hazmat.backends import default_backend
++    from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
+ except ImportError:
+     DES = None
++else:
++    DES = True
+ 
+ random.seed()
+ 
+@@ -90,14 +93,18 @@
+         desKey, salt, iv = self.__getEncryptionKey(
+             encryptKey, snmpEngineBoots
+         )
++        # Use the same DES key three times and TripleDES is identical to DES
++        desKey *= 3
+ 
+         # 8.3.1.2
+         privParameters = univ.OctetString(salt)
+ 
+         # 8.1.1.2
+-        desObj = DES.new(desKey, DES.MODE_CBC, iv)
++        desObj = Cipher(
++            algorithms.TripleDES(desKey), modes.CBC(iv),
++            backend=default_backend()).encryptor()
+         plaintext = dataToEncrypt + univ.OctetString((0,) * (8 - len(dataToEncrypt) % 8)).asOctets()
+-        ciphertext = desObj.encrypt(plaintext)
++        ciphertext = desObj.update(plaintext) + desObj.finalize()
+ 
+         # 8.3.1.3 & 4
+         return univ.OctetString(ciphertext), privParameters
+@@ -121,6 +128,8 @@
+ 
+         # 8.3.2.3
+         desKey, iv = self.__getDecryptionKey(decryptKey, salt)
++        # Use the same DES key three times and TripleDES is identical to DES
++        desKey *= 3
+ 
+         # 8.3.2.4 -> 8.1.1.3
+         if len(encryptedData) % 8 != 0:
+@@ -128,7 +137,9 @@
+                 errorIndication=errind.decryptionError
+             )
+ 
+-        desObj = DES.new(desKey, DES.MODE_CBC, iv)
++        desObj = Cipher(
++            algorithms.TripleDES(desKey), modes.CBC(iv),
++            backend=default_backend()).decryptor()
+ 
+         # 8.3.2.6
+-        return desObj.decrypt(encryptedData.asOctets())
++        return desObj.update(encryptedData.asOctets()) + desObj.finalize()
+--- pysnmp-4.3.2/pysnmp/proto/secmod/rfc3826/priv/aes.py	2016-02-13 11:38:14.000000000 -0800
++++ pysnmp-4.3.2/pysnmp/proto/secmod/rfc3826/priv/aes.py	2016-07-01 12:51:20.539017683 -0700
+@@ -12,9 +12,12 @@
+ from pysnmp.proto import errind, error
+ 
+ try:
+-    from Crypto.Cipher import AES
++    from cryptography.hazmat.backends import default_backend
++    from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
+ except ImportError:
+     AES = None
++else:
++    AES = True
+ 
+ random.seed()
+ 
+@@ -97,12 +100,15 @@
+         )
+ 
+         # 3.3.1.3
+-        aesObj = AES.new(aesKey, AES.MODE_CFB, iv, segment_size=128)
++        # XXX segment_size=128
++        aesObj = Cipher(
++          algorithms.AES(aesKey), modes.CFB(iv),
++          backend=default_backend()).encryptor()
+ 
+         # PyCrypto seems to require padding
+         dataToEncrypt = dataToEncrypt + univ.OctetString((0,) * (16-len(dataToEncrypt)%16)).asOctets()
+ 
+-        ciphertext = aesObj.encrypt(dataToEncrypt)
++        ciphertext = aesObj.update(dataToEncrypt) + aesObj.finalize()
+ 
+         # 3.3.1.4
+         return univ.OctetString(ciphertext), univ.OctetString(salt)
+@@ -127,10 +133,13 @@
+             decryptKey, snmpEngineBoots, snmpEngineTime, salt
+         )
+ 
+-        aesObj = AES.new(aesKey, AES.MODE_CFB, iv, segment_size=128)
++        # XXX segment_size=128
++        aesObj = Cipher(
++          algorithms.AES(aesKey), modes.CFB(iv),
++          backend=default_backend()).decryptor()
+ 
+         # PyCrypto seems to require padding
+         encryptedData = encryptedData + univ.OctetString((0,) * (16-len(encryptedData)%16)).asOctets()
+ 
+         # 3.3.2.4-6
+-        return aesObj.decrypt(encryptedData.asOctets())
++        return aesObj.update(encryptedData.asOctets()) + aesObj.finalize()
+--- pysnmp-4.3.2/pysnmp.egg-info/requires.txt	2016-02-13 13:14:19.000000000 -0800
++++ pysnmp-4.3.2/pysnmp.egg-info/requires.txt	2016-07-01 12:37:23.692977024 -0700
+@@ -1,3 +1,2 @@
+ pyasn1>=0.1.8
+ pysmi
+-pycrypto>=2.4.1
