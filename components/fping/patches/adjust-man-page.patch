@@ -1,0 +1,183 @@
+Adjust the fping man page to be Solaris specific.
+
+These changes should probably be sent upstream, when the patch
+can be reworked into a form that would be acceptable.
+
+--- fping-2.4b2_to/fping.8.orig	2016-09-08 08:27:57.573911510 +0000
++++ fping-2.4b2_to/fping.8	2016-09-08 08:38:11.582287257 +0000
+@@ -1,4 +1,4 @@
+-.TH fping l
++.TH fping 8
+ .SH NAME
+ fping \- send ICMP ECHO_REQUEST packets to network hosts
+ .SH SYNOPSIS
+@@ -13,7 +13,7 @@
+       
+ .B fping 
+ is a 
+-.MS ping 8
++.B ping
+ like program which uses the Internet Control
+ Message Protocol (ICMP) echo request to determine if a target host is
+ responding. 
+@@ -83,13 +83,12 @@
+ with the "-" indicating that no response was received to the fourth
+ request.
+ .IP \fB-d\fR 5
+-Use DNS to lookup address of return ping packet. This allows you to give
++Use gethostbyaddr(3NSL) to lookup address of return ping packet. This allows you to give
+ fping a list of IP addresses as input and print hostnames in the output.
+ .IP \fB-e\fR 5
+ Show elapsed (round-trip) time of packets.
+ .IP \fB-f\fR 5
+-Read list of targets from a file.  This option can only be used by the
+-root user.  Regular users should pipe in the file via stdin:
++Read list of targets from a file.
+ 
+ % fping < targets_file
+ 
+@@ -187,6 +186,121 @@
+ }
+ 
+ .ni
++.LP
++The following is an output example: 
++.sp
++\fB% fping a.b.com x.y.z.net 192.168.0.1 192.168.0.3\fR
++.in +2
++.nf
++a.b.com is alive
++x.y.z.net is alive
++192.168.0.1 is alive
++192.168.0.3 is alive
++.fi
++.in -2
++.sp
++.LP
++The following is an output example using the '-a' option: 
++.sp
++\fB% fping -a a.b.com x.y.z.net 192.168.0.1 192.168.0.3\fR
++.in +2
++.nf
++a.b.com
++x.y.z.net
++192.168.0.1
++192.168.0.3
++.fi
++.in -2
++.LP
++The following is an output example using the '-c' option: 
++.sp
++\fb% fping -c 3 a.b.com x.y.z.net 192.168.0.1\fR
++.in +2
++.nf
++a.b.com         : [0], 84 bytes, 51.1 ms (51.1 avg, 0% loss)
++192.168.0.1     : [0], 84 bytes, 0.08 ms (0.08 avg, 0% loss) [<- 192.168.0.4]
++x.y.z.net       : [0], 84 bytes, 70.6 ms (70.6 avg, 0% loss)
++a.b.com         : [1], 84 bytes, 60.9 ms (56.0 avg, 0% loss)
++192.168.0.1     : [1], 84 bytes, 0.09 ms (0.08 avg, 0% loss) [<- 192.168.0.4]
++a.b.com         : [2], 84 bytes, 40.6 ms (50.9 avg, 0% loss)
++192.168.0.1     : [2], 84 bytes, 0.11 ms (0.09 avg, 0% loss) [<- 192.168.0.4]
++x.y.z.net               : [2], 84 bytes, 68.8 ms (69.7 avg, 33% loss)
++.sp
++a.b.com         : xmt/rcv/%loss = 3/3/0%, min/avg/max = 40.6/50.9/60.9
++x.y.z.net               : xmt/rcv/%loss = 3/2/33%, min/avg/max = 68.8/69.7/70.6
++192.168.0.1     : xmt/rcv/%loss = 3/3/0%, min/avg/max = 0.08/0.09/0.11
++.fi
++.in -2
++.LP
++The following is an output example using the '-C' option: 
++.sp
++\fb% fping -C 3 a.b.com x.y.z.net 192.168.0.1\fR
++.in +2
++.nf
++a.b.com         : [0], 84 bytes, 41.7 ms (41.7 avg, 0% loss)
++x.y.z.net               : [0], 84 bytes, 66.6 ms (66.6 avg, 0% loss)
++a.b.com         : [1], 84 bytes, 50.7 ms (46.2 avg, 0% loss)
++x.y.z.net               : [1], 84 bytes, 62.6 ms (64.6 avg, 0% loss)
++a.b.com         : [2], 84 bytes, 44.9 ms (45.8 avg, 0% loss)
++x.y.z.net               : [2], 84 bytes, 69.5 ms (66.2 avg, 0% loss)
++.sp
++a.b.com         : 41.74 50.72 44.94
++x.y.z.net               : 66.69 62.63 69.52
++192.168.0.1     : - - -
++.fi
++.in -2
++.LP
++The following is an output example using the '-e' option: 
++.sp
++\fb% fping -e a.b.com x.y.z.net 192.168.0.1\fR
++.in +2
++.nf
++a.b.com is alive (18.9 ms)
++x.y.z.net is alive (9.51 ms)
++192.168.0.1 is alive (0.35 ms)
++.fi
++.in -2
++.LP
++The following is an output example using the '-g' option: 
++.sp
++\fb% fping -g 192.168.0.1 192.168.0.6\fR
++.in +2
++.nf
++192.168.0.0 is alive [<- 192.168.0.4]
++192.168.0.4 is alive
++192.168.0.1 is unreachable
++192.168.0.2 is unreachable
++192.168.0.3 is unreachable
++192.168.0.5 is unreachable
++192.168.0.6 is unreachable
++.fi
++.in -2
++.LP
++The following is an output example using the '-s' option: 
++.sp
++\fb% fping -s a.b.com x.y.z.net 192.168.0.1\fR
++.in +2
++.nf
++a.b.com is alive
++x.y.z.net is alive
++192.168.0.1 is unreachable
++
++       3 targets
++       2 alive
++       1 unreachable
++       0 unknown addresses
++
++       4 timeouts (waiting for response)
++       6 ICMP Echos sent
++       2 ICMP Echo Replies received
++       0 other ICMP received
++
++ 46.1 ms (min round trip time)
++ 58.7 ms (avg round trip time)
++ 71.3 ms (max round trip time)
++        4.153 sec (elapsed real time)
++.fi
++.in -2
+ 
+ .SH AUTHORS
+ .nf
+@@ -202,19 +316,10 @@
+ .SH BUGS
+ Ha! If we knew of any we would have fixed them!
+ .SH RESTRICTIONS
+-If certain options are used (i.e, a low value for -i and -t, and a 
+-high value for -r) it is possible to flood the network. This program
+-must be installed as setuid root in order to open up a raw socket,
+-or must be run by root. In order to stop mere mortals from hosing the
+-network (when fping is installed setuid root) , normal users can't specify 
+-the following:
+-.nf
+-
+- -i n   where n < 10  msec
+- -r n   where n > 20
+- -t n   where n < 250 msec
++Successful execution of this program requires that it be granted
++the net_icmpaccess privilege.
+ 
+ .ni
+ .SH SEE ALSO
+-netstat(1), ping(8), ifconfig(8c)
++netstat(8), ping(8), ifconfig(8), rbac(7), privileges(7)
+ 
