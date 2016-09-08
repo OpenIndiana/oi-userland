@@ -31,6 +31,14 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625
 
+# Adjust references to section 3am to be section 3 in the extensions man pages.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(SOURCE_DIR)/extension ; \
+	mlist=`/usr/bin/find . -name '*.3am'` ; \
+	for f in $$mlist ; do \
+		$(GSED) -i -e 's|3am|3|g' $$f ; \
+	done)
+
 # The additional gawk specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
