@@ -41,7 +41,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/python$(PYVER)/vendor-packages/64/_rjsmin.so
 file path=usr/lib/python$(PYVER)/vendor-packages/_rjsmin.so
 file path=usr/lib/python$(PYVER)/vendor-packages/rjsmin-$(COMPONENT_VERSION)-py$(PYVER).egg-info
-file path=usr/lib/python$(PYVER)/vendor-packages/rjsmin.py
+# pkgdepend on S11 doesn't grok new PEP 3149 syntax
+file path=usr/lib/python$(PYVER)/vendor-packages/rjsmin.py \
+    pkg.depend.bypass-generate=.*_rjsmin.*
 #
 license rjsmin.license license="Apache 2.0"
 
