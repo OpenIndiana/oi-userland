@@ -55,6 +55,11 @@ CONFIGURE_OPTIONS +=	--enable-zlib
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--disable-static-daq
 
+# cheesy, but if we turn off visibility then it doesn't
+# save the CFLAGS right and then nulls them.
+CONFIGURE_OPTIONS +=   "gl_cv_cc_visibility=no"
+CONFIGURE_OPTIONS +=   gl_save_CFLAGS="$(CFLAGS)"
+
 # Move snort shared objects to 64-bit path to stop pkglint bitching.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicengine $(PROTOUSRLIBDIR64); \

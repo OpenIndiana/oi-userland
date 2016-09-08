@@ -47,6 +47,11 @@ CFLAGS +=	-Du_int32_t=uint32_t
 CONFIGURE_OPTIONS +=	--disable-ipfw-module
 CONFIGURE_OPTIONS +=    --enable-static=no
 
+# cheesy, but if we turn off visibility then it doesn't
+# save the CFLAGS right and then nulls them.
+CONFIGURE_OPTIONS +=	"gl_cv_cc_visibility=no"
+CONFIGURE_OPTIONS +=	gl_save_CFLAGS="$(CFLAGS)"
+
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
