@@ -35,16 +35,16 @@
  SHLIBDIRS= crypto ssl
 
 --- openssl-1.0.0e/crypto/cryptlib.c    2011-06-22 08:39:00.000000000 -0700
-+++ openssl-1.0.0e_patched/crypto/cryptlib.c    2011-12-12 06:17:45.422476900 -0800
++++ openssl-1.0.0e/crypto/cryptlib.c    2011-12-12 06:17:45.422476900 -0800
 @@ -421,11 +421,13 @@
  static void solaris_locking_callback(int mode, int type, const char *file,
      int line)
  {
 +#ifndef    _BOOT
      if (mode & CRYPTO_LOCK) {
-         pthread_mutex_lock(&solaris_openssl_locks[type]);
+         (void) pthread_mutex_lock(&solaris_openssl_locks[type]);
      } else {
-         pthread_mutex_unlock(&solaris_openssl_locks[type]);
+         (void) pthread_mutex_unlock(&solaris_openssl_locks[type]);
      }
 +#endif
  }
@@ -57,16 +57,16 @@
 +#ifndef    _BOOT
      int                        ret;
      pthread_mutex_t    *dynlock;
-
+ 
 @@ -446,6 +449,9 @@
      OPENSSL_assert(ret == 0);
-
+ 
      return ((struct CRYPTO_dynlock_value *)dynlock);
 +#else
 +    return (NULL);
 +#endif
  }
-
+ 
  static void
 @@ -452,6 +458,7 @@
  solaris_dynlock_lock(int mode, struct CRYPTO_dynlock_value *dynlock,
@@ -78,13 +78,13 @@
      if (mode & CRYPTO_LOCK) {
 @@ -461,6 +468,7 @@
      }
-
+ 
      OPENSSL_assert(ret == 0);
 +#endif
  }
-
+ 
  static void
-@@ -467,9 +475,11 @@
+@@ -467,23 +475,28 @@
  solaris_dynlock_destroy(struct CRYPTO_dynlock_value *dynlock,
      const char *file, int line)
  {
@@ -94,30 +94,54 @@
      OPENSSL_assert(ret == 0);
 +#endif
  }
-
-
-@@ -513,6 +523,12 @@
+ 
+ 
+ static void solaris_fork_prep(void)
+ {
++#ifndef    _BOOT
+     int i;
+ 
+     for (i = 0; i < CRYPTO_NUM_LOCKS; i++) {
+         (void) pthread_mutex_lock(&solaris_openssl_locks[i]);
+     }
++#endif
+ }
+ 
+ static void solaris_fork_post(void)
+ {
++#ifndef	_BOOT
+     int i;
+ 
+     for (i = CRYPTO_NUM_LOCKS - 1; i >= 0; i--) {
+@@ -494,6 +507,7 @@
+     OPENSSL_assert(dynlock_lock_callback == solaris_dynlock_lock);
+     OPENSSL_assert(dynlock_destroy_callback == solaris_dynlock_destroy);
+     OPENSSL_assert(locking_callback == solaris_locking_callback);
++#endif
+ }
+ 
+ /*
+@@ -517,6 +531,12 @@
+ 	    locking_callback = solaris_locking_callback;
      }
  
-     /*
++    /*
 +     * pthread_* can't be used in wanboot.
 +     * wanboot needs not be thread-safe and mutexes and locking callback
 +     * function will not be setup for wanboot.
 +     */
 +#ifndef    _BOOT
-+    /*
-      * Set atfork handler so that child can setup its own mutexes and
-      * locking callbacks when it is forked
-      */
-@@ -533,7 +549,7 @@
-         pthread_mutex_init(&solaris_openssl_locks[i], NULL);
+     /* allocate and initialize locks needed by OpenSSL  */
+     solaris_openssl_locks =
+         OPENSSL_malloc(sizeof (pthread_mutex_t) * CRYPTO_NUM_LOCKS);
+@@ -530,6 +550,7 @@
      }
-     locking_callback = solaris_locking_callback;
--
+ 
+     (void) pthread_atfork(solaris_fork_prep, solaris_fork_post, solaris_fork_post);
 +#endif
  }
  
- void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
+ 
 @@ -1104,6 +1120,12 @@
          MessageBox(NULL, buf, _T("OpenSSL: FATAL"), MB_OK | MB_ICONERROR);
  }
@@ -143,7 +167,7 @@
  
  void OpenSSLDie(const char *file, int line, const char *assertion)
  {
-+#ifndef    _BOOT        
++#ifndef _BOOT
      OPENSSL_showfatal
          ("%s(%d): OpenSSL internal error, assertion failed: %s\n", file, line,
           assertion);
@@ -151,7 +175,7 @@
 +    fprintf(stderr,
 +        "%s(%d): OpenSSL internal error, assertion failed: %s\n",
 +        file,line,assertion);
-+#endif    
++#endif
  #if !defined(_WIN32) || defined(__CYGWIN__)
      abort();
  #else

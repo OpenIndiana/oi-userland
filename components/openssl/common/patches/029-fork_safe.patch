@@ -5,8 +5,8 @@
 # This change was implemented in-house.  The issue was brought up to
 # the upstream engineers, but there was no commitment.
 #
---- openssl-1.0.1f/crypto/cryptlib.c.~1~	Fri Feb  7 10:41:36 2014
-+++ openssl-1.0.1f/crypto/cryptlib.c	Thu Feb  6 16:03:58 2014
+--- a/crypto/cryptlib.c	2016-05-03 06:44:42.000000000 -0700
++++ b/crypto/cryptlib.c	2016-09-02 08:47:23.640202700 -0700
 @@ -116,6 +116,7 @@
  
  #include "cryptlib.h"
@@ -34,7 +34,7 @@
 +     * setting of another locking callback.
 +     */
  }
-
+ 
  void CRYPTO_set_dynlock_lock_callback(void (*func) (int mode,
 @@ -382,7 +388,10 @@
                                                      const char *file,
@@ -46,7 +46,7 @@
 +     * setting of another locking callback.
 +     */
  }
-
+ 
  void CRYPTO_set_dynlock_destroy_callback(void (*func)
 @@ -389,7 +398,10 @@
                                            (struct CRYPTO_dynlock_value *l,
@@ -58,12 +58,12 @@
 +     * setting of another locking callback.
 +     */
  }
-
+ 
  void (*CRYPTO_get_locking_callback(void)) (int mode, int type,
-@@ -402,6 +414,128@@
+@@ -402,6 +414,127 @@
      return (add_lock_callback);
  }
-
+ 
 +/*
 + * This is the locking callback function which all applications will be
 + * using when CRYPTO_lock() is called.
@@ -72,9 +72,9 @@
 +    int line)
 +{
 +    if (mode & CRYPTO_LOCK) {
-+        pthread_mutex_lock(&solaris_openssl_locks[type]);
++        (void) pthread_mutex_lock(&solaris_openssl_locks[type]);
 +    } else {
-+        pthread_mutex_unlock(&solaris_openssl_locks[type]);
++        (void) pthread_mutex_unlock(&solaris_openssl_locks[type]);
 +    }
 +}
 +
@@ -123,28 +123,37 @@
 +}
 +
 +
-+/*
-+ * This function is called when a child process is forked to setup its own
-+ * global locking callback function ptr and mutexes.
-+ */
-+static void solaris_fork_child(void)
++static void solaris_fork_prep(void)
 +{
-+    /*
-+     * clear locking_callback to indicate that locks should
-+     * be reinitialized.
-+     */
-+    locking_callback = NULL;
-+    solaris_locking_setup();
++    int i;
++
++    for (i = 0; i < CRYPTO_NUM_LOCKS; i++) {
++        (void) pthread_mutex_lock(&solaris_openssl_locks[i]);
++    }
++}
++
++static void solaris_fork_post(void)
++{
++    int i;
++
++    for (i = CRYPTO_NUM_LOCKS - 1; i >= 0; i--) {
++        (void) pthread_mutex_unlock(&solaris_openssl_locks[i]);
++    }
++
++    OPENSSL_assert(dynlock_create_callback == solaris_dynlock_create);
++    OPENSSL_assert(dynlock_lock_callback == solaris_dynlock_lock);
++    OPENSSL_assert(dynlock_destroy_callback == solaris_dynlock_destroy);
++    OPENSSL_assert(locking_callback == solaris_locking_callback);
 +}
 +
 +/*
-+ * This function allocates and initializes the global mutex array, and
-+ * sets the locking callback.
++ * This is called by the _init() function to setup locks used by OpenSSL
++ * and locking callback functions.
 + */
-+void solaris_locking_setup()
++void
++solaris_locking_setup()
 +{
 +    int i;
-+    int num_locks;
 +
 +    /* setup the dynlock callback if not already */
 +    if (dynlock_create_callback == NULL) {
@@ -156,40 +165,30 @@
 +    if (dynlock_destroy_callback == NULL) {
 +        dynlock_destroy_callback = solaris_dynlock_destroy;
 +    }
-+
-+    /* locking callback is already setup. Nothing to do */
-+    if (locking_callback != NULL) {
-+        return;
++    if (locking_callback == NULL) {
++	    locking_callback = solaris_locking_callback;
 +    }
 +
-+    /*
-+     * Set atfork handler so that child can setup its own mutexes and
-+     * locking callbacks when it is forked
-+     */
-+    (void) pthread_atfork(NULL, NULL, solaris_fork_child);
-+
-+    /* allocate locks needed by OpenSSL  */
-+    num_locks = CRYPTO_num_locks();
++    /* allocate and initialize locks needed by OpenSSL  */
 +    solaris_openssl_locks =
-+        OPENSSL_malloc(sizeof (pthread_mutex_t) * num_locks);
++        OPENSSL_malloc(sizeof (pthread_mutex_t) * CRYPTO_NUM_LOCKS);
 +    if (solaris_openssl_locks == NULL) {
 +        fprintf(stderr,
 +            "solaris_locking_setup: memory allocation failure.\n");
 +        abort();
 +    }
-+
-+    /* initialize openssl mutexes */
-+    for (i = 0; i < num_locks; i++) {
-+        pthread_mutex_init(&solaris_openssl_locks[i], NULL);
++    for (i = 0; i < CRYPTO_NUM_LOCKS; i++) {
++        (void) pthread_mutex_init(&solaris_openssl_locks[i], NULL);
 +    }
-+    locking_callback = solaris_locking_callback;
 +
++    (void) pthread_atfork(solaris_fork_prep, solaris_fork_post, solaris_fork_post);
 +}
++
 +
  void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
                                                 const char *file, int line))
  {
-@@ -410,7 +486,11 @@
+@@ -410,7 +541,11 @@
       * started.
       */
      OPENSSL_init();
@@ -202,7 +201,7 @@
  }
  
  void CRYPTO_set_add_lock_callback(int (*func) (int *num, int mount, int type,
-@@ -471,9 +551,10 @@
+@@ -471,9 +606,10 @@
  
  int CRYPTO_THREADID_set_callback(void (*func) (CRYPTO_THREADID *))
  {
@@ -216,7 +215,7 @@
      return 1;
  }
  
-@@ -529,7 +669,10 @@
+@@ -529,7 +665,10 @@
  
  void CRYPTO_set_id_callback(unsigned long (*func) (void))
  {
