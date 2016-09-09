@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -42,7 +42,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/httplib2-$(COMPONENT_VERSION)-p
 file path=usr/lib/python$(PYVER)/vendor-packages/httplib2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/httplib2/cacerts.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/httplib2/iri2uri.py
-file path=usr/lib/python$(PYVER)/vendor-packages/httplib2/socks.py
+# Support for a socks proxy is only available on Python 2.  See
+# https://github.com/httplib2/httplib2/issues/25
+$(PYTHON_2.7_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/httplib2/socks.py
+#
 license httplib2.license license="MIT, BSD, LGPLv2.1, Apache v2.0"
 
 # force the rename with an optional dependency on the old name

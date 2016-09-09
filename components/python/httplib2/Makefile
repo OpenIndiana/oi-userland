@@ -36,18 +36,22 @@ COMPONENT_BUGDB=	python-mod/httplib2
 
 TPNO=			29114
 
-# Depends on SocksiPy; for Python 2.x, the module is part of httplib2, but
-# for Python 3.x, it is separate.  Once we add this module, httplib2 will
-# most likely work with Python 3.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =	$(SOURCE_DIR)/python2
+# Set up the tests for running with multiple versions.  Many of the tests
+# attempt to connect to URLs outside the firewall, some of which no longer
+# exist.  Others could be set up on a local server with the tests directory
+# from the git repo.  But for the most part, just expect the tests to fail.
+COMPONENT_PRE_TEST_ACTION = \
+	v=$$(echo $(PYTHON_VERSION) | cut -c1); \
+	$(CP) -r $(COMPONENT_SRC)/python$$v/httplib2/test $(@D); \
+	$(CP) $(COMPONENT_SRC)/python$$v/httplib2test.py $(@D); \
+
+COMPONENT_TEST_DIR =	$(@D)
 COMPONENT_TEST_ARGS =	httplib2test.py
 
 # common targets

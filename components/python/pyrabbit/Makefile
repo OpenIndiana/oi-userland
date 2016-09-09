@@ -36,11 +36,6 @@ COMPONENT_BUGDB=	python-mod/pyrabbit
 
 TPNO=			29383
 
-# pyrabbit itself is Python 3 ready: builds & publishes cleanly.  But it
-# depends on httplib2 which has its own dependency issues (see its Makefile
-# for details).  So don't build for Python 3 until dependencies resolved.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -52,7 +47,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# pyrabbit has no tests.
+# PyRabbit doesn't bundle tests in its tarball.  They're mostly tests that
+# require a live RabbitMQ server, anyway.
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
