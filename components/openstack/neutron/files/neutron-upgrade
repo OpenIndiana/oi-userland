@@ -31,9 +31,6 @@ NEUTRON_CONF_MAPPINGS = {
     ('DEFAULT', 'log_format'): (None, None),
     ('DEFAULT', 'rpc_thread_pool_size'):
         ('DEFAULT', 'executor_thread_pool_size'),
-    ('ml2_sriov', 'agent_required'): (None, None),
-    # Deprecated group/name for Mitaka
-    ('ml2', 'segment_mtu'): ('DEFAULT', 'global_physnet_mtu'),
     ('DEFAULT', 'nova_region_name'): ('nova', 'region_name'),
     ('DEFAULT', 'nova_admin_username'): ('nova', 'username'),
     ('DEFAULT', 'nova_admin_tenant_id'): ('nova', 'tenant_id'),
@@ -54,23 +51,31 @@ NEUTRON_CONF_EXCEPTIONS = [
     # doesn't handle EVS to OVS upgrade
     ('DEFAULT', 'core_plugin'),
     ('DEFAULT', 'service_plugins'),
+    ('nova', 'username'),
+    ('nova', 'tenant_name'),
+    ('nova', 'password'),
+    ('nova', 'auth_url'),
 ]
 
+L3_AGENT_MAPPINGS = {
+    ('DEFAULT', 'evs_controller'): (None, None),
+    ('DEFAULT', 'external_network_datalink'): (None, None),
+}
+
 L3_AGENT_EXCEPTIONS = [
-    # Do not overwrite EVS options with OVS options since upgrade
-    # doesn't handle EVS to OVS migration
     ('DEFAULT', 'ovs_integration_bridge'),
     ('DEFAULT', 'interface_driver'),
     ('DEFAULT', 'external_network_bridge'),
-    ('DEFAULT', 'evs_controller'),
+    ('DEFAULT', 'auth_url'),
 ]
 
+DHCP_AGENT_MAPPINGS = {
+    ('DEFAULT', 'evs_controller'): (None, None)
+}
+
 DHCP_AGENT_EXCEPTIONS = [
-    # Do not overwrite EVS options with OVS options since upgrade
-    # doesn't handle EVS to OVS migration
     ('DEFAULT', 'ovs_integration_bridge'),
     ('DEFAULT', 'interface_driver'),
-    ('DEFAULT', 'evs_controller'),
 ]
 
 METADATA_AGENT_EXCEPTIONS = [
@@ -89,7 +94,11 @@ OPENVSWITCH_AGENT_EXCEPTIONS = [
     ('securitygroup', 'enable_ipset'),
 ]
 
-ML2_CONF_EXCEPTION = [
+ML2_CONF_MAPPINGS = {
+    ('ml2', 'segment_mtu'): ('DEFAULT', 'global_physnet_mtu'),
+}
+
+ML2_CONF_EXCEPTIONS = [
     ('ml2', 'type_drivers'),
     ('ml2', 'tenant_network_types'),
     ('ml2', 'mechanism_drivers'),
@@ -128,18 +137,18 @@ def start():
         create_backups('/etc/neutron')
 
         modify_conf('/etc/neutron/api-paste.ini')
-        modify_conf('/etc/neutron/dhcp_agent.ini')
-        modify_conf('/etc/neutron/l3_agent.ini', mapping=None,
+        modify_conf('/etc/neutron/dhcp_agent.ini', mapping=DHCP_AGENT_MAPPINGS,
+                    exception_list=DHCP_AGENT_EXCEPTIONS)
+        modify_conf('/etc/neutron/l3_agent.ini', mapping=L3_AGENT_MAPPINGS,
                     exception_list=L3_AGENT_EXCEPTIONS)
-        modify_conf('/etc/neutron/neutron.conf', NEUTRON_CONF_MAPPINGS,
-                    NEUTRON_CONF_EXCEPTIONS)
+        modify_conf('/etc/neutron/neutron.conf', mapping=NEUTRON_CONF_MAPPINGS,
+                    exception_list=NEUTRON_CONF_EXCEPTIONS)
         modify_conf('/etc/neutron/metadata_agent.ini', mapping=None,
                     exception_list=METADATA_AGENT_EXCEPTIONS)
 
     # look for any .new files for ml2 plugin
     if glob.glob('/etc/neutron/plugins/ml2/*.new'):
         # modify the configuration files
-
         # backup all the old configuration files
         create_backups('/etc/neutron/plugins/ml2')
 
@@ -148,8 +157,8 @@ def start():
                     exception_list=OPENVSWITCH_AGENT_EXCEPTIONS)
 
         modify_conf('/etc/neutron/plugins/ml2/ml2_conf.ini',
-                    mapping=None,
-                    exception_list=ML2_CONF_EXCEPTION)
+                    mapping=ML2_CONF_MAPPINGS,
+                    exception_list=ML2_CONF_EXCEPTIONS)
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
