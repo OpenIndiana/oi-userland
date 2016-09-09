@@ -57,7 +57,11 @@ PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 			 -name '$(PATCH_PATTERN)' 2>/dev/null | \
 				LC_COLLATE=C sort)
 
-PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
+# Patches for different source tarballs have _X filename extensions to
+# match the _X extensions to the COMPONENT_* make variables.  Find these
+# extensions, using $(sort) to uniq them to prevent multiple rules from
+# getting generated.
+PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES)))))
 
 define patch-rule
 
