@@ -23,7 +23,7 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS =            64_and_32
+BUILD_BITS =            64
 # All components using gobject-introspection must be built with gcc as
 # gobject-introspection does not produce correct results when using Studio.
 COMPILER =              gcc
@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS += --disable-systemd
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-wnck
 CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --libexecdir="$(USRLIBDIR)"
 
 # Assumes GNU msgfmt is in PATH.
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
