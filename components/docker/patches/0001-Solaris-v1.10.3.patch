@@ -16,7 +16,7 @@ Subject: [PATCH] Solaris-v1.10.3
  api/server/router/container/container_routes.go    |    7 +
  api/server/server_unix.go                          |    2 +-
  container/container_solaris.go                     |  649 ++++++++++++
- container/monitor.go                               |   46 +-
+ container/monitor.go                               |    9 +
  container/state_solaris.go                         |    9 +
  contrib/docker-device-tool/device_tool.go          |    2 +-
  contrib/httpserver/Dockerfile                      |    2 +-
@@ -55,7 +55,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/list_unix.go                                |    2 +-
  daemon/network.go                                  |    7 +
  daemon/selinux_unsupported.go                      |    8 +
- daemon/start.go                                    |   58 ++
+ daemon/start.go                                    |   63 ++
  daemon/stats_collector_solaris.go                  |  139 +++
  daemon/stats_collector_unix.go                     |    2 +-
  daemon/stats_solaris.go                            |   82 ++
@@ -199,7 +199,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 189 files changed, 8870 insertions(+), 1216 deletions(-)
+ 189 files changed, 8839 insertions(+), 1215 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -1096,30 +1096,10 @@ index 0000000..fce3c7f
 +	return true
 +}
 diff --git a/container/monitor.go b/container/monitor.go
-index 09b447d..9e18b2f 100644
+index 09b447d..990b022 100644
 --- a/container/monitor.go
 +++ b/container/monitor.go
-@@ -7,6 +7,8 @@ import (
- 	"sync"
- 	"syscall"
- 	"time"
-+	"bytes"
-+	"regexp"
- 
- 	"github.com/Sirupsen/logrus"
- 	"github.com/docker/docker/daemon/execdriver"
-@@ -20,6 +22,10 @@ import (
- const (
- 	defaultTimeIncrement = 100
- 	loggerCloseTimeout   = 10 * time.Second
-+	RUNZ                 = "/usr/lib/brand/solaris-oci/runz"
-+	STOPPED_STATE        = "stopped"
-+	RUNNING_STATE        = "running"
-+	checkStateDelay      = 2 * time.Second
- )
- 
- // supervisor defines the interface that a supervisor must implement
-@@ -205,6 +211,15 @@ func (m *containerMonitor) start() error {
+@@ -205,6 +205,15 @@ func (m *containerMonitor) start() error {
  			if m.container.RestartCount == 0 {
  				m.container.ExitCode = -1
  				m.resetContainer(false)
@@ -1135,44 +1115,6 @@ index 09b447d..9e18b2f 100644
  
  				return derr.ErrorCodeCantStart.WithArgs(m.container.ID, utils.GetErrorMessage(err))
  			}
-@@ -318,7 +333,36 @@ func (m *containerMonitor) callback(processConfig *execdriver.ProcessConfig, pid
- 		}
- 	}
- 
--	m.container.SetRunning(pid)
-+	succStart := false
-+	running := regexp.MustCompile(RUNNING_STATE)
-+	stopped := regexp.MustCompile(STOPPED_STATE)
-+	for i := 0; i < 3; i++ {
-+		time.Sleep(checkStateDelay)
-+		cmd := exec.Command(RUNZ, "state", m.container.Name)
-+		outBuf := new(bytes.Buffer)
-+		cmd.Stdout = outBuf
-+		err := cmd.Run()
-+
-+		if err != nil {
-+			logrus.Errorf("Error getting runz state: %v", err)
-+			continue
-+		}
-+
-+		if len(running.FindString(outBuf.String())) > 0 || len(stopped.FindString(outBuf.String())) > 0 {
-+			// set succStart to true if container runz state
-+			// is running or if the container stopped
-+			// because it exited normally.
-+			// TODO: fetch exit code.
-+			succStart = true
-+			m.container.SetRunning(pid)
-+		}
-+	}
-+
-+	if !succStart {
-+		// Container not started successfully. The error would be caught and
-+		// returned by cmd.Wait() 
-+		return nil
-+	}
- 
- 	// signal that the process has started
- 	// close channel only if not closed
 diff --git a/container/state_solaris.go b/container/state_solaris.go
 new file mode 100644
 index 0000000..645c934
@@ -4587,7 +4529,7 @@ index 25a56ad..4f9bbe4 100644
 +	return nil, nil
 +}
 diff --git a/daemon/start.go b/daemon/start.go
-index 418dace..a4c6e47 100644
+index 418dace..c74f07a 100644
 --- a/daemon/start.go
 +++ b/daemon/start.go
 @@ -1,7 +1,10 @@
@@ -4640,7 +4582,7 @@ index 418dace..a4c6e47 100644
  	if err := daemon.waitForStart(container); err != nil {
  		return err
  	}
-@@ -170,3 +191,40 @@ func (daemon *Daemon) Cleanup(container *container.Container) {
+@@ -170,3 +191,45 @@ func (daemon *Daemon) Cleanup(container *container.Container) {
  		logrus.Warnf("%s cleanup: Failed to umount volumes: %v", container.ID, err)
  	}
  }
@@ -4651,6 +4593,10 @@ index 418dace..a4c6e47 100644
 +	pathdnsXml := container.Root + "/dns_client.xml"
 +	pathnsswitchXml := container.Root + "/ns_switch.xml"
 +	repodb := container.BaseFS + "/etc/svc/repository.db"
++
++	// We want to ensure we are accessing the SMF repository of the host,
++	// so we clear SVCCFG_REPOSITORY.
++	os.Unsetenv("SVCCFG_REPOSITORY")
 +
 +	err := exec.Command(SVCCFG, "extract", "dns/client", ">", pathdnsXml).Run()
 +	if err != nil {
@@ -4678,6 +4624,7 @@ index 418dace..a4c6e47 100644
 +
 +	os.Remove(pathdnsXml)
 +	os.Remove(pathnsswitchXml)
++	os.Unsetenv("SVCCFG_REPOSITORY")
 +
 +	return err
 +}
