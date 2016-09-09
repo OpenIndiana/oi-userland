@@ -25,6 +25,9 @@
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
+# COMPONENT_VERSION number in ./history must be >= s11 COMPONENT_VERSION
+# at all times, so update ./history if planning to backport an update.
+
 COMPONENT_NAME=		libpki
 COMPONENT_VERSION=	0.8.9
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/libpki/
