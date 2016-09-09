@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.unixtop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -54,8 +54,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
 
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
