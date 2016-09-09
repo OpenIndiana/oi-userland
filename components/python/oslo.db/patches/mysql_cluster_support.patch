@@ -2,7 +2,8 @@ This patchset is for bug:
 
 24409419 Mitaka oslo.db should support MySQL Cluster
 
-This fixes the following aspects of Oslo.db:
+This fixes the following aspects of oslo.db:
+
 1. Implementation of an oslo.db configuration parameter to specify the MySQL
    storage engine (mysql_storage_engine).
 
@@ -10,9 +11,8 @@ This has not been committed upstream, but has been filed in launchpad:
 
 https://bugs.launchpad.net/oslo.db/+bug/1564110
 
-
---- oslo.db-4.7.0/oslo_db/options.py.orig	2016-08-04 14:14:42.609731178 -0700
-+++ oslo.db-4.7.0/oslo_db/options.py	2016-08-04 14:42:24.071847993 -0700
+--- oslo.db-4.7.0/oslo_db/options.py.~1~	2016-03-27 20:04:48.000000000 +0000
++++ oslo.db-4.7.0/oslo_db/options.py	2016-09-08 23:03:23.562323080 +0000
 @@ -48,6 +48,13 @@ database_opts = [
                      'server-set SQL mode. To use whatever SQL mode '
                      'is set by the server configuration, '
@@ -21,9 +21,9 @@ https://bugs.launchpad.net/oslo.db/+bug/1564110
 +               default='InnoDB',
 +               help='This configures the MySQL storage engine. '
 +                    'This allows for OpenStack to support different storage '
-+                    'engine such as InnoDB, NDB, etc. For MySQL Cluster, '
-+                    'such as InnoDB, NDB, etc. For MySQL Cluster, set to '
-+                    'NDBCLUSTER. Example: mysql_storage_engine=NDBCLUSTER'),
++                    'engine such as InnoDB, NDB, etc. By default, '
++                    'this value will be set to InnoDB. For MySQL Cluster, '
++                    'set to NDBCLUSTER. Example: mysql_storage_engine='),
      cfg.IntOpt('idle_timeout',
                 default=3600,
                 deprecated_opts=[cfg.DeprecatedOpt('sql_idle_timeout',
