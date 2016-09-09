@@ -91,6 +91,9 @@ NOVA_CONF_MAPPINGS = {
     ('osapi_v21', 'project_id_regex'): (None, None),
     ('serial_console', 'listen'): (None, None),
     ('workarounds', 'destroy_after_evacuate'): (None, None),
+    # move noVNC proxy configuration from DEFAULT to the vnc group
+    ('DEFAULT', 'novncproxy_port'): ('vnc', 'novncproxy_port'),
+    ('DEFAULT', 'novncproxy_host'): ('vnc', 'novncproxy_host'),
     # move entries from DEFAULT.nova.virt.solariszones.driver to its own
     # section
     ('DEFAULT', 'boot_volume_type'): ('solariszones', 'boot_volume_type'),
@@ -118,7 +121,6 @@ NOVA_CONF_EXCEPTIONS = [
     ('DEFAULT', 'osapi_compute_workers'),
     ('DEFAULT', 'metadata_workers'),
     ('DEFAULT', 'lock_path'),
-    ('DEFAULT', 'novncproxy_base_url'),
     ('DEFAULT', 'ovs_bridge'),
     ('conductor', 'workers'),
     ('database', 'connection'),
@@ -133,7 +135,7 @@ NOVA_CONF_EXCEPTIONS = [
     ('neutron', 'password'),
     ('neutron', 'tenant_name'),
     ('neutron', 'auth_url'),
-
+    ('vnc', 'novncproxy_base_url'),
 
 ]
 
