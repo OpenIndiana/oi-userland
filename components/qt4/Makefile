@@ -33,15 +33,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-MYSQL_BINDIR.32=/usr/mariadb/5.5/bin
-MYSQL_BINDIR.64=/usr/mariadb/5.5/bin/$(MACH64)
-
 PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):/usr/bin
-
-MYSQL_LIBDIR.32=/usr/mariadb/5.5/lib
-MYSQL_LIBDIR.64=/usr/mariadb/5.5/lib/$(MACH64)
-LDFLAGS +=   -L$(MYSQL_LIBDIR.$(BITS)) -R$(MYSQL_LIBDIR.$(BITS)) 
-LDFLAGS +=   -L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS)) 
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D))
@@ -74,8 +66,14 @@ CONFIGURE_OPTIONS+=	-nomake docs
 CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS+=	-plugin-sql-sqlite
 CONFIGURE_OPTIONS+=	-plugin-sql-mysql
+CONFIGURE_OPTIONS+= -I$(MYSQL_INCDIR)
+CONFIGURE_OPTIONS+= -L$(MYSQL_LIBDIR.$(BITS)) -R$(MYSQL_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	-plugin-sql-psql
+CONFIGURE_OPTIONS+= -I$(PG_INCDIR)
+CONFIGURE_OPTIONS+= -L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+=	-system-sqlite
+CONFIGURE_OPTIONS+=	-system-libmng
+CONFIGURE_OPTIONS+=	-I/usr/include/libmng
 
 COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
 	mv qconfig.pri qconfig.pri.32 ; \
@@ -100,3 +98,28 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += database/postgres-93/developer
+REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/libmng
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxrender
