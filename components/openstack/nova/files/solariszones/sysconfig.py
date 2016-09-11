@@ -130,7 +130,7 @@ def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
                              name="gateway", value=hr_gw)
 
     # create DNS profile for static configurations
-    if addrtype == "static" and nameservers is not None:
+    if addrtype == "static" and nameservers:
         dns = etree.SubElement(svcbundle, "service", version="1",
                                type="service", name="network/dns/client")
         etree.SubElement(dns, "instance", enabled="true", name="default")
