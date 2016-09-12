@@ -17,12 +17,12 @@ include ../../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.5.50-38.0
-IPS_COMPONENT_VERSION=	5.5.50.38.0
+COMPONENT_VERSION=	5.5.51-38.1
+IPS_COMPONENT_VERSION=	5.5.51.38.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:f765aacea9dc15113fec10ffb8f8d59af2c78fa779cc761f51c7b1e421990e4b
+COMPONENT_ARCHIVE_HASH=	sha256:330fe7065c66a32e8d9cf37f33ddcbb76bffc14acae2d031395c3fb8d6b0857b
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
