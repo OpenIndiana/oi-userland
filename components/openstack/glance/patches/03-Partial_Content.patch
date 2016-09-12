@@ -38,14 +38,15 @@ See community bugs:
          response.headers['Content-Type'] = 'application/octet-stream'
  
          try:
-@@ -317,7 +334,9 @@ class ResponseSerializer(wsgi.JSONRespon
+@@ -317,7 +334,10 @@ class ResponseSerializer(wsgi.JSONRespon
              response.headers['Content-MD5'] = image.checksum
          # NOTE(markwash): "response.app_iter = ..." also erroneously resets the
          # content-length
 -        response.headers['Content-Length'] = str(image.size)
 +        # NOTE(mattk): Should be set to chunk_size or image.size
 +        response.headers['Content-Length'] = \
-+            str(chunk_size) if chunk_size != 0 else str(image.size)
++            str(chunk_size) if (chunk_size is not None and chunk_size != 0) \
++            else str(image.size)
  
      def upload(self, response, result):
          response.status_int = 204
