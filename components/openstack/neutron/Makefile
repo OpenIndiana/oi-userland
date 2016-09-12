@@ -63,11 +63,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 
 # Depends on openvswitch, available in S12 but not 11.3, so do not publish.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_NO_ARCH=
-INSTALL_NO_ARCH=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/ips.mk
 
@@ -145,10 +141,14 @@ COMPONENT_POST_BUILD_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
     $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
-# common targets
+# Skip all building & installing, especially of vpnaas, in evaluation mode.
+ifeq ($(BUILD_TYPE), evaluation)
+build:
+install:
+else
 build:		$(BUILD_NO_ARCH)
-
 install:	$(INSTALL_NO_ARCH) install-vpnaas
+endif
 
 test:		$(NO_TESTS)
 
