@@ -1,0 +1,46 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  1e024aba6f841541c36f2c618a0b9436124be5ba
+22672457 ibqueryerrors dumps core with invalid port specified
+
+diff -r 1e024aba6f84 src/portid.c
+--- a/src/portid.c	Mon Aug 29 10:50:40 2016 -0700
++++ b/src/portid.c	Thu Sep 01 15:55:44 2016 -0700
+@@ -82,7 +82,25 @@
+ 
+ int str2drpath(ib_dr_path_t * path, char *routepath, int drslid, int drdlid)
+ {
+-	char *s, *str = routepath;
++	char *s, *str;
++	char *buf;
++	int str_len;
++
++	if (routepath == NULL)
++		return -1;
++
++	/* Copy the content of routepath into buf for processing */
++	str_len = strlen(routepath);
++	if (str_len == 0)
++		return -1;
++	
++	buf = (char *) malloc((str_len + 1) * sizeof(char));
++	if (!buf) {
++		return -1;
++	}
++	strncpy(buf, routepath, str_len);
++	buf[str_len] = '\0';
++	str = buf;
+ 
+ 	path->cnt = -1;
+ 
+@@ -99,6 +117,8 @@
+ 	path->drdlid = drdlid ? drdlid : 0xffff;
+ 	path->drslid = drslid ? drslid : 0xffff;
+ 
++	free(buf);
++
+ 	return path->cnt;
+ }
+ 

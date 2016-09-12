@@ -1,0 +1,43 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  fdf4097d37ca807fc7f99fc7b0451422e88c9b86
+22672457 ibqueryerrors dumps core with invalid port specified
+
+diff -r fdf4097d37ca libibnetdisc/src/ibnetdisc.c
+--- a/libibnetdisc/src/ibnetdisc.c	Mon Aug 29 10:50:02 2016 -0700
++++ b/libibnetdisc/src/ibnetdisc.c	Thu Sep 01 16:05:30 2016 -0700
+@@ -610,7 +610,11 @@
+ ibnd_node_t *ibnd_find_node_dr(ibnd_fabric_t * fabric, char *dr_str)
+ {
+ 	ibnd_port_t *rc = ibnd_find_port_dr(fabric, dr_str);
+-	return rc->node;
++	/* Check whether the specified port is found */
++	if (rc == NULL)
++		return NULL;
++	else
++		return rc->node;
+ }
+ 
+ void add_to_nodeguid_hash(ibnd_node_t * node, ibnd_node_t * hash[])
+@@ -911,6 +915,8 @@
+ 	}
+ 
+ 	cur_node = fabric->from_node;
++	if (!cur_node)
++		return NULL;
+ 
+ 	if (str2drpath(&path, dr_str, 0, 0) == -1)
+ 		return NULL;
+@@ -921,6 +927,10 @@
+ 			continue;
+ 		if (!cur_node->ports)
+ 			return NULL;
++		/* check the existence of the port specified in dr path */
++		if (path.p[i] > cur_node->numports ||
++		    cur_node->ports[path.p[i]] == NULL)
++			return NULL;
+ 
+ 		remote_port = cur_node->ports[path.p[i]]->remoteport;
+ 		if (!remote_port)

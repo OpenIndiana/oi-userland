@@ -1,0 +1,25 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+# 
+# HG changeset patch
+# Parent  88a36501a87e8091b564f83dbb5a4f735c20abb1
+23302428 Re-enabling an already enabled IB port resets the port
+
+diff -r 88a36501a87e src/ibportstate.c
+--- a/src/ibportstate.c	Tue Aug 09 11:44:09 2016 -0700
++++ b/src/ibportstate.c	Tue Aug 09 11:57:05 2016 -0700
+@@ -563,7 +563,14 @@
+ 				printf("Port is already in enable state\n");
+ 				goto close_port;
+ 			}
++			mad_set_field(data, 0, IB_PORT_PHYS_STATE_F, 2);
++                       break;
+ 		case ENABLE:
++			/* Do not have to enable a port which is already in ENABLE state */
++			if(physstate == 5) {
++				printf("Port is already in enable state, no need to re-enable\n");
++				goto close_port;
++			}
+ 		case RESET:
+ 			/* Polling */
+ 			mad_set_field(data, 0, IB_PORT_PHYS_STATE_F, 2);
