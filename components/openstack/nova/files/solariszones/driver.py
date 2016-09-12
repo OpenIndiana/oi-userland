@@ -40,7 +40,7 @@ from cinderclient.v1 import client as v1_client
 from eventlet import greenthread
 from keystoneclient import exceptions as keystone_exception
 from lxml import etree
-from oslo_concurrency import processutils
+from oslo_concurrency import lockutils, processutils
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
@@ -1063,23 +1063,36 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Fetch an image using Glance given the instance's image_ref."""
         glancecache_dirname = CONF.solariszones.glancecache_dirname
         fileutils.ensure_tree(glancecache_dirname)
-        image = ''.join([glancecache_dirname, '/', instance['image_ref']])
-        if os.path.exists(image):
-            LOG.debug(_("Using existing, cached Glance image: id %s")
-                      % instance['image_ref'])
-            return image
+        iref = instance['image_ref']
+        image = os.path.join(glancecache_dirname, iref)
+        downloading = image + '.downloading'
 
-        LOG.debug(_("Fetching new Glance image: id %s")
-                  % instance['image_ref'])
-        try:
-            images.fetch(context, instance['image_ref'], image,
-                         instance['user_id'], instance['project_id'])
-        except Exception as reason:
-            LOG.error(_("Unable to fetch Glance image: id %s: %s")
-                      % (instance['image_ref'], reason))
-            raise
-        return image
+        with lockutils.lock('glance-image-%s' % iref):
+            if os.path.isfile(downloading):
+                LOG.debug(_('Cleaning partial download of %s' % iref))
+                os.unlink(image)
+                os.unlink(downloading)
 
+            elif os.path.exists(image):
+                LOG.debug(_("Using existing, cached Glance image: id %s")
+                          % iref)
+                return image
+
+            LOG.debug(_("Fetching new Glance image: id %s") % iref)
+            try:
+                # touch the empty .downloading file
+                with open(downloading, 'w'):
+                    pass
+                images.fetch(context, iref, image, instance['user_id'],
+                             instance['project_id'])
+                os.unlink(downloading)
+                return image
+            except Exception as reason:
+                LOG.error(_("Unable to fetch Glance image: id %s: %s")
+                          % (iref, reason))
+                raise
+
+    @lockutils.synchronized('validate_image')
     def _validate_image(self, context, image, instance):
         """Validate a glance image for compatibility with the instance."""
         # Skip if the image was already checked and confirmed as valid.
@@ -1119,7 +1132,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             image_meta = glanceapi.get(context, instance['image_ref'])
             image_properties = image_meta.get('properties')
             if image_properties.get('architecture') is None:
-                reason = reason + (_(" The 'architecture' property is not set "
+                reason = reason + (_("The 'architecture' property is not set "
                                      "on the Glance image."))
 
             raise exception.ImageUnacceptable(image_id=instance['image_ref'],
