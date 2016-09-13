@@ -2110,17 +2110,25 @@ class SolarisZonesDriver(driver.ComputeDriver):
         image = self._fetch_image(context, instance)
         self._validate_image(context, image, instance)
 
-        # create a new directory for SC profiles
-        sc_dir = tempfile.mkdtemp(prefix="nova-sysconfig-",
-                                  dir=CONF.state_path)
-        os.chmod(sc_dir, 0755)
+        # c1d0 is the standard dev for the default boot device.
+        # Irrelevant value for ZFS, but Cinder gets stroppy without it.
+        mountpoint = "c1d0"
+
+        # Ensure no block device mappings attempt to use the reserved boot
+        # device (c1d0).
+        for entry in block_device_info.get('block_device_mapping'):
+            if entry['connection_info'] is None:
+                continue
+
+            mount_device = entry['mount_device']
+            if mount_device == '/dev/' + mountpoint:
+                msg = (_("Unable to assign '%s' to block device as it is"
+                         "reserved for the root file system") % mount_device)
+                raise exception.InvalidDiskInfo(msg)
 
         # Attempt to provision a (Cinder) volume service backed boot volume
         volume = self._create_boot_volume(context, instance)
         volume_id = volume['id']
-        # c1d0 is the standard dev for for default boot device.
-        # Irrelevant value for ZFS, but Cinder gets stroppy without it.
-        mountpoint = "c1d0"
         name = instance['name']
         try:
             connection_info = self._connect_boot_volume(volume, mountpoint,
@@ -2138,14 +2146,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to attach root zpool volume '%s' to instance "
                         "%s: %s") % (volume['id'], name, reason))
             self._volume_api.delete(context, volume_id)
-            # remove the sc_profile temp directory
-            shutil.rmtree(sc_dir)
             raise
+
+        # create a new directory for SC profiles
+        sc_dir = tempfile.mkdtemp(prefix="nova-sysconfig-",
+                                  dir=CONF.state_path)
+        os.chmod(sc_dir, 0755)
 
         try:
             self._create_config(context, instance, network_info,
                                 connection_info, sc_dir, admin_password)
             self._install(instance, image, sc_dir)
+
+            for entry in block_device_info.get('block_device_mapping'):
+                if entry['connection_info'] is not None:
+                    self.attach_volume(context, entry['connection_info'],
+                                       instance, entry['mount_device'])
+
             self._power_on(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
