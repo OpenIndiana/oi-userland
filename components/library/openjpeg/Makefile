@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2013-2016, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjpeg
 COMPONENT_VERSION=	2.1.1
