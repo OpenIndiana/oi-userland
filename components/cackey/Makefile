@@ -38,9 +38,9 @@
 #   Testing libcackey... DONE. Status = 0
 #   then you have a finished test and results.
 #   Search for CK_FAIL or "failed" in testoutput.log to see the actual failures,
-#   if no CK_FAIl or failed were reported, the test ran successfully.
+#   if no CK_FAIL or failed were reported, the test ran successfully.
 
-BUILD_BITS= 64
+BUILD_BITS=	64_and_32
 include ../../make-rules/shared-macros.mk
  
 COMPONENT_NAME=         CACKey
