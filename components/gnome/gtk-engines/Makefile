@@ -49,11 +49,16 @@ gcc_OPT.i386.32 = -O2
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
 
+COMPONENT_BUILD_ENV += LD_SHARED_OPTIONS="$(LD_OPTIONS_SO) -lm"
+
 CONFIGURE_OPTIONS += --disable-lua
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-all
 CONFIGURE_OPTIONS += --enable-animation
-CONFIGURE_OPTIONS += --enable-deprecated
+# --disable-deprecated actually disables the -D *_DISABLE_DEPRECATED flags
+# that hide deprecated functions in the headers, thus enabling the engines
+# to build properly
+CONFIGURE_OPTIONS += --disable-deprecated
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 
@@ -73,3 +78,4 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/library/math
