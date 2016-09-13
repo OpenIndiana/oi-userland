@@ -1,0 +1,21 @@
+Do not use acroread, use pdf2ps from gs for PDF
+
+See: https://patches.ubuntu.com/by-release/extracted/ubuntu/a/a2ps/1:4.13c~rc5-1/05_no_acroread_for_pdf.dpatch
+
+## 05_no_acroread_for_pdf.dpatch by Masayuki Hatta <mhatta@debian.org>
+
+Index: b/etc/a2ps_cfg.in
+===================================================================
+--- a/etc/a2ps_cfg.in
++++ b/etc/a2ps_cfg.in
+@@ -291,8 +291,8 @@
+ @COM_PSUTILS@@COM_pdf2ps@Delegation: pdf2ps pdf:ps \
+ @COM_PSUTILS@@COM_pdf2ps@   @pdf2ps@ '$f' #f0 && #{del.psselect} #f0 | #{del.psnup}
+ # Delegated to AcrobatReader
+-@COM_PSUTILS@@COM_acroread@Delegation: Acrobat pdf:ps \
+-@COM_PSUTILS@@COM_acroread@   #{del.acroread} < '$f' | #{del.psselnup}
++#@COM_PSUTILS@@COM_acroread@Delegation: Acrobat pdf:ps \
++#@COM_PSUTILS@@COM_acroread@   #{del.acroread} < '$f' | #{del.psselnup}
+ 
+ ########## PostScript files
+ # Pass the PostScript files to psnup and psselect

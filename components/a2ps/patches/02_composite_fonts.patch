@@ -1,0 +1,856 @@
+Composite fonts support, needed for handling Japanese EUC-JP encoding
+Roughly based on Yasuyuki Furukawa's patch
+
+See: https://patches.ubuntu.com/by-release/extracted/ubuntu/a/a2ps/1:4.13c~rc5-1/02_composite_fonts.dpatch
+
+## 02_composite_fonts.dpatch by Masayuki Hatta <mhatta@debian.org>
+
+Index: b/encoding/Makefile.am
+===================================================================
+--- a/encoding/Makefile.am
++++ b/encoding/Makefile.am
+@@ -16,7 +16,7 @@
+ minor_encodings = \
+ ms-cp1250.edf hp.edf mac.edf ibm-cp437.edf ibm-cp850.edf iso2.edf	\
+ iso3.edf iso4.edf iso5.edf iso7.edf iso9.edf iso10.edf iso13.edf	\
+-iso15.edf koi8.edf ms-cp1251.edf
++iso15.edf koi8.edf ms-cp1251.edf euc-jp.edf
+ 
+ if EXTENSIONS
+ encodings_DATA = encoding.map $(major_encodings) $(minor_encodings)
+Index: b/encoding/Makefile.in
+===================================================================
+--- a/encoding/Makefile.in
++++ b/encoding/Makefile.in
+@@ -270,7 +270,7 @@
+ minor_encodings = \
+ ms-cp1250.edf hp.edf mac.edf ibm-cp437.edf ibm-cp850.edf iso2.edf	\
+ iso3.edf iso4.edf iso5.edf iso7.edf iso9.edf iso10.edf iso13.edf	\
+-iso15.edf koi8.edf ms-cp1251.edf
++iso15.edf koi8.edf ms-cp1251.edf euc-jp.edf
+ 
+ @EXTENSIONS_FALSE@encodings_DATA = encoding.map $(major_encodings)
+ @EXTENSIONS_TRUE@encodings_DATA = encoding.map $(major_encodings) $(minor_encodings)
+Index: b/encoding/encoding.map
+===================================================================
+--- a/encoding/encoding.map
++++ b/encoding/encoding.map
+@@ -93,6 +93,12 @@
+ koi8			koi8
+ koi			koi8
+ 
++euc-jp			euc-jp
++eucjp			euc-jp
++japanese		euc-jp
++ja			euc-jp
++jp			euc-jp
++
+ ########################################################################
+ # Some architectures specific char sets
+ ########################################################################
+Index: b/encoding/euc-jp.edf
+===================================================================
+--- /dev/null
++++ b/encoding/euc-jp.edf
+@@ -0,0 +1,95 @@
++# Description of the EUC-JP encoding
++# Copyright (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
++# Copyright (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
++# Copyright (c) 2003 Masayuki Hatta
++#
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2, or (at your option)
++# any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; see the file COPYING.  If not, write to
++# the Free Software Foundation, 59 Temple Place - Suite 330,
++# Boston, MA 02111-1307, USA.
++#
++
++Name: EUC-JP
++
++Documentation
++The EUC-JP encoding is a 8-bit character set widely used in Japan.
++EndDocumentation
++
++# If there is an unknown font requested, use Courier
++Default: Courier
++
++# Automatic spell checking :)
++Substitute: 	Times			Times-Roman
++Substitute: 	Helvetica-Italic	Helvetica-Oblique
++Substitute: 	Helvetica-BoldItalic	Helvetica-BoldOblique
++
++
++# SlantFont for Japanese Italic Kanji font
++#		new font			source font		value
++SlantFont:	Ryumin-Light-EUC-H-Italic	Ryumin-Light-EUC-H	0.2
++SlantFont:	GothicBBB-Medium-EUC-H-Italic	GothicBBB-Medium-EUC-H	0.2
++
++# Compose fonts for Japanese EUC code
++#		target font		additional font			width	size rate
++DefaultComposite:			Ryumin-Light-EUC-H		1.0	1.1
++
++# 1:2 fixed
++#DefaultComposite:			Ryumin-Light-EUC-H		1.0	0.8333
++
++# 1:1 fixed
++#DefaultComposite:			Ryumin-Light-EUC-H		1.0	1.6666
++
++Composite:	Helvetica		GothicBBB-Medium-EUC-H		1.0	1.1
++Composite:	Helvetica-Oblique	GothicBBB-Medium-EUC-H-Italic	1.0 	1.1
++Composite:	Helvetica-Bold		GothicBBB-Medium-EUC-H  	1.0 	1.1
++Composite:	Helvetica-BoldOblique	GothicBBB-Medium-EUC-H-Italic	1.0	1.1
++
++Composite:	Courier-Oblique		Ryumin-Light-EUC-H-Italic	1.0	1.1
++Composite:	Courier-Bold		GothicBBB-Medium-EUC-H		1.0	1.1
++Composite:	Courier-BoldOblique	GothicBBB-Medium-EUC-H-Italic	1.0	1.1
++Composite:	Times-Bold		GothicBBB-Medium-EUC-H		1.0	1.1
++
++Vector:
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++space exclam quotedbl numbersign dollar percent ampersand quoteright
++parenleft parenright asterisk plus comma minus period slash
++zero one two three four five six seven
++eight nine colon semicolon less equal greater question
++at A B C D E F G
++H I J K L M N O
++P Q R S T U V W
++X Y Z bracketleft backslash bracketright asciicircum underscore
++quoteleft a b c d e f g
++h i j k l m n o
++p q r s t u v w
++x y z braceleft bar braceright asciitilde .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++.notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
++space exclamdown cent sterling currency yen brokenbar section
++dieresis copyright ordfeminine guillemotleft logicalnot hyphen registered macron
++degree plusminus twosuperior threesuperior acute mu paragraph bullet
++cedilla onesuperior ordmasculine guillemotright onequarter onehalf threequarters questiondown
++Agrave Aacute Acircumflex Atilde Adieresis Aring AE Ccedilla
++Egrave Eacute Ecircumflex Edieresis Igrave Iacute Icircumflex Idieresis
++Eth Ntilde Ograve Oacute Ocircumflex Otilde Odieresis multiply
++Oslash Ugrave Uacute Ucircumflex Udieresis Yacute Thorn germandbls
++agrave aacute acircumflex atilde adieresis aring ae ccedilla
++egrave eacute ecircumflex edieresis igrave iacute icircumflex idieresis
++eth ntilde ograve oacute ocircumflex otilde odieresis divide
++oslash ugrave uacute ucircumflex udieresis yacute thorn ydieresis
+Index: b/lib/encoding.c
+===================================================================
+--- a/lib/encoding.c
++++ b/lib/encoding.c
+@@ -389,15 +389,25 @@
+  * Association of suffixes rules, and corresponding style sheet
+  * (The hashing is upon `alias')
+  */
++struct slantfont_info {
++  char * name;
++  char * src;
++  float ratio;
++};
++
+ struct encoding {
+   char * key;			/* e.g. latin1			*/
+   char * name;			/* e.g. ISO Latin 1		*/
++  int    composite_flag;		/* flag for composite font	*/
+   uchar * documentation;		/* Useful pieces of text	*/
+ 
+   char * default_font;		/* When a font can't be used
+ 				   define the font to use	*/
+   struct pair_htable * substitutes;	/* e.g. in latin2, don't use
+ 					 * Courier, but Courier-Ogonki	*/
++  struct pair_htable * composite;
++
++  struct slantfont_info     slantfont[NB_FACES];
+ 
+   char * vector[256];	/* Define the char set			*/
+   struct darray * font_names_used;
+@@ -407,6 +417,9 @@
+   struct hash_table_s * fonts;	/* Contains cells that are
+ 				 * 1. name of font, 2. int wx[256] 	*/
+   unsigned int * faces_wx[NB_FACES];
++
++  unsigned int   composite_wx[NB_FACES];     /* fixed length font width */
++  float          composite_ratio[NB_FACES];  /* size ratio of additonal and original font */
+ };
+ 
+ /*
+@@ -423,9 +436,12 @@
+   res->name = NULL;
+   res->default_font = NULL;
+   res->documentation = NULL;
++  res->composite_flag = false;
+ 
+   /* Vector will be set by setup */
+   res->substitutes = pair_table_new ();
++  res->composite = pair_table_new ();
++  res->slantfont[0].name = NULL;
+   res->font_names_used = da_new ("List of font names", 10,
+ 				 da_linear, 10,
+ 				 (da_print_func_t) da_str_print,
+@@ -471,6 +487,34 @@
+ }
+ 
+ /*
++ * Add a composite font in the current encoding
++ */
++static void
++encoding_add_composite_font (struct encoding * encoding,
++			      const char * orig, const char * subs,
++			      int wx, float ratio)
++{
++  encoding->composite_flag = true;
++  pair_add2 (encoding->composite, orig, subs, wx, ratio);
++}
++
++/*
++ * Add a composite font in the current encoding
++ */
++static void
++encoding_add_slant_font (struct encoding * encoding,
++			 const char * new, const char * src,
++			 float ratio)
++{
++  static num =  0;
++  encoding->slantfont[num].name = strdup(new);
++  encoding->slantfont[num].src  = strdup(src);
++  encoding->slantfont[num].ratio = ratio;
++  encoding->slantfont[num+1].name = NULL;
++  num++;
++}
++
++/*
+  * When FONT_NAME is used with ENCODING, return the
+  * real font name to use (e.g., in latin2, Courier-Ogonki
+  * should be returned when asked for Courier).
+@@ -514,6 +558,77 @@
+     }
+ 
+   message (msg_enc,
++	   (stderr, "In encoding %s, composite font for %s is resolved as %s\n",
++	    encoding->key, font_name, res));
++  return res;
++}
++
++/*
++ * Get composite font size and ratio
++ */
++static int
++composite_font_info_get_wx(struct a2ps_job * job,
++			   struct encoding * encoding,
++			   const char * font_list)
++{
++  int wx= -1;
++  char * font_list_copy;
++  char * font_name;
++  astrcpy (font_list_copy, font_list);
++  font_name = strtok (font_list_copy, ",<>;");
++
++  wx = pair_get_wx (encoding->composite, font_name);
++  if (wx<0)
++      wx = pair_get_wx (encoding->composite, "default_composite__");
++
++  return wx;
++}
++
++static float
++composite_font_info_get_ratio(struct a2ps_job * job,
++			      struct encoding * encoding,
++			      const char * font_list)
++{
++  float ratio= -1;
++  char * font_list_copy;
++  char * font_name;
++
++  astrcpy (font_list_copy, font_list);
++  font_name = strtok (font_list_copy, ",<>;");
++
++  ratio = pair_get_ratio (encoding->composite, font_name);
++  if (ratio<0)
++      ratio = pair_get_ratio (encoding->composite, "default_composite__");
++  return ratio;
++}
++
++const char *
++encoding_resolve_composite_font (struct a2ps_job * job,
++				  struct encoding * encoding,
++				  const char * font_list)
++{
++  const char * res = NULL;
++  char * font_list_copy;
++  char * font_name;
++
++  astrcpy (font_list_copy, font_list);
++  font_name = strtok (font_list_copy, ",<>;");
++
++  /* Find if there is a substitute for that font */
++  res = pair_get (encoding->composite, font_name);
++
++  /* We've found nothing interesting.  Last chance is the default
++   * font */
++  if (!res)
++    {
++      res = pair_get (encoding->composite, "default_composite__");
++
++      if (!res)
++	error (1, 0, "Cannot find font %s, nor any composite font",
++	       font_name);
++    }
++  
++  message (msg_enc,
+ 	   (stderr, "In encoding %s, font %s is resolved as %s\n",
+ 	    encoding->key, font_name, res));
+   return res;
+@@ -633,6 +748,66 @@
+ 	  subs = token2;
+ 	  encoding_add_font_substitute (encoding, orig, subs);
+ 	}
++      else if (strequ (token, "DefaultComposite:"))
++	{
++	  char * orig, * subs;
++	  int wx;
++	  float ratio;
++
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  subs = token2;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  wx = (int)atof(token2)*1000;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  ratio = atof(token2);
++	  encoding_add_composite_font(encoding, "default_composite__",
++				      subs, wx, ratio);
++	}
++      else if (strequ (token, "Composite:"))
++	{
++	  char * orig, * subs;
++	  int wx;
++	  float ratio;
++
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  orig = token2;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  subs = token2;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  wx = (int)atof(token2)*1000;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  ratio = atof(token2);
++	  encoding_add_composite_font(encoding, orig, subs, wx, ratio);
++	}
++      else if (strequ (token, "SlantFont:"))
++	{
++	  char * new, * src;
++	  float ratio;
++	  unsigned int num;
++
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  new = token2;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  src = token2;
++	  token2 = GET_TOKEN (NULL);
++	  CHECK_TOKEN ();
++	  ratio = atof(token2);
++	  for (num = 0 ; encoding->slantfont[num].name ; num ++ );
++	  if (num > sizeof encoding->slantfont - 1){
++	      error_at_line (1, 0, fname, firstline,
++			   _("too many slant font: `%s'"), new);
++	  }
++	  encoding_add_slant_font(encoding, new, src, ratio);
++	}
+       else
+         error_at_line (1, 0, fname, firstline,
+                        _("invalid option `%s'"), quotearg (token));
+@@ -754,6 +929,15 @@
+ }
+ 
+ /*
++ * Return the flag of composite flag
++ */
++int
++encoding_get_composite_flag (struct encoding * enc)
++{
++  return enc->composite_flag;
++}
++
++/*
+  * Prepare the environment (a dictionary) for the support
+  * of ENCODING, dump it into STREAM.
+  *
+@@ -766,9 +950,11 @@
+ 		     struct encoding * encoding)
+ {
+   size_t i, nb;
++  size_t ns;
+   const char * real_font_name;		/* After subsitution	*/
+   char ** font_names = (char **) encoding->font_names_used->content;
+ 
++
+   /* How many fonts are there? */
+   da_qsort (encoding->font_names_used);
+   da_unique (encoding->font_names_used, (da_map_func_t) free);
+@@ -787,15 +973,46 @@
+    * in the current ENCODING	*/
+   nb = encoding->font_names_used->len;
+ 
++  /* The number of slant fonts */
++  for (i= 0, ns=0 ; encoding->slantfont[i].name ; i++ )
++      ns++;
++
+   /* Create the dictionary and fill it */
+   fprintf (stream, "%% Dictionary for %s support\n",
+ 	  encoding->name);
+-  fprintf (stream, "/%sdict %d dict begin\n", encoding->key, nb);
++  fprintf (stream, "/%sdict %d dict begin\n", encoding->key,
++	   (encoding->composite_flag == true)? nb+nb+ns:nb+ns);
+   for (i = 0 ; i < nb ; i++)
+     fprintf (stream, "  /f%s %sEncoding /%s reencode_font\n",
+ 	     font_names [i],
+ 	     encoding->name,
+ 	     encoding_resolve_font_substitute (job, encoding, font_names [i]));
++
++  /* Slant font setting */
++  for (i = 0 ; encoding->slantfont[i].name ; i++ )
++    fprintf (stream, "  /%s /%s %f slantfont  definefont pop\n",
++	     encoding->slantfont[i].name,
++	     encoding->slantfont[i].src,
++	     encoding->slantfont[i].ratio);
++
++  /*
++   * Composite font setting.
++   * If kanji font size is larger than alphabet character, 
++   * set base font size to kanji charactor size.
++   */
++  if (encoding->composite_flag == true) {
++    for (i = 0 ; i < nb ; i++)
++      fprintf (stream, "  /f%s /f%s /%s %f %f false  compositefont "
++	               "%f scalefont def\n",
++	       font_names [i],
++	       font_names [i],
++	       encoding_resolve_composite_font (job, encoding, font_names [i]),
++	       encoding->composite_ratio[i],
++	       (encoding->composite_ratio[i] > 1.0)?
++	       0: (1-encoding->composite_ratio[i])/2.0,
++	       (encoding->composite_ratio[i] > 1.0)?
++	       1.0/encoding->composite_ratio[i]: 1.0 );
++  }
+   fputs ("currentdict end def\n", stream);
+ }
+ 
+@@ -939,6 +1156,22 @@
+ 				   true_font_name,
+ 				   encoding->vector,
+ 				   encoding->faces_wx [face]);
++
++      if (encoding->composite_flag)
++	{
++	  encoding->composite_ratio[i] =
++	    composite_font_info_get_ratio(job, encoding, 
++					  job->face_eo_font [face]);
++
++	  encoding->composite_wx[i] =
++	    composite_font_info_get_wx(job, encoding, 
++				       job->face_eo_font [face]);
++
++	  /* If kanji font size is larger than alphabet character, 
++	     fit kanji charactor size to base font size */
++	  if (encoding->composite_ratio[i] < 1.0)
++	      encoding->composite_wx[i] *= encoding->composite_ratio[i]; 
++	}
+     }
+ }
+ 
+@@ -1073,6 +1306,13 @@
+   return 0;	/* For -Wall */
+ }
+ 
++unsigned int
++char_composite_WX (a2ps_job * job, uchar c)
++{
++  return (job->encoding->composite_wx[job->status->face]/
++	  job->encoding->composite_ratio[job->status->face]);
++}
++
+ /*
+  *	Returns the WX of a string (including M- and ^)
+  */
+Index: b/lib/encoding.h
+===================================================================
+--- a/lib/encoding.h
++++ b/lib/encoding.h
+@@ -43,6 +43,7 @@
+  */
+ unsigned int char_WX PARAMS ((struct a2ps_job * job, uchar c));
+ unsigned int string_WX PARAMS ((struct a2ps_job * job, uchar * string));
++unsigned int char_composite_WX PARAMS ((struct a2ps_job * job, uchar c));
+ 
+ 
+ /************************************************************************/
+@@ -56,6 +57,7 @@
+ 					FILE * stream));
+ int encoding_char_exists PARAMS ((struct encoding * enc,
+ 					enum face_e face, uchar c));
++int encoding_get_composite_flag (struct encoding * enc);
+ struct encoding *
+ get_encoding_by_alias PARAMS ((struct a2ps_job * job, 
+ 			       char *string));
+@@ -70,6 +72,12 @@
+ 	PARAMS ((struct a2ps_job * job,
+ 		 struct encoding * encoding,
+ 		 const char * font_name));
++
++
++const char * encoding_resolve_composite_font
++	PARAMS ((struct a2ps_job * job,
++		 struct encoding * encoding,
++		 const char * font_name));
+ 
+ /*
+  * Have a struct encoding determine the faces_wx
+Index: b/lib/pair_ht.c
+===================================================================
+--- a/lib/pair_ht.c
++++ b/lib/pair_ht.c
+@@ -49,6 +49,8 @@
+ {
+   char * key;
+   char * value;
++  float  ratio;
++  int    wx;
+ };
+ 
+ /*
+@@ -165,6 +167,37 @@
+ }
+ 
+ /*
++ *  Add a pair, with your own allocation for them.
++ * It KEY is yet used, override its value with VALUE
++ */
++void
++pair_add2 (struct hash_table_s * table,
++	  const char * key, const char * value, int wx, float ratio)
++{
++  struct pair * item, token;
++  
++  token.key = (char *) key;
++  item = (struct pair *) hash_find_item (table, &token);
++
++  if (item) {
++    if (item->value)
++      free (item->value);
++  } else {
++    item = XMALLOC (struct pair, 1);
++    item->key = xstrdup(key);
++    item->wx    = wx;
++    item->ratio = ratio;
++  }
++  
++  if (value)
++    item->value = xstrdup (value);
++  else
++    item->value = NULL;
++
++  hash_insert (table, item);
++}
++
++/*
+  * Remove a pair and free it.
+  * It KEY is yet used, override its value with VALUE
+  */
+@@ -201,6 +234,34 @@
+     return NULL;
+ }
+ 
++int
++pair_get_wx (struct hash_table_s * table, const char * key)
++{
++  struct pair * item, token;
++  
++  token.key = (char *) key;
++  item = (struct pair *) hash_find_item (table, &token);
++
++  if (item)
++    return item->wx;
++  else
++    return -1;
++}
++
++float
++pair_get_ratio (struct hash_table_s * table, const char * key)
++{
++  struct pair * item, token;
++  
++  token.key = (char *) key;
++  item = (struct pair *) hash_find_item (table, &token);
++
++  if (item)
++    return item->ratio;
++  else
++    return -1;
++}
++
+ /*
+  * Return the content of the hash table, ordered
+  */
+Index: b/lib/pair_ht.h
+===================================================================
+--- a/lib/pair_ht.h
++++ b/lib/pair_ht.h
+@@ -56,6 +56,10 @@
+ void pair_add PARAMS ((struct pair_htable * table, 
+ 		       const char * key, const char * value));
+ 
++void pair_add2 PARAMS ((struct pair_htable * table, 
++		       const char * key, const char * value,
++			int wx, float ratio));
++
+ /*
+  * The key and value of the matching item  will be free'd
+  * (No problem if KEY matches nothing)
+@@ -68,6 +72,10 @@
+  */
+ char * pair_get PARAMS ((struct pair_htable * table,
+ 			 const char * key));
++int    pair_get_wx PARAMS ((struct pair_htable * table,
++			    const char * key));
++float  pair_get_ratio PARAMS ((struct pair_htable * table,
++			       const char * key));
+ 
+ void pair_table_list_short PARAMS ((struct pair_htable * table,
+ 				    FILE * stream));
+Index: b/lib/psgen.c
+===================================================================
+--- a/lib/psgen.c
++++ b/lib/psgen.c
+@@ -875,6 +875,7 @@
+   print:
+   default:
+     {
++      static mb_flag= 0;
+       uchar buf[256];
+       int nchars;
+       *buf = '\0';
+@@ -889,6 +890,29 @@
+     job->status->face_declared = false;
+   }
+ 
++  if (c > 127 && encoding_get_composite_flag (job->encoding) &&
++      job->status->face != Symbol) {
++    if (mb_flag) {
++        nchars = ps_escape_char (job, mb_flag, buf) + 
++	         ps_escape_char (job, c, buf);
++	job->status->wx += char_composite_WX(job, c);
++	job->status->column += nchars;
++	if (line_full) {
++	    if (job->folding) {
++	        fold_line (job, new_face);
++		job->status->column = nchars*2;
++		job->status->wx = char_composite_WX(job, c);
++	    } else {
++	      job->status->is_in_cut = true;
++	      return;
++	    }
++	}
++	mb_flag = 0;
++    } else {
++        mb_flag = c;
++	return;
++    }
++  } else {
+       nchars = ps_escape_char (job, c, buf);
+       job->status->wx += char_WX (job, c);
+       job->status->column += nchars;
+@@ -902,8 +926,9 @@
+ 	  return;
+ 	}
+       }
++  }
+       output (jdiv, "%s", buf);
+-      job->status->chars++;
++      job->status->chars+=nchars;
+     }
+     break;
+   }
+Index: b/ps/base.ps
+===================================================================
+--- a/ps/base.ps
++++ b/ps/base.ps
+@@ -153,7 +153,11 @@
+ % Return the y size of the current font
+ % - => fontsize
+ /currentfontsize {
+-  currentfont /FontMatrix get 3 get 1000 mul
++  currentfont /FontType get 0 eq {
++    currentfont /FontMatrix get 3 get
++  }{
++    currentfont /FontMatrix get 3 get 1000 mul
++  } ifelse
+ } bind def
+ 
+ % reencode the font
+@@ -200,6 +204,144 @@
+   end 
+ } bind def
+ 
++% composite fonts for ASCII-EUC mixed strings
++% Version 1.2 1/31/1990
++% Original Ken'ichi HANDA (handa@etl.go.jp)
++% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
++% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
++% Anyone can freely copy, modify, distribute this program.
++
++/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
++	1 index maxlength add dict begin
++	{	1 index /FID ne 2 index /UniqueID ne and
++		{def} {pop pop} ifelse
++	} forall
++	currentdict
++	end
++} bind def
++
++/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
++    /RomanRotation exch def
++    /RomanOffset exch def
++    /RomanScale exch def
++    userdict /fixeucfont_dict known not {
++	userdict begin
++	    /fixeucfont_dict 2 dict begin
++		/UpperByteEncoding [
++		    16#00 1 16#20 { pop 0 } for
++		    16#21 1 16#28 { 16#20 sub } for
++		    16#29 1 16#2F { pop 0 } for
++		    16#30 1 16#74 { 16#27 sub } for
++		    16#75 1 16#FF { pop 0 } for
++		] def
++	        /LowerByteEncoding [
++		    16#00 1 16#A0 { pop /.notdef } for
++		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
++				    (cXX) dup 1 4 -1 roll
++				    putinterval cvn } for
++		    /.notdef
++		] def
++		currentdict
++	    end def
++	end
++    } if
++    findfont dup /FontType get 0 eq {
++	14 dict begin
++	    %
++	    % 7+8 bit EUC font
++	    %
++	    12 dict begin
++		/EUCFont exch def
++		/FontInfo (7+8 bit EUC font) readonly def
++		/PaintType 0 def
++		/FontType 0 def
++		/FontMatrix matrix def
++		% /FontName
++		/Encoding fixeucfont_dict /UpperByteEncoding get def
++		/FMapType 2 def
++		EUCFont /WMode known
++		{ EUCFont /WMode get /WMode exch def }
++		{ /WMode 0 def } ifelse
++		/FDepVector [
++		    EUCFont /FDepVector get 0 get
++		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
++		    {
++			13 dict begin
++			    /EUCFont EUCFont def
++			    /UpperByte exch 16#80 add def	
++			    % /FontName
++			    /FontInfo (EUC lower byte font) readonly def
++			    /PaintType 0 def
++			    /FontType 3 def
++			    /FontMatrix matrix def
++			    /FontBBox {0 0 0 0} def
++			    /Encoding
++				fixeucfont_dict /LowerByteEncoding get def
++			    % /UniqueID
++			    % /WMode
++			    /BuildChar {
++				gsave
++				exch dup /EUCFont get setfont
++				/UpperByte get
++				2 string
++				dup 0 4 -1 roll put
++				dup 1 4 -1 roll put
++				dup stringwidth setcharwidth
++				0 0 moveto show
++				grestore
++			    } bind def
++			    currentdict
++			end
++			/lowerbytefont exch definefont
++		    } forall
++		] def
++		currentdict
++	    end
++	    /eucfont exch definefont
++	    exch
++	    findfont 1 copyfont dup begin
++		RomanRotation {
++			/FontMatrix FontMatrix
++			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
++			matrix concatmatrix def
++		}{
++			/FontMatrix FontMatrix
++			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
++			def
++			/CDevProc
++			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
++		} ifelse
++	    end
++	    /asciifont exch definefont
++	    exch
++	    /FDepVector [ 4 2 roll ] def
++	    /FontType 0 def
++	    /WMode 0 def
++	    /FMapType 4 def
++	    /FontMatrix matrix def
++	    /Encoding [0 1] def
++	    /FontBBox {0 0 0 0} def
++%	    /FontHeight 1.0 def % XXXX
++	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
++	    /Descent -0.3 def   % XXXX
++	    currentdict
++	end
++	/tmpfont exch definefont
++	pop
++	/tmpfont findfont
++    }{
++	pop findfont 0 copyfont
++    } ifelse
++} def	
++
++/slantfont {	% FontName slant-degree  slantfont  font'
++    exch findfont 1 copyfont begin
++    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
++    /FontMatrix exch def
++    currentdict
++    end
++} def
++
+ % Function print line number (<string> # -)
+ /# {
+   gsave

@@ -22,7 +22,8 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+COMPILER= gcc
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
@@ -37,6 +38,10 @@ include $(WS_MAKE_RULES)/gnu-component.mk
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
+# Needed to get the tests to work.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/gnu
@@ -46,14 +51,12 @@ CONFIGURE_OPTIONS  +=		--with-medium=letter
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
-COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(@D)/doc ; \
-	 ln -s $(SOURCE_DIR)/doc/make-authors.pl ; \
-	 ln -s $(SOURCE_DIR)/doc/translators.txt) ; \
-	(cd $(@D)/sheets ; \
-	 for sheet in $(SOURCE_DIR)/sheets/*.ssh ; do \
-	     ln -s $$sheet ; \
-	 done)
+
+COMPONENT_TEST_DIR =	$(@D)/tests
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 # Adjust '#!/usr/bin/perl'
 PERL_SCRIPTS = \
