@@ -1,0 +1,86 @@
+diff -Nurb opal-3.10.10.orig/include/h323/h323ep.h opal-3.10.10/include/h323/h323ep.h
+--- opal-3.10.10.orig/include/h323/h323ep.h	2013-02-20 03:18:14.000000000 +0100
++++ opal-3.10.10/include/h323/h323ep.h	2016-07-31 15:45:34.758319854 +0200
+@@ -145,7 +145,7 @@
+       OpalCall & call,                  ///<  Owner of connection
+       const PString & party,            ///<  Remote party to call
+       void * userData  = NULL,          ///<  Arbitrary data to pass to connection
+-      unsigned int options = NULL,      ///<  options to pass to conneciton
++      unsigned int options = 0,      ///<  options to pass to conneciton
+       OpalConnection::StringOptions * stringOptions = NULL
+     );
+   //@}
+diff -Nurb opal-3.10.10.orig/include/opal/manager.h opal-3.10.10/include/opal/manager.h
+--- opal-3.10.10.orig/include/opal/manager.h	2013-02-20 03:18:20.000000000 +0100
++++ opal-3.10.10/include/opal/manager.h	2016-07-31 15:45:34.760096740 +0200
+@@ -1527,7 +1527,7 @@
+     PString       defaultDisplayName;
+ 
+     BYTE                     m_defaultMediaTypeOfService;
+-    map<OpalMediaType, BYTE> m_mediaTypeOfService;
++    std::map<OpalMediaType, BYTE> m_mediaTypeOfService;
+ 
+     PINDEX        rtpPayloadSizeMax;
+     PINDEX        rtpPacketSizeMax;
+diff -Nurb opal-3.10.10.orig/include/opal/opalmixer.h opal-3.10.10/include/opal/opalmixer.h
+--- opal-3.10.10.orig/include/opal/opalmixer.h	2013-02-20 03:18:20.000000000 +0100
++++ opal-3.10.10/include/opal/opalmixer.h	2016-07-31 15:45:34.759809722 +0200
+@@ -153,7 +153,7 @@
+     struct Stream {
+       virtual ~Stream() { }
+       virtual void QueuePacket(const RTP_DataFrame & rtp) = 0;
+-      queue<RTP_DataFrame> m_queue;
++      std::queue<RTP_DataFrame> m_queue;
+     };
+     typedef std::map<Key_T, Stream *> StreamMap_T;
+ 
+diff -Nurb opal-3.10.10.orig/include/sip/handlers.h opal-3.10.10/include/sip/handlers.h
+--- opal-3.10.10.orig/include/sip/handlers.h	2013-02-20 03:18:21.000000000 +0100
++++ opal-3.10.10/include/sip/handlers.h	2016-07-31 15:45:34.760416421 +0200
+@@ -164,7 +164,7 @@
+   int                         m_originalExpireTime;
+   int                         m_offlineExpireTime;
+   State                       m_state;
+-  queue<State>                m_stateQueue;
++  std::queue<State>           m_stateQueue;
+   bool                        m_receivedResponse;
+   PTimer                      m_expireTimer; 
+   SIPURL                      m_proxy;
+diff -Nurb opal-3.10.10.orig/include/sip/sipcon.h opal-3.10.10/include/sip/sipcon.h
+--- opal-3.10.10.orig/include/sip/sipcon.h	2013-02-20 03:18:21.000000000 +0100
++++ opal-3.10.10/include/sip/sipcon.h	2016-07-31 15:45:34.760509989 +0200
+@@ -738,7 +738,7 @@
+     PRACKMode      m_prackMode;
+     bool           m_prackEnabled;
+     unsigned       m_prackSequenceNumber;
+-    queue<SIP_PDU> m_responsePackets;
++    std::queue<SIP_PDU> m_responsePackets;
+     PTimer         m_responseFailTimer;
+     PTimer         m_responseRetryTimer;
+     unsigned       m_responseRetryCount;
+diff -Nurb opal-3.10.10.orig/plugins/video/common/mpi.cxx opal-3.10.10/plugins/video/common/mpi.cxx
+--- opal-3.10.10.orig/plugins/video/common/mpi.cxx	2013-02-20 03:18:05.000000000 +0100
++++ opal-3.10.10/plugins/video/common/mpi.cxx	2016-07-31 15:45:34.865970421 +0200
+@@ -132,8 +132,8 @@
+   // to the desired one or matches it
+   for (i=0; i < MPIs.size(); i++) {
+     // we square the value in order to get absolute distances
+-    distance = ( abs(MPIs[i].width  - desiredWidth ) *
+-                 abs(MPIs[i].height - desiredHeight) );
++    distance = ( abs(int(MPIs[i].width  - desiredWidth)) *
++                 abs(int(MPIs[i].height - desiredHeight)));
+ 
+     if (distance < minDistance) {
+       minDistance = distance;
+diff -Nurb opal-3.10.10.orig/src/opal/manager.cxx opal-3.10.10/src/opal/manager.cxx
+--- opal-3.10.10.orig/src/opal/manager.cxx	2013-02-20 03:18:31.000000000 +0100
++++ opal-3.10.10/src/opal/manager.cxx	2016-07-31 15:45:34.774398967 +0200
+@@ -1666,7 +1666,7 @@
+ 
+ BYTE OpalManager::GetMediaTypeOfService(const OpalMediaType & type) const
+ {
+-  map<OpalMediaType, BYTE>::const_iterator it = m_mediaTypeOfService.find(type);
++  std::map<OpalMediaType, BYTE>::const_iterator it = m_mediaTypeOfService.find(type);
+   return it != m_mediaTypeOfService.end() ? it->second : m_defaultMediaTypeOfService;
+ }
+ 
