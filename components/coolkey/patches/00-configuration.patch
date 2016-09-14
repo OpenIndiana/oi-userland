@@ -1,10 +1,11 @@
-In-house patch created to remove the /pkcs11 subdir from "pkcs11dir" definition as 
-Solaris does not use that convention for its pkcs11 libraries. 
+In-house patch created to remove the /pkcs11 subdir from "pkcs11dir" definition
+as Solaris does not use that convention for its pkcs11 libraries. 
 
-Fixed erroneous blank line found in coolkeypk11.sym file creation which causes an
-error with studio compiler and sun linker.
+Fixed erroneous blank line found in coolkeypk11.sym file creation which causes
+an error with Studio compiler and Solaris linker.
 
-Added 64-fit flag for c++ and ld linking to solaris section of aclocal.m4
+Added proper 32-bit or 64-fit flag for C++ and ld linking to solaris section
+of aclocal.m4.
 
 This patch is Solaris buildenv specific and may not be suitable for upstream.
 
@@ -65,14 +66,14 @@ This patch is Solaris buildenv specific and may not be suitable for upstream.
  
  clean-generic:
  	rm -f coolkeypk11.sym
---- ORIGINAL/./aclocal.m4	2016-06-29 00:23:04.484933583 -0400
-+++ ././aclocal.m4	2016-06-29 08:09:30.082985198 -0400
+--- a/aclocal.m4	2016-09-14 08:45:59.170910473 +0000
++++ b/aclocal.m4	2016-09-14 09:01:07.886108085 +0000
 @@ -3575,7 +3575,7 @@
  	_LT_AC_TAGVAR(no_undefined_flag, $1)=' -zdefs'
  	_LT_AC_TAGVAR(archive_cmds, $1)='$CC -G${allow_undefined_flag}  -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
  	_LT_AC_TAGVAR(archive_expsym_cmds, $1)='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
 -	$CC -G${allow_undefined_flag}  ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
-+	$CC -G -m64 ${allow_undefined_flag}  ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
++	$CC $LDFLAGS -G${allow_undefined_flag}  ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
  
  	_LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
  	_LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no

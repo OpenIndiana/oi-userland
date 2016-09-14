@@ -43,7 +43,7 @@
 #   Search for "failed" in testoutput.log to see the actual failures, then
 #   review any failed messages to determine if the test ran successfully or not.
 
-BUILD_BITS= 64 
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coolkey
@@ -59,12 +59,21 @@ TPNO =			25487
 include $(WS_MAKE_RULES)/common.mk
 
 # configuration related patch needs aclocal to be regenerated
-COMPONENT_PREP_ACTION +=(cd $(@D); autoconf);
+COMPONENT_PREP_ACTION += (cd $(@D); autoconf);
 
-# do not add the SUNWspro area to the RUNPATH
-LD_UNSET += "-R$(SPRO_VROOT)/lib/$(MACH64)"
-COMPONENT_BUILD_ENV += LD_UNSET="$(LD_UNSET)"
-COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
+# Do not add the SUNWspro area to the RUNPATH. Follow exactly what CC does.
+LD_UNSET.32.i386	= -R$(SPRO_VROOT)/lib
+LD_UNSET.32.sparc	= -R$(SPRO_VROOT)/lib/$(MACH):$(SPRO_VROOT)/lib
+LD_UNSET.32		= $(LD_UNSET.32.$(MACH))
+LD_UNSET.64		= -R$(SPRO_VROOT)/lib/$(MACH64)
+LD_UNSET		+= $(LD_UNSET.$(BITS))
+COMPONENT_BUILD_ENV	+= LD_UNSET="$(LD_UNSET)"
+COMPONENT_INSTALL_ENV	+= LD_UNSET="$(LD_UNSET)"
+
+# Propagate correct LDFLAGS to the linking phase.
+LDFLAGS			+= $(CC_BITS)
+COMPONENT_BUILD_ARGS	+= LDFLAGS="$(LDFLAGS)"
+COMPONENT_INSTALL_ARGS	+= LDFLAGS="$(LDFLAGS)"
 
 # requires PC/SC headers and library
 CONFIGURE_ENV +=	PCSC_CFLAGS="-I$(USRINCDIR)/PCSC"
@@ -77,4 +86,3 @@ CONFIGURE_OPTIONS +=    --disable-dependency-tracking
 REQUIRED_PACKAGES += library/security/pcsc/pcsclite
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/c++-runtime
-
