@@ -18,21 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2016, Aurelien Larcher. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjpeg
-COMPONENT_VERSION=	2.1.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.1.1
 COMPONENT_FMRI=     	image/library/openjpeg
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.openjpeg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:1232bb814fd88d8ed314c94f0bfebb03de8559583a33abbe8c64ef3fc0a8ff03
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/openjpeg.mirror/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+	sha256:82c27f47fc7219e2ed5537ac69545bf15ed8c6ba8e6e1e529f89f7356506dbaa
+COMPONENT_ARCHIVE_URL=	https://github.com/uclouvain/openjpeg/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      OpenJPEG library : Open source JPEG 2000 codecs
@@ -40,6 +39,9 @@ COMPONENT_SUMMARY=      OpenJPEG library : Open source JPEG 2000 codecs
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+CFLAGS+= -std=c99 -D_XOPEN_SOURCE=600
+CFLAGS+= $(CPP_LARGEFILES)
 
 CMAKE_OPTIONS+= -DCMAKE_EXE_LINKER_FLAGS:STRING="-lnsl -lsocket"
 # Openjpeg does not use CMake's internal variables.
@@ -63,7 +65,5 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
