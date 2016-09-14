@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2016 Aurelien Larcher.  All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -50,6 +50,7 @@ file path=usr/include/opal/codec/opalplugin.h
 file path=usr/include/opal/codec/opalpluginmgr.h
 file path=usr/include/opal/codec/opalwavfile.h
 file path=usr/include/opal/codec/ratectl.h
+file path=usr/include/opal/codec/rfc2435.h
 file path=usr/include/opal/codec/rfc2833.h
 file path=usr/include/opal/codec/rfc4175.h
 file path=usr/include/opal/codec/silencedetect.h
@@ -88,7 +89,6 @@ file path=usr/include/opal/iax2/frame.h
 file path=usr/include/opal/iax2/iax2.h
 file path=usr/include/opal/iax2/iax2con.h
 file path=usr/include/opal/iax2/iax2ep.h
-file path=usr/include/opal/iax2/iax2jitter.h
 file path=usr/include/opal/iax2/iax2medstrm.h
 file path=usr/include/opal/iax2/iedata.h
 file path=usr/include/opal/iax2/ies.h
@@ -107,15 +107,16 @@ file path=usr/include/opal/im/msrp.h
 file path=usr/include/opal/im/rfc4103.h
 file path=usr/include/opal/im/sipim.h
 file path=usr/include/opal/im/t140.h
+file path=usr/include/opal/lids/capi_ep.h
 file path=usr/include/opal/lids/lid.h
 file path=usr/include/opal/lids/lidep.h
 file path=usr/include/opal/lids/lidplugin.h
 file path=usr/include/opal/lids/lidpluginmgr.h
 file path=usr/include/opal/opal.h
-file path=usr/include/opal/opal/audiorecord.h
 file path=usr/include/opal/opal/buildopts.h
 file path=usr/include/opal/opal/call.h
 file path=usr/include/opal/opal/connection.h
+file path=usr/include/opal/opal/console_mgr.h
 file path=usr/include/opal/opal/endpoint.h
 file path=usr/include/opal/opal/guid.h
 file path=usr/include/opal/opal/ivr.h
@@ -129,11 +130,15 @@ file path=usr/include/opal/opal/opalmixer.h
 file path=usr/include/opal/opal/opalvxml.h
 file path=usr/include/opal/opal/patch.h
 file path=usr/include/opal/opal/pcss.h
+file path=usr/include/opal/opal/pres_ent.h
+file path=usr/include/opal/opal/recording.h
 file path=usr/include/opal/opal/rtpconn.h
 file path=usr/include/opal/opal/rtpep.h
 file path=usr/include/opal/opal/transcoders.h
 file path=usr/include/opal/opal/transports.h
 file path=usr/include/opal/rtp/jitter.h
+file path=usr/include/opal/rtp/metrics.h
+file path=usr/include/opal/rtp/pcapfile.h
 file path=usr/include/opal/rtp/rtp.h
 file path=usr/include/opal/rtp/srtp.h
 file path=usr/include/opal/rtp/zrtpudp.h
@@ -143,6 +148,7 @@ file path=usr/include/opal/sip/sip.h
 file path=usr/include/opal/sip/sipcon.h
 file path=usr/include/opal/sip/sipep.h
 file path=usr/include/opal/sip/sippdu.h
+file path=usr/include/opal/sip/sippres.h
 file path=usr/include/opal/t120/h323t120.h
 file path=usr/include/opal/t120/t120proto.h
 file path=usr/include/opal/t120/x224.h
@@ -154,15 +160,22 @@ file path=usr/include/opal/zrtp/zrtpeventproc.h
 link path=usr/lib/libopal.so target=libopal.so.$(COMPONENT_VERSION)
 file path=usr/lib/libopal.so.$(COMPONENT_VERSION)
 file path=usr/lib/libopal_s.a
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g722_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g726_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/gsm0610_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/gsmamrcodec_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/ilbc_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/ima_adpcm_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/lpc10_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/speex_audio_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/h261-vic_video_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/theora_video_pwplugin.so
-file path=usr/lib/opal-$(COMPONENT_VERSION)/lid/vpb_lid_pwplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g7221_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g7222_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g722_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/g726_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/gsm0610_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/gsmamrcodec_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/iLBC_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/ima_adpcm_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/lpc10_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/silk_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/audio/speex_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/h261_vic_ptplugin.so
+# Disabled due to dependency to encumbered
+#file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/h263_ffmpeg_ptplugin.so
+#file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/h264_video_pwplugin_helper
+#file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/h264_x264_ptplugin.so
+#file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/mpeg4_ffmpeg_ptplugin.so
+file path=usr/lib/opal-$(COMPONENT_VERSION)/codecs/video/theora_ptplugin.so
 file path=usr/lib/pkgconfig/opal.pc
