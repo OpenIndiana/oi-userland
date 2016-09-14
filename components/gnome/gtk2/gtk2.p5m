@@ -39,13 +39,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/510
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-file path=etc/$(MACH64)/gtk-2.0/gtk.immodules \
-    original_name=SUNWgtk2:etc/$(MACH64)/gtk-2.0/gtk.immodules preserve=true
 file path=etc/$(MACH64)/gtk-2.0/im-multipress.conf \
     original_name=SUNWgtk2:etc/$(MACH64)/gtk-2.0/im-multipress.conf \
     preserve=true
-file path=etc/gtk-2.0/gtk.immodules \
-    original_name=SUNWgtk2:etc/gtk-2.0/gtk.immodules preserve=true
 file path=etc/gtk-2.0/im-multipress.conf \
     original_name=SUNWgtk2:etc/gtk-2.0/im-multipress.conf preserve=true
 file path=usr/bin/$(MACH64)/gtk-builder-convert
@@ -664,3 +660,5 @@ license COPYING license=LGPLv2
 depend type=conditional \
     fmri=pkg:/library/desktop/gtk2/gtk-backend-cups@$(IPS_COMPONENT_VERSION) \
     predicate=library/print/cups-libs
+# need application/desktop-cache/input-method-cache to build immodules.cache
+depend type=require fmri=pkg:/service/gnome/desktop-cache@0.2.9

@@ -27,7 +27,7 @@ BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         desktop-cache
-COMPONENT_VERSION=      0.2.8
+COMPONENT_VERSION=      0.2.9
 COMPONENT_SRC=          # all files under files/
 COMPONENT_BUGDB=	gnome/install
 
