@@ -43,7 +43,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-$(SOURCE_DIR)/.prep:	PYTHON_VERSION=3.4
+# nose ships the tests in Python 2 syntax, and uses setup.py build_tests
+# to convert them to Python 3 syntax, but doing so requires running Python 3.
+$(UNPACK_STAMP):	PYTHON_VERSION=3.4
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	selftest.py
