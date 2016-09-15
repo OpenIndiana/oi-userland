@@ -180,8 +180,6 @@ CONFIG_SHELL =	/bin/bash
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # Assume a component is categorized as a utility by default.
 COMPONENT_BUGDB=	utility/$(COMPONENT_NAME)
 

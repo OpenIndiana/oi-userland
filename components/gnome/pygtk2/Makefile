@@ -33,7 +33,6 @@ COMPONENT_NAME=		pygtk
 COMPONENT_VERSION=	2.24.0
 COMPONENT_PROJECT_URL=	http://www.pygtk.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_OVERRIDE= true # override gnome-component.mk default of *.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:cd1c1ea265bd63ff669e92a2d3c2a88eb26bcd9e5363e0f82c896e649f206912
 COMPONENT_BUGDB=       gnome/libraries

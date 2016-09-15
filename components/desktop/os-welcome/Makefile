@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         os-welcome
 COMPONENT_VERSION=      1.2.0
 COMPONENT_SRC=          files
+COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_BUGDB=	gnome/applications
 
 # nothing to download ; just build & package

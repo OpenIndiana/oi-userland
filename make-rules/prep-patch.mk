@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 GPATCH =	/usr/gnu/bin/patch
@@ -63,7 +63,7 @@ PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 # getting generated.
 PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES)))))
 
-define patch-rule
+define patch-variables
 
 ifeq ($(1),_0)
 PATCH_PATTERN$(1) ?=	%.patch
@@ -78,7 +78,11 @@ PATCH_STAMPS$(1) += $$(PATCHES$(1):$(PATCH_DIR)/%=$$(SOURCE_DIR$(1))/.patched-%)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATCH_STAMPS$(1) += $$(PATCHES$(1):$(PARFAIT_PATCH_DIR)/%=$$(SOURCE_DIR$(1))/.patched-%)
 endif 
+endif
+endef
 
+define patch-rules
+ifneq ($$(PATCHES$(1)),)
 # We should unpack the source that we patch before we patch it.
 $$(PATCH_STAMPS$(1)::	$$(UNPACK_STAMP$(1)) unpack
 
@@ -105,9 +109,12 @@ REQUIRED_PACKAGES += text/gnu-patch
 endif
 endef
 
-#
-# Define the rules required to download any source archives and augment any
-# cleanup macros.
-#
-$(foreach suffix, $(PCH_SUFFIXES), $(eval $(call patch-rule,_$(suffix))))
-$(eval $(call patch-rule,))	# this must be last so we don't drop *.patch_%.
+# Evaluate the variable assignments immediately.
+$(foreach suffix, $(PCH_SUFFIXES), $(eval $(call patch-variables,_$(suffix))))
+$(eval $(call patch-variables,))	# this must be last so we don't drop *.patch_%.
+
+# Put the rule evaluations in a variable for deferred evaluation.
+define eval-patch-rules
+$(foreach suffix, $(PCH_SUFFIXES), $(eval $(call patch-rules,_$(suffix))))
+$(eval $(call patch-rules,))	# this must be last so we don't drop *.patch_%.
+endef

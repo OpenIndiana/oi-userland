@@ -37,16 +37,28 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 # the file and signature for verification of its contents.
 #
 
-URL_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
-		$(filter COMPONENT_ARCHIVE_URL_%, $(.VARIABLES)))
+# Filter out any suffixes which correspond to auto-generated github archive
+# URLs (see prep-git.mk for the definition of GITHUB_ARCHIVE_SUFFIXES).  If
+# the primary archive shouldn't be processed here, we check for it before
+# evaling.
+URL_SUFFIXES = $(filter-out $(GITHUB_ARCHIVE_SUFFIXES), \
+		$(subst COMPONENT_ARCHIVE_URL_,, \
+		 $(filter COMPONENT_ARCHIVE_URL_%, $(.VARIABLES))))
 
-# Template for download rules.
-define download-rules
-ifdef COMPONENT_ARCHIVE_URL$(1)
-
+# Templates for download variables and rules.  We separate the variable
+# assignments from the rules so that all the variable assignments are given a
+# chance to complete before those variables are used in targets or
+# prerequisites, where they'll be expanded immediately.  Use ifneq/origin
+# instead of ifdef due to GNU Make bug 49093.
+define download-variables
+ifneq "$(origin COMPONENT_ARCHIVE_URL$(1))" "undefined"
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1)) $$(notdir $$(COMPONENT_SIG_URL$(1)))
+endif
+endef
 
+define download-rules
+ifneq "$(origin COMPONENT_ARCHIVE_URL$(1))" "undefined"
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
@@ -61,12 +73,17 @@ REQUIRED_PACKAGES += runtime/python-27
 endif
 endef
 
-#
-# Define the rules required to download any source archives and augment any
-# cleanup macros.
-#
-$(eval $(call download-rules,))
+# Evaluate the variable assignments immediately.  If we're pulling the main
+# (unsuffixed) archive from github, gia prep-git.mk, then skip doing that here.
+# Use $(if) instead of ifeq() because the latter is evaluated immediately.
+$(if $(findstring __BLANK__,$(GITHUB_ARCHIVE_SUFFIXES)),,$(eval $(call download-variables,)))
+$(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-variables,_$(suffix))))
+
+# Put the rule evaluations in a variable for deferred evaluation.
+define eval-download-rules
+$(if $(findstring __BLANK__,$(GITHUB_ARCHIVE_SUFFIXES)),,$(eval $(call download-rules,)))
 $(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-rules,_$(suffix))))
+endef
 
 # Needed for signature validation of downloads
 REQUIRED_PACKAGES += crypto/gnupg

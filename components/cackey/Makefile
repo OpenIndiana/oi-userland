@@ -45,6 +45,10 @@ include ../../make-rules/shared-macros.mk
  
 COMPONENT_NAME=         CACKey
 COMPONENT_VERSION=      0.7.4
+# The new form includes the commit as a disambiguator, but the current archive
+# wasn't created with that in its name, so we use the old form until the next
+# update.
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.rkeene.org/projects/info/wiki/161
 
 COMPONENT_ARCHIVE_SRC=	git

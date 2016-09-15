@@ -27,6 +27,10 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openca-ocspd
 COMPONENT_VERSION=	3.1.2
+# The new form includes the commit as a disambiguator, but the current archive
+# wasn't created with that in its name, so we use the old form until the next
+# update.
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/ocspd/
 COMPONENT_ARCHIVE_SRC=	git
 COMPONENT_BUGDB=	library/smartcard

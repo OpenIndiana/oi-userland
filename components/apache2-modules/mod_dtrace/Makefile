@@ -29,6 +29,7 @@ COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
 COMPONENT_SRC=		src
 COMPONENT_ARCHIVE=
+COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 
 TPNO=			8876

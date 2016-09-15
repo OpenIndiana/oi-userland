@@ -35,6 +35,7 @@ COMPONENT_NAME=		rpm2cpio
 COMPONENT_VERSION=	1.3
 COMPONENT_PROJECT_URL=	http://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
 COMPONENT_SRC=		src
+COMPONENT_ARCHIVE_SRC=	none
 COMPONENT_BUGDB=	utility/rpm
 
 TPNO=			17824

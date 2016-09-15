@@ -29,9 +29,7 @@
 #
 COMPONENT_PROJECT_URL ?=	https://www.gnome.org/
 COMPONENT_MAJOR_MINOR ?=	$(basename $(COMPONENT_VERSION))
-ifndef COMPONENT_ARCHIVE_OVERRIDE
-COMPONENT_ARCHIVE      =	$(COMPONENT_SRC).tar.xz
-endif
+COMPONENT_ARCHIVE     ?=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL ?=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_MINOR)/$(COMPONENT_ARCHIVE)
 
 PKGMOGRIFY_TRANSFORMS += $(WS_TOP)/transforms/gnome-incorporation

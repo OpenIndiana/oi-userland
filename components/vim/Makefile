@@ -29,6 +29,7 @@ COMPONENT_NAME=		vim
 COMPONENT_VERSION=	7.4
 IPS_COMPONENT_VERSION=	$(shell echo $(HG_REV) | sed -e 's/-/./g' -e 's/v//')
 # COMPONENT_SRC* is autodefined by the prep-{SCM} Makefile fragment
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 
 HG_REPO=	https://vim.googlecode.com/hg

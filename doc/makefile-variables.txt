@@ -2,22 +2,43 @@ This is a guide to explain various useful variables in Userland component
 Makefiles.  To distinguish these from the Makefile(s) that are part of each
 component distribution, the latter will be referred to as native Makefiles.
 
-The following are the basics that just about every Makefile should have.
+The following are the basics that just about every Makefile should have.  Most
+have defaults, but can be overridden.
+
+* BUILD_ARCH declares which architecture this component should be built for;
+  possible values are: i386, sparc.  If not set, the component will be built
+  for both.
 
 * BUILD_BITS declares which bits this component should be built for and
   which binaries are the preferred ones (i.e. should be installed in /usr/bin);
-  values are: 64, 64_and_32, 32, 32_and_64.
+  values are: 64, 64_and_32, 32, 32_and_64, and NO_ARCH.
+
 * COMPONENT_NAME is typically a short name (e.g., vim).
+
 * COMPONENT_VERSION is typically numbers separated by dots (e.g. 7.3).
+
 * COMPONENT_SRC is where the archive is extracted; it has a default value of
   "$(COMPONENT_NAME)-$(COMPONENT_VERSION)".
+
 * COMPONENT_PROJECT_URL is the general web site for the component.
+
 * COMPONENT_ARCHIVE is the base name of the archive to be downloaded; it has
   a default value of "$(COMPONENT_SRC).tar.gz".
+
 * COMPONENT_ARCHIVE_HASH is typically "sha256:" followed by the first output
   field of `sha256sum $(COMPONENT_ARCHIVE)`.
+
+* COMPONENT_ARCHIVE_SRC defines what kind of object delivers the source.  This
+  can be "git", "hg", or "svn" if the source comes from an SCM repository, and
+  must be "none" if the source is checked into the Userland repository
+  directly.
+
 * COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
   typically constructed from $(COMPONENT_PROJECT_URL) and $(COMPONENT_ARCHIVE).
+
+* COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat; it has
+  a default value of "utility/$(COMPONENT_NAME)".
+
 * COMPONENT_SIG_URL is the URL where the PGP signature for $(COMPONENT_ARCHIVE)
   can be found.  This can be used in addition to the hash in
   $(COMPONENT_ARCHIVE_HASH) to verify the correctness of the archive.  If
@@ -32,6 +53,11 @@ The following are the basics that just about every Makefile should have.
 	done
   before you 'hg commit' your merge.
 
+* COMPONENT_LABEL is an arbitrary string that will be used as part of
+  COMPONENT_SRC when building an archive from an SCM source repository.  It
+  defaults to COMPONENT_VERSION.  It may be set to empty if desired.  See
+  the relevant makefiles for the full composition.
+
 * GIT_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
   source from the GIT repository referenced in the value.
 * GIT_REV is the tag or changeset that you wish to pull from GIT.
@@ -44,32 +70,8 @@ The following are the basics that just about every Makefile should have.
   source from the Subversion repository referenced in the value.
 * SVN_REV is the tag or changeset that you wish to pull from Subversion.
 
-The following are basic variables that can be overridden but provide default
-values:
-
-* BUILD_ARCH declares which architecture this component should be built for;
-  possible values are: i386, sparc.  If not set, the component will be built
-  for both.
-* COMPONENT_SRC is where the archive is extracted; it has a default value of
-  "$(COMPONENT_NAME)-$(COMPONENT_VERSION)".
-* COMPONENT_ARCHIVE is the base name of the archive to be downloaded; it has
-  a default value of "$(COMPONENT_SRC).tar.gz".
-* COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat; it has
-  a default value of "utility/$(COMPONENT_NAME)".
 * REQUIRED_PACKAGES is a list of packages required to build or run the
   component and its tests; it includes "system/library" by default.
-
-* GIT_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
-  source from the GIT repository referenced in the value.
-* GIT_REV is the tag or changeset that you wish to pull from GIT.
-
-* HG_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
-  source from the Mercurial repository referenced in the value.
-* HG_REV is the tag or changeset that you wish to pull from Mercurial.
-
-* SVN_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
-  source from the Subversion repository referenced in the value.
-* SVN_REV is the tag or changeset that you wish to pull from Subversion.
 
 The following are basic variables that must be set before including common.mk
 if overriding the default:

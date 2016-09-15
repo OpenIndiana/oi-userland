@@ -67,6 +67,7 @@ SUPP_PACKAGES=		crypto image lint net sys text tools tour
 define supp-rules
 COMPONENT_NAME_$(1)=		$(1)
 COMPONENT_VERSION_$(1)=		$(COMPONENT_VERSION)
+COMPONENT_LABEL_$(1)=
 COMPONENT_IMPORT_SRC_$(1)=	golang.org/x
 GIT_REPO_$(1)=			https://github.com/golang/$(1).git
 TPNO_$(1)=			$(TPNO)

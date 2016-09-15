@@ -27,22 +27,39 @@ UNPACK =		$(WS_TOOLS)/userland-unpack
 
 #
 # Anything that we downloaded and want to unpack must have a
-# COMPONENT_ARCHIVE{_[0-9]+} macro.
+# COMPONENT_ARCHIVE{_[0-9]+} macro.  Filter out a handful of
+# well-known macros that don't correspond to extra archives.
 #
-PCK_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
-                $(filter COMPONENT_ARCHIVE_%, $(.VARIABLES)))
+PCK_SUFFIXES = $(filter-out HASH OVERRIDE SRC URL, $(subst COMPONENT_ARCHIVE_,, \
+                $(filter COMPONENT_ARCHIVE_%, $(.VARIABLES))))
 
-# Template for unpacking rules.
-define unpack-rules
-ifneq ($(strip $(COMPONENT_ARCHIVE$(1))),)
-ifneq ($(strip $(COMPONENT_SRC$(1))),)
-
+# Templates for unpacking variables and rules.  We separate the variable
+# assignments from the rules so that all the variable assignments are given a
+# chance to complete before those variables are used in targets or
+# prerequisites, where they'll be expanded immediately.
+#
+# Some components don't have an archive that we download, but host their source
+# directly in the repo, and a separate unpacking step will fail.  So we don't do
+# any unpacking if COMPONENT_ARCHIVE_SRC is "none", and rely on such components
+# to set that variable specifically.
+#
+# The reason we don't condition on an empty COMPONENT_ARCHIVE is that any
+# components that rely on that being set by default by prep.mk won't have it set
+# for this conditional.  It's easier to make the very few archive-less
+# components declare themselves rather than force everyone else to use
+# boilerplate code to name their archives.
+define unpack-variables
+ifneq ($(strip $(COMPONENT_ARCHIVE_SRC$(1))),none)
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
-SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
+SOURCE_DIR$(1) = $$(COMPONENT_SRC$(1):%=$$(COMPONENT_DIR)/%)
 
-UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1))/.unpacked
+UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1):%=%/.unpacked)
+endif
+endef
 
-# RUBY_VERSION is passed on to ensure userland-unpack uses the 
+define unpack-rules
+ifneq ($(strip $(COMPONENT_ARCHIVE_SRC$(1))),none)
+# RUBY_VERSION is passed on to ensure userland-unpack uses the
 # correct gem command for the ruby version specified
 $$(UNPACK_STAMP$(1)):	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)) download
 	$$(RM) -r $$(SOURCE_DIR$(1))
@@ -62,14 +79,15 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zip
 REQUIRED_PACKAGES += developer/java/jdk-8
 REQUIRED_PACKAGES += runtime/ruby
-
-endif
 endif
 endef
 
-#
-# Define the rules required to download any source archives and augment any
-# cleanup macros.
-#
+# Evaluate the variable assignments immediately.
+$(eval $(call unpack-variables,))
+$(foreach suffix, $(PCK_SUFFIXES), $(eval $(call unpack-variables,_$(suffix))))
+
+# Put the rule evaluations in a variable for deferred evaluation.
+define eval-unpack-rules
 $(eval $(call unpack-rules,))
 $(foreach suffix, $(PCK_SUFFIXES), $(eval $(call unpack-rules,_$(suffix))))
+endef

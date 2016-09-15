@@ -32,11 +32,15 @@ GIT =		/usr/bin/git
 
 GIT_SUFFIXES = $(subst GIT_REPO_,, $(filter GIT_REPO_%, $(.VARIABLES)))
 
-define git-rules
+# Templates for git variables and rules.  We separate the variable assignments
+# from the rules so that all the variable assignments are given a chance to
+# complete before those variables are used in targets or prerequisites, where
+# they'll be expanded immediately.
+define git-variables
 ifdef GIT_REPO$(1)
 ifeq ("",$(strip $(or $(GIT_BRANCH$(1)),$(GIT_COMMIT_ID$(1)))))
   $$(error GIT_BRANCH$(1) and/or GIT_COMMIT_ID$(1) must be defined)
-else
+endif
 
 ifdef GIT_BRANCH$(1)
   GIT_BRANCH_ARG$(1) = -b $$(GIT_BRANCH$(1))
@@ -44,11 +48,20 @@ else
   GIT_BRANCH_ARG$(1) = -b master
 endif
 
-COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))$$(GIT_BRANCH$(1):%=-%)$$(GIT_COMMIT_ID$(1):%=-%)
+# If the label is not already defined (including to empty), set it to the version.
+COMPONENT_LABEL$(1) ?= $$(COMPONENT_VERSION$(1))
+# The source directory is <name>-(<label>|<version>)[-(<tag>|<branch>)][-<commit].
+COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))$$(COMPONENT_LABEL$(1):%=-%)$$($$(or $$(GIT_TAG$(1)),$$(GIT_BRANCH$(1))))$$(GIT_COMMIT_ID$(1):%=-%)
 COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
-# If the source is github attempt to generate an archive url
+# If the source is github attempt to generate an archive url.  Defining
+# COMPONENT_ARCHIVE_URL here messes with prep-download.mk, which keys off of
+# that variable to build download rules, so keep track of which suffixes
+# generated a github archive URL, and prep-download.mk will use that list to
+# remove those URLs.  If the primary (unsuffixed) archive is from github, then
+# we add a dummy __BLANK__ suffix to the list, and filter that out separately.
 ifeq (github,$(findstring github,$(GIT_REPO$(1))))
   COMPONENT_ARCHIVE_URL$(1) ?= $(GIT_REPO$(1))/tarball/$(GIT_BRANCH$(1))
+  GITHUB_ARCHIVE_SUFFIXES += $(or $(strip $(1:_%=%)),__BLANK__)
 else
   COMPONENT_ARCHIVE_SRC$(1) = git
 endif
@@ -56,7 +69,11 @@ endif
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
 SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
+endif
+endef
 
+define git-rules
+ifdef GIT_REPO$(1)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 # First attempt to download a cached archive of the SCM repo at the proper
@@ -94,12 +111,14 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 REQUIRED_PACKAGES += developer/versioning/git
 
 endif
-endif
 endef
 
-#
-# Define the rules required to download any source archives and augment any
-# cleanup macros.
-#
+# Evaluate the variable assignments immediately
+$(eval $(call git-variables,))
+$(foreach suffix, $(GIT_SUFFIXES), $(eval $(call git-variables,_$(suffix))))
+
+# Put the rule evaluations in a variable for deferred evaluation.
+define eval-git-rules
 $(eval $(call git-rules,))
 $(foreach suffix, $(GIT_SUFFIXES), $(eval $(call git-rules,_$(suffix))))
+endef

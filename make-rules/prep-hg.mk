@@ -32,18 +32,31 @@ HG =		/usr/bin/hg
 
 HG_SUFFIXES = $(subst HG_REPO_,, $(filter HG_REPO_%, $(.VARIABLES)))
 
-define mercurial-rules
+# Templates for download variables and rules.  We separate the variable
+# assignments from the rules so that all the variable assignments are given a
+# chance to complete before those variables are used in targets or
+# prerequisites, where they'll be expanded immediately.
+define hg-variables
 ifdef HG_REPO$(1)
 ifdef HG_REV$(1)
 
-COMPONENT_SRC$(1) = $$(COMPONENT_NAME$(1))-$(COMPONENT_VERSION)-$$(HG_REV$(1))
-COMPONENT_ARCHIVE$(1) = $$(COMPONENT_SRC$(1)).tar.bz2
+# If the label is not already defined (including to empty), set it to the version.
+COMPONENT_LABEL$(1) ?= $$(COMPONENT_VERSION$(1))
+# The source directory is <name>-(<label>|<version>)[-(<tag>|<branch>)][-<commit].
+COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))$$(COMPONENT_LABEL$(1):%=-%)$$($$(or $$(HG_TAG$(1)),$$(HG_BRANCH$(1))))$$(HG_REV$(1):%=-%)
+COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
 COMPONENT_ARCHIVE_SRC$(1) = hg
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
 SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
+endif
+endif
+endef
 
+define hg-rules
+ifdef HG_REPO$(1)
+ifdef HG_REV$(1)
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 # First attempt to download a cached archive of the SCM repo at the proper
@@ -70,9 +83,12 @@ endif
 endif
 endef
 
-#
-# Define the rules required to download any source archives and augment any
-# cleanup macros.
-#
-$(eval $(call mercurial-rules,))
-$(foreach suffix, $(HG_SUFFIXES), $(eval $(call mercurial-rules,_$(suffix))))
+# Evaluate the variable assignments immediately.
+$(eval $(call hg-variables,))
+$(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-variables,_$(suffix))))
+
+# Put the rule evaluations in a variable for deferred evaluation.
+define eval-hg-rules
+$(eval $(call hg-rules,))
+$(foreach suffix, $(HG_SUFFIXES), $(eval $(call hg-rules,_$(suffix))))
+endef

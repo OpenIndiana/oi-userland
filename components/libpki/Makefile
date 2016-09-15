@@ -30,6 +30,10 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpki
 COMPONENT_VERSION=	0.8.9
+# The new form includes the commit as a disambiguator, but the current archive
+# wasn't created with that in its name, so we use the old form until the next
+# update.
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openca.org/projects/libpki/
 COMPONENT_ARCHIVE_SRC=	git
 COMPONENT_BUGDB=	library/smartcard

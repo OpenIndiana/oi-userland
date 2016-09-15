@@ -28,7 +28,10 @@ COMPONENT_VERSION=	OPENBSD_5_5
 IPS_COMPONENT_VERSION=	5.5
 COMPONENT_PROJECT_URL=	http://www.openbsd.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+# The archive exists only in the userland cache.  In order to update the cache,
+# we have to get the sources via CVS manually and ask the gatekeepers to add it.
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_URL=
 COMPONENT_ARCHIVE_SRC=	cache
 COMPONENT_ARCHIVE_HASH= sha256:372dbe0ca8c6b090842a9f0fbdd13b320dc37883137d3dc674d588448aa2d5e9
 COMPONENT_BUGDB=	service/ftp-proxy
@@ -54,15 +57,6 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) -D_SOLARIS_ -DOBSD_COMP -lscf"
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS +=	MANDIR=$(PROTOUSRSHAREMANDIR)
 COMPONENT_INSTALL_ARGS +=	INSTALL=$(INSTALL)
-
-# Here we just download the cached source archive. In order to update
-# the cache, we have to get the sources via CVS manually and ask gatekeepers
-# to place it into the cache. There is no archive available at openbsd.org.
-download:: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
-
-$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE): $(MAKEFILE_PREREQ)
-	$(FETCH) --file $@ --hash $(COMPONENT_ARCHIVE_HASH)
-	$(TOUCH) $@
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += network/firewall
