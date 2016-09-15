@@ -98,7 +98,11 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$(GIT) clone $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
 	(cd $$$${TMP_REPO} ; $(GIT) checkout \
 	$$(GIT_COMMIT_ID$(1))) && \
-	(cd $$$${TMP_REPO} ; $(GIT) archive --format tar.gz \
+	(cd $$$${TMP_REPO} ; \
+		$(GIT) config tar.tar.bz2.command "bzip2 -c"; \
+		$(GIT) config tar.tar.xz.command "xz -c"; \
+		$(GIT) archive \
+		--format $(subst $(COMPONENT_SRC$(1)).,,$(COMPONENT_ARCHIVE$(1))) \
 		--prefix $$(COMPONENT_SRC$(1))/ \
 		$$(or $$(GIT_COMMIT_ID$(1)),$$(GIT_BRANCH$(1)))) > $$@ && \
 	$(RM) -r $$$${TMP_REPO} ) && \
