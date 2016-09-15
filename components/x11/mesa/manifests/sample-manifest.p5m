@@ -23,6 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=etc/drirc
+file path=usr/include/EGL/egl.h
+file path=usr/include/EGL/eglext.h
+file path=usr/include/EGL/eglextchromium.h
+file path=usr/include/EGL/eglmesaext.h
+file path=usr/include/EGL/eglplatform.h
 file path=usr/include/GL/gl.h
 file path=usr/include/GL/gl_mangle.h
 file path=usr/include/GL/glcorearb.h
@@ -31,9 +36,9 @@ file path=usr/include/GL/glx.h
 file path=usr/include/GL/glx_mangle.h
 file path=usr/include/GL/glxext.h
 file path=usr/include/GL/internal/dri_interface.h
+file path=usr/include/GL/mesa_glinterop.h
 file path=usr/include/GL/osmesa.h
 file path=usr/include/GL/wglext.h
-file path=usr/include/GL/wmesa.h
 file path=usr/include/GLES/egl.h
 file path=usr/include/GLES/gl.h
 file path=usr/include/GLES/glext.h
@@ -45,6 +50,11 @@ file path=usr/include/GLES3/gl3.h
 file path=usr/include/GLES3/gl31.h
 file path=usr/include/GLES3/gl3ext.h
 file path=usr/include/GLES3/gl3platform.h
+file path=usr/include/KHR/khrplatform.h
+file path=usr/include/gbm.h
+link path=usr/lib/$(MACH64)/libEGL.so target=libEGL.so.1.0.0
+link path=usr/lib/$(MACH64)/libEGL.so.1 target=libEGL.so.1.0.0
+file path=usr/lib/$(MACH64)/libEGL.so.1.0.0
 link path=usr/lib/$(MACH64)/libGL.so target=libGL.so.1.2.0
 link path=usr/lib/$(MACH64)/libGL.so.1 target=libGL.so.1.2.0
 file path=usr/lib/$(MACH64)/libGL.so.1.2.0
@@ -57,14 +67,22 @@ file path=usr/lib/$(MACH64)/libGLESv2.so.2.0.0
 link path=usr/lib/$(MACH64)/libOSMesa.so target=libOSMesa.so.8.0.0
 link path=usr/lib/$(MACH64)/libOSMesa.so.8 target=libOSMesa.so.8.0.0
 file path=usr/lib/$(MACH64)/libOSMesa.so.8.0.0
+link path=usr/lib/$(MACH64)/libgbm.so target=libgbm.so.1.0.0
+link path=usr/lib/$(MACH64)/libgbm.so.1 target=libgbm.so.1.0.0
+file path=usr/lib/$(MACH64)/libgbm.so.1.0.0
 link path=usr/lib/$(MACH64)/libglapi.so target=libglapi.so.0.0.0
 link path=usr/lib/$(MACH64)/libglapi.so.0 target=libglapi.so.0.0.0
 file path=usr/lib/$(MACH64)/libglapi.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/dri.pc
+file path=usr/lib/$(MACH64)/pkgconfig/egl.pc
+file path=usr/lib/$(MACH64)/pkgconfig/gbm.pc
 file path=usr/lib/$(MACH64)/pkgconfig/gl.pc
 file path=usr/lib/$(MACH64)/pkgconfig/glesv1_cm.pc
 file path=usr/lib/$(MACH64)/pkgconfig/glesv2.pc
 file path=usr/lib/$(MACH64)/pkgconfig/osmesa.pc
+link path=usr/lib/libEGL.so target=libEGL.so.1.0.0
+link path=usr/lib/libEGL.so.1 target=libEGL.so.1.0.0
+file path=usr/lib/libEGL.so.1.0.0
 link path=usr/lib/libGL.so target=libGL.so.1.2.0
 link path=usr/lib/libGL.so.1 target=libGL.so.1.2.0
 file path=usr/lib/libGL.so.1.2.0
@@ -77,23 +95,28 @@ file path=usr/lib/libGLESv2.so.2.0.0
 link path=usr/lib/libOSMesa.so target=libOSMesa.so.8.0.0
 link path=usr/lib/libOSMesa.so.8 target=libOSMesa.so.8.0.0
 file path=usr/lib/libOSMesa.so.8.0.0
+link path=usr/lib/libgbm.so target=libgbm.so.1.0.0
+link path=usr/lib/libgbm.so.1 target=libgbm.so.1.0.0
+file path=usr/lib/libgbm.so.1.0.0
 link path=usr/lib/libglapi.so target=libglapi.so.0.0.0
 link path=usr/lib/libglapi.so.0 target=libglapi.so.0.0.0
 file path=usr/lib/libglapi.so.0.0.0
 file path=usr/lib/pkgconfig/dri.pc
+file path=usr/lib/pkgconfig/egl.pc
+file path=usr/lib/pkgconfig/gbm.pc
 file path=usr/lib/pkgconfig/gl.pc
 file path=usr/lib/pkgconfig/glesv1_cm.pc
 file path=usr/lib/pkgconfig/glesv2.pc
 file path=usr/lib/pkgconfig/osmesa.pc
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so \
-    target=swrast_dri.so
+    target=radeon_dri.so
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i965_dri.so \
-    target=swrast_dri.so
+    target=radeon_dri.so
 hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r200_dri.so \
-    target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so \
-    target=swrast_dri.so
-file path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so
+    target=radeon_dri.so
+file path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so \
+    target=radeon_dri.so
 file path=usr/lib/xorg/modules/dri/i915_dri.so
 hardlink path=usr/lib/xorg/modules/dri/i965_dri.so target=i915_dri.so
 hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=i915_dri.so
