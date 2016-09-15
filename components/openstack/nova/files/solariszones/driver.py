@@ -639,13 +639,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_iscsi_initiator(self):
         """ Return the iSCSI initiator node name IQN for this host """
-        out, err = utils.execute('/usr/sbin/iscsiadm', 'list',
-                                 'initiator-node')
-        # Sample first line of command output:
-        # Initiator node name: iqn.1986-03.com.sun:01:e00000000000.4f757217
-        initiator_name_line = out.splitlines()[0]
-        initiator_iqn = initiator_name_line.rsplit(' ', 1)[1]
-        return initiator_iqn
+        try:
+            out, err = utils.execute('/usr/sbin/iscsiadm', 'list',
+                                     'initiator-node')
+            # Sample first line of command output:
+            # Initiator node name: iqn.1986-03.com.sun:01:e00000000000.4f757217
+            initiator_name_line = out.splitlines()[0]
+            initiator_iqn = initiator_name_line.rsplit(' ', 1)[1]
+            return initiator_iqn
+        except processutils.ProcessExecutionError as ex:
+            LOG.info(_("Failed to get the initiator-node info: %s") % (ex))
+            return None
 
     def _get_zone_by_name(self, name):
         """Return a Solaris Zones object via RAD by name."""
@@ -2773,7 +2777,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
                 # re-add the entry to the zone configuration so that the
                 # configuration will reflect what is in cinder before we raise
-                # the exception, therefor failing the detach and leaving the
+                # the exception, therefore failing the detach and leaving the
                 # volume in-use.
                 needed_props = ["storage", "bootpri"]
                 props = filter(lambda prop: prop.name in needed_props,
@@ -4472,8 +4476,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if self._initiator:
             connector['initiator'] = self._initiator
         else:
-            LOG.warning(_("Could not determine iSCSI initiator name"),
-                        instance=instance)
+            LOG.debug(_("Could not determine iSCSI initiator name"),
+                      instance=instance)
 
         if not self._fc_wwnns:
             self._fc_wwnns = self._get_fc_wwnns()
