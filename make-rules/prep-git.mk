@@ -104,7 +104,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$(RM) -r $$$${TMP_REPO} ) && \
 	( GIT_HASH=$$$$(digest -a sha256 $$@) && \
 	$(GSED) -i \
-		-e "s/^GIT_HASH$(1)=.*/GIT_HASH$(1)=  sha256:$$$${GIT_HASH}/" \
+		-e "s/\(GIT_HASH$(1)[[:space:]]*=[[:space:]]*\).*/\1sha256:$$$${GIT_HASH}/" \
 		Makefile ))
 
 

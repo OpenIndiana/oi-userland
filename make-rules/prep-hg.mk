@@ -74,7 +74,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	 $(RM) -rf $${TMP_REPO} && \
 	 HG_HASH=$$$$(digest -a sha256 $$@) && \
 	 $(GSED) -i \
-		-e "s/^HG_HASH$(1)=.*/HG_HASH$(1)=	sha256:$$$${HG_HASH}/" \
+		-e "s/\(HG_HASH$(1)[[:space:]]*=[[:space:]]*\).*/\1sha256:$$$${HG_HASH}/" \
 		Makefile)
 
 REQUIRED_PACKAGES += developer/versioning/mercurial
