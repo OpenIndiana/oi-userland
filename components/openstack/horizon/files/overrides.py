@@ -213,6 +213,9 @@ if getattr(settings, 'SOLARIS_BOOTARGS', True):
         project_tables_row_actions[pos:]
     )
 
+# Set the available states for Create Snapshot to only be 'ACTIVE'
+project_tables.SNAPSHOT_READY_STATES = ('ACTIVE',)
+
 # Disable 'disk_over_commit', 'block_migration' in
 # Admin/System/Instances/Actions/Live Migrate Instance. Note that this is
 # unchecked by default.

@@ -1132,7 +1132,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             image_meta = glanceapi.get(context, instance['image_ref'])
             image_properties = image_meta.get('properties')
             if image_properties.get('architecture') is None:
-                reason = reason + (_("The 'architecture' property is not set "
+                reason = reason + (_(" The 'architecture' property is not set "
                                      "on the Glance image."))
 
             raise exception.ImageUnacceptable(image_id=instance['image_ref'],
@@ -3044,6 +3044,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param image_id: Reference to a pre-created image that will
                          hold the snapshot.
         """
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        # look to see if the zone is a kernel zone and is powered off.  If it
+        # is raise an exception before trying to archive it
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if zone.state != ZONE_STATE_RUNNING and \
+                brand == ZONE_BRAND_SOLARIS_KZ:
+            raise exception.InstanceNotRunning(instance_id=name)
+
         # Get original base image info
         (base_service, base_id) = glance.get_remote_image_service(
             context, instance['image_ref'])
