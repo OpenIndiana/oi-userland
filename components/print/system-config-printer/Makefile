@@ -16,39 +16,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= system-config-printer
-COMPONENT_VERSION= 1.0.16
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.4.8
 IPS_COMPONENT_VERSION= 2.30.0
 COMPONENT_SUMMARY= Print Manager for CUPS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:721c66e0f02aba245db7625d63a141b2f5229a6ba9c1e4a0f300a2a21ce0bfaf
+  sha256:9f65e96434819bf4170d654ef5caa945699e48f72bf5ae8c500341409c3db2f9
 COMPONENT_ARCHIVE_URL= \
-  http://cyberelk.net/tim/data/$(COMPONENT_NAME)/1.0.x/$(COMPONENT_ARCHIVE)
+  http://cyberelk.net/tim/data/$(COMPONENT_NAME)/1.4/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cyberelk.net/tim/software/system-config-printer/
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PATH=/usr/gnu/bin:/usr/bin
+
 CFLAGS += -I/usr/X11/include
 
 COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
-					cp -r $(SOURCE_DIR)/* $(@D) && \
-					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all &&\
-                                        cd $(@D) && libtoolize --force &&\
-                                        aclocal &&\
-                                        automake -a -f -c --gnu &&\
-                                        autoconf )
+					cp -r $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
-CONFIGURE_ENV	+= XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV	+= MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 
 build: $(BUILD_32)
@@ -58,10 +51,7 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/python-2/pycups-27
-REQUIRED_PACKAGES += library/python-2/python-notify-27
-REQUIRED_PACKAGES += library/python/gnome-python-27
-REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += library/python/pycups-27
+REQUIRED_PACKAGES += library/python/pygobject-3-27
 REQUIRED_PACKAGES += library/python/python-dbus-27
 REQUIRED_PACKAGES += runtime/python-27
