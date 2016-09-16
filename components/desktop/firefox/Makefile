@@ -26,28 +26,28 @@
 # parfait is a bit unhappy (22527218)
 export PARFAIT_BUILD=no
 
-COMPILER =	gcc
-
+BUILD_BITS= 32
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
-# gcc 5.3 can't compile this version of firefox yet, so keep using 4.8 for now.
-GCC_ROOT = /usr/gcc/4.8
+# gcc 5.3 can't compile this version of firefox yet, so keep using 4.9 for now.
+GCC_ROOT = /usr/gcc/4.9
 
 COMPONENT_NAME =		firefox
-COMPONENT_VERSION =		38.5.0esr
+COMPONENT_VERSION =		45.1.1esr
 COMPONENT_PROJECT_URL =		http://www.mozilla.com/firefox
-COMPONENT_SRC =			mozilla-esr38
 COMPONENT_SRC_NAME =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC_NAME).source.tar.bz2
+COMPONENT_SRC = 		$(COMPONENT_SRC_NAME)
+COMPONENT_ARCHIVE =		$(COMPONENT_SRC_NAME).source.tar.xz
 COMPONENT_ARCHIVE_HASH = \
-	sha256:2a1f90cfe390ab20be88fed38cb9f61a18281cfbee47505c67e0254d339cdb20
+    sha256:a27e36aa1ccebddfe5a113f7f15b09a61e35644be58029b00b0d996a00d04562
 MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL =		$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		firefox/browser
 
-TPNO=				26828	
+TPNO=				28419	
 
-IPS_COMPONENT_VERSION =		38.5.0
+IPS_COMPONENT_VERSION =		45.1.1
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -58,30 +58,24 @@ IPS_COMPONENT_VERSION =		38.5.0
 # collide due to different files with identical .xpi names.
 COMPONENT_ARCHIVE_1 =           $(COMPONENT_SRC_NAME)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-	sha256:1fe09d5540167cbda3029f4e02640498fbb98ad7b47cdb6b8872e6dcf522a3e1
+	sha256:d80142e7b64b3b61baaf7631e6ad0bf7c4a44d962dc3611bf6dba2dde33aacea
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
 
 LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
 	fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO \
 	pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-
 # Alignment issues on sparc: do not publish until resolved.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32=
-INSTALL_32=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
 # /usr/sbin needed for dtrace.
 PATH =			$(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
 
 CLEAN_PATHS +=		$(COMPONENT_SRC)
+CLEAN_PATHS +=		$(COMPONENT_DIR)/xpi
 
 MOZCONFIG = 		$(BUILD_DIR_32)/mozconfig
 
@@ -97,18 +91,18 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-xinerama" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-libffi" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
@@ -119,12 +113,16 @@ CXXFLAGS +=     -Wno-invalid-offsetof -fpermissive
 CC +=           $(CC_BITS)
 CXX +=          $(CC_BITS)
 
+# Currently, GCC 4.9 incorrectly forces all 32-bit compilation to use lf64(7) 
+# interfaces.  
+CFLAGS += -U_FILE_OFFSET_BITS
+CXXFLAGS += -U_FILE_OFFSET_BITS
+
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
-CONFIGURE_ENV +=        CXXFLAGS='-xlibmil -xlibmopt -lCrun -lCstd -features=tmplrefstatic,no%except -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ -template=no%extdef'
 # -L.../dist/lib needs to be set otherwise it will report missing libnss3.so, 
 # libssl3.so, etc, while linking.
-CONFIGURE_ENV +=        LDFLAGS="$(LD_Z_IGNORE) -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
+CONFIGURE_ENV +=        LDFLAGS="-z ignore -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
 
 
 CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
@@ -158,6 +156,24 @@ COMPONENT_POST_INSTALL_ACTION += \
                 $(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/browser/extensions/langpack-$$f@firefox.mozilla.org.xpi ; \
         done ;
 
+FF_XPI = $(MOZILLA_FTP)/linux-i686/xpi
+
+# Run gmake download-xpis to download a tarball for xpi locally. 
+# The resulting archive should be uploaded to userland internal archive.
+download-xpis:
+	@echo "download-xpis"
+	$(RM) -r $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
+	$(MKDIR) $(COMPONENT_DIR)/xpi
+	@echo "downloading firefox xpis"
+	list1='$(LANG_LIST)' ; for f in $$list1 ; do \
+	    echo $$f; \
+	    /usr/bin/curl -s -o $(COMPONENT_DIR)/xpi/$$f.xpi \
+	        $(FF_XPI)/$$f.xpi; \
+	done
+	(cd $(COMPONENT_DIR); \
+	    $(TAR) czvf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1) xpi )
+	/usr/bin/sha256sum $(COMPONENT_ARCHIVE_1)
+
 SIGNED_LIST.i386 = libsoftokn3.so libnssdbm3.so libfreebl3.so
 SIGNED_LIST.sparc = libsoftokn3.so libnssdbm3.so libfreebl_32int_3.so libfreebl_32int64_3.so
 SIGNED_LIST = $(SIGNED_LIST.$(MACH))
@@ -168,24 +184,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION) $(BUILD_DIR_32)/dist/bin/shlibsign -v -i $(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/$$f ; \
         done ;
 
+COMPONENT_TEST_MASTER = \
+        $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/\(^TEST-PASS\).*/d" '
 
-configure:	$(CONFIGURE_32)
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TEST_32)
-
-system-test:	$(NO_TESTS)
-
-REQUIRED_PACKAGES += codec/libogg
-REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo

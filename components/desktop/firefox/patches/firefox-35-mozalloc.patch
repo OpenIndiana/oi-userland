@@ -6,9 +6,9 @@ diff --git a/memory/mozalloc/mozalloc.cpp b/memory/mozalloc/mozalloc.cpp
 --- a/memory/mozalloc/mozalloc.cpp
 +++ b/memory/mozalloc/mozalloc.cpp
 @@ -208,6 +208,8 @@
- }
- #endif
-
+ #endif // if defined(HAVE_VALLOC) 
+ 
+ #ifndef MOZ_STATIC_RUNTIME
 +extern "C" size_t malloc_usable_size(const void *ptr);
 +
  size_t
@@ -18,9 +18,9 @@ diff --git a/memory/mozalloc/mozalloc_abort.cpp b/memory/mozalloc/mozalloc_abort
 --- a/memory/mozalloc/mozalloc_abort.cpp
 +++ b/memory/mozalloc/mozalloc_abort.cpp
 @@ -63,7 +63,11 @@
- // Define abort() here, so that it is used instead of the system abort(). This
- // lets us control the behavior when aborting, in order to get better results
- // on *NIX platforms. See mozalloc_abort for details.
+ //
+ // That segmentation fault will be interpreted as another bug by ASan and as a
+ // result, ASan will just exit(1) instead of aborting.
 +#if defined(SOLARIS)
 +void std::abort(void)
 +#else

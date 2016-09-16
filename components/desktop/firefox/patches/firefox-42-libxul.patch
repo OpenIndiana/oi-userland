@@ -12,15 +12,15 @@ diff --git a/toolkit/library/libxul.mk b/toolkit/library/libxul.mk
  LIBXUL_AUTOLOAD = $(topsrcdir)/toolkit/library/libxul.so-gdb.py.in
  LIBXUL_AUTOLOAD_FLAGS := -Dtopsrcdir=$(abspath $(topsrcdir))
  endif
- 
+
 +ifdef MOZ_MEMORY
 +ifeq ($(OS_ARCH),SunOS)
-+OS_LDFLAGS +=  $(LIBXUL_DIST)/lib/libmemory.a
++OS_LDFLAGS +=  $(MOZ_BUILD_ROOT)/dist/sdk/lib/libmemory.a
 +endif
 +endif
 +
 +ifeq ($(OS_ARCH),SunOS)
-+OS_LDFLAGS +=  -lm -Wl,-z,defs
++OS_LDFLAGS +=  -lm -lsendfile -Wl,-z,defs ../../js/src/js-dtrace.o
 +endif
 +
  # BFD ld doesn't create multiple PT_LOADs as usual when an unknown section
@@ -44,3 +44,20 @@ diff --git a/toolkit/library/libxul.mk b/toolkit/library/libxul.mk
 +ifeq (SunOS,$(OS_ARCH))
 +LOCAL_CHECKS += ; test "$$($(TOOLCHAIN_PREFIX)readelf -l $1 | awk '$1 == "LOAD" { t += 1 } END { print t }')" -le 1 && echo "Only one PT_LOAD segment" && exit 1 || exit 0
 +endif
+diff a/ipc/app/moz.build b/ipc/app/moz.build
+--- a/ipc/app/moz.build 2015-11-03 11:34:14.000000000 +0100
++++ b/ipc/app/moz.build 2015-11-10 08:31:42.024431000 +0100
+@@ -130,5 +130,13 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'gonk
+         'utils',
+     ]
+
++OS_LIBS += [
++    '$(DEPTH)/security/nss/lib/util/libnssutil3.so',
++    '$(DEPTH)/security/nss/lib/ssl/libssl3.so',
++    '$(DEPTH)/security/nss/lib/smime/libsmime3.so',
++    '$(DEPTH)/security/nss/lib/nss/libnss3.so',
++    '$(DEPTH)/config/external/lgpllibs/liblgpllibs.so',
++    '-lsendfile',
++]
+ if CONFIG['GNU_CXX']:
+     CXXFLAGS += ['-Wshadow']

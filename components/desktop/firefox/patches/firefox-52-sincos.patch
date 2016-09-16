@@ -1,0 +1,47 @@
+DS is defined elsewhere, as is HAVE_SINCOS.
+Will not send upstream.
+
+--- a/js/src/jsmath.cpp    2016-03-22 13:29:37.873777320 -0700
++++ b/js/src/jsmath.cpp    2016-03-22 13:29:55.750437374 -0700
+@@ -919,7 +919,7 @@ js::math_sincos_uncached(double x, doubl
+ {
+ #if defined(__GLIBC__)
+     sincos(x, sin, cos);
+-#elif defined(HAVE_SINCOS)
++#elif defined(_HAVE_SINCOS)
+     __sincos(x, sin, cos);
+ #else
+     *sin = js::math_sin_uncached(x);
+--- a/dom/canvas/WebGLFormats.cpp	2016-03-22 12:40:33.085785762 -0700
++++ b/dom/canvas/WebGLFormats.cpp	2016-03-22 12:40:59.650189892 -0700
+@@ -156,7 +156,7 @@ AddFormatInfo(EffectiveFormat format, co
+         hasStencil = true;
+         break;
+ 
+-    case UnsizedFormat::DS:
++    case UnsizedFormat::XDS:
+         hasDepth = true;
+         hasStencil = true;
+         break;
+@@ -241,8 +241,8 @@ InitFormatInfo()
+     AddFormatInfo(FOO(DEPTH_COMPONENT16 ), 2, UnsizedFormat::D , false, ComponentType::NormUInt);
+     AddFormatInfo(FOO(DEPTH_COMPONENT24 ), 3, UnsizedFormat::D , false, ComponentType::NormUInt);
+     AddFormatInfo(FOO(DEPTH_COMPONENT32F), 4, UnsizedFormat::D , false, ComponentType::Float);
+-    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::DS, false, ComponentType::Special);
+-    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::DS, false, ComponentType::Special);
++    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::XDS, false, ComponentType::Special);
++    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::XDS, false, ComponentType::Special);
+ 
+     // GLES 3.0.4, p205-206, "Required Renderbuffer Formats"
+     AddFormatInfo(FOO(STENCIL_INDEX8), 1, UnsizedFormat::S, false, ComponentType::UInt);
+--- a/dom/canvas/WebGLFormats.h	2016-03-22 12:39:45.933021022 -0700
++++ b/dom/canvas/WebGLFormats.h	2016-03-22 12:40:19.073659489 -0700
+@@ -158,7 +158,7 @@ enum class UnsizedFormat : uint8_t {
+     A,
+     D,
+     S,
+-    DS,
++    XDS,
+ };
+ 
+ // GLES 3.0.4 p114 Table 3.4, p240

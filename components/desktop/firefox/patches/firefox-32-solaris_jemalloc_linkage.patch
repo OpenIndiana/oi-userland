@@ -25,50 +25,9 @@ new file mode 100644
 +        realloc            = NODIRECT;
 +        valloc             = NODIRECT;
 +};
-diff --git a/memory/mozalloc/mozalloc.cpp b/memory/mozalloc/mozalloc.cpp
---- a/memory/mozalloc/mozalloc.cpp
-+++ b/memory/mozalloc/mozalloc.cpp
-@@ -200,6 +200,14 @@
- }
- #endif // if defined(HAVE_VALLOC)
- 
-+#if defined(MOZ_MEMORY_SOLARIS)
-+#include "jemalloc_types.h"
-+extern "C" {
-+extern size_t malloc_usable_size(const void *ptr);
-+extern void jemalloc_stats(jemalloc_stats_t* stats);
-+}
-+#endif
-+
- size_t
- moz_malloc_usable_size(void *ptr)
- {
-@@ -209,7 +217,22 @@
- #if defined(XP_MACOSX)
-     return malloc_size(ptr);
- #elif defined(HAVE_MALLOC_USABLE_SIZE) || defined(MOZ_MEMORY)
-+#if defined(SOLARIS)
-+    static bool checked = false;
-+    static bool using_jemalloc = false;
-+    if (!checked) {
-+        checked = true;
-+        jemalloc_stats_t stats;
-+        jemalloc_stats(&stats);
-+        using_jemalloc = stats.allocated;
-+    }
-+    if (using_jemalloc)
-+        return malloc_usable_size(ptr);
-+    else
-+        return 0;
-+#else
-     return malloc_usable_size(ptr);
-+#endif
- #elif defined(XP_WIN)
-     return _msize(ptr);
- #else
-diff --git a/storage/src/mozStorageService.cpp b/storage/src/mozStorageService.cpp
---- a/storage/src/mozStorageService.cpp
-+++ b/storage/src/mozStorageService.cpp
+diff --git a/storage/mozStorageService.cpp b/storage/mozStorageService.cpp
+--- a/storage/mozStorageService.cpp
++++ b/storage/mozStorageService.cpp
 @@ -514,9 +514,14 @@
    int rc;
  
@@ -90,26 +49,16 @@ diff --git a/storage/src/mozStorageService.cpp b/storage/src/mozStorageService.c
 diff --git a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 --- a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 +++ b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
-@@ -165,16 +165,19 @@ static const bool config_ivsalloc =
-  *   JEMALLOC_H_INLINES : Inline functions.
-  */
- /******************************************************************************/
- #define	JEMALLOC_H_TYPES
- 
+@@ -184,6 +184,9 @@ static const bool config_cache_oblivious
  #include "jemalloc/internal/jemalloc_internal_macros.h"
  
  /* Size class index type. */
 +#ifdef __sun
 +#define index_t je_index_t
 +#endif
- typedef unsigned index_t;
+ typedef unsigned szind_t;
  
- #define	MALLOCX_ARENA_MASK	((int)~0xff)
- #define	MALLOCX_LG_ALIGN_MASK	((int)0x3f)
- /* Use MALLOCX_ALIGN_GET() if alignment may not be specified in flags. */
- #define	MALLOCX_ALIGN_GET_SPECIFIED(flags)				\
-     (ZU(1) << (flags & MALLOCX_LG_ALIGN_MASK))
- #define	MALLOCX_ALIGN_GET(flags)					\
+ /*
 --- a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in	2015-09-15 13:37:17.326056000 +0800
 +++ b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in	2015-09-15 13:37:51.959830000 +0800
 @@ -204,6 +204,9 @@

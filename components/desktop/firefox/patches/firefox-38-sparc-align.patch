@@ -20,7 +20,7 @@ diff --git a/js/xpconnect/src/XPCShellImpl.cpp b/js/xpconnect/src/XPCShellImpl.c
 +
      JSRuntime* rt;
      JSContext* cx;
-     int result;
+     int result = 0;
      nsresult rv;
  
      gErrFile = stderr;
@@ -64,6 +64,6 @@ diff --git a/toolkit/xre/nsAppRunner.cpp b/toolkit/xre/nsAppRunner.cpp
 +    asm ( "ta 6" );
 +#endif
 +
-   char aLocal;
-   GeckoProfilerInitRAII profilerGuard(&aLocal);
+   ScopedLogging log;
  
+ #if defined(MOZ_SANDBOX) && defined(XP_LINUX) && !defined(ANDROID)

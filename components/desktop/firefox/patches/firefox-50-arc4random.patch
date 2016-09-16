@@ -1,0 +1,152 @@
+ARC4RANDOM_EXPORT is defined as extern. Fixes issues in arc4random and libevent.
+Solaris specific changes, will not send upstream.
+
+--- a/ipc/chromium/src/third_party/libevent/arc4random.c    2016-03-01 09:29:36.602447178 -0800
++++ b/ipc/chromium/src/third_party/libevent/arc4random.c    2016-03-01 10:17:51.627857034 -0800
+@@ -445,8 +445,8 @@ arc4random_stir(void)
+ #endif
+
+ #ifndef ARC4RANDOM_NOADDRANDOM
+-ARC4RANDOM_EXPORT void
+-arc4random_addrandom(const unsigned char *dat, int datlen)
++extern void
++arc4random_addrandom(uchar_t *dat, size_t datlen)
+ {
+        int j;
+        _ARC4_LOCK();
+@@ -477,7 +477,7 @@ arc4random(void)
+ }
+ #endif
+
+-ARC4RANDOM_EXPORT void
++extern void
+ arc4random_buf(void *_buf, size_t n)
+ {
+        unsigned char *buf = _buf;
+--- a/config/system-headers	2015-11-03 11:34:17.000000000 +0100
++++ b/config/system-headers	2015-11-09 03:34:24.577525000 +0100
+@@ -1064,7 +1064,6 @@
+ sys/stat.h
+ sys/statvfs.h
+ sys/syscall.h
+-sys/sysctl.h
+ sys/sysinfo.h
+ sys/sysmp.h
+ sys/syssgi.h
+--- a/ipc/chromium/src/third_party/libevent/arc4random.c	2016-03-23 11:47:53.743867536 -0700
++++ b/ipc/chromium/src/third_party/libevent/arc4random.c	2016-03-23 11:48:38.956865864 -0700
+@@ -41,6 +41,10 @@
+  * RC4 is a registered trademark of RSA Laboratories.
+  */
+ 
++#if defined (OS_SOLARIS)
++#undef _EVENT_HAVE_SYS_SYSCTL_H
++#endif
++
+ #ifndef ARC4RANDOM_EXPORT
+ #define ARC4RANDOM_EXPORT
+ #endif
+@@ -59,7 +61,7 @@
+ #include <sys/param.h>
+ #include <sys/time.h>
+ #ifdef _EVENT_HAVE_SYS_SYSCTL_H
+-#include <sys/sysctl.h>
++;//#include <sys/sysctl.h>
+ #endif
+ #endif
+ #include <limits.h>
+--- a/ipc/chromium/moz.build	2016-03-28 13:41:06.878922929 -0700
++++ b/ipc/chromium/moz.build	2016-03-28 13:42:04.555448660 -0700
+@@ -161,6 +161,23 @@ if os_bsd or os_linux:
+             'src/base/message_pump_qt.cc',
+         ]
+ 
++if os_solaris:
++    SOURCES += [
++	'src/base/atomicops_internals_x86_gcc.cc',
++	'src/base/idle_timer_none.cc',
++	'src/base/process_util_linux.cc',
++	'src/base/time_posix.cc',
++    ]
++    if CONFIG['MOZ_WIDGET_GTK']:
++	SOURCES += [
++            'src/base/message_pump_glib.cc',
++	]
++    if not CONFIG['MOZ_NATIVE_LIBEVENT']:
++	SOURCES += [
++            'src/third_party/libevent/devpoll.c',
++	]
++    LOCAL_INCLUDES += ['src/third_party/libevent/solaris']
++
+ ost = CONFIG['OS_TEST']
+ if '86' not in ost and 'arm' not in ost and 'mips' not in ost:
+     SOURCES += [
+diff a/ipc/chromium/src/third_party/libeventcommon.mozbuild b/ipc/chromium/src/third_party/libeventcommon.mozbuild
+--- a/ipc/chromium/src/third_party/libeventcommon.mozbuild	2015-11-03 11:34:14.000000000 +0100
++++ b/ipc/chromium/src/third_party/libeventcommon.mozbuild	2015-11-09 03:34:24.579311000 +0100
+@@ -9,6 +9,7 @@
+ os_openbsd = 0
+ os_bsd = 0
+ os_linux = 0
++os_solaris = 0
+ 
+ if CONFIG['OS_ARCH'] == 'WINNT':
+     os_win = 1
+@@ -21,6 +22,9 @@ else:
+                                'NetBSD', 'OpenBSD']:
+         os_bsd = 1
+         libevent_include_suffix = 'bsd'
++    elif CONFIG['OS_ARCH'] == 'SunOS':
++        os_solaris = 1
++        libevent_include_suffix = 'solaris'
+     else:
+         os_linux = 1
+         if CONFIG['OS_TARGET'] == 'Android':
+diff a/ipc/chromium/src/third_party/libevent/event.c b/ipc/chromium/src/third_party/libevent/event.c
+--- a/ipc/chromium/src/third_party/libevent/event.c	2015-11-03 11:34:14.000000000 +0100
++++ b/ipc/chromium/src/third_party/libevent/event.c	2015-11-09 03:34:24.485030000 +0100
+@@ -70,7 +70,7 @@
+ #include "util-internal.h"
+ 
+ #ifdef _EVENT_HAVE_EVENT_PORTS
+-extern const struct eventop evportops;
++//extern const struct eventop evportops;
+ #endif
+ #ifdef _EVENT_HAVE_SELECT
+ extern const struct eventop selectops;
+@@ -79,7 +79,7 @@ extern const struct eventop selectops;
+ extern const struct eventop pollops;
+ #endif
+ #ifdef _EVENT_HAVE_EPOLL
+-extern const struct eventop epollops;
++//extern const struct eventop epollops;
+ #endif
+ #ifdef _EVENT_HAVE_WORKING_KQUEUE
+ extern const struct eventop kqops;
+@@ -94,13 +94,13 @@ extern const struct eventop win32ops;
+ /* Array of backends in order of preference. */
+ static const struct eventop *eventops[] = {
+ #ifdef _EVENT_HAVE_EVENT_PORTS
+-	&evportops,
++	//&evportops,
+ #endif
+ #ifdef _EVENT_HAVE_WORKING_KQUEUE
+ 	&kqops,
+ #endif
+ #ifdef _EVENT_HAVE_EPOLL
+-	&epollops,
++	//&epollops,
+ #endif
+ #ifdef _EVENT_HAVE_DEVPOLL
+ 	&devpollops,
+@@ -2883,8 +2883,8 @@
+ #endif
+ 	if (evsig_global_setup_locks_(enable_locks) < 0)
+ 		return -1;
+-	if (evutil_secure_rng_global_setup_locks_(enable_locks) < 0)
+-		return -1;
++//	if (evutil_secure_rng_global_setup_locks_(enable_locks) < 0)
++//		return -1;
+ 	return 0;
+ }
+ #endif

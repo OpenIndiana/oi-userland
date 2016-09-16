@@ -135,19 +135,6 @@ diff --git a/dom/plugins/ipc/PluginModuleChild.h b/dom/plugins/ipc/PluginModuleC
      NP_PLUGINUNIXINIT mInitializeFunc;
  #elif defined(OS_WIN) || defined(OS_MACOSX)
      NP_PLUGININIT mInitializeFunc;
-diff --git a/dom/plugins/ipc/PluginProcessParent.cpp b/dom/plugins/ipc/PluginProcessParent.cpp
---- a/dom/plugins/ipc/PluginProcessParent.cpp
-+++ b/dom/plugins/ipc/PluginProcessParent.cpp
-@@ -143,6 +143,9 @@
-         else if (base::PROCESS_ARCH_ARM & pluginLibArchitectures & containerArchitectures) {
-           selectedArchitecture = base::PROCESS_ARCH_ARM;
-         }
-+        else if (base::PROCESS_ARCH_SPARC & pluginLibArchitectures & containerArchitectures) {
-+          selectedArchitecture = base::PROCESS_ARCH_SPARC;
-+        }
-         else {
-             return false;
-         }
 diff --git a/ipc/chromium/chromium-config.mozbuild b/ipc/chromium/chromium-config.mozbuild
 --- a/ipc/chromium/chromium-config.mozbuild
 +++ b/ipc/chromium/chromium-config.mozbuild
@@ -161,41 +148,6 @@ diff --git a/ipc/chromium/chromium-config.mozbuild b/ipc/chromium/chromium-confi
      elif CONFIG['OS_ARCH'] == 'DragonFly':
          DEFINES.update({
              'OS_DRAGONFLY': 1,
-diff --git a/ipc/chromium/moz.build b/ipc/chromium/moz.build
---- a/ipc/chromium/moz.build
-+++ b/ipc/chromium/moz.build
-@@ -205,17 +205,25 @@
-             'moc_message_pump_qt.cc',
-         ]
-     if not CONFIG['MOZ_NATIVE_LIBEVENT']:
--        if CONFIG['OS_TARGET'] != 'Android':
-+        if CONFIG['OS_TARGET'] != 'SunOS':
-+            if CONFIG['OS_TARGET'] != 'Android':
-+                SOURCES += [
-+                    'src/third_party/libevent/epoll_sub.c',
-+                ]
-             SOURCES += [
--                'src/third_party/libevent/epoll_sub.c',
-+                'src/third_party/libevent/epoll.c',
-             ]
--        SOURCES += [
--            'src/third_party/libevent/epoll.c',
--        ]
-         if CONFIG['OS_TARGET'] == 'Android':
-             LOCAL_INCLUDES += ['src/third_party/libevent/android']
-         else:
--            LOCAL_INCLUDES += ['src/third_party/libevent/linux']
-+            if CONFIG['OS_TARGET'] != 'SunOS':
-+                LOCAL_INCLUDES += ['src/third_party/libevent/linux']
-+            else:
-+                LOCAL_INCLUDES += ['src/third_party/libevent/solaris']
-+                SOURCES += [
-+                    'src/third_party/libevent/devpoll.c',
-+                    'src/third_party/libevent/evport.c',
-+                ]
- 
- if os_bsd:
-     SOURCES += [
 diff --git a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
 --- a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
 +++ b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
@@ -456,175 +408,6 @@ diff --git a/ipc/chromium/src/base/file_util.h b/ipc/chromium/src/base/file_util
 diff --git a/ipc/chromium/src/base/file_util_posix.cc b/ipc/chromium/src/base/file_util_posix.cc
 --- a/ipc/chromium/src/base/file_util_posix.cc
 +++ b/ipc/chromium/src/base/file_util_posix.cc
-@@ -8,7 +8,7 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <fnmatch.h>
--#ifndef ANDROID
-+#if !defined(ANDROID) && !defined(OS_SOLARIS)
- #include <fts.h>
- #endif
- #include <libgen.h>
-@@ -67,9 +67,34 @@
-   if (!recursive)
-     return (rmdir(path_str) == 0);
- 
--#ifdef ANDROID
-+#if defined(ANDROID)
-   // XXX Need ftsless impl for bionic
-   return false;
-+#elif defined(OS_SOLARIS)
-+  bool success = true;
-+  std::stack<std::string> directories;
-+  directories.push(path.value());
-+  FileEnumerator traversal(path, true, static_cast<FileEnumerator::FILE_TYPE>(
-+        FileEnumerator::FILES | FileEnumerator::DIRECTORIES |
-+        FileEnumerator::SHOW_SYM_LINKS));
-+  for (FilePath current = traversal.Next(); success && !current.empty();
-+       current = traversal.Next()) {
-+    FileEnumerator::FindInfo info;
-+    traversal.GetFindInfo(&info);
-+
-+    if (S_ISDIR(info.stat.st_mode))
-+      directories.push(current.value());
-+    else
-+      success = (unlink(current.value().c_str()) == 0);
-+  }
-+
-+  while (success && !directories.empty()) {
-+    FilePath dir = FilePath(directories.top());
-+    directories.pop();
-+    success = (rmdir(dir.value().c_str()) == 0);
-+  }
-+
-+  return success; 
- #else
-   bool success = true;
-   int ftsflags = FTS_PHYSICAL | FTS_NOSTAT;
-@@ -140,14 +165,98 @@
-     return false;
-   }
- 
--#ifdef ANDROID
-+#if defined(ANDROID)
-   // XXX Need ftsless impl for bionic
-   return false;
-+#elif defined(OS_SOLARIS)
-+  // This function does not properly handle destinations within the source
-+  FilePath real_to_path = to_path;
-+  if (PathExists(real_to_path)) {
-+    if (!AbsolutePath(&real_to_path))
-+      return false;
-+  } else {
-+    real_to_path = real_to_path.DirName();
-+    if (!AbsolutePath(&real_to_path))
-+      return false;
-+  }
-+  FilePath real_from_path = from_path;
-+  if (!AbsolutePath(&real_from_path))
-+    return false;
-+  if (real_to_path.value().size() >= real_from_path.value().size() &&
-+      real_to_path.value().compare(0, real_from_path.value().size(),
-+      real_from_path.value()) == 0)
-+    return false;
-+
-+  bool success = true;
-+  FileEnumerator::FILE_TYPE traverse_type =
-+      static_cast<FileEnumerator::FILE_TYPE>(FileEnumerator::FILES |
-+      FileEnumerator::SHOW_SYM_LINKS);
-+  if (recursive)
-+    traverse_type = static_cast<FileEnumerator::FILE_TYPE>(
-+        traverse_type | FileEnumerator::DIRECTORIES);
-+  FileEnumerator traversal(from_path, recursive, traverse_type);
-+
-+  // We have to mimic windows behavior here. |to_path| may not exist yet,
-+  // start the loop with |to_path|.
-+  FileEnumerator::FindInfo info;
-+  FilePath current = from_path;
-+  if (stat(from_path.value().c_str(), &info.stat) < 0) {
-+    CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't stat source directory: " <<
-+        from_path.value() << " errno = " << errno;
-+    success = false;
-+  }
-+  struct stat to_path_stat;
-+  FilePath from_path_base = from_path;
-+  if (recursive && stat(to_path.value().c_str(), &to_path_stat) == 0 &&
-+      S_ISDIR(to_path_stat.st_mode)) {
-+    // If the destination already exists and is a directory, then the
-+    // top level of source needs to be copied.
-+    from_path_base = from_path.DirName();
-+  }
-+
-+  // The Windows version of this function assumes that non-recursive calls
-+  // will always have a directory for from_path.
-+  DCHECK(recursive || S_ISDIR(info.stat.st_mode));
-+
-+  while (success && !current.empty()) {
-+    // current is the source path, including from_path, so paste
-+    // the suffix after from_path onto to_path to create the target_path.
-+    std::string suffix(&current.value().c_str()[from_path_base.value().size()]);
-+    // Strip the leading '/' (if any).
-+    if (!suffix.empty()) {
-+      DCHECK_EQ('/', suffix[0]);
-+      suffix.erase(0, 1);
-+    }
-+    const FilePath target_path = to_path.Append(suffix);
-+
-+    if (S_ISDIR(info.stat.st_mode)) {
-+      if (mkdir(target_path.value().c_str(), info.stat.st_mode & 01777) != 0 &&
-+          errno != EEXIST) {
-+        CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't create directory: " <<
-+            target_path.value() << " errno = " << errno;
-+        success = false;
-+      }
-+    } else if (S_ISREG(info.stat.st_mode)) {
-+      if (!CopyFile(current, target_path)) {
-+        CHROMIUM_LOG(ERROR) << "CopyDirectory() couldn't create file: " <<
-+            target_path.value();
-+        success = false;
-+      }
-+    } else {
-+      CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping non-regular file: " <<
-+          current.value();
-+    }
-+
-+    current = traversal.Next();
-+    traversal.GetFindInfo(&info);
-+  }
-+
-+  return success;
- #else
-   char* dir_list[] = { top_dir, NULL };
-   FTS* fts = fts_open(dir_list, FTS_PHYSICAL | FTS_NOSTAT, NULL);
-   if (!fts) {
--    CHROMIUM_LOG(ERROR) << "fts_open failed: " << strerror(errno);
-+    CHROMIUM_CHROMIUM_LOG(ERROR) << "fts_open failed: " << strerror(errno);
-     return false;
-   }
- 
-@@ -203,11 +312,11 @@
-         break;
-       case FTS_SL:      // Symlink.
-       case FTS_SLNONE:  // Symlink with broken target.
--        CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping symbolic link: " <<
-+        CHROMIUM_CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping symbolic link: " <<
-             ent->fts_path;
-         continue;
-       case FTS_DEFAULT:  // Some other sort of file.
--        CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping file of unknown type: " <<
-+        CHROMIUM_CHROMIUM_LOG(WARNING) << "CopyDirectory() skipping file of unknown type: " <<
-             ent->fts_path;
-         continue;
-       default:
-@@ -227,7 +336,7 @@
-   }
- 
-   if (error) {
--    CHROMIUM_LOG(ERROR) << "CopyDirectory(): " << strerror(error);
-+    CHROMIUM_CHROMIUM_LOG(ERROR) << "CopyDirectory(): " << strerror(error);
-     return false;
-   }
-   return true;
 @@ -446,7 +555,7 @@
  }
  
@@ -976,22 +759,13 @@ diff --git a/ipc/chromium/src/base/process_util.h b/ipc/chromium/src/base/proces
  #include <map>
  #include <string>
  #include <vector>
-@@ -71,7 +75,8 @@
-   PROCESS_ARCH_I386 = 0x1,
-   PROCESS_ARCH_X86_64 = 0x2,
-   PROCESS_ARCH_PPC = 0x4,
--  PROCESS_ARCH_ARM = 0x8
-+  PROCESS_ARCH_ARM = 0x8,
-+  PROCESS_ARCH_SPARC = 0x10
- };
- 
- inline ProcessArchitecture GetCurrentProcessArchitecture()
-@@ -85,6 +90,8 @@
+@@ -86,8 +86,8 @@
    currentArchitecture = base::PROCESS_ARCH_PPC;
  #elif defined(ARCH_CPU_ARMEL)
    currentArchitecture = base::PROCESS_ARCH_ARM;
-+#elif defined(ARCH_CPU_SPARC)
-+  currentArchitecture = base::PROCESS_ARCH_SPARC;
+-#elif defined(ARCH_CPU_MIPS)
++#elif defined(ARCH_CPU_MIPS) || defined(ARCH_CPU_SPARC)
+   currentArchitecture = base::PROCESS_ARCH_MIPS;
  #endif
    return currentArchitecture;
  }
@@ -1051,15 +825,6 @@ diff --git a/ipc/chromium/src/base/sys_info_posix.cc b/ipc/chromium/src/base/sys
  
  // static
  std::string SysInfo::OperatingSystemName() {
--  utsname info;
-+  struct utsname info;
-   if (uname(&info) < 0) {
-     NOTREACHED();
-     return "";
-@@ -129,7 +129,7 @@
- 
- // static
- std::string SysInfo::OperatingSystemVersion() {
 -  utsname info;
 +  struct utsname info;
    if (uname(&info) < 0) {
@@ -1984,7 +1749,16 @@ diff --git a/config/system-headers b/config/system-headers
 diff --git a/ipc/glue/MessageLink.cpp b/ipc/glue/MessageLink.cpp
 --- a/ipc/glue/MessageLink.cpp
 +++ b/ipc/glue/MessageLink.cpp
-@@ -338,17 +338,17 @@ ProcessLink::OnChannelOpened()
+@@ -350,7 +354,7 @@
+         mExistingListener = mTransport->set_listener(this);
+ #ifdef DEBUG
+         if (mExistingListener) {
+-            queue<Message> pending;
++            std::queue<Message> pending;
+             mExistingListener->GetQueuedMessages(pending);
+             MOZ_ASSERT(pending.empty());
+         }
+@@ -366,17 +366,17 @@ ProcessLink::OnChannelOpened()
      /*assert*/mTransport->Connect();
  }
  

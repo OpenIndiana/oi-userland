@@ -1,19 +1,19 @@
 Can probably send upstream. 
 
+--- a/media/libvpx/moz.build
++++ b/media/libvpx/moz.build
+@@ -97,3 +97,8 @@ if CONFIG['OS_TARGET'] == 'Android':
+     ASFLAGS += [
+         '-D__ANDROID__'
+     ]
++
++if CONFIG['OS_TARGET'] == 'SunOS':
++    ASFLAGS += [
++        '-DSOLARIS'
++    ]
 diff --git a/media/libvpx/Makefile.in b/media/libvpx/Makefile.in
 --- a/media/libvpx/Makefile.in
 +++ b/media/libvpx/Makefile.in
-@@ -14,6 +14,10 @@
-   ASFLAGS += -D__ANDROID__
- endif
- 
-+ifeq ($(OS_TARGET),SunOS)
-+ASFLAGS+=-DSOLARIS=1
-+endif  
-+
- ifdef VPX_ARM_ASM
- # Building on an ARM platform with a supported assembler, include
- # the optimized assembly in the build.
 @@ -121,7 +125,7 @@
  # Workaround a bug of Sun Studio (CR 6963410)
  ifdef SOLARIS_SUNPRO_CC
