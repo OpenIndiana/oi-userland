@@ -2,17 +2,9 @@ In-house patch to add support for Solaris 11.3 and 12.0.  This patch
 has not yet been submitted upstream due to requirements for 3rd party
 CI testing.
 
---- openstack-swift-6.1.0/manifests/params.pp.orig	2016-04-21 08:33:03.312647988 -0700
-+++ openstack-swift-6.1.0/manifests/params.pp	2016-04-21 08:33:26.608565136 -0700
-@@ -1,3 +1,7 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
- # == Class: swift::params
- #
- class swift::params {
-@@ -58,6 +62,29 @@ class swift::params {
+--- openstack-swift-8.2.0/manifests/params.pp.~1~       2016-07-28 12:33:14.000000000 +0000
++++ openstack-swift-8.2.0/manifests/params.pp   2016-09-16 07:00:57.400131753 +0000
+@@ -58,6 +58,32 @@ class swift::params {
        $service_provider                  = undef
        $swift3                            = 'openstack-swift-plugin-swift3'
      }
@@ -20,23 +12,26 @@ CI testing.
 +      $package_name                      = 'cloud/openstack/swift'
 +      $client_package                    = 'library/python/swiftclient'
 +      $proxy_package_name                = 'cloud/openstack/swift'
-+      $proxy_service_name                = 'application/openstack/swift/swift-proxy-server:default'
++      $proxy_server_service_name         = 'application/openstack/swift/swift-proxy-server:default'
 +      $object_package_name               = 'cloud/openstack/swift'
-+      $object_service_name               = 'application/openstack/swift/swift-object-server:default'
++      $object_server_service_name        = 'application/openstack/swift/swift-object-server:default'
 +      $object_auditor_service_name       = 'application/openstack/swift/swift-object-auditor:default'
 +      $object_replicator_service_name    = 'application/openstack/swift/swift-object-replicator:default'
 +      $object_updater_service_name       = 'application/openstack/swift/swift-object-updater:default'
++      $object_expirer_package_name       = 'cloud/openstack/swift'
++      $object_expirer_service_name       = 'application/openstack/swift/swift-object-expirer:default'
 +      $container_package_name            = 'cloud/openstack/swift'
-+      $container_service_name            = 'application/openstack/swift/swift-container-server:default'
++      $container_server_service_name     = 'application/openstack/swift/swift-container-server:default'
 +      $container_auditor_service_name    = 'application/openstack/swift/swift-container-auditor:default'
 +      $container_replicator_service_name = 'application/openstack/swift/swift-container-replicator:default'
 +      $container_updater_service_name    = 'application/openstack/swift/swift-container-updater:default'
++      $container_sync_service_name       = 'application/openstack/swift/swift-container-sync:default'
 +      $account_package_name              = 'cloud/openstack/swift'
-+      $account_service_name              = 'application/openstack/swift/swift-account-server:default'
++      $account_server_service_name       = 'application/openstack/swift/swift-account-server:default'
 +      $account_auditor_service_name      = 'application/openstack/swift/swift-account-auditor:default'
 +      $account_reaper_service_name       = 'application/openstack/swift/swift-account-reaper:default'
 +      $account_replicator_service_name   = 'application/openstack/swift/swift-account-replicator:default'
-+      $service_provider                  = 'smf'
++      $service_provider                  = undef
 +      $swift3                            = undef
 +    }
      default: {
