@@ -23,9 +23,7 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../../make-rules/shared-macros.mk
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	3.4
@@ -37,11 +35,11 @@ COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.4
+APACHE_USR_PREFIX=/usr/apache2/2.2
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -69,16 +67,14 @@ $(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --wi
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec ; \
+	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec ; \
 		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec/$(MACH64) ; \
+	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec/$(MACH64) ; \
 		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
 
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
 COMPONENT_VERSION=	2.0.9
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	utility/apache
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/justmake.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
@@ -73,6 +73,9 @@ install: $(INSTALL_32)
 #test: $(TEST_32)
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += web/server/apache-24

@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
@@ -29,8 +29,8 @@ COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
 
-include ../../../make-rules/justmake.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
 VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
@@ -59,8 +59,6 @@ $(VARIANT_APACHE24)/$(MACH64)/.built: BITS=64
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-
 download:
 
 clobber: clean
@@ -76,6 +74,6 @@ build: $(BUILD_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24

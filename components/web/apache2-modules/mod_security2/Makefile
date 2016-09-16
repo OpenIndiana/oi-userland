@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
 COMPONENT_VERSION=	2.7.7
@@ -52,9 +52,9 @@ $(VARIANT_APACHE24)/$(MACH64)/.configured:  BITS=64
 $(VARIANT_APACHE22)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.2
 $(VARIANT_APACHE24)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.4
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
 APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
@@ -74,6 +74,11 @@ $(SOURCE_DIR)/modsecurity.conf-recommended-24: $(SOURCE_DIR)/.prep
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24
