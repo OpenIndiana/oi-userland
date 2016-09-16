@@ -28,13 +28,13 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	3.5.0
+COMPONENT_VERSION=	3.5.2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:92c83ad8a4fd6224cf6319a60b399854f55b38ebe9d297c942408b792b1a9efa
+    sha256:92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a
 COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 
-TPNO=			27412
+TPNO=			29071
 
 # configure in cmake does not accept many of the options set in
 # configure.mk (CC=, CXX=, --bindir, --libdir, --sbindir).
@@ -42,6 +42,7 @@ CONFIGURE_DEFAULT_DIRS= no
 
 # expected failure for test: CTestTestUpload
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Remove undesriable /opt/csw lines from the Modules/*.cmake files.
@@ -101,11 +102,20 @@ COMPONENT_TEST_ENV += https_proxy="$(HTTPS_PROXY)"
 COMPONENT_TEST_ENV += HTTP_PROXY="$(HTTP_PROXY)"
 COMPONENT_TEST_ENV += HTTPS_PROXY="$(HTTPS_PROXY)"
 
+# Results output is different on Intel vs. SPARC.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
 COMPONENT_TEST_TARGETS =	test
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
-	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"'
+	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"' \
+	'-e "/bin/ctest/d"' \
+	'-e "/Test project/d"' \
+	'-e "/^[mM]ake/d"' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 COMPONENT_SYSTEM_TEST_ENV += CC="$(CC)"
 COMPONENT_SYSTEM_TEST_ENV += CXX="$(CXX)"
