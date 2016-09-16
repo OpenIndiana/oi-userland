@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa-demos
 COMPONENT_VERSION= 8.3.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The Mesa 3-D Graphics demo applications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
