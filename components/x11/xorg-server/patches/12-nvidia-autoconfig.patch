@@ -18,20 +18,28 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
-index ab9a37a..891623d 100644
---- a/hw/xfree86/common/xf86Config.c
-+++ b/hw/xfree86/common/xf86Config.c
-@@ -533,6 +533,25 @@ fixup_video_driver_list(char **drivers)
-             }
-         }
-     }
+--- xorg-server-1.18.4/hw/xfree86/common/xf86Config.c.orig	2016-09-17 00:07:50.879400615 +0200
++++ xorg-server-1.18.4/hw/xfree86/common/xf86Config.c	2016-09-17 00:08:09.608273665 +0200
+@@ -559,13 +559,34 @@
+ static void
+ fixup_video_driver_list(const char **drivers)
+ {
+-    const char **end;
++    const char **end, **drv;
++    const char *x;
+ 
+     /* walk to the end of the list */
+     for (end = drivers; *end && **end; end++);
+     end--;
+ 
+     qsort(drivers, end - drivers, sizeof(const char *), driver_sort);
++
 +    /*
 +     * Since the nvidia kernel driver interferes with the nv Xorg driver,
 +     * make sure to prefer nvidia if it's installed
 +     */
 +    for (drv = drivers; drv != end; drv++) {
-+	char **nv, **nvidia;
++        char **nv, **nvidia;
 +        if (!strcmp(*drv, "nv")) {
 +            nv = drv;
 +            for (drv = nv; drv != end; drv++) {
@@ -47,4 +55,4 @@ index ab9a37a..891623d 100644
 +    }
  }
  
- static char **
+ static const char **
