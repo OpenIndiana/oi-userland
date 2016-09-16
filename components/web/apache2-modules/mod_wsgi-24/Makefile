@@ -25,19 +25,22 @@
 
 include ../../../../make-rules/shared-macros.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	3.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ae85c98e9e146840ab3c3e4490e6774f9bef0f99b9f679fca786b2adb5b4b6e8
-COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:5d8e7789f6b2c84696bf58da6e6489246722e13a7ed137f7c9b32f8010017250
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/28/a7/de0dd1f4fae5b2ace921042071ae8563ce47dac475b332e288bc1d773e8d/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PYTHON_VERSIONS = 2.7 3.4
 
 APACHE_USR_PREFIX=/usr/apache2/2.4
 
@@ -47,13 +50,13 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # The following four paragraphs are copied from setup.py.mk
 # but since mod_wsgi doesn't use setup.py, we can't just include
 # setup.py.mk
-$(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
-$(BUILD_DIR)/%-2.6/.installed:	PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.installed:  PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
@@ -66,15 +69,12 @@ INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 $(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --with-python=$(PYTHON.32) 
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
-$(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec ; \
-		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
-
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec/$(MACH64) ; \
-		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
-
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/server/apache-24
