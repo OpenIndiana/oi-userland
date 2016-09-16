@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
 COMPONENT_VERSION=	3.4.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -120,6 +121,10 @@ COMPONENT_BUILD_ARGS =
 COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dynload
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+COMPONENT_POST_INSTALL_ACTION= \
+	(cd $(PROTOUSRDIR) ;  \
+		$(MV) include/python3.4m/pyconfig.h include/python3.4m/pyconfig-$(BITS).h )
 
 # common targets
 $(INSTALL_32):	$(INSTALL_64)
