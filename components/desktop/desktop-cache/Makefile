@@ -46,4 +46,5 @@ $(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
 validate-smf:	$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
 build:		$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
 
+REQUIRED_PACKAGES += service/opengl/ogl-select
 REQUIRED_PACKAGES += system/core-os

@@ -52,6 +52,17 @@
 		<service_fmri value='svc:/system/filesystem/minimal' />
 	</dependency>
 
+	<!-- gtk is linked to cairo which is linked to libGL, so we need
+	     libGL to be resolvable so we don't get file-not-found errors
+	     trying to load libraries in gtk-query-immodules -->
+	<dependency
+		name='ogl-select'
+		type='service'
+		grouping='require_all'
+		restart_on='none'>
+		<service_fmri value='svc:/application/opengl/ogl-select' />
+	</dependency>
+
 	<dependent
                 name='input_method_cache-assembly-complete'
                 grouping='optional_all'
