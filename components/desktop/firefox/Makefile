@@ -191,6 +191,9 @@ COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/\(^TEST-PASS\).*/d" '
 
+REQUIRED_PACKAGES += codec/libogg
+REQUIRED_PACKAGES += codec/libvorbis
+REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
