@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms
 COMPONENT_VERSION=      1.19
+COMPONENT_REVISION=	1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -32,10 +33,10 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lcms
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
@@ -66,28 +67,12 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     $(RM) -f $(SOURCE_DIR)/include/icc34.h ; \
     $(CP) -p include/icc34.h $(SOURCE_DIR)/include/ )
 
-# After we have configured, make a copy of the python bits so we
-# can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION += ; (cd $(@D) ; cp -rp python python2.7 ; \
-	 		$(GSED) -i -e 's/2[.]6/2.7/g' python2.7/Makefile)
-
-# After we have built/installed lcms, rebuild/install the python
-# support for python 2.7
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
-
 LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 
 test: $(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
