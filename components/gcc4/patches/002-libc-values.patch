@@ -1,0 +1,46 @@
+#
+# As the comment mentions below, match the values-*.o that selects the libc
+# behaviour for the C/C++ standard selected on the command line.
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=40411
+#
+--- gcc-4.9.4/gcc/config/sol2.h	2014-05-28 06:37:50.000000000 -0500
++++ gcc-4.9.4/gcc/config/sol2.h	2016-08-09 23:59:08.116828625 -0500
+@@ -126,10 +126,35 @@
+ #define MD_STARTFILE_PREFIX "/usr/ccs/lib/"
+ #endif
+ 
+-#undef STARTFILE_ARCH32_SPEC
+-#define STARTFILE_ARCH32_SPEC "%{ansi:values-Xc.o%s} \
+-			    %{!ansi:values-Xa.o%s}"
++/* Solaris libc and libm implement multiple behaviours for various interfaces
++   that have changed over the years in different versions of the standards.
++   The behaviour is controlled by linking corresponding values-*.o objects.
++   Each of these objects contain alternate defintions of one or more variables
++   that libc uses to select which conflicting behaviour it should exhibit.
++   There are two sets of these objects, values-X*.o and values-xpg*.o.
+ 
++   The values-X*.o objects set the variable _lib_version to one of strict_ansi,
++   ansi_1, or c_issue_4.  Ignoring '-Xt' and '-Xs', unless '-Xc' is used with
++   the Solaris Studio C/C++ compilers, it appears that values-Xa.o is linked
++   into resulting executable program regardless of which '-std=' setting is
++   selected.
++
++   The values-xpg*.o objects define one or more __xpg* variables.  No
++   values-xpg*.o object is linked in unless the equivalent of '-std=c99|c11'
++   is used during the linking of an executable program.  In either of those
++   cases, values-xpg6.o is linked.
++
++   The below spec string is reasonably consistent with that behaviour. */
++#undef STARTFILE_ARCH32_SPEC
++#define STARTFILE_ARCH32_SPEC \
++    "%{!shared:%{!symbolic: \
++       %{ansi:values-Xc.o%s; :values-Xa.o%s} \
++       %{std=c99|std=c9x|std=gnu99|std=gnu9x:values-xpg6.o%s} \
++       %{std=c11|std=c1x|std=gnu11|std=gnu1x:values-xpg6.o%s} \
++       %{std=c++11|std=c++0x|std=gnu++11|std=gnu++0x:values-xpg6.o%s} \
++       %{std=c++14|std=c++1y|std=gnu++14|std=gnu++1y:values-xpg6.o%s} \
++       %{std=c++1z|std=gnu++1z:values-xpg6.o%s}}}"
++ 
+ #undef STARTFILE_ARCH_SPEC
+ #define STARTFILE_ARCH_SPEC STARTFILE_ARCH32_SPEC
+ 

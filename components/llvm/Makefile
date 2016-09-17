@@ -28,6 +28,9 @@ COMPILER=gcc
 
 include ../../make-rules/shared-macros.mk
 
+# We use GCC version 4.9.3, and not another version for now.
+GCC_ROOT=/usr/gcc/4.9
+
 COMPONENT_NAME=		llvm
 COMPONENT_VERSION=	3.8.1
 COMPONENT_PROJECT_URL=	http://llvm.org/
@@ -74,14 +77,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL := 0
 DEBUG_BUILD := 0
-GCC_VERSION := 4.9
 HAVE_SPHINX := 0
 
 export PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/$(PERL_VERSION)/bin
-
-# We use GCC version 4.9.3, and not another version for now.
-CC=$(USRDIR)/gcc/$(GCC_VERSION)/bin/gcc
-CXX=$(USRDIR)/gcc/$(GCC_VERSION)/bin/g++
 
 # We're building with CMake
 CMAKE=/usr/bin/cmake
@@ -119,8 +117,8 @@ CMAKE_INSTALL_DATAROOTDIR = share
 # We need the specific C++ runtime that clang/llvm was built and
 # linked with, and not some random and incompatible stuff from
 # /usr/lib.
-LLVM_RUNPATH_32 = /usr/gcc/$(GCC_VERSION)/lib
-LLVM_RUNPATH_64 = /usr/gcc/$(GCC_VERSION)/lib/$(MACH64)
+LLVM_RUNPATH_32 = $(GCC_ROOT)/lib
+LLVM_RUNPATH_64 = $(GCC_ROOT)/lib/$(MACH64)
 LLVM_RUNPATH = $(LLVM_RUNPATH_$(BITS))
 
 # -O0. GCC on SPARC dies with an out-memory error in cc1plus when

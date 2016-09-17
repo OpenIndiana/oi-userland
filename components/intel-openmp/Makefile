@@ -28,6 +28,10 @@ COMPILER = gcc
 
 include ../../make-rules/shared-macros.mk
 
+# We are using GCC 4.9 with LLVM, use it here too for the time being.
+# Switch to GCC 5.3 if/when LLVM can.
+GCC_ROOT=/usr/gcc/4.9
+
 COMPONENT_NAME        = libomp
 COMPONENT_VERSION     = 20151009
 COMPONENT_SRC         = $(COMPONENT_NAME)_$(COMPONENT_VERSION)
@@ -51,12 +55,7 @@ endif
 
 include $(WS_MAKE_RULES)/common.mk
 
-# We are using GCC 4.9 with LLVM, use it here too for the time being.
-# Switch to GCC 5.3 if/when LLVM can.
-CC = /usr/gcc/4.9/bin/gcc
-CXX = /usr/gcc/4.9/bin/g++
-
-export PATH=/usr/gnu/bin:/usr/gcc/$(GCC_V)/bin:/usr/bin:/usr/perl5/5.22/bin
+export PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl5/5.22/bin
 
 PATCH_LEVEL := 0
 DEBUG_BUILD := 0

@@ -1,0 +1,24 @@
+#
+# We have made several changes to headers in Solaris 11/12 so that we no
+# longer need to "fix" them.  This patch limits what we fix and keep.
+#
+# We will want to spend time going through inclhack.def to make sure that
+# it only targets those things that we want "fixed" in S12 and later before
+# we submit anything upstream.
+#
+--- gcc-5.3.0.orig/fixincludes/fixinc.in	Sun Oct 28 14:42:48 2012
++++ gcc-5.3.0/fixincludes/fixinc.in	Fri Jan 22 23:13:39 2016
+@@ -471,6 +471,13 @@
+ # DOS/Windows filesystems.
+ find . -name '[Dd][Oo][Nn][Ee]' -exec rm -f '{}' ';'
+ 
++# We only want limits.h, syslimits.h, and feature_tests.h fixed on Solaris
++for file in `find . -type f | \
++             egrep -v './(limits.h|syslimits.h|sys/feature_tests.h)'` ; do
++  echo Removing $file
++  rm -f $file
++done
++
+ if test $VERBOSE -gt 1
+ then echo 'Cleaning up unneeded directories:' ; fi
+ cd $LIB
