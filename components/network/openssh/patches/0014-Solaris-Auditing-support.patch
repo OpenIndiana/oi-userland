@@ -112,7 +112,7 @@ new file mode 100644
 index 0000000..abf870c
 --- /dev/null
 +++ b/audit-solaris.c
-@@ -0,0 +1,562 @@
+@@ -0,0 +1,574 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -289,26 +289,36 @@ index 0000000..abf870c
 +audit_connection_from(const char *host, int port)
 +{
 +	int peer = packet_get_connection_in();
-+	adt_session_data_t	*ah;
++	adt_session_data_t	*ah = NULL;
 +
 +	if (adt_load_termid(peer, &tid) != 0) {
 +		error("adt audit_connection_from: unable to load tid for %d:%s",
 +		    peer, strerror(errno));
++		return;
 +	}
 +	if (adt_start_session(&ah, NULL, 0) != 0) {
 +		error("adt audit_connection_from: unable to start session "
 +		    "for %s:%d:%s", host, port, strerror(errno));
++		free(tid);
++		tid = NULL;
++		return;
 +	}
 +	if (adt_set_user(ah, ADT_NO_AUDIT, ADT_NO_AUDIT, 0,
 +	    ADT_NO_AUDIT, tid, ADT_SETTID) != 0) {
 +		error("adt audit_connection_from: unable to set user "
 +		    "for %s:%d:%s", host, port, strerror(errno));
++		free(tid);
++		tid = NULL;
 +		(void) adt_end_session(ah);
-+		ah = NULL;
++		return;
 +	}
 +	if (adt_set_proc(ah) != 0) {
 +		error("adt audit_connection_from: unable to set proc "
 +		    "for %s:%d:%s", host, port, strerror(errno));
++		free(tid);
++		tid = NULL;
++		(void) adt_end_session(ah);
++		return;
 +	}
 +	(void) adt_end_session(ah);
 +	debug("adt audit_connection_from(%s, %d): peerfd=%d", host, port,
@@ -351,6 +361,8 @@ index 0000000..abf870c
 +		} else {
 +			error("adt audit_event logout without login");
 +		}
++		free(tid);
++		tid = NULL;
 +		return;
 +
 +	/* Translate fail events to Solaris PAM errors */
@@ -437,6 +449,8 @@ index 0000000..abf870c
 +			/* reset saw max tries */
 +			did_maxtries = FALSE;
 +		}
++		free(tid);
++		tid = NULL;
 +		break;
 +
 +	default:
@@ -578,8 +592,6 @@ index 0000000..abf870c
 +	adt_free_event(event);
 +	(void) adt_end_session(ah);
 +	ah = NULL;
-+	free(tid);
-+	tid = NULL;
 +}
 +
 +/*
