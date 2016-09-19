@@ -1,0 +1,31 @@
+Patch origin: in-house
+Patch status: not suitable for upstream
+
+Solaris Studio will report: non-constant initializer: op "?"
+gcc seems to be fine with it.
+
+The change which triggered this issue was change from:
+"struct {" to "static const struct {" .
+
+Compiler bug: 24681821
+
+--- src/configparser.y
++++ src/configparser.y
+@@ -470,6 +470,8 @@
+         char *comp_key;
+         size_t len;
+       } comps[] = {
++#undef  CONST_STR_LEN
++#define CONST_STR_LEN(x) x, sizeof(x) - 1
+         { COMP_SERVER_SOCKET,      CONST_STR_LEN("SERVER[\"socket\"]"   ) },
+         { COMP_HTTP_URL,           CONST_STR_LEN("HTTP[\"url\"]"        ) },
+         { COMP_HTTP_HOST,          CONST_STR_LEN("HTTP[\"host\"]"       ) },
+@@ -484,6 +486,8 @@
+         { COMP_HTTP_QUERY_STRING,  CONST_STR_LEN("HTTP[\"query-string\"]") },
+         { COMP_HTTP_REQUEST_METHOD, CONST_STR_LEN("HTTP[\"request-method\"]") },
+         { COMP_HTTP_SCHEME,        CONST_STR_LEN("HTTP[\"scheme\"]"     ) },
++#undef  CONST_STR_LEN
++#define CONST_STR_LEN(x) x, (x) ? sizeof(x) - 1 : 0
+         { COMP_UNSET, NULL, 0 },
+       };
+       size_t i;

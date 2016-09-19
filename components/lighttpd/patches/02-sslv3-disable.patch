@@ -5,12 +5,12 @@ Always disable SSLv3 and don't allow to enable it ever again.
 
 --- src/network.c
 +++ src/network.c
-@@ -780,7 +780,7 @@
+@@ -845,7 +845,7 @@
  			}
  		}
  
 -		if (!s->ssl_use_sslv3) {
 +		if (1) {
  			/* disable SSLv3 */
- 			if (!(SSL_OP_NO_SSLv3 & SSL_CTX_set_options(s->ssl_ctx, SSL_OP_NO_SSLv3))) {
+ 			if ((SSL_OP_NO_SSLv3 & SSL_CTX_set_options(s->ssl_ctx, SSL_OP_NO_SSLv3)) != SSL_OP_NO_SSLv3) {
  				log_error_write(srv, __FILE__, __LINE__, "ss", "SSL:",

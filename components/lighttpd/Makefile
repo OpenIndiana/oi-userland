@@ -26,13 +26,13 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.39
+COMPONENT_VERSION=	1.4.41
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bc5f910f78b8cbae3e8fe1a1d8558259f09dbe50dd3907db771404bfab27bb2e
+    sha256:8a5749e218237fafc3119dd8a4fcf510ea728728b3fcf1193fcad7209be4b6d7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
-TPNO=			27512
+TPNO=			31753
 
 LIGHTTPD_INSTALLDIR=$(USRDIR)/lighttpd/1.4
 
@@ -58,17 +58,17 @@ CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5/bin/mysql_config
+CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.7/bin/mysql_config
 CONFIGURE_OPTIONS +=    PCRECONFIG="$(USRBINDIR64)/pcre-config"
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' \
+	'-e "s/, *[0-9][0-9]* wallclock secs (.*CPU)$$/, <TIMINGS REMOVED>/" ' \
 	'-e "/^preparing infrastructure/,/make\[4\]: Leaving directory/p" ' \
 	'-e "/.*/d" '
 
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += database/mysql-55
-REQUIRED_PACKAGES += database/mysql-55/library
+REQUIRED_PACKAGES += database/mysql-57
+REQUIRED_PACKAGES += database/mysql-57/library
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
