@@ -28,14 +28,14 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
-COMPONENT_VERSION=	5.3.0
+COMPONENT_VERSION=	5.4.0
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:b7f5f56bd7db6f4fcaa95511dbf69fc596115b976b5352c06531c2fc95ece2f4
+    sha256:37089e80c3f2e9a0663d7ccc51c2a6c7dbbf3275bc1e4ed1ed3b1460cd5b3030
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/gnu-compiler
 
-TPNO=			26089
+TPNO=			29354
 
 # Use gcc's default flags instead of userland's.
 CFLAGS=
@@ -145,7 +145,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Master test results are different between x86 and SPARC.
 COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 REQUIRED_PACKAGES += developer/test/dejagnu
 REQUIRED_PACKAGES += library/gmp
