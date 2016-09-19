@@ -23,21 +23,23 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-common
-COMPONENT_VERSION=	0.58.2
+COMPONENT_VERSION=	0.63.2
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-common/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:c92db7d6bbac880969a439027a8239827a02a90815dbfba6bd4c031d85f4cd61
-COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/extras/python-logilab-common/$(COMPONENT_ARCHIVE)/a745888475d988300a76b0c87a5f4381/$(COMPONENT_ARCHIVE)
+	sha256:603ba00c9bb09219a3bd2906c214d9455481110dacc472f450b53d5ae90f28e7
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/1f/36/70463859e7bd8c37c84f1180da665c2ed394dffd22fc696b70681d871380/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-common
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+
+PYTHON_VERSIONS=2.7
 
 # rename pytest to its versioned name; mediated links (depending on
 # the python version) in the manifest will create the link from pytest
@@ -54,13 +56,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
-	
+
 # The tests are run using python 2.7 only and require that the
-# python-27 package is installed (does not have to be the default python). 
-# Testing using python-26 is done manually, since it requires
-# downloading and installing the unittest2 component (not part of Solaris).
-# which provides python 2.7 functionality to the unittest python library
-# in the python2.6 package.
+# python-27 package is installed (does not have to be the default python).
 
 # Use the python 2.7 libraries (via PYTHONPATH setting) for testing.
 test: PYTHON_VERSION=2.7
@@ -69,12 +67,11 @@ COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-2.7
 COMPONENT_TEST_ARGS =
 
 # Expected failures for test target:
-# 413 test cases, 1 error, 1 failures, 22 skipped
-# 21 modules OK (2 failed)
-# failures: unittest_shellutils [1/23], unittest_date [1/45]
+# 425 test cases, 1 errors, 23 skipped
+# 21 modules OK (1 failed)
+# failures: test_locked_for_one_hour
 
 test:	$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/python/pyorbit-27
+REQUIRED_PACKAGES += runtime/python-27

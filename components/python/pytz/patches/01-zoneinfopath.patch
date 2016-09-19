@@ -1,0 +1,51 @@
+pytz by default ships a private copy of the Olson timezone database, for
+operating systems that don't ship their own.  Since Solaris does, we should
+point at that copy.  The extra table files are in different places between
+the two, so we adjust those paths as well.
+
+--- pytz-2016.6.1/pytz/__init__.py.~1~	2016-07-14 11:20:28.000000000 +0300
++++ pytz-2016.6.1/pytz/__init__.py	2016-09-19 11:47:30.080544638 +0300
+@@ -81,8 +81,7 @@
+     for part in name_parts:
+         if part == os.path.pardir or os.path.sep in part:
+             raise ValueError('Bad path segment: %r' % part)
+-    filename = os.path.join(os.path.dirname(__file__),
+-                            'zoneinfo', *name_parts)
++    filename = os.path.join('/usr/share/lib/zoneinfo', *name_parts)
+     if not os.path.exists(filename):
+         # http://bugs.launchpad.net/bugs/383171 - we avoid using this
+         # unless absolutely necessary to help when a broken version of
+@@ -327,13 +326,15 @@
+
+     def _fill(self):
+         data = {}
+-        zone_tab = open_resource('zone.tab')
++        zone_tab = open_resource('tab/zone_sun.tab')
+         try:
+             for line in zone_tab:
+                 line = line.decode('UTF-8')
+                 if line.startswith('#'):
+                     continue
+                 code, coordinates, zone = line.split(None, 4)[:3]
++                if not code.isupper():
++                    continue
+                 if zone not in all_timezones_set:
+                     continue
+                 try:
+@@ -355,13 +356,15 @@
+     '''
+     def _fill(self):
+         data = {}
+-        zone_tab = open_resource('iso3166.tab')
++        zone_tab = open_resource('tab/country.tab')
+         try:
+             for line in zone_tab.readlines():
+                 line = line.decode('UTF-8')
+                 if line.startswith('#'):
+                     continue
+                 code, name = line.split(None, 1)
++                if not code.isupper():
++                    continue
+                 data[code] = name.strip()
+             self.data = data
+         finally:
