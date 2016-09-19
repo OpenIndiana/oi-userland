@@ -68,8 +68,7 @@ COMPONENT_POST_UNPACK_ACTION += \
 		$(COMPONENT_SRC)/doc/examples/Makefile.am ;
 
 # Recreate configure and top-level Makefile to pickup libsunperf changes.
-COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -f)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fiv)
 
 LDFLAGS += $(CC_BITS)
 LDFLAGS += $(studio_PIC)
