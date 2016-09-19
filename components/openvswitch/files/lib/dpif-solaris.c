@@ -73,6 +73,21 @@ struct dpif_solaris {
 	bool recv_set;
 	int event_rfd;
 	int event_wfd;
+	uint32_t n_handlers;
+	/*
+	 * List of lower links of the OVS ports, over which the upcall_fd(s)
+	 * are created
+	 */
+	struct hmap lowerlinks;
+};
+
+struct dpif_solaris_lowerlink {
+	struct hmap_node node;	/* Node in dpif_solaris's 'lowerlinks'. */
+	char physname[MAXLINKNAMELEN];
+	struct dpif_solaris_handler *handlers;
+	uint32_t n_handlers;
+	uint32_t next_idx;
+	uint32_t nports;
 };
 
 static struct ovs_mutex dp_solaris_mutex = OVS_MUTEX_INITIALIZER;
@@ -82,6 +97,11 @@ static struct shash dp_all_solaris OVS_GUARDED_BY(dp_solaris_mutex) =
     SHASH_INITIALIZER(&dp_all_solaris);
 
 static struct vlog_rate_limit error_rl = VLOG_RATE_LIMIT_INIT(9999, 5);
+
+struct dpif_solaris_handler {
+	int upcall_fd;
+	odp_port_t pf_port_no;
+};
 
 struct dpif_solaris_bridge {
 	char *name;
@@ -108,6 +128,7 @@ struct dpif_solaris_port {
 
 	/* Receive the upcalls */
 	int upcall_fd;			/* PF_PACKET fd for MISS event */
+	struct dpif_solaris_lowerlink *lowerlink;
 
 	/* Send the packet */
 	int xfd;			/* PF_PACKET to execute output action */
@@ -131,19 +152,24 @@ static void dpif_solaris_port_del__(struct dpif_solaris *dpif,
 static void dpif_solaris_destroy_channels(struct dpif_solaris *dpif)
     OVS_REQ_WRLOCK(dpif->upcall_lock);
 static int dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
-    struct dpif_solaris_port *port, const char *physname, boolean_t notify)
+    struct dpif_solaris_port *port, boolean_t notify)
     OVS_REQ_WRLOCK(dpif->port_rwlock);
+static void dpif_solaris_destroy_port_channel(struct dpif_solaris *dpif,
+    struct dpif_solaris_port *port);
 static int dpif_solaris_get_port_by_number(struct dpif_solaris *dpif,
-    odp_port_t port_no, struct dpif_solaris_port **portp)
+    odp_port_t port_no, struct dpif_solaris_port **portp);
     OVS_REQ_RDLOCK(dpif->port_rwlock);
-static int
-dpif_solaris_get_uplink_port_info(struct dpif_solaris *dpif,
+static int dpif_solaris_get_uplink_port_info(struct dpif_solaris *dpif,
     odp_port_t port_no, odp_port_t *uport_nop, int *xfdp,
     enum ovs_vport_type *vtypep);
 static void dpif_solaris_flow_remove(struct dpif_solaris *dpif,
     struct dpif_solaris_flow *flow)
     OVS_REQ_WRLOCK(dpif->flow_rwlock);
 static int dpif_solaris_flow_flush__(struct dpif_solaris *dpif);
+static void dpif_solaris_destroy_lowerlink(struct dpif_solaris *dpif,
+    struct dpif_solaris_lowerlink *lowerlink);
+static int dpif_solaris_create_lowerlink(struct dpif_solaris *dpif,
+    char *physname, struct dpif_solaris_lowerlink **lowerlinkp);
 
 static struct dpif_solaris *
 dpif_solaris_cast(const struct dpif *dpif)
@@ -238,7 +264,9 @@ again:
 		/* port related */
 		ovs_rwlock_init(&dpif->port_rwlock);
 		hmap_init(&dpif->ports);
+		hmap_init(&dpif->lowerlinks);
 		dpif->event_rfd = dpif->event_wfd = -1;
+		dpif->n_handlers = 0;
 
 		/* flow related */
 		ovs_rwlock_init(&dpif->flow_rwlock);
@@ -287,6 +315,7 @@ dp_solaris_free(struct dpif_solaris *dpif)
 	HMAP_FOR_EACH_SAFE(port, next, node, &dpif->ports) {
 		dpif_solaris_port_del__(dpif, port);
 	}
+	ovs_assert(hmap_count(&dpif->lowerlinks) == 0);
 	ovs_rwlock_unlock(&dpif->port_rwlock);
 
 	dpif_solaris_flow_flush__(dpif);
@@ -296,6 +325,7 @@ dp_solaris_free(struct dpif_solaris *dpif)
 	ovs_rwlock_destroy(&dpif->bridge_rwlock);
 
 	hmap_destroy(&dpif->ports);
+	hmap_destroy(&dpif->lowerlinks);
 	ovs_rwlock_destroy(&dpif->port_rwlock);
 
 	hmap_destroy(&dpif->flows);
@@ -490,15 +520,53 @@ dpif_solaris_create_xsocket(struct dpif_solaris *dpif OVS_UNUSED,
 }
 
 static boolean_t
-port_not_used(struct dpif_solaris *dpif, uint32_t port_no)
+port_no_used(struct dpif_solaris *dpif, uint32_t port_no)
     OVS_REQ_WRLOCK(dp->port_rwlock)
 {
 	struct dpif_solaris_port *port;
-	HMAP_FOR_EACH(port, node, &dpif->ports) {
 
-		if (port->port_no == port_no ||
-		    port->pf_port_no == port_no) {
+	HMAP_FOR_EACH(port, node, &dpif->ports) {
+		if (port->port_no == port_no)
 			return (true);
+	}
+	return (false);
+}
+
+/*
+ * Choose an unused, non-zero port number and return it on success.
+ * Return ODPP_NONE on failure.
+ * The current approach to choose unused port number is quite inefficient,
+ * need improvement. TBD
+ */
+static odp_port_t
+choose_port(struct dpif_solaris *dpif)
+    OVS_REQ_WRLOCK(dp->port_rwlock)
+{
+	uint32_t port_no;
+
+	for (port_no = PORT_PF_PACKET_UPLINK + 1;
+	    port_no < MAC_OF_MAXPORT; port_no++) {
+		if (port_no_used(dpif, port_no))
+			continue;
+
+		return (u32_to_odp(port_no));
+	}
+
+	return (ODPP_NONE);
+}
+
+static boolean_t
+pf_port_no_used(struct dpif_solaris *dpif, uint32_t pf_port_no)
+{
+	struct dpif_solaris_lowerlink *lowerlink;
+	int i;
+
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		for (i = 0; i < lowerlink->n_handlers; i++) {
+			ovs_assert(lowerlink->handlers != NULL);
+			ovs_assert(lowerlink->handlers[i].upcall_fd != -1);
+			if (lowerlink->handlers[i].pf_port_no == pf_port_no)
+				return (true);
 		}
 	}
 	return (false);
@@ -511,18 +579,29 @@ port_not_used(struct dpif_solaris *dpif, uint32_t port_no)
  * need improvement. TBD
  */
 static odp_port_t
-choose_port(struct dpif_solaris *dpif, uint32_t exclude_port_no)
+choose_pf_port(struct dpif_solaris *dpif,
+    struct dpif_solaris_lowerlink *lowerlink, int n)
     OVS_REQ_WRLOCK(dp->port_rwlock)
 {
-	uint32_t port_no;
+	uint32_t pf_port_no;
+	int i;
 
-	for (port_no = PORT_PF_PACKET_UPLINK + 1; port_no < OFPP_MAX;
-	    port_no++) {
-		if ((exclude_port_no == ODPP_NONE ||
-		    port_no != exclude_port_no) &&
-		    (!port_not_used(dpif, port_no))) {
-			return (u32_to_odp(port_no));
+	for (pf_port_no = MAC_OF_MAXPORT + 1; pf_port_no < UINT32_MAX;
+	    pf_port_no++) {
+		if (pf_port_no_used(dpif, pf_port_no))
+			continue;
+
+		for (i = 0; i < n; i++) {
+			ovs_assert(lowerlink->handlers != NULL);
+			ovs_assert(lowerlink->handlers[i].upcall_fd != -1);
+			if (lowerlink->handlers[i].pf_port_no == pf_port_no)
+				break;
 		}
+
+		if (i < n)
+			continue;
+
+		return (u32_to_odp(pf_port_no));
 	}
 
 	return (ODPP_NONE);
@@ -655,7 +734,6 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	char physname[MAXLINKNAMELEN];
 	char dlbuffer[DLADM_PROP_VAL_MAX];
 	int error = 0;
-	odp_port_t pf_port_no;
 	boolean_t is_uplink = false;
 
 	vtype = netdev_to_ovs_vport_type(netdev);
@@ -703,17 +781,11 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	ovs_rwlock_wrlock(&dpif->port_rwlock);
 
 	if (*port_nop == ODPP_NONE) {
-		*port_nop = choose_port(dpif, ODPP_NONE);
+		*port_nop = choose_port(dpif);
 		if (*port_nop == ODPP_NONE) {
 			error = EFBIG;
 			goto fail;
 		}
-	}
-	pf_port_no = is_uplink ? PORT_PF_PACKET_UPLINK : choose_port(dpif,
-	    *port_nop);
-	if (pf_port_no == ODPP_NONE) {
-		error = EFBIG;
-		goto fail;
 	}
 	if (vtype == OVS_VPORT_TYPE_NETDEV || vtype == OVS_VPORT_TYPE_VXLAN ||
 	    vtype == OVS_VPORT_TYPE_INTERNAL) {
@@ -732,7 +804,7 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 
 	port = xzalloc(sizeof (*port));
 	port->port_no = *port_nop;
-	port->pf_port_no = pf_port_no;
+	port->pf_port_no = ODPP_NONE;
 	port->name = xstrdup(name);
 	port->linkname = xstrdup(linkname);
 	port->physname = xstrdup(physname);
@@ -753,18 +825,18 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 		}
 	}
 
-	error = dpif_solaris_refresh_port_channel(dpif, port, physname, true);
+	error = dpif_solaris_refresh_port_channel(dpif, port, true);
 	if (error != 0) {
-		VLOG_ERR("dpif_solaris_refresh_port_channel on %s failed: %s",
+		VLOG_ERR("dpif_solaris_refresh_port_channel on %s failed %s",
 		    linkname, ovs_strerror(error));
 		goto fail;
 	}
 
 	if (vtype == OVS_VPORT_TYPE_NETDEV || vtype == OVS_VPORT_TYPE_VXLAN ||
 	    vtype == OVS_VPORT_TYPE_INTERNAL)
-		dpif_solaris_bridge_add_port(dpif, physname, port);
-	hmap_insert(&dpif->ports, &port->node, hash_odp_port(port->port_no));
+		(void) dpif_solaris_bridge_add_port(dpif, physname, port);
 
+	hmap_insert(&dpif->ports, &port->node, hash_odp_port(port->port_no));
 	ovs_rwlock_unlock(&dpif->port_rwlock);
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 	return (0);
@@ -772,11 +844,7 @@ fail:
 	if (port != NULL) {
 		if (port->xfd != -1)
 			(void) close(port->xfd);
-		if (port->upcall_fd != -1) {
-			(void) setsockopt(port->upcall_fd, SOL_PACKET,
-			    PACKET_REM_OF_DEFFLOW, NULL, 0);
-			(void) close(port->upcall_fd);
-		}
+		dpif_solaris_destroy_port_channel(dpif, port);
 		free(port->name);
 		free(port->linkname);
 		free(port->type);
@@ -877,23 +945,19 @@ dpif_solaris_port_del__(struct dpif_solaris *dpif,
 
 	if (port->xfd != -1)
 		(void) close(port->xfd);
-	if (port->upcall_fd != -1) {
-		(void) setsockopt(port->upcall_fd, SOL_PACKET,
-		    PACKET_REM_OF_DEFFLOW, NULL, 0);
-		(void) close(port->upcall_fd);
-	}
+	dpif_solaris_destroy_port_channel(dpif, port);
 	if (port->vtype == OVS_VPORT_TYPE_NETDEV || port->vtype ==
 	    OVS_VPORT_TYPE_VXLAN || port->vtype == OVS_VPORT_TYPE_INTERNAL) {
-			VLOG_DBG("1.reset portno on %s", port->linkname);
-			(void) solaris_set_dlprop_ulong(port->linkname,
-			    "ofport", NULL, B_TRUE);
+		VLOG_DBG("1.reset portno on %s", port->linkname);
+		(void) solaris_set_dlprop_ulong(port->linkname,
+		    "ofport", NULL, B_TRUE);
 		if (port->is_uplink) {
 			VLOG_DBG("dpif_solaris_port_del__ primary port "
 			    "%s", port->name);
 		}
 	}
-	VLOG_DBG("dpif_solaris_port_del %s close xfd %d upcall_fd %d",
-	    port->name, port->xfd, port->upcall_fd);
+	VLOG_DBG("dpif_solaris_port_del %s close xfd %d", port->name,
+	    port->xfd);
 
 	free(port->type);
 	free(port->name);
@@ -2034,15 +2098,11 @@ dpif_solaris_migrate_internal_port(const char *bridge, const char *physname)
 		HMAP_FOR_EACH(port, node, &dpif->ports) {
 			if (strcmp(port->name, bridge) != 0)
 				continue;
-			if (port->upcall_fd != -1) {
-				(void) setsockopt(port->upcall_fd, SOL_PACKET,
-				    PACKET_REM_OF_DEFFLOW, NULL, 0);
-				(void) close(port->upcall_fd);
-			}
+			dpif_solaris_destroy_port_channel(dpif, port);
 			free(port->physname);
 			port->physname = xstrdup(physname);
 			err = dpif_solaris_refresh_port_channel(dpif, port,
-			    physname, false);
+			    false);
 			if (err == 0)
 				VLOG_DBG("dpif_solaris_migrate_internal_port %s"
 				    " on %s succeed", bridge, physname);
@@ -2053,7 +2113,6 @@ dpif_solaris_migrate_internal_port(const char *bridge, const char *physname)
 		}
 		ovs_rwlock_unlock(&dpif->port_rwlock);
 	}
-
 }
 
 static void
@@ -2209,6 +2268,50 @@ dpif_solaris_execute(struct dpif *dpif_, struct dpif_execute *execute)
 }
 
 static void
+dpif_solaris_destroy_lowerlink(struct dpif_solaris *dpif,
+    struct dpif_solaris_lowerlink *lowerlink)
+    OVS_REQ_WRLOCK(dpif->port_rwlock)
+{
+	int i;
+
+	VLOG_DBG("dpif_solaris_destroy_lowerlink %s", lowerlink->physname);
+	ovs_assert(lowerlink->nports == 0);
+	hmap_remove(&dpif->lowerlinks, &lowerlink->node);
+	for (i = 0; i < lowerlink->n_handlers; i++) {
+		ovs_assert(lowerlink->handlers != NULL);
+		if (lowerlink->handlers[i].upcall_fd != -1)
+			(void) close(lowerlink->handlers[i].upcall_fd);
+	}
+	if (lowerlink->handlers != NULL)
+		free(lowerlink->handlers);
+	free(lowerlink);
+}
+
+static void
+dpif_solaris_destroy_port_channel(struct dpif_solaris *dpif,
+    struct dpif_solaris_port *port)
+{
+	struct dpif_solaris_lowerlink *lowerlink;
+	ovs_assert(dpif->recv_set);
+
+	if (port->upcall_fd == -1)
+		return;
+
+	VLOG_DBG("dpif_solaris_destroy_port_channel port %s lower-link %s",
+	    port->linkname, port->physname);
+	(void) setsockopt(port->upcall_fd, SOL_PACKET,
+	    PACKET_REM_OF_DEFFLOW, &port->port_no, sizeof (uint32_t));
+	port->upcall_fd = -1;
+	port->pf_port_no = ODPP_NONE;
+
+	lowerlink = port->lowerlink;
+	port->lowerlink = NULL;
+
+	if (--lowerlink->nports == 0)
+		dpif_solaris_destroy_lowerlink(dpif, lowerlink);
+}
+
+static void
 dpif_solaris_destroy_channels(struct dpif_solaris *dpif)
     OVS_REQ_WRLOCK(dpif->upcall_lock)
 {
@@ -2217,24 +2320,100 @@ dpif_solaris_destroy_channels(struct dpif_solaris *dpif)
 	if (!dpif->recv_set)
 		return;
 
+	VLOG_DBG("dpif_solaris_destroy_channels");
+
 	ovs_rwlock_wrlock(&dpif->port_rwlock);
 	HMAP_FOR_EACH(port, node, &dpif->ports) {
-		if (port->upcall_fd != -1) {
-			(void) close(port->upcall_fd);
-			port->upcall_fd = -1;
-		}
+		dpif_solaris_destroy_port_channel(dpif, port);
 	}
 	ovs_rwlock_unlock(&dpif->port_rwlock);
+
 	(void) close(dpif->event_rfd);
 	(void) close(dpif->event_wfd);
 	dpif->event_rfd = dpif->event_wfd = -1;
 	dpif->recv_set = false;
+	dpif->n_handlers = 0;
 }
 
 static int
 dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
-    struct dpif_solaris_port *port, const char *physname, boolean_t notify)
+    struct dpif_solaris_port *port, boolean_t notify)
     OVS_REQ_WRLOCK(dpif->port_rwlock)
+{
+	struct dpif_solaris_lowerlink *lowerlink;
+	mac_of_ports_t mofport;
+	odp_port_t pf_port_no;
+	int fd, idx, error;
+	boolean_t lowerlink_found = false;
+
+	if (!dpif->recv_set || (port->vtype != OVS_VPORT_TYPE_NETDEV &&
+	    port->vtype != OVS_VPORT_TYPE_VXLAN && port->vtype !=
+	    OVS_VPORT_TYPE_INTERNAL))
+		return (0);
+
+	VLOG_DBG("dpif_solaris_refresh_port_channel(%s) port_no %d on %s%s",
+	    port->linkname, port->port_no, port->physname,
+	    notify ? " notify" : "");
+
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		if (strcmp(lowerlink->physname, port->physname) == 0) {
+			lowerlink_found = true;
+			break;
+		}
+	}
+
+	/* Create the lower link if it is not found */
+	if (!lowerlink_found) {
+		error = dpif_solaris_create_lowerlink(dpif, port->physname,
+		    &lowerlink);
+		if (error != 0) {
+			VLOG_DBG("dpif_solaris_refresh_port_channel lowerlink "
+			    "%s creation failed %s", port->physname,
+			    ovs_strerror(error));
+			return (error);
+		}
+	}
+
+	idx = port->is_uplink ? 0 :
+	    (lowerlink->next_idx % lowerlink->n_handlers);
+	fd = lowerlink->handlers[idx].upcall_fd;
+	pf_port_no = lowerlink->handlers[idx].pf_port_no;
+
+	VLOG_DBG("dpif_solaris_refresh_port_channel(%s) port_no %d pf_port_no "
+	    "%d upcall_fd %d", port->linkname, port->port_no, pf_port_no, fd);
+
+	mofport.mop_port = pf_port_no;
+	mofport.mop_sport = port->port_no;
+	if (setsockopt(fd, SOL_PACKET, PACKET_ADD_OF_DEFFLOW,
+	    &mofport, sizeof (mac_of_ports_t)) != 0) {
+		error = errno;
+		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to set "
+		    "PACKET_ADD_OF_DEFFLOW: %s", port->name,
+		    ovs_strerror(error));
+		if (!lowerlink_found)
+			dpif_solaris_destroy_lowerlink(dpif, lowerlink);
+		return (error);
+	}
+	if (!port->is_uplink)
+		lowerlink->next_idx ++;
+	lowerlink->nports ++;
+	port->lowerlink = lowerlink;
+	port->upcall_fd = fd;
+	port->pf_port_no = pf_port_no;
+
+	/* Inform the event_rfd that the port->upcall_fd has been changed */
+	if (notify && write(dpif->event_wfd, (char *)(&port->port_no),
+	    sizeof (odp_port_t)) < 0) {
+		VLOG_ERR("dpif_solaris_refresh_port_channel %s event "
+		    "notify failed: %s", port->linkname, ovs_strerror(errno));
+	}
+
+	return (0);
+}
+
+static int
+dpif_solaris_create_upfd(struct dpif_solaris *dpif, const char *physname,
+    int *upcall_fdp) OVS_REQ_WRLOCK(dpif->port_rwlock)
 {
 	int fd, flags, onoff = 1;
 	struct sockaddr_ll sll;
@@ -2243,18 +2422,15 @@ dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
 	dladm_status_t status;
 	int error;
 
-	if (!dpif->recv_set || (port->vtype != OVS_VPORT_TYPE_NETDEV &&
-	    port->vtype != OVS_VPORT_TYPE_VXLAN && port->vtype !=
-	    OVS_VPORT_TYPE_INTERNAL))
-		return (0);
+	if (!dpif->recv_set)
+		return (EINVAL);
 
-	VLOG_DBG("dpif_solaris_refresh_port_channel(%s) port_no: %d on %s%s",
-	    port->linkname, port->port_no, physname, notify ? " notify" : "");
+	VLOG_DBG("dpif_solaris_create_upfd() on %s", physname);
 
 	fd = socket(PF_PACKET, SOCK_RAW, ETH_P_ALL);
 	if (fd == -1) {
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to "
-		    "create socket: %s", port->linkname, ovs_strerror(errno));
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to "
+		    "create socket: %s", physname, ovs_strerror(errno));
 		return (errno);
 	}
 
@@ -2262,8 +2438,8 @@ dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
 	    NULL, NULL, NULL);
 	error = solaris_dladm_status2error(status);
 	if (error != 0) {
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to get "
-		    "linkid: %s", port->linkname, ovs_strerror(error));
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to get "
+		    "linkid: %s", physname, ovs_strerror(error));
 		(void) close(fd);
 		return (error);
 	}
@@ -2274,20 +2450,8 @@ dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
 	sll.sll_protocol = ETH_P_ALL;
 	if (bind(fd, (struct sockaddr *)&sll, sizeof (sll)) == -1) {
 		error = errno;
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to bind: "
-		    "%s", port->name, ovs_strerror(error));
-		(void) close(fd);
-		return (error);
-	}
-
-	mofport.mop_port = port->pf_port_no;
-	mofport.mop_sport = port->port_no;
-	if (setsockopt(fd, SOL_PACKET,
-	    PACKET_ADD_OF_DEFFLOW, &mofport, sizeof (mac_of_ports_t)) != 0) {
-		error = errno;
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to set "
-		    "PACKET_ADD_OF_DEFFLOW: %s", port->name,
-		    ovs_strerror(error));
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to bind: "
+		    "%s", physname, ovs_strerror(error));
 		(void) close(fd);
 		return (error);
 	}
@@ -2295,40 +2459,109 @@ dpif_solaris_refresh_port_channel(struct dpif_solaris *dpif,
 	if (setsockopt(fd, SOL_PACKET,
 	    PACKET_AUXDATA, &onoff, sizeof (onoff)) != 0) {
 		error = errno;
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to set "
-		    "PACKET_AUXDATAQ: %s", port->name,
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to set "
+		    "PACKET_AUXDATAQ: %s", physname,
 		    ovs_strerror(error));
-		(void) setsockopt(fd, SOL_PACKET, PACKET_REM_OF_DEFFLOW,
-		    NULL, 0);
 		(void) close(fd);
 		return (error);
 	}
 
+	/* Disable the promiscous mode on this socket */
+	mofport.mop_port = 0;
+	mofport.mop_sport = 0;
+	if (setsockopt(fd, SOL_PACKET, PACKET_ADD_OF_DEFFLOW,
+	    &mofport, sizeof (mac_of_ports_t)) != 0) {
+		error = errno;
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to set "
+		    "PACKET_ADD_OF_DEFFLOW port 0: %s", physname,
+		    ovs_strerror(error));
+		(void) close(fd);
+		return (error);
+	}
 	/* must not block */
 	if (((flags = fcntl(fd, F_GETFL, 0)) == -1) ||
 	    (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)) {
 		error = errno;
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s failed to set "
-		    "non-block: %s", port->name, ovs_strerror(error));
-		(void) setsockopt(fd, SOL_PACKET, PACKET_REM_OF_DEFFLOW,
-		    NULL, 0);
+		VLOG_ERR("dpif_solaris_create_upfd %s failed to set "
+		    "non-block: %s", physname, ovs_strerror(error));
 		(void) close(fd);
 		return (error);
 	}
 
-	port->upcall_fd = fd;
-
-	VLOG_DBG("dpif_solaris_refresh_port_channel %s upcall_fd=%d",
-	    port->name, port->upcall_fd);
-
-	/* Inform the event_rfd that the port->upcall_fd has been changed */
-	if (notify && write(dpif->event_wfd, (char *)(&port->port_no),
-	    sizeof (odp_port_t)) < 0) {
-		VLOG_ERR("dpif_solaris_refresh_port_channel %s event "
-		    "notify failed: %s", port->name, ovs_strerror(errno));
-	}
+	VLOG_DBG("dpif_solaris_create_upfd %s fd=%d", physname, fd);
+	*upcall_fdp = fd;
 
 	return (0);
+}
+
+static int
+dpif_solaris_create_lowerlink(struct dpif_solaris *dpif, char *physname,
+    struct dpif_solaris_lowerlink **lowerlinkp)
+    OVS_REQ_WRLOCK(dpif->port_rwlock)
+{
+	struct dpif_solaris_lowerlink *lowerlink;
+	odp_port_t pf_port_no;
+	int i, err;
+
+	if (!dpif->recv_set)
+		return (0);
+
+	VLOG_DBG("dpif_solaris_create_lowerlink create %d upfds over lower "
+	    "link %s", dpif->n_handlers, physname);
+
+	lowerlink = xzalloc(sizeof (*lowerlink));
+	if (strlcpy(lowerlink->physname, physname,
+	    sizeof (lowerlink->physname)) >= sizeof (lowerlink->physname)) {
+		free(lowerlink);
+		return (ENOBUFS);
+	}
+
+	lowerlink->n_handlers = dpif->n_handlers;
+	lowerlink->handlers = xzalloc(lowerlink->n_handlers *
+	    sizeof (struct dpif_solaris_handler));
+	lowerlink->nports = 0;
+	lowerlink->next_idx = 0;
+
+	for (i = 0; i < lowerlink->n_handlers; i++)
+		lowerlink->handlers[i].upcall_fd = -1;
+
+	for (i = 0; i < lowerlink->n_handlers; i++) {
+		err = dpif_solaris_create_upfd(dpif,
+		    lowerlink->physname, &(lowerlink->handlers[i].upcall_fd));
+		if (err != 0) {
+			VLOG_ERR("dpif_solaris_create_lowerlink create %dth "
+			    "upfd over %s failed %s", i, lowerlink->physname,
+			    ovs_strerror(err));
+			goto fail;
+		} else {
+			VLOG_DBG("dpif_solaris_create_lowerlink create %dth "
+			    "upfd over %s: %d", i, lowerlink->physname,
+			    lowerlink->handlers[i].upcall_fd);
+		}
+		pf_port_no = (i == 0) ? PORT_PF_PACKET_UPLINK :
+		    choose_pf_port(dpif, lowerlink, i);
+		if (pf_port_no == ODPP_NONE) {
+			VLOG_ERR("dpif_solaris_create_lowerlink no usable "
+			    "port_no avaiable for %dth upfd over %s", i,
+			    lowerlink->physname);
+			err = EFBIG;
+			goto fail;
+		} else {
+			VLOG_DBG("dpif_solaris_create_lowerlink "
+			    "avaiable pf_port_no for %dth upfd over %s: %d", i,
+			    lowerlink->physname, pf_port_no);
+		}
+		lowerlink->handlers[i].pf_port_no = pf_port_no;
+	}
+	hmap_insert(&dpif->lowerlinks, &lowerlink->node,
+	    hash_string(lowerlink->physname, 0));
+
+	*lowerlinkp = lowerlink;
+	return (0);
+
+fail:
+	dpif_solaris_destroy_lowerlink(dpif, lowerlink);
+	return (err);
 }
 
 /*
@@ -2373,14 +2606,14 @@ dpif_solaris_refresh_channels(struct dpif_solaris *dpif, uint32_t n_handlers)
 		return (error);
 	}
 
+	dpif->n_handlers = n_handlers;
 	dpif->recv_set = true;
 	dpif->event_rfd = fds[0];
 	dpif->event_wfd = fds[1];
 
 	ovs_rwlock_wrlock(&dpif->port_rwlock);
 	HMAP_FOR_EACH(port, node, &dpif->ports) {
-		error = dpif_solaris_refresh_port_channel(dpif, port,
-		    port->physname, false);
+		error = dpif_solaris_refresh_port_channel(dpif, port, false);
 		if (error != 0) {
 			ovs_rwlock_unlock(&dpif->port_rwlock);
 			dpif_solaris_destroy_channels(dpif);
@@ -2510,10 +2743,10 @@ dpif_solaris_recv__(struct dpif_solaris *dpif, uint32_t handler_id OVS_UNUSED,
 	    _CMSG_HDR_ALIGNMENT];
 	uint8_t pktbuf[65536];
 	int pktlen;
-	struct dpif_solaris_port *port;
+	struct dpif_solaris_lowerlink *lowerlink;
 	odp_port_t port_no;
 	uint16_t action_type;
-	int error;
+	int i, fd, error;
 
 	if (!dpif->recv_set) {
 		return (EAGAIN);
@@ -2522,86 +2755,103 @@ dpif_solaris_recv__(struct dpif_solaris *dpif, uint32_t handler_id OVS_UNUSED,
 	(void) read(dpif->event_rfd, (char *)&port_no,
 	    sizeof (odp_port_t));
 
-	ovs_rwlock_wrlock(&dpif->port_rwlock);
-	HMAP_FOR_EACH(port, node, &dpif->ports) {
-		if (port->upcall_fd == -1)
-			continue;
-
-		msg.msg_name = NULL;
-		msg.msg_namelen = 0;
-		msg.msg_iov = &iov;
-		msg.msg_iovlen = 1;
-		msg.msg_control = (void *)_CMSG_HDR_ALIGN(cmsg_buf);
-		msg.msg_controllen = sizeof (cmsg_buf) -
-		    (_CMSG_HDR_ALIGN(cmsg_buf) - (uintptr_t)cmsg_buf);
-		msg.msg_flags = 0;
-
-		iov.iov_len = sizeof (pktbuf);
-		iov.iov_base = pktbuf;
-		pktlen = recvmsg(port->upcall_fd, &msg, MSG_TRUNC);
-		if (pktlen > 0) {
-			struct pkt_metadata	md;
-			mactun_info_t		*tuninfop = NULL;
-			struct flow_tnl		*tun;
-			struct ofpbuf		pkt;
-			struct tpacket_auxdata	aux;
-
-			action_type = FLOW_ACTION_OF_MAX;
-			for (cmsg = CMSG_FIRSTHDR(&msg); cmsg;
-			    cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-				if (cmsg->cmsg_len <
-				    CMSG_LEN(sizeof (struct tpacket_auxdata)) ||
-				    cmsg->cmsg_level != SOL_PACKET ||
-				    cmsg->cmsg_type != PACKET_AUXDATA)
-					continue;
-
-				memcpy(&aux, CMSG_DATA(cmsg), sizeof (aux));
-				action_type = aux.tp_of_action;
-				port_no = aux.tp_of_port;
-				tuninfop = &aux.tp_tun_info;
-				break;
-			}
-
-			if (action_type != FLOW_ACTION_MISSED_PKT &&
-			    action_type != FLOW_ACTION_OF_CONTROLLER) {
-				VLOG_ERR("dpif_solaris_recv__ on port %s len %d"
-				    " but with unknown auxdata type %d",
-				    port->name, pktlen, action_type);
+	ovs_rwlock_rdlock(&dpif->port_rwlock);
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		for (i = 0; i < lowerlink->n_handlers; i++) {
+			if ((fd = lowerlink->handlers[i].upcall_fd) == -1)
 				continue;
-			}
 
-			VLOG_DBG("dpif_solaris_recv__ on port %s len %d "
-			    "type %s (src_port = %u)", port->name, pktlen,
-			    action_type == FLOW_ACTION_MISSED_PKT ?
-			    "miss_pkt" : "fwd_controller", port_no);
+			msg.msg_name = NULL;
+			msg.msg_namelen = 0;
+			msg.msg_iov = &iov;
+			msg.msg_iovlen = 1;
+			msg.msg_control = (void *)_CMSG_HDR_ALIGN(cmsg_buf);
+			msg.msg_controllen = sizeof (cmsg_buf) -
+			    (_CMSG_HDR_ALIGN(cmsg_buf) - (uintptr_t)cmsg_buf);
+			msg.msg_flags = 0;
 
-			ovs_assert(tuninfop != NULL);
-			md = PKT_METADATA_INITIALIZER(port_no);
-			if (tuninfop->mti_dst._S6_un._S6_u32[3] != 0) {
-				tun = &md.tunnel;
-				tun->tun_id = htonll(tuninfop->mti_id);
-				tun->flags |= FLOW_TNL_F_KEY;
-				tun->ip_src =
-				    tuninfop->mti_src._S6_un._S6_u32[3];
-				tun->ip_dst =
-				    tuninfop->mti_dst._S6_un._S6_u32[3];
-				tun->ip_tos = tuninfop->mti_tos;
-				tun->ip_ttl = tuninfop->mti_ttl;
-				/* TBD? */
-				tun->flags |= FLOW_TNL_F_DONT_FRAGMENT;
-			}
-			ofpbuf_use_const(&pkt, pktbuf, pktlen);
-			error = dpif_solaris_parse_pkt(dpif, &pkt, &md,
-			    action_type, upcall, buf);
-			if (error != 0) {
-				VLOG_ERR("dpif_solaris_recv__ parse_pkt on "
-				    "port %s action %s failed %d", port->name,
+			iov.iov_len = sizeof (pktbuf);
+			iov.iov_base = pktbuf;
+			pktlen = recvmsg(fd, &msg, MSG_TRUNC);
+			if (pktlen > 0) {
+				struct pkt_metadata	md;
+				mactun_info_t		*tuninfop = NULL;
+				struct flow_tnl		*tun;
+				struct ofpbuf		pkt;
+				struct tpacket_auxdata	aux;
+
+				action_type = FLOW_ACTION_OF_MAX;
+				for (cmsg = CMSG_FIRSTHDR(&msg); cmsg;
+				    cmsg = CMSG_NXTHDR(&msg, cmsg)) {
+					if (cmsg->cmsg_len <
+					    CMSG_LEN(
+					    sizeof (struct tpacket_auxdata)) ||
+					    cmsg->cmsg_level != SOL_PACKET ||
+					    cmsg->cmsg_type != PACKET_AUXDATA)
+						continue;
+
+					memcpy(&aux, CMSG_DATA(cmsg),
+					    sizeof (aux));
+					action_type = aux.tp_of_action;
+					port_no = aux.tp_of_port;
+					tuninfop = &aux.tp_tun_info;
+					break;
+				}
+
+				if (action_type != FLOW_ACTION_MISSED_PKT &&
+				    action_type != FLOW_ACTION_OF_CONTROLLER) {
+					VLOG_ERR("dpif_solaris_recv__ on %s fd "
+					    "%d len %d but with unknown "
+					    "auxdata type %d",
+					    lowerlink->physname, fd, pktlen,
+					    action_type);
+					continue;
+				}
+
+				if (port_no == 0) {
+					VLOG_ERR("dpif_solaris_recv__ on %s fd "
+					    "%d len %d but with unknown "
+					    "port_no 0",
+					    lowerlink->physname, fd, pktlen);
+					continue;
+				}
+
+				VLOG_DBG("dpif_solaris_recv__ on %s fd %d len "
+				    "%d type %s (src_port = %u)",
+				    lowerlink->physname, fd, pktlen,
 				    action_type == FLOW_ACTION_MISSED_PKT ?
-				    "miss_pkt" : "fwd_to_controller",
-				    error);
-			} else {
-				ovs_rwlock_unlock(&dpif->port_rwlock);
-				return (0);
+				    "miss_pkt" : "fwd_controller", port_no);
+
+				ovs_assert(tuninfop != NULL);
+				md = PKT_METADATA_INITIALIZER(port_no);
+				if (tuninfop->mti_dst._S6_un._S6_u32[3] != 0) {
+					tun = &md.tunnel;
+					tun->tun_id = htonll(tuninfop->mti_id);
+					tun->flags |= FLOW_TNL_F_KEY;
+					tun->ip_src = tuninfop->
+					    mti_src._S6_un._S6_u32[3];
+					tun->ip_dst = tuninfop->
+					    mti_dst._S6_un._S6_u32[3];
+					tun->ip_tos = tuninfop->mti_tos;
+					tun->ip_ttl = tuninfop->mti_ttl;
+					/* TBD? */
+					tun->flags |= FLOW_TNL_F_DONT_FRAGMENT;
+				}
+				ofpbuf_use_const(&pkt, pktbuf, pktlen);
+				error = dpif_solaris_parse_pkt(dpif, &pkt, &md,
+				    action_type, upcall, buf);
+				if (error != 0) {
+					VLOG_ERR("dpif_solaris_recv__ "
+					    "parse_pkt on %s fd %d action %s "
+					    "failed %d", lowerlink->physname,
+					    fd, action_type ==
+					    FLOW_ACTION_MISSED_PKT ?
+					    "miss_pkt" : "fwd_to_controller",
+					    error);
+				} else {
+					ovs_rwlock_unlock(&dpif->port_rwlock);
+					return (0);
+				}
 			}
 		}
 	}
@@ -2628,19 +2878,24 @@ static void
 dpif_solaris_recv_wait(struct dpif *dpif_, uint32_t handler_id OVS_UNUSED)
 {
 	struct dpif_solaris *dpif = dpif_solaris_cast(dpif_);
-	struct dpif_solaris_port *port;
+	struct dpif_solaris_lowerlink *lowerlink;
+	int i, fd;
 
 	ovs_rwlock_rdlock(&dpif->upcall_lock);
-	if (dpif->recv_set) {
-		poll_fd_wait(dpif->event_rfd, POLLIN);
-		ovs_rwlock_wrlock(&dpif->port_rwlock);
-		HMAP_FOR_EACH(port, node, &dpif->ports) {
-			if (port->upcall_fd != -1) {
-				poll_fd_wait(port->upcall_fd, POLLIN);
+	if (!dpif->recv_set)
+		goto done;
+
+	poll_fd_wait(dpif->event_rfd, POLLIN);
+	ovs_rwlock_rdlock(&dpif->port_rwlock);
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		for (i = 0; i < lowerlink->n_handlers; i++) {
+			if ((fd = lowerlink->handlers[i].upcall_fd) != -1) {
+				poll_fd_wait(fd, POLLIN);
 			}
 		}
-		ovs_rwlock_unlock(&dpif->port_rwlock);
 	}
+	ovs_rwlock_unlock(&dpif->port_rwlock);
+done:
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 }
 
@@ -2648,16 +2903,22 @@ static void
 dpif_solaris_recv_purge__(struct dpif_solaris *dpif)
     OVS_REQ_WRLOCK(dpif->upcall_lock)
 {
-	struct dpif_solaris_port *port;
+	struct dpif_solaris_lowerlink *lowerlink;
+	int i, fd;
 
-	if (dpif->recv_set) {
-		drain_rcvbuf(dpif->event_rfd);
-		ovs_rwlock_wrlock(&dpif->port_rwlock);
-		HMAP_FOR_EACH(port, node, &dpif->ports) {
-			drain_rcvbuf(port->upcall_fd);
+	if (!dpif->recv_set)
+		return;
+
+	drain_rcvbuf(dpif->event_rfd);
+	ovs_rwlock_rdlock(&dpif->port_rwlock);
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		for (i = 0; i < lowerlink->n_handlers; i++) {
+			if ((fd = lowerlink->handlers[i].upcall_fd) != -1) {
+				drain_rcvbuf(fd);
+			}
 		}
-		ovs_rwlock_unlock(&dpif->port_rwlock);
 	}
+	ovs_rwlock_unlock(&dpif->port_rwlock);
 }
 
 static void
@@ -2672,10 +2933,17 @@ dpif_solaris_recv_purge(struct dpif *dpif_)
 }
 
 static int
-dpif_solaris_handlers_set(struct dpif *dpif OVS_UNUSED,
-    uint32_t n_handlers OVS_UNUSED)
+dpif_solaris_handlers_set(struct dpif *dpif_, uint32_t n_handlers)
 {
-	return (0);
+	struct dpif_solaris *dpif = dpif_solaris_cast(dpif_);
+	int err = 0;
+
+	VLOG_DBG("dpif_solaris_handlers_set %d", n_handlers);
+	ovs_rwlock_wrlock(&dpif->upcall_lock);
+	if (dpif->recv_set)
+		err = dpif_solaris_refresh_channels(dpif, n_handlers);
+	ovs_rwlock_unlock(&dpif->upcall_lock);
+	return (err);
 }
 
 const struct dpif_class dpif_solaris_class = {

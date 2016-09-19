@@ -1341,18 +1341,9 @@ flow_ofports2propstr(char *str, size_t strsize, uint32_t *ofports,
 	int	i, err, range_cnt;
 	ofport_range_t	*ofports_range;
 
-	if (nofports == 0) {
-		if (snprintf(buf, sizeof (buf), "%soutports%cdrop",
-		    strlen(str) == 0 ? "" : FP_MULTI_ACTION_DELIM_STR,
-		    FP_NAME_VAL_DELIM) >= sizeof (buf)) {
-			return (ENOBUFS);
-		}
 
-		if (strlcat(str, buf, strsize) >= strsize)
-			return (ENOBUFS);
-
+	if (nofports == 0)
 		return (0);
-	}
 
 	ofports_range = malloc(nofports * sizeof (ofport_range_t));
 	if (ofports_range == NULL)
@@ -1990,10 +1981,8 @@ solaris_nlattr_to_DLVal(void *cookie,
 		goto out;
 
 	/* if actions_len == 0, then the action is drop */
-	if (actions_len == 0) {
-		err = flow_ofports2propstr(str, sizeof (str), ofports, 0);
+	if (actions_len == 0)
 		goto out;
-	}
 
 	NL_ATTR_FOR_EACH_UNSAFE(a, left, actions_nlattr, actions_len) {
 		lasttype = type;
@@ -2562,28 +2551,6 @@ solaris_get_flowattr(const char *flowname, struct flow *f, struct flow *m)
 }
 
 static int
-flow_propval2action_outports_drop(char **propvals, int nval,
-    struct ofpbuf *action)
-{
-	int i;
-	char *endp = NULL;
-	int64_t n;
-
-	if (strcmp(propvals[0], "drop") == 0)
-		return (0);
-
-	errno = 0;
-	for (i = 0; i < nval; i++) {
-		n = strtoull(propvals[i], &endp, 10);
-		if ((errno != 0) || *endp != '\0')
-			return (EINVAL);
-		nl_msg_put_u32(action, OVS_ACTION_ATTR_OUTPUT, (uint32_t)n);
-	}
-
-	return (0);
-}
-
-static int
 flow_propval2action_setpri(char **propvals OVS_UNUSED, int nval OVS_UNUSED,
     struct ofpbuf *action OVS_UNUSED)
 {
@@ -2856,8 +2823,7 @@ flow_propval2action_setipv6(char **propvals, int nval, struct ofpbuf *action)
 			errno = 0;
 			endp = NULL;
 			value = strtoul(sep, &endp, 16);
-			if (errno != 0 || value == 0 || value > 0xff ||
-			    *endp != '\0') {
+			if (errno != 0 || value > 0xff || *endp != '\0') {
 				goto out;
 			}
 			ipv6.ipv6_label = value;
@@ -3098,80 +3064,89 @@ flow_propval2action_settnl(char **propvals, int nval, struct ofpbuf *action)
 }
 
 static int
-flow_propstr2vals(char *key, char *val, char ***propvalsp, int *valcntp)
+flow_propstr2outports(char *key, char *val, uint32_t outports[], int *valcntp)
 {
-	char **propvals = *propvalsp, *curr;
-	int i, j, len;
+	char *curr;
+	int maxcnt = *valcntp, i, j, len;
+	char *ofp_min, *ofp_max, *tmp = NULL, *endp = NULL;
+	uint32_t of_min, of_max, i_of;
+	boolean_t match, is_range;
 	char c;
 
 	dpif_log(0, "flow_propstr2vals key %s val %s", key, val);
 	len = strlen(val);
 
-	if (strcmp(key, "outports") == 0) {
-		char *ofp_min, *ofp_max, *tmp = NULL, *endp = NULL;
-		char ofport_val[10];
-		uint32_t of_min, of_max, i_of;
-		boolean_t match, is_range;
-		match = is_range = B_FALSE;
-		ofp_min = ofp_max = val;
+	ovs_assert(strcmp(key, "outports") == 0);
 
-		for (i = 0, j = 0, curr = val; i < len; i++) {
-			ofp_min = ofp_max = curr;
-			c = val[i];
-			match = (c == FP_ACTION_MULTI_VAL_DELIM ||
-			    c == FP_ACTION_PORT_RANGE_DELIM);
-			if (!match && i != len -1)
-				continue;
-			if (match)
-				val[i] = '\0';
+	match = is_range = B_FALSE;
+	ofp_min = ofp_max = val;
 
-			if (c == FP_ACTION_PORT_RANGE_DELIM) {
-				tmp = curr;
-				curr = val + i + 1;
-				is_range = B_TRUE;
-				continue;
-			}
+	for (i = 0, j = 0, curr = val; i < len && j < maxcnt; i++) {
+		ofp_min = ofp_max = curr;
+		c = val[i];
+		match = (c == FP_ACTION_MULTI_VAL_DELIM ||
+		    c == FP_ACTION_PORT_RANGE_DELIM);
+		if (!match && i != len -1)
+			continue;
+		if (match)
+			val[i] = '\0';
 
-			if (is_range == B_TRUE) {
-				ofp_min = tmp;
-				is_range = B_FALSE;
-			}
-			of_min = (uint32_t)strtoul(ofp_min, &endp, 10);
-			of_max = (uint32_t)strtoul(ofp_max, &endp, 10);
-
-			for (i_of = of_min; i_of <= of_max; i_of++) {
-				bzero(ofport_val, sizeof (ofport_val));
-				snprintf(ofport_val, sizeof (ofport_val), "%u",
-				    i_of);
-
-				if (strlcpy(propvals[j++], ofport_val,
-				    DLADM_PROP_VAL_MAX) >= DLADM_PROP_VAL_MAX) {
-					dpif_log(EINVAL, "flow_propstr2vals"
-					    "key %s %dth string too long %s",
-					    key, j - 1, ofport_val);
-					return (EINVAL);
-				}
-			}
+		if (c == FP_ACTION_PORT_RANGE_DELIM) {
+			tmp = curr;
 			curr = val + i + 1;
+			is_range = B_TRUE;
+			continue;
 		}
-	} else {
-		for (i = 0, j = 0, curr = val; i < len; i++) {
-			if ((c = val[i]) != FP_ACTION_MULTI_VAL_DELIM &&
-			    i != len -1)
-				continue;
 
-			if (c == FP_ACTION_MULTI_VAL_DELIM)
-				val[i] = '\0';
-
-			if (strlcpy(propvals[j++], curr, DLADM_PROP_VAL_MAX) >=
-			    DLADM_PROP_VAL_MAX) {
-				dpif_log(EINVAL, "flow_propstr2vals key %s %dth"
-				    " string too long %s", key, j - 1, curr);
-				return (EINVAL);
-			}
-			curr = val + i + 1;
+		if (is_range == B_TRUE) {
+			ofp_min = tmp;
+			is_range = B_FALSE;
 		}
+		of_min = (uint32_t)strtoul(ofp_min, &endp, 10);
+		of_max = (uint32_t)strtoul(ofp_max, &endp, 10);
+
+		for (i_of = of_min; i_of <= of_max; i_of++)
+			outports[j++] = i_of;
+		curr = val + i + 1;
 	}
+	if (j >= maxcnt)
+		dpif_log(ENOBUFS, "flow_propstr2outports action truncated");
+	*valcntp = j;
+	for (i = 0; i < j; i++)
+		dpif_log(0, "flow_propstr2outports key %s %dth: %d", key, i+1,
+		    outports[i]);
+	return (0);
+}
+
+static int
+flow_propstr2vals(char *key, char *val, char ***propvalsp, int *valcntp)
+{
+	char **propvals = *propvalsp, *curr;
+	int maxcnt = *valcntp, i, j, len;
+	char c;
+
+	dpif_log(0, "flow_propstr2vals key %s val %s", key, val);
+	len = strlen(val);
+
+	ovs_assert(strcmp(key, "outports") != 0);
+	for (i = 0, j = 0, curr = val; i < len && j < maxcnt; i++) {
+		if ((c = val[i]) != FP_ACTION_MULTI_VAL_DELIM &&
+		    i != len -1)
+			continue;
+
+		if (c == FP_ACTION_MULTI_VAL_DELIM)
+			val[i] = '\0';
+
+		if (strlcpy(propvals[j++], curr, DLADM_PROP_VAL_MAX) >=
+		    DLADM_PROP_VAL_MAX) {
+			dpif_log(EINVAL, "flow_propstr2vals key %s %dth"
+			    " string too long %s", key, j - 1, curr);
+			return (EINVAL);
+		}
+		curr = val + i + 1;
+	}
+	if (j >= maxcnt)
+		dpif_log(ENOBUFS, "flow_propstr2vals action truncated");
 	*valcntp = j;
 	for (i = 0; i < j; i++)
 		dpif_log(0, "flow_propstr2vals key %s %dth: %s", key, i+1,
@@ -3184,17 +3159,18 @@ flow_propval2action_ofaction(char *propval, struct ofpbuf *action)
 {
 	char ofaction_str[4096];
 	char **pvals, *buf = NULL;
+	uint32_t outports[MAC_OF_MAXPORT];
 	size_t len;
 	char *curr, *key, c;
 	boolean_t match;
-	int nval, err = 0, i;
+	int nval, err = 0, i, j;
 
-	buf = malloc((sizeof (char *) +
-	    DLADM_PROP_VAL_MAX) * DLADM_MAX_PROP_VALCNT);
+	buf = malloc((sizeof (char *) + DLADM_PROP_VAL_MAX) *
+	    DLADM_PROP_VAL_MAX);
 
 	pvals = (char **)(void *)buf;
-	for (i = 0; i < DLADM_MAX_PROP_VALCNT; i++) {
-		pvals[i] = buf + sizeof (char *) * DLADM_MAX_PROP_VALCNT +
+	for (i = 0; i < DLADM_PROP_VAL_MAX; i++) {
+		pvals[i] = buf + sizeof (char *) * DLADM_PROP_VAL_MAX +
 		    i * DLADM_PROP_VAL_MAX;
 	}
 
@@ -3231,14 +3207,21 @@ flow_propval2action_ofaction(char *propval, struct ofpbuf *action)
 			goto done;
 		}
 
-		err = flow_propstr2vals(key, curr, &pvals, &nval);
+		if (strcmp(key, "outports") == 0) {
+			nval = MAC_OF_MAXPORT;
+			err = flow_propstr2outports(key, curr, outports, &nval);
+		} else {
+			nval = DLADM_PROP_VAL_MAX;
+			err = flow_propstr2vals(key, curr, &pvals, &nval);
+		}
 		if (err != 0)
 			goto done;
 
-		if (strcmp(key, "outports") == 0)
-			err = flow_propval2action_outports_drop(pvals, nval,
-			    action);
-		else if (strcmp(key, "max-bw") == 0)
+		if (strcmp(key, "outports") == 0) {
+			for (j = 0; j < nval; j++)
+				nl_msg_put_u32(action, OVS_ACTION_ATTR_OUTPUT,
+				    outports[j]);
+		} else if (strcmp(key, "max-bw") == 0)
 			err = flow_propval2action_setpri(pvals, nval, action);
 		else if (strcmp(key, "controller") == 0)
 			err = flow_propval2action_controller(pvals, nval,
@@ -3292,7 +3275,7 @@ solaris_flowinfo2actionmap(const char *key, dlmgr_DLValue_t *val,
 			goto out;
 		valcnt = 1;
 		if (strlcpy(propval, val->ddlv_sval, sizeof (propval)) >=
-		    DLADM_STRSIZE)
+		    sizeof (propval))
 			goto out;
 		break;
 	case DDLVT_STRINGS:
@@ -3302,7 +3285,7 @@ solaris_flowinfo2actionmap(const char *key, dlmgr_DLValue_t *val,
 		if (valcnt != 1 || strlen(val->ddlv_slist[0]) == 0)
 			goto out;
 		if (strlcpy(propval, val->ddlv_slist[0], sizeof (propval)) >=
-		    DLADM_STRSIZE)
+		    sizeof (propval))
 			goto out;
 		break;
 	case DDLVT_ULONG:
