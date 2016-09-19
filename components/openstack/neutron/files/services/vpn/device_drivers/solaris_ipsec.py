@@ -1235,14 +1235,14 @@ class IPsecDriver(device_drivers.DeviceDriver):
         try:
             vpnaas = config.get('DEFAULT', 'service_plugins')
             for arg in vpnaas.split(","):
-                if re.match(r'\bvpnaas\b', arg):
+                if re.search(r'\bvpnaas\b', arg):
                     not_configured = False
                     break
         except:
             pass
 
         if not_configured:
-            LOG.info("VPNaaS has not been configured.")
+            LOG.info("VPNaaS has not been enabled as a service_plugin.")
             return
 
         self.processes = {}
