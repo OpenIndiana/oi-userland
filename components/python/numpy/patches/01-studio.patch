@@ -1,0 +1,78 @@
+Fix 64-bit builds with Studio compilers
+
+Migrated from desktop gate patches/numpy27-01-sun64.diff
+Upstream status unknown
+
+
+--- a/numpy/distutils/fcompiler/sun.py.orig	Mon Oct 20 16:15:23 2014
++++ b/numpy/distutils/fcompiler/sun.py	Mon Oct 20 16:13:11 2014
+@@ -25,7 +25,7 @@
+         }
+     module_dir_switch = '-moddir='
+     module_include_switch = '-M'
+-    pic_flags = ['-xcode=pic32']
++    pic_flags = ['-KPIC']
+ 
+     def get_flags_f77(self):
+         ret = ["-ftrap=%none"]
+--- a/numpy/distutils/ccompiler.py.orig	Mon Oct 20 16:05:36 2014
++++ b/numpy/distutils/ccompiler.py	Mon Oct 20 16:11:46 2014
+@@ -520,6 +520,15 @@
+         ccompiler._default_compilers = (('nt', 'mingw32'),) \
+                                        + ccompiler._default_compilers
+ 
++if sys.platform == 'sunos5':
++    compiler_class['sun64'] = ('sunccompiler','SunCCompiler64',
++                            "Sun Studio C Compiler for solaris")
++    compiler_class['sun32'] = ('sunccompiler','SunCCompiler32',
++                            "Sun Studio C Compiler for solaris")
++    log.info('Setting sunos as default compiler for solaris.')
++    ccompiler._default_compilers = (('linux', 'sun64'), 
++     				  ('linux', 'sun32'),) \
++                    + ccompiler._default_compilers
+ 
+ _distutils_new_compiler = new_compiler
+ def new_compiler (plat=None,
+--- /dev/null	2014-10-20 17:24:13.000000000 +0530
++++ b/numpy/distutils/sunccompiler.py	2014-10-20 16:36:32.438378171 +0530
+@@ -0,0 +1,40 @@
++"""Sun studio compiler (both solaris and linux)."""
++from distutils.unixccompiler import UnixCCompiler
++from numpy.distutils.exec_command import find_executable
++from numpy.distutils.misc_util import get_build_architecture
++from numpy.distutils.cpuinfo import SunOSCPUInfo
++import sys
++
++class SunCCompiler64(UnixCCompiler):
++	"""Sun C compiler """
++	compiler_type = 'sun64'
++	# Use suncc instead of cc, because it makes it more obvious to follow
++	# what's going on when several compilers are available.
++	cc_exe = 'cc'
++
++	def __init__ (self, verbose=0, dry_run=0, force=0):
++		UnixCCompiler.__init__ (self, verbose,dry_run, force)
++		self.cc_exe = 'cc -m64 -KPIC'
++		compiler = self.cc_exe
++		self.set_executables(compiler=compiler,
++			compiler_so=compiler,
++			compiler_cxx=compiler,
++			linker_exe=compiler,
++			linker_so=compiler + ' -64 -shared')
++
++class SunCCompiler32(UnixCCompiler):
++	"""Sun C compiler """
++	compiler_type = 'sun32'
++	# Use suncc instead of cc, because it makes it more obvious to follow
++	# what's going on when several compilers are available.
++	cc_exe = 'cc'
++
++	def __init__ (self, verbose=0, dry_run=0, force=0):
++		UnixCCompiler.__init__ (self, verbose,dry_run, force)
++		self.cc_exe = 'cc -m32 -xarch=sse2 -KPIC'
++		compiler = self.cc_exe
++		self.set_executables(compiler=compiler,
++			compiler_so=compiler,
++			compiler_cxx=compiler,
++			linker_exe=compiler,
++			linker_so=compiler + ' -shared')
