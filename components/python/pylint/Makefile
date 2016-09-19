@@ -22,7 +22,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
 COMPONENT_VERSION=	0.25.2
@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/extras/pylint/$(COMPONENT_ARCHIVE)/de940692e4fc9a71fcd9e1f13066e820/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
 COMPONENT_BUGDB=	utility/pylint
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
@@ -91,11 +93,7 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # The tests are run using python 2.7 only and require that
-# the python-27 package is installed (does not have to be the default python). 
-# Testing using python-26 is done manually, since it requires
-# downloading and installing the unittest2 component (not part of Solaris),
-# which provides python 2.7 functionality to the unittest python library
-# in the python2.6 package.
+# the python-27 package is installed (does not have to be the default python).
 
 # Use the python 2.7 libraries for testing.
 test: PYTHON_VERSION=2.7
@@ -111,19 +109,16 @@ COMPONENT_PRE_TEST_ACTION = ($(GMAKE) -C \
 
 COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(COMPONENT_DIR)/../logilab-astng/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-# Run pytest-2.7 from logilab-common's proto area for now, until the 
+# Run pytest-2.7 from logilab-common's proto area for now, until the
 # new version of logilab-common containing pytest is in CBE.
 # Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
 COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
 # Expected failures for test target:
-# 799 test cases, 4 errors, 6 failures, 4 skipped
-# 9 modules OK (2 failed)
-# failures: smoketest [7/14], unittest_lint [3/21]
+# 799 test cases, 2 errors, 3 skipped
+# 10 modules OK (1 failed)
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
