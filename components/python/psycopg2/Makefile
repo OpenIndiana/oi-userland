@@ -10,22 +10,24 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 # Copyright 2015, PALO Richard.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	psycopg2
-COMPONENT_VERSION= 	2.6.1
+COMPONENT_VERSION= 	2.6.2
 COMPONENT_SUMMARY= 	Python-PostgreSQL Database Adapter
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:6acf9abbbe757ef75dc2ecd9d91ba749547941abaffbe69ff2086a9e37d4904c
+	sha256:70490e12ed9c5c818ecd85d185d363335cc8a8cbf7212e3c185431c79ff8c05c
 COMPONENT_ARCHIVE_URL= \
-  https://pypi.python.org/packages/source/p/psycopg2/$(COMPONENT_ARCHIVE)
+	https://pypi.python.org/packages/7b/a8/dc2d50a6f37c157459cd18bab381c8e6134b9381b50fbe969997b2ae7dbc/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/psycopg2
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -42,3 +44,7 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 test:	$(NO_TESTS)
+
+REQUIRED_PACKAGES += database/postgres-93/library
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
