@@ -724,6 +724,7 @@ LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
