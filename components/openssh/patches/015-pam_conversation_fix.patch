@@ -61,7 +61,7 @@
  		sshpam_password = fake = fake_password(password);
  
 +#ifdef PAM_BUGFIX
-+        sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, password);
++        sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, sshpam_password);
 +        if (sshpam_err != PAM_SUCCESS) {
 +                debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
 +                    pam_strerror(sshpam_handle, sshpam_err));
