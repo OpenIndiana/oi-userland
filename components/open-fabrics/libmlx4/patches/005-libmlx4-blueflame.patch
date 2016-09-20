@@ -1,0 +1,20 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  710c2a999a0a5469c1dd4ea1c21b279debb26a3b
+24617163 Missing code in libmlx4 when upgrading from ofed-1.5.3 to ofed-3.18
+
+diff -r 710c2a999a0a src/qp.c
+--- a/src/qp.c	Fri Sep 16 10:24:06 2016 -0700
++++ b/src/qp.c	Tue Sep 20 08:12:11 2016 -0700
+@@ -405,7 +405,8 @@
+ out:
+ 	ctx = to_mctx(ibqp->context);
+ 
+-	if (nreq == 1 && inl && size > 1 && size <= ctx->bf_buf_size / 16) {
++	if (ctx->ibv_ctx.device->blueflame_enabled && nreq == 1 && inl &&
++	    size > 1 && size <= ctx->bf_buf_size / 16) {
+ 		ctrl->owner_opcode |= htonl((qp->sq.head & 0xffff) << 8);
+ 		*(uint32_t *) ctrl->reserved |= qp->doorbell_qpn;
+ 		/*
