@@ -76,6 +76,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-soabi
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
