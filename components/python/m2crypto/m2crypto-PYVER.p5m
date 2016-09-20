@@ -18,18 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/m2crypto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/m2crypto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python interface for OpenSSL"
 set name=pkg.description \
     value="M2Crypto is a complete Python wrapper for OpenSSL featuring RSA, DSA, DH, HMACs, message digests, symmetric ciphers (including AES); SSL functionality to implement clients and servers; HTTPS extensions to Python's httplib, urllib, and xmlrpclib; unforgeable HMAC'ing AuthCookies for web session management; FTP/TLS client and server; S/MIME; ZServerSSL: an HTTPS server for Zope; and ZSmime: an S/MIME messenger for Zope. M2Crypto can also be used to provide SSL for Twisted."
 set name=com.oracle.info.description value="Python bindings for OpenSSL"
-set name=com.oracle.info.tpno value=4424
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
+    value=org.opensolaris.category.2008:Development/Python \
+    value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="Heikki Toivonen <heikki@osafoundation.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -75,6 +77,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/SSL/timeout.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/X509.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/__m2crypto.so
+file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/_m2crypto.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/callback.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/ftpslib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/httpslib.py
@@ -87,10 +90,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/util.py
 #
 license LICENCE license=BSD
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/m2crypto-$(PYV)@0.21.1,5.11-2016.0.1.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the m2crypto package
 depend type=require \
-    fmri=library/python-2/m2crypto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/m2crypto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

@@ -18,34 +18,47 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		M2Crypto
-COMPONENT_VERSION=	0.21.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.24.0
 COMPONENT_PROJECT_URL=	http://chandlerproject.org/Projects/MeTooCrypto/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:25b94498505c2d800ee465db0cc1aff097b1615adc3ac042a1c85ceca264fc0a
+    sha256:80a56441a1d2c0cf27e725be7554c92598b938fc8767ee2c71fdbc2fdc055ee8
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/M/M2Crypto/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/m2crypto
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+# Syntax issues: not Python 3 ready.
+PYTHON_VERSIONS=	2.7
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_TEST_ARGS =	setup.py test
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_TEST_ENV=	CC=$(CC)
+COMPONENT_TEST_ENV +=	PATH=/usr/bin
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+# tests.test_x509.X509TestCase fails with
+# No such file or directory: 'tests/bad_date_cert.crt'
+test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/swig
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
