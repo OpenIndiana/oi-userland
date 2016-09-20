@@ -1,0 +1,19 @@
+This is workaround for Studio compiler bug 24660887.
+
+When build with -xO4 object will miss symbol like this:
+
+symbol .L77001888: referenced symbol not found
+
+Not suitable for upstream.
+
+--- plugins/profinet/Makefile.in
++++ plugins/profinet/Makefile.in
+@@ -300,7 +300,7 @@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CC_FOR_BUILD = @CC_FOR_BUILD@
+-CFLAGS = @CFLAGS@
++CFLAGS = @CFLAGS@ -xO3
+ CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@
+ CFLAGS_SSE42 = @CFLAGS_SSE42@
+ CONFIG_ARGS = @CONFIG_ARGS@

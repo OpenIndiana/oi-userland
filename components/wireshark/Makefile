@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	2.0.5
+COMPONENT_VERSION=	2.2.0
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0ce0241330828973f5b4efee422a3760cab8ce0b41e7721c4b9fd185be1bb10b
+    sha256:a6847e741efcba6cb9d92d464d4219917bee3ad0b8f5b0f80d4388ad2f3f1104
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
-TPNO=			30387
+TPNO=			31738
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -48,12 +48,12 @@ PKG_MACROS+= MICRO_VERSION=$(MICRO_VERSION)
 
 PATCH_LEVEL=0
 
-# We don't have automake 1.14 yet. Thus need to reconfigure with older one.
-COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
-
 # Look for gnutls-3 pkg-config & libraries before the defaults
 PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
 LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
+
+# Reported via bug 12923
+CFLAGS += -I/usr/include/kerberosv5
 
 CONFIGURE_BINDIR.64= $(CONFIGURE_SBINDIR.64)
 
@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-qt=no
-CONFIGURE_OPTIONS +=	--with-gtk2=yes
+CONFIGURE_OPTIONS +=	--with-gtk=2
 CONFIGURE_OPTIONS +=	\
   PATH="$(USRDIR)/perl5/bin:$(GNUBIN)/$(MACH64):$(GNUBIN):$(USRBIN.64):$(PATH)"
 
@@ -83,10 +83,10 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # During install libtool will relink libwireshark library so that it
 # requires libwiretap version from system and not from proto area.
 # This workaround is only needed when CBE contains older libwiretap.
-LIBWIRESHARK=$(PROTOUSRLIBDIR64)/libwireshark.so.6.1.$(MICRO_VERSION)
+LIBWIRESHARK=$(PROTOUSRLIBDIR64)/libwireshark.so.8.0.$(MICRO_VERSION)
 COMPONENT_POST_INSTALL_ACTION = \
 	(WTAP=`$(ELFEDIT) -e dyn:dump $(LIBWIRESHARK) | grep 'libwiretap' | awk '{print $$4}'` \
-	; $(ELFEDIT) -e "dyn:value -s -with-valstr $$WTAP libwiretap.so.5" $(LIBWIRESHARK) )
+	; $(ELFEDIT) -e "dyn:value -s -with-valstr $$WTAP libwiretap.so.6" $(LIBWIRESHARK) )
 
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
