@@ -45,7 +45,15 @@ diff -pur old/cipher.c new/cipher.c
 diff -pur old/digest-openssl.c new/digest-openssl.c
 --- old/digest-openssl.c
 +++ new/digest-openssl.c
-@@ -53,8 +53,22 @@ struct ssh_digest {
+@@ -31,6 +31,7 @@
+ #include "sshbuf.h"
+ #include "digest.h"
+ #include "ssherr.h"
++#include "misc.h"
+ 
+ #ifndef HAVE_EVP_RIPEMD160
+ # define EVP_ripemd160 NULL
+@@ -53,8 +54,22 @@ struct ssh_digest {
  	const EVP_MD *(*mdfunc)(void);
  };
  
@@ -68,7 +76,7 @@ diff -pur old/digest-openssl.c new/digest-openssl.c
  	{ SSH_DIGEST_MD5,	"MD5",	 	16,	EVP_md5 },
  	{ SSH_DIGEST_RIPEMD160,	"RIPEMD160",	20,	EVP_ripemd160 },
  	{ SSH_DIGEST_SHA1,	"SHA1",	 	20,	EVP_sha1 },
-@@ -67,6 +81,9 @@ const struct ssh_digest digests[] = {
+@@ -67,6 +82,9 @@ const struct ssh_digest digests[] = {
  static const struct ssh_digest *
  ssh_digest_by_alg(int alg)
  {
@@ -78,7 +86,7 @@ diff -pur old/digest-openssl.c new/digest-openssl.c
  	if (alg < 0 || alg >= SSH_DIGEST_MAX)
  		return NULL;
  	if (digests[alg].id != alg) /* sanity */
-@@ -79,6 +96,9 @@ ssh_digest_by_alg(int alg)
+@@ -79,6 +97,9 @@ ssh_digest_by_alg(int alg)
  int
  ssh_digest_alg_by_name(const char *name)
  {
@@ -91,7 +99,15 @@ diff -pur old/digest-openssl.c new/digest-openssl.c
 diff -pur old/gss-genr.c new/gss-genr.c
 --- old/gss-genr.c
 +++ new/gss-genr.c
-@@ -100,6 +100,7 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -44,6 +44,7 @@
+ #include "cipher.h"
+ #include "key.h"
+ #include "kex.h"
++#include "misc.h"
+ #include <openssl/evp.h>
+ 
+ #include "ssh-gss.h"
+@@ -100,6 +101,7 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  	char deroid[2];
  	const EVP_MD *evp_md = EVP_md5();
  	EVP_MD_CTX md;
@@ -99,7 +115,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  
  	if (gss_enc2oid != NULL) {
  		for (i = 0; gss_enc2oid[i].encoded != NULL; i++)
-@@ -112,6 +113,14 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -112,6 +114,14 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  
  	buffer_init(&buf);
  
@@ -114,7 +130,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  	oidpos = 0;
  	for (i = 0; i < gss_supported->count; i++) {
  		if (gss_supported->elements[i].length < 128 &&
-@@ -119,7 +128,6 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -119,7 +129,6 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  
  			deroid[0] = SSH_GSS_OIDTYPE;
  			deroid[1] = gss_supported->elements[i].length;
@@ -122,7 +138,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  			EVP_DigestInit(&md, evp_md);
  			EVP_DigestUpdate(&md, deroid, 2);
  			EVP_DigestUpdate(&md,
-@@ -151,6 +159,12 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -151,6 +160,12 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  			oidpos++;
  		}
  	}
@@ -138,7 +154,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
 diff -pur old/kex.c new/kex.c
 --- old/kex.c
 +++ new/kex.c
-@@ -89,7 +89,40 @@ struct kexalg {
+@@ -90,7 +90,43 @@ struct kexalg {
  	int ec_nid;
  	int hash_alg;
  };
@@ -149,7 +165,10 @@ diff -pur old/kex.c new/kex.c
 +static const struct kexalg kexalgs_fips[] = {
 +#ifdef WITH_OPENSSL
 +	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1 },
-+	{ KEX_DH14, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1 },
++	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1 },
++	{ KEX_DH14_SHA256, KEX_DH_GRP14_SHA256, 0, SSH_DIGEST_SHA256 },
++	{ KEX_DH16_SHA512, KEX_DH_GRP16_SHA512, 0, SSH_DIGEST_SHA512 },
++	{ KEX_DH18_SHA512, KEX_DH_GRP18_SHA512, 0, SSH_DIGEST_SHA512 },
 +	{ KEX_DHGEX_SHA1, KEX_DH_GEX_SHA1, 0, SSH_DIGEST_SHA1 },
 +#ifdef HAVE_EVP_SHA256
 +	{ KEX_DHGEX_SHA256, KEX_DH_GEX_SHA256, 0, SSH_DIGEST_SHA256 },
@@ -178,7 +197,7 @@ diff -pur old/kex.c new/kex.c
 +#endif 
  #ifdef WITH_OPENSSL
  	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1 },
- 	{ KEX_DH14, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1 },
+ 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1 },
 diff -pur old/mac.c new/mac.c
 --- old/mac.c
 +++ new/mac.c
@@ -219,7 +238,7 @@ diff -pur old/mac.c new/mac.c
 diff -pur old/misc.c new/misc.c
 --- old/misc.c
 +++ new/misc.c
-@@ -39,12 +39,15 @@
+@@ -39,12 +39,16 @@
  #include <string.h>
  #include <time.h>
  #include <unistd.h>
@@ -231,11 +250,12 @@ diff -pur old/misc.c new/misc.c
  #include <netinet/tcp.h>
  
 +#include <openssl/crypto.h>
++#include <openssl/err.h>
 +
  #include <ctype.h>
  #include <errno.h>
  #include <fcntl.h>
-@@ -78,6 +81,60 @@ chop(char *s)
+@@ -78,6 +82,60 @@ chop(char *s)
  
  }
  
@@ -299,7 +319,7 @@ diff -pur old/misc.c new/misc.c
 diff -pur old/misc.h new/misc.h
 --- old/misc.h
 +++ new/misc.h
-@@ -38,6 +38,11 @@ struct ForwardOptions {
+@@ -40,6 +40,11 @@ struct ForwardOptions {
  
  char	*chop(char *);
  char	*strdelim(char **);
@@ -314,7 +334,7 @@ diff -pur old/misc.h new/misc.h
 diff -pur old/myproposal.h new/myproposal.h
 --- old/myproposal.h
 +++ new/myproposal.h
-@@ -83,19 +83,31 @@
+@@ -88,21 +88,33 @@
  # else
  #  define KEX_CURVE25519_METHODS ""
  # endif
@@ -323,21 +343,23 @@ diff -pur old/myproposal.h new/myproposal.h
 +#define KEX_COMMON_KEX_DFLT \
  	KEX_CURVE25519_METHODS \
  	KEX_ECDH_METHODS \
- 	KEX_SHA256_METHODS
+ 	KEX_SHA2_METHODS
  
 -#define KEX_SERVER_KEX KEX_COMMON_KEX \
 +#define KEX_SERVER_KEX_DFLT KEX_COMMON_KEX_DFLT \
+ 	KEX_SHA2_GROUP14 \
  	"diffie-hellman-group14-sha1" \
  
 -#define KEX_CLIENT_KEX KEX_COMMON_KEX \
 +#define KEX_CLIENT_KEX_DFLT KEX_COMMON_KEX_DFLT \
  	"diffie-hellman-group-exchange-sha1," \
+ 	KEX_SHA2_GROUP14 \
  	"diffie-hellman-group14-sha1"
  
 -#define	KEX_DEFAULT_PK_ALG	\
 +#define KEX_COMMON_KEX_FIPS \
 +	KEX_ECDH_METHODS \
-+	KEX_SHA256_METHODS
++	KEX_SHA2_METHODS
 +
 +#define KEX_SERVER_KEX_FIPS KEX_COMMON_KEX_FIPS \
 +	"diffie-hellman-group14-sha1" \
@@ -350,7 +372,7 @@ diff -pur old/myproposal.h new/myproposal.h
  	HOSTKEY_ECDSA_CERT_METHODS \
  	"ssh-ed25519-cert-v01@openssh.com," \
  	"ssh-rsa-cert-v01@openssh.com," \
-@@ -105,17 +117,32 @@
+@@ -112,17 +124,32 @@
  	"rsa-sha2-256," \
  	"ssh-rsa"
  
@@ -386,7 +408,7 @@ diff -pur old/myproposal.h new/myproposal.h
  	"umac-64-etm@openssh.com," \
  	"umac-128-etm@openssh.com," \
  	"hmac-sha2-256-etm@openssh.com," \
-@@ -127,7 +154,42 @@
+@@ -134,7 +161,42 @@
  	"hmac-sha2-512," \
  	"hmac-sha1"
  
@@ -473,7 +495,7 @@ diff -pur old/ssh-agent.1 new/ssh-agent.1
 diff -pur old/ssh-agent.c new/ssh-agent.c
 --- old/ssh-agent.c
 +++ new/ssh-agent.c
-@@ -1199,6 +1199,7 @@ main(int ac, char **av)
+@@ -1196,6 +1196,7 @@ main(int ac, char **av)
  	struct timeval *tvp = NULL;
  	size_t len;
  	mode_t prev_mask;
@@ -481,9 +503,9 @@ diff -pur old/ssh-agent.c new/ssh-agent.c
  
  	ssh_malloc_init();	/* must be called before any mallocs */
  	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
-@@ -1213,6 +1214,9 @@ main(int ac, char **av)
- 	prctl(PR_SET_DUMPABLE, 0);
- #endif
+@@ -1207,6 +1208,9 @@ main(int ac, char **av)
+ 
+ 	platform_disable_tracing(0);	/* strict=no */
  
 +#ifdef ENABLE_OPENSSL_FIPS
 +	fips_err = ssh_FIPS_mode_set_if_capable();
@@ -491,7 +513,7 @@ diff -pur old/ssh-agent.c new/ssh-agent.c
  #ifdef WITH_OPENSSL
  	OpenSSL_add_all_algorithms();
  #endif
-@@ -1343,8 +1347,19 @@ main(int ac, char **av)
+@@ -1337,8 +1341,19 @@ main(int ac, char **av)
  		printf(format, SSH_AUTHSOCKET_ENV_NAME, socket_name,
  		    SSH_AUTHSOCKET_ENV_NAME);
  		printf("echo Agent pid %ld;\n", (long)parent_pid);
@@ -514,7 +536,7 @@ diff -pur old/ssh-agent.c new/ssh-agent.c
 diff -pur old/ssh-keygen.1 new/ssh-keygen.1
 --- old/ssh-keygen.1
 +++ new/ssh-keygen.1
-@@ -283,6 +283,8 @@ and
+@@ -284,6 +284,8 @@ and
  .Dq sha256 .
  The default is
  .Dq sha256 .
@@ -526,7 +548,7 @@ diff -pur old/ssh-keygen.1 new/ssh-keygen.1
 diff -pur old/ssh-keygen.c new/ssh-keygen.c
 --- old/ssh-keygen.c
 +++ new/ssh-keygen.c
-@@ -2267,11 +2267,18 @@ main(int argc, char **argv)
+@@ -2273,11 +2273,18 @@ main(int argc, char **argv)
  
  	__progname = ssh_get_progname(argv[0]);
  
@@ -576,7 +598,7 @@ diff -pur old/ssh-keysign.c new/ssh-keysign.c
 diff -pur old/ssh.1 new/ssh.1
 --- old/ssh.1
 +++ new/ssh.1
-@@ -91,6 +91,9 @@ If
+@@ -92,6 +92,9 @@ If
  is specified,
  it is executed on the remote host instead of a login shell.
  .Pp
@@ -589,7 +611,7 @@ diff -pur old/ssh.1 new/ssh.1
 diff -pur old/ssh.c new/ssh.c
 --- old/ssh.c
 +++ new/ssh.c
-@@ -606,6 +606,11 @@ main(int ac, char **av)
+@@ -609,6 +609,11 @@ main(int ac, char **av)
  	 */
  	initialize_options(&options);
  
@@ -601,7 +623,7 @@ diff -pur old/ssh.c new/ssh.c
  	/* Parse command-line arguments. */
  	host = NULL;
  	use_syslog = 0;
-@@ -1016,6 +1021,10 @@ main(int ac, char **av)
+@@ -1028,6 +1033,10 @@ main(int ac, char **av)
  #endif
  		);
  
@@ -615,7 +637,7 @@ diff -pur old/ssh.c new/ssh.c
 diff -pur old/ssh_api.c new/ssh_api.c
 --- old/ssh_api.c
 +++ new/ssh_api.c
-@@ -81,6 +81,10 @@ ssh_init(struct ssh **sshp, int is_serve
+@@ -79,6 +79,10 @@ ssh_init(struct ssh **sshp, int is_serve
  	int r;
  
  	if (!called) {
@@ -652,7 +674,7 @@ diff -pur old/ssh_config.5 new/ssh_config.5
  .It Cm ForwardAgent
  Specifies whether the connection to the authentication agent (if any)
  will be forwarded to the remote machine.
-@@ -1200,6 +1209,16 @@ umac-64@openssh.com,umac-128@openssh.com
+@@ -1249,6 +1258,16 @@ umac-64@openssh.com,umac-128@openssh.com
  hmac-sha2-256,hmac-sha2-512,hmac-sha1
  .Ed
  .Pp
@@ -703,7 +725,7 @@ diff -pur old/sshd.8 new/sshd.8
 diff -pur old/sshd.c new/sshd.c
 --- old/sshd.c
 +++ new/sshd.c
-@@ -430,10 +430,18 @@ sshd_exchange_identification(int sock_in
+@@ -431,10 +431,18 @@ sshd_exchange_identification(struct ssh
  		minor = PROTOCOL_MINOR_1;
  	}
  
@@ -722,7 +744,7 @@ diff -pur old/sshd.c new/sshd.c
  
  	/* Send our protocol version identification. */
  	if (atomicio(vwrite, sock_out, server_version_string,
-@@ -1503,6 +1511,10 @@ main(int ac, char **av)
+@@ -1562,6 +1570,10 @@ main(int ac, char **av)
  	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
  	sanitise_stdfd();
  
@@ -733,7 +755,7 @@ diff -pur old/sshd.c new/sshd.c
  	/* Initialize configuration options to their default values. */
  	initialize_server_options(&options);
  
-@@ -1653,6 +1665,10 @@ main(int ac, char **av)
+@@ -1712,6 +1724,10 @@ main(int ac, char **av)
  	    SYSLOG_FACILITY_AUTH : options.log_facility,
  	    log_stderr || !inetd_flag);
  
@@ -747,7 +769,7 @@ diff -pur old/sshd.c new/sshd.c
 diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
-@@ -482,6 +482,13 @@ aes128-ctr,aes192-ctr,aes256-ctr,
+@@ -489,6 +489,13 @@ aes128-ctr,aes192-ctr,aes256-ctr,
  aes128-gcm@openssh.com,aes256-gcm@openssh.com
  .Ed
  .Pp
@@ -761,7 +783,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  The list of available ciphers may also be obtained using the
  .Fl Q
  option of
-@@ -576,6 +583,8 @@ and
+@@ -585,6 +592,8 @@ and
  .Dq sha256 .
  The default is
  .Dq sha256 .
@@ -770,7 +792,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  .It Cm ForceCommand
  Forces the execution of the command specified by
  .Cm ForceCommand ,
-@@ -1025,6 +1034,16 @@ umac-64@openssh.com,umac-128@openssh.com
+@@ -1034,6 +1043,16 @@ umac-64@openssh.com,umac-128@openssh.com
  hmac-sha2-256,hmac-sha2-512,hmac-sha1
  .Ed
  .Pp

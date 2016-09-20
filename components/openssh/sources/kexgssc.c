@@ -63,7 +63,6 @@ kexgss_client(struct ssh *ssh) {
 	Gssctxt *ctxt;
 	OM_uint32 maj_status, min_status, ret_flags;
 	uint_t klen, kout, slen = 0, strlen;
-	DH *dh;
 	BIGNUM *dh_server_pub = NULL;
 	BIGNUM *shared_secret = NULL;
 	BIGNUM *p = NULL;
@@ -284,7 +283,9 @@ kexgss_client(struct ssh *ssh) {
 	switch (kex->kex_type) {
 	case KEX_GSS_GRP1_SHA1:
 	case KEX_GSS_GRP14_SHA1:
-		kex_dh_hash(kex->client_version_string,
+		kex_dh_hash(
+		    kex->hash_alg,
+		    kex->client_version_string,
 		    kex->server_version_string,
 		    buffer_ptr(kex->my), buffer_len(kex->my),
 		    buffer_ptr(kex->peer), buffer_len(kex->peer),

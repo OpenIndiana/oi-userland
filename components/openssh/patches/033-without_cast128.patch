@@ -12,26 +12,16 @@
 # relevant ssh implementations also provide several more common encryption
 # algorithms (aes256-ctr, aes128-cbc, ...) on top of cast128-cbc.
 #
+# Update Aug 29, 2016:
+# This used to be implemented by Solaris specific macro WITHOUT_CAST,
+# but now upstream OPENSSL_NO_CAST is used instead. This patch now just
+# removes cast references from manpages.
+#
 # This is a Solaris specific patch and it is not likely to be accepted upstream.
 #
-diff -pur old/cipher.c new/cipher.c
---- old/cipher.c
-+++ new/cipher.c
-@@ -88,8 +88,10 @@ static const struct sshcipher ciphers[]
- 	{ "3des-cbc",	SSH_CIPHER_SSH2, 8, 24, 0, 0, 0, 1, EVP_des_ede3_cbc },
- 	{ "blowfish-cbc",
- 			SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 1, EVP_bf_cbc },
-+#ifndef WITHOUT_CAST128
- 	{ "cast128-cbc",
- 			SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 1, EVP_cast5_cbc },
-+#endif
- 	{ "arcfour",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 0, EVP_rc4 },
- 	{ "arcfour128",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 1536, 0, EVP_rc4 },
- 	{ "arcfour256",	SSH_CIPHER_SSH2, 8, 32, 0, 0, 1536, 0, EVP_rc4 },
-diff -pur old/ssh_config.5 new/ssh_config.5
---- old/ssh_config.5
-+++ new/ssh_config.5
-@@ -478,8 +478,6 @@ arcfour256
+--- orig/ssh_config.5	Mon Aug 15 17:22:20 2016
++++ new/ssh_config.5	Mon Aug 15 17:25:28 2016
+@@ -478,8 +478,6 @@
  .It
  blowfish-cbc
  .It
@@ -40,10 +30,20 @@ diff -pur old/ssh_config.5 new/ssh_config.5
  chacha20-poly1305@openssh.com
  .El
  .Pp
-diff -pur old/sshd.8 new/sshd.8
---- old/sshd.8
-+++ new/sshd.8
-@@ -307,7 +307,7 @@ For protocol 2,
+--- orig/sshd_config.5	Mon Aug 15 17:22:29 2016
++++ new/sshd_config.5	Mon Aug 15 17:25:58 2016
+@@ -479,8 +479,6 @@
+ .It
+ blowfish-cbc
+ .It
+-cast128-cbc
+-.It
+ chacha20-poly1305@openssh.com
+ .El
+ .Pp
+--- orig/sshd.8	Mon Aug 15 17:22:36 2016
++++ new/sshd.8	Mon Aug 15 17:26:48 2016
+@@ -307,7 +307,7 @@
  forward security is provided through a Diffie-Hellman key agreement.
  This key agreement results in a shared session key.
  The rest of the session is encrypted using a symmetric cipher, currently
@@ -52,15 +52,3 @@ diff -pur old/sshd.8 new/sshd.8
  The client selects the encryption algorithm
  to use from those offered by the server.
  Additionally, session integrity is provided
-diff -pur old/sshd_config.5 new/sshd_config.5
---- old/sshd_config.5
-+++ new/sshd_config.5
-@@ -472,8 +472,6 @@ arcfour256
- .It
- blowfish-cbc
- .It
--cast128-cbc
--.It
- chacha20-poly1305@openssh.com
- .El
- .Pp

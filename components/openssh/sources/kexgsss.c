@@ -76,7 +76,6 @@ kexgss_server(struct ssh *ssh)
 	Gssctxt *ctxt = NULL;
 	uint_t slen, klen, kout;
 	uchar_t *kbuf;
-	DH *dh;
 	int min = -1, max = -1, nbits = -1;
 	BIGNUM *shared_secret = NULL;
 	BIGNUM *dh_client_pub = NULL;
@@ -236,6 +235,7 @@ kexgss_server(struct ssh *ssh)
 	case KEX_GSS_GRP1_SHA1:
 	case KEX_GSS_GRP14_SHA1:
 		kex_dh_hash(
+		    kex->hash_alg,
 		    kex->client_version_string, kex->server_version_string,
 		    buffer_ptr(kex->peer), buffer_len(kex->peer),
 		    buffer_ptr(kex->my), buffer_len(kex->my),

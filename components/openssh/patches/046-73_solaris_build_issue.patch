@@ -1,0 +1,31 @@
+#
+# Unbreak ./configure on Solaris.
+#
+# Patch source: upstream
+# https://marc.info/?l=openssh-unix-dev&m=147011381114561&w=2
+#
+--- orig/configure.ac	Thu Aug 18 14:41:57 2016
++++ new/configure.ac	Thu Aug 18 14:44:59 2016
+@@ -751,6 +751,9 @@
+ 	use_pie=auto
+ 	check_for_libcrypt_later=1
+ 	check_for_openpty_ctty_bug=1
++        dnl Target SUSv3/POSIX.1-2001 plus BSD specifics.
++        dnl _DEFAULT_SOURCE is the new name for _BSD_SOURCE
++        CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE=600 -D_BSD_SOURCE -D_DEFAULT_SOURCE"
+ 	AC_DEFINE([PAM_TTY_KLUDGE], [1],
+ 		[Work around problematic Linux PAM modules handling of PAM_TTY])
+ 	AC_DEFINE([LOCKED_PASSWD_PREFIX], ["!"],
+@@ -1790,11 +1793,8 @@
+ 	warn \
+ ])
+ 
+-dnl Wide character support.  Linux man page says it needs _XOPEN_SOURCE.
+-saved_CFLAGS="$CFLAGS"
+-CFLAGS="$CFLAGS -D_XOPEN_SOURCE"
++dnl Wide character support.
+ AC_CHECK_FUNCS([mblen mbtowc nl_langinfo wcwidth])
+-CFLAGS="$saved_CFLAGS"
+ 
+ AC_LINK_IFELSE(
+         [AC_LANG_PROGRAM(

@@ -4,23 +4,12 @@
 # and hmac-md5 Messages Authentication Codes (MACs). Besides that, disable
 # deprecated 3des-cbc by default on client (already disabled on the server).
 #
+# Update Aug 29, 2016:
+# Disabling arcfour used to be implemented by Solaris specific macro
+# WITHOUT_ARCFOUR, but now upstream OPENSSL_NO_RC4 is used instead.
+#
 # Patch source: in-house
 #
-diff -pur old/cipher.c new/cipher.c
---- old/cipher.c
-+++ new/cipher.c
-@@ -119,9 +119,11 @@ static const struct sshcipher ciphers[]
- 	{ "cast128-cbc",
- 			SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 1, EVP_cast5_cbc },
- #endif
-+#ifndef WITHOUT_ARCFOUR
- 	{ "arcfour",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 0, 0, EVP_rc4 },
- 	{ "arcfour128",	SSH_CIPHER_SSH2, 8, 16, 0, 0, 1536, 0, EVP_rc4 },
- 	{ "arcfour256",	SSH_CIPHER_SSH2, 8, 32, 0, 0, 1536, 0, EVP_rc4 },
-+#endif
- 	{ "aes128-cbc",	SSH_CIPHER_SSH2, 16, 16, 0, 0, 0, 1, EVP_aes_128_cbc },
- 	{ "aes192-cbc",	SSH_CIPHER_SSH2, 16, 24, 0, 0, 0, 1, EVP_aes_192_cbc },
- 	{ "aes256-cbc",	SSH_CIPHER_SSH2, 16, 32, 0, 0, 0, 1, EVP_aes_256_cbc },
 diff -pur old/mac.c new/mac.c
 --- old/mac.c
 +++ new/mac.c
@@ -49,7 +38,7 @@ diff -pur old/mac.c new/mac.c
 diff -pur old/myproposal.h new/myproposal.h
 --- old/myproposal.h
 +++ new/myproposal.h
-@@ -133,14 +133,14 @@
+@@ -140,14 +140,14 @@
  	AESGCM_CIPHER_MODES
  
  #define KEX_CLIENT_ENCRYPT_DFLT KEX_SERVER_ENCRYPT_DFLT "," \
@@ -91,44 +80,6 @@ diff -pur old/ssh_config.5 new/ssh_config.5
  .Ed
  .Pp
  The following ciphers are FIPS-140 approved and are supported in FIPS-140 mode:
-diff -pur old/sshd_config.5 new/sshd_config.5
---- old/sshd_config.5
-+++ new/sshd_config.5
-@@ -464,12 +464,6 @@ aes128-gcm@openssh.com
- .It
- aes256-gcm@openssh.com
- .It
--arcfour
--.It
--arcfour128
--.It
--arcfour256
--.It
- blowfish-cbc
- .It
- chacha20-poly1305@openssh.com
-@@ -988,10 +982,6 @@ The supported MACs are:
- .Pp
- .Bl -item -compact -offset indent
- .It
--hmac-md5
--.It
--hmac-md5-96
--.It
- hmac-ripemd160
- .It
- hmac-sha1
-@@ -1006,10 +996,6 @@ umac-64@openssh.com
- .It
- umac-128@openssh.com
- .It
--hmac-md5-etm@openssh.com
--.It
--hmac-md5-96-etm@openssh.com
--.It
- hmac-ripemd160-etm@openssh.com
- .It
- hmac-sha1-etm@openssh.com
 diff -pur old/sshd.8 new/sshd.8
 --- old/sshd.8
 +++ new/sshd.8
@@ -147,3 +98,41 @@ diff -pur old/sshd.8 new/sshd.8
  hmac-sha2-256 or hmac-sha2-512).
  .Pp
  Finally, the server and the client enter an authentication dialog.
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -471,12 +471,6 @@ aes128-gcm@openssh.com
+ .It
+ aes256-gcm@openssh.com
+ .It
+-arcfour
+-.It
+-arcfour128
+-.It
+-arcfour256
+-.It
+ blowfish-cbc
+ .It
+ chacha20-poly1305@openssh.com
+@@ -1009,10 +1003,6 @@ The supported MACs are:
+ .Pp
+ .Bl -item -compact -offset indent
+ .It
+-hmac-md5
+-.It
+-hmac-md5-96
+-.It
+ hmac-ripemd160
+ .It
+ hmac-sha1
+@@ -1027,10 +1017,6 @@ umac-64@openssh.com
+ .It
+ umac-128@openssh.com
+ .It
+-hmac-md5-etm@openssh.com
+-.It
+-hmac-md5-96-etm@openssh.com
+-.It
+ hmac-ripemd160-etm@openssh.com
+ .It
+ hmac-sha1-etm@openssh.com

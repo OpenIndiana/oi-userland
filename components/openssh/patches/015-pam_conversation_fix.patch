@@ -4,9 +4,9 @@
 # 2009, but it was not accepted by the upstream.  For more information, see
 # https://bugzilla.mindrot.org/show_bug.cgi?id=1681.
 #
---- orig/auth-pam.c	Mon Oct 27 14:40:01 2014
-+++ new/auth-pam.c	Tue Oct 28 12:40:59 2014
-@@ -1111,11 +1111,13 @@
+--- orig/auth-pam.c	Mon Aug 15 16:16:17 2016
++++ new/auth-pam.c	Mon Aug 15 16:26:40 2016
+@@ -1138,11 +1138,13 @@
  	free(env);
  }
  
@@ -20,25 +20,25 @@
  static int
  sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
      struct pam_response **resp, void *data)
-@@ -1137,6 +1139,17 @@
+@@ -1164,6 +1166,17 @@
  	for (i = 0; i < n; ++i) {
  		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
  		case PAM_PROMPT_ECHO_OFF:
 +#ifdef PAM_BUGFIX
 +                       /*
 +                        * PAM conversation function for the password userauth
-+			* method (non-interactive) really cannot do any 
-+			* prompting.  We set the PAM_AUTHTOK item in 
++                        * method (non-interactive) really cannot do any 
++                        * prompting.  We set the PAM_AUTHTOK item in 
 +                        * sshpam_auth_passwd()to avoid conversation. If some
-+			* modules still try to converse, then the password
-+			* userauth will fail.
-+			*/
-+			goto fail;
++                        * modules still try to converse, then the password
++                        * userauth will fail.
++                        */
++                        goto fail;
 +#else
  			if (sshpam_password == NULL)
  				goto fail;
  			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
-@@ -1143,6 +1156,7 @@
+@@ -1170,6 +1183,7 @@
  				goto fail;
  			reply[i].resp_retcode = PAM_SUCCESS;
  			break;
@@ -46,7 +46,7 @@
  		case PAM_ERROR_MSG:
  		case PAM_TEXT_INFO:
  			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-@@ -1178,6 +1192,9 @@
+@@ -1205,6 +1219,9 @@
  int
  sshpam_auth_passwd(Authctxt *authctxt, const char *password)
  {
@@ -55,35 +55,35 @@
 +#endif
  	int flags = (options.permit_empty_passwd == 0 ?
  	    PAM_DISALLOW_NULL_AUTHTOK : 0);
- 
-@@ -1197,6 +1214,15 @@
+ 	char *fake = NULL;
+@@ -1225,6 +1242,15 @@
  	    options.permit_root_login != PERMIT_YES))
- 		sshpam_password = badpw;
+ 		sshpam_password = fake = fake_password(password);
  
 +#ifdef PAM_BUGFIX
-+  	sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, password);
-+	if (sshpam_err != PAM_SUCCESS) {
-+		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
-+		    pam_strerror(sshpam_handle, sshpam_err));
-+		return 0;
-+	}
++        sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, password);
++        if (sshpam_err != PAM_SUCCESS) {
++                debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++                    pam_strerror(sshpam_handle, sshpam_err));
++                return 0;
++        }
 +#endif
 +
  	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
  	    (const void *)&passwd_conv);
  	if (sshpam_err != PAM_SUCCESS)
-@@ -1205,6 +1231,16 @@
- 
- 	sshpam_err = pam_authenticate(sshpam_handle, flags);
- 	sshpam_password = NULL;
+@@ -1236,6 +1262,16 @@
+ 	free(fake);
+ 	if (sshpam_err == PAM_MAXTRIES)
+ 		sshpam_set_maxtries_reached(1);
 +
 +#ifdef PAM_BUGFIX
 +        set_item_rtn = pam_set_item(sshpam_handle, PAM_AUTHTOK, NULL);
-+	if (set_item_rtn != PAM_SUCCESS) {
-+		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
-+		    pam_strerror(sshpam_handle, set_item_rtn));
-+		return 0;
-+	}
++        if (set_item_rtn != PAM_SUCCESS) {
++                debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++                    pam_strerror(sshpam_handle, set_item_rtn));
++                return 0;
++        }
 +#endif
 +
  	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
