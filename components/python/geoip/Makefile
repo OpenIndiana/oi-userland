@@ -8,13 +8,14 @@
 #
 
 #
-# Copyright 2016 <contributor name>
+# Copyright 2016 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		GeoIP
 COMPONENT_VERSION=	1.3.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MaxMind GeoIP Legacy Database - Python API
 COMPONENT_PROJECT_URL=	http://www.maxmind.com/
 COMPONENT_FMRI=		library/python/geoip
@@ -30,7 +31,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS=2.6 2.7 3.4
+PYTHON_VERSIONS=2.7 3.4
 
 build:          $(BUILD_NO_ARCH)
 
@@ -39,6 +40,6 @@ install:        $(INSTALL_NO_ARCH)
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += database/geoip
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library
