@@ -199,20 +199,6 @@ temp.remove(EditInstanceSecurityGroups)
 temp.remove(TogglePause)
 InstancesTable._meta.row_actions = tuple(temp)
 
-# Bootargs feature:
-# If locally configured to do so add 'EditBootargs' to
-# Project/Compute/Instances/Actions
-if getattr(settings, 'SOLARIS_BOOTARGS', True):
-    project_tables_row_actions = \
-        project_tables.InstancesTable._meta.row_actions
-    pos = project_tables.InstancesTable._meta.row_actions.index(
-        project_tables.ConsoleLink
-    )
-    project_tables.InstancesTable._meta.row_actions = (
-        project_tables_row_actions[:pos] + (project_tables.EditBootargs,) +
-        project_tables_row_actions[pos:]
-    )
-
 # Set the available states for Create Snapshot to only be 'ACTIVE'
 project_tables.SNAPSHOT_READY_STATES = ('ACTIVE',)
 
