@@ -1,7 +1,633 @@
-Traceback (most recent call last):
-  File "documentation3.py", line 1155, in <module>
-    ba = before_after('BEFORE', 'AFTER') # ContextManager instance
-  File "<string>", line 2, in before_after
-  File "/usr/lib/python3.5/contextlib.py", line 38, in __init__
-    self.gen = func(*args, **kwds)
-TypeError: before_after() argument after ** must be a mapping, not str
+test (__main__.DocumentationTestCase) ... ok
+test_singledispatch1 (__main__.DocumentationTestCase) ... ok
+test_singledispatch2 (__main__.DocumentationTestCase) ... ok
+test_no_first_arg (__main__.ExtraTestCase) ... ok
+test_qualname (__main__.ExtraTestCase) ... ok
+test_signature (__main__.ExtraTestCase) ... ok
+test_unique_filenames (__main__.ExtraTestCase) ... ok
+test_c_classes (__main__.TestSingleDispatch) ... ok
+test_mro (__main__.TestSingleDispatch) ... ok
+test_mro_conflicts (__main__.TestSingleDispatch) ... ok
+test_register_abc (__main__.TestSingleDispatch) ... ok
+test_register_decorator (__main__.TestSingleDispatch) ... ok
+test_register_error (__main__.TestSingleDispatch) ... ok
+test_simple_overloads (__main__.TestSingleDispatch) ... ok
+test_wrapping_attributes (__main__.TestSingleDispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in
+
+OK
+Trying:
+    from decorator import getargspec  # akin to inspect.getargspec
+Expecting nothing
+ok
+Trying:
+    print(getargspec(f1))
+Expecting:
+    ArgSpec(args=[], varargs='args', varkw='kw', defaults=None)
+ok
+Trying:
+    f1(0, 1) # doctest: +IGNORE_EXCEPTION_DETAIL
+Expecting:
+    Traceback (most recent call last):
+       ...
+    TypeError: f1() takes exactly 1 positional argument (2 given)
+ok
+Trying:
+    from decorator import decorate
+Expecting nothing
+ok
+Trying:
+    @memoize
+    def heavy_computation():
+        time.sleep(2)
+        return "done"
+Expecting nothing
+ok
+Trying:
+    print(heavy_computation()) # the first time it will take 2 seconds
+Expecting:
+    done
+ok
+Trying:
+    print(heavy_computation()) # the second time it will be instantaneous
+Expecting:
+    done
+ok
+Trying:
+    print(getargspec(heavy_computation))
+Expecting:
+    ArgSpec(args=[], varargs=None, varkw=None, defaults=None)
+ok
+Trying:
+    @trace
+    def f1(x):
+        pass
+Expecting nothing
+ok
+Trying:
+    f1(0)
+Expecting:
+    calling f1 with args (0,), {}
+ok
+Trying:
+    print(getargspec(f1))
+Expecting:
+    ArgSpec(args=['x'], varargs=None, varkw=None, defaults=None)
+ok
+Trying:
+    @trace
+    def f(x, y=1, z=2, *args, **kw):
+        pass
+Expecting nothing
+ok
+Trying:
+    f(0, 3)
+Expecting:
+    calling f with args (0, 3, 2), {}
+ok
+Trying:
+    print(getargspec(f))
+Expecting:
+    ArgSpec(args=['x', 'y', 'z'], varargs='args', varkw='kw', defaults=(1, 2))
+ok
+Trying:
+    @trace
+    def f(x: 'the first argument', y: 'default argument'=1, z=2,
+          *args: 'varargs', **kw: 'kwargs'):
+        pass
+Expecting nothing
+ok
+Trying:
+    from inspect import getfullargspec
+Expecting nothing
+ok
+Trying:
+    argspec = getfullargspec(f)
+Expecting nothing
+ok
+Trying:
+    argspec.args
+Expecting:
+    ['x', 'y', 'z']
+ok
+Trying:
+    argspec.varargs
+Expecting:
+    'args'
+ok
+Trying:
+    argspec.varkw
+Expecting:
+    'kw'
+ok
+Trying:
+    argspec.defaults
+Expecting:
+    (1, 2)
+ok
+Trying:
+    argspec.kwonlyargs
+Expecting:
+    []
+ok
+Trying:
+    argspec.kwonlydefaults
+Expecting nothing
+ok
+Trying:
+    f.__annotations__ is f.__wrapped__.__annotations__
+Expecting:
+    True
+ok
+Trying:
+    from decorator import decorator
+Expecting nothing
+ok
+Trying:
+    print(decorator.__doc__)
+Expecting:
+    decorator(caller) converts a caller function into a decorator
+ok
+Trying:
+    @decorator
+    def trace(f, *args, **kw):
+        kwstr = ', '.join('%r: %r' % (k, kw[k]) for k in sorted(kw))
+        print("calling %s with args %s, {%s}" % (f.__name__, args, kwstr))
+        return f(*args, **kw)
+Expecting nothing
+ok
+Trying:
+    trace # doctest: +ELLIPSIS
+Expecting:
+    <function trace at 0x...>
+ok
+Trying:
+    @trace
+    def func(): pass
+Expecting nothing
+ok
+Trying:
+    func()
+Expecting:
+    calling func with args (), {}
+ok
+Trying:
+    @blocking("Please wait ...")
+    def read_data():
+        time.sleep(3) # simulate a blocking resource
+        return "some data"
+Expecting nothing
+ok
+Trying:
+    print(read_data())  # data is not available yet
+Expecting:
+    Please wait ...
+ok
+Trying:
+    time.sleep(1)
+Expecting nothing
+ok
+Trying:
+    print(read_data())  # data is not available yet
+Expecting:
+    Please wait ...
+ok
+Trying:
+    time.sleep(1)
+Expecting nothing
+ok
+Trying:
+    print(read_data())  # data is not available yet
+Expecting:
+    Please wait ...
+ok
+Trying:
+    time.sleep(1.1)  # after 3.1 seconds, data is available
+Expecting nothing
+ok
+Trying:
+    print(read_data())
+Expecting:
+    some data
+ok
+Trying:
+    @decorator(Future)
+    def long_running(x):
+        time.sleep(.5)
+        return x
+Expecting nothing
+ok
+Trying:
+    fut1 = long_running(1)
+Expecting nothing
+ok
+Trying:
+    fut2 = long_running(2)
+Expecting nothing
+ok
+Trying:
+    fut1.result() + fut2.result()
+Expecting:
+    3
+ok
+Trying:
+    from contextlib import contextmanager
+Expecting nothing
+ok
+Trying:
+    @contextmanager
+    def before_after(before, after):
+        print(before)
+        yield
+        print(after)
+Expecting nothing
+ok
+Trying:
+    with before_after('BEFORE', 'AFTER'):
+        print('hello')
+Expecting:
+    BEFORE
+    hello
+    AFTER
+ok
+Trying:
+    def f(*args, **kw): # a function with a generic signature
+        print(args, kw)
+Expecting nothing
+ok
+Trying:
+    f1 = FunctionMaker.create('f1(a, b)', 'f(a, b)', dict(f=f))
+Expecting nothing
+ok
+Trying:
+    f1(1,2)
+Expecting:
+    (1, 2) {}
+ok
+Trying:
+    f1 = FunctionMaker.create(
+        'f1(a, b)', 'f(a, b)', dict(f=f), addsource=True)
+Expecting nothing
+ok
+Trying:
+    print(f1.__source__)
+Expecting:
+    def f1(a, b):
+        f(a, b)
+    <BLANKLINE>
+ok
+Trying:
+    f1 = FunctionMaker.create(
+        'f1(a, b)', 'f(a, b)', dict(f=f), addsource=True, defaults=(None,))
+Expecting nothing
+ok
+Trying:
+    print(getargspec(f1))
+Expecting:
+    ArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=(None,))
+ok
+Trying:
+    import inspect
+Expecting nothing
+ok
+Trying:
+    print(inspect.getsource(example))
+Expecting:
+        def wrapper(*args, **kw):
+            return func(*args, **kw)
+    <BLANKLINE>
+ok
+Trying:
+    print(inspect.getsource(factorial.__wrapped__))
+Expecting:
+    @tail_recursive
+    def factorial(n, acc=1):
+        "The good old factorial"
+        if n == 0:
+            return acc
+        return factorial(n-1, n*acc)
+    <BLANKLINE>
+ok
+Trying:
+    print(factorial(4))
+Expecting:
+    24
+ok
+Trying:
+    writer = XMLWriter()
+Expecting nothing
+ok
+Trying:
+    writer.write(2.3)
+Expecting:
+    '<float>2.3</float>'
+ok
+Trying:
+    win(Paper(), Rock())
+Expecting:
+    1
+ok
+Trying:
+    win(Scissors(), Paper())
+Expecting:
+    1
+ok
+Trying:
+    win(Rock(), Scissors())
+Expecting:
+    1
+ok
+Trying:
+    win(Paper(), Paper())
+Expecting:
+    0
+ok
+Trying:
+    win(Rock(), Rock())
+Expecting:
+    0
+ok
+Trying:
+    win(Scissors(), Scissors())
+Expecting:
+    0
+ok
+Trying:
+    win(Rock(), Paper())
+Expecting:
+    -1
+ok
+Trying:
+    win(Paper(), Scissors())
+Expecting:
+    -1
+ok
+Trying:
+    win(Scissors(), Rock())
+Expecting:
+    -1
+ok
+Trying:
+    win(StrongRock(), Scissors())
+Expecting:
+    1
+ok
+Trying:
+    win.dispatch_info(StrongRock, Scissors)
+Expecting:
+    [('StrongRock', 'Scissors'), ('Rock', 'Scissors')]
+ok
+Trying:
+    issubclass(WithLength, collections.Sized)
+Expecting:
+    True
+ok
+Trying:
+    get_length(WithLength())
+Expecting:
+    0
+ok
+Trying:
+    _ = collections.Set.register(SomeSet)
+Expecting nothing
+ok
+Trying:
+    issubclass(SomeSet, collections.Set)
+Expecting:
+    True
+ok
+Trying:
+    get_length(SomeSet())  # NB: the implementation for Sized would give 0
+Expecting:
+    1
+ok
+Trying:
+    g, V = singledispatch_example2()
+Expecting nothing
+ok
+Trying:
+    g.dispatch_info(V)
+Expecting:
+    [('V',), ('Sized',), ('S',), ('Container',)]
+ok
+Trying:
+    @trace
+    def f():
+        1/0
+Expecting nothing
+ok
+Trying:
+    f() # doctest: +ELLIPSIS
+Expecting:
+    Traceback (most recent call last):
+      ...
+         File "<string>", line 2, in f
+         File "<doctest __main__[22]>", line 4, in trace
+           return f(*args, **kw)
+         File "<doctest __main__[51]>", line 3, in f
+           1/0
+    ZeroDivisionError: ...
+ok
+Trying:
+    @memoize
+    def getkeys(**kw):
+        return kw.keys()
+Expecting nothing
+ok
+Trying:
+    getkeys(func='a') # doctest: +ELLIPSIS
+Expecting:
+    Traceback (most recent call last):
+     ...
+    TypeError: _memoize() got multiple values for ... 'func'
+ok
+Trying:
+    @trace
+    def f(_func_): print(f)
+Expecting:
+    Traceback (most recent call last):
+      ...
+    NameError: _func_ is overridden in
+    def f(_func_):
+        return _call_(_func_, _func_)
+ok
+Trying:
+    def f(): pass # the original function
+Expecting nothing
+ok
+Trying:
+    f.attr1 = "something" # setting an attribute
+Expecting nothing
+ok
+Trying:
+    f.attr2 = "something else" # setting another attribute
+Expecting nothing
+ok
+Trying:
+    traced_f = trace(f) # the decorated function
+Expecting nothing
+ok
+Trying:
+    traced_f.attr1
+Expecting:
+    'something'
+ok
+Trying:
+    traced_f.attr2 = "something different" # setting attr
+Expecting nothing
+ok
+Trying:
+    f.attr2 # the original attribute did not change
+Expecting:
+    'something else'
+ok
+Trying:
+    a = Action()
+Expecting nothing
+ok
+Trying:
+    a.view() # ok
+Expecting nothing
+ok
+Trying:
+    a.insert() # doctest: +IGNORE_EXCEPTION_DETAIL
+Expecting:
+    Traceback (most recent call last):
+       ...
+    PermissionError: User does not have the permission to run insert!
+ok
+Trying:
+    decorator(_memoize).__name__
+Expecting:
+    '_memoize'
+ok
+Trying:
+    factorial.__doc__
+Expecting:
+    'The good old factorial'
+ok
+Trying:
+    ba.__class__.__name__
+Expecting:
+    'ContextManager'
+ok
+Trying:
+    hello('michele')
+Expecting:
+    BEFORE
+    hello michele
+    AFTER
+ok
+Trying:
+    @trace
+    def f(**kw): pass
+Expecting nothing
+ok
+Trying:
+    f()
+Expecting:
+    calling f with args (), {}
+ok
+Trying:
+    @trace
+    def f(*, a=1, **kw): pass
+Expecting nothing
+ok
+Trying:
+    import inspect
+Expecting nothing
+ok
+Trying:
+    inspect.getfullargspec(f)
+Expecting:
+    FullArgSpec(args=[], varargs=None, varkw='kw', defaults=None, kwonlyargs=['a'], kwonlydefaults={'a': 1}, annotations={})
+ok
+Trying:
+    @trace
+    def func(a, b, *args, y=2, z=3, **kwargs):
+        return y, z
+Expecting nothing
+ok
+Trying:
+    func('a', 'b', 'c', 'd', 'e', y='y', z='z', cat='dog')
+Expecting:
+    calling func with args ('a', 'b', 'c', 'd', 'e'), {'cat': 'dog', 'y': 'y', 'z': 'z'}
+    ('y', 'z')
+ok
+Trying:
+    @trace
+    def f(arg, defarg=1, *args, kwonly=2): pass
+Expecting nothing
+ok
+Trying:
+    f.__kwdefaults__
+Expecting:
+    {'kwonly': 2}
+ok
+52 items had no tests:
+    documentation.Action.delete
+    documentation.Action.insert
+    documentation.Action.view
+    documentation.Admin
+    documentation.C
+    documentation.Future
+    documentation.Future.__init__
+    documentation.Future.result
+    documentation.Paper
+    documentation.PermissionError
+    documentation.PowerUser
+    documentation.Rock
+    documentation.Scissors
+    documentation.SomeSet
+    documentation.SomeSet.__len__
+    documentation.StrongRock
+    documentation.TailRecursive
+    documentation.TailRecursive.__call__
+    documentation.TailRecursive.__init__
+    documentation.User
+    documentation.WithLength
+    documentation.WithLength.__len__
+    documentation.XMLWriter
+    documentation.XMLWriter.__init__
+    documentation.XMLWriter.write
+    documentation._memoize
+    documentation._trace
+    documentation.before_after
+    documentation.blocking
+    documentation.decorator_apply
+    documentation.example
+    documentation.f1
+    documentation.fact
+    documentation.factorial
+    documentation.get_length
+    documentation.get_length_set
+    documentation.get_length_sized
+    documentation.get_userclass
+    documentation.identity_dec
+    documentation.memoize
+    documentation.memoize_uw
+    documentation.restricted
+    documentation.singledispatch_example1
+    documentation.singledispatch_example2
+    documentation.tail_recursive
+    documentation.trace
+    documentation.win
+    documentation.winPaperScissors
+    documentation.winRockPaper
+    documentation.winRockScissors
+    documentation.winStrongRockPaper
+    documentation.writefloat
+8 items passed all tests:
+  88 tests in documentation
+   3 tests in documentation.Action
+   2 tests in documentation.a_test_for_pylons
+   2 tests in documentation.hello
+   2 tests in documentation.test_kwonly_no_args
+   3 tests in documentation.test_kwonly_star_notation
+   2 tests in documentation.test_kwonlyargs
+   2 tests in documentation.test_kwonlydefaults
+104 tests in 60 items.
+104 passed and 0 failed.
+Test passed.

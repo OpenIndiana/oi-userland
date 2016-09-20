@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		decorator
-COMPONENT_VERSION=	3.4.0
+COMPONENT_VERSION=	4.0.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c20b404cbb7ee5cebd506688e0114e3cd76f5ce233805a51f36e1a7988d9d783
+    sha256:9c6e98edcb33499881b86ede07d9968c81ab7c769e28e9af24075f0a5379f070
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/decorator
 COMPONENT_BUGDB=	python-mod/decorator
 
-TPNO=			13154
+TPNO=			31612
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -42,13 +42,12 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_ARGS.2.7=	documentation.py -v
-COMPONENT_TEST_ARGS.3.4=	documentation3.py -v
-COMPONENT_TEST_ARGS.3.5=	documentation3.py -v
-COMPONENT_TEST_ARGS=		$(COMPONENT_TEST_ARGS.$(PYTHON_VERSION))
-COMPONENT_TEST_DIR=		$(SOURCE_DIR)
+COMPONENT_TEST_ARGS=		test.py -v
+COMPONENT_TEST_DIR=		$(SOURCE_DIR)/src/tests
 
-# common targets
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Ran .* tests in\).*|\1|" '
+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
