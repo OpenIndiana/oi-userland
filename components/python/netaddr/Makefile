@@ -32,6 +32,8 @@ COMPONENT_PROJECT_URL=  http://github.com/drkjam/netaddr/
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netaddr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/netaddr
 
+PYTHON_VERSIONS=2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
@@ -53,6 +55,5 @@ COMPONENT_PRE_TEST_ACTION= \
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/python/ipython-27
+REQUIRED_PACKAGES += runtime/python-27
