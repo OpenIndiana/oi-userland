@@ -37,21 +37,21 @@ set name=org.opensolaris.arc-caseid value=LSARC/2009/298
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/pytest target=pytest-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
-file path=usr/bin/pytest-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/__init__.py
+# pytest-$(PYVER) is doing "from logilab.common.pytest import run". That
+# triggers a series of import instructions in the bytecode, one of which
+# is "import logilab".  But there's nothing that pkgdepend can recognize
+# as providing the logilab package, so it errors out, unless we add in
+# the bypass for __init__.py. See also CR #24506760.
+file path=usr/bin/pytest-$(PYVER) \
+    pkg.depend.bypass-generate=.*logilab/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/__pkginfo__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/changelog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/clcommands.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/cli.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/configuration.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/contexts.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/corbautils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/daemon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/date.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/dbf.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/debugger.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/decorators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/deprecation.py
@@ -63,7 +63,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/modutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/optik_ext.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/optparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/proc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/pyro_ext.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/pytest.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/registry.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/shellutils.py
@@ -83,10 +82,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/ureports/text_wr
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/urllib2ext.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/vcgutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/visitor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/xmlrpcutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab/common/xmlutils.py
-
-
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab_common-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab_common-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/logilab_common-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
@@ -104,11 +100,6 @@ depend type=optional \
 # force a dependency on the Python $(PYVER) runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
-
-# pkgdepend should have picked up the dependency on /library/python/pyorbit-$(PYV)
-depend type=require fmri=__TBD \
-    pkg.debug.depend.file=usr/lib/python$(PYVER)/vendor-packages/CORBA.py \
-    pkg.debug.reason=usr/lib/python$(PYVER)/vendor-packages/logilab/common/corbautils.py
 
 # force a dependency on the logilab-common package
 depend type=require \

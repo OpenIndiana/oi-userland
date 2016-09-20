@@ -26,19 +26,28 @@ BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
-COMPONENT_VERSION=	1.4.3
+COMPONENT_VERSION=	1.6.4
 COMPONENT_ARCHIVE_HASH=		\
-	sha256:1dce8c143a5aa15e0638887c2b395e2e823223c63ebaf8d5f432a99e44b29f60
+	sha256:ef901a34b62ed7a734370ba5b162d890231ba8822abe88c6dda1268e2575f5f1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  https://bitbucket.org/logilab/pylint
 
-TPNO=			22903
-
-# Since Pylint 1.4, it only supports Python 2.7+ and Python 3.3+.
-PYTHON_VERSIONS=	2.7
+TPNO=			31351
 
 BUILD_STYLE= setup.py
 include $(WS_MAKE_RULES)/common.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# Use the logilab-common, lazy-object-proxy, astroid and isort that are in the
+# gate until the new versions are on the Userland build machines.
+LLC = $(WS_COMPONENTS)/python/logilab-common/build/prototype/$(MACH)/$(PYTHON_LIB)
+LOP = $(WS_COMPONENTS)/python/lazy-object-proxy/build/prototype/$(MACH)/$(PYTHON_LIB)
+ASTROID = $(WS_COMPONENTS)/python/astroid/build/prototype/$(MACH)/$(PYTHON_LIB)
+ISORT = $(WS_COMPONENTS)/python/isort/build/prototype/$(MACH)/$(PYTHON_LIB)
+
+COMPONENT_BUILD_ENV +=		PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT)
+COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT)
 
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
@@ -49,9 +58,7 @@ PDOC_PYLINT_EXAMPLES =	$(PDOC_PYLINT)/examples
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/README $(PDOC_PYLINT) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/README.Python3 $(PDOC_PYLINT) ;
+	$(CP) $(COMPONENT_SRC)/README.rst $(PDOC_PYLINT) ;
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PDOC_PYLINT_EXAMPLES) ;
@@ -76,40 +83,19 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin; $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 COMPONENT_POST_INSTALL_ACTION += \
-	$(PYTHON.2.7.32) -m py_compile $(PROTOUSRLIBDIR)/python2.7/vendor-packages/pylint/testutils.py
+	$(PYTHON) -m py_compile $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/pylint/testutils.py
 
-# The tests are run using python 2.7 only and require that
-# the python-27 package is installed (does not have to be the default python). 
+COMPONENT_TEST_ENV = PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-# Use the python 2.7 libraries for testing.
-test: PYTHON_VERSION=2.7
-
-# logilab-common and astroid are runtime dependencies of pylint,
-# and we need to use their latest versions from this workspace.
-# We can't just add their install targets as dependencies here,
-# so just "gmake install" in the logilab-common and astroid
-# component directories before running the pylint tests.
-COMPONENT_PRE_TEST_ACTION = ($(GMAKE) -C \
-	$(COMPONENT_DIR)/../logilab-common install; \
-	$(GMAKE) -C $(COMPONENT_DIR)/../astroid install )
-
-COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(COMPONENT_DIR)/../astroid/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_TEST_CMD = $(LLC)/../../../bin/pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS =
 
 # The test output contains details from each test, in whatever order they
-# complete. Use nawk to extract just the sections that summarizes the test result.
-COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# complete. Use nawk to extract just the sections that summarizes the test
+# result.
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/Ran (.+) test cases/{ sub(/in(.+)\)/, \"\"); print }/All (.+) modules OK/'"
 
-
 COMPONENT_SYSTEM_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_SYSTEM_TEST_ARGS =
-
-REQUIRED_PACKAGES += library/python/logilab-common-27
-REQUIRED_PACKAGES += library/python/astroid-27
-REQUIRED_PACKAGES += library/python/six-27

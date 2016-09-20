@@ -48,27 +48,32 @@ file path=usr/lib/python$(PYVER)/vendor-packages/astroid-$(COMPONENT_VERSION)-py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/__pkginfo__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/arguments.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/as_string.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/astpeephole.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/bases.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/builtin_inference.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/py2gi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/py2mechanize.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/py2pytest.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/py2qt4.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/py2stdlib.py \
-    pkg.tmp.autopyc=false
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/pynose.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/pysix_moves.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_builtin_inference.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_dateutil.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_gi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_mechanize.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_nose.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_numpy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_pytest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_qt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_six.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_ssl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/brain/brain_stdlib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/builder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/decorators.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/inference.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/inspector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/mixins.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/modutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/node_classes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/objects.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/protocols.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/raw_building.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/rebuilder.py
@@ -161,19 +166,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/testdata/python3/
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_brain.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_builder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_inference.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_inspector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_lookup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_modutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_objects.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_peephole.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_protocols.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_python3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_raw_building.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_regrtest.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_scoped_nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_transforms.py
 file path=usr/lib/python$(PYVER)/vendor-packages/astroid/tests/unittest_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/astroid/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/transforms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/astroid/util.py
 #
 license astroid.license license=LGPLv2.1
 
@@ -189,8 +196,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 depend type=require \
     fmri=library/python/astroid@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-# force a dependency on logilab-common version 0.63.2
-depend type=require fmri=library/python/logilab-common-27@0.63.2
+# force a dependency on logilab-common-$(PYV) version 1.2.2
+depend type=require fmri=library/python/logilab-common-$(PYV)@1.2.2
 
 # force a dependency on the six package
 depend type=require \

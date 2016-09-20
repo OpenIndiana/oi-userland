@@ -20,25 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-common
-COMPONENT_VERSION=	0.63.2
+COMPONENT_VERSION=	1.2.2
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-common/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:603ba00c9bb09219a3bd2906c214d9455481110dacc472f450b53d5ae90f28e7
+	sha256:62b0d88d9276e86b48c7188cea8d91d8ff1744d046ea6323d40359aa53aef708
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/logilab-common
 
-TPNO=			22842
-
-# Syntax issues: not Python 3 ready. pyorbit not 3.4 ready.
-PYTHON_VERSIONS=	2.7
+TPNO=			31342
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -55,23 +52,15 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
-	
-# The tests are run using python 2.7 only and require that the
-# python-27 package is installed (does not have to be the default python). 
-
-# Use the python 2.7 libraries (via PYTHONPATH setting) for testing.
-test: PYTHON_VERSION=2.7
 
 # The test output contains details from each test, in whatever order they
-# complete. Use nawk to extract just the sections that summarizes the test result.
-COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-2.7
+# complete. Use nawk to extract just the sections that summarizes the test
+# result.
+COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/Ran (.+) test cases/{ sub(/in(.+)\)/, \"\"); print }/(.+) modules OK/'"
 
@@ -91,6 +80,3 @@ COMPONENT_POST_SYSTEM_TEST_ACTION += \
 test:	$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TEST_NO_ARCH)
-
-REQUIRED_PACKAGES += library/python/pyorbit-27
-REQUIRED_PACKAGES += library/python/six-27
