@@ -1,30 +1,28 @@
---- libtorrent-0.12.2.orig/src/data/memory_chunk.cc	(revision 1060)
-+++ libtorrent-0.12.2/src/data/memory_chunk.cc	(working copy)
-@@ -41,6 +41,16 @@
- #include <unistd.h>
- #include <sys/types.h>
- #include <sys/mman.h>
-+#if defined(__sun) && defined(__SVR4)
-+/* Ugly hack to make this compile on Solaris with g++. See
-+ * http://www.opensolaris.org/jive/thread.jspa?threadID=21035&tstart=0
-+ */
-+#if (_POSIX_C_SOURCE > 2) || defined(_XPG4_2)
-+extern "C" {
-+extern int madvise(caddr_t, size_t, int);
-+}
-+#endif
-+#endif
- #include <rak/error_number.h>
- 
- #include "torrent/exceptions.h"
---- libtorrent-0.12.2.orig/scripts/common.m4	2008-05-07 08:19:12.000000000 -0400
-+++ libtorrent-0.12.2/scripts/common.m4	2008-06-23 17:04:24.567475080 -0400
-@@ -170,7 +170,7 @@
-   AC_COMPILE_IFELSE(
-     [[#include <sys/types.h>
-           #include <sys/mman.h>
--          void f() { static char test[1024]; madvise((void *)test, sizeof(test), MADV_NORMAL); }
-+          void f() { static char test[1024]; madvise((char *)test, sizeof(test), MADV_NORMAL); }
-     ]],
+Changes needed to allow libtorrent to compile with g++ and the Solaris
+version of madvise.
+
+These changes should be sent upstream if they can be adjusted to an
+acceptable form.
+
+--- libtorrent-0.13.6/scripts/common.m4.orig	2016-09-15 17:07:33.144629366 +0000
++++ libtorrent-0.13.6/scripts/common.m4	2016-09-15 17:08:17.259446458 +0000
+@@ -171,7 +171,7 @@
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+       #include <sys/types.h>
+       #include <sys/mman.h>
+-        void f() { static char test@<:@1024@:>@; madvise((void *)test, sizeof(test), MADV_NORMAL); }
++        void f() { static char test@<:@1024@:>@; madvise((char *)test, sizeof(test), MADV_NORMAL); }
+       ])],
      [
        AC_MSG_RESULT(yes)
+--- libtorrent-0.13.6/src/data/memory_chunk.cc.orig	2016-09-15 17:08:59.127701605 +0000
++++ libtorrent-0.13.6/src/data/memory_chunk.cc	2016-09-15 17:24:27.343279729 +0000
+@@ -45,7 +45,7 @@
+ #include "memory_chunk.h"
+ 
+ #ifdef __sun__
+-extern "C" int madvise(void *, size_t, int);
++extern "C" int madvise(caddr_t, size_t, int);
+ //#include <sys/mman.h>
+ //Should be the include line instead, but Solaris
+ //has an annoying bug wherein it doesn't declare

@@ -27,14 +27,14 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
-COMPONENT_VERSION=	0.12.2
-COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
+COMPONENT_VERSION=	0.13.6
+COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cf9d2cd667fd6939a3e0bd27e48d0c7f35d9ab2f7affbb3214da03fd2c1360a8
-COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
+    sha256:2838a08c96edfd936aff8fbf99ecbb930c2bfca3337dd1482eb5fccdb80d5a04
+COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rtorrent
 
-TPNO=			9038
+TPNO=			24572
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -50,26 +50,23 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# requires an older automake to reconfigure.
-COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
+# Uses aclocal-1.14 by default, which we don't have.
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -fiv)
 
 CXXFLAGS += -std=c++11
 
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
 CONFIGURE_OPTIONS  +=	--disable-static
-CONFIGURE_OPTIONS  +=	--with-ports
-CONFIGURE_OPTIONS  +=	--disable-libtool-lock
 CONFIGURE_OPTIONS  +=	--srcdir=$(BUILD_DIR_$(BITS))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-REQUIRED_PACKAGES += developer/build/automake-111
+REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
-
