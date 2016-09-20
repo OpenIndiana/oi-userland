@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dbus-python
 COMPONENT_VERSION=	1.2.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/DBusBindings/
 COMPONENT_SUMMARY=	Python bindings for D-Bus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,12 +27,11 @@ COMPONENT_ARCHIVE_URL=	http://dbus.freedesktop.org/releases/dbus-python/$(COMPON
 
 PATH=/usr/gnu/bin:/usr/bin
 
-gcc_OPT		= -O2
+PYTHON_VERSIONS = 2.7
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+VARIANTS = $(VARIANT_PYTHON27)
 
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
@@ -40,24 +39,13 @@ BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-$(VARIANT_PYTHON27)/$(MACH64)/.installed:       $(VARIANT_PYTHON26)/$(MACH64)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.6.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
 
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 
@@ -81,7 +69,6 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/libdbus
