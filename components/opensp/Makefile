@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER= gcc
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
@@ -37,12 +38,8 @@ TPNO=			9621
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
-
 # Needed to find the man pages at install time.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CXX +=			$(studio_NORUNPATH)
 
 CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 CONFIGURE_OPTIONS +=	--disable-http
@@ -65,4 +62,5 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

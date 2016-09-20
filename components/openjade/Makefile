@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER= gcc
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
@@ -56,8 +57,11 @@ CONFIGURE_SCRIPT = 	$(@D)/configure
 # Expects GNU install.
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS +=    --enable-spincludedir=$(USRINCDIR)/OpenSP
-CONFIGURE_OPTIONS +=	--enable-splibdir=$(USRLIB.$(BITS))
+# Get opensp header files and libraries out of the opensp build prototype area.
+OPENSP_BASE = $(WS_COMPONENTS)/opensp/build/prototype/$(MACH)
+
+CONFIGURE_OPTIONS +=    --enable-spincludedir=$(OPENSP_BASE)/$(USRINCDIR)/OpenSP
+CONFIGURE_OPTIONS +=	--enable-splibdir=$(OPENSP_BASE)/$(USRLIB.$(BITS))
 CONFIGURE_OPTIONS +=    --enable-mif
 CONFIGURE_OPTIONS +=	--disable-http
 CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
@@ -79,5 +83,6 @@ COMPONENT_PRE_INSTALL_ACTION.32 += \
 	$(MKDIR) $(PROTOUSRBINDIR)/$(MACH32);
 
 REQUIRED_PACKAGES += developer/documentation-tool/opensp
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
