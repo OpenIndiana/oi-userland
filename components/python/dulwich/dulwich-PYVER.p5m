@@ -14,7 +14,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/dulwich-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/dulwich-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python implementation of the Git file formats and protocols"
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
@@ -30,48 +30,32 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the dulwich package
 depend type=require \
-    fmri=library/python-2/dulwich@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/dulwich@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
-link path=usr/bin/dul-daemon \
-    target=dul-daemon$(PYVER) \
-    mediator=python mediator-version=$(PYVER)
 link path=usr/bin/dul-receive-pack \
     target=dul-receive-pack$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 link path=usr/bin/dul-upload-pack \
     target=dul-upload-pack$(PYVER) \
     mediator=python mediator-version=$(PYVER)
-link path=usr/bin/dul-web \
-    target=dul-web$(PYVER) \
-    mediator=python mediator-version=$(PYVER)
 link path=usr/bin/dulwich \
     target=dulwich$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 
-link path=usr/bin/$(MACH64)/dul-daemon \
-    target=dul-daemon$(PYVER) \
-    mediator=python mediator-version=$(PYVER)
 link path=usr/bin/$(MACH64)/dul-receive-pack \
     target=dul-receive-pack$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 link path=usr/bin/$(MACH64)/dul-upload-pack \
     target=dul-upload-pack$(PYVER) \
     mediator=python mediator-version=$(PYVER)
-link path=usr/bin/$(MACH64)/dul-web \
-    target=dul-web$(PYVER) \
-    mediator=python mediator-version=$(PYVER)
 link path=usr/bin/$(MACH64)/dulwich \
     target=dulwich$(PYVER) \
     mediator=python mediator-version=$(PYVER)
 
-file usr/bin/dul-daemon$(PYVER).32 path=usr/bin/dul-daemon$(PYVER)
-file usr/bin/dul-daemon$(PYVER).64 path=usr/bin/$(MACH64)/dul-daemon$(PYVER)
 file usr/bin/dul-receive-pack$(PYVER).32 path=usr/bin/dul-receive-pack$(PYVER)
 file usr/bin/dul-receive-pack$(PYVER).64 path=usr/bin/$(MACH64)/dul-receive-pack$(PYVER)
 file usr/bin/dul-upload-pack$(PYVER).32 path=usr/bin/dul-upload-pack$(PYVER)
 file usr/bin/dul-upload-pack$(PYVER).64 path=usr/bin/$(MACH64)/dul-upload-pack$(PYVER)
-file usr/bin/dul-web$(PYVER).32 path=usr/bin/dul-web$(PYVER)
-file usr/bin/dul-web$(PYVER).64 path=usr/bin/$(MACH64)/dul-web$(PYVER)
 file usr/bin/dulwich$(PYVER).32 path=usr/bin/dulwich$(PYVER)
 file usr/bin/dulwich$(PYVER).64 path=usr/bin/$(MACH64)/dulwich$(PYVER)
 
@@ -83,16 +67,25 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/64/_diff_tree.so
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/64/_objects.so
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/64/_pack.so
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_diff_tree.c
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_diff_tree.so
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_objects.c
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_objects.so
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_pack.c
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/_pack.so
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/archive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/contrib/paramiko_vendor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/contrib/swift.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/contrib/test_swift.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/contrib/test_swift_smoke.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/diff_tree.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/errors.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/fastexport.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/file.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/greenthreads.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/hooks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/index.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/log_utils.py
@@ -104,9 +97,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/pack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/patch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/porcelain.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/protocol.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/reflog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/refs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/repo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/stdint.h
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/server_utils.py
@@ -117,6 +112,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/test_serve
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/test_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/test_web.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/compat/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_archive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_blackbox.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_config.py
@@ -124,6 +120,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_diff_tree.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_fastexport.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_file.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_grafts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_greenthreads.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_hooks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_index.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_lru_cache.py
@@ -135,6 +132,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_pack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_patch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_porcelain.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_protocol.py
+file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_reflog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_refs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_repository.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dulwich/tests/test_server.py
