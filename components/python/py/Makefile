@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
 COMPONENT_VERSION=	1.4.31
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -35,7 +36,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
 COMPONENT_BUGDB=	python-mod/py
 
-PYTHON_VERSIONS=		2.7
+PYTHON_VERSIONS=		2.7 3.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -56,3 +57,4 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 REQUIRED_PACKAGES=	runtime/python-27
+REQUIRED_PACKAGES=	runtime/python-34

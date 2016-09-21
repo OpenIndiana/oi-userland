@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		six
 COMPONENT_VERSION=	1.9.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -35,7 +36,7 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/six/
 COMPONENT_BUGDB=	python-mod/six
 
-PYTHON_VERSIONS=	2.7
+PYTHON_VERSIONS=	2.7 3.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,7 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	test_six.py
-COMPONENT_TEST_CMD =	pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_CMD =	py.test-$(PYTHON_VERSION)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
