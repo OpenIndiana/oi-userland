@@ -18,13 +18,15 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		pyzmq
 COMPONENT_VERSION=	14.0.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://github.com/zeromq/pyzmq
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:07c7f63aaa7709438345a5e5f4d90fe7decb147ff72d244acf4fa56f8801e5e0
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/p/pyzmq/$(COMPONENT_ARCHIVE)
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -36,3 +38,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/c++/zeromq-3.2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
