@@ -20,26 +20,28 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycparser
-COMPONENT_VERSION=	2.10
+COMPONENT_VERSION=	2.14
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:957d98b661c0b64b580ab6f94b125e09b6714154ee51de40bca16d3f0076b86c
+    sha256:7959b4a74abdc27b312fed1c21e6caf9309ce0b29ea86b591fd2e99ecdf27f73
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/eliben/pycparser
 COMPONENT_BUGDB=	python-mod/pycparser
 
-TPNO=			16938
+TPNO=			28876
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+PYTHON_VERSIONS=	2.7 3.4
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -49,7 +51,7 @@ COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
 COMPONENT_TEST_ARGS +=	-p no:codechecker
 COMPONENT_TEST_ENV +=	PATH=$$PATH:$(BUILD_DIR)/bin
 
-$(SOURCE_DIR)/pycparser/ply/lex.py: $(SOURCE_DIR)/.patched
+$(SOURCE_DIR)/pycparser/ply/lex.py: $(SOURCE_DIR)/.prep
 
 $(BUILD_DIR)/license.ply: $(SOURCE_DIR)/pycparser/ply/lex.py
 	nawk '/^# Copyright / {p=1} /^# ---/ {p=0} p == 1 {print substr($$0, 3)}' $< > $@
@@ -61,6 +63,5 @@ install:	$(INSTALL_NO_ARCH) $(BUILD_DIR)/license.ply
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
