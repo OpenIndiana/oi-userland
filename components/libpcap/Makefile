@@ -52,3 +52,4 @@ CONFIGURE_OPTIONS  +=	--disable-dbus
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/network/bpf
