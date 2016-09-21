@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.17
+COMPONENT_VERSION=	1.4.25
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d9173ef6d99ba798c982ea4566cb4f0e64eb23859fdbf9926a89999d8cdc0458
+	sha256:f058437b3c224d321919a9a6bb4e3eedb2312ed718c0caf087ff2f04ab795dda
 COMPONENT_ARCHIVE_URL=	http://memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
-TPNO=			16265
+TPNO=			31391
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,6 +58,8 @@ CONFIGURE_OPTIONS.64 +=	--with-libevent=$(USRLIBDIR64)
 CONFIGURE_OPTIONS.64 +=	"ac_cv_libevent_dir=/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
+
+# lru-maintainer.t is inconsistent and usually fails.
 
 # Transforms remove unnecessary text from results
 COMPONENT_TEST_TRANSFORMS += \
