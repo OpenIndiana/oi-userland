@@ -1,0 +1,40 @@
+Backport of upstream patch to address
+https://bugs.launchpad.net/horizon/+bug/1600062
+The fix first appears in newton-2.
+
+fixed by Change-Id:  I45a4097413e8e5154350459d15e2f45b61f811a8
+
+commit fc02a0207da0f3bdfce023789009fc2c529a5bee
+Author: chen.qiaomin@99cloud.net <chen.qiaomin@99cloud.net>
+Date:   Fri Jul 8 00:25:30 2016 +0000
+
+    Modify "Edit Flavor" action
+
+    Reproduce:
+    1 Open Admin/Flavors
+    2 Click "Edit Flavor" in the table list actions
+
+    Expected result:
+    Open "Flavor Information" tab.
+
+    Actual result:
+    Open "Flavor Access" tab.
+
+    Change-Id: I45a4097413e8e5154350459d15e2f45b61f811a8
+    Closes-Bug: #1600062
+
+--- horizon-9.0.1/openstack_dashboard/dashboards/admin/flavors/tables.py.orig	2016-09-16 10:28:54.006726137 +0000
++++ horizon-9.0.1/openstack_dashboard/dashboards/admin/flavors/tables.py	2016-09-16 10:29:38.550645259 +0000
+@@ -64,6 +64,12 @@ class UpdateFlavor(tables.LinkAction):
+     classes = ("ajax-modal",)
+     icon = "pencil"
+ 
++    def get_link_url(self, flavor):
++        step = 'update_info'
++        base_url = reverse(self.url, args=[flavor.id])
++        param = urlencode({"step": step})
++        return "?".join([base_url, param])
++
+ 
+ class UpdateMetadata(tables.LinkAction):
+     name = "update_metadata"
