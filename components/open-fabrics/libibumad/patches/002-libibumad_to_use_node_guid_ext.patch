@@ -1,0 +1,42 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  c1b4449a11e307550ee85b73baed3cd69e1b87cf
+24516419 umad_get_ca() should pass the PF node_guid for CX3
+
+diff -r c1b4449a11e3 include/infiniband/umad.h
+--- a/include/infiniband/umad.h	Thu Aug 18 00:00:48 2016 -0700
++++ b/include/infiniband/umad.h	Sun Aug 21 22:33:49 2016 -0700
+@@ -129,6 +129,8 @@
+ #define SYS_CA_HW_VERS		"hw_rev"
+ #define SYS_CA_TYPE		"hca_type"
+ #define SYS_CA_NODE_GUID	"node_guid"
++#define SYS_CA_NODE_GUID_EXTERNAL \
++				"node_guid_external"
+ #define SYS_CA_SYS_GUID		"sys_image_guid"
+ 
+ #define SYS_PORT_LMC		"lid_mask_count"
+diff -r c1b4449a11e3 src/umad.c
+--- a/src/umad.c	Thu Aug 18 00:00:48 2016 -0700
++++ b/src/umad.c	Sun Aug 21 22:33:49 2016 -0700
+@@ -456,7 +456,19 @@
+ 	if ((r = sys_read_string(dir_name, SYS_CA_TYPE, ca->ca_type,
+ 				 sizeof ca->ca_type)) < 0)
+ 		ca->ca_type[0] = '\0';
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Get "node_guid_external" for the device. If it does not exist,
++	 * or if the value node_guid_external is 0, use "node_guid"
++	 */
++	r = sys_read_guid(dir_name, SYS_CA_NODE_GUID_EXTERNAL,
++	    &ca->node_guid);
++	if (((r < 0) || (ca->node_guid == 0)) &&
++	    ((r = sys_read_guid(dir_name, SYS_CA_NODE_GUID,
++	    &ca->node_guid)) < 0))
++#else
+ 	if ((r = sys_read_guid(dir_name, SYS_CA_NODE_GUID, &ca->node_guid)) < 0)
++#endif
+ 		return r;
+ 	if ((r =
+ 	     sys_read_guid(dir_name, SYS_CA_SYS_GUID, &ca->system_guid)) < 0)
