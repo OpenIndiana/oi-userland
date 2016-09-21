@@ -326,20 +326,26 @@ $(BUILD_DIR_64)/.installed:       BITS=64
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
 
-# set the default test results directory
+# set the default build test results directory
+COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
+
+# set the default master test results directory
 COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
 
 # set the default master test results file
 COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 
 # set the default test results output file
-COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
+COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-results
 
 # set the default test results comparison diffs file
-COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-diffs
+COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-diffs
 
 # set the default test snapshot file
-COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).snapshot
+COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_BUILD_DIR)/results-$(BITS).snapshot
+
+# Normally $(GSED) is simplest, but some results files need more power.
+COMPONENT_TEST_TRANSFORMER =	$(GSED)
 
 # The set of default transforms to be applied to the test results to try
 # to normalize them.
@@ -354,7 +360,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '$(GSED) ' \
+        	print '$(COMPONENT_TEST_TRANSFORMER) ' \
 			$(COMPONENT_TEST_TRANSFORMS) \
                 	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
         	print '$(COMPONENT_TEST_OUTPUT) \\' \
@@ -364,7 +370,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # set the default command for performing any test result munging
-COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_RESULTS_DIR)/transform-$(BITS)-results
+COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_BUILD_DIR)/transform-$(BITS)-results
 
 # set the default operation to run to perform test result normalization
 COMPONENT_TEST_PERFORM_TRANSFORM = \
