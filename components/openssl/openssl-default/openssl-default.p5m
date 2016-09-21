@@ -148,6 +148,7 @@ link path=usr/bin/$(MACH32)/openssl \
     mediator-implementation=default mediator-priority=vendor
 link path=usr/bin/CA.pl target=../../lib/openssl/default/CA.pl \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
+file path=usr/bin/c_rehash owner=root group=bin mode=0555
 
 # Mediator links for the commands
 link path=usr/bin/openssl target=../../lib/openssl/default/openssl \
@@ -252,6 +253,7 @@ link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
 link path=usr/sfw/bin/openssl target=../../bin/openssl
 file path=usr/share/man/man1openssl/CA.pl.1openssl
 file path=usr/share/man/man1openssl/asn1parse.1openssl
+file path=usr/share/man/man1openssl/c_rehash.1openssl
 file path=usr/share/man/man1openssl/ca.1openssl
 file path=usr/share/man/man1openssl/ciphers.1openssl
 file path=usr/share/man/man1openssl/cms.1openssl
@@ -2228,3 +2230,6 @@ file path=usr/share/man/man7openssl/des_modes.7openssl
 legacy pkg=SUNWopensslr desc="OpenSSL Libraries (Root)" \
     name="OpenSSL Libraries (Root)"
 license openssl-default.license license="OpenSSL, SSLeay"
+# force a dependency on the Perl runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/bin

@@ -413,3 +413,4 @@ REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/crypto
+REQUIRED_PACKAGES += runtime/perl-522
