@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	PyYAML
 COMPONENT_VERSION= 	3.11
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	A YAML parser and emitter for the Python language
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -25,6 +26,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   http://pyyaml.org/download/pyyaml/PyYAML-3.11.tar.gz
 COMPONENT_PROJECT_URL = http://pyyaml.org/
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -35,3 +38,7 @@ COMPONENT_BUILD_ENV += LDFLAGS=$(LDFLAGS)
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += library/libyaml
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
