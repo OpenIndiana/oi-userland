@@ -61,6 +61,17 @@ CONFIGURE_ENV += ac_cv_lib_mlib_mlib_ImageSetStruct=no
 # Tell g-ir-scanner which compiler to use since upstream Makefile forgot to
 COMPONENT_BUILD_ENV += INTROSPECTION_SCANNER_ENV='CC=$(CC_FOR_BUILD)'
 
+# Generate and install architecture-specific configuration files.
+PROTOGTKDIR=		$(PROTO_DIR)$(USRLIB)/gtk-2.0/2.10.0
+PROTOIMMCONF=		$(PROTOGTKDIR)/immodules.cache
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOGTKDIR); \
+	LD_LIBRARY_PATH='$(PROTO_DIR)$(USRLIB)' \
+	  $(PROTO_DIR)$(USRBIN)/gtk-query-immodules-2.0 \
+	  $(PROTOGTKDIR)/immodules/*.so | \
+	  $(GSED) -e 's%$(PROTO_DIR)%%' > $(PROTOIMMCONF) ;
+
 # Needed for "gmake test" to work successfully.
 unexport SHELLOPTS
 
