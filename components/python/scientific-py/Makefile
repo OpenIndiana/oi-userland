@@ -13,12 +13,12 @@
 # Copyright 2013 Aurelien Larcher.  All rights reserved.
 #
 
-include ../../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	scientific-py
 COMPONENT_VERSION= 	2.8
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=		library/python-2/scientific-py
+COMPONENT_REVISION=	2
+COMPONENT_FMRI=		library/python/scientific-py
 COMPONENT_SRC_NAME=	ScientificPython
 COMPONENT_SRC= 		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL = https://sourcesup.renater.fr/projects/scientific-py/
@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_LICENSE=	CeCILL-C
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY= 	Python modules for scientific computing
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,8 +49,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+# Auto-generated contents below.  Please manually verify and remove this comment
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
