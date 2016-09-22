@@ -1,0 +1,59 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Instant inlining of C and C++ code in Python"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the unversioned package
+depend type=require \
+    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# Force a dependency on SWIG
+depend type=require fmri=pkg:/developer/swig
+
+# Force a dependency on NUMPY
+depend type=require fmri=pkg:/library/python/numpy-$(PYV)
+
+link path=usr/bin/instant-clean \
+    target=instant-clean$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+
+link path=usr/bin/instant-showcache \
+    target=instant-showcache$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+
+file path=usr/bin/instant-clean$(PYVER)
+file path=usr/bin/instant-showcache$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/instant-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/cache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/codegeneration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/inlining.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/locking.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/output.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/paths.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/signatures.py
+file path=usr/lib/python$(PYVER)/vendor-packages/instant/swig/numpy.i
