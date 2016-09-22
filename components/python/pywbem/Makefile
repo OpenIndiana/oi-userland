@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pywbem
 COMPONENT_VERSION=	0.7.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -37,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/pywbem
 TPNO=			9053
 
 # Syntax issues: not Python 3 ready.
-# PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -51,3 +52,5 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
+# Auto-generated contents below.  Please manually verify and remove this comment
+REQUIRED_PACKAGES += runtime/python-27
