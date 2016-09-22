@@ -23,13 +23,15 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# This file intentionally hardcodes Python 2.7 instead of using the PYVER
+# subsititutions to avoid triggering the auto-generation of a generic
+# library/python/pycairo in this component, since that's being done in
+# ../pycairo instead to cover the python 3.x versions correctly.
 
 set name=pkg.fmri \
-    value=pkg:/library/python/pycairo-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Python $(MAYBE_PYVER_SPACE)bindings for the Cairo graphics library"
-set name=com.oracle.info.description \
-    value="Python $(MAYBE_PYVER_SPACE)bindings for Cairo"
+    value=pkg:/library/python/pycairo-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python 2.7 bindings for the Cairo graphics library"
+set name=com.oracle.info.description value="Python 2.7 bindings for Cairo"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
@@ -41,8 +43,8 @@ file path=usr/include/pycairo/pycairo.h
 link path=usr/include/pycairo27 target=pycairo
 file path=usr/lib/pkgconfig/pycairo.pc
 link path=usr/lib/pkgconfig/pycairo27.pc target=pycairo.pc
-file path=usr/lib/python$(PYVER)/vendor-packages/cairo/64/_cairo.so
-file path=usr/lib/python$(PYVER)/vendor-packages/cairo/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cairo/_cairo.so
+file path=usr/lib/python2.7/vendor-packages/cairo/64/_cairo.so
+file path=usr/lib/python2.7/vendor-packages/cairo/__init__.py
+file path=usr/lib/python2.7/vendor-packages/cairo/_cairo.so
 license COPYING license=LGPL-2.1,MPL-1.1
 license COPYING-MPL-1.1 license=MPL-1.1
