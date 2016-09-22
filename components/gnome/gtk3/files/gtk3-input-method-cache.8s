@@ -1,0 +1,69 @@
+.\" Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.TH gtk3-input-method-cache 8S "14 Sep 2016"
+.SH NAME
+.PP
+svc:/application/desktop-cache/gtk3-input-method-cache \- GTK+ 3.x input method module cache service
+.SH DESCRIPTION
+.PP
+The
+.B svc:/application/desktop-cache/gtk3-input-method-cache
+transient
+.BR smf (7)
+service runs
+.BR gtk-query-immodules-3.0 (1)
+when necessary to update the immodules.cache file with the information from
+the input method modules for GTK+ 3.x in the
+.IR libdir /gtk-3.0/3.0.0/immodules
+directory (where
+.I libdir
+may be either /usr/lib or /usr/lib/64).
+.PP
+Packages that deliver files into the
+.IR libdir /gtk-3.0/3.0.0/immodules
+directory should set a
+.I refresh_fmri
+attribute with the value
+.B svc:/application/desktop-cache/gtk3-input-method-cache:default
+on such files.
+.PP
+This service has no configurable properties.
+.PP
+Administrative actions on this service, such as enabling, disabling, or
+requesting restart, can be performed using \fBsvcadm\fR(8). The status of the
+service can be queried using the \fBsvcs\fR(1) command.
+.SH FILES
+.TP 30
+.IR libdir /gtk-3.0/3.0.0/immodules
+GTK+ 3.x input method modules
+.TP 30
+.IR libdir /gtk-3.0/3.0.0/immodules.cache
+The default im cache file used by GTK+ 3.x applications
+.SH SEE ALSO
+.PP
+.BR gtk-query-immodules-3.0 (1),
+.BR svcs (1),
+.BR attributes (7),
+.BR pkg (7),
+.BR smf (7),
+.BR svcadm (8)
+.PP
+https://wiki.gnome.org/Projects/dconf/SystemAdministrators

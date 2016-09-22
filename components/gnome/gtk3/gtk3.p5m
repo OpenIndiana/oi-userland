@@ -39,15 +39,15 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2016/320
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=etc/$(MACH64)/gtk-3.0/gtk.immodules \
-    original_name=SUNWgtk3:etc/$(MACH64)/gtk-3.0/gtk.immodules preserve=true
 file path=etc/$(MACH64)/gtk-3.0/im-multipress.conf \
     original_name=SUNWgtk3:etc/$(MACH64)/gtk-3.0/im-multipress.conf \
     preserve=true
-file path=etc/gtk-3.0/gtk.immodules \
-    original_name=SUNWgtk3:etc/gtk-3.0/gtk.immodules preserve=true
 file path=etc/gtk-3.0/im-multipress.conf \
     original_name=SUNWgtk3:etc/gtk-3.0/im-multipress.conf preserve=true
+file files/gtk3-input-method-cache.xml \
+    path=lib/svc/manifest/application/desktop-cache/gtk3-input-method-cache.xml
+file files/gtk3-input-method-cache.sh \
+    path=lib/svc/method/gtk3-input-method-cache
 file path=usr/bin/$(MACH64)/gtk-encode-symbolic-svg
 file path=usr/bin/$(MACH64)/gtk-launch
 file path=usr/bin/$(MACH64)/gtk-query-immodules-3.0
@@ -437,6 +437,7 @@ file path=usr/include/gtk-3.0/unix-print/gtk/gtkunixprint.h
 file path=usr/lib/$(MACH64)/girepository-1.0/Gdk-3.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/GdkX11-3.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/Gtk-3.0.typelib
+file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules.cache preserve=true
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-am-et.so
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-cedilla.so
 file path=usr/lib/$(MACH64)/gtk-3.0/3.0.0/immodules/im-cyrillic-translit.so
@@ -468,6 +469,7 @@ file path=usr/lib/$(MACH64)/pkgconfig/gtk+-x11-3.0.pc
 file path=usr/lib/girepository-1.0/Gdk-3.0.typelib
 file path=usr/lib/girepository-1.0/GdkX11-3.0.typelib
 file path=usr/lib/girepository-1.0/Gtk-3.0.typelib
+file path=usr/lib/gtk-3.0/3.0.0/immodules.cache preserve=true
 file path=usr/lib/gtk-3.0/3.0.0/immodules/im-am-et.so
 file path=usr/lib/gtk-3.0/3.0.0/immodules/im-cedilla.so
 file path=usr/lib/gtk-3.0/3.0.0/immodules/im-cyrillic-translit.so
@@ -771,6 +773,8 @@ file path=usr/share/man/man1/gtk3-demo-application.1
 file path=usr/share/man/man1/gtk3-demo.1
 file path=usr/share/man/man1/gtk3-icon-browser.1
 file path=usr/share/man/man1/gtk3-widget-factory.1
+file files/gtk3-input-method-cache.8s \
+    path=usr/share/man/man8s/application/desktop-cache/gtk3-input-method-cache.8s
 file path=usr/share/themes/Default/gtk-3.0/gtk-keys.css
 file path=usr/share/themes/Emacs/gtk-3.0/gtk-keys.css
 license COPYING license=LGPLv2

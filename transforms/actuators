@@ -49,9 +49,13 @@
 <transform file path=usr/share/mime/packages/.*\.xml$ -> \
     default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
 
-# GNOME gtk Input Method modules
-<transform file path=usr/lib.*/gtk-.*/.*/immodules/.*.so$ -> \
-    default restart_fmri svc:/application/desktop-cache/input-method-cache:default>
+# GNOME gtk2 Input Method modules
+<transform file path=usr/lib.*/gtk-2.*/.*/immodules/.*.so$ -> \
+    default refresh_fmri svc:/application/desktop-cache/input-method-cache:default>
+
+# GNOME gtk3 Input Method modules
+<transform file path=usr/lib.*/gtk-3.*/.*/immodules/.*.so$ -> \
+    default refresh_fmri svc:/application/desktop-cache/gtk3-input-method-cache:default>
 
 # GNOME gdk-pixbuf image loader modules
 <transform file path=usr/lib.*/gdk-pixbuf-.*/.*/loaders/.*.so$ -> \

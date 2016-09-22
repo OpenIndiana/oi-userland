@@ -62,28 +62,6 @@ CFLAGS.gcc += -std=gnu11
 # 32-bit gcc builds cause segfaults in gtk3; see bug 21393975.
 gcc_OPT.i386.32 = -O2
 
-# Generate and install architecture-specific configuration files.
-PROTOETCGTKDIR.32=	$(PROTO_DIR)/$(ETCDIR.32)/gtk-3.0
-PROTOETCGTKDIR.64=	$(PROTO_DIR)/$(ETCDIR.64)/gtk-3.0
-PROTOETCIMMCONF.32=	$(PROTOETCGTKDIR.32)/gtk.immodules
-PROTOETCIMMCONF.64=	$(PROTOETCGTKDIR.64)/gtk.immodules
-
-$(PROTOETCIMMCONF.32):
-	$(MKDIR) $(PROTOETCGTKDIR.32); \
-	LD_LIBRARY_PATH=$(PROTO_DIR)/$(USRLIB.32) \
-	  $(PROTOUSRBINDIR)/gtk-query-immodules-3.0 \
-	  $(PROTOUSRLIBDIR)/gtk-3.0/*/immodules/*.so | \
-	  $(GSED) -e "s#$(PROTO_DIR)/##" > $(PROTOETCIMMCONF.32)
-
-$(PROTOETCIMMCONF.64):
-	$(MKDIR) $(PROTOETCGTKDIR.64); \
-	LD_LIBRARY_PATH=$(PROTO_DIR)/$(USRLIB.64) \
-	  $(PROTOUSRBINDIR64)/gtk-query-immodules-3.0 \
-	  $(PROTOUSRLIBDIR64)/gtk-3.0/*/immodules/*.so | \
-	  $(GSED) -e "s#$(PROTO_DIR)/##" > $(PROTOETCIMMCONF.64)
-
-install: $(PROTOETCIMMCONF.32) $(PROTOETCIMMCONF.64)
-
 CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 CONFIGURE_OPTIONS += --enable-cloudprint
 # Required for other components.
@@ -98,6 +76,27 @@ CONFIGURE_OPTIONS += --enable-colord=no
 
 # Needed due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+
+# Make sure SMF manifests are valid
+$(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
+	@for f in files/*.xml ; do \
+	    (set -ex ; /usr/sbin/svccfg validate "$$f") ; \
+	done
+	$(TOUCH) $@
+
+validate-smf:	$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
+build:		$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
+
+# Generate and install architecture-specific configuration files.
+PROTOGTKDIR=		$(PROTO_DIR)$(USRLIB)/gtk-3.0/3.0.0
+PROTOIMMCONF=		$(PROTOGTKDIR)/immodules.cache
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTOGTKDIR); \
+	LD_LIBRARY_PATH='$(PROTO_DIR)$(USRLIB)' \
+	  $(PROTO_DIR)$(USRBIN)/gtk-query-immodules-3.0 \
+	  $(PROTOGTKDIR)/immodules/*.so | \
+	  $(GSED) -e 's%$(PROTO_DIR)%%' > $(PROTOIMMCONF) ;
 
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
@@ -118,6 +117,7 @@ REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
