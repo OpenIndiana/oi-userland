@@ -23,20 +23,23 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Note that the use of this module itself is discouraged in new code.
+# Other modules like XML::LibXML is highly recommended.
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-Simple
-COMPONENT_VERSION=	2.20
+COMPONENT_VERSION=	2.22
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5cff13d0802792da1eb45895ce1be461903d98ec97c9c953bc8406af7294434a
+    sha256:b9450ef22ea9644ae5d6ada086dc4300fa105be050a2030ebd4efd28c198eb49
 COMPONENT_ARCHIVE_URL=	\
     http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 
-TPNO=			17624
+TPNO=			31845
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
