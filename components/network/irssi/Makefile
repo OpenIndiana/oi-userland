@@ -16,13 +16,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		irssi
-COMPONENT_VERSION=	0.8.19
+COMPONENT_VERSION=	0.8.20
 COMPONENT_SUMMARY=	irssi - a terminal based IRC client
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_FMRI=		network/chat/irssi
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4ca0040548e814ea93eb7d602ab7d6d379afcbbdf10e84160523ce69c73ee5d3
+COMPONENT_ARCHIVE_HASH=	sha256:7882c4e821f5aac469c5e69e69d7e235f4986101285c675e81a9a95bfb20505a
 COMPONENT_ARCHIVE_URL=	https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://irssi.org/
 COMPONENT_LICENSE=	GPLv2+
@@ -53,4 +53,9 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-REQUIRED_PACKAGES+= runtime/perl-522
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
