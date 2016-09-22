@@ -17,8 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	Pyro4
 COMPONENT_VERSION= 	4.22
+COMPONENT_REVISION=	1
 COMPONENT_IPS_NAME= 	pyro4
-COMPONENT_FMRI= 	library/python-2/$(COMPONENT_IPS_NAME)
+COMPONENT_FMRI= 	library/python/$(COMPONENT_IPS_NAME)
 COMPONENT_SUMMARY= 	Distributed object middleware for Python (RPC)
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -28,6 +29,8 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/P/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pythonhosted.org/Pyro4/
 COMPONENT_LICENSE_FILE=	$(COMPONENT_IPS_NAME).license
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -39,7 +42,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
-
+REQUIRED_PACKAGES += runtime/python-27
