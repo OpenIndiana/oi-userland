@@ -3,12 +3,11 @@ Changes needed in server.cfg, mainly :
     The default port used to connect to RabbitMQ is 61613
     Default user : 'mcollective' & passwd : 'changeme'
     Change RabbitMQ to log to /dev/stderr, so it goes to the SMF log
+    Set the PSK type explicitly to UID and the default to 'changeme'
 
-NOTE : This patch is developed in-house (and Solaris specific)
-
---- marionette-collective-2.8.8/etc/server.cfg.dist.orig	2016-04-20 12:36:27.556854540 -0700
-+++ marionette-collective-2.8.8/etc/server.cfg.dist	2016-04-20 12:37:10.186932498 -0700
-@@ -1,7 +1,13 @@
+--- marionette-collective-2.8.8/etc/server.cfg.dist.orig	2016-09-19 08:51:05.719526817 -0700
++++ marionette-collective-2.8.8/etc/server.cfg.dist	2016-09-19 08:51:49.506159302 -0700
+@@ -1,20 +1,28 @@
 +#######################################################################
 +# Oracle has modified the originally distributed contents of this file.
 +#######################################################################
@@ -24,9 +23,11 @@ NOTE : This patch is developed in-house (and Solaris specific)
  loglevel = info
  daemonize = 1
  
-@@ -9,12 +15,13 @@
+ # Plugins
  securityprovider = psk
- plugin.psk = unset
+-plugin.psk = unset
++plugin.psk = changeme
++plugin.psk.callertype = uid
  
 -connector = activemq
 -plugin.activemq.pool.size = 1

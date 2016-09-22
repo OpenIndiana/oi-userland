@@ -1341,8 +1341,10 @@ file path=usr/share/man/man8/puppet-resource_type.8
 file path=usr/share/man/man8/puppet-secret_agent.8
 file path=usr/share/man/man8/puppet-status.8
 file path=usr/share/man/man8/puppet.8
-dir  path=var/lib/puppet owner=puppet group=puppet mode=0755
-dir  path=var/log/puppet owner=puppet group=puppet mode=0755
+dir  path=var/lib/puppet owner=puppet group=puppet mode=0755 \
+    revert-tag=system:clone=*
+dir  path=var/log/puppet owner=puppet group=puppet mode=0755 \
+    revert-tag=system:clone=*
 license puppet.license license="Apache v2.0"
 
 # globally applicable low level puppet modules we provide
