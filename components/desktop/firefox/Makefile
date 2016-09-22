@@ -34,20 +34,20 @@ include ../../../make-rules/shared-macros.mk
 GCC_ROOT = /usr/gcc/4.9
 
 COMPONENT_NAME =		firefox
-COMPONENT_VERSION =		45.1.1esr
+COMPONENT_VERSION =		45.4.0esr
 COMPONENT_PROJECT_URL =		http://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC = 		$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC_NAME).source.tar.xz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:a27e36aa1ccebddfe5a113f7f15b09a61e35644be58029b00b0d996a00d04562
+    sha256:cfd90096b9e1019b9de4fe061ece8c65f668b8a24bcbb657ce6b3c940ef83ad0
 MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL =		$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		firefox/browser
 
-TPNO=				28419	
+TPNO=				31455
 
-IPS_COMPONENT_VERSION =		45.1.1
+IPS_COMPONENT_VERSION =		45.4.0
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -58,8 +58,8 @@ IPS_COMPONENT_VERSION =		45.1.1
 # collide due to different files with identical .xpi names.
 COMPONENT_ARCHIVE_1 =           $(COMPONENT_SRC_NAME)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-	sha256:d80142e7b64b3b61baaf7631e6ad0bf7c4a44d962dc3611bf6dba2dde33aacea
-COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
+	sha256:7a1cfadd2bdc81c7e4ecfdf138ec565a8baf7fbb087491db201e0c4fe8994299
+COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
 	fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO \
@@ -188,8 +188,9 @@ COMPONENT_TEST_MASTER = \
         $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "/\(^TEST-PASS\).*/d" '
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^TIMEOUTS:/,/Failed:/p" ' \
+	'-e "/.*/d" '
 
 REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libvorbis
