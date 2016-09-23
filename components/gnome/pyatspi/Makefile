@@ -53,6 +53,10 @@ $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
 # Tests require dbus python module, which we don't have for python3 yet
 TEST_TARGET= $(SKIP_TEST)
+
+# Requires pygobject3, not available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 CONFIGURE_OPTIONS += --disable-static
