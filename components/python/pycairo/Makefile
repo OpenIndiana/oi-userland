@@ -51,6 +51,9 @@ TEST_64      = $(PYTHON3_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compare
 # Cannot run tests until build machines update to s12_105 due to bug 23763105
 TEST_TARGET = $(SKIP_TEST)
 
+# Requires newer version of cairo than we have available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Trick bundled waf into unpacking itself so we can patch it
