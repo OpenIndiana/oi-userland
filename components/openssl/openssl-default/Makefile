@@ -30,19 +30,19 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.2h
+COMPONENT_VERSION =	1.0.2i
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.8
+IPS_COMPONENT_VERSION = 1.0.2.9
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1d4007e53aad94a5b2002fe045ee7bb0b3d98f1a47f8b2bc851dcd1c74332919
+    sha256:9287487d11c9545b6efb287cdb70535d4e9b284dd10d51441d9b9963d000de6f
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			28137
+TPNO=			31795
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as
@@ -112,7 +112,7 @@ CONFIGURE_OPTIONS += no-seed
 CONFIGURE_OPTIONS += no-gost
 
 # Disable SSLv2 and SSLv3 protocols
-CONFIGURE_OPTIONS += no-ssl2 no-ssl2-method
+CONFIGURE_OPTIONS += no-ssl2
 CONFIGURE_OPTIONS += no-ssl3 no-ssl3-method
 
 # We use both no-whirlpool and no-whrlpool since there is an inconsistency in

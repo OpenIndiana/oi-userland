@@ -1,54 +1,6 @@
 #
 # This was developed in house.  Not applicable to the upstream.
 #
---- openssl-1.0.1/ssl/s2_meth.c      Fri May  8 09:38:33 2015
-+++ openssl-1.0.1/ssl/s2_meth.c.new       Fri May  8 09:51:53 2015
-@@ -74,6 +74,13 @@
-                          ssl2_accept, ssl2_connect, ssl2_get_method)
- #else                           /* !OPENSSL_NO_SSL2 */
-
-+/* stub function */
-+const SSL_METHOD *
-+SSLv2_method(void)
-+{
-+       return (NULL);
-+}
-+
- # if PEDANTIC
- static void *dummy = &dummy;
- # endif
---- openssl-1.0.1/ssl/s2_clnt.c      Fri May  8 09:37:51 2015
-+++ openssl-1.0.1/ssl/s2_clnt.c.new       Fri May  8 09:53:12 2015
-@@ -1087,6 +1087,13 @@
- }
- #else                           /* !OPENSSL_NO_SSL2 */
-
-+/* stub function */
-+const SSL_METHOD *
-+SSLv2_client_method(void)
-+{
-+       return (NULL);
-+}
-+
- # if PEDANTIC
- static void *dummy = &dummy;
- # endif
---- openssl-1.0.1/ssl/s2_srvr.c      Fri May  8 09:38:02 2015
-+++ openssl-1.0.1/ssl/s2_srvr.c.new       Fri May  8 09:53:43 2015
-@@ -1148,6 +1148,13 @@
- }
- #else                           /* !OPENSSL_NO_SSL2 */
-
-+/* stub function */
-+const SSL_METHOD *
-+SSLv2_server_method(void)
-+{
-+        return (NULL);
-+}
-+
- # if PEDANTIC
- static void *dummy = &dummy;
- # endif
 --- openssl-1.0.1/ssl/ssl.h	Tue May 26 11:13:15 2015
 +++ openssl-1.0.1/ssl/ssl.h.new	Tue May 26 11:32:09 2015
 @@ -2345,10 +2345,23 @@

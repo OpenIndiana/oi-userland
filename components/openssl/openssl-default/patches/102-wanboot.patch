@@ -298,18 +298,6 @@
      {
 --- openssl-1.0.0e/crypto/rand/randfile.c    2011-03-19 02:44:37.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/rand/randfile.c    2011-12-13 05:26:51.884824200 -0800
-@@ -57,9 +57,11 @@
-  */
- 
- /* We need to define this to get macros like S_IFBLK and S_IFCHR */
-+#ifndef    _BOOT
- #if !defined(OPENSSL_SYS_VXWORKS)
- # define _XOPEN_SOURCE 500
- #endif
-+#endif    /* _BOOT */
- 
- #include <errno.h>
- #include <stdio.h>
 @@ -191,6 +193,7 @@
      return (ret);
  }
@@ -459,8 +447,8 @@
 
 +#ifndef _BOOT
  .global	_sparcv9_vis1_instrument_bus
+ .weak	_sparcv9_vis1_instrument_bus
  .align	8
- _sparcv9_vis1_instrument_bus:
 @@ -501,3 +502,7 @@
  	nop
  	call	OPENSSL_cpuid_setup
