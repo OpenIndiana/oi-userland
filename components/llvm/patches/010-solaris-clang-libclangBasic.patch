@@ -56,9 +56,9 @@
  
  unsigned Selector::getNumArgs() const {
 ###
---- tools/clang/lib/Basic/Targets.cpp	2016-05-24 12:36:54.000000000 -0700
-+++ tools/clang/lib/Basic/Targets.cpp	2016-08-08 08:06:27.116982930 -0700
-@@ -29,10 +29,11 @@
+--- tools/clang/lib/Basic/Targets.cpp	2016-05-24 14:36:54.000000000 -0500
++++ tools/clang/lib/Basic/Targets.cpp	2016-09-21 13:23:09.141230622 -0500
+@@ -29,11 +29,12 @@
  #include "llvm/MC/MCSectionMachO.h"
  #include "llvm/Support/ErrorHandling.h"
  #include "llvm/Support/TargetParser.h"
@@ -66,13 +66,14 @@
 +
  #include <algorithm>
  #include <memory>
--
--using namespace clang;
 +#include <string>
  
+-using namespace clang;
+-
  //===----------------------------------------------------------------------===//
  //  Common code shared among targets.
-@@ -618,34 +619,206 @@
+ //===----------------------------------------------------------------------===//
+@@ -618,35 +619,143 @@
  // Solaris target
  template<typename Target>
  class SolarisTargetInfo : public OSTargetInfo<Target> {
@@ -95,93 +96,32 @@
 -    // ensure that you are not using C99 with an old version of X/Open or C89
 -    // with a new version.
 -    if (Opts.C99)
-+    Builder.defineMacro("__SunOS", "1");
 +
-+    Builder.defineMacro("__EXTENSIONS__", "1");
++    Builder.defineMacro("__STDC_HOSTED__", "1");
 +
-+    if (Opts.POSIXThreads || Opts.OpenMP) {
++    // If '-pthread' is specificed, we want reentrant interfaces.
++    // This is unused on Solaris 12 and later.
++    if (Opts.POSIXThreads) {
 +      Builder.defineMacro("_REENTRANT");
-+      Builder.defineMacro("__GTHREADS", "1");
 +    }
 +
-+    if (Opts.C99) {
++    // The GCC Standard C++ library and its consumers are built with these
++    // macro settings, so we want to match.
++    if (Opts.CPlusPlus) {
++      Builder.defineMacro("__STDC_VERSION__", "199901L");
        Builder.defineMacro("_XOPEN_SOURCE", "600");
 -    else
-+      Builder.defineMacro("_XPG6", "1");
-+      Builder.defineMacro("__STDC_VERSION__", "199901L");
-+      Builder.defineMacro("_STDC_C99", "1");
-+      Builder.defineMacro("__C99FEATURES__", "1");
-+    }
-+
-+    if (Opts.CPlusPlus11) {
-+      Builder.defineMacro("__cplusplus", "201103L");
-+      Builder.defineMacro("_XOPEN_SOURCE", "600");
-+      Builder.defineMacro("_XPG6", "1");
-+    } else if (Opts.CPlusPlus14) {
-+      Builder.defineMacro("__cplusplus", "201402L");
-+      Builder.defineMacro("_XOPEN_SOURCE", "700");
-+      Builder.defineMacro("_XPG7", "1");
-+    }
-+
-+    if (Opts.CPlusPlus || Opts.CPlusPlus11 || Opts.CPlusPlus14 ||
-+        Opts.CPlusPlus1z) {
-+      Builder.defineMacro("__STDCPP_STRICT_POINTER_SAFETY__", "1");
-+      Builder.defineMacro("__STDCPP_THREADS__", "1");
-+    }
-+
-+    if (Opts.CPlusPlus11) {
-+      Builder.defineMacro("_STDC_C99", "1");
-+      Builder.defineMacro("__STDC_VERSION__", "199901L");
-+      Builder.defineMacro("__C99FEATURES__", "1");
-+      Builder.defineMacro("__STDC_ISO_10646__", "201011L");
-+      Builder.defineMacro("__STDC_MB_MIGHT_NEQ_WC__", "1");
-+      Builder.defineMacro("__STDC_LIB_EXT1__", "201112L");
-+    } else if (Opts.C11 || Opts.CPlusPlus14) {
-+      Builder.defineMacro("__STDC_HOSTED__", "1");
-+      Builder.defineMacro("__STDC_VERSION__", "201112L");
-+      Builder.defineMacro("_STDC_C11", "1");
-+      Builder.defineMacro("_STDC_C11_BCI", "1");
-+      Builder.defineMacro("__STDC_ISO_10646__", "201011L");
-+      Builder.defineMacro("__STDC_MB_MIGHT_NEQ_WC__", "1");
-+      Builder.defineMacro("__STDC_LIB_EXT1__", "201112L");
-+      Builder.defineMacro("__STDC_UTF_16__", "1");
-+      Builder.defineMacro("__STDC_UTF_32__", "1");
-+      Builder.defineMacro("__XPG7_THREAD_MODEL__", "1");
-+
-+      if (Opts.C11) {
-+        Builder.defineMacro("__STDC_ANALYZABLE", "1");
-+        Builder.defineMacro("__STDC_IEC_559__", "1");
-+        Builder.defineMacro("__STDC_IEC_559_COMPLEX__", "1");
-+      }
-+    } else if (Opts.CPlusPlus1z) {
-+      // This is bogus until C++17 is actually ratified,
-+      // but we need something to identify C++17 for now.
-+      Builder.defineMacro("__cplusplus", "20171231L");
-+      Builder.defineMacro("__STDC_VERSION__", "201112L");
-+      Builder.defineMacro("_STDC_C11", "1");
-+      Builder.defineMacro("_STDC_C11_BCI", "1");
-+      Builder.defineMacro("__XPG7_THREAD_MODEL__", "1");
-+      Builder.defineMacro("_XOPEN_SOURCE", "700");
-+      Builder.defineMacro("_XPG7", "1");
-+    } else if ((!Opts.C99 && !Opts.C11) ||
-+               (!Opts.CPlusPlus && !Opts.CPlusPlus11 &&
-+                !Opts.CPlusPlus14 && !Opts.CPlusPlus1z)) {
-       Builder.defineMacro("_XOPEN_SOURCE", "500");
+-      Builder.defineMacro("_XOPEN_SOURCE", "500");
 -    if (Opts.CPlusPlus)
 -      Builder.defineMacro("__C99FEATURES__");
-+      Builder.defineMacro("__STDC_VERSION__", "199409L");
-+      if (Opts.CPlusPlus && !Opts.CPlusPlus11 && !Opts.CPlusPlus14 &&
-+          !Opts.CPlusPlus1z)
-+        Builder.defineMacro("__cplusplus", "199711L");
-+    }
-+
-+    if ((Triple.getArchName() == "i386") || (Triple.getArchName() == "sparc"))
-     Builder.defineMacro("_LARGEFILE_SOURCE");
-+    else if ((Triple.getArchName() == "x86_64") ||
-+             (Triple.getArchName() == "sparcv9"))
-     Builder.defineMacro("_LARGEFILE64_SOURCE");
+-    Builder.defineMacro("_LARGEFILE_SOURCE");
+-    Builder.defineMacro("_LARGEFILE64_SOURCE");
 -    Builder.defineMacro("__EXTENSIONS__");
 -    Builder.defineMacro("_REENTRANT");
++      Builder.defineMacro("_LARGEFILE_SOURCE", "1");
++      Builder.defineMacro("_LARGEFILE64_SOURCE", "1");
++      Builder.defineMacro("__EXTENSIONS__", "1");
++    }
    }
 +
  public:
@@ -206,7 +146,7 @@
 +      this->WCharType = this->SignedInt;
 +      break;
 +    }
-+  }
+   }
 +
 +  virtual const char *getStaticInitSectionSpecifier() const override {
 +    return ".init";
@@ -290,10 +230,11 @@
 +      return true;
 +
 +    return false;
-   }
++  }
  };
  
-@@ -5899,6 +6072,10 @@
+ // Windows target
+@@ -5899,6 +6008,10 @@
      case 'N': // Same as 'K' but zext (required for SIMode)
      case 'O': // The constant 4096
        return true;
