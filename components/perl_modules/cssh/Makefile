@@ -55,7 +55,7 @@ test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol
-REQUIRED_PACKAGES += library/perl-5/perl-tk
+REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol-522
+REQUIRED_PACKAGES += library/perl-5/perl-tk-522
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
