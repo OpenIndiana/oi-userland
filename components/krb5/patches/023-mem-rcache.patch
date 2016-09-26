@@ -28,7 +28,6 @@
 # integrate features that don't require replay caches in the the future.
 # Patch source: in-house
 #
-diff --git a/src/lib/krb5/krb/srv_rcache.c b/src/lib/krb5/krb/srv_rcache.c
 --- a/src/lib/krb5/krb/srv_rcache.c
 +++ b/src/lib/krb5/krb/srv_rcache.c
 @@ -39,6 +39,7 @@ krb5_get_server_rcache(krb5_context context, const krb5_data *piece,
@@ -79,7 +78,6 @@ diff --git a/src/lib/krb5/krb/srv_rcache.c b/src/lib/krb5/krb/srv_rcache.c
  
      if (k5_buf_status(&buf) != 0)
          return ENOMEM;
-diff --git a/src/lib/krb5/rcache/Makefile.in b/src/lib/krb5/rcache/Makefile.in
 --- a/src/lib/krb5/rcache/Makefile.in
 +++ b/src/lib/krb5/rcache/Makefile.in
 @@ -13,7 +13,8 @@ STLIBOBJS = \
@@ -112,7 +110,6 @@ diff --git a/src/lib/krb5/rcache/Makefile.in b/src/lib/krb5/rcache/Makefile.in
  
  ##DOS##LIBOBJS = $(OBJS)
  
-diff --git a/src/lib/krb5/rcache/rc-int.h b/src/lib/krb5/rcache/rc-int.h
 --- a/src/lib/krb5/rcache/rc-int.h
 +++ b/src/lib/krb5/rcache/rc-int.h
 @@ -87,5 +87,6 @@ krb5_error_code krb5_rc_register_type(krb5_context, const krb5_rc_ops *);
@@ -122,7 +119,6 @@ diff --git a/src/lib/krb5/rcache/rc-int.h b/src/lib/krb5/rcache/rc-int.h
 +extern const krb5_rc_ops krb5_rc_mem_ops;
  
  #endif /* __KRB5_RCACHE_INT_H__ */
-diff --git a/src/lib/krb5/rcache/rc_base.c b/src/lib/krb5/rcache/rc_base.c
 --- a/src/lib/krb5/rcache/rc_base.c
 +++ b/src/lib/krb5/rcache/rc_base.c
 @@ -13,19 +13,35 @@
@@ -236,7 +232,6 @@ diff --git a/src/lib/krb5/rcache/rc_base.c b/src/lib/krb5/rcache/rc_base.c
  }
  
  krb5_error_code
-diff --git a/src/lib/krb5/rcache/rc_dfl.c b/src/lib/krb5/rcache/rc_dfl.c
 --- a/src/lib/krb5/rcache/rc_dfl.c
 +++ b/src/lib/krb5/rcache/rc_dfl.c
 @@ -249,6 +249,9 @@ krb5_rc_dfl_close_no_free(krb5_context context, krb5_rcache id)
@@ -265,7 +260,6 @@ diff --git a/src/lib/krb5/rcache/rc_dfl.c b/src/lib/krb5/rcache/rc_dfl.c
      }
      return retval;
  }
-diff --git a/src/lib/krb5/rcache/rc_io.c b/src/lib/krb5/rcache/rc_io.c
 --- a/src/lib/krb5/rcache/rc_io.c
 +++ b/src/lib/krb5/rcache/rc_io.c
 @@ -56,7 +56,10 @@ getdir(void)

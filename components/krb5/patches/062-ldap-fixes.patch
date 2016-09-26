@@ -27,7 +27,6 @@
 # I think we don't need a ticket for this, since it isn't really a
 # user-visible bug.
 # Patch source: in-house
-diff --git a/src/man/kdc.conf.man b/src/man/kdc.conf.man
 --- a/src/man/kdc.conf.man
 +++ b/src/man/kdc.conf.man
 @@ -533,6 +533,8 @@ passwords (created by \fBkdb5_ldap_util stashsrvpw\fP) for the
@@ -39,7 +38,6 @@ diff --git a/src/man/kdc.conf.man b/src/man/kdc.conf.man
  .TP
  .B \fBunlockiter\fP
  If set to \fBtrue\fP, this DB2\-specific tag causes iteration
-diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 --- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 +++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 @@ -125,7 +125,8 @@ kdb5_ldap_stash_service_password(int argc, char **argv)
@@ -52,7 +50,6 @@ diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/k
      }
  done:
  
-diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
 --- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
 +++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
 @@ -32,8 +32,6 @@
@@ -64,7 +61,6 @@ diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h b/src/plugins/k
  extern int tohex(krb5_data, krb5_data *);
  
  extern void kdb5_ldap_stash_service_password(int argc, char **argv);
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
 --- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c
 @@ -176,6 +176,7 @@ krb5_ldap_cleanup_handles(krb5_ldap_server_info *ldap_server_info)
@@ -75,7 +71,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_handle.c b/src/plugins/kdb/ld
          free (ldap_server_handle);
          ldap_server_handle = NULL;
      }
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
 --- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c
 @@ -360,6 +360,17 @@ krb5_ldap_read_server_params(krb5_context context, char *conf_section,
@@ -96,7 +91,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.c b/src/plugins/kdb/ldap
      }
  
      if (ldap_context->sasl_mech == NULL) {
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
 --- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h
 @@ -36,6 +36,8 @@
@@ -108,7 +102,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_misc.h b/src/plugins/kdb/ldap
  /* misc functions */
  
  krb5_boolean
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
 --- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_pwd_policy.c
 @@ -461,7 +461,8 @@ krb5_ldap_iterate_password_policy(krb5_context context, char *match_expr,

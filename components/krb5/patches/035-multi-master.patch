@@ -8,7 +8,6 @@
 # should look at modifying/deleting this patch.
 # Patch source: in-house
 #
-diff --git a/src/kadmin/cli/kadmin.c b/src/kadmin/cli/kadmin.c
 --- a/src/kadmin/cli/kadmin.c
 +++ b/src/kadmin/cli/kadmin.c
 @@ -255,7 +255,7 @@ kadmin_startup(int argc, char *argv[], char **request_out, char ***args_out)
@@ -72,7 +71,6 @@ diff --git a/src/kadmin/cli/kadmin.c b/src/kadmin/cli/kadmin.c
      if (retval) {
          com_err(whoami, retval, _("while initializing %s interface"), whoami);
          if (retval == KADM5_BAD_CLIENT_PARAMS ||
-diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
 --- a/src/lib/kadm5/admin.h
 +++ b/src/lib/kadm5/admin.h
 @@ -345,6 +345,51 @@ kadm5_ret_t    kadm5_init_with_creds(krb5_context context,
@@ -127,7 +125,6 @@ diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
  kadm5_ret_t    kadm5_lock(void *server_handle);
  kadm5_ret_t    kadm5_unlock(void *server_handle);
  kadm5_ret_t    kadm5_flush(void *server_handle);
-diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 --- a/src/lib/kadm5/clnt/client_init.c
 +++ b/src/lib/kadm5/clnt/client_init.c
 @@ -55,7 +55,7 @@ enum init_type { INIT_PASS, INIT_SKEY, INIT_CREDS, INIT_ANONYMOUS };
@@ -201,7 +198,8 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 +    svcnames[0] = service_name;
 +    svcnames[1] = NULL;
 +
-+    return init_any(context, client_name, INIT_ANONYMOUS, NULL, NULL,
+     return init_any(context, client_name, INIT_ANONYMOUS, NULL, NULL,
+-                    service_name, params, struct_version, api_version,
 +                    svcnames, params, struct_version, api_version,
 +                    db_args, server_handle);
 +}
@@ -212,8 +210,7 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 +                     krb5_ui_4 struct_version, krb5_ui_4 api_version,
 +                     char **db_args, void **server_handle)
 +{
-     return init_any(context, client_name, INIT_ANONYMOUS, NULL, NULL,
--                    service_name, params, struct_version, api_version,
++    return init_any(context, client_name, INIT_ANONYMOUS, NULL, NULL,
 +                    svcnames, params, struct_version, api_version,
                      db_args, server_handle);
  }
@@ -355,7 +352,17 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 +    } else {
 +        svcname_ptr = svcnames_in;
 +    }
-+
+ 
+-	code = kadm5_get_adm_host_srv_names(context, handle->params.realm,
+-	    &kadmin_srv_names);
+-        if (code)
+-            goto error;
+-	svcname = strdup(kadmin_srv_names[0]);
+-	free_srv_names(kadmin_srv_names);
+-	if (svcname == NULL) {
+-	    code = ENOMEM;
+-            goto error;
+-	}
 +    for (i = 0; svcname_ptr[i]; i++) {
 +        /* Get credentials. */
 +        code = get_init_creds(handle, client, init_type, pass, ccache_in,
@@ -369,17 +376,7 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 +            } else
 +                goto error;
 +        }
- 
--	code = kadm5_get_adm_host_srv_names(context, handle->params.realm,
--	    &kadmin_srv_names);
--        if (code)
--            goto error;
--	svcname = strdup(kadmin_srv_names[0]);
--	free_srv_names(kadmin_srv_names);
--	if (svcname == NULL) {
--	    code = ENOMEM;
--            goto error;
--	}
++
 +        code = _kadm5_initialize_rpcsec_gss_handle(handle, client_name,
 +                                                   svcname_ptr[i]);
 +        if (code) {
@@ -502,7 +499,6 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
                      server_out);
      /* Improved error messages */
      if (code == KRB5KRB_AP_ERR_BAD_INTEGRITY) code = KADM5_BAD_PASSWORD;
-diff --git a/src/lib/kadm5/clnt/libkadm5clnt_mit.exports b/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
 --- a/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
 +++ b/src/lib/kadm5/clnt/libkadm5clnt_mit.exports
 @@ -31,6 +31,11 @@ kadm5_init_krb5_context
@@ -517,7 +513,6 @@ diff --git a/src/lib/kadm5/clnt/libkadm5clnt_mit.exports b/src/lib/kadm5/clnt/li
  kadm5_lock
  kadm5_modify_policy
  kadm5_modify_principal
-diff --git a/src/lib/kadm5/srv/server_init.c b/src/lib/kadm5/srv/server_init.c
 --- a/src/lib/kadm5/srv/server_init.c
 +++ b/src/lib/kadm5/srv/server_init.c
 @@ -97,6 +97,29 @@ kadm5_ret_t kadm5_init_with_password(krb5_context context, char *client_name,
@@ -615,7 +610,6 @@ diff --git a/src/lib/kadm5/srv/server_init.c b/src/lib/kadm5/srv/server_init.c
  kadm5_ret_t kadm5_init(krb5_context context, char *client_name, char *pass,
                         char *service_name,
                         kadm5_config_params *params_in,
-diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
 --- a/src/slave/kpropd.c
 +++ b/src/slave/kpropd.c
 @@ -613,7 +613,7 @@ do_iprop()

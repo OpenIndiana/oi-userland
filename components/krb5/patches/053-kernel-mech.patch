@@ -28,7 +28,6 @@
 # therefore should not be considered as an upstream contribution to MIT.
 # Patch source: in-house
 #
-diff --git a/src/lib/gssapi/generic/Makefile.in b/src/lib/gssapi/generic/Makefile.in
 --- a/src/lib/gssapi/generic/Makefile.in
 +++ b/src/lib/gssapi/generic/Makefile.in
 @@ -66,6 +66,7 @@ SRCS = \
@@ -55,7 +54,6 @@ diff --git a/src/lib/gssapi/generic/Makefile.in b/src/lib/gssapi/generic/Makefil
  	util_set.o \
  	util_seqstate.o \
  	util_token.o \
-diff --git a/src/lib/gssapi/generic/deps b/src/lib/gssapi/generic/deps
 --- a/src/lib/gssapi/generic/deps
 +++ b/src/lib/gssapi/generic/deps
 @@ -64,6 +64,13 @@ util_errmap.so util_errmap.po $(OUTPRE)util_errmap.$(OBJEXT): \
@@ -72,7 +70,6 @@ diff --git a/src/lib/gssapi/generic/deps b/src/lib/gssapi/generic/deps
  util_set.so util_set.po $(OUTPRE)util_set.$(OBJEXT): \
    $(BUILDTOP)/include/autoconf.h $(BUILDTOP)/include/gssapi/gssapi.h \
    $(BUILDTOP)/include/gssapi/gssapi_alloc.h $(COM_ERR_DEPS) \
-diff --git a/src/lib/gssapi/generic/gssapiP_generic.h b/src/lib/gssapi/generic/gssapiP_generic.h
 --- a/src/lib/gssapi/generic/gssapiP_generic.h
 +++ b/src/lib/gssapi/generic/gssapiP_generic.h
 @@ -116,6 +116,12 @@
@@ -108,7 +105,6 @@ diff --git a/src/lib/gssapi/generic/gssapiP_generic.h b/src/lib/gssapi/generic/g
  char *g_strdup (char *str);
  
  /** declarations of internal name mechanism functions **/
-diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/accept_sec_context.c
 --- a/src/lib/gssapi/krb5/accept_sec_context.c
 +++ b/src/lib/gssapi/krb5/accept_sec_context.c
 @@ -435,6 +435,7 @@ kg_accept_krb5(minor_status, context_handle,
@@ -119,15 +115,15 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
      krb5_gss_cred_id_t cred = 0;
      krb5_data ap_rep, ap_req;
      unsigned int i;
-@@ -698,6 +699,7 @@ kg_accept_krb5(minor_status, context_handle,
-         }
- 
-         gss_flags = GSS_C_MUTUAL_FLAG | GSS_C_REPLAY_FLAG | GSS_C_SEQUENCE_FLAG;
+@@ -701,6 +702,7 @@ kg_accept_krb5(minor_status, context_handle,
+         gss_flags = GSS_C_REPLAY_FLAG | GSS_C_SEQUENCE_FLAG;
+         if (ap_req_options & AP_OPTS_MUTUAL_REQUIRED)
+             gss_flags |= GSS_C_MUTUAL_FLAG;
 +	bigend = 0;
      } else {
          /* gss krb5 v1 */
  
-@@ -725,14 +727,22 @@ kg_accept_krb5(minor_status, context_handle,
+@@ -728,14 +730,22 @@ kg_accept_krb5(minor_status, context_handle,
          }
  
          ptr = (unsigned char *) authdat->checksum->contents;
@@ -156,7 +152,7 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
  
          /*
            The following section of code attempts to implement the
-@@ -773,7 +783,7 @@ kg_accept_krb5(minor_status, context_handle,
+@@ -776,7 +786,7 @@ kg_accept_krb5(minor_status, context_handle,
  
          /* Read the token flags.  Remember if GSS_C_DELEG_FLAG was set, but
           * mask it out until we actually read a delegated credential. */
@@ -165,7 +161,7 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
          token_deleg_flag = (gss_flags & GSS_C_DELEG_FLAG);
          gss_flags &= ~GSS_C_DELEG_FLAG;
  
-@@ -782,8 +792,8 @@ kg_accept_krb5(minor_status, context_handle,
+@@ -785,8 +795,8 @@ kg_accept_krb5(minor_status, context_handle,
          i = authdat->checksum->length - 24;
          if (i && token_deleg_flag) {
              if (i >= 4) {
@@ -176,7 +172,7 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
                  i -= 4;
  
                  if (i < option.length) {
-@@ -880,6 +890,7 @@ kg_accept_krb5(minor_status, context_handle,
+@@ -883,6 +893,7 @@ kg_accept_krb5(minor_status, context_handle,
                                        GSS_C_DCE_STYLE | GSS_C_IDENTIFY_FLAG |
                                        GSS_C_EXTENDED_ERROR_FLAG)));
      ctx->seed_init = 0;
@@ -184,7 +180,6 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
      ctx->cred_rcache = cred_rcache;
  
      /* XXX move this into gss_name_t */
-diff --git a/src/lib/gssapi/krb5/gssapiP_krb5.h b/src/lib/gssapi/krb5/gssapiP_krb5.h
 --- a/src/lib/gssapi/krb5/gssapiP_krb5.h
 +++ b/src/lib/gssapi/krb5/gssapiP_krb5.h
 @@ -205,6 +205,7 @@ typedef struct _krb5_gss_ctx_id_rec {
@@ -195,7 +190,6 @@ diff --git a/src/lib/gssapi/krb5/gssapiP_krb5.h b/src/lib/gssapi/krb5/gssapiP_kr
      unsigned int have_acceptor_subkey : 1;
      unsigned int seed_init : 1;  /* XXX tested but never actually set */
      unsigned int terminated : 1;
-diff --git a/src/lib/gssapi/krb5/gssapi_krb5.c b/src/lib/gssapi/krb5/gssapi_krb5.c
 --- a/src/lib/gssapi/krb5/gssapi_krb5.c
 +++ b/src/lib/gssapi/krb5/gssapi_krb5.c
 @@ -1046,6 +1046,7 @@ static int gss_krb5mechglue_init(void)
@@ -206,7 +200,6 @@ diff --git a/src/lib/gssapi/krb5/gssapi_krb5.c b/src/lib/gssapi/krb5/gssapi_krb5
      gssint_register_mechinfo(&mech_krb5);
  
      mech_krb5.mechNameStr = "kerberos_v5_old";
-diff --git a/src/lib/gssapi/krb5/import_sec_context.c b/src/lib/gssapi/krb5/import_sec_context.c
 --- a/src/lib/gssapi/krb5/import_sec_context.c
 +++ b/src/lib/gssapi/krb5/import_sec_context.c
 @@ -107,7 +107,6 @@ krb5_gss_import_sec_context(minor_status, interprocess_token, context_handle)
@@ -217,7 +210,6 @@ diff --git a/src/lib/gssapi/krb5/import_sec_context.c b/src/lib/gssapi/krb5/impo
  
      ctx->mech_used = krb5_gss_convert_static_mech_oid(ctx->mech_used);
  
-diff --git a/src/lib/gssapi/krb5/ser_sctx.c b/src/lib/gssapi/krb5/ser_sctx.c
 --- a/src/lib/gssapi/krb5/ser_sctx.c
 +++ b/src/lib/gssapi/krb5/ser_sctx.c
 @@ -150,6 +150,22 @@ kg_oid_size(kcontext, arg, sizep)

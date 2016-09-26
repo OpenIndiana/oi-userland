@@ -7,7 +7,6 @@
 # donated.
 # Patch source: in-house
 #
-diff --git a/src/kadmin/testing/scripts/init_db b/src/kadmin/testing/scripts/init_db
 --- a/src/kadmin/testing/scripts/init_db
 +++ b/src/kadmin/testing/scripts/init_db
 @@ -215,7 +215,7 @@ changepw/kerberos@$REALM	cil
@@ -19,7 +18,6 @@ diff --git a/src/kadmin/testing/scripts/init_db b/src/kadmin/testing/scripts/ini
  
  # Create $K5ROOT/setup.csh to make it easy to run other programs against
  # the test db
-diff --git a/src/kadmin/testing/util/tcl_kadm5.c b/src/kadmin/testing/util/tcl_kadm5.c
 --- a/src/kadmin/testing/util/tcl_kadm5.c
 +++ b/src/kadmin/testing/util/tcl_kadm5.c
 @@ -13,8 +13,11 @@
@@ -54,7 +52,6 @@ diff --git a/src/kadmin/testing/util/tcl_kadm5.c b/src/kadmin/testing/util/tcl_k
      (void) sprintf(buf, "%d", KADM5_STRUCT_VERSION);
      Tcl_SetVar(interp, "KADM5_STRUCT_VERSION", buf, TCL_GLOBAL_ONLY);
      (void) sprintf(buf, "%d", KADM5_API_VERSION_2);
-diff --git a/src/lib/kadm5/unit-test/Makefile.in b/src/lib/kadm5/unit-test/Makefile.in
 --- a/src/lib/kadm5/unit-test/Makefile.in
 +++ b/src/lib/kadm5/unit-test/Makefile.in
 @@ -103,7 +103,7 @@ unit-test-server-setup::
@@ -66,7 +63,6 @@ diff --git a/src/lib/kadm5/unit-test/Makefile.in b/src/lib/kadm5/unit-test/Makef
  	$(ENV_SETUP) $(RUNTEST) --tool api RPC=1 API=$(CLNTTCL) \
  		KINIT=$(BUILDTOP)/clients/kinit/kinit \
  		KDESTROY=$(BUILDTOP)/clients/kdestroy/kdestroy \
-diff --git a/src/lib/kadm5/unit-test/api.current/init-v2.exp b/src/lib/kadm5/unit-test/api.current/init-v2.exp
 --- a/src/lib/kadm5/unit-test/api.current/init-v2.exp
 +++ b/src/lib/kadm5/unit-test/api.current/init-v2.exp
 @@ -70,7 +70,7 @@ proc test102 {} {
@@ -106,7 +102,6 @@ diff --git a/src/lib/kadm5/unit-test/api.current/init-v2.exp b/src/lib/kadm5/uni
      one_line_succeed_test {
  	kadm5_init_with_creds testuser null $KADM5_CHANGEPW_SERVICE \
  		null $KADM5_STRUCT_VERSION $KADM5_API_VERSION_3 \
-diff --git a/src/lib/kadm5/unit-test/api.current/init.exp b/src/lib/kadm5/unit-test/api.current/init.exp
 --- a/src/lib/kadm5/unit-test/api.current/init.exp
 +++ b/src/lib/kadm5/unit-test/api.current/init.exp
 @@ -697,8 +697,8 @@ if {$RPC} {
@@ -120,7 +115,6 @@ diff --git a/src/lib/kadm5/unit-test/api.current/init.exp b/src/lib/kadm5/unit-t
  }
  
  return ""
-diff --git a/src/lib/kadm5/unit-test/destroy-test.c b/src/lib/kadm5/unit-test/destroy-test.c
 --- a/src/lib/kadm5/unit-test/destroy-test.c
 +++ b/src/lib/kadm5/unit-test/destroy-test.c
 @@ -27,7 +27,7 @@ int main()
@@ -132,7 +126,6 @@ diff --git a/src/lib/kadm5/unit-test/destroy-test.c b/src/lib/kadm5/unit-test/de
                           KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                           &server_handle);
          if(ret != KADM5_OK) {
-diff --git a/src/lib/kadm5/unit-test/handle-test.c b/src/lib/kadm5/unit-test/handle-test.c
 --- a/src/lib/kadm5/unit-test/handle-test.c
 +++ b/src/lib/kadm5/unit-test/handle-test.c
 @@ -30,7 +30,7 @@ int main(int argc, char *argv[])
@@ -144,7 +137,6 @@ diff --git a/src/lib/kadm5/unit-test/handle-test.c b/src/lib/kadm5/unit-test/han
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if(ret != KADM5_OK) {
-diff --git a/src/lib/kadm5/unit-test/iter-test.c b/src/lib/kadm5/unit-test/iter-test.c
 --- a/src/lib/kadm5/unit-test/iter-test.c
 +++ b/src/lib/kadm5/unit-test/iter-test.c
 @@ -22,7 +22,7 @@ int main(int argc, char **argv)
@@ -156,7 +148,6 @@ diff --git a/src/lib/kadm5/unit-test/iter-test.c b/src/lib/kadm5/unit-test/iter-
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if (ret != KADM5_OK) {
-diff --git a/src/lib/kadm5/unit-test/randkey-test.c b/src/lib/kadm5/unit-test/randkey-test.c
 --- a/src/lib/kadm5/unit-test/randkey-test.c
 +++ b/src/lib/kadm5/unit-test/randkey-test.c
 @@ -23,7 +23,7 @@ int main()
@@ -168,7 +159,6 @@ diff --git a/src/lib/kadm5/unit-test/randkey-test.c b/src/lib/kadm5/unit-test/ra
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &server_handle);
      if(ret != KADM5_OK) {
-diff --git a/src/lib/kadm5/unit-test/setkey-test.c b/src/lib/kadm5/unit-test/setkey-test.c
 --- a/src/lib/kadm5/unit-test/setkey-test.c
 +++ b/src/lib/kadm5/unit-test/setkey-test.c
 @@ -119,7 +119,7 @@ main(int argc, char **argv)
@@ -180,7 +170,6 @@ diff --git a/src/lib/kadm5/unit-test/setkey-test.c b/src/lib/kadm5/unit-test/set
                       KADM5_STRUCT_VERSION, KADM5_API_VERSION_4, NULL,
                       &handle);
      if (ret) {
-diff --git a/src/tests/dejagnu/krb-standalone/kadmin.exp b/src/tests/dejagnu/krb-standalone/kadmin.exp
 --- a/src/tests/dejagnu/krb-standalone/kadmin.exp
 +++ b/src/tests/dejagnu/krb-standalone/kadmin.exp
 @@ -1050,13 +1050,16 @@ proc kadmin_test { } {

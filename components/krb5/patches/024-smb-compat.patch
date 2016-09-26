@@ -14,7 +14,6 @@
 # environment variable.
 # Patch source: in-house
 #
-diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/accept_sec_context.c
 --- a/src/lib/gssapi/krb5/accept_sec_context.c
 +++ b/src/lib/gssapi/krb5/accept_sec_context.c
 @@ -454,8 +454,6 @@ kg_accept_krb5(minor_status, context_handle,
@@ -26,7 +25,7 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
      gss_cred_id_t defcred = GSS_C_NO_CREDENTIAL;
      krb5_gss_cred_id_t deleg_cred = NULL;
      krb5int_access kaccess;
-@@ -1211,6 +1209,8 @@ fail:
+@@ -1214,6 +1212,8 @@ fail:
           major_status == GSS_S_CONTINUE_NEEDED)) {
          unsigned int tmsglen;
          int toktype;
@@ -35,7 +34,7 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
  
          /*
           * The client is expecting a response, so we can send an
-@@ -1218,6 +1218,31 @@ fail:
+@@ -1221,6 +1221,31 @@ fail:
           */
          memset(&krb_error_data, 0, sizeof(krb_error_data));
  
@@ -67,7 +66,6 @@ diff --git a/src/lib/gssapi/krb5/accept_sec_context.c b/src/lib/gssapi/krb5/acce
          code -= ERROR_TABLE_BASE_krb5;
          if (code < 0 || code > KRB_ERR_MAX)
              code = 60 /* KRB_ERR_GENERIC */;
-diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_mech.c
 --- a/src/lib/gssapi/spnego/spnego_mech.c
 +++ b/src/lib/gssapi/spnego/spnego_mech.c
 @@ -180,6 +180,13 @@ get_negTokenResp(OM_uint32 *, unsigned char *, unsigned int,
@@ -119,7 +117,7 @@ diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_
  	/*
  	 * Select the best match between the list of mechs
  	 * that the initiator requested and the list that
-@@ -3087,6 +3115,7 @@ get_available_mechs(OM_uint32 *minor_status,
+@@ -3084,6 +3112,7 @@ get_available_mechs(OM_uint32 *minor_status,
  	gss_OID_set mechs, goodmechs;
  	gss_OID_set_desc except_attrs;
  	gss_OID_desc attr_oids[2];
@@ -127,7 +125,7 @@ diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_
  
  	attr_oids[0] = *GSS_C_MA_DEPRECATED;
  	attr_oids[1] = *GSS_C_MA_NOT_DFLT_MECH;
-@@ -3108,6 +3137,15 @@ get_available_mechs(OM_uint32 *minor_status,
+@@ -3105,6 +3134,15 @@ get_available_mechs(OM_uint32 *minor_status,
  		return (major_status);
  	}
  
@@ -143,7 +141,7 @@ diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_
  	for (i = 0; i < mechs->count && major_status == GSS_S_COMPLETE; i++) {
  		if ((mechs->elements[i].length
  		    != spnego_mechanism.mech_type.length) ||
-@@ -3123,6 +3161,25 @@ get_available_mechs(OM_uint32 *minor_status,
+@@ -3120,6 +3158,25 @@ get_available_mechs(OM_uint32 *minor_status,
  		}
  	}
  
@@ -169,7 +167,7 @@ diff --git a/src/lib/gssapi/spnego/spnego_mech.c b/src/lib/gssapi/spnego/spnego_
  	/*
  	 * If the caller wanted a list of creds returned,
  	 * trim the list of mechanisms down to only those
-@@ -3698,9 +3755,17 @@ negotiate_mech(gss_OID_set supported, gss_OID_set received,
+@@ -3695,9 +3752,17 @@ negotiate_mech(gss_OID_set supported, gss_OID_set received,
  	for (i = 0; i < received->count; i++) {
  		gss_OID mech_oid = &received->elements[i];
  

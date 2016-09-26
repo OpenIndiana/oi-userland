@@ -7,7 +7,6 @@
 # through kdc_max_tcp_connections.
 # Patch source: in-house
 #
-diff --git a/src/include/k5-int.h b/src/include/k5-int.h
 --- a/src/include/k5-int.h
 +++ b/src/include/k5-int.h
 @@ -264,6 +264,7 @@ typedef unsigned char   u_char;
@@ -18,7 +17,6 @@ diff --git a/src/include/k5-int.h b/src/include/k5-int.h
  #define KRB5_CONF_MODULE                       "module"
  #define KRB5_CONF_NOADDRESSES                  "noaddresses"
  #define KRB5_CONF_NO_HOST_REFERRAL             "no_host_referral"
-diff --git a/src/include/net-server.h b/src/include/net-server.h
 --- a/src/include/net-server.h
 +++ b/src/include/net-server.h
 @@ -52,6 +52,7 @@ krb5_error_code loop_setup_network(verto_ctx *ctx, void *handle,
@@ -29,7 +27,6 @@ diff --git a/src/include/net-server.h b/src/include/net-server.h
  
  /* to be supplied by the server application */
  
-diff --git a/src/include/osconf.hin b/src/include/osconf.hin
 --- a/src/include/osconf.hin
 +++ b/src/include/osconf.hin
 @@ -94,6 +94,10 @@
@@ -43,7 +40,6 @@ diff --git a/src/include/osconf.hin b/src/include/osconf.hin
  /*
   * Defaults for the KADM5 admin system.
   */
-diff --git a/src/kdc/main.c b/src/kdc/main.c
 --- a/src/kdc/main.c
 +++ b/src/kdc/main.c
 @@ -203,7 +203,8 @@ static krb5_error_code
@@ -116,7 +112,6 @@ diff --git a/src/kdc/main.c b/src/kdc/main.c
      /* Handle each realm's ports */
      for (i=0; i< shandle.kdc_numrealms; i++) {
          char *cp = shandle.kdc_realmlist[i]->realm_ports;
-diff --git a/src/kdc/realm_data.h b/src/kdc/realm_data.h
 --- a/src/kdc/realm_data.h
 +++ b/src/kdc/realm_data.h
 @@ -66,6 +66,7 @@ typedef struct __kdc_realm_data {
@@ -127,7 +122,6 @@ diff --git a/src/kdc/realm_data.h b/src/kdc/realm_data.h
      /*
       * Per-realm parameters.
       */
-diff --git a/src/lib/apputils/net-server.c b/src/lib/apputils/net-server.c
 --- a/src/lib/apputils/net-server.c
 +++ b/src/lib/apputils/net-server.c
 @@ -348,6 +348,12 @@ loop_add_tcp_port(int port)
@@ -143,7 +137,6 @@ diff --git a/src/lib/apputils/net-server.c b/src/lib/apputils/net-server.c
  krb5_error_code
  loop_add_rpc_service(int port, u_long prognum,
                       u_long versnum, void (*dispatchfn)())
-diff --git a/src/lib/krb5/os/localauth.c b/src/lib/krb5/os/localauth.c
 --- a/src/lib/krb5/os/localauth.c
 +++ b/src/lib/krb5/os/localauth.c
 @@ -258,6 +258,49 @@ parse_mapping_value(const char *value, char **type_out, char **residual_out)

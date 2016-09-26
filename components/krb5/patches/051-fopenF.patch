@@ -7,7 +7,6 @@
 # submitted to MIT until this is resolved in ON.
 # Patch source: in-house
 #
-diff --git a/src/appl/gss-sample/gss-server.c b/src/appl/gss-sample/gss-server.c
 --- a/src/appl/gss-sample/gss-server.c
 +++ b/src/appl/gss-sample/gss-server.c
 @@ -709,7 +709,7 @@ main(int argc, char **argv)
@@ -19,7 +18,6 @@ diff --git a/src/appl/gss-sample/gss-server.c b/src/appl/gss-sample/gss-server.c
                  display_file = logfile;
                  if (!logfile) {
                      perror(*argv);
-diff --git a/src/clients/ksu/authorization.c b/src/clients/ksu/authorization.c
 --- a/src/clients/ksu/authorization.c
 +++ b/src/clients/ksu/authorization.c
 @@ -100,7 +100,7 @@ krb5_error_code krb5_authorization(context, principal, luser,
@@ -40,7 +38,6 @@ diff --git a/src/clients/ksu/authorization.c b/src/clients/ksu/authorization.c
              return 0;
          }
          if ( fowner(users_fp, pwd->pw_uid) == FALSE){
-diff --git a/src/clients/ksu/ccache.c b/src/clients/ksu/ccache.c
 --- a/src/clients/ksu/ccache.c
 +++ b/src/clients/ksu/ccache.c
 @@ -375,7 +375,7 @@ krb5_get_login_princ(luser, princ_list)
@@ -52,7 +49,6 @@ diff --git a/src/clients/ksu/ccache.c b/src/clients/ksu/ccache.c
          return 0;
      }
      /*
-diff --git a/src/clients/ksu/heuristic.c b/src/clients/ksu/heuristic.c
 --- a/src/clients/ksu/heuristic.c
 +++ b/src/clients/ksu/heuristic.c
 @@ -222,7 +222,7 @@ get_authorized_princ_names(luser, cmd, princ_list)
@@ -73,7 +69,6 @@ diff --git a/src/clients/ksu/heuristic.c b/src/clients/ksu/heuristic.c
              return 0;
  
          if ( fowner(users_fp, pwd->pw_uid) == FALSE){
-diff --git a/src/kadmin/dbutil/dump.c b/src/kadmin/dbutil/dump.c
 --- a/src/kadmin/dbutil/dump.c
 +++ b/src/kadmin/dbutil/dump.c
 @@ -1215,7 +1215,7 @@ current_dump_sno_in_ulog(krb5_context context, const char *ifile)
@@ -85,7 +80,7 @@ diff --git a/src/kadmin/dbutil/dump.c b/src/kadmin/dbutil/dump.c
      if (f == NULL)
          return 0;              /* aliasing other errors to ENOENT here is OK */
  
-@@ -1537,7 +1537,7 @@ load_db(int argc, char **argv)
+@@ -1540,7 +1540,7 @@ load_db(int argc, char **argv)
  
      /* Open the dumpfile. */
      if (dumpfile != NULL) {
@@ -94,7 +89,6 @@ diff --git a/src/kadmin/dbutil/dump.c b/src/kadmin/dbutil/dump.c
          if (f == NULL) {
              com_err(progname, errno, _("while opening %s"), dumpfile);
              goto error;
-diff --git a/src/kadmin/server/ovsec_kadmd.c b/src/kadmin/server/ovsec_kadmd.c
 --- a/src/kadmin/server/ovsec_kadmd.c
 +++ b/src/kadmin/server/ovsec_kadmd.c
 @@ -126,7 +126,7 @@ write_pid_file(const char *pid_file)
@@ -106,7 +100,6 @@ diff --git a/src/kadmin/server/ovsec_kadmd.c b/src/kadmin/server/ovsec_kadmd.c
      if (file == NULL)
          return errno;
      pid = (unsigned long)getpid();
-diff --git a/src/kdc/main.c b/src/kdc/main.c
 --- a/src/kdc/main.c
 +++ b/src/kdc/main.c
 @@ -859,7 +859,7 @@ write_pid_file(const char *path)
@@ -118,7 +111,6 @@ diff --git a/src/kdc/main.c b/src/kdc/main.c
      if (file == NULL)
          return errno;
      pid = (unsigned long) getpid();
-diff --git a/src/lib/gssapi/generic/util_errmap.c b/src/lib/gssapi/generic/util_errmap.c
 --- a/src/lib/gssapi/generic/util_errmap.c
 +++ b/src/lib/gssapi/generic/util_errmap.c
 @@ -176,7 +176,7 @@ OM_uint32 gssint_mecherrmap_map(OM_uint32 minor, const gss_OID_desc * oid)
@@ -130,7 +122,6 @@ diff --git a/src/lib/gssapi/generic/util_errmap.c b/src/lib/gssapi/generic/util_
      if (f == NULL)
          f = stderr;
  #endif
-diff --git a/src/lib/gssapi/mechglue/g_initialize.c b/src/lib/gssapi/mechglue/g_initialize.c
 --- a/src/lib/gssapi/mechglue/g_initialize.c
 +++ b/src/lib/gssapi/mechglue/g_initialize.c
 @@ -1218,7 +1218,7 @@ loadConfigFile(const char *fileName)
@@ -142,7 +133,6 @@ diff --git a/src/lib/gssapi/mechglue/g_initialize.c b/src/lib/gssapi/mechglue/g_
  		return;
  	}
  
-diff --git a/src/lib/kadm5/logger.c b/src/lib/kadm5/logger.c
 --- a/src/lib/kadm5/logger.c
 +++ b/src/lib/kadm5/logger.c
 @@ -566,7 +566,7 @@ krb5_klog_init(krb5_context kcontext, char *ename, char *whoami, krb5_boolean do
@@ -181,7 +171,6 @@ diff --git a/src/lib/kadm5/logger.c b/src/lib/kadm5/logger.c
              if (f) {
                  set_cloexec_file(f);
                  log_control.log_entries[lindex].lfu_filep = f;
-diff --git a/src/lib/kadm5/srv/server_acl.c b/src/lib/kadm5/srv/server_acl.c
 --- a/src/lib/kadm5/srv/server_acl.c
 +++ b/src/lib/kadm5/srv/server_acl.c
 @@ -488,7 +488,7 @@ kadm5int_acl_load_acl_file()
@@ -193,7 +182,6 @@ diff --git a/src/lib/kadm5/srv/server_acl.c b/src/lib/kadm5/srv/server_acl.c
      if (afp) {
          set_cloexec_file(afp);
          alineno = 1;
-diff --git a/src/lib/kdb/kdb_default.c b/src/lib/kdb/kdb_default.c
 --- a/src/lib/kdb/kdb_default.c
 +++ b/src/lib/kdb/kdb_default.c
 @@ -251,9 +251,9 @@ krb5_db_def_fetch_mkey_stash(krb5_context   context,
@@ -208,7 +196,6 @@ diff --git a/src/lib/kdb/kdb_default.c b/src/lib/kdb/kdb_default.c
  #endif
              return KRB5_KDB_CANTREAD_STORED;
      set_cloexec_file(kf);
-diff --git a/src/lib/krb5/ccache/cc_dir.c b/src/lib/krb5/ccache/cc_dir.c
 --- a/src/lib/krb5/ccache/cc_dir.c
 +++ b/src/lib/krb5/ccache/cc_dir.c
 @@ -153,7 +153,7 @@ read_primary_file(krb5_context context, const char *primary_path,
@@ -220,7 +207,6 @@ diff --git a/src/lib/krb5/ccache/cc_dir.c b/src/lib/krb5/ccache/cc_dir.c
      if (fp == NULL)
          return ENOENT;
      ret = fgets(buf, sizeof(buf), fp);
-diff --git a/src/lib/krb5/ccache/ccselect_k5identity.c b/src/lib/krb5/ccache/ccselect_k5identity.c
 --- a/src/lib/krb5/ccache/ccselect_k5identity.c
 +++ b/src/lib/krb5/ccache/ccselect_k5identity.c
 @@ -168,7 +168,7 @@ k5identity_choose(krb5_context context, krb5_ccselect_moddata data,
@@ -232,7 +218,6 @@ diff --git a/src/lib/krb5/ccache/ccselect_k5identity.c b/src/lib/krb5/ccache/ccs
      free(filename);
      if (fp == NULL)
          return KRB5_PLUGIN_NO_HANDLE;
-diff --git a/src/lib/krb5/keytab/kt_file.c b/src/lib/krb5/keytab/kt_file.c
 --- a/src/lib/krb5/keytab/kt_file.c
 +++ b/src/lib/krb5/keytab/kt_file.c
 @@ -1028,11 +1028,11 @@ typedef krb5_int16  krb5_kt_vno;
@@ -251,7 +236,6 @@ diff --git a/src/lib/krb5/keytab/kt_file.c b/src/lib/krb5/keytab/kt_file.c
  #endif
  
  static krb5_error_code
-diff --git a/src/lib/krb5/keytab/kt_srvtab.c b/src/lib/krb5/keytab/kt_srvtab.c
 --- a/src/lib/krb5/keytab/kt_srvtab.c
 +++ b/src/lib/krb5/keytab/kt_srvtab.c
 @@ -342,9 +342,9 @@ const struct _krb5_kt_ops krb5_kts_ops = {
@@ -266,7 +250,6 @@ diff --git a/src/lib/krb5/keytab/kt_srvtab.c b/src/lib/krb5/keytab/kt_srvtab.c
  #endif
  
  /* The maximum sizes for V4 aname, realm, sname, and instance +1 */
-diff --git a/src/lib/krb5/os/localaddr.c b/src/lib/krb5/os/localaddr.c
 --- a/src/lib/krb5/os/localaddr.c
 +++ b/src/lib/krb5/os/localaddr.c
 @@ -368,7 +368,7 @@ get_linux_ipv6_addrs ()
@@ -278,7 +261,6 @@ diff --git a/src/lib/krb5/os/localaddr.c b/src/lib/krb5/os/localaddr.c
      if (f) {
          char ifname[21];
          unsigned int idx, pfxlen, scope, dadstat;
-diff --git a/src/lib/krb5/os/localauth_k5login.c b/src/lib/krb5/os/localauth_k5login.c
 --- a/src/lib/krb5/os/localauth_k5login.c
 +++ b/src/lib/krb5/os/localauth_k5login.c
 @@ -116,7 +116,7 @@ userok_k5login(krb5_context context, krb5_localauth_moddata data,
@@ -290,7 +272,6 @@ diff --git a/src/lib/krb5/os/localauth_k5login.c b/src/lib/krb5/os/localauth_k5l
      if (fp == NULL) {
          ret = errno;
          goto cleanup;
-diff --git a/src/lib/krb5/rcache/t_replay.c b/src/lib/krb5/rcache/t_replay.c
 --- a/src/lib/krb5/rcache/t_replay.c
 +++ b/src/lib/krb5/rcache/t_replay.c
 @@ -66,7 +66,7 @@ dump_rcache(const char *filename)
@@ -302,7 +283,6 @@ diff --git a/src/lib/krb5/rcache/t_replay.c b/src/lib/krb5/rcache/t_replay.c
      if (!fp) {
          fprintf(stderr, "Can't open filename: %s\n", strerror(errno));
          return;
-diff --git a/src/lib/krb5/unicode/ucdata/ucdata.c b/src/lib/krb5/unicode/ucdata/ucdata.c
 --- a/src/lib/krb5/unicode/ucdata/ucdata.c
 +++ b/src/lib/krb5/unicode/ucdata/ucdata.c
 @@ -156,7 +156,7 @@ _ucprop_load(char *paths, int reload)
@@ -368,7 +348,6 @@ diff --git a/src/lib/krb5/unicode/ucdata/ucdata.c b/src/lib/krb5/unicode/ucdata/
        return -1;
  
      /*
-diff --git a/src/lib/krb5/unicode/ucdata/ucgendat.c b/src/lib/krb5/unicode/ucdata/ucgendat.c
 --- a/src/lib/krb5/unicode/ucdata/ucgendat.c
 +++ b/src/lib/krb5/unicode/ucdata/ucgendat.c
 @@ -1296,14 +1296,14 @@ write_cdata(char *opath)
@@ -460,7 +439,6 @@ diff --git a/src/lib/krb5/unicode/ucdata/ucgendat.c b/src/lib/krb5/unicode/ucdat
                fprintf(stderr, "%s: unable to open ctype file %s\n",
                        prog, argv[0]);
              else {
-diff --git a/src/lib/rpc/getrpcent.c b/src/lib/rpc/getrpcent.c
 --- a/src/lib/rpc/getrpcent.c
 +++ b/src/lib/rpc/getrpcent.c
 @@ -121,7 +121,7 @@ SETRPCENT_TYPE setrpcent(int f)
@@ -481,7 +459,6 @@ diff --git a/src/lib/rpc/getrpcent.c b/src/lib/rpc/getrpcent.c
  		return (NULL);
  	    set_cloexec_file(d->rpcf);
  	}
-diff --git a/src/lib/rpc/svc_auth_gssapi.c b/src/lib/rpc/svc_auth_gssapi.c
 --- a/src/lib/rpc/svc_auth_gssapi.c
 +++ b/src/lib/rpc/svc_auth_gssapi.c
 @@ -57,7 +57,7 @@ void gssrpcint_printf(const char *format, ...)
@@ -493,7 +470,6 @@ diff --git a/src/lib/rpc/svc_auth_gssapi.c b/src/lib/rpc/svc_auth_gssapi.c
  	if (f) {
  	    vfprintf(f, format, ap);
  	    fflush(f);
-diff --git a/src/plugins/audit/test/au_test.c b/src/plugins/audit/test/au_test.c
 --- a/src/plugins/audit/test/au_test.c
 +++ b/src/plugins/audit/test/au_test.c
 @@ -54,7 +54,7 @@ static k5_mutex_t lock = K5_MUTEX_PARTIAL_INITIALIZER;
@@ -505,13 +481,12 @@ diff --git a/src/plugins/audit/test/au_test.c b/src/plugins/audit/test/au_test.c
      if (au_fd == NULL)
          return KRB5_PLUGIN_NO_HANDLE; /* audit module is unavailable */
      k5_mutex_init(&lock);
-diff --git a/src/plugins/kdb/db2/adb_openclose.c b/src/plugins/kdb/db2/adb_openclose.c
 --- a/src/plugins/kdb/db2/adb_openclose.c
 +++ b/src/plugins/kdb/db2/adb_openclose.c
-@@ -147,12 +147,12 @@ osa_adb_init_db(osa_adb_db_t *dbp, char *filename, char *lockfilename,
+@@ -152,12 +152,12 @@ osa_adb_init_db(osa_adb_db_t *dbp, char *filename, char *lockfilename,
+          * needs be open read/write so that write locking can work with
           * POSIX systems
           */
-         lockp->lockinfo.filename = strdup(lockfilename);
 -        if ((lockp->lockinfo.lockfile = fopen(lockfilename, "r+")) == NULL) {
 +        if ((lockp->lockinfo.lockfile = fopen(lockfilename, "r+F")) == NULL) {
              /*
@@ -523,7 +498,6 @@ diff --git a/src/plugins/kdb/db2/adb_openclose.c b/src/plugins/kdb/db2/adb_openc
                  == NULL) {
                  free(db);
                  return OSA_ADB_NOLOCKFILE;
-diff --git a/src/plugins/kdb/db2/libdb2/btree/bt_debug.c b/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
 --- a/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
 +++ b/src/plugins/kdb/db2/libdb2/btree/bt_debug.c
 @@ -66,7 +66,7 @@ __bt_dinit()
@@ -535,7 +509,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/btree/bt_debug.c b/src/plugins/kdb/db2/l
  		return;
  #endif
  	tracefp = stderr;
-diff --git a/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c b/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
 --- a/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
 +++ b/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c
 @@ -18,7 +18,7 @@ void main(int argc, char *argv[]) {
@@ -547,7 +520,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/test/SEQ_TEST/t.c b/src/plugins/kdb/db2/
      printf("Unable to open %s\n","data");
      exit(25);
    }
-diff --git a/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c b/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
 --- a/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
 +++ b/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c
 @@ -224,7 +224,7 @@ user(db)
@@ -586,7 +558,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/test/btree.tests/main.c b/src/plugins/kd
  		(void)fprintf(stderr, "%s: %s\n", argv[1], strerror(errno));
  		return;
  	}
-diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c b/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
 --- a/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
 +++ b/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c
 @@ -103,7 +103,7 @@ char **argv;
@@ -598,7 +569,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/tdel.c b/src/plugins/kd
  		i = 0;
  		while ( fgets(wp1, 8192, fp) &&
  			fgets(wp2, 8192, fp) &&
-diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c b/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
 --- a/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
 +++ b/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c
 @@ -106,7 +106,7 @@ char **argv;
@@ -610,7 +580,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/test/hash1.tests/thash4.c b/src/plugins/
  		i = 0;
  		while ( fgets(wp1, 256, fp) &&
  			fgets(wp2, 8192, fp) &&
-diff --git a/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c b/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
 --- a/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
 +++ b/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c
 @@ -19,8 +19,8 @@ main(void)
@@ -657,7 +626,6 @@ diff --git a/src/plugins/kdb/db2/libdb2/test/hash2.tests/passtest.c b/src/plugin
  
      db = dbopen("/usr/tmp/passwd.db", O_RDWR|O_BINARY, 0664, DB_HASH, &passwd);
      n = 0;
-diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 --- a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 +++ b/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c
 @@ -178,7 +178,7 @@ done:
@@ -678,7 +646,6 @@ diff --git a/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.c b/src/plugins/k
          umask (omask);
          if (newfile == NULL) {
              com_err(me, errno, _("Error creating file %s"), tmp_file);
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c b/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
 --- a/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c
 @@ -87,7 +87,7 @@ krb5_ldap_readpassword(krb5_context context, const char *filename,
@@ -690,7 +657,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/ldap_service_stash.c b/src/plugins
      if (fp == NULL) {
          ret = errno;
          k5_setmsg(context, ret, _("Cannot open LDAP password file '%s': %s"),
-diff --git a/src/plugins/locate/python/py-locate.c b/src/plugins/locate/python/py-locate.c
 --- a/src/plugins/locate/python/py-locate.c
 +++ b/src/plugins/locate/python/py-locate.c
 @@ -98,7 +98,7 @@ my_init(void)
@@ -702,7 +668,6 @@ diff --git a/src/plugins/locate/python/py-locate.c b/src/plugins/locate/python/p
      if (f == NULL) {
          if (sctx)
              krb5_set_error_message(sctx, -1,
-diff --git a/src/plugins/preauth/otp/otp_state.c b/src/plugins/preauth/otp/otp_state.c
 --- a/src/plugins/preauth/otp/otp_state.c
 +++ b/src/plugins/preauth/otp/otp_state.c
 @@ -96,7 +96,7 @@ read_secret_file(const char *secret_file, char **secret)
@@ -714,7 +679,6 @@ diff --git a/src/plugins/preauth/otp/otp_state.c b/src/plugins/preauth/otp/otp_s
      if (file == NULL) {
          retval = errno;
          com_err("otp", retval, "Unable to open secret file '%s'", filename);
-diff --git a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
 --- a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
 +++ b/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c
 @@ -4281,7 +4281,7 @@ pkinit_get_certs_pkcs12(krb5_context context,
@@ -726,7 +690,6 @@ diff --git a/src/plugins/preauth/pkinit/pkinit_crypto_openssl.c b/src/plugins/pr
      if (fp == NULL) {
          pkiDebug("Failed to open PKCS12 file '%s', error %d\n",
                   idopts->cert_filename, errno);
-diff --git a/src/plugins/preauth/pkinit/pkinit_lib.c b/src/plugins/preauth/pkinit/pkinit_lib.c
 --- a/src/plugins/preauth/pkinit/pkinit_lib.c
 +++ b/src/plugins/preauth/pkinit/pkinit_lib.c
 @@ -365,7 +365,7 @@ print_buffer_bin(unsigned char *buf, unsigned int len, char *filename)
@@ -738,7 +701,6 @@ diff --git a/src/plugins/preauth/pkinit/pkinit_lib.c b/src/plugins/preauth/pkini
          return;
  
      set_cloexec_file(f);
-diff --git a/src/plugins/tls/k5tls/openssl.c b/src/plugins/tls/k5tls/openssl.c
 --- a/src/plugins/tls/k5tls/openssl.c
 +++ b/src/plugins/tls/k5tls/openssl.c
 @@ -348,7 +348,7 @@ load_anchor_file(X509_STORE *store, const char *path)
@@ -750,7 +712,6 @@ diff --git a/src/plugins/tls/k5tls/openssl.c b/src/plugins/tls/k5tls/openssl.c
      if (fp == NULL)
          return errno;
      sk = PEM_X509_INFO_read(fp, NULL, NULL, NULL);
-diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
 --- a/src/slave/kpropd.c
 +++ b/src/slave/kpropd.c
 @@ -1310,7 +1310,7 @@ authorized_principal(krb5_context context, krb5_principal p,
@@ -762,7 +723,6 @@ diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
      if (acl_file == NULL)
          return FALSE;
  
-diff --git a/src/tests/asn.1/t_trval.c b/src/tests/asn.1/t_trval.c
 --- a/src/tests/asn.1/t_trval.c
 +++ b/src/tests/asn.1/t_trval.c
 @@ -93,7 +93,7 @@ int main(argc, argv)
@@ -774,7 +734,6 @@ diff --git a/src/tests/asn.1/t_trval.c b/src/tests/asn.1/t_trval.c
                  fprintf(stderr,"trval: unable to open %s\n", *argv);
                  continue;
              }
-diff --git a/src/tests/gss-threads/gss-server.c b/src/tests/gss-threads/gss-server.c
 --- a/src/tests/gss-threads/gss-server.c
 +++ b/src/tests/gss-threads/gss-server.c
 @@ -733,7 +733,7 @@ main(int argc, char **argv)
@@ -786,7 +745,6 @@ diff --git a/src/tests/gss-threads/gss-server.c b/src/tests/gss-threads/gss-serv
                  display_file = logfile;
                  if (!logfile) {
                      perror(*argv);
-diff --git a/src/util/profile/prof_file.c b/src/util/profile/prof_file.c
 --- a/src/util/profile/prof_file.c
 +++ b/src/util/profile/prof_file.c
 @@ -126,7 +126,7 @@ static int rw_access(const_profile_filespec_t filespec)
@@ -825,7 +783,6 @@ diff --git a/src/util/profile/prof_file.c b/src/util/profile/prof_file.c
      if (!f) {
          retval = errno;
          if (retval == 0)
-diff --git a/src/util/profile/prof_parse.c b/src/util/profile/prof_parse.c
 --- a/src/util/profile/prof_parse.c
 +++ b/src/util/profile/prof_parse.c
 @@ -213,7 +213,7 @@ static errcode_t parse_include_file(const char *filename,
@@ -837,7 +794,6 @@ diff --git a/src/util/profile/prof_parse.c b/src/util/profile/prof_parse.c
      if (fp == NULL)
          return PROF_FAIL_INCLUDE_FILE;
      retval = parse_file(fp, &state, NULL);
-diff --git a/src/util/profile/test_parse.c b/src/util/profile/test_parse.c
 --- a/src/util/profile/test_parse.c
 +++ b/src/util/profile/test_parse.c
 @@ -25,7 +25,7 @@ int main(argc, argv)

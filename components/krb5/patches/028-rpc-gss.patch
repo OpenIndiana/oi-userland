@@ -27,7 +27,6 @@
 # In the future MIT might provide support for system native RPC implementation.
 # Patch source: in-house
 #
-diff --git a/src/build-tools/krb5-config.in b/src/build-tools/krb5-config.in
 --- a/src/build-tools/krb5-config.in
 +++ b/src/build-tools/krb5-config.in
 @@ -97,9 +97,6 @@ while test $# != 0; do
@@ -66,7 +65,6 @@ diff --git a/src/build-tools/krb5-config.in b/src/build-tools/krb5-config.in
      fi
  
      if test $library = 'gssapi'; then
-diff --git a/src/config/pre.in b/src/config/pre.in
 --- a/src/config/pre.in
 +++ b/src/config/pre.in
 @@ -318,7 +318,7 @@ KDB5_PLUGIN_LIBS = @KDB5_PLUGIN_LIBS@
@@ -87,7 +85,6 @@ diff --git a/src/config/pre.in b/src/config/pre.in
  KADM_COMM_LIBS	= $(GSSRPC_LIBS)
  # need fixing if ever used on Mac OS X!
  KADMSRV_LIBS	= -lkadm5srv_mit $(HESIOD_LIBS) $(KDB5_LIBS) $(KADM_COMM_LIBS)
-diff --git a/src/include/iprop.h b/src/include/iprop.h
 --- a/src/include/iprop.h
 +++ b/src/include/iprop.h
 @@ -6,8 +6,7 @@
@@ -100,7 +97,6 @@ diff --git a/src/include/iprop.h b/src/include/iprop.h
  
  #ifdef __cplusplus
  extern "C" {
-diff --git a/src/include/k5-int.h b/src/include/k5-int.h
 --- a/src/include/k5-int.h
 +++ b/src/include/k5-int.h
 @@ -218,11 +218,14 @@ typedef unsigned char   u_char;
@@ -118,7 +114,6 @@ diff --git a/src/include/k5-int.h b/src/include/k5-int.h
  #define KRB5_CONF_K5LOGIN_AUTHORITATIVE        "k5login_authoritative"
  #define KRB5_CONF_K5LOGIN_DIRECTORY            "k5login_directory"
  #define KRB5_CONF_KADMIND_PORT                 "kadmind_port"
-diff --git a/src/kadmin/dbutil/kadm5_create.c b/src/kadmin/dbutil/kadm5_create.c
 --- a/src/kadmin/dbutil/kadm5_create.c
 +++ b/src/kadmin/dbutil/kadm5_create.c
 @@ -158,11 +158,20 @@ static int add_admin_princs(void *handle, krb5_context context, char *realm)
@@ -142,7 +137,6 @@ diff --git a/src/kadmin/dbutil/kadm5_create.c b/src/kadmin/dbutil/kadm5_create.c
  
      if ((ret = add_admin_princ(handle, context,
                                 KADM5_CHANGEPW_SERVICE, realm,
-diff --git a/src/kadmin/server/ipropd_svc.c b/src/kadmin/server/ipropd_svc.c
 --- a/src/kadmin/server/ipropd_svc.c
 +++ b/src/kadmin/server/ipropd_svc.c
 @@ -137,6 +137,8 @@ iprop_get_updates_1_svc(kdb_last_t *arg, struct svc_req *rqstp)
@@ -246,7 +240,6 @@ diff --git a/src/kadmin/server/ipropd_svc.c b/src/kadmin/server/ipropd_svc.c
  
      switch (rqstp->rq_proc) {
      case NULLPROC:
-diff --git a/src/kadmin/server/kadm_rpc_svc.c b/src/kadmin/server/kadm_rpc_svc.c
 --- a/src/kadmin/server/kadm_rpc_svc.c
 +++ b/src/kadmin/server/kadm_rpc_svc.c
 @@ -5,7 +5,7 @@
@@ -282,7 +275,6 @@ diff --git a/src/kadmin/server/kadm_rpc_svc.c b/src/kadmin/server/kadm_rpc_svc.c
       return success;
  }
 +#endif
-diff --git a/src/kadmin/server/ovsec_kadmd.c b/src/kadmin/server/ovsec_kadmd.c
 --- a/src/kadmin/server/ovsec_kadmd.c
 +++ b/src/kadmin/server/ovsec_kadmd.c
 @@ -45,10 +45,9 @@
@@ -455,7 +447,6 @@ diff --git a/src/kadmin/server/ovsec_kadmd.c b/src/kadmin/server/ovsec_kadmd.c
  
      krb5_klog_close(context);
      krb5_free_context(context);
-diff --git a/src/kadmin/server/server_stubs.c b/src/kadmin/server/server_stubs.c
 --- a/src/kadmin/server/server_stubs.c
 +++ b/src/kadmin/server/server_stubs.c
 @@ -21,10 +21,10 @@ extern gss_name_t                       gss_changepw_name;
@@ -1411,7 +1402,6 @@ diff --git a/src/kadmin/server/server_stubs.c b/src/kadmin/server/server_stubs.c
 +    }
 +    return (name);
  }
-diff --git a/src/lib/Makefile.in b/src/lib/Makefile.in
 --- a/src/lib/Makefile.in
 +++ b/src/lib/Makefile.in
 @@ -1,5 +1,5 @@
@@ -1421,7 +1411,6 @@ diff --git a/src/lib/Makefile.in b/src/lib/Makefile.in
  WINSUBDIRS=crypto krb5 gssapi
  BUILDTOP=$(REL)..
  
-diff --git a/src/lib/apputils/net-server.c b/src/lib/apputils/net-server.c
 --- a/src/lib/apputils/net-server.c
 +++ b/src/lib/apputils/net-server.c
 @@ -32,7 +32,7 @@
@@ -1746,7 +1735,6 @@ diff --git a/src/lib/apputils/net-server.c b/src/lib/apputils/net-server.c
  }
  
  #if defined(CMSG_SPACE) && defined(HAVE_STRUCT_CMSGHDR) &&      \
-diff --git a/src/lib/kadm5/Makefile.in b/src/lib/kadm5/Makefile.in
 --- a/src/lib/kadm5/Makefile.in
 +++ b/src/lib/kadm5/Makefile.in
 @@ -21,6 +21,7 @@ SRCS =	kadm_err.c \
@@ -1773,7 +1761,6 @@ diff --git a/src/lib/kadm5/Makefile.in b/src/lib/kadm5/Makefile.in
  	logger.o
  
  HDRDIR=$(BUILDTOP)/include/kadm5
-diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
 --- a/src/lib/kadm5/admin.h
 +++ b/src/lib/kadm5/admin.h
 @@ -42,7 +42,7 @@
@@ -1815,7 +1802,6 @@ diff --git a/src/lib/kadm5/admin.h b/src/lib/kadm5/admin.h
  krb5_error_code kadm5_init_krb5_context (krb5_context *);
  
  krb5_error_code kadm5_init_iprop(void *server_handle, char **db_args);
-diff --git a/src/lib/kadm5/alt_prof.c b/src/lib/kadm5/alt_prof.c
 --- a/src/lib/kadm5/alt_prof.c
 +++ b/src/lib/kadm5/alt_prof.c
 @@ -746,10 +746,17 @@ krb5_error_code kadm5_get_config_params(krb5_context context,
@@ -1879,7 +1865,6 @@ diff --git a/src/lib/kadm5/alt_prof.c b/src/lib/kadm5/alt_prof.c
  
      *params_out = params;
  
-diff --git a/src/lib/kadm5/clnt/Makefile.in b/src/lib/kadm5/clnt/Makefile.in
 --- a/src/lib/kadm5/clnt/Makefile.in
 +++ b/src/lib/kadm5/clnt/Makefile.in
 @@ -7,12 +7,11 @@ LIBMAJOR=10
@@ -1896,7 +1881,6 @@ diff --git a/src/lib/kadm5/clnt/Makefile.in b/src/lib/kadm5/clnt/Makefile.in
  RELDIR=kadm5/clnt
  
  ##DOSBUILDTOP = ..\..\..
-diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
 --- a/src/lib/kadm5/clnt/client_init.c
 +++ b/src/lib/kadm5/clnt/client_init.c
 @@ -44,12 +44,12 @@
@@ -2519,7 +2503,6 @@ diff --git a/src/lib/kadm5/clnt/client_init.c b/src/lib/kadm5/clnt/client_init.c
  }
  
  kadm5_ret_t
-diff --git a/src/lib/kadm5/clnt/client_principal.c b/src/lib/kadm5/clnt/client_principal.c
 --- a/src/lib/kadm5/clnt/client_principal.c
 +++ b/src/lib/kadm5/clnt/client_principal.c
 @@ -5,7 +5,7 @@
@@ -2531,7 +2514,6 @@ diff --git a/src/lib/kadm5/clnt/client_principal.c b/src/lib/kadm5/clnt/client_p
  #include    <kadm5/admin.h>
  #include    <kadm5/kadm_rpc.h>
  #ifdef HAVE_MEMORY_H
-diff --git a/src/lib/kadm5/clnt/client_rpc.c b/src/lib/kadm5/clnt/client_rpc.c
 --- a/src/lib/kadm5/clnt/client_rpc.c
 +++ b/src/lib/kadm5/clnt/client_rpc.c
 @@ -1,5 +1,5 @@
@@ -2541,7 +2523,6 @@ diff --git a/src/lib/kadm5/clnt/client_rpc.c b/src/lib/kadm5/clnt/client_rpc.c
  #include <kadm5/kadm_rpc.h>
  #include <krb5.h>
  #include <kadm5/admin.h>
-diff --git a/src/lib/kadm5/clnt/clnt_policy.c b/src/lib/kadm5/clnt/clnt_policy.c
 --- a/src/lib/kadm5/clnt/clnt_policy.c
 +++ b/src/lib/kadm5/clnt/clnt_policy.c
 @@ -5,7 +5,7 @@
@@ -2553,7 +2534,6 @@ diff --git a/src/lib/kadm5/clnt/clnt_policy.c b/src/lib/kadm5/clnt/clnt_policy.c
  #include    <kadm5/admin.h>
  #include    <kadm5/kadm_rpc.h>
  #include    "client_internal.h"
-diff --git a/src/lib/kadm5/clnt/clnt_privs.c b/src/lib/kadm5/clnt/clnt_privs.c
 --- a/src/lib/kadm5/clnt/clnt_privs.c
 +++ b/src/lib/kadm5/clnt/clnt_privs.c
 @@ -7,7 +7,7 @@
@@ -2565,7 +2545,6 @@ diff --git a/src/lib/kadm5/clnt/clnt_privs.c b/src/lib/kadm5/clnt/clnt_privs.c
  #include    <kadm5/admin.h>
  #include    <kadm5/kadm_rpc.h>
  #include    "client_internal.h"
-diff --git a/src/lib/kadm5/deps b/src/lib/kadm5/deps
 --- a/src/lib/kadm5/deps
 +++ b/src/lib/kadm5/deps
 @@ -90,6 +90,20 @@ str_conv.so str_conv.po $(OUTPRE)str_conv.$(OBJEXT): \
@@ -2589,7 +2568,6 @@ diff --git a/src/lib/kadm5/deps b/src/lib/kadm5/deps
  logger.so logger.po $(OUTPRE)logger.$(OBJEXT): $(BUILDTOP)/include/autoconf.h \
    $(BUILDTOP)/include/krb5/krb5.h $(BUILDTOP)/include/osconf.h \
    $(BUILDTOP)/include/profile.h $(COM_ERR_DEPS) $(top_srcdir)/include/adm_proto.h \
-diff --git a/src/lib/kadm5/kadm_rpc.h b/src/lib/kadm5/kadm_rpc.h
 --- a/src/lib/kadm5/kadm_rpc.h
 +++ b/src/lib/kadm5/kadm_rpc.h
 @@ -2,7 +2,7 @@
@@ -2610,7 +2588,6 @@ diff --git a/src/lib/kadm5/kadm_rpc.h b/src/lib/kadm5/kadm_rpc.h
 +#define	xdr_u_int32 xdr_u_int
  
  #endif /* __KADM_RPC_H__ */
-diff --git a/src/lib/kadm5/kadm_rpc_xdr.c b/src/lib/kadm5/kadm_rpc_xdr.c
 --- a/src/lib/kadm5/kadm_rpc_xdr.c
 +++ b/src/lib/kadm5/kadm_rpc_xdr.c
 @@ -3,7 +3,7 @@
@@ -2622,7 +2599,6 @@ diff --git a/src/lib/kadm5/kadm_rpc_xdr.c b/src/lib/kadm5/kadm_rpc_xdr.c
  #include <krb5.h>
  #include <errno.h>
  #include <kadm5/admin.h>
-diff --git a/src/lib/kadm5/server_internal.h b/src/lib/kadm5/server_internal.h
 --- a/src/lib/kadm5/server_internal.h
 +++ b/src/lib/kadm5/server_internal.h
 @@ -264,4 +264,8 @@ k5_kadm5_hook_rename (krb5_context context,
@@ -2634,7 +2610,6 @@ diff --git a/src/lib/kadm5/server_internal.h b/src/lib/kadm5/server_internal.h
 +extern caddr_t xdralloc_getdata(XDR *xdrs);
 +
  #endif /* __KADM5_SERVER_INTERNAL_H__ */
-diff --git a/src/lib/kadm5/srv/Makefile.in b/src/lib/kadm5/srv/Makefile.in
 --- a/src/lib/kadm5/srv/Makefile.in
 +++ b/src/lib/kadm5/srv/Makefile.in
 @@ -14,13 +14,12 @@ LIBMINOR=0
@@ -2679,7 +2654,6 @@ diff --git a/src/lib/kadm5/srv/Makefile.in b/src/lib/kadm5/srv/Makefile.in
  	adb_xdr.o
  
  all-unix:: includes
-diff --git a/src/lib/kadm5/srv/adb_xdr.c b/src/lib/kadm5/srv/adb_xdr.c
 --- a/src/lib/kadm5/srv/adb_xdr.c
 +++ b/src/lib/kadm5/srv/adb_xdr.c
 @@ -7,7 +7,7 @@
@@ -2691,7 +2665,6 @@ diff --git a/src/lib/kadm5/srv/adb_xdr.c b/src/lib/kadm5/srv/adb_xdr.c
  #include	"server_internal.h"
  #include "admin_xdr.h"
  #ifdef HAVE_MEMORY_H
-diff --git a/src/lib/kadm5/srv/server_init.c b/src/lib/kadm5/srv/server_init.c
 --- a/src/lib/kadm5/srv/server_init.c
 +++ b/src/lib/kadm5/srv/server_init.c
 @@ -233,8 +233,7 @@ kadm5_ret_t kadm5_init(krb5_context context, char *client_name, char *pass,
@@ -2703,8 +2676,7 @@ diff --git a/src/lib/kadm5/srv/server_init.c b/src/lib/kadm5/srv/server_init.c
 +     KADM5_CONFIG_IPROP_LOGFILE)
  
      if ((handle->params.mask & REQUIRED_PARAMS) != REQUIRED_PARAMS) {
-         free_db_args(handle);
-diff --git a/src/lib/kdb/Makefile.in b/src/lib/kdb/Makefile.in
+         kadm5_free_config_params(handle->context, &handle->params);
 --- a/src/lib/kdb/Makefile.in
 +++ b/src/lib/kdb/Makefile.in
 @@ -14,9 +14,8 @@ RELDIR=kdb
@@ -2718,7 +2690,6 @@ diff --git a/src/lib/kdb/Makefile.in b/src/lib/kdb/Makefile.in
  
  adb_err.$(OBJEXT): adb_err.c
  adb_err.c adb_err.h: $(srcdir)/adb_err.et
-diff --git a/src/lib/kdb/iprop_xdr.c b/src/lib/kdb/iprop_xdr.c
 --- a/src/lib/kdb/iprop_xdr.c
 +++ b/src/lib/kdb/iprop_xdr.c
 @@ -9,6 +9,7 @@
@@ -2737,7 +2708,6 @@ diff --git a/src/lib/kdb/iprop_xdr.c b/src/lib/kdb/iprop_xdr.c
  
  bool_t
  xdr_utf8str_t (XDR *xdrs, utf8str_t *objp)
-diff --git a/src/lib/krb5/os/changepw.c b/src/lib/krb5/os/changepw.c
 --- a/src/lib/krb5/os/changepw.c
 +++ b/src/lib/krb5/os/changepw.c
 @@ -57,7 +57,7 @@ struct sendto_callback_context {
@@ -2749,7 +2719,6 @@ diff --git a/src/lib/krb5/os/changepw.c b/src/lib/krb5/os/changepw.c
  locate_kpasswd(krb5_context context, const krb5_data *realm,
                 struct serverlist *serverlist, krb5_boolean no_udp)
  {
-diff --git a/src/lib/krb5/os/locate_kdc.c b/src/lib/krb5/os/locate_kdc.c
 --- a/src/lib/krb5/os/locate_kdc.c
 +++ b/src/lib/krb5/os/locate_kdc.c
 @@ -675,6 +675,14 @@ k5_locate_kdc(krb5_context context, const krb5_data *realm,
@@ -2767,7 +2736,6 @@ diff --git a/src/lib/krb5/os/locate_kdc.c b/src/lib/krb5/os/locate_kdc.c
  krb5_boolean
  k5_kdc_is_master(krb5_context context, const krb5_data *realm,
                   struct server_entry *server)
-diff --git a/src/lib/rpc/xdr_alloc.c b/src/lib/rpc/xdr_alloc.c
 --- a/src/lib/rpc/xdr_alloc.c
 +++ b/src/lib/rpc/xdr_alloc.c
 @@ -35,18 +35,23 @@
@@ -2879,7 +2847,6 @@ diff --git a/src/lib/rpc/xdr_alloc.c b/src/lib/rpc/xdr_alloc.c
 +{
 +     return FALSE;
 +}
-diff --git a/src/plugins/kdb/db2/adb_policy.c b/src/plugins/kdb/db2/adb_policy.c
 --- a/src/plugins/kdb/db2/adb_policy.c
 +++ b/src/plugins/kdb/db2/adb_policy.c
 @@ -28,6 +28,9 @@
@@ -2892,7 +2859,6 @@ diff --git a/src/plugins/kdb/db2/adb_policy.c b/src/plugins/kdb/db2/adb_policy.c
  
  /*
   * Function: osa_adb_create_policy
-diff --git a/src/plugins/kdb/db2/pol_xdr.c b/src/plugins/kdb/db2/pol_xdr.c
 --- a/src/plugins/kdb/db2/pol_xdr.c
 +++ b/src/plugins/kdb/db2/pol_xdr.c
 @@ -1,6 +1,6 @@
@@ -2903,7 +2869,6 @@ diff --git a/src/plugins/kdb/db2/pol_xdr.c b/src/plugins/kdb/db2/pol_xdr.c
  #include <kdb.h>
  #include <kadm5/admin_xdr.h>
  #include "policy_db.h"
-diff --git a/src/plugins/kdb/db2/policy_db.h b/src/plugins/kdb/db2/policy_db.h
 --- a/src/plugins/kdb/db2/policy_db.h
 +++ b/src/plugins/kdb/db2/policy_db.h
 @@ -28,8 +28,8 @@
@@ -2917,7 +2882,6 @@ diff --git a/src/plugins/kdb/db2/policy_db.h b/src/plugins/kdb/db2/policy_db.h
  #include <db.h>
  #include "adb_err.h"
  #include <com_err.h>
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.c b/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.c
 --- a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.c
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.c
 @@ -3,6 +3,10 @@
@@ -2931,7 +2895,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.c b/src/plugins/kdb/ldap
  bool_t
  ldap_xdr_krb5_ui_2(XDR *xdrs, krb5_ui_2 *objp)
  {
-diff --git a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.h b/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.h
 --- a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.h
 +++ b/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.h
 @@ -4,7 +4,7 @@
@@ -2943,7 +2906,6 @@ diff --git a/src/plugins/kdb/ldap/libkdb_ldap/princ_xdr.h b/src/plugins/kdb/ldap
  
  #ifdef HAVE_MEMORY_H
  #include <memory.h>
-diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
 --- a/src/slave/kpropd.c
 +++ b/src/slave/kpropd.c
 @@ -588,7 +588,7 @@ full_resync(CLIENT *clnt)
@@ -2955,7 +2917,6 @@ diff --git a/src/slave/kpropd.c b/src/slave/kpropd.c
                         (caddr_t)&vers, (xdrproc_t)xdr_kdb_fullresync_result_t,
                         (caddr_t)&clnt_res, full_resync_timeout);
      if (status == RPC_PROCUNAVAIL) {
-diff --git a/src/tests/misc/Makefile.in b/src/tests/misc/Makefile.in
 --- a/src/tests/misc/Makefile.in
 +++ b/src/tests/misc/Makefile.in
 @@ -12,18 +12,16 @@ SRCS=\
@@ -2998,7 +2959,6 @@ diff --git a/src/tests/misc/Makefile.in b/src/tests/misc/Makefile.in
 -	$(RM) test_getpw test_chpw_message test_cxx_krb5 test_cxx_gss test_cxx_k5int test_cxx_rpc test_cxx_kadm5 *.o
 +	$(RM) test_getpw test_chpw_message test_cxx_krb5 test_cxx_gss test_cxx_k5int test_cxx_kadm5 *.o
  
-diff --git a/src/tests/t_ccache.py b/src/tests/t_ccache.py
 --- a/src/tests/t_ccache.py
 +++ b/src/tests/t_ccache.py
 @@ -51,7 +51,7 @@ realm.kinit(realm.user_princ, password('user'))
@@ -3010,7 +2970,6 @@ diff --git a/src/tests/t_ccache.py b/src/tests/t_ccache.py
  realm.run([klist, '-s'])
  realm.run([kdestroy])
  realm.run([klist, '-s'], expected_code=1)
-diff --git a/src/tests/t_iprop.py b/src/tests/t_iprop.py
 --- a/src/tests/t_iprop.py
 +++ b/src/tests/t_iprop.py
 @@ -1,44 +1,35 @@
@@ -3504,7 +3463,6 @@ diff --git a/src/tests/t_iprop.py b/src/tests/t_iprop.py
  
  success('iprop tests')
 +
-diff --git a/src/tests/t_kadmin_acl.py b/src/tests/t_kadmin_acl.py
 --- a/src/tests/t_kadmin_acl.py
 +++ b/src/tests/t_kadmin_acl.py
 @@ -9,7 +9,7 @@ def make_client(name):
@@ -3516,7 +3474,6 @@ diff --git a/src/tests/t_kadmin_acl.py b/src/tests/t_kadmin_acl.py
      return ccache
  
  def kadmin_as(client, query, **kwargs):
-diff --git a/src/util/gss-kernel-lib/Makefile.in b/src/util/gss-kernel-lib/Makefile.in
 --- a/src/util/gss-kernel-lib/Makefile.in
 +++ b/src/util/gss-kernel-lib/Makefile.in
 @@ -7,7 +7,7 @@ ALL_CFLAGS=$(CPPFLAGS) $(CFLAGS) $(WARN_CFLAGS) $(DEFS) $(DEFINES) -I. -Igssapi
@@ -3528,7 +3485,6 @@ diff --git a/src/util/gss-kernel-lib/Makefile.in b/src/util/gss-kernel-lib/Makef
  
  SRCS= \
  	k5seal.c \
-diff --git a/src/util/k5test.py b/src/util/k5test.py
 --- a/src/util/k5test.py
 +++ b/src/util/k5test.py
 @@ -997,7 +997,7 @@ class K5Realm(object):
