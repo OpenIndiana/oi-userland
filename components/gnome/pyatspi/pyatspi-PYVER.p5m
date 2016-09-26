@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python/pyatspi-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pyatspi2-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python API to AT-SPI on D-Bus"
 set name=com.oracle.info.description value="Python API to AT-SPI on D-Bus"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -65,9 +65,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pyatspi/value.py
 license COPYING.GPL license=GPLv2
 license COPYING license=LGPLv2.1
 
+# force the rename with an optional dependency on the old name
+$(PYTHON_2.7_ONLY)depend type=optional \
+    fmri=library/python/pyatspi-27@2.30.0-5.12.0.0.0.109.0
+
 # force a dependency on the unversioned package
 depend type=require \
-    fmri=library/python/pyatspi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pyatspi2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on the Python runtime
 depend type=require fmri=runtime/python-$(PYV)
