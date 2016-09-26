@@ -1,4 +1,4 @@
-#! /usr/bin/ksh
+#!/bin/sh
 #
 # CDDL HEADER START
 #
@@ -25,7 +25,15 @@
 # Use is subject to license terms.
 #
 
-prompt=$(echo $1 | sed s/_/__/g)
-ICON=/usr/share/pixmaps/blueprint-keyring.png
+# Updated for portability, Copyright 2016 by Jim Klimov
+
+prompt="$(echo "$1" | sed 's/_/__/g')"
+### This one is not delivered since... opensolaris-134 timeframe.
+###ICON=/usr/share/pixmaps/blueprint-keyring.png
+ICON=/usr/share/pixmaps/ssh-askpass-zenity.png
+ICONFLAG=""
+if [ -s "$ICON" ]; then
+    ICONFLAG="--window-icon=$ICON"
+fi
 exec /usr/bin/zenity --entry --title "ssh-askpass" \
-    --text="$prompt" --hide-text --window-icon=$ICON
+    --text="$prompt" --hide-text $ICONFLAG
