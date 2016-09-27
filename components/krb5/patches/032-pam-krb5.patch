@@ -43,6 +43,15 @@
  
  	iprop_svc = strdup(KIPROP_SVC_NAME);
  	if (iprop_svc == NULL)
+@@ -442,7 +440,7 @@ _kadm5_initialize_rpcsec_gss_handle(kadm5_server_handle_t handle,
+ 
+ 	if (ccname_orig) {
+ 		gssstat = gss_krb5_ccache_name(&minor_stat, ccname_orig, NULL);
+-		free(ccname_orig);
++		free((void *)ccname_orig);
+ 		if (gssstat != GSS_S_COMPLETE) {
+ 			code = KADM5_GSS_ERROR;
+ 			goto error;
 @@ -516,7 +514,7 @@ cleanup:
  
  static kadm5_ret_t

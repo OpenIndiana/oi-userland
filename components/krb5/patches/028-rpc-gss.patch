@@ -261,7 +261,24 @@
  	  krb5_klog_syslog(LOG_ERR, "Authentication attempt failed: %s, "
  			   "RPC authentication flavor %d",
  			   client_addr(rqstp->rq_xprt),
-@@ -246,6 +245,8 @@ void kadm_1(rqstp, transp)
+@@ -229,7 +228,7 @@ void kadm_1(rqstp, transp)
+ 	  return;
+      }
+      memset(&argument, 0, sizeof(argument));
+-     if (!svc_getargs(transp, xdr_argument, &argument)) {
++     if (!svc_getargs(transp, xdr_argument, (char *)&argument)) {
+ 	  svcerr_decode(transp);
+ 	  return;
+      }
+@@ -239,13 +238,15 @@ void kadm_1(rqstp, transp)
+ 		 "continuing.");
+ 	  svcerr_systemerr(transp);
+      }
+-     if (!svc_freeargs(transp, xdr_argument, &argument)) {
++     if (!svc_freeargs(transp, xdr_argument, (char *)&argument)) {
+ 	  krb5_klog_syslog(LOG_ERR, "WARNING! Unable to free arguments, "
+ 		 "continuing.");
+      }
       return;
  }
  
@@ -337,7 +354,11 @@
 +        fail_to_start(ENOMEM, _("copying GSSAPI auth names"));
 +    free_srv_names(tmp_srv_names);
 +    tmp_srv_names = NULL;
-+
+ 
+-    names[0].name = build_princ_name(KADM5_ADMIN_SERVICE, params.realm);
+-    names[1].name = build_princ_name(KADM5_CHANGEPW_SERVICE, params.realm);
+-    if (names[0].name == NULL || names[1].name == NULL)
+-        fail_to_start(0, _("Cannot build GSSAPI auth names"));
 +    ret = kadm5_get_cpw_host_srv_names(context, params.realm, &tmp_srv_names);
 +    if (ret)
 +        fail_to_start(ret, _("building GSSAPI auth names"));
@@ -346,11 +367,7 @@
 +        fail_to_start(ENOMEM, _("copying GSSAPI auth names"));
 +    free_srv_names(tmp_srv_names);
 +    tmp_srv_names = NULL;
- 
--    names[0].name = build_princ_name(KADM5_ADMIN_SERVICE, params.realm);
--    names[1].name = build_princ_name(KADM5_CHANGEPW_SERVICE, params.realm);
--    if (names[0].name == NULL || names[1].name == NULL)
--        fail_to_start(0, _("Cannot build GSSAPI auth names"));
++
 +    if (params.iprop_enabled == TRUE) {
 +        ret = kadm5_get_kiprop_host_srv_names(context, params.realm,
 +                                              &tmp_srv_names);
@@ -489,14 +506,14 @@
 -    if (! gss_to_krb5_name(handle, rqst2name(rqstp),
 -                           &handle->current_caller)) {
 +    if (!(name = rqst2name(rqstp))) {
-+        free(handle);
-+        return KADM5_FAILURE;
-+    }
-+    if (! gss_to_krb5_name(handle, name, &handle->current_caller)) {
          free(handle);
-+        gss_release_name(&min_stat, &name);
          return KADM5_FAILURE;
      }
++    if (! gss_to_krb5_name(handle, name, &handle->current_caller)) {
++        free(handle);
++        gss_release_name(&min_stat, &name);
++        return KADM5_FAILURE;
++    }
  
      *out_handle = handle;
 +    gss_release_name(&min_stat, &name);
@@ -551,7 +568,12 @@
 +    gss_name_t name = NULL;
 +    rpc_gss_rawcred_t *raw_cred;
 +    gss_buffer_desc name_buff;
-+
+ 
+-    maj_stat = gss_inquire_context(&min_stat, context, NULL, &name,
+-                                   NULL, NULL, NULL, NULL, NULL);
+-    if (maj_stat != GSS_S_COMPLETE)
+-        return NULL;
+-    return name;
 +    rpc_gss_getcred(rqstp, &raw_cred, NULL, NULL);
 +    name_buff.value = raw_cred->svc_principal;
 +    name_buff.length = strlen(raw_cred->svc_principal);
@@ -567,12 +589,7 @@
 +      return (NULL);
 +    }
 +    gss_release_buffer(&min_stat, &name_buff);
- 
--    maj_stat = gss_inquire_context(&min_stat, context, NULL, &name,
--                                   NULL, NULL, NULL, NULL, NULL);
--    if (maj_stat != GSS_S_COMPLETE)
--        return NULL;
--    return name;
++
 +     return name;
  }
  
@@ -1382,16 +1399,15 @@
  gss_name_t
  rqst2name(struct svc_req *rqstp)
  {
--
--    if (rqstp->rq_cred.oa_flavor == RPCSEC_GSS)
--        return rqstp->rq_clntname;
--    else
--        return rqstp->rq_clntcred;
 +    OM_uint32 maj_stat, min_stat;
 +    gss_name_t name;
 +    rpc_gss_rawcred_t * raw_cred;
 +    gss_buffer_desc name_buff;
-+
+ 
+-    if (rqstp->rq_cred.oa_flavor == RPCSEC_GSS)
+-        return rqstp->rq_clntname;
+-    else
+-        return rqstp->rq_clntcred;
 +    rpc_gss_getcred(rqstp, &raw_cred, NULL, NULL);
 +    name_buff.value = raw_cred->client_principal->name;
 +    name_buff.length = raw_cred->client_principal->len;
@@ -1636,16 +1652,19 @@
 +    void *handlep;
 +    struct netconfig *nconf, *nconf4 = NULL, *nconf6 = NULL;
 +    char *protofmly = NULL;
-+
+ 
+-    memset(&sin4, 0, sizeof(sin4));
+-    sin4.sin_family = AF_INET;
+-    sin4.sin_addr.s_addr = INADDR_ANY;
 +    /* pick the right network: tcp and tcp6 */
 +    if ((handlep = setnetconfig()) == NULL) {
 +        com_err(data->prog, errno, _("cannot get any transport information"));
 +        goto cleanup;
 +    }
  
--    memset(&sin4, 0, sizeof(sin4));
--    sin4.sin_family = AF_INET;
--    sin4.sin_addr.s_addr = INADDR_ANY;
+-    memset(&sin6, 0, sizeof(sin6));
+-    sin6.sin6_family = AF_INET6;
+-    sin6.sin6_addr = in6addr_any;
 +    while (nconf = getnetconfig(handlep)) {
 +        if ((nconf->nc_semantics == NC_TPI_COTS_ORD) &&
 +            (strcmp(nconf->nc_proto, NC_TCP) == 0)){
@@ -1655,10 +1674,7 @@
 +                    nconf6 = nconf;
 +        }
 +    }
- 
--    memset(&sin6, 0, sizeof(sin6));
--    sin6.sin6_family = AF_INET6;
--    sin6.sin6_addr = in6addr_any;
++
 +    if (nconf4 == NULL && nconf6 == NULL) {
 +        com_err(data->prog, 0, _("no transport with proto=%s"), NC_TCP);
 +        goto cleanup;
@@ -1667,7 +1683,10 @@
      FOREACH_ELT (rpc_svc_data, i, svc) {
 -        int s4;
 -        int s6;
--
++        fd = create_server_endpoint(data, nconf4, svc.port);
++        if (fd < 0)
++            goto cleanup;
+ 
 -        sa_setport((struct sockaddr *)&sin4, svc.port);
 -        s4 = create_server_socket(data, (struct sockaddr *)&sin4, SOCK_STREAM);
 -        if (s4 < 0)
@@ -1678,10 +1697,6 @@
 -        else
 -            krb5_klog_syslog(LOG_INFO, _("listening on fd %d: rpc %s"),
 -                             s4, paddr((struct sockaddr *)&sin4));
-+        fd = create_server_endpoint(data, nconf4, svc.port);
-+        if (fd < 0)
-+            goto cleanup;
-+
 +        if (add_rpc_listener_fd(data, nconf4, &svc, fd) == NULL)
 +            close(fd);
 +        else {
@@ -2144,7 +2159,7 @@
 +	/* Set a one-hour timeout. */
 +	timeout.tv_sec = 3600;
 +	timeout.tv_usec = 0;
-+	(void)clnt_control(handle->clnt, CLSET_TIMEOUT, &timeout);
++	(void)clnt_control(handle->clnt, CLSET_TIMEOUT, (char *)&timeout);
 +
 +	handle->lhandle->clnt = handle->clnt;
 +
@@ -2158,7 +2173,7 @@
 +	 */
 +	/* use the kadm5 cache */
 +	gssstat = gss_krb5_ccache_name(&minor_stat, handle->cache_name,
-+                                       &ccname_orig);
++                                       (const char **)&ccname_orig);
 +	if (gssstat != GSS_S_COMPLETE) {
 +		code = KADM5_GSS_ERROR;
 +		goto error;
@@ -2308,11 +2323,25 @@
 -     * Get credentials.  Also does some fallbacks in case kadmin/fqdn
 -     * principal doesn't exist.
 -     */
--    code = get_init_creds(handle, client, init_type, pass, ccache_in,
++    /* NULL svcname means use host-based. */
++    if (svcname_in == NULL) {
++        code = kadm5_get_admin_service_name(handle->context,
++                                            handle->params.realm,
++                                            svcname, sizeof(svcname));
++        if (code)
++            goto error;
++    } else {
++        strncpy(svcname, svcname_in, sizeof(svcname));
++        svcname[sizeof(svcname)-1] = '\0';
++    }
++
++    /* Get credentials. */
+     code = get_init_creds(handle, client, init_type, pass, ccache_in,
 -                          service_name, handle->params.realm, &server);
--    if (code)
--        goto error;
--
++                          svcname, handle->params.realm, &server);
+     if (code)
+         goto error;
+ 
 -    /* If the service_name and client_name are iprop-centric, use the iprop
 -     * port and RPC identifiers. */
 -    iprop_enable = (service_name != NULL &&
@@ -2322,14 +2351,7 @@
 -        port = handle->params.iprop_port;
 -        rpc_prog = KRB5_IPROP_PROG;
 -        rpc_vers = KRB5_IPROP_VERS;
-+    /* NULL svcname means use host-based. */
-+    if (svcname_in == NULL) {
-+        code = kadm5_get_admin_service_name(handle->context,
-+                                            handle->params.realm,
-+                                            svcname, sizeof(svcname));
-+        if (code)
-+            goto error;
-     } else {
+-    } else {
 -        port = handle->params.kadmind_port;
 -        rpc_prog = KADM;
 -        rpc_vers = KADMVERS;
@@ -2346,10 +2368,8 @@
 -        clnt_pcreateerror("clnttcp_create");
 -#endif
 -        goto error;
-+        strncpy(svcname, svcname_in, sizeof(svcname));
-+        svcname[sizeof(svcname)-1] = '\0';
-     }
- 
+-    }
+-
 -    /* Set a one-hour timeout. */
 -    timeout.tv_sec = 3600;
 -    timeout.tv_usec = 0;
@@ -2369,12 +2389,9 @@
 -     */
 -    code = setup_gss(handle, params_in,
 -                     (init_type == INIT_CREDS) ? client : NULL, server);
-+    /* Get credentials. */
-+    code = get_init_creds(handle, client, init_type, pass, ccache_in,
-+                          svcname, handle->params.realm, &server);
-     if (code)
-         goto error;
- 
+-    if (code)
+-        goto error;
+-
 -    /*
 -     * Bypass the remainder of the code and return straightaway
 -     * if the gss service requested is kiprop
@@ -2908,7 +2925,7 @@
  #include <memory.h>
 --- a/src/slave/kpropd.c
 +++ b/src/slave/kpropd.c
-@@ -588,7 +588,7 @@ full_resync(CLIENT *clnt)
+@@ -588,12 +588,12 @@ full_resync(CLIENT *clnt)
  
      memset(&clnt_res, 0, sizeof(clnt_res));
  
@@ -2917,6 +2934,12 @@
                         (caddr_t)&vers, (xdrproc_t)xdr_kdb_fullresync_result_t,
                         (caddr_t)&clnt_res, full_resync_timeout);
      if (status == RPC_PROCUNAVAIL) {
+         status = clnt_call(clnt, IPROP_FULL_RESYNC, (xdrproc_t)xdr_void,
+-                           (caddr_t *)&vers,
++                           (caddr_t)&vers,
+                            (xdrproc_t)xdr_kdb_fullresync_result_t,
+                            (caddr_t)&clnt_res, full_resync_timeout);
+     }
 --- a/src/tests/misc/Makefile.in
 +++ b/src/tests/misc/Makefile.in
 @@ -12,18 +12,16 @@ SRCS=\
@@ -3041,7 +3064,7 @@
 -         fail('Expected old serial %d from kpropd sync' % expected_old)
 -    if new_sno != expected_new:
 -         fail('Expected new serial %d from kpropd sync' % expected_new)
--
+ 
 -    # Wait until kpropd is sleeping before continuing, to avoid races.
 -    # (This is imperfect since there's there is a short window between
 -    # the fprintf and the sleep; kpropd will need design changes to
@@ -3052,6 +3075,12 @@
 -        if 'Waiting for' in line:
 -            break
 -    output('*** Sync complete\n')
++# Verify the iprop log last serial number against an expected value,
++# on either the master or slave.
++def check_serial(realm, expected, env=None):
++    out = realm.run([kproplog, '-h'], env=env)
++    if 'Last serial # : ' not in out:
++        fail('Unexpected serial number')
  
 -# Verify the output of kproplog against the expected number of
 -# entries, first and last serial number, and a list of principal names
@@ -3087,12 +3116,6 @@
 -            eprinc = entries[ser - first]
 -            if eprinc != None:
 -                fail('Expected princ %s in update entry %d' % (eprinc, ser))
-+# Verify the iprop log last serial number against an expected value,
-+# on either the master or slave.
-+def check_serial(realm, expected, env=None):
-+    out = realm.run([kproplog, '-h'], env=env)
-+    if 'Last serial # : ' not in out:
-+        fail('Unexpected serial number')
  
 -# slave1 will receive updates from master, and slave2 will receive
 -# updates from slave1.  Because of the awkward way iprop and kprop
@@ -3111,16 +3134,22 @@
 -                                     'iprop_logfile': '$testdir/ulog.slave2',
 -                                     'iprop_port': '$port8'}},
 -               'dbmodules': {'db': {'database_name': '$testdir/db.slave2'}}}
- 
--realm = K5Realm(kdc_conf=conf, create_user=False, start_kadmind=True)
--slave1 = realm.special_env('slave1', True, kdc_conf=conf_slave1)
--slave1m = realm.special_env('slave1m', True, kdc_conf=conf_slave1m)
--slave2 = realm.special_env('slave2', True, kdc_conf=conf_slave2)
 +conf = {
 +    'realms': {'$realm': {
 +            'iprop_enable': 'true',
 +            'iprop_logfile' : '$testdir/db.ulog'}}}
++
++conf_slave = {
++    'realms': {'$realm': {
++            'iprop_slave_poll': '600',
++            'iprop_logfile' : '$testdir/db.slave.ulog'}},
++    'dbmodules': {'db': {'database_name': '$testdir/db.slave'}}}
  
+ realm = K5Realm(kdc_conf=conf, create_user=False, start_kadmind=True)
+-slave1 = realm.special_env('slave1', True, kdc_conf=conf_slave1)
+-slave1m = realm.special_env('slave1m', True, kdc_conf=conf_slave1m)
+-slave2 = realm.special_env('slave2', True, kdc_conf=conf_slave2)
+-
 -# Define some principal names.  pr3 is long enough to cause internal
 -# reallocs, but not long enough to grow the basic ulog entry size.
 -pr1 = 'wakawaka@' + realm.realm
@@ -3129,18 +3158,12 @@
 -cs = c + '/'
 -pr3 = (cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + cs + c +
 -       '@' + realm.realm)
-+conf_slave = {
-+    'realms': {'$realm': {
-+            'iprop_slave_poll': '600',
-+            'iprop_logfile' : '$testdir/db.slave.ulog'}},
-+    'dbmodules': {'db': {'database_name': '$testdir/db.slave'}}}
- 
+-
 -# Create the kpropd ACL file.
 -acl_file = os.path.join(realm.testdir, 'kpropd-acl')
 -acl = open(acl_file, 'w')
 -acl.write(realm.host_princ + '\n')
 -acl.close()
-+realm = K5Realm(kdc_conf=conf, create_user=False, start_kadmind=True)
 +slave = realm.special_env('slave', True, kdc_conf=conf_slave)
  
  ulog = os.path.join(realm.testdir, 'db.ulog')
@@ -3173,8 +3196,6 @@
 +realm.addprinc('w')
 +realm.run([kadminl, 'modprinc', '-allow_tix', 'w'])
 +realm.run([kadminl, 'modprinc', '+allow_tix', 'w'])
-+
-+check_serial(realm, '7')
  
 -# Make some changes to the master DB.
 -realm.addprinc(pr1)
@@ -3183,11 +3204,7 @@
 -realm.run([kadminl, 'modprinc', '-allow_tix', pr2])
 -realm.run([kadminl, 'modprinc', '+allow_tix', pr2])
 -check_ulog(6, 1, 6, [None, pr1, pr3, pr2, pr2, pr2])
-+# Set up the kpropd acl file.
-+acl_file = os.path.join(realm.testdir, 'kpropd-acl')
-+acl = open(acl_file, 'w')
-+acl.write(realm.host_princ + '\n')
-+acl.close()
++check_serial(realm, '7')
  
 -# Start kpropd for slave1 and get a full dump from master.
 -kpropd1 = realm.start_kpropd(slave1, ['-d'])
@@ -3196,6 +3213,12 @@
 -if pr1 not in out or pr2 not in out or pr3 not in out:
 -    fail('slave1 does not have all principals from master')
 -check_ulog(1, 6, 6, [None], slave1)
++# Set up the kpropd acl file.
++acl_file = os.path.join(realm.testdir, 'kpropd-acl')
++acl = open(acl_file, 'w')
++acl.write(realm.host_princ + '\n')
++acl.close()
++
 +# Start kpropd and get a full dump from master.
 +kpropd = realm.start_kpropd(slave, ['-d'])
 +wait_for_prop(kpropd, True)
@@ -3218,7 +3241,8 @@
 +out = realm.run([kadminl, 'getprinc', 'w'], env=slave)
  if 'Attributes: DISALLOW_ALL_TIX' not in out:
 -    fail('slave1 does not have modification from master')
--
++    fail('Slave does not have modification from master')
+ 
 -# Start kadmind -proponly for slave1.  (Use the slave1m environment
 -# which defines iprop_port to $port8.)
 -slave1_out_dump_path = os.path.join(realm.testdir, 'dump.slave1.out')
@@ -3228,8 +3252,7 @@
 -realm.start_server([kadmind, '-nofork', '-proponly', '-W', '-p', kdb5_util,
 -                    '-K', kprop, '-F', slave1_out_dump_path], 'starting...',
 -                   slave1m)
-+    fail('Slave does not have modification from master')
- 
+-
 -# Start kpropd for slave2.  The -A option isn't needed since we're
 -# talking to the same host as master (we specify it anyway to exercise
 -# the code), but slave2 defines iprop_port to $port8 so it will talk
@@ -3297,18 +3320,18 @@
 -wait_for_prop(kpropd1, False, 8, 9)
 -check_ulog(4, 6, 9, [None, pr2, pr1, pr2], slave1)
 -out = realm.run([kadminl, 'getprinc', pr2], env=slave1)
+-if 'Attributes:\n' not in out:
+-    fail('slave1 does not have modification from master')
+-kpropd2.send_signal(signal.SIGUSR1)
+-wait_for_prop(kpropd2, False, 8, 9)
+-check_ulog(3, 7, 9, [None, pr1, pr2], slave2)
+-out = realm.run([kadminl, 'getprinc', pr2], env=slave2)
 +check_serial(realm, '10')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, False)
 +check_serial(realm, '10', slave)
 +out = realm.run([kadminl, 'getprinc', 'w'], env=slave)
  if 'Attributes:\n' not in out:
--    fail('slave1 does not have modification from master')
--kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, False, 8, 9)
--check_ulog(3, 7, 9, [None, pr1, pr2], slave2)
--out = realm.run([kadminl, 'getprinc', pr2], env=slave2)
--if 'Attributes:\n' not in out:
 -    fail('slave2 does not have modification from slave1')
 +    fail('Slave has different state from master')
  
@@ -3319,18 +3342,18 @@
 -wait_for_prop(kpropd1, True, 9, 1)
 -check_ulog(1, 1, 1, [None], slave1)
 -out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1)
--if 'Minimum number of password character classes: 2' not in out:
--    fail('slave1 does not have policy from master')
--kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 9, 1)
--check_ulog(1, 1, 1, [None], slave2)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2)
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
 +wait_for_prop(kpropd, True)
 +check_serial(realm, 'None', slave)
 +out = realm.run([kadminl, 'getpol', 'testpol'], env=slave)
  if 'Minimum number of password character classes: 2' not in out:
+-    fail('slave1 does not have policy from master')
+-kpropd2.send_signal(signal.SIGUSR1)
+-wait_for_prop(kpropd2, True, 9, 1)
+-check_ulog(1, 1, 1, [None], slave2)
+-out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2)
+-if 'Minimum number of password character classes: 2' not in out:
 -    fail('slave2 does not have policy from slave1')
 +    fail('Slave does not have policy from master')
  
@@ -3363,12 +3386,6 @@
 -wait_for_prop(kpropd1, True, 1, 1)
 -check_ulog(1, 1, 1, [None], slave1)
 -out = realm.run([kadminl, 'getpol', 'testpol'], env=slave1, expected_code=1)
--if 'Policy does not exist' not in out:
--    fail('slave1 did not get policy deletion from master')
--kpropd2.send_signal(signal.SIGUSR1)
--wait_for_prop(kpropd2, True, 1, 1)
--check_ulog(1, 1, 1, [None], slave2)
--out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2, expected_code=1)
 +realm.run([kadminl, 'delpol', '-force', 'testpol'])
 +check_serial(realm, 'None')
 +kpropd.send_signal(signal.SIGUSR1)
@@ -3376,6 +3393,12 @@
 +check_serial(realm, 'None', slave)
 +out = realm.run([kadminl, 'getpol', 'testpol'], env=slave, expected_code=1)
  if 'Policy does not exist' not in out:
+-    fail('slave1 did not get policy deletion from master')
+-kpropd2.send_signal(signal.SIGUSR1)
+-wait_for_prop(kpropd2, True, 1, 1)
+-check_ulog(1, 1, 1, [None], slave2)
+-out = realm.run([kadminl, 'getpol', 'testpol'], env=slave2, expected_code=1)
+-if 'Policy does not exist' not in out:
 -    fail('slave2 did not get policy deletion from slave1')
 -
 -# Modify a principal on the master and test that it propagates incrementally.
@@ -3393,8 +3416,7 @@
 -out = realm.run([kadminl, 'getprinc', pr1], env=slave2)
 -if 'Maximum ticket life: 0 days 00:10:00' not in out:
 -    fail('slave2 does not have modification from slave1')
-+    fail('Slave did not get policy deletion from master')
- 
+-
 -# Delete a principal and test that it propagates incrementally.
 -realm.run([kadminl, 'delprinc', pr3])
 -check_ulog(3, 1, 3, [None, pr1, pr3])
@@ -3410,7 +3432,8 @@
 -out = realm.run([kadminl, 'getprinc', pr3], env=slave2, expected_code=1)
 -if 'Principal does not exist' not in out:
 -    fail('slave2 does not have principal deletion from slave1')
--
++    fail('Slave did not get policy deletion from master')
+ 
 -# Reset the ulog on the master to force a full resync.
 +# Reset the ulog on the master side to force a full resync to all slaves.
 +# XXX Note that we only have one slave in this test, so we can't really
