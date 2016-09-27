@@ -729,6 +729,7 @@ CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
 GAS =		/usr/gnu/bin/as
+GTAR =		/usr/gnu/bin/tar
 STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 
