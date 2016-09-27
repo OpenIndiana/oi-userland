@@ -1,0 +1,23 @@
+Fix Bug 23595729 dnet can't send out packet
+Will not send upstream
+
+--- libdnet-1.12/src/eth-dlpi.c.orig	2016-09-26 15:47:06.875827196 +0000
++++ libdnet-1.12/src/eth-dlpi.c	2016-09-26 17:00:25.875054128 +0000
+@@ -137,7 +137,7 @@
+ 	}
+ #else
+ 	e->fd = -1;
+-	snprintf(dev, sizeof(dev), "/dev/%s", device);
++	snprintf(dev, sizeof(dev), "/dev/net/%s", device);
+ 	if ((p = strpbrk(dev, "0123456789")) == NULL) {
+ 		errno = EINVAL;
+ 		return (eth_close(e));
+@@ -146,7 +146,7 @@
+ 	*p = '\0';
+ 
+ 	if ((e->fd = open(dev, O_RDWR)) < 0) {
+-		snprintf(dev, sizeof(dev), "/dev/%s", device);
++		snprintf(dev, sizeof(dev), "/dev/net/%s", device);
+ 		if ((e->fd = open(dev, O_RDWR)) < 0)
+ 			return (eth_close(e));
+ 	}
