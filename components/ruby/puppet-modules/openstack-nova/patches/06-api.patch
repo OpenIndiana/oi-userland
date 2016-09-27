@@ -1,0 +1,47 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-8.2.0/manifests/api.pp.orig        2016-09-27 13:07:46.464838759 +0000
++++ openstack-nova-8.2.0/manifests/api.pp      2016-09-27 13:14:17.285797345 +0000
+@@ -152,7 +152,6 @@
+ #
+ # [*fping_path*]
+ #   (optional) Full path to fping.
+-#   Defaults to '/usr/sbin/fping'
+ #
+ # [*validation_options*]
+ #   (optional) Service validation options
+@@ -210,7 +209,7 @@ class nova::api(
+   $validate                  = false,
+   $validation_options        = {},
+   $instance_name_template    = undef,
+-  $fping_path                = '/usr/sbin/fping',
++  $fping_path                = undef,
+   $service_name              = $::nova::params::api_service_name,
+   $secure_proxy_ssl_header   = $::os_service_default,
+   # DEPRECATED PARAMETER
+@@ -226,6 +225,14 @@ class nova::api(
+   include ::nova::policy
+   include ::cinder::client
+
++  if ! $fping_path {
++    if $::osfamily == 'Solaris' {
++      $fping_path_real = '/usr/bin/fping'
++    } else {
++      $fping_path_real = '/usr/sbin/fping'
++    }
++  }
++
+   if $ec2_listen_port or $ec2_workers or $keystone_ec2_url {
+     warning('ec2_listen_port, ec2_workers and keystone_ec2_url are deprecated and have no effect. Deploy openstack/ec2-api instead.')
+   }
+@@ -311,7 +318,7 @@ class nova::api(
+     'DEFAULT/metadata_workers':          value => $metadata_workers;
+     'DEFAULT/use_forwarded_for':         value => $use_forwarded_for;
+     'DEFAULT/default_floating_pool':     value => $default_floating_pool;
+-    'DEFAULT/fping_path':                value => $fping_path;
++    'DEFAULT/fping_path':                value => $fping_path_real;
+     'DEFAULT/secure_proxy_ssl_header':   value => $secure_proxy_ssl_header;
+     'osapi_v3/enabled':                  value => $osapi_v3;
+   }

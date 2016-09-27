@@ -22,7 +22,6 @@ class nova::compute::solaris_zones(
   nova_config {
     'DEFAULT/compute_driver':                          value => 'solariszones.SolarisZonesDriver';
     'DEFAULT/pybasedir':                               value => '/usr/lib/python2.7/vendor-packages';
-    'DEFAULT/fping_path':                              value => '/usr/bin/fping';
     'DEFAULT/network_driver':                          value => 'nova.network.solaris_net';
     'solariszones/glancecache_dirname':                value => $glancecache_dirname;
     'solariszones/solariszones_snapshots_directory':   value => $solariszones_snapshots_directory;
