@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -33,18 +33,26 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Editors \
     value="org.opensolaris.category.2008:System/Text Tools"
-set name=info.repository-changeset value=$(HG_REV)
-set name=info.repository-url value=$(HG_REPO)
+set name=info.repository-changeset value=$(GIT_COMMIT_ID)
+set name=info.repository-url value=$(GIT_REPO)
 set name=info.upstream value=vim-dev@vim.org
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2007/267 value=PSARC/2008/546
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/gview target=gvim
-file $(MACH64)-gvim/src/gvim path=usr/bin/gvim
+file path=usr/bin/gvim
 link path=usr/bin/gvimdiff target=gvim
 link path=usr/bin/rgview target=gvim
 link path=usr/bin/rgvim target=gvim
+file path=usr/share/applications/gvim.desktop
+file path=usr/share/applications/vim.desktop
+file path=usr/share/icons/hicolor/48x48/apps/gvim.png
+file path=usr/share/icons/locolor/16x16/apps/gvim.png
+file path=usr/share/icons/locolor/32x32/apps/gvim.png
 link path=usr/share/man/man1/gvim.1 target=vim.1
 link path=usr/share/man/man1/gvimdiff.1 target=vimdiff.1
+#
 license license license="VIM License"
+#
 depend type=require fmri=editor/vim@$(IPS_COMPONENT_VERSION)

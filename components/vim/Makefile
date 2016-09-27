@@ -26,25 +26,22 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	7.4
-IPS_COMPONENT_VERSION=	$(shell echo $(HG_REV) | sed -e 's/-/./g' -e 's/v//')
+COMPONENT_VERSION=	8.0
+COMPONENT_FULL_VERSION=	$(shell echo $(GIT_TAG) | sed -e 's/v//')
+IPS_COMPONENT_VERSION=	$(shell echo $(GIT_TAG) | sed -e 's/v//' -e 's/\.0*\([1-9]\)/.\1/')
+COMPONENT_LABEL=	$(COMPONENT_FULL_VERSION)
 # COMPONENT_SRC* is autodefined by the prep-{SCM} Makefile fragment
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 
-HG_REPO=	https://vim.googlecode.com/hg
-HG_REV=		v7-4
-HG_HASH= sha256:0c823290aebf4ea341be2f8280cc5906cdbbf772c54fa675afb0845983f23b60
+GIT_REPO=		git://github.com/vim/vim
+GIT_TAG=		v8.0.0016
+GIT_COMMIT_ID=		0e77b76
+GIT_HASH=		sha256:1a5f704a68f844ababa932ac8522d87ede599c062ff7fe1dd48beaaaf5417246
 
+TPNO=			31881
 
-TPNO=			21780
-
-INSTALL_TARGET=
-include $(WS_MAKE_RULES)/common.mk
-
-PATCH_LEVEL =	0
-
-PKG_MACROS +=	VIMVER=vim74
+PKG_MACROS +=	VIMVER=vim$(subst .,,$(COMPONENT_VERSION))
 
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
 NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-vim
@@ -54,30 +51,32 @@ VARIANTS =	$(X_VARIANT) $(NOX_VARIANT)
 $(VARIANTS:%=%/.configured):	BITS=64
 
 BUILD_64 = 	$(VARIANTS:%=%/.built)
-
-# Only install the non-X variant.  We will cherry-pick gvim out of the build
-# directory to avoid re-installing everything.
-INSTALL_64 = 	$(NOX_VARIANT)/.installed
-
+INSTALL_64 = 	$(VARIANTS:%=%/.installed)
+# Test only the terminal variant.
 TEST_64 = 	$(NOX_VARIANT)/.tested
 
-# Necessary to pass 64-bit flags to the link stage.
-CC +=			$(CC_BITS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Studio 12.3 and 12.4 allow unknown __attribute__s, but complain about them,
+# making the build pretty loud about unknown "unused" attributes.  If we make
+# it an error, configure will turn off its use.  See bug 20230791.
+CFLAGS +=		-errwarn=E_ATTRIBUTE_UNKNOWN
+
+# Make sure we use a 64-bit, multithreaded perl
+CONFIGURE_ENV +=	vi_cv_path_perl=/usr/perl5/5.22/bin/perl
+# Vim's configure script looks for a "python3" executable, per PEP 394
+CONFIGURE_ENV +=	vi_cv_path_python3=/usr/bin/python3.5
+# zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
+CONFIGURE_ENV +=	MSGFMT=gmsgfmt
+CONFIGURE_ENV +=	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)
 
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
-CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
+CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <discuss@solaris-userland.java.net>"
 CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
-# XXX Perl compilation fails, for some reason.
-# - Perl_croak_nocontext is redefined (embed.h, line 5157), having something to
-#   do with PERL_IMPLICIT_CONTEXT, which is discussed in perlguts(1).  This is
-#   just a warning, but looks like it might have nasty consequences.
-# - The declaration of Perl_Gthr_key_ptr() has a problem with its argument of
-#   type pTHX.  if_perl.xs defines that to void if it's not already defined,
-#   but perl.h probably does something else to it, not sure what yet.  This
-#   also appears to have something to do with PERL_IMPLICIT_CONTEXT.
-# CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-python3interp=dynamic
 CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
 
 # We build two variants: with and without X support.
@@ -86,12 +85,15 @@ $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gui
 $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --disable-gtktest
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-vim-name=gvim
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-x
-$(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gui=gtk2
-$(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk2-check
+$(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gui=gtk3
 
 # Vim's build is too smart for itself and configure can't run outside of a
 # complete source tree.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# For the GUI, install only the executable itself.
+$(X_VARIANT)/.installed: COMPONENT_INSTALL_ARGS += -C src
+$(X_VARIANT)/.installed: COMPONENT_INSTALL_TARGETS = installvimbin
 
 COMPONENT_TEST_TARGETS = test
 
@@ -101,15 +103,23 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
 # common targets
-install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license
+install:	$(INSTALL_64) $(BUILD_DIR)/license
 
+
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-35
+REQUIRED_PACKAGES += runtime/ruby-21
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
