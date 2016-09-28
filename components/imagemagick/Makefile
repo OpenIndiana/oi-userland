@@ -29,12 +29,12 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.9.5
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
-COMPONENT_SUBVERSION=		0
+COMPONENT_SUBVERSION=		10
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4b84a3236d24278966140bb5d641c45d3dab47244db79b51e5066518c5cf65c4
+    sha256:468419fea538ba1dcd2dc69334e8981cf41417f9a9938973884dccaedc403b39
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --without-gvc
 CONFIGURE_OPTIONS+= --disable-openmp
+CONFIGURE_OPTIONS+= --without-openjp2 # tests do not pass
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 CONFIGURE_OPTIONS+= --with-fontconfig=no

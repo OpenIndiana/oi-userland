@@ -1,0 +1,37 @@
+cd /var/tmp
+
+convert -list font | wc -l  # ~ 200 lines of output
+
+convert -size 170x100 xc:black \
+   -fill white -draw 'circle 50,50 13,50' \
+   -draw 'circle 120,50 157,50' \
+   -draw 'rectangle 50,13 120,87' \
+   -fill black -draw 'circle 50,50 25,50' \
+   -draw 'circle 120,50 145,50' \
+   -draw 'rectangle 50,25 120,75' \
+   -fill white -draw 'circle 60,50 40,50' \
+   -draw 'circle 110,50 130,50' \
+   -draw 'rectangle 60,30 110,70' \
+   -gaussian 1x1 +matte logo_mask.png
+
+convert logo_mask.png -background red -alpha shape \
+   -font Times-Roman -pointsize 36 -fill white -stroke black \
+   -gravity Center -annotate 0 "Ant" \
+   logo.png
+
+convert logo.png -alpha extract -blur 0x6 -shade 110x30 -normalize \
+   logo.png -compose Overlay -composite \
+   logo.png -alpha on -compose Dst_In -composite \
+   logo_3D.png
+
+convert logo_3D.png \( +clone -background navy -shadow 80x4+6+6 \) \
+   +swap -background none -layers merge +repage logo_3D_shadowed.png
+
+convert logo_3D_shadowed.png \
+    \( +clone +repage -alpha off -fx 'rand()' -shade 120x30 \
+    -fill grey70 -colorize 60 \
+    -fill lavender -tint 100 \) \
+    +swap -composite logo_3D_bg.jpg
+
+# Now compare logo_3D_bg.jpg to the image at
+# http://www.imagemagick.org/Usage/advanced/#3d-logos
