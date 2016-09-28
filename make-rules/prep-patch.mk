@@ -53,7 +53,7 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PARFAIT_PATCH_DIR =	parfait
 endif
 
-PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
+ALL_PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 			 -name '$(PATCH_PATTERN)' 2>/dev/null | \
 				LC_COLLATE=C sort)
 
@@ -61,16 +61,16 @@ PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 # match the _X extensions to the COMPONENT_* make variables.  Find these
 # extensions, using $(sort) to uniq them to prevent multiple rules from
 # getting generated.
-PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES)))))
+PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(ALL_PATCHES)))))
 
 define patch-variables
 
 ifeq ($(1),_0)
 PATCH_PATTERN$(1) ?=	%.patch
-PATCHES$(1) = $(filter %.patch,$(PATCHES))
+PATCHES$(1) = $(filter %.patch,$(ALL_PATCHES))
 else
 PATCH_PATTERN$(1) ?=	%.patch$(1)
-PATCHES$(1) = $(filter %.patch$(1),$(PATCHES))
+PATCHES$(1) = $(filter %.patch$(1),$(ALL_PATCHES))
 endif
 
 ifneq ($$(PATCHES$(1)),)

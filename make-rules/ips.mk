@@ -486,7 +486,7 @@ install-packages:	publish
 
 $(RESOLVED):	install
 
-canonical-manifests:	$(CANONICAL_MANIFESTS) $(MAKEFILE_PREREQ) $(PATCHES) \
+canonical-manifests:	$(CANONICAL_MANIFESTS) $(MAKEFILE_PREREQ) $(ALL_PATCHES) \
     $(HISTORY)
 ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# If there were no canonical manifests in the workspace, nothing will
