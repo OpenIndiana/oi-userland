@@ -67,11 +67,19 @@ configure:	$(CONFIGURE_32_and_64)
 
 build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32_and_64)
+install:        $(INSTALL_32_and_64) $(BUILD_DIR)/.merged-header
 
 test:           $(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
+$(BUILD_DIR)/.merged-header: $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
+	-$(RM) $(PROTO_DIR)/usr/include/tiffconf.h
+	$(GDIFF) -D _LP64 \
+            $(BUILD_DIR_32)/libtiff/tiffconf.h $(BUILD_DIR_64)/libtiff/tiffconf.h \
+            > $(PROTO_DIR)/usr/include/tiffconf.h; \
+	diffstatus=$$? ; \
+	if (( $$diffstatus != 1 )) ; then exit $$diffstatus ; fi
 
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/library/libjpeg

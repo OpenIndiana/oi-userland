@@ -1,0 +1,38 @@
+cd /var/tmp
+
+cat > a.c <<EOT
+#include <tiffconf.h>
+#include <stdio.h>
+
+int main(void) {
+        printf("8=%d\n", sizeof(TIFF_INT64_T));
+        printf("8=%d\n", sizeof(TIFF_UINT64_T));
+        printf("%d=%d\n", sizeof(ssize_t), sizeof(TIFF_SSIZE_T));
+}
+EOT
+
+GCC=gcc
+CC=/ws/on12-tools/SUNWspro/solarisstudio12.4/bin/cc
+
+$GCC -m32 a.c && ./a.out
+$GCC -m64 a.c && ./a.out
+$CC -m32 a.c && ./a.out
+$CC -m64 a.c && ./a.out
+
+Output should be:
+8=8
+8=8
+4=4
+...
+8=8
+8=8
+8=8
+...
+8=8
+8=8
+4=4
+...
+8=8
+8=8
+8=8
+
