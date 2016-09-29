@@ -818,13 +818,25 @@ netdev_solaris_configure_uplink(const struct netdev *netdev_,
 
 	if (error == ENODEV) {
 		/*
-		 * No implicit VNIC being created yet, create it now
+		 * No implicit VNIC exists, create it now first over
+		 * NETDEV_IMPL_ETHERSTUB and later migrate onto new_uplink. Not
+		 * creating it directly over new_uplink as it may fail(for vnet)
+		 * if it doesn't support creating vnic with "auto" mac-addr-type
 		 */
-		VLOG_DBG("%s vnic being created on %s", brname, new_uplink);
-		error = solaris_create_vnic(new_uplink, brname);
+		VLOG_DBG("%s vnic being created on %s", brname,
+		    NETDEV_IMPL_ETHERSTUB);
+		error = solaris_create_vnic(NETDEV_IMPL_ETHERSTUB, brname);
 		if (error == 0) {
-			(void) strlcpy(netdev->brname, brname,
-			    sizeof (netdev->brname));
+			VLOG_DBG("%s vnic is being migrated on %s", brname,
+			    new_uplink);
+			error = solaris_modify_vnic(new_uplink, brname);
+			if (error == 0) {
+				(void) strlcpy(netdev->brname, brname,
+				    sizeof (netdev->brname));
+			} else {
+				VLOG_ERR("Failed to migrate %s vnic over %s:%s",
+				    brname, new_uplink, ovs_strerror(error));
+			}
 		} else {
 			VLOG_ERR("Failed to create vnic for %s: %s",
 			    brname, ovs_strerror(error));

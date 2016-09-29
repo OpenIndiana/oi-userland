@@ -984,6 +984,50 @@ solaris_set_dlprop_string(const char *netdev_name, const char *propname,
 	    temp));
 }
 
+static int
+dlmgr_DLValue_putstring(dlmgr__rad_dict_string_DLValue_t *ddvp,
+    const char *key, char *buf, char *dstr, size_t dstrlen)
+{
+	dlmgr_DLValue_t  *old_val = NULL;
+	dlmgr_DLValue_t  new_val;
+	rc_err_t status;
+
+	if (strlen(key) != 0) {
+		bzero(&new_val, sizeof (new_val));
+		new_val.ddlv_type = DDLVT_STRING;
+		new_val.ddlv_sval = buf;
+		if ((status = dlmgr__rad_dict_string_DLValue_put(ddvp, key,
+		    &new_val, &old_val)) != RCE_OK) {
+			return (EINVAL);
+		}
+		if (dstr)
+			snprintf(dstr, dstrlen, "%s,%s=%s", dstr, key, buf);
+		dlmgr_DLValue_free(old_val);
+	}
+	return (0);
+}
+
+static int
+dlmgr_DLValue_putdict(dlmgr__rad_dict_string_DLValue_t *ddvp,
+    const char *key, dlmgr__rad_dict_string_DLValue_t *dict)
+{
+	dlmgr_DLValue_t  *old_val = NULL;
+	dlmgr_DLValue_t  new_val;
+	rc_err_t status;
+
+	if (strlen(key) != 0) {
+		bzero(&new_val, sizeof (new_val));
+		new_val.ddlv_type = DDLVT_DICTIONARY;
+		new_val.ddlv_dval = dict;
+		if ((status = dlmgr__rad_dict_string_DLValue_put(ddvp, key,
+		    &new_val, &old_val)) != RCE_OK) {
+			return (EINVAL);
+		}
+		dlmgr_DLValue_free(old_val);
+	}
+	return (0);
+}
+
 int
 solaris_create_vnic(const char *linkname, const char *vnicname)
 {
@@ -1030,15 +1074,22 @@ out:
 	return ((status != RCE_OK) ? ENOTSUP : 0);
 }
 
+/*
+ * Try setting implicit VNIC's mac-addr-type as "fixed", if it fails then try
+ * with "auto" else bail out. This procedure is to ensure vnic migration
+ * succeeds specifically on LDOM's vnet (ensuring it works on other uplinks too)
+ * with any of its config (custom=enable/disable).
+ */
 int
 solaris_modify_vnic(const char *linkname, const char *vnicname)
 {
 	dlmgr__rad_dict_string_DLValue_t *sprop_dict = NULL;
+	dlmgr__rad_dict_string_DLValue_t *mac_info_dict = NULL;
 	dlmgr_DLValue_t			*old_val = NULL;
-	dlmgr_DLValue_t			new_val;
 	rc_instance_t			*link = NULL;
 	rc_err_t			status;
 	dlmgr_DatalinkError_t   	*derrp = NULL;
+	char				mac_address[DLADM_PROP_VAL_MAX];
 	int				error = 0;
 
 	status = dlmgr_Datalink__rad_lookup(rad_conn, B_TRUE, &link, 1,
@@ -1050,33 +1101,70 @@ solaris_modify_vnic(const char *linkname, const char *vnicname)
 
 	sprop_dict = dlmgr__rad_dict_string_DLValue_create(link);
 	if (sprop_dict == NULL) {
-		status = ENOMEM;
+		error = ENOMEM;
+		goto out;
+	}
+	mac_info_dict = dlmgr__rad_dict_string_DLValue_create(link);
+	if (mac_info_dict == NULL) {
+		error = ENOMEM;
 		goto out;
 	}
 
-	bzero(&new_val, sizeof (new_val));
-	new_val.ddlv_type = DDLVT_STRING;
-	new_val.ddlv_sval = strdupa(linkname);
-	status = dlmgr__rad_dict_string_DLValue_put(
-	    sprop_dict, "lower-link", &new_val, &old_val);
-	if (status != RCE_OK) {
-		error = EINVAL;
+	if ((error = dlmgr_DLValue_putstring(sprop_dict, "lower-link",
+	    strdupa(linkname), NULL, 0)) != 0) {
 		goto out;
 	}
-	dlmgr_DLValue_free(old_val);
+
+	if ((error = solaris_get_dlprop(vnicname, "mac-address", "current",
+	    mac_address, sizeof (mac_address))) != 0) {
+		goto out;
+	}
+
+	if ((error = dlmgr_DLValue_putstring(mac_info_dict, "mac-address-type",
+	    "fixed", NULL, 0)) != 0) {
+		goto out;
+	}
+	if ((error = dlmgr_DLValue_putstring(mac_info_dict, "mac-address",
+	    mac_address, NULL, 0)) != 0) {
+		goto out;
+	}
+	if ((error = dlmgr_DLValue_putdict(sprop_dict, "mac-address-info",
+	    mac_info_dict)) != 0) {
+		goto out;
+	}
 
 	status = dlmgr_Datalink_setProperties(link, sprop_dict, &derrp);
 	if (status != RCE_OK) {
-		if (status == RCE_SERVER_OBJECT) {
-			dpif_log(derrp->dde_err,
-			    "failed Datalink_setPropertiess(%s, lower-link): "
-			    " %s", vnicname, derrp->dde_errmsg);
+		/* If it fails with "fixed" as mac-addr-type, try with "auto" */
+		if ((status = dlmgr__rad_dict_string_DLValue_remove(
+		    mac_info_dict, "mac-address", &old_val)) != RCE_OK) {
+			error = ENOTSUP;
+			goto out;
 		}
-		error = ENOTSUP;
+		dlmgr_DLValue_free(old_val);
+
+		if ((error = dlmgr_DLValue_putstring(mac_info_dict,
+		    "mac-address-type", "auto", NULL, 0))
+		    != 0) {
+			goto out;
+		}
+
+		status = dlmgr_Datalink_setProperties(link, sprop_dict,
+		    &derrp);
+		if (status != RCE_OK) {
+			if (status == RCE_SERVER_OBJECT) {
+				dpif_log(derrp->dde_err,
+				    "failed Datalink_setProperties"
+				    "(%s, lower-link): %s",
+				    vnicname, derrp->dde_errmsg);
+			}
+			error = ENOTSUP;
+		}
 	}
 out:
 	dlmgr_DatalinkError_free(derrp);
 	dlmgr__rad_dict_string_DLValue_free(sprop_dict);
+	dlmgr__rad_dict_string_DLValue_free(mac_info_dict);
 	rc_instance_rele(link);
 	return (error);
 }
@@ -1389,28 +1477,6 @@ flow_ofports2propstr(char *str, size_t strsize, uint32_t *ofports,
 no_buffer:
 	free(ofports_range);
 	return (ENOBUFS);
-}
-
-static int
-dlmgr_DLValue_putstring(dlmgr__rad_dict_string_DLValue_t *ddvp,
-    const char *key, char *buf, char *dstr, size_t dstrlen)
-{
-	dlmgr_DLValue_t  *old_val = NULL;
-	dlmgr_DLValue_t  new_val;
-	rc_err_t status;
-
-	if (strlen(key) != 0) {
-		bzero(&new_val, sizeof (new_val));
-		new_val.ddlv_type = DDLVT_STRING;
-		new_val.ddlv_sval = buf;
-		if ((status = dlmgr__rad_dict_string_DLValue_put(ddvp, key,
-		    &new_val, &old_val)) != RCE_OK) {
-			return (EINVAL);
-		}
-		snprintf(dstr, dstrlen, "%s,%s=%s", dstr, key, buf);
-		dlmgr_DLValue_free(old_val);
-	}
-	return (0);
 }
 
 static int
