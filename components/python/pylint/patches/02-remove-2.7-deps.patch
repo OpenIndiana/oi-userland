@@ -1,0 +1,30 @@
+Remove the references to backports.functools-lru-cache and configparser
+in pylint 2.7, until the Python backports.functools-lru-cache module is
+available in Userland/Solaris.
+
+configparser will be automatically handled via the six module.
+
+These changes will not be sent upstream (and are only temporary).
+
+--- pylint-1.6.4/pylint/__pkginfo__.py.orig	2016-09-29 13:31:06.105631780 +0000
++++ pylint-1.6.4/pylint/__pkginfo__.py	2016-09-29 13:31:18.012770831 +0000
+@@ -23,7 +23,6 @@
+ 
+ extras_require = {}
+ extras_require[':sys_platform=="win32"'] = ['colorama']
+-extras_require[':python_version=="2.7"'] = ['configparser', 'backports.functools_lru_cache']
+ 
+ 
+ license = 'GPL'
+--- pylint-1.6.4/pylint.egg-info/requires.txt.orig	2016-09-29 13:31:54.332003719 +0000
++++ pylint-1.6.4/pylint.egg-info/requires.txt	2016-09-29 13:32:04.774966160 +0000
+@@ -2,9 +2,5 @@
+ six
+ isort >= 4.2.5
+ 
+-[:python_version=="2.7"]
+-configparser
+-backports.functools_lru_cache
+-
+ [:sys_platform=="win32"]
+ colorama
