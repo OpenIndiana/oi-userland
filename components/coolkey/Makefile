@@ -61,6 +61,9 @@ include $(WS_MAKE_RULES)/common.mk
 # configuration related patch needs aclocal to be regenerated
 COMPONENT_PREP_ACTION += (cd $(@D); autoconf);
 
+# Allow building with Developer Studio 12.5.
+CXX	:= $(CXX) -std=sun03
+
 # Do not add the SUNWspro area to the RUNPATH. Follow exactly what CC does.
 LD_UNSET.32.i386	= -R$(SPRO_VROOT)/lib
 LD_UNSET.32.sparc	= -R$(SPRO_VROOT)/lib/$(MACH):$(SPRO_VROOT)/lib

@@ -5,6 +5,24 @@ Addresses issues seen with pcscd restart.
 
 --- ORIGINAL/./src/coolkey/slot.cpp	2016-06-24 16:07:20.111616788 -0400
 +++ ././src/coolkey/slot.cpp	2016-06-27 21:05:04.901200633 -0400
+@@ -25,7 +25,6 @@
+ #include "PKCS11Exception.h"
+ #include <winscard.h>
+ #include "slot.h"
+-#include <memory.h>
+ #include "zlib.h"
+ #include "params.h"
+
+@@ -33,9 +32,7 @@
+
+ #define MIN(x, y) ((x) < (y) ? (x) : (y))
+
+-using std::auto_ptr;
+
+-
+ #ifdef DEBUG
+ #define PRINTF(args) printf args
+ #else
 @@ -56,6 +56,34 @@
  {  0x3B, 0x6F, 0x00, 0xFF, 0x52, 0x53, 0x41, 0x53, 0x65, 0x63, 0x75, 0x72,
     0x49, 0x44, 0x28, 0x52, 0x29, 0x31, 0x30 };
