@@ -23,7 +23,7 @@
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-GPATCH =	/usr/gnu/bin/patch
+GPATCH =	/usr/bin/patch
 PATCH_LEVEL ?=	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	--strip=$(PATCH_LEVEL) $(GPATCH_BACKUP)
@@ -53,7 +53,7 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PARFAIT_PATCH_DIR =	parfait
 endif
 
-ALL_PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
+PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 			 -name '$(PATCH_PATTERN)' 2>/dev/null | \
 				LC_COLLATE=C sort)
 
@@ -61,16 +61,16 @@ ALL_PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 # match the _X extensions to the COMPONENT_* make variables.  Find these
 # extensions, using $(sort) to uniq them to prevent multiple rules from
 # getting generated.
-PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(ALL_PATCHES)))))
+PCH_SUFFIXES = $(sort $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES)))))
 
 define patch-variables
 
 ifeq ($(1),_0)
 PATCH_PATTERN$(1) ?=	%.patch
-PATCHES$(1) = $(filter %.patch,$(ALL_PATCHES))
+PATCHES$(1) = $(filter %.patch,$(PATCHES))
 else
 PATCH_PATTERN$(1) ?=	%.patch$(1)
-PATCHES$(1) = $(filter %.patch$(1),$(ALL_PATCHES))
+PATCHES$(1) = $(filter %.patch$(1),$(PATCHES))
 endif
 
 ifneq ($$(PATCHES$(1)),)

@@ -664,7 +664,7 @@ CCSMAKE =	/usr/ccs/bin/make
 DOXYGEN =	/usr/bin/doxygen
 ELFEDIT =	/usr/bin/elfedit
 GMAKE =		/usr/gnu/bin/make
-GPATCH =	/usr/gnu/bin/patch
+GPATCH =	/usr/bin/patch
 PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
