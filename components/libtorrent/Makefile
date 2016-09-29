@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS  +=	--srcdir=$(BUILD_DIR_$(BITS))
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 REQUIRED_PACKAGES += developer/build/automake-115
+REQUIRED_PACKAGES += developer/c++/cppunit
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
