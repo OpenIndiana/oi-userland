@@ -1,0 +1,35 @@
+# Define CMAKE_HOST_SOLARIS when running on Solaris.
+# Submitted upstream to CMake:
+# https://public.kitware.com/Bug/view.php?id=16061
+# Accepted for CMake >= 3.6.0 (see bug comments above).
+--- old/Source/cmState.cxx	2016-03-08 06:36:22.000000000 -0800
++++ new/Source/cmState.cxx	2016-04-13 12:36:36.918264928 -0700
+@@ -1425,6 +1425,9 @@
+     this->SetDefinition("APPLE", "1");
+     this->SetDefinition("CMAKE_HOST_APPLE", "1");
+   #endif
++  #if defined(__sun__)
++    this->SetDefinition("CMAKE_HOST_SOLARIS", "1");
++  #endif
+ 
+     char temp[1024];
+     sprintf(temp, "%d", cmVersion::GetMinorVersion());
+--- old/Help/manual/cmake-variables.7.rst	2016-03-08 06:36:21.000000000 -0800
++++ new/Help/manual/cmake-variables.7.rst	2016-04-13 12:32:06.281390861 -0700
+@@ -175,6 +175,7 @@
+    /variable/CMAKE_CL_64
+    /variable/CMAKE_COMPILER_2005
+    /variable/CMAKE_HOST_APPLE
++   /variable/CMAKE_HOST_SOLARIS
+    /variable/CMAKE_HOST_SYSTEM_NAME
+    /variable/CMAKE_HOST_SYSTEM_PROCESSOR
+    /variable/CMAKE_HOST_SYSTEM
+--- old/Help/variable/CMAKE_HOST_SOLARIS.rst	2016-04-13 12:35:14.483750545 -0700
++++ new/Help/variable/CMAKE_HOST_SOLARIS.rst	2016-04-13 12:35:00.360288857 -0700
+@@ -0,0 +1,6 @@
++CMAKE_HOST_SOLARIS
++------------------
++
++``True`` for Oracle Solaris operating systems.
++
++Set to ``true`` when the host system is Oracle Solaris.

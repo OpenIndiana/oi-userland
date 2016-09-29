@@ -21,6 +21,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2016 Andreas Wacknitz <a.wacknitz@gmx.de>
 #
 
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
@@ -30,19 +31,22 @@ PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	2.8.12.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.5.2
+COMPONENT_LICENSE=	BSD, MIT, GPLv2, Curl, PD
+COMPONENT_LICENSE_FILE= cmake.license
+COMPONENT_CLASSIFICATION=Development/Distribution Tools
+COMPONENT_SUMMARY=A cross-platform, open-source make system
+COMPONENT_DESCRIPTION="CMake is a family of tools designed to build, test and package software.  It is used to control the software compilation process using simple platform and compiler-independent configuration files.  CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice."
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:8c6574e9afabcb9fc66f463bb1f2f051958d86c85c37fccf067eb1a44a120e5e
-COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v2.8/$(COMPONENT_ARCHIVE)
+	sha256:92d8410d3d981bb881dfff2aed466da55a58d34c7390d50449aa59b32bb5e62a
+COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
-COMPONENT_BUGDB=	utility/cmake
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -59,8 +63,8 @@ endif
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"
 
 CONFIGURE_OPTIONS  =	--prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--datadir=/share/cmake-2.8
-CONFIGURE_OPTIONS +=	--docdir=/share/doc/cmake-2.8
+CONFIGURE_OPTIONS +=	--datadir=/share/cmake-3.5
+CONFIGURE_OPTIONS +=	--docdir=/share/doc/cmake-3.5
 CONFIGURE_OPTIONS += 	--mandir=/share/man
 
 # Use system-installed third-party libraries, rather than the private
@@ -70,6 +74,8 @@ CONFIGURE_OPTIONS +=	--system-curl
 CONFIGURE_OPTIONS +=	--system-expat
 CONFIGURE_OPTIONS +=	--system-zlib
 CONFIGURE_OPTIONS +=	--system-bzip2
+CONFIGURE_OPTIONS +=    --system-libarchive                                                                                          
+CONFIGURE_OPTIONS +=    --system-liblzma 
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
@@ -94,6 +100,13 @@ install:	$(INSTALL_32)
 # expected failure: CTestTestUpload
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
 
-include $(WS_TOP)/make-rules/depend.mk
