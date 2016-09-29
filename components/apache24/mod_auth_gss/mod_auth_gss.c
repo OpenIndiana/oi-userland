@@ -27,7 +27,7 @@
  */
 
 /*
- * Copyright (c) 2007, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 
@@ -63,6 +63,10 @@ typedef struct {
 	char *keytab_file;
 	int gss_debug;
 } gss_auth_config;
+
+/* private libgssapi_krb5 symbols */
+extern OM_uint32 gssint_get_mech_type(gss_OID, gss_buffer_t);
+extern const char *gssint_oid_to_mech(const gss_OID);
 
 static const char *set_service_name(cmd_parms *cmd, void *config,
 	const char *name)
@@ -341,8 +345,8 @@ authenticate_user_gss(request_rec *r, gss_auth_config *conf,
 		gss_OID client_mechoid = &client_mech_desc;
 		char *mechstr = NULL;
 
-		if (!__gss_get_mech_type(client_mechoid, &input_token)) {
-			mechstr = (char *)__gss_oid_to_mech(client_mechoid);
+		if (!gssint_get_mech_type(client_mechoid, &input_token)) {
+			mechstr = (char *)gssint_oid_to_mech(client_mechoid);
 		}
 		if (mechstr == NULL) {
 			client_mechoid = GSS_C_NULL_OID;
