@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.38.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,7 +40,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
+PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.6/bin
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
@@ -48,7 +48,7 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
-CPPFLAGS +=	$(shell /usr/php/5.4/bin/php-config --includes)
+CPPFLAGS +=	$(shell /usr/php/5.6/bin/php-config --includes)
 #CXX +=		$(studio_NORUNPATH)
 
 # Can't find headers without this.
