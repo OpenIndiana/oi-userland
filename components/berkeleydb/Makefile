@@ -25,6 +25,19 @@
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
+# Separate build for test with --enable-test configured
+CONFIGURE_32_and_64 += $(BUILD_DIR)/test-$(MACH32)/.configured
+CONFIGURE_32_and_64 += $(BUILD_DIR)/test-$(MACH64)/.configured
+BUILD_32_and_64 += $(BUILD_DIR)/test-$(MACH32)/.built
+BUILD_32_and_64 += $(BUILD_DIR)/test-$(MACH64)/.built
+$(BUILD_DIR)/test-$(MACH32)/.built:	BITS=32
+$(BUILD_DIR)/test-$(MACH64)/.built:	BITS=64
+INSTALL_32_and_64 += $(BUILD_DIR)/test-$(MACH32)/.installed
+INSTALL_32_and_64 += $(BUILD_DIR)/test-$(MACH64)/.installed
+$(BUILD_DIR)/test-$(MACH32)/.installed:    BITS=32
+$(BUILD_DIR)/test-$(MACH64)/.installed:    BITS=64
+TEST_TARGET= $(BUILD_DIR)/test-$(MACH32)/.tested $(BUILD_DIR)/test-$(MACH64)/.tested
+
 PATH=$(SPRO_VROOT)/bin:/usr/bin
 
 COMPONENT_NAME=		berkeleydb
@@ -36,6 +49,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
+# Userland default optimization level is 4, but that causes test failures.
+# Upstream recommends level 2, which allows the tests to run, so we use that.
+studio_OPT = -xO2
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -45,8 +62,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Per the test suite instructions in the BDB build manual, the tclsh
 # include path must be correct in include.tcl then tclsh is run by
 # sourcing the test.tcl header and finally running the "run_std" command.
-# COMPONENT_POST_TEST_ACTION does this after BDB has been recompiled
-# for test (--enable-test)
+# COMPONENT_POST_TEST_ACTION does this.
 
 COMPONENT_POST_TEST_ACTION = \
         (cd $(@D); \
@@ -57,6 +73,7 @@ COMPONENT_POST_TEST_ACTION = \
 	$(GSED) \
 	    's;set tclsh_path .*;set tclsh_path '$(TCLSH)';' \
 	    < include.tcl.orig > include.tcl; \
+	ulimit -n 65535; \
         $(ENV) $(TCLSH) run_bdb.tcl)
 
 CONFIGURE_SCRIPT = dist/configure
@@ -86,7 +103,7 @@ COMPONENT_TEST_TARGETS = test
 
 $(SKIP_TEST_AT_TOP_LEVEL)
 
-$(BUILD_DIR)/%/.tested: configure_test= --enable-test
+$(BUILD_DIR)/test-%/.configured: configure_test= --enable-test
 
 # Do not apply the standard licence transforms for this component.
 LICENSE_TRANSFORMS =
