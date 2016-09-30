@@ -1,4 +1,4 @@
-ARC4RANDOM_EXPORT is defined as extern. Fixes issues in arc4random and libevent. 
+ARC4RANDOM_EXPORT is defined as extern. Fixes issues in arc4random and libevent.
 Solaris specific changes, will not send upstream.
 
 --- a/ipc/chromium/src/third_party/libevent/arc4random.c    2016-03-01 09:29:36.602447178 -0800
@@ -55,23 +55,6 @@ Solaris specific changes, will not send upstream.
  #endif
  #endif
  #include <limits.h>
-diff a/ipc/app/moz.build b/ipc/app/moz.build
---- a/ipc/app/moz.build 2015-11-03 11:34:14.000000000 +0100
-+++ b/ipc/app/moz.build 2015-11-10 08:31:42.024431000 +0100
-@@ -130,5 +130,13 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'gonk
-         'utils',
-     ]
-
-+OS_LIBS += [
-+    '$(DEPTH)/security/nss/lib/util/libnssutil3.so',
-+    '$(DEPTH)/security/nss/lib/ssl/libssl3.so',
-+    '$(DEPTH)/security/nss/lib/smime/libsmime3.so',
-+    '$(DEPTH)/security/nss/lib/nss/libnss3.so',
-+    '$(DEPTH)/config/external/lgpllibs/liblgpllibs.so',
-+    '-lsendfile',
-+]
- if CONFIG['GNU_CXX']:
-     CXXFLAGS += ['-Wshadow']
 --- a/ipc/chromium/moz.build	2016-03-28 13:41:06.878922929 -0700
 +++ b/ipc/chromium/moz.build	2016-03-28 13:42:04.555448660 -0700
 @@ -161,6 +161,23 @@ if os_bsd or os_linux:

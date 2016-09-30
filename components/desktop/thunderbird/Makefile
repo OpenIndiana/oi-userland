@@ -30,8 +30,6 @@ BUILD_BITS = 32
 COMPILER = gcc
 
 include ../../../make-rules/shared-macros.mk
-GCC_ROOT = /usr/gcc/4.8
-
 
 COMPONENT_NAME=		thunderbird
 COMPONENT_VERSION=	45.1.0
@@ -94,8 +92,8 @@ endif
 
 include $(WS_MAKE_RULES)/common.mk
 
-# /usr/sbin needed for dtrace.
-PATH =         $(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
+# /usr/sbin for dtrace, SPRO for python modules, PERL as well.
+PATH = $(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin:$(dirname $(PERL)):$(SPRO_VROOT)/bin
 
 MOZCONFIG =	$(BUILD_DIR_32)/mozconfig
 
@@ -120,8 +118,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
@@ -134,6 +130,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 CXXFLAGS += 		-Wno-invalid-offsetof -fpermissive
 CC +=		$(CC_BITS)
 CXX +=		$(CC_BITS)
+
+# jemalloc (from libxul) interposes on malloc in glib causing startup problems,
+# so use the big hammer for now, pending the resolution of:
+#    24765609 thunderbird build dies with newer GCC 
+LD_EXEC_OPTIONS += -z now
 
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
