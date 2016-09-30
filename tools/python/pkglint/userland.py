@@ -484,6 +484,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 		    if not action.attrs['license']:
 		        engine.error( _("missing vaue for action license attribute 'license' like 'CDDL','MIT','GPL'..."),
 		            msgid="%s%s.0" % (self.name, pkglint_id))
+		    else:
 			license = True
 			break
 
