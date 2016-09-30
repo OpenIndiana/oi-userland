@@ -26,6 +26,9 @@ COMPONENT_ARCHIVE_HASH= \
 #COMPONENT_ARCHIVE_URL=	http://download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 
+PKG_PROTO_DIRS += $(COMPONENT_SRC)/NVDAgraphics/
+PKG_PROTO_DIRS += $(COMPONENT_SRC)/NVDAgraphicsr/
+
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 

@@ -33,187 +33,195 @@ set name=description value="NVIDIA Graphics System Software"
 set name=info.classification value=org.opensolaris.category.2008:Drivers/Display
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=variant.opensolaris.zone value=global value=nonglobal
-dir  path=dev group=sys
-link path=dev/nvidia0 target=fbs/nvidia0 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia1 target=fbs/nvidia1 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia10 target=fbs/nvidia10 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia11 target=fbs/nvidia11 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia12 target=fbs/nvidia12 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia13 target=fbs/nvidia13 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia14 target=fbs/nvidia14 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia15 target=fbs/nvidia15 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia2 target=fbs/nvidia2 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia3 target=fbs/nvidia3 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia4 target=fbs/nvidia4 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia5 target=fbs/nvidia5 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia6 target=fbs/nvidia6 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia7 target=fbs/nvidia7 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia8 target=fbs/nvidia8 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidia9 target=fbs/nvidia9 pkg.linted=true \
-    variant.opensolaris.zone=global
-link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
-    pkg.linted=true variant.opensolaris.zone=global
-link path=dev/nvidia-modeset target=../devices/pseudo/nvidia_modeset@0:ctl \
-    pkg.linted=true variant.opensolaris.zone=global
-dir  path=kernel group=sys variant.opensolaris.zone=global
-dir  path=kernel/drv group=sys variant.opensolaris.zone=global
-dir  path=kernel/drv/$(MACH64) group=sys variant.opensolaris.zone=global
-file path=kernel/drv/$(MACH64)/nvidia group=sys reboot-needed=true \
-    variant.opensolaris.zone=global
-file path=kernel/drv/nvidia group=sys reboot-needed=true \
-    variant.opensolaris.zone=global
-file path=kernel/drv/nvidia.conf group=sys reboot-needed=false \
-    variant.opensolaris.zone=global
-file path=kernel/drv/$(MACH64)/nvidia_modeset group=sys reboot-needed=true \
-    variant.opensolaris.zone=global
-file path=kernel/drv/nvidia_modeset group=sys reboot-needed=true \
-    variant.opensolaris.zone=global
-file path=kernel/drv/nvidia_modeset.conf group=sys reboot-needed=false \
-    variant.opensolaris.zone=global
-dir  path=usr
-dir  path=usr/X11
-dir  path=usr/X11
-dir  path=usr/X11/include
-dir  path=usr/X11/include/NVIDIA
-dir  path=usr/X11/include/NVIDIA/GL
-file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
-file Solaris/glext.h path=usr/X11/include/NVIDIA/GL/glext.h
-file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
-file Solaris/glxext.h path=usr/X11/include/NVIDIA/GL/glxext.h
-dir  path=usr/X11/include/NVIDIA/vdpau
-file Solaris/vdpau.h path=usr/X11/include/NVIDIA/vdpau/vdpau.h
-file Solaris/vdpau_x11.h path=usr/X11/include/NVIDIA/vdpau/vdpau_x11.h
-dir  path=usr/X11/lib
-dir  path=usr/X11/lib/NVIDIA
-dir  path=usr/X11/lib/NVIDIA/$(MACH64)
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so target=libEGL.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libEGL.so.1
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv1_CM.so.1
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libGLESv2.so.2
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-eglcore.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glsi.so.1
-link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
-    target=libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+dir  path=kernel owner=root group=sys pkg.send.convert.sunw-pkg-hollow=true
+dir  path=kernel/drv owner=root group=sys pkg.send.convert.sunw-pkg-hollow=true
+dir  path=kernel/drv/amd64 owner=root group=sys \
+    pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/amd64/nvidia path=kernel/drv/amd64/nvidia owner=root \
+    group=sys pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/amd64/nvidia_modeset \
+    path=kernel/drv/amd64/nvidia_modeset owner=root group=sys \
+    pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/nvidia path=kernel/drv/nvidia owner=root group=sys \
+    pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/nvidia.conf path=kernel/drv/nvidia.conf owner=root \
+    group=sys pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/nvidia_modeset path=kernel/drv/nvidia_modeset owner=root \
+    group=sys pkg.send.convert.sunw-pkg-hollow=true
+file reloc/kernel/drv/nvidia_modeset.conf path=kernel/drv/nvidia_modeset.conf \
+    owner=root group=sys pkg.send.convert.sunw-pkg-hollow=true
+dir  path=usr/X11/lib owner=root group=bin
+dir  path=usr/X11/lib/NVIDIA owner=root group=bin
+dir  path=usr/X11/lib/NVIDIA/amd64 owner=root group=bin
+link path=usr/X11/lib/NVIDIA/amd64/libEGL.so target=libEGL.so.1
+file reloc/X11/lib/NVIDIA/amd64/libEGL.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libEGL.so.1 owner=root group=bin
+link path=usr/X11/lib/NVIDIA/amd64/libGL.so target=libGL.so.1
+file reloc/X11/lib/NVIDIA/amd64/libGL.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libGL.so.1 owner=root group=bin
+link path=usr/X11/lib/NVIDIA/amd64/libGLESv1_CM.so target=libGLESv1_CM.so.1
+file reloc/X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1 owner=root group=bin
+link path=usr/X11/lib/NVIDIA/amd64/libGLESv2.so target=libGLESv2.so.2
+file reloc/X11/lib/NVIDIA/amd64/libGLESv2.so.2 \
+    path=usr/X11/lib/NVIDIA/amd64/libGLESv2.so.2 owner=root group=bin
+file reloc/X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/amd64/libnvidia-glcore.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libnvidia-glcore.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1 owner=root group=bin
+link path=usr/X11/lib/NVIDIA/amd64/libnvidia-tls.so target=libnvidia-tls.so.1
+file reloc/X11/lib/NVIDIA/amd64/libnvidia-tls.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libnvidia-tls.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/amd64/libvdpau_nvidia.so.1 \
+    path=usr/X11/lib/NVIDIA/amd64/libvdpau_nvidia.so.1 owner=root group=bin
 link path=usr/X11/lib/NVIDIA/libEGL.so target=libEGL.so.1
-file path=usr/X11/lib/NVIDIA/libEGL.so.1
+file reloc/X11/lib/NVIDIA/libEGL.so.1 path=usr/X11/lib/NVIDIA/libEGL.so.1 \
+    owner=root group=bin
 link path=usr/X11/lib/NVIDIA/libGL.so target=libGL.so.1
-file path=usr/X11/lib/NVIDIA/libGL.so.1
+file reloc/X11/lib/NVIDIA/libGL.so.1 path=usr/X11/lib/NVIDIA/libGL.so.1 \
+    owner=root group=bin
 link path=usr/X11/lib/NVIDIA/libGLESv1_CM.so target=libGLESv1_CM.so.1
-file path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1
+file reloc/X11/lib/NVIDIA/libGLESv1_CM.so.1 \
+    path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1 owner=root group=bin
 link path=usr/X11/lib/NVIDIA/libGLESv2.so target=libGLESv2.so.2
-file path=usr/X11/lib/NVIDIA/libGLESv2.so.2
-file path=usr/X11/lib/NVIDIA/libnvidia-eglcore.so.1
-file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
-file path=usr/X11/lib/NVIDIA/libnvidia-glsi.so.1
+file reloc/X11/lib/NVIDIA/libGLESv2.so.2 \
+    path=usr/X11/lib/NVIDIA/libGLESv2.so.2 owner=root group=bin
+file reloc/X11/lib/NVIDIA/libnvidia-eglcore.so.1 \
+    path=usr/X11/lib/NVIDIA/libnvidia-eglcore.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/libnvidia-glcore.so.1 \
+    path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/libnvidia-glsi.so.1 \
+    path=usr/X11/lib/NVIDIA/libnvidia-glsi.so.1 owner=root group=bin
 link path=usr/X11/lib/NVIDIA/libnvidia-tls.so target=libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
-file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
-dir  path=usr/X11/lib/X11
-dir  path=usr/X11/lib/X11/getconfig
-file path=usr/X11/lib/X11/getconfig/nvda.cfg
-dir  path=usr/X11/lib/modules
-dir  path=usr/X11/lib/modules/NVIDIA
-dir  path=usr/X11/lib/modules/NVIDIA/$(MACH64)
-link path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so \
+file reloc/X11/lib/NVIDIA/libnvidia-tls.so.1 \
+    path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1 owner=root group=bin
+file reloc/X11/lib/NVIDIA/libvdpau_nvidia.so.1 \
+    path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1 owner=root group=bin
+dir  path=usr/X11/lib/X11 owner=root group=bin
+dir  path=usr/X11/lib/X11/getconfig owner=root group=bin
+file reloc/X11/lib/X11/getconfig/nvda.cfg \
+    path=usr/X11/lib/X11/getconfig/nvda.cfg owner=root group=bin
+dir  path=usr/X11/lib/modules owner=root group=bin
+dir  path=usr/X11/lib/modules/NVIDIA owner=root group=bin
+dir  path=usr/X11/lib/modules/NVIDIA/amd64 owner=root group=bin
+link path=usr/X11/lib/modules/NVIDIA/amd64/libnvidia-wfb.so \
     target=libnvidia-wfb.so.1
-file path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 \
-    pkg.debug.depend.path=usr/lib/$(MACH64)
+file reloc/X11/lib/modules/NVIDIA/amd64/libnvidia-wfb.so.1 \
+    path=usr/X11/lib/modules/NVIDIA/amd64/libnvidia-wfb.so.1 owner=root \
+    group=bin
 link path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so target=libnvidia-wfb.so.1
-file path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 \
-    pkg.debug.depend.path=usr/lib
-dir  path=usr/X11/lib/modules/drivers
-dir  path=usr/X11/lib/modules/drivers/$(MACH64)
-file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
-file path=usr/X11/lib/modules/drivers/nvidia_drv.so
-dir  path=usr/X11/lib/modules/extensions
-dir  path=usr/X11/lib/modules/extensions/NVIDIA
-dir  path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)
-link path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so \
+file reloc/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 \
+    path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 owner=root group=bin
+dir  path=usr/X11/lib/modules/amd64 owner=root group=bin
+dir  path=usr/X11/lib/modules/drivers owner=root group=bin
+dir  path=usr/X11/lib/modules/drivers/amd64 owner=root group=bin
+file reloc/X11/lib/modules/drivers/amd64/nvidia_drv.so \
+    path=usr/X11/lib/modules/drivers/amd64/nvidia_drv.so owner=root group=bin
+file reloc/X11/lib/modules/drivers/nvidia_drv.so \
+    path=usr/X11/lib/modules/drivers/nvidia_drv.so owner=root group=bin
+dir  path=usr/X11/lib/modules/extensions owner=root group=bin
+dir  path=usr/X11/lib/modules/extensions/NVIDIA owner=root group=bin
+dir  path=usr/X11/lib/modules/extensions/NVIDIA/amd64 owner=root group=bin
+link path=usr/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so \
     target=libglx.so.1
-file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
+file reloc/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so.1 \
+    path=usr/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so.1 owner=root \
+    group=bin
 link path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so target=libglx.so.1
-file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
-dir  path=usr/bin
-dir  path=usr/bin/$(MACH32)
-file path=usr/bin/$(MACH32)/nvidia-settings
-file path=usr/bin/$(MACH32)/nvidia-xconfig
-dir  path=usr/bin/$(MACH64)
-file path=usr/bin/$(MACH64)/nvidia-settings
-file path=usr/bin/$(MACH64)/nvidia-xconfig
-file path=usr/bin/nvidia-SunOS-bug-report.sh
+file reloc/X11/lib/modules/extensions/NVIDIA/libglx.so.1 \
+    path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1 owner=root group=bin
+dir  path=usr/bin owner=root group=bin
+dir  path=usr/bin/amd64 owner=root group=bin
+file reloc/bin/amd64/nvidia-debugdump path=usr/bin/amd64/nvidia-debugdump \
+    owner=root group=bin
+file reloc/bin/amd64/nvidia-settings path=usr/bin/amd64/nvidia-settings \
+    owner=root group=bin
+file reloc/bin/amd64/nvidia-smi path=usr/bin/amd64/nvidia-smi owner=root \
+    group=bin
+file reloc/bin/amd64/nvidia-xconfig path=usr/bin/amd64/nvidia-xconfig \
+    owner=root group=bin
+dir  path=usr/bin/i86 owner=root group=bin
+file reloc/bin/i86/nvidia-debugdump path=usr/bin/i86/nvidia-debugdump \
+    owner=root group=bin
+file reloc/bin/i86/nvidia-settings path=usr/bin/i86/nvidia-settings owner=root \
+    group=bin
+file reloc/bin/i86/nvidia-smi path=usr/bin/i86/nvidia-smi owner=root group=bin
+file reloc/bin/i86/nvidia-xconfig path=usr/bin/i86/nvidia-xconfig owner=root \
+    group=bin
+file reloc/bin/nvidia-SunOS-bug-report.sh \
+    path=usr/bin/nvidia-SunOS-bug-report.sh owner=root group=bin
+hardlink path=usr/bin/nvidia-debugdump target=../lib/isaexec pkg.linted=true
 hardlink path=usr/bin/nvidia-settings target=../lib/isaexec pkg.linted=true
-hardlink path=usr/bin/nvidia-xconfg target=../lib/isaexec pkg.linted=true
-dir  path=usr/dt
-dir  path=usr/dt/appconfig
-dir  path=usr/dt/appconfig/appmanager
-dir  path=usr/dt/appconfig/appmanager/C
-dir  path=usr/dt/appconfig/appmanager/C/Desktop_Apps
-file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
-dir  path=usr/dt/appconfig/icons
-dir  path=usr/dt/appconfig/icons/C
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
-file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
-dir  path=usr/dt/appconfig/types
-dir  path=usr/dt/appconfig/types/C
-file path=usr/dt/appconfig/types/C/nvidia-settings.dt
-dir  path=usr/include
-link path=usr/include/vdpau target=../X11/include/NVIDIA/vdpau
-dir  path=usr/lib
-dir  path=usr/lib/$(MACH64)
-link path=usr/lib/$(MACH64)/libEGL.so target=libEGL.so.1
-link path=usr/lib/$(MACH64)/libEGL.so.1 \
+hardlink path=usr/bin/nvidia-smi target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/nvidia-xconfig target=../lib/isaexec pkg.linted=true
+dir  path=usr/dt owner=root group=bin
+dir  path=usr/dt/appconfig owner=root group=bin
+dir  path=usr/dt/appconfig/appmanager owner=root group=bin
+dir  path=usr/dt/appconfig/appmanager/C owner=root group=bin
+dir  path=usr/dt/appconfig/appmanager/C/Desktop_Apps owner=root group=bin
+file reloc/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings \
+    path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings \
+    owner=root group=bin mode=0555
+dir  path=usr/dt/appconfig/icons owner=root group=bin
+dir  path=usr/dt/appconfig/icons/C owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.l.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.l.pm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.l_m.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.m.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.m.pm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.m_m.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.t.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.t.pm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm owner=root group=bin
+file reloc/dt/appconfig/icons/C/nvidia-settings.t_m.bm \
+    path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm owner=root group=bin
+dir  path=usr/dt/appconfig/types owner=root group=bin
+dir  path=usr/dt/appconfig/types/C owner=root group=bin
+file reloc/dt/appconfig/types/C/nvidia-settings.dt \
+    path=usr/dt/appconfig/types/C/nvidia-settings.dt owner=root group=bin \
+    mode=0444
+dir  path=usr/lib owner=root group=bin
+dir  path=usr/lib/amd64 owner=root group=bin
+link path=usr/lib/amd64/libEGL.so target=libEGL.so.1
+link path=usr/lib/amd64/libEGL.so.1 \
     target=../../X11/lib/NVIDIA/amd64/libEGL.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so target=libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv1_CM.so.1 \
+link path=usr/lib/amd64/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/lib/amd64/libGLESv1_CM.so.1 \
     target=../../X11/lib/NVIDIA/amd64/libGLESv1_CM.so.1
-link path=usr/lib/$(MACH64)/libGLESv2.so target=libGLESv2.so.2
-link path=usr/lib/$(MACH64)/libGLESv2.so.2 \
+link path=usr/lib/amd64/libGLESv2.so target=libGLESv2.so.2
+link path=usr/lib/amd64/libGLESv2.so.2 \
     target=../../X11/lib/NVIDIA/amd64/libGLESv2.so.2
-link path=usr/lib/$(MACH64)/libnvidia-cfg.so target=libnvidia-cfg.so.1
-file path=usr/lib/$(MACH64)/libnvidia-cfg.so.1
-link path=usr/lib/$(MACH64)/libnvidia-eglcore.so.1 \
+link path=usr/lib/amd64/libnvidia-cfg.so target=libnvidia-cfg.so.1
+file reloc/lib/amd64/libnvidia-cfg.so.1 path=usr/lib/amd64/libnvidia-cfg.so.1 \
+    owner=root group=bin
+link path=usr/lib/amd64/libnvidia-eglcore.so.1 \
     target=../../X11/lib/NVIDIA/amd64/libnvidia-eglcore.so.1
-link path=usr/lib/$(MACH64)/libnvidia-glcore.so.1 \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
-link path=usr/lib/$(MACH64)/libnvidia-glsi.so.1 \
+link path=usr/lib/amd64/libnvidia-glcore.so.1 \
+    target=../../X11/lib/NVIDIA/amd64/libnvidia-glcore.so.1
+link path=usr/lib/amd64/libnvidia-glsi.so.1 \
     target=../../X11/lib/NVIDIA/amd64/libnvidia-glsi.so.1
-link path=usr/lib/$(MACH64)/libnvidia-tls.so target=libnvidia-tls.so.1
-link path=usr/lib/$(MACH64)/libnvidia-tls.so.1 \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
-link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
-    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
-dir  path=usr/lib/$(MACH64)/vdpau
-link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
-    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+file reloc/lib/amd64/libnvidia-gtk2.so.367.35 \
+    path=usr/lib/amd64/libnvidia-gtk2.so.367.35 owner=root group=bin
+link path=usr/lib/amd64/libnvidia-ml.so target=libnvidia-ml.so.1
+file reloc/lib/amd64/libnvidia-ml.so.1 path=usr/lib/amd64/libnvidia-ml.so.1 \
+    owner=root group=bin
+link path=usr/lib/amd64/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/lib/amd64/libnvidia-tls.so.1 \
+    target=../../X11/lib/NVIDIA/amd64/libnvidia-tls.so.1
+link path=usr/lib/amd64/libvdpau_nvidia.so \
+    target=../../X11/lib/NVIDIA/amd64/libvdpau_nvidia.so.1
+dir  path=usr/lib/amd64/vdpau owner=root group=bin
+link path=usr/lib/amd64/vdpau/libvdpau_nvidia.so.1 \
+    target=../../../X11/lib/NVIDIA/amd64/libvdpau_nvidia.so.1
 link path=usr/lib/libEGL.so target=libEGL.so.1
 link path=usr/lib/libEGL.so.1 target=../X11/lib/NVIDIA/libEGL.so.1
 link path=usr/lib/libGLESv1_CM.so target=libGLESv1_CM.so.1
@@ -221,80 +229,138 @@ link path=usr/lib/libGLESv1_CM.so.1 target=../X11/lib/NVIDIA/libGLESv1_CM.so.1
 link path=usr/lib/libGLESv2.so target=libGLESv2.so.2
 link path=usr/lib/libGLESv2.so.2 target=../X11/lib/NVIDIA/libGLESv2.so.2
 link path=usr/lib/libnvidia-cfg.so target=libnvidia-cfg.so.1
-file path=usr/lib/libnvidia-cfg.so.1
+file reloc/lib/libnvidia-cfg.so.1 path=usr/lib/libnvidia-cfg.so.1 owner=root \
+    group=bin
 link path=usr/lib/libnvidia-eglcore.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-eglcore.so.1
 link path=usr/lib/libnvidia-glcore.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-glcore.so.1
 link path=usr/lib/libnvidia-glsi.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-glsi.so.1
+file reloc/lib/libnvidia-gtk2.so.367.35 path=usr/lib/libnvidia-gtk2.so.367.35 \
+    owner=root group=bin
+link path=usr/lib/libnvidia-ml.so target=libnvidia-ml.so.1
+file reloc/lib/libnvidia-ml.so.1 path=usr/lib/libnvidia-ml.so.1 owner=root \
+    group=bin
 link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
 link path=usr/lib/libnvidia-tls.so.1 target=../X11/lib/NVIDIA/libnvidia-tls.so.1
 link path=usr/lib/libvdpau_nvidia.so \
     target=../X11/lib/NVIDIA/libvdpau_nvidia.so.1
-dir  path=usr/lib/vdpau
+dir  path=usr/lib/vdpau owner=root group=bin
 link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
     target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
-dir  path=usr/share
-dir  path=usr/share/applications
-file path=usr/share/applications/nvidia-settings.desktop \
+dir  path=usr/share owner=root group=sys
+dir  path=usr/share/applications owner=root group=other
+file reloc/share/applications/nvidia-settings.desktop \
+    path=usr/share/applications/nvidia-settings.desktop owner=root \
+    group=other \
     restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
-dir  path=usr/share/control-center-2.0
-dir  path=usr/share/control-center-2.0/capplets
-file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
-dir  path=usr/share/doc
-dir  path=usr/share/doc/NVIDIA
-file path=usr/share/doc/NVIDIA/README.txt
-dir  path=usr/share/doc/NVIDIA/html
-file path=usr/share/doc/NVIDIA/html/acknowledgements.html
-file path=usr/share/doc/NVIDIA/html/addressingcapabilities.html
-file path=usr/share/doc/NVIDIA/html/addtlresources.html
-file path=usr/share/doc/NVIDIA/html/appendices.html
-file path=usr/share/doc/NVIDIA/html/commonproblems.html
-file path=usr/share/doc/NVIDIA/html/configlaptop.html
-file path=usr/share/doc/NVIDIA/html/configmultxscreens.html
-file path=usr/share/doc/NVIDIA/html/configtwinview.html
-file path=usr/share/doc/NVIDIA/html/depth30.html
-file path=usr/share/doc/NVIDIA/html/displaydevicenames.html
-file path=usr/share/doc/NVIDIA/html/dpi.html
-file path=usr/share/doc/NVIDIA/html/editxconfig.html
-file path=usr/share/doc/NVIDIA/html/faq.html
-file path=usr/share/doc/NVIDIA/html/flippingubb.html
-file path=usr/share/doc/NVIDIA/html/framelock.html
-file path=usr/share/doc/NVIDIA/html/glxsupport.html
-file path=usr/share/doc/NVIDIA/html/gpunames.html
-file path=usr/share/doc/NVIDIA/html/index.html
-file path=usr/share/doc/NVIDIA/html/installationandconfiguration.html
-file path=usr/share/doc/NVIDIA/html/installdriver.html
-file path=usr/share/doc/NVIDIA/html/installedcomponents.html
-file path=usr/share/doc/NVIDIA/html/introduction.html
-file path=usr/share/doc/NVIDIA/html/knownissues.html
-file path=usr/share/doc/NVIDIA/html/minimumrequirements.html
-file path=usr/share/doc/NVIDIA/html/newusertips.html
-file path=usr/share/doc/NVIDIA/html/nvidiasettings.html
-file path=usr/share/doc/NVIDIA/html/openglenvvariables.html
-file path=usr/share/doc/NVIDIA/html/profiles.html
-file path=usr/share/doc/NVIDIA/html/programmingmodes.html
-file path=usr/share/doc/NVIDIA/html/sdi.html
-file path=usr/share/doc/NVIDIA/html/sli.html
-file path=usr/share/doc/NVIDIA/html/supportedchips.html
-file path=usr/share/doc/NVIDIA/html/swapcard.html
-file path=usr/share/doc/NVIDIA/html/vdpausupport.html
-file path=usr/share/doc/NVIDIA/html/xcompositeextension.html
-file path=usr/share/doc/NVIDIA/html/xconfigoptions.html
-file path=usr/share/doc/NVIDIA/html/xineramaglx.html
-file path=usr/share/doc/NVIDIA/html/xrandrextension.html
-dir  path=usr/share/icons
-dir  path=usr/share/icons/NVIDIA
-file path=usr/share/icons/NVIDIA/nvidia-settings.png \
+dir  path=usr/share/doc owner=root group=other
+dir  path=usr/share/doc/NVIDIA owner=root group=other
+file reloc/share/doc/NVIDIA/README.txt path=usr/share/doc/NVIDIA/README.txt \
+    owner=root group=other
+dir  path=usr/share/doc/NVIDIA/html owner=root group=other
+file reloc/share/doc/NVIDIA/html/acknowledgements.html \
+    path=usr/share/doc/NVIDIA/html/acknowledgements.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/addressingcapabilities.html \
+    path=usr/share/doc/NVIDIA/html/addressingcapabilities.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/addtlresources.html \
+    path=usr/share/doc/NVIDIA/html/addtlresources.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/appendices.html \
+    path=usr/share/doc/NVIDIA/html/appendices.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/commonproblems.html \
+    path=usr/share/doc/NVIDIA/html/commonproblems.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/configlaptop.html \
+    path=usr/share/doc/NVIDIA/html/configlaptop.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/configmultxscreens.html \
+    path=usr/share/doc/NVIDIA/html/configmultxscreens.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/configtwinview.html \
+    path=usr/share/doc/NVIDIA/html/configtwinview.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/depth30.html \
+    path=usr/share/doc/NVIDIA/html/depth30.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/displaydevicenames.html \
+    path=usr/share/doc/NVIDIA/html/displaydevicenames.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/dpi.html \
+    path=usr/share/doc/NVIDIA/html/dpi.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/editxconfig.html \
+    path=usr/share/doc/NVIDIA/html/editxconfig.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/faq.html \
+    path=usr/share/doc/NVIDIA/html/faq.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/flippingubb.html \
+    path=usr/share/doc/NVIDIA/html/flippingubb.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/framelock.html \
+    path=usr/share/doc/NVIDIA/html/framelock.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/glxsupport.html \
+    path=usr/share/doc/NVIDIA/html/glxsupport.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/gpunames.html \
+    path=usr/share/doc/NVIDIA/html/gpunames.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/index.html \
+    path=usr/share/doc/NVIDIA/html/index.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/installationandconfiguration.html \
+    path=usr/share/doc/NVIDIA/html/installationandconfiguration.html \
+    owner=root group=other
+file reloc/share/doc/NVIDIA/html/installdriver.html \
+    path=usr/share/doc/NVIDIA/html/installdriver.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/installedcomponents.html \
+    path=usr/share/doc/NVIDIA/html/installedcomponents.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/introduction.html \
+    path=usr/share/doc/NVIDIA/html/introduction.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/knownissues.html \
+    path=usr/share/doc/NVIDIA/html/knownissues.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/minimumrequirements.html \
+    path=usr/share/doc/NVIDIA/html/minimumrequirements.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/newusertips.html \
+    path=usr/share/doc/NVIDIA/html/newusertips.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/nvidiasettings.html \
+    path=usr/share/doc/NVIDIA/html/nvidiasettings.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/openglenvvariables.html \
+    path=usr/share/doc/NVIDIA/html/openglenvvariables.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/profiles.html \
+    path=usr/share/doc/NVIDIA/html/profiles.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/programmingmodes.html \
+    path=usr/share/doc/NVIDIA/html/programmingmodes.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/sdi.html \
+    path=usr/share/doc/NVIDIA/html/sdi.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/sli.html \
+    path=usr/share/doc/NVIDIA/html/sli.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/supportedchips.html \
+    path=usr/share/doc/NVIDIA/html/supportedchips.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/swapcard.html \
+    path=usr/share/doc/NVIDIA/html/swapcard.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/vdpausupport.html \
+    path=usr/share/doc/NVIDIA/html/vdpausupport.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/xcompositeextension.html \
+    path=usr/share/doc/NVIDIA/html/xcompositeextension.html owner=root \
+    group=other
+file reloc/share/doc/NVIDIA/html/xconfigoptions.html \
+    path=usr/share/doc/NVIDIA/html/xconfigoptions.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/xineramaglx.html \
+    path=usr/share/doc/NVIDIA/html/xineramaglx.html owner=root group=other
+file reloc/share/doc/NVIDIA/html/xrandrextension.html \
+    path=usr/share/doc/NVIDIA/html/xrandrextension.html owner=root group=other
+dir  path=usr/share/icons/NVIDIA owner=root group=other
+file reloc/share/icons/NVIDIA/nvidia-settings.png \
+    path=usr/share/icons/NVIDIA/nvidia-settings.png owner=root group=other \
     restart_fmri=svc:/application/desktop-cache/icon-cache:default
-dir  path=usr/share/man
-dir  path=usr/share/man/man1
-file path=usr/share/man/man1/nvidia-settings.1
-file path=usr/share/man/man1/nvidia-xconfig.1
-dir  path=usr/share/nvidia
-file path=usr/share/nvidia/nvidia-application-profiles-key-documentation
-file path=usr/share/nvidia/nvidia-application-profiles-rc
+file reloc/share/man/man1/nvidia-settings.1 \
+    path=usr/share/man/man1/nvidia-settings.1 owner=root group=other \
+    restart_fmri=svc:/application/man-index:default
+file reloc/share/man/man1/nvidia-smi.1 path=usr/share/man/man1/nvidia-smi.1 \
+    owner=root group=other
+file reloc/share/man/man1/nvidia-xconfig.1 \
+    path=usr/share/man/man1/nvidia-xconfig.1 owner=root group=other
+dir  path=usr/share/nvidia owner=root group=other
+file reloc/share/nvidia/nvidia-application-profiles-key-documentation \
+    path=usr/share/nvidia/nvidia-application-profiles-key-documentation \
+    owner=root group=other
+file reloc/share/nvidia/nvidia-application-profiles-rc \
+    path=usr/share/nvidia/nvidia-application-profiles-rc owner=root group=other
 driver name=nvidia perms="* 0666 root root" \
     alias=pci10de,6c0 \
     alias=pci10de,6c4 \
@@ -609,8 +675,19 @@ driver name=nvidia perms="* 0666 root root" \
     alias=pci10de,1b80 \
     alias=pci10de,1b81
 driver name=nvidia_modeset perms="* 0666 root root"
-legacy pkg=NVDAgraphics desc="X and OpenGL Drivers for NVIDIA Quadro graphics" \
-    name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation"
-legacy pkg=NVDAgraphicsr desc="Kernel Drivers for NVIDIA Quadro graphics" \
-    name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
+legacy pkg=NVDAgraphics arch=i386 category=system,graphics \
+    desc="X and OpenGL Drivers for NVIDIA Quadro graphics" \
+    hotline="Please contact your local service provider" \
+    name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation" \
+    version=367.35,REV=2016.07.11.23.58
+legacy pkg=NVDAgraphicsr arch=i386 category=system,graphics \
+    desc="Kernel Drivers for NVIDIA Quadro graphics" \
+    hotline="Please contact your local service provider" \
+    name="NVIDIA Graphics System Device Driver" \
+    pkg.send.convert.sunw-pkg-hollow=true vendor="NVIDIA Corporation" \
+    version=367.35,REV=2016.07.11.23.58
+license install/copyright license=NVDAgraphics.copyright
+license install/copyright license=NVDAgraphicsr.copyright \
+    pkg.send.convert.sunw-pkg-hollow=true
 license driver-graphics-nvidia.license license="NVIDIA license"
+
