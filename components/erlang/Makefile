@@ -26,9 +26,6 @@
 BUILD_BITS= 64
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
-# temporarily use GCC 4.8 until we resolve SPARC core dump issues with a newer
-# GCC.
-GCC_ROOT=/usr/gcc/4.8
 
 PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
 
