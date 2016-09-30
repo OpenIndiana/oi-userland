@@ -30,6 +30,7 @@ prep:		TARGET = prep
 build:		TARGET = build
 install:	TARGET = install
 publish:	TARGET = publish
+pre-publish:	TARGET = pre-publish
 validate:	TARGET = validate
 clean:		TARGET = clean
 clobber:	TARGET = clobber
@@ -39,7 +40,7 @@ component-hook:		TARGET = component-hook
 
 .DEFAULT:	publish
 
-download setup prep build install publish validate clean clobber \
+download setup prep build install pre-publish publish validate clean clobber \
 test component-hook unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE

@@ -1,18 +1,17 @@
---- backend/usb-unix.c.orig	Tue Sep 22 11:47:36 2009
-+++ backend/usb-unix.c	Sat Nov 28 06:16:25 2009
-@@ -30,7 +30,11 @@
+--- backend/usb-unix.c.~1~	2013-05-29 15:51:34.000000000 +0400
++++ backend/usb-unix.c	2016-09-14 11:56:04.800980384 +0300
+@@ -30,6 +30,10 @@
  
  #include <sys/select.h>
  
 +#ifdef __sun
 +#include <sys/ecppio.h>
 +#endif
- 
 +
+ 
  /*
   * Local functions...
-  */
-@@ -470,6 +474,8 @@
+@@ -456,6 +460,8 @@
      {
        for (i = 0, busy = 0; i < 8; i ++)
        {
@@ -21,7 +20,7 @@
  	sprintf(device, "/dev/usb/printer%d", i);
  
  	if ((fd = open(device, O_WRONLY | O_EXCL)) >= 0)
-@@ -489,6 +495,16 @@
+@@ -475,6 +481,16 @@
  	  device_uri[0] = '\0';
          }
  

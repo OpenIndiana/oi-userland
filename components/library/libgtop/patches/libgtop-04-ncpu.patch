@@ -1,0 +1,79 @@
+--- libgtop-2.28.5/sysdeps/solaris/open.c.1	2016-08-17 12:34:02.369916525 +0300
++++ libgtop-2.28.5/sysdeps/solaris/open.c	2016-08-17 12:37:09.435510626 +0300
+@@ -75,7 +75,7 @@
+ 	   life time of a process, but let's hope that's just an error in
+ 	   the documentation. */
+ 
+-	if((nproc_same = new_ncpu) == server->ncpu)
++	if(nproc_same = (new_ncpu == server->ncpu))
+ 	{
+ 	    int checked, i;
+ 	    char cpu[20];
+--- libgtop-2.28.5/sysdeps/solaris/sysinfo.c.~2~	2016-08-17 16:41:07.949479961 +0300
++++ libgtop-2.28.5/sysdeps/solaris/sysinfo.c	2016-08-17 16:48:58.989919023 +0300
+@@ -37,7 +37,64 @@
+ static void
+ init_sysinfo (glibtop *server)
+ {
+-
++   kstat_ctl_t     *kc;
++   kstat_t         *ksp;
++   kstat_named_t   *knp;
++
++   sysinfo.ncpu = 0;
++
++   if ((kc = kstat_open()) == NULL) {
++	printf ("kstat_open() failed\n");
++	return;
++   }
++
++   if ((ksp = kstat_lookup(kc, "cpu_info", -1, NULL))){
++       for (ksp = kc->kc_chain; ksp && sysinfo.ncpu < GLIBTOP_NCPU; ksp = ksp->ks_next) {
++           glibtop_entry *cpuinfo;
++           gchar *brand;
++           int mhz = 0;
++
++           if (strcmp(ksp->ks_module, "cpu_info") != 0)
++               continue;
++            
++           cpuinfo = &sysinfo.cpuinfo[sysinfo.ncpu];
++          
++           cpuinfo->labels = g_ptr_array_new ();
++
++           cpuinfo->values = g_hash_table_new_full(g_str_hash,
++                                                        g_str_equal,
++                                                        NULL, g_free);
++
++           g_ptr_array_add (cpuinfo->labels, "processor");
++           g_hash_table_insert (cpuinfo->values, "processor",
++              g_strdup_printf("%u", (guint)sysinfo.ncpu));
++
++           if (kstat_read(kc, ksp, NULL)<0)
++               continue;
++				
++           if ((knp = kstat_data_lookup(ksp, "brand")) == NULL) {
++               brand = "(unknown)";
++           } else {
++               brand = knp->value.str.addr.ptr;
++           }
++           g_ptr_array_add (cpuinfo->labels, "vendor_id");
++           g_hash_table_insert (cpuinfo->values, "vendor_id",
++                                     g_strdup(brand)); 
++
++           if ((knp = kstat_data_lookup(ksp, "clock_MHz")) != NULL) {
++               mhz = knp->value.l;
++           } 
++           
++           g_ptr_array_add (cpuinfo->labels, "cpu MHz");
++           g_hash_table_insert (cpuinfo->values, "cpu MHz",
++                                     g_strdup_printf("%d", mhz));
++
++           sysinfo.ncpu++;
++      }
++   }
++
++   kstat_close(kc);
++  
+ }
+ 
+ const glibtop_sysinfo *

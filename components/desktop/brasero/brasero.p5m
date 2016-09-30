@@ -27,9 +27,13 @@ license brasero.license license="GPL v2"
 <transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/mkisofs type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/growisofs type=require
 
 file files/exec_attr path=etc/security/exec_attr.d/desktop-cd-burning-brasero
+
+depend type=conditional fmri=gnome/file-manager/nautilus/extension/brasero-nautilus \
+   predicate=gnome/file-manager/nautilus
 
 file path=usr/bin/brasero
 file path=usr/include/brasero/brasero-blank-dialog.h
@@ -95,11 +99,9 @@ file path=usr/lib/libbrasero-media.so.1.2.0
 link path=usr/lib/libbrasero-utils.so target=libbrasero-utils.so.1.2.0
 link path=usr/lib/libbrasero-utils.so.1 target=libbrasero-utils.so.1.2.0
 file path=usr/lib/libbrasero-utils.so.1.2.0
-file path=usr/lib/nautilus/extensions-2.0/libnautilus-brasero-extension.so
 file path=usr/lib/pkgconfig/libbrasero-burn.pc
 file path=usr/lib/pkgconfig/libbrasero-media.pc
 file path=usr/share/GConf/gsettings/brasero.convert
-file path=usr/share/applications/brasero-nautilus.desktop
 file path=usr/share/applications/brasero.desktop
 file path=usr/share/brasero/icons/hicolor/16x16/actions/insert-pause.png
 file path=usr/share/brasero/icons/hicolor/16x16/actions/iso-image-burn.png

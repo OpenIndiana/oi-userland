@@ -1,0 +1,112 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/time-slider@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Configuration and Preferences"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/icons/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=usr/lib/.* -> default mode 0555>
+<transform file path=usr/.* -> default pkg.depend.runpath $PKGDEPEND_RUNPATH:usr/share/time-slider/lib>
+<transform file path=usr/lib/time-slider/plugins/.* -> default pkg.depend.bypass-generate .*>
+
+depend fmri=desktop/gksu type=require
+depend fmri=gnome/zenity type=require
+depend fmri=library/python/gnome-python-27 type=require
+depend fmri=library/python/pygobject-27 type=require
+depend fmri=library/python/pygtk2-27 type=require
+depend fmri=library/python/python-dbus-27 type=require
+depend fmri=library/python-2/python-notify-27 type=require
+depend fmri=service/gnome/desktop-cache type=require
+
+file files/auth_attr path=etc/security/auth_attr.d/desktop-time-slider
+file files/user_attr path=etc/user_attr.d/desktop-time-slider
+
+user ftpuser=false gcos-field="ZFS Automatic Snapshots Reserved UID" group=daemon login-shell=/usr/bin/pfsh password=NP uid=51 username=zfssnap
+
+file path=etc/dbus-1/system.d/time-slider.conf preserve=renameold
+file path=etc/xdg/autostart/time-slider-notify.desktop preserve=renameold
+file path=lib/svc/manifest/application/time-slider-plugin.xml
+file path=lib/svc/manifest/application/time-slider.xml
+file path=lib/svc/manifest/system/filesystem/auto-snapshot.xml
+file path=lib/svc/method/time-slider
+file path=lib/svc/method/time-slider-plugin
+file path=lib/svc/method/time-slider-rsync
+file path=usr/bin/time-slider-setup
+file path=usr/lib/time-slider-delete
+file path=usr/lib/time-slider-notify
+file path=usr/lib/time-slider-snapshot
+file path=usr/lib/time-slider-version
+file path=usr/lib/time-slider/plugins/rsync/rsync-backup
+file path=usr/lib/time-slider/plugins/rsync/rsync-trigger
+file path=usr/lib/time-slider/plugins/zfssend/zfssend
+file path=usr/lib/time-sliderd
+file path=usr/share/applications/time-slider.desktop
+file path=usr/share/icons/hicolor/16x16/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/24x24/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/32x32/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/36x36/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/48x48/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/72x72/apps/time-slider-setup.png
+file path=usr/share/icons/hicolor/96x96/apps/time-slider-setup.png
+file path=usr/share/locale/ar/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/ca/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/cs/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/de/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/es/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/fr/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/hu/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/id/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/it/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/ja/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/ko/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/nl/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/pl/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/ru/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/sv/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/time-slider.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/time-slider.mo
+file path=usr/share/time-slider/glade/time-slider-delete.glade
+file path=usr/share/time-slider/glade/time-slider-setup.glade
+file path=usr/share/time-slider/glade/time-slider-snapshot.glade
+file path=usr/share/time-slider/glade/time-slider-version.glade
+file path=usr/share/time-slider/lib/plugin/__init__.py
+file path=usr/share/time-slider/lib/plugin/plugin.py
+file path=usr/share/time-slider/lib/plugin/pluginsmf.py
+file path=usr/share/time-slider/lib/plugin/rsync/__init__.py
+file path=usr/share/time-slider/lib/plugin/rsync/backup.py
+file path=usr/share/time-slider/lib/plugin/rsync/rsyncsmf.py
+file path=usr/share/time-slider/lib/plugin/rsync/trigger.py
+file path=usr/share/time-slider/lib/plugin/zfssend/__init__.py
+file path=usr/share/time-slider/lib/plugin/zfssend/zfssend.py
+file path=usr/share/time-slider/lib/time_slider/__init__.py
+file path=usr/share/time-slider/lib/time_slider/applet.py
+file path=usr/share/time-slider/lib/time_slider/autosnapsmf.py
+file path=usr/share/time-slider/lib/time_slider/dbussvc.py
+file path=usr/share/time-slider/lib/time_slider/deletegui.py
+file path=usr/share/time-slider/lib/time_slider/fileversion.py
+file path=usr/share/time-slider/lib/time_slider/rbac.py
+file path=usr/share/time-slider/lib/time_slider/setupgui.py
+file path=usr/share/time-slider/lib/time_slider/smf.py
+file path=usr/share/time-slider/lib/time_slider/snapnowui.py
+file path=usr/share/time-slider/lib/time_slider/timesliderd.py
+file path=usr/share/time-slider/lib/time_slider/timeslidersmf.py
+file path=usr/share/time-slider/lib/time_slider/util.py
+file path=usr/share/time-slider/lib/time_slider/zfs.py

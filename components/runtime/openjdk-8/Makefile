@@ -16,6 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
+COMPONENT_REVISION= 1
 
 OPENJDK_BUILD_NUMBER=92
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
@@ -65,7 +66,7 @@ COMPONENT_BUILD_ARGS = JOBS=4
 
 COMPONENT_BUILD_TARGETS = images
 
-CACERTS_DIR=$(WS_TOP)/components/illumos/ca-certificates
+CACERTS_DIR=$(WS_TOP)/components/openindiana/ca-certificates
 CACERTS_INSTALLED=$(CACERTS_DIR)/build/$(MACH32)/.installed
 CACERTS_PROTO_DIR=$(CACERTS_DIR)/build/prototype/$(MACH)
 

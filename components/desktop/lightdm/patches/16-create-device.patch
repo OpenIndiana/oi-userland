@@ -1,0 +1,78 @@
+--- lightdm-1.19.3/src/session.c	2016-08-12 00:32:27.703931801 +0300
++++ session.c	2016-08-12 00:32:21.342169373 +0300
+@@ -20,6 +20,10 @@
+ #include <glib/gstdio.h>
+ #include <grp.h>
+ #include <pwd.h>
++#ifdef __sun__
++#include <sys/param.h>
++#include <utime.h>
++#endif
+ 
+ #ifdef HAVE_SMF_CONTRACTS
+ #include <sys/ctfs.h>
+@@ -137,6 +137,49 @@
+                          G_IMPLEMENT_INTERFACE (
+                              LOGGER_TYPE, session_logger_iface_init));
+ 
++#ifdef __sun__
++static void
++create_device (const char *dev);
++
++static void
++create_device (const char *dev)
++{
++        gchar buf[MAXPATHLEN + 1];
++        struct stat st;
++
++        if (dev == NULL || dev[0] == '\0')
++                return;
++
++        if (strcmp (dev, "/dev/dtlocal")  != 0 &&
++            strcmp (dev, "/dev/dtremote") != 0 )
++                return;
++
++        memset (buf, 0, sizeof (gchar) * (MAXPATHLEN + 1));
++
++        if (stat (dev, &st) != 0) {
++                g_debug ("Creating pseudo-device %s", dev);
++                symlink ("/dev/null", dev);
++        } else if (readlink (dev, buf, MAXPATHLEN) > 0) {
++                if (strcmp (buf, "/dev/null") == 0) {
++                        /* Touch symlink */
++                        struct utimbuf  timebuf;
++        
++                        timebuf.modtime = time ((time_t *) 0);
++                        timebuf.actime  = timebuf.modtime;
++
++                        if ((utime (dev, &timebuf)) != 0)
++                                g_debug ("Problem updating access time of pseudo-device %s", dev);
++                        else
++                                g_debug ("Touching pseudo-device %s", dev);
++                } else {
++                        g_debug ("Device %s points to %s", dev, buf);
++                }
++        } else {
++                g_debug ("Device %s is not a symlink", dev);
++        }
++}
++#endif
++
+ #ifdef HAVE_SMF_CONTRACTS
+ static int contracts_fd = -1;
+ 
+@@ -794,6 +837,14 @@
+     version = 3;
+     write_data (session, &version, sizeof (version));
+ 
++#ifdef __sun__
++    if(session->priv->remote_host_name) {
++       create_device("/dev/dtremote");
++    } else if (!g_str_equal (session->priv->xdisplay,":0")) {
++       create_device("/dev/dtlocal");
++    }
++#endif
++
+     /* Send configuration */
+     write_string (session, session->priv->pam_service);
+     write_string (session, session->priv->username);

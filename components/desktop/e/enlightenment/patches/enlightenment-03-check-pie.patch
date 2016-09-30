@@ -1,0 +1,33 @@
+https://phab.enlightenment.org/T4479
+
+--- enlightenment-0.19.3/configure.ac.1	2016-09-01 14:45:27.400238352 +0300
++++ enlightenment-0.19.3/configure.ac	2016-09-01 14:54:48.922121488 +0300
+@@ -1025,8 +1025,26 @@
+     EFL_COMPILER_FLAG([-Wformat=2])
+    ])
+ 
+-SUID_CFLAGS=-fPIE
+-SUID_LDFLAGS=-pie
++SUID_CFLAGS=
++SUID_LDFLAGS=
++if test -n "$GCC"; then
++  AC_MSG_CHECKING(if GCC supports -fPIE)
++
++  OLDCFLAGS="$CFLAGS"
++  OLDLDFLAGS="$LDFLAGS"
++
++  CFLAGS="$CFLAGS -fPIE"
++  LDFLAGS="$LDFLAGS -pie"
++
++  AC_TRY_LINK(,,
++	[ 
++        SUID_CFLAGS="-fPIE"
++	SUID_LDFLAGS="-pie"
++	AC_MSG_RESULT(yes)],
++	AC_MSG_RESULT(no))
++  CFLAGS="$OLDCFLAGS"
++  LDFLAGS="$OLDLFDLAGS"
++fi
+ AC_SUBST([SUID_CFLAGS])
+ AC_SUBST([SUID_LDFLAGS])
+ 
