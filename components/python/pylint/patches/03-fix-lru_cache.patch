@@ -1,0 +1,17 @@
+Substitute repoze.lru for backports.functools_lru_cache as we already
+have repoze.lru in Userland/Solaris and backports.functools_lru_cache
+has some 4th party dependencies.
+
+This change will not be sent upstream.
+
+--- pylint-1.6.4/pylint/checkers/variables.py.orig	2016-09-29 16:26:46.454143452 +0000
++++ pylint-1.6.4/pylint/checkers/variables.py	2016-09-29 16:29:51.776301211 +0000
+@@ -13,7 +13,7 @@
+ try:
+     from functools import lru_cache
+ except ImportError:
+-    from backports.functools_lru_cache import lru_cache
++    from repoze.lru import lru_cache
+ 
+ import six
+ 

@@ -1,0 +1,30 @@
+Fix pylint 2.7 dependencies:
+- Change the references to backports.functools-lru-cache to repoze.lru
+- Remove references to configparser (this will be automatically handled
+  via the six module).
+
+These changes will not be sent upstream.
+
+--- pylint-1.6.4/pylint/__pkginfo__.py.orig	2016-09-29 16:37:29.087716647 +0000
++++ pylint-1.6.4/pylint/__pkginfo__.py	2016-09-29 16:38:08.944410368 +0000
+@@ -23,7 +23,7 @@
+ 
+ extras_require = {}
+ extras_require[':sys_platform=="win32"'] = ['colorama']
+-extras_require[':python_version=="2.7"'] = ['configparser', 'backports.functools_lru_cache']
++extras_require[':python_version=="2.7"'] = ['repoze.lru']
+ 
+ 
+ license = 'GPL'
+--- pylint-1.6.4/pylint.egg-info/requires.txt.orig	2016-09-29 16:38:53.808066151 +0000
++++ pylint-1.6.4/pylint.egg-info/requires.txt	2016-09-29 16:39:07.395150865 +0000
+@@ -3,8 +3,7 @@
+ isort >= 4.2.5
+ 
+ [:python_version=="2.7"]
+-configparser
+-backports.functools_lru_cache
++repoze.lru
+ 
+ [:sys_platform=="win32"]
+ colorama
