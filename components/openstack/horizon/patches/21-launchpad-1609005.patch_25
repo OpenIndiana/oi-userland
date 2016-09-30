@@ -1,0 +1,47 @@
+Patch to dynamically load panel only of ironic service is configured
+Fixed in upstream via Launchpad bug 1609005 and changeset
+31c70d956262dab46ad263d42581c04e69fd85c4
+Fix included in release 2.0.0
+
+commit 31c70d956262dab46ad263d42581c04e69fd85c4
+Author: Tyr Johanson <tyr@hpe.com>
+Date:   Tue Aug 16 10:28:40 2016 -0600
+
+    Hide panel if 'baremetal' service not present
+    
+    Don't show the ironic panel unless the service is present in the
+    service catalog.  Also, restrict the panel to admin permission.
+    
+    Change-Id: I413d50133e743a7bdc45378e3ed0454974b7b3c7
+    Closes-Bug: 1609005
+
+--- ironic-ORIG/ironic_ui/content/ironic/panel.py	2016-08-17 10:27:15.935362835 +0100
++++ ironic-ui-1.1.2/ironic_ui/content/ironic/panel.py	2016-08-17 10:28:38.290465910 +0100
+@@ -17,7 +17,27 @@
+ 
+ import horizon
+ 
++from openstack_dashboard.api import base
++from openstack_dashboard.dashboards.admin import dashboard
++
+ 
+ class Ironic(horizon.Panel):
+     name = _("Ironic Bare Metal Provisioning")
+     slug = 'ironic'
++    permissions = ('openstack.roles.admin',)
++
++    def allowed(self, context):
++        request = context['request']
++        if not base.is_service_enabled(request, 'baremetal'):
++            return False
++        else:
++            return super(Ironic, self).allowed(context)
++
++    def nav(self, context):
++        request = context['request']
++        if not base.is_service_enabled(request, 'baremetal'):
++            return False
++        else:
++            return True
++
++dashboard.Admin.register(Ironic)

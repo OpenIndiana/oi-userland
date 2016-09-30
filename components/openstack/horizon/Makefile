@@ -51,11 +51,12 @@ TPNO_BOOTSWATCH=		27202
 TPNO_D3=			20822
 TPNO_FONT_AWESOME=		25763
 TPNO_HOGAN=			21827
+TPNO_IRONIC_UI=			31179
 TPNO_JQUERY=			21642
 TPNO_JQUERY_MIGRATE=		13315
-TPNO_JQUERY_UI=			18416
 TPNO_JQUERY_QUICKSEARCH=	20396
 TPNO_JQUERY_TABLESORTER=	20824
+TPNO_JQUERY_UI=			18416
 TPNO_JSENCRYPT=			20397
 TPNO_MDI=			30294
 TPNO_RICKSHAW=			20673
@@ -281,6 +282,15 @@ COMPONENT_ARCHIVE_HASH_24 = \
 COMPONENT_ARCHIVE_URL_24 = $(call pypi_url,24)
 PKG_MACROS +=		VERSION_ROBOTO_FF=$(basename $(COMPONENT_VERSION_24))
 
+COMPONENT_NAME_25 =		ironic-ui
+COMPONENT_VERSION_25 =	1.1.2
+COMPONENT_SRC_25 =		ironic-ui-$(COMPONENT_VERSION_25)
+COMPONENT_ARCHIVE_25 =	ironic-ui-$(COMPONENT_VERSION_25).tar.gz
+COMPONENT_ARCHIVE_HASH_25 =	\
+    sha256:4db1d1516b1fde1b917cb8a87a877d3e470e8159a84ad0dc989ec4e71f17a7fd
+COMPONENT_ARCHIVE_URL_25 = $(call pypi_url,25)
+PKG_MACROS +=		VERSION_IRONIC_UI=$(COMPONENT_VERSION_25)
+
 PKG_VARS +=		COMPONENT_BE_VERSION
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -338,6 +348,7 @@ COMPONENT_POST_INSTALL_ACTION += \
      cd $(PROTO_PYTHON_LIB)/openstack_dashboard; \
      $(CP) $(COMPONENT_DIR)/files/local_settings_static.py \
 	 local/local_settings.py; \
+     $(CP) ../ironic_ui/enabled/_2200_ironic.py enabled; \
      $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py \
 	 collectstatic --noinput -v 0; \
      $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py compress -v 0; \
@@ -385,7 +396,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 ifneq ($(BUILD_TYPE), evaluation)
 .PHONY:	xstatic
 xstatic:	$(PROTO_DIR) build
-	for xs_archive in $$(ls -d XStatic-* | grep -v .tar.gz); do \
+	for xs_archive in $$(ls -d XStatic-* ironic-ui-* | grep -v .tar.gz); do \
 		cd $$xs_archive; \
 		$(ENV) $(PYTHON.$(BITS)) ./setup.py build; \
 		$(ENV) $(PYTHON.$(BITS)) ./setup.py install \
@@ -410,10 +421,6 @@ endif
 test:		$(NO_TESTS)
 
 system-test:	$(NO_TESTS)
-
-clean::
-	gfind $(COMPONENT_DIR) -maxdepth 1 -type d -name "XStatic*" \
-	    -exec rm -r {} \;
 
 # Includes packages required by Django's manage.py during the Horizon build
 REQUIRED_PACKAGES += library/python/babel-27
