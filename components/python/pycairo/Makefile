@@ -63,6 +63,9 @@ COMPONENT_POST_UNPACK_ACTION += \
 # Do not install optimised compiled .pyo files
 CONFIGURE_OPTIONS += --nopyo
 
+# This needed to be added for pycairo to build cleanly s12_109 onwards
+studio_C99MODE = $(studio_C99_ENABLE)
+
 # The bundled waf compiles to the old pre-python-3.2 locations, so
 # tell it not to bother, and take care of it ourselves
 CONFIGURE_OPTIONS += --nopyc
