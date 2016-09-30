@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2016 Carsten Grzemba cgrzemba≈@opencsw.org
 #
 
 include ../../../make-rules/shared-macros.mk
