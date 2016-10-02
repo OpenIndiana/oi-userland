@@ -1,0 +1,25 @@
+From 6d8a19910a89bfa91c3029c1ec5a8c2bdefb6c25 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Thu, 14 Jul 2016 12:14:11 -0400
+Subject: uxa: Don't bother with xf86GARTCloseScreen
+
+We only ever use xserver's AGP support from the i810 driver.
+
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 73d7f4f..62abdd2 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -1172,8 +1172,6 @@ static Bool I830CloseScreen(CLOSE_SCREEN_ARGS_DECL)
+ 
+ 	intel_sync_close(screen);
+ 
+-	xf86GARTCloseScreen(scrn->scrnIndex);
+-
+ 	scrn->vtSema = FALSE;
+ 	return TRUE;
+ }
+-- 
+cgit v0.10.2
+

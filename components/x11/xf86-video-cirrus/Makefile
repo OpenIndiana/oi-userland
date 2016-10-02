@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-cirrus
-COMPONENT_VERSION= 1.5.2
-COMPONENT_REVISION=1
+COMPONENT_VERSION= 1.5.3
 COMPONENT_SUMMARY= xf86-video-cirrus - Cirrus Logic video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3361e1a65d9b84c464752fd612bdf6087622c6dd204121715366a170e5c3ccd7
+  sha256:edc87b20a55259126b5239b5c1ef913419eab7ded0ed12ae9ae989460d7351ab
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -58,3 +57,7 @@ LD_OPTIONS= \
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/server/xorg

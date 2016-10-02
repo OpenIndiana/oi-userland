@@ -1,0 +1,351 @@
+From 24ab9145c7748cb344b69d70b4f8eccb0c90db76 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 20 Jul 2016 11:16:47 +0100
+Subject: Update to ABI 22 and NotifyFd
+
+ABI 22 brings in a new BlockHandler/WakeupHandler interface
+(SetNotifyFd) and throws out the current interface (albeit without
+delivering any improvements).
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/compat-api.h b/src/compat-api.h
+index 64e3736..05797a0 100644
+--- a/src/compat-api.h
++++ b/src/compat-api.h
+@@ -30,6 +30,7 @@
+ 
+ #include <xorg-server.h>
+ #include <xorgVersion.h>
++#include <xf86Module.h>
+ 
+ #include <picturestr.h>
+ #ifndef GLYPH_HAS_GLYPH_PICTURE_ACCESSOR
+@@ -48,6 +49,10 @@
+ #define xf86ScrnToScreen(s) ((s)->pScreen)
+ #endif
+ 
++#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) >= 22
++#define HAVE_NOTIFY_FD 1
++#endif
++
+ #ifndef XF86_SCRN_INTERFACE
+ 
+ #define SCRN_ARG_TYPE int
+@@ -250,4 +255,9 @@ static inline void FreePixmap(PixmapPtr pixmap)
+ #define PixmapSyncDirtyHelper(d, dd) PixmapSyncDirtyHelper(d)
+ #endif
+ 
++#if !HAVE_NOTIFY_FD
++#define SetNotifyFd(fd, cb, mode, data) AddGeneralSocket(fd);
++#define RemoveNotifyFd(fd) RemoveGeneralSocket(fd)
++#endif
++
+ #endif
+#diff --git a/src/sna/sna.h b/src/sna/sna.h
+#index 64bf498..76d66cb 100644
+#--- a/src/sna/sna.h
+#+++ b/src/sna/sna.h
+#@@ -388,8 +388,10 @@ struct sna {
+# 	EntityInfoPtr pEnt;
+# 	const struct intel_device_info *info;
+# 
+#+#if !HAVE_NOTIFY_FD
+# 	ScreenBlockHandlerProcPtr BlockHandler;
+# 	ScreenWakeupHandlerProcPtr WakeupHandler;
+#+#endif
+# 	CloseScreenProcPtr CloseScreen;
+# 
+# 	PicturePtr clear;
+#diff --git a/src/sna/sna_accel.c b/src/sna/sna_accel.c
+#index 48dcb58..e06cd24 100644
+#--- a/src/sna/sna_accel.c
+#+++ b/src/sna/sna_accel.c
+#@@ -18024,6 +18024,13 @@ static bool sna_option_accel_blt(struct sna *sna)
+# 	return strcasecmp(s, "blt") == 0;
+# }
+# 
+#+#if HAVE_NOTIFY_FD
+#+static void sna_accel_notify(int fd, int ready, void *data)
+#+{
+#+	sna_mode_wakeup(data);
+#+}
+#+#endif
+#+
+# bool sna_accel_init(ScreenPtr screen, struct sna *sna)
+# {
+# 	const char *backend;
+#@@ -18035,7 +18042,7 @@ bool sna_accel_init(ScreenPtr screen, struct sna *sna)
+# 	list_init(&sna->flush_pixmaps);
+# 	list_init(&sna->active_pixmaps);
+# 
+#-	AddGeneralSocket(sna->kgem.fd);
+#+	SetNotifyFd(sna->kgem.fd, sna_accel_notify, X_NOTIFY_READ, sna);
+# 
+# #ifdef DEBUG_MEMORY
+# 	sna->timer_expire[DEBUG_MEMORY_TIMER] = GetTimeInMillis()+ 10 * 1000;
+#@@ -18214,7 +18221,7 @@ void sna_accel_close(struct sna *sna)
+# 	sna_pixmap_expire(sna);
+# 
+# 	DeleteCallback(&FlushCallback, sna_accel_flush_callback, sna);
+#-	RemoveGeneralSocket(sna->kgem.fd);
+#+	RemoveNotifyFd(sna->kgem.fd);
+# 
+# 	kgem_cleanup_cache(&sna->kgem);
+# }
+#diff --git a/src/sna/sna_acpi.c b/src/sna/sna_acpi.c
+#index dcc0287..643d04a 100644
+#--- a/src/sna/sna_acpi.c
+#+++ b/src/sna/sna_acpi.c
+#@@ -92,7 +92,7 @@ void _sna_acpi_wakeup(struct sna *sna)
+# 		DBG(("%s: error [%d], detaching from acpid\n", __FUNCTION__, n));
+# 
+# 		/* XXX reattach later? */
+#-		RemoveGeneralSocket(sna->acpi.fd);
+#+		RemoveNotifyFd(sna->acpi.fd);
+# 		sna_acpi_fini(sna);
+# 		return;
+# 	}
+#@@ -136,6 +136,13 @@ void _sna_acpi_wakeup(struct sna *sna)
+# 	} while (n);
+# }
+# 
+#+#if HAVE_NOTIFY_FD
+#+static void sna_acpi_notify(int fd, int read, void *data)
+#+{
+#+	_sna_acpi_wakeup(data);
+#+}
+#+#endif
+#+
+# static int read_power_state(const char *path)
+# {
+# 	DIR *dir;
+#@@ -200,7 +207,7 @@ void sna_acpi_init(struct sna *sna)
+# 
+# 	DBG(("%s: attaching to acpid\n", __FUNCTION__));
+# 
+#-	AddGeneralSocket(sna->acpi.fd);
+#+	SetNotifyFd(sna->acpi.fd, sna_acpi_notify, X_NOTIFY_READ, sna);
+# 	sna->acpi.remain = sizeof(sna->acpi.event) - 1;
+# 	sna->acpi.offset = 0;
+# 
+#diff --git a/src/sna/sna_display.c b/src/sna/sna_display.c
+#index 10d33f2..ef29a91 100644
+#--- a/src/sna/sna_display.c
+#+++ b/src/sna/sna_display.c
+#@@ -5832,8 +5832,8 @@ static void __restore_swcursor(ScrnInfoPtr scrn)
+# 	enable_fb_access(scrn, FALSE);
+# 	enable_fb_access(scrn, TRUE);
+# 
+#-	RemoveBlockAndWakeupHandlers((BlockHandlerProcPtr)__restore_swcursor,
+#-				     (WakeupHandlerProcPtr)NoopDDA,
+#+	RemoveBlockAndWakeupHandlers((void *)__restore_swcursor,
+#+				     (void *)NoopDDA,
+# 				     scrn);
+# }
+# 
+#@@ -5843,8 +5843,8 @@ static void restore_swcursor(struct sna *sna)
+# 	FreeCursor(sna->cursor.ref, None);
+# 	sna->cursor.ref = NULL;
+# 
+#-	RegisterBlockAndWakeupHandlers((BlockHandlerProcPtr)__restore_swcursor,
+#-				       (WakeupHandlerProcPtr)NoopDDA,
+#+	RegisterBlockAndWakeupHandlers((void *)__restore_swcursor,
+#+				       (void *)NoopDDA,
+# 				       sna->scrn);
+# }
+# 
+#diff --git a/src/sna/sna_driver.c b/src/sna/sna_driver.c
+#index 455113f..60a5a97 100644
+#--- a/src/sna/sna_driver.c
+#+++ b/src/sna/sna_driver.c
+#@@ -681,6 +681,7 @@ cleanup:
+# 	return FALSE;
+# }
+# 
+#+#if !HAVE_NOTIFY_FD
+# static bool has_shadow(struct sna *sna)
+# {
+# 	if (!sna->mode.shadow_enabled)
+#@@ -737,6 +738,31 @@ sna_wakeup_handler(WAKEUPHANDLER_ARGS_DECL)
+# 		FD_CLR(sna->kgem.fd, (fd_set*)read_mask);
+# 	}
+# }
+#+#else
+#+static void
+#+sna_block_handler(void *data, void *_timeout)
+#+{
+#+	struct sna *sna = data;
+#+	int *timeout = _timeout;
+#+	struct timeval tv, *tvp;
+#+
+#+	DBG(("%s (timeout=%d)\n", __FUNCTION__, *timeout));
+#+	if (*timeout == 0)
+#+		return;
+#+
+#+	if (*timeout < 0) {
+#+		tvp = NULL;
+#+	} else {
+#+		tv.tv_sec = *timeout / 1000;
+#+		tv.tv_usec = (*timeout % 1000) * 1000;
+#+		tvp = &tv;
+#+	}
+#+
+#+	sna_accel_block(sna, &tvp);
+#+	if (tvp)
+#+		*timeout = tvp->tv_sec * 1000 + tvp->tv_usec / 1000;
+#+}
+#+#endif
+# 
+# #if HAVE_UDEV
+# #include <sys/stat.h>
+#@@ -1141,11 +1167,17 @@ sna_screen_init(SCREEN_INIT_ARGS_DECL)
+# 	 * later memory should be bound when allocating, e.g rotate_mem */
+# 	scrn->vtSema = TRUE;
+# 
+#+#if !HAVE_NOTIFY_FD
+# 	sna->BlockHandler = screen->BlockHandler;
+# 	screen->BlockHandler = sna_block_handler;
+# 
+# 	sna->WakeupHandler = screen->WakeupHandler;
+# 	screen->WakeupHandler = sna_wakeup_handler;
+#+#else
+#+	RegisterBlockAndWakeupHandlers(sna_block_handler,
+#+				       (ServerWakeupHandlerProcPtr)NoopDDA,
+#+				       sna);
+#+#endif
+# 
+# 	screen->SaveScreen = sna_save_screen;
+# 	screen->CreateScreenResources = sna_create_screen_resources;
+diff --git a/src/uxa/intel.h b/src/uxa/intel.h
+index 054b626..a5e77af 100644
+--- a/src/uxa/intel.h
++++ b/src/uxa/intel.h
+@@ -196,7 +196,9 @@ typedef struct intel_screen_private {
+ 
+ 	int colorKey;
+ 	XF86VideoAdaptorPtr adaptor;
++#if !HAVE_NOTIFY_FD
+ 	ScreenBlockHandlerProcPtr BlockHandler;
++#endif
+ 	Bool overlayOn;
+ 
+ 	struct {
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index fa371c6..809cda1 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -2089,6 +2089,7 @@ intel_pageflip_abort(ScrnInfoPtr scrn, xf86CrtcPtr crtc, void *data)
+ /*
+  * Check for pending DRM events and process them.
+  */
++#if !HAVE_NOTIFY_FD
+ static void
+ drm_wakeup_handler(pointer data, int err, pointer p)
+ {
+@@ -2103,6 +2104,14 @@ drm_wakeup_handler(pointer data, int err, pointer p)
+ 	if (FD_ISSET(mode->fd, read_mask))
+ 		drmHandleEvent(mode->fd, &mode->event_context);
+ }
++#else
++static void
++drm_notify_fd(int fd, int ready, void *data)
++{
++	struct intel_mode *mode = data;
++	drmHandleEvent(mode->fd, &mode->event_context);
++}
++#endif
+ 
+ /*
+  * If there are any available, read drm_events
+@@ -2263,9 +2272,11 @@ intel_mode_init(struct intel_screen_private *intel)
+ 	 * registration within ScreenInit and not PreInit.
+ 	 */
+ 	mode->flip_count = 0;
+-	AddGeneralSocket(mode->fd);
++	SetNotifyFd(mode->fd, drm_notify_fd, X_NOTIFY_READ, mode);
++#if !HAVE_NOTIFY_FD
+ 	RegisterBlockAndWakeupHandlers((BlockHandlerProcPtr)NoopDDA,
+ 				       drm_wakeup_handler, mode);
++#endif
+ }
+ 
+ void
+@@ -2289,9 +2300,11 @@ intel_mode_close(intel_screen_private *intel)
+ 
+         intel_drm_abort_scrn(intel->scrn);
+ 
++#if !HAVE_NOTIFY_FD
+ 	RemoveBlockAndWakeupHandlers((BlockHandlerProcPtr)NoopDDA,
+ 				     drm_wakeup_handler, mode);
+-	RemoveGeneralSocket(mode->fd);
++#endif
++	RemoveNotifyFd(mode->fd);
+ }
+ 
+ void
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 62abdd2..3703c41 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -652,8 +652,9 @@ redisplay_dirty(ScreenPtr screen, PixmapDirtyUpdatePtr dirty)
+ }
+ 
+ static void
+-intel_dirty_update(ScreenPtr screen)
++intel_dirty_update(intel_screen_private *intel)
+ {
++	ScreenPtr screen = xf86ScrnToScreen(intel->scrn);
+ 	RegionPtr region;
+ 	PixmapDirtyUpdatePtr ent;
+ 
+@@ -670,6 +671,7 @@ intel_dirty_update(ScreenPtr screen)
+ }
+ #endif
+ 
++#if !HAVE_NOTIFY_FD
+ static void
+ I830BlockHandler(BLOCKHANDLER_ARGS_DECL)
+ {
+@@ -687,9 +689,22 @@ I830BlockHandler(BLOCKHANDLER_ARGS_DECL)
+ 	intel_uxa_block_handler(intel);
+ 	intel_video_block_handler(intel);
+ #ifdef INTEL_PIXMAP_SHARING
+-	intel_dirty_update(screen);
++	intel_dirty_update(intel);
+ #endif
+ }
++#else
++static void
++I830BlockHandler(void *data, void *timeout)
++{
++	intel_screen_private *intel = data;
++
++	intel_uxa_block_handler(intel);
++	intel_video_block_handler(intel);
++#ifdef INTEL_PIXMAP_SHARING
++	intel_dirty_update(intel);
++#endif
++}
++#endif
+ 
+ static Bool
+ intel_init_initial_framebuffer(ScrnInfoPtr scrn)
+@@ -947,8 +962,14 @@ I830ScreenInit(SCREEN_INIT_ARGS_DECL)
+ 			   "Hardware cursor initialization failed\n");
+ 	}
+ 
++#if !HAVE_NOTIFY_FD
+ 	intel->BlockHandler = screen->BlockHandler;
+ 	screen->BlockHandler = I830BlockHandler;
++#else
++	RegisterBlockAndWakeupHandlers(I830BlockHandler,
++				       (ServerWakeupHandlerProcPtr)NoopDDA,
++				       intel);
++#endif
+ 
+ #ifdef INTEL_PIXMAP_SHARING
+ 	screen->StartPixmapTracking = PixmapStartDirtyTracking;
+-- 
+cgit v0.10.2
+

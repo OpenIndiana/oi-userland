@@ -16,16 +16,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xrandr
-COMPONENT_VERSION=        1.4.3
+COMPONENT_VERSION=        1.5.0
 COMPONENT_FMRI=           x11/xrandr
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xrandr - utility to configure screen sizes and layout
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7154ac3486b86923692f2d6cdb2991a2ee72bc32af2c4379a6f1c068f204be1b
+  sha256:c1cfd4e1d4d708c031d60801e527abc9b6d34b85f2ffa2cadd21f75ff38151cd
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xrandr-1.4.3.tar.bz2
+  http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xrandr.license

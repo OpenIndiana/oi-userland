@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Captain XNV
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libxkbfile
-COMPONENT_VERSION=        1.0.8
+COMPONENT_VERSION=        1.0.9
 COMPONENT_FMRI=           x11/library/libxkbfile
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libxkbfile - XKB file library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8aa94e19c537c43558f30906650cea6e15fa012591445d9f927658c3b32a8f3a
+  sha256:51817e0530961975d9513b773960b4edd275f7d5c72293d5a151ed4f42aeb16a
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libxkbfile-1.0.8.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libxkbfile.license

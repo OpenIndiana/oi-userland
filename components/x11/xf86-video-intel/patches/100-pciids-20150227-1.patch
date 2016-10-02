@@ -1,0 +1,76 @@
+From 445423170d24a8a9f57ac887921cdecf4377f7ca Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 27 Feb 2015 10:15:04 +0000
+Subject: pciids: sync with kernel 0dc6f20b9
+
+No new ids, just fixed descriptions.
+
+Sync upto
+kernel commit 0dc6f20b9803f09726bbb682649d35cda8ef5b5d
+Author: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Date:   Wed Jan 21 11:46:32 2015 -0800
+
+    drm/i915/bdw: PCI IDs ending in 0xb are ULT.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/i915_pciids.h b/src/i915_pciids.h
+index 180ad0e..f2e47fd 100644
+--- a/src/i915_pciids.h
++++ b/src/i915_pciids.h
+@@ -214,9 +214,9 @@
+ 	INTEL_VGA_DEVICE((((gt) - 1) << 4) | (id), info)
+ 
+ #define _INTEL_BDW_M_IDS(gt, info) \
+-	_INTEL_BDW_M(gt, 0x1602, info), /* ULT */ \
++	_INTEL_BDW_M(gt, 0x1602, info), /* Halo */ \
+ 	_INTEL_BDW_M(gt, 0x1606, info), /* ULT */ \
+-	_INTEL_BDW_M(gt, 0x160B, info), /* Iris */ \
++	_INTEL_BDW_M(gt, 0x160B, info), /* ULT */ \
+ 	_INTEL_BDW_M(gt, 0x160E, info) /* ULX */
+ 
+ #define _INTEL_BDW_D_IDS(gt, info) \
+@@ -259,21 +259,31 @@
+ 	INTEL_VGA_DEVICE(0x22b2, info), \
+ 	INTEL_VGA_DEVICE(0x22b3, info)
+ 
+-#define INTEL_SKL_IDS(info) \
+-	INTEL_VGA_DEVICE(0x1916, info), /* ULT GT2 */ \
++#define INTEL_SKL_GT1_IDS(info)	\
+ 	INTEL_VGA_DEVICE(0x1906, info), /* ULT GT1 */ \
+-	INTEL_VGA_DEVICE(0x1926, info), /* ULT GT3 */ \
+-	INTEL_VGA_DEVICE(0x1921, info), /* ULT GT2F */ \
+ 	INTEL_VGA_DEVICE(0x190E, info), /* ULX GT1 */ \
++	INTEL_VGA_DEVICE(0x1902, info), /* DT  GT1 */ \
++	INTEL_VGA_DEVICE(0x190B, info), /* Halo GT1 */ \
++	INTEL_VGA_DEVICE(0x190A, info) /* SRV GT1 */
++
++#define INTEL_SKL_GT2_IDS(info)	\
++	INTEL_VGA_DEVICE(0x1916, info), /* ULT GT2 */ \
++	INTEL_VGA_DEVICE(0x1921, info), /* ULT GT2F */ \
+ 	INTEL_VGA_DEVICE(0x191E, info), /* ULX GT2 */ \
+ 	INTEL_VGA_DEVICE(0x1912, info), /* DT  GT2 */ \
+-	INTEL_VGA_DEVICE(0x1902, info), /* DT  GT1 */ \
+ 	INTEL_VGA_DEVICE(0x191B, info), /* Halo GT2 */ \
+-	INTEL_VGA_DEVICE(0x192B, info), /* Halo GT3 */ \
+-	INTEL_VGA_DEVICE(0x190B, info), /* Halo GT1 */ \
+ 	INTEL_VGA_DEVICE(0x191A, info), /* SRV GT2 */ \
+-	INTEL_VGA_DEVICE(0x192A, info), /* SRV GT3 */ \
+-	INTEL_VGA_DEVICE(0x190A, info), /* SRV GT1 */ \
+ 	INTEL_VGA_DEVICE(0x191D, info)  /* WKS GT2 */
+ 
++#define INTEL_SKL_GT3_IDS(info) \
++	INTEL_VGA_DEVICE(0x1926, info), /* ULT GT3 */ \
++	INTEL_VGA_DEVICE(0x192B, info), /* Halo GT3 */ \
++	INTEL_VGA_DEVICE(0x192A, info) /* SRV GT3 */ \
++
++#define INTEL_SKL_IDS(info) \
++	INTEL_SKL_GT1_IDS(info), \
++	INTEL_SKL_GT2_IDS(info), \
++	INTEL_SKL_GT3_IDS(info)
++
++
+ #endif /* _I915_PCIIDS_H */
+-- 
+cgit v0.10.2
+

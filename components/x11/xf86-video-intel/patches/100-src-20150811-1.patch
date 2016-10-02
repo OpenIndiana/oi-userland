@@ -1,0 +1,61 @@
+From 5a9a3e73a9252cffbaf5f361e98c096095725a64 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Tue, 11 Aug 2015 10:48:48 +0100
+Subject: sna/dri2: Keep the most-recent back buffer cache when reaping on idle
+
+When the client misses a swap, we consider it idle and unlikely to swap
+again for a while. We try to take advantage of that and remove the old
+back buffers. But it is likely to swap again and so having some of that
+cache around would be advantageous.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/intel_list.h b/src/intel_list.h
+index d0408be..df912a8 100644
+--- a/src/intel_list.h
++++ b/src/intel_list.h
+@@ -347,6 +347,11 @@ list_is_empty(const struct list *head)
+ 	 &pos->member != (head);					\
+ 	 pos = tmp, tmp = __container_of(pos->member.next, tmp, member))
+ 
++#define list_for_each_entry_safe_from(pos, tmp, head, member)		\
++    for (tmp = __container_of(pos->member.next, pos, member);		\
++	 &pos->member != (head);					\
++	 pos = tmp, tmp = __container_of(pos->member.next, tmp, member))
++
+ #else
+ 
+ #include <list.h>
+@@ -396,6 +401,11 @@ static inline void list_move_tail(struct list *list, struct list *head)
+ 	 &pos->member != (head);					\
+ 	 pos = __container_of(pos->member.prev, pos, member))
+ 
++#define list_for_each_entry_safe_from(pos, tmp, head, member)		\
++    for (tmp = __container_of(pos->member.next, pos, member)		\
++	 &pos->member != (head);					\
++	 pos = tmp)
++
+ #endif
+ 
+ #undef container_of
+#diff --git a/src/sna/sna_dri2.c b/src/sna/sna_dri2.c
+#index bae9314..e6f4d43 100644
+#--- a/src/sna/sna_dri2.c
+#+++ b/src/sna/sna_dri2.c
+#@@ -1510,10 +1510,10 @@ sna_dri2_remove_event(WindowPtr win, struct sna_dri2_event *info)
+# 
+# 	priv->chain = info->chain;
+# 	if (priv->chain == NULL) {
+#-		while (!list_is_empty(&priv->cache)) {
+#-			struct dri_bo *c;
+#+		struct dri_bo *c, *tmp;
+# 
+#-			c = list_first_entry(&priv->cache, struct dri_bo, link);
+#+		c = list_entry(priv->cache.next->next, struct dri_bo, link);
+#+		list_for_each_entry_safe_from(c, tmp, &priv->cache, link) {
+# 			list_del(&c->link);
+# 
+# 			DBG(("%s: releasing cached handle=%d\n", __FUNCTION__, c->bo ? c->bo->handle : 0));
+-- 
+cgit v0.10.2
+

@@ -1,0 +1,50 @@
+From 03bed1c7ba838af9aa6ab722aeaa070aa4cc70e3 Mon Sep 17 00:00:00 2001
+From: Lyude <cpaul@redhat.com>
+Date: Wed, 23 Mar 2016 15:44:37 -0400
+Subject: uxa: Restore old bo on failure
+
+When we fail to do a modeset, we need to make sure that we restore the
+previous bo in the event that it's changed. Otherwise we'll crash the X
+server the next time we do a pageflip.
+
+This fixes an issue with panning crashing the X server if a user tries
+to set a large panning resolution such as 5200x3200, and the GPU doesn't
+have enough memory to handle the bo due to being in UXA mode.
+
+Signed-off-by: Lyude <cpaul@redhat.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_uxa.c b/src/uxa/intel_uxa.c
+index 590ff5d..830f094 100644
+--- a/src/uxa/intel_uxa.c
++++ b/src/uxa/intel_uxa.c
+@@ -1068,7 +1068,7 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+ 	ScrnInfoPtr scrn = xf86ScreenToScrn(screen);
+ 	PixmapPtr pixmap;
+ 	intel_screen_private *intel = intel_get_screen_private(scrn);
+-	dri_bo *bo = intel->front_buffer;
++	dri_bo *bo = intel->front_buffer, *old_bo;
+ 	int old_width, old_height, old_pitch;
+ 
+ 	if (!uxa_resources_init(screen))
+@@ -1081,6 +1081,7 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+ 	old_width = pixmap->drawable.width;
+ 	old_height = pixmap->drawable.height;
+ 	old_pitch = pixmap->devKind;
++	old_bo = intel_uxa_get_pixmap_bo(pixmap);
+ 
+ 	if (!screen->ModifyPixmapHeader(pixmap,
+ 					scrn->virtualX,
+@@ -1102,6 +1103,9 @@ Bool intel_uxa_create_screen_resources(ScreenPtr screen)
+ err:
+ 	screen->ModifyPixmapHeader(pixmap,
+ 				   old_width, old_height, -1, -1, old_pitch, NULL);
++	if (old_bo)
++		intel_uxa_set_pixmap_bo(pixmap, old_bo);
++
+ 	return FALSE;
+ }
+ 
+-- 
+cgit v0.10.2
+

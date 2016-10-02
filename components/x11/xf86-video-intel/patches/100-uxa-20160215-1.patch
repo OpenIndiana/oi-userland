@@ -1,0 +1,35 @@
+From 7c81719b7fcba091fe2e9cf6fb7cb62a13d4f1dd Mon Sep 17 00:00:00 2001
+From: Martin Peres <martin.peres@linux.intel.com>
+Date: Thu, 11 Feb 2016 12:19:13 +0200
+Subject: display: prevent a NULL pointer dereference in
+ intel_set_scanout_pixmap
+
+Caught by Klockwork.
+
+v2:
+ - be less verbose on failure
+
+Signed-off-by: Martin Peres <martin.peres@linux.intel.com>
+
+diff --git a/src/uxa/intel_display.c b/src/uxa/intel_display.c
+index 8bf0184..fa371c6 100644
+--- a/src/uxa/intel_display.c
++++ b/src/uxa/intel_display.c
+@@ -688,9 +688,11 @@ intel_set_scanout_pixmap(xf86CrtcPtr crtc, PixmapPtr ppix)
+ 	}
+ 
+ 	bo = intel_get_pixmap_bo(ppix);
+-	if (intel->front_buffer) {
+-		ErrorF("have front buffer\n");
+-	}
++	if (!bo)
++		return FALSE;
++
++	if (intel->front_buffer)
++		return FALSE;
+ 
+ 	drm_intel_bo_disable_reuse(bo);
+ 
+-- 
+cgit v0.10.2
+

@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Captain XNV
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libfontenc
-COMPONENT_VERSION=        1.1.2
+COMPONENT_VERSION=        1.1.3
 COMPONENT_FMRI=           x11/library/libfontenc
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libfontenc - font encoding table parser and mapping library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a9a4efed3359b2e80161bb66b65038fac145137fa134e71335264cbc23b02f62
+  sha256:70588930e6fc9542ff38e0884778fbc6e6febf21adbab92fd8f524fe60aefd21
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libfontenc-1.1.2.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libfontenc.license

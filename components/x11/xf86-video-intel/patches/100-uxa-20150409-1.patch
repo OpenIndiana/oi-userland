@@ -1,0 +1,51 @@
+From fbefc8f2bd4242c3f01b02e25276340237b34a88 Mon Sep 17 00:00:00 2001
+From: Olivier Fourdan <ofourdan@redhat.com>
+Date: Thu, 9 Apr 2015 11:45:27 +0100
+Subject: uxa: Do not register hotplug without RandR
+
+When using Xinerama, RandR is automatically disabled, and calling RR
+routines will trigger an assert() because the RR keys/resources are
+not set, leading to an Xserver abort.
+
+Hotplug makes little sense without RandR, so no need to install a
+udev monitor if RandR is not available, as done in sna.
+
+v3: Rebase onto backwards compatible rrPrivKey detection [ickle]
+
+Signed-off-by: Olivier Fourdan <ofourdan@redhat.com>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 6e64b8c..0fb8609 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -766,6 +766,15 @@ I830HandleUEvents(int fd, void *closure)
+ 	udev_device_unref(dev);
+ }
+ 
++static bool has_randr(void)
++{
++#if HAS_DIXREGISTERPRIVATEKEY
++	return dixPrivateKeyRegistered(rrPrivKey);
++#else
++	return *rrPrivKey;
++#endif
++}
++
+ static void
+ I830UeventInit(ScrnInfoPtr scrn)
+ {
+@@ -775,6 +784,10 @@ I830UeventInit(ScrnInfoPtr scrn)
+ 	Bool hotplug;
+ 	MessageType from = X_CONFIG;
+ 
++	/* Without RR, nothing we can do here */
++	if (!has_randr())
++		return;
++
+ 	if (!xf86GetOptValBool(intel->Options, OPTION_HOTPLUG, &hotplug)) {
+ 		from = X_DEFAULT;
+ 		hotplug = TRUE;
+-- 
+cgit v0.10.2
+

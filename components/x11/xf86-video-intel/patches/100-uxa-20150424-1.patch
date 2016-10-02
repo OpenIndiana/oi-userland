@@ -1,0 +1,26 @@
+From dafd181441f6cde71e6748adab230e851ca5a277 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 24 Apr 2015 20:48:14 +0100
+Subject: uxa: Fix compilation for bool
+
+../../../src/uxa/intel_driver.c: At top level:
+../../../src/uxa/intel_driver.c:769:1: error: unknown type name 'bool'
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 0fb8609..8e685bd 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -766,7 +766,7 @@ I830HandleUEvents(int fd, void *closure)
+ 	udev_device_unref(dev);
+ }
+ 
+-static bool has_randr(void)
++static int has_randr(void)
+ {
+ #if HAS_DIXREGISTERPRIVATEKEY
+ 	return dixPrivateKeyRegistered(rrPrivKey);
+-- 
+cgit v0.10.2
+

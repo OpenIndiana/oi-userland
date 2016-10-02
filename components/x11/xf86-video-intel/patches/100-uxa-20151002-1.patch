@@ -1,0 +1,22 @@
+From 4e668dd19ca402321091311fc6c2dd5cd9c28f23 Mon Sep 17 00:00:00 2001
+From: Robert Ancell <robert.ancell@canonical.com>
+Date: Fri, 2 Oct 2015 10:43:10 +0100
+Subject: uxa: Add missing const to string to stop compiler warning
+
+
+diff --git a/src/uxa/intel_hwmc.c b/src/uxa/intel_hwmc.c
+index 829cb8e..7854060 100644
+--- a/src/uxa/intel_hwmc.c
++++ b/src/uxa/intel_hwmc.c
+@@ -193,7 +193,7 @@ Bool intel_xvmc_adaptor_init(ScreenPtr pScreen)
+ 	intel_screen_private *intel = intel_get_screen_private(scrn);
+ 	struct pci_device *pci;
+ 	static XF86MCAdaptorRec *pAdapt;
+-	char *name;
++	const char *name;
+ 	char buf[64];
+ 
+ 	if (!intel->XvMCEnabled)
+-- 
+cgit v0.10.2
+

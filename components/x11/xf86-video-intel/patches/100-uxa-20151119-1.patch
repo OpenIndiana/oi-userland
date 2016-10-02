@@ -1,0 +1,116 @@
+From 3cdc1780e3fbd789c40487fed4fb2272002784ab Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Thu, 19 Nov 2015 10:37:42 +0000
+Subject: Rename Option "NoAccel" to "Accel"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Totally cribbed from xf86-video-amdgpu/-radeon:
+
+commit 560b7fe6dc66405762020f00e9a05918a36f3a17
+Author: Michel Dänzer <michel.daenzer@amd.com>
+Date:   Wed Nov 11 17:31:34 2015 +0900
+
+    Rename Option "NoAccel" to "Accel"
+
+Renaming the option removes the need for a double negation when forcing
+acceleration on and is backwards compatible as the option parser
+automagically handles the 'No' prefix.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+From f6e9316ed44ff491e26a7f43db71a4883147ca5b Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Thu, 19 Nov 2015 23:20:07 +0000
+Subject: Re-enable acceleration!
+
+Double negatives are most confusing before coffee. In removing the
+double negation from the xorg.conf, I inverted the option in the code
+but didn't invert the test. As a result, acceleration was now disabled
+unless you explicitly asked for NoAccel.
+
+Reported-by: Jan Steffens
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/man/intel.man b/man/intel.man
+index 318a5b7..8da496e 100644
+--- a/man/intel.man
++++ b/man/intel.man
+@@ -112,8 +112,8 @@ The default is 8192 if AGP allocable memory is < 128 MB, 16384 if < 192 MB,
+ 24576 if higher. DRI require at least a value of 16384. Higher values may give
+ better 3D performance, at expense of available system memory.
+ .TP
+-.BI "Option \*qNoAccel\*q \*q" boolean \*q
+-Disable or enable acceleration.
++.BI "Option \*qAccel\*q \*q" boolean \*q
++Enable or disable acceleration.
+ .IP
+ Default: acceleration is enabled.
+ 
+@@ -122,8 +122,8 @@ The following driver
+ .B Options
+ are supported for the 830M and later chipsets:
+ .TP
+-.BI "Option \*qNoAccel\*q \*q" boolean \*q
+-Disable or enable acceleration.
++.BI "Option \*qAccel\*q \*q" boolean \*q
++Enable or disable acceleration.
+ .IP
+ Default: acceleration is enabled.
+ .TP
+diff --git a/src/intel_options.c b/src/intel_options.c
+index d19736b..7f253ac 100644
+--- a/src/intel_options.c
++++ b/src/intel_options.c
+@@ -9,7 +9,7 @@
+ #include "intel_options.h"
+ 
+ const OptionInfoRec intel_options[] = {
+-	{OPTION_ACCEL_DISABLE,	"NoAccel",	OPTV_BOOLEAN,	{0},	0},
++	{OPTION_ACCEL_ENABLE,	"Accel",	OPTV_BOOLEAN,	{0},	0},
+ 	{OPTION_ACCEL_METHOD,	"AccelMethod",	OPTV_STRING,	{0},	0},
+ 	{OPTION_BACKLIGHT,	"Backlight",	OPTV_STRING,	{0},	0},
+ 	{OPTION_EDID,		"CustomEDID",	OPTV_STRING,	{0},	0},
+diff --git a/src/intel_options.h b/src/intel_options.h
+index a831c55..43635f1 100644
+--- a/src/intel_options.h
++++ b/src/intel_options.h
+@@ -12,7 +12,7 @@
+  */
+ 
+ enum intel_options {
+-	OPTION_ACCEL_DISABLE,
++	OPTION_ACCEL_ENABLE,
+ 	OPTION_ACCEL_METHOD,
+ 	OPTION_BACKLIGHT,
+ 	OPTION_EDID,
+diff --git a/src/sna/sna_accel.c b/src/sna/sna_accel.c
+index 7d7731b..7e20715 100644
+--- a/src/sna/sna_accel.c
++++ b/src/sna/sna_accel.c
+@@ -17985,7 +17985,7 @@ static bool sna_option_accel_none(struct sna *sna)
+ 	if (wedged(sna))
+ 		return true;
+ 
+-	if (xf86ReturnOptValBool(sna->Options, OPTION_ACCEL_DISABLE, FALSE))
++	if (!xf86ReturnOptValBool(sna->Options, OPTION_ACCEL_ENABLE, TRUE))
+ 		return true;
+ 
+ 	if (sna->kgem.gen >= 0120)
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 8e685bd..70bce84 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -364,7 +364,7 @@ static Bool can_accelerate_blt(struct intel_screen_private *intel)
+ 	if (INTEL_INFO(intel)->gen == -1)
+ 		return FALSE;
+ 
+-	if (xf86ReturnOptValBool(intel->Options, OPTION_ACCEL_DISABLE, FALSE) ||
++	if (!xf86ReturnOptValBool(intel->Options, OPTION_ACCEL_ENABLE, TRUE) ||
+ 	    !intel_option_cast_to_bool(intel->Options, OPTION_ACCEL_METHOD, TRUE)) {
+ 		xf86DrvMsg(intel->scrn->scrnIndex, X_CONFIG,
+ 			   "Disabling hardware acceleration.\n");
+-- 
+cgit v0.10.2
+

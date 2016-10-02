@@ -1,0 +1,62 @@
+From ca71ee06851058b86405c677c204790d0fb94e36 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Thu, 5 Feb 2015 08:40:01 +0000
+Subject: uxa/present: Do not allow the unflip to fail
+
+As we cannot propagate the failure for unflipping back to the caller, we
+must ensure that the CRTCs are correctly reset if the attempt to flip
+back to normality fails.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_present.c b/src/uxa/intel_present.c
+index d20043f..2e57e7a 100644
+--- a/src/uxa/intel_present.c
++++ b/src/uxa/intel_present.c
+@@ -343,29 +343,33 @@ intel_present_unflip(ScreenPtr screen, uint64_t event_id)
+ {
+ 	ScrnInfoPtr                             scrn = xf86ScreenToScrn(screen);
+ 	intel_screen_private                    *intel = intel_get_screen_private(scrn);
+-	struct intel_present_vblank_event       *event;
+ 	PixmapPtr                               pixmap = screen->GetScreenPixmap(screen);
++	struct intel_present_vblank_event       *event = NULL;
+ 	dri_bo                                  *bo;
+-	Bool                                    ret;
+ 
+ 	if (!intel_present_check_flip(NULL, screen->root, pixmap, true))
+-		return;
++		goto fail;
+ 
+ 	bo = intel_get_pixmap_bo(pixmap);
+ 	if (!bo)
+-		return;
++		goto fail;
+ 
+ 	event = calloc(1, sizeof(struct intel_present_vblank_event));
+ 	if (!event)
+-		return;
++		goto fail;
+ 
+ 	event->event_id = event_id;
+ 
+-	ret = intel_do_pageflip(intel, bo, -1, FALSE, event, intel_present_flip_event, intel_present_flip_abort);
+-	if (!ret) {
+-		xf86DrvMsg(scrn->scrnIndex, X_ERROR,
+-			   "present unflip failed\n");
+-	}
++	if (intel_do_pageflip(intel, bo, -1, FALSE, event,
++			      intel_present_flip_event,
++			      intel_present_flip_abort))
++		goto fail;
++
++	return;
++fail:
++	xf86SetDesiredModes(scrn);
++	present_event_notify(event_id, 0, 0);
++	free(event);
+ }
+ 
+ static present_screen_info_rec intel_present_screen_info = {
+-- 
+cgit v0.10.2
+

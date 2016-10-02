@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.14.7
+COMPONENT_VERSION= 1.18.4
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fcf66fa6ad86227613d2d3e8ae13ded297e2a1e947e9060a083eaf80d323451f
+  sha256:278459b2c31d61a15655d95a72fb79930c480a6bb8cf9226e48a07df8b1d31c8
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/wiki/
@@ -48,7 +48,19 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 CPPFLAGS += -DSUNSOFT -DTSOL
+CPPFLAGS += -I$(USRINCDIR)/pixman-1
+CPPFLAGS += -I$(USRINCDIR)/X11/dri
 CPP = $(CC) -E -std=gnu99
+
+# From X11 S12 module:
+# Pass linker mapfile listing symbols that modules can count on resolving
+# from the Xorg binary itself
+XORG_EXTERNS_FILE = mapfile-Xorg-externs.$(MACH)
+XORG_EXTERNS_FLAG = -Wl,-M,$(COMPONENT_DIR)/$(XORG_EXTERNS_FILE)
+COMPONENT_BUILD_ENV += XORG_EXTERNS_FLAG='$(XORG_EXTERNS_FLAG)'
+COMPONENT_BUILD_ENV += LD_SHARED_OPTIONS='-M $(COMPONENT_DIR)/$(XORG_EXTERNS_FILE)'
+
+LDFLAGS += -L/usr/lib/xorg/$(ARCHLIBSUBDIR) -R/usr/lib/xorg/$(ARCHLIBSUBDIR)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -61,8 +73,11 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
 CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
+CONFIGURE_OPTIONS += --disable-systemd-logind
 CONFIGURE_OPTIONS += --enable-dmx
+CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
+CONFIGURE_OPTIONS += --enable-dri3
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
 CONFIGURE_OPTIONS += --enable-shared
@@ -85,6 +100,9 @@ CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += CPP="$(CPP)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) -lm"
+CONFIGURE_ENV += GL_CFLAGS="-I/usr/include/mesa -L/usr/lib/mesa/$(LIBSUBDIR)"
+CONFIGURE_ENV += XSERVERCFLAGS_CFLAGS="-DHAS_FCHOWN -DHAS_STICKY_DIR_BIT -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DXTHREADS -DXUSE_MTSAFE_API"
 
 COMPONENT_BUILD_ENV += SERVERMOD_SUBDIR="$(SERVERMOD_SUBDIR)"
 

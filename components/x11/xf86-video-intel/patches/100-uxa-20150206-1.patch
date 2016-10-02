@@ -1,0 +1,29 @@
+From 4c9af314774d366583411f44b0c9b7dd1a1198f2 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 6 Feb 2015 08:05:15 +0000
+Subject: uxa/present: Do flip returns 0 on failure
+
+Oops, inverted error handling lead to use-after-free and calamity.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_present.c b/src/uxa/intel_present.c
+index 2e57e7a..a7f904c 100644
+--- a/src/uxa/intel_present.c
++++ b/src/uxa/intel_present.c
+@@ -360,9 +360,9 @@ intel_present_unflip(ScreenPtr screen, uint64_t event_id)
+ 
+ 	event->event_id = event_id;
+ 
+-	if (intel_do_pageflip(intel, bo, -1, FALSE, event,
+-			      intel_present_flip_event,
+-			      intel_present_flip_abort))
++	if (!intel_do_pageflip(intel, bo, -1, FALSE, event,
++			       intel_present_flip_event,
++			       intel_present_flip_abort))
+ 		goto fail;
+ 
+ 	return;
+-- 
+cgit v0.10.2
+

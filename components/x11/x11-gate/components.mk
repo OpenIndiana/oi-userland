@@ -133,7 +133,7 @@ COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= freeglut
 COMPONENTS+= ../pixman
 COMPONENTS+= libxkbcommon
-#COMPONENTS+= libvdpau TBD
+COMPONENTS+= libvdpau
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # app
@@ -154,14 +154,14 @@ COMPONENTS+= installalias
 COMPONENTS+= listres
 COMPONENTS+= luit
 COMPONENTS+= kbd_mode
-COMPONENTS+= mesa-demos
+#COMPONENTS+= mesa-demos
 COMPONENTS+= mkcookie
 COMPONENTS+= oclock
 COMPONENTS+= sessreg
 COMPONENTS+= setxkbmap
 COMPONENTS+= showfont
 COMPONENTS+= smproxy
-#COMPONENTS+= synergy TDB
+#COMPONENTS+= synergy
 COMPONENTS+= winsysck
 COMPONENTS+= twm
 COMPONENTS+= viewres

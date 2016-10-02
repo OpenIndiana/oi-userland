@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXrandr
-COMPONENT_VERSION=        1.4.2
+COMPONENT_VERSION=        1.5.0
 COMPONENT_FMRI=           x11/library/libxrandr
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXrandr - X Resize and Rotate extension library 
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:caa7b31ac769be51a532343c65376f1d4df3f307afaed58e34fb5e82e8b825ad
+  sha256:6f864959b7fc35db11754b270d71106ef5b5cf363426aa58589cb8ac8266de58
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/

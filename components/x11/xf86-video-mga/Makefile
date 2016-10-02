@@ -61,3 +61,8 @@ CONFIGURE_OPTIONS += XORG_LIBS="$(DRIVER_LD_FLAGS)"
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/server/xorg

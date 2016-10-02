@@ -1,0 +1,73 @@
+From c446a7ccc783e3ca00b4b15d017c6e3af66dc646 Mon Sep 17 00:00:00 2001
+From: Wayne Boyer <wayne.boyer@intel.com>
+Date: Wed, 18 Nov 2015 10:39:42 -0800
+Subject: Add Kabylake PCI IDs
+
+Add the Kabylake PCI IDs based on the following kernel patches:
+
+commit d97044b661d0d56b2a2ae9b2b95ab0b359b417dc
+Author: Deepak S <deepak.s@intel.com>
+Date:   Wed Oct 28 12:19:51 2015 -0700
+
+    drm/i915/kbl: Add Kabylake PCI ID
+
+commit 8b10c0cf21ec84618d4bf02c73c0543500ece68d
+Author: Deepak S <deepak.s@intel.com>
+Date:   Wed Oct 28 12:21:12 2015 -0700
+
+    drm/i915/kbl: Add Kabylake GT4 PCI ID
+
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Wayne Boyer <wayne.boyer@intel.com>
+[ickle: Copy across the real i915_pciids.h from the kernel]
+
+diff --git a/src/i915_pciids.h b/src/i915_pciids.h
+index 17c4456..f1a113e 100644
+--- a/src/i915_pciids.h
++++ b/src/i915_pciids.h
+@@ -291,4 +291,40 @@
+ 	INTEL_VGA_DEVICE(0x1A84, info), \
+ 	INTEL_VGA_DEVICE(0x5A84, info)
+ 
++#define INTEL_KBL_GT1_IDS(info)	\
++	INTEL_VGA_DEVICE(0x5913, info), /* ULT GT1.5 */ \
++	INTEL_VGA_DEVICE(0x5915, info), /* ULX GT1.5 */ \
++	INTEL_VGA_DEVICE(0x5917, info), /* DT  GT1.5 */ \
++	INTEL_VGA_DEVICE(0x5906, info), /* ULT GT1 */ \
++	INTEL_VGA_DEVICE(0x590E, info), /* ULX GT1 */ \
++	INTEL_VGA_DEVICE(0x5902, info), /* DT  GT1 */ \
++	INTEL_VGA_DEVICE(0x590B, info), /* Halo GT1 */ \
++	INTEL_VGA_DEVICE(0x590A, info) /* SRV GT1 */
++
++#define INTEL_KBL_GT2_IDS(info)	\
++	INTEL_VGA_DEVICE(0x5916, info), /* ULT GT2 */ \
++	INTEL_VGA_DEVICE(0x5921, info), /* ULT GT2F */ \
++	INTEL_VGA_DEVICE(0x591E, info), /* ULX GT2 */ \
++	INTEL_VGA_DEVICE(0x5912, info), /* DT  GT2 */ \
++	INTEL_VGA_DEVICE(0x591B, info), /* Halo GT2 */ \
++	INTEL_VGA_DEVICE(0x591A, info), /* SRV GT2 */ \
++	INTEL_VGA_DEVICE(0x591D, info) /* WKS GT2 */
++
++#define INTEL_KBL_GT3_IDS(info) \
++	INTEL_VGA_DEVICE(0x5926, info), /* ULT GT3 */ \
++	INTEL_VGA_DEVICE(0x592B, info), /* Halo GT3 */ \
++	INTEL_VGA_DEVICE(0x592A, info) /* SRV GT3 */
++
++#define INTEL_KBL_GT4_IDS(info) \
++	INTEL_VGA_DEVICE(0x5932, info), /* DT  GT4 */ \
++	INTEL_VGA_DEVICE(0x593B, info), /* Halo GT4 */ \
++	INTEL_VGA_DEVICE(0x593A, info), /* SRV GT4 */ \
++	INTEL_VGA_DEVICE(0x593D, info)  /* WKS GT4 */
++
++#define INTEL_KBL_IDS(info) \
++	INTEL_KBL_GT1_IDS(info), \
++	INTEL_KBL_GT2_IDS(info), \
++	INTEL_KBL_GT3_IDS(info), \
++	INTEL_KBL_GT4_IDS(info)
++
+ #endif /* _I915_PCIIDS_H */
+ 
+-- 
+cgit v0.10.2
+

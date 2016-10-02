@@ -1,0 +1,493 @@
+diff -Nurb intel-gpu-tools-1.16/benchmarks/gem_exec_tracer.c intel-gpu-tools-1.16-illumos/benchmarks/gem_exec_tracer.c
+--- intel-gpu-tools-1.16/benchmarks/gem_exec_tracer.c	2016-05-23 12:51:28.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/benchmarks/gem_exec_tracer.c	2016-09-12 01:08:52.931512982 +0200
+@@ -42,6 +42,14 @@
+ #include "intel_aub.h"
+ #include "intel_chipset.h"
+ 
++/* Solaris-specific formerly in drm.h */
++#if defined(__sun) && defined(__SVR4)
++#include <sys/mkdev.h>
++#define	_IOC_TYPEMASK   ((1 << _IOC_TYPEBITS)-1)
++#define	_IOC_TYPE(nr)		(((nr) >> _IOC_TYPESHIFT) & _IOC_TYPEMASK)
++#include <sys/ioccom.h>
++#endif
++
+ static int (*libc_close)(int fd);
+ static int (*libc_ioctl)(int fd, unsigned long request, void *argp);
+ 
+@@ -199,6 +207,7 @@
+ 	return strcmp(name, "i915") == 0;
+ }
+ 
++#if !defined(__sun)
+ int
+ ioctl(int fd, unsigned long request, ...)
+ {
+@@ -277,6 +286,7 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static void __attribute__ ((constructor))
+ init(void)
+diff -Nurb intel-gpu-tools-1.16/benchmarks/gem_syslatency.c intel-gpu-tools-1.16-illumos/benchmarks/gem_syslatency.c
+--- intel-gpu-tools-1.16/benchmarks/gem_syslatency.c	2016-05-23 12:51:28.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/benchmarks/gem_syslatency.c	2016-09-12 01:08:52.931569952 +0200
+@@ -43,10 +43,15 @@
+ #include <limits.h>
+ #include "drm.h"
+ 
++#if defined(__sun) && defined(__SVR4)
++#define HAS_NOTIFY_THREAD_ID 0
++#define gettid() (unsigned long)pthread_self();
++#else
++#define HAS_NOTIFY_THREAD_ID 1
+ #include <linux/unistd.h>
+-
+ #define gettid() syscall(__NR_gettid)
+ #define sigev_notify_thread_id _sigev_un._tid
++#endif
+ 
+ static volatile int done;
+ 
+@@ -155,8 +160,10 @@
+ 	sigaddset(&mask, SIG);
+ 	sigprocmask(SIG_SETMASK, &mask, NULL);
+ 
++#if HAS_NOTIFY_THREAD_ID
+ 	sev.sigev_notify = SIGEV_SIGNAL | SIGEV_THREAD_ID;
+ 	sev.sigev_notify_thread_id = gettid();
++#endif
+ 	sev.sigev_signo = SIG;
+ 	timer_create(CLOCK_MONOTONIC, &sev, &timer);
+ 
+diff -Nurb intel-gpu-tools-1.16/lib/igt_aux.c intel-gpu-tools-1.16-illumos/lib/igt_aux.c
+--- intel-gpu-tools-1.16/lib/igt_aux.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/lib/igt_aux.c	2016-09-12 01:08:52.930251643 +0200
+@@ -39,6 +39,7 @@
+ #include <sys/mman.h>
+ #include <signal.h>
+ #include <pciaccess.h>
++#include <pthread.h>
+ #include <stdlib.h>
+ #include <time.h>
+ #include <unistd.h>
+@@ -82,8 +83,14 @@
+ #define NSEC_PER_SEC (1000*USEC_PER_SEC)
+ 
+ /* signal interrupt helpers */
++#if defined(__sun) && defined(__SVR4)
++#define HAS_NOTIFY_THREAD_ID 0
++#define gettid() (unsigned long)pthread_self();
++#else
++#define HAS_NOTIFY_THREAD_ID 1
+ #define gettid() syscall(__NR_gettid)
+ #define sigev_notify_thread_id _sigev_un._tid
++#endif
+ 
+ static struct __igt_sigiter_global {
+ 	pid_t tid;
+@@ -178,8 +185,10 @@
+ 		__igt_sigiter.tid = gettid();
+ 
+ 		memset(&sev, 0, sizeof(sev));
++#if HAS_NOTIFY_THREAD_ID
+ 		sev.sigev_notify = SIGEV_SIGNAL | SIGEV_THREAD_ID;
+ 		sev.sigev_notify_thread_id = __igt_sigiter.tid;
++#endif
+ 		sev.sigev_signo = SIGRTMIN;
+ 		igt_assert(timer_create(CLOCK_MONOTONIC, &sev, &__igt_sigiter.timer) == 0);
+ 
+@@ -1141,8 +1150,10 @@
+ 	igt_siglatency.sig = sig;
+ 
+ 	memset(&sev, 0, sizeof(sev));
++#if HAS_NOTIFY_THREAD_ID
+ 	sev.sigev_notify = SIGEV_SIGNAL | SIGEV_THREAD_ID;
+ 	sev.sigev_notify_thread_id = gettid();
++#endif
+ 	sev.sigev_signo = sig;
+ 	timer_create(CLOCK_MONOTONIC, &sev, &igt_siglatency.timer);
+ 
+diff -Nurb intel-gpu-tools-1.16/lib/igt_core.c intel-gpu-tools-1.16-illumos/lib/igt_core.c
+--- intel-gpu-tools-1.16/lib/igt_core.c	2016-09-02 13:35:21.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/lib/igt_core.c	2016-09-12 01:08:52.930114607 +0200
+@@ -1772,9 +1772,13 @@
+ #else
+ 		pthread_t tid = pthread_self();
+ 		union sigval value = { .sival_ptr = NULL };
+-
++#if defined(__sun) && defined(__SVR4)
++		sigqueue(getpid(), sig, value);
++#else
+ 		pthread_sigqueue(tid, sig, value);
+ #endif
++
++#endif
+         }
+ }
+ 
+diff -Nurb intel-gpu-tools-1.16/lib/igt_debugfs.c intel-gpu-tools-1.16-illumos/lib/igt_debugfs.c
+--- intel-gpu-tools-1.16/lib/igt_debugfs.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/lib/igt_debugfs.c	2016-09-12 01:08:52.930179058 +0200
+@@ -89,6 +89,7 @@
+ 
+ static const char *__debugfs_mount(void)
+ {
++#ifdef __linux__
+ 	struct stat st;
+ 
+ 	if (stat("/debug/dri", &st) == 0)
+@@ -99,11 +100,13 @@
+ 
+ 	igt_assert(stat("/sys/kernel/debug", &st) == 0);
+ 	igt_assert(mount("debug", "/sys/kernel/debug", "debugfs", 0, 0) == 0);
++#endif
+ 	return "/sys/kernel/debug";
+ }
+ 
+ static bool __igt_debugfs_init(igt_debugfs_t *debugfs)
+ {
++#ifdef __linux__
+ 	struct stat st;
+ 	int n;
+ 
+@@ -118,6 +121,7 @@
+ 	}
+ 
+ 	debugfs->dri_path[0] = '\0';
++#endif
+ 	return false;
+ }
+ 
+@@ -794,6 +798,7 @@
+  */
+ int igt_debugfs_dir(int device)
+ {
++#ifdef __linux__
+ 	struct stat st;
+ 	char path[256];
+ 
+@@ -803,4 +808,8 @@
+ 	sprintf(path, "%s/dri/%d", __debugfs_mount(), (int)(st.st_rdev & 0xff));
+ 	igt_debug("Opening debugfs dir %s\n", path);
+ 	return open(path, O_RDONLY);
++#else
++	return -1;
++#endif
++
+ }
+diff -Nurb intel-gpu-tools-1.16/lib/igt_sysfs.c intel-gpu-tools-1.16-illumos/lib/igt_sysfs.c
+--- intel-gpu-tools-1.16/lib/igt_sysfs.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/lib/igt_sysfs.c	2016-09-12 01:08:52.930035142 +0200
+@@ -25,6 +25,9 @@
+ #include <inttypes.h>
+ #include <sys/stat.h>
+ #include <sys/mount.h>
++#if defined(__sun) && defined(__SVR4)
++#include <sys/mkdev.h>
++#endif
+ #include <errno.h>
+ #include <stdarg.h>
+ #include <stdio.h>
+diff -Nurb intel-gpu-tools-1.16/tests/drv_missed_irq.c intel-gpu-tools-1.16-illumos/tests/drv_missed_irq.c
+--- intel-gpu-tools-1.16/tests/drv_missed_irq.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/drv_missed_irq.c	2016-09-12 01:08:52.952377939 +0200
+@@ -109,7 +109,11 @@
+ {
+ 	struct sched_param rt = {.sched_priority = 99 };
+ 
++#ifdef SCHED_RESET_ON_FORK
+ 	igt_assert(sched_setscheduler(getpid(), SCHED_RR | SCHED_RESET_ON_FORK, &rt) == 0);
++#else
++	igt_assert(sched_setscheduler(getpid(), SCHED_RR, &rt) == 0);
++#endif
+ }
+ 
+ igt_simple_main
+diff -Nurb intel-gpu-tools-1.16/tests/gem_close_race.c intel-gpu-tools-1.16-illumos/tests/gem_close_race.c
+--- intel-gpu-tools-1.16/tests/gem_close_race.c	2016-06-21 16:08:38.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_close_race.c	2016-09-12 01:08:52.952687659 +0200
+@@ -51,8 +51,14 @@
+ static uint32_t devid;
+ static bool has_64bit_relocations;
+ 
++#if defined(__sun) && defined(__SVR4)
++#define HAS_NOTIFY_THREAD_ID 0
++#define gettid() (unsigned long)pthread_self();
++#else
++#define HAS_NOTIFY_THREAD_ID 1
+ #define gettid() syscall(__NR_gettid)
+ #define sigev_notify_thread_id _sigev_un._tid
++#endif
+ 
+ static void selfcopy(int fd, uint32_t handle, int loops)
+ {
+@@ -177,8 +183,10 @@
+ 	igt_assert(sigaction(SIGRTMIN, &act, NULL) == 0);
+ 
+ 	memset(&sev, 0, sizeof(sev));
++#if HAS_NOTIFY_THREAD_ID
+ 	sev.sigev_notify = SIGEV_SIGNAL | SIGEV_THREAD_ID;
+ 	sev.sigev_notify_thread_id = gettid();
++#endif
+ 	sev.sigev_signo = SIGRTMIN;
+ 	igt_assert(timer_create(CLOCK_MONOTONIC, &sev, &timer) == 0);
+ 
+diff -Nurb intel-gpu-tools-1.16/tests/gem_concurrent_all.c intel-gpu-tools-1.16-illumos/tests/gem_concurrent_all.c
+--- intel-gpu-tools-1.16/tests/gem_concurrent_all.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_concurrent_all.c	2016-09-12 01:08:52.952806718 +0200
+@@ -1915,10 +1915,15 @@
+ 						igt_debug("Pinning %lld MiB\n", (long long)pin_sz);
+ 						pin_sz *= 1024 * 1024;
+ 
++#if defined(__sun) && defined(__SVR4)
++						if (posix_memalign(&pinned, 4096, pin_sz) ||
++						    mlock(pinned, pin_sz)) {
++							free(pinned);
++#else
+ 						if (posix_memalign(&pinned, 4096, pin_sz) ||
+ 						    mlock(pinned, pin_sz) ||
+ 						    madvise(pinned, pin_sz, MADV_DONTFORK)) {
+-							free(pinned);
++#endif
+ 							pinned = NULL;
+ 						}
+ 						igt_require(pinned);
+diff -Nurb intel-gpu-tools-1.16/tests/gem_ctx_switch.c intel-gpu-tools-1.16-illumos/tests/gem_ctx_switch.c
+--- intel-gpu-tools-1.16/tests/gem_ctx_switch.c	2016-06-21 16:08:38.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_ctx_switch.c	2016-09-12 01:08:52.952477240 +0200
+@@ -64,7 +64,7 @@
+ 		(end->tv_nsec - start->tv_nsec)*1e-9);
+ }
+ 
+-static void single(int fd, uint32_t handle,
++static void do_single(int fd, uint32_t handle,
+ 		   const struct intel_execution_engine *e,
+ 		   unsigned flags,
+ 		   const int ncpus)
+@@ -158,13 +158,13 @@
+ 
+ 	for (e = intel_execution_engines; e->name; e++) {
+ 		igt_subtest_f("%s%s", e->exec_id == 0 ? "basic-" : "", e->name)
+-			single(fd, handle, e, 0, 1);
++			do_single(fd, handle, e, 0, 1);
+ 		igt_subtest_f("%s-interruptible", e->name)
+-			single(fd, handle, e, INTERRUPTIBLE, 1);
++			do_single(fd, handle, e, INTERRUPTIBLE, 1);
+ 		igt_subtest_f("forked-%s", e->name)
+-			single(fd, handle, e, 0, ncpus);
++			do_single(fd, handle, e, 0, ncpus);
+ 		igt_subtest_f("forked-%s-interruptible", e->name)
+-			single(fd, handle, e, INTERRUPTIBLE, ncpus);
++			do_single(fd, handle, e, INTERRUPTIBLE, ncpus);
+ 	}
+ 
+ 	igt_fixture {
+diff -Nurb intel-gpu-tools-1.16/tests/gem_ctx_thrash.c intel-gpu-tools-1.16-illumos/tests/gem_ctx_thrash.c
+--- intel-gpu-tools-1.16/tests/gem_ctx_thrash.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_ctx_thrash.c	2016-09-12 01:08:52.952577229 +0200
+@@ -103,7 +103,7 @@
+ 	return ret;
+ }
+ 
+-static void single(const char *name, bool all_engines)
++static void do_single(const char *name, bool all_engines)
+ {
+ 	struct drm_i915_gem_exec_object2 *obj;
+ 	struct drm_i915_gem_relocation_entry *reloc;
+@@ -383,9 +383,9 @@
+ 	igt_skip_on_simulation();
+ 
+ 	igt_subtest("single")
+-		single("single", false);
++		do_single("single", false);
+ 	igt_subtest("engines")
+-		single("engines", true);
++		do_single("engines", true);
+ 
+ 	igt_subtest("processes")
+ 		processes();
+diff -Nurb intel-gpu-tools-1.16/tests/gem_exec_alignment.c intel-gpu-tools-1.16-illumos/tests/gem_exec_alignment.c
+--- intel-gpu-tools-1.16/tests/gem_exec_alignment.c	2016-05-23 12:51:28.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_exec_alignment.c	2016-09-12 01:08:52.952909954 +0200
+@@ -139,7 +139,7 @@
+ 	free(execobj);
+ }
+ 
+-static void single(int fd)
++static void do_single(int fd)
+ {
+ 	struct drm_i915_gem_exec_object2 execobj;
+ 	struct drm_i915_gem_execbuffer2 execbuf;
+@@ -203,7 +203,7 @@
+ 		fd = drm_open_driver(DRIVER_INTEL);
+ 
+ 	igt_subtest("single") /* basic! */
+-		single(fd);
++		do_single(fd);
+ 	igt_subtest("many")
+ 		many(fd);
+ 
+diff -Nurb intel-gpu-tools-1.16/tests/gem_exec_nop.c intel-gpu-tools-1.16-illumos/tests/gem_exec_nop.c
+--- intel-gpu-tools-1.16/tests/gem_exec_nop.c	2016-07-25 13:12:40.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_exec_nop.c	2016-09-12 01:08:52.953009367 +0200
+@@ -96,7 +96,7 @@
+ 	return elapsed(&start, &now);
+ }
+ 
+-static void single(int fd, uint32_t handle,
++static void do_single(int fd, uint32_t handle,
+ 		   unsigned ring_id, const char *ring_name)
+ {
+ 	double time;
+@@ -249,7 +249,7 @@
+ 
+ 	for (e = intel_execution_engines; e->name; e++)
+ 		igt_subtest_f("%s", e->name)
+-			single(device, handle, e->exec_id | e->flags, e->name);
++			do_single(device, handle, e->exec_id | e->flags, e->name);
+ 
+ 	igt_subtest("all")
+ 		all(device, handle, 150);
+diff -Nurb intel-gpu-tools-1.16/tests/gem_shrink.c intel-gpu-tools-1.16-illumos/tests/gem_shrink.c
+--- intel-gpu-tools-1.16/tests/gem_shrink.c	2016-06-21 16:08:38.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/gem_shrink.c	2016-09-12 01:08:52.953109963 +0200
+@@ -222,9 +222,15 @@
+ {
+ 	char *ptr;
+ 
++#if defined(__sun) && defined(__SVR4)
++	ptr = mmap(NULL, alloc, PROT_READ | PROT_WRITE,
++		   MAP_ANON | MAP_PRIVATE,
++		   -1, 0);
++#else
+ 	ptr = mmap(NULL, alloc, PROT_READ | PROT_WRITE,
+ 		   MAP_ANON | MAP_PRIVATE | MAP_POPULATE,
+ 		   -1, 0);
++#endif
+ 	if (ptr != (char *)-1)
+ 		return;
+ 
+diff -Nurb intel-gpu-tools-1.16/tests/kms_cursor_legacy.c intel-gpu-tools-1.16-illumos/tests/kms_cursor_legacy.c
+--- intel-gpu-tools-1.16/tests/kms_cursor_legacy.c	2016-09-01 08:58:18.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/kms_cursor_legacy.c	2016-09-12 01:08:52.953224132 +0200
+@@ -86,14 +86,22 @@
+ 	arg.flags = mode;
+ 	igt_fork(child, num_children) {
+ 		struct sched_param rt = {.sched_priority = 99 };
++#if defined(__sun) && defined(__SVR4)
++		/* Add support for localilty groups */
++#else
+ 		cpu_set_t allowed;
++#endif
+ 		unsigned long count = 0;
+ 
+ 		sched_setscheduler(getpid(), SCHED_RR, &rt);
+ 
++#if defined(__sun) && defined(__SVR4)
++		/* Add support for localilty groups */
++#else
+ 		CPU_ZERO(&allowed);
+ 		CPU_SET(child, &allowed);
+ 		sched_setaffinity(getpid(), sizeof(cpu_set_t), &allowed);
++#endif
+ 
+ 		hars_petruska_f54_1_random_perturb(child);
+ 		igt_until_timeout(timeout) {
+@@ -108,14 +116,22 @@
+ 	if (torture) {
+ 		igt_fork(child, num_children) {
+ 			struct sched_param rt = {.sched_priority = 1 };
++#if defined(__sun) && defined(__SVR4)
++			/* Add support for localilty groups */
++#else
+ 			cpu_set_t allowed;
++#endif
+ 			unsigned long long count = 0;
+ 
+ 			sched_setscheduler(getpid(), SCHED_RR, &rt);
+ 
++#if defined(__sun) && defined(__SVR4)
++			/* Add support for localilty groups */
++#else
+ 			CPU_ZERO(&allowed);
+ 			CPU_SET(child, &allowed);
+ 			sched_setaffinity(getpid(), sizeof(cpu_set_t), &allowed);
++#endif
+ 			igt_until_timeout(timeout) {
+ 				count++;
+ 				cpu_relax();
+diff -Nurb intel-gpu-tools-1.16/tests/pm_rpm.c intel-gpu-tools-1.16-illumos/tests/pm_rpm.c
+--- intel-gpu-tools-1.16/tests/pm_rpm.c	2016-07-14 12:43:04.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tests/pm_rpm.c	2016-09-12 01:08:52.953344213 +0200
+@@ -38,8 +38,33 @@
+ #include <sys/mman.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++
++#if defined(__sun) && defined(__SVR4)
++#include <limits.h>
++struct i2c_msg {
++	uint16_t addr;	/* slave address			*/
++	uint16_t flags;
++#define I2C_M_RD		0x0001	/* read data, from slave to master */
++						/* I2C_M_RD is guaranteed to be 0x0001! */
++#define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
++#define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
++#define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
++#define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
++#define I2C_M_REV_DIR_ADDR	0x2000	/* if I2C_FUNC_PROTOCOL_MANGLING */
++#define I2C_M_NOSTART		0x4000	/* if I2C_FUNC_NOSTART */
++#define I2C_M_STOP		0x8000	/* if I2C_FUNC_PROTOCOL_MANGLING */
++	uint16_t len;		/* msg length				*/
++	uint8_t *buf;		/* pointer to msg data			*/
++};
++#define I2C_RDWR	0x0707
++struct i2c_rdwr_ioctl_data {
++	struct i2c_msg *msgs;
++	uint32_t nmsgs;
++};
++#else
+ #include <linux/i2c.h>
+ #include <linux/i2c-dev.h>
++#endif
+ 
+ #include <drm.h>
+ 
+diff -Nurb intel-gpu-tools-1.16/tools/aubdump.c intel-gpu-tools-1.16-illumos/tools/aubdump.c
+--- intel-gpu-tools-1.16/tools/aubdump.c	2016-07-14 12:43:04.000000000 +0200
++++ intel-gpu-tools-1.16-illumos/tools/aubdump.c	2016-09-12 01:08:52.914977006 +0200
+@@ -40,6 +40,14 @@
+ #include <dlfcn.h>
+ #include <i915_drm.h>
+ 
++/* Solaris-specific formerly in drm.h */
++#if defined(__sun) && defined(__SVR4)
++#include <sys/mkdev.h>
++#define	_IOC_TYPEMASK   ((1 << _IOC_TYPEBITS)-1)
++#define	_IOC_TYPE(nr)		(((nr) >> _IOC_TYPESHIFT) & _IOC_TYPEMASK)
++#include <sys/ioccom.h>
++#endif
++
+ #include "intel_aub.h"
+ #include "intel_chipset.h"
+ 
+@@ -426,6 +434,7 @@
+ 	return libc_close(fd);
+ }
+ 
++#if !defined(__sun)
+ int
+ ioctl(int fd, unsigned long request, ...)
+ {
+@@ -546,6 +555,7 @@
+ 		return libc_ioctl(fd, request, argp);
+ 	}
+ }
++#endif
+ 
+ static void
+ init(void)

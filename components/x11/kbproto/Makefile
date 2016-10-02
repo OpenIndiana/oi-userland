@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= kbproto
-COMPONENT_VERSION= 1.0.6
+COMPONENT_VERSION= 1.0.7
 COMPONENT_SUMMARY= headers & documentation for XKEYBOARD extension to the X11 protocol
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:037cac0aeb80c4fccf44bf736d791fccb2ff7fd34c558ef8f03ac60b61085479
+  sha256:f882210b76376e3fa006b11dbd890e56ec0942bc56e65d1249ff4af86f90b857
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/

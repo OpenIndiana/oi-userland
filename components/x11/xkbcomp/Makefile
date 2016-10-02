@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xkbcomp
-COMPONENT_VERSION=        1.3.0
+COMPONENT_VERSION=        1.3.1
 COMPONENT_FMRI=           x11/keyboard/xkbcomp
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xkbcomp - compile XKB keyboard description
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cfac973778fabf5216121ad60b7af8ab74ce7513af0f9260cf8c5309e1622b2a
+  sha256:0304dc9e0d4ac10831a9ef5d5419722375ddbc3eac3ff4413094d57bc1f1923d
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xkbcomp-1.3.0.tar.bz2
+  http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xkbcomp.license

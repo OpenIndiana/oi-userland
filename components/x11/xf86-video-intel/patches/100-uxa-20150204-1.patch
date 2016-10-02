@@ -1,0 +1,119 @@
+From db629a38342883176d58357fa014176c9e45115d Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Wed, 4 Feb 2015 09:34:14 +0000
+Subject: Allow runtime selection between DRI levels
+
+Rather than imposing a maximum DRI level at compile time by compiling
+out unwanted protocol handlers, default to limiting it at runtime so
+that we can switch between any level.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/configure.ac b/configure.ac
+index 07e6af1..9dc4327 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -339,10 +339,20 @@ AC_ARG_ENABLE(dri2,
+ 	      [DRI2=$enableval],
+ 	      [DRI2=yes])
+ AC_ARG_ENABLE(dri3,
+-	      AS_HELP_STRING([--enable-dri3],
+-			     [Enable DRI3 support [[default=no]]]),
++	      AS_HELP_STRING([--disable-dri3],
++			     [Disable DRI3 support [[default=yes]]]),
+ 	      [DRI3=$enableval],
+-	      [DRI3=no])
++	      [DRI3=yes])
++AC_ARG_WITH(default-dri,
++	    AS_HELP_STRING([--with-default-dri],
++			   [Select the default maximum DRI level [default 2]]),
++	      [DRI_DEFAULT=$withval],
++	      [DRI_DEFAULT=2])
++if test "x$DRI_DEFAULT" = "x0"; then
++	AC_DEFINE(DEFAULT_DRI_LEVEL, 0,[Default DRI level])
++else
++	AC_DEFINE(DEFAULT_DRI_LEVEL, ~0, [Default DRI level])
++fi
+ 
+ AC_ARG_ENABLE(xvmc, AS_HELP_STRING([--disable-xvmc],
+                                   [Disable XvMC support [[default=yes]]]),
+@@ -521,7 +531,12 @@ AC_MSG_RESULT([$have_dri1])
+ AM_CONDITIONAL(DRI1, test "x$have_dri1" != "xno")
+ if test "x$have_dri1" != "xno"; then
+         AC_DEFINE(HAVE_DRI1,1,[Enable DRI1 driver support])
+-	dri_msg="$dri_msg DRI1"
++	str="DRI1"
++	if test "x$DRI_DEFAULT" = "x1"; then
++		AC_DEFINE(DEFAULT_DRI_LEVEL,1,[Default DRI level])
++		str="*$str"
++	fi
++	dri_msg="$dri_msg $str"
+ else
+         DRI1_CFLAGS=""
+         DRI1_LIBS=""
+@@ -578,7 +593,12 @@ AM_CONDITIONAL(DRI2, test "x$have_dri2" != "xno")
+ AC_MSG_RESULT([$have_dri2])
+ if test "x$have_dri2" != "xno"; then
+         AC_DEFINE(HAVE_DRI2,1,[Enable DRI2 driver support])
+-	dri_msg="$dri_msg DRI2"
++	str="DRI2"
++	if test "x$DRI_DEFAULT" = "x2"; then
++		AC_DEFINE(DEFAULT_DRI_LEVEL,2,[Default DRI level])
++		str="*$str"
++	fi
++	dri_msg="$dri_msg $str"
+ else
+ 	if test "x$DRI" = "xyes" -a "x$DRI2" != "xno" -a "x$KMS" = "xyes"; then
+ 		AC_MSG_ERROR([DRI2 requested but prerequisites not found])
+@@ -593,13 +613,21 @@ AM_CONDITIONAL(DRI3, test "x$have_dri3" != "xno")
+ AC_MSG_RESULT([$have_dri3])
+ if test "x$have_dri3" != "xno"; then
+         AC_DEFINE(HAVE_DRI3,1,[Enable DRI3 driver support])
+-	dri_msg="$dri_msg DRI3"
++	str="DRI3"
++	if test "x$DRI_DEFAULT" = "x3"; then
++		AC_DEFINE(DEFAULT_DRI_LEVEL,3,[Default DRI level])
++		str="*$str"
++	fi
++	dri_msg="$dri_msg $str"
+ else
+ 	if test "x$DRI" = "xyes" -a "x$DRI3" != "xno" -a "x$KMS" = "xyes"; then
+ 		AC_MSG_ERROR([DRI3 requested but prerequisites not found])
+ 	fi
+ fi
+ 
++AC_MSG_CHECKING([default DRI support])
++AC_MSG_RESULT([$DEFAULT_DRI_DEFAULT])
++
+ AC_CHECK_HEADERS([X11/extensions/dpmsconst.h])
+ 
+ PRESENT="no"
+diff --git a/src/sna/sna_driver.c b/src/sna/sna_driver.c
+index 79b62a8..8c0d0b5 100644
+--- a/src/sna/sna_driver.c
++++ b/src/sna/sna_driver.c
+@@ -436,7 +436,7 @@ static void setup_dri(struct sna *sna)
+ 	sna->dri2.available = false;
+ 	sna->dri3.available = false;
+ 
+-	level = intel_option_cast_to_unsigned(sna->Options, OPTION_DRI, ~0);
++	level = intel_option_cast_to_unsigned(sna->Options, OPTION_DRI, DEFAULT_DRI_LEVEL);
+ #if HAVE_DRI3
+ 	if (level >= 3)
+ 		sna->dri3.available = !!xf86LoadSubModule(sna->scrn, "dri3");
+diff --git a/src/uxa/intel_driver.c b/src/uxa/intel_driver.c
+index 8816ee4..c554124 100644
+--- a/src/uxa/intel_driver.c
++++ b/src/uxa/intel_driver.c
+@@ -243,7 +243,7 @@ static void intel_check_dri_option(ScrnInfoPtr scrn)
+ 	unsigned level;
+ 
+ 	intel->dri2 = intel->dri3 = DRI_NONE;
+-	level = intel_option_cast_to_unsigned(intel->Options, OPTION_DRI, ~0);
++	level = intel_option_cast_to_unsigned(intel->Options, OPTION_DRI, DEFAULT_DRI_LEVEL);
+ 	if (level < 3)
+ 		intel->dri3 = DRI_DISABLED;
+ 	if (level < 2)
+-- 
+cgit v0.10.2
+

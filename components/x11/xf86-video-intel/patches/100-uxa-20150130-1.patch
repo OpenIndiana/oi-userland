@@ -1,0 +1,59 @@
+From fa5a8c61d1ac6f90b1f4544e1734308fbdba3c0d Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 30 Jan 2015 13:10:55 +0000
+Subject: uxa/dri2: Reset swap_info->type after a failed flip submission
+
+As we set the type prior to attempting to queue a flip, we need to then
+reset the type if that attempt fails and we need to fall back to a
+vblank handler.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel_dri.c b/src/uxa/intel_dri.c
+index e9f3174..e7080dc 100644
+--- a/src/uxa/intel_dri.c
++++ b/src/uxa/intel_dri.c
+@@ -1130,8 +1130,6 @@ I830DRI2ScheduleSwap(ClientPtr client, DrawablePtr draw, DRI2BufferPtr front,
+ 	    flip = 1;
+ 	}
+ 
+-	swap_info->type = swap_type;
+-
+ 	/* Correct target_msc by 'flip' if swap_type == DRI2_FLIP.
+ 	 * Do it early, so handling of different timing constraints
+ 	 * for divisor, remainder and msc vs. target_msc works.
+@@ -1140,20 +1138,22 @@ I830DRI2ScheduleSwap(ClientPtr client, DrawablePtr draw, DRI2BufferPtr front,
+ 		*target_msc -= flip;
+ 
+ 	/*
++	 * If we can, schedule the flip directly from here rather
++	 * than waiting for an event from the kernel for the current
++	 * (or a past) MSC.
++	 */
++	if (flip && divisor == 0 && current_msc >= *target_msc &&
++	    I830DRI2ScheduleFlip(intel, draw, swap_info))
++		return TRUE;
++
++	swap_info->type = swap_type;
++
++	/*
+ 	 * If divisor is zero, or current_msc is smaller than target_msc
+ 	 * we just need to make sure target_msc passes before initiating
+ 	 * the swap.
+ 	 */
+ 	if (divisor == 0 || current_msc < *target_msc) {
+-		/*
+-		 * If we can, schedule the flip directly from here rather
+-		 * than waiting for an event from the kernel for the current
+-		 * (or a past) MSC.
+-		 */
+-		if (flip && divisor == 0 && current_msc >= *target_msc &&
+-		    I830DRI2ScheduleFlip(intel, draw, swap_info))
+-			return TRUE;
+-
+ 		vbl.request.type =
+ 			DRM_VBLANK_ABSOLUTE | DRM_VBLANK_EVENT | pipe_select(pipe);
+ 
+-- 
+cgit v0.10.2
+

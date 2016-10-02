@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xvinfo
-COMPONENT_VERSION=        1.1.2
+COMPONENT_VERSION=        1.1.3
 COMPONENT_FMRI=           x11/diagnostic/xvinfo
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  xvinfo - print out X-Video extension adaptor information
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:eed3d90ffd788ef728c4a5e7aa4bd86dc6bbcebac929caf7a0479cf8b53b50e3
+  sha256:9fba8b68daf53863e66d5004fa9c703fcecf69db4d151ea2d3d885d621e6e5eb
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/app/xvinfo-1.1.2.tar.bz2
+  http://www.x.org/releases/individual/app/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xvinfo.license

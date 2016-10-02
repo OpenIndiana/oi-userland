@@ -1,0 +1,70 @@
+From c2f30a539cfb5808dbee19b7cc5d878bb7381a60 Mon Sep 17 00:00:00 2001
+From: Chris Wilson <chris@chris-wilson.co.uk>
+Date: Fri, 30 Jan 2015 13:12:20 +0000
+Subject: uxa/dri2: Make vblank/flip handlers static
+
+These are no longer called directly from outside intel_dri.c and so we
+can make them static.
+
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+
+diff --git a/src/uxa/intel.h b/src/uxa/intel.h
+index 1b7e533..b4ad292 100644
+--- a/src/uxa/intel.h
++++ b/src/uxa/intel.h
+@@ -456,10 +456,6 @@ extern xf86CrtcPtr intel_covering_crtc(ScrnInfoPtr scrn, BoxPtr box,
+ 
+ Bool I830DRI2ScreenInit(ScreenPtr pScreen);
+ void I830DRI2CloseScreen(ScreenPtr pScreen);
+-void I830DRI2FrameEventHandler(unsigned int frame, unsigned int tv_sec,
+-			       unsigned int tv_usec, DRI2FrameEventPtr flip_info);
+-void I830DRI2FlipEventHandler(unsigned int frame, unsigned int tv_sec,
+-			      unsigned int tv_usec, DRI2FrameEventPtr flip_info);
+ 
+ /* intel_dri3.c */
+ Bool intel_dri3_screen_init(ScreenPtr screen);
+diff --git a/src/uxa/intel_dri.c b/src/uxa/intel_dri.c
+index e7080dc..5170c6d 100644
+--- a/src/uxa/intel_dri.c
++++ b/src/uxa/intel_dri.c
+@@ -81,6 +81,11 @@ static DevPrivateKeyRec i830_client_key;
+ static int i830_client_key;
+ #endif
+ 
++static void I830DRI2FlipEventHandler(unsigned int frame,
++				     unsigned int tv_sec,
++				     unsigned int tv_usec,
++				     DRI2FrameEventPtr flip_info);
++
+ static uint32_t pixmap_flink(PixmapPtr pixmap)
+ {
+ 	struct intel_uxa_pixmap *priv = intel_uxa_get_pixmap_private(pixmap);
+@@ -889,8 +894,10 @@ can_exchange(DrawablePtr drawable, DRI2BufferPtr front, DRI2BufferPtr back)
+ 	return TRUE;
+ }
+ 
+-void I830DRI2FrameEventHandler(unsigned int frame, unsigned int tv_sec,
+-			       unsigned int tv_usec, DRI2FrameEventPtr swap_info)
++static void I830DRI2FrameEventHandler(unsigned int frame,
++				      unsigned int tv_sec,
++				      unsigned int tv_usec,
++				      DRI2FrameEventPtr swap_info)
+ {
+ 	intel_screen_private *intel = swap_info->intel;
+ 	DrawablePtr drawable;
+@@ -939,8 +946,10 @@ void I830DRI2FrameEventHandler(unsigned int frame, unsigned int tv_sec,
+ 	i830_dri2_del_frame_event(swap_info);
+ }
+ 
+-void I830DRI2FlipEventHandler(unsigned int frame, unsigned int tv_sec,
+-			      unsigned int tv_usec, DRI2FrameEventPtr flip_info)
++static void I830DRI2FlipEventHandler(unsigned int frame,
++				     unsigned int tv_sec,
++				     unsigned int tv_usec,
++				     DRI2FrameEventPtr flip_info)
+ {
+ 	struct intel_screen_private *intel = flip_info->intel;
+ 	DrawablePtr drawable;
+-- 
+cgit v0.10.2
+
