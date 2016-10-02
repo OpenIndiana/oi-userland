@@ -60,6 +60,8 @@ CPPFLAGS = -I/usr/X11/include/drm -D__EXTENSIONS__
 LDFLAGS= -L$(PROTODIR)$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
          -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
          -lumem
+CFLAGS+= -Wl,-lumem
+CXXFLAGS+= -Wl,-lumem
 
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 
