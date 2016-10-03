@@ -38,6 +38,10 @@ TPNO=	30187
 
 CONFIGURE_DEFAULT_DIRS=no
 TEST_TARGET= $(NO_TESTS)
+
+# Requires newer Kerberos, unavailable in 11.3
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # This is baked into the Apache module build configuration and is used by apxs
@@ -59,10 +63,7 @@ CONFIGURE_PREFIX =	$(USRDIR)/apache2/2.4
 CONFIGURE_OPTIONS +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS +=	--enable-mpms-shared=all
 CONFIGURE_OPTIONS +=	--enable-mods-shared=all
-ifeq ($(OS_VERSION), 5.12)
-# workaround for a known issue with 2.4.23 (should be probably removed with 2.4.24) 
 CONFIGURE_OPTIONS +=	--enable-proxy-fdpass
-endif
 CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	--enable-cgi
 CONFIGURE_OPTIONS +=	--enable-suexec
