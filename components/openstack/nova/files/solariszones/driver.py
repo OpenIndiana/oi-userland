@@ -1009,6 +1009,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 self._volume_api.detach(context, root_ci['serial'])
                 self._volume_api.delete(context, root_ci['serial'])
 
+                # Go ahead and remove the root bdm from the bdms so that we do
+                # not trip up spawn either checking against the use of c1d0 or
+                # attempting to re-attach the root device.
+                bdms.objects.remove(bdms.root_bdm())
+                rootdevname = block_device_info.get('root_device_name')
+                if rootdevname is not None:
+                    bdi_bdms = block_device_info.get('block_device_mapping')
+                    for entry in bdi_bdms:
+                        if entry['mount_device'] == rootdevname:
+                            bdi_bdms.remove(entry)
+                            break
+
         instance.task_state = task_states.REBUILD_SPAWNING
         instance.save(
             expected_task_state=[task_states.REBUILD_BLOCK_DEVICE_MAPPING])
@@ -1026,7 +1038,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             instance.system_metadata['rebuilding'] = 'true'
             self.spawn(context, instance, image_meta, injected_files,
                        admin_password, network_info, block_device_info)
-            self.power_off(instance)
 
         del instance.system_metadata['rebuilding']
         name = instance['name']
@@ -1037,17 +1048,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if recreate:
             zone.attach(['-x', 'initialize-hostdata'])
 
-        rootmp = instance['root_device_name']
-        for entry in bdms:
-            if (entry['connection_info'] is None or
-                    rootmp == entry['device_name']):
-                continue
+            rootmp = instance['root_device_name']
+            for entry in bdms:
+                if (entry['connection_info'] is None or
+                        rootmp == entry['device_name']):
+                    continue
 
-            connection_info = jsonutils.loads(entry['connection_info'])
-            mount = entry['device_name']
-            self.attach_volume(context, connection_info, instance, mount)
+                connection_info = jsonutils.loads(entry['connection_info'])
+                mount = entry['device_name']
+                self.attach_volume(context, connection_info, instance, mount)
 
-        self._power_on(instance, network_info)
+            self._power_on(instance, network_info)
 
         if admin_password is not None:
             # Because there is no way to make sure a zone is ready upon
