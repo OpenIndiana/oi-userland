@@ -1,0 +1,89 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform dir file link hardlink path=usr/share/gtk-doc/.* -> \
+    default facet.devel all>
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+
+
+set name=pkg.fmri \
+    value=pkg:/library/desktop/libxklavier@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="libXklavier XKB utility library"
+set name=com.oracle.info.description value="libXklavier library"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.repository-url value=git://anongit.freedesktop.org/libxklavier
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2009/483
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+file path=usr/include/libxklavier/xkl-enum-types.h
+file path=usr/include/libxklavier/xkl_config_item.h
+file path=usr/include/libxklavier/xkl_config_rec.h
+file path=usr/include/libxklavier/xkl_config_registry.h
+file path=usr/include/libxklavier/xkl_engine.h
+file path=usr/include/libxklavier/xkl_engine_marshal.h
+file path=usr/include/libxklavier/xklavier.h
+link path=usr/lib/$(MACH64)/libxklavier.so target=libxklavier.so.16.0.0
+link path=usr/lib/$(MACH64)/libxklavier.so.16 target=libxklavier.so.16.0.0
+file path=usr/lib/$(MACH64)/libxklavier.so.16.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libxklavier.pc
+link path=usr/lib/libxklavier.so target=libxklavier.so.16.0.0
+link path=usr/lib/libxklavier.so.16 target=libxklavier.so.16.0.0
+file path=usr/lib/libxklavier.so.16.0.0
+file path=usr/lib/pkgconfig/libxklavier.pc
+file path=usr/share/gtk-doc/html/libxklavier/XklConfigItem.html
+file path=usr/share/gtk-doc/html/libxklavier/XklConfigRec.html
+file path=usr/share/gtk-doc/html/libxklavier/XklConfigRegistry.html
+file path=usr/share/gtk-doc/html/libxklavier/ch01.html
+file path=usr/share/gtk-doc/html/libxklavier/ch02.html
+file path=usr/share/gtk-doc/html/libxklavier/home.png
+file path=usr/share/gtk-doc/html/libxklavier/index.html
+file path=usr/share/gtk-doc/html/libxklavier/index.sgml
+file path=usr/share/gtk-doc/html/libxklavier/left-insensitive.png
+file path=usr/share/gtk-doc/html/libxklavier/left.png
+file path=usr/share/gtk-doc/html/libxklavier/libxklavier-xkl-engine.html
+file path=usr/share/gtk-doc/html/libxklavier/libxklavier-xklavier.html
+file path=usr/share/gtk-doc/html/libxklavier/libxklavier.devhelp2
+file path=usr/share/gtk-doc/html/libxklavier/right-insensitive.png
+file path=usr/share/gtk-doc/html/libxklavier/right.png
+file path=usr/share/gtk-doc/html/libxklavier/style.css
+file path=usr/share/gtk-doc/html/libxklavier/up-insensitive.png
+file path=usr/share/gtk-doc/html/libxklavier/up.png
+
+
+license COPYING.LIB license=LGPLv2
+
+# code in xklavier_config_xkb.c execs xkbcomp
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xkbcomp
+# code in xklavier_config_xkb.c references /usr/share/X11/xkb/rules/base
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/share/X11/xkb/rules/base
+# code in xklavier_config_iso.c parses the data files in iso-codes
+depend type=require fmri=pkg:/data/iso-codes

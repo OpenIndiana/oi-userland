@@ -1,0 +1,55 @@
+Existing set of patches from the desktop gate for Solaris
+Not suitable for upstream
+ 
+--- libxklavier-5.0.orig/tests/Makefile.am	2010-06-01 15:52:32.355954665 +0200
++++ libxklavier-5.0/tests/Makefile.am	2010-06-01 15:54:24.239711266 +0200
+@@ -4,7 +4,7 @@
+ 
+ test_monitor_SOURCES=test_monitor.c
+ 
+-AM_CFLAGS=-Wall -I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
++AM_CFLAGS=-I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
+ 
+ LDADD=$(top_builddir)/libxklavier/libxklavier.la $(X_LIBS) $(GLIB_LIBS)
+ 
+--- libxklavier-5.0.orig/tests/Makefile.in	2010-06-01 15:52:32.356253578 +0200
++++ libxklavier-5.0/tests/Makefile.in	2010-06-01 15:54:33.471616942 +0200
+@@ -210,7 +210,7 @@
+ top_srcdir = @top_srcdir@
+ test_config_SOURCES = test_config.c
+ test_monitor_SOURCES = test_monitor.c
+-AM_CFLAGS = -Wall -I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
++AM_CFLAGS = -I$(top_srcdir) $(X_CFLAGS) $(GLIB_CFLAGS)
+ LDADD = $(top_builddir)/libxklavier/libxklavier.la $(X_LIBS) $(GLIB_LIBS)
+ all: all-am
+ 
+--- libxklavier-5.0.orig/libxklavier/Makefile.am	2009-06-28 15:07:27.000000000 +0200
++++ libxklavier-5.0/libxklavier/Makefile.am	2012-06-05 14:09:29.819059363 +0200
+@@ -15,12 +15,13 @@
+   ENABLE_XMODMAP_SUPPORT_CFLAG = -DDISABLE_XMODMAP_SUPPORT=1
+ endif
+ 
+-AM_CFLAGS=-Wall -DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
++AM_CFLAGS=-DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+   -I. -I$(top_srcdir) $(X_CFLAGS) \
+   $(XML_CFLAGS) $(GLIB_CFLAGS) $(XINPUT_CFLAGS) \
+   $(LIBXKBFILE_PRESENT_CFLAG) \
+   $(ENABLE_XKB_SUPPORT_CFLAG) \
+-  $(ENABLE_XMODMAP_SUPPORT_CFLAG)
++  $(ENABLE_XMODMAP_SUPPORT_CFLAG) \
++  -DLOCALEDIR=\"$(datadir)/locale\"
+ 
+ lib_LTLIBRARIES = libxklavier.la
+ noinst_HEADERS = xklavier_private.h xklavier_private_xkb.h xklavier_private_xmm.h
+
+--- libxklavier-5.0.orig/libxklavier/Makefile.in	2010-06-01 16:01:01.278962526 +0200
++++ libxklavier-5.0/libxklavier/Makefile.in	2010-06-01 16:01:49.876322985 +0200
+@@ -224,7 +224,7 @@
+ @ENABLE_XKB_SUPPORT_TRUE@ENABLE_XKB_SUPPORT_CFLAG = -DENABLE_XKB_SUPPORT=1
+ @ENABLE_XMODMAP_SUPPORT_FALSE@ENABLE_XMODMAP_SUPPORT_CFLAG = -DDISABLE_XMODMAP_SUPPORT=1
+ @ENABLE_XMODMAP_SUPPORT_TRUE@ENABLE_XMODMAP_SUPPORT_CFLAG = -DENABLE_XMODMAP_SUPPORT=1
+-AM_CFLAGS = -Wall -DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
++AM_CFLAGS = -DDATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+   -I. -I$(top_srcdir) $(X_CFLAGS) \
+   $(XML_CFLAGS) $(GLIB_CFLAGS) $(XINPUT_CFLAGS) \
+   $(LIBXKBFILE_PRESENT_CFLAG) \
