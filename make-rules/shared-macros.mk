@@ -92,7 +92,7 @@ COMPILER =		gcc
 LINKER =		gcc
 BITS =			32
 PYTHON_VERSION =	2.7
-PYTHON_VERSIONS =	2.6 2.7
+PYTHON_VERSIONS =	2.7
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -541,13 +541,13 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
-PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
-PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
-PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
+PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
+PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
@@ -578,9 +578,6 @@ RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
-
-PYTHON.2.6.32 =	/usr/bin/python2.6
-PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
@@ -724,6 +721,7 @@ LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk

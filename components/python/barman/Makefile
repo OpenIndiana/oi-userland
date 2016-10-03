@@ -10,21 +10,23 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	1.3.3
+COMPONENT_VERSION= 	1.6.1
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3e3af2fec16ac2836965a4c135d9ef4959ed690fb40ef06571d03ff526448468
+  sha256:2fb8bbf0a386114dda4f1ade3e02a79aede5e3dd77c6b8d4f872b75fd1427e65
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pgbarman.org/
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

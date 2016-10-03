@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	python-ldap
 COMPONENT_VERSION= 	2.4.25
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= 	library/python/python-ldap
 COMPONENT_SUMMARY= 	Python modules for implementing LDAP clients
 COMPONENT_CLASSIFICATION=	Development/Python
@@ -29,6 +30,8 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/python-ldap
 COMPONENT_LICENSE_FILE=	LICENCE
 COMPONENT_LICENSE=	PYTHON_STYLE
+
+PYTHON_VERSIONS=	2.7
 
 CFLAGS += -I/usr/include/openldap
 
@@ -43,6 +46,5 @@ install:	$(INSTALL_32_and_64)
 test:           $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

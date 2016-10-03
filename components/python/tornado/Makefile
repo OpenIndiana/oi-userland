@@ -18,12 +18,15 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		tornado
 COMPONENT_VERSION=	2.4.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tornado
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:14d392cf14698eba75b9299748fa83716f7c02fc49684dfc5011668c30ba6b00
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/t/tornado/$(COMPONENT_ARCHIVE)
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -36,4 +39,6 @@ install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/python-2/pycurl-27
+REQUIRED_PACKAGES += library/python-2/python-mysql-27
+REQUIRED_PACKAGES += runtime/python-27

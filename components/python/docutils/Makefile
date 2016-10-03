@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	docutils
 COMPONENT_VERSION= 	0.12
+COMPONENT_REVISION=	1
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
@@ -24,6 +25,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/d/docutils/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/docutils
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -38,3 +41,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 						rst2odt.py rst2pseudoxml.py rst2s5.py rst2xetex.py rst2xml.py\
 						rstpep2html.py; \
 					do $(MV) $$i $$i-$(PYTHON_VERSION); done)
+
+REQUIRED_PACKAGES += library/python-2/lxml-27
+REQUIRED_PACKAGES += runtime/python-27

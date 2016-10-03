@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mock
 COMPONENT_VERSION=	1.0.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.voidspace.org.uk/python/mock/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -31,6 +32,10 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b839dd2d9c117c701430c149956918a423a9863b48b09c90e30a6013e7d2f44f
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/m/mock/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/mock
+
+# mock has been subsumed into Python starting with 3.3, so no need to build
+# it for Python 3.
+PYTHON_VERSIONS=        2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -46,6 +51,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

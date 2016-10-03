@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.38.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -61,7 +61,7 @@ CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_ENV +=	RUBY=$(RUBY.1.9)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
-CONFIGURE_OPTIONS +=	--enable-python26=yes
+CONFIGURE_OPTIONS +=	--enable-python26=no
 CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-qt=no
@@ -73,7 +73,6 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python26
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
 
 # The test infrastructure doesn't run in a VPATHed environment.
@@ -104,6 +103,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/ruby-19
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library

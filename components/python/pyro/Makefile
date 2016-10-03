@@ -17,8 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	Pyro
 COMPONENT_VERSION= 	3.9.1
+COMPONENT_REVISION=	1
 COMPONENT_IPS_NAME= 	pyro
-COMPONENT_FMRI= 	library/python-2/$(COMPONENT_IPS_NAME)
+COMPONENT_FMRI= 	library/python/$(COMPONENT_IPS_NAME)
 COMPONENT_SUMMARY= 	Distributed object middleware for Python (RPC)
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -28,6 +29,8 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/P/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/Pyro
 COMPONENT_LICENSE_FILE=	$(COMPONENT_IPS_NAME).license
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -47,6 +50,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

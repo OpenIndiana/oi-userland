@@ -24,29 +24,24 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8f26f519a5bccd770864317e098e5e307fc5ad1201eb96329634b6508b253178
 COMPONENT_ARCHIVE_URL=	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
+PYTHON_VERSIONS=	2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+VARIANTS = $(VARIANT_PYTHON27)
 
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
@@ -63,8 +58,6 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/python/pygobject-26
 REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

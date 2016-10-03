@@ -15,6 +15,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Elixir
 COMPONENT_VERSION=	0.7.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Declarative Mapper for SQLAlchemy
 COMPONENT_PROJECT_URL=	http://elixir.ematia.de/trac/wiki
 COMPONENT_FMRI=		library/python/elixir
@@ -29,7 +30,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSIONS= 2.6 2.7
+PYTHON_VERSIONS= 2.7
 
 build:          $(BUILD_NO_ARCH)
 
@@ -37,5 +38,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27

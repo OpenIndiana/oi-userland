@@ -24,7 +24,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/netaddr-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/netaddr-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python network address manipulation"
 set name=pkg.description \
     value="The netaddr Python library represents and manipulates network addresses. It supports the ability to work and interact with the following: IPv4 and IPv6 addresses and subnets; MAC addresses, OUI and IAB identifiers, IEEE EUI-64 identifiers; arbitrary (non-aligned) IP address ranges and IP address sets; various non-CIDR IP range formats such as nmap and glob-style formats."
@@ -76,6 +76,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/ipv6.py
 #
 license LICENSE license=BSD
 #
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/netaddr-$(PYV)@0.7.10,5.11-2016.0.1.0
 # force a dependency on the netaddr package
 depend type=require \
-    fmri=library/python-2/netaddr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/netaddr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

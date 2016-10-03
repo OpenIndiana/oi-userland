@@ -18,13 +18,15 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		jokosher
 COMPONENT_VERSION=	0.11.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://jokosher.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:489e0d06c28c3a11b817e7d6e49573ad4942a9cd426ad62dbbf94f3cca03dedb
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/jokosher/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -43,11 +45,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 test:           $(NO_TEST)
 
-REQUIRED_PACKAGES += library/python/pygobject-26
 REQUIRED_PACKAGES += library/python/pygobject-27
-REQUIRED_PACKAGES += library/python/pygtk2-26
 REQUIRED_PACKAGES += library/python/pygtk2-27
-REQUIRED_PACKAGES += library/python/python-gst-26
 REQUIRED_PACKAGES += library/python/python-gst-27
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27

@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-python-desktop
 COMPONENT_VERSION=	2.32.0
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -24,23 +24,18 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:09dbd580bf3b0ef60f91b090eafe6d08ddcc50a609e2b425a7f8eca46d4e0ee9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
+PYTHON_VERSIONS=	2.7
+
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+VARIANTS = $(VARIANT_PYTHON27)
 
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -86,8 +81,6 @@ REQUIRED_PACKAGES += library/libgtop
 REQUIRED_PACKAGES += library/libical
 REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += library/python/gnome-python
-REQUIRED_PACKAGES += library/python/gnome-python-26
 REQUIRED_PACKAGES += library/python/gnome-python-27
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

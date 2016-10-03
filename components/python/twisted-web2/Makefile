@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		TwistedWeb2
 COMPONENT_VERSION=	8.1.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://twistedmatrix.com/trac/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -34,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:0f016d498b1db0216861e9b8fbf8ad49b5b587fa64a18f1640095c1e4f93e391
 COMPONENT_ARCHIVE_URL=	http://twistedmatrix.com/Releases/Web2/8.1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/twisted-web2
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -46,6 +49,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

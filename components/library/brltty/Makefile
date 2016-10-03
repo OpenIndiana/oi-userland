@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= brltty
 COMPONENT_VERSION= 4.4
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= Braille support
 COMPONENT_FMRI= library/accessibility/brltty
 COMPONENT_CLASSIFICATION= Applications/Universal Access
@@ -34,8 +34,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/bin:/usr/gnu/bin
-
-COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) && cp -r Bindings/Python Bindings/Python26)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf -f )
@@ -54,7 +52,6 @@ CONFIGURE_OPTIONS += --disable-speech-support
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
-CONFIGURE_ENV += PYTHON26="$(PYTHON.2.6.$(BITS))"
 CONFIGURE_ENV += ICU_CONFIG="$(ICU_CONFIG.$(BITS))"
 
 COMPONENT_BUILD_ENV.64 = LDFLAGS=-m64
@@ -73,9 +70,7 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += gnome/accessibility/at-spi
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/python-2/pyrex-26
 REQUIRED_PACKAGES += library/python-2/pyrex-27
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus

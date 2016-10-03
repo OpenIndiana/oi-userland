@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
 COMPONENT_VERSION=	3.5.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -35,9 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
-# disable optimization to prevent the Studio compilers from spinning
-studio_OPT.i386.32 =
-studio_OPT.i386.64 =
+PYTHON_VERSIONS=	2.7 3.4
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -56,8 +55,13 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# Tests fail with
+# ERROR: test_xmlschema_parse_fixed_attributes (lxml.tests.test_xmlschema.ETreeXMLSchemaTestCase)
+# lxml.etree.XMLSyntaxError: Element 'b', attribute 'hardy': The value '(null)' does not match the fixed value constraint 'hey'.
+# https://bugs.launchpad.net/lxml/+bug/1608479
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
