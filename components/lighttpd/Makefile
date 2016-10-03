@@ -58,7 +58,11 @@ CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-ldap
+ifeq ($(OS_VERSION), 5.12)
 CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.7/bin/mysql_config
+else
+CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5/bin/mysql_config
+endif
 CONFIGURE_OPTIONS +=    PCRECONFIG="$(USRBINDIR64)/pcre-config"
 
 COMPONENT_TEST_TRANSFORMS += \
@@ -67,8 +71,13 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/.*/d" '
 
 REQUIRED_PACKAGES += compress/bzip2
+ifeq ($(OS_VERSION), 5.12)
 REQUIRED_PACKAGES += database/mysql-57
 REQUIRED_PACKAGES += database/mysql-57/library
+else
+REQUIRED_PACKAGES += database/mysql-55
+REQUIRED_PACKAGES += database/mysql-55/library
+endif
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
