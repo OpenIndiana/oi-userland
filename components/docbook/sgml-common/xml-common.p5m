@@ -1,0 +1,47 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/data/xml-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Common XML catalog and DTD files"
+set name=pkg.description \
+    value="The xml-common package is a subpackage of sgml-common which contains a collection XML catalogs that are useful for processing XML, but that don't need to be included in main package."
+set name=com.oracle.info.description value="Common SGML catalog and DTD files"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Documentation"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2005/734
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/sgml/docbook/xmlcatalog mode=0644 preserve=renamenew \
+    refresh_fmri=svc:/application/desktop-cache/docbook-dtds-update:default
+file path=etc/xml/catalog mode=0644 preserve=renamenew \
+    refresh_fmri=svc:/application/desktop-cache/docbook-style-xsl-update:default
+link path=usr/share/sgml/docbook/xmlcatalog \
+    target=../../../../etc/sgml/docbook/xmlcatalog
+license sgml-common.license license=GPLv2
+depend type=require fmri=data/docbook/docbook-dtds
+

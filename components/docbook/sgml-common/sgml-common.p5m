@@ -1,0 +1,82 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+# XML/SGML catalog update.
+<transform file path=usr/share/(sgml|xml)/.*$ -> \
+    default restart_fmri svc:/application/desktop-cache/docbook-dtds-update:default>
+set name=pkg.fmri \
+    value=pkg:/data/sgml-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Common SGML catalog and DTD files"
+set name=pkg.description \
+    value="The sgml-common package contains a collection of entities and DTDs that are useful for processing SGML, but that don't need to be included in multiple packages. Sgml-common also includes an up-to-date Open Catalog file."
+set name=com.oracle.info.description value="Common SGML catalog and DTD files"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Documentation"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2005/734
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/sgml/catalog preserve=renamenew
+file path=etc/sgml/sgml.conf preserve=renamenew
+file path=usr/bin/install-catalog
+file path=usr/bin/sgmlwhich
+file usr/share/doc/sgml-common-$(COMPONENT_VERSION)/html/fdl.html \
+    path=usr/share/doc/sgml-common/__dist_doc/html/fdl.html
+file usr/share/doc/sgml-common-$(COMPONENT_VERSION)/html/index.html \
+    path=usr/share/doc/sgml-common/__dist_doc/html/index.html
+file usr/share/doc/sgml-common-$(COMPONENT_VERSION)/html/install-catalog.html \
+    path=usr/share/doc/sgml-common/__dist_doc/html/install-catalog.html
+file usr/share/doc/sgml-common-$(COMPONENT_VERSION)/html/introduction.html \
+    path=usr/share/doc/sgml-common/__dist_doc/html/introduction.html
+file path=usr/share/man/man8/install-catalog.8
+file files/html.dcl path=usr/share/sgml/html.dcl
+file files/html.soc path=usr/share/sgml/html.soc
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamsa.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamsb.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamsc.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamsn.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamso.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOamsr.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISObox.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOcyr1.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOcyr2.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOdia.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOgrk1.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOgrk2.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOgrk3.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOgrk4.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOlat1.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOlat2.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOnum.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOpub.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/ISOtech.ent
+file path=usr/share/sgml/sgml-iso-entities-8879.1986/catalog
+file files/xml.dcl path=usr/share/sgml/xml.dcl
+file files/xml.soc path=usr/share/sgml/xml.soc
+license sgml-common.license license=GPLv2
+depend type=require fmri=data/docbook/docbook-dtds
