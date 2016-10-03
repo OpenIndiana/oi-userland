@@ -1,0 +1,247 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+<transform file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/(.*) -> \
+    set action.hash docbook-dsssl-1.79/%<1>>
+<transform file path=usr/share/sgml/docbook/dsssl-stylesheets-.*/catalog$ -> \
+    default restart_fmri \
+    svc:/application/desktop-cache/docbook-style-dsssl-update:default>
+
+
+set name=pkg.fmri \
+    value=pkg:/data/docbook/docbook-style-dsssl@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Norman Walsh's modular stylesheets for DocBook"
+set name=pkg.description \
+    value="These DSSSL stylesheets allow to convert any DocBook document to another printed (for example, RTF or PostScript) or online (for example, HTML) format. They are highly customizable."
+set name=com.oracle.info.description \
+    value="Norman Walsh's modular stylesheets for DocBook"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Documentation"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2010/143
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+file files/docbook-style-dsssl-update.xml \
+    path=lib/svc/manifest/application/desktop-cache/docbook-style-dsssl-update.xml
+file files/docbook-style-dsssl-update.sh \
+    path=lib/svc/method/docbook-style-dsssl-update.sh
+file bin/collateindex.pl.1 path=usr/share/man/man1/collateindex.pl.1
+file bin/collateindex.pl path=usr/share/sgml/docbook/collateindex.pl mode=0555
+file files/docbook-style-dsssl-install.sh \
+    path=usr/share/sgml/docbook/docbook-style-dsssl-install.sh mode=0555
+file files/docbook-style-dsssl-uninstall.sh \
+    path=usr/share/sgml/docbook/docbook-style-dsssl-uninstall.sh mode=0555
+link path=usr/share/sgml/docbook/dsssl-stylesheets target=dsssl-stylesheets-1.79
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/BUGS
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/README
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/VERSION
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/catalog
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbcommon.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl10n.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl10n.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1af.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1af.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1bg.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1bg.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1bs.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1bs.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ca.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ca.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1cs.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1cs.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1da.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1da.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1de.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1de.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1el.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1el.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1en.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1en.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1es.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1es.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1et.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1et.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1eu.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1eu.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1fi.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1fi.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1fr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1fr.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1hu.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1hu.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1id.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1id.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1it.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1it.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ja.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ja.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ko.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ko.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1nl.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1nl.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1nn.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1nn.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1no.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1no.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1null.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1pl.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1pl.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1pt.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1pt.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ptbr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ptbr.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ro.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ro.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ru.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1ru.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sk.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sk.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sl.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sl.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sr.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sv.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1sv.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1th.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1tr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1tr.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1uk.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1uk.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1xh.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1xh.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1zhcn.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1zhcn.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1zhtw.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbl1zhtw.ent
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/common/dbtable.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/dbdsssl/dbdsssl.dtd
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/decls/docbook.dcl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/decls/xml.dcl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/html/ISOlat1.gml
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/html/dbhtml.dtd
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/imagelib/imagelib.dtd
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/dtds/olink/olinksum.dtd
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbadmon.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbautoc.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbbibl.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbblock.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbcallou.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbchunk.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbcompon.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbdivis.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbefsyn.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbfootn.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbgloss.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbgraph.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbhtml.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbindex.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbinfo.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbinline.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dblink.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dblists.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dblot.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbmath.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbmsgset.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbnavig.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbparam.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbpi.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbprocdr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbqanda.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbrfntry.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbsect.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbsynop.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbtable.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbtitle.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbttlpg.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/dbverb.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/docbook.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/version.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/1.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/10.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/2.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/3.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/4.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/5.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/6.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/7.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/8.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/callouts/9.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/caution.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/home.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/important.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/next.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/note.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/prev.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/tip.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/toc-blank.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/toc-minus.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/toc-plus.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/up.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/images/warning.gif
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/lib/dblib.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/olink/olink.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbadmon.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbautoc.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbbibl.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbblock.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbcallou.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbcompon.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbdivis.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbefsyn.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbgloss.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbgraph.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbindex.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbinfo.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbinline.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dblink.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dblists.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dblot.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbmath.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbmsgset.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbparam.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbprint.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbprocdr.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbqanda.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbrfntry.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbsect.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbsynop.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbtable.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbtitle.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbttlpg.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/dbverb.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/docbook.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/notoc.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/plain.dsl
+file path=usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/version.dsl
+license docbook-style-dsssl.license license=MIT
+
+# Called in SMF method scripts
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/install-catalog
+
