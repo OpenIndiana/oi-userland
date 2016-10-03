@@ -2245,13 +2245,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 zone.halt()
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            if isinstance(ex, rad.client.ObjectError):
-                code = ex.get_payload().code
-                if code == zonemgr.ErrorCode.COMMAND_ERROR:
-                    LOG.warning(_("Ignoring command error returned while "
-                                  "trying to power off instance '%s' via "
-                                  "zonemgr(3RAD): %s" % (name, reason)))
-                    return
+            # A shutdown state could still be reached if the error was
+            # informational and ignorable.
+            if self._get_state(zone) == power_state.SHUTDOWN:
+                LOG.warning(_("Ignoring command error returned while "
+                              "trying to power off instance '%s' via "
+                              "zonemgr(3RAD): %s" % (name, reason)))
+                return
+
             LOG.error(_("Unable to power off instance '%s' via zonemgr(3RAD): "
                         "%s") % (name, reason))
             raise exception.InstancePowerOffFailure(reason=reason)
