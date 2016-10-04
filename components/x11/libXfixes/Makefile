@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfixes
 COMPONENT_VERSION= 5.0.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libXfixes - XFIXES extension client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
