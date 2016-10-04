@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compizconfig-python
 COMPONENT_VERSION=	0.8.10
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
@@ -24,29 +24,24 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:061b3ba74d134a48a822461f8e21b50799562a48195db5939aa1cc5043172149
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
+PYTHON_VERSIONS=	2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+VARIANTS = $(VARIANT_PYTHON27)
 
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 COMPONENT_PREP_ACTION = \
@@ -70,6 +65,5 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += desktop/compiz/library/libcompizconfig
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

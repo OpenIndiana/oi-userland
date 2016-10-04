@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/ply-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/ply-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Lex and yacc parsing tools for Python"
 set name=pkg.description \
     value="PLY is an implementation of lex and yacc parsing tools for Python"
 set name=com.oracle.info.description \
     value="the lex and yacc parsing tools for Python"
-set name=com.oracle.info.tpno value=10013
+set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -46,8 +46,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ply/cpp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ply/ctokens.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ply/lex.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ply/yacc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ply/ygen.py
 #
-license COPYING license=LGPLv2.1
+license ply.license license=BSD
+
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/ply-$(PYV)@3.1,5.11-2016.0.1.0
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -55,4 +59,4 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the ply package
 depend type=require \
-    fmri=library/python-2/ply@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/ply@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

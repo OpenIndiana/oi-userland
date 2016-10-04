@@ -18,36 +18,42 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
 COMPONENT_NAME=		coverage
-COMPONENT_VERSION=	3.5
+COMPONENT_VERSION=	4.0.3
 COMPONENT_PROJECT_URL=	http://nedbatchelder.com/code/coverage/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b181d5ec72baf7478942fd600503d9f32bb525cfca413b1c73ebfa7ff1b95ae9
-COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/c/coverage/$(COMPONENT_ARCHIVE)
+    sha256:85b1275b6d7a61ccc8024a4e9a4c9e896394776edce1a5d075ec116f91925462
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/coverage
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+PYTHON_VERSIONS=	2.7 3.4
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
 COMPONENT_POST_INSTALL_ACTION =	\
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f coverage coverage$(PYTHON_VERSION))
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
+# test requires PyContracts and gevent which haven't been integrated yet.
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += system/library

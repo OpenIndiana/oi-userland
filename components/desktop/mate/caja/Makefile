@@ -36,7 +36,14 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=	\
+	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
+		cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+
+# Localization files should be updated
+#COMPONENT_PRE_CONFIGURE_ACTION = \
+#  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+#    cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
@@ -57,6 +64,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -67,6 +75,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

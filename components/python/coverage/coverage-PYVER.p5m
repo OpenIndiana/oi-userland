@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/coverage-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/coverage-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The coverage.py Python code coverage tool"
 set name=pkg.description \
     value="Coverage is a tool for measuring code coverage of Python programs. It monitors a program, noting which parts of the code have been executed, then analyzes the source to identify code that could have been executed, but was not. Coverage measurement is typically used to gauge the effectiveness of tests. It can show which parts of your code are being exercised by tests, and which are not."
 set name=com.oracle.info.description \
     value="coverage, the code coverage tool for Python"
-set name=com.oracle.info.tpno value=10021
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -46,47 +47,59 @@ file path=usr/lib/python$(PYVER)/vendor-packages/coverage-$(COMPONENT_VERSION)-p
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/64/tracer.so
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/annotate.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/backunittest.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/backward.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/bytecode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/cmdline.py
-file path=usr/lib/python$(PYVER)/vendor-packages/coverage/codeunit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/collector.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/control.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/debug.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/env.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/execfile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/files.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/html.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/coverage_html.js
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/index.html
-file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery-1.4.3.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery.debounce.min.js
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery.hotkeys.js
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery.isonscreen.js
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery.min.js
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/jquery.tablesorter.min.js
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/keybd_closed.png
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/keybd_open.png
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/pyfile.html
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/htmlfiles/style.css
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/misc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/monkey.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/parser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/phystokens.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/pickle2json.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/plugin_support.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/python.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/pytracer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/report.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/results.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/summary.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/templite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/test_helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/tracer.so
+file path=usr/lib/python$(PYVER)/vendor-packages/coverage/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/coverage/xmlreport.py
 #
-license coverage.copyright license=BSD
-# the packaging software treats the license= attribute as the key, so
-# we need to name them differently or the tools will fail to deal with
-# the fact that they are really different license files.
-license jquery.copyright license=MIT-1
-license jquery.isonscreen.copyright license=MIT-2
+license coverage.copyright license="Apache v2.0"
+license jquery.copyright license=MIT
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/coverage-$(PYV)@3.5,5.11-2016.0.1.0
 
 # force a dependency on the coverage package
 depend type=require \
-    fmri=library/python-2/coverage@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/coverage@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

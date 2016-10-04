@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-python-extras
 COMPONENT_VERSION=	2.25.3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Supplemental Python bindings for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -27,23 +27,18 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/
 
 PATH=/usr/gnu/bin:/usr/bin
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
+PYTHON_VERSIONS=	2.7
+
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
-VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
+VARIANTS = $(VARIANT_PYTHON27)
 
 BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
 
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -69,4 +64,14 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtkspell
+REQUIRED_PACKAGES += library/desktop/libbonoboui
+REQUIRED_PACKAGES += library/desktop/libgksu
+REQUIRED_PACKAGES += library/desktop/libgnomeui
+REQUIRED_PACKAGES += library/desktop/libgtkhtml
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-vfs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11

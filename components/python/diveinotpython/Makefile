@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	diveintopython
 COMPONENT_VERSION= 	5.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	A book on Python programming
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-html-$(COMPONENT_VERSION).zip

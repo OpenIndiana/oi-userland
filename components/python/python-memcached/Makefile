@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-memcached
 COMPONENT_VERSION=	1.53
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -38,7 +39,7 @@ COMPONENT_BUGDB=	python-mod/memcached
 TPNO=			17839
 
 # Syntax errors: not Python 3 ready
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -64,6 +65,4 @@ install:	$(INSTALL_NO_ARCH)
 # tests require local, online svc:/application/database/memcached:default
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

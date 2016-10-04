@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Twisted
 COMPONENT_VERSION=	10.1.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://twistedmatrix.com/trac/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -34,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:eda6e0e9e5ef6f6c19ab75bcb094f83a12ee25fe589fbcddf946e8a655c8070b
 COMPONENT_ARCHIVE_URL=	http://twistedmatrix.com/Releases/$(COMPONENT_NAME)/10.1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/twisted
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -43,8 +46,6 @@ COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
 build:          $(BUILD_32_and_64)
 
@@ -52,6 +53,5 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

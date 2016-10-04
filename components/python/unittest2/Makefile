@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	unittest2
 COMPONENT_VERSION= 	0.5.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	unittest2 is a backport of the new features added to the unittest testing framework in Python 2.7
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -25,6 +26,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/u/unittest2/$(COMPONENT_ARCHIVE)#md5=a0af5cac92bbbfa0c3b0e99571390e0f
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/unittest2
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -36,3 +39,6 @@ install: $(INSTALL_32)
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; for i in unit2; do $(MV) $$i $$i-$(PYTHON_VERSION); done)
+
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += runtime/python-27

@@ -29,7 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
 COMPONENT_VERSION=	3.8.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://mercurial-scm.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,7 +39,7 @@ COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE
 COMPONENT_BUGDB=	utility/hg
 
 # Mercurial does not yet support Python 3.
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS = 2.7
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -114,6 +114,5 @@ install:	$(INSTALL_32)
 
 test:		install $(TEST_32)
 
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	numpy
 COMPONENT_VERSION= 	1.11.1
+COMPONENT_REVISION=	1
 COMPONENT_FMRI= 	library/python/numpy
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -29,6 +30,8 @@ COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SUMMARY= 	Numerical-Python
 COMPONENT_LICENSE= 	BSD
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -100,7 +103,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += library/math/openblas
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

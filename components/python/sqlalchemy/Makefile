@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SQLAlchemy
 COMPONENT_VERSION=	0.9.8
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -34,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.sqlalchemy.org/
 COMPONENT_BUGDB=	python-mod/sqlalchemy
+
+PYTHON_VERSIONS=	2.7 3.4
 
 TPNO=			21741
 
@@ -57,4 +60,6 @@ test:		$(TEST_32_and_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library

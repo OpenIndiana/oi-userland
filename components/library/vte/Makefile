@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vte
 COMPONENT_VERSION=	0.28.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Terminal emulation widget for GTK+
 COMPONENT_FMRI=		library/desktop/vte
@@ -32,8 +32,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) && cp -r python python-2.6)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --force &&\
@@ -51,9 +49,7 @@ CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
-COMPONENT_POST_INSTALL_ACTION = (mv -f $(PROTO_DIR)/usr/lib/python2.6/site-packages/gtk-2.0/vtemodule.so \
-	$(PROTO_DIR)/usr/lib/python2.6/site-packages/gtk-2.0/vtemodule-$(BITS).so &&\
-	mv -f $(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule.so \
+COMPONENT_POST_INSTALL_ACTION = ( mv -f $(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule.so \
 	$(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule-$(BITS).so)
 
 # common targets
@@ -73,6 +69,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
