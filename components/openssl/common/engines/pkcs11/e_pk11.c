@@ -557,7 +557,7 @@ static const EVP_CIPHER pk11_aes_256_ecb = {
 
 static EVP_CIPHER pk11_aes_128_ctr = {
 	NID_aes_128_ctr,
-	16, 16, 16,
+	1, 16, 16,
 	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
@@ -570,7 +570,7 @@ static EVP_CIPHER pk11_aes_128_ctr = {
 
 static EVP_CIPHER pk11_aes_192_ctr = {
 	NID_aes_192_ctr,
-	16, 24, 16,
+	1, 24, 16,
 	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
@@ -583,7 +583,7 @@ static EVP_CIPHER pk11_aes_192_ctr = {
 
 static EVP_CIPHER pk11_aes_256_ctr = {
 	NID_aes_256_ctr,
-	16, 32, 16,
+	1, 32, 16,
 	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
