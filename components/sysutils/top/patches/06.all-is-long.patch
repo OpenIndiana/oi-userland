@@ -1,0 +1,96 @@
+diff -ru top-3.8beta1-patched/display.c top-3.8beta1/display.c
+--- top-3.8beta1-patched/display.c	2016-10-04 08:20:24.371099898 +0300
++++ top-3.8beta1/display.c	2016-10-04 08:21:50.557598135 +0300
+@@ -1065,7 +1065,7 @@
+ 
+ 
+ void
+-i_procstates(int total, int *brkdn, int threads)
++i_procstates(int total, long *brkdn, int threads)
+ 
+ {
+     /* write current number of processes and remember the value */
+@@ -1088,7 +1088,7 @@
+ }
+ 
+ void
+-u_procstates(int total, int *brkdn, int threads)
++u_procstates(int total, long *brkdn, int threads)
+ 
+ {
+     /* if threads state has changed, do a full update */
+@@ -1297,7 +1297,7 @@
+  */
+ 
+ void
+-i_kernel(int *stats)
++i_kernel(long *stats)
+ 
+ {
+     if (num_kernel > 0)
+@@ -1310,7 +1310,7 @@
+ }
+ 
+ void
+-u_kernel(int *stats)
++u_kernel(long *stats)
+ 
+ {
+     if (num_kernel > 0)
+diff -ru top-3.8beta1-patched/display.h top-3.8beta1/display.h
+--- top-3.8beta1-patched/display.h	2016-10-04 08:20:24.371184492 +0300
++++ top-3.8beta1/display.h	2016-10-04 08:23:29.864887467 +0300
+@@ -49,13 +49,13 @@
+ void i_uptime(time_t *bt, time_t *tod);
+ void u_uptime(time_t *bt, time_t *tod);
+ void i_timeofday(time_t *tod);
+-void i_procstates(int total, int *brkdn, int threads);
+-void u_procstates(int total, int *brkdn, int threads);
++void i_procstates(int total, long *brkdn, int threads);
++void u_procstates(int total, long *brkdn, int threads);
+ void i_cpustates(int *states);
+ void u_cpustates(int *states);
+ void z_cpustates();
+-void i_kernel(int *stats);
+-void u_kernel(int *stats);
++void i_kernel(long *stats);
++void u_kernel(long *stats);
+ void i_memory(long *stats);
+ void u_memory(long *stats);
+ void i_arc(long *stats);
+diff -ru top-3.8beta1-patched/machine/m_sunos5.c top-3.8beta1/machine/m_sunos5.c
+--- top-3.8beta1-patched/machine/m_sunos5.c	2016-10-04 08:20:24.370442623 +0300
++++ top-3.8beta1/machine/m_sunos5.c	2016-10-04 08:29:58.683900520 +0300
+@@ -270,7 +270,7 @@
+ char *state_abbrev[] =
+ {"", "sleep", "run", "zombie", "stop", "start", "cpu", "swap"};
+ 
+-int process_states[PROCSTATES];
++long process_states[PROCSTATES];
+ char *procstatenames[] =
+ {
+   "", " sleeping, ", " running, ", " zombie, ", " stopped, ",
+@@ -299,7 +299,7 @@
+ {"K Total, ", "K MRU, ", "K MFU, ", "K Anon, ", "K Header, ", "K Other", NULL};
+ 
+ /* these are for detailing kernel statistics */
+-int kernel_stats[8];
++long kernel_stats[8];
+ char *kernelnames[] =
+ {" ctxsw, ", " trap, ", " intr, ", " syscall, ", " fork, ",
+  " flt, ", " pgin, ", " pgout, ", NULL};
+diff -ru top-3.8beta1-patched/machine.h top-3.8beta1/machine.h
+--- top-3.8beta1-patched/machine.h	2016-10-04 08:20:24.371366916 +0300
++++ top-3.8beta1/machine.h	2016-10-04 08:25:23.714859616 +0300
+@@ -81,9 +81,9 @@
+     double load_avg[NUM_AVERAGES];
+     int    p_total;
+     int    P_ACTIVE;     /* number of procs considered "active" */
+-    int    *procstates;
++    long   *procstates;
+     int    *cpustates;
+-    int    *kernel;
++    long    *kernel;
+     long   *memory;
+     long   arc[NUM_ZFS_ARC];
+     long   *swap;

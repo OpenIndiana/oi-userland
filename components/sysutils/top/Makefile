@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		top
 COMPONENT_VERSION=	3.8beta1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.unixtop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,6 +39,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 IPS_COMPONENT_VERSION =	3.8
 
+CONFIGURE_BINDIR.64=$(CONFIGURE_PREFIX)/bin
+
 # viewpathing support in the build is broken in the 'install' target
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -50,9 +52,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 LDFLAGS=
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
