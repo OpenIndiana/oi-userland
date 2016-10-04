@@ -16,31 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-mga
-COMPONENT_VERSION= 1.6.4
+COMPONENT_VERSION= 1.6.5
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
+COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-mga
+COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:48c6690b6751c76f53de64f8dbeaa9d6c62dbcfe890c768fd87167951247d44f
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Display
+COMPONENT_ARCHIVE_HASH= \
+  sha256:b663cd8e6364f7c4e2637b9fcab9861d0e3971518c73b00d213f6545a1289422
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-mga
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c && \
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
