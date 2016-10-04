@@ -1,0 +1,1216 @@
+$NetBSD: patch-src_AtomBios_CD__Operations.c,v 1.1 2016/09/05 12:08:53 richard Exp $
+
+since some alignment functions were moved out of compiler.h,
+simply copy them here.
+
+--- a/src/AtomBios/CD_Operations.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/AtomBios/CD_Operations.c
+@@ -43,7 +43,7 @@ Revision History:
+ #include <X11/Xos.h>
+ #include "xorg-server.h"
+ #include "compiler.h"
+-
++#include <string.h>	/* needed for memmove */
+ #include "Decoder.h"
+ 
+ VOID PutDataRegister(PARSER_TEMP_DATA STACK_BASED * pParserTempData);
+@@ -73,6 +73,39 @@ UINT32 GetParametersDirect(PARSER_TEMP_D
+ UINT16* GetDataMasterTablePointer(DEVICE_DATA STACK_BASED*  pDeviceData);
+ UINT8 GetTrueIndexInMasterTable(PARSER_TEMP_DATA STACK_BASED * pParserTempData, UINT8 IndexInMasterTable);
+ 
++static __inline__ uint32_t
++ldl_u(uint32_t * p)
++{
++    uint32_t ret;
++
++    memmove(&ret, p, sizeof(*p));
++    return ret;
++}
++
++static __inline__ uint16_t
++ldw_u(uint16_t * p)
++{
++    uint16_t ret;
++
++    memmove(&ret, p, sizeof(*p));
++    return ret;
++}
++
++static __inline__ void
++stl_u(uint32_t val, uint32_t * p)
++{
++    uint32_t tmp = val;
++
++    memmove(p, &tmp, sizeof(*p));
++}
++
++static __inline__ void
++stw_u(uint16_t val, uint16_t * p)
++{
++    uint16_t tmp = val;
++
++    memmove(p, &tmp, sizeof(*p));
++}
+ 
+ WRITE_IO_FUNCTION WritePCIFunctions[8] =   {
+     WritePCIReg32,
+$NetBSD: patch-src_atombios__crtc.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/atombios_crtc.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/atombios_crtc.c
+@@ -87,7 +87,7 @@ atombios_lock_crtc(atomBiosHandlePtr ato
+     data.exec.pspace = &crtc_data;
+ 
+     if (RHDAtomBiosFunc(atomBIOS->pScrn, atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("%s CRTC %d success\n", lock? "Lock":"Unlock", crtc);
++/*	ErrorF("%s CRTC %d success\n", lock? "Lock":"Unlock", crtc); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -110,7 +110,7 @@ atombios_enable_crtc(atomBiosHandlePtr a
+     data.exec.pspace = &crtc_data;
+ 
+     if (RHDAtomBiosFunc(atomBIOS->pScrn, atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("%s CRTC %d success\n", state? "Enable":"Disable", crtc);
++/*	ErrorF("%s CRTC %d success\n", state? "Enable":"Disable", crtc); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -133,7 +133,7 @@ atombios_enable_crtc_memreq(atomBiosHand
+     data.exec.pspace = &crtc_data;
+ 
+     if (RHDAtomBiosFunc(atomBIOS->pScrn, atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("%s CRTC memreq %d success\n", state? "Enable":"Disable", crtc);
++/*	ErrorF("%s CRTC memreq %d success\n", state? "Enable":"Disable", crtc); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -157,7 +157,7 @@ atombios_blank_crtc(atomBiosHandlePtr at
+     data.exec.pspace = &crtc_data;
+ 
+     if (RHDAtomBiosFunc(atomBIOS->pScrn, atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("%s CRTC %d success\n", state? "Blank":"Unblank", crtc);
++/*	ErrorF("%s CRTC %d success\n", state? "Blank":"Unblank", crtc); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -231,7 +231,7 @@ atombios_set_crtc_timing(xf86CrtcPtr crt
+     data.exec.pspace = &param;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set CRTC Timing success\n");
++/*	ErrorF("Set CRTC Timing success\n"); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -282,7 +282,7 @@ atombios_set_crtc_dtd_timing(xf86CrtcPtr
+     data.exec.pspace = &param;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set DTD CRTC Timing success\n");
++/*	ErrorF("Set DTD CRTC Timing success\n"); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -336,7 +336,7 @@ atombios_pick_pll(xf86CrtcPtr crtc)
+     } else
+ 	radeon_crtc->pll_id = radeon_crtc->crtc_id;
+ 
+-    ErrorF("Picked PLL %d\n", radeon_crtc->pll_id);
++/*    ErrorF("Picked PLL %d\n", radeon_crtc->pll_id); */
+ 
+     for (o = 0; o < xf86_config->num_output; o++) {
+ 	output = xf86_config->output[o];
+@@ -449,11 +449,11 @@ static uint32_t atombios_adjust_pll(xf86
+ 		args.v1.ucTransmitterID = radeon_encoder->encoder_id;
+ 		args.v1.ucEncodeMode = atombios_get_encoder_mode(output);
+ 
+-		ErrorF("before %d\n", args.v1.usPixelClock);
++/*		ErrorF("before %d\n", args.v1.usPixelClock); */
+ 		if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+ 		    adjusted_clock = le16_to_cpu(args.v1.usPixelClock) * 10;
+ 		}
+-		ErrorF("after %d\n", args.v1.usPixelClock);
++/*		ErrorF("after %d\n", args.v1.usPixelClock); */
+ 		break;
+ 	    case 3:
+ 		args.v3.sInput.usPixelClock = cpu_to_le16(adjusted_clock / 10);
+@@ -467,7 +467,7 @@ static uint32_t atombios_adjust_pll(xf86
+ 		// if SS
+ 		//    args.v3.sInput.ucDispPllConfig |= DISPPLL_CONFIG_SS_ENABLE;
+ 
+-		ErrorF("before %d 0x%x\n", args.v3.sInput.usPixelClock, args.v3.sInput.ucDispPllConfig);
++/*		ErrorF("before %d 0x%x\n", args.v3.sInput.usPixelClock, args.v3.sInput.ucDispPllConfig); */
+ 		if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+ 		    adjusted_clock = args.v3.sOutput.ulDispPllFreq * 10;
+ 		    if (args.v3.sOutput.ucRefDiv) {
+@@ -478,8 +478,8 @@ static uint32_t atombios_adjust_pll(xf86
+ 			pll_flags |= RADEON_PLL_USE_POST_DIV;
+ 			info->pll.post_div = args.v3.sOutput.ucPostDiv;
+ 		    }
+-		    ErrorF("after %d %d %d\n", args.v3.sOutput.ulDispPllFreq,
+-			   args.v3.sOutput.ucRefDiv, args.v3.sOutput.ucPostDiv);
++/*		    ErrorF("after %d %d %d\n", args.v3.sOutput.ulDispPllFreq,
++			   args.v3.sOutput.ucRefDiv, args.v3.sOutput.ucPostDiv); */
+ 		}
+ 		break;
+ 	    default:
+@@ -568,7 +568,7 @@ atombios_crtc_set_dcpll(xf86CrtcPtr crtc
+     data.exec.pspace = &args;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set DCPLL success\n");
++/*	ErrorF("Set DCPLL success\n"); */
+ 	return;
+     }
+ 
+@@ -710,7 +710,7 @@ atombios_crtc_set_pll(xf86CrtcPtr crtc, 
+     data.exec.pspace = &args;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set CRTC %d PLL success\n", radeon_crtc->crtc_id);
++/*	ErrorF("Set CRTC %d PLL success\n", radeon_crtc->crtc_id); */
+ 	return;
+     }
+ 
+@@ -991,8 +991,8 @@ atombios_crtc_mode_set(xf86CrtcPtr crtc,
+ 	tilingChanged = RADEONSetTiling(pScrn);
+     }
+ 
+-    ErrorF("Mode %dx%d - %d %d %d\n", adjusted_mode->CrtcHDisplay, adjusted_mode->CrtcVDisplay,
+-	   adjusted_mode->CrtcHTotal, adjusted_mode->CrtcVTotal, adjusted_mode->Flags);
++/*    ErrorF("Mode %dx%d - %d %d %d\n", adjusted_mode->CrtcHDisplay, adjusted_mode->CrtcVDisplay,
++	   adjusted_mode->CrtcHTotal, adjusted_mode->CrtcVTotal, adjusted_mode->Flags); */
+ 
+     RADEONInitMemMapRegisters(pScrn, info->ModeReg, info);
+     RADEONRestoreMemMapRegisters(pScrn, info->ModeReg);
+$NetBSD: patch-src_atombios__output.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/atombios_output.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/atombios_output.c
+@@ -234,7 +234,7 @@ atombios_output_dac_setup(xf86OutputPtr 
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Output DAC%d setup success\n", num);
++/*	ErrorF("Output DAC%d setup success\n", num); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -298,7 +298,7 @@ atombios_output_tv_setup(xf86OutputPtr o
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Output TV setup success\n");
++/*	ErrorF("Output TV setup success\n"); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -333,7 +333,7 @@ atombios_external_tmds_setup(xf86OutputP
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("External TMDS setup success\n");
++/*	ErrorF("External TMDS setup success\n"); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -364,7 +364,7 @@ atombios_output_ddia_setup(xf86OutputPtr
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("DDIA setup success\n");
++/*	ErrorF("DDIA setup success\n"); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -503,7 +503,7 @@ atombios_output_digital_setup(xf86Output
+     data.exec.dataSpace = (void *)&space;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Output digital setup success\n");
++/*	ErrorF("Output digital setup success\n"); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -826,7 +826,7 @@ atombios_output_dig_encoder_setup(xf86Ou
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Output DIG%d encoder setup success\n", radeon_output->dig_encoder);
++/*	ErrorF("Output DIG%d encoder setup success\n", radeon_output->dig_encoder); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -1011,10 +1011,12 @@ atombios_output_dig_transmitter_setup(xf
+     data.exec.pspace = &disp_data;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
++/*
+ 	if (IS_DCE32_VARIANT)
+ 	    ErrorF("Output UNIPHY%d transmitter setup success\n", num);
+ 	else
+ 	   ErrorF("Output DIG%d transmitter setup success\n", num);
++*/
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -1299,7 +1301,7 @@ atombios_output_yuv_setup(xf86OutputPtr 
+ 
+ 	OUTREG(reg, temp);
+ 
+-	ErrorF("crtc %d YUV %s setup success\n", radeon_crtc->crtc_id, enable ? "enable" : "disable");
++/*	ErrorF("crtc %d YUV %s setup success\n", radeon_crtc->crtc_id, enable ? "enable" : "disable"); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -1357,7 +1359,7 @@ atombios_output_overscan_setup(xf86Outpu
+     data.exec.pspace = &overscan_param;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set CRTC %d Overscan success\n", radeon_crtc->crtc_id);
++/*	ErrorF("Set CRTC %d Overscan success\n", radeon_crtc->crtc_id); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -1414,13 +1416,13 @@ atombios_output_scaler_setup(xf86OutputP
+ 	    break;
+ 	}
+ 	disp_data.ucEnable = SCALER_ENABLE_MULTITAP_MODE;
+-        ErrorF("Using TV scaler %x %x\n", disp_data.ucTVStandard, disp_data.ucEnable);
++/*        ErrorF("Using TV scaler %x %x\n", disp_data.ucTVStandard, disp_data.ucEnable); */
+     } else if (radeon_output->active_device & (ATOM_DEVICE_CV_SUPPORT)) {
+ 	disp_data.ucTVStandard = ATOM_TV_CV;
+ 	disp_data.ucEnable = SCALER_ENABLE_MULTITAP_MODE;
+-        ErrorF("Using CV scaler %x %x\n", disp_data.ucTVStandard, disp_data.ucEnable);
++/*        ErrorF("Using CV scaler %x %x\n", disp_data.ucTVStandard, disp_data.ucEnable); */
+     } else if (radeon_output->Flags & RADEON_USE_RMX) {
+-	ErrorF("Using RMX\n");
++/*	ErrorF("Using RMX\n"); */
+ 	if (radeon_output->rmx_type == RMX_FULL)
+ 	    disp_data.ucEnable = ATOM_SCALER_EXPANSION;
+ 	else if (radeon_output->rmx_type == RMX_CENTER)
+@@ -1428,7 +1430,7 @@ atombios_output_scaler_setup(xf86OutputP
+ 	else if (radeon_output->rmx_type == RMX_ASPECT)
+ 	    disp_data.ucEnable = ATOM_SCALER_EXPANSION;
+     } else {
+-	ErrorF("Not using RMX\n");
++/*	ErrorF("Not using RMX\n"); */
+ 	if (IS_AVIVO_VARIANT)
+ 	    disp_data.ucEnable = ATOM_SCALER_DISABLE;
+ 	else
+@@ -1442,10 +1444,10 @@ atombios_output_scaler_setup(xf86OutputP
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+ 	if (radeon_output->active_device & (ATOM_DEVICE_CV_SUPPORT | ATOM_DEVICE_TV_SUPPORT)
+ 	    && info->ChipFamily >= CHIP_FAMILY_RV515 && info->ChipFamily <= CHIP_FAMILY_RV570) {
+-	    ErrorF("forcing TV scaler\n");
++/*	    ErrorF("forcing TV scaler\n"); */
+ 	    atom_rv515_force_tv_scaler(output->scrn, radeon_crtc);
+ 	}
+-	ErrorF("scaler %d setup success\n", radeon_crtc->crtc_id);
++/*	ErrorF("scaler %d setup success\n", radeon_crtc->crtc_id); */
+ 	return ATOM_SUCCESS;
+     }
+ 
+@@ -1548,10 +1550,12 @@ atombios_output_dpms(xf86OutputPtr outpu
+ 		reg = INREG(RADEON_BIOS_3_SCRATCH);
+ 		OUTREG(RADEON_BIOS_3_SCRATCH, reg & ~ATOM_S3_DFP2I_ACTIVE);
+ 	    }
+-	    if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS)
++	    if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) != ATOM_SUCCESS)
++/*
+ 		ErrorF("Output %s enable success\n",
+ 		       device_name[radeon_get_device_index(radeon_output->active_device)]);
+ 	    else
++*/
+ 		ErrorF("Output %s enable failed\n",
+ 		       device_name[radeon_get_device_index(radeon_output->active_device)]);
+ 	    if (radeon_encoder->encoder_id == ENCODER_OBJECT_ID_INTERNAL_DDI)
+@@ -1581,10 +1585,12 @@ atombios_output_dpms(xf86OutputPtr outpu
+ 		data.exec.pspace = &disp_data;
+ 
+ 		if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data)
+-		    == ATOM_SUCCESS)
++		    != ATOM_SUCCESS)
++/*
+ 		    ErrorF("Output %s disable success\n",
+ 			   device_name[radeon_get_device_index(radeon_output->active_device)]);
+ 		else
++*/
+ 		    ErrorF("Output %s disable failed\n",
+ 			   device_name[radeon_get_device_index(radeon_output->active_device)]);
+ 	    }
+@@ -1735,7 +1741,7 @@ atombios_set_output_crtc_source(xf86Outp
+     data.exec.dataSpace = (void *)&space;
+ 
+     if (RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Set CRTC %d Source success\n", radeon_crtc->crtc_id);
++/*	ErrorF("Set CRTC %d Source success\n", radeon_crtc->crtc_id); */
+ 	return;
+     }
+ 
+@@ -2006,7 +2012,7 @@ atom_bios_dac_load_detect(atomBiosHandle
+     data.exec.pspace = &dac_data;
+ 
+     if (RHDAtomBiosFunc(atomBIOS->pScrn, atomBIOS, ATOMBIOS_EXEC, &data) == ATOM_SUCCESS) {
+-	ErrorF("Dac detection success\n");
++/*	ErrorF("Dac detection success\n"); */
+ 	return ATOM_SUCCESS ;
+     }
+ 
+@@ -2161,7 +2167,7 @@ RADEONDPEncoderService(xf86OutputPtr out
+ 
+     RHDAtomBiosFunc(info->atomBIOS->pScrn, info->atomBIOS, ATOMBIOS_EXEC, &data);
+ 
+-    ErrorF("%s: %d %d\n", __func__, action, args.ucStatus);
++/*    ErrorF("%s: %d %d\n", __func__, action, args.ucStatus); */
+     return args.ucStatus;
+ }
+ 
+@@ -2320,7 +2326,7 @@ atom_dp_i2c_address(I2CDevPtr dev, I2CSl
+ static Bool
+ atom_dp_i2c_start(I2CBusPtr bus, int timeout)
+ {
+-    ErrorF("%s\n", __func__);
++/*    ErrorF("%s\n", __func__); */
+     return TRUE;
+ }
+ 
+@@ -2467,8 +2473,8 @@ atom_dp_get_link_status(xf86OutputPtr ou
+ 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "dp link status failed\n");
+ 	return FALSE;
+     }
+-    ErrorF("link status %02x %02x %02x %02x %02x %02x\n", link_status[0], link_status[1],
+-	   link_status[2], link_status[3], link_status[4], link_status[5]);
++/*    ErrorF("link status %02x %02x %02x %02x %02x %02x\n", link_status[0], link_status[1],
++	   link_status[2], link_status[3], link_status[4], link_status[5]); */
+ 
+     return TRUE;
+ }
+$NetBSD: patch-src_legacy__crtc.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/legacy_crtc.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/legacy_crtc.c
+@@ -305,7 +305,8 @@ RADEONRestorePLLRegisters(ScrnInfoPtr pS
+ 
+ #if defined(__powerpc__)
+     /* apparently restoring the pll causes a hang??? */
+-    if (info->MacModel == RADEON_MAC_IBOOK)
++    if ((info->MacModel == RADEON_MAC_IBOOK) ||
++        (info->MacModel == RADEON_MAC_MINI_INTERNAL))
+ 	return;
+ #endif
+ 
+@@ -1260,7 +1261,8 @@ RADEONInitPLLRegisters(xf86CrtcPtr crtc,
+ 
+ #if defined(__powerpc__)
+     /* apparently programming this otherwise causes a hang??? */
+-    if (info->MacModel == RADEON_MAC_IBOOK)
++    if ((info->MacModel == RADEON_MAC_IBOOK) ||
++        (info->MacModel == RADEON_MAC_MINI_INTERNAL))
+ 	save->ppll_div_3 = 0x000600ad;
+     else
+ #endif
+$NetBSD: patch-src_r600__exa.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/r600_exa.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/r600_exa.c
+@@ -246,7 +246,8 @@ R600PrepareSolid(PixmapPtr pPix, int alu
+     cb_conf.base = accel_state->dst_obj.offset;
+     cb_conf.bo = accel_state->dst_obj.bo;
+ #ifdef XF86DRM_MODE
+-    cb_conf.surface = accel_state->dst_obj.surface;
++    if (info->cs) 
++        cb_conf.surface = accel_state->dst_obj.surface;
+ #endif
+ 
+     if (accel_state->dst_obj.bpp == 8) {
+@@ -428,7 +429,8 @@ R600DoPrepareCopy(ScrnInfoPtr pScrn)
+     tex_res.bo                  = accel_state->src_obj[0].bo;
+     tex_res.mip_bo              = accel_state->src_obj[0].bo;
+ #ifdef XF86DRM_MODE
+-    tex_res.surface             = accel_state->src_obj[0].surface;
++    if (info->cs) 
++        tex_res.surface             = accel_state->src_obj[0].surface;
+ #endif
+     if (accel_state->src_obj[0].bpp == 8) {
+ 	tex_res.format              = FMT_8;
+@@ -475,7 +477,8 @@ R600DoPrepareCopy(ScrnInfoPtr pScrn)
+     cb_conf.base = accel_state->dst_obj.offset;
+     cb_conf.bo = accel_state->dst_obj.bo;
+ #ifdef XF86DRM_MODE
+-    cb_conf.surface = accel_state->dst_obj.surface;
++    if (info->cs) 
++        cb_conf.surface = accel_state->dst_obj.surface;
+ #endif
+     if (accel_state->dst_obj.bpp == 8) {
+ 	cb_conf.format = COLOR_8;
+@@ -626,15 +629,10 @@ R600PrepareCopy(PixmapPtr pSrc,   Pixmap
+ 
+     if (accel_state->same_surface == TRUE) {
+ #if defined(XF86DRM_MODE)
+-	unsigned long size = accel_state->dst_obj.surface->bo_size;
+-	unsigned long align = accel_state->dst_obj.surface->bo_alignment;
+-#else
+-	unsigned height = pDst->drawable.height;
+-	unsigned long size = height * accel_state->dst_obj.pitch * pDst->drawable.bitsPerPixel/8;
+-#endif
+-
+-#if defined(XF86DRM_MODE)
+ 	if (info->cs) {
++	    unsigned long size = accel_state->dst_obj.surface->bo_size;
++	    unsigned long align = accel_state->dst_obj.surface->bo_alignment;
++
+ 	    if (accel_state->copy_area_bo) {
+ 		radeon_bo_unref(accel_state->copy_area_bo);
+ 		accel_state->copy_area_bo = NULL;
+@@ -656,6 +654,9 @@ R600PrepareCopy(PixmapPtr pSrc,   Pixmap
+ 	} else
+ #endif
+ 	{
++	    unsigned height = pDst->drawable.height;
++	    unsigned long size = height * accel_state->dst_obj.pitch * pDst->drawable.bitsPerPixel/8;
++
+ 	    if (accel_state->copy_area) {
+ 		exaOffscreenFree(pDst->drawable.pScreen, accel_state->copy_area);
+ 		accel_state->copy_area = NULL;
+@@ -978,7 +979,8 @@ static Bool R600TextureSetup(PicturePtr 
+     tex_res.bo                  = accel_state->src_obj[unit].bo;
+     tex_res.mip_bo              = accel_state->src_obj[unit].bo;
+ #ifdef XF86DRM_MODE
+-    tex_res.surface             = accel_state->src_obj[unit].surface;
++    if (info->cs) 
++        tex_res.surface             = accel_state->src_obj[unit].surface;
+ #endif
+     tex_res.request_size        = 1;
+ 
+@@ -1447,7 +1449,8 @@ static Bool R600PrepareComposite(int op,
+     cb_conf.format = dst_format;
+     cb_conf.bo = accel_state->dst_obj.bo;
+ #ifdef XF86DRM_MODE
+-    cb_conf.surface = accel_state->dst_obj.surface;
++    if (info->cs) 
++        cb_conf.surface = accel_state->dst_obj.surface;
+ #endif
+ 
+     switch (pDstPicture->format) {
+@@ -1899,9 +1902,7 @@ R600UploadToScreenCS(PixmapPtr pDst, int
+     src_obj.domain = RADEON_GEM_DOMAIN_GTT;
+     src_obj.bo = scratch;
+     src_obj.tiling_flags = 0;
+-#ifdef XF86DRM_MODE
+     src_obj.surface = NULL;
+-#endif
+ 
+     dst_obj.pitch = dst_pitch_hw;
+     dst_obj.width = pDst->drawable.width;
+@@ -1911,9 +1912,7 @@ R600UploadToScreenCS(PixmapPtr pDst, int
+     dst_obj.domain = RADEON_GEM_DOMAIN_VRAM;
+     dst_obj.bo = radeon_get_pixmap_bo(pDst);
+     dst_obj.tiling_flags = radeon_get_pixmap_tiling(pDst);
+-#ifdef XF86DRM_MODE
+     dst_obj.surface = radeon_get_pixmap_surface(pDst);
+-#endif
+ 
+     if (!R600SetAccelState(pScrn,
+ 			   &src_obj,
+@@ -2040,9 +2039,7 @@ R600DownloadFromScreenCS(PixmapPtr pSrc,
+     src_obj.domain = RADEON_GEM_DOMAIN_VRAM | RADEON_GEM_DOMAIN_GTT;
+     src_obj.bo = radeon_get_pixmap_bo(pSrc);
+     src_obj.tiling_flags = radeon_get_pixmap_tiling(pSrc);
+-#ifdef XF86DRM_MODE
+     src_obj.surface = radeon_get_pixmap_surface(pSrc);
+-#endif
+ 
+     dst_obj.pitch = scratch_pitch;
+     dst_obj.width = w;
+@@ -2052,9 +2049,7 @@ R600DownloadFromScreenCS(PixmapPtr pSrc,
+     dst_obj.bpp = bpp;
+     dst_obj.domain = RADEON_GEM_DOMAIN_GTT;
+     dst_obj.tiling_flags = 0;
+-#ifdef XF86DRM_MODE
+     dst_obj.surface = NULL;
+-#endif
+ 
+     if (!R600SetAccelState(pScrn,
+ 			   &src_obj,
+$NetBSD: patch-src_r600__textured__videofuncs.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/r600_textured_videofuncs.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/r600_textured_videofuncs.c
+@@ -275,7 +275,8 @@ R600DisplayTexturedVideo(ScrnInfoPtr pSc
+ 	tex_res.bo                  = accel_state->src_obj[0].bo;
+ 	tex_res.mip_bo              = accel_state->src_obj[0].bo;
+ #ifdef XF86DRM_MODE
+-	tex_res.surface             = NULL;
++	if (info->cs)
++		tex_res.surface     = NULL;
+ #endif
+ 
+ 	tex_res.format              = FMT_8;
+@@ -412,7 +413,8 @@ R600DisplayTexturedVideo(ScrnInfoPtr pSc
+     cb_conf.base = accel_state->dst_obj.offset;
+     cb_conf.bo = accel_state->dst_obj.bo;
+ #ifdef XF86DRM_MODE
+-    cb_conf.surface = accel_state->dst_obj.surface;
++    if (info->cs)
++        cb_conf.surface = accel_state->dst_obj.surface;
+ #endif
+ 
+     switch (accel_state->dst_obj.bpp) {
+$NetBSD: patch-src_r6xx__accel.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/r6xx_accel.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/r6xx_accel.c
+@@ -228,7 +228,7 @@ r600_set_render_target(ScrnInfoPtr pScrn
+ 
+ 
+ #if defined(XF86DRM_MODE)
+-    if (cb_conf->surface) {
++    if (info->cs && cb_conf->surface) {
+ 	switch (cb_conf->surface->level[0].mode) {
+ 	case RADEON_SURF_MODE_1D:
+ 		array_mode = 2;
+@@ -626,7 +626,7 @@ r600_set_tex_resource(ScrnInfoPtr pScrn,
+     uint32_t array_mode, pitch;
+ 
+ #if defined(XF86DRM_MODE)
+-    if (tex_res->surface) {
++    if (info->cs && tex_res->surface) {
+ 	switch (tex_res->surface->level[0].mode) {
+ 	case RADEON_SURF_MODE_1D:
+ 		array_mode = 2;
+$NetBSD: patch-src_radeon__accelfuncs.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/radeon_accelfuncs.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_accelfuncs.c
+@@ -1332,7 +1332,6 @@ FUNC_NAME(RADEONAccelInit)(ScreenPtr pSc
+ #endif
+ 
+ #ifdef RENDER
+-    info->RenderAccel = FALSE;
+     if (info->RenderAccel && info->xaaReq.minorversion >= 2) {
+ 
+ 	a->CPUToScreenAlphaTextureFlags = XAA_RENDER_POWER_OF_2_TILE_ONLY;
+$NetBSD: patch-src_radeon__crtc.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/radeon_crtc.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_crtc.c
+@@ -170,7 +170,7 @@ RADEONComputePLL_old(RADEONPLLPtr pll,
+ 
+     freq = freq * 1000;
+ 
+-    ErrorF("freq: %lu\n", freq);
++/*    ErrorF("freq: %lu\n", freq); */
+ 
+     if (flags & RADEON_PLL_USE_REF_DIV)
+ 	min_ref_div = max_ref_div = pll->reference_div;
+@@ -300,11 +300,13 @@ RADEONComputePLL_old(RADEONPLLPtr pll,
+ 	}
+     }
+ 
++/*
+     ErrorF("best_freq: %u\n", (unsigned int)best_freq);
+     ErrorF("best_feedback_div: %u\n", (unsigned int)best_feedback_div);
+     ErrorF("best_frac_feedback_div: %u\n", (unsigned int)best_frac_feedback_div);
+     ErrorF("best_ref_div: %u\n", (unsigned int)best_ref_div);
+     ErrorF("best_post_div: %u\n", (unsigned int)best_post_div);
++*/
+ 
+     if (best_freq == -1)
+ 	FatalError("Couldn't find valid PLL dividers\n");
+@@ -438,11 +440,13 @@ RADEONComputePLL_new(RADEONPLLPtr pll,
+     best_freq += pll->reference_freq * fb_div_frac;
+     best_freq = best_freq / (ref_div * post_div);
+ 
++/*
+     ErrorF("best_freq: %u\n", (unsigned int)best_freq);
+     ErrorF("best_feedback_div: %u\n", (unsigned int)fb_div);
+     ErrorF("best_frac_feedback_div: %u\n", (unsigned int)fb_div_frac);
+     ErrorF("best_ref_div: %u\n", (unsigned int)ref_div);
+     ErrorF("best_post_div: %u\n", (unsigned int)post_div);
++*/
+ 
+ done:
+     if (best_freq == 0)
+$NetBSD: patch-src_radeon__dri.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/radeon_dri.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_dri.c
+@@ -40,6 +40,8 @@
+ 
+ #include <string.h>
+ #include <stdio.h>
++#include <sys/types.h>
++#include <sys/mman.h>
+ 
+ 				/* Driver data structures */
+ #include "radeon.h"
+@@ -1056,9 +1058,8 @@ static Bool RADEONDRIPciInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+-	       "[pci] %d kB allocated with handle 0x%08x\n",
+-	       info->dri->gartSize*1024,
+-	       (unsigned int)info->dri->pciMemHandle);
++	       "[pci] %d kB allocated with handle 0x%08lx\n",
++	       info->dri->gartSize*1024, info->dri->pciMemHandle);
+ 
+     RADEONDRIInitGARTValues(info);
+ 
+@@ -1069,12 +1070,11 @@ static Bool RADEONDRIPciInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+-	       "[pci] ring handle = 0x%08x\n",
+-	       (unsigned int)info->dri->ringHandle);
++	       "[pci] ring handle = 0x%08lx, size = 0x%08lx\n", info->dri->ringHandle, info->dri->ringMapSize);
+ 
+-    if (drmMap(info->dri->drmFD, info->dri->ringHandle, info->dri->ringMapSize,
+-	       &info->dri->ring) < 0) {
+-	xf86DrvMsg(pScreen->myNum, X_ERROR, "[pci] Could not map ring\n");
++    if ((ret = drmMap(info->dri->drmFD, info->dri->ringHandle, info->dri->ringMapSize,
++	       &info->dri->ring)) < 0) {
++	xf86DrvMsg(pScreen->myNum, X_ERROR, "[pci] Could not map ring: ret %d\n", ret);
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+@@ -1091,8 +1091,8 @@ static Bool RADEONDRIPciInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+- 	       "[pci] ring read ptr handle = 0x%08x\n",
+-	       (unsigned int)info->dri->ringReadPtrHandle);
++ 	       "[pci] ring read ptr handle = 0x%08lx\n",
++	       info->dri->ringReadPtrHandle);
+ 
+     if (drmMap(info->dri->drmFD, info->dri->ringReadPtrHandle, info->dri->ringReadMapSize,
+ 	       &info->dri->ringReadPtr) < 0) {
+@@ -1114,8 +1114,8 @@ static Bool RADEONDRIPciInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+- 	       "[pci] vertex/indirect buffers handle = 0x%08x\n",
+-	       (unsigned int)info->dri->bufHandle);
++ 	       "[pci] vertex/indirect buffers handle = 0x%08lx\n",
++	       info->dri->bufHandle);
+ 
+     if (drmMap(info->dri->drmFD, info->dri->bufHandle, info->dri->bufMapSize,
+ 	       &info->dri->buf) < 0) {
+@@ -1137,8 +1137,8 @@ static Bool RADEONDRIPciInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+- 	       "[pci] GART texture map handle = 0x%08x\n",
+-	       (unsigned int)info->dri->gartTexHandle);
++ 	       "[pci] GART texture map handle = 0x%08lx\n",
++	       info->dri->gartTexHandle);
+ 
+     if (drmMap(info->dri->drmFD, info->dri->gartTexHandle, info->dri->gartTexMapSize,
+ 	       &info->dri->gartTex) < 0) {
+@@ -1165,8 +1165,7 @@ static Bool RADEONDRIMapInit(RADEONInfoP
+ 	return FALSE;
+     }
+     xf86DrvMsg(pScreen->myNum, X_INFO,
+-	       "[drm] register handle = 0x%08x\n",
+-	       (unsigned int)info->dri->registerHandle);
++	       "[drm] register handle = 0x%08lx\n", info->dri->registerHandle);
+ 
+     return TRUE;
+ }
+$NetBSD: patch-src_radeon__driver.c,v 1.3 2015/04/10 16:03:01 tnn Exp $
+
+--- a/src/radeon_driver.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_driver.c
+@@ -178,7 +178,7 @@ static const OptionInfoRec RADEONOptions
+     { OPTION_SCALER_WIDTH,                "ScalerWidth",              OPTV_INTEGER, {0}, FALSE }, 
+ #endif
+ #ifdef RENDER
+-    { OPTION_RENDER_ACCEL,   "RenderAccel",      OPTV_BOOLEAN, {0}, FALSE },
++    { OPTION_RENDER_ACCEL,   "RenderAccel",      OPTV_BOOLEAN, {0}, TRUE },
+     { OPTION_SUBPIXEL_ORDER, "SubPixelOrder",    OPTV_ANYSTR,  {0}, FALSE },
+ #endif
+     { OPTION_CLOCK_GATING,   "ClockGating",      OPTV_BOOLEAN, {0}, FALSE },
+@@ -3756,12 +3756,15 @@ Bool RADEONScreenInit(SCREEN_INIT_ARGS_D
+     /* Backing store setup */
+     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, RADEON_LOGLEVEL_DEBUG,
+ 		   "Initializing backing store\n");
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+     miInitializeBackingStore(pScreen);
++#endif
+     xf86SetBackingStore(pScreen);
+ 
+     /* DRI finalisation */
+ #ifdef XF86DRI
+-    if (info->directRenderingEnabled && info->cardType==CARD_PCIE &&
++    if (info->directRenderingEnabled &&
++	(info->cardType==CARD_PCIE || info->cardType==CARD_PCI) &&
+         info->dri->pKernelDRMVersion->version_minor >= 19)
+     {
+       if (RADEONDRISetParam(pScrn, RADEON_SETPARAM_PCIGART_LOCATION, info->dri->pciGartOffset) < 0)
+@@ -6440,7 +6443,11 @@ static Bool RADEONCloseScreen(CLOSE_SCRE
+     if (info->dri && info->dri->pDamage) {
+ 	PixmapPtr pPix = pScreen->GetScreenPixmap(pScreen);
+ 
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ 	DamageUnregister(&pPix->drawable, info->dri->pDamage);
++#else
++	DamageUnregister(info->dri->pDamage);
++#endif
+ 	DamageDestroy(info->dri->pDamage);
+ 	info->dri->pDamage = NULL;
+     }
+$NetBSD: patch-src_radeon__exa.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/radeon_exa.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_exa.c
+@@ -498,7 +498,7 @@ void *RADEONEXACreatePixmap2(ScreenPtr p
+     memset(&surface, 0, sizeof(struct radeon_surface));
+ 
+ #ifdef XF86DRM_MODE
+-    if (info->ChipFamily >= CHIP_FAMILY_R600 && info->surf_man) {
++    if (info->cs && info->ChipFamily >= CHIP_FAMILY_R600 && info->surf_man) {
+ 		if (width) {
+ 			surface.npix_x = width;
+ 			/* need to align height to 8 for old kernel */
+$NetBSD: patch-src_radeon__exa__funcs.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/radeon_exa_funcs.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_exa_funcs.c
+@@ -814,7 +814,7 @@ Bool FUNC_NAME(RADEONDrawInit)(ScreenPtr
+ 	    info->accel_state->exa->DownloadFromScreen = RADEONDownloadFromScreenCP;
+     }
+ # if defined(XF86DRM_MODE)
+-    else {
++    else if (info->cs) {
+ 	info->accel_state->exa->UploadToScreen = &RADEONUploadToScreenCS;
+         info->accel_state->exa->DownloadFromScreen = &RADEONDownloadFromScreenCS;
+     }
+$NetBSD: patch-src_radeon__exa__render.c,v 1.3 2014/10/26 10:20:42 wiz Exp $
+
+macallan; Tue Oct 29 01:06:03 UTC 2013:
+Don't endian-twiddle solid source colours in composite operations on R1xx
+Now gtk2-rendered text looks right again with EXA and xrender acceleration
+enabled.
+Probably needs similar fixes for R2xx, also needs testing on little-endian
+hardware.
+
+--- a/src/radeon_exa_render.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_exa_render.c
+@@ -649,7 +649,7 @@ static Bool FUNC_NAME(R100PrepareComposi
+     CHECK_OFFSET(pDst, 0x0f, "destination");
+ 
+     if (!pSrc) {
+-	pSrc = RADEONSolidPixmap(pScreen, cpu_to_le32(pSrcPicture->pSourcePict->solidFill.color));
++	pSrc = RADEONSolidPixmap(pScreen, pSrcPicture->pSourcePict->solidFill.color);
+ 	if (!pSrc)
+ 	    RADEON_FALLBACK("Failed to create solid scratch pixmap\n");
+     }
+@@ -661,7 +661,7 @@ static Bool FUNC_NAME(R100PrepareComposi
+ 	return FALSE;
+ 
+     if (pMaskPicture && !pMask) {
+-	pMask = RADEONSolidPixmap(pScreen, cpu_to_le32(pMaskPicture->pSourcePict->solidFill.color));
++	pMask = RADEONSolidPixmap(pScreen, pMaskPicture->pSourcePict->solidFill.color);
+ 	if (!pMask) {
+ 	    if (!pSrcPicture->pDrawable)
+ 		pScreen->DestroyPixmap(pSrc);
+@@ -1025,7 +1025,7 @@ static Bool FUNC_NAME(R200PrepareComposi
+ 	RADEON_FALLBACK(("Bad destination pitch 0x%x\n", (int)dst_pitch));
+ 
+     if (!pSrc) {
+-	pSrc = RADEONSolidPixmap(pScreen, cpu_to_le32(pSrcPicture->pSourcePict->solidFill.color));
++	pSrc = RADEONSolidPixmap(pScreen, pSrcPicture->pSourcePict->solidFill.color);
+ 	if (!pSrc)
+ 	    RADEON_FALLBACK("Failed to create solid scratch pixmap\n");
+     }
+@@ -1034,7 +1034,7 @@ static Bool FUNC_NAME(R200PrepareComposi
+ 	return FALSE;
+ 
+     if (pMaskPicture && !pMask) {
+-	pMask = RADEONSolidPixmap(pScreen, cpu_to_le32(pMaskPicture->pSourcePict->solidFill.color));
++	pMask = RADEONSolidPixmap(pScreen, pMaskPicture->pSourcePict->solidFill.color);
+ 	if (!pMask) {
+ 	    if (!pSrcPicture->pDrawable)
+ 		pScreen->DestroyPixmap(pSrc);
+@@ -1533,7 +1533,7 @@ static Bool FUNC_NAME(R300PrepareComposi
+ 	RADEON_FALLBACK(("Bad destination pitch 0x%x\n", (int)dst_pitch));
+ 
+     if (!pSrc) {
+-	pSrc = RADEONSolidPixmap(pScreen, cpu_to_le32(pSrcPicture->pSourcePict->solidFill.color));
++	pSrc = RADEONSolidPixmap(pScreen, pSrcPicture->pSourcePict->solidFill.color);
+ 	if (!pSrc)
+ 	    RADEON_FALLBACK("Failed to create solid scratch pixmap\n");
+     }
+@@ -1542,7 +1542,7 @@ static Bool FUNC_NAME(R300PrepareComposi
+ 	return FALSE;
+ 
+     if (pMaskPicture && !pMask) {
+-	pMask = RADEONSolidPixmap(pScreen, cpu_to_le32(pMaskPicture->pSourcePict->solidFill.color));
++	pMask = RADEONSolidPixmap(pScreen, pMaskPicture->pSourcePict->solidFill.color);
+ 	if (!pMask) {
+ 	    if (!pSrcPicture->pDrawable)
+ 		pScreen->DestroyPixmap(pSrc);
+$NetBSD: patch-src_radeon__kms.c,v 1.1 2015/04/10 16:03:01 tnn Exp $
+
+--- a/src/radeon_kms.c.orig	2012-06-29 13:45:35.000000000 +0000
++++ b/src/radeon_kms.c
+@@ -1039,7 +1039,9 @@ Bool RADEONScreenInit_KMS(SCREEN_INIT_AR
+     /* Backing store setup */
+     xf86DrvMsgVerb(pScrn->scrnIndex, X_INFO, RADEON_LOGLEVEL_DEBUG,
+ 		   "Initializing backing store\n");
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+     miInitializeBackingStore(pScreen);
++#endif
+     xf86SetBackingStore(pScreen);
+ 
+ 
+$NetBSD: patch-src_radeon__mm__i2c.c,v 1.1 2015/04/02 22:16:46 tnn Exp $
+
+--- a/src/radeon_mm_i2c.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_mm_i2c.c
+@@ -16,10 +16,21 @@
+ 
+ /* i2c stuff */
+ #include "xf86i2c.h"
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ #include "fi1236.h"
+ #include "msp3430.h"
+ #include "tda9885.h"
+ #include "uda1380.h"
++#else
++#define TUNER_TYPE_FI1216 -1
++#define TUNER_TYPE_FI1236 -1
++#define TUNER_TYPE_FI1236W -1
++#define TUNER_TYPE_FI1246 -1
++#define TUNER_TYPE_FI1256 -1
++#define TUNER_TYPE_MT2032 -1
++#define TUNER_TYPE_FM1216ME -1
++#define TUNER_TYPE_TEMIC_FN5AL -1
++#endif
+ #include "i2c_def.h"
+ 
+ 
+@@ -367,10 +378,12 @@ void RADEONInitI2C(ScrnInfoPtr pScrn, RA
+     RADEONPLLPtr  pll = &(info->pll);
+ 
+     pPriv->i2c = NULL;
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+     pPriv->fi1236 = NULL;
+     pPriv->msp3430 = NULL;
+     pPriv->tda9885 = NULL;
+ 	 pPriv->uda1380 = NULL;
++#endif
+     #if 0 /* put back on when saa7114 support is present */
+     pPriv->saa7114 = NULL;
+     #endif
+@@ -469,6 +482,7 @@ void RADEONInitI2C(ScrnInfoPtr pScrn, RA
+     if(!info->MM_TABLE_valid)RADEON_read_eeprom(pPriv);
+ #endif    
+     
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+     if(!xf86LoadSubModule(pScrn,"fi1236"))
+     {
+        xf86DrvMsg(pScrn->scrnIndex, X_ERROR, "Unable to initialize fi1236 driver\n");
+@@ -595,6 +609,7 @@ void RADEONInitI2C(ScrnInfoPtr pScrn, RA
+        xf86_InitMSP3430(pPriv->msp3430);
+        xf86_MSP3430SetVolume(pPriv->msp3430, pPriv->mute ? MSP3430_FAST_MUTE : MSP3430_VOLUME(pPriv->volume));
+     }
++#endif
+     
+ #if 0 /* put this back when saa7114 driver is ready */
+     if(!xf86LoadSubModule(pScrn,"saa7114"))
+@@ -624,6 +639,7 @@ void RADEONInitI2C(ScrnInfoPtr pScrn, RA
+ 
+ static void RADEON_TDA9885_Init(RADEONPortPrivPtr pPriv)
+ {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ TDA9885Ptr t=pPriv->tda9885;
+ t->sound_trap=0;
+ t->auto_mute_fm=1; /* ? */
+@@ -639,4 +655,5 @@ t->minimum_gain=0;
+ t->gating=0; 
+ t->vif_agc=1; /* set to 1 ? - depends on design */
+ t->gating=0; 
++#endif
+ }
+$NetBSD: patch-src_radeon__render.c,v 1.1 2013/10/31 00:07:24 wiz Exp $
+
+--- a/src/radeon_render.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_render.c
+@@ -409,6 +409,9 @@ static Bool FUNC_NAME(R100SetupTexture)(
+     dst_pitch = RADEON_ALIGN(width * tex_bytepp, 64);
+     size = dst_pitch * height;
+ 
++    info->accel_state->texW[0] = width;
++    info->accel_state->texH[0] = height;
++
+     if ((flags & XAA_RENDER_REPEAT) && (height != 1) &&
+ 	(RADEON_ALIGN(width * tex_bytepp, 32) != dst_pitch))
+ 	return FALSE;
+@@ -432,7 +435,7 @@ static Bool FUNC_NAME(R100SetupTexture)(
+ 	txformat |= ATILog2(width) << RADEON_TXFORMAT_WIDTH_SHIFT;
+ 	txformat |= ATILog2(height) << RADEON_TXFORMAT_HEIGHT_SHIFT;
+     } else {
+-	tex_size = (height << 16) | width;
++	tex_size = ((height - 1) << 16) | (width - 1);
+ 	txformat |= RADEON_TXFORMAT_NON_POWER2;
+     }
+ 
+@@ -462,7 +465,6 @@ static Bool FUNC_NAME(R100SetupTexture)(
+ 
+     if (info->accel_state->accel->NeedToSync)
+ 	info->accel_state->accel->Sync(pScrn);
+-
+     while (height--) {
+ 	memcpy(dst, src, width * tex_bytepp);
+ 	src += src_pitch;
+@@ -633,10 +635,10 @@ FUNC_NAME(R100SubsequentCPUToScreenTextu
+ 
+     r = width + l;
+     b = height + t;
+-    fl = srcx;
+-    fr = srcx + width;
+-    ft = srcy;
+-    fb = srcy + height;
++    fl = (float)srcx / info->accel_state->texW[0];
++    fr = (float)(srcx + width) / info->accel_state->texW[0];
++    ft = (float)srcy / info->accel_state->texH[0];
++    fb = (float)(srcy + height) / info->accel_state->texH[0];
+ 
+ #ifdef ACCEL_CP
+     BEGIN_RING(25);
+$NetBSD: patch-src_radeon__textured__video.c,v 1.1 2014/10/26 10:20:42 wiz Exp $
+
+--- a/src/radeon_textured_video.c.orig	2012-06-25 08:19:41.000000000 +0000
++++ b/src/radeon_textured_video.c
+@@ -251,14 +251,17 @@ RADEONPutImageTextured(ScrnInfoPtr pScrn
+     BoxRec dstBox;
+     int dst_width = width, dst_height = height;
+     int aligned_height;
+-#ifdef XF86DRM_MODE
+-    int h_align = drmmode_get_height_align(pScrn, 0);
+-#else
+-    int h_align = 1;
+-#endif
++    int h_align;
+     /* make the compiler happy */
+     s2offset = s3offset = srcPitch2 = 0;
+ 
++#ifdef XF86DRM_MODE
++    if (info->cs)
++        h_align = drmmode_get_height_align(pScrn, 0);
++    else
++#endif
++        h_align = 1;
++
+     /* Clip */
+     x1 = src_x;
+     x2 = src_x + src_w;
+@@ -496,7 +499,7 @@ RADEONPutImageTextured(ScrnInfoPtr pScrn
+ #ifdef XF86DRI
+     if (info->directRenderingEnabled) {
+ #ifdef XF86DRM_MODE
+-	if (IS_EVERGREEN_3D)
++	if (info->cs && IS_EVERGREEN_3D)
+ 	    EVERGREENDisplayTexturedVideo(pScrn, pPriv);
+ 	else
+ #endif
+$NetBSD: patch-src_radeon__video.c,v 1.1 2015/04/02 22:16:46 tnn Exp $
+
+--- a/src/radeon_video.c.orig	2012-06-25 08:32:43.000000000 +0000
++++ b/src/radeon_video.c
+@@ -32,9 +32,11 @@
+ 
+ #include "theatre_detect.h"
+ #include "theatre_reg.h"
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ #include "fi1236.h"
+ #include "msp3430.h"
+ #include "tda9885.h"
++#endif
+ 
+ #define OFF_DELAY       250  /* milliseconds */
+ #define FREE_DELAY      15000
+@@ -1743,8 +1745,10 @@ RADEONStopVideo(ScrnInfoPtr pScrn, point
+         OUTREG(RADEON_CAP0_TRIG_CNTL, 0);
+         RADEONResetVideo(pScrn);
+         pPriv->video_stream_active = FALSE;
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if(pPriv->msp3430 != NULL) xf86_MSP3430SetVolume(pPriv->msp3430, MSP3430_FAST_MUTE);
+ 		if(pPriv->uda1380 != NULL) xf86_uda1380_mute(pPriv->uda1380, TRUE);
++#endif
+         if(pPriv->i2c != NULL) RADEON_board_setmisc(pPriv);
+      }
+      RADEONFreeVideoMemory(pScrn, pPriv);
+@@ -1913,11 +1917,13 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+         pPriv->encoding = value;
+         if(pPriv->video_stream_active)
+         {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+            if(pPriv->theatre != NULL) RADEON_RT_SetEncoding(pScrn, pPriv);
+            if(pPriv->msp3430 != NULL) RADEON_MSP_SetEncoding(pPriv);
+            if(pPriv->tda9885 != NULL) RADEON_TDA9885_SetEncoding(pPriv);
+ 	   if(pPriv->fi1236 != NULL) RADEON_FI1236_SetEncoding(pPriv);
+            if(pPriv->i2c != NULL) RADEON_board_setmisc(pPriv);
++#endif
+         /* put more here to actually change it */
+         }
+    } 
+@@ -1925,6 +1931,7 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+    {
+         pPriv->frequency = value;
+         /* mute volume if it was not muted before */
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if((pPriv->msp3430!=NULL)&& !pPriv->mute)xf86_MSP3430SetVolume(pPriv->msp3430, MSP3430_FAST_MUTE);
+ 		if((pPriv->uda1380!=NULL)&& !pPriv->mute)xf86_uda1380_mute(pPriv->uda1380, TRUE);
+         if(pPriv->fi1236 != NULL) xf86_TUNER_set_frequency(pPriv->fi1236, value);
+@@ -1933,18 +1940,23 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+                 xf86_InitMSP3430(pPriv->msp3430);
+         if((pPriv->msp3430 != NULL)&& !pPriv->mute) xf86_MSP3430SetVolume(pPriv->msp3430, MSP3430_VOLUME(pPriv->volume));
+ 		if((pPriv->uda1380 != NULL)&& !pPriv->mute) xf86_uda1380_setvolume(pPriv->uda1380, pPriv->volume);
++#endif
+    } 
+    else if(attribute == xvMute) 
+    {
+         pPriv->mute = value;
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if(pPriv->msp3430 != NULL) xf86_MSP3430SetVolume(pPriv->msp3430, pPriv->mute ? MSP3430_FAST_MUTE : MSP3430_VOLUME(pPriv->volume));
+         if(pPriv->i2c != NULL) RADEON_board_setmisc(pPriv);
+ 		if(pPriv->uda1380 != NULL) xf86_uda1380_mute(pPriv->uda1380, pPriv->mute);
++#endif
+    } 
+    else if(attribute == xvSAP) 
+    {
+         pPriv->sap_channel = value;
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if(pPriv->msp3430 != NULL) xf86_MSP3430SetSAP(pPriv->msp3430, pPriv->sap_channel?4:3);
++#endif
+    } 
+    else if(attribute == xvVolume) 
+    {
+@@ -1952,9 +1964,11 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+         if(value>1000)value = 1000;
+         pPriv->volume = value;  
+         pPriv->mute = FALSE;
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if(pPriv->msp3430 != NULL) xf86_MSP3430SetVolume(pPriv->msp3430, MSP3430_VOLUME(value));
+         if(pPriv->i2c != NULL) RADEON_board_setmisc(pPriv);
+ 		if(pPriv->uda1380 != NULL) xf86_uda1380_setvolume(pPriv->uda1380, value);
++#endif
+    } 
+    else if(attribute == xvOverlayDeinterlacingMethod) 
+    {
+@@ -1982,6 +1996,7 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+ 		pScrn->currentMode->Flags & V_INTERLACE ? " interlaced" : "" ,
+ 		pScrn->currentMode->Flags & V_DBLSCAN ? " doublescan" : ""
+ 		);
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ 	if(pPriv->tda9885 != NULL){
+ 		xf86_tda9885_getstatus(pPriv->tda9885);
+ 		xf86_tda9885_dumpstatus(pPriv->tda9885);
+@@ -1989,16 +2004,19 @@ RADEONSetPortAttribute(ScrnInfoPtr  pScr
+ 	if(pPriv->fi1236!=NULL){
+ 		xf86_fi1236_dump_status(pPriv->fi1236);
+ 		}
++#endif
+    }
+    else if(attribute == xvAdjustment) 
+    {
+   	pPriv->adjustment=value;
+         xf86DrvMsg(pScrn->scrnIndex,X_ERROR,"Setting pPriv->adjustment to %u\n",
+ 		   (unsigned)pPriv->adjustment);
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+   	if(pPriv->tda9885!=0){
+ 		pPriv->tda9885->top_adjustment=value;
+ 		RADEON_TDA9885_SetEncoding(pPriv);
+ 		}
++#endif
+    }
+    else 
+ 	return BadMatch;
+@@ -2090,12 +2108,14 @@ RADEONGetPortAttribute(ScrnInfoPtr  pScr
+         *value = pPriv->frequency;
+     else 
+     if(attribute == xvTunerStatus) {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+         if(pPriv->fi1236==NULL){
+                 *value=TUNER_OFF;
+                 } else
+                 {
+                 *value = xf86_TUNER_get_afc_hint(pPriv->fi1236);
+                 }
++#endif
+        } 
+     else if(attribute == xvMute)
+         *value = pPriv->mute;
+@@ -3676,9 +3696,11 @@ RADEONPutVideo(
+       {
+          RADEON_RT_SetEncoding(pScrn, pPriv); 
+       }
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+       if(pPriv->msp3430 != NULL) RADEON_MSP_SetEncoding(pPriv);
+       if(pPriv->tda9885 != NULL) RADEON_TDA9885_SetEncoding(pPriv);
+       if(pPriv->fi1236 != NULL) RADEON_FI1236_SetEncoding(pPriv);
++#endif
+       if(pPriv->i2c != NULL)RADEON_board_setmisc(pPriv);
+    }
+ 
+@@ -3756,6 +3778,7 @@ RADEONPutVideo(
+ 
+ static void RADEON_board_setmisc(RADEONPortPrivPtr pPriv)
+ {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+     /* Adjust PAL/SECAM constants for FI1216MF tuner */
+     if((((pPriv->tuner_type & 0xf)==5) ||
+         ((pPriv->tuner_type & 0xf)==11)||
+@@ -3775,7 +3798,7 @@ static void RADEON_board_setmisc(RADEONP
+            pPriv->fi1236->parm.band_high = 0x33;
+         }
+     }
+-    
++#endif
+ }
+ 
+ static void RADEON_RT_SetEncoding(ScrnInfoPtr pScrn, RADEONPortPrivPtr pPriv)
+@@ -3867,6 +3890,7 @@ xf86_RT_SetOutputVideoSize(pPriv->theatr
+ 
+ static void RADEON_MSP_SetEncoding(RADEONPortPrivPtr pPriv)
+ {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ xf86_MSP3430SetVolume(pPriv->msp3430, MSP3430_FAST_MUTE);
+ switch(pPriv->encoding){
+         case 1:
+@@ -3922,10 +3946,12 @@ switch(pPriv->encoding){
+         }
+ xf86_InitMSP3430(pPriv->msp3430);
+ xf86_MSP3430SetVolume(pPriv->msp3430, pPriv->mute ? MSP3430_FAST_MUTE : MSP3430_VOLUME(pPriv->volume));
++#endif
+ }
+ 
+ static void RADEON_TDA9885_SetEncoding(RADEONPortPrivPtr pPriv)
+ {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ TDA9885Ptr t=pPriv->tda9885;
+ 
+ switch(pPriv->encoding){
+@@ -3962,10 +3988,12 @@ switch(pPriv->encoding){
+ xf86_tda9885_setparameters(pPriv->tda9885); 
+ xf86_tda9885_getstatus(pPriv->tda9885);
+ xf86_tda9885_dumpstatus(pPriv->tda9885);
++#endif
+ }
+ 
+ static void RADEON_FI1236_SetEncoding(RADEONPortPrivPtr pPriv)
+ {
++#ifdef PKGSRC_LEGACY_XORG_SERVER
+ /* at the moment this only affect MT2032 */
+ switch(pPriv->encoding){
+                 /* PAL */
+@@ -3994,5 +4022,6 @@ switch(pPriv->encoding){
+         default:
+                 return;
+         }       
++#endif
+ }
+ 
