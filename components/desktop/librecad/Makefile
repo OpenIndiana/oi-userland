@@ -25,6 +25,10 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_ARCHIVE_URL=  https://api.github.com/repos/$(COMPONENT_NAME)/$(COMPONENT_NAME)/tarball/$(COMPONENT_VERSION)
 
 UNPACK_ARGS = --relocate-to=$(COMPONENT_SRC)
+COMPONENT_POST_UNPACK_ACTION = \
+	$(MV) $(COMPONENT_SRC)/*/* $(COMPONENT_SRC) ;\
+	$(MV) $(COMPONENT_SRC)/*/.[gt]* $(COMPONENT_SRC) ;\
+	rmdir $(COMPONENT_SRC)/$(COMPONENT_NAME)-$(COMPONENT_NAME)-[0-9a-f]*
 
 COMPONENT_LICENSE =	Apache2-or-GPLv3
 COMPONENT_LICENSE_FILE = LICENSE
@@ -39,7 +43,6 @@ COMPONENT_LICENSE_FILE = LICENSE
 COMPONENT_SUMMARY =	LibreCAD is a 2D CAD drawing tool based on the community edition of QCAD.
 COMPONENT_CLASSIFICATION = Applications/Graphics and Imaging
 
-COMPONENT_REVISION = $(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION)
 
 include ../../../make-rules/prep.mk
