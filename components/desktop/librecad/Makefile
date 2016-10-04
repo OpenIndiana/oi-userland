@@ -44,8 +44,6 @@ IPS_COMPONENT_VERSION = $(COMPONENT_VERSION)
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
-
-# publish: update-publish
 include ../../../make-rules/ips.mk
 
 tolower = $(shell echo $(1) | tr '[A-Z]' '[a-z]')
