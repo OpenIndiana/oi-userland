@@ -42,13 +42,10 @@ COMPONENT_BUGDB=	utility/foomatic
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.$(BUILD_BITS)= $(USRLIBDIR)/lp/bin
-
-CONFIGURE_OPTIONS +=	--prefix=$(USRLIBDIR)/lp
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS +=	--with-echo=wecho
 CONFIGURE_OPTIONS +=	--with-file-converter="a2ps -1 -q -c -B @@--medium=@@PAGESIZE@@ -o -"
-CONFIGURE_OPTIONS +=	--with-execpath=$(USRLIBDIR)/lp/bin:$(USRBINDIR):$(BINDIR)
+CONFIGURE_OPTIONS +=	--with-execpath=$(USRLIBDIR)/cups/filter:$(USRBINDIR):$(BINDIR)
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
 
