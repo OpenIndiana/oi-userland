@@ -30,9 +30,9 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR)
+PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:$(USRBINDIR)
 else
-PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
+PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 COMPONENT_NAME=		p7zip
