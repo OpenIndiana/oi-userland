@@ -30,9 +30,9 @@ COMPONENT_POST_UNPACK_ACTION = \
 	$(MV) $(COMPONENT_SRC)/*/.[gt]* $(COMPONENT_SRC) ;\
 	rmdir $(COMPONENT_SRC)/$(COMPONENT_NAME)-$(COMPONENT_NAME)-[0-9a-f]*
 
-COMPONENT_LICENSE =	Apache2-or-GPLv3
+COMPONENT_LICENSE =	GPLv2
 COMPONENT_LICENSE_FILE = LICENSE
-# COMPONENT_LICENSE_FILE += LICENSE_Apache2.txt
+# COMPONENT_LICENSE_FILE += Apache2
 # COMPONENT_LICENSE_FILE += LICENSE_GPLv3.txt
 # COMPONENT_LICENSE_FILE += LICENSE_KST32B_v2.txt
 # COMPONENT_LICENSE_FILE += license-lc_opengost-fonts.txt
@@ -49,24 +49,29 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
 
-tolower = $(shell echo $(1) | tr '[A-Z]' '[a-z]')
-COMPONENT_PRE_INSTALL_ACTION += ginstall -d $(PROTO_DIR)$(USRBINDIR);
-COMPONENT_PRE_INSTALL_ACTION += ginstall -d $(PROTO_DIR)$(USRLIBDIR)/$(call tolower, $(COMPONENT_NAME))/resources
-COMPONENT_PRE_INSTALL_ACTION +=  ginstall -d $(PROTO_DIR)$(USRSHAREDOCDIR)/$(call tolower, $(COMPONENT_NAME))
+COMPONENT_NAME_lc = $(shell echo $(COMPONENT_NAME) | tr '[A-Z]' '[a-z]')
 COMPONENT_INSTALL_ACTION = \
-	ginstall -m 755 $(@D)/unix/librecad $(PROTO_DIR)$(USRBINDIR); \
-	  ginstall -m 755 $(@D)/unix/ttf2lff $(PROTO_DIR)$(USRBINDIR); \
-          gcp -rf  $(@D)/unix/resources/* \
-                  $(PROTO_DIR)$(USRLIBDIR)/$(call tolower, $(COMPONENT_NAME))/resources; \
-          gcp -rf  $(@D)/librecad/support/* \
-                  $(PROTO_DIR)$(USRLIBDIR)/$(call tolower, $(COMPONENT_NAME))/resources; \
-	  cd $(PROTO_DIR)$(USRLIBDIR)/$(call tolower, $(COMPONENT_NAME))/resources/plugins && mkdir 64 && mv lib*so 64; \
-	  cd $(PROTO_DIR)$(USRLIBDIR)/$(call tolower, $(COMPONENT_NAME))/resources/ && mv fonts $(PROTO_DIR)$(USRSHAREDOCDIR)/$(call tolower, $(COMPONENT_NAME)); \
-          cd $(SOURCE_DIR) && cp -p  LICENSE* gpl-* license* \
-		$(PROTO_DIR)$(USRSHAREDOCDIR)/$(call tolower, $(COMPONENT_NAME))
+	ginstall -Dpm 755 $(@D)/unix/librecad $(PROTO_DIR)$(USRBINDIR)/librecad; \
+	ginstall -Dpm 755 $(@D)/unix/ttf2lff $(PROTO_DIR)$(USRBINDIR)/ttf2lff; \
+	ginstall -d $(PROTO_DIR)$(USRLIBDIR)/$(COMPONENT_NAME_lc)/plugins/$(MACH64) ; \
+	ginstall -d $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc); \
+        gcp -rfL  $(@D)/unix/resources/plugins/* \
+                  $(PROTO_DIR)$(USRLIBDIR)/$(COMPONENT_NAME_lc)/plugins/$(MACH64)/; \
+        gcp -rfL  $(@D)/unix/resources/qm \
+                  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc)/; \
+        gcp -rfL  $(@D)/librecad/support/* \
+                  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc); \
+	ginstall -Dpm 644 $(@D)/desktop/librecad.desktop $(PROTO_DIR)$(USRSHAREDIR)/applications/librecad.desktop ; \
+	ginstall -Dpm 644 $(@D)/librecad/res/main/librecad.png $(PROTO_DIR)$(USRSHAREDIR)/pixmaps/librecad.png ; \
+	ginstall -Dpm 644 $(@D)/desktop/librecad.sharedmimeinfo $(PROTO_DIR)$(USRSHAREDIR)/mime/packages/librecad.xml ; \
+	ginstall -Dpm 644 $(@D)/desktop/librecad.1 $(PROTO_DIR)$(USRSHAREMANDIR)/man1/librecad.1 ; \
+	ginstall -Dpm 644 $(SOURCE_DIR)/ttf2lff.1 $(PROTO_DIR)$(USRSHAREMANDIR)/man1/ttf2lff.1 ; \
+        ginstall -Dpm 644  $(SOURCE_DIR)/LICENSE* $(SOURCE_DIR)/gpl-* $(SOURCE_DIR)/license* \
+	  $(PROTO_DIR)$(USRSHAREDIR)/$(COMPONENT_NAME_lc)/doc
+	
 	
 COMPONENT_PRE_BUILD_ACTION = \
-        (cd $(@D) && qmake $(call tolower,$(COMPONENT_NAME)).pro)
+        (cd $(@D) && qmake $(COMPONENT_NAME_lc).pro 'CONFIG+=release')
 
 build:		$(BUILD_32)
 
