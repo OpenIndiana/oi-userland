@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fontconfig
-COMPONENT_VERSION= 2.11.95
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.12.1
 COMPONENT_SUMMARY=  Fontconfig - Font configuration and customization library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7b165eee7aa22dcc1557db56f58d905b6a14b32f9701c79427452474375b4c89
+  sha256:b449a3e10c47e1d1c7a6ec6e2016cca73d3bd68fbbd4f0ae5cc6b573f7d6c7f3
 COMPONENT_ARCHIVE_URL= \
   http://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software/fontconfig/
