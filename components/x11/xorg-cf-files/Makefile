@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           xorg-cf-files
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_FMRI=           developer/build/imake/xorg-cf-files
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SUMMARY=  X.Org platform configuration files for imake
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ed23b85043edecc38fad4229e0ebdb7ff80b570e746bc03a7c8678d601be7ed4
+  sha256:4dcf5a9dbe3c6ecb9d2dd05e629b3d373eae9ba12d13942df87107fdc1b3934d
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/util/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/

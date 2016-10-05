@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ibus
 COMPONENT_VERSION= 1.3.9
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= iBus - Intelligent Input Bus
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -53,6 +54,10 @@ CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib/ibus
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/ibus/$(MACH64)
 CONFIGURE_OPTIONS.64 += --with-gtk-im-module-dir=/usr/lib/$(MACH64)/gtk-2.0/$(GTK_BIN_VER)/immodules/
 
+CONFIGURE_ENV += PYTHON="$(PYTHON)"
+CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
+
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
@@ -64,3 +69,13 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += x11/library/libx11
