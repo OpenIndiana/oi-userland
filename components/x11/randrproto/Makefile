@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= randrproto
-COMPONENT_VERSION= 1.4.0
+COMPONENT_VERSION= 1.5.0
 COMPONENT_SUMMARY= headers & documentation for RANDR extension to the X11 protocol
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:85c42e8c66a55318ddaf2ce5727beacb25cb1f8555229f778cd1da86478209cf
+  sha256:4c675533e79cd730997d232c8894b6692174dce58d3e207021b8f860be498468
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
