@@ -1,0 +1,18 @@
+diff --git a/lib/igt_core.c b/lib/igt_core.c
+index 6b69bb7..e6dd06b 100644
+--- a/lib/igt_core.c
++++ b/lib/igt_core.c
+@@ -72,6 +72,13 @@
+ #include <libgen.h>   /* for basename() on Solaris */
+ #endif
+ 
++#ifndef __linux__
++static int pthread_sigqueue(pthread_t threadid, int signo, const union sigval value)
++{
++ return ENOSYS;
++}
++#endif
++
+ /**
+  * SECTION:igt_core
+  * @short_description: Core i-g-t testing support
