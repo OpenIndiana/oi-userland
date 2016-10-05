@@ -50,6 +50,11 @@ include enable-extensions.mk
 CONFIGURE_OPTIONS += --enable-dtrace
 COMPONENT_BUILD_ENV += PATH="$(PATH):$(USRSBINDIR)"
 
+# Without this, the the build seems to interrogate GCC for potential library
+# search path information and then embed it into the RUNPATH of selected ELF
+# files it creates.  This includes GCC private directories
+CONFIGURE_OPTIONS += --disable-rpath
+
 ETCPHPDIR= $(ETCDIR)/php/$(UL_PHP_MINOR_VERSION)
 VARPHPDIR= $(VARDIR)/php/$(UL_PHP_MINOR_VERSION)
 # .conf files go under /etc, not /usr
