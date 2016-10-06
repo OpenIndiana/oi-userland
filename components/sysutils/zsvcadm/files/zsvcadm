@@ -1,0 +1,68 @@
+#!/bin/ksh
+#
+# Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident	"%Z%%M%	%I%	%E% SMI"
+#
+# Initial version taken "as is" from a blog post by Darren Moffat (C) 2004 :
+#   https://blogs.oracle.com/darren/resource/zsvcadm.txt
+#   https://blogs.oracle.com/darren/entry/i_recently_saw_a_libcurses
+#
+# See also his blog about delegating a user account rights to manage services :
+#   https://blogs.oracle.com/darren/entry/zenity_tools_gui_interfaces_to
+#   (e.g. run `usermod -P "Service Operator" $YOURUSERNAME` as root)
+
+PATH=/usr/bin:/usr/sbin
+
+do_action()
+{
+	for service in $@ ; do
+		current_state=$(svcs -H -o state $service)
+		
+		if [ "$current_state" = "offline" ]; then
+			svcs -x -v 2>&1 > /tmp/svcs-x-zenity-$$
+			zenity --width=500 --height=300 --text-info \
+			    --title="svcs -v -x $service" \
+			    --filename=/tmp/svcs-x-zenity-$$
+			rm /tmp/svcs-x-zenity-$$
+			continue;
+		fi
+
+		case $current_state in
+		'disabled') allowed_actions="start enable refresh";;
+		'online') allowed_actions="stop disable refresh";;
+		'maintenance') allowed_actions="stop disable clear refresh";;
+		esac
+		action=$(zenity --list --title="$service" --column "New State"\
+			$allowed_actions)
+		[ -z "$action" ] && break
+
+		[ "$action" = "start" ] && action="enable -t"
+		[ "$action" = "stop" ] && action="disable -t"
+
+		svcadm $action $@
+	done
+}
+
+
+if [ "$1" = "-h" ]; then
+	echo "Usage: `basename $0` [-a] [FMRI | pattern]..."
+	echo "       -a\tlist all services"
+	exit 0
+fi
+
+while true ; do
+	services=$(svcs -H -o fmri,stime,state,nstate -s fmri -s state \
+		-S nstate $@ |sed s/-$/X/g)
+	err=$?
+	[ $err != 0 ] && exit $err
+
+	service=$(zenity --list --title="Services" \
+		--width=600 --height=500 \
+		--column=FMRI --column=STIME --column=STATE --column NSTATE\
+		$services)
+	[ ! $? -eq 0 ] && break;
+
+	do_action $service
+done
