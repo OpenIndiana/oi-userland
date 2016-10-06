@@ -32,7 +32,7 @@
  struct flagval {
      char *name;
      krb5_flags val;
-@@ -2504,12 +2507,14 @@ static int tcl_kadm5_get_privs(ClientData clientData, Tcl_Interp *interp,
+@@ -2504,12 +2507,14 @@ static int tcl_kadm5_get_privs(ClientDat
  
  void Tcl_kadm5_init(Tcl_Interp *interp)
  {
@@ -74,6 +74,24 @@
  }
  if {$RPC} test102
  
+@@ -412,7 +412,7 @@ test117
+     
+ send "puts \$KADM5_ADMIN_SERVICE\n"
+ expect {
+-    -re "(\[a-zA-Z/@\]+)\n$prompt" {
++    -re "(\[a-zA-Z0-9/\\-.@\]+)\n$prompt" {
+ 	set KADM5_ADMIN_SERVICE $expect_out(1,string) 
+     }
+     default {
+@@ -423,7 +423,7 @@ expect {
+ 
+ send "puts \$KADM5_CHANGEPW_SERVICE\n"
+ expect {
+-    -re "(\[a-zA-Z/@\]+)\n$prompt" {
++    -re "(\[a-zA-Z0-9/\\-.@\]+)\n$prompt" {
+ 	set KADM5_CHANGEPW_SERVICE $expect_out(1,string) 
+     }
+     default {
 @@ -434,10 +434,11 @@ expect {
  
  test "init 150"
