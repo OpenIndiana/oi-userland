@@ -7,10 +7,9 @@
 name threads to improve observability - developed by Oracle
 Not submitted upstream: Uses feature first present in Solaris 12
 
-diff -r b63f212d891d -r 0293c398eda7 yarn.c
---- a/yarn.c
-+++ b/yarn.c
-@@ -258,7 +258,12 @@
+--- pigz-2.3.3/yarn.c.orig	2016-09-26 10:55:04.395234262 +0000
++++ pigz-2.3.3/yarn.c	2016-09-26 10:57:33.364488635 +0000
+@@ -262,7 +262,12 @@
  
  /* not all POSIX implementations create threads as joinable by default, so that
     is made explicit here */
@@ -23,7 +22,7 @@ diff -r b63f212d891d -r 0293c398eda7 yarn.c
  {
      int ret;
      thread *th;
-@@ -284,7 +289,9 @@
+@@ -288,7 +293,9 @@
          (ret = pthread_create(&(th->id), &attr, ignition, capsule)) ||
          (ret = pthread_attr_destroy(&attr)))
          fail(ret);
@@ -34,9 +33,8 @@ diff -r b63f212d891d -r 0293c398eda7 yarn.c
      /* put the thread in the threads list for join_all() */
      th->done = 0;
      th->next = threads;
-diff -r b63f212d891d -r 0293c398eda7 yarn.h
---- a/yarn.h
-+++ b/yarn.h
+--- pigz-2.3.3/yarn.h.orig	2016-09-26 10:57:54.883094290 +0000
++++ pigz-2.3.3/yarn.h	2016-09-26 10:58:28.855091969 +0000
 @@ -115,7 +115,12 @@
  void yarn_mem(void *(*)(size_t), void (*)(void *));
  

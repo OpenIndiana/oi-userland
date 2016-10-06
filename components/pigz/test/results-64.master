@@ -1,4 +1,3 @@
-make[1]: Entering directory `$(@D)'
 $(@D)/pigz -kf pigz.c ; $(@D)/pigz -t pigz.c.gz
 $(@D)/pigz -kfb 32 pigz.c ; $(@D)/pigz -t pigz.c.gz
 $(@D)/pigz -kfp 1 pigz.c ; $(@D)/pigz -t pigz.c.gz
@@ -12,12 +11,17 @@ printf "xyz" | $(@D)/pigz -cdf | wc -c | test `cat` -eq 3
 (printf "w" | gzip ; printf "xy") | $(@D)/pigz -cdf | wc -c | test `cat` -eq 3
 (printf "w" | gzip ; printf "xyz") | $(@D)/pigz -cdf | wc -c | test `cat` -eq 4
 compress -f < pigz.c | $(@D)/unpigz | cmp - pigz.c
-(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
+(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
   cd ..; cp -pr 1 2; $(@D)/pigz -rp 4 --index %z 1; \
   $(@D)/pigz -drp 4 --index %z 1; diff -r 1 2)
-Common subdirectories: 1/pigz-2.2.5 and 2/pigz-2.2.5
-(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
+Common subdirectories: 1/pigz-2.3.3 and 2/pigz-2.3.3
+Common subdirectories: 1/pigz-2.3.3/zopfli and 2/pigz-2.3.3/zopfli
+Common subdirectories: 1/pigz-2.3.3/zopfli/src and 2/pigz-2.3.3/zopfli/src
+Common subdirectories: 1/pigz-2.3.3/zopfli/src/zopfli and 2/pigz-2.3.3/zopfli/src/zopfli
+(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
   cd ..; cp -pr 1 2; $(@D)/pigz -zrp 4 -X %f.idx 1; \
   $(@D)/pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
-Common subdirectories: 1/pigz-2.2.5 and 2/pigz-2.2.5
-make[1]: Leaving directory `$(@D)'
+Common subdirectories: 1/pigz-2.3.3 and 2/pigz-2.3.3
+Common subdirectories: 1/pigz-2.3.3/zopfli and 2/pigz-2.3.3/zopfli
+Common subdirectories: 1/pigz-2.3.3/zopfli/src and 2/pigz-2.3.3/zopfli/src
+Common subdirectories: 1/pigz-2.3.3/zopfli/src/zopfli and 2/pigz-2.3.3/zopfli/src/zopfli

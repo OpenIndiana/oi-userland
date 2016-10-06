@@ -1,0 +1,22 @@
+Fix bug in directory traversal.
+
+This off-by-one error resulted in useless reexamination of the
+same files by descending twice into each directory.
+
+See:
+
+https://github.com/madler/pigz/commit/06b5347948ff2d675ebbeb943941e2b7610082f3
+
+This fix has already been integrated upstream.
+
+--- pigz-2.3.3/pigz.c.orig	2016-10-03 08:06:26.655873581 +0000
++++ pigz-2.3.3/pigz.c	2016-10-03 08:07:23.222592284 +0000
+@@ -4268,7 +4268,7 @@
+ 
+             /* run process() for each entry in the directory */
+             base = len && g.inf[len - 1] != (unsigned char)'/' ?
+-                   vstrcpy(&g.inf, &g.inz, len, "/") : len;
++                   vstrcpy(&g.inf, &g.inz, len, "/") - 1 : len;
+             for (off = 0; roll[off]; off += strlen(roll + off) + 1) {
+                 vstrcpy(&g.inf, &g.inz, base, roll + off);
+                 process(g.inf);

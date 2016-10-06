@@ -1,26 +1,29 @@
-diff -r 27ff4e7aa5f1 Makefile
---- a/Makefile
-+++ b/Makefile
-@@ -44,6 +44,15 @@
+Support for parallel decompression.
+Written by Mihael Gerdts <mike.gerdts@oracle.com>
+
+These changes should be sent upstream.
+
+--- pigz-2.3.3/Makefile.orig	2016-09-26 11:06:54.000000000 +0000
++++ pigz-2.3.3/Makefile	2016-09-26 13:16:05.000000000 +0000
+@@ -70,6 +70,15 @@
  	  compress -f < pigz.c | ./unpigz | cmp - pigz.c ;\
  	fi
  	@rm -f pigz.c.gz pigz.c.zz pigz.c.zip
 +	@rm -rf d/1 d/2
-+	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
++	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
 +	  cd ..; cp -pr 1 2; ../pigz -rp 4 --index %z 1; \
 +	  ../pigz -drp 4 --index %z 1; diff -r 1 2)
 +	@rm -rf d/1 d/2
-+	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
++	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.3.3.tar.gz; \
 +	  cd ..; cp -pr 1 2; ../pigz -zrp 4 -X %f.idx 1; \
 +	  ../pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
 +	@rm -rf d/1 d/2
  
  tests: dev test
  	./pigzn -kf pigz.c ; ./pigz -t pigz.c.gz
-diff -r 27ff4e7aa5f1 pigz.1
---- a/pigz.1
-+++ b/pigz.1
-@@ -180,6 +180,14 @@
+--- pigz-2.3.3/pigz.1.orig	2016-09-26 11:07:52.000000000 +0000
++++ pigz-2.3.3/pigz.1	2016-09-26 11:12:03.000000000 +0000
+@@ -185,6 +185,14 @@
  .B -V --version
  Show the version of pigz.
  .TP
@@ -35,21 +38,17 @@ diff -r 27ff4e7aa5f1 pigz.1
  .B -z --zlib
  Compress to zlib (.zz) instead of gzip format.
  .TP
-diff -r 27ff4e7aa5f1 pigz.c
---- a/pigz.c
-+++ b/pigz.c
-@@ -191,13 +191,27 @@
-    effectiveness of deflating in a single thread.  This can be turned off using
+--- pigz-2.3.3/pigz.c.orig	2016-09-26 11:07:43.000000000 +0000
++++ pigz-2.3.3/pigz.c	2016-09-27 08:09:45.122201079 +0000
+@@ -218,14 +218,27 @@
     the --independent or -i option, so that the blocks can be decompressed
     independently for partial error recovery or for random access.
--
--   Decompression can't be parallelized, at least not without specially prepared
--   deflate streams for that purpose.  As a result, pigz uses a single thread
--   (the main thread) for decompression, but will create three other threads for
--   reading, writing, and check calculation, which can speed up decompression
--   under some circumstances.  Parallel decompression can be turned off by
--   specifying one process (-dp 1 or -tp 1).
-+   
+ 
+-   Decompression can't be parallelized over an arbitrary number of processors
+-   like compression can be, at least not without specially prepared deflate
+-   streams for that purpose.  As a result, pigz uses a single thread (the main
+-   thread) for decompression, but will create three other threads for reading,
+-   writing, and check calculation, which can speed up decompression under some
 +   The --index or -X option causes the generation of a block index which can be
 +   used for parallel decompression.  The block index can be appended onto the
 +   compressed output or it may be stored in a separate file.  The uncompressed
@@ -61,19 +60,29 @@ diff -r 27ff4e7aa5f1 pigz.c
 +   If a block index is not present, pigz uses a single thread (the main thread)
 +   for decompression, but will create three other threads for reading, writing,
 +   and check calculation, which can speed up decompression under some
-+   circumstances.  Parallel decompression can be turned off by specifying one
-+   process (-dp 1 or -tp 1).
-+
+    circumstances.  Parallel decompression can be turned off by specifying one
+    process (-dp 1 or -tp 1).
+ 
 +   If the block index is present, the main thread reads the input file and
 +   dispatches each block to an uncompress thread.  The uncompress thread
 +   uncompresses the block, verifies the block checksum, and passes the block
 +   off to a writer thread.  The writer thread writes the blocks in order,
 +   and combines the individual block checksums into a per-file checksum.  The
 +   per-file checksum is compared to the checksum in the stream's trailer.
- 
++
     pigz requires zlib 1.2.1 or later to allow setting the dictionary when doing
     raw deflate.  Since zlib 1.2.3 corrects security vulnerabilities in zlib
-@@ -259,13 +273,14 @@
+    version 1.2.1 and 1.2.2, conditionals check for zlib 1.2.3 or later during
+@@ -260,7 +273,7 @@
+    jobs until instructed to return.  When a job is pulled, the dictionary, if
+    provided, will be loaded into the deflate engine and then that input buffer
+    is dropped for reuse.  Then the input data is compressed into an output
+-   buffer that grows in size if necessary to hold the compressed data.  The job
++   buffer that grows in size if necessary to hold the compressed data. The job
+    is then put into the write job list, sorted by the sequence number. The
+    compress thread however continues to calculate the check value on the input
+    data, either a CRC-32 or Adler-32, possibly in parallel with the write
+@@ -286,13 +299,14 @@
     can't get way ahead of the write thread and build up a large backlog of
     unwritten compressed data.  The write thread will write the compressed data,
     drop the output buffer, and then wait for the check value to be unlocked
@@ -95,7 +104,7 @@ diff -r 27ff4e7aa5f1 pigz.c
  
     The input and output buffers are reused through their collection in pools.
     Each buffer has a use count, which when decremented to zero returns the
-@@ -313,6 +328,9 @@
+@@ -341,6 +355,9 @@
  #if __STDC_VERSION__-0 >= 199901L || __GNUC__-0 >= 3
  #  include <inttypes.h> /* intmax_t */
  #endif
@@ -103,33 +112,46 @@ diff -r 27ff4e7aa5f1 pigz.c
 +#include <sys/mman.h>   /* mmap() */
 +#include <netinet/in.h> /* htonl() */
  
- #ifdef __hpux
- #  include <sys/param.h>
-@@ -420,8 +438,10 @@
- local char *prog;           /* name by which pigz was invoked */
- local int ind;              /* input file descriptor */
- local int outd;             /* output file descriptor */
-+local int idxd;             /* index file descriptor */
- local char in[PATH_MAX+1];  /* input file name (accommodate recursion) */
- local char *out = NULL;     /* output file name (allocated if not NULL) */
-+local char *index = NULL;   /* index file name template (may have %f, %z) */
- local int verbosity;        /* 0 = quiet, 1 = normal, 2 = verbose, 3 = trace */
- local int headis;           /* 1 to store name, 2 to store date, 3 both */
- local int pipeout;          /* write output to stdout even if file */
-@@ -467,9 +487,12 @@
-     return 0;
+ #ifdef DEBUG
+ #  if defined(__APPLE__)
+@@ -473,9 +490,11 @@
+     char *prog;             /* name by which pigz was invoked */
+     int ind;                /* input file descriptor */
+     int outd;               /* output file descriptor */
++    int idxd;               /* index file descriptor */
+     char *inf;              /* input file name (allocated) */
+     size_t inz;             /* input file name allocated size */
+     char *outf;             /* output file name (allocated) */
++    char *index;            /* index file name template (may have %f, %z) */
+     int verbosity;          /* 0 = quiet, 1 = normal, 2 = verbose, 3 = trace */
+     int headis;             /* 1 to store name, 2 to store date, 3 both */
+     int pipeout;            /* write output to stdout even if file */
+@@ -620,7 +639,7 @@
+ 
+ local void yarn_free(void *ptr)
+ {
+-    return free_track(&mem_track, ptr);
++    free_track(&mem_track, ptr);
  }
+ #endif
+ 
+@@ -820,12 +839,15 @@
+ 
+ #endif
  
 +local void idx_abort(void);
 +
- /* exit with error, delete output file if in the middle of writing it */
- local int bail(char *why, char *what)
+ /* abort or catch termination signal */
+ local void cut_short(int sig)
  {
+     if (sig == SIGINT) {
+         Trace(("termination by user"));
+     }
 +    idx_abort();
-     if (outd != -1 && out != NULL)
-         unlink(out);
-     complain("abort: %s%s", why, what);
-@@ -684,11 +707,23 @@
+     if (g.outd != -1 && g.outd != 1) {
+         unlink(g.outf);
+         RELEASE(g.outf);
+@@ -951,11 +973,23 @@
      return dos;
  }
  
@@ -154,7 +176,7 @@ diff -r 27ff4e7aa5f1 pigz.c
  /* write a gzip, zlib, or zip header using the information in the globals */
  local unsigned long put_header(void)
  {
-@@ -982,7 +1017,7 @@
+@@ -1253,7 +1287,7 @@
  
  /* get a space from a pool -- the use count is initially set to one, so there
     is no need to call use_space() for the first use */
@@ -163,7 +185,7 @@ diff -r 27ff4e7aa5f1 pigz.c
  {
      struct space *space;
  
-@@ -995,6 +1030,15 @@
+@@ -1266,6 +1300,15 @@
      if (pool->head != NULL) {
          space = pool->head;
          possess(space->use);
@@ -173,21 +195,19 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            free(space->buf);
 +            space->buf = malloc(size);
 +            if (space->buf == NULL)
-+                bail("not enough memory", "");
++                throw(ENOMEM, "not enough memory");
 +            space->size = size;
 +        }
          pool->head = space->next;
          twist(pool->have, BY, -1);      /* one less in pool */
          twist(space->use, TO, 1);       /* initially one user */
-@@ -1012,15 +1056,20 @@
-     if (space == NULL)
-         bail("not enough memory", "");
+@@ -1281,13 +1324,18 @@
+     release(pool->have);
+     space = alloc(NULL, sizeof(struct space));
      space->use = new_lock(1);           /* initially one user */
--    space->buf = malloc(pool->size);
-+    space->buf = malloc(size);
-     if (space->buf == NULL)
-         bail("not enough memory", "");
+-    space->buf = alloc(NULL, pool->size);
 -    space->size = pool->size;
++    space->buf = alloc(NULL, size);
 +    space->size = size;
      space->len = 0;
      space->pool = pool;                 /* remember the pool this belongs to */
@@ -199,10 +219,10 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    return get_space_size(pool, pool->size);
 +}
 +
- /* compute next size up by multiplying by about 2**(1/3) and round to the next
-    power of 2 if we're close (so three applications results in doubling) -- if
-    small, go up to at least 16, if overflow, go to max size_t value */
-@@ -1109,17 +1158,35 @@
+ /* increase the size of the buffer in space */
+ local void grow_space(struct space *space)
+ {
+@@ -1354,17 +1402,35 @@
      return count;
  }
  
@@ -239,15 +259,15 @@ diff -r 27ff4e7aa5f1 pigz.c
  struct job {
      long seq;                   /* sequence number */
      int more;                   /* true if this is not the last chunk */
-@@ -1166,6 +1233,7 @@
-     new_pool(&out_pool, OUTPOOL(size), -1);
+@@ -1411,6 +1477,7 @@
+     new_pool(&out_pool, OUTPOOL(g.block), -1);
      new_pool(&dict_pool, DICT, -1);
-     new_pool(&lens_pool, size >> (RSYNCBITS - 1), -1);
+     new_pool(&lens_pool, g.block >> (RSYNCBITS - 1), -1);
 +    new_pool(&idx_pool, 1, -1);
  }
  
  /* command the compress threads to all return, then join them all (call from
-@@ -1202,6 +1270,8 @@
+@@ -1447,6 +1514,8 @@
      Trace(("-- freed %d output buffers", caught));
      caught = free_pool(&in_pool);
      Trace(("-- freed %d input buffers", caught));
@@ -256,12 +276,12 @@ diff -r 27ff4e7aa5f1 pigz.c
      free_lock(write_first);
      free_lock(compress_have);
      compress_have = NULL;
-@@ -1395,18 +1465,483 @@
-     (void)deflateEnd(&strm);
+@@ -1710,18 +1779,483 @@
+     }
  }
  
 +/* Block Index
-+  
++
 +   The block index is an array of idx_entry structs followed by an idx_trailer
 +   struct.  They are written to the file in LSB order.  The block index can
 +   exist as a standalone file or be appended onto the compressed files.
@@ -374,7 +394,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    int nag;
 +
 +    /* Be quiet when opportunistic index use check is being done. */
-+    nag = ((index == NULL) && strcmp(pathpat, "%z"));
++    nag = ((g.index == NULL) && strcmp(pathpat, "%z"));
 +
 +    for (i = 0, j = 0; pathpat[i] && j < sizeof(idx.path); i++) {
 +        if (pathpat[i] != '%') {
@@ -387,16 +407,16 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            idx.path[j++] = '%';
 +            continue;
 +        case 'f':               /* %f is replaced by uncompressed file name */
-+            if (decode) {
-+                if (strcmp(out, "<stdout>") != 0) {
-+                    copy = out;                     /* uncompressed file */
++            if (g.decode) {
++                if (strcmp(g.outf, "<stdout>") != 0) {
++                    copy = g.outf;                  /* uncompressed file */
 +                    chop_suffix = 0;
 +                    break;
 +                }
-+                if (strcmp(in, "<stdin>") != 0) {
-+                    copy = in;                      /* compressed file */
++                if (strcmp(g.inf, "<stdin>") != 0) {
++                    copy = g.inf;                   /* compressed file */
 +                    chop_suffix = 1;
-+                    suf = strrchr(in, '.');
++                    suf = strrchr(g.inf, '.');
 +                    break;
 +                }
 +                if (nag)
@@ -404,14 +424,14 @@ diff -r 27ff4e7aa5f1 pigz.c
 +                return -1;
 +            }
 +
-+            if (strcmp(out, "<stdout>") != 0) {
-+                copy = out;                         /* compressed file */
++            if (strcmp(g.outf, "<stdout>") != 0) {
++                copy = g.outf;                      /* compressed file */
 +                chop_suffix = 1;
-+                suf = strrchr(out, '.');
++                suf = strrchr(g.outf, '.');
 +                break;
 +            }
-+            if (strcmp(in, "<stdin>") != 0) {
-+                copy = in;                          /* uncompressed file */
++            if (strcmp(g.inf, "<stdin>") != 0) {
++                copy = g.inf;                       /* uncompressed file */
 +                chop_suffix = 0;
 +                break;
 +            }
@@ -420,13 +440,13 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            return -1;
 +        case 'z':               /* %z is replaced by compressed file name */
 +            chop_suffix = 0;
-+            if (decode) {
-+                if (strcmp(in, "<stdin>") == 0) {
++            if (g.decode) {
++                if (strcmp(g.inf, "<stdin>") == 0) {
 +                    if (nag)
 +                        complain("file name for %%z unknown");
 +                    return -1;
 +                }
-+                copy = in;
++                copy = g.inf;
 +                break;
 +            }
 +            if (strcmp(pathpat, "%z") == 0) {
@@ -435,12 +455,12 @@ diff -r 27ff4e7aa5f1 pigz.c
 +                idx.append = 1;
 +                break;
 +            }
-+            if (strcmp(out, "<stdout>") == 0) {
++            if (strcmp(g.outf, "<stdout>") == 0) {
 +                if (nag)
 +                    complain("file name for %%z unknown");
 +                return -1;
 +            }
-+            copy = out;
++            copy = g.outf;
 +            break;
 +        default:
 +            if (nag) {
@@ -475,21 +495,21 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    idx.path[j] = '\0';
 +
 +    if (copy == NULL && idx.append) {
-+            (void)strncpy(idx.path, out, sizeof(idx.path));
++            (void)strncpy(idx.path, g.outf, sizeof(idx.path));
 +            idx.path[sizeof(idx.path) - 1] = '\0';
 +    }
 +    else {
-+        if (same_file(decode ? out : in, idx.path)) {
++        if (same_file(g.decode ? g.outf : g.inf, idx.path)) {
 +            if (nag)
 +                complain("index file %s must not be same as uncompressed file",
 +                        idx.path);
 +            return -1;
 +        }
 +
-+        idx.append = same_file(decode ? in : out, idx.path);
++        idx.append = same_file(g.decode ? g.inf : g.outf, idx.path);
 +    }
 +
-+    if (verbosity > 1)
++    if (g.verbosity > 1)
 +        (void) fprintf(stderr, "index %s ", idx.path);
 +
 +    return 0;
@@ -507,12 +527,12 @@ diff -r 27ff4e7aa5f1 pigz.c
 +
 +    setup_jobs();
 +
-+    idxd = -1;
++    g.idxd = -1;
 +
 +    if (expand_pathpat(pathpat) != 0)
 +        return -1;
 +
-+    if (decode) {                               /* Uncompress */
++    if (g.decode) {                               /* Uncompress */
 +        int64_t sz;
 +        int64_t off;
 +        long pagesize;
@@ -522,15 +542,15 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            struct idx_trailer trail;
 +
 +            /* uncompressing, index at end of compressed file */
-+            if (idx_read_trailer(ind, in, &trail) != 0) {
-+                complain("%s: could not read index", in);
++            if (idx_read_trailer(g.ind, g.inf, &trail) != 0) {
++                complain("%s: could not read index", g.inf);
 +                return -1;
 +            }
 +
-+            idxd = dup(ind);
-+            if (fstat(idxd, &st) != 0 || !S_ISREG(st.st_mode)) {
++            g.idxd = dup(g.ind);
++            if (fstat(g.idxd, &st) != 0 || !S_ISREG(st.st_mode)) {
 +                complain("%s: index appended to non-regular file", idx.path);
-+                (void) close(idxd);
++                (void) close(g.idxd);
 +                return -1;
 +            }
 +            off = st.st_size - sizeof(trail);
@@ -538,13 +558,13 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            off -= sz;          /* offset into file of first idx_entry */
 +        } else {
 +            /* Uncompressing, index in a different file. */
-+            if ((idxd = open(idx.path, O_RDONLY)) < 0) {
++            if ((g.idxd = open(idx.path, O_RDONLY)) < 0) {
 +                complain("%s: unable to open index file", idx.path);
 +                return -1;
 +            }
-+            if (fstat(idxd, &st) != 0) {
++            if (fstat(g.idxd, &st) != 0) {
 +                complain("%s: unable to stat index file", idx.path);
-+                (void) close(idxd);
++                (void) close(g.idxd);
 +                return -1;
 +            }
 +            off = 0;
@@ -558,10 +578,10 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            /* moff is the beginning of the page containing off */
 +            moff = off & ~(pagesize -1);
 +            idx.mapsz = st.st_size - moff;
-+            idx.map = mmap(NULL, idx.mapsz, PROT_READ, MAP_PRIVATE, idxd, moff);
++            idx.map = mmap(NULL, idx.mapsz, PROT_READ, MAP_PRIVATE, g.idxd, moff);
 +            if (idx.map != MAP_FAILED) {
-+                (void)close(idxd);
-+                idxd = -1;
++                (void)close(g.idxd);
++                g.idxd = -1;
 +
 +                /* set up array for idx_get() */
 +                idx.ents = (struct idx_entry*)(idx.map + (off & (pagesize -1)));
@@ -573,7 +593,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +            idx.map = NULL;
 +        }
 +        /* unable to mmap.  Ensure idxfd is positioned properly. */
-+        if (lseek(idxd, off, SEEK_SET) != off) {
++        if (lseek(g.idxd, off, SEEK_SET) != off) {
 +            complain("%s: unable to seek on index file", idx.path);
 +            return -1;
 +        }
@@ -588,12 +608,12 @@ diff -r 27ff4e7aa5f1 pigz.c
 +        return 0;
 +    }
 +
-+    idxd = open(idx.path, O_WRONLY | O_CREAT | O_TRUNC | (force ? 0 : O_EXCL),
++    g.idxd = open(idx.path, O_WRONLY | O_CREAT | O_TRUNC | (g.force ? 0 : O_EXCL),
 +                0600);
-+    if (idxd < 0 && errno == EEXIST && isatty(0) && verbosity &&
++    if (g.idxd < 0 && errno == EEXIST && isatty(0) && g.verbosity &&
 +            allow_overwrite(idx.path)) {
-+        idxd = open(idx.path, O_CREAT | O_TRUNC | O_WRONLY, 0600);
-+        if (idxd == -1) {
++        g.idxd = open(idx.path, O_CREAT | O_TRUNC | O_WRONLY, 0600);
++        if (g.idxd == -1) {
 +            complain("%s: %s", idx.path, strerror(errno));
 +            return -1;
 +        }
@@ -610,7 +630,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    if (idx.ents != NULL)
 +        base = (uchar_t *)&idx.ents[idx.seq];
 +    else {
-+        readn(idxd, buf, sizeof(buf));
++        readn(g.idxd, buf, sizeof(buf));
 +        base = buf;
 +    }
 +    entry->infsz = PULL4L(base);
@@ -651,7 +671,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    idx.seq++;
 +
 +    /* point start at the right buffer, ensuring it is big enough */
-+    if (idxd != -1) {
++    if (g.idxd != -1) {
 +        start = buf;
 +    } else {
 +        possess(idx.space->use);
@@ -665,8 +685,8 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    PUT4L(start + 4, (uint32_t)outsz);
 +    PUT4L(start + 8, (uint32_t)check);
 +
-+    if (idxd != -1)
-+        writen(idxd, buf, sizeof(buf));
++    if (g.idxd != -1)
++        writen(g.idxd, buf, sizeof(buf));
 +    else {
 +        idx.space->len += sizeof(struct idx_entry);
 +        release(idx.space->use);
@@ -680,7 +700,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    assert(idx.valid);
 +    idx.valid = 0;
 +
-+    if (decode && !keep && !idx.append)
++    if (g.decode && !g.keep && !idx.append)
 +        (void)unlink(idx.path);
 +
 +    if (idx.map != NULL) {           /* uncompressing, using mmap'd index */
@@ -689,14 +709,14 @@ diff -r 27ff4e7aa5f1 pigz.c
 +        return;
 +    }
 +
-+    if (decode) {                   /* uncompressing, from a file */
-+        (void)close(idxd);
-+        idxd = -1;
++    if (g.decode) {                   /* uncompressing, from a file */
++        (void)close(g.idxd);
++        g.idxd = -1;
 +        return;
 +    }
 +
 +    if (idx.space != NULL) {        /* compressing, append to output file */
-+        writen(outd, idx.space->buf, idx.space->len);
++        writen(g.outd, idx.space->buf, idx.space->len);
 +        release(idx.space->use);
 +        drop_space(idx.space);
 +    }
@@ -704,11 +724,11 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    PUT4L(buf, IDXMAGIC);
 +    PUT8L(buf + 4, idx.seq);
 +
-+    writen(idx.append ? outd : idxd, buf, sizeof(buf));
++    writen(idx.append ? g.outd : g.idxd, buf, sizeof(buf));
 +
-+    if (idxd != -1) {
-+        (void) close(idxd);
-+        idxd = -1;
++    if (g.idxd != -1) {
++        (void) close(g.idxd);
++        g.idxd = -1;
 +    }
 +}
 +
@@ -718,10 +738,10 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    struct idx_trailer trail;
 +
 +    /* Not relevant unless we are uncompressing */
-+    if (decode == 0)
++    if (g.decode == 0)
 +        return (0);
 +
-+    return (idx_read_trailer(ind, in, &trail) == 0);
++    return (idx_read_trailer(g.ind, g.inf, &trail) == 0);
 +}
 +
  /* collect the write jobs off of the list in sequence order and write out the
@@ -740,41 +760,41 @@ diff -r 27ff4e7aa5f1 pigz.c
 -    unsigned long clen;             /* total compressed size (overflow ok) */
 +    size_t clen;                    /* total compressed size */
      unsigned long check;            /* check value of uncompressed data */
+     ball_t err;                     /* error information from throw() */
  
-     (void)dummy;
-@@ -1430,23 +1965,27 @@
-         /* update lengths, save uncompressed length for COMB */
-         more = job->more;
-         len = job->in->len;
-+        olen = job->out->len;
-         drop_space(job->in);
-         ulen += (unsigned long)len;
--        clen += (unsigned long)(job->out->len);
-+        clen += olen;
+@@ -1747,23 +2281,27 @@
+             /* update lengths, save uncompressed length for COMB */
+             more = job->more;
+             len = job->in->len;
++            olen = job->out->len;
+             drop_space(job->in);
+             ulen += (unsigned long)len;
+-            clen += (unsigned long)(job->out->len);
++            clen += olen;
  
-         /* write the compressed data and drop the output buffer */
-         Trace(("-- writing #%ld", seq));
--        writen(outd, job->out->buf, job->out->len);
-+        writen(outd, job->out->buf, olen);
-         drop_space(job->out);
-         Trace(("-- wrote #%ld%s", seq, more ? "" : " (last)"));
+             /* write the compressed data and drop the output buffer */
+             Trace(("-- writing #%ld", seq));
+-            writen(g.outd, job->out->buf, job->out->len);
++            writen(g.outd, job->out->buf, olen);
+             drop_space(job->out);
+             Trace(("-- wrote #%ld%s", seq, more ? "" : " (last)"));
  
--        /* wait for check calculation to complete, then combine, once
--           the compress thread is done with the input, release it */
-+        /* wait for check calculation to complete, then combine */
-         possess(job->calc);
-         wait_for(job->calc, TO_BE, 1);
-         release(job->calc);
-         check = COMB(check, job->check, len);
+-            /* wait for check calculation to complete, then combine, once
+-               the compress thread is done with the input, release it */
++            /* wait for check calculation to complete, then combine */
+             possess(job->calc);
+             wait_for(job->calc, TO_BE, 1);
+             release(job->calc);
+             check = COMB(check, job->check, len);
  
-+        /* update the block index */
-+        if (index)
-+            idx_add(len, olen, job->check);
++            /* update the block index */
++            if (g.index)
++                idx_add(len, olen, job->check);
 +
-         /* free the job */
-         free_lock(job->calc);
-         free(job);
-@@ -1517,7 +2056,7 @@
+             /* free the job */
+             free_lock(job->calc);
+             FREE(job);
+@@ -1845,7 +2383,7 @@
      setup_jobs();
  
      /* start write thread */
@@ -782,18 +802,18 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    writeth = launch(compress_write_thread, NULL);
  
      /* read from input and start compress threads (write thread will pick up
-      the output of the compress threads) */
-@@ -1913,7 +2452,7 @@
+        the output of the compress threads) */
+@@ -2303,7 +2841,7 @@
  #ifndef NOTHREAD
      /* if first time in or procs == 1, read a buffer to have something to
         return, otherwise wait for the previous read job to complete */
--    if (procs > 1) {
-+    if (procs > 1 && index == NULL && !ind_has_index()) {
+-    if (g.procs > 1) {
++    if (g.procs > 1 && g.index == NULL && !ind_has_index()) {
          /* if first time, fire up the read thread, ask for a read */
-         if (in_which == -1) {
-             in_which = 1;
-@@ -1995,12 +2534,6 @@
-         in_next += togo; \
+         if (g.in_which == -1) {
+             g.in_which = 1;
+@@ -2404,12 +2942,6 @@
+         g.in_next += togo; \
      } while (0)
  
 -/* pull LSB order or MSB order integers from an unsigned char buffer */
@@ -805,7 +825,7 @@ diff -r 27ff4e7aa5f1 pigz.c
  /* convert MS-DOS date and time to a Unix time, assuming current timezone
     (you got a better idea?) */
  local time_t dos2time(unsigned long dos)
-@@ -2613,6 +3146,73 @@
+@@ -3033,6 +3565,73 @@
      return 0;
  }
  
@@ -816,73 +836,73 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    unsigned long len;
 +
 +    /* read and check trailer */
-+    if (form > 1) {             /* zip local trailer (if any) */
-+        if (form == 3) {        /* data descriptor follows */
++    if (g.form > 1) {           /* zip local trailer (if any) */
++        if (g.form == 3) {      /* data descriptor follows */
 +            /* read original version of data descriptor */
-+            zip_crc = GET4();
-+            zip_clen = GET4();
-+            zip_ulen = GET4();
-+            if (in_eof)
-+                bail("corrupted zip entry -- missing trailer: ", in);
++            g.zip_crc = GET4();
++            g.zip_clen = GET4();
++            g.zip_ulen = GET4();
++            if (g.in_eof)
++                throw(EDOM, "%s: corrupted zip entry -- missing trailer: ", g.inf);
 +
 +            /* if crc doesn't match, try info-zip variant with sig */
-+            if (zip_crc != out_check) {
-+                if (zip_crc != 0x08074b50UL || zip_clen != out_check)
-+                    bail("corrupted zip entry -- crc32 mismatch: ", in);
-+                zip_crc = zip_clen;
-+                zip_clen = zip_ulen;
-+                zip_ulen = GET4();
++            if (g.zip_crc != g.out_check) {
++                if (g.zip_crc != 0x08074b50UL || g.zip_clen != g.out_check)
++                    throw(EDOM, "%s: corrupted zip entry -- crc32 mismatch: ", g.inf);
++                g.zip_crc = g.zip_clen;
++                g.zip_clen = g.zip_ulen;
++                g.zip_ulen = GET4();
 +            }
 +
 +            /* handle incredibly rare cases where crc equals signature */
-+            else if (zip_crc == 0x08074b50UL && zip_clen == zip_crc &&
-+              ((clen & LOW32) != zip_crc || zip_ulen == zip_crc)) {
-+                zip_crc = zip_clen;
-+                zip_clen = zip_ulen;
-+                zip_ulen = GET4();
++            else if (g.zip_crc == 0x08074b50UL && g.zip_clen == g.zip_crc &&
++              ((clen & LOW32) != g.zip_crc || g.zip_ulen == g.zip_crc)) {
++                g.zip_crc = g.zip_clen;
++                g.zip_clen = g.zip_ulen;
++                g.zip_ulen = GET4();
 +            }
 +
 +            /* if second length doesn't match, try 64-bit lengths */
-+            if (zip_ulen != (out_tot & LOW32)) {
-+                zip_ulen = GET4();
++            if (g.zip_ulen != (g.out_tot & LOW32)) {
++                g.zip_ulen = GET4();
 +                (void)GET4();
 +            }
-+            if (in_eof)
-+                bail("corrupted zip entry -- missing trailer: ", in);
++            if (g.in_eof)
++                throw(EDOM, "%s: corrupted zip entry -- missing trailer: ", g.inf);
 +        }
-+        if (zip_clen != (clen & LOW32) || zip_ulen != (out_tot & LOW32))
-+            bail("corrupted zip entry -- length mismatch: ", in);
-+        check = zip_crc;
++        if (g.zip_clen != (clen & LOW32) || g.zip_ulen != (g.out_tot & LOW32))
++            throw(EDOM, "%s: corrupted zip entry -- length mismatch: ", g.inf);
++        check = g.zip_crc;
 +    }
-+    else if (form == 1) {       /* zlib (big-endian) trailer */
++    else if (g.form == 1) {     /* zlib (big-endian) trailer */
 +        check = (unsigned long)(GET()) << 24;
 +        check += (unsigned long)(GET()) << 16;
 +        check += (unsigned)(GET()) << 8;
 +        check += GET();
-+        if (in_eof)
-+            bail("corrupted zlib stream -- missing trailer: ", in);
-+        if (check != out_check)
-+            bail("corrupted zlib stream -- adler32 mismatch: ", in);
++        if (g.in_eof)
++            throw(EDOM, "%s: corrupted zlib stream -- missing trailer: ", g.inf);
++        if (check != g.out_check)
++            throw(EDOM, "%s: corrupted zlib stream -- adler32 mismatch: ", g.inf);
 +    }
 +    else {                      /* gzip trailer */
 +        check = GET4();
 +        len = GET4();
-+        if (in_eof)
-+            bail("corrupted gzip stream -- missing trailer: ", in);
-+        if (check != out_check)
-+            bail("corrupted gzip stream -- crc32 mismatch: ", in);
-+        if (len != (out_tot & LOW32))
-+            bail("corrupted gzip stream -- length mismatch: ", in);
++        if (g.in_eof)
++            throw(EDOM, "%s: corrupted gzip stream -- missing trailer: ", g.inf);
++        if (check != g.out_check)
++            throw(EDOM, "%s: corrupted gzip stream -- crc32 mismatch: ", g.inf);
++        if (len != (g.out_tot & LOW32))
++            throw(EDOM, "%s: corrupted gzip stream -- length mismatch: ", g.inf);
 +    }
 +}
 +
  /* inflate for decompression or testing -- decompress from ind to outd unless
     decode != 1, in which case just test ind, and then also list if list != 0;
     look for and decode multiple, concatenated gzip and/or zlib streams;
-@@ -2620,10 +3220,8 @@
+@@ -3040,10 +3639,8 @@
  local void infchk(void)
  {
-     int ret, cont;
+     int ret, cont, was;
 -    unsigned long check, len;
 +    unsigned long check;
      z_stream strm;
@@ -891,75 +911,82 @@ diff -r 27ff4e7aa5f1 pigz.c
      off_t clen;
  
      cont = 0;
-@@ -2653,65 +3251,7 @@
+@@ -3080,72 +3677,7 @@
          /* compute compressed data length */
-         clen = in_tot - in_left;
+         clen = g.in_tot - g.in_left;
  
 -        /* read and check trailer */
--        if (form > 1) {             /* zip local trailer (if any) */
--            if (form == 3) {        /* data descriptor follows */
+-        if (g.form > 1) {           /* zip local trailer (if any) */
+-            if (g.form == 3) {      /* data descriptor follows */
 -                /* read original version of data descriptor */
--                zip_crc = GET4();
--                zip_clen = GET4();
--                zip_ulen = GET4();
--                if (in_eof)
--                    bail("corrupted zip entry -- missing trailer: ", in);
+-                g.zip_crc = GET4();
+-                g.zip_clen = GET4();
+-                g.zip_ulen = GET4();
+-                if (g.in_eof)
+-                    throw(EDOM, "%s: corrupted entry -- missing trailer",
+-                          g.inf);
 -
 -                /* if crc doesn't match, try info-zip variant with sig */
--                if (zip_crc != out_check) {
--                    if (zip_crc != 0x08074b50UL || zip_clen != out_check)
--                        bail("corrupted zip entry -- crc32 mismatch: ", in);
--                    zip_crc = zip_clen;
--                    zip_clen = zip_ulen;
--                    zip_ulen = GET4();
+-                if (g.zip_crc != g.out_check) {
+-                    if (g.zip_crc != 0x08074b50UL || g.zip_clen != g.out_check)
+-                        throw(EDOM, "%s: corrupted entry -- crc32 mismatch",
+-                              g.inf);
+-                    g.zip_crc = g.zip_clen;
+-                    g.zip_clen = g.zip_ulen;
+-                    g.zip_ulen = GET4();
 -                }
 -
 -                /* handle incredibly rare cases where crc equals signature */
--                else if (zip_crc == 0x08074b50UL && zip_clen == zip_crc &&
--                         ((clen & LOW32) != zip_crc || zip_ulen == zip_crc)) {
--                    zip_crc = zip_clen;
--                    zip_clen = zip_ulen;
--                    zip_ulen = GET4();
+-                else if (g.zip_crc == 0x08074b50UL &&
+-                         g.zip_clen == g.zip_crc &&
+-                         ((clen & LOW32) != g.zip_crc ||
+-                          g.zip_ulen == g.zip_crc)) {
+-                    g.zip_crc = g.zip_clen;
+-                    g.zip_clen = g.zip_ulen;
+-                    g.zip_ulen = GET4();
 -                }
 -
 -                /* if second length doesn't match, try 64-bit lengths */
--                if (zip_ulen != (out_tot & LOW32)) {
--                    zip_ulen = GET4();
+-                if (g.zip_ulen != (g.out_tot & LOW32)) {
+-                    g.zip_ulen = GET4();
 -                    (void)GET4();
 -                }
--                if (in_eof)
--                    bail("corrupted zip entry -- missing trailer: ", in);
+-                if (g.in_eof)
+-                    throw(EDOM, "%s: corrupted entry -- missing trailer",
+-                          g.inf);
 -            }
--            if (zip_clen != (clen & LOW32) || zip_ulen != (out_tot & LOW32))
--                bail("corrupted zip entry -- length mismatch: ", in);
--            check = zip_crc;
+-            if (g.zip_clen != (clen & LOW32) ||
+-                g.zip_ulen != (g.out_tot & LOW32))
+-                throw(EDOM, "%s: corrupted entry -- length mismatch",
+-                      g.inf);
+-            check = g.zip_crc;
 -        }
--        else if (form == 1) {       /* zlib (big-endian) trailer */
+-        else if (g.form == 1) {     /* zlib (big-endian) trailer */
 -            check = (unsigned long)(GET()) << 24;
 -            check += (unsigned long)(GET()) << 16;
 -            check += (unsigned)(GET()) << 8;
 -            check += GET();
--            if (in_eof)
--                bail("corrupted zlib stream -- missing trailer: ", in);
--            if (check != out_check)
--                bail("corrupted zlib stream -- adler32 mismatch: ", in);
+-            if (g.in_eof)
+-                throw(EDOM, "%s: corrupted -- missing trailer", g.inf);
+-            if (check != g.out_check)
+-                throw(EDOM, "%s: corrupted -- adler32 mismatch", g.inf);
 -        }
 -        else {                      /* gzip trailer */
 -            check = GET4();
 -            len = GET4();
--            if (in_eof)
--                bail("corrupted gzip stream -- missing trailer: ", in);
--            if (check != out_check)
--                bail("corrupted gzip stream -- crc32 mismatch: ", in);
--            if (len != (out_tot & LOW32))
--                bail("corrupted gzip stream -- length mismatch: ", in);
+-            if (g.in_eof)
+-                throw(EDOM, "%s: corrupted -- missing trailer", g.inf);
+-            if (check != g.out_check)
+-                throw(EDOM, "%s: corrupted -- crc32 mismatch", g.inf);
+-            if (len != (g.out_tot & LOW32))
+-                throw(EDOM, "%s: corrupted -- length mismatch", g.inf);
 -        }
 +        check_trailer(check, clen);
  
          /* show file information if requested */
-         if (list) {
-@@ -2731,6 +3271,231 @@
-         complain("%s OK, has trailing junk which was ignored", in);
+         if (g.list) {
+@@ -3169,6 +3701,231 @@
+         complain("warning: %s: trailing junk was ignored", g.inf);
  }
  
 +local void uncompress_write_thread(void *dummy)
@@ -983,12 +1010,12 @@ diff -r 27ff4e7aa5f1 pigz.c
 +           output, and free the input and output spaces.  While the input space
 +           could be dropped earlier, it is done here to ensure the write queue
 +           doesn't grow without bounds. */
-+        out_check = COMB(out_check, job->check, job->out->len);
-+        out_tot += job->out->len;
++        g.out_check = COMB(g.out_check, job->check, job->out->len);
++        g.out_tot += job->out->len;
 +
 +        Trace(("-- writing #%ld", seq));
-+        if (decode == 1)            /* don't really write if just checking */
-+            writen(outd, job->out->buf, job->out->len);
++        if (g.decode == 1)          /* don't really write if just checking */
++            writen(g.outd, job->out->buf, job->out->len);
 +        drop_space(job->in);
 +        drop_space(job->out);
 +        Trace(("-- wrote #%ld%s", seq, job->more ? "" : " (last)"));
@@ -1023,7 +1050,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    strm.zalloc = Z_NULL;
 +    strm.opaque = Z_NULL;
 +    if (inflateInit2(&strm, -15) != Z_OK)
-+        bail("not enough memory", "");
++        throw(ENOMEM, "not enough memory");
 +
 +    firstcheck = CHECK(0, Z_NULL, 0);
 +
@@ -1044,7 +1071,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +           deflate and verify the checksum. */
 +        Trace(("-- uncompressing #%ld", job->seq));
 +        if (inflateReset2(&strm, -15) != Z_OK)
-+            bail("stream reset failed: ", strm.msg);
++            throw(EINVAL, "stream reset failed: %s", strm.msg);
 +        strm.next_in = job->in->buf;
 +        strm.avail_in = job->in->len;
 +        strm.next_out = job->out->buf;
@@ -1052,17 +1079,17 @@ diff -r 27ff4e7aa5f1 pigz.c
 +
 +        err = inflate(&strm, Z_SYNC_FLUSH);
 +        if (err != Z_OK && err != Z_STREAM_END)
-+            bail("corrupted input -- invalid deflate data: ", strm.msg);
++            throw(EINVAL, "corrupted input -- invalid deflate data: %s", strm.msg);
 +
 +        /* It's not strictly necessary to verify the checksum here, but it
 +           seems nice to get an error about a bad checksum as early as possible
 +           to wasteful cpu and i/o consumtion. */
 +        check = CHECK(firstcheck, job->out->buf, job->out->len);
 +        if (check != job->check) {
-+            if (form == 1)
-+                bail("corrupted zlib stream -- adler32 mismatch: ", in);
++            if (g.form == 1)
++                throw(EDOM, "%s: corrupted zlib stream -- adler32 mismatch: ", g.inf);
 +            else
-+                bail("corrupted gzip stream -- crc32 mismatch: ", in);
++                throw(EDOM, "%s: corrupted gzip stream -- crc32 mismatch: ", g.inf);
 +        }
 +
 +        Trace(("-- uncompressed #%ld%s", job->seq, job->more ? "" : " (last)"));
@@ -1102,8 +1129,8 @@ diff -r 27ff4e7aa5f1 pigz.c
 +        return;
 +    }
 +
-+    if (form > 1) {
-+        complain("index not supported with zip file ", in);
++    if (g.form > 1) {
++        complain("index not supported with zip file ", g.inf);
 +        infchk();
 +        return;
 +    }
@@ -1115,9 +1142,9 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    writeth = launch(uncompress_write_thread, NULL);
 +
 +    /* updated by uncompress_write_thread */
-+    out_check = CHECK(0L, Z_NULL, 0);
++    g.out_check = CHECK(0L, Z_NULL, 0);
 +    out_len = 0;
-+    out_tot = 0;
++    g.out_tot = 0;
 +
 +    for (seq = 0; !last; seq++) {
 +        /* get the next entry from the index */
@@ -1125,7 +1152,7 @@ diff -r 27ff4e7aa5f1 pigz.c
 +
 +        job = malloc(sizeof(struct job));
 +        if (job == NULL)
-+            bail("not enough memory", "");
++            throw(ENOMEM, "not enough memory");
 +        job->seq = seq;
 +        job->more = !last;
 +        job->in = get_space_size(&in_pool, defsz);
@@ -1136,21 +1163,21 @@ diff -r 27ff4e7aa5f1 pigz.c
 +        job->next = NULL;
 +
 +        /* reading the header cached some data, be sure not to skip it */
-+        fromload = (in_left < defsz ? in_left : defsz);
++        fromload = (g.in_left < defsz ? g.in_left : defsz);
 +        if (fromload > 0) {
-+            (void)memcpy(job->in->buf, in_next, fromload);
-+            in_left -= fromload;
-+            in_next += fromload;
++            (void)memcpy(job->in->buf, g.in_next, fromload);
++            g.in_left -= fromload;
++            g.in_next += fromload;
 +        }
 +        if (fromload < defsz)
-+            readn(ind, job->in->buf + fromload, defsz - fromload);
++            readn(g.ind, job->in->buf + fromload, defsz - fromload);
 +        job->in->len = defsz;
 +        job->out->len = infsz;
 +
 +        out_len += infsz;
 +
 +        /* start another uncompress thread if needed */
-+        if (cthreads <= seq && cthreads < procs) {
++        if (cthreads <= seq && cthreads < g.procs) {
 +            (void)launch(uncompress_thread, NULL);
 +            cthreads++;
 +        }
@@ -1167,16 +1194,16 @@ diff -r 27ff4e7aa5f1 pigz.c
 +    writeth = NULL;
 +    Trace(("-- write thread joined"));
 +
-+    check_trailer(out_check, out_len);
++    check_trailer(g.out_check, out_len);
 +}
 +
 +/* parallel_infchk() or infchk(), whichever works. */
 +local void best_infchk(void)
 +{
-+    if (index != NULL) {
++    if (g.index != NULL) {
 +        /* User specified index file */
-+        if (idx_open(index) != 0)
-+            bail("invalid index file", "");
++        if (idx_open(g.index) != 0)
++            throw(EINVAL, "invalid index file");
 +    }
 +    else if (ind_has_index())
 +        (void)idx_open("%z");
@@ -1189,23 +1216,23 @@ diff -r 27ff4e7aa5f1 pigz.c
 +
  /* --- decompress Unix compress (LZW) input --- */
  
- /* memory for unlzw() --
-@@ -3159,7 +3924,7 @@
-         /* if requested, test input file (possibly a special list) */
-         if (decode == 2) {
-             if (method == 8)
--                infchk();
-+                best_infchk();
-             else {
-                 unlzw();
-                 if (list) {
-@@ -3219,19 +3984,8 @@
+ /* Type for accumulating bits.  23 bits will be used to accumulate up to 16-bit
+@@ -3576,7 +4333,7 @@
+         if (g.decode == 2) {
+             try {
+                 if (method == 8)
+-                    infchk();
++                    best_infchk();
+                 else {
+                     unlzw();
+                     if (g.list) {
+@@ -3649,19 +4406,8 @@
  
          /* if exists and not -f, give user a chance to overwrite */
-         if (outd < 0 && errno == EEXIST && isatty(0) && verbosity) {
+         if (g.outd < 0 && errno == EEXIST && isatty(0) && g.verbosity) {
 -            int ch, reply;
 -
--            fprintf(stderr, "%s exists -- overwrite (y/n)? ", out);
+-            fprintf(stderr, "%s exists -- overwrite (y/n)? ", g.outf);
 -            fflush(stderr);
 -            reply = -1;
 -            do {
@@ -1214,41 +1241,43 @@ diff -r 27ff4e7aa5f1 pigz.c
 -                    reply = ch == 'y' || ch == 'Y' ? 1 : 0;
 -            } while (ch != EOF && ch != '\n' && ch != '\r');
 -            if (reply == 1)
--                outd = open(out, O_CREAT | O_TRUNC | O_WRONLY,
--                            0600);
-+            if (allow_overwrite(out))
-+                outd = open(out, O_CREAT | O_TRUNC | O_WRONLY, 0600);
+-                g.outd = open(g.outf, O_CREAT | O_TRUNC | O_WRONLY,
+-                              0600);
++            if (allow_overwrite(g.outf))
++                g.outd = open(g.outf, O_CREAT | O_TRUNC | O_WRONLY, 0600);
          }
  
          /* if exists and no overwrite, report and go on to next */
-@@ -3254,17 +4008,24 @@
+@@ -3684,10 +4430,11 @@
      /* process ind to outd */
-     if (verbosity > 1)
-         fprintf(stderr, "%s to %s ", in, out);
+     if (g.verbosity > 1)
+         fprintf(stderr, "%s to %s ", g.inf, g.outf);
 +
-     if (decode) {
-         if (method == 8)
--            infchk();
-+            best_infchk();
-         else if (method == 256)
-             unlzw();
-         else
-             cat();
+     if (g.decode) {
+         try {
+             if (method == 8)
+-                infchk();
++                best_infchk();
+             else if (method == 257)
+                 unlzw();
+             else
+@@ -3708,8 +4455,14 @@
+         }
      }
  #ifndef NOTHREAD
--    else if (procs > 1)
-+    else if (index != NULL) {
-+        if (idx_open(index) != 0)
-+            bail("invalid index file", "");
+-    else if (g.procs > 1)
++    else if (g.index != NULL) {
++        if (idx_open(g.index) != 0)
++            throw(EINVAL, "invalid index file");
          parallel_compress();
 +    }
-+    else if (procs > 1) {
++    else if (g.procs > 1) {
 +        parallel_compress();
 +    }
  #endif
      else
          single_compress(0);
-@@ -3273,6 +4034,10 @@
+@@ -3718,6 +4471,10 @@
          fflush(stderr);
      }
  
@@ -1257,9 +1286,9 @@ diff -r 27ff4e7aa5f1 pigz.c
 +        idx_close();
 +
      /* finish up, copy attributes, set times, delete original */
-     if (ind != 0)
-         close(ind);
-@@ -3331,6 +4096,9 @@
+     if (g.ind != 0)
+         close(g.ind);
+@@ -3781,6 +4538,9 @@
  "  -v, --verbose        Provide more verbose output",
  #endif
  "  -V  --version        Show the version of pigz",
@@ -1269,65 +1298,55 @@ diff -r 27ff4e7aa5f1 pigz.c
  "  -z, --zlib           Compress to zlib (.zz) instead of gzip format",
  "  --                   All arguments after \"--\" are treated as files"
  };
-@@ -3400,11 +4168,11 @@
- local char *longopts[][2] = {
+@@ -3859,11 +4619,11 @@
      {"LZW", "Z"}, {"ascii", "a"}, {"best", "9"}, {"bits", "Z"},
-     {"blocksize", "b"}, {"decompress", "d"}, {"fast", "1"}, {"force", "f"},
--    {"help", "h"}, {"independent", "i"}, {"keep", "k"}, {"license", "L"},
--    {"list", "l"}, {"name", "N"}, {"no-name", "n"}, {"no-time", "T"},
+     {"blocksize", "b"}, {"decompress", "d"}, {"fast", "1"}, {"first", "F"},
+     {"force", "f"}, {"help", "h"}, {"independent", "i"}, {"iterations", "I"},
+-    {"keep", "k"}, {"license", "L"}, {"list", "l"}, {"maxsplits", "M"},
+-    {"name", "N"}, {"no-name", "n"}, {"no-time", "T"}, {"oneblock", "O"},
 -    {"processes", "p"}, {"quiet", "q"}, {"recursive", "r"}, {"rsyncable", "R"},
 -    {"silent", "q"}, {"stdout", "c"}, {"suffix", "S"}, {"test", "t"},
 -    {"to-stdout", "c"}, {"uncompress", "d"}, {"verbose", "v"},
-+    {"help", "h"}, {"independent", "i"}, {"index", "X"}, {"keep", "k"},
-+    {"license", "L"}, {"list", "l"}, {"name", "N"}, {"no-name", "n"},
-+    {"no-time", "T"}, {"processes", "p"}, {"quiet", "q"}, {"recursive", "r"},
++    {"index", "X"}, {"keep", "k"}, {"license", "L"}, {"list", "l"},
++    {"maxsplits", "M"}, {"name", "N"}, {"no-name", "n"}, {"no-time", "T"},
++    {"oneblock", "O"}, {"processes", "p"}, {"quiet", "q"}, {"recursive", "r"},
 +    {"rsyncable", "R"}, {"silent", "q"}, {"stdout", "c"}, {"suffix", "S"},
 +    {"test", "t"}, {"to-stdout", "c"}, {"uncompress", "d"}, {"verbose", "v"},
      {"version", "V"}, {"zip", "K"}, {"zlib", "z"}};
  #define NLOPTS (sizeof(longopts) / (sizeof(char *) << 1))
  
-@@ -3444,7 +4212,7 @@
+@@ -3903,7 +4663,7 @@
  
      /* if no argument or dash option, check status of get */
      if (get && (arg == NULL || *arg == '-')) {
--        bad[1] = "bpS"[get - 1];
-+        bad[1] = "bpSX"[get - 1];
-         bail("missing parameter after ", bad);
+-        bad[1] = "bpSIM"[get - 1];
++        bad[1] = "bpSIMX"[get - 1];
+         throw(EINVAL, "missing parameter after %s", bad);
      }
      if (arg == NULL)
-@@ -3503,6 +4271,7 @@
-             case 'R':  rsync = 1;  break;
+@@ -3972,6 +4732,7 @@
              case 'S':  get = 3;  break;
+             case 'T':  g.headis &= ~0xa;  break;
              case 'V':  fputs(VERSION, stderr);  exit(0);
-+            case 'X':  setdict = 0; get = 4;  break;
++            case 'X':  g.setdict = 0; get = 6;  break;
              case 'Z':
-                 bail("invalid option: LZW output not supported: ", bad);
-             case 'a':
-@@ -3530,7 +4299,7 @@
+                 throw(EINVAL, "invalid option: LZW output not supported: %s",
+                       bad);
+@@ -4001,7 +4762,7 @@
              return 0;
      }
  
--    /* process option parameter for -b, -p, or -S */
-+    /* process option parameter for -b, -p, -S, or -X */
+-    /* process option parameter for -b, -p, -S, -I, or -M */
++    /* process option parameter for -b, -p, -S, -I, -M or -X */
      if (get) {
          size_t n;
  
-@@ -3543,7 +4312,7 @@
-                 OUTPOOL(size) < size ||
-                 (ssize_t)OUTPOOL(size) < 0 ||
-                 size > (1UL << 22))
--                bail("block size too large: ", arg);
-+                bail("block size too large:", arg);
-             new_opts();
-         }
-         else if (get == 2) {
-@@ -3561,6 +4330,9 @@
-         }
-         else if (get == 3)
-             sufx = arg;                         /* gz suffix */
-+        else if (get == 4)
-+            index = arg;                        /* index file */
-+
+@@ -4036,6 +4797,8 @@
+             g.zopts.numiterations = num(arg);   /* optimization iterations */
+         else if (get == 5)
+             g.zopts.blocksplittingmax = num(arg);   /* max block splits */
++        else if (get == 6)
++            g.index = arg;                      /* index file */
          get = 0;
          return 0;
      }

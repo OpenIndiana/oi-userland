@@ -7,15 +7,14 @@
 do not link with libpthread - developed by Oracle
 Not submitted upstream: specific to Solaris but no Solaris Makefile upstream
 
-diff -r 1debb6343954 -r 08d5c81201b3 Makefile
---- a/Makefile
-+++ b/Makefile
-@@ -2,7 +2,7 @@
- CFLAGS=-O3 -Wall -Wextra
+--- pigz-2.3.3/Makefile.orig	2016-09-26 10:42:09.822806707 +0000
++++ pigz-2.3.3/Makefile	2016-09-26 10:51:57.724668109 +0000
+@@ -5,7 +5,7 @@
+ # use gcc and gmake on Solaris
  
- pigz: pigz.o yarn.o
--	$(CC) -o pigz pigz.o yarn.o -lpthread -lz
-+	$(CC) -o pigz pigz.o yarn.o -lz
+ pigz: pigz.o yarn.o try.o ${ZOPFLI}deflate.o ${ZOPFLI}blocksplitter.o ${ZOPFLI}tree.o ${ZOPFLI}lz77.o ${ZOPFLI}cache.o ${ZOPFLI}hash.o ${ZOPFLI}util.o ${ZOPFLI}squeeze.o ${ZOPFLI}katajainen.o
+-	$(CC) $(LDFLAGS) -o pigz $^ -lpthread -lm
++	$(CC) $(LDFLAGS) -o pigz $^ -lm
  	ln -f pigz unpigz
  
- pigz.o: pigz.c yarn.h
+ pigz.o: pigz.c yarn.h try.h ${ZOPFLI}deflate.h ${ZOPFLI}util.h
