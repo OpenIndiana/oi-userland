@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXvMC
 COMPONENT_VERSION=        1.0.9
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/libxvmc
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXvMC - X Video Motion Compensation library 

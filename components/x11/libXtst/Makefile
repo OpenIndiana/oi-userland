@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXtst
 COMPONENT_VERSION=        1.2.2
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/libxtst
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXtst - Client library for X Record and Test extensions

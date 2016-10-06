@@ -10,22 +10,22 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXrender
-COMPONENT_VERSION=        0.9.8
+COMPONENT_VERSION=        0.9.9
 COMPONENT_FMRI=           x11/library/libxrender
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXrender - X Render extension library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1d14b02f0060aec5d90dfdcf16a996f17002e515292906ed26e3dcbba0f4fc62
+  sha256:fc2fe57980a14092426dffcd1f2d9de0987b9d40adea663bd70d6342c0e9be1a
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXrender-0.9.8.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXrender.license

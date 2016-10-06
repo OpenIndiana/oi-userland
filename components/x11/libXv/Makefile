@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXv
 COMPONENT_VERSION=        1.0.10
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           x11/library/libxv
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXv - X Video extension library
