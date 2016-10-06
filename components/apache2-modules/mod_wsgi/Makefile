@@ -40,6 +40,9 @@ VARIANTS_64 += $(BUILD_DIR)/apache24-python34
 VARIANTS_64 += $(BUILD_DIR)/apache24-python35
 include ../modules.mk
 
+# Python is now built in C99 mode and we need it too (24743682).
+studio_C99MODE= $(studio_C99_ENABLE)
+
 $(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_24_USR_PREFIX)/bin/apxs BITS=64
 $(BUILD_DIR)/apache24-%/$(MACH64)/.built: BITS=64
 $(BUILD_DIR)/apache24-%/$(MACH64)/.tested: BITS=64
