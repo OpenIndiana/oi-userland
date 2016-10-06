@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 COMPONENT_VERSION=	2.25.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -62,13 +62,14 @@ CONFIGURE_OPTIONS +=    --enable-largefile=yes
 
 CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
 
+$(INSTALL_32):	$(INSTALL_64)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test: $(TEST_32_and_64)
 
-test: $(TEST_32)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
