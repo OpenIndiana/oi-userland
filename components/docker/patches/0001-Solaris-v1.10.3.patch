@@ -1,18 +1,13 @@
-In-house patch which contains a full port of the v1.10.3 Docker
-Engine for Solaris. This is being integrated as the first
-version of Docker on Solaris, targeting release with Solaris 12.
-
-While work is ongoing upstream in the public project, and
-most if not all of that code will be integrated upstream, that
-work will not be done in time to target a Solaris 12 release.
-This version is the first in hopefully many, and this patch
-will be deprecated in future release integrations. 
+From 3cf1310ac1de1c3ed1be6341d5d8e6afe255c89f Mon Sep 17 00:00:00 2001
+From: Amit Krishnan <amit.krishnan@oracle.com>
+Date: Thu, 6 Oct 2016 14:24:52 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
  Dockerfile.solaris                                 |   26 +
  Makefile                                           |   35 +-
  api/client/run.go                                  |    1 +
+ api/client/version.go                              |   20 -
  api/server/router/container/container_routes.go    |    7 +
  api/server/server_unix.go                          |    2 +-
  container/container_solaris.go                     |  649 ++++++++++++
@@ -27,7 +22,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/config_solaris.go                           |   66 ++
  daemon/config_test.go                              |   30 +-
  daemon/container_operations_solaris.go             |  973 ++++++++++++++++++
- daemon/daemon.go                                   |    9 +-
+ daemon/daemon.go                                   |    6 +-
  daemon/daemon_solaris.go                           |  544 ++++++++++
  daemon/daemon_test.go                              |    2 +
  daemon/daemon_unix_test.go                         |    2 +-
@@ -38,7 +33,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/execdriver/driver_solaris.go                |   76 ++
  daemon/execdriver/driver_unix.go                   |    2 +-
  .../execdriver/execdrivers/execdrivers_solaris.go  |   13 +
- daemon/execdriver/zones/driver.go                  |  772 ++++++++++++++
+ daemon/execdriver/zones/driver.go                  |  745 ++++++++++++++
  daemon/execdriver/zones/driver_unsupported.go      |   12 +
  .../execdriver/zones/driver_unsupported_nocgo.go   |   13 +
  daemon/graphdriver/driver_solaris.go               |    8 +
@@ -50,15 +45,16 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/graphdriver/zfs/zfs_linux.go                |   37 +
  daemon/graphdriver/zfs/zfs_solaris.go              |   95 ++
  daemon/graphdriver/zfs/zfs_unsupported.go          |    2 +-
+ daemon/info.go                                     |    2 -
  daemon/inspect_solaris.go                          |   30 +
  daemon/inspect_unix.go                             |    2 +-
  daemon/list_unix.go                                |    2 +-
  daemon/network.go                                  |    7 +
  daemon/selinux_unsupported.go                      |    8 +
- daemon/start.go                                    |   63 ++
- daemon/stats_collector_solaris.go                  |  139 +++
+ daemon/start.go                                    |   65 ++
+ daemon/stats_collector_solaris.go                  |  537 ++++++++++
  daemon/stats_collector_unix.go                     |    2 +-
- daemon/stats_solaris.go                            |   82 ++
+ daemon/stats_solaris.go                            |   84 ++
  docker/daemon_solaris.go                           |   58 ++
  docker/daemon_unix.go                              |    2 +-
  hack/.vendor-helpers.sh                            |    8 +-
@@ -128,7 +124,7 @@ Subject: [PATCH] Solaris-v1.10.3
  pkg/signal/signal_solaris.go                       |   42 +
  pkg/signal/signal_unsupported.go                   |    2 +-
  pkg/sysinfo/sysinfo_solaris.go                     |  117 +++
- pkg/system/meminfo_solaris.go                      |  133 +++
+ pkg/system/meminfo_solaris.go                      |  127 +++
  pkg/system/meminfo_unsupported.go                  |    2 +-
  pkg/system/stat_linux.go                           |   33 -
  pkg/system/stat_solaris.go                         |   20 +-
@@ -148,12 +144,13 @@ Subject: [PATCH] Solaris-v1.10.3
  .../github.com/Sirupsen/logrus/terminal_solaris.go |   15 +
  .../docker/engine-api/types/container/config.go    |    4 +
  .../engine-api/types/container/host_config.go      |    1 +
+ .../github.com/docker/engine-api/types/types.go    |    2 -
  .../docker/go-connections/sockets/unix_socket.go   |    2 +-
  .../docker/libnetwork/default_gateway_solaris.go   |    7 +
- .../libnetwork/drivers/solaris/bridge/bridge.go    | 1062 ++++++++++++++++++++
+ .../libnetwork/drivers/solaris/bridge/bridge.go    | 1076 ++++++++++++++++++++
  .../drivers/solaris/bridge/bridge_store.go         |  212 ++++
  .../libnetwork/drivers/solaris/bridge/errors.go    |  341 +++++++
- .../drivers/solaris/bridge/port_mapping.go         |  199 ++++
+ .../drivers/solaris/bridge/port_mapping.go         |  218 ++++
  .../docker/libnetwork/drivers_solaris.go           |   13 +
  .../docker/libnetwork/ipamutils/utils_solaris.go   |   92 ++
  vendor/src/github.com/docker/libnetwork/network.go |    2 -
@@ -172,6 +169,7 @@ Subject: [PATCH] Solaris-v1.10.3
  .../libnetwork/portmapper/mock_proxy_linux.go      |   18 +
  .../docker/libnetwork/portmapper/proxy.go          |  209 ----
  .../docker/libnetwork/portmapper/proxy_linux.go    |  209 ++++
+ vendor/src/github.com/docker/libnetwork/sandbox.go |    7 +-
  .../libnetwork/sandbox_externalkey_solaris.go      |   45 +
  .../docker/libnetwork/sandbox_externalkey_unix.go  |    2 +-
  .../src/github.com/godbus/dbus/transport_unix.go   |    2 +-
@@ -190,7 +188,7 @@ Subject: [PATCH] Solaris-v1.10.3
  .../libcontainer/configs/cgroup_unsupported.go     |    2 +-
  .../runc/libcontainer/configs/device_defaults.go   |    4 +-
  .../runc/libcontainer/console_solaris.go           |   13 +
- .../runc/libcontainer/container_solaris.go         |  103 ++
+ .../runc/libcontainer/container_solaris.go         |   22 +
  .../runc/libcontainer/stats_solaris.go             |    8 +
  .../runc/libcontainer/system/sysconfig.go          |    2 +-
  .../runc/libcontainer/zones/stats.go               |   86 ++
@@ -199,7 +197,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 189 files changed, 8839 insertions(+), 1215 deletions(-)
+ 193 files changed, 9162 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -398,6 +396,65 @@ index 16f4230..4f5a412 100644
  		// No Autoremove: Simply retrieve the exit code
  		if !config.Tty {
  			// In non-TTY mode, we can't detach, so we must wait for container exit
+diff --git a/api/client/version.go b/api/client/version.go
+index a64deef..3000b1a 100644
+--- a/api/client/version.go
++++ b/api/client/version.go
+@@ -3,7 +3,6 @@ package client
+ import (
+ 	"runtime"
+ 	"text/template"
+-	"time"
+ 
+ 	Cli "github.com/docker/docker/cli"
+ 	"github.com/docker/docker/dockerversion"
+@@ -16,8 +15,6 @@ var versionTemplate = `Client:
+  Version:      {{.Client.Version}}
+  API version:  {{.Client.APIVersion}}
+  Go version:   {{.Client.GoVersion}}
+- Git commit:   {{.Client.GitCommit}}
+- Built:        {{.Client.BuildTime}}
+  OS/Arch:      {{.Client.Os}}/{{.Client.Arch}}{{if .Client.Experimental}}
+  Experimental: {{.Client.Experimental}}{{end}}{{if .ServerOK}}
+ 
+@@ -25,8 +22,6 @@ Server:
+  Version:      {{.Server.Version}}
+  API version:  {{.Server.APIVersion}}
+  Go version:   {{.Server.GoVersion}}
+- Git commit:   {{.Server.GitCommit}}
+- Built:        {{.Server.BuildTime}}
+  OS/Arch:      {{.Server.Os}}/{{.Server.Arch}}{{if .Server.Experimental}}
+  Experimental: {{.Server.Experimental}}{{end}}{{end}}`
+ 
+@@ -58,8 +53,6 @@ func (cli *DockerCli) CmdVersion(args ...string) (err error) {
+ 			Version:      dockerversion.Version,
+ 			APIVersion:   cli.client.ClientVersion(),
+ 			GoVersion:    runtime.Version(),
+-			GitCommit:    dockerversion.GitCommit,
+-			BuildTime:    dockerversion.BuildTime,
+ 			Os:           runtime.GOOS,
+ 			Arch:         runtime.GOARCH,
+ 			Experimental: utils.ExperimentalBuild(),
+@@ -71,19 +64,6 @@ func (cli *DockerCli) CmdVersion(args ...string) (err error) {
+ 		vd.Server = &serverVersion
+ 	}
+ 
+-	// first we need to make BuildTime more human friendly
+-	t, errTime := time.Parse(time.RFC3339Nano, vd.Client.BuildTime)
+-	if errTime == nil {
+-		vd.Client.BuildTime = t.Format(time.ANSIC)
+-	}
+-
+-	if vd.ServerOK() {
+-		t, errTime = time.Parse(time.RFC3339Nano, vd.Server.BuildTime)
+-		if errTime == nil {
+-			vd.Server.BuildTime = t.Format(time.ANSIC)
+-		}
+-	}
+-
+ 	if err2 := tmpl.Execute(cli.out, vd); err2 != nil && err == nil {
+ 		err = err2
+ 	}
 diff --git a/api/server/router/container/container_routes.go b/api/server/router/container/container_routes.go
 index 4e2ffca..e58405b 100644
 --- a/api/server/router/container/container_routes.go
@@ -2471,7 +2528,7 @@ index 0000000..17bb0a0
 +	return fmt.Errorf("Container %s is marked for removal and cannot be connected or disconnected to the network", containerID)
 +}
 diff --git a/daemon/daemon.go b/daemon/daemon.go
-index 6cb7f8c..3d2b2f8 100644
+index 6cb7f8c..f360392 100644
 --- a/daemon/daemon.go
 +++ b/daemon/daemon.go
 @@ -766,7 +766,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
@@ -2497,16 +2554,6 @@ index 6cb7f8c..3d2b2f8 100644
  }
  
  // Run uses the execution driver to run a given container
-@@ -1040,6 +1042,9 @@ func (daemon *Daemon) ExportImage(names []string, outStream io.Writer) error {
- 
- // PushImage initiates a push operation on the repository named localName.
- func (daemon *Daemon) PushImage(ref reference.Named, metaHeaders map[string][]string, authConfig *types.AuthConfig, outStream io.Writer) error {
-+	if runtime.GOOS == "solaris" {
-+		return fmt.Errorf("Pushing an image not supported on Solaris platform")
-+	}
- 	// Include a buffer so that slow client connections don't affect
- 	// transfer performance.
- 	progressChan := make(chan progress.Progress, 100)
 diff --git a/daemon/daemon_solaris.go b/daemon/daemon_solaris.go
 new file mode 100644
 index 0000000..ebec5ad
@@ -3244,10 +3291,10 @@ index 0000000..25a496e
 +}
 diff --git a/daemon/execdriver/zones/driver.go b/daemon/execdriver/zones/driver.go
 new file mode 100644
-index 0000000..b407ba5
+index 0000000..de5b637
 --- /dev/null
 +++ b/daemon/execdriver/zones/driver.go
-@@ -0,0 +1,772 @@
+@@ -0,0 +1,745 @@
 +// +build solaris,cgo
 +
 +package zones
@@ -3266,11 +3313,9 @@ index 0000000..b407ba5
 +	"strings"
 +	"sync"
 +	"syscall"
-+	"time"
 +
 +	"github.com/Sirupsen/logrus"
 +	"github.com/docker/docker/daemon/execdriver"
-+	sysinfo "github.com/docker/docker/pkg/system"
 +	"github.com/opencontainers/runc/libcontainer"
 +)
 +
@@ -3371,7 +3416,6 @@ index 0000000..b407ba5
 +type Driver struct {
 +	root             string
 +	activeContainers map[string]*activeContainer
-+	machineMemory    int64
 +	sync.Mutex
 +}
 +
@@ -3447,29 +3491,26 @@ index 0000000..b407ba5
 +
 +func startWrapper(cmd *exec.Cmd) error {
 +	// create processes in their own process contracts
-+	var errn, cttmpl C.int
++	var cttmpl C.int
++	var err error
 +
-+	if cttmpl = C.ct_pr_tmpl(); cttmpl == -1 {
-+		errno_msg := C.GoString(C.strerror(errn))
-+		return errors.New("Failed to create process contract template: " + errno_msg)
++	if cttmpl, err = C.ct_pr_tmpl(); cttmpl == -1 {
++		return err
 +	}
 +	defer func() {
-+		if errn = C.ct_abandon_latest(); errn != 0 {
-+			logrus.Error("Failed to abandon process contract: %v", C.GoString(C.strerror(errn)))
-+		} else if errn = C.ct_clear(cttmpl); errn != 0 {
-+			logrus.Error("Failed to clear process contract template %v", C.GoString(C.strerror(errn)))
++		if errn := C.ct_abandon_latest(); errn != 0 {
++			logrus.Error("Failed to abandon process contract: ", C.GoString(C.strerror(errn)))
++		}
++		if errn := C.ct_clear(cttmpl); errn != 0 {
++			logrus.Error("Failed to clear process contract template ", C.GoString(C.strerror(errn)))
 +		}
 +	}()
-+	err := cmd.Start()
++	err = cmd.Start()
 +
 +	return err
 +}
 +
 +func NewDriver(root string, options []string) (*Driver, error) {
-+	meminfo, err := sysinfo.ReadMemInfo()
-+	if err != nil {
-+		return nil, err
-+	}
 +	if err := os.MkdirAll(root, 0700); err != nil {
 +		return nil, err
 +	}
@@ -3477,7 +3518,6 @@ index 0000000..b407ba5
 +	return &Driver{
 +		root:             root,
 +		activeContainers: make(map[string]*activeContainer),
-+		machineMemory:    meminfo.MemTotal,
 +	}, nil
 +}
 +
@@ -3826,7 +3866,6 @@ index 0000000..b407ba5
 +		return execdriver.ExitStatus{ExitCode: -1}, err
 +	}
 +
-+
 +	if pipes.Stdin != nil {
 +		go func() {
 +			io.Copy(w, pipes.Stdin)
@@ -3973,26 +4012,7 @@ index 0000000..b407ba5
 +
 +// Stats implements the exec driver Driver interface.
 +func (d *Driver) Stats(id string) (*execdriver.ResourceStats, error) {
-+	stats, err := libcontainer.GetStats(id)
-+	if err != nil {
-+		return nil, err
-+	}
-+	// XXX: get from container configuration the memory resource limit
-+	//      in linux: c.Config().Cgroups.Resources.Memory
-+	var memoryLimit int64 = 0
-+	// if the container does not have any memory limit specified set the
-+	// limit to the machines memory
-+	if memoryLimit == 0 {
-+		memoryLimit = d.machineMemory
-+	}
-+
-+	p := &execdriver.ResourceStats{
-+		Stats:       stats,
-+		Read:        time.Now(),
-+		MemoryLimit: memoryLimit,
-+	}
-+
-+	return p, nil
++	return nil, errors.New("Stats is not supported in zones execdriver")
 +}
 +
 +// Stats implements the exec driver Driver interface.
@@ -4417,6 +4437,22 @@ index 643b169..ce8daad 100644
  
  package zfs
  
+diff --git a/daemon/info.go b/daemon/info.go
+index 008ac20..3d86bc0 100644
+--- a/daemon/info.go
++++ b/daemon/info.go
+@@ -134,11 +134,9 @@ func (daemon *Daemon) SystemInfo() (*types.Info, error) {
+ func (daemon *Daemon) SystemVersion() types.Version {
+ 	v := types.Version{
+ 		Version:      dockerversion.Version,
+-		GitCommit:    dockerversion.GitCommit,
+ 		GoVersion:    runtime.Version(),
+ 		Os:           runtime.GOOS,
+ 		Arch:         runtime.GOARCH,
+-		BuildTime:    dockerversion.BuildTime,
+ 		Experimental: utils.ExperimentalBuild(),
+ 	}
+ 
 diff --git a/daemon/inspect_solaris.go b/daemon/inspect_solaris.go
 new file mode 100644
 index 0000000..e42a61d
@@ -4529,7 +4565,7 @@ index 25a56ad..4f9bbe4 100644
 +	return nil, nil
 +}
 diff --git a/daemon/start.go b/daemon/start.go
-index 418dace..c74f07a 100644
+index 418dace..9d5e6cb 100644
 --- a/daemon/start.go
 +++ b/daemon/start.go
 @@ -1,7 +1,10 @@
@@ -4552,18 +4588,7 @@ index 418dace..c74f07a 100644
  // ContainerStart starts a container.
  func (daemon *Daemon) ContainerStart(name string, hostConfig *containertypes.HostConfig) error {
  	container, err := daemon.GetContainer(name)
-@@ -109,6 +114,10 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
- 		return err
- 	}
- 
-+	if err := daemon.injectHostConfig(container); err != nil {
-+		return err
-+	}
-+
- 	// Make sure NetworkMode has an acceptable value. We do this to ensure
- 	// backwards API compatibility.
- 	container.HostConfig = runconfig.SetDefaultNetModeIfBlank(container.HostConfig)
-@@ -142,6 +151,18 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
+@@ -142,6 +147,24 @@ func (daemon *Daemon) containerStart(container *container.Container) (err error)
  	mounts = append(mounts, container.TmpfsMounts()...)
  
  	container.Command.Mounts = mounts
@@ -4579,10 +4604,16 @@ index 418dace..c74f07a 100644
 +		container.Command.ContOS = img.Os
 +	}
 +
++	if container.Command.ContOS == "solaris" {
++		if err := daemon.injectHostConfig(container); err != nil {
++			return err
++	}
++
++	}
  	if err := daemon.waitForStart(container); err != nil {
  		return err
  	}
-@@ -170,3 +191,45 @@ func (daemon *Daemon) Cleanup(container *container.Container) {
+@@ -170,3 +193,45 @@ func (daemon *Daemon) Cleanup(container *container.Container) {
  		logrus.Warnf("%s cleanup: Failed to umount volumes: %v", container.ID, err)
  	}
  }
@@ -4630,28 +4661,260 @@ index 418dace..c74f07a 100644
 +}
 diff --git a/daemon/stats_collector_solaris.go b/daemon/stats_collector_solaris.go
 new file mode 100644
-index 0000000..9a51b27
+index 0000000..4d4b4a0
 --- /dev/null
 +++ b/daemon/stats_collector_solaris.go
-@@ -0,0 +1,139 @@
+@@ -0,0 +1,537 @@
 +package daemon
 +
 +import (
 +	"bufio"
-+	"sync"
-+	"time"
 +	"github.com/Sirupsen/logrus"
 +	"github.com/docker/docker/container"
 +	"github.com/docker/docker/daemon/execdriver"
 +	"github.com/docker/docker/pkg/pubsub"
++	"github.com/docker/docker/pkg/system"
++	"github.com/docker/libnetwork/types"
++	"github.com/opencontainers/runc/libcontainer"
++	"github.com/opencontainers/runc/libcontainer/zones"
++	"strings"
++	"sync"
++	"time"
 +)
++
++/*
++
++#cgo LDFLAGS: -lzonestat -lkstat2
++
++#include <errno.h>
++#include <kstat2.h>
++#include <string.h>
++#include <strings.h>
++#include <stdlib.h>
++#include <zone.h>
++#include <zonestat.h>
++#include <sys/param.h>
++
++typedef struct z_iostat {
++	int64_t	nread;
++	int64_t	read_bytes;
++	int64_t nwrite;
++	int64_t write_bytes;
++} z_iostat_t;
++
++typedef struct z_netstat {
++	int64_t	ibytes;
++	int64_t	ipackets;
++	int64_t ierrors;
++	int64_t	idrops;
++	int64_t	obytes;
++	int64_t	opackets;
++	int64_t oerrors;
++	int64_t	odrops;
++} z_netstat_t;
++
++#define KSTAT2_IO_URI	"kstat:/misc/unix/vopstats_zfs/%d"
++z_iostat_t *
++get_io_stats(zoneid_t zoneid) {
++	kstat2_handle_t handle;
++	kstat2_status_t stat;
++	kstat2_map_t    map;
++	kstat2_mapiter_t iter;
++	boolean_t has_next;
++	z_iostat_t *zio = malloc(sizeof(*zio));
++
++	if (zio == NULL) {
++		errno = ENOMEM;
++		return (NULL);
++	}
++	char lookup_uri[sizeof(KSTAT2_IO_URI) + 10]; // 12 extra digits
++
++	(void) snprintf(lookup_uri, sizeof(lookup_uri), KSTAT2_IO_URI, zoneid);
++
++	stat = kstat2_open(&handle, NULL);
++	if (stat != KSTAT2_S_OK) {
++		return (NULL);
++	}
++
++	stat = kstat2_lookup_map(handle, lookup_uri, &map);
++	if (stat != KSTAT2_S_OK) {
++		(void) kstat2_close(&handle);
++		return (NULL);
++	}
++
++	if ((stat = kstat2_mapiter_start(map, KSTAT2_NVK_ALL, &iter)) !=
++	    KSTAT2_S_OK) {
++		(void) kstat2_close(&handle);
++		return (NULL);
++	}
++
++	while (kstat2_mapiter_hasnext(iter, &has_next) == KSTAT2_S_OK &&
++	    has_next) {
++		kstat2_nv_t val;
++
++		if (kstat2_mapiter_next(iter, &val) != KSTAT2_S_OK) {
++			continue;
++		}
++
++		if (!strcmp(val->name, "nread") && (val->type == KSTAT2_NVVT_INT))
++			zio->nread = val->data.integer;
++		else if (!strcmp(val->name, "read_bytes") && (val->type == KSTAT2_NVVT_INT))
++			zio->read_bytes = val->data.integer;
++		else if (!strcmp(val->name, "nwrite") && (val->type == KSTAT2_NVVT_INT))
++			zio->nwrite = val->data.integer;
++		else if (!strcmp(val->name, "write_bytes") && (val->type == KSTAT2_NVVT_INT))
++			zio->write_bytes = val->data.integer;
++	}
++
++	(void) kstat2_close(&handle);
++	return (zio);
++}
++
++void
++io_stats_free(z_iostat_t *p)
++{
++	free(p);
++}
++
++#define KSTAT2_NET_LINK_URI	"kstat:/net/link"
++
++z_netstat_t *
++get_net_stats(const char *linkname, zoneid_t zoneid) {
++	kstat2_handle_t handle;
++	kstat2_status_t stat;
++	kstat2_map_t    map;
++	kstat2_mapiter_t iter;
++	boolean_t has_next;
++	// URI prefix + '/' + max data link name + '/' + zoneid digits + '\0'
++	char lookup_uri[sizeof(KSTAT2_NET_LINK_URI) + MAXLINKNAMELEN + 12];
++	z_netstat_t *zns = calloc(1, sizeof(*zns));
++
++	if (zns == NULL) {
++		errno = ENOMEM;
++		return (NULL);
++	}
++
++	(void) snprintf(lookup_uri, sizeof(lookup_uri), "%s/%s/%d",
++	    KSTAT2_NET_LINK_URI, linkname, zoneid);
++
++	stat = kstat2_open(&handle, NULL);
++	if (stat != KSTAT2_S_OK) {
++		free(zns);
++		return (NULL);
++	}
++
++	stat = kstat2_lookup_map(handle, lookup_uri, &map);
++	if (stat != KSTAT2_S_OK) {
++		(void) kstat2_close(&handle);
++		free(zns);
++		return (NULL);
++	}
++
++	stat = kstat2_mapiter_start(map, KSTAT2_NVK_ALL, &iter);
++	if (stat != KSTAT2_S_OK) {
++		(void) kstat2_close(&handle);
++		free(zns);
++		return (NULL);
++	}
++
++	while (kstat2_mapiter_hasnext(iter, &has_next) == KSTAT2_S_OK &&
++	    has_next) {
++		kstat2_nv_t val;
++
++		if (kstat2_mapiter_next(iter, &val) != KSTAT2_S_OK ||
++		    val->type != KSTAT2_NVVT_INT) {
++			continue;
++		}
++
++		if (strcmp(val->name, "ipackets64") == 0) {
++			zns->ipackets = val->data.integer;
++		} else if (strcmp(val->name, "rbytes64") == 0) {
++			zns->ibytes = val->data.integer;
++		} else if (strcmp(val->name, "ierrors") == 0) {
++			zns->ierrors = val->data.integer;
++		} else if (strcmp(val->name, "dl_idrops") == 0) {
++			zns->idrops = val->data.integer;
++		} else if (strcmp(val->name, "opackets64") == 0) {
++			zns->opackets = val->data.integer;
++		} else if (strcmp(val->name, "obytes64") == 0) {
++			zns->obytes = val->data.integer;
++		} else if (strcmp(val->name, "oerrors") == 0) {
++			zns->oerrors = val->data.integer;
++		} else if (strcmp(val->name, "dl_odrops") == 0) {
++			zns->odrops = val->data.integer;
++		}
++	}
++
++	(void) kstat2_close(&handle);
++	return (zns);
++}
++
++void
++net_stats_free(z_netstat_t *p)
++{
++	free(p);
++}
++
++uint64_t
++getSystemCPUUsage(zs_usage_t usage)
++{
++	timestruc_t cpu;
++
++	zs_resource_total_time(usage, ZS_RESOURCE_CPU, &cpu);
++	return (1000000000ULL * cpu.tv_sec + cpu.tv_nsec);
++}
++
++char *
++get_zone_name(zs_zone_t z)
++{
++	zs_property_t prop;
++
++	prop = zs_zone_property(z, ZS_ZONE_PROP_NAME);
++	if (prop == NULL)
++		return (NULL);
++
++	return (zs_property_string(prop));
++}
++
++zs_usage_t
++get_usage(zs_ctl_t zsctl)
++{
++	zs_usage_t zsu;
++
++        while ((zsu = zs_usage_read(zsctl)) == NULL &&
++	    (errno == EINTR || errno == EAGAIN))
++		;
++
++	return (zsu);
++}
++
++uint64_t
++getCpuUsage(zs_zone_t z)
++{
++	timestruc_t cpu;
++
++	zs_resource_used_zone_time(z, ZS_RESOURCE_CPU, &cpu);
++	return ((uint64_t)(cpu.tv_sec * 1000000000ULL + cpu.tv_nsec));
++}
++
++*/
++import "C"
++
++func getZoneName(z C.zs_zone_t) string {
++	return C.GoString(C.get_zone_name(z))
++}
 +
 +// XXX solaris: TODO Copied from Windows, refactor accordingly for collector actions.
 +// XXX: Copied statsCollector struct and interface from unix
 +
 +type statsSupervisor interface {
-+	// GetContainerStats collects all the stats related to a container
-+	GetContainerStats(container *container.Container) (*execdriver.ResourceStats, error)
++	// GetZoneStats collects all the stats related to a zone container
++	getZoneStats(z C.zs_zone_t, zoneid uint64, container *container.Container) (*execdriver.ResourceStats, error)
++}
++
++type zonePublisher struct {
++	publisher *pubsub.Publisher
++	zoneid    uint64
 +}
 +
 +// newStatsCollector returns a new statsCollector for collection stats
@@ -4660,10 +4923,10 @@ index 0000000..9a51b27
 +// they are started.
 +func (daemon *Daemon) newStatsCollector(interval time.Duration) *statsCollector {
 +	s := &statsCollector{
-+		interval:            interval,
-+		supervisor:          daemon,
-+		publishers:          make(map[*container.Container]*pubsub.Publisher),
-+		bufReader:           bufio.NewReaderSize(nil, 128),
++		interval:   interval,
++		supervisor: daemon,
++		publishers: make(map[*container.Container]*zonePublisher),
++		bufReader:  bufio.NewReaderSize(nil, 128),
 +	}
 +	go s.run()
 +
@@ -4672,25 +4935,34 @@ index 0000000..9a51b27
 +
 +// statsCollector manages and provides container resource stats
 +type statsCollector struct {
-+	m                   sync.Mutex
-+	supervisor          statsSupervisor
-+	interval            time.Duration
-+	publishers          map[*container.Container]*pubsub.Publisher
-+	bufReader           *bufio.Reader
++	m          sync.Mutex
++	supervisor statsSupervisor
++	interval   time.Duration
++	publishers map[*container.Container]*zonePublisher
++	bufReader  *bufio.Reader
 +}
 +
 +// collect registers the container with the collector and adds it to
++
 +// the event loop for collection on the specified interval returning
 +// a channel for the subscriber to receive on.
 +func (s *statsCollector) collect(c *container.Container) chan interface{} {
 +	s.m.Lock()
 +	defer s.m.Unlock()
-+	publisher, exists := s.publishers[c]
++	zpub, exists := s.publishers[c]
 +	if !exists {
-+		publisher = pubsub.NewPublisher(100*time.Millisecond, 1024)
-+		s.publishers[c] = publisher
++		zid, err := C.getzoneidbyname(C.CString(strings.TrimPrefix(c.Name, "/")))
++		if err != nil {
++			// Too early to get zoneid, flag and defer
++			zid = 0
++		}
++		zpub = &zonePublisher{
++			publisher: pubsub.NewPublisher(100*time.Millisecond, 1024),
++			zoneid:    uint64(zid),
++		}
++		s.publishers[c] = zpub
 +	}
-+	return publisher.Subscribe()
++	return zpub.publisher.Subscribe()
 +}
 +
 +// stopCollection closes the channels for all subscribers and removes
@@ -4698,8 +4970,8 @@ index 0000000..9a51b27
 +func (s *statsCollector) stopCollection(c *container.Container) {
 +	s.m.Lock()
 +	defer s.m.Unlock()
-+	if publisher, exists := s.publishers[c]; exists {
-+		publisher.Close()
++	if zpub, exists := s.publishers[c]; exists {
++		zpub.publisher.Close()
 +		delete(s.publishers, c)
 +	}
 +}
@@ -4708,10 +4980,10 @@ index 0000000..9a51b27
 +func (s *statsCollector) unsubscribe(c *container.Container, ch chan interface{}) {
 +	s.m.Lock()
 +	defer s.m.Unlock()
-+	publisher := s.publishers[c]
-+	if publisher != nil {
-+		publisher.Evict(ch)
-+		if publisher.Len() == 0 {
++	zpub, exists := s.publishers[c]
++	if exists {
++		zpub.publisher.Evict(ch)
++		if zpub.publisher.Len() == 0 {
 +			delete(s.publishers, c)
 +		}
 +	}
@@ -4721,57 +4993,214 @@ index 0000000..9a51b27
 +func (s *statsCollector) run() {
 +	type publishersPair struct {
 +		container *container.Container
-+		publisher *pubsub.Publisher
++		zpub      *zonePublisher
 +	}
++	memoryInfo, err := system.ReadMemInfo()
++	machineMemory := memoryInfo.MemTotal
++
 +	// we cannot determine the capacity here.
 +	// it will grow enough in first iteration
-+	var pairs []publishersPair
++	pairs := make(map[string]publishersPair)
 +
++	zsctl := C.zs_open()
++	usage_last, err := C.get_usage(zsctl)
++	if usage_last == nil {
++		logrus.Error("Failed to get usage: ", err)
++		C.zs_close(zsctl)
++		return
++	}
 +	for range time.Tick(s.interval) {
-+		// it does not make sense in the first iteration,
-+		// but saves allocations in further iterations
-+		pairs = pairs[:0]
++		var usage_diff C.zs_usage_t
 +
 +		s.m.Lock()
-+		for container, publisher := range s.publishers {
++		for container, zpub := range s.publishers {
 +			// copy pointers here to release the lock ASAP
-+			pairs = append(pairs, publishersPair{container, publisher})
++			pairs[strings.TrimPrefix(container.Name, "/")] = publishersPair{container, zpub}
 +		}
 +		s.m.Unlock()
 +		if len(pairs) == 0 {
 +			continue
 +		}
 +
-+		// XXX: need to implement getSystmCPUUsage()
-+		// XXX: ? whole system usage or how much of container allocated resources used?
-+		// XXX: The output of docker stats seem broken as the CPU % column show changes
-+		//      from previous reading, instead of actual usage.
-+		//      Thats in api/client/stats.go calculateCPUUsage()
-+		//
-+		systemUsage, err := s.getSystemCPUUsage()
-+		if err != nil {
-+			logrus.Errorf("collecting system cpu usage: %v", err)
++		usage, err := C.get_usage(zsctl)
++		if usage != nil {
++			usage_diff = C.zs_usage_diff(usage_last, usage)
++		}
++		if usage == nil || usage_diff == nil {
++			logrus.Error("Failed to get usage: ", err)
++			// empty the map
++			for name, _ := range pairs {
++				delete(pairs, name)
++			}
 +			continue
 +		}
++		systemUsage := uint64(C.getSystemCPUUsage(usage_diff))
 +
-+		for _, pair := range pairs {
-+			stats, err := s.supervisor.GetContainerStats(pair.container)
++		var z C.zs_zone_t
++		z = nil
++		for z = C.zs_zone_walk(usage_diff, z); z != nil; z = C.zs_zone_walk(usage_diff, z) {
++			name := getZoneName(z)
++			pair, ok := pairs[name]
++			if ok == false {
++				continue
++			}
++			zoneid := pair.zpub.zoneid
++			if zoneid == 0 {
++				zid, err := C.getzoneidbyname(C.CString(name))
++				if err != nil {
++					// zoneid is not available yet
++					delete(pairs, name)
++					continue
++				}
++				pair.zpub.zoneid = uint64(zid)
++				zoneid = pair.zpub.zoneid
++			}
++			stats, err := s.supervisor.getZoneStats(z, zoneid, pair.container)
 +			if err != nil {
 +				if err != execdriver.ErrNotRunning {
 +					logrus.Errorf("collecting stats for %s: %v", pair.container.ID, err)
 +				}
++				delete(pairs, name)
 +				continue
++			}
++			if stats.MemoryLimit == 0 {
++				stats.MemoryLimit = machineMemory
 +			}
 +			stats.SystemUsage = systemUsage
 +
-+			pair.publisher.Publish(stats)
++			pair.zpub.publisher.Publish(stats)
++			delete(pairs, name)
 +		}
++		C.zs_usage_free(usage_last)
++		C.zs_usage_free(usage_diff)
++		usage_last = usage
 +	}
++	C.zs_close(zsctl)
 +}
 +
-+// XXX needs to be implemented.
-+func (s *statsCollector) getSystemCPUUsage() (uint64, error) {
-+	return 0, nil
++func getIOStats(zoneid uint64) (*zones.BlkioStats, error) {
++	iostats, err := C.get_io_stats(C.zoneid_t(zoneid))
++	if iostats == nil {
++		return nil, err
++	}
++
++	ioBytes := []zones.BlkioStatEntry{
++		{
++			Op:    "write",
++			Value: uint64(iostats.write_bytes),
++		},
++		{
++			Op:    "read",
++			Value: uint64(iostats.read_bytes),
++		},
++	}
++	ioCount := []zones.BlkioStatEntry{
++		{
++			Op:    "write",
++			Value: uint64(iostats.nwrite),
++		},
++		{
++			Op:    "read",
++			Value: uint64(iostats.nread),
++		},
++	}
++	C.io_stats_free(iostats)
++	ioStats := zones.BlkioStats{
++		IoServiceBytesRecursive: ioBytes,
++		IoServicedRecursive:     ioCount,
++	}
++
++	return &ioStats, nil
++}
++
++func getNetStats(zoneid uint64) ([]*libcontainer.NetworkInterface, error) {
++	m := make(map[string]*types.InterfaceStatistics)
++	s := types.InterfaceStatistics{}
++
++	// XXX: Should get an array with all data links in the container from its
++	// configuration. For now, net0 suffices. If multi-homed containers are allowed
++	// in the future, this will be required to have accuarte network statistics.
++	datalink := []string{"net0"}
++	for _, linkname := range datalink {
++		ns, err := C.get_net_stats(C.CString(linkname), C.zoneid_t(zoneid))
++		if ns == nil {
++			return nil, err
++		}
++
++		s.RxBytes = uint64(ns.ibytes)
++		s.RxPackets = uint64(ns.ipackets)
++		s.RxErrors = uint64(ns.ierrors)
++		s.RxDropped = uint64(ns.idrops)
++
++		s.TxBytes = uint64(ns.obytes)
++		s.TxPackets = uint64(ns.opackets)
++		s.TxErrors = uint64(ns.oerrors)
++		s.TxDropped = uint64(ns.odrops)
++		m[linkname] = &s
++		C.net_stats_free(ns)
++
++	}
++	// Convert libnetwork nw stats into libcontainer nw stats
++	var list []*libcontainer.NetworkInterface
++	for ifName, ifStats := range m {
++		list = append(list, convertLnNetworkStats(ifName, ifStats))
++	}
++
++	return list, nil
++}
++
++func getContainerStats(z C.zs_zone_t, zoneid uint64) (*libcontainer.Stats, error) {
++	cstats := &libcontainer.Stats{}
++	zstats := zones.Stats{}
++	iostats, err := getIOStats(zoneid)
++	if iostats == nil {
++		return nil, err
++	}
++
++	// For now we only retrieve what's needed by docker stats
++	cpuUsage := uint64(C.getCpuUsage(z))
++	memUsage := uint64(C.zs_resource_used_zone_uint64(z, C.ZS_RESOURCE_RAM_RSS))
++
++	// XXX: Need to use kstat2 for CPU usage
++	// CPU% only seems to work if all these fields are populated.
++	// Once kstat2 are used, these statistics will be filled accurately.
++	zstats.CpuStats.CpuUsage.PercpuUsage = []uint64{cpuUsage}
++	zstats.CpuStats.CpuUsage.TotalUsage = uint64(cpuUsage)
++	zstats.CpuStats.CpuUsage.UsageInKernelmode = uint64(cpuUsage)
++	zstats.CpuStats.CpuUsage.UsageInUsermode = uint64(cpuUsage)
++	zstats.MemoryStats.Usage.Usage = memUsage
++	zstats.BlkioStats = *iostats
++
++	cstats.Stats = &zstats
++
++	return cstats, nil
++}
++
++func (daemon *Daemon) getZoneStats(z C.zs_zone_t, zoneid uint64, container *container.Container) (*execdriver.ResourceStats, error) {
++
++	zstats, err := getContainerStats(z, zoneid)
++	if zstats == nil {
++		return nil, err
++	}
++	netstats, err := getNetStats(zoneid)
++	if netstats == nil {
++		return nil, err
++	}
++
++	memoryLimit := int64(C.zs_zone_limit_uint64(z, C.ZS_LIMIT_RAM_RSS))
++
++	if memoryLimit == C.ZS_LIMIT_NONE {
++		memoryLimit = 0
++	}
++
++	zstats.Interfaces = netstats
++	stats := &execdriver.ResourceStats{
++		Read:        time.Now(),
++		MemoryLimit: memoryLimit,
++		Stats:       zstats,
++	}
++
++	return stats, nil
 +}
 diff --git a/daemon/stats_collector_unix.go b/daemon/stats_collector_unix.go
 index 2fd368c..ec408c6 100644
@@ -4785,10 +5214,10 @@ index 2fd368c..ec408c6 100644
  
 diff --git a/daemon/stats_solaris.go b/daemon/stats_solaris.go
 new file mode 100644
-index 0000000..1d99f1f
+index 0000000..a1230c6
 --- /dev/null
 +++ b/daemon/stats_solaris.go
-@@ -0,0 +1,82 @@
+@@ -0,0 +1,84 @@
 +package daemon
 +
 +import (
@@ -4822,38 +5251,40 @@ index 0000000..1d99f1f
 +		}
 +	}
 +
-+	if cs != nil {
-+		s.BlkioStats = types.BlkioStats{
-+			IoServiceBytesRecursive: copyBlkioEntry(cs.BlkioStats.IoServiceBytesRecursive),
-+			IoServicedRecursive:     copyBlkioEntry(cs.BlkioStats.IoServicedRecursive),
-+			IoQueuedRecursive:       copyBlkioEntry(cs.BlkioStats.IoQueuedRecursive),
-+			IoServiceTimeRecursive:  copyBlkioEntry(cs.BlkioStats.IoServiceTimeRecursive),
-+			IoWaitTimeRecursive:     copyBlkioEntry(cs.BlkioStats.IoWaitTimeRecursive),
-+			IoMergedRecursive:       copyBlkioEntry(cs.BlkioStats.IoMergedRecursive),
-+			IoTimeRecursive:         copyBlkioEntry(cs.BlkioStats.IoTimeRecursive),
-+			SectorsRecursive:        copyBlkioEntry(cs.BlkioStats.SectorsRecursive),
-+		}
-+		cpu := cs.CpuStats
-+		s.CPUStats = types.CPUStats{
-+			CPUUsage: types.CPUUsage{
-+				TotalUsage:        cpu.CpuUsage.TotalUsage,
-+				PercpuUsage:       cpu.CpuUsage.PercpuUsage,
-+				UsageInKernelmode: cpu.CpuUsage.UsageInKernelmode,
-+				UsageInUsermode:   cpu.CpuUsage.UsageInUsermode,
-+			},
-+			ThrottlingData: types.ThrottlingData{
-+				Periods:          cpu.ThrottlingData.Periods,
-+				ThrottledPeriods: cpu.ThrottlingData.ThrottledPeriods,
-+				ThrottledTime:    cpu.ThrottlingData.ThrottledTime,
-+			},
-+		}
-+		mem := cs.MemoryStats
-+		s.MemoryStats = types.MemoryStats{
-+			Usage:    mem.Usage.Usage,
-+			MaxUsage: mem.Usage.MaxUsage,
-+			Stats:    mem.Stats,
-+			Failcnt:  mem.Usage.Failcnt,
-+		}
++	if cs == nil {
++		return s
++	}
++
++	s.BlkioStats = types.BlkioStats{
++		IoServiceBytesRecursive: copyBlkioEntry(cs.BlkioStats.IoServiceBytesRecursive),
++		IoServicedRecursive:     copyBlkioEntry(cs.BlkioStats.IoServicedRecursive),
++		IoQueuedRecursive:       copyBlkioEntry(cs.BlkioStats.IoQueuedRecursive),
++		IoServiceTimeRecursive:  copyBlkioEntry(cs.BlkioStats.IoServiceTimeRecursive),
++		IoWaitTimeRecursive:     copyBlkioEntry(cs.BlkioStats.IoWaitTimeRecursive),
++		IoMergedRecursive:       copyBlkioEntry(cs.BlkioStats.IoMergedRecursive),
++		IoTimeRecursive:         copyBlkioEntry(cs.BlkioStats.IoTimeRecursive),
++		SectorsRecursive:        copyBlkioEntry(cs.BlkioStats.SectorsRecursive),
++	}
++	cpu := cs.CpuStats
++	s.CPUStats = types.CPUStats{
++		CPUUsage: types.CPUUsage{
++			TotalUsage:        cpu.CpuUsage.TotalUsage,
++			PercpuUsage:       cpu.CpuUsage.PercpuUsage,
++			UsageInKernelmode: cpu.CpuUsage.UsageInKernelmode,
++			UsageInUsermode:   cpu.CpuUsage.UsageInUsermode,
++		},
++		ThrottlingData: types.ThrottlingData{
++			Periods:          cpu.ThrottlingData.Periods,
++			ThrottledPeriods: cpu.ThrottlingData.ThrottledPeriods,
++			ThrottledTime:    cpu.ThrottlingData.ThrottledTime,
++		},
++	}
++	mem := cs.MemoryStats
++	s.MemoryStats = types.MemoryStats{
++		Usage:    mem.Usage.Usage,
++		MaxUsage: mem.Usage.MaxUsage,
++		Stats:    mem.Stats,
++		Failcnt:  mem.Usage.Failcnt,
 +	}
 +
 +	return s
@@ -8299,10 +8730,10 @@ index 0000000..f8314c4
 +}
 diff --git a/pkg/system/meminfo_solaris.go b/pkg/system/meminfo_solaris.go
 new file mode 100644
-index 0000000..f8c0af3
+index 0000000..bad227f
 --- /dev/null
 +++ b/pkg/system/meminfo_solaris.go
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,127 @@
 +// +build solaris,cgo
 +
 +package system
@@ -8378,19 +8809,13 @@ index 0000000..f8c0af3
 +	return int64(pagesize * npages)
 +}
 +
-+func getFreeMem() int64 {
-+	pagesize := C.sysconf(C._SC_PAGESIZE)
-+	npages := C.sysconf(C._SC_AVPHYS_PAGES)
-+	return int64(pagesize * npages)
-+}
-+
 +// ReadMemInfo retrieves memory statistics of the host system and returns a
 +//  MemInfo type.
 +func ReadMemInfo() (*MemInfo, error) {
 +
 +	ppKernel := C.getPpKernel()
 +	MemTotal := getTotalMem()
-+	MemFree := getFreeMem()
++	MemFree := MemTotal - int64(ppKernel)
 +	SwapTotal, SwapFree, err := getSysSwap()
 +
 +	if ppKernel < 0 || MemTotal < 0 || MemFree < 0 || SwapTotal < 0 ||
@@ -8400,7 +8825,7 @@ index 0000000..f8c0af3
 +
 +	meminfo := &MemInfo{}
 +	// Total memory is total physical memory less than memory locked by kernel
-+	meminfo.MemTotal = MemTotal - int64(ppKernel)
++	meminfo.MemTotal = MemTotal
 +	meminfo.MemFree = MemFree
 +	meminfo.SwapTotal = SwapTotal
 +	meminfo.SwapFree = SwapFree
@@ -8956,6 +9381,24 @@ index f43263d..0bf260d 100644
  	Resources
 +	LimitPriv string // Comma separated list of privileges to limit container to
  }
+diff --git a/vendor/src/github.com/docker/engine-api/types/types.go b/vendor/src/github.com/docker/engine-api/types/types.go
+index 64c9981..d42395e 100644
+--- a/vendor/src/github.com/docker/engine-api/types/types.go
++++ b/vendor/src/github.com/docker/engine-api/types/types.go
+@@ -178,13 +178,11 @@ type ContainerProcessList struct {
+ type Version struct {
+ 	Version       string
+ 	APIVersion    string `json:"ApiVersion"`
+-	GitCommit     string
+ 	GoVersion     string
+ 	Os            string
+ 	Arch          string
+ 	KernelVersion string `json:",omitempty"`
+ 	Experimental  bool   `json:",omitempty"`
+-	BuildTime     string `json:",omitempty"`
+ }
+ 
+ // Info contains response of Remote API:
 diff --git a/vendor/src/github.com/docker/go-connections/sockets/unix_socket.go b/vendor/src/github.com/docker/go-connections/sockets/unix_socket.go
 index c10aced..d162734 100644
 --- a/vendor/src/github.com/docker/go-connections/sockets/unix_socket.go
@@ -8981,10 +9424,10 @@ index 0000000..104781a
 +}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
 new file mode 100644
-index 0000000..960f8ea
+index 0000000..12c8b69
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
-@@ -0,0 +1,1062 @@
+@@ -0,0 +1,1076 @@
 +package bridge
 +
 +import (
@@ -9418,16 +9861,29 @@ index 0000000..960f8ea
 +		config.BridgeName, config.AddressIPv4)
 +
 +	networkList := d.getNetworks()
-+	for _, nw := range networkList {
++	for i, nw := range networkList {
 +		nw.Lock()
 +		nwConfig := nw.config
 +		nw.Unlock()
 +		if err := nwConfig.Conflicts(config); err != nil {
-+			return types.ForbiddenErrorf(
-+				"cannot create network %s (%s): "+
-+					"conflicts with network %s (%s): %s",
-+				nwConfig.BridgeName, config.ID, nw.id,
-+				nw.config.BridgeName, err.Error())
++			if config.DefaultBridge {
++				// We encountered and identified a stale default network
++				// We must delete it as libnetwork is the source of thruth
++				// The default network being created must be the only one
++				// This can happen only from docker 1.12 on ward
++				logrus.Infof("Removing stale default bridge network %s (%s)", nwConfig.ID, nwConfig.BridgeName)
++				if err := d.DeleteNetwork(nwConfig.ID); err != nil {
++					logrus.Warnf("Failed to remove stale default network: %s (%s): %v. Will remove from store.", nwConfig.ID, nwConfig.BridgeName, err)
++					d.storeDelete(nwConfig)
++				}
++				networkList = append(networkList[:i], networkList[i+1:]...)
++			} else {
++				return types.ForbiddenErrorf(
++					"cannot create network %s (%s): "+
++						"conflicts with network %s (%s): %s",
++					nwConfig.BridgeName, config.ID, nw.id,
++					nw.config.BridgeName, err.Error())
++			}
 +		}
 +	}
 +	if config.DefaultBindingIP == nil ||
@@ -9594,7 +10050,8 @@ index 0000000..960f8ea
 +
 +	// Program any required port mapping and store them in the endpoint
 +	endpoint.portMapping, err = n.allocatePorts(epConfig,
-+		endpoint, c.DefaultBindingIntf, c.DefaultBindingIP)
++		endpoint, c.DefaultBindingIntf, c.DefaultBindingIP,
++		c.BridgeName+"_gw0")
 +	if err != nil {
 +		return err
 +	}
@@ -10614,10 +11071,10 @@ index 0000000..0e0d67a
 +func (address InvalidLinkIPAddrError) BadRequest() {}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go
 new file mode 100644
-index 0000000..3fae520
+index 0000000..f2b1fd5
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go
-@@ -0,0 +1,199 @@
+@@ -0,0 +1,218 @@
 +package bridge
 +
 +import (
@@ -10640,7 +11097,8 @@ index 0000000..3fae520
 +	maxAllocatePortAttempts = 10
 +)
 +
-+func addPFRules(epid, bindIntf string, bs []types.PortBinding) {
++func addPFRules(epid, bindIntf string, bs []types.PortBinding,
++	gwIntf string) {
 +	id := epid[:12]
 +	fname := "/var/lib/docker/network/files/pf." + id
 +
@@ -10656,6 +11114,24 @@ index 0000000..3fae520
 +			"port %d rdr-to %s port %d\n", bindIntf,
 +			b.Proto.String(), bindIntf, b.HostPort,
 +			b.IP.String(), b.Port)
++		_, err = f.WriteString(r)
++		if err != nil {
++			logrus.Warnf("cannot write to %s: %v", fname, err)
++		}
++		r = fmt.Sprintf(
++			"pass out inet proto %s from (%s) to (%s) port %d " +
++			"rdr-to %s port %d route-to %s" + "@" + "%s\n",
++			b.Proto.String(), bindIntf, bindIntf, b.HostPort,
++			b.IP.String(), b.Port, b.IP.String(), gwIntf)
++		_, err = f.WriteString(r)
++		if err != nil {
++			logrus.Warnf("cannot write to %s: %v", fname, err)
++		}
++		r = fmt.Sprintf(
++			"pass out on %s inet proto %s from (%s) to %s " +
++			"port %d reply-to %s\n", gwIntf,
++			b.Proto.String(), bindIntf, b.IP.String(), b.Port,
++			bindIntf)
 +		_, err = f.WriteString(r)
 +		if err != nil {
 +			logrus.Warnf("cannot write to %s: %v", fname, err)
@@ -10679,7 +11155,7 @@ index 0000000..3fae520
 +	}
 +}
 +
-+func (n *bridgeNetwork) allocatePorts(epc *endpointConfiguration, ep *bridgeEndpoint, bindIntf string, reqDefBindIP net.IP) ([]types.PortBinding, error) {
++func (n *bridgeNetwork) allocatePorts(epc *endpointConfiguration, ep *bridgeEndpoint, bindIntf string, reqDefBindIP net.IP, gwIntf string) ([]types.PortBinding, error) {
 +	if epc == nil || epc.PortBindings == nil || len(epc.PortBindings) == 0 {
 +		return nil, nil
 +	}
@@ -10694,7 +11170,7 @@ index 0000000..3fae520
 +	if err != nil {
 +		return nil, err
 +	}
-+	addPFRules(ep.id, bindIntf, bs)
++	addPFRules(ep.id, bindIntf, bs, gwIntf)
 +	return bs, err
 +}
 +
@@ -12235,6 +12711,28 @@ index 0000000..ddde274
 +	}
 +	return nil
 +}
+diff --git a/vendor/src/github.com/docker/libnetwork/sandbox.go b/vendor/src/github.com/docker/libnetwork/sandbox.go
+index 71c8ebb..4853ee4 100644
+--- a/vendor/src/github.com/docker/libnetwork/sandbox.go
++++ b/vendor/src/github.com/docker/libnetwork/sandbox.go
+@@ -148,12 +148,15 @@ func (sb *sandbox) Labels() map[string]interface{} {
+ func (sb *sandbox) Statistics() (map[string]*types.InterfaceStatistics, error) {
+ 	m := make(map[string]*types.InterfaceStatistics)
+ 
+-	if sb.osSbox == nil {
++	sb.Lock()
++	osb := sb.osSbox
++	sb.Unlock()
++	if osb == nil {
+ 		return m, nil
+ 	}
+ 
+ 	var err error
+-	for _, i := range sb.osSbox.Info().Interfaces() {
++	for _, i := range osb.Info().Interfaces() {
+ 		if m[i.DstName()], err = i.Statistics(); err != nil {
+ 			return m, err
+ 		}
 diff --git a/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_solaris.go b/vendor/src/github.com/docker/libnetwork/sandbox_externalkey_solaris.go
 new file mode 100644
 index 0000000..7569e46
@@ -13259,17 +13757,13 @@ index 0000000..d0e6819
 +}
 diff --git a/vendor/src/github.com/opencontainers/runc/libcontainer/container_solaris.go b/vendor/src/github.com/opencontainers/runc/libcontainer/container_solaris.go
 new file mode 100644
-index 0000000..27639a1
+index 0000000..503c339
 --- /dev/null
 +++ b/vendor/src/github.com/opencontainers/runc/libcontainer/container_solaris.go
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,22 @@
 +// +build solaris
 +
 +package libcontainer
-+
-+import (
-+	"github.com/opencontainers/runc/libcontainer/zones"
-+)
 +
 +// State represents a running container's state
 +type State struct {
@@ -13288,83 +13782,6 @@ index 0000000..27639a1
 +
 +	// Methods below here are platform specific
 +
-+}
-+
-+// XXX: Should collect the networking stats too.
-+// 	For the stubs, need config with slice of NICs.
-+func GetStats(id string) (*Stats, error) {
-+	stats := &Stats{}
-+	zstats := zones.Stats{}
-+	cpuUsage := zones.CpuUsage {
-+		TotalUsage:		5,
-+		/* XXX: currently only TotalUsage is consumed.
-+		PercpuUsage:		[]uint64 { 1, 2, 3 },
-+		UsageInKernelmode:	3,
-+		UsageInUsermode:	2,
-+		*/
-+	}
-+	cpuStats := zones.CpuStats {
-+		CpuUsage:	cpuUsage,
-+		/* XXX: currently only CpuUsage.TotalUsage is consumed.
-+		ThrottlingData:	ThrottlingData {
-+			Periods:		100,
-+			ThrottledPeriods:	5,
-+			ThrottledTime:		1,
-+		},
-+		*/
-+	}
-+	memoryStats := zones.MemoryStats {
-+		Cache:	65536,
-+		Usage:	zones.MemoryData {
-+			Usage:		32000000,
-+			MaxUsage:	64000000,
-+			Failcnt:	10,
-+		},
-+		/* XXX: currently only MemboriStats.Usage is consumed
-+		SwapUsage: MemoryData {
-+			Usage:		8192000,
-+			MaxUsage:	8192000,
-+			Failcnt:	128,
-+		},
-+		KernelUsage: MemoryData {
-+			Usage:		4096000,
-+			MaxUsage:	2048000,
-+			Failcnt:	0,
-+		},
-+		*/
-+	}
-+	blkioStats := zones.BlkioStats {
-+		IoServiceBytesRecursive: []zones.BlkioStatEntry {
-+			{
-+				Major:	14,
-+				Minor:	1,
-+				Op:	"read", //op name from api/client/stats.go
-+				Value:	9000000,
-+			},
-+			{
-+				Major:	13,
-+				Minor:	0,
-+				Op:	"write", //op name from api/client/stats.go
-+				Value:	500000,
-+			},
-+		},
-+		/* XXX: currently only IoServiceBytesRecursive is consumed
-+		IoServicedRecursive: []BlkioStatEntry {
-+			{
-+				Major:	14000000,
-+				Minor:	10000000,
-+				Op:	"",
-+				Value:	9000000,
-+			},
-+		},
-+		*/
-+	}
-+	zstats.CpuStats = cpuStats
-+	zstats.MemoryStats = memoryStats
-+	zstats.BlkioStats = blkioStats
-+
-+	stats.Stats = &zstats
-+	return stats, nil
 +}
 diff --git a/vendor/src/github.com/opencontainers/runc/libcontainer/stats_solaris.go b/vendor/src/github.com/opencontainers/runc/libcontainer/stats_solaris.go
 new file mode 100644
