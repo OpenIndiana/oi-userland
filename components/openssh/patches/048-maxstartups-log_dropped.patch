@@ -1,0 +1,24 @@
+#
+# When MaxStartups of unauthenticated concurrent connections is hit,
+# additional connections are dropped.
+#
+# Dropped connections should be logged. Server administrator should be able to
+# find this information and might be interested in details. 
+#
+# Patch source: in-house
+# Offered upstream:
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2613
+#
+diff -pur old/sshd.c new/sshd.c
+--- old/sshd.c
++++ new/sshd.c
+@@ -1419,7 +1419,8 @@ server_accept_loop(int *sock_in, int *so
+ 				continue;
+ 			}
+ 			if (drop_connection(startups) == 1) {
+-				debug("drop connection #%d", startups);
++				logit("MaxStartups: dropping connection #%d",
++				    startups);
+ 				close(*newsock);
+ 				continue;
+ 			}
