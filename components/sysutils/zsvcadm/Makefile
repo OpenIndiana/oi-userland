@@ -16,6 +16,12 @@ include ../../../make-rules/shared-macros.mk
 # implementation packages, such as (initially) the network-ssh-askpass-zenity
 COMPONENT_NAME=		zsvcadm
 COMPONENT_VERSION=	1.0
+COMPONENT_SUMMARY=	The svcadm GUI wrapper utility
+COMPONENT_DESCRIPTION=	A GUI wrapper around svcadm simplifies management of SMF services in an X11 session
+COMPONENT_CLASSIFICATION=	Applications/System Utilities
+COMPONENT_FMRI= 	system/zsvcadm
+COMPONENT_LICENSE=	CDDL
+COMPONENT_LICENSE_FILE=	opensolaris.license
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
