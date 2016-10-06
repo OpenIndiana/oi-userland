@@ -41,4 +41,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 
+# Merge 32-bit & 64-bit versions of config_types.h 
+install: $(BUILD_DIR)/.merged-header
+
+$(BUILD_DIR)/.merged-header: $(BUILD_DIR_32)/.installed $(BUILD_DIR_64)/.installed
+	-$(RM) $(PROTO_DIR)/include/ogg/config_types.h
+	$(GDIFF) -D _LP64 \
+	    $(BUILD_DIR_32)/include/ogg/config_types.h $(BUILD_DIR_64)/include/ogg/config_types.h \
+	    > $(PROTO_DIR)/usr/include/ogg/config_types.h; \
+	diffstatus=$$? ; \
+	if (( $$diffstatus != 1 )) ; then exit $$diffstatus ; fi
+
 REQUIRED_PACKAGES += system/library/math
