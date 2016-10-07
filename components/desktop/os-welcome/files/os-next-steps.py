@@ -22,7 +22,9 @@ import locale
 import gettext
 from gettext import gettext as _
 import os
+import socket
 import string
+import subprocess
 import re
 
 import gi
@@ -43,10 +45,26 @@ bullet_point = u'\u2022'
 
 default_link_color = Gdk.Color (0, 0, 65535)
 
+# This needs to stay in sync with the method in /lib/svc/method/svc-webui-server
+# for generating the hostname used in the site certificate to avoid TLS errors.
+def get_solaris_dashboard_url():
+	hostname = socket.gethostname()
+	if hostname != '':
+		p = subprocess.Popen(["/usr/sbin/host", hostname],
+				     stdin=None, stdout=subprocess.PIPE,
+				     stderr=None, shell=False, close_fds=True,
+				     bufsize=-1)
+		(stdoutdata, stderrdata) = p.communicate()
+		if p.returncode == 0:
+			hostname = stdoutdata.split(' ', 1)[0]
+	if hostname == '':
+		hostname = "localhost"
+	return "https://%s:6787/" % hostname
+
 help_link= {
 	'header' : N_("Get Help"),
 	'icon' : "resources.png",
-	'url_links' : [ ["http://docs.oracle.com/cd/E53394_01/pdf/E54847.pdf", N_("##What's new## with <b>Oracle Solaris 11.3</b>")], ["http://www.oracle.com/us/support/systems/index.html", N_("##Get world class support## with <b>Oracle Premier Support</b>")], ["https://localhost:6787/", N_("##Explore## the <b>Oracle Solaris Dashboard</b> with system analytics and more")] ],
+	'url_links' : [ ["http://docs.oracle.com/cd/E53394_01/pdf/E54847.pdf", N_("##What's new## with <b>Oracle Solaris 11.3</b>")], ["http://www.oracle.com/us/support/systems/index.html", N_("##Get world class support## with <b>Oracle Premier Support</b>")], [get_solaris_dashboard_url(), N_("##Explore## the <b>Oracle Solaris Dashboard</b> with system analytics and more")] ],
 }
 
 personalize_link= {
@@ -64,180 +82,6 @@ participate_link= {
 ICON_PATH = "/usr/share/os-about/"
 DESKTOP_ITEM_PATH = "/usr/share/applications/"
 
-class WindowedLabel (Gtk.Label):
-    '''Custom Gtk.Label with an overlapping input-only Gdk.Window'''
-
-    event_window = None
-
-    def __init__ (self, debug = False):
-	'''Initialize object and plug all signals'''
-	self.debug = debug
-	super (WindowedLabel, self).__init__ ()
-
-    def do_realize (self):
-	'''Create a custom GDK window with which we will be able to play'''
-	Gtk.Label.do_realize (self)
-	event_mask = self.get_events () | Gdk.EventMask.BUTTON_PRESS_MASK \
-					| Gdk.EventMask.BUTTON_RELEASE_MASK \
-					| Gdk.EventMask.KEY_PRESS_MASK
-	attr = Gdk.WindowAttr()
-	attr.window_type = Gdk.WindowType.CHILD
-	attr.wclass = Gdk.WindowWindowClass.INPUT_ONLY
-	attr.event_mask = event_mask
-	attr.x = self.get_allocation().x
-	attr.y = self.get_allocation().y
-	attr.width = self.get_allocation().width
-	attr.height = self.get_allocation().height
-
-	self.event_window = Gdk.Window (
-	    parent = self.get_parent_window (),
-	    attributes = attr,
-	    attributes_mask = (Gdk.WindowAttributesType.X |
-			       Gdk.WindowAttributesType.Y)
-	    )
-	self.event_window.set_user_data (self)
-
-    def do_unrealize (self):
-	'''Destroy event window on unrealize'''
-	self.event_window.set_user_data (None)
-	self.event_window.destroy ()
-	Gtk.Label.do_unrealize (self)
-
-    def do_size_allocate (self, allocation):
-	'''Move & resize the event window to fit the Label's one'''
-	Gtk.Label.do_size_allocate (self, allocation)
-	if self.get_realized():
-	    self.event_window.move_resize (allocation.x, allocation.y,
-					   allocation.width, allocation.height)
-
-    def do_map (self):
-	'''Show event window'''
-	Gtk.Label.do_map (self)
-	self.event_window.show ()
-	'''Raise the event window to make sure it is over the Label's one'''
-	self.event_window.raise_ ()
-
-    def do_unmap (self):
-	'''Hide event window on unmap'''
-	self.event_window.hide ()
-	Gtk.Label.do_unmap (self)
-
-GObject.type_register (WindowedLabel)
-
-class HyperLink (WindowedLabel):
-    '''Clickable www link label'''
-
-    url		= ""
-    is_app_link = False
-    menu	= None
-    selection	= None
-
-    def __init__ (self, label, url, app_link):
-	'''Initialize object'''
-	super (HyperLink, self).__init__ ()
-	markup = "<b><u>%s</u></b>" % label
-	self.set_markup (markup)
-	self.set_selectable (True)
-	self.url = url
-	self.is_app_link = app_link
-	self.create_menu ()
-	link_color = self.style_get_property ("link-color")
-	if not link_color:
-	    link_color = default_link_color
-	self.modify_fg (Gtk.StateType.NORMAL, link_color)
-
-    def open_url (self, *args):
-	'''Use GNOME API to open the url'''
-	try:
-	    Gtk.show_uri (None, self.url, Gtk.get_current_event_time())
-	except Exception, e:
-	    print '''Warning: could not open "%s": %s''' % (self.url, e)
-
-    def open_link (self, *args):
-	try:
-	    ditem = Gio.DesktopAppInfo.new (self.url)
-	    ditem.launch ([])
-	except Exception, e:
-	    print '''Warning: could not execute file "%s" : %s''' % (self.url, e)
-
-    def copy_url (self, *args):
-	'''Copy URL to Clipboard'''
-	clipboard = Gtk.clipboard_get ("CLIPBOARD")
-	clipboard.set_text (self.url)
-
-    def create_menu (self):
-	'''Create the popup menu that will be displayed upon right click'''
-	self.menu = Gtk.Menu ()
-	if self.is_app_link:
-		open_item = Gtk.MenuItem (_("_Open Link"), use_underline = True)
-		open_item.connect ("activate", self.open_link)
-	else:
-		open_item = Gtk.MenuItem (_("_Open URL"), use_underline = True)
-		open_item.connect ("activate", self.open_url)
-
-	open_item.show ()
-	self.menu.append (open_item)
-	copy_item = Gtk.MenuItem (_("_Copy URL"), use_underline = True)
-	copy_item.connect ("activate", self.copy_url)
-	copy_item.show ()
-	self.menu.append (copy_item)
-
-    def display_menu (self, button, time, place = False):
-	'''Display utility popup menu'''
-	if place:
-	    alloc = self.get_allocation ()
-	    pos = self.event_window.get_origin ()
-	    x = pos[0]
-	    y = pos[1] + alloc.height
-	    func = lambda *a: (x, y, True)
-	else:
-	    func = None
-	self.menu.popup (None, None, func, None, button, time)
-
-    def do_map (self):
-	'''Select the HAND2 cursor on map'''
-	WindowedLabel.do_map (self)
-	cursor = Gdk.Cursor.new(Gdk.CursorType.HAND2)
-	self.event_window.set_cursor (cursor)
-
-    def do_button_press_event (self, event):
-	'''Update selection bounds infos or display popup menu'''
-	if event.button == 1:
-	    self.selection = self.get_selection_bounds ()
-	elif event.button == 3:
-	    self.display_menu (event.button, event.time)
-	    return True
-	WindowedLabel.do_button_press_event (self, event)
-
-    def do_button_release_event (self, event):
-	'''Open url if selection hasn't changed since initial press'''
-	if event.button == 1:
-	    selection = self.get_selection_bounds ()
-	    if selection == self.selection:
-		if self.is_app_link:
-			self.open_link ()
-		else:
-			self.open_url ()
-		return True
-	WindowedLabel.do_button_release_event (self, event)
-
-    def do_key_press_event (self, event):
-	'''Open url when Return key is pressed'''
-	if event.keyval == Gdk.KEY_Return:
-	    if self.is_app_link:
-		self.open_link ()
-	    else:
-		self.open_url ()
-	    return True
-	elif event.keyval == Gdk.KEY_Menu \
-	  or (event.keyval == Gdk.KEY_F10 \
-	      and event.get_state() & Gtk.accelerator_get_default_mod_mask() == \
-		  Gdk.ModifierType.SHIFT_MASK):
-	    self.display_menu (event.keyval, event.time, place = True)
-	    return True
-	WindowedLabel.do_key_press_event (self, event)
-
-GObject.type_register (HyperLink)
 class DialogOSNextSteps(Gtk.Dialog):
 	def __init__(self, parent=None):
 		Gtk.Dialog.__init__(self, self.__class__.__name__, parent, 0, None)
@@ -306,6 +150,15 @@ class DialogOSNextSteps(Gtk.Dialog):
 		header_vbox.pack_start(detail_vbox, False, False, 0)
 		self.fill_section(section_link, detail_vbox)
 
+	def launch_app(self,label,uri):
+		try:
+			ditem = Gio.DesktopAppInfo.new (uri)
+			ditem.launch ([])
+		except Exception, e:
+			print '''Warning: could not execute file "%s" : %s''' % (uri, e)
+
+		return True
+
 	def fill_section (self, section_link, vbox):
 
 		if 'program_links' in section_link:
@@ -322,7 +175,11 @@ class DialogOSNextSteps(Gtk.Dialog):
 				label.set_markup(tmp[0])
 				hbox.pack_start(label, False, False, 0)
 
-				link_button = HyperLink (tmp[1],i[0], True)
+				link_button = Gtk.Label()
+				link_button.connect("activate-link", self.launch_app)
+                                markup = "<b><a href='%s'>%s</a></b>" % (i[0],tmp[1])
+                                link_button.set_markup(markup)
+
 				hbox.pack_start(link_button, False, False, 0)
 
 				label = Gtk.Label()
@@ -345,7 +202,9 @@ class DialogOSNextSteps(Gtk.Dialog):
 				label.set_markup(tmp[0])
 				hbox.pack_start(label, False, False, 0)
 
-				link_button = HyperLink (tmp[1], i[0], False)
+				link_button = Gtk.Label()
+				markup = "<b><a href='%s'>%s</a></b>" % (i[0],tmp[1])
+				link_button.set_markup(markup)
 				hbox.pack_start(link_button, False, False, 0)
 
 				label = Gtk.Label()
