@@ -64,16 +64,6 @@ CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-debug
 
-# Delete this when libtorrent is updated in the build servers
-LIBTORRENT_BASE = $(WS_COMPONENTS)/libtorrent/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(LIBTORRENT_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L$(LIBTORRENT_BASE)$(USRLIB.$(BITS))
-CXXFLAGS += -I$(LIBTORRENT_BASE)$(USRINCDIR)
-CXXFLAGS += -I$(LIBTORRENT_BASE)$(USRINCDIR)/torrent
-CXXFLAGS += -I$(LIBTORRENT_BASE)$(USRINCDIR)/torrent/utils
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_$(BITS)="$(LIBTORRENT_BASE)$(USRLIB.$(BITS))"
-#end Delete
-
 REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/libtorrent
