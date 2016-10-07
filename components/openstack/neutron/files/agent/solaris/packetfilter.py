@@ -181,7 +181,7 @@ class PacketFilter(object):
         for i, keyword in enumerate(keywords):
             if keyword == 'label':
                 break
-        return keywords[i + 1]
+        return keywords[i + 1].strip('"')
 
     def remove_anchor(self, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
