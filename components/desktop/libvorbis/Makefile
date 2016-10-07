@@ -39,6 +39,9 @@ TPNO=			9575
 # check with results-all.master fails
 TEST_TARGET = $(SKIP_TEST)
 
+# ogg-vorbis is not unlockable in S11 gnome-incorporation
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
