@@ -67,5 +67,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/python/lxml-27
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library/dbus/dbus-x11
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
