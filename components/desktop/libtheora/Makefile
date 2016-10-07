@@ -36,6 +36,9 @@ COMPONENT_BUGDB=	gnome/multimedia
 
 TPNO=			9578
 
+# Depends on libogg which is on the do-not-publish list.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Assumes GNU versions of utilities in PATH (e.g. tail).
