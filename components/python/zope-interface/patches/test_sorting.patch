@@ -1,0 +1,19 @@
+As we don't have zope testrunner, test is run directly by python. Therefore 
+the module name changes as __main__ and causes test_sorting failure.
+Discussed here https://github.com/zopefoundation/zope.interface/issues/58
+Will not send upstream.
+
+--- a/src/zope/interface/tests/test_sorting.py	2016-10-06 16:54:45.526945350 +0000
++++ b/src/zope/interface/tests/test_sorting.py	2016-10-06 16:55:21.312625725 +0000
+@@ -42,9 +42,9 @@
+         # interfaces with equal names but different modules should sort by
+         # module name
+         from zope.interface.tests.m1 import I1 as m1_I1
+-        l = [I1, m1_I1]
++        l = [m1_I1, I1]
+         l.sort()
+-        self.assertEqual(l, [m1_I1, I1])
++        self.assertEqual(l, [I1, m1_I1])
+ 
+ def test_suite():
+     return TestSuite((

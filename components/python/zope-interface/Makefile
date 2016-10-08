@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zope.interface
-COMPONENT_VERSION=	3.3.0
+COMPONENT_VERSION=	4.3.2
 COMPONENT_PROJECT_URL=	http://zope.org/Wikis/Interfaces/FrontPage
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c049ef6f0748a2db26c7d01de1566e52f048e5fa6fbbb8da90c43e55597a5075
+    sha256:6a0e224a052e3ce27b3a7b1300a24747513f7a507217fcc2a4cb02eb92945cee
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/zope
 
-TPNO=			7911
+TPNO=			32154
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
