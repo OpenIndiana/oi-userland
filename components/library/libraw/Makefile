@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libraw
 COMPONENT_VERSION= 0.17.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libraw - library for reading RAW files obtained from digital photo cameras
 COMPONENT_PROJECT_URL= http://www.libraw.org/
 COMPONENT_FMRI= image/library/libraw
@@ -33,14 +34,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Use libjpeg-turbo
-CXXFLAGS+= -I/usr/include/libjpeg8-turbo 
-LIBJPEG_PREFIX=/usr/lib/libjpeg8-turbo
-CXXFLAGS+= -Wl,-L$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR)
-CXXFLAGS+= -Wl,-R$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR)
-
-CONFIGURE_ENV+= LDFLAGS="-L$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR) -R$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR)"
-CONFIGURE_ENV+= LIBS="-L$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR) -R$(LIBJPEG_PREFIX)/lib/$(ARCHLIBSUBDIR)"
+# Use default libjpeg
+CXXFLAGS+= $(JPEG_CPPFLAGS)
+CXXFLAGS+= $(JPEG_CXXFLAGS)
+CONFIGURE_ENV+= LDFLAGS="$(JPEG_LDFLAGS)"
+CONFIGURE_ENV+= LIBS="$(JPEG_LDFLAGS)"
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-jpeg
