@@ -56,6 +56,8 @@ file path=etc/gdm/Xsession mode=0555 preserve=true
 file path=etc/gdm/custom.conf mode=0644 preserve=true
 file files/gdm-launch-environment.pam path=etc/gdm/gdm-launch-environment.pam \
     preserve=renamenew
+file files/gdm-autologin path=etc/pam.d/gdm-autologin \
+    original_name=system/core-os:etc/pam.d/gdm-autologin preserve=renamenew
 file files/gdm.auth_attr \
     path=etc/security/auth_attr.d/system:display-manager:gdm
 file files/gdm.prof_attr \
@@ -274,6 +276,8 @@ user username=gdm gcos-field="GDM Reserved UID" group=gdm \
 license gdm.license license="GPL v2, LGPL v2, MIT"
 
 
+# Need a version of core-os with etc/pam.d/gdm-autologin removed
+depend type=optional fmri=pkg:/system/core-os@5.12-5.12.0.0.0.110
 depend type=require fmri=__TBD \
     pkg.debug.depend.file=etc/X11/xinit/xinitrc.d/0011.env
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/Xserver
