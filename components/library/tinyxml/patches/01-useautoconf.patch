@@ -1,0 +1,92 @@
+diff -uNr tinyxml/configure.ac tinyxml2/configure.ac
+--- tinyxml/configure.ac	1970-01-01 08:00:00.000000000 +0800
++++ tinyxml2/configure.ac	2016-01-15 00:54:51.743552575 +0800
+@@ -0,0 +1,34 @@
++#                                               -*- Autoconf -*-
++# Process this file with autoconf to produce a configure script.
++
++AC_PREREQ([2.69])
++AC_INIT(tinyxml, 2.6.2)
++AC_CONFIG_SRCDIR([tinyxml.c])
++AM_INIT_AUTOMAKE
++AC_CONFIG_SRCDIR([tinyxmlerror.cpp])
++LT_INIT
++# Checks for programs.
++AC_PROG_CXX
++AC_PROG_CC
++AC_PROG_RANLIB
++
++# Checks for libraries.
++
++# Checks for header files.
++AC_CHECK_HEADERS([stddef.h stdlib.h string.h])
++
++# Checks for typedefs, structures, and compiler characteristics.
++AC_CHECK_HEADER_STDBOOL
++AC_C_INLINE
++AC_TYPE_SIZE_T
++AC_CHECK_TYPES([ptrdiff_t])
++
++CFLAGS+=" -DTIXML_USE_STL"
++CXXFLAGS+=" -DTIXML_USE_STL"
++
++# Checks for library functions.
++AC_CHECK_FUNCS([memmove strchr])
++AM_INIT_AUTOMAKE
++#AC_CONFIG_FILES([Makefile])
++AC_OUTPUT([Makefile
++		])
+diff -uNr tinyxml/COPYING tinyxml2/COPYING
+--- tinyxml/COPYING	1970-01-01 08:00:00.000000000 +0800
++++ tinyxml2/COPYING	2016-01-15 00:56:39.064320909 +0800
+@@ -0,0 +1,12 @@
++The zlib/libpng License Copyright (c)
++
++
++This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
++
++Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
++
++1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
++
++2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
++
++3. This notice may not be removed or altered from any source distribution.
+diff -uNr tinyxml/Makefile.am tinyxml2/Makefile.am
+--- tinyxml/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ tinyxml2/Makefile.am	2016-01-15 00:54:51.749827287 +0800
+@@ -0,0 +1,8 @@
++lib_LTLIBRARIES=libtinyxml.la
++libtinyxml_la_SOURCES=tinystr.cpp  tinyxml.cpp  tinyxmlerror.cpp  tinyxmlparser.cpp
++libtinyxml_la_LDFLAGS = -version-info 2:6:2
++AM_CPPFLAGS=-I$(top_srcdir)
++tinyxmlincludedir=$(includedir)
++tinyxmlinclude_HEADERS=tinystr.h tinyxml.h
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = tinyxml.pc
+diff -uNr tinyxml/tinyxml.h tinyxml2/tinyxml.h
+--- tinyxml/tinyxml.h	2011-05-15 10:24:57.000000000 +0800
++++ tinyxml2/tinyxml.h	2016-01-15 00:55:41.002038102 +0800
+@@ -26,6 +26,8 @@
+ #ifndef TINYXML_INCLUDED
+ #define TINYXML_INCLUDED
+ 
++#define TIXML_USE_STL 1
++
+ #ifdef _MSC_VER
+ #pragma warning( push )
+ #pragma warning( disable : 4530 )
+diff -uNr tinyxml/tinyxml.pc tinyxml2/tinyxml.pc
+--- tinyxml/tinyxml.pc	1970-01-01 08:00:00.000000000 +0800
++++ tinyxml2/tinyxml.pc	2016-01-15 00:54:51.773077123 +0800
+@@ -0,0 +1,10 @@
++prefix=/usr/
++exec_prefix=${prefix}
++libdir=%LIBDIR%
++includedir=${prefix}/include
++
++Name: TinyXML
++Description: simple, small, C++ XML parser
++Version: %VERSION%
++Libs: -L${libdir} -ltinyxml
++Cflags: -I${includedir} -DTIXML_USE_STL=YES 
