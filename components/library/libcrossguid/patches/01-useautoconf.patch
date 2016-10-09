@@ -1,0 +1,61 @@
+diff -uNr a/configure.ac b/configure.ac
+--- a/configure.ac	1970-01-01 08:00:00.000000000 +0800
++++ b/configure.ac	2016-01-15 00:54:51.743552575 +0800
+@@ -0,0 +1,31 @@
++#                                               -*- Autoconf -*-
++# Process this file with autoconf to produce a configure script.
++
++AC_PREREQ([2.69])
++AC_INIT(crossguid, 2.6.2)
++AC_CONFIG_SRCDIR([.])
++AM_INIT_AUTOMAKE
++LT_INIT
++# Checks for programs.
++AC_PROG_CXX
++AC_PROG_CC
++AC_PROG_RANLIB
++
++# Checks for libraries.
++
++# Checks for header files.
++AC_CHECK_HEADERS([stddef.h stdlib.h string.h])
++
++# Checks for typedefs, structures, and compiler characteristics.
++AC_CHECK_HEADER_STDBOOL
++AC_C_INLINE
++AC_TYPE_SIZE_T
++AC_CHECK_TYPES([ptrdiff_t])
++
++
++# Checks for library functions.
++AC_CHECK_FUNCS([memmove strchr])
++AM_INIT_AUTOMAKE
++#AC_CONFIG_FILES([Makefile])
++AC_OUTPUT([Makefile
++		])
+diff -uNr a/Makefile.am b/Makefile.am
+--- a/Makefile.am	1970-01-01 08:00:00.000000000 +0800
++++ b/Makefile.am	2016-01-15 00:54:51.749827287 +0800
+@@ -0,0 +1,8 @@
++lib_LTLIBRARIES=libcrossguid.la
++libcrossguid_la_SOURCES=guid.cpp
++libcrossguid_la_LDFLAGS = -version-info 1:0:0
++AM_CPPFLAGS=-I$(top_srcdir) -std=c++11 -DGUID_LIBUUID 
++crossguidincludedir=$(includedir)
++crossguidinclude_HEADERS=guid.h
++pkgconfigdir = $(libdir)/pkgconfig
++pkgconfig_DATA = crossguid.pc
+diff -uNr crossguid/crossguid.pc crossguid2/crossguid.pc
+--- crossguid/crossguid.pc	1970-01-01 08:00:00.000000000 +0800
++++ crossguid2/crossguid.pc	2016-01-15 00:54:51.773077123 +0800
+@@ -0,0 +1,10 @@
++prefix=/usr/
++exec_prefix=${prefix}
++libdir=%LIBDIR%
++includedir=${prefix}/include
++
++Name: CrossGuid
++Description: CrossGuid is a minimal, cross platform, C++ GUID library.
++Version: %VERSION%
++Libs: -L${libdir} -lcrossguid -luuid
++Cflags: -I${includedir} -DGUID_LIBUUID
