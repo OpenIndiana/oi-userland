@@ -33,15 +33,21 @@ COMPONENT_BUGDB=	gnome/install
 
 # nothing to download or build; just package
 BUILD_STYLE= pkg
+
+# Uses a feature in a gtk script not added until S12.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Make sure SMF manifests are valid
+ifneq ($(BUILD_TYPE), evaluation)
 $(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
 	@for f in files/*.xml ; do \
 	    [[ "$$f" == "files/com.oracle.solaris.gdm-temporary.xml" ]] || \
 	    (set -ex ; /usr/sbin/svccfg validate "$$f") ; \
 	done
 	$(TOUCH) $@
+endif
 
 validate-smf:	$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
 build:		$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
