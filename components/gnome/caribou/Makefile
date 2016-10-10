@@ -59,11 +59,15 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
 
+PKG_MACROS += PYVER="$(PYTHON_VERSION)"
+
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/desktop/at-spi2-atk
 REQUIRED_PACKAGES += library/desktop/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/clutter
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
@@ -71,6 +75,7 @@ REQUIRED_PACKAGES += library/desktop/libgee
 REQUIRED_PACKAGES += library/desktop/libxklavier
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/python/pygobject-3-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxtst

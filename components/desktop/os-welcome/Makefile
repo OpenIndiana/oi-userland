@@ -46,6 +46,8 @@ COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
 
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/python/pygobject-3-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93

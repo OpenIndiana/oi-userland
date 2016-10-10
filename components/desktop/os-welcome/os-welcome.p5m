@@ -101,6 +101,17 @@ license os-welcome.license license=Oracle
 # called in os-icons-copy.sh
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/stat
 # pkgdepend doesn't know that importing gi requires the gobject-introspection
-# data files, so we have to list the ones not in pygobject-3-* manually
-depend type=require fmri=__TBD \
-    pkg.debug.depend.file=usr/lib/girepository-1.0/GdkPixbuf-2.0.typelib
+# data files (RFE 24463417), so we have to list them manually
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GObject-2.0 \
+    pkg.debug.depend.reason=usr/bin/os-about \
+    pkg.debug.depend.reason=usr/bin/os-next-steps
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gdk-3.0 \
+    pkg.debug.depend.reason=usr/bin/os-about \
+    pkg.debug.depend.reason=usr/bin/os-next-steps
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gtk-3.0 \
+    pkg.debug.depend.reason=usr/bin/os-about \
+    pkg.debug.depend.reason=usr/bin/os-next-steps
+depend type=require fmri=__TBD pkg.debug.depend.reason=usr/bin/os-next-steps \
+    pkg.tmp.gi-typelib=GdkPixbuf-2.0
+depend type=require fmri=__TBD pkg.debug.depend.reason=usr/bin/os-next-steps \
+    pkg.tmp.gi-typelib=Gio-2.0

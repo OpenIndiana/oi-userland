@@ -25,10 +25,13 @@
 
 #
 # Dependency helpers for things pkgdepend(1) doesn't or can't handle
+# These may be eventually replaced if/when the listed RFE's to handle
+# them directly in pkgdepend are implemented.
 #
 
 #
 # gsettings schema files
+#   Bug 24416519 - pkgdepend could look for gsettings schema dependencies
 #
 # Finding these requires looking in source code for calls such as:
 #   g_settings_new ("org.gnome.desktop.interface");
@@ -45,3 +48,36 @@
     delete pkg.tmp.gsettings-schema .*>
 <transform depend fmri=__TBD pkg.debug.depend.file=.*\.gschema\.xml$ -> \
     add pkg.debug.depend.path usr/share/glib-2.0/schemas>
+
+#
+# gobject-introspection typelib files
+#   Bug 24463417 - pkgdepend could look for pygobject dependencies
+#   Bug 24463542 - pkgdepend could look for girepository dependencies
+#
+# These are used as binding layers between the C libraries and other languages
+# such as Python and JavaScript.
+#
+# In python:
+#  gi.require_version('Gtk', '3.0')
+#  from gi.repository import Gtk
+# In javascript:
+#  imports.gi.versions.Gtk = '3.0';
+#  const Gtk = imports.gi.Gtk;
+#
+# When found, add an entry such as:
+#   depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gtk-3.0
+# If no version is specified for the import, the latest version should be used.
+#
+# You may also include pkg.debug.depend.reason=source-file.py as a reference
+# for future updates to record what source file you found the call in.
+#
+# If you need to search application-specific directories for them, you can add
+# an additional pkg.debug.depend.path attribute for each directory.
+#
+
+<transform depend fmri=__TBD pkg.tmp.gi-typelib=(.*) -> \
+    default pkg.debug.depend.file %<1>.typelib>
+<transform depend fmri=__TBD pkg.debug.depend.file=.*\.typelib$ -> \
+    delete pkg.tmp.gi-typelib .*>
+<transform depend fmri=__TBD pkg.debug.depend.file=.*\.typelib$ -> \
+    add pkg.debug.depend.path usr/lib/$(MACH64)/girepository-1.0>
