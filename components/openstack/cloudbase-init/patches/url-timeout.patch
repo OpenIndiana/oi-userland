@@ -1,0 +1,50 @@
+Add timeout to prevent cloudbase-init service being stuck in offline state
+for long time.
+This has not been committed upstream, but has been filed in launchpad:
+
+https://bugs.launchpad.net/cloudbase-init/+bug/1630006
+
+--- cloudbase-init-0.9.9/cloudbaseinit/metadata/services/httpservice.py.orig	2016-09-06 14:29:04.416253079 +0000
++++ cloudbase-init-0.9.9/cloudbaseinit/metadata/services/httpservice.py	2016-09-06 14:39:14.807656387 +0000
+@@ -58,7 +58,7 @@
+ 
+     def _get_response(self, req):
+         try:
+-            return request.urlopen(req)
++            return request.urlopen(req, timeout=1)
+         except error.HTTPError as ex:
+             if ex.code == 404:
+                 raise base.NotExistingMetadataException()
+--- cloudbase-init-0.9.9/cloudbaseinit/metadata/services/ec2service.py.orig	2016-09-06 14:29:11.956815039 +0000
++++ cloudbase-init-0.9.9/cloudbaseinit/metadata/services/ec2service.py	2016-09-06 14:40:09.253600964 +0000
+@@ -60,7 +60,7 @@
+ 
+     def _get_response(self, req):
+         try:
+-            return request.urlopen(req)
++            return request.urlopen(req, timeout=1)
+         except error.HTTPError as ex:
+             if ex.code == 404:
+                 raise base.NotExistingMetadataException()
+--- cloudbase-init-0.9.9/cloudbaseinit/metadata/services/maasservice.py.orig	2016-09-06 14:29:26.753303424 +0000
++++ cloudbase-init-0.9.9/cloudbaseinit/metadata/services/maasservice.py	2016-09-06 14:40:40.454202962 +0000
+@@ -79,7 +79,7 @@
+ 
+     def _get_response(self, req):
+         try:
+-            return request.urlopen(req)
++            return request.urlopen(req, timeout=1)
+         except error.HTTPError as ex:
+             if ex.code == 404:
+                 raise base.NotExistingMetadataException()
+--- cloudbase-init-0.9.9/cloudbaseinit/metadata/services/cloudstack.py.orig	2016-09-22 14:25:30.411026974 +0000
++++ cloudbase-init-0.9.9/cloudbaseinit/metadata/services/cloudstack.py	2016-09-22 14:26:29.615140081 +0000
+@@ -90,7 +90,7 @@
+         """Get content for received url."""
+         LOG.debug('Getting metadata from:  %s', url)
+         request = urllib.request.Request(url, **kwargs)
+-        response = urllib.request.urlopen(request)
++        response = urllib.request.urlopen(request, timeout=1)
+         return response.read()
+ 
+     def _get_data(self, path):

@@ -63,4 +63,5 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require testr which is not integrated
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
