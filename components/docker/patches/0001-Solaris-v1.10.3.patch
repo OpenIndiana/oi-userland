@@ -1,6 +1,6 @@
-From 3cf1310ac1de1c3ed1be6341d5d8e6afe255c89f Mon Sep 17 00:00:00 2001
-From: Amit Krishnan <amit.krishnan@oracle.com>
-Date: Thu, 6 Oct 2016 14:24:52 -0700
+From 2807410f20afedbe7e2a0df0147ba5ac280c0d4a Mon Sep 17 00:00:00 2001
+From: Shreya Jain <shreya.jain@oracle.com>
+Date: Mon, 10 Oct 2016 12:31:58 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -3291,7 +3291,7 @@ index 0000000..25a496e
 +}
 diff --git a/daemon/execdriver/zones/driver.go b/daemon/execdriver/zones/driver.go
 new file mode 100644
-index 0000000..de5b637
+index 0000000..4a65eca
 --- /dev/null
 +++ b/daemon/execdriver/zones/driver.go
 @@ -0,0 +1,745 @@
@@ -3598,7 +3598,7 @@ index 0000000..de5b637
 +		return -1, err
 +	}
 +
-+	cmd := exec.Command(RUNZ, "exec", c.Name, ProcessPath)
++	cmd := exec.Command(RUNZ, "exec", "-p", ProcessPath, c.Name)
 +	cmd.Dir = filepath.Dir(filepath.Dir(c.Rootfs))
 +	cmd.Stdout = pipes.Stdout
 +	cmd.Stderr = pipes.Stderr
