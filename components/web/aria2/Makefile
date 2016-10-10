@@ -1,0 +1,66 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016 Predrag Zečević
+#
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=           aria2
+COMPONENT_VERSION=        1.27.1
+COMPONENT_FMRI=           web/aria2
+COMPONENT_PROJECT_URL=    https://aria2.github.io/
+COMPONENT_CLASSIFICATION= Applications/Internet
+COMPONENT_SUMMARY= \
+    aria2 - lightweight multi-protocol and multi-source download utility
+COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH= \
+    sha256:1828ccd4a9b35d273ecf4393b1d93ab5b161dd7b81b0c9b93bcbc50a3f5c1f15
+COMPONENT_ARCHIVE_URL= \
+    https://github.com/aria2/aria2/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE= GPLv3
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=/usr/gnu/bin:/usr/bin
+
+CXXFLAGS+= -I/usr/include/gmp
+
+CONFIGURE_OPTIONS+= --disable-static
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32_and_64)
+
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/libssh2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
