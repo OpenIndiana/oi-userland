@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= shairplay
 COMPONENT_VERSION= 1.0.0
+COMPONENT_REVISION= 1
 COMPONENT_FMRI = library/audio/shairplay
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_PROJECT_URL = https://github.com/juhovh/shairplay
@@ -28,7 +29,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:49ac0e0470ec6367f720c7b79a09165138f57b60f5949a2d9c38be5823d13294
 COMPONENT_ARCHIVE_URL= \
   https://github.com/juhovh/shairplay/archive/$(COMPONENT_SRC_VERSION).tar.gz
-COMPONENT_LICENSE = MIT 
+COMPONENT_LICENSE = MIT
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
