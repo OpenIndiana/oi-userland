@@ -2,6 +2,29 @@ cd /var/tmp
 
 convert -list font | wc -l  # ~ 200 lines of output
 
+# Make sure that all the config files can be found. The next line should print
+# no output
+for i in $(convert -list list); do convert -list $i; done 2>&1 | grep 'convert: unable to access'
+
+# List all xml files opened during the operation. Both files found and not
+# found
+A=$(
+   for i in $(convert -list list); do
+      truss -'t!all' -t open convert -list $i
+   done 2>&1 |
+   grep ".xml\"," |
+   sed -e 's,.*/,,' |
+   sort -u
+)
+
+# Sort the files to found ones and not found ones
+FOUND=$( ggrep -P '\d$' <<<"$A" | sed -e 's/".*//' )
+NOT_FOUND=$( ggrep -v -P '\d$' <<<"$A" | sed -e 's/".*//' )
+
+# Now for every not_found file there has to be the same file found, else
+# display it's name. The output should be empty
+ggrep -F -x -v -f <(echo "$FOUND") <(echo "$NOT_FOUND")
+
 convert -size 170x100 xc:black \
    -fill white -draw 'circle 50,50 13,50' \
    -draw 'circle 120,50 157,50' \

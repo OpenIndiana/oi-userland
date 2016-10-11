@@ -27,18 +27,18 @@ COMPILER=gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.9.5
+COMPONENT_VERSION=		6.9.6
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
-COMPONENT_SUBVERSION=		10
+COMPONENT_SUBVERSION=		7
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:468419fea538ba1dcd2dc69334e8981cf41417f9a9938973884dccaedc403b39
+    sha256:6a677b917bab99e9ad6a370e75726525909167d646f7902bcaf546053ecd540f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
-TPNO=			29915
+TPNO=			32077
 
 # Enable adiheap security extension.
 # adistack fails with libgcc exception unwinding code.
@@ -127,6 +127,7 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += image/library/libwebp
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/fftw-3
@@ -134,6 +135,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/c++-runtime
