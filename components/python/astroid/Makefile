@@ -41,18 +41,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Use the logilab-common and lazy-object-proxy that are in the gate until the
-# new versions are on the Userland build machines.
-LLC = $(WS_COMPONENTS)/python/logilab-common/build/prototype/$(MACH)/$(PYTHON_LIB)
-LOP = $(WS_COMPONENTS)/python/lazy-object-proxy/build/prototype/$(MACH)/$(PYTHON_LIB)
-
-COMPONENT_BUILD_ENV +=		PYTHONPATH=$(LLC):$(LOP)
-COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(LLC):$(LOP)
-
-COMPONENT_TEST_ENV = PYTHONPATH=$(LLC):$(LOP):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/astroid/tests
-COMPONENT_TEST_CMD = $(LLC)/../../../bin/pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
 # The test output contains details from each test, in whatever order they

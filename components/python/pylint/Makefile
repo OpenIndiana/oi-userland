@@ -39,16 +39,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Use the logilab-common, lazy-object-proxy, astroid and isort that are in the
-# gate until the new versions are on the Userland build machines.
-LLC = $(WS_COMPONENTS)/python/logilab-common/build/prototype/$(MACH)/$(PYTHON_LIB)
-LOP = $(WS_COMPONENTS)/python/lazy-object-proxy/build/prototype/$(MACH)/$(PYTHON_LIB)
-ASTROID = $(WS_COMPONENTS)/python/astroid/build/prototype/$(MACH)/$(PYTHON_LIB)
-ISORT = $(WS_COMPONENTS)/python/isort/build/prototype/$(MACH)/$(PYTHON_LIB)
-
-COMPONENT_BUILD_ENV +=		PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT)
-COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT)
-
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
 # the proto area "manually", so they can be included in the package.
@@ -86,9 +76,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	$(PYTHON) -m py_compile $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/pylint/testutils.py
 
-COMPONENT_TEST_ENV = PYTHONPATH=$(LLC):$(LOP):$(ASTROID):$(ISORT):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-COMPONENT_TEST_CMD = $(LLC)/../../../bin/pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 
 # The test output contains details from each test, in whatever order they
