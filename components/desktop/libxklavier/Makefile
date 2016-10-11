@@ -51,6 +51,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-gtk-doc
 CONFIGURE_OPTIONS += --enable-xkb-support
+CONFIGURE_OPTIONS += --with-xkb-base=/usr/share/X11/xkb
 
 REQUIRED_PACKAGES += data/iso-codes
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
