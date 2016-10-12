@@ -184,12 +184,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    LD_LIBRARY_PATH=$(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION) $(BUILD_DIR_32)/dist/bin/shlibsign -v -i $(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/$$f ; \
         done ;
 
-COMPONENT_TEST_MASTER = \
-        $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS = \
-	'-e "/^TIMEOUTS:/,/Failed:/p" ' \
+	'-e "/^PASSED ALL/,/Failed:/p" ' \
 	'-e "/.*/d" '
 
 REQUIRED_PACKAGES += codec/libogg

@@ -225,12 +225,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(CP) $$f $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/cpu/sparcv8plus/libnspr_flt4.so ; \
 	done ;
 
-COMPONENT_TEST_MASTER = \
-        $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 COMPONENT_TEST_DIR =    $(@D)/js/src
 COMPONENT_TEST_TARGETS=check-jit-test
-COMPONENT_TEST_TRANSFORMS += \
-        '-e "/\(^TEST-PASS\).*/d" '
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^PASSED ALL/,/Failed:/p" ' \
+	'-e "/.*/d" '
 
 $(SOURCE_DIR)/.patched-firefox-%: GPATCH_FLAGS += -d $(@D)/mozilla
 
