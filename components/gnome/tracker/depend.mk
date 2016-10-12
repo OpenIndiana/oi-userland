@@ -1,0 +1,1 @@
+gnome/tracker: gnome/nautilus

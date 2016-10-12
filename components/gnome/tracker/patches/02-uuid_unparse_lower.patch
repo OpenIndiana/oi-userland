@@ -1,0 +1,48 @@
+Solaris libuuid doesn't have a uuid_unparse_lower or uuid_unparse_upper;
+however, libuuid's uuid_unparse always returns lowercase characters so is
+the equivalent of uuid_unparse_lower.  Regardless, bug 21395188 has been
+filed to add these to Solaris.
+
+Not appropriate for upstream.
+--- tracker-1.4.0/src/libtracker-sparql/tracker-utils.c	2015-03-17 12:24:05.000000000 -0700
++++ tracker-1.4.0/src/libtracker-sparql/tracker-utils.c	2015-07-08 17:14:03.162585414 -0700
+@@ -35,7 +35,7 @@
+ gchar* tracker_sparql_escape_uri_printf (const gchar* format, ...);
+ gchar* tracker_sparql_escape_string (const gchar* literal);
+ void uuid_generate (guchar* uuid);
+-void uuid_unparse_lower (guchar* uuid, gchar* out);
++void uuid_unparse (guchar* uuid, gchar* out);
+ gchar* tracker_sparql_get_uuid_urn (void);
+ 
+ 
+@@ -283,7 +283,7 @@
+ #line 117 "/home/carlos/Source/gnome/tracker/src/libtracker-sparql/tracker-utils.vala"
+ 	uuid_generate (base_uuid);
+ #line 118 "/home/carlos/Source/gnome/tracker/src/libtracker-sparql/tracker-utils.vala"
+-	uuid_unparse_lower (base_uuid, (gchar*) lower);
++	uuid_unparse (base_uuid, (gchar*) lower);
+ #line 121 "/home/carlos/Source/gnome/tracker/src/libtracker-sparql/tracker-utils.vala"
+ 	_tmp2_ = g_strdup_printf ("urn:uuid:%s", lower);
+ #line 121 "/home/carlos/Source/gnome/tracker/src/libtracker-sparql/tracker-utils.vala"
+--- tracker-1.4.0/src/libtracker-sparql/tracker-utils.vala	2014-02-14 03:05:48.000000000 -0800
++++ tracker-1.4.0/src/libtracker-sparql/tracker-utils.vala	2015-07-08 17:14:12.612902806 -0700
+@@ -94,8 +94,8 @@
+ 	[CCode (cname = "uuid_generate")]
+ 	private extern static void uuid_generate ([CCode (array_length = false)] uchar[] uuid);
+ 
+-	[CCode (cname = "uuid_unparse_lower")]
+-	private extern static void uuid_unparse_lower ([CCode (array_length = false)] uchar[] uuid, char* out);
++	[CCode (cname = "uuid_unparse")]
++	private extern static void uuid_unparse ([CCode (array_length = false)] uchar[] uuid, char* out);
+ 
+ 	/**
+ 	 * tracker_sparql_get_uuid_urn:
+@@ -115,7 +115,7 @@
+ 		string lower = (string) new char[37];
+ 
+ 		uuid_generate (base_uuid);
+-		uuid_unparse_lower (base_uuid, (char *) lower);
++		uuid_unparse (base_uuid, (char *) lower);
+ 
+ 		// generate uuid
+ 		return "urn:uuid:%s".printf (lower);
