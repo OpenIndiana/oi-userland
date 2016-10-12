@@ -1,0 +1,80 @@
+*** idnkit-1.0-src/lib/ucsmap.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/ucsmap.c	Tue Sep  2 17:01:48 2003
+***************
+*** 122,127 ****
+--- 122,131 ----
+  	idn_ucsmap_t ctx;
+  
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsmap_create()\n"));
+  
+***************
+*** 145,150 ****
+--- 149,158 ----
+  void
+  idn_ucsmap_destroy(idn_ucsmap_t ctx) {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsmap_destroy()\n"));
+  
+***************
+*** 160,165 ****
+--- 168,177 ----
+  void
+  idn_ucsmap_incrref(idn_ucsmap_t ctx) {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	ctx->refcnt++;
+  }
+***************
+*** 172,177 ****
+--- 184,193 ----
+  	ucsmap_entry_t *newbuf;
+  
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsmap_add(ucs=U+%lX, maplen=%u)\n", ucs, maplen));
+  
+***************
+*** 226,231 ****
+--- 242,251 ----
+  	int i;
+  
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsmap_fix()\n"));
+  
+***************
+*** 272,277 ****
+--- 292,301 ----
+  
+  	assert(ctx != NULL && ctx->refcnt > 0 && to != NULL &&
+  	       maplenp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0 || to == NULL || maplenp == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsmap_map(v=U+%lX)\n", v));
+  

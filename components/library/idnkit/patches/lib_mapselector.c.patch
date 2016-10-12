@@ -1,0 +1,106 @@
+*** idnkit-1.0-src/lib/mapselector.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/mapselector.c	Wed Sep  3 14:47:29 2003
+***************
+*** 103,108 ****
+--- 103,112 ----
+  	idn_result_t r;
+  
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_mapselector_create()\n"));
+  
+  	ctx = (idn_mapselector_t)malloc(sizeof(struct idn_mapselector));
+***************
+*** 134,139 ****
+--- 138,147 ----
+  void
+  idn_mapselector_destroy(idn_mapselector_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_destroy()\n"));
+  
+***************
+*** 154,159 ****
+--- 162,171 ----
+  void
+  idn_mapselector_incrref(idn_mapselector_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_incrref()\n"));
+  	TRACE(("idn_mapselector_incrref: update reference count (%d->%d)\n",
+***************
+*** 169,174 ****
+--- 181,190 ----
+  	char hash_key[MAPSELECTOR_MAX_TLD_LENGTH + 1];
+  
+  	assert(ctx != NULL && tld != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || tld == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_add(tld=%s, name=%s)\n", tld, name));
+  
+***************
+*** 215,220 ****
+--- 231,240 ----
+  	int i;
+  
+  	assert(ctx != NULL && tld != NULL && scheme_names != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || tld == NULL || scheme_names == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_addall(tld=%s, nschemes=%d)\n", 
+  	      tld, nschemes));
+***************
+*** 239,244 ****
+--- 259,268 ----
+  	char hash_key[MAPSELECTOR_MAX_TLD_LENGTH + 1];
+  
+  	assert(ctx != NULL && tld != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || tld == NULL)
++ 		return ((idn_mapper_t)NULL);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_mapper(tld=%s)\n", tld));
+  
+***************
+*** 272,277 ****
+--- 296,305 ----
+  	size_t fromlen;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_map(from=\"%s\", tld=\"%s\", tolen=%d)\n",
+  	       idn__debug_ucs4xstring(from, 50), idn__debug_xstring(tld, 50),
+***************
+*** 340,345 ****
+--- 368,377 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapselector_map2(from=\"%s\", tld=\"%s\")\n",
+  	       idn__debug_ucs4xstring(from, 50),

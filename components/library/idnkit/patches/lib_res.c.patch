@@ -1,0 +1,67 @@
+*** idnkit-1.0-src/lib/res.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/res.c	Tue Sep  2 14:34:22 2003
+***************
+*** 169,174 ****
+--- 169,181 ----
+  static void
+  idn_res_initialize(void) {
+  	if (!initialized) {
++ #ifdef	SUN_CHANGE
++ 		/*
++ 		 * We do not honor IDN_DISABLE environment variable;
++ 		 * see LSARC/2003/311.
++ 		 */
++ 		enabled = 1;
++ #else
+  		char *value = getenv("IDN_DISABLE");
+  
+  		if (value == NULL) {
+***************
+*** 176,181 ****
+--- 183,189 ----
+  		} else {
+  			enabled = 0;
+  		}
++ #endif	/* SUN_CHANGE */
+  		initialized = 1;
+  	}
+  }
+***************
+*** 194,199 ****
+--- 202,211 ----
+  	int idn_is_ace;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_res_encodename(actions=%s, from=\"%s\", tolen=%d)\n",
+  		idn__res_actionstostring(actions),
+***************
+*** 460,465 ****
+--- 472,481 ----
+  	int idn_is_ace;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_res_decodename(actions=%s, from=\"%s\", tolen=%d)\n",
+  		idn__res_actionstostring(actions),
+***************
+*** 720,725 ****
+--- 736,745 ----
+  	size_t buffer_length;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_res_decodename2(actions=%s, from=\"%s\", tolen=%d, "
+  		"auxencoding=\"%s\")\n",

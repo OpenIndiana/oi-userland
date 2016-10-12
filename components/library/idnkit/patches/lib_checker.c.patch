@@ -1,0 +1,109 @@
+*** idnkit-1.0-src/lib/checker.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/checker.c	Wed Aug 27 15:50:04 2003
+***************
+*** 187,192 ****
+--- 187,196 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_create()\n"));
+  
+***************
+*** 224,229 ****
+--- 228,237 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_destroy()\n"));
+  
+***************
+*** 244,249 ****
+--- 252,261 ----
+  void
+  idn_checker_incrref(idn_checker_t ctx) {
+  	assert(ctx != NULL && scheme_hash != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_incrref()\n"));
+  	TRACE(("idn_checker_incrref: update reference count (%d->%d)\n",
+***************
+*** 263,268 ****
+--- 275,284 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_add(scheme_name=%s)\n",
+  		idn__debug_xstring(scheme_name, 50)));
+***************
+*** 306,311 ****
+--- 322,333 ----
+  	 * Add the scheme.
+  	 */
+  	assert(ctx->nschemes <= ctx->scheme_size);
++ #ifdef	SUN_CHANGE
++ 	if (ctx->nschemes > ctx->scheme_size) {
++ 		r = idn_invalid_name;
++ 		goto ret;
++ 	}
++ #endif	/* SUN_CHANGE */
+  
+  	if (ctx->nschemes == ctx->scheme_size) {
+  		check_scheme_t *new_schemes;
+***************
+*** 345,350 ****
+--- 367,376 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL && scheme_names != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL || scheme_names == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_addall(nschemes=%d)\n", nschemes));
+  
+***************
+*** 369,374 ****
+--- 395,404 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL && ucs4 != NULL && found != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL || ucs4 == NULL || found == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_lookup(ucs4=\"%s\")\n",
+  		idn__debug_ucs4xstring(ucs4, 50)));
+***************
+*** 413,418 ****
+--- 443,453 ----
+  	assert(scheme_hash != NULL);
+  	assert(prefix != NULL && create != NULL && destroy != NULL &&
+  		lookup != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || prefix == NULL || create == NULL ||
++ 	    destroy == NULL || lookup == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_checker_register(prefix=%s)\n", prefix));
+  

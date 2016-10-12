@@ -1,0 +1,69 @@
+*** idnkit-1.0-src/lib/unormalize.c.org	Wed Aug 27 11:37:03 2003
+--- idnkit-1.0-src/lib/unormalize.c	Tue Sep  2 17:18:01 2003
+***************
+*** 99,104 ****
+--- 99,108 ----
+  		       const unsigned long *from, unsigned long *to,
+  		       size_t tolen) {
+  	assert(version != NULL && from != NULL && to != NULL && tolen >= 0);
++ #ifdef	SUN_CHANGE
++ 	if (version == NULL || from == NULL || to == NULL || tolen < 0)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn__unormalize_formkc(from=\"%s\", tolen=%d)\n",
+  	       idn__debug_ucs4xstring(from, 50), tolen));
+  	return (normalize(version, 1, 1, from, to, tolen));
+***************
+*** 120,125 ****
+--- 124,135 ----
+  		unsigned long c;
+  
+  		assert(wb.cur == wb.last);
++ #ifdef	SUN_CHANGE
++ 		if (wb.cur != wb.last) {
++ 			r = idn_notfound;
++ 			goto ret;
++ 		}
++ #endif	/* SUN_CHANGE */
+  
+  		/*
+  		 * Get one character from 'from'.
+***************
+*** 257,262 ****
+--- 267,276 ----
+  	int class;
+  
+  	assert(wb != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (wb == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	i = wb->cur;
+  	c = wb->ucs4[i];
+***************
+*** 282,287 ****
+--- 296,305 ----
+  	idn__unicode_version_t ver;
+  
+  	assert(wb != NULL && wb->class[0] == 0);
++ #ifdef	SUN_CHANGE
++ 	if (wb == NULL || wb->class[0] != 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	cur = wb->cur;
+  	ucs4 = wb->ucs4;
+***************
+*** 384,389 ****
+--- 402,411 ----
+  	int nmove;
+  
+  	assert(wb != NULL && wb->cur >= shift);
++ #ifdef	SUN_CHANGE
++ 	if (wb == NULL || wb->cur < shift)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	nmove = wb->last - shift;
+  	(void)memmove(&wb->ucs4[0], &wb->ucs4[shift],

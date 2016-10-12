@@ -1,0 +1,43 @@
+*** idnkit-1.0-src/lib/util.c.org	Wed Aug 27 11:37:03 2003
+--- idnkit-1.0-src/lib/util.c	Tue Sep  2 17:21:46 2003
+***************
+*** 87,92 ****
+--- 87,96 ----
+  int
+  idn__util_asciihaveaceprefix(const char *str, const char *prefix) {
+  	assert(str != NULL && prefix != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (str == NULL || prefix == NULL)
++ 		return (0);
++ #endif	/* SUN_CHANGE */
+  
+  	while (*prefix != '\0') {
+  		if (ASCII_TOLOWER(*str) != ASCII_TOLOWER(*prefix))
+***************
+*** 101,106 ****
+--- 105,114 ----
+  int
+  idn__util_ucs4haveaceprefix(const unsigned long *str, const char *prefix) {
+  	assert(str != NULL && prefix != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (str == NULL || prefix == NULL)
++ 		return (0);
++ #endif	/* SUN_CHANGE */
+  
+  	while (*prefix != '\0') {
+  		if (ASCII_TOLOWER(*str) != ASCII_TOLOWER(*prefix))
+***************
+*** 136,141 ****
+--- 144,155 ----
+  	assert((topkey == idn__util_hkey_currentuser ||
+  		topkey == idn__util_hkey_localmachine) &&
+  	       name != NULL && str != NULL);
++ #ifdef	SUN_CHANGE
++ 	if ((topkey != idn__util_hkey_currentuser &&
++ 		topkey != idn__util_hkey_localmachine) ||
++ 	       name == NULL || str == NULL)
++ 		return (0);
++ #endif	/* SUN_CHANGE */
+  
+  	if (topkey == idn__util_hkey_currentuser) {
+  		top= HKEY_CURRENT_USER;

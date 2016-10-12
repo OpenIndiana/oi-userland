@@ -1,0 +1,122 @@
+*** idnkit-1.0-src/lib/normalizer.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/normalizer.c	Tue Sep  2 16:27:07 2003
+***************
+*** 138,143 ****
+--- 138,147 ----
+  	idn_result_t r;
+  
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_normalizer_create()\n"));
+  
+  	if ((ctx = malloc(sizeof(struct idn_normalizer))) == NULL) {
+***************
+*** 160,165 ****
+--- 164,173 ----
+  void
+  idn_normalizer_destroy(idn_normalizer_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_destroy()\n"));
+  
+***************
+*** 179,184 ****
+--- 187,196 ----
+  void
+  idn_normalizer_incrref(idn_normalizer_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_incrref()\n"));
+  	TRACE(("idn_normalizer_incrref: update reference count (%d->%d)\n",
+***************
+*** 194,203 ****
+--- 206,223 ----
+  	normalize_scheme_t *scheme;
+  
+  	assert(ctx != NULL && scheme_name != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || scheme_name == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_add(scheme_name=%s)\n", scheme_name));
+  
+  	assert(INITIALIZED);
++ #ifdef	SUN_CHANGE
++ 	if (! INITIALIZED)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	if (idn__strhash_get(scheme_hash, scheme_name, &v) != idn_success) {
+  		ERROR(("idn_normalizer_add(): invalid scheme \"%-.30s\"\n",
+***************
+*** 209,214 ****
+--- 229,238 ----
+  	scheme = v;
+  
+  	assert(ctx->nschemes <= ctx->scheme_size);
++ #ifdef	SUN_CHANGE
++ 	if (ctx->nschemes > ctx->scheme_size)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	if (ctx->nschemes == ctx->scheme_size &&
+  	    (r = expand_schemes(ctx)) != idn_success) {
+***************
+*** 229,234 ****
+--- 253,262 ----
+  	int i;
+  
+  	assert(ctx != NULL && scheme_names != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || scheme_names == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_addall(nschemes=%d)\n", nschemes));
+  
+***************
+*** 258,263 ****
+--- 286,295 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_buffer_overflow);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_normalize(from=\"%s\", tolen=%d)\n",
+  	       idn__debug_ucs4xstring(from, 50), (int)tolen));
+***************
+*** 348,357 ****
+--- 380,397 ----
+  	normalize_scheme_t *scheme;
+  
+  	assert(scheme_name != NULL && proc != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_name == NULL || proc == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_normalizer_register(scheme_name=%s)\n", scheme_name));
+  
+  	assert(INITIALIZED);
++ #ifdef	SUN_CHANGE
++ 	if (! INITIALIZED)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	scheme = malloc(sizeof(*scheme) + strlen(scheme_name) + 1);
+  	if (scheme == NULL) {

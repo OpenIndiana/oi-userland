@@ -1,0 +1,55 @@
+*** idnkit-1.0-src/lib/filemapper.c.org	Tue Aug 26 17:28:32 2003
+--- idnkit-1.0-src/lib/filemapper.c	Tue Sep  2 15:44:57 2003
+***************
+*** 93,98 ****
+--- 93,102 ----
+  	idn_result_t r;
+  
+  	assert(file != NULL && ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (file == NULL || ctxp == NULL)
++ 		return (idn_nofile);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filemapper_create(file=\"%-.100s\")\n", file));
+  
+***************
+*** 126,131 ****
+--- 130,139 ----
+  idn__filemapper_destroy(idn__filemapper_t ctx) {
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filemapper_destroy()\n"));
+  
+***************
+*** 141,146 ****
+--- 149,158 ----
+  	ucsbuf_t ub;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_buffer_overflow);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filemapper_map(from=\"%s\")\n",
+  	       idn__debug_ucs4xstring(from, 50)));
+***************
+*** 302,308 ****
+--- 314,324 ----
+  		if (*p == ';' || *p == '#' || *p == '\0')
+  			return (r);
+  	}
++ 	/*
++ 	 * The following statement cannot be reached; we are commenting it
++ 	 * out to remove the compile time warning:
+  	return (r);
++ 	*/
+  }
+  
+  static char *

@@ -1,0 +1,24 @@
+*** idnkit-1.0-src/include/idn/logmacro.h.org	Tue Aug 26 17:42:27 2003
+--- idnkit-1.0-src/include/idn/logmacro.h	Wed Aug 27 13:32:31 2003
+***************
+*** 50,60 ****
+--- 50,68 ----
+  
+  #include <idn/log.h>
+  
++ #ifdef	SUN_CHANGE
++ #define FATAL(x)
++ #define ERROR(x)
++ #define WARNING(x)
++ #define INFO(x)
++ #define TRACE(x)
++ #else
+  #define FATAL(x)	idn_log_fatal x
+  #define ERROR(x)	idn_log_error x
+  #define WARNING(x)	idn_log_warning x
+  #define INFO(x)		LOG_AT_LEVEL(idn_log_level_info, idn_log_info, x)
+  #define TRACE(x)	LOG_AT_LEVEL(idn_log_level_trace, idn_log_trace, x)
++ #endif	/* SUN_CHANGE */
+  
+  #ifdef DEBUG
+  #define DUMP(x)		LOG_AT_LEVEL(idn_log_level_dump, idn_log_dump, x)

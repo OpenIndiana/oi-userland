@@ -1,0 +1,93 @@
+*** idnkit-1.0-src/lib/ucsset.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/ucsset.c	Tue Sep  2 17:07:03 2003
+***************
+*** 130,135 ****
+--- 130,139 ----
+  	idn_ucsset_t bm;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_create()\n"));
+  
+***************
+*** 148,153 ****
+--- 152,161 ----
+  void
+  idn_ucsset_destroy(idn_ucsset_t ctx) {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_destroy()\n"));
+  
+***************
+*** 161,166 ****
+--- 169,178 ----
+  void
+  idn_ucsset_incrref(idn_ucsset_t ctx) {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_incrref()\n"));
+  
+***************
+*** 170,175 ****
+--- 182,191 ----
+  idn_result_t
+  idn_ucsset_add(idn_ucsset_t ctx, unsigned long v) {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_add(v=U+%lX)\n", v));
+  
+***************
+*** 181,186 ****
+--- 197,206 ----
+  			 unsigned long to)
+  {
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_addrange(from=U+%lX, to=U+%lX)\n",
+  	       from, to));
+***************
+*** 196,201 ****
+--- 216,225 ----
+  	int i, j;
+  
+  	assert(ctx != NULL && ctx->refcnt > 0);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_fix()\n"));
+  
+***************
+*** 265,270 ****
+--- 289,298 ----
+  	segment_t *segments;
+  
+  	assert(ctx != NULL && ctx->refcnt > 0 && found != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->refcnt <= 0 || found == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_ucsset_lookup(v=U+%lX)\n", v));
+  

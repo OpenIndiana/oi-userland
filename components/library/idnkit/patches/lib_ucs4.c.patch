@@ -1,0 +1,53 @@
+*** idnkit-1.0-src/lib/ucs4.c.org	Tue Aug 12 15:37:09 2003
+--- idnkit-1.0-src/lib/ucs4.c	Tue Sep  2 15:16:01 2003
+***************
+*** 200,205 ****
+--- 200,208 ----
+  	unsigned long *ucs4p = ucs4;
+  	unsigned long v, min;
+  	unsigned char c;
++ #ifdef	SUN_CHANGE
++ 	unsigned char first_byte;
++ #endif	/* SUN_CHANGE */
+  	int width;
+  	int i;
+  	idn_result_t r;
+***************
+*** 243,250 ****
+--- 246,271 ----
+  			goto ret;
+  		}
+  
++ #ifdef	SUN_CHANGE
++ 		first_byte = c;
+  		for (i = width - 1; i > 0; i--) {
+  			c = *utf8p++;
++ 			if ((first_byte == 0xe0 && c < 0xa0) ||
++ 			    (first_byte == 0xed && c > 0x9f) ||
++ 			    (first_byte == 0xf0 && c < 0x90) ||
++ 			    (first_byte == 0xf4 && c > 0x8f) ||
++ 			    c < 0x80 || 0xc0 <= c) {
++ 				WARNING(("idn_ucs4_utf8toucs4: "
++ 					 "invalid character\n"));
++ 				r = idn_invalid_encoding;
++ 				goto ret;
++ 			}
++ 			v = (v << 6) | (c & 0x3f);
++ 			first_byte = 0;
++ 		}
++ #else
++ 		for (i = width - 1; i > 0; i--) {
++ 			c = *utf8p++;
+  			if (c < 0x80 || 0xc0 <= c) {
+  				WARNING(("idn_ucs4_utf8toucs4: "
+  					 "invalid character\n"));
+***************
+*** 253,258 ****
+--- 274,280 ----
+  			}
+  			v = (v << 6) | (c & 0x3f);
+  		}
++ #endif	/* SUN_CHANGE */
+  
+  	        if (v < min) {
+  			WARNING(("idn_ucs4_utf8toucs4: invalid character\n"));
