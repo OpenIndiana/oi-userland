@@ -71,6 +71,10 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
+# for DWARF
+CFLAGS.i386 =	-preserve_argvalues=complete
+CFLAGS +=	$(CFLAGS.$(MACH))
+
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.
 # Use of xprofile requires that the same options be used during compilation and

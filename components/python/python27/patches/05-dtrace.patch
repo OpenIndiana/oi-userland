@@ -430,3 +430,13 @@ new file mode 100644
          # function
          def func(): pass
          check(func, size('9P'))
+--- Python-2.7.12/Include/ceval.h.~1~	2016-06-25 14:49:30.000000000 -0700
++++ Python-2.7.12/Include/ceval.h	2016-10-12 07:33:22.132802000 -0700
+@@ -64,6 +64,7 @@
+ PyAPI_FUNC(PyObject *) PyEval_GetCallStats(PyObject *);
+ PyAPI_FUNC(PyObject *) PyEval_EvalFrame(struct _frame *);
+ PyAPI_FUNC(PyObject *) PyEval_EvalFrameEx(struct _frame *f, int exc);
++#pragma	no_inline(PyEval_EvalFrameEx)
+ 
+ /* this used to be handled on a per-thread basis - now just two globals */
+ PyAPI_DATA(volatile int) _Py_Ticker;
