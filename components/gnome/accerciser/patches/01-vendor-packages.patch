@@ -1,0 +1,17 @@
+Adjust path to accerciser's modules to look in vendor-packages instead
+of in site-packages, to match where we install on Solaris.
+
+Not suitable for upstream as-is, would need modification to follow
+$(pkgpythondir) from configure instead.
+
+--- accerciser-3.14.0/src/accerciser.in	2014-08-18 15:03:29.000000000 -0700
++++ accerciser-3.14.0/src/accerciser.in	2016-08-30 22:54:41.210135315 -0700
+@@ -36,7 +36,7 @@
+ # use __file__ and for now hope that lib is relative to bin.
+ sys.prefix = '@prefix@'
+ libs = os.path.join(sys.prefix, 'lib',
+-                    'python@PYTHON_VERSION@', 'site-packages')
++                    'python@PYTHON_VERSION@', 'vendor-packages')
+ # point to the proper site-packages path
+ sys.path.insert(1, libs)
+ 
