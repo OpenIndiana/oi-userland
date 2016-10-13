@@ -47,10 +47,10 @@ $(BUILD_DIR)/.validated-smf-manifests-$(MACH): $(BUILD_DIR)
 	    (set -ex ; /usr/sbin/svccfg validate "$$f") ; \
 	done
 	$(TOUCH) $@
-endif
 
 validate-smf:	$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
 build:		$(BUILD_DIR)/.validated-smf-manifests-$(MACH)
+endif
 
 REQUIRED_PACKAGES += service/opengl/ogl-select
 REQUIRED_PACKAGES += system/core-os
