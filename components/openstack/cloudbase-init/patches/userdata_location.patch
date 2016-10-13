@@ -1,0 +1,19 @@
+In-house patch to change the default for the heat_config_dir to
+something less Windows-oriented.  Upstream bug
+https://bugs.launchpad.net/cloudbase-init/+bug/1633235 has been filed
+to track this effort.
+
+--- cloudbase-init-0.9.9/cloudbaseinit/plugins/common/userdataplugins/heat.py.orig     2016-05-23 06:48:28.287743238 -0700
++++ cloudbase-init-0.9.9/cloudbaseinit/plugins/common/userdataplugins/heat.py     2016-05-23 06:52:54.574788709 -0700
+@@ -24,8 +24,9 @@ from cloudbaseinit.utils import encoding
+
+
+ opts = [
+-    cfg.StrOpt('heat_config_dir', default='C:\\cfn', help='The directory '
+-               'where the Heat configuration files must be saved'),
++    cfg.StrOpt('heat_config_dir', default='/system/volatile',
++               help='The directory where the Heat configuration files must '
++               'be saved'),
+ ]
+
+ CONF = cfg.CONF
