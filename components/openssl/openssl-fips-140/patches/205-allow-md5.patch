@@ -1,0 +1,20 @@
+# Allow MD5 in FIPS mode
+# Developed in house: not applicable to upstream
+--- a/crypto/evp/digest.c	2016-09-15 15:26:57.097982570 -0700
++++ b/crypto/evp/digest.c	2016-09-15 15:29:22.781095415 -0700
+@@ -240,8 +240,13 @@
+         return 1;
+ #ifdef OPENSSL_FIPS
+     if (FIPS_mode()) {
+-        if (FIPS_digestinit(ctx, type))
+-            return 1;
++	if (type == EVP_md5()) {
++		if (ctx->digest->init(ctx))
++		    return 1;
++	} else {
++		if (FIPS_digestinit(ctx, type))
++		    return 1;
++	}
+         OPENSSL_free(ctx->md_data);
+         ctx->md_data = NULL;
+         return 0;

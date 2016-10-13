@@ -1,0 +1,28 @@
+# Developed in house: Solaris specific
+# This patch enables FIPS mode in the _init routine.
+--- a/crypto/cryptlib.c 2016-09-02 14:10:14.157867400 -0700
++++ b/crypto/cryptlib.c 2016-09-02 14:08:38.308229315 -0700
+@@ -117,6 +117,8 @@
+ #include <openssl/safestack.h>
+ #include <pthread.h>
+ 
++extern	unsigned char FIPS_signature[];
++
+ #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
+ static double SSLeay_MSVC5_hack = 0.0; /* and for VC1.5 */
+ #endif
+@@ -531,6 +582,14 @@
+         (void) pthread_mutex_init(&solaris_openssl_locks[i], NULL);
+     }
+ 
++    if ((FIPS_signature[0] != 0x00) || (FIPS_signature[1] != 0xFF)) {
++        /* Set FIPS mode by default if FIPS_signature is already set */
++        if (FIPS_mode_set(1) != 1) {
++            fprintf(stderr, "Failed to set FIPS mode.\n");
++            abort();
++        }
++    }
++
+     (void) pthread_atfork(solaris_fork_prep, solaris_fork_post, solaris_fork_post);
+ }
+ 
