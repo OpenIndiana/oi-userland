@@ -1,0 +1,185 @@
+--- src/loop.c.orig	Wed Apr  1 20:13:31 2009
++++ src/loop.c	Thu Apr  2 21:33:37 2009
+@@ -15,6 +15,9 @@
+ #include <sys/time.h>		/* FreeBSD wants this for the next one.. */
+ #include <sys/resource.h>
+ #include <poll.h>
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <netdb.h>
+ 
+ #if !defined(WCOREDUMP)
+ # define WCOREDUMP(x) 0
+@@ -795,7 +798,9 @@
+ u_int ctimeout, utest;
+ {
+     struct child *children;
+-    struct pollfd *pfd;
++    struct pollfd *pfd, *sfd;
++    struct sockaddr_in *addr;
++    int ntarget = target_getmax();
+     struct sigaction sa, saved_sa;
+     int idx;
+     char *cargv[10];
+@@ -844,6 +849,30 @@
+       }
+     memset((void *) children, 0, (max+1)*sizeof(struct child));
+ 
++    sfd = (struct pollfd *) malloc(ntarget * sizeof(struct pollfd));
++    if (sfd == NULL)
++      {
++	perror("malloc failed");
++	free(pfd);
++	free(children);
++	return RC_ERROR;
++      }
++    memset((void *) sfd, 0, ntarget * sizeof(struct pollfd));
++    idx = 0;
++    while (idx < ntarget)
++	sfd[idx++].fd = -1;
++
++    addr = (struct sockaddr_in *)malloc(ntarget * sizeof(struct sockaddr_in));
++    if (addr == NULL)
++      {
++	perror("malloc failed");
++	free(pfd);
++	free(children);
++	free(sfd);
++	return RC_ERROR;
++      }
++    memset((void *) addr, 0, ntarget * sizeof(struct sockaddr_in));
++
+     /* Setup SIGINT handler */
+     sigemptyset(&sa.sa_mask);
+     sa.sa_flags = 0;
+@@ -857,42 +886,97 @@
+     /* Run fping if requested */
+     if (ping != NULL)
+       {
+-	u_int count = 0;
+-	
+-	pfd[2].fd = -1;
+-	cargv[0] = "fping"; cargv[1] = "-t"; cargv[2] = ping; cargv[3] = NULL;
+-	children[0].pid = exec(&(pfd[0].fd), &(pfd[1].fd), &(pfd[2].fd),
+-			       NULL, cargv, 0);
+-	if (children[0].pid == -1)
+-	    /* Error message was given by exec() */
+-	    spawn_mode = SPAWN_FATAL;
+-	else
+-	  {
+-	    init_child(&(children[0]));
++	int ret, flags, setfl, ndone = 0;
++	struct hostent *hp;
++	struct in_addr *haddr;
++	idx = 0;
++	while (target_next(1) == 0) {
++	    target_start();
++	    if ((sfd[idx].fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
++		eprint("Ping(create socket) failed for %s: %s", target_getname(), strerror(errno));
++		idx++;
++		continue;
++	    }
++	    sfd[idx].events = POLLIN;
+ 
+-	    pfd[1].events = POLLIN;
+-	    pfd[2].events = POLLIN;
++	    if ((flags = fcntl(sfd[idx].fd, F_GETFL, 0)) == -1) {
++		eprint("Ping(get status flag) failed for %s: %s", target_getname(), strerror(errno));
++		close(sfd[idx].fd);
++		sfd[idx].fd = -1;
++		idx++;
++		continue;
++	    }
++	    if ((setfl = fcntl(sfd[idx].fd, F_SETFL, flags | O_NONBLOCK)) == -1) {
++		eprint("Ping(set status flag) failed for %s: %s", target_getname(), strerror(errno));
++		close(sfd[idx].fd);
++		sfd[idx].fd = -1;
++		idx++;
++		continue;
++	    }
+ 
+-	    while (target_next(1) == 0)
+-	      {
+-                char *tname;
++	    if ((hp = gethostbyname(target_getname())) == NULL) {
++		eprint("Ping(get host entry) failed for %s: %s", target_getname(), strerror(errno));
++		close(sfd[idx].fd);
++		sfd[idx].fd = -1;
++		idx++;
++		continue;
++	    }
++	    haddr = (struct in_addr *)*hp->h_addr_list;
++	    addr[idx].sin_family = AF_INET;
++	    addr[idx].sin_addr = *haddr;
++	    addr[idx].sin_port = htons((short)80);
++	    bzero(&(addr[idx].sin_zero), 8);
+ 
+-		target_start();
+-		count += 1;
+-                tname = strchr(target_getname(), '@');
+-                if (tname == NULL)
+-                    tname = target_getname();
+-                else
+-                    tname += 1;
+-		write(pfd[0].fd, tname, strlen(tname));
+-		write(pfd[0].fd, "\n", 1);
+-	      }
+-	    close(pfd[0].fd); pfd[0].fd = -1;
+-	    iprint("Pinging %u targets...", count);
+-	    dprint("fping pid = %d (idx=0) %d/%d/%d",
+-		   children[0].pid, pfd[0].fd, pfd[1].fd, pfd[2].fd);
+-	    ping = NULL;
+-	  }
++	    ret = connect(sfd[idx].fd, (struct sockaddr *)&addr[idx], sizeof(struct sockaddr));
++	    if (ret == 0) { //this case may happen on localhost
++		target_result(1);
++		close(sfd[idx].fd);
++		sfd[idx].fd = -1;
++		ndone++;
++	    }
++	    idx++;
++	} // end of while
++
++	time_t t1 = time(NULL);
++	while (time(NULL) - t1 < atoi(ping) && ndone != ntarget) {
++	    ret = poll(sfd, ntarget, 1000);
++	    if (ret == -1 && errno != EINTR) {
++		eprint("poll failed: %s", strerror(errno));
++		break;
++	    } else if (ret > 0) {
++		for (idx = 0; idx < ntarget; idx++) {
++		    if (sfd[idx].revents > 0) {
++			target_setbynum(idx);
++			target_result(1);
++			close(sfd[idx].fd);
++			sfd[idx].fd = -1;
++			ndone++;
++		    }
++		    if (ndone == ntarget) {
++			break;
++		    }
++		} // end of for
++	    }
++	} // end of while
++
++	if (ndone < ntarget) {
++	    dprint("ping is done or timed out");
++	    while (target_pong(NULL) == 0) {
++		idx = target_getnum();
++		if (sfd[idx].fd > 0) {
++		    eprint("Ping timed out for %s", target_getname());
++		    target_result(-1);
++		    close(sfd[idx].fd);
++		    sfd[idx].fd = -1;
++		} else {
++		    eprint("%s assumed to be alive (missing from ping results)", target_getname());
++		    target_result(1);
++		}
++	    } // end of while
++	}
++	free(addr);
++	free(sfd);
++	ping = NULL;
+       }
+     else
+ 	/* No fping, let's move on to the next phase then */
