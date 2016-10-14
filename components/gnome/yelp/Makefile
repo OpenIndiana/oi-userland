@@ -67,6 +67,7 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/webkitgtk4
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/yelp-xsl
 REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
