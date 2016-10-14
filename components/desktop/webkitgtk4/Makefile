@@ -23,6 +23,9 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# parfait is a bit unhappy (24796572)
+export PARFAIT_BUILD=no
+
 BUILD_BITS= 64
 # For now, all things built for C++11 require gcc; the cmake files for this
 # project already specify the required -std.

@@ -21,6 +21,9 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# parfait is a bit unhappy (24796481)
+export PARFAIT_BUILD=no
+
 BUILD_BITS =            64_and_32
 # Also, all components using gobject-introspection must be built with gcc as
 # gobject-introspection does not produce correct results when using Studio.

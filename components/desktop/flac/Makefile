@@ -21,6 +21,9 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# parfait is a bit unhappy (24796395)
+export PARFAIT_BUILD=no
+
 BUILD_BITS=		64_and_32
 # Upstream requires gcc flags that Studio doesn't support
 COMPILER=		gcc

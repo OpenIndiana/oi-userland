@@ -23,6 +23,9 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 32
+
+export PARFAIT_BUILD=no
+
 # Build gcc with gcc
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk

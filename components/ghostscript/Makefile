@@ -23,6 +23,10 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+# parfait seems to spin when looking at the .bc files (13704877), so
+# for now disable it.
+export PARFAIT_BUILD=no
+
 # Prefer 32-bit due to ghostcript's hybrid build system.
 BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
