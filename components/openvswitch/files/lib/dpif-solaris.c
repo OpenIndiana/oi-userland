@@ -39,11 +39,23 @@
 #include <zone.h>
 #include <libdllink.h>
 
+#ifndef	MAC_OFPORT_ARRAY
+/*
+ * Keeping a bitbucket of each containing 64-bits (uint64_t)
+ * for kernel ofports to effectively lookup a free ofport.
+ */
+#define	MAC_OFPORT_ARRAY		(MAC_OF_MAXPORT/64)
+#define	MAC_OFPORT_ARRAY_MASK		0x3F
+#define	MAC_OFPORT_ARRAY_SHIFT		6
+#endif
+
 VLOG_DEFINE_THIS_MODULE(dpif_solaris);
 
 static kstat2_handle_t	dpif_khandle;
 static boolean_t	kstat2_handle_initialized = B_FALSE;
 static struct ovs_mutex	kstat_mutex = OVS_MUTEX_INITIALIZER;
+static struct ovs_mutex dp_ports_bitvector_mutex = OVS_MUTEX_INITIALIZER;
+uint64_t dp_ports_bitvector[MAC_OFPORT_ARRAY];
 
 /* Datapath interface for the openvswitch Solaris kernel module. */
 struct dpif_solaris {
@@ -519,19 +531,6 @@ dpif_solaris_create_xsocket(struct dpif_solaris *dpif OVS_UNUSED,
 	return (0);
 }
 
-static boolean_t
-port_no_used(struct dpif_solaris *dpif, uint32_t port_no)
-    OVS_REQ_WRLOCK(dp->port_rwlock)
-{
-	struct dpif_solaris_port *port;
-
-	HMAP_FOR_EACH(port, node, &dpif->ports) {
-		if (port->port_no == port_no)
-			return (true);
-	}
-	return (false);
-}
-
 /*
  * Choose an unused, non-zero port number and return it on success.
  * Return ODPP_NONE on failure.
@@ -539,20 +538,34 @@ port_no_used(struct dpif_solaris *dpif, uint32_t port_no)
  * need improvement. TBD
  */
 static odp_port_t
-choose_port(struct dpif_solaris *dpif)
-    OVS_REQ_WRLOCK(dp->port_rwlock)
+choose_port(void)
 {
 	uint32_t port_no;
-
+	uint64_t chk_bit;
+	ovs_mutex_lock(&dp_ports_bitvector_mutex);
 	for (port_no = PORT_PF_PACKET_UPLINK + 1;
 	    port_no < MAC_OF_MAXPORT; port_no++) {
-		if (port_no_used(dpif, port_no))
+		chk_bit = dp_ports_bitvector[port_no >> MAC_OFPORT_ARRAY_SHIFT];
+		if ((chk_bit & (1LL << (port_no & MAC_OFPORT_ARRAY_MASK))) > 0)
 			continue;
 
+		dp_ports_bitvector[port_no >> MAC_OFPORT_ARRAY_SHIFT] |=
+		    (1LL << (port_no & MAC_OFPORT_ARRAY_MASK));
+		ovs_mutex_unlock(&dp_ports_bitvector_mutex);
+		VLOG_DBG("dpif_solaris_choose_port: port no: %d", port_no);
 		return (u32_to_odp(port_no));
 	}
-
+	ovs_mutex_unlock(&dp_ports_bitvector_mutex);
 	return (ODPP_NONE);
+}
+
+static void
+reset_port(uint32_t port_no)
+{
+	ovs_mutex_lock(&dp_ports_bitvector_mutex);
+	dp_ports_bitvector[port_no >> MAC_OFPORT_ARRAY_SHIFT] &=
+	    ~(1LL << (port_no & MAC_OFPORT_ARRAY_MASK));
+	ovs_mutex_unlock(&dp_ports_bitvector_mutex);
 }
 
 static boolean_t
@@ -781,7 +794,7 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	ovs_rwlock_wrlock(&dpif->port_rwlock);
 
 	if (*port_nop == ODPP_NONE) {
-		*port_nop = choose_port(dpif);
+		*port_nop = choose_port();
 		if (*port_nop == ODPP_NONE) {
 			error = EFBIG;
 			goto fail;
@@ -841,6 +854,9 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 	return (0);
 fail:
+	if (*port_nop != ODPP_NONE)
+		reset_port(odp_to_u32(*port_nop));
+
 	if (port != NULL) {
 		if (port->xfd != -1)
 			(void) close(port->xfd);
@@ -958,6 +974,8 @@ dpif_solaris_port_del__(struct dpif_solaris *dpif,
 	}
 	VLOG_DBG("dpif_solaris_port_del %s close xfd %d", port->name,
 	    port->xfd);
+
+	reset_port(port->port_no);
 
 	free(port->type);
 	free(port->name);
