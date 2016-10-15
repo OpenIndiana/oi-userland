@@ -17,13 +17,12 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		tornado
-COMPONENT_VERSION=	2.4.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	4.1
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tornado
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:14d392cf14698eba75b9299748fa83716f7c02fc49684dfc5011668c30ba6b00
+    sha256:99abd3aede45c93739346ee7384e710120121c3744da155d5cff1c0101702228
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/t/tornado/$(COMPONENT_ARCHIVE)
 
 PYTHON_VERSIONS=	2.7
@@ -42,3 +41,4 @@ test:           $(NO_TEST)
 REQUIRED_PACKAGES += library/python-2/pycurl-27
 REQUIRED_PACKAGES += library/python-2/python-mysql-27
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
