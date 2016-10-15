@@ -1,0 +1,103 @@
+Solaris implementation of CPU information retrieval backend to fix bug 24898656
+
+Need to submit upstream along with previous patches, once they're cleaned up.
+
+--- libgtop-2.30.0/sysdeps/solaris/sysinfo.c
++++ libgtop-2.30.0/sysdeps/solaris/sysinfo.c
+@@ -37,7 +37,96 @@
+ static void
+ init_sysinfo (glibtop *server)
+ {
++	kstat_ctl_t	*kc;
++	guint		 ncpus;
+ 
++	if (G_LIKELY (sysinfo.flags))
++		return;
++
++	glibtop_init_s (&server, GLIBTOP_SYSDEPS_CPU, 0);
++	ncpus = sysconf(_SC_NPROCESSORS_CONF);
++
++	if (server->machine.kc == NULL)
++		server->machine.kc = kstat_open ();
++	kc = server->machine.kc;
++
++	for (sysinfo.ncpu = 0;
++	     sysinfo.ncpu < GLIBTOP_NCPU && sysinfo.ncpu < ncpus;
++	     sysinfo.ncpu++) {
++		glibtop_entry * const cpuinfo = &sysinfo.cpuinfo[sysinfo.ncpu];
++		kstat_t	*ksp;
++		kstat_named_t *k;
++		int status;
++
++		ksp = kstat_lookup(kc, "cpu_info", sysinfo.ncpu, NULL);
++		if (ksp == NULL) {
++			continue;
++		}
++
++		status = kstat_read(kc, ksp, NULL);
++		if (status == -1) {
++			continue;
++		}
++
++		cpuinfo->labels = g_ptr_array_new ();
++
++		cpuinfo->values = g_hash_table_new_full(g_str_hash,
++							g_str_equal,
++							NULL, g_free);
++
++		g_ptr_array_add (cpuinfo->labels, "processor");
++		g_hash_table_insert (cpuinfo->values, "processor",
++				     g_strdup_printf("%u", (guint)sysinfo.ncpu));
++
++		/* Map names from Solaris kstats to Linux /proc/cpuinfo keys */
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "brand");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "model name");
++			g_hash_table_insert (cpuinfo->values, "model name",
++					     g_strdup(k->value.str.addr.ptr));
++		}
++
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "core_id");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "core id");
++			g_hash_table_insert (cpuinfo->values, "core id",
++					     g_strdup_printf("%ld", k->value.l));
++		}
++
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "clock_MHz");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "cpu MHz");
++			g_hash_table_insert (cpuinfo->values, "cpu MHz",
++					     g_strdup_printf("%ld", k->value.l));
++		}
++
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "family");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "cpu family");
++			g_hash_table_insert (cpuinfo->values, "cpu family",
++					     g_strdup_printf("%ld", k->value.l));
++		}
++
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "model");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "model");
++			g_hash_table_insert (cpuinfo->values, "model",
++					     g_strdup_printf("%ld", k->value.l));
++		}
++
++		k = (kstat_named_t *) kstat_data_lookup(ksp, "vendor_id");
++		if (k) {
++			g_ptr_array_add (cpuinfo->labels, "vendor_id");
++			g_hash_table_insert (cpuinfo->values, "vendor_id",
++					     g_strdup(k->value.str.addr.ptr));
++		}
++
++
++
++
++	}
++
++	sysinfo.flags = _glibtop_sysdeps_sysinfo;
+ }
+ 
+ const glibtop_sysinfo *
