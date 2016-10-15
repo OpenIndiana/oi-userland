@@ -133,6 +133,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += print/filter/ghostscript-core
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += $(PERL_PKG)

@@ -62,3 +62,4 @@ CONFIGURE_OPTIONS +=	--with-pic
 COMPONENT_BUILD_ARGS += V=1
 
 REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += print/filter/ghostscript-core
