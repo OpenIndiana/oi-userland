@@ -13,10 +13,11 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgadmin3
 COMPONENT_VERSION= 	1.18.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= 	pgAdminIII administration and development GUI for PostgreSQL
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
@@ -38,9 +39,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= (cp -a $(SOURCE_DIR)/* $(@D))
 
-COMPONENT_BUILD_ENV     +=      LDFLAGS="$(LDFLAGS)"
+COMPONENT_BUILD_ENV+= LDFLAGS="$(LDFLAGS)"
 
 build: $(BUILD_32)
 
