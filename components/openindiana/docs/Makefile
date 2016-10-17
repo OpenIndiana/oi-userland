@@ -40,8 +40,9 @@ OI_DOCS_CLEAN_FILES = __init__.py
 OI_DOCS_CLEAN_FILES+= __init__.pyc
 
 COMPONENT_PREP_ACTION= \
-	  $(CP) $(COMPONENT_DIR)/files/mkdocs.yml \
-	        $(COMPONENT_DIR)/files/openindiana-docs.desktop $(SOURCE_DIR)
+    $(GSED) -i -e 's/^use_directory_urls[[:space:]]*:.*$$/use_directory_urls: false/' $(SOURCE_DIR)/mkdocs.yml; \
+    $(GSED) -i -e 's/^theme[[:space:]]*:.*$$/theme: yeti/' $(SOURCE_DIR)/mkdocs.yml; \
+	  $(CP) $(COMPONENT_DIR)/files/openindiana-docs.desktop $(SOURCE_DIR)
 
 COMPONENT_BUILD_ACTION= \
     cd $(@D) && mkdocs build --clean -f $(SOURCE_DIR)/mkdocs.yml
