@@ -23,26 +23,32 @@
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sg3_utils
-COMPONENT_VERSION=	1.33
-COMPONENT_PROJECT_URL=	http://sg.danny.cz/sg/sg3_utils.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:3034a4e798404cc963fc46437b0ceeb0edc635e02471ab13aa18acd8b716a27b
-COMPONENT_ARCHIVE_URL=	http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/sg3utils
+COMPONENT_NAME= sg3_utils
+COMPONENT_VERSION= 1.42
+COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/sg3_utils.html
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_HASH= sha256:1dcb7a0309bd0ba3d4a83acb526973b80106ee26cd9f7398186cd3f0633c9ef3
+COMPONENT_ARCHIVE_URL= http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE= GPLv2+ and BSD 
+COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
+# to avoid the error
+# /usr/include/sys/feature_tests.h:400:2: error: #error "Compiler or options invalid; UNIX 03 and POSIX.1-2001 applications       require the use of c99"
+CFLAGS += -D__EXTENSIONS__ -D_XOPEN_SOURCE=1 -D_XOPEN_SOURCE_EXTENDED=1
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -66,6 +72,4 @@ install:        $(INSTALL_32)
 
 test:           $(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+EQUIRED_PACKAGES += system/library
