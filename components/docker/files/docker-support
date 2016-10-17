@@ -5,10 +5,12 @@
 
 import argparse
 import os
+import shutil
 from subprocess import Popen, PIPE
 import sys
+import tempfile
 
-
+ROOTFS_ARCHIVE  = "rootfs.tar.gz"
 DOCKERFILE = """FROM scratch
 ADD %(archive)s /
 LABEL vendor="Oracle USA"
@@ -54,11 +56,6 @@ def get_os_version():
 
 
 def create_rootfs_archive(args):
-    # we'll build the default archive, make sure we don't clobber one
-    if os.path.exists("rootfs.tar.gz"):
-        raise RuntimeError("archive already exists 'rootfs.tar.gz'")
-
-    # build here with mkimage, send output to stdout
     cmd = ['/usr/lib/brand/solaris-oci/mkimage-solaris']
     if args.devbuild:
         cmd.append('-D')
@@ -67,8 +64,8 @@ def create_rootfs_archive(args):
             raise RuntimeError("'%s' not found" % args.profile)
         cmd.extend(['-c', args.profile])
     try:
+        # build rootfs, send output to stdout
         DockerSupportCmd(cmd, verbose=True).run()
-        return "rootfs.tar.gz"
     except Exception as err:
         raise RuntimeError("mkimage-solaris failure: %s" % err)
 
@@ -77,33 +74,41 @@ def create_base_image(args):
     if not docker_is_online():
         raise SystemExit("Docker service not online, is Docker configured?")
 
-    if os.path.exists("Dockerfile"):
-        raise SystemExit("Dockerfile already exists in working directory.")
+    try:
+        temp_dir = tempfile.mkdtemp(dir="/system/volatile")
+    except Exception as err:
+        raise SystemExit("Could not create build directory: %s" % err)
 
     try:
         print "Creating container rootfs from host publishers..."
-        rootfs = create_rootfs_archive(args)
+        create_rootfs_archive(args)
     except Exception as err:
         raise SystemExit("Failed to create rootfs: %s" % err)
 
-    osversion = get_os_version()
-    with open("Dockerfile", "w") as dockerfile:
-        dockerfile.write(
-            DOCKERFILE % {"archive": rootfs, "osversion": osversion})
+    shutil.move(ROOTFS_ARCHIVE, temp_dir)
 
-    tag = "solaris:%s" % osversion
-    print "Creating Docker base image '%s'..." % tag
-    try: 
+    prev_dir = os.getcwd()
+    os.chdir(temp_dir)
+    try:
+        osversion = get_os_version()
+        with open("Dockerfile", "w") as dockerfile:
+            dockerfile.write(DOCKERFILE %
+                {"archive": ROOTFS_ARCHIVE, "osversion": osversion})
+
+        tag = "solaris:%s" % osversion
+        print "Creating Docker base image '%s'..." % tag
+
         DockerSupportCmd(
             ["/usr/bin/docker", "build", "-t", tag, "."], verbose=True).run()
         DockerSupportCmd(
             ["/usr/bin/docker", "tag", tag, "solaris:latest"]).run()
+        print "Build complete."
     except Exception as err:
         raise SystemExit("Failed image build: %s" % err)
-
-    assert os.path.exists("rootfs.tar.gz")
-    os.unlink("rootfs.tar.gz")
-    print "Build complete."
+    finally:
+        os.chdir(prev_dir)
+        assert os.path.exists(temp_dir)
+        shutil.rmtree(temp_dir)
 
 
 def build_parser():
