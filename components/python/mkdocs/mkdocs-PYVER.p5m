@@ -1,0 +1,137 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/library/python/mkdocs-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="mkdocs - Project documentation with Markdown"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='MkDocs License (BSD)'
+
+
+# force a dependency on the Python runtime
+depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the package
+depend fmri=library/python/mkdocs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require
+
+# depends on tornado
+depend fmri=library/python/tornado-$(PYV) type=require
+
+# version the executable
+link path=usr/bin/mkdocs target=mkdocs-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+
+<transform file path=usr/bin/mkdocs-$(PYVER) \
+	-> set action.hash usr/bin/mkdocs >
+
+file path=usr/bin/mkdocs-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/lunr-0.5.7.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/mustache.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/require.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/search-results-template.mustache
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/search.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/assets/search/mkdocs/js/text.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/build.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/gh_deploy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/new.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/commands/serve.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/config_options.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/config/defaults.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/legacy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/nav.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/relative_path_ext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/search.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/templates/sitemap.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/build_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/cli_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/base_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/config_options_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/config/config_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/gh_deploy_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/integration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/legacy_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/nav_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/new_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/search_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/toc_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/ghp_import_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/tests/utils/utils_tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/404.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/base.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/content.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/css/base.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/css/bootstrap-custom.min.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/css/font-awesome-4.5.0.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/css/highlight.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/fonts/fontawesome-webfont.eot
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/fonts/fontawesome-webfont.svg
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/fonts/fontawesome-webfont.ttf
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/fonts/fontawesome-webfont.woff
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/img/favicon.ico
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/img/grid.png
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/base.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/bootstrap-3.0.3.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/highlight.pack.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/js/jquery-1.10.2.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/nav-sub.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/nav.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/mkdocs/toc.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/base.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/breadcrumbs.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/css/highlight.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/css/theme.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/css/theme_extra.css
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/fonts/fontawesome-webfont.eot
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/fonts/fontawesome-webfont.svg
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/fonts/fontawesome-webfont.ttf
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/fonts/fontawesome-webfont.woff
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/footer.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/img/favicon.ico
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/js/highlight.pack.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/js/jquery-2.1.1.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/js/modernizr-2.8.3.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/js/theme.js
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/search.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/searchbox.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/toc.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/themes/readthedocs/versions.html
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/toc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs/utils/ghp_import.py
