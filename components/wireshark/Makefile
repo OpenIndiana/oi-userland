@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	2.2.0
+COMPONENT_VERSION=	2.2.1
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a6847e741efcba6cb9d92d464d4219917bee3ad0b8f5b0f80d4388ad2f3f1104
+    sha256:900e22af04c8b35e0d02a25a360ab1fb7cfe5ac18fc48a9afd75a7103e569149
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
-TPNO=			31738
+TPNO=			32120
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-qt=no
-CONFIGURE_OPTIONS +=	--with-gtk=2
+CONFIGURE_OPTIONS +=	--with-gtk=3
 CONFIGURE_OPTIONS +=	\
   PATH="$(USRDIR)/perl5/bin:$(GNUBIN)/$(MACH64):$(GNUBIN):$(USRBIN.64):$(PATH)"
 
@@ -93,7 +93,7 @@ REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += diagnostic/wireshark/wireshark-common
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3
