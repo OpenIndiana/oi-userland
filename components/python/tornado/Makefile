@@ -31,6 +31,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_POST_INSTALL_ACTION= \
+  gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \
+    -exec gawk '/^\#!.*python/{print FILENAME}{nextfile}' {} + \
+  | xargs gsed -i -e '1 s;^.*$$;\#!$(PYTHON.32);'
+
 # common targets
 build:		$(BUILD_32_and_64)
 
