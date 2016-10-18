@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Puppet modules do not have any concept of 'build' so make this a no-op
@@ -29,6 +29,15 @@ $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(COMPONENT_PRE_BUILD_ACTION)
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
+
+# Modify ruby scripts containing "#!/usr/bin/env ruby" to
+# use the version-specific ruby path, defined by the $(RUBY_VERSION) macro.
+# Without this change, the mediated ruby version in /usr/bin/ruby
+# will probably be used, which may not match the ruby
+# version supported by the puppet module.
+COMPONENT_POST_INSTALL_ACTION += \
+    cd $(PROTO_DIR); \
+    $(RUBY_SCRIPT_FIX_FUNC);
 
 # install the source into the proto directory
 $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built

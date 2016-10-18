@@ -514,6 +514,14 @@ RUBY =		$(RUBY.$(RUBY_VERSION))
 # both the ruby version and the ruby library version are needed. 
 RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
+# Transform Ruby scripts to call the supported
+# version-specific ruby; used in multiple *.mk files
+RUBY_SCRIPT_FIX_FUNC = \
+    $(GNU_GREP) -Rl '^\#! */usr/bin/env ruby' | \
+        /usr/bin/xargs -I\{\} $(GSED) -i -e \
+        '1s%^\#! */usr/bin/env ruby%\#!/usr/ruby/$(RUBY_VERSION)/bin/ruby%' \
+        \{\}
+
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))

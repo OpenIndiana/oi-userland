@@ -31,3 +31,13 @@ PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 PKG_MACROS += RUBYV=$(subst .,,$(RUBY_VERSION))
 VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
 VENDOR_RUBY_ARCH = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/$(MACH64)-solaris$(SOLARIS_VERSION)
+
+# Modify ruby scripts in the ruby-version-specific path of the proto area,
+# under usr/ruby/$(RUBY_VERSION), containing "#!/usr/bin/env ruby" to
+# use the version-specific ruby path, defined by the $(RUBY_VERSION) macro.
+# Without this change, the mediated ruby version in /usr/bin/ruby
+# will probably be used, which may not match the ruby
+# version supported by the component.
+COMPONENT_POST_INSTALL_ACTION += \
+    cd $(PROTO_DIR)/usr/ruby/$(RUBY_VERSION); \
+    $(RUBY_SCRIPT_FIX_FUNC);
