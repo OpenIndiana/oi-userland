@@ -47,7 +47,7 @@ include $(WS_MAKE_RULES)/common.mk
 # The GNU compiler wants the GNU utilities.
 PATH=$(GNUBIN):$(USRBINDIR):$(USRDIR)/perl5/bin
 
-PARCH =         $(MACH64:amd64=x86_64-pc)
+PARCH =         $(MACH:i386=x86_64-pc)
 GNU_ARCH =      $(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
 
 PKG_MACROS +=   GNU_ARCH="$(GNU_ARCH)"
