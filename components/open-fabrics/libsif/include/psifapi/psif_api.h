@@ -3,8 +3,8 @@
  */
 
 /*
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -14,19 +14,20 @@
  *    and/or other materials provided with the distribution.
  *
  * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef	_PSIF_API_H
@@ -42,15 +43,15 @@ extern "C" {
 #define u16 uint16_t
 #define u32 uint32_t
 #define u64 uint64_t
-typedef uint64_t __be64 ;
-#endif /* __arm__ */ 
+typedef uint64_t __be64;
+#endif /* __arm__ */
 
 #define PSIF_RELEASE_STR "PSIF.ARCH.05.68 revB"
 #define PSIF_MAJOR_VERSION  5
 #define PSIF_MINOR_VERSION 68
 #define PSIF_CHIP_VERSION  2
-#define PSIF_VERSION ((PSIF_MAJOR_VERSION<<8)+PSIF_MINOR_VERSION)
-#define PSIF_API_VERSION(x,y) ((x<<8)+y)
+#define PSIF_VERSION ((PSIF_MAJOR_VERSION<<16)+PSIF_MINOR_VERSION)
+#define PSIF_API_VERSION(x, y) ((x<<16)+y)
 
 #define PSIF_REV2
 
@@ -61,34 +62,33 @@ typedef uint64_t __be64 ;
 /*
  * Update if protocol changes in a backward incompatible way
  */
-#define EPSC_MAJOR_VERSION 0
+#define EPSC_MAJOR_VERSION 2
 
 /*
  * Update when new operations are added or otherwise
  * backward compatible changes are made
  */
-#define EPSC_MINOR_VERSION 101
+#define EPSC_MINOR_VERSION 4
 
 /*
  * Macros for EPSC API #if checking in code
  */
 #define EPSC_VERSION ((EPSC_MAJOR_VERSION<<16)+EPSC_MINOR_VERSION)
-#define EPSC_API_VERSION(x,y) ((x<<16)+y)
+#define EPSC_API_VERSION(x, y) ((x<<16)+y)
 
 /*
  * Macro to conver 16 bit sequence number to 64 bit wire format
  */
 #define EPSC_STATUS_16_to_64(s) ((((u64)(s)) <<  0) | (((u64)(s)) << 16) | \
-                                 (((u64)(s)) << 32) | ((((u64)s)) << 48))
+								(((u64)(s)) << 32) | ((((u64)s)) << 48))
 /*
  * Macros to force layout to match HW implementation
  */
 #define PSIF_PACKED           __attribute__((packed))
-#define PSIF_PACKED_ALIGNED 
-#define PSIF_PACKED_ALIGNED32 
+#define PSIF_PACKED_ALIGNED
+#define PSIF_PACKED_ALIGNED32
 #define PSIF_ALIGNED 
 #define PSIF_ALIGNED8 
-
 #define PSIF_ALIGNED32 
 
 #define PSIF_PF PSIF_VF0
@@ -152,17 +152,30 @@ typedef uint64_t __be64 ;
 /* Index to the error QP. */
 #define QPS_ERROR_INDEX 0
 
+/** \brief Bit definition for degraded mode reporting
+ *  \hideinitializer
+ *  \details
+ *  In the response structure for the mailbox online request from the driver
+ *  this bit is set in the `info` member if the PSIF firmware is already in
+ *  degraded mode. That means that the driver should refrain from doing more
+ *  than just the bare minimum needed to allow updating of the firmware.
+ */
+#define PSIF_INFO_FLAG_DEGRADED (1 << 16)
+
 /** Request value for mailbox register to restart */
 #define MAILBOX_RESTART ((u64)0)
 
 /** Response value for mailbox register on error */
-#define MAILBOX_IN_ERROR 0x0000ffffffff0000
+#define MAILBOX_IN_ERROR 0x0000ffffffff0000ULL
 
 /** Mailbox (response) value for unused VFs */
-#define MAILBOX_NOT_IN_USE 0x0000ffeeeeff0000
+#define MAILBOX_NOT_IN_USE 0x0000ffeeeeff0000ULL
 
 /** Mailbox response value for busy UFs (QP cleanup ongoing) */
-#define MAILBOX_NOT_READY 0x0000ffddddff0000
+#define MAILBOX_NOT_READY 0x0000ffddddff0000ULL
+
+/** Mailbox response value that the doorbell needs to be rung again */
+#define MAILBOX_AGAIN 0x0000ffeddeff0000ULL
 
 /** Highes non-online mailbox sequence number - applied directly after reset */
 #define MAILBOX_SEQ_SET_PROTOCOL ((u16)0x7fff)

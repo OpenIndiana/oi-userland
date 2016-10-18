@@ -27,19 +27,20 @@ BUILD_BITS= 64
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libsif
-COMPONENT_VERSION=	1.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=         libsif
+COMPONENT_VERSION=      1.1
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:501858b4b9d45ebe163d9136f7fb4d08708aaf91cc97c40059ae2a1b4737239d
-COMPONENT_SERVER=      download.oracle.com
+	sha256:ffa472db19614ff27988875ed474e6dcd233273c14dec3ad589ff149288d44b3
+COMPONENT_SERVER=       download.oracle.com
 COMPONENT_ARCHIVE_URL= http://$(COMPONENT_SERVER)/otn-pub/oss/networking/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_psif
 
 include ../ofed-component.mk
 
-REMOVE_OLD_SRC= sif.h sif_user.h sif_int_user.h os_header.h psif_api.h psif_endian.h psif_hw_print.h psif_hw_data* psif_hw_setget* psif_hw_macro* kernel_types.h
+REMOVE_OLD_SRC= sif.h sif_user.h sif_int_user.h os_header.h psif_api.h psif_endian.h psif_hw_print.c psif_hw_print.h psif_hw_data* \
+	       	psif_hw_setget* psif_hw_macro* kernel_types.h
 # --disable-libcheck is not a supported option for this component
 DISABLE_LIBCHECK=
 

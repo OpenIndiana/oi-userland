@@ -1,125 +1,15 @@
 # This patch does the config changes specific to solaris.
 # It is developed By solaris PSIF team. We plan to have a common upstream repo
 # and submit these changes to it, but do not yet have a target date of doing it.
-diff -r 1584d5cbb44d Makefile.am
---- a/Makefile.am	Wed Feb 10 12:40:22 2016 +0530
-+++ b/Makefile.am	Mon Mar 07 19:29:59 2016 +0530
-@@ -9,7 +9,11 @@
-   -avoid-version \
-   -release @IBV_DEVICE_LIBRARY_EXTENSION@
- 
--lib_LTLIBRARIES = src/libsif.la src/libsifwa.la
-+lib_LTLIBRARIES = src/libsif.la
-+if !SIF_SOLARIS
-+lib_LTLIBRARIES += src/libsifwa.la
-+endif
-+
- src_libsif_la_SOURCES = \
-     src/cpu_features.c \
-     src/cq.c \
-@@ -24,14 +28,18 @@
- 
- src_libsif_la_LDFLAGS = $(SIF_LDFLAGS) $(sif_version_script)
- 
-+if !SIF_SOLARIS
- src_libsifwa_la_SOURCES = src/sif_eps.c
- src_libsifwa_la_CFLAGS = $(AM_CFLAGS) $(NETLINK_CFLAGS)
- src_libsifwa_la_LDFLAGS = $(SIF_LDFLAGS) $(NETLINK_LIBS) $(sifwa_version_script)
-+endif
- 
+diff -r e1f52bdf4884 Makefile.am
+--- a/Makefile.am	Thu Aug 25 00:19:37 2016 -0700
++++ b/Makefile.am	Thu Aug 25 00:26:27 2016 -0700
+@@ -25,8 +25,6 @@
  sifconfdir = $(sysconfdir)/libibverbs.d
  sifconf_DATA = sif.driver
  
-+if !SIF_SOLARIS
- -include $(srcdir)/genrules.mk
-+endif
- 
+--include $(srcdir)/genrules.mk
+-
  EXTRA_DIST = \
      libsif.spec.in \
-@@ -67,8 +75,10 @@
-     src/psif_hw_print.c
- 
- libsif_includedir = $(includedir)/infiniband
--libsif_include_HEADERS = src/sif.h src/sif_eps.h src/sif_drvapi.h
--
-+libsif_include_HEADERS = src/sif.h 
-+if !SIF_SOLARIS
-+libsif_include_HEADERS += src/sif_eps.h src/sif_drvapi.h
-+endif
- 
- dist-hook:
- 	@rm -f $(distdir)/m4/{sifdrv,psifapi}.m4
-diff -r 1584d5cbb44d configure.ac
---- a/configure.ac	Wed Feb 10 12:40:22 2016 +0530
-+++ b/configure.ac	Mon Mar 07 19:29:59 2016 +0530
-@@ -10,6 +10,10 @@
- # Silent rules by default - use make V=1 for verbose
- AM_SILENT_RULES([yes])
- 
-+AS_IF([test "x$os_type" = "x" ],
-+    [os_type=`uname -a | awk 'BEGIN { FS=" " } { print $1; }'`],
-+    [])
-+
- AC_CONFIG_MACRO_DIR([m4])
- m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
- 
-@@ -30,7 +34,7 @@
- 
- dnl Checks for programs
- AC_PROG_CC
--
-+AM_CONDITIONAL(SIF_SOLARIS, test $os_type != Linux)
- 
- 
- 
-@@ -40,6 +44,7 @@
-     AC_MSG_ERROR(
- [ibv_get_device_list() not found.  libsif requires libibverbs.]))
- 
-+if test $os_type = Linux; then
- PKG_CHECK_MODULES(LIBNL3, libnl-3.0 >= 3.1, [have_libnl3=yes],[ dnl
-   have_libnl3=no
-   PKG_CHECK_MODULES([NETLINK], [libnl-1 >= 1.1])
-@@ -52,7 +57,7 @@
- else
- 	LIBS+=" $NETLINK_LIBS"
- fi
--
-+fi
- dnl Checks for header files.
- AC_CHECK_HEADER(infiniband/driver.h, [],
-     AC_MSG_ERROR([<infiniband/driver.h> not found.  libsif requires libibverbs.]))
-@@ -86,11 +91,22 @@
- AC_SUBST(IBV_DEVICE_LIBRARY_EXTENSION)
- 
- SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, ibv_ctx);"
-+SIF_GET_QP_CONTAINER="return container_of(ibqp, struct sif_qp, ibv_qp);"
-+SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, ibv_srq);"
-+SIF_GET_STRUCT="ibv"
- 
- AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
--	[SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, verbs_ctx.context);"])
-+    [SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, verbs_ctx.context);"])
-+AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+    [SIF_GET_QP_CONTAINER="return container_of(ibqp, struct sif_qp, verbs_qp.qp);"])
-+AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+    [SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, verbs_srq.srq);"])
-+AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER], [SIF_GET_STRUCT="verbs"])
- 
- AC_SUBST([SIF_GET_CONTEXT_CONTAINER])
-+AC_SUBST([SIF_GET_STRUCT])
-+AC_SUBST([SIF_GET_QP_CONTAINER])
-+AC_SUBST([SIF_GET_SRQ_CONTAINER])
- 
- AC_CACHE_CHECK(whether ld accepts --version-script, ac_cv_version_script,
-     [if test -n "`$LD --help < /dev/null 2>/dev/null | grep version-script`"; then
-diff -r 1584d5cbb44d sif.driver
---- a/sif.driver	Wed Feb 10 12:40:22 2016 +0530
-+++ b/sif.driver	Mon Mar 07 19:29:59 2016 +0530
-@@ -1,1 +1,6 @@
-+#
-+# Copyright (c) 2014, 2016, Oracle America, Inc. and its Affiliates
-+# All rights reserved.
-+#
-+# WARNING: Do not change these settings unless you know what you are doing.
- driver sif
+     sif.driver \

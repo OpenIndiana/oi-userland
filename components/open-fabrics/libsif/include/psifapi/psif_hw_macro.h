@@ -3,8 +3,8 @@
  */
 
 /*
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -14,19 +14,20 @@
  *    and/or other materials provided with the distribution.
  *
  * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef	_PSIF_HW_MACRO_H
@@ -43,6 +44,16 @@ extern "C" {
 #include "os_header.h"
 #endif
 
+
+#define PSIF_CSR_MMU_CONFIG_TA_UPPER_TWELVE_OFFSET	0
+#define PSIF_CSR_MMU_CONFIG_TA_UPPER_TWELVE_SHIFT	32
+#define PSIF_CSR_MMU_CONFIG_TA_UPPER_TWELVE_BITS	12
+#define PSIF_CSR_MMU_CONFIG_TA_UPPER_TWELVE_MASK	0x00000fff00000000ull
+
+#define PSIF_CSR_MMU_CONFIG_PA_UPPER_TWELVE_OFFSET	0
+#define PSIF_CSR_MMU_CONFIG_PA_UPPER_TWELVE_SHIFT	48
+#define PSIF_CSR_MMU_CONFIG_PA_UPPER_TWELVE_BITS	12
+#define PSIF_CSR_MMU_CONFIG_PA_UPPER_TWELVE_MASK	0x0fff000000000000ull
 
 /*
  * PSIF_WR_INVALIDATE_LKEY: key to invalidate/flush from the DMA VT cache.
@@ -380,6 +391,18 @@ extern "C" {
 #define PSIF_QP_CORE_9_TRANSPORT_TYPE_MASK	0x0000000000000007ull
 
 /*
+ * This is an index to completion queue descriptor. The descriptor points to
+ * a receive completion queue, which may or may not be the same as the send
+ * completion queue. For XRC QPs, this field is written by the CQ descriptor
+ * received by the XRCSRQ on the first packet. This way we don't need to look
+ * up the XRCSRQ for every packet. of the message.
+ */
+#define PSIF_QP_CORE_RCV_CQ_INDX_OFFSET	9
+#define PSIF_QP_CORE_9_RCV_CQ_INDX_SHIFT	8
+#define PSIF_QP_CORE_9_RCV_CQ_INDX_BITS	24
+#define PSIF_QP_CORE_9_RCV_CQ_INDX_MASK	0x00000000ffffff00ull
+
+/*
  * Number of bytes received of in progress RDMA Write or SEND. The data
  * received for SENDs and RDMA WR w/Imm are needed for completions. This
  * should be added to the msg_length.
@@ -658,8 +681,8 @@ extern "C" {
 #define PSIF_AH_2_SL_SHIFT	20
 #define PSIF_AH_2_SL_BITS	4
 #define PSIF_AH_2_SL_MASK	0x0000000000f00000ull
-#if defined (HOST_LITTLE_ENDIAN)
-#elif defined (HOST_BIG_ENDIAN)
+#if defined(HOST_LITTLE_ENDIAN)
+#elif defined(HOST_BIG_ENDIAN)
 #else
 #error "Could not determine byte order in psif_hw_macro.h !?"
 #endif

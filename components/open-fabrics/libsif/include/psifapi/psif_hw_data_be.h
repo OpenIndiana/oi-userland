@@ -3,8 +3,8 @@
  */
 
 /*
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -14,23 +14,95 @@
  *    and/or other materials provided with the distribution.
  *
  * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef	_PSIF_HW_DATA_H_BE
 #define	_PSIF_HW_DATA_H_BE
+
+/* CSR automated type for TSU_MMU_MMU_CONFIG */
+/* MMU Static-Configuration and Status */
+struct psif_csr_mmu_config {
+	u16	noname:4;
+	u16	pa_upper_twelve:12;
+	u16	noname1:4;
+	u16	ta_upper_twelve:12;
+	u16	cam_par_err_fatal:1;
+	u16	dis_table_ptr_trans:1;
+	u16	noname2:2;
+	u16	ptwc_hash_sel:2;
+	u16	dma_cnt_mask:8;
+	u16	sparc_pages:1;
+	u16	bit_sixty_three_value:1;
+	u16	chk_bit_sixty_three:1;
+	u16	chk_upper_addr_bits:1;
+	u16	swap_rsp:1;
+	u16	mmuc_hash_select:2;
+	u16	random_evict:1;
+	u16	mmuc_evict_algorithm:1;
+	u16	ptwc_evict_algorithm:1;
+	u16	cam_evict_cntr_cnt_sel:5;
+	u16	cam_evict_cntr_prescale_sel:3;
+} PSIF_PACKED_ALIGNED; /* struct psif_csr_mmu_config [ 8 byte] */
+
+/**
+ * \brief Definition of struct returned by EPSC_QUERY_EXTERNAL_PORT_INFO
+ * \details
+ * This struct is returning several attributes of the external IB port. The vHCA IB portnumber
+ * is set in the index field. Values returned maches description in PortInfo (See IB specification
+ * 1.3 vol1 chapter 14.2.5.6), except for active speed which will return values as defined in
+ * psif_port_speed.
+ * \par Width
+ *      64 bit
+ * \par Used in
+ * the parameter for the PSIF_QUERY sub-operation EPSC_QUERY_PORT_INFO - vHCA IB portnumber set in index field
+ * \par Classification
+ *      internal, development
+ */
+
+struct psif_epsc_query_external_port_info {
+	/**< LID of the IB device connected to the external port */
+
+	u16	lid;
+	/**< IB port number of external port (on the IB device above) */
+
+	u16	portnumber:8;
+	/**< IB port state of external port values will match psif_epsc_port_state_t */
+
+	u16	port_state:4;
+	/**< Physical port state of IB port */
+
+	u16	port_physical_state:4;
+	/**< IB LinkSpeedActive of external port */
+
+	enum psif_port_speed	active_speed:8;
+
+	/**< IB LinkWidthActive of external port */
+
+	u16	active_width:8;
+	/**< Active MTU of external port (values will match psif_epsc_path_mtu_t */
+
+	u16	active_mtu:4;
+	/**< Number of operational Data VLs */
+
+	u16	operational_vls:4;
+	/**< Reserved */
+
+	u16	noname:8;
+} PSIF_PACKED_ALIGNED; /* struct psif_epsc_query_external_port_info [ 8 byte] */
 
 /*
  * Context used by tsu_mmu when performing address translation. The structure
@@ -810,7 +882,7 @@ struct psif_sq_ring {
 	u64	something;
 } PSIF_PACKED_ALIGNED; /* struct psif_sq_ring [ 8 byte] */
 
-/* Temp.definition of the send queue entry cache for the completion block 
+/* Temp. definition of the send queue entry cache for the completion block.
  * The only info used by the driver is the size of this struct,
  * when allocating space for the cache in memory:
  */
@@ -1583,7 +1655,7 @@ struct psif_query_qp {
  */
 struct psif_qp_attributes {
 	/* Manually added spacing to pad outpsif_qp_attributes */
-	u8	:7;
+	u8	pad92:7;
 	/* Change path req_access error if set. */
 	u8	req_access_error:1;
 	/* Change path MTU if set. */
@@ -1838,7 +1910,7 @@ struct psif_modify_command {
 	 */
 	u32	notify_when_zero:1;
 	/* Manually added spacing to pad out psif_modify_command */
-	u32	:3;
+	u32	pad93:3;
 } PSIF_PACKED; /* struct psif_modify_command [ 5 byte] */
 
 /*
@@ -1901,7 +1973,7 @@ struct psif_key {
 
 /**
  * Flash image header format for application image
- * extention of struct psif_flash_header_all
+ * extension of struct psif_flash_header_all
  */
 struct psif_flash_header_app {
 	/* byte[4:7] image type */
@@ -2100,17 +2172,6 @@ struct psif_eq_entry {
 	u32	seq_num;
 } PSIF_PACKED_ALIGNED32; /* struct psif_eq_entry [64 byte] */
 
-struct psif_epsc_log_stat {
-	/* Owned by epsc runs all the way to 64 bit */
-	u64	produce_offset;
-	/* Owned by host */
-	u64	consume_offset;
-	/* Owned by host real offset modulo sz */
-	u64	size;
-	/* Allign to 32 byte */
-	u64	pad;
-} PSIF_PACKED_ALIGNED; /* struct psif_epsc_log_stat [32 byte] */
-
 /**
  * CSR Query port structure
  */
@@ -2147,6 +2208,17 @@ struct psif_epsc_port_attr {
 	u64	pad;
 } PSIF_PACKED_ALIGNED32; /* struct psif_epsc_port_attr [64 byte] */
 
+struct psif_epsc_log_stat {
+	/* Owned by epsc runs all the way to 64 bit */
+	u64	produce_offset;
+	/* Owned by host */
+	u64	consume_offset;
+	/* Owned by host real offset modulo sz */
+	u64	size;
+	/* Allign to 32 byte */
+	u64	pad;
+} PSIF_PACKED_ALIGNED; /* struct psif_epsc_log_stat [32 byte] */
+
 /**
  * Query GID response in host memory
  */
@@ -2159,7 +2231,7 @@ struct psif_epsc_gid_attr {
  * Populate MMU table
  */
 struct psif_epsc_exercise_mmu {
-	/* Start adress */
+	/* Start address */
 	u64	host_addr;
 	/* MMU context supplied by driver */
 	struct psif_mmu_cntx	mmu_cntx;
@@ -2223,6 +2295,17 @@ struct psif_epsc_device_attr {
 } PSIF_PACKED_ALIGNED32; /* struct psif_epsc_device_attr [192 byte] */
 
 /**
+ * For data in response structure of EPSC_BER_DATA Op.
+ */
+struct psif_epsc_csr_rsp_ber_data {
+	/* Received signal values (H0 values) for each Serdes Channel per port.
+	 status_rxd_reg0 in Sonoma PRM */
+	u64	received_signal_values[4];
+	/* Number of elements is same as psif_epsc_csr_ber_counters enum */
+	u64	ber_counters[5];
+} PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_rsp_ber_data [72 byte] */
+
+/**
  * The eps-c fw csr to host sw completion
  * Response to a CSR request
  */
@@ -2275,8 +2358,10 @@ struct psif_epsc_csr_base_addr {
 	u32	num_entries;
 	/** unused (padding) */
 	u32	noname:27;
-	/** size of an entry as log2 value. The address to an entry is calculated
-	 *  as host_addr + entry_num*(1 << extent_log2) */
+	/**
+	 * Size of an entry as log2 value. The address to an entry is calculated
+	 * as host_addr + entry_num*(1 << extent_log2).
+	 */
 	u32	extent_log2:5;
 	/** MSI-X interrupt index only valid for EQ setup */
 	u32	msix_index;
@@ -2320,10 +2405,10 @@ struct psif_csr_modify_qp_ctrl {
 	 */
 	u64	notify_when_zero:1;
 	/* Manually added spacing to pad out psif_modify_command */
-	u64	:3;
+	u64	pad97:3;
 	/* Inlined cmd_attributes : struct psif_qp_attributes (24 bits) */
 	/* Manually added spacing to pad outpsif_qp_attributes */
-	u64	:7;
+	u64	pad98:7;
 	/* Change path req_access error if set. */
 	u64	req_access_error:1;
 	/* Change path MTU if set. */
@@ -2567,14 +2652,13 @@ struct psif_epsc_csr_modify_port {
  * Test operations : EPSC_TEST_HOST_RD & EPSC_TEST_HOST_WR
  */
 struct psif_epsc_csr_test_host_wrd {
-	struct psif_mmu_cntx	mmu_cntx;
 	u64	host_addr;
+	u32	key;
 	u32	epsc_offs;
 	u32	length;
 	/* pattern number 0..xxx */
 	u32	pattern;
-	u32	noname:32;
-	u64	reserved_2[7];
+	u64	reserved_1[8];
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_test_host_wrd [88 byte] */
 
 /**
@@ -2592,7 +2676,6 @@ struct psif_epsc_csr_flash_access {
 
 /**
  * IB packet trace acquire : EPSC_TRACE_ACQUIRE
- *
  */
 struct psif_epsc_csr_trace_acquire {
 	/* Pointer to trace buffer */
@@ -2624,8 +2707,10 @@ struct psif_epsc_csr_log_ctrl {
 	/* Log mode to use */
 	enum psif_epsc_log_mode	mode:32;
 
-	/* Fields only used by log mode EPSC_LOG_MODE_HOST:
-	 Start address of the data area to write to */
+	/*
+	 * Fields only used by log mode EPSC_LOG_MODE_HOST:
+	 * Start address of the data area to write to.
+	 */
 	u64	base;
 	/* pointer to a log_stat data area */
 	u64	stat_base;
@@ -2653,24 +2738,22 @@ struct psif_epsc_csr_epsa_cntrl {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_epsa_cntrl [88 byte] */
 
 /**
- * EPS-A to EPS-A
+ * host to EPS-A
  */
 struct psif_epsc_csr_epsa_cmd {
 	enum psif_epsa_command	cmd:32;
 
 	u32	length;
-	/* MMU context supplied by driver */
-	struct psif_mmu_cntx	mmu_cntx;
-	/* Buffer adress in host memory */
+	/* Buffer address in host memory */
 	u64	host_addr;
 	u8	entry_point[16];
 	u32	key;
 	u32	qpnum;
-	u64	reserved[5];
+	u64	reserved[6];
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_epsa_cmd [88 byte] */
 
 /**
- * EPSC_CLI_ACCESS - buffer size is assumed to be 4K
+ * EPSC_CLI_ACCESS - buffer size is presumed to be 2K
  */
 struct psif_epsc_csr_cli_access {
 	u64	host_addr;
@@ -2754,7 +2837,6 @@ struct psif_epsc_csr_query {
 
 /**
  * Structure for EPSC_SET
- *
  */
 struct psif_epsc_csr_set {
 	/* UF number */
@@ -2902,10 +2984,9 @@ struct psif_epsc_csr_pma_counters {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_pma_counters [32 byte] */
 
 /** \brief Command params for opcode EPSC_VIMMA_CTRL_SET_VFP_VHCA_DEREGISTER
- \note
- This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
- \par Classification
- external
+ *  \note This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
+ *  \par Classification
+ *       external
  */
 struct psif_epsc_vimma_dereg {
 	/* size 5*u64 */
@@ -2919,10 +3000,9 @@ struct psif_epsc_vimma_dereg {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_vimma_dereg [40 byte] */
 
 /** \brief Struct defintion for vHCA registration details
- \note
- This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
- \par Classification
- external
+ * \note This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
+ * \par Classification
+ *      external
  */
 struct psif_epsc_vimma_vfp_reg {
 	/* size 5*u64 */
@@ -2937,10 +3017,9 @@ struct psif_epsc_vimma_vfp_reg {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_vimma_vfp_reg [40 byte] */
 
 /** \brief Command params for opcode EPSC_VIMMA_CTRL_SET_ADMIN_MODE
- \note
- This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
- \par Classification
- external
+ *  \note This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
+ *  \par Classification
+ *       external
  */
 struct psif_epsc_vimma_set_admmode {
 	/* size 5*u64 */
@@ -2956,10 +3035,9 @@ struct psif_epsc_vimma_set_admmode {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_vimma_set_admmode [40 byte] */
 
 /** \brief Command params for opcode EPSC_VIMMA_CTRL_SET_VFP_VHCA_REGISTER
- \note
- This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
- \par Classification
- external
+ *  \note This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_VFP_CAPS
+ *  \par Classification
+ *       external
  */
 struct psif_epsc_vimma_reg_info {
 	u32	noname:32;
@@ -2972,8 +3050,8 @@ struct psif_epsc_vimma_reg_info {
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_vimma_reg_info [40 byte] */
 
 /** \brief Defining params for VIMMA opcodes
- \par Classification
- external
+ *  \par Classification
+ *       external
  */
 union psif_epsc_vimma_ctrl_cmd {
 	/* all union elements are size 5*u64 */
@@ -2984,11 +3062,10 @@ union psif_epsc_vimma_ctrl_cmd {
 } PSIF_PACKED; /* union psif_epsc_vimma_ctrl_cmd [40 byte] */
 
 /** \brief Defines the complete command params for VIMMA opcodes
- \note
- This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_BASIC_CAPS
- and should never change in an incompatible way.
- \par Classification
- external
+ *  \note This struct belongs to capability: EPSC_VIMMA_CTRL_CAP_PSIF_BASIC_CAPS
+ *   and should never change in an incompatible way.
+ *  \par Classification
+ *       external
  */
 struct psif_epsc_csr_vimma_ctrl {
 	/* VIMMA sub-opcodes triggered by EPSC_VIMMA_CTRL */
@@ -3005,6 +3082,20 @@ struct psif_epsc_csr_vimma_ctrl {
 	/* Summing up to 11 * u64 which is total and max */
 	u64	reserved[3];
 } PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_vimma_ctrl [88 byte] */
+
+/**
+ * Structure for EPSC_BER_DATA
+ */
+struct psif_epsc_csr_ber_data {
+	/* Buffer address in host memory */
+	u64	host_addr;
+	/* MMU supplied by the driver */
+	struct psif_mmu_cntx	mmu_cntx;
+	/* IBU port number */
+	u32	port;
+	/* Buffer length in bytes */
+	u32	len;
+} PSIF_PACKED_ALIGNED; /* struct psif_epsc_csr_ber_data [24 byte] */
 
 /* Public API for mailbox requests details */
 union psif_epsc_csr_details {
@@ -3074,6 +3165,8 @@ union psif_epsc_csr_details {
 	struct psif_epsc_csr_pma_counters	pma_counters;
 	/* EPSC_VIMMA_CTRL: VIMMA functions */
 	struct psif_epsc_csr_vimma_ctrl	vimma_ctrl;
+	/* BER data query */
+	struct psif_epsc_csr_ber_data	ber;
 } PSIF_PACKED; /* union psif_epsc_csr_details [88 byte] */
 
 /**
@@ -3116,10 +3209,14 @@ struct psif_epsc_csr_doorbell {
  * Basic configuration data for each UF
  */
 struct psif_epsc_csr_config {
-	/** Minor protocol version identifier. */
-	u32	minor_ver;
-	/** Major protocol version identifier. */
-	u32	major_ver;
+	/** Major EPS API version identifier. */
+	u16	epsapi_major_ver;
+	/** Minor EPS API version identifier. */
+	u16	epsapi_minor_ver;
+	/** Major HW API version identifier. */
+	u16	hwapi_major_ver;
+	/** Minor HW API version identifier. */
+	u16	hwapi_minor_ver;
 	/** Request base address. */
 	u64	request;
 	/** Respose base address. */
@@ -3420,7 +3517,7 @@ struct psif_base_addr { /* Subjected to copy and convert */
 	/* Number of entries in table. */
 	u32	num_entries;
 	/* Manually added spacing to pad out base addr */
-	u32	:27;
+	u32	pad104:27;
 	/*
 	 * clog2_extent used for entry alignment. This field used to calculate
 	 * address for a particular entry. Address to an entry is calculated as
@@ -3437,8 +3534,10 @@ struct psif_atomic_retry_element {
 	u32	zero:8;
 	/* [183:160] psn */
 	u32	psn:24;
-	/* [159] When set to one entry has been used. When set to zero 
-	 no duplicate has been written in this entry. */
+	/*
+	 * [159] When set to one, entry has been used. When set to zero,
+	 * no duplicate has been written in this entry.
+	 */
 	u32	used:1;
 	/* [158] This atomic response was in error. */
 	u32	response_error:1;
@@ -3447,7 +3546,8 @@ struct psif_atomic_retry_element {
 	u64	reserved[2];
 } PSIF_PACKED_ALIGNED; /* struct psif_atomic_retry_element [32 byte] */
 
-/* Data type for TSU_HOST_QP_BASE_ADDR - atomic replay scratch pad
+/*
+ * Data type for TSU_HOST_QP_BASE_ADDR - atomic replay scratch pad
  *  Layout as of 16 deep atomic queue - elements padded to 32 byte
  */
 struct psif_atsp {

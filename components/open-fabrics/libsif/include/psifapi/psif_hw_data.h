@@ -3,8 +3,8 @@
  */
 
 /*
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
@@ -14,19 +14,20 @@
  *    and/or other materials provided with the distribution.
  *
  * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef	_PSIF_HW_DATA_H
@@ -47,72 +48,122 @@ extern "C" {
 
 /* Extent of all psif enums */
 enum psif_enum_extent {
-	PSIF_MMU_TRANSLATION_EXTENT	 = 0x8,
-	PSIF_PAGE_SIZE_EXTENT	 = 0xf,
-	PSIF_WR_TYPE_EXTENT	 = 0x8f,
-	PSIF_PORT_EXTENT	 = 0x2,
-	PSIF_USE_AH_EXTENT	 = 0x2,
-	PSIF_TSU_QOS_EXTENT	 = 0x2,
-	PSIF_WC_OPCODE_EXTENT	 = 0x83,
-	PSIF_WC_STATUS_EXTENT	 = 0x16,
-	PSIF_TSL_QP_WR_EXTENT	 = 0x10,
-	PSIF_TABLE_LEVEL_EXTENT	 = 0x6,
-	IB_OPCODE_EXTENT	 = 0xca,
-	PSIF_RB_TYPE_EXTENT	 = 0x7,
-	PSIF_EPS_A_CORE_EXTENT	 = 0x4,
-	PSIF_QP_STATE_EXTENT	 = 0x8,
-	PSIF_CMPL_OUTSTANDING_ERROR_EXTENT	 = 0xa,
-	PSIF_EXPECTED_OP_EXTENT	 = 0x4,
-	PSIF_MIGRATION_EXTENT	 = 0x4,
-	PSIF_QP_TRANS_EXTENT	 = 0x8,
-	PSIF_BOOL_EXTENT	 = 0x2,
-	PSIF_EOIB_TYPE_EXTENT	 = 0x4,
-	PSIF_COMM_LIVE_EXTENT	 = 0x2,
-	PSIF_PATH_MTU_EXTENT	 = 0x8,
-	PSIF_USE_GRH_EXTENT	 = 0x2,
-	PSIF_LOOPBACK_EXTENT	 = 0x2,
-	PSIF_PORT_SPEED_EXTENT	 = 0x21,
-	PSIF_PCIE_WR_OFFS_EXTENT	 = 0x1000,
-	PSIF_QP_COMMAND_EXTENT	 = 0x4,
-	PSIF_SIBS_MBOX_TYPE_EXTENT	 = 0x2,
-	PSIF_MBOX_TYPE_EXTENT	 = 0x6,
-	PSIF_DMA_VT_KEY_STATES_EXTENT	 = 0x4,
-	PSIF_FLASH_IMAGE_TYPE_EXTENT	 = 0x5,
-	PSIF_EVENT_EXTENT	 = 0x11,
-	PSIF_TSU_ERROR_TYPES_EXTENT	 = 0x8c,
-	PSIF_EPS_CORE_ID_EXTENT	 = 0x5,
-	PSIF_EPSC_LOG_MODE_EXTENT	 = 0x11,
-	PSIF_EPSC_LOG_LEVEL_EXTENT	 = 0x8,
-	PSIF_EPSC_PORT_STATE_EXTENT	 = 0x6,
-	PSIF_EPSC_PATH_MTU_EXTENT	 = 0x8,
-	PSIF_EPSC_MONITOR_EXTENT	 = 0x5,
-	PSIF_EPSC_INTERRUPT_SOURCE_EXTENT	 = 0x15,
-	PSIF_EPSC_INTERRUPT_PRI_EXTENT	 = 0x4,
-	PSIF_EPSC_ATOMIC_CAP_EXTENT	 = 0x3,
-	PSIF_EPSC_CSR_STATUS_EXTENT	 = 0x100,
-	PSIF_EPSC_CSR_OPCODE_EXTENT	 = 0x4f,
-	PSIF_EPSC_CSR_FLAGS_EXTENT	 = 0x5,
-	PSIF_VLINK_STATE_EXTENT	 = 0x11,
-	PSIF_EPSC_CSR_MODIFY_DEVICE_FLAGS_EXTENT	 = 0x3,
-	PSIF_EPSC_CSR_MODIFY_PORT_FLAGS_EXTENT	 = 0x11,
-	PSIF_EPSC_CSR_EPSA_COMMAND_EXTENT	 = 0x4,
-	PSIF_EPSA_COMMAND_EXTENT	 = 0xb,
-	PSIF_EPSC_QUERY_OP_EXTENT	 = 0x4b,
-	PSIF_EPSC_CSR_UPDATE_OPCODE_EXTENT	 = 0x8,
-	PSIF_EPSC_FLASH_SLOT_EXTENT	 = 0x6,
-	PSIF_EPSC_UPDATE_SET_EXTENT	 = 0x5,
-	PSIF_EPSC_CSR_UF_CTRL_OPCODE_EXTENT	 = 0x9,
-	PSIF_EPSC_VIMMA_CTRL_OPCODE_EXTENT	 = 0x8,
-	PSIF_EPSC_VIMMA_ADMMODE_EXTENT	 = 0x2,
-	PSIF_EPSC_CSR_PMA_COUNTERS_ENUM_EXTENT	 = 0x17,
-	PSIF_EPSC_CSR_ATOMIC_OP_EXTENT	 = 0x4,
-	PSIF_CQ_STATE_EXTENT	 = 0x4,
-	PSIF_RSS_HASH_SOURCE_EXTENT	 = 0x2
+	PSIF_PORT_SPEED_EXTENT	 = 0x21u,
+	PSIF_EPSC_DEGRADE_CAUSE_EXTENT	 = 0x7u,
+	PSIF_MMU_TRANSLATION_EXTENT	 = 0x8u,
+	PSIF_PAGE_SIZE_EXTENT	 = 0xfu,
+	PSIF_WR_TYPE_EXTENT	 = 0x8fu,
+	PSIF_PORT_EXTENT	 = 0x2u,
+	PSIF_USE_AH_EXTENT	 = 0x2u,
+	PSIF_TSU_QOS_EXTENT	 = 0x2u,
+	PSIF_WC_OPCODE_EXTENT	 = 0x83u,
+	PSIF_WC_STATUS_EXTENT	 = 0x16u,
+	PSIF_TSL_QP_WR_EXTENT	 = 0x10u,
+	PSIF_TABLE_LEVEL_EXTENT	 = 0x6u,
+	IB_OPCODE_EXTENT	 = 0xcau,
+	PSIF_RB_TYPE_EXTENT	 = 0x7u,
+	PSIF_EPS_A_CORE_EXTENT	 = 0x4u,
+	PSIF_QP_STATE_EXTENT	 = 0x8u,
+	PSIF_CMPL_OUTSTANDING_ERROR_EXTENT	 = 0xau,
+	PSIF_EXPECTED_OP_EXTENT	 = 0x4u,
+	PSIF_MIGRATION_EXTENT	 = 0x4u,
+	PSIF_QP_TRANS_EXTENT	 = 0x8u,
+	PSIF_BOOL_EXTENT	 = 0x2u,
+	PSIF_EOIB_TYPE_EXTENT	 = 0x4u,
+	PSIF_COMM_LIVE_EXTENT	 = 0x2u,
+	PSIF_PATH_MTU_EXTENT	 = 0x8u,
+	PSIF_USE_GRH_EXTENT	 = 0x2u,
+	PSIF_LOOPBACK_EXTENT	 = 0x2u,
+	PSIF_PCIE_WR_OFFS_EXTENT	 = 0x1000u,
+	PSIF_QP_COMMAND_EXTENT	 = 0x4u,
+	PSIF_SIBS_MBOX_TYPE_EXTENT	 = 0x2u,
+	PSIF_MBOX_TYPE_EXTENT	 = 0x6u,
+	PSIF_DMA_VT_KEY_STATES_EXTENT	 = 0x4u,
+	PSIF_FLASH_IMAGE_TYPE_EXTENT	 = 0x5u,
+	PSIF_EVENT_EXTENT	 = 0x13u,
+	PSIF_TSU_ERROR_TYPES_EXTENT	 = 0x8cu,
+	PSIF_EPS_CORE_ID_EXTENT	 = 0x5u,
+	PSIF_EPSC_QUERY_PERSISTENT_EXTENT	 = 0x3u,
+	PSIF_EPSC_QUERY_NUM_VFS_MODE_EXTENT	 = 0x3u,
+	PSIF_EPSC_PORT_STATE_EXTENT	 = 0x6u,
+	PSIF_EPSC_PATH_MTU_EXTENT	 = 0x8u,
+	PSIF_EPSC_MONITOR_EXTENT	 = 0x5u,
+	PSIF_EPSC_LOG_MODE_EXTENT	 = 0x11u,
+	PSIF_EPSC_LOG_LEVEL_EXTENT	 = 0x8u,
+	PSIF_EPSC_INTERRUPT_SOURCE_EXTENT	 = 0x15u,
+	PSIF_EPSC_INTERRUPT_PRI_EXTENT	 = 0x4u,
+	PSIF_EPSC_ATOMIC_CAP_EXTENT	 = 0x3u,
+	PSIF_EPSC_CSR_STATUS_EXTENT	 = 0x100u,
+	PSIF_EPSC_CSR_OPCODE_EXTENT	 = 0x50u,
+	PSIF_EPSC_CSR_FLAGS_EXTENT	 = 0x5u,
+	PSIF_VLINK_STATE_EXTENT	 = 0x11u,
+	PSIF_EPSC_CSR_MODIFY_DEVICE_FLAGS_EXTENT	 = 0x3u,
+	PSIF_EPSC_CSR_MODIFY_PORT_FLAGS_EXTENT	 = 0x11u,
+	PSIF_EPSC_CSR_EPSA_COMMAND_EXTENT	 = 0x4u,
+	PSIF_EPSA_COMMAND_EXTENT	 = 0xcu,
+	PSIF_EPSC_QUERY_OP_EXTENT	 = 0x55u,
+	PSIF_EPSC_CSR_UPDATE_OPCODE_EXTENT	 = 0x8u,
+	PSIF_EPSC_FLASH_SLOT_EXTENT	 = 0x6u,
+	PSIF_EPSC_UPDATE_SET_EXTENT	 = 0x5u,
+	PSIF_EPSC_CSR_UF_CTRL_OPCODE_EXTENT	 = 0x9u,
+	PSIF_EPSC_VIMMA_CTRL_OPCODE_EXTENT	 = 0x8u,
+	PSIF_EPSC_VIMMA_ADMMODE_EXTENT	 = 0x2u,
+	PSIF_EPSC_CSR_PMA_COUNTERS_ENUM_EXTENT	 = 0x17u,
+	PSIF_EPSC_CSR_ATOMIC_OP_EXTENT	 = 0x4u,
+	PSIF_EPSC_CSR_BER_COUNTERS_ENUM_EXTENT	 = 0x5u,
+	PSIF_CQ_STATE_EXTENT	 = 0x4u,
+	PSIF_RSS_HASH_SOURCE_EXTENT	 = 0x2u
 }; /* enum psif_enum_extent [16 bits] */
+
+/*
+ * Should match definitions in ib_verbs.h
+ */
+enum psif_port_speed {
+	PSIF_SPEED_SDR	 = 0x1u,
+	PSIF_SPEED_DDR	 = 0x2u,
+	PSIF_SPEED_QDR	 = 0x4u,
+	PSIF_SPEED_FDR10	 = 0x8u,
+	PSIF_SPEED_FDR	 = 0x10u,
+	PSIF_SPEED_EDR	 = 0x20u,
+	/* Padding out to required bits allocated */
+	PSIF_PORT_SPEED_FIELD_MAX	 = 0xffu
+}; /* enum psif_port_speed [ 8 bits] */
+
+/** Bits describing the cause(s) for EPSC to have entered degraded mode
+ * \par Used in
+ *      response to `EPSC_QUERY_DEGRADED_MODE` and `psif_eq_entry::event_data`
+ * \par Classification
+ *      driver
+ */
+enum psif_epsc_degrade_cause {
+/**< degrade cause: no GUID programmed or not readable */
+
+	DEGRADE_CAUSE_FLAG_MISSING_GUID,
+/**< degrade cause: invalid function name in VPD */
+
+	DEGRADE_CAUSE_FLAG_VPD_INVALID_NAME,
+/**< degrade cause: HW not supported by FW */
+
+	DEGRADE_CAUSE_FLAG_HW_UNSUPPORTED,
+/**< degrade cause: failed MDIO access */
+
+	DEGRADE_CAUSE_FLAG_HW_MDIO_ERROR,
+/**< degrade cause: modify QP timeout */
+
+	DEGRADE_CAUSE_FLAG_MODIFY_QP_TIMEOUT,
+/**< degrade cause: Virtualization mode reconfigured, reset needed */
+
+	DEGRADE_CAUSE_FLAG_VIRTMODE_RECONF,
+/**< degrade cause: no credits for sending multicast packets */
+
+	DEGRADE_CAUSE_FLAG_MCAST_LACK_OF_CREDIT,
+	/* Padding out to required bits allocated */
+	PSIF_EPSC_DEGRADE_CAUSE_FIELD_MAX	 = 0x1fu
+}; /* enum psif_epsc_degrade_cause [ 5 bits] */
 
 /* MMU operation modes. */
 enum psif_mmu_translation {
-	MMU_PASS_THROUGH0,
+	MMU_PASS_THROUGH0	 = 0u,
 	MMU_PASS_THROUGH_PAD,
 	MMU_GVA2GPA_MODE,
 	MMU_GVA2GPA_MODE_PAD,
@@ -127,16 +178,16 @@ enum psif_mmu_translation {
  * sizes
  */
 enum psif_page_size {
-	PAGE_SIZE_IA32E_4KB	 = 0,
-	PAGE_SIZE_IA32E_2MB	 = 0x1,
-	PAGE_SIZE_IA32E_1GB	 = 0x2,
-	PAGE_SIZE_S64_8KB	 = 0x8,
-	PAGE_SIZE_S64_64KB	 = 0x9,
-	PAGE_SIZE_S64_512KB	 = 0xa,
-	PAGE_SIZE_S64_4MB	 = 0xb,
-	PAGE_SIZE_S64_32MB	 = 0xc,
-	PAGE_SIZE_S64_2GB	 = 0xd,
-	PAGE_SIZE_S64_16GB	 = 0xe
+	PAGE_SIZE_IA32E_4KB	 = 0u,
+	PAGE_SIZE_IA32E_2MB	 = 0x1u,
+	PAGE_SIZE_IA32E_1GB	 = 0x2u,
+	PAGE_SIZE_S64_8KB	 = 0x8u,
+	PAGE_SIZE_S64_64KB	 = 0x9u,
+	PAGE_SIZE_S64_512KB	 = 0xau,
+	PAGE_SIZE_S64_4MB	 = 0xbu,
+	PAGE_SIZE_S64_32MB	 = 0xcu,
+	PAGE_SIZE_S64_2GB	 = 0xdu,
+	PAGE_SIZE_S64_16GB	 = 0xeu
 }; /* enum psif_page_size [ 4 bits] */
 
 /*
@@ -147,7 +198,7 @@ enum psif_page_size {
  * must report the source of a WR to RQS.
  */
 enum psif_wr_type {
-	PSIF_WR_SEND,
+	PSIF_WR_SEND	 = 0u,
 	PSIF_WR_SEND_IMM,
 	PSIF_WR_SPECIAL_QP_SEND,
 	PSIF_WR_QP0_SEND_DR_XMIT,
@@ -163,7 +214,7 @@ enum psif_wr_type {
 	PSIF_WR_MASK_CMP_SWAP,
 	PSIF_WR_MASK_FETCH_ADD,
 	PSIF_WR_LSO,
-	PSIF_WR_INVALIDATE_RKEY	 = 0x80,
+	PSIF_WR_INVALIDATE_RKEY	 = 0x80u,
 	PSIF_WR_INVALIDATE_LKEY,
 	PSIF_WR_INVALIDATE_BOTH_KEYS,
 	PSIF_WR_INVALIDATE_TLB,
@@ -182,8 +233,8 @@ enum psif_wr_type {
 
 /* Port number the IB packet is transimitted on. */
 enum psif_port {
-	PORT_1	 = 0,
-	PORT_2	 = 0x1
+	PORT_1	 = 0u,
+	PORT_2	 = 0x1u
 }; /* enum psif_port [ 1 bits] */
 
 /*
@@ -191,8 +242,8 @@ enum psif_port {
  * information from the QP state in appropriate places.
  */
 enum psif_use_ah {
-	NO_AHA	 = 0,
-	USE_AHA	 = 0x1
+	NO_AHA	 = 0u,
+	USE_AHA	 = 0x1u
 }; /* enum psif_use_ah [ 1 bits] */
 
 /*
@@ -200,8 +251,8 @@ enum psif_use_ah {
  * QP.
  */
 enum psif_tsu_qos {
-	QOSL_HIGH_BANDWIDTH	 = 0,
-	QOSL_LOW_LATENCY	 = 0x1
+	QOSL_HIGH_BANDWIDTH	 = 0u,
+	QOSL_LOW_LATENCY	 = 0x1u
 }; /* enum psif_tsu_qos [ 1 bits] */
 
 /*
@@ -209,15 +260,15 @@ enum psif_tsu_qos {
  * entry is completed.
  */
 enum psif_wc_opcode {
-	PSIF_WC_OPCODE_SEND	 = 0,
-	PSIF_WC_OPCODE_RDMA_WR	 = 0x1,
-	PSIF_WC_OPCODE_RDMA_READ	 = 0x2,
-	PSIF_WC_OPCODE_CMP_SWAP	 = 0x3,
-	PSIF_WC_OPCODE_FETCH_ADD	 = 0x4,
-	PSIF_WC_OPCODE_LSO	 = 0x6,
-	PSIF_WC_OPCODE_MASKED_CMP_SWAP	 = 0x9,
+	PSIF_WC_OPCODE_SEND	 = 0u,
+	PSIF_WC_OPCODE_RDMA_WR	 = 0x1u,
+	PSIF_WC_OPCODE_RDMA_READ	 = 0x2u,
+	PSIF_WC_OPCODE_CMP_SWAP	 = 0x3u,
+	PSIF_WC_OPCODE_FETCH_ADD	 = 0x4u,
+	PSIF_WC_OPCODE_LSO	 = 0x6u,
+	PSIF_WC_OPCODE_MASKED_CMP_SWAP	 = 0x9u,
 	PSIF_WC_OPCODE_MASKED_FETCH_ADD,
-	PSIF_WC_OPCODE_INVALIDATE_RKEY	 = 0x40,
+	PSIF_WC_OPCODE_INVALIDATE_RKEY	 = 0x40u,
 	PSIF_WC_OPCODE_INVALIDATE_LKEY,
 	PSIF_WC_OPCODE_INVALIDATE_BOTH_KEYS,
 	PSIF_WC_OPCODE_INVALIDATE_TLB,
@@ -233,14 +284,14 @@ enum psif_wc_opcode {
 	PSIF_WC_OPCODE_INVALIDATE_RB,
 	PSIF_WC_OPCODE_INVALIDATE_XRCSRQ,
 	PSIF_WC_OPCODE_INVALIDATE_SGL_CACHE,
-	PSIF_WC_OPCODE_RECEIVE_SEND	 = 0x80,
+	PSIF_WC_OPCODE_RECEIVE_SEND	 = 0x80u,
 	PSIF_WC_OPCODE_RECEIVE_RDMA_WR_IMM,
 	PSIF_WC_OPCODE_RECEIVE_CONDITIONAL_WR_IMM
 }; /* enum psif_wc_opcode [ 8 bits] */
 
 /* Completion status for this completion. */
 enum psif_wc_status {
-	PSIF_WC_STATUS_SUCCESS,
+	PSIF_WC_STATUS_SUCCESS	 = 0u,
 	PSIF_WC_STATUS_LOC_LEN_ERR,
 	PSIF_WC_STATUS_LOC_QP_OP_ERR,
 	PSIF_WC_STATUS_LOC_EEC_OP_ERR,
@@ -263,20 +314,20 @@ enum psif_wc_status {
 	PSIF_WC_STATUS_RESP_TIMEOUT_ERR,
 	PSIF_WC_STATUS_GENERAL_ERR,
 	/* Padding out to required bits allocated */
-	PSIF_WC_STATUS_FIELD_MAX	 = 0xff
+	PSIF_WC_STATUS_FIELD_MAX	 = 0xffu
 }; /* enum psif_wc_status [ 8 bits] */
 
 /* TSU Service level required in the QP and WR */
 enum psif_tsl_qp_wr {
 	/* Dataplane traffic separated in 4 TSLs */
-	TSL_DATA,
+	TSL_DATA	 = 0u,
 	TSL_DATA_1,
 	TSL_DATA_2,
 	TSL_DATA_3,
 	/* TSL for privelidge QP */
-	TSL_PRIV	 = 0xe,
+	TSL_PRIV	 = 0xeu,
 	/* Strapped down TSL for testing */
-	TSL_JUNK	 = 0xf
+	TSL_JUNK	 = 0xfu
 }; /* enum psif_tsl_qp_wr [ 4 bits] */
 
 /* MMU table level definition
@@ -285,7 +336,7 @@ enum psif_tsl_qp_wr {
  */
 enum psif_table_level {
 	/* */
-	PAGE_LEVEL0	 = 0,
+	PAGE_LEVEL0	 = 0u,
 	PAGE_LEVEL1,
 	PAGE_LEVEL2,
 	PAGE_LEVEL3,
@@ -296,105 +347,105 @@ enum psif_table_level {
 
 
 enum ib_opcode {
-	RC_SEND_First	 = 0,
-	RC_SEND_Middle	 = 0x1,
-	RC_SEND_Last	 = 0x2,
-	RC_SEND_Last_Imm	 = 0x3,
-	RC_SEND_Only	 = 0x4,
-	RC_SEND_Only_Imm	 = 0x5,
-	RC_RDMA_WR_First	 = 0x6,
-	RC_RDMA_WR_Middle	 = 0x7,
-	RC_RDMA_WR_Last	 = 0x8,
-	RC_RDMA_WR_Last_Imm	 = 0x9,
-	RC_RDMA_WR_Only	 = 0xa,
-	RC_RDMA_WR_Only_Imm	 = 0xb,
-	RC_RDMA_RD_Req	 = 0xc,
-	RC_RDMA_RD_Resp_First	 = 0xd,
-	RC_RDMA_RD_Resp_Middle	 = 0xe,
-	RC_RDMA_RD_Resp_Last	 = 0xf,
-	RC_RDMA_RD_Resp_Only	 = 0x10,
-	RC_ACK	 = 0x11,
-	RC_Atomic_ACK	 = 0x12,
-	RC_CmpSwap	 = 0x13,
-	RC_FetchAdd	 = 0x14,
-	RC_Reserved	 = 0x15,
-	RC_SEND_Last_Invalid	 = 0x16,
-	RC_SEND_Only_Invalid	 = 0x17,
-	RC_MaskCmpSwap	 = 0x18,
-	RC_MaskFetchAdd	 = 0x19,
-	UC_SEND_First	 = 0x20,
-	UC_SEND_Middle	 = 0x21,
-	UC_SEND_Last	 = 0x22,
-	UC_SEND_Last_Imm	 = 0x23,
-	UC_SEND_Only	 = 0x24,
-	UC_SEND_Only_Imm	 = 0x25,
-	UC_RDMA_WR_First	 = 0x26,
-	UC_RDMA_WR_Middle	 = 0x27,
-	UC_RDMA_WR_Last	 = 0x28,
-	UC_RDMA_WR_Last_Imm	 = 0x29,
-	UC_RDMA_WR_Only	 = 0x2a,
-	UC_RDMA_WR_Only_Imm	 = 0x2b,
-	RD_SEND_First	 = 0x40,
-	RD_SEND_Middle	 = 0x41,
-	RD_SEND_Last	 = 0x42,
-	RD_SEND_Last_Imm	 = 0x43,
-	RD_SEND_Only	 = 0x44,
-	RD_SEND_Only_Imm	 = 0x45,
-	RD_RDMA_WR_First	 = 0x46,
-	RD_RDMA_WR_Middle	 = 0x47,
-	RD_RDMA_WR_Last	 = 0x48,
-	RD_RDMA_WR_Last_Imm	 = 0x49,
-	RD_RDMA_WR_Only	 = 0x4a,
-	RD_RDMA_WR_Only_Imm	 = 0x4b,
-	RD_RDMA_RD_Req	 = 0x4c,
-	RD_RDMA_RD_Resp_First	 = 0x4d,
-	RD_RDMA_RD_Resp_Middle	 = 0x4e,
-	RD_RDMA_RD_Resp_Last	 = 0x4f,
-	RD_RDMA_RD_Resp_Only	 = 0x50,
-	RD_ACK	 = 0x51,
-	RD_Atomic_ACK	 = 0x52,
-	RD_CmpSwap	 = 0x53,
-	RD_FetchAdd	 = 0x54,
-	RD_RESYNC	 = 0x55,
-	UD_SEND_Only	 = 0x64,
-	UD_SEND_Only_Imm	 = 0x65,
-	CNP	 = 0x80,
-	XRC_SEND_First	 = 0xa0,
-	XRC_SEND_Middle	 = 0xa1,
-	XRC_SEND_Last	 = 0xa2,
-	XRC_SEND_Last_Imm	 = 0xa3,
-	XRC_SEND_Only	 = 0xa4,
-	XRC_SEND_Only_Imm	 = 0xa5,
-	XRC_RDMA_WR_First	 = 0xa6,
-	XRC_RDMA_WR_Middle	 = 0xa7,
-	XRC_RDMA_WR_Last	 = 0xa8,
-	XRC_RDMA_WR_Last_Imm	 = 0xa9,
-	XRC_RDMA_WR_Only	 = 0xaa,
-	XRC_RDMA_WR_Only_Imm	 = 0xab,
-	XRC_RDMA_RD_Req	 = 0xac,
-	XRC_RDMA_RD_Resp_First	 = 0xad,
-	XRC_RDMA_RD_Resp_Middle	 = 0xae,
-	XRC_RDMA_RD_Resp_Last	 = 0xaf,
-	XRC_RDMA_RD_Resp_Only	 = 0xb0,
-	XRC_ACK	 = 0xb1,
-	XRC_Atomic_ACK	 = 0xb2,
-	XRC_CmpSwap	 = 0xb3,
-	XRC_FetchAdd	 = 0xb4,
-	XRC_Reserved	 = 0xb5,
-	XRC_SEND_Last_Invalid	 = 0xb6,
-	XRC_SEND_Only_Invalid	 = 0xb7,
-	XRC_MaskCmpSwap	 = 0xb8,
-	XRC_MaskFetchAdd	 = 0xb9,
-	MANSP1_INVALID	 = 0xc0,
-	MANSP1_HOST_READ	 = 0xc1,
-	MANSP1_HOST_WRITE	 = 0xc2,
-	MANSP1_HOST_READ_NO_DMAVT	 = 0xc3,
-	MANSP1_HOST_WRITE_NO_DMAVT	 = 0xc4,
-	MANSP1_INTERNAL_TYPE	 = 0xc5,
-	MANSP1_INTERNAL_TYPE_MMU_BYPASS	 = 0xc6,
-	MANSP1_HOST_CMP_SWAP	 = 0xc7,
-	MANSP1_DR_LOOPBACK	 = 0xc8,
-	MANSP1_ARP_LOOPBACK	 = 0xc9
+	RC_SEND_First	 = 0u,
+	RC_SEND_Middle	 = 0x1u,
+	RC_SEND_Last	 = 0x2u,
+	RC_SEND_Last_Imm	 = 0x3u,
+	RC_SEND_Only	 = 0x4u,
+	RC_SEND_Only_Imm	 = 0x5u,
+	RC_RDMA_WR_First	 = 0x6u,
+	RC_RDMA_WR_Middle	 = 0x7u,
+	RC_RDMA_WR_Last	 = 0x8u,
+	RC_RDMA_WR_Last_Imm	 = 0x9u,
+	RC_RDMA_WR_Only	 = 0xau,
+	RC_RDMA_WR_Only_Imm	 = 0xbu,
+	RC_RDMA_RD_Req	 = 0xcu,
+	RC_RDMA_RD_Resp_First	 = 0xdu,
+	RC_RDMA_RD_Resp_Middle	 = 0xeu,
+	RC_RDMA_RD_Resp_Last	 = 0xfu,
+	RC_RDMA_RD_Resp_Only	 = 0x10u,
+	RC_ACK	 = 0x11u,
+	RC_Atomic_ACK	 = 0x12u,
+	RC_CmpSwap	 = 0x13u,
+	RC_FetchAdd	 = 0x14u,
+	RC_Reserved	 = 0x15u,
+	RC_SEND_Last_Invalid	 = 0x16u,
+	RC_SEND_Only_Invalid	 = 0x17u,
+	RC_MaskCmpSwap	 = 0x18u,
+	RC_MaskFetchAdd	 = 0x19u,
+	UC_SEND_First	 = 0x20u,
+	UC_SEND_Middle	 = 0x21u,
+	UC_SEND_Last	 = 0x22u,
+	UC_SEND_Last_Imm	 = 0x23u,
+	UC_SEND_Only	 = 0x24u,
+	UC_SEND_Only_Imm	 = 0x25u,
+	UC_RDMA_WR_First	 = 0x26u,
+	UC_RDMA_WR_Middle	 = 0x27u,
+	UC_RDMA_WR_Last	 = 0x28u,
+	UC_RDMA_WR_Last_Imm	 = 0x29u,
+	UC_RDMA_WR_Only	 = 0x2au,
+	UC_RDMA_WR_Only_Imm	 = 0x2bu,
+	RD_SEND_First	 = 0x40u,
+	RD_SEND_Middle	 = 0x41u,
+	RD_SEND_Last	 = 0x42u,
+	RD_SEND_Last_Imm	 = 0x43u,
+	RD_SEND_Only	 = 0x44u,
+	RD_SEND_Only_Imm	 = 0x45u,
+	RD_RDMA_WR_First	 = 0x46u,
+	RD_RDMA_WR_Middle	 = 0x47u,
+	RD_RDMA_WR_Last	 = 0x48u,
+	RD_RDMA_WR_Last_Imm	 = 0x49u,
+	RD_RDMA_WR_Only	 = 0x4au,
+	RD_RDMA_WR_Only_Imm	 = 0x4bu,
+	RD_RDMA_RD_Req	 = 0x4cu,
+	RD_RDMA_RD_Resp_First	 = 0x4du,
+	RD_RDMA_RD_Resp_Middle	 = 0x4eu,
+	RD_RDMA_RD_Resp_Last	 = 0x4fu,
+	RD_RDMA_RD_Resp_Only	 = 0x50u,
+	RD_ACK	 = 0x51u,
+	RD_Atomic_ACK	 = 0x52u,
+	RD_CmpSwap	 = 0x53u,
+	RD_FetchAdd	 = 0x54u,
+	RD_RESYNC	 = 0x55u,
+	UD_SEND_Only	 = 0x64u,
+	UD_SEND_Only_Imm	 = 0x65u,
+	CNP	 = 0x80u,
+	XRC_SEND_First	 = 0xa0u,
+	XRC_SEND_Middle	 = 0xa1u,
+	XRC_SEND_Last	 = 0xa2u,
+	XRC_SEND_Last_Imm	 = 0xa3u,
+	XRC_SEND_Only	 = 0xa4u,
+	XRC_SEND_Only_Imm	 = 0xa5u,
+	XRC_RDMA_WR_First	 = 0xa6u,
+	XRC_RDMA_WR_Middle	 = 0xa7u,
+	XRC_RDMA_WR_Last	 = 0xa8u,
+	XRC_RDMA_WR_Last_Imm	 = 0xa9u,
+	XRC_RDMA_WR_Only	 = 0xaau,
+	XRC_RDMA_WR_Only_Imm	 = 0xabu,
+	XRC_RDMA_RD_Req	 = 0xacu,
+	XRC_RDMA_RD_Resp_First	 = 0xadu,
+	XRC_RDMA_RD_Resp_Middle	 = 0xaeu,
+	XRC_RDMA_RD_Resp_Last	 = 0xafu,
+	XRC_RDMA_RD_Resp_Only	 = 0xb0u,
+	XRC_ACK	 = 0xb1u,
+	XRC_Atomic_ACK	 = 0xb2u,
+	XRC_CmpSwap	 = 0xb3u,
+	XRC_FetchAdd	 = 0xb4u,
+	XRC_Reserved	 = 0xb5u,
+	XRC_SEND_Last_Invalid	 = 0xb6u,
+	XRC_SEND_Only_Invalid	 = 0xb7u,
+	XRC_MaskCmpSwap	 = 0xb8u,
+	XRC_MaskFetchAdd	 = 0xb9u,
+	MANSP1_INVALID	 = 0xc0u,
+	MANSP1_HOST_READ	 = 0xc1u,
+	MANSP1_HOST_WRITE	 = 0xc2u,
+	MANSP1_HOST_READ_NO_DMAVT	 = 0xc3u,
+	MANSP1_HOST_WRITE_NO_DMAVT	 = 0xc4u,
+	MANSP1_INTERNAL_TYPE	 = 0xc5u,
+	MANSP1_INTERNAL_TYPE_MMU_BYPASS	 = 0xc6u,
+	MANSP1_HOST_CMP_SWAP	 = 0xc7u,
+	MANSP1_DR_LOOPBACK	 = 0xc8u,
+	MANSP1_ARP_LOOPBACK	 = 0xc9u
 }; /* enum ib_opcode [ 8 bits] */
 
 /*
@@ -402,7 +453,7 @@ enum ib_opcode {
  * represents.
  */
 enum psif_rb_type {
-	PSIF_RB_TYPE_INVALID,
+	PSIF_RB_TYPE_INVALID	 = 0u,
 	PSIF_RB_TYPE_DM_PUT,
 	PSIF_RB_TYPE_DM_GET_RESP,
 	PSIF_RB_TYPE_RCV_PROXY_COMPLETION,
@@ -416,7 +467,7 @@ enum psif_rb_type {
  * PSIF_EPS_A_4
  */
 enum psif_eps_a_core {
-	PSIF_EPS_A_1,
+	PSIF_EPS_A_1	 = 0u,
 	PSIF_EPS_A_2,
 	PSIF_EPS_A_3,
 	PSIF_EPS_A_4
@@ -424,13 +475,13 @@ enum psif_eps_a_core {
 
 /* This is the state this QP is in. */
 enum psif_qp_state {
-	PSIF_QP_STATE_RESET	 = 0,
-	PSIF_QP_STATE_INIT	 = 0x1,
-	PSIF_QP_STATE_RTR	 = 0x2,
-	PSIF_QP_STATE_RTS	 = 0x3,
-	PSIF_QP_STATE_SQERR	 = 0x5,
-	PSIF_QP_STATE_ERROR	 = 0x6,
-	PSIF_QP_STATE_INVALID	 = 0x7
+	PSIF_QP_STATE_RESET	 = 0u,
+	PSIF_QP_STATE_INIT	 = 0x1u,
+	PSIF_QP_STATE_RTR	 = 0x2u,
+	PSIF_QP_STATE_RTS	 = 0x3u,
+	PSIF_QP_STATE_SQERR	 = 0x5u,
+	PSIF_QP_STATE_ERROR	 = 0x6u,
+	PSIF_QP_STATE_INVALID	 = 0x7u
 }; /* enum psif_qp_state [ 3 bits] */
 
 /*
@@ -458,10 +509,10 @@ enum psif_cmpl_outstanding_error {
  * last
  */
 enum psif_expected_op {
-	NO_OPERATION_IN_PROGRESS	 = 0,
-	EXPECT_SEND_MIDDLE_LAST	 = 0x1,
-	EXPECT_RDMA_WR_MIDDLE_LAST	 = 0x2,
-	EXPECT_DM_PUT_MIDDLE_LAST	 = 0x3
+	NO_OPERATION_IN_PROGRESS	 = 0u,
+	EXPECT_SEND_MIDDLE_LAST	 = 0x1u,
+	EXPECT_RDMA_WR_MIDDLE_LAST	 = 0x2u,
+	EXPECT_DM_PUT_MIDDLE_LAST	 = 0x3u
 }; /* enum psif_expected_op [ 2 bits] */
 
 /*
@@ -469,7 +520,7 @@ enum psif_expected_op {
  * states.
  */
 enum psif_migration {
-	APM_OFF,
+	APM_OFF	 = 0u,
 	APM_MIGRATED,
 	APM_REARM,
 	APM_ARMED
@@ -483,20 +534,20 @@ enum psif_migration {
  * specific opcodes.
  */
 enum psif_qp_trans {
-	PSIF_QP_TRANSPORT_RC	 = 0,
-	PSIF_QP_TRANSPORT_UC	 = 0x1,
-	PSIF_QP_TRANSPORT_RD	 = 0x2,
-	PSIF_QP_TRANSPORT_UD	 = 0x3,
-	PSIF_QP_TRANSPORT_RSVD1	 = 0x4,
-	PSIF_QP_TRANSPORT_XRC	 = 0x5,
-	PSIF_QP_TRANSPORT_MANSP1	 = 0x6,
-	PSIF_QP_TRANSPORT_MANSP2	 = 0x7
+	PSIF_QP_TRANSPORT_RC	 = 0u,
+	PSIF_QP_TRANSPORT_UC	 = 0x1u,
+	PSIF_QP_TRANSPORT_RD	 = 0x2u,
+	PSIF_QP_TRANSPORT_UD	 = 0x3u,
+	PSIF_QP_TRANSPORT_RSVD1	 = 0x4u,
+	PSIF_QP_TRANSPORT_XRC	 = 0x5u,
+	PSIF_QP_TRANSPORT_MANSP1	 = 0x6u,
+	PSIF_QP_TRANSPORT_MANSP2	 = 0x7u
 }; /* enum psif_qp_trans [ 3 bits] */
 
 
 enum psif_bool {
-	FALSE	 = 0,
-	TRUE	 = 0x1
+	FALSE	 = 0u,
+	TRUE	 = 0x1u
 }; /* enum psif_bool [ 1 bits] */
 
 /*
@@ -504,7 +555,7 @@ enum psif_bool {
  * EOIB_PARTIAL, EOIB_QKEY_ONLY, EOIB_NONE.
  */
 enum psif_eoib_type {
-	EOIB_FULL,
+	EOIB_FULL	 = 0u,
 	EOIB_PARTIAL,
 	EOIB_QKEY_ONLY,
 	EOIB_NONE
@@ -515,63 +566,49 @@ enum psif_eoib_type {
  * error free when in RTR state.
  */
 enum psif_comm_live {
-	NO_COMM_ESTABLISHED	 = 0,
-	COMM_ESTABLISHED	 = 0x1
+	NO_COMM_ESTABLISHED	 = 0u,
+	COMM_ESTABLISHED	 = 0x1u
 }; /* enum psif_comm_live [ 1 bits] */
 
 /* Definitions for the different supported MTU sizes. */
 enum psif_path_mtu {
-	MTU_INVALID	 = 0,
-	MTU_256B	 = 0x1,
-	MTU_512B	 = 0x2,
-	MTU_1024B	 = 0x3,
-	MTU_2048B	 = 0x4,
-	MTU_4096B	 = 0x5,
-	MTU_10240B	 = 0x6,
-	MTU_XXX	 = 0x7
+	MTU_INVALID	 = 0u,
+	MTU_256B	 = 0x1u,
+	MTU_512B	 = 0x2u,
+	MTU_1024B	 = 0x3u,
+	MTU_2048B	 = 0x4u,
+	MTU_4096B	 = 0x5u,
+	MTU_10240B	 = 0x6u,
+	MTU_XXX	 = 0x7u
 }; /* enum psif_path_mtu [ 3 bits] */
 
 /* Enumeration for using GRH or not. When set GRH should be used. */
 enum psif_use_grh {
-	NO_GRH	 = 0,
-	USE_GRH	 = 0x1
+	NO_GRH	 = 0u,
+	USE_GRH	 = 0x1u
 }; /* enum psif_use_grh [ 1 bits] */
 
 /* Enumeration for loopback indication NO_LOOPBACK = 0 LOOPBACK = 1. */
 enum psif_loopback {
-	NO_LOOPBACK	 = 0,
-	LOOPBACK	 = 0x1
+	NO_LOOPBACK	 = 0u,
+	LOOPBACK	 = 0x1u
 }; /* enum psif_loopback [ 1 bits] */
-
-/*
- * Should match definitions in ib_verbs.h
- */
-enum psif_port_speed {
-	PSIF_SPEED_SDR	 = 0x1,
-	PSIF_SPEED_DDR	 = 0x2,
-	PSIF_SPEED_QDR	 = 0x4,
-	PSIF_SPEED_FDR10	 = 0x8,
-	PSIF_SPEED_FDR	 = 0x10,
-	PSIF_SPEED_EDR	 = 0x20,
-	/* Padding out to required bits allocated */
-	PSIF_PORT_SPEED_FIELD_MAX	 = 0xff
-}; /* enum psif_port_speed [ 8 bits] */
 
 /* Depricated data type... */
 enum psif_pcie_wr_offs {
-	WR_CB_START_OFFS	 = 0,
-	WR_CB_LAST_OFFS	 = 0x140,
-	WR_SQS_DOORBELL_OFFS	 = 0xfc0,
-	WR_CB_CLEAR_OFFS	 = 0xff8,
-	WR_MAX_BAR_OFFS	 = 0xfff
+	WR_CB_START_OFFS	 = 0u,
+	WR_CB_LAST_OFFS	 = 0x140u,
+	WR_SQS_DOORBELL_OFFS	 = 0xfc0u,
+	WR_CB_CLEAR_OFFS	 = 0xff8u,
+	WR_MAX_BAR_OFFS	 = 0xfffu
 }; /* enum psif_pcie_wr_offs [12 bits] */
 
 /* Commands used for modify/query QP. */
 enum psif_qp_command {
-	QP_CMD_INVALID	 = 0,
-	QP_CMD_MODIFY	 = 0x1,
-	QP_CMD_QUERY	 = 0x2,
-	QP_CMD_CHECK_TIMEOUT	 = 0x3
+	QP_CMD_INVALID	 = 0u,
+	QP_CMD_MODIFY	 = 0x1u,
+	QP_CMD_QUERY	 = 0x2u,
+	QP_CMD_CHECK_TIMEOUT	 = 0x3u
 }; /* enum psif_qp_command [ 2 bits] */
 
 
@@ -579,7 +616,7 @@ enum psif_sibs_mbox_type {
 	SIBS_MBOX_EPSC,
 	SIBS_MBOX_EPS_MAX,
 	/* Padding out to required bits allocated */
-	PSIF_SIBS_MBOX_TYPE_FIELD_MAX	 = 0xff
+	PSIF_SIBS_MBOX_TYPE_FIELD_MAX	 = 0xffu
 }; /* enum psif_sibs_mbox_type [ 8 bits] */
 
 
@@ -591,7 +628,7 @@ enum psif_mbox_type {
 	MBOX_EPSC,
 	MBOX_EPS_MAX,
 	/* Padding out to required bits allocated */
-	PSIF_MBOX_TYPE_FIELD_MAX	 = 0xff
+	PSIF_MBOX_TYPE_FIELD_MAX	 = 0xffu
 }; /* enum psif_mbox_type [ 8 bits] */
 
 /*
@@ -599,23 +636,23 @@ enum psif_mbox_type {
  * PSIF_DMA_KEY_FREE = 1 PSIF_DMA_KEY_VALID = 2 PSIF_DMA_KEY_MMU_VALID
  */
 enum psif_dma_vt_key_states {
-	PSIF_DMA_KEY_INVALID	 = 0,
-	PSIF_DMA_KEY_FREE	 = 0x1,
-	PSIF_DMA_KEY_VALID	 = 0x2,
-	PSIF_DMA_KEY_MMU_VALID	 = 0x3
+	PSIF_DMA_KEY_INVALID	 = 0u,
+	PSIF_DMA_KEY_FREE	 = 0x1u,
+	PSIF_DMA_KEY_VALID	 = 0x2u,
+	PSIF_DMA_KEY_MMU_VALID	 = 0x3u
 }; /* enum psif_dma_vt_key_states [ 2 bits] */
 
 /**
  * Flash image types. More comming...
  */
 enum psif_flash_image_type {
-	PSIF_IMAGE_INVALID	 = 0,
-	PSIF_IMAGE_BOOT_LOADER	 = 0x1,
-	PSIF_IMAGE_EPS_C_APPLICATION	 = 0x2,
-	PSIF_IMAGE_EPS_A_APPLICATION	 = 0x3,
-	PSIF_IMAGE_DIAGNOSTICS	 = 0x4,
+	PSIF_IMAGE_INVALID	 = 0u,
+	PSIF_IMAGE_BOOT_LOADER	 = 0x1u,
+	PSIF_IMAGE_EPS_C_APPLICATION	 = 0x2u,
+	PSIF_IMAGE_EPS_A_APPLICATION	 = 0x3u,
+	PSIF_IMAGE_DIAGNOSTICS	 = 0x4u,
 	/* Padding out to required bits allocated */
-	PSIF_FLASH_IMAGE_TYPE_FIELD_MAX	 = 0x7fffffff
+	PSIF_FLASH_IMAGE_TYPE_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_flash_image_type [32 bits] */
 
 /** \brief SW EQ event type
@@ -637,7 +674,7 @@ enum psif_flash_image_type {
  */
 enum psif_event {
 	/** Event without a reason... */
-	PSIF_EVENT_NO_CHANGE	 = 0,
+	PSIF_EVENT_NO_CHANGE	 = 0u,
 	/** GID table have been updated */
 	PSIF_EVENT_SGID_TABLE_CHANGED,
 	/** PKEY table have been updated by the SM */
@@ -670,8 +707,12 @@ enum psif_event {
 	PSIF_EVENT_QUEUE_FULL,
 	/** FW entered degraded mode */
 	PSIF_EVENT_DEGRADED_MODE,
+	/** Request a keep-alive message */
+	PSIF_EVENT_EPSC_KEEP_ALIVE,
+	/** FW finished flushing MMU */
+	PSIF_EVENT_EPSC_MMU_FLUSH_DONE,
 	/* Padding out to required bits allocated */
-	PSIF_EVENT_FIELD_MAX	 = 0x7fffffff
+	PSIF_EVENT_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_event [32 bits] */
 
 /*
@@ -733,7 +774,7 @@ enum psif_event {
  * TSU_CMPL_TIMEOUT_ERR TSU_CMPL_IMPLIED_NAK TSU_CMPL_GHOST_RESP_ERR
  */
 enum psif_tsu_error_types {
-	TSU_NO_ERROR	 = 0,
+	TSU_NO_ERROR	 = 0u,
 	TSU_IBPR_ICRC_ERR,
 	TSU_IBPR_INVALID_PKEY_ERR,
 	TSU_IBPR_INVALID_QP_ERR,
@@ -880,50 +921,50 @@ enum psif_tsu_error_types {
  * PSIF_EVENT_EPS_A_3 PSIF_EVENT_EPS_A_4 PSIF_EVENT_EPS_C
  */
 enum psif_eps_core_id {
-	PSIF_EVENT_CORE_EPS_A_1,
+	PSIF_EVENT_CORE_EPS_A_1	 = 0u,
 	PSIF_EVENT_CORE_EPS_A_2,
 	PSIF_EVENT_CORE_EPS_A_3,
 	PSIF_EVENT_CORE_EPS_A_4,
 	PSIF_EVENT_CORE_EPS_C,
 	/* Padding out to required bits allocated */
-	PSIF_EPS_CORE_ID_FIELD_MAX	 = 0xf
+	PSIF_EPS_CORE_ID_FIELD_MAX	 = 0xfu
 }; /* enum psif_eps_core_id [ 4 bits] */
 
-
-enum psif_epsc_log_mode {
-/* Logging completely disabled */
-
-	EPSC_LOG_MODE_OFF	 = 0,
-/* See epsfw/src/include/logging.h */
-
-	EPSC_LOG_MODE_SCAT	 = 0x1,
-	EPSC_LOG_MODE_MALLOC	 = 0x2,
-	EPSC_LOG_MODE_LOCAL	 = 0x3,
-/* Redirect logging to host (dma) */
-
-	EPSC_LOG_MODE_HOST	 = 0x4,
-/* Save the set log mode in the flash */
-
-	EPSC_LOG_MODE_SAVE	 = 0x10,
+/**
+ * \brief Discriminator for PSIF_QUERY of persistent values
+ * \details
+ * \par Width
+ *      32 bit
+ * \par Used in
+ * the parameter for the PSIF_QUERY sub-operation EPSC_QUERY_NUM_VFS and EPS_QUERY_JUMBO - set in the index field
+ * \par Classification
+ *      driver
+ */
+enum psif_epsc_query_persistent {
+	EPSC_QUERY_PERSISTENT_STORED,
+	EPSC_QUERY_PERSISTENT_ACTIVE,
+	EPSC_QUERY_PERSISTENT_HW_CAP,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_LOG_MODE_FIELD_MAX	 = 0x7fffffff
-}; /* enum psif_epsc_log_mode [32 bits] */
+	PSIF_EPSC_QUERY_PERSISTENT_FIELD_MAX	 = 0x7fffffffu
+}; /* enum psif_epsc_query_persistent [32 bits] */
 
 /**
- * EPSC_LOG_CTRL
+ * \brief Discriminator for the PSIF_QUER sub-operation EPSC_QUERY_NUM_VFS - obsolete interface
+ * \details
+ * \par Width
+ *      32 bit
+ * \par Used in
+ * the parameter for the PSIF_QUERY sub-operation EPSC_QUERY_NUM_VFS - set in the index field
+ * \par Classification
+ *      driver
  */
-enum psif_epsc_log_level {
-	EPS_LOG_OFF	 = 0,
-	EPS_LOG_FATAL	 = 0x1,
-	EPS_LOG_ERROR	 = 0x2,
-	EPS_LOG_WARN	 = 0x3,
-	EPS_LOG_INFO	 = 0x4,
-	EPS_LOG_DEBUG	 = 0x5,
-	EPS_LOG_TRACE	 = 0x6,
-	EPS_LOG_ALL	 = 0x7,
+enum psif_epsc_query_num_vfs_mode {
+	EPSC_QUERY_NUM_VFS_MODE_PERSISTENT,
+	EPSC_QUERY_NUM_VFS_MODE_CURRENT,
+	EPSC_QUERY_NUM_VFS_MODE_HW_CAP,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_LOG_LEVEL_FIELD_MAX	 = 0x7fffffff
-}; /* enum psif_epsc_log_level [32 bits] */
+	PSIF_EPSC_QUERY_NUM_VFS_MODE_FIELD_MAX	 = 0x7fffffffu
+}; /* enum psif_epsc_query_num_vfs_mode [32 bits] */
 
 /**
  * \brief Port state
@@ -946,19 +987,19 @@ enum psif_epsc_log_level {
  */
 enum psif_epsc_port_state {
 	/** No change */
-	EPSC_PORT_NOP	 = 0,
+	EPSC_PORT_NOP	 = 0u,
 	/** The port is down. */
-	EPSC_PORT_DOWN	 = 0x1,
+	EPSC_PORT_DOWN	 = 0x1u,
 	/** The port is in init state. */
-	EPSC_PORT_INIT	 = 0x2,
+	EPSC_PORT_INIT	 = 0x2u,
 	/** The port state is armed. */
-	EPSC_PORT_ARMED	 = 0x3,
+	EPSC_PORT_ARMED	 = 0x3u,
 	/** The port is active. */
-	EPSC_PORT_ACTIVE	 = 0x4,
+	EPSC_PORT_ACTIVE	 = 0x4u,
 	/** The port is in deferred active state. */
-	EPSC_PORT_ACTIVE_DEFER	 = 0x5,
+	EPSC_PORT_ACTIVE_DEFER	 = 0x5u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_PORT_STATE_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_PORT_STATE_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_port_state [32 bits] */
 
 /**
@@ -980,23 +1021,23 @@ enum psif_epsc_port_state {
  */
 enum psif_epsc_path_mtu {
 	/** Not a valid MTU. */
-	EPSC_MTU_INVALID	 = 0,
+	EPSC_MTU_INVALID	 = 0u,
 	/** The MTU is 256 bytes. */
-	EPSC_MTU_256B	 = 0x1,
+	EPSC_MTU_256B	 = 0x1u,
 	/** The MTU is 512 bytes. */
-	EPSC_MTU_512B	 = 0x2,
+	EPSC_MTU_512B	 = 0x2u,
 	/** The MTU is 1024 bytes. */
-	EPSC_MTU_1024B	 = 0x3,
+	EPSC_MTU_1024B	 = 0x3u,
 	/** The MTU is 2048 bytes. */
-	EPSC_MTU_2048B	 = 0x4,
+	EPSC_MTU_2048B	 = 0x4u,
 	/** The MTU is 4069 bytes. */
-	EPSC_MTU_4096B	 = 0x5,
+	EPSC_MTU_4096B	 = 0x5u,
 	/** The MTU is 10240 bytes. */
-	EPSC_MTU_10240B	 = 0x6,
+	EPSC_MTU_10240B	 = 0x6u,
 	/** Not a specific MTU. */
-	EPSC_MTU_XXX	 = 0x7,
+	EPSC_MTU_XXX	 = 0x7u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_PATH_MTU_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_PATH_MTU_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_path_mtu [32 bits] */
 
 /**
@@ -1021,8 +1062,44 @@ enum psif_epsc_monitor {
 	PSIF_MONITOR_INACTIVE,
 	PSIF_MONITOR_ERROR,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_MONITOR_FIELD_MAX	 = 0xf
+	PSIF_EPSC_MONITOR_FIELD_MAX	 = 0xfu
 }; /* enum psif_epsc_monitor [ 4 bits] */
+
+
+enum psif_epsc_log_mode {
+/* Logging completely disabled */
+
+	EPSC_LOG_MODE_OFF	 = 0u,
+/* See epsfw/src/include/logging.h */
+
+	EPSC_LOG_MODE_SCAT	 = 0x1u,
+	EPSC_LOG_MODE_MALLOC	 = 0x2u,
+	EPSC_LOG_MODE_LOCAL	 = 0x3u,
+/* Redirect logging to host (dma) */
+
+	EPSC_LOG_MODE_HOST	 = 0x4u,
+/* Save the set log mode in the flash */
+
+	EPSC_LOG_MODE_SAVE	 = 0x10u,
+	/* Padding out to required bits allocated */
+	PSIF_EPSC_LOG_MODE_FIELD_MAX	 = 0x7fffffffu
+}; /* enum psif_epsc_log_mode [32 bits] */
+
+/**
+ * EPSC_LOG_CTRL
+ */
+enum psif_epsc_log_level {
+	EPS_LOG_OFF	 = 0u,
+	EPS_LOG_FATAL	 = 0x1u,
+	EPS_LOG_ERROR	 = 0x2u,
+	EPS_LOG_WARN	 = 0x3u,
+	EPS_LOG_INFO	 = 0x4u,
+	EPS_LOG_DEBUG	 = 0x5u,
+	EPS_LOG_TRACE	 = 0x6u,
+	EPS_LOG_ALL	 = 0x7u,
+	/* Padding out to required bits allocated */
+	PSIF_EPSC_LOG_LEVEL_FIELD_MAX	 = 0x7fffffffu
+}; /* enum psif_epsc_log_level [32 bits] */
 
 /**
  * \brief Interrupt sources definitions as bit indexes.
@@ -1128,7 +1205,7 @@ enum psif_epsc_atomic_cap {
 	/** global atomicity guarantee */
 	EPSC_ATOMIC_GLOB,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_ATOMIC_CAP_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_ATOMIC_CAP_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_atomic_cap [32 bits] */
 
 /**
@@ -1143,55 +1220,55 @@ enum psif_epsc_atomic_cap {
  */
 enum psif_epsc_csr_status {
 	/** Successful exit status. */
-	EPSC_SUCCESS	 = 0,
+	EPSC_SUCCESS	 = 0u,
 	/** Key was rejected by service. */
-	EPSC_EKEYREJECTED	 = 0x1,
+	EPSC_EKEYREJECTED	 = 0x1u,
 	/** Cannot assign requested address. */
-	EPSC_EADDRNOTAVAIL	 = 0x2,
+	EPSC_EADDRNOTAVAIL	 = 0x2u,
 	/** Operation not supported on transport endpoint. */
-	EPSC_EOPNOTSUPP	 = 0x3,
+	EPSC_EOPNOTSUPP	 = 0x3u,
 	/** Out of memory. */
-	EPSC_ENOMEM	 = 0x4,
+	EPSC_ENOMEM	 = 0x4u,
 	/** No data available. */
-	EPSC_ENODATA	 = 0x5,
+	EPSC_ENODATA	 = 0x5u,
 	/** Try again. */
-	EPSC_EAGAIN	 = 0x6,
+	EPSC_EAGAIN	 = 0x6u,
 	/** Operation canceled. */
-	EPSC_ECANCELED	 = 0x7,
+	EPSC_ECANCELED	 = 0x7u,
 	/** Connection reset by peer. */
-	EPSC_ECONNRESET	 = 0x8,
+	EPSC_ECONNRESET	 = 0x8u,
 	/** CSR operation failed. */
-	EPSC_ECSR	 = 0x9,
+	EPSC_ECSR	 = 0x9u,
 	/** Modify queue pair error: QP index out of range. */
-	EPSC_MODIFY_QP_OUT_OF_RANGE	 = 0xa,
+	EPSC_MODIFY_QP_OUT_OF_RANGE	 = 0xau,
 	/** Modify queue pair error: QP is invalid. */
-	EPSC_MODIFY_QP_INVALID	 = 0xb,
+	EPSC_MODIFY_QP_INVALID	 = 0xbu,
 	/** Modify queue pair error: failed to change QP attribute. */
-	EPSC_MODIFY_CANNOT_CHANGE_QP_ATTR	 = 0xc,
+	EPSC_MODIFY_CANNOT_CHANGE_QP_ATTR	 = 0xcu,
 	/** Modify queue pair error: failed to change QP due to invalid or not matching state. */
-	EPSC_MODIFY_INVALID_QP_STATE	 = 0xd,
+	EPSC_MODIFY_INVALID_QP_STATE	 = 0xdu,
 	/** Modify queue pair error: failed to change QP due to invalid or not matching migration state. */
-	EPSC_MODIFY_INVALID_MIG_STATE	 = 0xe,
+	EPSC_MODIFY_INVALID_MIG_STATE	 = 0xeu,
 	/** Modify queue pair error: the operation timed out. */
-	EPSC_MODIFY_TIMEOUT	 = 0xf,
+	EPSC_MODIFY_TIMEOUT	 = 0xfu,
 	/** DMA test failure in HEAD. */
-	EPSC_ETEST_HEAD	 = 0x10,
+	EPSC_ETEST_HEAD	 = 0x10u,
 	/** DMA test failure in TAIL. */
-	EPSC_ETEST_TAIL	 = 0x11,
+	EPSC_ETEST_TAIL	 = 0x11u,
 	/** DMA test failure in PATTERN. */
-	EPSC_ETEST_PATTERN	 = 0x12,
+	EPSC_ETEST_PATTERN	 = 0x12u,
 	/** Multicast address already exist. */
-	EPSC_EADDRINUSE	 = 0x13,
+	EPSC_EADDRINUSE	 = 0x13u,
 	/** vHCA out of range */
-	EPSC_EINVALID_VHCA	 = 0x14,
+	EPSC_EINVALID_VHCA	 = 0x14u,
 	/** Port out of range */
-	EPSC_EINVALID_PORT	 = 0x15,
+	EPSC_EINVALID_PORT	 = 0x15u,
 	/** Address out of range */
-	EPSC_EINVALID_ADDRESS	 = 0x16,
+	EPSC_EINVALID_ADDRESS	 = 0x16u,
 	/** Parameter out of range */
-	EPSC_EINVALID_PARAMETER	 = 0x17,
+	EPSC_EINVALID_PARAMETER	 = 0x17u,
 	/** General failure. */
-	EPSC_FAIL	 = 0xff
+	EPSC_FAIL	 = 0xffu
 }; /* enum psif_epsc_csr_status [ 8 bits] */
 
 /**
@@ -1226,11 +1303,11 @@ enum psif_epsc_csr_status {
  */
 enum psif_epsc_csr_opcode {
 	/** Not a valid operation code. */
-	EPSC_NOOP	 = 0,
+	EPSC_NOOP	 = 0u,
 	/** EPS-C ping over mailbox. */
-	EPSC_MAILBOX_PING	 = 0x4c,
+	EPSC_MAILBOX_PING	 = 0x4cu,
 	/** Host patting of EPS-C SW watch-dog. */
-	EPSC_KEEP_ALIVE	 = 0x4d,
+	EPSC_KEEP_ALIVE	 = 0x4du,
 	/** Initial configuration request per UF.
 	 * This request is transferred from the host to the epsc at driver
 	 * attach using an encoding of the physical mailbox register. It
@@ -1263,7 +1340,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver
 	 */
-	EPSC_SETUP	 = 0x1,
+	EPSC_SETUP	 = 0x1u,
 	/** Final de-configuration request.
 	 * This request is sent from the host driver to indicate that it has
 	 * cleaned up all queues and flushed caches associated with the current
@@ -1281,10 +1358,10 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver
 	 */
-	EPSC_TEARDOWN	 = 0x36,
+	EPSC_TEARDOWN	 = 0x36u,
 	/** Operation code for a general set request.
 	 * The request usees the same parameter structure as the \ref EPSC_QUERY
-	 * request. Upon recieve the mailbox thread first processes the set request
+	 * request. Upon receive the mailbox thread first processes the set request
 	 * in \ref psif_epsc_csr_query_t::info and then the request in
 	 * \ref psif_epsc_csr_query_t::data. Both members are of type
 	 * \ref psif_epsc_query_req_t and have their own sub-operation codes in
@@ -1306,7 +1383,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      external
 	 */
-	EPSC_SET	 = 0x46,
+	EPSC_SET	 = 0x46u,
 	/** Operation code for a single CSR write request.
 	 * \note
 	 * The request is deprecated and will be removed as soon as all
@@ -1314,7 +1391,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Return Codes
 	 *      \ref EPSC_EADDRNOTAVAIL
 	 */
-	EPSC_SET_SINGLE	 = 0x2,
+	EPSC_SET_SINGLE	 = 0x2u,
 	/** Operation code for setting an arbitrary CSR.
 	 * \note
 	 * The request is used mainly for debugging tools and will be either removed
@@ -1340,7 +1417,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver, development
 	 */
-	EPSC_SET_ONE_CSR	 = 0x3,
+	EPSC_SET_ONE_CSR	 = 0x3u,
 	/** Old operation code to set up a descriptor base address.
 	 * \note
 	 * The request is deprecated and will be removed as soon as all
@@ -1351,7 +1428,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver
 	 */
-	EPSC_SETUP_BASEADDR	 = 0x4,
+	EPSC_SETUP_BASEADDR	 = 0x4u,
 	/** Operation code to set up a descriptor base address.
 	 * With this request the driver configures the descriptor base addresses
 	 * of queues, queue pairs and address handles.
@@ -1370,7 +1447,7 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver, development
 	 */
-	EPSC_SET_BASEADDR	 = 0x5,
+	EPSC_SET_BASEADDR	 = 0x5u,
 	/** Operation code to set up an event queue (EQ).
 	 * With this request the driver configures an EQ descriptor base address
 	 * as well as the associated interrupt.
@@ -1389,122 +1466,124 @@ enum psif_epsc_csr_opcode {
 	 * \par Classification
 	 *      driver
 	 */
-	EPSC_SET_BASEADDR_EQ	 = 0x6,
+	EPSC_SET_BASEADDR_EQ	 = 0x6u,
 	/* Set Local ID for UF (backdoor) */
-	EPSC_SET_LID	 = 0x7,
-	OBSOLETE_1	 = 0x8,
-	OBSOLETE_2	 = 0x9,
+	EPSC_SET_LID	 = 0x7u,
+	OBSOLETE_1	 = 0x8u,
+	OBSOLETE_2	 = 0x9u,
 	/* Set Global ID for UF (backdoor) */
-	EPSC_SET_GID	 = 0xa,
+	EPSC_SET_GID	 = 0xau,
 	/* Set EoIB MAC address (backdoor) */
-	EPSC_SET_EOIB_MAC	 = 0x40,
+	EPSC_SET_EOIB_MAC	 = 0x40u,
 	/* Set Vlink state */
-	EPSC_SET_VLINK_STATE	 = 0xb,
+	EPSC_SET_VLINK_STATE	 = 0xbu,
 	/* Get Vlink state */
-	EPSC_QUERY_VLINK_STATE	 = 0xc,
+	EPSC_QUERY_VLINK_STATE	 = 0xcu,
 	/* Reset UF at startup */
-	EPSC_UF_RESET	 = 0xd,
+	EPSC_UF_RESET	 = 0xdu,
 	/* Modify QP complete w/kick */
-	EPSC_MODIFY_QP	 = 0xe,
-	/* Get single 64bit register - depricated */
-	EPSC_GET_SINGLE	 = 0xf,
+	EPSC_MODIFY_QP	 = 0xeu,
+	/* Get single 64bit register - deprecated */
+	EPSC_GET_SINGLE	 = 0xfu,
 	/* Get one 64bit register using CSR addr */
-	EPSC_GET_ONE_CSR	 = 0x10,
+	EPSC_GET_ONE_CSR	 = 0x10u,
 	/* Query QP sub-entry */
-	EPSC_QUERY_QP	 = 0x11,
+	EPSC_QUERY_QP	 = 0x11u,
 	/** Query HW receive queue. */
-	EPSC_QUERY_HW_RQ	 = 0x42,
+	EPSC_QUERY_HW_RQ	 = 0x42u,
 	/** Query HW SQ. */
-	EPSC_QUERY_HW_SQ	 = 0x43,
+	EPSC_QUERY_HW_SQ	 = 0x43u,
 	/* Non-MAD query device */
-	EPSC_QUERY_DEVICE	 = 0x12,
+	EPSC_QUERY_DEVICE	 = 0x12u,
 	/* Non-MAD query port */
-	EPSC_QUERY_PORT_1	 = 0x13,
-	EPSC_QUERY_PORT_2	 = 0x14,
+	EPSC_QUERY_PORT_1	 = 0x13u,
+	EPSC_QUERY_PORT_2	 = 0x14u,
 	/* Non-MAD SMA attribute query */
-	EPSC_QUERY_PKEY	 = 0x15,
-	EPSC_QUERY_GID	 = 0x16,
+	EPSC_QUERY_PKEY	 = 0x15u,
+	EPSC_QUERY_GID	 = 0x16u,
 	/* Non-MAD SMA attribute setting */
-	EPSC_MODIFY_DEVICE	 = 0x17,
-	EPSC_MODIFY_PORT_1	 = 0x18,
-	EPSC_MODIFY_PORT_2	 = 0x19,
+	EPSC_MODIFY_DEVICE	 = 0x17u,
+	EPSC_MODIFY_PORT_1	 = 0x18u,
+	EPSC_MODIFY_PORT_2	 = 0x19u,
 	/* Local MC subscription handling */
-	EPSC_MC_ATTACH	 = 0x1a,
-	EPSC_MC_DETACH	 = 0x1b,
-	EPSC_MC_QUERY	 = 0x1c,
+	EPSC_MC_ATTACH	 = 0x1au,
+	EPSC_MC_DETACH	 = 0x1bu,
+	EPSC_MC_QUERY	 = 0x1cu,
 	/* Handle asynchronous events */
-	EPSC_EVENT_ACK	 = 0x1d,
-	EPSC_EVENT_INDEX	 = 0x1e,
+	EPSC_EVENT_ACK	 = 0x1du,
+	EPSC_EVENT_INDEX	 = 0x1eu,
 	/* Program flash content */
-	EPSC_FLASH_START	 = 0x1f,
-	EPSC_FLASH_INFO	 = 0x20,
-	EPSC_FLASH_ERASE_SECTOR	 = 0x21,
-	EPSC_FLASH_RD	 = 0x22,
-	EPSC_FLASH_WR	 = 0x23,
-	EPSC_FLASH_CHECK	 = 0x24,
-	EPSC_FLASH_SCAN	 = 0x25,
-	EPSC_FLASH_STOP	 = 0x26,
+	EPSC_FLASH_START	 = 0x1fu,
+	EPSC_FLASH_INFO	 = 0x20u,
+	EPSC_FLASH_ERASE_SECTOR	 = 0x21u,
+	EPSC_FLASH_RD	 = 0x22u,
+	EPSC_FLASH_WR	 = 0x23u,
+	EPSC_FLASH_CHECK	 = 0x24u,
+	EPSC_FLASH_SCAN	 = 0x25u,
+	EPSC_FLASH_STOP	 = 0x26u,
 	/* new update handling */
-	EPSC_UPDATE	 = 0x47,
+	EPSC_UPDATE	 = 0x47u,
 	/* IB packet tracer */
-	EPSC_TRACE_STATUS	 = 0x27,
-	EPSC_TRACE_SETUP	 = 0x28,
-	EPSC_TRACE_START	 = 0x29,
-	EPSC_TRACE_STOP	 = 0x2a,
-	EPSC_TRACE_ACQUIRE	 = 0x2b,
+	EPSC_TRACE_STATUS	 = 0x27u,
+	EPSC_TRACE_SETUP	 = 0x28u,
+	EPSC_TRACE_START	 = 0x29u,
+	EPSC_TRACE_STOP	 = 0x2au,
+	EPSC_TRACE_ACQUIRE	 = 0x2bu,
 	/* Test operations */
-	EPSC_TEST_HOST_RD	 = 0x2c,
-	EPSC_TEST_HOST_WR	 = 0x2d,
+	EPSC_TEST_HOST_RD	 = 0x2cu,
+	EPSC_TEST_HOST_WR	 = 0x2du,
 	/* Get EPS-C version details */
-	EPSC_FW_VERSION	 = 0x2e,
+	EPSC_FW_VERSION	 = 0x2eu,
 	/* Redirection/configuration of EPSC's internal log subsystem */
-	EPSC_LOG_CTRL	 = 0x2f,
-	EPSC_LOG_REQ_NOTIFY	 = 0x30,
+	EPSC_LOG_CTRL	 = 0x2fu,
+	EPSC_LOG_REQ_NOTIFY	 = 0x30u,
 	/* Force & read back link speed */
-	EPSC_LINK_CNTRL	 = 0x31,
+	EPSC_LINK_CNTRL	 = 0x31u,
 	/* EPS-A control & communication (to EPS-C) */
-	EPSC_A_CONTROL	 = 0x33,
+	EPSC_A_CONTROL	 = 0x33u,
 	/* EPS-A targeted commands (to EPS-A) */
-	EPSC_A_COMMAND	 = 0x35,
+	EPSC_A_COMMAND	 = 0x35u,
 	/* Exercise mmu with access from epsc */
-	EPSC_EXERCISE_MMU	 = 0x34,
+	EPSC_EXERCISE_MMU	 = 0x34u,
 	/* Access to EPS-C CLI */
-	EPSC_CLI_ACCESS	 = 0x37,
+	EPSC_CLI_ACCESS	 = 0x37u,
 	/* IB packet proxy to/from host */
-	EPSC_MAD_PROCESS	 = 0x38,
-	EPSC_MAD_SEND_WR	 = 0x39,
+	EPSC_MAD_PROCESS	 = 0x38u,
+	EPSC_MAD_SEND_WR	 = 0x39u,
 	/** Generic query epsc interface. */
-	EPSC_QUERY	 = 0x41,
+	EPSC_QUERY	 = 0x41u,
 	/* Setup interrupt coalescing etc. */
-	EPSC_HOST_INT_COMMON_CTRL	 = 0x44,
-	EPSC_HOST_INT_CHANNEL_CTRL	 = 0x45,
+	EPSC_HOST_INT_COMMON_CTRL	 = 0x44u,
+	EPSC_HOST_INT_CHANNEL_CTRL	 = 0x45u,
 	/** UF control depends on \ref psif_epsc_csr_uf_ctrl_t::opcode. */
-	EPSC_UF_CTRL	 = 0x48,
+	EPSC_UF_CTRL	 = 0x48u,
 	/* Flush MMU and-or PTW Caches */
-	EPSC_FLUSH_CACHES	 = 0x49,
+	EPSC_FLUSH_CACHES	 = 0x49u,
 	/* Query PMA counters - alternative path to sending MAD's */
-	EPSC_PMA_COUNTERS	 = 0x4a,
+	EPSC_PMA_COUNTERS	 = 0x4au,
 	/** VIMMA operations depends on \ref psif_epsc_csr_vimma_ctrl_t::opcode. */
-	EPSC_VIMMA_CTRL	 = 0x4b,
+	EPSC_VIMMA_CTRL	 = 0x4bu,
+	/* EPSC BER (Bit Error Report) Data */
+	EPSC_BER_DATA	 = 0x4eu,
 	/** EOF marker - must be last and highest in this enum type. */
-	EPSC_LAST_OP	 = 0x4e,
+	EPSC_LAST_OP	 = 0x4fu,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_OPCODE_FIELD_MAX	 = 0xff
+	PSIF_EPSC_CSR_OPCODE_FIELD_MAX	 = 0xffu
 }; /* enum psif_epsc_csr_opcode [ 8 bits] */
 
 /**
  * The eps-c fw csr flags
  */
 enum psif_epsc_csr_flags {
-	EPSC_FL_NONE	 = 0,
+	EPSC_FL_NONE	 = 0u,
 	/* Request notification (interrupt) when completion is ready */
-	EPSC_FL_NOTIFY	 = 0x1,
+	EPSC_FL_NOTIFY	 = 0x1u,
 	/* Privileged QP indicator only valid for query and modify QP */
-	EPSC_FL_PQP	 = 0x2,
+	EPSC_FL_PQP	 = 0x2u,
 	/* Allways report opertion success */
-	EPSC_FL_IGNORE_ERROR	 = 0x4,
+	EPSC_FL_IGNORE_ERROR	 = 0x4u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_FLAGS_FIELD_MAX	 = 0xff
+	PSIF_EPSC_CSR_FLAGS_FIELD_MAX	 = 0xffu
 }; /* enum psif_epsc_csr_flags [ 8 bits] */
 
 /*
@@ -1513,33 +1592,33 @@ enum psif_epsc_csr_flags {
  * PSIF_LINK_ARM = 8 PSIF_LINK_ACTIVE = 16
  */
 enum psif_vlink_state {
-	PSIF_LINK_DISABLED	 = 0x1,
-	PSIF_LINK_DOWN	 = 0x2,
-	PSIF_LINK_INIT	 = 0x4,
-	PSIF_LINK_ARM	 = 0x8,
-	PSIF_LINK_ACTIVE	 = 0x10
+	PSIF_LINK_DISABLED	 = 0x1u,
+	PSIF_LINK_DOWN	 = 0x2u,
+	PSIF_LINK_INIT	 = 0x4u,
+	PSIF_LINK_ARM	 = 0x8u,
+	PSIF_LINK_ACTIVE	 = 0x10u
 }; /* enum psif_vlink_state [ 5 bits] */
 
 /**
  * EPSC_MODIFY_DEVICE operations
  */
 enum psif_epsc_csr_modify_device_flags {
-	PSIF_DEVICE_MODIFY_SYS_IMAGE_GUID	 = 0x1,
-	PSIF_DEVICE_MODIFY_NODE_DESC	 = 0x2,
+	PSIF_DEVICE_MODIFY_SYS_IMAGE_GUID	 = 0x1u,
+	PSIF_DEVICE_MODIFY_NODE_DESC	 = 0x2u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_MODIFY_DEVICE_FLAGS_FIELD_MAX	 = 0xffff
+	PSIF_EPSC_CSR_MODIFY_DEVICE_FLAGS_FIELD_MAX	 = 0xffffu
 }; /* enum psif_epsc_csr_modify_device_flags [16 bits] */
 
 /**
  * EPSC_MODIFY_PORT_{1,2} operations
  */
 enum psif_epsc_csr_modify_port_flags {
-	PSIF_PORT_SHUTDOWN	 = 0x1,
-	PSIF_PORT_INIT_TYPE	 = 0x4,
-	PSIF_PORT_RESET_QKEY_CNTR	 = 0x8,
-	PSIF_PORT_RESET_PKEY_CNTR	 = 0x10,
+	PSIF_PORT_SHUTDOWN	 = 0x1u,
+	PSIF_PORT_INIT_TYPE	 = 0x4u,
+	PSIF_PORT_RESET_QKEY_CNTR	 = 0x8u,
+	PSIF_PORT_RESET_PKEY_CNTR	 = 0x10u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_MODIFY_PORT_FLAGS_FIELD_MAX	 = 0xffff
+	PSIF_EPSC_CSR_MODIFY_PORT_FLAGS_FIELD_MAX	 = 0xffffu
 }; /* enum psif_epsc_csr_modify_port_flags [16 bits] */
 
 
@@ -1549,7 +1628,7 @@ enum psif_epsc_csr_epsa_command {
 	EPSC_A_STOP,
 	EPSC_A_STATUS,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_EPSA_COMMAND_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_CSR_EPSA_COMMAND_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_csr_epsa_command [32 bits] */
 
 /*
@@ -1566,8 +1645,9 @@ enum psif_epsa_command {
 	EPSA_SKJM_ACC,
 	EPSA_SKJM_MEMACC,
 	EPSA_GET_PROXY_QP_SQ_KEY,
+	EPSA_GENERIC_CMD,
 	/* Padding out to required bits allocated */
-	PSIF_EPSA_COMMAND_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSA_COMMAND_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsa_command [32 bits] */
 
 /**
@@ -1581,86 +1661,90 @@ enum psif_epsa_command {
  *      internal, development
  */
 enum psif_epsc_query_op {
-	/** If initiated from a EPSC_QUERY this operation code will always return zero and report success.
-	 *  In case of a intended set request (EPSC_SET) this operation code ignore the request and return success.
+	/** If initiated from a EPSC_QUERY this operation code will always return zero
+	 *  and report success. In case of a intended set request (EPSC_SET) this
+	 *  operation code ignore the request and return success.
 	 */
-	EPSC_QUERY_BLANK	 = 0,
+	EPSC_QUERY_BLANK	 = 0u,
 	/* Obsolete - use EPSC_QUERY_CAP_VCB_{LO HI} */
-	EPSC_QUERY_CAP_VCB	 = 0x1,
+	EPSC_QUERY_CAP_VCB	 = 0x1u,
 	/* Obsolete - use EPSC_QUERY_CAP_PCB_{LO HI} */
-	EPSC_QUERY_CAP_PCB	 = 0x2,
-	EPSC_QUERY_NUM_UF	 = 0x3,
-	EPSC_QUERY_GID_HI	 = 0x4,
-	EPSC_QUERY_GID_LO	 = 0x5,
-	EPSC_QUERY_P_KEY	 = 0x6,
-	EPSC_QUERY_Q_KEY	 = 0x7,
-	EPSC_QUERY_UF	 = 0x8,
-	EPSC_QUERY_LINK_STATE	 = 0x9,
-	EPSC_QUERY_VHCA_STATE	 = 0xa,
+	EPSC_QUERY_CAP_PCB	 = 0x2u,
+	EPSC_QUERY_NUM_UF	 = 0x3u,
+	EPSC_QUERY_GID_HI	 = 0x4u,
+	EPSC_QUERY_GID_LO	 = 0x5u,
+	EPSC_QUERY_P_KEY	 = 0x6u,
+	EPSC_QUERY_Q_KEY	 = 0x7u,
+	EPSC_QUERY_UF	 = 0x8u,
+	EPSC_QUERY_LINK_STATE	 = 0x9u,
+	EPSC_QUERY_VHCA_STATE	 = 0xau,
 	/* Corresponds to register TSU_HOST_INT_CTRL_ADDR */
-	EPSC_QUERY_INT_COMMON	 = 0xb,
+	EPSC_QUERY_INT_COMMON	 = 0xbu,
 	/* Corresponds to register TSU_HOST_INT_CHAN_CTRL_0 */
-	EPSC_QUERY_INT_CHAN_RATE	 = 0xc,
+	EPSC_QUERY_INT_CHAN_RATE	 = 0xcu,
 	/* Corresponds to register TSU_HOST_INT_CHAN_CTRL_1 */
-	EPSC_QUERY_INT_CHAN_AUSEC	 = 0xd,
+	EPSC_QUERY_INT_CHAN_AUSEC	 = 0xdu,
 	/* Corresponds to register TSU_HOST_INT_CHAN_CTRL_2 */
-	EPSC_QUERY_INT_CHAN_PUSEC	 = 0xe,
+	EPSC_QUERY_INT_CHAN_PUSEC	 = 0xeu,
 	/* Number of VCBs in PCI lo BAR */
-	EPSC_QUERY_CAP_VCB_LO	 = 0xf,
+	EPSC_QUERY_CAP_VCB_LO	 = 0xfu,
 	/* Number of VCBs in PCI hi BAR */
-	EPSC_QUERY_CAP_VCB_HI	 = 0x10,
+	EPSC_QUERY_CAP_VCB_HI	 = 0x10u,
 	/* Number of PCBs mapped to lo BAR VCBs */
-	EPSC_QUERY_CAP_PCB_LO	 = 0x11,
+	EPSC_QUERY_CAP_PCB_LO	 = 0x11u,
 	/* Number of PCBs mapped to hi BAR VCBs */
-	EPSC_QUERY_CAP_PCB_HI	 = 0x12,
-	/* psif_epsc_query_req.index = IB port number [1 2] */
-	EPSC_QUERY_PMA_REDIRECT_QP	 = 0x13,
+	EPSC_QUERY_CAP_PCB_HI	 = 0x12u,
+	/*
+	 * QP number for EPS-C to forward PMA responces to host
+	 * psif_epsc_query_req.index = IB port number [1,2]
+	 */
+	EPSC_QUERY_PMA_REDIRECT_QP	 = 0x13u,
 	/* uptime in seconds */
-	EPSC_QUERY_FW_UPTIME	 = 0x14,
+	EPSC_QUERY_FW_UPTIME	 = 0x14u,
 	/* date the firmware was programmed in epoch time */
-	EPSC_QUERY_FW_PROG_DATE	 = 0x15,
+	EPSC_QUERY_FW_PROG_DATE	 = 0x15u,
 	/* date the firmware was built in epoch time */
-	EPSC_QUERY_FW_BUILD_DATE	 = 0x16,
+	EPSC_QUERY_FW_BUILD_DATE	 = 0x16u,
 	/* current firmware image number (flash slot) */
-	EPSC_QUERY_FW_CURR_IMG	 = 0x17,
+	EPSC_QUERY_FW_CURR_IMG	 = 0x17u,
 	/* oneshot firmware image number (flash slot) */
-	EPSC_QUERY_FW_ONESHOT_IMG	 = 0x18,
+	EPSC_QUERY_FW_ONESHOT_IMG	 = 0x18u,
 	/* autostart firmware image number (flash slot) */
-	EPSC_QUERY_FW_AUTOSTART_IMG	 = 0x19,
+	EPSC_QUERY_FW_AUTOSTART_IMG	 = 0x19u,
 	/* bit field encoding why the FW image was booted */
-	EPSC_QUERY_FW_START_CAUSE	 = 0x1a,
+	EPSC_QUERY_FW_START_CAUSE	 = 0x1au,
 	/* firmware version */
-	EPSC_QUERY_FW_VERSION	 = 0x1b,
+	EPSC_QUERY_FW_VERSION	 = 0x1bu,
 	/* Requester - number of bad response errors. */
-	EPSC_QUERY_SQ_NUM_BRE	 = 0x1c,
+	EPSC_QUERY_SQ_NUM_BRE	 = 0x1cu,
 	/* Requester - number of bad response errors. */
-	EPSC_QUERY_NUM_CQOVF	 = 0x1d,
+	EPSC_QUERY_NUM_CQOVF	 = 0x1du,
 	/* Requester - number of CQEs with status flushed in error. */
-	EPSC_QUERY_SQ_NUM_WRFE	 = 0x1e,
+	EPSC_QUERY_SQ_NUM_WRFE	 = 0x1eu,
 	/* Responder - number of CQEs with status flushed in error. */
-	EPSC_QUERY_RQ_NUM_WRFE	 = 0x1f,
+	EPSC_QUERY_RQ_NUM_WRFE	 = 0x1fu,
 	/* Responder - number of local access errors. */
-	EPSC_QUERY_RQ_NUM_LAE	 = 0x20,
+	EPSC_QUERY_RQ_NUM_LAE	 = 0x20u,
 	/* Responder - number of local protection errors. */
-	EPSC_QUERY_RQ_NUM_LPE	 = 0x21,
+	EPSC_QUERY_RQ_NUM_LPE	 = 0x21u,
 	/* Requester - number of local length errors. */
-	EPSC_QUERY_SQ_NUM_LLE	 = 0x22,
+	EPSC_QUERY_SQ_NUM_LLE	 = 0x22u,
 	/* Responder - number of local length errors. */
-	EPSC_QUERY_RQ_NUM_LLE	 = 0x23,
+	EPSC_QUERY_RQ_NUM_LLE	 = 0x23u,
 	/* Requester - number local QP operation error. */
-	EPSC_QUERY_SQ_NUM_LQPOE	 = 0x24,
+	EPSC_QUERY_SQ_NUM_LQPOE	 = 0x24u,
 	/* Responder - number local QP operation error. */
-	EPSC_QUERY_RQ_NUM_LQPOE	 = 0x25,
+	EPSC_QUERY_RQ_NUM_LQPOE	 = 0x25u,
 	/* Requester - number of NAK-Sequence Error received. */
-	EPSC_QUERY_SQ_NUM_OOS	 = 0x26,
+	EPSC_QUERY_SQ_NUM_OOS	 = 0x26u,
 	/* Responder - number of NAK-Sequence Error sent. */
-	EPSC_QUERY_RQ_NUM_OOS	 = 0x27,
+	EPSC_QUERY_RQ_NUM_OOS	 = 0x27u,
 	/* Requester - number of RNR nak retries exceeded errors. */
-	EPSC_QUERY_SQ_NUM_RREE	 = 0x28,
+	EPSC_QUERY_SQ_NUM_RREE	 = 0x28u,
 	/* Requester - number of transport retries exceeded errors. */
-	EPSC_QUERY_SQ_NUM_TREE	 = 0x29,
+	EPSC_QUERY_SQ_NUM_TREE	 = 0x29u,
 	/* Requester - number of NAK-Remote Access Error received. */
-	EPSC_QUERY_SQ_NUM_ROE	 = 0x2a,
+	EPSC_QUERY_SQ_NUM_ROE	 = 0x2au,
 	/*
 	 * Responder - number of NAK-Remote Access Error sent. NAK-Remote Operation
 	 * Error on: 1. Malformed WQE: Responder detected a malformed Receive Queue
@@ -1668,34 +1752,34 @@ enum psif_epsc_query_op {
 	 * encountered an error, (local to the responder), which prevented it from
 	 * completing the request.
 	 */
-	EPSC_QUERY_RQ_NUM_ROE	 = 0x2b,
+	EPSC_QUERY_RQ_NUM_ROE	 = 0x2bu,
 	/*
 	 * Requester - number of NAK-Remote Access Error received. R_Key Violation:
 	 * Responder detected an invalid R_Key while executing an RDMA Request.
 	 */
-	EPSC_QUERY_SQ_NUM_RAE	 = 0x2c,
+	EPSC_QUERY_SQ_NUM_RAE	 = 0x2cu,
 	/*
 	 * Responder - number of NAK-Remote Access Error sent. R_Key Violation
 	 * Responder detected an R_Key violation while executing an RDMA request.
 	 */
-	EPSC_QUERY_RQ_NUM_RAE	 = 0x2d,
+	EPSC_QUERY_RQ_NUM_RAE	 = 0x2du,
 	/*
 	 * The number of UD packets silently discarded on the receive queue due to
 	 * lack of receive descriptor.
 	 */
-	EPSC_QUERY_RQ_NUM_UDSDPRD	 = 0x2e,
+	EPSC_QUERY_RQ_NUM_UDSDPRD	 = 0x2eu,
 	/*
 	 * The number of UC packets silently discarded on the receive queue due to
 	 * lack of receive descriptor.
 	 */
-	EPSC_QUERY_RQ_NUM_UCSDPRD	 = 0x2f,
+	EPSC_QUERY_RQ_NUM_UCSDPRD	 = 0x2fu,
 	/*
 	 * Requester - number of remote invalid request errors NAK-Invalid Request
 	 * on: 1. Unsupported OpCode: Responder detected an unsupported OpCode. 2.
 	 * Unexpected OpCode: Responder detected an error in the sequence of OpCodes,
 	 * such as a missing Last packet.
 	 */
-	EPSC_QUERY_SQ_NUM_RIRE	 = 0x30,
+	EPSC_QUERY_SQ_NUM_RIRE	 = 0x30u,
 	/*
 	 * Responder - number of remote invalid request errors. NAK may or may not be
 	 * sent. 1. QP Async Affiliated Error: Unsupported or Reserved OpCode (RC,RD
@@ -1717,67 +1801,91 @@ enum psif_epsc_query_op {
 	 * bytes 9. Length error: Inbound message exceeded the size supported by the
 	 * CA port.
 	 */
-	EPSC_QUERY_RQ_NUM_RIRE	 = 0x31,
+	EPSC_QUERY_RQ_NUM_RIRE	 = 0x31u,
 	/* Requester - the number of RNR Naks received. */
-	EPSC_QUERY_SQ_NUM_RNR	 = 0x32,
+	EPSC_QUERY_SQ_NUM_RNR	 = 0x32u,
 	/* Responder - the number of RNR Naks sent. */
-	EPSC_QUERY_RQ_NUM_RNR	 = 0x33,
+	EPSC_QUERY_RQ_NUM_RNR	 = 0x33u,
 	/* twoshot firmware image number (flash slot) */
-	EPSC_QUERY_FW_TWOSHOT_IMG	 = 0x34,
+	EPSC_QUERY_FW_TWOSHOT_IMG	 = 0x34u,
 	/* firmware type */
-	EPSC_QUERY_FW_TYPE	 = 0x35,
+	EPSC_QUERY_FW_TYPE	 = 0x35u,
 	/* firmware size */
-	EPSC_QUERY_FW_SIZE	 = 0x36,
+	EPSC_QUERY_FW_SIZE	 = 0x36u,
 	/* firmware slot size (available space for an image) */
-	EPSC_QUERY_FW_SLOT_SIZE	 = 0x37,
+	EPSC_QUERY_FW_SLOT_SIZE	 = 0x37u,
 	/* version of boot loader that has started the application */
-	EPSC_QUERY_BL_VERSION	 = 0x38,
+	EPSC_QUERY_BL_VERSION	 = 0x38u,
 	/* boot loader build date in epoch time format */
-	EPSC_QUERY_BL_BUILD_DATE	 = 0x39,
+	EPSC_QUERY_BL_BUILD_DATE	 = 0x39u,
 	/* only used by EPSC_SET mark a PQP CQ ID as clean (WA bug 3769) */
-	EPSC_QUERY_CLEAN_CQ_ID	 = 0x3a,
+	EPSC_QUERY_CLEAN_CQ_ID	 = 0x3au,
 	/* Number of TSL supported by FW */
-	EPSC_QUERY_CAP_TSL_TX	 = 0x3b,
-	EPSC_QUERY_CAP_TSL_RX	 = 0x3c,
+	EPSC_QUERY_CAP_TSL_TX	 = 0x3bu,
+	EPSC_QUERY_CAP_TSL_RX	 = 0x3cu,
 	/* Reset CBLD Diag counters. Only used by EPSC_SET */
-	EPSC_QUERY_RESET_CBLD_DIAG_COUNTERS	 = 0x3d,
+	EPSC_QUERY_RESET_CBLD_DIAG_COUNTERS	 = 0x3du,
 	/* Max QP index used since power-on or host reset - to optimize WA for HW bug 3251 */
-	EPSC_QUERY_MAX_QP_USED	 = 0x3e,
+	EPSC_QUERY_MAX_QP_USED	 = 0x3eu,
 	/** the UF and QP where modify QP timed out ((uf << 32) | (qp)) */
-	EPSC_QUERY_MODQP_TO_SOURCE	 = 0x3f,
+	EPSC_QUERY_MODQP_TO_SOURCE	 = 0x3fu,
 	/** the debug register when modify QP timed out */
-	EPSC_QUERY_MODQP_TO_DEBUG	 = 0x40,
+	EPSC_QUERY_MODQP_TO_DEBUG	 = 0x40u,
 	/** the bit vector containing the reasons for entering degraded mode */
-	EPSC_QUERY_DEGRADED_CAUSE	 = 0x41,
+	EPSC_QUERY_DEGRADED_CAUSE	 = 0x41u,
 	/** CMPL spin set mode (safe = 1 fast = 0) */
-	EPSC_QUERY_SPIN_SET_CONTROL	 = 0x42,
+	EPSC_QUERY_SPIN_SET_CONTROL	 = 0x42u,
 	/** VPD MAC address */
-	EPSC_QUERY_VPD_MAC	 = 0x43,
+	EPSC_QUERY_VPD_MAC	 = 0x43u,
 	/** VPD part number */
-	EPSC_QUERY_VPD_PART_NUMBER	 = 0x44,
+	EPSC_QUERY_VPD_PART_NUMBER	 = 0x44u,
 	/** VPD revision */
-	EPSC_QUERY_VPD_REVISION	 = 0x45,
+	EPSC_QUERY_VPD_REVISION	 = 0x45u,
 	/** VPD serial number (big endian sub-string) - 8 byte offset in query index */
-	EPSC_QUERY_VPD_SERIAL_NUMBER	 = 0x46,
+	EPSC_QUERY_VPD_SERIAL_NUMBER	 = 0x46u,
 	/** VPD manufacturer = = Oracle Corporation - 8 byte offset in query index */
-	EPSC_QUERY_VPD_MANUFACTURER	 = 0x47,
+	EPSC_QUERY_VPD_MANUFACTURER	 = 0x47u,
+	/** VPD product name (big endian sub-string) - 8 byte offset in query index */
+	EPSC_QUERY_VPD_PRODUCT_NAME	 = 0x4bu,
+	/** VPD Base GUID */
+	EPSC_QUERY_VPD_BASE_GUID	 = 0x4eu,
+	/** PSIF TSU SL and QoS mapping for for QP 0 - port number in query index */
+	EPSC_QUERY_MAP_QP0_TO_TSL	 = 0x52u,
 	/** PSIF TSU SL and QoS mapping for priv QP - port number in query index */
-	EPSC_QUERY_MAP_PQP_TO_TSL	 = 0x48,
+	EPSC_QUERY_MAP_PQP_TO_TSL	 = 0x48u,
 	/** PSIF TSU SL and QoS mapping for IB SL 0-7 - port number in query index */
-	EPSC_QUERY_MAP_SL_TO_TSL_LO	 = 0x49,
+	EPSC_QUERY_MAP_SL_TO_TSL_LO	 = 0x49u,
 	/** PSIF TSU SL and QoS mapping for IB SL 8-15 - port number in query index */
-	EPSC_QUERY_MAP_SL_TO_TSL_HI	 = 0x4a,
-	/** VPD Product Name - 8 byte offset in query index */
-	EPSC_QUERY_VPD_PRODUCT_NAME	 = 0x4b,
+	EPSC_QUERY_MAP_SL_TO_TSL_HI	 = 0x4au,
+	/** MMU static configuration of TA_UPPER_TWELVE bits (SPARC only) */
+	EPSC_QUERY_TA_UPPER_TWELVE	 = 0x4cu,
+	/** MMU static configuration of PA_UPPER_TWELVE bits (SPARC only) */
+	EPSC_QUERY_PA_UPPER_TWELVE	 = 0x4du,
+	/** Number of VFs configured - valid values limited to power-of-two.
+	 * For BARE_METAL mode, number of VFs is -1 i.e. not applicable.
+	 * PSIF_QUERY index as defined in psif_epsc_query_num_vfs_mode
+	 * PSIF_SET   index = #VFs for next restart
+	 */
+	EPSC_QUERY_NUM_VFS	 = 0x4fu,
+	/** Development debug only operation: SET and QUERY the TSU credit
+	 * mode setup as defined by epsc_cli: cfg tsu_credit
+	 */
+	EPSC_QUERY_CREDIT_MODE	 = 0x50u,
+	/** Query version on onboard CPLD (Titan only Other platforms will return EPSC_ENODATA) */
+	EPSC_QUERY_CPLD_VERSION	 = 0x51u,
+	/** Query portinfo on exernal port (defined in psif_epsc_query_external_port_info_t) */
+	EPSC_QUERY_EXTERNAL_PORT_INFO	 = 0x53u,
+	/* EOF marker - must be last and highest in this enum type. */
+	EPSC_QUERY_LAST	 = 0x54u,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_QUERY_OP_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_QUERY_OP_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_query_op [32 bits] */
 
 /**
  * Valid values for struct psif_epsc_csr_update::opcode
  */
 enum psif_epsc_csr_update_opcode {
-	EPSC_UPDATE_OP_POLL	 = 0,
+	EPSC_UPDATE_OP_POLL	 = 0u,
 	EPSC_UPDATE_OP_START,
 	EPSC_UPDATE_OP_ERASE,
 	EPSC_UPDATE_OP_WRITE,
@@ -1786,7 +1894,7 @@ enum psif_epsc_csr_update_opcode {
 	EPSC_UPDATE_OP_SET,
 	EPSC_UPDATE_OP_MAX,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_UPDATE_OPCODE_FIELD_MAX	 = 0xffff
+	PSIF_EPSC_CSR_UPDATE_OPCODE_FIELD_MAX	 = 0xffffu
 }; /* enum psif_epsc_csr_update_opcode [16 bits] */
 
 /**
@@ -1801,7 +1909,7 @@ enum psif_epsc_flash_slot {
 	/* always last */
 	EPSC_FLASH_SLOT_COUNT,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_FLASH_SLOT_FIELD_MAX	 = 0xffff
+	PSIF_EPSC_FLASH_SLOT_FIELD_MAX	 = 0xffffu
 }; /* enum psif_epsc_flash_slot [16 bits] */
 
 /**
@@ -1814,7 +1922,7 @@ enum psif_epsc_update_set {
 	EPSC_UPDATE_SET_TWOSHOT_IMG,
 	EPSC_UPDATE_SET_IMG_VALID,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_UPDATE_SET_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_UPDATE_SET_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_update_set [32 bits] */
 
 /**
@@ -1824,10 +1932,14 @@ enum psif_epsc_csr_uf_ctrl_opcode {
 	EPSC_UF_CTRL_MMU_FLUSH,
 	EPSC_UF_CTRL_GET_UF_USED_QP,
 	EPSC_UF_CTRL_CLEAR_UF_USED_QP,
-	/** For SMP {en dis}able is the flag param a bitvector for which ports to update 0x6 hence indicate P1 and P2. */
+	/** For SMP {en dis}able is the flag param a bitvector for which ports
+	 *  to update, 0x6 hence indicate P1 and P2.
+	 */
 	EPSC_UF_CTRL_SMP_ENABLE,
 	EPSC_UF_CTRL_SMP_DISABLE,
-	/** For Vlink {dis }connect is the flag param a bitvector for which ports to update 0x6 hence indicate P1 and P2. */
+	/** For Vlink {dis }connect is the flag param a bitvector for which ports
+	 * to update, 0x6 hence indicate P1 and P2.
+	 */
 	EPSC_UF_CTRL_VLINK_CONNECT,
 	EPSC_UF_CTRL_VLINK_DISCONNECT,
 	/** Retrieve the highest QP number used by the given UF */
@@ -1835,7 +1947,7 @@ enum psif_epsc_csr_uf_ctrl_opcode {
 	/** Reset the highest QP number cache for the given UF */
 	EPSC_UF_CTRL_RESET_HIGHEST_QP_IDX,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_UF_CTRL_OPCODE_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_CSR_UF_CTRL_OPCODE_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_csr_uf_ctrl_opcode [32 bits] */
 
 /**
@@ -1911,7 +2023,7 @@ enum psif_epsc_vimma_ctrl_opcode {
 	/* no DMA or DMA if multiple UFs */
 	EPSC_VIMMA_CTRL_SET_ADMIN_MODE,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_VIMMA_CTRL_OPCODE_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_VIMMA_CTRL_OPCODE_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_vimma_ctrl_opcode [32 bits] */
 
 
@@ -1920,7 +2032,7 @@ enum psif_epsc_vimma_admmode {
 	/* VFP used as short for VM Fabric Profile */
 	EPSC_VIMMA_CTRL_IB_ADM_MODE_VM_FABRIC_PROFILE,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_VIMMA_ADMMODE_FIELD_MAX	 = 0xffff
+	PSIF_EPSC_VIMMA_ADMMODE_FIELD_MAX	 = 0xffffu
 }; /* enum psif_epsc_vimma_admmode [16 bits] */
 
 /**
@@ -1929,7 +2041,7 @@ enum psif_epsc_vimma_admmode {
  */
 enum psif_epsc_csr_pma_counters_enum {
 	/** Regular counters - IB Spec chapter 16.1.3.5 */
-	EPSC_PMA_SYMBOL_ERR_CNTR	 = 0,
+	EPSC_PMA_SYMBOL_ERR_CNTR	 = 0u,
 	EPSC_PMA_LINK_ERR_RECOVERY_CNTR,
 	EPSC_PMA_LINK_DOWNED_CNTR,
 	EPSC_PMA_PORT_RCV_ERR,
@@ -1961,7 +2073,7 @@ enum psif_epsc_csr_pma_counters_enum {
 	/* Keep this in End */
 	EPSC_PMA_COUNTERS_TOTAL,
 	/* Padding out to required bits allocated */
-	PSIF_EPSC_CSR_PMA_COUNTERS_ENUM_FIELD_MAX	 = 0x7fffffff
+	PSIF_EPSC_CSR_PMA_COUNTERS_ENUM_FIELD_MAX	 = 0x7fffffffu
 }; /* enum psif_epsc_csr_pma_counters_enum [32 bits] */
 
 /**
@@ -1976,7 +2088,7 @@ enum psif_epsc_csr_pma_counters_enum {
  */
 enum psif_epsc_csr_atomic_op {
 	/** PSIF requests atomic operations for IB and SQS. */
-	PSIF_PCIE_ATOMIC_OP_BOTH	 = 0,
+	PSIF_PCIE_ATOMIC_OP_BOTH	 = 0u,
 	/** PSIF requests atomic operations for IB. */
 	PSIF_PCIE_ATOMIC_OP_IB,
 	/** PSIF requests atomic operations for SQS. */
@@ -1985,12 +2097,28 @@ enum psif_epsc_csr_atomic_op {
 	PSIF_PCIE_ATOMIC_OP_NONE
 }; /* enum psif_epsc_csr_atomic_op [ 2 bits] */
 
+/**
+ * For data in response structure of EPSC_BER_DATA Op.
+ */
+enum psif_epsc_csr_ber_counters_enum {
+	/* IBU_P1_STATUS_ADDR */
+	EPSC_BER_PORT_STATUS	 = 0u,
+	/* IBU_P1_LINK_SPEED_ACTIVE_ADDR */
+	EPSC_BER_LINK_SPEED_ACTIVE,
+	/* IBU_P1_LINK_WIDTH_ACTIVE_ADDR */
+	EPSC_BER_LINKWIDTH_ACTIVE,
+	/* IBU_P1_PCLINK_ERR_REC_CNT_ADDR */
+	EPSC_BER_PCLINK_ERR_REC_CNT,
+	/* IBU_P1_PCLINK_DOWNED_CNT_ADDR */
+	EPSC_BER_PCLINK_DOWNED_CNT
+}; /* enum psif_epsc_csr_ber_counters_enum [ 3 bits] */
+
 /*
  * Completion notification states. Could take any of these values:
  * PSIF_CQ_UNARMED PSIF_CQ_ARMED_SE PSIF_CQ_ARMED_ALL PSIF_CQ_TRIGGERED
  */
 enum psif_cq_state {
-	PSIF_CQ_UNARMED,
+	PSIF_CQ_UNARMED	 = 0u,
 	PSIF_CQ_ARMED_SE,
 	PSIF_CQ_ARMED_ALL,
 	PSIF_CQ_TRIGGERED
@@ -2001,13 +2129,13 @@ enum psif_cq_state {
  * not.
  */
 enum psif_rss_hash_source {
-	RSS_WITHOUT_PORT,
+	RSS_WITHOUT_PORT	 = 0u,
 	RSS_WITH_PORT
 }; /* enum psif_rss_hash_source [ 1 bits] */
 
-#if defined (HOST_LITTLE_ENDIAN)
+#if defined(HOST_LITTLE_ENDIAN)
 #include "psif_hw_data_le.h"
-#elif defined (HOST_BIG_ENDIAN)
+#elif defined(HOST_BIG_ENDIAN)
 #include "psif_hw_data_be.h"
 #else
 #error "Could not determine byte order in psif_hw_data.h !?"

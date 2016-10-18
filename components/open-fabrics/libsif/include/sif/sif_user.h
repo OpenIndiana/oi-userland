@@ -185,6 +185,13 @@ typedef struct sif_alloc_pd_resp_ext {
 	uint32_t reserved;
 } sif_alloc_pd_resp_ext_t;
 
+typedef struct sif_share_pd_resp_ext {
+	/* The virtual collect buffer to use by this shared protection domain */
+	__u32 cb_idx;
+	__u32 reserved;
+} sif_share_pd_resp_ext_t;
+
+
 typedef struct sif_create_cq_ext {
 	enum sif_vendor_flags flags;
 	enum sif_proxy_type proxy;

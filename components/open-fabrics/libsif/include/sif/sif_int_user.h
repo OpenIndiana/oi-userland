@@ -70,6 +70,7 @@ typedef struct sif_sq_sw {
 	volatile __u16 head_seq;
 	__u16 trusted_seq;
 	__u8 tsl;
+	bool need_flush;
 	volatile __u64 flags;
 }sif_sq_sw_t;
 

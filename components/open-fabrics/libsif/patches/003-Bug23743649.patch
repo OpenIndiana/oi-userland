@@ -1,0 +1,15 @@
+# This patch is fix for the Bug-22995977
+# It is developed By solaris PSIF team. We plan to have a common upstream repo
+# and submit these changes to it, but do not yet have a target date of doing it.
+diff -r fb74c9cd6bdb src/uverbs.c
+--- a/src/uverbs.c	Fri Aug 05 03:12:30 2016 -0700
++++ b/src/uverbs.c	Fri Aug 05 03:20:22 2016 -0700
+@@ -398,7 +398,7 @@
+ #if defined(__SVR4) && defined(__sun)
+         cq->m.sz = page_align(cq->m.sz);
+         off64_t offset = mmap_set_cmd(SIF_MAP_CQ, cq->index);
+-        cq->m.base = mmap64(NULL, cq->m.sz, PROT_READ, MAP_SHARED, fd, offset);
++        cq->m.base = mmap64(NULL, cq->m.sz, PROT_READ|PROT_WRITE, MAP_SHARED, fd, offset);
+ #else
+         off_t offset = mmap_set_cmd(SIF_MAP_CQ, cq->index);
+         cq->m.base = mmap(NULL, cq->m.sz, PROT_READ, MAP_SHARED, fd, offset);
