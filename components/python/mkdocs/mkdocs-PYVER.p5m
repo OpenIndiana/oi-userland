@@ -41,6 +41,9 @@ link path=usr/bin/mkdocs target=mkdocs-$(PYVER) mediator=python \
 <transform file path=usr/bin/mkdocs-$(PYVER) \
 	-> set action.hash usr/bin/mkdocs >
 
+# pkgdepend is confused
+<transform file path=.*\.py -> default pkg.depend.bypass-generate .* >
+
 file path=usr/bin/mkdocs-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/mkdocs-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
