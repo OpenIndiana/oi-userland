@@ -1,0 +1,113 @@
+*** idnkit-1.0-src/lib/aliaslist.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/aliaslist.c	Tue Sep  2 14:48:37 2003
+***************
+*** 92,97 ****
+--- 92,101 ----
+  	TRACE(("idn__aliaslist_create()\n"));
+  
+  	assert(listp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (listp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	if ((*listp = malloc(size)) == NULL) {
+  		return (idn_nomemory);
+***************
+*** 109,114 ****
+--- 113,122 ----
+  	TRACE(("idn__aliaslist_destroy()\n"));
+  
+  	assert(list != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (list == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	current = list->first_item;
+  	while (current != NULL) {
+***************
+*** 133,138 ****
+--- 141,150 ----
+  	char line[200], alias[200], real[200];
+  
+  	assert(path != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (path == NULL)
++ 		return (idn_nofile);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__aliaslist_aliasfile(path=%s)\n", path));
+  
+***************
+*** 142,151 ****
+--- 154,170 ----
+  	for (line_no = 1; fgets(line, sizeof(line), fp) != NULL; line_no++) {
+  		unsigned char *p = (unsigned char *)line;
+  
++ #ifdef	SUN_CHANGE
++ 		while (*p != '\n' && *p != '\0' && isascii(*p) && isspace(*p))
++ 			p++;
++ 		if (*p == '#' || *p == '\n' || *p == '\0')
++ 			continue;
++ #else
+  		while (isascii(*p) && isspace(*p))
+  			p++;
+  		if (*p == '#' || *p == '\n')
+  			continue;
++ #endif	/* SUN_CHANGE */
+  		if (sscanf((char *)p, "%s %s", alias, real) == 2) {
+  			r = additem_to_bottom(list, alias, real);
+  			if (r != idn_success)
+***************
+*** 189,194 ****
+--- 208,217 ----
+  	assert(list != NULL);
+  	assert(pattern != NULL);
+  	assert(encoding != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (list == NULL || pattern == NULL || encoding == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	if ((r = create_item(pattern, encoding, &new_item))
+  	    != idn_success) {
+***************
+*** 217,222 ****
+--- 240,249 ----
+  	assert(list != NULL);
+  	assert(pattern != NULL);
+  	assert(encoding != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (list == NULL || pattern == NULL || encoding == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	r = create_item(pattern, encoding, &new_item);
+  	if (r != idn_success) {
+***************
+*** 249,254 ****
+--- 276,285 ----
+  
+  	assert(list != NULL);
+  	assert(pattern != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (list == NULL || pattern == NULL)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  
+  #ifdef DEBUG
+  	DUMP(("target pattern: %s\n", pattern));
+***************
+*** 309,314 ****
+--- 340,349 ----
+  
+  	assert(pattern != NULL);
+  	assert(encoding != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (pattern == NULL || encoding == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	if ((*itemp = malloc(size)) == NULL)
+  		return (idn_nomemory);

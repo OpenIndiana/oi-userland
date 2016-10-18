@@ -1,0 +1,54 @@
+*** idnkit-1.0-src/lib/unicode.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/unicode.c	Tue Sep  2 17:13:30 2003
+***************
+*** 117,122 ****
+--- 117,126 ----
+  	idn__unicode_version_t v;
+  
+  	assert(versionp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (versionp == NULL)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn__unicode_create(version=%-.50s)\n",
+  	       version == NULL ? "<NULL>" : version));
+  
+***************
+*** 135,140 ****
+--- 139,148 ----
+  void
+  idn__unicode_destroy(idn__unicode_version_t version) {
+  	assert(version != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (version == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn__unicode_destroy()\n"));
+  	/* Nothing to do */
+  }
+***************
+*** 156,161 ****
+--- 164,173 ----
+  	const unsigned long *seq;
+  
+  	assert(v != NULL && vlen >= 0 && decomp_lenp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (v == NULL || vlen < 0 || decomp_lenp == NULL)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  
+  	if (c > UCS_MAX)
+  		return (idn_notfound);
+***************
+*** 253,258 ****
+--- 265,274 ----
+  	const struct composition *cseq;
+  
+  	assert(compp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (compp == NULL)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  
+  	if (c1 > UCS_MAX || c2 > UCS_MAX)
+  		return (idn_notfound);

@@ -1,0 +1,343 @@
+*** idnkit-1.0-src/lib/converter.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/converter.c	Wed Sep  3 13:08:04 2003
+***************
+*** 57,62 ****
+--- 57,67 ----
+  #include <iconv.h>
+  #endif
+  
++ #ifdef	SUN_CHANGE
++ #include <sys/types.h>
++ #include <sys/stat.h>
++ #endif	/* SUN_CHANGE */
++ 
+  #include <idn/result.h>
+  #include <idn/assert.h>
+  #include <idn/logmacro.h>
+***************
+*** 259,264 ****
+--- 264,289 ----
+  
+  static int
+  file_exist(const char *filename) {
++ #ifdef	SUN_CHANGE
++ 	struct stat64 sbuf;
++ 
++ 	if (stat64(filename, &sbuf) == -1) {
++ 		return (0);
++ 	}
++ 
++ 	/*
++ 	 * We make sure that the access mode is 0444, owner is root, and
++ 	 * group is sys for better security; see LSARC/2003/311.
++ 	 */
++ 	if (sbuf.st_mode != 0100444 || sbuf.st_uid != 0 || sbuf.st_gid != 3) {
++ 		fprintf(stderr, "idn_nameinit: warning: config file "
++ 			"(%s) not in proper access mode or ownership "
++ 			"- the file ignored.\n", filename);
++ 		return (0);
++ 	}
++ 
++ 	return (1);
++ #else
+  	FILE  *fp;
+  
+  	if ((fp = fopen(filename, "r")) == NULL)
+***************
+*** 265,270 ****
+--- 290,296 ----
+  		return (0);
+  	fclose(fp);
+  	return (1);
++ #endif	/* SUN_CHANGE */
+  }
+  #endif
+  
+***************
+*** 276,281 ****
+--- 302,311 ----
+  	void *v;
+  
+  	assert(name != NULL && ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (name == NULL || ctxp == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_create(%s)\n", name));
+  
+***************
+*** 304,309 ****
+--- 334,345 ----
+  	ctx->private_data = NULL;
+  
+  	assert(encoding_name_hash != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (encoding_name_hash == NULL) {
++ 		free(ctx);
++ 		return (idn_invalid_name);
++ 	}
++ #endif	/* SUN_CHANGE */
+  
+  	if (strcmp(realname, IDN_UTF8_ENCODING_NAME) == 0) {
+  		/* No conversion needed */
+***************
+*** 356,361 ****
+--- 392,401 ----
+  void
+  idn_converter_destroy(idn_converter_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_destroy(ctx=%s)\n", ctx->local_encoding_name));
+  
+***************
+*** 374,379 ****
+--- 414,423 ----
+  void
+  idn_converter_incrref(idn_converter_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_incrref(ctx=%s)\n", ctx->local_encoding_name));
+  	TRACE(("idn_converter_incrref: update reference count (%d->%d)\n",
+***************
+*** 385,390 ****
+--- 429,438 ----
+  char *
+  idn_converter_localencoding(idn_converter_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return ((char *)NULL);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_converter_localencoding(ctx=%s)\n",
+  	       ctx->local_encoding_name));
+  	return (ctx->local_encoding_name);
+***************
+*** 395,400 ****
+--- 443,452 ----
+  	int encoding_type;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (IDN_NONACE);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_converter_encodingtype(ctx=%s)\n",
+  	       ctx->local_encoding_name));
+  
+***************
+*** 408,413 ****
+--- 460,469 ----
+  	int iscompat;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (0);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_converter_isasciicompatible(ctx=%s)\n",
+  	       ctx->local_encoding_name));
+  
+***************
+*** 422,427 ****
+--- 478,487 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_convfromucs4(ctx=%s, from=\"%s\", tolen=%d)\n",
+  	       ctx->local_encoding_name, idn__debug_ucs4xstring(from, 50),
+***************
+*** 461,466 ****
+--- 521,530 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_convtoucs4(ctx=%s, from=\"%s\", tolen=%d)\n",
+  	       ctx->local_encoding_name, idn__debug_xstring(from, 50),
+***************
+*** 501,506 ****
+--- 565,574 ----
+  	idn_result_t r;
+  
+  	assert(name != NULL && convfromucs4 != NULL && convtoucs4 != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (name == NULL || convfromucs4 == NULL || convtoucs4 == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_register(name=%s)\n", name));
+  
+***************
+*** 596,601 ****
+--- 664,673 ----
+  	idn_result_t r;
+  
+  	assert(alias_name != NULL && real_name != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (alias_name == NULL || real_name == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_addalias(alias_name=%s,real_name=%s)\n",
+  	       alias_name, real_name));
+***************
+*** 628,633 ****
+--- 700,709 ----
+  	idn_result_t r;
+  
+  	assert(path != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (path == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_converter_aliasfile(path=%s)\n", path));
+  
+***************
+*** 675,680 ****
+--- 751,760 ----
+   	TRACE(("idn_converter_getrealname()\n"));
+  
+  	assert(name != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (name == NULL)
++ 		return ("");
++ #endif	/* SUN_CHANGE */
+  
+  	if (encoding_alias_list == NULL) {
+  		WARNING(("idn_converter_getrealname(): the module is not "
+***************
+*** 762,767 ****
+--- 842,851 ----
+  static idn_result_t
+  converter_none_open(idn_converter_t ctx, void **privdata) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	return (idn_success);
+  }
+***************
+*** 769,774 ****
+--- 853,862 ----
+  static idn_result_t
+  converter_none_close(idn_converter_t ctx, void *privdata) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	return (idn_success);
+  }
+***************
+*** 777,782 ****
+--- 865,874 ----
+  converter_none_convfromucs4(idn_converter_t ctx, void *privdata,
+  		       const unsigned long *from, char *to, size_t tolen) {
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_encoding);
++ #endif	/* SUN_CHANGE */
+  
+  	return idn_ucs4_ucs4toutf8(from, to, tolen);
+  }
+***************
+*** 785,790 ****
+--- 877,886 ----
+  converter_none_convtoucs4(idn_converter_t ctx, void *privdata,
+  		     const char *from, unsigned long *to, size_t tolen) {
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_encoding);
++ #endif	/* SUN_CHANGE */
+  
+  	return idn_ucs4_utf8toucs4(from, to, tolen);
+  }
+***************
+*** 801,806 ****
+--- 897,906 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	r = iconv_initialize_privdata(privdata);
+  	if (r != idn_success)
+***************
+*** 831,836 ****
+--- 931,940 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	r = iconv_initialize_privdata(privdata);
+  	if (r != idn_success)
+***************
+*** 887,892 ****
+--- 991,1000 ----
+  static idn_result_t
+  converter_iconv_close(idn_converter_t ctx, void *privdata) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	iconv_finalize_privdata(privdata);
+  
+***************
+*** 907,912 ****
+--- 1015,1024 ----
+  	char *inbuf, *outbuf;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_encoding);
++ #endif	/* SUN_CHANGE */
+  
+  	if (tolen <= 0) {
+  		r = idn_buffer_overflow;	/* need space for NUL */
+***************
+*** 1025,1030 ****
+--- 1137,1146 ----
+  	char *outbuf;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_encoding);
++ #endif	/* SUN_CHANGE */
+  
+  	if (tolen <= 0) {
+  		r = idn_buffer_overflow;	/* need space for NUL */

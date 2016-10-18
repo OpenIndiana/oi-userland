@@ -1,0 +1,41 @@
+*** idnkit-1.0-src/lib/api.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/api.c	Wed Aug 27 13:36:32 2003
+***************
+*** 140,145 ****
+--- 140,149 ----
+  	idn_result_t r;
+  
+  	assert(from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_encodename(actions=%s, from=\"%s\")\n",
+  	       idn__res_actionstostring(actions),
+***************
+*** 165,170 ****
+--- 169,178 ----
+  	idn_result_t r;
+  
+  	assert(from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_decodename(actions=%s, from=\"%s\", tolen=%d)\n",
+  	       idn__res_actionstostring(actions),
+***************
+*** 191,196 ****
+--- 199,208 ----
+  	idn_result_t r;
+  
+  	assert(from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (from == NULL || to == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_decodename2(actions=%s, from=\"%s\", tolen=%d)\n",
+  	       idn__res_actionstostring(actions),

@@ -1,0 +1,93 @@
+*** idnkit-1.0-src/lib/strhash.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/strhash.c	Tue Sep  2 16:50:08 2003
+***************
+*** 94,99 ****
+--- 94,103 ----
+  	TRACE(("idn__strhash_create()\n"));
+  
+  	assert(hashp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (hashp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	*hashp = NULL;
+  
+***************
+*** 120,125 ****
+--- 124,133 ----
+  	int i;
+  
+  	assert(hash != NULL && hash->bins != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (hash == NULL || hash->bins == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	for (i = 0; i < hash->nbins; i++) {
+  		strhash_entry_t *bin = hash->bins[i];
+***************
+*** 143,148 ****
+--- 151,160 ----
+  	strhash_entry_t *entry;
+  
+  	assert(hash != NULL && key != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (hash == NULL || key == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	h = hash_value(key);
+  	h_index = h % hash->nbins;
+***************
+*** 179,184 ****
+--- 191,200 ----
+  	strhash_entry_t *entry;
+  
+  	assert(hash != NULL && key != NULL && valuep != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (hash == NULL || key == NULL || valuep == NULL)
++ 		return (idn_noentry);
++ #endif	/* SUN_CHANGE */
+  
+  	h = hash_value(key);
+  	entry = find_entry(hash->bins[h % hash->nbins], key, h);
+***************
+*** 194,199 ****
+--- 210,219 ----
+  	unsigned long h;
+  
+  	assert(hash != NULL && key != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (hash == NULL || key == NULL)
++ 		return (0);
++ #endif	/* SUN_CHANGE */
+  
+  	h = hash_value(key);
+  	return (find_entry(hash->bins[h % hash->nbins], key, h) != NULL);
+***************
+*** 214,219 ****
+--- 234,243 ----
+  static strhash_entry_t *
+  find_entry(strhash_entry_t *entry, const char *key, unsigned long hash) {
+  	assert(key != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (key == NULL)
++ 		return ((strhash_entry_t *)NULL);
++ #endif	/* SUN_CHANGE */
+  
+  	while (entry != NULL) {
+  		if (entry->hash_value == hash && strcmp(key, entry->key) == 0)
+***************
+*** 229,234 ****
+--- 253,262 ----
+  	int len;
+  
+  	assert(key != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (key == NULL)
++ 		return ((strhash_entry_t *)NULL);
++ #endif	/* SUN_CHANGE */
+  
+  	len = strlen(key) + 1;
+  	if ((entry = malloc(sizeof(strhash_entry_t) + len)) == NULL) {

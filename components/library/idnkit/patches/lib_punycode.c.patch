@@ -1,0 +1,43 @@
+*** idnkit-1.0-src/lib/punycode.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/punycode.c	Tue Sep  2 16:33:16 2003
+***************
+*** 115,120 ****
+--- 115,124 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_invalid_encoding);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__punycode_decode(from=\"%s\", tolen=%d)\n",
+  	       idn__debug_xstring(from, 50), (int)tolen));
+***************
+*** 215,220 ****
+--- 219,228 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__punycode_encode(from=\"%s\", tolen=%d)\n",
+  	       idn__debug_ucs4xstring(from, 50), (int)tolen));
+***************
+*** 304,309 ****
+--- 312,323 ----
+  		}
+  		/* There must be such code point. */
+  		assert(limit >= 0);
++ #ifdef	SUN_CHANGE
++ 		if (limit < 0) {
++ 			r = idn_buffer_overflow;
++ 			goto ret;
++ 		}
++ #endif	/* SUN_CHANGE */
+  
+  		delta += (next_code - cur_code) * (ucsdone + 1);
+  		cur_code = next_code;

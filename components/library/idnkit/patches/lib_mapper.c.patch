@@ -1,0 +1,107 @@
+*** idnkit-1.0-src/lib/mapper.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/mapper.c	Tue Sep  2 15:57:01 2003
+***************
+*** 156,161 ****
+--- 156,165 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_create()\n"));
+  
+***************
+*** 194,199 ****
+--- 198,207 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_destroy()\n"));
+  
+***************
+*** 214,219 ****
+--- 222,231 ----
+  void
+  idn_mapper_incrref(idn_mapper_t ctx) {
+  	assert(ctx != NULL && scheme_hash != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_incrref()\n"));
+  	TRACE(("idn_mapper_incrref: update reference count (%d->%d)\n",
+***************
+*** 234,239 ****
+--- 246,255 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (scheme_hash == NULL || ctx == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_add(scheme_name=%s)\n",
+  		idn__debug_xstring(scheme_name, 50)));
+***************
+*** 282,287 ****
+--- 298,307 ----
+  	 * Add the scheme.
+  	 */
+  	assert(ctx->nschemes <= ctx->scheme_size);
++ #ifdef	SUN_CHANGE
++ 	if (ctx->nschemes > ctx->scheme_size)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	if (ctx->nschemes == ctx->scheme_size) {
+  		map_scheme_t *new_schemes;
+***************
+*** 320,325 ****
+--- 340,349 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL && scheme_names != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || scheme_hash == NULL || scheme_names == NULL)
++ 		return (idn_invalid_name);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_addall(nschemes=%d)\n", nschemes));
+  
+***************
+*** 349,354 ****
+--- 373,382 ----
+  
+  	assert(scheme_hash != NULL);
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || scheme_hash == NULL || from == NULL || to == NULL)
++ 		return (idn_buffer_overflow);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_map(from=\"%s\", tolen=%d)\n",
+  	       idn__debug_ucs4xstring(from, 50), (int)tolen));
+***************
+*** 444,449 ****
+--- 472,482 ----
+  	assert(scheme_hash != NULL);
+  	assert(prefix != NULL && create != NULL && destroy != NULL &&
+  		map != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (prefix == NULL || scheme_hash == NULL || create == NULL ||
++ 	    destroy == NULL || map == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_mapper_register(prefix=%s)\n", prefix));
+  

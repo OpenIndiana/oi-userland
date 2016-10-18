@@ -1,0 +1,80 @@
+*** idnkit-1.0-src/lib/delimitermap.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/delimitermap.c	Tue Sep  2 15:30:21 2003
+***************
+*** 80,85 ****
+--- 80,89 ----
+  	idn_result_t r;
+  
+  	assert(ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctxp == NULL)
++ 		return (idn_nomemory);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_delimitermap_create()\n"));
+  
+  	ctx = (idn_delimitermap_t) malloc(sizeof(struct idn_delimitermap));
+***************
+*** 111,116 ****
+--- 115,124 ----
+  void
+  idn_delimitermap_destroy(idn_delimitermap_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_delimitermap_destroy()\n"));
+  
+***************
+*** 129,134 ****
+--- 137,146 ----
+  void
+  idn_delimitermap_incrref(idn_delimitermap_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_delimitermap_incrref()\n"));
+  	TRACE(("idn_delimitermap_incrref: update reference count (%d->%d)\n",
+***************
+*** 142,147 ****
+--- 154,163 ----
+  	idn_result_t r;
+  
+  	assert(ctx != NULL && ctx->ndelimiters <= ctx->delimiter_size);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || ctx->ndelimiters > ctx->delimiter_size)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  	TRACE(("idn_delimitermap_add(delimiter=\\x%04lx)\n", delimiter));
+  
+  	if (delimiter == 0 || delimiter > UNICODE_MAX ||
+***************
+*** 179,184 ****
+--- 195,204 ----
+  	int i;
+  
+  	assert(ctx != NULL && delimiters != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || delimiters == NULL)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_delimitermap_addall(ndelimiters=%d)\n", ndelimiters));
+  
+***************
+*** 213,218 ****
+--- 233,242 ----
+  	int found;
+  
+  	assert(ctx != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || from == NULL || to == NULL)
++ 		return (idn_buffer_overflow);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_delimitermap_map(from=\"%s\", tolen=%d)\n",
+  		idn__debug_ucs4xstring(from, 50), (int)tolen));

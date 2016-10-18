@@ -1,0 +1,111 @@
+*** idnkit-1.0-src/lib/utf8.c.org	Tue Aug 26 15:26:06 2003
+--- idnkit-1.0-src/lib/utf8.c	Tue Sep  2 15:23:28 2003
+***************
+*** 64,69 ****
+--- 64,79 ----
+  
+  #define VALID_CONT_BYTE(c)	(0x80 <= (c) && (c) < 0xc0)
+  
++ #ifdef	SUN_CHANGE
++ #define	INVALID_CONT_BYTE(first_byte, next_byte) \
++ 	(((first_byte) == 0xe0 && (next_byte) < 0xa0) || \
++ 	 ((first_byte) == 0xed && (next_byte) > 0x9f) || \
++ 	 ((first_byte) == 0xf0 && (next_byte) < 0x90) || \
++ 	 ((first_byte) == 0xf4 && (next_byte) > 0x8f) || \
++ 	 (next_byte) < 0x80 || \
++ 	 (next_byte) > 0xbf)
++ #endif	/* SUN_CHANGE */
++ 
+  int
+  idn_utf8_mblen(const char *s) {
+  	int c = *(unsigned char *)s;
+***************
+*** 82,87 ****
+--- 92,100 ----
+  	/* buf must be at least 7-bytes long */
+  	const unsigned char *p = (const unsigned char *)s;
+  	unsigned char *q = (unsigned char *)buf;
++ #ifdef	SUN_CHANGE
++ 	unsigned char first_byte;
++ #endif	/* SUN_CHANGE */
+  	int width = UTF8_WIDTH(*p);
+  	int w;
+  
+***************
+*** 96,109 ****
+--- 109,133 ----
+  		return (0);
+  
+  	/* Copy the first byte. */
++ #ifdef	SUN_CHANGE
++ 	first_byte = *q++ = *p++;
++ #else
+  	*q++ = *p++;
++ #endif	/* SUN_CHANGE */
+  
+  	/* .. and the rest. */
+  	w = width;
+  	while (--w > 0) {
++ #ifdef	SUN_CHANGE
++ 		if (INVALID_CONT_BYTE(first_byte, (*p)))
++ #else
+  		if (!VALID_CONT_BYTE(*p))
++ #endif	/* SUN_CHANGE */
+  			return (0);
+  		*q++ = *p++;
++ #ifdef	SUN_CHANGE
++ 		first_byte = '\0';
++ #endif	/* SUN_CHANGE */
+  	}
+  	return (width);
+  }
+***************
+*** 113,119 ****
+--- 137,147 ----
+  	unsigned long v;
+  	unsigned long min;
+  	const unsigned char *p = (const unsigned char *)s;
++ #ifdef	SUN_CHANGE
++ 	unsigned long c;
++ #else
+  	int c;
++ #endif	/* SUN_CHANGE */
+  	int width;
+  	int rest;
+  
+***************
+*** 164,173 ****
+--- 192,208 ----
+  		
+  	rest = width - 1;
+  	while (rest-- > 0) {
++ #ifdef	SUN_CHANGE
++ 		if (INVALID_CONT_BYTE(c, (*p)))
++ #else
+  		if (!VALID_CONT_BYTE(*p))
++ #endif	/* SUN_CHANGE */
+  			return (0);
+  		v = (v << 6) | (*p & 0x3f);
+  		p++;
++ #ifdef	SUN_CHANGE
++ 		c = 0;
++ #endif	/* SUN_CHANGE */
+  	}
+  
+  	if (v < min)
+***************
+*** 269,275 ****
+--- 304,316 ----
+  		    break;
+  		p--;
+  	}
++ #ifdef	SUN_CHANGE
++ 	if (p < t || UTF8_WIDTH(*p) == 0 ||
++ 	    (UTF8_WIDTH(*p) >= 2 && (const unsigned char *)s > p &&
++ 	     INVALID_CONT_BYTE((*p), (*(p + 1)))))
++ #else
+  	if (p < t || UTF8_WIDTH(*p) == 0)
++ #endif	/* SUN_CHANGE */
+  		return (NULL);
+  
+  	return ((char *)p);

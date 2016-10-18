@@ -1,0 +1,41 @@
+*** idnkit-1.0-src/lib/filechecker.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/filechecker.c	Tue Sep  2 15:36:11 2003
+***************
+*** 80,85 ****
+--- 80,89 ----
+  	idn_result_t r;
+  
+  	assert(file != NULL && ctxp != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (file == NULL || ctxp == NULL)
++ 		return (idn_nofile);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filechecker_create(file=\"%-.100s\")\n", file));
+  
+***************
+*** 113,118 ****
+--- 117,126 ----
+  void
+  idn__filechecker_destroy(idn__filechecker_t ctx) {
+  	assert(ctx != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filechecker_destroy()\n"));
+  
+***************
+*** 126,131 ****
+--- 134,143 ----
+  	idn_result_t r = idn_success;
+  
+  	assert(ctx != NULL && str != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (ctx == NULL || str == NULL)
++ 		return (idn_failure);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn__filechecker_lookup(str=\"%s\")\n",
+  	       idn__debug_ucs4xstring(str, 50)));

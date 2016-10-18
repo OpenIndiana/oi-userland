@@ -1,0 +1,80 @@
+*** idnkit-1.0-src/lib/nameprep.c.org	Wed Aug 27 11:37:02 2003
+--- idnkit-1.0-src/lib/nameprep.c	Tue Sep  2 16:12:10 2003
+***************
+*** 104,109 ****
+--- 104,113 ----
+  	idn_nameprep_t handle;
+  
+  	assert(handlep != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handlep == NULL)
++ 		return (idn_notfound);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_create(version=%-.50s)\n",
+  	       version == NULL ? "<NULL>" : version));
+***************
+*** 128,133 ****
+--- 132,141 ----
+  void
+  idn_nameprep_destroy(idn_nameprep_t handle) {
+  	assert(handle != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handle == NULL)
++ 		return;
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_destroy()\n"));
+  
+***************
+*** 138,143 ****
+--- 146,155 ----
+  idn_nameprep_map(idn_nameprep_t handle, const unsigned long *from,
+  		 unsigned long *to, size_t tolen) {
+  	assert(handle != NULL && from != NULL && to != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handle == NULL || from == NULL || to == NULL)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_map(ctx=%s, from=\"%s\")\n",
+  	       handle->version, idn__debug_ucs4xstring(from, 50)));
+***************
+*** 202,207 ****
+--- 214,223 ----
+  idn_nameprep_isprohibited(idn_nameprep_t handle, const unsigned long *str,
+  			  const unsigned long **found) {
+  	assert(handle != NULL && str != NULL && found != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handle == NULL || str == NULL || found == NULL)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_isprohibited(ctx=%s, str=\"%s\")\n",
+  	       handle->version, idn__debug_ucs4xstring(str, 50)));
+***************
+*** 213,218 ****
+--- 229,238 ----
+  idn_nameprep_isunassigned(idn_nameprep_t handle, const unsigned long *str,
+  			  const unsigned long **found) {
+  	assert(handle != NULL && str != NULL && found != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handle == NULL || str == NULL || found == NULL)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_isunassigned(handle->version, str=\"%s\")\n",
+  	       handle->version, idn__debug_ucs4xstring(str, 50)));
+***************
+*** 254,259 ****
+--- 274,283 ----
+  	int found_r_al;
+  
+  	assert(handle != NULL && str != NULL && found != NULL);
++ #ifdef	SUN_CHANGE
++ 	if (handle == NULL || str == NULL || found == NULL)
++ 		return (idn_invalid_codepoint);
++ #endif	/* SUN_CHANGE */
+  
+  	TRACE(("idn_nameprep_isvalidbidi(ctx=%s, str=\"%s\")\n",
+  	       handle->version, idn__debug_ucs4xstring(str, 50)));
