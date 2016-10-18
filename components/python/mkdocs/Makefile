@@ -45,6 +45,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+COMPONENT_POST_INSTALL_ACTION= \
+  gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \
+    -exec gawk '/^\#!.*python/{print FILENAME}{nextfile}' {} + \
+  | xargs gsed -i -e '1 s;^.*$$;\#!$(PYTHON.32);'
+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
