@@ -56,13 +56,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
-# Move the section 8 man pages into section 1m.
-COMPONENT_POST_INSTALL_ACTION = \
-	for f in $(PROTOUSRSHAREMANDIR)/man8/*; do \
-		mv $$f $${f%.8}.1m; \
-	done ; \
-	$(MV) $(PROTOUSRSHAREMANDIR)/man8 $(PROTOUSRSHAREMANDIR)/man1m
-
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 # common targets
