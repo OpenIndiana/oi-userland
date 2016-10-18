@@ -41,6 +41,9 @@ TPNO=			29533
 include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/php.mk
 
+# need GCC_ROOT/bin for configure, usr/sbin for dtrace 
+export PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(USRSBINDIR):$(GNUBIN)
+
 # We patch configure.in to allow building just modules (no SAPI's), e.g. intl.
 # Since we are sharing the source, regenerate configure here.
 COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR) ; autoreconf) ;
@@ -48,7 +51,6 @@ COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR) ; autoreconf) ;
 include enable-extensions.mk
 
 CONFIGURE_OPTIONS += --enable-dtrace
-COMPONENT_BUILD_ENV += PATH="$(PATH):$(USRSBINDIR)"
 
 # Without this, the the build seems to interrogate GCC for potential library
 # search path information and then embed it into the RUNPATH of selected ELF
