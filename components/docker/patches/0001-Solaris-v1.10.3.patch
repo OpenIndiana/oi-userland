@@ -1,6 +1,16 @@
-From 2807410f20afedbe7e2a0df0147ba5ac280c0d4a Mon Sep 17 00:00:00 2001
-From: Shreya Jain <shreya.jain@oracle.com>
-Date: Mon, 10 Oct 2016 12:31:58 -0700
+In-house patch which contains a full port of the v1.10.3 Docker
+Engine for Solaris. This is being integrated as the first
+version of Docker on Solaris, targeting release with Solaris 12.
+
+While work is ongoing upstream in the public project, and
+most if not all of that code will be integrated upstream, that
+work will not be done in time to target a Solaris 12 release.
+This version is the first in hopefully many, and this patch
+will be deprecated in future release integrations. 
+
+From 1a691306db9dfd0ddddf351cc203eeb58fc916ff Mon Sep 17 00:00:00 2001
+From: Jesse Butler <jesse.butler@oracle.com>
+Date: Mon, 17 Oct 2016 19:20:35 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -10,7 +20,7 @@ Subject: [PATCH] Solaris-v1.10.3
  api/client/version.go                              |   20 -
  api/server/router/container/container_routes.go    |    7 +
  api/server/server_unix.go                          |    2 +-
- container/container_solaris.go                     |  649 ++++++++++++
+ container/container_solaris.go                     |  650 ++++++++++++
  container/monitor.go                               |    9 +
  container/state_solaris.go                         |    9 +
  contrib/docker-device-tool/device_tool.go          |    2 +-
@@ -197,7 +207,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9162 insertions(+), 1241 deletions(-)
+ 193 files changed, 9163 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -499,10 +509,10 @@ index a4fc639..ea647ff 100644
  
 diff --git a/container/container_solaris.go b/container/container_solaris.go
 new file mode 100644
-index 0000000..fce3c7f
+index 0000000..0525329
 --- /dev/null
 +++ b/container/container_solaris.go
-@@ -0,0 +1,649 @@
+@@ -0,0 +1,650 @@
 +// +build solaris
 +
 +package container
@@ -566,6 +576,7 @@ index 0000000..fce3c7f
 +	env := []string{
 +		"PATH=" + system.DefaultPathEnv,
 +		"HOSTNAME=" + fullHostname,
++		"HOME=/root", // XXX fine until we have non-root users
 +	}
 +	if container.Config.Tty {
 +		env = append(env, "TERM=xterm")
