@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= singledispatch
 COMPONENT_VERSION= 3.4.0.3
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= library/python/singledispatch
 COMPONENT_PROJECT_URL= http://docs.python.org/3/library/functools.html#functools.singledispatch
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
