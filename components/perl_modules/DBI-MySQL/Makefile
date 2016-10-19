@@ -27,14 +27,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	DBI-MySQL
-COMPONENT_VERSION=	4.0.24
+COMPONENT_VERSION=	4.0.37
 COMPONENT_SUMMARY= 	The DBI MySQL Interface for Perl
-COMPONENT_SRC=		DBD-mysql-4.024
+COMPONENT_SRC=		DBD-mysql-4.037
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:fc65bb07ab86f71ff5d7ac4197d04e5c5dc54d9b3c4732f39330ec78e87682d4
+  sha256:df578acef28ed3f6aaae52dc98e6821a1407d3bfa88585255729bb0ebfed3cfc
 COMPONENT_ARCHIVE_URL= \
-  http://search.cpan.org/CPAN/authors/id/C/CA/CAPTTOFU/$(COMPONENT_ARCHIVE)
+  https://cpan.metacpan.org/authors/id/M/MI/MICHIELB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-mysql/lib/DBD/mysql.pm
 
 # Don't depend on host default MySQL
