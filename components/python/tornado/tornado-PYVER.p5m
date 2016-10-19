@@ -23,6 +23,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license tornado.copyright license="Apache v2.0"
 
+# Tornado does a lot of try/import/except, making pkgdepend unhapyy
+<transform path=usr/lib/python$(PYVER)/vendor-packages/tornado/.*\.py -> default pkg.depend.bypass-generate .* >
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
