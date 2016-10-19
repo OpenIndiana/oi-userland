@@ -44,6 +44,8 @@ PATCH_LEVEL =		0
 
 CONFIGURE_OPTIONS +=	--without-examples
 
+CXXFLAGS += -std=sun03
+
 # pkgdepend doesn't like the first line of a Python script to be:
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.7'
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -59,6 +61,9 @@ COMPONENT_INSTALL_ARGS += sbindir=$(PROTOUSRSBINDIR)
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(JAVA_HOME).*$$|XXX_JAVA_XXX|g" ' \
 	'-e "/^ANTLR Parser Generator.*$$/d"' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"' \
 	'-e "/^XXX_JAVA_XXX$$/d" '
 
 COMPONENT_TEST_TARGETS = test
