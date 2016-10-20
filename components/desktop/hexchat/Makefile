@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
-COMPONENT_VERSION=	2.12.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.12.2
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5201b0c6d17dcb8c2cb79e9c39681f8e052999ba8f7b5986d5c1e7dc68fa7c6b
+    sha256:6dad783f37aac32a8301a12d498af7a74900f011aec4e77bb378ae9797a3ccf6
 COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
 # to download the source file.
