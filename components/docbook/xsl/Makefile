@@ -45,6 +45,8 @@ TPNO=			9656
 
 TEST_TARGET = $(NO_TESTS)
 
+PKG_VARS += COMPONENT_ARCHIVE_URL_1
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
