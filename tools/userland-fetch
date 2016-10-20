@@ -36,238 +36,244 @@ from urllib2 import urlopen
 from urllib2 import Request
 import hashlib
 
+
 def printIOError(e, txt):
-	""" Function to decode and print IOError type exception """
-	print "I/O Error: " + txt + ": "
-	try:
-		(code, message) = e
-		print str(message) + " (" + str(code) + ")"
-	except:
-		print str(e)
-	
+    """ Function to decode and print IOError type exception """
+    print "I/O Error: " + txt + ": "
+    try:
+        (code, message) = e
+        print str(message) + " (" + str(code) + ")"
+    except:
+        print str(e)
+
+
 def validate(file, hash):
-	algorithm, hashvalue = hash.split(':')
+    algorithm, hashvalue = hash.split(':')
 
-	# force migration away from sha1
-	if algorithm == "sha1":
-		algorithm = "sha256"
-	try:
-		m = hashlib.new(algorithm)
-	except ValueError:
-		return False
+    # force migration away from sha1
+    if algorithm == "sha1":
+        algorithm = "sha256"
+    try:
+        m = hashlib.new(algorithm)
+    except ValueError:
+        return False
 
-	while True:
-		try:
-			block = file.read()
-		except IOError, err:
-			print str(err),
-			break
+    while True:
+        try:
+            block = file.read()
+        except IOError, err:
+            print str(err),
+            break
 
-		m.update(block)
-		if block == '':
-			break
+        m.update(block)
+        if block == '':
+            break
 
-	return "%s:%s" % (algorithm, m.hexdigest())
+    return "%s:%s" % (algorithm, m.hexdigest())
+
 
 def validate_container(filename, hash):
-	try:
-		file = open(filename, 'r')
-	except IOError as e:
-		printIOError(e, "Can't open file " + filename)
-		return False
-	return validate(file, hash)
+    try:
+        file = open(filename, 'r')
+    except IOError as e:
+        printIOError(e, "Can't open file " + filename)
+        return False
+    return validate(file, hash)
 
 
 def validate_payload(filename, hash):
-	import re
-	import gzip
-	import bz2
+    import re
+    import gzip
+    import bz2
 
-	expr_bz = re.compile('.+\.bz2$', re.IGNORECASE)
-	expr_gz = re.compile('.+\.gz$', re.IGNORECASE)
-	expr_tgz = re.compile('.+\.tgz$', re.IGNORECASE)
+    expr_bz = re.compile('.+\.bz2$', re.IGNORECASE)
+    expr_gz = re.compile('.+\.gz$', re.IGNORECASE)
+    expr_tgz = re.compile('.+\.tgz$', re.IGNORECASE)
 
-	try:
-		if expr_bz.match(filename):
-			file = bz2.BZ2File(filename, 'r')
-		elif expr_gz.match(filename):
-			file = gzip.GzipFile(filename, 'r')
-		elif expr_tgz.match(filename):
-			file = gzip.GzipFile(filename, 'r')
-		else:
-			return False
-	except IOError as e:
-		printIOError(e, "Can't open archive " + filename)
-		return False
-	return validate(file, hash)
+    try:
+        if expr_bz.match(filename):
+            file = bz2.BZ2File(filename, 'r')
+        elif expr_gz.match(filename):
+            file = gzip.GzipFile(filename, 'r')
+        elif expr_tgz.match(filename):
+            file = gzip.GzipFile(filename, 'r')
+        else:
+            return False
+    except IOError as e:
+        printIOError(e, "Can't open archive " + filename)
+        return False
+    return validate(file, hash)
 
 
-def download(url, filename = None, user_agent_arg = None):
-	src = None
+def download(url, filename=None, user_agent_arg=None):
+    src = None
 
-	try:
-		req = Request(url)
-		if user_agent_arg != None:
-			req.add_header("User-Agent", user_agent_arg)
-		src = urlopen(req)
-	except IOError as e:
-		printIOError(e, "Can't open url " + url)
-		return None
+    try:
+        req = Request(url)
+        if user_agent_arg != None:
+            req.add_header("User-Agent", user_agent_arg)
+        src = urlopen(req)
+    except IOError as e:
+        printIOError(e, "Can't open url " + url)
+        return None
 
-	# 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
-	if src.getcode() and (3 <= int(src.getcode()/100) <= 5):
-		print "Error code: " + str(src.getcode())
-		return None
+    # 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
+    if src.getcode() and (3 <= int(src.getcode() / 100) <= 5):
+        print "Error code: " + str(src.getcode())
+        return None
 
-	if filename == None:
-		filename = src.geturl().split('/')[-1]
+    if filename == None:
+        filename = src.geturl().split('/')[-1]
 
-	try:
-		dst = open(filename, 'wb');
-	except IOError as e:
-		printIOError(e, "Can't open file " + filename + " for writing")
-		src.close()
-		return None
+    try:
+        dst = open(filename, 'wb')
+    except IOError as e:
+        printIOError(e, "Can't open file " + filename + " for writing")
+        src.close()
+        return None
 
-	while True:
-		block = src.read()
-		if block == '':
-			break;
-		dst.write(block)
+    while True:
+        block = src.read()
+        if block == '':
+            break
+        dst.write(block)
 
-	src.close()
-	dst.close()
+    src.close()
+    dst.close()
 
-	# return the name of the file that we downloaded the data to.
-	return filename
+    # return the name of the file that we downloaded the data to.
+    return filename
+
 
 def download_paths(search, filename, url):
-	urls = list()
+    urls = list()
 
-	if filename != None:
-		tmp = os.getenv('DOWNLOAD_SEARCH_PATH')
-		if tmp:
-			search += tmp.split(' ')
+    if filename != None:
+        tmp = os.getenv('DOWNLOAD_SEARCH_PATH')
+        if tmp:
+            search += tmp.split(' ')
 
-		file = os.path.basename(filename)
+        file = os.path.basename(filename)
 
-		urls = [ base + '/' + file for base in search ]
+        urls = [base + '/' + file for base in search]
 
-		# filename should always be first
-		if filename in urls:
-			urls.remove(filename)
-		urls.insert(0, filename)
+        # filename should always be first
+        if filename in urls:
+            urls.remove(filename)
+        urls.insert(0, filename)
 
-	# command line url is a fallback, so it's last
-	if url != None and url not in urls:
-		urls.append(url)
+    # command line url is a fallback, so it's last
+    if url != None and url not in urls:
+        urls.append(url)
 
-	return urls
+    return urls
+
 
 def usage():
-	print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] " \
-		"[-l|--link] [-h|--hash (hash)] [-s|--search (search-dir)] " \
-		"-u|--url (url)" % (sys.argv[0].split('/')[-1])
-	sys.exit(1)
+    print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] " \
+        "[-l|--link] [-h|--hash (hash)] [-s|--search (search-dir)] " \
+        "-u|--url (url)" % (sys.argv[0].split('/')[-1])
+    sys.exit(1)
+
 
 def main():
-	import getopt
+    import getopt
 
-	# FLUSH STDOUT 
-	sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+    # FLUSH STDOUT
+    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
-	user_agent_arg = None
-	file_arg = None
-	link_arg = False
-	keep_arg = False
-	hash_arg = None
-	url_arg = None
-	search_list = list()
+    user_agent_arg = None
+    file_arg = None
+    link_arg = False
+    keep_arg = False
+    hash_arg = None
+    url_arg = None
+    search_list = list()
 
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
-			["file=", "link", "keep", "hash=", "search=", "url=",
-			"user-agent="])
-	except getopt.GetoptError, err:
-		print str(err)
-		usage()
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "a:f:h:lks:u:",
+                                   ["file=", "link", "keep", "hash=", "search=", "url=",
+                                    "user-agent="])
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
 
-	for opt, arg in opts:
-		if opt in [ "-a", "--user-agent" ]:
-			user_agent_arg = arg
-		elif opt in [ "-f", "--file" ]:
-			file_arg = arg
-		elif opt in [ "-l", "--link" ]:
-			link_arg = True
-		elif opt in [ "-k", "--keep" ]:
-			keep_arg = True
-		elif opt in [ "-h", "--hash" ]:
-			hash_arg = arg
-		elif opt in [ "-s", "--search" ]:
-			search_list.append(arg)
-		elif opt in [ "-u", "--url" ]:
-			url_arg = arg
-		else:
-			assert False, "unknown option"
+    for opt, arg in opts:
+        if opt in ["-a", "--user-agent"]:
+            user_agent_arg = arg
+        elif opt in ["-f", "--file"]:
+            file_arg = arg
+        elif opt in ["-l", "--link"]:
+            link_arg = True
+        elif opt in ["-k", "--keep"]:
+            keep_arg = True
+        elif opt in ["-h", "--hash"]:
+            hash_arg = arg
+        elif opt in ["-s", "--search"]:
+            search_list.append(arg)
+        elif opt in ["-u", "--url"]:
+            url_arg = arg
+        else:
+            assert False, "unknown option"
 
-	if url_arg == None:
-		usage()
+    if url_arg == None:
+        usage()
 
-	for url in download_paths(search_list, file_arg, url_arg):
-		print "Source %s..." % url,
+    for url in download_paths(search_list, file_arg, url_arg):
+        print "Source %s..." % url,
 
-		scheme, path = splittype(url)
-		name = file_arg
+        scheme, path = splittype(url)
+        name = file_arg
 
-		if scheme in [ None, 'file' ]:
-			if os.path.exists(path) == False:
-				print "not found, skipping file copy"
-				continue
-			elif name != path:
-				if link_arg == False:
-					print "\n    copying..."
-					shutil.copy2(path, name)
-				else:
-					print "\n    linking..."
-					os.symlink(path, name)
-			else:
-				pass
-		elif scheme in [ 'http', 'https', 'ftp' ]:
-			print "\n    downloading...",
-			name = download(url, file_arg, user_agent_arg)
-			if name == None:
-				print "failed"
-				continue
+        if scheme in [None, 'file']:
+            if os.path.exists(path) == False:
+                print "not found, skipping file copy"
+                continue
+            elif name != path:
+                if link_arg == False:
+                    print "\n    copying..."
+                    shutil.copy2(path, name)
+                else:
+                    print "\n    linking..."
+                    os.symlink(path, name)
+            else:
+                pass
+        elif scheme in ['http', 'https', 'ftp']:
+            print "\n    downloading...",
+            name = download(url, file_arg, user_agent_arg)
+            if name == None:
+                print "failed"
+                continue
 
-		print "\n    validating...",
-		if hash_arg == None:
-			print "skipping (no hash)"
-			sys.exit(0)
-			
-		realhash = validate_container(name, hash_arg)
-		if realhash == hash_arg:
-			print "ok"
-			sys.exit(0)
-		else:
-			payloadhash = validate_payload(name, hash_arg)
-			if payloadhash == hash_arg:
-				print "ok"
-				sys.exit(0)
-			print "corruption detected"
-			print "    expected: %s" % hash_arg
-			print "    actual:   %s" % realhash
-			print "    payload:  %s" % payloadhash
+        print "\n    validating...",
+        if hash_arg == None:
+            print "skipping (no hash)"
+            sys.exit(0)
 
-		if keep_arg == False:
-			try:
-				print "\nWARN: Removing the corrupt downloaded file"
-				os.remove(name)
-			except OSError:
-				pass
-		else:
-			print "\nINFO: Keeping the downloaded file because asked to"
+        realhash = validate_container(name, hash_arg)
+        if realhash == hash_arg:
+            print "ok"
+            sys.exit(0)
+        else:
+            payloadhash = validate_payload(name, hash_arg)
+            if payloadhash == hash_arg:
+                print "ok"
+                sys.exit(0)
+            print "corruption detected"
+            print "    expected: %s" % hash_arg
+            print "    actual:   %s" % realhash
+            print "    payload:  %s" % payloadhash
 
-	sys.exit(1)
+        if keep_arg == False:
+            try:
+                print "\nWARN: Removing the corrupt downloaded file"
+                os.remove(name)
+            except OSError:
+                pass
+        else:
+            print "\nINFO: Keeping the downloaded file because asked to"
+
+    sys.exit(1)
 
 if __name__ == "__main__":
-	main()
+    main()
