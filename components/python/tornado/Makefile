@@ -18,7 +18,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		tornado
 COMPONENT_VERSION=	4.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tornado
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -44,7 +44,9 @@ install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TEST)
 
-REQUIRED_PACKAGES += library/python-2/pycurl-27
-REQUIRED_PACKAGES += library/python-2/python-mysql-27
+REQUIRED_PACKAGES += library/python/backports.ssl_match_hostname-27
+REQUIRED_PACKAGES += library/python/certifi-27
+REQUIRED_PACKAGES += library/python/pycurl-27
+REQUIRED_PACKAGES += library/python/python-mysql-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
