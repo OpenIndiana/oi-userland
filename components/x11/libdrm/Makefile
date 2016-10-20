@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdrm
-COMPONENT_VERSION=      2.4.70
+COMPONENT_VERSION=      2.4.71
 COMPONENT_PROJECT_URL=  http://dri.freedesktop.org
 COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:b17d4b39ed97ca0e4cffa0db06ff609e617bac94646ec38e8e0579d530540e7b
+    sha256:c66287ddeee5f46ea8f8880b94b80acb3bbc33ba6321d17767eef145046df9b8
 COMPONENT_ARCHIVE_URL=  http://dri.freedesktop.org/libdrm/$(COMPONENT_ARCHIVE) 
 COMPONENT_FMRI= x11/library/libdrm
 COMPONENT_CLASSIFICATION = System/X11
@@ -45,13 +45,15 @@ CONFIGURE_OPTIONS+=      --enable-cairo-tests
 CONFIGURE_OPTIONS+=      --enable-libkms
 CONFIGURE_OPTIONS+=      --enable-intel
 CONFIGURE_OPTIONS+=      --enable-radeon
+CONFIGURE_OPTIONS+=      --enable-amdgpu
 CONFIGURE_OPTIONS+=      --disable-nouveau
 CONFIGURE_OPTIONS+=      --enable-omap-experimental-api
 CONFIGURE_OPTIONS+=      --enable-exynos-experimental-api
 CONFIGURE_OPTIONS+=      --enable-freedreno
 CONFIGURE_OPTIONS+=      --enable-freedreno-kgsl
 CONFIGURE_OPTIONS+=      --enable-tegra-experimental-api
-CONFIGURE_OPTIONS+=      --enable-amdgpu
+CONFIGURE_OPTIONS+=      --enable-etnaviv-experimental-api
+CONFIGURE_OPTIONS+=      --enable-vc4
 
 CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV+= MISC_MAN_SUFFIX=7
