@@ -1,0 +1,11 @@
+--- mozilla/layout/base/nsLayoutUtils.cpp.1	2016-09-27 13:58:08.703466569 +0300
++++ mozilla/layout/base/nsLayoutUtils.cpp	2016-09-27 13:58:30.906962066 +0300
+@@ -3322,7 +3322,7 @@
+       nsCString string("dump-");
+       // Include the process ID in the dump file name, to make sure that in an
+       // e10s setup different processes don't clobber each other's dump files.
+-      string.AppendInt(getpid());
++      string.AppendInt((int)getpid());
+       for (int paintCount : *gPaintCountStack) {
+         string.AppendLiteral("-");
+         string.AppendInt(paintCount);
