@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2016, Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,6 +22,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform dir path=usr/lib/*/module.so$ -> default mode 0555>
+<transform dir path=usr/lib/*/enlightenment/utils/*$ -> default mode 0555>
+
+file path=usr/bin/emixer
 file path=usr/bin/enlightenment
 file path=usr/bin/enlightenment_filemanager
 file path=usr/bin/enlightenment_imc
@@ -31,6 +35,7 @@ file path=usr/bin/enlightenment_start
 file path=usr/etc/enlightenment/sysactions.conf
 file path=usr/etc/xdg/menus/e-applications.menu
 file path=usr/include/enlightenment/e.h
+file path=usr/include/enlightenment/e_Efx.h
 file path=usr/include/enlightenment/e_about.h
 file path=usr/include/enlightenment/e_acpi.h
 file path=usr/include/enlightenment/e_actions.h
@@ -40,18 +45,17 @@ file path=usr/include/enlightenment/e_auth.h
 file path=usr/include/enlightenment/e_backlight.h
 file path=usr/include/enlightenment/e_bg.h
 file path=usr/include/enlightenment/e_bindings.h
-file path=usr/include/enlightenment/e_box.h
-file path=usr/include/enlightenment/e_canvas.h
+file path=usr/include/enlightenment/e_bryce.h
 file path=usr/include/enlightenment/e_client.h
 file path=usr/include/enlightenment/e_client.x
 file path=usr/include/enlightenment/e_color.h
-file path=usr/include/enlightenment/e_color_class.h
 file path=usr/include/enlightenment/e_color_dialog.h
 file path=usr/include/enlightenment/e_comp.h
 file path=usr/include/enlightenment/e_comp_canvas.h
 file path=usr/include/enlightenment/e_comp_cfdata.h
 file path=usr/include/enlightenment/e_comp_object.h
 file path=usr/include/enlightenment/e_comp_x.h
+file path=usr/include/enlightenment/e_comp_x_randr.h
 file path=usr/include/enlightenment/e_config.h
 file path=usr/include/enlightenment/e_config_data.h
 file path=usr/include/enlightenment/e_config_dialog.h
@@ -67,7 +71,6 @@ file path=usr/include/enlightenment/e_desktop_editor.h
 file path=usr/include/enlightenment/e_dialog.h
 file path=usr/include/enlightenment/e_dnd.h
 file path=usr/include/enlightenment/e_dpms.h
-file path=usr/include/enlightenment/e_entry.h
 file path=usr/include/enlightenment/e_entry_dialog.h
 file path=usr/include/enlightenment/e_env.h
 file path=usr/include/enlightenment/e_error.h
@@ -89,6 +92,7 @@ file path=usr/include/enlightenment/e_focus.h
 file path=usr/include/enlightenment/e_font.h
 file path=usr/include/enlightenment/e_gadcon.h
 file path=usr/include/enlightenment/e_gadcon_popup.h
+file path=usr/include/enlightenment/e_gadget.h
 file path=usr/include/enlightenment/e_grab_dialog.h
 file path=usr/include/enlightenment/e_grabinput.h
 file path=usr/include/enlightenment/e_hints.h
@@ -114,7 +118,6 @@ file path=usr/include/enlightenment/e_ipc_codec.h
 file path=usr/include/enlightenment/e_layout.h
 file path=usr/include/enlightenment/e_livethumb.h
 file path=usr/include/enlightenment/e_log.h
-file path=usr/include/enlightenment/e_manager.h
 file path=usr/include/enlightenment/e_maximize.h
 file path=usr/include/enlightenment/e_menu.h
 file path=usr/include/enlightenment/e_mmx.h
@@ -134,7 +137,7 @@ file path=usr/include/enlightenment/e_place.h
 file path=usr/include/enlightenment/e_pointer.h
 file path=usr/include/enlightenment/e_powersave.h
 file path=usr/include/enlightenment/e_prefix.h
-file path=usr/include/enlightenment/e_randr.h
+file path=usr/include/enlightenment/e_randr2.h
 file path=usr/include/enlightenment/e_remember.h
 file path=usr/include/enlightenment/e_resist.h
 file path=usr/include/enlightenment/e_scale.h
@@ -149,7 +152,6 @@ file path=usr/include/enlightenment/e_slidesel.h
 file path=usr/include/enlightenment/e_spectrum.h
 file path=usr/include/enlightenment/e_startup.h
 file path=usr/include/enlightenment/e_sys.h
-file path=usr/include/enlightenment/e_table.h
 file path=usr/include/enlightenment/e_test.h
 file path=usr/include/enlightenment/e_theme.h
 file path=usr/include/enlightenment/e_theme_about.h
@@ -158,6 +160,7 @@ file path=usr/include/enlightenment/e_toolbar.h
 file path=usr/include/enlightenment/e_update.h
 file path=usr/include/enlightenment/e_user.h
 file path=usr/include/enlightenment/e_utils.h
+file path=usr/include/enlightenment/e_video.h
 file path=usr/include/enlightenment/e_widget.h
 file path=usr/include/enlightenment/e_widget_aspect.h
 file path=usr/include/enlightenment/e_widget_bgpreview.h
@@ -165,8 +168,6 @@ file path=usr/include/enlightenment/e_widget_button.h
 file path=usr/include/enlightenment/e_widget_check.h
 file path=usr/include/enlightenment/e_widget_color_well.h
 file path=usr/include/enlightenment/e_widget_config_list.h
-file path=usr/include/enlightenment/e_widget_csel.h
-file path=usr/include/enlightenment/e_widget_cslider.h
 file path=usr/include/enlightenment/e_widget_entry.h
 file path=usr/include/enlightenment/e_widget_filepreview.h
 file path=usr/include/enlightenment/e_widget_flist.h
@@ -195,175 +196,188 @@ file path=usr/include/enlightenment/e_zone.h
 file path=usr/include/enlightenment/e_zoomap.h
 file path=usr/include/enlightenment/evry_api.h
 file path=usr/include/enlightenment/evry_types.h
-file path=usr/lib/enlightenment/modules/appmenu/e-module-appmenu.edj
-file path=usr/lib/enlightenment/modules/appmenu/module.desktop
-file path=usr/lib/enlightenment/modules/appmenu/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/backlight/e-module-backlight.edj
-file path=usr/lib/enlightenment/modules/backlight/module.desktop
-file path=usr/lib/enlightenment/modules/backlight/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/battery/e-module-battery.edj
-file path=usr/lib/enlightenment/modules/battery/module.desktop
-file path=usr/lib/enlightenment/modules/battery/solaris2.11-i386-ver-serious-0.19/batget
-file path=usr/lib/enlightenment/modules/battery/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/bluez4/e-module-bluez4.edj
-file path=usr/lib/enlightenment/modules/bluez4/module.desktop
-file path=usr/lib/enlightenment/modules/bluez4/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/clock/e-module-clock.edj
-file path=usr/lib/enlightenment/modules/clock/module.desktop
-file path=usr/lib/enlightenment/modules/clock/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf/e-module-conf.edj
-file path=usr/lib/enlightenment/modules/conf/module.desktop
-file path=usr/lib/enlightenment/modules/conf/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_applications/e-module-conf_applications.edj
-file path=usr/lib/enlightenment/modules/conf_applications/module.desktop
-file path=usr/lib/enlightenment/modules/conf_applications/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_bindings/module.desktop
-file path=usr/lib/enlightenment/modules/conf_bindings/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_dialogs/e-module-conf_dialogs.edj
-file path=usr/lib/enlightenment/modules/conf_dialogs/module.desktop
-file path=usr/lib/enlightenment/modules/conf_dialogs/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_display/module.desktop
-file path=usr/lib/enlightenment/modules/conf_display/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_interaction/e-module-conf_interaction.edj
-file path=usr/lib/enlightenment/modules/conf_interaction/module.desktop
-file path=usr/lib/enlightenment/modules/conf_interaction/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_intl/module.desktop
-file path=usr/lib/enlightenment/modules/conf_intl/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_menus/e-module-conf_menus.edj
-file path=usr/lib/enlightenment/modules/conf_menus/module.desktop
-file path=usr/lib/enlightenment/modules/conf_menus/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_paths/e-module-conf_paths.edj
-file path=usr/lib/enlightenment/modules/conf_paths/module.desktop
-file path=usr/lib/enlightenment/modules/conf_paths/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_performance/e-module-conf_performance.edj
-file path=usr/lib/enlightenment/modules/conf_performance/module.desktop
-file path=usr/lib/enlightenment/modules/conf_performance/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_randr/e-module-conf_randr.edj
-file path=usr/lib/enlightenment/modules/conf_randr/module.desktop
-file path=usr/lib/enlightenment/modules/conf_randr/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_shelves/e-module-conf_shelves.edj
-file path=usr/lib/enlightenment/modules/conf_shelves/module.desktop
-file path=usr/lib/enlightenment/modules/conf_shelves/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_theme/module.desktop
-file path=usr/lib/enlightenment/modules/conf_theme/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_window_manipulation/module.desktop
-file path=usr/lib/enlightenment/modules/conf_window_manipulation/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/conf_window_remembers/e-module-conf_window_remembers.edj
-file path=usr/lib/enlightenment/modules/conf_window_remembers/module.desktop
-file path=usr/lib/enlightenment/modules/conf_window_remembers/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/connman/e-module-connman.edj
-file path=usr/lib/enlightenment/modules/connman/module.desktop
-file path=usr/lib/enlightenment/modules/connman/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/cpufreq/e-module-cpufreq.edj
-file path=usr/lib/enlightenment/modules/cpufreq/module.desktop
-file path=usr/lib/enlightenment/modules/cpufreq/solaris2.11-i386-ver-serious-0.19/freqset
-file path=usr/lib/enlightenment/modules/cpufreq/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/everything/e-module-everything-start.edj
-file path=usr/lib/enlightenment/modules/everything/e-module-everything.edj
-file path=usr/lib/enlightenment/modules/everything/module.desktop
-file path=usr/lib/enlightenment/modules/everything/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/fileman/e-module-fileman.edj
-file path=usr/lib/enlightenment/modules/fileman/module.desktop
-file path=usr/lib/enlightenment/modules/fileman/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/fileman_opinfo/e-module-fileman_opinfo.edj
-file path=usr/lib/enlightenment/modules/fileman_opinfo/module.desktop
-file path=usr/lib/enlightenment/modules/fileman_opinfo/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/gadman/e-module-gadman.edj
-file path=usr/lib/enlightenment/modules/gadman/module.desktop
-file path=usr/lib/enlightenment/modules/gadman/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/ibar/e-module-ibar.edj
-file path=usr/lib/enlightenment/modules/ibar/module.desktop
-file path=usr/lib/enlightenment/modules/ibar/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/ibox/e-module-ibox.edj
-file path=usr/lib/enlightenment/modules/ibox/module.desktop
-file path=usr/lib/enlightenment/modules/ibox/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/lokker/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/mixer/e-module-mixer.edj
-file path=usr/lib/enlightenment/modules/mixer/module.desktop
-file path=usr/lib/enlightenment/modules/mixer/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/msgbus/e-module-msgbus.edj
-file path=usr/lib/enlightenment/modules/msgbus/module.desktop
-file path=usr/lib/enlightenment/modules/msgbus/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/music-control/e-module-music-control.edj
-file path=usr/lib/enlightenment/modules/music-control/module.desktop
-file path=usr/lib/enlightenment/modules/music-control/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/notification/e-module-notification.edj
-file path=usr/lib/enlightenment/modules/notification/module.desktop
-file path=usr/lib/enlightenment/modules/notification/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/packagekit/e-module-packagekit.edj
-file path=usr/lib/enlightenment/modules/packagekit/module.desktop
-file path=usr/lib/enlightenment/modules/packagekit/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/pager/e-module-pager.edj
-file path=usr/lib/enlightenment/modules/pager/module.desktop
-file path=usr/lib/enlightenment/modules/pager/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/pager_plain/e-module-pager-plain.edj
-file path=usr/lib/enlightenment/modules/pager_plain/module.desktop
-file path=usr/lib/enlightenment/modules/pager_plain/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/policy_mobile/e-module-policy-mobile.edj
-file path=usr/lib/enlightenment/modules/policy_mobile/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/quickaccess/e-module-quickaccess.edj
-file path=usr/lib/enlightenment/modules/quickaccess/module.desktop
-file path=usr/lib/enlightenment/modules/quickaccess/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/shot/e-module-shot.edj
-file path=usr/lib/enlightenment/modules/shot/module.desktop
-file path=usr/lib/enlightenment/modules/shot/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/start/e-module-start.edj
-file path=usr/lib/enlightenment/modules/start/module.desktop
-file path=usr/lib/enlightenment/modules/start/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/syscon/e-module-syscon.edj
-file path=usr/lib/enlightenment/modules/syscon/module.desktop
-file path=usr/lib/enlightenment/modules/syscon/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/systray/e-module-systray.edj
-file path=usr/lib/enlightenment/modules/systray/module.desktop
-file path=usr/lib/enlightenment/modules/systray/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/tasks/e-module-tasks.edj
-file path=usr/lib/enlightenment/modules/tasks/module.desktop
-file path=usr/lib/enlightenment/modules/tasks/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/teamwork/e-module-teamwork.edj
-file path=usr/lib/enlightenment/modules/teamwork/module.desktop
-file path=usr/lib/enlightenment/modules/teamwork/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/tiling/e-module-tiling.edj
-file path=usr/lib/enlightenment/modules/tiling/module.desktop
-file path=usr/lib/enlightenment/modules/tiling/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/winlist/e-module-winlist.edj
-file path=usr/lib/enlightenment/modules/winlist/module.desktop
-file path=usr/lib/enlightenment/modules/winlist/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/def-ibar.txt
-file path=usr/lib/enlightenment/modules/wizard/desktop/home.desktop
-file path=usr/lib/enlightenment/modules/wizard/desktop/root.desktop
-file path=usr/lib/enlightenment/modules/wizard/desktop/tmp.desktop
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_000.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_010.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_011.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_020.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_030.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_040.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_050.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_060.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_070.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_080.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_090.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_100.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_110.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_120.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_130.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_150.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_160.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_170.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_180.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/wizard/solaris2.11-i386-ver-serious-0.19/page_200.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/modules/xkbswitch/e-module-xkbswitch.edj
-file path=usr/lib/enlightenment/modules/xkbswitch/module.desktop
-file path=usr/lib/enlightenment/modules/xkbswitch/solaris2.11-i386-ver-serious-0.19/module.so mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_alert mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_fm mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_fm_op mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_static_grabber mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_sys mode=0555 preserve=true
-file path=usr/lib/enlightenment/utils/enlightenment_thumb mode=0555 preserve=true
-file path=usr/lib/pkgconfig/enlightenment.pc
-file path=usr/lib/pkgconfig/everything.pc
+file path=usr/lib/$(MACH64)/enlightenment/modules/appmenu/e-module-appmenu.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/appmenu/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/appmenu/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/backlight/e-module-backlight.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/backlight/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/backlight/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/battery/e-module-battery.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/battery/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/battery/solaris2.11-i386-ver-0.21/batget
+file path=usr/lib/$(MACH64)/enlightenment/modules/battery/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/bluez4/e-module-bluez4.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/bluez4/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/bluez4/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/clock/e-module-clock.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/clock/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/clock/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf/e-module-conf.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_applications/e-module-conf_applications.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_applications/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_applications/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_bindings/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_bindings/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_dialogs/e-module-conf_dialogs.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_dialogs/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_dialogs/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_display/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_display/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_interaction/e-module-conf_interaction.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_interaction/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_interaction/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_intl/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_intl/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_menus/e-module-conf_menus.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_menus/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_menus/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_paths/e-module-conf_paths.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_paths/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_paths/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_performance/e-module-conf_performance.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_performance/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_performance/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_randr/e-module-conf_randr.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_randr/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_randr/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_shelves/e-module-conf_shelves.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_shelves/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_shelves/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_theme/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_theme/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_manipulation/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_manipulation/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_remembers/e-module-conf_window_remembers.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_remembers/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/conf_window_remembers/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/connman/e-module-connman.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/connman/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/connman/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/e-module-cpufreq.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/solaris2.11-i386-ver-0.21/freqset
+file path=usr/lib/$(MACH64)/enlightenment/modules/cpufreq/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/everything/e-module-everything-start.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/everything/e-module-everything.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/everything/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/everything/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman/e-module-fileman.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman_opinfo/e-module-fileman_opinfo.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman_opinfo/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/fileman_opinfo/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/gadman/e-module-gadman.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/gadman/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/gadman/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/geolocation/e-module-geolocation.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/geolocation/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/geolocation/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibar/e-module-ibar.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibar/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibar/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibox/e-module-ibox.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibox/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/ibox/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/lokker/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/mixer/e-module-mixer.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/mixer/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/mixer/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/msgbus/e-module-msgbus.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/msgbus/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/msgbus/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/music-control/e-module-music-control.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/music-control/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/music-control/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/notification/e-module-notification.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/notification/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/notification/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/packagekit/e-module-packagekit.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/packagekit/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/packagekit/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager/e-module-pager.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager_plain/e-module-pager-plain.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager_plain/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/pager_plain/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/policy_mobile/e-module-policy-mobile.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/policy_mobile/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/quickaccess/e-module-quickaccess.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/quickaccess/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/quickaccess/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/shot/e-module-shot.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/shot/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/shot/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/start/e-module-start.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/start/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/start/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/syscon/e-module-syscon.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/syscon/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/syscon/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/systray/e-module-systray.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/systray/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/systray/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/tasks/e-module-tasks.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/tasks/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/tasks/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/teamwork/e-module-teamwork.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/teamwork/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/teamwork/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/tiling/e-module-tiling.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/tiling/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/tiling/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/time/e-module-time.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/time/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/time/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/winlist/e-module-winlist.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/winlist/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/winlist/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wireless/e-module-wireless.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/wireless/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/wireless/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/def-ibar.txt
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/desktop/home.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/desktop/root.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/desktop/tmp.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_000.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_010.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_011.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_020.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_030.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_040.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_050.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_060.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_065.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_070.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_080.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_090.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_100.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_110.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_120.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_130.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_150.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_160.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_170.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_180.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/wizard/solaris2.11-i386-ver-0.21/page_200.so
+file path=usr/lib/$(MACH64)/enlightenment/modules/xkbswitch/e-module-xkbswitch.edj
+file path=usr/lib/$(MACH64)/enlightenment/modules/xkbswitch/module.desktop
+file path=usr/lib/$(MACH64)/enlightenment/modules/xkbswitch/solaris2.11-i386-ver-0.21/module.so
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_alert
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_backlight
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_elm_cfgtool
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_fm
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_fm_op
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_static_grabber
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_sys
+file path=usr/lib/$(MACH64)/enlightenment/utils/enlightenment_thumb
+file path=usr/lib/$(MACH64)/pkgconfig/enlightenment.pc
+file path=usr/lib/$(MACH64)/pkgconfig/everything.pc
+file path=usr/share/applications/emixer.desktop
 file path=usr/share/applications/enlightenment_filemanager.desktop
 file path=usr/share/enlightenment/AUTHORS
 file path=usr/share/enlightenment/COPYING
@@ -412,11 +426,6 @@ file path=usr/share/enlightenment/data/config/mobile/e_bindings.cfg
 file path=usr/share/enlightenment/data/config/mobile/enlightenment-mobile.png
 file path=usr/share/enlightenment/data/config/mobile/module.battery.cfg
 file path=usr/share/enlightenment/data/config/mobile/module.conf.cfg
-file path=usr/share/enlightenment/data/config/mobile/module.illume-home.cfg
-file path=usr/share/enlightenment/data/config/mobile/module.illume-indicator.cfg
-file path=usr/share/enlightenment/data/config/mobile/module.illume-keyboard.cfg
-file path=usr/share/enlightenment/data/config/mobile/module.illume-softkey.cfg
-file path=usr/share/enlightenment/data/config/mobile/module.illume2.cfg
 file path=usr/share/enlightenment/data/config/mobile/profile.desktop
 file path=usr/share/enlightenment/data/config/profile.cfg
 file path=usr/share/enlightenment/data/config/standard/e.cfg
@@ -611,6 +620,8 @@ file path=usr/share/locale/sr/LC_MESSAGES/enlightenment.mo
 file path=usr/share/locale/sv/LC_MESSAGES/enlightenment.mo
 file path=usr/share/locale/tr/LC_MESSAGES/enlightenment.mo
 file path=usr/share/locale/uk/LC_MESSAGES/enlightenment.mo
+file path=usr/share/locale/vi/LC_MESSAGES/enlightenment.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/enlightenment.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/enlightenment.mo
+file path=usr/share/pixmaps/emixer.png
 file path=usr/share/xsessions/enlightenment.desktop
