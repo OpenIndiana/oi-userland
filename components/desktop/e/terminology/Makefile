@@ -23,34 +23,33 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminology
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	1.0.0
 COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_SUMMARY= Enlightenment - The best terminal emulator written with the EFL
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://enlightenment.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7a10d44b023cf6134c2483304e4ad33bea6df0f11266aec482f54fa67a3ce628
+COMPONENT_ARCHIVE_HASH=	sha256:cc31f0648c83ad8374d35ef60c255eb0a5f1de156ff2567afc6b5b5ef751a45e
 COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      BSD
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      Enlightenment - The best terminal emulator written with the EFL
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_BINDIR.64=$(USRBINDIR)
 
-# Need to regenerate configure and Makefiles as 1.13 is used.
-COMPONENT_PRE_CONFIGURE_ACTION= pushd $(SOURCE_DIR); aclocal -I m4 --install && autoconf && automake -a; popd;
+COMPONENT_PREP_ACTION= \
+    ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )
 
+build: $(BUILD_64)
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/e/efl
-REQUIRED_PACKAGES += library/e/elementary
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
