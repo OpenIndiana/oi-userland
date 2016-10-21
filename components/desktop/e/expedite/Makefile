@@ -22,37 +22,36 @@
 #
 include ../../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		expedite
-COMPONENT_VERSION=	1.7.9
-COMPONENT_REVISION=	1
-COMPONENT_FMRI=     	library/e/expedite
+COMPONENT_NAME=         expedite
+COMPONENT_VERSION=      1.7.10
+COMPONENT_FMRI=         library/e/expedite
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://enlightenment.org
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a05be096c911e0d66d4bdc497ebb935a04ad23696de9084aed9959b5172a593e
-COMPONENT_ARCHIVE_URL=	http://download.enlightenment.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      BSD
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      Enlightenment - Performance and correctness test suite for Evas
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=  http://enlightenment.org
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:c25194b787907d1299df5fc8a57a91ba83b032f66832f638f7d1dc978eb95a2b
+COMPONENT_ARCHIVE_URL= \
+    http://download.enlightenment.org/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=      BSD
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATCH_LEVEL=0
+CONFIGURE_BINDIR.64=$(USRBINDIR)
 
 CONFIGURE_OPTIONS+=	--enable-opengl-x11
 CONFIGURE_OPTIONS+=	--enable-software-x11
 CONFIGURE_OPTIONS+=	--with-x
 
 # pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/expedite-cmp;
+COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!$(PYTHON)|' $(PROTO_DIR)/usr/bin/expedite-cmp;
 
+build: $(BUILD_64)
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
