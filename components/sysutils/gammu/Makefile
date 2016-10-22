@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gammu
 COMPONENT_VERSION=	1.37.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wammu.eu/gammu/
 COMPONENT_SUMMARY=	Command line utility to control your phone
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,7 +26,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b0fd316f09e862a732aa9ad6fd2f49f09ad69307fd05f50e58f40d33c15deea0
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_FMRI=		utilities/gammu
+COMPONENT_FMRI=		utility/gammu
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -67,4 +68,6 @@ REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += utility/bash-completion
 REQUIRED_PACKAGES += web/curl
