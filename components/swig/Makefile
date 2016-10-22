@@ -69,4 +69,6 @@ COMPONENT_TEST_TARGETS = \
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime 
 REQUIRED_PACKAGES += system/library/math
