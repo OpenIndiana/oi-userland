@@ -24,22 +24,22 @@
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webalizer
-COMPONENT_VERSION=	2.23.5
-HUMAN_VERSION=		2.23-05
+COMPONENT_VERSION=	2.23.8
+HUMAN_VERSION=		2.23-08
 COMPONENT_PROJECT_URL=	http://www.webalizer.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:afc88b8ee0927d9ed004962cb7e3d3054ef7628c7bc8a7b2e3ea1d758a47885a
+    sha256:b37524fbd98e97052a80d59f75e69f857468752cf74cc0eb0972e5fab02eb6f7
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/webalizer
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D)); (cd $(SOURCE_DIR); $(GSED) -i -e 's/u_int64_t/uint64_t/g' *.c *.h configure.in configure)
@@ -67,6 +67,9 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
