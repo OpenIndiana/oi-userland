@@ -1,0 +1,32 @@
+Preserve permissions on cache files.
+
+file upstream bug
+
+--- desktop-file-utils-0.22/src/update-desktop-database.c	2013-01-06 23:59:20.000000000 -0800
++++ desktop-file-utils-0.22/src/update-desktop-database.c	2015-04-19 01:01:37.626587280 -0700
+@@ -32,6 +32,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
++#include <grp.h>
+ 
+ #include <glib.h>
+ #include <glib/gi18n.h>
+@@ -328,6 +329,7 @@
+   char *temp_cache_file, *cache_file;
+   FILE *tmp_file;
+   GList *keys, *key;
++  struct group *bingrp;
+ 
+   temp_cache_file = NULL;
+   sync_error = NULL;
+@@ -352,6 +354,9 @@
+   g_list_free (keys);
+   fclose (tmp_file);
+ 
++  bingrp = getgrnam ("bin");
++  chown (temp_cache_file, 0, bingrp->gr_gid); 
++
+   cache_file = g_build_filename (dir, CACHE_FILENAME, NULL);
+   if (rename (temp_cache_file, cache_file) < 0)
+     {

@@ -60,9 +60,10 @@ CONFIGURE_OPTIONS += --with-gtk=3.0
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
 
+REQUIRED_PACKAGES += desktop/xdg/desktop-file-utils
 REQUIRED_PACKAGES += developer/vala
 # Build time requirement for desktop-file-validate until desktop-file-utils
-# is split out of the control-center package
+# (split out of the control-center package) is installed on all build machines
 REQUIRED_PACKAGES += gnome/preferences/control-center
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/desktop/atk
