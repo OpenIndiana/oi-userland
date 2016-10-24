@@ -58,6 +58,11 @@ CONFIGURE_OPTIONS += --with-cairo
 CONFIGURE_OPTIONS += --with-gtk
 CONFIGURE_OPTIONS += --with-pic
 
+# Workaround the mozjs issue described in 24935318 
+ifeq ($(MACH),sparc)
+COMPONENT_BUILD_ENV.64 += LD_OPTIONS="$(LD_OPTIONS) -M$(PWD)/mapfile"
+endif
+
 # Required due to patches.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
