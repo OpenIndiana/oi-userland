@@ -1,0 +1,28 @@
+Fix linking with gcc 5 using -fstack-protector.
+
+Need to determine if this should be submitted upstream.
+
+--- gnome-terminal-3.18.0/configure.ac	Fri Oct 16 08:43:20 2015
++++ gnome-terminal-3.18.0/configure.ac	Fri Oct 16 08:43:43 2015
+@@ -267,6 +265,13 @@
+ # ***********
+ # Compilation
+ # ***********
++# If these flags are supported for compilation, they must also be used when
++# linking.  To ensure that libtool doesn't strip them out, they're
++# explicitly added to LDFLAGS using -Wc,$OPTION
++if test "$cc_cv_CFLAGS__fstack_protector" != "no"; then
++  eval "AM_LDFLAGS='${AM_LDFLAGS} -Wc,-fstack-protector'"
++fi
++
+ 
+ WARN_CFLAGS=
+ CC_CHECK_FLAGS_APPEND([WARN_CFLAGS],[CFLAGS],[ \
+@@ -310,7 +308,6 @@
+   -fno-strict-aliasing \
+   -fvisibility=hidden \
+   -fstack-protector \
+-  -fstack-protector-strong \
+ ])
+ 
+ # *********
