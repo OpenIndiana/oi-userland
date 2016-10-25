@@ -1,0 +1,18 @@
+Avoid triggering Solaris header bug 23506995 when an old XPG version is
+requested in a C99 or later mode of the C compiler.
+
+Need to figure out how best to submit upstream.
+
+--- file-roller-3.16.4/src/fr-command-unarchiver.c
++++ file-roller-3.16.4/src/fr-command-unarchiver.c
+@@ -20,8 +20,10 @@
+  */
+ 
+ #include <config.h>
++#ifndef __sun
+ #define _XOPEN_SOURCE       /* See feature_test_macros(7) */
+ #define _XOPEN_SOURCE_EXTENDED 1  /* for strptime */
++#endif
+ #include <time.h>
+ #include <stdio.h>
+ #include <stdlib.h>
