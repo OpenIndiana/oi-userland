@@ -1,0 +1,81 @@
+Use libv12n to find virtualization environment instead of asking systemd
+
+Need to submit upstream
+
+--- gnome-control-center-3.18.2/configure.ac
++++ gnome-control-center-3.18.2/configure.ac
+@@ -64,6 +64,7 @@ AC_CHECK_HEADERS(X11/extensions/XKB.h)
+ CPPFLAGS=$savecppflags
+ 
+ AC_CHECK_LIB(m, floor)
++AC_CHECK_LIB(v12n, v12n_get_current_env)
+ 
+ # IBus support
+ IBUS_REQUIRED_VERSION=1.5.2
+--- gnome-control-center-3.18.2/panels/info/cc-info-panel.c
++++ gnome-control-center-3.18.2/panels/info/cc-info-panel.c
+@@ -43,6 +43,10 @@
+ #include <GL/glx.h>
+ #endif
+ 
++#ifdef HAVE_LIBV12N
++#include <libv12n.h>
++#endif
++
+ #include "gsd-disk-space-helper.h"
+ 
+ /* Autorun options */
+@@ -740,6 +744,10 @@ static struct {
+   const char *id;
+   const char *display;
+ } const virt_tech[] = {
++  { "kernel-zone", "Kernel Zone" },
++  { "logical-domain", "Logical Domain" },
++  { "non-global-zone", "Non-Global Zone" },
++  { "virtualbox", "VirtualBox" },
+   { "kvm", "KVM" },
+   { "qemu", "QEmu" },
+   { "vmware", "VMware" },
+@@ -788,13 +796,31 @@ set_virtualization_label (CcInfoPanel  *
+ static void
+ info_panel_setup_virt (CcInfoPanel  *self)
+ {
++  char *str = NULL;
++
++#ifdef HAVE_LIBV12N
++  v12n_env_t *env;
++  char *name;
++
++  env = v12n_get_current_env ();
++  if (env == NULL)
++    {
++      g_debug (" v12n_get_current_env failed, bailing: %s", strerror(errno));
++      goto bail;
++    }
++
++  name = v12n_get_env_prop (env, V12N_PROP_NAME);
++  if (name != NULL)
++    {
++      str = g_strdup (name);
++      free (name);
++    }
++  v12n_free_env(env);
++#else /* systemd */
+   GError *error = NULL;
+   GDBusProxy *systemd_proxy;
+   GVariant *variant;
+   GVariant *inner;
+-  char *str;
+-
+-  str = NULL;
+ 
+   systemd_proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
+                                                  G_DBUS_PROXY_FLAGS_NONE,
+@@ -832,6 +858,7 @@ info_panel_setup_virt (CcInfoPanel  *sel
+   g_variant_unref (variant);
+ 
+   g_object_unref (systemd_proxy);
++#endif
+ 
+ bail:
+   set_virtualization_label (self, str);

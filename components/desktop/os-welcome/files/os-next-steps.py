@@ -62,15 +62,15 @@ def get_solaris_dashboard_url():
 	return "https://%s:6787/" % hostname
 
 help_link= {
-	'header' : N_("Get Help"),
+	'header' : N_("Learn More about Oracle Solaris"),
 	'icon' : "resources.png",
 	'url_links' : [ ["http://docs.oracle.com/cd/E53394_01/pdf/E54847.pdf", N_("##What's new## with <b>Oracle Solaris 11.3</b>")], ["http://www.oracle.com/us/support/systems/index.html", N_("##Get world class support## with <b>Oracle Premier Support</b>")], [get_solaris_dashboard_url(), N_("##Explore## the <b>Oracle Solaris Dashboard</b> with system analytics and more")] ],
 }
 
 personalize_link= {
-	'header' : N_("Personalize"),
-	'icon' : "personalize.png",
-	'program_links' : [ ["gnome-appearance-properties.desktop", N_("##Change themes## with <b>System > Preferences > Appearance</b>")], ["at-properties.desktop", N_("##Enable Accessibility## with <b>System > Preferences > Assistive Technologies</b>")] ],
+	'header' : N_("Use the GNOME Desktop"),
+	'icon' : "gnome.png",
+	'program_links' : [  ["yelp.desktop", N_("##Get Help## using the <b>GNOME Desktop</b>")], ["gnome-control-center.desktop", N_("##Change desktop settings## with <b>GNOME Control Center</b>")], ["gnome-universal-access-panel.desktop", N_("##Enable Accessibility## with <b>Settings > Universal Access</b>")] ],
 }
 
 participate_link= {

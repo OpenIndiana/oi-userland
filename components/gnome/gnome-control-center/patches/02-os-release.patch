@@ -1,0 +1,30 @@
+Use /etc/release instead of /etc/os-release to get OS name on Solaris.
+
+Need to submit upstream.
+
+--- gnome-control-center-3.18.2/panels/info/cc-info-panel.c~	2015-07-20 03:08:50.000000000 +0000
++++ gnome-control-center-3.18.2/panels/info/cc-info-panel.c	2016-10-15 13:22:56.504195284 +0000
+@@ -460,6 +460,23 @@ get_os_type (void)
+ 
+        g_free (buffer);
+     }
++#ifdef __sun
++  else if (g_file_get_contents ("/etc/release", &buffer, NULL, NULL))
++    {
++      char *start = buffer;
++      char *end = strchr (start, '\n');
++        
++      if (start != NULL && end != NULL)
++        {
++          name = g_strndup (start, end - start);
++          if (name != NULL)
++            {
++              g_strstrip(name);
++            }
++        }
++       g_free (buffer);
++    }
++#endif
+ 
+   if (GLIB_SIZEOF_VOID_P == 8)
+     bits = 64;

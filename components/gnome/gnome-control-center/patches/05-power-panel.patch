@@ -1,0 +1,43 @@
+Disable power panel for now, since it comes up blank because we have no
+suitable upower backend for Solaris.
+
+Not suitable for upstream unless made configurable.
+
+--- gnome-control-center-3.18.2/panels/Makefile.am
++++ gnome-control-center-3.18.2/panels/Makefile.am
+@@ -1,7 +1,6 @@
+ SUBDIRS= \
+ 	common \
+ 	background \
+-	power \
+ 	color \
+ 	display \
+ 	mouse \
+--- gnome-control-center-3.18.2/shell/Makefile.am
++++ gnome-control-center-3.18.2/shell/Makefile.am
+@@ -66,7 +66,6 @@
+ 	$(top_builddir)/panels/mouse/libmouse-properties.la		\
+ 	$(top_builddir)/panels/notifications/libnotifications.la	\
+ 	$(top_builddir)/panels/online-accounts/libonline-accounts.la	\
+-	$(top_builddir)/panels/power/libpower.la			\
+ 	$(top_builddir)/panels/privacy/libprivacy.la			\
+ 	$(top_builddir)/panels/region/libregion.la			\
+ 	$(top_builddir)/panels/search/libsearch.la			\
+--- gnome-control-center-3.18.2/shell/cc-panel-loader.c
++++ gnome-control-center-3.18.2/shell/cc-panel-loader.c
+@@ -44,7 +44,6 @@
+ #endif /* BUILD_NETWORK */
+ extern GType cc_notifications_panel_get_type (void);
+ extern GType cc_goa_panel_get_type (void);
+-extern GType cc_power_panel_get_type (void);
+ #ifdef BUILD_PRINTERS
+ extern GType cc_printers_panel_get_type (void);
+ #endif /* BUILD_PRINTERS */
+@@ -87,7 +86,6 @@
+ #endif
+   PANEL_TYPE("notifications",    cc_notifications_panel_get_type),
+   PANEL_TYPE("online-accounts",  cc_goa_panel_get_type          ),
+-  PANEL_TYPE("power",            cc_power_panel_get_type        ),
+ #ifdef BUILD_PRINTERS
+   PANEL_TYPE("printers",         cc_printers_panel_get_type     ),
+ #endif

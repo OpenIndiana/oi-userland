@@ -1,0 +1,55 @@
+Remove user-accounts panel on Solaris since we don't have pwquality library.
+
+Not suitable for upstream as is - would need to convert to check if pwquality
+is present and if not, then disable the module.
+
+--- gnome-control-center-3.18.2/configure.ac	2016-10-05 13:52:06.244424424 -0700
++++ gnome-control-center-3.18.2/configure.ac	2016-10-05 14:09:43.829904386 -0700
+@@ -167,7 +167,6 @@
+                   polkit-gobject-1 >= $POLKIT_REQUIRED_VERSION
+                   gnome-desktop-3.0
+                   gdk-pixbuf-2.0 >= $GDKPIXBUF_REQUIRED_VERSION
+-                  pwquality >= $PWQUALITY_REQUIRED_VERSION
+                   accountsservice >= $ACCOUNTSSERVICE_REQUIRED_VERSION)
+ PKG_CHECK_MODULES(SHARING_PANEL, $COMMON_MODULES)
+ PKG_CHECK_MODULES(REMOTE_LOGIN_HELPER, glib-2.0 >= $GLIB_REQUIRED_VERSION gio-2.0)
+--- gnome-control-center-3.18.2/panels/Makefile.am	2016-10-05 14:10:42.367244420 -0700
++++ gnome-control-center-3.18.2/panels/Makefile.am	2016-10-05 14:10:48.722872762 -0700
+@@ -12,7 +12,6 @@
+ 	sound \
+ 	keyboard \
+ 	universal-access \
+-	user-accounts \
+ 	datetime \
+ 	search \
+ 	privacy \
+--- gnome-control-center-3.18.2/shell/Makefile.am	2016-10-05 14:11:27.817541135 -0700
++++ gnome-control-center-3.18.2/shell/Makefile.am	2016-10-05 14:11:45.146654661 -0700
+@@ -72,8 +72,7 @@
+ 	$(top_builddir)/panels/search/libsearch.la			\
+ 	$(top_builddir)/panels/sharing/libsharing.la			\
+ 	$(top_builddir)/panels/sound/libsound.la			\
+-	$(top_builddir)/panels/universal-access/libuniversal-access.la	\
+-	$(top_builddir)/panels/user-accounts/libuser-accounts.la
++	$(top_builddir)/panels/universal-access/libuniversal-access.la
+ 
+ if BUILD_WACOM
+ gnome_control_center_LDADD += $(top_builddir)/panels/wacom/libwacom-properties.la
+--- gnome-control-center-3.18.2/shell/cc-panel-loader.c	2016-10-05 14:39:04.203136226 -0700
++++ gnome-control-center-3.18.2/shell/cc-panel-loader.c	2016-10-05 14:39:28.489591313 -0700
+@@ -54,7 +54,6 @@
+ extern GType cc_sharing_panel_get_type (void);
+ extern GType cc_sound_panel_get_type (void);
+ extern GType cc_ua_panel_get_type (void);
+-extern GType cc_user_panel_get_type (void);
+ #ifdef BUILD_WACOM
+ extern GType cc_wacom_panel_get_type (void);
+ #endif /* BUILD_WACOM */
+@@ -98,7 +97,6 @@
+   PANEL_TYPE("sharing",          cc_sharing_panel_get_type      ),
+   PANEL_TYPE("sound",            cc_sound_panel_get_type        ),
+   PANEL_TYPE("universal-access", cc_ua_panel_get_type           ),
+-  PANEL_TYPE("user-accounts",    cc_user_panel_get_type         ),
+ #ifdef BUILD_WACOM
+   PANEL_TYPE("wacom",            cc_wacom_panel_get_type        ),
+ #endif

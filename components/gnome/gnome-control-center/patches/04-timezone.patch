@@ -1,0 +1,37 @@
+Find timezone on Solaris without having systemd's timedated
+
+Will not be accepted upstream, since they refuse to support any API other
+than timedated, so we'll need to provide timedated at some point.
+
+--- gnome-control-center-3.18.2/panels/datetime/cc-datetime-panel.c.~1~	2015-09-21 07:59:31.000000000 +0000
++++ gnome-control-center-3.18.2/panels/datetime/cc-datetime-panel.c	2016-10-20 23:49:51.988471652 +0000
+@@ -621,7 +621,29 @@ get_initial_timezone (CcDateTimePanel *s
+ {
+   const gchar *timezone;
+ 
++#ifdef __sun // no support for systemd's timedated yet
++  timezone = getenv("TZ");
++  if (timezone == NULL || (strcmp(timezone, "localtime") == 0))
++    {
++      char linkbuf[PATH_MAX];
++      ssize_t bufused;
++      const char tzdir[] = "/usr/share/lib/zoneinfo/";
++
++      bufused = readlink("/etc/localtime", linkbuf, sizeof(linkbuf) - 1);
++      if (bufused > (sizeof(tzdir) - 1))
++      {
++	char *p;
++	linkbuf[bufused] = '\0';
++	p = strstr(linkbuf, tzdir);
++	if (p != NULL)
++	{
++	  timezone = g_strdup(p + sizeof(tzdir) - 1);
++	}
++      }
++    }
++#else // use systemd
+   timezone = timedate1_get_timezone (self->priv->dtm);
++#endif
+ 
+   if (timezone == NULL ||
+       !cc_timezone_map_set_timezone (CC_TIMEZONE_MAP (self->priv->map), timezone))
