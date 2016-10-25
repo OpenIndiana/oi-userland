@@ -108,7 +108,7 @@ CONFIGURE_OPTIONS += --with-configdir=$(XSS_LIBDIR)/config/control-center-2.0
 CONFIGURE_OPTIONS += --with-x-app-defaults=$(APP_DEFAULTS_DIR)
 
 # Data sources for images & text in hacks
-CONFIGURE_OPTIONS += --with-image-directory=$(USRSHAREDIR)/pixmaps/backgrounds
+CONFIGURE_OPTIONS += --with-image-directory=$(USRSHAREDIR)/backgrounds
 CONFIGURE_OPTIONS += --with-text-file=/etc/motd
 
 # Do not install setuid hacks
