@@ -66,7 +66,7 @@ CONFIGURE_OPTIONS += --with-ca-path=$(ETCDIR)/openssl/certs
 CONFIGURE_OPTIONS += --with-zlib=$(USRDIR) --with-libidn=$(USRDIR)
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
-CONFIGURE_OPTIONS += --without-nghttp2
+CONFIGURE_OPTIONS += --with-nghttp2
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
@@ -97,6 +97,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libssh2
+REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib

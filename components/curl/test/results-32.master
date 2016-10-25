@@ -14,8 +14,8 @@ libtool: link:
 srcdir=$(SOURCE_DIR)/tests /usr/bin/perl -I$(SOURCE_DIR)/tests $(SOURCE_DIR)/tests/runtests.pl -a -s
 ********* System characteristics ******** 
 * curl 7.45.0
-* libcurl/7.45.0 OpenSSL/1.0.2e zlib/1.2.8-T4mods libidn/1.19 libssh2/1.4.2
-* Features: IDN IPv6 Largefile GSS-API Kerberos SPNEGO NTLM NTLM_WB SSL libz TLS-SRP UnixSockets 
+* libcurl/7.45.0 OpenSSL/1.0.2j zlib/1.2.8-T4mods libidn/1.33 libssh2/1.7.0 nghttp2/1.9.2
+* Features: IDN IPv6 Largefile GSS-API Kerberos SPNEGO NTLM NTLM_WB SSL libz TLS-SRP HTTP2 UnixSockets 
 * Host:
 * System: SunOS
 * Server SSL:        ON   libcurl SSL:  ON 
@@ -400,14 +400,20 @@ test 0562...OK (392 out of 984, remaining: xx:xx)
 test 0563...OK (393 out of 984, remaining: xx:xx)
 RUN: SFTP server failed verification
 === Start of file log/sftp_server.log
-No credentials cache file found
+No Kerberos credentials available (default cache: FILE:/tmp/krb5cc_559288)
 
-Connection reset by 127.0.0.1
+No Kerberos credentials available (default cache: FILE:/tmp/krb5cc_559288)
+
+
+
+No Kerberos credentials available (default cache: FILE:/tmp/krb5cc_559288)
+
+Connection reset by 127.0.0.1 port 8999
 Connection closed
 === End of file log/sftp_server.log
 === Start of file curl_sftp_config
 # This is a generated file.  Do not edit.
-# OpenSSH 7.1.0 sftp client configuration file for curl testing
+# OpenSSH 7.3.0 sftp client configuration file for curl testing
 #
 Host *
 #
@@ -468,17 +474,17 @@ VerifyHostKeyDNS no
 === Start of file log/ssh_server.log
 curl_sshd_config line 10: Deprecated option AuthorizedKeysFile2
 curl_sshd_config line 36: Unsupported option PrintLastLog
-curl_sshd_config line 64: ignoring UsePAM option value. This option is always on.
+curl_sshd_config line 65: ignoring UsePAM option value. This option is always on.
 Server listening on 127.0.0.1 port 8999.
 rexec line 10: Deprecated option AuthorizedKeysFile2
 rexec line 36: Unsupported option PrintLastLog
-rexec line 64: ignoring UsePAM option value. This option is always on.
+rexec line 65: ignoring UsePAM option value. This option is always on.
 Connection from 127.0.0.1 port
 No supported key exchange algorithms
 === End of file log/ssh_server.log
 === Start of file curl_sshd_config
 # This is a generated file.  Do not edit.
-# OpenSSH 7.1.0 sshd configuration file for curl testing
+# OpenSSH 7.3.0 sshd configuration file for curl testing
 #
 DenyUsers !yitezhan
 AllowUsers yitezhan
@@ -529,6 +535,7 @@ KerberosOrLocalPasswd no
 KerberosTicketCleanup yes
 SkeyAuthentication no
 GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
 GSSAPIKeyExchange no
 #
 AcceptEnv
@@ -954,6 +961,7 @@ test 1528...OK (927 out of 984, remaining: xx:xx)
 test 1529...OK (928 out of 984, remaining: xx:xx)
 test 1530...OK (929 out of 984, remaining: xx:xx)
 test 1531...OK (930 out of 984, remaining: xx:xx)
+test 1800...OK (934 out of 984, remaining: xx:xx)
 test 1900...OK (935 out of 984, remaining: xx:xx)
 test 1901...OK (936 out of 984, remaining: xx:xx)
 test 1902...OK (937 out of 984, remaining: xx:xx)
@@ -984,7 +992,7 @@ test 2041...OK (980 out of 984, remaining: xx:xx)
 test 2042...OK (981 out of 984, remaining: xx:xx)
 test 2044...OK (983 out of 984, remaining: xx:xx)
 test 2045...OK (984 out of 984, remaining: xx:xx)
-TESTDONE: 802 tests out of 802 reported OK: 100%
+TESTDONE: 803 tests out of 803 reported OK: 100%
 TESTDONE: 994 tests were considered during
 /usr/gnu/bin/make  10-at-a-time anyauthput cookie_interface debug fileupload fopen ftpget ftpgetresp ftpupload getinfo getinmemory http-post httpput https multi-app multi-debugcallback multi-double multi-post multi-single persistant post-callback postit2 sepheaders simple simplepost simplessl sendrecv httpcustomheader certinfo chkspeed ftpgetinfo ftp-wildcard smtp-mail smtp-multi smtp-ssl smtp-tls smtp-vrfy smtp-expn rtsp externalsocket resolve progressfunc pop3-retr pop3-list pop3-uidl pop3-dele pop3-top pop3-stat pop3-noop pop3-ssl pop3-tls pop3-multi imap-list imap-lsub imap-fetch imap-store imap-append imap-examine imap-search imap-create imap-delete imap-copy imap-noop imap-ssl imap-tls imap-multi url2file sftpget ftpsget postinmemory http2-download http2-upload http2-serverpush
 "$(SOURCE_DIR)/docs/examples/pop3-multi.c", line 96: warning: implicit function declaration: memset
