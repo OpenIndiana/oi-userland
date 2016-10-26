@@ -40,6 +40,9 @@ TPNO=			28307
 
 CXXFLAGS += -std=c++11
 
+# patch 002-gst1.0.2.patch modifies configure.in
+COMPONENT_PREP_ACTION += (cd $(@D); autoconf);
+
 TEST_TARGET= $(NO_TESTS)
 
 # Depends on newer cairo, which cannot be updated in S11.
@@ -65,9 +68,10 @@ CONFIGURE_OPTIONS += --without-libmpack
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gstreamer-1
+REQUIRED_PACKAGES += library/desktop/gstreamer-1/gst-plugins-base
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
