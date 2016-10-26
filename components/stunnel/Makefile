@@ -23,19 +23,20 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stunnel
-COMPONENT_VERSION=	5.18
+COMPONENT_VERSION=	5.35
 COMPONENT_PROJECT_URL=	http://www.stunnel.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:0532c0a2f8de3da1ab625e384146501ce5936fac63d01561c3a9bf652b692317
+	sha256:ffa386ae4c825f35f35157c285e7402a6d58779ad8c3822f74a9d355b54aba1d
 
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/04f90ffbb65ffa289a5b1db2c52950f5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/9079f5fafbccaf88b7d92b227d78249a/$(COMPONENT_ARCHIVE)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; autoreconf -f)
 
-TPNO=                   24738
+TPNO=                   31069
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -63,3 +64,4 @@ COMPONENT_PRE_INSTALL_ACTION = \
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/library
