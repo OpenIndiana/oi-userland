@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/gcc type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/exuberant-ctags type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/objdump type=require
+
+file path=usr/bin/abi-compliance-checker
+file path=usr/share/abi-compliance-checker/modules/Internals/CallConv.pm
+file path=usr/share/abi-compliance-checker/modules/Internals/RegTests.pm
+file path=usr/share/abi-compliance-checker/modules/Internals/Scripts/Sections.js
+file path=usr/share/abi-compliance-checker/modules/Internals/Scripts/Tabs.js
+file path=usr/share/abi-compliance-checker/modules/Internals/Styles/CmpSystems.css
+file path=usr/share/abi-compliance-checker/modules/Internals/Styles/HeadersDiff.css
+file path=usr/share/abi-compliance-checker/modules/Internals/Styles/Report.css
+file path=usr/share/abi-compliance-checker/modules/Internals/Styles/SymbolsList.css
+file path=usr/share/abi-compliance-checker/modules/Internals/Styles/Tabs.css
+file path=usr/share/abi-compliance-checker/modules/Internals/SysCheck.pm
+file path=usr/share/abi-compliance-checker/modules/Internals/XmlDump.pm
+file path=usr/share/abi-compliance-checker/modules/RulesBin.xml
+file path=usr/share/abi-compliance-checker/modules/RulesSrc.xml
