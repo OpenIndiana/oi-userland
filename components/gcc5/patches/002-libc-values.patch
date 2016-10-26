@@ -3,9 +3,9 @@
 # behaviour for the C/C++ standard selected on the command line.
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=40411
 #
---- gcc-5.3.0.orig/gcc/config/sol2.h	Thu Oct  1 05:01:18 2015
-+++ gcc-5.3.0/gcc/config/sol2.h	Tue Jan 12 17:39:43 2016
-@@ -150,9 +150,32 @@
+--- gcc-5.4.0/gcc/config/sol2.h.orig	2015-10-01 07:01:18.000000000 +0000
++++ gcc-5.4.0/gcc/config/sol2.h	2016-10-26 09:09:10.323357813 +0000
+@@ -150,9 +150,34 @@
  #define MD_EXEC_PREFIX "/usr/ccs/bin/"
  #endif
  
@@ -19,24 +19,26 @@
 +   The values-X*.o objects set the variable _lib_version to one of strict_ansi,
 +   ansi_1, or c_issue_4.  Ignoring '-Xt' and '-Xs', unless '-Xc' is used with
 +   the Solaris Studio C/C++ compilers, it appears that values-Xa.o is linked
-+   into resulting executables regardless of which '-std=' setting is selected.
++   into resulting executable program regardless of which '-std=' setting is
++   selected.
 +
 +   The values-xpg*.o objects define one or more __xpg* variables.  No
 +   values-xpg*.o object is linked in unless the equivalent of '-std=c99|c11'
-+   is used during the linking of C code.  In either of those cases,
-+   values-xpg6.o is linked.
++   is used during the linking of an executable program.  In either of those
++   cases, values-xpg6.o is linked.
 +
 +   The below spec string is reasonably consistent with that behaviour. */
  #undef STARTFILE_ARCH_SPEC
 -#define STARTFILE_ARCH_SPEC "%{ansi:values-Xc.o%s} \
 -			    %{!ansi:values-Xa.o%s}"
 +#define STARTFILE_ARCH_SPEC \
-+    "%{ansi:values-Xc.o%s; :values-Xa.o%s} \
-+     %{std=c99|std=c9x|std=gnu99|std=gnu9x:values-xpg6.o%s} \
-+     %{std=c11|std=c1x|std=gnu11|std=gnu1x:values-xpg6.o%s} \
-+     %{std=c++11|std=c++0x|std=gnu++11|std=gnu++0x:values-xpg6.o%s} \
-+     %{std=c++14|std=c++1y|std=gnu++14|std=gnu++1y:values-xpg6.o%s} \
-+     %{std=c++1z|std=gnu++1z:values-xpg6.o%s}"
++    "%{!shared:%{!symbolic: \
++       %{ansi:values-Xc.o%s; :values-Xa.o%s} \
++       %{std=c99|std=c9x|std=gnu99|std=gnu9x:values-xpg6.o%s} \
++       %{std=c11|std=c1x|std=gnu11|std=gnu1x:values-xpg6.o%s} \
++       %{std=c++11|std=c++0x|std=gnu++11|std=gnu++0x:values-xpg6.o%s} \
++       %{std=c++14|std=c++1y|std=gnu++14|std=gnu++1y:values-xpg6.o%s} \
++       %{std=c++1z|std=gnu++1z:values-xpg6.o%s}}}"
  
  #if defined(HAVE_LD_PIE) && defined(HAVE_SOLARIS_CRTS)
  #define STARTFILE_CRTBEGIN_SPEC "%{shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
