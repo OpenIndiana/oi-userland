@@ -29,7 +29,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-CPPFLAGS +=	-I$(WS_TOP)/components/tuntap/build/prototype/$(MACH)/usr/include
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
