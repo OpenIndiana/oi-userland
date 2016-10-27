@@ -27,20 +27,21 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libffi
-COMPONENT_VERSION=	3.0.9
+COMPONENT_VERSION=	3.2.1
 COMPONENT_PROJECT_URL=	http://sourceware.org/libffi/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:589d25152318bc780cd8919b14670793f4971d9838dab46ed38c32b3ee92c452
+    sha256:d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37
 COMPONENT_ARCHIVE_URL=	ftp://sources.redhat.com/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libffi
 
-TPNO=		5930
+TPNO=		21649
 
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(@D)/testsuite
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+# The 32 test suite is trying various ABI (fastcall, thiscall, stdcall).
+# We don't support those on Solaris.
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^Test Run By.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^Native configuration is.*$$|XXX_REMOVE_XXX|g" ' \
