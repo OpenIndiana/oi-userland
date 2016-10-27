@@ -1,66 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
-
-<!-- Setup notes for the OpenVPN SMF service integration:
-
-To create additional OpenVPN instances for additional configuration files run:
-    :; VPNCFG=mywork-client
-    :; pfexec svccfg -s openvpn add $VPNCFG
-    :; pfexec svccfg -s openvpn:$VPNCFG addpg config application
-    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/config_file = astring: /etc/openvpn/$VPNCFG.ovpn
-    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/value_authorization = astring: solaris.smf.value.openvpn
-    :; pfexec svcadm refresh openvpn:$VPNCFG
-    :; pfexec svcadm enable -ts openvpn:$VPNCFG
-    :; svcs -p openvpn:$VPNCFG
-
-Also note that for tunneled traffic to actually pass, you may have to allow
-it in your (custom) IPFilter config, e.g. /etc/ipf/ipf.conf, by preemptively
-adding lines like these...
-
-pass in quick on tun0
-pass out quick on tun0
-pass in quick on tun1
-pass out quick on tun1
-pass in quick on tun2
-pass out quick on tun2
-pass in quick on tun3
-pass out quick on tun3
-pass in quick on tap0
-pass out quick on tap0
-pass in quick on tap1
-pass out quick on tap1
-pass in quick on tap2
-pass out quick on tap2
-pass in quick on tap3
-pass out quick on tap3
-
-...and restarting the service:
-    :; pfexec svcadm restart ipfilter
-
-If the remote OpenVPN server for your client is on some non-standard ports,
-or if your local OpenVPN server instance listens on some non-standard ports,
-and your firewall config is strict, you might have to allow that traffic in
-the firewall rulesets too.
-
-Alternately you might research and use scripting hooks in openvpn config files.
-
-Also note that you can run an openvpn router in a local zone with exclusive
-IP stack. This may require some additional privileges and setup for the zone;
-if it does not work "out of the box" for you, try changing the zone manifest
-according to:
-
-<zone name=... limitpriv="default,priv_net_rawaccess">
-...
-  <device match="/dev/tun"/>
-  <device match="/dev/tap"/>
-</zone>
-
-You might also want to enable some permissions in the service manifest below,
-or per-instance, if e.g. you want one to listen on privileged ports, or to
-chroot(), or to use configuration files and device nodes owned by another user.
-Remember that under SMF a "root" is not almighty! For more details, see the
-commented "method_credential" suggestions below.
--->
+<!-- See the non-trivial-setup notes and recommendations for the OpenVPN SMF
+     service integration in /usr/share/doc/openvpn/README.openindiana -->
 <service_bundle type="manifest" name="openvpn">
     <service name="network/openvpn" type="service" version="0.01">
         <create_default_instance enabled="false"/>
@@ -73,15 +14,14 @@ commented "method_credential" suggestions below.
             <service_fmri value="svc:/system/filesystem/local"/>
         </dependency>
 
-        <method_context>
+        <method_context project=':default' resource_pool=':default' working_directory='/etc/openvpn'>
             <method_environment>
                 <envvar name="PATH" value="/usr/bin:/usr/sbin"/>
             </method_environment>
             <!-- Some setups might need extra permissions for their OpenVPN
                  service, but not all - so by default they are commented away
                  and may be enabled by an end-user's deployment, and maybe just
-                 for a particular instance. Possibly, this might also allow to
-                 run OpenVPN as a non-root account. -->
+                 for a particular instance. -->
 <!--
             <method_credential group='root' limit_privileges=':default'
                 privileges='basic,sys_iptun_config,sys_net_config,sys_devices,net_privaddr,net_rawaccess,net_icmpaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'
@@ -93,8 +33,8 @@ commented "method_credential" suggestions below.
              config_file path specified by user, and allows relative paths
              to additional files to be used from that config file as is
              commonly done in OpenVPN setups.
-             An SMF native "method_context working_directory" might be better,
-             but alas it seems to not accept macros ;(
+             An SMF native "method_context working_directory" tuned for each
+             instance might be better, but alas it seems to not accept macros.
              Logs are sent to stderr here so they end up in the SMF instance
              log and failures are debuggable easier. A particular config_file
              may redefine logging if desired. -->
@@ -113,6 +53,7 @@ commented "method_credential" suggestions below.
         </property_group>
 
         <property_group name='config' type='application'>
+            <!-- Full path to config file is required -->
             <propval name="config_file" type='astring' value='/etc/openvpn/openvpn.conf'/>
             <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
         </property_group>
