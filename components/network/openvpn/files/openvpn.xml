@@ -1,5 +1,44 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<!-- Setup notes for the OpenVPN SMF service integration:
+
+To create additional OpenVPN instances for additional configuration files run:
+    :; VPNCFG=mywork-client
+    :; pfexec svccfg -s openvpn add $VPNCFG
+    :; pfexec svccfg -s openvpn:$VPNCFG addpg config application
+    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/config_file = astring: /etc/openvpn/$VPNCFG.ovpn
+    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/value_authorization = astring: solaris.smf.value.openvpn
+    :; pfexec svcadm refresh openvpn:$VPNCFG
+    :; pfexec svcadm enable -ts openvpn:$VPNCFG
+    :; svcs -p openvpn:$VPNCFG
+
+Also note that for tunneled traffic to actually pass, you may have to allow
+it in your (custom) IPFilter config, e.g. /etc/ipf/ipf.conf, by preemptively
+adding lines like these...
+
+pass in quick on tun0
+pass out quick on tun0
+pass in quick on tun1
+pass out quick on tun1
+pass in quick on tun2
+pass out quick on tun2
+pass in quick on tun3
+pass out quick on tun3
+pass in quick on tap0
+pass out quick on tap0
+pass in quick on tap1
+pass out quick on tap1
+pass in quick on tap2
+pass out quick on tap2
+pass in quick on tap3
+pass out quick on tap3
+
+...and restarting the service:
+    :; pfexec svcadm restart ipfilter
+
+Alternately you might research and use scriptng hooks in openvpn config files.
+-->
 <service_bundle type="manifest" name="openvpn">
     <service name="network/openvpn" type="service" version="0">
         <create_default_instance enabled="false"/>
