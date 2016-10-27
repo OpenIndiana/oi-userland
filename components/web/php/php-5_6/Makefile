@@ -19,6 +19,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:16eb544498339d1d855292826e2e547ab01a31600141094959073e5e10e93ab5
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
+COMPONENT_SIG_URL= 	http://uk1.php.net/distributions/$(COMPONENT_ARCHIVE).asc	
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
