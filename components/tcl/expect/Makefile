@@ -55,10 +55,15 @@ CONFIGURE_OPTIONS +=		--with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(B
 CONFIGURE_OPTIONS.64 += 	-enable-64bit
 CONFIGURE_OPTIONS.sparc.64 +=	--enable-64bit-vis
 
+CC += $(CC_BITS)
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|$(WS_TOP)|\\$$(WS_TOP)|g"' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"' \
 	'-e "s|tcl/build/$(MACH$(BITS))|\\$$(TCLBUILD)|g"'
 
 # special targets due to tcl internals dependencies

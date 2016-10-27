@@ -1,8 +1,3 @@
-make[1]: Entering directory `$(@D)'
-rm -f tkTestInit.o
-mv tkAppInit.o tkTestInit.o
-make[2]: Entering directory `$(@D)'
-make[2]: Leaving directory `$(@D)'
 Tests running in interp:  $(@D)/tktest
 Tests located in:  $(SOURCE_DIR)/tests
 Tests running in:  $(@D)
@@ -98,7 +93,7 @@ times
     font actual {times -12} -size
 
 ---- Result was:
--12
+-2147483648
 ---- Result should have been (exact matching):
 24
 ==== font-44.1 FAILED
@@ -225,77 +220,6 @@ spinbox.test
 0.505376 0.72043
 ==== spinbox-3.70 FAILED
 
-
-
-==== spinbox-21.1 spinbox button, out of range checking FAILED
-==== Contents of test case:
-
-    destroy .e
-    spinbox .e -from -10 -to 20 -increment 2
-    set out {}
-    lappend out [.e get]; # -10
-    .e delete 0 end
-    .e insert 0 25; # set outside of range
-    .e invoke buttondown; # should constrain
-    lappend out [.e get]; # 20
-    .e delete 0 end
-    .e insert 0 25; # set outside of range
-    .e invoke buttonup; # should constrain
-    lappend out [.e get]; # 20
-    .e delete 0 end
-    .e insert 0 -100; # set outside of range
-    .e invoke buttonup; # should constrain
-    lappend out [.e get]; # -10
-    .e delete 0 end
-    .e insert 0 -100; # set outside of range
-    .e invoke buttondown; # should constrain
-    lappend out [.e get]; # -10
-    .e delete 0 end
-    .e insert 0 bogus; # set to a bogus value
-    .e invoke buttondown; # should use fromValue
-    lappend out [.e get]; # -10
-    .e delete 0 end
-    .e insert 0 19; # set just inside of range
-    .e invoke buttonup; # no wrap
-    lappend out [.e get]; # 20
-    .e invoke buttonup; # no wrap
-    lappend out [.e get]; # 20
-    .e invoke buttondown
-    lappend out [.e get]; # 18
-    .e delete 0 end
-    .e insert 0 -9; # set just inside of range
-    .e invoke buttondown; # no wrap
-    lappend out [.e get]; # -10
-    .e invoke buttondown; # no wrap
-    lappend out [.e get]; # -10
-    .e invoke buttonup; # no wrap
-    lappend out [.e get]; # -8
-
-    .e configure -wrap 1
-    .e delete 0 end
-    .e insert 0 19; # set just inside of range
-    .e invoke buttonup; # wrap
-    lappend out [.e get]; # -10
-    .e invoke buttonup
-    lappend out [.e get]; # -8
-    .e invoke buttondown
-    lappend out [.e get]; # -10
-    .e delete 0 end
-    .e insert 0 -9; # set just inside of range
-    .e invoke buttondown; # wrap
-    lappend out [.e get]; # 20
-    .e invoke buttondown
-    lappend out [.e get]; # 18
-    .e invoke buttonup; # no wrap
-    lappend out [.e get]; # 20
-
-
----- Result was:
-0 20 20 -10 -10 -10 20 20 18 -10 -10 -8 -10 -8 -10 20 18 20
----- Result should have been (exact matching):
--10 20 20 -10 -10 -10 20 20 18 -10 -10 -8 -10 -8 -10 20 18 20
-==== spinbox-21.1 FAILED
-
 text.test
 textBTree.test
 textDisp.test
@@ -420,6 +344,56 @@ up up up
 x-up up up y-up up
 ==== textTag-15.1 FAILED
 
+
+
+==== textTag-16.2 TkTextPickCurrent procedure FAILED
+==== Contents of test case:
+
+    event gen .t <ButtonRelease-1> -state 0x100 -x $x1 -y $y1
+    event gen .t <Motion> -x $x2 -y $y2
+    set x [.t index current]
+    .t tag add big 3.0
+    update
+    lappend x [.t index current]
+
+---- Result was:
+3.2 2.2
+---- Result should have been (exact matching):
+3.2 3.1
+==== textTag-16.2 FAILED
+
+
+
+==== textTag-18.1 TkTextPickCurrent tag bindings FAILED
+==== Contents of test case:
+
+    text .t -width 30 -height 4 -relief sunken -borderwidth 10  -highlightthickness 10 -pady 2
+    pack .t
+    
+    .t insert end " Tag here " TAG " no tag here"
+    .t tag configure TAG -borderwidth 4 -relief raised
+    .t tag bind TAG <Enter>  {lappend res "%x %y tag-Enter"}
+    .t tag bind TAG <Leave>  {lappend res "%x %y tag-Leave"}
+    bind .t <Enter> {lappend res Enter}
+    bind .t <Leave> {lappend res Leave}
+
+    set res {}
+    # Bindings must not trigger on the widget border, only over
+    # the actual tagged characters themselves.
+    event gen .t <Motion> -warp 1 -x 0 -y 0 ; update
+    event gen .t <Motion> -warp 1 -x 10 -y 10 ; update
+    event gen .t <Motion> -warp 1 -x 25 -y 25 ; update
+    event gen .t <Motion> -warp 1 -x 20 -y 20 ; update
+    event gen .t <Motion> -warp 1 -x 10 -y 10 ; update
+    event gen .t <Motion> -warp 1 -x 25 -y 25 ; update
+    set res
+
+---- Result was:
+{25 25 tag-Enter} Enter {10 10 tag-Leave} {25 25 tag-Enter} {20 20 tag-Leave} {25 25 tag-Enter}
+---- Result should have been (exact matching):
+Enter {25 25 tag-Enter} {20 20 tag-Leave} {25 25 tag-Enter}
+==== textTag-18.1 FAILED
+
 textWind.test
 
 
@@ -449,6 +423,38 @@ textWind.test
 tk.test
 unixButton.test
 unixEmbed.test
+
+
+==== unixEmbed-9.2 EmbedWindowDeleted procedure, check embeddedPtr FAILED
+==== Contents of test case:
+
+    deleteWindows
+    frame .f1 -container 1 -width 200 -height 50
+    pack .f1
+    dobg "set w1 [winfo id .f1]"
+    dobg {
+	eval destroy [winfo child .]
+	toplevel .t1 -use $w1 -highlightthickness 2 -bd 2 -relief sunken
+	set x {}
+	lappend x [testembed]
+	destroy .t1
+	lappend x [testembed]
+    }
+
+---- Test generated error; Return code was: 1
+---- Return code should have been one of: 0 2
+---- errorInfo: error flushing "file9": broken pipe
+    while executing
+"flush $fd"
+    (procedure "dobg" line 9)
+    invoked from within
+"dobg "set w1 [winfo id .f1]""
+    ("uplevel" body line 5)
+    invoked from within
+"uplevel 1 $script"
+---- errorCode: POSIX EPIPE {broken pipe}
+==== unixEmbed-9.2 FAILED
+
 unixFont.test
 
 
@@ -530,23 +536,10 @@ courier
     set x
 
 ---- Result was:
-33
+29
 ---- Result should have been (exact matching):
 78
 ==== unixfont-8.4 FAILED
-
-
-
-==== unixfont-8.5 AllocFont procedure: setup widths of normal chars FAILED
-==== Contents of test case:
-
-    font metrics $courier -fixed
-
----- Result was:
-0
----- Result should have been (exact matching):
-1
-==== unixfont-8.5 FAILED
 
 
 
@@ -560,7 +553,7 @@ courier
     set x
 
 ---- Result was:
-29
+21
 ---- Result should have been (exact matching):
 60
 ==== unixfont-8.6 FAILED
@@ -600,7 +593,7 @@ courier
     lappend x [.b.c index $t @[expr $ax*5],0]
 
 ---- Result was:
-0 1 1 3 3 3
+0 1 2 3 3 3
 ---- Result should have been (exact matching):
 0 1 1 1 1 2
 ==== unixfont-9.2 FAILED
@@ -608,6 +601,24 @@ courier
 unixMenu.test
 unixSelect.test
 unixWm.test
+
+
+==== unixWm-4.3 moving window while withdrawn FAILED
+==== Contents of test case:
+
+	wm withdraw .t
+	sleep 200
+	wm geom .t $geom
+	update
+	wm deiconify .t
+	wm geom .t
+    
+---- Result was:
+100x150+0+29
+---- Result should have been (exact matching):
+100x150+0+0
+==== unixWm-4.3 FAILED
+
 
 
 ==== unixWm-45.2 UpdateSizeHints procedure FAILED
@@ -816,9 +827,9 @@ wm.test
 
 xmfbox.test
 
-all.tcl:	Total	9101	Passed	7910	Skipped	1155	Failed	36
+all.tcl:	Total	8865	Passed	7908	Skipped	919	Failed	38
 Sourced 87 Test Files.
-Files with failing tests: focus.test font.test scrollbar.test spinbox.test textDisp.test textImage.test textTag.test textWind.test unixFont.test unixWm.test wm.test
+Files with failing tests: focus.test font.test scrollbar.test spinbox.test textDisp.test textImage.test textTag.test textWind.test unixEmbed.test unixFont.test unixWm.test wm.test
 Number of tests skipped for each constraint:
 	14	altDisplay
 	1	aqua
@@ -833,7 +844,7 @@ Number of tests skipped for each constraint:
 	1	havePseudocolorVisual
 	6	knownBug
 	1	memory
-	378	nonPortable
+	142	nonPortable
 	33	nt
 	5	pseudocolor8
 	11	testmetrics
@@ -864,37 +875,17 @@ progressbar.test
 radiobutton.test
 scrollbar.test
 spinbox.test
-
-
-==== spinbox-1.8.4 -validate option: FAILED
-==== Contents of test case:
-
-    .sb configure -validate all -validatecommand {lappend ::spinbox_test %P}
-    pack .sb
-    .sb set 50
-    focus .sb
-    after 100 {set ::spinbox_wait 1} ; vwait ::spinbox_wait
-    set ::spinbox_test
-
----- Result was:
-
----- Result should have been (exact matching):
-50
-==== spinbox-1.8.4 FAILED
-
 treetags.test
 treeview.test
 ttk.test
 validate.test
 vsapi.test
 
-all.tcl:	Total	457	Passed	439	Skipped	17	Failed	1
+all.tcl:	Total	457	Passed	440	Skipped	17	Failed	0
 Sourced 17 Test Files.
-Files with failing tests: spinbox.test
 Number of tests skipped for each constraint:
 	2	NA
 	4	coreEntry
 	3	coreScrollbar
 	5	nyi
 	3	xpnative
-make[1]: Leaving directory `$(@D)'

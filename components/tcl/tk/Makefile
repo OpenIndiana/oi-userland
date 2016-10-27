@@ -49,6 +49,8 @@ CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS.studio += -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
 
+CC += $(CC_BITS)
+
 CONFIGURE_OPTIONS +=		--enable-shared
 CONFIGURE_OPTIONS +=		--enable-man-symlinks
 CONFIGURE_OPTIONS +=		--enable-threads
@@ -62,6 +64,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
 	'-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
 	'-e "s|^cc: Warning: illegal use of -x.* option, .*$$|XXX_CC_XXX|g"' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"' \
+	'-e "/tk.*Init.o/d"' \
 	'-e "/^XXX_CC_XXX$$/d"' \
 	'-e "/^Tests began at .*$$/d"' \
 	'-e "/^Tests ended at .*$$/d"'
