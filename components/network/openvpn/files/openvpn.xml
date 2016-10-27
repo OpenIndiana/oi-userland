@@ -38,7 +38,7 @@
              Logs are sent to stderr here so they end up in the SMF instance
              log and failures are debuggable easier. A particular config_file
              may redefine logging if desired. -->
-        <exec_method type="method" name="start" exec="/usr/sbin/openvpn --log-append /dev/stderr --daemon openvpn:%i --config '%{config/config_file}' --cd &quot;$(dirname '%{config/config_file}')&quot;" timeout_seconds="60"/>
+        <exec_method type="method" name="start" exec="/usr/sbin/openvpn --log-append '%{config/default_logfile}' --daemon openvpn:%i --config '%{config/config_file}' --cd &quot;$(dirname '%{config/config_file}')&quot;" timeout_seconds="60"/>
 
         <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
 
@@ -55,6 +55,8 @@
         <property_group name='config' type='application'>
             <!-- Full path to config file is required -->
             <propval name="config_file" type='astring' value='/etc/openvpn/openvpn.conf'/>
+            <!-- Note that the log location can be overridden inside the config file -->
+            <propval name="default_logfile" type='astring' value='/dev/stderr'/>
             <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
         </property_group>
 

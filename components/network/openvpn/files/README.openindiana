@@ -11,9 +11,16 @@ privileges needed to do this setup):
     :; pfexec svccfg -s openvpn add $VPNCFG
     :; pfexec svccfg -s openvpn:$VPNCFG addpg config application
     :; pfexec svccfg -s openvpn:$VPNCFG setprop config/config_file = astring: /etc/openvpn/$VPNCFG.ovpn
+    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/default_logfile = astring: /var/log/openvpn/$VPNCFG.log
     :; pfexec svccfg -s openvpn:$VPNCFG setprop config/value_authorization = astring: solaris.smf.value.openvpn
     :; pfexec svcadm refresh openvpn:$VPNCFG
 ----
+
+NOTE: The suggestion above sets up logging into the specified file as soon as
+the service starts (rather than `syslog` as mandated by the `--daemon` mode);
+by our default it is `/dev/stderr` so the messages end up in the SMF instance
+log and then the location may be specified by the `config_file` contents.
+Make sure the specified location exists and is writable.
 
 If you want the tunnel occasionally (not up by default every time you boot)
 do not forget to run it as a temporarily-enabled service (also this requires
