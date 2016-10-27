@@ -40,7 +40,7 @@ pass out quick on tap3
 Alternately you might research and use scriptng hooks in openvpn config files.
 -->
 <service_bundle type="manifest" name="openvpn">
-    <service name="network/openvpn" type="service" version="0">
+    <service name="network/openvpn" type="service" version="0.01">
         <create_default_instance enabled="false"/>
 
         <dependency name="network" grouping="require_all" restart_on="error" type="service">
@@ -57,7 +57,16 @@ Alternately you might research and use scriptng hooks in openvpn config files.
             </method_environment>
         </method_context>
 
-        <exec_method type="method" name="start" exec="/usr/sbin/openvpn --daemon --config %{config/config_file}" timeout_seconds="60"/>
+        <!-- The "\-\-cd" in the exec method both verifies validity of the
+             config_file path specified by user, and allows relative paths
+             to additional files to be used from that config file as is
+             commonly done in OpenVPN setups.
+             An SMF native "method_context working_directory" might be better,
+             but alas it seems to not accept macros ;(
+             Logs are sent to stderr here so they end up in the SMF instance
+             log and failures are debuggable easier. A particular config_file
+             may redefine logging if desired. -->
+        <exec_method type="method" name="start" exec="/usr/sbin/openvpn --log-append /dev/stderr --daemon openvpn:%i --config '%{config/config_file}' --cd &quot;$(dirname '%{config/config_file}')&quot;" timeout_seconds="60"/>
 
         <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
 
