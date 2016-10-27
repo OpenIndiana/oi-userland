@@ -1,0 +1,19 @@
+Build fails with:
+
+  "The package setup script has attempted to modify files on your system
+   that are not within the EasyInstall build area, and has been aborted."
+
+without this patch.
+
+This change will not be sent upstream.
+
+--- mccabe-0.5.2/setup.py.orig	2016-09-29 11:04:22.409951942 +0000
++++ mccabe-0.5.2/setup.py	2016-09-29 11:04:14.248108118 +0000
+@@ -33,7 +33,6 @@
+     license='Expat license',
+     py_modules=['mccabe'],
+     zip_safe=False,
+-    setup_requires=['pytest-runner'],
+     tests_require=['pytest'],
+     entry_points={
+         'flake8.extension': [
