@@ -1,0 +1,16 @@
+Warnings are treated as fatal when building gnome-session, so this causes
+an error when building with gcc as pid_t and int are not the same type.
+
+Need to file upstream bug
+
+--- gnome-session-3.16.0/gnome-session/gsm-dbus-client.c	2014-12-12 07:23:26.000000000 -0800
++++ gnome-session-3.16.0/gnome-session/gsm-dbus-client.c	2015-07-06 22:48:37.709502671 -0700
+@@ -208,7 +208,7 @@
+         retval = TRUE;
+ 
+         g_debug ("uid = %d", uid);
+-        g_debug ("pid = %d", pid);
++        g_debug ("pid = %d", (int) pid);
+ 
+ out:
+         g_clear_pointer (&uid_variant, (GDestroyNotify) g_variant_unref);

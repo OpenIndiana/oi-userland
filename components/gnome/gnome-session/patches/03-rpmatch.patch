@@ -1,0 +1,17 @@
+Linux / FreeBSD have a convenience function to determining whether there
+is a local-specific "positive" value in a variable (rpmatch).  Solaris
+does not have this.
+
+Need to file a Solaris bug?
+
+--- gnome-session-3.16.0/gnome-session/main.c	2015-02-17 11:53:01.000000000 -0800
++++ gnome-session-3.16.0/gnome-session/main.c	2015-07-06 22:49:12.668481062 -0700
+@@ -260,7 +260,7 @@
+ 
+         debug_string = g_getenv ("GNOME_SESSION_DEBUG");
+         if (debug_string != NULL) {
+-                debug = rpmatch (debug_string) == TRUE || atoi (debug_string) == 1;
++                debug = atoi (debug_string) == 1;
+         }
+ 
+         error = NULL;

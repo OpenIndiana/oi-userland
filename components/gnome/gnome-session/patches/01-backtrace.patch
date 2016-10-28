@@ -1,0 +1,20 @@
+Solaris provides backtrace via libc directly, so use AC_SEARCH_LIBS instead
+for a simpler way of finding this function.
+
+Need to file upstream bug; appropriate as-is
+--- gnome-session-3.16.0/configure.ac	2015-03-23 10:27:18.000000000 -0700
++++ gnome-session-3.16.0/configure.ac	2015-07-06 22:30:31.155697361 -0700
+@@ -296,12 +296,7 @@
+ dnl ====================================================================
+ 
+ AC_CHECK_HEADERS(execinfo.h)
+-AC_CHECK_LIB(execinfo, backtrace, [have_backtrace="yes"], [have_backtrace="no"])
+-EXECINFO_LIBS=""
+-if test "x$have_backtrace" = "xyes"; then
+-        EXECINFO_LIBS="-lexecinfo"
+-fi
+-AC_SUBST(EXECINFO_LIBS)
++AC_SEARCH_LIBS([backtrace], [execinfo], [have_backtrace="yes"], [have_backtrace="no"])
+ 
+ dnl ====================================================================
+ dnl Check for X transport interface - allows to disable ICE Transports
