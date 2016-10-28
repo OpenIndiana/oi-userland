@@ -43,6 +43,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS +=	-I$(USRINCDIR)/ncurses
+CFLAGS += $(XPG6MODE)
+studio_C99MODE = $(studio_C99_ENABLE) 
 
 CONFIGURE_OPTIONS +=	--enable-nls
 CONFIGURE_OPTIONS +=	--enable-japanese-utf8

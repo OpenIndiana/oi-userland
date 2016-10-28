@@ -42,6 +42,9 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # The additional gawk specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"' \
         '-e "s|\(^/usr/gnu/bin/make\).*|\1|" ' 
 
 TPNO=			26217	
@@ -49,6 +52,9 @@ TPNO=			26217
 # must build tests before using
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
+
+CFLAGS += $(XPG6MODE)
+studio_C99MODE = $(studio_C99_ENABLE) 
 
 # Utility executables are intentionally delivered to the 32-bit lib directory.
 CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
