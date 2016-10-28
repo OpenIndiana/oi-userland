@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		drm
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://hg.java.net/hg/solaris-x11~x-s12-clone
 COMPONENT_SUMMARY=	DRM Kernel Drivers
 COMPONENT_SRC=		$(COMPONENT_NAME)
