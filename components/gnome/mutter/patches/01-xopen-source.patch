@@ -1,0 +1,54 @@
+If _XOPEN_SOURCE is defined, the library must be built as an xpg6
+application, however it is not, so we instead define __EXTENSIONS__ in the
+Makefile and then avoid defining _XOPEN_SOURCE.
+
+Needs investigation before contributing to upstream.
+
+--- mutter-3.16.1/src/core/delete.c	2015-04-14 12:55:28.000000000 -0700
++++ mutter-3.16.1.new/src/core/delete.c	2015-07-18 12:57:28.387713815 -0700
+@@ -20,7 +20,9 @@
+  * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#ifndef __EXTENSIONS__
+ #define _XOPEN_SOURCE /* for kill() */
++#endif
+ 
+ #include <config.h>
+ #include "util-private.h"
+--- mutter-3.16.1/src/core/display.c	2015-04-14 12:56:09.000000000 -0700
++++ mutter-3.16.1.new/src/core/display.c	2015-07-18 12:57:03.109624404 -0700
+@@ -28,7 +28,9 @@
+  * The display is represented as a #MetaDisplay struct.
+  */
+ 
++#ifndef __EXTENSIONS__
+ #define _XOPEN_SOURCE 600 /* for gethostname() */
++#endif
+ 
+ #include <config.h>
+ #include "display-private.h"
+--- mutter-3.16.1/src/core/main.c	2015-04-14 12:55:28.000000000 -0700
++++ mutter-3.16.1.new/src/core/main.c	2015-07-18 12:57:20.499111571 -0700
+@@ -42,7 +42,9 @@
+  */
+ 
+ #define _GNU_SOURCE
++#ifndef __EXTENSIONS__
+ #define _XOPEN_SOURCE /* for putenv() and some signal-related functions */
++#endif
+ 
+ #include <config.h>
+ #include <meta/main.h>
+--- mutter-3.16.1/src/x11/window-props.c	2015-04-06 15:17:15.000000000 -0700
++++ mutter-3.16.1.new/src/x11/window-props.c	2015-07-18 12:56:41.006550890 -0700
+@@ -35,7 +35,9 @@
+  */
+ 
+ #define _GNU_SOURCE
++#ifndef __EXTENSIONS__
+ #define _XOPEN_SOURCE 500 /* for gethostname() */
++#endif
+ 
+ #include <config.h>
+ #include "window-props.h"

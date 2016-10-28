@@ -1,0 +1,208 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/gnome/window-manager/mutter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The GNOME window and compositing manager"
+set name=com.oracle.info.description value=$(COMPONENT_NAME)
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Window Managers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/396
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/mutter
+file path=usr/include/mutter/meta/barrier.h
+file path=usr/include/mutter/meta/boxes.h
+file path=usr/include/mutter/meta/common.h
+file path=usr/include/mutter/meta/compositor-mutter.h
+file path=usr/include/mutter/meta/compositor.h
+file path=usr/include/mutter/meta/display.h
+file path=usr/include/mutter/meta/errors.h
+file path=usr/include/mutter/meta/group.h
+file path=usr/include/mutter/meta/keybindings.h
+file path=usr/include/mutter/meta/main.h
+file path=usr/include/mutter/meta/meta-backend.h
+file path=usr/include/mutter/meta/meta-background-actor.h
+file path=usr/include/mutter/meta/meta-background-group.h
+file path=usr/include/mutter/meta/meta-background-image.h
+file path=usr/include/mutter/meta/meta-background.h
+file path=usr/include/mutter/meta/meta-cursor-tracker.h
+file path=usr/include/mutter/meta/meta-enum-types.h
+file path=usr/include/mutter/meta/meta-idle-monitor.h
+file path=usr/include/mutter/meta/meta-monitor-manager.h
+file path=usr/include/mutter/meta/meta-plugin.h
+file path=usr/include/mutter/meta/meta-shadow-factory.h
+file path=usr/include/mutter/meta/meta-shaped-texture.h
+file path=usr/include/mutter/meta/meta-version.h
+file path=usr/include/mutter/meta/meta-window-actor.h
+file path=usr/include/mutter/meta/meta-window-shape.h
+file path=usr/include/mutter/meta/prefs.h
+file path=usr/include/mutter/meta/screen.h
+file path=usr/include/mutter/meta/theme.h
+file path=usr/include/mutter/meta/types.h
+file path=usr/include/mutter/meta/util.h
+file path=usr/include/mutter/meta/window.h
+file path=usr/include/mutter/meta/workspace.h
+link path=usr/lib/$(MACH64)/libmutter.so target=libmutter.so.0.0.0
+link path=usr/lib/$(MACH64)/libmutter.so.0 target=libmutter.so.0.0.0
+file path=usr/lib/$(MACH64)/libmutter.so.0.0.0 \
+    pkg.depend.bypass-generate=.*libstartup-notification.*
+file path=usr/lib/$(MACH64)/mutter-restart-helper mode=0555
+file path=usr/lib/$(MACH64)/mutter/Meta-3.0.gir
+file path=usr/lib/$(MACH64)/mutter/Meta-3.0.typelib
+file path=usr/lib/$(MACH64)/mutter/plugins/default.so
+file path=usr/lib/$(MACH64)/pkgconfig/libmutter.pc
+link path=usr/lib/libmutter.so target=libmutter.so.0.0.0
+link path=usr/lib/libmutter.so.0 target=libmutter.so.0.0.0
+file path=usr/lib/libmutter.so.0.0.0 \
+    pkg.depend.bypass-generate=.*libstartup-notification.*
+file path=usr/lib/mutter-restart-helper mode=0555
+file path=usr/lib/mutter/Meta-3.0.gir
+file path=usr/lib/mutter/Meta-3.0.typelib
+file path=usr/lib/mutter/plugins/default.so
+file path=usr/lib/pkgconfig/libmutter.pc
+file path=usr/share/GConf/gsettings/mutter-schemas.convert
+# file path=usr/share/applications/mutter-wayland.desktop
+file path=usr/share/applications/mutter.desktop
+file path=usr/share/glib-2.0/schemas/org.gnome.mutter.gschema.xml
+file path=usr/share/glib-2.0/schemas/org.gnome.mutter.wayland.gschema.xml
+file path=usr/share/gnome-control-center/keybindings/50-mutter-navigation.xml
+file path=usr/share/gnome-control-center/keybindings/50-mutter-system.xml
+file path=usr/share/gnome-control-center/keybindings/50-mutter-windows.xml
+file path=usr/share/locale/am/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ar/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/as/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ast/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/az/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/be/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/be@latin/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/bg/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/bn/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/br/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/bs/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ca/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/cs/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/cy/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/da/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/de/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/dz/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/el/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/eo/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/es/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/et/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/eu/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/fa/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/fi/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/fr/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ga/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/gl/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/gu/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ha/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/he/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/hi/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/hr/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/hu/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/hy/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/id/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ig/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/is/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/it/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ja/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ka/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/kk/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/kn/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ko/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ku/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/la/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/lt/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/lv/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/mai/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/mg/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/mk/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ml/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/mn/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/mr/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ms/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/nb/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/nds/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ne/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/nl/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/nn/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/oc/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/or/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/pa/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/pl/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/pt/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ro/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ru/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/rw/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/si/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sk/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sl/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sq/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sr/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/sv/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ta/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/te/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/tg/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/th/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/tk/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/tr/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/ug/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/uk/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/vi/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/wa/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/xh/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/yo/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/mutter.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/mutter.mo
+file path=usr/share/man/man1/mutter.1
+license COPYING license=GPLv2
+depend type=require fmri=__TBD \
+    pkg.debug.depend.reason=src/backends/meta-input-settings.c \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.peripherals
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/keybindings.c \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.wm.keybindings
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/prefs.c \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.input-sources
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/prefs.c \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.interface
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/prefs.c \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.wm.preferences
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/prefs.c \
+    pkg.tmp.gsettings-schema=org.gnome.settings-daemon.peripherals
+depend type=require fmri=__TBD pkg.debug.depend.reason=src/core/prefs.c \
+    pkg.tmp.gsettings-schema=org.gnome.settings-daemon.plugins.xsettings

@@ -1,0 +1,48 @@
+Fix compiler warnings.
+
+meta-cursor-renderer.c is already fixed upstream in a later release:
+https://git.gnome.org/browse/mutter/commit?id=ff312b69585cb0ec9f53483baa47678db8d44306
+
+Other two files need to be submitted upstream still.
+
+--- mutter-3.18.0/src/backends/meta-cursor-renderer.c	Sun Oct  4 19:47:56 2015
++++ mutter-3.18.0/src/backends/meta-cursor-renderer.c	Sun Oct  4 19:48:42 2015
+@@ -26,6 +26,7 @@
+ 
+ #include "meta-cursor-renderer.h"
+ 
++#include <math.h> 
+ #include <meta/meta-backend.h>
+ #include <meta/util.h>
+ 
+--- mutter-3.18.0/src/core/window.c	Mon Sep 21 12:48:51 2015
++++ mutter-3.18.0/src/core/window.c	Tue Jan  5 13:34:16 2016
+@@ -3488,7 +3488,7 @@
+     {
+       MetaMonitorInfo *info = &window->screen->monitor_infos[i];
+ 
+-      if (info->winsys_id == winsys_id)
++      if ((size_t)info->winsys_id == winsys_id)
+         return info;
+     }
+ 
+@@ -3697,7 +3697,7 @@
+ 
+   meta_window_update_monitor (window, flags & META_MOVE_RESIZE_USER_ACTION);
+ 
+-  if (old_output_winsys_id != window->monitor->winsys_id &&
++  if (old_output_winsys_id != (size_t) window->monitor->winsys_id &&
+       flags & META_MOVE_RESIZE_MOVE_ACTION && flags & META_MOVE_RESIZE_USER_ACTION)
+     window->preferred_output_winsys_id = window->monitor->winsys_id;
+
+--- mutter-3.18.1/src/x11/session.c	Tue Jan  5 13:40:50 2016
++++ mutter-3.18.1/src/x11/session.c	Tue Jan  5 13:41:09 2016
+@@ -336,7 +336,7 @@
+     prop3val.value = &hint;
+     prop3val.length = 1;
+ 
+-    sprintf (pid, "%d", getpid ());
++    sprintf (pid, "%ld", (long)getpid ());
+     prop4.name = (char *)SmProcessID;
+     prop4.type = (char *)SmARRAY8;
+     prop4.num_vals = 1;
