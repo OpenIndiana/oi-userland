@@ -240,7 +240,9 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
+# Remove once all build machines have library/desktop/startup-notification:
 REQUIRED_PACKAGES += library/gnome/gnome-libs
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libevent

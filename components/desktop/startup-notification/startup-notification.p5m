@@ -1,0 +1,61 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/desktop/startup-notification@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Provides a reference implementation of the startup notification protocol"
+set name=com.oracle.info.description value=startup-notification
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/371
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/include/startup-notification-1.0/libsn/sn-common.h
+file path=usr/include/startup-notification-1.0/libsn/sn-launchee.h
+file path=usr/include/startup-notification-1.0/libsn/sn-launcher.h
+file path=usr/include/startup-notification-1.0/libsn/sn-monitor.h
+file path=usr/include/startup-notification-1.0/libsn/sn-util.h
+file path=usr/include/startup-notification-1.0/libsn/sn.h
+link path=usr/lib/$(MACH64)/libstartup-notification-1.so \
+    target=libstartup-notification-1.so.0.0.0
+link path=usr/lib/$(MACH64)/libstartup-notification-1.so.0 \
+    target=libstartup-notification-1.so.0.0.0
+file path=usr/lib/$(MACH64)/libstartup-notification-1.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libstartup-notification-1.0.pc
+link path=usr/lib/libstartup-notification-1.so \
+    target=libstartup-notification-1.so.0.0.0
+link path=usr/lib/libstartup-notification-1.so.0 \
+    target=libstartup-notification-1.so.0.0.0
+file path=usr/lib/libstartup-notification-1.so.0.0.0
+file path=usr/lib/pkgconfig/libstartup-notification-1.0.pc
+license COPYING license=LGPLv2
+# Prior to s12_112, this library was in the gnome-libs package, so we depend
+# on a version of that new enough to avoid conflicts
+depend type=optional fmri=pkg:/library/gnome/gnome-libs@2.30.0-5.12.0.0.0.112.0
