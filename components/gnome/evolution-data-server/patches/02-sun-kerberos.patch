@@ -1,0 +1,13 @@
+Bit-rot has set in upstream; they just needs to use their own include
+checks to include the right header file.
+--- evolution-data-server-3.16.2/camel/camel-sasl-gssapi.c	2015-03-22 23:41:04.000000000 -0700
++++ evolution-data-server-3.16.2/camel/camel-sasl-gssapi.c	2015-07-16 11:20:06.049118652 -0700
+@@ -45,6 +45,8 @@
+ 
+ #ifdef HAVE_HEIMDAL_KRB5
+ #include <krb5.h>
++#elif HAVE_SUN_KRB5
++#include <kerberosv5/krb5.h>
+ #else
+ #include <krb5/krb5.h>
+ #endif /* HAVE_HEIMDAL_KRB5 */

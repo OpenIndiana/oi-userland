@@ -1,0 +1,29 @@
+This ensures that Mozilla nss/nspr libraries are placed last in
+flags/libraries so that the sqlite3 library found in /usr/lib is preferred
+over the one found in /usr/lib/mps.
+
+We need to fix Solaris to not have conflicting sqlite3 libraries, instead
+of forcing upstream to hack around this.
+
+--- evolution-data-server-3.16.2/configure.ac	2015-07-16 12:48:00.510697572 -0700
++++ evolution-data-server-3.16.2/configure.ac	2015-07-16 12:47:38.408295304 -0700
+@@ -1452,8 +1452,8 @@
+ dnl ******************************
+ AC_DEFUN([EVO_SET_COMPILE_FLAGS], [
+ 	PKG_CHECK_MODULES([$1], [$2])
+-	$1_CFLAGS="[$]$1_CFLAGS $3 "
+-	$1_LIBS="[$]$1_LIBS $4 "
++	$1_CFLAGS="$3 [$]$1_CFLAGS "
++	$1_LIBS="$4 [$]$1_LIBS "
+ ])
+ 
+ dnl ******************************
+@@ -1626,7 +1626,7 @@
+ 
+ AM_CONDITIONAL(ENABLE_LARGEFILE, [test "x$enable_largefile" = "xyes"])
+ 
+-EVO_SET_COMPILE_FLAGS(CAMEL, gio-2.0 gmodule-2.0 $mozilla_nss $mozilla_nspr sqlite3 >= sqlite_minimum_version, $KRB5_CFLAGS $MANUAL_NSS_CFLAGS $MANUAL_NSPR_CFLAGS $LARGEFILE_CFLAGS $ICU_CFLAGS, -lz $KRB5_LIBS $MANUAL_NSS_LIBS $MANUAL_NSPR_LIBS $ICU_LIBS)
++EVO_SET_COMPILE_FLAGS(CAMEL, gio-2.0 gmodule-2.0 $mozilla_nss $mozilla_nspr, $SQLITE3_CFLAGS $KRB5_CFLAGS $MANUAL_NSS_CFLAGS $MANUAL_NSPR_CFLAGS $LARGEFILE_CFLAGS $ICU_CFLAGS, $SQLITE3_LIBS -lz $KRB5_LIBS $MANUAL_NSS_LIBS $MANUAL_NSPR_LIBS $ICU_LIBS)
+ AC_SUBST(CAMEL_CFLAGS)
+ AC_SUBST(CAMEL_LIBS)
+ 

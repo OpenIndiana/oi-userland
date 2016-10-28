@@ -1,0 +1,85 @@
+redefinition warnings for _FILE_OFFSET_BITS if config.h not included first.
+
+This may be fixed upstream in post-3.22 development - need to resync and
+determine if there's anything left to send upstream.
+
+--- evolution-data-server-3.16.2/libedataserver/e-source.c	2015-05-06 02:39:09.000000000 -0700
++++ evolution-data-server-3.16.2/libedataserver/e-source.c	2015-07-16 15:31:08.167638153 -0700
+@@ -65,9 +65,12 @@
+  * fail with %G_IO_ERROR_NOT_SUPPORTED.
+  **/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include "e-source.h"
+ 
+-#include <config.h>
+ #include <string.h>
+ #include <glib/gi18n-lib.h>
+
+--- evolution-data-server-3.16.2/libedataserver/e-source-registry.c	2015-03-22 23:41:04.000000000 -0700
++++ evolution-data-server-3.16.2/libedataserver/e-source-registry.c	2015-07-16 18:52:09.708140925 -0700
+@@ -37,9 +37,12 @@
+  * book, calendar, memo list and task list for desktop integration.
+  **/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include "e-source-registry.h"
+ 
+-#include <config.h>
+ #include <glib/gstdio.h>
+ #include <glib/gi18n-lib.h>
+ 
+--- evolution-data-server-3.16.2/libedataserver/e-source-collection.c	2015-03-22 23:41:04.000000000 -0700
++++ evolution-data-server-3.16.2/libedataserver/e-source-collection.c	2015-07-16 19:04:32.222032022 -0700
+@@ -34,9 +34,12 @@
+  * ]|
+  **/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include "e-source-collection.h"
+ 
+-#include <config.h>
+ #include <glib/gi18n-lib.h>
+ 
+ /* Private D-Bus classes. */
+--- evolution-data-server-3.16.2/libedataserver/e-source-mail-signature.c	2015-03-22 23:41:04.000000000 -0700
++++ evolution-data-server-3.16.2/libedataserver/e-source-mail-signature.c	2015-07-16 19:04:48.534733808 -0700
+@@ -34,9 +34,12 @@
+  * ]|
+  **/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include "e-source-mail-signature.h"
+ 
+-#include <config.h>
+ #include <string.h>
+ #include <glib/gi18n-lib.h>
+ 
+--- evolution-data-server-3.16.2/libedataserver/e-source-proxy.c	2015-03-22 23:41:04.000000000 -0700
++++ evolution-data-server-3.16.2/libedataserver/e-source-proxy.c	2015-07-16 19:05:04.096807494 -0700
+@@ -35,9 +35,12 @@
+  * ]|
+  **/
+ 
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
+ #include "e-source-proxy.h"
+ 
+-#include <config.h>
+ #include <glib/gi18n-lib.h>
+ 
+ #include <libedataserver/e-source-enumtypes.h>

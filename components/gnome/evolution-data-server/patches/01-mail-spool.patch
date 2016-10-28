@@ -1,0 +1,23 @@
+Provide a way to override mail spool check; unclear if this is the right
+solution for upstream. Need to investigate if Solaris mail spool is still
+"broken".
+--- evolution-data-server-3.16.2/configure.ac	2015-04-12 23:39:40.000000000 -0700
++++ evolution-data-server-3.16.2/configure.ac	2015-07-16 10:57:25.519611383 -0700
+@@ -1077,10 +1077,14 @@
+ AC_DEFINE_UNQUOTED(SENDMAIL_PATH, "$SENDMAIL", [Path to a sendmail binary, or equivalent])
+ 
+ AC_MSG_CHECKING([system mail directory])
+-if test -d /var/mail -a '!' -h /var/mail ; then
+-	system_mail_dir="/var/mail"
++if test -z "$SYSTEM_MAIL_DIR"; then
++	if test -d /var/mail -a '!' -h /var/mail ; then
++		system_mail_dir="/var/mail"
++	else
++		system_mail_dir="/var/spool/mail"
++	fi
+ else
+-	system_mail_dir="/var/spool/mail"
++	system_mail_dir="$SYSTEM_MAIL_DIR"
+ fi
+ AC_DEFINE_UNQUOTED(SYSTEM_MAIL_DIR, "$system_mail_dir", [Directory local mail is delivered to])
+ 
