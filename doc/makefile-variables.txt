@@ -15,6 +15,16 @@ The following are the basics that just about every Makefile should have.
 * COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
   typically constructed from $(COMPONENT_PROJECT_URL) and $(COMPONENT_ARCHIVE).
 * COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
+* COMPONENT_SIG_URL is the URL where the PGP signature for $(COMPONENT_ARCHIVE)
+  can be found.  This can be used in addition to the hash in
+  $(COMPONENT_ARCHIVE_HASH) to verify the correctness of the archive.  If
+  COMPONENT_SIG_URL is present, then COMPONENT_ARCHIVE_HASH needn't be, but its
+  presence is strongly encouraged to ensure that the archive contents don't
+  change silently.  Note that when merging, because
+  $WS/tools/.gnupg/pubring.gpg is a binary file, you will have to choose
+  the correct version. To check if key is imported, run:
+	gpg2 --homedir=$(git rev-parse --show-toplevel)/tools/.gnupg --list-keys 
+  before you 'git commit' your merge.
 
 These two are both initialized in make-rules/shared-macros.mk rather than any
 component-level Makefile, but are frequently referenced from the latter.

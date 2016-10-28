@@ -39,6 +39,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_PROJECT_URL=	http://www.clamav.org/
 COMPONENT_ARCHIVE_URL=	\
 	http://www.clamav.net/downloads/production/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
