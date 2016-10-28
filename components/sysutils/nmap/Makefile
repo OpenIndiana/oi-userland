@@ -27,7 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
-COMPONENT_VERSION=		7.30
+COMPONENT_VERSION=		7.31
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -37,7 +37,7 @@ service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ba38a042ec67e315d903d28a4976b74999da94c646667c0c63f31e587d6d8d0f
+	sha256:cb9f4e03c0771c709cd47dc8fc6ac3421eadbdd313f0aae52276829290583842
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)dist/sigs/$(COMPONENT_ARCHIVE).asc	
 COMPONENT_BUGDB=		utility/nmap
@@ -67,8 +67,8 @@ CONFIGURE_OPTIONS  +=   --with-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
-# We will likely want to use external lua, when we have lua 5.3.
-CONFIGURE_OPTIONS  +=   --with-liblua=internal
+# libdnet-stripped fails to build with external lua
+CONFIGURE_OPTIONS  +=   --with-liblua=included
 CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 
