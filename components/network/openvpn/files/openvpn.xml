@@ -4,8 +4,6 @@
      service integration in /usr/share/doc/openvpn/README.openindiana -->
 <service_bundle type="manifest" name="openvpn">
     <service name="network/openvpn" type="service" version="1">
-        <create_default_instance enabled="false"/>
-
         <dependency name="network" grouping="require_all" restart_on="error" type="service">
             <service_fmri value="svc:/milestone/network:default"/>
         </dependency>
@@ -29,16 +27,9 @@
 -->
         </method_context>
 
-        <!-- The "\-\-cd" in the exec method both verifies validity of the
-             config_file path specified by user, and allows relative paths
-             to additional files to be used from that config file as is
-             commonly done in OpenVPN setups.
-             An SMF native "method_context working_directory" tuned for each
-             instance might be better, but alas it seems to not accept macros.
-             Logs are sent to stderr here so they end up in the SMF instance
-             log and failures are debuggable easier. A particular config_file
-             may redefine logging if desired. -->
-        <exec_method type="method" name="start" exec="/usr/sbin/openvpn --log-append '%{config/default_logfile}' --daemon openvpn:%i --config '%{config/config_file}' --cd &quot;$(dirname '%{config/config_file}')&quot;" timeout_seconds="60"/>
+        <exec_method type="method" name="start"
+            exec="/usr/sbin/openvpn --log-append '/var/log/openvpn/%i.log' --daemon openvpn:%i --config '/etc/openvpn/%i.conf'"
+            timeout_seconds="60"/>
 
         <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
 
@@ -52,13 +43,19 @@
             <propval name="ignore_error" type="astring" value="core,signal"/>
         </property_group>
 
-        <property_group name='config' type='application'>
-            <!-- Full path to config file is required -->
-            <propval name="config_file" type='astring' value='/etc/openvpn/openvpn.conf'/>
-            <!-- Note that the log location can be overridden inside the config file -->
-            <propval name="default_logfile" type='astring' value='/dev/stderr'/>
-            <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
-        </property_group>
+        <instance name='default' enabled='false'>
+            <!-- Support legacy (upgraded) setups of single :default instance
+                 just the way they were delivered earlier -->
+            <exec_method type="method" name="start"
+                exec="/usr/sbin/openvpn --daemon openvpn:%i --config '%{config/config_file}'"
+                timeout_seconds="60"/>
+
+            <property_group name='config' type='application'>
+                <!-- Full path to config file is required -->
+                <propval name="config_file" type='astring' value='/etc/openvpn/openvpn.conf'/>
+                <propval name='value_authorization' type='astring' value='solaris.smf.value.openvpn'/>
+            </property_group>
+        </instance>
 
         <stability value="Evolving"/>
 

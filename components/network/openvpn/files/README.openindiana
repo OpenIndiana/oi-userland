@@ -3,29 +3,26 @@
 == Multiple-instance support
 
 To create additional SMF instances for additional OpenVPN configuration
-files, run the following commands (as `root` or a user with the RBAC
+files, run the following commands (as the `root` or a user with the RBAC
 privileges needed to do this setup):
 
 ----
     :; VPNCFG=mywork-client
     :; pfexec svccfg -s openvpn add $VPNCFG
-    :; pfexec svccfg -s openvpn:$VPNCFG addpg config application
-    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/config_file = astring: /etc/openvpn/$VPNCFG.ovpn
-    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/default_logfile = astring: /var/log/openvpn/$VPNCFG.log
-    :; pfexec svccfg -s openvpn:$VPNCFG setprop config/value_authorization = astring: solaris.smf.value.openvpn
     :; pfexec svcadm refresh openvpn:$VPNCFG
 ----
 
-NOTE: The suggestion above sets up logging into the specified file as soon as
-the service starts (rather than `syslog` as mandated by the `--daemon` mode);
-by our default it is `/dev/stderr` so the messages end up in the SMF instance
-log and then the location may be specified by the `config_file` contents.
-Make sure the specified location exists and is writable.
+NOTE: The service template assumes all system-level connection config files
+(and additional files they might pull by relative paths) are all located
+under `/etc/openvpn/` directory as `$VPNCFG.conf`; initial logging is set up
+to write into `/var/log/openvpn/$VPNCFG/log` by default, and then the location
+may be specified by the `config_file` contents. In any case, make sure the
+specified location exists and is writable by the service user account.
 
-If you want the tunnel occasionally (not up by default every time you boot)
-do not forget to run it as a temporarily-enabled service (also this requires
-less RBAC privileges needed to the user account that would start or stop the
-tunnel):
+If you want the tunnel just occasionally (not up by default every time you
+boot), do not forget to run it as a temporarily-enabled service (also this
+requires less RBAC privileges needed to the user account that would start
+or stop the tunnel service):
 
 ----
     :; pfexec svcadm enable -ts openvpn:$VPNCFG
