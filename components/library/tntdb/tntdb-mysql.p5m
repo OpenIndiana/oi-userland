@@ -1,0 +1,38 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/mysql@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - connector library for Mysql"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI)/common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)  type=require
+
+# Do not force a dependency on specific DB package variant for
+# the DB libraries that any one of variant packages may provide
+file path=usr/lib/tntdb/tntdb4-mysql.so.4.0.0 pkg.depend.bypass-generate=.*
+file path=usr/lib/$(MACH64)/tntdb/tntdb4-mysql.so.4.0.0 pkg.depend.bypass-generate=.*
+
+link path=usr/lib/tntdb/tntdb4-mysql.so target=tntdb4-mysql.so.4.0.0
+link path=usr/lib/tntdb/tntdb4-mysql.so.4 target=tntdb4-mysql.so.4.0.0
+
+link path=usr/lib/$(MACH64)/tntdb/tntdb4-mysql.so.4 target=tntdb4-mysql.so.4.0.0
+link path=usr/lib/$(MACH64)/tntdb/tntdb4-mysql.so target=tntdb4-mysql.so.4.0.0

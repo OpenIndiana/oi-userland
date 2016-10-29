@@ -1,0 +1,82 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - common libraries and headers"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/tntdb.h
+file path=usr/include/tntdb/connectionpool.h
+file path=usr/include/tntdb/error.h
+file path=usr/include/tntdb/decimal.h
+file path=usr/include/tntdb/connection.h
+file path=usr/include/tntdb/bits/rowreader.h
+file path=usr/include/tntdb/bits/statement.h
+file path=usr/include/tntdb/bits/blobstream.h
+file path=usr/include/tntdb/bits/value.h
+file path=usr/include/tntdb/bits/row_iterator.h
+file path=usr/include/tntdb/bits/row.h
+file path=usr/include/tntdb/bits/blob.h
+file path=usr/include/tntdb/bits/result_iterator.h
+file path=usr/include/tntdb/bits/statement_iterator.h
+file path=usr/include/tntdb/bits/connection.h
+file path=usr/include/tntdb/bits/result.h
+file path=usr/include/tntdb/value.h
+file path=usr/include/tntdb/cxxtools/datetime.h
+file path=usr/include/tntdb/cxxtools/time.h
+file path=usr/include/tntdb/cxxtools/date.h
+file path=usr/include/tntdb/iface/iconnection.h
+file path=usr/include/tntdb/iface/irow.h
+file path=usr/include/tntdb/iface/istatement.h
+file path=usr/include/tntdb/iface/icursor.h
+file path=usr/include/tntdb/iface/iconnectionmanager.h
+file path=usr/include/tntdb/iface/iresult.h
+file path=usr/include/tntdb/iface/iblob.h
+file path=usr/include/tntdb/iface/ivalue.h
+file path=usr/include/tntdb/time.h
+file path=usr/include/tntdb/config.h
+file path=usr/include/tntdb/result.h
+file path=usr/include/tntdb/connect.h
+file path=usr/include/tntdb/impl/blob.h
+file path=usr/include/tntdb/datetime.h
+file path=usr/include/tntdb/transaction.h
+file path=usr/include/tntdb/row.h
+file path=usr/include/tntdb/date.h
+file path=usr/include/tntdb/blob.h
+file path=usr/include/tntdb/statement.h
+file path=usr/include/tntdb/librarymanager.h
+file path=usr/include/tntdb/sqlbuilder.h
+
+file path=usr/lib/libtntdb.so.4.0.0
+file path=usr/lib/tntdb/tntdb4-replicate.so.4.0.0
+file path=usr/lib/$(MACH64)/libtntdb.so.4.0.0
+file path=usr/lib/$(MACH64)/tntdb/tntdb4-replicate.so.4.0.0
+
+link path=usr/lib/libtntdb.so.4 target=libtntdb.so.4.0.0
+link path=usr/lib/libtntdb.so target=libtntdb.so.4.0.0
+link path=usr/lib/tntdb/tntdb4-replicate.so.4 target=tntdb4-replicate.so.4.0.0
+link path=usr/lib/tntdb/tntdb4-replicate.so target=tntdb4-replicate.so.4.0.0
+
+link path=usr/lib/$(MACH64)/libtntdb.so.4 target=libtntdb.so.4.0.0
+link path=usr/lib/$(MACH64)/libtntdb.so target=libtntdb.so.4.0.0
+link path=usr/lib/$(MACH64)/tntdb/tntdb4-replicate.so.4 target=tntdb4-replicate.so.4.0.0
+link path=usr/lib/$(MACH64)/tntdb/tntdb4-replicate.so target=tntdb4-replicate.so.4.0.0
