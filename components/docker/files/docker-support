@@ -4,17 +4,72 @@
 #
 
 import argparse
+import httplib
+import json
+from multiprocessing.dummy import Pool as ThreadPool 
 import os
 import shutil
+import socket
 from subprocess import Popen, PIPE
 import sys
 import tempfile
 
+DOCKER_SOCK = "/var/run/docker/docker.sock"
 ROOTFS_ARCHIVE  = "rootfs.tar.gz"
 DOCKERFILE = """FROM scratch
 ADD %(archive)s /
 CMD /bin/bash
 """
+
+
+class HTTPConnectionSocket(httplib.HTTPConnection):
+    """HTTPConnection for local UNIX sockets."""
+    def __init__(self, sock_path):
+        httplib.HTTPConnection.__init__(self, 'localhost')
+        self.sock_path = sock_path
+
+    def connect(self):
+        # superclass uses self.sock, he'll handle cleanup
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock.connect(self.sock_path)
+
+
+def do_api_get(url):
+    try:
+        con = HTTPConnectionSocket(DOCKER_SOCK)
+        con.request("GET", url)
+        resp = con.getresponse()
+    except httplib.HTTPException as err:
+        raise RuntimeError("unable to call API: %s" % err)
+
+    # expect standard success status
+    if resp.status != 200:
+        raise RuntimeError("Unable to query Docker API: status [%s] "
+            "reason [%s]" % (resp.status, resp.reason))
+
+    try:
+        data = json.loads(resp.read())
+    except Exception as err:
+        raise RuntimeError("unexpected error parsing JSON: %s" % err)
+
+    con.close()
+    return data
+
+
+def do_api_post(url):
+    try:
+        con = HTTPConnectionSocket(DOCKER_SOCK)
+        con.request("POST", url)
+        resp = con.getresponse()
+    except httplib.HTTPException as err:
+        raise RuntimeError("unable to call API: %s" % err)
+
+    # expect success and no content
+    if resp.status != 204:
+        raise RuntimeError("Unable to query Docker API: status [%s] "
+            "reason [%s]" % (resp.status, resp.reason))
+    con.close()
+
 
 class DockerSupportCmd(object):
     def __init__(self, cmd, verbose=False):
@@ -35,10 +90,11 @@ class DockerSupportCmd(object):
 
 def docker_is_online():
     try:
-        return DockerSupportCmd(['/usr/bin/svcs', '-Ho', 'state',
-            'docker']).run().strip() == 'online'
+        status = DockerSupportCmd(['/usr/bin/svcs', '-Ho', 'state',
+            'docker']).run().strip()
+        return status.startswith('online') or status.startswith('degraded')
     except Exception as err:
-        raise RuntimeError("Unable to determine version: %s" % err)
+        raise RuntimeError("Unable to determine service status: %s" % err)
 
 
 def get_os_version():
@@ -108,6 +164,36 @@ def create_base_image(args):
         shutil.rmtree(temp_dir)
 
 
+def get_running_container_ids():
+    try:
+        return [container['Id'] for container in
+            do_api_get("http:/containers/json")]
+    except RuntimeError as e:
+        print "unable to query api for container list: %s" % e
+
+
+def kill_container(cid):
+    try:
+        do_api_post("http:/containers/%s/kill" % cid)
+        print "shutdown container [%s]" % cid
+    except RuntimeError as e:
+        print "unable to kill container [%s]: %s" % (cid, e)
+
+
+def shutdown_containers(args):
+    print "Shutting down all running container instances..."
+    if not docker_is_online():
+        return
+
+    pool = ThreadPool(64)
+    pool.map(kill_container, get_running_container_ids())
+    pool.close()
+    pool.join()
+
+    if get_running_container_ids():
+        print "NOTE: unable to gracefully shutdown all containers"
+
+
 def build_parser():
     parser_main = argparse.ArgumentParser()
     parser_main.add_argument("-v", "--version", action="version",
@@ -122,8 +208,12 @@ def build_parser():
         help="use development build options for the package image")
     parser_create.add_argument("-p", "--profile",
         help="TEMPORARY: optional syconfig profile")
-
     parser_create.set_defaults(func=create_base_image)
+
+    parser_shutdown = subparsers.add_parser("shutdown-containers",
+        help="gracefully kill all running container instances",
+        usage=argparse.SUPPRESS)
+    parser_shutdown.set_defaults(func=shutdown_containers)
 
     return parser_main
 

@@ -4,15 +4,15 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-import grp
 import os
-from subprocess import Popen, PIPE, check_call, CalledProcessError
+import subprocess
 import sys
 import traceback
 
 import smf_include
 
 DOCKER_EXEC="/usr/bin/docker"
+DOCKER_SUPPORT="/usr/bin/docker-support"
 MKDIR="/usr/bin/mkdir"
 SVCADM="/usr/sbin/svcadm"
 SVCCFG="/usr/sbin/svccfg"
@@ -33,7 +33,8 @@ class SvcDockerCmd(object):
         self.cmd = cmd
 
     def run(self, expect_nonzero=None):
-        p = Popen(self.cmd, stdout=PIPE, stderr=PIPE)
+        p = subprocess.Popen(self.cmd, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
         output, error = p.communicate()
         if not expect_nonzero and p.returncode != 0:
             raise SvcDockerException(error)
@@ -192,7 +193,7 @@ def start():
         if v:
             os.putenv(p, v)
 
-    # Set up the service command line to execut the daemon
+    # Set up the daemon command line and execute
     dcmd = DOCKER_EXEC + ' daemon'
     if _get_docker_prop('config/debug') == 'true':
         dcmd += ' -D'
@@ -200,23 +201,27 @@ def start():
     dcmd += ' --graph="%s"' % DOCKER_MOUNTPOINT
     dcmd += ' --pidfile="%s/docker.pid"' % DOCKER_ROOT
     dcmd += ' --storage-opt zfs.fsname=' + fsname
-
     smf_include.smf_subprocess(dcmd)
     sys.exit(smf_include.SMF_EXIT_OK)
 
 
 def stop():
-    # First, kill off the SMF contract
+    # Kill off any running containers. Use a shell to log progress.
+    p = subprocess.Popen("/usr/bin/docker-support shutdown-containers",
+                shell=True)
+    p.communicate()
+
+    # Kill the process contract which contains the daemon
     try:
-        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
-    except CalledProcessError as e:
+        subprocess.check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
+    except subprocess.CalledProcessError as e:
         # 1 is returncode if no SMF contract processes were matched,
         # meaning they have already terminated.
         if e.returncode != 1:
             print "failed to kill the SMF contract: %s" % e
             return smf_include.SMF_EXIT_ERR_FATAL
 
-    # Now unmount the root dataset from /var/lib/docker
+    # Finally unmount the root dataset from /var/lib/docker
     _unmount_dataset(DOCKER_MOUNTPOINT)
 
 
