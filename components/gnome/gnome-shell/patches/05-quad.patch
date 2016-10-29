@@ -1,0 +1,113 @@
+Rename "quad" argument to avoid clash with "quad" typedef in <sys/types.h> on
+Solaris.   While the C compiler has no problem this, gobject-introspection
+freaks out, resulting in errors of:
+
+gnome-shell-3.18.3/src/shell-glsl-quad.h:58: syntax error,
+ unexpected typedef-name, expecting ')' or ',' in
+ 'void shell_glsl_quad_add_glsl_snippet (ShellGLSLQuad *quad,' at 'quad'
+
+gnome-shell-3.18.3/src/shell-glsl-quad.h:64: syntax error,
+ unexpected typedef-name, expecting ')' or ',' in
+ 'int shell_glsl_quad_get_uniform_location (ShellGLSLQuad *quad,' at 'quad'
+
+gnome-shell-3.18.3/src/shell-glsl-quad.h:66: syntax error,
+ unexpected typedef-name, expecting ')' or ',' in
+ 'void shell_glsl_quad_set_uniform_float (ShellGLSLQuad *quad,' at 'quad'
+
+and these functions missing from the generated Shell-0.1.gir file and thus
+breaking calls to them from the Javascript files elsewhere in gnome-shell.
+
+Need to consult with upstream on best way to fix there.
+
+--- gnome-shell-3.18.3/src/shell-glsl-quad.h	2015-11-17 13:11:17.000000000 -0800
++++ gnome-shell-3.18.3/src/shell-glsl-quad.h	2016-10-13 18:25:09.637995723 -0700
+@@ -55,15 +55,15 @@
+ 
+ GType shell_glsl_quad_get_type (void) G_GNUC_CONST;
+ 
+-void shell_glsl_quad_add_glsl_snippet (ShellGLSLQuad    *quad,
++void shell_glsl_quad_add_glsl_snippet (ShellGLSLQuad    *gquad,
+                                        ShellSnippetHook  hook,
+                                        const char       *declarations,
+                                        const char       *code,
+                                        gboolean          is_replace);
+ 
+-int  shell_glsl_quad_get_uniform_location (ShellGLSLQuad *quad,
++int  shell_glsl_quad_get_uniform_location (ShellGLSLQuad *gquad,
+                                            const char    *name);
+-void shell_glsl_quad_set_uniform_float    (ShellGLSLQuad *quad,
++void shell_glsl_quad_set_uniform_float    (ShellGLSLQuad *gquad,
+                                            int            uniform,
+                                            int            n_components,
+                                            int            total_count,
+--- gnome-shell-3.18.3/src/shell-glsl-quad.c	2015-11-17 13:11:17.000000000 -0800
++++ gnome-shell-3.18.3/src/shell-glsl-quad.c	2016-10-13 18:31:55.812183369 -0700
+@@ -57,7 +57,7 @@
+ 
+ /**
+  * shell_glsl_quad_add_glsl_snippet:
+- * @quad: a #ShellGLSLQuad
++ * @gquad: a #ShellGLSLQuad
+  * @hook: where to insert the code
+  * @declarations: GLSL declarations
+  * @code: GLSL code
+@@ -70,13 +70,13 @@
+  * function.
+  */
+ void
+-shell_glsl_quad_add_glsl_snippet (ShellGLSLQuad    *quad,
++shell_glsl_quad_add_glsl_snippet (ShellGLSLQuad    *gquad,
+                                   ShellSnippetHook  hook,
+                                   const char       *declarations,
+                                   const char       *code,
+                                   gboolean          is_replace)
+ {
+-  ShellGLSLQuadClass *klass = SHELL_GLSL_QUAD_GET_CLASS (quad);
++  ShellGLSLQuadClass *klass = SHELL_GLSL_QUAD_GET_CLASS (gquad);
+   CoglSnippet *snippet;
+ 
+   g_return_if_fail (klass->base_pipeline != NULL);
+@@ -167,7 +167,7 @@
+ 
+ /**
+  * shell_glsl_quad_get_uniform_location:
+- * @quad: a #ShellGLSLQuad
++ * @gquad: a #ShellGLSLQuad
+  * @name: the uniform name
+  *
+  * Returns: the location of the uniform named @name, that can be
+@@ -174,15 +174,15 @@
+  *          passed to shell_glsl_quad_set_uniform_float().
+  */
+ int
+-shell_glsl_quad_get_uniform_location (ShellGLSLQuad *quad,
++shell_glsl_quad_get_uniform_location (ShellGLSLQuad *gquad,
+                                       const char    *name)
+ {
+-  return cogl_pipeline_get_uniform_location (quad->priv->pipeline, name);
++  return cogl_pipeline_get_uniform_location (gquad->priv->pipeline, name);
+ }
+ 
+ /**
+  * shell_glsl_quad_set_uniform_float:
+- * @quad: a #ShellGLSLQuad
++ * @gquad: a #ShellGLSLQuad
+  * @uniform: the uniform location (as returned by shell_glsl_quad_get_uniform_location())
+  * @n_components: the number of components in the uniform (eg. 3 for a vec3)
+  * @total_count: the total number of floats in @value
+@@ -189,13 +189,13 @@
+  * @value: (array length=total_count): the array of floats to set @uniform
+  */
+ void
+-shell_glsl_quad_set_uniform_float (ShellGLSLQuad *quad,
++shell_glsl_quad_set_uniform_float (ShellGLSLQuad *gquad,
+                                    int            uniform,
+                                    int            n_components,
+                                    int            total_count,
+                                    const float   *value)
+ {
+-  cogl_pipeline_set_uniform_float (quad->priv->pipeline, uniform,
++  cogl_pipeline_set_uniform_float (gquad->priv->pipeline, uniform,
+                                    n_components, total_count / n_components,
+                                    value);
+ }

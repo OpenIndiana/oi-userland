@@ -1,0 +1,68 @@
+Upstream patch for gnome-shell memory leak recommended by gnome distros list
+https://mail.gnome.org/archives/distributor-list/2016-March/msg00006.html
+
+From 4a8b9d62c98539972cf553fa8101567ce37d73c4 Mon Sep 17 00:00:00 2001
+From: Aaron Plattner <aplattner@nvidia.com>
+Date: Fri, 18 Mar 2016 16:00:05 -0700
+Subject: [PATCH] st: Fix offscreen leak if cogl_framebuffer_allocate fails
+X-NVConfidentiality: public
+
+If cogl_framebuffer_allocate fails in _st_create_shadow_pipeline_from_actor, the
+CoglOffscreen* that was allocated earlier in the function is leaked.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=735705
+
+Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+---
+ src/st/st-private.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/st/st-private.c b/src/st/st-private.c
+index 559336c42d15..d40eceb86c78 100644
+--- a/src/st/st-private.c
++++ b/src/st/st-private.c
+@@ -425,40 +425,41 @@ _st_create_shadow_pipeline_from_actor (StShadow     *shadow_spec,
+       clutter_actor_get_allocation_box (actor, &box);
+       clutter_actor_box_get_size (&box, &width, &height);
+ 
+       if (width == 0 || height == 0)
+         return NULL;
+ 
+       buffer = cogl_texture_new_with_size (width,
+                                            height,
+                                            COGL_TEXTURE_NO_SLICING,
+                                            COGL_PIXEL_FORMAT_ANY);
+ 
+       if (buffer == NULL)
+         return NULL;
+ 
+       offscreen = cogl_offscreen_new_with_texture (buffer);
+       fb = COGL_FRAMEBUFFER (offscreen);
+ 
+       if (!cogl_framebuffer_allocate (fb, &catch_error))
+         {
+           cogl_error_free (catch_error);
++          cogl_object_unref (offscreen);
+           cogl_object_unref (buffer);
+           return NULL;
+         }
+ 
+       cogl_color_init_from_4ub (&clear_color, 0, 0, 0, 0);
+ 
+       /* XXX: There's no way to render a ClutterActor to an offscreen
+        * as it uses the implicit API. */
+       G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+       cogl_push_framebuffer (fb);
+       G_GNUC_END_IGNORE_DEPRECATIONS;
+ 
+       cogl_framebuffer_clear (fb, COGL_BUFFER_BIT_COLOR, &clear_color);
+       cogl_framebuffer_translate (fb, -box.x1, -box.y1, 0);
+       cogl_framebuffer_orthographic (fb, 0, 0, width, height, 0, 1.0);
+ 
+       clutter_actor_set_opacity_override (actor, 255);
+       clutter_actor_paint (actor);
+       clutter_actor_set_opacity_override (actor, -1);
+ 
+-- 
+2.7.4
+

@@ -1,0 +1,19 @@
+Enable use of /proc/self/cmdline on Solaris as well as Linux, now that we have
+support for it via PSARC/2015/207, instead of falling through to no-op case in
+shell_global_reexec_self().
+
+Need to submit upstream.
+
+diff --git a/src/shell-global.c b/src/shell-global.c
+index 6dda352..a698f0e 100644
+--- a/src/shell-global.c
++++ b/src/shell-global.c
+@@ -1244,7 +1244,7 @@ shell_global_reexec_self (ShellGlobal *global)
+   GPtrArray *arr;
+   gsize len;
+ 
+-#if defined __linux__
++#if defined __linux__ || defined __sun
+   char *buf;
+   char *buf_p;
+   char *buf_end;

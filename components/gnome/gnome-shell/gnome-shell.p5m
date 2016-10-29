@@ -1,0 +1,219 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+<transform depend fmri=__TBD pkg.tmp.gi-typelib=.* -> \
+    add pkg.debug.depend.path usr/lib/$(MACH64)/gnome-shell>
+<transform depend fmri=__TBD pkg.tmp.gi-typelib=.* -> \
+    add pkg.debug.depend.path usr/lib/$(MACH64)/mutter>
+set name=pkg.fmri \
+    value=pkg:/gnome/gnome-shell@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GNOME 3 User Shell"
+set name=com.oracle.info.description value="Desktop User Shell for GNOME 3"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/396
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/gnome-shell
+file path=usr/bin/gnome-shell-extension-prefs
+file path=usr/bin/gnome-shell-extension-tool
+file path=usr/bin/gnome-shell-perf-tool
+file path=usr/lib/$(MACH64)/gnome-shell-calendar-server mode=0555
+file path=usr/lib/$(MACH64)/gnome-shell-hotplug-sniffer mode=0555
+file path=usr/lib/$(MACH64)/gnome-shell-perf-helper mode=0555
+file path=usr/lib/$(MACH64)/gnome-shell/Gvc-1.0.typelib
+file path=usr/lib/$(MACH64)/gnome-shell/Shell-0.1.typelib
+file path=usr/lib/$(MACH64)/gnome-shell/ShellJS-0.1.typelib
+file path=usr/lib/$(MACH64)/gnome-shell/ShellMenu-0.1.typelib
+file path=usr/lib/$(MACH64)/gnome-shell/St-1.0.typelib
+file path=usr/lib/$(MACH64)/gnome-shell/libgnome-shell-js.so
+file path=usr/lib/$(MACH64)/gnome-shell/libgnome-shell-menu.so
+file path=usr/lib/$(MACH64)/gnome-shell/libgnome-shell.so
+# 64-bit browser plugin won't work with our 32-bit Firefox
+# file path=usr/lib/$(MACH64)/mozilla/plugins/libgnome-shell-browser-plugin.so
+file path=usr/share/GConf/gsettings/gnome-shell-overrides.convert
+file path=usr/share/applications/evolution-calendar.desktop
+file path=usr/share/applications/gnome-shell-extension-prefs.desktop
+file path=usr/share/applications/gnome-shell-wayland.desktop
+file path=usr/share/applications/gnome-shell.desktop
+file path=usr/share/dbus-1/interfaces/org.gnome.Shell.Screencast.xml
+file path=usr/share/dbus-1/interfaces/org.gnome.Shell.Screenshot.xml
+file path=usr/share/dbus-1/interfaces/org.gnome.ShellSearchProvider.xml
+file path=usr/share/dbus-1/interfaces/org.gnome.ShellSearchProvider2.xml
+file path=usr/share/dbus-1/services/org.gnome.Shell.CalendarServer.service
+file path=usr/share/dbus-1/services/org.gnome.Shell.HotplugSniffer.service
+file path=usr/share/glib-2.0/schemas/org.gnome.shell.gschema.xml
+file path=usr/share/gnome-control-center/keybindings/50-gnome-shell-system.xml
+file path=usr/share/gnome-shell/gnome-shell-theme.gresource
+file path=usr/share/gnome-shell/perf-background.xml
+file path=usr/share/locale/af/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/an/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ar/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/as/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ast/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/be/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/bg/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/bn/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/bs/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ca/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/cs/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/da/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/de/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/el/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/eo/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/es/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/et/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/eu/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/fa/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/fi/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/fr/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/fur/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ga/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/gl/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/gu/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/he/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/hi/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/hu/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ia/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/id/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/is/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/it/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ja/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/kk/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/km/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/kn/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ko/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ku/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ky/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/lt/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/lv/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/mk/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ml/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/mr/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ms/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/nb/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ne/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/nl/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/nn/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/oc/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/or/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/pa/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/pl/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/pt/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ro/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ru/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/si/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/sk/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/sl/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/sr/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/sv/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ta/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/te/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/tg/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/th/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/tr/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/ug/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/uk/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/uz@cyrillic/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/vi/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/gnome-shell.mo
+file path=usr/share/man/man1/gnome-shell.1
+license COPYING license=GPLv2
+# We want our logo displayed on gnome-shell backgrounds by default
+depend type=group fmri=pkg:/gnome/gnome-shell/background-logo-extension
+# Dependencies from imports.gi.<foo> statements in js/ui/*.js files
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=AccountsService-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Atk-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Atspi-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Caribou-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Clutter-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Cogl-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GDesktopEnums-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GLib-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GObject-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GWeather-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gdk-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GdkPixbuf-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gdm-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gio-2.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=GnomeDesktop-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Gtk-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=IBus-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Meta-3.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Pango-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Polkit-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Shell-0.1
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=ShellMenu-0.1
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=Soup-2.4
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=St-1.0
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=TelepathyGLib-0.12
+depend type=require fmri=__TBD pkg.tmp.gi-typelib=TelepathyLogger-0.2
+# Dependencies from Gio.Settings() calls in js/*/*.js files
+depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.clocks
+depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.desktop.a11y
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.a11y.applications
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.a11y.magnifier
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.app-folders
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.default-applications
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.interface
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.lockdown
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.media-handling
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.notifications
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.privacy
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.screensaver
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.search-providers
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.wm.keybindings
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.wm.preferences
+depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.login-screen
+depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.mutter
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.settings-daemon.peripherals
+depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.shell
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.system.location

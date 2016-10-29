@@ -1,0 +1,25 @@
+Solaris-specific patch to change the default background to our branded image
+
+--- gnome-shell-3.18.3/data/theme/gnome-shell.css~	2015-11-17 13:21:03.000000000 +0000
++++ gnome-shell-3.18.3/data/theme/gnome-shell.css	2016-10-13 22:40:15.790975576 +0000
+@@ -1649,7 +1649,7 @@
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); }
+ 
+ #lockDialogGroup {
+-  background: #2e3436 url(resource:///org/gnome/shell/theme/noise-texture.png);
+-  background-repeat: repeat; }
++  background: #2e3436 url(file:///usr/share/backgrounds/solaris/Polygons_Color.png);
++  background-repeat: no-repeat; }
+ 
+ #screenShieldNotifications StButton#vhandle, #screenShieldNotifications StButton#hhandle {
+--- gnome-shell-3.18.3/js/ui/background.js~	2015-11-17 13:11:17.000000000 +0000
++++ gnome-shell-3.18.3/js/ui/background.js	2016-10-14 17:25:00.602762652 +0000
+@@ -464,7 +464,7 @@
+     Name: 'SystemBackground',
+ 
+     _init: function() {
+-        let file = Gio.File.new_for_uri('resource:///org/gnome/shell/theme/noise-texture.png');
++        let file = Gio.File.new_for_uri('file:///usr/share/backgrounds/solaris/Polygons_Color.png');
+ 
+         if (_systemBackground == null) {
+             _systemBackground = new Meta.Background({ meta_screen: global.screen });
