@@ -38,12 +38,15 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
+CONFIGURE_LOCALSTATEDIR =   $(VARDIR)/lib
+CONFIGURE_LIBEXECDIR.32 =   $(USRLIBDIR)/$(COMPONENT_NAME)
+CONFIGURE_LIBEXECDIR.64 =   $(USRLIBDIR)/$(COMPONENT_NAME)
+### TODO: CONFIGURE_LIBEXECDIR.64 should be different? Original was BOTH:
+###CONFIGURE_OPTIONS+=  --libexecdir=/usr/lib/mate
+###CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"

@@ -41,8 +41,6 @@ COMPONENT_PREP_ACTION = cd $(@D) && autoreconf -f -i
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 # common targets
 build:		$(BUILD_32)
 

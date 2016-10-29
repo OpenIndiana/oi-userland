@@ -36,9 +36,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
-
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
 build: $(BUILD_32)

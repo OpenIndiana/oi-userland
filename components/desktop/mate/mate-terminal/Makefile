@@ -37,8 +37,7 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION=  cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR =   $(VARDIR)/lib
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 

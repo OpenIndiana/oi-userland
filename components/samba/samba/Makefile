@@ -23,6 +23,12 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+# TODO: Revise structures below to utilize well the new common configure.mk
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 # Samba does not work properly on i386 when built by studio with -xO3+.
 ifeq ($(MACH), sparc)
 # parallelize up to 64 concurent tasks for sparc

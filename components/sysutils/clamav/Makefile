@@ -88,9 +88,10 @@ COMPONENT_PREP_ACTION = \
 # Missing files in build dir for configure without this
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_SYSCONFDIR =	$(ETCDIR)/clamav
+
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/clamav
 CONFIGURE_OPTIONS +=	--with-dbdir=$(VARDIR)/clamav/db
 CONFIGURE_OPTIONS +=	--with-user=clamav
 CONFIGURE_OPTIONS +=	--with-group=clamav

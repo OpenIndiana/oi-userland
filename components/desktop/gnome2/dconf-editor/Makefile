@@ -37,9 +37,6 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 CFLAGS += -std=c99
 CFLAGS += -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS+=        --sysconfdir=/etc
-CONFIGURE_OPTIONS+=        --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 # common targets
 build:	$(BUILD_32)
 

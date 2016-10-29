@@ -33,7 +33,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -std=c99
 
-CONFIGURE_OPTIONS  += --sysconfdir=/etc
 CONFIGURE_OPTIONS  += --enable-shared
 CONFIGURE_OPTIONS  += --disable-static
 CONFIGURE_OPTIONS  += --enable-alsa

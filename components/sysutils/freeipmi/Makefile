@@ -40,9 +40,6 @@ include $(WS_MAKE_RULES)/ips.mk
 CFLAGS += $(CPP_LARGEFILES) -DMAXHOSTNAMELEN=256
 CPPFLAGS += $(CPP_LARGEFILES) -DMAXHOSTNAMELEN=256
 
-USRLIBDIR.32=$(USRLIBDIR)
-USRLIBDIR.64=$(USRLIBDIR64)
-
 COMPONENT_PREP_ACTION = \
     (cd $(@D) &&\
         aclocal -I . &&\
@@ -56,12 +53,10 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 #       configure(1) options to use
 # a default --prefix and --mandir are set in make-rules
+CONFIGURE_INFODIR =	$(CONFIGURE_DOCDIR)
+
 CONFIGURE_OPTIONS += --with-dont-check-for-root
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --infodir=/usr/share/doc/freeipmi/info
 CONFIGURE_OPTIONS += --enable-static=no
-CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR.$(BITS))
 
 # This is needed to avoid using CCACHE for CPP in this recipe:
 # they use CPP to build manpages! Go figure...

@@ -45,9 +45,9 @@ COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh;\
 CFLAGS+=-D__EXTENSIONS__
 CFLAGS+=-std=gnu99
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR =   $(VARDIR)/lib
+
 CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --enable-maintainer-mode
 
 COMPONENT_BUILD_ENV += CC="$(CC)"

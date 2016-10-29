@@ -47,7 +47,8 @@ MPS_LIBDIR.32 =	$(USRLIBDIR)/mps
 MPS_LIBDIR.64 =	$(USRLIBDIR)/mps/$(MACH64)
 MPS_LIBDIR =	$(MPS_LIBDIR.$(BITS))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc/samba
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/samba
+
 CONFIGURE_OPTIONS += --with-nss-inc=$(MPS_INCDIR)
 CONFIGURE_OPTIONS += --with-nspr-inc=$(MPS_INCDIR)
 CONFIGURE_OPTIONS += --enable-optimize

@@ -20,6 +20,13 @@
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
+
+# TODO: Revise structures below to utilize well the new common configure.mk
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-5_6-ext-memcached

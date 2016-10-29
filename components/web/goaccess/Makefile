@@ -34,7 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	$(CLONEY) $(SOURCE_DIR) $(@D)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-geoip
 
 CFLAGS+= -std=gnu99
