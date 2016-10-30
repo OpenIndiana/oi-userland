@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:223f8a2345a75f891098cf26ccdf208b293350388f51ce690
 COMPONENT_ARCHIVE_URL=	http://nginx.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS =  --prefix=/etc/nginx
 CONFIGURE_OPTIONS += --sbin-path=$(CONFIGURE_SBINDIR.$(BITS))/nginx

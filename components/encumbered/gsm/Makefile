@@ -43,10 +43,10 @@ COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 
 COMPONENT_INSTALL_ARGS += INSTALL_ROOT=/usr
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_INSTALL_ACTION += ( /usr/gnu/bin/install -d \
 		$(PROTOUSRBINDIR) \

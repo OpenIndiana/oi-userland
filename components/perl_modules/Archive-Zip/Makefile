@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ba789436dc82db02a7f3d2e9d120d0221edc83d8c7ec72519648ae64bbc4ce05
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/P/PH/PHRED/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_TARGETS = test
 
@@ -38,4 +38,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -29,10 +29,10 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libbluray.html
 COMPONENT_LICENSE = LGPLv2.1
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMMON_BUILD_ENV += JDK_HOME="$(JAVA_HOME)"
 

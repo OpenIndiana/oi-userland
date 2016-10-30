@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/sahlberg/libnfs/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = LGPLv2.1,BSD
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION= \
     ( cd  $(@D) && NOCONFIGURE=true sh bootstrap  )

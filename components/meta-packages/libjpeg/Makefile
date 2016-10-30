@@ -18,7 +18,7 @@ COMPONENT_NAME=		libjpeg
 COMPONENT_VERSION=	6.0.2
 COMPONENT_SUMMARY=	Joint Photographic Experts Group library
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

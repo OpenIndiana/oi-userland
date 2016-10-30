@@ -29,10 +29,10 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/foo86/dcadec/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE = LGPLv2.1
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

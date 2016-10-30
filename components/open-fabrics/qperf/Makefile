@@ -30,8 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:304b89d1b006c959cad3b132346a6d061526fe626953ef99c764df396e43f959
 COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/pkgs/qperf/$(COMPONENT_ARCHIVE)/46d427f3c5e853ce0d260cc85c4785f8/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs
@@ -51,4 +51,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

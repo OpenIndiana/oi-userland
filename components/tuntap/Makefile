@@ -31,9 +31,9 @@ Universal TUN/TAP driver. Some changes were made and code added \
 for supporting Ethernet tunneling feature, since the Universal \
 TUN/TAP driver for Solaris only supports IP tunneling known as TUN.
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKG_OPTIONS +=		-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 
@@ -54,4 +54,4 @@ install:	$(INSTALL_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

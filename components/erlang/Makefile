@@ -58,9 +58,9 @@ COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 UNPACK_ARGS_2=  -r $(COMPONENT_SRC_2)
 PKG_PROTO_DIRS +=       $(COMPONENT_SRC_2)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
@@ -136,4 +136,4 @@ test:	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

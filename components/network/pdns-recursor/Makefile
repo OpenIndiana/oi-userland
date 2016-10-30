@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	a DNS server
 COMPONENT_CLASSIFICATION="System/Services"
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS=-g
 
@@ -56,4 +56,4 @@ REQUIRED_PACKAGES += system/library
 # build-time only dependencies
 REQUIRED_PACKAGES += system/library/boost
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

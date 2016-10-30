@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:fa9ca4d13871dd122f61258a80d01751d603b4d3ee14095d65453b4e846e17d7
 COMPONENT_LICENSE=	Bitstream Vera Fonts License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONT_CONF_DIR=/etc/fonts/conf.avail
 FONT_TTF_DIR=/usr/share/fonts/TrueType

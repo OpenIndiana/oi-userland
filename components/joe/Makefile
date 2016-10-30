@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/joe-editor/JOE%2
 
 COMPONENT_BUGDB=	editor/joe
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS	 +=	--sysconfdir=$(ETCDIR)
 

@@ -122,8 +122,8 @@ CLEAN_PATHS+=$(BUILD_DIR)
 
 COMPONENT_PREP_ACTION= ( $(GSED) -i -e's,\(NAMELEN\ \ *\)44,\1256,' $(COMPONENT_DIR)/*/docbook.dcl )
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

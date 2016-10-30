@@ -30,9 +30,9 @@ COMPONENT_LICENSE = BSD
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = system/management/ipmitool
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -D__EXTENSIONS__
 

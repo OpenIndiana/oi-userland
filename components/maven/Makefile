@@ -28,8 +28,8 @@ COMPONENT_ARCHIVE_URL= \
   http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:
 

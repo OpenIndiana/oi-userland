@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_URL= $(call pypi_url)
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION= \
   gfind $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32) -type f \

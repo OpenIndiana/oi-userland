@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS+=-I/usr/include/ncurses
 

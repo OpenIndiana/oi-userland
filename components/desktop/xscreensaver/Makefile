@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreen
 
 PATCH_LEVEL=		0
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_DIR)/po && \
 					cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \

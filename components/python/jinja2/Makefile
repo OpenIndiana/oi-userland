@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/J/Jinja2/$(COMPON
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_NO_ARCH)

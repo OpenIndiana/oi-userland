@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:532435eff61c14b44a583f27b72f93e7864e96c95fe51134e
 COMPONENT_PROJECT_URL=	http://openvpn.net
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 

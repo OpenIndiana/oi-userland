@@ -28,9 +28,9 @@ COMPONENT_PROJECT_URL = http://icu-project.org
 COMPONENT_ARCHIVE_URL = http://download.icu-project.org/files/icu4c/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
 

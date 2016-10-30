@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:dda9c571ce3369e5b6b06e92790434b54bec1f2b03f1c9df054c0988aa4e2e8a
 COMPONENT_ARCHIVE_URL=	http://jodies.de/ipcalc-archive/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32)

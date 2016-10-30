@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:e4b7e306475bf9427d1757578f0e4528930c84c44eaa3f167d4c42f110ee75d6
 COMPONENT_LICENSE= GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONT_CONF_DIR=/etc/fonts/conf.avail
 FONT_TTF_DIR=/usr/share/fonts/TrueType

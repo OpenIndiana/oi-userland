@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:c583b4b968ffae6ea30d5b74041afeac83126682c490a9624b770d60d0e63d59
 COMPONENT_LICENSE= Luxi fonts license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONT_CONF_DIR=/etc/fonts/conf.avail
 FONT_TTF_DIR=/usr/share/fonts/TrueType

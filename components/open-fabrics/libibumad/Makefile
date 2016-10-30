@@ -30,8 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:4999cb9ff5c7243027d8a154d6b27d1efffaa4359b84447731c5ef545fb72229
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 LIBS +=	-lsocket -lnsl -libverbs
@@ -85,4 +85,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

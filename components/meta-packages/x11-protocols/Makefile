@@ -18,7 +18,7 @@ COMPONENT_NAME=		x11-protocols
 COMPONENT_VERSION=	7.5
 COMPONENT_SUMMARY=	X Window System protocol definitions
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

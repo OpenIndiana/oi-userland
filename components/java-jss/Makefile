@@ -45,9 +45,9 @@ COMPONENT_BUILD_ENV += JAVA_HOME=/usr/java
 COMPONENT_BUILD_ENV.64 += USE_64=1
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

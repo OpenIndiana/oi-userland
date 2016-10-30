@@ -25,7 +25,7 @@ COMPONENT_LICENSE_FILE= ogl-select.license
 COMPONENT_CLASSIFICATION= System/X11
 
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

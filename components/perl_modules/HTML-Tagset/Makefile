@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:adb17dac9e36cd011f5243881c9739417fd102fce760f8de4e9be4c7131108e2
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/P/PE/PETDANCE/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_TEST_TARGETS = test
@@ -50,4 +50,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

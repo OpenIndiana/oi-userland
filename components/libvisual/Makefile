@@ -30,9 +30,9 @@ COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_FMRI = library/desktop/libvisual
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # This is necessary fro mapfile to be found
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))

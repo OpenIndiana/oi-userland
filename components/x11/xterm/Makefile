@@ -31,9 +31,9 @@ COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= xterm.license
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

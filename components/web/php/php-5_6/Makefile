@@ -21,9 +21,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:16eb544498339d1d855292826e2e547ab01a3160014109495
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_SIG_URL= 	http://uk1.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 

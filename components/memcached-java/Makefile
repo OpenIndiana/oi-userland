@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT
 COMPONENT_PROJECT_URL=  http://whalin.com/memcached/
 COMPONENT_BUGDB=	database/memcached
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ant.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Make sure we remove unneeded pieces from the source (the test dir)
 # and also the existing source files which will be generated anew
@@ -80,4 +80,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

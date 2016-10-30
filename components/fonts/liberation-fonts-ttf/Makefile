@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:7890278a6cd17873c57d9cd785c2d230d9abdea837e96516019c5885dd271504
 COMPONENT_LICENSE=	SIL Open Font License Version 1.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONT_TTF_DIR=/usr/share/fonts/TrueType
 THIS_FONT_DIR=$(FONT_TTF_DIR)/liberation

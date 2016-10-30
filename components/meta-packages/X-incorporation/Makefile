@@ -18,7 +18,7 @@ COMPONENT_NAME=		X-incorporation
 COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	X consolidation incorporation
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

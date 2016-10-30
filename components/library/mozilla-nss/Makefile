@@ -50,9 +50,9 @@ COMPONENT_TEST_ENV += $(COMPONENT_BUILD_ENV)
 COMPONENT_TEST_ENV += HOST=127.0.0.1
 COMPONENT_TEST_DIR = $(BUILD_DIR_$(BITS))/nss/tests
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

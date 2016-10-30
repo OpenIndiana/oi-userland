@@ -29,8 +29,8 @@ COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR_32)/.built:	BITS=32
 $(BUILD_DIR_64)/.built:	BITS=64
@@ -63,4 +63,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

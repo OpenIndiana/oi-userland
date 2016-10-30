@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	\
    sha256:72b24ded17d687193c3366d0ebe7cde1e6b18f0df8c55438ac95be39e8a30613
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -47,7 +47,7 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
 # common targets
 build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 install:	$(INSTALL_32_and_64)
 
@@ -58,4 +58,4 @@ test: build
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

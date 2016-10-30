@@ -42,9 +42,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_CLASSIFICATION=	System/Shells
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
 # automatically generated
@@ -57,7 +57,7 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/which

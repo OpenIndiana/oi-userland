@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL=	http://dbus.freedesktop.org/releases/dbus-glib/$(COMPONEN
 COMPONENT_LICENSE= GPLv2,AFLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

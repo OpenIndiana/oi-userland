@@ -33,10 +33,10 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:8a96f924836187e406161f797b709ea52ade6c89ceffe489f7254b51088938d5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)0.3.11/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 LIBS = -lnsl -lsocket -lgen
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT
@@ -75,4 +75,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

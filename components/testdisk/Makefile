@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:00bb3b6b22e6aba88580eeb887037aef026968c21a87b5f906c6652cbee3442d
 COMPONENT_ARCHIVE_URL=	https://www.cgsecurity.org/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--enable-qt
 
@@ -46,4 +46,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_
 COMPONENT_FMRI=	library/ncurses
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to make "gmake test" work.
 COMPONENT_PRE_CONFIGURE_ACTION = \

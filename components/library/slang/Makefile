@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
 COMPONENT_BUGDB=	utility/slang
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
@@ -55,4 +55,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

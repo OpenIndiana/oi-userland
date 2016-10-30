@@ -30,9 +30,9 @@ COMPONENT_FMRI = library/musicbrainz/libmusicbrainz-5
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING.txt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/cmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DCMAKE_VERBOSE_MAKEFILE=1

@@ -32,8 +32,8 @@ COMPONENT_LICENSE = unknown
 COMPONENT_LICENSE_FILE = worldtime.license
 COMPONENT_CLASSIFICATION = Applications/Panels and Applets
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

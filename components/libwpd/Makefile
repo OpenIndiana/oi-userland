@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libwpd/files/libwpd/libwp
 COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
@@ -50,5 +50,5 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

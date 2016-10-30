@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:88af681912f8b1a9f51fe00ce13e233d28ae279128d04318db1b7e626482d2a8
 COMPONENT_ARCHIVE_URL=	http://system-tools-backends.freedesktop.org/downloads/1.4/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(shell dirname $(PERL)):/usr/gnu/bin:/usr/bin
 
@@ -49,4 +49,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

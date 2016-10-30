@@ -31,9 +31,9 @@ COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-nv
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \

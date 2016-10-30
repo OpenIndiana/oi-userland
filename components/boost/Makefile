@@ -32,9 +32,9 @@ COMPONENT_PROJECT_URL=	http://www.boost.org
 COMPONENT_LICENSE_FILE=	boost.license
 COMPONENT_LICENSE=	Boost Software license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/modules.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/modules.mk
 
 LIBDIR.32= $(USRLIBDIR)
 LIBDIR.64= $(USRLIBDIR64)

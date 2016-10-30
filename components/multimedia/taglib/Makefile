@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL= \
   https://taglib.github.io/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = LGPL
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 

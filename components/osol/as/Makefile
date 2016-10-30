@@ -25,8 +25,8 @@ download::
 	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg:/developer/build/make@0.5.11,5.11-0.134:20100302T014001Z
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:	prep
 

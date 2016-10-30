@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:fd23eb5f6f986dcc7e708307355ba3289abe03cc381fc47a8
 COMPONENT_PROJECT_URL=	http://0pointer.de/lennart/projects/libdaemon
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/libdaemon/$(COMPONENT_ARCHIVE)/509dc27107c21bcd9fbf2f95f5669563/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 

@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # We don't need -m32 for 32-bit builds, especially when it is passed to ld
 LD_BITS=
@@ -76,7 +76,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 .PHONY: build
 build:		$(BUILD_32)
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # Install.
 #

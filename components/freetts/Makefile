@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src.zip
 COMPONENT_ARCHIVE_HASH=	sha256:270bbf8c3ab1571585f0a78818ba73b601ef515eb1e6087293c41177219ed156
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/freetts/FreeTTS/FreeTTS%20$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # userland-unpack can't overwrite META-INF directory
 UNPACK= /usr/bin/unzip -o

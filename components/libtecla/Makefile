@@ -32,10 +32,10 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libtecla
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 COMPONENT_BUILD_ARGS=
 
@@ -59,4 +59,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

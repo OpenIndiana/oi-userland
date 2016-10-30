@@ -29,9 +29,9 @@ COMPONENT_LICENSE_FILE= sccs.license
 COMPONENT_LICENSE= GPL,CDDL
 COMPONENT_FMRI= developer/versioning/sccs
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 

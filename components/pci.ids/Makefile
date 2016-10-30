@@ -26,7 +26,7 @@ COMPONENT_LICENSE_FILE=	pci.ids.license
 COMPONENT_ARCHIVE_URL=	https://pci-ids.ucw.cz/v$(FORMAT)/$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	https://pci-ids.ucw.cz/
 
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CURL=/usr/bin/curl
 GZIP=/usr/bin/gzip

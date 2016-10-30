@@ -30,10 +30,10 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Media
 COMPONENT_FMRI = codec/opencore-amr
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-compile-c
 CONFIGURE_OPTIONS += --enable-shared

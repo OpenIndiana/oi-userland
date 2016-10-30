@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL=	\
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PREP_ACTION =        (cd $(@D) && \

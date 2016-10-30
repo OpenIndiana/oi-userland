@@ -25,9 +25,9 @@ COMPONENT_PROJECT_URL=	http://www.percona.com/
 COMPONENT_ARCHIVE_HASH=	sha256:7a80028748e49456c79cea3110d22c0583138e6ff20ebbf5f39fcbb8a5fbf7f8
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.5/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/percona-server/5.5
