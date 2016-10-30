@@ -1,0 +1,210 @@
+#!/bin/bash
+
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+# This script aims to uphold a common style in the oi-userland Makefiles,
+# especially substantial for legacy and imported recipes. It can be run
+# from the oi-userland workspace root or any sub-directory with components
+# (down to a single component's directory).
+#
+# Nits it tries to fix (or will try at some point) include:
+# * proper use of WS_* variables where defined for specific directories
+# * wipe trailing whitespaces (SPACE and TAB characters)
+# * use the directory variables instead of hardcoded /usr and so on
+# * drop "(BUILD_TOOLS|depends*.mk|BUILD_PKG_DEPENDENCIES)" lines in favor of REQUIRED_PACKAGES
+#
+
+# These defaults assume an OI Hipster clone with an "upstream" remote repo
+# set up pointing to https://github.com/OpenIndiana/oi-userland
+# TODO: Add smarts to detect if the upstream is defined in `git remote -v`
+#       and/or what name is uses if defined (FORK_UPSTREAM)
+# TODO: If BRANCH_MFSTYLE is not provided, default to the current branch if
+#       it is not BRANCH_MASTER (in which case generate the new branch)
+[ -n "${BRANCH_MASTER-}" ] || BRANCH_MASTER="oi/hipster"
+[ -n "${FORK_UPSTREAM-}" ] || FORK_UPSTREAM="upstream"
+[ -n "${BRANCH_UPSTREAM_MASTER-}" ] || BRANCH_UPSTREAM_MASTER="$FORK_UPSTREAM/$BRANCH_MASTER"
+[ -n "${BRANCH_MFSTYLE-}" ] || BRANCH_MFSTYLE="mfstyle-`/usr/gnu/bin/date -u +%s`" || BRANCH_MFSTYLE="mfstyle-$$"
+[ -n "${WS_TOP-}" ] || WS_TOP="`git rev-parse --show-toplevel`" || WS_TOP=""
+[ -n "${WS_TOP}" ] && [ -d "${WS_TOP}" ] || WS_TOP=""
+
+cat << EOF >&2
+INFO: for Makefile style cleanup work I will use:
+    BRANCH_MFSTYLE='$BRANCH_MFSTYLE'
+    BRANCH_MASTER='$BRANCH_MASTER'
+    BRANCH_UPSTREAM_MASTER='$BRANCH_UPSTREAM_MASTER'
+    WS_TOP='${WS_TOP}'
+EOF
+
+[ -n "${WS_TOP}" ] && case "`pwd`" in
+    "${WS_TOP}"|"${WS_TOP}/components"|"${WS_TOP}/components"/*) ;; # Stay put
+    *)  echo "INFO: Changing workdir from '`pwd`' to '${WS_TOP}/components'" >&2
+        cd "${WS_TOP}/components"
+        ;;
+esac
+
+git_refresh_master() {
+    set -e
+    git checkout "${BRANCH_MASTER}" || return # Abort if e.g. current WS is not clean
+    git checkout -f "${BRANCH_MASTER}" && git pull --all && git merge "${BRANCH_UPSTREAM_MASTER}" && git push
+    set +e
+}
+
+git_merge_master() {
+    set -e
+    # Either of these can fail due to source-code incompatibilities =>
+    # Resolve conflicts with updated and re-based code (if any) manually
+    git merge "${BRANCH_UPSTREAM_MASTER}" || git mergetool
+    git rebase -i "${BRANCH_UPSTREAM_MASTER}" || git mergetool
+
+    local LIST="`git status -s | egrep '^( M|UU) ' | sed 's,^\( M\|UU\) ,,'`"
+    if [ -n "$LIST" ] ; then
+        git add $LIST
+        git commit -m 'Resolve merge conflicts from upstream'
+        git rebase --continue
+    fi
+    set +e
+}
+
+git_refresh_mfstyle() {
+    git_refresh_master || return
+    # Apply current upstream code into this cleanup branch
+    git checkout -f "${BRANCH_MFSTYLE}" || git checkout -b "${BRANCH_MFSTYLE}" || return
+    git_merge_master
+}
+
+revise_mfstyle_wsdirs() {
+    # To inspect changes for typical errors and find omissions I used:
+    local OUT
+
+    ### Files that DO NOT contain "shared-macros" but DO contain WS_MAKE_RULES
+    ### If there are any hits - we rewrote something we should not have (or part
+    ### of a more complex web of makefiles, theoretically)
+    echo "=== Inspecting whether we rewrote something we should not have (WS_MAKE_RULES without shared-macros):" >&2
+    OUT="$(find . -type f -name Makefile | grep -v /build/ | while read M ; do egrep -q '^[^#]*shared-macros' "$M" || { grep -q "WS_MAKE_RULES" "$M" && echo "$M"; } ; done)"
+    echo "$OUT" >&2
+    [ -n "$OUT" ] && echo "=== ERROR: we rewrote something we should not have (see above)" >&2 && return 1
+
+    ### Files that DO contain "setup.py.mk" or "shared-target.mk" but
+    ### DO NOT have them sourced from WS_MAKE_RULES
+    ### If there are any hits - we did not rewrite something we should have
+    echo "=== Inspecting whether we did not rewrite something we should have (setup.py.mk):" >&2
+    OUT="$(find . -type f -name Makefile | grep -v /build/ | while read M ; do egrep -q '^[^#]*setup.py.mk' "$M" && { egrep -q 'WS_MAKE_RULES.*setup\.py\.mk' "$M" || echo "$M"; } ; done)"
+    echo "$OUT" >&2
+    [ -n "$OUT" ] && echo "=== ERROR: we did not rewrite something we should have (see above)" >&2 && return 1
+
+    echo "=== Inspecting whether we did not rewrite something we should have (shared-target.mk):" >&2
+    OUT="$(find . -type f -name Makefile | grep -v /build/ | while read M ; do egrep -q '^[^#]*shared-target.mk' "$M" && { egrep -q 'WS_MAKE_RULES.*shared-target\.mk' "$M" || echo "$M"; } ; done)"
+    echo "$OUT" >&2
+    [ -n "$OUT" ] && echo "=== ERROR: we did not rewrite something we should have (see above)" >&2 && return 1
+
+    echo "=== revise_mfstyle_wsdirs() : Passed OK" >&2
+}
+
+mfstyle_wsdirs() {
+    set -e
+    ### Fix up make-rules references, in some component or in the root of components tree
+    echo "=== Inspecting if some Makefiles should be fixed to use WS_* path variables :" >&2
+    find . -type f -name Makefile -exec sed -e \
+        's,^include \(\.\./\..*\|\$(WS_TOP)\)/make-rules/\([^s][^h]\|setup\.py\.mk\|shared-targets\.mk\),include \$(WS_MAKE_RULES)/\2,' -i '{}' \;
+    #git diff Makefile
+
+    # The same effect while updating a Makefile in Midnight Commander editor
+    # (e.g. outside this PR) can be achieved with regex search-and-replace:
+    #S# include (\.\./\..*|\$\(WS_TOP\))/make-rules/([^s][^h]|setup\.py\.mk|shared-targets\.mk)
+    #R# include $(WS_MAKE_RULES)/\2
+
+    # Add and commit all tracked modified files
+    local LIST="`git status -s | egrep '^( M|UU) ' | sed 's,^\( M\|UU\) ,,'`"
+    if [ -n "$LIST" ] ; then
+        git add $LIST
+        git commit -m 'Numerous components/*/Makefile unified to take advantage of WS_MAKE_RULES, update '"`date -u`"
+        ### Optionally flush this change into the original changeset, or keep it separate for easier review
+        git rebase -i upstream/oi/hipster
+    fi
+    set +e
+
+    revise_mfstyle_wsdirs
+}
+
+mfstyle_trailing_whitespace() {
+    set -e
+    echo "=== Inspecting if some Makefiles should be fixed regarding trailing whitespaces :" >&2
+    find . -type f -name Makefile -exec sed -e 's,^\(\|.*[^\\= \t]\)[ \t][ \t]*$,\1,' -i '{}' \;
+
+    # Add and commit all tracked modified files
+    local LIST="`git status -s | egrep '^( M|UU) ' | sed 's,^\( M\|UU\) ,,'`"
+    if [ -n "$LIST" ] ; then
+        git add $LIST
+        git commit -m 'Numerous components/*/Makefile cleaned up of trailing whitespaces, update '"`date -u`"
+        ### Optionally flush this change into the original changeset, or keep it separate for easier review
+        git rebase -i upstream/oi/hipster
+    fi
+
+    ### For changes related to configure.mk I searched with Midnight Commander for regex hits:
+    #Filenames# Makefile
+    #Content# \-\-(info|man|doc|include|lib|libexec|s?bin|sysconf|localstate|sharedstate)dir=
+    set +e
+}
+
+mfstyle_all() {
+    mfstyle_trailing_whitespace
+    mfstyle_wsdirs
+}
+
+usage() {
+    cat << EOF
+$0 : ensure certain style in the Makefiles
+
+Usage:
+    `basename $0` {-h | --help}
+    `basename $0` [resync] {mfstyle | mfstyle_* ... }
+    `basename $0` revise_mfstyle_wsdirs
+
+Arguments:
+    -h | --help     This help text
+    resync          Resync BRANCH_MFSTYLE with latest upstream
+    mfstyle         Process all the mfstyle rules in BRANCH_MFSTYLE, or
+                    Individual rules can also be called separately :
+        mfstyle_trailing_whitespace
+        mfstyle_wsdirs
+    revise_mfstyle_wsdirs   Verify workspace for typical errors that can be
+                    made by mfstyle_wsdirs (revision called as part of it too)
+    all             Shortcut for "resync mfstyle"
+EOF
+
+}
+
+[ $# = 0 ] && usage && exit 1
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help) usage; exit 0;;
+        resync)
+            git_refresh_mfstyle
+            ;;
+        mfstyle_trailing_whitespace|mfstyle_wsdirs|revise_mfstyle_wsdirs)
+            "$1" ;;
+        all)
+            git_refresh_mfstyle
+            ;& # Fall through
+        mfstyle)
+            mfstlyle_all
+            exit $?
+            ;;
+    esac
+    shift
+done
+
+exit 0
