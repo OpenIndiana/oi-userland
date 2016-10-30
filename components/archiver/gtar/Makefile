@@ -23,23 +23,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.28
+COMPONENT_VERSION=	1.29
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:60e4bfe0602fef34cd908d91cf638e17eeb09394d7b98c2487217dc4d3147562
+    sha256:236b11190c0a3a6885bdb8d61424f2b36a5872869aa3f7f695dea4b4843ae2f2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-
-PATCH_LEVEL=0
-
-# workaround for CR 6998994
-# sparc_COPTFLAG = -xO2
 
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
@@ -51,10 +46,8 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Failed tests: 
-#25: terminal input FAILED (iotty.at:29)
-#87: incremental dump when the parent directory is unreadable FAILED (listed03.at:27)
-
+#181 tests were successful.
+#23 tests were skipped.
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += compress/bzip2
