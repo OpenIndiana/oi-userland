@@ -114,10 +114,11 @@ CONFIGURE_SHAREDSTATEDIR =	$(VARDIR)
 
 # These optional variables enable certain blocks in this makefile
 # that additionally (re-)define some values and options
-CONFIGURE_PROTO_DIRS?=yes
+# Note: The initial PR adds but does not enable by default some new features
+CONFIGURE_PROTO_DIRS?=no
 CONFIGURE_DEFAULT_DIRS?=yes
-CONFIGURE_DEFAULT_EXTRA_DIRS?=yes
-CONFIGURE_DEFAULT_STATE_DIRS?=yes
+CONFIGURE_DEFAULT_EXTRA_DIRS?=no
+CONFIGURE_DEFAULT_STATE_DIRS?=no
 
 ifeq ($(CONFIGURE_PROTO_DIRS),yes)
 # Redefine the relevant pieces of PROTO*DIR trees to match possible
