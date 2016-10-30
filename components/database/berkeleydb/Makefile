@@ -108,7 +108,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 		$(CP) berkeleydb.license $(PROTOUSRDIR)/docs/LICENSE
 
-test:		$(TEST_32_and_64) 
+test:		$(TEST_32_and_64)
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std

@@ -46,7 +46,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-# Paths to find libraries/modules to link with 
+# Paths to find libraries/modules to link with
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
@@ -82,7 +82,7 @@ CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --enable-sna 
+CONFIGURE_OPTIONS += --enable-sna
 CONFIGURE_OPTIONS += --enable-uxa
 CONFIGURE_OPTIONS += --enable-rendernode
 CONFIGURE_OPTIONS += --enable-create2

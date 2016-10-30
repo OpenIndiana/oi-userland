@@ -23,7 +23,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:3c05e05aebcbfcc044d9e8c2d4646cd8359be39a3f0ba8ce4e72a9094bee704f
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE) 
+  http://sourceforge.net/projects/libmms/files/libmms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://libmms.sourceforge.net/
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LIB

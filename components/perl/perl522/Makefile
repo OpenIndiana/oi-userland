@@ -79,7 +79,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
-			-Uuselargefiles 
+			-Uuselargefiles
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 
@@ -101,7 +101,7 @@ test:		$(TEST_32)
 	#		re/subst.t
 	#		re/substT.t
 	#		re/subst_wamp.t
-	# 		
+	#
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

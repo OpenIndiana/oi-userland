@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:ee26ed1e177c0cd8fa8458a481b14a0b24ca0b51468c8b4c8b676fd3ceccd330
 COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/project/faac/faad2-src/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.audiocoding.com/faad2.html	
+COMPONENT_PROJECT_URL = http://www.audiocoding.com/faad2.html
 COMPONENT_LICENSE = GPLv2
 COMPONENT_LICENSE_FILE = $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = Applications/Sound and Video

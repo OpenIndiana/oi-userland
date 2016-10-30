@@ -75,7 +75,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_query_xrc_rcv_qp.3 \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_create_xrc_rcv_qp.3 \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_modify_xrc_rcv_qp.3
-	
+
 # common targets
 build:		$(BUILD_32_and_64)
 

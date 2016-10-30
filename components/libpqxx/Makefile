@@ -44,7 +44,7 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
 
 COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 && \
-	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 )  
+	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTO_DIR)/usr/share/doc/libpqxx-4.0 )
 
 build: $(BUILD_32_and_64)
 

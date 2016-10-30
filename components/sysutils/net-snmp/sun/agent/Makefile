@@ -31,7 +31,7 @@
 #
 # Revision 1.1  2003/07/23 15:53:29  rr144420
 # new makefiles for building sun directory
-# 
+#
 #
 
 SUBDIRS		= modules mibs

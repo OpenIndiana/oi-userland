@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=         gnome-icon-theme
 COMPONENT_VERSION=      2.31.0
 COMPONENT_PROJECT_URL=  http://www.gnome.org
-COMPONENT_SUMMARY=      GNOME Icon Themes 
+COMPONENT_SUMMARY=      GNOME Icon Themes
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \

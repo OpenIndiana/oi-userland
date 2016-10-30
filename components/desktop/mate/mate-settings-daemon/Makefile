@@ -42,7 +42,7 @@ CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-gtk=2.0
-CONFIGURE_OPTIONS+= --with-default-wm 
+CONFIGURE_OPTIONS+= --with-default-wm
 CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"

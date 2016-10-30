@@ -26,7 +26,7 @@
 #
 
 LIBRARY_LINK=	libparted.so
-LIBRARY=	$(LIBRARY_LINK).8	
+LIBRARY=	$(LIBRARY_LINK).8
 
 SRCDIR=		common
 
@@ -118,9 +118,9 @@ LDFLAGS +=	-shared
 $(LIBRARY_LINK): $(LIBRARY)
 	ln -s $(LIBRARY) $(LIBRARY_LINK)
 
-all: 	$(LIBRARY_LINK) 
+all: 	$(LIBRARY_LINK)
 
-clean: 
+clean:
 	rm -f $(LIBRARY) $(LIBRARY_LINK) $(OBJECTS)
 
 HEADERS=	constraint.h crc32.h debug.h device.h \
@@ -128,7 +128,7 @@ HEADERS=	constraint.h crc32.h debug.h device.h \
 		geom.h natmath.h parted.h solaris.h \
 		timer.h unit.h
 
-install: $(LIBRARY_LINK) 
+install: $(LIBRARY_LINK)
 	for i in $(HEADERS); do \
 		install -D $(SRCDIR)/include/parted/$$i $(DESTDIR)/usr/include/parted/$$i; \
 	done

@@ -11,7 +11,7 @@
 #
 # Copyright 2011, Andrzej Szeszo
 # Copyright 2013, Jon Tibble
-# Copyright 2014, Alexander Pyhalov 
+# Copyright 2014, Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -84,7 +84,7 @@ install: build
 		cp $(BUILD_DIR_64)/dist/SunOS5.11_*_OPT.OBJ/bin/$$i $(PROTO_DIR)/usr/sfw/bin/$(MACH64); \
 		done
 	cat $(COMPONENT_DIR)/nss.pc | sed s/^Version:/Version:\ $(COMPONENT_VERSION)/ \
-		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc 
+		> $(PROTO_DIR)/usr/lib/pkgconfig/nss.pc
 	for i in $(PROTO_DIR)/usr/lib/mps/*.so; do \
         	/usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib/mps"' $$i ;\
     		done ;
@@ -106,7 +106,7 @@ $(TEST_32):  $(BUILD_32)
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested
 
-$(TEST_64):  $(BUILD_64) 
+$(TEST_64):  $(BUILD_64)
 	cd $(COMPONENT_TEST_DIR) && \
 	$(ENV) $(COMPONENT_TEST_ENV) $(CONFIG_SHELL) all.sh &&\
 	$(TOUCH) $(BUILD_DIR_$(BITS))/.tested

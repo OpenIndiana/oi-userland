@@ -56,7 +56,7 @@ PATTERN_FILES = \
 	swirl2.xbm \
 	wave1.xbm	\
 	wrnkle2.xbm
-	
+
 PATTERN_DIR=$(USRSHAREDIR)/patterns
 
 build:
@@ -64,7 +64,7 @@ build:
 install:
 	$(MKDIR) $(PROTO_DIR)$(PATTERN_DIR)
 	cd $(COMPONENT_DIR)/src \
-		&& $(INSTALL) -t $(PROTO_DIR)$(PATTERN_DIR) $(PATTERN_FILES) 
+		&& $(INSTALL) -t $(PROTO_DIR)$(PATTERN_DIR) $(PATTERN_FILES)
 
 test: $(NO_TESTS)
 

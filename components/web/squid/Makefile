@@ -99,9 +99,9 @@ COMPONENT_POST_BUILD_ACTION= \
                  $(CP) files/squid.conf.default $(@D)/src)
 
 # common targets
-build:		$(BUILD_32) 
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32)
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly

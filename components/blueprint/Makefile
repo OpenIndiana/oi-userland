@@ -42,7 +42,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 
 $(BUILD_DIR_32)/.installed_pixmaps:	$(BUILD_32)
 	$(RM) -fr $(PROTO_DIR)/usr/share/pixmaps
-	$(MKDIR) -p $(PROTO_DIR)/usr/share/pixmaps 
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/pixmaps
 	for i in `find $(SOURCE_DIR)/icons/48x48 -name "*.png"`; do \
 		echo "Installing $$i to $(PROTO_DIR)/usr/share/pixmaps with blueprint- prefix "; \
 		i_base=`basename $$i`; \

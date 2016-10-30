@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS += --sysconfdir="/etc"
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 COMPONENT_POST_INSTALL_ACTION= \
     @$(MKDIR) -p $(PROTO_DIR)/etc/; \
-    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/ 
+    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -56,7 +56,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-		
+
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

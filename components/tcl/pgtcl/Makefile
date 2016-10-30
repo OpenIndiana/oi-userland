@@ -44,7 +44,7 @@ CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.5/pgtcl1.9/$(MACH64)
 
 
 COMPONENT_POST_INSTALL_ACTION= ( mkdir -p $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) && \
-	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )  
+	 cp -a $(SOURCE_DIR)/doc/html/* $(PROTOUSRSHAREDOCDIR)/pgtcl-$(COMPONENT_VERSION) )
 
 build: $(BUILD_32_and_64)
 

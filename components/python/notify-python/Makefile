@@ -56,7 +56,7 @@ CFLAGS += -I/usr/include/gtk-2.0
 CFLAGS += -I/usr/include/cairo
 CFLAGS += -I/usr/include/pango-1.0
 
-# There was reference to now unavailable http://trac.galago-project.org/ticket/121 
+# There was reference to now unavailable http://trac.galago-project.org/ticket/121
 # for the reason to remove the file
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					rm src/pynotify.c &&\

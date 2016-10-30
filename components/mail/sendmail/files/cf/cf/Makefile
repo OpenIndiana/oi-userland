@@ -53,7 +53,7 @@ all: $(ALL)
 clean cleandir:
 	$(RM) $(ALL) core
 
-depend install: 
+depend install:
 
 # this is overkill, but....
 M4FILES=\

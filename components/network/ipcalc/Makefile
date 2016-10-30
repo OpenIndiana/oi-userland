@@ -44,7 +44,7 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 $(BUILD_DIR)/%/.installed: $(BUILD_32)
-	$(MKDIR) $(PROTO_DIR)/usr/bin 
+	$(MKDIR) $(PROTO_DIR)/usr/bin
 	cp $(SOURCE_DIR)/ipcalc $(PROTO_DIR)/usr/bin/ipcalc
 	$(TOUCH) $@
 

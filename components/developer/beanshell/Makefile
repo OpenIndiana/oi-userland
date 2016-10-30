@@ -41,7 +41,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_BUILD_ARGS =		-Ddist-dir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS +=	-Djavadoc-dir=${PROTO_DIR}
-COMPONENT_BUILD_TARGETS +=	dist 
+COMPONENT_BUILD_TARGETS +=	dist
 
 # We use the solaris-transform file to pick up files in the prototype area
 # that are not found in the directories we install them to on Solaris.
@@ -49,7 +49,7 @@ COMPONENT_BUILD_TARGETS +=	dist
 # associated beanshell.p5m file.
 PUBLISH_TRANSFORMS += solaris-transform
 # Needed to pick up scripts/bsh and bshcommands-bshdoc.xml
-PKG_PROTO_DIRS += $(COMPONENT_DIR) 
+PKG_PROTO_DIRS += $(COMPONENT_DIR)
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
 
 # common targets

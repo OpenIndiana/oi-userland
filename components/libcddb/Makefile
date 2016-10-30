@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libcddb/files/libcddb/$(C
 COMPONENT_LICENSE=	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_FMRI= 	library/audio/libcddb 
+COMPONENT_FMRI= 	library/audio/libcddb
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

@@ -46,7 +46,7 @@ PATCH_LEVEL = 0
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += -std=c99 
+CFLAGS += -std=c99
 CFLAGS += -fexceptions
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)

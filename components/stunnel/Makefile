@@ -42,8 +42,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# need /usr/perl5/bin on path to access pod2man perl script, used by 
-# the build to create docs. 
+# need /usr/perl5/bin on path to access pod2man perl script, used by
+# the build to create docs.
 # Perl 5.10 pod2man does not recognize "-u" argument.
 COMPONENT_BUILD_ENV +=  PATH=/usr/perl5/5.16/bin:$(PATH)
 

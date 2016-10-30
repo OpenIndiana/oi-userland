@@ -36,7 +36,7 @@ COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS 	+=	--disable-static
 
 include $(WS_TOP)/make-rules/shared-targets.mk
-	
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

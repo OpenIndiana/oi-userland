@@ -48,7 +48,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 # This option causes "$1: unbound variable" errors during the check-TESTS,
 # and the gnulib-tests don't even run at all.
 # Note that the below unexports SHELLOPTS, even for targets
-# other than "test." 
+# other than "test."
 unexport SHELLOPTS
 
 # common targets
@@ -57,7 +57,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 # 1 test fails - multibyte-white-space (something with illumos locales?)
-# 
+#
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

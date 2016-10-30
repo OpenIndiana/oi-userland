@@ -266,7 +266,7 @@ $(BUILD_iiimgcf_64): $(BUILD_xiiimp_so_64)
 $(BUILD_iiimgcf_32): $(BUILD_xiiimp_so_32)
 	$(RM) -r $(BUILD_DIR_32)/iiimgcf
 	$(MKDIR) $(BUILD_DIR_32)/iiimgcf
-	cd $(BUILD_DIR_32)/iiimgcf; /usr/bin/env CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS.32)" CXXFLAGS="$(CXXFLAGS.32)" LDFLAGS="$(MY_LDFLAGS2)" $(SOURCE_DIR)/iiimgcf/configure --prefix=/usr -sysconfdir=/etc --localstatedir=/var 
+	cd $(BUILD_DIR_32)/iiimgcf; /usr/bin/env CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS.32)" CXXFLAGS="$(CXXFLAGS.32)" LDFLAGS="$(MY_LDFLAGS2)" $(SOURCE_DIR)/iiimgcf/configure --prefix=/usr -sysconfdir=/etc --localstatedir=/var
 	cd $(BUILD_DIR_32)/iiimgcf; $(GMAKE)
 	cd $(BUILD_DIR_32)/iiimgcf; $(GMAKE) DESTDIR=$(PROTO_DIR) install
 	$(TOUCH) $@
@@ -395,7 +395,7 @@ $(BUILD_vkb_native_32):	$(BUILD_iiim_panel_32)
 	cp -r $(SOURCE_DIR)/program/iiim-keyboard/* $(BUILD_DIR_32)/program/iiim-keyboard
 	cd $(BUILD_DIR_32)/program/iiim-keyboard/vkb_native;  /usr/bin/env CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS.32)" CXXFLAGS="$(CXXFLAGS.32)" LDFLAGS="$(MY_LDFLAGS2) -L$(BUILD_DIR_32)/lib/iiimcf" $(SOURCE_DIR)/program/iiim-keyboard/vkb_native/autogen.sh \
 		--prefix=/usr  --sysconfdir=/etc --libdir=/usr/lib/iiim
-	cd $(BUILD_DIR_32)/program/iiim-keyboard/vkb_native; $(GMAKE) 
+	cd $(BUILD_DIR_32)/program/iiim-keyboard/vkb_native; $(GMAKE)
 	cd $(BUILD_DIR_32)/program/iiim-keyboard/vkb_native; $(GMAKE) DESTDIR=$(PROTO_DIR) install
 	$(TOUCH) $@
 
@@ -542,7 +542,7 @@ $(INSTALL_final_cleanup_32): $(INSTALL_iiim_properties_desktop_32)
 	cd $(PROTO_DIR)/usr/lib/iiim; $(RM) libiiimutils.so.0; ln -s libiiimutils.so libiiimutils.so.0
 	$(RM) -rf $(PROTO_DIR)/usr/share/gnome/help/imswitcher
 	$(TOUCH) $@
-		
+
 # Common targets
 
 build: $(BUILD_32_and_64)

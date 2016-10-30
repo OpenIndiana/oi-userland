@@ -11,7 +11,7 @@
 
 #
 # Copyright 2016 Alexander Pyhalov
-# 
+#
 
 include ../../../make-rules/shared-macros.mk
 

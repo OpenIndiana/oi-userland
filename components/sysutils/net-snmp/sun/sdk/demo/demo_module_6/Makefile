@@ -16,7 +16,7 @@
 #
 #
 # Makefile to generate demo_module_6.so
-# 
+#
 # usage:
 # "make" : generate library for 64bit / sparc
 # "make ARCH=32" : generate library for 32bit / sparc
@@ -34,8 +34,8 @@ TARGETS=demo_module_6.so
 
 #CFLAGS_64=-g -I. -Dsolaris_2 -m64
 CFLAGS_64=-I. -Dsolaris_2 -m64
-#CFLAGS_32=-g -I. -Dsolaris_2 
-CFLAGS_32=-I. -Dsolaris_2 
+#CFLAGS_32=-g -I. -Dsolaris_2
+CFLAGS_32=-I. -Dsolaris_2
 CFLAGS=$(CFLAGS_$(ARCH))
 
 BUILDAGENTLIBS_64=-R../lib -L$(LIB64) -lnetsnmpagent -lnetsnmpmibs -l netsnmphelpers -lnetsnmp -ldl -lkvm -lz  -lpkcs11 -lkstat -lelf -lm -ldl -lnsl -lsocket -ladm

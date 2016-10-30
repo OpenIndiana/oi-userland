@@ -32,7 +32,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # Missing files in build dir for configure without this.
-# COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+# COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 build: $(BUILD_32_and_64)
 

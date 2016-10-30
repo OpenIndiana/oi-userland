@@ -34,7 +34,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMMON_BUILD_ENV += JDK_HOME="$(JAVA_HOME)" 
+COMMON_BUILD_ENV += JDK_HOME="$(JAVA_HOME)"
 
 CFLAGS += -I $(JAVA_HOME)/include/solaris
 

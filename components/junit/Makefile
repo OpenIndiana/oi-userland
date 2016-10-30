@@ -47,8 +47,8 @@ COMPONENT_BUILD_TARGETS += dist
 
 # common targets
 build:		$(BUILD_32)
-	
-install:	build	
+
+install:	build
 
 # Testing is run as part of the build.
 # To really test AFTER you have installed the resulting package do:
@@ -59,7 +59,7 @@ install:	build
 #
 # OK (22 tests)
 test:		$(NO_TESTS)
-		
+
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

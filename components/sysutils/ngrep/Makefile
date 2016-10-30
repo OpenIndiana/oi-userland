@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2016 Adam Stevko 
+# Copyright 2016 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -22,7 +22,7 @@ COMPONENT_FMRI=		diagnostic/ngrep
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/ngrep/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download	
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/ngrep/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ARCHIVE_HASH=	sha256:aea6dd337da8781847c75b3b5b876e4de9c58520e0d77310679a979fc6402fa7
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license

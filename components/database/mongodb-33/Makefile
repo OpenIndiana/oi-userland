@@ -60,7 +60,7 @@ COMPONENT_INSTALL_ARGS = $(COMPONENT_BUILD_ARGS)
 
 $(BUILD_TOOLS):	$(BUILD_64)
 	$(MKDIR) $(@D)/bin
-	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D) 
+	$(CP) -a $(SOURCE_DIR)/src/mongo/gotools/* $(@D)
 	cd $(@D) && /usr/bin/bash build.sh ssl
 	$(TOUCH) $(@)
 

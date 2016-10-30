@@ -49,7 +49,7 @@ PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 
-# This is to force OpenSSL's Configure script to use gmake for 'make links'. 
+# This is to force OpenSSL's Configure script to use gmake for 'make links'.
 # Otherwise it fails with:
 #     mksh: Fatal error in reader: Unmatched `(' on line
 CONFIGURE_ENV += MAKE="$(GMAKE)"

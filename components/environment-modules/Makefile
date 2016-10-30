@@ -34,7 +34,7 @@ COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_PREFIX=	$(USRLIBDIR)

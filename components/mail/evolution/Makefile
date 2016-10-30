@@ -40,7 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					autoheader &&\
 					automake -a -f -c --gnu &&\
 					autoconf )
-					
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 gcc_OPT		= -O2

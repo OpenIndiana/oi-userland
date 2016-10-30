@@ -43,7 +43,7 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 LDFLAGS= -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
+                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR)
 
 CONFIGURE_OPTIONS += --enable-motif
 

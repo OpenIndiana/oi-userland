@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_POST_INSTALL_ACTION +=	( cp $(COMPONENT_DIR)/files/*.1  \
-	$(PROTO_DIR)/usr/gnu/share/man/man1/ ) 
+	$(PROTO_DIR)/usr/gnu/share/man/man1/ )
 
 # common targets
 build:		$(BUILD_32)

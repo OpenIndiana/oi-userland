@@ -45,7 +45,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 # CONFIGURE_OPTIONS and CONFIGURE_ENV are reset because
 # autoconf 2.13 doesn't like the defaults (in any case,
 # autoconf is but a set of scripts and needn't be compiled)
-CONFIGURE_OPTIONS   =		--prefix=/usr 
+CONFIGURE_OPTIONS   =		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--srcdir=.
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--program-suffix=-2.13

@@ -40,7 +40,7 @@ COMPONENT_BUILD_TARGETS+=	ec IP=6 SHLIBBASE=c-client SHLIBNAME=libc-client.so.1 
 
 PATH=	/usr/gnu/bin:/usr/bin:$PATH
 
-echoenv:	
+echoenv:
 		env
 
 build:		echoenv $(BUILD_32_and_64)

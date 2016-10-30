@@ -24,7 +24,7 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-# ocaml configure system checks for gcc as gcc*, 
+# ocaml configure system checks for gcc as gcc*,
 # so we can't set -cc option to $(CC).
 # Instead we set PATH to $(GCC_ROOT)/bin:$(PATH) and -cc to gcc
 PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
@@ -144,7 +144,7 @@ COMPONENT_POST_INSTALL_ACTION = (cd $(@D)/emacs ; \
 #
 # ASLR_MODE = $(ASLR_DISABLE)
 
-# Files built in the COMPONENT_POST_INSTALL_ACTION are found by setting 
+# Files built in the COMPONENT_POST_INSTALL_ACTION are found by setting
 # PKG_PROTO_DIRS as follows:
 #
 PKG_PROTO_DIRS +=       $(BUILD_DIR_$(BITS))

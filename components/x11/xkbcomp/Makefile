@@ -36,7 +36,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CPPFLAGS+= -DNO_ALLOCA 
+CPPFLAGS+= -DNO_ALLOCA
 
 build: $(BUILD_32_and_64)
 

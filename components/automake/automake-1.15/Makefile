@@ -37,7 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/automake
 COMPONENT_SUMMARY=	A Makefile generator
-COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/ 
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	GPLv2 FDLv1.3
 

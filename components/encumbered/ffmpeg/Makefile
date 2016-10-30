@@ -39,7 +39,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 CFLAGS.32 += -fno-rename-registers
 CFLAGS.32 += -fomit-frame-pointer
-CFLAGS.32 += -fno-PIC -UPIC 
+CFLAGS.32 += -fno-PIC -UPIC
 CFLAGS.32 += -mpreferred-stack-boundary=4
 
 CFLAGS += $(CFLAGS.$(BITS))
@@ -54,7 +54,7 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
-CONFIGURE_OPTIONS += --enable-runtime-cpudetect 
+CONFIGURE_OPTIONS += --enable-runtime-cpudetect
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
@@ -65,7 +65,7 @@ CONFIGURE_OPTIONS += --enable-swscale
 CONFIGURE_OPTIONS += --enable-libgsm
 CONFIGURE_OPTIONS += --enable-libxvid
 CONFIGURE_OPTIONS += --enable-libx264
-# Don't enable it, resulting binary is not 
+# Don't enable it, resulting binary is not
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
 CONFIGURE_OPTIONS += --enable-libtheora

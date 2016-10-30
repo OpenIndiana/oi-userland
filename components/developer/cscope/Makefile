@@ -24,7 +24,7 @@ Cscope is a developer's tool for browsing source code. It has an impeccable \
 Unix pedigree, having been originally developed at Bell Labs back in the \
 days of the PDP-11. Cscope was part of the official AT&T Unix distribution \
 for many years, and has been used to manage projects involving 20 million \
-lines of code! 
+lines of code!
 COMPONENT_FMRI=         developer/cscope
 COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_SRC=		cscope-$(COMPONENT_VERSION)

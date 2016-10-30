@@ -39,7 +39,7 @@ PATCH_LEVEL=0
 COMPONENT_PRE_CONFIGURE_ACTION= \
     $(CLONEY) $(SOURCE_DIR) $(@D)
 
-LDFLAGS+= -lnsl -lsocket 
+LDFLAGS+= -lnsl -lsocket
 
 build:          $(BUILD_32_and_64)
 

@@ -42,7 +42,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 

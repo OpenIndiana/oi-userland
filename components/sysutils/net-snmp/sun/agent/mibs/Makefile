@@ -14,7 +14,7 @@
 
 #
 # Makefile to install mibs
-# 
+#
 # usage:
 # "make install"
 

@@ -55,10 +55,10 @@ COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 build:	$(BUILD_32_and_64)
 
 
-install:	$(INSTALL_32_and_64)	
+install:	$(INSTALL_32_and_64)
 
 test: install	$(TEST_32_and_64)
- 
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

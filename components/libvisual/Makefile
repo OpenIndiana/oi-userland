@@ -52,7 +52,7 @@ CONFIGURE_OPTIONS += --enable-static=no
 
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
-             $(MV) include/libvisual-0.4/libvisual/lvconfig.h include/libvisual-0.4/libvisual/lvconfig-$(BITS).h ) 
+             $(MV) include/libvisual-0.4/libvisual/lvconfig.h include/libvisual-0.4/libvisual/lvconfig-$(BITS).h )
 
 build: $(BUILD_32_and_64)
 

@@ -40,7 +40,7 @@ CONFIGURE_OPTIONS +=    --with-mysql=/usr/mariadb/5.5
 CONFIGURE_OPTIONS +=    --enable-largefile
 CONFIGURE_OPTIONS +=    --bindir=/usr/benchmarks/sysbench/bin
 
-install: $(INSTALL_32) 
+install: $(INSTALL_32)
 
 build: $(BUILD_32)
 

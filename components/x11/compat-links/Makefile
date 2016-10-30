@@ -26,9 +26,9 @@ COMPONENT_LICENSE_FILE= compat-links.license
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-build: 
+build:
 
-install: 
+install:
 
 test: $(NO_TESTS)
 

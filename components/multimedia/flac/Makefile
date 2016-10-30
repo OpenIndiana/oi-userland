@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS  += --disable-sse
 CONFIGURE_OPTIONS  += --disable-asm-optimizations
 endif
 CONFIGURE_OPTIONS  += --disable-3dnow
-CONFIGURE_OPTIONS  += --disable-altivec 
+CONFIGURE_OPTIONS  += --disable-altivec
 
 # common targets
 build:		$(BUILD_32_and_64)

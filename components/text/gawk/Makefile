@@ -39,7 +39,7 @@ include $(WS_TOP)/make-rules/ips.mk
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 
-COMPONENT_TEST_TRANSFORMS += '-e "/\/usr\/gnu\/bin\/make/d"' 
+COMPONENT_TEST_TRANSFORMS += '-e "/\/usr\/gnu\/bin\/make/d"'
 
 # common targets
 build:		$(BUILD_32)

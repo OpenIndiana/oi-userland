@@ -8,7 +8,7 @@
 #
 
 #
-# Copyright 2016 Adam Stevko 
+# Copyright 2016 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -23,7 +23,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_URL=	https://www.atagar.com/arm/resources/static/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= sha256:fc0e771585dde3803873b4807578060f0556cf1cac6c38840a714ffada3b28fa
-COMPONENT_LICENSE=	GPLv3	
+COMPONENT_LICENSE=	GPLv3
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

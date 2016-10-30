@@ -48,7 +48,7 @@ else
 MULTI_PROTO=no
 endif
 
-$(SOURCE_DIR)/.downloaded: 
+$(SOURCE_DIR)/.downloaded:
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
 	@cd $(SOURCE_DIR); $(GIT) checkout $(GIT_BRANCH); $(GIT) pull \

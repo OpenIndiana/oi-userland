@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2011, Andrzej Szeszo 
+# Copyright 2011, Andrzej Szeszo
 #
 
 include ../../make-rules/shared-macros.mk

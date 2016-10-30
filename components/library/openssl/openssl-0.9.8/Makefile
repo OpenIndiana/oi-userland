@@ -23,7 +23,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:f1d9f3ed1b85a82ecf80d0e2d389e1fda3fca9a4dba0bf07adbf231e1a5e2fd6
-    
+
 COMPONENT_ARCHIVE_URL=	https://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -32,7 +32,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 
-# This is to force OpenSSL's Configure script to use gmake for 'make links'. 
+# This is to force OpenSSL's Configure script to use gmake for 'make links'.
 # Otherwise it fails with:
 #     mksh: Fatal error in reader: Unmatched `(' on line
 CONFIGURE_ENV += MAKE="$(GMAKE)"

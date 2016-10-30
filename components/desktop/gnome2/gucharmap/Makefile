@@ -42,7 +42,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cd $(@D) &&\
 					libtoolize --force &&\
 					autoreconf -f )
-					
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc

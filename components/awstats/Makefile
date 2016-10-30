@@ -42,7 +42,7 @@ $(INSTALL_32):  $(BUILD_32)
 	$(MKDIR) $(PROTO_DIR)/usr/lib/awstats
 	mv $(BUILD_DIR_32)/README.TXT $(BUILD_DIR_32)/tools $(PROTO_DIR)/usr/lib/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/doc/awstats
-	mv $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/share/doc/awstats 
+	mv $(BUILD_DIR_32)/docs $(PROTO_DIR)/usr/share/doc/awstats
 	$(MKDIR) $(PROTO_DIR)/usr/share/awstats
 	mv $(BUILD_DIR_32)/wwwroot/* $(PROTO_DIR)/usr/share/awstats
 	$(TOUCH) $(@)

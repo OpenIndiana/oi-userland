@@ -33,8 +33,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CFLAGS += -I/usr/include/pcre/ 
-CFLAGS += -I/usr/include/svn/ 
+CFLAGS += -I/usr/include/pcre/
+CFLAGS += -I/usr/include/svn/
 CFLAGS += -I/usr/apr-util/include/
 CPPFLAGS += -I/usr/include/pcre/
 LDFLAGS += -R/usr/lib/svn -R/usr/apr-util/lib -R/usr/apr/lib
@@ -53,7 +53,7 @@ COMPONENT_POST_INSTALL_ACTION = ( mkdir -p $(PROTO_DIR)/usr/share/man/man1; \
 	cp $(SOURCE_DIR)/doc/*.1 $(PROTO_DIR)/usr/share/man/man1; \
 	cp $(SOURCE_DIR)/doc/*.5 $(PROTO_DIR)/usr/share/man/man5)
 
-install: $(INSTALL_32) 
+install: $(INSTALL_32)
 
 build: $(BUILD_32)
 

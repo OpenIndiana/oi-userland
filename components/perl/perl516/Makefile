@@ -89,7 +89,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
-			-Uuselargefiles 
+			-Uuselargefiles
 
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
