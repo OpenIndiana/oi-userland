@@ -23,6 +23,7 @@
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS=		NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cloudbase-init
@@ -39,14 +40,22 @@ COMPONENT_BUGDB=	service/cloudbase-init
 
 TPNO=			26420
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+ifneq ($(BUILD_TYPE), evaluation)
+BUILD_STYLE= setup.py
+endif
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# FOSS eval upgrade instructions lead to maintenance state; just skip.
+# On S12, the same problem if the pkg is installed, but it's not on the
+# default install list for S12.  If the S12 issue gets fixed, we can drop
+# the following line and thus remove this from the do-not-publish list.
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 # Upstream only supports 3.3 from the Python 3 series
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+
+include $(WS_MAKE_RULES)/common.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
