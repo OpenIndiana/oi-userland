@@ -1298,3 +1298,78 @@ https://bugs.launchpad.net/nova/+bug/1564110
          count = noninnodb.scalar()
          self.assertEqual(count, 0, "%d non InnoDB tables created" % count)
  
+--- nova-13.1.0/nova/db/sqlalchemy/api.py.orig	2016-10-31 15:15:23.984379619 +0000
++++ nova-13.1.0/nova/db/sqlalchemy/api.py	2016-10-31 15:15:50.528785047 +0000
+@@ -2920,11 +2920,17 @@ def instance_info_cache_update(context,
+         needs_create = True
+ 
+     try:
+-        with main_context_manager.writer.savepoint.using(context):
++        if CONF.database.mysql_storage_engine == 'NDBCLUSTER':
+             if needs_create:
+                 info_cache.save(context.session)
+             else:
+                 info_cache.update(values)
++        else:
++            with main_context_manager.writer.savepoint.using(context):
++                if needs_create:
++                    info_cache.save(context.session)
++                else:
++                    info_cache.update(values)
+     except db_exc.DBDuplicateEntry:
+         # NOTE(sirp): Possible race if two greenthreads attempt to
+         # recreate the instance cache entry at the same time. First one
+@@ -4282,8 +4288,11 @@ def security_group_create(context, value
+     security_group_ref.rules
+     security_group_ref.update(values)
+     try:
+-        with main_context_manager.writer.savepoint.using(context):
++        if CONF.database.mysql_storage_engine == 'NDBCLUSTER':
+             security_group_ref.save(context.session)
++        else:
++            with main_context_manager.writer.savepoint.using(context):
++                security_group_ref.save(context.session)
+     except db_exc.DBDuplicateEntry:
+         raise exception.SecurityGroupExists(
+                 project_id=values['project_id'],
+@@ -5220,17 +5229,25 @@ def flavor_extra_specs_update_or_create(
+             for spec_ref in spec_refs:
+                 key = spec_ref["key"]
+                 existing_keys.add(key)
+-                with main_context_manager.writer.savepoint.using(context):
++                if CONF.database.mysql_storage_engine == 'NDBCLUSTER':
+                     spec_ref.update({"value": specs[key]})
++                else:
++                    with main_context_manager.writer.savepoint.using(context):
++                        spec_ref.update({"value": specs[key]})
+ 
+             for key, value in specs.items():
+                 if key in existing_keys:
+                     continue
+                 spec_ref = models.InstanceTypeExtraSpecs()
+-                with main_context_manager.writer.savepoint.using(context):
++                if CONF.database.mysql_storage_engine == 'NDBCLUSTER':
+                     spec_ref.update({"key": key, "value": value,
+                                      "instance_type_id": instance_type_id})
+                     context.session.add(spec_ref)
++                else:
++                    with main_context_manager.writer.savepoint.using(context):
++                        spec_ref.update({"key": key, "value": value,
++                                         "instance_type_id": instance_type_id})
++                        context.session.add(spec_ref)
+ 
+             return specs
+         except db_exc.DBDuplicateEntry:
+@@ -6824,8 +6841,11 @@ def instance_tag_add(context, instance_u
+ 
+     try:
+         _check_instance_exists_in_project(context, instance_uuid)
+-        with get_context_manager(context).writer.savepoint.using(context):
++        if CONF.database.mysql_storage_engine == 'NDBCLUSTER':
+             context.session.add(tag_ref)
++        else:
++            with get_context_manager(context).writer.savepoint.using(context):
++                context.session.add(tag_ref)
+     except db_exc.DBDuplicateEntry:
+         # NOTE(snikitin): We should ignore tags duplicates
+         pass
