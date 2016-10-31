@@ -20,12 +20,14 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
+from keystoneclient import session
+from keystoneclient.auth.identity.generic import Password
 from neutron.agent.common import ovs_lib
 from neutron.agent.linux import utils
 from neutron.agent.solaris import net_lib
 from neutron.common import exceptions
 from neutron.plugins.common import constants as p_const
-
+from neutronclient.v2_0 import client
 
 LOG = logging.getLogger(__name__)
 
@@ -47,6 +49,15 @@ OPTS = [
                default='publicURL',
                help=_("Network service endpoint type to pull from "
                       "the keystone catalog")),
+    # Keystone V3 Password authentication plugin related options
+    cfg.StrOpt('project_name',
+               help=_("Project name to scope to")),
+    cfg.StrOpt('project_domain_name',
+               help=_("Domain name containing project")),
+    cfg.StrOpt('user_domain_name',
+               help=_("User's domain name")),
+    cfg.StrOpt('trust_id',
+               help=_("Trust ID")),
 ]
 
 
@@ -75,16 +86,21 @@ class OVSInterfaceDriver(object):
     def neutron_client(self):
         if self._neutron_client:
             return self._neutron_client
-        from neutronclient.v2_0 import client
-        self._neutron_client = client.Client(
+        auth_plugin = Password(
+            auth_url=self.conf.auth_url,
             username=self.conf.admin_user,
             password=self.conf.admin_password,
             tenant_name=self.conf.admin_tenant_name,
-            auth_url=self.conf.auth_url,
-            auth_strategy=self.conf.auth_strategy,
-            region_name=self.conf.auth_region,
-            endpoint_type=self.conf.endpoint_type
+            project_name=self.conf.project_name,
+            project_domain_name=self.conf.project_domain_name,
+            user_domain_name=self.conf.user_domain_name,
+            trust_id=self.conf.trust_id
         )
+        sess = session.Session(auth=auth_plugin)
+        self._neutron_client = client.Client(
+            session=sess, region_name=self.conf.auth_region,
+            auth_strategy=self.conf.auth_strategy,
+            endpoint_type=self.conf.endpoint_type)
         return self._neutron_client
 
     def fini_l3(self, device_name):
