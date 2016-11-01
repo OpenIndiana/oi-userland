@@ -34,10 +34,10 @@ COMPONENT_BUGDB=	gnome/remote-desktop
 
 TPNO=			26597
 
-include $(WS_MAKE_RULES)/gnome-component.mk
-
 # Needs updated glib2, not available on S11.
 include $(WS_MAKE_RULES)/no-evaluation.mk
+
+include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Requires XPG4 or later & C99 compatibility, thus XPG6 or later
 CFLAGS += $(XPG6MODE)
