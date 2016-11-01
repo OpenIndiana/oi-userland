@@ -35,6 +35,9 @@ COMPONENT_BUGDB= 	gnome/accessibility
 
 TPNO=			25184
 
+# Needs gtk3, not available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Assumes GNU gettext & msgfmt are first in PATH.
