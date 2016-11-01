@@ -36,6 +36,9 @@ TPNO=			25852
 
 TEST_TARGET = $(NO_TESTS)
 
+# Needs gtk3, not available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
