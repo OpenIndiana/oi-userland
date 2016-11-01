@@ -1,6 +1,6 @@
-From 38fc08be66c3ef8174633da9ad61f70532e79e5d Mon Sep 17 00:00:00 2001
-From: Shreya Jain <shreya.jain@oracle.com>
-Date: Thu, 27 Oct 2016 11:23:16 -0700
+From e71700670d67ea6eca368ec2703782b0a58a47f9 Mon Sep 17 00:00:00 2001
+From: "shraddha.joshi@oracle.com" <shrajosh@low.us.oracle.com>
+Date: Tue, 1 Nov 2016 10:54:49 -0700
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -83,7 +83,7 @@ Subject: [PATCH] Solaris-v1.10.3
  integration-cli/docker_cli_links_unix_test.go      |    2 +-
  integration-cli/docker_cli_network_unix_test.go    |    2 +-
  integration-cli/docker_cli_ps_test.go              |   15 +-
- integration-cli/docker_cli_run_test.go             |  341 +++----
+ integration-cli/docker_cli_run_test.go             |  341 +++---
  integration-cli/docker_cli_run_unix_test.go        |   49 +-
  integration-cli/docker_cli_save_load_unix_test.go  |    2 +-
  .../docker_cli_start_volume_driver_unix_test.go    |   16 +-
@@ -147,9 +147,9 @@ Subject: [PATCH] Solaris-v1.10.3
  .../github.com/docker/engine-api/types/types.go    |    2 -
  .../docker/go-connections/sockets/unix_socket.go   |    2 +-
  .../docker/libnetwork/default_gateway_solaris.go   |    7 +
- .../libnetwork/drivers/solaris/bridge/bridge.go    | 1076 ++++++++++++++++++++
+ .../libnetwork/drivers/solaris/bridge/bridge.go    | 1084 ++++++++++++++++++++
  .../drivers/solaris/bridge/bridge_store.go         |  212 ++++
- .../libnetwork/drivers/solaris/bridge/errors.go    |  341 +++++++
+ .../libnetwork/drivers/solaris/bridge/errors.go    |  341 ++++++
  .../drivers/solaris/bridge/port_mapping.go         |  218 ++++
  .../docker/libnetwork/drivers_solaris.go           |   13 +
  .../docker/libnetwork/ipamutils/utils_solaris.go   |   92 ++
@@ -162,8 +162,8 @@ Subject: [PATCH] Solaris-v1.10.3
  .../libnetwork/portallocator/portallocator.go      |   22 -
  .../portallocator/portallocator_linux.go           |   28 +
  .../portallocator/portallocator_solaris.go         |    5 +
- .../docker/libnetwork/portmapper/mapper.go         |  228 -----
- .../docker/libnetwork/portmapper/mapper_linux.go   |  228 +++++
+ .../docker/libnetwork/portmapper/mapper.go         |  228 ----
+ .../docker/libnetwork/portmapper/mapper_linux.go   |  228 ++++
  .../docker/libnetwork/portmapper/mapper_solaris.go |  150 +++
  .../docker/libnetwork/portmapper/mock_proxy.go     |   18 -
  .../libnetwork/portmapper/mock_proxy_linux.go      |   18 +
@@ -197,7 +197,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9136 insertions(+), 1241 deletions(-)
+ 193 files changed, 9144 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -9393,10 +9393,10 @@ index 0000000..104781a
 +}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
 new file mode 100644
-index 0000000..344997d
+index 0000000..da5e3f6
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
-@@ -0,0 +1,1076 @@
+@@ -0,0 +1,1084 @@
 +package bridge
 +
 +import (
@@ -9664,12 +9664,20 @@ index 0000000..344997d
 +	err := exec.Command("/usr/sbin/ipadm", "set-prop", "-t",
 +		"-p", "forwarding=on", "ipv4").Run()
 +	if err != nil {
-+		return fmt.Errorf("cannot cannot ip forwarding: %v", err)
++		return fmt.Errorf("cannot set ip forwarding: %v", err)
 +	}
-+	route_cmd := "/usr/sbin/ipadm show-addr -p -o addr " +
-+		"`/usr/sbin/route get default | /usr/bin/grep interface | " +
-+		"/usr/bin/awk '{print $2}'`"
-+	out, err := exec.Command("/usr/bin/bash", "-c", route_cmd).Output()
++	def_cmd := "/usr/sbin/route get default | /usr/bin/grep interface | " +
++		"/usr/bin/awk '{print $2}'"
++	out, err := exec.Command("/usr/bin/bash", "-c", def_cmd).Output()
++	if err != nil {
++		return fmt.Errorf("cannot get default route interface: %v", err)
++	}
++	intfc := string(out)
++	if intfc == "" {
++		intfc = "net0"
++	}
++	route_cmd := "/usr/sbin/ipadm show-addr -p -o addr " + intfc
++	out, err = exec.Command("/usr/bin/bash", "-c", route_cmd).Output()
 +	if err != nil {
 +		return fmt.Errorf("cannot get default route: %v", err)
 +	}
