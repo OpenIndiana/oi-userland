@@ -38,6 +38,9 @@ TPNO=			25848
 
 TEST_TARGET= $(NO_TESTS)
 
+# Needs gtk3, not available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Regenerate configure after patches modify configure.ac & Makefile.am files
