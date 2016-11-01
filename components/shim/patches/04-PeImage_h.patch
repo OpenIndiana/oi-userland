@@ -1,0 +1,18 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://github.com/rhinstaller/shim/issues/54
+
+--- ORIGINAL/include/PeImage.h	2016-06-24 03:08:21.920617695 +0000
++++ shim-0.9/include/PeImage.h	2016-08-01 20:56:15.093433529 +0000
+@@ -24,6 +24,11 @@
+ 
+ #include <wincert.h>
+ 
++#ifdef __sun
++#include <sys/int_types.h> 
++typedef    uint64_t    UINTN; 
++#endif
++
+ #define SIGNATURE_16(A, B)        ((A) | (B << 8))
+ #define SIGNATURE_32(A, B, C, D)  (SIGNATURE_16 (A, B) | (SIGNATURE_16 (C, D) << 16))
+ #define SIGNATURE_64(A, B, C, D, E, F, G, H) \

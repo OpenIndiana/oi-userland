@@ -1,0 +1,18 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://github.com/rhinstaller/shim/issues/54
+
+--- ORIGINAL/include/efiauthenticated.h	2016-06-24 03:08:20.857258353 +0000
++++ shim-0.9/include/efiauthenticated.h	2016-08-01 21:25:06.234152722 +0000
+@@ -72,6 +72,11 @@
+     0x4aafd29d, 0x68df, 0x49ee, {0x8a, 0xa9, 0x34, 0x7d, 0x37, 0x56, 0x65, 0xa7} \
+   }
+ 
++#ifdef __sun
++#include <sys/int_types.h> 
++typedef    uint64_t    UINTN; 
++#endif
++
+ ///
+ /// WIN_CERTIFICATE_UEFI_GUID.CertType
+ /// 

@@ -1,0 +1,63 @@
+# Source: Internal
+# Info: Written internally so this component can be built and run on Solaris.
+# Status: This patch is offered at https://github.com/rhinstaller/shim/issues/54
+
+--- ORIGINAL/shim.c	2016-06-24 03:08:17.837273349 +0000
++++ shim-0.9/shim.c	2016-08-01 21:16:42.359585949 +0000
+@@ -53,6 +53,11 @@
+ #define FALLBACK L"\\fallback.efi"
+ #define MOK_MANAGER L"\\MokManager.efi"
+ 
++#ifdef __sun
++#include <sys/int_types.h>
++typedef    uint64_t    UINTN;
++#endif
++	
+ static EFI_SYSTEM_TABLE *systab;
+ static EFI_HANDLE image_handle;
+ static EFI_STATUS (EFIAPI *entry_point) (EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *system_table);
+@@ -1590,6 +1595,9 @@
+ 	CHAR16 *PathName = NULL;
+ 	void *sourcebuffer = NULL;
+ 	UINT64 sourcesize = 0;
++#ifdef __sun
++	UINT8 boot_grub = 0;
++#endif
+ 	void *data = NULL;
+ 	int datasize;
+ 
+@@ -1616,7 +1624,13 @@
+ 	}
+ 
+ 	if (findNetboot(li->DeviceHandle)) {
++#ifdef __sun
++		if (PathName[0] == 'g')
++			boot_grub = 1;
++		efi_status = parseNetbootinfo(image_handle, boot_grub);
++#else
+ 		efi_status = parseNetbootinfo(image_handle);
++#endif
+ 		if (efi_status != EFI_SUCCESS) {
+ 			perror(L"Netboot parsing failed: %r\n", efi_status);
+ 			return EFI_PROTOCOL_ERROR;
+@@ -1690,7 +1704,7 @@
+ 
+ 	efi_status = start_image(image_handle, use_fb ? FALLBACK :second_stage);
+ 
+-	if (efi_status == EFI_SECURITY_VIOLATION) {
++	if (efi_status != EFI_SUCCESS) {
+ 		efi_status = start_image(image_handle, MOK_MANAGER);
+ 		if (efi_status != EFI_SUCCESS) {
+ 			Print(L"start_image() returned %r\n", efi_status);
+@@ -2173,7 +2187,11 @@
+ 	while (x++) {
+ 		/* Make this so it can't /totally/ DoS us. */
+ #if defined(__x86_64__) || defined(__i386__) || defined(__i686__)
++#ifndef __sun
+ 		if (x > 4294967294)
++#else
++		if (x > 4294967294LL)
++#endif
+ 			break;
+ 		__asm__ __volatile__("pause");
+ #elif defined(__aarch64__)

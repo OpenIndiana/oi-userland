@@ -1,0 +1,53 @@
+# Source: Internal
+# Info: Written internally so this component can be built without elliptical 
+# curve on Solaris.
+# Status: This patch is offered internally.  This patch should no longer be
+#        necessary when PSARC/2016/417 integrated.
+
+--- ORIGINAL//Cryptlib/Include/openssl/ec.h	2016-06-24 03:08:38.274809074 +0000
++++ shim-0.9/Cryptlib/Include/openssl/ec.h	2016-06-29 01:53:09.700908601 +0000
+@@ -75,7 +75,11 @@
+ # include <openssl/opensslconf.h>
+ 
+ # ifdef OPENSSL_NO_EC
+-#  error EC is disabled.
++#  ifndef __sun
++#   error EC is disabled.
++#  else
++#   warning EC is disabled.
++#  endif
+ # endif
+ 
+ # include <openssl/asn1.h>
+
+--- ORIGINAL//Cryptlib/Include/openssl/ecdh.h   2016-06-24 03:08:35.818258914 +0000
++++ shim-0.9/Cryptlib/Include/openssl/ecdh.h    2016-06-29 02:03:12.091858470 +0000
+@@ -72,7 +72,11 @@
+ # include <openssl/opensslconf.h>
+
+ # ifdef OPENSSL_NO_ECDH
+-#  error ECDH is disabled.
++#  ifndef __sun
++#   error ECDH is disabled.
++#  else
++#   warning ECDH is disabled.
++#  endif
+ # endif
+
+ # include <openssl/ec.h>
+
+--- ORIGINAL//Cryptlib/Include/openssl/ecdsa.h  2016-06-24 03:08:37.043840450 +0000
++++ shim-0.9/Cryptlib/Include/openssl/ecdsa.h   2016-06-29 02:05:18.658775097 +0000
+@@ -62,7 +62,11 @@
+ # include <openssl/opensslconf.h>
+
+ # ifdef OPENSSL_NO_ECDSA
+-#  error ECDSA is disabled.
++#  ifndef __sun
++#   error ECDSA is disabled.
++#  else
++#   warning ECDSA is disabled.
++#  endif
+ # endif
+
+ # include <openssl/ec.h>

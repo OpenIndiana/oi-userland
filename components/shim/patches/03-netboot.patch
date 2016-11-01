@@ -1,0 +1,107 @@
+# Source: Internal
+# Info: Written internally so this component can be built and run on Solaris.
+# Status: This patch is offered at https://github.com/rhinstaller/shim/issues/54
+
+--- ORIGINAL/netboot.h  2016-06-29 02:22:41.249041492 +0000
++++ shim-0.9/netboot.h  2016-06-29 02:22:48.250540430 +0000
+@@ -3,7 +3,11 @@
+
+ extern BOOLEAN findNetboot(EFI_HANDLE image_handle);
+
++#ifndef __sun
+ extern EFI_STATUS parseNetbootinfo(EFI_HANDLE image_handle);
++#else
++extern EFI_STATUS parseNetbootinfo(EFI_HANDLE image_handle, UINT8 boot_grub);
++#endif
+
+ extern EFI_STATUS FetchNetbootimage(EFI_HANDLE image_handle, VOID **buffer, UINT64 *bufsiz);
+ #endif
+
+--- ORIGINAL/netboot.c	2016-06-28 04:01:44.455712794 +0000
++++ shim-0.9/netboot.c	2016-06-29 02:17:31.667622371 +0000
+@@ -42,6 +42,10 @@
+ 
+ #define ntohs(x) __builtin_bswap16(x)	/* supported both by GCC and clang */
+ #define htons(x) ntohs(x)
++#ifdef __sun
++# define GRUB_BOOT_FILE ".grub2netx64.uefi"
++# define MOK_BOOT_FILE ".MokManager.uefi"
++#endif
+ 
+ static EFI_PXE_BASE_CODE *pxe;
+ static EFI_IP_ADDRESS tftp_addr;
+@@ -273,14 +277,25 @@
+ 	return EFI_SUCCESS;
+ }
+ 
++#ifndef __sun
+ static EFI_STATUS parseDhcp4()
++#else
++static EFI_STATUS parseDhcp4(UINT8 boot_grub)
++#endif
+ {
++#ifndef __sun
+ 	CHAR8 *template = (CHAR8 *)translate_slashes(DEFAULT_LOADER_CHAR);
++#else
++	CHAR8 *template = boot_grub ? (CHAR8 *)GRUB_BOOT_FILE:(CHAR8 *)MOK_BOOT_FILE;
++#endif
+ 	INTN template_len = strlen(template) + 1;
+ 
+ 	INTN dir_len = strnlena(pxe->Mode->DhcpAck.Dhcpv4.BootpBootFile, 127);
+ 	INTN i;
+ 	UINT8 *dir = pxe->Mode->DhcpAck.Dhcpv4.BootpBootFile;
++#ifdef __sun
++	UINT8 BootpHwAddrLen = pxe->Mode->DhcpAck.Dhcpv4.BootpHwAddrLen;
++#endif
+ 
+ 	for (i = dir_len; i >= 0; i--) {
+ 		if (dir[i] == '/')
+@@ -288,7 +303,11 @@
+ 	}
+ 	dir_len = (i >= 0) ? i + 1 : 0;
+ 
++#ifndef __sun
+ 	full_path = AllocateZeroPool(dir_len + template_len);
++#else
++	full_path = AllocateZeroPool(dir_len + template_len + BootpHwAddrLen*2 + 2);
++#endif
+ 
+ 	if (!full_path)
+ 		return EFI_OUT_OF_RESOURCES;
+@@ -298,6 +317,12 @@
+ 		if (full_path[dir_len-1] == '/' && template[0] == '/')
+ 			full_path[dir_len-1] = '\0';
+ 	}
++#ifdef __sun
++	else {
++		strncpya(full_path, dir, BootpHwAddrLen*2 + 2);
++	}
++#endif
++
+ 	if (dir_len == 0 && dir[0] != '/' && template[0] == '/')
+ 		template++;
+ 	strcata(full_path, template);
+@@ -306,7 +331,11 @@
+ 	return EFI_SUCCESS;
+ }
+ 
++#ifndef __sun
+ EFI_STATUS parseNetbootinfo(EFI_HANDLE image_handle)
++#else
++EFI_STATUS parseNetbootinfo(EFI_HANDLE image_handle, UINT8 boot_grub)
++#endif
+ {
+ 
+ 	EFI_STATUS rc;
+@@ -323,7 +352,11 @@
+ 	if (pxe->Mode->UsingIpv6){
+ 		rc = parseDhcp6();
+ 	} else
++#ifndef __sun
+ 		rc = parseDhcp4();
++#else
++		rc = parseDhcp4(boot_grub);
++#endif
+ 	return rc;
+ }
+ 

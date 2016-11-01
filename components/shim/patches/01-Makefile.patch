@@ -1,0 +1,115 @@
+# Source: Internal
+# Info: Written internally so this component can be built on Solaris.
+# Status: This patch is offered at https://github.com/rhinstaller/shim/issues/54
+
+--- ORIGINAL/Makefile	2016-06-24 03:08:28.270393201 +0000
++++ shim-0.9/Makefile	2016-08-01 20:57:34.268232472 +0000
+@@ -1,38 +1,52 @@
+ VERSION		= 0.9
+-RELEASE		:=
++RELEASE		:=""
+ ifneq ($(RELEASE),"")
+ 	RELEASE="-$(RELEASE)"
+ endif
+ 
+ CC		= $(CROSS_COMPILE)gcc
+-LD		= $(CROSS_COMPILE)ld
+-OBJCOPY		= $(CROSS_COMPILE)objcopy
++OS		= $(shell uname -s)
++ifeq ($(OS),SunOS) 
++	LD		= /usr/gnu/bin/ld
++	OBJCOPY		= /usr/gnu/bin/objcopy
++	ARCH		= $(shell isainfo -n)
++	LIB_PATH	= /usr/lib/amd64
++	EFI_PATH	:= /usr/lib/amd64/efi
++	DEFAULT_LOADER	:= \\\\grubx64.efi
++	# FreeBSD reports amd64 instead of x86_64
++	ifeq ($(ARCH),amd64)
++	  override ARCH := x86_64
++	endif
++	EFI_LDS		= elf_$(ARCH)_efi_sol2.lds
++else
++	LD		= $(CROSS_COMPILE)ld
++	OBJCOPY		= /usr/gnu/bin/objcopy
++	ARCH		= $(shell $(CC) -dumpmachine | cut -f1 -d- | sed s,i[3456789]86,ia32,)
++	LIB_PATH	= /usr/lib/amd64
++	EFI_PATH	:= /usr/lib64/gnuefi
++	DEFAULT_LOADER	:= \\\\grub.efi
++	EFI_LDS		= elf_$(ARCH)_efi.lds
++endif
+ 
+-ARCH		= $(shell $(CC) -dumpmachine | cut -f1 -d- | sed s,i[3456789]86,ia32,)
+ OBJCOPY_GTE224  = $(shell expr `$(OBJCOPY) --version |grep ^"GNU objcopy" | sed 's/^.* //g' | cut -f1-2 -d.` \>= 2.24)
+ 
+ SUBDIRS		= Cryptlib lib
+ 
+-LIB_PATH	= /usr/lib64
+-
+ EFI_INCLUDE	:= /usr/include/efi
+ EFI_INCLUDES	= -nostdinc -ICryptlib -ICryptlib/Include -I$(EFI_INCLUDE) -I$(EFI_INCLUDE)/$(ARCH) -I$(EFI_INCLUDE)/protocol -I$(shell pwd)/include
+-EFI_PATH	:= /usr/lib64/gnuefi
+ 
+ LIB_GCC		= $(shell $(CC) -print-libgcc-file-name)
+ EFI_LIBS	= -lefi -lgnuefi --start-group Cryptlib/libcryptlib.a Cryptlib/OpenSSL/libopenssl.a --end-group $(LIB_GCC) 
+ 
+ EFI_CRT_OBJS 	= $(EFI_PATH)/crt0-efi-$(ARCH).o
+-EFI_LDS		= elf_$(ARCH)_efi.lds
+ 
+-DEFAULT_LOADER	:= \\\\grub.efi
+ CFLAGS		= -ggdb -O0 -fno-stack-protector -fno-strict-aliasing -fpic \
+ 		  -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin \
+ 		  -Werror=sign-compare -ffreestanding \
+ 		  -I$(shell $(CC) -print-file-name=include) \
+ 		  "-DDEFAULT_LOADER=L\"$(DEFAULT_LOADER)\"" \
+ 		  "-DDEFAULT_LOADER_CHAR=\"$(DEFAULT_LOADER)\"" \
+-		  $(EFI_INCLUDES)
++		  $(EFI_INCLUDES) -I/usr/include
+ 
+ ifneq ($(origin OVERRIDE_SECURITY_POLICY), undefined)
+ 	CFLAGS	+= -DOVERRIDE_SECURITY_POLICY
+@@ -93,10 +107,12 @@
+ 		-e "s,@@COMMIT@@,$(shell if [ -d .git ] ; then git log -1 --pretty=format:%H ; elif [ -f commit ]; then cat commit ; else echo commit id not available; fi)," \
+ 		< version.c.in > version.c
+ 
++ifneq ($(OS),SunOS)
+ certdb/secmod.db: shim.crt
+ 	-mkdir certdb
+ 	pk12util -d certdb/ -i shim.p12 -W "" -K ""
+ 	certutil -d certdb/ -A -i shim.crt -n shim -t u
++endif
+ 
+ shim.o: $(SOURCES) shim_cert.h
+ 
+@@ -156,16 +172,32 @@
+ 		-j .note.gnu.build-id \
+ 		$(FORMAT) $^ $@.debug
+ 
++ifeq ($(OS),SunOS)
++%.efi.signed: %.efi shim.crt
++	sbsign --cert $(word 2,$^) --key shim.key --output $@ $<
++else
+ %.efi.signed: %.efi certdb/secmod.db
+ 	pesign -n certdb -i $< -c "shim" -s -o $@ -f
++endif
+ 
+ clean:
+ 	$(MAKE) -C Cryptlib clean
+ 	$(MAKE) -C Cryptlib/OpenSSL clean
+ 	$(MAKE) -C lib clean
++	ifeq ($(OS),SunOS)
++	rm -rf $(TARGET) $(OBJS) $(MOK_OBJS) $(FALLBACK_OBJS) $(KEYS)
++	else
+ 	rm -rf $(TARGET) $(OBJS) $(MOK_OBJS) $(FALLBACK_OBJS) $(KEYS) certdb
++	endif
+ 	rm -f *.debug *.so *.efi *.tar.* version.c
+ 
++ifeq ($(OS),SunOS)
++install:
++	echo $(DESTDIR)
++	mkdir -p $(DESTDIR)/boot
++	install -m 0755 $(TARGET) $(DESTDIR)/boot
++endif
++
+ GITTAG = $(VERSION)
+ 
+ test-archive:
