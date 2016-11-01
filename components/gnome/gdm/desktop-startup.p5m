@@ -1,0 +1,44 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=etc/X11/xinit/xinitrc.d/.+ -> set mode 0555>
+<transform file path=.*/(.*) -> set action.hash files/%<1>>
+set name=pkg.fmri \
+    value=pkg:/system/display-manager/desktop-startup@0.38.0,$(BUILD_VERSION)
+set name=pkg.summary value="Desktop startup scripts in xinitrc.d"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Scripts"
+set name=org.opensolaris.arc-caseid value=PSARC/2016/448
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/X11/xinit/xinitrc.d/0011.env
+file path=etc/X11/xinit/xinitrc.d/0020.pre-localization
+file path=usr/bin/dtstart
+license files/dtstartup.copyright license=Oracle
+
+# Programs run by various scripts in this package
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/gnome-session
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xmodmap
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xrdb

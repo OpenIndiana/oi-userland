@@ -1,0 +1,79 @@
+From 1ca93c6cf2f4710895caf1f13b38dcb2a46bf688 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 12:26:03 -0800
+Subject: [PATCH 03/19] solaris pam
+
+Fix compiler complaints due to different types between Solaris & Linux PAM:
+
+daemon/gdm-session-worker.c: In function 'gdm_session_worker_get_username':
+daemon/gdm-session-worker.c:611:9: warning: passing argument 3 of
+  'pam_get_item' from incompatible pointer type [enabled by default]
+         if (pam_get_item (worker->priv->pam_handle, PAM_USER, &item) == PAM_SUCCESS) {
+         ^
+In file included from daemon/gdm-session-worker.c:40:0:
+/usr/include/security/pam_appl.h:167:1: note: expected 'void **' but
+  argument is of type 'const void **'
+ pam_get_item(
+ ^
+
+daemon/gdm-session-worker.c: In function 'gdm_session_worker_initialize_pam':
+daemon/gdm-session-worker.c:1200:31: warning: assignment from incompatible
+  pointer type [enabled by default]
+         pam_conversation.conv = (GdmSessionWorkerPamNewMessagesFunc) gdm_session_worker_pam_new_messages_handler;
+                               ^
+
+(split out of Desktop gate patch gdm-03-sdtlogin.diff since it's unrelated)
+---
+ daemon/gdm-session-worker.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/daemon/gdm-session-worker.c b/daemon/gdm-session-worker.c
+index 3b10940..291caad 100644
+--- a/daemon/gdm-session-worker.c
++++ b/daemon/gdm-session-worker.c
+@@ -37,6 +37,12 @@
+ #include <grp.h>
+ #include <pwd.h>
+ 
++#if __sun
++#define GDM_PAM_QUAL
++#else
++#define GDM_PAM_QUAL const
++#endif
++
+ #include <security/pam_appl.h>
+ 
+ #ifdef HAVE_LOGINCAP
+@@ -205,7 +211,7 @@ static void     worker_interface_init           (GdmDBusWorkerIface *iface);
+ 
+ 
+ typedef int (* GdmSessionWorkerPamNewMessagesFunc) (int,
+-                                                    const struct pam_message **,
++                                                    GDM_PAM_QUAL struct pam_message **,
+                                                     struct pam_response **,
+                                                     gpointer);
+ 
+@@ -604,7 +610,11 @@ static gboolean
+ gdm_session_worker_get_username (GdmSessionWorker  *worker,
+                                  char             **username)
+ {
++#ifdef __sun
++        gpointer item;
++#else
+         gconstpointer item;
++#endif
+ 
+         g_assert (worker->priv->pam_handle != NULL);
+ 
+@@ -860,7 +870,7 @@ get_friendly_error_message (int error_code)
+ 
+ static int
+ gdm_session_worker_pam_new_messages_handler (int                        number_of_messages,
+-                                             const struct pam_message **messages,
++                                             GDM_PAM_QUAL struct pam_message **messages,
+                                              struct pam_response      **responses,
+                                              GdmSessionWorker          *worker)
+ {
+-- 
+2.7.4
+

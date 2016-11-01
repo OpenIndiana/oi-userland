@@ -1,0 +1,99 @@
+From 07e3172702817a57ef5b9546575c3d0a6378c0f4 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 18:35:41 -0800
+Subject: [PATCH 11/19] vtswitch on exit
+
+Bug 15737566/SUNBT7082840 Disabling the gdm SMF service no longer returns
+ to the text console
+Original date:2011-08-29 owner:yippi type:bug bugster:7082840
+---
+ daemon/main.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+
+diff --git a/daemon/main.c b/daemon/main.c
+index 65f34c8..f3329d0 100644
+--- a/daemon/main.c
++++ b/daemon/main.c
+@@ -33,6 +33,7 @@
+ #include <sys/wait.h>
+ #include <locale.h>
+ #include <signal.h>
++#include <sys/vt.h>
+ 
+ #include <glib.h>
+ #include <glib/gi18n.h>
+@@ -255,12 +256,71 @@ gdm_daemon_lookup_user (uid_t *uidp,
+ }
+ 
+ static gboolean
++ck_fd_is_a_console (int fd)
++{
++#ifdef __linux__
++        struct vt_stat vts;
++#elif defined(__FreeBSD__)
++        int vers;
++#endif
++        int  kb_ok;
++
++        errno = 0;
++#ifdef __linux__
++        kb_ok = (ioctl (fd, VT_GETSTATE, &vts) == 0);
++#elif defined(__FreeBSD__)
++        kb_ok = (ioctl (fd, CONS_GETVERS, &vers) == 0);
++#else
++        kb_ok = 1;
++#endif
++
++        return (isatty (fd) && kb_ok);
++}
++
++static int
++open_a_console (const char *fnam)
++{
++        int fd;
++
++        fd = open (fnam, O_RDONLY | O_NOCTTY);
++        if (fd < 0 && errno == EACCES)
++                fd = open (fnam, O_WRONLY | O_NOCTTY);
++
++        if (fd < 0)
++                return -1;
++
++        if (! ck_fd_is_a_console (fd)) {
++                close (fd);
++                fd = -1;
++        }
++
++        return fd;
++}
++
++static gboolean
+ on_shutdown_signal_cb (gpointer user_data)
+ {
+         GMainLoop *mainloop = user_data;
+ 
+         g_main_loop_quit (mainloop);
+ 
++        /* Switch to VT1 before going down. */
++        int fd = open_a_console ("/dev/vt/active");
++        if (fd < 0) {
++                fd = open_a_console ("/dev/vt/0");
++        }
++
++        if (fd >= 0) {
++                int res;
++
++                res = ioctl (fd, VT_ACTIVATE, 1);
++
++                if (res != 0) {
++                        if (errno == ENOTSUP) {
++                                g_debug ("VT_ACTIVATE not supported, cannot switch to VT1");
++                        }
++                }
++        }
+         return FALSE;
+ }
+ 
+-- 
+2.7.4
+

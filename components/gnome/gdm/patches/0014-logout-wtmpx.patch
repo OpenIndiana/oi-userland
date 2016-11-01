@@ -1,0 +1,28 @@
+From dd025ea2459d84cfd30406a9a06c22a2ed0db266 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 19:09:03 -0800
+Subject: [PATCH 14/19] logout wtmpx
+
+Bug 15814640/SUNBT7196841 When a user logout from GDM the username is
+  not logged
+Original date:2012-09-17 owner:abhijit type:bug bugster: 7196841
+---
+ daemon/gdm-session-record.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/daemon/gdm-session-record.c b/daemon/gdm-session-record.c
+index 590a1e8..349c36f 100644
+--- a/daemon/gdm-session-record.c
++++ b/daemon/gdm-session-record.c
+@@ -338,6 +338,8 @@ gdm_session_record_logout (GPid                  session_pid,
+         if (x11_display_name == NULL)
+                 x11_display_name = display_device;
+ 
++        record_set_username (&session_record, user_name);
++
+         g_debug ("Writing logout record");
+ 
+ #if defined(HAVE_UT_UT_TYPE)
+-- 
+2.7.4
+

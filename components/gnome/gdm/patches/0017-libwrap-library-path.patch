@@ -1,0 +1,30 @@
+From abb394431714cb79959ca0b69cc9032c629d2bf0 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Wed, 30 Dec 2015 00:09:41 -0800
+Subject: [PATCH 17/19] libwrap library path
+
+Don't force use of -L/usr/sfw/lib -R/usr/sfw/lib when libwrap is found
+in the default path.  Need to send upstream.
+---
+ configure.ac | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index e819e5e..d3bc4d0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -725,7 +725,10 @@ else
+ 		echo "Not using TCP wrappers after all."
+ 		echo "*********************************************************"
+ 	else
+-		LIBWRAP_LIBS="-L/usr/sfw/lib -R/usr/sfw/lib -lwrap"
++		if test "x$LIBWRAP_PATH" = "x/usr/sfw/lib/libwrap.so" ; then
++			LIBWRAP_LIBS="-L/usr/sfw/lib -R/usr/sfw/lib"
++		fi
++		LIBWRAP_LIBS="$LIBWRAP_LIBS -lwrap"
+ 		AC_DEFINE(HAVE_TCPWRAPPERS, 1, [Define if have tcp wrappers])
+ 	fi
+   else
+-- 
+2.7.4
+

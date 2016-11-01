@@ -1,0 +1,308 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform file preserve=(true|renamenew) -> default overlay allow>
+set name=pkg.fmri \
+    value=pkg:/system/display-manager/gdm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GNOME Display Manager (GDM)"
+set name=pkg.description \
+    value="The GNOME Display Manager (GDM) is a program that manages graphical display servers and handles graphical user logins."
+set name=com.oracle.info.description value="GNOME Display Manager (GDM)"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Sessions"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+# LSARC/2003/261 gdm2 - Gnome Display Manager
+# LSARC/2005/417 GDM2 as default Solaris Display Manager
+# PSARC/2008/662 GDM system user home directory
+# LSARC/2009/433 GNOME Display Manager (GDM) Rewrite
+# PSARC/2010/116 GDM Integration With audioctl
+set name=org.opensolaris.arc-caseid value=LSARC/2003/261 value=LSARC/2005/417 \
+    value=LSARC/2009/433 value=PSARC/2008/662 value=PSARC/2010/116 \
+    value=PSARC/2016/448
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+file path=etc/dbus-1/system.d/gdm.conf
+file path=etc/gdm/Init/Default mode=0555 preserve=true
+file path=etc/gdm/PostLogin/Default.sample mode=0555
+file path=etc/gdm/PostSession/Default mode=0555 preserve=true
+file path=etc/gdm/PreSession/Default mode=0555 preserve=true
+file path=etc/gdm/Xsession mode=0555 preserve=true
+file path=etc/gdm/custom.conf mode=0644 preserve=true
+file files/gdm-launch-environment.pam path=etc/gdm/gdm-launch-environment.pam \
+    preserve=renamenew
+file files/gdm.auth_attr \
+    path=etc/security/auth_attr.d/system:display-manager:gdm
+file files/gdm.prof_attr \
+    path=etc/security/prof_attr.d/system:display-manager:gdm
+file files/gdm.user_attr path=etc/user_attr.d/system:display-manager:gdm
+file files/gdm.xml path=lib/svc/manifest/application/graphical-login/gdm.xml
+file files/svc-gdm path=lib/svc/method/svc-gdm
+file path=usr/bin/gdm-screenshot
+file path=usr/bin/gdmflexiserver
+file path=usr/include/gdm/gdm-client-glue.h
+file path=usr/include/gdm/gdm-client.h
+file path=usr/include/gdm/gdm-sessions.h
+file path=usr/include/gdm/gdm-user-switching.h
+file path=usr/lib/$(MACH64)/girepository-1.0/Gdm-1.0.typelib
+link path=usr/lib/$(MACH64)/libgdm.so target=libgdm.so.1.0.0
+link path=usr/lib/$(MACH64)/libgdm.so.1 target=libgdm.so.1.0.0
+file path=usr/lib/$(MACH64)/libgdm.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/gdm.pc
+link path=usr/lib/gdm/ck-get-x11-display-device \
+    target=../ck-get-x11-display-device
+file path=usr/lib/gdm/gdm-host-chooser mode=0555
+file path=usr/lib/gdm/gdm-session-worker mode=0555
+file path=usr/lib/gdm/gdm-simple-chooser mode=0555
+# No Wayland for Solaris yet
+# file path=usr/lib/gdm/gdm-wayland-session
+file path=usr/lib/gdm/gdm-x-session mode=0555
+file path=usr/sbin/gdm
+file path=usr/share/dconf/profile/gdm
+file path=usr/share/gdm/gdb-cmd
+file path=usr/share/gdm/gdm.schemas
+file path=usr/share/gdm/greeter-dconf-defaults
+# No Wayland for Solaris yet
+# file path=usr/share/gdm/greeter/applications/gnome-shell-wayland.desktop
+file path=usr/share/gdm/greeter/applications/gnome-shell.desktop
+file path=usr/share/gdm/greeter/applications/mime-dummy-handler.desktop
+file path=usr/share/gdm/greeter/applications/mimeapps.list
+file path=usr/share/gdm/greeter/autostart/orca-autostart.desktop
+file path=usr/share/gdm/locale.alias
+file path=usr/share/gir-1.0/Gdm-1.0.gir
+file files/org.gnome.login-screen.gschema.override \
+    path=usr/share/glib-2.0/schemas/org.gnome.login-screen.gschema.override
+file path=usr/share/glib-2.0/schemas/org.gnome.login-screen.gschema.xml
+file path=usr/share/help/C/gdm/index.docbook
+file path=usr/share/help/C/gdm/legal.xml
+file path=usr/share/help/ca/gdm/index.docbook
+file path=usr/share/help/ca/gdm/legal.xml
+file path=usr/share/help/cs/gdm/index.docbook
+file path=usr/share/help/cs/gdm/legal.xml
+file path=usr/share/help/de/gdm/index.docbook
+file path=usr/share/help/de/gdm/legal.xml
+file path=usr/share/help/el/gdm/index.docbook
+file path=usr/share/help/el/gdm/legal.xml
+file path=usr/share/help/en_GB/gdm/index.docbook
+file path=usr/share/help/en_GB/gdm/legal.xml
+file path=usr/share/help/es/gdm/index.docbook
+file path=usr/share/help/es/gdm/legal.xml
+file path=usr/share/help/fr/gdm/index.docbook
+file path=usr/share/help/fr/gdm/legal.xml
+file path=usr/share/help/gl/gdm/index.docbook
+file path=usr/share/help/gl/gdm/legal.xml
+file path=usr/share/help/hu/gdm/index.docbook
+file path=usr/share/help/hu/gdm/legal.xml
+file path=usr/share/help/id/gdm/index.docbook
+file path=usr/share/help/id/gdm/legal.xml
+file path=usr/share/help/it/gdm/index.docbook
+file path=usr/share/help/it/gdm/legal.xml
+file path=usr/share/help/ko/gdm/index.docbook
+file path=usr/share/help/ko/gdm/legal.xml
+file path=usr/share/help/oc/gdm/index.docbook
+file path=usr/share/help/oc/gdm/legal.xml
+file path=usr/share/help/pt_BR/gdm/index.docbook
+file path=usr/share/help/pt_BR/gdm/legal.xml
+file path=usr/share/help/ro/gdm/index.docbook
+file path=usr/share/help/ro/gdm/legal.xml
+file path=usr/share/help/ru/gdm/index.docbook
+file path=usr/share/help/ru/gdm/legal.xml
+file path=usr/share/help/sl/gdm/index.docbook
+file path=usr/share/help/sl/gdm/legal.xml
+file path=usr/share/help/sv/gdm/index.docbook
+file path=usr/share/help/sv/gdm/legal.xml
+file path=usr/share/help/te/gdm/index.docbook
+file path=usr/share/help/te/gdm/legal.xml
+file path=usr/share/help/uk/gdm/index.docbook
+file path=usr/share/help/uk/gdm/legal.xml
+file path=usr/share/help/zh_CN/gdm/index.docbook
+file path=usr/share/help/zh_CN/gdm/legal.xml
+file path=usr/share/icons/hicolor/16x16/apps/gdm-xnest.png
+file path=usr/share/icons/hicolor/32x32/apps/gdm-setup.png
+file path=usr/share/icons/hicolor/32x32/apps/gdm-xnest.png
+file path=usr/share/locale/af/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/am/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/an/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ar/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/as/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ast/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/az/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/be/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/be@latin/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/bg/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/bn/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/br/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/bs/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ca/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/crh/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/cs/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/csb/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/cy/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/da/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/de/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/dz/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/el/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/en@shaw/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/eo/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/es/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/et/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/eu/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/fa/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/fi/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/fr/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/fur/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/fy/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ga/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/gd/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/gl/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/gu/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/gv/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/he/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/hi/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/hr/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/hu/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/hy/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/id/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/is/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/it/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ja/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ka/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/kab/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/kk/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/km/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/kn/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ko/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ku/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ky/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/lt/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/lv/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mai/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mg/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mi/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mk/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ml/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mn/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/mr/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ms/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/nb/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/nds/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ne/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/nl/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/nn/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/nso/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/oc/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/or/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/pa/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/pl/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ps/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/pt/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ro/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ru/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/rw/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/si/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sk/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sl/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sq/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sr/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/sv/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ta/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/te/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/tg/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/th/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/tr/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/ug/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/uk/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/uz/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/uz@cyrillic/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/vi/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/wa/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/xh/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/gdm.mo
+file path=usr/share/locale/zu/LC_MESSAGES/gdm.mo
+file files/gdm.8 path=usr/share/man/man8/gdm.8
+file path=usr/share/pixmaps/gdm-foot-logo.png
+file path=usr/share/pixmaps/gdm-setup.png
+file path=usr/share/pixmaps/gdm-xnest.png
+file path=usr/share/pixmaps/gdm.png
+file path=usr/share/pixmaps/nobody.png
+file path=usr/share/pixmaps/nohost.png
+file files/xterm.desktop path=usr/share/xsessions/xterm.desktop
+dir  path=var/cache/gdm group=gdm mode=0755
+dir  path=var/lib/gdm group=gdm mode=1770
+dir  path=var/lib/gdm/.local group=gdm mode=0770
+dir  path=var/lib/gdm/.local/share group=gdm mode=0770
+dir  path=var/lib/gdm/.local/share/applications group=gdm mode=0770
+dir  path=var/log/gdm group=gdm mode=1770
+
+
+group groupname=gdm gid=50
+user username=gdm gcos-field="GDM Reserved UID" group=gdm \
+    home-dir=/var/lib/gdm password=*LK* uid=50
+license gdm.license license="GPL v2, LGPL v2, MIT"
+
+
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=etc/X11/xinit/xinitrc.d/0011.env
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/Xserver
+
+# Programs run by various session scripts in /etc/gdm/*
+# or /usr/share/gdm/greeter/*/*.desktop
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/audioctl
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/awk
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/chmod
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/chown
+# Commented out temporarily to break dependency loop in initial GNOME 3 build
+# Uncomment once gnome-shell is installed on Userland build machines
+# depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/gnome-shell
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/hostname
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/mkdir
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/orca
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/setxkbmap
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/stat
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/su
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/uname
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xhost
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xmodmap
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xrdb
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xterm
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/zenity
+
+# gsettings schemas referenced in gdm code
+depend type=require fmri=__TBD \
+    pkg.tmp.gsettings-schema=org.gnome.desktop.a11y.applications
+# Commented out temporarily to break dependency loop in initial GNOME 3 build
+# Uncomment once gnome-shell is installed on Userland build machines
+# depend type=require fmri=__TBD pkg.tmp.gsettings-schema=org.gnome.login-screen

@@ -1,0 +1,29 @@
+From ce79e5360f1a7d4d9040d2ff098798269305917f Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 19:16:58 -0800
+Subject: [PATCH 15/19] display /etc/issue file
+
+Bug 15774186/SUNBT7147307 gdm should be configured by default to display
+  /etc/issue
+Original date:2014-07-03 owner:abhijit type:bug bugdb: 15774186
+---
+ data/Init.in | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/data/Init.in b/data/Init.in
+index ec6fd39..8256edc 100644
+--- a/data/Init.in
++++ b/data/Init.in
+@@ -86,4 +86,9 @@ if [ "x$SETXKBMAP" != "x" ] ; then
+   fi
+ fi
+ 
++if [ -f /etc/issue ] ; then
++   /usr/bin/zenity --text-info --width=800 --height=300 \
++         --title="Security Message" --filename=/etc/issue
++fi
++
+ exit 0
+-- 
+2.7.4
+

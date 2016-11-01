@@ -1,0 +1,70 @@
+From ad177152bc5e75dcf4b04d60931a3723f3fba4df Mon Sep 17 00:00:00 2001
+From: Ray Strode <rstrode@redhat.com>
+Date: Wed, 22 Jun 2016 10:13:07 -0400
+Subject: [PATCH 01/19] fix shutdown crash
+
+Backport of upstream fix from
+https://git.gnome.org/browse/gdm/commit/?id=e980b9101bfb1387df3cab4bf0c5ebdb4c6badbb
+
+local-display-factory: disconnect signal handlers when factory is disposed
+
+There's the potential for a crash in the shutdown path after the
+factory is disposed, since we fail to disconnect signal handlers to
+the displays / display store at factory dispose time.
+
+This commit changes the g_signal_connect to g_signal_connect_object, to
+avoid any potential for crash.
+
+(this is a fix noticed when reading through the source.  It's tangentially
+related to a discussion on irc for a different bug)
+---
+ daemon/gdm-local-display-factory.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/daemon/gdm-local-display-factory.c b/daemon/gdm-local-display-factory.c
+index c794313..de6ecdd 100644
+--- a/daemon/gdm-local-display-factory.c
++++ b/daemon/gdm-local-display-factory.c
+@@ -549,8 +549,10 @@ on_display_added (GdmDisplayStore        *display_store,
+         display = gdm_display_store_lookup (display_store, id);
+ 
+         if (display != NULL) {
+-                g_signal_connect (display, "notify::status",
+-                                  G_CALLBACK (on_display_status_changed), factory);
++                g_signal_connect_object (display, "notify::status",
++                                         G_CALLBACK (on_display_status_changed),
++                                         factory,
++                                         0);
+ 
+                 g_object_weak_ref (G_OBJECT (display), (GWeakNotify)on_display_disposed, factory);
+         }
+@@ -582,15 +584,17 @@ gdm_local_display_factory_start (GdmDisplayFactory *base_factory)
+ 
+         store = gdm_display_factory_get_display_store (GDM_DISPLAY_FACTORY (factory));
+ 
+-        g_signal_connect (G_OBJECT (store),
+-                          "display-added",
+-                          G_CALLBACK (on_display_added),
+-                          factory);
+-
+-        g_signal_connect (G_OBJECT (store),
+-                          "display-removed",
+-                          G_CALLBACK (on_display_removed),
+-                          factory);
++        g_signal_connect_object (G_OBJECT (store),
++                                 "display-added",
++                                 G_CALLBACK (on_display_added),
++                                 factory,
++                                 0);
++
++        g_signal_connect_object (G_OBJECT (store),
++                                 "display-removed",
++                                 G_CALLBACK (on_display_removed),
++                                 factory,
++                                 0);
+ 
+         gdm_local_display_factory_start_monitor (factory);
+         return gdm_local_display_factory_sync_seats (factory);
+-- 
+2.7.4
+

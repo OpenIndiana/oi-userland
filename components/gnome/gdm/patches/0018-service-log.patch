@@ -1,0 +1,37 @@
+From c78c018393a9d32a97f38f99d5679d7ddef6c356 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sun, 28 Aug 2016 14:57:46 -0700
+Subject: [PATCH 18/19] service log
+
+On Solaris, check for running under SMF control instead of for serviced
+to determine if we should log to syslog or stderr (for SMF to capture).
+---
+ common/gdm-log.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/common/gdm-log.c b/common/gdm-log.c
+index 03b7bcc..1303d5c 100644
+--- a/common/gdm-log.c
++++ b/common/gdm-log.c
+@@ -136,14 +136,16 @@ gdm_log_init (void)
+         initialized = TRUE;
+ #ifdef WITH_SYSTEMD
+         is_sd_booted = sd_booted () > 0;
++#elif defined(__sun)
++        is_sd_booted = (g_getenv("SMF_FMRI") != NULL);
+ #endif
+ 
+         g_log_set_default_handler (gdm_log_default_handler, NULL);
+ 
+-        /* Only set up syslog if !systemd, otherwise with systemd
++        /* Only set up syslog if !systemd/SMF, otherwise with systemd or SMF
+          * enabled, we keep the default GLib log handler which goes to
+          * stderr, which is routed to the appropriate place in the
+-         * systemd service file.
++         * systemd service file or SMF service log.
+          */
+         if (!is_sd_booted) {
+                 prg_name = g_get_prgname ();
+-- 
+2.7.4
+

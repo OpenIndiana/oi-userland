@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# Copyright 2008, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# For modifying parameters passed to gdm, do not edit this script.
+# Instead use svccfg(1m) to modify the SMF repository.  For example:
+#
+# # svccfg
+# svc:> select application/graphical-login/gdm
+# svc:/application/graphical-login/gdm> setprop gdm/args = "--fatal-warnings"
+# svc:/application/graphical-login/gdm> exit
+
+. /lib/svc/share/smf_include.sh
+
+CK_FMRI='svc:/system/consolekit'
+sessions="$(eval "echo $(svcprop -p consolekit/sessions $CK_FMRI)")"
+
+case "$1" in
+'start')
+	FMRI=svc:/application/graphical-login/gdm
+
+	arg="$(eval "echo $(svcprop -p gdm/args $FMRI)")"
+
+	/usr/sbin/gdm $arg &
+
+	rc=$?
+	if [[ $rc != 0 ]]; then
+		echo "$0: gdm failed with $rc"
+		exit $SMF_EXIT_ERR_FATAL
+	fi
+
+	# If no static sessions started, start dynamic ones
+	if [[ -z "$sessions" && -x /usr/lib/ConsoleKit/dsession ]]; then
+                sleep 2
+  		/usr/lib/ConsoleKit/dsession --init
+  	fi
+	;;
+
+'stop')
+	if [[ -z "$sessions" && -x /usr/lib/ConsoleKit/dsession ]]; then
+  		/usr/lib/ConsoleKit/dsession --fini
+  	fi
+
+	PIDFILE='/var/run/gdm/gdm.pid'
+	if [[ ! -f $PIDFILE ]] ; then
+	        echo "$PIDFILE doesn't exist, perhaps GDM isn't running"
+	else
+		kill -TERM $(cat $PIDFILE) && sleep 5
+	fi
+	# kill any stragglers that gdm itself didn't kill off
+	smf_kill_contract $2 TERM 1 30
+	[[ $? -ne 0 ]] && exit 1
+	;;
+
+*)
+	echo "Usage: $0 { start | stop }"
+	exit $SMF_EXIT_ERR_FATAL
+	;;
+esac
+
+exit $SMF_EXIT_OK

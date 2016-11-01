@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2009, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+# To determine the character set used for filenames with
+# glib's g_filename_to/from_utf8() functions, we set the
+# environment variables G_FILENAME_ENCODING and G_BROKEN_FILENAMES.
+#
+# G_BROKEN_FILENAMES, when set, lets the functions take the
+# character set for the current locale for filename's encoding.
+#
+# G_FILENAME_ENCODING, which is introduced to glib 2.3.x and later, may be
+# set to a comma-separated list of character set names.
+# The special token "@locale" is taken to mean the character set
+# for the current locale. The first character set from the list is taken
+# as the filename encoding.
+#
+# If G_FILENAME_ENCODING is not set, but G_BROKEN_FILENAMES is, the
+# character set of the current locale is taken as the filename encoding.
+
+export G_BROKEN_FILENAMES=yes
+export G_FILENAME_ENCODING=@locale,UTF-8
+
+# Fixes Sun Bug 6583891 / Oracle Bug 15411677
+case $LANG in
+    ja*) export VTE_CJK_WIDTH=1;;
+    ko*) export VTE_CJK_WIDTH=1;;
+    zh*) export VTE_CJK_WIDTH=1;;
+    *) ;;
+esac
+
+# Fixes Sun Bug 6555226 / Oracle Bug 15395640
+if [[ "$LANG" == "zh" ]] ; then
+    export LANGUAGE=zh:zh_CN.EUC
+fi
+
+# Locale specific .desktop files
+if [[ -d /usr/share/locale/$LANG/xdg ]] ; then
+    XDG_DATA_DIRS=${XDG_DATA_DIRS:-"/usr/share"}
+    XDG_DATA_DIRS=${XDG_DATA_DIRS}:/usr/share/locale/$LANG/xdg
+    export XDG_DATA_DIRS
+fi
+
+if [[ -x /usr/bin/xdg-user-dirs-update ]]; then
+    /usr/bin/xdg-user-dirs-update
+fi

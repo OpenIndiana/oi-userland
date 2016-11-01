@@ -1,0 +1,100 @@
+From 1d0cd85ec6ad9ae9886618816605261e8519b731 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 18:50:08 -0800
+Subject: [PATCH 12/19] restart limit
+
+Bug 15745160/SUNBT7096672 GDM should stop restarting the Xserver on the console
+Original owner:yippi date:2011-11-07 type:bug bugster:7096672
+---
+ daemon/gdm-display.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/daemon/gdm-display.c b/daemon/gdm-display.c
+index ab84ba4..ab7eba7 100644
+--- a/daemon/gdm-display.c
++++ b/daemon/gdm-display.c
+@@ -68,7 +68,8 @@ struct GdmDisplayPrivate
+         char                 *x11_display_name;
+         int                   status;
+         time_t                creation_time;
+-        GTimer               *server_timer;
++        int                   num_failures;
++        gint64                time_last_start;
+ 
+         char                 *x11_cookie;
+         gsize                 x11_cookie_size;
+@@ -613,6 +614,10 @@ gdm_display_manage (GdmDisplay *self)
+ 
+         g_debug ("GdmDisplay: Managing display: %s", self->priv->id);
+ 
++        if (self->priv->time_last_start == 0) {
++                self->priv->time_last_start = g_get_monotonic_time();
++        }
++
+         /* If not explicitly prepared, do it now */
+         if (self->priv->status == GDM_DISPLAY_UNMANAGED) {
+                 res = gdm_display_prepare (self);
+@@ -621,8 +626,6 @@ gdm_display_manage (GdmDisplay *self)
+                 }
+         }
+ 
+-        g_timer_start (self->priv->server_timer);
+-
+         if (g_strcmp0 (self->priv->session_class, "greeter") == 0) {
+                 if (GDM_DISPLAY_GET_CLASS (self)->manage != NULL) {
+                         GDM_DISPLAY_GET_CLASS (self)->manage (self);
+@@ -658,8 +661,6 @@ gdm_display_unmanage (GdmDisplay *self)
+ 
+         g_debug ("GdmDisplay: unmanage display");
+ 
+-        g_timer_stop (self->priv->server_timer);
+-
+         if (self->priv->user_access_file != NULL) {
+                 gdm_display_access_file_close (self->priv->user_access_file);
+                 g_object_unref (self->priv->user_access_file);
+@@ -672,9 +673,18 @@ gdm_display_unmanage (GdmDisplay *self)
+                 self->priv->access_file = NULL;
+         }
+ 
+-        elapsed = g_timer_elapsed (self->priv->server_timer, NULL);
+-        if (elapsed < 3) {
+-                g_warning ("GdmDisplay: display lasted %lf seconds", elapsed);
++        elapsed = (g_get_monotonic_time() - self->priv->time_last_start) / 1000000;
++        g_debug ("GdmDisplay: Elapsed time since last start: %lf", elapsed);
++        if (elapsed > 60) {
++                self->priv->num_failures = 0;
++                self->priv->time_last_start = g_get_monotonic_time();
++        } else {
++                self->priv->num_failures++;
++                g_debug ("GdmDisplay: Number of failures=%d", self->priv->num_failures);
++        }
++
++        if (self->priv->num_failures >= 5) {
++                g_warning ("GdmDisplay: Display %s failed 5 times in %lf seconds, no longer managing display", self->priv->id, elapsed);
+                 _gdm_display_set_status (self, GDM_DISPLAY_FAILED);
+         } else {
+                 _gdm_display_set_status (self, GDM_DISPLAY_UNMANAGED);
+@@ -1300,7 +1310,8 @@ gdm_display_init (GdmDisplay *self)
+         self->priv = GDM_DISPLAY_GET_PRIVATE (self);
+ 
+         self->priv->creation_time = time (NULL);
+-        self->priv->server_timer = g_timer_new ();
++        self->priv->time_last_start = 0;
++        self->priv->num_failures = 0;
+ }
+ 
+ static void
+@@ -1336,10 +1347,6 @@ gdm_display_finalize (GObject *object)
+                 g_object_unref (self->priv->user_access_file);
+         }
+ 
+-        if (self->priv->server_timer != NULL) {
+-                g_timer_destroy (self->priv->server_timer);
+-        }
+-
+         G_OBJECT_CLASS (gdm_display_parent_class)->finalize (object);
+ }
+ 
+-- 
+2.7.4
+

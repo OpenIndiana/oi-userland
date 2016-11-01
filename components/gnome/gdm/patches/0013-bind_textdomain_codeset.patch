@@ -1,0 +1,27 @@
+From db0314f3eae402e81b13fbb905bfc7d2b3fddb62 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 18:59:56 -0800
+Subject: [PATCH 13/19] bind_textdomain_codeset
+
+Bug 15725357/SUNBT7060748 Some messages are not displayed correctly
+  in non-UTF-8 locale terminal environment
+Original date:2012-03-23 owner:pengwang type:bug bugster: 7060748
+---
+ daemon/main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/daemon/main.c b/daemon/main.c
+index f3329d0..924eb89 100644
+--- a/daemon/main.c
++++ b/daemon/main.c
+@@ -401,6 +401,7 @@ main (int    argc,
+ #endif
+ 
+         bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
++        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+         textdomain (GETTEXT_PACKAGE);
+         setlocale (LC_ALL, "");
+ 
+-- 
+2.7.4
+

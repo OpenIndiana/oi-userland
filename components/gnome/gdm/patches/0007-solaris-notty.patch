@@ -1,0 +1,151 @@
+From 05391989747e3c6044329002f0786c37f34a2f6c Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 15:51:45 -0800
+Subject: [PATCH 07/19] solaris-notty
+
+Workaround the Solaris PAM & auditing subsystems requirements that
+every session cannot be attributed to a single device file, as if
+we all still logged in on serial terminals.
+
+Original date:2009-10-16 owner:yippi type:branding
+---
+ daemon/gdm-manager.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+ daemon/gdm-server.c  | 37 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 81 insertions(+), 4 deletions(-)
+
+diff --git a/daemon/gdm-manager.c b/daemon/gdm-manager.c
+index 3d1d2eb..46c07ca 100644
+--- a/daemon/gdm-manager.c
++++ b/daemon/gdm-manager.c
+@@ -29,6 +29,11 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ 
++#ifdef __sun
++#include <utime.h>
++#include <sys/param.h>
++#endif
++
+ #include <glib.h>
+ #include <glib/gi18n.h>
+ #include <glib/gstdio.h>
+@@ -2467,6 +2472,46 @@ clean_embryonic_user_session (GdmSession *session)
+         g_object_unref (session);
+ }
+ 
++static void
++create_device (const char *dev)
++{
++#ifdef __sun
++        gchar buf[MAXPATHLEN + 1];
++        struct stat st;
++
++        if (dev == NULL || dev[0] == '\0')
++                return;
++
++        if (strcmp (dev, "/dev/dtlocal")  != 0 &&
++            strcmp (dev, "/dev/dtremote") != 0 )
++                return;
++
++        memset (buf, 0, sizeof (gchar) * (MAXPATHLEN + 1));
++
++        if (stat (dev, &st) != 0) {
++                g_debug ("Creating pseudo-device %s", dev);
++                symlink ("/dev/null", dev);
++        } else if (readlink (dev, buf, MAXPATHLEN) > 0) {
++                if (strcmp (buf, "/dev/null") == 0) {
++                        /* Touch symlink */
++                        struct utimbuf  timebuf;
++
++                        timebuf.modtime = time ((time_t *) 0);
++                        timebuf.actime  = timebuf.modtime;
++
++                        if ((utime (dev, &timebuf)) != 0)
++                                g_debug ("Problem updating access time of pseudo-device %s", dev);
++                        else
++                                g_debug ("Touching pseudo-device %s", dev);
++                } else {
++                        g_debug ("Device %s points to %s", dev, buf);
++                }
++        } else {
++                g_debug ("Device %s is not a symlink", dev);
++        }
++#endif
++}
++
+ static GdmSession *
+ create_embryonic_user_session_for_display (GdmManager *manager,
+                                            GdmDisplay *display,
+@@ -2490,6 +2535,9 @@ create_embryonic_user_session_for_display (GdmManager *manager,
+                       "seat-id", &display_seat_id,
+                       NULL);
+         display_device = get_display_device (manager, display);
++        if (!display_device && !display_is_local)
++                display_device = g_strdup ("/dev/dtremote");
++        create_device (display_device);
+ 
+         session = gdm_session_new (GDM_SESSION_VERIFICATION_MODE_LOGIN,
+                                    allowed_user,
+diff --git a/daemon/gdm-server.c b/daemon/gdm-server.c
+index 2cec263..77c18a8 100644
+--- a/daemon/gdm-server.c
++++ b/daemon/gdm-server.c
+@@ -96,6 +96,7 @@ struct GdmServerPrivate
+         guint    child_watch_id;
+ 
+         gboolean is_initial;
++        gboolean is_local;
+ };
+ 
+ enum {
+@@ -146,15 +147,43 @@ _gdm_server_query_ck_for_display_device (GdmServer *server)
+                                          NULL,
+                                          &status,
+                                          &error);
++        g_free (command);
++
+         if (! res) {
+                 g_warning ("Could not run helper: %s", error->message);
+                 g_error_free (error);
+-        } else {
+-                out = g_strstrip (out);
+-                g_debug ("GdmServer: Got tty: '%s'", out);
++                g_free (out);
++                return NULL;
+         }
+ 
+-        g_free (command);
++        out = g_strstrip (out);
++
++        /* There are several scenarios that the device will be "?"
++         * 1. Local sessions without VT support. If the display is ":0",
++         *    we set the device as "/dev/console" to gain device permissions.
++         *    This only happens on those systems do not has VT support such as
++         *    old Solaris. So far, Linux and OpenSolaris with VT support.
++         * 2. XDMCP sessions, we set device as "/dev/dtremote"
++         * 3. Local sessions like Sun Ray, Xvfb, Xvnc, we set device as
++         *    "/dev/dtlocal"
++         */
++        if (g_str_equal (out, "?")) {
++                if (!server->priv->is_local) {
++                        /* This is for XDMCP sessions. */
++                        out = g_strdup ("/dev/dtremote");
++                } else  {
++                        if (g_str_equal (server->priv->display_name, ":0")) {
++                                /* This is for local session run on console. */
++                                out = g_strdup ("/dev/console");
++                        } else {
++                                /* This is for local sessions like
++                                 * Sun Ray, Xvfb, Xvnc, etc. */
++                                out = g_strdup ("/dev/dtlocal");
++                        }
++                }
++        }
++
++        g_debug ("GdmServer: Got tty: '%s'", out);
+ 
+         return out;
+ }
+-- 
+2.7.4
+

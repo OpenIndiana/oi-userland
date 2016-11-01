@@ -1,0 +1,152 @@
+From ec1cbb0425a809bae65d76cec2440aeaac6a0970 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 18:07:05 -0800
+Subject: [PATCH 10/19] logindevperm
+
+Support for Solaris /etc/logindevperm.  A previous version of this patch
+was upstream, but disappeared in code rewrites.  The desktop gate had a
+patch (gdm-28-logindevperm.diff) which also removed the old upstream code
+and replaced with a new version - it's unclear if it was ever sent upstream.
+
+This revision is based on that patch, but moves the calls from the
+launch-environment to the session-worker, where they can be run as
+root so that they actually work in gdm 3.18.
+
+Orig. date:2010-12-14 owner:yippi type:feature bugster:6998997 bugzilla:621581
+---
+ configure.ac                |  2 +-
+ daemon/gdm-session-worker.c | 77 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5e97a41..cc58fbb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1152,7 +1152,7 @@ AC_SUBST(EXTRA_TEST_LIBS)
+ #
+ AC_CHECK_LIB(devinfo, di_devperm_login, [
+                         AC_DEFINE(HAVE_LOGINDEVPERM)
+-                            PAM_LIBS="$PAM_LIBS -ldevinfo" ])
++                            EXTRA_DAEMON_LIBS="$EXTRA_DAEMON_LIBS -ldevinfo" ])
+ 
+ dnl ---------------------------------------------------------------------------
+ dnl - Check for X Server location
+diff --git a/daemon/gdm-session-worker.c b/daemon/gdm-session-worker.c
+index 5fc83d6..f19a92f 100644
+--- a/daemon/gdm-session-worker.c
++++ b/daemon/gdm-session-worker.c
+@@ -46,6 +46,10 @@
+ 
+ #include <security/pam_appl.h>
+ 
++#ifdef HAVE_LOGINDEVPERM
++#include <libdevinfo.h>
++#endif
++
+ #ifdef HAVE_LOGINCAP
+ #include <login_cap.h>
+ #endif
+@@ -1917,6 +1921,10 @@ run_script (GdmSessionWorker *worker,
+                                worker->priv->x11_authority_file);
+ }
+ 
++#ifdef HAVE_LOGINDEVPERM
++static void gdm_session_worker_revoke_console_permissions (GdmSessionWorker *);
++#endif
++
+ static void
+ session_worker_child_watch (GPid              pid,
+                             int               status,
+@@ -1944,6 +1952,11 @@ session_worker_child_watch (GPid              pid,
+         worker->priv->child_pid = -1;
+         worker->priv->child_watch_id = 0;
+         run_script (worker, GDMCONFDIR "/PostSession");
++
++#ifdef HAVE_LOGINDEVPERM
++        gdm_session_worker_revoke_console_permissions (worker);
++#endif
++
+ }
+ 
+ static void
+@@ -2103,6 +2116,66 @@ out:
+         return fd;
+ }
+ 
++#ifdef HAVE_LOGINDEVPERM
++static void
++gdm_session_worker_grant_console_permissions (
++        GdmSessionWorker  *worker,
++        struct passwd *passwd_entry)
++{
++        const char *username =  worker->priv->username;
++        const char *display_device = worker->priv->display_device;
++
++        /*
++         * Only do logindevperm processing if /dev/console or
++         * a device associated with a VT
++         */
++        if (display_device != NULL &&
++            (strncmp (display_device, "/dev/vt/", strlen ("/dev/vt/")) == 0 ||
++             strcmp  (display_device, "/dev/console") == 0)) {
++                g_debug ("Logindevperm login for user %s, device %s",
++                         username, display_device);
++                if (di_devperm_login (display_device,
++                                      passwd_entry->pw_uid,
++                                      passwd_entry->pw_gid,
++                                      NULL) == -1) {
++                        g_debug("error processing /etc/logindevperm,"
++                                " see syslog for more details\n");
++                }
++        } else {
++                g_debug ("Not calling di_devperm_login login for user %s, device %s",
++                         username, display_device);
++        }
++}
++
++static void
++gdm_session_worker_revoke_console_permissions (
++        GdmSessionWorker  *worker)
++{
++        const char *username =  worker->priv->username;
++        const char *display_device = worker->priv->display_device;
++
++        /*
++         * Only do logindevperm processing if /dev/console or a device
++         * associated with a VT.  Do this after processing the PostSession
++         * script so that permissions for devices are not returned to root
++         * before running the script.
++         */
++        if (display_device != NULL &&
++            (strncmp (display_device, "/dev/vt/", strlen ("/dev/vt/")) == 0 ||
++             strcmp  (display_device, "/dev/console") == 0)) {
++                g_debug ("di_devperm_logout for user %s, device %s",
++                         username, display_device);
++                if (di_devperm_logout (display_device) == -1) {
++                        g_debug("error processing /etc/logindevperm,"
++                                " see syslog for more details\n");
++                }
++        } else {
++                g_debug ("Not calling di_devperm_logout logout for user %s, device %s",
++                         username, display_device);
++        }
++}
++#endif  /* HAVE_LOGINDEVPERM */
++
+ #ifdef __sun
+ static void
+ solaris_xserver_cred (const char *username, struct passwd *passwd_entry,
+@@ -2229,6 +2302,10 @@ gdm_session_worker_start_session (GdmSessionWorker  *worker,
+                          worker->priv->arguments[0]);
+         }
+ 
++#ifdef HAVE_LOGINDEVPERM
++        gdm_session_worker_grant_console_permissions (worker, passwd_entry);
++#endif
++
+ #ifdef __sun
+         solaris_xserver_cred (worker->priv->username,
+                               passwd_entry,
+-- 
+2.7.4
+

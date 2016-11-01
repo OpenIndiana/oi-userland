@@ -1,0 +1,285 @@
+From 2ee31816ec447ad8aca5ed20e1793f248204d0ed Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 17:22:36 -0800
+Subject: [PATCH 09/19] xauth-directory
+
+Bug 15620655/SUNBT6923733 gdm create user writable directories under /var/run
+Original date:2010-02-19 owner:yippi type:feature bugster:6923733
+---
+ daemon/gdm-display-access-file.c | 128 ++++++++++++++++++++++++++++++++++-----
+ daemon/gdm-display-access-file.h |   1 +
+ daemon/main.c                    |   3 +
+ data/Makefile.am                 |  12 ++--
+ 4 files changed, 124 insertions(+), 20 deletions(-)
+
+diff --git a/daemon/gdm-display-access-file.c b/daemon/gdm-display-access-file.c
+index 02ec0a0..90e4eed 100644
+--- a/daemon/gdm-display-access-file.c
++++ b/daemon/gdm-display-access-file.c
+@@ -41,6 +41,8 @@
+ #include "gdm-display-access-file.h"
+ #include "gdm-common.h"
+ 
++static const char *xauth_dir_name = NULL;
++
+ struct _GdmDisplayAccessFilePrivate
+ {
+         char *username;
+@@ -221,13 +223,24 @@ _get_uid_and_gid_for_user (const char *username,
+         return TRUE;
+ }
+ 
++void
++gdm_display_access_file_cleanup_xauth (void)
++{
++        /* Clean up any xauth_dir_name when shutting down */
++        if (strcmp (GDM_XAUTH_DIR, "/tmp") == 0 && xauth_dir_name != NULL) {
++                g_remove (xauth_dir_name);
++                g_debug ("GdmDisplayAccessFile: Unlinking xauth directory %s", xauth_dir_name);
++                xauth_dir_name = NULL;
++        }
++}
++
+ static void
+-clean_up_stale_auth_subdirs (void)
++clean_up_stale_auth_subdirs (const char * xauth_dir_name)
+ {
+         GDir *dir;
+         const char *filename;
+ 
+-        dir = g_dir_open (GDM_XAUTH_DIR, 0, NULL);
++        dir = g_dir_open (xauth_dir_name, 0, NULL);
+ 
+         if (dir == NULL) {
+                 return;
+@@ -236,7 +249,7 @@ clean_up_stale_auth_subdirs (void)
+         while ((filename = g_dir_read_name (dir)) != NULL) {
+                 char *path;
+ 
+-                path = g_build_filename (GDM_XAUTH_DIR, filename, NULL);
++                path = g_build_filename (xauth_dir_name, filename, NULL);
+ 
+                 /* Will only succeed if the directory is empty
+                  */
+@@ -251,10 +264,13 @@ _create_xauth_file_for_user (const char  *username,
+                              char       **filename,
+                              GError     **error)
+ {
++        struct stat statbuf;
++        gboolean dir_exists;
+         char   *template;
+         const char *dir_name;
+         char   *auth_filename;
+         int     fd;
++        int     xauth_dir_fp = -1;
+         FILE   *fp;
+         uid_t   uid;
+         gid_t   gid;
+@@ -268,10 +284,37 @@ _create_xauth_file_for_user (const char  *username,
+         fp = NULL;
+         fd = -1;
+ 
++        dir_exists = TRUE;
++
++        if (xauth_dir_name == NULL) {
++                if (strcmp (GDM_XAUTH_DIR, "/tmp") == 0) {
++                        dir_exists = FALSE;
++                        template = g_strdup_printf ("/tmp/gdm-auth-cookies-XXXXXX");
++                        xauth_dir_name = gdm_make_temp_dir (template);
++
++                        g_debug ("GdmDisplayAccessFile: Creating xauth directory %s", xauth_dir_name);
++                        g_chmod (xauth_dir_name, 0711);
++                        _get_uid_and_gid_for_user (GDM_USERNAME, &uid, &gid);
++                        if (chown (xauth_dir_name, 0, gid) != 0) {
++                                g_warning ("Unable to change owner of '%s'",
++                                           xauth_dir_name);
++                        }
++                } else {
++                        xauth_dir_name = GDM_XAUTH_DIR;
++                }
++        }
++
++        /*
++         * Note: if GDM_XAUTH_DIR is "/tmp", we never fall into the next if-case, since
++         * gdm_make_temp_dir calls mkdtemp() which creates the directory.
++         */
++
+         /* Create directory if not exist, then set permission 0711 and ownership root:gdm */
+-        if (g_file_test (GDM_XAUTH_DIR, G_FILE_TEST_IS_DIR) == FALSE) {
+-                g_remove (GDM_XAUTH_DIR);
+-                if (g_mkdir (GDM_XAUTH_DIR, 0711) != 0) {
++
++        if (g_file_test (xauth_dir_name, G_FILE_TEST_IS_DIR) == FALSE) {
++                dir_exists = FALSE;
++                g_remove (xauth_dir_name);
++                if (g_mkdir (xauth_dir_name, 0711) != 0) {
+                         g_set_error (error,
+                                      G_FILE_ERROR,
+                                      g_file_error_from_errno (errno),
+@@ -279,18 +322,70 @@ _create_xauth_file_for_user (const char  *username,
+                         goto out;
+                 }
+ 
+-                g_chmod (GDM_XAUTH_DIR, 0711);
++                g_chmod (xauth_dir_name, 0711);
+                 _get_uid_and_gid_for_user (GDM_USERNAME, &uid, &gid);
+-                if (chown (GDM_XAUTH_DIR, 0, gid) != 0) {
++                if (chown (xauth_dir_name, 0, gid) != 0) {
+                         g_warning ("Unable to change owner of '%s'",
+-                                   GDM_XAUTH_DIR);
++                                   xauth_dir_name);
++                }
++        }
++
++        /* Do sanity testing on the Xauth directory */
++        if ((xauth_dir_fp = open (xauth_dir_name, O_RDONLY | O_NOFOLLOW)) == -1) {
++                /* If it is a symlink, open fails with O_NOFOLLOW. */
++                g_set_error (error,
++                     GDM_DISPLAY_ACCESS_FILE_ERROR,
++                     GDM_DISPLAY_ACCESS_FILE_ERROR_FINDING_AUTH_ENTRY,
++                     _("GDM authorization directory %s cannot be opened."),
++                     xauth_dir_name);
++                goto out;
++        }
++
++        if (fstat (xauth_dir_fp, &statbuf) == 0) {
++                if (! S_ISDIR (statbuf.st_mode)) {
++                        g_set_error (error,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR_FINDING_AUTH_ENTRY,
++                             _("GDM authorization directory %s is not a directory."),
++                             xauth_dir_name);
++                        goto out;
++                }
++
++                if (statbuf.st_uid != 0) {
++                        g_set_error (error,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR_FINDING_AUTH_ENTRY,
++                             _("GDM authorization directory %s: uid is not root"),
++                             xauth_dir_name);
++                        goto out;
++                }
++
++                _get_uid_and_gid_for_user (GDM_USERNAME, &uid, &gid);
++                if (statbuf.st_gid != gid) {
++                        g_set_error (error,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR,
++                             GDM_DISPLAY_ACCESS_FILE_ERROR_FINDING_AUTH_ENTRY,
++                             _("GDM authorization directory %s: gid is not the GDM user"),
++                             xauth_dir_name);
++                        goto out;
+                 }
+         } else {
+-                /* if it does exist make sure it has correct mode 0711 */
+-                g_chmod (GDM_XAUTH_DIR, 0711);
++                g_set_error (error,
++                     GDM_DISPLAY_ACCESS_FILE_ERROR,
++                     GDM_DISPLAY_ACCESS_FILE_ERROR_FINDING_AUTH_ENTRY,
++                     _("Cannot fstat() the GDM authorization directory %s"),
++                     xauth_dir_name);
++                goto out;
++        }
++
++        if (dir_exists == TRUE) {
++                /* If we did not create the directory, do some cleanup */
++
++                /* Make sure it has correct mode 0711 */
++                g_chmod (xauth_dir_name, 0711);
+ 
+                 /* and clean up any stale auth subdirs */
+-                clean_up_stale_auth_subdirs ();
++                clean_up_stale_auth_subdirs (xauth_dir_name);
+         }
+ 
+         if (!_get_uid_and_gid_for_user (username, &uid, &gid)) {
+@@ -303,9 +398,8 @@ _create_xauth_file_for_user (const char  *username,
+ 
+         }
+ 
+-        template = g_strdup_printf (GDM_XAUTH_DIR
+-                                    "/auth-for-%s-XXXXXX",
+-                                    username);
++        template = g_strdup_printf ("%s/auth-for-%s-XXXXXX",
++                                    xauth_dir_name, username);
+ 
+         g_debug ("GdmDisplayAccessFile: creating xauth directory %s", template);
+         /* Initially create with mode 01700 then later chmod after we create database */
+@@ -394,7 +488,9 @@ out:
+         if (fd != -1) {
+                 close (fd);
+         }
+-
++        if (xauth_dir_fp != -1) {
++		close (xauth_dir_fp);
++        }
+         return fp;
+ }
+ 
+diff --git a/daemon/gdm-display-access-file.h b/daemon/gdm-display-access-file.h
+index cc7de9e..091b31f 100644
+--- a/daemon/gdm-display-access-file.h
++++ b/daemon/gdm-display-access-file.h
+@@ -83,6 +83,7 @@ gboolean              gdm_display_access_file_remove_display          (GdmDispla
+ 
+ void                  gdm_display_access_file_close                   (GdmDisplayAccessFile  *file);
+ char                 *gdm_display_access_file_get_path                (GdmDisplayAccessFile  *file);
++void                  gdm_display_access_file_cleanup_xauth           (void);
+ 
+ G_END_DECLS
+ #endif /* __GDM_DISPLAY_ACCESS_FILE_H__ */
+diff --git a/daemon/main.c b/daemon/main.c
+index 50f6e94..65f34c8 100644
+--- a/daemon/main.c
++++ b/daemon/main.c
+@@ -47,6 +47,7 @@
+ #include "gdm-settings.h"
+ #include "gdm-settings-direct.h"
+ #include "gdm-settings-keys.h"
++#include "gdm-display-access-file.h"
+ 
+ #define GDM_DBUS_NAME "org.gnome.DisplayManager"
+ 
+@@ -426,6 +427,8 @@ main (int    argc,
+         gdm_settings_direct_shutdown ();
+         gdm_log_shutdown ();
+ 
++        gdm_display_access_file_cleanup_xauth ();
++
+         g_main_loop_unref (main_loop);
+ 
+         ret = 0;
+diff --git a/data/Makefile.am b/data/Makefile.am
+index 81cde22..a05fc14 100644
+--- a/data/Makefile.am
++++ b/data/Makefile.am
+@@ -212,8 +212,10 @@ uninstall-hook:
+ 	$(DESTDIR)$(sysconfdir)/dconf/profile/gdm \
+ 	-rf \
+ 	$(DESTDIR)$(screenshotdir) \
+-	$(DESTDIR)$(xauthdir) \
+ 	$(DESTDIR)$(PAM_PREFIX)/pam.d
++	if test "x$(xauthdir)" -ne "x/tmp"; then \
++		rm -rf $(DESTDIR)$(xauthdir) \
++	fi
+ 
+ 	if test -n "$(systemdsystemunit)"; then \
+ 		rm -f $(DESTDIR)$(SYSTEMD_SYSTEM_UNIT_DIR)/$(systemdsystemunit); \
+@@ -292,9 +294,11 @@ endif
+ 	fi
+ 
+ 	if test '!' -d $(DESTDIR)$(xauthdir); then \
+-		$(mkinstalldirs) $(DESTDIR)$(xauthdir); \
+-		chmod 0711 $(DESTDIR)$(xauthdir); \
+-		chown root:gdm $(DESTDIR)$(xauthdir) || : ; \
++		if test "x$(xauthdir)" -ne "x/tmp"; then \
++			$(mkinstalldirs) $(DESTDIR)$(xauthdir); \
++			chmod 0711 $(DESTDIR)$(xauthdir); \
++			chown root:gdm $(DESTDIR)$(xauthdir) || : ; \
++		fi \
+ 	fi
+ 
+ 	if test -n "$(systemdsystemunit)" -a '!' -d $(DESTDIR)$(SYSTEMD_SYSTEM_UNIT_DIR); then \
+-- 
+2.7.4
+

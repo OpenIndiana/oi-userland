@@ -1,0 +1,141 @@
+From 0ccf6e6afa7eb6f5dc8b8c6689caa8bb190fef0d Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 14:21:38 -0800
+Subject: [PATCH 06/19] /etc/default/login
+
+Add support for /etc/default/login configuration.
+Original date:2009-03-31 owner:yippi type:feature
+---
+ daemon/gdm-session-worker.c | 83 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 76 insertions(+), 7 deletions(-)
+
+diff --git a/daemon/gdm-session-worker.c b/daemon/gdm-session-worker.c
+index 93c9e82..5fc83d6 100644
+--- a/daemon/gdm-session-worker.c
++++ b/daemon/gdm-session-worker.c
+@@ -222,6 +222,33 @@ G_DEFINE_TYPE_WITH_CODE (GdmSessionWorker,
+                          G_IMPLEMENT_INTERFACE (GDM_DBUS_TYPE_WORKER,
+                                                 worker_interface_init))
+ 
++#if __sun
++#include <deflt.h>
++
++/*
++ * gdm_read_default
++ *
++ * This function is used to support systems that have the /etc/default/login
++ * interface to control programs that affect security.  This is a Solaris
++ * thing, though some users on other systems may find it useful.
++ */
++static gchar *
++gdm_read_default (gchar *key)
++{
++    gchar *retval = NULL;
++
++    if (defopen ("/etc/default/login") == 0) {
++       int flags = defcntl (DC_GETFLAGS, 0);
++
++       TURNOFF (flags, DC_CASE);
++       (void) defcntl (DC_SETFLAGS, flags);  /* ignore case */
++       retval = g_strdup (defread (key));
++       (void) defopen ((char *)NULL);
++    }
++    return retval;
++}
++#endif
++
+ #ifdef WITH_CONSOLE_KIT
+ static gboolean
+ open_ck_session (GdmSessionWorker  *worker)
+@@ -1351,6 +1378,28 @@ gdm_session_worker_authorize_user (GdmSessionWorker *worker,
+         g_debug ("GdmSessionWorker: determining if authenticated user (password required:%d) is authorized to session",
+                  password_is_required);
+ 
++#ifdef __sun
++        char *consoleonly = gdm_read_default ("CONSOLE=");
++
++        if ((consoleonly != NULL) &&
++            (strcmp (consoleonly, "/dev/console") == 0)) {
++
++                if (worker->priv->hostname != NULL &&
++                    worker->priv->hostname[0] != '\0') {
++                        struct passwd *passwd_entry;
++
++                        passwd_entry = getpwnam (worker->priv->username);
++                        if (passwd_entry->pw_uid == 0) {
++                                error_code = PAM_PERM_DENIED;
++
++                                g_debug ("The system administrator is not allowed to log in remotely");
++                                g_set_error (error, GDM_SESSION_WORKER_ERROR, GDM_SESSION_WORKER_ERROR_AUTHORIZING, "%s", pam_strerror (worker->priv->pam_handle, error_code));
++                                goto out;
++                        }
++                }
++        }
++#endif
++
+         authentication_flags = 0;
+ 
+         if (password_is_required) {
+@@ -1716,6 +1765,7 @@ gdm_session_worker_accredit_user (GdmSessionWorker  *worker,
+         gid_t    gid;
+         char    *shell;
+         char    *home;
++        char    *path_str;
+         int      error_code;
+ 
+         ret = FALSE;
+@@ -1756,18 +1806,26 @@ gdm_session_worker_accredit_user (GdmSessionWorker  *worker,
+                                                                 home,
+                                                                 shell);
+ 
+-        /* Let's give the user a default PATH if he doesn't already have one
+-         */
+-        if (!gdm_session_worker_environment_variable_is_set (worker, "PATH")) {
++        path_str = NULL;
++
++#ifdef __sun
++        if (uid == 0)
++                path_str = gdm_read_default ("SUPATH=");
++
++        if (path_str == NULL)
++                path_str = gdm_read_default ("PATH=");
++#endif
++
++        if (path_str == NULL)  {
+                 if (strcmp (BINDIR, "/usr/bin") == 0) {
+-                        gdm_session_worker_set_environment_variable (worker, "PATH",
+-                                                                     GDM_SESSION_DEFAULT_PATH);
++                        path_str = GDM_SESSION_DEFAULT_PATH;
+                 } else {
+-                        gdm_session_worker_set_environment_variable (worker, "PATH",
+-                                                                     BINDIR ":" GDM_SESSION_DEFAULT_PATH);
++                        path_str = BINDIR ":" GDM_SESSION_DEFAULT_PATH;
+                 }
+         }
+ 
++        gdm_session_worker_set_environment_variable (worker, "PATH", path_str);
++
+         if (! _change_user (worker, uid, gid)) {
+                 g_debug ("GdmSessionWorker: Unable to change to user");
+                 error_code = PAM_SYSTEM_ERR;
+@@ -2768,6 +2826,17 @@ do_setup (GdmSessionWorker *worker)
+         GError  *error;
+         gboolean res;
+ 
++#ifdef __sun
++        char    *passreq;
++
++        passreq = gdm_read_default ("PASSREQ=");
++
++        if ((passreq != NULL) && g_ascii_strcasecmp (passreq, "YES") == 0)
++                worker->priv->password_is_required = TRUE;
++        else
++                worker->priv->password_is_required = FALSE;
++#endif
++
+         error = NULL;
+         res = gdm_session_worker_initialize_pam (worker,
+                                                  worker->priv->service,
+-- 
+2.7.4
+

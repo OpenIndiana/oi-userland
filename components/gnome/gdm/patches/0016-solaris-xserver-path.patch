@@ -1,0 +1,31 @@
+From 202fe64993977f44f51b76264b2fbe4b2878ef7a Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 21:08:59 -0800
+Subject: [PATCH 16/19] solaris xserver path
+
+On Solaris 11 & later, we just use /usr/bin, not /usr/X11/bin.
+Need to submit upstream.
+---
+ configure.ac | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index cc58fbb..e819e5e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1169,7 +1169,11 @@ dnl ---------------------------------------------------------------------------
+ # and /usr/X11 since they often symlink to each other, and configure
+ # should use the more stable location (the real directory) if possible.
+ #
+-if test -x /usr/X11/bin/Xserver; then
++if test -x /usr/bin/Xserver; then
++   X_PATH="/usr/bin"
++   X_SERVER_PATH="/usr/bin"
++   X_SERVER="/usr/bin/Xserver"
++elif test -x /usr/X11/bin/Xserver; then
+    X_PATH="/usr/X11/bin"
+    X_SERVER_PATH="/usr/X11/bin"
+    X_SERVER="/usr/X11/bin/Xserver"
+-- 
+2.7.4
+

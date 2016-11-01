@@ -1,0 +1,227 @@
+From f7978982d31f67867d8200f9f3102eb423312abc Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Tue, 29 Dec 2015 12:50:16 -0800
+Subject: [PATCH 04/19] sdtlogin
+
+Adds SDTLOGIN interface, which drops the Xserver to user
+perms rather than running as root, for added security on Solaris.
+Original date:2008-05-06 owner:yippi type:feature
+
+For the original definition, see Sun ASARC case 1995/390.
+For the current implementation in the X server, see sun-src/os/dtlogin.c
+and dtlogin-userinfo.patch in open-src/xserver/xorg in the X gate.
+---
+ common/gdm-common.h         |   5 ++
+ daemon/gdm-server.c         |  11 +++++
+ daemon/gdm-session-worker.c | 116 ++++++++++++++++++++++++++++++++++++++++++++
+ daemon/main.c               |  15 ++++++
+ 4 files changed, 147 insertions(+)
+
+diff --git a/common/gdm-common.h b/common/gdm-common.h
+index 19dbbbb..6ac61c0 100644
+--- a/common/gdm-common.h
++++ b/common/gdm-common.h
+@@ -42,6 +42,11 @@ GQuark gdm_common_error_quark (void);
+ typedef char * (*GdmExpandVarFunc) (const char *var,
+                                     gpointer user_data);
+ 
++#ifdef __sun
++#define GDM_DT_DIR "/var/dt"
++#define GDM_SDTLOGIN_DIR "/var/dt/sdtlogin"
++#endif
++
+ G_BEGIN_DECLS
+ 
+ int            gdm_wait_on_pid           (int pid);
+diff --git a/daemon/gdm-server.c b/daemon/gdm-server.c
+index 08f2354..2cec263 100644
+--- a/daemon/gdm-server.c
++++ b/daemon/gdm-server.c
+@@ -742,6 +742,17 @@ gdm_server_spawn (GdmServer    *server,
+                 goto out;
+         }
+ 
++#if __sun
++        /* Remove old communication pipe, if present */
++        char *display_num = strchr(server->priv->display_name, ':');
++        if (display_num != NULL && display_num[1] != '\0') {
++                char *old_pipe = g_strdup_printf ("%s/%s", GDM_SDTLOGIN_DIR,
++                                                  display_num + 1);
++                VE_IGNORE_EINTR (g_remove (old_pipe));
++                g_free (old_pipe);
++        }
++#endif
++
+         env = get_server_environment (server);
+ 
+         freeme = g_strjoinv (" ", argv);
+diff --git a/daemon/gdm-session-worker.c b/daemon/gdm-session-worker.c
+index 291caad..93c9e82 100644
+--- a/daemon/gdm-session-worker.c
++++ b/daemon/gdm-session-worker.c
+@@ -38,6 +38,7 @@
+ #include <pwd.h>
+ 
+ #if __sun
++#include <sys/param.h>
+ #define GDM_PAM_QUAL
+ #else
+ #define GDM_PAM_QUAL const
+@@ -2044,6 +2045,115 @@ out:
+         return fd;
+ }
+ 
++#ifdef __sun
++static void
++solaris_xserver_cred (const char *username, struct passwd *passwd_entry,
++                      const char *x11_display_name)
++{
++        FILE *fp;
++        struct stat statbuf;
++        gid_t  groups[NGROUPS_UMAX];
++        char *tmp, *p, pipe[MAXPATHLEN], info[MAXPATHLEN];
++        int display_number = 0;
++        int fd, i;
++        int ngroups;
++
++        if (g_access (passwd_entry->pw_dir, F_OK) != 0) {
++                g_debug ("solaris_xserver_cred: no HOME dir access\n");
++                return;
++        }
++
++        /*
++         * Handshake with server. Make sure it created a pipe.
++         * Open and write.
++         */
++        if ((tmp = strstr (x11_display_name, ":")) != NULL) {
++                tmp++;
++                display_number = g_ascii_strtod (tmp, &p);
++
++                if (errno != 0) {
++                        g_debug ("solaris_xserver_cred: problem getting display number\n");
++                        return;
++                }
++        }
++
++        if (g_stat (GDM_SDTLOGIN_DIR, &statbuf) == 0) {
++                if (! S_ISDIR(statbuf.st_mode)) {
++                        g_debug ("solaris_xserver_cred: %s is not a directory\n",
++                                 GDM_SDTLOGIN_DIR);
++                        return;
++                }
++        } else {
++                g_debug ("solaris_xserver_cred: %s does not exist\n", GDM_SDTLOGIN_DIR);
++                return;
++        }
++
++        snprintf (pipe, sizeof(pipe), "%s/%d", GDM_SDTLOGIN_DIR, display_number);
++        fd = open (pipe, O_RDWR);
++        g_remove (pipe);
++
++        if (fd < 0) {
++                g_debug ("solaris_xserver_cred: could not open %s\n", pipe);
++                return;
++        }
++        if (fstat (fd, &statbuf) == 0 ) {
++                if (! S_ISFIFO(statbuf.st_mode)) {
++                        close (fd);
++                        g_debug ("solaris_xserver_cred: %s is not a pipe\n", pipe);
++                        return;
++                }
++        } else {
++                close (fd);
++                g_debug ("solaris_xserver_cred: %s does not exist\n", pipe);
++                return;
++        }
++        fp = fdopen (fd, "w");
++        if (fp == NULL) {
++                close (fd);
++                g_debug ("solaris_xserver_cred: could not fdopen %s\n", pipe);
++                return;
++        }
++
++        snprintf (info, sizeof(info), "GID=\"%d\"; ", passwd_entry->pw_gid);
++        fputs (info, fp);
++        g_debug ("solaris_xserver_cred: %s\n", info);
++
++        if (initgroups (username, passwd_entry->pw_gid) == -1) {
++                ngroups = 0;
++        } else {
++                ngroups = getgroups (NGROUPS_UMAX, groups);
++        }
++
++        for (i=0; i < ngroups; i++) {
++                snprintf (info, sizeof(info), "G_LIST_ID=\"%u\" ", groups[i]);
++                fputs (info, fp);
++                g_debug ("solaris_xserver_cred: %s\n", info);
++        }
++
++        if (ngroups > 0) {
++                fputc (';', fp);
++        }
++
++        snprintf (info, sizeof(info), " HOME=\"%s\" ", passwd_entry->pw_dir);
++        fputs (info, fp);
++        g_debug ("solaris_xserver_cred: %s\n", info);
++
++        snprintf (info, sizeof(info), " UID=\"%d\" EOF=\"\";", passwd_entry->pw_uid);
++        fputs (info, fp);
++        g_debug ("solaris_xserver_cred: %s\n", info);
++
++        /*
++         * Handshake with server. Make sure it read the pipe.
++         *
++         * Close file descriptor.
++         */
++        fflush (fp);
++        fclose (fp);
++
++        return;
++}
++#endif
++
+ static gboolean
+ gdm_session_worker_start_session (GdmSessionWorker  *worker,
+                                   GError           **error)
+@@ -2061,6 +2171,12 @@ gdm_session_worker_start_session (GdmSessionWorker  *worker,
+                          worker->priv->arguments[0]);
+         }
+ 
++#ifdef __sun
++        solaris_xserver_cred (worker->priv->username,
++                              passwd_entry,
++                              worker->priv->x11_display_name);
++#endif
++
+         error_code = PAM_SUCCESS;
+ 
+ #ifdef WITH_SYSTEMD
+diff --git a/daemon/main.c b/daemon/main.c
+index ca2dda3..50f6e94 100644
+--- a/daemon/main.c
++++ b/daemon/main.c
+@@ -324,6 +324,21 @@ main (int    argc,
+ 
+         block_sigusr1 ();
+ 
++#ifdef __sun
++        {
++                struct stat statbuf;
++                int r;
++
++                r = stat (GDM_DT_DIR, &statbuf);
++                if (r < 0) {
++                        g_mkdir (GDM_DT_DIR, 0755);
++                }
++
++                g_remove (GDM_SDTLOGIN_DIR);
++                g_mkdir (GDM_SDTLOGIN_DIR, 0700);
++        }
++#endif
++
+         bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
+         textdomain (GETTEXT_PACKAGE);
+         setlocale (LC_ALL, "");
+-- 
+2.7.4
+
