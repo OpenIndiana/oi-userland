@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.24
+COMPONENT_VERSION=	1.4.33
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:08a426c504ecf64633151eec1058584754d2f54e62e5ed2d6808559401617e55
+    sha256:83726c8d68258c56712373072abb25a449c257398075a39ec0867fd8ba69771d
 COMPONENT_ARCHIVE_URL=	http://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
@@ -73,12 +73,8 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# t/whitespace.t fails
+# t/lru-maintainer.t fails
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += SUNWcs
