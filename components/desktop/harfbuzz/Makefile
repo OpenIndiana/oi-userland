@@ -22,10 +22,9 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-# Prefer 32-bit over 64-bit for now.
-BUILD_BITS=32_and_64
+BUILD_BITS=		64_and_32
 # For now, all things built for C++11 require gcc.
-COMPILER= gcc
+COMPILER= 		gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		harfbuzz
@@ -41,11 +40,7 @@ TPNO=			25623
 
 # Requires newer version of gobject-introspection from Desktop, available in
 # S12 but not 11.3, so do not publish.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
 
