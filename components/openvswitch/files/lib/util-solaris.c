@@ -3664,25 +3664,24 @@ solaris_port_walk(void *arg, void (*fn)(void *, const char *, char *,
 	free(anamearr);
 }
 
-uint64_t
-solaris_flow_walk(void *arg, struct ofpbuf *action, boolean_t no_default,
-    void (*fn)(void *, const char *, boolean_t, struct flow *, struct flow *,
+void
+solaris_flow_walk(void *arg, struct ofpbuf *action,
+    void (*fn)(void *, const char *, struct flow *, struct flow *,
     struct ofpbuf *, uint64_t, uint64_t, uint64_t))
 {
 	adr_name_t	**anamearr = NULL;
 	int		anamecnt = 0, i;
 	rc_err_t	rerr;
 	int		err = 0;
-	uint64_t	n_flows = 0;
 
 	rerr = dlmgr_Flow__rad_list(rad_conn, B_FALSE, NS_GLOB, &anamearr,
 	    &anamecnt, 0);
 	if (rerr != RCE_OK)
-		return (0);
+		return;
 
 	if (anamecnt == 0) {
 		free(anamearr);
-		return (0);
+		return;
 	}
 
 	for (i = 0; i < anamecnt; i++) {
@@ -3696,19 +3695,14 @@ solaris_flow_walk(void *arg, struct ofpbuf *action, boolean_t no_default,
 		struct flow		f, m;
 		int			ndlist = 0;
 		uint64_t		npackets, nbytes, lastused;
-		boolean_t		is_default;
 		dlmgr_DatalinkError_t	*derrp = NULL;
 
 		flowinfo = NULL;
 		dlist = NULL;
 		dlval = NULL;
-		is_default = B_FALSE;
 		if (strstr(adr_name_key(anamearr[i], "name"), "defflow") !=
 		    NULL) {
-			if (no_default)
-				continue;
-			else
-				is_default = B_TRUE;
+			continue;
 		} else if (strstr(adr_name_key(anamearr[i], "name"),
 		    "sys.of") == NULL) {
 			continue;
@@ -3792,21 +3786,16 @@ solaris_flow_walk(void *arg, struct ofpbuf *action, boolean_t no_default,
 			goto done;
 		}
 
-		if (action != NULL) {
-			err = solaris_flowinfo2action(flowinfo, action);
-			if (err != 0) {
-				dpif_log(err, "solaris_flow_walk "
-				    "flowinfo2action failed for %s: %d",
-				    adr_name_key(anamearr[i], "name"), err);
-				goto done;
-			}
+		err = solaris_flowinfo2action(flowinfo, action);
+		if (err != 0) {
+			dpif_log(err, "solaris_flow_walk "
+			    "flowinfo2action failed for %s: %d",
+			    adr_name_key(anamearr[i], "name"), err);
+			goto done;
 		}
 
-		if (fn != NULL) {
-			fn(arg, adr_name_key(anamearr[i], "name"), is_default,
-			    &f, &m, action, npackets, nbytes, lastused);
-		}
-		n_flows++;
+		fn(arg, adr_name_key(anamearr[i], "name"), &f, &m, action,
+		    npackets, nbytes, lastused);
 done:
 		dlmgr__rad_dict_string_DLValue_free(flowinfo);
 		dlmgr_DLValue_free(dlval);
@@ -3816,8 +3805,6 @@ done:
 	for (i = 0; i < anamecnt; i++)
 		adr_name_rele(anamearr[i]);
 	free(anamearr);
-
-	return (n_flows);
 }
 
 int

@@ -407,6 +407,7 @@ dpif_solaris_get_stats(const struct dpif *dpif_, struct dpif_dp_stats *stats)
 	struct dpif_solaris		*dpif = dpif_solaris_cast(dpif_);
 	struct dpif_solaris_bridge	*bridge;
 	struct dpif_solaris_port	*port;
+	struct dpif_solaris_lowerlink	*lowerlink;
 	kstat2_status_t			stat;
 	kstat2_map_t			map;
 	char				kuri[1024];
@@ -464,9 +465,25 @@ dpif_solaris_get_stats(const struct dpif *dpif_, struct dpif_dp_stats *stats)
 		}
 	}
 	ovs_rwlock_unlock(&dpif->bridge_rwlock);
+	ovs_rwlock_rdlock(&dpif->port_rwlock);
+	HMAP_FOR_EACH(lowerlink, node, &dpif->lowerlinks) {
+		(void) snprintf(kuri, sizeof (kuri),
+		    "kstat:/net/link/%s/%d", lowerlink->physname, 0);
+		stat = kstat2_lookup_map(dpif_khandle, kuri, &map);
+		if (stat != KSTAT2_S_OK) {
+			ovs_rwlock_unlock(&dpif->port_rwlock);
+			ovs_mutex_unlock(&kstat_mutex);
+			VLOG_WARN("dpif_solaris_get_stats kstat_lookup "
+			    "of %s failed: %s", kuri,
+			    kstat2_status_string(stat));
+			return (-1);
+		}
+		stats->n_flows += get_nvvt_int(map, "nflows");
+	}
+	VLOG_DBG("dpif_solaris_get_stats %ld nflows", stats->n_flows);
+	ovs_rwlock_unlock(&dpif->port_rwlock);
 	ovs_mutex_unlock(&kstat_mutex);
 	stats->n_lost   = 0;
-	stats->n_flows  = solaris_flow_walk(NULL, NULL, B_TRUE, NULL);
 	stats->n_masks  = UINT32_MAX;
 	stats->n_mask_hit  = UINT64_MAX;
 	return (0);
@@ -791,15 +808,15 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 		return (EINVAL);
 	}
 	ovs_rwlock_wrlock(&dpif->upcall_lock);
-	ovs_rwlock_wrlock(&dpif->port_rwlock);
 
 	if (*port_nop == ODPP_NONE) {
 		*port_nop = choose_port();
 		if (*port_nop == ODPP_NONE) {
 			error = EFBIG;
-			goto fail;
+			goto portno_fail;
 		}
 	}
+
 	if (vtype == OVS_VPORT_TYPE_NETDEV || vtype == OVS_VPORT_TYPE_VXLAN ||
 	    vtype == OVS_VPORT_TYPE_INTERNAL) {
 		uint64_t u64 = (uint32_t)(*port_nop);
@@ -811,7 +828,7 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 			VLOG_ERR("set portno %d on %s failed: %s",
 			    (uint32_t)(*port_nop), linkname,
 			    ovs_strerror(error));
-			goto fail;
+			goto portno_fail;
 		}
 	}
 
@@ -828,6 +845,7 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	port->xfd = -1;
 	port->is_uplink = is_uplink;
 
+	ovs_rwlock_wrlock(&dpif->port_rwlock);
 	/* Only create the TX PF_SOCKET on the physical link */
 	if (is_uplink) {
 		error = dpif_solaris_create_xsocket(dpif, port);
@@ -853,10 +871,8 @@ dpif_solaris_port_add__(struct dpif_solaris *dpif, struct netdev *netdev,
 	ovs_rwlock_unlock(&dpif->port_rwlock);
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 	return (0);
-fail:
-	if (*port_nop != ODPP_NONE)
-		reset_port(odp_to_u32(*port_nop));
 
+fail:
 	if (port != NULL) {
 		if (port->xfd != -1)
 			(void) close(port->xfd);
@@ -867,13 +883,19 @@ fail:
 		free(port->physname);
 		free(port);
 	}
+
+	ovs_rwlock_unlock(&dpif->port_rwlock);
 	if (vtype == OVS_VPORT_TYPE_NETDEV || vtype == OVS_VPORT_TYPE_VXLAN ||
 	    vtype == OVS_VPORT_TYPE_INTERNAL) {
 		VLOG_DBG("reset portno on %s", linkname);
 		(void) solaris_set_dlprop_ulong(linkname, "ofport", NULL,
 		    B_TRUE);
 	}
-	ovs_rwlock_unlock(&dpif->port_rwlock);
+
+portno_fail:
+	if (*port_nop != ODPP_NONE)
+		reset_port(odp_to_u32(*port_nop));
+
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 	return (error);
 }
@@ -1386,14 +1408,13 @@ dpif_solaris_flow_get(const struct dpif *dpif_,
 		return (error);
 	}
 	(void) strlcpy(flowname, solaris_flow->flowname, MAXUSERFLOWNAMELEN);
+	ovs_rwlock_unlock(&dpif->flow_rwlock);
+
 	error = solaris_get_flowattr(flowname, &f, &m);
 	if (error) {
 		VLOG_ERR("solaris_get_flowattr failed %d", error);
-		ovs_rwlock_unlock(&dpif->flow_rwlock);
 		return (error);
 	}
-
-	ovs_rwlock_unlock(&dpif->flow_rwlock);
 
 	/* Allocate buffer big enough for everything. */
 	*bufp = ofpbuf_new(4096);
@@ -1479,6 +1500,11 @@ dpif_solaris_flow_put(struct dpif *dpif_, const struct dpif_flow_put *put)
 	char flowname[MAXUSERFLOWNAMELEN];
 	int error;
 	struct ds fs, as;
+	boolean_t check_flow_equal = B_FALSE;
+	struct dpif_solaris_port *port = NULL;
+	odp_port_t		inport;
+	char			physname[MAXLINKNAMESPECIFIER];
+	char			portname[MAXLINKNAMESPECIFIER];
 
 	VLOG_DBG("dpif_solaris_flow_put");
 
@@ -1508,99 +1534,96 @@ dpif_solaris_flow_put(struct dpif *dpif_, const struct dpif_flow_put *put)
 	miniflow_destroy(&miniflow);
 
 	if (solaris_flow == NULL) {
-		if (put->flags & DPIF_FP_CREATE) {
-			struct dpif_solaris_port *port = NULL;
-			odp_port_t		inport;
-			char			physname[MAXLINKNAMESPECIFIER];
-			char			portname[MAXLINKNAMESPECIFIER];
-
-			inport = f.in_port.odp_port;
-			ovs_rwlock_rdlock(&dpif->port_rwlock);
-			error = dpif_solaris_get_port_by_number(dpif, inport,
-			    &port);
-			if (error == 0) {
-				(void) strlcpy(physname, port->physname,
-				    sizeof (physname));
-				(void) strlcpy(portname, port->name,
-				    sizeof (portname));
-			}
-			ovs_rwlock_unlock(&dpif->port_rwlock);
-			if (error == 0) {
-				VLOG_DBG("dpif_solaris_flow_put on %s",
-				    physname);
-
-				solaris_flow = dpif_solaris_flow_add(dpif,
-				    physname, &f, &wc.masks, &wc);
-				(void) strlcpy(flowname,
-				    solaris_flow->flowname,
-				    MAXUSERFLOWNAMELEN);
-				VLOG_DBG("dpif_solaris_flow_put %s mask %s "
-				    "actions %s", flowname, ds_cstr(&fs),
-				    ds_cstr(&as));
-				/*
-				 * workaround to passing a struct dpif to
-				 * solaris_add_flow adding dpif_provider.h to
-				 * util-solaris brings up a conflict in
-				 * Solaris's list and the OVS list
-				 * implementations.
-				 */
-				error = solaris_add_flow((void *)dpif,
-				    physname, flowname, &f,
-				    &wc.masks, put->actions, put->actions_len);
-				if (error == 0) {
-					VLOG_DBG("dpif_solaris_flow_put "
-					    "solaris_add_flow %s on %s succeed"
-					    "(port:%s)",
-					    flowname, physname, portname);
-				} else {
-					VLOG_ERR("dpif_solaris_flow_put "
-					    "solaris_add_flow %s on %s failed "
-					    "(port:%s)"
-					    "%d", flowname,
-					    physname,
-					    portname,
-					    error);
-					dpif_solaris_flow_remove(dpif,
-					    solaris_flow);
-				}
-			} else {
-				VLOG_DBG("dpif_solaris_flow_put(): "
-				    "failed to get inport %d\n", inport);
-			}
-		} else {
+		if ((put->flags & DPIF_FP_CREATE) == 0) {
+			ovs_rwlock_unlock(&dpif->flow_rwlock);
 			VLOG_ERR("dpif_solaris_flow_put mask %s "
 			    "actions %s not found", ds_cstr(&fs),
 			    ds_cstr(&as));
 			error = ENOENT;
+			goto done;
 		}
+
+
+		inport = f.in_port.odp_port;
+		ovs_rwlock_rdlock(&dpif->port_rwlock);
+		error = dpif_solaris_get_port_by_number(dpif, inport,
+		    &port);
+
+		if (error != 0) {
+			ovs_rwlock_unlock(&dpif->port_rwlock);
+			ovs_rwlock_unlock(&dpif->flow_rwlock);
+			VLOG_DBG("dpif_solaris_flow_put(): "
+			    "failed to get inport %d\n", inport);
+			goto done;
+		}
+
+		(void) strlcpy(physname, port->physname, sizeof (physname));
+		(void) strlcpy(portname, port->name, sizeof (portname));
+		ovs_rwlock_unlock(&dpif->port_rwlock);
+
+		VLOG_DBG("dpif_solaris_flow_put on %s", physname);
+
+		solaris_flow = dpif_solaris_flow_add(dpif, physname, &f,
+		    &wc.masks, &wc);
+		(void) strlcpy(flowname, solaris_flow->flowname,
+		    MAXUSERFLOWNAMELEN);
+
+		ovs_rwlock_unlock(&dpif->flow_rwlock);
+		VLOG_DBG("dpif_solaris_flow_put %s mask %s "
+		    "actions %s", flowname, ds_cstr(&fs), ds_cstr(&as));
+
+		/*
+		 * workaround to passing a struct dpif to
+		 * solaris_add_flow adding dpif_provider.h to
+		 * util-solaris brings up a conflict in
+		 * Solaris's list and the OVS list
+		 * implementations.
+		 */
+		error = solaris_add_flow((void *)dpif,
+		    physname, flowname, &f,
+		    &wc.masks, put->actions, put->actions_len);
+		if (error != 0) {
+			VLOG_ERR("dpif_solaris_flow_put "
+			    "solaris_add_flow %s on %s failed "
+			    "(port:%s)%d", flowname, physname, portname, error);
+			ovs_rwlock_wrlock(&dpif->flow_rwlock);
+			dpif_solaris_flow_remove(dpif, solaris_flow);
+			ovs_rwlock_unlock(&dpif->flow_rwlock);
+			goto done;
+		}
+
+		VLOG_DBG("dpif_solaris_flow_put "
+		    "solaris_add_flow %s on %s succeed"
+		    "(port:%s)", flowname, physname, portname);
 	} else {
-		VLOG_DBG("dpif_solaris_flow_put exsting flow %s found for"
-		    " mask %s actions %s", solaris_flow->flowname,
-		    ds_cstr(&fs), ds_cstr(&as));
-		if ((put->flags & DPIF_FP_MODIFY) &&
-		    flow_equal(&f, &solaris_flow->flow)) {
-			(void) strlcpy(flowname, solaris_flow->flowname,
-			    MAXUSERFLOWNAMELEN);
+		(void) strlcpy(flowname, solaris_flow->flowname,
+		    MAXUSERFLOWNAMELEN);
+		check_flow_equal = flow_equal(&f, &solaris_flow->flow);
+		ovs_rwlock_unlock(&dpif->flow_rwlock);
+		VLOG_DBG("dpif_solaris_flow_put exsting flow %s found for "
+		    "mask %s actions %s", flowname, ds_cstr(&fs), ds_cstr(&as));
+		if ((put->flags & DPIF_FP_MODIFY) && check_flow_equal) {
 			error = solaris_modify_flow((void *)dpif,
 			    flowname, put->actions, put->actions_len);
-			if (error == 0) {
-				VLOG_DBG("dpif_solaris_flow_put "
-				    "exsting flow %s found and updated,"
-				    "for mask %s actions %s", flowname,
-				    ds_cstr(&fs), ds_cstr(&as));
-			} else {
+			if (error != 0) {
 				VLOG_ERR("dpif_solaris_flow_put "
 				    "exsting flow %s found but update "
 				    "failed %d, for mask %s actions %s",
 				    flowname, error, ds_cstr(&fs),
 				    ds_cstr(&as));
+				goto done;
 			}
+			VLOG_DBG("dpif_solaris_flow_put "
+			    "exsting flow %s found and updated,"
+			    "for mask %s actions %s", flowname,
+			    ds_cstr(&fs), ds_cstr(&as));
 		} else if (put->flags & DPIF_FP_CREATE) {
 			VLOG_DBG("dpif_solaris_flow_put existing flow "
 			    "%s already exists for mask %s actions %s",
-			    solaris_flow->flowname, ds_cstr(&fs),
+			    flowname, ds_cstr(&fs),
 			    ds_cstr(&as));
 			error = EEXIST;
+			goto done;
 		} else {
 			/*
 			 * Overlapping flow. (Flow & Mask) matches but flow
@@ -1608,31 +1631,29 @@ dpif_solaris_flow_put(struct dpif *dpif_, const struct dpif_flow_put *put)
 			 */
 			VLOG_ERR("dpif_solaris_flow_put overlapped "
 			    "with existing flow %s, for mask %s actions %s",
-			    solaris_flow->flowname, ds_cstr(&fs),
+			    flowname, ds_cstr(&fs),
 			    ds_cstr(&as));
 			error = EINVAL;
+			goto done;
 		}
 	}
 
-	if (error == 0) {
-		if (put->stats) {
-			if (dpif_solaris_get_flowstats(flowname,
-			    put->stats) == 0) {
-				VLOG_DBG("dpif_solaris_flow_put "
-				    "get_flowstats %s succeed", flowname);
-			} else {
-				VLOG_ERR("dpif_solaris_flow_put "
-				    "get_flowstats %s failed", flowname);
-			}
+	if (put->stats) {
+		if (dpif_solaris_get_flowstats(flowname,
+		    put->stats) == 0) {
+			VLOG_DBG("dpif_solaris_flow_put "
+			    "get_flowstats %s succeed", flowname);
+		} else {
+			VLOG_ERR("dpif_solaris_flow_put "
+			    "get_flowstats %s failed", flowname);
 		}
-		/*
-		 * If DPIF_FP_MODIFY and DPIF_FP_ZERO_STATS is set in
-		 * put->flags, we should zero out the statistics of the
-		 * given flow. This is currently not supported, and so far,
-		 * we don't see any problem yet.
-		 */
 	}
-	ovs_rwlock_unlock(&dpif->flow_rwlock);
+	/*
+	 * If DPIF_FP_MODIFY and DPIF_FP_ZERO_STATS is set in
+	 * put->flags, we should zero out the statistics of the
+	 * given flow. This is currently not supported, and so far,
+	 * we don't see any problem yet.
+	 */
 done:
 	ds_destroy(&fs);
 	ds_destroy(&as);
@@ -1682,6 +1703,7 @@ dpif_solaris_flow_del(struct dpif *dpif_, const struct dpif_flow_del *del)
 			    "get_flowstats %s failed %d", flowname, error);
 		}
 	}
+	ovs_rwlock_unlock(&dpif->flow_rwlock);
 	error = solaris_remove_flow(physname, flowname);
 	if (error == 0) {
 		VLOG_DBG("dpif_solaris_flow_del solaris_remove_flow %s "
@@ -1690,7 +1712,6 @@ dpif_solaris_flow_del(struct dpif *dpif_, const struct dpif_flow_del *del)
 		VLOG_ERR("dpif_solaris_flow_del solaris_remove_flow %s "
 		    "failed %d", flowname, error);
 	}
-	ovs_rwlock_unlock(&dpif->flow_rwlock);
 
 	free(physname);
 	return (error);
@@ -1700,14 +1721,28 @@ static int
 dpif_solaris_flow_flush__(struct dpif_solaris *dpif)
 {
 	struct dpif_solaris_flow *solaris_flow, *next;
-
+	int i = 0, flow_count = 0;
+	char **flownames, **physnames;
 	ovs_rwlock_wrlock(&dpif->flow_rwlock);
+	flow_count = hmap_count(&dpif->flows);
+
+	flownames = xmalloc(flow_count * sizeof (char *));
+	physnames = xmalloc(flow_count * sizeof (char *));
+
 	HMAP_FOR_EACH_SAFE(solaris_flow, next, node, &dpif->flows) {
-		(void) solaris_remove_flow(solaris_flow->physname,
-		    solaris_flow->flowname);
+		flownames[i] = xstrdup(solaris_flow->flowname);
+		physnames[i] = xstrdup(solaris_flow->physname);
 		dpif_solaris_flow_remove(dpif, solaris_flow);
 	}
 	ovs_rwlock_unlock(&dpif->flow_rwlock);
+
+	for (i = 0; i < flow_count; i++) {
+		(void) solaris_remove_flow(physnames[i], flownames[i]);
+		free(physnames[i]);
+		free(flownames[i]);
+	}
+	free(flownames);
+	free(physnames);
 	return (0);
 }
 
@@ -1758,7 +1793,7 @@ dpif_solaris_flow_dump_state_uninit(void *state_)
 }
 
 static void
-walk_flow(void *arg, const char *name, boolean_t is_default, struct flow *f,
+walk_flow(void *arg, const char *name, struct flow *f,
     struct flow *m, struct ofpbuf *action, uint64_t npackets, uint64_t nbytes,
     uint64_t lastused)
 {
@@ -1768,7 +1803,6 @@ walk_flow(void *arg, const char *name, boolean_t is_default, struct flow *f,
 	struct dpif_solaris_flow *dsflow;
 
 	VLOG_DBG("dpif_solaris_flow_dump_start walk flow %s", name);
-	ovs_assert(!is_default);
 	flow = xzalloc(sizeof (*flow));
 	strlcpy(flow->flowname, name, sizeof (flow->flowname));
 	bcopy(f, &flow->f, sizeof (*f));
@@ -1816,7 +1850,7 @@ dpif_solaris_flow_dump_start(const struct dpif *dpif_, void **iterp)
 	ovs_mutex_init(&iter->mutex);
 	ovs_mutex_lock(&iter->mutex);
 	ofpbuf_init(&action, 0);
-	(void) solaris_flow_walk(iter, &action, B_TRUE, walk_flow);
+	solaris_flow_walk(iter, &action, walk_flow);
 	ofpbuf_uninit(&action);
 	ovs_mutex_unlock(&iter->mutex);
 	return (0);

@@ -95,8 +95,8 @@ uint64_t get_nvvt_int(kstat2_map_t, char *);
 
 void solaris_port_walk(void *, void (*)(void *, const char *, char *,
     odp_port_t));
-uint64_t solaris_flow_walk(void *, struct ofpbuf *, boolean_t,
-    void (*)(void *, const char *, boolean_t, struct flow *, struct flow *,
+void solaris_flow_walk(void *, struct ofpbuf *,
+    void (*)(void *, const char *, struct flow *, struct flow *,
     struct ofpbuf *, uint64_t, uint64_t, uint64_t));
 
 boolean_t solaris_is_uplink_class(const char *);
