@@ -2,7 +2,7 @@ Changes to Neutron Open vSwitch agent to port it to Solaris. These changes
 will eventually be proposed upstream.
 
 --- neutron-8.1.2/neutron/plugins/ml2/drivers/openvswitch/agent/ovs_neutron_agent.py	2016-06-09 18:45:36.000000000 -0700
-+++ new/neutron/plugins/ml2/drivers/openvswitch/agent/ovs_neutron_agent.py	2016-08-18 13:23:57.331696500 -0700
++++ new/neutron/plugins/ml2/drivers/openvswitch/agent/ovs_neutron_agent.py	2016-11-01 18:39:33.985866969 -0700
 @@ -15,12 +15,14 @@
  
  import collections
@@ -47,7 +47,7 @@ will eventually be proposed upstream.
  
          self.use_veth_interconnection = ovs_conf.use_veth_interconnection
          self.veth_mtu = agent_conf.veth_mtu
-@@ -2081,9 +2090,489 @@
+@@ -2081,9 +2090,492 @@
                                 "in both the Agent and Server side."))
  
  
@@ -143,7 +143,10 @@ will eventually be proposed upstream.
 +        #   ovs-vsctl -- --may-exist add-br BRIDGE_NAME
 +        # which does nothing if bridge already exists.
 +        self.int_br.create()
-+        self.int_br.set_secure_mode()
++        if self.enable_tunneling:
++            self.int_br.set_secure_mode()
++        else:
++            self.int_br.set_standalone_mode()
 +        self.int_br.setup_controllers(self.conf)
 +
 +        if self.conf.AGENT.drop_flows_on_start:
@@ -538,7 +541,7 @@ will eventually be proposed upstream.
          LOG.error(_LE("Tunneling can't be enabled with invalid local_ip '%s'."
                        " IP couldn't be found on this host's interfaces."),
                    local_ip)
-@@ -2116,7 +2605,10 @@
+@@ -2116,7 +2608,10 @@
      validate_tunnel_config(cfg.CONF.AGENT.tunnel_types, cfg.CONF.OVS.local_ip)
  
      try:
