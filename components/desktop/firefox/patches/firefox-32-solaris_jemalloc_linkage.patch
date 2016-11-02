@@ -28,7 +28,7 @@ new file mode 100644
 diff --git a/storage/mozStorageService.cpp b/storage/mozStorageService.cpp
 --- a/storage/mozStorageService.cpp
 +++ b/storage/mozStorageService.cpp
-@@ -514,9 +514,14 @@
+@@ -528,9 +528,14 @@
    int rc;
  
  #ifdef MOZ_STORAGE_MEMORY
@@ -45,7 +45,7 @@ diff --git a/storage/mozStorageService.cpp b/storage/mozStorageService.cpp
 +  free(test_jemalloc);
  #endif
  
-   // Explicitly initialize sqlite3.  Although this is implicitly called by
+   // TODO (bug 1191405): do not preallocate the connections caches until we
 diff --git a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 --- a/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in
 +++ b/memory/jemalloc/src/include/jemalloc/internal/jemalloc_internal.h.in

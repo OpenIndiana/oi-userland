@@ -4,9 +4,9 @@ this or whether we are just going to support PulseAudio.
 diff --git a/media/libcubeb/src/cubeb.c b/media/libcubeb/src/cubeb.c
 --- a/media/libcubeb/src/cubeb.c
 +++ b/media/libcubeb/src/cubeb.c
-@@ -56,6 +56,9 @@
- #if defined(USE_AUDIOTRACK)
- int audiotrack_init(cubeb ** context, char const * context_name);
+@@ -60,6 +60,9 @@
+ #if defined(USE_KAI)
+ int kai_init(cubeb ** context, char const * context_name);
  #endif
 +#if defined(USE_SUN)
 +int sunaudio_init(cubeb ** context, char const * context_name);
@@ -14,9 +14,9 @@ diff --git a/media/libcubeb/src/cubeb.c b/media/libcubeb/src/cubeb.c
  
  int
  validate_stream_params(cubeb_stream_params stream_params)
-@@ -122,6 +125,9 @@
- #if defined(USE_AUDIOTRACK)
-     audiotrack_init,
+@@ -129,6 +132,9 @@
+ #if defined(USE_KAI)
+     kai_init,
  #endif
 +#if defined(USE_SUN)
 +    sunaudio_init,

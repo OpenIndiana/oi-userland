@@ -8,7 +8,7 @@ diff --git a/gfx/cairo/cairo/src/cairo-xlib-surface.c b/gfx/cairo/cairo/src/cair
 --- a/gfx/cairo/cairo/src/cairo-xlib-surface.c
 +++ b/gfx/cairo/cairo/src/cairo-xlib-surface.c
 @@ -2325,6 +2325,7 @@
-                           cairo_region_t *clip_region)
+ 			   cairo_region_t *clip_region)
  {
      cairo_image_surface_t *image;
 +    cairo_format_masks_t image_masks;
@@ -16,8 +16,8 @@ diff --git a/gfx/cairo/cairo/src/cairo-xlib-surface.c b/gfx/cairo/cairo/src/cair
      cairo_status_t status;
      int tx, ty;
 @@ -2341,6 +2342,16 @@
-            (image->base.content & CAIRO_CONTENT_ALPHA) == 0)))
-        return CAIRO_INT_STATUS_UNSUPPORTED;
+ 	    (image->base.content & CAIRO_CONTENT_ALPHA) == 0)))
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
  
 +    if (image->base.backend->type == CAIRO_SURFACE_TYPE_IMAGE) {
 +       if (_pixman_format_to_masks (image->pixman_format, &image_masks)) {
@@ -30,5 +30,5 @@ diff --git a/gfx/cairo/cairo/src/cairo-xlib-surface.c b/gfx/cairo/cairo/src/cair
 +    }
 +
      if (image->base.backend->type != CAIRO_SURFACE_TYPE_IMAGE) {
-        if (image->base.backend->type == CAIRO_INTERNAL_SURFACE_TYPE_SNAPSHOT) {
-            image = (cairo_image_surface_t *) ((cairo_surface_snapshot_t *) image)->target;
+ 	if (image->base.backend->type == CAIRO_INTERNAL_SURFACE_TYPE_SNAPSHOT) {
+ 	    image = (cairo_image_surface_t *) ((cairo_surface_snapshot_t *) image)->target;
