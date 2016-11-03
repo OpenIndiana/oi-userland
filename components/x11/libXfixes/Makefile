@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfixes
-COMPONENT_VERSION= 5.0.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 5.0.3
 COMPONENT_SUMMARY= libXfixes - XFIXES extension client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:63bec085084fa3caaee5180490dd871f1eb2020ba9e9b39a30f93693ffc34767
+  sha256:de1cd33aff226e08cefd0e6759341c2c8e8c9faf8ce9ac6ec38d43e287b22ad6
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
