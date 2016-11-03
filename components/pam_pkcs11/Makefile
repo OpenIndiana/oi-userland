@@ -52,6 +52,7 @@ endif
 CONFIGURE_BINDIR.32= $(USRLIB.32)/pam_pkcs11
 CONFIGURE_BINDIR.64= $(USRLIB.64)/pam_pkcs11
 CPPFLAGS += -I$(USRINCDIR)/openldap
+CFLAGS += -DMODULE_ISA_FIX -DUPGRADE_BUG_FIX
 CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)/security
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
@@ -59,11 +60,8 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-confdir=/etc/security/pam_pkcs11
 CONFIGURE_OPTIONS += --docdir=/etc/security/pam_pkcs11
 CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
+CONFIGURE_OPTIONS += --with-pcsclite=yes
 CONFIGURE_OPTIONS += PCSC_CFLAGS="-I /usr/include/PCSC"
-CONFIGURE_OPTIONS.32 += CFLAGS="$(CFLAGS) -DMODULE_ISA_FIX"
-CONFIGURE_OPTIONS.32 += --with-pcsclite=no
-CONFIGURE_OPTIONS.64 += CFLAGS="$(CFLAGS) -DMODULE_ISA_FIX -D_LP64"
-CONFIGURE_OPTIONS.64 += --with-pcsclite=yes
 
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl

@@ -1,7 +1,7 @@
 '\" te
 .\" Portions Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
 .\" This manual page is derived from documentation obtained from the OpenSC organization (www.opensc-project.org). This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. This library is distributed in the hope that it is useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-.TH pam_pkcs11 7 "30 Aug 2016" "SunOS 5.12" "Standards, Environments, and Macros"
+.TH pam_pkcs11 7 "14 Oct 2016" "SunOS 5.12" "Standards, Environments, and Macros"
 .SH NAME
 pam_pkcs11 \- PAM Authentication Module for the PKCS#11 token libraries
 .SH SYNOPSIS
@@ -230,7 +230,9 @@ Some mappers do not require the specification of a mapfile, for example, the com
 .sp
 .RE
 .RS +4
-The $ISA token in all the module paths is replaced by an implementation defined directory name which defines the path relative to the calling program's instruction set architecture. This allows the pam_pkcs11 module to support both 32 and 64 bit applications co-exist concurrently in the system. For example, for the "module = /usr/lib/$ISA/libpkcs11.so" option, at run time, /usr/lib/64/libpkcs11.so will be loaded for 64 bit applications and /usr/lib/32/libpkcs11.so for 32 bit applications. 
+All the modules (PKCS#11 module and mapper modules) specified in the /etc/security/pam_pkcs11/pam_pkcs11.conf configuration file need to be delivered in both 32-bit and 64-bit forms.
+.sp
+The $ISA (instruction set architecture) token in all the module paths is replaced by an implementation-defined directory name which defines the path relative to the calling program's instruction set architecture. The $ISA token should be used in all the module paths. This allows the pam_pkcs11 module to support both 32 and 64 bit applications concurrently on the system. For example, for the "module = /usr/lib/$ISA/libpkcs11.so" option, at run time, /usr/lib/64/libpkcs11.so will be loaded for 64-bit applications and /usr/lib/32/libpkcs11.so for 32-bit applications. 
 .RE
 .SH OPTIONS
 .sp
@@ -414,4 +416,4 @@ Interface StabilityUncommitted
 \fBcard_eventmgr\fR(1), \fBpkcs11_inspect\fR(1), \fBpklogin_finder\fR(1), \fBcryptoadm\fR(8), \fBlibpkcs11\fR(3LIB)\fBlibpkcs11\fR(3LIB)\fBpam_sm_authenticate\fR(3PAM), \fBpam.conf\fR(5), \fBattributes\fR(7), \fBpkcs11_softtoken\fR(7)
 .sp
 .LP
-\fIPAM-PKCS11 User Manual\fR, available at the \fBhttp://www.opensc-project.org/\fR web site, under the \fBPAM PKCS#11\fR link.
+\fIPAM-PKCS11 User Manual\fR, available at /usr/share/doc/pam_pkcs11/pam_pkcs11.html.

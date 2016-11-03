@@ -1,0 +1,59 @@
+#
+# This patch is to fix one spelling error and some message problems in PAM
+# prompt, so that they will comply to the Solaris message style.
+# 
+# The authentication spelling error has been already fixed in the latest
+# upstream source, so there is no need to contribute back this spelling error
+# fix. We will remove the spelling error change from this patch, when we 
+# upgrade this module to a new release that contains the spelling error fix.
+#
+# Changes from smartcard to "smart card" in pam_prompt messages are for
+# Solaris message style compliance and they are Solaris specific. 
+#
+--- pam_pkcs11-0.6.8_ORIG/src/pam_pkcs11/pam_pkcs11.c	Tue Oct  4 12:22:18 2016
++++ pam_pkcs11-0.6.8_NEW/src/pam_pkcs11/pam_pkcs11.c	Thu Oct 27 15:56:06 2016
+@@ -199,7 +199,7 @@
+   char **issuer, **serial;
+   const char *login_token_name = NULL;
+ 
+-  pam_prompt(pamh, PAM_TEXT_INFO , NULL, _("Smartcard authentification starts"));
++  pam_prompt(pamh, PAM_TEXT_INFO , NULL, _("Smart card authentication starts"));
+ 
+   /* first of all check whether debugging should be enabled */
+   for (i = 0; i < argc; i++)
+@@ -392,7 +392,7 @@
+       }
+     } else if (user) {
+ 		if (!configuration->quiet) {
+-			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2308: No smartcard found"));
++			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2308: No smart card found"));
+ 			sleep(configuration->err_display_time);
+ 		}
+ 
+@@ -419,7 +419,7 @@
+       if (rv != 0) {
+         /* user gave us a user id and no smart card go to next module */
+ 		if (!configuration->quiet) {
+-			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2310: No smartcard found"));
++			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2310: No smart card found"));
+ 			sleep(configuration->err_display_time);
+ 		}
+ 
+@@ -495,7 +495,7 @@
+ 			pam_syslog(pamh, LOG_ERR,
+ 					"password length is zero but the 'nullok' argument was not defined.");
+ 			if (!configuration->quiet) {
+-				pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2318: Empty smartcard PIN not allowed."));
++				pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2318: Empty smart card PIN not allowed."));
+ 				sleep(configuration->err_display_time);
+ 			}
+ 			return PAM_AUTH_ERR;
+@@ -523,7 +523,7 @@
+       ERR1("open_pkcs11_login() failed: %s", get_error());
+ 		if (!configuration->quiet) {
+ 			pam_syslog(pamh, LOG_ERR, "open_pkcs11_login() failed: %s", get_error());
+-			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2320: Wrong smartcard PIN"));
++			pam_prompt(pamh, PAM_ERROR_MSG , NULL, _("Error 2320: Wrong smart card PIN"));
+ 			sleep(configuration->err_display_time);
+ 		}
+       goto auth_failed_nopw;

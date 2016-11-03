@@ -1,0 +1,115 @@
+#
+# In S11U3 releases, two versions of LDAP mapper modules are provided:
+# - ldap_mapper.so (built with Mozilla LDAP)
+# - openldap_mapper.so (built with OpenLDAP)
+#
+# However, on S12, because Mozilla LDAP is EOL'ed, only one LDAP mapper module
+# is provided:
+# - ldap_mapper.so (built with OpenLDAP)
+#
+# If openldap_mapper.so is used in pam_pkcs11.conf on S11U3, then pam_pkcs11
+# will fail to load the LDAP module after upgrade to S12. 
+#
+# To resolve this upgrade issue, on S12, if openldap_mapper.so is specified in 
+# pam_pkcs11.conf file, then we will load ldap_mapper.so instead. 
+#
+# This patch is Solaris specific and is for S12+ only. 
+#
+--- pam_pkcs11-0.6.8_ISA/src/pam_pkcs11/mapper_mgr.c	Thu Oct 13 15:01:46 2016
++++ pam_pkcs11-0.6.8_NEW/src/pam_pkcs11/mapper_mgr.c	Tue Nov  1 20:09:41 2016
+@@ -42,6 +42,41 @@
+ #include <sys/param.h>
+ #endif
+ 
++#ifdef UPGRADE_BUG_FIX
++#include <sys/utsname.h>
++#include <strings.h>
++#include <libgen.h>
++#include <syslog.h>
++
++#define LDAP_MAPPER_MODULE "ldap_mapper.so"
++#define OPENLDAP_MAPPER_MODULE "openldap_mapper.so"
++
++/*
++ * Return 1, if the system is running S12 or later, otherwise return 0.
++ */
++static int is_S12(void) {
++	struct utsname unstr;
++	struct utsname *un = &unstr;
++	char *ptr;
++
++	(void) uname(un);
++	DBG1("System is %s\n", un->release);
++
++	/* Make sure the major number is 5 */
++	ptr = un->release;
++	if (strncmp(ptr, "5", 1) != 0)
++	    return 0;
++
++	/* Check the minor number */
++	ptr = ptr + 2; 
++	if (atoi(ptr) >= 12) {
++	    return 1;
++	} else {
++	    return 0;
++	}
++}
++#endif /* UPGRADE_BUG_FIX */
++
+ struct mapper_listitem *root_mapper_list;
+ 
+ /*
+@@ -100,17 +135,49 @@
+ 	    }
+ 	} else if (blk) { /* assume dynamic module */
+ 	    DBG1("Loading dynamic module for mapper '%s'",name);
++
+ #ifdef MODULE_ISA_FIX
+ 	    if (expand_isa_path(libname, real_libname, sizeof (real_libname))) {
+ 	        DBG1("Problem in module path %s", libname);
+                 return NULL;
+ 	    } else {
+-	        DBG1("Module path is %s", real_libname);
++		DBG1("Module path is %s", real_libname);
+ 	    }
+-	    handler= dlopen(real_libname, RTLD_NOW);
+-#else
++
++#ifdef UPGRADE_BUG_FIX
++	    /*
++	     * If the system is running S12+ and openldap_mapper.so is used
++	     * for the ldap mapper module, then we will replace it with
++	     * ldap_mapper.so.
++	     */
++	    if (is_S12() && (strcmp(name, "ldap") == 0) && 
++	      (strcmp(basename(real_libname), OPENLDAP_MAPPER_MODULE) == 0)) {
++		char tmp_libname[MAXPATHLEN];
++		int len1, len2;
++
++		len1 = strlen(real_libname);
++		len2 = strlen(OPENLDAP_MAPPER_MODULE);
++		(void) strlcpy(tmp_libname, real_libname, len1 - len2 + 1);
++		(void) strlcat(tmp_libname, LDAP_MAPPER_MODULE, MAXPATHLEN);
++		(void) strncpy(real_libname, tmp_libname, MAXPATHLEN);
++
++		syslog(LOG_ERR,"pam_pkcs11: openldap_mapper.so is not "
++		  "available on S12, so ldap_mapper.so is loaded instead, "
++		  "because ldap_mapper.so is built with OpenLDAP libraries "
++		  "on S12.");
++
++		DBG("Warning: openldap_mapper.so is not available on S12, so "
++		  "ldap_mapper.so is loaded instead, because ldap_mapper.so "
++		  "is built with OpenLDAP libraries on S12.");
++        		
++		DBG1("Module path is changed to %s", real_libname);
++	    } 
++#endif /* UPGRADE_BUG_FIX */
++	    handler= dlopen(real_libname,RTLD_NOW);
++#else 
+ 	    handler= dlopen(libname,RTLD_NOW);
+-#endif
++#endif /* MODULE_ISA_FIX */
++
+ 	    if (!handler) {
+ 		DBG3("dlopen failed for module:  %s path: %s Error: %s",name,libname,dlerror());
+ 		return NULL;
