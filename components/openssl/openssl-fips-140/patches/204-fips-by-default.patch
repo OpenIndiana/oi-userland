@@ -1,5 +1,6 @@
 # Developed in house: Solaris specific
 # This patch enables FIPS mode in the _init routine.
+# Also, use EVP API instead of low level SHA API
 --- a/crypto/cryptlib.c 2016-09-02 14:10:14.157867400 -0700
 +++ b/crypto/cryptlib.c 2016-09-02 14:08:38.308229315 -0700
 @@ -117,6 +117,8 @@
@@ -26,3 +27,25 @@
      (void) pthread_atfork(solaris_fork_prep, solaris_fork_post, solaris_fork_post);
  }
  
+--- a/apps/speed.c	2016-09-26 02:49:07.000000000 -0700
++++ b/apps/speed.c	2016-10-25 11:26:37.455939170 -0700
+@@ -1640,7 +1640,8 @@
+             print_message(names[D_SHA256], c[D_SHA256][j], lengths[j]);
+             Time_F(START);
+             for (count = 0, run = 1; COND(c[D_SHA256][j]); count++)
+-                SHA256(buf, lengths[j], sha256);
++                EVP_Digest(buf, (unsigned long)lengths[j], sha256, NULL,
++                           EVP_sha256(), NULL);
+             d = Time_F(STOP);
+             print_result(D_SHA256, j, count, d);
+         }
+@@ -1653,7 +1654,8 @@
+             print_message(names[D_SHA512], c[D_SHA512][j], lengths[j]);
+             Time_F(START);
+             for (count = 0, run = 1; COND(c[D_SHA512][j]); count++)
+-                SHA512(buf, lengths[j], sha512);
++                EVP_Digest(buf, (unsigned long)lengths[j], sha512, NULL,
++                           EVP_sha512(), NULL);
+             d = Time_F(STOP);
+             print_result(D_SHA512, j, count, d);
+         }

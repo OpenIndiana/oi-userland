@@ -80,6 +80,20 @@ OPENSSL_FIPS_HMAC = 26f923491458df77a1f4c6ce39fef2f5bea88cd5
 COMPONENT_PRE_CONFIGURE_ACTION = ( cd $(@D); \
     $(RM) $(SOURCE_DIR)/test/fips_aes_data; $(CP) -r $(SOURCE_DIR)/* .; )
 
+COMPONENT_POST_UNPACK_ACTION = \
+    ( echo "Cloning engines..."; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/dest4-sparcv9.pl		$(@D)/crypto/des/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/vis3-mont.pl		$(@D)/crypto/bn/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl		$(@D)/crypto/bn/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl		$(@D)/crypto/bn/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/e_des3.c			$(@D)/crypto/evp; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/e_aes.c			$(@D)/crypto/evp; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sha1-sparcv9.pl		$(@D)/crypto/sha/asm; \
+	$(LN) -fs $(COMPONENT_DIR)/inline-t4/sha512-sparcv9.pl		$(@D)/crypto/sha/asm; )
+
 # There is a specific way that must be followed to build the FIPS-140 canister.
 # It is "./config fipscanisterbuild; make; make install" and is called a command
 # set "U2" in the OpenSSL FIPS-140 User Guide.

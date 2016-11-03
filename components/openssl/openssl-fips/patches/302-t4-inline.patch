@@ -1,0 +1,710 @@
+#
+# This file adds inline T4 instruction support to OpenSSL upstream code.
+# The change was brought in from OpenSSL 1.0.2.
+#
+Index: Configure
+===================================================================
+diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
+--- a/Configure 2011-05-24 17:02:24.000000000 -0700
++++ b/Configure 2011-07-27 10:48:17.817470000 -0700
+@@ -129,7 +129,7 @@
+ 
+ my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:e_padlock-x86_64.o";
+ my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
+-my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o vis3-mont.o sparct4-mont.o sparcv9-gf2m.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
+ my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
+ my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
+ my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
+Index: crypto/sparccpuid.S
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
+--- a/crypto/sparccpuid.S 2011-05-24 17:02:24.000000000 -0700
++++ b/crypto/sparccpuid.S 2011-07-27 10:48:17.817470000 -0700
+@@ -255,7 +255,12 @@
+ !	UltraSPARC IIe		7
+ !	UltraSPARC III		7
+ !	UltraSPARC T1		24
++!	SPARC T4		65(*)
+ !
++! (*)	result has lesser to do with VIS instruction latencies, rdtick
++!	appears that slow, but it does the trick in sense that FP and
++!	VIS code paths are still slower than integer-only ones.
++!
+ ! Numbers for T2 and SPARC64 V-VII are more than welcomed.
+ !
+ ! It would be possible to detect specifically US-T1 by instrumenting
+@@ -264,6 +269,8 @@
+ .global	_sparcv9_vis1_instrument
+ .align	8
+ _sparcv9_vis1_instrument:
++	.word	0x81b00d80	!fxor	%f0,%f0,%f0
++	.word	0x85b08d82	!fxor	%f2,%f2,%f2
+ 	.word	0x91410000	!rd	%tick,%o0
+ 	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+ 	.word	0x85b08d82	!fxor	%f2,%f2,%f2
+Index: crypto/sparcv9cap.c
+===================================================================
+--- openssl-fips-2.0.13/crypto/sparcv9cap.c.~1~	2016-06-20 12:49:42.000000000 -0700
++++ openssl-fips-2.0.13/crypto/sparcv9cap.c	2016-09-08 14:37:20.252604855 -0700
+@@ -4,41 +4,81 @@
+ #include <setjmp.h>
+ #include <signal.h>
+ #include <sys/time.h>
++#include <unistd.h>
+ #include <openssl/bn.h>
++#include "sparc_arch.h"
+ 
+-#define SPARCV9_TICK_PRIVILEGED	(1<<0)
+-#define SPARCV9_PREFER_FPU	(1<<1)
+-#define SPARCV9_VIS1		(1<<2)
+-#define SPARCV9_VIS2		(1<<3)	/* reserved */
+-#define SPARCV9_FMADD		(1<<4)	/* reserved for SPARC64 V */
+-#define SPARCV9_BLK		(1<<5)	/* VIS1 block copy */
++#if defined(__GNUC__) && defined(__linux)
++__attribute__((visibility("hidden")))
++#endif
+ 
+-static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
++extern unsigned OPENSSL_sparcv9cap_P[2];
+ 
+ int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
+-	{
+-	int bn_mul_mont_fpu(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
+-	int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
++{
++    int bn_mul_mont_vis3(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np, const BN_ULONG *n0, int num);
++    int bn_mul_mont_fpu(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np, const BN_ULONG *n0, int num);
++    int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np, const BN_ULONG *n0, int num);
+ 
+-	if (num>=8 && !(num&1) &&
+-	    (OPENSSL_sparcv9cap_P&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
+-		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
+-		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
+-	else
+-		return bn_mul_mont_int(rp,ap,bp,np,n0,num);
+-	}
++    if (!(num & 1) && num >= 6) {
++        if ((num & 15) == 0 && num <= 64 &&
++            (OPENSSL_sparcv9cap_P[1] & (CFR_MONTMUL | CFR_MONTSQR)) ==
++            (CFR_MONTMUL | CFR_MONTSQR)) {
++            typedef int (*bn_mul_mont_f) (BN_ULONG *rp, const BN_ULONG *ap,
++                                          const BN_ULONG *bp,
++                                          const BN_ULONG *np,
++                                          const BN_ULONG *n0);
++            int bn_mul_mont_t4_8(BN_ULONG *rp, const BN_ULONG *ap,
++                                 const BN_ULONG *bp, const BN_ULONG *np,
++                                 const BN_ULONG *n0);
++            int bn_mul_mont_t4_16(BN_ULONG *rp, const BN_ULONG *ap,
++                                  const BN_ULONG *bp, const BN_ULONG *np,
++                                  const BN_ULONG *n0);
++            int bn_mul_mont_t4_24(BN_ULONG *rp, const BN_ULONG *ap,
++                                  const BN_ULONG *bp, const BN_ULONG *np,
++                                  const BN_ULONG *n0);
++            int bn_mul_mont_t4_32(BN_ULONG *rp, const BN_ULONG *ap,
++                                  const BN_ULONG *bp, const BN_ULONG *np,
++                                  const BN_ULONG *n0);
++            static const bn_mul_mont_f funcs[4] = {
++                bn_mul_mont_t4_8, bn_mul_mont_t4_16,
++                bn_mul_mont_t4_24, bn_mul_mont_t4_32
++            };
++            bn_mul_mont_f worker = funcs[num / 16 - 1];
+ 
++            if ((*worker) (rp, ap, bp, np, n0))
++                return 1;
++            /* retry once and fall back */
++            if ((*worker) (rp, ap, bp, np, n0))
++                return 1;
++            return bn_mul_mont_vis3(rp, ap, bp, np, n0, num);
++        }
++        if ((OPENSSL_sparcv9cap_P[0] & SPARCV9_VIS3))
++            return bn_mul_mont_vis3(rp, ap, bp, np, n0, num);
++        else if (num >= 8 &&
++                 (OPENSSL_sparcv9cap_P[0] &
++                  (SPARCV9_PREFER_FPU | SPARCV9_VIS1)) ==
++                 (SPARCV9_PREFER_FPU | SPARCV9_VIS1))
++            return bn_mul_mont_fpu(rp, ap, bp, np, n0, num);
++    }
++    return bn_mul_mont_int(rp, ap, bp, np, n0, num);
++}
++
++
+ unsigned long	_sparcv9_rdtick(void);
+ void		_sparcv9_vis1_probe(void);
+ unsigned long	_sparcv9_vis1_instrument(void);
+ void		_sparcv9_vis2_probe(void);
+ void		_sparcv9_fmadd_probe(void);
++unsigned long _sparcv9_rdcfr(void);
++void _sparcv9_vis3_probe(void);
++unsigned long _sparcv9_random(void);
+ size_t 		_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
+ size_t		_sparcv8_vis1_instrument_bus2(unsigned int *,size_t,size_t);
+ 
+ unsigned long OPENSSL_rdtsc(void)
+ 	{
+-	if (OPENSSL_sparcv9cap_P&SPARCV9_TICK_PRIVILEGED)
++	if (OPENSSL_sparcv9cap_P[0]&SPARCV9_TICK_PRIVILEGED)
+ #if defined(__sun) && defined(__SVR4)
+ 		return gethrtime();
+ #else
+@@ -50,7 +90,7 @@
+ 
+ size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
+ 	{
+-	if (OPENSSL_sparcv9cap_P&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
+ 			SPARCV9_BLK)
+ 		return _sparcv9_vis1_instrument_bus(out,cnt);
+ 	else
+@@ -59,7 +99,7 @@
+ 
+ size_t OPENSSL_instrument_bus2(unsigned int *out,size_t cnt,size_t max)
+ 	{
+-	if (OPENSSL_sparcv9cap_P&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
+ 			SPARCV9_BLK)
+ 		return _sparcv9_vis1_instrument_bus2(out,cnt,max);
+ 	else
+@@ -120,7 +160,9 @@
+ 
+ 	if ((e=getenv("OPENSSL_sparcv9cap")))
+ 		{
+-		OPENSSL_sparcv9cap_P=strtoul(e,NULL,0);
++		OPENSSL_sparcv9cap_P[0]=strtoul(e,NULL,0);
++		if ((e = strchr(e, ':')))
++			OPENSSL_sparcv9cap_P[1] = strtoul(e + 1, NULL, 0);
+ 		return;
+ 		}
+ 
+@@ -128,17 +170,17 @@
+ 		{
+ 		if (strcmp(si,"sun4v"))
+ 			/* FPU is preferred for all CPUs, but US-T1/2 */
+-			OPENSSL_sparcv9cap_P |= SPARCV9_PREFER_FPU;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_PREFER_FPU;
+ 		}
+ 
+ 	if (sysinfo(SI_ISALIST,si,sizeof(si))>0)
+ 		{
+ 		if (strstr(si,"+vis"))
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS1|SPARCV9_BLK;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS1|SPARCV9_BLK;
+ 		if (strstr(si,"+vis2"))
+ 			{
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
+-			OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
++			OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 			return;
+ 			}
+ 		}
+@@ -198,12 +240,14 @@
+  
+ 	if ((e=getenv("OPENSSL_sparcv9cap")))
+ 		{
+-		OPENSSL_sparcv9cap_P=strtoul(e,NULL,0);
++		OPENSSL_sparcv9cap_P[0]=strtoul(e,NULL,0);
++		if ((e = strchr(e, ':')))
++			OPENSSL_sparcv9cap_P[1] = strtoul(e + 1, NULL, 0);
+ 		return;
+ 		}
+ 
+ 	/* Initial value, fits UltraSPARC-I&II... */
+-	OPENSSL_sparcv9cap_P = SPARCV9_PREFER_FPU|SPARCV9_TICK_PRIVILEGED;
++	OPENSSL_sparcv9cap_P[0] = SPARCV9_PREFER_FPU|SPARCV9_TICK_PRIVILEGED;
+ 
+ 	sigfillset(&all_masked);
+ 	sigdelset(&all_masked,SIGILL);
+@@ -226,20 +270,20 @@
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_rdtick();
+-		OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++		OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 		}
+ 
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_vis1_probe();
+-		OPENSSL_sparcv9cap_P |= SPARCV9_VIS1|SPARCV9_BLK;
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS1|SPARCV9_BLK;
+ 		/* detect UltraSPARC-Tx, see sparccpud.S for details... */
+ 		if (_sparcv9_vis1_instrument() >= 12)
+-			OPENSSL_sparcv9cap_P &= ~(SPARCV9_VIS1|SPARCV9_PREFER_FPU);
++			OPENSSL_sparcv9cap_P[0] &= ~(SPARCV9_VIS1|SPARCV9_PREFER_FPU);
+ 		else
+ 			{
+ 			_sparcv9_vis2_probe();
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
+ 			}
+ 		}
+ 
+@@ -246,13 +290,49 @@
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_fmadd_probe();
+-		OPENSSL_sparcv9cap_P |= SPARCV9_FMADD;
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_FMADD;
+ 		}
+ 
++	/*
++	 * VIS3 flag is tested independently from VIS1, unlike VIS2 that is,
++	 * because VIS3 defines even integer instructions.
++	 */
++	if (sigsetjmp(common_jmp,1) == 0) {
++		_sparcv9_vis3_probe();
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS3;
++	}
++
++	if (sigsetjmp(common_jmp,1) == 0) {
++		(void)_sparcv9_random();
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_RANDOM;
++	}
++
++	/*
++	 * In wait for better solution _sparcv9_rdcfr is masked by
++	 * VIS3 flag, because it goes to uninterruptable endless
++	 * loop on UltraSPARC II running Solaris. Things might be
++	 * different on Linux...
++	 */
++	if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3) &&
++		sigsetjmp(common_jmp, 1) == 0) {
++		OPENSSL_sparcv9cap_P[1] = (unsigned int)_sparcv9_rdcfr();
++	}
++
+ 	sigaction(SIGBUS,&bus_oact,NULL);
+ 	sigaction(SIGILL,&ill_oact,NULL);
+ 
+ 	sigprocmask(SIG_SETMASK,&oset,NULL);
++
++	if (sizeof(size_t) == 8)
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
++#ifdef __linux
++	else {
++		int ret = syscall(340);
++
++		if (ret >= 0 && ret & 1)
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
+ 	}
++#endif
++	}
+ 
+ #endif
+Index: crypto/sha/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sha/Makefile openssl-1.0.1e/crypto/sha/Makefile
+--- a/crypto/sha/Makefile    2011-05-24 17:02:24.000000000 -0700
++++ b/crypto/sha/Makefile    2011-07-27 10:48:17.817470000 -0700
+@@ -66,9 +66,9 @@
+ sha1-x86_64.s:	asm/sha1-x86_64.pl;	$(PERL) asm/sha1-x86_64.pl $(PERLASM_SCHEME) > $@
+ sha256-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
+ sha512-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
+-sha1-sparcv9.s:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
+-sha256-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+-sha512-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
++sha1-sparcv9.S:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
++sha256-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
++sha512-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ 
+ sha1-ppc.s:	asm/sha1-ppc.pl;	$(PERL) asm/sha1-ppc.pl $(PERLASM_SCHEME) $@
+ sha256-ppc.s:	asm/sha512-ppc.pl;	$(PERL) asm/sha512-ppc.pl $(PERLASM_SCHEME) $@
+Index: crypto/des/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/des/Makefile.orig openssl-1.0.1e/crypto/des/Makefile
+--- a/crypto/des/Makefile
++++ b/crypto/des/Makefile
+@@ -61,6 +61,10 @@ des: des.o cbc3_enc.o lib
+ 
+ des_enc-sparc.S:	asm/des_enc.m4
+ 	m4 -B 8192 asm/des_enc.m4 > des_enc-sparc.S
++dest4-sparcv9.S:	asm/dest4-sparcv9.pl
++	$(PERL) asm/dest4-sparcv9.pl $(CFLAGS) > $@
++aest4-sparcv9.o:	aest4-sparcv9.S
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
+ 
+ des-586.s:	asm/des-586.pl ../perlasm/x86asm.pl ../perlasm/cbc.pl
+ 	$(PERL) asm/des-586.pl $(PERLASM_SCHEME) $(CFLAGS) > $@
+Index: openssl/crypto/bn/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/bn/Makefile openssl-1.0.1e/crypto/bn/Makefile.new
+--- openssl-1.0.1e/crypto/bn/Makefile 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/bn/Makefile 2011-07-27 10:48:17.817470000 -0700
+@@ -77,6 +77,16 @@
+ 	$(PERL) asm/sparcv9a-mont.pl $(CFLAGS) > $@
+ sparcv9-mont.s:		asm/sparcv9-mont.pl
+ 	$(PERL) asm/sparcv9-mont.pl $(CFLAGS) > $@
++vis3-mont.S:		asm/vis3-mont.pl
++	$(PERL) asm/vis3-mont.pl $(CFLAGS) > $@
++vis3-mont.o:	vis3-mont.S
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++sparct4-mont.S:	asm/sparct4-mont.pl
++	$(PERL) asm/sparct4-mont.pl $(CFLAGS) > $@
++sparct4-mont.o:	sparct4-mont.S
++	$(CC) $(CFLAGS) -Wa,-n -c -o $@ $^
++sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
++	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
+ 
+ bn-mips3.o:	asm/mips3.s
+ 	@if [ "$(CC)" = "gcc" ]; then \
+Index: openssl/crypto/aes/Makefile
+===================================================================
+--- Makefile	Thu May  2 13:42:37 2013
++++ Makefile.orig	Thu May  2 13:41:51 2013
+@@ -69,6 +69,11 @@
+ aes-sparcv9.s: asm/aes-sparcv9.pl
+ 	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
+ 
++aest4-sparcv9.S: asm/aest4-sparcv9.pl
++	$(PERL) asm/aest4-sparcv9.pl $(CFLAGS) > $@
++aest4-sparcv9.o: aest4-sparcv9.S
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++
+ aes-ppc.s:	asm/aes-ppc.pl
+ 	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
+ aesp8-ppc.s:	asm/aesp8-ppc.pl
+Index: openssl/crypto/evp/evp.h
+===================================================================
+--- evp.h    Mon Feb 11 07:26:04 2013
++++ evp.h.new    Thu May  2 14:31:55 2013
+@@ -1282,6 +1282,7 @@
+ #define EVP_F_AESNI_INIT_KEY				 165
+ #define EVP_F_AESNI_XTS_CIPHER				 176
+ #define EVP_F_AES_INIT_KEY				 133
++#define EVP_F_AES_T4_INIT_KEY				 178
+ #define EVP_F_AES_XTS					 172
+ #define EVP_F_AES_XTS_CIPHER				 175
+ #define EVP_F_CAMELLIA_INIT_KEY				 159
+Index: openssl/crypto/bn/bn_exp.c
+===================================================================
+--- bn_exp.c.orig	2016-09-09 14:46:47.271555005 -0700
++++ bn_exp.c	2016-09-09 16:04:47.477700835 -0700
+@@ -124,8 +124,15 @@
+ # ifndef alloca
+ #  define alloca(s) __builtin_alloca((s))
+ # endif
++#else
++#include <alloca.h>
+ #endif
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++# include "sparc_arch.h"
++extern unsigned int OPENSSL_sparcv9cap_P[];
++#endif
++
+ /* maximum precomputation table size for *variable* sliding windows */
+ #define TABLE_SIZE	32
+ 
+@@ -468,7 +475,15 @@
+ 	wstart=bits-1;	/* The top bit of the window */
+ 	wend=0;		/* The bottom bit of the window */
+ 
++#if 1    /* by Shay Gueron's suggestion */
++	j = mont->N.top;    /* borrow j */
++	if (bn_wexpand(r,j) == NULL) goto err;
++	r->d[0] = (0-m->d[0])&BN_MASK2;        /* 2^(top*BN_BITS2) - m */
++	for(i=1;i<j;i++) r->d[i] = (~m->d[i])&BN_MASK2;
++	r->top = j;
++#else
+ 	if (!BN_to_montgomery(r,BN_value_one(),mont,ctx)) goto err;
++#endif
+ 	for (;;)
+ 		{
+ 		if (BN_is_bit_set(p,wstart) == 0)
+@@ -520,6 +535,17 @@
+ 		start=0;
+ 		if (wstart < 0) break;
+ 		}
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0] & (SPARCV9_VIS3|SPARCV9_PREFER_FPU)) {
++		j = mont->N.top;	/* borrow j */
++		val[0]->d[0] = 1;	/* borrow val[0] */
++		for (i=1;i<j;i++)
++			val[0]->d[i] = 0;
++		val[0]->top = j;
++		if (!BN_mod_mul_montgomery(rr, r, val[0], mont, ctx))
++			goto err;
++	} else
++#endif
+ 	if (!BN_from_montgomery(rr,r,mont,ctx)) goto err;
+ 	ret=1;
+ err:
+@@ -529,7 +555,26 @@
+ 	return(ret);
+ 	}
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++static BN_ULONG bn_get_bits(const BIGNUM *a, int bitpos) {
++	BN_ULONG ret = 0;
++	int wordpos;
+ 
++	wordpos = bitpos / BN_BITS2;
++	bitpos %= BN_BITS2;
++	if (wordpos>=0 && wordpos < a->top) {
++		ret = a->d[wordpos]&BN_MASK2;
++		if (bitpos) {
++			ret >>= bitpos;
++			if (++wordpos < a->top)
++				ret |= a->d[wordpos]<<(BN_BITS2-bitpos);
++		}
++	}
++
++	return ret & BN_MASK2;
++}
++#endif
++
+ /* BN_mod_exp_mont_consttime() stores the precomputed powers in a specific layout
+  * so that accessing any of these table values shows the same access pattern as far
+  * as cache lines are concerned.  The following functions are used to transfer a BIGNUM
+@@ -588,6 +633,9 @@
+ 	int powerbufLen = 0;
+ 	unsigned char *powerbuf=NULL;
+ 	BIGNUM tmp, am;
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	unsigned int t4=0;
++#endif
+ 
+ 	bn_check_top(a);
+ 	bn_check_top(p);
+@@ -622,9 +670,17 @@
+ 
+ 	/* Get the window size to use with size of p. */
+ 	window = BN_window_bits_for_ctime_exponent_size(bits);
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	if (window>=5 && (top&15)==0 && top<=64 &&
++	    (OPENSSL_sparcv9cap_P[1]&(CFR_MONTMUL|CFR_MONTSQR))==
++	    (CFR_MONTMUL|CFR_MONTSQR) && (t4=OPENSSL_sparcv9cap_P[0]))
++		window=5;
++	else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+ 	if (window==6 && bits<=1024) window=5;	/* ~5% improvement of 2048-bit RSA sign */
+ #endif
++	(void) 0;
+ 
+ 	/* Allocate a buffer large enough to hold all of the pre-computed
+ 	 * powers of am, am itself and tmp.
+@@ -657,9 +713,9 @@
+ 	tmp.flags = am.flags = BN_FLG_STATIC_DATA;
+ 
+ 	/* prepare a^0 in Montgomery domain */
+-#if 1
++#if 0
+  	if (!BN_to_montgomery(&tmp,BN_value_one(),mont,ctx))	goto err;
+-#else
++#else	/* by Shay Gueron's suggestion */
+ 	tmp.d[0] = (0-m->d[0])&BN_MASK2;	/* 2^(top*BN_BITS2) - m */
+ 	for (i=1;i<top;i++)
+ 		tmp.d[i] = (~m->d[i])&BN_MASK2;
+@@ -673,7 +729,122 @@
+ 		if (!BN_to_montgomery(&am,&am,mont,ctx))	goto err;
+ 		}
+ 	else	if (!BN_to_montgomery(&am,a,mont,ctx))		goto err;
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++    if (t4) {
++        typedef int (*bn_pwr5_mont_f)(BN_ULONG *tp,const BN_ULONG *np,
++            const BN_ULONG *n0,const void *table,int power,int bits);
++        int bn_pwr5_mont_t4_8(BN_ULONG *tp,const BN_ULONG *np,
++            const BN_ULONG *n0,const void *table,int power,int bits);
++        int bn_pwr5_mont_t4_16(BN_ULONG *tp,const BN_ULONG *np,
++            const BN_ULONG *n0,const void *table,int power,int bits);
++        int bn_pwr5_mont_t4_24(BN_ULONG *tp,const BN_ULONG *np,
++            const BN_ULONG *n0,const void *table,int power,int bits);
++        int bn_pwr5_mont_t4_32(BN_ULONG *tp,const BN_ULONG *np,
++            const BN_ULONG *n0,const void *table,int power,int bits);
++        static const bn_pwr5_mont_f pwr5_funcs[4] = {
++            bn_pwr5_mont_t4_8,    bn_pwr5_mont_t4_16,
++            bn_pwr5_mont_t4_24,    bn_pwr5_mont_t4_32 };
++        bn_pwr5_mont_f pwr5_worker = pwr5_funcs[top/16-1];
+ 
++        typedef int (*bn_mul_mont_f)(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++        int bn_mul_mont_t4_8(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++        int bn_mul_mont_t4_16(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++        int bn_mul_mont_t4_24(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++        int bn_mul_mont_t4_32(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++        static const bn_mul_mont_f mul_funcs[4] = {
++            bn_mul_mont_t4_8,    bn_mul_mont_t4_16,
++            bn_mul_mont_t4_24,    bn_mul_mont_t4_32 };
++        bn_mul_mont_f mul_worker = mul_funcs[top/16-1];
++
++        void bn_mul_mont_vis3(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,
++            const BN_ULONG *n0,int num);
++        void bn_mul_mont_t4(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *bp,const BN_ULONG *np,
++            const BN_ULONG *n0,int num);
++        void bn_mul_mont_gather5_t4(BN_ULONG *rp,const BN_ULONG *ap,
++            const void *table,const BN_ULONG *np,
++            const BN_ULONG *n0,int num,int power);
++        void bn_flip_n_scatter5_t4(const BN_ULONG *inp,size_t num,
++            void *table,size_t power);
++        void bn_gather5_t4(BN_ULONG *out,size_t num,
++            void *table,size_t power);
++        void bn_flip_t4(BN_ULONG *dst,BN_ULONG *src,size_t num);
++
++        BN_ULONG *np=mont->N.d, *n0=mont->n0;
++        int stride = 5*(6-(top/16-1));    /* multiple of 5, but less than 32 */
++
++        /*
++         * BN_to_montgomery can contaminate words above .top
++         * [in BN_DEBUG[_DEBUG] build]...
++         */
++        for (i=am.top; i<top; i++)    am.d[i]=0;
++        for (i=tmp.top; i<top; i++)    tmp.d[i]=0;
++
++        bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,0);
++        bn_flip_n_scatter5_t4(am.d,top,powerbuf,1);
++        if (!(*mul_worker)(tmp.d,am.d,am.d,np,n0) &&
++        !(*mul_worker)(tmp.d,am.d,am.d,np,n0))
++        bn_mul_mont_vis3(tmp.d,am.d,am.d,np,n0,top);
++        bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,2);
++
++        for (i=3; i<32; i++) {
++        /* Calculate a^i = a^(i-1) * a */
++        if (!(*mul_worker)(tmp.d,tmp.d,am.d,np,n0) &&
++            !(*mul_worker)(tmp.d,tmp.d,am.d,np,n0))
++            bn_mul_mont_vis3(tmp.d,tmp.d,am.d,np,n0,top);
++        bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,i);
++        }
++
++        /* switch to 64-bit domain */
++        np = alloca(top*sizeof(BN_ULONG));
++        top /= 2;
++        bn_flip_t4(np,mont->N.d,top);
++
++        bits--;
++        for (wvalue=0, i=bits%5; i>=0; i--,bits--)
++        wvalue = (wvalue<<1)+BN_is_bit_set(p,bits);
++        bn_gather5_t4(tmp.d,top,powerbuf,wvalue);
++
++        /* Scan the exponent one window at a time starting from the most
++         * significant bits.
++         */
++        while (bits >= 0) {
++        if (bits < stride)
++            stride = bits+1;
++        bits -= stride;
++        wvalue = (bn_get_bits(p,bits+1));
++
++        if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride))
++            continue;
++        /* retry once and fall back */
++        if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride))
++            continue;
++
++        bits += stride-5;
++        wvalue >>= stride-5;
++        wvalue &= 31;
++        bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++        bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++        bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++        bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++        bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++        bn_mul_mont_gather5_t4(tmp.d,tmp.d,powerbuf,np,n0,top,wvalue);
++        }
++
++        bn_flip_t4(tmp.d,tmp.d,top);
++        top *= 2;
++        /* back to 32-bit domain */
++        tmp.top=top;
++        bn_correct_top(&tmp);
++        OPENSSL_cleanse(np,top*sizeof(BN_ULONG));
++    } else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+     /* This optimization uses ideas from http://eprint.iacr.org/2011/239,
+      * specifically optimization of cache-timing attack countermeasures
+@@ -812,6 +983,15 @@
+ 	}
+ 
+  	/* Convert the final result from montgomery to standard format */
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0] & (SPARCV9_VIS3|SPARCV9_PREFER_FPU)) {
++		am.d[0] = 1;	/* borrow am */
++		for (i = 1; i < top; i++)
++			am.d[i] = 0;
++		if (!BN_mod_mul_montgomery(rr,&tmp,&am,mont,ctx))
++			goto err;
++	} else
++#endif
+ 	if (!BN_from_montgomery(rr,&tmp,mont,ctx)) goto err;
+ 	ret=1;
+ err:
+Index: fips/fipssyms.h
+===================================================================
+--- a/fips/fipssyms.h	2016-10-14 11:12:58.496245385 -0700
++++ b/fips/fipssyms.h	2016-10-14 11:12:49.159899380 -0700
+@@ -476,19 +476,56 @@
+ #define SHA512_Update fips_sha512_update
+ #define SHA512_version fips_sha512_version
+ #define _shadow_DES_check_key fips__shadow_des_check_key
++#define aes_t4_decrypt fips_aes_t4_decrypt
++#define aes_t4_encrypt fips_aes_t4_encrypt
++#define aes_t4_set_decrypt_key fips_aes_t4_set_decrypt_key
++#define aes_t4_set_encrypt_key fips_aes_t4_set_encrypt_key
++#define aes128_t4_cbc_decrypt fips_aes128_t4_cbc_decrypt
++#define aes128_t4_cbc_encrypt fips_aes128_t4_cbc_encrypt
++#define aes128_t4_ctr32_encrypt fips_aes128_t4_ctr32_encrypt
++#define aes128_t4_xts_decrypt fips_aes128_t4_xts_decrypt
++#define aes128_t4_xts_encrypt fips_aes128_t4_xts_encrypt
++#define aes192_t4_cbc_decrypt fips_aes192_t4_cbc_decrypt
++#define aes192_t4_cbc_encrypt fips_aes192_t4_cbc_encrypt
++#define aes192_t4_ctr32_encrypt fips_aes192_t4_ctr32_encrypt
++#define aes256_t4_cbc_decrypt fips_aes256_t4_cbc_decrypt
++#define aes256_t4_cbc_encrypt fips_aes256_t4_cbc_encrypt
++#define aes256_t4_ctr32_encrypt fips_aes256_t4_ctr32_encrypt
++#define aes256_t4_xts_decrypt fips_aes256_t4_xts_decrypt
++#define aes256_t4_xts_encrypt fips_aes256_t4_xts_encrypt
++#define bn_GF2m_mul_2x2 fips_bn_GF2m_mul_2x2
+ #define bn_add_part_words fips_bn_add_part_words
+ #define bn_cmp_part_words fips_bn_cmp_part_words
+ #define bn_cmp_words fips_bn_cmp_words
+ #define bn_dup_expand fips_bn_dup_expand
+ #define bn_expand2 fips_bn_expand2
++#define bn_flip_n_scatter5_t4 fips_bn_flip_n_scatter5_t4
++#define bn_flip_t4 fips_bn_flip_t4
++#define bn_gather5_t4 fips_bn_gather5_t4
+ #define bn_mul_high fips_bn_mul_high
+ #define bn_mul_low_normal fips_bn_mul_low_normal
+ #define bn_mul_low_recursive fips_bn_mul_low_recursive
++#define bn_mul_mont_gather5_t4 fips_bn_mul_mont_gather5_t4
++#define bn_mul_mont_t4 fips_bn_mul_mont_t4
++#define bn_mul_mont_t4_8 fips_bn_mul_mont_t4_8
++#define bn_mul_mont_t4_16 fips_bn_mul_mont_t4_16
++#define bn_mul_mont_t4_24 fips_bn_mul_mont_t4_24
++#define bn_mul_mont_t4_32 fips_bn_mul_mont_t4_32
++#define bn_mul_mont_vis3 fips_bn_mul_mont_vis3
+ #define bn_mul_normal fips_bn_mul_normal
+ #define bn_mul_part_recursive fips_bn_mul_part_recursive
+ #define bn_mul_recursive fips_bn_mul_recursive
++#define bn_pwr5_mont_t4_8 fips_bn_pwr5_mont_t4_8
++#define bn_pwr5_mont_t4_16 fips_bn_pwr5_mont_t4_16
++#define bn_pwr5_mont_t4_24 fips_bn_pwr5_mont_t4_24
++#define bn_pwr5_mont_t4_32 fips_bn_pwr5_mont_t4_32
+ #define bn_sqr_normal fips_bn_sqr_normal
+ #define bn_sqr_recursive fips_bn_sqr_recursive
++#define des_t4_cbc_decrypt fips_des_t4_cbc_decrypt
++#define des_t4_cbc_encrypt fips_des_t4_cbc_encrypt
++#define des_t4_ede3_cbc_decrypt fips_des_t4_ede3_cbc_decrypt
++#define des_t4_ede3_cbc_encrypt fips_des_t4_ede3_cbc_encrypt
++#define des_t4_key_expand fips_des_t4_key_expand
+ #define dsa_builtin_paramgen fips_dsa_builtin_paramgen
+ #define dsa_builtin_paramgen2 fips_dsa_builtin_paramgen2
+ #define dsa_paramgen_check_g fips_dsa_paramgen_check_g
+Index: fips/sha/fips_standalone_sha1.c
+===================================================================
+--- a/fips/sha/fips_standalone_sha1.c	2016-06-20 12:49:46.000000000 -0700
++++ b/fips/sha/fips_standalone_sha1.c	2016-10-25 09:26:32.105775365 -0700
+@@ -60,6 +60,7 @@
+ void FIPS_selftest_check() {}
+ void OPENSSL_cleanse(void *p,size_t len) {}
+ unsigned int  OPENSSL_ia32cap_P[2];
++unsigned int  OPENSSL_sparcv9cap_P[2];
+ #endif
+ 
+ #ifdef OPENSSL_FIPS
