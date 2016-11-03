@@ -15,13 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		driver-graphics-nvidia
-COMPONENT_VERSION=	340.96
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	340.98
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 COMPONENT_SRC=		NVIDIA-Solaris-x86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).run
 COMPONENT_ARCHIVE_HASH= \
-	sha256:c4ec820ca82c99874a4c053479fae043ead3ed1c75e55bb6a01ea876319eed05
+	sha256:4add5b1a62615a1f305fd7ff9bd4e737c3ada7739d666d711c384384ab569be2
 COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -40,7 +39,7 @@ $(INSTALL_32): 	$(BUILD_32)
 	[ -d $(PROTO_DIR)/kernel/drv/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/drv/amd64
 	for i in kernel/drv/amd64/nvidia kernel/drv/nvidia kernel/drv/nvidia.conf; do \
 	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
-	[ -h $(PROTO_DIR)/usr ] && rm $(PROTO_DIR)/usr || true
+	rm -fr $(PROTO_DIR)/usr
 	cp -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
 	$(TOUCH) $@
 
