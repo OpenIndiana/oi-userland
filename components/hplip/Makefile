@@ -27,9 +27,9 @@ BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.15.7
-TPNO=			24589
-COMPONENT_ARCHIVE_HASH= sha256:d310903048f3600f93422e5a8c39ddd682511e0849cd9abc5e943f9a10bdd49d
+COMPONENT_VERSION=      3.16.9
+TPNO=			31664
+COMPONENT_ARCHIVE_HASH= sha256:cc8cf2a7baa1403cddd6503f120c58780c786b42fad073da6caec7535d3797a6
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/hplip/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 
