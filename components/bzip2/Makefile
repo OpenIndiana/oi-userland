@@ -45,6 +45,10 @@ LINT_FLAGS +=	-I.
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"

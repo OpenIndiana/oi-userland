@@ -40,6 +40,11 @@ COMPONENT_BUGDB=	utility/imagemagick
 
 TPNO=			29915
 
+# Enable adiheap security extension.
+# adistack fails with libgcc exception unwinding code.
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_DISABLE)
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)

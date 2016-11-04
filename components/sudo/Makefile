@@ -47,6 +47,10 @@ include $(WS_MAKE_RULES)/common.mk
 LDFLAGS += $(CC_BITS)
 LDFLAGS += -lldap_r-2.4
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # Allows zero-sized struct/union declarations and void functions with return
 # statements returning a value to work.
 CFLAGS += -features=extensions

@@ -905,8 +905,10 @@ gcc_PIC =	-fPIC -DPIC
 
 # Generic macro for PIC code generation.  Use this macro instead of the
 # compiler-specific variant.
-CC_PIC =	$($(COMPILER)_PIC)
-
+CC_PIC =		$($(COMPILER)_PIC)
+CC_PIC_ENABLE =		$(CC_PIC)
+CC_PIC_DISABLE =	
+CC_PIC_MODE =		$(CC_PIC_DISABLE)
 
 # Default GNU C compiler flags.  Add the required feature to your Makefile
 # with CFLAGS += $(FEATURE_MACRO) and add to the component build with
@@ -926,6 +928,10 @@ CXXFLAGS.gcc +=		$(gcc_XREGS)
 
 # Build 32 or 64 bit objects.
 CFLAGS +=	$(CC_BITS)
+
+# Support building a binary PIE by building each unit PIC. To enable in
+# a makefile, add CC_PIC_MODE = $(CC_PIC_ENABLE)
+CFLAGS +=	$(CC_PIC_MODE)
 
 # Add compiler-specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
@@ -1006,22 +1012,91 @@ LD_Z_STRIP_CLASS =	-zstrip-class=comment
 # use direct binding
 LD_B_DIRECT =		-Bdirect
 
-# use generic macro names for enabling/disabling ASLR
-ASLR_ENABLE = 		-zaslr=enable
-ASLR_DISABLE = 		-zaslr=disable
-ASLR_NOT_APPLICABLE = 	-zaslr=disable
+# build a PIE binary
+# to enable creating a PIE binary, add LD_Z_PIE_MODE = $(LD_Z_PIE_ENABLE)
+# to the component makefile, and ensure that it's built PIC (CC_PIC_ENABLE).
+LD_Z_PIE_ENABLE =	-ztype=pie
+LD_Z_PIE_DISABLE =
+LD_Z_PIE_MODE =		$(LD_Z_PIE_DISABLE)
 
-# Enable ASLR by default unless target build is NO_ARCH.
-ifeq ($(strip $(BUILD_BITS)),NO_ARCH)
-ASLR_MODE= $(ASLR_NOT_APPLICABLE)
+# generic macro names for enabling/disabling security extensions
+# -z<extname> is deprecated, but supported, on S12, in favor of
+# the more flexible -zsx=<extname> format. Security extensions which
+# are not supported on S11 use -zsx=<extname> by default.
+
+ifeq ($(OS_VERSION), 5.11)
+ASLR_ENABLE = 			-zaslr=enable
+ASLR_DISABLE = 			-zaslr=disable
+ASLR_NOT_APPLICABLE = 		-zaslr=disable
+
+NXSTACK_ENABLE =		-znxstack=enable
+NXSTACK_DISABLE =		-znxstack=disable
+NXSTACK_NOT_APPLICABLE =	-znxstack=disable
+
+NXHEAP_ENABLE =			-znxheap=enable
+NXHEAP_DISABLE =		-znxheap=disable
+NXHEAP_NOT_APPLICABLE =		-znxheap=disable
 else
-ASLR_MODE= $(ASLR_ENABLE)
+ASLR_ENABLE = 			-zsx=aslr=enable
+ASLR_DISABLE = 			-zsx=aslr=disable
+ASLR_NOT_APPLICABLE = 		-zsx=aslr=disable
+
+NXSTACK_ENABLE =		-zsx=nxstack=enable
+NXSTACK_DISABLE =		-zsx=nxstack=disable
+NXSTACK_NOT_APPLICABLE =	-zsx=nxstack=disable
+
+NXHEAP_ENABLE =			-zsx=nxheap=enable
+NXHEAP_DISABLE =		-zsx=nxheap=disable
+NXHEAP_NOT_APPLICABLE =		-zsx=nxheap=disable
+
+ADIHEAP_ENABLE.sparcv9 =	-zsx=adiheap=enable
+ADIHEAP_DISBLE.sparcv9 =	-zsx=adiheap=disable
+ADIHEAP_ENABLE =		$(ADIHEAP_ENABLE.$(MACH64))
+ADIHEAP_DISABLE =		$(ADIHEAP_DISABLE.$(MACH64))
+
+ADISTACK_ENABLE.sparcv9 =	-zsx=adistack=enable
+ADISTACK_DISABLE.sparcv9 =	-zsx=adistack=disable
+ADISTACK_ENABLE =		$(ADISTACK_ENABLE.$(MACH64))
+ADISTACK_DISABLE =		$(ADISTACK_DISABLE.$(MACH64))
+endif
+ 
+# Enable ASLR, NXHEAP and NXSTACK by default unless target build is NO_ARCH.
+ifeq ($(strip $(BUILD_BITS)),NO_ARCH)
+ASLR_MODE= 		$(ASLR_NOT_APPLICABLE)
+NXSTACK_MODE =		$(NXSTACK_NOT_APPLICABLE)
+NXHEAP_MODE =		$(NXHEAP_NOT_APPLICABLE)
+ADIHEAP_MODE =
+ADISTACK_MODE =
+else
+ASLR_MODE =		$(ASLR_ENABLE)
+NXSTACK_MODE =		$(NXSTACK_ENABLE)
+NXHEAP_MODE =		$(NXHEAP_ENABLE)
+ADIHEAP_MODE =
+ADISTACK_MODE =
 endif
 
-# by default, turn on Address Space Layout Randomization for ELF executables;
+# by default, turn on Address Space Layout Randomization, non-executable
+# stack and non-executable heap for ELF executables;
 # to explicitly disable ASLR, set ASLR_MODE = $(ASLR_DISABLE)
+# to explicitly disable NXSTACK, set NXSTACK_MODE = $(NXSTACK_DISABLE)
+# to explicitly disable NXHEAP, set NXHEAP_MODE = $(NXHEAP_DISABLE)
 # in that component's Makefile
 LD_Z_ASLR =		$(ASLR_MODE)
+LD_Z_NXSTACK =		$(NXSTACK_MODE)
+LD_Z_NXHEAP =		$(NXHEAP_MODE)
+
+# by default, ADIHEAP and ADISTACK are opt-in.
+# to explicitly enable ADIHEAP, set ADIHEAP_MODE = $(ADIHEAP_ENABLE)
+# to explicitly disable ADIHEAP, set ADIHEAP_MODE = $(ADIHEAP_DISABLE)
+# to explicitly enable ADISTACK, set ADISTACK_MODE = $(ADISTACK_ENABLE)
+# to explicitly disable ADISTACK, set ADISTACK_MODE = $(ADISTACK_DISABLE)
+#
+# ADIHEAP and ADISTACK are not supported on Solaris 11.
+#
+ifneq ($(OS_VERSION), 5.11)
+LD_Z_ADIHEAP =		$(ADIHEAP_MODE)
+LD_Z_ADISTACK =		$(ADISTACK_MODE)
+endif
 
 #
 # More Solaris linker flags that we want to be sure that everyone gets.  This
@@ -1029,10 +1104,6 @@ LD_Z_ASLR =		$(ASLR_MODE)
 # 'install' phases of the component build.  Each individual feature can be
 # turned off by adding FEATURE_MACRO= to the component Makefile.
 #
-
-# Create a non-executable stack when linking.
-LD_MAP_NOEXSTK.i386 =	-M /usr/lib/ld/map.noexstk
-LD_MAP_NOEXSTK.sparc =	-M /usr/lib/ld/map.noexstk
 
 # Create a non-executable bss segment when linking.
 LD_MAP_NOEXBSS.i386 =	-M /usr/lib/ld/map.noexbss
@@ -1053,21 +1124,32 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS) $(LD_DEF_LIBS)
 # Default linker options that everyone should get.  Do not add additional
 # libraries to this macro, as it will apply to everything linked during the
 # component build.
-LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
+LD_OPTIONS +=	$(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE) \
 		$(LD_Z_STRIP_CLASS)
 
+LD_SECEXT_OPTIONS.sparc = $(LD_Z_ADIHEAP) $(LD_Z_ADISTACK)
+LD_SECEXT_OPTIONS =	$(LD_Z_ASLR) $(LD_Z_NXSTACK) $(LD_Z_NXHEAP) \
+			$(LD_SECEXT_OPTIONS.$(MACH))
+
 # only used on executables
-LD_EXEC_OPTIONS = $(LD_Z_ASLR)
+# executables can be ET_EXEC or ET_DYN (PIE). LD_EXEC_OPTIONS and
+# LD_PIE_OPTIONS apply respectively. A small trick is used to link
+# binaries with -ztype=pie, by passing it on the LD_EXEC_OPTIONS list.
+LD_EXEC_OPTIONS =	$(LD_Z_PIE_MODE) $(LD_SECEXT_OPTIONS)
+LD_PIE_OPTIONS =	$(LD_SECEXT_OPTIONS)
+		
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"\
+    LD_PIE_OPTIONS="$(LD_PIE_OPTIONS)"\
 COMPONENT_INSTALL_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"\
+    LD_PIE_OPTIONS="$(LD_PIE_OPTIONS)"\
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))

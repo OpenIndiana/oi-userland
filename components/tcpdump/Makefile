@@ -34,6 +34,10 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 
 TPNO=			22949
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 include $(WS_MAKE_RULES)/common.mk
 
 ifeq ($(OS_VERSION),5.11)

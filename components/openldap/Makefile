@@ -113,6 +113,10 @@ COMPONENT_BUILD_ENV += LD_UNSET="$(LD_UNSET)"
 COMPONENT_BUILD_ENV += LTCFLAGS="-m$(BITS)"
 COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # special targets due to dependency on cyrus-sasl
 ../cyrus-sasl/build/%/.installed:
 	(cd ../cyrus-sasl && $(GMAKE) install)

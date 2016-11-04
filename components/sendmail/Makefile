@@ -37,6 +37,10 @@ COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 
 TPNO=			23958
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # Mostly but not completely migrated from ON in S12.
 ifeq ($(BUILD_TYPE), evaluation)
 BUILD_32_and_64=

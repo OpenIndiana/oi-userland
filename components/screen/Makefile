@@ -32,6 +32,10 @@ COMPONENT_ARCHIVE_HASH=	\
 
 TPNO=			29565	
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/gnu-component.mk
 

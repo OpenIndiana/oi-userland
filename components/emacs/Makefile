@@ -66,7 +66,6 @@ PKG_MACROS +=	EMACS_ULEVDIR=$(EMACS_ULEVDIR)
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
 # components. Non-executable stack and data break sparc emacs.
 #
-LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
 # Uncomment this for debugging only. It configures emacs to run from the
@@ -112,17 +111,12 @@ CONFIGURE_OPTIONS +=	--without-gsettings --without-dbus
 # emacs is not network facing, or run with elevated privileges, this is
 # not a security concern.
 #
-# As with ASLR, ADIHEAP should be explicitly disabled for emacs, as the
-# dumped emacs cannot work with ADI. Recognizing that ASLR_MODE could really
-# be SX_MODE, and generalized to handle all the sxadm extensions, redefine
-# it here to handle both cases. It is expected that in due course, the
-# Userland framework will evolve in this direction.
-#
-ifeq ($(OS_VERSION), 5.11)
+# Similarly, emacs cannot cope with a non-executable stack and with a protected
+# and non-executable heap.
 ASLR_MODE =	$(ASLR_DISABLE)
-else
-ASLR_MODE =	-z sx=aslr=disable,adiheap=disable
-endif
+NXHEAP_MODE =	$(NXHEAP_DISABLE)
+NXSTACK_MODE =	$(NXSTACK_DISABLE)
+ADIHEAP_MODE =	$(ADIHEAP_DISABLE)
 
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS += --without-all --without-x

@@ -35,6 +35,10 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPO
 
 TPNO=			32120
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 TEST_TARGET= $(NO_TESTS)
 
 # Depends on newer cairo, which cannot be updated in S11.

@@ -64,6 +64,11 @@ HTTPS_PROXY = https://www-proxy.us.oracle.com:80/
 # when testing on sparc
 LD_MAP_NOEXBSS.sparc=
 
+# map.noexbss has the side effect of making the heap non executable.
+# Reflect the setting above explicitly disabling NXHEAP.
+NXHEAP_MODE = $(NXHEAP_DISABLE)
+
+
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"

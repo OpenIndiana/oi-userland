@@ -44,6 +44,10 @@ CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += "-I/usr/include/openldap"
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR) --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict

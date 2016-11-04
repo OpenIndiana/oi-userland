@@ -36,6 +36,10 @@ COMPONENT_ARCHIVE_URL=	ftp://ftp.ucsb.edu/pub/mirrors/$(COMPONENT_NAME)/$(COMPON
 
 TPNO=			9003
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk

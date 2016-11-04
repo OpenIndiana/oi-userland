@@ -75,8 +75,13 @@ CFLAGS += -DWITHOUT_HMAC_MD5
 # libraries that it needs.
 LDFLAGS += $(LD_B_DIRECT) -z nolazyload
 
-# Enable nxheap and nxstack security extensions
-LDFLAGS += -z nxheap=enable -z nxstack=enable
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
+# Build PIE
+CC_PIC_MODE =	$(CC_PIC_ENABLE)
+LD_Z_PIE_MODE =	$(LD_Z_PIE_ENABLE)
 
 # Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)

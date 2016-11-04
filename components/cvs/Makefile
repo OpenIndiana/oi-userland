@@ -41,6 +41,10 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += -D__ATTRIBUTE_DISABLED
 CONFIGURE_OPTIONS  +=	--with-external-zlib
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # need gnu grep
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 # "check" is not working yet.  It's asking for a password.

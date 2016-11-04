@@ -58,6 +58,10 @@ AUXLIBS +=	-lsqlite3
 CCARGS +=	-DHAS_LDAP -I/usr/include/openldap
 AUXLIBS +=	-lldap_r-2.4 -llber-2.4
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # pcre-config is run as part of the setup, so we need to find the 64-bit
 # version so it will provide a 64-bit runpath, o/w pkglint gives warnings.
 PATH =		$(USRBINDIR64):$(USRBINDIR):$(GNUBIN)

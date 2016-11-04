@@ -92,6 +92,10 @@ CPPFLAGS +=	$(CPP_LARGEFILES)
 CPPFLAGS +=	$(CPP_XPG6MODE)
 CPPFLAGS +=	-I/usr/include/openldap
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 LDFLAGS +=	-m$(BITS)
 LDFLAGS +=	-R/usr/lib/samba$(MACHLIBDIR)
 LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
@@ -105,6 +109,7 @@ CONFIGURE_OPTIONS =	--exec-prefix=/usr
 CONFIGURE_OPTIONS +=	--bindir=/usr/lib/samba/bin
 CONFIGURE_OPTIONS +=	--sbindir=/usr/lib/samba/sbin
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib/samba$(MACHLIBDIR)
+
 CONFIGURE_OPTIONS +=	--with-privatelibdir=/usr/lib/samba/private$(MACHLIBDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
 CONFIGURE_OPTIONS +=	--with-pammodulesdir=/usr/lib/samba/security$(MACHLIBDIR)

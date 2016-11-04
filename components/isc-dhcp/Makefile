@@ -49,6 +49,10 @@ LINT_FLAGS +=   -I$(BUILD_DIR_32)/includes \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # Some patches need configure script re-creation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -vfi);
 

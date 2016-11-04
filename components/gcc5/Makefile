@@ -68,6 +68,15 @@ LD_MAP_NOEXDATA.i386=
 # /usr/lib/ld/map.noexbss destroys SPARC
 LD_MAP_NOEXBSS.sparc=
 
+# Mapfiles map.noexdata and map.noexbss mark the data + bss and bss
+# segments non executable on x86 and SPARC respectively. The protection
+# extends to the heap segment, if the heap is brk based, as is the case
+# with gcc. Since the introduction of NXHEAP, this is controlled
+# separately by the NXHEAP extension itself. Whether the heap should be
+# executable or not should be reevaluated. For now, try to avoid
+# "destruction" as hinted above.
+NXHEAP_MODE = $(NXHEAP_DISABLE)
+
 # for some reason the fixincludes target fails with bash on Solaris.
 CONFIG_SHELL = /bin/sh
 MAKESHELL = /bin/sh

@@ -48,6 +48,10 @@ include $(WS_MAKE_RULES)/common.mk
 # to build modules.
 LDFLAGS += $(CC_BITS)
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE = $(ADIHEAP_ENABLE)
+ADISTACK_MODE = $(ADISTACK_ENABLE)
+
 PATCH_LEVEL=0
 
 # We will build two separate mod_ssl versions.

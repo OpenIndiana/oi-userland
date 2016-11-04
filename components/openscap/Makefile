@@ -62,6 +62,10 @@ LDFLAGS += -L$(RAD_CLIENT_LIB_PATH) -R$(RAD_CLIENT_LIB_PATH) -lradclient -ladr -
 # XXX This shouldn't be necessary, but is; investigate why.
 CFLAGS += -D_FILE_OFFSET_BITS=64
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE = $(ADIHEAP_ENABLE)
+ADISTACK_MODE = $(ADISTACK_ENABLE)
+
 # Perl related patch needs configure script recreation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 

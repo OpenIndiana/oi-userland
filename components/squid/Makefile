@@ -38,6 +38,10 @@ COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCH
 
 TPNO=			28337
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 

@@ -56,6 +56,10 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 # libcheck and specific Perl Test::Unit version is required for full test
 TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk

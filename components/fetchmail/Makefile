@@ -35,6 +35,10 @@ COMPONENT_PROJECT_URL=	http://www.fetchmail.info/
 
 TPNO=			29615
 
+# Enable adiheap and adistack security extensions
+ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
+ADISTACK_MODE =	$(ADISTACK_ENABLE)
+
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		PYTHON="$(PYTHON.2.7.32)"
