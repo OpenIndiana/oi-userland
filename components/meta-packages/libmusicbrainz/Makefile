@@ -18,7 +18,7 @@ COMPONENT_NAME=		libmusicbrainz
 COMPONENT_VERSION=	5.1.0
 COMPONENT_SUMMARY=	Library for accessing MusicBrainz servers
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

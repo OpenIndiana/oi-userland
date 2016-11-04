@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL= \
   https://github.com/libimobiledevice/libplist/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE = GPLv2,LGPLv2.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_PREP_ACTION= \

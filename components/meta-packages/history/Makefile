@@ -106,6 +106,6 @@ publish: $(BUILD_DIR)/.published-$(MACH)
 
 %.p5m: 	%.p5m.$(MACH)
 	$(CP) $< $@
-	
+
 clobber clean::
 	$(RM) -r $(BUILD_DIR) $(GENERATED_ARCH_MANIFESTS)

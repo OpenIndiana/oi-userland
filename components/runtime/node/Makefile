@@ -22,15 +22,15 @@ COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
 COMPONENT_VERSION=	0.12.16
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
-COMPONENT_LICENSE_FILE=	node.license	
+COMPONENT_LICENSE_FILE=	node.license
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:312c0b74b0815f0514de9bf00667850d4f6ce184126f02f3d8dbf40fd48235eb
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Include /usr/sbin for dtrace
 PATH=/usr/bin:/usr/gnu/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin

@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/levent/files/libevent/lib
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2

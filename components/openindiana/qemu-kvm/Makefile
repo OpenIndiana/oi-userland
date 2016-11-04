@@ -29,9 +29,9 @@ ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
 endif
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC=/opt/gcc/4.4.4/bin/gcc
 

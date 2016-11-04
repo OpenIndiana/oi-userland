@@ -38,7 +38,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && \
                 automake -a -c -f &&\
                 autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS+= -D__EXTENSIONS__
 

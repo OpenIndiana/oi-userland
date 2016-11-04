@@ -30,10 +30,10 @@ COMPONENT_PROJECT_URL = http://www.videolan.org/developers/libdca.html
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += $($(COMPILER)_PIC)
 

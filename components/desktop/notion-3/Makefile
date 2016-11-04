@@ -29,9 +29,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	Notion 3 window manager
 COMPONENT_CLASSIFICATION=System/X11
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/justmake.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 COMPONENT_BUILD_ENV += ETCDIR=/etc/notion
@@ -57,4 +57,4 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 # notion uses xmessage to display errors at run time
 REQUIRED_PACKAGES += x11/xmessage
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

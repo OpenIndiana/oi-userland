@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liboil
 COMPONENT_VERSION= 0.3.17
-COMPONENT_SUMMARY= Library of Optimized Inner Loops 
+COMPONENT_SUMMARY= Library of Optimized Inner Loops
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://liboil.freedesktop.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += ( cd $(@D) &&\
 	aclocal -I./m4 &&\

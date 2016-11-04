@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.indexdata.dk/pub/yaz/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.indexdata.dk/yaz
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_OPTIONS += --without-icu

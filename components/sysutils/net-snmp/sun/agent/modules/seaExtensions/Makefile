@@ -14,7 +14,7 @@
 #
 #
 # Makefile to generate libseaExtensions.so
-# 
+#
 # usage:
 # "make" : generate library for 64bit / sparc
 # "make ARCH=32" : generate library for 32bit / sparc

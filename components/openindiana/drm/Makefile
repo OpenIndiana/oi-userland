@@ -26,8 +26,8 @@ COMPONENT_FMRI=		driver/graphics/drm
 COMPONENT_CLASSIFICATION=	Drivers/Display
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/opt/onbld/bin/i386
 

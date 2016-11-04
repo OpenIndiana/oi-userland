@@ -39,8 +39,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://groups.csail.mit.edu/mac/ftpdir/scm/OLD/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/slib
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Lie to IPS packaging about the version because it doesn't like
 # COMPONENT_VERSION's with letters.
@@ -62,4 +62,4 @@ clean::
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

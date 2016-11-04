@@ -30,9 +30,9 @@ ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
 endif
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(CLONEY) $(SOURCE_DIR) $(@D)

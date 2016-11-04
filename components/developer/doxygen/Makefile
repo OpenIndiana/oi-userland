@@ -38,9 +38,9 @@ COMPONENT_ARCHIVE_HASH_1 =	\
     sha256:6796de1e77f723dcb52f36395161fdfbeaeebf769a297eb78b73e19b9542aa59
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Necessary to find gcc during build
 PATH=$(GCC_ROOT)/bin:/usr/bin
@@ -64,7 +64,7 @@ COMPONENT_TEST_TARGETS =	tests
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	$(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) 
+	$(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 	[ -f $(PROTO_DIR)/doxygen_manual-$(IPS_COMPONENT_VERSION).pdf ] || \
 	  $(MV) doxygen_manual-$(IPS_COMPONENT_VERSION).pdf $(PROTO_DIR)
 
@@ -72,4 +72,4 @@ test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

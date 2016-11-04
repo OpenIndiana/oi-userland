@@ -55,7 +55,7 @@ COMPONENT_PREP_ACTION = ( \
 	ACLOCAL=$(ACLOCAL) AUTOMAKE=$(AUTOMAKE) autoreconf; \
 	cd $(SOURCE_DIR); \
 	$(PERL) -pi -e 's,^\#!.*?python,\#!$(USED_PYTHON), if $$.==1' systemv/hal_lpadmin ; \
-) 
+)
 
 build:		$(BUILD_32)
 

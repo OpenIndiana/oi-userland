@@ -20,7 +20,7 @@ COMPONENT_SUMMARY=	GNOME Unicode and Korean TrueType fonts
 COMPONENT_CLASSIFICATION=	Meta Packages/Group Packages
 COMPONENT_FMRI=	system/font/gnome-fonts
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

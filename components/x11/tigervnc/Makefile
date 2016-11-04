@@ -40,9 +40,9 @@ XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg114.patch
 
 XORG_SERVER_VERSION= 1.14.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
@@ -51,9 +51,9 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
 	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver114.patch
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1)
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2)
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3)
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -76,7 +76,7 @@ COMPONENT_PREP_ACTION =        (cd $(@D) &&\
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+= --with-installed-zlib
-CONFIGURE_OPTIONS+= --with-system-jpeg 
+CONFIGURE_OPTIONS+= --with-system-jpeg
 CONFIGURE_OPTIONS+= --without-simd
 CONFIGURE_OPTIONS+= --localstatedir=/var
 

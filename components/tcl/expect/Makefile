@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/expect
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
@@ -60,8 +60,8 @@ COMPONENT_TEST_TARGETS = test
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) 
-	
+install:	$(INSTALL_32_and_64)
+
 test: 		$(TEST_32_and_64)
 
 # special targets due to tcl internals dependencies
@@ -74,4 +74,4 @@ $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

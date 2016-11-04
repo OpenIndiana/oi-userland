@@ -35,11 +35,11 @@ COMPONENT_BUGDB=	utility/puppet
 
 TPNO=			18128
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/install.rb.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/install.rb.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# puppet requires facter and hiera as part of the install phase 
+# puppet requires facter and hiera as part of the install phase
 COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH32)/lib:$(COMPONENT_DIR)/../hiera/build/$(MACH32)/lib"
 
 ../facter/build/%/.installed:
@@ -75,4 +75,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

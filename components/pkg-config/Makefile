@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:6b6eb31c6ec4421174578652c7e141fdaae2dabad1021f420d8713206ac1f845
 COMPONENT_ARCHIVE_URL=	http://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
 #CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
@@ -52,4 +52,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

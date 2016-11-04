@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/project/tinyxml/tinyxml/$(COMPONENT_VERSION)/$(COMPONENT_NAME)_$(COMPONENT_SRC_VERSION).tar.gz
 COMPONENT_LICENSE = zlib/libpng License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION= \
     ( cd  $(@D) && \

@@ -19,7 +19,7 @@ COMPONENT_NAME=           libXpm
 COMPONENT_VERSION=        3.5.11
 COMPONENT_FMRI=           x11/library/libxpm
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY=  libXpm - X Pixmap library 
+COMPONENT_SUMMARY=  libXpm - X Pixmap library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
@@ -30,9 +30,9 @@ COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXpm.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

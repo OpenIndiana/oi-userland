@@ -10,7 +10,7 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# 
+#
 
 include ../../../make-rules/shared-macros.mk
 
@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/project/boost/boost/1.59.0/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION = ( $(MKDIR) $(BUILD_DIR)/boost && /usr/gnu/bin/tar -C $(BUILD_DIR)/boost -xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
 

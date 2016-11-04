@@ -18,7 +18,7 @@ COMPONENT_NAME=		developer-xopen-xcu4
 COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	XCU4 make and sccs utilities
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

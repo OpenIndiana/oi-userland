@@ -19,7 +19,7 @@ COMPONENT_NAME=           libXaw
 COMPONENT_VERSION=        1.0.13
 COMPONENT_FMRI=           x11/library/toolkit/libxaw7
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY= libXaw - X Athena Widgets library 
+COMPONENT_SUMMARY= libXaw - X Athena Widgets library
 COMPONENT_SRC=     $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
@@ -30,9 +30,9 @@ COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXaw.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

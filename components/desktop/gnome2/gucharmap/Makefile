@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -42,7 +42,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cd $(@D) &&\
 					libtoolize --force &&\
 					autoreconf -f )
-					
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc

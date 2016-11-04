@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/gtkperf/files/gtkperf/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://gtkperf.sourceforge.net/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION += \
 	( cd $(@D) && \

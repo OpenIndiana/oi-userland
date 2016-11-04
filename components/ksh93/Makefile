@@ -42,7 +42,7 @@ COMPONENT_SRC = $(COMPONENT_SRC_NAME).$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH = \
     sha256:d692d476fe4bb933e7b6459c0cc99a2e9f428bfd81a495ed4201ec197e070f57
-COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE) 
+COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE)
 COMPONENT_PATCHES = 
 
 # Patch only required if building ksh93 only and not ast-base
@@ -89,7 +89,7 @@ UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
 # We override LD_B_DIRECT because -B direct has unfortunate consequences for the
 # interposition used by the Safe/Fast IO library (i.e. it becomes neither safe
-# nor fast, and causes the build to deadly embrace). 
+# nor fast, and causes the build to deadly embrace).
 LD_B_DIRECT=
 
 # Disable nmake's probing of runpaths
@@ -110,7 +110,7 @@ COMPONENT_INSTALL_PACKAGES += ast-base
 COMPONENT_TEST_TARGETS = ksh93
 
 # Unpack the ast-base tarball and copy it into the INIT tree,
-# mark it as un-patched 
+# mark it as un-patched
 COMPONENT_POST_UNPACK_ACTION_1= \
 	$(RM) $(COMPONENT_SRC)/*patched_1; \
     $(CP) -r $(COMPONENT_SRC_1)/* $(COMPONENT_SRC)
@@ -122,17 +122,17 @@ CLEAN_PATHS+= build $(COMPONENT_NAME_1).$(COMPONENT_VERSION_1) \
 # ksh.kshrc needs to be installed with the ksh package
 COMPONENT_POST_INSTALL_ACTION= \
 	@$(MKDIR) -p $(PROTO_DIR)/etc/; \
-	$(CP) ksh.kshrc $(PROTO_DIR)/etc/ 
+	$(CP) ksh.kshrc $(PROTO_DIR)/etc/
 
 # Packaging information.
-# Note how the AT&T "version letter symbol date" code is translated 
+# Note how the AT&T "version letter symbol date" code is translated
 # into the IPS version number:
-# 
+#
 # shell/ksh93@93.<letter representation>.<0 or 1>.<yymmdd>
 #
-# <letter representation> is the numeric place in the alphabet of the 
+# <letter representation> is the numeric place in the alphabet of the
 # major version letter.
-# 
+#
 # <0 or 1> is the presence or absence of the "+" symbol in the AT&T
 # version code. The "+" represents a point/bugfix release and would appear as
 # "93<version letter>+" in the human readable form.
@@ -147,16 +147,16 @@ IPS_HUMAN_VERSION= "93u 2011-02-08"
 
 # common targets
 build:		$(BUILD_32_and_64)
-	
-install:	$(INSTALL_32_and_64)	
-		
+
+install:	$(INSTALL_32_and_64)
+
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=   $(COMPONENT_DIR)/files
 
-include ../../make-rules/prep.mk
-include ../../make-rules/attpackagemake.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/attpackagemake.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/depend.mk

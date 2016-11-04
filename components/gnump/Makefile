@@ -37,16 +37,16 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnump
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += -std=c99 
+CFLAGS += -std=c99
 CFLAGS += -fexceptions
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
@@ -143,5 +143,5 @@ test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

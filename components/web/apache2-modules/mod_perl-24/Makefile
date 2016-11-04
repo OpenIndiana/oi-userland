@@ -58,7 +58,7 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	INSTALLSCRIPT=$(AP_PERL5BIN) \
 	MP_NO_THREADS=1 \
 	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs\
-	MP_APR_CONFIG=/usr/apr/bin/apr-1-config) 
+	MP_APR_CONFIG=/usr/apr/bin/apr-1-config)
 
 COMPONENT_TEST_TARGETS=	test
 

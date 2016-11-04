@@ -20,7 +20,7 @@ COMPONENT_FMRI=		  x11/x11-window-dump
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	  X11 Window Dump (screenshot) utilities
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

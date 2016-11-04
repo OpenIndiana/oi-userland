@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_URL=  https://fedorahosted.org/releases/m/l/$(COMPONENT_NAME)/
 
 COMPONENT_BUGDB = utility/mlocate
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS.64 +=    CC="$(CC) -m64"
 CONFIGURE_OPTIONS += --localstatedir="/var/cache"
@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS += --sysconfdir="/etc"
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 COMPONENT_POST_INSTALL_ACTION= \
     @$(MKDIR) -p $(PROTO_DIR)/etc/; \
-    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/ 
+    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -56,9 +56,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-		
+
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -27,16 +27,16 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE		= GPL v3
 COMPONENT_LICENSE_FILE	= $(COMPONENT_NAME).license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS 	+=	--disable-static
 
-include $(WS_TOP)/make-rules/shared-targets.mk
-	
+include $(WS_MAKE_RULES)/shared-targets.mk
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
@@ -45,4 +45,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -49,7 +49,7 @@ $(WS_TOP)/components/$(ENCUMBERED)depends.mk:     $(WS_TOP)/components/$(ENCUMBE
 		| sed -f components.ignore \
 		| sed -e 's;$$;/depend.mk;g') >$@ \
 		2>/dev/null
- 
+
 -include $(WS_TOP)/components/$(ENCUMBERED)depends.mk
 
 

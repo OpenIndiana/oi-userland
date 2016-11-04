@@ -26,10 +26,10 @@ COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
@@ -38,7 +38,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-# Paths to find libraries/modules to link with 
+# Paths to find libraries/modules to link with
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))

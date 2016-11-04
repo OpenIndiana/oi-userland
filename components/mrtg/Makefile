@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://oss.oetiker.ch/mrtg/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://oss.oetiker.ch/mrtg/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 

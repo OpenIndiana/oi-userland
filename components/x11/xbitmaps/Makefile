@@ -23,16 +23,16 @@ COMPONENT_SUMMARY=  bitmap images from X.Org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3671b034356bbc4d32d052808cf646c940ec8b2d1913adac51b1453e41aa1e9d  
+  sha256:3671b034356bbc4d32d052808cf646c940ec8b2d1913adac51b1453e41aa1e9d
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/data/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xbitmaps.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

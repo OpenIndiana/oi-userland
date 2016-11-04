@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ggrep
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 
@@ -48,7 +48,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 # This option causes "$1: unbound variable" errors during the check-TESTS,
 # and the gnulib-tests don't even run at all.
 # Note that the below unexports SHELLOPTS, even for targets
-# other than "test." 
+# other than "test."
 unexport SHELLOPTS
 
 # common targets
@@ -57,12 +57,12 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 # 1 test fails - multibyte-white-space (something with illumos locales?)
-# 
+#
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += SUNWcs

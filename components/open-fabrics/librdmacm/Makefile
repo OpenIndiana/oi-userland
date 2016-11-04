@@ -30,8 +30,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b74d367415b4f294f3821955428f3e362b91f779042c88970f99941216c13a7c
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/rdmacm/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 LIBS += -libverbs -lsocket -lnsl
@@ -52,7 +52,7 @@ CLEANUP_FILES =\
 	$(PROTOUSRINCDIR)/rdma/rdma_cma_abi.h\
 	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la\
 	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la
-	
+
 COMPONENT_PREP_ACTION = \
 	$(TOUCH) $(COMPONENT_SRC)/Makefile.in
 
@@ -70,4 +70,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

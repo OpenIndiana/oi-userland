@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:6efd3c3a1e14209226db3c6df35bb1cb92ae68d7bb529bcaa3e02fdd5424c00d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/teseq/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS	+= -std=c99
 
@@ -46,4 +46,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

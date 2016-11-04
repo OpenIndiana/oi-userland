@@ -20,7 +20,7 @@ COMPONENT_FMRI=		  x11/xt-resource-utilities
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	  X Toolkit Resource Utilties
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

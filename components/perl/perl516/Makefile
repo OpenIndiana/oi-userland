@@ -42,9 +42,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LD_B_DIRECT=		""
 
@@ -89,7 +89,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
-			-Uuselargefiles 
+			-Uuselargefiles
 
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
@@ -140,4 +140,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

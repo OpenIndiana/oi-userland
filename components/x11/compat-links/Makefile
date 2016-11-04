@@ -23,12 +23,12 @@ COMPONENT_SUMMARY=      Compatibility links for X11 files
 COMPONENT_LICENSE=      Oracle
 COMPONENT_LICENSE_FILE= compat-links.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-build: 
+build:
 
-install: 
+install:
 
 test: $(NO_TESTS)
 

@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.realvnc.com
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(JAVA_HOME)/bin:/usr/gnu/bin:/usr/bin
 

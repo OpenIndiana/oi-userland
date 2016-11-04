@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:ff9df3c2e8c5bb19c6a66078b36a0ef4c4dfb0fcb969e29f7
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/aspell/dict/en/$(COMPONENT_ARCHIVE)
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
 

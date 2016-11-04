@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	python-mod/mysql
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Remove trailing carriage returns, if present, in the files.
 COMPONENT_POST_UNPACK_ACTION = \

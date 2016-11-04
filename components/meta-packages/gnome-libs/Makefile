@@ -18,7 +18,7 @@ COMPONENT_NAME=		gnome-libs
 COMPONENT_VERSION=	2.30.1
 COMPONENT_SUMMARY=	GNOME platform libraries
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

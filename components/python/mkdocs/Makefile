@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= mkdocs
 COMPONENT_VERSION= 0.15.3
 COMPONENT_REVISION= 2
-COMPONENT_FMRI= library/python/mkdocs	
+COMPONENT_FMRI= library/python/mkdocs
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_SUMMARY= mkdocs - Project documentation with Markdown
 COMPONENT_PROJECT_URL= http://www.mkdocs.org/

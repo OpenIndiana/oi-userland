@@ -33,9 +33,9 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LD_OPTIONS	+= -lm
 
@@ -50,13 +50,13 @@ COMPONENT_PRE_BUILD_ACTION  +=	chmod 755 $(BUILD_DIR)/fake_cc
 COMPONENT_PRE_INSTALL_ACTION  +=	echo '\#!/bin/sh' > $(BUILD_DIR)/fake_cc ;
 COMPONENT_PRE_INSTALL_ACTION  +=	echo 'gcc -m$(BITS) $$@' >> $(BUILD_DIR)/fake_cc ;
 COMPONENT_PRE_INSTALL_ACTION  +=	chmod 755 $(BUILD_DIR)/fake_cc
-	
+
 COMPONENT_POST_BUILD_ACTION =	$(RM) $(BUILD_DIR)/fake_cc
 COMPONENT_POST_INSTALL_ACTION =	$(RM) $(BUILD_DIR)/fake_cc
 
 CC=$(BUILD_DIR)/fake_cc
 
-COMPONENT_BUILD_ARGS	=	--fcompiler=gnu95 
+COMPONENT_BUILD_ARGS	=	--fcompiler=gnu95
 
 NUMPY_WRONG_HASHBANG =\
 	fft/tests/test_helper.py\

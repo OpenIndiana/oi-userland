@@ -39,7 +39,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--program-suffix=3
 
-# 
+#
 COMPONENT_BUILD_ENV+=	CC="$(CC)"
 COMPONENT_BUILD_ENV+=	CFLAGS="$(CFLAGS)"
 

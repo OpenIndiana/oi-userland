@@ -23,7 +23,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 #
-# Makefile for xlock. 
+# Makefile for xlock.
 
 CPPFLAGS += ${DEFINES} -DUSE_PAM -DIPv6
 C_SRCS=xlock.c hsbramp.c resource.c \
@@ -44,7 +44,7 @@ LINTFLAGS += -errsecurity=extended
 LINTFLAGS += -erroff=E_SEC_RAND_WARN
 
 # Get default XFILESEARCHPATH from libXt & use it in resource.c
-DEF_FILESEARCHPATH=`pkg-config --variable=xfilesearchpath xt` 
+DEF_FILESEARCHPATH=`pkg-config --variable=xfilesearchpath xt`
 datadir=$(PREFIX)/share
 libdir=$(PREFIX)/lib
 sysconfdir=/etc

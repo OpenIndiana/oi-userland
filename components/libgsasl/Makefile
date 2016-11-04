@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libgsasl
 COMPONENT_VERSION=	1.8.0
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gsasl/
-COMPONENT_SUMMARY=	Implementation of the Simple Authentication and Security Layer framework 
+COMPONENT_SUMMARY=	Implementation of the Simple Authentication and Security Layer framework
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -26,12 +26,12 @@ COMPONENT_FMRI=		library/libgsasl
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
-    
+
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gsasl/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -50,4 +50,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

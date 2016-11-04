@@ -33,11 +33,11 @@ COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COM
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 COMPONENT_BUGDB=	utility/foomatic
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	FILEUTIL=/bin/true
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu
@@ -71,4 +71,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

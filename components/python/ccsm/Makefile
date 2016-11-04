@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ae622878b651ff215de2673a057ca6c34f5fe4e68d8cf2eb073fb83e4cda3254
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # compizconfig-python is Python 2.7 only
 PYTHON_VERSIONS = 2.7
@@ -37,7 +37,7 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_BUILD_ARGS += --prefix=/usr
 
 COMPONENT_INSTALL_ARGS = --prefix=/usr
-COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR) 
+COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR)
 COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-purelib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-platlib=$(PYTHON_LIB)

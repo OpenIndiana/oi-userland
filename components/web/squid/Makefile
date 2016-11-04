@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) &&\
 					libtoolize --copy --force &&\
@@ -99,9 +99,9 @@ COMPONENT_POST_BUILD_ACTION= \
                  $(CP) files/squid.conf.default $(@D)/src)
 
 # common targets
-build:		$(BUILD_32) 
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32)
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly
@@ -134,4 +134,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

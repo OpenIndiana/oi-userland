@@ -38,8 +38,8 @@ UNPACK_ARGS= -r $(COMPONENT_SRC)
 
 PROTOGSSHAREDIR=$(PROTOUSRSHAREDIR)/ghostscript
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # untar the tar ball and apply the patches
 build:  $(SOURCE_DIR)/.prep
@@ -54,4 +54,4 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

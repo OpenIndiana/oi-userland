@@ -20,7 +20,7 @@ COMPONENT_FMRI=		        x11/diagnostic/x11-info-clients
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	      X Window System diagnostic and information display clients
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

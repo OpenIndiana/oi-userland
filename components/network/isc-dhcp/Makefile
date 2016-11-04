@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:f5115aee3dd3e6925de4ba47b80ab732ba48b481c8364b6ebade2d43698d607e
 COMPONENT_BUGDB=	service/dhcp-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Parallel build fails
 COMPONENT_BUILD_ARGS =

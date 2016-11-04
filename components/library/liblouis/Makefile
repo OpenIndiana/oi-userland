@@ -31,15 +31,15 @@ COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
 COMPONENT_LICENSE_FILE = liblouis.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_BUILD_ARGS =
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ( cp -a $(SOURCE_DIR)/* $(@D))

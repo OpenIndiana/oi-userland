@@ -74,8 +74,8 @@ CONFIGURE_OPTIONS +=	--system-curl
 CONFIGURE_OPTIONS +=	--system-expat
 CONFIGURE_OPTIONS +=	--system-zlib
 CONFIGURE_OPTIONS +=	--system-bzip2
-CONFIGURE_OPTIONS +=    --system-libarchive                                                                                          
-CONFIGURE_OPTIONS +=    --system-liblzma 
+CONFIGURE_OPTIONS +=    --system-libarchive
+CONFIGURE_OPTIONS +=    --system-liblzma
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"

@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:487d27d3a081ae403cf87c0fc78c2a64183f001b48f9feb87e8de1e16fba8df2
 COMPONENT_ARCHIVE_URL= http://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))

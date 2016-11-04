@@ -46,9 +46,9 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMPONENT_ARCHIVE_1)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -84,7 +84,7 @@ CONFIGURE_OPTIONS += --enable-bdb
 CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-ldap
-CONFIGURE_OPTIONS += --enable-passwd	 
+CONFIGURE_OPTIONS += --enable-passwd
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
@@ -115,7 +115,7 @@ install:	$(INSTALL_32_and_64)
 # build does this always
 test:	$(TEST_32_and_64)
 
-	
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

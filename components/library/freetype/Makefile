@@ -31,9 +31,9 @@ COMPONENT_PROJECT_URL = http://freetype.org/
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= freetype-2.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

@@ -34,13 +34,13 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c0baaa87f59153967b650a0dde2f7d4147d358fa15f3fdabb47e84d0282fe625
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 COMPONENT_BUGDB=	utility/sudo
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS +=	--disable-hardening
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
-CONFIGURE_OPTIONS +=	--with-pam 
+CONFIGURE_OPTIONS +=	--with-pam
 CONFIGURE_OPTIONS +=	--with-pam-login
 CONFIGURE_OPTIONS +=	--disable-pam-session
 CONFIGURE_OPTIONS +=	--with-tty-tickets

@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/ejabberd
 
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 SRC_OFFSET =	src
 # Now we override paths to .built
@@ -48,8 +48,8 @@ COMPONENT_PREP_ACTION = \
        (cd $(@D)/src ; PATH=$(PATH) $(AUTORECONF) -fiv)
 
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += "HOME=/tmp"
 CONFIGURE_ENV += "HOME=/tmp"
@@ -77,4 +77,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

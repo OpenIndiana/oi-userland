@@ -20,9 +20,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:16eb544498339d1d855292826e2e547ab01a31600141094959073e5e10e93ab5
 COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -181,7 +181,7 @@ CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 COMPONENT_BUILD_TARGETS = libphp5.la
 COMPONENT_INSTALL_TARGETS = install-sapi
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 

@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mpc
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 export SHELL
 SHELL=/bin/sh
@@ -47,7 +47,7 @@ CFLAGS +=		`pkg-config --cflags libmpfr`
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 
@@ -55,10 +55,10 @@ COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 build:	$(BUILD_32_and_64)
 
 
-install:	$(INSTALL_32_and_64)	
+install:	$(INSTALL_32_and_64)
 
 test: install	$(TEST_32_and_64)
- 
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

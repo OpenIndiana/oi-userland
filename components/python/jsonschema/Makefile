@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/j/jsonschema/$(CO
 
 PYTHON_VERSIONS=	2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; \

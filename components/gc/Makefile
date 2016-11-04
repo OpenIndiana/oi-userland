@@ -27,11 +27,11 @@ COMPONENT_ARCHIVE_URL= \
   https://launchpad.net/libgc/main/$(COMPONENT_VERSION)e/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://launchpad.net/libgc
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =    ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION =    ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-threads=posix

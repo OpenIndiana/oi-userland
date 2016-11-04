@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
 COMPONENT_VERSION= 	1.6.1
-COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
+COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
@@ -28,9 +28,9 @@ COMPONENT_PROJECT_URL = http://pgbarman.org/
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         ($(MV) $(PROTO_DIR)/usr/bin/barman $(PROTO_DIR)/usr/bin/barman-$(PYTHON_VERSION))

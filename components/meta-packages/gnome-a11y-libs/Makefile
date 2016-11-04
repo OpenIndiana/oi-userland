@@ -18,7 +18,7 @@ COMPONENT_NAME=		gnome-a11y-libs
 COMPONENT_VERSION=	2.32.0
 COMPONENT_SUMMARY=	Accessibility implementation for GNOME
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

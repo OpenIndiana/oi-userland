@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_1=		lightning-$(LIGHTNING_VERSION)-sm+tb-linux.xpi
 COMPONENT_ARCHIVE_HASH_1=	sha256:1f3762ac664ef8861158d32306e406e774b16cc63be5ba2be49638088742dff5
 COMPONENT_ARCHIVE_URL_1=	https://addons.cdn.mozilla.net/user-media/addons/_attachments/2313/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR) && chmod +x $(BUILD_DIR)/gld-wrapper )
 
@@ -98,7 +98,7 @@ CLEAN_PATHS += $(LANG_FILES)
 
 COMPONENT_BUILD_ARGS =
 
-$(LANG_FILES): 
+$(LANG_FILES):
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
 COMPONENT_POST_INSTALL_ACTION += \

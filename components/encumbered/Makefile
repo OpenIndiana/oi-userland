@@ -15,6 +15,6 @@
 
 include ../../make-rules/shared-macros.mk
 
-include $(WS_TOP)/make-rules/encumbered.mk
+include $(WS_MAKE_RULES)/encumbered.mk
 
 include $(WS_TOP)/components/Makefile

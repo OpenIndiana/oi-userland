@@ -16,9 +16,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		build-essential
 COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	3	
+COMPONENT_REVISION=	3
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKGLINT=/bin/true
 

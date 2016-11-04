@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.heanet.ie/mirrors/xbmc/build-deps/sources/$(COMPONENT_SRC).tar.gz
 COMPONENT_LICENSE = MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS+= -DGUID_LIBUUID
 

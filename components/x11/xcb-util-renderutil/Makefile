@@ -33,11 +33,11 @@ COMPONENT_ARCHIVE_HASH=	sha256:c6e97e48fb1286d6394dddb1c1732f00227c70bd1bedb7d1a
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Convenience functions for the Render extension. 
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Convenience functions for the Render extension.
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 
@@ -47,7 +47,7 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
 
 REQUIRED_PACKAGES += system/library

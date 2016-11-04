@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2016 Adam Stevko 
+# Copyright 2016 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk

@@ -28,8 +28,8 @@ COMPONENT_VERSION=	1.9
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_BUGDB=	utility/ruby
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # This package delivers no files and has no dependencies.
 EXTDEPFILES = $(NULLDEPFILE)

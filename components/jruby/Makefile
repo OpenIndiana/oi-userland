@@ -28,8 +28,8 @@ COMPONENT_ARCHIVE_URL= \
   https://s3.amazonaws.com/jruby.org/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://jruby.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += JAVA_HOME="$(JAVA_HOME)"
 # build the configured source

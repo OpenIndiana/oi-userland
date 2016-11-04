@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_CLASSIFICATION=	System/Fonts
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =	( cp $(COMPONENT_DIR)/files/Makefile $(@D))
 

@@ -29,15 +29,15 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:0ef103dd18c96668f968b55f63c6b6c38d1711fd921dffc0d23047a39d708d40
 # Note, we are not sure if we can distribute this source file, so it is available
 # only from our build servers
-# However, you can manually download Solaris GLDv3 driver from 
+# However, you can manually download Solaris GLDv3 driver from
 # http://www.broadcom.com/support/ethernet_nic/netxtremeii.php ,
 # extract BRCMbnx-S11-i386-7.8.2.tar.Z and put it in component dir.
 COMPONENT_ARCHIVE_URL= \
   http://dlc-int.openindiana.org/hipster/broadcom/BRCMbnx-S11-i386-7.8.2.tar.Z
 COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii.php
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 
@@ -46,7 +46,7 @@ $(BUILD_32):	$(SOURCE_DIR)/.prep
 	$(TOUCH) $@
 
 $(INSTALL_32): $(BUILD_32)
-	$(MKDIR) $(PROTO_DIR) 
+	$(MKDIR) $(PROTO_DIR)
 	cp -a $(SOURCE_DIR)/reloc/* $(PROTO_DIR)
 	$(TOUCH) $@
 

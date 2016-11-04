@@ -38,11 +38,11 @@ COMPONENT_BUGDB=	python-mod/twisted
 
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 

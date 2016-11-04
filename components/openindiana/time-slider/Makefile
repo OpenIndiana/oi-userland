@@ -32,15 +32,15 @@ GIT_CHANGESET=HEAD
 
 PATH=/usr/gnu/bin:/usr/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
 # publish: target should appear before inclusion of ips.mk
 publish: update-publish
 
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \

@@ -29,9 +29,9 @@ COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = desktop/mate/$(COMPONENT_NAME)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -42,8 +42,8 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/mate
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --enable-stickynotes 
-CONFIGURE_OPTIONS+= --with-gtk=2.0 
+CONFIGURE_OPTIONS+= --enable-stickynotes
+CONFIGURE_OPTIONS+= --with-gtk=2.0
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= LIBS="-lnsl -lsocket"

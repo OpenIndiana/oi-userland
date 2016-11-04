@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION=Desktop (GNOME)/Window Managers
 COMPONENT_LICENSE_FILE=	compiz.license
 COMPONENT_LICENSE=	MIT, LGPLv2.1, GPLv2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

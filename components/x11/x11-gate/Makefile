@@ -4,7 +4,7 @@ X11_GATE_DIR=$(WS_TOP)/components/x11
 X11_GATE_COOKIE=.x11.installed
 X11_GATE_INSTALL_ACTION=!install
 
-include components.mk 
+include components.mk
 
 clobber:
 	@for d in $(COMPONENTS); \

@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright 2016 Adam Stevko 
+# Copyright 2016 Adam Stevko
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flamegraph
 COMPONENT_VERSION=	0.1
-COMPONENT_SUMMARY=	Statistical profiler which outputs in format suitable for FlameGraph 
+COMPONENT_SUMMARY=	Statistical profiler which outputs in format suitable for FlameGraph
 COMPONENT_PROJECT_URL=	https://github.com/evanhempel/python-flamegraph
 COMPONENT_FMRI=		library/python/flamegraph
 COMPONENT_CLASSIFICATION=Development/Python

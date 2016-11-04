@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		  xfs-utilities
-COMPONENT_VERSION=	  7.5 
+COMPONENT_VERSION=	  7.5
 COMPONENT_FMRI=		  x11/xfs/xfs-utilities
 COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	  X Font Server utilities
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_URL=  http://sfe.opencsw.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =	LGPLv2
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 GMAKE=/usr/bin/dmake
 
@@ -58,4 +58,4 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
