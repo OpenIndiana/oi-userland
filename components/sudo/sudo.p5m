@@ -34,6 +34,10 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/252
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file files/sudo path=etc/pam.d/sudo group=sys mode=0644 overlay=allow \
+    preserve=renamenew
+file files/sudo-i path=etc/pam.d/sudo-i group=sys mode=0644 overlay=allow \
+    preserve=renamenew
 file path=etc/sudoers group=root mode=0440 original_name=SUNWsudo:etc/sudoers \
     overlay=allow preserve=true
 dir  path=etc/sudoers.d group=root mode=0750
@@ -107,6 +111,9 @@ file path=usr/share/locale/it/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/ja.UTF-8 target=ja
 file path=usr/share/locale/ja/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/ja/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/ko.UTF-8 target=ko
+file path=usr/share/locale/ko/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/ko/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/lt.UTF-8 target=lt
 file path=usr/share/locale/lt/LC_MESSAGES/sudoers.mo
 link path=usr/share/locale/nb.UTF-8 target=nb

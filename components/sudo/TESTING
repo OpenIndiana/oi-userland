@@ -75,11 +75,11 @@ sudo auditreduce * | praudit -s
 # Make sure that 'root' is a role
 sudo usermod -K type=role root
 
-# Note the preselection mask, it should probably be 'lo(0x1000,0x1000)'
+# Note the preselection mask, it should probably be 'sstore(0x200031000,0x200031000)'
 sudo bash -c 'auditconfig -getpinfo $$'
 
 # Add audit flags to root
-sudo rolemod -K audit_flags=lo,ex:no root
+sudo rolemod -K audit_flags=ex:no root
 
 # Make sure that the preselection mask now shows new entries (lo,ex)
 sudo bash -c 'auditconfig -getpinfo $$'
@@ -128,24 +128,31 @@ sudo dtrace -l -n 'syscall::b*:entry'
 
 # Verify the following works
 
-$ sudo /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+$ sudo /usr/perl5/5.22/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
 before
 uid=0(root) gid=0(root) groups=0(root),1(other),2(bin),3(sys),4(adm),6(mail),7(tty),8(lp),12(daemon)
 after
 
 # Add the following to sudoers
 
-ALL     ALL = NOPASSWD: NOEXEC: /usr/perl5/5.12/bin/perl
+ALL     ALL = NOPASSWD: NOEXEC: /usr/perl5/5.22/bin/perl
 
 # Now Perl should be prevent to run further commands, so the output is
 
-$ sudo /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+$ sudo /usr/perl5/5.22/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
 before
 after
 
 # Perl itself works as expected
 
-$ /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+$ /usr/perl5/5.22/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
 before
 uid=101(rimmer) gid=10(staff) groups=10(staff)
 after
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Verify that "Last login..." message does not appear
+
+$ sudo /bin/date
+Thu Nov 10 08:24:57 UTC 2016
