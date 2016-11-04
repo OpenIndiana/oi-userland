@@ -88,12 +88,6 @@ CONFIGURE_ENV += PATH=$(GNUBIN):$(PATH)
 # Tell g-ir-scanner not to cache results in homedir of user running the build
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
-# Temporary until lcms2 with fix for 24494517 is installed on build machines
-# Allows running binaries during build to process profiles without bus errors
-LCMS2_LIB_DIR = $(WS_COMPONENTS)/lcms2/build/prototype/$(MACH)$(USRLIB)
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH="$(LCMS2_LIB_DIR)"
-# End temporary workaround section
-
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

@@ -46,11 +46,7 @@ PYTHON_VERSIONS=3.4
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gupnp, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -64,26 +60,6 @@ CONFIGURE_OPTIONS += --with-pic
 
 # Ancient configure script needs regeneration.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
-
-# Delete this when build servers are installed with gupnp
-GUPNP_BASE = $(WS_COMPONENTS)/gnome/gupnp/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(GUPNP_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(GUPNP_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(GUPNP_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(GUPNP_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(GUPNP_BASE)/usr/include/gupnp-1.0
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo.
-DEPENDED += $(WS_TOP)/components/gnome/gupnp/build/manifest-$(MACH)-gupnp.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../gupnp/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

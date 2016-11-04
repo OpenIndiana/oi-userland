@@ -40,28 +40,11 @@ TPNO=			25780
 TEST_TARGET = $(NO_TESTS)
 
 # Needs updated gtk, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 CXXFLAGS += -std=c++11
-
-# Delete this when build servers are installed with atkmm
-ATKMM_BASE = $(WS_COMPONENTS)/gnome/atkmm/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(ATKMM_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(ATKMM_BASE)$(USRLIB.$(BITS))
-
-CPPFLAGS += -I$(ATKMM_BASE)$(USRINCDIR)/atkmm-1.6
-
-DEPENDED += $(WS_TOP)/components/gnome/atkmm/build/manifest-$(MACH)-atkmm.depend
-
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's%\$$(PERL_PKG)%$(PERL_PKG)%' -e 's/REQUIRED_PACKAGES +=//p' ../atkmm/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += image/graphviz

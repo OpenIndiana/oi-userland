@@ -57,27 +57,6 @@ CONFIGURE_OPTIONS += --with-pic
 
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 
-# Delete once builds servers have goa installed
-GOA_BASE = $(WS_COMPONENTS)/gnome/gnome-online-accounts/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(GOA_BASE)/usr/lib/$(MACH64)/pkgconfig
-
-LD_OPTIONS += -L $(GOA_BASE)$(USRLIB.$(BITS))
-
-CONFIGURE_ENV += GNOME_CFLAGS="-D_REENTRANT -I$(GOA_BASE)/usr/include/goa-1.0 -I$(GOA_BASE)/usr/lib/$(MACH64)/goa-1.0/include -I/usr/include/gcr-3 -I/usr/include/gck-1 -I/usr/include/p11-kit-1 -I/usr/include/libxml2 -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include"
-
-COMPONENT_BUILD_ENV  += \
-	XDG_DATA_DIRS="$(GOA_BASE)/usr/share/:/usr/share/"
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(GOA_BASE)$(USRLIB.$(BITS)):$(BUILD_DIR_64)/gdata/.libs"
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/gnome-online-accounts/build/manifest-$(MACH)-gnome-online-accounts.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../gnome-online-accounts/Makefile)
-#end Delete
-
 # for the tests
 unexport SHELLOPTS
 COMPONENT_TEST_ARGS =   -k -i

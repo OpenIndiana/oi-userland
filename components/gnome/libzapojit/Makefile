@@ -41,11 +41,7 @@ TPNO=			25454
 TEST_TARGET = $(NO_TESTS)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_64=
-INSTALL_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -58,26 +54,6 @@ CONFIGURE_OPTIONS += --with-pic
 # Expects GNU utilities in path (e.g. GNU cp, etc.)
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
-
-# Delete once builds servers have goa installed
-GOA_BASE = $(WS_COMPONENTS)/gnome/gnome-online-accounts/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(GOA_BASE)/usr/lib/$(MACH64)/pkgconfig
-
-LD_OPTIONS += -L $(GOA_BASE)$(USRLIB.$(BITS))
-
-CPPFLAGS +=  \
-	-I$(GOA_BASE)/usr/include/goa-1.0 \
-	-I$(GOA_BASE)/usr/lib/$(MACH64)/goa-1.0/include
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(GOA_BASE)/$(USRLIB.$(BITS)):$(BUILD_DIR_64)/src/.libs"
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/gnome-online-accounts/build/manifest-$(MACH)-gnome-online-accounts.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../gnome-online-accounts/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

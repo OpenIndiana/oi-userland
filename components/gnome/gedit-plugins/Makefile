@@ -41,27 +41,14 @@ TPNO=			26843
 TEST_TARGET = $(NO_TESTS)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_64=
-INSTALL_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
 
-# Delete this when build servers are installed with an updated gedit
-GEDIT_BASE = $(WS_COMPONENTS)/gnome/gedit/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(GEDIT_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L$(GEDIT_BASE)$(USRLIB.$(BITS))
-CPPFLAGS += -I$(GEDIT_BASE)/usr/include/gedit-3.14
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../gedit/Makefile)
-#end Delete
-
+REQUIRED_PACKAGES += editor/gedit
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtksourceview3
 REQUIRED_PACKAGES += library/desktop/libpeas

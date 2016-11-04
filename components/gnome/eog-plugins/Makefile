@@ -40,11 +40,7 @@ TPNO=			26904
 TEST_TARGET = $(NO_TESTS)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_64=
-INSTALL_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -69,30 +65,10 @@ CONFIGURE_OPTIONS += --with-plugins="map,fit-to-width,exif-display,fullscreenbg,
 # Requires python 3.2 or newer
 PYTHON_VERSION = 3.5
 
-# Delete this when build servers are installed with an updated eog
-EOG_BASE = $(WS_COMPONENTS)/gnome/eog/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(EOG_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L$(EOG_BASE)$(USRLIB.$(BITS))
-CPPFLAGS += -I$(EOG_BASE)/usr/include/eog-3.0
-
-LIBCHAMPLAIN_BASE = $(WS_COMPONENTS)/gnome/libchamplain/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(LIBCHAMPLAIN_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L$(LIBCHAMPLAIN_BASE)$(USRLIB.$(BITS))
-CPPFLAGS += -I$(LIBCHAMPLAIN_BASE)/usr/include/libchamplain-0.12 -I$(LIBCHAMPLAIN_BASE)/usr/include/libchamplain-gtk-0.12
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo.
-DEPENDED += $(WS_TOP)/components/gnome/eog/build/manifest-$(MACH)-eog.depend
-DEPENDED += $(WS_TOP)/components/gnome/libchamplain/build/manifest-$(MACH)-libchamplain.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../eog/Makefile)
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../libchamplain/Makefile)
-#end Delete
-
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += image/viewer/eog
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/clutter

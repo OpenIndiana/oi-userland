@@ -48,48 +48,9 @@ TEST_TARGET= $(SKIP_TEST)
 PYTHON_VERSIONS= 2.7
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Delete this when build servers are installed with an updated versions of,
-# gst-plugins-base, pulseaudio and libsoup
-GST_BASE = $(WS_COMPONENTS)/desktop/gstreamer1/gst-plugins-base/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(GST_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(GST_BASE)/usr/lib/$(MACH64)/pkgconfig/
-
-PULSE_BASE = $(WS_COMPONENTS)/desktop/pulseaudio/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(PULSE_BASE)/usr/lib/pkgconfig
-PKG_CONFIG_PATHS.64 += $(PULSE_BASE)/usr/lib/$(MACH64)/pkgconfig/
-
-SOUP_BASE = $(WS_COMPONENTS)/gnome/libsoup/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(SOUP_BASE)/usr/lib/pkgconfig
-PKG_CONFIG_PATHS.64 += $(SOUP_BASE)/usr/lib/$(MACH64)/pkgconfig/
-
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-CPPFLAGS += 	-I$(GST_BASE)/usr/include/gstreamer-1.0 \
-		-I$(PULSE_BASE)/usr/include/pulse \
-		-I$(SOUP_BASE)/usr/include/libsoup-2.4 \
-		-I$(SOUP_BASE)/usr/include/libsoup-gnome-2.4
-
-LD_OPTIONS.32 += -L $(GST_BASE)/usr/lib \
-		 -L $(PULSE_BASE)/usr/lib \
-		 -L $(SOUP_BASE)/usr/lib
-			
-LD_OPTIONS.64 += -L $(GST_BASE)/usr/lib/$(MACH64) \
-		 -L $(PULSE_BASE)/usr/lib/$(MACH64) \
-		 -L $(SOUP_BASE)/usr/lib/$(MACH64) 
-
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-DEPENDED += $(WS_TOP)/components/desktop/gstreamer1/gst-plugins-base/build/manifest-$(MACH)-gst-plugins-base.depend
-
-# end Delete
 
 CXXFLAGS += -std=c++11
 

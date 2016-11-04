@@ -61,35 +61,9 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-vala
 CONFIGURE_OPTIONS += --with-pic
 
-# Delete this when build servers are installed with an updated colord
 COLORD_BASE = $(WS_COMPONENTS)/desktop/colord/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(COLORD_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(COLORD_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(COLORD_BASE)/usr/lib 
-LD_OPTIONS.64 += -L $(COLORD_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
 COMPONENT_BUILD_ENV  += \
-libdir=$(COLORD_BASE)/usr/lib
-
-COMPONENT_BUILD_ENV  += \
-	XDG_DATA_DIRS="$(COLORD_BASE)/usr/share:/usr/share"
-
-CPPFLAGS += -I$(COLORD_BASE)/usr/include/colord-1
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_32="$(BUILD_DIR_32)/libcolord-gtk/.libs:$(COLORD_BASE)$(USRLIB.$(BITS))"
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(BUILD_DIR_64)/libcolord-gtk/.libs:$(COLORD_BASE)$(USRLIB.$(BITS))"
-
-# The dependency isn't installed, so add it manually since pkgdepend 
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/desktop/colord/build/manifest-$(MACH)-colord.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../colord/Makefile)
-#end Delete
-
+        XDG_DATA_DIRS="$(COLORD_BASE)/usr/share:/usr/share"
 
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/desktop/cairo

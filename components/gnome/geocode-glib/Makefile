@@ -41,22 +41,9 @@ TPNO=			25283
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
-
-# Delete this when build servers are installed with an updated libsoup
-LIBSOUP_ROOT = $(WS_COMPONENTS)/gnome/libsoup/build/prototype/$(MACH)
-CPPFLAGS += -I$(LIBSOUP_ROOT)/usr/include/libsoup-2.4
-LD_OPTIONS.32 += -L $(LIBSOUP_ROOT)/usr/lib 
-LD_OPTIONS.64 += -L $(LIBSOUP_ROOT)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-# end Delete
 
 CONFIGURE_OPTIONS += --disable-static
 # Required for other components.

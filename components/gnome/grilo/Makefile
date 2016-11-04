@@ -41,11 +41,7 @@ TPNO=			25361
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -63,27 +59,6 @@ CONFIGURE_OPTIONS += --enable-shared
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-vala
 CONFIGURE_OPTIONS += --with-pic
-
-# Delete when build servers are installed with an updated totem-pl-parser
-TPP_BASE = $(WS_COMPONENTS)/gnome/totem-pl-parser/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(TPP_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(TPP_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(TPP_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(TPP_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CONFIGURE_ENV += TOTEM_PL_PARSER_CFLAGS="-I$(TPP_BASE)/usr/include/totem-pl-parser/1/plparser"
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo.
-DEPENDED += $(WS_TOP)/components/gnome/totem-pl-parser/build/manifest-$(MACH)-totem-pl-parser.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../totem-pl-parser/Makefile)
-#end Delete
-
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala

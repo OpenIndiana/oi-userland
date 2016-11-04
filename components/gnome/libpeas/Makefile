@@ -39,11 +39,7 @@ COMPONENT_BUGDB=        gnome/libraries
 TPNO=			25272
 
 # Needs pygobject3, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -81,15 +77,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS:/p" ' \
         '-e "/FAIL:/p" '
 
-# Delete this when build servers are installed with pygobject3
-PYGOBJ_BASE = $(WS_COMPONENTS)/gnome/pygobject3/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(PYGOBJ_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(PYGOBJ_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-CONFIGURE_OPTIONS += PYGOBJECT_CFLAGS=-I$(PYGOBJ_BASE)/usr/include/pygobject-3.0
-#end Delete
-
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/documentation-tool/xmlto
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -97,5 +84,6 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lua/lgi-52
+REQUIRED_PACKAGES += library/python/pygobject-3
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27

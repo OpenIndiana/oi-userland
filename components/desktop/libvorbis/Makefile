@@ -46,12 +46,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 
-# Replace the following with REQUIRED_PACKAGES += codec/libogg when 
-# the build server is updated
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/desktop/libogg/build/manifest-$(MACH)-libogg.depend
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../libogg/Makefile)
-
+REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += system/library/math

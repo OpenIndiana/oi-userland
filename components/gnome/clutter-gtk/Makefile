@@ -41,11 +41,7 @@ TPNO=			24627
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -54,46 +50,6 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-introspection
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
-
-# Delete this when build servers are installed with the dependencies
-COGL_BASE = $(WS_COMPONENTS)/gnome/cogl/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(COGL_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(COGL_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(COGL_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(COGL_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(COGL_BASE)/usr/include/cogl
-
-CLUTTER_BASE = $(WS_COMPONENTS)/gnome/clutter/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(CLUTTER_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(CLUTTER_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(CLUTTER_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(CLUTTER_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(CLUTTER_BASE)/usr/include/clutter-1.0 \
-	    -I/usr/include/json-glib-1.0
-
-COMPONENT_BUILD_ENV  += \
-	XDG_DATA_DIRS="$(COGL_BASE)/usr/share/:$(CLUTTER_BASE)/usr/share/:/usr/share/"
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_32="$(COGL_BASE)$(USRLIB.$(BITS)):$(CLUTTER_BASE)$(USRLIB.$(BITS)):$(BUILD_DIR_32)/clutter-gtk/.libs"
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(COGL_BASE)$(USRLIB.$(BITS)):$(CLUTTER_BASE)$(USRLIB.$(BITS)):$(BUILD_DIR_64)/clutter-gtk/.libs"
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo. - 15708323
-DEPENDED += $(WS_TOP)/components/gnome/cogl/build/manifest-$(MACH)-cogl.depend
-DEPENDED += $(WS_TOP)/components/gnome/clutter/build/manifest-$(MACH)-clutter.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../cogl/Makefile)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES +=//p' ../clutter/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/cairo

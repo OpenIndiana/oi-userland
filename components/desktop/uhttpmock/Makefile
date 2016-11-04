@@ -41,27 +41,10 @@ TPNO=			25615
 # Enable after libsoup is installed on the build servers
 TEST_TARGET= $(SKIP_TEST)
 
-# Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+# Needs updated glib2, not available on S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Delete this when build servers are installed with an updated libsoup
-SOUP_BASE = $(WS_COMPONENTS)/gnome/libsoup/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(SOUP_BASE)/usr/lib/pkgconfig
-PKG_CONFIG_PATHS.64 += $(SOUP_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-CPPFLAGS += -I$(SOUP_BASE)/usr/include/libsoup-2.4 \
-	    -I$(SOUP_BASE)/usr/include/libsoup-gnome-2.4
-LD_OPTIONS.32 += -L $(SOUP_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(SOUP_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-# end Delete
 
 # Tell g-ir-scanner not to cache results in homedir of user running the build
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""

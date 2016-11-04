@@ -42,11 +42,7 @@ TPNO=			24625
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -67,32 +63,6 @@ CONFIGURE_OPTIONS += --enable-x11-backend
 CONFIGURE_OPTIONS += --enable-xinput
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-x
-
-# Delete this when build servers are installed with an updated cogl
-COGL_BASE = $(WS_COMPONENTS)/gnome/cogl/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(COGL_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(COGL_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(COGL_BASE)/usr/lib 
-LD_OPTIONS.64 += -L $(COGL_BASE)/usr/lib/$(MACH64) 
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(COGL_BASE)/usr/include/cogl
-
-COMPONENT_BUILD_ENV  += \
-	XDG_DATA_DIRS="$(COGL_BASE)/usr/share/:/usr/share/" 
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_32="$(COGL_BASE)$(USRLIB.$(BITS)):$(BUILD_DIR_32)/clutter/.libs"
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(COGL_BASE)$(USRLIB.$(BITS)):$(BUILD_DIR_64)/clutter/.libs"
-
-# Work around pkgdepend bug which doesn't resolve dependencies from
-# the local workspace repo. - 15708323
-DEPENDED += $(WS_TOP)/components/gnome/cogl/build/manifest-$(MACH)-cogl.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../cogl/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/atk
