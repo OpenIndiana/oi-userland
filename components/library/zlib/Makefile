@@ -61,9 +61,11 @@ CFLAGS += $(CFLAGS.$(BITS))
 
 # We need to reset configure options here because zlib is confused with
 # CC and CFLAGS definitions as configure parameters.
+# Note that this is NOT an autoconf-generated standard configure script.
 CONFIGURE_OPTIONS	=  --shared
 CONFIGURE_OPTIONS	+= --prefix=/usr
-CONFIGURE_OPTIONS.64	+= --64
+CONFIGURE_OPTIONS.32	=
+CONFIGURE_OPTIONS.64	= --64
 CONFIGURE_OPTIONS.64	+= --libdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 
