@@ -10,21 +10,22 @@
 #
 
 #
-# Copyright 2015 Predrag Zecevic.  All rights reserved.
+# Copyright 2016 Predrag Zečević.  All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= geany
-COMPONENT_VERSION= 1.26
+COMPONENT_NAME= geany-plugins
+COMPONENT_VERSION= 1.28
 COMPONENT_CLASSIFICATION=System/Text Tools
-COMPONENT_FMRI=editor/geany
-COMPONENT_SUMMARY= A fast and lightweight IDE
+COMPONENT_FMRI=editor/geany/plugins
+COMPONENT_SUMMARY= Plugins for Geany editor
+COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e38530e87c577e1e9806be3b40e08fb9ee321eb1abc6361ddacdad89c825f90d
-COMPONENT_ARCHIVE_URL= http://download.geany.org/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.geany.org/Main/HomePage
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:918f644053ea205fdf0f2185ac3b8e21339764e0e761a38583f2dda7de7fdb97
+COMPONENT_ARCHIVE_URL= http://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 
@@ -34,9 +35,13 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+CFLAGS += -std=gnu99
+CFLAGS += -D_FILE_OFFSET_BITS=64
+CFLAGS += -D_XOPEN_SOURCE=600
 
-CONFIGURE_OPTIONS    += --enable-the-force
-
+# These 2 plugins fail to be compiled
+CONFIGURE_OPTIONS += --disable-debugger
+CONFIGURE_OPTIONS += --disable-scope
 
 build: $(BUILD_32)
 
@@ -44,3 +49,4 @@ install: $(INSTALL_32)
 
 test: $(NO_TESTS)
 
+REQUIRED_PACKAGES += editor/geany
