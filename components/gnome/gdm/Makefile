@@ -98,7 +98,6 @@ REQUIRED_PACKAGES += library/gnome/dconf
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += library/xdg/consolekit
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/input-method/imf-startup
 REQUIRED_PACKAGES += system/io/audio
 REQUIRED_PACKAGES += system/library/accountsservice
 REQUIRED_PACKAGES += system/library/dbus
