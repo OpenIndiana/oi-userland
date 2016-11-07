@@ -1,0 +1,13 @@
+OI/Hipster userland patch for libgd-2.1.1 recipe.
+
+--- src/gdkanji.c	2016-06-21 07:17:46.000000000 +0200
++++ src/gdkanji.c	2016-07-27 16:43:41.879785052 +0200
+@@ -355,7 +355,7 @@
+ 	from_len = strlen ((const char *)from) + 1;
+ 	to_len = BUFSIZ;
+ 
+-	if ((int) (iconv (cd, (char **)from_p, &from_len, (char **)to_p, &to_len))
++	if ((int) (iconv (cd, (const char **_RESTRICT_KYWD)from_p, &from_len, (char **)to_p, &to_len))
+ 	        == -1) {
+ #ifdef HAVE_ERRNO_H
+ 		if (errno == EINVAL)
