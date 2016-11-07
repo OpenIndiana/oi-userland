@@ -1,0 +1,15 @@
+Included <sys/types.h>, <netinet/in.h>, and <inttypes.h> since ntohll and htonll require them.
+Patch will potentially be submitted upstream.
+
+--- libmemcached-1.0.18/libmemcached/byteorder.h_orig	2016-11-02 12:23:13.343093392 +0000
++++ libmemcached-1.0.18/libmemcached/byteorder.h	2016-11-02 12:26:54.078606142 +0000
+@@ -48,3 +48,9 @@
+ #ifdef __cplusplus
+ }
+ #endif
++
++#ifdef _SOLARIS_
++#include <sys/types.h>
++#include <netinet/in.h>
++#include <inttypes.h>
++#endif

@@ -22,25 +22,28 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER=gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmemcached
-COMPONENT_VERSION=	0.16
+COMPONENT_VERSION=	1.0.18
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4fb3a64dc592c104caa4e98bc11f209fcb97eecdeb7f506797320dea75b9459
-COMPONENT_ARCHIVE_URL= http://launchpadlibrarian.net/33299595/${COMPONENT_ARCHIVE}
+    sha256:e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82 
+COMPONENT_ARCHIVE_URL= https://launchpad.net/libmemcached/1.0/${COMPONENT_VERSION}/+download/libmemcached-${COMPONENT_VERSION}.tar.gz 
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
-TPNO=			5582
+TPNO=			31699
 
 include $(WS_MAKE_RULES)/common.mk
-
-CFLAGS += -xstrconst
 
 ifeq ($(OS_VERSION),5.11)
 LDFLAGS += -lsocket -lnsl
 endif
+
+# Include _SOLARIS_ flag for byteorder.h.patch's ifdef to work
+CFLAGS+= -D_SOLARIS_
+CXXFLAGS+= -D_SOLARIS_
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -69,13 +72,28 @@ COMPONENT_BUILD_ARGS +=	pkglibdir=$(USRLIBDIR)
 COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
 
 COMPONENT_TEST_ARGS +=		-k -i
-COMPONENT_TEST_DIR =		$(@D)/tests
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(bash: line 1:\).*|\1|" ' \
-	'-e "s|\(Testing \)\(.*\)\([0-9].[0-9][0-9][0-9]\)\(.*$$\)|\1\2\4|" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "/^XXX_REMOVE_XXX$$/d" '
+        '-n ' \
+        '-e "/SKIP/p" ' \
+        '-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" ' \
+	'-e "/TOTAL/p" '
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# To prevent "libtool_install_magic: unbound variable"
+unexport SHELLOPTS
 
 # Tests fail, probably because memcached is not running.
+# XFAILS are due to servers or arguments not being provided. 
+
+REQUIRED_PACKAGES += developer/gcc
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libsasl2
