@@ -34,6 +34,10 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+CFLAGS += -std=gnu99
+CFLAGS += -D_FILE_OFFSET_BITS=64
+CFLAGS += -D_XOPEN_SOURCE=600
+
 # These 2 plugins fail to be compiled
 CONFIGURE_OPTIONS    += --disable-debugger --disable-scope
 
