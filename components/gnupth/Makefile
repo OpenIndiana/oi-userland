@@ -47,7 +47,6 @@ CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
 LDFLAGS =	-lpthread -lposix4 -lrt
 
-CONFIGURE_OPTIONS  +=	--localstatedir=/var
 CONFIGURE_OPTIONS  +=	--with-pic
 
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"

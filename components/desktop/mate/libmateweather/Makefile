@@ -35,13 +35,12 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh 
+COMPONENT_PREP_ACTION = cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
+CONFIGURE_LOCALSTATEDIR=$(VARDIR)/lib
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 

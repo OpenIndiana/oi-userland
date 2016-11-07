@@ -76,9 +76,7 @@ COMPILER =	gcc
 # CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR) --with-compress-info=no
-CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS +=	--with-compress-info=no
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 

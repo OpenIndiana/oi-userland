@@ -38,9 +38,6 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 CFLAGS += -std=c99
 CFLAGS += -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS+=        --sysconfdir=/etc
-CONFIGURE_OPTIONS+=        --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 COMPONENT_INSTALL_ENV+=        GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 

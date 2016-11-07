@@ -34,8 +34,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/mate
+CONFIGURE_LIBEXECDIR.32 =   $(USRLIBDIR)/mate
+CONFIGURE_LIBEXECDIR.64 =   $(USRLIBDIR)/mate
+### TODO: CONFIGURE_LIBEXECDIR.64 should be different? Original was:
+###CONFIGURE_OPTIONS+=  --libexecdir=/usr/lib/mate
+
 CONFIGURE_OPTIONS+=	--disable-static
 
 # common targets

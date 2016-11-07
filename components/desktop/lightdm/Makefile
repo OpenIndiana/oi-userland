@@ -38,9 +38,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --disable-tests
 CONFIGURE_OPTIONS += --with-greeter-session=lightdm-gtk-greeter
 CONFIGURE_OPTIONS += --with-user-session=mate

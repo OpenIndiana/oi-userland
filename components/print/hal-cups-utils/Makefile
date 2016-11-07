@@ -44,8 +44,8 @@ USED_PYTHON=$(PYTHON)
 
 CONFIGURE_ENV += PYTHON=$(USED_PYTHON)
 
-CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/hal
+CONFIGURE_DATAROOTDIR=$(ETCDIR)
+CONFIGURE_LIBEXECDIR.$(BITS)=$(CONFIGURE_LIBDIR.$(BITS))/hal
 
 # Since we patch Makefile.am, we have to rebuild the autoconf generated files
 # Just running automake does not work, since our automake is different from the one

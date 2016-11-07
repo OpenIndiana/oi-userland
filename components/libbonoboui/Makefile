@@ -35,8 +35,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 gcc_OPT = -O2
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

@@ -34,15 +34,12 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 LDFLAGS += -lnsl -lsocket -lgobject-2.0
 
-CPPFLAGS += -I/usr/include/gc
+CPPFLAGS += -I$(CONFIGURE_INCLUDEROOTDIR)/gc
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-esound
 CONFIGURE_OPTIONS += --disable-force-preopen
 # Solaris has native OSS; don't use PulseAudio wrapper.
@@ -60,8 +57,7 @@ CONFIGURE_OPTIONS += --enable-orc
 CONFIGURE_OPTIONS += --enable-oss-output
 CONFIGURE_OPTIONS += --enable-solaris
 CONFIGURE_OPTIONS += --with-database=gdbm
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --with-zsh-completion-dir=/usr/share/zsh/5.2/functions/Completion/Unix
+CONFIGURE_OPTIONS += --with-zsh-completion-dir=$(CONFIGURE_DATAROOTDIR)/zsh/5.2/functions/Completion/Unix
 
 CONFIGURE_ENV	+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV	+= PERL=$(PERL)

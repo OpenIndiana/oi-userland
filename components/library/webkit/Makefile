@@ -45,8 +45,6 @@ CONFIGURE_ARGS += --x-includes=/usr/X11/include
 CONFIGURE_ARGS.32 += --x-libraries=/usr/X11/lib
 CONFIGURE_ARGS.64 += --x-libraries=/usr/X11/lib/$(MACH64)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 CONFIGURE_ENV += PERL=$(PERL)
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 

@@ -36,9 +36,10 @@ COMPONENT_PREP_ACTION+=        (cd $(@D) && libtoolize -c && $(ACLOCAL))
 COMPONENT_POST_INSTALL_ACTION+= \
         $(CP) $(COMPONENT_SRC)/doc/manual.xml $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME)
 
+CONFIGURE_BINDIR.32 = /usr/benchmarks/sysbench/bin
+
 CONFIGURE_OPTIONS +=    --with-mysql=/usr/mariadb/5.5
 CONFIGURE_OPTIONS +=    --enable-largefile
-CONFIGURE_OPTIONS +=    --bindir=/usr/benchmarks/sysbench/bin
 
 install: $(INSTALL_32) 
 

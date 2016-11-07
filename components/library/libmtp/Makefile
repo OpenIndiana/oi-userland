@@ -41,7 +41,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 CPPFLAGS.32 += -D_FILE_OFFSET_BITS=64
 CPPFLAGS = $(CPPFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS  += --sysconfdir=/etc
 CONFIGURE_OPTIONS  += --enable-shared
 CONFIGURE_OPTIONS  += --disable-static
 

@@ -40,8 +40,6 @@ LDFLAGS += -ldns_sd
 
 CONFIGURE_OPTIONS+= --with-avahi-user=daemon
 CONFIGURE_OPTIONS+= --with-avahi-group=other
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --with-distro=none
 CONFIGURE_OPTIONS+= --disable-gtk3
 CONFIGURE_OPTIONS+= --disable-qt3

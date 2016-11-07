@@ -28,15 +28,14 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LD_OPTIONS=
 
-CONFIGURE_OPTIONS += --localstatedir=/var 
 CONFIGURE_OPTIONS += --disable-skdb-update
-CONFIGURE_OPTIONS += --with-convert-dir=/usr/share/omf
+CONFIGURE_OPTIONS += --with-convert-dir=$(CONFIGURE_DATAROOTDIR)/omf
 
 build: $(BUILD_32_and_64)
 

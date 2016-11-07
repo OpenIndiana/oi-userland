@@ -60,8 +60,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT=$(SOURCE_DIR)/autogen.sh
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 # Use tar to avoid replacing issues
 $(INSTALL_GTK3_THEME):	$(INSTALL_32_and_64)
 	cp -r $(COMPONENT_SRC_1)/*nimbus* $(PROTO_DIR)/usr/share/themes/

@@ -14,6 +14,12 @@
 # Copyright 2012, Piotr Jasiukajtis
 #
 
+# TODO: Revise structures below to utilize well the new common configure.mk
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../../make-rules/shared-macros.mk
 
 PATH=	/opt/onbld/bin/i386:/usr/bin:/usr/sbin:/sbin:/usr/gnu/bin

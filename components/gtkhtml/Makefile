@@ -33,7 +33,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-deprecated-warning-flags=no
 
 CONFIGURE_ENV += LIBS="-lm -lgthread-2.0"

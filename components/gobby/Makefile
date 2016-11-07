@@ -41,9 +41,6 @@ LDFLAGS += -lnsl -lsocket
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

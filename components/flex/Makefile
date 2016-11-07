@@ -42,7 +42,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
 
 COMPONENT_BUILD_ENV +=		SONAME="$(SONAME)"

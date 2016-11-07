@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2015-2016 Alexander Pyhalov
 #
 
 include ../../../../make-rules/shared-macros.mk
@@ -41,9 +41,6 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 					cd $(@D)/po-sun && $(MAKE) all )
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 

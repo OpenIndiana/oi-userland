@@ -33,7 +33,6 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf)
 
-CONFIGURE_OPTIONS +=        --sysconfdir=/etc
 CONFIGURE_OPTIONS +=        --enable-gnome
 CONFIGURE_OPTIONS +=        --with-cairo
 CONFIGURE_OPTIONS +=        --disable-static

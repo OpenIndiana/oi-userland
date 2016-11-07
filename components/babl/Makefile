@@ -39,9 +39,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D)  && \
                                 autoreconf -f -i)
 
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
 CONFIGURE_OPTIONS+= --disable-mmx
 CONFIGURE_OPTIONS+= --disable-sse
 

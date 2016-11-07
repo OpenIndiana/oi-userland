@@ -37,8 +37,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-
 # common targets
 build:          $(BUILD_32_and_64)
 

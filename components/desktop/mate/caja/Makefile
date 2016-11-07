@@ -45,12 +45,15 @@ COMPONENT_PREP_ACTION=	\
 #  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 #    cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR =   $(VARDIR)/lib
+CONFIGURE_LIBEXECDIR.32 =   $(USRLIBDIR)/$(COMPONENT_NAME)
+CONFIGURE_LIBEXECDIR.64 =   $(USRLIBDIR)/$(COMPONENT_NAME)
+### TODO: CONFIGURE_LIBEXECDIR.64 should be different? Original was:
+###CONFIGURE_OPTIONS+=  --libexecdir=/usr/lib/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/$(COMPONENT_NAME)
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 

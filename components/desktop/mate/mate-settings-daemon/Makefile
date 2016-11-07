@@ -37,13 +37,16 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR =	$(VARDIR)/lib
+CONFIGURE_LIBEXECDIR.32 =	$(USRLIBDIR)/$(COMPONENT_NAME)
+CONFIGURE_LIBEXECDIR.64 =	$(USRLIBDIR)/$(COMPONENT_NAME)
+### TODO: CONFIGURE_LIBEXECDIR.64 should be different? Original was:
+###CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-gtk=2.0
-CONFIGURE_OPTIONS+= --with-default-wm 
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS+= --with-default-wm
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV.64 += NSS_LIBS="-L/usr/lib/mps/64"

@@ -38,8 +38,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/automake-1.11
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_DOCDIR =  $(CONFIGURE_DATAROOTDIR)/doc/$(COMPONENT_NAME)-1.11
+
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 # common targets

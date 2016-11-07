@@ -59,7 +59,6 @@ LOCALE_LIB_DIR.64=/usr/lib/X11/locale/$(MACH64)
 CONFIGURE_OPTIONS +=  --without-xmlto 
 CONFIGURE_OPTIONS +=  --with-asciidoc 
 CONFIGURE_OPTIONS +=  --without-fop
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --without-lint

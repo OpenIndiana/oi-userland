@@ -14,11 +14,11 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=	 	softhsm
-COMPONENT_VERSION=     	2.1.0
-COMPONENT_LICENSE=      BSD
-COMPONENT_PROJECT_URL=  https://www.opendnssec.org/softhsm/
-COMPONENT_SUMMARY= 	SoftHSM is an implementation of a cryptographic store accessible through a PKCS11 interface.
+COMPONENT_NAME= 		softhsm
+COMPONENT_VERSION=  	2.1.0
+COMPONENT_LICENSE=  	BSD
+COMPONENT_PROJECT_URL=	https://www.opendnssec.org/softhsm/
+COMPONENT_SUMMARY=	SoftHSM is an implementation of a cryptographic store accessible through a PKCS11 interface.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -29,13 +29,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --disable-ecc
 CONFIGURE_OPTIONS+= --with-crypto-backend=botan
-CONFIGURE_OPTIONS+= --with-botan=/usr
+CONFIGURE_OPTIONS+= --with-botan=$(USRDIR)
 CONFIGURE_OPTIONS+= --with-migrate
-CONFIGURE_OPTIONS+= --with-sqlite3=/usr
+CONFIGURE_OPTIONS+= --with-sqlite3=$(USRDIR)
 
 build:		$(BUILD_32)
 

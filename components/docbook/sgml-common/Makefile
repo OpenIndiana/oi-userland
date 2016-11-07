@@ -39,9 +39,6 @@ COMPONENT_PREP_ACTION +=(cd $(@D) && \
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --with-docdir=$(USRSHAREDOCDIR)
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

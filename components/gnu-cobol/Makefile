@@ -39,7 +39,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFGIURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
 build:		$(BUILD_32)
 

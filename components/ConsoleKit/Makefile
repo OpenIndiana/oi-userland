@@ -45,9 +45,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-pam-module
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security

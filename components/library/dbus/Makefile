@@ -39,9 +39,6 @@ gcc_OPT=-O2
 
 COMPONENT_PREP_ACTION =	( cd $(@D) && autoreconf --force --install )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-dbus-user=root
 CONFIGURE_OPTIONS += --with-dbus-daemondir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-static

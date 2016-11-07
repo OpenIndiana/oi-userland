@@ -66,7 +66,8 @@ CFLAGS += `pkg-config --cflags lcms2`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --enable-shared 

@@ -13,6 +13,11 @@
 # Copyright 2013-2016 Aurelien Larcher.  All rights reserved.
 #
 
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../../make-rules/shared-macros.mk
 MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk
@@ -37,9 +42,9 @@ COMPONENT_LICENSE      = 	BSD 2-Clause
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 ENV+= -i
 

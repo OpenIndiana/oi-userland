@@ -36,7 +36,6 @@ PATH=/usr/mariadb/5.5/bin:/usr/gnu/bin:/usr/bin
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf  -f -i )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-deprecations
 CONFIGURE_OPTIONS+=	--disable-festival
 CONFIGURE_OPTIONS+=	--disable-advertisement

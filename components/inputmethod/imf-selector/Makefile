@@ -26,8 +26,8 @@ COMPONENT_LICENSE_FILE = OPENSOLARIS.LICENSE
 COMPONENT_LICENSE = CDDL
 COMPONENT_CLASSIFICATION = System/Internationalization
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 clobber: clean
 
@@ -40,8 +40,6 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/autogen.sh
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 

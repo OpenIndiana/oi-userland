@@ -49,8 +49,6 @@ CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-
 # common targets; no ARCH since this is just a script
 build:		$(BUILD_32)
 

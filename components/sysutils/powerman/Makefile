@@ -43,7 +43,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-httppower
 CONFIGURE_OPTIONS +=	--with-snmppower
 CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no

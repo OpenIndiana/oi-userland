@@ -31,7 +31,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(GNUBIN):$(USRBINDIR):/usr/perl5/bin
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
           libtoolize --force && \
@@ -48,7 +48,6 @@ CXXFLAGS+=	-DSOLARIS -D__EXTENSIONS__
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-ldap
 CONFIGURE_OPTIONS+=	--disable-notify
 CONFIGURE_OPTIONS+=	--enable-xv

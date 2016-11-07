@@ -39,8 +39,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ibus
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/ibus
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"

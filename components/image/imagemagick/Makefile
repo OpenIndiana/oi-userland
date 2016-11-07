@@ -85,14 +85,13 @@ CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 CONFIGURE_OPTIONS+= --with-fontconfig=no
-# Configure option 'with-gs-font-dir' is required because some build systems might 
+# Configure option 'with-gs-font-dir' is required because some build systems might
 # not have ghostscript fonts installed.
-CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
-CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
+CONFIGURE_OPTIONS+= --with-gs-font-dir="$(CONFIGURE_DATAROOTDIR)/ghostscript/fonts"
+CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 # common targets
 #
@@ -106,7 +105,7 @@ PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 PKG_MACROS += PERL_PKG=$(PERL_PKG)
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
-# can be run only after ImageMagick is actually installed and this is not 
+# can be run only after ImageMagick is actually installed and this is not
 # possible, so the tests are not invoked.
 #
 test:		$(NO_TESTS)

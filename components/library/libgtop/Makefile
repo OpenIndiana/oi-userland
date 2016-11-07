@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2014-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -38,8 +38,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)

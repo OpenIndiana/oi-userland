@@ -36,11 +36,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -if)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
-CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
+CONFIGURE_ENV    += XGETTEXT=$(GNUBIN)/xgettext
+CONFIGURE_ENV    += MSGFMT=$(GNUBIN)/msgfmt
 
 build: $(BUILD_32)
 

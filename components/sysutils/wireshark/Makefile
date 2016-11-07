@@ -45,7 +45,8 @@ PATCH_LEVEL=0
 # We don't have automake 1.14 yet. Thus need to reconfigure with older one.
 COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
+CONFIGURE_BINDIR.$(BITS) = $(CONFIGURE_SBINDIR.$(BITS))
+
 CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-androiddump
 CONFIGURE_OPTIONS +=	--disable-randpkt

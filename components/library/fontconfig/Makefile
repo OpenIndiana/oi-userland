@@ -41,7 +41,6 @@ gcc_OPT=-O2
 # This is necessary to pass tests
 ENV=/usr/bin/env -i
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --with-confdir=/etc/fonts
 CONFIGURE_OPTIONS+= --with-default-fonts='/usr/share/fonts'
 CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'

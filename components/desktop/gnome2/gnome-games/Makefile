@@ -38,9 +38,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--with-sound=gstreamer
 CONFIGURE_OPTIONS+=	--disable-setgid
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper

@@ -36,8 +36,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --with-xinitdir=/etc/X11/xinit
+CONFIGURE_OPTIONS+= --with-xinitdir=$(ETCDIR)/X11/xinit
 
 build: $(BUILD_32_and_64)
 

@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
@@ -51,10 +51,7 @@ LDFLAGS.32 = -L/usr/sfw/lib -R/usr/sfw/lib
 LDFLAGS.64 = -L/usr/sfw/lib/$(MACH64) -R/usr/sfw/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-fuse
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
 CONFIGURE_ENV+= PERL=$(PERL)

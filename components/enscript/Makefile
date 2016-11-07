@@ -62,9 +62,6 @@ COMPONENT_PREP_ACTION = \
 # There are patches that change a Makefile.am and configure.in
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -fiv);
 
-# Needed so that enscript can find the enscript.cfg file.
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
-
 CONFIGURE_OPTIONS +=	--with-media=Letter
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"

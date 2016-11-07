@@ -44,6 +44,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
+CONFIGURE_LIBEXECDIR.$(BITS)=	$(CONFIGURE_LIBDIR.$(BITS))/sudo
+
 CONFIGURE_OPTIONS +=	--disable-hardening
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
@@ -56,7 +58,6 @@ CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-bsm-audit
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/sudo
 CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"

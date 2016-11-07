@@ -35,7 +35,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-corona

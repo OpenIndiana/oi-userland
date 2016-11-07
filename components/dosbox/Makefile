@@ -39,8 +39,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 

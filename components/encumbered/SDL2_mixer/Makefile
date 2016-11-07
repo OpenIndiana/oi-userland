@@ -56,8 +56,6 @@ PATH=$(PATH.$(BITS))
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && ./autogen.sh )
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--enable-music-cmd
 CONFIGURE_OPTIONS +=	--enable-music-wave
 CONFIGURE_OPTIONS +=	--enable-music-midi

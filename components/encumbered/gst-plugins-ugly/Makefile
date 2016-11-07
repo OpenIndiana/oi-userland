@@ -47,9 +47,6 @@ PATH = /usr/gnu/bin:/usr/bin
 
 CFLAGS += -I/usr/sfw/include -I/usr/X11/include
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS += --enable-external
 CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
 CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink

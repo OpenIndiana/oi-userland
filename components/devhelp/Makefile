@@ -38,7 +38,6 @@ COMPONENT_PREP_ACTION =        (cd $(@D); autoreconf --install --force)
 # We get Werror without building in separate directory, and it's not good
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
 

@@ -46,8 +46,6 @@ CONFIGURE_ENV	+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV	+= LIBGWEATHER_LIBS="-lgweather -lm"
 CONFIGURE_ENV	+= LIBS="-lm"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-gstreamer=0.10
 CONFIGURE_OPTIONS+= --enable-stickynotes
 CONFIGURE_OPTIONS+= --disable-scrollkeeper

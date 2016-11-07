@@ -37,9 +37,8 @@ PATH=/usr/gnu/bin:/usr/bin
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-ipv6
-CONFIGURE_OPTIONS+=	--with-openssl=/usr
+CONFIGURE_OPTIONS+=	--with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS+=	--disable-credssp
 CONFIGURE_OPTIONS+=	--disable-smartcard
 CONFIGURE_OPTIONS+=	--with-sound=oss

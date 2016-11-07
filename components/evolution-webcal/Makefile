@@ -35,9 +35,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 LDFLAGS += -lgthread-2.0
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-
 COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 build: $(BUILD_32)

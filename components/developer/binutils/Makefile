@@ -51,8 +51,6 @@ CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
 CONFIGURE_OPTIONS +=    --enable-gold=no
 CONFIGURE_OPTIONS +=    --enable-plugins=no

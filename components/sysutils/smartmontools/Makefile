@@ -42,11 +42,10 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-drivedbdir=yes
 CONFIGURE_OPTIONS += --with-savestates=/var/lib/smartmontools/smartd.
 CONFIGURE_OPTIONS += --with-attributelog=/var/lib/smartmontools/attrlog.
-CONFIGURE_OPTIONS += --with-smartdscriptdir=/usr/sbin
+CONFIGURE_OPTIONS += --with-smartdscriptdir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --with-nvme-devicescan=yes
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files

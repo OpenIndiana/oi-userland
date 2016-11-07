@@ -48,7 +48,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnutls=no
 CONFIGURE_OPTIONS+=	--with-gstreamer=0.10
 CONFIGURE_OPTIONS+=	--with-nss-includes=/usr/include/mps

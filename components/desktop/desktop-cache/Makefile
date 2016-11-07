@@ -30,9 +30,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS = --libdir=/lib
-CONFIGURE_OPTIONS += --datadir=/usr/share
-CONFIGURE_OPTIONS += --sysconfdir=/lib
+CONFIGURE_SYSCONFDIR = /lib
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 

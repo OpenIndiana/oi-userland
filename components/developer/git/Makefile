@@ -48,13 +48,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--with-libpcre
 CONFIGURE_OPTIONS  +=	--without-openssl
-CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
-CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
+CONFIGURE_OPTIONS  +=	CPPFLAGS="-I$(CONFIGURE_INCLUDEROOTDIR)/pcre"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
@@ -62,13 +60,13 @@ COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{in
 COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
 COMPONENT_TEST_TARGETS = test
-COMPONENT_TEST_ENV = PATH=/usr/gnu/bin:/usr/bin ENV='/usr/bin/env -i'
+COMPONENT_TEST_ENV = PATH=$(GNUBIN):$(USRBINDIR) ENV='$(USRBINDIR)/env -i'
 
 # This runs configure but configure doesn't generate a Makefile.
 # Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
-# Overwrite symliked tests, because they relying on test assets being regular files.
+# Overwrite symliked tests, because they are relying on test assets being regular files.
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	(chmod u+x $(COMPONENT_SRC)/t/*.sh  && $(CLONEY) $(SOURCE_DIR) $(@D) && \

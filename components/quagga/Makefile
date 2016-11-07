@@ -62,12 +62,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+CONFIGURE_LOCALSTATEDIR=$(CFGLOCALSTATEDIR)
+CONFIGURE_SYSCONFDIR=$(CFGSYSCONFDIR)
+
 CONFIGURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-opaque-lsa
-CONFIGURE_OPTIONS +=	--localstatedir=$(CFGLOCALSTATEDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(CFGSYSCONFDIR)
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--enable-isisd
 CONFIGURE_OPTIONS +=	--enable-trill
 CONFIGURE_OPTIONS +=	--disable-watchquagga

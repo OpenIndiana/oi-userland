@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2013-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -27,14 +27,12 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/asciidoc/files/asciidoc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://www.methods.co.nz/asciidoc/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -a  $(SOURCE_DIR)/* $(@D))
-
-CONFIGURE_OPTIONS +=  --sysconfdir=/etc
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 

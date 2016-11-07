@@ -39,7 +39,6 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --with-pcsclite=no
 CONFIGURE_OPTIONS += --with-included-gettext=yes
-CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += OPENSSL_LIBS="-lssl -lcrypto -lsocket -lnsl"
 
 # common targets

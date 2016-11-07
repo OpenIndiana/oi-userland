@@ -34,8 +34,6 @@ COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -f -i)
 
 CFLAGS += $(gcc_C99_ENABLE)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+=         PYTHON=$(PYTHON)
 CONFIGURE_ENV+=         am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+=         am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"

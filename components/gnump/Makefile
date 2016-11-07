@@ -82,8 +82,8 @@ CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/gmp
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/gmp
+
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
@@ -107,32 +107,32 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
+        $(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
+        $(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
+        $(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
+        $(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
+        $(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
-	    $(COMPONENT_DIR)/libgmpxx.pc ; \
+        $(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
+            $(COMPONENT_DIR)/libgmpxx.pc ; \
       $(MV) $(PROTOUSRINCLUDEDIR)/gmp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
       $(MV) $(PROTOUSRINCLUDEDIR)/mp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
-	$(PROTOUSRSHAREHTMLDIR)/ ; \
+        $(PROTOUSRSHAREHTMLDIR)/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.pc \
-	$(PROTOPKGCONFIGDIR) ; \
+        $(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmpxx.pc \
-	$(PROTOPKGCONFIGDIR) ; \
+        $(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/libgmp.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
+        $(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/libgmpxx.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
+        $(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ )
+        $(PROTOUSRSHAREMAN3DIR)/ )
 
 # common targets
 build: $(BUILD_32_and_64)

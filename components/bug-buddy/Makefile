@@ -33,7 +33,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-scrollkeeper
 CONFIGURE_OPTIONS.64 += --disable-eds
 

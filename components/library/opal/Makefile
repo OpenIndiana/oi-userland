@@ -53,7 +53,6 @@ COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf &&\
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-iax
 CONFIGURE_OPTIONS += --enable-localgsm
 CONFIGURE_OPTIONS += --disable-x264

@@ -46,8 +46,6 @@ PATH=/usr/gnu/bin:/usr/bin
 PKG_OPTIONS +=  -D COMPONENT_VERSION_SONAME="$(COMPONENT_VERSION_SONAME)"
 PKG_OPTIONS +=  -D COMPONENT_VERSION_TAG="$(COMPONENT_VERSION_TAG)"
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 # for tests to pass
 ENV=/usr/bin/env -i
 

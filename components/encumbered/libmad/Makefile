@@ -41,7 +41,6 @@ include $(WS_MAKE_RULES)/ips.mk
 FP_ARCH.32 = default
 FP_ARCH.64 = 64bit
 
-CONFIGURE_OPTIONS  += --sysconfdir=/etc
 CONFIGURE_OPTIONS  += --enable-accuracy
 CONFIGURE_OPTIONS  += --enable-shared
 CONFIGURE_OPTIONS  += --disable-static

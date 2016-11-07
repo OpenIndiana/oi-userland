@@ -39,8 +39,11 @@ include $(WS_TOP)/make-rules/ips.mk
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
+# Note: This explicit (lack of) bitness in the path was here originally...
+# Maybe it causes problems, maybe the program is smart to install differently?
+CONFIGURE_LIBEXECDIR.$(BITS)=/usr/sbin
+
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 
 build:		$(BUILD_32_and_64)
 

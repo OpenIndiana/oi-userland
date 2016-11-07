@@ -42,11 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
-CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--with-fontpath=/usr/openwin/lib
 CONFIGURE_OPTIONS +=	--with-logdir=/var/log/cups
 CONFIGURE_OPTIONS +=	--with-domainsocket=/var/run/cups-socket

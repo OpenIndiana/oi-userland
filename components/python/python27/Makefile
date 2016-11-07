@@ -79,7 +79,6 @@ LDFLAGS += $(LDFLAGS.$(BITS))
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-system-expat
 CONFIGURE_OPTIONS  +=		--with-system-ffi

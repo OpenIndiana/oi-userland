@@ -36,8 +36,6 @@ include $(WS_MAKE_RULES)/ips.mk
 LDFLAGS += -lsocket -lnsl
 CFLAGS += -I/usr/include/odbc
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_BINDIR.32 =   $(CONFIGURE_PREFIX)/bin/$(MACH32)
 
 COMPONENT_POST_INSTALL_ACTION= \

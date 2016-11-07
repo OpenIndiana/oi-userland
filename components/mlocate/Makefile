@@ -40,9 +40,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+CONFIGURE_LOCALSTATEDIR=/var/cache
+
 CONFIGURE_OPTIONS.64 +=    CC="$(CC) -m64"
-CONFIGURE_OPTIONS += --localstatedir="/var/cache"
-CONFIGURE_OPTIONS += --sysconfdir="/etc"
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 COMPONENT_POST_INSTALL_ACTION= \

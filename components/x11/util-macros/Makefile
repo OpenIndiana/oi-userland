@@ -36,8 +36,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
