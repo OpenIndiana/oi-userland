@@ -20,6 +20,7 @@ COMPONENT_VERSION= 1.28
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
+COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:918f644053ea205fdf0f2185ac3b8e21339764e0e761a38583f2dda7de7fdb97
@@ -49,4 +50,3 @@ install: $(INSTALL_32)
 test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += editor/geany
-
