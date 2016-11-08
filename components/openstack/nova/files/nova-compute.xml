@@ -66,7 +66,10 @@
         <method_credential user='nova' group='nova' />
       </method_context>
     </exec_method>
-    <exec_method timeout_seconds="60" type="method" name="stop"
+    <!-- increase the timeout to 600 seconds. The time that it could take to
+	 flush the database calls and complete shutdown espescially on heavily
+	 utilized systems. -->
+    <exec_method timeout_seconds="600" type="method" name="stop"
       exec=":kill"/>
 
     <instance name='default' enabled='false'>
