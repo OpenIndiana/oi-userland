@@ -339,8 +339,9 @@ class ZoneConfig(object):
             return self
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to initialize editing of instance '%s' via "
-                        "zonemgr(3RAD): %s") % (self.zone.name, reason))
+            LOG.exception(_("Unable to initialize editing of instance '%s' "
+                            "via zonemgr(3RAD): %s")
+                          % (self.zone.name, reason))
             raise
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -358,9 +359,9 @@ class ZoneConfig(object):
                 self.zone.commitConfig()
             except Exception as ex:
                 reason = zonemgr_strerror(ex)
-                LOG.error(_("Unable to commit the new configuration for "
-                            "instance '%s' via zonemgr(3RAD): %s")
-                          % (self.zone.name, reason))
+                LOG.exception(_("Unable to commit the new configuration for "
+                                "instance '%s' via zonemgr(3RAD): %s")
+                              % (self.zone.name, reason))
 
                 # Last ditch effort to cleanup.
                 self.zone.cancelConfig()
@@ -385,9 +386,9 @@ class ZoneConfig(object):
                     [zonemgr.Property(prop, value)])
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to set '%s' property on '%s' resource for "
-                        "instance '%s' via zonemgr(3RAD): %s")
-                      % (prop, resource, self.zone.name, reason))
+            LOG.exception(_("Unable to set '%s' property on '%s' resource for "
+                            "instance '%s' via zonemgr(3RAD): %s")
+                          % (prop, resource, self.zone.name, reason))
             raise
 
     def addresource(self, resource, props=None, ignore_exists=False):
@@ -411,9 +412,9 @@ class ZoneConfig(object):
                         zonemgr.Resource(resource, None), props)
                     return
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to create new resource '%s' for instance '%s'"
-                        "via zonemgr(3RAD): %s")
-                      % (resource, self.zone.name, reason))
+            LOG.exception(_("Unable to create new resource '%s' for instance "
+                            "'%s' via zonemgr(3RAD): %s")
+                          % (resource, self.zone.name, reason))
             raise
 
     def removeresources(self, resource, props=None):
@@ -427,9 +428,9 @@ class ZoneConfig(object):
             self.zone.removeResources(zonemgr.Resource(resource, props))
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to remove resource '%s' for instance '%s' via "
-                        "zonemgr(3RAD): %s")
-                      % (resource, self.zone.name, reason))
+            LOG.exception(_("Unable to remove resource '%s' for instance '%s' "
+                            "via zonemgr(3RAD): %s")
+                          % (resource, self.zone.name, reason))
             raise
 
     def clear_resource_props(self, resource, props):
@@ -440,9 +441,9 @@ class ZoneConfig(object):
                                               props)
         except rad.client.ObjectError as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to clear '%s' property on '%s' resource for "
-                        "instance '%s' via zonemgr(3RAD): %s")
-                      % (props, resource, self.zone.name, reason))
+            LOG.exception(_("Unable to clear '%s' property on '%s' resource "
+                            "for instance '%s' via zonemgr(3RAD): %s")
+                          % (props, resource, self.zone.name, reason))
             raise
 
 
@@ -1102,8 +1103,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 os.unlink(downloading)
                 return image
             except Exception as reason:
-                LOG.error(_("Unable to fetch Glance image: id %s: %s")
-                          % (iref, reason))
+                LOG.exception(_("Unable to fetch Glance image: id %s: %s")
+                              % (iref, reason))
                 raise
 
     @lockutils.synchronized('validate_image')
@@ -1317,8 +1318,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 greenthread.sleep(1)
 
         except Exception as reason:
-            LOG.error(_("Unable to create root zpool volume for instance '%s'"
-                        ": %s") % (instance['name'], reason))
+            LOG.exception(_("Unable to create root zpool volume for instance "
+                            "'%s': %s") % (instance['name'], reason))
             raise
 
     def _connect_boot_volume(self, volume, mountpoint, context, instance):
@@ -1547,7 +1548,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             try:
                 results = get_ovsdb_info('Open_vSwitch', ['other_config'])
             except Exception as err:
-                LOG.error(_("Failed to retrieve other_config: %s"), err)
+                LOG.exception(_("Failed to retrieve other_config: %s"), err)
                 raise
 
             other_config = results[0]['other_config']
@@ -1817,8 +1818,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                               sc_dir)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to create configuration for instance '%s' via "
-                        "zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to create configuration for instance '%s' "
+                            "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
     def _create_vnc_console_service(self, instance):
@@ -1847,9 +1848,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                             "console SMF service for instance '%s'") % name)
                 return
             reason = ex.stderr
-            LOG.error(_("Unable to create zone VNC console SMF service "
-                        "'{0}': {1}").format(
-                            VNC_CONSOLE_BASE_FMRI + ':' + name, reason))
+            LOG.exception(_("Unable to create zone VNC console SMF service "
+                            "'{0}': {1}").format(VNC_CONSOLE_BASE_FMRI + ':' +
+                                                 name, reason))
             raise
 
     def _delete_vnc_console_service(self, instance):
@@ -1868,9 +1869,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                           % name)
                 return
             reason = ex.stderr
-            LOG.error(_("Unable to delete zone VNC console SMF service '%s': "
-                        "%s")
-                      % (VNC_CONSOLE_BASE_FMRI + ':' + name, reason))
+            LOG.exception(_("Unable to delete zone VNC console SMF service "
+                            "'%s': %s")
+                          % (VNC_CONSOLE_BASE_FMRI + ':' + name, reason))
             raise
 
     def _enable_vnc_console_service(self, instance):
@@ -1896,8 +1897,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                           % name)
                 return
             reason = ex.stderr
-            LOG.error(_("Unable to start zone VNC console SMF service "
-                        "'%s': %s") % (console_fmri, reason))
+            LOG.exception(_("Unable to start zone VNC console SMF service "
+                            "'%s': %s") % (console_fmri, reason))
             raise
 
         # Allow some time for the console service to come online.
@@ -1920,8 +1921,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 greenthread.sleep(2)
             except processutils.ProcessExecutionError as ex:
                 reason = ex.stderr
-                LOG.error(_("Error querying state of zone VNC console SMF "
-                            "service '%s': %s") % (console_fmri, reason))
+                LOG.exception(_("Error querying state of zone VNC console SMF "
+                                "service '%s': %s") % (console_fmri, reason))
                 raise
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
@@ -1933,9 +1934,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                      'refresh')
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Unable to update 'vnc/nova-enabled' property for "
-                        "zone VNC console SMF service "
-                        "'%s': %s") % (console_fmri, reason))
+            LOG.exception(_("Unable to update 'vnc/nova-enabled' property for "
+                            "zone VNC console SMF service '%s': %s")
+                          % (console_fmri, reason))
             raise
 
     def _disable_vnc_console_service(self, instance):
@@ -1952,8 +1953,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                      '-s', console_fmri)
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Unable to disable zone VNC console SMF service "
-                        "'%s': %s") % (console_fmri, reason))
+            LOG.exception(_("Unable to disable zone VNC console SMF service "
+                            "'%s': %s") % (console_fmri, reason))
         # The console service sets a SMF instance property for the port
         # on which the VNC service is listening. The service needs to be
         # refreshed to reset the property value
@@ -1962,8 +1963,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                      'refresh')
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Unable to refresh zone VNC console SMF service "
-                        "'%s': %s") % (console_fmri, reason))
+            LOG.exception(_("Unable to refresh zone VNC console SMF service "
+                            "'%s': %s") % (console_fmri, reason))
 
     def _get_vnc_console_service_state(self, instance):
         """Returns state of the instance zone VNC console SMF service"""
@@ -1981,9 +1982,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             return state.strip()
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Console state request failed for zone VNC console "
-                        "SMF service for instance '%s': %s")
-                      % (name, reason))
+            LOG.exception(_("Console state request failed for zone VNC "
+                            "console SMF service for instance '%s': %s")
+                          % (name, reason))
             raise
 
     def _has_vnc_console_service(self, instance):
@@ -2022,8 +2023,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             zone.install(options=options)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to install root file system for instance '%s' "
-                        "via zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to install root file system for instance "
+                            "'%s' via zonemgr(3RAD): %s") % (name, reason))
             raise
 
         self._set_instance_metahostid(instance)
@@ -2068,8 +2069,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to power on instance '%s' via zonemgr(3RAD): "
-                        "%s") % (name, reason))
+            LOG.exception(_("Unable to power on instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
             raise exception.InstancePowerOnFailure(reason=reason)
         finally:
             if CONF.solariszones.solariszones_boot_options:
@@ -2100,8 +2101,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             zone.uninstall(['-F'])
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to uninstall root file system for instance "
-                        "'%s' via zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to uninstall root file system for "
+                            "instance '%s' via zonemgr(3RAD): %s")
+                          % (name, reason))
             raise
 
     def _delete_config(self, instance):
@@ -2114,8 +2116,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self.zone_manager.delete(name)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to delete configuration for instance '%s' via "
-                        "zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to delete configuration for instance '%s' "
+                            "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
     def spawn(self, context, instance, image_meta, injected_files,
@@ -2178,8 +2180,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             connection_info = None
         except Exception as reason:
             # Something really bad happened. Don't pass Go.
-            LOG.error(_("Unable to attach root zpool volume '%s' to instance "
-                        "%s: %s") % (volume['id'], name, reason))
+            LOG.exception(_("Unable to attach root zpool volume '%s' to "
+                            "instance %s: %s") % (volume['id'], name, reason))
             self._volume_api.delete(context, volume_id)
             raise
 
@@ -2201,8 +2203,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._power_on(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
-                      % (name, reason))
+            LOG.exception(_("Unable to spawn instance '%s' via zonemgr(3RAD): "
+                            "'%s'") % (name, reason))
             # At least attempt to uninstall the instance, depending on where
             # the installation got to there could be things left behind that
             # need to be cleaned up, e.g a root zpool etc.
@@ -2271,8 +2273,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                               "zonemgr(3RAD): %s" % (name, reason)))
                 return
 
-            LOG.error(_("Unable to power off instance '%s' via zonemgr(3RAD): "
-                        "%s") % (name, reason))
+            LOG.exception(_("Unable to power off instance '%s' "
+                            "via zonemgr(3RAD): %s") % (name, reason))
             raise exception.InstancePowerOffFailure(reason=reason)
 
     def _samehost_revert_resize(self, context, instance, network_info,
@@ -2465,8 +2467,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to reboot instance '%s' via zonemgr(3RAD): %s")
-                      % (name, reason))
+            LOG.exception(_("Unable to reboot instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
             raise exception.InstanceRebootFailure(reason=reason)
         finally:
             if CONF.solariszones.solariszones_boot_options:
@@ -2567,8 +2569,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                      'refresh')
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Unable to refresh zone VNC console SMF service "
-                        "'%s': %s" % (console_fmri, reason)))
+            LOG.exception(_("Unable to refresh zone VNC console SMF service "
+                            "'%s': %s" % (console_fmri, reason)))
             raise
 
         host = CONF.vnc.vncserver_proxyclient_address
@@ -2580,9 +2582,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                     internal_access_path=None)
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Unable to read VNC console port from zone VNC "
-                        "console SMF service '%s': %s"
-                      % (console_fmri, reason)))
+            LOG.exception(_("Unable to read VNC console port from zone VNC "
+                            "console SMF service '%s': %s"
+                          % (console_fmri, reason)))
 
     def get_spice_console(self, context, instance):
         """Get connection info for a spice console.
@@ -2750,8 +2752,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 zone.apply()
             except Exception as ex:
                 reason = zonemgr_strerror(ex)
-                LOG.error(_("Unable to attach '%s' to instance '%s' via "
-                            "zonemgr(3RAD): %s") % (suri, name, reason))
+                LOG.exception(_("Unable to attach '%s' to instance '%s' via "
+                                "zonemgr(3RAD): %s") % (suri, name, reason))
                 with ZoneConfig(zone) as zc:
                     zc.removeresources("device", resource_scope)
                 raise
@@ -2790,9 +2792,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
             try:
                 zone.apply()
             except:
-                LOG.error(_("Unable to apply the detach of resource '%s' to "
-                            "running instance '%s' because the resource is "
-                            "most likely in use.") % (suri, name))
+                LOG.exception(_("Unable to apply the detach of resource '%s' "
+                                "to running instance '%s' because the "
+                                "resource is most likely in use.")
+                              % (suri, name))
 
                 # re-add the entry to the zone configuration so that the
                 # configuration will reflect what is in cinder before we raise
@@ -2951,7 +2954,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             self._volume_api.delete(context, volume['id'])
         except Exception as err:
-            LOG.error(_("Unable to cleanup the resized volume: %s" % err))
+            LOG.exception(_("Unable to cleanup the resized volume: %s" % err))
 
     def migrate_disk_and_power_off(self, context, instance, dest,
                                    flavor, network_info,
@@ -3051,7 +3054,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 try:
                     self._volume_api.extend(context, newvolume['id'], nrgb)
                 except Exception:
-                    LOG.error(_("Failed to extend the new volume"))
+                    LOG.exception(_("Failed to extend the new volume"))
                     self._cleanup_migrate_disk(context, instance, newvolume)
                     raise
 
@@ -3370,14 +3373,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             self._volume_api.detach(context, configured)
         except Exception:
-            LOG.error(_("Failed to detach the volume"))
+            LOG.exception(_("Failed to detach the volume"))
             raise
 
         try:
             self._volume_api.attach(context, replacement, instance['uuid'],
                                     rootmp)
         except Exception:
-            LOG.error(_("Failed to attach the volume"))
+            LOG.exception(_("Failed to attach the volume"))
             raise
 
         bdmobj = objects.BlockDeviceMapping()
@@ -3522,8 +3525,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._unplug_vifs(instance)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to suspend instance '%s' via "
-                        "zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to suspend instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
             raise exception.InstanceSuspendFailure(reason=reason)
 
     def resume(self, context, instance, network_info, block_device_info=None):
@@ -3566,8 +3569,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._plug_vifs(instance, network_info)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to resume instance '%s' via zonemgr(3RAD): %s")
-                      % (name, reason))
+            LOG.exception(_("Unable to resume instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
             raise exception.InstanceResumeFailure(reason=reason)
 
     def resume_state_on_host_boot(self, context, instance, network_info,
@@ -3686,8 +3689,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             (out, _err) = utils.execute('/usr/sbin/zpool', 'get', prop, zpool)
         except processutils.ProcessExecutionError as ex:
             reason = ex.stderr
-            LOG.error(_("Failed to get property '%s' from zpool '%s': %s")
-                      % (prop, zpool, reason))
+            LOG.exception(_("Failed to get property '%s' from zpool '%s': %s")
+                          % (prop, zpool, reason))
             return value
 
         zpool_prop = out.splitlines()[1].split()
@@ -3845,9 +3848,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         except Exception as ex:
             with excutils.save_and_reraise_exception():
                 reason = zonemgr_strerror(ex)
-                LOG.error(_("Unable to live migrate instance '%s' to host "
-                            "'%s' via zonemgr(3RAD): %s")
-                          % (name, dest, reason))
+                LOG.exception(_("Unable to live migrate instance '%s' to host "
+                                "'%s' via zonemgr(3RAD): %s")
+                              % (name, dest, reason))
                 recover_method(context, instance, dest, block_migration)
 
         post_method(context, instance, dest, block_migration, migrate_data)
@@ -3917,8 +3920,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._delete_config(instance)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
-            LOG.error(_("Unable to delete configuration for instance '%s' via "
-                        "zonemgr(3RAD): %s") % (name, reason))
+            LOG.exception(_("Unable to delete configuration for instance '%s' "
+                            "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
     def post_live_migration_at_source(self, context, instance, network_info):
