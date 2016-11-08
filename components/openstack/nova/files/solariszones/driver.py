@@ -979,7 +979,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if recreate:
             instance.system_metadata['evac_from'] = instance['launched_on']
             instance.save()
-            extra_specs = self._get_extra_specs(instance)
+            extra_specs = self._get_flavor(instance)['extra_specs'].copy()
             brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
             if brand == ZONE_BRAND_SOLARIS:
                 msg = (_("'%s' branded zones do not currently support "
@@ -1028,7 +1028,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # Instead of using a boolean for 'rebuilding' scratch data, use a
         # string because the object will translate it to a string anyways.
         if recreate:
-            extra_specs = self._get_extra_specs(instance)
+            extra_specs = self._get_flavor(instance)['extra_specs'].copy()
 
             instance.system_metadata['rebuilding'] = 'false'
             self._create_config(context, instance, network_info, root_ci, None)
@@ -1067,12 +1067,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
             greenthread.sleep(15)
             self.set_admin_password(instance, admin_password)
 
-    def _get_extra_specs(self, instance):
-        """Retrieve extra_specs of an instance."""
-        flavor = flavor_obj.Flavor.get_by_id(
+    def _get_flavor(self, instance):
+        """Retrieve the flavor object as specified in the instance object"""
+        return flavor_obj.Flavor.get_by_id(
             nova_context.get_admin_context(read_deleted='yes'),
             instance['instance_type_id'])
-        return flavor['extra_specs'].copy()
 
     def _fetch_image(self, context, instance):
         """Fetch an image using Glance given the instance's image_ref."""
@@ -1337,7 +1336,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # local to this compute node. If it is, then don't use it for
         # Solaris branded zones in order to avoid a known ZFS deadlock issue
         # when using a zpool within another zpool on the same system.
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand == ZONE_BRAND_SOLARIS:
             driver_type = connection_info['driver_volume_type']
@@ -1763,10 +1762,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if self._get_zone_by_name(name) is not None:
             raise exception.InstanceExists(name=name)
 
-        extra_specs = self._get_extra_specs(instance)
+        flavor = self._get_flavor(instance)
+        extra_specs = flavor['extra_specs'].copy()
 
         # If unspecified, default zone brand is ZONE_BRAND_SOLARIS
-        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        brand = extra_specs.get('zonecfg:brand')
+        if brand is None:
+            LOG.warning(_("'zonecfg:brand' key not found in extra specs for "
+                          "flavor '%s'.  Defaulting to 'solaris'"
+                        % flavor['name']))
+
+            brand = ZONE_BRAND_SOLARIS
+
         template = ZONE_BRAND_TEMPLATE.get(brand)
         # TODO(dcomay): Detect capability via libv12n(3LIB) or virtinfo(1M).
         if template is None:
@@ -2274,7 +2281,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         self.power_off(instance)
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
 
         name = instance['name']
@@ -2718,7 +2725,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand != ZONE_BRAND_SOLARIS_KZ:
             # Only Solaris kernel zones are currently supported.
@@ -2757,7 +2764,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand != ZONE_BRAND_SOLARIS_KZ:
             # Only Solaris kernel zones are currently supported.
@@ -2844,7 +2851,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         ctxt = nova_context.get_admin_context()
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         anetname = self._set_ovs_info(ctxt, zone, brand, False, vif)
 
@@ -2894,7 +2901,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                      "instance '%s'.") % (vif['address'], name))
             raise nova.exception.NovaException(msg)
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         for prop in resource.properties:
             if brand == ZONE_BRAND_SOLARIS and prop.name == 'linkname':
@@ -2977,7 +2984,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if samehost:
             instance.system_metadata['resize_samehost'] = samehost
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand != ZONE_BRAND_SOLARIS_KZ and not samehost:
             reason = (_("'%s' branded zones do not currently support resize "
@@ -3067,7 +3074,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         # look to see if the zone is a kernel zone and is powered off.  If it
         # is raise an exception before trying to archive it
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if zone.state != ZONE_STATE_RUNNING and \
                 brand == ZONE_BRAND_SOLARIS_KZ:
@@ -3216,7 +3223,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if samehost:
             instance.system_metadata['old_vm_state'] = vm_states.RESIZED
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         name = instance['name']
 
@@ -3992,7 +3999,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                          dst_cpu_arch))
             raise exception.MigrationPreCheckError(reason=reason)
 
-        extra_specs = self._get_extra_specs(instance)
+        extra_specs = self._get_flavor(instance)['extra_specs'].copy()
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand != ZONE_BRAND_SOLARIS_KZ:
             # Only Solaris kernel zones are currently supported.
