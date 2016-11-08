@@ -1,6 +1,6 @@
-From dd4abad90dcd396fc3d61a0dd0d16e9c0b611700 Mon Sep 17 00:00:00 2001
+From 501b0bd8316d8ee28f0bcf7365965547c60f0638 Mon Sep 17 00:00:00 2001
 From: Shreya Jain <shreya.jain@oracle.com>
-Date: Mon, 7 Nov 2016 11:14:24 -0800
+Date: Tue, 8 Nov 2016 13:26:30 -0800
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -33,7 +33,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/execdriver/driver_solaris.go                |   76 ++
  daemon/execdriver/driver_unix.go                   |    2 +-
  .../execdriver/execdrivers/execdrivers_solaris.go  |   13 +
- daemon/execdriver/zones/driver.go                  |  819 +++++++++++++++
+ daemon/execdriver/zones/driver.go                  |  799 +++++++++++++++
  daemon/execdriver/zones/driver_unsupported.go      |   12 +
  .../execdriver/zones/driver_unsupported_nocgo.go   |   13 +
  daemon/graphdriver/driver_solaris.go               |    8 +
@@ -197,7 +197,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9196 insertions(+), 1241 deletions(-)
+ 193 files changed, 9176 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -3292,15 +3292,16 @@ index 0000000..25a496e
 +}
 diff --git a/daemon/execdriver/zones/driver.go b/daemon/execdriver/zones/driver.go
 new file mode 100644
-index 0000000..e0ac9f6
+index 0000000..db48175
 --- /dev/null
 +++ b/daemon/execdriver/zones/driver.go
-@@ -0,0 +1,819 @@
+@@ -0,0 +1,799 @@
 +// +build solaris,cgo
 +
 +package zones
 +
 +import (
++	"bufio"
 +	"bytes"
 +	"encoding/json"
 +	"errors"
@@ -3314,7 +3315,6 @@ index 0000000..e0ac9f6
 +	"strings"
 +	"sync"
 +	"syscall"
-+	"bufio"
 +
 +	"github.com/Sirupsen/logrus"
 +	"github.com/docker/docker/daemon/execdriver"
@@ -3485,8 +3485,6 @@ index 0000000..e0ac9f6
 +}
 +
 +type User struct {
-+	Username       string  `json:"username,omitempty"`
-+	GroupName      string  `json:"groupname,omitempty"`
 +	AdditionalGids []int64 `json:"additionalGids,omitempty"`
 +	Gid            int64   `json:"gid"`
 +	Uid            int64   `json:"uid"`
@@ -3543,30 +3541,23 @@ index 0000000..e0ac9f6
 +		hostname = c.Name
 +	}
 +
-+	var username string
-+	var groupname string
 +	var userID int
 +	var groupID int
 +	var err error
 +	if c.ProcessConfig.User != "" {
-+		// can be of the form username|uid:group|gid
 +		ids := strings.Split(c.ProcessConfig.User, ":")
 +		userID, err = strconv.Atoi(ids[0])
 +		if err != nil {
-+			username = ids[0]
-+			userID = 0
-+		} else {
-+			username = ""
++			logrus.Error("Only uid[:gid] is supported")
++			return -1, err
 +		}
 +		if len(ids) == 1 {
 +			groupID = 0
 +		} else {
 +			groupID, err = strconv.Atoi(ids[1])
 +			if err != nil {
-+				groupname = ids[1]
-+				groupID = 0
-+			} else {
-+				username = ""
++				logrus.Error("Only uid[:gid] is supported")
++				return -1, err
 +			}
 +		}
 +	} else {
@@ -3589,10 +3580,8 @@ index 0000000..e0ac9f6
 +		Env:      env,
 +		Terminal: processConfig.Tty,
 +		User: User{
-+			Username:  username,
-+			GroupName: groupname,
-+			Gid:       int64(groupID),
-+			Uid:       int64(userID),
++			Gid: int64(groupID),
++			Uid: int64(userID),
 +		},
 +	}
 +
@@ -3732,30 +3721,23 @@ index 0000000..e0ac9f6
 +		}
 +	}
 +
-+	var username string
-+	var groupname string
 +	var userID int
 +	var groupID int
 +	var err error
 +	if c.ProcessConfig.User != "" {
-+		// can be of the form username|uid:group|gid
 +		ids := strings.Split(c.ProcessConfig.User, ":")
 +		userID, err = strconv.Atoi(ids[0])
 +		if err != nil {
-+			username = ids[0]
-+			userID = 0
-+		} else {
-+			username = ""
++			logrus.Error("Only uid[:gid] is supported")
++			return execdriver.ExitStatus{ExitCode: -1}, err
 +		}
 +		if len(ids) == 1 {
 +			groupID = 0
 +		} else {
 +			groupID, err = strconv.Atoi(ids[1])
 +			if err != nil {
-+				groupname = ids[1]
-+				groupID = 0
-+			} else {
-+				username = ""
++				logrus.Error("Only uid[:gid] is supported")
++				return execdriver.ExitStatus{ExitCode: -1}, err
 +			}
 +		}
 +	} else {
@@ -3836,10 +3818,8 @@ index 0000000..e0ac9f6
 +				Env:      c.ProcessConfig.Env,
 +				Terminal: c.ProcessConfig.Tty,
 +				User: User{
-+					Username:  username,
-+					GroupName: groupname,
-+					Gid:       int64(groupID),
-+					Uid:       int64(userID),
++					Gid: int64(groupID),
++					Uid: int64(userID),
 +				},
 +			},
 +			RootSpec: RootSpec{
