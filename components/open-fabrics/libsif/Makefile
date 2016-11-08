@@ -22,19 +22,19 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_ARCH= sparc
 BUILD_BITS= 64
 COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
+include libsif-macros.mk
 
-COMPONENT_NAME=         libsif
-COMPONENT_VERSION=      1.1
+COMPONENT_NAME=         $(LIBSIF_COMPONENT_NAME)
+COMPONENT_VERSION=      $(LIBSIF_COMPONENT_VERSION)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:ffa472db19614ff27988875ed474e6dcd233273c14dec3ad589ff149288d44b3
 COMPONENT_SERVER=       download.oracle.com
-COMPONENT_ARCHIVE_URL= http://$(COMPONENT_SERVER)/otn-pub/oss/networking/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://$(COMPONENT_SERVER)/otn-pub/oss/networking/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_psif
 
 include ../ofed-component.mk

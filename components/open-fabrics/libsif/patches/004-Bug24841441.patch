@@ -1,0 +1,91 @@
+# This patch does the x86 architecture libsif changes specific to solaris.
+# It is developed By solaris PSIF team. We plan to have a common upstream repo
+# and submit these changes to it, but do not yet have a target date of doing it.
+diff -r 0d4ed3308871 src/encoding.h
+--- a/src/encoding.h	Tue Oct 18 17:59:31 2016 +0530
++++ b/src/encoding.h	Tue Oct 18 18:59:13 2016 +0530
+@@ -37,6 +37,7 @@
+ #define _SIF_ENCODING_H
+ 
+ #include <sys/types.h>
++#include <infiniband/arch.h>
+ #if !(defined(__SVR4) && defined(__sun))
+ #include "kernel_types.h"
+ #endif
+diff -r 0d4ed3308871 src/sif.c
+--- a/src/sif.c	Tue Oct 18 17:59:31 2016 +0530
++++ b/src/sif.c	Tue Oct 18 18:59:13 2016 +0530
+@@ -188,9 +188,11 @@
+     const char *fast_copy_mnem;
+     const int feature_mnemonics_size = 500;
+     char feature_mnemonics[feature_mnemonics_size];
++#if !(defined(__SVR4) && defined(__sun))
+ #if defined(__SSE__) || defined(__AVX__)
+     int disa_x_wc;
+ #endif
++#endif
+     int ret = 0;
+ 
+ #ifdef HAVE_VERBS_REGISTER_DRIVER
+@@ -264,9 +266,11 @@
+ 
+     odm = getenv("SIF_OPT_DISABLE_MASK");
+     context->opt_disable_mask = odm ? strtoll(odm, NULL, 0) : 0;
++#if !(defined(__SVR4) && defined(__sun))
+ #if defined(__SSE__) || defined(__AVX__)
+     disa_x_wc = context->opt_disable_mask & SOD_EXPLICIT_WC;
+ #endif
++#endif
+ 
+ #if defined(__SVR4) && defined(__sun)
+     user_cb_disable = getenv("SIF_DISABLE_USER_CB");
+@@ -276,7 +280,14 @@
+      * set env variable SIF_CB_MODE = 1 to change to cb_mode
+      */
+     cb_mode = getenv("SIF_CB_MODE");
+-    mode = cb_mode ? strtol(cb_mode, NULL, 0) : 0;
++    if (cb_mode)
++	    mode = strtol(cb_mode, NULL, 0);
++    else
++#if defined(__x86_64)
++	    mode = 1;
++#else
++	    mode = 0;		
++#endif
+     context->default_flags |= mode? 0: SQ_mode;
+     sif_log(context, SIF_INFO, "Mode: %s", mode? "CB/SQ": "SQ");
+ #endif
+@@ -293,12 +304,14 @@
+ 
+     fast_copy_mnem = "fast_copy_plain";
+     context->fast_copy = fast_copy_plain;
++#if !(defined(__SVR4) && defined(__sun))
+ #if defined(__SSE__)
+     if (can_use_sse()) {
+         fast_copy_mnem     = disa_x_wc ? "fast_copy_sse" : "fast_copy_wc_sse";
+         context->fast_copy = disa_x_wc ?  fast_copy_sse  :  fast_copy_wc_sse;
+     }
+ #endif
++#endif
+ #if defined(__AVX__)
+     if (can_use_avx()) {
+         fast_copy_mnem     = disa_x_wc ? "fast_copy_avx" : "fast_copy_wc_avx";
+diff -r 0d4ed3308871 src/sndrcv.c
+--- a/src/sndrcv.c	Tue Oct 18 17:59:31 2016 +0530
++++ b/src/sndrcv.c	Tue Oct 18 18:59:13 2016 +0530
+@@ -573,6 +573,7 @@
+ 
+ 
+ #if defined(__SSE__)
++#if !(defined(__SVR4) && defined(__sun))
+ __attribute__((__target__("sse"))) void fast_copy_wc_sse(void *_dst, const void *_src, int len)
+ {
+     __m128 *dst = (__m128 *)_dst;
+@@ -611,6 +612,7 @@
+ }
+ #endif
+ #endif
++#endif
+ 
+ void fast_copy_plain(void *_dst, const void *_src, int len)
+ {

@@ -30,8 +30,7 @@ set name=pkg.summary \
 set name=pkg.linted.pkglint.manifest004 value=true
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
-set name=info.source-url \
-    value=http://download.oracle.com/otn-pub/oss/networking/libsif-1.0.tar.gz \
+set name=info.source-url value=$(LIBSIF_COMPONENT_ARCHIVE_URL) \
     value=https://www.openfabrics.org/downloads/ibutils/ibutils-1.5.7-0.2.gbd7e502.tar.gz \
     value=https://www.openfabrics.org/downloads/libibverbs/libibverbs-1.1.8.tar.gz \
     value=https://www.openfabrics.org/downloads/libmlx4/libmlx4-1.0.6.tar.gz \
@@ -53,7 +52,7 @@ file path=etc/infiniband/infiniband-diags/error_thresholds mode=0644 \
 file path=etc/infiniband/infiniband-diags/ibdiag.conf mode=0644 \
     preserve=renameold
 file path=etc/infiniband/libibverbs.d/mlx4.driver
-file path=etc/infiniband/libibverbs.d/sif.driver variant.arch=sparc
+file path=etc/infiniband/libibverbs.d/sif.driver
 file path=etc/infiniband/libsdp.conf mode=0644 preserve=renameold
 link path=usr/bin/$(MACH64)/ib_clock_test target=../ib_clock_test
 link path=usr/bin/$(MACH64)/ib_read_bw target=../ib_read_bw
@@ -172,8 +171,8 @@ file path=usr/lib/$(MACH64)/libosmvendor.so.4.0.1
 link path=usr/lib/$(MACH64)/librdmacm.so target=librdmacm.so.1.0.0
 link path=usr/lib/$(MACH64)/librdmacm.so.1 target=librdmacm.so.1.0.0
 file path=usr/lib/$(MACH64)/librdmacm.so.1.0.0
-file path=usr/lib/$(MACH64)/libsif-rdmav2.so variant.arch=sparc
-link path=usr/lib/$(MACH64)/libsif.so target=libsif-rdmav2.so variant.arch=sparc
+file path=usr/lib/$(MACH64)/libsif-rdmav2.so
+link path=usr/lib/$(MACH64)/libsif.so target=libsif-rdmav2.so
 link path=usr/lib/secure/$(MACH64)/libsdp.so target=libsdp.so.1.0.0
 link path=usr/lib/secure/$(MACH64)/libsdp.so.1 target=libsdp.so.1.0.0
 file path=usr/lib/secure/$(MACH64)/libsdp.so.1.0.0
@@ -392,7 +391,8 @@ legacy pkg=SUNWofusr \
     name="Oracle Solaris OpenFabrics userland libraries and applications"
 license libsif/libsif.license license=BSD3 \
     com.oracle.info.description="The OpenFabrics Verbs support for Oracle SIF Driver" \
-    com.oracle.info.name=libsif com.oracle.info.version=1.0
+    com.oracle.info.name=libsif \
+    com.oracle.info.version=$(LIBSIF_COMPONENT_VERSION)
 license open-fabrics.license license=open-fabrics \
     com.oracle.info.description="the OpenFabrics Enterprise Distribution" \
     com.oracle.info.name=open-fabrics com.oracle.info.version=3.18
