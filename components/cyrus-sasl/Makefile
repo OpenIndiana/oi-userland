@@ -75,18 +75,11 @@ studio_MT=
 CPPFLAGS += -I$(USRINCDIR)/openldap
 LDFLAGS += $(CC_BITS)  -lscf -lresolv
 
-# if there is no mediator, use MIT
-KRB5_API = $(shell pkg mediator -H kerberos5 2>/dev/null | nawk '{print $$4;}')
-
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-auth-sasldb
 CONFIGURE_OPTIONS += --with-saslauthd=/var/run/saslauthd
 CONFIGURE_OPTIONS += --with-dblib=berkeley
-ifeq ($(KRB5_API), solaris)
-CONFIGURE_OPTIONS += --with-gss_impl=seam
-else
 CONFIGURE_OPTIONS += --with-gss_impl=mit
-endif
 CONFIGURE_OPTIONS += --without-gnu-ld
 CONFIGURE_OPTIONS.32 += --with-plugindir=$(SASL2.32)
 CONFIGURE_OPTIONS.64 += --with-plugindir=$(SASL2.64)
@@ -198,5 +191,4 @@ REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += security/kerberos-5
-REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network/ldap/openldap

@@ -219,8 +219,8 @@ REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libserf
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += system/library/c++-runtime
-REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
 

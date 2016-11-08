@@ -103,6 +103,5 @@ REQUIRED_PACKAGES += security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/ldap/openldap

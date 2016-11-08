@@ -105,7 +105,6 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += security/kerberos-5
-REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
