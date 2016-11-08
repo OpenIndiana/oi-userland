@@ -1,0 +1,117 @@
+This patch fixes launchpad bug 1579706:
+https://bugs.launchpad.net/nova/+bug/1579706
+
+and can be removed when Nova is upgraded to 13.1.2 (or newer)
+
+From 9a97047850e6febce090cee9a5f2224cdf02a2c3 Mon Sep 17 00:00:00 2001
+From: EdLeafe <ed@leafe.com>
+Date: Wed, 29 Jun 2016 18:51:34 +0000
+Subject: Return HTTP 200 on list for invalid status
+
+The server listing API raises a 500 error if you pass an invalid status
+filter for admin user. In the case of a non-admin user, it simply
+returns an empty list. In the case of an admin user, it fetches extended
+server attributes, so a condition was added to get extended server
+attributes only when servers list is not empty.
+
+This change simply removes the cause of the 500 exception. A subsequent
+patch with a microversion bump will modify the behavior so that a 400
+Bad Request will be raised for an invalid status, for both admin and
+non-admin alike.
+
+Co-Authored-By: Dinesh Bhor <dinesh.bhor@nttdata.com>
+
+Closes-Bug: #1579706
+
+Change-Id: I10bde78f0a9ac59b8646d58f62fa5056f989f54f
+(cherry picked from commit ee4d69e28dfb3d4764186d0c0212d53c99bda3ca)
+---
+ .../compute/extended_server_attributes.py          | 25 ++++++++++++----------
+ .../compute/test_extended_server_attributes.py     | 12 +++++++++++
+ ...ist-server-bad-status-fix-7db504b38c8d732f.yaml |  7 ++++++
+ 3 files changed, 33 insertions(+), 11 deletions(-)
+ create mode 100644 releasenotes/notes/list-server-bad-status-fix-7db504b38c8d732f.yaml
+
+diff --git a/nova/api/openstack/compute/extended_server_attributes.py b/nova/api/openstack/compute/extended_server_attributes.py
+index 66061f2..f06bd91 100644
+--- a/nova/api/openstack/compute/extended_server_attributes.py
++++ b/nova/api/openstack/compute/extended_server_attributes.py
+@@ -89,18 +89,21 @@ class ExtendedServerAttributesController(wsgi.Controller):
+             authorize_host_status = True
+         if authorize_extend or authorize_host_status:
+             servers = list(resp_obj.obj['servers'])
+-            instances = req.get_db_instances()
+-            # Instances is guaranteed to be in the cache due to
+-            # the core API adding it in its 'detail' method.
+-            if authorize_host_status:
+-                host_statuses = self.compute_api.get_instances_host_statuses(
+-                                instances.values())
+-            for server in servers:
+-                if authorize_extend:
+-                    instance = instances[server['id']]
+-                    self._extend_server(context, server, instance, req)
++            # NOTE(dinesh-bhor): Skipping fetching of instances from cache as
++            # servers list can be empty if invalid status is provided to the
++            # core API 'detail' method.
++            if servers:
++                instances = req.get_db_instances()
+                 if authorize_host_status:
+-                    server['host_status'] = host_statuses[server['id']]
++                    host_statuses = (
++                        self.compute_api.get_instances_host_statuses(
++                                instances.values()))
++                for server in servers:
++                    if authorize_extend:
++                        instance = instances[server['id']]
++                        self._extend_server(context, server, instance, req)
++                    if authorize_host_status:
++                        server['host_status'] = host_statuses[server['id']]
+ 
+ 
+ class ExtendedServerAttributes(extensions.V21APIExtensionBase):
+diff --git a/nova/tests/unit/api/openstack/compute/test_extended_server_attributes.py b/nova/tests/unit/api/openstack/compute/test_extended_server_attributes.py
+index 834044f..b8da1eb 100644
+--- a/nova/tests/unit/api/openstack/compute/test_extended_server_attributes.py
++++ b/nova/tests/unit/api/openstack/compute/test_extended_server_attributes.py
+@@ -13,6 +13,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++import mock
+ from oslo_config import cfg
+ from oslo_serialization import jsonutils
+ import webob
+@@ -130,6 +131,17 @@ class ExtendedServerAttributesTestV21(test.TestCase):
+                                     node='node-%s' % (i + 1),
+                                     instance_name=NAME_FMT % (i + 1))
+ 
++    @mock.patch.object(compute.api.API, 'get_all')
++    def test_detail_empty_instance_list_invalid_status(self,
++                                                       mock_get_all_method):
++        mock_get_all_method.return_value = objects.InstanceList(objects=[])
++
++        url = "%s%s" % (self.fake_url, '/servers/detail?status=invalid_status')
++        res = self._make_request(url)
++        # check status code 200 with empty instance list
++        self.assertEqual(200, res.status_int)
++        self.assertEqual(0, len(self._get_servers(res.body)))
++
+     def test_no_instance_passthrough_404(self):
+ 
+         def fake_compute_get(*args, **kwargs):
+diff --git a/releasenotes/notes/list-server-bad-status-fix-7db504b38c8d732f.yaml b/releasenotes/notes/list-server-bad-status-fix-7db504b38c8d732f.yaml
+new file mode 100644
+index 0000000..6a92c7c
+--- /dev/null
++++ b/releasenotes/notes/list-server-bad-status-fix-7db504b38c8d732f.yaml
+@@ -0,0 +1,7 @@
++---
++fixes:
++  - |
++    Fixed bug #1579706: "Listing nova instances with invalid status raises 500
++    InternalServerError for admin user". Now passing an invalid status as a
++    filter will return an empty list. A subsequent patch will then correct this
++    to raise a 400 Bad Request when an invalid status is received.
+-- 
+cgit v0.12
+
