@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
 COMPONENT_VERSION=	3.7.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,9 +29,9 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	a DNS server
 COMPONENT_CLASSIFICATION="System/Services"
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS=-g
 
@@ -55,5 +56,3 @@ REQUIRED_PACKAGES += system/library
 
 # build-time only dependencies
 REQUIRED_PACKAGES += system/library/boost
-
-include ../../../make-rules/depend.mk
