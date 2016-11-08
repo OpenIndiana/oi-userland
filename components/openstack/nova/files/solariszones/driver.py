@@ -27,9 +27,10 @@ import shutil
 import tempfile
 import uuid
 
+from collections import defaultdict
 from openstack_common import get_ovsdb_info
 import rad.bindings.com.oracle.solaris.rad.archivemgr_1 as archivemgr
-import rad.bindings.com.oracle.solaris.rad.kstat_1 as kstat
+import rad.bindings.com.oracle.solaris.rad.kstat_2 as kstat
 import rad.bindings.com.oracle.solaris.rad.zonemgr_1 as zonemgr
 import rad.client
 import rad.connect
@@ -170,6 +171,14 @@ ROOTZPOOL_RESOURCE = 'rootzpool'
 HYPERVISOR_VERSION = '5.11'
 
 shared_storage = ['iscsi', 'fibre_channel']
+
+KSTAT_TYPE = {
+    'NVVT_STR': 'string',
+    'NVVT_STRS': 'strings',
+    'NVVT_INT': 'integer',
+    'NVVT_INTS': 'integers',
+    'NVVT_KSTAT': 'kstat',
+}
 
 
 def lookup_resource(zone, resource):
@@ -733,52 +742,56 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # of online CPUs.
         return os.sysconf('SC_NPROCESSORS_ONLN')
 
-    def _get_kstat_by_name(self, kstat_class, module, instance, name):
+    def _kstat_data(self, uri):
         """Return Kstat snapshot data via RAD as a dictionary."""
-        pattern = {}
-        if kstat_class is not None:
-            pattern.update({'class': kstat_class})
-        if module is not None:
-            pattern.update({'module': module})
-        if instance is not None:
-            pattern.update({'instance': instance})
-        if name is not None:
-            pattern.update({'name': name})
+        if not isinstance(uri, str):
+            raise exception.NovaException("kstat URI must be string type: "
+                                          "%s is %s" % (uri, type(uri)))
+
+        if not uri.startswith("kstat:/"):
+            uri = "kstat:/" + uri
 
         try:
             self.kstat_control.update()
-            kstat_objects = self.rad_connection.list_objects(
-                kstat.Kstat(), rad.client.ADRGlobPattern(pattern))
+            kstat_obj = self.rad_connection.get_object(
+                kstat.Kstat(), rad.client.ADRGlobPattern({"uri": uri}))
+
         except Exception as reason:
-            LOG.info(_("Unable to retrieve kstat object '%s:%s:%s' of class "
-                       "'%s' via kstat(3RAD): %s")
-                     % (module, instance, name, kstat_class, reason))
+            LOG.info(_("Unable to retrieve kstat object '%s' via kstat(3RAD): "
+                       "%s") % (uri, reason))
             return None
 
-        kstat_data = []
-        for kstat_object in kstat_objects:
-            object = self.rad_connection.get_object(kstat_object)
-            for named in object.fresh_snapshot().data.NAMED:
-                kstat_data.append(
-                    {named.name:
-                     getattr(named.value, str(named.value.discriminant))})
-        return kstat_data
+        ks_data = {}
+        for name, data in kstat_obj.getMap().items():
+            ks_data[name] = getattr(data, KSTAT_TYPE[str(data.type)])
 
-    def _aggregate_kstat_statistic(self, kstat_data, statistic):
-        aggregate = 0
-        for ks in kstat_data:
-            value = ks.get(statistic)
-            if value is not None:
-                aggregate += value
+        return ks_data
 
-        return aggregate
+    def _sum_kstat_statistic(self, kstat_data, statistic):
+        total = 0
+        for ks in kstat_data.values():
+            data = ks.getMap()[statistic]
+            value = getattr(data, KSTAT_TYPE[str(data.type)])
+            try:
+                total += value
+            except TypeError:
+                LOG.error(_("Unable to aggregate non-summable kstat %s;%s "
+                            " of type %s") % (ks.getParent().uri, statistic,
+                                              type(value)))
+                return None
 
-    def _get_kstat_statistic(self, kstat_data, statistic):
-        value = None
-        for ks in kstat_data:
-            value = ks.get(statistic)
-            if value is not None:
-                break
+        return total
+
+    def _get_kstat_statistic(self, ks, statistic):
+        if not isinstance(ks, kstat.Kstat):
+            reason = (_("Attempted to get a kstat from %s type.") % (type(ks)))
+            raise TypeError(reason)
+
+        try:
+            data = ks.getMap()[statistic]
+            value = getattr(data, KSTAT_TYPE[str(data.type)])
+        except TypeError:
+            value = None
 
         return value
 
@@ -787,17 +800,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone.id == -1:
             return 0
 
-        kstat_data = self._get_kstat_by_name(
-            'zones', 'cpu', None, ''.join(('sys_zone_', str(zone.id))))
-        if kstat_data is None:
-            return 0
+        # The retry value of 3 was determined by the "we shouldn't hit this
+        # often, but if we do it should resolve quickly so try again"+1
+        # algorithm.
+        for _attempt in range(3):
+            total = 0
 
-        cpu_nsec_kernel = self._aggregate_kstat_statistic(kstat_data,
-                                                          'cpu_nsec_kernel')
-        cpu_nsec_user = self._aggregate_kstat_statistic(kstat_data,
-                                                        'cpu_nsec_user')
+            accum_uri = "kstat:/zones/cpu/sys_zone_accum/%d" % zone.id
+            uri = "kstat:/zones/cpu/sys_zone_%d" % zone.id
 
-        return cpu_nsec_kernel + cpu_nsec_user
+            initial = self._kstat_data(accum_uri)
+            cpus = self._kstat_data(uri)
+
+            total += self._sum_kstat_statistic(cpus, 'cpu_nsec_kernel_cur')
+            total += self._sum_kstat_statistic(cpus, 'cpu_nsec_user_cur')
+
+            final = self._kstat_data(accum_uri)
+
+            if initial['gen_num'] == final['gen_num']:
+                total += initial['cpu_nsec_user'] + initial['cpu_nsec_kernel']
+                return total
+
+        LOG.error(_("Unable to get accurate cpu usage beacuse cpu list "
+                    "keeps changing"))
+        return 0
 
     def get_info(self, instance):
         """Get the current status of an instance, by name (not ID!)
@@ -2655,42 +2681,49 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone.id == -1:
             return None
 
-        diagnostics = {}
-        zone_id = str(zone.id)
+        diagnostics = defaultdict(lambda: 0)
 
-        kstat_data = self._get_kstat_by_name(
-            'zone_caps', 'caps', zone_id,
-            ''.join(('lockedmem_zone_', zone_id)))
-        if kstat_data is not None:
-            diagnostics['lockedmem'] = self._get_kstat_statistic(kstat_data,
-                                                                 'usage')
+        for stat in ['lockedmem', 'nprocs', 'swapresv']:
+            uri = "kstat:/zone_caps/caps/%s_zone_%d/%d" % (stat, zone.id,
+                                                           zone.id)
+            diagnostics[stat] = self._kstat_data(uri)['usage']
 
-        kstat_data = self._get_kstat_by_name(
-            'zone_caps', 'caps', zone_id, ''.join(('nprocs_zone_', zone_id)))
-        if kstat_data is not None:
-            diagnostics['nprocs'] = self._get_kstat_statistic(kstat_data,
-                                                              'usage')
+        # Get the inital accumulated data kstat, then get the sys_zone kstat
+        # and sum all the "*_cur" statistics in it. Then re-get the accumulated
+        # kstat, and if the generation number hasn't changed, add its values.
+        # If it has changed, try again a few times then give up because
+        # something keeps pulling cpus out from under us.
 
-        kstat_data = self._get_kstat_by_name(
-            'zone_caps', 'caps', zone_id, ''.join(('swapresv_zone_', zone_id)))
-        if kstat_data is not None:
-            diagnostics['swapresv'] = self._get_kstat_statistic(kstat_data,
-                                                                'usage')
+        accum_uri = "kstat:/zones/cpu/sys_zone_accum/%d" % zone.id
+        uri = "kstat:/zones/cpu/sys_zone_%d" % zone.id
 
-        kstat_data = self._get_kstat_by_name('zones', 'cpu', None,
-                                             ''.join(('sys_zone_', zone_id)))
-        if kstat_data is not None:
-            for ks in kstat_data:
-                key = ks.keys()[0]
-                if key in ('class', 'crtime', 'snaptime', 'zonename'):
-                    continue
-                if key.endswith('_cur'):
-                        continue
-                if diagnostics.get(key) is None:
-                    diagnostics[key] = 0
-                else:
-                    diagnostics[key] += ks[key]
-        return diagnostics
+        for _attempt in range(3):
+            initial = self._kstat_data(accum_uri)
+            data = self._kstat_data(uri)
+            # The list of cpu kstats in data must contain at least one element
+            # and all elements have the same map of statistics, since they're
+            # all the same kstat type. This gets a list of all the statistics
+            # which end in "_cur" from the first (guaranteed) kstat element.
+            stats = [k for k in data[data.keys()[0]].getMap().keys() if
+                     k.endswith("_cur")]
+
+            for stat in stats:
+                diagnostics[stat[:-4]] += self._sum_kstat_statistic(data, stat)
+
+            final = self._kstat_data(accum_uri)
+
+            if initial['gen_num'] == final['gen_num']:
+                for stat in stats:
+                    # Remove the '_cur' from the statistic
+                    diagnostics[stat[:-4]] += initial[stat[:-4]]
+                break
+        else:
+            reason = (_("Could not get diagnostic info for instance '%s' "
+                        "because the cpu list keeps changing.") % zone.name)
+            raise nova.exception.MaxRetriesExceeded(reason)
+
+        # Remove any None valued elements from diagnostics and return it
+        return {k: v for k, v in diagnostics.items() if v is not None}
 
     def get_diagnostics(self, instance):
         """Return diagnostics data about the given instance.
@@ -3741,21 +3774,21 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         # Account for any existing processor sets by looking at the the number
         # of CPUs not assigned to any processor sets.
-        kstat_data = self._get_kstat_by_name('misc', 'unix', '0', 'pset')
-        if kstat_data is not None:
-            unassigned = self._get_kstat_statistic(kstat_data, 'ncpus')
-            host_stats['vcpus_used'] = host_stats['vcpus'] - unassigned
+        uri = "kstat:/misc/unix/pset/0"
+        data = self._kstat_data(uri)
+
+        if data is not None:
+            host_stats['vcpus_used'] = host_stats['vcpus'] - data['ncpus']
         else:
             host_stats['vcpus_used'] = 0
 
         # Subtract the number of free pages from the total to get the used.
-        kstat_data = self._get_kstat_by_name('pages', 'unix', '0',
-                                             'system_pages')
-        if kstat_data is not None:
-            free_ram_mb = self._get_kstat_statistic(kstat_data, 'freemem')
-            free_ram_mb = self._pages_to_kb(free_ram_mb) / 1024
-            host_stats['memory_mb_used'] = \
-                host_stats['memory_mb'] - free_ram_mb
+        uri = "kstat:/pages/unix/system_pages"
+        data = self._kstat_data(uri)
+        if data is not None:
+            free_ram = data['freemem']
+            free_ram = self._pages_to_kb(free_ram) / 1024
+            host_stats['memory_mb_used'] = host_stats['memory_mb'] - free_ram
         else:
             host_stats['memory_mb_used'] = 0
 
