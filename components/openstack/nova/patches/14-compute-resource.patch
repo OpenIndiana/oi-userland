@@ -1,0 +1,19 @@
+In-house patch to change the compute node resource tracking for the
+'solariszones' driver, as we don't locally allocate space for root on the
+compute node and instead provision it through Cinder.
+
+This patch is not suitable for upstream.
+
+--- nova-13.1.0/nova/compute/resource_tracker.py 2016-06-14 08:45:49.000000000 -0700
++++ nova-13.1.0/nova/compute/resource_tracker.py.new 2016-10-18 10:14:56.580870836 -0700
+@@ -714,7 +714,10 @@
+         mem_usage += overhead['memory_mb']
+
+         self.compute_node.memory_mb_used += sign * mem_usage
+-        self.compute_node.local_gb_used += sign * usage.get('root_gb', 0)
++        # The Solaris Zones driver does not have root locally assigned in Nova,
++        # root zvols are provisioned from Cinder, so don't track them here.
++        if usage.get('vm_mode') != 'solariszones':
++            self.compute_node.local_gb_used += sign * usage.get('root_gb', 0)
+         self.compute_node.local_gb_used += sign * usage.get('ephemeral_gb', 0)
+         self.compute_node.vcpus_used += sign * usage.get('vcpus', 0)
