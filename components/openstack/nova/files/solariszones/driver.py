@@ -236,6 +236,11 @@ def zonemgr_strerror(ex):
     return result
 
 
+class MemoryAlignmentIncorrect(exception.FlavorMemoryTooSmall):
+    msg_fmt = _("Requested flavor, %(flavor)s, memory size %(memsize)s does "
+                "not align on %(align)s boundary.")
+
+
 class SolarisVolumeAPI(API):
     """ Extending the volume api to support additional cinder sub-commands
     """
@@ -1159,6 +1164,24 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                               reason=reason)
         # - looks like it's OK
         self._validated_archives.append(instance['image_ref'])
+
+    def _validate_flavor(self, instance):
+        """Validate the flavor for compatibility with zone brands"""
+        flavor = self._get_flavor(instance)
+        extra_specs = flavor['extra_specs'].copy()
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+
+        if brand == ZONE_BRAND_SOLARIS_KZ:
+            # verify the memory is 256mb aligned
+            test_size = Size('256MB')
+            instance_size = Size('%sMB' % instance['memory_mb'])
+
+            if instance_size.byte_value % test_size.byte_value:
+                # non-zero result so it doesn't align
+                raise MemoryAlignmentIncorrect(
+                    flavor=flavor['name'],
+                    memsize=str(instance['memory_mb']),
+                    align='256')
 
     def _suri_from_volume_info(self, connection_info):
         """Returns a suri(5) formatted string based on connection_info.
@@ -2146,6 +2169,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         image = self._fetch_image(context, instance)
         self._validate_image(context, image, instance)
+        self._validate_flavor(instance)
 
         # c1d0 is the standard dev for the default boot device.
         # Irrelevant value for ZFS, but Cinder gets stroppy without it.
