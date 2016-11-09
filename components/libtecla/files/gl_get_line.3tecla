@@ -888,7 +888,7 @@ If you wish to change the size of the history buffer that was originally specifi
 The \fIhistlen\fR argument specifies the new size in bytes, and if you specify this as 0, the buffer will be deleted.
 .sp
 .LP
-As mentioned in the discussion of \fBnew_GetLine()\fR, the number of lines that can be stored in the history buffer, depends on the lengths of the individual lines. For example, a 1000 byte buffer could equally store 10 lines of average length 100 bytes, or 20 lines of average length 50 bytes. Although the buffer is never expanded when new lines are added, a list of pointers into the buffer does get expanded when needed to accomodate the number of lines currently stored in the buffer. To place an upper limit on the number of lines in the buffer, and thus a ceiling on the amount of memory used in this list, you can call the \fBgl_limit_history()\fR function.
+As mentioned in the discussion of \fBnew_GetLine()\fR, the number of lines that can be stored in the history buffer, depends on the lengths of the individual lines. For example, a 1000 byte buffer could equally store 10 lines of average length 100 bytes, or 20 lines of average length 50 bytes. Although the buffer is never expanded when new lines are added, a list of pointers into the buffer does get expanded when needed to accommodate the number of lines currently stored in the buffer. To place an upper limit on the number of lines in the buffer, and thus a ceiling on the amount of memory used in this list, you can call the \fBgl_limit_history()\fR function.
 .sp
 .LP
 The \fImax_lines\fR should either be a positive number >= 0, specifying an upper limit on the number of lines in the buffer, or be -1 to cancel any previously specified limit. When a limit is in effect, only the \fImax_lines\fR most recently appended lines are kept in the buffer. Older lines are discarded.
@@ -1054,7 +1054,7 @@ The timeout is specified in the form of an integral number of seconds and an int
 
 .sp
 .LP
-On returning, the application's callback is expected to return one of the following enumerators to tell \fBgl_get_line()\fR how to procede after the timeout has been handled by the callback.
+On returning, the application's callback is expected to return one of the following enumerators to tell \fBgl_get_line()\fR how to proceed after the timeout has been handled by the callback.
 .sp
 .ne 2
 .mk
@@ -1181,7 +1181,7 @@ Note that in the case of all of the above signals, POSIX mandates that by defaul
 If \fBgl_get_line()\fR aborts with \fBerrno\fR set to \fBEINTR\fR, you can find out what signal caused it to abort, by calling the \fBgl_last_signal()\fR function. This returns the numeric code (for example, \fBSIGINT\fR) of the last signal that was received during the most recent call to \fBgl_get_line()\fR, or -1 if no signals were received.
 .sp
 .LP
-On systems that support it, when a \fBSIGWINCH\fR (window change) signal is received, \fBgl_get_line()\fR queries the terminal to find out its new size, redraws the current input line to accomodate the new size, then returns to waiting for keyboard input from the user. Unlike other signals, this signal is not resent to the application.
+On systems that support it, when a \fBSIGWINCH\fR (window change) signal is received, \fBgl_get_line()\fR queries the terminal to find out its new size, redraws the current input line to accommodate the new size, then returns to waiting for keyboard input from the user. Unlike other signals, this signal is not resent to the application.
 .sp
 .LP
 Finally, the following signals cause \fBgl_get_line()\fR to first restore the terminal and signal environment to that which prevailed before \fBgl_get_line()\fR was called, then resend the signal to the application. If the process still exists after the signal has been delivered, then \fBgl_get_line()\fR then re-establishes its own signal handlers, switches the terminal back to raw mode, redisplays the input line, and goes back to awaiting terminal input from the user.
@@ -1645,7 +1645,7 @@ On the few systems where this mechanism is not available, at startup \fBnew_GetL
 Even on systems that do support ioctl(\fBTIOCGWINSZ\fR), if the terminal is on the other end of a serial line, the terminal driver generally has no way of detecting when a resize occurs or of querying what the current size is. In such cases no \fBSIGWINCH\fR is sent to the process, and the dimensions returned by ioctl(\fBTIOCGWINSZ\fR) are not correct. The only way to handle such instances is to provide a way for the user to enter a command that tells the remote system what the new size is. This command would then call the \fBgl_set_term_size()\fR function to tell \fBgl_get_line()\fR about the change in size.
 .sp
 .LP
-The \fIncolumn\fR and \fInline\fR arguments are used to specify the new dimensions of the terminal, and must not be less than 1. On systems that do support ioctl(\fBTIOCGWINSZ\fR), this function first calls ioctl(\fBTIOCSWINSZ\fR) to tell the terminal driver about the change in size. In non-blocking server-I/O mode, if a line is currently being input, the input line is then redrawn to accomodate the changed size. Finally the new values are recorded in \fIgl\fR for future use by \fBgl_get_line()\fR.
+The \fIncolumn\fR and \fInline\fR arguments are used to specify the new dimensions of the terminal, and must not be less than 1. On systems that do support ioctl(\fBTIOCGWINSZ\fR), this function first calls ioctl(\fBTIOCSWINSZ\fR) to tell the terminal driver about the change in size. In non-blocking server-I/O mode, if a line is currently being input, the input line is then redrawn to accommodate the changed size. Finally the new values are recorded in \fIgl\fR for future use by \fBgl_get_line()\fR.
 .sp
 .LP
 The \fBgl_terminal_size()\fR function allows you to query the current size of the terminal, and install an alternate fallback size for cases where the size is not available. Beware that the terminal size will not be available if reading from a pipe or a file, so the default values can be important even on systems that do support ways of finding out the terminal size.
