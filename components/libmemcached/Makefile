@@ -39,6 +39,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 ifeq ($(OS_VERSION),5.11)
 LDFLAGS += -lsocket -lnsl
+CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__fPIE=no
+CONFIGURE_OPTIONS += ax_cv_check_cflags__Werror__pie=no
+CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__fPIE=no
+CONFIGURE_OPTIONS += ax_cv_check_cxxflags__Werror__pie=no
 endif
 
 # Include _SOLARIS_ flag for byteorder.h.patch's ifdef to work
