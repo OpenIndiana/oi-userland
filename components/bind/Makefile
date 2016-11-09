@@ -170,5 +170,11 @@ REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += network/dns/bind
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += security/kerberos-5
+ifeq ($(OS_VERSION),5.11)
+REQUIRED_PACKAGES += service/security/kerberos-5
+endif
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
+ifeq ($(OS_VERSION),5.11)
+REQUIRED_PACKAGES += system/library/security/gss
+endif
