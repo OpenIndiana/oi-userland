@@ -124,29 +124,36 @@ COMPONENT_POST_INSTALL_ACTION = \
 	  xargs -n 1 dirname | sort -u | \
 	  xargs $(PYTHON) -m compileall )
 
+COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
+
+
+COMPONENT_PRE_TEST_ENV += TCL_LIBRARY="$(USRLIBDIR)/tcl8.5"
+
+# We don't have DejaGNU in S11.
+ifeq ($(OS_VERSION), 5.12)
+  COMPONENT_PRE_TEST_ENV += DEJAGNULIBS="$(USRSHAREDIR)/dejagnu"
+endif
+
+#
+# Run the tests and generate a summary report, then output the summary
+# report into the results file.
+#
 # To ensure that all tests that are expected to pass actually
 # pass, we have to increase the stacksize limit to at least
 # 16MB. Otherwise we'll get spurious failures in the test
 # harness (gcc.c-torture/compile/limits-exprparen.c and others).
 # With the soft stacksize limit set to 16384 we get reasonably good
 # test results.
-COMPONENT_PRE_TEST_ACTION = ulimit -Ss 16384
-COMPONENT_TEST_ARGS = -k -i
-COMPONENT_TEST_TARGETS = check check-target
+#
+COMPONENT_PRE_TEST_ACTION += \
+	(cd $(COMPONENT_TEST_DIR) ; \
+	 ulimit -Ss 16384 ; \
+	 $(ENV) $(COMPONENT_PRE_TEST_ENV) \
+	        $(GMAKE) -k -i $(JOBS:%=-j%) check check-target ; \
+	 $(GMAKE) mail-report.log)
 
-COMPONENT_TEST_ENV += TCL_LIBRARY="$(USRLIBDIR)/tcl8.5"
-
-# We don't have DejaGNU in S11.
-ifeq ($(OS_VERSION), 5.12)
-  COMPONENT_TEST_ENV += DEJAGNULIBS="$(USRSHAREDIR)/dejagnu"
-endif
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(Test Run By\).*|\1|" ' \
-	'-e "/\(Missing header fix: \).*/d" ' \
-	'-e "/\(\\*\\*\\* complex.h\).*/d" ' \
-	'-e "/\(\\*\\*\\* math.h\).*/d" ' \
-	'-e "/\(\\*\\*\\* stdio.h\).*/d" '
+COMPONENT_TEST_CMD = $(CAT)
+COMPONENT_TEST_TARGETS = mail-report.log
 
 # Master test results are different between x86 and SPARC.
 COMPONENT_TEST_MASTER = \
