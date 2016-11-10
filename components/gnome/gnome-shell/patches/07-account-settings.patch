@@ -1,0 +1,18 @@
+Remove "Account Settings" from the status menu in the top right of the screen
+since we aren't shipping the gnome-user-accounts-panel on Solaris due to
+../gnome-control-center/patches/01-user-accounts.patch .
+
+--- gnome-shell-3.18.3/js/ui/status/system.js
++++ gnome-shell-3.18.3/js/ui/status/system.js
+@@ -350,8 +350,9 @@
+         this._switchUserSubMenu.menu.addMenuItem(item);
+         this._logoutItem = item;
+ 
+-        this._switchUserSubMenu.menu.addSettingsAction(_("Account Settings"),
+-                                                       'gnome-user-accounts-panel.desktop');
++// gnome-user-accounts-panel is not currently available on Solaris
++//        this._switchUserSubMenu.menu.addSettingsAction(_("Account Settings"),
++//                                                       'gnome-user-accounts-panel.desktop');
+ 
+         this._user.connect('notify::is-loaded', Lang.bind(this, this._updateSwitchUserSubMenu));
+         this._user.connect('changed', Lang.bind(this, this._updateSwitchUserSubMenu));

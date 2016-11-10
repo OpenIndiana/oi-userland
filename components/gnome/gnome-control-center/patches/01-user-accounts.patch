@@ -3,6 +3,13 @@ Remove user-accounts panel on Solaris since we don't have pwquality library.
 Not suitable for upstream as is - would need to convert to check if pwquality
 is present and if not, then disable the module.
 
+Even if that's resolved, we'd need to deal with panels/user-accounts/run-passwd.c
+which currently execs /usr/bin/passwd and looks for the responses it expects
+from the Linux passwd command, instead of using PAM or similar for Solaris.
+
+If this panel is ever restored, then you will also need to remove
+../gnome-shell/patches/07-account-settings.patch to restore its menu entry.
+
 --- gnome-control-center-3.18.2/configure.ac	2016-10-05 13:52:06.244424424 -0700
 +++ gnome-control-center-3.18.2/configure.ac	2016-10-05 14:09:43.829904386 -0700
 @@ -167,7 +167,6 @@
