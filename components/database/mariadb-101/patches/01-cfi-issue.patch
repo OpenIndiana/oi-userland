@@ -1,0 +1,22 @@
+--- mariadb-10.1.17/mysys/my_context.c.~1~	2016-07-27 19:23:07.480630772 +0300
++++ mariadb-10.1.17/mysys/my_context.c		2016-07-27 19:29:53.348738350 +0300
+@@ -205,8 +205,8 @@
+   __asm__ __volatile__
+     (
+      "movq %%rsp, (%[save])\n\t"
+-     "movq %[stack], %%rsp\n\t"
+-#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER)
++     "movq %[stack], %%rsp\n\t" 
++#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER) && !defined(__sun)
+      /*
+        This emits a DWARF DW_CFA_undefined directive to make the return address
+        undefined. This indicates that this is the top of the stack frame, and
+@@ -456,7 +456,7 @@
+     (
+      "movl %%esp, (%[save])\n\t"
+      "movl %[stack], %%esp\n\t"
+-#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER)
++#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)) && !defined(__INTEL_COMPILER) && !defined(__sun)
+      /*
+        This emits a DWARF DW_CFA_undefined directive to make the return address
+        undefined. This indicates that this is the top of the stack frame, and
