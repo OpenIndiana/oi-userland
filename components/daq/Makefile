@@ -25,16 +25,15 @@
 # Prefer 32-bit as only "binary" delivered is a script with embedded paths.
 BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
-
 COMPONENT_NAME=		daq
-COMPONENT_VERSION=	2.0.2
+COMPONENT_VERSION=	2.0.6
 COMPONENT_PROJECT_URL=	http://www.snort.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d65d1e67c4994e02c3142c49a648642e780b7e3d942b4a51f605309beac269a8
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort/files/snort/$(COMPONENT_ARCHIVE)/download
+    sha256:b40e1d1273e08aaeaa86e69d4f28d535b7e53bdb3898adf539266b63137be7cb
+COMPONENT_ARCHIVE_URL=	https://www.snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
 
-TPNO=			19384
+TPNO=			32523
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
