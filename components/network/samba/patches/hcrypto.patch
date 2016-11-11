@@ -1,0 +1,83 @@
+Source: Home brewed
+Fixes: overloaded ERR definition
+
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_karatsuba_mul.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_karatsuba_mul.c	2014-02-18 05:51:05.518085627 -0800
+@@ -44,6 +44,7 @@
+  * Generally though the overhead of this method doesn't pay off
+  * until a certain size (N ~ 80) is reached.
+  */
++#undef ERR
+ int mp_karatsuba_mul (mp_int * a, mp_int * b, mp_int * c)
+ {
+   mp_int  x0, x1, y0, y1, t1, x0y0, x1y1;
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_karatsuba_sqr.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_karatsuba_sqr.c	2014-02-18 05:52:07.020144267 -0800
+@@ -22,6 +22,7 @@
+  * is essentially the same algorithm but merely
+  * tuned to perform recursive squarings.
+  */
++#undef ERR
+ int mp_karatsuba_sqr (mp_int * a, mp_int * b)
+ {
+   mp_int  x0, x1, t1, t2, x0x0, x1x1;
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_toom_sqr.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_toom_sqr.c	2014-02-18 05:54:10.993497897 -0800
+@@ -14,6 +14,7 @@
+  *
+  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+  */
++#undef ERR
+ 
+ /* squaring using Toom-Cook 3-way algorithm */
+ int
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_toom_mul.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_toom_mul.c	2014-02-18 05:48:52.888293183 -0800
+@@ -22,6 +22,7 @@
+  * only particularly useful on VERY large inputs
+  * (we're talking 1000s of digits here...).
+ */
++#undef ERR
+ int mp_toom_mul(mp_int *a, mp_int *b, mp_int *c)
+ {
+     mp_int w0, w1, w2, w3, w4, tmp1, tmp2, a0, a1, a2, b0, b1, b2;
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k.c	2014-02-18 06:00:05.098527808 -0800
+@@ -14,6 +14,7 @@
+  *
+  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+  */
++#undef ERR
+ 
+ /* reduces a modulo n where n is of the form 2**p - d */
+ int mp_reduce_2k(mp_int *a, mp_int *n, mp_digit d)
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k_l.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k_l.c	2014-02-18 06:01:32.514873634 -0800
+@@ -14,6 +14,7 @@
+  *
+  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+  */
++#undef ERR
+ 
+ /* reduces a modulo n where n is of the form 2**p - d
+    This differs from reduce_2k since "d" can be larger
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k_setup_l.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_reduce_2k_setup_l.c	2014-02-18 06:01:04.034539817 -0800
+@@ -14,6 +14,7 @@
+  *
+  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+  */
++#undef ERR
+ 
+ /* determines the setup value */
+ int mp_reduce_2k_setup_l(mp_int *a, mp_int *d)
+--- a/source4/heimdal/lib/hcrypto/libtommath/bn_mp_is_square.c	2013-06-13 02:21:02.000000000 -0700
++++ samba-4.1.4/source4/heimdal/lib/hcrypto/libtommath/bn_mp_is_square.c	2014-02-18 06:05:49.598152405 -0800
+@@ -14,6 +14,7 @@
+  *
+  * Tom St Denis, tomstdenis@gmail.com, http://libtom.org
+  */
++#undef ERR
+ 
+ /* Check if remainders are possible squares - fast exclude non-squares */
+ static const char rem_128[128] = {

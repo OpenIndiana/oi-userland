@@ -1,0 +1,21 @@
+Source: Home brewed
+
+--- a/buildtools/wafsamba/samba_autoconf.py	2013-06-13 09:21:02.000000000 +0000
++++ samba-4.1.7/buildtools/wafsamba/samba_autoconf.py	2014-06-10 11:53:22.567811902 +0000
+@@ -439,7 +439,7 @@
+ 
+ @conf
+ def CHECK_STRUCTURE_MEMBER(conf, structname, member,
+-                           always=False, define=None, headers=None):
++                           always=False, define=None, headers=None, lib=None):
+     '''check for a structure member'''
+     if define is None:
+         define = 'HAVE_%s' % member.upper()
+@@ -451,6 +451,7 @@
+                       always=always,
+                       headers=headers,
+                       local_include=False,
++                      lib=lib,
+                       msg="Checking for member %s in %s" % (member, structname))
+ 
+ 
