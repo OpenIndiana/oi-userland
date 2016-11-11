@@ -43,6 +43,7 @@ PATCH_LEVEL = 0
 CXXFLAGS += $(CPP_LARGEFILES)
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
+CXXFLAGS += -std=sun03 
 # libtools seems to be forcing -nolibs, so we have to add back libc, libm,
 # libCstd and libCrun. The last two are needed because with Studio 12.2
 # (and beyond), there is a bug in the CC driver that is not correctly using
@@ -64,8 +65,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/Nothing to be done/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
 REQUIRED_PACKAGES += system/library/c++-runtime

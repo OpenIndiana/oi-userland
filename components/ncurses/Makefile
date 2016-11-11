@@ -44,6 +44,8 @@ CONFIGURE_PREFIX =	/usr/gnu
 # Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)
 
+CXXFLAGS += -std=sun03
+
 # Expects GNU install.
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 

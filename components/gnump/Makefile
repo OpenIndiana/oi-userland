@@ -100,6 +100,9 @@ CXXFLAGS.shared += -xF=%none -xthreadvar=%all
 CPPFLAGS.shared += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
+CXX.studio.32 += -std=sun03
+CXX.studio.64 += -std=sun03
+
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
      '-e "/-m32/d"' \

@@ -46,7 +46,7 @@ GNUCP = $(GNUBIN)/cp
 
 # Because we can't seem to get -norunpath to the java bindings build any
 # other way.
-CXX += $(studio_NORUNPATH)
+CXX += $(studio_NORUNPATH) -std=sun03
 CFLAGS += -features=extensions
 CFLAGS += -D_REENTRANT -DNDEBUG -DSOLARIS
 CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
@@ -77,7 +77,8 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s^lib/$(MACH64)^lib/MACH64^g"'  \
      '-e "s/^make\[[0-9]\{1,\}\]/make/g"' \
      '-e "/ld: warning/d"' \
-     '-e "/warning/d"'
+     '-e "/warning/d"' \
+     '-e "/exists from a previous run/d"'
 
 PERL_VERSION.32 = none
 PERL_VERSION.64 = 5.22
@@ -99,6 +100,9 @@ LD_TEST_PATH_32 := \
   $(PROTOUSRLIBDIR)/svn:$(BUILD_DIR_32)/subversion/tests/.libs
 LD_TEST_PATH_64 := \
   $(PROTOUSRLIBDIR)/svn/$(MACH64):$(BUILD_DIR_64)/subversion/tests/.libs
+
+# we need the proto area for the tests
+test: install
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \

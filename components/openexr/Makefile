@@ -45,6 +45,7 @@ CXXFLAGS += $(CPP_LARGEFILES)
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
 CXXFLAGS += -template=extdef
+CXXFLAGS += -std=sun03
 
 # libtools seems to be forcing -nolibs, so we have to add back libc, libm,
 # libCstd and libCrun. The last two are needed because with Studio 12.2
@@ -57,6 +58,12 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
      '-e "/-m32/d"' \
      '-e "/-m64/d"' \
+     '-e "/Nothing to be done/d"' \
+     '-e "/Leaving directory/d"' \
+     '-e "/Entering directory/d"' \
+     '-e "/mkdir .libs/d"' \
+     '-e "/is up to date/d"' \
+     '-e "/creating IlmImfTest/d"' \
      '-e "/DEPDIR=/d"'
 
 CONFIGURE_ENV += LIBS="$(LIBS)"

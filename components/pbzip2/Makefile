@@ -38,6 +38,8 @@ BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CXX += -std=sun03
+
 # pbzip2 Solaris Sun Studio build uses a non-standard Makefile
 COMPONENT_BUILD_ARGS +=		CC="$(CXX)"
 COMPONENT_BUILD_ARGS +=		-f Makefile.solaris.sunstudio

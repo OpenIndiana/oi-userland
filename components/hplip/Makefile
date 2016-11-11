@@ -41,6 +41,7 @@ PKG_OPTIONS += -I $(COMPONENT_DIR)
 CFLAGS.studio += $(studio_FEATURES_EXTENSIONS)
 CXXFLAGS.studio += $(studio_FEATURES_EXTENSIONS) 
 CXXFLAGS.studio += $(studio_CXXLIB_CSTD) 
+CXXFLAGS.studio += -std=sun03
 
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--with-hpppddir=$(USRSHAREDIR)/cups/model/hplip

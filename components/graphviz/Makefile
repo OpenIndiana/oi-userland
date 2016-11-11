@@ -65,6 +65,7 @@ CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
 CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
 CXX +=		$(studio_NORUNPATH)
+CXX +=		-std=sun03
 
 # Make sure to use the right python, depending on the 32/64-bit build.
 CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7)

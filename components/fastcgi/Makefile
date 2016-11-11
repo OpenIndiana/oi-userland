@@ -43,6 +43,8 @@ include $(WS_MAKE_RULES)/common.mk
 # https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
 LDFLAGS +=	-Wc,$(studio_NORUNPATH)
 
+CXX +=	-std=sun03
+
 # For now, install 32-bit and 64-bit binaries to the same location.  This will
 # cause problems if we ever install 32-bit and 64-bit concurrently.  This is
 # likely the safest option until we can either stop shipping 32-bit or until it

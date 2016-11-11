@@ -40,6 +40,7 @@ PATCH_LEVEL = 0
 
 # adding to the C++ compiler because libtool appears to strip it from CXXFLAGS
 CXX +=	$(studio_NORUNPATH)
+CXX +=	-std=sun03
 
 # It seems that we have no other way to designate that we want large file support
 CFLAGS += $(CPP_LARGEFILES)
@@ -52,6 +53,10 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/little cms testbed/d"' \
      '-e "s/[0-9]\{1,\} tics//g"' \
      '-e "s/[0-9]\{1,\} tics\,//g"' \
+     '-e "/Nothing to be done/d"' \
+     '-e "/Leaving directory/d"' \
+     '-e "/Entering directory/d"' \
+     '-e "/warning:/d"' \
      '-e "s/\, [0-9]\{1,\}\.[0-9]\{1,\} sec\.//g"'
 
 # non-default C++ flags
