@@ -38,6 +38,9 @@ CFLAGS+=	$(CPP_LARGEFILES)
 CXXFLAGS+=	$(CPP_LARGEFILES)
 CPPFLAGS+=	$(CPP_LARGEFILES)
 
+COMPONENT_PREP_ACTION += \
+        (cd $(@D); autoreconf --install --force)
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
