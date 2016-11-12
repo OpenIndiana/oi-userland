@@ -52,7 +52,10 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-BUILT_LIBS = libwebm.so
+### Library is private for the tools above; now it builds statically
+### See the renamed patch 02-CMakeLists-sharedlib._no-patch_ to reenable it
+#BUILT_LIBS = libwebm.so
+BUILT_LIBS = libwebm.a
 BUILT_BINS = sample sample_muxer vttdemux webm2pes
 
 $(BUILD_DIR_32)/.installed: $(BUILD_DIR_32)/.built
