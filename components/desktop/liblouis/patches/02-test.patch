@@ -1,0 +1,19 @@
+In our build environment the test script was failing because lou_checktable
+was looking for the passed in pathname under $LOUIS_TABLEPATH and thus all
+tests failed with a doubled pathname, effectively
+$(top_srcdir)/tables/$(top_srcdir)/tables/tablename .
+
+Upstream has replaced this shell script with a perl script, so we need to see
+if it has the same problem before figuring out if we need to submit upstream.
+
+--- liblouis-2.1.1/tests/check_all_tables
++++ liblouis-2.1.1/tests/check_all_tables
+@@ -13,7 +13,7 @@
+ TABLES=`ls $LOUIS_TABLEPATH/*.[cu]tb $LOUIS_TABLEPATH/*.cti $LOUIS_TABLEPATH/*.dis | grep -v countries.cti | grep -v compress.ctb | grep -v corrections.ctb | grep -v core.[cu]tb`
+ 
+ for table in $TABLES; do
+-    if ! lou_checktable $table 2> /dev/null; then
++    if ! lou_checktable $(basename $table); then
+ 	echo "lou_checktable on $table failed";
+ 	fail=1;
+     fi
