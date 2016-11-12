@@ -24,10 +24,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Create needed dirs (actual activity may change over time,
-# thus we ask to bump the service if re-delivering the script)
-file Solaris/tntnet-run-once.sh path=usr/share/tntnet/tntnet-run-once.sh mode=0555 refresh_fmri=svc:/application/tntnet/run-once:default
-file Solaris/tntnet-run-once.xml path=lib/svc/manifest/application/tntnet-run-once.xml restart_fmri=svc:/system/manifest-import:default
+dir group=webservd mode=0755 owner=webservd path=var/www
+dir group=webservd mode=0755 owner=webservd path=var/log/tntnet
 
 file path=usr/bin/$(MACH64)/tntnet
 file path=usr/bin/tntnet
