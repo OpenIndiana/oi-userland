@@ -45,6 +45,10 @@ include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
+# Workaround build failures when /usr/include/GL points to Nvidia's headers
+COMPONENT_PREP_ACTION += $(SYMLINK) /usr/include/mesa $(@D)/GL ;
+CPPFLAGS += -I $(SOURCE_DIR)
+
 # Requires non-standard extensions.
 CFLAGS += -std=c99 -D__EXTENSIONS__
 

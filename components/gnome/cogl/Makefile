@@ -50,6 +50,9 @@ TEST_TARGET = $(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
+# Workaround build failures when /usr/include/GL points to Nvidia's headers
+COMPONENT_PREP_ACTION += $(SYMLINK) /usr/include/mesa $(@D)/GL ;
+
 CONFIGURE_OPTION += --disable-static
 # Required for other components.
 CONFIGURE_OPTIONS += --enable-glib
