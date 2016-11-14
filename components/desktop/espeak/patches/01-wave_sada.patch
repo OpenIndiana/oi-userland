@@ -1,0 +1,22 @@
+Patch imported from Desktop gate, where it was listed as:
+# date:2010-10-27 owner:yippi type:bug
+
+Fixes build error:
+wave_sada.cpp: In function 'void wave_init(int)':
+wave_sada.cpp:86:2: error: 'wave_samplerate' was not declared in this scope
+  wave_samplerate = srate;
+  ^
+
+Fix has already been integrated upstream:
+https://sourceforge.net/p/espeak/code/257/tree//trunk/src/wave_sada.cpp?diff=248
+
+--- espeak-1.44.05-source/src/wave_sada.cpp-orig	2010-10-27 23:38:38.475656462 -0500
++++ espeak-1.44.05-source/src/wave_sada.cpp	2010-10-27 23:40:35.828458218 -0500
+@@ -63,6 +63,7 @@ static uint32_t total_samples_skipped;
+ //
+ static uint32_t last_play_position=0;
+ 
++static uint32_t wave_samplerate;
+ //>
+ // wave_init 
+ //

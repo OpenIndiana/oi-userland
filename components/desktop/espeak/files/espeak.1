@@ -1,0 +1,133 @@
+.TH espeak 1 "13 Nov 2016" "SunOS 5.12" "User Commands"
+.SH "NAME"
+espeak \- a compact open source software speech synthesizer
+.SH "SYNOPSIS"
+.PP
+\fBespeak\fR [\fB\fIoption\&.\&.\&.\fR\fR] [\fB\fIwords\fR\fR]
+.SH "DESCRIPTION"
+.PP
+\fBespeak\fR is a compact open source software speech synthesizer\&.
+It can run as a command line program to speak text from a file or from
+\fBstdin\fR\&.
+.PP
+Main features of \fBespeak\fR:
+.IP \(bu 2
+Includes different voices, whose characteristics can be altered\&.
+.IP \(bu 2
+Can produce speech output as a WAV file\&.
+.IP \(bu 2
+Supports SSML (Speech Synthesis Markup Language - not complete)
+.IP \(bu 2
+Supports HTML\&.
+.IP \(bu 2
+Is compact in size\&.
+.IP \(bu 2
+Can translate text to phoneme codes, so it could be adapted as a front end
+for another speech synthesis engine\&.
+.IP \(bu 2
+Is written in C++\&.
+.fi
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 24
+.B -a \fIinteger\fR
+Amplitude as an \fIinteger\fR in the
+range from 0 to 200, default is 100\&.
+.TP 24
+.B -b
+Input text is 8-bit encoded\&.
+.TP 24
+.B -f \fItext_file\fR
+Speak text from \fItext_file\fR\&.
+.TP 24
+.B -g \fIinteger\fR
+Specify the word gap, or the pause between words, as an
+\fIinteger\fR\&.   Units of 10mS at the default speed\&.
+.TP 24
+.B -k \fIinteger\fR
+Indicate how to speak capital letters as an
+\fIinteger\fR\&.  The argument can have the following
+values: 1=sound, 2=the word "capitals", higher values=a pitch increase (try
+-\fBk\fR 20)\&.
+.TP 24
+.B -l \fIinteger\fR
+Line length as an \fIinteger\fR\&. If not
+zero (which is the default), consider lines less than this length as
+end-of-clause\&.
+.TP 24
+.B -m
+Interpret SSML markup, and ignore other < > tags\&.
+.TP 24
+.B -p \fIinteger\fR
+Pitch adjustment as an \fIinteger\fR in
+the range from 0 to 99, default is 50\&.
+.TP 24
+.B -q
+Quiet, do not produce any speech (may be useful with
+-\fBx\fR)\&.
+.TP 24
+.B -s \fIinteger\fR
+Speed as an \fIinteger\fR meaning
+words per minute\&.  Values can be from 80 to 370, default is 170\&.
+.TP 24
+.B -v \fIvoice_file\fR
+Use specified \fIvoice_file\fR\&.
+.TP 24
+.B -w \fIfilename\fR
+Write output to the specified
+\fIfilename\fR, in WAV format,
+rather than speaking it directly\&.
+.TP 24
+.B -x
+Write phoneme mnemonics to \fBstdout\fR\&.
+.TP 24
+.B -X
+Write phonemes mnemonics and translation trace to
+\fBstdout\fR\&.
+.TP 24
+.B -z
+No final sentence pause at the end of the text\&.
+.TP 24
+.B --compile=\fIvoice_name\fR
+Compile the pronunciation rules and dictionary in the
+current directory\&. The \fIvoice_name\fR value is optional
+and specifies which language to use\&.
+.TP 24
+.B --punct="\fIcharacters\fR"
+Speak the names of punctuation
+\fIcharacters\fR while speaking\&.  If the
+\fIcharacters\fR value is omitted, all punctuation is
+spoken\&.
+.TP 24
+.B --split=\fIminutes\fR
+Starts a new WAV file every \fIminutes\fR\&.  Used with -\fBw\fR\&.
+.TP 24
+.B --stdin
+Read text input from \fBstdin\fR instead of a
+file\&.
+.TP 24
+.B --stdout
+Write speech output to \fBstdout\fR\&.
+.TP 24
+.B --voices=\fIlanguage\fR
+List the available voices for the specified
+\fIlanguage\fR\&.  If \fIlanguage\fR is
+omitted, then list all voices\&.
+.SH "FILES"
+.PP
+The following files are used by espeak:
+.TP 26
+.B /usr/lib/64/libespeak\&.so
+Library for espeak speech synthesis
+.TP 26
+.B /usr/share/espeak-data
+Directory of voice language and data files
+.SH "NOTES"
+.PP
+espeak was written by Jonathan Duddington\&.
+.SH "SEE ALSO"
+.PP
+\fBorca\fR(1),
+\fBlibespeak\fR(3),
+\fBattributes\fR(7)
