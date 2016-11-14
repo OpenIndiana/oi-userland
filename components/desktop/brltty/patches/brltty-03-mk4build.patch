@@ -1,0 +1,18 @@
+Workaround bashisms in mk4build - need to evaluate for upstream
+
+Without this patch, build fails with:
+brltty-5.4/mk4build[20]: .[36]: local: not found [No such file or directory]
+brltty-5.4/mk4build[20]: .[39]: local: not found [No such file or directory]
+brltty-5.4/mk4build[20]: .[40]: local: not found [No such file or directory]
+brltty-5.4/mk4build[20]: .[44]: local: not found [No such file or directory]
+brltty-5.4/mk4build[20]: .[45]: readonly: =: invalid variable name
+
+
+--- brltty-5.4/mk4build
++++ brltty-5.4/mk4build
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ ###############################################################################
+ # BRLTTY - A background process providing access to the console screen (when in
+ #          text mode) for a blind person using a refreshable braille display.

@@ -1,0 +1,37 @@
+brltty sets -std=gnu99 which the Solaris headers view as incompatible with
+_XOPEN_SOURCE < 600, since XPG5 and prior standards required C89, not C99.
+
+Need to either relax system header checks (bug 23506995) or submit upstream.
+
+--- brltty-5.4/configure.ac
++++ brltty-5.4/configure.ac
+@@ -288,7 +288,7 @@ in
+       brltty_prog_cc_sysflags="-D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=2 -D_BSD_SOURCE -D_XOPEN_SOURCE=500 -D_XOPEN_SOURCE_EXTENDED -D_GNU_SOURCE"
+       ;;
+    solaris*)
+-      brltty_prog_cc_sysflags="-D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
++      brltty_prog_cc_sysflags="-D_XOPEN_SOURCE=600 -D__EXTENSIONS__"
+       ;;
+    hpux*)
+       brltty_prog_cc_sysflags="-D_XOPEN_SOURCE_EXTENDED -D_HPUX_SOURCE"
+--- brltty-5.4/Drivers/Braille/EuroBraille/eutp_brl.c
++++ brltty-5.4/Drivers/Braille/EuroBraille/eutp_brl.c
+@@ -5,8 +5,6 @@
+ ** Login   <obert01@epita.fr>
+ */
+ 
+-#define _XOPEN_SOURCE 500
+-
+ /* globals */
+ unsigned char extensions[] = {'K', 'L', 'B', 'T', 'A'};
+ unsigned char positions[] = {3, 7, 16};
+--- brltty-5.4/Drivers/Braille/EuroBraille/eutp_transfer.c
++++ brltty-5.4/Drivers/Braille/EuroBraille/eutp_transfer.c
+@@ -7,7 +7,6 @@
+ ** Started on  Sun Mar 20 16:10:06 2005 Olivier BERT
+ Last update Fri Jun  1 15:23:17 2007 Olivier BERT
+ */
+-#define _XOPEN_SOURCE 500
+ #include <sys/types.h>
+ #include <dirent.h>
+ #include <string.h>

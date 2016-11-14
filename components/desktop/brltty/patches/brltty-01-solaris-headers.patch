@@ -1,0 +1,73 @@
+Solaris requires fcntl.h for open() and friends
+brltty defines logMessage & friends in log.h
+
+Fixes build errors:
+
+brltty-5.4/Programs/beep_solaris.c: In function 'getKeyboard':
+brltty-5.4/Programs/beep_solaris.c:30:21: warning: implicit declaration of
+  function 'open' [-Wimplicit-function-declaration]
+     if ((keyboard = open("/dev/kbd", O_WRONLY)) != -1) {
+                     ^
+brltty-5.4/Programs/beep_solaris.c:30:38: error: 'O_WRONLY' undeclared
+  (first use in this function)
+     if ((keyboard = open("/dev/kbd", O_WRONLY)) != -1) {
+                                      ^
+brltty-5.4/Programs/beep_solaris.c:32:7: warning: implicit declaration of
+  function 'logMessage' [-Wimplicit-function-declaration]
+       logMessage(LOG_DEBUG, "keyboard opened: fd=%d", keyboard);
+       ^
+brltty-5.4/Programs/beep_solaris.c:32:18: error: 'LOG_DEBUG' undeclared
+  (first use in this function)
+       logMessage(LOG_DEBUG, "keyboard opened: fd=%d", keyboard);
+                  ^
+brltty-5.4/Programs/beep_solaris.c:34:7: warning: implicit declaration of
+  function 'logSystemError' [-Wimplicit-function-declaration]
+       logSystemError("keyboard open");
+       ^
+
+brltty-5.4/Programs/pcm_audio.c: In function 'openPcmDevice':
+brltty-5.4/Programs/pcm_audio.c:40:32: warning: implicit declaration of
+  function 'open' [-Wimplicit-function-declaration]
+     if ((pcm->fileDescriptor = open(device, O_WRONLY|O_NONBLOCK)) != -1) {
+                                ^
+brltty-5.4/Programs/pcm_audio.c:40:45: error: 'O_WRONLY' undeclared
+  (first use in this function)
+     if ((pcm->fileDescriptor = open(device, O_WRONLY|O_NONBLOCK)) != -1) {
+                                             
+brltty-5.4/Programs/pcm_audio.c:40:54: error: 'O_NONBLOCK' undeclared
+  (first use in this function)
+     if ((pcm->fileDescriptor = open(device, O_WRONLY|O_NONBLOCK)) != -1) {
+                                                      ^
+brltty-5.4/Programs/pcm_audio.c:56:61: warning: implicit declaration of
+  function 'strerror' [-Wimplicit-function-declaration]
+         logMessage(errorLevel, "Cannot set audio info: %s", strerror(errno));
+                                                             ^
+brltty-5.4/Programs/pcm_audio.c:56:70: error: 'errno' undeclared
+  (first use in this function)
+         logMessage(errorLevel, "Cannot set audio info: %s", strerror(errno));
+                                                                      ^
+
+Need to submit upstream.
+
+--- brltty-5.4/Programs/beep_solaris.c
++++ brltty-5.4/Programs/beep_solaris.c
+@@ -18,6 +18,8 @@
+ 
+ #include "prologue.h"
++#include "log.h"
+ 
++#include <fcntl.h>
+ #include <sys/kbio.h>
+ #include <sys/kbd.h>
+ 
+--- brltty-5.4/Programs/pcm_audio.c
++++ brltty-5.4/Programs/pcm_audio.c
+@@ -19,5 +19,8 @@
+ #include "prologue.h"
+ 
++#include <string.h>
++#include <errno.h>
++#include <fcntl.h>
+ #include <sys/audio.h>
+ #include <stropts.h>
+ 
