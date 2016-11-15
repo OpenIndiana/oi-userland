@@ -22,49 +22,36 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-# At the moment, we build both 32-bit and 64-bit versions of binutils, but only
-# deliver the 32-bit binaries and libraries.
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.25.1
+COMPONENT_VERSION=	2.27
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
+	sha256:369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88
 COMPONENT_BUGDB=	utility/gnu-binutils
 
-TPNO=			23923
+TPNO=			32076
 
-TEST_TARGET= $(TEST_32)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
 
-PATCH_LEVEL := 0
+export PATH=$(dirname $(CC)):$(GNUBIN):/usr/bin
+COMPONENT_TEST_ARGS += -k
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-PARCH =		$(MACH:i386=i386-pc)
-GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
+COMPONENT_TEST_TRANSFORMS += '-e "/bin\/gcc/d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/bin\/g++/d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Test Run By /d" '
+
+PARCH =		$(MACH:i386=x86_64-pc)
+GNU_ARCH =	$(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
 
 PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
 
-CFLAGS.i386 = -mtune=opteron -march=opteron
-CFLAGS.sparc = -mtune=ultrasparc3 -mcpu=ultrasparc3 -mvis2 \
-  -mno-unaligned-doubles -mhard-float -mimpure-text
-
-CFLAGS = $(CC_BITS) -g -O2 -std=c99
-CFLAGS += $(CFLAGS.$(MACH))
-CFLAGS += -D_REENTRANT  $(CPP_LARGEFILES) $(CPP_POSIX)
-CXXFLAGS = $(CC_BITS) -g -O2 -std=c++03
-CXXFLAGS += $(CFLAGS.$(MACH))
-CXXFLAGS += -D_REENTRANT $(CPP_LARGEFILES) $(CPP_POSIX)
-CPPFLAGS += -D_REENTRANT $(CPP_LARGEFILES) $(CPP_POSIX)
-
 CONFIGURE_PREFIX =	$(USRDIR)/gnu
-
-CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
-CONFIGURE_ENV +=	CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV +=	LIBS="$(LIBS)"
-CONFIGURE_ENV +=	PATH="$(PATH)"
 
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
@@ -76,6 +63,8 @@ CONFIGURE_OPTIONS +=    --enable-host-shared
 CONFIGURE_OPTIONS +=    --enable-largefile
 CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --enable-plugins
+CONFIGURE_OPTIONS +=    --with-system-zlib
+CONFIGURE_OPTIONS +=    --build=$(GNU_ARCH)
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/math

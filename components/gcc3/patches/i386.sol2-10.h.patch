@@ -1,29 +1,39 @@
-*** gcc-3.4.3/gcc/config/i386/sol2-10.h.orig	Wed Nov 17 09:59:39 2004
---- gcc-3.4.3/gcc/config/i386/sol2-10.h	Mon Jan 28 13:39:30 2008
-***************
-*** 69,80 ****
-     %{YP,*} \
-     %{R*} \
-     %{compat-bsd: \
-!      %{!YP,*:%{p|pg:-Y P,/usr/ucblib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64} \
-!              %{!p:%{!pg:-Y P,/usr/ucblib/64:/lib:/usr/lib/64}}} \
-!              -R /usr/ucblib/64} \
-     %{!compat-bsd: \
-!      %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/64:/lib/64:/usr/lib/64} \
-!              %{!p:%{!pg:-Y P,/lib/64:/usr/lib/64}}}}"
-  
-  #undef LINK_ARCH64_SPEC
-  #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE
---- 69,80 ----
-     %{YP,*} \
-     %{R*} \
-     %{compat-bsd: \
-!      %{!YP,*:%{p|pg:-Y P,/usr/gcc/3.4/lib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64:/usr/lib/libp/64} \
-!              %{!p:%{!pg:-Y P,/usr/gcc/3.4/lib/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64}}} \
-!              } \
-     %{!compat-bsd: \
-!      %{!YP,*:%{p|pg:-Y P,/usr/gcc/3.4/lib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64:/usr/lib/libp/64} \
-!              %{!p:%{!pg:-Y P,/usr/gcc/3.4/lib/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64}}}}"
-  
-  #undef LINK_ARCH64_SPEC
-  #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE
+#
+# This patch was developed in house and encompasses two changes to GCC 3.
+#    1. It causes gcc to always specify the desired bittedness when calling
+#       the assembler to generate an object file.  That particular change
+#       has already been addressed by the upstream in future versions of GCC.
+#    2. It adjust the linker search path to find GCC 3 bits.  This current
+#       versions of GCC already handle this how we want them to.
+#
+# There is no need for either change to be submitted upstream.
+#
+--- gcc-3.4.3/gcc/config/i386/sol2-10.h.orig	2004-11-17 09:59:39.000000000 -0800
++++ gcc-3.4.3/gcc/config/i386/sol2-10.h	2016-10-04 11:58:11.778683101 -0700
+@@ -24,7 +24,7 @@
+ 
+ #undef ASM_SPEC
+ #define ASM_SPEC "%{v:-V} %{Qy:} %{!Qn:-Qy} %{n} %{T} %{Ym,*} %{Yd,*} " \
+-		 "%{Wa,*:%*} %{m32:--32} %{m64:--64} -s %(asm_cpu)"
++		 "%{Wa,*:%*} %{!m64:--32} %{m64:--64} -s %(asm_cpu)"
+ 
+ #undef NO_PROFILE_COUNTERS
+ 
+@@ -69,12 +69,12 @@
+    %{YP,*} \
+    %{R*} \
+    %{compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/ucblib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64} \
+-             %{!p:%{!pg:-Y P,/usr/ucblib/64:/lib:/usr/lib/64}}} \
+-             -R /usr/ucblib/64} \
++     %{!YP,*:%{p|pg:-Y P,/usr/gcc/3.4/lib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64:/usr/lib/libp/64} \
++             %{!p:%{!pg:-Y P,/usr/gcc/3.4/lib/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64}}} \
++             } \
+    %{!compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/64:/lib/64:/usr/lib/64} \
+-             %{!p:%{!pg:-Y P,/lib/64:/usr/lib/64}}}}"
++     %{!YP,*:%{p|pg:-Y P,/usr/gcc/3.4/lib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64:/usr/lib/libp/64} \
++             %{!p:%{!pg:-Y P,/usr/gcc/3.4/lib/64:/lib/64:/usr/lib/64 -R /usr/gcc/3.4/lib/64}}}}"
+ 
+ #undef LINK_ARCH64_SPEC
+ #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE
