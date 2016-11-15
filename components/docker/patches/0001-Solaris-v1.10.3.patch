@@ -1,6 +1,6 @@
-From 501b0bd8316d8ee28f0bcf7365965547c60f0638 Mon Sep 17 00:00:00 2001
+From 0102118524dffdc2917fafac5feeb2e410fd393e Mon Sep 17 00:00:00 2001
 From: Shreya Jain <shreya.jain@oracle.com>
-Date: Tue, 8 Nov 2016 13:26:30 -0800
+Date: Tue, 15 Nov 2016 10:53:53 -0800
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -23,7 +23,7 @@ Subject: [PATCH] Solaris-v1.10.3
  daemon/config_test.go                              |   30 +-
  daemon/container_operations_solaris.go             |  973 ++++++++++++++++++
  daemon/daemon.go                                   |    6 +-
- daemon/daemon_solaris.go                           |  544 ++++++++++
+ daemon/daemon_solaris.go                           |  576 +++++++++++
  daemon/daemon_test.go                              |    2 +
  daemon/daemon_unix_test.go                         |    2 +-
  daemon/daemon_unsupported.go                       |    2 +-
@@ -197,7 +197,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9176 insertions(+), 1241 deletions(-)
+ 193 files changed, 9208 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -2557,10 +2557,10 @@ index 6cb7f8c..f360392 100644
  // Run uses the execution driver to run a given container
 diff --git a/daemon/daemon_solaris.go b/daemon/daemon_solaris.go
 new file mode 100644
-index 0000000..ebec5ad
+index 0000000..a73cbb8
 --- /dev/null
 +++ b/daemon/daemon_solaris.go
-@@ -0,0 +1,544 @@
+@@ -0,0 +1,576 @@
 +// +build solaris,cgo
 +
 +package daemon
@@ -2581,6 +2581,7 @@ index 0000000..ebec5ad
 +	"github.com/docker/docker/pkg/sysinfo"
 +	"github.com/docker/docker/reference"
 +	"github.com/docker/docker/runconfig"
++	runconfigopts "github.com/docker/docker/runconfig/opts"
 +	containertypes "github.com/docker/engine-api/types/container"
 +	"github.com/docker/libnetwork"
 +	nwconfig "github.com/docker/libnetwork/config"
@@ -3078,7 +3079,38 @@ index 0000000..ebec5ad
 +// registerLinks sets up links between containers and writes the
 +// configuration out for persistence.
 +func (daemon *Daemon) registerLinks(container *container.Container, hostConfig *containertypes.HostConfig) error {
-+	return nil
++	if hostConfig == nil || hostConfig.NetworkMode.IsUserDefined() {
++		return nil
++	}
++
++	for _, l := range hostConfig.Links {
++		name, alias, err := runconfigopts.ParseLink(l)
++		if err != nil {
++			return err
++		}
++		child, err := daemon.GetContainer(name)
++		if err != nil {
++			//An error from daemon.GetContainer() means this name could not be found
++			return fmt.Errorf("Could not get container for %s", name)
++		}
++		for child.HostConfig.NetworkMode.IsContainer() {
++			parts := strings.SplitN(string(child.HostConfig.NetworkMode), ":", 2)
++			child, err = daemon.GetContainer(parts[1])
++			if err != nil {
++				return fmt.Errorf("Could not get container for %s", parts[1])
++			}
++		}
++		if child.HostConfig.NetworkMode.IsHost() {
++			return runconfig.ErrConflictHostNetworkAndLinks
++		}
++		if err := daemon.registerLink(container, child, alias); err != nil {
++			return err
++		}
++	}
++
++	// After we load all the links into the daemon
++	// set them to nil on the hostconfig
++	return container.WriteHostConfig()
 +}
 +
 +func (daemon *Daemon) cleanupMounts() error {
