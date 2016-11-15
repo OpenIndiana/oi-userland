@@ -129,6 +129,8 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/perl-5/xml-parser
+REQUIRED_PACKAGES += library/python/dbus-python-27
+# Remove once all build machines are upgraded to dbus-python-27:
 REQUIRED_PACKAGES += library/python/python-dbus-27
 REQUIRED_PACKAGES += library/security/nss
 REQUIRED_PACKAGES += $(PERL_PKG)
