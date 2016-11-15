@@ -1,0 +1,335 @@
+Based on patchset # 8 from https://review.openstack.org/#/c/371199/
+and modified for use in Mitaka.
+
+From 9c39d55f8f3bfa8a1384919df2c3f8e6aafef69a Mon Sep 17 00:00:00 2001
+From: iain MacDonnell <iain.macdonnell@oracle.com>
+Date: Tue, 20 Dec 2016 02:56:31 +0000
+Subject: [PATCH] ZFSSA volume driver multi-connect
+
+Fix ZFSSA volume driver to allow connection of a volume to more
+than one connector (initiator group) at the same time, which is
+required for live-migration to work.
+
+Note: ZFSSA software release 2013.1.3.x (or higher) will be required
+to use this functionality.
+
+Change-Id: I44b86fd967a21da465b44a8db15331ca17438961
+Closes-Bug: #1565051
+
+--- cinder-8.0.0/cinder/tests/unit/test_zfssa.py.orig   2017-01-25 15:04:22.074740153 +0000
++++ cinder-8.0.0/cinder/tests/unit/test_zfssa.py       2017-01-25 15:07:00.610253132 +0000
+@@ -445,27 +445,117 @@ class TestZFSSAISCSIDriver(test.TestCase
+     def test_volume_attach_detach(self, _get_provider_info):
+         lcfg = self.configuration
+         test_target_iqn = 'iqn.1986-03.com.sun:02:00000-aaaa-bbbb-cccc-ddddd'
+-        stub_val = {'provider_location':
+-                    '%s %s 0' % (lcfg.zfssa_target_portal, test_target_iqn)}
+-        self.drv._get_provider_info.return_value = stub_val
++        self.drv._get_provider_info.return_value = {
++            'provider_location': '%s %s' % (lcfg.zfssa_target_portal,
++                                            test_target_iqn)
++        }
+
+-        connector = dict(initiator='iqn.1-0.org.deb:01:d7')
++        def side_effect_get_initiator_initiatorgroup(arg):
++            return [{
++                'iqn.1-0.org.deb:01:d7': 'test-init-grp1',
++                'iqn.1-0.org.deb:01:d9': 'test-init-grp2',
++            }[arg]]
++
++        self.drv.zfssa.get_initiator_initiatorgroup.side_effect = (
++            side_effect_get_initiator_initiatorgroup)
++
++        initiator = 'iqn.1-0.org.deb:01:d7'
++        initiator_group = 'test-init-grp1'
++        lu_number = '246'
++
++        self.drv.zfssa.get_lun.side_effect = iter([
++            {'initiatorgroup': [], 'number': []},
++            {'initiatorgroup': [initiator_group], 'number': [lu_number]},
++            {'initiatorgroup': [initiator_group], 'number': [lu_number]},
++        ])
++
++        connector = dict(initiator=initiator)
+         props = self.drv.initialize_connection(self.test_vol, connector)
+-        self.drv._get_provider_info.assert_called_once_with(self.test_vol)
++        self.drv._get_provider_info.assert_called_once_with()
+         self.assertEqual('iscsi', props['driver_volume_type'])
+         self.assertEqual(self.test_vol['id'], props['data']['volume_id'])
+         self.assertEqual(lcfg.zfssa_target_portal,
+                          props['data']['target_portal'])
+         self.assertEqual(test_target_iqn, props['data']['target_iqn'])
+-        self.assertEqual(0, props['data']['target_lun'])
++        self.assertEqual(int(lu_number), props['data']['target_lun'])
+         self.assertFalse(props['data']['target_discovered'])
++        self.drv.zfssa.set_lun_initiatorgroup.assert_called_with(
++            lcfg.zfssa_pool,
++            lcfg.zfssa_project,
++            self.test_vol['name'],
++            [initiator_group])
++
++        self.drv.terminate_connection(self.test_vol, connector)
++        self.drv.zfssa.set_lun_initiatorgroup.assert_called_with(
++            lcfg.zfssa_pool,
++            lcfg.zfssa_project,
++            self.test_vol['name'],
++            [])
++
++    @mock.patch.object(iscsi.ZFSSAISCSIDriver, '_get_provider_info')
++    def test_volume_attach_detach_live_migration(self, _get_provider_info):
++        lcfg = self.configuration
++        test_target_iqn = 'iqn.1986-03.com.sun:02:00000-aaaa-bbbb-cccc-ddddd'
++        self.drv._get_provider_info.return_value = {
++            'provider_location': '%s %s' % (lcfg.zfssa_target_portal,
++                                            test_target_iqn)
++        }
++
++        def side_effect_get_initiator_initiatorgroup(arg):
++            return [{
++                'iqn.1-0.org.deb:01:d7': 'test-init-grp1',
++                'iqn.1-0.org.deb:01:d9': 'test-init-grp2',
++            }[arg]]
++
++        self.drv.zfssa.get_initiator_initiatorgroup.side_effect = (
++            side_effect_get_initiator_initiatorgroup)
++
++        src_initiator = 'iqn.1-0.org.deb:01:d7'
++        src_initiator_group = 'test-init-grp1'
++        src_connector = dict(initiator=src_initiator)
++        src_lu_number = '123'
++
++        dst_initiator = 'iqn.1-0.org.deb:01:d9'
++        dst_initiator_group = 'test-init-grp2'
++        dst_connector = dict(initiator=dst_initiator)
++        dst_lu_number = '456'
++
++        # In the beginning, the LUN is already presented to the source
++        # node. During initialize_connection(), and at the beginning of
++        # terminate_connection(), it's presented to both nodes.
++        self.drv.zfssa.get_lun.side_effect = iter([
++            {'initiatorgroup': [src_initiator_group],
++             'number': [src_lu_number]},
++            {'initiatorgroup': [dst_initiator_group, src_initiator_group],
++             'number': [dst_lu_number, src_lu_number]},
++            {'initiatorgroup': [dst_initiator_group, src_initiator_group],
++             'number': [dst_lu_number, src_lu_number]},
++        ])
++
++        # Before migration, the volume gets connected to the destination
++        # node (whilst still connected to the source node), so it should
++        # be presented to the initiator groups for both
++        props = self.drv.initialize_connection(self.test_vol, dst_connector)
++        self.drv.zfssa.set_lun_initiatorgroup.assert_called_with(
++            lcfg.zfssa_pool,
++            lcfg.zfssa_project,
++            self.test_vol['name'],
++            [src_initiator_group, dst_initiator_group])
++
++        # LU number must be an int -
++        # https://bugs.launchpad.net/cinder/+bug/1538582
++        # and must be the LU number for the destination node's
++        # initiatorgroup (where the connection was just initialized)
++        self.assertEqual(int(dst_lu_number), props['data']['target_lun'])
+
+-        self.drv.terminate_connection(self.test_vol, '')
+-        self.drv.zfssa.set_lun_initiatorgroup.assert_called_once_with(
++        # After migration, the volume gets detached from the source node
++        # so it should be present to only the destination node
++        self.drv.terminate_connection(self.test_vol, src_connector)
++        self.drv.zfssa.set_lun_initiatorgroup.assert_called_with(
+             lcfg.zfssa_pool,
+             lcfg.zfssa_project,
+             self.test_vol['name'],
+-            '')
++            [dst_initiator_group])
+
+     def test_volume_attach_detach_negative(self):
+         self.drv.zfssa.get_initiator_initiatorgroup.return_value = []
+
+--- cinder-8.0.0/cinder/volume/drivers/zfssa/zfssaiscsi.py.orig	2017-01-25 10:52:12.359163201 +0000
++++ cinder-8.0.0/cinder/volume/drivers/zfssa/zfssaiscsi.py	2017-01-25 10:55:45.101897566 +0000
+@@ -269,27 +269,14 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+
+             self.zfssa.verify_target(self._get_target_alias())
+
+-    def _get_provider_info(self, volume, lun=None):
++    def _get_provider_info(self):
+         """Return provider information."""
+         lcfg = self.configuration
+-        project = lcfg.zfssa_project
+-        if ((lcfg.zfssa_enable_local_cache is True) and
+-                (volume['name'].startswith('os-cache-vol-'))):
+-            project = lcfg.zfssa_cache_project
+-
+-        if lun is None:
+-            lun = self.zfssa.get_lun(lcfg.zfssa_pool,
+-                                     project,
+-                                     volume['name'])
+-
+-        if isinstance(lun['number'], list):
+-            lun['number'] = lun['number'][0]
+
+         if self.tgtiqn is None:
+             self.tgtiqn = self.zfssa.get_target(self._get_target_alias())
+
+-        loc = "%s %s %s" % (lcfg.zfssa_target_portal, self.tgtiqn,
+-                            lun['number'])
++        loc = "%s %s" % (lcfg.zfssa_target_portal, self.tgtiqn)
+         LOG.debug('_get_provider_info: provider_location: %s', loc)
+         provider = {'provider_location': loc}
+         if lcfg.zfssa_target_user != '' and lcfg.zfssa_target_password != '':
+@@ -730,6 +717,11 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         return lun['size'] == size
+
+     def initialize_connection(self, volume, connector):
++        """Driver entry point to setup a connection for a volume."""
++        LOG.debug('Initializing volume connection. volume: %(volname)s, '
++                  'connector: %(connector)s',
++                  {'volname': volume['name'],
++                   'connector': connector})
+         lcfg = self.configuration
+         init_groups = self.zfssa.get_initiator_initiatorgroup(
+             connector['initiator'])
+@@ -748,19 +740,37 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+         else:
+             project = lcfg.zfssa_project
+
+-        for initiator_group in init_groups:
+-            self.zfssa.set_lun_initiatorgroup(lcfg.zfssa_pool,
+-                                              project,
+-                                              volume['name'],
+-                                              initiator_group)
++        lun = self.zfssa.get_lun(lcfg.zfssa_pool, project, volume['name'])
++
++        # Construct a set (to avoid duplicates) of initiator groups by
++        # combining the list to which the LUN is already presented with
++        # the list for the new connector.
++        new_init_groups = set(lun['initiatorgroup'] + init_groups)
++        self.zfssa.set_lun_initiatorgroup(lcfg.zfssa_pool,
++                                          project,
++                                          volume['name'],
++                                          sorted(list(new_init_groups)))
++
+         iscsi_properties = {}
+-        provider = self._get_provider_info(volume)
++        provider = self._get_provider_info()
+
+-        (target_portal, iqn, lun) = provider['provider_location'].split()
++        (target_portal, target_iqn) = provider['provider_location'].split()
+         iscsi_properties['target_discovered'] = False
+         iscsi_properties['target_portal'] = target_portal
+-        iscsi_properties['target_iqn'] = iqn
+-        iscsi_properties['target_lun'] = int(lun)
++        iscsi_properties['target_iqn'] = target_iqn
++
++        # Get LUN again to discover new initiator group mapping
++        lun = self.zfssa.get_lun(lcfg.zfssa_pool, project, volume['name'])
++
++        # Construct a mapping of LU number to initiator group.
++        lu_map = dict(zip(lun['initiatorgroup'], lun['number']))
++
++        # When an initiator is a member of multiple groups, and a LUN is
++        # presented to all of them, the same LU number is assigned to all of
++        # them, so we can use the first initator group containing the
++        # initiator to lookup the right LU number in our mapping
++        iscsi_properties['target_lun'] = int(lu_map[init_groups[0]])
++
+         iscsi_properties['volume_id'] = volume['id']
+
+         if 'provider_auth' in provider:
+@@ -777,16 +787,28 @@ class ZFSSAISCSIDriver(driver.ISCSIDrive
+
+     def terminate_connection(self, volume, connector, **kwargs):
+         """Driver entry point to terminate a connection for a volume."""
+-        LOG.debug('terminate_connection: volume name: %s.', volume['name'])
++        LOG.debug('Terminating volume connection. volume: %(volname)s, '
++                  'connector: %(connector)s',
++                  {'volname': volume['name'],
++                   'connector': connector})
+         lcfg = self.configuration
+         project = lcfg.zfssa_project
++        pool = lcfg.zfssa_pool
++        connector_init_groups = self.zfssa.get_initiator_initiatorgroup(
++            connector['initiator'])
+         if ((lcfg.zfssa_enable_local_cache is True) and
+                 (volume['name'].startswith('os-cache-vol-'))):
+             project = lcfg.zfssa_cache_project
+-        self.zfssa.set_lun_initiatorgroup(lcfg.zfssa_pool,
++        lun = self.zfssa.get_lun(pool, project, volume['name'])
++        # Construct the new set of initiator groups, starting with the list
++        # that the volume is currently connected to, then removing those
++        # associated with the connector that we're detaching from
++        new_init_groups = set(lun['initiatorgroup'])
++        new_init_groups -= set(connector_init_groups)
++        self.zfssa.set_lun_initiatorgroup(pool,
+                                           project,
+                                           volume['name'],
+-                                          '')
++                                          sorted(list(new_init_groups)))
+
+     def _get_voltype_specs(self, volume):
+         """Get specs suitable for volume creation."""
+
+--- cinder-8.0.0/cinder/volume/drivers/zfssa/zfssarest.py.orig	2017-01-25 10:56:44.811166673 +0000
++++ cinder-8.0.0/cinder/volume/drivers/zfssa/zfssarest.py	2017-01-25 10:59:44.000469150 +0000
+@@ -746,11 +746,26 @@ class ZFSSAApi(object):
+             raise exception.VolumeNotFound(volume_id=lun)
+ 
+         val = json.loads(ret.data)
++
++        # For backward-compatibility with 2013.1.2.x, convert initiatorgroup
++        # and number to lists if they're not already
++        def _listify(item):
++            return item if isinstance(item, list) else [item]
++
++        initiatorgroup = _listify(val['lun']['initiatorgroup'])
++        number = _listify(val['lun']['assignednumber'])
++
++        # Hide special maskAll value when LUN is not currently presented to
++        # any initiatorgroups:
++        if 'com.sun.ms.vss.hg.maskAll' in initiatorgroup:
++            initiatorgroup = []
++            number = []
++
+         ret = {
+             'name': val['lun']['name'],
+             'guid': val['lun']['lunguid'],
+-            'number': val['lun']['assignednumber'],
+-            'initiatorgroup': val['lun']['initiatorgroup'],
++            'number': number,
++            'initiatorgroup': initiatorgroup,
+             'size': val['lun']['volsize'],
+             'nodestroy': val['lun']['nodestroy'],
+             'targetgroup': val['lun']['targetgroup']
+@@ -797,8 +812,15 @@ class ZFSSAApi(object):
+ 
+     def set_lun_initiatorgroup(self, pool, project, lun, initiatorgroup):
+         """Set the initiatorgroup property of a LUN."""
+-        if initiatorgroup == '':
++
++        # For backward-compatibility with 2013.1.2.x, set initiatorgroup
++        # to a single string if there's only one item in the list.
++        # Live-migration won't work, but existing functionality should still
++        # work. If the list is empty, substitute the special "maskAll" value.
++        if len(initiatorgroup) == 0:
+             initiatorgroup = 'com.sun.ms.vss.hg.maskAll'
++        elif len(initiatorgroup) == 1:
++            initiatorgroup = initiatorgroup[0]
+ 
+         svc = '/api/storage/v1/pools/' + pool + '/projects/' + \
+             project + '/luns/' + lun
+@@ -806,6 +828,14 @@ class ZFSSAApi(object):
+             'initiatorgroup': initiatorgroup
+         }
+ 
++        LOG.debug('Setting LUN initiatorgroup. pool=%(pool)s, '
++                  'project=%(project)s, lun=%(lun)s, '
++                  'initiatorgroup=%(initiatorgroup)s',
++                  {'project': project,
++                   'pool': pool,
++                   'lun': lun,
++                   'initiatorgroup': initiatorgroup})
++
+         ret = self.rclient.put(svc, arg)
+         if ret.status != restclient.Status.ACCEPTED:
+             LOG.error(_LE('Error Setting Volume: %(lun)s to InitiatorGroup: '
