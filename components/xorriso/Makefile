@@ -26,13 +26,13 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
-COMPONENT_VERSION=      0.6.0
+COMPONENT_VERSION=      1.4.6
 COMPONENT_PROJECT_URL=  http://scdbackup.sourceforge.net/xorriso/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1f26880eaacf7bd806520a458963d2374ad6bf90353e08ed0de271b6d45c5b8a
+    sha256:526f728c7eee6f8c4b69fbf391789e6c80806197c2861cf5922cf7cfe1035784
 COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
 
-TPNO=			3504
+TPNO=			32406
 
 CPPFLAGS+=		-I./test
 
@@ -44,9 +44,7 @@ CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
-# The tarball for this version already has a config.status file so remove it.
-COMPONENT_PREP_ACTION = \
-	 (cd $(@D) ; test -f config.status && rm config.status)
-
+REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/tk-8
