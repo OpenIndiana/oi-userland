@@ -1,0 +1,24 @@
+Patch to prevent setup.py clobbering built sources - important if
+we want to do an incremental build, or just execute the build,
+install, test and publish targets as separate invocations of gmake.
+
+Not considered worthwhile pushing upstream since this is purely an
+optimization for our build process.
+
+Patch was written in-house.
+
+--- Cython-0.24.1/Makefile.orig	2016-10-10 09:47:47.171569322 -0700
++++ Cython-0.24.1/Makefile	2016-10-10 09:47:56.150802555 -0700
+@@ -2,11 +2,11 @@
+ REPO = git://github.com/cython/cython.git
+ 
+ all:    local 
+ 
+ local:
+-	${PYTHON} setup.py build_ext --inplace
++	${PYTHON} setup.py build_ext
+ 
+ TMPDIR = .repo_tmp
+ .git: .gitrev
+ 	rm -rf $(TMPDIR)
+ 	git clone -n $(REPO) $(TMPDIR)
