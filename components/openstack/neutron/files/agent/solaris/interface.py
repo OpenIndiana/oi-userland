@@ -143,6 +143,7 @@ class OVSInterfaceDriver(object):
 
         if network is None:
             network = self.neutron_client.show_network(network_id)['network']
+            mtu = network.get('mtu')
 
         network_type = network.get('provider:network_type')
         vid = None
@@ -159,8 +160,8 @@ class OVSInterfaceDriver(object):
             try:
                 results = get_ovsdb_info('Open_vSwitch', ['other_config'])
             except Exception as err:
-                LOG.error(_("Failed to retrieve other_config from %s: %s"),
-                          bridge, err)
+                LOG.exception(_("Failed to retrieve other_config from %s: %s"),
+                              bridge, err)
                 raise
             other_config = results[0]['other_config']
             if not other_config:
@@ -203,6 +204,8 @@ class OVSInterfaceDriver(object):
 
         dl = net_lib.Datalink(datalink_name)
         dl.create_vnic(lower_link, mac_address, vid, temp=True)
+        if mtu:
+            dl.set_prop('mtu', mtu)
 
         attrs = [('external_ids', {'iface-id': port_id,
                                    'iface-status': 'active',
@@ -231,8 +234,8 @@ class OVSInterfaceDriver(object):
             ovs.delete_port(datalink_name)
             LOG.debug("Unplugged interface '%s'", datalink_name)
         except RuntimeError as err:
-            LOG.error(_("Failed unplugging interface '%s': %s") %
-                      (datalink_name, err))
+            LOG.exception(_("Failed unplugging interface '%s': %s") %
+                          (datalink_name, err))
 
     @property
     def use_gateway_ips(self):

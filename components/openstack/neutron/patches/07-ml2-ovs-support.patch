@@ -228,8 +228,8 @@ will eventually be proposed upstream.
 +            try:
 +                utils.execute(cmd)
 +            except Exception as e:
-+                LOG.error(_LE("failed to create VXLAN tunnel end point "
-+                              "ovs.vxlan1: %s. Agent terminated!") % (e))
++                LOG.exception(_LE("failed to create VXLAN tunnel end point "
++                                  "ovs.vxlan1: %s. Agent terminated!") % (e))
 +                exit(1)
 +        # set openvswitch property to on
 +        try:
@@ -241,8 +241,8 @@ will eventually be proposed upstream.
 +                       'openvswitch=on', 'ovs.vxlan1']
 +                utils.execute(cmd)
 +        except Exception as e:
-+            LOG.error(_LE("failed to set 'openvswitch' property on "
-+                          "ovs.vxlan1: %s. Agent terminated!") % (e))
++            LOG.exception(_LE("failed to set 'openvswitch' property on "
++                              "ovs.vxlan1: %s. Agent terminated!") % (e))
 +            exit(1)
 +
 +        attrs = [('type', 'vxlan'),

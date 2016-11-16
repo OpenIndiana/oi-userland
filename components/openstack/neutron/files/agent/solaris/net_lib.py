@@ -203,6 +203,13 @@ class Datalink(CommandBase):
 
         self.execute_with_pfexec(cmd)
 
+    def set_prop(self, pname, pvalue, temp=True):
+        cmd = ['/usr/sbin/dladm', 'set-linkprop', '-p', '%s=%s'
+               % (pname, pvalue), self._dlname]
+        if temp:
+            cmd.append('-t')
+        self.execute_with_pfexec(cmd)
+
     def delete_vnic(self):
         if not self.datalink_exists(self._dlname):
             return
