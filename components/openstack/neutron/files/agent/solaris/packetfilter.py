@@ -24,7 +24,7 @@ LOG = logging.getLogger(__name__)
 class PacketFilter(object):
     '''Wrapper around Solaris pfctl(1M) command'''
 
-    def __init__(self, anchor_name):
+    def __init__(self, anchor_name, layer2=False):
         '''All the PF rules/anchors will be placed under anchor_name.
 
         An anchor is a collection of rules, tables, and other anchors. They
@@ -41,6 +41,14 @@ class PacketFilter(object):
         the methods in this class will operate under that root anchor.
         '''
         self.root_anchor_path = anchor_name
+        self.layer2 = layer2
+
+    def _build_pfctl_cmd(self, options):
+        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl']
+        if self.layer2:
+            cmd.append('-2')
+        cmd.extend(options)
+        return cmd
 
     def get_anchor_path(self, subanchors):
         if subanchors:
@@ -72,8 +80,7 @@ class PacketFilter(object):
             anchor_rule = anchor_rule + " " + anchor_option
         existing_anchor_rules.append(anchor_rule)
         process_input = '%s\n' % '\n'.join(sorted(existing_anchor_rules))
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-f', '-']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-f', '-'])
         utils.execute(cmd, process_input=process_input)
 
     def remove_nested_anchor_rule(self, parent_anchor, child_anchor):
@@ -94,13 +101,12 @@ class PacketFilter(object):
             return
         existing_anchor_rules.remove(rule)
         process_input = '%s\n' % '\n'.join(existing_anchor_rules)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-f', '-']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-f', '-'])
         utils.execute(cmd, process_input=process_input)
 
     def list_anchor_rules(self, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sr']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-sr'])
         try:
             stdout = utils.execute(cmd)
         except:
@@ -109,7 +115,7 @@ class PacketFilter(object):
 
     def list_anchors(self, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sA']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-sA'])
         try:
             stdout = utils.execute(cmd)
         except:
@@ -118,29 +124,29 @@ class PacketFilter(object):
 
     def add_table(self, name, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-t', name, '-T', 'add']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                     '-T', 'add'])
         utils.execute(cmd)
 
     def add_table_entry(self, name, cidrs, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-t', name, '-T', 'add']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                     '-T', 'add'])
         cmd.extend(cidrs)
         utils.execute(cmd)
 
     def replace_table_entry(self, name, cidrs, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-t', name, '-T', 'replace']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                     '-T', 'replace'])
         cmd.extend(cidrs)
         utils.execute(cmd)
 
     def table_exists(self, name, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
         try:
-            cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-                   '-t', name, '-T', 'show']
+            cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                         '-T', 'show'])
             utils.execute(cmd)
         except:
             return False
@@ -152,8 +158,8 @@ class PacketFilter(object):
                       'deleting') % name)
             return
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-t', name, '-T', 'delete']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                     '-T', 'delete'])
         utils.execute(cmd)
 
     def remove_table_entry(self, name, cidrs, subanchors=None):
@@ -162,16 +168,15 @@ class PacketFilter(object):
                       'deleting') % name)
             return
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-t', name, '-T', 'delete']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-t', name,
+                                     '-T', 'delete'])
         cmd.extend(cidrs)
         utils.execute(cmd)
 
     def add_rules(self, rules, subanchors=None):
         anchor_path = self.get_anchor_path(subanchors)
         process_input = '\n'.join(rules) + '\n'
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-f', '-']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-f', '-'])
         utils.execute(cmd, process_input=process_input)
 
     def _get_rule_label(self, rule):
@@ -188,7 +193,7 @@ class PacketFilter(object):
 
         # retrieve all the labels for rules, we will delete the state
         # after removing the rules
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sr']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-sr'])
         try:
             stdout = utils.execute(cmd)
         except:
@@ -204,14 +209,12 @@ class PacketFilter(object):
                 labels.append(label)
 
         # delete the rules and tables
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path,
-               '-F', 'all']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-F', 'all'])
         utils.execute(cmd)
 
         # clear the state
         for label in labels:
-            cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-k', 'label',
-                   '-k', label]
+            cmd = self._build_pfctl_cmd(['-k', 'label', '-k', label])
             utils.execute(cmd)
 
     def _get_relative_nested_anchors(self, anchorname):
@@ -225,7 +228,7 @@ class PacketFilter(object):
 
     def remove_anchor_recursively(self, subanchors=None, recurse_ctxt=False):
         anchor_path = self.get_anchor_path(subanchors)
-        cmd = ['/usr/bin/pfexec', '/usr/sbin/pfctl', '-a', anchor_path, '-sA']
+        cmd = self._build_pfctl_cmd(['-a', anchor_path, '-sA'])
         try:
             stdout = utils.execute(cmd)
         except:

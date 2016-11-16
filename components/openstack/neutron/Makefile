@@ -125,6 +125,7 @@ COMPONENT_POST_BUILD_ACTION += \
 	 files/agent/solaris/net_lib.py \
 	 files/agent/solaris/packetfilter.py \
 	 files/agent/solaris/pd.py \
+         files/agent/solaris/pf_firewall.py \
 	 files/agent/solaris/ra.py \
 	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/solaris; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/$(DEVICE_TEMPLATE); \

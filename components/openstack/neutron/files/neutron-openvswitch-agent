@@ -15,9 +15,12 @@
 #    under the License.
 
 import os
+from subprocess import CalledProcessError, check_call
 import sys
 
 import smf_include
+
+from neutron.agent.solaris import packetfilter
 
 
 def start():
@@ -27,9 +30,29 @@ def start():
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
 
+    # Cleanup any security groups related PF rules
+    pf = packetfilter.PacketFilter('_auto/neutron:ovs:agent')
+    pf.remove_anchor_recursively()    
+
     cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-openvswitch-agent " \
         "--config-file %s --config-file %s" % tuple(sys.argv[2:4])
     smf_include.smf_subprocess(cmd)
+
+
+def stop():
+    try:
+        # first kill the SMF contract
+        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
+    except CalledProcessError as err:
+        print "failed to kill the SMF contract: %s" % err
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    # We need to remove the PF rules added under _auto/neutron:ovs:agent
+    # anchor.
+    pf = packetfilter.PacketFilter('_auto/neutron:ovs:agent')
+    pf.remove_anchor_recursively()
+    return smf_include.SMF_EXIT_OK
+
 
 if __name__ == "__main__":
     os.putenv("LC_ALL", "C")

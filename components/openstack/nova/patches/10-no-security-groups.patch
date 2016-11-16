@@ -1,15 +1,78 @@
-In-house patch as Solaris doesn't currently support security groups.
+Nova while spawning the instance expects the security group feature to be
+enabled. When not enabled we get 404 Not Found error and this causes the
+spawning of instances to fail.  In the case of 404 Not Found error, we just
+need to return an empty security group list.  This is an issue with upstream,
+and the patch must be proposed upstream.
 
---- nova-13.1.0/nova/network/neutronv2/api.py.~1~	2016-06-14 08:45:49.000000000 -0700
-+++ nova-13.1.0/nova/network/neutronv2/api.py	2016-07-06 18:08:27.484252690 -0700
-@@ -606,8 +606,8 @@ class API(base_api.NetworkAPI):
-         self._check_external_network_attach(context, nets)
- 
-         security_groups = kwargs.get('security_groups', [])
--        security_group_ids = self._process_security_groups(
--                                    instance, neutron, security_groups)
-+        # TODO(gmoodalb): Solaris doesn't currently support security groups.
-+        security_group_ids = []
- 
-         preexisting_port_ids = []
-         created_port_ids = []
+*** nova-13.1.0/nova/network/neutronv2/api.py	2016-06-14 08:45:49.000000000 -0700
+--- new/nova/network/neutronv2/api.py	2016-10-31 20:37:36.416614641 -0700
+***************
+*** 483,490 ****
+          # group if len(security_groups) == 1
+          if len(security_groups):
+              search_opts = {'tenant_id': instance.project_id}
+!             user_security_groups = neutron.list_security_groups(
+!                 **search_opts).get('security_groups')
+  
+              for security_group in security_groups:
+                  name_match = None
+--- 483,496 ----
+          # group if len(security_groups) == 1
+          if len(security_groups):
+              search_opts = {'tenant_id': instance.project_id}
+!             try:
+!                 user_security_groups = neutron.list_security_groups(
+!                     **search_opts).get('security_groups')
+!             except neutron_client_exc.NotFound:
+!                 # An admin could have disabled security group feature for the
+!                 # cloud, and in that case the API above will end up in 404 not
+!                 # found, so we need to return an empty list.
+!                 return []
+  
+              for security_group in security_groups:
+                  name_match = None
+*** nova-13.1.0/nova/api/openstack/compute/security_groups.py	2016-06-14 08:45:49.000000000 -0700
+--- new/nova/api/openstack/compute/security_groups.py	2016-11-01 11:21:01.453929563 -0700
+***************
+*** 172,178 ****
+                  list(sorted(result,
+                              key=lambda k: (k['tenant_id'], k['name'])))}
+  
+!     @extensions.expected_errors((400, 403))
+      def create(self, req, body):
+          """Creates a new security group."""
+          context = _authorize_context(req)
+--- 172,178 ----
+                  list(sorted(result,
+                              key=lambda k: (k['tenant_id'], k['name'])))}
+  
+!     @extensions.expected_errors((400, 403, 501))
+      def create(self, req, body):
+          """Creates a new security group."""
+          context = _authorize_context(req)
+*** nova-13.1.0/nova/network/security_group/neutron_driver.py	2016-06-14 08:45:49.000000000 -0700
+--- new/nova/network/security_group/neutron_driver.py	2016-11-10 13:38:32.968864075 -0800
+***************
+*** 50,55 ****
+--- 50,59 ----
+          try:
+              security_group = neutron.create_security_group(
+                  body).get('security_group')
++         except n_exc.NotFound:
++             raise exc.HTTPNotImplemented(
++                 explanation='Neutron Security Groups feature is not available '
++                             'on this cloud.')
+          except n_exc.BadRequest as e:
+              raise exception.Invalid(six.text_type(e))
+          except n_exc.NeutronClientException as e:
+***************
+*** 188,193 ****
+--- 192,199 ----
+          try:
+              security_groups = neutron.list_security_groups(**params).get(
+                  'security_groups')
++         except n_exc.NotFound:
++             security_groups = []
+          except n_exc.NeutronClientException:
+              with excutils.save_and_reraise_exception():
+                  LOG.exception(_LE("Neutron Error getting security groups"))

@@ -28,37 +28,14 @@ from openstack_dashboard.dashboards.admin.instances.forms import \
     LiveMigrateForm
 from openstack_dashboard.dashboards.admin.instances.tables import \
     AdminInstancesTable, MigrateInstance
-from openstack_dashboard.dashboards.project.access_and_security.tabs import \
-    AccessAndSecurityTabs, APIAccessTab, FloatingIPsTab, KeypairsTab
 from openstack_dashboard.dashboards.project.images.images.tables import \
     ImagesTable, CreateVolumeFromImage
 from openstack_dashboard.dashboards.project.instances import tables \
     as project_tables
 from openstack_dashboard.dashboards.project.instances.tables import \
-    InstancesTable, TogglePause, EditInstanceSecurityGroups
+    InstancesTable, TogglePause
 from openstack_dashboard.dashboards.project.instances.workflows import \
     create_instance, update_instance
-
-
-# Remove Security Groups from the LaunchInstance workflow
-
-class SolarisSetAccessControlsAction(create_instance.SetAccessControlsAction):
-    def __init__(self, request, *args, **kwargs):
-        super(SolarisSetAccessControlsAction, self).__init__(request,
-                                                             *args,
-                                                             **kwargs)
-
-        del self.fields['groups']
-
-    class Meta(object):
-        name = _("Access & Security")
-        help_text = _("Control access to your instance via key pairs, "
-                      "and other mechanisms.")
-
-    def populate_groups_choices(self, request, context):
-        return []
-
-create_instance.SetAccessControls.action_class = SolarisSetAccessControlsAction
 
 
 # Bootargs feature:
@@ -168,12 +145,6 @@ class UpdateInstanceBootarg(workflows.Step):
     contributes = ("bootargs", "bootargs_persist",)
 
 
-# Remove 'UpdateInstanceSecurityGroups' from
-# Project/Compute/Instances/Actions/Edit Instance
-update_instance.UpdateInstance.default_steps = (
-    update_instance.UpdateInstanceInfo,
-)
-
 # Bootargs feature:
 # if locally configured to do so add UpdateInstanceBootarg
 # to Project/Compute/Instances/Actions/Edit Instance
@@ -182,9 +153,6 @@ if getattr(settings, 'SOLARIS_BOOTARGS', True):
         UpdateInstanceBootarg,
     )
 
-# Remove 'SecurityGroupsTab' tab from Project/Compute/Access & Security
-AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
-
 # Remove 'TogglePause', 'MigrateInstance' actions from
 # Admin/System/Instances/Actions
 temp = list(AdminInstancesTable._meta.row_actions)
@@ -192,10 +160,8 @@ temp.remove(MigrateInstance)
 temp.remove(TogglePause)
 AdminInstancesTable._meta.row_actions = tuple(temp)
 
-# Remove 'EditInstanceSecurityGroups', 'TogglePause' actions from
-# Project/Compute/Instances/Actions
+# Remove 'TogglePause' action from Project/Compute/Instances/Actions
 temp = list(InstancesTable._meta.row_actions)
-temp.remove(EditInstanceSecurityGroups)
 temp.remove(TogglePause)
 InstancesTable._meta.row_actions = tuple(temp)
 

@@ -1,22 +1,21 @@
-The Solaris OVS Interface driver needs to be added to the list of entry points
-in order to be discovered and loaded by stevedore.
+The Solaris OVS Interface driver and Solaris PF security group driver need to
+be added to the list of entry points in order to be discovered and loaded by
+stevedore.
 
-*** neutron-8.0.0/setup.cfg	2016-04-07 00:47:18.000000000 -0700
---- new/setup.cfg	2016-05-24 13:31:12.688314864 -0700
-***************
-*** 155,161 ****
-  	ivs = neutron.agent.linux.interface:IVSInterfaceDriver
-  	linuxbridge = neutron.agent.linux.interface:BridgeInterfaceDriver
-  	null = neutron.agent.linux.interface:NullDriver
-! 	openvswitch = neutron.agent.linux.interface:OVSInterfaceDriver
-  neutron.agent.firewall_drivers = 
-  	noop = neutron.agent.firewall:NoopFirewallDriver
-  	iptables = neutron.agent.linux.iptables_firewall:IptablesFirewallDriver
---- 155,161 ----
-  	ivs = neutron.agent.linux.interface:IVSInterfaceDriver
-  	linuxbridge = neutron.agent.linux.interface:BridgeInterfaceDriver
-  	null = neutron.agent.linux.interface:NullDriver
-! 	openvswitch = neutron.agent.solaris.interface:OVSInterfaceDriver
-  neutron.agent.firewall_drivers = 
-  	noop = neutron.agent.firewall:NoopFirewallDriver
-  	iptables = neutron.agent.linux.iptables_firewall:IptablesFirewallDriver
+--- neutron-8.1.2/setup.cfg	2016-06-09 18:50:09.000000000 -0700
++++ new/setup.cfg	2016-09-08 22:28:20.271867703 -0700
+@@ -155,12 +155,13 @@
+ 	ivs = neutron.agent.linux.interface:IVSInterfaceDriver
+ 	linuxbridge = neutron.agent.linux.interface:BridgeInterfaceDriver
+ 	null = neutron.agent.linux.interface:NullDriver
+-	openvswitch = neutron.agent.linux.interface:OVSInterfaceDriver
++	openvswitch = neutron.agent.solaris.interface:OVSInterfaceDriver
+ neutron.agent.firewall_drivers = 
+ 	noop = neutron.agent.firewall:NoopFirewallDriver
+ 	iptables = neutron.agent.linux.iptables_firewall:IptablesFirewallDriver
+ 	iptables_hybrid = neutron.agent.linux.iptables_firewall:OVSHybridIptablesFirewallDriver
+ 	openvswitch = neutron.agent.linux.openvswitch_firewall:OVSFirewallDriver
++	pf = neutron.agent.solaris.pf_firewall:PFFirewallDriver
+ 
+ [build_sphinx]
+ all_files = 1

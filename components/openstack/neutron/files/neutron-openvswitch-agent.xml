@@ -61,7 +61,11 @@
       </method_context>
     </exec_method>
     <exec_method timeout_seconds="60" type="method" name="stop"
-      exec=":kill"/>
+      exec="/lib/svc/method/neutron-openvswitch-agent %m %{restarter/contract}">
+      <method_context>
+	<method_credential user='neutron' group='neutron'/>
+      </method_context>
+    </exec_method>
 
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
