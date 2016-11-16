@@ -1,0 +1,74 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/fftw-3@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Fourier transform library"
+set name=com.oracle.info.description \
+    value="FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/High Performance Computing"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2008/438
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/fftw-wisdom
+file path=usr/bin/fftw-wisdom-to-conf
+file path=usr/bin/fftwf-wisdom
+file path=usr/bin/fftwl-wisdom
+file path=usr/include/fftw3.f
+file path=usr/include/fftw3.h
+link path=usr/lib/$(MACH64)/libfftw3.so target=libfftw3.so.3.2.3
+link path=usr/lib/$(MACH64)/libfftw3.so.3 target=libfftw3.so.3.2.3
+file path=usr/lib/$(MACH64)/libfftw3.so.3.2.3
+link path=usr/lib/$(MACH64)/libfftw3f.so target=libfftw3f.so.3.2.3
+link path=usr/lib/$(MACH64)/libfftw3f.so.3 target=libfftw3f.so.3.2.3
+file path=usr/lib/$(MACH64)/libfftw3f.so.3.2.3
+link path=usr/lib/$(MACH64)/libfftw3l.so target=libfftw3l.so.3.2.3
+link path=usr/lib/$(MACH64)/libfftw3l.so.3 target=libfftw3l.so.3.2.3
+file path=usr/lib/$(MACH64)/libfftw3l.so.3.2.3
+file path=usr/lib/$(MACH64)/pkgconfig/fftw3.pc
+file path=usr/lib/$(MACH64)/pkgconfig/fftw3f.pc
+file path=usr/lib/$(MACH64)/pkgconfig/fftw3l.pc
+link path=usr/lib/libfftw3.so target=libfftw3.so.3.2.3
+link path=usr/lib/libfftw3.so.3 target=libfftw3.so.3.2.3
+file path=usr/lib/libfftw3.so.3.2.3
+link path=usr/lib/libfftw3f.so target=libfftw3f.so.3.2.3
+link path=usr/lib/libfftw3f.so.3 target=libfftw3f.so.3.2.3
+file path=usr/lib/libfftw3f.so.3.2.3
+link path=usr/lib/libfftw3l.so target=libfftw3l.so.3.2.3
+link path=usr/lib/libfftw3l.so.3 target=libfftw3l.so.3.2.3
+file path=usr/lib/libfftw3l.so.3.2.3
+file path=usr/lib/pkgconfig/fftw3.pc
+file path=usr/lib/pkgconfig/fftw3f.pc
+file path=usr/lib/pkgconfig/fftw3l.pc
+file path=usr/share/info/fftw3.info
+file path=usr/share/man/man1/fftw-wisdom-to-conf.1
+file path=usr/share/man/man1/fftw-wisdom.1
+file path=usr/share/man/man1/fftwf-wisdom.1
+file path=usr/share/man/man1/fftwl-wisdom.1
+license fftw.license license="GPLv2, MIT"
