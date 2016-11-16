@@ -45,6 +45,10 @@ ADISTACK_MODE =	$(ADISTACK_ENABLE)
 TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
+# Look for gnutls-3 pkg-config & libraries before the defaults
+PKG_CONFIG_PATH.64 := $(PKG_CONFIG_PATH.64)/gnutls-3:$(PKG_CONFIG_PATH.64)
+LDFLAGS += -L$(USRLIBDIR64)/gnutls-3
+
 CFLAGS += -I$(USRINCDIR)/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
 # <getopt.h> changed between 11 & 12.
@@ -83,14 +87,17 @@ CONFIGURE_OPTIONS += --enable-auth-ntlm='smb_lm,fake'
 CONFIGURE_OPTIONS += --enable-ntlm-fail-open
 CONFIGURE_OPTIONS += --enable-removal-policies='heap,lru'
 CONFIGURE_OPTIONS += --enable-snmp
-CONFIGURE_OPTIONS += --enable-ssl
 CONFIGURE_OPTIONS += --enable-storeio='aufs,diskd,ufs'
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --with-aio
 CONFIGURE_OPTIONS += --with-aufs-threads=8
-CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
+CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_LP64_OFF64
+# Due to the current licensing of squid and openssl, gnutls/nettle
+# must be enabled and used instead of openssl for tls and/or other
+# crypto support.
+CONFIGURE_OPTIONS += --with-gnutls
+CONFIGURE_OPTIONS += --with-nettle
 CONFIGURE_OPTIONS += --with-pthreads
-CONFIGURE_OPTIONS += --without-nettle
 CONFIGURE_OPTIONS += --disable-arch-native
 CONFIGURE_OPTIONS += PERL=$(PERL)
 
@@ -143,8 +150,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Can not open file/d" ' \
 	'-e "/ERROR/p" '
 
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/nettle
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += security/kerberos-5
 ifeq ($(OS_VERSION),5.11)
