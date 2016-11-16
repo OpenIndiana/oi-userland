@@ -1,0 +1,67 @@
+Workaround the qemu on Solaris to create bootable volumes.
+The patch is Solaris-specific and not suitable for upstream.
+
+--- cinder-8.0.0/cinder/image/image_utils.py.orig	2016-11-03 11:18:00.796414519 +0000
++++ cinder-8.0.0/cinder/image/image_utils.py	2016-11-04 14:43:09.735267859 +0000
+@@ -27,7 +27,9 @@ we should look at maybe pushing this up
+ import contextlib
+ import math
+ import os
++import platform
+ import re
++import tarfile
+ import tempfile
+ 
+ from oslo_concurrency import processutils
+@@ -55,8 +57,40 @@ CONF = cfg.CONF
+ CONF.register_opts(image_helper_opts)
+ 
+ 
++class QemuEmulation(object):
++    def __init__(self, path):
++        if tarfile.is_tarfile(path):
++            # Solaris Unified Archive
++            cmd = ('/usr/bin/env', 'LC_ALL=C', '/usr/sbin/archiveadm', 'info', '-vp', path)
++            try:
++                out, _err = utils.execute(*cmd)
++
++                # the UAR image size is in the 4th line, 8th column
++                data = out.splitlines()[3].split('|')[7]
++
++                # cut off the trailing 'b' character
++                self.virtual_size = data[:-1]
++                self.disk_size = data[:-1]
++            except processutils.ProcessExecutionError:
++                # the image is a tarball but not a Unifed Archive
++                self.virtual_size = os.path.getsize(path)
++                self.disk_size = os.path.getsize(path)
++        else:
++            # simply set the size of the image on disk
++            self.virtual_size = os.path.getsize(path)
++            self.disk_size = os.path.getsize(path)
++
++        # fill in the rest of attributes
++        self.backing_file = None
++        self.file_format = 'raw'
++        self.cluster_size = None
++        self.snapshots = []
++        self.encrypted = False
++
+ def qemu_img_info(path, run_as_root=True):
+     """Return an object containing the parsed output from qemu-img info."""
++    if platform.system() == 'SunOS':
++        return QemuEmulation(path)
+     cmd = ('env', 'LC_ALL=C', 'qemu-img', 'info', path)
+     if os.name == 'nt':
+         cmd = cmd[2:]
+@@ -275,6 +309,10 @@ def fetch_to_volume_format(context, imag
+                              "can be used if qemu-img is not installed."),
+                     image_id=image_id)
+ 
++        if platform.system() == 'SunOS':
++            # No QEMU support on Solaris now.
++            qemu_img = False
++
+         tmp_images = TemporaryImages.for_image_service(image_service)
+         tmp_image = tmp_images.get(context, image_id)
+         if tmp_image:
