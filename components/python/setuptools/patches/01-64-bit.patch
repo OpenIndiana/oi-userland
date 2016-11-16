@@ -1,0 +1,33 @@
+Needed as a counterpart to Python's 64-bit patch.  Will not be submitted
+upstream.
+
+--- setuptools-19.2/setuptools/command/bdist_egg.py.~1~	2015-12-11 08:17:56.000000000 +0000
++++ setuptools-19.2/setuptools/command/bdist_egg.py	2016-11-16 11:46:37.034754212 +0000
+@@ -167,11 +167,24 @@
+             filename, ext = os.path.splitext(ext_name)
+             pyfile = os.path.join(self.bdist_dir, strip_module(filename) +
+                                   '.py')
+-            self.stubs.append(pyfile)
++            dirname, basename = os.path.split(pyfile)
++            dirnamehead, dirnametail = os.path.split(dirname)
++            # Strip any trailing '64' dirs in the .py file path.
++            if dirnametail == '64':
++                tweakedpyfile = os.path.join(dirnamehead, basename)
++            else:
++                tweakedpyfile = pyfile
++            self.stubs.append(tweakedpyfile)
+             log.info("creating stub loader for %s" % ext_name)
+             if not self.dry_run:
+-                write_stub(os.path.basename(ext_name), pyfile)
+-            to_compile.append(pyfile)
++                # If pyfile is unchanged, then the .so should be in the same
++                # directory, but if we tweaked it, then we need to add back
++                # the '64' that we had stripped.
++                resource = os.path.basename(ext_name)
++                if pyfile != tweakedpyfile:
++                    resource = os.path.join('64', resource)
++                write_stub(resource, tweakedpyfile)
++            to_compile.append(tweakedpyfile)
+             ext_outputs[p] = ext_name.replace(os.sep, '/')
+ 
+         if to_compile:
