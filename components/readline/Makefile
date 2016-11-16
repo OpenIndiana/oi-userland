@@ -107,6 +107,8 @@ INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
 
+PKG_MACROS +=	COMPONENT_VERSION_1=$(COMPONENT_VERSION_1)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
