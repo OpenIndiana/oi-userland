@@ -1,0 +1,32 @@
+This is an in-house patch which is not intended to go upstream.  Its purpose
+is to keep pyyaml from using Cython, which will be necessary until
+https://github.com/yaml/pyyaml/issues/40 has been addressed.
+Once that occurs, this patch should be removed.
+
+--- PyYAML-3.11.orig/setup.py	2014-03-26 12:54:13.000000000 +0000
++++ PyYAML-3.11/setup.py	2016-11-16 09:58:50.505699753 +0000
+@@ -77,18 +77,13 @@ if 'setuptools.extension' in sys.modules
+ with_pyrex = None
+ if sys.version_info[0] < 3:
+     try:
+-        from Cython.Distutils.extension import Extension as _Extension
+-        from Cython.Distutils import build_ext as _build_ext
+-        with_pyrex = 'cython'
++        # Pyrex cannot build _yaml.c at the moment,
++        # but it may get fixed eventually.
++        from Pyrex.Distutils import Extension as _Extension
++        from Pyrex.Distutils import build_ext as _build_ext
++        with_pyrex = 'pyrex'
+     except ImportError:
+-        try:
+-            # Pyrex cannot build _yaml.c at the moment,
+-            # but it may get fixed eventually.
+-            from Pyrex.Distutils import Extension as _Extension
+-            from Pyrex.Distutils import build_ext as _build_ext
+-            with_pyrex = 'pyrex'
+-        except ImportError:
+-            pass
++        pass
+ 
+ 
+ class Distribution(_Distribution):
