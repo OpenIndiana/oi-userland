@@ -1,0 +1,20 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  1f2e317a13060277cda3ad53f729422573785190
+24578210 qperf rc_bw test fails when cross running with PSIF and CX on UEK4
+
+diff -r 1f2e317a1306 src/rdma.c
+--- a/src/rdma.c	Wed Nov 16 13:16:34 2016 -0800
++++ b/src/rdma.c	Wed Nov 16 13:26:55 2016 -0800
+@@ -2243,7 +2243,8 @@
+         .retry_cnt         = RETRY_CNT,
+         .rnr_retry         = RNR_RETRY_CNT,
+         .sq_psn            = dev->lnode.psn,
+-        .max_rd_atomic     = dev->rnode.rd_atomic,
++	/* uses the minimum rd_atomic of the two sides to avoid RTR->RTS transition failure */
++        .max_rd_atomic     = dev->lnode.rd_atomic > dev->rnode.rd_atomic ? dev->rnode.rd_atomic : dev->lnode.rd_atomic,
+         .path_mig_state    = IBV_MIG_REARM,
+         .alt_port_num      = Req.alt_port,
+         .alt_ah_attr       = {

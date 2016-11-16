@@ -1,0 +1,41 @@
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  fb92c41a991128da97e3b50025d9971a7609dcbf
+25034411 re-construct the DR path in ibportstate
+
+diff -r fb92c41a9911 src/ibportstate.c
+--- a/src/ibportstate.c	Wed Nov 16 13:16:32 2016 -0800
++++ b/src/ibportstate.c	Wed Nov 16 13:23:26 2016 -0800
+@@ -675,16 +675,20 @@
+ 
+ 			/* Setup portid for peer port */
+ 			memcpy(&peerportid, &portid, sizeof(peerportid));
+-			peerportid.drpath.cnt = 1;
+-			peerportid.drpath.p[1] = (uint8_t) portnum;
+-
+-			/* Set DrSLID to local lid */
+-			if (resolve_self(ibd_ca, ibd_ca_port, &selfportid,
+-						&selfport, 0) < 0)
+-				IBEXIT("could not resolve self");
+-			peerportid.lid = switch_lid;
+-			peerportid.drpath.drslid = (uint16_t) selfportid.lid;
+-			peerportid.drpath.drdlid = 0xffff;
++			if (portid.lid == 0) {
++                                peerportid.drpath.cnt++;
++                                if (peerportid.drpath.cnt == IB_SUBNET_PATH_HOPS_MAX)
++                                        IBEXIT("Too many hops");
++                        } else {
++                                peerportid.drpath.cnt = 1;
++                                /* Set DrSLID to local lid */
++                                if (resolve_self(ibd_ca, ibd_ca_port, &selfportid,
++                                    &selfport, 0) < 0)
++                                        IBEXIT("could not resolve self");
++                                peerportid.drpath.drslid = (uint16_t) selfportid.lid;
++                                peerportid.drpath.drdlid = 0xffff;
++                        }
++                        peerportid.drpath.p[peerportid.drpath.cnt] = (uint8_t) portnum;
+ 
+ 			/* Get peer port NodeInfo to obtain peer port number */
+ 			is_peer_switch = get_node_info(&peerportid, data);
