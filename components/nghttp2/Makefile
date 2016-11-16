@@ -42,5 +42,6 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-hpack-tools
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += ac_cv_prog_CYTHON=''
 CONFIGURE_OPTIONS += ZLIB_LIBS=-lz
 CONFIGURE_OPTIONS += ZLIB_CFLAGS=
