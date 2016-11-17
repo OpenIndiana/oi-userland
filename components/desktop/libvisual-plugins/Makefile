@@ -39,6 +39,9 @@ TPNO=			9462
 
 TEST_TARGET = $(NO_TESTS)
 
+# Needs newer versions of various desktop packages than are available in S11.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
