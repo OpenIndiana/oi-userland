@@ -1,0 +1,24 @@
+Existing set of patches from the desktop gate.  Potentially send upstream
+
+--- rdesktop-1.6.0.orig/disk.c	2008-02-16 01:13:25.000000000 +0100
++++ rdesktop-1.6.0/disk.c	2011-06-13 18:29:54.232977906 +0200
+@@ -356,6 +356,19 @@
+ 		filename[strlen(filename) - 1] = 0;
+ 	sprintf(path, "%s%s", g_rdpdr_device[device_id].local_path, filename);
+ 
++	/* Protect against mailicous servers:
++	   somelongpath/..     # not allowed
++	               /../b   # not allowed
++                      /..b    # currently not allowed
++                      /b..    # allowed
++                      /b..b   # allowed
++                      /b../c  # allowed
++        */
++        if (strstr(path, "/.."))
++        {
++            return RD_STATUS_ACCESS_DENIED;
++        }
++
+ 	switch (create_disposition)
+ 	{
+ 		case CREATE_ALWAYS:
