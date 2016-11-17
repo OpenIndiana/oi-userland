@@ -61,7 +61,7 @@ CONFIGURE_OPTIONS +=	--enable-rbac-shutdown=solaris.system.shutdown
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/xserver/xorg
+REQUIRED_PACKAGES += x11/server/xorg
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/dbus
