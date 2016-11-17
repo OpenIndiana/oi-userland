@@ -54,6 +54,14 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
 LDFLAGS += $(CC_BITS)
 
+# Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
+PKG_CONFIG_PATHS.32 += $(PKG_CONFIG_PATH.32)/libnotify-4
+PKG_CONFIG_PATHS.64 += $(PKG_CONFIG_PATH.64)/libnotify-4
+PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
+LD_OPTIONS.32 += -L $(USRLIB.32)/libnotify-4 -R $(USRLIB.32)/libnotify-4
+LD_OPTIONS.64 += -L $(USRLIB.64)/libnotify-4 -R $(USRLIB.64)/libnotify-4
+LD_OPTIONS += $(LD_OPTIONS.$(BITS))
+
 CONFIGURE_OPTIONS += --with-gtk=2
 CONFIGURE_OPTIONS += --enable-mimetype
 CONFIGURE_OPTIONS += --enable-xrc
@@ -73,10 +81,10 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gstreamer-1
 REQUIRED_PACKAGES += library/desktop/gstreamer-1/gst-plugins-base
 REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/libnotify
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libnotify
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
