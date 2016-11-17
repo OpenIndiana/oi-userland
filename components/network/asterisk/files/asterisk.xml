@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<service_bundle type="manifest" name="asterisk">
+    <service name="network/asterisk" type="service" version="0">
+	<create_default_instance enabled="false"/>
+
+        <dependency name="network" grouping="require_all" restart_on="error" type="service">
+            <service_fmri value="svc:/milestone/network:default"/>
+        </dependency>
+
+        <dependency name="filesystem" grouping="require_all" restart_on="error" type="service">
+            <service_fmri value="svc:/system/filesystem/local"/>
+        </dependency>
+
+        <method_context>
+            <method_environment>
+                <envvar name="PATH" value="/usr/sbin"/>
+            </method_environment>
+        </method_context>
+
+        <exec_method type="method" name="start" exec="/usr/sbin/asterisk" timeout_seconds="60">
+		<method_context>
+			<method_credential user='asterisk' group='asterisk'/>
+		</method_context>
+        </exec_method>
+
+        <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+
+        <stability value="Evolving"/>
+
+        <template>
+            <common_name>
+                <loctext xml:lang="C">Asterisk</loctext>
+            </common_name>
+            <documentation>
+                <manpage title="asterisk" section="8" manpath="/usr/share/man"/>
+            </documentation>
+        </template>
+    </service>
+</service_bundle>
