@@ -1,0 +1,18 @@
+# Developed in house: Solaris specific
+# It checks the validity of the context.
+# This change is inside the FIPS canister; thus, not applicable to
+# the upstream.
+--- a/crypto/hmac/hmac.c	2016-11-09 14:41:31.820245175 -0800
++++ b/crypto/hmac/hmac.c	2016-11-09 14:42:13.816500695 -0800
+@@ -75,8 +75,10 @@
+ 		reset=1;
+ 		ctx->md=md;
+ 		}
+-	else
++	else if (ctx->md != NULL)
+ 		md=ctx->md;
++	else
++		goto err;
+ 
+ 	if (key != NULL)
+ 		{

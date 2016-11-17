@@ -1,0 +1,61 @@
+# Developed in house.
+# It checks the validity of the context.
+# The issue was reported to the upstream by QE: #4679
+--- a/crypto/hmac/hmac.c	2016-11-09 12:52:40.755645360 -0800
++++ b/crypto/hmac/hmac.c	2016-11-09 12:53:17.872944235 -0800
+@@ -71,6 +71,10 @@
+     int i, j, reset = 0;
+     unsigned char pad[HMAC_MAX_MD_CBLOCK];
+ 
++    /* If we are changing MD then we must have a key */
++    if (md != NULL && md != ctx->md && (key == NULL || len < 0))
++        return 0;
++
+ #ifdef OPENSSL_FIPS
+     /* If FIPS mode switch to approved implementation if possible */
+     if (FIPS_mode()) {
+@@ -97,9 +101,6 @@
+             return FIPS_hmac_init_ex(ctx, key, len, md, NULL);
+     }
+ #endif
+-    /* If we are changing MD then we must have a key */
+-    if (md != NULL && md != ctx->md && (key == NULL || len < 0))
+-        return 0;
+ 
+     if (md != NULL) {
+         reset = 1;
+@@ -164,12 +165,13 @@
+ 
+ int HMAC_Update(HMAC_CTX *ctx, const unsigned char *data, size_t len)
+ {
++    if (!ctx->md)
++        return 0;
++
+ #ifdef OPENSSL_FIPS
+     if (FIPS_mode() && !ctx->i_ctx.engine)
+         return FIPS_hmac_update(ctx, data, len);
+ #endif
+-    if (!ctx->md)
+-        return 0;
+ 
+     return EVP_DigestUpdate(&ctx->md_ctx, data, len);
+ }
+@@ -178,14 +180,15 @@
+ {
+     unsigned int i;
+     unsigned char buf[EVP_MAX_MD_SIZE];
++
++    if (!ctx->md)
++        goto err;
++
+ #ifdef OPENSSL_FIPS
+     if (FIPS_mode() && !ctx->i_ctx.engine)
+         return FIPS_hmac_final(ctx, md, len);
+ #endif
+ 
+-    if (!ctx->md)
+-        goto err;
+-
+     if (!EVP_DigestFinal_ex(&ctx->md_ctx, buf, &i))
+         goto err;
+     if (!EVP_MD_CTX_copy_ex(&ctx->md_ctx, &ctx->o_ctx))
