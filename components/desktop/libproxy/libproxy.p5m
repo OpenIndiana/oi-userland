@@ -1,0 +1,59 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> \
+    default mangler.man.stability "pass-through volatile">
+set name=pkg.fmri \
+    value=pkg:/library/libproxy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A library that provides automatic proxy configuration management"
+set name=com.oracle.info.description value=libproxy
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/408
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/$(MACH64)/proxy
+file path=usr/bin/proxy
+file path=usr/include/libproxy/proxy.h
+link path=usr/lib/$(MACH64)/libproxy.so target=libproxy.so.1
+link path=usr/lib/$(MACH64)/libproxy.so.1 target=libproxy.so.1.0.0
+file path=usr/lib/$(MACH64)/libproxy.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libproxy-1.0.pc
+file path=usr/lib/$(MACH64)/pxgsettings mode=0555
+link path=usr/lib/libproxy.so target=libproxy.so.1
+link path=usr/lib/libproxy.so.1 target=libproxy.so.1.0.0
+file path=usr/lib/libproxy.so.1.0.0
+file path=usr/lib/pkgconfig/libproxy-1.0.pc
+file path=usr/lib/pxgsettings mode=0555
+file path=usr/lib/python2.7/vendor-packages/libproxy.py
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Net/Libproxy.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Net/Libproxy/Libproxy.so
+file usr/share/cmake/Modules/Findlibproxy.cmake \
+    path=usr/share/cmake-2.8/Modules/Findlibproxy.cmake
+file path=usr/share/vala/vapi/libproxy-1.0.vapi
+license COPYING license=LGPLv2.1
