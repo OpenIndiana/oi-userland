@@ -1,7 +1,7 @@
 This patch provides the implementation of the smfproperty probe
 on solaris.
 This patch has not been contributed upstream but is planned to be contributed
-upstream.  Hoping to have it accepted by 2015-Dec-15.
+upstream.  Hoping to have it accepted by 2016-Dec-15.
 --- openscap-1.2.1/configure.ac.~3~	2015-04-22 16:20:53.433875799 -0700
 +++ openscap-1.2.1/configure.ac	2015-04-22 16:25:56.053053597 -0700
 @@ -257,6 +257,10 @@
@@ -61,9 +61,9 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
  endif
  
  #
---- openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c.~1~	2015-06-02 21:28:41.068464123 -0700
-+++ openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c	2015-06-03 09:48:55.973035835 -0700
-@@ -0,0 +1,385 @@
+--- openscap-1.2.9/src/OVAL/probes/unix/solaris/smfproperty.c.~1~	2016-11-09 09:54:40.194926041 +0000
++++ openscap-1.2.9/src/OVAL/probes/unix/solaris/smfproperty.c	2016-11-10 08:36:22.209408705 +0000
+@@ -0,0 +1,468 @@
 +/**
 + * @file smfproperty.c
 + * @brief smfproperty probe
@@ -104,6 +104,7 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +#endif
 +
 +#define	MAX_SCF_VALUE_LENGTH	1024
++#define	STR(x)	((x == NULL) ? "" : x)
 +/* Convenience structure for the results being reported */
 +
 +/*
@@ -161,7 +162,7 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +
 +static int
 +convert_prop(scf_handle_t *hdl, const scf_property_t *prop,
-+    struct result_info *res, probe_ctx *ctx)
++    struct result_info *res)
 +{
 +	char propname[256];
 +	scf_iter_t *iter = NULL;
@@ -233,11 +234,75 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +		len += size;
 +	}
 +	res->value = buffer;
-+	report_smfproperty(res, ctx);
-+	dI("fmri=% service=%s instance=%s property=%s value=%s\n",
-+	    res->fmri, res->service, res->instance, res->property, res->value);
-+	free(buffer);
 +	return 0;
++}
++
++static int get_smf_nested_pg(scf_handle_t *h, scf_propertygroup_t *apg, char*aprop_name, scf_propertygroup_t **appg, char**app_prop)
++{
++        char *propgrp;
++        char *prop;
++        char props[2048];
++	 static int count = 0;
++
++        props[0] = '\0';
++        snprintf(props, sizeof(props), "%s", aprop_name); 
++	dI("In get_smf_nested_pg %s\n ", props);
++	if ((prop = strstr(props, SCF_FMRI_NESTED_PROPERTYGRP_PREFIX)) != NULL) {
++		scf_propertygroup_t *pg = scf_pg_create(h);
++		*prop = '\0';
++		prop += strlen(SCF_FMRI_NESTED_PROPERTYGRP_PREFIX);
++		propgrp = props;
++		dI("property-grp:%s\tproperty:%s\n", propgrp, prop);
++		if (scf_pg_get_pg(apg, propgrp, pg) == -1 ) {
++			dE("Error: Could not read %s/%s property group \n",
++			    propgrp, prop);
++                        scf_pg_destroy(pg);
++			count = 0;
++			return 1;
++		} else {
++			count++;
++			*appg = pg;
++			*app_prop = prop;
++			 if (count > 1)
++                            scf_pg_destroy(apg);
++			return get_smf_nested_pg(h, pg, prop, appg, app_prop);
++                }
++        } else {
++                *appg = apg;
++                *app_prop = aprop_name;
++		 count = 0;
++                return 0;
++        }
++}
++
++static int
++get_smf_prop_from_pg(scf_handle_t *h, scf_propertygroup_t *pg, char *prop_name, 
++ struct result_info *res)
++{
++	scf_propertygroup_t *apg = scf_pg_create(h);
++	scf_property_t *prop = scf_property_create(h);
++	int rc=0;
++	char *aprop;
++ 
++ 	if ((rc = get_smf_nested_pg(h, pg, prop_name, &apg, &aprop)) == 0) {
++		char grp[1024];
++		dI("prop_name:%s\n", aprop);
++		if (scf_pg_get_name(apg, grp, sizeof(grp)) > 0)
++			dI("prop_grp_name:%s\n", grp);
++		if (scf_pg_get_property(apg, aprop, prop) == -1 ) {
++			dE("Error: Could not read %s property %s\n",
++		                prop_name, res->fmri);
++			rc = 1;
++			goto cleanup;
++		} else {
++			rc = convert_prop(h, prop, res);
++                }
++	}
++cleanup:
++	scf_property_destroy(prop);
++	if (apg != pg)
++		scf_pg_destroy(apg);
++	return rc;
 +}
 +
 +static int
@@ -247,7 +312,7 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +{
 +	scf_propertygroup_t *pg = scf_pg_create(h);
 +	scf_property_t *prop = scf_property_create(h);
-+	int rc;
++	int rc = 0;
 +
 +	if (pg == NULL) {
 +		dE("Unable to create property group from handle.\n");
@@ -296,19 +361,30 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +			dE("Error: Could not read "
 +			    " %s/%s property from snapshot for %s\n",
 +			    prop_grp_name, prop_name, res->fmri);
-+			rc = 1;
-+			scf_snapshot_destroy(snap);
-+			goto cleanup;
++			if (scf_instance_get_pg_composed(instance, NULL,
++                            prop_grp_name, pg) == -1) {
++                                dE( "Error: Could not read "
++                                    " %s/%s property for %s\n",
++                                    prop_grp_name, prop_name, res->fmri);
++                                goto cleanup;
++                        }
++
 +		}
 +		scf_snapshot_destroy(snap);
 +	}
-+	if (scf_pg_get_property(pg, prop_name, prop) == -1) {
-+		dE("Error: Could not read %s/%s property %s\n",
-+		    prop_grp_name, prop_name, res->fmri);
-+		rc = 1;
-+		goto cleanup;
++ 	if ((rc = get_smf_prop_from_pg(h, pg, prop_name, res)) != 0) {
++		if (scf_instance_get_pg_composed(instance, NULL, prop_grp_name,
++		    pg) == -1) {
++			printf(
++			    "Error: Could not read "
++			    " %s/%s property for %s\n",
++			    prop_grp_name,
++			    prop_name, res->fmri);
++			rc = 1;
++			goto cleanup;
++		}
++		rc = get_smf_prop_from_pg(h, pg, prop_name, res);
 +	}
-+	rc = convert_prop(h, prop, res, ctx);
 +cleanup:
 +	scf_property_destroy(prop);
 +	scf_pg_destroy(pg);
@@ -357,7 +433,7 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +	tmp = strdup_check(aprop);
 +	if ((p = strstr(tmp, SCF_FMRI_PROPERTY_PREFIX)) != NULL) {
 +		*p = '\0';
-+		p++;
++		p +=  strlen(SCF_FMRI_PROPERTY_PREFIX);
 +		prop = p;
 +	}
 +	propgrp = tmp;
@@ -367,15 +443,22 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +	r.instance = ainst;
 +	r.property = aprop;
 +	if (get_smf_prop(scf_hdl, svc, inst, propgrp, prop, &r, ctx) > 0) {
-+		r.fmri = NULL;
++		r.value = "";
++               probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 +		dE("get_smf_prop failed.\n");
 +	}
++	report_smfproperty(&r, ctx);
++	dI("fmri=%s service=%s instance=%s property=%s value=%s\n",
++	    STR(r.fmri), STR(r.service), STR(r.instance), STR(r.property),
++	    STR(r.value));
++        if (r.value != NULL && strlen(r.value) > 0)
++	    free(r.value);
 +	dI("Service exists:%s\n", r.service);
 +cleanup:
 +	free(tmp);
 +	free(r.fmri);
-+	scf_handle_destroy(scf_hdl);
 +	scf_handle_unbind(scf_hdl);
++	scf_handle_destroy(scf_hdl);
 +	scf_service_destroy(svc);
 +	scf_instance_destroy(inst);
 +	return rc;
@@ -449,13 +532,3 @@ upstream.  Hoping to have it accepted by 2015-Dec-15.
 +	return PROBE_EOPNOTSUPP;
 +}
 +#endif
---- openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c.~2~	2015-11-10 10:00:28.564892744 -0800
-+++ openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c	2015-11-10 10:03:34.496610180 -0800
-@@ -38,6 +38,7 @@
- #endif
- 
- #define	MAX_SCF_VALUE_LENGTH	1024
-+#define	STR(x)	((x == NULL) ? "" : x)
- /* Convenience structure for the results being reported */
- 
- /*
