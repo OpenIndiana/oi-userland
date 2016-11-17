@@ -61,6 +61,12 @@ CMAKE_OPTIONS += -DWITH_VALA=ON
 # Always build pacrunner as a module.
 CMAKE_OPTIONS += -DBIPR=ON
 
+ifeq ($(OS_VERSION),5.11)
+LDFLAGS +=       -lsocket -lnsl -lxnet
+CMAKE_OPTIONS += -DCMAKE_SHARED_LINKER_FLAGS="$(LDFLAGS)"
+CMAKE_OPTIONS += -DPERL_EXECUTABLE="$(PERL)"
+endif
+
 # Assumes "make" is GNU make, turns into fork bomb if it finds Solaris make
 COMPONENT_BUILD_ENV += PATH="/usr/gnu/bin:$(PATH)"
 
