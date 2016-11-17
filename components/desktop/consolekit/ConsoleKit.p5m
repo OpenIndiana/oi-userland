@@ -1,0 +1,95 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=etc/ConsoleKit/.*\.d/.* -> default preserve true>
+<transform file path=etc/ConsoleKit/.*\.d/.* -> default overlay allow>
+set name=pkg.fmri \
+    value=pkg:/library/xdg/consolekit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Framework for tracking users, login sessions and seats"
+set name=com.oracle.info.description value=ConsoleKit
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Sessions"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2009/432
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir  path=etc/ConsoleKit group=sys
+file path=etc/ConsoleKit/displays.d/Headless.display
+file path=etc/ConsoleKit/displays.d/HotPlug.display
+file path=etc/ConsoleKit/displays.d/Local.display
+file path=etc/ConsoleKit/displays.d/LocalVNC.display
+file path=etc/ConsoleKit/displays.d/MultiDCU.display
+file path=etc/ConsoleKit/displays.d/RemoteMachine.display
+dir  path=etc/ConsoleKit/run-seat.d group=sys
+dir  path=etc/ConsoleKit/run-session.d group=sys
+file path=etc/ConsoleKit/seats.d/00-primary.seat
+file path=etc/ConsoleKit/sessions.d/Headless.session
+file path=etc/ConsoleKit/sessions.d/Local.session
+file path=etc/ConsoleKit/sessions.d/LocalVNC.session
+file path=etc/ConsoleKit/sessions.d/MultiDCU0.session
+file path=etc/ConsoleKit/sessions.d/MultiDCU1.session
+file path=etc/ConsoleKit/sessions.d/MultiDCU2.session
+file path=etc/ConsoleKit/sessions.d/MultiDCU3.session
+file path=etc/ConsoleKit/sessions.d/Remote.session
+file path=etc/dbus-1/system.d/ConsoleKit.conf
+file files/consolekit.xml path=lib/svc/manifest/system/consolekit.xml
+file files/svc-consolekit path=lib/svc/method/svc-consolekit
+file path=usr/bin/ck-history
+file path=usr/bin/ck-launch-session
+file path=usr/bin/ck-list-sessions
+file path=usr/include/ConsoleKit/ck-connector/ck-connector.h
+link path=usr/lib/$(MACH64)/libck-connector.so target=libck-connector.so.0.0.0
+link path=usr/lib/$(MACH64)/libck-connector.so.0 target=libck-connector.so.0.0.0
+file path=usr/lib/$(MACH64)/libck-connector.so.0.0.0
+dir  path=usr/lib/ConsoleKit/run-seat.d mode=0555
+dir  path=usr/lib/ConsoleKit/run-session.d mode=0555
+file path=usr/lib/ConsoleKit/scripts/ck-system-restart mode=0555
+file path=usr/lib/ConsoleKit/scripts/ck-system-stop mode=0555
+file path=usr/lib/ck-collect-session-info mode=0555
+file path=usr/lib/ck-get-x11-display-device mode=0555
+file path=usr/lib/ck-get-x11-server-pid mode=0555
+link path=usr/lib/libck-connector.so target=libck-connector.so.0.0.0
+link path=usr/lib/libck-connector.so.0 target=libck-connector.so.0.0.0
+file path=usr/lib/libck-connector.so.0.0.0
+file path=usr/lib/pkgconfig/ck-connector.pc
+file path=usr/sbin/ck-log-system-restart
+file path=usr/sbin/ck-log-system-start
+file path=usr/sbin/ck-log-system-stop
+file path=usr/sbin/ck-seat-tool
+file path=usr/sbin/console-kit-daemon
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Manager.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Seat.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.ConsoleKit.Session.xml
+file path=usr/share/dbus-1/system-services/org.freedesktop.ConsoleKit.service
+file files/ck-history.1 path=usr/share/man/man1/ck-history.1
+file files/ck-launch-session.1 path=usr/share/man/man1/ck-launch-session.1
+file files/ck-list-sessions.1 path=usr/share/man/man1/ck-list-sessions.1
+file files/ck-seat-tool.8 path=usr/share/man/man8/ck-seat-tool.8
+file files/console-kit-daemon.8 path=usr/share/man/man8/console-kit-daemon.8
+dir  path=var/log/ConsoleKit group=root
+license ConsoleKit.license license="GPLv2+, BSD, MIT"

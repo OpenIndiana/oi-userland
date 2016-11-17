@@ -1,0 +1,166 @@
+.TH ck-seat-tool 8 "12 Sep 2016"
+.SH "NAME"
+ck-seat-tool \- ConsoleKit seat tool
+.SH "SYNOPSIS"
+.PP
+\fBck-seat-tool\fR \fB--add\fR \fB--display-type=\fItype\fR\fR [\fB--seat-id=\fIid\fR\fR] [\fB--session-type=\fItype\fR\fR] [\fB\fIvariable\fR \fIvariable\fR\fR\&...]
+.PP
+\fBck-seat-tool\fR \fB--delete\fR \fB--session-id=\fIid\fR\fR
+.PP
+\fBck-seat-tool\fR [\fB--help\fR] [\fB--version\fR]
+.SH "DESCRIPTION"
+.PP
+\fBck-seat-tool\fR is a utility that causes ConsoleKit to add or delete
+a ConsoleKit session in a dymanic fashion\&.  When adding a session, the
+\fB--display-type\fR option must be specified\&.  When deleting a
+session, the \fB--session-id\fR option must be specified\&.
+.PP
+To use \fBck-seat-tool\fR, it must be run as the same user which is
+running the main ConsoleKit daemon, which is normally the root user\&.  Otherwise
+the request is ignored\&.
+.PP
+When adding a session, the \fB--seat-id\fR option works as follows:
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+If \fB--seat-id=\fIid\fR\fR is provided and this
+seat exists, then a new session will be added to that seat\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+If \fB--seat-id=\fIid\fR\fR is provided, but
+this seat does not exist, then a new seat with the specified seat\&.
+\fIid\fR is created, and a new session added to that seat\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+If \fB--seat-id=\fIid\fR\fR is not given, a new
+seat \fIid\fR (Seat#) will be generated, and a new session
+added to that seat\&. 
+.sp
+.in -3
+.in -2
+.PP
+When adding a session, if session is successfully added, the session ID is
+printed in the standard output\&.
+.PP
+Note that to delete a session which is running on a particular DISPLAY, it
+may be necessary to run the 
+\fBck\-list\-sessions\fR(1)
+command to find the corresponding session ID for a given DISPLAY\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+\fB-a\fR, \fB--add\fR
+Add the specified session\&.
+.TP
+\fB-d\fR, \fB--delete\fR
+Delete the specified session\&.
+.TP
+\fB--display-type=\fR\fItype\fR
+This option is only available when adding a session\&.  Specifies the display
+\fItype\fR in the ConsoleKit display configuration that
+will be associated with the session\&.
+.TP
+\fB-h\fR, \fB--help\fR
+Display detailed usage message\&.
+.TP
+\fB--seat-id=\fR\fIid\fR
+This option is only available when adding a session\&. Specifies the seat
+\fIid\fR that will be associated with the session\&.
+.TP
+\fB--session-id=\fR\fIid\fR
+This option is only available when deleting a session\&.  Specifies the session
+\fIid\fR associated with session that will be deleted\&.
+.TP
+\fB--session-type=\fR\fItype\fR
+This option is only available when adding a session\&.  Specifies the session
+\fItype\fR that will be associated with the session\&.  The
+default value is "LoginWindow"\&.
+.TP
+\fB-V\fR, \fB--version\fR
+Display the version of the \fBck-seat-tool\fR application\&.
+.SH "OPERANDS"
+.PP
+The following operand is supported only when adding a session:
+.TP
+\fIvariable\fR
+The \fIvariable\fR operand is only available when adding a
+sesssion\&.  The command to run when starting a session is specified in a
+ConsoleKit display configuration file named
+\fB/etc/ConsoleKit/displays\&.d/\fIdisplay_type\fR\&.display\fR,
+where \fIdisplay_type\fR is specified by the
+\fB--display-type\fR option\&.  This file is in standard INI format\&.
+The command is specified by the key "X11/Exec"\&.  For example:
+.sp
+.nf
+.sp
+[X11]
+Exec=/usr/X11/bin/Xorg $display -br -verbose $vt
+.fi
+.sp
+Arguments that start with the "$" sign are variables\&.  The values
+for these variables can be specified with the
+\fIvariable\fR operand\&.  For example, if this value is
+"display=:0 vt=vt9", this would set the "$display"
+argument to ":0" and the "$vt" argument to "vt9"\&.
+.SH "EXAMPLES"
+.PP
+\fBExample 1: To add a session to the next available seat with a display type of
+"Local" and start it on display ":20"\fR
+.PP
+.nf
+example% \fBck-seat-tool -\fBa\fR \fB--display-type=Local\fR display=:20\fR
+.fi
+.PP
+\fBExample 2: To add a session to Seat10 with a session type of
+"LoginWindow", a display type of "Local", and
+start it on display ":20"\fR
+.PP
+.nf
+example% \fBck-seat-tool -\fBa\fR \fB--session-type=LoginWindow\fR \fB--display-type=Local\fR \fB--seat-id=Seat10\fR display=:20\fR
+.fi
+.PP
+\fBExample 3: To remove the session with session ID
+"/org/freedesktop/ConsoleKit/Session2"\fR
+.PP
+.nf
+example% \fBck-seat-tool \fB--d\fR \fB--session-id=/org/freedesktop/ConsoleKit/Session2\fR\fR
+.fi
+.SH "EXIT STATUS"
+.PP
+The following exit values are returned:
+.TP
+.B 0
+Application exited successfully
+.TP
+.B 1
+Application exited with failure
+.SH "FILES"
+.PP
+The following files are used by this application:
+.TP
+.B /usr/sbin/ck-seat-tool
+Executable for ConsoleKit seat tool\&.
+.TP
+.B /etc/ConsoleKit/displays\&.d
+ConsoleKit display configuration files\&.
+.SH "SEE ALSO"
+.PP
+\fBck-history\fR(1),
+\fBck-launch-session\fR(1),
+\fBck-list-sessions\fR(1),
+\fBgdmdynamic\fR(1),
+\fBconsole-kit-daemon\fR(8),
+\fBgdm\fR(8),
+\fBattributes\fR(7)

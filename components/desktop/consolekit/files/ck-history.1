@@ -1,0 +1,80 @@
+.TH ck-history 1 "12 Sep 2016"
+.SH "NAME"
+ck-history \- ConsoleKit history
+.SH "SYNOPSIS"
+.PP
+\fBck-history\fR [-\fB-frequent\fR] [-\fB-help\fR] [-\fB-last\fR] [-\fB-last-compat\fR] [-\fB-log\fR] [-\fB-seat=\fIseat\fR\fR] [-\fB-session-type=\fItype\fR\fR] [-\fB-user=\fIuser\fR\fR] [-\fB-version\fR]
+.SH "DESCRIPTION"
+.PP
+\fBck-history\fR is a utility that provides information from the
+ConsoleKit database about what users have logged into the system\&.  It supports
+options to specify whether to provide information about users who have logged
+in most frequently or most recently\&.
+.PP
+The \fBck-history\fR utility is used by \fBgdm\fR(8)
+when the GDM Face Browser is enabled to display users in the order of
+frequency\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 30
+.B --frequent
+Show listing of logged-in users in the most frequent order\&.
+.TP 30
+\fB-h\fR, \fB--help\fR
+Display detailed usage message\&.
+.TP 30
+.B --last
+Show listing of all user logins since ConsoleKit began logging, in the most
+recent order\&.
+.TP 30
+.B --last-compat
+Show listing of logged-in users in the most-recent order\&.  The output is
+displayed in
+\fBlast\fR(1)
+compatible format\&.
+.TP 30
+.B --log
+Show full ConsoleKit event log\&.
+.TP 30
+\fB-s\fR, \fB--seat=\fR\fIseat\fR
+Show entries for the specified \fIseat\fR\&.
+.TP 30
+\fB-t\fR, \fB--session-type=\fR\fItype\fR
+Show entries for the specified session \fItype\fR\&.
+.TP 30
+\fB-u\fR, \fB--user=\fR\fIuser\fR
+Show entries for the specified \fIuser\fR\&.
+.TP 30
+\fB-V\fR, \fB--version\fR
+Display the version of the \fBck-history\fR application\&.
+.SH "EXAMPLES"
+.PP
+\fBExample 1: Show most frequently logged in users\fR
+.PP
+.nf
+example% \fBck-history -\fB-frequent\fR\fR
+.fi
+.PP
+\fBExample 2: Show the entire ConsoleKit log\&.\fR
+.PP
+.nf
+example% \fBck-history -\fB-log\fR\fR
+.fi
+.SH "FILES"
+.PP
+The following files are used by this application:
+.TP 30
+.B /usr/bin/ck-history
+Executable for ConsoleKit history\&.
+.TP 30
+.B /var/log/ConsoleKit/history
+ConsoleKit history database\&.
+.SH "SEE ALSO"
+.PP
+\fBck-launch-session\fR(1),
+\fBck-list-sessions\fR(1),
+\fBck-seat-tool\fR(8),
+\fBconsole-kit-daemon\fR(8),
+\fBgdm\fR(8),
+\fBattributes\fR(7)

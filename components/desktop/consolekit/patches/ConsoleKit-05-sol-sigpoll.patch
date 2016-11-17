@@ -1,0 +1,20 @@
+commit b00450b3f9284d997e2e25fd470e7df7336f03ec
+Author: Halton Huo <halton.huo@sun.com>
+Date:   Fri Oct 16 11:10:37 2009 +0800
+
+    Fix bug console-kit-daemon exit when receiving  SIGPOLL on Solaris.
+    Refer to bug http://defect.opensolaris.org/bz/show_bug.cgi?id=11612
+
+diff --git a/src/ck-vt-monitor.c b/src/ck-vt-monitor.c
+index 17b8299..67a1f49 100644
+--- a/src/ck-vt-monitor.c
++++ b/src/ck-vt-monitor.c
+@@ -393,6 +393,8 @@ vt_add_watches (CkVtMonitor *vt_monitor)
+          */
+         struct sigaction act;
+         act.sa_handler = handle_vt_active;
++        sigemptyset (&act.sa_mask);
++        act.sa_flags = 0;
+         sigaction (SIGPOLL, &act, NULL);
+ 
+         ioctl (vt_monitor->priv->vfd, I_SETSIG, S_MSG);

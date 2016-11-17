@@ -1,0 +1,50 @@
+Patch migrated from desktop gate, where it was listed as:
+# date:2014-06-04 owner:henzhao type:bug bug:18554239
+
+which corresponds to:
+        18554239 gdm fails to spawn new Xorg when killed by SIGTERM
+
+
+
+diff --git a/ck-seat.c.old b/ck-seat.c
+index 9981e53..e9d954f 100644
+--- a/src/ck-seat.c.old
++++ b/src/ck-seat.c
+@@ -964,6 +964,7 @@ find_possible_session_to_activate (CkSeat *seat)
+         gboolean       is_open;
+         char          *session_type = NULL;
+         CkSession     *login_session = NULL;
++	gboolean       done = FALSE;
+ 
+         g_debug ("CkSeat: Find possible session to activate");
+         g_hash_table_iter_init (&iter, seat->priv->sessions);
+@@ -977,7 +978,8 @@ find_possible_session_to_activate (CkSeat *seat)
+                         guint    num;
+                         gboolean ret;
+ 
+-                        login_session = NULL;
++			if (!done)
++				login_session = NULL;
+ 
+                         g_debug ("Found open session.");
+ 
+@@ -1006,9 +1008,16 @@ find_possible_session_to_activate (CkSeat *seat)
+ 
+                 if (IS_STR_SET (session_type) &&
+                     g_str_equal (session_type, "LoginWindow")) {
+-                        login_session = value;
+-                        g_debug ("CkSeat: Setting login_session");
+-                        g_free (session_type);
++
++			if (!done) {
++				login_session = value;
++				/* Give non-open session a precedence */
++				if (!is_open)
++					done = TRUE;
++                        	g_debug ("CkSeat: Setting login_session");
++			}
++
++			g_free (session_type);
+                 }
+         }
+ 

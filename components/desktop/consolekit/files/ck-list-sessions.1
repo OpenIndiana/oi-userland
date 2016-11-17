@@ -1,0 +1,166 @@
+.TH ck-list-sessions 1 "12 Sep 2016"
+.SH "NAME"
+ck-list-sessions \- Show ConsoleKit Session Information
+.SH "SYNOPSIS"
+.PP
+\fBck-list-sessions\fR [-\fB-all\fR] [-\fB-sid=\fIsid\fR\fR] [-\fB-format=\fIformat\fR\fR] [-\fB-help\fR] [-\fB-version\fR]
+.SH "DESCRIPTION"
+.PP
+\fBck-list-sessions\fR is a utility that displays information from the
+ConsoleKit database\&.  By default, only open sessions are shown\&.  The
+-\fB-all\fR option can be used to display all existing sessions on
+the system\&.  \fBck-list-sessions\fR returns information about each ConsoleKit
+session\&.  Users can specify which properties to display via the
+-\fB-format\fR option\&.
+.PP
+The following properties can be displayed for each session:
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP 20
+\fB-a\fR, \fB--all\fR
+Show all ConsoleKit sessions\&.  If this option is not provided, only open
+sessions are shown\&.
+.TP 20
+\fB-s\fR, \fB--sid=\fR\fIsid\fR
+Show one ConsoleKit session with session id \fIsid\fR\&.  
+.TP 20
+\fB-f\fR, \fB--format=\fR\fIformat\fR
+Display information using the specified \fIformat\fR\&.  The
+\fIformat\fR value is a list of properties to display
+separated by commas\&.
+.TP 20
+\fB-h\fR, \fB--help\fR
+Display detailed usage message\&.
+.TP 20
+\fB-V\fR, \fB--version\fR
+Display the version of the \fBck-list-sessions\fR application\&.
+.SH "EXTENDED DESCRIPTION"
+.SS "ConsoleKit session properties"
+.PP
+For each session, the following session properties are displayed:
+.TP 20
+\fBunix-user\fR
+The user id value associated with the session\&.
+.TP 20
+\fBrealname\fR
+The name of the user associated with the session\&.
+.TP 20
+\fBseat\fR
+The ID for the ConsoleKit Seat associated with the session\&.
+.TP 20
+\fBsession-type\fR
+The ConsoleKit session type\&.  This value is specified by the "Type"
+key in the ConsoleKit session configuration file associated with this session\&. 
+.TP 20
+\fBdisplay-type\fR
+The ConsoleKit display type\&.  This value is specified by the
+"DisplayTemplate" key in the ConsoleKit session configuration file
+associated with this session\&. 
+.TP 20
+\fBopen\fR
+The value is "TRUE" if the session is open, and "FALSE"
+otherwise\&.
+.TP 20
+\fBactive\fR
+The value is "TRUE" if the session is active on the seat to which it
+is attached, and "FALSE" otherwise\&.
+.TP 20
+\fBx11-display\fR
+The value of the X11 DISPLAY environment variable for this session if one is
+present\&.
+.TP 20
+\fBx11-display-device\fR
+The value of the display device that the X11 display for the session is
+connected to\&.  If there is no x11-display set, then this value is undefined\&.
+.TP 20
+\fBdisplay-device\fR
+The display device associated with the session\&.
+.TP 20
+\fBremote-host\fR
+If the session is not local, the value is the host name associated with the
+session\&.  If the session is local, the value is empty\&.
+.TP 20
+\fBis-local\fR
+The value is "TRUE" if the session is local, and "FALSE"
+if remote\&.
+.TP 20
+\fBon-since\fR
+An ISO 8601 date-time string that corresponds to the time the session started\&.
+.TP 20
+\fBlogin-session-id\fR
+The value of the login session ID that the underlying system uses to enforce
+session boundaries\&. If there is no login session ID set then this value is an
+empty string\&.
+.TP 20
+\fBidle-since-hint\fR
+An ISO 8601 date-time string that corresponds to the time of the last change of
+the idle-hint\&.  This is a hint used to indicate that the session may be idle\&.
+For sessions with a x11-display set (ie\&. graphical sessions), it is up to each
+session to delegate the responsibility for updating this value\&. Typically, the
+screensaver will set this\&.
+.sp
+However, for non-graphical sessions with a display-device set the Session
+object itself will periodically update this value based on the activity
+detected on the display-device itself\&.
+.sp
+This should not be considered authoritative\&. 
+.SH "EXAMPLES"
+.PP
+\fBExample 1: Show running sessions\&.\fR
+.PP
+.PP
+.nf
+example% \fBck-list-sessions\fR
+.fi
+.PP
+This command would generate output like the following for each session:
+.PP
+.nf
+SessionSeat1Local:
+        unix-user = \&'50\&'
+        realname = \&'GDM Reserved UID\&'
+        seat = \&'Seat1\&'
+        session-type = \&'LoginWindow\&'
+        display-type = \&'Local\&'
+        open = \&'TRUE\&'
+        active = \&'TRUE\&'
+        x11-display = \&':0\&'
+        x11-display-device = \&'/dev/console\&'
+        display-device = \&'/dev/console\&'
+        remote-host-name = \&'\&'
+        is-local = \&'TRUE\&'
+        on-since = \&'2009-08-11T06:46:42\&.941134Z\&'
+        login-session-id = \&'\&'
+        idle-since-hint = \&'\&'
+.fi
+.PP
+\fBExample 2: Show only the session-id, unix-user, and display-type properties\&.\fR
+.PP
+.nf
+example% \fBck-list-sessions -\fB-format="session-id,unix-user,display-type"\fR\fR
+.fi
+.PP
+This command would generate output like the following for each session:
+.PP
+.nf
+SessionSeat1Local       50      Local
+.fi
+.SH "FILES"
+.PP
+The following files are used by this application:
+.TP 20
+.B /usr/bin/ck-list-sessions
+Executable for Show ConsoleKit Session Information\&.
+.TP 20
+.B /etc/ConsoleKit/session\&.d
+ConsoleKit session configuration files\&.
+.SH "SEE ALSO"
+.PP
+\fBck-history\fR(1),
+\fBck-launch-session\fR(1),
+\fBck-seat-tool\fR(8),
+\fBconsole-kit-daemon\fR(8),
+\fBgdm\fR(8),
+\fBattributes\fR(7)
+
