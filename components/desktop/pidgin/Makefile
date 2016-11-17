@@ -113,7 +113,6 @@ COMPONENT_BUILD_ARGS += HGPLAIN=
 COMPONENT_BUILD_ARGS += HGRCPATH=/dev/null
 
 REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
