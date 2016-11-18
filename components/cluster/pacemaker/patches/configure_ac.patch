@@ -1,0 +1,33 @@
+commit 9909ee44c8c0815fbfed44fe8001c15ecc97e6f9
+Author: Andreas Grueninger <andreas.grueninger@nomail.com>
+Date:   Sat Oct 22 17:28:57 2016 +0200
+
+    Fix: No special handling of gcc flags for Solaris
+    
+    In Solaris/Illumos sh is not bash. CONFIG_SHELL must be set with: export CONFIG_SHELL=/usr/gnu/bin/sh.
+
+diff --git a/configure.ac b/configure.ac
+index 01853b3..dc65eaa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1780,6 +1780,7 @@ dnl otherwise none of both
+         
+ 	# We had to eliminate -Wnested-externs because of libtool changes
+         EXTRA_FLAGS="-fgnu89-inline
++		-fstack-protector-all				
+ 		-Wall
+ 		-Waggregate-return
+ 		-Wbad-function-cast
+@@ -1815,12 +1816,6 @@ dnl otherwise none of both
+ # Additional warnings it might be nice to enable one day
+ #		-Wshadow
+ #		-Wunreachable-code
+-	case "$host_os" in
+-	    *solaris*) ;;
+-	    *) EXTRA_FLAGS="$EXTRA_FLAGS
+-			-fstack-protector-all"
+-		;;
+-	esac
+ 	for j in $EXTRA_FLAGS
+ 	do
+ 	  if
