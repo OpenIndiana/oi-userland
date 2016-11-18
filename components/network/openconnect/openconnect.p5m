@@ -1,0 +1,109 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# This script-package dependency is not as apparent to pkg tools as link-time dependencies ;)
+depend type=require fmri=network/vpnc-scripts
+depend type=require fmri=driver/network/tun
+depend type=require fmri=driver/network/tap
+
+file path=usr/include/openconnect.h
+link path=usr/lib/$(MACH64)/libopenconnect.so target=libopenconnect.so.5.4.0
+link path=usr/lib/$(MACH64)/libopenconnect.so.5 target=libopenconnect.so.5.4.0
+file path=usr/lib/$(MACH64)/libopenconnect.so.5.4.0
+file path=usr/lib/$(MACH64)/pkgconfig/openconnect.pc
+link path=usr/lib/libopenconnect.so target=libopenconnect.so.5.4.0
+link path=usr/lib/libopenconnect.so.5 target=libopenconnect.so.5.4.0
+file path=usr/lib/libopenconnect.so.5.4.0
+file path=usr/lib/pkgconfig/openconnect.pc
+file path=usr/sbin/$(MACH64)/openconnect
+file path=usr/sbin/openconnect
+file path=usr/share/doc/openconnect/anyconnect.html
+file path=usr/share/doc/openconnect/building.html
+file path=usr/share/doc/openconnect/changelog.html
+file path=usr/share/doc/openconnect/charset.html
+file path=usr/share/doc/openconnect/connecting.html
+file path=usr/share/doc/openconnect/contribute.html
+file path=usr/share/doc/openconnect/csd.html
+file path=usr/share/doc/openconnect/download.html
+file path=usr/share/doc/openconnect/features.html
+file path=usr/share/doc/openconnect/gui.html
+file path=usr/share/doc/openconnect/images/left.png
+file path=usr/share/doc/openconnect/images/left2.png
+file path=usr/share/doc/openconnect/images/leftsel.png
+file path=usr/share/doc/openconnect/images/leftsel2.png
+file path=usr/share/doc/openconnect/images/openconnect.png
+file path=usr/share/doc/openconnect/images/openconnect.svg
+file path=usr/share/doc/openconnect/images/right.png
+file path=usr/share/doc/openconnect/images/right2.png
+file path=usr/share/doc/openconnect/images/rightsel.png
+file path=usr/share/doc/openconnect/images/rightsel2.png
+file path=usr/share/doc/openconnect/inc/content.tmpl
+file path=usr/share/doc/openconnect/inc/footer.tmpl
+file path=usr/share/doc/openconnect/inc/header.tmpl
+file path=usr/share/doc/openconnect/index.html
+file path=usr/share/doc/openconnect/juniper.html
+file path=usr/share/doc/openconnect/mail.html
+file path=usr/share/doc/openconnect/manual.html
+file path=usr/share/doc/openconnect/nonroot.html
+file path=usr/share/doc/openconnect/packages.html
+file path=usr/share/doc/openconnect/pkcs11.html
+file path=usr/share/doc/openconnect/platforms.html
+file path=usr/share/doc/openconnect/styles/main.css
+file path=usr/share/doc/openconnect/token.html
+file path=usr/share/doc/openconnect/tpm.html
+file path=usr/share/doc/openconnect/vpnc-script.html
+file path=usr/share/locale/ar/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/bs/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/ca/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/cs/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/de/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/el/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/en_US/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/es/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/eu/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/fi/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/fr/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/gl/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/hu/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/id/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/it/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/lt/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/nl/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/pa/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/pl/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/pt/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/sk/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/sl/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/sr/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/sv/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/tg/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/tr/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/ug/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/uk/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/openconnect.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/openconnect.mo
+file path=usr/share/man/man8/openconnect.8
