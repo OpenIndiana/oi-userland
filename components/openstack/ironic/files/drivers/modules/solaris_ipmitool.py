@@ -470,16 +470,16 @@ def _get_node_architecture(node):
         driver_info = _parse_driver_info(node)
         try:
             cpu_arch, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
+            propdict = {'cpu_arch': cpu_arch.split(":")[1].strip()}
+            node_properties = node.properties
+            node_properties.update(propdict)
+            node.properties = node_properties
+            node.save()
+
         except Exception as err:
             LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
                       (err)))
             raise exception.IPMIFailure(cmd=err)
-
-        propdict = {'cpu_arch': cpu_arch}
-        node_properties = node.properties
-        node_properties.update(propdict)
-        node.properties = node_properties
-        node.save()
 
         LOG.debug("SolarisDeploy._get_node_architecture: cpu_arch: '%s'"
                   % (cpu_arch))
