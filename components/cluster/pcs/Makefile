@@ -44,8 +44,9 @@ COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=/usr/share/bash-completion/com
 PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
 PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 
-COMPONENT_PRE_BUILD_ACTION=( \
-   gem install bundle ) 														
+# This needs to be removed and fixed by getting bundler package inside. Commenting out for now.
+#COMPONENT_PRE_BUILD_ACTION=( \
+#   gem install bundle ) 														
 														
 COMPONENT_POST_BUILD_ACTION=( \
     mkdir -p  $(PROTO_DIR)/usr/share/pcs/examples; \
