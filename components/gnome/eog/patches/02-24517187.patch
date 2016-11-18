@@ -1,0 +1,47 @@
+Security bug fix from upstream that can be deleted when we bring in the
+3.20.4
+
+From e99a8c00f959652fe7c10e2fa5a3a7a5c25e6af4 Mon Sep 17 00:00:00 2001
+From: Felix Riemann <friemann@gnome.org>
+Date: Sun, 21 Aug 2016 15:56:46 +0200
+Subject: EogErrorMessageArea: Make sure error messages are valid UTF8
+
+GMarkup requires valid UTF8 input strings and would cause odd
+looking messages if given invalid input. This could also trigger an
+out-of-bounds write in glib before 2.44.1. Reported by kaslovdmitri.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=770143
+---
+ src/eog-error-message-area.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/eog-error-message-area.c b/src/eog-error-message-area.c
+index 22de7b1..938ba96 100644
+--- a/src/eog-error-message-area.c
++++ b/src/eog-error-message-area.c
+@@ -28,6 +28,7 @@
+ 
+ #include "eog-error-message-area.h"
+ #include "eog-image.h"
++#include "eog-util.h"
+ 
+ #include <glib.h>
+ #include <glib/gi18n.h>
+@@ -218,7 +219,7 @@ eog_image_load_error_message_area_new (const gchar  *caption,
+ 	error_message = g_strdup_printf (_("Could not load image '%s'."),
+ 					 pango_escaped_caption);
+ 
+-	message_details = g_strdup (error->message);
++	message_details = eog_util_make_valid_utf8 (error->message);
+ 
+ 	message_area = create_error_message_area (error_message,
+ 						  message_details,
+@@ -260,7 +261,7 @@ eog_image_save_error_message_area_new (const gchar  *caption,
+ 	error_message = g_strdup_printf (_("Could not save image '%s'."),
+ 					 pango_escaped_caption);
+ 
+-	message_details = g_strdup (error->message);
++	message_details = eog_util_make_valid_utf8 (error->message);
+ 
+ 	message_area = create_error_message_area (error_message,
+ 						  message_details,
