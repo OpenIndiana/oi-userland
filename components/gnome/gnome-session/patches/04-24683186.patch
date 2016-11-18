@@ -1,0 +1,38 @@
+Security bug fix from upstream which can be deleted when we bring in 
+3.20.2
+
+From 634ab70d9f03b1650be4b8259091ca3036f0fbf9 Mon Sep 17 00:00:00 2001
+From: Hanno Boeck <hanno@hboeck.de>
+Date: Mon, 11 Jul 2016 10:37:03 -0400
+Subject: main: fix heap overflow in dbus-launch wrapping
+
+I have discovered a heap overflow with the help of an address sanitizer.
+
+The require_dbus_session() function has this code:
+
+        new_argv = g_malloc (argc + 3 * sizeof (*argv));
+
+The intention is to allocate space for (argc + 3) pointers. However obviously a
+parenthesis is missing, therefore only argc bytes + 3 * pointer size gets
+allocated, which is insufficient space. This leads to invalid memory writes.
+
+The fix is trivial: Parentheses around argc + 3.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=768441
+---
+ gnome-session/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gnome-session/main.c b/gnome-session/main.c
+index 9f3ca0f..bd23824 100644
+--- a/gnome-session/main.c
++++ b/gnome-session/main.c
+@@ -187,7 +187,7 @@ require_dbus_session (int      argc,
+                               TRUE);
+ 
+         /* +2 for our new arguments, +1 for NULL */
+-        new_argv = g_malloc (argc + 3 * sizeof (*argv));
++        new_argv = g_malloc ((argc + 3) * sizeof (*argv));
+ 
+         new_argv[0] = "dbus-launch";
+         new_argv[1] = "--exit-with-session";
