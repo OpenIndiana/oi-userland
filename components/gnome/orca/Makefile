@@ -35,6 +35,9 @@ COMPONENT_BUGDB= 	gnome/accessibility
 
 TPNO=			25851
 
+# Depends on newer intltool than is available in 11.3.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Assumes GNU gettext & msgfmt are first in PATH.
