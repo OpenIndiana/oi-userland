@@ -566,10 +566,12 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  1.9
-RUBY_LIB_VERSION =      1.9.1
-RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
-RUBY =          $(RUBY.$(RUBY_VERSION))
+RUBY.1.9 = /usr/ruby/1.9/bin/ruby
+RUBY.2.2 = /usr/ruby/2.2/bin/ruby
+RUBY.2.3 = /usr/ruby/2.3/bin/ruby
+RUBY_VERSION = 1.9
+RUBY_LIB_VERSION = 1.9.1
+RUBY = $(RUBY.$(RUBY_VERSION))
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
 # both the ruby version and the ruby library version are needed.
