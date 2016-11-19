@@ -106,27 +106,21 @@ diff -nur a/pcsd/pcs.rb b/pcsd/pcs.rb
    else
      cmd = ['chkconfig', service, 'off']
    end
-@@ -2028,6 +2051,11 @@
- end
- 
+@@ -2066,6 +2066,8 @@
  def start_service(service)
-+  if ISSOLARIS
-+     cmd = ['svcadm', 'enable', "hacluster"]
-+     _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)
-+     return (retcode == 0)
-+  end 
-   _, _, retcode = run_cmd(
-     PCSAuth.getSuperuserAuth(), "service", service, "start"
-   )
-@@ -2038,6 +2066,11 @@
-   if not is_service_installed?(service)
-     return true
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'start', "#{service}.service"]
++  elsif ISSOLARIS
++    cmd = ['svcadm', 'enable', "hacluster"]
+   else
+     cmd = ['service', service, 'start']
    end
-+  if ISSOLARIS
-+     cmd = ['svcadm', 'disable', "hacluster"]
-+     _, _, retcode = run_cmd(PCSAuth.getSuperuserAuth(), *cmd)
-+     return (retcode == 0)
-+  end
-   _, _, retcode = run_cmd(
-     PCSAuth.getSuperuserAuth(), "service", service, "stop"
-   )
+@@ -2079,6 +2081,8 @@
+   end
+   if ISSYSTEMCTL
+     cmd = ['systemctl', 'stop', "#{service}.service"]
++  elsif ISSOLARIS
++    cmd = ['svcadm', 'disable', "hacluster"]
+   else
+     cmd = ['service', service, 'stop']
+   end

@@ -14,14 +14,17 @@
 
 include ../../../make-rules/shared-macros.mk
 
+RUBY_VERSION = 2.2
+RUBY_LIB_VERSION = 2.2.0
+
 COMPONENT_NAME= pcs
-COMPONENT_VERSION= 0.9.154
+COMPONENT_VERSION= 0.9.155
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f4720b4d64d8647dcd0e63fd883c5c1ad9bc49a3777f5092f8b3e01f193838a4
+COMPONENT_ARCHIVE_HASH= sha256:e8ae0a689e23d43f6148c758a178fd26a7dd8a71ecfd1fc07bd1000754bce4cc
 COMPONENT_ARCHIVE_URL= https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz 
 COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= Pacemaker command line interface and GUI.
@@ -30,7 +33,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH= /usr/gnu/bin:/usr/ruby/1.9/bin/:/usr/bin:/usr/sbin:/sbin
+PATH= /usr/gnu/bin:/usr/ruby/$(RUBY_VERSION)/bin:/usr/bin:/usr/sbin:/sbin
 
 PATCH_LEVEL= 1
 
@@ -44,9 +47,6 @@ COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=/usr/share/bash-completion/com
 PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
 PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 
-COMPONENT_PRE_BUILD_ACTION=( \
-   gem install bundle ) 														
-														
 COMPONENT_POST_BUILD_ACTION=( \
     mkdir -p  $(PROTO_DIR)/usr/share/pcs/examples; \
     mv $(PROTO_DIR)/etc/logrotate.d    $(PROTO_DIR)/usr/share/pcs/examples )
@@ -67,5 +67,7 @@ test:           $(TESTS_32)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/ruby-22
+REQUIRED_PACKAGES += library/ruby/bundler
+REQUIRED_PACKAGES += library/ruby/bundler-22
 REQUIRED_PACKAGES += system/library
