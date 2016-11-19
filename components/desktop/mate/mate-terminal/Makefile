@@ -15,15 +15,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-terminal
-COMPONENT_VERSION=      1.14.0
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.16.1
 COMPONENT_PROJECT_URL=  http://www.mate-desktop.org
 COMPONENT_SUMMARY=      MATE terminal emulator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:efee5c2207c5deae3ccf06a1dc9e59d90efbddd079a735721bca2a530a65580c
-COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARCHIVE)
+    sha256:c032a11a6a4f5ccb84c3453cedba6c0b7100858cf1a2fa5d7f97173d4c33bccc
+COMPONENT_ARCHIVE_URL=  http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION = Applications/System Utilities
@@ -49,12 +48,12 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/mate/mate-desktop
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/vte
+REQUIRED_PACKAGES += library/desktop/vte-291
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/perl-516
 REQUIRED_PACKAGES += system/library
