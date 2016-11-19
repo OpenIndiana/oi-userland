@@ -8,8 +8,9 @@
 # http://www.illumos.org/license/CDDL.
 #
 
-# 
+#
 # Copyright 2013, Adam Stevko. All rights reserved.
+# Copyright 2015-2016 Jim Klimov
 #
 
 <transform file dir path=.*kernel.* -> default group sys>
@@ -25,7 +26,7 @@
 set name=pkg.fmri value=pkg:/driver/network/tun@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="TUN driver from tuntap package"
 set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
-set name=info.classification value="org.opensolaris.category.2008:Drivers/Networking"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -35,10 +36,6 @@ set name=variant.opensolaris.zone value="global"
 license $(COMPONENT_NAME).license license="$(COMPONENT_LICENSE)"
 
 driver name=tun
-dir  path=usr
-dir  path=usr/kernel
-dir  path=usr/kernel/drv
-dir  path=usr/kernel/drv/$(MACH64)
-file path=usr/kernel/drv/tun
-file path=usr/kernel/drv/$(MACH64)/tun
-file path=usr/kernel/drv/tun.conf preserve=true
+file path=usr/kernel/drv/tun mode=555 owner=root group=sys
+file path=usr/kernel/drv/$(MACH64)/tun mode=555 owner=root group=sys
+file path=usr/kernel/drv/tun.conf mode=644 owner=root group=sys preserve=true
