@@ -3262,15 +3262,6 @@ diff -Nurb caja-1.14.1.orig/src/caja-window-menus.c caja-1.14.1/src/caja-window-
  action_zoom_in_callback (GtkAction *action,
                           gpointer user_data)
  {
-@@ -539,7 +568,7 @@
-                            "comments", _("Caja lets you organize "
-                                          "files and folders, both on "
-                                          "your computer and online."),
--                           "copyright", _("Copyright \xC2\xA9 1999-2009 The Nautilus authors\n"
-+                           "copyright", _("Copyright \xC2\xA9 1999-2009 The Caja authors\n"
-                                           "Copyright \xC2\xA9 2011-2014 The Caja authors"),
-                            "license", license_trans,
-                            "wrap-license", TRUE,
 @@ -918,6 +947,10 @@
  
  static const GtkToggleActionEntry main_toggle_entries[] =
@@ -3311,18 +3302,18 @@ diff -Nurb caja-1.14.1.orig/src/caja-window-slot.h caja-1.14.1/src/caja-window-s
      gboolean visible;
  };
 diff -Nurb caja-1.14.1.orig/src/caja-window.c caja-1.14.1/src/caja-window.c
---- caja-1.14.1.orig/src/caja-window.c	2016-09-17 08:38:42.150403965 +0200
-+++ caja-1.14.1/src/caja-window.c	2016-09-17 08:39:44.409023541 +0200
-@@ -179,7 +179,7 @@
-     /* Set initial window title */
-     gtk_window_set_title (GTK_WINDOW (window), _("Caja"));
- 
+--- caja-1.16.1/src/caja-window.c.~1~	2016-10-18 16:36:20.000000000 +0300
++++ caja-1.16.1/src/caja-window.c	2016-11-18 13:55:37.376433140 +0300
+@@ -195,7 +195,7 @@
+     gtk_widget_show (grid);
+     gtk_container_add (GTK_CONTAINER (window), grid);
+ #else
 -    table = gtk_table_new (1, 6, FALSE);
 +    table = gtk_table_new (1, 7, FALSE);
      window->details->table = table;
      gtk_widget_show (table);
      gtk_container_add (GTK_CONTAINER (window), table);
-@@ -399,6 +399,18 @@
+@@ -422,6 +422,18 @@
                       set_allow_up, (window, allow));
  }
  
@@ -3341,7 +3332,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-window.c caja-1.14.1/src/caja-window.c
  static void
  update_cursor (CajaWindow *window)
  {
-@@ -407,7 +419,7 @@
+@@ -430,7 +442,7 @@
  
      slot = window->details->active_pane->active_slot;
  
@@ -3350,7 +3341,7 @@ diff -Nurb caja-1.14.1.orig/src/caja-window.c caja-1.14.1/src/caja-window.c
      {
          GdkDisplay *display;
          GdkCursor * cursor;
-@@ -445,8 +457,19 @@
+@@ -468,8 +480,19 @@
      {
          if (slot == window->details->active_pane->active_slot)
          {
@@ -3370,7 +3361,6 @@ diff -Nurb caja-1.14.1.orig/src/caja-window.c caja-1.14.1/src/caja-window.c
  
          if (gtk_widget_get_realized (GTK_WIDGET (window)))
          {
-diff -Nurb caja-1.14.1.orig/src/caja-window.h caja-1.14.1/src/caja-window.h
 --- caja-1.14.1.orig/src/caja-window.h	2016-09-17 08:38:42.145824450 +0200
 +++ caja-1.14.1/src/caja-window.h	2016-09-17 08:39:44.409260787 +0200
 @@ -153,7 +153,8 @@

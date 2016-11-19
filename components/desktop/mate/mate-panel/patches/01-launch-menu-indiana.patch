@@ -1,7 +1,7 @@
-/jds/bin/diff -uprN gnome-panel-2.27.92.old/gnome-panel/menu.c gnome-panel-2.27.92/gnome-panel/menu.c
---- mate-panel-1.14.0/mate-panel/menu.c.~1~	2016-04-06 23:27:37.000000000 +0300
-+++ mate-panel-1.14.0/mate-panel/menu.c	2016-07-28 20:55:28.445532327 +0300
-@@ -1302,6 +1302,52 @@
+diff -ur mate-panel-1.16.0/mate-panel/menu.c mate-panel-patched/mate-panel/menu.c
+--- mate-panel-1.16.0/mate-panel/menu.c	2016-08-09 10:23:17.000000000 +0300
++++ mate-panel-patched/mate-panel/menu.c	2016-11-19 09:39:32.330177274 +0300
+@@ -1311,6 +1311,52 @@
  				  menu);
  }
  
@@ -54,10 +54,10 @@
  GtkWidget *
  create_applications_menu (const char *menu_file,
  			  const char *menu_path,
-/jds/bin/diff -uprN gnome-panel-2.27.92.old/gnome-panel/menu.h gnome-panel-2.27.92/gnome-panel/menu.h
---- mate-panel-1.14.0/mate-panel/menu.h	2009-09-14 13:54:27.545416000 +0100
-+++ mate-panel-1.14.0/mate-panel/menu.h	2009-09-14 13:55:13.778639000 +0100
-@@ -69,6 +69,8 @@ GtkWidget      *add_menu_separator   (Gt
+diff -ur mate-panel-1.16.0/mate-panel/menu.h mate-panel-patched/mate-panel/menu.h
+--- mate-panel-1.16.0/mate-panel/menu.h	2016-04-06 23:27:37.000000000 +0300
++++ mate-panel-patched/mate-panel/menu.h	2016-11-19 09:39:32.330267982 +0300
+@@ -71,6 +71,8 @@
  
  gboolean menu_dummy_button_press_event (GtkWidget      *menuitem,
  					GdkEventButton *event);
@@ -65,21 +65,10 @@
 +void applications_menu_append (GtkWidget *main_menu);
  
  
- G_END_DECLS
---- mate-panel-1.14.0/mate-panel/panel-menu-items.c.~1~	2016-07-28 20:25:13.610260744 +0300
-+++ mate-panel-1.14.0/mate-panel/panel-menu-items.c	2016-07-28 20:29:41.335680771 +0300
-@@ -1224,6 +1224,8 @@
- 
- 	panel_menu_items_append_from_desktop (menu, "mate-user-guide.desktop", NULL, FALSE);
- 
-+	panel_menu_items_append_from_desktop (menu, "openindiana-about.desktop", NULL, FALSE);
-+
- 	panel_menu_items_append_from_desktop (menu, "mate-about.desktop", NULL, FALSE);
- 
- 	if (parent->priv->append_lock_logout)
-/jds/bin/diff -uprN gnome-panel-2.27.92.old/gnome-panel/panel-menu-bar.c gnome-panel-2.27.92/gnome-panel/panel-menu-bar.c
---- mate-panel-1.14.0/mate-panel/panel-menu-bar.c.~1~	2016-04-06 23:27:37.000000000 +0300
-+++ mate-panel-1.14.0/mate-panel/panel-menu-bar.c	2016-07-28 21:25:19.343933253 +0300
+ #ifdef __cplusplus
+diff -ur mate-panel-1.16.0/mate-panel/panel-menu-bar.c mate-panel-patched/mate-panel/panel-menu-bar.c
+--- mate-panel-1.16.0/mate-panel/panel-menu-bar.c	2016-04-06 23:27:37.000000000 +0300
++++ mate-panel-patched/mate-panel/panel-menu-bar.c	2016-11-19 09:39:32.330487540 +0300
 @@ -141,11 +141,29 @@
  		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (menubar->priv->applications_item), NULL);
  }
@@ -132,3 +121,15 @@
  	menubar->priv->applications_item = panel_image_menu_item_new();
  	gtk_menu_item_set_label(GTK_MENU_ITEM(menubar->priv->applications_item), _("Applications"));
  
+diff -ur mate-panel-1.16.0/mate-panel/panel-menu-items.c mate-panel-patched/mate-panel/panel-menu-items.c
+--- mate-panel-1.16.0/mate-panel/panel-menu-items.c	2016-04-06 23:27:37.000000000 +0300
++++ mate-panel-patched/mate-panel/panel-menu-items.c	2016-11-19 09:39:32.330384513 +0300
+@@ -1224,6 +1224,8 @@
+ 
+ 	panel_menu_items_append_from_desktop (menu, "mate-user-guide.desktop", NULL, FALSE);
+ 
++	panel_menu_items_append_from_desktop (menu, "openindiana-about.desktop", NULL, FALSE);
++
+ 	panel_menu_items_append_from_desktop (menu, "mate-about.desktop", NULL, FALSE);
+ 
+ 	if (parent->priv->append_lock_logout)
