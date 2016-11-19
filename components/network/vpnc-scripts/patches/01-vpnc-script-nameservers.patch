@@ -1,0 +1,52 @@
+Add support for pre/ap-pended original DNS servers.
+
+--- ./vpnc-script	2016-08-28 08:27:51.000000000 +0200
++++ /etc/vpnc/vpnc-script	2016-11-19 22:21:39.427685497 +0100
+@@ -81,6 +81,10 @@
+ DEFAULT_ROUTE_FILE=/var/run/vpnc/defaultroute
+ RESOLV_CONF_BACKUP=/var/run/vpnc/resolv.conf-backup
+ SCRIPTNAME=`basename $0`
++
++# Valid values are "before" and "after", to pre/ap-pend your nameservers
++# compared to VPN ones3. You can use the hooks support to configure this.
++KEEP_ORIGINAL_DNS="no"
+ 
+ # some systems, eg. Darwin & FreeBSD, prune /var/run on boot
+ if [ ! -d "/var/run/vpnc" ]; then
+@@ -370,12 +371,13 @@
+ # as long as the above mark is intact"
+ 
+ 	DOMAINS="$CISCO_DEF_DOMAIN"
++	ORIGINAL_IP4_DNS=""
+ 
+ 	exec 6< "$RESOLV_CONF_BACKUP"
+ 	while read LINE <&6 ; do
+ 		case "$LINE" in
+ 			# omit; we will overwrite these
+-			nameserver*) ;;
++			nameserver*) ORIGINAL_IP4_DNS="${LINE#* } $ORIGINAL_IP4_DNS" ;;
+ 			# extract listed domains and prepend to list
+ 			domain* | search*) DOMAINS="${LINE#* } $DOMAINS" ;;
+ 			# retain other lines
+@@ -385,10 +387,21 @@
+ 	done
+ 	exec 6<&-
+ 
++	[ "${KEEP_ORIGINAL_DNS}" = before ] && \
++	for i in $ORIGINAL_IP4_DNS ; do
++		NEW_RESOLVCONF="$NEW_RESOLVCONF
++nameserver $i"
++	done
+ 	for i in $INTERNAL_IP4_DNS ; do
+ 		NEW_RESOLVCONF="$NEW_RESOLVCONF
+ nameserver $i"
+ 	done
++	[ "${KEEP_ORIGINAL_DNS}" = after ] && \
++	for i in $ORIGINAL_IP4_DNS ; do
++		NEW_RESOLVCONF="$NEW_RESOLVCONF
++nameserver $i"
++	done
++
+ 	# note that "search" is mutually exclusive with "domain";
+ 	# "search" allows multiple domains to be listed, so use that
+ 	if [ -n "$DOMAINS" ]; then
