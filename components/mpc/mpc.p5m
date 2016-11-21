@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -33,11 +33,20 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/255
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/include/mpc.h
-link path=usr/lib/$(MACH64)/libmpc.so target=libmpc.so.2.0.0
-link path=usr/lib/$(MACH64)/libmpc.so.2 target=libmpc.so.2.0.0
-file path=usr/lib/$(MACH64)/libmpc.so.2.0.0
-link path=usr/lib/libmpc.so target=libmpc.so.2.0.0
-link path=usr/lib/libmpc.so.2 target=libmpc.so.2.0.0
-file path=usr/lib/libmpc.so.2.0.0
+link path=usr/lib/$(MACH64)/libmpc.so target=libmpc.so.3.0.0
+file path=usr/lib/$(MACH64)/libmpc.so.2
+link path=usr/lib/$(MACH64)/libmpc.so.3 target=libmpc.so.3.0.0
+file path=usr/lib/$(MACH64)/libmpc.so.3.0.0
+link path=usr/lib/libmpc.so target=libmpc.so.3.0.0
+file path=usr/lib/libmpc.so.2
+link path=usr/lib/libmpc.so.3 target=libmpc.so.3.0.0
+file path=usr/lib/libmpc.so.3.0.0
 file path=usr/share/info/mpc.info
-license mpc.license license=LGPLv2.1
+# This license action only needed for the old mpc 0.9 libraries.
+license mpc-old.license license=LGPLv2.1 \
+    com.oracle.info.description="mpc version 0.9 libraries" \
+    com.oracle.info.name=mpc com.oracle.info.tpno=$(TPNO_1) \
+    com.oracle.info.version=$(COMPONENT_VERSION_1)
+license mpc.license license=LGPLv3 com.oracle.info.description=mpc \
+    com.oracle.info.name=mpc com.oracle.info.tpno=$(TPNO) \
+    com.oracle.info.version=$(COMPONENT_VERSION)

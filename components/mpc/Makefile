@@ -23,32 +23,77 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mpc
-COMPONENT_VERSION=	0.9
+COMPONENT_VERSION=	1.0.3
 COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fd3efe422f0d454592059e80f2c00d1a2e381bf2beda424c5094abd4deb049ac
+    sha256:617decc6ea09889fb08ede330917a00b16809b8db88c29c31bfbb49cbf88ecc3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
 
-TPNO=			4706
+TPNO=			29500
+
+#
+# Temporarily build the old version to transition GCC 4.9 & 5.  Once GCC has
+# been built against the new version, the old version can be removed.
+#
+# Begin old version
+#
+COMPONENT_VERSION_1=	0.9
+COMPONENT_SRC_1=	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_HASH_1= \
+    sha256:fd3efe422f0d454592059e80f2c00d1a2e381bf2beda424c5094abd4deb049ac
+COMPONENT_ARCHIVE_URL_1=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC_1)/$(COMPONENT_ARCHIVE_1)
+
+TPNO_1=			4706
+
+# Macros to configure, build, and install the old version for the time being.
+BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
+BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
+
+$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_32)/.configured: BITS=32
+$(BUILD_OLD_DIR_64)/.configured: BITS=64
+
+BUILD_32 += $(BUILD_OLD_DIR_32)/.built
+BUILD_64 += $(BUILD_OLD_DIR_64)/.built
+
+INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
+INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
+
+# install the old version first
+$(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
+$(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
+#
+# End old version
 
 TEST_TARGET= install $(TEST_32_and_64)
 # Add install dependency when system-test target is implemented.
 include $(WS_MAKE_RULES)/common.mk
 
-export SHELL
-SHELL=$(BINDIR)/sh
-
 CFLAGS +=		`pkg-config --cflags libmpfr`
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=	--disable-static
 
-COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
+COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+PKG_MACROS +=		COMPONENT_VERSION_1=$(COMPONENT_VERSION_1)
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/=====/p" ' \
+	'-e "/^Testsuite/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
