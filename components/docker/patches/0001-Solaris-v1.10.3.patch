@@ -1,6 +1,6 @@
-From 0102118524dffdc2917fafac5feeb2e410fd393e Mon Sep 17 00:00:00 2001
-From: Shreya Jain <shreya.jain@oracle.com>
-Date: Tue, 15 Nov 2016 10:53:53 -0800
+From 2dd56e50d4e22a931b6b26de35a19321ee0e36a4 Mon Sep 17 00:00:00 2001
+From: "shraddha.joshi@oracle.com" <shrajosh@low.us.oracle.com>
+Date: Mon, 21 Nov 2016 12:10:24 -0800
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -150,7 +150,7 @@ Subject: [PATCH] Solaris-v1.10.3
  .../libnetwork/drivers/solaris/bridge/bridge.go    | 1084 ++++++++++++++++++++
  .../drivers/solaris/bridge/bridge_store.go         |  212 ++++
  .../libnetwork/drivers/solaris/bridge/errors.go    |  341 ++++++
- .../drivers/solaris/bridge/port_mapping.go         |  218 ++++
+ .../drivers/solaris/bridge/port_mapping.go         |  247 +++++
  .../docker/libnetwork/drivers_solaris.go           |   13 +
  .../docker/libnetwork/ipamutils/utils_solaris.go   |   92 ++
  vendor/src/github.com/docker/libnetwork/network.go |    2 -
@@ -197,7 +197,7 @@ Subject: [PATCH] Solaris-v1.10.3
  vendor/src/gopkg.in/fsnotify.v1/fsnotify.go        |    2 +-
  volume/local/local_unix.go                         |    2 +-
  volume/store/store_unix.go                         |    2 +-
- 193 files changed, 9208 insertions(+), 1241 deletions(-)
+ 193 files changed, 9237 insertions(+), 1241 deletions(-)
  create mode 100644 Dockerfile.solaris
  create mode 100644 container/container_solaris.go
  create mode 100644 container/state_solaris.go
@@ -9457,7 +9457,7 @@ index 0000000..104781a
 +}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
 new file mode 100644
-index 0000000..da5e3f6
+index 0000000..23db1d9
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/bridge.go
 @@ -0,0 +1,1084 @@
@@ -10092,7 +10092,7 @@ index 0000000..da5e3f6
 +	// Program any required port mapping and store them in the endpoint
 +	endpoint.portMapping, err = n.allocatePorts(epConfig,
 +		endpoint, c.DefaultBindingIntf, c.DefaultBindingIP,
-+		c.BridgeName+"_gw0")
++		c.BridgeName+"_gw0", c.AddressIPv4)
 +	if err != nil {
 +		return err
 +	}
@@ -11112,10 +11112,10 @@ index 0000000..0e0d67a
 +func (address InvalidLinkIPAddrError) BadRequest() {}
 diff --git a/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go
 new file mode 100644
-index 0000000..f2b1fd5
+index 0000000..a2e0599
 --- /dev/null
 +++ b/vendor/src/github.com/docker/libnetwork/drivers/solaris/bridge/port_mapping.go
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,247 @@
 +package bridge
 +
 +import (
@@ -11139,7 +11139,7 @@ index 0000000..f2b1fd5
 +)
 +
 +func addPFRules(epid, bindIntf string, bs []types.PortBinding,
-+	gwIntf string) {
++	gwIntf string, nwAddr *net.IPNet) {
 +	id := epid[:12]
 +	fname := "/var/lib/docker/network/files/pf." + id
 +
@@ -11149,7 +11149,18 @@ index 0000000..f2b1fd5
 +		logrus.Warnf("cannot open temp pf file")
 +		return
 +	}
++	gwIPaddr := nwAddr.String()
++	_, gwNetwork, err := net.ParseCIDR(gwIPaddr)
++	if err != nil {
++		logrus.Warnf("ParseCIDR error.")
++		return
++	}
++
 +	for _, b := range bs {
++		// tag created for every container port must be unique. Hence a
++		// combination of epid + port number of the container is used
++		// to create the tag.
++		tag := fmt.Sprintf("%s%d", id, b.Port)
 +		r := fmt.Sprintf(
 +			"pass in on %s proto %s from any to (%s) " +
 +			"port %d rdr-to %s port %d\n", bindIntf,
@@ -11177,6 +11188,24 @@ index 0000000..f2b1fd5
 +		if err != nil {
 +			logrus.Warnf("cannot write to %s: %v", fname, err)
 +		}
++		r = fmt.Sprintf(
++			"pass in on %s inet proto %s from %s to (%s) " +
++			"port %d tag %s nat-to (%s) static-port route-to %s\n", gwIntf,
++			b.Proto.String(), gwNetwork, bindIntf, b.HostPort, tag, bindIntf,
++			gwIntf)
++		_, err = f.WriteString(r)
++		if err != nil {
++			logrus.Warnf("cannot write to %s: %v", fname, err)
++		}
++		r = fmt.Sprintf(
++			"pass out on %s inet proto %s from any to (%s) " +
++			"tagged %s rdr-to %s port %d reply-to %s\n", gwIntf,
++			b.Proto.String(), bindIntf, tag, b.IP.String(), b.Port,
++			gwIntf)
++		_, err = f.WriteString(r)
++		if err != nil {
++			logrus.Warnf("cannot write to %s: %v", fname, err)
++		}
 +	}
 +	f.Close()
 +
@@ -11196,7 +11225,7 @@ index 0000000..f2b1fd5
 +	}
 +}
 +
-+func (n *bridgeNetwork) allocatePorts(epc *endpointConfiguration, ep *bridgeEndpoint, bindIntf string, reqDefBindIP net.IP, gwIntf string) ([]types.PortBinding, error) {
++func (n *bridgeNetwork) allocatePorts(epc *endpointConfiguration, ep *bridgeEndpoint, bindIntf string, reqDefBindIP net.IP, gwIntf string, nwAddr *net.IPNet) ([]types.PortBinding, error) {
 +	if epc == nil || epc.PortBindings == nil || len(epc.PortBindings) == 0 {
 +		return nil, nil
 +	}
@@ -11211,7 +11240,7 @@ index 0000000..f2b1fd5
 +	if err != nil {
 +		return nil, err
 +	}
-+	addPFRules(ep.id, bindIntf, bs, gwIntf)
++	addPFRules(ep.id, bindIntf, bs, gwIntf, nwAddr)
 +	return bs, err
 +}
 +
