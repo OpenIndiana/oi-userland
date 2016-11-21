@@ -112,6 +112,7 @@ COMPONENT_BUILD_ARGS +=	V=1
 COMPONENT_BUILD_ARGS += HGPLAIN=
 COMPONENT_BUILD_ARGS += HGRCPATH=/dev/null
 
+REQUIRED_PACKAGES += communication/im/pidgin-gnome-keyring
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -122,7 +123,6 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
