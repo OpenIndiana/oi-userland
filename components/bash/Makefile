@@ -26,11 +26,11 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	4.3
+COMPONENT_VERSION=	4.4
 COMPONENT_ARCHIVE_HASH = \
-    sha256:afc687a28e0e24dc21b988fa159ff9dbcf6b7caa92ade8645cc6d5605cd024d4
+    sha256:d86b3392c1202e8ff5a423b302e6284db7f8f435ea9f39b5b1b20fd3ac36dfcb
 
-TPNO=			21712
+TPNO=			32706
 
 include $(WS_MAKE_RULES)/gnu-component.mk
 
@@ -95,6 +95,7 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/warning/d"' \
      '-e "s/^[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
      '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\},[0-9]\{1,\}//g"' \
+     '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
      '-e "/^$$/d"'
 
 # The bash test harness needs the GNU userland utilities
@@ -168,6 +169,7 @@ COMPONENT_TEST_ENV =		- $(TEST_PATH)
 # The tests use /tmp/xx, and there can only be one user running
 # the them at a time. Need to remove /tmp/xx after testing to
 # avoid permission issues for other users running these tests
+COMPONENT_PRE_TEST_ACTION =	rm -f /tmp/xx
 COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
 COMPONENT_POST_INSTALL_ACTION += \
