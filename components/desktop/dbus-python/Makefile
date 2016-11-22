@@ -67,6 +67,11 @@ COMPONENT_TEST_TRANSFORM_CMD = \
 COMPONENT_TEST_MASTER = \
     $(COMPONENT_TEST_RESULTS_DIR)/results-py$(PYTHON_MAJOR).master
 
+# An ancestor package had a mismatched version-lock facet, which would
+# complicate instructions.  As nothing in FOSS-eval depends on this,
+# just add it to the do-not-publish list for simplicity.
+include $(WS_MAKE_RULES)/no-evaluation.mk
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Need to replace the py-compile in the 1.2.0 tarball with the one from a
