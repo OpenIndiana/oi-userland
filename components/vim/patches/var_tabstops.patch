@@ -1118,7 +1118,7 @@ index 4bef6c5..2f02246 100644
  		curwin->w_cursor.coladd = 0;
  	}
 diff --git a/src/option.c b/src/option.c
-index 93e3c39..da91f8a 100644
+index 2b9ba2d..02902fc 100644
 --- a/src/option.c
 +++ b/src/option.c
 @@ -180,6 +180,10 @@
@@ -1190,7 +1190,7 @@ index 93e3c39..da91f8a 100644
  }
  
  /*
-@@ -7222,6 +7249,88 @@ did_set_string_option(
+@@ -7258,6 +7285,88 @@ did_set_string_option(
      }
  #endif
  
@@ -1279,7 +1279,7 @@ index 93e3c39..da91f8a 100644
      /* Options that are a list of flags. */
      else
      {
-@@ -8489,7 +8598,14 @@ set_num_option(
+@@ -8525,7 +8634,14 @@ set_num_option(
      if (curbuf->b_p_sw < 0)
      {
  	errmsg = e_positive;
@@ -1294,7 +1294,7 @@ index 93e3c39..da91f8a 100644
      }
  
      /*
-@@ -10466,6 +10582,10 @@ get_varp(struct vimoption *p)
+@@ -10496,6 +10612,10 @@ get_varp(struct vimoption *p)
  #ifdef FEAT_SIGNS
  	case PV_SCL:	return (char_u *)&(curwin->w_p_scl);
  #endif
@@ -1302,10 +1302,10 @@ index 93e3c39..da91f8a 100644
 +	case PV_VSTS:	return (char_u *)&(curbuf->b_p_vsts);
 +	case PV_VTS:	return (char_u *)&(curbuf->b_p_vts);
 +#endif
- 	default:	EMSG(_("E356: get_varp ERROR"));
+ 	default:	IEMSG(_("E356: get_varp ERROR"));
      }
      /* always return a valid pointer to avoid a crash! */
-@@ -10774,6 +10894,15 @@ buf_copy_options(buf_T *buf, int flags)
+@@ -10816,6 +10936,15 @@ buf_copy_options(buf_T *buf, int flags)
  #endif
  	    buf->b_p_sts = p_sts;
  	    buf->b_p_sts_nopaste = p_sts_nopaste;
@@ -1321,7 +1321,7 @@ index 93e3c39..da91f8a 100644
  	    buf->b_p_sn = p_sn;
  #ifdef FEAT_COMMENTS
  	    buf->b_p_com = vim_strsave(p_com);
-@@ -10890,12 +11019,27 @@ buf_copy_options(buf_T *buf, int flags)
+@@ -10932,12 +11061,27 @@ buf_copy_options(buf_T *buf, int flags)
  	     * or to a help buffer.
  	     */
  	    if (dont_do_help)
@@ -1349,7 +1349,7 @@ index 93e3c39..da91f8a 100644
  		buf->b_help = FALSE;
  #ifdef FEAT_QUICKFIX
  		if (buf->b_p_bt[0] == 'h')
-@@ -11718,6 +11862,12 @@ paste_option_changed(void)
+@@ -11760,6 +11904,12 @@ paste_option_changed(void)
  		buf->b_p_sts_nopaste = buf->b_p_sts;
  		buf->b_p_ai_nopaste = buf->b_p_ai;
  		buf->b_p_et_nopaste = buf->b_p_et;
@@ -1362,7 +1362,7 @@ index 93e3c39..da91f8a 100644
  	    }
  
  	    /* save global options */
-@@ -11736,6 +11886,11 @@ paste_option_changed(void)
+@@ -11778,6 +11928,11 @@ paste_option_changed(void)
  	    p_sts_nopaste = p_sts;
  	    p_tw_nopaste = p_tw;
  	    p_wm_nopaste = p_wm;
@@ -1374,7 +1374,7 @@ index 93e3c39..da91f8a 100644
  	}
  
  	/*
-@@ -11750,6 +11905,14 @@ paste_option_changed(void)
+@@ -11792,6 +11947,14 @@ paste_option_changed(void)
  	    buf->b_p_sts = 0;	    /* softtabstop is 0 */
  	    buf->b_p_ai = 0;	    /* no auto-indent */
  	    buf->b_p_et = 0;	    /* no expandtab */
@@ -1389,7 +1389,7 @@ index 93e3c39..da91f8a 100644
  	}
  
  	/* set global options */
-@@ -11771,6 +11934,11 @@ paste_option_changed(void)
+@@ -11813,6 +11976,11 @@ paste_option_changed(void)
  	p_wm = 0;
  	p_sts = 0;
  	p_ai = 0;
@@ -1401,7 +1401,7 @@ index 93e3c39..da91f8a 100644
      }
  
      /*
-@@ -11786,6 +11954,18 @@ paste_option_changed(void)
+@@ -11828,6 +11996,18 @@ paste_option_changed(void)
  	    buf->b_p_sts = buf->b_p_sts_nopaste;
  	    buf->b_p_ai = buf->b_p_ai_nopaste;
  	    buf->b_p_et = buf->b_p_et_nopaste;
@@ -1420,7 +1420,7 @@ index 93e3c39..da91f8a 100644
  	}
  
  	/* restore global options */
-@@ -11808,6 +11988,11 @@ paste_option_changed(void)
+@@ -11850,6 +12030,11 @@ paste_option_changed(void)
  	p_sts = p_sts_nopaste;
  	p_tw = p_tw_nopaste;
  	p_wm = p_wm_nopaste;
@@ -1432,7 +1432,7 @@ index 93e3c39..da91f8a 100644
      }
  
      old_p_paste = p_paste;
-@@ -12144,6 +12329,301 @@ check_ff_value(char_u *p)
+@@ -12186,6 +12371,301 @@ check_ff_value(char_u *p)
      return check_opt_strings(p, p_ff_values, FALSE);
  }
  
