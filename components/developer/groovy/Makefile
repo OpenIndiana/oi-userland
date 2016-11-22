@@ -32,9 +32,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-LN_S ?= $(LN) -s
-LN_SYM_REL = $(GNUBIN)/ln -s -r
-
 # This is an archive with prebuilt binaries, nothing to build
 $(BUILD_$(BITS)): $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR_$(BITS))
@@ -42,23 +39,11 @@ $(BUILD_$(BITS)): $(SOURCE_DIR)/.prep
 
 build: $(BUILD_32)
 
-$(INSTALL_32): $(BUILD_32) $(SOURCE_DIR)/.prep
-	$(MKDIR) $(PROTOUSRSHAREDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION) $(PROTOUSRBINDIR)
-	cd $(SOURCE_DIR) && \
-		$(CP) -pr \
-bin \
-conf \
-embeddable \
-grooid \
-indy \
-lib \
-LICENSE \
-licenses \
-NOTICE \
-		$(PROTOUSRSHAREDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-	$(RM) $(PROTOUSRSHAREDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/bin/*.bat
-	cd $(PROTOUSRBINDIR) && \
-		$(LN_SYM_REL) $(PROTOUSRSHAREDIR)/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/bin/* .
+# There are many "intimate" variables to pass into the other Makefile,
+# so rather than run a sub-make we include it into our context.
+include $(COMPONENT_DIR)/files/Makefile
+
+$(INSTALL_32): install-groovy
 	$(TOUCH) $@
 
 install: $(INSTALL_32)
