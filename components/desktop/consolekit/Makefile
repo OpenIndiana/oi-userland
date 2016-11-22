@@ -54,7 +54,12 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-pam-module
 CONFIGURE_OPTIONS.32 +=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS.64 +=	--with-pam-module-dir=/usr/lib/security/$(MACH64)
-CONFIGURE_OPTIONS +=	--libexecdir="$(USRLIB)"
+# The 32-bit versions of private commands are not packaged as the 64-bit
+# versions must be used instead since they are executed directly by
+# parts of the GNOME system and so must be delivered to the 32-bit
+# location. 
+CONFIGURE_OPTIONS.32 += --libexecdir="$(USRLIBDIR)/$(MACH32)"
+CONFIGURE_OPTIONS.64 += --libexecdir="$(USRLIBDIR)" 
 CONFIGURE_OPTIONS +=	--localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS +=	--enable-rbac-shutdown=solaris.system.shutdown
 
