@@ -32,18 +32,18 @@ COMPILER = gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		thunderbird
-COMPONENT_VERSION=	45.3.0
+COMPONENT_VERSION=	45.5.1
 COMPONENT_PROJECT_URL=	http://www.mozilla.com/thunderbird
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:231f6a7a073344659e436a2b1ae58004c3a29e74375af2c8d0de13f3bc79fac7
+    sha256:15088086ab8643275f04775002aca02701e30b4d61f108d5380b6e6b7582a24c
 MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	tbird/mailer
 
-TPNO=			31787	
+TPNO=			32721
 
-LIGHTNING_VERSION=	4.7.1
+LIGHTNING_VERSION=	4.7.5.1
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -56,12 +56,12 @@ LIGHTNING_VERSION=	4.7.1
 # collide due to different files with identical .xpi names. 
 COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:6b170356db3c345e4704de93ed41f5d16afac9460345f6675b02193ad41a128f
+    sha256:976113c074c640e32281972d26b55935238b93ff5ff8903c80bb6ed15f23cd4c
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 =		lightning-$(LIGHTNING_VERSION)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_2 = \
-    sha256:5bab9f0f879bdae9a312c5612b089c932c0400db89346c9c38b5c41623410e75
+    sha256:3840c42da82352bbae7defa2b3361b460c9f2f19febc4d0b3fa2335fb201c4d3
 COMPONENT_ARCHIVE_URL_2 = 	$(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_2)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
@@ -121,7 +121,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-gstreamer=1.0" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-debug-symbols=no" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-calendar" >> $(MOZCONFIG) ; \
@@ -186,7 +186,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    echo 'locale calendar '$$f' chrome/calendar-'$$f'/locale/'$$f'/calendar/' >> $(LIGHTNING_EXT_DIR)/chrome.manifest ; \
 	    echo 'locale lightning '$$f' chrome/lightning-'$$f'/locale/'$$f'/lightning/' >> $(LIGHTNING_EXT_DIR)/chrome.manifest ; \
 	done ;
- 
+
+TB_XPI = $(MOZILLA_FTP)/linux-i686/xpi
+LN_XPI = http://ftp.mozilla.org/pub/calendar/lightning/candidates/$(LIGHTNING_VERSION)-candidates/build1/linux-i686
+
+# Run gmake download-xpis and gmake download-lightning-xpis to download tarballs of xpi
+# for thunderbird and lightning seprarately.
+# The resulting archives should be uploaded to userland internal archive.
 download-xpis:
 	@echo "download-xpis"
 	$(RM) -r $(COMPONENT_DIR)/xpi $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1) 
@@ -235,6 +241,9 @@ $(SOURCE_DIR)/.patched-firefox-%: GPATCH_FLAGS += -d $(@D)/mozilla
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
+ifneq ($(MACH), sparc)
+REQUIRED_PACKAGES += developer/yasm
+endif
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
