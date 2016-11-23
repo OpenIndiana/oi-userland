@@ -2243,8 +2243,12 @@ class SolarisInspect(base.InspectInterface):
 
         vallist = [line.split(': ')[1]
                    for line in cpu_props.strip().splitlines()]
-        total_cores = sum(map(int, vallist))
-        propdict['cores'] = total_cores
+
+        try:
+            total_cores = sum(map(int, vallist))
+            propdict['cores'] = total_cores
+        except ValueError:
+            propdict['cores'] = 'N/A'
 
         node_properties = task.node.properties
         node_properties.update(propdict)
