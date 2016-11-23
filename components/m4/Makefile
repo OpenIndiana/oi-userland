@@ -34,21 +34,27 @@ COMPONENT_BUGDB=	utility/gnu-m4
 
 TPNO=			25279
 
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 
-# test failures; keep going
-COMPONENT_TEST_ARGS += -k -i
+# The Makefile in the checks directory has different targets for the
+# equivalent of "gmake test" and "gmake system-test".
 
-# Keep only test results
-COMPONENT_TEST_TRANSFORMS += '-n' \
-	'-e /TOTAL/p' \
-	'-e /PASS/p'  \
-	'-e /SKIP/p'  \
-	'-e /FAIL/p'  \
-	'-e /ERROR/p'
+COMPONENT_TEST_DIR =		$(@D)/checks
+COMPONENT_TEST_TARGETS =	check-local
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/checks
+COMPONENT_SYSTEM_TEST_TARGETS =	installcheck
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/PATH=/d"' \
+	'-e "/check-them/d"' \
+	'-e "/echo m4/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/Entering directory/d"'
 
 REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += system/library/math
