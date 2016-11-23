@@ -38,6 +38,7 @@ TPNO=			22949
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
 ADISTACK_MODE =	$(ADISTACK_ENABLE)
 
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 ifeq ($(OS_VERSION),5.11)
@@ -60,8 +61,21 @@ CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
 CONFIGURE_OPTIONS += --without-crypto
 
-# common targets
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Entering directory/d" ' \
+	'-e "/Leaving directory/d" ' \
+	'-e "/cd tests/d" '
+
 COMPONENT_PRE_TEST_ACTION = \
+        ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
+
+# We don't want to build tcpdump, so override the equivalent of "gmake check"
+# in the main Makefile.
+COMPONENT_SYSTEM_TEST_CMD =	./TESTrun.sh
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV +=	TCPDUMP_BIN=$(USRSBINDIR)/tcpdump
+COMPONENT_SYSTEM_TEST_TARGETS =
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
 REQUIRED_PACKAGES += system/library/libpcap

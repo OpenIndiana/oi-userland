@@ -1,0 +1,23 @@
+Patch to allow us to specify an alternate tcpdump binary when running tests.
+
+This patch should be sent upstream.
+
+--- tcpdump-4.7.4/tests/TESTonce.orig	2016-11-22 07:54:46.080609871 +0000
++++ tcpdump-4.7.4/tests/TESTonce	2016-11-22 09:51:15.439509866 +0000
+@@ -1,5 +1,7 @@
+ #!/usr/bin/env perl
+ 
++$TCPDUMP = "../tcpdump" if (!($TCPDUMP = $ENV{TCPDUMP_BIN}));
++
+ system("mkdir -p NEW DIFF");
+ 
+ if(@ARGV != 4) {
+@@ -21,7 +23,7 @@
+ else {
+     # we used to do this as a nice pipeline, but the problem is that $r fails to
+     # to be set properly if the tcpdump core dumps.
+-    $r = system "../tcpdump 2>/dev/null -n -r $input $options >NEW/$output";
++    $r = system "$TCPDUMP 2>/dev/null -n -r $input $options >NEW/$output";
+     if($r == 0x100) {
+         # this means tcpdump exited with code 1.
+         open(OUTPUT, ">>"."NEW/$output") || die "fail to open $output\n";
