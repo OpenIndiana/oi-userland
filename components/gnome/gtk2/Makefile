@@ -30,15 +30,15 @@ BUILD_BITS =		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk2
-COMPONENT_VERSION=	2.24.28
+COMPONENT_VERSION=	2.24.31
 COMPONENT_PROJECT_URL=	http://www.gtk.org/
 COMPONENT_SRC=		gtk+-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b2c6441e98bc5232e5f9bba6965075dcf580a8726398f7374d39f90b88ed4656
+    sha256:68c1922732c7efc08df4656a5366dcc3afdc8791513400dac276009b40954658
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/gtk+/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/gtk+
 
-TPNO=			24778
+TPNO=			32698
 
 # Requires gdk-pixbuf, which we cannot build on 11.3, so do not publish.
 include $(WS_MAKE_RULES)/no-evaluation.mk
