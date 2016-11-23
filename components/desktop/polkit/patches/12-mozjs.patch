@@ -1,0 +1,283 @@
+This is an upstream patch that moves us to using mozjs in Solaris instead
+of duktape. When we update to a version of polkit that includes this, we
+should be able to delete this set of 4 patches 
+
+C++ needs explicit casts for many pointer type conversions
+For example char * to void * should have a cast. Fix a
+number of these cases. Also, correct a white space indentation
+error left in the last patch for review clarity.
+
+Signed-off-by: Jeremy Linton <jeremy.linton at arm.com>
+---
+ src/polkitbackend/Makefile.am                  |   2 +-
+ src/polkitbackend/polkitbackendjsauthority.cpp | 148 ++++++++++++-------------
+ 2 files changed, 75 insertions(+), 75 deletions(-)
+
+diff --git a/src/polkitbackend/Makefile.am b/src/polkitbackend/Makefile.am
+index 5655d17..ca62474 100644
+--- a/src/polkitbackend/Makefile.am
++++ b/src/polkitbackend/Makefile.am
+@@ -53,7 +53,7 @@ libpolkit_backend_1_la_CFLAGS =                                        	\
+ 	$(LIBJS_CFLAGS)							\
+         $(NULL)
+ 
+-libpolkit_backend_1_la_CXXFLAGS = $(libpolkit_backend_1_la_CFLAGS) -fpermissive
++libpolkit_backend_1_la_CXXFLAGS = $(libpolkit_backend_1_la_CFLAGS)
+ 
+ libpolkit_backend_1_la_LIBADD =                               		\
+         $(GLIB_LIBS)							\
+diff --git a/src/polkitbackend/polkitbackendjsauthority.cpp b/src/polkitbackend/polkitbackendjsauthority.cpp
+index 1541856..ce3a980 100644
+--- a/src/polkitbackend/polkitbackendjsauthority.cpp
++++ b/src/polkitbackend/polkitbackendjsauthority.cpp
+@@ -287,7 +287,7 @@ load_scripts (PolkitBackendJsAuthority  *authority)
+ 
+   for (l = files; l != NULL; l = l->next)
+     {
+-      const gchar *filename = l->data;
++      const gchar *filename = (gchar *)l->data;
+       JS::RootedScript script(authority->priv->cx);
+       JS::CompileOptions options(authority->priv->cx);
+       JS::RootedObject   obj(authority->priv->cx,authority->priv->js_global);
+@@ -464,66 +464,66 @@ polkit_backend_js_authority_constructed (GObject *object)
+   entered_request = TRUE;
+ 
+   {
+-  JS::CompartmentOptions compart_opts;
+-  compart_opts.setVersion(JSVERSION_LATEST);
+-  authority->priv->js_global = JS_NewGlobalObject (authority->priv->cx, &js_global_class, NULL, compart_opts);
+-  JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
+-
+-  if (authority->priv->js_global == NULL)
+-    goto fail;
+-  JS_AddObjectRoot (authority->priv->cx, &authority->priv->js_global);
+-
+-  if (!JS_InitStandardClasses (authority->priv->cx, authority->priv->js_global))
+-    goto fail;
+-
+-  authority->priv->js_polkit = JS_DefineObject (authority->priv->cx,
+-                                                authority->priv->js_global,
+-                                                "polkit",
+-                                                &js_polkit_class,
+-                                                NULL,
+-                                                JSPROP_ENUMERATE);
+-  if (authority->priv->js_polkit == NULL)
+-    goto fail;
+-  JS_AddObjectRoot (authority->priv->cx, &authority->priv->js_polkit);
+-
+-  if (!JS_DefineFunctions (authority->priv->cx,
+-                           authority->priv->js_polkit,
+-                           js_polkit_functions))
+-    goto fail;
+-
+-  if (!JS_EvaluateScript (authority->priv->cx,
+-                          authority->priv->js_global,
+-                          init_js, strlen (init_js), /* init.js */
+-                          "init.js",  /* filename */
+-                          0,     /* lineno */
+-                          NULL)) /* rval */
+-    {
++    JS::CompartmentOptions compart_opts;
++    compart_opts.setVersion(JSVERSION_LATEST);
++    authority->priv->js_global = JS_NewGlobalObject (authority->priv->cx, &js_global_class, NULL, compart_opts);
++    JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
++
++    if (authority->priv->js_global == NULL)
++      goto fail;
++    JS_AddObjectRoot (authority->priv->cx, &authority->priv->js_global);
++
++    if (!JS_InitStandardClasses (authority->priv->cx, authority->priv->js_global))
++      goto fail;
++
++    authority->priv->js_polkit = JS_DefineObject (authority->priv->cx,
++                                                  authority->priv->js_global,
++                                                  "polkit",
++                                                  &js_polkit_class,
++                                                  NULL,
++                                                  JSPROP_ENUMERATE);
++    if (authority->priv->js_polkit == NULL)
++      goto fail;
++    JS_AddObjectRoot (authority->priv->cx, &authority->priv->js_polkit);
++
++    if (!JS_DefineFunctions (authority->priv->cx,
++                             authority->priv->js_polkit,
++                             js_polkit_functions))
+       goto fail;
+-    }
+-
+-  if (authority->priv->rules_dirs == NULL)
+-    {
+-      authority->priv->rules_dirs = g_new0 (gchar *, 3);
+-      authority->priv->rules_dirs[0] = g_strdup (PACKAGE_SYSCONF_DIR "/polkit-1/rules.d");
+-      authority->priv->rules_dirs[1] = g_strdup (PACKAGE_DATA_DIR "/polkit-1/rules.d");
+-    }
+-
+-  g_mutex_init (&authority->priv->rkt_init_mutex);
+-  g_cond_init (&authority->priv->rkt_init_cond);
+-  g_mutex_init (&authority->priv->rkt_timeout_pending_mutex);
+-
+-  authority->priv->runaway_killer_thread = g_thread_new ("runaway-killer-thread",
+-                                                         runaway_killer_thread_func,
+-                                                         authority);
+-
+-  /* wait for runaway_killer_thread to set up its GMainContext */
+-  g_mutex_lock (&authority->priv->rkt_init_mutex);
+-  while (authority->priv->rkt_context == NULL)
+-    g_cond_wait (&authority->priv->rkt_init_cond, &authority->priv->rkt_init_mutex);
+-  g_mutex_unlock (&authority->priv->rkt_init_mutex);
+-
+-  setup_file_monitors (authority);
+-  load_scripts (authority);
++
++    if (!JS_EvaluateScript (authority->priv->cx,
++                            authority->priv->js_global,
++                            init_js, strlen (init_js), /* init.js */
++                            "init.js",  /* filename */
++                            0,     /* lineno */
++                            NULL)) /* rval */
++      {
++        goto fail;
++      }
++
++    if (authority->priv->rules_dirs == NULL)
++      {
++        authority->priv->rules_dirs = g_new0 (gchar *, 3);
++        authority->priv->rules_dirs[0] = g_strdup (PACKAGE_SYSCONF_DIR "/polkit-1/rules.d");
++        authority->priv->rules_dirs[1] = g_strdup (PACKAGE_DATA_DIR "/polkit-1/rules.d");
++      }
++
++    g_mutex_init (&authority->priv->rkt_init_mutex);
++    g_cond_init (&authority->priv->rkt_init_cond);
++    g_mutex_init (&authority->priv->rkt_timeout_pending_mutex);
++
++    authority->priv->runaway_killer_thread = g_thread_new ("runaway-killer-thread",
++                                                           runaway_killer_thread_func,
++                                                           authority);
++
++    /* wait for runaway_killer_thread to set up its GMainContext */
++    g_mutex_lock (&authority->priv->rkt_init_mutex);
++    while (authority->priv->rkt_context == NULL)
++      g_cond_wait (&authority->priv->rkt_init_cond, &authority->priv->rkt_init_mutex);
++    g_mutex_unlock (&authority->priv->rkt_init_mutex);
++
++    setup_file_monitors (authority);
++    load_scripts (authority);
+   }
+   JS_EndRequest (authority->priv->cx);
+   entered_request = FALSE;
+@@ -559,7 +559,7 @@ polkit_backend_js_authority_finalize (GObject *object)
+     {
+       GFileMonitor *monitor = authority->priv->dir_monitors[n];
+       g_signal_handlers_disconnect_by_func (monitor,
+-                                            G_CALLBACK (on_dir_monitor_changed),
++                                            (gpointer*)G_CALLBACK (on_dir_monitor_changed),
+                                             authority);
+       g_object_unref (monitor);
+     }
+@@ -645,7 +645,7 @@ polkit_backend_js_authority_class_init (PolkitBackendJsAuthorityClass *klass)
+                                                        NULL,
+                                                        NULL,
+                                                        G_TYPE_STRV,
+-                                                       G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE));
++                                                       GParamFlags(G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)));
+ 
+ 
+   g_type_class_add_private (klass, sizeof (PolkitBackendJsAuthorityPrivate));
+@@ -685,7 +685,7 @@ set_property_strv (PolkitBackendJsAuthority  *authority,
+       JSString *jsstr;
+       jsval val;
+ 
+-      jsstr = JS_NewStringCopyZ (authority->priv->cx, g_ptr_array_index(value, n));
++      jsstr = JS_NewStringCopyZ (authority->priv->cx, (char *)g_ptr_array_index(value, n));
+       val = STRING_TO_JSVAL (jsstr);
+       JS_SetElement (authority->priv->cx, array_object, n, &val);
+     }
+@@ -1347,8 +1347,8 @@ spawn_cb (GObject       *source_object,
+           GAsyncResult  *res,
+           gpointer       user_data)
+ {
+-  SpawnData *data = user_data;
+-  data->res = g_object_ref (res);
++  SpawnData *data = (SpawnData *)user_data;
++  data->res = (GAsyncResult*)g_object_ref (res);
+   g_main_loop_quit (data->loop);
+ }
+ 
+@@ -1657,7 +1657,7 @@ static void
+ utils_on_cancelled (GCancellable *cancellable,
+                     gpointer      user_data)
+ {
+-  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
+   GError *error;
+ 
+   error = NULL;
+@@ -1672,7 +1672,7 @@ utils_read_child_stderr (GIOChannel *channel,
+                          GIOCondition condition,
+                          gpointer user_data)
+ {
+-  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
+   gchar buf[1024];
+   gsize bytes_read;
+ 
+@@ -1686,7 +1686,7 @@ utils_read_child_stdout (GIOChannel *channel,
+                          GIOCondition condition,
+                          gpointer user_data)
+ {
+-  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
+   gchar buf[1024];
+   gsize bytes_read;
+ 
+@@ -1700,7 +1700,7 @@ utils_child_watch_cb (GPid     pid,
+                       gint     status,
+                       gpointer user_data)
+ {
+-  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
+   gchar *buf;
+   gsize buf_size;
+ 
+@@ -1729,7 +1729,7 @@ utils_child_watch_cb (GPid     pid,
+ static gboolean
+ utils_timeout_cb (gpointer user_data)
+ {
+-  UtilsSpawnData *data = user_data;
++  UtilsSpawnData *data = (UtilsSpawnData *)user_data;
+ 
+   data->timed_out = TRUE;
+ 
+@@ -1758,12 +1758,12 @@ utils_spawn (const gchar *const  *argv,
+   data->simple = g_simple_async_result_new (NULL,
+                                             callback,
+                                             user_data,
+-                                            utils_spawn);
++                                            (gpointer*)utils_spawn);
+   data->main_context = g_main_context_get_thread_default ();
+   if (data->main_context != NULL)
+     g_main_context_ref (data->main_context);
+ 
+-  data->cancellable = cancellable != NULL ? g_object_ref (cancellable) : NULL;
++  data->cancellable = cancellable != NULL ? (GCancellable*)g_object_ref (cancellable) : NULL;
+ 
+   data->child_stdout = g_string_new (NULL);
+   data->child_stderr = g_string_new (NULL);
+@@ -1796,7 +1796,7 @@ utils_spawn (const gchar *const  *argv,
+   if (!g_spawn_async_with_pipes (NULL, /* working directory */
+                                  (gchar **) argv,
+                                  NULL, /* envp */
+-                                 G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
++                                 GSpawnFlags(G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD),
+                                  NULL, /* child_setup */
+                                  NULL, /* child_setup's user_data */
+                                  &(data->child_pid),
+@@ -1863,7 +1863,7 @@ utils_spawn_finish (GAsyncResult   *res,
+   if (g_simple_async_result_propagate_error (simple, error))
+     goto out;
+ 
+-  data = g_simple_async_result_get_op_res_gpointer (simple);
++  data = (UtilsSpawnData*)g_simple_async_result_get_op_res_gpointer (simple);
+ 
+   if (data->timed_out)
+     {

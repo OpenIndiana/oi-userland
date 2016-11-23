@@ -46,11 +46,7 @@ TPNO=			27381
 TEST_TARGET = $(SKIP_TEST)
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -79,6 +75,11 @@ CONFIGURE_OPTIONS += --with-polkitd-user=_polkitd
 CONFIGURE_OPTIONS += --with-os-type=solaris
 CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)"
 
+# Workaround the mozjs issue described in 24935318
+LD_EXEC_OPTIONS += -M $(PWD)/../../gnome/gjs/mapfile
+ADIHEAP_MODE = $(ADIHEAP_DISABLE)
+ADISTACK_MODE = $(ADISTACK_DISABLE)
+
 # Largefile support breaks use of <procfs.h> when build environment is older
 # than s12_84 due to Solaris bug 21833491
 ifeq ($(OS_VERSION), 5.11)
@@ -97,6 +98,9 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libmozjs-24
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/dbus
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math

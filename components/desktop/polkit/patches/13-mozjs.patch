@@ -1,0 +1,77 @@
+This is an upstream patch that moves us to using mozjs in Solaris instead
+of duktape. When we update to a version of polkit that includes this, we
+should be able to delete this set of 4 patches 
+
+The autocompartment definition in the previous patches seems to be fine, but
+constructing the autocompartment for the lifetime of the global object is probably
+a better way to handle this.
+
+Signed-off-by: Jeremy Linton <jeremy.linton at arm.com>
+---
+ src/polkitbackend/polkitbackendjsauthority.cpp | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/src/polkitbackend/polkitbackendjsauthority.cpp b/src/polkitbackend/polkitbackendjsauthority.cpp
+index ce3a980..6a0b4ab 100644
+--- a/src/polkitbackend/polkitbackendjsauthority.cpp
++++ b/src/polkitbackend/polkitbackendjsauthority.cpp
+@@ -76,6 +76,7 @@ struct _PolkitBackendJsAuthorityPrivate
+   JSRuntime *rt;
+   JSContext *cx;
+   JSObject *js_global;
++  JSAutoCompartment *ac;
+   JSObject *js_polkit;
+ 
+   GThread *runaway_killer_thread;
+@@ -335,8 +336,6 @@ reload_scripts (PolkitBackendJsAuthority *authority)
+ 
+   JS_BeginRequest (authority->priv->cx);
+ 
+-  JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
+-
+   if (!JS_CallFunctionName(authority->priv->cx,
+                            authority->priv->js_polkit,
+                            "_deleteRules",
+@@ -467,10 +466,15 @@ polkit_backend_js_authority_constructed (GObject *object)
+     JS::CompartmentOptions compart_opts;
+     compart_opts.setVersion(JSVERSION_LATEST);
+     authority->priv->js_global = JS_NewGlobalObject (authority->priv->cx, &js_global_class, NULL, compart_opts);
+-    JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
+ 
+     if (authority->priv->js_global == NULL)
+       goto fail;
++
++    authority->priv->ac = new JSAutoCompartment(authority->priv->cx,  authority->priv->js_global);
++
++    if (authority->priv->ac == NULL)
++      goto fail;
++
+     JS_AddObjectRoot (authority->priv->cx, &authority->priv->js_global);
+ 
+     if (!JS_InitStandardClasses (authority->priv->cx, authority->priv->js_global))
+@@ -568,6 +572,7 @@ polkit_backend_js_authority_finalize (GObject *object)
+ 
+   JS_BeginRequest (authority->priv->cx);
+   JS_RemoveObjectRoot (authority->priv->cx, &authority->priv->js_polkit);
++  delete authority->priv->ac;
+   JS_RemoveObjectRoot (authority->priv->cx, &authority->priv->js_global);
+   JS_EndRequest (authority->priv->cx);
+ 
+@@ -1071,8 +1076,6 @@ polkit_backend_js_authority_get_admin_auth_identities (PolkitBackendInteractiveA
+ 
+   JS_BeginRequest (authority->priv->cx);
+ 
+-  JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
+-
+   if (!action_and_details_to_jsval (authority, action_id, details, &argv[0], &error))
+     {
+       polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
+@@ -1182,8 +1185,6 @@ polkit_backend_js_authority_check_authorization_sync (PolkitBackendInteractiveAu
+ 
+   JS_BeginRequest (authority->priv->cx);
+ 
+-  JSAutoCompartment ac(authority->priv->cx,  authority->priv->js_global);
+-
+   if (!action_and_details_to_jsval (authority, action_id, details, &argv[0], &error))
+     {
+       polkit_backend_authority_log (POLKIT_BACKEND_AUTHORITY (authority),
