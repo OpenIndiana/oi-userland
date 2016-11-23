@@ -1,0 +1,41 @@
+vmncdec: Sanity-check width/height before using it
+
+We will allocate a screen area of width*height*bpp bytes, however this
+calculation can easily overflow if too high width or height are given
+inside the stream. Nonetheless we would just assume that enough memory
+was allocated, try to fill it and overwrite as much memory as wanted.
+
+Also allocate the screen area filled with zeroes to ensure that we start
+with full-black and not any random (or not so random) data.
+
+https://scarybeastsecurity.blogspot.gr/2016/11/0day-poc-risky-design-decisions-in.html
+
+Ideally we should just remove this plugin in favour of the one in
+gst-libav, which generally seems to be of better code quality.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=774533
+
+--- gst-plugins-bad-0.10.23/gst/vmnc/vmncdec.c.1	2016-11-23 14:57:36.448172925 +0300
++++ gst-plugins-bad-0.10.23/gst/vmnc/vmncdec.c	2016-11-23 14:59:22.942244683 +0300
+@@ -370,7 +370,7 @@
+ 
+   if (dec->imagedata)
+     g_free (dec->imagedata);
+-  dec->imagedata = g_malloc (dec->format.width * dec->format.height *
++  dec->imagedata = g_malloc0 (dec->format.width * dec->format.height *
+       dec->format.bytes_per_pixel);
+   GST_DEBUG_OBJECT (dec, "Allocated image data at %p", dec->imagedata);
+ 
+@@ -901,7 +901,11 @@
+             GST_WARNING_OBJECT (dec, "Rectangle out of range, type %d", r.type);
+             return ERROR_INVALID;
+           }
+-        }
++        } else if (r.width > 16384 || r.height > 16384) {
++          GST_WARNING_OBJECT (dec, "Width or height too high: %ux%u", r.width,
++            r.height);
++          return ERROR_INVALID;
++        } 
+ 
+         switch (r.type) {
+           case TYPE_WMVd:

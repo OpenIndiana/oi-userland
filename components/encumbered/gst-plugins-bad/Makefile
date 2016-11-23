@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad
 COMPONENT_VERSION= 0.10.23
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -61,3 +62,38 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += audio/faac
+REQUIRED_PACKAGES += audio/faad2
+REQUIRED_PACKAGES += codec/jasper
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += driver/graphics/nvidia
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/audio/libdca
+REQUIRED_PACKAGES += library/audio/libgsm
+REQUIRED_PACKAGES += library/audio/libmpcdec
+REQUIRED_PACKAGES += library/audio/openal
+REQUIRED_PACKAGES += library/audio/soundtouch
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libofa
+REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/video/libass
+REQUIRED_PACKAGES += library/video/libdvdnav
+REQUIRED_PACKAGES += library/video/libdvdread
+REQUIRED_PACKAGES += library/video/libmms
+REQUIRED_PACKAGES += library/video/libschroedinger
+REQUIRED_PACKAGES += library/video/libvpx
+REQUIRED_PACKAGES += library/video/xvid
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/orc
+REQUIRED_PACKAGES += video/rtmpdump
+REQUIRED_PACKAGES += x11/library/libx11
