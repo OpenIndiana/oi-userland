@@ -30,21 +30,17 @@ COMPILER =		gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.40.12
+COMPONENT_VERSION=	2.40.16
 COMPONENT_MAJOR_MINOR=	$(basename $(COMPONENT_VERSION))
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ffe40c4378bf3899f4d679a475726bab03a127a5bdccddec86404cc329ffb550
+    sha256:d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e
 COMPONENT_BUGDB=        library/librsvg
 
-TPNO=			26339
+TPNO=			32695
 
 # Needs gobject-introspection, not available on S11.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
 
@@ -62,6 +58,7 @@ unexport SHELLOPTS
 # Ignore whether the test code was already built or not
 COMPONENT_TEST_TRANSFORMS += "-e '/^  CC.*/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^make.* is up to date\.$$/d'"
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
