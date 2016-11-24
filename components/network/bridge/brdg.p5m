@@ -1,15 +1,16 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
-# 
-# Copyright 2013, Adam Stevko. All rights reserved.
+#
+# Copyright 2016 Jim Klimov
 #
 
 <transform file dir path=.*kernel.* -> default group sys>
@@ -22,23 +23,19 @@
 <transform dir path=kernel$ -> set variant.opensolaris.zone global>
 <transform dir path=.*/kernel$ -> set variant.opensolaris.zone global>
 
-set name=pkg.fmri value=pkg:/driver/network/tun@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="TUN driver from tuntap package"
-set name=pkg.description value="$(COMPONENT_DESCRIPTION)"
-set name=info.classification value="org.opensolaris.category.2008:Drivers/Networking"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 set name=variant.opensolaris.zone value="global"
 
-license $(COMPONENT_NAME).license license="$(COMPONENT_LICENSE)"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-driver name=tun
-dir  path=usr
-dir  path=usr/kernel
-dir  path=usr/kernel/drv
-dir  path=usr/kernel/drv/$(MACH64)
-file path=usr/kernel/drv/tun
-file path=usr/kernel/drv/$(MACH64)/tun
-file path=usr/kernel/drv/tun.conf preserve=true
+# NOTE: This is not a "driver" but a module (nothing to install with add_drv)
+file path=kernel/strmod/$(MACH64)/brdg mode=555 owner=root group=sys
+file path=kernel/strmod/brdg mode=555 owner=root group=sys
+file path=usr/bin/$(MACH64)/brdgadm
+file path=usr/bin/brdgadm
