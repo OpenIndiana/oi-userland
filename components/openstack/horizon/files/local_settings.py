@@ -752,3 +752,8 @@ COMPRESS_OFFLINE = True
 # to edit boot options post instance creation. If you want this disabled set
 # to False.
 SOLARIS_BOOTARGS = True
+
+# Flavor brand types exposed in Create/Edit flavors dialogs.
+# Allows a user to set preferred Solaris brand for a flavor
+# Set to False to disallow setting of brand type in flvaors
+SOLARIS_BRANDTYPE = True
