@@ -28,12 +28,12 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.18
+COMPONENT_VERSION=      3.5.22
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:812ba5ec74ebdc1bea1b3013b636f9dfcb7a6f5271b2783961009c215879af82
+    sha256:1ce95b469257abeb2ed8a1c0417812301c1ef5a4cc40ca504167daa470ad9358
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
@@ -132,6 +132,13 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libsasl
