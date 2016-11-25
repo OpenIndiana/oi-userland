@@ -22,22 +22,25 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached-java
 COMPONENT_VERSION=	2.0.1
+COMPONENT_SUMMARY=	memcached client for the Java platform
 COMPONENT_RELEASE=	release_$(COMPONENT_VERSION)
 COMPONENT_SRC=		java_memcached-$(COMPONENT_RELEASE)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f0978f387cd6c42191a3ec366ecc5519f66ee03e686c5d080eb2516ebbecdcc4
-COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://whalin.com/memcached/
-COMPONENT_BUGDB=	database/memcached
+COMPONENT_FMRI=	library/java/memcached-java
+COMPONENT_CLASSIFICATION=	Development/Java
+COMPONENT_LICENSE=	BSD-like
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ant.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Make sure we remove unneeded pieces from the source (the test dir)
 # and also the existing source files which will be generated anew 
@@ -78,6 +81,5 @@ install:	build
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/build/ant
+REQUIRED_PACKAGES += developer/java/openjdk7
