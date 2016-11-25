@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2016 Alexander Pyhalov
 #
 
@@ -27,7 +28,7 @@ COMPONENT_SRC=            es_ES
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
     sha256:5af9d57cc747d40601a9355ec16026271b6a7cc8968ec92325705630f02daad0
-COMPONENT_ARCHIVE_URL=   http://ooo.mirror.dkm.cz/pub/openoffice/contrib/dictionaries/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=   http://openoffice.cs.utah.edu/contrib/dictionaries/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 include $(WS_TOP)/make-rules/prep.mk

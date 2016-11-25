@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -30,7 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5cff13d0802792da1eb45895ce1be461903d98ec97c9c953bc8406af7294434a
 COMPONENT_ARCHIVE_URL=	\
-    http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
+    http://ftp.osuosl.org/pub/blfs/7.6/perl-modules/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 

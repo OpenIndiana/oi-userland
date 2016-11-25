@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
@@ -22,7 +23,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f5e04409f865b90802725711f2af15adb30db6a3de8317df62c21e176d3fb2b2
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng10/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng10/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	libpng
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries

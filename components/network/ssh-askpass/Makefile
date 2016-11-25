@@ -7,6 +7,7 @@
 # source. A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 by Jim Klimov
 #
 include ../../../make-rules/shared-macros.mk
@@ -21,6 +22,8 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
+download:
+
 build:
 
 install:

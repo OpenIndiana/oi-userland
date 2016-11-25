@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -24,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:59b32d45252f67d066cc3bda7a59f8078e0cf4e7f23590a4b621633e81060292
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/gphoto/files/libgphoto/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  http://sourceforge.net/projects/gphoto/files/libgphoto/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gphoto.org
 
 include $(WS_TOP)/make-rules/prep.mk

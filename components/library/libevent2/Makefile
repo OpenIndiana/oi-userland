@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov
 #
 
@@ -25,7 +26,7 @@ COMPONENT_SRC=		libevent-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:71c2c49f0adadacfdbe6332a372c38cf9c8b7895bb73dabeaa53cdcc1d4e1fa3
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/levent/files/libevent/libevent-2.0/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/levent/files/release-2.0.22-stable/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
 

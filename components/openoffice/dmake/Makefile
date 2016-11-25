@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:2fcbf389a9baaec25a973bd0d9e338069ad427b17d2adc7dc023efb034e96057
 COMPONENT_ARCHIVE_URL= \
-  http://dmake.apache-extras.org.codespot.com/files/$(COMPONENT_ARCHIVE)
+  http://ftp.lip6.fr/pub/minix/distfiles/local/3.3.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://code.google.com/a/apache-extras.org/p/dmake/
 
 include $(WS_TOP)/make-rules/prep.mk

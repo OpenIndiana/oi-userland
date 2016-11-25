@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -21,9 +22,9 @@ COMPONENT_SUMMARY= FileBench Commands, Workloads, Scripts, and Config Files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:a1d1516083a1d46bccf6246caf709e800e93eccf17572583343e77726b720678
+  sha256:4c4f9f007077de995e7c006df4e3a29fb90ad0097f678aac3e667c4d8fe9158e
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/filebench/files/filebench/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  https://sourceforge.net/projects/filebench/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://sourceforge.net/apps/mediawiki/filebench/index.php?title=Main_Page
 
 COMPONENT_LICENSE_FILE=	LICENSE

@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:1e572a0735b92aca5746c4528f9bebd35aa0ccf8619b22fa2756137a8cc9f912
 COMPONENT_ARCHIVE_URL= \
-  http://diracvideo.org/download/schroedinger/$(COMPONENT_ARCHIVE)
+  https://download.videolan.org/contrib/schroedinger/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://diracvideo.org
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING.LGPL

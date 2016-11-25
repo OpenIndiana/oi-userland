@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2016 Alexander Pyhalov
 #
 
@@ -28,7 +29,7 @@ COMPONENT_SRC=            sjp-myspell-pl-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
     sha256:100268f5509234c17970b9089577ce7baf0b51cdbe8bd133fc60e1b7fb9e0e44
-COMPONENT_ARCHIVE_URL=   http://sjp.pl/slownik/ort/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=   https://people.freebsd.org/~sunpoet/distfiles/hunspell/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=	-r $(COMPONENT_SRC)
 
 COMPONENT_POST_UNPACK_ACTION= unzip $(SOURCE_DIR)/pl_PL.zip -d $(SOURCE_DIR)

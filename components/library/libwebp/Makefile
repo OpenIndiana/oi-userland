@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:31913577e96386556855b41d210736449445fe96cfbe9289014e9b8afa944d69
 COMPONENT_ARCHIVE_URL= \
-  http://webp.googlecode.com/files/$(COMPONENT_ARCHIVE)
+  http://download.openpkg.org/components/cache/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developers.google.com/speed/webp/
 
 include $(WS_MAKE_RULES)/prep.mk

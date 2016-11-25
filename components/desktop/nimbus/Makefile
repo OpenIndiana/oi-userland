@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -19,16 +20,20 @@ COMPONENT_VERSION=	0.1.9
 COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	https://java.net/projects/solaris-desktop/pages/Home
 COMPONENT_SUMMARY=	Engine for Sun Nimbus GTK2 Theme
+#
+# This source archive is no longer available from github.com
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:aff6aef7a9c5fd8d05aa42da5dd79d8ff86c74730d5a200422e25f42a1430fae
-COMPONENT_ARCHIVE_URL=	https://github.com/aszeszo/archives/raw/master/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
 
+# This source archive is only available from gnome-look.org
+# with prior authorization.
 COMPONENT_SRC_1=	nimbus-gtk3-theme-4.2
 COMPONENT_ARCHIVE_1=	164641-$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha256:6483b4515165a6b00010587167f34c147808962406d37bc5dd7bac0cbb154d0e
-COMPONENT_ARCHIVE_URL_1= http://gnome-look.org/CONTENT/content-files/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_URL_1= http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 
 COMPONENT_FMRI=		gnome/theme/nimbus

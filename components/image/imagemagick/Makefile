@@ -20,26 +20,28 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
+# Version 6.9.4-5 is no longer available.
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.9.4
+COMPONENT_VERSION=		6.9.6
 COMPONENT_MAJOR_VERSIOR=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+\.[0-9]\+/\1/')
-COMPONENT_SUBVERSION=		5
+COMPONENT_SUBVERSION=		4
 COMPONENT_REVISION=		1
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
-COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
+COMPONENT_PROJECT_URL=		https://www.imagemagick.org/download
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:39a65b8e2371db36cb63709dea0b15f08a6870f8ce6103432f068112d9513c5a
-COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
+    sha256:d523c2c45dc2ff55f1bc27aa0cfa6e00e6f80dc182e8d6c27fcac99461c462d7
+COMPONENT_ARCHIVE_URL=		$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE = Apache 2.0 license
 COMPONENT_LICENSE_FILE = LICENSE
 

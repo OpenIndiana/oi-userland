@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:a9fdc7e94d38fcd3831f37b6e0fe36492bf79aa6d54f8f66062cf7f9c4155233
 COMPONENT_ARCHIVE_URL= \
-  http://downloads.sourceforge.net/qpdf/$(COMPONENT_ARCHIVE)
+  https://sourceforge.net/projects/qpdf/files/qpdf/6.0.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://qpdf.sourceforge.net/
 COMPONENT_FMRI= print/qpdf
 COMPONENT_CLASSIFICATION= System/Printing

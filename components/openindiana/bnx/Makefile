@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -33,7 +34,7 @@ COMPONENT_ARCHIVE_HASH= \
 # http://www.broadcom.com/support/ethernet_nic/netxtremeii.php ,
 # extract BRCMbnx-S11-i386-7.8.2.tar.Z and put it in component dir.
 COMPONENT_ARCHIVE_URL= \
-  http://dlc-int.openindiana.org/hipster/broadcom/BRCMbnx-S11-i386-7.8.2.tar.Z
+  http://dlc.openindiana.org/oi-userland/source-archives/BRCMbnx-S11-i386-7.8.2.tar.Z
 COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii.php
 
 include $(WS_TOP)/make-rules/prep.mk

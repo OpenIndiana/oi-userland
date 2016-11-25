@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Aurelien Larcher
 #
 
@@ -24,6 +25,10 @@ COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:90bd7824742b9a6f52a6cf80e2cadd6f5349cf600a358d08260772615b89d19c
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL= \
   http://xkbcommon.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xkbcommon.org/

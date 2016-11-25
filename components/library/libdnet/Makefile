@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -26,10 +27,10 @@ COMPONENT_NAME=		libdnet
 COMPONENT_VERSION=	1.12
 COMPONENT_PROJECT_URL=	http://code.google.com/p/libdnet/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:83b33039787cf99990e977cef7f18a5d5e7aaffc4505548a83d31bd3515eb026
-COMPONENT_ARCHIVE_URL=	http://libdnet.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:b6360659c93fa2e3cde9e0a1fc9c07bc4111f3448c5de856e095eb98315dd424
+COMPONENT_ARCHIVE_URL=	https://github.com/dugsong/libdnet/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libdnet 
 
 include $(WS_TOP)/make-rules/prep.mk

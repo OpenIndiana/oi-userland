@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Alexander Pyhalov
 #
 include ../../../make-rules/shared-macros.mk
@@ -22,7 +23,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:15d96dff79a4f7ad14338894a4096d4ac584c6ad25fdcca955bc4726303287e9
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libmtp
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING

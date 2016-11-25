@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
   sha256:4b485408897953889ce41d2981fa71a5479b70d8d1d853829d205492ce250675
 COMPONENT_ARCHIVE_URL= \
-  https://www.openprinting.org/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+  http://www.openprinting.org/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.openprinting.org
 COMPONENT_FMRI= print/cups-filters
 COMPONENT_CLASSIFICATION= System/Printing

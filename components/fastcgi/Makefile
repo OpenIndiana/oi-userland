@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -27,13 +28,13 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
 COMPONENT_VERSION=	2.4.0
-COMPONENT_PROJECT_URL=	http://www.fastcgi.com/
+COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/slackbuildsdirectlinks/files/fcgi/
 COMPONENT_SRC_NAME=	fcgi
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:66fc45c6b36a21bf2fbbb68e90f780cc21a9da1fffbae75e76d2b4402d3f05b9
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/fcgi
 
 include ../../make-rules/prep.mk

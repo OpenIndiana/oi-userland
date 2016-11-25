@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
@@ -22,8 +23,12 @@ COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:57f0903bf782afe00874267b59e0f4adefa79da4c48d0257c5ae2bef02f87fcf
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL= \
-  https://pdsh.googlecode.com/files/$(COMPONENT_ARCHIVE)
+  https://code.google.com/archive/p/pdsh/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://code.google.com/p/pdsh/
 
 include ../../make-rules/prep.mk

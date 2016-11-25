@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2013 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -34,7 +35,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:53215930b38edeb980f43130fc29783db4875ce2317c946391a7baa63d98aa0e
-COMPONENT_ARCHIVE_URL=  http://download.freedesktop.org/ldtp/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_MINOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  http://ftp.igh.cnrs.fr/pub/os/openindiana/dlc/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/ldtp
 
 PYTHON_VERSIONS=	2.7

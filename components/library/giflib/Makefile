@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2016 Jim Klimov
+# Copyright 2016 Gary Mills
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,7 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
 	sha256:df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5
 COMPONENT_ARCHIVE_URL= \
-	http://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE)/download
+	http://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_SUMMARY=	GIFLIB - A library and utilities for processing GIFs
@@ -45,7 +46,7 @@ COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.bz2
 COMPONENT_ARCHIVE_HASH_1= \
 	sha256:8909839ccbdfca75cfbe6a4db907b55978e11fb268a8f3cde24bd923a0f669ea
 COMPONENT_ARCHIVE_URL_1= \
-	http://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE_1)/download
+	http://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS +=	$(COMPONENT_SRC_1)
 SOURCE_DIR_1 =	$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 

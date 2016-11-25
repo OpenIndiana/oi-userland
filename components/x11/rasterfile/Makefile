@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Aurelien Larcher
 #
 
@@ -29,6 +30,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 rasterfile_INCDIR=$(PROTO_DIR)$(USRINCDIR)/pixrect
 rasterfile_MANDIR=$(PROTO_DIR)$(USRSHAREMAN5DIR)
+
+download:
 
 build:
 

@@ -11,6 +11,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2016 Jim Klimov
+# Copyright 2016 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -31,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6c8f1849eb9264219bf5d703601e5abe92a58651ecae927a03d1a1aa15ee2083
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng16/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libpng/files/libpng16/older-releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	libpng
 COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries

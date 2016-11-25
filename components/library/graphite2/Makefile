@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 Aurelien Larcher.  All rights reserved.
 #
 
@@ -24,7 +25,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	graphite-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:475e7657ac606ed8805518031729c1273cf7d9d422169ac6f7882e01d832af75
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/silgraphite/files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/silgraphite/files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license

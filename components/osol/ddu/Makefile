@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Aurelien Larcher
 #
 
@@ -27,6 +28,8 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 include $(WS_MAKE_RULES)/ips.mk
 
 PCI_IDS_FILE=/usr/share/pci.ids.gz
+
+download:
 
 build:
 

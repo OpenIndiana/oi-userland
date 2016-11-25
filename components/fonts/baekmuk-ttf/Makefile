@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -19,11 +20,11 @@ COMPONENT_NAME=		baekmuk-ttf
 COMPONENT_VERSION=	2.2
 COMPONENT_PROJECT_URL=	http://kldp.net/projects/baekmuk/
 COMPONENT_SUMMARY=	Baekmuk family Korean TrueType fonts
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		865-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:08ab7dffb55d5887cc942ce370f5e33b756a55fbb4eaf0b90f244070e8d51882
-COMPONENT_ARCHIVE_URL=	http://kldp.net/download.php/1429/
+COMPONENT_ARCHIVE_URL=	http://kldp.net/baekmuk/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/font/baekmuk-ttf
 COMPONENT_LICENSE_FILE=	COPYRIGHT
 COMPONENT_LICENSE=	BSD

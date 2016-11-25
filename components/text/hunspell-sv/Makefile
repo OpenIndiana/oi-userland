@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2016 Alexander Pyhalov
 #
 
@@ -23,11 +24,12 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_FMRI=	library/myspell/dictionary/sv
 COMPONENT_CLASSIFICATION	= System/Localizations
 
+# This source archive is no longer available from extensions.libreoffice.org
 COMPONENT_SRC=            ooo_swedish_dict_2-35
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).oxt
 COMPONENT_ARCHIVE_HASH=        \
     sha256:bd08a5205d4d4f867e64f71be1b629c0476ae413d4c524174a1aba61875930ea
-COMPONENT_ARCHIVE_URL=   http://extensions.libreoffice.org/extension-center/swedish-spelling-dictionary-den-stora-svenska-ordlistan/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=   http://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 include $(WS_TOP)/make-rules/prep.mk

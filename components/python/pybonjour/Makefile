@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -32,7 +33,11 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:006175b0fa6ef555fe8970132db81332827662a680d5f64dcb005bfcc80299ad
-COMPONENT_ARCHIVE_URL=	http://pybonjour.googlecode.com/files/$(COMPONENT_ARCHIVE)
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
+COMPONENT_ARCHIVE_URL=	https://code.google.com/archive/p/pybonjour/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pybonjour
 
 PYTHON_VERSIONS=	2.7 3.4

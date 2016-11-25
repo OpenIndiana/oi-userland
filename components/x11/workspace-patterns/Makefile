@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Aurelien Larcher
 #
 
@@ -58,6 +59,8 @@ PATTERN_FILES = \
 	wrnkle2.xbm
 	
 PATTERN_DIR=$(USRSHAREDIR)/patterns
+
+download:
 
 build:
 

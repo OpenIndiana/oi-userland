@@ -20,18 +20,21 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Jim Klimov
+# Copyright 2016 Gary Mills
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pigz
-COMPONENT_VERSION=	2.3.3
+#
+# Version 2.3.3 is no longer available
+COMPONENT_VERSION=	2.3.4
 COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://zlib.net/pigz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4e8b67b432ce7907575a549f3e1cac4709781ba0f6b48afea9f59369846b509c
+    sha256:6f031fa40bc15b1d80d502ff91f83ba14f4b079e886bfb83221374f7bf5c8f9a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pigz
 COMPONENT_TEST_TARGETS=	test

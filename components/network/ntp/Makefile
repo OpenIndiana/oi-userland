@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -33,6 +34,10 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
 	sha256:2ab3d0b5f0456e6311dda1cc27ab75da108762773a19e46abd938bd9407b97ee
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 

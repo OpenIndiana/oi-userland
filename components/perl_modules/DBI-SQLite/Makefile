@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
@@ -21,8 +22,12 @@ COMPONENT_SRC=		DBD-SQLite-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:b2b179136cd7c0df7b0e4840ff3f46330f161e5fc646279748afa7a3144f7cc0
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL= \
-  http://search.cpan.org/CPAN/authors/id/I/IS/ISHIGAKI/$(COMPONENT_ARCHIVE)
+  http://mirror.squ.edu.om/CPAN/modules/by-module/DBD/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://search.cpan.org/dist/DBD-SQLite/lib/DBD/SQLite.pm
 
 include $(WS_TOP)/make-rules/prep.mk

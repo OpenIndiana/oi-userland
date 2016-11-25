@@ -20,6 +20,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -31,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f95224060f45e0d8212a5039b339afa5f1a94a1bb0298e796104e5b12e926129
-COMPONENT_ARCHIVE_URL=	http://www.jedsoft.org/releases/slang/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://www.jedsoft.org/releases/slang/old/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
 COMPONENT_BUGDB=	utility/slang
 

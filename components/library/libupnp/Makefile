@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -22,8 +23,12 @@ COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:ee3537081e3ea56f66ada10387486823989210bc98002f098305551c966e3a63
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%20$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  http://sourceforge.net/projects/pupnp/files/pupnp/libUPnP\%20$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pupnp.sourceforge.net/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = system/library/libupnp

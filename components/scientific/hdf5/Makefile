@@ -9,6 +9,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -23,7 +24,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ed17178abd9928a7237f30370189ba767b9e39e0db45917c2ac4665eb9cb4771
-COMPONENT_ARCHIVE_URL=	http://www.hdfgroup.org/ftp/HDF5/releases/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://support.hdfgroup.org/ftp/HDF5/releases/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
 COMPONENT_LICENSE=	NCSA
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license

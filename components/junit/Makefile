@@ -18,6 +18,7 @@
 #
 # CDDL HEADER END
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
@@ -29,7 +30,7 @@ COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7f427e18a21006ea5394fb71b268d2fa1d12a9f4575b5743ff093547c7ac7b37
+    sha256:65c0688d4491864ac53bf50164a02fa2169e14eb10bda6730934d6749d86587d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/junit
 
@@ -47,7 +48,7 @@ COMPONENT_BUILD_TARGETS += dist
 
 # common targets
 build:		$(BUILD_32)
-	
+
 install:	build	
 
 # Testing is run as part of the build.
@@ -59,7 +60,7 @@ install:	build
 #
 # OK (22 tests)
 test:		$(NO_TESTS)
-		
+
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

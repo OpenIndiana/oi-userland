@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -23,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:a61c4036c2600a645843f16bec4be166093a9df5f15b02c85291213aa9cf15a2
 COMPONENT_ARCHIVE_URL= \
-  http://www.68k.org/~michael/audiofile/$(COMPONENT_ARCHIVE)
+  https://sourceforge.net/projects/audiofile/files/audiofile/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.68k.org/~michael/audiofile/
 COMPONENT_FMRI= library/audio/audiofile
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries

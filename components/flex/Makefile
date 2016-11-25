@@ -20,19 +20,21 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
+# Version 2.5.35 is no longer available.
 COMPONENT_NAME=		flex
-COMPONENT_VERSION=	2.5.35
+COMPONENT_VERSION=	2.5.36
 COMPONENT_PROJECT_URL=	http://flex.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0becbd4b2b36b99c67f8c22ab98f7f80c9860aec70f0350a0018f29a88704e7b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/flex/files/flex/flex-2.5.35/flex-2.5.35.tar.bz2
+    sha256:c466e68bbbb0a7884301ba257376f98197254543799690b671b1ac2130645d55
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/flex/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/flex
 
 SONAME=libfl.so.1

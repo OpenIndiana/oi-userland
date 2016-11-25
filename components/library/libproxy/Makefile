@@ -10,6 +10,7 @@
 #
 
 #
+# Copyright 2016 Gary Mills
 # Copyright 2016 Alexander Pyhalov
 #
 
@@ -24,8 +25,12 @@ COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:82e27b1b391fbf36ae1433729b7431739212171fbffc34c55eb75b60e20998fb
+#
+# If this download fails, try a manual download from a web browser,
+# using the same URL.  Verify that the hash is correct.  Then, copy
+# the file to the archives directory.
 COMPONENT_ARCHIVE_URL= \
-  http://libproxy.googlecode.com/files/$(COMPONENT_ARCHIVE)
+  https://code.google.com/archive/p/libproxy/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://code.google.com/p/libproxy/
 
 include $(WS_MAKE_RULES)/prep.mk
