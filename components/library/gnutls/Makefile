@@ -16,14 +16,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnutls
-COMPONENT_VERSION= 2.12.23
+COMPONENT_VERSION= 2.12.24
 COMPONENT_SUMMARY= GNU transport layer security library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:dfa67a7e40727eb0913e75f3c44911d5d8cd58d1ead5acfe73dd933fc0d17ed2
+  sha256:792e127c97e5b72bacbbdad16ba7532dc7d81a6197087a574549f473c1627ce7
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnutls.org/gcrypt/gnutls/v2.12/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=
+  ftp://ftp.gnutls.org/gcrypt/gnutls/v2.12/$(COMPONENT_ARCHIVE).sig
 COMPONENT_PROJECT_URL = http://www.gnutls.org
 COMPONENT_FMRI = library/gnutls
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -42,6 +44,7 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-guile=no
 CONFIGURE_OPTIONS += --disable-camellia
 CONFIGURE_OPTIONS += --without-p11-kit
+CONFIGURE_OPTIONS += --with-libgcrypt
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -50,3 +53,11 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/libtasn1
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/security/libgcrypt
