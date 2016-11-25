@@ -23,7 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           aria2
-COMPONENT_VERSION=        1.27.1
+COMPONENT_VERSION=        1.29.0
 COMPONENT_FMRI=           web/aria2
 COMPONENT_PROJECT_URL=    https://aria2.github.io/
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -32,7 +32,7 @@ COMPONENT_SUMMARY= \
 COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1828ccd4a9b35d273ecf4393b1d93ab5b161dd7b81b0c9b93bcbc50a3f5c1f15
+    sha256:bbfc7e6b4c84b5063012edbe34c6d4258e64799cab4ac65709d970d649dcde23
 COMPONENT_ARCHIVE_URL= \
     https://github.com/aria2/aria2/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv3
