@@ -1731,7 +1731,7 @@ dpif_solaris_flow_flush__(struct dpif_solaris *dpif)
 
 	HMAP_FOR_EACH_SAFE(solaris_flow, next, node, &dpif->flows) {
 		flownames[i] = xstrdup(solaris_flow->flowname);
-		physnames[i] = xstrdup(solaris_flow->physname);
+		physnames[i++] = xstrdup(solaris_flow->physname);
 		dpif_solaris_flow_remove(dpif, solaris_flow);
 	}
 	ovs_rwlock_unlock(&dpif->flow_rwlock);
