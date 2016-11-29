@@ -186,6 +186,132 @@
 			<manpage title='ntp.conf' section='4' />
 			<manpage title='ntpq' section='8' />
 		</documentation>
+		<pg_pattern name='config' type='application' target='this'
+		    required='false'>
+			<prop_pattern name='wait_for_sync' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Prevents service from going fully online until after the first
+time the clock is set.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='no_auth_required' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Disables the need for broadcast and multicast servers to
+be authenticated with crypto keys.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='verbose_logging' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+The ntpd daemon is started with logging turned on.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='slew_always' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Prevents the clock from stepping for measured offsets below 600 seconds.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='allow_step_at_boot' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Allows the first clock correction after a system boot to be of any size. Ignores
+the setting of slew_always for ths first clock adjustment.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='always_allow_large_step' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Extends the meaning of allow_step_at_boot to apply to the first clock adjustment
+after ntpd is started and not just the first time after a boot.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='disable_local_time_adjustment' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+Removes the ability of ntpd to set the time on the local system, but allows it
+to start anyway.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='logfile' type='astring'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+The logfile that ntpd will use if verbose_logging is set. This file must be
+writeable by the user daemon and be in a directory writable by that user. 
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+			<prop_pattern name='debuglevel' type='integer'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+The level of debugging. A value of 0 disables debugging. Maximum debugging
+is 7.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+				<values>
+					<value name='0'>
+						<description>
+							<loctext xml:lang='C'>
+Turn off debugging.
+							</loctext>
+						</description>
+					</value>
+					<value name='7'>
+						<description>
+							<loctext xml:lang='C'>
+Maximum debugging.
+							</loctext>
+						</description>
+					</value>
+				</values>
+			</prop_pattern>
+
+			<prop_pattern name='mdnsregister' type='boolean'
+			    required='false'>
+				<description>
+					<loctext xml:lang='C'>
+After the clock is in sync, register the NTP service with mdns.
+					</loctext>
+				</description>
+				<cardinality min='1' max='1' />
+			</prop_pattern>
+
+		</pg_pattern>
 	</template>
 </service>
 
