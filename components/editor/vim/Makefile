@@ -20,37 +20,31 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	7.4
+COMPONENT_VERSION=	8.0.0104
+IPS_COMPONENT_VERSION=  $(shell echo $(COMPONENT_VERSION) | sed -e 's/\.0*\([1-9]\)/.\1/')
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b41395eb3e32b888f08eb8cc192269a956105abc70175bdddf9e3b7e90131c24
-COMPONENT_HG_URL=	https://github.com/vim/vim
-COMPONENT_HG_REV=	v$(COMPONENT_VERSION)
-
+COMPONENT_ARCHIVE_HASH=	sha256:b200636f743ea250d655bc03f053dc177a27e066d3e00db4ee0efe3c4de5f666
 COMPONENT_BUGDB=	utility/vim
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-PATCH_LEVEL =	0
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/configure  $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
 				  find $(@D) -name \*.sh  -exec chmod +x '{}' ';' )
 
-PKG_MACROS +=	VIMVER=vim74
-
-ASLR_MODE =	$(ASLR_ENABLE)
+PKG_MACROS +=  VIMVER=vim80
 
 X_VARIANT =	$(BUILD_DIR)/$(MACH32)-gvim
 NOX_VARIANT =	$(BUILD_DIR)/$(MACH32)-vim
@@ -63,19 +57,20 @@ INSTALL_32 = 	$(VARIANTS:%=%/.installed)
 
 TEST_32 = 	$(NOX_VARIANT)/.tested
 
+# vim uses self-defined INFINITY/NAN, which don't work well on illumos
+CFLAGS += -std=c99 -D_XOPEN_SOURCE=600
+
+# Make sure we use a default perl
+CONFIGURE_ENV +=	vi_cv_path_perl=$(PERL)
+# zh_CN.cp936.po has invalid characters which GNU msgfmt seems to be able to ignore.
+CONFIGURE_ENV +=	MSGFMT=gmsgfmt
+CONFIGURE_ENV +=	SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH)
+
 CONFIGURE_OPTIONS +=	--with-features=huge
-CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
-CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
+CONFIGURE_OPTIONS +=	--with-compiledby="oi-userland build environment"
+CONFIGURE_OPTIONS +=	--with-modified-by="OpenIndiana <oi-dev@openindiana.org>"
 CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
-# XXX Perl compilation fails, for some reason.
-# - Perl_croak_nocontext is redefined (embed.h, line 5157), having something to
-#   do with PERL_IMPLICIT_CONTEXT, which is discussed in perlguts(1).  This is
-#   just a warning, but looks like it might have nasty consequences.
-# - The declaration of Perl_Gthr_key_ptr() has a problem with its argument of
-#   type pTHX.  if_perl.xs defines that to void if it's not already defined,
-#   but perl.h probably does something else to it, not sure what yet.  This
-#   also appears to have something to do with PERL_IMPLICIT_CONTEXT.
-# CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
 
@@ -92,6 +87,10 @@ $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk2-check
 # complete source tree.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# For the GUI, install only the executable itself.
+$(X_VARIANT)/.installed: COMPONENT_INSTALL_ARGS += -C src
+$(X_VARIANT)/.installed: COMPONENT_INSTALL_TARGETS = installvimbin
+
 COMPONENT_TEST_TARGETS = test
 
 $(SOURCE_DIR)/runtime/doc/uganda.txt: prep
@@ -102,10 +101,22 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32) $(BUILD_DIR)/license
 
+#  A lot of tests fail with 'Cannot create directory'
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

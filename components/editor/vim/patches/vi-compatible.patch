@@ -1,0 +1,18 @@
+When started as "vi", run in vi-compatibility mode, and don't source
+defaults.vim.  This can be submitted upstream.
+
+--- a/runtime/defaults.vim	2016-09-12 07:41:04.000000000 -0700
++++ b/runtime/defaults.vim	2016-09-15 15:55:10.820971765 -0700
+@@ -13,6 +13,12 @@
+   finish
+ endif
+ 
++" When started as "vi", operate in compatible mode (unless you have a
++" .vimrc).
++if v:progname ==? "vi"
++  finish
++endif
++
+ " Bail out if something that ran earlier, e.g. a system wide vimrc, does not
+ " want Vim to use these default values.
+ if exists('skip_defaults_vim')
