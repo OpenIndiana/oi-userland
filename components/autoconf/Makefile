@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
 
 TPNO=			22294
 
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_NO_ARCH)
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 # with ksh93 as the configure shell, all tests pass
@@ -41,6 +42,23 @@ CONFIG_SHELL=$(BINDIR)/ksh93
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += PERL="$(PERL)"
 CONFIGURE_OPTIONS += M4="$(GNUBIN)/m4"
+
+# The Makefile has different targets for the equivalent of "gmake test" and
+# "gmake system-test".
+COMPONENT_TEST_TARGETS =	check-local
+COMPONENT_TEST_DIR =		$(@D)/tests
+COMPONENT_TEST_ENV +=		F77=/usr/bin/gfortran
+
+COMPONENT_SYSTEM_TEST_TARGETS =	installcheck
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV +=	F77=/usr/bin/gfortran
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "/check-local/d"' \
+        '-e "/ksh93/d"' \
+        '-e "/Entering directory/d"' \
+        '-e "/Leaving directory/d"' \
+        '-e "/^make/d"'
 
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += $(PERL_PKG)

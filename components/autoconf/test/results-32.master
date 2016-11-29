@@ -1,67 +1,3 @@
-make[1]: Entering directory '$(@D)'
-if test -d $(SOURCE_DIR)/.git; then			\
-  cd $(SOURCE_DIR) &&						\
-  git submodule --quiet foreach test '$(git rev-parse $sha1)'	\
-      = '$(git merge-base origin $sha1)'			\
-    || { echo 'maint.mk: found non-public submodule commit' >&2;	\
-	 exit 1; };						\
-else								\
-  : ;								\
-fi
-/usr/gnu/bin/make  check-recursive
-make[2]: Entering directory '$(@D)'
-Making check in bin
-make[3]: Entering directory '$(@D)/bin'
-make[3]: Nothing to be done for 'check'.
-make[3]: Leaving directory '$(@D)/bin'
-Making check in .
-make[3]: Entering directory '$(@D)'
-make[3]: Nothing to be done for 'check-am'.
-make[3]: Leaving directory '$(@D)'
-Making check in lib
-make[3]: Entering directory '$(@D)/lib'
-Making check in Autom4te
-make[4]: Entering directory '$(@D)/lib/Autom4te'
-make[4]: Nothing to be done for 'check'.
-make[4]: Leaving directory '$(@D)/lib/Autom4te'
-Making check in m4sugar
-make[4]: Entering directory '$(@D)/lib/m4sugar'
-/usr/gnu/bin/make  check-local
-make[5]: Entering directory '$(@D)/lib/m4sugar'
-make[5]: Leaving directory '$(@D)/lib/m4sugar'
-make[4]: Leaving directory '$(@D)/lib/m4sugar'
-Making check in autoconf
-make[4]: Entering directory '$(@D)/lib/autoconf'
-/usr/gnu/bin/make  check-local
-make[5]: Entering directory '$(@D)/lib/autoconf'
-make[5]: Leaving directory '$(@D)/lib/autoconf'
-make[4]: Leaving directory '$(@D)/lib/autoconf'
-Making check in autotest
-make[4]: Entering directory '$(@D)/lib/autotest'
-/usr/gnu/bin/make  check-local
-make[5]: Entering directory '$(@D)/lib/autotest'
-make[5]: Leaving directory '$(@D)/lib/autotest'
-make[4]: Leaving directory '$(@D)/lib/autotest'
-Making check in autoscan
-make[4]: Entering directory '$(@D)/lib/autoscan'
-make[4]: Nothing to be done for 'check'.
-make[4]: Leaving directory '$(@D)/lib/autoscan'
-Making check in emacs
-make[4]: Entering directory '$(@D)/lib/emacs'
-make[4]: Nothing to be done for 'check'.
-make[4]: Leaving directory '$(@D)/lib/emacs'
-make[4]: Entering directory '$(@D)/lib'
-make[4]: Nothing to be done for 'check-am'.
-make[4]: Leaving directory '$(@D)/lib'
-make[3]: Leaving directory '$(@D)/lib'
-Making check in doc
-make[3]: Entering directory '$(@D)/doc'
-make[3]: Nothing to be done for 'check'.
-make[3]: Leaving directory '$(@D)/doc'
-Making check in tests
-make[3]: Entering directory '$(@D)/tests'
-/usr/gnu/bin/make  check-local
-make[4]: Entering directory '$(@D)/tests'
 :;{ \
   echo '# Signature of the current package.' && \
   echo 'm4_define([AT_PACKAGE_NAME],      [GNU Autoconf])' && \
@@ -73,12 +9,8 @@ make[4]: Entering directory '$(@D)/tests'
 } > package.m4-t
 mv package.m4-t package.m4
 cd ../lib/autotest && /usr/gnu/bin/make  autotest.m4f
-make[5]: Entering directory '$(@D)/lib/autotest'
-make[5]: 'autotest.m4f' is up to date.
-make[5]: Leaving directory '$(@D)/lib/autotest'
 autom4te_perllibdir='$(SOURCE_DIR)'/lib AUTOM4TE_CFG='../lib/autom4te.cfg'         ../bin/autom4te -B '..'/lib -B '$(SOURCE_DIR)'/lib         --language=autotest -I . -I $(SOURCE_DIR)/tests suite.at -o testsuite.tmp
 mv testsuite.tmp testsuite
-/bin/ksh93 ./testsuite 
 ## ----------------------------- ##
 ## GNU Autoconf 2.69 test suite. ##
 ## ----------------------------- ##
@@ -426,7 +358,7 @@ Fortran low level compiling/preprocessing macros.
 
 307: GNU Fortran 77                                  ok
 308: GNU Fortran                                     ok
-309: AC_OPENMP and Fortran 77                        skipped (fortran.at:114)
+309: AC_OPENMP and Fortran 77                        ok
 310: AC_OPENMP and Fortran                           ok
 311: AC_F77_DUMMY_MAIN usage                         ok
 312: AC_FC_DUMMY_MAIN usage                          ok
@@ -446,7 +378,7 @@ Fortran low level compiling/preprocessing macros.
 
 Testing autoconf/fortran macros.
 
-326: AC_F77_IMPLICIT_NONE                            skipped (acfortran.at:13)
+326: AC_F77_IMPLICIT_NONE                            ok
 327: AC_F77_MAIN                                     ok
 328: AC_F77_WRAPPERS                                 ok
 329: AC_FC_CHECK_BOUNDS                              ok
@@ -671,13 +603,5 @@ Autoscan.
 ## Test results. ##
 ## ------------- ##
 
-487 tests behaved as expected.
-16 tests were skipped.
-make[4]: Leaving directory '$(@D)/tests'
-make[3]: Leaving directory '$(@D)/tests'
-Making check in man
-make[3]: Entering directory '$(@D)/man'
-make[3]: Nothing to be done for 'check'.
-make[3]: Leaving directory '$(@D)/man'
-make[2]: Leaving directory '$(@D)'
-make[1]: Leaving directory '$(@D)'
+489 tests behaved as expected.
+14 tests were skipped.
