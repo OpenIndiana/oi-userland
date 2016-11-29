@@ -86,7 +86,7 @@ class IPInterface(CommandBase):
             # create ip interface
             cmd = ['/usr/sbin/ipadm', 'create-ip', self._ifname]
             if temp:
-                cmd.append('-t')
+                cmd.insert(2, '-t')
             self.execute_with_pfexec(cmd)
         elif addrcheck and self.ipaddr_exists(ipaddr, self._ifname):
             return
@@ -107,13 +107,13 @@ class IPInterface(CommandBase):
                 cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                        str(ll_addr), self._ifname]
                 if temp:
-                    cmd.append('-t')
+                    cmd.insert(2, '-t')
                 self.execute_with_pfexec(cmd)
 
         cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                ipaddr, self._ifname]
         if temp:
-            cmd.append('-t')
+            cmd.insert(2, '-t')
 
         self.execute_with_pfexec(cmd)
 
@@ -122,7 +122,7 @@ class IPInterface(CommandBase):
             # create ip interface
             cmd = ['/usr/sbin/ipadm', 'create-ip', self._ifname]
             if temp:
-                cmd.append('-t')
+                cmd.insert(2, '-t')
             self.execute_with_pfexec(cmd)
         else:
             cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'type', self._ifname]
@@ -133,7 +133,7 @@ class IPInterface(CommandBase):
         cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'addrconf',
                self._ifname]
         if temp:
-            cmd.append('-t')
+            cmd.insert(2, '-t')
         self.execute_with_pfexec(cmd)
 
     def delete_address(self, ipaddr, addrcheck=True):
@@ -199,7 +199,7 @@ class Datalink(CommandBase):
         cmd = ['/usr/sbin/dladm', 'create-vnic', '-l', lower_link,
                '-m', mac_address, '-v', vid, self._dlname]
         if temp:
-            cmd.append('-t')
+            cmd.insert(2, '-t')
 
         self.execute_with_pfexec(cmd)
 
@@ -207,7 +207,7 @@ class Datalink(CommandBase):
         cmd = ['/usr/sbin/dladm', 'set-linkprop', '-p', '%s=%s'
                % (pname, pvalue), self._dlname]
         if temp:
-            cmd.append('-t')
+            cmd.insert(2, '-t')
         self.execute_with_pfexec(cmd)
 
     def delete_vnic(self):
