@@ -18,7 +18,7 @@
 .\"
 .\" CDDL HEADER END
 .\"
-.\" Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright (c) 2009, 2016, Oracle and/or its affiliates. All rights reserved.
 .\"
 .TH "ntp.conf" "5" "" "" "File Formats"
 .SH NAME
@@ -219,7 +219,7 @@ This option specifies the time-to-live \fIttl\fP for the \fBbroadcast\fR commman
 .RS 4n
 Specifies the version number to be used for outgoing NTP packets. Versions 1-4 are the choices, with version 4 the default.
 .RE
-.SS "Auxilliary Commands"
+.SS "Auxiliary Commands"
 .sp .3
 .ne 2
 .mk
@@ -796,7 +796,7 @@ Number of packets discarded due to rate limitation.
 .ad
 .sp .25
 .RS 4n
-Indicates the full path of a directory where statistics files should be created (see below). This keyword allows the (otherwise constant) \fBfilegen\fR filename prefix to be modified for file generation sets, which is useful for handling statistics logs.
+Indicates the full path of a directory where statistics files should be created (see below). This keyword allows the (otherwise constant) \fBfilegen\fR filename prefix to be modified for file generation sets, which is useful for handling statistics logs. This directory must be writable by the user "daemon" and all files in it must be writable by that user.
 .RE
 .sp .3
 .ne 2
@@ -894,7 +894,7 @@ This option controls the delay in seconds between the first and second packets s
 .ad
 .sp .25
 .RS 4n
-This command specifies the complete path and name of the file used to record the frequency of the local clock oscillator. This is the same operation as the \fB-f\fR command linke option. If the file exists, it is read at startup in order to set the initial frequency and then updated once per hour with the current frequency computed by the daemon. If the file name is specified, but the file itself does not exist, the starts with an initial frequency of zero and creates the file when writing it for the first time. If this command is not given, the daemon will always start with an initial frequency of zero.
+This command specifies the complete path and name of the file used to record the frequency of the local clock oscillator. This is the same operation as the \fB-f\fR command linke option. If the file exists, it is read at startup in order to set the initial frequency and then updated once per hour with the current frequency computed by the daemon. If the file name is specified, but the file itself does not exist, the starts with an initial frequency of zero and creates the file when writing it for the first time. If this command is not given, the daemon will always start with an initial frequency of zero. This file must be in a directory writable by the user "daemon".
 .LP
 The file format consists of a single line containing a single floating point number, which records the frequency offset measured in parts-per-million (PPM). The file is updated by first writing the current drift value into a temporary file and then renaming this file to replace the old version. This implies that \fBntpd\fR must have write permission for the directory the drift file is located in, and that file system links, symbolic or otherwise, should be avoided.
 .LP
@@ -1000,7 +1000,7 @@ Enables the statistics facility. The default for this flag is disable
 .ad
 .sp .25
 .RS 4n
-This command allows additional configuration commands to be included from a separate file. Include files may be nested to a depth of five; upon reaching the end of any include file, command processing resumes in the previous configuration file. This option is useful for sites that run \fBntpd\fR on multiple hosts, with (mostly) common options (e.g., a restriction list).
+This command allows additional configuration commands to be included from a separate file. Include files may be nested to a depth of five; upon reaching the end of any include file, command processing resumes in the previous configuration file. This option is useful for sites that run \fBntpd\fR on multiple hosts, with (mostly) common options (e.g., a restriction list). The include file must be in a file readable by the user "daemon". 
 .RE
 .sp .3
 .ne 2
@@ -1033,7 +1033,7 @@ This configuration will list all clock information and synchronization informati
 .sp .25
 .RS 4n
 .LP
-This command specifies the location of an alternate log file to be used instead of the default system \fBsyslog\fR facility. This is the same operation as the \fB-l \fRcommand line option.
+This command specifies the location of an alternate log file to be used instead of the default system \fBsyslog\fR facility. This is the same operation as the \fB-l \fRcommand line option. This file must be writable by the user "daemon" and be in a directory writable by that user.
 .RE
 .sp .3
 .ne 2

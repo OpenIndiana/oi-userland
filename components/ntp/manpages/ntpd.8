@@ -1,3 +1,4 @@
+config/ignore_time_adjustment_errors
 '\" te
 .\" CDDL HEADER START
 .\"
@@ -18,7 +19,7 @@
 .\"
 .\" CDDL HEADER END
 .\"
-.\" Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright (c) 2009, 2016, Oracle and/or its affiliates. All rights reserved.
 .\"
 .TH "ntpd" "8" "" "" "System Administration Commands"
 .SH NAME
@@ -104,7 +105,8 @@ Enable the client to sync to broadcast servers.
 .TP
 .BR \-c " \fIstring\fP, " \--configfile "=" \fIstring\fP
 The name and path of the configuration file,
-/etc/inet/ntp.conf by default.
+/etc/inet/ntp.conf by default. This file must be readable by the user "daemon".
+If the file does not exist the \fBNTP\fP service will not start.
 .TP
 .BR \-d ", " \--debug-level
 Increase output debug message level.
@@ -141,7 +143,9 @@ is the default.
 .TP
 .BR \-l " \fIstring\fP, " \--logfile "=" \fIstring\fP
 Specify the name and path of the log file.
-The default is the system log file.
+The default is the system log file. If logging is enabled to the logfile, the
+logfile must be in a directory that is writable by the user "daemon" and if the
+file already exists, it also must be writeable by the user "daemon".
 .TP
 .BR \-L ", " \--novirtualips
 Do not listen to virtual IPs. The default is to listen.
@@ -271,7 +275,8 @@ when the system boots. The default is true, which allows such a large step once 
 An integer specifying the level of debugging requested. A zero means no debugging. The default is zero.
 .TP
 .BR config/logfile
-A string specifying the location of the file used for log output. The default is /var/ntp/ntp.log
+A string specifying the location of the file used for log output. The default is /var/ntp/ntp.log. The
+log file must be writable by the user "daemon" andmust be in a directory writeable by that user.
 .TP
 .BR config/no_auth_required
 A boolean which when true, specifies that anonymous servers such as broadcast, multicast and active peers 
@@ -294,6 +299,10 @@ this option has no effect. The default is true.
 A boolean which when true, causes the \fBNTP\fP service to delay coming completely on-line until after the first 
 time the system clock is synchronized. This can potetially delay the system start up by a significant amount. The
 default is false.
+.TP
+.BR config/ignore_time_adjustment_errors
+A boolean which when true, causes the \fBNTP\fP service to skip checking for the privileges that allow it to 
+adjust the system clock. The default is false. 
 .TP
 .BR config/mdnsregister
 A boolean which when true, will cause the daemon to register with the network mDNS system. The default is false.
@@ -320,9 +329,36 @@ Various internal \fBntpd\fR variables can be displayed and configuration options
 .LP
 When \fBntpd\fR starts it looks at the value of umask, and if zero \fBntpd\fR will set the umask to 022.
 .LP
-The documentation available at /usr/share/doc/ntp is provided as is from the 
-\fBNTP\fR distribution and may contain information that is not applicable to 
+The documentation available at /usr/share/doc/ntp is provided as is from the
+\fBNTP\fR distribution and may contain information that is not applicable to
 the software as provided in this particular distribution.
+.LP
+The ntpd daemon now runs as the user "daemon". Care must be taken if it is
+configured to read or write files other than in the directories /etc/inet and
+/var/ntp. Any other locations will require that the user daemon have the proper
+permissions to access the files. 
+.LP
+There are two example configuration files provided, /etc/inet/ntp.client and
+/etc/inet/ntp.server. The first provides examples and some discussion around
+the configuration information that goes into the /etc/inet/ntp.conf file. The
+second focuses exclusively on the configuration of hardware clocks for stratum
+zero servers and can be ignored by most users.
+.PP
+.SH EXAMPLES
+.LP
+The simplest way to start using the \fBNTP\fP service on a new host is to run
+the command:
+.sp
+.in +2
+.nf
+echo 'server hostname iburst' > /etc/inet/ntp.conf
+.fi
+.in -2
+.LP
+and then start the service. Replace 'hostname' with the actual hostname of an
+NTP server. You can add more lines like this one with the hostnames of more
+NTP servers, but do not configure exactly two. Four servers is optimal, but
+never use two.
 .PP
 .SH SEE ALSO
 .LP
