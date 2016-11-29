@@ -1,0 +1,40 @@
+Changes to remove neutron extensions that are not currently supported on Solaris.
+
+This patch was developed in-house. Since it is Solaris-specific, it is not
+suitable for upstream.
+
+--- neutron-8.1.2/neutron/api/extensions.py.orig	2016-11-27 14:03:20.341214148 +0000
++++ neutron-8.1.2/neutron/api/extensions.py	2016-11-27 14:04:01.947497025 +0000
+@@ -222,6 +222,10 @@
+ 
+     def __init__(self, extension_manager):
+         self.extension_manager = extension_manager
++        # List of extensions that are not supported currently on Solaris
++        self.ext_not_supp = ['auto-allocated-topology', 'l3-ha',
++                             'address-scope', 'extraroute', 'dns-integration',
++                             'dvr']
+ 
+     @staticmethod
+     def _translate(ext):
+@@ -236,6 +240,9 @@
+     def index(self, request):
+         extensions = []
+         for _alias, ext in six.iteritems(self.extension_manager.extensions):
++            if _alias in self.ext_not_supp:
++                LOG.debug("Extension '%s' not supported", _alias)
++                continue
+             extensions.append(self._translate(ext))
+         return dict(extensions=extensions)
+ 
+@@ -245,6 +252,11 @@
+         if not ext:
+             raise webob.exc.HTTPNotFound(
+                 _("Extension with alias %s does not exist") % id)
++
++        alias = ext.get_alias()
++        if alias in self.ext_not_supp:
++            raise webob.exc.HTTPNotFound(
++                _("Extension '%s' not supported") % alias)
+         return dict(extension=self._translate(ext))
+ 
+     def delete(self, request, id):
