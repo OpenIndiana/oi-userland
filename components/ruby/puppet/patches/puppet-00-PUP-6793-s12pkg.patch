@@ -1,0 +1,16 @@
+Merged with upstream PUP 4.9.0
+(PUP-6793) pkg provider should be default for Solaris 12
+https://tickets.puppetlabs.com/browse/PUP-6793
+
+diff --git a/lib/puppet/provider/package/pkg.rb b/lib/puppet/provider/package/pkg.rb
+--- a/lib/puppet/provider/package/pkg.rb
++++ b/lib/puppet/provider/package/pkg.rb
+@@ -23,7 +23,7 @@ Puppet::Type.type(:package).provide :pkg, :parent => Puppet::Provider::Package d
+ 
+   confine :osfamily => :solaris
+ 
+-  defaultfor :osfamily => :solaris, :kernelrelease => '5.11'
++  defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
+ 
+   def self.instances
+     pkg(:list, '-Hv').split("\n").map{|l| new(parse_line(l))}

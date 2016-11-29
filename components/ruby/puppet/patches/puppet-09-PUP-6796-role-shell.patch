@@ -1,14 +1,11 @@
---- puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb.orig	2016-04-19 14:32:54.606087591 -0700
-+++ puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb	2016-04-19 14:34:04.451831050 -0700
-@@ -1,3 +1,7 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
- require 'puppet/util'
- require 'puppet/util/user_attr'
- require 'date'
-@@ -12,6 +16,7 @@
+Merged with upstream PUP 4.9.0
+(PUP-6796) Support setting/checking shell in user_role_add
+https://tickets.puppetlabs.com/browse/PUP-6796
+
+diff --git a/lib/puppet/provider/user/user_role_add.rb b/lib/puppet/provider/user/user_role_add.rb
+--- a/lib/puppet/provider/user/user_role_add.rb
++++ b/lib/puppet/provider/user/user_role_add.rb
+@@ -12,6 +12,7 @@ Puppet::Type.type(:user).provide :user_role_add, :parent => :useradd, :source =>
    options :home, :flag => "-d", :method => :dir
    options :comment, :method => :gecos
    options :groups, :flag => "-G"
@@ -16,7 +13,7 @@
    options :roles, :flag => "-R"
    options :auths, :flag => "-A"
    options :profiles, :flag => "-P"
-@@ -26,7 +31,22 @@
+@@ -26,8 +27,23 @@ Puppet::Type.type(:user).provide :user_role_add, :parent => :useradd, :source =>
      value !~ /\s/
    end
  
@@ -26,7 +23,7 @@
 +  end
 +
    has_features :manages_homedir, :allows_duplicates, :manages_solaris_rbac, :manages_passwords, :manages_password_age, :manages_shell
-+  
+ 
 +
 +  def check_valid_shell
 +    unless File.exists?(@resource.should(:shell))
@@ -36,6 +33,7 @@
 +      raise(Puppet::Error, "Shell #{@resource.should(:shell)} must be executable")
 +    end
 +  end
- 
++
    #must override this to hand the keyvalue pairs
    def add_properties
+     cmd = []

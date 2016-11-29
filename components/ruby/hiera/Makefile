@@ -28,16 +28,16 @@ RUBY_LIB_VERSION=2.1.0
 RUBY_VERSIONS=2.1.0
 
 COMPONENT_NAME=		hiera
-COMPONENT_VERSION=	1.3.4
+COMPONENT_VERSION=  3.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a3c85385ddda64916d453efeeb965151dc2454428d88f04f40d539559af27020
+    sha256:39a5d7a14dafaf4745b1f660e7b78a80d2f2724ac89d467a092305c1eea5f576
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
-COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera	
+COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=                   18210
+TPNO=                   30453
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \

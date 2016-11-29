@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 '''
@@ -41,6 +41,7 @@ NOTE: This file should not be included with the puppet release
 import os
 import re
 import sys
+import textwrap
 
 from lxml import etree
 from optparse import OptionParser
@@ -171,7 +172,7 @@ def process_grouping(lines):
     key_type = determine_type(key, value)
 
     # remaining lines are the descriptor field
-    desc = '\n'.join(lines)
+    desc = textwrap.fill("\n".join(lines),79)
     PUPPET_CONFIG_DICT[key] = (key, key_type, desc)
 
 
@@ -205,7 +206,7 @@ def parse_puppet_config(filename):
     f_handle.close()
 
 
-def update_smf_file(smf_xml_file, output_file, version):
+def update_smf_file(smf_xml_file, output_file):
     '''Replace the puppet property definitions in the specified SMF
        file with those that are stored in PUPPET_CONFIG_DICT
     '''
@@ -216,7 +217,7 @@ def update_smf_file(smf_xml_file, output_file, version):
         root = tree.getroot()
         template = root.find("service/template")
         puppet_desc = template.find("common_name/loctext")
-        puppet_desc.text = "Puppet version %s" % version
+        puppet_desc.text = "Puppet"
 
         pg_pattern = template.find("pg_pattern")
     except IOError as msg:
@@ -258,7 +259,7 @@ def option_list():
     '''Build the option list for this utility'''
     desc = "Utility for assisting in the upgrading of Solaris Puppet SMF file"
     usage = "usage: %prog -c <puppet_config_file> -s <smf_confilg_file> " \
-            "-v <puppet_version> [-o <output_file>]\n"
+            "[-o <output_file>]\n"
     opt_list = OptionParser(description=desc, usage=usage)
 
     opt_list.add_option("-c", "--config", dest="config", default=None,
@@ -277,11 +278,6 @@ def option_list():
                         action="store", type="string", nargs=1,
                         metavar="<output_file>",
                         help="The name of the new puppet.xml file ")
-    opt_list.add_option("-v", "--version", dest="version", default="None",
-                        action="store", type="string", nargs=1,
-                        metavar="<puppet_version>",
-                        help="Puppet Version of update")
-
     return opt_list
 
 
@@ -291,11 +287,8 @@ def main():
 
     (options, _args) = parser.parse_args()
 
-    if not options.output and options.version:
-        options.output = "puppet.%s.xml" % options.version
-
     if not options.config or not options.smf_xml or \
-            not options.output or not options.version:
+            not options.output:
         err("Required options not specified")
         parser.print_help()
         sys.exit(-1)
@@ -314,7 +307,7 @@ def main():
         sys.exit(-1)
 
     parse_puppet_config(options.config)
-    update_smf_file(options.smf_xml, options.output, options.version)
+    update_smf_file(options.smf_xml, options.output)
 
 if __name__ == '__main__':
     main()

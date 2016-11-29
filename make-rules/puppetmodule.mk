@@ -43,8 +43,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(SOURCE_DIR); \
-		$(MKDIR) -p $(PROTO_DIR)/etc/puppet/modules/$(MODULE_NAME); \
-		$(CP) -R * $(PROTO_DIR)/etc/puppet/modules/$(MODULE_NAME))
+		$(MKDIR) -p $(PROTO_DIR)/usr/puppetlabs/puppet/modules/$(MODULE_NAME); \
+		$(CP) -R * $(PROTO_DIR)/usr/puppetlabs/puppet/modules/$(MODULE_NAME))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 

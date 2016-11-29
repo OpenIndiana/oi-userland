@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 GIT =		/usr/bin/git
@@ -60,7 +60,7 @@ COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
 # remove those URLs.  If the primary (unsuffixed) archive is from github, then
 # we add a dummy __BLANK__ suffix to the list, and filter that out separately.
 ifeq (github,$(findstring github,$(GIT_REPO$(1))))
-  COMPONENT_ARCHIVE_URL$(1) ?= $(GIT_REPO$(1))/tarball/$(GIT_BRANCH$(1))
+  COMPONENT_ARCHIVE_URL$(1) ?= $(GIT_REPO$(1))/archive/$(GIT_BRANCH$(1)).tar.gz
   GITHUB_ARCHIVE_SUFFIXES += $(or $(strip $(1:_%=%)),__BLANK__)
 else
   COMPONENT_ARCHIVE_SRC$(1) = git

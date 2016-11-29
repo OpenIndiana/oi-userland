@@ -1,0 +1,21 @@
+Merged with upstream PUP 4.9.0
+(PUP-6797) service should check for smf service first
+https://tickets.puppetlabs.com/browse/PUP-6797
+
+--- puppet-3.8.6/lib/puppet/provider/service/smf.rb.orig	2016-04-19 14:26:51.367951573 -0700
++++ puppet-3.8.6/lib/puppet/provider/service/smf.rb	2016-04-19 14:27:31.661139999 -0700
+@@ -129,6 +129,14 @@ Puppet::Type.type(:service).provide :smf, :parent => :base do
+       return
+     end
+
++    # Check to see if the service exists
++    cmd = Array[command(:svccfg), "select", @resource[:name]]
++    output = Puppet::Util::Execution.execute(
++        cmd, :combine => true, :failonfail => false)
++    if $CHILD_STATUS.exitstatus != 0
++      info output
++    end
++
+     begin
+       # get the current state and the next state, and if the next
+       # state is set (i.e. not "-") use it for state comparison

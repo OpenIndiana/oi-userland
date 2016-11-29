@@ -1,39 +1,45 @@
+Not submitted to upstream
 Add auditing support to agent execution
 
---- puppet-3.8.6/lib/puppet/agent.rb.orig	2016-04-19 14:23:14.948120246 -0700
-+++ puppet-3.8.6/lib/puppet/agent.rb	2016-04-19 14:24:09.178244630 -0700
-@@ -1,4 +1,11 @@
-+#######################################################################
-+# Oracle has modified the originally distributed contents of this file.
-+#######################################################################
-+
+diff --git a/lib/puppet/agent.rb b/lib/puppet/agent.rb
+--- a/lib/puppet/agent.rb
++++ b/lib/puppet/agent.rb
+@@ -1,5 +1,8 @@
  require 'puppet/application'
+ require 'puppet/error'
 +if Facter.value(:osfamily) == "Solaris"
 +  require 'PuppetAudit'
 +end
  
  # A general class for triggering a run of another
  # class.
-@@ -37,6 +44,11 @@
-       return
-     end
+@@ -30,11 +33,15 @@ class Puppet::Agent
  
+   # Perform a run with our client.
+   def run(client_options = {})
++    # Always start an audit record
 +    if Facter.value(:osfamily) == "Solaris"
 +        audit_handle = PuppetAudit.new
 +        audit_handle.audit_start
 +    end
-+
+     if disabled?
+       Puppet.notice "Skipping run of #{client_class}; administratively disabled (Reason: '#{disable_message}');\nUse 'puppet agent --enable' to re-enable."
+       return
+     end
+-
      result = nil
      block_run = Puppet::Application.controlled_run do
        splay client_options.fetch :splay, Puppet[:splay]
-@@ -52,6 +64,10 @@
-           end
-         end
-       end
-+      if Facter.value(:osfamily) == "Solaris"
-+          audit_handle.audit_stop
-+          audit_handle.audit_teardown
-+      end
-       true
+@@ -55,6 +62,12 @@ class Puppet::Agent
      end
      Puppet.notice "Shutdown/restart in progress (#{Puppet::Application.run_status.inspect}); skipping run" unless block_run
+     result
++  ensure
++    # Always stop an audit record
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle.audit_stop
++        audit_handle.audit_teardown
++    end
+   end
+ 
+   def stopping?

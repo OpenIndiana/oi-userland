@@ -1,0 +1,50 @@
+24680838 puppet agent failures should be visible to administrator via SMF interfaces
+
+Patch could be submitted but is unlikely to be accepted by upstream.
+The default behavior is as expected by Puppet.
+
+--- puppet-4.7.0/lib/puppet/util/log.rb.orig	2016-12-07 11:50:30.148628055 +0000
++++ puppet-4.7.0/lib/puppet/util/log.rb	2016-12-07 11:53:27.475565260 +0000
+@@ -16,6 +16,7 @@
+ 
+   @levels = [:debug,:info,:notice,:warning,:err,:alert,:emerg,:crit]
+   @loglevel = 2
++  @degraded = false
+ 
+   @desttypes = {}
+ 
+@@ -52,6 +53,16 @@
+   # Reset log to basics.  Basically just flushes and closes files and
+   # undefs other objects.
+   def Log.close(destination)
++    if Puppet[:degrade_smf_on_error]
++      if !@degraded
++        if Puppet.run_mode.agent?
++          system 'svcadm clear puppet:agent'
++        elsif Puppet.run_mode.master?
++          system 'svcadm clear puppet:master'
++        end
++      end
++    end
++
+     if @destinations.include?(destination)
+       @destinations[destination].flush if @destinations[destination].respond_to?(:flush)
+       @destinations[destination].close if @destinations[destination].respond_to?(:close)
+@@ -168,6 +179,17 @@
+   # a potential for a loop here, if the machine somehow gets the destination set as
+   # itself.
+   def Log.newmessage(msg)
++    if Puppet[:degrade_smf_on_error]
++      if [:err,:alert,:emerg,:crit].include? msg.level and !@degraded
++        @degraded = true
++        if Puppet.run_mode.agent?
++          system 'svcadm mark -s degraded puppet:agent'
++        elsif Puppet.run_mode.master?
++          system 'svcadm mark -s degraded puppet:master'
++        end
++      end
++    end
++
+     return if @levels.index(msg.level) < @loglevel
+ 
+     queuemessage(msg) if @destinations.length == 0

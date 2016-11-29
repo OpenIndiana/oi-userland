@@ -1,5 +1,8 @@
---- puppet-3.8.3/lib/puppet/application/apply.rb.orig	2015-09-21 14:46:28.000000000 -0700
-+++ puppet-3.8.3/lib/puppet/application/apply.rb	2015-12-01 10:21:17.911069347 -0800
+Not submitted to upstream
+
+diff --git a/lib/puppet/application/apply.rb b/lib/puppet/application/apply.rb
+--- a/lib/puppet/application/apply.rb
++++ b/lib/puppet/application/apply.rb
 @@ -1,6 +1,9 @@
  require 'puppet/application'
  require 'puppet/configurer'
@@ -9,30 +12,29 @@
 +end
  
  class Puppet::Application::Apply < Puppet::Application
+   require 'puppet/util/splayer'
+@@ -182,6 +185,12 @@ Copyright (c) 2011 Puppet Labs, LLC Licensed under the Apache 2.0 License
+   end
  
-@@ -217,6 +220,12 @@
-       end
- 
-       begin
-+        # configure auditing on Solaris
-+        if Facter.value(:osfamily) == "Solaris"
-+            audit_handle = PuppetAudit.new
-+            audit_handle.audit_start
-+        end
+   def main
++    # configure auditing on Solaris
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle = PuppetAudit.new
++        audit_handle.audit_start
++    end
 +
-         # Compile our catalog
-         starttime = Time.now
-         catalog = Puppet::Resource::Catalog.indirection.find(node.name, :use_node => node)
-@@ -245,6 +254,12 @@
-       rescue => detail
-         Puppet.log_exception(detail)
-         exit(1)
-+      ensure
-+        # clean up auditing records on Solaris
-+        if Facter.value(:osfamily) == "Solaris"
-+          audit_handle.audit_stop
-+          audit_handle.audit_teardown
-+        end
-       end
+     # Set our code or file to use.
+     if options[:code] or command_line.args.length == 0
+       Puppet[:code] = options[:code] || STDIN.read
+@@ -287,6 +296,11 @@ Copyright (c) 2011 Puppet Labs, LLC Licensed under the Apache 2.0 License
      end
  
+   ensure
++    # clean up auditing records on Solaris
++    if Facter.value(:osfamily) == "Solaris"
++      audit_handle.audit_stop
++      audit_handle.audit_teardown
++    end
+     if @profiler
+       Puppet::Util::Profiler.remove_profiler(@profiler)
+       @profiler.shutdown

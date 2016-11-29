@@ -1,0 +1,321 @@
+From dcd2568b4bcb30962da54a4a12c3d75b3f5da2b5 Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Fri, 9 Dec 2016 15:01:26 -0500
+Subject: [PATCH] Puppet4 paths
+
+Patches not suitable for upstream
+25232171 puppet hard codes new path locations
+25232111 puppet install.rb vardir argument has no impact
+---
+ install.rb                                    |  4 ++--
+ lib/puppet/defaults.rb                        |  2 +-
+ lib/puppet/face/config.rb                     |  2 +-
+ lib/puppet/face/module/install.rb             | 12 ++++++------
+ lib/puppet/face/module/list.rb                | 10 +++++-----
+ lib/puppet/face/module/uninstall.rb           |  4 ++--
+ lib/puppet/provider/package/puppet_gem.rb     |  2 +-
+ lib/puppet/reference/configuration.rb         |  2 +-
+ lib/puppet/util/run_mode.rb                   |  2 +-
+ man/man5/puppet.conf.5                        |  4 ++--
+ man/man8/puppet-config.8                      |  2 +-
+ man/man8/puppet-module.8                      | 14 +++++++-------
+ spec/unit/provider/package/puppet_gem_spec.rb |  2 +-
+ spec/unit/util/run_mode_spec.rb               |  4 ++--
+ 14 files changed, 33 insertions(+), 33 deletions(-)
+
+diff --git a/install.rb b/install.rb
+index bed64d0..dccf787 100755
+--- a/install.rb
++++ b/install.rb
+@@ -178,7 +178,7 @@ def prepare_installation
+     opts.on('--codedir[=OPTIONAL]', 'Installation directory for code files', 'Default /etc/puppetlabs/code') do |codedir|
+       InstallOptions.codedir = codedir
+     end
+-    opts.on('--vardir[=OPTIONAL]', 'Installation directory for var files', 'Default /opt/puppetlabs/puppet/cache') do |vardir|
++    opts.on('--vardir[=OPTIONAL]', 'Installation directory for var files', 'Default /var/puppetlabs/puppet/cache') do |vardir|
+       InstallOptions.vardir = vardir
+     end
+     opts.on('--rundir[=OPTIONAL]', 'Installation directory for state files', 'Default /var/run/puppetlabs') do |rundir|
+@@ -269,7 +269,7 @@ def prepare_installation
+   elsif $operatingsystem == "windows"
+     vardir = File.join(Dir::COMMON_APPDATA, "PuppetLabs", "puppet", "cache")
+   else
+-    vardir = "/opt/puppetlabs/puppet/cache"
++    vardir = "/var/puppetlabs/puppet/cache"
+   end
+ 
+   if not InstallOptions.rundir.nil?
+diff --git a/lib/puppet/defaults.rb b/lib/puppet/defaults.rb
+index fa1aeaa..ff4f210 100644
+--- a/lib/puppet/defaults.rb
++++ b/lib/puppet/defaults.rb
+@@ -1207,7 +1207,7 @@ EOT
+       :desc       => "File that provides mapping between custom SSL oids and user-friendly names"
+     },
+     :basemodulepath => {
+-      :default => "$codedir/modules#{File::PATH_SEPARATOR}/opt/puppetlabs/puppet/modules",
++      :default => "$codedir/modules#{File::PATH_SEPARATOR}/usr/puppetlabs/puppet/modules",
+       :type => :path,
+       :desc => "The search path for **global** modules. Should be specified as a
+         list of directories separated by the system path separator character. (The
+diff --git a/lib/puppet/face/config.rb b/lib/puppet/face/config.rb
+index cd8e746..82a9463 100644
+--- a/lib/puppet/face/config.rb
++++ b/lib/puppet/face/config.rb
+@@ -102,7 +102,7 @@ Puppet::Face.define(:config, '0.0.1') do
+ 
+       Set the vardir for only the agent:
+ 
+-      $ puppet config set vardir /opt/puppetlabs/puppet/cache --section agent
++      $ puppet config set vardir /var/puppetlabs/puppet/cache --section agent
+     EOT
+ 
+     when_invoked do |name, value, options|
+diff --git a/lib/puppet/face/module/install.rb b/lib/puppet/face/module/install.rb
+index d0ab01e..d533547 100644
+--- a/lib/puppet/face/module/install.rb
++++ b/lib/puppet/face/module/install.rb
+@@ -46,20 +46,20 @@ Puppet::Face.define(:module, '1.0.0') do
+ 
+       Install a module into a specific directory:
+ 
+-      $ puppet module install puppetlabs-vcsrepo --target-dir=/opt/puppetlabs/puppet/modules
+-      Preparing to install into /opt/puppetlabs/puppet/modules ...
++      $ puppet module install puppetlabs-vcsrepo --target-dir=/usr/puppetlabs/puppet/modules
++      Preparing to install into /usr/puppetlabs/puppet/modules ...
+       Downloading from https://forgeapi.puppetlabs.com ...
+       Installing -- do not interrupt ...
+-      /opt/puppetlabs/puppet/modules
++      /usr/puppetlabs/puppet/modules
+       └── puppetlabs-vcsrepo (v0.0.4)
+ 
+       Install a module into a specific directory and check for dependencies in other directories:
+ 
+-      $ puppet module install puppetlabs-vcsrepo --target-dir=/opt/puppetlabs/puppet/modules --modulepath /etc/puppetlabs/code/modules
+-      Preparing to install into /opt/puppetlabs/puppet/modules ...
++      $ puppet module install puppetlabs-vcsrepo --target-dir=/usr/puppetlabs/puppet/modules --modulepath /etc/puppetlabs/code/modules
++      Preparing to install into /usr/puppetlabs/puppet/modules ...
+       Downloading from https://forgeapi.puppetlabs.com ...
+       Installing -- do not interrupt ...
+-      /opt/puppetlabs/puppet/modules
++      /usr/puppetlabs/puppet/modules
+       └── puppetlabs-vcsrepo (v0.0.4)
+ 
+       Install a module from a release archive:
+diff --git a/lib/puppet/face/module/list.rb b/lib/puppet/face/module/list.rb
+index cecaf5b..df51df6 100644
+--- a/lib/puppet/face/module/list.rb
++++ b/lib/puppet/face/module/list.rb
+@@ -27,7 +27,7 @@ Puppet::Face.define(:module, '1.0.0') do
+         ├── puppetlabs-mysql (v0.0.1)
+         ├── puppetlabs-sqlite (v0.0.1)
+         └── puppetlabs-stdlib (v2.2.1)
+-        /opt/puppetlabs/puppet/modules (no modules installed)
++        /usr/puppetlabs/puppet/modules (no modules installed)
+ 
+       List installed modules in a tree view:
+ 
+@@ -38,7 +38,7 @@ Puppet::Face.define(:module, '1.0.0') do
+           ├─┬ puppetlabs-mysql (v0.0.1)
+           │ └── bodepd-create_resources (v0.0.1)
+           └── puppetlabs-sqlite (v0.0.1)
+-        /opt/puppetlabs/puppet/modules (no modules installed)
++        /usr/puppetlabs/puppet/modules (no modules installed)
+ 
+       List installed modules from a specified environment:
+ 
+@@ -49,12 +49,12 @@ Puppet::Face.define(:module, '1.0.0') do
+         ├── puppetlabs-mysql (v0.0.1)
+         ├── puppetlabs-sqlite (v0.0.1)
+         └── puppetlabs-stdlib (v2.2.1)
+-        /opt/puppetlabs/puppet/modules (no modules installed)
++        /usr/puppetlabs/puppet/modules (no modules installed)
+ 
+       List installed modules from a specified modulepath:
+ 
+-      $ puppet module list --modulepath /opt/puppetlabs/puppet/modules
+-        /opt/puppetlabs/puppet/modules (no modules installed)
++      $ puppet module list --modulepath /usr/puppetlabs/puppet/modules
++        /usr/puppetlabs/puppet/modules (no modules installed)
+     EOT
+ 
+     when_invoked do |options|
+diff --git a/lib/puppet/face/module/uninstall.rb b/lib/puppet/face/module/uninstall.rb
+index e3c74c5..90c6ed4 100644
+--- a/lib/puppet/face/module/uninstall.rb
++++ b/lib/puppet/face/module/uninstall.rb
+@@ -16,8 +16,8 @@ Puppet::Face.define(:module, '1.0.0') do
+ 
+       Uninstall a module from a specific directory:
+ 
+-      $ puppet module uninstall puppetlabs-ssh --modulepath /opt/puppetlabs/puppet/modules
+-      Removed /opt/puppetlabs/puppet/modules/ssh (v1.0.0)
++      $ puppet module uninstall puppetlabs-ssh --modulepath /usr/puppetlabs/puppet/modules
++      Removed /usr/puppetlabs/puppet/modules/ssh (v1.0.0)
+ 
+       Uninstall a module from a specific environment:
+ 
+diff --git a/lib/puppet/provider/package/puppet_gem.rb b/lib/puppet/provider/package/puppet_gem.rb
+index 8d876a0..86752b7 100644
+--- a/lib/puppet/provider/package/puppet_gem.rb
++++ b/lib/puppet/provider/package/puppet_gem.rb
+@@ -12,6 +12,6 @@ Puppet::Type.type(:package).provide :puppet_gem, :parent => :gem do
+     # sort out the absolute path.
+     commands :gemcmd => "gem"
+   else
+-    commands :gemcmd => "/opt/puppetlabs/puppet/bin/gem"
++    commands :gemcmd => "/usr/bin/gem"
+   end
+ end
+diff --git a/lib/puppet/reference/configuration.rb b/lib/puppet/reference/configuration.rb
+index ac00cab..384077a 100644
+--- a/lib/puppet/reference/configuration.rb
++++ b/lib/puppet/reference/configuration.rb
+@@ -23,7 +23,7 @@ config = Puppet::Util::Reference.newreference(:configuration, :depth => 1, :doc
+     # Now print the data about the item.
+     val = object.default
+     if name.to_s == 'vardir'
+-      val = 'Unix/Linux: /opt/puppetlabs/puppet/cache -- Windows: C:\ProgramData\PuppetLabs\puppet\cache -- Non-root user: ~/.puppetlabs/opt/puppet/cache'
++      val = 'Unix/Linux: /var/puppetlabs/puppet/cache -- Windows: C:\ProgramData\PuppetLabs\puppet\cache -- Non-root user: ~/.puppetlabs/opt/puppet/cache'
+     elsif name.to_s == 'confdir'
+       val = 'Unix/Linux: /etc/puppetlabs/puppet -- Windows: C:\ProgramData\PuppetLabs\puppet\etc -- Non-root user: ~/.puppetlabs/etc/puppet'
+     elsif name.to_s == 'codedir'
+diff --git a/lib/puppet/util/run_mode.rb b/lib/puppet/util/run_mode.rb
+index cf6c461..21968ce 100644
+--- a/lib/puppet/util/run_mode.rb
++++ b/lib/puppet/util/run_mode.rb
+@@ -67,7 +67,7 @@ module Puppet
+       end
+ 
+       def var_dir
+-        which_dir("/opt/puppetlabs/puppet/cache", "~/.puppetlabs/opt/puppet/cache")
++        which_dir("/var/puppetlabs/puppet/cache", "~/.puppetlabs/opt/puppet/cache")
+       end
+ 
+       def run_dir
+diff --git a/man/man5/puppet.conf.5 b/man/man5/puppet.conf.5
+index ff23f71..414cfc8 100644
+--- a/man/man5/puppet.conf.5
++++ b/man/man5/puppet.conf.5
+@@ -121,7 +121,7 @@ The search path for \fBglobal\fR modules\. Should be specified as a list of dire
+ These are the modules that will be used by \fIall\fR environments\. Note that the \fBmodules\fR directory of the active environment will have priority over any global directories\. For more info, see https://docs\.puppetlabs\.com/puppet/latest/reference/environments\.html
+ .
+ .IP "\(bu" 4
+-\fIDefault\fR: $codedir/modules:/opt/puppetlabs/puppet/modules
++\fIDefault\fR: $codedir/modules:/usr/puppetlabs/puppet/modules
+ .
+ .IP "" 0
+ .
+@@ -1730,7 +1730,7 @@ The user puppet master should run as\.
+ Where Puppet stores dynamic and growing data\. The default for this setting is calculated specially, like \fBconfdir\fR_\.
+ .
+ .IP "\(bu" 4
+-\fIDefault\fR: /opt/puppetlabs/puppet/cache
++\fIDefault\fR: /var/puppetlabs/puppet/cache
+ .
+ .IP "" 0
+ .
+diff --git a/man/man8/puppet-config.8 b/man/man8/puppet-config.8
+index 35310d0..5df37e4 100644
+--- a/man/man8/puppet-config.8
++++ b/man/man8/puppet-config.8
+@@ -111,7 +111,7 @@ $ puppet config set rundir /var/run/puppetlabs
+ Set the vardir for only the agent:
+ .
+ .P
+-$ puppet config set vardir /opt/puppetlabs/puppet/cache \-\-section agent
++$ puppet config set vardir /var/puppetlabs/puppet/cache \-\-section agent
+ .
+ .SH "COPYRIGHT AND LICENSE"
+ Copyright 2011 by Puppet Labs Apache 2 license; see COPYING
+diff --git a/man/man8/puppet-module.8 b/man/man8/puppet-module.8
+index 62591fe..b5b05a5 100644
+--- a/man/man8/puppet-module.8
++++ b/man/man8/puppet-module.8
+@@ -340,13 +340,13 @@ $ puppet module install puppetlabs\-vcsrepo \-v 0\.0\.4 Preparing to install int
+ Install a module into a specific directory:
+ .
+ .P
+-$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/opt/puppetlabs/puppet/modules Preparing to install into /opt/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /opt/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
++$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/usr/puppetlabs/puppet/modules Preparing to install into /usr/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /usr/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
+ .
+ .P
+ Install a module into a specific directory and check for dependencies in other directories:
+ .
+ .P
+-$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/opt/puppetlabs/puppet/modules \-\-modulepath /etc/puppetlabs/code/modules Preparing to install into /opt/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /opt/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
++$ puppet module install puppetlabs\-vcsrepo \-\-target\-dir=/usr/puppetlabs/puppet/modules \-\-modulepath /etc/puppetlabs/code/modules Preparing to install into /usr/puppetlabs/puppet/modules \.\.\. Downloading from https://forgeapi\.puppetlabs\.com \.\.\. Installing \-\- do not interrupt \.\.\. /usr/puppetlabs/puppet/modules └── puppetlabs\-vcsrepo (v0\.0\.4)
+ .
+ .P
+ Install a module from a release archive:
+@@ -367,25 +367,25 @@ $ puppet module install puppetlabs\-vcsrepo\-0\.0\.4\.tar\.gz \-\-ignore\-depend
+ List installed modules:
+ .
+ .P
+-$ puppet module list /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /opt/puppetlabs/puppet/modules (no modules installed)
++$ puppet module list /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /usr/puppetlabs/puppet/modules (no modules installed)
+ .
+ .P
+ List installed modules in a tree view:
+ .
+ .P
+-$ puppet module list \-\-tree /etc/puppetlabs/code/modules └─┬ puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-stdlib (v2\.2\.1) ├─┬ puppetlabs\-mysql (v0\.0\.1) │ └── bodepd\-create_resources (v0\.0\.1) └── puppetlabs\-sqlite (v0\.0\.1) /opt/puppetlabs/puppet/modules (no modules installed)
++$ puppet module list \-\-tree /etc/puppetlabs/code/modules └─┬ puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-stdlib (v2\.2\.1) ├─┬ puppetlabs\-mysql (v0\.0\.1) │ └── bodepd\-create_resources (v0\.0\.1) └── puppetlabs\-sqlite (v0\.0\.1) /usr/puppetlabs/puppet/modules (no modules installed)
+ .
+ .P
+ List installed modules from a specified environment:
+ .
+ .P
+-$ puppet module list \-\-environment production /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /opt/puppetlabs/puppet/modules (no modules installed)
++$ puppet module list \-\-environment production /etc/puppetlabs/code/modules ├── bodepd\-create_resources (v0\.0\.1) ├── puppetlabs\-bacula (v0\.0\.2) ├── puppetlabs\-mysql (v0\.0\.1) ├── puppetlabs\-sqlite (v0\.0\.1) └── puppetlabs\-stdlib (v2\.2\.1) /usr/puppetlabs/puppet/modules (no modules installed)
+ .
+ .P
+ List installed modules from a specified modulepath:
+ .
+ .P
+-$ puppet module list \-\-modulepath /opt/puppetlabs/puppet/modules /opt/puppetlabs/puppet/modules (no modules installed)
++$ puppet module list \-\-modulepath /usr/puppetlabs/puppet/modules /usr/puppetlabs/puppet/modules (no modules installed)
+ .
+ .P
+ \fBsearch\fR
+@@ -409,7 +409,7 @@ $ puppet module uninstall puppetlabs\-ssh Removed /etc/puppetlabs/code/modules/s
+ Uninstall a module from a specific directory:
+ .
+ .P
+-$ puppet module uninstall puppetlabs\-ssh \-\-modulepath /opt/puppetlabs/puppet/modules Removed /opt/puppetlabs/puppet/modules/ssh (v1\.0\.0)
++$ puppet module uninstall puppetlabs\-ssh \-\-modulepath /usr/puppetlabs/puppet/modules Removed /usr/puppetlabs/puppet/modules/ssh (v1\.0\.0)
+ .
+ .P
+ Uninstall a module from a specific environment:
+diff --git a/spec/unit/provider/package/puppet_gem_spec.rb b/spec/unit/provider/package/puppet_gem_spec.rb
+index 017e0c4..2817701 100644
+--- a/spec/unit/provider/package/puppet_gem_spec.rb
++++ b/spec/unit/provider/package/puppet_gem_spec.rb
+@@ -20,7 +20,7 @@ describe provider_class do
+   if Puppet.features.microsoft_windows?
+     let(:puppet_gem) { 'gem' }
+   else
+-    let(:puppet_gem) { '/opt/puppetlabs/puppet/bin/gem' }
++    let(:puppet_gem) { '/usr/bin/gem' }
+   end
+ 
+   before :each do
+diff --git a/spec/unit/util/run_mode_spec.rb b/spec/unit/util/run_mode_spec.rb
+index bd7759a..657d40c 100644
+--- a/spec/unit/util/run_mode_spec.rb
++++ b/spec/unit/util/run_mode_spec.rb
+@@ -67,8 +67,8 @@ describe Puppet::Util::RunMode do
+     end
+ 
+     describe "#var_dir" do
+-      it "has vardir /opt/puppetlabs/puppet/cache when run as root" do
+-        as_root { expect(@run_mode.var_dir).to eq(File.expand_path('/opt/puppetlabs/puppet/cache')) }
++      it "has vardir /var/puppetlabs/puppet/cache when run as root" do
++        as_root { expect(@run_mode.var_dir).to eq(File.expand_path('/var/puppetlabs/puppet/cache')) }
+       end
+ 
+       it "has vardir ~/.puppetlabs/opt/puppet/cache when run as non-root" do
+-- 
+2.9.3 (Apple Git-75)
+
+
