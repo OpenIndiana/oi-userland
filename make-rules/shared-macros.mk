@@ -21,6 +21,7 @@
 # Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
+# This setting is overridden in many component Makefiles
 PATH=/usr/bin:/usr/gnu/bin
 
 # The location of an internal mirror of community source archives that we build
@@ -490,7 +491,7 @@ export CCACHE := $(shell \
         fi; \
     fi)
 
-GCC_ROOT =	/usr/gcc/4.9
+GCC_ROOT =	/usr/local
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
