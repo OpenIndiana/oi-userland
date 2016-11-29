@@ -44,8 +44,23 @@ fi
 
 # Disable globbing to prevent privilege escalations by users authorized
 # to set property values for the NTP service.
-set -f 
+set -f
 
+# Do we want to run without setting the clock? If not and we don't have
+# the priv to set the clock, exit. If so, remove the priv and
+# continue on. Set env variable to tell ntpd to ignore EPERM errors.
+val=`svcprop -c -p config/disable_local_time_adjustment $SMF_FMRI`
+if [ "$val" = "true" ]; then
+       	export IGNORE_SYS_TIME_ERROR=1
+	ppriv -s EIP-sys_time $$
+else
+	ppriv -q sys_time
+	if (($? > 0)); then
+		echo "Error: Insufficient privilege to adjust the system clock." \
+	    	" Set the disable_local_time_adjustment property to run anyway."
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+fi
 #
 # Build the command line flags
 #

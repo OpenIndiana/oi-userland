@@ -1,0 +1,180 @@
+This patch is Solaris specific and will not be submitted to the community. It
+makes it possible to suppress the "Not owner" errors if NTP is run in a zone
+without the sys_time privilege needed to adjust the clock. It also adds a check
+for that same privilege so that the service will go into maintenance by default
+if the privilege is missing. 
+
+*** include/ntp_machine.h
+--- include/ntp_machine.h
+*************** extern char *strdup(const char *);
+*** 293,297 ****
+--- 293,298 ----
+  extern time_t	timegm		(struct tm *);
+  #endif
+  
++ extern int	eperm_count;
+  
+  #endif	/* NTP_MACHINE_H */
+*** ntpd/ntp_loopfilter.c
+--- ntpd/ntp_loopfilter.c
+***************
+*** 15,20 ****
+--- 15,21 ----
+  #include "ntp_io.h"
+  #include "ntp_unixtime.h"
+  #include "ntp_stdlib.h"
++ #include "ntp_machine.h"
+  
+  #include <limits.h>
+  #include <stdio.h>
+*************** ntp_adjtime_error_handler(
+*** 263,278 ****
+  			);
+  		    break;
+  		    case EPERM:
+! 			if (tai_call) {
+! 			    errno = saved_errno;
+! 			    msyslog(LOG_ERR,
+! 				"%s: ntp_adjtime(TAI) failed: %m",
+! 				caller);
+  			}
+! 			errno = saved_errno;
+! 			msyslog(LOG_ERR, "%s: %s line %d: ntp_adjtime: %m",
+! 			    caller, file_name(), line
+! 			);
+  		    break;
+  		    default:
+  			msyslog(LOG_NOTICE, "%s: %s line %d: unhandled errno value %d after failed ntp_adjtime call",
+--- 264,284 ----
+  			);
+  		    break;
+  		    case EPERM:
+! 		    	if (!eperm_count) {
+! 				if (tai_call) {
+! 				    errno = saved_errno;
+! 				    msyslog(LOG_ERR,
+! 					"%s: ntp_adjtime(TAI) failed: %m",
+! 					caller);
+! 				}
+! 				errno = saved_errno;
+! 				msyslog(LOG_ERR, "%s: %s line %d: ntp_adjtime: %m",
+! 				    caller, file_name(), line
+! 				);
+! 				msyslog(LOG_ERR, "Is the current zone missing"
+! 				    " the sys_time privilege?");
+  			}
+! 			eperm_count++;
+  		    break;
+  		    default:
+  			msyslog(LOG_NOTICE, "%s: %s line %d: unhandled errno value %d after failed ntp_adjtime call",
+*** libntp/systime.c
+--- libntp/systime.c
+***************
+*** 14,19 ****
+--- 14,20 ----
+  #include "timevalops.h"
+  #include "timespecops.h"
+  #include "ntp_calendar.h"
++ #include "ntp_machine.h"
+  
+  #ifdef HAVE_SYS_PARAM_H
+  # include <sys/param.h>
+***************
+*** 28,33 ****
+--- 29,40 ----
+  int	allow_panic = FALSE;		/* allow panic correction (-g) */
+  int	enable_panic_check = TRUE;	/* Can we check allow_panic's state? */
+  
++ /* Count how many EPERM error we have had. Only log an error on the first
++  * one. Don't even try after the first ten. To suppress the log, initialize
++  * the count to one.
++  */
++ int	eperm_count=0;
++ 
+  #ifndef USE_COMPILETIME_PIVOT
+  # define USE_COMPILETIME_PIVOT 1
+  #endif
+*************** adj_systime(
+*** 346,363 ****
+  		adjtv.tv_usec = -adjtv.tv_usec;
+  		sys_residual = -sys_residual;
+  	}
+  	if (adjtv.tv_sec != 0 || adjtv.tv_usec != 0) {
+! 		if (adjtime(&adjtv, &oadjtv) < 0) {
+! 			msyslog(LOG_ERR, "adj_systime: %m");
+! 			if (enable_panic_check && allow_panic) {
+! 				msyslog(LOG_ERR, "adj_systime: allow_panic is TRUE!");
+  			}
+  			return FALSE;
+  		}
+  	}
+- 	if (enable_panic_check && allow_panic) {
+- 		msyslog(LOG_ERR, "adj_systime: allow_panic is TRUE!");
+- 	}
+  	return TRUE;
+  }
+  #endif
+--- 353,380 ----
+  		adjtv.tv_usec = -adjtv.tv_usec;
+  		sys_residual = -sys_residual;
+  	}
++ 	if (enable_panic_check && allow_panic) {
++ 		msyslog(LOG_ERR, "adj_systime: allow_panic is TRUE!");
++ 	}
+  	if (adjtv.tv_sec != 0 || adjtv.tv_usec != 0) {
+! 		/* After a few tries, give up */
+! 		if (eperm_count < 10) {
+! 			if (adjtime(&adjtv, &oadjtv) < 0) {
+! 				if (errno == EPERM) {
+! 				       	if (!eperm_count) {
+! 						msyslog(LOG_ERR,
+! 						    "adj_systime: %m");
+! 					}
+! 					eperm_count++;
+! 				} else {
+! 					msyslog(LOG_ERR, "adj_systime: %m");
+! 				}
+! 				return FALSE;
+  			}
++ 		} else {
+  			return FALSE;
+  		}
+  	}
+  	return TRUE;
+  }
+  #endif
+*************** step_systime(
+*** 440,446 ****
+  
+  	/* now set new system time */
+  	if (ntp_set_tod(&timetv, NULL) != 0) {
+! 		msyslog(LOG_ERR, "step-systime: %m");
+  		if (enable_panic_check && allow_panic) {
+  			msyslog(LOG_ERR, "step_systime: allow_panic is TRUE!");
+  		}
+--- 457,466 ----
+  
+  	/* now set new system time */
+  	if (ntp_set_tod(&timetv, NULL) != 0) {
+! 		if (errno == EPERM && !eperm_count) {
+! 			msyslog(LOG_ERR, "step-systime: %m");
+! 			eperm_count++;
+! 		}
+  		if (enable_panic_check && allow_panic) {
+  			msyslog(LOG_ERR, "step_systime: allow_panic is TRUE!");
+  		}
+*** ntpd/ntpd.c
+--- ntpd/ntpd.c
+*************** ntpdmain(
+*** 641,646 ****
+--- 641,650 ----
+  	}
+  # endif
+  
++ 	if (getenv("IGNORE_SYS_TIME_ERROR")) {
++ 		eperm_count=1;
++ 	}
++ 
+  /*
+   * Enable the Multi-Media Timer for Windows?
+   */
