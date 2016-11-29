@@ -25,21 +25,43 @@ BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-utils
-COMPONENT_VERSION=	1.0.2
-COMPONENT_PROJECT_URL=	http://portland.freedesktop.org/download/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_VERSION=	1.1.1
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/xdg-utils/
 COMPONENT_ARCHIVE_HASH= \
-	sha256:21aeb7d16b2529b8d3975118f59eec09953e09f9a68d718159e98c90474b01ac
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+	sha256:b0dd63a2576e0bb16f1aa78d6ddf7d6784784a098d4df17161cd6a17c7bc4125
+COMPONENT_ARCHIVE_URL=	http://portland.freedesktop.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=      $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	gnome/interop
 
-TPNO=			9368	
+TPNO=			32590
 
 # Tests require a window system to be up and running
 TEST_TARGET = $(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Replaces patches/0001-xdg-utils-01-bash.patch
+COMPONENT_POST_UNPACK_ACTION += \
+    $(GSED) -i -e 's,^\#!/bin/sh$$,\#!/usr/bin/bash,' $(@D)/scripts/*.in
+
+# Cannot find desc/*.xml during build if tree isn't cloned
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# Use GNU awk & sed
+CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
+COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
+
+# docbook-dtds, xsltproc, & xmlto are used to generate files during the build
+REQUIRED_PACKAGES += data/docbook/docbook-dtds
+REQUIRED_PACKAGES += developer/documentation-tool/xmlto
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += gnome/zenity
+REQUIRED_PACKAGES += library/gnome/gvfs
+REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library/dbus
+REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/gnu-sed
+REQUIRED_PACKAGES += x11/x11-server-utilities
