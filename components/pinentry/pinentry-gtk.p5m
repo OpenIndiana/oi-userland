@@ -22,18 +22,22 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
+# This package requires package pinentry to be installed. To help
+# pkgdepend find that relationship without hardwiring an fmri, specify
+# a dependency on a file known to always be present in the core package,
+# and allow pkgdepend to generate the fmri.
+#
 # Mediation: the mediated options are by default sorted in the order:
 #	priority, version, implementation-order, implementation
 # where "implementation" is sorted lexically.
 # The goal is to give priority of package pinentry-gtk over package pinentry.
 #
 set name=pkg.fmri \
-    value=pkg:/security/pinentry@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="A small command line utility for entering passwords."
+    value=pkg:/security/pinentry-gtk@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A small X11 utility for entering passwords."
 set name=pkg.description \
-    value="A command line curses dialog program that allows GnuPG to read passphrases and PIN numbers in a secure manner."
-set name=com.oracle.info.description value="pinentry utility for command line"
+    value="A X11 (GTK toolkit) dialog program that allows GnuPG to read passphrases and PIN numbers in a secure manner."
+set name=com.oracle.info.description value="pinentry utility for X11 GTK"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
@@ -41,9 +45,11 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2009/397
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/lib/pinentry target=pinentry-curses mediator=pinentry \
-    mediator-implementation=pinentry-curses mediator-priority=vendor
-file path=usr/lib/pinentry-curses mode=0555
-file path=usr/share/info/pinentry.info
+link path=usr/lib/pinentry target=pinentry-gtk-2 mediator=pinentry \
+    mediator-implementation=default mediator-priority=vendor
+file path=usr/lib/pinentry-gtk-2 mode=0555
 license pinentry.license license=GPLv2
 depend type=optional fmri=crypto/gnupg@2.0.17-0.169
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/share/info/pinentry.info \
+    pkg.debug.reason=usr/lib/pinentry-gtk-2
