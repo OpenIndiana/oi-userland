@@ -32,11 +32,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
 COMPONENT_VERSION=	3.5.2
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD, MIT, GPLv2, Curl, PD
 COMPONENT_LICENSE_FILE= cmake.license
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_SUMMARY=A cross-platform, open-source make system
-COMPONENT_DESCRIPTION="CMake is a family of tools designed to build, test and package software.  It is used to control the software compilation process using simple platform and compiler-independent configuration files.  CMake generates native makefiles and workspaces that can be used in the compiler environment of your choice."
+COMPONENT_DESCRIPTION=CMake is a family of tools designed to build, test and package software. \
+It is used to control the software compilation process using simple platform and \
+compiler-independent configuration files.  CMake generates native makefiles and \
+workspaces that can be used in the compiler environment of your choice.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
