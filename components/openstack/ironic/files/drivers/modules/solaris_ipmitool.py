@@ -60,7 +60,7 @@ PLATFORM = platform.system()
 if PLATFORM != "SunOS":
     import tarfile
 else:
-    from pkg.fmri import is_valid_pkg_name
+    from pkg.fmri import IllegalFmri, PkgFmri
     from pkg.misc import valid_pub_prefix, valid_pub_url
 
 
@@ -1211,9 +1211,12 @@ def _validate_fmri_format(fmri):
             "Missing IPS package name in fmri (%s).") % (fmri))
     elif PLATFORM == "SunOS":
         # Validate package name
-        if not is_valid_pkg_name(url.path.strip("/")):
-            raise exception.InvalidParameterValue(_(
-                "Malformed IPS package name in fmri (%s).") % (fmri))
+        try:
+            # PkgFmri object does not like the @latest special case so
+            # strip it off if it's there.
+            _pkgfmri = PkgFmri(fmri.strip('@latest'))
+        except IllegalFmri as err:
+            raise exception.InvalidParameterValue(err)
 
 
 def _validate_publishers(task):
@@ -1232,11 +1235,17 @@ def _validate_publishers(task):
     # Split publishers into list of name@origin publishers
     pub_list = [pub.strip() for pub in pubs.split('+') if pub.strip()]
     for pub in pub_list:
-        # Split into name origin
-        name, origin = pub.split('@', 1)
+        try:
+            # Split into name origin
+            name, origin = pub.split('@', 1)
+        except ValueError:
+            raise exception.InvalidParameterValue(_(
+                "Malformed IPS publisher, must be of format "
+                "name@origin (%s).") % (pub))
+
         if not name or not origin:
             raise exception.InvalidParameterValue(_(
-                "Malformed IPS publisher must be of format "
+                "Malformed IPS publisher, must be of format "
                 "name@origin (%s).") % (pub))
 
         if PLATFORM == "SunOS":
