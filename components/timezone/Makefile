@@ -27,9 +27,9 @@ BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
-COMPONENT_VERSION=    	2016.9
+COMPONENT_VERSION=    	2016.10
 COMPONENT_SRC=
-HUMAN_VERSION=		2016i
+HUMAN_VERSION=		2016j
 TPNO=			24870
 
 # Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
