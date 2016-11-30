@@ -1,5 +1,5 @@
---- lightdm-1.19.3/src/lightdm.c.1	2016-08-10 22:09:32.097905772 +0300
-+++ lightdm-1.19.3/src/lightdm.c	2016-08-10 22:15:35.625093601 +0300
+--- lightdm-1.19.3/src/lightdm.c.1	2016-11-30 11:16:46.549436459 +0300
++++ lightdm-1.19.3/src/lightdm.c	2016-11-30 11:19:57.426432236 +0300
 @@ -20,6 +20,7 @@
  #include <fcntl.h>
  #include <sys/stat.h>
@@ -8,8 +8,8 @@
  
  #include "configuration.h"
  #include "display-manager.h"
-@@ -193,15 +194,56 @@
-     g_list_free_full (sections, g_free);
+@@ -211,9 +212,55 @@
+     }
  }
  
 +static int
@@ -32,18 +32,10 @@
 +        return fd;
 +}
 +
- static void
- signal_cb (Process *process, int signum)
- {
-+    int fd;
-+
-     switch (signum)
-     {
-     case SIGINT:
-     case SIGTERM:
-         g_debug ("Caught %s signal, shutting down", g_strsignal (signum));
-         display_manager_stop (display_manager);
-+	
++static void 
++switch_vt_console()
++{
++       int fd;
 +
 +        /* Switch to VT1 before going down. */
 +        fd = open_a_console ("/dev/vt/active");
@@ -62,6 +54,13 @@
 +                        }
 +                }
 +        }
-         // FIXME: Stop XDMCP server
-         break;
-     case SIGUSR1:
++}
++
+ static void
+ display_manager_stopped_cb (DisplayManager *display_manager)
+ {
++    g_debug ("Switching VT to VT1 before going down");
++    switch_vt_console();
+     g_debug ("Stopping daemon");
+     g_main_loop_quit (loop);
+ }
