@@ -35,6 +35,8 @@ COMPONENT_BUGDB=	library/popt
 
 TPNO=			27265
 
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
@@ -53,6 +55,20 @@ CONFIGURE_OPTIONS +=	--disable-nls
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+# Get correct libpopt.so.0 from the proto area.
+TEST_LIBPATH.32 =       $(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
 # api-sanity-autotest.pl is part of the API Sanity Checker
 # http://ispras.linuxbase.org/index.php/API_Sanity_Autotest
 # (which we don't have in Solaris), so expect that test to fail.
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Entering directory/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/recursive/d"' \
+	'-e "/check-local/d"' \
+	'-e "/check-TESTS/d"' \
+	'-e "/^Making/d"' \
+	'-e "/^make/d"'
