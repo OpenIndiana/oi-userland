@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
 COMPONENT_VERSION= 0.9.154
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
@@ -45,6 +45,9 @@ COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=/usr/share/bash-completion/com
 
 PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
 PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
+
+# Ugly hack to avoid fail on second install
+COMPONENT_PRE_BUILD_ACTION = ($(RM) -r $(PROTO_DIR))
 
 COMPONENT_POST_BUILD_ACTION=( \
     mkdir -p  $(PROTO_DIR)/usr/share/pcs/examples; \
