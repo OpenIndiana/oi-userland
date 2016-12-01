@@ -1,0 +1,99 @@
+diff -ur vim-8.0.0104-orig/src/mbyte.c vim-8.0.0104/src/mbyte.c
+--- vim-8.0.0104-orig/src/mbyte.c	2016-12-01 22:22:14.604601821 +0300
++++ vim-8.0.0104/src/mbyte.c	2016-12-01 22:28:09.039734628 +0300
+@@ -5735,7 +5735,7 @@
+ #endif
+ 
+ #if defined(FEAT_GUI_X11) || defined(PROTO)
+-# if defined(XtSpecificationRelease) && XtSpecificationRelease >= 6 && !defined(sun)
++# if defined(XtSpecificationRelease) && XtSpecificationRelease >= 6 && !defined(__sun)
+ #  define USE_X11R6_XIM
+ # endif
+ 
+diff -ur vim-8.0.0104-orig/src/os_unixx.h vim-8.0.0104/src/os_unixx.h
+--- vim-8.0.0104-orig/src/os_unixx.h	2016-12-01 22:22:14.613874364 +0300
++++ vim-8.0.0104/src/os_unixx.h	2016-12-01 22:27:32.298607140 +0300
+@@ -18,7 +18,7 @@
+ #endif
+ 
+    /* sun's sys/ioctl.h redefines symbols from termio world */
+-#if defined(HAVE_SYS_IOCTL_H) && !defined(sun)
++#if defined(HAVE_SYS_IOCTL_H) && !defined(__sun)
+ # include <sys/ioctl.h>
+ #endif
+ 
+diff -ur vim-8.0.0104-orig/src/osdef1.h.in vim-8.0.0104/src/osdef1.h.in
+--- vim-8.0.0104-orig/src/osdef1.h.in	2016-12-01 22:22:14.615668309 +0300
++++ vim-8.0.0104/src/osdef1.h.in	2016-12-01 22:28:28.989367062 +0300
+@@ -36,7 +36,7 @@
+ extern int	ferror(FILE *);
+ #endif
+ extern int	fflush(FILE *);
+-#if defined(sun) || defined(_SEQUENT_)
++#if defined(__sun) || defined(_SEQUENT_)
+ /* used inside of stdio macros getc(), puts(), putchar()... */
+ extern int	_flsbuf(int, FILE *);
+ extern int	_filbuf(FILE *);
+diff -ur vim-8.0.0104-orig/src/pty.c vim-8.0.0104/src/pty.c
+--- vim-8.0.0104-orig/src/pty.c	2016-12-01 22:22:14.636358209 +0300
++++ vim-8.0.0104/src/pty.c	2016-12-01 22:27:11.643887842 +0300
+@@ -62,7 +62,7 @@
+ #ifdef sinix
+ #undef buf_T
+ #endif
+-# ifdef sun
++# ifdef __sun
+ #  include <sys/conf.h>
+ # endif
+ #endif
+@@ -87,7 +87,7 @@
+ # include <sys/ptem.h>
+ #endif
+ 
+-#if !defined(sun) && !defined(VMS) && !defined(MACOS)
++#if !defined(__sun) && !defined(VMS) && !defined(MACOS)
+ # include <sys/ioctl.h>
+ #endif
+ 
+@@ -166,7 +166,7 @@
+ # endif
+     if (ioctl(fd, I_PUSH, "ldterm") != 0)
+ 	return -1;
+-# ifdef sun
++# ifdef __sun
+     if (ioctl(fd, I_PUSH, "ttcompat") != 0)
+ 	return -1;
+ # endif
+@@ -391,7 +391,7 @@
+ 		continue;
+ 	    }
+ #endif
+-#if defined(sun) && defined(TIOCGPGRP) && !defined(SUNOS3)
++#if defined(__sun) && defined(TIOCGPGRP) && !defined(SUNOS3)
+ 	    /* Hack to ensure that the slave side of the pty is
+ 	     * unused. May not work in anything other than SunOS4.1
+ 	     */
+diff -ur vim-8.0.0104-orig/src/vim.h vim-8.0.0104/src/vim.h
+--- vim-8.0.0104-orig/src/vim.h	2016-12-01 22:22:14.685623662 +0300
++++ vim-8.0.0104/src/vim.h	2016-12-01 22:26:19.952255749 +0300
+@@ -2498,7 +2498,7 @@
+ #define FNE_INCL_BR	1	/* include [] in name */
+ #define FNE_CHECK_START	2	/* check name starts with valid character */
+ 
+-#if (defined(sun) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)) \
++#if (defined(__sun) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)) \
+ 	&& defined(S_ISCHR)
+ # define OPEN_CHR_FILES
+ #endif
+diff -ur vim-8.0.0104-orig/src/xxd/xxd.c vim-8.0.0104/src/xxd/xxd.c
+--- vim-8.0.0104-orig/src/xxd/xxd.c	2016-12-01 22:22:14.690933759 +0300
++++ vim-8.0.0104/src/xxd/xxd.c	2016-12-01 22:27:55.069610969 +0300
+@@ -119,7 +119,7 @@
+  * FILE is defined on OS 4.x, not on 5.x (Solaris).
+  * if __SVR4 is defined (some Solaris versions), don't include this.
+  */
+-#if defined(sun) && defined(FILE) && !defined(__SVR4) && defined(__STDC__)
++#if defined(__sun) && defined(FILE) && !defined(__SVR4) && defined(__STDC__)
+ #  define __P(a) a
+ /* excerpt from my sun_stdlib.h */
+ extern int fprintf __P((FILE *, char *, ...));
