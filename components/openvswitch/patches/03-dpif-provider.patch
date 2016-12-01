@@ -95,3 +95,32 @@ index 028e7e0..62e0cf1 100644
  
  /* Translates the 'ofpacts_len' bytes of "struct ofpacts" starting at 'ofpacts'
   * into datapath actions in 'odp_actions', using 'ctx'.
+diff --git a/ofproto/ofproto-dpif-upcall.c b/ofproto/ofproto-dpif-upcall.c
+index 193e6b7..23cfa4d 100644
+--- a/ofproto/ofproto-dpif-upcall.c
++++ b/ofproto/ofproto-dpif-upcall.c
+@@ -997,8 +997,11 @@ handle_upcalls(struct handler *handler, struct hmap *misses,
+             struct ofpbuf mask;
+             bool megaflow;
+ 
+-            miss->put = true;
++#ifdef __sun
++            if (miss->xout.nf_output_iface != NF_OUT_FLOOD) {
++#endif
+ 
++            miss->put = true;
+             atomic_read(&enable_megaflows, &megaflow);
+             ofpbuf_use_stack(&mask, &miss->mask_buf, sizeof miss->mask_buf);
+             if (megaflow) {
+@@ -1031,6 +1034,11 @@ handle_upcalls(struct handler *handler, struct hmap *misses,
+                 op->u.flow_put.actions = ofpbuf_data(&buf);
+                 op->u.flow_put.actions_len = ofpbuf_size(&buf);
+             }
++#ifdef __sun
++            } else {
++                VLOG_DBG("handle_upcalls flush action, do not flow_put");
++            }
++#endif
+         }
+ 
+         /*
