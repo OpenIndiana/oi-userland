@@ -51,7 +51,8 @@ def uncompress_unpack_commands(filename, verbose=False):
 	elif (re.search("(\.oxt)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
 	elif (re.search("(\.gem)$", filename) != None):
-		uncompress = "/usr/bin/gem unpack"
+		ruby_ver = os.getenv('RUBY_VERSION', '')
+		uncompress = "/usr/ruby/" + ruby_ver + "/bin/gem unpack"
 
 	unpack = " | gtar -xf -"
 

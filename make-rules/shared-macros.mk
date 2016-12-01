@@ -78,6 +78,12 @@ CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
+# Defines $(space) as a single blank space, so we can use it to convert
+# space-separated paths to colon-separated paths in variables with
+# $(subst $(space),:,$(strip $(SPATHS)))
+empty :=
+space := $(empty) $(empty)
+
 ROOT =			/
 
 # Native OS version
@@ -566,10 +572,22 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  1.9
-RUBY_LIB_VERSION =      1.9.1
-RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
+RUBY_VERSION =  2.3
+RUBY_LIB_VERSION.2.2 = 2.2.0	
+RUBY_LIB_VERSION.2.3 = 2.3.0
+RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
+RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
 RUBY =          $(RUBY.$(RUBY_VERSION))
+RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
+
+# Transform Ruby scripts to call the supported
+# version-specific ruby; used in multiple *.mk files
+RUBY_SCRIPT_FIX_FUNC = \
+    $(GNU_GREP) -Rl '^\#! */usr/bin/env ruby' | \
+        /usr/bin/xargs -I\{\} $(GSED) -i -e \
+        '1s%^\#! */usr/bin/env ruby%\#!/usr/ruby/$(RUBY_VERSION)/bin/ruby%' \
+        \{\}
+
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
 # both the ruby version and the ruby library version are needed.
@@ -744,6 +762,7 @@ SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
+GNU_GREP =	/usr/gnu/bin/grep
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
