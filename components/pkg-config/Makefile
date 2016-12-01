@@ -35,17 +35,23 @@ COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 
 TPNO=			26453
 
+SYSTEM_TEST_TARGET=	build $(SYSTEM_TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
 CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 
-COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(USRBINDIR)
+COMPONENT_TEST_DIR =		$(@D)/check
+COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):$(USRBINDIR)
 
-# The additional pkg-config specific set of transforms to be applied to the
-# test results to try to normalize them.
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/check
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
+COMPONENT_SYSTEM_TEST_TARGETS =	TESTS_PKG_CONFIG=/usr/bin/pkg-config check
+
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^+ sed -e /d" '
+	'-e "/Entering directory/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/^make/d"'
 
 ifeq ($(OS_VERSION),5.11)
 OLD_DESKTOP_BUILD=	0.175.2.0.0.21.0
