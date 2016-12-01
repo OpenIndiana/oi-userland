@@ -1,0 +1,22 @@
+Patch origin: upstream
+Patch status: expected to be included in a future release
+
+https://github.com/stedolan/jq/pull/1204
+
+--- a/builtin.c
++++ b/builtin.c
+@@ -1,6 +1,14 @@
+ #define _BSD_SOURCE
+ #define _GNU_SOURCE
+ #define _XOPEN_SOURCE
++#define _XOPEN_SOURCE_EXTENDED 1
++#ifndef __sun__
++# define _XOPEN_SOURCE
++# define _XOPEN_SOURCE_EXTENDED 1
++#else
++# define _XPG6
++# define __EXTENSIONS__
++#endif
+ #include <sys/time.h>
+ #include <stdlib.h>
+ #include <stddef.h>
