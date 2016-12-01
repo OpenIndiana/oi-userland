@@ -37,6 +37,7 @@ COMPONENT_BUGDB=	library/libarchive
 TPNO=			29683
 
 TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
