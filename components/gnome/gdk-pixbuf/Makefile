@@ -30,21 +30,17 @@ BUILD_BITS =		32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdk-pixbuf
-COMPONENT_VERSION=	2.32.1
+COMPONENT_VERSION=	2.36.0
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GdkPixbuf
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4432b74f25538c7d6bcb3ca51adabdd666168955f25812a2568dc9637697f3bc
+    sha256:85ab52ce9f2c26327141b3dcf21cca3da6a3f8de84b95fa1e727d8871a23245c
 COMPONENT_BUGDB=	gnome/libraries
 
-TPNO=			24751
+TPNO=			32697
 
 # Requires newer version of library/glib2 which we cannot build on 11.3, so
 # do not publish.
-ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
-PUBLISH_STAMP=
-endif
+include $(WS_MAKE_RULES)/no-evaluation.mk
 
 SYSTEM_TEST_TARGET= $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 include $(WS_MAKE_RULES)/gnome-component.mk
