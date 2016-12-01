@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pcs
 COMPONENT_VERSION= 0.9.154
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Shells
 COMPONENT_PROJECT_URL= https://github.com/ClusterLabs/pcs
@@ -29,8 +30,9 @@ COMPONENT_SUMMARY= Pacemaker command line interface and GUI.
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
-PATH= /usr/gnu/bin:/usr/ruby/1.9/bin/:/usr/bin:/usr/sbin:/sbin
+PATH= /usr/gnu/bin:/usr/ruby/$(RUBY_VERSION)/bin/:/usr/bin:/usr/sbin:/sbin
 
 PATCH_LEVEL= 1
 
@@ -44,10 +46,6 @@ COMPONENT_BUILD_GMAKE_ARGS += BASH_COMPLETION_DIR=/usr/share/bash-completion/com
 PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
 PKG_MACROS += RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 
-# This needs to be removed and fixed by getting bundler package inside. Commenting out for now.
-#COMPONENT_PRE_BUILD_ACTION=( \
-#   gem install bundle ) 														
-														
 COMPONENT_POST_BUILD_ACTION=( \
     mkdir -p  $(PROTO_DIR)/usr/share/pcs/examples; \
     mv $(PROTO_DIR)/etc/logrotate.d    $(PROTO_DIR)/usr/share/pcs/examples )
@@ -67,6 +65,7 @@ test:           $(TESTS_32)
 
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/ruby/bundler
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += system/library
