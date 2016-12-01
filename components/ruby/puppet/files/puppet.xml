@@ -65,13 +65,13 @@
     <stability value="Unstable"/>
     <template>
       <common_name>
-        <loctext xml:lang="C">Puppet version 3.6.2</loctext>
+        <loctext xml:lang="C">Puppet version 3.8.6</loctext>
       </common_name>
       <documentation>
         <manpage title="puppet-master" section="8" manpath="/usr/share/man"/>
       </documentation>
-      <pg_pattern required="false" type="application" name="config">
-        <prop_pattern required="false" type="astring" name="agent_catalog_run_lockfile">
+      <pg_pattern name="config" required="false" type="application">
+        <prop_pattern name="agent_catalog_run_lockfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 A lock file to indicate that a puppet agent catalog run is currently in progress.
@@ -79,7 +79,7 @@ The file contains the pid of the process that holds the lock on the catalog run.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="agent_disabled_lockfile">
+        <prop_pattern name="agent_disabled_lockfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 A lock file to indicate that puppet agent runs have been administratively
@@ -87,7 +87,7 @@ disabled.  File contains a JSON object with state information.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="allow_duplicate_certs">
+        <prop_pattern name="allow_duplicate_certs" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to allow a new certificate
@@ -95,7 +95,7 @@ request to overwrite an existing certificate.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="allow_variables_with_dashes">
+        <prop_pattern name="allow_variables_with_dashes" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Permit hyphens (`-`) in variable names and issue deprecation warnings about
@@ -110,21 +110,40 @@ revert it to `false` after you have renamed all affected variables.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="archive_file_server">
+        <prop_pattern name="always_cache_features" required="false" type="boolean">
+          <description>
+            <loctext xml:lang="C">
+Affects how we cache attempts to load Puppet 'features'.  If false, then
+calls to `Puppet.features.&lt;feature&gt;?` will always attempt to load the
+feature (which can be an expensive operation) unless it has already been
+loaded successfully.  This makes it possible for a single agent run to,
+e.g., install a package that provides the underlying capabilities for
+a feature, and then later load that feature during the same run (even if
+the feature had been tested earlier and had not been available).
+
+If this setting is set to true, then features will only be checked once,
+and if they are not available, the negative result is cached and returned
+for all subsequent attempts to load the feature.  This behavior is almost
+always appropriate for the server, and can result in a significant performance
+improvement for features that are checked frequently.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="archive_file_server" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 During an inspect run, the file bucket server to archive files to if archive_files is set.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="archive_files">
+        <prop_pattern name="archive_files" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 During an inspect run, whether to archive files whose contents are audited to a file bucket.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="async_storeconfigs">
+        <prop_pattern name="async_storeconfigs" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to use a queueing system to provide asynchronous database integration.
@@ -132,14 +151,14 @@ Requires that `puppet queue` be running.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="autoflush">
+        <prop_pattern name="autoflush" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether log files should always flush to disk.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="autosign">
+        <prop_pattern name="autosign" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Whether (and how) to autosign certificate requests. This setting
@@ -169,7 +188,7 @@ For info on autosign configuration files, see
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="basemodulepath">
+        <prop_pattern name="basemodulepath" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The search path for **global** modules. Should be specified as a
@@ -186,23 +205,14 @@ setting, which is used when directory environments are disabled.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="biff">
-          <description>
-            <loctext xml:lang="C">
-Turns on Biff the catalog builder, future parser, and future evaluator.
-This is an experimental feature - and this setting may go away before
-release of Pupet 3.6.
-	    </loctext>
-          </description>
-        </prop_pattern>
-        <prop_pattern required="false" type="net_address" name="bindaddress">
+        <prop_pattern name="bindaddress" required="false" type="net_address">
           <description>
             <loctext xml:lang="C">
 The address a listening server should bind to.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="binder">
+        <prop_pattern name="binder" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Turns the binding system on or off. This includes bindings in modules.
@@ -211,7 +221,7 @@ The binding system is experimental and any or all of it may change.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="binder_config">
+        <prop_pattern name="binder_config" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The binder configuration file. Puppet reads this file on each request to configure the bindings system.
@@ -220,35 +230,35 @@ is used. If the setting :binding_config is specified, it must reference a valid 
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="bucketdir">
+        <prop_pattern name="bucketdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where FileBucket files are stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ca">
+        <prop_pattern name="ca" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether the master should function as a certificate authority.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ca_name">
+        <prop_pattern name="ca_name" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The name to use the Certificate Authority certificate.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="ca_port">
+        <prop_pattern name="ca_port" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The port to use for the certificate authority.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="ca_server">
+        <prop_pattern name="ca_server" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The server to use for certificate
@@ -257,7 +267,7 @@ and does not need to horizontally scale.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="ca_ttl">
+        <prop_pattern name="ca_ttl" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The default TTL for new certificates.
@@ -265,63 +275,63 @@ This setting can be a time interval in seconds (30 or 30s), minutes (30m), hours
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="cacert">
+        <prop_pattern name="cacert" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The CA certificate.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="cacrl">
+        <prop_pattern name="cacrl" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The certificate revocation list (CRL) for the CA. Will be used if present but otherwise ignored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="cadir">
+        <prop_pattern name="cadir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The root directory for the certificate authority.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="cakey">
+        <prop_pattern name="cakey" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The CA private key.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="capass">
+        <prop_pattern name="capass" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the CA stores the password for the private key.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="caprivatedir">
+        <prop_pattern name="caprivatedir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the CA stores private certificate information.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="capub">
+        <prop_pattern name="capub" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The CA public key.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="catalog_cache_terminus">
+        <prop_pattern name="catalog_cache_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 How to store cached catalogs. Valid values are 'json', 'msgpack' and 'yaml'. The agent application defaults to 'json'.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="catalog_format">
+        <prop_pattern name="catalog_format" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 (Deprecated for 'preferred_serialization_format') What format to
@@ -330,7 +340,7 @@ matters on the client, since it asks the server for a specific format.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="catalog_terminus">
+        <prop_pattern name="catalog_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to get node catalogs.  This is useful to change if, for instance,
@@ -338,7 +348,7 @@ you'd like to pre-compile catalogs and store them in memcached or some other eas
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="cert_inventory">
+        <prop_pattern name="cert_inventory" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The inventory file. This is a text file to which the CA writes a
@@ -346,14 +356,14 @@ complete listing of all certificates.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="certdir">
+        <prop_pattern name="certdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The certificate directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="certdnsnames">
+        <prop_pattern name="certdnsnames" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The `certdnsnames` setting is no longer functional,
@@ -369,7 +379,7 @@ labels added while generating your own CSR.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="certificate_expire_warning">
+        <prop_pattern name="certificate_expire_warning" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The window of time leading up to a certificate's expiration that a notification
@@ -377,7 +387,7 @@ will be logged. This applies to CA, master, and agent certificates. This setting
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="certificate_revocation">
+        <prop_pattern name="certificate_revocation" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether certificate revocation should be supported by downloading a
@@ -386,15 +396,43 @@ to all clients.  If enabled, CA chaining will almost definitely not work.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="hostname" name="certname">
+        <prop_pattern name="certname" required="false" type="hostname">
           <description>
             <loctext xml:lang="C">
-The name to use when handling certificates.  Defaults
-to the fully qualified domain name.
+The name to use when handling certificates. When a node
+requests a certificate from the CA puppet master, it uses the value of the
+`certname` setting as its requested Subject CN.
+
+This is the name used when managing a node's permissions in
+[auth.conf](http://docs.puppetlabs.com/puppet/latest/reference/config_file_auth.html).
+In most cases, it is also used as the node's name when matching
+[node definitions](http://docs.puppetlabs.com/puppet/latest/reference/lang_node_definitions.html)
+and requesting data from an ENC. (This can be changed with the `node_name_value`
+and `node_name_fact` settings, although you should only do so if you have
+a compelling reason.)
+
+A node's certname is available in Puppet manifests as `$trusted['certname']`. (See
+[Facts and Built-In Variables](http://docs.puppetlabs.com/puppet/latest/reference/lang_facts_and_builtin_vars.html)
+for more details.)
+
+* For best compatibility, you should limit the value of `certname` to
+  only use letters, numbers, periods, underscores, and dashes. (That is,
+  it should match `/A[a-z0-9._-]+Z/`.)
+* The special value `ca` is reserved, and can't be used as the certname
+  for a normal node.
+
+Defaults to the node's fully qualified domain name.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="classfile">
+        <prop_pattern name="cfacter" required="false" type="boolean">
+          <description>
+            <loctext xml:lang="C">
+Whether or not to use the native facter (cfacter) implementation instead of the Ruby one (facter). Defaults to false.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="classfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The file in which puppet agent stores a list of the classes
@@ -404,28 +442,28 @@ option.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="client_datadir">
+        <prop_pattern name="client_datadir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which serialized data is stored on the client.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="clientbucketdir">
+        <prop_pattern name="clientbucketdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where FileBucket files are stored locally.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="clientyamldir">
+        <prop_pattern name="clientyamldir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which client-side YAML data is stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="code">
+        <prop_pattern name="code" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Code to parse directly.  This is essentially only used
@@ -434,7 +472,7 @@ executable.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="color">
+        <prop_pattern name="color" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Whether to use colors when logging to the console.  Valid values are
@@ -443,7 +481,7 @@ Defaults to false on Windows, as its console does not support ansi colors.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="confdir">
+        <prop_pattern name="confdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The main Puppet configuration directory.  The default for this setting
@@ -454,21 +492,21 @@ in the user's home directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="config">
+        <prop_pattern name="config" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The configuration file for the current puppet application.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="config_file_name">
+        <prop_pattern name="config_file_name" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The name of the puppet config file.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="config_version">
+        <prop_pattern name="config_version" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 How to determine the configuration version.  By default, it will be the
@@ -482,7 +520,7 @@ http://docs.puppetlabs.com/puppet/latest/reference/environments.html
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="configprint">
+        <prop_pattern name="configprint" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Print the value of a specific configuration setting.  If the name of a
@@ -492,7 +530,7 @@ specify 'all'.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="configtimeout">
+        <prop_pattern name="configtimeout" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 How long the client should wait for the configuration to be retrieved
@@ -501,7 +539,7 @@ many clients contact the server at one time. This setting can be a time interval
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="uri" name="couchdb_url">
+        <prop_pattern name="couchdb_url" required="false" type="uri">
           <description>
             <loctext xml:lang="C">
 The url where the puppet couchdb database will be created.
@@ -509,7 +547,7 @@ Only used when `facts_terminus` is set to `couch`.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="csr_attributes">
+        <prop_pattern name="csr_attributes" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 An optional file containing custom attributes to add to certificate signing
@@ -539,14 +577,14 @@ for site-specific extensions.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="csrdir">
+        <prop_pattern name="csrdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the CA stores certificate requests
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="daemonize">
+        <prop_pattern name="daemonize" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to send the process into the background.  This defaults
@@ -555,21 +593,21 @@ currently cannot daemonize).
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="data_binding_terminus">
+        <prop_pattern name="data_binding_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to retrive information about data.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbadapter">
+        <prop_pattern name="dbadapter" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The type of database to use. This setting is only used by the ActiveRecord storeconfigs and inventory backends, which are deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbconnections">
+        <prop_pattern name="dbconnections" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The number of database connections for networked
@@ -577,28 +615,28 @@ databases.  Will be ignored unless the value is a positive integer. This setting
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dblocation">
+        <prop_pattern name="dblocation" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The sqlite database file. This setting is only used by the ActiveRecord storeconfigs and inventory backends, which are deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="dbmigrate">
+        <prop_pattern name="dbmigrate" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to automatically migrate the database. This setting is only used by the ActiveRecord storeconfigs and inventory backends, which are deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbname">
+        <prop_pattern name="dbname" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The name of the database to use. This setting is only used by the ActiveRecord storeconfigs and inventory backends, which are deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbpassword">
+        <prop_pattern name="dbpassword" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The database password for caching. Only
@@ -606,7 +644,7 @@ used when networked databases are used. This setting is only used by the ActiveR
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbport">
+        <prop_pattern name="dbport" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The database password for caching. Only
@@ -614,7 +652,7 @@ used when networked databases are used. This setting is only used by the ActiveR
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="dbserver">
+        <prop_pattern name="dbserver" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The database server for caching. Only
@@ -622,7 +660,7 @@ used when networked databases are used.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbsocket">
+        <prop_pattern name="dbsocket" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The database socket location. Only used when networked
@@ -630,7 +668,7 @@ databases are used.  Will be ignored if the value is an empty string. This setti
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dbuser">
+        <prop_pattern name="dbuser" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The database user for caching. Only
@@ -638,7 +676,7 @@ used when networked databases are used. This setting is only used by the ActiveR
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="default_file_terminus">
+        <prop_pattern name="default_file_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The default source for files if no server is given in a
@@ -648,7 +686,24 @@ is `file_server`, causing requests to be filled locally.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="default_schedules">
+        <prop_pattern name="default_manifest" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+The default main manifest for directory environments. Any environment that
+doesn't set the `manifest` setting in its `environment.conf` file will use
+this manifest.
+
+This setting's value can be an absolute or relative path. An absolute path
+will make all environments default to the same main manifest; a relative
+path will allow each environment to use its own manifest, and Puppet will
+resolve the path relative to each environment's main directory.
+
+In either case, the path can point to a single file or to a directory of
+manifests to be evaluated in alphabetical order.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="default_schedules" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Boolean; whether to generate the default schedule resources. Setting this to
@@ -656,21 +711,21 @@ false is useful for keeping external report processors clean of skipped schedule
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="deviceconfig">
+        <prop_pattern name="deviceconfig" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Path to the device config file for puppet device.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="devicedir">
+        <prop_pattern name="devicedir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The root directory of devices' $vardir.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="diff">
+        <prop_pattern name="diff" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Which diff command to use when printing differences between files. This setting
@@ -679,7 +734,7 @@ third-party diff tools.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="diff_args">
+        <prop_pattern name="diff_args" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Which arguments to pass to the diff command when printing differences between
@@ -687,7 +742,7 @@ files. The command to use can be chosen with the `diff` setting.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="digest_algorithm">
+        <prop_pattern name="digest_algorithm" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Which digest algorithm to use for file resources and the filebucket.
@@ -695,15 +750,35 @@ Valid values are md5, sha256. Default is md5.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="disable_warnings">
+        <prop_pattern name="disable_per_environment_manifest" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
-A list of warning types to disable. Currently the only warning type that can be
-disabled are deprecations, but more warning types may be added later.
+Whether to disallow an environment-specific main manifest. When set
+to `true`, Puppet will use the manifest specified in the `default_manifest` setting
+for all environments. If an environment specifies a different main manifest in its
+`environment.conf` file, catalog requests for that environment will fail with an error.
+
+This setting requires `default_manifest` to be set to an absolute path.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="dns_alt_names">
+        <prop_pattern name="disable_warnings" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+A comma-separated list of warning types to suppress. If large numbers
+of warnings are making Puppet's logs too large or difficult to use, you
+can temporarily silence them with this setting.
+
+If you are preparing to upgrade Puppet to a new major version, you
+should re-enable all warnings for a while.
+
+Valid values for this setting are:
+
+* `deprecations` --- disables deprecation warnings.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="dns_alt_names" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The comma-separated list of alternative DNS names to use for the local host.
@@ -725,7 +800,7 @@ respond on two physically separate networks under different names.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="document_all">
+        <prop_pattern name="document_all" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to document all resources when using `puppet doc` to
@@ -733,7 +808,7 @@ generate manifest documentation.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="dynamicfacts">
+        <prop_pattern name="dynamicfacts" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 (Deprecated) Facts that are dynamic; these facts will be ignored when deciding whether
@@ -742,7 +817,7 @@ comma-separated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="environment">
+        <prop_pattern name="environment" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The environment Puppet is running in.  For clients
@@ -752,15 +827,40 @@ this provides the default environment for nodes we know nothing about.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="environment_timeout">
+        <prop_pattern name="environment_timeout" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
-The time to live for a cached environment. The time is either given This setting can be a time interval in seconds (30 or 30s), minutes (30m), hours (6h), days (2d), or years (5y)., or
-the word 'unlimited' which causes the environment to be cached until the master is restarted.
+How long the Puppet master should cache data it loads from an
+environment.
+This setting can be a time interval in seconds (30 or 30s), minutes (30m), hours (6h), days (2d), or years (5y).
+A value of `0` will disable caching. This setting can also be set to
+`unlimited`, which will cache environments until the master is restarted
+or told to refresh the cache.
+
+You should change this setting once your Puppet deployment is doing
+non-trivial work. We chose the default value of `0` because it lets new
+users update their code without any extra steps, but it lowers the
+performance of your Puppet master.
+
+We recommend setting this to `unlimited` and explicitly refreshing your
+Puppet master as part of your code deployment process.
+
+* With Puppet Server, you should refresh environments by calling the
+  `environment-cache` API endpoint. See the docs for the Puppet Server
+  administrative API.
+* With a Rack Puppet master, you should restart the web server or the
+  application server. Passenger lets you touch a `restart.txt` file to
+  refresh an application without restarting Apache; see the Passenger docs
+  for details.
+
+We don't recommend using any value other than `0` or `unlimited`, since
+most Puppet masters use a pool of Ruby interpreters which all have their
+own cache timers. When these timers drift out of sync, agents can be served
+inconsistent catalogs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="environmentpath">
+        <prop_pattern name="environmentpath" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 A search path for directory environments, as a list of directories
@@ -773,7 +873,7 @@ http://docs.puppetlabs.com/puppet/latest/reference/environments.html
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="evaltrace">
+        <prop_pattern name="evaltrace" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether each resource should log when it is
@@ -782,30 +882,7 @@ what is being done.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="evaluator">
-          <description>
-            <loctext xml:lang="C">
-Which evaluator to use when compiling Puppet manifests. Valid values
-are `current` and `future` (the default).
-
-**Note:** This setting is only used when `parser = future`. It allows
-testers to turn off the `future` evaluator when doing detailed tests and
-comparisons of the new compilation system.
-
-Evaluation is the second stage of catalog compilation. After the parser
-converts a manifest to a model of expressions, the evaluator processes
-each expression. (For example, a resource declaration signals the
-evaluator to add a resource to the catalog).
-
-The `future` parser and evaluator are slated to become default in Puppet
-4. Their purpose is to add new features and improve consistency
-and reliability.
-
-Available Since Puppet 3.5.
-	    </loctext>
-          </description>
-        </prop_pattern>
-        <prop_pattern required="false" type="astring" name="external_nodes">
+        <prop_pattern name="external_nodes" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 An external command that can produce node information.  The command's output
@@ -819,7 +896,7 @@ information in other data sources like databases.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="factpath">
+        <prop_pattern name="factpath" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet should look for facts.  Multiple directories should
@@ -828,21 +905,21 @@ separator is ':', and the Windows path separator is ';'.)
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="facts_terminus">
+        <prop_pattern name="facts_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The node facts terminus.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="fileserverconfig">
+        <prop_pattern name="fileserverconfig" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the fileserver configuration is stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="filetimeout">
+        <prop_pattern name="filetimeout" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The minimum time to wait between checking for updates in
@@ -851,7 +928,14 @@ a file (such as manifests or templates) has changed on disk. This setting can be
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="freeze_main">
+        <prop_pattern name="forge_authorization" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+The authorization key to connect to the Puppet Forge. Leave blank for unauthorized or license based connections
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="freeze_main" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Freezes the 'main' class, disallowing any code to be added to it.  This
@@ -860,7 +944,7 @@ class, or definition other than in the site manifest.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="genmanifest">
+        <prop_pattern name="genmanifest" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to just print a manifest to stdout and exit.  Only makes
@@ -869,7 +953,7 @@ on the CLI.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="graph">
+        <prop_pattern name="graph" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to create dot graph files for the different
@@ -878,35 +962,35 @@ like OmniGraffle or dot (which is part of ImageMagick).
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="graphdir">
+        <prop_pattern name="graphdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to store dot-outputted graphs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="group">
+        <prop_pattern name="group" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The group puppet master should run as.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hiera_config">
+        <prop_pattern name="hiera_config" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The hiera configuration file. Puppet only reads this file on startup, so you must restart the puppet master every time you edit it.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hostcert">
+        <prop_pattern name="hostcert" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where individual hosts store and look for their certificates.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hostcrl">
+        <prop_pattern name="hostcrl" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the host's certificate revocation list can be found.
@@ -914,28 +998,28 @@ This is distinct from the certificate authority's CRL.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hostcsr">
+        <prop_pattern name="hostcsr" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where individual hosts store and look for their certificate requests.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hostprivkey">
+        <prop_pattern name="hostprivkey" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where individual hosts store and look for their private key.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="hostpubkey">
+        <prop_pattern name="hostpubkey" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where individual hosts store and look for their public key.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="http_compression">
+        <prop_pattern name="http_compression" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Allow http compression in REST communication with the master.
@@ -948,29 +1032,64 @@ if it supports it, this setting might reduce performance on high-speed LANs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="http_proxy_host">
+        <prop_pattern name="http_debug" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
-The HTTP proxy host to use for outgoing connections.  Note: You
-may need to use a FQDN for the server hostname when using a proxy.
+Whether to write HTTP request and responses to stderr. This should never be used in a production environment.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="http_proxy_port">
+        <prop_pattern name="http_keepalive_timeout" required="false" type="integer">
+          <description>
+            <loctext xml:lang="C">
+The maximum amount of time a persistent HTTP connection can remain idle in the connection pool, before it is closed.  This timeout should be shorter than the keepalive timeout used on the HTTP server, e.g. Apache KeepAliveTimeout directive.
+This setting can be a time interval in seconds (30 or 30s), minutes (30m), hours (6h), days (2d), or years (5y).
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="http_proxy_host" required="false" type="host">
+          <description>
+            <loctext xml:lang="C">
+The HTTP proxy host to use for outgoing connections.  Note: You
+may need to use a FQDN for the server hostname when using a proxy. Environment variable
+http_proxy or HTTP_PROXY will override this value
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="http_proxy_password" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+The password for the user of an authenticated HTTP proxy.
+Requires the `http_proxy_user` setting.
+
+Note that passwords must be valid when used as part of a URL. If a password
+contains any characters with special meanings in URLs (as specified by RFC 3986
+` would become `%23`.)
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="http_proxy_port" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The HTTP proxy port to use for outgoing connections
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="httplog">
+        <prop_pattern name="http_proxy_user" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+The user name for an authenticated HTTP proxy. Requires the `http_proxy_host` setting.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="httplog" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the puppet agent web server logs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ignorecache">
+        <prop_pattern name="ignorecache" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Ignore cache and always recompile the configuration.  This is
@@ -980,7 +1099,7 @@ change or if the server changes.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ignoreimport">
+        <prop_pattern name="ignoreimport" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 If true, allows the parser to continue without requiring
@@ -989,7 +1108,7 @@ designed for use with commit hooks for parse-checking.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ignoremissingtypes">
+        <prop_pattern name="ignoremissingtypes" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Skip searching for classes and definitions that were missing during a
@@ -998,7 +1117,7 @@ persists until the environment is cleared or the master is restarted.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ignoreschedules">
+        <prop_pattern name="ignoreschedules" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Boolean; whether puppet agent should ignore schedules.  This is useful
@@ -1006,56 +1125,56 @@ for initial puppet agent runs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="immutable_node_data">
+        <prop_pattern name="immutable_node_data" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 When true, also prevents $trusted and $facts from being overridden in any scope
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="inventory_port">
+        <prop_pattern name="inventory_port" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The port to communicate with the inventory_server.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="inventory_server">
+        <prop_pattern name="inventory_server" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The server to send facts to.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="inventory_terminus">
+        <prop_pattern name="inventory_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Should usually be the same as the facts terminus
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="keylength">
+        <prop_pattern name="keylength" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The bit length of keys.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="lastrunfile">
+        <prop_pattern name="lastrunfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where puppet agent stores the last run report summary in yaml format.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="lastrunreport">
+        <prop_pattern name="lastrunreport" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where puppet agent stores the last run report in yaml format.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapattrs">
+        <prop_pattern name="ldapattrs" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The LDAP attributes to include when querying LDAP for nodes.  All
@@ -1065,7 +1184,7 @@ all attributes.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapbase">
+        <prop_pattern name="ldapbase" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The search base for LDAP searches.  It's impossible to provide
@@ -1075,7 +1194,7 @@ branch under your main directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapclassattrs">
+        <prop_pattern name="ldapclassattrs" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The LDAP attributes to use to define Puppet classes.  Values
@@ -1083,35 +1202,35 @@ should be comma-separated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapparentattr">
+        <prop_pattern name="ldapparentattr" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The attribute to use to define the parent node.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldappassword">
+        <prop_pattern name="ldappassword" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The password to use to connect to LDAP.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="ldapport">
+        <prop_pattern name="ldapport" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The LDAP port.  Only used if `node_terminus` is set to `ldap`.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="ldapserver">
+        <prop_pattern name="ldapserver" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The LDAP server.  Only used if `node_terminus` is set to `ldap`.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ldapssl">
+        <prop_pattern name="ldapssl" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether SSL should be used when searching for nodes.
@@ -1120,7 +1239,7 @@ to be set up on the client side.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapstackedattrs">
+        <prop_pattern name="ldapstackedattrs" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The LDAP attributes that should be stacked to arrays by adding
@@ -1129,14 +1248,14 @@ should be comma-separated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ldapstring">
+        <prop_pattern name="ldapstring" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The search string used to find an LDAP node.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="ldaptls">
+        <prop_pattern name="ldaptls" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether TLS should be used when searching for nodes.
@@ -1145,7 +1264,7 @@ to be set up on the client side.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="hostname" name="ldapuser">
+        <prop_pattern name="ldapuser" required="false" type="hostname">
           <description>
             <loctext xml:lang="C">
 The user to use to connect to LDAP.  Must be specified as a
@@ -1153,7 +1272,7 @@ full DN.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="legacy_query_parameter_serialization">
+        <prop_pattern name="legacy_query_parameter_serialization" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 The serialization format to use when sending file_metadata
@@ -1169,7 +1288,7 @@ older master, so should never need to be set explicitly.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="libdir">
+        <prop_pattern name="libdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 An extra search path for Puppet.  This is only useful
@@ -1180,7 +1299,7 @@ is in Ruby's search path
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="listen">
+        <prop_pattern name="listen" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether puppet agent should listen for
@@ -1191,14 +1310,14 @@ requests on the `run`, `facts`, `certificate`, and `resource` endpoints.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="localcacert">
+        <prop_pattern name="localcacert" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where each client stores the CA certificate.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="localconfig">
+        <prop_pattern name="localconfig" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where puppet agent caches the local configuration.  An
@@ -1206,28 +1325,37 @@ extension indicating the cache format is added automatically.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="log_level">
+        <prop_pattern name="log_level" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
-Default logging level
+Default logging level for messages from Puppet. Allowed values are:
+
+* debug
+* info
+* notice
+* warning
+* err
+* alert
+* emerg
+* crit
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="logdir">
+        <prop_pattern name="logdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which to store log files
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="manage_internal_file_permissions">
+        <prop_pattern name="manage_internal_file_permissions" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether Puppet should manage the owner, group, and mode of files it uses internally
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="manifest">
+        <prop_pattern name="manifest" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The entry-point manifest for puppet master. This can be one file
@@ -1242,7 +1370,7 @@ http://docs.puppetlabs.com/puppet/latest/reference/environments.html
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="manifestdir">
+        <prop_pattern name="manifestdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Used to build the default value of the `manifest` setting. Has no other purpose.
@@ -1251,22 +1379,28 @@ This setting is deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="masterhttplog">
+        <prop_pattern name="masterhttplog" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
-Where the puppet master web server logs.
+Where the puppet master web server saves its access log. This is
+only used when running a WEBrick puppet master. When puppet master is
+running under a Rack server like Passenger, that web server will have
+its own logging behavior.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="masterlog">
+        <prop_pattern name="masterlog" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
-Where puppet master logs.  This is generally not used,
-since syslog is the default log destination.
+This file is literally never used, although Puppet may create it
+as an empty file. For more context, see the `puppetdlog` setting and
+puppet master's `--logdest` command line option.
+
+This setting is deprecated and will be removed in a future version of Puppet.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="masterport">
+        <prop_pattern name="masterport" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The port for puppet master traffic. For puppet master,
@@ -1275,34 +1409,34 @@ to make requests on. Both applications use this setting to get the port.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="max_deprecations">
+        <prop_pattern name="max_deprecations" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 Sets the max number of logged/displayed parser validation deprecation
-warnings in case multiple errors have been detected. A value of 0 is the
-same as value 1. The count is per manifest.
+warnings in case multiple deprecation warnings have been detected. A value of 0
+blocks the logging of deprecation warnings.  The count is per manifest.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="max_errors">
+        <prop_pattern name="max_errors" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 Sets the max number of logged/displayed parser validation errors in case
-multiple errors have been detected. A value of 0 is the same as value 1.
-The count is per manifest.
+multiple errors have been detected. A value of 0 is the same as a value of 1; a
+minimum of one error is always raised.  The count is per manifest.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="max_warnings">
+        <prop_pattern name="max_warnings" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 Sets the max number of logged/displayed parser validation warnings in
-case multiple errors have been detected. A value of 0 is the same as
-value 1. The count is per manifest.
+case multiple warnings have been detected. A value of 0 blocks logging of
+warnings.  The count is per manifest.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="maximum_uid">
+        <prop_pattern name="maximum_uid" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The maximum allowed UID.  Some platforms use negative UIDs
@@ -1313,35 +1447,42 @@ way when that happens.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="mkusers">
+        <prop_pattern name="mkusers" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to create the necessary user and group that puppet agent will run as.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="uri" name="module_repository">
+        <prop_pattern name="module_groups" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+Extra module groups to request from the Puppet Forge
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="module_repository" required="false" type="uri">
           <description>
             <loctext xml:lang="C">
 The module repository
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="module_skeleton_dir">
+        <prop_pattern name="module_skeleton_dir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory which the skeleton for module tool generate is stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="module_working_dir">
+        <prop_pattern name="module_working_dir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory into which module tool data is stored
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="modulepath">
+        <prop_pattern name="modulepath" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The search path for modules, as a list of directories separated by the system
@@ -1356,7 +1497,7 @@ http://docs.puppetlabs.com/puppet/latest/reference/environments.html
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="name">
+        <prop_pattern name="name" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The name of the application, if we are running as one.  The
@@ -1364,7 +1505,7 @@ default is essentially $0 without the path or `.rb`.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="node_cache_terminus">
+        <prop_pattern name="node_cache_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 How to store cached nodes.
@@ -1373,7 +1514,7 @@ The master application defaults to 'write_only_yaml', all others to none.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="node_name">
+        <prop_pattern name="node_name" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 How the puppet master determines the client's identity
@@ -1385,7 +1526,7 @@ reported in its facts)
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="node_name_fact">
+        <prop_pattern name="node_name_fact" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The fact name used to determine the node name used for all requests the agent
@@ -1396,7 +1537,7 @@ http://links.puppetlabs.com/node_name_fact for more information.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="node_name_value">
+        <prop_pattern name="node_name_value" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The explicit value used for the node name for all requests the agent
@@ -1407,14 +1548,14 @@ http://links.puppetlabs.com/node_name_value for more information.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="node_terminus">
+        <prop_pattern name="node_terminus" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to find information about nodes.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="noop">
+        <prop_pattern name="noop" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to apply catalogs in noop mode, which allows Puppet to
@@ -1441,7 +1582,7 @@ agent with `noop = true` or `--noop`. (Conversely, a resource with
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="onetime">
+        <prop_pattern name="onetime" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Perform one configuration run and exit, rather than spawning a long-running
@@ -1450,7 +1591,7 @@ running puppet agent from cron.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ordering">
+        <prop_pattern name="ordering" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 How unrelated resources should be ordered when applying a catalog.
@@ -1471,14 +1612,14 @@ ordering of _unrelated_ resources.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="parser">
+        <prop_pattern name="parser" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Selects the parser to use for parsing puppet manifests (in puppet DSL
 language/'.pp' files). Available choices are `current` (the default)
 and `future`.
 
-The `curent` parser means that the released version of the parser should
+The `current` parser means that the released version of the parser should
 be used.
 
 The `future` parser is a "time travel to the future" allowing early
@@ -1489,7 +1630,7 @@ Available Since Puppet 3.2.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="passfile">
+        <prop_pattern name="passfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where puppet agent stores the password for its private key.
@@ -1497,7 +1638,7 @@ Generally unused.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="path">
+        <prop_pattern name="path" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The shell search path.  Defaults to whatever is inherited
@@ -1505,7 +1646,7 @@ from the parent process.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="pidfile">
+        <prop_pattern name="pidfile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The file containing the PID of a running process.
@@ -1515,7 +1656,7 @@ the process table.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="plugindest">
+        <prop_pattern name="plugindest" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet should store plugins that it pulls down from the central
@@ -1523,28 +1664,28 @@ server.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="pluginfactdest">
+        <prop_pattern name="pluginfactdest" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet should store external facts that are being handled by pluginsync
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="pluginfactsource">
+        <prop_pattern name="pluginfactsource" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to retrieve external facts for pluginsync
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="pluginsignore">
+        <prop_pattern name="pluginsignore" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 What files to ignore when pulling down plugins.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="pluginsource">
+        <prop_pattern name="pluginsource" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 From where to retrieve plugins.  The standard Puppet `file` type
@@ -1553,14 +1694,14 @@ be used here.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="pluginsync">
+        <prop_pattern name="pluginsync" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether plugins should be synced with the central server.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="postrun_command">
+        <prop_pattern name="postrun_command" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 A command to run after every agent run.  If this command returns a non-zero
@@ -1569,7 +1710,7 @@ performed work during the normal run.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="preferred_serialization_format">
+        <prop_pattern name="preferred_serialization_format" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The preferred means of serializing
@@ -1580,7 +1721,7 @@ classes that support it.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="prerun_command">
+        <prop_pattern name="prerun_command" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 A command to run before every agent run.  If this command returns a non-zero
@@ -1588,7 +1729,14 @@ return code, the entire Puppet run will fail.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="priority">
+        <prop_pattern name="preview_outputdir" required="false" type="astring">
+          <description>
+            <loctext xml:lang="C">
+The directory where catalog previews per node are generated.
+	    </loctext>
+          </description>
+        </prop_pattern>
+        <prop_pattern name="priority" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The scheduling priority of the process.  Valid values are 'high',
@@ -1599,49 +1747,60 @@ user in order to increase scheduling priority.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="privatedir">
+        <prop_pattern name="privatedir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the client stores private certificate information.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="privatekeydir">
+        <prop_pattern name="privatekeydir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The private key directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="profile">
+        <prop_pattern name="profile" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to enable experimental performance profiling
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="publickeydir">
+        <prop_pattern name="publickeydir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The public key directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="puppetdlog">
+        <prop_pattern name="puppetdlog" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
-The log file for puppet agent.  This is generally not used.
+The fallback log file. This is only used when the `--logdest` option
+is not specified AND Puppet is running on an operating system where both
+the POSIX syslog service and the Windows Event Log are unavailable. (Currently,
+no supported operating systems match that description.)
+
+Despite the name, both puppet agent and puppet master will use this file
+as the fallback logging destination.
+
+For control over logging destinations, see the `--logdest` command line
+option in the manual pages for puppet master, puppet agent, and puppet
+apply. You can see man pages by running `puppet &lt;SUBCOMMAND&gt; --help`,
+or read them online at http://docs.puppetlabs.com/references/latest/man/.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="puppetport">
+        <prop_pattern name="puppetport" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 Which port puppet agent listens on.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="uri" name="queue_source">
+        <prop_pattern name="queue_source" required="false" type="uri">
           <description>
             <loctext xml:lang="C">
 Which type of queue to use for asynchronous processing.  If your stomp server requires
@@ -1649,14 +1808,14 @@ authentication, you can include it in the URI as long as your stomp client libra
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="queue_type">
+        <prop_pattern name="queue_type" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Which type of queue to use for asynchronous processing.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="rails_loglevel">
+        <prop_pattern name="rails_loglevel" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The log level for Rails connections.  The value must be
@@ -1665,28 +1824,28 @@ and other environments normally use `debug`. This setting is only used by the Ac
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="railslog">
+        <prop_pattern name="railslog" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Rails-specific logs are sent. This setting is only used by the ActiveRecord storeconfigs and inventory backends, which are deprecated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="report">
+        <prop_pattern name="report" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to send reports after every transaction.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="report_port">
+        <prop_pattern name="report_port" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The port to communicate with the report_server.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="report_serialization_format">
+        <prop_pattern name="report_serialization_format" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The serialization format to use when sending reports to the
@@ -1703,14 +1862,14 @@ older master, so should never need to be set explicitly.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="report_server">
+        <prop_pattern name="report_server" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The server to send transaction reports to.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="reportdir">
+        <prop_pattern name="reportdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which to store reports. Each node gets
@@ -1720,14 +1879,14 @@ used when the `store` report processor is enabled (see the
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="reportfrom">
+        <prop_pattern name="reportfrom" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The 'from' email address for the reports.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="reports">
+        <prop_pattern name="reports" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The list of report handlers to use. When using multiple report handlers,
@@ -1746,7 +1905,7 @@ handlers; custom report handlers can also be loaded from modules.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="uri" name="reporturl">
+        <prop_pattern name="reporturl" required="false" type="uri">
           <description>
             <loctext xml:lang="C">
 The URL that reports should be forwarded to. This setting
@@ -1755,21 +1914,21 @@ is only used when the `http` report processor is enabled (see the
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="req_bits">
+        <prop_pattern name="req_bits" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The bit length of the certificates.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="requestdir">
+        <prop_pattern name="requestdir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where host certificate requests are stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="resourcefile">
+        <prop_pattern name="resourcefile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The file in which puppet agent stores a list of the resources
@@ -1777,7 +1936,7 @@ associated with the retrieved configuration.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="rest_authconfig">
+        <prop_pattern name="rest_authconfig" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The configuration file that defines the rights to the different
@@ -1786,14 +1945,14 @@ authorization system for `puppet master`.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="route_file">
+        <prop_pattern name="route_file" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The YAML file containing indirector route configuration.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="rrddir">
+        <prop_pattern name="rrddir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory where RRD database files are stored.
@@ -1802,7 +1961,7 @@ this directory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="rrdinterval">
+        <prop_pattern name="rrdinterval" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 How often RRD should expect data.
@@ -1810,14 +1969,14 @@ This should match how often the hosts report back to the server. This setting ca
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="rundir">
+        <prop_pattern name="rundir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet PID files are kept.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="runinterval">
+        <prop_pattern name="runinterval" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 How often puppet agent applies the catalog.
@@ -1827,35 +1986,35 @@ it with the `--no-client` option. This setting can be a time interval in seconds
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="sendmail">
+        <prop_pattern name="sendmail" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where to find the sendmail binary with which to send email.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="serial">
+        <prop_pattern name="serial" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the serial number for certificates is stored.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="server">
+        <prop_pattern name="server" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The puppet master server to which the puppet agent should connect.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="server_datadir">
+        <prop_pattern name="server_datadir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which serialized data is stored, usually in a subdirectory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="show_diff">
+        <prop_pattern name="show_diff" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to log and report a contextual diff when files are being replaced.
@@ -1867,14 +2026,14 @@ library.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="signeddir">
+        <prop_pattern name="signeddir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where the CA stores signed certificates.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="smtphelo">
+        <prop_pattern name="smtphelo" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The name by which we identify ourselves in SMTP HELO for reports.
@@ -1883,21 +2042,21 @@ If you send to a smtpserver which does strict HELO checking (as with Postfix's
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="smtpport">
+        <prop_pattern name="smtpport" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The TCP port through which to send email reports.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="smtpserver">
+        <prop_pattern name="smtpserver" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The server through which to send email reports.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="splay">
+        <prop_pattern name="splay" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to sleep for a pseudo-random (but consistent) amount of time before
@@ -1905,7 +2064,7 @@ a run.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="splaylimit">
+        <prop_pattern name="splaylimit" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 The maximum time to delay before runs.  Defaults to being the same as the
@@ -1913,14 +2072,14 @@ run interval. This setting can be a time interval in seconds (30 or 30s), minute
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="host" name="srv_domain">
+        <prop_pattern name="srv_domain" required="false" type="host">
           <description>
             <loctext xml:lang="C">
 The domain which will be queried to find the SRV records of servers to use.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ssl_client_ca_auth">
+        <prop_pattern name="ssl_client_ca_auth" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Certificate authorities who issue server certificates.  SSL servers will not be
@@ -1930,7 +2089,7 @@ certificate (localcacert) will be used.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ssl_client_header">
+        <prop_pattern name="ssl_client_header" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The header containing an authenticated client's SSL DN.
@@ -1946,7 +2105,7 @@ to underscores, and all letters are uppercased.  Thus, to use the
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ssl_client_verify_header">
+        <prop_pattern name="ssl_client_verify_header" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The header containing the status message of the client
@@ -1961,7 +2120,7 @@ to underscores, and all letters are uppercased.  Thus, to use the
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ssl_server_ca_auth">
+        <prop_pattern name="ssl_server_ca_auth" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Certificate authorities who issue client certificates.  SSL clients will not be
@@ -1971,14 +2130,14 @@ certificate (localcacert) will be used.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="ssldir">
+        <prop_pattern name="ssldir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where SSL certificates are kept.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="statedir">
+        <prop_pattern name="statedir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory where Puppet state is stored.  Generally,
@@ -1987,7 +2146,7 @@ might result in spurious service restarts).
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="statefile">
+        <prop_pattern name="statefile" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where puppet agent and puppet master store state associated
@@ -1997,7 +2156,7 @@ with clients.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="storeconfigs">
+        <prop_pattern name="storeconfigs" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to store each client's configuration, including catalogs, facts,
@@ -2011,7 +2170,7 @@ You can adjust the backend using the storeconfigs_backend setting.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="storeconfigs_backend">
+        <prop_pattern name="storeconfigs_backend" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Configure the backend terminus used for StoreConfigs.
@@ -2020,7 +2179,7 @@ database from within the Puppet Master process.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="strict_hostname_checking">
+        <prop_pattern name="strict_hostname_checking" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to only search for the complete
@@ -2029,7 +2188,7 @@ in the catalogs.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="strict_variables">
+        <prop_pattern name="strict_variables" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Makes the parser raise errors when referencing unknown variables. (This does not affect
@@ -2037,22 +2196,22 @@ referencing variables that are explicitly set to undef).
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="stringify_facts">
+        <prop_pattern name="stringify_facts" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 to_s. Means you can't have arrays or
-hashes as fact values.
+hashes as fact values. (DEPRECATED) This option will be removed in Puppet 4.0.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="summarize">
+        <prop_pattern name="summarize" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to print a transaction summary.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="syslogfacility">
+        <prop_pattern name="syslogfacility" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 What syslog facility to use when logging to syslog.
@@ -2061,14 +2220,14 @@ choose one of those; you cannot just make one up.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="tagmap">
+        <prop_pattern name="tagmap" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The mapping between reporting tags and email addresses.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="tags">
+        <prop_pattern name="tags" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Tags to use to find resources.  If this is set, then
@@ -2077,7 +2236,7 @@ Values must be comma-separated.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="templatedir">
+        <prop_pattern name="templatedir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet looks for template files.  Can be a list of colon-separated
@@ -2087,7 +2246,7 @@ This setting is deprecated. Please put your templates in modules instead.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="thin_storeconfigs">
+        <prop_pattern name="thin_storeconfigs" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Boolean; whether Puppet should store only facts and exported resources in the storeconfigs
@@ -2097,14 +2256,14 @@ Thinning catalogs is generally unnecessary when using PuppetDB to store catalogs
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="trace">
+        <prop_pattern name="trace" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to print stack traces on some errors
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="trusted_node_data">
+        <prop_pattern name="trusted_node_data" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Stores trusted node data in a hash called $trusted.
@@ -2112,7 +2271,7 @@ When true also prevents $trusted from being overridden in any scope.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="use_cached_catalog">
+        <prop_pattern name="use_cached_catalog" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to only use the cached catalog rather than compiling a new catalog
@@ -2121,14 +2280,14 @@ disabled when a recompile is desired.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="use_srv_records">
+        <prop_pattern name="use_srv_records" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether the server will search for SRV records in DNS for the current domain.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="usecacheonfailure">
+        <prop_pattern name="usecacheonfailure" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Whether to use the cached configuration when the remote
@@ -2138,14 +2297,14 @@ rather than reverting to a known-good one.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="user">
+        <prop_pattern name="user" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The user puppet master should run as.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="vardir">
+        <prop_pattern name="vardir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 Where Puppet stores dynamic and growing data.  The default for this
@@ -2153,7 +2312,7 @@ setting is calculated specially, like `confdir`_.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="integer" name="waitforcert">
+        <prop_pattern name="waitforcert" required="false" type="integer">
           <description>
             <loctext xml:lang="C">
 How frequently puppet agent should ask for a signed certificate.
@@ -2172,14 +2331,14 @@ This setting can be a time interval in seconds (30 or 30s), minutes (30m), hours
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="astring" name="yamldir">
+        <prop_pattern name="yamldir" required="false" type="astring">
           <description>
             <loctext xml:lang="C">
 The directory in which YAML data is stored, usually in a subdirectory.
 	    </loctext>
           </description>
         </prop_pattern>
-        <prop_pattern required="false" type="boolean" name="zlib">
+        <prop_pattern name="zlib" required="false" type="boolean">
           <description>
             <loctext xml:lang="C">
 Boolean; whether to use the zlib library

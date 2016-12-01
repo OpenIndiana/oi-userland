@@ -1,52 +1,44 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# Depend on renamed versions to pull them forward
+depend type=optional fmri=library/ruby/hiera@1.3.4,5.11-2016.1.0.1
+depend type=optional fmri=system/management/facter@2.4.6,5.11-2016.1.0.0
+# depend on renamed -19 versions to force an update to remove them
+depend type=optional fmri=system/management/puppet-19@3.6.2,5.11-2016.1.0.1
+
+# Puppet Dependencies
+depend type=require fmri=library/ruby/hiera
+depend type=require fmri=system/management/facter
+depend type=require fmri=system/management/puppet/puppet-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # do not look for .pyc files as the install.rb script does not compile
 # .py files as it installs
 <transform file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/.*\.py$ -> default pkg.tmp.autopyc false>
-set name=pkg.fmri \
-    value=pkg:/system/management/puppet-$(RUBYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Puppet - configuration management toolkit"
-set name=pkg.description \
-    value='Puppet is a flexible, customizable framework designed to help system administrators automate the many repetitive tasks they regularly perform. As a declarative, model-based approach to IT automation, it lets you define the desired state - or the "what" - of your infrastructure using the Puppet configuration language. Once these configurations are deployed, Puppet automatically installs the necessary packages and starts the related services, and then regularly enforces the desired state.'
-set name=com.oracle.info.description \
-    value="Puppet, a configuration management toolkit"
-set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/Administration and Configuration"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2013/005 value=PSARC/2013/218 \
-    value=PSARC/2013/221 value=PSARC/2013/288 value=PSARC/2013/426
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-
-#file ext/PuppetAudit.so \
-#    path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/$(MACH64)-solaris$(SOLARIS_VERSION)/PuppetAudit.so
 
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera/backend/puppet_backend.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera/puppet_function.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera/scope.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera_puppet.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet.rb
@@ -64,6 +56,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/certificate_revocation_list.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/config.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/describe.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/describe.rb.~1~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/device.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/doc.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/application/face_base.rb
@@ -94,6 +87,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/coercion.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/configurer.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/configurer/downloader.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/configurer/downloader_factory.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/configurer/fact_handler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/configurer/plugin_handler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/confine.rb
@@ -167,10 +161,12 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/face/secret_agent.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/face/status.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/cfacter.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/eventlog.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/external_facts.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/libuser.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/msgpack.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/pe_license.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/pson.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/rack.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/feature/rails.rb
@@ -207,14 +203,29 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/file_system/memory_file.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/file_system/memory_impl.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/file_system/path_pattern.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/file_system/tempfile.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/file_system/uniquefile.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/forge.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/forge/cache.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/forge/errors.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/forge/repository.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/assert_type.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/defined.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/each.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/epp.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/filter.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/hiera.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/hiera_array.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/hiera_hash.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/hiera_include.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/import.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/inline_epp.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/map.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/match.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/reduce.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/scanf.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/slice.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/functions/with.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/graph.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/graph/key.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/graph/prioritizer.rb
@@ -284,6 +295,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/file_metadata/rest.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/file_metadata/selector.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/file_server.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/hiera.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/indirection.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/instrumentation_data.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/indirector/instrumentation_data/local.rb
@@ -375,6 +387,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/metadata.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/modulefile.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/shared_behaviors.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/skeleton/templates/generator/Gemfile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/skeleton/templates/generator/README.md.erb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/skeleton/templates/generator/Rakefile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/module_tool/skeleton/templates/generator/manifests/init.pp.erb
@@ -405,14 +418,19 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/compression.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/connection.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/error.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/factory.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/handler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/issues.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/memory_response.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/nocache_pool.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/pool.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/rack.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/rack/rest.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/request.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/response.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/route.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/session.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/site.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/webrick.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http/webrick/rest.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/network/http_pool.rb
@@ -471,13 +489,13 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/collector.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/compiler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/e4_parser_adapter.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/e_parser_adapter.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/files.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/collect.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/assert_type.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/contain.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/create_resources.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/defined.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/digest.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/each.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/epp.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/extlookup.rb
@@ -495,13 +513,14 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/inline_template.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/lookup.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/map.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/match.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/md5.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/realize.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/reduce.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/regsubst.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/require.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/scanf.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/search.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/select.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/sha1.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/shellquote.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/slice.rb
@@ -511,6 +530,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/tagged.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/template.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/versioncmp.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/functions/with.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/grammar.ra
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/lexer.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/parser/makefile
@@ -537,6 +557,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/bindings_loader.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/bindings_model.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/bindings_model_dumper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/bindings_model_meta.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/bindings_validator_factory.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/config/binder_config.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/config/binder_config_checker.rb
@@ -553,13 +574,21 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/binder/system_bindings.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/containment.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/access_operator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/callable_mismatch_describer.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/callable_signature.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/closure.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/collector_transformer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/collectors/abstract_collector.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/collectors/catalog_collector.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/collectors/exported_collector.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/collectors/fixed_set_collector.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/compare_operator.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/epp_evaluator.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/evaluator_impl.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/external_syntax_support.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/puppet_proc.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/relationship_operator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/runtime3_converter.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/evaluator/runtime3_support.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/functions/dispatch.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/functions/dispatcher.rb
@@ -575,16 +604,17 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/module_loaders.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/null_loader.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/ruby_function_instantiator.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/ruby_legacy_function_instantiator.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/simple_environment_loader.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/static_loader.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loader/uri_helper.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/loaders.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/migration/migration_checker.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/ast_transformer.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/ast_tree_dumper.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/factory.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/model.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/model_label_provider.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/model_meta.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/model_tree_dumper.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/model/tree_dumper.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/code_merger.rb
@@ -595,12 +625,10 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/evaluating_parser.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/heredoc_support.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/interpolation_support.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/lexer.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/lexer2.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/lexer_support.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/locatable.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/locator.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/makefile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/parser_support.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/parser/slurp_support.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/patterns.rb
@@ -611,11 +639,10 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/types/type_factory.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/types/type_parser.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/types/types.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/types/types_meta.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/utils.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/validation.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/validation/checker3_1.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/validation/checker4_0.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/validation/validator_factory_3_1.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/validation/validator_factory_4_0.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/visitable.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/pops/visitor.rb
@@ -681,6 +708,8 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pacman.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pip.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkg.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkg.rb.~1~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkg.rb.~2~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkgdmg.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkgin.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/pkgutil.rb
@@ -719,6 +748,11 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/runit.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/service.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb.~1~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb.~2~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb.~3~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb.~4~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/smf.rb.~5~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/src.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/systemd.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/service/upstart.rb
@@ -731,12 +765,15 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/ldap.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/pw.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/user_role_add.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/user_role_add.rb.~1~
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/user_role_add.rb.~2~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/useradd.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/user/windows_adsi.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/vlan/cisco.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/yumrepo/inifile.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/zfs/zfs.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/zone/solaris.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/zone/solaris.rb.~1~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/zpool/zpool.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/rails.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/rails/benchmark.rb
@@ -892,9 +929,9 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/type/yumrepo.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/type/zfs.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/type/zone.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/type/zone.rb.~1~
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/type/zpool.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/adsi.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/autoload.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/backups.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/cacher.rb
@@ -963,8 +1000,9 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/plugins.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/posix.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/aggregate.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/around_profiler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/logging.rb
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/none.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/object_counts.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/profiler/wall_clock.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/provider_features.rb
@@ -1005,6 +1043,9 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/access_control_entry.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/access_control_list.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/adsi.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/api_types.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/com.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/error.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/file.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/process.rb
@@ -1014,16 +1055,185 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/security_descriptor.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/sid.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/string.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/taskscheduler.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/windows/user.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/yaml.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/util/zaml.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/load_pathspec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/load_rgen.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/load_safe_yaml.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/load_semantic.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/CHANGELOG.md
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/LICENSE
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/PUPPET_README.md
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/README.md
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/lib/pathspec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/lib/pathspec/gitignorespec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/lib/pathspec/regexspec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/pathspec/lib/pathspec/spec.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/require_vendored.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/CHANGELOG
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/MIT-LICENSE
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/PUPPET_README.md
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/README.rdoc
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/Rakefile
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/TODO
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/anounce.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/design_rationale.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/ea_support.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/id_store.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/uml13_ea_metamodel.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/uml13_ea_metamodel_ext.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/uml13_ea_metamodel_generator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/uml13_ea_to_uml13.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/ea_support/uml13_to_uml13_ea.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/metamodels/uml13_metamodel.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/metamodels/uml13_metamodel_ext.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/mmgen/metamodel_generator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/mmgen/mm_ext/ecore_mmgen_ext.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/mmgen/mmgen.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/mmgen/templates/annotations.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/mmgen/templates/metamodel_generator.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/array_extensions.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ecore.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ecore_builder_methods.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ecore_ext.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ecore_interface.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ecore_to_ruby.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/ecore/ruby_to_ecore.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/environment.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/fragment/dump_file_cache.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/fragment/fragmented_model.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/fragment/model_fragment.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/abstract_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/abstract_xml_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/default_xml_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/ecore_xml_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/json_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/json_parser.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/json_parser.y
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/nodebased_xml_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/qualified_name_resolver.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/reference_resolver.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/resolution_helper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/instantiator/xmi11_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/builder_extensions.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/builder_runtime.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/constant_order_helper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/data_types.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/intermediate/annotation.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/intermediate/feature.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/mm_multiple.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/metamodel_builder/module_extension.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/model_builder.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/model_builder/builder_context.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/model_builder/model_serializer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/model_builder/reference_resolver.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/json_serializer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/opposite_reference_filter.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/qualified_name_provider.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/xmi11_serializer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/xmi20_serializer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/serializer/xml_serializer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/template_language.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/template_language/directory_template_container.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/template_language/output_handler.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/template_language/template_container.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/template_language/template_helper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/transformer.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/auto_class_creator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/cached_glob.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/file_cache_map.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/file_change_detector.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/method_delegation.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/model_comparator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/model_comparator_base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/model_dumper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/name_helper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/rgen/util/pattern_matcher.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/transformers/ecore_to_uml13.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/lib/transformers/uml13_to_ecore.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/array_extensions_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/ea_instantiator_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/ea_serializer_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/ecore_self_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/environment_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/json_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_builder_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_from_ecore_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_order_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_roundtrip_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_roundtrip_test/TestModel.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_roundtrip_test/houseMetamodel.ecore
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_roundtrip_test/houseMetamodel_from_ecore.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/metamodel_roundtrip_test/using_builtin_types.ecore
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/method_delegation_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/builder_context_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/builder_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/ecore_original.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/ecore_original_regenerated.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/reference_resolver_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/serializer_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/statemachine_metamodel.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder/test_model/statemachine1.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_builder_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/model_fragment_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/output_handler_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/qualified_name_provider_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/qualified_name_resolver_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/reference_resolver_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/rgen_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/expected_result1.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/expected_result2.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/expected_result3.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/indentStringTestDefaultIndent.out
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/indentStringTestTabIndent.out
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/callback_indent_test/a.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/callback_indent_test/b.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/code/array.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/content/author.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/content/chapter.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/define_local_test/local.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/define_local_test/test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/evaluate_test/test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/indent_string_test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/index/c/cmod.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/index/chapter.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_backslash_r_test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_indent_test/no_indent.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_indent_test/sub1/no_indent.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_indent_test/test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_indent_test/test2.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/no_indent_test/test3.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/null_context_test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/root.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/template_resolution_test/sub1.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/template_resolution_test/sub1/sub1.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/templates/template_resolution_test/test.tpl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/template_language_test/testout.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/class_model_checker.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/ea_testmodel.eap
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/ea_testmodel.xml
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/ea_testmodel_partial.xml
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/ecore_model_checker.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/manual_testmodel.xml
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/testmodel/object_model_checker.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/transformer_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/util/file_cache_map_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/util/pattern_matcher_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/util_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/xml_instantiator_test.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/xml_instantiator_test/simple_ecore_model_checker.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/xml_instantiator_test/simple_xmi_ecore_instantiator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/xml_instantiator_test/simple_xmi_metamodel.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/rgen/test/xml_instantiator_test/simple_xmi_to_ecore.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/CHANGES.md
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/Gemfile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/LICENSE.txt
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/PUPPET_README.md
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/README.md
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/Rakefile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/lib/safe_yaml.rb
@@ -1049,8 +1259,8 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/lib/safe_yaml/version.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/run_specs_all_ruby_versions.sh
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/safe_yaml.gemspec
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/exploit.$(RUBY_VERSION).2.yaml
-file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/exploit.$(RUBY_VERSION).3.yaml
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/exploit.1.9.2.yaml
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/exploit.1.9.3.yaml
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/psych_resolver_spec.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/resolver_specs.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/safe_yaml_spec.rb
@@ -1064,6 +1274,7 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml/spec/transform/to_symbol_spec.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/safe_yaml_patches.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/semantic/Gemfile
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/semantic/PUPPET_README.md
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/semantic/Rakefile
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/semantic/lib/semantic.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/vendor/semantic/lib/semantic/dependency.rb
@@ -1089,15 +1300,42 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppetx/puppet/syntax_checker.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppetx/puppetlabs/syntax_checkers/json.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/semver.rb
-file path=usr/sbin/extlookup2hiera mediator=ruby mediator-version=$(RUBY_VERSION)
-file path=usr/sbin/puppet mediator=ruby mediator-version=$(RUBY_VERSION)
-
-license puppet.license license="Apache v2.0"
-
-# Puppet Dependencies
-depend type=require fmri=pkg:/system/management/facter-$(RUBYV)
-depend type=require fmri=pkg:/library/ruby/hiera-$(RUBYV)
-
-# force a dependency on the puppet package
-depend type=require \
-    fmri=pkg:/system/management/puppet@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+file path=usr/sbin/extlookup2hiera
+file path=usr/sbin/puppet
+file path=usr/share/man/man5/puppet.conf.5
+file path=usr/share/man/man8/extlookup2hiera.8
+file path=usr/share/man/man8/puppet-agent.8
+file path=usr/share/man/man8/puppet-apply.8
+file path=usr/share/man/man8/puppet-ca.8
+file path=usr/share/man/man8/puppet-catalog.8
+file path=usr/share/man/man8/puppet-cert.8
+file path=usr/share/man/man8/puppet-certificate.8
+file path=usr/share/man/man8/puppet-certificate_request.8
+file path=usr/share/man/man8/puppet-certificate_revocation_list.8
+file path=usr/share/man/man8/puppet-config.8
+file path=usr/share/man/man8/puppet-describe.8
+file path=usr/share/man/man8/puppet-device.8
+file path=usr/share/man/man8/puppet-doc.8
+file path=usr/share/man/man8/puppet-facts.8
+file path=usr/share/man/man8/puppet-file.8
+file path=usr/share/man/man8/puppet-filebucket.8
+file path=usr/share/man/man8/puppet-help.8
+file path=usr/share/man/man8/puppet-inspect.8
+file path=usr/share/man/man8/puppet-instrumentation_data.8
+file path=usr/share/man/man8/puppet-instrumentation_listener.8
+file path=usr/share/man/man8/puppet-instrumentation_probe.8
+file path=usr/share/man/man8/puppet-key.8
+file path=usr/share/man/man8/puppet-kick.8
+file path=usr/share/man/man8/puppet-man.8
+file path=usr/share/man/man8/puppet-master.8
+file path=usr/share/man/man8/puppet-module.8
+file path=usr/share/man/man8/puppet-node.8
+file path=usr/share/man/man8/puppet-parser.8
+file path=usr/share/man/man8/puppet-plugin.8
+file path=usr/share/man/man8/puppet-queue.8
+file path=usr/share/man/man8/puppet-report.8
+file path=usr/share/man/man8/puppet-resource.8
+file path=usr/share/man/man8/puppet-resource_type.8
+file path=usr/share/man/man8/puppet-secret_agent.8
+file path=usr/share/man/man8/puppet-status.8
+file path=usr/share/man/man8/puppet.8

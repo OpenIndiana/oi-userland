@@ -22,7 +22,16 @@
 #
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+set name=pkg.fmri value=pkg:/system/management/puppet/puppet-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Common OpenIndiana-specific components for Puppet"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 set name=org.opensolaris.smf.fmri value=svc:/application/puppet:agent \
     value=svc:/application/puppet:master
 dir  path=etc/puppet owner=puppet group=puppet mode=0755
@@ -155,48 +164,6 @@ file files/prof_attr path=etc/security/prof_attr.d/puppet
 file files/user_attr path=etc/user_attr.d/puppet
 file files/puppet.xml path=lib/svc/manifest/application/puppet.xml
 file files/puppet.stencil path=lib/svc/stencils/puppet.stencil
-file path=usr/share/man/man5/puppet.conf.5
-file path=usr/share/man/man8/extlookup2hiera.8
-file path=usr/share/man/man8/puppet-agent.8
-file path=usr/share/man/man8/puppet-apply.8
-file path=usr/share/man/man8/puppet-ca.8
-file path=usr/share/man/man8/puppet-catalog.8
-file path=usr/share/man/man8/puppet-cert.8
-file path=usr/share/man/man8/puppet-certificate.8
-file path=usr/share/man/man8/puppet-certificate_request.8
-file path=usr/share/man/man8/puppet-certificate_revocation_list.8
-file path=usr/share/man/man8/puppet-config.8
-file path=usr/share/man/man8/puppet-describe.8
-file path=usr/share/man/man8/puppet-device.8
-file path=usr/share/man/man8/puppet-doc.8
-file path=usr/share/man/man8/puppet-facts.8
-file path=usr/share/man/man8/puppet-file.8
-file path=usr/share/man/man8/puppet-filebucket.8
-file path=usr/share/man/man8/puppet-help.8
-file path=usr/share/man/man8/puppet-inspect.8
-file path=usr/share/man/man8/puppet-instrumentation_data.8
-file path=usr/share/man/man8/puppet-instrumentation_listener.8
-file path=usr/share/man/man8/puppet-instrumentation_probe.8
-file path=usr/share/man/man8/puppet-key.8
-file path=usr/share/man/man8/puppet-kick.8
-file path=usr/share/man/man8/puppet-man.8
-file path=usr/share/man/man8/puppet-master.8
-file path=usr/share/man/man8/puppet-module.8
-file path=usr/share/man/man8/puppet-node.8
-file path=usr/share/man/man8/puppet-parser.8
-file path=usr/share/man/man8/puppet-plugin.8
-file path=usr/share/man/man8/puppet-queue.8
-file path=usr/share/man/man8/puppet-report.8
-file path=usr/share/man/man8/puppet-resource.8
-file path=usr/share/man/man8/puppet-resource_type.8
-file path=usr/share/man/man8/puppet-secret_agent.8
-file path=usr/share/man/man8/puppet-status.8
-file path=usr/share/man/man8/puppet.8
 group groupname=puppet gid=40
 user username=puppet ftpuser=false gcos-field="Puppet Admin" group=puppet \
     home-dir=/etc/puppet login-shell=/bin/false uid=40
-license puppet.license license="Apache v2.0"
-
-# force dependency on ruby runtime package to ensure at least one version
-# of ruby is installed on the system
-depend type=require fmri=pkg:/runtime/ruby

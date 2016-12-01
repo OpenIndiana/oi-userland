@@ -1,10 +1,14 @@
-In-house patch to fix upstream bug PUP-5234 which adds attrible "shell" to the user provider.
-https://tickets.puppetlabs.com/browse/PUP-5234
-The patch has been submitted upstream but not yet accepted.
-
---- puppet-3.6.2/lib/puppet/provider/user/user_role_add.rb.orig  Thu Jul 30 22:51:24 2015
-+++ puppet-3.6.2/lib/puppet/provider/user/user_role_add.rb	Mon Aug  3 23:22:44 2015
-@@ -12,6 +12,7 @@
+--- puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb.orig	2016-04-19 14:32:54.606087591 -0700
++++ puppet-3.8.6/lib/puppet/provider/user/user_role_add.rb	2016-04-19 14:34:04.451831050 -0700
+@@ -1,3 +1,7 @@
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
++
+ require 'puppet/util'
+ require 'puppet/util/user_attr'
+ require 'date'
+@@ -12,6 +16,7 @@
    options :home, :flag => "-d", :method => :dir
    options :comment, :method => :gecos
    options :groups, :flag => "-G"
@@ -12,7 +16,7 @@ The patch has been submitted upstream but not yet accepted.
    options :roles, :flag => "-R"
    options :auths, :flag => "-A"
    options :profiles, :flag => "-P"
-@@ -26,8 +27,23 @@
+@@ -26,7 +31,22 @@
      value !~ /\s/
    end
  
@@ -21,9 +25,9 @@ The patch has been submitted upstream but not yet accepted.
 +    set("shell", value)
 +  end
 +
-   has_features :manages_homedir, :allows_duplicates, :manages_solaris_rbac, :manages_passwords, :manages_password_age
-+  has_features :manages_shell
- 
+   has_features :manages_homedir, :allows_duplicates, :manages_solaris_rbac, :manages_passwords, :manages_password_age, :manages_shell
++  
++
 +  def check_valid_shell
 +    unless File.exists?(@resource.should(:shell))
 +      raise(Puppet::Error, "Shell #{@resource.should(:shell)} must exist")
@@ -32,7 +36,6 @@ The patch has been submitted upstream but not yet accepted.
 +      raise(Puppet::Error, "Shell #{@resource.should(:shell)} must be executable")
 +    end
 +  end
-+
+ 
    #must override this to hand the keyvalue pairs
    def add_properties
-     cmd = []
