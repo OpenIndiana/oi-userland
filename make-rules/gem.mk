@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 GEM=/usr/ruby/$(RUBY_VERSION)/bin/gem
 
@@ -32,16 +34,27 @@ GEMSPEC=$(COMPONENT_NAME).gemspec
 # Some gems projects have to be built using rake
 # Allow GEM build/install commands to be overwritten
 # to account for possible differences
-GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEMSPEC))
+GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
 
-GEM_INSTALL_ACTION=\
-	$(GEM) install -V --local --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR) \
-	     --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin --force \
-	     $(@D)/$(COMPONENT_ARCHIVE)
+# Build install args in a more readable fashion
+ifeq ($(firstword $(subst .,$(space),$(RUBY_VERSION))),2)
+# gem install 2.x does docs differently. Continue to generate both types
+GEM_INSTALL_ARGS += --document rdoc,ri
+endif
+
+GEM_INSTALL_ARGS += -V --local --force
+GEM_INSTALL_ARGS += --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR)
+GEM_INSTALL_ARGS += --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin
+
+# cd into build directory
+# gem 2.2.3 uses .gem from the cwd ignoring command line .gem file
+# gem 1.8.23.2 uses command line .gem file OR .gem from cwd
+GEM_INSTALL_ACTION= (cd $(@D); $(GEM) install $(GEM_INSTALL_ARGS) $(COMPONENT_NAME))
+
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(CLONEY) $(SOURCE_DIR) $(@D)
+	$(GTAR) -C $(SOURCE_DIR) -cpf - . | $(GTAR) -C $(@D) -xpf -
 	$(COMPONENT_PRE_BUILD_ACTION)
 	# Build the gem and cause the generation of a new gem spec
 	# file in $(COMPONENT_SRC)
@@ -57,5 +70,38 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+COMPONENT_TEST_TARGETS =
+
+# Test the built source.  If the output file shows up in the environment or
+# arguments, don't redirect stdout/stderr to it.
+$(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
+	$(COMPONENT_PRE_TEST_ACTION)
+	-(cd $(COMPONENT_TEST_DIR) ; \
+	    $(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+	    $(COMPONENT_TEST_CMD) \
+	    $(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
+	    $(if $(findstring $(COMPONENT_TEST_OUTPUT),$(COMPONENT_TEST_ENV)$(COMPONENT_TEST_ARGS)),,&> $(COMPONENT_TEST_OUTPUT))
+	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
+	$(COMPONENT_TEST_COMPARE)
+	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
+
+$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
+	$(COMPONENT_PRE_TEST_ACTION)
+	(cd $(COMPONENT_TEST_DIR) ; \
+	    $(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
+	    $(COMPONENT_TEST_CMD) \
+	    $(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+	$(COMPONENT_POST_TEST_ACTION)
+	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+REQUIRED_PACKAGES += runtime/ruby
