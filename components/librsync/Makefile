@@ -50,6 +50,8 @@ TPNO=			9087
 
 CLEAN_PATHS += $(COMPONENT_NAME_1)
 
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -62,6 +64,14 @@ CONFIGURE_OPTIONS  +=	--enable-shared
 
 PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
 
+# Get correct librsync.so.1 from the proto area.
+TEST_LIBPATH.32 =		$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =		$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=		LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
+COMPONENT_TEST_DIR =		$(@D)/testsuite
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/testsuite
+
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
@@ -69,6 +79,13 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # The additional librsync specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Entering directory/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/check-TESTS/d"' \
+	'-e "/depmode/d"' \
+	'-e "/isprefix.driver/d"' \
+	'-e "/^mkdir/d"' \
+	'-e "/^make/d"' \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
