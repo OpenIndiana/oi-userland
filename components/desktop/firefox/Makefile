@@ -99,7 +99,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-xinerama" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-pulseaudio" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-gstreamer=1.0" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-libffi" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \

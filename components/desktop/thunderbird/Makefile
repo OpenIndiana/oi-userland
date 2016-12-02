@@ -119,7 +119,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-gstreamer=1.0" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
