@@ -36,6 +36,8 @@ COMPONENT_BUGDB=	library/libevent
 
 TPNO=			27840	
 
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
@@ -51,17 +53,32 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --disable-static
 
+# Get correct libevent-2.0.so.5 from the proto area.
+TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
+COMPONENT_TEST_DIR =		$(@D)/test
 COMPONENT_TEST_TARGETS =	verify
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/test
+COMPONENT_SYSTEM_TEST_TARGETS =	verify
 
 # \x24 represents the character '$'
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/^type: .* OKAY\x24/TYPE-COUNT-LINE OKAY/" '
+	'-e "s/^type: .* OKAY\x24/TYPE-COUNT-LINE OKAY/" ' \
+	'-e "/cp test.sh test-script.sh/d" ' \
+	'-e "/Entering directory/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/^make/d"' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
 
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/cp test.sh test-script.sh/d" '
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
