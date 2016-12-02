@@ -36,15 +36,23 @@ COMPONENT_BUGDB=	library/libsndfile
 
 TPNO=			30616
 
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # Needed to get tests/header_test.c to compile successfully on SPARC.
 gcc_XREGS.sparc=	-mapp-regs
 
+# Get correct libsndfile.so.1 from the proto area.
+TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
 # Need to use GNU sed otherwise we get a:
 # Error : sfversion <version> and PACKAGE_VERSION <version> don't match."
 # failure from the test_wrapper.sh script.
 COMPONENT_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -65,9 +73,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*argument:.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*prototype:.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "s|^.*warning:.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Nothing to be.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 REQUIRED_PACKAGES += codec/flac
