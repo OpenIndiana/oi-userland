@@ -51,7 +51,11 @@ CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 CPPFLAGS +=	$(shell /usr/php/5.6/bin/php-config --includes)
 #CXX +=		$(studio_NORUNPATH)
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
+				aclocal && \
+				autoconf -f -I m4 && \
+				autoheader && \
+				automake --add-missing)
 
 # Can't find headers without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
