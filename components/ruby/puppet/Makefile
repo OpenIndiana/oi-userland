@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppet
 COMPONENT_VERSION=	3.8.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Puppet - configuration management toolkit
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
