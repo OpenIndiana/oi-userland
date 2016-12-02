@@ -75,32 +75,6 @@ endif
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
-# Results output is slightly different on Intel vs. SPARC.
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
-
-# Do not change the order of these regexp transforms.
-COMPONENT_TEST_TRANSFORMS += \
-     '-e "/^</d"' \
-     '-e "/^>/d"' \
-     '-e "/^---/d"' \
-     '-e "/^Testing/d"' \
-     '-e "/m64/d"' \
-     '-e "/DPROGRAM/d"' \
-     '-e "/^rm -f/d"' \
-     '-e "/^ls -l/d"' \
-     '-e "/text/d"' \
-     '-e "/size/d"' \
-     '-e "/bash$$/d"' \
-     '-e "/warning/d"' \
-     '-e "s/^[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
-     '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\},[0-9]\{1,\}//g"' \
-     '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
-     '-e "/^$$/d"'
-
-# The bash test harness needs the GNU userland utilities
-TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
-
 # This avoids the need to patch configure or other files for these dependencies.
 ifeq ($(OS_VERSION), 5.11)
 CONFIGURE_ENV += LD_OPTIONS="-lc -lm -lgen -lsocket -lnsl -lresolv $(LD_Z_IGNORE)"
@@ -116,10 +90,6 @@ CONFIGURE_ENV += ac_cv_lib_termcap_tgetent=no
 CONFIGURE_ENV += ac_cv_lib_curses_tgetent=no
 CONFIGURE_ENV += ac_cv_lib_ncurses_tgetent=yes
 CONFIGURE_ENV += bash_cv_termcap_lib=libncurses
-
-# bash will trigger an autoconf during the build; so apply above again
-# XXX just apply configure_env?
-# COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
 CONFIGURE_OPTIONS += --disable-profiling
 CONFIGURE_OPTIONS += --disable-strict-posix-default
@@ -163,14 +133,36 @@ CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-bash-malloc=yes
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --with-installed-readline=no
-COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
-COMPONENT_TEST_ENV =		- $(TEST_PATH)
 
-# The tests use /tmp/xx, and there can only be one user running
-# the them at a time. Need to remove /tmp/xx after testing to
-# avoid permission issues for other users running these tests
-COMPONENT_PRE_TEST_ACTION =	rm -f /tmp/xx
-COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
+COMPONENT_TEST_DIR		= $(BUILD_DIR_64)
+COMPONENT_TEST_ENV		= - $(TEST_PATH)
+# The bash test harness needs the GNU userland utilities
+TEST_PATH	= "PATH=$(GNUBIN):$(USRBINDIR)"
+# Results output is slightly different on Intel vs. SPARC.
+COMPONENT_TEST_MASTER		= \
+    $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
+
+# The goal is to remove lines like
+#   71d70
+#   < +[8] cat
+# from the test-trap output. To have full controll over the output I use -n
+# gsed parameter (don't print the output automatically)
+COMPONENT_TEST_TRANSFORMS       += \
+	-n \
+	'-e "                           \n\
+	    /^run-trap$$/,/^run-/ {     \n\
+	        \# For text region from ^run-trap$$ till any line beginning with ^run- \n\
+	        /^[^0-9<>]/ {           \n\
+	            \# If the line does _NOT_ start with number or < or >, print it \n\
+	            p                   \n\
+	        }                       \n\
+		\# and delete the line so that it does not get printed by the last p command \n\
+	        d                       \n\
+	    }                           \n\
+	    \# Everything else gets printed \n\
+	    p                           \n\
+	"'
 
 COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHAREDIR)/locale ; \

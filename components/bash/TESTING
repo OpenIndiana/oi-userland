@@ -1,10 +1,26 @@
 Bash test results are stored in test/*/test-64-results. They are then filtered
 by COMPONENT_TEST_TRANSFORMS to make the test produce stable/reproducible
-results. Unfortunatelly COMPONENT_TEST_TRANSFORMS remove any problems
-encountered too. This is not ideal and should be fixed. The problem is that
-bash tests are sensitive to environment they are executed in (your ~/.bash*
-files for example). It's not easy to tell that bash tests finished
-successfully, you have to read it through.
+results. Currently the only test which is not sometimes passing is 'run-trap'.
+Explanation is in the test output itself, and this is what the output looks like:
 
-To compare the results before and after a fix one has to store test-64-results
-file and compare it to the one generated after your change.
+  warning: UNIX versions number signals and schedule processes differently.
+  warning: If output differing only in line numbers is produced, please
+  warning: do not consider this a test failure.
+  71d70
+  < +[8] cat
+  72a72
+  > +[8] cat
+
+
+COMPONENT_TEST_TRANSFORMS thus remove this test output. When testing bash it is
+necessary to observe full test-64-results.
+
+
+To test new version of bash installed on new machine I did:
+
+- install new bash
+- reboot
+- svcs -x # to see if it caused any issue
+- bash --version
+  - to see if we are testing right bash version
+
