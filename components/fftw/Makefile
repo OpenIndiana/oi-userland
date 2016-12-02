@@ -27,15 +27,13 @@ BUILD_BITS=		64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fftw
-COMPONENT_VERSION=	3.2.1
+COMPONENT_VERSION=	3.3.5
 COMPONENT_PROJECT_URL=	http://fftw.org
 COMPONENT_ARCHIVE_HASH= \
-	sha256:076a43a8000d331076181ea9e72a56a9cd050400535b7bb3fc2f53b707e712f5
-# 3.2.1 is no longer available on upstream website, so we use Fedora's archive
-# COMPONENT_ARCHIVE_URL=	ftp://ftp.fftw.org/pub/fftw/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/fftw/fftw-3.2.1.tar.gz/712d3f33625a0a76f5758648d4b925f7/fftw-3.2.1.tar.gz
+	sha256:8ecfe1b04732ec3f5b7d279fdb8efcad536d555f9d1e8fabd027037d45ea8bcf
+COMPONENT_ARCHIVE_URL=	http://fftw.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libfftw
-TPNO=			8418	
+TPNO=			32881
 
 # Need to build regular, float, and long-double variants
 VARIANTS =		f l
