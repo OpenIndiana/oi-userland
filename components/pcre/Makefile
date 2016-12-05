@@ -35,6 +35,8 @@ COMPONENT_BUGDB=	library/pcre
 
 TPNO=			25877
 
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # pick up -xc99=all in CFLAGS
@@ -97,18 +99,23 @@ COMPONENT_BUILD_ENV+=	"MAKE=$(GMAKE)"
 
 COMPONENT_BUILD_ARGS+=	-e
 
+COMPONENT_INSTALL_ARGS+=	"INSTALL=$(INSTALL)"
+COMPONENT_INSTALL_ARGS+=	"MAKE=$(GMAKE)"
+
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Get correct libpcre.so.0 from the build area.
+TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Nothing to be done/d"' \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"' \
 	'-e "s|Testsuite summary for PCRE .*|Testsuite summary for PCRE|" '
-
-COMPONENT_INSTALL_ARGS+=	"INSTALL=$(INSTALL)"
-COMPONENT_INSTALL_ARGS+=	"MAKE=$(GMAKE)"
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
