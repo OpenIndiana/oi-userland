@@ -26,15 +26,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.4.9
+COMPONENT_VERSION=	3.4.15
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:48594fadba33d450f796ec69526cf2bce6ff9bc3dc90fbd7bf38dc3601f57c3f
+    sha256:eb2a013905f5f2a0cbf7bcc1d20c85a50065063ee87bd33b496c4e19815e3498 
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnutls
 
-TPNO=			28117
+TPNO=			32471
 
 COMPONENT_BUILD_TARGETS = all info
 
@@ -180,6 +180,7 @@ CONFIGURE_OPTIONS.wanboot += --disable-crywrap
 
 CONFIGURE_OPTIONS.wanboot += ac_cv_func___fsetlocking=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func___register_atfork=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func___secure_getenv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func__fseeki64=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func__ftelli64=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func__ftime=no
@@ -211,6 +212,7 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_func_iconv=no
 CONFIGURE_OPTIONS.wanboot += am_cv_func_iconv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_inet_ntop=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_inet_pton=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_issetugid=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_kqueue=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_localtime=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_localtime_r=no
@@ -227,6 +229,7 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_func_putenv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_regcomp=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_scandir=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_scm_gc_malloc_pointerless=no
+CONFIGURE_OPTIONS.wanboot += ac_cv_func_secure_getenv=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_select=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_setdtablesize=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_func_setenv=no
