@@ -115,9 +115,7 @@ file path=usr/include/mesa/glx.h
 file path=usr/include/mesa/glx_mangle.h
 file path=usr/include/mesa/glxext.h
 file path=usr/include/mesa/internal/dri_interface.h
-file path=usr/include/mesa/mesa_glinterop.h
 file path=usr/include/mesa/osmesa.h
-file path=usr/include/mesa/wglext.h
 file path=usr/include/EGL/egl.h
 file path=usr/include/EGL/eglext.h
 file path=usr/include/EGL/eglextchromium.h
@@ -191,13 +189,17 @@ file path=usr/lib/pkgconfig/gl.pc
 file path=usr/lib/pkgconfig/glesv1_cm.pc
 file path=usr/lib/pkgconfig/glesv2.pc
 file path=usr/lib/pkgconfig/osmesa.pc
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i965_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r200_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so target=swrast_dri.so
-file path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/i915_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/i965_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=swrast_dri.so
-hardlink path=usr/lib/xorg/modules/dri/radeon_dri.so target=swrast_dri.so
-file path=usr/lib/xorg/modules/dri/swrast_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i915_dri.so \
+    target=radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/i965_dri.so \
+    target=radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/r200_dri.so \
+    target=radeon_dri.so
+file path=usr/lib/xorg/modules/dri/$(MACH64)/radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/$(MACH64)/swrast_dri.so \
+    target=radeon_dri.so
+hardlink path=usr/lib/xorg/modules/dri/i915_dri.so target=i965_dri.so
+file path=usr/lib/xorg/modules/dri/i965_dri.so
+hardlink path=usr/lib/xorg/modules/dri/r200_dri.so target=i965_dri.so
+hardlink path=usr/lib/xorg/modules/dri/radeon_dri.so target=i965_dri.so
+hardlink path=usr/lib/xorg/modules/dri/swrast_dri.so target=i965_dri.so
