@@ -11,19 +11,25 @@
 #
 # Copyright 2012, Jon Tibble
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-gcc
 COMPONENT_VERSION=	4.4.4
-COMPONENT_SRC=		illumos-gcc-bcf43dd
+COMPONENT_SUMMARY=	GCC - 4.4.4 compilers patched for illumos
+COMPONENT_SRC=		illumos-gcc-0f5ed4c
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:373d39fe19299da26e0a4e124e1a2f97565a2535c8fabf9bd075a0e6fda050e1
-ILLUMOS_VERSION=	gcc-4.4.4-il-3
+COMPONENT_ARCHIVE_HASH=	sha256:55ef400145e448a1251d0a5ea9b5a423e56b3964244ab3a805710a80ccd2a082
+ILLUMOS_VERSION=	gcc-4.4.4-il-4
 COMPONENT_ARCHIVE_URL=	https://github.com/illumos/gcc/tarball/$(ILLUMOS_VERSION)
+COMPONENT_PROJECT_URL=	https://github.com/illumos/gcc
+COMPONENT_FMRI=		developer/illumos-gcc
+COMPONENT_CLASSIFICATION=	Development/C
+COMPONENT_LICENSE=	GPLv3 with Runtime Exception, FDLv1.2
+COMPONENT_LICENSE_FILE=	gcc.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC_BITS=
 CFLAGS=		-g -O2
@@ -65,3 +71,9 @@ COMPONENT_POST_INSTALL_ACTION= ( \
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/mpfr
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
