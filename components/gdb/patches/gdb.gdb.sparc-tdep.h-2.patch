@@ -1,0 +1,48 @@
+Support for target descriptions layered on top of sparc32/sparc64
+which describe more registers than native ones.
+Pseudo registers always come after the real registers.
+One more step forward to modernize sparc tdep's.
+Submitted to upstream as:
+https://sourceware.org/bugzilla/show_bug.cgi?id=20936
+
+--- gdb-7.11/gdb/sparc-tdep.h.orig	2016-11-13 21:25:35.998594039 -0800
++++ gdb-7.11/gdb/sparc-tdep.h	2016-11-13 21:26:09.714151047 -0800
+@@ -20,6 +20,12 @@
+ #ifndef SPARC_TDEP_H
+ #define SPARC_TDEP_H 1
+ 
++#define SPARC_CORE_REGISTERS                      \
++  "g0", "g1", "g2", "g3", "g4", "g5", "g6", "g7", \
++  "o0", "o1", "o2", "o3", "o4", "o5", "sp", "o7", \
++  "l0", "l1", "l2", "l3", "l4", "l5", "l6", "l7", \
++  "i0", "i1", "i2", "i3", "i4", "i5", "fp", "i7"
++
+ struct frame_info;
+ struct gdbarch;
+ struct regcache;
+@@ -57,6 +63,12 @@
+   int pc_regnum;
+   int npc_regnum;
+ 
++  /* Register names specific for architecture (sparc32 vs. sparc64) */
++  const char **fpu_register_names;
++  size_t fpu_registers_num;
++  const char **cp0_register_names;
++  size_t cp0_registers_num;
++
+   /* Register sets.  */
+   const struct regset *gregset;
+   size_t sizeof_gregset;
+@@ -141,8 +153,11 @@
+   SPARC32_NPC_REGNUM,		/* %npc */
+   SPARC32_FSR_REGNUM,		/* %fsr */
+   SPARC32_CSR_REGNUM,		/* %csr */
++};
+ 
+-  /* Pseudo registers.  */
++/* Pseudo registers.  */
++enum sparc32_pseudo_regnum
++{
+   SPARC32_D0_REGNUM,		/* %d0 */
+   SPARC32_D30_REGNUM		/* %d30 */
+   = SPARC32_D0_REGNUM + 15

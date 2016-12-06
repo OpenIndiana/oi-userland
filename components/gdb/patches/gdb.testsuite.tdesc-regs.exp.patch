@@ -1,0 +1,22 @@
+Support for target descriptions layered on top of sparc32/sparc64
+which describe more registers than native ones.
+Pseudo registers always come after the real registers.
+One more step forward to modernize sparc tdep's.
+Submitted to upstream as:
+https://sourceware.org/bugzilla/show_bug.cgi?id=20936
+
+--- gdb-7.11/gdb/testsuite/gdb.xml/tdesc-regs.exp.orig	2016-11-19 07:32:42.820444427 -0800
++++ gdb-7.11/gdb/testsuite/gdb.xml/tdesc-regs.exp	2016-11-19 07:35:44.085215333 -0800
+@@ -49,6 +49,12 @@
+     "s390*-*-*" {
+ 	set core-regs {s390-core32.xml s390-acr.xml s390-fpr.xml}
+     }
++    "sparc-*-*" {
++        set core-regs {sparc-cpu.xml sparc-fpu.xml sparc-cp0.xml}
++    }
++    "sparc64-*-*" {
++        set core-regs {sparc64-cpu.xml sparc64-fpu.xml sparc64-cp0.xml}
++    }
+     "spu*-*-*" {
+ 	# This may be either the spu-linux-nat target, or the Cell/B.E.
+ 	# multi-architecture debugger in SPU standalone executable mode.

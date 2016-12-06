@@ -1,0 +1,22 @@
+Support for target descriptions layered on top of sparc32/sparc64
+which describe more registers than native ones.
+Pseudo registers always come after the real registers.
+One more step forward to modernize sparc tdep's.
+Submitted to upstream as:
+https://sourceware.org/bugzilla/show_bug.cgi?id=20936
+
+--- gdb-7.11/gdb/sparc64-tdep.h.orig	2016-11-13 21:26:01.870566687 -0800
++++ gdb-7.11/gdb/sparc64-tdep.h	2016-11-13 21:26:21.157185579 -0800
+@@ -56,8 +56,11 @@
+   SPARC64_FSR_REGNUM,		/* %fsr */
+   SPARC64_FPRS_REGNUM,		/* %fprs */
+   SPARC64_Y_REGNUM,		/* %y */
++};
+ 
+-  /* Pseudo registers.  */
++/* Pseudo registers.  */
++enum sparc64_pseudo_regnum
++{
+   SPARC64_CWP_REGNUM,		/* %cwp */
+   SPARC64_PSTATE_REGNUM,	/* %pstate */
+   SPARC64_ASI_REGNUM,		/* %asi */
