@@ -27,17 +27,16 @@ COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
-COMPONENT_VERSION=	1.0.1
+COMPONENT_VERSION=	1.1.11
 COMPONENT_SRC_NAME=	libopenusb
 COMPONENT_PROJECT_URL=	http://openusb.sourceforge.net/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:031098c376f16f6030c4dbd553266e107b39d1f7b3fc366f8f7fd412d3d7c3ad
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/openusb/files/$(COMPONENT_NAME)/libopenusb%201.0.1/$(COMPONENT_ARCHIVE)/download
+    sha256:434242e758155aba6e4ddd28460dc9a2565c44bb8861a35ceaf7a6bbcae4aa1e
+COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/openusb/files/libopenusb/libopenusb-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download	
 COMPONENT_BUGDB=	library/libopenusb
 
-TPNO=			8843
+TPNO=			32726
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # keep traditional GNU semantics for inline functions so we don't lose

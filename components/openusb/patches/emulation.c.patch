@@ -1,0 +1,25 @@
+struct and USBCONSTISSUE cause usb_bulk_write and usb_interrupt_write in
+libopenusb-1.1.11/src/emulation.c to mismatch the usb_bulk_write and usb_interrupt_write
+declarations in /usr/include/usb.h. struct and USBCONSTISSUE have thus been removed 
+to resolve this issue. This patch is not planned to be submitted upstream.
+
+--- libopenusb-1.1.11/src/emulation.c_orig	2016-11-10 13:29:36.583852896 +0000
++++ libopenusb-1.1.11/src/emulation.c	2016-11-10 13:30:33.154618185 +0000
+@@ -635,7 +635,7 @@
+ 	return(bulk.result.transferred_bytes);
+ }
+ 
+-int usb_bulk_write(struct usb_dev_handle *dev, int ep, USBCONSTISSUE char *bytes, int size,
++int usb_bulk_write(usb_dev_handle *dev, int ep, char *bytes, int size,
+ 	int timeout)
+ {
+ 	return (usb0_bulk_xfer(dev, ep, (char*)bytes, size, timeout));
+@@ -678,7 +678,7 @@
+ 	return(intr.result.transferred_bytes);
+ }
+ 
+-int usb_interrupt_write(usb_dev_handle *dev, int ep, USBCONSTISSUE char *bytes, int size,
++int usb_interrupt_write(usb_dev_handle *dev, int ep, char *bytes, int size,
+ 	int timeout)
+ {
+ 	return (usb0_intr_xfer(dev, ep, (char*)bytes, size, timeout));

@@ -1,12 +1,15 @@
---- libopenusb-1.0.1/src/Makefile.in	Thu Feb 21 17:54:43 2008
-+++ Makefile.in	Thu Feb 21 17:59:12 2008
-@@ -374,6 +374,9 @@
- 	  else :; fi; \
- 	done
+Creates target install-sunos-backend for component to build successfully.
+Patch will potentially be submitted upstream.
+
+--- libopenusb-1.1.11/src/Makefile.in_orig	2016-11-15 10:56:29.737793492 +0000
++++ libopenusb-1.1.11/src/Makefile.in	2016-11-15 10:58:21.991252260 +0000
+@@ -428,6 +428,9 @@
+ 	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(usblibdir)"; \
+ 	}
  
 +install-sunos-backend: $(usblib_LTLIBRARIES)
 +	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,sunos.so -o .libs/sunos.so  .libs/sunos_la-sunos.o  -R$(libdir) -L.libs $(sunos_la_LIBADD)
 +
  uninstall-usblibLTLIBRARIES:
  	@$(NORMAL_UNINSTALL)
- 	@list='$(usblib_LTLIBRARIES)'; for p in $$list; do \
+ 	@list='$(usblib_LTLIBRARIES)'; test -n "$(usblibdir)" || list=; \
