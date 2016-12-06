@@ -49,15 +49,34 @@ CONFIGURE_OPTIONS += X11LIB=/usr/X11/lib/64
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_ENV =		DISPLAY=:1
+COMPONENT_TEST_TARGETS =	test
+
+# Tests are run using an X virtual framebuffer.
+# When we have the equivalent of REQUIRED_PACKAGES for test dependencies,
+# then we will need to make sure that x11/server/xvfb is included in that list.
+
+COMPONENT_PRE_TEST_ACTION = \
+	$(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
+COMPONENT_POST_TEST_ACTION = \
+	$(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Entering directory/d"' \
+	'-e "/Leaving directory/d"' \
+	'-e "/^chmod/d"' \
+	'-e "/^make/d"' \
+	'-e "/^Stack moved/d"' \
+	'-e "/\. update/d"' \
+	'-e "/\.label/d"' \
+	'-e "/\.toplevel/d"' \
+	'-e "/OPTIMIZE/d"' \
+	'-e "s/, *[0-9][0-9]* wallclock secs (.*CPU)$$/, <TIMINGS REMOVED>/" '
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# Tests work but require an X display and for some reason does not like
-# our test harness.  Unable to connect to X display.
-# 23107507 perl-tk tests fail to work inside the userland test framework
 test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
