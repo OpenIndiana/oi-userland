@@ -1,13 +1,19 @@
-https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=12901
+https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=13163
 
 --- make-version.pl
 +++ make-version.pl
-@@ -619,7 +619,7 @@
- {
- 	my $VCS_REVISION;
- 	my $needs_update = 1;
--	my $set_header = 1;
-+	my $set_header = 0;
- 	my $git_cdir;
+@@ -689,9 +689,11 @@
+ 	}
  
- 	chomp($git_cdir = qx{git --git-dir="$srcdir/.git" rev-parse --git-common-dir 2> $devnull});
+ 	if (! open(FILE, "<$vconf_file")) {
+-		print_diag "Version configuration file $vconf_file not "
+-		. "found. Using defaults.\n";
+-		return 1;
++		if (! open(FILE, "<$srcdir/$vconf_file")) {
++			print_diag "Version configuration file $vconf_file not "
++			. "found. Using defaults.\n";
++			return 1;
++		}
+ 	}
+ 
+ 	while (<FILE>) {
