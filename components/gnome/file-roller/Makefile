@@ -26,13 +26,13 @@ COMPILER=		gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		file-roller
-COMPONENT_VERSION=	3.16.4
+COMPONENT_VERSION=	3.20.4
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/FileRoller
 COMPONENT_ARCHIVE_HASH= \
-	sha256:5455980b2c9c7eb063d2d65560ae7ab2e7f01b208ea3947e151680231c7a4185
+	sha256:d9346bb90d5f3296bf22f93a81f5bcd2e974620a4d81efea882db2b3db3b66c1
 COMPONENT_BUGDB=	gnome/libraries
 
-TPNO=			25852
+TPNO=			32830
 
 TEST_TARGET = $(NO_TESTS)
 
