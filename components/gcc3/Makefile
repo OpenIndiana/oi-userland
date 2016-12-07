@@ -85,6 +85,9 @@ CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=$(USRBINDIR)/as
 CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=$(GNUBIN)/as
 
+COMPONENT_BUILD_ENV +=	gcc_cv_as_ix86_gotoff_in_data=yes
+COMPONENT_BUILD_ENV +=	gcc_cv_as_tls=yes
+
 COMPONENT_BUILD_ENV += STAGE1_CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CFLAGS_FOR_TARGET="$(CFLAGS)"
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)

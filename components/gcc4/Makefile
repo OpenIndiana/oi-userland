@@ -101,6 +101,7 @@ CONFIGURE_OPTIONS +=	--with-gmp-include=$(USRINCDIR)/gmp
 CONFIGURE_OPTIONS +=	--with-mpfr-include=$(USRINCDIR)/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(USRBINDIR)/ld
 CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=$(GNUBIN)/as
+CONFIGURE_OPTIONS +=	--enable-tls
 
 # If the compiler used to build matches the compiler being built, there is no
 # need for a 3 stage build.
