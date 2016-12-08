@@ -18,19 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# sed script to fix the rbconfig.rb file after 
+# the configure and install of ruby
 
-set name=pkg.fmri value=pkg:/runtime/ruby@$(COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Ruby, RubyGems, and Rake"
-set name=pkg.description \
-    value="Metapackage that ensures at least one version of Ruby is installed"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Ruby
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2013/269
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-license ruby.license license=Oracle
-
-# Any version of Ruby currently available
-depend type=require-any fmri=runtime/ruby-21 fmri=runtime/ruby-23
+# These paths to GNU commands are symlinks which are only available when 
+# the pkg facet.gnu-links is true, so use the non-faceted paths
+s%/usr/bin/ginstall%/usr/gnu/bin/install%
+s%/usr/bin/gmkdir%/usr/gnu/bin/mkdir%
+s%/usr/bin/gsed%/usr/gnu/bin/sed%
+s%/usr/bin/ggrep%/usr/gnu/bin/grep%

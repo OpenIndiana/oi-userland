@@ -1,0 +1,43 @@
+# Solaris specific change; not appropriate for contributing upstream.
+#
+# Remove the test_popen_exit test so it won't run; SIGTERM is sent to the
+# ruby process causing the entire test run to terminate when this test is run.
+
+--- ruby-2.3.1-orig/test/ruby/test_process.rb	2016-03-29 00:11:32.000000000 -0700
++++ ruby-2.3.1/test/ruby/test_process.rb	2016-11-28 15:32:30.591404723 -0800
+@@ -1729,35 +1729,6 @@ class TestProcess < Test::Unit::TestCase
+     }
+   end
+ 
+-  def test_popen_exit
+-    bug11510 = '[ruby-core:70671] [Bug #11510]'
+-    pid = nil
+-    opt = {timeout: 10, stdout_filter: ->(s) {pid = s}}
+-    if windows?
+-      opt[:new_pgroup] = true
+-    else
+-      opt[:pgroup] = true
+-    end
+-    assert_ruby_status(["-", RUBY], <<-'end;', bug11510, **opt)
+-      RUBY = ARGV[0]
+-      th = Thread.start {
+-        Thread.current.abort_on_exception = true
+-        IO.popen([RUBY, "-esleep 15", err: [:child, :out]]) {|f|
+-          STDOUT.puts f.pid
+-          STDOUT.flush
+-          sleep(2)
+-        }
+-      }
+-      sleep(0.001) until th.stop?
+-    end;
+-    assert_match(/\A\d+\Z/, pid)
+-  ensure
+-    if pid
+-      pid = pid.to_i
+-      [:TERM, :KILL].each {|sig| Process.kill(sig, pid) rescue break}
+-    end
+-  end
+-
+   def test_execopts_new_pgroup
+     return unless windows?
+ 

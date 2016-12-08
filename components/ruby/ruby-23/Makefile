@@ -23,17 +23,18 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	2.1.6
+COMPONENT_VERSION=	2.3.1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4
+    sha256:b87c738cb2032bf4920fef8e3864dc5cf8eae9d89d8d523ce0236945c5797dcd
 COMPONENT_ARCHIVE_URL=	\
-	http://cache.ruby-lang.org/pub/ruby/2.1/$(COMPONENT_ARCHIVE)
+	http://cache.ruby-lang.org/pub/ruby/2.3/$(COMPONENT_ARCHIVE)
 
-TPNO=			22307
+TPNO=			31235
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,13 +48,13 @@ RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 # '.' separating <major> and <minor>.  Used when editing manpages (see below).
 RUBY_VER_NO_DOT=$(subst .,,$(RUBY_VER))
 # the library-compatible version
-RUBY_LIB_VER=2.1.0
+RUBY_LIB_VER=2.3.0
 
 PROTORUBYDIR=$(PROTOUSRDIR)/ruby/$(RUBY_VER)
 PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(MACH64)-solaris$(SOLARIS_VERSION)/rbconfig.rb
 
 # these macros are used in the package manifest
-PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
+PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER) RUBY_VER_NO_DOT=$(RUBY_VER_NO_DOT)
 
 # Prevent re-compile of ripper.so during install, which would result in
 # an erroneous full build directory in its RUNPATH.  The below change to 
@@ -73,18 +74,15 @@ COMPONENT_PRE_INSTALL_ACTION += \
 # work for some of the commands in rbconfig.sedscript.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e "s/RUBY_VER_NO_DOT/$(RUBY_VER_NO_DOT)/g" \
- 	    -e "s/RUBY_VER/$(RUBY_VER)/g" \
+	    -e "s/RUBY_VER/$(RUBY_VER)/g" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/g" Solaris/gem.1-generic \
 	    > Solaris/gem.1 ; \
 	$(GSED) -e "s/RUBY_VER_NO_DOT/$(RUBY_VER_NO_DOT)/g" \
- 	    -e "s/RUBY_VER/$(RUBY_VER)/g" \
+	    -e "s/RUBY_VER/$(RUBY_VER)/g" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/g" Solaris/ruby.1.sedscript \
 	    > Solaris/ruby.1.sedscript.mod ; \
 	$(GSED) -e  "s/RUBY_VER/$(RUBY_VER)/g" \
-	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/g" \
-	    -e "s/CFLAGS_GCC/$(CFLAGS.gcc)/g" \
-	    -e "s/CXXFLAGS_GCC/$(CXXFLAGS.gcc)/g" \
-	    Solaris/rbconfig.sedscript \
+	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/g" Solaris/rbconfig.sedscript \
 	    > Solaris/rbconfig.sedscript.mod ; \
 	$(GSED) -i -f Solaris/ruby.1.sedscript.mod \
 	    $(PROTORUBYDIR)/share/man/man1/ruby.1 ; \
@@ -177,7 +175,12 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^[[:space:]]*CPPFLAGS = \).*|\1|" ' \
 	'-e "s|\(^[[:space:]]*DLDFLAGS = \).*|\1|" ' \
 	'-e "s|\(^[[:space:]]*SOLIBS = \).*|\1|" ' \
-	'-e "s|\(^cc: \).*|\1|" ' \
+	'-e "s|\(^COLLECT_GCC=\).*|\1|" ' \
+	'-e "s|\(^COLLECT_LTO_WRAPPER=\).*|\1|" ' \
+	'-e "s|\(^Target: \).*|\1|" ' \
+	'-e "s|\(^Configured with: \).*|\1|" ' \
+	'-e "s|\(^gcc version \).*|\1|" ' \
+	'-e "s|\(^pid \)[1-9][0-9]*|\1NUM|" ' \
 	'-e "s|^\.[\.FES]\+|XXX_DOTS_XXX|" ' \
 	'-e "s|\(Insecure world writable dir \).*\( in PATH, mode \)[0-7].*|\1XXX_DIR_XXX\2XXX_MODE_XXX|g" ' \
 	'-e "s|\(^Driver is \).*|\1XXX_RUBY_VERSION_XXX|" ' \
@@ -200,9 +203,13 @@ REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += x11/library/libx11

@@ -1,0 +1,25 @@
+Fixes problem with deprecated SSLv2 functions in Solaris.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- ruby-2.3.1-orig/ext/openssl/extconf.rb	2016-04-11 22:29:12.000000000 -0700
++++ ruby-2.3.1/ext/openssl/extconf.rb	2016-09-14 14:00:35.000000000 -0700
+@@ -97,12 +97,18 @@ have_func("OBJ_NAME_do_all_sorted")
+ have_func("SSL_SESSION_get_id")
+ have_func("SSL_SESSION_cmp")
+ have_func("OPENSSL_cleanse")
++=begin
++These functions are deprecated in Solaris
+ have_func("SSLv2_method")
+ have_func("SSLv2_server_method")
+ have_func("SSLv2_client_method")
++=end
++=begin
++Do not include for Solaris.
+ have_func("SSLv3_method")
+ have_func("SSLv3_server_method")
+ have_func("SSLv3_client_method")
++=end
+ have_func("TLSv1_1_method")
+ have_func("TLSv1_1_server_method")
+ have_func("TLSv1_1_client_method")
