@@ -137,6 +137,7 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
