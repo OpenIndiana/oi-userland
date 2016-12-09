@@ -47,11 +47,20 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f isort isort-$(PYTHON_VERSION)) ;
 
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_TEST_ARGS=	setup.py test
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(in \).*\(seconds\).*|\1 x \2|"' \
+	'-n ' \
+	'-e "/^===/p" '
+
+COMPONENT_TEST_MASTER=	 $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# tests hookup need further work. See CR #24696934 for more details.
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
