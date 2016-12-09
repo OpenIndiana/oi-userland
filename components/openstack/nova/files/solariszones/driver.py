@@ -797,23 +797,31 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_cpu_time(self, zone):
         """Return the CPU time used in nanoseconds."""
-        if zone.id == -1:
+        if zone.name is None:
             return 0
 
+        # Loop over the kstats for each cpu. If the cpu list changes, the
+        # gen_num for the accumulated kstat will change invalidating the
+        # result, so retry if this happens.
         # The retry value of 3 was determined by the "we shouldn't hit this
         # often, but if we do it should resolve quickly so try again"+1
         # algorithm.
         for _attempt in range(3):
             total = 0
 
-            accum_uri = "kstat:/zones/cpu/sys_zone_accum/%d" % zone.id
-            uri = "kstat:/zones/cpu/sys_zone_%d" % zone.id
+            uri = "kstat:/zones/%s/cpu" % zone.name
+            accum_uri = "kstat:/zones/%s/cpu/accum/sys" % zone.name
 
             initial = self._kstat_data(accum_uri)
             cpus = self._kstat_data(uri)
+            cpus.pop('pset_accum')
+            cpus.pop('accum')
 
-            total += self._sum_kstat_statistic(cpus, 'cpu_nsec_kernel_cur')
-            total += self._sum_kstat_statistic(cpus, 'cpu_nsec_user_cur')
+            for n in cpus.keys():
+                cpu = self._kstat_data(uri + "/%s" % n)
+
+                total += self._sum_kstat_statistic(cpu, 'cpu_nsec_kernel_cur')
+                total += self._sum_kstat_statistic(cpu, 'cpu_nsec_user_cur')
 
             final = self._kstat_data(accum_uri)
 
@@ -821,7 +829,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 total += initial['cpu_nsec_user'] + initial['cpu_nsec_kernel']
                 return total
 
-        LOG.error(_("Unable to get accurate cpu usage beacuse cpu list "
+        LOG.error(_("Unable to get accurate cpu usage because cpu list "
                     "keeps changing"))
         return 0
 
@@ -2694,12 +2702,20 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # If it has changed, try again a few times then give up because
         # something keeps pulling cpus out from under us.
 
-        accum_uri = "kstat:/zones/cpu/sys_zone_accum/%d" % zone.id
-        uri = "kstat:/zones/cpu/sys_zone_%d" % zone.id
+        uri = "kstat:/zones/%s/cpu" % zone.name
+        accum_uri = "kstat:/zones/%s/cpu/accum/sys" % zone.name
 
         for _attempt in range(3):
             initial = self._kstat_data(accum_uri)
             data = self._kstat_data(uri)
+            data.pop('accum')
+            data.pop('pset_accum')
+
+            # Turn the list of cpu ids in data.keys into a dictionary of the
+            # 'sys' kstat for each cpu id.
+            data = {n: self._kstat_data(uri + "/%s" % n)['sys']
+                    for n in data.keys()}
+
             # The list of cpu kstats in data must contain at least one element
             # and all elements have the same map of statistics, since they're
             # all the same kstat type. This gets a list of all the statistics
