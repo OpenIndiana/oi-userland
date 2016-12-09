@@ -1,0 +1,24 @@
+#
+# Add krbPwdPolicy attributes to kerberos.ldif
+#
+# When LDAP backend support for policy extensions was added by 
+# https://github.com/krb5/krb5/commit/5edafa0,
+# kerberos.ldif update was incomplete.
+#
+# Patch source: in-house
+# Submitted upstream: 
+#    https://github.com/krb5/krb5/pull/572
+#    https://github.com/krb5/krb5/commit/823e308
+# Most probably will be part of krb5 1.15.1+ and 1.14.5+.
+#
+--- a/src/plugins/kdb/ldap/libkdb_ldap/kerberos.ldif
++++ b/src/plugins/kdb/ldap/libkdb_ldap/kerberos.ldif
+@@ -863,7 +863,7 @@ objectClasses: ( 2.16.840.1.113719.1.301
+                 NAME 'krbPwdPolicy' 
+                 SUP top
+                 MUST ( cn )
+-                MAY ( krbMaxPwdLife $ krbMinPwdLife $ krbPwdMinDiffChars $ krbPwdMinLength $ krbPwdHistoryLength $ krbPwdMaxFailure $ krbPwdFailureCountInterval $ krbPwdLockoutDuration ) )
++                MAY ( krbMaxPwdLife $ krbMinPwdLife $ krbPwdMinDiffChars $ krbPwdMinLength $ krbPwdHistoryLength $ krbPwdMaxFailure $ krbPwdFailureCountInterval $ krbPwdLockoutDuration $ krbPwdAttributes $ krbPwdMaxLife $ krbPwdMaxRenewableLife $ krbPwdAllowedKeysalts ) )
+ 
+ 
+ ##### The krbTicketPolicyAux holds Kerberos ticket policy attributes.
