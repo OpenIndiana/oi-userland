@@ -41,11 +41,11 @@ file usr/mysql/5.7/support-files/my-default.cnf path=etc/mysql/5.7/my.cnf \
 file Solaris/mysql_57.xml \
     path=lib/svc/manifest/application/database/mysql_57.xml
 file Solaris/mysql_57 path=lib/svc/method/mysql_57 mode=0555
+
+# Regular mysql-57 files
 file path=usr/mysql/5.7/COPYING
 file path=usr/mysql/5.7/README
 file path=usr/mysql/5.7/bin/innochecksum
-
-# Regular mysql-57 files
 file path=usr/mysql/5.7/bin/lz4_decompress
 file path=usr/mysql/5.7/bin/my_print_defaults
 file path=usr/mysql/5.7/bin/myisam_ftdump
@@ -64,6 +64,7 @@ file path=usr/mysql/5.7/bin/mysqld
 file path=usr/mysql/5.7/bin/mysqld_multi
 file path=usr/mysql/5.7/bin/mysqld_safe
 file path=usr/mysql/5.7/bin/mysqldumpslow
+file path=usr/mysql/5.7/bin/mysqlxtest
 file path=usr/mysql/5.7/bin/perror
 file path=usr/mysql/5.7/bin/replace
 file path=usr/mysql/5.7/bin/resolve_stack_dump
@@ -72,7 +73,6 @@ file path=usr/mysql/5.7/bin/zlib_decompress
 file path=usr/mysql/5.7/docs/ChangeLog
 file path=usr/mysql/5.7/docs/INFO_BIN
 file path=usr/mysql/5.7/docs/INFO_SRC
-file path=usr/mysql/5.7/docs/INSTALL-BINARY
 file path=usr/mysql/5.7/include/big_endian.h
 file path=usr/mysql/5.7/include/binary_log_types.h
 file path=usr/mysql/5.7/include/byte_order_generic.h
@@ -149,6 +149,7 @@ file path=usr/mysql/5.7/include/mysql/service_rules_table.h
 file path=usr/mysql/5.7/include/mysql/service_security_context.h
 file path=usr/mysql/5.7/include/mysql/service_srv_session.h
 file path=usr/mysql/5.7/include/mysql/service_srv_session_info.h
+file path=usr/mysql/5.7/include/mysql/service_ssl_wrapper.h
 file path=usr/mysql/5.7/include/mysql/service_thd_alloc.h
 file path=usr/mysql/5.7/include/mysql/service_thd_engine_lock.h
 file path=usr/mysql/5.7/include/mysql/service_thd_wait.h
@@ -187,6 +188,7 @@ file path=usr/mysql/5.7/lib/$(MACH64)/plugin/daemon_example.ini
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/ha_example.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/innodb_engine.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/keyring_file.so
+file path=usr/mysql/5.7/lib/$(MACH64)/plugin/keyring_udf.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/libdaemon_example.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/libmemcached.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/libtest_framework.so
@@ -213,6 +215,7 @@ file path=usr/mysql/5.7/lib/$(MACH64)/plugin/libtest_x_sessions_init.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/locking_service.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/mypluglib.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/mysql_no_login.so
+file path=usr/mysql/5.7/lib/$(MACH64)/plugin/mysqlx.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/qa_auth_client.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/qa_auth_interface.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/qa_auth_server.so
@@ -222,6 +225,7 @@ file path=usr/mysql/5.7/lib/$(MACH64)/plugin/rewriter.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/semisync_master.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/semisync_slave.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/test_security_context.so
+file path=usr/mysql/5.7/lib/$(MACH64)/plugin/test_udf_services.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/validate_password.so
 file path=usr/mysql/5.7/lib/$(MACH64)/plugin/version_token.so
 file path=usr/mysql/5.7/man/man1/comp_err.1
@@ -324,4 +328,5 @@ dir  path=var/mysql/5.7 owner=mysql group=mysql mode=0700
 dir  path=var/mysql/5.7/data owner=mysql group=mysql mode=0700
 license boost.license license="Boost Software License"
 license mysql-57.license license=GPLv2
+depend type=require fmri=database/mysql-57/client
 depend type=require fmri=database/mysql-common

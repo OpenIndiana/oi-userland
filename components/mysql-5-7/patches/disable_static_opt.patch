@@ -1,9 +1,9 @@
 This patch adds an "cmake" option DISABLE_STATIC that prevent
 static libraries built from being installed.
 
---- a/cmake/libutils.cmake	2016-02-02 00:31:58.000000000 +0100
-+++ b/cmake/libutils.cmake	2016-03-02 22:54:28.199045221 +0100
-@@ -267,7 +267,7 @@
+--- a/cmake/libutils.cmake
++++ b/cmake/libutils.cmake
+@@ -267,7 +267,7 @@ MACRO(MERGE_LIBRARIES)
    ELSE()
      MESSAGE(FATAL_ERROR "Unknown library type")
    ENDIF()
@@ -13,18 +13,18 @@ static libraries built from being installed.
        SET(COMP COMPONENT ${ARG_COMPONENT}) 
      ENDIF()
 
---- a/CMakeLists.txt	2016-02-02 00:31:58.000000000 +0100
-+++ b/CMakeLists.txt	2016-03-02 22:36:49.634297070 +0100
-@@ -206,6 +206,8 @@
- INCLUDE(mysql_add_executable)
- 
- # Handle options
-+OPTION(DISABLE_STATIC 
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -214,6 +214,8 @@ ELSE()
+   OPTION(WITH_RAPID
+     "Build additonal code(plugins) that is located in rapid directory" OFF)
+ ENDIF()
++OPTION(DISABLE_STATIC
 + "Don't build static libraries" OFF)
  OPTION(DISABLE_SHARED 
   "Don't build shared libraries, compile code as position-dependent" OFF)
  IF(DISABLE_SHARED)
-@@ -223,7 +225,7 @@
+@@ -231,7 +233,7 @@ IF(NOT WITHOUT_SERVER)
    OPTION (WITH_UNIT_TESTS "Compile MySQL with unit tests" ON)
  ENDIF()
  OPTION(FORCE_UNSUPPORTED_COMPILER "Disable compiler version checks" OFF)
@@ -34,14 +34,13 @@ static libraries built from being installed.
  
  include(CheckCSourceCompiles)
 
---- a/libservices/CMakeLists.txt	2016-02-02 00:31:58.000000000 +0100
-+++ b/libservices/CMakeLists.txt	2016-03-02 22:53:28.974537132 +0100
-@@ -34,4 +34,6 @@
-   security_context_service.c)
+--- a/libservices/CMakeLists.txt
++++ b/libservices/CMakeLists.txt
+@@ -35,4 +35,6 @@ SET(MYSQLSERVICES_SOURCES
+   mysql_keyring_service.c)
  
  ADD_CONVENIENCE_LIBRARY(mysqlservices ${MYSQLSERVICES_SOURCES})
 -INSTALL(TARGETS mysqlservices DESTINATION ${INSTALL_LIBDIR} COMPONENT Development)
 +IF(NOT DISABLE_STATIC)
 +  INSTALL(TARGETS mysqlservices DESTINATION ${INSTALL_LIBDIR} COMPONENT Development)
 +ENDIF()
-
