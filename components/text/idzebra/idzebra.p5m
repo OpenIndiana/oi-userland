@@ -10,19 +10,18 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
-set name=pkg.fmri value=pkg:/text/idzebra@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:System/Text Tools"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license idzebra.license license="GPLv2"
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/share/idzebra-2.0/examples/(.+)$ -> set action.hash usr/share/idzebra-2.0-examples/%<\1> >
 
 file usr/bin/$(MACH64)/idzebra-config-2.0 path=usr/bin/$(MACH64)/idzebra-config mode=0555
@@ -36,9 +35,18 @@ file usr/share/man/man1/idzebra-config-2.0.1 path=usr/share/man/man1/idzebra-con
 file usr/share/man/man1/zebraidx-2.0.1 path=usr/share/man/man1/zebraidx.1
 file usr/share/man/man8/zebrasrv-2.0.8 path=usr/share/man/man8/zebrasrv.8
 
-# Generated section:
-file path=usr/bin/$(MACH64)/idzebra-abs2dom mode=0555
-file path=usr/bin/idzebra-abs2dom mode=0555
+file path=usr/bin/$(MACH64)/idzebra-abs2dom
+#file path=usr/bin/$(MACH64)/idzebra-config-2.0
+#link path=usr/bin/$(MACH64)/zebraidx target=zebraidx-2.0
+#file path=usr/bin/$(MACH64)/zebraidx-2.0
+#link path=usr/bin/$(MACH64)/zebrasrv target=zebrasrv-2.0
+#file path=usr/bin/$(MACH64)/zebrasrv-2.0
+file path=usr/bin/idzebra-abs2dom
+#file path=usr/bin/idzebra-config-2.0
+#link path=usr/bin/zebraidx target=zebraidx-2.0
+#file path=usr/bin/zebraidx-2.0
+#link path=usr/bin/zebrasrv target=zebrasrv-2.0
+#file path=usr/bin/zebrasrv-2.0
 file path=usr/include/idzebra-2.0/idzebra/api.h
 file path=usr/include/idzebra-2.0/idzebra/bfile.h
 file path=usr/include/idzebra-2.0/idzebra/data1.h
@@ -54,26 +62,26 @@ file path=usr/include/idzebra-2.0/idzebra/res.h
 file path=usr/include/idzebra-2.0/idzebra/snippet.h
 file path=usr/include/idzebra-2.0/idzebra/util.h
 file path=usr/include/idzebra-2.0/idzebra/version.h
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-alvis.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-dom.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-marc.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-regx.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-xml.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-safari.so mode=0555
-file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-text.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-alvis.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-dom.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-marc.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-regx.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-xml.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-safari.so
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-text.so
 link path=usr/lib/$(MACH64)/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
 link path=usr/lib/$(MACH64)/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
-file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.1 mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-alvis.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-dom.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-grs-marc.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-grs-regx.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-grs-xml.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-safari.so mode=0555
-file path=usr/lib/idzebra-2.0/modules/mod-text.so mode=0555
+file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.1
+file path=usr/lib/idzebra-2.0/modules/mod-alvis.so
+file path=usr/lib/idzebra-2.0/modules/mod-dom.so
+file path=usr/lib/idzebra-2.0/modules/mod-grs-marc.so
+file path=usr/lib/idzebra-2.0/modules/mod-grs-regx.so
+file path=usr/lib/idzebra-2.0/modules/mod-grs-xml.so
+file path=usr/lib/idzebra-2.0/modules/mod-safari.so
+file path=usr/lib/idzebra-2.0/modules/mod-text.so
 link path=usr/lib/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
 link path=usr/lib/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
-file path=usr/lib/libidzebra-2.0.so.0.0.1 mode=0555
+file path=usr/lib/libidzebra-2.0.so.0.0.1
 file path=usr/share/aclocal/idzebra-2.0.m4
 file path=usr/share/doc/idzebra-2.0/administration-extended-services.html
 file path=usr/share/doc/idzebra-2.0/administration-ranking.html
