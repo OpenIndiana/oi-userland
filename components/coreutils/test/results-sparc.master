@@ -62,6 +62,7 @@ PASS: tests/rm/unread3.sh
 PASS: tests/rm/unreadable.pl
 PASS: tests/rm/v-slash.sh
 SKIP: tests/rm/many-dir-entries-vs-OOM.sh
+SKIP: tests/rm/rm-readdir-fail.sh
 PASS: tests/chgrp/default-no-deref.sh
 PASS: tests/chgrp/deref.sh
 PASS: tests/chgrp/no-x.sh
@@ -74,6 +75,8 @@ PASS: tests/misc/env.sh
 PASS: tests/misc/ptx.pl
 PASS: tests/misc/test.pl
 PASS: tests/misc/seq.pl
+PASS: tests/misc/seq-epipe.sh
+SKIP: tests/misc/seq-io-errors.sh
 SKIP: tests/misc/seq-long-double.sh
 PASS: tests/misc/seq-precision.sh
 PASS: tests/misc/head.pl
@@ -95,7 +98,7 @@ PASS: tests/pr/pr-tests.pl
 PASS: tests/misc/pwd-option.sh
 PASS: tests/misc/chcon-fail.sh
 SKIP: tests/misc/coreutils.sh
-PASS: tests/misc/cut.pl
+FAIL: tests/misc/cut.pl
 PASS: tests/misc/cut-huge-range.sh
 PASS: tests/misc/wc.pl
 PASS: tests/misc/wc-files0-from.pl
@@ -115,6 +118,7 @@ PASS: tests/misc/csplit-1000.sh
 PASS: tests/misc/csplit-heap.sh
 SKIP: tests/misc/csplit-io-err.sh
 PASS: tests/misc/csplit-suppress-matched.pl
+PASS: tests/misc/date-debug.sh
 PASS: tests/misc/date-sec.sh
 FAIL: tests/misc/dircolors.pl
 PASS: tests/misc/dirname.pl
@@ -131,6 +135,7 @@ PASS: tests/misc/head-c.sh
 PASS: tests/misc/head-pos.sh
 SKIP: tests/misc/head-write-error.sh
 PASS: tests/misc/kill.sh
+PASS: tests/misc/b2sum.sh
 PASS: tests/misc/md5sum.pl
 PASS: tests/misc/md5sum-bsd.sh
 PASS: tests/misc/md5sum-newline.pl
@@ -172,6 +177,7 @@ PASS: tests/misc/shred-remove.sh
 PASS: tests/misc/shred-size.sh
 PASS: tests/misc/shuf.sh
 SKIP: tests/misc/shuf-reservoir.sh
+PASS: tests/misc/sleep.sh
 PASS: tests/misc/sort.pl
 SKIP: tests/misc/sort-benchmark-random.sh
 PASS: tests/misc/sort-compress.sh
@@ -183,6 +189,7 @@ PASS: tests/misc/sort-debug-warn.sh
 PASS: tests/misc/sort-discrim.sh
 PASS: tests/misc/sort-files0-from.pl
 PASS: tests/misc/sort-float.sh
+SKIP: tests/misc/sort-h-thousands-sep.sh
 PASS: tests/misc/sort-merge.pl
 PASS: tests/misc/sort-merge-fdlimit.sh
 SKIP: tests/misc/sort-month.sh
@@ -229,6 +236,7 @@ PASS: tests/misc/tac-2-nonseekable.sh
 PASS: tests/misc/tail.pl
 PASS: tests/misc/tee.sh
 PASS: tests/misc/test-diag.pl
+PASS: tests/misc/time-style.sh
 PASS: tests/misc/timeout.sh
 PASS: tests/misc/timeout-blocked.pl
 SKIP: tests/misc/timeout-group.sh
@@ -345,7 +353,7 @@ PASS: tests/dd/stderr.sh
 PASS: tests/dd/unblock.pl
 PASS: tests/dd/unblock-sync.sh
 PASS: tests/dd/stats.sh
-SKIP: tests/df/total-verify.sh
+PASS: tests/df/total-verify.sh
 SKIP: tests/du/2g.sh
 PASS: tests/du/8gb.sh
 PASS: tests/du/basic.sh
@@ -384,6 +392,7 @@ PASS: tests/install/create-leading.sh
 PASS: tests/install/d-slashdot.sh
 PASS: tests/install/install-C.sh
 SKIP: tests/install/install-C-selinux.sh
+SKIP: tests/install/install-Z-selinux.sh
 PASS: tests/install/strip-program.sh
 PASS: tests/install/trap.sh
 PASS: tests/ln/backup-1.sh
@@ -394,7 +403,7 @@ PASS: tests/ln/relative.sh
 PASS: tests/ln/sf-1.sh
 PASS: tests/ln/slash-decorated-nonexistent-dest.sh
 PASS: tests/ln/target-1.sh
-PASS: tests/ls/abmon-align.sh
+ERROR: tests/ls/abmon-align.sh
 PASS: tests/ls/block-size.sh
 PASS: tests/ls/color-clear-to-eol.sh
 PASS: tests/ls/color-dtype-dir.sh
@@ -414,6 +423,7 @@ PASS: tests/ls/multihardlink.sh
 PASS: tests/ls/no-arg.sh
 SKIP: tests/ls/no-cap.sh
 PASS: tests/ls/proc-selinux-segfault.sh
+PASS: tests/ls/quote-align.sh
 PASS: tests/ls/readdir-mountpoint-inode.sh
 PASS: tests/ls/recursive.sh
 PASS: tests/ls/root-rel-symlink-color.sh
@@ -578,13 +588,13 @@ SKIP: tests/factor/t33.sh
 SKIP: tests/factor/t34.sh
 SKIP: tests/factor/t35.sh
 SKIP: tests/factor/t36.sh
-# TOTAL: 580
-# PASS:  440
-# SKIP:  139
+# TOTAL: 590
+# PASS:  445
+# SKIP:  142
 # XFAIL: 0
-# FAIL:  1
+# FAIL:  2
 # XPASS: 0
-# ERROR: 0
+# ERROR: 1
 SKIP: tests/tail-2/inotify-race
 SKIP tests/tail-2/inotify-race.sh (exit status: 77)
 SKIP: tests/tail-2/inotify-race2
@@ -607,6 +617,10 @@ SKIP: tests/rm/r-root
 SKIP tests/rm/r-root.sh (exit status: 77)
 SKIP: tests/rm/many-dir-entries-vs-OOM
 SKIP tests/rm/many-dir-entries-vs-OOM.sh (exit status: 77)
+SKIP: tests/rm/rm-readdir-fail
+SKIP tests/rm/rm-readdir-fail.sh (exit status: 77)
+SKIP: tests/misc/seq-io-errors
+SKIP tests/misc/seq-io-errors.sh (exit status: 77)
 SKIP: tests/misc/seq-long-double
 SKIP tests/misc/seq-long-double.sh (exit status: 77)
 SKIP: tests/tail-2/tail-n0f
@@ -615,6 +629,8 @@ SKIP: tests/misc/arch
 SKIP tests/misc/arch.sh (exit status: 77)
 SKIP: tests/misc/coreutils
 SKIP tests/misc/coreutils.sh (exit status: 77)
+FAIL: tests/misc/cut
+FAIL tests/misc/cut.pl (exit status: 1)
 SKIP: tests/misc/wc-parallel
 SKIP tests/misc/wc-parallel.sh (exit status: 77)
 SKIP: tests/misc/cat-proc
@@ -635,6 +651,8 @@ SKIP: tests/misc/sort-compress-hang
 SKIP tests/misc/sort-compress-hang.sh (exit status: 77)
 SKIP: tests/misc/sort-compress-proc
 SKIP tests/misc/sort-compress-proc.sh (exit status: 77)
+SKIP: tests/misc/sort-h-thousands-sep
+SKIP tests/misc/sort-h-thousands-sep.sh (exit status: 77)
 SKIP: tests/misc/sort-month
 SKIP tests/misc/sort-month.sh (exit status: 77)
 SKIP: tests/misc/sort-spinlock-abuse
@@ -679,8 +697,6 @@ SKIP: tests/df/skip-rootfs
 SKIP tests/df/skip-rootfs.sh (exit status: 77)
 SKIP: tests/dd/direct
 SKIP tests/dd/direct.sh (exit status: 77)
-SKIP: tests/df/total-verify
-SKIP tests/df/total-verify.sh (exit status: 77)
 SKIP: tests/du/2g
 SKIP tests/du/2g.sh (exit status: 77)
 SKIP: tests/du/fd-leak
@@ -699,6 +715,10 @@ SKIP: tests/id/smack
 SKIP tests/id/smack.sh (exit status: 77)
 SKIP: tests/install/install-C-selinux
 SKIP tests/install/install-C-selinux.sh (exit status: 77)
+SKIP: tests/install/install-Z-selinux
+SKIP tests/install/install-Z-selinux.sh (exit status: 77)
+ERROR: tests/ls/abmon-align
+ERROR tests/ls/abmon-align.sh (exit status: 99)
 SKIP: tests/ls/getxattr-speedup
 SKIP tests/ls/getxattr-speedup.sh (exit status: 77)
 SKIP: tests/ls/no-cap
@@ -865,10 +885,10 @@ SKIP: tests/factor/t35
 SKIP tests/factor/t35.sh (exit status: 77)
 SKIP: tests/factor/t36
 SKIP tests/factor/t36.sh (exit status: 77)
-# TOTAL: 580
-# PASS:  440
-# SKIP:  139
+# TOTAL: 590
+# PASS:  445
+# SKIP:  142
 # XFAIL: 0
-# FAIL:  1
+# FAIL:  2
 # XPASS: 0
-# ERROR: 0
+# ERROR: 1

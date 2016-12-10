@@ -4,17 +4,19 @@ See the comments in CR# 15595871 for more details.
 This patch has not been passed upstream yet. It needs to be reworked into
 a format that would be acceptable.
 
---- lib/mountlist.c.orig	2014-07-27 14:40:04.634723388 -0700
-+++ lib/mountlist.c	2014-07-27 14:40:58.062935347 -0700
-@@ -212,10 +212,11 @@
+--- lib/mountlist.c.orig	2016-11-30 16:10:17.136191581 +0000
++++ lib/mountlist.c	2016-11-30 16:33:57.209112678 +0000
+@@ -222,11 +222,12 @@
  #endif
  
  #ifndef ME_REMOTE
 -/* A file system is "remote" if its Fs_name contains a ':'
--   or if (it is of type (smbfs or cifs) and its Fs_name starts with '//').  */
-+/* A file system is `remote' if its Fs_name contains a `:' (and isn't of
-++   type pcfs), or if (it is of type (smbfs or cifs) and its Fs_name starts
-++   with `//').  */
+-   or if (it is of type (smbfs or cifs) and its Fs_name starts with '//')
+-   or Fs_name is equal to "-hosts" (used by autofs to mount remote fs).  */
++/* A file system is "remote" if its Fs_name contains a ':' (and isn't of
++   type pcfs), or if (it is of type (smbfs or cifs) and its Fs_name starts
++   with '//') or Fs_name is equal to "-hosts" (used by autofs to mount
++   remote fs).  */
  # define ME_REMOTE(Fs_name, Fs_type)            \
 -    (strchr (Fs_name, ':') != NULL              \
 +    ((strchr (Fs_name, ':') != NULL && strcmp (Fs_type, "pcfs") != 0) \
