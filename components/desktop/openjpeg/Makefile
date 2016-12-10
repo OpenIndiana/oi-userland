@@ -27,16 +27,15 @@ BUILD_BITS = 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjpeg
-COMPONENT_VERSION=	2.1.0
+COMPONENT_VERSION=	2.1.2
 COMPONENT_PROJECT_URL=	http://www.openjpeg.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-version.2.1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4afc996cd5e0d16360d71c58216950bcb4ce29a3272360eb29cadb1c8bce4efc
-COMPONENT_ARCHIVE_URL=	https://github.com/uclouvain/$(COMPONENT_NAME)/archive/version.2.1.tar.gz
+    sha256:4ce77b6ef538ef090d9bde1d5eeff8b3069ab56c4906f083475517c2c023dfa7
+COMPONENT_ARCHIVE_URL=	https://github.com/uclouvain/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_BUGDB=	library/openjpeg
 
-TPNO=			18449
+TPNO=			32786
 
 BUILD_STYLE = cmake
 
@@ -44,6 +43,8 @@ BUILD_STYLE = cmake
 TEST_TARGET = $(SKIP_TEST)
 
 include $(WS_MAKE_RULES)/common.mk
+
+studio_C99MODE=$(studio_C99_ENABLE)
 
 # Workaround non-standard type usage in big endian builds.
 CFLAGS.studio.sparc += -Du_int16_t=uint16_t
