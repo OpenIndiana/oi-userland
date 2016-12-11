@@ -27,11 +27,11 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.6.29
+COMPONENT_VERSION     = 5.6.33
 COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-         sha256:6ac85b75b2dfa8c232725dda25469df37bf4e48b408cc0978d0dfc34c25a817f
+         sha256:60776ec27d78b59f597e71738c5bcdea64dcba33c36fede320d5930320b1fef0
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
@@ -49,7 +49,7 @@ endif
 CLONEY = echo
 COMPONENT_PRE_BUILD_ACTION +=  $(CP) -rp $(SOURCE_DIR)/* $(@D);
 
-BUILD_STYLE= justmake
+BUILD_STYLE= cmake
 TEST_TARGET= $(NO_TESTS)
 SYSTEM_TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -72,8 +72,8 @@ CMAKE_PLUGINDIR.32  = lib/plugin
 CMAKE_PLUGINDIR.64  = lib/$(MACH64)/plugin
 CMAKE_CFLAGS.32     = -m32
 CMAKE_CFLAGS.64     = -m64
-CMAKE_CXXFLAGS.32   = -m32 -xnorunpath -std=c++03
-CMAKE_CXXFLAGS.64   = -m64 -xnorunpath -std=c++03
+CMAKE_CXXFLAGS.32   = -m32 -norunpath -std=c++03
+CMAKE_CXXFLAGS.64   = -m64 -norunpath -std=c++03
 
 # Providing component specific build options to cmake
 CMAKE_OPTIONS += -DBUILD_CONFIG=mysql_release
@@ -104,11 +104,6 @@ CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS="$(CMAKE_CXXFLAGS.$(BITS))"
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
 CMAKE_OPTIONS += -DFEATURE_SET=community
 CMAKE_OPTIONS += -DCMAKE_VERBOSE_MAKEFILE:BOOL=TRUE
-
-COMPONENT_PRE_BUILD_ACTION += cd $(@D);
-COMPONENT_PRE_BUILD_ACTION += export LDFLAGS=$(CMAKE_CXXFLAGS.$(BITS));
-COMPONENT_PRE_BUILD_ACTION += echo Running cmake with $(CMAKE_OPTIONS);
-COMPONENT_PRE_BUILD_ACTION += $(CMAKE) . $(CMAKE_OPTIONS);
 
 # Adjust '#!/usr/bin/perl'
 $(INSTALL_64): PERL_SCRIPTS= \
