@@ -1,0 +1,15 @@
+--- a/hw/kdrive/src/kdrive.c	2017-03-15 11:05:25.000000000 -0700
++++ a/hw/kdrive/src/kdrive.c	2017-09-19 14:15:20.800426840 -0700
+@@ -95,6 +95,12 @@
+ 
+ static Bool kdCaughtSignal = FALSE;
+ 
++#if ((defined(__sparc__) || defined(__sparc)) && defined (sun))
++int  num_total_disp_dev = 0;
++int  num_session_disp_dev = 0;
++char disp_dev_path[PATH_MAX];
++#endif
++
+ /*
+  * Carry arguments from InitOutput through driver initialization
+  * to KdScreenInit

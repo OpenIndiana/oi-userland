@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2016, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -110,6 +110,37 @@ inputdev_grabs_help(void)
 	"of DeviceIntRec entries starting at the entry stored in the global\n"
 	"variable \"InputInfo\" and print information about each one.\n"
 	);
+}
+
+/*
+ * Functions required by resource.h to implement CLIENT_BITS macro below.
+ */
+
+static unsigned int
+ilog2(int val)
+{
+    int bits;
+
+    if (val <= 0)
+        return 0;
+    for (bits = 0; val != 0; bits++)
+        val >>= 1;
+    return bits - 1;
+}
+
+
+_X_HIDDEN unsigned int
+ResourceClientBits(void)
+{
+    int LimitClients;
+
+    if (mdb_readsym(&LimitClients, sizeof (LimitClients), "LimitClients") == -1)
+    {
+	mdb_warn("failed to read LimitClients");
+	LimitClients = LIMITCLIENTS;
+    }
+
+    return (ilog2(LimitClients));
 }
 
 _X_HIDDEN int

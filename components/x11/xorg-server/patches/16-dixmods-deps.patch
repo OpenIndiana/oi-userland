@@ -1,30 +1,6 @@
---- a/hw/xfree86/Makefile.am	Fri Jan  8 15:06:52 2016
-+++ b/hw/xfree86/Makefile.am	Fri Jan  8 15:10:09 2016
-@@ -34,10 +34,10 @@
- INT10_SUBDIR = int10
- endif
- 
--SUBDIRS = common ddc x86emu $(INT10_SUBDIR) os-support parser \
--	  ramdac $(VGAHW_SUBDIR) loader modes $(DRI_SUBDIR) \
--	  $(DRI2_SUBDIR) . $(VBE_SUBDIR) i2c dixmods \
--	  fbdevhw shadowfb exa $(XF86UTILS_SUBDIR) doc man \
-+SUBDIRS = common ddc i2c x86emu $(INT10_SUBDIR) fbdevhw os-support parser \
-+	  ramdac shadowfb $(VBE_SUBDIR) $(VGAHW_SUBDIR) loader \
-+          $(DRI_SUBDIR) $(DRI2_SUBDIR) . dixmods exa modes \
-+	  $(XF86UTILS_SUBDIR) doc man \
- 	  $(GLAMOR_EGL_SUBDIR) drivers
- 
- DIST_SUBDIRS = common ddc i2c x86emu int10 fbdevhw os-support \
-@@ -48,7 +48,7 @@
- bin_PROGRAMS = Xorg
- nodist_Xorg_SOURCES = sdksyms.c
- 
--AM_CFLAGS = $(DIX_CFLAGS) @XORG_CFLAGS@
-+AM_CFLAGS = $(DIX_CFLAGS) $(PIXMAN_CFLAGS) @XORG_CFLAGS@
- AM_CPPFLAGS = $(XORG_INCS) -I$(srcdir)/parser \
- 	-I$(srcdir)/ddc -I$(srcdir)/i2c -I$(srcdir)/modes -I$(srcdir)/ramdac \
- 	-I$(srcdir)/dri -I$(srcdir)/dri2 -I$(top_srcdir)/dri3
-@@ -135,14 +135,17 @@
+--- a/hw/xfree86/Makefile.am	2017-02-02 07:34:36.117204752 -0800
++++ b/hw/xfree86/Makefile.am	2017-02-02 07:35:26.842036982 -0800
+@@ -137,7 +137,7 @@
  EXTRA_DIST += sdksyms.sh
  
  sdksyms.dep sdksyms.c: sdksyms.sh
@@ -32,72 +8,10 @@
 +	$(AM_V_GEN)CPP='$(CPP)' AWK='$(AWK)' SED='$(SED)' $(SHELL) $(srcdir)/sdksyms.sh $(top_srcdir) $(CFLAGS) $(AM_CFLAGS) $(AM_CPPFLAGS) -I/usr/include -I/usr/include/xorg -I/usr/include/pixman-1 -I/usr/include/X11/dri
  
  SDKSYMS_DEP = sdksyms.dep
---include $(SDKSYMS_DEP)
-+include $(SDKSYMS_DEP)
- 
- i2c/libi2c.la:
- 	$(AM_V_at)cd i2c && $(MAKE) libi2c.la
- 
-+modes/libxf86modes.la:
-+	$(AM_V_at)cd modes && $(MAKE) libxf86modes.la
-+
- dixmods/libdixmods.la:
- 	$(AM_V_at)cd dixmods && $(MAKE) libdixmods.la
- 
---- a/hw/xfree86/dixmods/Makefile.am	Fri Jan  8 15:10:28 2016
-+++ b/hw/xfree86/dixmods/Makefile.am	Fri Jan  8 15:11:36 2016
-@@ -18,7 +18,9 @@
-            -I$(top_srcdir)/glx
- 
- libfb_la_LDFLAGS = -module -avoid-version $(LD_NO_UNDEFINED_FLAG)
-+libfb_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
- libfb_la_LIBADD = $(top_builddir)/fb/libfb.la
-+libfb_la_LIBADD += -lpixman-1
- libfb_la_SOURCES = fbmodule.c
- libfb_la_CFLAGS = $(AM_CFLAGS)
- 
-@@ -28,9 +30,12 @@
- libwfb_la_CFLAGS = $(AM_CFLAGS) -DFB_ACCESS_WRAPPER
- 
- libglx_la_LDFLAGS = -module -avoid-version $(LD_NO_UNDEFINED_FLAG)
-+libglx_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
- libglx_la_LIBADD = $(top_builddir)/glx/libglx.la $(GLX_SYS_LIBS)
- if AIGLX_DRI_LOADER
- libglx_la_LIBADD += $(top_builddir)/glx/libglxdri.la
-+libglx_la_LDFLAGS += -R$(extsmoduledir)
-+libglx_la_LDFLAGS += $(LIBDRM_LIBS)
- if NO_UNDEFINED
- libglx_la_LIBADD += $(LIBDRM_LIBS) $(PIXMAN_LIBS)
- endif
-@@ -39,6 +44,8 @@
- 
- libshadow_la_LDFLAGS = -module -avoid-version $(LD_NO_UNDEFINED_FLAG)
- libshadow_la_LIBADD = $(top_builddir)/miext/shadow/libshadow.la
-+libshadow_la_DEPENDENCIES = libfb.la
-+libshadow_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
- if NO_UNDEFINED
- libshadow_la_LIBADD += libfb.la
- endif
---- a/hw/xfree86/shadowfb/Makefile.am	Fri Jan  8 15:12:06 2016
-+++ b/hw/xfree86/shadowfb/Makefile.am	Fri Jan  8 15:12:25 2016
-@@ -8,3 +8,6 @@
- AM_CPPFLAGS = $(XORG_INCS)
- 
- AM_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
-+
-+libshadowfb_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
-+libshadowfb_la_LIBADD += -lXfont
---- a/hw/xfree86/vbe/Makefile.am	Fri Jan  8 15:12:44 2016
-+++ b/hw/xfree86/vbe/Makefile.am	Fri Jan  8 15:13:05 2016
-@@ -12,3 +12,5 @@
- AM_CPPFLAGS = $(XORG_INCS) -I$(srcdir)/../ddc -I$(srcdir)/../i2c \
-            -I$(srcdir)/../modes -I$(srcdir)/../parser \
-            -I$(srcdir)/../int10
-+
-+libvbe_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
---- a/configure.ac	Fri Jan  8 15:04:41 2016
-+++ b/configure.ac	Fri Jan  8 15:06:30 2016
-@@ -244,6 +244,8 @@
+ -include $(SDKSYMS_DEP)
+--- a/configure.ac	2017-02-02 07:40:40.357395126 -0800
++++ b/configure.ac	2017-02-02 07:42:15.312782485 -0800
+@@ -247,6 +247,8 @@
  dnl Find the math libary, then check for cbrt function in it.
  AC_CHECK_LIB(m, sqrt)
  AC_CHECK_FUNCS([cbrt])
@@ -105,8 +19,8 @@
 +LIBS="${LIBS//-lm}"
  
  AC_CHECK_HEADERS([ndbm.h dbm.h rpcsvc/dbm.h])
-
-@@ -1731,6 +1731,7 @@
+ 
+@@ -1764,6 +1766,7 @@
  XSERVER_LIBS="$DIX_LIB $MI_LIB $OS_LIB"
  XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS}"
  XSERVER_SYS_LIBS="${XSERVER_SYS_LIBS} -lproject"
@@ -114,12 +28,11 @@
  AC_SUBST([XSERVER_LIBS])
  AC_SUBST([XSERVER_SYS_LIBS])
  
-@@ -1761,7 +1761,7 @@
- 	    [AC_LANG_SOURCE([int main(int argc, char **argv) { return 0; }])],
- 	    [mv conftest$EXEEXT conftest.parent
- 	     XORG_CHECK_LINKER_FLAGS([-Wl,-z,parent=conftest.parent -G],
--		[LD_NO_UNDEFINED_FLAG="-Wl,-z,defs -Wl,-z,parent=\$(top_builddir)/hw/xfree86/Xorg"
-+		[LD_NO_UNDEFINED_FLAG="-Wl,-z,defs -Wl,-z,parent=\${bindir}/Xorg"
- # Not set yet, since this gets exported in xorg-server.pc to all the drivers,
- # and they're not all fixed to build correctly with it yet.
- #		 XORG_DRIVER_LIBS="-Wl,-z,defs -Wl,-z,parent=${bindir}/Xorg"
+--- xorg-server-1.19.5/hw/xfree86/utils/cvt/Makefile.am.orig	2017-10-23 16:34:25.592472787 +0000
++++ xorg-server-1.19.5/hw/xfree86/utils/cvt/Makefile.am	2017-10-23 16:34:42.983047274 +0000
+@@ -33,3 +33,5 @@
+ 	$(top_srcdir)/os/xprintf.c
+ 
+ cvt_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
++
++cvt_LDADD = -lm

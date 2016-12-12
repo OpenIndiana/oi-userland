@@ -72,73 +72,6 @@
      xf86MsgVerb(X_DEFAULT, 0,
                  "Using default built-in configuration (%d lines)\n",
                  builtinLines);
-@@ -229,66 +244,6 @@
- #ifdef XSERVER_PLATFORM_BUS
-     i = xf86PlatformMatchDriver(matches, nmatches);
- #endif
--#ifdef sun
--    /* Check for driver type based on /dev/fb type and if valid, use
--       it instead of PCI bus probe results */
--    if (xf86Info.consoleFd >= 0 && (i < (nmatches - 1))) {
--        struct vis_identifier visid;
--        const char *cp;
--        int iret;
--
--        SYSCALL(iret = ioctl(xf86Info.consoleFd, VIS_GETIDENTIFIER, &visid));
--        if (iret < 0) {
--            int fbfd;
--
--            fbfd = open(xf86SolarisFbDev, O_RDONLY);
--            if (fbfd >= 0) {
--                SYSCALL(iret = ioctl(fbfd, VIS_GETIDENTIFIER, &visid));
--                close(fbfd);
--            }
--        }
--
--        if (iret < 0) {
--            xf86Msg(X_WARNING,
--                    "could not get frame buffer identifier from %s\n",
--                    xf86SolarisFbDev);
--        }
--        else {
--            xf86Msg(X_PROBED, "console driver: %s\n", visid.name);
--
--            /* Special case from before the general case was set */
--            if (strcmp(visid.name, "NVDAnvda") == 0) {
--                matches[i++] = xnfstrdup("nvidia");
--            }
--
--            /* General case - split into vendor name (initial all-caps
--               prefix) & driver name (rest of the string). */
--            if (strcmp(visid.name, "SUNWtext") != 0) {
--                for (cp = visid.name; (*cp != '\0') && isupper(*cp); cp++) {
--                    /* find end of all uppercase vendor section */
--                }
--                if ((cp != visid.name) && (*cp != '\0')) {
--                    char *driverName = xnfstrdup(cp);
--                    char *vendorName = xnfstrdup(visid.name);
--
--                    vendorName[cp - visid.name] = '\0';
--
--                    matches[i++] = vendorName;
--                    matches[i++] = driverName;
--                }
--            }
--        }
--    }
--#endif
--#ifdef __sparc__
--    if (i < (nmatches - 1))
--    {
--        char *sbusDriver = sparcDriverName();
--
--        if (sbusDriver)
--            matches[i++] = xnfstrdup(sbusDriver);
--    }
--#endif
- #ifdef XSERVER_LIBPCIACCESS
-     if (i < (nmatches - 1))
-         i += xf86PciMatchDriver(&matches[i], nmatches - i);
 @@ -448,3 +403,176 @@
  
      return ptr;
@@ -405,3 +338,72 @@
  #ifdef XSERVER_PLATFORM_BUS
      xf86platformPrimary();
  #endif
+--- a/hw/xfree86/common/xf86AutoConfig.c	2017-02-01 15:25:17.530888588 -0800
++++ b/hw/xfree86/common/xf86AutoConfig.c	2017-02-01 15:26:39.121379814 -0800
+@@ -253,66 +253,7 @@
+ #ifdef XSERVER_PLATFORM_BUS
+     i = xf86PlatformMatchDriver(matches, nmatches);
+ #endif
+-#ifdef __sun
+-    /* Check for driver type based on /dev/fb type and if valid, use
+-       it instead of PCI bus probe results */
+-    if (xf86Info.consoleFd >= 0 && (i < (nmatches - 1))) {
+-        struct vis_identifier visid;
+-        const char *cp;
+-        int iret;
+ 
+-        SYSCALL(iret = ioctl(xf86Info.consoleFd, VIS_GETIDENTIFIER, &visid));
+-        if (iret < 0) {
+-            int fbfd;
+-
+-            fbfd = open(xf86SolarisFbDev, O_RDONLY);
+-            if (fbfd >= 0) {
+-                SYSCALL(iret = ioctl(fbfd, VIS_GETIDENTIFIER, &visid));
+-                close(fbfd);
+-            }
+-        }
+-
+-        if (iret < 0) {
+-            xf86Msg(X_WARNING,
+-                    "could not get frame buffer identifier from %s\n",
+-                    xf86SolarisFbDev);
+-        }
+-        else {
+-            xf86Msg(X_PROBED, "console driver: %s\n", visid.name);
+-
+-            /* Special case from before the general case was set */
+-            if (strcmp(visid.name, "NVDAnvda") == 0) {
+-                matches[i++] = xnfstrdup("nvidia");
+-            }
+-
+-            /* General case - split into vendor name (initial all-caps
+-               prefix) & driver name (rest of the string). */
+-            if (strcmp(visid.name, "SUNWtext") != 0) {
+-                for (cp = visid.name; (*cp != '\0') && isupper(*cp); cp++) {
+-                    /* find end of all uppercase vendor section */
+-                }
+-                if ((cp != visid.name) && (*cp != '\0')) {
+-                    char *driverName = xnfstrdup(cp);
+-                    char *vendorName = xnfstrdup(visid.name);
+-
+-                    vendorName[cp - visid.name] = '\0';
+-
+-                    matches[i++] = vendorName;
+-                    matches[i++] = driverName;
+-                }
+-            }
+-        }
+-    }
+-#endif
+-#ifdef __sparc__
+-    if (i < (nmatches - 1))
+-    {
+-        char *sbusDriver = sparcDriverName();
+-
+-        if (sbusDriver)
+-            matches[i++] = xnfstrdup(sbusDriver);
+-    }
+-#endif
+ #ifdef XSERVER_LIBPCIACCESS
+     if (i < (nmatches - 1))
+         i += xf86PciMatchDriver(&matches[i], nmatches - i);

@@ -1,5 +1,5 @@
 diff --git a/config/hal.c b/config/hal.c
-index 9de9dfc..f069dff 100644
+index ea574ca..e108f03 100644
 --- a/config/hal.c
 +++ b/config/hal.c
 @@ -1,6 +1,7 @@
@@ -10,7 +10,7 @@ index 9de9dfc..f069dff 100644
   *
   * Permission is hereby granted, free of charge, to any person obtaining a
   * copy of this software and associated documentation files (the "Software"),
-@@ -39,6 +40,23 @@
+@@ -40,6 +41,23 @@
  #include "config-backends.h"
  #include "os.h"
  
@@ -35,10 +35,10 @@ index 9de9dfc..f069dff 100644
  #define LIBHAL_XKB_PROP_KEY "input.xkb."
  
 @@ -124,6 +142,51 @@ get_prop_string_array(LibHalContext * hal_ctx, const char *udi,
+     return ret;
  }
  
- #ifdef SUNSOFT
-+#if (defined(__sparc__) || defined(__sparc))
++#if defined(SUNSOFT) && (defined(__sparc__) || defined(__sparc))
 +Bool check_inactive_session(char const *path) {
 +    struct stat statbuf;
 +    char linkpath[PATH_MAX];
@@ -84,9 +84,9 @@ index 9de9dfc..f069dff 100644
 +#endif
 +
  static void
- add_extra_device(char *driver)
+ device_added(LibHalContext * hal_ctx, const char *udi)
  {
-@@ -178,6 +241,11 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+@@ -136,6 +199,11 @@ device_added(LibHalContext * hal_ctx, const char *udi)
      struct xkb_options xkb_opts = { 0 };
      int rc;
  
@@ -98,7 +98,7 @@ index 9de9dfc..f069dff 100644
      LibHalPropertySet *set = NULL;
      LibHalPropertySetIterator set_iter;
      char *psi_key = NULL, *tmp_val;
-@@ -264,6 +332,28 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+@@ -232,6 +300,28 @@ device_added(LibHalContext * hal_ctx, const char *udi)
      input_options = input_option_new(input_options, "driver", driver);
      input_options = input_option_new(input_options, "name", name);
  
@@ -127,16 +127,7 @@ index 9de9dfc..f069dff 100644
      if (asprintf(&config_info, "hal:%s", udi) == -1) {
          config_info = NULL;
          LogMessage(X_ERROR, "config/hal: couldn't allocate name\n");
-@@ -428,7 +518,7 @@ device_added(LibHalContext * hal_ctx, const char *udi)
- #ifdef SUNSOFT
-     InputOption *md = input_option_find(input_options, "mdriver");
-     if (md) {
--	char *mdriver = input_option_get_value(md);
-+	char *mdriver = (char *) input_option_get_value(md);
- 	add_extra_device (mdriver);
-     }
- #endif
-@@ -442,6 +532,26 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+@@ -402,6 +492,26 @@ device_added(LibHalContext * hal_ctx, const char *udi)
          goto unwind;
      }
  
@@ -163,7 +154,7 @@ index 9de9dfc..f069dff 100644
   unwind:
      if (set)
          libhal_free_property_set(set);
-@@ -474,6 +584,12 @@ device_added(LibHalContext * hal_ctx, const char *udi)
+@@ -434,6 +544,12 @@ device_added(LibHalContext * hal_ctx, const char *udi)
  
      dbus_error_free(&error);
  
@@ -177,7 +168,7 @@ index 9de9dfc..f069dff 100644
  }
  
 diff --git a/hw/xfree86/common/xf86Xinput.c b/hw/xfree86/common/xf86Xinput.c
-index bee407b..248c603 100644
+index c56a2b9..a3a7645 100644
 --- a/hw/xfree86/common/xf86Xinput.c
 +++ b/hw/xfree86/common/xf86Xinput.c
 @@ -45,6 +45,9 @@
@@ -190,9 +181,9 @@ index bee407b..248c603 100644
  
  #ifdef HAVE_XORG_CONFIG_H
  #include <xorg-config.h>
-@@ -103,6 +106,15 @@
- static int
-  xf86InputDevicePostInit(DeviceIntPtr dev);
+@@ -113,6 +116,15 @@ static int
+ static InputInfoPtr *new_input_devices;
+ static int new_input_devices_count;
  
 +#if ((defined(__sparc__) || defined(__sparc)) && defined(sun))
 +#define MAX_DEVICES       	4
@@ -206,7 +197,7 @@ index bee407b..248c603 100644
  /**
   * Eval config and modify DeviceVelocityRec accordingly
   */
-@@ -1432,6 +1444,25 @@ xf86DisableDevice(DeviceIntPtr dev, Bool panic)
+@@ -1469,6 +1481,25 @@ xf86DisableDevice(DeviceIntPtr dev, Bool panic)
          SendDevicePresenceEvent(dev->id, DeviceUnrecoverable);
          DeleteInputDeviceRequest(dev);
      }
@@ -233,7 +224,7 @@ index bee407b..248c603 100644
  
  /**
 diff --git a/hw/xfree86/common/xf86pciBus.c b/hw/xfree86/common/xf86pciBus.c
-index 258988a..2ec07d9 100644
+index 8158c2b..f812a3b 100644
 --- a/hw/xfree86/common/xf86pciBus.c
 +++ b/hw/xfree86/common/xf86pciBus.c
 @@ -1,5 +1,6 @@
