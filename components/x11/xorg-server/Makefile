@@ -17,13 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.18.4
-COMPONENT_REVISION= 5
+COMPONENT_VERSION= 1.19.5
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:278459b2c31d61a15655d95a72fb79930c480a6bb8cf9226e48a07df8b1d31c8
+  sha256:18fffa8eb93d06d2800d06321fc0df4d357684d8d714315a66d8dfa7df251447
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.x.org/
@@ -38,8 +37,8 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR))
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) &&\
-		cd $(@D) && autoreconf --install --force )
+COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D) &&\
+                                  cd $(@D) && autoreconf --install --force )
 
 # Enabling gcc optimization leads to crashes
 gcc_OPT =
@@ -58,6 +57,10 @@ CPP = $(CC) -E -std=gnu99
 LD_B_DIRECT=
 LD_Z_IGNORE=
 
+# Disable epoll on illumos
+CONFIGURE_ENV+= ac_cv_func_epoll_ctl=no
+CONFIGURE_ENV+= ac_cv_func_epoll_create1=no
+
 # From X11 S12 module:
 # Pass linker mapfile listing symbols that modules can count on resolving
 # from the Xorg binary itself
@@ -70,20 +73,19 @@ LDFLAGS += -L/usr/lib/xorg/$(ARCHLIBSUBDIR) -R/usr/lib/xorg/$(ARCHLIBSUBDIR)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS.32 += --bindir=/usr/bin
-CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
-
-CONFIGURE_OPTIONS = $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS += --bindir=$(USRBINDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-install-setuid
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
 CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
 CONFIGURE_OPTIONS += --disable-systemd-logind
+CONFIGURE_OPTIONS += --disable-input-thread
 CONFIGURE_OPTIONS += --enable-dmx
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --enable-dri3
+CONFIGURE_OPTIONS += --disable-glamor
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
 CONFIGURE_OPTIONS += --enable-shared

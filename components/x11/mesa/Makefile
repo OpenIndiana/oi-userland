@@ -23,9 +23,9 @@ COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:29ef104a7fc082d352b1599bd6cb1d040be424ccd22f5e0eb7ee9b0e9acd3597
+  sha256:0937804f43746339b1f9540d8f9c8b4a1bb3d3eec0e4020eac283b8799798239
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+  ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -66,12 +66,12 @@ LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 
 # Command line options to GNU autoconf configure script
-CONFIGURE_OPTIONS += --enable-dri3
+CONFIGURE_OPTIONS += --disable-dri3
 CONFIGURE_OPTIONS += --with-dri-driverdir='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --disable-gallium-llvm
 CONFIGURE_OPTIONS += --enable-egl
-CONFIGURE_OPTIONS += --enable-gbm
+CONFIGURE_OPTIONS += --disable-gbm
 CONFIGURE_OPTIONS += --with-gallium-drivers=
 CONFIGURE_OPTIONS += --enable-shared-glapi
 CONFIGURE_OPTIONS += --enable-texture-float

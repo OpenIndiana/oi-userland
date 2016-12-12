@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -46,6 +46,18 @@ _dixGetScreenPrivateKey(const DevScreenPrivateKey key, ScreenPtr pScreen)
 {
     abort();
     return NULL; /* compiler whines about not returning a value after abort() */
+}
+
+/* Just here to satisfy linkage from inlines in dixstruct.h
+   Should never ever be called from the module. */
+_X_HIDDEN void
+LogMessage(MessageType type, const char *format, ...)
+{
+    va_list ap;
+
+    va_start(ap, format);
+    mdb_vprintf(format, ap);
+    va_end(ap);
 }
 
 
@@ -266,9 +278,9 @@ client_pids(uintptr_t addr, uint_t flags, int argc, const mdb_arg_t *argv)
 	    static GElf_Sym iaprivkey_sym;
 
 	    if ((iaprivkey_sym.st_value == 0) &&
-		(mdb_lookup_by_obj("libia.so", "IAPrivKeyRec", &iaprivkey_sym)
+		(mdb_lookup_by_name("IAPrivKeyRec", &iaprivkey_sym)
 		 == -1)) {
-		mdb_warn("failed to lookup 'libia.so`IAPrivKeyRec'");
+		mdb_warn("failed to lookup 'IAPrivKeyRec'");
 	    }
 
 	    if (iaprivkey_sym.st_value != 0) {

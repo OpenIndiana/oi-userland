@@ -19,33 +19,6 @@ index 106da3a..dd7e3a2 100644
          return;
  
      mk->sourceid = device->id;
-diff --git a/Xi/extinit.c b/Xi/extinit.c
-index 7e30755..5c008e4 100644
---- a/Xi/extinit.c
-+++ b/Xi/extinit.c
-@@ -371,6 +371,10 @@ Mask PropagateMask[EMASKSIZE];
- 
- DevPrivateKeyRec XIClientPrivateKeyRec;
- 
-+#ifdef SUNSOFT
-+DevPrivateKeyRec HotkeyMapDevicePrivateKeyRec;
-+#endif
-+
- /*****************************************************************
-  *
-  * Declarations of local routines.
-@@ -1260,6 +1264,11 @@ XInputExtensionInit(void)
-         (&XIClientPrivateKeyRec, PRIVATE_CLIENT, sizeof(XIClientRec)))
-         FatalError("Cannot request private for XI.\n");
- 
-+#ifdef SUNSOFT   
-+    if (!dixRegisterPrivateKey(&HotkeyMapDevicePrivateKeyRec, PRIVATE_DEVICE, 0))
-+        FatalError("Cannot request private for hotkey.\n");
-+#endif
-+
-     if (!AddCallback(&ClientStateCallback, XIClientCallback, 0))
-         FatalError("Failed to add callback to XI.\n");
- 
 diff --git a/config/hal.c b/config/hal.c
 index 2ead556..9de9dfc 100644
 --- a/config/hal.c
@@ -148,3 +121,28 @@ index 5a38924..263b1b1 100644
  #define BitIsOn(ptr, bit) (!!(((const BYTE *) (ptr))[(bit)>>3] & (1 << ((bit) & 7))))
  #define SetBit(ptr, bit)  (((BYTE *) (ptr))[(bit)>>3] |= (1 << ((bit) & 7)))
  #define ClearBit(ptr, bit) (((BYTE *)(ptr))[(bit)>>3] &= ~(1 << ((bit) & 7)))
+--- xorg-server-1.19.5/Xi/extinit.c.orig	Mon Oct 23 14:46:01 2017
++++ xorg-server-1.19.5/Xi/extinit.c	Mon Oct 23 14:46:10 2017
+@@ -371,6 +371,10 @@
+ 
+ DevPrivateKeyRec XIClientPrivateKeyRec;
+ 
++#ifdef SUNSOFT
++DevPrivateKeyRec HotkeyMapDevicePrivateKeyRec;
++#endif
++
+ /*****************************************************************
+  *
+  * Declarations of local routines.
+@@ -1290,6 +1290,11 @@
+         (&XIClientPrivateKeyRec, PRIVATE_CLIENT, sizeof(XIClientRec)))
+         FatalError("Cannot request private for XI.\n");
+ 
++#ifdef SUNSOFT   
++    if (!dixRegisterPrivateKey(&HotkeyMapDevicePrivateKeyRec, PRIVATE_DEVICE, 0))
++        FatalError("Cannot request private for hotkey.\n");
++#endif
++
+     if (!XIBarrierInit())
+         FatalError("Could not initialize barriers.\n");
+ 
