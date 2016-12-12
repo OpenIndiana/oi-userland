@@ -205,7 +205,18 @@ class OVSInterfaceDriver(object):
         dl = net_lib.Datalink(datalink_name)
         dl.create_vnic(lower_link, mac_address, vid, temp=True)
         if mtu:
-            dl.set_prop('mtu', mtu)
+            try:
+                dl.set_prop('mtu', mtu)
+            except Exception:
+                msg = (_("Failed to set mtu value of '%s' on '%s' over lower "
+                         "link '%s'. If you are using VLANs, then ensure that "
+                         "either the mapping of physical networks to MTU "
+                         "values (ml2_conf.ini`physical_network_mtus option) "
+                         "or neutron.conf`global_physnet_mtu value is set "
+                         "correctly. If you are using VXLANs, make sure that "
+                         "ml2_conf.ini`path_mtu value is set correctly.") %
+                       (mtu, datalink_name, lower_link))
+                LOG.error(msg)
 
         attrs = [('external_ids', {'iface-id': port_id,
                                    'iface-status': 'active',
