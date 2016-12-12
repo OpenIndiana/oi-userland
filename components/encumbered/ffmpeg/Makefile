@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ffmpeg
-COMPONENT_VERSION= 2.8.6
+COMPONENT_VERSION= 2.8.10
 COMPONENT_SUMMARY= A very fast video and audio converter
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:40611e329bc354592c6f8f1deb033c31b91f80e91f5707ca4f9afceca78d8e62
+  sha256:d1ce1a73503dce6e2b1e208cb93a2a8a7e89f9c64357ddc3e4da3cab33dea9c9
 COMPONENT_ARCHIVE_URL= \
   http://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ffmpeg.org/
@@ -95,3 +95,31 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test:	$(TEST_32)
+
+REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += codec/libtheora
+REQUIRED_PACKAGES += codec/speex
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += driver/graphics/nvidia
+REQUIRED_PACKAGES += image/library/openjpeg
+REQUIRED_PACKAGES += library/audio/libgsm
+REQUIRED_PACKAGES += library/audio/openal
+REQUIRED_PACKAGES += library/libvorbis
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/video/libass
+REQUIRED_PACKAGES += library/video/libschroedinger
+REQUIRED_PACKAGES += library/video/libvpx
+REQUIRED_PACKAGES += library/video/x264
+REQUIRED_PACKAGES += library/video/xvid
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += video/rtmpdump
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxv
