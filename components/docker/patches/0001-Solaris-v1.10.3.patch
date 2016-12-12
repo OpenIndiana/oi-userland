@@ -1,6 +1,6 @@
-From 2dd56e50d4e22a931b6b26de35a19321ee0e36a4 Mon Sep 17 00:00:00 2001
-From: "shraddha.joshi@oracle.com" <shrajosh@low.us.oracle.com>
-Date: Mon, 21 Nov 2016 12:10:24 -0800
+From a3e044c4d94e66259008000a451578849b50b516 Mon Sep 17 00:00:00 2001
+From: Shreya Jain <shreya.jain@oracle.com>
+Date: Fri, 9 Dec 2016 13:30:07 -0800
 Subject: [PATCH] Solaris-v1.10.3
 
 ---
@@ -3324,7 +3324,7 @@ index 0000000..25a496e
 +}
 diff --git a/daemon/execdriver/zones/driver.go b/daemon/execdriver/zones/driver.go
 new file mode 100644
-index 0000000..db48175
+index 0000000..5649ce1
 --- /dev/null
 +++ b/daemon/execdriver/zones/driver.go
 @@ -0,0 +1,799 @@
@@ -3881,7 +3881,7 @@ index 0000000..db48175
 +	PathDnsXml := filepath.Join(ProfilesPath, "/dns_client.xml")
 +	PathNSSwitchXml := filepath.Join(ProfilesPath, "/ns_switch.xml")
 +
-+	err = exec.Command(SVCCFG, "extract", "dns/client", ">", PathDnsXml).Run()
++	err = exec.Command(SVCCFG, "extract", "svc:/network/dns/client", ">", PathDnsXml).Run()
 +	if err != nil {
 +		logrus.Errorf("Error exporting dns/client: %v", err)
 +		return execdriver.ExitStatus{ExitCode: -1}, err
@@ -3938,7 +3938,7 @@ index 0000000..db48175
 +		os.Remove(PathDnsXml)
 +	}
 +
-+	err = exec.Command(SVCCFG, "extract", "name-service/switch", ">", PathNSSwitchXml).Run()
++	err = exec.Command(SVCCFG, "extract", "svc:/system/name-service/switch", ">", PathNSSwitchXml).Run()
 +	if err != nil {
 +		logrus.Errorf("Error exporting name-service/switch: %v", err)
 +		return execdriver.ExitStatus{ExitCode: -1}, err
