@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.25
+COMPONENT_VERSION=	1.4.33
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:f058437b3c224d321919a9a6bb4e3eedb2312ed718c0caf087ff2f04ab795dda
+    sha256:83726c8d68258c56712373072abb25a449c257398075a39ec0867fd8ba69771d
 COMPONENT_ARCHIVE_URL=	http://memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
-TPNO=			31391
+TPNO=			32788
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,8 +41,6 @@ PATH=$(USRBINDIR):$(GNUBIN):$(USRDIR)/perl5/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-COMPONENT_TEST_TARGETS=	test
 
 studio_OPT = -xO5
 
@@ -61,12 +59,16 @@ CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 
 # lru-maintainer.t is inconsistent and usually fails.
 
-# Transforms remove unnecessary text from results
+COMPONENT_TEST_TARGETS=	test
+
+# Just retain test result output that's useful.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(failed to listen on TCP port \).*|\1|" ' \
-	'-e "s|\(Tests=6851\).*|\1|" '\
-	'-e "/\(slab class\).*/d" ' \
-	'-e "/\(<\).*/d" ' 
+	'-n ' \
+	'-e "/^ok/p" ' \
+	'-e "/ ok/p" ' \
+	'-e "/^not ok/p" ' \
+	'-e "/^All tests/p" ' \
+	'-e "/^Result/p" '
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += shell/ksh93

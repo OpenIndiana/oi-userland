@@ -1,0 +1,29 @@
+Adjustments needed to get memcached version 1.4.33 to build with the Studio
+compiler on Solaris.
+
+These changes will be passed upstream.
+
+--- memcached-1.4.33/logger.c.orig	2016-11-23 07:59:46.959952180 +0000
++++ memcached-1.4.33/logger.c	2016-11-23 08:01:04.874324240 +0000
+@@ -7,6 +7,10 @@
+ #include <poll.h>
+ #include <ctype.h>
+ 
++#if !defined(HAVE_GCC_64ATOMICS) && defined(__sun)
++#include <atomic.h>
++#endif
++
+ #include "memcached.h"
+ #include "bipbuffer.h"
+ 
+--- memcached-1.4.33/memcached.c.orig	2016-11-23 08:01:32.066440520 +0000
++++ memcached-1.4.33/memcached.c	2016-11-23 08:01:55.766437536 +0000
+@@ -358,8 +358,6 @@
+                     sleep_time);
+         usleep((useconds_t) sleep_time * 1000000);
+     }
+-
+-    return NULL;
+ }
+ 
+ static int start_conn_timeout_thread() {
