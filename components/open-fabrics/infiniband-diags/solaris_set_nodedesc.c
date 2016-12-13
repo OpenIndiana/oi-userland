@@ -219,7 +219,8 @@ do_driver_update_ioctl(struct ibv_device *device, char *node_desc,
 		/* NOTREACHED */
 	}
 
-	strncpy(nodedescp->node_desc_str, desc_str, 64);
+	strncpy(nodedescp->node_desc_str, desc_str, UVERBS_NODEDESC_MAX);
+	nodedescp->node_desc_str[UVERBS_NODEDESC_MAX - 1] = '\0';
 	nodedescp->node_desc_update_flag = update_flag;
 	nodedescp->uverbs_solaris_abi_version =
 	    IB_USER_VERBS_SOLARIS_ABI_VERSION;
@@ -375,31 +376,55 @@ usage(void)
 }
 
 /*
- * Return the Node descriptor string by concatinating
- * many substrings. The first substring is "optarg" and
- * the index of the last sub-string is "optind".
+ * Name		: nodedesc_substr_cat
  *
- * For common nodedescription, add a space at the end,
- * if there is none.
+ * Function	:
+ * 	This fuction returns the node descriptor string
+ * 	extracted from the command line arguments.
+ *
+ * Inputs	:
+ * 	Parameters
+ * 	----------
+ * 	argv, argc  - Command line arguments to main()
+ * 	space_at_end- Indicates if a space should be
+ * 		added at the end of returned string
+ *	Externs
+ *	-------
+ *	optarg - string after option (-N / -H)
+ *	optind - 1 based index to argv array for the
+ *		string after option name
+ *	See getopt_long(3C) for more information.
+ *
+ * Return	:
+ * 	Node description string. The memory allocated
+ * 	for the returned node descriptor string should
+ * 	be freed by the caller.
+ *
+ * Notes	:
+ * 	The node descriptor string can contain multiple
+ * 	sub-strings, for example
+ * 		-N s1 s2 s3
+ * 	This function concatenates these sub-strings with
+ * 	a space between the substring. An additional space
+ * 	is added at the end, if "space_at_end" parameter
+ * 	is TRUE.
+ *
+ * 	This function always returns a string of length
+ * 	less than UVERBS_NODEDESC_MAX.
  */
+
 static char *
 nodedesc_substr_cat(char **argv, int argc, boolean_t space_at_end)
 {
 	int	i, start_opt, end_opt;
 	char	*nodedesc_str;
 
-	/* Get the index for first sub-string. */
-	for (start_opt = 0, i = optind; i; i--) {
-		if (argv[i] == NULL)
-			continue;
-
-		if (strcmp(argv[i], optarg) == 0) {
-			start_opt = i;
-			break;
-		}
-	}
-	if (start_opt == 0)
-		return (NULL);
+	/*
+	 * Set start_opt to the 0 based index to the starting
+	 * string after the option. As optind is 1 based,
+	 * decrement 1.
+	 */
+	start_opt = optind - 1;
 
 	/* Get the index for last sub-string */
 	for (end_opt = 0, i = optind; i <= argc; i++) {
@@ -412,16 +437,28 @@ nodedesc_substr_cat(char **argv, int argc, boolean_t space_at_end)
 		return (NULL);
 
 	nodedesc_str = malloc(64);
-	strncpy(nodedesc_str, optarg, 64);
+	/* copy the first string after the option. */
+	strncpy(nodedesc_str, optarg, UVERBS_NODEDESC_MAX);
+	nodedesc_str[UVERBS_NODEDESC_MAX - 1] = '\0';
 	start_opt++;
 
 	/*
-	 * strcat a space string and then strcat the
-	 * next sub-string.
+	 * concatenate subsequent strings after the option
+	 * (if any). Add a space between the strings.
 	 */
 	for (i = start_opt; i <= end_opt; i++) {
-		strncat(nodedesc_str, " ", 64);
-		strncat(nodedesc_str, argv[i], 64);
+		/*
+		 * Check if concatenated string would go out of
+		 * bounds, if so skip the rest of the strings.
+		 */
+		if ((strlen(nodedesc_str) + strlen(argv[i]) + 1)
+		    >= UVERBS_NODEDESC_MAX) {
+			break;
+		}
+		/* concatenate a space and the next string. */
+		strncat(nodedesc_str, " ", UVERBS_NODEDESC_MAX - 1);
+		strncat(nodedesc_str, argv[i],
+		    UVERBS_NODEDESC_MAX - strlen(nodedesc_str));
 	}
 
 	/*
@@ -430,8 +467,20 @@ nodedesc_substr_cat(char **argv, int argc, boolean_t space_at_end)
 	 * contain a space at the end.
 	 */
 	if (space_at_end == B_TRUE &&
-	    nodedesc_str[strlen(nodedesc_str)] != ' ')
-		strncat(nodedesc_str, " ", 64);
+	    nodedesc_str[strlen(nodedesc_str)] != ' ') {
+		/*
+		 * If the return string has already reached the
+		 * maximum length, just overwrite the last char
+		 * in the string with space.
+		 *
+		 * else strcat a space at the end.
+		 */
+		if (strlen(nodedesc_str) == (UVERBS_NODEDESC_MAX - 1))
+			nodedesc_str[UVERBS_NODEDESC_MAX - 2] = ' ';
+		else
+			strncat(nodedesc_str, " ", UVERBS_NODEDESC_MAX - 2);
+	}
+
 	return (nodedesc_str);
 }
 
@@ -564,13 +613,23 @@ main(int argc, char **argv)
 		}
 
 		/*
-		 * The common nodedesc string can have max 64 chars.
-		 * We can accomodate 63 chars from uname and alike
-		 * option -N, we append a space to the nodename.
+		 * The common nodedesc string can have max
+		 * UVERBS_NODEDESC_MAX chars. From the nodename,
+		 * UVERBS_NODEDESC_MAX - 2 can be accommodated.
+		 * A space is appended at the end, just like
+		 * common node specified using the "-N" option.
 		 */
-		(void) strncpy(nodename, uts_name.nodename, 63);
-		if (nodename[strlen(nodename)] != ' ')
-			(void) strncat(nodename, " ", 1);
+
+		(void) strncpy(nodename, uts_name.nodename,
+		    UVERBS_NODEDESC_MAX - 2);
+		nodename[UVERBS_NODEDESC_MAX - 1] = '\0';
+		if (nodename[strlen(nodename)] != ' ') {
+			if (strlen(nodename) == UVERBS_NODEDESC_MAX - 1)
+				nodename[UVERBS_NODEDESC_MAX - 2] = ' ';
+			else
+				(void) strncat(nodename, " ",
+				    UVERBS_NODEDESC_MAX - 2);
+		}
 
 		rc = update_nodedesc(device_list, num_devices,
 		    nodename, NULL, 0,
