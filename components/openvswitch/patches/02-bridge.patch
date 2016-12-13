@@ -126,6 +126,49 @@ index 6cd30b8..67120d4 100644
  }
  
  static void
+diff --git a/vswitchd/ovs-vswitchd.c b/vswitchd/ovs-vswitchd.c
+index 3c843e1..a49f41e 100644
+--- a/vswitchd/ovs-vswitchd.c
++++ b/vswitchd/ovs-vswitchd.c
+@@ -61,6 +61,27 @@ static unixctl_cb_func ovs_vswitchd_exit;
+ static char *parse_options(int argc, char *argv[], char **unixctl_path);
+ static void usage(void) NO_RETURN;
+ 
++#ifdef __sun
++static void
++setfdlimit(void)
++{
++    struct rlimit rlimit;
++    rlim_t cur;
++
++    if (getrlimit(RLIMIT_NOFILE, &rlimit) < 0) {
++        VLOG_ERR("getting the max fd limit failed so we are not able to "
++            "increase the current fd limit to max: %s", ovs_strerror(errno));
++        return;
++    }
++
++    cur = rlimit.rlim_cur;
++    rlimit.rlim_cur = rlimit.rlim_max;
++    if (setrlimit(RLIMIT_NOFILE, &rlimit) < 0)
++        VLOG_ERR("setting the # fds to %lu failed, proceeding with %lu as the "
++            "limit: %s", rlimit.rlim_max, cur, ovs_strerror(errno));
++}
++#endif
++
+ int
+ main(int argc, char *argv[])
+ {
+@@ -93,6 +114,10 @@ main(int argc, char *argv[])
+ #endif
+     }
+ 
++#ifdef __sun
++    setfdlimit();
++#endif
++
+     retval = unixctl_server_create(unixctl_path, &unixctl);
+     if (retval) {
+         exit(EXIT_FAILURE);
 diff --git a/vswitchd/system-stats.c b/vswitchd/system-stats.c
 index 7789787..cee0255 100644
 --- a/vswitchd/system-stats.c
