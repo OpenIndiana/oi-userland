@@ -1,0 +1,55 @@
+https://bugzilla.mozilla.org/show_bug.cgi?id=1314904
+
+# HG changeset patch
+# User Petr Sumbera <petr.sumbera@oracle.com>
+# Date 1478168626 25200
+# Node ID 9e60c1e0b3f1ada2e2d9bf80c3303d51eee2954c
+# Parent  5598e1579a1f7b5de8ca60f45b9f2cfd46c4c9e1
+Bug 1314904 - uname() on success can return non-negative value (not just 0). r=bsmedberg
+
+diff --git a/toolkit/components/startup/nsUserInfoUnix.cpp b/toolkit/components/startup/nsUserInfoUnix.cpp
+--- a/toolkit/components/startup/nsUserInfoUnix.cpp
++++ b/toolkit/components/startup/nsUserInfoUnix.cpp
+@@ -100,18 +100,17 @@ nsUserInfo::GetUsername(char * *aUsernam
+ NS_IMETHODIMP 
+ nsUserInfo::GetDomain(char * *aDomain)
+ {
+     nsresult rv = NS_ERROR_FAILURE;
+ 
+     struct utsname buf;
+     char *domainname = nullptr;
+ 
+-    // is this portable?  that is a POSIX compliant call, but I need to check
+-    if (uname(&buf)) { 
++    if (uname(&buf) < 0) { 
+         return rv;
+     }
+ 
+ #if defined(__linux__)
+     domainname = buf.domainname;
+ #endif
+ 
+     if (domainname && domainname[0]) {   
+diff --git a/widget/GfxInfoX11.cpp b/widget/GfxInfoX11.cpp
+--- a/widget/GfxInfoX11.cpp
++++ b/widget/GfxInfoX11.cpp
+@@ -134,17 +134,17 @@ GfxInfo::GetData()
+     }
+ 
+     if (!strcmp(textureFromPixmap.get(), "TRUE"))
+         mHasTextureFromPixmap = true;
+ 
+     // only useful for Linux kernel version check for FGLRX driver.
+     // assumes X client == X server, which is sad.
+     struct utsname unameobj;
+-    if (!uname(&unameobj))
++    if (uname(&unameobj) >= 0)
+     {
+       mOS.Assign(unameobj.sysname);
+       mOSRelease.Assign(unameobj.release);
+     }
+ 
+     const char *spoofedVendor = PR_GetEnv("MOZ_GFX_SPOOF_GL_VENDOR");
+     if (spoofedVendor)
+         mVendor.Assign(spoofedVendor);
+
