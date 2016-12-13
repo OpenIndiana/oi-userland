@@ -94,6 +94,7 @@ CONFIGURE_OPTIONS = \
 			-Duse64bitall \
                         -Dusethreads \
 			-Dlibpth="/lib/64 /usr/lib/64" \
+			-Dusesitecustomize \
 			-Doptimize="$(CFLAGS.studio)"
 
 #
