@@ -45,6 +45,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.4.6
+COMPONENT_REVISION=	1
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
@@ -97,6 +98,14 @@ LDFLAGS.64 +=	-R/usr/gnu/lib/$(MACH64)
 
 #ASLR_MODE =	$(ASLR_ENABLE)
 LD_OPTIONS += 	-B direct
+
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LDFLAGS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LDFLAGS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS =	--exec-prefix=/usr
@@ -156,6 +165,7 @@ CONFIGURE_ENV.64 +=	LINKFLAGS="$(LDFLAGS.64)"
 CONFIGURE_ENV.64 +=	MACH64="$(MACH64)"
 CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Propagation of smb.conf with default settings.
 $(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
@@ -251,10 +261,9 @@ system-test:    $(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnu-libiconv
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
@@ -263,8 +272,9 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network/avahi
