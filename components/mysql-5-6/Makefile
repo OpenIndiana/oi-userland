@@ -32,7 +32,7 @@ COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
          sha256:60776ec27d78b59f597e71738c5bcdea64dcba33c36fede320d5930320b1fef0
-COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/archives/mysql-5.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
 
