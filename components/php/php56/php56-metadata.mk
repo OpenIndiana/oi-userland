@@ -24,6 +24,6 @@
 #
 
 # The UL_ prefix safeguards against confusion with upstream variables.
-UL_PHP_VERSION = 5.6.22
+UL_PHP_VERSION = 5.6.28
 UL_PHP_MINOR_VERSION = 5.6
 UL_PHP_SHORT_VERSION = 56
