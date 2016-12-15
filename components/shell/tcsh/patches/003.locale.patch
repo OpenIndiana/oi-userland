@@ -1,43 +1,6 @@
---- tcsh-6.18.01/configure.in.orig	Wed Sep  5 11:52:15 2012
-+++ tcsh-6.18.01/configure.in	Wed Sep  5 11:52:40 2012
-@@ -303,7 +303,6 @@
- AC_SEARCH_LIBS(gethostbyname, nsl)
- AC_SEARCH_LIBS(connect, socket)
- AC_SEARCH_LIBS(catgets, catgets)
--AM_ICONV
- 
- dnl Checks for header files
- AC_CHECK_HEADERS([auth.h crypt.h features.h inttypes.h paths.h] dnl
---- tcsh-6.18.01/Makefile.in.orig	Wed Sep  5 11:56:12 2012
-+++ tcsh-6.18.01/Makefile.in	Wed Sep  5 11:57:51 2012
-@@ -12,6 +12,7 @@
- BUILD=tcsh$(EXEEXT)
- VPATH=@srcdir@
- srcdir=@srcdir@
-+localedir=@localedir@
- 
- ################################################################
- ## CFLAGS.  For various -D things, see config.h
-@@ -145,6 +146,7 @@
- #DFLAGS=-D_PATH_TCSHELL='"${DESTBIN}/tcsh"'
- ## The following is set by autoconf.
- DFLAGS = -D_PATH_TCSHELL='"${bindir}/tcsh"' @DFLAGS@ @CPPFLAGS@
-+DFLAGS += -DLOCALEDIR='"${localedir}"'
- 
- 
- ################################################################
-@@ -296,7 +298,7 @@
- #
- 
- EXTRAFLAGS = @HESDEF@ $(AFSDEF)
--EXTRALIBS = @HESLIB@ $(AFSLIB) @LIBICONV@
-+EXTRALIBS = @HESLIB@ $(AFSLIB)
- 
- 
- 
---- tcsh-6.18.01/sh.c.orig	Thu Nov 15 14:26:18 2012
-+++ tcsh-6.18.01/sh.c	Thu Nov 15 14:26:37 2012
-@@ -175,17 +175,10 @@
+--- tcsh-6.19.00/sh.c.orig	Tue May 26 11:09:46 2015
++++ tcsh-6.19.00/sh.c	Tue May 26 11:10:09 2015
+@@ -176,17 +176,10 @@
      size_t len;
      int add_LOC = 1;
      int add_lang = 1;
@@ -55,9 +18,9 @@
      if ((old = getenv("NLSPATH")) != NULL)
          len = strlen(old) + 1;	/* don't forget the colon. */
      else
---- tcsh-6.18.01/sh.func.c.orig	Mon Dec  3 13:09:33 2012
-+++ tcsh-6.18.01/sh.func.c	Mon Dec  3 13:09:54 2012
-@@ -2627,6 +2627,8 @@
+--- tcsh-6.19.00/sh.func.c.orig	Tue May 26 11:10:46 2015
++++ tcsh-6.19.00/sh.func.c	Tue May 26 11:11:47 2015
+@@ -2657,6 +2657,8 @@
  
      if (adrof(STRcatalog) != NULL)
  	catalog = xasprintf("tcsh.%s", short2str(varval(STRcatalog)));
