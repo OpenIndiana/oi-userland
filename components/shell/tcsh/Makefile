@@ -26,14 +26,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.18.01
-IPS_COMPONENT_VERSION=	6.18.1
+COMPONENT_VERSION=	6.20.00
+IPS_COMPONENT_VERSION=	6.20.0
 COMPONENT_PROJECT_URL=	http://www.tcsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d81ca27851f3e8545666399b4bcf25433e602a195113b3f7c73886fef84c9fa8
-COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/old/$(COMPONENT_ARCHIVE)
+    sha256:b89de7064ab54dac454a266cfe5d8bf66940cb5ed048d0c30674ea62e7ecef9d
+COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcsh
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -48,19 +48,30 @@ COMPONENT_PREP_ACTION = \
 
 LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 
+# Deliver 64-bit binary in /usr/bin
+CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
+
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(USRBINDIR)
+COMPONENT_SYSTEM_TEST_TARGETS= system-test
+
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: 		$(NO_TESTS)
-
-include $(WS_MAKE_RULES)/depend.mk
+test: 		$(TEST_64)
 
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/locale
