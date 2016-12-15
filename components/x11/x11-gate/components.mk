@@ -66,7 +66,7 @@ COMPONENTS+= ../library/fontconfig
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 COMPONENTS+= libpthread-stubs
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-COMPONENTS+= libdrm
+COMPONENTS+= ../openindiana/gfx-drm
 COMPONENTS+= libfontenc
 COMPONENTS+= libpciaccess
 COMPONENTS+= libxcb
@@ -260,12 +260,6 @@ COMPONENTS+= xf86-video-trident
 COMPONENTS+= xf86-video-vesa
 COMPONENTS+= xf86-video-vmware
 COMPONENTS+= ../meta-packages/xorg-video
-COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
-
-# kernel
-COMPONENTS+= #drm TBD
-COMPONENTS+= #i915 TBD
-COMPONENTS+= #mdb TBD
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 COMPONENTS+= rgb
