@@ -34,8 +34,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                                        cd $(@D) &&  autoreconf -f  -i )
 CFLAGS += -I/usr/include/X11/xcms
 
 CONFIGURE_OPTIONS += --without-lint

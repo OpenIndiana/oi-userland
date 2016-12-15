@@ -36,8 +36,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CPPFLAGS += -DSUNSOFT
 
-LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
-
 COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
 					cd $(@D) &&  libtoolize --copy --force &&\
                                         aclocal -I . &&\
