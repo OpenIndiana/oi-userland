@@ -16,19 +16,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= nettle
-COMPONENT_VERSION= 2.7
+COMPONENT_VERSION= 3.3
 COMPONENT_SUMMARY= Library for desktop notifications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c294ea133c05382cc2effb1734d49f4abeb1ad8515543a333de49a11422cd4d6
+  sha256:46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e
 COMPONENT_ARCHIVE_URL= \
   https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_FMRI=	library/nettle
 COMPONENT_CLASSIFICATION= System/Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LIB
+COMPONENT_LICENSE = LGPLv3, GPLv3, GPLv2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -54,3 +53,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
+
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += system/library

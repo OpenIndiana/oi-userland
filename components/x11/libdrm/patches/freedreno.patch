@@ -1,11 +1,15 @@
---- libdrm-2.4.58/freedreno/kgsl/kgsl_bo.c.backup	2015-01-08 18:38:13.650691272 +0300
-+++ libdrm-2.4.58/freedreno/kgsl/kgsl_bo.c	2015-01-08 18:39:10.143311946 +0300
-@@ -32,7 +32,7 @@
+--- libdrm-2.4.70/freedreno/kgsl/kgsl_bo.c.orig	2016-09-14 01:56:02.447145494 +0200
++++ libdrm-2.4.70/freedreno/kgsl/kgsl_bo.c	2016-09-14 01:57:13.859602672 +0200
+@@ -32,7 +32,12 @@
  
  #include "kgsl_priv.h"
  
--#include <linux/fb.h>
++#if defined(__sun) && defined(__SVR4)
++#include <xorg/xorg-server.h>
 +#include <xorg/fb.h>
++#else
+ #include <linux/fb.h>
++#endif
  
  static int set_memtype(struct fd_device *dev, uint32_t handle, uint32_t flags)
  {

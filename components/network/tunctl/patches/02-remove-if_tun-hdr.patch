@@ -1,0 +1,27 @@
+The sources include a copy of the header. As of 2016, they are identical
+to those that come with tuntap drivers - and future-wise, they should match.
+So we use system copy of the header instead, and require the 'header-tun'
+package as part of the recipe.
+
+--- ./tunctl.c.~1~	2014-12-14 12:59:41.000000000 +0100
++++ ./tunctl.c	2016-11-20 00:12:57.004129056 +0100
+@@ -40,7 +40,7 @@
+ #include <strings.h>
+ #include <errno.h>
+ #include <ctype.h>
+-#include "if_tun.h"
++#include <net/if_tun.h>
+ 
+ #ifndef TUNMAXPPA
+ #define TUNMAXPPA	20
+--- ./Makefile.in.~2~	2014-12-14 12:59:41.000000000 +0100
++++ ./Makefile.in	2016-11-20 00:07:51.307370977 +0100
+@@ -31,7 +31,7 @@
+ 
+ all: tunctl
+ 
+-tunctl: $(SRCDIR)/tunctl.c $(SRCDIR)/if_tun.h
++tunctl: $(SRCDIR)/tunctl.c
+ 	$(CC) $(CFLAGS) $(LDFLAGS) $(SRCDIR)/tunctl.c -o tunctl
+ 
+ install: all

@@ -1,0 +1,63 @@
+diff -ur top-3.8beta1/display.c top-3.8beta1-p/display.c
+--- top-3.8beta1/display.c	2016-10-04 15:11:26.584585961 +0300
++++ top-3.8beta1-p/display.c	2016-10-04 15:11:23.456363934 +0300
+@@ -635,7 +635,7 @@
+ 	    }
+ 	    else
+ 	    {
+-		display_write(x, y, color, 0, itoa((int)num));
++		display_write(x, y, color, 0, itoa(num));
+ 	    }
+ 
+ 	    /* next iteration will not start at x, y */
+diff -ur top-3.8beta1/utils.c top-3.8beta1-p/utils.c
+--- top-3.8beta1/utils.c	2008-05-07 07:41:39.000000000 +0400
++++ top-3.8beta1-p/utils.c	2016-10-04 15:12:54.413001306 +0300
+@@ -93,27 +93,27 @@
+ }
+ 
+ /*
+- *  itoa - convert integer (decimal) to ascii string for positive numbers
++ *  itoa - convert integer (long) to ascii string for positive numbers
+  *  	   only (we don't bother with negative numbers since we know we
+  *	   don't use them).
+  */
+ 
+ 				/*
+-				 * How do we know that 16 will suffice?
++				 * How do we know that 24 will suffice?
+ 				 * Because the biggest number that we will
+-				 * ever convert will be 2^32-1, which is 10
++				 * ever convert will be 2^64-1, which is 20
+ 				 * digits.
+ 				 */
+ 
+ char *
+-itoa(int val)
++itoa(long val)
+ 
+ {
+     register char *ptr;
+-    static char buffer[16];	/* result is built here */
+-    				/* 16 is sufficient since the largest number
+-				   we will ever convert will be 2^32-1,
+-				   which is 10 digits. */
++    static char buffer[24];	/* result is built here */
++    				/* 24 is sufficient since the largest number
++				   we will ever convert will be 2^64-1,
++				   which is 20 digits. */
+ 
+     ptr = buffer + sizeof(buffer);
+     *--ptr = '\0';
+diff -ur top-3.8beta1/utils.h top-3.8beta1-p/utils.h
+--- top-3.8beta1/utils.h	2008-05-07 07:41:39.000000000 +0400
++++ top-3.8beta1-p/utils.h	2016-10-04 15:11:23.451063067 +0300
+@@ -40,7 +40,7 @@
+ #define _UTILS_H
+ 
+ int atoiwi(char *);
+-char *itoa(int);
++char *itoa(long);
+ char *itoa_w(int, int);
+ char *itoa7(int);
+ int digits(int);

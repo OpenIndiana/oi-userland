@@ -1,0 +1,102 @@
+Pulled from https://raw.githubusercontent.com/kaizawa/patch-vpnc-solaris/master/patch-vpnc-solaris on 2016-11-17 (original commit 2012-07-28).
+Posted by kazuyoshi :
+
+This is a patch for vpnc 0.5.3 for Solaris 11.
+
+https://github.com/kaizawa/patch-vpnc-solaris
+Kazuyoshi Aizawa <admin2@whiteboard.ne.jp>
+
+How To Apply
+-------------
+
+Copy patch file to the directory you exetracted vpnc 0.5.3.
+Then run patch command.
+
+sol11 $ cd vpnc-0.5.3
+sol11 $ patch -p1 < patch-vpnc-solaris 
+patching file config.c
+patching file sysdep.c
+patching file tunip.c
+patching file vpnc.c
+
+diff --git a/config.c b/config.c
+index c12b09e..972768f 100644
+--- a/config.c
++++ b/config.c
+@@ -35,6 +35,9 @@
+ #include "vpnc.h"
+ #include "supp.h"
+ #include "decrypt-utils.h"
++#if defined(__sun__)
++#include <strings.h>
++#endif
+ 
+ const char *config[LAST_CONFIG];
+ 
+diff --git a/sysdep.c b/sysdep.c
+index ff07753..540648f 100644
+--- a/sysdep.c
++++ b/sysdep.c
+@@ -527,7 +527,7 @@ int tun_write(int fd, unsigned char *buf, int len)
+ {
+ 	struct strbuf sbuf;
+ 	sbuf.len = len;
+-	sbuf.buf = buf;
++	sbuf.buf = (char *)buf;
+ 	return putmsg(fd, NULL, &sbuf, 0) >= 0 ? sbuf.len : -1;
+ }
+ 
+@@ -537,7 +537,7 @@ int tun_read(int fd, unsigned char *buf, int len)
+ 	int f = 0;
+ 
+ 	sbuf.maxlen = len;
+-	sbuf.buf = buf;
++	sbuf.buf = (char *)buf;
+ 	return getmsg(fd, NULL, &sbuf, &f) >= 0 ? sbuf.len : -1;
+ }
+ #elif defined(__CYGWIN__)
+@@ -680,8 +680,12 @@ int tun_get_hwaddr(int fd, char *dev, uint8_t *hwaddr)
+ 	if (ioctl(fd, SIOCGIFHWADDR, &ifr) < 0) {
+ 		return -1;
+ 	}
+-	
++
++#if defined(__sun__)	
++	memcpy(hwaddr, &ifr.ifr_addr.sa_data, ETH_ALEN);
++#else
+ 	memcpy(hwaddr, &ifr.ifr_hwaddr.sa_data, ETH_ALEN);
++#endif
+ 	
+ 	return 0;
+ #else
+diff --git a/tunip.c b/tunip.c
+index 19db717..4eb663c 100644
+--- a/tunip.c
++++ b/tunip.c
+@@ -1058,7 +1058,11 @@ void vpnc_doit(struct sa_block *s)
+ 	} else {
+ 		printf("VPNC started in foreground...\n");
+ 	}
++#if defined(__sun__)
++	openlog("vpnc", LOG_PID, LOG_DAEMON);
++#else
+ 	openlog("vpnc", LOG_PID | LOG_PERROR, LOG_DAEMON);
++#endif
+ 	write_pidfile(pidfile);
+ 	
+ 	vpnc_main_loop(s);
+diff --git a/vpnc.c b/vpnc.c
+index 38dc17f..421c29b 100644
+--- a/vpnc.c
++++ b/vpnc.c
+@@ -39,6 +39,10 @@
+ #include <sys/utsname.h>
+ 
+ #include <gcrypt.h>
++#if defined(__sun__)
++#include <fcntl.h>
++#include <sys/types.h>
++#endif
+ 
+ #ifdef OPENSSL_GPL_VIOLATION
+ /* OpenSSL */

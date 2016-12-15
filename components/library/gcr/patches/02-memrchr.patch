@@ -1,0 +1,112 @@
+memrchr compatibility stub taken from sudo.
+21158555 - solaris should provide memrchr for bsd / linux compatibility 
+
+--- gcr-3.16.0/configure.ac	2015-05-12 07:27:59.000000000 -0700
++++ gcr-3.16.0/configure.ac	2015-05-27 16:50:16.536249851 -0700
+@@ -144,6 +144,7 @@
+ #
+ 
+ AC_CHECK_FUNCS(timegm, AC_DEFINE(HAVE_TIMEGM,1,[Have timegm]))
++AC_CHECK_FUNCS(memrchr, AC_DEFINE(HAVE_MEMRCHR,1,[Have memrchr]))
+ AC_CHECK_FUNCS(mlock)
+ 
+ # --------------------------------------------------------------------
+--- gcr-3.16.0/egg/egg-armor.c	2015-04-06 11:28:46.000000000 -0700
++++ gcr-3.16.0/egg/egg-armor.c	2015-05-27 16:59:15.748737526 -0700
+@@ -31,7 +31,7 @@
+ #include <glib.h>
+ 
+ #include <ctype.h>
+-#include <string.h>
++#include "egg-memrchr.h"
+ 
+ /*
+  * Armor looks like:
+--- gcr-3.16.0/egg/egg-memrchr.c	1969-12-31 16:00:00.000000000 -0800
++++ gcr-3.16.0/egg/egg-memrchr.c	2015-05-27 16:56:33.358969153 -0700
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2007, 2010-2011, 2013
++ *	Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#include <config.h>
++
++#ifndef HAVE_MEMRCHR
++
++#include <sys/types.h>
++
++/*
++ * Reverse memchr()
++ * Find the last occurrence of 'c' in the buffer 's' of size 'n'.
++ */
++void *
++memrchr(const void *s, int c, size_t n)
++{
++    const unsigned char *cp;
++
++    if (n != 0) {
++	cp = (unsigned char *)s + n;
++	do {
++	    if (*(--cp) == (unsigned char)c)
++		return (void *)cp;
++	} while (--n != 0);
++    }
++    return (void *)0;
++}
++#endif /* HAVE_MEMRCHR */
+--- gcr-3.16.0/egg/egg-memrchr.h	1969-12-31 16:00:00.000000000 -0800
++++ gcr-3.16.0/egg/egg-memrchr.h	2015-05-27 16:57:08.717867655 -0700
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2007, 2010-2011, 2013
++ *	Todd C. Miller <Todd.Miller@courtesan.com>
++ * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#ifndef EGG_MEMRCHR_H_
++#define EGG_MEMRCHR_H_
++
++#include <string.h>
++
++#ifndef HAVE_MEMRCHR
++
++void *      memrchr   (const void *s, int c, size_t n);
++
++#endif
++
++#endif /* EGG_MEMRCHR_H_ */
+--- gcr-3.16.0/egg/Makefile.am	2015-04-06 11:28:46.000000000 -0700
++++ gcr-3.16.0/egg/Makefile.am	2015-05-27 16:58:43.053533180 -0700
+@@ -27,6 +27,7 @@
+ 	egg/egg-hex.c egg/egg-hex.h \
+ 	egg/egg-hkdf.c egg/egg-hkdf.h \
+ 	egg/egg-libgcrypt.c egg/egg-libgcrypt.h \
++	egg/egg-memrchr.c egg/egg-memrchr.h \
+ 	egg/egg-oid.c egg/egg-oid.h \
+ 	egg/egg-padding.c egg/egg-padding.h \
+ 	egg/egg-openssl.c egg/egg-openssl.h \

@@ -17,12 +17,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libX11
 
-COMPONENT_VERSION= 1.6.3
+COMPONENT_VERSION= 1.6.4
 COMPONENT_SUMMARY= libX11 - X11 core protocol client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cf31a7c39f2f52e8ebd0db95640384e63451f9b014eed2bb7f5de03e8adc8111
+  sha256:b7c748be3aa16ec2cbd81edc847e9b6ee03f88143ab270fb59f58a044d34e441
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb  -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
 
@@ -56,7 +56,6 @@ LOCALE_LIB_DIR.64=/usr/lib/X11/locale/$(MACH64)
 
 
 CONFIGURE_OPTIONS +=  --without-xmlto 
-CONFIGURE_OPTIONS +=  --with-asciidoc 
 CONFIGURE_OPTIONS +=  --without-fop
 CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
@@ -67,7 +66,6 @@ CONFIGURE_OPTIONS +=  --with-pic
 CONFIGURE_OPTIONS +=  --enable-xthreads 
 CONFIGURE_OPTIONS +=  --enable-loadable-i18n 
 CONFIGURE_OPTIONS +=  --enable-xf86bigfont
-CONFIGURE_OPTIONS +=  --with-xcb=yes 
 CONFIGURE_OPTIONS +=  --enable-loadable-xcursor 
 CONFIGURE_OPTIONS +=  --enable-xcms
 CONFIGURE_OPTIONS +=  --enable-xlocaledir 

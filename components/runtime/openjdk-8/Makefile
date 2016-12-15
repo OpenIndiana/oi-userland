@@ -17,15 +17,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-8
 
-OPENJDK_BUILD_NUMBER=92
+OPENJDK_BUILD_NUMBER=112
 COMPONENT_VERSION=1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20160506.tar.xz
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20161027.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:dbf98bea04fba78a625c4feb3417a3669105e2099f59829abd71894ebea4a684
+  sha256:ad6e0a59b2f4ab648988382cb061d6e2f93af7915bff6aa786d1658988685f8e
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.netbsd.org/pub/pkgsrc/distfiles/LOCAL_PORTS/openjdk7/$(COMPONENT_ARCHIVE)
+  ftp://ftp.netbsd.org/pub/pkgsrc/distfiles/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
 
 CLEAN_PATHS += $(BUILD_DIR)
@@ -54,7 +54,6 @@ CONFIGURE_OPTIONS+=        --disable-precompiled-headers
 CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --with-user-release-suffix=oi-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS+=        --with-update-version=$(OPENJDK_BUILD_NUMBER)
-CONFIGURE_OPTIONS+=        --with-build-number=b14
 
 CONFIGURE_ENV+=	AS=$(GAS)
 CONFIGURE_ENV+=	STRIP=$(STRIP)
@@ -65,7 +64,7 @@ COMPONENT_BUILD_ARGS = JOBS=4
 
 COMPONENT_BUILD_TARGETS = images
 
-CACERTS_DIR=$(WS_TOP)/components/illumos/ca-certificates
+CACERTS_DIR=$(WS_TOP)/components/openindiana/ca-certificates
 CACERTS_INSTALLED=$(CACERTS_DIR)/build/$(MACH32)/.installed
 CACERTS_PROTO_DIR=$(CACERTS_DIR)/build/prototype/$(MACH)
 

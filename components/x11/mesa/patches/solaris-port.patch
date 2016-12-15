@@ -30,7 +30,7 @@
   /
 --- src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:01 2012
 +++ src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:32 2012
-@@ -209,7 +209,27 @@
+@@ -221,6 +221,24 @@
     BRW_SURFACEFORMAT_R8G8B8A8_SSCALED
  };
  
@@ -41,7 +41,7 @@
 +{
 +       int i1;
 +       int ret;
- 
++
 +       i1 = i & UINT_MAX;
 +       ret = ffs(i1);
 +       if (ret == 0) {
@@ -52,12 +52,9 @@
 +}
 +#endif
 +
-+
-+
-+
- /**
-  * Given vertex array type/size/format/normalized info, return
-  * the appopriate hardware surface type.
+ static GLuint
+ double_types(struct brw_context *brw,
+              int size,
 --- src/mesa/drivers/dri/i915/intel_tris.c	Thu Sep  6 08:39:52 2012
 +++ src/mesa/drivers/dri/i915/intel_tris.c	Thu Sep  6 08:40:10 2012
 @@ -345,7 +345,7 @@
@@ -71,7 +68,7 @@
     int __tmp;							\
 --- configure.ac	Thu Sep  6 08:47:48 2012
 +++ configure.ac	Thu Sep  6 08:48:26 2012
-@@ -172,7 +172,7 @@
+@@ -294,7 +294,7 @@
      # Enable -fvisibility=hidden if using a gcc that supports it
      save_CFLAGS="$CFLAGS"
      AC_MSG_CHECKING([whether $CC supports -fvisibility=hidden])
@@ -80,7 +77,7 @@
      CFLAGS="$CFLAGS $VISIBILITY_CFLAGS"
      AC_LINK_IFELSE([AC_LANG_PROGRAM()], AC_MSG_RESULT([yes]),
  		   [VISIBILITY_CFLAGS=""; AC_MSG_RESULT([no])]);
-@@ -193,7 +193,7 @@
+@@ -338,7 +338,7 @@
      # Enable -fvisibility=hidden if using a gcc that supports it
      save_CXXFLAGS="$CXXFLAGS"
      AC_MSG_CHECKING([whether $CXX supports -fvisibility=hidden])
@@ -89,26 +86,27 @@
      CXXFLAGS="$CXXFLAGS $VISIBILITY_CXXFLAGS"
      AC_LANG_PUSH([C++])
      AC_LINK_IFELSE([AC_LANG_PROGRAM()], AC_MSG_RESULT([yes]),
---- configure	Thu Sep  6 08:48:39 2012
-+++ configure	Thu Sep  6 08:49:02 2012
-@@ -6040,7 +6040,7 @@
-     save_CFLAGS="$CFLAGS"
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC supports -fvisibility=hidden" >&5
- $as_echo_n "checking whether $CC supports -fvisibility=hidden... " >&6; }
--    VISIBILITY_CFLAGS="-fvisibility=hidden"
-+    VISIBILITY_CFLAGS=""
-     CFLAGS="$CFLAGS $VISIBILITY_CFLAGS"
-     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
- /* end confdefs.h.  */
-@@ -6080,7 +6080,7 @@
-     save_CXXFLAGS="$CXXFLAGS"
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports -fvisibility=hidden" >&5
- $as_echo_n "checking whether $CXX supports -fvisibility=hidden... " >&6; }
--    VISIBILITY_CXXFLAGS="-fvisibility=hidden"
-+    VISIBILITY_CXXFLAGS=""
-     CXXFLAGS="$CXXFLAGS $VISIBILITY_CXXFLAGS"
-     ac_ext=cpp
- ac_cpp='$CXXCPP $CPPFLAGS'
+@@ -1521,9 +1521,6 @@
+     case "$host_os" in
+     linux*)
+         DEFINES="$DEFINES -DHAVE_ALIAS"
+-        if test "x$enable_dri3" = xyes; then
+-            DEFINES="$DEFINES -DHAVE_DRI3"
+-        fi
+ 
+         if test "x$have_pci_id" != xyes; then
+             AC_MSG_ERROR([libudev-dev or sysfs required for building DRI])
+@@ -1575,6 +1572,10 @@
+     DRI_LIB_DEPS="$DRI_LIB_DEPS $SELINUX_LIBS $LIBDRM_LIBS $EXPAT_LIBS -lm $PTHREAD_LIBS $DLOPEN_LIBS"
+ fi
+ 
++if test "x$enable_dri3" = xyes; then
++    DEFINES="$DEFINES -DHAVE_DRI3"
++fi
++
+ AC_SUBST([DRI_LIB_DEPS])
+ 
+ DRI_DIRS=''
 --- src/mesa/drivers/dri/i915/intel_batchbuffer.c.~1~	2015-02-19 13:51:13.665829618 +0300
 +++ src/mesa/drivers/dri/i915/intel_batchbuffer.c	2015-02-19 13:51:34.230820294 +0300
 @@ -56,7 +56,7 @@

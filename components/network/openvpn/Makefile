@@ -10,15 +10,17 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.3.8
+COMPONENT_VERSION=	2.3.13
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:532435eff61c14b44a583f27b72f93e7864e96c95fe51134ec0ad4b1b1107c51
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:9cde0c8000fd32d5275adb55f8bb1d8ba429ff3de35f60a36e81f3859b7537e0
 COMPONENT_PROJECT_URL=	http://openvpn.net
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
 
@@ -28,7 +30,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-CPPFLAGS +=	-I$(WS_TOP)/components/tuntap/build/prototype/$(MACH)/usr/include
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
@@ -36,6 +37,7 @@ CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-password-save
 
 build:		$(BUILD_32)
 

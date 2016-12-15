@@ -16,23 +16,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXv
-COMPONENT_VERSION=        1.0.10
+COMPONENT_VERSION=        1.0.11
 COMPONENT_FMRI=           x11/library/libxv
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXv - X Video extension library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:55fe92f8686ce8612e2c1bfaf58c057715534419da700bda8d517b1d97914525
+  sha256:d26c13eac99ac4504c532e8e76a1c8e4bd526471eb8a0a4ff2a88db60cb0b088
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXv-1.0.10.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXv.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

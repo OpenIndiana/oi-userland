@@ -78,6 +78,12 @@ CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
+# Defines $(space) as a single blank space, so we can use it to convert
+# space-separated paths to colon-separated paths in variables with
+# $(subst $(space),:,$(strip $(SPATHS)))
+empty :=
+space := $(empty) $(empty)
+
 ROOT =			/
 
 # Native OS version
@@ -92,7 +98,7 @@ COMPILER =		gcc
 LINKER =		gcc
 BITS =			32
 PYTHON_VERSION =	2.7
-PYTHON_VERSIONS =	2.6 2.7
+PYTHON_VERSIONS =	2.7
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -326,20 +332,26 @@ $(BUILD_DIR_64)/.installed:       BITS=64
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
 
-# set the default test results directory
+# set the default build test results directory
+COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
+
+# set the default master test results directory
 COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
 
 # set the default master test results file
 COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 
 # set the default test results output file
-COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
+COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-results
 
 # set the default test results comparison diffs file
-COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-diffs
+COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_BUILD_DIR)/test-$(BITS)-diffs
 
 # set the default test snapshot file
-COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).snapshot
+COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_BUILD_DIR)/results-$(BITS).snapshot
+
+# Normally $(GSED) is simplest, but some results files need more power.
+COMPONENT_TEST_TRANSFORMER =	$(GSED)
 
 # The set of default transforms to be applied to the test results to try
 # to normalize them.
@@ -354,7 +366,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '$(GSED) ' \
+        	print '$(COMPONENT_TEST_TRANSFORMER) ' \
 			$(COMPONENT_TEST_TRANSFORMS) \
                 	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
         	print '$(COMPONENT_TEST_OUTPUT) \\' \
@@ -364,7 +376,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	fi
 
 # set the default command for performing any test result munging
-COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_RESULTS_DIR)/transform-$(BITS)-results
+COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_BUILD_DIR)/transform-$(BITS)-results
 
 # set the default operation to run to perform test result normalization
 COMPONENT_TEST_PERFORM_TRANSFORM = \
@@ -535,13 +547,13 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
-PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
-PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
-PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.4.VENDOR_PACKAGES.32 = /usr/lib/python3.4/vendor-packages
+PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
+PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(WS_TOOLS)/parfait/cc
@@ -560,10 +572,22 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =  1.9
-RUBY_LIB_VERSION =      1.9.1
-RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
+RUBY_VERSION =  2.3
+RUBY_LIB_VERSION.2.2 = 2.2.0	
+RUBY_LIB_VERSION.2.3 = 2.3.0
+RUBY.2.2 =	/usr/ruby/2.2/bin/ruby
+RUBY.2.3 =	/usr/ruby/2.3/bin/ruby
 RUBY =          $(RUBY.$(RUBY_VERSION))
+RUBY_LIB_VERSION = $(RUBY_LIB_VERSION.$(RUBY_VERSION))
+
+# Transform Ruby scripts to call the supported
+# version-specific ruby; used in multiple *.mk files
+RUBY_SCRIPT_FIX_FUNC = \
+    $(GNU_GREP) -Rl '^\#! */usr/bin/env ruby' | \
+        /usr/bin/xargs -I\{\} $(GSED) -i -e \
+        '1s%^\#! */usr/bin/env ruby%\#!/usr/ruby/$(RUBY_VERSION)/bin/ruby%' \
+        \{\}
+
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
 # both the ruby version and the ruby library version are needed.
@@ -572,9 +596,6 @@ RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
-
-PYTHON.2.6.32 =	/usr/bin/python2.6
-PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
@@ -677,6 +698,27 @@ PKG_MACROS +=   MYSQL_VERSION=$(MYSQL_VERSION)
 PKG_MACROS +=   MYSQL_VERNUM=$(MYSQL_VERNUM)
 PKG_MACROS +=   MYSQL_BASEPKG=$(MYSQL_BASEPKG)
 
+# Default libjpeg implementation layout
+JPEG_IMPLEM ?=     libjpeg8-turbo
+JPEG_HOME =        $(USRLIBDIR)/$(JPEG_IMPLEM)
+JPEG_BINDIR.32 =   $(JPEG_HOME)/bin
+JPEG_BINDIR.64 =   $(JPEG_HOME)/bin/$(MACH64)
+JPEG_BINDIR =      $(JPEG_BINDIR.$(BITS))
+JPEG_INCDIR =      $(USRINCDIR)/$(JPEG_IMPLEM)
+JPEG_LIBDIR.32 =   $(JPEG_HOME)/lib
+JPEG_LIBDIR.64 =   $(JPEG_HOME)/lib/$(MACH64)
+JPEG_LIBDIR =      $(JPEG_LIBDIR.$(BITS))
+JPEG_CPPFLAGS =    -I$(JPEG_INCDIR)
+JPEG_CFLAGS.32 =   -Wl,-L$(JPEG_LIBDIR.32) -Wl,-R$(JPEG_LIBDIR.32)
+JPEG_CFLAGS.64 =   -Wl,-L$(JPEG_LIBDIR.64) -Wl,-R$(JPEG_LIBDIR.64)
+JPEG_CFLAGS =      $(JPEG_CFLAGS.$(BITS))
+JPEG_CXXFLAGS.32 = -Wl,-L$(JPEG_LIBDIR.32) -Wl,-R$(JPEG_LIBDIR.32)
+JPEG_CXXFLAGS.64 = -Wl,-L$(JPEG_LIBDIR.64) -Wl,-R$(JPEG_LIBDIR.64)
+JPEG_CXXFLAGS =    $(JPEG_CXXFLAGS.$(BITS))
+JPEG_LDFLAGS.32 =  -L$(JPEG_LIBDIR.32) -R$(JPEG_LIBDIR.32)
+JPEG_LDFLAGS.64 =  -L$(JPEG_LIBDIR.64) -R$(JPEG_LIBDIR.64)
+JPEG_LDFLAGS =     $(JPEG_LDFLAGS.$(BITS))
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.5
@@ -718,11 +760,14 @@ LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
+GNU_GREP =	/usr/gnu/bin/grep
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
 GAS =		/usr/gnu/bin/as
+GTAR =		/usr/gnu/bin/tar
 STRIP =	/usr/bin/strip
 IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 

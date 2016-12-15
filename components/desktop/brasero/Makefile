@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	brasero
 COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=	Gnome CD/DVD burner
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a0422cea30dbe470c06963f3c716a948442aed88f28701ea246752b5a73da5b9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -64,6 +64,22 @@ install:	$(INSTALL_32)
 
 test:	$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += desktop/cd-burning/brasero
+REQUIRED_PACKAGES += gnome/file-manager/nautilus
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libunique
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/media-player/totem-pl-parser
+REQUIRED_PACKAGES += media/cdrtools
+REQUIRED_PACKAGES += media/dvd+rw-tools
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm

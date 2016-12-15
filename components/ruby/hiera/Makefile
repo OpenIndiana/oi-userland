@@ -1,4 +1,4 @@
-
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -24,23 +24,28 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hiera
 COMPONENT_VERSION=	1.3.4
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a3c85385ddda64916d453efeeb965151dc2454428d88f04f40d539559af27020
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
 COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera	
-COMPONENT_BUGDB=	utility/puppet
-
-TPNO=                   18210
+COMPONENT_FMRI=	library/ruby/hiera
+COMPONENT_SUMMARY=	Ruby hierarchical data store
+COMPONENT_DESCRIPTION=	Hiera is a key/value lookup tool for configuration data. By default, Hiera supports a backend datastore using YAML or JSON
+COMPONENT_CLASSIFICATION=	Development/Ruby
+COMPONENT_LICENSE=	Apache v2.0
+COMPONENT_LICENSE_FILE=	hiera.license
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
-    $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
+    $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/gem.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gem.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -50,6 +55,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/ruby-23

@@ -17,12 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 11.2.2
+COMPONENT_VERSION= 12.0.3
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:40e148812388ec7c6d7b6657d5a16e2e8dabba8b97ddfceea5197947647bdfb4
+  sha256:1dc86dd9b51272eee1fad3df65e18cda2e556ef1bc0b6e07cd750b9757f493b1
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
@@ -65,14 +65,19 @@ LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 
 # Command line options to GNU autoconf configure script
+CONFIGURE_OPTIONS += --enable-dri3
 CONFIGURE_OPTIONS += --with-dri-driverdir='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --disable-gallium-llvm
-CONFIGURE_OPTIONS += --disable-egl 
+CONFIGURE_OPTIONS += --enable-egl
+CONFIGURE_OPTIONS += --enable-gbm
 CONFIGURE_OPTIONS += --with-gallium-drivers=
 CONFIGURE_OPTIONS += --enable-shared-glapi
 CONFIGURE_OPTIONS += --enable-texture-float
 CONFIGURE_OPTIONS += --enable-osmesa
+CONFIGURE_OPTIONS += --with-sha1=libcrypto
+CONFIGURE_OPTIONS += --disable-glx-tls
+CONFIGURE_OPTIONS += --enable-shader-cache
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)
@@ -83,21 +88,6 @@ COMPONENT_BUILD_ARGS =
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
-
-REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/g++-4-runtime
-REQUIRED_PACKAGES += system/library/gcc-4-runtime
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/glu
-REQUIRED_PACKAGES += x11/library/glw
-REQUIRED_PACKAGES += x11/library/libdrm
-REQUIRED_PACKAGES += x11/library/libx11
-REQUIRED_PACKAGES += x11/library/libxcb
-REQUIRED_PACKAGES += x11/library/libxdamage
-REQUIRED_PACKAGES += x11/library/libxext
-REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxxf86vm
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library

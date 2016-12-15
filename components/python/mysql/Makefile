@@ -28,18 +28,24 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/mysql/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		MySQL-python
-COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/mysql-python
+COMPONENT_VERSION=	1.2.5
+COMPONENT_PROJECT_URL=	https://github.com/farcepest/MySQLdb1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f4133b81e65c7b94a5921ff6a0e7bdbfb622f2a70473673103cb17d5a5be807a
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/mysql-python/$(COMPONENT_ARCHIVE)
+    sha256:811040b647e5d5686f84db415efd697e6250008b112b6909ba77ac059e140c74
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/mysql
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+# Remove trailing carriage returns, if present, in the files.
+COMPONENT_POST_UNPACK_ACTION = \
+    /usr/bin/find $(SOURCE_DIR) -type f -exec $(GSED) -i 's/\r//' '{}' \; ;
 
 CFLAGS.32 =	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
 CFLAGS.64 =	-L/usr/mariadb/5.5/lib/$(MACH64) -R/usr/mariadb/5.5/lib/$(MACH64)
@@ -57,6 +63,6 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += database/mariadb-55/library
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library

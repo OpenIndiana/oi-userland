@@ -1,0 +1,340 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+<transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=etc/ha.d/resource.d/ldirectord target=../../../usr/sbin/ldirectord
+link path=usr/lib/ocf/resource.d/redhat  target=../../../share/cluster
+
+file path=etc/ha.d/shellfuncs
+file path=etc/logrotate.d/ldirectord
+file path=usr/include/heartbeat/agent_config.h
+
+file path=usr/lib/heartbeat/findif mode=0555
+
+file path=usr/lib/ocf/lib/heartbeat/apache-conf.sh
+file path=usr/lib/ocf/lib/heartbeat/findif.sh
+file path=usr/lib/ocf/lib/heartbeat/http-mon.sh
+file path=usr/lib/ocf/lib/heartbeat/mysql-common.sh
+file path=usr/lib/ocf/lib/heartbeat/nfsserver-redhat.sh
+file path=usr/lib/ocf/lib/heartbeat/ocf-binaries
+file path=usr/lib/ocf/lib/heartbeat/ocf-directories
+file path=usr/lib/ocf/lib/heartbeat/ocf-distro
+file path=usr/lib/ocf/lib/heartbeat/ocf-rarun
+file path=usr/lib/ocf/lib/heartbeat/ocf-returncodes
+file path=usr/lib/ocf/lib/heartbeat/ocf-shellfuncs
+file path=usr/lib/ocf/lib/heartbeat/ora-common.sh
+file path=usr/lib/ocf/lib/heartbeat/sapdb-nosha.sh
+file path=usr/lib/ocf/lib/heartbeat/sapdb.sh
+link path=usr/lib/ocf/resource.d/heartbeat/.ocf-binaries \
+    target=../../lib/heartbeat/ocf-binaries
+link path=usr/lib/ocf/resource.d/heartbeat/.ocf-directories \
+    target=../../lib/heartbeat/ocf-directories
+link path=usr/lib/ocf/resource.d/heartbeat/.ocf-returncodes \
+    target=../../lib/heartbeat/ocf-returncodes
+link path=usr/lib/ocf/resource.d/heartbeat/.ocf-shellfuncs \
+    target=../../lib/heartbeat/ocf-shellfuncs
+
+file path=usr/lib/ocf/resource.d/heartbeat/AoEtarget mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/AudibleAlarm mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/CTDB mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ClusterMon mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Delay mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Dummy mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/EvmsSCC mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Evmsd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Filesystem mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ICP mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/IPaddr mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/IPaddr2 mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/IPsrcaddr mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/LVM mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/LinuxSCSI mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/MailTo mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ManageRAID mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ManageVE mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Pure-FTPd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Raid1 mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Route mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/SAPDatabase mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/SAPInstance mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/SendArp mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ServeRAID mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/SphinxSearchDaemon mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Squid mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Stateful mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/SysInfo mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/VIPArip mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/VirtualDomain mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/WAS mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/WAS6 mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/WinPopup mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Xen mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/Xinetd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/anything mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/apache mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/asterisk mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/clvm mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/conntrackd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/db2 mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/dhcpd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/dnsupdate mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/docker mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/eDir88 mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ethmonitor mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/exportfs mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/fio mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/galera mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/iSCSILogicalUnit mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/iSCSITarget mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ids mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/iface-bridge mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/iface-vlan mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/iscsi mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/jboss mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/kamailio mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/ldirectord mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/lxc mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/mysql mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/mysql-proxy mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/nagios mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/named mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/nfsnotify mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/nfsserver mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/nginx mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/oracle mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/oralsnr mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/pgsql mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/pingd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/portblock mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/postfix mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/pound mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/proftpd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/rabbitmq-cluster mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/redis mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/rsyncd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/rsyslog mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/scsi2reservation mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/sfex mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/sg_persist mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/slapd mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/symlink mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/syslog-ng mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/tomcat mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/varnish mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/vmware mode=0555 
+file path=usr/lib/ocf/resource.d/heartbeat/zabbixserver mode=0555 
+
+file path=usr/sbin/ldirectord
+file path=usr/sbin/ocf-tester
+file path=usr/sbin/ocft
+file path=usr/sbin/rhev-check.sh
+file path=usr/share/cluster/ASEHAagent.sh mode=0555
+file path=usr/share/cluster/SAPDatabase mode=0555
+file path=usr/share/cluster/SAPInstance mode=0555
+file path=usr/share/cluster/apache.metadata
+file path=usr/share/cluster/apache.sh mode=0555
+file path=usr/share/cluster/bind-mount.sh mode=0555
+file path=usr/share/cluster/clusterfs.sh mode=0555
+file path=usr/share/cluster/db2.sh mode=0555
+file path=usr/share/cluster/drbd.metadata
+file path=usr/share/cluster/drbd.sh mode=0555
+file path=usr/share/cluster/fs.sh mode=0555
+file path=usr/share/cluster/ip.sh mode=0555
+file path=usr/share/cluster/lvm.metadata
+file path=usr/share/cluster/lvm.sh mode=0555
+file path=usr/share/cluster/lvm_by_lv.sh mode=0555
+file path=usr/share/cluster/lvm_by_vg.sh mode=0555
+file path=usr/share/cluster/mysql.metadata
+file path=usr/share/cluster/mysql.sh mode=0555
+file path=usr/share/cluster/named.metadata
+file path=usr/share/cluster/named.sh mode=0555
+file path=usr/share/cluster/netfs.sh mode=0555
+file path=usr/share/cluster/nfsclient.sh mode=0555
+file path=usr/share/cluster/nfsexport.sh mode=0555
+file path=usr/share/cluster/nfsserver.sh mode=0555
+file path=usr/share/cluster/ocf-shellfuncs
+file path=usr/share/cluster/openldap.metadata
+file path=usr/share/cluster/openldap.sh mode=0555
+file path=usr/share/cluster/oracledb.sh mode=0555
+file path=usr/share/cluster/oradg.metadata
+file path=usr/share/cluster/oradg.sh mode=0555
+file path=usr/share/cluster/orainstance.metadata
+file path=usr/share/cluster/orainstance.sh mode=0555
+file path=usr/share/cluster/oralistener.metadata
+file path=usr/share/cluster/oralistener.sh mode=0555
+file path=usr/share/cluster/postgres-8.metadata
+file path=usr/share/cluster/postgres-8.sh mode=0555
+file path=usr/share/cluster/relaxng/ra-api-1-modified.dtd
+file path=usr/share/cluster/relaxng/ra2man.xsl
+file path=usr/share/cluster/relaxng/ra2ref.xsl
+file path=usr/share/cluster/relaxng/ra2rng.xsl
+file path=usr/share/cluster/relaxng/resources.rng.head
+file path=usr/share/cluster/relaxng/resources.rng.mid
+file path=usr/share/cluster/relaxng/resources.rng.tail
+file path=usr/share/cluster/samba.metadata
+file path=usr/share/cluster/samba.sh mode=0555
+file path=usr/share/cluster/script.sh mode=0555
+file path=usr/share/cluster/service.sh mode=0555
+file path=usr/share/cluster/smb.sh mode=0555
+file path=usr/share/cluster/svclib_nfslock
+file path=usr/share/cluster/tomcat-5.metadata
+file path=usr/share/cluster/tomcat-5.sh mode=0555
+file path=usr/share/cluster/tomcat-6.metadata
+file path=usr/share/cluster/tomcat-6.sh mode=0555
+file path=usr/share/cluster/utils/config-utils.sh mode=0555
+file path=usr/share/cluster/utils/fs-lib.sh mode=0555
+file path=usr/share/cluster/utils/httpd-parse-config.pl mode=0555
+file path=usr/share/cluster/utils/member_util.sh mode=0555
+file path=usr/share/cluster/utils/messages.sh mode=0555
+file path=usr/share/cluster/utils/named-parse-config.pl mode=0555
+file path=usr/share/cluster/utils/ra-skelet.sh mode=0555
+file path=usr/share/cluster/utils/tomcat-parse-config.pl mode=0555
+file path=usr/share/cluster/vm.sh mode=0555
+file path=usr/share/doc/resource-agents/README.webapps
+file path=usr/share/man/man7/ocf_heartbeat_AoEtarget.7
+file path=usr/share/man/man7/ocf_heartbeat_AudibleAlarm.7
+file path=usr/share/man/man7/ocf_heartbeat_CTDB.7
+file path=usr/share/man/man7/ocf_heartbeat_ClusterMon.7
+file path=usr/share/man/man7/ocf_heartbeat_Delay.7
+file path=usr/share/man/man7/ocf_heartbeat_Dummy.7
+file path=usr/share/man/man7/ocf_heartbeat_EvmsSCC.7
+file path=usr/share/man/man7/ocf_heartbeat_Evmsd.7
+file path=usr/share/man/man7/ocf_heartbeat_Filesystem.7
+file path=usr/share/man/man7/ocf_heartbeat_ICP.7
+file path=usr/share/man/man7/ocf_heartbeat_IPaddr.7
+file path=usr/share/man/man7/ocf_heartbeat_IPaddr2.7
+file path=usr/share/man/man7/ocf_heartbeat_IPsrcaddr.7
+file path=usr/share/man/man7/ocf_heartbeat_LVM.7
+file path=usr/share/man/man7/ocf_heartbeat_LinuxSCSI.7
+file path=usr/share/man/man7/ocf_heartbeat_MailTo.7
+file path=usr/share/man/man7/ocf_heartbeat_ManageRAID.7
+file path=usr/share/man/man7/ocf_heartbeat_ManageVE.7
+file path=usr/share/man/man7/ocf_heartbeat_Pure-FTPd.7
+file path=usr/share/man/man7/ocf_heartbeat_Raid1.7
+file path=usr/share/man/man7/ocf_heartbeat_Route.7
+file path=usr/share/man/man7/ocf_heartbeat_SAPDatabase.7
+file path=usr/share/man/man7/ocf_heartbeat_SAPInstance.7
+file path=usr/share/man/man7/ocf_heartbeat_SendArp.7
+file path=usr/share/man/man7/ocf_heartbeat_ServeRAID.7
+file path=usr/share/man/man7/ocf_heartbeat_SphinxSearchDaemon.7
+file path=usr/share/man/man7/ocf_heartbeat_Squid.7
+file path=usr/share/man/man7/ocf_heartbeat_Stateful.7
+file path=usr/share/man/man7/ocf_heartbeat_SysInfo.7
+file path=usr/share/man/man7/ocf_heartbeat_VIPArip.7
+file path=usr/share/man/man7/ocf_heartbeat_VirtualDomain.7
+file path=usr/share/man/man7/ocf_heartbeat_WAS.7
+file path=usr/share/man/man7/ocf_heartbeat_WAS6.7
+file path=usr/share/man/man7/ocf_heartbeat_WinPopup.7
+file path=usr/share/man/man7/ocf_heartbeat_Xen.7
+file path=usr/share/man/man7/ocf_heartbeat_Xinetd.7
+file path=usr/share/man/man7/ocf_heartbeat_anything.7
+file path=usr/share/man/man7/ocf_heartbeat_apache.7
+file path=usr/share/man/man7/ocf_heartbeat_asterisk.7
+file path=usr/share/man/man7/ocf_heartbeat_clvm.7
+file path=usr/share/man/man7/ocf_heartbeat_conntrackd.7
+file path=usr/share/man/man7/ocf_heartbeat_db2.7
+file path=usr/share/man/man7/ocf_heartbeat_dhcpd.7
+file path=usr/share/man/man7/ocf_heartbeat_dnsupdate.7
+file path=usr/share/man/man7/ocf_heartbeat_docker.7
+file path=usr/share/man/man7/ocf_heartbeat_eDir88.7
+file path=usr/share/man/man7/ocf_heartbeat_ethmonitor.7
+file path=usr/share/man/man7/ocf_heartbeat_exportfs.7
+file path=usr/share/man/man7/ocf_heartbeat_fio.7
+file path=usr/share/man/man7/ocf_heartbeat_galera.7
+file path=usr/share/man/man7/ocf_heartbeat_iSCSILogicalUnit.7
+file path=usr/share/man/man7/ocf_heartbeat_iSCSITarget.7
+file path=usr/share/man/man7/ocf_heartbeat_ids.7
+file path=usr/share/man/man7/ocf_heartbeat_iface-bridge.7
+file path=usr/share/man/man7/ocf_heartbeat_iface-vlan.7
+file path=usr/share/man/man7/ocf_heartbeat_iscsi.7
+file path=usr/share/man/man7/ocf_heartbeat_jboss.7
+file path=usr/share/man/man7/ocf_heartbeat_kamailio.7
+file path=usr/share/man/man7/ocf_heartbeat_lxc.7
+file path=usr/share/man/man7/ocf_heartbeat_mysql-proxy.7
+file path=usr/share/man/man7/ocf_heartbeat_mysql.7
+file path=usr/share/man/man7/ocf_heartbeat_named.7
+file path=usr/share/man/man7/ocf_heartbeat_nfsnotify.7
+file path=usr/share/man/man7/ocf_heartbeat_nfsserver.7
+file path=usr/share/man/man7/ocf_heartbeat_nginx.7
+file path=usr/share/man/man7/ocf_heartbeat_oracle.7
+file path=usr/share/man/man7/ocf_heartbeat_oralsnr.7
+file path=usr/share/man/man7/ocf_heartbeat_pgsql.7
+file path=usr/share/man/man7/ocf_heartbeat_pingd.7
+file path=usr/share/man/man7/ocf_heartbeat_portblock.7
+file path=usr/share/man/man7/ocf_heartbeat_postfix.7
+file path=usr/share/man/man7/ocf_heartbeat_pound.7
+file path=usr/share/man/man7/ocf_heartbeat_proftpd.7
+file path=usr/share/man/man7/ocf_heartbeat_rabbitmq-cluster.7
+file path=usr/share/man/man7/ocf_heartbeat_redis.7
+file path=usr/share/man/man7/ocf_heartbeat_rsyncd.7
+file path=usr/share/man/man7/ocf_heartbeat_rsyslog.7
+file path=usr/share/man/man7/ocf_heartbeat_scsi2reservation.7
+file path=usr/share/man/man7/ocf_heartbeat_sfex.7
+file path=usr/share/man/man7/ocf_heartbeat_sg_persist.7
+file path=usr/share/man/man7/ocf_heartbeat_slapd.7
+file path=usr/share/man/man7/ocf_heartbeat_symlink.7
+file path=usr/share/man/man7/ocf_heartbeat_syslog-ng.7
+file path=usr/share/man/man7/ocf_heartbeat_tomcat.7
+file path=usr/share/man/man7/ocf_heartbeat_varnish.7
+file path=usr/share/man/man7/ocf_heartbeat_vmware.7
+file path=usr/share/man/man7/ocf_heartbeat_zabbixserver.7
+file path=usr/share/man/man1m/ocf-tester.1m
+file path=usr/share/resource-agents/ocft/README
+file path=usr/share/resource-agents/ocft/README.zh_CN
+file path=usr/share/resource-agents/ocft/caselib
+file path=usr/share/resource-agents/ocft/configs/Filesystem
+file path=usr/share/resource-agents/ocft/configs/IPaddr2
+file path=usr/share/resource-agents/ocft/configs/IPaddr2v4
+file path=usr/share/resource-agents/ocft/configs/IPaddr2v6
+file path=usr/share/resource-agents/ocft/configs/IPsrcaddr
+file path=usr/share/resource-agents/ocft/configs/IPv6addr
+file path=usr/share/resource-agents/ocft/configs/LVM
+file path=usr/share/resource-agents/ocft/configs/MailTo
+file path=usr/share/resource-agents/ocft/configs/Raid1
+file path=usr/share/resource-agents/ocft/configs/SendArp
+file path=usr/share/resource-agents/ocft/configs/VirtualDomain
+file path=usr/share/resource-agents/ocft/configs/Xen
+file path=usr/share/resource-agents/ocft/configs/Xinetd
+file path=usr/share/resource-agents/ocft/configs/apache
+file path=usr/share/resource-agents/ocft/configs/db2
+file path=usr/share/resource-agents/ocft/configs/drbd.linbit
+file path=usr/share/resource-agents/ocft/configs/exportfs
+file path=usr/share/resource-agents/ocft/configs/exportfs-multidir
+file path=usr/share/resource-agents/ocft/configs/iscsi
+file path=usr/share/resource-agents/ocft/configs/jboss
+file path=usr/share/resource-agents/ocft/configs/mysql
+file path=usr/share/resource-agents/ocft/configs/mysql-proxy
+file path=usr/share/resource-agents/ocft/configs/named
+file path=usr/share/resource-agents/ocft/configs/nfsserver
+file path=usr/share/resource-agents/ocft/configs/oracle
+file path=usr/share/resource-agents/ocft/configs/pgsql
+file path=usr/share/resource-agents/ocft/configs/portblock
+file path=usr/share/resource-agents/ocft/configs/postfix
+file path=usr/share/resource-agents/ocft/configs/sg_persist
+file path=usr/share/resource-agents/ocft/configs/tomcat
+file path=usr/share/resource-agents/ocft/helpers.sh
+file path=usr/share/resource-agents/ocft/runocft mode=0555
+file path=usr/share/resource-agents/ocft/runocft.prereq
+file path=usr/share/resource-agents/ra-api-1.dtd

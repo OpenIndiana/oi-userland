@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		caja
-COMPONENT_VERSION=	1.14.1
+COMPONENT_VERSION=	1.16.1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2e7445a8ba77ff9fa7748645bdbe3b54d158db807fa40db25425d47101dd0dc2
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARCHIVE)
+    sha256:5d201a43bf8aff9366410d03a1a53906073c6bca2201887fcf513050bd69789d
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -35,7 +35,14 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && NOCONFIGURE=1 ./autogen.sh
+COMPONENT_PREP_ACTION=	\
+	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
+		cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+
+# Localization files should be updated
+#COMPONENT_PRE_CONFIGURE_ACTION = \
+#  ( cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+#    cd $(@D)/po-sun && $(MAKE) all )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
@@ -56,6 +63,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -66,6 +74,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libunique
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/desktop/mate/mate-common
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

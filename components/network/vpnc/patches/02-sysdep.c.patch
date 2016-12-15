@@ -1,0 +1,34 @@
+* vpnc : do not use PERMANENT flag when creating tunnels (so they can be closed by system if daemon dies ungracefully)
+Following recommendations from
+http://lists.infradead.org/pipermail/openconnect-devel/2011-November/000449.html
+to not leave unclosed tunnels if the daemon crashes.
+
+--- ./sysdep.c.~2~	2016-11-18 00:16:56.000000000 +0100
++++ ./sysdep.c	2016-11-20 00:29:43.813455500 +0100
+@@ -139,7 +139,7 @@
+ 		syslog(LOG_ERR, "Can't set PPA %d", ppa);
+ 		return -1;
+ 	}
+-	if ((muxid = ioctl(ip_fd, I_PLINK, if_fd)) < 0) {
++	if ((muxid = ioctl(ip_fd, I_LINK, if_fd)) < 0) {
+ 		syslog(LOG_ERR, "Can't link TUN device to IP");
+ 		return -1;
+ 	}
+@@ -152,7 +152,7 @@
+ 	ifr.ifr_ip_muxid = muxid;
+ 
+ 	if (ioctl(ip_fd, SIOCSIFMUXID, &ifr) < 0) {
+-		ioctl(ip_fd, I_PUNLINK, muxid);
++		ioctl(ip_fd, I_UNLINK, muxid);
+ 		syslog(LOG_ERR, "Can't set multiplexor id");
+ 		return -1;
+ 	}
+@@ -497,7 +497,7 @@
+ 		return 0;
+ 	}
+ 
+-	if (ioctl(ip_fd, I_PUNLINK, muxid) < 0) {
++	if (ioctl(ip_fd, I_UNLINK, muxid) < 0) {
+ 		syslog(LOG_ERR, "Can't unlink interface");
+ 		return 0;
+ 	}

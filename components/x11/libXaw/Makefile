@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXaw
-COMPONENT_VERSION=        1.0.12
+COMPONENT_VERSION=        1.0.13
 COMPONENT_FMRI=           x11/library/toolkit/libxaw7
 COMPONENT_CLASSIFICATION= System/X11
-COMPONENT_SUMMARY= 				libXaw - X Athena Widgets library 
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
+COMPONENT_SUMMARY= libXaw - X Athena Widgets library 
+COMPONENT_SRC=     $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96fc314874fce9979556321d1d6ee00b5baf32fb333b7278853b4983bc3cdbf6
+  sha256:8ef8067312571292ccc2bbe94c41109dcf022ea5a4ec71656a83d8cce9edb0cd
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/

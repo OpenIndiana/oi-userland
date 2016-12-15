@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dash
-COMPONENT_VERSION=	0.5.9
+COMPONENT_VERSION=	0.5.9.1
 COMPONENT_SUMMARY=	DASH is a POSIX-compliant implementation of /bin/sh that aims to be as small as possible.
 COMPONENT_PROJECT_URL=  http://gondor.apana.org.au/~herbert/dash/
 COMPONENT_FMRI=		shell/dash
@@ -23,7 +23,7 @@ COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	http://gondor.apana.org.au/~herbert/dash/files/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:92793b14c017d79297001556389442aeb9e3c1cc559fd178c979169b1a47629c
+COMPONENT_ARCHIVE_HASH=	sha256:5ecd5bea72a93ed10eb15a1be9951dd51b52e5da1d4a7ae020efd9826b49e659
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 

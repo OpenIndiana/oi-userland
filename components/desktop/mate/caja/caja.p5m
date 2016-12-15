@@ -24,6 +24,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# We use gvfs gio modules to handle a lot of locations
+depend type=require fmri=library/gnome/gvfs
+
 file path=usr/bin/$(MACH64)/caja
 file path=usr/bin/$(MACH64)/caja-autorun-software
 file path=usr/bin/$(MACH64)/caja-connect-server
@@ -50,12 +53,12 @@ link path=usr/lib/$(MACH64)/libcaja-extension.so.1 \
     target=libcaja-extension.so.1.4.0
 file path=usr/lib/$(MACH64)/libcaja-extension.so.1.4.0
 file path=usr/lib/$(MACH64)/pkgconfig/libcaja-extension.pc
+file path=usr/lib/caja/caja-convert-metadata mode=0555
 file path=usr/lib/girepository-1.0/Caja-2.0.typelib
 link path=usr/lib/libcaja-extension.so target=libcaja-extension.so.1.4.0
 link path=usr/lib/libcaja-extension.so.1 target=libcaja-extension.so.1.4.0
 file path=usr/lib/libcaja-extension.so.1.4.0
 file path=usr/lib/pkgconfig/libcaja-extension.pc
-file mode=0555 path=usr/lib/caja/caja-convert-metadata
 file path=usr/share/appdata/caja.appdata.xml
 file path=usr/share/applications/caja-autorun-software.desktop
 file path=usr/share/applications/caja-browser.desktop
@@ -128,7 +131,6 @@ file path=usr/share/locale/as/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ast/LC_MESSAGES/caja.mo
 file path=usr/share/locale/az/LC_MESSAGES/caja.mo
 file path=usr/share/locale/be/LC_MESSAGES/caja.mo
-file path=usr/share/locale/be@latin/LC_MESSAGES/caja.mo
 file path=usr/share/locale/bg/LC_MESSAGES/caja.mo
 file path=usr/share/locale/bn/LC_MESSAGES/caja.mo
 file path=usr/share/locale/bn_IN/LC_MESSAGES/caja.mo
@@ -144,11 +146,9 @@ file path=usr/share/locale/da/LC_MESSAGES/caja.mo
 file path=usr/share/locale/de/LC_MESSAGES/caja.mo
 file path=usr/share/locale/dz/LC_MESSAGES/caja.mo
 file path=usr/share/locale/el/LC_MESSAGES/caja.mo
-file path=usr/share/locale/en@shaw/LC_MESSAGES/caja.mo
 file path=usr/share/locale/en_AU/LC_MESSAGES/caja.mo
 file path=usr/share/locale/en_CA/LC_MESSAGES/caja.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/caja.mo
-file path=usr/share/locale/en_US/LC_MESSAGES/caja.mo
 file path=usr/share/locale/eo/LC_MESSAGES/caja.mo
 file path=usr/share/locale/es/LC_MESSAGES/caja.mo
 file path=usr/share/locale/es_AR/LC_MESSAGES/caja.mo
@@ -165,7 +165,6 @@ file path=usr/share/locale/fy/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ga/LC_MESSAGES/caja.mo
 file path=usr/share/locale/gl/LC_MESSAGES/caja.mo
 file path=usr/share/locale/gu/LC_MESSAGES/caja.mo
-file path=usr/share/locale/gv/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ha/LC_MESSAGES/caja.mo
 file path=usr/share/locale/he/LC_MESSAGES/caja.mo
 file path=usr/share/locale/hi/LC_MESSAGES/caja.mo
@@ -175,13 +174,11 @@ file path=usr/share/locale/hy/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ia/LC_MESSAGES/caja.mo
 file path=usr/share/locale/id/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ig/LC_MESSAGES/caja.mo
-file path=usr/share/locale/io/LC_MESSAGES/caja.mo
 file path=usr/share/locale/is/LC_MESSAGES/caja.mo
 file path=usr/share/locale/it/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ja/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ka/LC_MESSAGES/caja.mo
 file path=usr/share/locale/kk/LC_MESSAGES/caja.mo
-file path=usr/share/locale/km/LC_MESSAGES/caja.mo
 file path=usr/share/locale/kn/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ko/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ku/LC_MESSAGES/caja.mo
@@ -207,18 +204,19 @@ file path=usr/share/locale/oc/LC_MESSAGES/caja.mo
 file path=usr/share/locale/or/LC_MESSAGES/caja.mo
 file path=usr/share/locale/pa/LC_MESSAGES/caja.mo
 file path=usr/share/locale/pl/LC_MESSAGES/caja.mo
+file path=usr/share/locale/pms/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ps/LC_MESSAGES/caja.mo
 file path=usr/share/locale/pt/LC_MESSAGES/caja.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ro/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ru/LC_MESSAGES/caja.mo
 file path=usr/share/locale/rw/LC_MESSAGES/caja.mo
+file path=usr/share/locale/sc/LC_MESSAGES/caja.mo
 file path=usr/share/locale/si/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sk/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sl/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sq/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sr/LC_MESSAGES/caja.mo
-file path=usr/share/locale/sr@ije/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sr@latin/LC_MESSAGES/caja.mo
 file path=usr/share/locale/sv/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ta/LC_MESSAGES/caja.mo
@@ -230,7 +228,6 @@ file path=usr/share/locale/ug/LC_MESSAGES/caja.mo
 file path=usr/share/locale/uk/LC_MESSAGES/caja.mo
 file path=usr/share/locale/ur/LC_MESSAGES/caja.mo
 file path=usr/share/locale/uz/LC_MESSAGES/caja.mo
-file path=usr/share/locale/uz@cyrillic/LC_MESSAGES/caja.mo
 file path=usr/share/locale/vi/LC_MESSAGES/caja.mo
 file path=usr/share/locale/wa/LC_MESSAGES/caja.mo
 file path=usr/share/locale/xh/LC_MESSAGES/caja.mo
@@ -244,11 +241,38 @@ file path=usr/share/man/man1/caja-autorun-software.1
 file path=usr/share/man/man1/caja-connect-server.1
 file path=usr/share/man/man1/caja-file-management-properties.1
 file path=usr/share/man/man1/caja.1
+
+# Packaged in desktop/shared-mime-info
+#file path=usr/share/mime/XMLnamespaces
+#file path=usr/share/mime/aliases
+#file path=usr/share/mime/application/x-mate-saved-search.xml
+#file path=usr/share/mime/generic-icons
+#file path=usr/share/mime/globs
+#file path=usr/share/mime/globs2
+#file path=usr/share/mime/icons
+#file path=usr/share/mime/magic
+#file path=usr/share/mime/mime.cache
+#file path=usr/share/mime/packages/caja.xml
+#file path=usr/share/mime/subclasses
+
+#file path=usr/share/mime/treemagic
+#file path=usr/share/mime/types
 file path=usr/share/pixmaps/caja/audio.svg
 file path=usr/share/pixmaps/caja/backgrounds.png
+file path=usr/share/pixmaps/caja/camera.png
 file path=usr/share/pixmaps/caja/chit_frame.png
 file path=usr/share/pixmaps/caja/colors.png
 file path=usr/share/pixmaps/caja/emblems.png
 file path=usr/share/pixmaps/caja/erase.png
+file path=usr/share/pixmaps/caja/group.png
+file path=usr/share/pixmaps/caja/group_neg.png
 file path=usr/share/pixmaps/caja/knob.png
+file path=usr/share/pixmaps/caja/mask.png
+file path=usr/share/pixmaps/caja/other.png
+file path=usr/share/pixmaps/caja/other_neg.png
+file path=usr/share/pixmaps/caja/restore-no.png
+file path=usr/share/pixmaps/caja/restore-search.png
+file path=usr/share/pixmaps/caja/restore.png
 file path=usr/share/pixmaps/caja/thumbnail_frame.png
+file path=usr/share/pixmaps/caja/user.png
+file path=usr/share/pixmaps/caja/user_neg.png

@@ -10,29 +10,29 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXrandr
-COMPONENT_VERSION=        1.4.2
+COMPONENT_VERSION=        1.5.1
 COMPONENT_FMRI=           x11/library/libxrandr
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXrandr - X Resize and Rotate extension library 
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:caa7b31ac769be51a532343c65376f1d4df3f307afaed58e34fb5e82e8b825ad
+  sha256:1ff9e7fa0e4adea912b16a5f0cfa7c1d35b0dcda0e216831f7715c8a3abcf51a
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXrandr.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

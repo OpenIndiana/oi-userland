@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycairo
 COMPONENT_VERSION=	1.8.8
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.cairographics.org
 COMPONENT_SUMMARY=	Python bindings for Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -25,7 +25,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:2f52599943ca03c8ff336a0e84b1c8b74f30e2a3de9cb6a9a42a93a848832860
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 
-VARIANT_PYTHON26 = $(BUILD_DIR)/python-26
+PYTHON_VERSIONS =	2.7
+
 VARIANT_PYTHON27 = $(BUILD_DIR)/python-27
 
 VARIANTS = $(VARIANT_PYTHON26) $(VARIANT_PYTHON27)
@@ -36,24 +37,13 @@ BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
 INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
 INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
 
-# Avoid overwriting python2.7 files in /usr/share
-$(VARIANT_PYTHON27)/$(MACH32)/.installed:       $(VARIANT_PYTHON26)/$(MACH32)/.installed
-$(VARIANT_PYTHON27)/$(MACH64)/.installed:       $(VARIANT_PYTHON26)/$(MACH64)/.installed
-
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: BITS=64
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: BITS=64
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.6.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
-$(VARIANT_PYTHON26)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.64)
 $(VARIANT_PYTHON27)/$(MACH64)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.64)
 
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pyexecdir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
-$(VARIANT_PYTHON26)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.32)
 $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.VENDOR_PACKAGES.32)
 
 include $(WS_TOP)/make-rules/prep.mk

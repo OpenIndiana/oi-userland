@@ -16,12 +16,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyxdg
 COMPONENT_VERSION=	0.25
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/pyxdg/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:81e883e0b9517d624e8b0499eb267b82a815c0b7146d5269f364988ae031279d
 COMPONENT_ARCHIVE_URL=	http://people.freedesktop.org/~takluyver/$(COMPONENT_ARCHIVE)
+
+PYTHON_VERSIONS=	2.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -34,4 +37,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-27

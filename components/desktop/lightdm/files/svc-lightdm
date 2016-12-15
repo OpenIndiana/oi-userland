@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+#pragma ident	"@(#)svc-gdm.src	1.1	06/02/06 SMI"
+#
+# For modifying parameters passed to lightdm, do not edit
+# this script. Instead use svccfg(1m) to modify the SMF
+# repository. For example:
+#
+# # svccfg
+# svc:> select application/graphical-login/lightdm
+# svc:/application/graphical-login/lightdm> setprop lightdm/args = "-d"
+# svc:/application/graphical-login/lightdm> exit
+
+. /lib/svc/share/smf_include.sh
+
+case "$1" in
+'start')
+	FMRI=svc:/application/graphical-login/lightdm:default
+
+	arg=`eval "echo \`svcprop -p lightdm/args $FMRI\`"`
+
+	/usr/sbin/lightdm $arg &
+
+	rc=$?
+	if [ $rc != 0 ]; then
+		echo "$0: lightdm failed with $rc"
+		exit 1
+	fi
+	;;
+
+'stop')
+	PIDFILE=/var/run/lightdm.pid 
+	if test '!' -f $PIDFILE ; then
+	        echo "$PIDFILE doesn't exist, perhaps LightDM isn't running"
+	        exit 1
+	fi
+	# exec the kill to get the correct return code
+	exec kill -TERM `cat $PIDFILE`
+	;;
+
+*)
+	echo "Usage: $0 { start | stop }"
+	exit 1
+	;;
+esac
+
+exit $SMF_EXIT_OK

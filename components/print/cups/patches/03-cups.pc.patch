@@ -1,19 +1,16 @@
 Index: Makefile
 ===================================================================
---- Makefile.orig	Fri Apr 23 11:56:34 2010
-+++ Makefile	Tue Dec  7 01:16:04 2010
-@@ -237,7 +237,10 @@
- 		$(INSTALL_DIR) -m 755 $(BUILDROOT)$(ICONDIR)/hicolor/128x128/apps; \
- 		$(INSTALL_DATA) desktop/cups-128.png $(BUILDROOT)$(ICONDIR)/hicolor/128x128/apps/cups.png; \
- 	fi
+--- Makefile.~1~	2016-09-14 11:51:26.531319155 +0300
++++ Makefile	2016-09-14 11:52:57.348185766 +0300
+@@ -192,6 +192,8 @@
+ 	echo Installing cups-config script...
+ 	$(INSTALL_DIR) -m 755 $(BINDIR)
+ 	$(INSTALL_SCRIPT) cups-config $(BINDIR)/cups-config
 +	$(INSTALL_DIR) $(BUILDROOT)$(libdir)/pkgconfig
 +	$(INSTALL_DATA) cups.pc $(BUILDROOT)$(libdir)/pkgconfig/cups.pc
  
-+
+ 
  #
- # Install header files...
- #
-
 Index: cups.pc.in
 ===================================================================
 --- cups.pc.in	(revision 0)
@@ -47,12 +44,11 @@ Index: configure.in
 ===================================================================
 --- configure.in.orig	Tue Jun 22 14:42:44 2010
 +++ configure.in	Mon Dec  6 03:26:15 2010
-@@ -71,7 +71,7 @@
- 	  man/client.conf.man man/cups-deviced.man man/cups-driverd.man
- 	  man/cups-lpd.man man/cupsaddsmb.man man/cupsd.man
- 	  man/cupsd.conf.man man/lpoptions.man
--	  templates/header.tmpl
-+	  templates/header.tmpl cups.pc
+@@ -86,6 +86,7 @@
+ 	  scheduler/cups.xml
+ 	  scheduler/org.cups.cups-lpd.plist
+  	  templates/header.tmpl
++	  cups.pc
+           packaging/cups.list
  	  $LANGFILES)
  
- chmod +x cups-config

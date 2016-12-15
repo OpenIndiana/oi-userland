@@ -1,0 +1,121 @@
+= Setup notes for the OpenVPN SMF service integration
+
+== Multiple-instance support
+
+To create additional SMF instances for additional OpenVPN configuration
+files, run the following commands (as the `root` or a user with the RBAC
+privileges needed to do this setup):
+
+----
+    :; VPNCFG=mywork-client
+    :; pfexec svccfg -s openvpn add $VPNCFG
+    :; pfexec svcadm refresh openvpn:$VPNCFG
+----
+
+NOTE: The service template assumes all system-level connection config files
+(and additional files they might pull by relative paths) are all located
+under `/etc/openvpn/` directory as `$VPNCFG.conf`; initial logging is set up
+to write into `/var/log/openvpn/$VPNCFG/log` by default, and then the location
+may be specified by the `config_file` contents. In any case, make sure the
+specified location exists and is writable by the service user account.
+
+If you want the tunnel just occasionally (not up by default every time you
+boot), do not forget to run it as a temporarily-enabled service (also this
+requires less RBAC privileges needed to the user account that would start
+or stop the tunnel service):
+
+----
+    :; pfexec svcadm enable -ts openvpn:$VPNCFG
+----
+
+Inspect the results with:
+
+----
+    :; svcs -p openvpn:$VPNCFG
+    :; tail -f /var/svc/log/*openvpn:$VPNCFG.log &
+----
+
+== Firewall considerations
+
+In order for tunneled traffic to actually pass, you may have to allow it in
+your (custom) IPFilter config, usually `/etc/ipf/ipf.conf`, by preemptively
+adding lines like these (scale by the amount of TUN and/or TAP tunnels you
+expect active at the same time), e.g.:
+
+----
+pass in quick on tun0
+pass out quick on tun0
+pass in quick on tun1
+pass out quick on tun1
+pass in quick on tun2
+pass out quick on tun2
+pass in quick on tun3
+pass out quick on tun3
+pass in quick on tap0
+pass out quick on tap0
+pass in quick on tap1
+pass out quick on tap1
+pass in quick on tap2
+pass out quick on tap2
+pass in quick on tap3
+pass out quick on tap3
+----
+
+...and restarting the service:
+
+----
+    :; pfexec svcadm restart ipfilter
+----
+
+If the remote OpenVPN server for your client is on some non-standard ports,
+or if your local OpenVPN server instance listens on some non-standard ports,
+and your firewall config is strict, you might have to allow that traffic in
+the firewall rulesets too.
+
+Alternately you might research and use scripting hooks in openvpn config files.
+
+== OpenVPN in local zones
+
+You can run an openvpn router in a local zone with exclusive IP stack, using
+the tun/tap device drivers (kernel modules) installed in the global zone and
+passed into the local zone.
+
+This may require some additional privileges and setup steps for that zone;
+if it does not work "out of the box" for you, try changing the zone manifest
+according to:
+
+----
+    <zone name=... limitpriv="default,priv_net_rawaccess">
+    ...
+      <device match="/dev/tun"/>
+      <device match="/dev/tap"/>
+    </zone>
+----
+
+== Special privileges for the OpenVPN daemon
+
+You might also want to enable some permissions in the service manifest below,
+or per-instance, for example if you want one to listen on privileged ports, or
+to `chroot()` the daemon, or to use configuration files and device nodes owned
+by another user. Remember that under SMF a `root` is not always almighty!
+
+Specific use-cases will require different privilege sets, but all or most of
+the list below had been useful in different non-triial deployments:
+
+----
+        <method_context>
+            <!-- Some setups might need extra permissions for their OpenVPN
+                 service, but not all - so by default they are commented away
+                 and may be enabled by an end-user's deployment, and maybe just
+                 for a particular instance. Possibly, this might also allow to
+                 run OpenVPN as a non-root account. -->
+<!--
+            <method_credential group='root' limit_privileges=':default'
+                privileges='basic,sys_iptun_config,sys_net_config,sys_devices,net_privaddr,net_rawaccess,net_icmpaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'
+                supp_groups=':default' user='root'/>
+-->
+        </method_context>
+----
+
+
+Have fun running your copy of OpenVPN on OpenIndiana!

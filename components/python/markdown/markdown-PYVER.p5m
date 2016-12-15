@@ -1,0 +1,71 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/library/python/markdown-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python implementation of Markdown"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='BSD'
+
+# force a dependency on the Python runtime
+depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the package
+depend fmri=library/python/markdown@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require
+
+# version the executable
+link path=usr/bin/markdown_py target=markdown_py-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+
+<transform file path=usr/bin/markdown_py-$(PYVER) \
+	-> set action.hash usr/bin/markdown_py >
+
+file path=usr/bin/markdown_py-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/Markdown-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/__version__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/blockparser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/blockprocessors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/abbr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/admonition.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/attr_list.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/codehilite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/def_list.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/extra.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/fenced_code.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/footnotes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/headerid.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/meta.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/nl2br.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/sane_lists.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/smart_strong.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/smarty.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/toc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/extensions/wikilinks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/inlinepatterns.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/odict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/postprocessors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/preprocessors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/serializers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/treeprocessors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/markdown/util.py

@@ -17,14 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	45.2.0esr
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION= 	45.2.0
+COMPONENT_VERSION= 	45.6.0esr
+IPS_COMPONENT_VERSION= 	45.6.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1a729774034231c919dc5a556e17d3342792d5347c755d8d0a4f67a07374804b
+  sha256:c1e7ddf6efb0f54c8071131b6395f4942a422c2ab70f2e9a81b588373d6fbf5b
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -50,7 +49,7 @@ CONFIGURE_OPTIONS +=	--enable-jemalloc
 CONFIGURE_OPTIONS +=	--disable-dtrace
 CONFIGURE_OPTIONS +=    --disable-xinerama
 CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=	--disable-pulseaudio
+CONFIGURE_OPTIONS +=	--enable-pulseaudio
 CONFIGURE_OPTIONS +=	--disable-gstreamer
 CONFIGURE_OPTIONS +=	--with-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
@@ -67,6 +66,7 @@ ENV +=	MOZ_PKG_FORMAT=XZ
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=firefox
 ENV +=	SHELL="/bin/bash"
+ENV +=  LDFLAGS="-L$(BUILD_DIR_32)/dist/lib -L$(BUILD_DIR_32)/dist/bin"
 
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
@@ -95,3 +95,32 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
     done )
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++/sunpro
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcomposite
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxdamage
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

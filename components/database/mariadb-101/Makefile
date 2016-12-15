@@ -1,0 +1,88 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2011-2013, EveryCity Ltd. All rights reserved.
+# Copyright 2016-2017, Wiselabs Software Ltda - http://www.wiselabs.com.br . All rights reserved.
+#
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		mariadb
+COMPONENT_VERSION=	10.1.17
+IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_PROJECT_URL=	http://www.mariadb.org/
+COMPONENT_ARCHIVE_HASH=	sha256:4ca45ac5e34418761868115ebc8c068d511fed08e283b2cac52559d63ba4aab5
+COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/cmake.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+
+CONFIGURE_PREFIX=/usr/mariadb/10.1
+CONFDIR=/etc/mariadb/10.1
+DATA_PREFIX=/var/mariadb/10.1
+
+CMAKE_BINDIR.32 =	bin
+CMAKE_BINDIR.64 =	bin/$(MACH64)
+CMAKE_LIBDIR.32 =	lib
+CMAKE_LIBDIR.64 =	lib/$(MACH64)
+CMAKE_PLUGINDIR.32 =	lib/plugin
+CMAKE_PLUGINDIR.64 =	lib/$(MACH64)/plugin
+
+CMAKE_OPTIONS+= -DCMAKE_C_COMPILER=$(CC)
+CMAKE_OPTIONS+= -DCMAKE_CXX_COMPILER=$(CXX)
+CMAKE_OPTIONS+= -DCMAKE_C_FLAGS=$(CFLAGS)
+CMAKE_OPTIONS+= -DCMAKE_CXX_FLAGS=$(CFLAGS)
+
+CMAKE_OPTIONS+= -DINSTALL_LAYOUT=SVR4
+CMAKE_OPTIONS+= -DCMAKE_INSTALL_PREFIX=$(CONFIGURE_PREFIX)
+CMAKE_OPTIONS+= -DINSTALL_BINDIR=$(CMAKE_BINDIR.$(BITS))
+CMAKE_OPTIONS+= -DINSTALL_INFODIR=bin
+CMAKE_OPTIONS+= -DINSTALL_INCLUDEDIR=include
+CMAKE_OPTIONS+= -DINSTALL_LIBDIR=$(CMAKE_LIBDIR.$(BITS))
+CMAKE_OPTIONS+= -DINSTALL_PLUGINDIR=$(CMAKE_PLUGINDIR.$(BITS))
+CMAKE_OPTIONS+= -DINSTALL_MANDIR=man
+CMAKE_OPTIONS+= -DINSTALL_SHAREDIR=share
+CMAKE_OPTIONS+= -DINSTALL_MYSQLSHAREDIR=share
+CMAKE_OPTIONS+= -DINSTALL_SBINDIR=$(CMAKE_BINDIR.$(BITS))
+CMAKE_OPTIONS+= -DINSTALL_SCRIPTDIR=$(CMAKE_BINDIR.$(BITS))
+CMAKE_OPTIONS+= -DMYSQL_DATADIR=$(DATA_PREFIX)/data
+CMAKE_OPTIONS+= -DSYSCONFDIR=$(CONFDIR)
+CMAKE_OPTIONS+= -DINSTALL_SYSCONFDIR=$(CONFDIR)
+CMAKE_OPTIONS+= -DENABLE_DTRACE=ON
+CMAKE_OPTIONS+= -DWITH_READLINE=ON
+CMAKE_OPTIONS+= -DWITH_EMBEDDED_SERVER=ON
+CMAKE_OPTIONS+= -DWITHOUT_MROONGA_STORAGE_ENGINE=ON
+CMAKE_OPTIONS+= -DHAVE_VISIBILITY_HIDDEN=0
+CMAKE_OPTIONS+= -DMY_CONTEXT_USE_UCONTEXT=1
+CMAKE_OPTIONS+= -DWITH_EXTRA_CHARSETS=complex
+CMAKE_OPTIONS+= -DWITH_ZLIB=system
+CMAKE_OPTIONS+= -DWITH_PCRE=system
+CMAKE_OPTIONS+= -DWITH_SSL=system
+CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/mariadb-10.1/client
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math

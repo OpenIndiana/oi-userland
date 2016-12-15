@@ -16,23 +16,23 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXtst
-COMPONENT_VERSION=        1.2.2
+COMPONENT_VERSION=        1.2.3
 COMPONENT_FMRI=           x11/library/libxtst
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXtst - Client library for X Record and Test extensions
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ef0a7ffd577e5f1a25b1663b375679529663a1880151beaa73e9186c8309f6d9
+  sha256:4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXtst-1.2.2.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXtst.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

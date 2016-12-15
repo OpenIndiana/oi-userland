@@ -465,7 +465,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 								engine.error(_("package %(pkg)s depends on %(name)s, which comes from forbidden publisher %(publisher)s") %
 									{"pkg":manifest.fmri,"name":pkg_name,"publisher":i.publisher}, msgid="%s%s.1" % (self.name, pkglint_id))
 
-	forbidden_publisher.pkglint_dest = _(
+	forbidden_publisher.pkglint_desc = _(
 		"Dependencies should come from standard publishers" )
 
 	def component_check(self, manifest, engine, pkglint_id="001"):
@@ -481,8 +481,12 @@ class UserlandManifestChecker(base.ManifestChecker):
 			return
 
 		for action in manifest.gen_actions_by_type("license"):
-			license = True
-			break
+			if not action.attrs['license']:
+		        	engine.error( _("missing vaue for action license attribute 'license' like 'CDDL','MIT','GPL'..."),
+		            	msgid="%s%s.0" % (self.name, pkglint_id))
+			else:
+				license = True
+				break
 
 		if license == False:
 			engine.error( _("missing license action"),
@@ -492,7 +496,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 #			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
 #				msgid="%s%s.0" % (self.name, pkglint_id))
 
-	component_check.pkglint_dest = _(
+	component_check.pkglint_desc = _(
 		"license actions and ARC information are required if you deliver files.")
 
         def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
@@ -504,3 +508,6 @@ class UserlandManifestChecker(base.ManifestChecker):
                         engine.error(_("package %s has a publisher set!") %
                             manifest.fmri,
                             msgid="%s%s.2" % (self.name, pkglint_id))
+
+	publisher_in_fmri.pkglint_desc = _(
+		"extra publisher set" )

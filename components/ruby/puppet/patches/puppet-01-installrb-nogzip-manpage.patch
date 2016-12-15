@@ -1,15 +1,24 @@
+Oracle customization - non upstream patch
 Prevent puppet's build script from gzipping the manpages.  Our version
 of man doesn't understand manpages with a .gz extension
 
---- puppet-3.2.2/install.rb.orig	2013-01-04 14:05:09.892870020 -0700
-+++ puppet-3.2.2/install.rb	2013-01-04 14:05:40.466062888 -0700
-@@ -146,9 +146,6 @@
+--- puppet-3.8.6/install.rb.orig        2016-04-19 14:11:02.962068933 -0700
++++ puppet-3.8.6/install.rb     2016-04-19 14:12:16.560008346 -0700
+@@ -1,4 +1,7 @@
+ #! /usr/bin/env ruby
++#######################################################################
++# Oracle has modified the originally distributed contents of this file.
++#######################################################################
+ #--
+ # Copyright 2004 Austin Ziegler <ruby-install@halostatue.ca>
+ #   Install utility. Based on the original installation script for rdoc by the
+@@ -135,9 +138,6 @@
        FileUtils.chmod(0755, om)
-       FileUtils.install(mf, omf, {:mode => 0644, :verbose => true})
+       FileUtils.install(mf, omf, {:mode => 0644, :preserve => true, :verbose => true})
      end
 -    gzip = %x{which gzip}
 -    gzip.chomp!
 -    %x{#{gzip} -f #{omf}}
    end
  end
- 
+

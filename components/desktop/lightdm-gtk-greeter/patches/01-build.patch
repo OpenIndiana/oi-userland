@@ -1,0 +1,104 @@
+https://bugs.launchpad.net/lightdm-gtk-greeter/+bug/1606183
+
+diff -Naur orig/src/lightdm-gtk-greeter.c patched/src/lightdm-gtk-greeter.c
+--- orig/src/lightdm-gtk-greeter.c	2015-05-21 04:40:39.000000000 +0200
++++ patched/src/lightdm-gtk-greeter.c	2016-07-26 05:56:46.479012727 +0200
+@@ -1919,6 +1919,8 @@
+     prompted = FALSE;
+     password_prompted = FALSE;
+     prompt_active = FALSE;
++    
++    GError *error = NULL;
+ 
+     if (pending_questions)
+     {
+@@ -1932,11 +1934,11 @@
+     {
+         gtk_widget_show (GTK_WIDGET (username_entry));
+         gtk_widget_show (GTK_WIDGET (cancel_button));
+-        lightdm_greeter_authenticate (greeter, NULL);
++        lightdm_greeter_authenticate (greeter, NULL, &error);
+     }
+     else if (g_strcmp0 (username, "*guest") == 0)
+     {
+-        lightdm_greeter_authenticate_as_guest (greeter);
++        lightdm_greeter_authenticate_as_guest (greeter, &error);
+     }
+     else
+     {
+@@ -1956,7 +1958,7 @@
+             set_language (NULL);
+         }
+ 
+-        lightdm_greeter_authenticate (greeter, username);
++        lightdm_greeter_authenticate (greeter, username, &error);
+     }
+ }
+ 
+@@ -1966,6 +1968,7 @@
+     GtkTreeModel *model;
+     GtkTreeIter iter;
+     gboolean other = FALSE;
++    GError *error = NULL;
+ 
+     if (pending_questions)
+     {
+@@ -1978,7 +1981,7 @@
+     if (lightdm_greeter_get_in_authentication (greeter))
+     {
+         cancelling = TRUE;
+-        lightdm_greeter_cancel_authentication (greeter);
++        lightdm_greeter_cancel_authentication (greeter, &error);
+         set_message_label (LIGHTDM_MESSAGE_TYPE_INFO, NULL);
+     }
+ 
+@@ -2009,10 +2012,12 @@
+ {
+     gchar *language;
+     gchar *session;
++    
++    GError *error = NULL;
+ 
+     language = get_language ();
+     if (language)
+-        lightdm_greeter_set_language (greeter, language);
++        lightdm_greeter_set_language (greeter, language, &error);
+     g_free (language);
+ 
+     session = get_session ();
+@@ -2220,6 +2225,8 @@
+ void
+ login_cb (GtkWidget *widget)
+ {
++	GError *error = NULL;
++	
+     /* Reset to default screensaver values */
+     if (lightdm_greeter_get_lock_hint (greeter))
+         XSetScreenSaver (gdk_x11_display_get_xdisplay (gdk_display_get_default ()), timeout, interval, prefer_blanking, allow_exposures);
+@@ -2233,7 +2240,7 @@
+         start_session ();
+     else if (lightdm_greeter_get_in_authentication (greeter))
+     {
+-        lightdm_greeter_respond (greeter, gtk_entry_get_text (password_entry));
++        lightdm_greeter_respond (greeter, gtk_entry_get_text (password_entry), &error);
+         /* If we have questions pending, then we continue processing
+          * those, until we are done. (Otherwise, authentication will
+          * not complete.) */
+@@ -2306,6 +2313,8 @@
+ static void
+ timed_autologin_cb (LightDMGreeter *greeter)
+ {
++	GError *error = NULL;
++	
+     /* Don't trigger autologin if user locks screen with light-locker (thanks to Andrew P.). */
+     if (!lightdm_greeter_get_lock_hint (greeter))
+     {
+@@ -2326,7 +2335,7 @@
+             }
+         }
+         else
+-            lightdm_greeter_authenticate_autologin (greeter);
++            lightdm_greeter_authenticate_autologin (greeter, &error);
+     }
+ }
+ 

@@ -23,24 +23,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		facter
-COMPONENT_VERSION=	2.1.0
+COMPONENT_VERSION=	2.4.6
+COMPONENT_SUMMARY=	Facter - collect and display facts about the system
+COMPONENT_DESCRIPTION=	The facter(8) command collects and displays facts about the current system.\
+ The library behind Facter is easy to expand, making Facter an easy way\
+ to collect information about a system from within the shell or within Ruby.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f4c5573d309520fed49651f36d5a0366bf40609a0ff04a34266a01d263704f17
+    sha256:56ffc5fbcd550fcdb4788bc4d7fd0199bff69937d6df1e5a1f61c92d143d78fe
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
 COMPONENT_PROJECT_URL=  http://puppetlabs.com/facter
-COMPONENT_BUGDB=	utility/puppet
-
-TPNO=                   18642
+COMPONENT_FMRI=		system/management/facter
+COMPONENT_CLASSIFICATION=	Development/Ruby
+COMPONENT_LICENSE=	Apache v2.0
+COMPONENT_LICENSE_FILE=	facter.license
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
-    $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
+    $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/gem.mk
+include $(WS_TOP)/make-rules/ruby.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -54,6 +60,4 @@ install:	$(INSTALL_32)
 # Disable the tests until these rubygems are available.
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/ruby-23

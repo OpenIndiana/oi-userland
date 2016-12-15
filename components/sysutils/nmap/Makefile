@@ -27,8 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
-COMPONENT_VERSION=		7.12
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		7.31
 COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -38,8 +37,9 @@ service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:63df082a87c95a189865d37304357405160fc6333addcf5b84204c95e0539b04
+	sha256:cb9f4e03c0771c709cd47dc8fc6ac3421eadbdd313f0aae52276829290583842
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)dist/sigs/$(COMPONENT_ARCHIVE).asc	
 COMPONENT_BUGDB=		utility/nmap
 COMPONENT_LICENSE=		GPLv2,OpenSSL,SSLeay
 # Note: This license file incorporates nmap COPYING and OpenSSL license text
@@ -52,9 +52,10 @@ include $(WS_MAKE_RULES)/ips.mk
 PKG_OPTIONS +=	-D COMPONENT_DESCRIPTION="$(COMPONENT_DESCRIPTION)"
 PKG_OPTIONS +=	-D PYTHON_VERSION="$(PYTHON_VERSION)"
 
+COMPONENT_PREP_ACTION = (cd $(@D)/libdnet-stripped && autoconf)
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D) && \
-	  cd $(@D)/libdnet-stripped && autoconf )
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
@@ -66,12 +67,13 @@ CONFIGURE_OPTIONS  +=   --with-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
-CONFIGURE_OPTIONS  +=   --with-liblua
+# libdnet-stripped fails to build with external lua
+CONFIGURE_OPTIONS  +=   --with-liblua=included
 CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 
 # pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
+# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.7'
 COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -e 's?env python?python$(PYTHON_VERSION)?' \
                 -i $(PROTOUSRBINDIR)/uninstall_zenmap && \
@@ -85,11 +87,11 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime

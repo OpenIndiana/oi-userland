@@ -16,14 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-applets
-COMPONENT_VERSION=	1.14.0
+COMPONENT_VERSION=	1.16.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fceb0781d4481e805beb280e90a0ee3dabeca2238fef2de391fb0631541cec9f
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARCHIVE)
+    sha256:adcc895478f5b1e1c5c40f3f20537dcf809e0f06802850b890d323602f16d817
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -46,6 +46,8 @@ CONFIGURE_OPTIONS+= --enable-stickynotes
 CONFIGURE_OPTIONS+= --with-gtk=2.0 
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
+CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+= LIBS="-lnsl -lsocket"
 
 # common targets

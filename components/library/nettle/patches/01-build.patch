@@ -8,16 +8,16 @@
  
  OBJEXT = @OBJEXT@
  EXEEXT = @EXEEXT@
---- nettle-2.7/configure.ac.~1~	2013-04-24 17:26:53.000000000 +0400
-+++ nettle-2.7/configure.ac	2016-05-06 18:45:40.292691231 +0300
-@@ -411,17 +411,24 @@
+--- nettle-3.3/configure.ac.~1~	2016-10-01 10:28:38.000000000 +0300
++++ nettle-3.3/configure.ac	2016-11-25 14:25:41.079412290 +0300
+@@ -627,16 +627,23 @@
      # Sun's ld uses -h to set the soname, and this option is passed
      # through by both Sun's compiler and gcc. Might not work with GNU
      # ld, but it's unusual to use GNU ld on Solaris.
 +
 +    if test x$GCC = xyes ; then
 +        LINK_SHARED_FLAG=-shared ;
-+    else 
++    else
 +        LINK_SHARED_FLAG=-G;
 +    fi
 +
@@ -31,16 +31,14 @@
      LIBHOGWEED_FORLINK=libhogweed.so
      LIBHOGWEED_SONAME='$(LIBHOGWEED_FORLINK).$(LIBHOGWEED_MAJOR)'
      LIBHOGWEED_FILE='$(LIBHOGWEED_SONAME).$(LIBHOGWEED_MINOR)'
--    LIBHOGWEED_LINK='$(CC) $(CFLAGS) $(LDFLAGS) -L. -G -h $(LIBHOGWEED_SONAME)'
--    LIBHOGWEED_LIBS='-lnettle -lgmp'
+-    LIBHOGWEED_LINK='$(CC) $(CFLAGS) $(LDFLAGS) -G -h $(LIBHOGWEED_SONAME)'
 +    LIBHOGWEED_LINK='$(CC) $(CFLAGS) $(LDFLAGS) $(LINK_SHARED_FLAG) -h $(LIBHOGWEED_SONAME)'
-+    LIBHOGWEED_LIBS='libnettle.so -lgmp'
+     LIBHOGWEED_LIBS='libnettle.so $(LIBS)'
      ;;
    *)
-     LIBNETTLE_FORLINK=libnettle.so
-@@ -563,6 +570,8 @@
- 
- AC_SUBST(SHLIBCFLAGS)
+@@ -788,6 +795,8 @@
+ AC_SUBST(W64_ABI)
+ AC_SUBST(EMULATOR)
  
 +AC_SUBST(LINK_SHARED_FLAG)
 +

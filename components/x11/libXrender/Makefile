@@ -10,29 +10,29 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2016 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libXrender
-COMPONENT_VERSION=        0.9.8
+COMPONENT_VERSION=        0.9.10
 COMPONENT_FMRI=           x11/library/libxrender
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SUMMARY=  libXrender - X Render extension library
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1d14b02f0060aec5d90dfdcf16a996f17002e515292906ed26e3dcbba0f4fc62
+  sha256:c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949
 COMPONENT_ARCHIVE_URL= \
-  http://www.x.org/releases/individual/lib/libXrender-0.9.8.tar.bz2
+  http://www.x.org/releases/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= libXrender.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

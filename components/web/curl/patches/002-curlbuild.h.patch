@@ -2,8 +2,8 @@ Various curl build definitions for Solaris for both Studio and Gnu compilers.
 
 These changes need to be sent upsteam.
 
---- include/curl/curlbuild.h.orig	2014-09-10 12:10:14.624818524 -0700
-+++ include/curl/curlbuild.h	2014-09-10 12:10:08.344835020 -0700
+--- include/curl/curlbuild.h.~1~	2016-08-03 09:39:11.000000000 +0300
++++ include/curl/curlbuild.h	2016-08-08 23:11:38.581659787 +0300
 @@ -496,6 +496,45 @@
  #  define CURL_SIZEOF_CURL_SOCKLEN_T 4
  
@@ -88,10 +88,10 @@ These changes need to be sent upsteam.
 +#     endif
 +#  endif
 +#  else /* !((sun) || (__sun) || (__sun__)) */
- #  if defined(__ILP32__) || \
-       defined(__i386__) || defined(__ppc__) || defined(__arm__) || defined(__sparc__)
- #    define CURL_SIZEOF_LONG           4
-@@ -552,6 +625,7 @@
+ #  if !defined(__LP64__) && (defined(__ILP32__) || \
+       defined(__i386__) || defined(__ppc__) || defined(__arm__) || \
+       defined(__sparc__) || defined(__mips__) || defined(__sh__))
+@@ -553,6 +626,7 @@
  #  define CURL_SIZEOF_CURL_SOCKLEN_T 4
  #  define CURL_PULL_SYS_TYPES_H      1
  #  define CURL_PULL_SYS_SOCKET_H     1

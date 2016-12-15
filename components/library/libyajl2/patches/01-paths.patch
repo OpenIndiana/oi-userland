@@ -1,0 +1,24 @@
+--- yajl-2.1.0/src/CMakeLists.txt.orig	2016-10-09 06:09:35.369231178 +0200
++++ yajl-2.1.0/src/CMakeLists.txt	2016-10-09 06:10:13.868241601 +0200
+@@ -84,4 +84,4 @@
+ INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+-INSTALL(FILES ${shareDir}/yajl.pc DESTINATION share/pkgconfig)
++INSTALL(FILES ${shareDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+--- yajl-2.1.0/reformatter/CMakeLists.txt.orig	2016-10-09 06:11:23.796993730 +0200
++++ yajl-2.1.0/reformatter/CMakeLists.txt	2016-10-09 06:11:41.170811239 +0200
+@@ -40,4 +40,4 @@
+ ADD_CUSTOM_COMMAND(TARGET json_reformat POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
+ 
+-INSTALL(TARGETS json_reformat RUNTIME DESTINATION bin)
++INSTALL(TARGETS json_reformat RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+--- yajl-2.1.0/verify/CMakeLists.txt.orig	2016-10-09 06:10:43.170906217 +0200
++++ yajl-2.1.0/verify/CMakeLists.txt	2016-10-09 06:11:06.101494287 +0200
+@@ -34,4 +34,4 @@
+ ADD_CUSTOM_COMMAND(TARGET json_verify POST_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
+ 
+-INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)
++INSTALL(TARGETS json_verify RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

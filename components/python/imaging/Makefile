@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Imaging
 COMPONENT_VERSION=	1.1.7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.pythonware.com/products/pil/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,12 +36,23 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	http://effbot.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pil
 
+PYTHON_VERSIONS=	2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 TEST_PYTHONPATH.32 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL
 TEST_PYTHONPATH.64 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL:$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL/64
+
+# This binary image file accompanies the test which is created along with a fix
+# in patches/04-CVE-2014-9601.patch
+COMPONENT_PRE_TEST_ACTION= \
+	if [ ! -e $(SOURCE_DIR)/Images/png_decompression_dos.png ]; then \
+		$(CP) files/png_decompression_dos.png \
+		$(SOURCE_DIR)/Images/png_decompression_dos.png ; \
+	fi
+
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
@@ -56,6 +67,11 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2

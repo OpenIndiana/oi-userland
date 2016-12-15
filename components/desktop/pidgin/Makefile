@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.11.0
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_FMRI=		communication/im/pidgin
@@ -33,6 +34,9 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
+
+# We use libncurses and libpanel from /usr/gnu/lib
+LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 			                libtoolize --force && \
@@ -59,7 +63,8 @@ CONFIGURE_OPTIONS+=	--disable-gevolution
 CONFIGURE_OPTIONS+=	--enable-cap
 CONFIGURE_OPTIONS+=	--disable-meanwhile
 CONFIGURE_OPTIONS+=	--disable-nm
-CONFIGURE_OPTIONS+=	--disable-consoleui
+CONFIGURE_OPTIONS+=	--enable-consoleui
+CONFIGURE_OPTIONS+=	--with-ncurses-headers=/usr/include/ncurses
 CONFIGURE_OPTIONS+=	--disable-vv
 CONFIGURE_OPTIONS+=	--enable-perl=yes
 
@@ -87,6 +92,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python-2/python-dbus-27
 REQUIRED_PACKAGES += runtime/perl-522

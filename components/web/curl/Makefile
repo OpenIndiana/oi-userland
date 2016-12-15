@@ -23,13 +23,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.47.0
+COMPONENT_VERSION=      7.51.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:df01bd42af361978d9de7de8529718bcafe01897a544a7650139a1954c55bdfe
+    sha256:65b5216a6fbfa72f547eb7706ca5902d7400db9868269017a8888aa91d87977c
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=  	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE).asc
 COMPONENT_BUGDB=	library/curl
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -85,7 +86,12 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libssh2
+REQUIRED_PACKAGES += library/nghttp2
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/gss

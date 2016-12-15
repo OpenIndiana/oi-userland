@@ -58,13 +58,14 @@ download:		TARGET = download
 prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
+pre-publish:		TARGET = pre-publish
 publish:		TARGET = publish
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
 component-hook:		TARGET = component-hook
-prep build install publish test:	TEMPLATE_ZONE=$(ZONE)
-prep build install publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
+prep build install pre-publish publish test:	TEMPLATE_ZONE=$(ZONE)
+prep build install pre-publish publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
@@ -73,7 +74,7 @@ endif
 
 .DEFAULT:	publish
 
-build install publish test: $(COMPONENT_DIRS)
+build install pre-publish publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 

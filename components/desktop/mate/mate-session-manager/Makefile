@@ -16,15 +16,14 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mate-session-manager
-COMPONENT_VERSION=	1.14.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.16.0
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:190b9d9d2d9e76b8aa8ef84f351aab07fbea7e0772cecc11dae8c441c67b8dde
-COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.14/$(COMPONENT_ARCHIVE)
+    sha256:15a5b986c6ba32bab381ed68d21d50ca14fdbe1e2c28ca990a833f21539b41c6
+COMPONENT_ARCHIVE_URL=	http://pub.mate-desktop.org/releases/1.16/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -55,11 +54,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/dbus/dbus-x11
 REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11

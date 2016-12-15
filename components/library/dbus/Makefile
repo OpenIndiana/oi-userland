@@ -10,18 +10,18 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.10.8
+COMPONENT_VERSION= 1.10.12
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:baf3d22baa26d3bdd9edc587736cd5562196ce67996d65b82103bedbe1f0c014
+  sha256:210a79430b276eafc6406c71705e9140d25b9956d18068df98a70156dc0e475d
 COMPONENT_ARCHIVE_URL= \
   http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software_2fdbus
@@ -55,3 +55,9 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += x11/library/libx11

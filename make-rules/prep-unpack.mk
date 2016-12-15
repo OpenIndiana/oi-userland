@@ -40,8 +40,11 @@ SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
 
 UNPACK_STAMP$(1) =	$$(SOURCE_DIR$(1))/.unpacked
 
+# RUBY_VERSION is passed on to ensure userland-unpack uses the
+# correct gem command for the ruby version specified
 $$(UNPACK_STAMP$(1)):	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)) download
 	$$(RM) -r $$(SOURCE_DIR$(1))
+	$(ENV) RUBY_VERSION=$(RUBY_VERSION) \
 	$$(UNPACK) $$(UNPACK_ARGS$(1)) $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 	$$(COMPONENT_POST_UNPACK_ACTION$(1))
 	$$(TOUCH) $$@

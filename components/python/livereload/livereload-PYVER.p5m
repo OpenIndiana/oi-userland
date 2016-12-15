@@ -1,0 +1,55 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/library/python/livereload-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python LiveReload is a tool for web developers"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='BSD-3'
+
+# force a dependency on the Python runtime
+depend fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the package
+depend fmri=library/python/livereload@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require
+
+# dependencies
+depend fmri=library/python/six-$(PYV) type=require
+
+# version the executable
+link path=usr/bin/livereload target=livereload-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+
+<transform file path=usr/bin/livereload-$(PYVER) \
+	-> set action.hash usr/bin/livereload >
+
+file path=usr/bin/livereload-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/handlers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/vendors/livereload.js
+file path=usr/lib/python$(PYVER)/vendor-packages/livereload/watcher.py

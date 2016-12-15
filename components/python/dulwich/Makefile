@@ -16,28 +16,32 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	dulwich
-COMPONENT_VERSION= 	0.9.5
+COMPONENT_VERSION= 	0.14.1
 COMPONENT_SUMMARY= 	Python implementation of the Git file formats and protocols
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:751fe9e1d32b61e21f086b4fa07ca96b69165a7ad24c5cebaef4f8803f512c0b
+  sha256:7c1f49e6e72fa8635328d32bfeb7103e86e175d87fa80a9cefdd63a360f7ba93
 COMPONENT_ARCHIVE_URL= \
-  https://pypi.python.org/packages/source/d/dulwich/dulwich-0.9.5.tar.gz#md5=7ace33f90cd61c7fcd32816eb73d1f5a
+  https://pypi.python.org/packages/d8/be/8cb595710e7bf2a32b0ac64f1455e1f0554ec8aa9ed62c49b084afe22ab6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/dulwich
+
+PYTHON_VERSIONS=	2.7 3.4
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMMANDS = dul-daemon  dul-receive-pack  dul-upload-pack  dul-web  dulwich
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+COMMANDS = dul-receive-pack  dul-upload-pack  dulwich
 
 COMPONENT_POST_INSTALL_ACTION= \
         (for cmd in $(COMMANDS) ; \
         do $(MV) -f $(PROTO_DIR)/usr/bin/$${cmd} \
                 $(PROTO_DIR)/usr/bin/$${cmd}$(PYTHON_VERSION).$(BITS); \
         done;)
+
+build: $(BUILD_32_and_64)
+
+install: $(INSTALL_32_and_64)
+
+test:	$(NO_TESTS)

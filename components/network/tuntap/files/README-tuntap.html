@@ -1,0 +1,474 @@
+<html>
+<head>
+<title>
+TAP driver for Solaris
+</title>
+</head>
+<body>
+
+<table border="0" style="width:100%">
+<tr><td>
+<h1><b>TAP driver for Solaris used for OpenVPN<br> and any other virtual network solution. </b></h1>
+</td>
+<td align="right">
+
+</td></tr></table>
+<p>
+This is a TAP driver for Solaris that can be used for 
+<a href="http://openvpn.net/">OpenVPN</a>, 
+<a href="http://www.infradead.org/openconnect.html">OpenConnect</a>,  
+<a href="http://www.unix-ag.uni-kl.de/~massar/vpnc/">vpnc</a><br>
+The code is based on <a href="http://vtun.sourceforge.net/tun/">
+Universal TUN/TAP driver</a>.
+I made changes somewhat and added some code to it for supporting Ethernet 
+tunneling feature, since Universal TUN/TAP driver for Solaris only supports 
+IP tunneling known as TUN. <br><br>
+<S>Since there has not been TAP driver for Solaris, OpenVPN does not have code 
+for handling a TAP device for Solaris. So I also modified OpenVPN code somewhat, 
+and made it work with this TAP driver.<br></S>
+OpenVPN patch has been merged into OpenVPN 2.2.0.(2011.04.28).<P>
+
+Also, I wrote bridge moduel for Solaris, so that you can configure Solaris as 
+bridge server.
+
+<blockquote>
+<ul>
+<li><a href="#tap">TAP Driver</a><br>
+<li><a href="#openvpn">Patch for OpenVPN</a><br>
+<li><a href="#bridge">Bridge Module</a><br>
+<li><a href="#tunctl">tunctl command for Solaris</a><br>
+<br>
+<li><a href="#test">Tested Solaris Version</a><br>
+<li><a href="#change">Change Log</a><br>
+</ul>
+</blockquote>
+
+<hr>
+<a name="tap"><h3>TAP driver </h3></a>
+<ul>
+<li><a href="https://github.com/kaizawa/tuntap/tarball/master">tuntap.tar.gz</a> (Last Update: 17th Jul 2012)
+<li><a href="http://github.com/kaizawa/tuntap">Source</a><p>
+ 
+   After extracting tuntap.tar.gz file, run './configure', 'make', and 'make install' as usual.<br>
+   Both 'tun' and 'tap' driver will be built and installed on your system. You can access
+   these devices through /dev/tun and /dev/tap.
+<br><br>
+</ul>
+<p>
+<hr>
+<a name="openvpn"><h3>Patch for OpenVPN</h3></a>
+Patch for OpenVPN has been merged into OpenVPN 2.2.0. (2011.04.28).<br>
+So if you are going to use OpenVPN 2.2.0 or later, you don't need to apply following patch.<p>
+<ul>
+<li>tun.c
+<br><br>
+<table border="1">
+<tr>
+	<td>OpenVPN Version</td><td>Modified file</td><td>patch(diff -u ouputs)</td><td>Last Update</td>
+</tr>
+<tr>
+	<td>2.0.7, 2.0.9</td><td><a href="http://github.com/downloads/kaizawa/openvpn-patch/tun.c.2.0.9">tun.c.2.0.9</a></td>
+         <td><a href="http://github.com/downloads/kaizawa/openvpn-patch/patch.openvpn-2.0.9.tun.c">patch.openvpn-2.0.9.tun.c</td>
+	<td>20th May 2009</td>
+</tr>
+
+<tr>
+	<td>2.1.1</td><td><a href="http://github.com/downloads/kaizawa/openvpn-patch/tun.c.2.1.1">tun.c.2.1.1</a></td>
+        <td><a href="http://github.com/downloads/kaizawa/openvpn-patch/patch.openvpn-2.1.1.tun.c">patch.openvpn-2.1.1.tun.c</a></td>
+	<td>29th Apr 2010</td>
+</tr>
+<tr>
+	<td>2.1.3</td><td><a href="http://github.com/downloads/kaizawa/openvpn-patch/tun.c.2.1.3">tun.c.2.1.3</a></td>
+        <td><a href="http://github.com/downloads/kaizawa/openvpn-patch/patch.openvpn-2.1.3.tun.c">patch.openvpn-2.1.3.tun.c</a></td>
+	<td>31th Aug 2010</td>
+</tr>
+<tr>
+	<td>2.2.0 -</td><td>n/a</td>
+        <td>n/a</a></td>
+	<td></td>
+</tr>
+</table>
+<br>
+<li>How to apply
+  <br><br>
+  <ul>
+  <li><b>By replacing file</b>
+  <br>
+Put tun.c on the directory where you extracted source code of OpenVPN, and swap existing tun.c 
+file for it.<br>
+Please note that you should rename tun.c.&lt;version&gt; to tun.c file.
+  <br>
+  <li><b>By patch(1) command</b>
+  <br>
+If you want to apply patch(1), put patch.openvpn-xxx.tun.c on the directory where you extracted
+source code of OpenVPN, and run patch(1) command like as below.<br>
+    <pre>
+  $ patch -p1 < patch.openvpn-xxxx.tun.c
+    </pre>
+  </ul>
+
+NOTE: Please download appropriate file which correspond to the version of OpenVPN.<br>
+Otherwise, you'll get an error while building a openvpn binary.
+</ul>
+
+<hr>
+<a name="bridge"><h3>Bridge module</h3></a>
+<ul>
+<li><a href="https://github.com/kaizawa/bridge/tarball/master">bridge.tar.gz</a> (Last Update: 14 Dec 2009)
+<li><a href="http://github.com/kaizawa/bridge">Source</a><p>
+ 
+   After extracting bridge.tar.gz file, run './configure', 'make', and 'make install'. 
+   'brdg' and brdgadm will be built and installed on your system.<br>
+   Where 'brdg' is a STREAMS module which enables briging 2 interfaces. And where 
+   'brdgadm' is a configuration command to add/delete bridge interfaces.
+
+<pre>
+Usage: brdgadm [ -a interface | -d interface]
+Options:
+   -a interface   : Add interface as port
+   -d interface   : Delete interface from port list
+   -l             : List all interfaces in port list
+</pre>
+
+See following sample configuration.
+
+<h4>Network configuration</h4>
+
+<img src="./network_config.png"><br>
+
+HostB is a router which is connected to 2 networks.
+By installing TAP and OpenVPN on HostB and HostC,
+I try to join HostC to Network1 through OpenVPN.<p>
+
+<ol>
+<li> On HostB, install TAP driver and OpenVPN, and then
+    configure it as bridging server using server-bridge
+    option.
+<pre>
+-------------
+dev tap
+proto tcp-server
+server-bridge 10.0.0.90 255.0.0.0 10.0.0.10 10.0.0.30
+client-to-client
+ca /etc/openvpn/keys/ca.crt
+cert /etc/openvpn/keys/u1.crt
+key /etc/openvpn/keys/u1.key  # This file should be kept secret
+dh /etc/openvpn/keys/dh1024.pem
+--------------
+</pre>
+    Then, run openvpn </li>
+<li>On HostB, make and install bridge module.
+  <ol>
+  <li>Extrace bridge.tar.gz
+  <pre>
+   # gunzip -c bridge.tar.gz | tar xvf -
+  </pre>
+  </li>
+  <li>Make bridge moduel(brdg) and control command(brdgadm)
+  <pre>
+   # ./configure
+   # make
+   # make install
+  </pre>
+  </li>
+  </ol> </li>
+<li>On HostB, setting up bridge.
+  <pre>
+   # /usr/local/bin/brdgadm -a tap0
+   # /usr/local/bin/brdgadm -a hme1
+  </pre>
+
+  where hme1 is a network interface connected with Network1.
+  As a result, tap0 and hme1 is bridged.
+  At this time, ifconfig looks like as below.
+  <pre>
+  hme0: flags=1000843&lt;UP,BROADCAST,RUNNING,MULTICAST,IPv4&gt; mtu 1500 index 2
+       inet 172.29.73.90 netmask ffffff00 broadcast 172.29.73.255
+       ether 8:0:20:91:a6:90
+  hme1: flags=1000843&lt;UP,BROADCAST,RUNNING,MULTICAST,IPv4&gt; mtu 1500 index 4
+       inet 10.0.0.90 netmask ff000000 broadcast 10.255.255.255
+        ether 8:0:20:91:a6:90
+  tap0: flags=1000842&lt;BROADCAST,RUNNING,MULTICAST,IPv4&gt; mtu 1500 index 5
+       inet 0.0.0.0 netmask 0
+       ether a:0:20:14:32:52
+  </pre></li>
+
+<li>On HostC, install TAP driver and openvpn, and
+    configure it as a client.
+   <pre>
+------------
+remote HostB
+proto tcp-client
+dev tap
+client
+persist-tun
+ca /etc/openvpn/keys/ca.crt
+cert /etc/openvpn/keys/onnv01.crt
+key /etc/openvpn/keys/onnv01.key
+-----------
+   </pre>
+   Then, run openvpn.
+   At this time, ifconfig on HostC looks like as below.
+
+   <pre>
+   hme0: flags=1000843&lt;UP,BROADCAST,RUNNING,MULTICAST,IPv4&gt; mtu 1500 index 2
+        inet 172.29.73.55 netmask ffffff00 broadcast 172.29.73.255
+        ether 8:0:20:c6:69:c7
+   tap0: flags=1000843&lt;UP,BROADCAST,RUNNING,MULTICAST,IPv4&gt; mtu 1500 index 4
+        inet 10.0.0.10 netmask ff000000 broadcast 10.255.255.255
+        ether a:0:20:53:71:52
+   </pre></li>
+</ol>
+
+Now, HostC joins Network1 via tap0 interface through openvpn.<P>
+<b>But, please note that there's some limitation.. HostC can't communicate with
+HostB using a bridged IP address on HostB.</b>
+I mean, ping 10.0.0.90 on HostC won't work. <p>
+
+<img src="./brdg_issue_en.png">
+
+<ol>
+<li>Ethernet packet from OpenVPN headed to HostB is passed to TAP driver.
+<li>TAP driver forwards packet to bridge module.
+<li>Bridge module forwards packet to hme driver as RAW data.
+<li>hme driver transfer the packet to the wire, but never forward it to IP module.
+</ol><p>
+
+Of course, HostC can communicate with all the other hosts on Network1, but.. it can't 
+communicate with bridged IP address of bridge server.<p>
+
+One more note. Once openvpn running on HostB is terminated,
+bridge setting will be invalidated. So, after executing
+2nd openvpn on HostB, you need to re-setup the bridge again.<p>
+
+  First, you need to drop existing settings.
+  <pre>
+   # /usr/local/bin/brdgadm -d hme1
+   # /usr/local/bin/brdgadm -d tap0
+  </pre>
+  Then, re-setup bridge.
+  <pre>
+   # /usr/local/bin/brdgadm -a hme1
+   # /usr/local/bin/brdgadm -a tap0 
+  </pre>
+</ul>
+
+<hr>
+<a name="tunctl"><h3>tunctl command for Solaris</h3></a>
+<ul>
+<li><a href="https://github.com/kaizawa/tunctl/tarball/master">tunctl.tar.gz (v0.1.0)</a> (Last Update: 27th Nov 2011)
+<li><a href="http://github.com/kaizawa/tunctl">Source</a><p>
+  This is a Solaris version of tunctl command which was originally written by Jeff Dike.<br>
+  The tunctl command enables administrator to preconfigure a TUN/TAP device. 
+  This command would be useful for testing, or for those who wants to use  
+  tun/tap interface just as a virtual interface.<br><br>
+
+  After extracting tuncntl.tar.gz file, run './configure', 'make', and 'make install'.<br>
+  By default, tunctl command is installed in /usr/local/bin<br><br>
+
+  NOTE:<br>
+  This Solaris version of tunctl command doesn't support the -u option, 
+   which enables administrator to specify an user who can use the interface.<br><br>
+
+  Example)<br>
+  Create tap0 interface
+<pre>
+   # /usr/local/bin/tunctl -t tap0
+   Set 'tap0' persistent
+   #
+</pre>
+  Delete tap0 interface
+<pre>
+   # /usr/local/bin/tunctl -d tap0
+   #
+</pre>
+</pre>
+  
+</ul> 
+
+
+<hr>
+<a name="test"><h3>Tested Solaris versioin</h3></a>
+I've tested on following Solaris version and platform.
+
+<ul>
+<li>32 bit Solaris 9 on x86.
+<li>32 bit Solaris 9 on sparc. 
+<li>64 bit Solaris 9 on sparc. 
+<li>32 bit Solaris 10 on x86.
+<li>64 bit Solaris 10 on sparc. 
+<li>64 bit Solaris 10 on x64.
+<li>32 bit OpenSolaris snv_101b on x86.
+<li>64 bit OpenSolaris snv_101b on sparc. 
+<li>64 bit OpenSolaris snv_101b on x64. 
+<li>32 bit Solaris 11 Express on x86.
+<li>32 bit OpenIndiana oi_148 on x86.
+<li>64 bit Solaris 11 Early Adoper svn_173 on x64.
+<li>64 bit Solaris 11 on x64.
+<li>64 bit Solaris 11 on sparc.
+</ul> 
+
+<hr>
+
+<a name="change"><h3>Change log</h3></a>
+
+<ul>
+<li>05/08/2006<br>
+	<ul>
+	<li>Modified tun_unitdata_req() to work on x86 Solaris 9
+	</ul>
+<li>05/12/2006<br>
+	<ul>
+	<li>Added tun_generate_mac_addr() to generate MAC address for tap device.
+	</ul>
+<li>10/09/2006<br>
+	<ul>
+	<li>Confirmed that the driver was able to work with OpenVPN 2.0.9.<br>
+            And also confirmed that tun.c file included in OpenVPN 2.0.9 has not 
+            been changed. <br>
+	    So the above tun.c file can be compiled with OpenVPN 2.0.9 as well.
+	</ul>
+<li>11/05/2006<br>
+	<ul>
+	<li>In tun_ioctl() of tap driver, reverted to original TUN/TAP driver's 
+            code which retrieves ppa from user program.
+	<li>In open_tun() of openvpn, changed it to use I_STR ioctl command to 
+            pass ppa to tap driver. <br>
+            This will allow openvpn to specify instance number using 'dev' option, like 
+            "dev tap7".
+	</ul>
+<li>01/03/2007<br>
+	<ul>
+        <li>Added comments about bridge module.
+        </ul>
+<li>02/21/2007<br>
+	<ul>
+        <li>Modified brdgadm.c file to make it to be able to handle e1000g.
+        <li>Modified brdgadm.c file to make it to be able to handle instance number
+        <li>Modified configure script of both bridge module and tun/tap driver to 
+            be able to build modules on x64 Solaris.
+        </ul>
+<li>03/22/2007<br>
+	<ul>
+        <li>Removed unnecessary debug code from brdgadm.c.
+        </ul>
+<li>06/25/2007<br>
+	<ul>
+        <li>Added "-mno-red-zone" compile option for amd64. 
+        </ul>
+<li>09/24/2007<br>
+	<ul>
+        <li>Modified Makefile.in for brdgadm command, so that it allows to specify
+            installation directory by --prefix option of configure script.
+        </ul>
+<li>12/07/2008<br>
+	<ul>
+        <li>Modified tun.c file of OpenVPN file to make it be able to be compiled with openvpn 2.1. 
+        </ul>
+<li>04/30/2009<br>
+	<ul>
+        <li>Modified Makefile.in and configure.in script to check whether ld is GNU ld or Solaris bundled ld command.
+	<li>Modified configure.in script to be able to build 32bit module on 64bit environment using --disable-64bit.
+	<li>Modified Makefile.in to be able to specify target directory using DESTDIR macro. 
+        </ul>
+<li>05/20/2009<br>
+	<ul>
+        <li>Modified configure.in and changed the way of checking GNU ld because latest OpenSolaris ld has --version option.
+        <li>Modified openvpn patch file(tun.c) and make openvpn commnad won't fail because of failure of I_POP ioctl command.
+	</ul>
+<li>06/07/2009<br>
+	<ul>
+        <li>Modified configure.in, Makefile.in and make it be able to build using Sun Studio Compiler.(Tested on Sun Studio 12)
+	</ul>
+<li>09/14/2009<br>
+	<ul>
+        <li>Added -xmodel=kernel option for Sun Studio compiler on amd64 platform.</br>
+	    (Formerly loading the driver failed with relocation error)
+	</ul>
+<li>11/16/2009<br>
+	<ul>
+        <li>Added ipv6 support to tun driver as required by <a href="http://www.infradead.org/openconnect.html">OpenConnect VPN Client</a><br>
+	</ul>
+<li>11/18/2009<br>
+	<ul>
+        <li>Modified tun.c of OpenVPN 2.1_rc21 and set ipv6_explicitly_supported to true for Solaris.<br>
+	</ul>
+<li>12/14/2009<br>
+	<ul>
+        <li>Added -xmodel=kernel option to configure script of bridge module for Sun Studio compiler on amd64 platform.
+	</ul>
+<li>04/29/2010<br>
+	<ul>
+        <li>Merged chages on tun.c of OpenVPN 2.1.1.<br>
+	</ul>
+<li>08/31/2010<br>
+	<ul>
+        <li>Merged chages on tun.c of OpenVPN 2.1.3.<br>
+	</ul>
+<li>09/17/2010<br>
+	<ul>
+        <li>Moved all download files to github repository.
+	</ul>
+<li>04/29/2011<br>
+	<ul>
+        <li>Tested on Oracle Solaris 11 Express and OpenIndiana 148. 
+	</ul>
+<li>06/11/2011<br>
+	<ul>
+        <li>Set default prefix for tun/tap driver, so that files would be copied to right directory.
+	</ul>
+<li>09/19/2011<br>
+	<ul>
+        <li>brdgadm: replaced strncpy with strlcpy.
+	</ul>
+<li>10/23/2011<br>
+	<ul>
+        <li>tuntap: Changed tun.c configure.in to be able to build on Solaris 11 EA (snv_173).<br>
+            Because snv_173 doesn't have ddi_power kernel function and DDI_PM_SUSPEND macro.
+	</ul>
+<li>11/16/2011<br>
+	<ul>
+        <li>tuntap: Changed configure.in to use uname -r for version checking instead of uname -v.
+	</ul>
+<li>11/27/2011<br>
+	<ul>
+        <li>tunctl: Stopped using text file to store muxid, instead store muxid to ip module by SIOCSLIFMUXID ioctl command.
+	</ul>
+<li>12/06/2011<br>
+	<ul>
+        <li>tuntap: Modified configure scrip to use -mcmodel=large for gcc-45. This enable driver compiled by gcc-45 to be loaded to the system without err(e.g relocation error: R_AMD64_32)
+	</ul>
+<li>07/17/2012<br>
+	<ul>
+        <li>tuntap: Improved throughput perfomance by increasing q_hiwat of read side stream head queue.<br>
+	</ul>
+<li>07/07/2013<br>
+	<ul>
+        <li>tuntap: Changed option for GNU ld, from elf_x86_64 to elf_x86_64_sol2
+        <li>tuntap: Added test script 
+</ul>
+<li>12/14/2014<br>
+	<ul>
+        <li>tunctl: Fixed to make tunctl bring tap interface up. 
+</ul>
+
+<hr>
+
+<br>
+I wrote this just for fun. Since this has not been tested well, please DON'T
+install this on production system. Use this at your own risk.<br>
+But your advice or comment would be appreciated.
+
+<p>
+<p>
+---<br>
+Kazuyoshi Aizawa &lt;admin2@whiteboard.ne.jp&gt;<br>
+28th Apr 2006
+---<br>
+This page and illustrations above were downloaded for packaging from
+<a href="http://www.whiteboard.ne.jp/~admin2/tuntap/">http://www.whiteboard.ne.jp/~admin2/tuntap/</a>
+on 19th Nov 2016 and mildly modified (removed ad scripts and added this footer).
+<hr>
+
+</body>
+</html>

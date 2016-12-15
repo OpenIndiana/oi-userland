@@ -1,0 +1,104 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.tmp.noincorporate value=true
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=kernel/drv/$(MACH64)/i915 group=sys pkg.depend.bypass-generate=.*
+file path=kernel/kmdb/$(MACH64)/i915 group=sys pkg.depend.bypass-generate=.*
+file path=kernel/misc/$(MACH64)/drm group=sys pkg.depend.bypass-generate=.*
+file path=usr/lib/mdb/kvm/$(MACH64)/i915.so group=sys
+file path=usr/share/man/man4d/i915.4d
+
+driver name=i915 perms="* 0644 root sys" \
+    alias=pci8086,102 \
+    alias=pci8086,106 \
+    alias=pci8086,10a \
+    alias=pci8086,112 \
+    alias=pci8086,116 \
+    alias=pci8086,122 \
+    alias=pci8086,126 \
+    alias=pci8086,152 \
+    alias=pci8086,156 \
+    alias=pci8086,15a \
+    alias=pci8086,162 \
+    alias=pci8086,166 \
+    alias=pci8086,16a \
+    alias=pci8086,402 \
+    alias=pci8086,406 \
+    alias=pci8086,40a \
+    alias=pci8086,40b \
+    alias=pci8086,40e \
+    alias=pci8086,412 \
+    alias=pci8086,416 \
+    alias=pci8086,41a \
+    alias=pci8086,41b \
+    alias=pci8086,41e \
+    alias=pci8086,422 \
+    alias=pci8086,426 \
+    alias=pci8086,42a \
+    alias=pci8086,42b \
+    alias=pci8086,42e \
+    alias=pci8086,a02 \
+    alias=pci8086,a06 \
+    alias=pci8086,a0a \
+    alias=pci8086,a0b \
+    alias=pci8086,a0e \
+    alias=pci8086,a12 \
+    alias=pci8086,a16 \
+    alias=pci8086,a1a \
+    alias=pci8086,a1b \
+    alias=pci8086,a1e \
+    alias=pci8086,a22 \
+    alias=pci8086,a26 \
+    alias=pci8086,a2a \
+    alias=pci8086,a2b \
+    alias=pci8086,a2e \
+    alias=pci8086,c02 \
+    alias=pci8086,c06 \
+    alias=pci8086,c0a \
+    alias=pci8086,c0b \
+    alias=pci8086,c0e \
+    alias=pci8086,c12 \
+    alias=pci8086,c16 \
+    alias=pci8086,c1a \
+    alias=pci8086,c1b \
+    alias=pci8086,c1e \
+    alias=pci8086,c22 \
+    alias=pci8086,c26 \
+    alias=pci8086,c2a \
+    alias=pci8086,c2b \
+    alias=pci8086,c2e \
+    alias=pci8086,d02 \
+    alias=pci8086,d06 \
+    alias=pci8086,d0a \
+    alias=pci8086,d0b \
+    alias=pci8086,d0e \
+    alias=pci8086,d12 \
+    alias=pci8086,d16 \
+    alias=pci8086,d1a \
+    alias=pci8086,d1b \
+    alias=pci8086,d1e \
+    alias=pci8086,d22 \
+    alias=pci8086,d26 \
+    alias=pci8086,d2a \
+    alias=pci8086,d2b \
+    alias=pci8086,d2e

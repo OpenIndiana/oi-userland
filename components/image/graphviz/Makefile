@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.38.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	6
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,7 +40,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
+PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.6/bin
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
@@ -48,8 +48,14 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
-CPPFLAGS +=	$(shell /usr/php/5.4/bin/php-config --includes)
+CPPFLAGS +=	$(shell /usr/php/5.6/bin/php-config --includes)
 #CXX +=		$(studio_NORUNPATH)
+
+COMPONENT_PREP_ACTION = (cd $(@D) && libtoolize -cf && \
+				aclocal && \
+				autoconf -f -I m4 && \
+				autoheader && \
+				automake --add-missing)
 
 # Can't find headers without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -58,10 +64,10 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PERL=$(PERL)
 # Explicitly use Ruby 1.9.  Allows switching Ruby default without
 # affecting graphviz build.
-CONFIGURE_ENV +=	RUBY=$(RUBY.1.9)
+CONFIGURE_ENV +=	RUBY=$(RUBY)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
-CONFIGURE_OPTIONS +=	--enable-python26=yes
+CONFIGURE_OPTIONS +=	--enable-python26=no
 CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-qt=no
@@ -73,7 +79,6 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python26
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
 
 # The test infrastructure doesn't run in a VPATHed environment.
@@ -104,7 +109,8 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += runtime/ruby-23
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime

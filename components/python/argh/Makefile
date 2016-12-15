@@ -26,6 +26,8 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
 
+PYTHON_VERSIONS=	2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
@@ -33,3 +35,5 @@ include $(WS_TOP)/make-rules/ips.mk
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += runtime/python-27

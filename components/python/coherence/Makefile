@@ -26,6 +26,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0b54a6ba88c1ff6274aadb68ff37b8a3961b4c6acf5ded291c5dea936a311ba4
 COMPONENT_ARCHIVE_URL=	http://coherence.beebits.net/download/$(COMPONENT_ARCHIVE)
 
+PYTHON_VERSIONS=	2.7
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
@@ -43,4 +45,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/python-2/configobj-27
+REQUIRED_PACKAGES += library/python-2/python-twisted-27
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library/dbus

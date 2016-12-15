@@ -22,19 +22,18 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libxcb
-COMPONENT_VERSION=	1.11.1
-COMPONENT_FMRI=     	x11/library/libxcb
+COMPONENT_NAME=         libxcb
+COMPONENT_VERSION=      1.11.1
+COMPONENT_FMRI=         x11/library/libxcb
 COMPONENT_CLASSIFICATION= System/X11
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_PROJECT_URL=  http://xcb.freedesktop.org
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:b720fd6c7d200e5371affdb3f049cc8f88cff9aed942ff1b824d95eedbf69d30
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): Libraries
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -42,17 +41,39 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-libtool-lock 
+CONFIGURE_OPTIONS+= --enable-devel-docs=no 
+CONFIGURE_OPTIONS+= --enable-composite 
+CONFIGURE_OPTIONS+= --enable-damage 
+CONFIGURE_OPTIONS+= --enable-dpms 
+CONFIGURE_OPTIONS+= --enable-dri2 
+CONFIGURE_OPTIONS+= --enable-glx 
+CONFIGURE_OPTIONS+= --enable-randr 
+CONFIGURE_OPTIONS+= --enable-record 
+CONFIGURE_OPTIONS+= --enable-render 
+CONFIGURE_OPTIONS+= --enable-resource 
+CONFIGURE_OPTIONS+= --enable-screensaver 
+CONFIGURE_OPTIONS+= --enable-shape 
+CONFIGURE_OPTIONS+= --enable-shm 
+CONFIGURE_OPTIONS+= --enable-sync 
+CONFIGURE_OPTIONS+= --enable-xevie 
+CONFIGURE_OPTIONS+= --enable-xfixes 
+CONFIGURE_OPTIONS+= --enable-xfree86-dri 
+CONFIGURE_OPTIONS+= --enable-xinerama 
+CONFIGURE_OPTIONS+= --enable-xinput 
+CONFIGURE_OPTIONS+= --enable-xprint 
+CONFIGURE_OPTIONS+= --disable-selinux 
+CONFIGURE_OPTIONS+= --enable-xtest 
+CONFIGURE_OPTIONS+= --enable-xv 
+CONFIGURE_OPTIONS+= --enable-xvmc 
+CONFIGURE_OPTIONS+= --with-queue-size=32768 
+CONFIGURE_OPTIONS+= --with-pic
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libxau
