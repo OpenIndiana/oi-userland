@@ -369,8 +369,8 @@ LLVM_LIBEXECDIR_32 = /usr/libexec
 LLVM_LIBEXECDIR_64 = /usr/libexec/$(MACH64)
 LLVM_LIBEXECDIR = $(LLVM_LIBEXECDIR_$(BITS))
 
-LIBFFI_INCDIR_32 = $(shell pkg-config --cflags libffi | sed -e s,-I,,)
-LIBFFI_INCDIR_64 = $(shell env PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64) pkg-config --cflags libffi | sed -e s,-I,,)
+LIBFFI_INCDIR_32 = $(shell pkg-config --cflags-only-I libffi | sed -e s,-I,,)
+LIBFFI_INCDIR_64 = $(shell env PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64) pkg-config --cflags-only-I libffi | sed -e s,-I,,)
 LIBFFI_INCDIR = $(LIBFFI_INCDIR_$(BITS))
 
 LIBFFI_LIBDIR_32 = /usr/lib
