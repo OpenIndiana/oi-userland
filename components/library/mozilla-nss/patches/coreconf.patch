@@ -5,7 +5,7 @@ diff -ruN nss-3.12.6.orig/nss/coreconf/rules.mk nss-3.12.6/mozilla/security/core
  endif
  
  # The quotes allow absolute paths to contain spaces.
--core_abspath = "$(if $(findstring :,$(1)),$(1),$(if $(filter /%,$(1)),$(1),$(PWD)/$(1)))"
+-core_abspath = '$(if $(findstring :,$(1)),$(1),$(if $(filter /%,$(1)),$(1),$(PWD)/$(1)))'
 +core_abspath = "$(shell if [ -d $(1) ]; then cd $(1); pwd; else cd `dirname $(1)`; echo `pwd`/`basename $(1)`; fi )"
  
  $(OBJDIR)/$(PROG_PREFIX)%$(OBJ_SUFFIX): %.c
