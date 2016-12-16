@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
 COMPONENT_VERSION=	8.0.39
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
@@ -37,10 +38,10 @@ COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-8/v$(COMPONE
 COMPONENT_BUGDB=	utility/tomcat
 
 # Tomcat subcomponents
-COMPONENT_ARCHIVE_1= ecjsrc-4.4.2.jar
+COMPONENT_ARCHIVE_1= ecjsrc-4.5.1.jar
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:ad3daf77ab710268f88c41fba87218dcdf502b423217a3799b5227ddf03b5858
-COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.4.2-201502041700/$(COMPONENT_ARCHIVE_1)
+    sha256:101a31ee0474282a287b16c46fa6e793ede43ceecaecabbd382f6e0b1b67ef72
+COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.5.1-201509040015/$(COMPONENT_ARCHIVE_1)
 
 TPNO=			26981
 
@@ -67,6 +68,7 @@ COMPONENT_PRE_BUILD_ACTION= \
 COMPONENT_PRE_BUILD_ACTION+= \
 	($(MKDIR) $(@D)/ECJ/scripts/binary/META-INF; cd $(@D)/ECJ ; \
 	    $(JAVA_HOME)/bin/jar xf $(ARCHIVES_LOCATION)/$(COMPONENT_ARCHIVE_1); \
+	    $(GPATCH) $(GPATCH_FLAGS) < $(COMPONENT_DIR)/patches/ECJ.ecj-patch; \
 	    $(CP) META-INF/MANIFEST.MF scripts/binary/META-INF/; \
 	    JAVA_HOME="$(JAVA_HOME)" LC_ALL="en_US.UTF-8" $(ANT) )
 
