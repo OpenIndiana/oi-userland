@@ -69,6 +69,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-systemd
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --libexecdir="$(USRLIBDIR)"
+CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)"
 
 # Solaris reserves uids < 100 for system accounts
