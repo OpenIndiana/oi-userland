@@ -100,6 +100,8 @@ CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-prng-alg=os
 CONFIGURE_OPTIONS += --with-tcl=$(USRDIR)
 CONFIGURE_OPTIONS += --without-system-verto
+# Documented as with-audit-plugin, but it's really enable-audit-plugin
+CONFIGURE_OPTIONS += --enable-audit-plugin=solaris
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	cd $(SOURCE_DIR)/src/ && $(SOURCE_DIR)/src/util/reconf
@@ -114,6 +116,9 @@ COMPONENT_TEST_ARGS += LD_LIBRARY_PATH="$(PROTOULD):$(PROTOULD)/$(MACH64):"
 COMPONENT_TEST_CREATE_TRANSFORMS=
 COMPONENT_TEST_PERFORM_TRANSFORM=
 COMPONENT_TEST_COMPARE=
+
+# Audit plugin directory for Solaris
+AUDIT_DIR = $(SOURCE_DIR)/src/plugins/audit/solaris
 
 # We don't ship Solaris specific files as patches to ease maintenance.
 # We rather copy the files to the right directories.
@@ -132,12 +137,14 @@ COMPONENT_PREP_ACTION= \
 	$(CP) Solaris/rc_mem.c $(SOURCE_DIR)/src/lib/krb5/rcache; \
 	$(CP) Solaris/rc_mem.h $(SOURCE_DIR)/src/lib/krb5/rcache; \
 	$(CP) Solaris/safechown.c $(SOURCE_DIR)/src/lib/krb5/os; \
-	$(CP) Solaris/util_ordering.c $(SOURCE_DIR)/src/lib/gssapi/generic
+	$(CP) Solaris/util_ordering.c $(SOURCE_DIR)/src/lib/gssapi/generic; \
+	$(MKDIR) -p $(AUDIT_DIR); $(CP) Solaris/audit/* $(AUDIT_DIR); \
+	$(CP) Solaris/audit/kadmind_audit.* $(SOURCE_DIR)/src/kadmin/server;
 
 # We move xdr_alloc.c and supporting dyn code from libgssrpc directly
 # into libkadm5srv_mit. kadmind is the only consumer anyway.
 SRCLIB=$(SOURCE_DIR)/src/lib
-COMPONENT_PREP_ACTION += ;\
+COMPONENT_PREP_ACTION += \
 	$(CP) $(SRCLIB)/rpc/xdr_alloc.c $(SRCLIB)/kadm5/srv/; \
 	$(CP) $(SRCLIB)/rpc/dyn.c $(SRCLIB)/kadm5/srv/; \
 	$(CP) $(SRCLIB)/rpc/dyn.h $(SRCLIB)/kadm5/srv/; \
