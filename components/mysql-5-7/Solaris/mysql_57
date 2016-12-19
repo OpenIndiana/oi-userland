@@ -40,7 +40,6 @@ getproparg() {
 MYSQLCNF=`getproparg mysql/cnf`
 MYSQLBIN=`getproparg mysql/bin`
 MYSQLDATA=`getproparg mysql/data`
-PIDFILE=${MYSQLDATA}/`/usr/bin/uname -n`.pid
 LOG_ERROR=${MYSQLDATA}/`/usr/bin/uname -n`.err
 STARTTIMEOUT=180
 
@@ -72,6 +71,23 @@ if [ ! -d "${MYSQLDATA}"/mysql ]; then
 	)
 fi
 
+getpidfile() {
+ ret=$(${MYSQLBIN}/my_print_defaults --defaults-file=${MYSQLCNF} \
+ mysqld | grep '^--pid-file=' | cut -d= -f2- | tail -1)
+ [ -z "$ret" ] && ret="${MYSQLDATA}/$(/usr/bin/uname -n).pid"
+ echo $ret
+}
+
+getsockfile() {
+ ret=$(${MYSQLBIN}/my_print_defaults --defaults-file=${MYSQLCNF} \
+ mysqld | grep '^--socket=' | cut -d= -f2- | tail -1)
+ [ -z "$ret" ] && ret="/tmp/mysql.sock"
+ echo $ret
+}
+
+PIDFILE=$(getpidfile)
+SOCKFILE=$(getsockfile)
+
 # ping function which return success when mysqld starts accepting connections
 # or return failure in case of timeout after $STARTTIMEOUT seconds.
 # using this function in mysql_start(), method waits/blocks to mysqld is really ready,
@@ -83,7 +99,7 @@ mysql_pinger() {
     ret=0
     while [ $timer -gt 0 ]; do
         sleep 1
-        "${MYSQLBIN}"/mysqladmin --no-defaults --socket="/tmp/mysql.sock" --user=UNKNOWN_MYSQL_USER ping >/dev/null 2>&1 && break
+        "${MYSQLBIN}"/mysqladmin --no-defaults --socket=${SOCKFILE} --user=UNKNOWN_MYSQL_USER ping >/dev/null 2>&1 && break
 	timer=$(expr $timer - 1)
 
 	# Check if mysqld_safe is still alive, if not there is no hope
