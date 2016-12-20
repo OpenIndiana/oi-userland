@@ -1,0 +1,39 @@
+--- perl-5.24.0/perl.h.~1~	2016-05-05 00:13:52.000000000 +0300
++++ perl-5.24.0/perl.h	2016-12-20 15:43:49.047876589 +0300
+@@ -3590,6 +3590,12 @@
+ #  endif
+ #endif
+ 
++#ifdef __SUNPRO_C
++#  undef HASATTRIBUTE_DEPRECATED
++#  undef HASATTRIBUTE_FORMAT
++#  undef HASATTRIBUTE_WARN_UNUSED_RESULT
++#endif
++
+ #ifdef HASATTRIBUTE_DEPRECATED
+ #  define __attribute__deprecated__         __attribute__((deprecated))
+ #endif
+@@ -3664,6 +3670,10 @@
+ #  define __attribute__format__null_ok__(x,y,z)
+ #endif
+ 
++#ifdef __SUNPRO_C
++#  undef HAS_BUILTIN_EXPECT
++#endif
++
+ #ifdef HAS_BUILTIN_EXPECT
+ #  define EXPECT(expr,val)                  __builtin_expect(expr,val)
+ #else
+--- perl-5.24.0/perlio.h.~1~	2016-03-01 15:33:02.000000000 +0300
++++ perl-5.24.0/perlio.h	2016-12-20 15:42:41.450282730 +0300
+@@ -166,6 +166,10 @@
+ 
+ /* --------------------- Now prototypes for functions --------------- */
+ 
++#ifdef __SUNPRO_C
++#  undef HASATTRIBUTE_FORMAT
++#endif
++
+ START_EXTERN_C
+ #ifndef __attribute__format__
+ #  ifdef HASATTRIBUTE_FORMAT
