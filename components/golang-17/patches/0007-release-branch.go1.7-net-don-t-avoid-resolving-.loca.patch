@@ -1,0 +1,73 @@
+From 308bdd0256acdc66ef20d4efd7cd41817674771d Mon Sep 17 00:00:00 2001
+From: Tom Wilkie <tom@weave.works>
+Date: Wed, 17 Aug 2016 10:13:03 +0100
+Subject: [PATCH 07/38] [release-branch.go1.7] net: don't avoid resolving
+ .local addresses
+
+.local addresses are used by things like Kubernetes and Weave DNS; Go
+should not avoid resolving them.
+
+This is a partial revert of https://golang.org/cl/21328 which was too
+strict of an interpretation of RFC 6762.
+
+Fixes #16739
+
+Change-Id: I349415b4eab5d61240dd18217bd95dc7d2105cd5
+Reviewed-on: https://go-review.googlesource.com/27250
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/28632
+---
+ src/net/dnsclient_unix.go      | 7 ++++---
+ src/net/dnsclient_unix_test.go | 9 +++++----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/src/net/dnsclient_unix.go b/src/net/dnsclient_unix.go
+index 8f2dff4..d12944c 100644
+--- a/src/net/dnsclient_unix.go
++++ b/src/net/dnsclient_unix.go
+@@ -338,8 +338,9 @@ func lookup(ctx context.Context, name string, qtype uint16) (cname string, rrs [
+ }
+ 
+ // avoidDNS reports whether this is a hostname for which we should not
+-// use DNS. Currently this includes only .onion and .local names,
+-// per RFC 7686 and RFC 6762, respectively. See golang.org/issue/13705.
++// use DNS. Currently this includes only .onion, per RFC 7686. See
++// golang.org/issue/13705. Does not cover .local names (RFC 6762),
++// see golang.org/issue/16739.
+ func avoidDNS(name string) bool {
+ 	if name == "" {
+ 		return true
+@@ -347,7 +348,7 @@ func avoidDNS(name string) bool {
+ 	if name[len(name)-1] == '.' {
+ 		name = name[:len(name)-1]
+ 	}
+-	return stringsHasSuffixFold(name, ".onion") || stringsHasSuffixFold(name, ".local")
++	return stringsHasSuffixFold(name, ".onion")
+ }
+ 
+ // nameList returns a list of names for sequential DNS queries.
+diff --git a/src/net/dnsclient_unix_test.go b/src/net/dnsclient_unix_test.go
+index 09bbd48..c953c1e 100644
+--- a/src/net/dnsclient_unix_test.go
++++ b/src/net/dnsclient_unix_test.go
+@@ -112,10 +112,11 @@ func TestAvoidDNSName(t *testing.T) {
+ 		{"foo.ONION", true},
+ 		{"foo.ONION.", true},
+ 
+-		{"foo.local.", true},
+-		{"foo.local", true},
+-		{"foo.LOCAL", true},
+-		{"foo.LOCAL.", true},
++		// But do resolve *.local address; Issue 16739
++		{"foo.local.", false},
++		{"foo.local", false},
++		{"foo.LOCAL", false},
++		{"foo.LOCAL.", false},
+ 
+ 		{"", true}, // will be rejected earlier too
+ 
+-- 
+2.7.4
+

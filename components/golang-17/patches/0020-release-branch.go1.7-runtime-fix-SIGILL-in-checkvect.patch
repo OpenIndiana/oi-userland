@@ -1,0 +1,37 @@
+From 230c3918a8ae8a65e1974659e55f8a808fe731b5 Mon Sep 17 00:00:00 2001
+From: Michael Munday <munday@ca.ibm.com>
+Date: Thu, 8 Sep 2016 19:27:24 -0400
+Subject: [PATCH 20/38] [release-branch.go1.7] runtime: fix SIGILL in
+ checkvectorfacility on s390x
+
+STFLE does not necessarily write to all the double-words that are
+requested. It is therefore necessary to clear the target memory
+before calling STFLE in order to ensure that the facility list does
+not contain false positives.
+
+Fixes #17032.
+
+Change-Id: I7bec9ade7103e747b72f08562fe57e6f091bd89f
+Reviewed-on: https://go-review.googlesource.com/28850
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-on: https://go-review.googlesource.com/31267
+Reviewed-by: Michael Munday <munday@ca.ibm.com>
+---
+ src/runtime/asm_s390x.s | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/runtime/asm_s390x.s b/src/runtime/asm_s390x.s
+index 896ccde..97f276c 100644
+--- a/src/runtime/asm_s390x.s
++++ b/src/runtime/asm_s390x.s
+@@ -20,6 +20,7 @@ TEXT runtime·checkvectorfacility(SB),NOSPLIT,$32-0
+ 	MOVD    $2, R0
+ 	MOVD	R1, tmp-32(SP)
+ 	MOVD    $x-24(SP), R1
++	XC	$24, 0(R1), 0(R1)
+ //      STFLE   0(R1)
+ 	WORD    $0xB2B01000
+ 	MOVBZ   z-8(SP), R1
+-- 
+2.7.4
+

@@ -1,0 +1,126 @@
+From 2287d95e9b130821b61c34afb79d8541268acd9b Mon Sep 17 00:00:00 2001
+From: David Chase <drchase@google.com>
+Date: Sat, 8 Oct 2016 16:45:58 -0400
+Subject: [PATCH 23/38] [release-branch.go1.7] cmd/compile: escape analysis
+ needs to run "flood" to fixed point
+
+In some cases the members of the root set from which flood
+runs themselves escape, without their referents being also
+tagged as escaping.  Fix this by reflooding from those roots
+whose escape increases, and also enhance the "leak" test to
+include reachability from a heap-escaped root.
+
+Fixes #17318.
+
+Change-Id: Ied1e75cee17ede8ca72a8b9302ce8201641ec593
+Reviewed-on: https://go-review.googlesource.com/30693
+Run-TryBot: David Chase <drchase@google.com>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/31290
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-by: David Chase <drchase@google.com>
+---
+ src/cmd/compile/internal/gc/esc.go | 21 +++++++++++++++++
+ test/fixedbugs/issue17318.go       | 47 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
+ create mode 100644 test/fixedbugs/issue17318.go
+
+diff --git a/src/cmd/compile/internal/gc/esc.go b/src/cmd/compile/internal/gc/esc.go
+index 90ad75c..69b5964 100644
+--- a/src/cmd/compile/internal/gc/esc.go
++++ b/src/cmd/compile/internal/gc/esc.go
+@@ -472,9 +472,29 @@ func escAnalyze(all []*Node, recursive bool) {
+ 
+ 	// visit the upstream of each dst, mark address nodes with
+ 	// addrescapes, mark parameters unsafe
++	escapes := make([]uint16, len(e.dsts))
++	for i, n := range e.dsts {
++		escapes[i] = n.Esc
++	}
+ 	for _, n := range e.dsts {
+ 		escflood(e, n)
+ 	}
++	for {
++		done := true
++		for i, n := range e.dsts {
++			if n.Esc != escapes[i] {
++				done = false
++				if Debug['m'] > 2 {
++					Warnl(n.Lineno, "Reflooding %v %S", e.curfnSym(n), n)
++				}
++				escapes[i] = n.Esc
++				escflood(e, n)
++			}
++		}
++		if done {
++			break
++		}
++	}
+ 
+ 	// for all top level functions, tag the typenodes corresponding to the param nodes
+ 	for _, n := range all {
+@@ -1796,6 +1816,7 @@ func escwalkBody(e *EscState, level Level, dst *Node, src *Node, step *EscStep,
+ 	}
+ 
+ 	leaks = level.int() <= 0 && level.guaranteedDereference() <= 0 && dstE.Escloopdepth < modSrcLoopdepth
++	leaks = leaks || level.int() <= 0 && dst.Esc&EscMask == EscHeap
+ 
+ 	osrcesc = src.Esc
+ 	switch src.Op {
+diff --git a/test/fixedbugs/issue17318.go b/test/fixedbugs/issue17318.go
+new file mode 100644
+index 0000000..fe00859
+--- /dev/null
++++ b/test/fixedbugs/issue17318.go
+@@ -0,0 +1,47 @@
++// errorcheck -0 -N -m -l
++
++// Copyright 2016 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++// The escape analyzer needs to run till its root set settles
++// (this is not that often, it turns out).
++// This test is likely to become stale because the leak depends
++// on a spurious-escape bug -- return an interface as a named
++// output parameter appears to cause the called closure to escape,
++// where returning it as a regular type does not.
++
++package main
++
++import (
++	"fmt"
++)
++
++type closure func(i, j int) ent
++
++type ent int
++
++func (e ent) String() string {
++	return fmt.Sprintf("%d", int(e)) // ERROR "ent.String ... argument does not escape$" "int\(e\) escapes to heap$"
++}
++
++//go:noinline
++func foo(ops closure, j int) (err fmt.Stringer) { // ERROR "leaking param: ops$" "leaking param: ops to result err level=0$"
++	enqueue := func(i int) fmt.Stringer { // ERROR "func literal escapes to heap$"
++		return ops(i, j) // ERROR "ops\(i, j\) escapes to heap$"
++	}
++	err = enqueue(4)
++	if err != nil {
++		return err
++	}
++	return // return result of enqueue, a fmt.Stringer
++}
++
++func main() {
++	// 3 identical functions, to get different escape behavior.
++	f := func(i, j int) ent { // ERROR "func literal escapes to heap$"
++		return ent(i + j)
++	}
++	i := foo(f, 3).(ent)
++	fmt.Printf("foo(f,3)=%d\n", int(i)) // ERROR "int\(i\) escapes to heap$" "main ... argument does not escape$"
++}
+-- 
+2.7.4
+

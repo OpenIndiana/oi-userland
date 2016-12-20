@@ -1,0 +1,81 @@
+From 3b6f4b04ba4da9e90e1f28dcd19c0eac78c57170 Mon Sep 17 00:00:00 2001
+From: Chris Broadfoot <cbro@golang.org>
+Date: Tue, 18 Oct 2016 12:52:26 -0700
+Subject: [PATCH 28/38] [release-branch.go1.7] net/http: update bundled http2
+
+Updates bundled http2 for x/net/http2 git rev d4c55e66 for:
+
+[release-branch.go1.7] http2: never Read from Request.Body in Transport
+to determine ContentLength
+https://golang.org/cl/31361
+
+Updates #17480
+Updates #17071
+
+Change-Id: I2231adaed3cb5b368927a9654dcf7e69a8b664b6
+Reviewed-on: https://go-review.googlesource.com/31432
+Run-TryBot: Chris Broadfoot <cbro@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Chris Broadfoot <cbro@golang.org>
+---
+ src/net/http/h2_bundle.go | 33 ++++++++++-----------------------
+ 1 file changed, 10 insertions(+), 23 deletions(-)
+
+diff --git a/src/net/http/h2_bundle.go b/src/net/http/h2_bundle.go
+index 80c02d0..063043a 100644
+--- a/src/net/http/h2_bundle.go
++++ b/src/net/http/h2_bundle.go
+@@ -5448,31 +5448,17 @@ func http2checkConnHeaders(req *Request) error {
+ 	return nil
+ }
+ 
+-func http2bodyAndLength(req *Request) (body io.Reader, contentLen int64) {
+-	body = req.Body
+-	if body == nil {
+-		return nil, 0
++// actualContentLength returns a sanitized version of
++// req.ContentLength, where 0 actually means zero (not unknown) and -1
++// means unknown.
++func http2actualContentLength(req *Request) int64 {
++	if req.Body == nil {
++		return 0
+ 	}
+ 	if req.ContentLength != 0 {
+-		return req.Body, req.ContentLength
+-	}
+-
+-	// We have a body but a zero content length. Test to see if
+-	// it's actually zero or just unset.
+-	var buf [1]byte
+-	n, rerr := body.Read(buf[:])
+-	if rerr != nil && rerr != io.EOF {
+-		return http2errorReader{rerr}, -1
++		return req.ContentLength
+ 	}
+-	if n == 1 {
+-
+-		if rerr == io.EOF {
+-			return bytes.NewReader(buf[:]), 1
+-		}
+-		return io.MultiReader(bytes.NewReader(buf[:]), body), -1
+-	}
+-
+-	return nil, 0
++	return -1
+ }
+ 
+ func (cc *http2ClientConn) RoundTrip(req *Request) (*Response, error) {
+@@ -5493,8 +5479,9 @@ func (cc *http2ClientConn) RoundTrip(req *Request) (*Response, error) {
+ 		return nil, http2errClientConnUnusable
+ 	}
+ 
+-	body, contentLen := http2bodyAndLength(req)
++	body := req.Body
+ 	hasBody := body != nil
++	contentLen := http2actualContentLength(req)
+ 
+ 	// TODO(bradfitz): this is a copy of the logic in net/http. Unify somewhere?
+ 	var requestedGzip bool
+-- 
+2.7.4
+

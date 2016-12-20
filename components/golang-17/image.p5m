@@ -24,14 +24,15 @@
 <include golang-supp-pkg.mog>
 #
 set name=pkg.fmri \
-    value=pkg:/library/golang/net@$(IPS_COMPONENT_VERSION_net),$(BUILD_VERSION)
-set name=pkg.summary value="Supplementary Go tool and packages for networking"
-set name=com.oracle.info.description value="Google Go Net"
-set name=com.oracle.info.tpno value=$(TPNO_net)
+    value=pkg:/library/golang/image@$(IPS_COMPONENT_VERSION_image),$(BUILD_VERSION)
+set name=pkg.summary value="Supplementary Go packages for image processing"
+set name=com.oracle.info.description value="Google Go Image"
+set name=com.oracle.info.tpno value=$(TPNO_image)
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/Other Languages"
-set name=info.repository-url value=$(GIT_REPO_net)
+set name=info.repository-url value=$(GIT_REPO_image)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=$(ARC_CASE)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend type=conditional fmri=library/golang/net-15 predicate=developer/golang-15
+depend type=conditional fmri=library/golang/image-$(COMPONENT_CMAJOR_VERSION) \
+    predicate=developer/golang-$(COMPONENT_CMAJOR_VERSION)

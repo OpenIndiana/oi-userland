@@ -1,0 +1,106 @@
+From e464c08beffc87cb064e48932699042b3dccc491 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Thu, 18 Aug 2016 19:21:26 -0700
+Subject: [PATCH 04/38] [release-branch.go1.7] io: fix infinite loop bug in
+ MultiReader
+
+If an io.Reader returned (non-zero, EOF), MultiReader would yield
+bytes forever.
+
+This bug has existed before Go 1 (!!), introduced in the original
+MultiReader implementation in https://golang.org/cl/1764043 and also
+survived basically the only update to this code since then
+(https://golang.org/cl/17873, git rev ccdca832c), which was added in
+Go 1.7.
+
+This just bit me when writing a test for some unrelated code.
+
+Fixes #16795
+
+Change-Id: I36e6a701269793935d19a47ac12f67b07179fbff
+Reviewed-on: https://go-review.googlesource.com/27397
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Keith Randall <khr@golang.org>
+Reviewed-by: Joe Tsai <thebrokentoaster@gmail.com>
+Reviewed-on: https://go-review.googlesource.com/28633
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/io/multi.go      |  9 +++++----
+ src/io/multi_test.go | 38 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 4 deletions(-)
+
+diff --git a/src/io/multi.go b/src/io/multi.go
+index ed05cac..3a9d036 100644
+--- a/src/io/multi.go
++++ b/src/io/multi.go
+@@ -18,15 +18,16 @@ func (mr *multiReader) Read(p []byte) (n int, err error) {
+ 			}
+ 		}
+ 		n, err = mr.readers[0].Read(p)
++		if err == EOF {
++			mr.readers = mr.readers[1:]
++		}
+ 		if n > 0 || err != EOF {
+-			if err == EOF {
+-				// Don't return EOF yet. There may be more bytes
+-				// in the remaining readers.
++			if err == EOF && len(mr.readers) > 0 {
++				// Don't return EOF yet. More readers remain.
+ 				err = nil
+ 			}
+ 			return
+ 		}
+-		mr.readers = mr.readers[1:]
+ 	}
+ 	return 0, EOF
+ }
+diff --git a/src/io/multi_test.go b/src/io/multi_test.go
+index 2dce369..5c6bb84 100644
+--- a/src/io/multi_test.go
++++ b/src/io/multi_test.go
+@@ -196,3 +196,41 @@ func TestMultiReaderFlatten(t *testing.T) {
+ 			myDepth+2, readDepth)
+ 	}
+ }
++
++// byteAndEOFReader is a Reader which reads one byte (the underlying
++// byte) and io.EOF at once in its Read call.
++type byteAndEOFReader byte
++
++func (b byteAndEOFReader) Read(p []byte) (n int, err error) {
++	if len(p) == 0 {
++		// Read(0 bytes) is useless. We expect no such useless
++		// calls in this test.
++		panic("unexpected call")
++	}
++	p[0] = byte(b)
++	return 1, EOF
++}
++
++// In Go 1.7, this yielded bytes forever.
++func TestMultiReaderSingleByteWithEOF(t *testing.T) {
++	got, err := ioutil.ReadAll(LimitReader(MultiReader(byteAndEOFReader('a'), byteAndEOFReader('b')), 10))
++	if err != nil {
++		t.Fatal(err)
++	}
++	const want = "ab"
++	if string(got) != want {
++		t.Errorf("got %q; want %q", got, want)
++	}
++}
++
++// Test that a reader returning (n, EOF) at the end of an MultiReader
++// chain continues to return EOF on its final read, rather than
++// yielding a (0, EOF).
++func TestMultiReaderFinalEOF(t *testing.T) {
++	r := MultiReader(bytes.NewReader(nil), byteAndEOFReader('a'))
++	buf := make([]byte, 2)
++	n, err := r.Read(buf)
++	if n != 1 || err != EOF {
++		t.Errorf("got %v, %v; want 1, EOF", n, err)
++	}
++}
+-- 
+2.7.4
+

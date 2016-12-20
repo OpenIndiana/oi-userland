@@ -1,0 +1,38 @@
+From 6f12826a869aa76e4abee4e1e1dfb27b19775782 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Mon, 22 Aug 2016 18:59:20 +0000
+Subject: [PATCH 11/38] [release-branch.go1.7] net/http: make
+ Transport.CancelRequest doc recommend Request.WithContext
+
+The old deprecation docs were referencing another deprecated field.
+
+Fixes #16752
+
+Change-Id: I44a690048e00ddc790a80214ecb7f5bb0a5b7b34
+Reviewed-on: https://go-review.googlesource.com/27510
+Reviewed-by: David Crawshaw <crawshaw@golang.org>
+Reviewed-on: https://go-review.googlesource.com/28638
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/net/http/transport.go | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/net/http/transport.go b/src/net/http/transport.go
+index 3046de5..6672119 100644
+--- a/src/net/http/transport.go
++++ b/src/net/http/transport.go
+@@ -498,8 +498,9 @@ func (t *Transport) CloseIdleConnections() {
+ // CancelRequest cancels an in-flight request by closing its connection.
+ // CancelRequest should only be called after RoundTrip has returned.
+ //
+-// Deprecated: Use Request.Cancel instead. CancelRequest cannot cancel
+-// HTTP/2 requests.
++// Deprecated: Use Request.WithContext to create a request with a
++// cancelable context instead. CancelRequest cannot cancel HTTP/2
++// requests.
+ func (t *Transport) CancelRequest(req *Request) {
+ 	t.reqMu.Lock()
+ 	cancel := t.reqCanceler[req]
+-- 
+2.7.4
+

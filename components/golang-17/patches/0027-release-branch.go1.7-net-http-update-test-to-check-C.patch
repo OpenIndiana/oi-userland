@@ -1,0 +1,40 @@
+From 740dfbadbd7e54e0340f43bf698f71007bee9f8b Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Tue, 18 Oct 2016 21:42:09 +0000
+Subject: [PATCH 27/38] [release-branch.go1.7] net/http: update test to check
+ Content-Length 0 Body more reliably
+
+The way to send an explicitly-zero Content-Length is to set a nil Body.
+
+Fix this test to do that, rather than relying on type sniffing.
+
+Updates #17480
+Updates #17071
+
+Change-Id: I6a38e20f17013c88ec4ea69d73c507e4ed886947
+Reviewed-on: https://go-review.googlesource.com/31434
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-by: Chris Broadfoot <cbro@golang.org>
+Reviewed-on: https://go-review.googlesource.com/31437
+Run-TryBot: Chris Broadfoot <cbro@golang.org>
+---
+ src/net/http/clientserver_test.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/net/http/clientserver_test.go b/src/net/http/clientserver_test.go
+index e12ea0c..8caba28 100644
+--- a/src/net/http/clientserver_test.go
++++ b/src/net/http/clientserver_test.go
+@@ -468,7 +468,7 @@ func TestH12_RequestContentLength_Known_NonZero(t *testing.T) {
+ }
+ 
+ func TestH12_RequestContentLength_Known_Zero(t *testing.T) {
+-	h12requestContentLength(t, func() io.Reader { return strings.NewReader("") }, 0)
++	h12requestContentLength(t, func() io.Reader { return nil }, 0)
+ }
+ 
+ func TestH12_RequestContentLength_Unknown(t *testing.T) {
+-- 
+2.7.4
+

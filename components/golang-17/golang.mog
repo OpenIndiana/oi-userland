@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> \
@@ -32,10 +32,8 @@
 <transform file \
     path=usr/lib/golang/.*/src/debug/.*/testdata/.*$ -> \
     default pkg.linted.userland.action001.2 true>
-
-# ASLR doesn't apply to objects for other platforms.
 <transform file \
-    path=usr/lib/golang/.*/src/runtime/race/race_(freebsd|linux)_$(MACH64)\.syso$ -> \
+    path=usr/lib/golang/.*/src/runtime/race/race_(freebsd|linux)_.*\.syso$ -> \
     default pkg.linted.userland.action001.2 true>
 
 # Go has test data not tagged for ASLR.
@@ -45,7 +43,7 @@
 
 # The Go linker does not currently support ASLR.
 <transform file \
-    path=usr/lib/golang/.*/pkg/tool/solaris_$(MACH64)/.*$ -> \
+    path=usr/lib/golang/.*/pkg/tool/solaris_$(GOMACH64)/.*$ -> \
     default pkg.linted.userland.action001.5 true>
 <transform file \
     path=usr/lib/golang/.*/pkg/bootstrap/bin/.*$ -> \
@@ -57,17 +55,23 @@
     path=usr/lib/gocode/.*/bin/.*$ -> \
     default pkg.linted.userland.action001.5 true>
 
-# Automatically add versioned mediators to any links in usr/bin.
+# Automatically add versioned mediators to any links in usr/bin, usr/share.
 <transform link hardlink path=usr/bin/.*$ -> \
-    set mediator golang >
+    set mediator golang>
 <transform link hardlink path=usr/share/.*$ -> \
     set mediator golang>
-# 1.5 will remain the default until Docker switches
-<transform link hardlink path=usr/bin/.*$ -> \
-    set mediator-priority vendor >
-<transform link hardlink path=usr/share/.*$ -> \
-    set mediator-priority vendor >
 <transform link hardlink path=usr/bin/.*$ -> \
     set mediator-version $(COMPONENT_MAJOR_VERSION) >
 <transform link hardlink path=usr/share/.*$ -> \
     set mediator-version $(COMPONENT_MAJOR_VERSION) >
+# Avoid bogus mediator errors from "conflicting" entries since mediators are
+# being added for the first time for 1.7.
+<transform link hardlink \
+    path=usr/bin/.*$ -> \
+    default pkg.linted.pkglint.dupaction010.2 true>
+<transform link hardlink \
+    path=usr/share/man/.*$ -> \
+    default pkg.linted.pkglint.dupaction008 true>
+<transform link hardlink \
+    path=usr/share/man/.*$ -> \
+    default pkg.linted.pkglint.dupaction010.1 true>

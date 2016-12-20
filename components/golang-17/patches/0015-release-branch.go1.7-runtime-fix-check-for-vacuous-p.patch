@@ -1,0 +1,44 @@
+From 40712a962573a9ad987c71ba2cb24e6d430b559d Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Fri, 19 Aug 2016 16:03:14 -0400
+Subject: [PATCH 15/38] [release-branch.go1.7] runtime: fix check for vacuous
+ page boundary rounding again
+
+The previous fix for this, commit 336dad2a, had everything right in
+the commit message, but reversed the test in the code. Fix the test in
+the code.
+
+This reversal effectively disabled the scavenger on large page systems
+*except* in the rare cases where this code was originally wrong, which
+is why it didn't obviously show up in testing.
+
+Fixes #16644. Again. :(
+
+Change-Id: I27cce4aea13de217197db4b628f17860f27ce83e
+Reviewed-on: https://go-review.googlesource.com/27402
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-on: https://go-review.googlesource.com/28631
+Run-TryBot: Chris Broadfoot <cbro@golang.org>
+---
+ src/runtime/mheap.go | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/runtime/mheap.go b/src/runtime/mheap.go
+index db60f7a..8db2fcc 100644
+--- a/src/runtime/mheap.go
++++ b/src/runtime/mheap.go
+@@ -917,7 +917,9 @@ func scavengelist(list *mSpanList, now, limit uint64) uintptr {
+ 				// more memory than we want.)
+ 				start = (start + sys.PhysPageSize - 1) &^ (sys.PhysPageSize - 1)
+ 				end &^= sys.PhysPageSize - 1
+-				if start == end {
++				if end <= start {
++					// start and end don't span a
++					// whole physical page.
+ 					continue
+ 				}
+ 			}
+-- 
+2.7.4
+

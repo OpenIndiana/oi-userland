@@ -24,16 +24,16 @@
 <include golang-supp-pkg.mog>
 #
 set name=pkg.fmri \
-    value=pkg:/library/golang/tools@$(IPS_COMPONENT_VERSION_tools),$(BUILD_VERSION)
+    value=pkg:/library/golang/lint@$(IPS_COMPONENT_VERSION_lint),$(BUILD_VERSION)
 set name=pkg.summary \
-    value="Supplementary Go tools and packages for Go program analysis, refactoring, etc."
-set name=com.oracle.info.description value="Google Go Tools"
-set name=com.oracle.info.tpno value=$(TPNO_tools)
+    value="Supplementary Go tool and packages for linting Go programs"
+set name=com.oracle.info.description value="Google Go Lint"
+set name=com.oracle.info.tpno value=$(TPNO_lint)
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/Other Languages"
-set name=info.repository-url value=$(GIT_REPO_tools)
+set name=info.repository-url value=$(GIT_REPO_lint)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=$(ARC_CASE)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend type=conditional fmri=library/golang/tools-15 \
-    predicate=developer/golang-15
+depend type=conditional fmri=library/golang/lint-$(COMPONENT_CMAJOR_VERSION) \
+    predicate=developer/golang-$(COMPONENT_CMAJOR_VERSION)

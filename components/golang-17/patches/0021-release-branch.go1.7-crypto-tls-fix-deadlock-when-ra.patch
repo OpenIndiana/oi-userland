@@ -1,0 +1,210 @@
+From ca0b97e80a558d06274e68ece667b821901acc42 Mon Sep 17 00:00:00 2001
+From: Adam Langley <agl@golang.org>
+Date: Wed, 14 Sep 2016 11:50:36 -0700
+Subject: [PATCH 21/38] [release-branch.go1.7] crypto/tls: fix deadlock when
+ racing to complete handshake.
+
+After renegotiation support was added (af125a5193c) it's possible for a
+Write to block on a Read when racing to complete the handshake:
+   1. The Write determines that a handshake is needed and tries to
+      take the neccesary locks in the correct order.
+   2. The Read also determines that a handshake is needed and wins
+      the race to take the locks.
+   3. The Read goroutine completes the handshake and wins a race
+      to unlock and relock c.in, which it'll hold when waiting for
+      more network data.
+
+If the application-level protocol requires the Write to complete before
+data can be read then the system as a whole will deadlock.
+
+Unfortunately it doesn't appear possible to reverse the locking order of
+c.in and handshakeMutex because we might read a renegotiation request at
+any point and need to be able to do a handshake without unlocking.
+
+So this change adds a sync.Cond that indicates that a goroutine has
+committed to doing a handshake. Other interested goroutines can wait on
+that Cond when needed.
+
+The test for this isn't great. I was able to reproduce the deadlock with
+it only when building with -race. (Because -race happened to alter the
+timing just enough.)
+
+Fixes #17101.
+
+Change-Id: I4e8757f7b82a84e46c9963a977d089f0fb675495
+Reviewed-on: https://go-review.googlesource.com/29164
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/31268
+---
+ src/crypto/tls/conn.go                  | 68 +++++++++++++++++++++++++--------
+ src/crypto/tls/handshake_client_test.go | 54 ++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+), 15 deletions(-)
+
+diff --git a/src/crypto/tls/conn.go b/src/crypto/tls/conn.go
+index 87bef23..77fd6d3 100644
+--- a/src/crypto/tls/conn.go
++++ b/src/crypto/tls/conn.go
+@@ -29,10 +29,14 @@ type Conn struct {
+ 
+ 	// constant after handshake; protected by handshakeMutex
+ 	handshakeMutex sync.Mutex // handshakeMutex < in.Mutex, out.Mutex, errMutex
+-	handshakeErr   error      // error resulting from handshake
+-	vers           uint16     // TLS version
+-	haveVers       bool       // version has been negotiated
+-	config         *Config    // configuration passed to constructor
++	// handshakeCond, if not nil, indicates that a goroutine is committed
++	// to running the handshake for this Conn. Other goroutines that need
++	// to wait for the handshake can wait on this, under handshakeMutex.
++	handshakeCond *sync.Cond
++	handshakeErr  error   // error resulting from handshake
++	vers          uint16  // TLS version
++	haveVers      bool    // version has been negotiated
++	config        *Config // configuration passed to constructor
+ 	// handshakeComplete is true if the connection is currently transfering
+ 	// application data (i.e. is not currently processing a handshake).
+ 	handshakeComplete bool
+@@ -1206,26 +1210,50 @@ func (c *Conn) Handshake() error {
+ 	// need to check whether a handshake is pending (such as Write) to
+ 	// block.
+ 	//
+-	// Thus we take c.handshakeMutex first and, if we find that a handshake
+-	// is needed, then we unlock, acquire c.in and c.handshakeMutex in the
+-	// correct order, and check again.
++	// Thus we first take c.handshakeMutex to check whether a handshake is
++	// needed.
++	//
++	// If so then, previously, this code would unlock handshakeMutex and
++	// then lock c.in and handshakeMutex in the correct order to run the
++	// handshake. The problem was that it was possible for a Read to
++	// complete the handshake once handshakeMutex was unlocked and then
++	// keep c.in while waiting for network data. Thus a concurrent
++	// operation could be blocked on c.in.
++	//
++	// Thus handshakeCond is used to signal that a goroutine is committed
++	// to running the handshake and other goroutines can wait on it if they
++	// need. handshakeCond is protected by handshakeMutex.
+ 	c.handshakeMutex.Lock()
+ 	defer c.handshakeMutex.Unlock()
+ 
+-	for i := 0; i < 2; i++ {
+-		if i == 1 {
+-			c.handshakeMutex.Unlock()
+-			c.in.Lock()
+-			defer c.in.Unlock()
+-			c.handshakeMutex.Lock()
+-		}
+-
++	for {
+ 		if err := c.handshakeErr; err != nil {
+ 			return err
+ 		}
+ 		if c.handshakeComplete {
+ 			return nil
+ 		}
++		if c.handshakeCond == nil {
++			break
++		}
++
++		c.handshakeCond.Wait()
++	}
++
++	// Set handshakeCond to indicate that this goroutine is committing to
++	// running the handshake.
++	c.handshakeCond = sync.NewCond(&c.handshakeMutex)
++	c.handshakeMutex.Unlock()
++
++	c.in.Lock()
++	defer c.in.Unlock()
++
++	c.handshakeMutex.Lock()
++
++	// The handshake cannot have completed when handshakeMutex was unlocked
++	// because this goroutine set handshakeCond.
++	if c.handshakeErr != nil || c.handshakeComplete {
++		panic("handshake should not have been able to complete after handshakeCond was set")
+ 	}
+ 
+ 	if c.isClient {
+@@ -1236,6 +1264,16 @@ func (c *Conn) Handshake() error {
+ 	if c.handshakeErr == nil {
+ 		c.handshakes++
+ 	}
++
++	if c.handshakeErr == nil && !c.handshakeComplete {
++		panic("handshake should have had a result.")
++	}
++
++	// Wake any other goroutines that are waiting for this handshake to
++	// complete.
++	c.handshakeCond.Broadcast()
++	c.handshakeCond = nil
++
+ 	return c.handshakeErr
+ }
+ 
+diff --git a/src/crypto/tls/handshake_client_test.go b/src/crypto/tls/handshake_client_test.go
+index ce987f1..07d31b6 100644
+--- a/src/crypto/tls/handshake_client_test.go
++++ b/src/crypto/tls/handshake_client_test.go
+@@ -1045,3 +1045,57 @@ func TestBuffering(t *testing.T) {
+ 		t.Errorf("expected server handshake to complete with only two writes, but saw %d", n)
+ 	}
+ }
++
++func TestHandshakeRace(t *testing.T) {
++	// This test races a Read and Write to try and complete a handshake in
++	// order to provide some evidence that there are no races or deadlocks
++	// in the handshake locking.
++	for i := 0; i < 32; i++ {
++		c, s := net.Pipe()
++
++		go func() {
++			server := Server(s, testConfig)
++			if err := server.Handshake(); err != nil {
++				panic(err)
++			}
++
++			var request [1]byte
++			if n, err := server.Read(request[:]); err != nil || n != 1 {
++				panic(err)
++			}
++
++			server.Write(request[:])
++			server.Close()
++		}()
++
++		startWrite := make(chan struct{})
++		startRead := make(chan struct{})
++		readDone := make(chan struct{})
++
++		client := Client(c, testConfig)
++		go func() {
++			<-startWrite
++			var request [1]byte
++			client.Write(request[:])
++		}()
++
++		go func() {
++			<-startRead
++			var reply [1]byte
++			if n, err := client.Read(reply[:]); err != nil || n != 1 {
++				panic(err)
++			}
++			c.Close()
++			readDone <- struct{}{}
++		}()
++
++		if i&1 == 1 {
++			startWrite <- struct{}{}
++			startRead <- struct{}{}
++		} else {
++			startRead <- struct{}{}
++			startWrite <- struct{}{}
++		}
++		<-readDone
++	}
++}
+-- 
+2.7.4
+

@@ -1,0 +1,87 @@
+From 4f7363cd723d3c79081d3a201279f4e024620db9 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Fri, 28 Oct 2016 18:03:21 +0000
+Subject: [PATCH 33/38] [release-branch.go1.7] doc: reference
+ go1.4-bootstrap-20161024.tar.gz
+
+Updates #16352
+
+Change-Id: I214c87579ef21ced8d0ba94aa170dd7780afec4b
+Reviewed-on: https://go-review.googlesource.com/32312
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/32914
+---
+ doc/install-source.html | 41 +++++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
+
+diff --git a/doc/install-source.html b/doc/install-source.html
+index d0a4ed2..77616c1 100644
+--- a/doc/install-source.html
++++ b/doc/install-source.html
+@@ -119,27 +119,39 @@ Go does not support CentOS 6 on these systems.
+ <p>
+ The Go tool chain is written in Go. To build it, you need a Go compiler installed.
+ The scripts that do the initial build of the tools look for an existing Go tool
+-chain in <code>$HOME/go1.4</code>.
+-(This path may be overridden by setting the <code>GOROOT_BOOTSTRAP</code>
+-environment variable.)
++chain in <code>$GOROOT_BOOTSTRAP</code>.
++If unset, the default value of <code>GOROOT_BOOTSTRAP</code>
++is <code>$HOME/go1.4</code>.
+ </p>
+ 
+ <p>
+-Build the tools with Go version 1.4 or a point release (1.4.1, 1.4.2 etc.).
+-Go 1.4 binaries can be found at <a href="/dl/">the downloads page</a>.
++There are many options for the bootstrap tool chain.
++After obtaining one, set <code>GOROOT_BOOTSTRAP</code> to the
++directory containing the unpacked tree.
++For example, <code>$GOROOT_BOOTSTRAP/bin/go</code> should be
++the <code>go</code> command binary for the bootstrap tool chain.
+ </p>
+ 
+ <p>
+-Download the zip or tarball of Go 1.4 for your platform and extract it to
+-<code>$HOME/go1.4</code> (or your nominated <code>GOROOT_BOOTSTRAP</code>
+-location).
++To use a binary release as a bootstrap tool chain, see
++<a href="/dl/">the downloads page</a> or use any other
++packaged Go distribution.
+ </p>
+ 
+ <p>
+-If you want to install Go 1.5 on a system that is not supported by Go 1.4 (such
+-as <code>linux/ppc64</code> and <code>linux/mips64le</code>) you can either use
+-<a href="/src/bootstrap.bash">bootstrap.bash</a> on a system that can bootstrap Go
+-1.5 normally, or bootstrap with gccgo 5.
++To build a bootstrap tool chain from source, use
++either the git branch <code>release-branch.go1.4</code> or
++<a href="https://storage.googleapis.com/golang/go1.4-bootstrap-20161024.tar.gz">go1.4-bootstrap-20161024.tar.gz</a>,
++which contains the Go 1.4 source code plus accumulated fixes
++to keep the tools running on newer operating systems.
++(Go 1.4 was the last distribution in which the tool chain was written in C.)
++</p>
++
++<p>
++To cross-compile a bootstrap tool chain from source, which is
++necessary on systems Go 1.4 did not target (for
++example, <code>linux/ppc64le</code>), install Go on a different system
++and run <a href="/src/bootstrap.bash">bootstrap.bash</a>.
+ </p>
+ 
+ <p>
+@@ -158,8 +170,9 @@ and used as <code>GOROOT_BOOTSTRAP</code> to bootstrap a local build.
+ </p>
+ 
+ <p>
+-To use gccgo, you need to arrange for <code>$GOROOT_BOOTSTRAP/bin/go</code> to be
+-the go tool that comes as part of gccgo 5. For example on Ubuntu Vivid:
++To use gccgo as the bootstrap toolchain, you need to arrange
++for <code>$GOROOT_BOOTSTRAP/bin/go</code> to be the go tool that comes
++as part of gccgo 5. For example on Ubuntu Vivid:
+ </p>
+ 
+ <pre>
+-- 
+2.7.4
+

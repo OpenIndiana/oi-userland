@@ -1,0 +1,63 @@
+From 1861ac159eac4b7db1a6c206c0edb1ab1bfef0d9 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Fri, 19 Aug 2016 23:27:45 +0000
+Subject: [PATCH 02/38] [release-branch.go1.7] net/http: update bundled http2
+ for Transport double STREAM_ENDED error
+
+Updates bundled http2 to x/net/http2 git rev 7394c11 for:
+
+http2: fix protocol violation regression when writing certain request bodies
+https://golang.org/cl/27406
+
+Fixes #16788
+
+Change-Id: I0efcd36e2b4b34a1df79f763d35bf7a3a1858506
+Reviewed-on: https://go-review.googlesource.com/27451
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Andrew Gerrand <adg@golang.org>
+Reviewed-on: https://go-review.googlesource.com/28636
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/net/http/h2_bundle.go | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/src/net/http/h2_bundle.go b/src/net/http/h2_bundle.go
+index ffe15f0..a41e3ca 100644
+--- a/src/net/http/h2_bundle.go
++++ b/src/net/http/h2_bundle.go
+@@ -5460,12 +5460,15 @@ func http2bodyAndLength(req *Request) (body io.Reader, contentLen int64) {
+ 	// We have a body but a zero content length. Test to see if
+ 	// it's actually zero or just unset.
+ 	var buf [1]byte
+-	n, rerr := io.ReadFull(body, buf[:])
++	n, rerr := body.Read(buf[:])
+ 	if rerr != nil && rerr != io.EOF {
+ 		return http2errorReader{rerr}, -1
+ 	}
+ 	if n == 1 {
+ 
++		if rerr == io.EOF {
++			return bytes.NewReader(buf[:]), 1
++		}
+ 		return io.MultiReader(bytes.NewReader(buf[:]), body), -1
+ 	}
+ 
+@@ -5714,8 +5717,13 @@ func (cs *http2clientStream) writeRequestBody(body io.Reader, bodyCloser io.Clos
+ 		}
+ 	}
+ 
++	if sentEnd {
++
++		return nil
++	}
++
+ 	var trls []byte
+-	if !sentEnd && hasTrailers {
++	if hasTrailers {
+ 		cc.mu.Lock()
+ 		defer cc.mu.Unlock()
+ 		trls = cc.encodeTrailers(req)
+-- 
+2.7.4
+

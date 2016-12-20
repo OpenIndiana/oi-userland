@@ -1,0 +1,43 @@
+From fab76f07f54527cd5b0c7243bea96d9d3608582d Mon Sep 17 00:00:00 2001
+From: Michael Fraenkel <michael.fraenkel@gmail.com>
+Date: Wed, 5 Oct 2016 11:27:34 -0400
+Subject: [PATCH 34/38] [release-branch.go1.7] net/http: multipart ReadForm
+ close file after copy
+
+Always close the file regardless of whether the copy succeeds or fails.
+Pass along the close error if the copy succeeds
+
+Updates #16296
+Fixes #17965
+
+Change-Id: Ib394655b91d25750f029f17b3846d985f673fb50
+Reviewed-on: https://go-review.googlesource.com/30410
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/33639
+Reviewed-by: Chris Broadfoot <cbro@golang.org>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/mime/multipart/formdata.go | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/mime/multipart/formdata.go b/src/mime/multipart/formdata.go
+index 8085bd3..c9e3188 100644
+--- a/src/mime/multipart/formdata.go
++++ b/src/mime/multipart/formdata.go
+@@ -79,8 +79,10 @@ func (r *Reader) readForm(maxMemory int64) (_ *Form, err error) {
+ 			if err != nil {
+ 				return nil, err
+ 			}
+-			defer file.Close()
+ 			_, err = io.Copy(file, io.MultiReader(&b, p))
++			if cerr := file.Close(); err == nil {
++				err = cerr
++			}
+ 			if err != nil {
+ 				os.Remove(file.Name())
+ 				return nil, err
+-- 
+2.7.4
+

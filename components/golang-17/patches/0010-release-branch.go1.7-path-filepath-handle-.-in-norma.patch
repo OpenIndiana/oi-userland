@@ -1,0 +1,267 @@
+From 3129c67db76bc8ee13a1edc38a6c25f9eddcbc6c Mon Sep 17 00:00:00 2001
+From: Hiroshi Ioka <hirochachacha@gmail.com>
+Date: Fri, 19 Aug 2016 09:37:19 +0900
+Subject: [PATCH 10/38] [release-branch.go1.7] path/filepath: handle ".." in
+ normalizing a path on Windows
+
+Current code assumes there are not ".." in the Clean(path).
+That's not true. Clean doesn't handle leading "..", so we need to stop
+normalization if we see "..".
+
+Fixes #16793
+
+Change-Id: I0a7901bedac17f1210b134d593ebd9f5e8483775
+Reviewed-on: https://go-review.googlesource.com/27410
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Alex Brainman <alex.brainman@gmail.com>
+Run-TryBot: Ian Lance Taylor <iant@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/28641
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+---
+ src/path/filepath/export_windows_test.go |   5 +-
+ src/path/filepath/path_test.go           |  32 +++++++++-
+ src/path/filepath/path_windows_test.go   | 101 ++++++++++++++++++++++++++++++-
+ src/path/filepath/symlink_windows.go     |  29 ++++++++-
+ 4 files changed, 159 insertions(+), 8 deletions(-)
+
+diff --git a/src/path/filepath/export_windows_test.go b/src/path/filepath/export_windows_test.go
+index 8ca007f..a7e2e64 100644
+--- a/src/path/filepath/export_windows_test.go
++++ b/src/path/filepath/export_windows_test.go
+@@ -4,4 +4,7 @@
+ 
+ package filepath
+ 
+-var ToNorm = toNorm
++var (
++	ToNorm   = toNorm
++	NormBase = normBase
++)
+diff --git a/src/path/filepath/path_test.go b/src/path/filepath/path_test.go
+index 1a4a9d2..a3990e2 100644
+--- a/src/path/filepath/path_test.go
++++ b/src/path/filepath/path_test.go
+@@ -840,7 +840,7 @@ func TestEvalSymlinks(t *testing.T) {
+ 		if p, err := filepath.EvalSymlinks(path); err != nil {
+ 			t.Errorf("EvalSymlinks(%q) error: %v", d.path, err)
+ 		} else if filepath.Clean(p) != filepath.Clean(dest) {
+-			t.Errorf("Clean(%q)=%q, want %q", path, p, dest)
++			t.Errorf("EvalSymlinks(%q)=%q, want %q", path, p, dest)
+ 		}
+ 
+ 		// test EvalSymlinks(".")
+@@ -872,6 +872,34 @@ func TestEvalSymlinks(t *testing.T) {
+ 			t.Errorf(`EvalSymlinks(".") in %q directory returns %q, want "." or %q`, d.path, p, want)
+ 		}()
+ 
++		// test EvalSymlinks(".."+path)
++		func() {
++			defer func() {
++				err := os.Chdir(wd)
++				if err != nil {
++					t.Fatal(err)
++				}
++			}()
++
++			err := os.Chdir(simpleJoin(tmpDir, "test"))
++			if err != nil {
++				t.Error(err)
++				return
++			}
++
++			path := simpleJoin("..", d.path)
++			dest := simpleJoin("..", d.dest)
++			if filepath.IsAbs(d.dest) || os.IsPathSeparator(d.dest[0]) {
++				dest = d.dest
++			}
++
++			if p, err := filepath.EvalSymlinks(path); err != nil {
++				t.Errorf("EvalSymlinks(%q) error: %v", d.path, err)
++			} else if filepath.Clean(p) != filepath.Clean(dest) {
++				t.Errorf("EvalSymlinks(%q)=%q, want %q", path, p, dest)
++			}
++		}()
++
+ 		// test EvalSymlinks where parameter is relative path
+ 		func() {
+ 			defer func() {
+@@ -889,7 +917,7 @@ func TestEvalSymlinks(t *testing.T) {
+ 			if p, err := filepath.EvalSymlinks(d.path); err != nil {
+ 				t.Errorf("EvalSymlinks(%q) error: %v", d.path, err)
+ 			} else if filepath.Clean(p) != filepath.Clean(d.dest) {
+-				t.Errorf("Clean(%q)=%q, want %q", d.path, p, d.dest)
++				t.Errorf("EvalSymlinks(%q)=%q, want %q", d.path, p, d.dest)
+ 			}
+ 		}()
+ 	}
+diff --git a/src/path/filepath/path_windows_test.go b/src/path/filepath/path_windows_test.go
+index b47cdfd..9c82a0b 100644
+--- a/src/path/filepath/path_windows_test.go
++++ b/src/path/filepath/path_windows_test.go
+@@ -329,9 +329,106 @@ func TestToNorm(t *testing.T) {
+ 	for _, test := range tests {
+ 		got, err := filepath.ToNorm(test.arg, stubBase)
+ 		if err != nil {
+-			t.Errorf("unexpected toNorm error, arg: %s, err: %v\n", test.arg, err)
++			t.Errorf("toNorm(%s) failed: %v\n", test.arg, err)
+ 		} else if got != test.want {
+-			t.Errorf("toNorm error, arg: %s, want: %s, got: %s\n", test.arg, test.want, got)
++			t.Errorf("toNorm(%s) returns %s, but %s expected\n", test.arg, got, test.want)
++		}
++	}
++
++	testPath := `{{tmp}}\test\foo\bar`
++
++	testsDir := []struct {
++		wd   string
++		arg  string
++		want string
++	}{
++		// test absolute paths
++		{".", `{{tmp}}\test\foo\bar`, `{{tmp}}\test\foo\bar`},
++		{".", `{{tmp}}\.\test/foo\bar`, `{{tmp}}\test\foo\bar`},
++		{".", `{{tmp}}\test\..\test\foo\bar`, `{{tmp}}\test\foo\bar`},
++		{".", `{{tmp}}\TEST\FOO\BAR`, `{{tmp}}\test\foo\bar`},
++
++		// test relative paths begin with drive letter
++		{`{{tmp}}\test`, `{{tmpvol}}.`, `{{tmpvol}}.`},
++		{`{{tmp}}\test`, `{{tmpvol}}..`, `{{tmpvol}}..`},
++		{`{{tmp}}\test`, `{{tmpvol}}foo\bar`, `{{tmpvol}}foo\bar`},
++		{`{{tmp}}\test`, `{{tmpvol}}.\foo\bar`, `{{tmpvol}}foo\bar`},
++		{`{{tmp}}\test`, `{{tmpvol}}foo\..\foo\bar`, `{{tmpvol}}foo\bar`},
++		{`{{tmp}}\test`, `{{tmpvol}}FOO\BAR`, `{{tmpvol}}foo\bar`},
++
++		// test relative paths begin with '\'
++		{".", `{{tmpnovol}}\test\foo\bar`, `{{tmpnovol}}\test\foo\bar`},
++		{".", `{{tmpnovol}}\.\test\foo\bar`, `{{tmpnovol}}\test\foo\bar`},
++		{".", `{{tmpnovol}}\test\..\test\foo\bar`, `{{tmpnovol}}\test\foo\bar`},
++		{".", `{{tmpnovol}}\TEST\FOO\BAR`, `{{tmpnovol}}\test\foo\bar`},
++
++		// test relative paths begin without '\'
++		{`{{tmp}}\test`, ".", `.`},
++		{`{{tmp}}\test`, "..", `..`},
++		{`{{tmp}}\test`, `foo\bar`, `foo\bar`},
++		{`{{tmp}}\test`, `.\foo\bar`, `foo\bar`},
++		{`{{tmp}}\test`, `foo\..\foo\bar`, `foo\bar`},
++		{`{{tmp}}\test`, `FOO\BAR`, `foo\bar`},
++	}
++
++	cwd, err := os.Getwd()
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	defer func() {
++		err := os.Chdir(cwd)
++		if err != nil {
++			t.Fatal(err)
++		}
++	}()
++
++	tmp, err := ioutil.TempDir("", "testToNorm")
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer os.RemoveAll(tmp)
++
++	// ioutil.TempDir might return "non-canonical" name.
++	tmp, err = filepath.EvalSymlinks(tmp)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	err = os.MkdirAll(strings.Replace(testPath, "{{tmp}}", tmp, -1), 0777)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	tmpVol := filepath.VolumeName(tmp)
++	tmpNoVol := tmp[len(tmpVol):]
++
++	for _, test := range testsDir {
++		wd := strings.Replace(strings.Replace(strings.Replace(test.wd, "{{tmp}}", tmp, -1), "{{tmpvol}}", tmpVol, -1), "{{tmpnovol}}", tmpNoVol, -1)
++		arg := strings.Replace(strings.Replace(strings.Replace(test.arg, "{{tmp}}", tmp, -1), "{{tmpvol}}", tmpVol, -1), "{{tmpnovol}}", tmpNoVol, -1)
++		want := strings.Replace(strings.Replace(strings.Replace(test.want, "{{tmp}}", tmp, -1), "{{tmpvol}}", tmpVol, -1), "{{tmpnovol}}", tmpNoVol, -1)
++
++		if test.wd == "." {
++			err := os.Chdir(cwd)
++			if err != nil {
++				t.Error(err)
++
++				continue
++			}
++		} else {
++			err := os.Chdir(wd)
++			if err != nil {
++				t.Error(err)
++
++				continue
++			}
++		}
++
++		got, err := filepath.ToNorm(arg, filepath.NormBase)
++		if err != nil {
++			t.Errorf("toNorm(%s) failed: %v (wd=%s)\n", arg, err, wd)
++		} else if got != want {
++			t.Errorf("toNorm(%s) returns %s, but %s expected (wd=%s)\n", arg, got, want, wd)
+ 		}
+ 	}
+ }
+diff --git a/src/path/filepath/symlink_windows.go b/src/path/filepath/symlink_windows.go
+index 2433528..bb05aab 100644
+--- a/src/path/filepath/symlink_windows.go
++++ b/src/path/filepath/symlink_windows.go
+@@ -22,7 +22,7 @@ func normVolumeName(path string) string {
+ 	return strings.ToUpper(volume)
+ }
+ 
+-// normBase retruns the last element of path.
++// normBase returns the last element of path with correct case.
+ func normBase(path string) (string, error) {
+ 	p, err := syscall.UTF16PtrFromString(path)
+ 	if err != nil {
+@@ -40,7 +40,24 @@ func normBase(path string) (string, error) {
+ 	return syscall.UTF16ToString(data.FileName[:]), nil
+ }
+ 
+-func toNorm(path string, base func(string) (string, error)) (string, error) {
++// baseIsDotDot returns whether the last element of path is "..".
++// The given path should be 'Clean'-ed in advance.
++func baseIsDotDot(path string) bool {
++	i := strings.LastIndexByte(path, Separator)
++	return path[i+1:] == ".."
++}
++
++// toNorm returns the normalized path that is guranteed to be unique.
++// It should accept the following formats:
++//   * UNC paths                              (e.g \\server\share\foo\bar)
++//   * absolute paths                         (e.g C:\foo\bar)
++//   * relative paths begin with drive letter (e.g C:foo\bar, C:..\foo\bar, C:.., C:.)
++//   * relative paths begin with '\'          (e.g \foo\bar)
++//   * relative paths begin without '\'       (e.g foo\bar, ..\foo\bar, .., .)
++// The returned normalized path will be in the same form (of 5 listed above) as the input path.
++// If two paths A and B are indicating the same file with the same format, toNorm(A) should be equal to toNorm(B).
++// The normBase parameter should be equal to the normBase func, except for in tests.  See docs on the normBase func.
++func toNorm(path string, normBase func(string) (string, error)) (string, error) {
+ 	if path == "" {
+ 		return path, nil
+ 	}
+@@ -58,7 +75,13 @@ func toNorm(path string, base func(string) (string, error)) (string, error) {
+ 	var normPath string
+ 
+ 	for {
+-		name, err := base(volume + path)
++		if baseIsDotDot(path) {
++			normPath = path + `\` + normPath
++
++			break
++		}
++
++		name, err := normBase(volume + path)
+ 		if err != nil {
+ 			return "", err
+ 		}
+-- 
+2.7.4
+
