@@ -31,15 +31,14 @@ include ../../../make-rules/shared-macros.mk
 # can't call it.
 
 COMPONENT_NAME=		perl
-COMPONENT_VERSION=	5.22.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.22.2
 COMPONENT_SUMMARY=	Perl 5.22
 PERL_VERSION=		5.22
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e98e4075a3167fa40524abe447c30bcca10c60e02a54ee1361eff278947a1221
+    sha256:b34dab1eabec056bec5a6682a57b55dab1bcf6afc60b098c9e2d99433dedc295
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl
 COMPONENT_FMRI=		runtime/perl-522
@@ -89,20 +88,29 @@ COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 #
 PKG_MACROS		+=	P_ARCH=$(shell arch)
 
+#
+# Getting 1 different result between sparc and x86.
+#
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
+#
+# Throw out everything prior to test results.
+# 2 x delete timings
+#
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/runtests choose/d"' \
+	'-e "/^u=/d" ' \
+	'-e "/^Elapsed/d"'
+
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-	#
-	#	Failed 5 tests out of 2222, 99.77% okay.
-	#		../ext/re/t/re_funcs_u.t
-	#		../lib/locale.t
-	#		re/subst.t
-	#		re/substT.t
-	#		re/subst_wamp.t
-	# 		
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/math
