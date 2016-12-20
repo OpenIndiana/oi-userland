@@ -17,9 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=       opus
 COMPONENT_VERSION=    1.1.3
+COMPONENT_REVISION=   1
 COMPONENT_PROJECT_URL=http://opus-codec.org/
 COMPONENT_SUMMARY=    Opus is an open, royalty-free, versatile audio codec for interactive speech and music transmission over the Internet
-COMPONENT_LICENSE=    BSD
 COMPONENT_FMRI=       library/opus
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SRC=        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
