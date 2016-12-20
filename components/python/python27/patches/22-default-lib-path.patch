@@ -1,28 +1,44 @@
 This patch was developed in-house.  It has been submitted upstream:
 http://bugs.python.org/issue23287
 
---- Python-2.7.12/Lib/ctypes/util.py.~1~	2016-06-25 14:49:30.000000000 -0700
-+++ Python-2.7.12/Lib/ctypes/util.py	2016-07-07 14:25:48.212744320 -0700
-@@ -176,23 +176,11 @@
+--- Python-2.7.13/Lib/ctypes/util.py.~1~	2016-12-17 12:05:05.000000000 +0000
++++ Python-2.7.13/Lib/ctypes/util.py	2016-12-19 08:44:16.426321564 +0000
+@@ -188,39 +188,15 @@
  
      elif sys.platform == "sunos5":
  
 -        def _findLib_crle(name, is64):
 -            if not os.path.exists('/usr/bin/crle'):
 -                return None
--
 +        def _findLib_path(name, is64):
+ 
+             env = dict(os.environ)
+             env['LC_ALL'] = 'C'
+ 
              if is64:
--                cmd = 'env LC_ALL=C /usr/bin/crle -64 2>/dev/null'
+-                args = ('/usr/bin/crle', '-64')
 +                paths = "/lib/64:/usr/lib/64"
              else:
--                cmd = 'env LC_ALL=C /usr/bin/crle 2>/dev/null'
+-                args = ('/usr/bin/crle',)
 -
 -            paths = None
--            for line in os.popen(cmd).readlines():
--                line = line.strip()
--                if line.startswith('Default Library Path (ELF):'):
--                    paths = line.split()[4]
+-            null = open(os.devnull, 'wb')
+-            try:
+-                with null:
+-                    proc = subprocess.Popen(args,
+-                                            stdout=subprocess.PIPE,
+-                                            stderr=null,
+-                                            env=env)
+-            except OSError:  # E.g. bad executable
+-                return None
+-            try:
+-                for line in proc.stdout:
+-                    line = line.strip()
+-                    if line.startswith(b'Default Library Path (ELF):'):
+-                        paths = line.split()[4]
+-            finally:
+-                proc.stdout.close()
+-                proc.wait()
 -
 -            if not paths:
 -                return None
@@ -30,7 +46,7 @@ http://bugs.python.org/issue23287
  
              for dir in paths.split(":"):
                  libfile = os.path.join(dir, "lib%s.so" % name)
-@@ -202,7 +190,7 @@
+@@ -230,7 +206,7 @@
              return None
  
          def find_library(name, is64 = False):

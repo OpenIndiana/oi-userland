@@ -4,9 +4,9 @@ is a workaround for build peculiarities and to meet Studio's requirement
 that the profiling options be used at all steps of the build -- not just
 compilation.  As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.12/Makefile.pre.in.~2~	2016-07-07 13:54:04.997344705 -0700
-+++ Python-2.7.12/Makefile.pre.in	2016-07-07 14:06:13.325835947 -0700
-@@ -212,7 +212,7 @@
+--- Python-2.7.13/Makefile.pre.in.~2~	2016-12-19 08:31:05.720179529 +0000
++++ Python-2.7.13/Makefile.pre.in	2016-12-19 08:31:05.804725502 +0000
+@@ -211,7 +211,7 @@
  # The task to run while instrument when building the profile-opt target
  # We exclude unittests with -x that take a rediculious amount of time to
  # run in the instrumented training build or do not provide much value.
@@ -15,12 +15,12 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  
  # report files for gcov / lcov coverage report
  COVERAGE_INFO=	$(abs_builddir)/coverage.info
-@@ -455,24 +455,33 @@
+@@ -454,24 +454,33 @@
  	$(MAKE) profile-removal
  
  build_all_generate_profile:
--	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LIBS="$(LIBS)"
-+	$(MAKE) all CC="$(CC) -xprofile=collect:$(XPROFILE_DIR)" \
+-	$(MAKE) @DEF_MAKE_RULE@ CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG) @LTOFLAGS@" LIBS="$(LIBS)"
++	$(MAKE) @DEF_MAKE_RULE@ CC="$(CC) -xprofile=collect:$(XPROFILE_DIR)" \
 +            CFLAGS="$(CFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
 +            LDFLAGS="$(LDFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
 +            BLDSHARED="$(BLDSHARED) -xprofile=collect:$(XPROFILE_DIR)"
@@ -34,8 +34,8 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  	$(LLVM_PROF_MERGER)
  
  build_all_use_profile:
--	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) @LTOFLAGS@"
-+	$(MAKE) all CC="$(CC) -xprofile=use:$(XPROFILE_DIR)" \
+-	$(MAKE) @DEF_MAKE_RULE@ CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG) @LTOFLAGS@" LDFLAGS="$(LDFLAGS) @LTOFLAGS@"
++	$(MAKE) @DEF_MAKE_RULE@ CC="$(CC) -xprofile=use:$(XPROFILE_DIR)" \
 +            CFLAGS="$(CFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
 +            LDFLAGS="$(LDFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
 +            BLDSHARED="$(BLDSHARED) -xprofile=use:$(XPROFILE_DIR)"
@@ -45,16 +45,16 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  coverage:
  	@echo "Building with support for coverage checking:"
  	$(MAKE) clean profile-removal
--	$(MAKE) all CFLAGS="$(CFLAGS) -O0 -pg -fprofile-arcs -ftest-coverage" LIBS="$(LIBS) -lgcov"
-+	$(MAKE) all CC="$(CC) -xprofile=tcov" \
+-	$(MAKE) @DEF_MAKE_RULE@ CFLAGS="$(CFLAGS) -O0 -pg -fprofile-arcs -ftest-coverage" LIBS="$(LIBS) -lgcov"
++	$(MAKE) @DEF_MAKE_RULE@ CC="$(CC) -xprofile=tcov" \
 +            CFLAGS="$(CFLAGS) -xO1 -xprofile=tcov" \
 +            LDFLAGS="$(LDFLAGS) -xprofile=tcov" \
 +            BLDSHARED="$(BLDSHARED) -xprofile=tcov"
  
  coverage-lcov:
  	@echo "Creating Coverage HTML report with LCOV:"
-@@ -1422,9 +1431,7 @@
- 	-rm -rf build
+@@ -1410,9 +1419,7 @@
+ 	-find build -type f -a ! -name '*.gc??' -exec rm -f {} ';'
  
  profile-removal:
 -	find . -name '*.gc??' -exec rm -f {} ';'
