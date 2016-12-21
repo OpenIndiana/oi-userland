@@ -100,7 +100,7 @@ index 36f8c62..cabd1d2 100644
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1204,6 +1216,16 @@ do_setup_env(Session *s, const char *shell)
+@@ -1204,5 +1216,15 @@ do_setup_env(Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -114,16 +114,14 @@ index 36f8c62..cabd1d2 100644
 +	child_inherit_env(&env, &envsize, "LC_MONETARY");
 +	child_inherit_env(&env, &envsize, "LC_MESSAGES");
 +
- 	if (!options.use_login) {
- 		/* Set basic environment. */
- 		for (i = 0; i < s->num_env; i++)
-@@ -1248,8 +1270,8 @@ do_setup_env(Session *s, const char *shell)
- 		/* Normal systems set SHELL by default. */
- 		child_set_env(&env, &envsize, "SHELL", shell);
- 	}
+	/* Set basic environment. */
+	for (i = 0; i < s->num_env; i++)
+@@ -1248,8 +1270,7 @@ do_setup_env(Session *s, const char *shell)
+	/* Normal systems set SHELL by default. */
+	child_set_env(&env, &envsize, "SHELL", shell);
+
 -	if (getenv("TZ"))
 -		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-+
 +	child_inherit_env(&env, &envsize, "TZ");
  
  #ifdef PER_SESSION_XAUTHFILE

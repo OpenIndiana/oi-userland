@@ -35,20 +35,19 @@ index 4ca0a58..d049779 100644
 +#endif
 +
  void
- do_pam_set_tty(const char *tty)
+ do_pam_setcred(int init)
  {
 diff --git a/auth-pam.h b/auth-pam.h
 index a1a2b52..6c41fd9 100644
 --- a/auth-pam.h
 +++ b/auth-pam.h
-@@ -35,6 +35,9 @@ void start_pam(Authctxt *);
+@@ -35,5 +35,8 @@ void start_pam(Authctxt *);
  void finish_pam(void);
  u_int do_pam_account(void);
  void do_pam_session(void);
 +#ifdef HAVE_PAM_AUSER
 +void do_pam_set_auser(const char *);
 +#endif
- void do_pam_set_tty(const char *);
  void do_pam_setcred(int );
  void do_pam_chauthtok(void);
 diff --git a/auth.h b/auth.h
@@ -56,9 +55,9 @@ index 985053c..6883f16 100644
 --- a/auth.h
 +++ b/auth.h
 @@ -84,6 +84,9 @@ struct Authctxt {
- #ifdef PAM_ENHANCEMENT
-         char            *authmethod_name;
- #endif 
+ 
+ 	struct sshkey	**prev_userkeys;
+ 	u_int		 nprev_userkeys;
 +#ifdef HAVE_PAM_AUSER
 +	char		*auser;
 +#endif 
