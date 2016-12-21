@@ -29,14 +29,14 @@ include ../../make-rules/shared-macros.mk
 PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(USRDIR)/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.18
+COMPONENT_VERSION=      3.5.23
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:812ba5ec74ebdc1bea1b3013b636f9dfcb7a6f5271b2783961009c215879af82
+    sha256:fa4c0c99f41e92fe1330bed3968d176c6f47ef2e3aea2f83977d5501afa40bdb
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 
-TPNO=			28337
+TPNO=			33098
 
 # Enable adiheap and adistack security extensions
 ADIHEAP_MODE =	$(ADIHEAP_ENABLE)
@@ -124,7 +124,7 @@ PERL_SCRIPTS= $(PROTOUSRDIR)/squid/libexec/helper-mux.pl
 #	# acl manager proto cache_object
 #
 # Make sure apache is running.
-#	# svcs apache22
+#	# svcs apache24
 # Start squid:
 #	# svcadm enable squid
 # On your desktop set your web browser to proxy through this squid:
