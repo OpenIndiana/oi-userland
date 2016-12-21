@@ -176,6 +176,9 @@ CONFIGURE_OPTIONS += --with-serf=$(CONFIGURE_PREFIIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apache-libexecdir=$(APACHE_LIBEXECDIR)
+# libgnome-keyring was obsoleted upstream, disable support for storing svn
+# passwords in gnome-keyring until svn is updated to use libsecret instead
+CONFIGURE_OPTIONS += --without-gnome-keyring
 
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
@@ -214,12 +217,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/versioning/subversion
 REQUIRED_PACKAGES += developer/build/scons
-REQUIRED_PACKAGES += gnome/gnome-keyring
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/libserf
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-522
