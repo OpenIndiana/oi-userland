@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE_HASH=	 \
 COMPONENT_PROJECT_URL=	https://golang.org
 
 ARC_CASE=		PSARC/2015/203,PSARC/2016/250
-TPNO=			23679,29538
+TPNO=			29538
 
 # Go has a number of supplementary tools and packages that are located in
 # separate archives or source repositories. Because Go currently forces a
