@@ -27,15 +27,15 @@ BUILD_BITS =            64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.23.1
+COMPONENT_VERSION=	0.23.2
 COMPONENT_PROJECT_URL=	http://p11-glue.freedesktop.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:e57371669f3b157141b86c429bd9c29741994b2f5ff115fcb8a03e751b0f6ac4
+    sha256:ba726ea8303c97467a33fca50ee79b7b35212964be808ecf9b145e9042fdfaf0
 COMPONENT_ARCHIVE_URL=	http://p11-glue.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/security
 
-TPNO=			25611
+TPNO=			32885	
 
 # Needs header updates from ON, available in S12 but not S11.
 ifeq ($(BUILD_TYPE), evaluation)
