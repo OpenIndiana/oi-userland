@@ -25,15 +25,15 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	8.38
+COMPONENT_VERSION=	8.39
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9883e419c336c63b0cb5202b09537c140966d585e4d0da66147dc513da13e629
+    sha256:ccdf7e788769838f8285b3ee672ed573358202305ee361cfec7a4a4fb005bbc7
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://pcre.org/
 COMPONENT_BUGDB=	library/pcre
 
-TPNO=			25877
+TPNO=			32943
 
 TEST_TARGET= install $(TEST_32_and_64)
 SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
