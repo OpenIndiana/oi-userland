@@ -111,7 +111,6 @@ REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's/REQUIRED_PACKAGES +=//p' ../nautil
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += desktop/pdf-viewer/poppler
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

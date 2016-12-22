@@ -97,7 +97,6 @@ REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/libvorbis
 REQUIRED_PACKAGES += codec/libvpx
-REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng

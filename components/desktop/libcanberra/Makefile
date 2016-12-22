@@ -65,7 +65,6 @@ CONFIGURE_OPTIONS += --with-pic
 
 REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/audio/pulseaudio

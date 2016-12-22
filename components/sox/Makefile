@@ -41,9 +41,12 @@ CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  += 	--disable-openmp
 
 REQUIRED_PACKAGES += codec/flac
+ifeq ($(BUILD_TYPE), evaluation)
+REQUIRED_PACKAGES += codec/ogg-vorbis
+else
 REQUIRED_PACKAGES += codec/libogg
 REQUIRED_PACKAGES += codec/libvorbis
-REQUIRED_PACKAGES += codec/ogg-vorbis
+endif
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/libsndfile
