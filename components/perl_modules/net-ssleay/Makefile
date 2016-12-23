@@ -26,15 +26,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Net-SSLeay
-COMPONENT_VERSION=	1.52
+COMPONENT_VERSION=	1.78
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:48ece32f8f1b4c20acedfcaefd5d66f0ab8818ae6f994ab7c02da7f42e6d77ba
+    sha256:e7f56427602f897446013b84b9ff51b8e8ab4fce0bbd086c4e28c198a942ed53
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MIKEM/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/net-ssleay
-TPNO=			21963
+TPNO=			33013
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/makemaker.mk
