@@ -22,10 +22,117 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend fmri=$(COMPONENT_FMRI)/drivers/serial@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/usb@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/snmp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/netxml@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/ipmi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/powerman@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
-depend fmri=$(COMPONENT_FMRI)/drivers/virtual@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+<transform file path=usr/lib/nut/bin/(.+) -> default mode 0555>
+<transform file path=usr/share/man/man1m/(.+) -> set action.hash usr/share/man/man1/%<1> >
+
+dir path=usr/lib/nut/bin group=bin
+
+file path=usr/lib/nut/bin/al175
+file path=usr/lib/nut/bin/apcsmart
+file path=usr/lib/nut/bin/apcsmart-old
+file path=usr/lib/nut/bin/apcupsd-ups
+file path=usr/lib/nut/bin/bcmxcp
+file path=usr/lib/nut/bin/bcmxcp_usb
+file path=usr/lib/nut/bin/belkin
+file path=usr/lib/nut/bin/belkinunv
+file path=usr/lib/nut/bin/bestfcom
+file path=usr/lib/nut/bin/bestfortress
+file path=usr/lib/nut/bin/bestuferrups
+file path=usr/lib/nut/bin/bestups
+file path=usr/lib/nut/bin/blazer_ser
+file path=usr/lib/nut/bin/blazer_usb
+file path=usr/lib/nut/bin/clone
+file path=usr/lib/nut/bin/clone-outlet
+file path=usr/lib/nut/bin/dummy-ups
+file path=usr/lib/nut/bin/etapro
+file path=usr/lib/nut/bin/everups
+file path=usr/lib/nut/bin/gamatronic
+file path=usr/lib/nut/bin/genericups
+file path=usr/lib/nut/bin/isbmex
+file path=usr/lib/nut/bin/ivtscd
+file path=usr/lib/nut/bin/liebert
+file path=usr/lib/nut/bin/liebert-esp2
+file path=usr/lib/nut/bin/masterguard
+file path=usr/lib/nut/bin/metasys
+file path=usr/lib/nut/bin/mge-shut
+file path=usr/lib/nut/bin/mge-utalk
+file path=usr/lib/nut/bin/microdowell
+file path=usr/lib/nut/bin/netxml-ups
+file path=usr/lib/nut/bin/nut-ipmipsu
+file path=usr/lib/nut/bin/nutdrv_atcl_usb
+file path=usr/lib/nut/bin/nutdrv_qx
+file path=usr/lib/nut/bin/oldmge-shut
+file path=usr/lib/nut/bin/oneac
+file path=usr/lib/nut/bin/optiups
+file path=usr/lib/nut/bin/powercom
+file path=usr/lib/nut/bin/powerman-pdu
+file path=usr/lib/nut/bin/powerpanel
+file path=usr/lib/nut/bin/rhino
+file path=usr/lib/nut/bin/richcomm_usb
+file path=usr/lib/nut/bin/riello_ser
+file path=usr/lib/nut/bin/riello_usb
+file path=usr/lib/nut/bin/safenet
+file path=usr/lib/nut/bin/snmp-ups
+file path=usr/lib/nut/bin/solis
+file path=usr/lib/nut/bin/tripplite
+file path=usr/lib/nut/bin/tripplite_usb
+file path=usr/lib/nut/bin/tripplitesu
+file path=usr/lib/nut/bin/upscode2
+file path=usr/lib/nut/bin/usbhid-ups
+file path=usr/lib/nut/bin/victronups
+file data/epdu-managed.dev \
+    path=usr/share/nut/etc-samples/epdu-managed.dev.dummy-ups.sample
+file data/evolution500.seq \
+    path=usr/share/nut/etc-samples/evolution500.seq.dummy-ups.sample
+file path=usr/share/man/man1m/al175.1m
+file path=usr/share/man/man1m/apcsmart-old.1m
+file path=usr/share/man/man1m/apcsmart.1m
+file path=usr/share/man/man1m/apcupsd-ups.1m
+file path=usr/share/man/man1m/bcmxcp.1m
+file path=usr/share/man/man1m/bcmxcp_usb.1m
+file path=usr/share/man/man1m/belkin.1m
+file path=usr/share/man/man1m/belkinunv.1m
+file path=usr/share/man/man1m/bestfcom.1m
+file path=usr/share/man/man1m/bestfortress.1m
+file path=usr/share/man/man1m/bestuferrups.1m
+file path=usr/share/man/man1m/bestups.1m
+file path=usr/share/man/man1m/blazer_ser.1m
+file path=usr/share/man/man1m/blazer_usb.1m
+file path=usr/share/man/man1m/clone.1m
+file path=usr/share/man/man1m/dummy-ups.1m
+file path=usr/share/man/man1m/etapro.1m
+file path=usr/share/man/man1m/everups.1m
+file path=usr/share/man/man1m/gamatronic.1m
+file path=usr/share/man/man1m/genericups.1m
+file path=usr/share/man/man1m/isbmex.1m
+file path=usr/share/man/man1m/ivtscd.1m
+file path=usr/share/man/man1m/liebert-esp2.1m
+file path=usr/share/man/man1m/liebert.1m
+file path=usr/share/man/man1m/masterguard.1m
+file path=usr/share/man/man1m/metasys.1m
+file path=usr/share/man/man1m/mge-shut.1m
+file path=usr/share/man/man1m/mge-utalk.1m
+file path=usr/share/man/man1m/microdowell.1m
+file path=usr/share/man/man1m/netxml-ups.1m
+file path=usr/share/man/man1m/nut-ipmipsu.1m
+file path=usr/share/man/man1m/nutdrv_atcl_usb.1m
+file path=usr/share/man/man1m/nutdrv_qx.1m
+file path=usr/share/man/man1m/nutupsdrv.1m
+file path=usr/share/man/man1m/oneac.1m
+file path=usr/share/man/man1m/optiups.1m
+file path=usr/share/man/man1m/powercom.1m
+file path=usr/share/man/man1m/powerman-pdu.1m
+file path=usr/share/man/man1m/powerpanel.1m
+file path=usr/share/man/man1m/rhino.1m
+file path=usr/share/man/man1m/richcomm_usb.1m
+file path=usr/share/man/man1m/riello_ser.1m
+file path=usr/share/man/man1m/riello_usb.1m
+file path=usr/share/man/man1m/safenet.1m
+file path=usr/share/man/man1m/snmp-ups.1m
+file path=usr/share/man/man1m/solis.1m
+file path=usr/share/man/man1m/tripplite.1m
+file path=usr/share/man/man1m/tripplite_usb.1m
+file path=usr/share/man/man1m/tripplitesu.1m
+file path=usr/share/man/man1m/upscode2.1m
+file path=usr/share/man/man1m/usbhid-ups.1m
+file path=usr/share/man/man1m/victronups.1m
