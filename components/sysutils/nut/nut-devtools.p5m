@@ -23,10 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/man/man1m/(.+) -> set action.hash usr/share/man/man1/%<1> >
 
 ### NUT Tools for project development and debugging
 file tools/nut-recorder.sh path=usr/bin/nut-recorder
-file path=usr/share/man/man8/nut-recorder.8
+file path=usr/share/man/man1m/nut-recorder.1m
 
 file tools/nut-ddl-dump.sh path=usr/bin/nut-ddl-dump
 

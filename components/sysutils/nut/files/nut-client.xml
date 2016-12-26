@@ -19,9 +19,9 @@
 #
 -->
 
-<service_bundle type='manifest' name='nut'>
+<service_bundle type='manifest' name='nut-client'>
 
-	<service name='system/power/nut' type='service' version='1'>
+	<service name='system/power/nut-client' type='service' version='1'>
 
 	<!--
 	  Configure a default instance for the service since it doesn't
@@ -75,13 +75,24 @@
 		</dependency>
 
 	<!--
+	  Wait for NUT upsd to be started, if it's enabled
+	-->
+		<dependency
+		name='nut-service'
+		grouping='optional_all'
+		restart_on='none'
+		type='service'>
+			<service_fmri value='svc:/system/power/nut' />
+		</dependency>
+
+	<!--
 	  The nut start/stop methods.
 	-->
 
 		<exec_method
 		type='method'
 		name='start'
-		exec='/lib/svc/method/svc-nut %m'
+		exec='/lib/svc/method/svc-nut-client %m'
 		timeout_seconds='60'/>
 
 		<exec_method
@@ -105,19 +116,13 @@
 		<template>
 			<common_name>
 				<loctext xml:lang='C'>
-				NUT ups information service
+				NUT ups monitoring service
 				</loctext>
 			</common_name>
 			<documentation>
-				<manpage title='upsdrvctl' section='8'
+				<manpage title='upsmon' section='8'
 				manpath='/usr/share/man' />
-				<manpage title='upsd' section='8'
-				manpath='/usr/share/man' />
-				<manpage title='ups.conf' section='5'
-				manpath='/usr/share/man' />
-				<manpage title='upsd.conf' section='5'
-				manpath='/usr/share/man' />
-				<manpage title='upsd.users' section='5'
+				<manpage title='upsmon.conf' section='5'
 				manpath='/usr/share/man' />
 			</documentation>
 		</template>

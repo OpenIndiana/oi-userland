@@ -23,6 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/man/man1m/(.+) -> set action.hash usr/share/man/man1/%<1> >
 
 depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
@@ -33,22 +34,11 @@ depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) t
 ### NUT driver packages should pull their relevant libs by harder ELF reqs.
 ### Reasonably, if you don't want those UPSes (got no drivers) why scan them? :)
 
-file path=usr/bin/$(MACH64)/nut-scanner
-file path=usr/bin/$(MACH64)/upsc
-file path=usr/bin/$(MACH64)/upscmd
-file path=usr/bin/$(MACH64)/upslog
-file path=usr/bin/$(MACH64)/upsrw
-
 file path=usr/bin/nut-scanner
 file path=usr/bin/upsc
 file path=usr/bin/upscmd
 file path=usr/bin/upslog
 file path=usr/bin/upsrw
-
-file path=usr/sbin/$(MACH64)/upsd
-file path=usr/sbin/$(MACH64)/upsdrvctl
-file path=usr/sbin/$(MACH64)/upsmon
-file path=usr/sbin/$(MACH64)/upssched
 
 file path=usr/sbin/upsd
 file path=usr/sbin/upsdrvctl
@@ -56,90 +46,54 @@ file path=usr/sbin/upsmon
 file path=usr/sbin/upssched
 
 # Example notification script for UPSMON
-file files/notifyme path=$(NUTDRVDIR)/notifyme preserve=renamenew
+file files/notifyme path=usr/lib/nut/bin/notifyme mode=0755 preserve=renamenew
 
 # This is an example script for handling upssched
 file path=usr/bin/upssched-cmd preserve=renamenew
 
-# Init-scripts for NUT, not perfect - but better than nothing for a start
-# Note that it is practically blocked by default `nut.conf` until changed
-# by administrator. We might deliver another script in its place later on.
+# Init-scripts for NUT, not perfect - but better than nothing for a start.
 # NUT should start generally after networking (if SNMP or NetXML is used,
 # or if this box is a client to remote upsd). Ending is trickier - could
 # want it to issue killpower late in shutdown, but have network to be able
 # to do so (for remote UPSes). This can be tuned in XML manifest by user.
-file path=lib/svc/method/svc-nut owner=bin group=bin mode=555
-file files/nut.xml path=var/svc/manifest/application/nut.xml \
-     restart_fmri=svc:/system/manifest-import:default
+file files/svc-nut path=lib/svc/method/svc-nut
+file files/nut.xml path=var/svc/manifest/application/nut.xml
+
+file files/svc-nut-client path=lib/svc/method/svc-nut-client
+file files/nut-client.xml path=var/svc/manifest/application/nut-client.xml
 
 file path=usr/share/man/man5/hosts.conf.5
-file path=usr/share/man/man5/nut.conf.5
 file path=usr/share/man/man5/ups.conf.5
 file path=usr/share/man/man5/upsd.conf.5
 file path=usr/share/man/man5/upsd.users.5
 file path=usr/share/man/man5/upsmon.conf.5
 file path=usr/share/man/man5/upssched.conf.5
 
-file path=usr/share/man/man8/nut-scanner.8
-file path=usr/share/man/man8/upsc.8
-file path=usr/share/man/man8/upscmd.8
-file path=usr/share/man/man8/upsd.8
-file path=usr/share/man/man8/upsdrvctl.8
-file path=usr/share/man/man8/upslog.8
-file path=usr/share/man/man8/upsmon.8
-file path=usr/share/man/man8/upsrw.8
-file path=usr/share/man/man8/upssched.8
+file path=usr/share/man/man1m/nut-scanner.1m
+file path=usr/share/man/man1m/upsc.1m
+file path=usr/share/man/man1m/upscmd.1m
+file path=usr/share/man/man1m/upsd.1m
+file path=usr/share/man/man1m/upsdrvctl.1m
+file path=usr/share/man/man1m/upslog.1m
+file path=usr/share/man/man1m/upsmon.1m
+file path=usr/share/man/man1m/upsrw.1m
+file path=usr/share/man/man1m/upssched.1m
 
-# NUT starter examples are by convention across many distros delivered in /etc
-# Default rights inspired by scripts/Solaris/postinstall.in
-file $(NUTETCDIR)/nut.conf.sample path=$(NUTETCSAMPLEDIR)/nut.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-file $(NUTETCDIR)/ups.conf.sample path=$(NUTETCSAMPLEDIR)/ups.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-file $(NUTETCDIR)/upsd.conf.sample path=$(NUTETCSAMPLEDIR)/upsd.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-file $(NUTETCDIR)/upsd.users.sample path=$(NUTETCSAMPLEDIR)/upsd.users.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-file $(NUTETCDIR)/upsmon.conf.sample path=$(NUTETCSAMPLEDIR)/upsmon.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-file $(NUTETCDIR)/upssched.conf.sample path=$(NUTETCSAMPLEDIR)/upssched.conf.sample \
-    group=$(NUTGROUP) owner=root mode=0440
-
-# We can actually deliver the sample configs as the ones to use,
+# We deliver the sample configs as the ones to use,
 # at worst they have no actual information inside and do nothing.
-# Also, the daemons are disabled by default `nut.conf` contents
-file $(NUTETCDIR)/nut.conf.sample path=$(NUTETCDIR)/nut.conf \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
-file $(NUTETCDIR)/ups.conf.sample path=$(NUTETCDIR)/ups.conf \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
-file $(NUTETCDIR)/upsd.conf.sample path=$(NUTETCDIR)/upsd.conf \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
-file $(NUTETCDIR)/upsd.users.sample path=$(NUTETCDIR)/upsd.users \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
-file $(NUTETCDIR)/upsmon.conf.sample path=$(NUTETCDIR)/upsmon.conf \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
-file $(NUTETCDIR)/upssched.conf.sample path=$(NUTETCDIR)/upssched.conf \
-    group=$(NUTGROUP) owner=root mode=0440 preserve=true
+file etc/nut/ups.conf.sample path=etc/nut/ups.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsd.conf.sample path=etc/nut/upsd.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsd.users.sample path=etc/nut/upsd.users \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsmon.conf.sample path=etc/nut/upsmon.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upssched.conf.sample path=etc/nut/upssched.conf \
+    group=nut owner=root mode=0640 preserve=true
 
-# Integration with dynamically added devices (USB mostly)
-# TODO pedantic: split this off to depend on some USB/hotplug/udev package(s)?
-file path=$(NUTHOTPLUGDIR)/usb/libhid.usermap preserve=renamenew
-file path=$(NUTHOTPLUGDIR)/usb/libhidups preserve=renamenew
+file build/$(MACH64)/scripts/avahi/nut.service path=$(NUT_AVAHI_SERVICE_SAMPLE)
 
-# README also suggests running `udevadm trigger --subsystem-match=usb_device`
-# Maybe on another iteration this would help us fix up illumos definitions?
-###TODO:IPMI### file path=$(NUTUDEVDIR)/rules.d/52-nut-ipmipsu.rules preserve=renamenew
-file path=$(NUTUDEVDIR)/rules.d/62-nut-usbups.rules preserve=renamenew
+file scripts/logrotate/nutlogd path=usr/share/nut/nutlogd.example
 
-# Maybe on another iteration this would help us fix up illumos definitions?
-file scripts/upower/95-upower-hid.rules path=$(NUTETCSAMPLEDIR)/95-upower-hid.rules.sample
-
-# TODO pedantic: split this off to depend on avahi package?
-# Also make sure which path that would go into for actual installation?
-file path=$(NUT_AVAHI_SERVICE_SAMPLE)
-
-# TODO pedantic: split this off to depend on logrotate package?
-file scripts/logrotate/nutlogd path=etc/logrotate.d/nutlogd preserve=renamenew
-
-# TODO pedantic: split this off to depend on bash package?
 file scripts/misc/nut.bash_completion path=usr/share/bash-completion/completions/nut
