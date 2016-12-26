@@ -41,44 +41,19 @@ CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CXXFLAGS+=$(CXXFLAGS.$(BITS))
 CFLAGS+=$(CFLAGS.$(BITS))
 
-#LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
-#LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
-
-NUTSEDSUBST = -e 's,\@USRDIR\@,$(USRDIR),g' -e 's,\@MACH\@,$(MACH),g' \
-	-e 's,\@MACH64\@,$(MACH64),g' -e 's,\@MACH32\@,$(MACH32),g'
-#NUTSEDSUBST += -e 's,\@NUTXXXDIR\@,$(NUTXXXDIR),g'
-### A lot of paths are defined and exported to pkg(5) tools below,
-### so we can flexibly set up location of certain NUT components.
-NUTUSER  =	nut
-PKG_OPTIONS +=	-D NUTUSER="$(NUTUSER)"
-NUTGROUP  =	nut
-PKG_OPTIONS +=	-D NUTGROUP="$(NUTGROUP)"
-NUTSEDSUBST += \
-	-e 's,\@NUTUSER\@,$(NUTUSER),g' \
-	-e 's,\@NUTGROUP\@,$(NUTGROUP),g'
+# Document generation can fail with -jN
+COMPONENT_BUILD_ARGS=
 
 # Example data and other resources for NUT
 NUTSHAREDIR  =	$(subst .../,,...$(USRSHAREDIR)/nut)
 PKG_OPTIONS +=	-D NUTSHAREDIR="$(NUTSHAREDIR)"
-NUTSEDSUBST += -e 's,\@NUTSHAREDIR\@,$(NUTSHAREDIR),g'
 
-# This is where config files are expected, INCLUDING (per convention from other
-# distros) example config files - e.g. not lost under /usr/shared/... locations
-# Also note we must not include the leading slash...
-NUTETCDIR  =	$(subst .../,,...$(ETCDIR)/nut)
-PKG_OPTIONS +=	-D NUTETCDIR="$(NUTETCDIR)"
-NUTSEDSUBST += -e 's,\@NUTETCDIR\@,$(NUTETCDIR),g'
-
-# To be decided - where the example copies land...
 NUTETCSAMPLEDIR=	$(NUTSHAREDIR)/etc-samples
-#NUTETCSAMPLEDIR=	$(NUTETCDIR)
 PKG_OPTIONS +=	-D NUTETCSAMPLEDIR="$(NUTETCSAMPLEDIR)"
-NUTSEDSUBST += -e 's,\@NUTETCSAMPLEDIR\@,$(NUTETCSAMPLEDIR),g'
 
 # Extra programs for NUT, not intended for direct user access (drivers, CGIs)
 NUTUSRDIR  =	$(subst .../,,...$(USRLIBDIR)/nut)
 PKG_OPTIONS +=	-D NUTUSRDIR="$(NUTUSRDIR)"
-NUTSEDSUBST += -e 's,\@NUTUSRDIR\@,$(NUTUSRDIR),g'
 # Note that binaries reside in base (32-bit) or $(MACH64) subdirectories of
 # these dirs; generally 32-bit ones should suffice and be more efficient,
 # so `isaexec` is not employed in this package. The 64-bit variants are made
@@ -87,20 +62,6 @@ NUTDRVDIR  =	$(NUTUSRDIR)/bin
 NUTCGIDIR  =	$(NUTUSRDIR)/cgi-bin
 PKG_OPTIONS +=	-D NUTDRVDIR="$(NUTDRVDIR)"
 PKG_OPTIONS +=	-D NUTCGIDIR="$(NUTCGIDIR)"
-NUTSEDSUBST += -e 's,\@NUTDRVDIR\@,$(NUTDRVDIR),g'
-NUTSEDSUBST += -e 's,\@NUTCGIDIR\@,$(NUTCGIDIR),g'
-
-_NUTVARDIR  =	$(subst .../,,...$(VARDIR))
-NUTSTATEDIR  =	$(_NUTVARDIR)/state/ups
-PKG_OPTIONS +=	-D NUTSTATEDIR="$(NUTSTATEDIR)"
-NUTSEDSUBST += -e 's,\@NUTSTATEDIR\@,$(NUTSTATEDIR),g'
-
-NUTPIDPATH =	$(_NUTVARDIR)/run
-NUTRUNDIR  =	$(NUTPIDPATH)/nut
-PKG_OPTIONS +=	-D NUTPIDPATH="$(NUTPIDPATH)"
-PKG_OPTIONS +=	-D NUTRUNDIR="$(NUTRUNDIR)"
-NUTSEDSUBST += -e 's,\@NUTPIDPATH\@,$(NUTPIDPATH),g'
-NUTSEDSUBST += -e 's,\@NUTRUNDIR\@,$(NUTRUNDIR),g'
 
 # So far I am not certain where we should deliver this one, so parametrize ;)
 # Currently we deliver this as a sample config file, but it may be copied (and
@@ -108,16 +69,13 @@ NUTSEDSUBST += -e 's,\@NUTRUNDIR\@,$(NUTRUNDIR),g'
 NUT_AVAHI_SERVICE_FILENAME=	avahi-nut.service
 NUT_AVAHI_SERVICE_SAMPLE=	$(NUTETCSAMPLEDIR)/$(NUT_AVAHI_SERVICE_FILENAME).sample
 PKG_OPTIONS +=	-D NUT_AVAHI_SERVICE_SAMPLE="$(NUT_AVAHI_SERVICE_SAMPLE)"
-NUTSEDSUBST += -e 's,\@NUT_AVAHI_SERVICE_SAMPLE\@,$(NUT_AVAHI_SERVICE_SAMPLE),g'
 
 # Leading slashes must also be stripped here
 NUTHOTPLUGDIR  =	$(subst .../,,...$(ETCDIR)/hotplug)
 PKG_OPTIONS +=	-D NUTHOTPLUGDIR="$(NUTHOTPLUGDIR)"
-NUTSEDSUBST += -e 's,\@NUTHOTPLUGDIR\@,$(NUTHOTPLUGDIR),g'
 ###NUTUDEVDIR  =	$(subst .../,,...$(USRDIR)/udev)
 NUTUDEVDIR  =	$(NUTETCSAMPLEDIR)/udev
 PKG_OPTIONS +=	-D NUTUDEVDIR="$(NUTUDEVDIR)"
-NUTSEDSUBST += -e 's,\@NUTUDEVDIR\@,$(NUTUDEVDIR),g'
 
 ### Recipe bits follow...
 COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
@@ -133,15 +91,15 @@ CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
 
-CONFIGURE_OPTIONS +=	--with-user=$(NUTUSER)
-CONFIGURE_OPTIONS +=	--with-group=$(NUTGROUP)
-CONFIGURE_OPTIONS +=	--sysconfdir=/$(NUTETCDIR)
+CONFIGURE_OPTIONS +=	--with-user=nut
+CONFIGURE_OPTIONS +=	--with-group=nut
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc/nut
 CONFIGURE_OPTIONS +=	--sharedstatedir=/$(NUTSHAREDIR)
 CONFIGURE_OPTIONS +=	--datarootdir=/$(NUTSHAREDIR)
 CONFIGURE_OPTIONS +=	--with-hotplug-dir=/$(NUTHOTPLUGDIR)
 CONFIGURE_OPTIONS +=	--with-udev-dir=/$(NUTUDEVDIR)
-CONFIGURE_OPTIONS +=	--with-pidpath=/$(NUTPIDPATH)
-CONFIGURE_OPTIONS +=	--with-statepath=/$(NUTSTATEDIR)
+CONFIGURE_OPTIONS +=	--with-pidpath=/var/run/nut
+CONFIGURE_OPTIONS +=	--with-statepath=/var/db/nut
 CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
 CONFIGURE_OPTIONS +=	--with-dev
 CONFIGURE_OPTIONS +=	--with-libltdl
@@ -196,27 +154,10 @@ CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 build: $(BUILD_32_and_64)
 
-$(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt: files/README-NUT-etc.txt.in
-	$(MKDIR) -p $(@D)
-	$(GSED) $(NUTSEDSUBST) < $< > $@
-	egrep '\@(NUT|MACH)' $@ >&2 && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && $(RM) $@ && exit 1 ; true
-
-$(PROTO_DIR)/lib/svc/method/svc-nut: files/nut.in
-	$(MKDIR) -p $(@D)
-	$(GSED) $(NUTSEDSUBST) < $< > $@
-	egrep '\@(NUT|MACH)' $@ >&2 && \
-		echo "ERROR: Some unconverted tags remain in $@" >&2 && $(RM) $@ && exit 1 ; true
-	chmod 755 $@
-
 # Ensure installed configs etc. match 32-bit paths
-$(INSTALL_32): $(INSTALL_64) \
-  $(PROTO_DIR)/$(NUTETCDIR)/README-NUT-etc.txt \
-  $(PROTO_DIR)/lib/svc/method/svc-nut
+$(INSTALL_32): $(INSTALL_64)
 
 install: $(INSTALL_32_and_64)
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/scripts/avahi/nut.service \
-		$(PROTO_DIR)/$(NUT_AVAHI_SERVICE_SAMPLE)
 
 test: $(TEST_32_and_64)
 

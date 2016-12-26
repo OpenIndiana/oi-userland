@@ -21,7 +21,7 @@
 
 <service_bundle type='manifest' name='nut'>
 
-	<service name='system/power/nut' type='service' version='1'>
+	<service name='system/power/nut-client' type='service' version='1'>
 
 	<!--
 	  Configure a default instance for the service since it doesn't
@@ -81,13 +81,13 @@
 		<exec_method
 		type='method'
 		name='start'
-		exec='/lib/svc/method/svc-nut %m'
+		exec='/lib/svc/method/svc-nut-client %m'
 		timeout_seconds='60'/>
 
 		<exec_method
 		type='method'
 		name='stop'
-		exec='/lib/svc/method/svc-nut %m'
+		exec=':kill'
 		timeout_seconds='60' />
 
 		<property_group name='startd' type='framework'>
@@ -109,17 +109,9 @@
 				</loctext>
 			</common_name>
 			<documentation>
-				<manpage title='upsdrvctl' section='8'
-				manpath='/usr/share/man' />
-				<manpage title='upsd' section='8'
-				manpath='/usr/share/man' />
 				<manpage title='upsmon' section='8'
 				manpath='/usr/share/man' />
-				<manpage title='ups.conf' section='5'
-				manpath='/usr/share/man' />
-				<manpage title='upsd.conf' section='5'
-				manpath='/usr/share/man' />
-				<manpage title='upsd.users' section='5'
+				<manpage title='upsmon.conf' section='5'
 				manpath='/usr/share/man' />
 			</documentation>
 		</template>

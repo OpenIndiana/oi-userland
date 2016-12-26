@@ -35,14 +35,14 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # and in particular do not move databases and logs into lost+found on uninstall
 # Note the locked user password is NL (not NP) because it has to manage crontab
 # Default rights inspired by scripts/Solaris/postinstall.in
-group groupname=$(NUTGROUP) gid=77
+group groupname=nut gid=77
 user ftpuser=false gcos-field="Network UPS Tools Reserved UID" \
-    group=$(NUTGROUP) group-list=root \
-    password=NL username=$(NUTUSER) uid=77
+    group=nut group-list=root \
+    password=NL username=nut uid=77
 
 # These directories can hold some content generated or downloaded at runtime
 # and can become lost+found when you un/re-install the core packages (if these
 # pkg actions are delivered there instead)
-dir group=$(NUTGROUP) owner=root mode=0775 path=$(NUTETCDIR)
-dir group=$(NUTGROUP) owner=root mode=0770 path=$(NUTSTATEDIR)
-file path=$(NUTETCDIR)/README-NUT-etc.txt owner=root group=bin
+dir group=nut owner=root mode=0775 path=etc/nut
+dir group=nut owner=root mode=0770 path=var/db/nut
+file files/README-NUT-etc.txt path=etc/nut/README-NUT-etc.txt owner=root group=bin

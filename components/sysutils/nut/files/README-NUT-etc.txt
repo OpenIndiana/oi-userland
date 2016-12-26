@@ -1,16 +1,13 @@
 This is the directory for Network UPS Tools configuration files,
 as distributed by OpenIndiana Hipster userland consolidation.
 
-Distributed examples are provided as `@NUTETCSAMPLEDIR@/*.sample`.
-Actual configuration files are loaded by programs from `@NUTETCDIR@`.
+Distributed examples are provided as `usr/share/nut/etc-samples/*.sample`.
+Actual configuration files are loaded by programs from `etc/nut`.
 General workflow is to copy distributed samples into actual files
 and modify the copies as fits your situation.
 
 NOTE: Take care about proper ownership and access bits of configuration
 files, especially for those with credentials.
-
-The `nut.conf` file controls the default init-script activity about
-this OS instance's role regarding the power device monitoring.
 
 On a NUT server machine that directly tracks UPS states, you must
 configure:
@@ -42,7 +39,7 @@ configure:
 * `upssched-cmd` is a sample script with a `case` structure to handle events
 
 For CGI clients you should set up the web-server of your choice accordingly
-to run the binaries provided in @NUTCGIDIR@, and configure:
+to run the binaries provided in usr/lib/nut/cgi-bin, and configure:
 * `upsset.conf` contains a flag that you must set to assert that you
   have indeed configured and enabled CGI clients knowingly, and have set
   up proper web-server security (required)
@@ -52,16 +49,16 @@ to run the binaries provided in @NUTCGIDIR@, and configure:
   the CGI web-interface regarding all known, or a specific chosen, devices.
 
 Beside directly NUT configuration examples, this distribution may include:
-* `/@NUT_AVAHI_SERVICE_SAMPLE@` with settings for
+* `/usr/share/nut/etc-samples/avahi-nut.service.sample` with settings for
   mDNS announcement of NUT service on the Avahi zero-conf subnet.
   This sample may be imported into your Avahi installation, which is
   out of scope for NUT packaging effort at this moment.
-* `@NUTUDEVDIR@` with sample `udev` configuration (not
+* `usr/share/nut/etc-samples/udev` with sample `udev` configuration (not
   directly applicable to Solaris-like platforms, but can be useful
   as an information source to set up USB connections); similarly for
   an `upower-hid` sample.
 ** Note that this distribution delivers sime `libhid` rules for UPSes
-  into `@NUTHOTPLUGDIR@/usb/`
+  into `etc/hotplug/usb/`
 
 Hope this helps,
 //Jim Klimov
