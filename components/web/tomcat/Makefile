@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
 COMPONENT_VERSION=	6.0.48
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
