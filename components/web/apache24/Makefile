@@ -23,14 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.23
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.4.25
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-   sha256:b71a13f56b8061c6b4086fdcc9ffdddd904449735eadec0f0e2947e33eec91d7
+   sha256:be6c5eb805216ec205453bb02b1990c82609cb1b145bcb69dc6e99fff45493a9
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -120,6 +119,20 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/apr
+REQUIRED_PACKAGES += library/apr-util
+REQUIRED_PACKAGES += library/apr-util/apr-ldap
+REQUIRED_PACKAGES += library/apr-util/dbd-mysql
+REQUIRED_PACKAGES += library/apr-util/dbd-sqlite
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nghttp2
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/gss
