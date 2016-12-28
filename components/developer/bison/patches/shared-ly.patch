@@ -1,30 +1,36 @@
---- bison-2.7.1/lib/Makefile.in.~1~	2013-04-15 13:00:41.000000000 +0400
-+++ bison-2.7.1/lib/Makefile.in	2013-10-09 14:35:26.382921904 +0400
-@@ -1665,7 +1665,7 @@
+--- bison-3.0.4/Makefile.in.orig	Tue Oct 27 10:12:31 2015
++++ bison-3.0.4/Makefile.in	Tue Oct 27 10:13:12 2015
+@@ -473,6 +473,12 @@
+ @ENABLE_YACC_TRUE@am_lib_liby_a_OBJECTS = lib/main.$(OBJEXT) \
+ @ENABLE_YACC_TRUE@	lib/yyerror.$(OBJEXT)
+ lib_liby_a_OBJECTS = $(am_lib_liby_a_OBJECTS)
++
++# doing this for just the OBJECTS macros doesn't seeem to work
++# and we rely on the approprate xregs/no-app-regs flag already
++# being in our CFLAGS from shared-macros.mk
++lib/yyerror.o lib/main.o: CFLAGS += $(CC_PIC)
++
+ @FLEX_CXX_WORKS_TRUE@am__EXEEXT_1 = examples/calc++/calc++$(EXEEXT)
+ PROGRAMS = $(bin_PROGRAMS)
+ am__objects_2 = examples/calc++/examples_calc___calc__-calc++-driver.$(OBJEXT) \
+@@ -2501,6 +2507,9 @@
+ @ENABLE_YACC_TRUE@EXTRA_LIBRARIES = lib/liby.a
+ @ENABLE_YACC_TRUE@lib_liby_a_SOURCES = lib/main.c lib/yyerror.c
+ LDADD = lib/libbison.a $(LIBINTL)
++
++lib_LIBRARIES += lib/liby.so.1
++
+ # Prettify Automake-computed names of compiled objects.
+ src_bison_SHORTNAME = bison
+ src_bison_CFLAGS = $(AM_CFLAGS) $(WERROR_CFLAGS)
+@@ -2624,6 +2633,10 @@
+ all: $(BUILT_SOURCES)
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
  
- 
- # The Yacc compatibility library.
--lib_LIBRARIES = $(YACC_LIBRARY)
-+lib_LIBRARIES = liby.so.1
- EXTRA_LIBRARIES = liby.a
- liby_a_SOURCES = main.c yyerror.c
- all: $(BUILT_SOURCES) config.h
-@@ -1761,6 +1761,9 @@
- 	$(AM_V_at)-rm -f liby.a
- 	$(AM_V_AR)$(liby_a_AR) liby.a $(liby_a_OBJECTS) $(liby_a_LIBADD)
- 	$(AM_V_at)$(RANLIB) liby.a
-+liby.so.1:    $(liby_a_OBJECTS) $(liby_a_DEPENDENCIES)
-+	$(AM_V_at)-rm -f liby.so.1
-+	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,liby.so.1 -o liby.so.1 $(liby_a_OBJECTS)
- 
- mostlyclean-compile:
- 	-rm -f *.$(OBJEXT)
-@@ -1912,7 +1915,7 @@
- @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yyerror.Po@am__quote@
- 
- .c.o:
--@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -fPIC -c -o $@ $<
- @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
- @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
- @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++lib/liby.so.1:    $(lib_liby_a_OBJECTS) $(lib_liby_a_DEPENDENCIES)
++	-rm -f lib/liby.so.1
++	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,liby.so.1 -o lib/liby.so.1 $(lib_liby_a_OBJECTS) $(lib_liby_a_LIBADD)
++
+ .SUFFIXES:
+ .SUFFIXES: .gv .eps .pdf .png .yy .stamp .c .cc .dvi .l .ll .log .o .obj .ps .sed .sin .test .test$(EXEEXT) .trs .y
+ am--refresh: Makefile
