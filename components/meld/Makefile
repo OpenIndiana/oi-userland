@@ -58,8 +58,9 @@ PYTHON_DATA =		/usr
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-REQUIRED_PACKAGES += developer/gnome/gettext
+REQUIRED_PACKAGES += developer/intltool
 REQUIRED_PACKAGES += library/desktop/gtksourceview3
+REQUIRED_PACKAGES += library/gnome/gnome-common
 REQUIRED_PACKAGES += library/python/pycairo-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += runtime/python-27

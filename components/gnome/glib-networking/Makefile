@@ -72,9 +72,11 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += developer/gnome/gettext
+REQUIRED_PACKAGES += developer/intltool
+REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-common
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libproxy
+REQUIRED_PACKAGES += text/gnu-gettext

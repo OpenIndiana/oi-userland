@@ -166,8 +166,8 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/crypto
 ifeq ($(OS_VERSION),5.11)
 REQUIRED_PACKAGES += system/library/security/gss
-endif
 REQUIRED_PACKAGES += system/library/security/libsasl
+endif
 REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/ldap/openldap

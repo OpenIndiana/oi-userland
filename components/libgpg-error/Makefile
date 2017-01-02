@@ -47,5 +47,3 @@ CONFIGURE_OPTIONS += --enable-threads=posix
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 include ../../make-rules/shared-targets.mk
-
-REQUIRED_PACKAGES += consolidation/desktop/desktop-incorporation

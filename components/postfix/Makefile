@@ -77,7 +77,7 @@ COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93

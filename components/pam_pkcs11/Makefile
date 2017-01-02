@@ -63,7 +63,7 @@ CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
 CONFIGURE_OPTIONS += --with-pcsclite=yes
 CONFIGURE_OPTIONS += PCSC_CFLAGS="-I /usr/include/PCSC"
 
-REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/pcsc/pcsclite
 REQUIRED_PACKAGES += shell/bash

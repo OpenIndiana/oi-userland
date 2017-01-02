@@ -95,7 +95,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/\(\/dev\/pts\/\)[0-9][0-9]*/\1\#/"'
 
 VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
 
-REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/network/ldap/openldap

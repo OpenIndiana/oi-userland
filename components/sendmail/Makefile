@@ -197,7 +197,6 @@ install:	$(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libmilter
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93

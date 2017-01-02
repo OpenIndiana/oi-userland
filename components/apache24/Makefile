@@ -92,7 +92,6 @@ REQUIRED_PACKAGES += library/apr-util-15/dbd-mysql
 REQUIRED_PACKAGES += library/apr-util-15/dbd-sqlite
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140

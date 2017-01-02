@@ -77,7 +77,7 @@ REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libglade
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/python/python-extra-27
+REQUIRED_PACKAGES += library/python/numpy-27
 REQUIRED_PACKAGES += runtime/python-27
 
 

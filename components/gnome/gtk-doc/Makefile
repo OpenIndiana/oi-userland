@@ -60,7 +60,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-REQUIRED_PACKAGES += data/docbook
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += data/docbook
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
 REQUIRED_PACKAGES += data/docbook/docbook-style-xsl 
@@ -68,12 +68,15 @@ REQUIRED_PACKAGES += data/sgml-common
 REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += developer/documentation-tool/itstool
 REQUIRED_PACKAGES += developer/documentation-tool/openjade
-REQUIRED_PACKAGES += developer/gnome/gettext
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
+REQUIRED_PACKAGES += developer/intltool
 REQUIRED_PACKAGES += editor/vim
+REQUIRED_PACKAGES += library/gnome/gnome-common
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/python/libxml2-27
-REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += service/gnome/desktop-cache
+REQUIRED_PACKAGES += text/gnu-gettext

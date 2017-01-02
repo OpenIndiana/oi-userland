@@ -78,7 +78,7 @@ else
 REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
 endif
-REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140

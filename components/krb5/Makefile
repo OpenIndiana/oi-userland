@@ -205,7 +205,6 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 
 REQUIRED_PACKAGES += developer/test/dejagnu
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += network/dns/bind
 REQUIRED_PACKAGES += service/network/ldap/openldap

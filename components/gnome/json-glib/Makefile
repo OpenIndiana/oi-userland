@@ -64,7 +64,11 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-REQUIRED_PACKAGES += data/docbook
+REQUIRED_PACKAGES += data/docbook/docbook-dtds
+REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
+REQUIRED_PACKAGES += data/docbook/docbook-style-xsl
+REQUIRED_PACKAGES += data/sgml-common
+REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2

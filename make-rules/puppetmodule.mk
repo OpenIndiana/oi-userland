@@ -48,4 +48,4 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
-REQUIRED_PACKAGES += system/management/puppet-19
+REQUIRED_PACKAGES += system/management/puppet

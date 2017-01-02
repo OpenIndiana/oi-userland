@@ -114,13 +114,18 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL/p" ' \
         '-e "/ERROR/p" '
 
-REQUIRED_PACKAGES += data/docbook
+REQUIRED_PACKAGES += $(PERL_PKG)
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += data/docbook
+REQUIRED_PACKAGES += data/docbook/docbook-dtds
+REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
+REQUIRED_PACKAGES += data/docbook/docbook-style-xsl
+REQUIRED_PACKAGES += data/sgml-common
+REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/dbus

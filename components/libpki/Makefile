@@ -77,7 +77,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/\# ERROR:/p" '
 
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/openldap
+$(SOLARIS_11_ONLY)REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += shell/ksh93

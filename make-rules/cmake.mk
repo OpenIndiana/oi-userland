@@ -80,11 +80,13 @@ COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += developer/build/pkg-config
-REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/intltool
+REQUIRED_PACKAGES += library/gnome/gnome-common
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/linker
 # Most cmake-based components expect GNU versions of these.
 REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-gettext
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed

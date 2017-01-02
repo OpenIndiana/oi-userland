@@ -69,8 +69,10 @@ COMPONENT_TEST_TRANSFORMS += \
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
-REQUIRED_PACKAGES += developer/gnome/gettext
+REQUIRED_PACKAGES += developer/intltool
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib-networking
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-common
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += text/gnu-gettext
