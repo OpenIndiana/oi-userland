@@ -31,17 +31,17 @@
 #
 # Release major number: 2014, 2015, etc.
 #
-RELEASE_MAJOR ?= 2016
+RELEASE_MAJOR ?= 2017
 
 #
 # Release minor number: 0, 1, 2, etc.
 #
-RELEASE_MINOR ?= 1
+RELEASE_MINOR ?= 0
 
 #
 # Release update number: 0, 1, 2, etc.
 #
-UPDATENUM ?= 1
+UPDATENUM ?= 0
 
 #
 # Component revision. Should be specified in the component's Makefile
