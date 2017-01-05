@@ -9,21 +9,20 @@
 #
 
 #
-# Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2016 Jim Klimov <jimklimov@gmail.com>
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openttd
-COMPONENT_VERSION=	1.5.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.6.1
 COMPONENT_PROJECT_URL=	http://www.openttd.org/en/
 COMPONENT_FMRI=		games/openttd/openttd-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d8b9a7aaca7c9f3ff69b1d210daf1e2658402941bb9b30cb2789a9df73d1ba63
+	sha256:9b08996e31c3485ef8dedfa1ab65147091593f3f11bd51eb7662ce5ea41363aa
 COMPONENT_ARCHIVE_URL=	https://binaries.openttd.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
