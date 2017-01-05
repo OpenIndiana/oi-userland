@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (22527218)
@@ -32,18 +32,18 @@ COMPILER = gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		thunderbird
-COMPONENT_VERSION=	45.5.1
+COMPONENT_VERSION=	45.6.0
 COMPONENT_PROJECT_URL=	http://www.mozilla.com/thunderbird
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:15088086ab8643275f04775002aca02701e30b4d61f108d5380b6e6b7582a24c
+    sha256:c32c74d69c4a2f79f120f44965525fc8197bbd39a9dac85027b2d9f74e04d8dc
 MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	tbird/mailer
 
-TPNO=			32721
+TPNO=			33172
 
-LIGHTNING_VERSION=	4.7.5.1
+LIGHTNING_VERSION=	4.7.6
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -56,12 +56,12 @@ LIGHTNING_VERSION=	4.7.5.1
 # collide due to different files with identical .xpi names. 
 COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:976113c074c640e32281972d26b55935238b93ff5ff8903c80bb6ed15f23cd4c
+    sha256:a00168d176130ec8be8963c478de6fc0f702804462f0b5e0701221b54e7abd33
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 =		lightning-$(LIGHTNING_VERSION)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_2 = \
-    sha256:3840c42da82352bbae7defa2b3361b460c9f2f19febc4d0b3fa2335fb201c4d3
+    sha256:e732cebccc778e3d2f86422ec7fa1d38999d5d583b88f1b8d508a397ba4eae4b
 COMPONENT_ARCHIVE_URL_2 = 	$(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_2)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
