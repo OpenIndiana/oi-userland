@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
 COMPONENT_VERSION=	1.7.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -46,6 +47,7 @@ CONFIGURE_OPTIONS  +=		--enable-imap
 CONFIGURE_OPTIONS  +=		--enable-smtp
 CONFIGURE_OPTIONS  +=		--enable-hcache
 CONFIGURE_OPTIONS  +=		--enable-sidebar
+CONFIGURE_OPTIONS  +=		--enable-debug
 CONFIGURE_OPTIONS  +=		--with-gdbm
 CONFIGURE_OPTIONS  +=		--with-regex
 CONFIGURE_OPTIONS  +=		--with-slang
