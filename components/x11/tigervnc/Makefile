@@ -94,7 +94,7 @@ CONFIGURE_LIBDIR = /usr/lib/vnc
 # I don't know why, but it just doesn't work without this
 gcc_OPT= 
 
-CPPFLAGS += -DSUNSOFT -DTSOL
+CPPFLAGS += -DSUNSOFT
 CPPFLAGS += -I/usr/include/pixman-1
 CPPFLAGS += -I/usr/include/xorg
 

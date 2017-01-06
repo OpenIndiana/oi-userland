@@ -48,6 +48,7 @@ CONFIGURE_SCRIPT=	$(@D)/configure
 CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99 -D_FILE_OFFSET_BITS=64
 CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFFSET_BITS=64
 LDFLAGS+=	-I$(@D)/mesa/GL 
+LIBS+=		-lglib-2.0
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
 CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
