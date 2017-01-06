@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -1051,7 +1051,7 @@ NXHEAP_DISABLE =		-zsx=nxheap=disable
 NXHEAP_NOT_APPLICABLE =		-zsx=nxheap=disable
 
 ADIHEAP_ENABLE.sparcv9 =	-zsx=adiheap=enable
-ADIHEAP_DISBLE.sparcv9 =	-zsx=adiheap=disable
+ADIHEAP_DISABLE.sparcv9 =	-zsx=adiheap=disable
 ADIHEAP_ENABLE =		$(ADIHEAP_ENABLE.$(MACH64))
 ADIHEAP_DISABLE =		$(ADIHEAP_DISABLE.$(MACH64))
 
