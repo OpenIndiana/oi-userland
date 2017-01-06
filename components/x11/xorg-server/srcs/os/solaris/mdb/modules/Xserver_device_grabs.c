@@ -26,7 +26,6 @@
 
 #include "Xserver_mdb.h"
 #include "xorg-server.h"
-#include "miscstruct.h"
 #include "inputstr.h"
 
 
