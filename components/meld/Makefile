@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_VERSION=	3.16.1
+COMPONENT_VERSION=	3.16.4
 COMPONENT_PROJECT_URL=	http://meldmerge.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1bec697aa1ababa315ca8241ade65dc68ea87f0d316632f590975afcf967cfab
+    sha256:93c4f928319dae7484135ab292fe6ea4254123e8219549a66d3e2deba6a38e67
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.8/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/3.16/$(COMPONENT_ARCHIVE)
 
-TPNO=			30088
+TPNO=			33168
 
 # We just need to build one version.
 PYTHON_VERSIONS =       2.7
@@ -42,7 +42,7 @@ PYTHON_VERSIONS =       2.7
 ifneq ($(BUILD_TYPE), evaluation)
 BUILD_STYLE= setup.py
 endif
-TEST_TARGET= $(NO_TESTS)
+TEST_TARGET=	$(TEST_64)
 
 # Needs older version of libpng, no longer available in evaluation builds.
 include $(WS_MAKE_RULES)/no-evaluation.mk
@@ -55,6 +55,15 @@ PATH =			$(GNUBIN):$(USRBINDIR)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
 PYTHON_DATA =		/usr
+
+COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/test
+COMPONENT_TEST_CMD =    /usr/bin/py.test
+COMPONENT_TEST_ARGS =
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(in \).*\(seconds\).*|\1 x \2|"' \
+	'-n ' \
+	'-e "/^===/p" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
