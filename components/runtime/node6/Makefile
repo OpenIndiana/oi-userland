@@ -11,7 +11,7 @@
 #
 # Copyright 2015 EveryCity Ltd. All rights reserved.
 # Copyright 2016 Alexander Pyhalov
-# Copyright 2016 Andreas Wacknitz
+# Copyright 2016, 2017 Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -21,12 +21,12 @@ COMPONENT_FMRI=		runtime/nodejs-6
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	6.9.2
+COMPONENT_VERSION=	6.9.4
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_LICENSE_FILE=	node.license	
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:997121460f3b4757907c2d7ff68ebdbf87af92b85bf2d07db5a7cb7aa5dae7d9
+COMPONENT_ARCHIVE_HASH=	sha256:f0257c83eb5e8b0e7b09db7264dc1e93e1f024c6dfccb098363b4fb0c192cf7f
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_MAKE_RULES)/prep.mk
