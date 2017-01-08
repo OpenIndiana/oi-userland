@@ -1,0 +1,60 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/cgi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT CGI clients"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=$(NUTCGIDIR)/+ -> default mode 0555>
+<transform dir path=$(NUTCGIDIR) -> set group bin>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+### NUT CGI clients, require libgd
+file path=$(NUTCGIDIR)/$(MACH64)/upsimage.cgi
+file path=$(NUTCGIDIR)/$(MACH64)/upsset.cgi
+file path=$(NUTCGIDIR)/$(MACH64)/upsstats.cgi
+file path=$(NUTCGIDIR)/upsimage.cgi
+file path=$(NUTCGIDIR)/upsset.cgi
+file path=$(NUTCGIDIR)/upsstats.cgi
+
+file path=usr/share/man/man5/upsset.conf.5
+file path=usr/share/man/man5/upsstats.html.5
+
+file path=usr/share/man/man8/upsimage.cgi.8
+file path=usr/share/man/man8/upsset.cgi.8
+file path=usr/share/man/man8/upsstats.cgi.8
+
+# We deliver the sample configs as the ones to use,
+# at worst they have no actual information inside and do nothing.
+# Also, the CGIs are disabled by default `upsset.conf` contents
+file etc/nut/hosts.conf.sample \
+    path=etc/nut/hosts.conf \
+    group=nut owner=root mode=0440 preserve=true
+file etc/nut/upsset.conf.sample \
+    path=etc/nut/upsset.conf \
+    group=nut owner=root mode=0440 preserve=true
+file etc/nut/upsstats-single.html.sample \
+    path=etc/nut/upsstats-single.html \
+    group=nut owner=root mode=0440 preserve=true
+file etc/nut/upsstats.html.sample \
+    path=etc/nut/upsstats.html \
+    group=nut owner=root mode=0440 preserve=true

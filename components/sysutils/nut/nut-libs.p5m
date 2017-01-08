@@ -1,0 +1,133 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/libs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - headers, libraries and their manpages"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+### NUT Development files - headers, libraries and their manpages
+file path=usr/include/nut-scan.h
+file path=usr/include/nutclient.h
+file path=usr/include/nutscan-device.h
+file path=usr/include/nutscan-init.h
+file path=usr/include/nutscan-ip.h
+file path=usr/include/parseconf.h
+file path=usr/include/upsclient.h
+
+file path=usr/lib/$(MACH64)/libnutclient.so.0.0.0
+link path=usr/lib/$(MACH64)/libnutclient.so target=libnutclient.so.0.0.0
+link path=usr/lib/$(MACH64)/libnutclient.so.0 target=libnutclient.so.0.0.0
+file path=usr/lib/$(MACH64)/libnutscan.so.1.0.0
+link path=usr/lib/$(MACH64)/libnutscan.so target=libnutscan.so.1.0.0
+link path=usr/lib/$(MACH64)/libnutscan.so.1 target=libnutscan.so.1.0.0
+file path=usr/lib/$(MACH64)/libupsclient.so.4.0.0
+link path=usr/lib/$(MACH64)/libupsclient.so target=libupsclient.so.4.0.0
+link path=usr/lib/$(MACH64)/libupsclient.so.4 target=libupsclient.so.4.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libnutclient.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libnutscan.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libupsclient.pc
+
+file path=usr/lib/libnutclient.so.0.0.0
+link path=usr/lib/libnutclient.so target=libnutclient.so.0.0.0
+link path=usr/lib/libnutclient.so.0 target=libnutclient.so.0.0.0
+file path=usr/lib/libnutscan.so.1.0.0
+link path=usr/lib/libnutscan.so target=libnutscan.so.1.0.0
+link path=usr/lib/libnutscan.so.1 target=libnutscan.so.1.0.0
+file path=usr/lib/libupsclient.so.4.0.0
+link path=usr/lib/libupsclient.so target=libupsclient.so.4.0.0
+link path=usr/lib/libupsclient.so.4 target=libupsclient.so.4.0.0
+file path=usr/lib/pkgconfig/libnutclient.pc
+file path=usr/lib/pkgconfig/libnutscan.pc
+file path=usr/lib/pkgconfig/libupsclient.pc
+
+file path=usr/share/man/man3/libnutclient.3
+file path=usr/share/man/man3/libnutclient_commands.3
+file path=usr/share/man/man3/libnutclient_devices.3
+file path=usr/share/man/man3/libnutclient_general.3
+file path=usr/share/man/man3/libnutclient_misc.3
+file path=usr/share/man/man3/libnutclient_tcp.3
+file path=usr/share/man/man3/libnutclient_variables.3
+file path=usr/share/man/man3/nutclient_authenticate.3
+file path=usr/share/man/man3/nutclient_destroy.3
+file path=usr/share/man/man3/nutclient_device_forced_shutdown.3
+file path=usr/share/man/man3/nutclient_device_login.3
+file path=usr/share/man/man3/nutclient_device_master.3
+file path=usr/share/man/man3/nutclient_execute_device_command.3
+file path=usr/share/man/man3/nutclient_get_device_command_description.3
+file path=usr/share/man/man3/nutclient_get_device_commands.3
+file path=usr/share/man/man3/nutclient_get_device_description.3
+file path=usr/share/man/man3/nutclient_get_device_num_logins.3
+file path=usr/share/man/man3/nutclient_get_device_rw_variables.3
+file path=usr/share/man/man3/nutclient_get_device_variable_description.3
+file path=usr/share/man/man3/nutclient_get_device_variable_values.3
+file path=usr/share/man/man3/nutclient_get_device_variables.3
+file path=usr/share/man/man3/nutclient_get_devices.3
+file path=usr/share/man/man3/nutclient_has_device.3
+file path=usr/share/man/man3/nutclient_has_device_command.3
+file path=usr/share/man/man3/nutclient_has_device_variable.3
+file path=usr/share/man/man3/nutclient_logout.3
+file path=usr/share/man/man3/nutclient_set_device_variable_value.3
+file path=usr/share/man/man3/nutclient_set_device_variable_values.3
+file path=usr/share/man/man3/nutclient_tcp_create_client.3
+file path=usr/share/man/man3/nutclient_tcp_disconnect.3
+file path=usr/share/man/man3/nutclient_tcp_get_timeout.3
+file path=usr/share/man/man3/nutclient_tcp_is_connected.3
+file path=usr/share/man/man3/nutclient_tcp_reconnect.3
+file path=usr/share/man/man3/nutclient_tcp_set_timeout.3
+file path=usr/share/man/man3/nutscan.3
+file path=usr/share/man/man3/nutscan_add_device_to_device.3
+file path=usr/share/man/man3/nutscan_add_option_to_device.3
+file path=usr/share/man/man3/nutscan_cidr_to_ip.3
+file path=usr/share/man/man3/nutscan_display_parsable.3
+file path=usr/share/man/man3/nutscan_display_ups_conf.3
+file path=usr/share/man/man3/nutscan_free_device.3
+file path=usr/share/man/man3/nutscan_get_serial_ports_list.3
+file path=usr/share/man/man3/nutscan_init.3
+file path=usr/share/man/man3/nutscan_new_device.3
+file path=usr/share/man/man3/nutscan_scan_avahi.3
+file path=usr/share/man/man3/nutscan_scan_eaton_serial.3
+file path=usr/share/man/man3/nutscan_scan_ipmi.3
+file path=usr/share/man/man3/nutscan_scan_nut.3
+file path=usr/share/man/man3/nutscan_scan_snmp.3
+file path=usr/share/man/man3/nutscan_scan_usb.3
+file path=usr/share/man/man3/nutscan_scan_xml_http.3
+file path=usr/share/man/man3/upscli_add_host_cert.3
+file path=usr/share/man/man3/upscli_cleanup.3
+file path=usr/share/man/man3/upscli_connect.3
+file path=usr/share/man/man3/upscli_disconnect.3
+file path=usr/share/man/man3/upscli_fd.3
+file path=usr/share/man/man3/upscli_get.3
+file path=usr/share/man/man3/upscli_init.3
+file path=usr/share/man/man3/upscli_list_next.3
+file path=usr/share/man/man3/upscli_list_start.3
+file path=usr/share/man/man3/upscli_readline.3
+file path=usr/share/man/man3/upscli_sendline.3
+file path=usr/share/man/man3/upscli_splitaddr.3
+file path=usr/share/man/man3/upscli_splitname.3
+file path=usr/share/man/man3/upscli_ssl.3
+file path=usr/share/man/man3/upscli_strerror.3
+file path=usr/share/man/man3/upscli_upserror.3
+file path=usr/share/man/man3/upsclient.3
+
+# Some mapping files
+file path=$(NUTSHAREDIR)/cmdvartab
+file path=$(NUTSHAREDIR)/driver.list
