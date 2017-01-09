@@ -1,0 +1,99 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/bins@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT Command-line binaries and scripts"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/man/man1m/(.+) -> set action.hash usr/share/man/man1/%<1> >
+
+depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+### NUT Command-line binaries and scripts (daemons, clients)
+
+### Note: While nut-scanner can use snmp, neon/xml, ipmi and usb libs, it loads
+### them truly dynamically (if available) and skips otherwise. Installing the
+### NUT driver packages should pull their relevant libs by harder ELF reqs.
+### Reasonably, if you don't want those UPSes (got no drivers) why scan them? :)
+
+file path=usr/bin/nut-scanner
+file path=usr/bin/upsc
+file path=usr/bin/upscmd
+file path=usr/bin/upslog
+file path=usr/bin/upsrw
+
+file path=usr/sbin/upsd
+file path=usr/sbin/upsdrvctl
+file path=usr/sbin/upsmon
+file path=usr/sbin/upssched
+
+# Example notification script for UPSMON
+file files/notifyme path=usr/lib/nut/bin/notifyme mode=0755 preserve=renamenew
+
+# This is an example script for handling upssched
+file path=usr/bin/upssched-cmd preserve=renamenew
+
+# Init-scripts for NUT, not perfect - but better than nothing for a start.
+# NUT should start generally after networking (if SNMP or NetXML is used,
+# or if this box is a client to remote upsd). Ending is trickier - could
+# want it to issue killpower late in shutdown, but have network to be able
+# to do so (for remote UPSes). This can be tuned in XML manifest by user.
+file files/svc-nut path=lib/svc/method/svc-nut
+file files/nut.xml path=var/svc/manifest/application/nut.xml
+
+file files/svc-nut-client path=lib/svc/method/svc-nut-client
+file files/nut-client.xml path=var/svc/manifest/application/nut-client.xml
+
+file path=usr/share/man/man5/hosts.conf.5
+file path=usr/share/man/man5/ups.conf.5
+file path=usr/share/man/man5/upsd.conf.5
+file path=usr/share/man/man5/upsd.users.5
+file path=usr/share/man/man5/upsmon.conf.5
+file path=usr/share/man/man5/upssched.conf.5
+
+file path=usr/share/man/man1m/nut-scanner.1m
+file path=usr/share/man/man1m/upsc.1m
+file path=usr/share/man/man1m/upscmd.1m
+file path=usr/share/man/man1m/upsd.1m
+file path=usr/share/man/man1m/upsdrvctl.1m
+file path=usr/share/man/man1m/upslog.1m
+file path=usr/share/man/man1m/upsmon.1m
+file path=usr/share/man/man1m/upsrw.1m
+file path=usr/share/man/man1m/upssched.1m
+
+# We deliver the sample configs as the ones to use,
+# at worst they have no actual information inside and do nothing.
+file etc/nut/ups.conf.sample path=etc/nut/ups.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsd.conf.sample path=etc/nut/upsd.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsd.users.sample path=etc/nut/upsd.users \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upsmon.conf.sample path=etc/nut/upsmon.conf \
+    group=nut owner=root mode=0640 preserve=true
+file etc/nut/upssched.conf.sample path=etc/nut/upssched.conf \
+    group=nut owner=root mode=0640 preserve=true
+
+file build/$(MACH64)/scripts/avahi/nut.service path=$(NUT_AVAHI_SERVICE_SAMPLE)
+
+file scripts/logrotate/nutlogd path=usr/share/nut/nutlogd.example
+
+file scripts/misc/nut.bash_completion path=usr/share/bash-completion/completions/nut
