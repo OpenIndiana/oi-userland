@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+
+This file and its contents are supplied under the terms of the
+Common Development and Distribution License ("CDDL"). You may
+only use this file in accordance with the terms of the CDDL.
+
+A full copy of the text of the CDDL should have accompanied this
+source. A copy of the CDDL is also available via the Internet at
+http://www.illumos.org/license/CDDL.
+
+Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+
+-->
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<service_bundle type='manifest' name='dovecot'>
+
+<service
+  name='network/imap/dovecot'
+  type='service'
+  version='1'>
+
+	<dependency
+	  name='filesystem_minimal'
+	  grouping='require_all'
+	  restart_on='none'
+	  type='service'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+	<dependency
+		name='loopback'
+		grouping='require_any'
+		restart_on='error'
+		type='service'>
+		<service_fmri value='svc:/network/loopback' />
+	</dependency>
+
+	<dependency
+		name='network'
+		grouping='optional_all'
+		restart_on='error'
+		type='service'>
+		<service_fmri value='svc:/milestone/network' />
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':kill'
+		timeout_seconds='60' />
+
+	<instance name='default' enabled='false' >
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/usr/sbin/dovecot -c %{options/configuration_directory}/dovecot.conf'
+			timeout_seconds='60' >
+			<method_context>
+				<method_credential
+					user='root'
+					group='root' />
+			</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='refresh'
+			exec=':kill -HUP'
+			timeout_seconds='60'>
+			<method_context/>
+		</exec_method>
+
+		<property_group name='options' type='application'>
+			<propval
+				name='configuration_directory'
+				type='astring'
+				value='/etc/dovecot' />
+		</property_group>
+
+	</instance>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				Dovecot Mail server
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='dovecot' section='1'
+				manpath='/usr/share/man' />
+		</documentation>
+	</template>
+
+</service>
+
+</service_bundle>
