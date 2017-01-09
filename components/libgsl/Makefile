@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gsl
-COMPONENT_VERSION=	2.1
+COMPONENT_VERSION=	2.2.1
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:59ad06837397617f698975c494fe7b2b698739a59e2fcf830b776428938a0c66
+    sha256:13d23dc7b0824e1405f3f7e7d0776deee9b8f62c62860bf66e7852d402b8b024
 COMPONENT_BUGDB=	library/libgsl
 
-TPNO=			26006
+TPNO=			32831
 
 TEST_TARGET=
 SYSTEM_TEST_TARGET=

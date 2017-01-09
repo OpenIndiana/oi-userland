@@ -2,9 +2,9 @@ Changes needed to use Studio libsunperf on Solaris (if available).
 
 These changes will be sent upstream.
 
---- gsl-2.1/configure.ac.orig	2015-12-04 10:22:53.164659106 -0800
-+++ gsl-2.1/configure.ac	2015-12-04 10:22:33.120473949 -0800
-@@ -109,6 +109,20 @@
+--- gsl-2.2.1/configure.ac.orig	2016-11-28 09:04:10.000000000 +0000
++++ gsl-2.2.1/configure.ac	2016-11-28 09:03:51.000000000 +0000
+@@ -111,6 +111,20 @@
  AC_C_INLINE
  AC_C_CHAR_UNSIGNED
  
@@ -25,14 +25,14 @@ These changes will be sent upstream.
  GSL_CFLAGS="-I$includedir"
  GSL_LIBS="-L$libdir -lgsl"
  dnl macro from libtool - can be replaced with LT_LIB_M when we require libtool 2
---- gsl-2.1/Makefile.am.orig	2015-12-04 10:25:17.763607999 -0800
-+++ gsl-2.1/Makefile.am	2015-12-04 10:27:53.909148289 -0800
+--- gsl-2.2.1/Makefile.am.orig	2016-11-28 09:04:30.000000000 +0000
++++ gsl-2.2.1/Makefile.am	2016-11-30 08:35:26.586505711 +0000
 @@ -2,7 +2,14 @@
  
  # AUTOMAKE_OPTIONS = readme-alpha
  
--SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils cblas blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit multilarge rstat statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline spblas spmatrix splinalg doc
-+SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils $(CBLAS_DIRS) blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit multilarge rstat statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline spblas spmatrix splinalg doc
+-SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils cblas blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit multifit_nlinear multilarge multilarge_nlinear rstat statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline spblas spmatrix splinalg doc
++SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils $(CBLAS_DIRS) blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit multifit_nlinear multilarge multilarge_nlinear rstat statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline spblas spmatrix splinalg doc
 +
 +SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
 +if SOLARIS_SUNPERF
@@ -41,21 +41,22 @@ These changes will be sent upstream.
 +    CBLAS_DIRS=cblas
 +endif
  
- SUBLIBS = block/libgslblock.la blas/libgslblas.la bspline/libgslbspline.la complex/libgslcomplex.la cheb/libgslcheb.la dht/libgsldht.la diff/libgsldiff.la deriv/libgslderiv.la eigen/libgsleigen.la err/libgslerr.la fft/libgslfft.la fit/libgslfit.la histogram/libgslhistogram.la ieee-utils/libgslieeeutils.la integration/libgslintegration.la interpolation/libgslinterpolation.la linalg/libgsllinalg.la matrix/libgslmatrix.la min/libgslmin.la monte/libgslmonte.la multifit/libgslmultifit.la multilarge/libgslmultilarge.la multimin/libgslmultimin.la multiroots/libgslmultiroots.la ntuple/libgslntuple.la ode-initval/libgslodeiv.la ode-initval2/libgslodeiv2.la permutation/libgslpermutation.la combination/libgslcombination.la multiset/libgslmultiset.la poly/libgslpoly.la qrng/libgslqrng.la randist/libgslrandist.la rng/libgslrng.la roots/libgslroots.la siman/libgslsiman.la sort/libgslsort.la specfunc/libgslspecfunc.la rstat/libgslrstat.la statistics/libgslstatistics.la sum/libgslsum.la sys/libgslsys.la test/libgsltest.la utils/libutils.la vector/libgslvector.la cdf/libgslcdf.la wavelet/libgslwavelet.la spmatrix/libgslspmatrix.la spblas/libgslspblas.la splinalg/libgslsplinalg.la
+ SUBLIBS = block/libgslblock.la blas/libgslblas.la bspline/libgslbspline.la complex/libgslcomplex.la cheb/libgslcheb.la dht/libgsldht.la diff/libgsldiff.la deriv/libgslderiv.la eigen/libgsleigen.la err/libgslerr.la fft/libgslfft.la fit/libgslfit.la histogram/libgslhistogram.la ieee-utils/libgslieeeutils.la integration/libgslintegration.la interpolation/libgslinterpolation.la linalg/libgsllinalg.la matrix/libgslmatrix.la min/libgslmin.la monte/libgslmonte.la multifit/libgslmultifit.la multifit_nlinear/libgslmultifit_nlinear.la multilarge/libgslmultilarge.la multilarge_nlinear/libgslmultilarge_nlinear.la multimin/libgslmultimin.la multiroots/libgslmultiroots.la ntuple/libgslntuple.la ode-initval/libgslodeiv.la ode-initval2/libgslodeiv2.la permutation/libgslpermutation.la combination/libgslcombination.la multiset/libgslmultiset.la poly/libgslpoly.la qrng/libgslqrng.la randist/libgslrandist.la rng/libgslrng.la roots/libgslroots.la siman/libgslsiman.la sort/libgslsort.la specfunc/libgslspecfunc.la rstat/libgslrstat.la statistics/libgslstatistics.la sum/libgslsum.la sys/libgslsys.la test/libgsltest.la utils/libutils.la vector/libgslvector.la cdf/libgslcdf.la wavelet/libgslwavelet.la spmatrix/libgslspmatrix.la spblas/libgslspblas.la splinalg/libgslsplinalg.la
  
-@@ -29,10 +36,16 @@
+@@ -29,10 +36,18 @@
  bin_PROGRAMS = gsl-randist gsl-histogram
  
  gsl_randist_SOURCES = gsl-randist.c
--gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
- 
- gsl_histogram_SOURCES = gsl-histogram.c
-+
 +if SOLARIS_SUNPERF
 +gsl_randist_LDADD = libgsl.la
++else
+ gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
++endif
+ 
+ gsl_histogram_SOURCES = gsl-histogram.c
++if SOLARIS_SUNPERF
 +gsl_histogram_LDADD = libgsl.la
 +else
-+gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
  gsl_histogram_LDADD = libgsl.la cblas/libgslcblas.la
 +endif
  
