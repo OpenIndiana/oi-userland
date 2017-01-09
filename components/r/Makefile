@@ -20,20 +20,20 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		R
-COMPONENT_VERSION=	3.2.5
+COMPONENT_VERSION=	3.3.2
 COMPONENT_PROJECT_URL=	http://www.r-project.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:60745672dce5ddc201806fa59f6d4e0ba6554d8ed78d0f9f0d79a629978f80b5
+    sha256:d294ad21e9f574fb4828ebb3a94b8cb34f4f304a41687a994be00dd41a4e514c
 COMPONENT_ARCHIVE_URL=	http://cran.mtu.edu/src/base/R-3/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/r
 
-TPNO=			28040
+TPNO=			32832
 
 # Requires newer version of system/linker from ON, available in S12 but not
 # 11.3, so do not publish.
