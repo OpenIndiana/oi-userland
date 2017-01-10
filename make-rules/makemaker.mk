@@ -33,35 +33,29 @@ COMMON_PERL_ENV +=	CFLAGS="$(PERL_OPTIMIZE)"
 # directories so that it populates all architecture prototype
 # directories.
 
-$(BUILD_DIR)/$(MACH32)-5.16/.configured:	PERL_VERSION=5.16
-$(BUILD_DIR)/$(MACH32)-5.16/.configured:	BITS=32
-$(BUILD_DIR)/$(MACH64)-5.16/.configured:	PERL_VERSION=5.16
-$(BUILD_DIR)/$(MACH64)-5.16/.configured:	BITS=64
 $(BUILD_DIR)/$(MACH32)-5.22/.configured:	PERL_VERSION=5.22
 $(BUILD_DIR)/$(MACH32)-5.22/.configured:	BITS=32
-$(BUILD_DIR)/$(MACH64)-5.22/.configured:	PERL_VERSION=5.22
-$(BUILD_DIR)/$(MACH64)-5.22/.configured:	BITS=64
+$(BUILD_DIR)/$(MACH64)-5.24/.configured:	PERL_VERSION=5.24
+$(BUILD_DIR)/$(MACH64)-5.24/.configured:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.16/.tested:	PERL_VERSION=5.16
-$(BUILD_DIR)/$(MACH32)-5.16/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH32)-5.22/.tested:	PERL_VERSION=5.22
 $(BUILD_DIR)/$(MACH32)-5.22/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-5.24/.tested:	PERL_VERSION=5.24
+$(BUILD_DIR)/$(MACH64)-5.24/.tested:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.16/.tested-and-compared:	PERL_VERSION=5.16
-$(BUILD_DIR)/$(MACH32)-5.16/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	PERL_VERSION=5.22
+$(BUILD_DIR)/$(MACH64)-5.24/.tested-and-compared:	PERL_VERSION=5.24
+$(BUILD_DIR)/$(MACH64)-5.24/.tested-and-compared:	BITS=64
 
-PERL_32_BUILD_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.built )
-PERL_32_INSTALL_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.installed )
 PERL_32_TEST_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.tested )
 PERL_32_TEST_AND_COMPARE_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.tested-and-compared )
 
-BUILD_32 =	$(PERL_32_BUILD_FILES)
-BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.built
+BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.built
+BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.built
 
-INSTALL_32 =	$(PERL_32_INSTALL_FILES)
-INSTALL_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.installed
+INSTALL_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.installed
+INSTALL_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.installed
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
 COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
@@ -107,9 +101,11 @@ COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
-TEST_32 =	$(PERL_32_TEST_FILES)
+TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.22/.tested
+TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.24/.tested
 else
-TEST_32 =       $(PERL_32_TEST_AND_COMPARE_FILES)
+TEST_32 =       $(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared
+TEST_64 =       $(BUILD_DIR)/$(MACH32)-5.24/.tested-and-compared
 endif
 
 # test the built source
