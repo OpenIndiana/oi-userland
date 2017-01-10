@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # libtool only delivers scripts that embed paths, so prefer 32-bit.
 BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
-COMPONENT_VERSION=	2.4.2
+COMPONENT_VERSION=	2.4.6
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b38de44862a987293cd3d8dfae1c409d514b6c4e794ebc93648febf9afc38918
+    sha256:e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3
 COMPONENT_BUGDB=	utility/libtool
 
-TPNO=			9088
+TPNO=			24542
 
 BUILD_TARGET=
 INSTALL_TARGET=
@@ -42,8 +42,9 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
-
+COMPONENT_PREP_ACTION = (cd $(@D) ; \
+	touch $(SOURCE_DIR)/README-release ; \
+	MAKE=/usr/bin/gmake ./bootstrap --force --no-git)
 # Remove the hard-wired compiler locations in the LTCC and CC line
 # in the version of the libtool script.
 COMPONENT_POST_INSTALL_ACTION = \
@@ -52,6 +53,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 		-e 's|^LTCC="/.*$$|LTCC="cc"|' \
 		-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
 
+# When this component is updated, a full Userland build should
+# be performed in a test BE with the new version of libtool installed
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/SKIP/p" ' \
