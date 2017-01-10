@@ -1,0 +1,43 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+#
+
+set name=pkg.fmri value=pkg:/library/perl-5/sqlite-dbi-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The DBI SQLite Interface for Perl"
+set name=info.classification value=org.opensolaris.category.2008:Development/Perl
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license dbi-sqlite.license license='Artistic'
+
+# We deliver 64-bit objects under usr/perl5/5.24/lib, pkglint dislikes this
+<transform file path=.* -> default pkg.linted.userland.action001.2 true >
+
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::Constants.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::Cookbook.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::Fulltext_search.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::VirtualTable.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::VirtualTable::FileContent.3
+file path=usr/perl5/$(PERLVER)/man/man3/DBD::SQLite::VirtualTable::PerlData.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Constants.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Cookbook.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/Fulltext_search.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable/FileContent.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/DBD/SQLite/VirtualTable/PerlData.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/SQLite/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/DBD/SQLite/SQLite.so
