@@ -47,6 +47,8 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
 CONFIGURE_OPTIONS += \
     --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
+CXXFLAGS += -std=c++11
+
 # Don't generate tmac wrappers for the Solaris troff macro packages.
 # Some man pages (such as groff.1) use long macro name definitions
 # which fail in compatibility mode. See:
@@ -89,6 +91,8 @@ REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/doctools
 REQUIRED_PACKAGES += text/gawk
