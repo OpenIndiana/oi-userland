@@ -1,0 +1,39 @@
+Upstream patch/fix that was included in the next release of pcsclite:
+https://anonscm.debian.org/cgit/pcsclite/PCSC.git/patch/?id=697fe05967af7ea215bcd5d5774be587780c9e22
+patch by Peter Wu <peter@lekensteyn.nl> 2016-12-25 22:31:24 (GMT)
+committed by Ludovic Rousseau <ludovic.rousseau@free.fr> 2016-12-30 16:18:39 (GMT)
+
+Once MSGRemoveContext is invoked (via SCARD_RELEASE_CONTEXT), cardsList is freed. 
+A repeated invocation of SCARD_RELEASE_CONTEXT (with an empty context handle) 
+results in a use-after-free followed by a double-free. After MSGRemoveContext, 
+invocation of SCardEstablishContext enable further use-after-free of cardsList in 
+MSGCheckHandleAssociation, MSGRemoveContext, MSGAddHandle, MSGRemoveHandle. 
+
+To avoid this problem, destroy the list only when the client connection is terminated.
+
+This patch was based on the above and modified to work with our v1.8.14 of the pcsc-lite source code 
+and named accordingly to build with our existing Solaris pcsc-lite userland patch layout.
+
+--- a/src/winscard_svc.c	2017-01-09 14:27:56.897972773 -0500
++++ b/src/winscard_svc.c	2017-01-09 14:26:46.043849006 -0500
+@@ -868,7 +868,6 @@
+ 		UNREF_READER(rContext)
+ 	}
+ 	(void)pthread_mutex_unlock(&threadContext->cardsList_lock);
+-	list_destroy(&threadContext->cardsList);
+ 
+ 	/* We only mark the context as no longer in use.
+ 	 * The memory is freed in MSGCleanupCLient() */
+@@ -979,6 +978,11 @@
+ 		(void)MSGRemoveContext(threadContext->hContext, threadContext);
+ 	}
+ 
++       
++	(void)pthread_mutex_lock(&threadContext->cardsList_lock);
++	list_destroy(&threadContext->cardsList);
++	(void)pthread_mutex_unlock(&threadContext->cardsList_lock);
++
+ 	Log3(PCSC_LOG_DEBUG,
+ 		"Thread is stopping: dwClientID=%d, threadContext @%p",
+ 		threadContext->dwClientID, threadContext);
+
