@@ -89,10 +89,7 @@ COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_TEST_ARGS =		-k -i
 COMPONENT_SYSTEM_TEST_ARGS =	-k -i
 
-# Master test results are different not only between 32-bit and 64-bit, but
-# also between x86 and SPARC (different # of tests run).
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
@@ -118,12 +115,6 @@ COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-# There are known problems in libsunperf that are causing GSL test failures
-# in Solaris 12 with Studio 12.4 just on the x86 platform:
-# linalg: FAIL:   LQ_update m(5,3) [88]                             (32-bit)
-# caused by 20914954 cblas_gemm differences between x86 and sparcv7
-# linalg: FAIL:   cholesky_invert hilbert(4)                        (64-bit)
-# caused by 20909151 cblas_dsymm differences between amd64 and sparcv9.
 test:		install $(TEST_32_and_64)
 
 system-test:    build $(SYSTEM_TEST_32_and_64)
