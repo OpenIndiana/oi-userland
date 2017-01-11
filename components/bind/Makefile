@@ -20,25 +20,25 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.10.4-P4
+COMPONENT_VERSION=	9.10.4-P5
 HUMAN_VERSION=		$(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=	9.10.4.0.4
+IPS_COMPONENT_VERSION=	9.10.4.0.5
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:a41ce7518e1d0faa40312cc89f4ca42246906b2718099d992e87a5d3ce9a9d86
+	sha256:89c47b413613feddb1b623ad092f3def2247402e4148c464dbc6c0021e3f0feb
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sha512.asc
 COMPONENT_BUGDB=	service/dns-server
-TPNO=			32362
+TPNO=			33260
 
 include $(WS_MAKE_RULES)/common.mk
 
