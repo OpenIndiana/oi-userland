@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> \
@@ -38,15 +38,10 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2016/389
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=etc/bash_completion.d/pacat target=pulseaudio
-link path=etc/bash_completion.d/pacmd target=pulseaudio
-link path=etc/bash_completion.d/pactl target=pulseaudio
-link path=etc/bash_completion.d/padsp target=pulseaudio
-link path=etc/bash_completion.d/paplay target=pulseaudio
-link path=etc/bash_completion.d/parec target=pulseaudio
-link path=etc/bash_completion.d/parecord target=pulseaudio
-link path=etc/bash_completion.d/pasuspender target=pulseaudio
-file path=etc/bash_completion.d/pulseaudio
+
+# removed with bugid 24288657.
+# gmake sample-config tries to pull this in.
+#file path=etc/dbus-1/system.d/pulseaudio-system.conf
 file path=etc/pulse/client.conf
 file path=etc/pulse/daemon.conf
 file path=etc/pulse/default.pa
@@ -118,10 +113,9 @@ file path=usr/lib/$(MACH64)/libpulse-mainloop-glib.so.0.0.5
 link path=usr/lib/$(MACH64)/libpulse-simple.so target=libpulse-simple.so.0.1.0
 link path=usr/lib/$(MACH64)/libpulse-simple.so.0 target=libpulse-simple.so.0.1.0
 file path=usr/lib/$(MACH64)/libpulse-simple.so.0.1.0
-link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.18.0
-link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.18.0
-file path=usr/lib/$(MACH64)/libpulse.so.0.18.0
-file path=usr/lib/$(MACH64)/libpulsecore-$(COMPONENT_VERSION).so
+link path=usr/lib/$(MACH64)/libpulse.so target=libpulse.so.0.20.0
+link path=usr/lib/$(MACH64)/libpulse.so.0 target=libpulse.so.0.20.0
+file path=usr/lib/$(MACH64)/libpulse.so.0.20.0
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-mainloop-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse-simple.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpulse.pc
@@ -201,6 +195,7 @@ file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.s
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
 file path=usr/lib/$(MACH64)/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
 file path=usr/lib/$(MACH64)/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
+file path=usr/lib/$(MACH64)/pulseaudio/libpulsecore-$(COMPONENT_VERSION).so
 file path=usr/lib/cmake/PulseAudio/PulseAudioConfig.cmake
 file path=usr/lib/cmake/PulseAudio/PulseAudioConfigVersion.cmake
 link path=usr/lib/libpulse-mainloop-glib.so \
@@ -211,10 +206,9 @@ file path=usr/lib/libpulse-mainloop-glib.so.0.0.5
 link path=usr/lib/libpulse-simple.so target=libpulse-simple.so.0.1.0
 link path=usr/lib/libpulse-simple.so.0 target=libpulse-simple.so.0.1.0
 file path=usr/lib/libpulse-simple.so.0.1.0
-link path=usr/lib/libpulse.so target=libpulse.so.0.18.0
-link path=usr/lib/libpulse.so.0 target=libpulse.so.0.18.0
-file path=usr/lib/libpulse.so.0.18.0
-file path=usr/lib/libpulsecore-$(COMPONENT_VERSION).so
+link path=usr/lib/libpulse.so target=libpulse.so.0.20.0
+link path=usr/lib/libpulse.so.0 target=libpulse.so.0.20.0
+file path=usr/lib/libpulse.so.0.20.0
 file path=usr/lib/pkgconfig/libpulse-mainloop-glib.pc
 file path=usr/lib/pkgconfig/libpulse-simple.pc
 file path=usr/lib/pkgconfig/libpulse.pc
@@ -294,13 +288,22 @@ file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-x11-xsmp.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-discover.so
 file path=usr/lib/pulse-$(COMPONENT_VERSION)/modules/module-zeroconf-publish.so
 file path=usr/lib/pulseaudio/libpulsecommon-$(COMPONENT_VERSION).so
+file path=usr/lib/pulseaudio/libpulsecore-$(COMPONENT_VERSION).so
+link path=usr/share/bash-completion/completions/pacat target=pulseaudio
+link path=usr/share/bash-completion/completions/pacmd target=pulseaudio
+link path=usr/share/bash-completion/completions/pactl target=pulseaudio
+link path=usr/share/bash-completion/completions/padsp target=pulseaudio
+link path=usr/share/bash-completion/completions/paplay target=pulseaudio
+link path=usr/share/bash-completion/completions/parec target=pulseaudio
+link path=usr/share/bash-completion/completions/parecord target=pulseaudio
+link path=usr/share/bash-completion/completions/pasuspender target=pulseaudio
+file path=usr/share/bash-completion/completions/pulseaudio
 file path=usr/share/locale/as/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/bn_IN/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ca/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/cs/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/de/LC_MESSAGES/pulseaudio.mo
-# Conflicts with system/locale link de_CH -> de
-# file path=usr/share/locale/de_CH/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/de_CH/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/el/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/es/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/fi/LC_MESSAGES/pulseaudio.mo
@@ -313,9 +316,11 @@ file path=usr/share/locale/id/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/it/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ja/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/kn/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/ko/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/ml/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/mr/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/nl/LC_MESSAGES/pulseaudio.mo
+file path=usr/share/locale/oc/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/or/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/pa/LC_MESSAGES/pulseaudio.mo
 file path=usr/share/locale/pl/LC_MESSAGES/pulseaudio.mo
@@ -337,7 +342,10 @@ file path=usr/share/man/man1/pacat.1
 file path=usr/share/man/man1/pacmd.1
 file path=usr/share/man/man1/pactl.1
 file path=usr/share/man/man1/padsp.1
-file path=usr/share/man/man1/paplay.1
+link path=usr/share/man/man1/pamon.1 target=pacat.1
+link path=usr/share/man/man1/paplay.1 target=pacat.1
+link path=usr/share/man/man1/parec.1 target=pacat.1
+link path=usr/share/man/man1/parecord.1 target=pacat.1
 file path=usr/share/man/man1/pasuspender.1
 file path=usr/share/man/man1/pax11publish.1
 file path=usr/share/man/man1/pulseaudio.1
@@ -354,3 +362,4 @@ file path=usr/share/vala/vapi/libpulse.deps
 file path=usr/share/vala/vapi/libpulse.vapi
 file path=usr/share/zsh/5.2/functions/Completion/Unix/_pulseaudio
 license pulseaudio.license license="GPLv2, LGPLv2.1"
+

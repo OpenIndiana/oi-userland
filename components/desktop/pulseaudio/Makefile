@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS = 		32_and_64
@@ -28,15 +28,15 @@ COMPILER = 		gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
-COMPONENT_VERSION=	6.0
+COMPONENT_VERSION=	9.0
 COMPONENT_PROJECT_URL=	http://freedesktop.org/software/pulseaudio
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b50640e0b80b1607600accfad2e45aabb79d379bf6354c9671efa2065477f6f6
+	sha256:c3d3d66b827f18fbe903fe3df647013f09fc1e2191c035be1ee2d82a9e404686
 COMPONENT_ARCHIVE_URL=	http://freedesktop.org/software/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	gnome/multimedia
 
-TPNO=			25017
+TPNO=			32882	
 
 # Only build for 2.7 for now as we need 32-bit and 64-bit support; all of the
 # GNOME and desktop components must be built for Python 2.7 for now.
@@ -87,7 +87,7 @@ COMPONENT_PREP_ACTION += ( cd $(@D) ; NOCONFIGURE=1 $(CONFIG_SHELL) bootstrap.sh
 unexport SHELLOPTS
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
-COMPONENT_TEST_ARGS =   -k -i
+COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/TOTAL:/p" ' \
@@ -104,15 +104,14 @@ REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libsndfile
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network/avahi
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
-REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
-REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxtst
