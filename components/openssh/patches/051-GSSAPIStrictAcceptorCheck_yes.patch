@@ -1,0 +1,27 @@
+#
+# GSSAPIStrictAcceptorCheck should default to yes as documented
+#
+# When GSSAPIStrictAcceptorCheck is not explicitely specified in sshd_config,
+# the default value should be yes. It is documented in sshd_config(5) this
+# way and it preserves original behavior.
+#
+# Also GSSAPIStrictAcceptorCheck=no interacts poorly with GSSAPIKeyExchange,
+# where it make the server willing to negotiate GSS-API key exchange, although
+# no keytab was provided.
+#
+# Patch source: in-house
+# Reported upstream:
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2637
+#
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c
++++ new/servconf.c
+@@ -323,7 +323,7 @@ fill_default_server_options(ServerOption
+ 	if (options->gss_cleanup_creds == -1)
+ 		options->gss_cleanup_creds = 1;
+ 	if (options->gss_strict_acceptor == -1)
+-		options->gss_strict_acceptor = 0;
++		options->gss_strict_acceptor = 1;
+ 	if (options->password_authentication == -1)
+ 		options->password_authentication = 1;
+ 	if (options->kbd_interactive_authentication == -1)

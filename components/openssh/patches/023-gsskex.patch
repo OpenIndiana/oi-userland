@@ -42,7 +42,15 @@ diff -pur old/Makefile.in new/Makefile.in
 diff -pur old/auth.c new/auth.c
 --- old/auth.c
 +++ new/auth.c
-@@ -786,99 +786,6 @@ fakepw(void)
+@@ -363,6 +363,7 @@ auth_root_allowed(const char *method)
+ 	case PERMIT_NO_PASSWD:
+ 		if (strcmp(method, "publickey") == 0 ||
+ 		    strcmp(method, "hostbased") == 0 ||
++		    strcmp(method, "gssapi-keyex") == 0 ||
+ 		    strcmp(method, "gssapi-with-mic") == 0)
+ 			return 1;
+ 		break;
+@@ -786,99 +787,6 @@ fakepw(void)
  }
  
  /*
@@ -1404,7 +1412,7 @@ diff -pur old/sshd.c new/sshd.c
 diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
-@@ -632,6 +632,11 @@ The default is
+@@ -632,6 +632,22 @@ The default is
  Specifies whether user authentication based on GSSAPI is allowed.
  The default on Solaris is
  .Dq yes .
@@ -1413,6 +1421,17 @@ diff -pur old/sshd_config.5 new/sshd_config.5
 +doesn't rely on ssh keys to verify host identity.
 +The default on Solaris is
 +.Dq yes .
++.Pp
++By default the server only offers the GSSAPI key exchange, if it can acquire
++acceptor credentials for 
++.Pa host
++service on the current hostname. But when 
++.Cm GSSAPIStrictAcceptorCheck
++is set to 
++.Dq no ,
++the server will always offer GSSAPI key
++exchange, although it may not be able to accept security context (which will
++cause the key exchange to fail).
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.
