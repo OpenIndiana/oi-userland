@@ -30,6 +30,9 @@
  * API, just adjusting it to still work with new struct ssh.
  * Rewritting to the new API can be considered in the future.
  */
+/*
+ * Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
+ */
 
 #include "includes.h"
 
@@ -53,15 +56,25 @@
 #include "log.h"
 #include "packet.h"
 #include "dh.h"
+#include "ssherr.h"
 
 #include "ssh-gss.h"
+
+#define	GSSKEX_ERRHINT \
+	"Disable GSS-API key exchange by including '-o GSSAPIKeyExchange=no'\n"\
+	"in the ssh(1) command line invocation and try again."
+#define	GSSKEX_ERRMSG \
+	"GSS-API protected key exchange failed due to an unspecified error \n" \
+	"encountered on the server.  This may be due to a misconfiguration \n" \
+	"of Kerberos on the server.\n" \
+	GSSKEX_ERRHINT
 
 int
 kexgss_client(struct ssh *ssh) {
 	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
 	gss_buffer_desc recv_tok, gssbuf, msg_tok, *token_ptr;
 	Gssctxt *ctxt;
-	OM_uint32 maj_status, min_status, ret_flags;
+	OM_uint32 maj_status, min_status, ret_flags, smaj_status, smin_status;
 	uint_t klen, kout, slen = 0, strlen;
 	BIGNUM *dh_server_pub = NULL;
 	BIGNUM *shared_secret = NULL;
@@ -72,11 +85,11 @@ kexgss_client(struct ssh *ssh) {
 	uchar_t *empty = "";
 	char *msg;
 	char *lang;
-	int type = 0;
+	uchar_t type = 0;
 	int first = 1;
 	int nbits = 0, min = DH_GRP_MIN, max = DH_GRP_MAX;
 	struct kex *kex = ssh->kex;
-	int r;
+	int r, err;
 	uchar_t hash[SSH_DIGEST_MAX_LENGTH];
 	size_t hashlen;
 
@@ -144,12 +157,10 @@ kexgss_client(struct ssh *ssh) {
 		    &ret_flags);
 
 		if (GSS_ERROR(maj_status)) {
-			if (send_tok.length != 0) {
-				packet_start(SSH2_MSG_KEXGSS_CONTINUE);
-				packet_put_string(send_tok.value,
-				    send_tok.length);
-			}
-			fatal("gss_init_context failed");
+			ssh_gssapi_error(ctxt);
+			(void) gss_release_buffer(&min_status, &send_tok);
+			packet_disconnect("A GSS-API error occurred during "
+			    "GSS-API protected key exchange\n");
 		}
 
 		/* If we've got an old receive buffer get rid of it */
@@ -187,7 +198,12 @@ kexgss_client(struct ssh *ssh) {
 
 			/* If we've sent them data, they should reply */
 			do {
-				type = packet_read();
+				err = ssh_packet_read_seqnr(active_state,
+				    &type, NULL);
+				if (err != 0) {
+					fatal("%s: %s.\n%s", __func__,
+					    ssh_err(err), GSSKEX_ERRMSG);
+				}
 				if (type == SSH2_MSG_KEXGSS_HOSTKEY) {
 					debug("Received KEXGSS_HOSTKEY");
 					if (serverhostkey)
@@ -202,8 +218,10 @@ kexgss_client(struct ssh *ssh) {
 			case SSH2_MSG_KEXGSS_CONTINUE:
 				debug("Received GSSAPI_CONTINUE");
 				if (maj_status == GSS_S_COMPLETE)
-					fatal("GSSAPI Continue received from"
-					    "server when complete");
+					packet_disconnect("Protocol error: "
+					    "received GSS-API context token "
+					    "but the context was already "
+					    "established");
 				recv_tok.value = packet_get_string(&strlen);
 				recv_tok.length = strlen;
 				break;
@@ -218,26 +236,37 @@ kexgss_client(struct ssh *ssh) {
 					recv_tok.value=
 					    packet_get_string(&strlen);
 					recv_tok.length = strlen;
-					/* If complete - protocol error */
-					if (maj_status == GSS_S_COMPLETE)
-						packet_disconnect("Protocol"
-						    " error: received token"
-						    " when complete");
-				} else {
+				}
+				if (recv_tok.length > 0 &&
+				    maj_status == GSS_S_COMPLETE) {
+					packet_disconnect("Protocol error: "
+					    "received GSS-API context token "
+					    "but the context was already "
+					    "established");
+				} else if (recv_tok.length == 0 &&
+				    maj_status == GSS_S_CONTINUE_NEEDED) {
 					/* No token included */
-					if (maj_status != GSS_S_COMPLETE)
-						packet_disconnect("Protocol"
-						    " error: did not receive"
-						    " final token");
+					packet_disconnect("Protocol error: "
+					    "did not receive expected "
+					    "GSS-API context token");
 				}
 				break;
 			case SSH2_MSG_KEXGSS_ERROR:
 				debug("Received Error");
-				maj_status = packet_get_int();
-				min_status = packet_get_int();
+				smaj_status = packet_get_int();
+				smin_status = packet_get_int();
 				msg = packet_get_string(NULL);
 				lang = packet_get_string(NULL);
-				fatal("GSSAPI Error: \n%.400s", msg);
+				free(lang);
+				error("Server had a GSS-API error; the "
+				    "connection will close (%u/%u):\n%s",
+				    smaj_status, smin_status, msg);
+				free(msg);
+				error(GSSKEX_ERRHINT);
+				packet_disconnect("The server encountered "
+				    "a GSS-API error during GSS-API protected "
+				    "key exchange\n");
+				break;
 			default:
 				packet_disconnect("Protocol error: didn't"
 				    " expect packet type %d", type);
@@ -257,6 +286,8 @@ kexgss_client(struct ssh *ssh) {
 
 	if (type != SSH2_MSG_KEXGSS_COMPLETE)
 		fatal("Didn't receive SSH2_MSG_KEXGSS_COMPLETE when expected");
+	if (maj_status != GSS_S_COMPLETE)
+		fatal("Internal error in GSS-API protected key exchange");
 
 	/* Check f in range [1, p-1] */
 	if (!dh_pub_is_valid(kex->dh, dh_server_pub))
