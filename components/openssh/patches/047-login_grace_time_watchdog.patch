@@ -36,7 +36,7 @@ diff -pur old/sshd.c new/sshd.c
  
  #ifdef WITH_SSH1
  static void do_ssh1_kex(void);
-@@ -369,12 +376,98 @@ grace_alarm_handler(int sig)
+@@ -369,12 +376,102 @@ grace_alarm_handler(int sig)
  		signal(SIGTERM, SIG_IGN);
  		kill(0, SIGTERM);
  	}
@@ -128,6 +128,10 @@ diff -pur old/sshd.c new/sshd.c
 +	}
 +
 +	kill(grace_watchdog_pid, SIGTERM);
++	while (waitpid(grace_watchdog_pid, NULL, 0) < 0) {
++		if (errno == EINTR)
++			continue;
++	}
 +	grace_watchdog_pid = -1;
 +}
 +
@@ -135,7 +139,7 @@ diff -pur old/sshd.c new/sshd.c
  /*
   * Signal handler for the key regeneration alarm.  Note that this
   * alarm only occurs in the daemon waiting for connections, and it does not
-@@ -723,6 +816,7 @@ privsep_preauth(Authctxt *authctxt)
+@@ -723,6 +820,7 @@ privsep_preauth(Authctxt *authctxt)
  		/* child */
  		close(pmonitor->m_sendfd);
  		close(pmonitor->m_log_recvfd);
@@ -143,7 +147,7 @@ diff -pur old/sshd.c new/sshd.c
  
  		/* Arrange for logging to be sent to the monitor */
  		set_log_handler(mm_log_handler, pmonitor);
-@@ -2235,8 +2329,10 @@ main(int ac, char **av)
+@@ -2235,8 +2333,10 @@ main(int ac, char **av)
  	 * are about to discover the bug.
  	 */
  	signal(SIGALRM, grace_alarm_handler);
@@ -155,7 +159,7 @@ diff -pur old/sshd.c new/sshd.c
  
  	sshd_exchange_identification(ssh, sock_in, sock_out);
  
-@@ -2302,6 +2398,7 @@ main(int ac, char **av)
+@@ -2302,6 +2402,7 @@ main(int ac, char **av)
  	 */
  	alarm(0);
  	signal(SIGALRM, SIG_DFL);
