@@ -31,7 +31,7 @@
 #
 # Release major number: 2014, 2015, etc.
 #
-RELEASE_MAJOR ?= 2016
+RELEASE_MAJOR ?= 2017
 
 #
 # Release minor number: 0, 1, 2, etc.
