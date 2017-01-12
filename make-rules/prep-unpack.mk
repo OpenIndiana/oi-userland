@@ -58,7 +58,7 @@ REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += compress/unzip
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zip
-REQUIRED_PACKAGES += developer/java/jdk
+REQUIRED_PACKAGES += developer/java/openjdk7
 REQUIRED_PACKAGES += runtime/ruby
 
 endif
