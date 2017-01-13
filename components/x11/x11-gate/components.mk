@@ -38,7 +38,6 @@ COMPONENTS+= xf86miscproto
 COMPONENTS+= xf86vidmodeproto
 COMPONENTS+= xineramaproto
 COMPONENTS+= xcb-proto # xcbproto in X11 gate
-COMPONENTS+= sun-ext-protos
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 COMPONENTS+= xbitmaps
