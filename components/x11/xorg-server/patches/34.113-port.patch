@@ -42,24 +42,6 @@
  
  LOCAL_LIBS = \
              $(MAIN_LIB) \
---- a/mi/miinitext.c	Fri Sep 14 15:27:58 2012
-+++ b/mi/miinitext.c	Fri Sep 14 15:28:25 2012
-@@ -121,6 +121,15 @@
-     Bool *disablePtr;
- } ExtensionToggle;
- 
-+#define SolarisIAExtension
-+
-+#ifdef SolarisIAExtension
-+#include <X11/extensions/interactive.h>
-+#include "../IA/interactive_srv.h"
-+Bool noIAExtension;
-+extern void IAExtensionInit(void);
-+#endif
-+
- static ExtensionToggle ExtensionToggleList[] = {
-     /* sort order is extension name string as shown in xdpyinfo */
-     {"Generic Events", &noGEExtension},
 --- a/include/globals.h	Tue Sep 25 14:45:20 2012
 +++ b/include/globals.h	Tue Sep 25 14:45:35 2012
 @@ -50,4 +50,8 @@
