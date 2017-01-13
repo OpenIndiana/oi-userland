@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2000, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* LINTLIBRARY */
@@ -37,6 +37,7 @@ int deflateInit_(z_streamp strm, int level, const char *version,
 int deflateInit2_(z_streamp strm, int  level, int  method, int windowBits,
     int memLevel, int strategy, const char *version, int stream_size);
 int deflate(z_streamp strm, int flush);
+int deflateGetDictionary(z_streamp strm, Bytef *dictionary, uInt *dictLength);
 int deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
     uInt dictLength);
 int deflateCopy(z_streamp dest, z_streamp source);
@@ -74,6 +75,8 @@ int compress2(Bytef *dest, uLongf *destLen, const Bytef *source,
 uLong compressBound(uLong sourceLen);
 int uncompress(Bytef *dest, uLongf *destLen, const Bytef *source,
     uLong sourceLen);
+int uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source,
+    uLong *sourceLen);
 gzFile gzopen(const char *path, const char *mode);
 gzFile gzopen64(const char *path, const char *mode);
 gzFile gzdopen(int fd, const char *mode);
@@ -87,6 +90,8 @@ char *gzgets(gzFile file, char *buf, int len);
 int gzungetc(int c, gzFile file);
 int gzputc(gzFile file, int c);
 int gzflush(gzFile file, int flush);
+z_size_t gzfread(voidp buf, z_size_t size, z_size_t nitems, gzFile file);
+z_size_t gzfwrite(voidpc buf, z_size_t size, z_size_t nitems, gzFile file);
 z_off_t gzseek(gzFile file, z_off_t offset, int whence);
 z_off64_t gzseek64(gzFile, z_off64_t, int);
 int gzrewind(gzFile file);
@@ -104,14 +109,18 @@ const char *gzerror(gzFile file, int *errnum);
 uLong adler32(uLong adler, const Bytef *buf, uInt len);
 uLong adler32_combine(uLong adler1, uLong adler2, z_off_t len2);
 uLong adler32_combine64(uLong adler1, uLong adler2, z_off64_t len2);
+uLong adler32_z(uLong adler, const Bytef *buf, z_size_t len);
 uLong crc32(uLong crc, const Bytef *buf, uInt len);
 uLong crc32_combine(uLong crc1, uLong crc2, z_off_t len2);
 uLong crc32_combine64(uLong crc1, uLong crc2, z_off64_t len2);
+uLong crc32_z(uLong adler, const Bytef *buf, z_size_t len);
 const char *zError(int err);
 uLong zlibCompileFlags(void);
 int inflateSyncPoint(z_streamp z);
 const z_crc_t *get_crc_table(void);
 int inflateUndermine(z_streamp, int);
+int inflateValidate(z_streamp, int);
+unsigned long inflateCodesUsed(z_streamp);
 int inflateResetKeep(z_streamp);
 int deflateResetKeep(z_streamp);
 int gzvprintf(gzFile file, const char *format, va_list va);

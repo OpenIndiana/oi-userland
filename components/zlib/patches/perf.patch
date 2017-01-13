@@ -1,23 +1,12 @@
 Patch origin: in-house
-Patch status: inffast.c part: submitted back to community without feedback
+Patch status: inffast.c part: accepted, will be in next version
 Patch status: deflate.c part: Solaris-specific; not suitable for upstream
 
---- zlib-1.2.8/zlib.h	2013-04-28 17:23:49.000000000 -0700
-+++ zlib-1.2.8/zlib.h	2014-04-18 05:32:31.316290241 -0700
-@@ -37,8 +37,8 @@
- extern "C" {
- #endif
- 
--#define ZLIB_VERSION "1.2.8"
--#define ZLIB_VERNUM 0x1280
-+#define ZLIB_VERSION "1.2.8-T4mods"
-+#define ZLIB_VERNUM 0x128f
- #define ZLIB_VER_MAJOR 1
- #define ZLIB_VER_MINOR 2
- #define ZLIB_VER_REVISION 8
+https://github.com/madler/zlib/commit/60a5ecc62b18d1e2391993b1fcfc10e100720642
+
 --- zlib-1.2.8/inffast.c	2013-03-24 22:47:59.000000000 -0700
 +++ zlib-1.2.8/inffast.c	2014-02-28 01:57:57.075708259 -0800
-@@ -87,7 +87,7 @@
+@@ -68,7 +68,7 @@
      code const FAR *dcode;      /* local strm->distcode */
      unsigned lmask;             /* mask for first level of length codes */
      unsigned dmask;             /* mask for first level of distance codes */
@@ -26,8 +15,8 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
      unsigned op;                /* code bits, operation, extra bits, or */
                                  /*  window position, window bytes to copy */
      unsigned len;               /* match length, unused bytes */
-@@ -124,20 +124,20 @@
-             hold += (unsigned long)(PUP(in)) << bits;
+@@ -105,20 +105,20 @@
+             hold += (unsigned long)(*in++) << bits;
              bits += 8;
          }
 -        here = lcode[hold & lmask];
@@ -44,9 +33,9 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
 +            Tracevv((stderr, here->val >= 0x20 && here->val < 0x7f ?
                      "inflate:         literal '%c'\n" :
 -                    "inflate:         literal 0x%02x\n", here.val));
--            PUP(out) = (unsigned char)(here.val);
+-            *out++ = (unsigned char)(here.val);
 +                    "inflate:         literal 0x%02x\n", here->val));
-+            PUP(out) = (unsigned char)(here->val);
++            *out++ = (unsigned char)(here->val);
          }
          else if (op & 16) {                     /* length base */
 -            len = (unsigned)(here.val);
@@ -54,8 +43,8 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
              op &= 15;                           /* number of extra bits */
              if (op) {
                  if (bits < op) {
-@@ -155,14 +155,14 @@
-                 hold += (unsigned long)(PUP(in)) << bits;
+@@ -136,14 +136,14 @@
+                 hold += (unsigned long)(*in++) << bits;
                  bits += 8;
              }
 -            here = dcode[hold & dmask];
@@ -72,8 +61,8 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
 +                dist = (unsigned)(here->val);
                  op &= 15;                       /* number of extra bits */
                  if (bits < op) {
-                     hold += (unsigned long)(PUP(in)) << bits;
-@@ -281,7 +281,7 @@
+                     hold += (unsigned long)(*in++) << bits;
+@@ -262,7 +262,7 @@
                  }
              }
              else if ((op & 64) == 0) {          /* 2nd level distance code */
@@ -82,7 +71,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
                  goto dodist;
              }
              else {
-@@ -291,7 +291,7 @@
+@@ -272,7 +272,7 @@
              }
          }
          else if ((op & 64) == 0) {              /* 2nd level length code */
@@ -101,7 +90,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
  /* ===========================================================================
   *  Function prototypes.
   */
-@@ -89,13 +90,18 @@
+@@ -91,13 +92,18 @@
        void match_init OF((void)); /* asm code initialization */
        uInt longest_match  OF((deflate_state *s, IPos cur_match));
  #else
@@ -112,7 +101,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
 +#endif
  #endif
  
- #ifdef DEBUG
+ #ifdef ZLIB_DEBUG
  local  void check_match OF((deflate_state *s, IPos start, IPos match,
                              int length));
  #endif
@@ -120,7 +109,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
  
  /* ===========================================================================
   * Local data
-@@ -104,6 +110,7 @@
+@@ -106,6 +112,7 @@
  #define NIL 0
  /* Tail of hash chains */
  
@@ -128,7 +117,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
  #ifndef TOO_FAR
  #  define TOO_FAR 4096
  #endif
-@@ -1130,7 +1137,9 @@
+@@ -1217,7 +1224,9 @@
  #endif
  #endif
  }
@@ -138,7 +127,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
  #ifndef FASTEST
  /* ===========================================================================
   * Set match_start to the longest match starting at the given string and
-@@ -1145,7 +1154,11 @@
+@@ -1232,7 +1241,11 @@
  /* For 80x86 and 680x0, an optimized version will be provided in match.asm or
   * match.S. The code will be functionally equivalent.
   */
@@ -150,7 +139,7 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
      deflate_state *s;
      IPos cur_match;                             /* current match */
  {
-@@ -1288,6 +1301,7 @@
+@@ -1375,6 +1388,7 @@
      return s->lookahead;
  }
  #endif /* ASMV */
@@ -158,15 +147,15 @@ Patch status: deflate.c part: Solaris-specific; not suitable for upstream
  
  #else /* FASTEST */
  
-@@ -1349,6 +1363,7 @@
+@@ -1436,6 +1450,7 @@
  
  #endif /* FASTEST */
  
 +#ifndef LONGEST_MATCH_ONLY
- #ifdef DEBUG
- /* ===========================================================================
-  * Check that the match at match_start is indeed a match.
-@@ -1965,3 +1980,4 @@
+ #ifdef ZLIB_DEBUG
+ 
+ #define EQUAL 0
+@@ -2154,3 +2169,4 @@
          FLUSH_BLOCK(s, 0);
      return block_done;
  }

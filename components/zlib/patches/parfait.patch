@@ -8,13 +8,97 @@ Parfait during linking.
 Downside of it is that Parfait will analyze also these separate object
 files.
 
---- zlib-1.2.8/Makefile.in	2013-04-28 15:57:11.000000000 -0700
-+++ zlib-1.2.8/Makefile.in	2014-05-07 07:30:58.047571894 -0700
-@@ -158,6 +158,7 @@
+--- zlib-1.2.11/Makefile.in
++++ zlib-1.2.11/Makefile.in
+@@ -208,76 +208,91 @@
  	-@mkdir objs 2>/dev/null || test -d objs
- 	$(CC) $(SFLAGS) -DPIC -c -o objs/$*.o $<
- 	-@mv objs/$*.o $@
-+	-@if [ -f objs/$*.o.bc ]; then mv objs/$*.o.bc $@.bc; fi
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/adler32.o $(SRCDIR)adler32.c
+ 	-@mv objs/adler32.o $@
++	-@if [ -f objs/adler32.o.bc ]; then mv objs/adler32.o.bc adler32.bc; fi
+ 
+ crc32.lo: $(SRCDIR)crc32.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/crc32.o $(SRCDIR)crc32.c
+ 	-@mv objs/crc32.o $@
++	-@if [ -f objs/crc32.o.bc ]; then mv objs/crc32.o.bc crc32.bc; fi
+ 
+ deflate.lo: $(SRCDIR)deflate.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/deflate.o $(SRCDIR)deflate.c
+ 	-@mv objs/deflate.o $@
++	-@if [ -f objs/deflate.o.bc ]; then mv objs/deflate.o.bc deflate.bc; fi
+ 
+ infback.lo: $(SRCDIR)infback.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/infback.o $(SRCDIR)infback.c
+ 	-@mv objs/infback.o $@
++	-@if [ -f objs/infback.o.bc ]; then mv objs/infback.o.bc infback.bc; fi
+ 
+ inffast.lo: $(SRCDIR)inffast.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inffast.o $(SRCDIR)inffast.c
+ 	-@mv objs/inffast.o $@
++	-@if [ -f objs/inffast.o.bc ]; then mv objs/inffast.o.bc inffast.bc; fi
+ 
+ inflate.lo: $(SRCDIR)inflate.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inflate.o $(SRCDIR)inflate.c
+ 	-@mv objs/inflate.o $@
++	-@if [ -f objs/inflate.o.bc ]; then mv objs/inflate.o.bc inflate.bc; fi
+ 
+ inftrees.lo: $(SRCDIR)inftrees.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/inftrees.o $(SRCDIR)inftrees.c
+ 	-@mv objs/inftrees.o $@
++	-@if [ -f objs/inftrees.o.bc ]; then mv objs/inftrees.o.bc inftrees.bc; fi
+ 
+ trees.lo: $(SRCDIR)trees.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/trees.o $(SRCDIR)trees.c
+ 	-@mv objs/trees.o $@
++	-@if [ -f objs/trees.o.bc ]; then mv objs/trees.o.bc trees.bc; fi
+ 
+ zutil.lo: $(SRCDIR)zutil.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/zutil.o $(SRCDIR)zutil.c
+ 	-@mv objs/zutil.o $@
++	-@if [ -f objs/zutil.o.bc ]; then mv objs/zutil.o.bc zutil.bc; fi
+ 
+ compress.lo: $(SRCDIR)compress.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/compress.o $(SRCDIR)compress.c
+ 	-@mv objs/compress.o $@
++	-@if [ -f objs/compress.o.bc ]; then mv objs/compress.o.bc compress.bc; fi
+ 
+ uncompr.lo: $(SRCDIR)uncompr.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/uncompr.o $(SRCDIR)uncompr.c
+ 	-@mv objs/uncompr.o $@
++	-@if [ -f objs/uncompr.o.bc ]; then mv objs/uncompr.o.bc uncompr.bc; fi
+ 
+ gzclose.lo: $(SRCDIR)gzclose.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzclose.o $(SRCDIR)gzclose.c
+ 	-@mv objs/gzclose.o $@
++	-@if [ -f objs/gzclose.o.bc ]; then mv objs/gzclose.o.bc gzclose.bc; fi
+ 
+ gzlib.lo: $(SRCDIR)gzlib.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzlib.o $(SRCDIR)gzlib.c
+ 	-@mv objs/gzlib.o $@
++	-@if [ -f objs/gzlib.o.bc ]; then mv objs/gzlib.o.bc gzlib.bc; fi
+ 
+ gzread.lo: $(SRCDIR)gzread.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzread.o $(SRCDIR)gzread.c
+ 	-@mv objs/gzread.o $@
++	-@if [ -f objs/gzread.o.bc ]; then mv objs/gzread.o.bc gzread.bc; fi
+ 
+ gzwrite.lo: $(SRCDIR)gzwrite.c
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) $(ZINC) -DPIC -c -o objs/gzwrite.o $(SRCDIR)gzwrite.c
+ 	-@mv objs/gzwrite.o $@
++	-@if [ -f objs/gzwrite.o.bc ]; then mv objs/gzwrite.o.bc gzwrite.bc; fi
+ 
  
  placebo $(SHAREDLIBV): $(PIC_OBJS) libz.a
- 	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS)
