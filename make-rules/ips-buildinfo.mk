@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 
@@ -63,7 +63,7 @@ PLATNUM ?= 0
 # the development build) of the Solaris Update is being built.
 # This is set by the gatekeepers.
 #
-BUILDID ?= 115
+BUILDID ?= 116
 
 # Each (nightly) build of the code that produces packages needs to
 # be uniquely identified so that packages produced by different
