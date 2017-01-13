@@ -203,7 +203,6 @@ COMPONENTS+= xlogo
 COMPONENTS+= xlsatoms
 COMPONENTS+= xlsclients
 COMPONENTS+= xlsfonts
-COMPONENTS+= xmag_multivis
 COMPONENTS+= xmag
 COMPONENTS+= xmakemap
 COMPONENTS+= xman
