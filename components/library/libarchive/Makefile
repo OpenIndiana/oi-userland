@@ -23,18 +23,25 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.1.2
-COMPONENT_REVISION=	3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	3.3.1
+COMPONENT_SUMMARY=	multi-format archive and compression library
+COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
+ interface for reading and writing archives in various formats such as\
+ tar(1) and cpio(1). libarchive also supports reading and writing\
+ archives compressed using various compression filters such as gzip(1)\
+ and bzip2(1). The library is inherently stream-oriented;\
+ readers serially iterate through the archive, writers serially\
+ add things to the archive.
+COMPONENT_SRC=		libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:eb87eacd8fe49e8d90c8fdc189813023ccc319c5e752b01fb6ad0cc7b2c53d5e
-COMPONENT_ARCHIVE_URL=	\
-    $(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libarchive
-
-TPNO=			24584
+	sha256:29ca5bd1624ca5a007aa57e16080262ab4379dbf8797f5c52f7ea74a3b0424e7
+COMPONENT_ARCHIVE_URL= \
+	http://libarchive.org/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=        library/libarchive
+COMPONENT_CLASSIFICATION=       System/Libraries
+COMPONENT_LICENSE=      BSD-like
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -43,6 +50,8 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-largefile
+# Linking libarchive with lzo violates LZO GPL licence
+CONFIGURE_OPTIONS += --without-lzo
 # We prefer openssl over nettle.
 CONFIGURE_OPTIONS += --without-nettle
 CONFIGURE_OPTIONS += --with-openssl
@@ -61,7 +70,7 @@ COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
 # We then convert BSD-style section numbers in the libarchive man pages to
 # Solaris-style section numbers.
 COMPONENT_PREP_ACTION = \
-	cd $(@D)/doc/man ; rm *.[135] ; env PATH=/usr/gnu/bin:$$PATH gmake all ; \
+	cd $(@D)/doc ; rm -f man/*.[135] ; env PATH=/usr/gnu/bin:$$PATH $(CONFIG_SHELL) update.sh ; \
 	cd $(@D)/libarchive ; \
 	find . -name "*\.[35]" | xargs /usr/bin/gsed -i 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
 	find . -name "*\.[35]" | xargs /usr/bin/gsed -i \
@@ -73,14 +82,22 @@ PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|/tmp/.*_test.*|\\$$(TESTDIR)|g"' \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-	'-e "s/ld: warning: symbol .* has differing sizes:$$/XXX_CC_XXX/"' \
-	'-e "s/.*value=0x[0-9a-f]\+.*$$/XXX_CC_XXX/"' \
-	'-e "s/.* definition taken$$/XXX_CC_XXX/"' \
-	'-e "/^XXX_CC_XXX$$/d"'
+        '-n ' \
+        '-e "/TOTAL:/p" ' \
+        '-e "/SKIP:/p" ' \
+        '-e "/PASS:/p" ' \
+        '-e "/FAIL:/p" ' \
+        '-e "/ERROR:/p" '
 
 build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
@@ -89,7 +106,9 @@ test:		$(TEST_32_and_64)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/lzo
+REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += text/groff
