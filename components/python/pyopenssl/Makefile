@@ -20,21 +20,20 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyOpenSSL
-COMPONENT_VERSION=	0.13
+COMPONENT_VERSION=	16.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:21e12b03abaa0e04ecc8cd9c251598f71bae11c9f385304234e4ea5618c6163b
+COMPONENT_ARCHIVE_HASH=	sha256:7779a3bbb74e79db234af6a08775568c6769b5821faecf6e2f4143edb227516e
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://launchpad.net/pyopenssl
 COMPONENT_BUGDB=	python-mod/pyopenssl
 
-TPNO=			9207
+TPNO=			32834
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -42,20 +41,24 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
-# The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the
-# $(PYTHON_VENDOR_PACKAGES) variable for 64bit Python is wrong.
-# Everything works fine if we just add the 32bit path.
-COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
-COMPONENT_TEST_CMD = $(SHELL)
-COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
+# Temporary measure before cryptography gets to official machines.
+# Can be removed after cryptography 1.6 has been installed on all machines.
+# Bug ID: 25394619
+CRYPTOGRAPHY = $(WS_COMPONENTS)/python/cryptography/build/prototype/$(MACH)/$(PYTHON_LIB)
 
+COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
+
+# In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
+# outputs the same hex as the key, so this is a false error.
+# In tests/test_ssl.py::ConnectionTests::test_set_seesion_wrong_method, This test doesn't
+# work for our version of OpenSSL, which is 1.0.2j; this test only supports OpenSSL 1.0.0
+COMPONENT_TEST_DIR = $(@D)
+COMPONENT_TEST_ENV += PYTHONPATH=$(CRYPTOGRAPHY):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES):$(PYTHON_VENDOR_PACKAGES)
+# Some tests require unicode characters, otherwise ~17 tests will fail
+COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
+COMPONENT_TEST_CMD = py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-# Using nawk for easier test results processing and stripping out the
-# random portions (like time to complete the tests).
-COMPONENT_TEST_TRANSFORMER =    $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^Running / { print }; /^ERROR: / { print }; /^FAIL: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
 
 build:		$(BUILD_32_and_64)
 
@@ -64,7 +67,6 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library
