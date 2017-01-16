@@ -136,7 +136,6 @@ COMPONENTS+= libxkbcommon
 COMPONENTS+= $(X11_GATE_INSTALL_ACTION)
 
 # app
-COMPONENTS+= accessx
 COMPONENTS+= appres
 COMPONENTS+= bitmap
 COMPONENTS+= cmap_alloc
