@@ -19,7 +19,7 @@
 
  CDDL HEADER END
 
- Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 
  NOTE:  This service manifest is not editable; its contents will
  be overwritten by package or patch operations, including
@@ -37,7 +37,7 @@
     <dependency name="identity" grouping="require_all" restart_on="error" type="service">
       <service_fmri value="svc:/system/identity:node"/>
     </dependency>
-    <dependency name="puppet_self-assembly-complete" grouping="optional_all" restart_on="none">
+    <dependency name="puppet_self-assembly-complete" grouping="optional_all" restart_on="none" type="service">
       <service_fmri value="svc:/milestone/self-assembly-complete"/>
     </dependency>
     <exec_method type="method" name="start" exec=":true" timeout_seconds="60"/>
@@ -71,26 +71,26 @@
       <!--
           The main instance exists to hold shared configuration values.
        -->
+      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
+      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
       <property_group name="config" type="application">
         <propval name="vardir" type="astring" value="/var/cache/puppetlabs"/>
         <propval name="rundir" type="astring" value="/var/run/puppetlabs"/>
         <propval name="confdir" type="astring" value="/etc/puppetlabs/puppet"/>
       </property_group>
-      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
-      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
     </instance>
     <instance name="user" enabled="false">
       <!--
           user is used by the Puppet apply command, as well as many of the less
           common Puppet subcommands.
        -->
+      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
+      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
       <property_group name="config" type="application">
         <propval name="vardir" type="astring" value="/var/cache/puppetlabs"/>
         <propval name="rundir" type="astring" value="/var/run/puppetlabs"/>
         <propval name="confdir" type="astring" value="/etc/puppetlabs/puppet"/>
       </property_group>
-      <exec_method type="method" name="start" exec=":true" timeout_seconds="0"/>
-      <exec_method type="method" name="stop" exec=":true" timeout_seconds="0"/>
     </instance>
     <instance name="master" enabled="false">
       <exec_method type="method" name="start" exec="/usr/sbin/puppet master --logdest %{config/logdest}" timeout_seconds="600"/>

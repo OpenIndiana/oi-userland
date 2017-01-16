@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 RUBY_VERSION=2.1
@@ -80,6 +80,7 @@ $(BUILD_DIR)/puppet.xml: $(BUILD_DIR)/puppet.conf
 $(BUILD_DIR)/.smf_updated: $(BUILD_DIR)/puppet.xml
 	$(GDIFF) -q $(BUILD_DIR)/puppet.xml files/puppet.xml > /dev/null 2>&1 || \
 		$(CP) $(BUILD_DIR)/puppet.xml files/puppet.xml
+	/usr/sbin/svccfg validate files/puppet.xml
 	$(TOUCH) $@
 
 # Collect and print puppet module manifests for cherry picking into group
