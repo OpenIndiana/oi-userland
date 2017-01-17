@@ -1,7 +1,7 @@
 # Copyright 2011 Justin Santa Barbara
 # All Rights Reserved.
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -569,6 +569,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.NovaException(reason)
 
         return self._archive_manager
+
+    def _initialize_volume_connection(self, context, volume_id, connection):
+        connection_info = self._volume_api.initialize_connection(context,
+                                                                 volume_id,
+                                                                 connection)
+        connection_info['serial'] = volume_id
+
+        return connection_info
 
     def init_host(self, host):
         """Initialize anything that is necessary for the driver to function,
@@ -1385,10 +1393,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         volume_id = volume['id']
 
         connector = self.get_volume_connector(instance)
-        connection_info = self._volume_api.initialize_connection(context,
-                                                                 volume_id,
-                                                                 connector)
-        connection_info['serial'] = volume_id
+        connection_info = self._initialize_volume_connection(context,
+                                                             volume_id,
+                                                             connector)
 
         # Check connection_info to determine if the provided volume is
         # local to this compute node. If it is, then don't use it for
@@ -3099,7 +3106,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     raise exception.ResizeError(reason=msg)
 
             if root_ci['driver_volume_type'] == 'iscsi':
-                volume_id = root_ci['data']['volume_id']
+                try:
+                    volume_id = root_ci['data']['volume_id']
+                except KeyError:
+                    volume_id = root_ci.get('serial')
             else:
                 volume_id = root_ci['serial']
 
@@ -3253,8 +3263,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             old_rvid = instance.system_metadata.get('old_instance_volid')
             if old_rvid:
                 connector = self.get_volume_connector(instance)
-                connection_info = self._volume_api.initialize_connection(
-                    context, old_rvid, connector)
+                connection_info = self._initialize_volume_connection(context,
+                                                                     old_rvid,
+                                                                     connector)
 
                 new_rvid = instance.system_metadata['new_instance_volid']
 
@@ -3419,10 +3430,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param samehost: is the resize happening on the same host
         """
         connector = self.get_volume_connector(instance)
-        connection_info = self._volume_api.initialize_connection(context,
-                                                                 replacement,
-                                                                 connector)
-        connection_info['serial'] = replacement
+        connection_info = self._initialize_volume_connection(context,
+                                                             replacement,
+                                                             connector)
         rootmp = instance.root_device_name
 
         if samehost:
@@ -3489,9 +3499,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         old_rvid = instance.system_metadata.get('old_instance_volid')
         if old_rvid:
             connector = self.get_volume_connector(instance)
-            connection_info = self._volume_api.initialize_connection(context,
-                                                                     old_rvid,
-                                                                     connector)
+            connection_info = self._initialize_volume_connection(context,
+                                                                 old_rvid,
+                                                                 connector)
 
             new_rvid = instance.system_metadata['new_instance_volid']
             self._volume_api.detach(context, new_rvid)
