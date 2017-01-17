@@ -58,3 +58,50 @@ convert logo_3D_shadowed.png \
 
 # Now compare logo_3D_bg.jpg to the image at
 # http://www.imagemagick.org/Usage/advanced/#3d-logos
+
+
+cat > a.pl <<'EOT'
+#!/usr/bin/perl
+
+use Image::Magick;
+
+$image=Image::Magick->new;
+$image->Set(size=>'300x300');
+$image->Read('xc:white');
+
+$tile=Image::Magick->new;
+$tile->Read('tile.gif');
+$image->Draw(primitive=>'Polygon',tile=>$tile,fill=>'none',
+  points=>'30,30 100,10 190,290 30,290');
+$image->Draw(stroke=>'red',primitive=>'Ellipse',stroke=>'black',fill=>'red',
+  strokewidth=>5,points=>'100,100 50,75 0,360');
+$image->Draw(primitive=>'Polygon',fill=>'none',stroke=>'black',strokewidth=>5,
+  points=>'30,30 100,10 190,290 30,290');
+$image->FloodfillPaint(geometry=>'+132+62',fill=>'blue',bordercolor=>'black',
+  invert=>'true');
+
+$image->Annotate(fill=>'red',geometry=>'+280+120',font=>'Generic.ttf',
+  pointsize=>14,text=>''.localtime(),rotate=>90.0);
+
+$image->Write('shapes.gif');
+EOT
+
+chmod +x a.pl
+./a.pl
+
+# Now display 'shapes.gif' and make sure it contains current date
+
+
+# Emacs is using imagemagick - let's test it
+
+pkg install gnu-emacs-x11 gnu-emacs-gtk
+cd /usr/share/doc/ImageMagick-6/images
+
+# We need to convert to bmp, because other file types (like png) emacs opens
+# directly via libpng and not using ImageMagick's libWand
+convert wizard.png wizard.bmp
+
+# Now both emacs should be able to display image
+
+emacs-x wizard.bmp
+emacs-gtk wizard.bmp
