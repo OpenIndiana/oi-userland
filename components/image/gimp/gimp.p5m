@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -20,11 +20,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license COPYING license='GPLv3'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=usr/lib/gimp/2.0/plug-ins/.* -> default mode 0555>
 <transform file path=usr/lib/gimp/2.0/plug-ins/.* -> default pkg.depend.bypass-generate .*/(pyconsole|gimp).*>
 <transform file path=etc/gimp/2.0/.* -> default preserve true>
@@ -261,23 +258,14 @@ file path=usr/lib/gimp/2.0/environ/default.env
 file path=usr/lib/gimp/2.0/environ/pygimp.env
 file path=usr/lib/gimp/2.0/interpreters/default.interp
 file path=usr/lib/gimp/2.0/interpreters/pygimp.interp
-file path=usr/lib/gimp/2.0/modules/libcolor-selector-cmyk.la
 file path=usr/lib/gimp/2.0/modules/libcolor-selector-cmyk.so
-file path=usr/lib/gimp/2.0/modules/libcolor-selector-water.la
 file path=usr/lib/gimp/2.0/modules/libcolor-selector-water.so
-file path=usr/lib/gimp/2.0/modules/libcolor-selector-wheel.la
 file path=usr/lib/gimp/2.0/modules/libcolor-selector-wheel.so
-file path=usr/lib/gimp/2.0/modules/libcontroller-midi.la
 file path=usr/lib/gimp/2.0/modules/libcontroller-midi.so
-file path=usr/lib/gimp/2.0/modules/libdisplay-filter-color-blind.la
 file path=usr/lib/gimp/2.0/modules/libdisplay-filter-color-blind.so
-file path=usr/lib/gimp/2.0/modules/libdisplay-filter-gamma.la
 file path=usr/lib/gimp/2.0/modules/libdisplay-filter-gamma.so
-file path=usr/lib/gimp/2.0/modules/libdisplay-filter-high-contrast.la
 file path=usr/lib/gimp/2.0/modules/libdisplay-filter-high-contrast.so
-file path=usr/lib/gimp/2.0/modules/libdisplay-filter-lcms.la
 file path=usr/lib/gimp/2.0/modules/libdisplay-filter-lcms.so
-file path=usr/lib/gimp/2.0/modules/libdisplay-filter-proof.la
 file path=usr/lib/gimp/2.0/modules/libdisplay-filter-proof.so
 file path=usr/lib/gimp/2.0/plug-ins/alien-map
 file path=usr/lib/gimp/2.0/plug-ins/align-layers
@@ -462,68 +450,49 @@ file path=usr/lib/gimp/2.0/plug-ins/waves
 file path=usr/lib/gimp/2.0/plug-ins/web-browser
 file path=usr/lib/gimp/2.0/plug-ins/whirl-pinch
 file path=usr/lib/gimp/2.0/plug-ins/wind
-file path=usr/lib/gimp/2.0/python/_gimpenums.la
 file path=usr/lib/gimp/2.0/python/_gimpenums.so
-file path=usr/lib/gimp/2.0/python/_gimpui.la
 file path=usr/lib/gimp/2.0/python/_gimpui.so
-file path=usr/lib/gimp/2.0/python/gimp.la
 file path=usr/lib/gimp/2.0/python/gimp.so
-file path=usr/lib/gimp/2.0/python/gimpcolor.la
 file path=usr/lib/gimp/2.0/python/gimpcolor.so
 file path=usr/lib/gimp/2.0/python/gimpenums.py
 file path=usr/lib/gimp/2.0/python/gimpenums.pyc
-file path=usr/lib/gimp/2.0/python/gimpenums.pyo
 file path=usr/lib/gimp/2.0/python/gimpfu.py
 file path=usr/lib/gimp/2.0/python/gimpfu.pyc
-file path=usr/lib/gimp/2.0/python/gimpfu.pyo
 file path=usr/lib/gimp/2.0/python/gimpplugin.py
 file path=usr/lib/gimp/2.0/python/gimpplugin.pyc
-file path=usr/lib/gimp/2.0/python/gimpplugin.pyo
 file path=usr/lib/gimp/2.0/python/gimpshelf.py
 file path=usr/lib/gimp/2.0/python/gimpshelf.pyc
-file path=usr/lib/gimp/2.0/python/gimpshelf.pyo
-file path=usr/lib/gimp/2.0/python/gimpthumb.la
 file path=usr/lib/gimp/2.0/python/gimpthumb.so
 file path=usr/lib/gimp/2.0/python/gimpui.py
 file path=usr/lib/gimp/2.0/python/gimpui.pyc
-file path=usr/lib/gimp/2.0/python/gimpui.pyo
 file path=usr/lib/gimp/2.0/python/pygimp-logo.png
-file path=usr/lib/libgimp-2.0.la
-link path=usr/lib/libgimp-2.0.so target=libgimp-2.0.so.0.800.16
-link path=usr/lib/libgimp-2.0.so.0 target=libgimp-2.0.so.0.800.16
-file path=usr/lib/libgimp-2.0.so.0.800.16
-file path=usr/lib/libgimpbase-2.0.la
-link path=usr/lib/libgimpbase-2.0.so target=libgimpbase-2.0.so.0.800.16
-link path=usr/lib/libgimpbase-2.0.so.0 target=libgimpbase-2.0.so.0.800.16
-file path=usr/lib/libgimpbase-2.0.so.0.800.16
-file path=usr/lib/libgimpcolor-2.0.la
-link path=usr/lib/libgimpcolor-2.0.so target=libgimpcolor-2.0.so.0.800.16
-link path=usr/lib/libgimpcolor-2.0.so.0 target=libgimpcolor-2.0.so.0.800.16
-file path=usr/lib/libgimpcolor-2.0.so.0.800.16
-file path=usr/lib/libgimpconfig-2.0.la
-link path=usr/lib/libgimpconfig-2.0.so target=libgimpconfig-2.0.so.0.800.16
-link path=usr/lib/libgimpconfig-2.0.so.0 target=libgimpconfig-2.0.so.0.800.16
-file path=usr/lib/libgimpconfig-2.0.so.0.800.16
-file path=usr/lib/libgimpmath-2.0.la
-link path=usr/lib/libgimpmath-2.0.so target=libgimpmath-2.0.so.0.800.16
-link path=usr/lib/libgimpmath-2.0.so.0 target=libgimpmath-2.0.so.0.800.16
-file path=usr/lib/libgimpmath-2.0.so.0.800.16
-file path=usr/lib/libgimpmodule-2.0.la
-link path=usr/lib/libgimpmodule-2.0.so target=libgimpmodule-2.0.so.0.800.16
-link path=usr/lib/libgimpmodule-2.0.so.0 target=libgimpmodule-2.0.so.0.800.16
-file path=usr/lib/libgimpmodule-2.0.so.0.800.16
-file path=usr/lib/libgimpthumb-2.0.la
-link path=usr/lib/libgimpthumb-2.0.so target=libgimpthumb-2.0.so.0.800.16
-link path=usr/lib/libgimpthumb-2.0.so.0 target=libgimpthumb-2.0.so.0.800.16
-file path=usr/lib/libgimpthumb-2.0.so.0.800.16
-file path=usr/lib/libgimpui-2.0.la
-link path=usr/lib/libgimpui-2.0.so target=libgimpui-2.0.so.0.800.16
-link path=usr/lib/libgimpui-2.0.so.0 target=libgimpui-2.0.so.0.800.16
-file path=usr/lib/libgimpui-2.0.so.0.800.16
-file path=usr/lib/libgimpwidgets-2.0.la
-link path=usr/lib/libgimpwidgets-2.0.so target=libgimpwidgets-2.0.so.0.800.16
-link path=usr/lib/libgimpwidgets-2.0.so.0 target=libgimpwidgets-2.0.so.0.800.16
-file path=usr/lib/libgimpwidgets-2.0.so.0.800.16
+link path=usr/lib/libgimp-2.0.so target=libgimp-2.0.so.0.800.18
+link path=usr/lib/libgimp-2.0.so.0 target=libgimp-2.0.so.0.800.18
+file path=usr/lib/libgimp-2.0.so.0.800.18
+link path=usr/lib/libgimpbase-2.0.so target=libgimpbase-2.0.so.0.800.18
+link path=usr/lib/libgimpbase-2.0.so.0 target=libgimpbase-2.0.so.0.800.18
+file path=usr/lib/libgimpbase-2.0.so.0.800.18
+link path=usr/lib/libgimpcolor-2.0.so target=libgimpcolor-2.0.so.0.800.18
+link path=usr/lib/libgimpcolor-2.0.so.0 target=libgimpcolor-2.0.so.0.800.18
+file path=usr/lib/libgimpcolor-2.0.so.0.800.18
+link path=usr/lib/libgimpconfig-2.0.so target=libgimpconfig-2.0.so.0.800.18
+link path=usr/lib/libgimpconfig-2.0.so.0 target=libgimpconfig-2.0.so.0.800.18
+file path=usr/lib/libgimpconfig-2.0.so.0.800.18
+link path=usr/lib/libgimpmath-2.0.so target=libgimpmath-2.0.so.0.800.18
+link path=usr/lib/libgimpmath-2.0.so.0 target=libgimpmath-2.0.so.0.800.18
+file path=usr/lib/libgimpmath-2.0.so.0.800.18
+link path=usr/lib/libgimpmodule-2.0.so target=libgimpmodule-2.0.so.0.800.18
+link path=usr/lib/libgimpmodule-2.0.so.0 target=libgimpmodule-2.0.so.0.800.18
+file path=usr/lib/libgimpmodule-2.0.so.0.800.18
+link path=usr/lib/libgimpthumb-2.0.so target=libgimpthumb-2.0.so.0.800.18
+link path=usr/lib/libgimpthumb-2.0.so.0 target=libgimpthumb-2.0.so.0.800.18
+file path=usr/lib/libgimpthumb-2.0.so.0.800.18
+link path=usr/lib/libgimpui-2.0.so target=libgimpui-2.0.so.0.800.18
+link path=usr/lib/libgimpui-2.0.so.0 target=libgimpui-2.0.so.0.800.18
+file path=usr/lib/libgimpui-2.0.so.0.800.18
+link path=usr/lib/libgimpwidgets-2.0.so target=libgimpwidgets-2.0.so.0.800.18
+link path=usr/lib/libgimpwidgets-2.0.so.0 target=libgimpwidgets-2.0.so.0.800.18
+file path=usr/lib/libgimpwidgets-2.0.so.0.800.18
 file path=usr/lib/pkgconfig/gimp-2.0.pc
 file path=usr/lib/pkgconfig/gimpthumb-2.0.pc
 file path=usr/lib/pkgconfig/gimpui-2.0.pc
@@ -1488,6 +1457,7 @@ file path=usr/share/locale/oc/LC_MESSAGES/gimp20-libgimp.mo
 file path=usr/share/locale/oc/LC_MESSAGES/gimp20-python.mo
 file path=usr/share/locale/oc/LC_MESSAGES/gimp20-script-fu.mo
 file path=usr/share/locale/oc/LC_MESSAGES/gimp20-std-plug-ins.mo
+file path=usr/share/locale/oc/LC_MESSAGES/gimp20-tips.mo
 file path=usr/share/locale/oc/LC_MESSAGES/gimp20.mo
 file path=usr/share/locale/pa/LC_MESSAGES/gimp20-libgimp.mo
 file path=usr/share/locale/pa/LC_MESSAGES/gimp20-python.mo
