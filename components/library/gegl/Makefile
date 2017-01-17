@@ -10,14 +10,14 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2017 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
-
 COMPONENT_VERSION= 0.2.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -29,18 +29,20 @@ COMPONENT_PROJECT_URL = http://www.gegl.org/
 
 GEGLDOCDIR = $(PROTO_DIR)/usr/share/doc/$(COMPONENT_NAME)
 
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS += -std=gnu99
 CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
+
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi)
+
+# Missing files in build dir for configure without this.
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
@@ -62,3 +64,19 @@ COMPONENT_POST_INSTALL_ACTION += \
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
+
+REQUIRED_PACKAGES += image/library/babl
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
