@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -65,7 +65,7 @@ class ironic::drivers::solaris_ipmitool (
   $port                 = '22',
   $timeout              = '10',
   $deploy_interval      = '10',
-  $dervied_manifest     = 'file:///usr/lib/ironic/ironic-manifest.ksh',
+  $derived_manifest     = 'file:///usr/lib/ironic/ironic-manifest.ksh',
   $ssh_key_file         = undef,
   $ssh_key_contents     = undef,
   $imagecache_dirname   = '/var/lib/ironic/images',
