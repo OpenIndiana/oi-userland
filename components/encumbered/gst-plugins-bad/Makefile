@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gst-plugins-bad
 COMPONENT_VERSION= 0.10.23
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GNOME streaming media framework plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -67,7 +67,6 @@ REQUIRED_PACKAGES += audio/faac
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += driver/graphics/nvidia
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/audio/gstreamer
@@ -79,6 +78,7 @@ REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/audio/soundtouch
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libofa
 REQUIRED_PACKAGES += library/libsndfile
 REQUIRED_PACKAGES += library/neon
