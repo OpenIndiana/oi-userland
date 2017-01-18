@@ -5,7 +5,7 @@
 # Copyright 2014 International Business Machines Corporation
 # All Rights Reserved.
 #
-# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -59,10 +59,11 @@ from ironic import objects
 PLATFORM = platform.system()
 if PLATFORM != "SunOS":
     import tarfile
+    IPMITOOL = '/usr/bin/ipmitool'
 else:
     from pkg.fmri import IllegalFmri, PkgFmri
     from pkg.misc import valid_pub_prefix, valid_pub_url
-
+    IPMITOOL = '/usr/sbin/ipmitool'
 
 AI_OPTS = [
     cfg.StrOpt('server',
@@ -368,7 +369,7 @@ def _exec_ipmitool(driver_info, command):
     ipmi_version = ('lanplus'
                     if driver_info['protocol_version'] == '2.0'
                     else 'lan')
-    args = ['/usr/sbin/ipmitool',
+    args = [IPMITOOL,
             '-I',
             ipmi_version,
             '-H',
