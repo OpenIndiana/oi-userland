@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.2
+COMPONENT_VERSION=	5.3.1
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f17916320ffaa844bbd7ce48ceeb5945fc5f3eff64b149b4229bbfbdf3795a9d
+    sha256:fc886cb2ade032d006da8322c09a7e92b2309177811428b121192d44832920da
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-TPNO=			26447
+TPNO=			33339
 
 BUILD_TARGET=
 INSTALL_TARGET=
@@ -42,7 +42,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_LIBDIR.64= $(CONFIGURE_LIBDIR.32)
 
-CONFIGURE_OPTIONS += -n
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-etcdir=$(ETCDIR)
@@ -52,21 +51,12 @@ CONFIGURE_OPTIONS += --enable-ldflags="$(CC_BITS) -zignore"
 ifeq ($(OS_VERSION),5.11)
 CONFIGURE_OPTIONS += --enable-libs="-lnsl"
 endif
+CONFIGURE_OPTIONS += --enable-additional-fpath=/usr/share/zsh/vendor-functions/Completion
 CONFIGURE_OPTIONS += --enable-maildir-support
 CONFIGURE_OPTIONS += --enable-multibyte
 CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
-
-# pcre-config --libs unnecessarily emits "-R$(USRLIBDIR64)"; we remove it so that it
-# doesn't end up in the binaries.
-COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(@D); \
-	sed -e "s,-R$(USRLIBDIR64),," \
-		config.status > config.status.new; \
-	mv config.status.new config.status; \
-	chmod 755 config.status; \
-	./config.status)
 
 COMPOVERRIDES = $(shell test -d find && find Completion -type f -print)
 
@@ -75,11 +65,6 @@ $(PROTOETCDIR)/%: % $(PROTOETCDIR)
 
 $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 	$(RM) $@; $(SYMLINK) profile $@
-
-# makepro.awk leaves turds behind when using gawk 3.1.5 and a UTF-8 locale.
-# Upgrading gawk would fix the problem, but for now, all we can do is change
-# the language.
-COMPONENT_BUILD_ENV += LC_ALL=C
 
 # The configure test for NIS tests to make sure that NIS is working, not whether
 # it's available to compile against.  We actually want to go through the switch

@@ -1,0 +1,34 @@
+Fix a crash when completing with _values after an =.  Fixed upstream
+post-5.3.1, posted in zsh-workers 40362.
+
+diff --git a/Src/Zle/computil.c b/Src/Zle/computil.c
+index 7bf9535..5b9ceec 100644
+--- a/Src/Zle/computil.c
++++ b/Src/Zle/computil.c
+@@ -3569,8 +3569,8 @@ bin_compvalues(char *nam, char **args, UNUSED(Options ops), UNUSED(int func))
+ 	    Cvval val = cv_get_val(cv_laststate.d, args[1]);
+ 
+ 	    if (val && val->arg) {
+-		setsparam(args[2], val->arg->descr);
+-		setsparam(args[3], val->arg->action);
++		setsparam(args[2], ztrdup(val->arg->descr));
++		setsparam(args[3], ztrdup(val->arg->action));
+ 
+ 		if (args[4])
+ 		    setsparam(args[4], ztrdup(val->name));
+
+Reduce noise in completion when POSIX_IDENTIFIERS is set.  Fixed upstream
+post-5.3.1, posted in zsh-workers 40372
+
+diff --git a/Completion/compinit b/Completion/compinit
+index 2715c47..cc663cb 100644
+--- a/Completion/compinit
++++ b/Completion/compinit
+@@ -154,6 +154,7 @@ _comp_options=(
+     NO_markdirs
+     NO_octalzeroes
+     NO_posixbuiltins
++    NO_posixidentifiers
+     NO_shwordsplit
+     NO_shglob
+     NO_warncreateglobal

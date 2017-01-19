@@ -74,7 +74,7 @@ CONFIGURE_OPTIONS += --enable-oss-output
 CONFIGURE_OPTIONS += --enable-solaris
 CONFIGURE_OPTIONS += --with-database=gdbm
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --with-zsh-completion-dir=/usr/share/zsh/5.2/functions/Completion/Unix
+CONFIGURE_OPTIONS += --with-zsh-completion-dir=/usr/share/zsh/vendor-functions/Completion
 
 # To avoid using the current system default, one is explicitly specified here.
 CONFIGURE_ENV += PYTHON=$(PYTHON)
