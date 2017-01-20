@@ -115,6 +115,7 @@ def notes_section_text(header_seen, community, source, modified_date):
 
 so_re = re.compile('^\.so.+$', re.MULTILINE)
 section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
+TH_re = re.compile('\.TH\s+(?:"[^"]+"|\S+)\s+(\S+)', re.IGNORECASE)
 #
 # mangler.man.stability = (mangler.man.stability)
 # mangler.man.modified_date = (mangler.man.modified-date)
@@ -131,6 +132,10 @@ def mangle_manpage(manifest, action, text):
 
 	# manpages may have a 'modified date'
 	modified_date = action.attrs.pop('mangler.man.modified-date', None)
+
+	# Rewrite the section in the .TH line to match the section in which
+	# we're delivering it.
+	rewrite_sect = action.attrs.pop('mangler.man.rewrite-section', 'true')
 
 	attributes_written = False
 	notes_seen = False
@@ -170,6 +175,14 @@ def mangle_manpage(manifest, action, text):
 					attributes_written = True
 				if section == 'NOTES':
 					notes_seen = True
+			match = TH_re.match(line)
+			if match and rewrite_sect.lower() == "true":
+				# Use the section defined by the filename, rather than
+				# the directory in which it sits.
+				sect = os.path.splitext(action.attrs["path"])[1][1:]
+				line = line[:match.span(1)[0]] + sect + \
+				    line[match.span(1)[1]:]
+
 		result += ("%s\n" % line)
 
 	if attributes_written == False:

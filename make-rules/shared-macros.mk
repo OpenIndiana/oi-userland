@@ -737,6 +737,7 @@ GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 GSED =		/usr/gnu/bin/sed
 GDIFF =		/usr/gnu/bin/diff
 GSORT =		/usr/gnu/bin/sort
+GUNZIP =	/usr/bin/gunzip
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
