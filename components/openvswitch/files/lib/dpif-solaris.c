@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -1914,8 +1914,8 @@ dpif_solaris_flow_dump_next(const struct dpif *dpif_ OVS_UNUSED, void *iter_,
 
 		ofpbuf_use_stack(&buf, &state->maskbuf,
 		    sizeof (state->maskbuf));
-		odp_flow_key_from_mask(&buf, &flow->m, &flow->m,
-		    flow->f.in_port.odp_port, SIZE_MAX);
+		odp_flow_key_from_mask(&buf, &flow->m, &flow->f,
+		    UINT32_MAX, SIZE_MAX);
 
 		*mask = ofpbuf_data(&buf);
 		*mask_len = ofpbuf_size(&buf);
@@ -2996,6 +2996,52 @@ dpif_solaris_handlers_set(struct dpif *dpif_, uint32_t n_handlers)
 		err = dpif_solaris_refresh_channels(dpif, n_handlers);
 	ovs_rwlock_unlock(&dpif->upcall_lock);
 	return (err);
+}
+
+void
+dpif_solaris_send_rarp(const char *name)
+{
+	struct dpif_solaris	*dpif;
+	int			fd = -1;
+	odp_port_t		port_no;
+	boolean_t		port_found = B_FALSE;
+	struct dpif_solaris_port	*port = NULL;
+	uint8_t			hwaddr[ETHERADDRL];
+
+	VLOG_DBG("dpif_get_uplink_fd: getting TX socket for %s\n", name);
+	dpif = get_dp_by_name("ovs-system");
+	if (dpif == NULL) {
+		VLOG_DBG("dpif_solaris_send_rarp: error getting datapath\n");
+		return;
+	}
+	ovs_rwlock_rdlock(&dpif->port_rwlock);
+	HMAP_FOR_EACH(port, node, &dpif->ports) {
+		if (strcmp(port->name, name) == 0) {
+			port_no = port->port_no;
+			port_found = B_TRUE;
+			break;
+		}
+	}
+	ovs_rwlock_unlock(&dpif->port_rwlock);
+	if (!port_found) {
+		VLOG_DBG("dpif_solaris_send_rarp: Error getting port for %s\n",
+		    name);
+		return;
+	}
+
+	if (netdev_get_etheraddr(port->netdev, hwaddr) != 0) {
+		VLOG_DBG("dpif_solaris_send_rarp: Error getting port %s's "
+		    "ethernet address\n", name);
+		return;
+	}
+
+	if (dpif_solaris_get_uplink_port_info(dpif, port_no,
+	    NULL, &fd, NULL) == 0) {
+		if (solaris_send_rarp(fd, hwaddr) == 0)
+			VLOG_DBG("dpif_get_uplink_fd: RARP success!");
+		else
+			VLOG_ERR("dpif_get_uplink_fd: RARP error!");
+	}
 }
 
 const struct dpif_class dpif_solaris_class = {

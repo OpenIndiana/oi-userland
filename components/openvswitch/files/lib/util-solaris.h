@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 #ifndef	UTIL_SOLARIS_H
@@ -103,6 +103,7 @@ boolean_t solaris_is_uplink_class(const char *);
 boolean_t solaris_dlparse_zonelinkname(const char *, char *, zoneid_t *);
 
 void solaris_parse_cpuinfo(long int *);
+int solaris_send_rarp(int, const uint8_t *);
 
 #define	SOLARIS_MAX_BUFSIZE	1024
 #endif	/* UTIL_SOLARIS_H */

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <config.h>
@@ -47,8 +47,10 @@
 #include <libdllink.h>
 #include <zone.h>
 #include <net/if_types.h>
+#include <net/if_arp.h>
 #include <inet/arp.h>
 #include <sys/socket.h>
+#include <sys/ethernet.h>
 #include <netdb.h>
 #include <rad/radclient.h>
 #include <rad/client/1/dlmgr.h>
@@ -80,6 +82,10 @@ typedef struct {
 	uint32_t ofp_min;
 	uint32_t ofp_max;
 } ofport_range_t;
+
+static ether_addr_t	bcast_addr = {
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
 
 static int
 extract_uint(const char *valstr, uint_t *val)
@@ -1591,6 +1597,7 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 	char		dstr[DLADM_STRSIZE];
 	int		err = 0;
 	boolean_t	is_arp = (ntohs(f->dl_type) == 0x806);
+	boolean_t	is_rarp = (ntohs(f->dl_type) == 0x8035);
 
 	dstr[0] = '\0';
 	if (f->dl_type != htons(FLOW_DL_TYPE_NONE)) {
@@ -1600,7 +1607,7 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 			goto out;
 	}
 
-	if (is_arp) {
+	if (is_arp || is_rarp) {
 		if (f->nw_proto != 0 || m->nw_proto != 0) {
 			err = dlmgr_DLValue_fm_putulong(ddvp, ddmp, "arp-op",
 			    f->nw_proto, m->nw_proto, dstr, sizeof (dstr));
@@ -1626,22 +1633,25 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 				goto out;
 		}
 
-		flow_addr2str(NULL, NULL, f->nw_src, m->nw_src, buf, rbuf,
-		    sizeof (buf), sizeof (rbuf));
-		if (strlen(buf) != 0) {
-			err = dlmgr_DLValue_fm_putstring(ddvp, ddmp, "arp-sip",
-			    buf, rbuf, dstr, sizeof (dstr));
-			if (err != 0)
-				goto out;
-		}
+		/* sip and tip of REVARP_REQUEST is undefined */
+		if (f->nw_proto != REVARP_REQUEST) {
+			flow_addr2str(NULL, NULL, f->nw_src, m->nw_src, buf,
+			    rbuf, sizeof (buf), sizeof (rbuf));
+			if (strlen(buf) != 0) {
+				err = dlmgr_DLValue_fm_putstring(ddvp, ddmp,
+				    "arp-sip", buf, rbuf, dstr, sizeof (dstr));
+				if (err != 0)
+					goto out;
+			}
 
-		flow_addr2str(NULL, NULL, f->nw_dst, m->nw_dst, buf, rbuf,
-		    sizeof (buf), sizeof (rbuf));
-		if (strlen(buf) != 0) {
-			err = dlmgr_DLValue_fm_putstring(ddvp, ddmp, "arp-tip",
-			    buf, rbuf,  dstr, sizeof (dstr));
-			if (err != 0)
-				goto out;
+			flow_addr2str(NULL, NULL, f->nw_dst, m->nw_dst, buf,
+			    rbuf, sizeof (buf), sizeof (rbuf));
+			if (strlen(buf) != 0) {
+				err = dlmgr_DLValue_fm_putstring(ddvp, ddmp,
+				    "arp-tip", buf, rbuf,  dstr, sizeof (dstr));
+				if (err != 0)
+					goto out;
+			}
 		}
 	} else {
 		if (f->nw_proto != 0 || m->nw_proto != 0) {
@@ -2568,6 +2578,9 @@ solaris_flowinfo2flow(dlmgr__rad_dict_string_DLValue_t *flowinfo,
 
 	status = dlmgr__rad_dict_string_DLValue_map(mdict,
 	    solaris_flowinfo2flowmap, m);
+	/* IP fragmentation is not supported, always return 0xff for its mask */
+	if (is_ip_any(f))
+		m->nw_frag = 0xff;
 	dlmgr_DLValue_free(mlist);
 	if (status != RCE_OK)
 		return (EINVAL);
@@ -3967,4 +3980,63 @@ solaris_parse_cpuinfo(long int *n_cores)
 	}
 
 	kstat2_close(&handle);
+}
+
+#define	ARH_FIXED_LEN	8
+/*
+ *  Send RARP packet on the given socket using the given MAC addresses.
+ *  Need to work with multiple MAC addresses
+ */
+int
+solaris_send_rarp(int sockfd, const uint8_t *hwaddr)
+{
+	int			count;
+	uint8_t			rarp_pkt[ETHERMIN];
+	struct ether_header	*ehp;
+	struct arphdr		*arh;
+	uint8_t			*cp;
+	uint8_t			*cp1;
+	uint8_t			plen = 4;
+	int			naddrs = 1;
+	int			err;
+
+	bzero(rarp_pkt, ETHERMIN);
+	ehp = (struct  ether_header *)rarp_pkt;
+	bcopy(&bcast_addr, &ehp->ether_dhost, ETHERADDRL);
+	ehp->ether_type = htons(ETHERTYPE_REVARP);
+	arh = (struct arphdr *)(rarp_pkt + sizeof (struct ether_header));
+	cp = (uint8_t *)arh;
+	arh->ar_hrd = htons(ARPHRD_ETHER);
+	arh->ar_pro = htons(ETHERTYPE_IP);
+	arh->ar_hln = ETHERADDRL;
+	arh->ar_pln = plen;
+	arh->ar_op = htons(REVARP_REQUEST);
+
+	cp += ARH_FIXED_LEN;
+	cp1 = cp;
+	/* For now, only one ethernet address is supported */
+	for (count = 0; count < naddrs; count++) {
+		cp = cp1;
+		bcopy(hwaddr, &ehp->ether_shost, ETHERADDRL);
+		bcopy(hwaddr, cp, ETHERADDRL);
+		cp += ETHERADDRL;
+		bzero(cp, plen);
+		cp += plen;
+
+		bcopy(hwaddr, cp, ETHERADDRL);
+		cp += ETHERADDRL;
+		bzero(cp, plen);
+
+		/*
+		 * Send the packet; Sending only one, we could send
+		 * multiple with an interval between them.
+		 */
+		errno = 0;
+		if (send(sockfd, (void *)rarp_pkt, ETHERMIN, 0) < 0) {
+			err = errno;
+			dpif_log(err, "RARP send() failed");
+			return (err);
+		}
+	}
+	return (0);
 }

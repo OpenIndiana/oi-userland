@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -36,5 +36,6 @@ int dpif_solaris_get_priority_details(void *, odp_port_t, uint_t,
 void dpif_log(int, const char *, ...);
 void dpif_solaris_migrate_internal_port(const char *, const char *);
 struct netdev *dpif_solaris_obtain_netdev_to_migrate(char *, bool *);
+void dpif_solaris_send_rarp(const char *);
 
 #endif	/* DPIF_SOLARIS_H */

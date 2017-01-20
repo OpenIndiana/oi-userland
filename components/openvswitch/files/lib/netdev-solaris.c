@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -81,6 +81,8 @@ struct netdev_solaris {
 	/* Protects all members below. */
 	struct ovs_mutex mutex;
 
+	boolean_t rarp_sent;
+
 	/*
 	 * Bit mask of cached properties. These can be cached because
 	 * nothing besides vswitchd is altering the properties.
@@ -147,6 +149,7 @@ static struct ovs_mutex	kstat_mutex = OVS_MUTEX_INITIALIZER;
 
 static int netdev_solaris_init(void);
 static struct netdev_solaris *netdev_solaris_cast(const struct netdev *);
+static void netdev_solaris_send_rarp(const struct netdev *);
 
 /* Maintaining a mapping of every netdev->name to its bridge name. */
 struct shash port_to_bridge_map = SHASH_INITIALIZER(&port_to_bridge_map);
@@ -702,6 +705,28 @@ netdev_solaris_init(void)
 static void
 netdev_solaris_run(void)
 {
+	struct shash device_shash;
+	struct shash_node *node;
+
+	shash_init(&device_shash);
+	netdev_get_devices(&netdev_solaris_class, &device_shash);
+	SHASH_FOR_EACH(node, &device_shash) {
+		struct netdev *netdev = node->data;
+		struct netdev_solaris *dev = netdev_solaris_cast(netdev);
+
+		/*
+		 * No lock is needed to protect dev->rarp_sent. Because
+		 * netdev_solaris_run() is called single threaded in the
+		 * main() function.
+		 */
+		if (!dev->rarp_sent) {
+			netdev_solaris_send_rarp(netdev);
+			dev->rarp_sent = B_TRUE;
+		}
+		netdev_close(netdev);
+	}
+
+	shash_destroy(&device_shash);
 }
 
 static void
@@ -714,6 +739,7 @@ netdev_solaris_alloc(void)
 {
 	struct netdev_solaris *netdev = xzalloc(sizeof (*netdev));
 
+	netdev->rarp_sent = B_FALSE;
 	return (&netdev->up);
 }
 
@@ -1196,6 +1222,24 @@ netdev_solaris_is_uplink(const struct netdev *netdev_)
 	if (netdev_solaris_get_dlclass(netdev_) != 0)
 		return (false);
 	return (solaris_is_uplink_class(netdev->class));
+}
+
+/*
+ * Send an Reverse ARP for this link, if it is not an uplink.
+ */
+static void
+netdev_solaris_send_rarp(const struct netdev *netdev_)
+{
+	const char		*netdev_name = netdev_get_name(netdev_);
+
+	VLOG_DBG("netdev_solaris_send_rarp:send RARP device %s", netdev_name);
+
+	if (netdev_solaris_is_uplink(netdev_)) {
+		VLOG_DBG("netdev_solaris_send_rarp: uplink\n");
+		return;
+	}
+
+	dpif_solaris_send_rarp(netdev_name);
 }
 
 static int
