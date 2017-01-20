@@ -1,0 +1,55 @@
+--- ck-0.5.2/doc/Makefile.in.orig	2017-01-20 17:23:59.365885969 +0100
++++ ck-0.5.2/doc/Makefile.in	2017-01-20 17:28:59.305434266 +0100
+@@ -2,7 +2,7 @@
+ 
+ MANDIR=@MANDIR@
+ GZIP=@GZIP@
+-GZIP_SUFFIX=.3@GZIP_SUFFIX@
++MAN_SUFFIX=.3
+ BUILD_DIR=@BUILD_DIR@
+ SRC_DIR=@SRC_DIR@
+ HTML_SUFFIX=.html
+@@ -180,7 +180,7 @@
+ 
+ all: 
+ 	for target in $(OBJECTS); do 			   \
+-		$(GZIP) $(SRC_DIR)/doc/$$target > $(BUILD_DIR)/doc/$$target$(GZIP_SUFFIX); \
++		cp $(SRC_DIR)/doc/$$target $(BUILD_DIR)/doc/$$target$(MAN_SUFFIX); \
+ 	done
+ 
+ html:
+@@ -188,14 +188,14 @@
+ 		echo $$target;				   		\
+ 		groff -man -Tascii $(SRC_DIR)/doc/$$target | col -bx >	\
+ 		   $(BUILD_DIR)/doc/$$target$(HTML_SUFFIX); 		\
+-		sed -i.bk 's/\&/\&amp\;/g;s/>/\&gt\;/g;s/</\&lt\;/g;'	\
++		gsed -i.bk 's/\&/\&amp\;/g;s/>/\&gt\;/g;s/</\&lt\;/g;'	\
+ 		   $(BUILD_DIR)/doc/$$target$(HTML_SUFFIX); 		\
+ 	done
+ 
+ # check for entries that are missing in OBJECTS
+ objcheck: all
+-	for file in `ls * | egrep '(ck|CK)_' | egrep -v "($(GZIP_SUFFIX)|$(HTML_SUFFIX))$$"`; do \
+-		if [ ! -f $${file}$(GZIP_SUFFIX) ]; then	\
++	for file in `ls * | egrep '(ck|CK)_' | egrep -v "($(MAN_SUFFIX)|$(HTML_SUFFIX))$$"`; do \
++		if [ ! -f $${file}$(MAN_SUFFIX) ]; then	\
+ 			echo "$$file is missing from OBJECTS" >&2;	\
+ 		fi;						\
+ 	done
+@@ -206,13 +206,13 @@
+ 
+ install:
+ 	mkdir -p $(DESTDIR)/$(MANDIR)/man3 || exit
+-	cp *$(GZIP_SUFFIX) $(DESTDIR)/$(MANDIR)/man3 || exit
++	cp *$(MAN_SUFFIX) $(DESTDIR)/$(MANDIR)/man3 || exit
+ 
+ uninstall:
+ 	for target in $(OBJECTS); do 			  \
+-		rm -f $(DESTDIR)/$(MANDIR)/man3/$$target$(GZIP_SUFFIX); \
++		rm -f $(DESTDIR)/$(MANDIR)/man3/$$target$(MAN_SUFFIX); \
+ 	done
+ 
+ clean:
+-	rm -f $(BUILD_DIR)/doc/*~ $(BUILD_DIR)/doc/*$(GZIP_SUFFIX) $(BUILD_DIR)/doc/*$(HTML_SUFFIX)
++	rm -f $(BUILD_DIR)/doc/*~ $(BUILD_DIR)/doc/*$(MAN_SUFFIX) $(BUILD_DIR)/doc/*$(HTML_SUFFIX)
+ 
