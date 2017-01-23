@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-ati
-COMPONENT_VERSION= 6.14.6
+COMPONENT_VERSION= 7.3.0
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:aa5286b3e4f0187d7df14785c06dd800255d9405205dbf061da5d77df86bec36
+  sha256:107c072c4919a996e04f47afdb53d5946a3ad574f270b8c560ef8b3a032046fe
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -75,6 +75,7 @@ COMPONENT_COMMON_ARGS = ati_drv_ladir='$(DRIVER_DIR)' \
 
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --disable-kms
+CONFIGURE_OPTIONS += --disable-glamor
 
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
@@ -82,3 +83,8 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+REQUIRED_PACKAGES += diagnostic/scanpci
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libdrm

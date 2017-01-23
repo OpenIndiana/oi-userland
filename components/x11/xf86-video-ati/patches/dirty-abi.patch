@@ -1,0 +1,37 @@
+Signed-off-by: Dave Airlie <airlied at redhat.com>
+---
+ src/drmmode_display.c | 4 +++-
+ src/radeon_kms.c      | 4 ++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/radeon_kms.c b/src/radeon_kms.c
+index ec8f51c..2dad0e6 100644
+--- a/src/radeon_kms.c
++++ b/src/radeon_kms.c
+@@ -287,7 +287,11 @@ redisplay_dirty(ScreenPtr screen, PixmapDirtyUpdatePtr dirty)
+ 
+ 	PixmapRegionInit(&pixregion, dirty->slave_dst);
+ 	DamageRegionAppend(&dirty->slave_dst->drawable, &pixregion);
++#ifdef HAS_DIRTYTRACKING_ROTATION
++	PixmapSyncDirtyHelper(dirty);
++#else
+ 	PixmapSyncDirtyHelper(dirty, &pixregion);
++#endif
+ 
+ 	radeon_cs_flush_indirect(pScrn);
+ 	DamageRegionProcessPending(&dirty->slave_dst->drawable);
+-- 
+2.4.3
+--- a/src/drmmode_display.c.orig	2016-05-22 00:15:13.741259102 +0200
++++ b/src/drmmode_display.c	2016-05-22 00:16:38.970863073 +0200
+@@ -789,7 +789,9 @@
+ 		screen->height = screenpix->drawable.height = max_height;
+ 	}
+ 	drmmode_crtc->scanout_pixmap_x = this_x;
+-#ifdef HAS_DIRTYTRACKING2
++#ifdef HAS_DIRTYTRACKING_ROTATION
++	PixmapStartDirtyTracking(ppix, screenpix, 0, 0, this_x, 0, RR_Rotate_0);
++#elif defined(HAS_DIRTYTRACKING2)
+ 	PixmapStartDirtyTracking2(ppix, screenpix, 0, 0, this_x, 0);
+ #else
+ 	PixmapStartDirtyTracking(ppix, screenpix, 0, 0);
