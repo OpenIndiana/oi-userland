@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXi
-COMPONENT_VERSION= 1.7.8
+COMPONENT_VERSION= 1.7.9
 COMPONENT_SUMMARY= libXi - X Input extension client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d8f2fa8d53141c41ff521627df9b2fa9c05f6f142fd9881152bab36549ac27bb
+  sha256:c2e6b8ff84f9448386c1b5510a5cf5a16d788f76db018194dacdc200180faf45
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
