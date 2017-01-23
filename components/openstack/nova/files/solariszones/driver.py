@@ -786,7 +786,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 LOG.error(_("Unable to aggregate non-summable kstat %s;%s "
                             " of type %s") % (ks.getParent().uri, statistic,
                                               type(value)))
-                return None
+                return 0
 
         return total
 
@@ -805,7 +805,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_cpu_time(self, zone):
         """Return the CPU time used in nanoseconds."""
-        if zone.name is None:
+        # If the zone is not in a running state, the information requested
+        # cannot be gathered, so simply return 0.
+        if zone.name is None or zone.state != ZONE_STATE_RUNNING:
             return 0
 
         # Loop over the kstats for each cpu. If the cpu list changes, the
@@ -814,24 +816,41 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # The retry value of 3 was determined by the "we shouldn't hit this
         # often, but if we do it should resolve quickly so try again"+1
         # algorithm.
+        uri = "kstat:/zones/%s/cpu" % zone.name
+        accum_uri = "kstat:/zones/%s/cpu/accum/sys" % zone.name
         for _attempt in range(3):
             total = 0
 
-            uri = "kstat:/zones/%s/cpu" % zone.name
-            accum_uri = "kstat:/zones/%s/cpu/accum/sys" % zone.name
-
             initial = self._kstat_data(accum_uri)
             cpus = self._kstat_data(uri)
+            if cpus is None:
+                # If the zone state is not running then give up but if it is
+                # running try again.
+                if zone.state != ZONE_STATE_RUNNING:
+                    break
+                else:
+                    continue
             cpus.pop('pset_accum')
             cpus.pop('accum')
 
-            for n in cpus.keys():
+            cpu = None
+            for n in cpus:
                 cpu = self._kstat_data(uri + "/%s" % n)
+                if cpu is None:
+                    if zone.state != ZONE_STATE_RUNNING:
+                        return 0
+                    else:
+                        break
 
                 total += self._sum_kstat_statistic(cpu, 'cpu_nsec_kernel_cur')
                 total += self._sum_kstat_statistic(cpu, 'cpu_nsec_user_cur')
 
+            if cpu is None:
+                continue
+
             final = self._kstat_data(accum_uri)
+            if final is None:
+                continue
 
             if initial['gen_num'] == final['gen_num']:
                 total += initial['cpu_nsec_user'] + initial['cpu_nsec_kernel']
@@ -2693,7 +2712,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_zone_diagnostics(self, zone):
         """Return data about Solaris Zone diagnostics."""
-        if zone.id == -1:
+        if zone.name is None or zone.state != ZONE_STATE_RUNNING:
             return None
 
         diagnostics = defaultdict(lambda: 0)
@@ -2714,14 +2733,34 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         for _attempt in range(3):
             initial = self._kstat_data(accum_uri)
-            data = self._kstat_data(uri)
-            data.pop('accum')
-            data.pop('pset_accum')
+            cpus = self._kstat_data(uri)
+            # Something went wrong in the data collection, if the zone is no
+            # longer running simply return None otherwise continue
+            if cpus is None:
+                if zone.state != ZONE_STATE_RUNNING:
+                    return None
+                continue
+            cpus.pop('accum')
+            cpus.pop('pset_accum')
 
             # Turn the list of cpu ids in data.keys into a dictionary of the
             # 'sys' kstat for each cpu id.
-            data = {n: self._kstat_data(uri + "/%s" % n)['sys']
-                    for n in data.keys()}
+            data = {}
+            datapoint = None
+            for n in cpus:
+                datapoint = self._kstat_data(uri + "/%s" % n)
+                # We could not get a datapoint for one of the cpus, so try the
+                # whole thing again if zone.state is still running.
+                if datapoint is None:
+                    if zone.state != ZONE_STATE_RUNNING:
+                        return None
+                    else:
+                        break
+
+                data.update({n: datapoint['sys']})
+
+            if datapoint is None:
+                continue
 
             # The list of cpu kstats in data must contain at least one element
             # and all elements have the same map of statistics, since they're
