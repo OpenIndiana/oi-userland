@@ -8,7 +8,7 @@
 #
 
 #
-# Copyright 2016 <contributor name>
+# Copyright 2017 <contributor name>
 #
 
 include ../../../make-rules/shared-macros.mk
