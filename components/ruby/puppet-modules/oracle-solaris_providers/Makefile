@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../../make-rules/shared-macros.mk
 
 
 GIT_REPO= https://github.com/oracle/puppet-solaris_providers
-GIT_BRANCH= v2.0.0
-GIT_COMMIT_ID= 4121a38
-GIT_HASH=  sha256:082fbc85bf5717990d88fdff80ca8ac9dd80ac5c7506bfa074cec06aa5c8c5a2
+GIT_BRANCH= v2.0.1
+GIT_COMMIT_ID= 932309
+GIT_HASH=  sha256:b858d0615642a6eff3215ecdee32dace3988bb296c6b02894b89eabbb907f4fc
 
 COMPONENT_NAME=		puppet-solaris_providers
-COMPONENT_VERSION=	2.0.0
+COMPONENT_VERSION=	2.0.1
 COMPONENT_PROJECT_URL=	https://github.com/oracle/puppet-solaris_providers
 # Construct our own SRC instead of using the default with GIT_COMMIT_ID
 # archive from github strips leading v from release for vN named release tags
@@ -51,7 +51,8 @@ PKG_OPTIONS +=	-I $(COMPONENT_DIR)
 # Dump a list of files installed in the proto dir but not in the manifest
 # this is a convenience target for the package maintainer
 new-files: install
-	$(PKGSEND) generate $(PROTO_DIR)/opt/puppetlabs/puppet/modules/ | $(GSED)  -e 's/\(file\).*path=/\1 path=/' | \
+	$(PKGSEND) generate $(PROTO_DIR)/usr/puppetlabs/puppet/modules/ | $(GNU_GREP) -v '/docs/' | \
+	    $(GSED)  -e 's/\(file\).*path=/\1 path=/' | \
 	    $(CAT) oracle-solaris_providers.p5m - | $(GNU_GREP) -h '^file' | sort | uniq -c | \
 	    $(GSED) -e '/ 2 /d' -e 's/   1 //'
 
