@@ -41,30 +41,34 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Temporary measure before cryptography gets to official machines.
-# Can be removed after cryptography 1.6 has been installed on all machines.
-# Bug ID: 25394619
-CRYPTOGRAPHY = $(WS_COMPONENTS)/python/cryptography/build/prototype/$(MACH)/$(PYTHON_LIB)
-
 COMPONENT_PRE_TEST_ACTION = $(CP) -r $(COMPONENT_SRC)/tests $(@D)
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/^\. lib/p" ' \
+	'-e "/^\. tests/p" ' \
+	'-e "/^s tests/p" ' \
+	'-e "/^F tests/p" '
 
 # In tests/test_crypto.py::FunctionTests::test_dump_certificate, the serial number line
 # outputs the same hex as the key, so this is a false error.
 # In tests/test_ssl.py::ConnectionTests::test_set_seesion_wrong_method, This test doesn't
 # work for our version of OpenSSL, which is 1.0.2j; this test only supports OpenSSL 1.0.0
 COMPONENT_TEST_DIR = $(@D)
-COMPONENT_TEST_ENV += PYTHONPATH=$(CRYPTOGRAPHY):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES):$(PYTHON_VENDOR_PACKAGES)
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32):$(PYTHON_VENDOR_PACKAGES)
 # Some tests require unicode characters, otherwise ~17 tests will fail
 COMPONENT_TEST_ENV += LC_ALL=en_US.UTF-8
 COMPONENT_TEST_CMD = py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS = --result-log=$(COMPONENT_TEST_OUTPUT)
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The pep8 and pyflakes output lines sometimes come in a different order.
+COMPONENT_TEST_COMPARE_CMD = sort -o $(COMPONENT_TEST_SNAPSHOT) $(COMPONENT_TEST_SNAPSHOT); $(GDIFF) -uN
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+test:		install $(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
