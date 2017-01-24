@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2016 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -22,14 +22,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-link path=usr/bin/grape target=../share/groovy-2.4/bin/grape
-link path=usr/bin/groovy target=../share/groovy-2.4/bin/groovy
-link path=usr/bin/groovyConsole target=../share/groovy-2.4/bin/groovyConsole
-link path=usr/bin/groovyc target=../share/groovy-2.4/bin/groovyc
-link path=usr/bin/groovydoc target=../share/groovy-2.4/bin/groovydoc
-link path=usr/bin/groovysh target=../share/groovy-2.4/bin/groovysh
-link path=usr/bin/java2groovy target=../share/groovy-2.4/bin/java2groovy
-link path=usr/bin/startGroovy target=../share/groovy-2.4/bin/startGroovy
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/java type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/javac type=require
+
+link path=usr/bin/grape target=../share/groovy-2.4/bin/grape mediator=groovy mediator-version=2.4
+link path=usr/bin/groovy target=../share/groovy-2.4/bin/groovy mediator=groovy mediator-version=2.4
+link path=usr/bin/groovyConsole target=../share/groovy-2.4/bin/groovyConsole mediator=groovy mediator-version=2.4
+link path=usr/bin/groovyc target=../share/groovy-2.4/bin/groovyc mediator=groovy mediator-version=2.4
+link path=usr/bin/groovydoc target=../share/groovy-2.4/bin/groovydoc mediator=groovy mediator-version=2.4
+link path=usr/bin/groovysh target=../share/groovy-2.4/bin/groovysh mediator=groovy mediator-version=2.4
+link path=usr/bin/java2groovy target=../share/groovy-2.4/bin/java2groovy mediator=groovy mediator-version=2.4
+link path=usr/bin/startGroovy target=../share/groovy-2.4/bin/startGroovy mediator=groovy mediator-version=2.4
+
 file path=usr/share/groovy-2.4/bin/grape
 file path=usr/share/groovy-2.4/bin/groovy
 file path=usr/share/groovy-2.4/bin/groovyConsole

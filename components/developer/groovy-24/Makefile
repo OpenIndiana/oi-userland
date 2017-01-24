@@ -14,15 +14,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groovy
-# Commit timestamp and previous known release (none here)
-COMPONENT_VERSION=	2.4.7
+COMPONENT_MAJOR_VERSION=	2.4
+COMPONENT_MINOR_VERSION=	8
+COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_ARCHIVE=	apache-$(COMPONENT_NAME)-binary-$(COMPONENT_VERSION).zip
-COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
+COMPONENT_FMRI=		developer/groovy-24
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://groovy-lang.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:438dd6098252647e88ff12ac5737d0d0f7e16a8e4e42e8be3e05a4c43abefbd5
+	sha256:668a65ea17037371a1952cca5f42ebc03329e15d3619aacb4c7dd5f4b39a8dfd
 COMPONENT_ARCHIVE_URL=	https://bintray.com/artifact/download/groovy/maven/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		Apache-2.0,BSD,MIT,Eclipse,PublicDomain
 COMPONENT_LICENSE_FILE= LICENSE
@@ -32,19 +33,17 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# This is an archive with prebuilt binaries, nothing to build
-$(BUILD_$(BITS)): $(SOURCE_DIR)/.prep
-	$(MKDIR) $(BUILD_DIR_$(BITS))
-	$(TOUCH) $@
+PATH=/usr/gnu/bin:/usr/bin
+
+COMPONENT_PREP_ACTION += (cp $(COMPONENT_DIR)/files/Makefile $(SOURCE_DIR))
+
+COMPONENT_COPY_ACTION = cp -r $(SOURCE_DIR)/* $(@D)/
+
+COMPONENT_INSTALL_ENV += GROOVY_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+
+COMPONENT_POST_INSTALL_ACTION = $(FIND) $(PROTO_DIR) -name \*.bat -delete
 
 build: $(BUILD_32)
-
-# There are many "intimate" variables to pass into the other Makefile,
-# so rather than run a sub-make we include it into our context.
-include $(COMPONENT_DIR)/files/Makefile
-
-$(INSTALL_32): install-groovy
-	$(TOUCH) $@
 
 install: $(INSTALL_32)
 
