@@ -1,0 +1,26 @@
+From 2f70e2f6c16fd02a92055742029721c526b5a064 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Aur=C3=A9lien=20Larcher?= <aurelien.larcher@gmail.com>
+Date: Tue, 13 Sep 2016 22:19:53 +0200
+Subject: [PATCH] No need to define c99 math functions in c++11 mode
+
+Change-Id: I698088bac9e3dc56f49ae09616c69c75ddf2ea90
+---
+ src/3rdparty/masm/wtf/MathExtras.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/3rdparty/masm/wtf/MathExtras.h b/src/3rdparty/masm/wtf/MathExtras.h
+index 9c38af6..947c2a2 100644
+--- a/qtdeclarative/src/3rdparty/masm/wtf/MathExtras.h
++++ b/src/3rdparty/masm/wtf/MathExtras.h
+@@ -88,7 +88,7 @@ inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
+ 
+ #endif
+ 
+-#if OS(SOLARIS)
++#if OS(SOLARIS) && __cplusplus < 201103L
+ 
+ namespace std {
+ 
+-- 
+2.9.2
+
