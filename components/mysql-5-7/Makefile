@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # MySQL 5.7 is compiled using GCC. Note that the MySQL Server 5.7 for
@@ -33,11 +33,11 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.7.15
+COMPONENT_VERSION     = 5.7.17
 COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_NAME)-boost-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-         sha256:7342a3a3e40878378dfaee252d42a3a5b06c58237f49c2544424d27316738945
+         sha256:b75bba87199ef6a6ccc5dfbcaf70949009dc12089eafad8c5254afc9002aa903
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
