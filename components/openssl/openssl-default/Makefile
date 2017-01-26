@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -373,6 +373,15 @@ MANDIR_SECTIONS += $(PROTO_DIR)/usr/share/man/man7openssl
 COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(MANDIR_SECTIONS); \
     $(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64); )
 
+# Remove unnecessary RUNPATH/RPATH for libcrypto.so.1.0.0
+COMPONENT_POST_INSTALL_ACTION.32 = \
+    $(ELFEDIT) -e "dyn:delete RUNPATH" -e "dyn:delete RPATH" \
+	$(BUILD_DIR_32)/libcrypto.so.1.0.0;
+COMPONENT_POST_INSTALL_ACTION.64 = \
+    $(ELFEDIT) -e "dyn:delete RUNPATH" -e "dyn:delete RPATH" \
+	$(BUILD_DIR_64)/libcrypto.so.1.0.0;
+COMPONENT_POST_INSTALL_ACTION += $(COMPONENT_POST_INSTALL_ACTION.$(BITS))
+
 # The install_docs target will install man pages into $(PROTO_DIR)/$(MANDIR). We
 # also add /usr/perl5/bin to PATH so that OpenSSL install code can locate the
 # system pod2man. If not set, OpenSSL make would use an internal implementation
@@ -412,5 +421,6 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += runtime/perl-522

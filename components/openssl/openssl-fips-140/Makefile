@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -118,9 +118,9 @@ CONFIGURE_OPTIONS += no-ssl3 no-ssl3-method
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
-CONFIGURE_OPTIONS32_i386 =	solaris-x86-cc-sunw
+CONFIGURE_OPTIONS32_i386 =	solaris-fips-x86-cc-sunw
 CONFIGURE_OPTIONS32_sparc =	solaris-fips-sparcv9-cc-sunw
-CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-cc-sunw
+CONFIGURE_OPTIONS64_i386 =	solaris64-fips-x86_64-cc-sunw
 CONFIGURE_OPTIONS64_sparc =	solaris64-fips-sparcv9-cc-sunw
 
 # Some additional options needed for our engines.
@@ -178,6 +178,15 @@ COMPONENT_PRE_BUILD_ACTION = \
 # libraries.
 COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64); )
 
+# Remove unnecessary RUNPATH/RPATH for libcrypto.so.1.0.0
+COMPONENT_POST_INSTALL_ACTION.32 = \
+    $(ELFEDIT) -e "dyn:delete RUNPATH" -e "dyn:delete RPATH" \
+        $(BUILD_DIR_32)/libcrypto.so.1.0.0;
+COMPONENT_POST_INSTALL_ACTION.64 = \
+    $(ELFEDIT) -e "dyn:delete RUNPATH" -e "dyn:delete RPATH" \
+        $(BUILD_DIR_64)/libcrypto.so.1.0.0;
+COMPONENT_POST_INSTALL_ACTION += $(COMPONENT_POST_INSTALL_ACTION.$(BITS))
+
 $(SOURCE_DIR)/.prep: $(COMPONENT_DIR)/../openssl-fips/build/$(MACH32)/.installed \
 		     $(COMPONENT_DIR)/../openssl-fips/build/$(MACH64)/.installed
 
@@ -206,4 +215,5 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/library/security/crypto
