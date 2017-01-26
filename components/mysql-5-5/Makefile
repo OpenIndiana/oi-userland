@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.5.52
+COMPONENT_VERSION     = 5.5.54
 COMPONENT_ARCHIVE_HASH= \
-    sha256:7820e13de6b3f4dadd255e12b2e9f3de43daf4507c218018c382d45aad8162fd
-COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/archives/mysql-5.5/$(COMPONENT_ARCHIVE)
+    sha256:273bcbcf8cc84061eb07c359308563b2029eb3f70f78b558905bc1b5c5791ab8
+COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
 
