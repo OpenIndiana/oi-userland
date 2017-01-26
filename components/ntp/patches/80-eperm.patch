@@ -45,10 +45,11 @@ if the privilege is missing.
   		    break;
   		    default:
   			msyslog(LOG_NOTICE, "%s: %s line %d: unhandled errno value %d after failed ntp_adjtime call",
---- 264,284 ----
+--- 264,285 ----
   			);
   		    break;
   		    case EPERM:
+! 		    case ENOTSUP:
 ! 		    	if (!eperm_count) {
 ! 				if (tai_call) {
 ! 				    errno = saved_errno;
@@ -125,7 +126,7 @@ if the privilege is missing.
 ! 		/* After a few tries, give up */
 ! 		if (eperm_count < 10) {
 ! 			if (adjtime(&adjtv, &oadjtv) < 0) {
-! 				if (errno == EPERM) {
+! 				if (errno == EPERM || errno == ENOTSUP) {
 ! 				       	if (!eperm_count) {
 ! 						msyslog(LOG_ERR,
 ! 						    "adj_systime: %m");
@@ -156,7 +157,7 @@ if the privilege is missing.
   
   	/* now set new system time */
   	if (ntp_set_tod(&timetv, NULL) != 0) {
-! 		if (errno == EPERM && !eperm_count) {
+! 		if ((errno == EPERM || errno == ENOTSUP) && !eperm_count) {
 ! 			msyslog(LOG_ERR, "step-systime: %m");
 ! 			eperm_count++;
 ! 		}
