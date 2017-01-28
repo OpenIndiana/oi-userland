@@ -16,31 +16,30 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-nv
-COMPONENT_VERSION= 2.1.20
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.1.21
 COMPONENT_SUMMARY= xf86-video-nv - NVIDIA video driver for the Xorg X server
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-nv
+COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:8395f65501f16f9cbaae8f598b02c6f18e78f4d3d30a08cb8d547dc2e00c10bf
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= \
+  sha256:1f98649e6ff0e8214b9d5dcac661f1d004be8e73823d8247b9c7025fd81db32d
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
-COMPONENT_CLASSIFICATION= Drivers/Display
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
-COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-nv
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        libtoolize --automake --copy --force && \
-                                        aclocal && \
-                                        autoheader && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && \
+                          libtoolize --automake --copy --force && \
+                          aclocal && \
+                          autoheader && \
+                          automake -a -f -c &&\
+                          autoconf )
 
 # Paths to find libraries/modules to link with 
 
