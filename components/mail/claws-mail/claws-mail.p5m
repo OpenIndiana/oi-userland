@@ -11,15 +11,18 @@
 
 #
 # Copyright 2016 Sergey Avseyev
+# Copyright 2016 Alexander Pyhalov
 #
 
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
 file path=usr/bin/$(MACH64)/claws-mail
 link path=usr/bin/$(MACH64)/sylpheed-claws target=claws-mail
 file path=usr/bin/claws-mail
@@ -59,6 +62,7 @@ file path=usr/include/claws-mail/common/log.h
 file path=usr/include/claws-mail/common/md5.h
 file path=usr/include/claws-mail/common/mgutils.h
 file path=usr/include/claws-mail/common/passcrypt.h
+file path=usr/include/claws-mail/common/pkcs5_pbkdf2.h
 file path=usr/include/claws-mail/common/plugin.h
 file path=usr/include/claws-mail/common/prefs.h
 file path=usr/include/claws-mail/common/progressindicator.h
@@ -182,6 +186,9 @@ file path=usr/include/claws-mail/news.h
 file path=usr/include/claws-mail/news_gtk.h
 file path=usr/include/claws-mail/noticeview.h
 file path=usr/include/claws-mail/partial_download.h
+file path=usr/include/claws-mail/password.h
+file path=usr/include/claws-mail/password_gtk.h
+file path=usr/include/claws-mail/passwordstore.h
 file path=usr/include/claws-mail/pine.h
 file path=usr/include/claws-mail/plugins/claws-mail/archiver.h
 file path=usr/include/claws-mail/plugins/claws-mail/archiver_prefs.h
@@ -226,6 +233,7 @@ file path=usr/include/claws-mail/prefs_image_viewer.h
 file path=usr/include/claws-mail/prefs_logging.h
 file path=usr/include/claws-mail/prefs_matcher.h
 file path=usr/include/claws-mail/prefs_message.h
+file path=usr/include/claws-mail/prefs_migration.h
 file path=usr/include/claws-mail/prefs_msg_colors.h
 file path=usr/include/claws-mail/prefs_other.h
 file path=usr/include/claws-mail/prefs_quote.h
@@ -286,6 +294,7 @@ file path=usr/lib/$(MACH64)/claws-mail/plugins/pgpinline.deps
 file path=usr/lib/$(MACH64)/claws-mail/plugins/pgpinline.so
 file path=usr/lib/$(MACH64)/claws-mail/plugins/pgpmime.deps
 file path=usr/lib/$(MACH64)/claws-mail/plugins/pgpmime.so
+file path=usr/lib/$(MACH64)/claws-mail/plugins/python.so
 file path=usr/lib/$(MACH64)/claws-mail/plugins/smime.deps
 file path=usr/lib/$(MACH64)/claws-mail/plugins/smime.so
 file path=usr/lib/$(MACH64)/claws-mail/plugins/spamassassin.so
@@ -314,6 +323,7 @@ file path=usr/lib/claws-mail/plugins/pgpinline.deps
 file path=usr/lib/claws-mail/plugins/pgpinline.so
 file path=usr/lib/claws-mail/plugins/pgpmime.deps
 file path=usr/lib/claws-mail/plugins/pgpmime.so
+file path=usr/lib/claws-mail/plugins/python.so
 file path=usr/lib/claws-mail/plugins/smime.deps
 file path=usr/lib/claws-mail/plugins/smime.so
 file path=usr/lib/claws-mail/plugins/spamassassin.so
@@ -328,6 +338,7 @@ file path=usr/share/icons/hicolor/48x48/apps/claws-mail.png
 file path=usr/share/icons/hicolor/64x64/apps/claws-mail.png
 file path=usr/share/locale/ca/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/cs/LC_MESSAGES/claws-mail.mo
+file path=usr/share/locale/da/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/de/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/en_GB/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/es/LC_MESSAGES/claws-mail.mo
@@ -335,14 +346,14 @@ file path=usr/share/locale/fi/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/fr/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/he/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/hu/LC_MESSAGES/claws-mail.mo
+file path=usr/share/locale/id_ID/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/it/LC_MESSAGES/claws-mail.mo
-file path=usr/share/locale/lt/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/nb/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/nl/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/ru/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/sk/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/sv/LC_MESSAGES/claws-mail.mo
+file path=usr/share/locale/tr/LC_MESSAGES/claws-mail.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/claws-mail.mo
 file path=usr/share/man/man1/claws-mail.1
-license $(COMPONENT_LICENSE_FILE) license=$(COMPONENT_LICENSE)

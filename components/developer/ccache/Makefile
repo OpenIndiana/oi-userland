@@ -16,14 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
-COMPONENT_VERSION=	3.2.6
+COMPONENT_VERSION=	3.3.3
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a4c59c2fe1fcbd3aba5b183f7841aff1b94ff7435cc29f1d8bbe7fc21d38e0cb
+	sha256:2985bc5e32ebe38d2958d508eb54ddcad39eed909489c0c2988035214597ca54
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_FMRI=		developer/ccache

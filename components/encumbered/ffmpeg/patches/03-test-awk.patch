@@ -1,0 +1,37 @@
+--- ffmpeg-2.8.10/tests/fate/filter-video.mak.orig	2016-12-12 20:08:08.259752860 +0100
++++ ffmpeg-2.8.10/tests/fate/filter-video.mak	2016-12-12 20:08:18.680896002 +0100
+@@ -482,7 +482,7 @@
+ tests/pixfmts.mak: TAG = GEN
+ tests/pixfmts.mak: ffmpeg$(EXESUF)
+ 	$(M)printf "PIXFMTS = " > $@
+-	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | awk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
++	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -pix_fmts list 2> /dev/null | gawk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
+ 	$(Q)printf "\n" >> $@
+ 
+ RUNNING_PIXFMTS_TESTS := $(filter check fate fate-list fate-filter fate-vfilter fate-filter-pixdesc%,$(MAKECMDGOALS))
+--- ffmpeg-2.8.10/tests/fate-run.sh.orig	2016-12-12 20:20:57.968486091 +0100
++++ ffmpeg-2.8.10/tests/fate-run.sh	2016-12-12 20:14:43.434323816 +0100
+@@ -39,7 +39,7 @@
+ # $1=value1, $2=value2, $3=threshold
+ # prints 0 if absolute difference between value1 and value2 is <= threshold
+ compare(){
+-    awk "BEGIN { v = $1 - $2; printf ((v < 0 ? -v : v) > $3) }"
++    gawk "BEGIN { v = $1 - $2; printf ((v < 0 ? -v : v) > $3) }"
+ }
+ 
+ do_tiny_psnr(){
+@@ -204,11 +204,11 @@
+     in_fmts=${outfile}_in_fmts
+ 
+     # exclude pixel formats which are not supported as input
+-    $showfiltfmts scale | awk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_in_fmts
+-    $showfiltfmts scale | awk -F '[ \r]' '/^OUTPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_out_fmts
++    $showfiltfmts scale | gawk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_in_fmts
++    $showfiltfmts scale | gawk -F '[ \r]' '/^OUTPUT/{ fmt=substr($3, 5); print fmt }' | sort >$scale_out_fmts
+     comm -12 $scale_in_fmts $scale_out_fmts >$scale_exclude_fmts
+ 
+-    $showfiltfmts $filter | awk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$in_fmts
++    $showfiltfmts $filter | gawk -F '[ \r]' '/^INPUT/{ fmt=substr($3, 5); print fmt }' | sort >$in_fmts
+     pix_fmts=$(comm -12 $scale_exclude_fmts $in_fmts)
+ 
+     outertest=$test

@@ -23,14 +23,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	24.5
+COMPONENT_VERSION=	25.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dd47d71dd2a526cf6b47cb49af793ec2e26af69a0951cc40e43ae290eacfc34e
+    sha256:19f2798ee3bc26c95dca3303e7ab141e7ad65d6ea2b6945eeba4dbea7df48f33
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -43,6 +45,15 @@ VARIANTS =	nox x gtk
 
 BUILD_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 INSTALL_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
+LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 # emacs creates a directory in usr/lib/emacs/$(COMPONENT_VERSION) that
 # contains the platform name. Although the name is platform dependent,
@@ -89,7 +100,7 @@ ASLR_MODE = $(ASLR_DISABLE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk2
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -165,6 +176,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/doc/man/etags.1 $(PGSHAREMAN1)/etags.1 ;
 
+# By default, emacs is configured to compress lisp files, manpages, and info
+# files. The option to disable that (--without-compress-install) has no
+# granularity --- it's all or nothing. For Solaris, we want to compress lisp
+# sources, but not the others. It's simplest to let everything be compressed.
+# and then explicitly decompress the manpages and info files.
+COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
+        $(PROTO_DIR)/usr/share/info/*.gz \
+        $(PROTO_DIR)/usr/share/man/man1/*.gz ;
+
 # Throw away usr/share/info/dir. This file is the topmost node of the Info
 # hierarchy. Emacs builds it, as presumably do all GNU packages, but on
 # Solaris, it is delivered by system/prerequisite/gnu.
@@ -178,6 +198,37 @@ install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
 test:	$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_MAKE_RULES)/depend.mk
+REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += image/imagemagick
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += image/library/libpng16
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libice
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/libxfixes
+REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxpm
+REQUIRED_PACKAGES += x11/library/libxrandr
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

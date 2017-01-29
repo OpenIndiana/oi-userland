@@ -141,6 +141,12 @@ set name=variant.arch value=$(MACH)
 <transform link mediator=python mediator-version=2.7 -> default mediator-priority vendor>
 
 #
+# Set the default Perl for mediated links
+#
+<transform link mediator=perl mediator-version=5.22 -> default mediator-priority vendor>
+<transform link mediator=system-perl mediator-version=5.22 -> default mediator-priority vendor>
+
+#
 # Set the default Apache for mediated links
 #
 <transform link mediator=apache mediator-version=2.2 -> default mediator-priority vendor>
@@ -167,6 +173,9 @@ set name=variant.arch value=$(MACH)
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# Avoid mangling compressed man pages
+<transform file path=usr.*/man/.+\.(Z|bzip2|gz|xz)$ -> default mangler.bypass true>
 
 <transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
              value=$(USERLAND_GIT_REMOTE)>

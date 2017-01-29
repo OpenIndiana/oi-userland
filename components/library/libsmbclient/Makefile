@@ -36,6 +36,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.4.6
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	http://www.samba.org/
@@ -72,6 +73,14 @@ CPPFLAGS +=	-I/usr/include/openldap
 
 LD_OPTIONS += 	-B direct
 
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LDFLAGS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LDFLAGS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
+
 # !!! Note, this is not a configure.mk-based Makefile !!!
 CONFIGURE_OPTIONS =	--prefix=/usr
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
@@ -104,6 +113,7 @@ CONFIGURE_ENV +=     	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += 	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Build targets for WAF:
 # (motivation) Samba started to use WAF (build system from Google) from the 3.x
@@ -155,7 +165,7 @@ clean::
 	$(RM) -r $(BUILD_DIR)
 
 REQUIRED_PACKAGES += library/gnu-libiconv
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += system/library

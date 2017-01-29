@@ -1439,16 +1439,12 @@ index a5a2f12..39776ae 100644
  	options->gss_deleg_creds = -1;
  	options->password_authentication = -1;
  	options->kbd_interactive_authentication = -1;
-@@ -1830,6 +1838,12 @@ fill_default_options(Options * options)
+@@ -1830,6 +1838,8 @@ fill_default_options(Options * options)
  #else
  		options->gss_authentication = 0;
  #endif
 +	if (options->gss_keyex == -1)
-+#ifdef OPTION_DEFAULT_VALUE
-+		options->gss_keyex = 1;
-+#else
 +		options->gss_keyex = 0;
-+#endif
  	if (options->gss_deleg_creds == -1)
  		options->gss_deleg_creds = 0;
  	if (options->password_authentication == -1)
@@ -1476,16 +1472,12 @@ index 434cafc..157a64a 100644
  	options->gss_cleanup_creds = -1;
  	options->gss_strict_acceptor = -1;
  	options->password_authentication = -1;
-@@ -312,6 +313,12 @@ fill_default_server_options(ServerOptions *options)
+@@ -312,6 +313,8 @@ fill_default_server_options(ServerOptions *options)
  #else
  		options->gss_authentication = 0;
  #endif
 +	if (options->gss_keyex == -1)
-+#ifdef OPTION_DEFAULT_VALUE
-+		options->gss_keyex = 1;
-+#else
 +		options->gss_keyex = 0;
-+#endif
  	if (options->gss_cleanup_creds == -1)
  		options->gss_cleanup_creds = 1;
  	if (options->gss_strict_acceptor == -1)
@@ -1603,7 +1595,7 @@ index 90fb63f..dd2a6e9 100644
  #   HostbasedAuthentication no
  #   GSSAPIAuthentication no
  #   GSSAPIDelegateCredentials no
-+#   GSSAPIKeyExchange yes
++#   GSSAPIKeyExchange no
  #   BatchMode no
  #   CheckHostIP yes
  #   AddressFamily any
@@ -1619,7 +1611,7 @@ index 3135e45..f4b471e 100644
 +Specifies whether key exchange based on GSSAPI may be used. When using
 +GSSAPI key exchange the server need not have a host key.
 +The default on Solaris is
-+.Dq yes .
++.Dq no .
  .It Cm GSSAPIDelegateCredentials
  Forward (delegate) credentials to the server.
  The default is
@@ -1888,7 +1880,7 @@ index a848d73..7322872 100644
 -#GSSAPIAuthentication no
 +#GSSAPIAuthentication yes
  #GSSAPICleanupCredentials yes
-+#GSSAPIKeyExchange yes
++#GSSAPIKeyExchange no
  
  # Set this to 'yes' to enable PAM authentication, account processing,
  # and session processing. If this is enabled, PAM authentication will
@@ -1904,7 +1896,7 @@ index 445cf65..0dec36c 100644
 +Specifies whether key exchange based on GSSAPI is allowed. GSSAPI key exchange
 +doesn't rely on ssh keys to verify host identity.
 +The default on Solaris is
-+.Dq yes .
++.Dq no .
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.

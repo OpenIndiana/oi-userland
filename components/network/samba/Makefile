@@ -44,12 +44,12 @@ export PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.4.6
+COMPONENT_VERSION=	4.4.8
 TPNO=			20605
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:37c423dd590c63099d952b06c07bf399da7cc6c2e72739b831eedd7dbe8cc18c
+COMPONENT_ARCHIVE_HASH= sha256:0e54de8a22b77f9712578029639331b51f818b70e194766c98475a5b99470fbf
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -97,6 +97,14 @@ LDFLAGS.64 +=	-R/usr/gnu/lib/$(MACH64)
 
 #ASLR_MODE =	$(ASLR_ENABLE)
 LD_OPTIONS += 	-B direct
+
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LDFLAGS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LDFLAGS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
 
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS =	--exec-prefix=/usr
@@ -156,6 +164,7 @@ CONFIGURE_ENV.64 +=	LINKFLAGS="$(LDFLAGS.64)"
 CONFIGURE_ENV.64 +=	MACH64="$(MACH64)"
 CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
+CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Propagation of smb.conf with default settings.
 $(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_DIR_SMB)/.built
@@ -251,10 +260,9 @@ system-test:    $(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnu-libiconv
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
@@ -263,8 +271,9 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network/avahi

@@ -10,29 +10,28 @@
 #
 
 #
-# Copyright 2015 Aurelien Larcher
+# Copyright 2015-2017 Aurelien Larcher
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           presentproto
-COMPONENT_VERSION=        1.0
+COMPONENT_VERSION=        1.1
+COMPONENT_SUMMARY=        headers for the Present extension to the X11 protocol
+COMPONENT_PROJECT_URL =   http://www.x.org/
 COMPONENT_FMRI=           x11/header/presentproto
 COMPONENT_CLASSIFICATION= Development/X11
-COMPONENT_SUMMARY=  headers for the Present extension to the X11 protocol
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:812c7d48721f909a0f7a2cb1e91f6eead76159a36c4712f4579ca587552839ce
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   http://www.x.org/releases/individual/proto/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.x.org/
-COMPONENT_LICENSE=      MIT License
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_ARCHIVE_HASH= \
+  sha256:f69b23a8869f78a5898aaf53938b829c8165e597cda34f06024d43ee1e6d26b9
+COMPONENT_LICENSE=        MIT License
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

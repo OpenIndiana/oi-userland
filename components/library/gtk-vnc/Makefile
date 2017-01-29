@@ -10,19 +10,18 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk-vnc
-
-COMPONENT_VERSION= 0.5.3
+COMPONENT_VERSION= 0.5.4
 COMPONENT_SUMMARY= gtk-vnc - A GTK widget for VNC client
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d490a6c8f40e550d43aef0043ce3bec498ec220d5eb3dc5cdcff8fd561149caf
+  sha256:488aa97a76ce6868160699cd45d4a0ee0fe6f0ad4631737c6ddd84450f6c9ce7
 COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/0.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.gnome.org/Projects/gtk-vnc
@@ -33,9 +32,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH = /usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
 
-gcc_OPT = -O2
+LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
+LD_OPTIONS += $(LD_OPTIONS.$(BITS))
+
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-plugin=yes
@@ -65,7 +71,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk-vnc
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library

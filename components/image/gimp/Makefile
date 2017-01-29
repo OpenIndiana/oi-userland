@@ -9,14 +9,13 @@
 #
 
 #
-# Copyright (c) 2016 Alexander Pyhalov
+# Copyright (c) 2017 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.8.16
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.8.18
 COMPONENT_PROJECT_URL=	http://www.gimp.org/
 COMPONENT_SUMMARY=	The Gimp image editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -24,8 +23,10 @@ COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:95e3857bd0b5162cf8d1eda8c78b741eef968c3e3ac6c1195aaac2a4e2574fb7
+    sha256:39dd2247c678deaf5cc664397d3c6bd4fb910d3472290fd54b52b441b5815441
 COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.8/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

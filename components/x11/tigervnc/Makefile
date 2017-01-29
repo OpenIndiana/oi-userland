@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tigervnc
 COMPONENT_VERSION= 1.1.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= TigerVNC X11/VNC server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -65,6 +65,15 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 
 $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/.prep:
 	$(GMAKE) -C $(COMPONENT_DIR)/../xorg-server prep
+
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
+LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 COMPONENT_PREP_ACTION =        (cd $(@D) &&\
 					aclocal -I m4 && \
@@ -174,3 +183,21 @@ $(BUILD_DIR)/.configured_Xvnc: $(BUILD_DIR_32)/.configured
 build: $(BUILD_32) $(BUILD_DIR)/.built_jar $(BUILD_DIR)/.built_Xvnc
 
 install: $(INSTALL_32) $(BUILD_DIR)/.installed_jar $(BUILD_DIR)/.installed_Xvnc
+
+REQUIRED_PACKAGES += image/library/libjpeg6
+REQUIRED_PACKAGES += image/library/libjpeg6-ijg
+REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += library/graphics/pixman
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-522
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxau
+REQUIRED_PACKAGES += x11/library/libxdmcp
+REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfont
+REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/server/xserver-common

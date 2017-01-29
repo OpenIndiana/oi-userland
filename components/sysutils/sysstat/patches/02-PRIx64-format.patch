@@ -1,0 +1,521 @@
+diff -Naur sysstat-20151012.orig/fsstats.c sysstat-20151012/fsstats.c
+--- sysstat-20151012.orig/fsstats.c	2015-10-12 21:30:47.000000000 +0200
++++ sysstat-20151012/fsstats.c	2016-12-07 17:11:27.194303530 +0100
+@@ -101,7 +101,7 @@
+ 	while (f && (strcmp(dev,f->dev) || strcmp(typ,f->typ)))
+ 		f = f->next;
+ 	if (f == 0) {
+-		dbug("add_fs(%s,%s,%s,%llu,%llu,%lx)\n",dev,mnt,typ,blocks,free,id);
++		dbug("add_fs(%s,%s,%s,%" PRIu64 ",%" PRIu64 ",%lx)\n",dev,mnt,typ,blocks,free,id);
+ 		f = malloc(sizeof(fsstat_t));
+ 		bzero(f,sizeof(fsstat_t));
+ 		f->next = Fs;
+@@ -112,7 +112,7 @@
+ 		f->ops_rate = -1;
+ 		Fs = f;
+ 	} else
+-		dbug("update_fs(%s,%s,%s,%llu,%llu,%lx)\n",dev,mnt,typ,blocks,free,id);
++		dbug("update_fs(%s,%s,%s,%" PRIu64 ",%" PRIu64 ",%lx)\n",dev,mnt,typ,blocks,free,id);
+ 	f->blocks = blocks;
+ 	f->free = free;
+ 	return f;
+@@ -125,7 +125,7 @@
+ {
+ 	fsstat_t *f = Fs;
+ 	while (f) {
+-		printf("%s@%s (%s): %llu\n",f->dev,f->mnt,f->typ,(long long unsigned) f->blocks);
++		printf("%s@%s (%s): %" PRIu64 "\n",f->dev,f->mnt,f->typ,(long long unsigned) f->blocks);
+ 		f = f->next;
+ 	}
+ }
+@@ -262,7 +262,7 @@
+ 		f = Fs;
+ 		dbug("sort_fs(): sorted file systems\n");
+ 		while (f) {
+-			dbug("%s:%lld\n",f->dev,f->free>>20);
++			dbug("%s:%" PRIi64 "\n",f->dev,f->free>>20);
+ 			++n;
+ 			f = f->next;
+ 		}
+@@ -324,7 +324,7 @@
+ 			if (-1 == statvfs(mnt_pnt,&vst))
+ 				continue;
+ 			size = ((uint64_t) vst.f_blocks * vst.f_frsize) >> 10;
+-			dbug("%s @ %s : %llu/%llu\n",
++			dbug("%s @ %s : %" PRIu64 "/%" PRIu64 "\n",
+ 					fstyp,
+ 					mnt_pnt,
+ 					(uint64_t)vst.f_bfree,
+@@ -345,7 +345,7 @@
+ 				continue;
+ 			}
+ 			if (-1 != statvfs(f->mnt,&vst)) {
+-				dbug("updated %s@%s: %llu/%llu\n",
++				dbug("updated %s@%s: %" PRIu64 "/%" PRIu64 "\n",
+ 					f->typ,
+ 					f->mnt,
+ 					(uint64_t)vst.f_bfree,
+diff -Naur sysstat-20151012.orig/localstats.c sysstat-20151012/localstats.c
+--- sysstat-20151012.orig/localstats.c	2015-10-12 21:30:47.000000000 +0200
++++ sysstat-20151012/localstats.c	2016-12-07 17:10:47.538894435 +0100
+@@ -572,7 +572,7 @@
+ 		c->rates.nread = (double) ((data->nread - c->iodata.nread) >> 10) * td;
+ 		c->rates.nwritten = (double)((data->nwritten - c->iodata.nwritten) >> 10) * td;
+ 		c->rates.rbusy = (data->rtime - c->iodata.rtime) / (double)(s->ks_snaptime - c->timestamp) * 100.0;
+-		dbug("rbusy: (%lld - %lld) == %lld / (%lld - %lld ) == %lld = %g\n",data->rtime,c->iodata.rtime,data->rtime-c->iodata.rtime,s->ks_snaptime,c->timestamp,s->ks_snaptime-c->timestamp,c->rates.rbusy);
++		dbug("rbusy: (%" PRIi64 " - %" PRIi64 ") == %" PRIi64 " / (%" PRIi64 " - %" PRIi64 " ) == %" PRIi64 " = %g\n",data->rtime,c->iodata.rtime,data->rtime-c->iodata.rtime,s->ks_snaptime,c->timestamp,s->ks_snaptime-c->timestamp,c->rates.rbusy);
+ 		if (c->rates.rbusy < 0)
+ 			c->rates.wbusy = 0;
+ 		c->rates.wbusy = (data->wtime - c->iodata.wtime) / (double)(s->ks_snaptime - c->timestamp) * 100.0;
+@@ -1417,19 +1417,19 @@
+ 		data = fsks.read_bytes;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		f->read_rate = (float)((data->value.ui64 - f->numread) >> 10) * td;
+-		dbug("read: %llu-%llu/%llu-%llu, %g\n",data->value.ui64,f->numread,s->ks_snaptime,f->rate_ts,f->read_rate);
++		dbug("read: %" PRIu64 "-%" PRIu64 "/%" PRIu64 "-%" PRIu64 ", %g\n",data->value.ui64,f->numread,s->ks_snaptime,f->rate_ts,f->read_rate);
+ 		f->numread = data->value.ui64;
+ 
+ 		data = fsks.readdir_bytes;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		f->read_rate += (float)((data->value.ui64 - f->numreaddir) >> 10) * td; 
+-		//dbug("readdir: %llu-%llu/%llu-%llu, %g\n",data->value.ui64,f->numread,s->ks_snaptime,f->rate_ts,f->read_rate);
++		//dbug("readdir: %" PRIu64 "-%" PRIu64 "/%" PRIu64 "-%" PRIu64 ", %g\n",data->value.ui64,f->numread,s->ks_snaptime,f->rate_ts,f->read_rate);
+ 		f->numreaddir = data->value.ui64;
+ 
+ 		data = fsks.write_bytes;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		f->write_rate = (float)((data->value.ui64 - f->numwrite) >> 10) * td;
+-		dbug("write: %llu-%llu, %g\n",data->value.ui64,f->numwrite,f->write_rate);
++		dbug("write: %" PRIu64 "-%" PRIu64 ", %g\n",data->value.ui64,f->numwrite,f->write_rate);
+ 		f->numwrite = data->value.ui64;
+ 
+ 		data = fsks.naccess;
+@@ -1437,7 +1437,7 @@
+ 		if (data->value.ui64 < f->naccess)
+ 			f->naccess = data->value.ui64;
+ 		ops += data->value.ui64 - f->naccess;
+-		//dbug("naccess = %llu\n",data->value.ui64-f->naccess);
++		//dbug("naccess = %" PRIu64 "\n",data->value.ui64-f->naccess);
+ 		f->naccess = data->value.ui64;
+ 
+ 		data = fsks.naddmap;
+@@ -1445,7 +1445,7 @@
+ 		if (data->value.ui64 < f->naddmap)
+ 			f->naddmap = data->value.ui64;
+ 		ops += data->value.ui64 - f->naddmap;
+-		//dbug("naddmap = %llu\n",data->value.ui64-f->naddmap);
++		//dbug("naddmap = %" PRIu64 "\n",data->value.ui64-f->naddmap);
+ 		f->naddmap = data->value.ui64;
+ 
+ 		data = fsks.nclose;
+@@ -1453,73 +1453,73 @@
+ 		if (data->value.ui64 < f->nclose)
+ 			f->nclose = data->value.ui64;
+ 		ops += data->value.ui64 - f->nclose;
+-		//dbug("nclose = %llu\n",data->value.ui64-f->nclose);
++		//dbug("nclose = %" PRIu64 "\n",data->value.ui64-f->nclose);
+ 		f->nclose = data->value.ui64;
+ 
+ 		data = fsks.ncmp;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ncmp;
+-		//dbug("ncmp = %llu\n",data->value.ui64-f->ncmp);
++		//dbug("ncmp = %" PRIu64 "\n",data->value.ui64-f->ncmp);
+ 		f->ncmp = data->value.ui64;
+ 
+ 		data = fsks.ncreate;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ncreate;
+-		//dbug("ncreate = %llu\n",data->value.ui64-f->ncreate);
++		//dbug("ncreate = %" PRIu64 "\n",data->value.ui64-f->ncreate);
+ 		f->ncreate = data->value.ui64;
+ 
+ 		data = fsks.ndelmap;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ndelmap;
+-		//dbug("ndelmap = %llu\n",data->value.ui64-f->ndelmap);
++		//dbug("ndelmap = %" PRIu64 "\n",data->value.ui64-f->ndelmap);
+ 		f->ndelmap = data->value.ui64;
+ 
+ 		data = fsks.ndispose;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ndispose;
+-		//dbug("ndispose = %llu\n",data->value.ui64-f->ndispose);
++		//dbug("ndispose = %" PRIu64 "\n",data->value.ui64-f->ndispose);
+ 		f->ndispose = data->value.ui64;
+ 		
+ 		data = fsks.ndump;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ndump;
+-		//dbug("ndump = %llu\n",data->value.ui64-f->ndump);
++		//dbug("ndump = %" PRIu64 "\n",data->value.ui64-f->ndump);
+ 		f->ndump = data->value.ui64;
+ 
+ 		data = fsks.ndumpctl;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ndumpctl;
+-		//dbug("ndumpctl = %llu\n",data->value.ui64-f->ndumpctl);
++		//dbug("ndumpctl = %" PRIu64 "\n",data->value.ui64-f->ndumpctl);
+ 		f->ndumpctl = data->value.ui64;
+ 
+ 		data = fsks.nfid;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->nfid;
+-		//dbug("nfid = %llu\n",data->value.ui64-f->nfid);
++		//dbug("nfid = %" PRIu64 "\n",data->value.ui64-f->nfid);
+ 		f->nfid = data->value.ui64;
+ 
+ 		data = fsks.nfrlock;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->nfrlock;
+-		//dbug("nfrlock = %llu\n",data->value.ui64-f->nfrlock);
++		//dbug("nfrlock = %" PRIu64 "\n",data->value.ui64-f->nfrlock);
+ 		f->nfrlock = data->value.ui64;
+ 
+ 		data = fsks.nfsync;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->nfsync;
+-		//dbug("nfsync = %llu\n",data->value.ui64-f->nfsync);
++		//dbug("nfsync = %" PRIu64 "\n",data->value.ui64-f->nfsync);
+ 		f->nfsync = data->value.ui64;
+ 
+ 		data = fsks.ngetattr;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ngetattr;
+-		//dbug("ngetattr = %llu\n",data->value.ui64-f->ngetattr);
++		//dbug("ngetattr = %" PRIu64 "\n",data->value.ui64-f->ngetattr);
+ 		f->ngetattr = data->value.ui64;
+ 
+ 		data = fsks.ngetpage;
+ 		assert(data && (data->data_type == KSTAT_DATA_UINT64));
+ 		ops += data->value.ui64 - f->ngetpage;
+-		//dbug("ngetpage = %llu\n",data->value.ui64-f->ngetpage);
++		//dbug("ngetpage = %" PRIu64 "\n",data->value.ui64-f->ngetpage);
+ 		f->ngetpage = data->value.ui64;
+ 
+ 		data = fsks.ngetsecattr;
+@@ -1527,7 +1527,7 @@
+ 		if (data->value.ui64 < f->ngetsecattr)
+ 			f->ngetsecattr = data->value.ui64;
+ 		ops += data->value.ui64 - f->ngetsecattr;
+-		//dbug("ngetsecattr = %llu\n",data->value.ui64-f->ngetsecattr);
++		//dbug("ngetsecattr = %" PRIu64 "\n",data->value.ui64-f->ngetsecattr);
+ 		f->ngetsecattr = data->value.ui64;
+ 
+ 		data = fsks.ninactive;
+@@ -1535,7 +1535,7 @@
+ 		if (data->value.ui64 < f->ninactive)
+ 			f->ninactive = data->value.ui64;
+ 		ops += data->value.ui64 - f->ninactive;
+-		//dbug("ninactive = %llu\n",data->value.ui64-f->ninactive);
++		//dbug("ninactive = %" PRIu64 "\n",data->value.ui64-f->ninactive);
+ 		f->ninactive = data->value.ui64;
+ 
+ 		data = fsks.nioctl;
+@@ -1543,7 +1543,7 @@
+ 		if (data->value.ui64 < f->nioctl)
+ 			f->nioctl = data->value.ui64;
+ 		ops += data->value.ui64 - f->nioctl;
+-		//dbug("nioctl = %llu\n",data->value.ui64-f->nioctl);
++		//dbug("nioctl = %" PRIu64 "\n",data->value.ui64-f->nioctl);
+ 		f->nioctl = data->value.ui64;
+ 
+ 		data = fsks.nlink;
+@@ -1551,7 +1551,7 @@
+ 		if (data->value.ui64 < f->nlink)
+ 			f->nlink = data->value.ui64;
+ 		ops += data->value.ui64 - f->nlink;
+-		//dbug("nlink = %llu\n",data->value.ui64-f->nlink);
++		//dbug("nlink = %" PRIu64 "\n",data->value.ui64-f->nlink);
+ 		f->nlink = data->value.ui64;
+ 
+ 		data = fsks.nlookup;
+@@ -1559,7 +1559,7 @@
+ 		if (data->value.ui64 < f->nlookup)
+ 			f->nlookup = data->value.ui64;
+ 		ops += data->value.ui64 - f->nlookup;
+-		//dbug("nlookup = %llu\n",data->value.ui64-f->nlookup);
++		//dbug("nlookup = %" PRIu64 "\n",data->value.ui64-f->nlookup);
+ 		f->nlookup = data->value.ui64;
+ 
+ 		data = fsks.nmap;
+@@ -1567,7 +1567,7 @@
+ 		if (data->value.ui64 < f->nmap)
+ 			f->nmap = data->value.ui64;
+ 		ops += data->value.ui64 - f->nmap;
+-		//dbug("nmap = %llu\n",data->value.ui64-f->nmap);
++		//dbug("nmap = %" PRIu64 "\n",data->value.ui64-f->nmap);
+ 		f->nmap = data->value.ui64;
+ 
+ 		data = fsks.nmkdir;
+@@ -1575,7 +1575,7 @@
+ 		if (data->value.ui64 < f->nmkdir)
+ 			f->nmkdir = data->value.ui64;
+ 		ops += data->value.ui64 - f->nmkdir;
+-		//dbug("nmkdir = %llu\n",data->value.ui64-f->nmkdir);
++		//dbug("nmkdir = %" PRIu64 "\n",data->value.ui64-f->nmkdir);
+ 		f->nmkdir = data->value.ui64;
+ 
+ 		data = fsks.nopen;
+@@ -1583,7 +1583,7 @@
+ 		if (data->value.ui64 < f->nopen)
+ 			f->nopen = data->value.ui64;
+ 		ops += data->value.ui64 - f->nopen;
+-		//dbug("nopen = %llu\n",data->value.ui64-f->nopen);
++		//dbug("nopen = %" PRIu64 "\n",data->value.ui64-f->nopen);
+ 		f->nopen = data->value.ui64;
+ 
+ 		data = fsks.npageio;
+@@ -1591,7 +1591,7 @@
+ 		if (data->value.ui64 < f->npageio)
+ 			f->npageio = data->value.ui64;
+ 		ops += data->value.ui64 - f->npageio;
+-		//dbug("npageio = %llu\n",data->value.ui64-f->npageio);
++		//dbug("npageio = %" PRIu64 "\n",data->value.ui64-f->npageio);
+ 		f->npageio = data->value.ui64;
+ 
+ 		data = fsks.npathconf;
+@@ -1599,7 +1599,7 @@
+ 		if (data->value.ui64 < f->npathconf)
+ 			f->npathconf = data->value.ui64;
+ 		ops += data->value.ui64 - f->npathconf;
+-		//dbug("npathconf = %llu\n",data->value.ui64-f->npathconf);
++		//dbug("npathconf = %" PRIu64 "\n",data->value.ui64-f->npathconf);
+ 		f->npathconf = data->value.ui64;
+ 
+ 		data = fsks.npoll;
+@@ -1607,7 +1607,7 @@
+ 		if (data->value.ui64 < f->npoll)
+ 			f->npoll = data->value.ui64;
+ 		ops += data->value.ui64 - f->npoll;
+-		//dbug("npoll = %llu\n",data->value.ui64-f->npoll);
++		//dbug("npoll = %" PRIu64 "\n",data->value.ui64-f->npoll);
+ 		f->npoll = data->value.ui64;
+ 
+ 		data = fsks.nputpage;
+@@ -1615,7 +1615,7 @@
+ 		if (data->value.ui64 < f->nputpage)
+ 			f->nputpage = data->value.ui64;
+ 		ops += data->value.ui64 - f->nputpage;
+-		//dbug("nputpage = %llu\n",data->value.ui64-f->nputpage);
++		//dbug("nputpage = %" PRIu64 "\n",data->value.ui64-f->nputpage);
+ 		f->nputpage = data->value.ui64;
+ 
+ 		data = fsks.nread;
+@@ -1623,7 +1623,7 @@
+ 		if (data->value.ui64 < f->nread)
+ 			f->nread = data->value.ui64;
+ 		ops += data->value.ui64 - f->nread;
+-		//dbug("nread = %llu\n",data->value.ui64-f->nread);
++		//dbug("nread = %" PRIu64 "\n",data->value.ui64-f->nread);
+ 		f->nread = data->value.ui64;
+ 
+ 		data = fsks.nreaddir;
+@@ -1631,7 +1631,7 @@
+ 		if (data->value.ui64 < f->nreaddir)
+ 			f->nreaddir = data->value.ui64;
+ 		ops += data->value.ui64 - f->nreaddir;
+-		//dbug("nreaddir = %llu\n",data->value.ui64-f->nreaddir);
++		//dbug("nreaddir = %" PRIu64 "\n",data->value.ui64-f->nreaddir);
+ 		f->nreaddir = data->value.ui64;
+ 
+ 		data = fsks.nreadlink;
+@@ -1639,7 +1639,7 @@
+ 		if (data->value.ui64 < f->nreadlink)
+ 			f->nreadlink = data->value.ui64;
+ 		ops += data->value.ui64 - f->nreadlink;
+-		//dbug("nreadlink = %llu\n",data->value.ui64-f->nreadlink);
++		//dbug("nreadlink = %" PRIu64 "\n",data->value.ui64-f->nreadlink);
+ 		f->nreadlink = data->value.ui64;
+ 
+ 		data = fsks.nrealvp;
+@@ -1647,7 +1647,7 @@
+ 		if (data->value.ui64 < f->nrealvp)
+ 			f->nrealvp = data->value.ui64;
+ 		ops += data->value.ui64 - f->nrealvp;
+-		//dbug("nrealvp = %llu\n",data->value.ui64-f->nrealvp);
++		//dbug("nrealvp = %" PRIu64 "\n",data->value.ui64-f->nrealvp);
+ 		f->nrealvp = data->value.ui64;
+ 
+ 		data = fsks.nremove;
+@@ -1655,7 +1655,7 @@
+ 		if (data->value.ui64 < f->nremove)
+ 			f->nremove = data->value.ui64;
+ 		ops += data->value.ui64 - f->nremove;
+-		//dbug("nremove = %llu\n",data->value.ui64-f->nremove);
++		//dbug("nremove = %" PRIu64 "\n",data->value.ui64-f->nremove);
+ 		f->nremove = data->value.ui64;
+ 
+ 		data = fsks.nrename;
+@@ -1663,7 +1663,7 @@
+ 		if (data->value.ui64 < f->nrename)
+ 			f->nrename = data->value.ui64;
+ 		ops += data->value.ui64 - f->nrename;
+-		//dbug("nrename = %llu\n",data->value.ui64-f->nrename);
++		//dbug("nrename = %" PRIu64 "\n",data->value.ui64-f->nrename);
+ 		f->nrename = data->value.ui64;
+ 
+ 		data = fsks.nrmdir;
+@@ -1671,7 +1671,7 @@
+ 		if (data->value.ui64 < f->nrmdir)
+ 			f->nrmdir = data->value.ui64;
+ 		ops += data->value.ui64 - f->nrmdir;
+-		//dbug("nrmdir = %llu\n",data->value.ui64-f->nrmdir);
++		//dbug("nrmdir = %" PRIu64 "\n",data->value.ui64-f->nrmdir);
+ 		f->nrmdir = data->value.ui64;
+ 
+ 		data = fsks.nrwlock;
+@@ -1679,7 +1679,7 @@
+ 		if (data->value.ui64 < f->nrwlock)
+ 			f->nrwlock = data->value.ui64;
+ 		ops += data->value.ui64 - f->nrwlock;
+-		//dbug("nrwlock = %llu\n",data->value.ui64-f->nrwlock);
++		//dbug("nrwlock = %" PRIu64 "\n",data->value.ui64-f->nrwlock);
+ 		f->nrwlock = data->value.ui64;
+ 
+ 		data = fsks.nrwunlock;
+@@ -1687,7 +1687,7 @@
+ 		if (data->value.ui64 < f->nrwunlock)
+ 			f->nrwunlock = data->value.ui64;
+ 		ops += data->value.ui64 - f->nrwunlock;
+-		//dbug("nrwunlock = %llu\n",data->value.ui64-f->nrwunlock);
++		//dbug("nrwunlock = %" PRIu64 "\n",data->value.ui64-f->nrwunlock);
+ 		f->nrwunlock = data->value.ui64;
+ 
+ 		data = fsks.nseek;
+@@ -1695,7 +1695,7 @@
+ 		if (data->value.ui64 < f->nseek)
+ 			f->nseek = data->value.ui64;
+ 		ops += data->value.ui64 - f->nseek;
+-		//dbug("nseek = %llu\n",data->value.ui64-f->nseek);
++		//dbug("nseek = %" PRIu64 "\n",data->value.ui64-f->nseek);
+ 		f->nseek = data->value.ui64;
+ 
+ 		data = fsks.nsetattr;
+@@ -1703,7 +1703,7 @@
+ 		if (data->value.ui64 < f->nsetattr)
+ 			f->nsetattr = data->value.ui64;
+ 		ops += data->value.ui64 - f->nsetattr;
+-		//dbug("nsetattr = %llu\n",data->value.ui64-f->nsetattr);
++		//dbug("nsetattr = %" PRIu64 "\n",data->value.ui64-f->nsetattr);
+ 		f->nsetattr = data->value.ui64;
+ 
+ 		data = fsks.nsetfl;
+@@ -1711,7 +1711,7 @@
+ 		if (data->value.ui64 < f->nsetfl)
+ 			f->nsetfl = data->value.ui64;
+ 		ops += data->value.ui64 - f->nsetfl;
+-		//dbug("nsetfl = %llu\n",data->value.ui64-f->nsetfl);
++		//dbug("nsetfl = %" PRIu64 "\n",data->value.ui64-f->nsetfl);
+ 		f->nsetfl = data->value.ui64;
+ 
+ 		data = fsks.nsetsecattr;
+@@ -1719,7 +1719,7 @@
+ 		if (data->value.ui64 < f->nsetsecattr)
+ 			f->nsetsecattr = data->value.ui64;
+ 		ops += data->value.ui64 - f->nsetsecattr;
+-		//dbug("nsetsecattr = %llu\n",data->value.ui64-f->nsetsecattr);
++		//dbug("nsetsecattr = %" PRIu64 "\n",data->value.ui64-f->nsetsecattr);
+ 		f->nsetsecattr = data->value.ui64;
+ 
+ 		data = fsks.nshrlock;
+@@ -1727,7 +1727,7 @@
+ 		if (data->value.ui64 < f->nshrlock)
+ 			f->nshrlock = data->value.ui64;
+ 		ops += data->value.ui64 - f->nshrlock;
+-		//dbug("nshrlock = %llu\n",data->value.ui64-f->nsetsecattr);
++		//dbug("nshrlock = %" PRIu64 "\n",data->value.ui64-f->nsetsecattr);
+ 		f->nshrlock = data->value.ui64;
+ 
+ 		data = fsks.nspace;
+@@ -1735,7 +1735,7 @@
+ 		if (data->value.ui64 < f->nspace)
+ 			f->nspace = data->value.ui64;
+ 		ops += data->value.ui64 - f->nspace;
+-		//dbug("nspace = %llu\n",data->value.ui64-f->nsetsecattr);
++		//dbug("nspace = %" PRIu64 "\n",data->value.ui64-f->nsetsecattr);
+ 		f->nspace = data->value.ui64;
+ 
+ 		data = fsks.nsymlink;
+@@ -1743,7 +1743,7 @@
+ 		if (data->value.ui64 < f->nsymlink)
+ 			f->nsymlink = data->value.ui64;
+ 		ops += data->value.ui64 - f->nsymlink;
+-		//dbug("nsymlink = %llu\n",data->value.ui64-f->nsymlink);
++		//dbug("nsymlink = %" PRIu64 "\n",data->value.ui64-f->nsymlink);
+ 		f->nsymlink = data->value.ui64;
+ 
+ 		data = fsks.nvnevent;
+@@ -1751,7 +1751,7 @@
+ 		if (data->value.ui64 < f->nvnevent)
+ 			f->nvnevent = data->value.ui64;
+ 		ops += data->value.ui64 - f->nvnevent;
+-		//dbug("nvnevent = %llu\n",data->value.ui64-f->nvnevent);
++		//dbug("nvnevent = %" PRIu64 "\n",data->value.ui64-f->nvnevent);
+ 		f->nvnevent = data->value.ui64;
+ 
+ 		data = fsks.nwrite;
+@@ -1759,16 +1759,16 @@
+ 		if (data->value.ui64 < f->nwrite)
+ 			f->nwrite = data->value.ui64;
+ 		ops += data->value.ui64 - f->nwrite;
+-		//dbug("nwrite = %llu\n",data->value.ui64-f->nwrite);
++		//dbug("nwrite = %" PRIu64 "\n",data->value.ui64-f->nwrite);
+ 		f->nwrite = data->value.ui64;
+ 
+ 		f->ops_rate = (float)(ops) * td;
+-		dbug("%s: oprate %g, ntotal %llu, ops %llu, dt %lld\n",f->dev,f->ops_rate,f->ntotal,ops,s->ks_snaptime-f->rate_ts);
++		dbug("%s: oprate %g, ntotal %" PRIu64 ", ops %" PRIu64 ", dt %" PRIi64 "\n",f->dev,f->ops_rate,f->ntotal,ops,s->ks_snaptime-f->rate_ts);
+ 		f->ntotal = ops;
+ 
+ 		f->rate_ts = s->ks_snaptime;
+ 		c->iteration = Iteration;
+-		dbug("%s: I/O(%g/%g), %lld %lld\n",f->dev,f->read_rate,f->write_rate,c->value[0],c->value[1]);
++		dbug("%s: I/O(%g/%g), %" PRIi64 " %" PRIi64 "\n",f->dev,f->read_rate,f->write_rate,c->value[0],c->value[1]);
+ 		c = c->next;
+ 	}
+ 	while (fs) {
+diff -Naur sysstat-20151012.orig/network.c sysstat-20151012/network.c
+--- sysstat-20151012.orig/network.c	2015-10-12 21:30:47.000000000 +0200
++++ sysstat-20151012/network.c	2016-12-07 17:11:38.387770462 +0100
+@@ -126,7 +126,7 @@
+ 	S -= l + 1;
+ 	m += l;
+ 	*m++ = '\t';
+-	/* c1 = snprintf(m,S,"%lld",v); {*/
++	/* c1 = snprintf(m,S,"%" PRIi64 "",v); {*/
+ 	{
+ 		long long d = 10;
+ 		while (d <= v) {
+@@ -143,7 +143,7 @@
+ 		}
+ 	}
+ 	--S;
+-	/* c1 = snprintf(m,S,"%lld",v); } */
++	/* c1 = snprintf(m,S,"%" PRIi64 "",v); } */
+ 	*m++ = c;
+ 	M = m;
+ }
+diff -Naur sysstat-20151012.orig/terminal.c sysstat-20151012/terminal.c
+--- sysstat-20151012.orig/terminal.c	2015-10-12 21:30:47.000000000 +0200
++++ sysstat-20151012/terminal.c	2016-12-07 17:11:54.772223283 +0100
+@@ -758,16 +758,16 @@
+ 		}
+ 		dl = sprintf(l,"%s",fs->dev);
+ 		if (fs->numzfs) {
+-			zl = snprintf(l+dl,Numcol,"(%llu)",fs->numzfs);
++			zl = snprintf(l+dl,Numcol,"(%" PRIu64 ")",fs->numzfs);
+ 			assert(zl >= 0);
+ 			if (dl + zl > 21) {
+ 				if (zl)
+-					(void) sprintf(l+21-3-zl,"...(%llu) ",fs->numzfs);
++					(void) sprintf(l+21-3-zl,"...(%" PRIu64 ") ",fs->numzfs);
+ 				else
+ 					(void) sprintf(l+21-3,"... ");
+ 				dl += zl;
+ 			} else if (zl) {
+-				(void) sprintf(l+dl,"(%llu) ",fs->numzfs);
++				(void) sprintf(l+dl,"(%" PRIu64 ") ",fs->numzfs);
+ 				dl += zl;
+ 			}
+ 		}

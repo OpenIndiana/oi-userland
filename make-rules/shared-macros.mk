@@ -620,13 +620,13 @@ JAVA_HOME = $(JAVA7_HOME)
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.22
 
-PERL_VERSIONS = 5.16 5.22
+PERL_VERSIONS = 5.22 5.24
 
-PERL.5.16 =	/usr/perl5/5.16/bin/perl
 PERL.5.22 =	/usr/perl5/5.22/bin/perl
+PERL.5.24 =	/usr/perl5/5.24/bin/perl
 
-POD2MAN.5.16 =	/usr/perl5/5.16/bin/pod2man
 POD2MAN.5.22 =	/usr/perl5/5.22/bin/pod2man
+POD2MAN.5.24 =	/usr/perl5/5.24/bin/pod2man
 
 PERL =		$(PERL.$(PERL_VERSION))
 POD2MAN =	$(POD2MAN.$(PERL_VERSION))
@@ -737,6 +737,7 @@ GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 GSED =		/usr/gnu/bin/sed
 GDIFF =		/usr/gnu/bin/diff
 GSORT =		/usr/gnu/bin/sort
+GUNZIP =	/usr/bin/gunzip
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend

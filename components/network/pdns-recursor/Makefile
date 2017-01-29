@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
-COMPONENT_VERSION=	3.7.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.7.4
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/downloads.html
 COMPONENT_FMRI=		service/network/dns/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:859ca6071147dd2e2ac1b2a5c3d5c2cbff0f5cbc501660db4259e7cbf27fea11
+	sha256:f4cd5589fce0b6c2532c5b28ffc5ef66df93c253e8b5f15558ea9b519e5845cf
 COMPONENT_ARCHIVE_URL=	http://downloads.powerdns.com/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -53,6 +52,4 @@ REQUIRED_PACKAGES += system/library/g++-4-runtime
 REQUIRED_PACKAGES += system/library/gcc-4-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library
-
-# build-time only dependencies
 REQUIRED_PACKAGES += system/library/boost

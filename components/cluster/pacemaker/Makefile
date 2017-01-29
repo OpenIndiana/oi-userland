@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pacemaker
 COMPONENT_VERSION= 1.1.15
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= application/cluster/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_SRC= $(COMPONENT_NAME)-Pacemaker-$(COMPONENT_VERSION)
@@ -41,6 +42,15 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT= $(@D)/configure
 
 CFLAGS += -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS -lssp_nonshared -lssp -lnsl
+
+# Force use of gnutls-3 pkgconfig during 2.x->3.x transition
+GNUTLS_PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig/gnutls-3
+GNUTLS_PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig/gnutls-3
+PKG_CONFIG_PATH = $(GNUTLS_PKG_CONFIG_PATH_$(BITS)):$(PKG_CONFIG_PATH.$(BITS))
+
+LD_OPTIONS.32 += -L/usr/lib/gnutls-3 -R/usr/lib/gnutls-3
+LD_OPTIONS.64 += -L/usr/lib/$(MACH64)/gnutls-3 -R/usr/lib/$(MACH64)/gnutls-3
+LD_OPTIONS += $(LD_OPTIONS.$(BITS))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
@@ -76,6 +86,7 @@ REQUIRED_PACKAGES += library/libesmtp
 REQUIRED_PACKAGES += library/libqb
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/ncurses
