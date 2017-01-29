@@ -17,19 +17,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 12.0.5
+COMPONENT_VERSION= 12.0.6
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2b0a972d8282860a11291c09c3ef01ac45171405951eb21a83c45ed2b4321924
+  sha256:7d6da9744c1022a4c2ab6ad01a206984d00443fb691568011d01b3dd97e36448
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -42,11 +42,11 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
-COMPONENT_PREP_ACTION +=  (cd $(SOURCE_DIR) && \
-                                        libtoolize --copy --force &&\
-                                        aclocal -I m4 &&\
-                                        automake -c -f -a &&\
-                                        autoconf)
+COMPONENT_PREP_ACTION += ( cd $(SOURCE_DIR) && \
+                           libtoolize --copy --force && \
+                           aclocal -I m4 && \
+                           automake -c -f -a && \
+                           autoconf)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
