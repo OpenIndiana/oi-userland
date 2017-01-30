@@ -5,12 +5,12 @@
 # 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
+# source. A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2016 <contributor>
+# Copyright 2017 Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -21,6 +21,13 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/guile/.+/scripts/.+$ -> default mode 0555>
+
+file files/guile-config.1 path=usr/share/man/man1/guile-config.1
+file files/guile-snarf.1 path=usr/share/man/man1/guile-snarf.1
+file files/guile-tools.1 path=usr/share/man/man1/guile-tools.1
+file files/guile.1 path=usr/share/man/man1/guile.1
 
 file path=usr/bin/$(MACH64)/guile
 file path=usr/bin/$(MACH64)/guile-config
@@ -354,7 +361,6 @@ file path=usr/share/guile/1.8/srfi/srfi-69.scm
 file path=usr/share/guile/1.8/srfi/srfi-8.scm
 file path=usr/share/guile/1.8/srfi/srfi-88.scm
 file path=usr/share/guile/1.8/srfi/srfi-9.scm
-file path=usr/share/info/dir
 file path=usr/share/info/goops.info
 file path=usr/share/info/guile-tut.info
 file path=usr/share/info/guile.info
@@ -366,4 +372,3 @@ file path=usr/share/info/guile.info-5
 file path=usr/share/info/guile.info-6
 file path=usr/share/info/guile.info-7
 file path=usr/share/info/r5rs.info
-file path=usr/share/man/man1/guile.1
