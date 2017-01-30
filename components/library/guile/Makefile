@@ -20,30 +20,31 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		guile
-COMPONENT_VERSION=	1.8.8
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/guile/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_NAME=           guile
+COMPONENT_VERSION=        1.8.8
+COMPONENT_SUMMARY=        GNU guile utility
+COMPONENT_PROJECT_URL=    http://www.gnu.org/software/guile/
+COMPONENT_CLASSIFICATION= Development/Other Languages
+COMPONENT_FMRI=           library/guile
+COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/guile
+  sha256:c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
+COMPONENT_ARCHIVE_URL=    http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
+COMPONENT_LICENSE=        LGPLv2.1, FDLv1.2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER = gcc
+CONFIGURE_ENV+= CPP="/usr/bin/gcc -E"
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
@@ -51,6 +52,8 @@ install:	$(INSTALL_32_and_64)
 # FAIL: time.test: strptime: GNU %s format: gmtoff on EST+5
 test:		 $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
