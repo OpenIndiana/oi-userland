@@ -1213,8 +1213,8 @@ new file mode 100644
 --- Python-2.7.6/setup.py.~3~	2014-05-14 13:10:30.979598710 -0700
 +++ Python-2.7.6/setup.py	2014-05-14 13:10:31.006864446 -0700
 @@ -1543,6 +1543,12 @@
-             exts.append( Extension('ucred', ['ucred.c'],
-                                    libraries = ['tsol']) )
+         else:
+             missing.append('dl')
  
 +        # dlpi module (Solaris)
 +        dlpi_inc = find_file('libdlpi.h', [], inc_dirs)
