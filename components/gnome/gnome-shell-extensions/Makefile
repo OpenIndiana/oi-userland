@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 
@@ -43,11 +43,6 @@ TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/no-evaluation.mk
 
 include $(WS_MAKE_RULES)/gnome-component.mk
-
-# Delete this when build servers are installed with required packages
-DEPENDED += ../gnome-menus/build/manifest-$(MACH)-*.depend
-# end Delete
-
 
 CONFIGURE_OPTIONS += --enable-extensions=all
 

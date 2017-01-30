@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -63,18 +63,6 @@ CONFIGURE_OPTIONS += --without-cheese
 # Needed due to patch to configure.ac.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
-# Delete this when build servers are installed with gnome-settings-daemon
-GSD_BASE = $(WS_COMPONENTS)/gnome/gnome-settings-daemon/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(GSD_BASE)$(PKG_CONFIG_PATH.$(BITS))
-CPPFLAGS += -I$(GSD_BASE)/usr/include/gnome-settings-daemon-3.0
-LD_OPTIONS += -L $(GSD_BASE)$(USRLIB.$(BITS))
-
-UNINSTALLED_DEPS = gnome-settings-daemon libgweather
-DEPENDED += $(UNINSTALLED_DEPS:%=../%/build/manifest-$(MACH)-*.depend)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES += //p' $(UNINSTALLED_DEPS:%=../%/Makefile))
-#end Delete
-
-
 # Use the GNOME 3 libnotify even though the GNOME 2 one is still the default
 PKG_CONFIG_PATHS.32 += /usr/lib/pkgconfig/libnotify-4
 PKG_CONFIG_PATHS.64 += /usr/lib/$(MACH64)/pkgconfig/libnotify-4
@@ -95,6 +83,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/grilo
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/libgweather
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2

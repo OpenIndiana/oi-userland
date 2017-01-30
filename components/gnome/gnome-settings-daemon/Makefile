@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64
@@ -72,33 +72,16 @@ CONFIGURE_OPTIONS += --with-pic
 # Required due to patches.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
 
-# Delete this when build servers are installed with an updated libgweather
-WEATHER_BASE = $(WS_COMPONENTS)/gnome/libgweather/build/prototype/$(MACH)
-PKG_CONFIG_PATHS.32 += $(WEATHER_BASE)/usr/lib/pkgconfig/
-PKG_CONFIG_PATHS.64 += $(WEATHER_BASE)/usr/lib/$(MACH64)/pkgconfig/
-PKG_CONFIG_PATHS += $(PKG_CONFIG_PATHS.$(BITS))
-
-LD_OPTIONS.32 += -L $(WEATHER_BASE)/usr/lib
-LD_OPTIONS.64 += -L $(WEATHER_BASE)/usr/lib/$(MACH64)
-LD_OPTIONS += $(LD_OPTIONS.$(BITS))
-
-CPPFLAGS += -I$(WEATHER_BASE)/usr/include/libgweather-3.0
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/libgweather/build/manifest-$(MACH)-libgweather.depend
-
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../libgweather/Makefile)
-#end Delete
-
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/geoclue
+REQUIRED_PACKAGES += library/desktop/geocode-glib
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libnotify
+REQUIRED_PACKAGES += library/desktop/libgweather
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-desktop

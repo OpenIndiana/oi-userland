@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=             64
@@ -48,23 +48,6 @@ CONFIGURE_OPTIONS += --disable-static
 # Assumes GNU msgfmt in PATH.
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
-
-# Delete when libgweather is installed on the build server
-WEATHER_BASE = $(WS_COMPONENTS)/gnome/libgweather/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(WEATHER_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(WEATHER_BASE)$(USRLIB.$(BITS))
-
-CPPFLAGS += -I$(WEATHER_BASE)/usr/include/libgweather-3.0
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/libgweather/build/manifest-$(MACH)-libgweather.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES +=//p' ../libgweather/Makefile)
-#end Delete
-
 
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -43,17 +43,6 @@ include $(WS_MAKE_RULES)/gnome-component.mk
 
 # Assumes GNU msgfmt in PATH.
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
-
-# Delete this when build servers are installed with libical
-ICAL_BASE = $(WS_COMPONENTS)/desktop/libical/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(ICAL_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L $(ICAL_BASE)$(USRLIB)
-CPPFLAGS += -I$(ICAL_BASE)$(USRINCDIR)/libical
-
-DEPENDED += $(WS_TOP)/components/desktop/libical/build/manifest-$(MACH)-libical.depend
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's/REQUIRED_PACKAGES += //p' ../../desktop/libical/Makefile)
-# end Delete
-
 
 # evolution-data-server requires nss/nspr, but Solaris doesn't include a 64-bit
 # pkg-config file for it, so we workaround this by using the one-off copy in the

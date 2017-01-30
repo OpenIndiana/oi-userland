@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS=		64
 # All components using gobject-introspection must be built with gcc as
@@ -94,30 +94,6 @@ CONFIGURE_ENV.64 += PKG_CONFIG_PATH="$(COMPONENT_DIR):$(PKG_CONFIG_PATH)"
 
 # Required due to patches.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
-
-# Delete once builds servers have libgweather installed
-WEATHER_BASE = $(WS_COMPONENTS)/gnome/libgweather/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(WEATHER_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(WEATHER_BASE)$(USRLIB.$(BITS))
-
-CONFIGURE_ENV+= LIBGWEATHER_CFLAGS="-DMESA_EGL_NO_X11_HEADERS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT -I$(WEATHER_BASE)/usr/include/libgweather-3.0 -I/usr/include/libsoup-2.4 -I/usr/include/libxml2 -I/usr/include/gtk-3.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/$(MACH64)/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libdrm -I/usr/include/libpng14 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng14 -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include"
-
-# Delete this when build servers are installed with libical
-ICAL_BASE = $(WS_COMPONENTS)/desktop/libical/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(ICAL_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L $(ICAL_BASE)$(USRLIB)
-CPPFLAGS += -I$(ICAL_BASE)$(USRINCDIR)/libical
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/libgweather/build/manifest-$(MACH)-libgweather.depend
-DEPENDED += $(WS_TOP)/components/desktop/libical/build/manifest-$(MACH)-libical.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES +=//p' ../libgweather/Makefile)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES +=//p' ../../desktop/libical/Makefile)
-#end Delete
 
 # for the tests
 unexport SHELLOPTS

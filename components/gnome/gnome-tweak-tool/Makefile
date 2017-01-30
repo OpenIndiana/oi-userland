@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		NO_ARCH
@@ -64,12 +64,6 @@ COMPONENT_POST_INSTALL_ACTION += $(PYTHON.$(PYTHON_VERSION)) -m compileall \
 PYTHON_SCRIPTS += $(PROTOUSRBINDIR)/gnome-tweak-tool
 PYTHON_SCRIPTS += $(PROTOUSRLIBDIR)/gnome-tweak-tool-lid-inhibitor
 
-# Delete this when build servers are installed with gnome-settings-daemon
-UNINSTALLED_DEPS = gnome-settings-daemon libgweather
-DEPENDED += $(UNINSTALLED_DEPS:%=../%/build/manifest-$(MACH)-*.depend.res)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES += //p' $(UNINSTALLED_DEPS:%=../%/Makefile))
-#end Delete
-
 REQUIRED_PACKAGES += gnome/file-manager/nautilus
 REQUIRED_PACKAGES += gnome/gnome-settings-daemon
 REQUIRED_PACKAGES += gnome/gnome-shell
@@ -77,6 +71,7 @@ REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += gnome/window-manager/mutter
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/libgweather
 REQUIRED_PACKAGES += library/desktop/libnotify
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/gnome/gnome-desktop

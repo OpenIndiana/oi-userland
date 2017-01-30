@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64_and_32
@@ -94,19 +94,6 @@ CONFIGURE_OPTIONS += --with-bash-completion-dir=/etc/bash_completion.d
 
 # Required due to patches.
 COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
-
-# Delete once builds servers have nautilus installed
-NAUTILUS_BASE = $(WS_COMPONENTS)/gnome/nautilus/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(NAUTILUS_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(NAUTILUS_BASE)$(USRLIB.$(BITS))
-
-CPPFLAGS += -I$(NAUTILUS_BASE)$(USRINCDIR)/nautilus
-
-DEPENDED += $(WS_TOP)/components/gnome/nautilus/build/manifest-$(MACH)-nautilus.depend
-
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's/REQUIRED_PACKAGES +=//p' ../nautilus/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libogg

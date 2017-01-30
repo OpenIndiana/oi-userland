@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=	    	64
@@ -49,22 +49,6 @@ COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
 # RDP support requires freerdp
 CONFIGURE_OPTIONS += --disable-rdp
 CONFIGURE_OPTIONS += --with-telepathy=yes
-
-# Delete this when build servers are installed with an updated gtk-vnc
-GTKVNC_BASE = $(WS_COMPONENTS)/gnome/gtk-vnc/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(GTKVNC_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(GTKVNC_BASE)$(USRLIB.$(BITS))
-
-CONFIGURE_ENV += VNC_CFLAGS="-DMESA_EGL_NO_X11_HEADERS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT -I$(GTKVNC_BASE)/usr/include/gtk-vnc-2.0 -I$(GTKVNC_BASE)/usr/include/gvnc-1.0 -I/usr/include/gtk-3.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/$(MACH64)/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libdrm -I/usr/include/libpng14 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng14 -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include -I/usr/include/libxml2"
-
-# The dependency isn't installed, so add it manually since pkgdepend
-# can't resolve them yet: 15708323
-DEPENDED += $(WS_TOP)/components/gnome/gtk-vnc/build/manifest-$(MACH)-gtk-vnc.depend
-
-# Temporary until dependencies are all on build machines
-REQUIRED_PACKAGES += $(shell $(GSED) -n 's/REQUIRED_PACKAGES +=//p' ../gtk-vnc/Makefile)
-#end Delete
 
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS =            64_and_32
@@ -74,20 +74,6 @@ CONFIGURE_OPTIONS += --with-plugins=autodetect
 # Assumes GNU msgfmt is in PATH.
 CONFIGURE_ENV += PATH="$(GNUBIN):$(PATH)"
 COMPONENT_BUILD_ENV += PATH="$(GNUBIN):$(PATH)"
-
-# Delete once builds servers have nautilus installed
-NAUTILUS_BASE = $(WS_COMPONENTS)/gnome/nautilus/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(NAUTILUS_BASE)$(PKG_CONFIG_PATH.$(BITS))
-
-LD_OPTIONS += -L $(NAUTILUS_BASE)$(USRLIB.$(BITS))
-
-CPPFLAGS += -I$(NAUTILUS_BASE)$(USRINCDIR)/nautilus
-
-DEPENDED += $(WS_TOP)/components/gnome/nautilus/build/manifest-$(MACH)-nautilus.depend
-
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's%\$$(PERL_PKG)%$(PERL_PKG)%' -e 's/REQUIRED_PACKAGES +=//p' ../nautilus/Makefile)
-#end Delete
-
 
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += developer/python/pylint-27

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -67,40 +67,6 @@ COMPONENT_BUILD_ENV += PATH=$(GNUBIN):$(PATH)
 LD_EXEC_OPTIONS += -M $(PWD)/../gjs/mapfile
 ADIHEAP_MODE = $(ADIHEAP_DISABLE)
 ADISTACK_MODE =	$(ADISTACK_DISABLE)
-
-# Delete this when build servers are installed with required packages
-SN_TOP = $(WS_COMPONENTS)/desktop/startup-notification
-SN_BASE = $(SN_TOP)/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(SN_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L $(SN_BASE)$(USRLIB)
-CPPFLAGS += -I$(SN_BASE)$(USRINCDIR)/startup-notification-1.0
-DEPENDED += $(SN_TOP)/build/manifest-$(MACH)-startup-notification.depend
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e 's/REQUIRED_PACKAGES +=//p' $(SN_TOP)/Makefile)
-
-MUTTER_BASE = $(WS_COMPONENTS)/gnome/mutter/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(MUTTER_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L $(MUTTER_BASE)$(USRLIB)
-CPPFLAGS += -I$(MUTTER_BASE)$(USRINCDIR)/mutter
-CONFIGURE_ENV += INTROSPECTION_GIRDIR="$(MUTTER_BASE)/usr/lib/$(MACH64)/mutter"
-MUTTER_GIRDIR=$(MUTTER_BASE)$(USRLIB)/mutter
-
-EDS_BASE = $(WS_COMPONENTS)/gnome/evolution-data-server/build/prototype/$(MACH)
-PKG_CONFIG_PATHS += $(EDS_BASE)$(PKG_CONFIG_PATH.$(BITS))
-LD_OPTIONS += -L $(EDS_BASE)$(USRLIB)
-CPPFLAGS += -I$(EDS_BASE)$(USRINCDIR)/evolution-data-server
-
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH_64="$(GOA_BASE)/$(USRLIB):$(EDS_BASE)/$(USRLIB)/evolution-data-server:$(MUTTER_BASE)/$(USRLIB):$(BUILD_DIR_64)/src/.libs"
-
-XDG_DATA_DIRS="$(MUTTER_GIR_DIR):$(CLUTTER_BASE)/usr/share/:/usr/share/"
-
-COMPONENT_BUILD_ENV += XDG_DATA_DIRS="$(MUTTER_GIR_DIR):$(CLUTTER_BASE)/usr/share/:/usr/share/"
-COMPONENT_BUILD_ENV += MUTTER_GIR_DIR="$(MUTTER_GIR_DIR):$(CLUTTER_BASE)/usr/share/:/usr/share/"
-
-# Dependencies on other packages in this build not yet on build machines
-UNINSTALLED_DEPS = gdm gnome-clocks gnome-settings-daemon libgweather
-DEPENDED += $(UNINSTALLED_DEPS:%=../%/build/manifest-$(MACH)-*.depend)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES += //p' $(UNINSTALLED_DEPS:%=../%/Makefile))
-# end Delete
 
 # evolution-data-server requires nss/nspr, but Solaris doesn't include a 64-bit
 # pkg-config file for it, so we workaround this by using the one-off copy in the

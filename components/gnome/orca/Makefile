@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 BUILD_BITS=		64
@@ -55,20 +55,6 @@ CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES:/64=)
 
 # intltool may or may not be run depending on previous state of build dir
 COMPONENT_TEST_TRANSFORMS += "-e '/\/usr\/bin\/intltool-update/d'"
-
-# Delete once build servers have new versions of brltty & liblouis installed
-UNINSTALLED_DEPS = desktop/brltty desktop/liblouis
-DEPEND_BASES =	$(UNINSTALLED_DEPS:%=$(WS_COMPONENTS)/%/build/prototype/$(MACH))
-PYTHON_PATHS =	$(DEPEND_BASES:%=%/usr/lib/python$(PYTHON_VERSION)/vendor-packages)
-LIBRARY_PATHS = $(DEPEND_BASES:%=%$(USRLIBDIR64))
-
-CONFIGURE_ENV += \
-    PYTHONPATH=$(subst $(space),:,$(strip $(PYTHON_PATHS))) \
-    LD_LIBRARY_PATH_64=$(subst $(space),:,$(strip $(LIBRARY_PATHS)))
-
-DEPENDED += $(UNINSTALLED_DEPS:%=$(WS_COMPONENTS)/%/build/manifest-$(MACH)-*.depend)
-REQUIRED_PACKAGES += $(shell $(GSED) -n -e '/GSED/d' -e 's/REQUIRED_PACKAGES += //p' $(UNINSTALLED_DEPS:%=$(WS_COMPONENTS)/%/Makefile))
-#end Delete
 
 REQUIRED_PACKAGES += gnome/gsettings-desktop-schemas
 REQUIRED_PACKAGES += library/accessibility/brltty
