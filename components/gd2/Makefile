@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
@@ -69,12 +69,15 @@ COMPONENT_TEST_CMD = \
 COMPONENT_TEST_TARGETS =
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "/Performing/d" ' \
 	'-e "s|\(^.*32 Test.*Passed\).*|\1|" ' \
 	'-e "s|\(^.*32 Test.*Failed\).*|\1|" ' \
-	'-e "s|\(^Total Test time (real) =\).*|\1|" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+	'-n ' \
+	'-e "/Passed/p" ' \
+	'-e "/Failed/p" ' \
+	'-e "/passed/p" ' \
+	'-e "/FAILED/p" ' \
+	'-e "/Errors/p" '
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
