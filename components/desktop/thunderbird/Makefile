@@ -32,18 +32,18 @@ COMPILER = gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		thunderbird
-COMPONENT_VERSION=	45.6.0
+COMPONENT_VERSION=	45.7.1
 COMPONENT_PROJECT_URL=	http://www.mozilla.com/thunderbird
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c32c74d69c4a2f79f120f44965525fc8197bbd39a9dac85027b2d9f74e04d8dc
+    sha256:5fc7a39c6a1baacfa37d6a52c9384f70c171dd0bb581576d370bdb29c84b9ffb
 MOZILLA_FTP = 		http://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	tbird/mailer
 
-TPNO=			33172
+TPNO=			33664
 
-LIGHTNING_VERSION=	4.7.6
+LIGHTNING_VERSION=	4.7.7.1
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -56,12 +56,12 @@ LIGHTNING_VERSION=	4.7.6
 # collide due to different files with identical .xpi names. 
 COMPONENT_ARCHIVE_1 =   	$(COMPONENT_SRC)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:a00168d176130ec8be8963c478de6fc0f702804462f0b5e0701221b54e7abd33
+    sha256:f72eeb6315479bdcf1d0f78803c30c9d660e6ee3daa1bfb414c398a3e9850478
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 COMPONENT_ARCHIVE_2 =		lightning-$(LIGHTNING_VERSION)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_2 = \
-    sha256:e732cebccc778e3d2f86422ec7fa1d38999d5d583b88f1b8d508a397ba4eae4b
+    sha256:4faad9e640b475771c680693a16cb32e8cd180494f26544cac5a72c6a8d91928
 COMPONENT_ARCHIVE_URL_2 = 	$(INTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_2)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
