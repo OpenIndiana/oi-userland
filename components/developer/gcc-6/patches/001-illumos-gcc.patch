@@ -1,53 +1,7 @@
-diff --git a/README.md b/README.md
-new file mode 100644
-index 0000000..6fa70ee
---- /dev/null
-+++ b/README.md
-@@ -0,0 +1,39 @@
-+This is the GCC used for compiling illumos.
-+
-+The `il-*` branches contain the the patches used for building illumos, which
-+are rebased versions of those used for Solaris/OpenSolaris, and then
-+additional changes.  The versions actually in use are tagged with
-+`il-VERSION-ilN` where _N_ version the illumos changes over the GCC version in
-+question.
-+
-+The `wip/*` branches are works in progress and _should never be used_
-+
-+The `codesourcery/*` and `sun/*` branches contain the original GCCs as patched by
-+CodeSourcery and Sun Microsystems for use compiling Solaris and OpenSolaris as
-+was, and the GCCFSS patches of Sun's
-+
-+When building the compilers for illumos use the flags generally used are:
-+
-+i386
-+~~~sh
-+../../configure --prefix=/opt/gcc/$VER --with-as=/usr/sfw/bin/gas --with-gnu-as \
-+   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
-+   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
-+   --with-gmp-include=/usr/include/gmp \
-+   --with-pkgversion="Illumos $(git describe --all)" \
-+   --with-bugurl="http://github.com/richlowe/gcc/issues"
-+~~~
-+
-+sparc
-+~~~sh
-+../../configure --prefix=/opt/gcc/$VER --without-gnu-as --with-as=/usr/ccs/bin/as" \
-+   --with-ld=/usr/bin/ld --without-gnu-ld --enable-languages="c,c++,objc" \
-+   --enable-shared  --with-mpfr-include=/usr/include/mpfr \
-+   --with-gmp-include=/usr/include/gmp \
-+   --with-pkgversion="Illumos $(git describe --all)" \
-+   --with-bugurl="http://github.com/richlowe/gcc/issues"
-+~~~
-+
-+Please use the correct `--with-bugurl` and `--with-pkgversion` flags as
-+appropriate for any modifications you make, but please also be sure that they
-+accurately describe what is in use (ie, are not left at the defaults) either.
-diff --git a/contrib/compare_tests b/contrib/compare_tests
-index 8ecf824..a2a19fe 100755
---- a/contrib/compare_tests
-+++ b/contrib/compare_tests
-@@ -107,8 +107,15 @@ elif [ -d "$1" -o -d "$2" ] ; then
+diff -ru --ignore-all-space gcc-6.3.0/contrib/compare_tests gcc-6.3.0-il/contrib/compare_tests
+--- gcc-6.3.0/contrib/compare_tests	2013-05-13 19:52:42.000000000 +0200
++++ gcc-6.3.0-il/contrib/compare_tests	2017-01-31 01:07:31.354756677 +0100
+@@ -107,8 +107,15 @@
  	usage "Must specify either two directories or two files"
  fi
  
@@ -65,11 +19,10 @@ index 8ecf824..a2a19fe 100755
  
  before=$tmp1
  now=$tmp2
-diff --git a/gcc/common.opt b/gcc/common.opt
-index 67048db..98c1799 100644
---- a/gcc/common.opt
-+++ b/gcc/common.opt
-@@ -1029,6 +1029,11 @@ fchecking
+diff -ru --ignore-all-space gcc-6.3.0/gcc/common.opt gcc-6.3.0-il/gcc/common.opt
+--- gcc-6.3.0/gcc/common.opt	2016-03-17 16:11:35.000000000 +0100
++++ gcc-6.3.0-il/gcc/common.opt	2017-01-31 01:07:35.418911240 +0100
+@@ -1029,6 +1029,11 @@
  Common Var(flag_checking) Init(CHECKING_P)
  Perform internal consistency checkings.
  
@@ -81,7 +34,7 @@ index 67048db..98c1799 100644
  fcombine-stack-adjustments
  Common Report Var(flag_combine_stack_adjustments) Optimization
  Looks for opportunities to reduce stack adjustments and stack references.
-@@ -2231,6 +2236,10 @@ fstrict-aliasing
+@@ -2231,6 +2236,10 @@
  Common Report Var(flag_strict_aliasing) Optimization
  Assume strict aliasing rules apply.
  
@@ -92,11 +45,10 @@ index 67048db..98c1799 100644
  fstrict-overflow
  Common Report Var(flag_strict_overflow) Optimization
  Treat signed overflow as undefined.
-diff --git a/gcc/config/i386/i386.c b/gcc/config/i386/i386.c
-index 91f51d5..6360fa1 100644
---- a/gcc/config/i386/i386.c
-+++ b/gcc/config/i386/i386.c
-@@ -2445,6 +2445,10 @@ struct GTY(()) stack_local_entry {
+diff -ru --ignore-all-space gcc-6.3.0/gcc/config/i386/i386.c gcc-6.3.0-il/gcc/config/i386/i386.c
+--- gcc-6.3.0/gcc/config/i386/i386.c	2016-12-14 16:44:07.000000000 +0100
++++ gcc-6.3.0-il/gcc/config/i386/i386.c	2017-01-31 01:07:31.550765552 +0100
+@@ -2445,6 +2445,10 @@
  
     saved frame pointer			if frame_pointer_needed
  					<- HARD_FRAME_POINTER
@@ -107,7 +59,7 @@ index 91f51d5..6360fa1 100644
     [saved regs]
  					<- regs_save_offset
     [padding0]
-@@ -2462,6 +2466,7 @@ struct GTY(()) stack_local_entry {
+@@ -2462,6 +2466,7 @@
    */
  struct ix86_frame
  {
@@ -115,7 +67,7 @@ index 91f51d5..6360fa1 100644
    int nsseregs;
    int nregs;
    int va_arg_size;
-@@ -2473,6 +2478,7 @@ struct ix86_frame
+@@ -2473,6 +2478,7 @@
    HOST_WIDE_INT hard_frame_pointer_offset;
    HOST_WIDE_INT stack_pointer_offset;
    HOST_WIDE_INT hfp_save_offset;
@@ -123,7 +75,7 @@ index 91f51d5..6360fa1 100644
    HOST_WIDE_INT reg_save_offset;
    HOST_WIDE_INT sse_reg_save_offset;
  
-@@ -2608,6 +2614,8 @@ static unsigned int ix86_minimum_incoming_stack_boundary (bool);
+@@ -2608,6 +2614,8 @@
  
  static enum calling_abi ix86_function_abi (const_tree);
  
@@ -132,35 +84,7 @@ index 91f51d5..6360fa1 100644
  
  #ifndef SUBTARGET32_DEFAULT_CPU
  #define SUBTARGET32_DEFAULT_CPU "i386"
-@@ -2635,7 +2643,7 @@ struct ptt
-   const int align_func;
- };
- 
--/* This table must be in sync with enum processor_type in i386.h.  */ 
-+/* This table must be in sync with enum processor_type in i386.h.  */
- static const struct ptt processor_target_table[PROCESSOR_max] =
- {
-   {"generic", &generic_cost, 16, 10, 16, 10, 16},
-@@ -4496,14 +4504,14 @@ ix86_option_override_internal (bool main_args_p,
- 	| PTA_SSE4A | PTA_CX16 | PTA_ABM | PTA_SSSE3 | PTA_SSE4_1
- 	| PTA_SSE4_2 | PTA_AES | PTA_PCLMUL | PTA_AVX | PTA_FMA4
- 	| PTA_XOP | PTA_LWP | PTA_BMI | PTA_TBM | PTA_F16C
--	| PTA_FMA | PTA_PRFCHW | PTA_FXSR | PTA_XSAVE 
-+	| PTA_FMA | PTA_PRFCHW | PTA_FXSR | PTA_XSAVE
- 	| PTA_XSAVEOPT | PTA_FSGSBASE},
-      {"bdver4", PROCESSOR_BDVER4, CPU_BDVER4,
- 	PTA_64BIT | PTA_MMX | PTA_SSE | PTA_SSE2 | PTA_SSE3
- 	| PTA_SSE4A | PTA_CX16 | PTA_ABM | PTA_SSSE3 | PTA_SSE4_1
--	| PTA_SSE4_2 | PTA_AES | PTA_PCLMUL | PTA_AVX | PTA_AVX2 
--	| PTA_FMA4 | PTA_XOP | PTA_LWP | PTA_BMI | PTA_BMI2 
--	| PTA_TBM | PTA_F16C | PTA_FMA | PTA_PRFCHW | PTA_FXSR 
-+	| PTA_SSE4_2 | PTA_AES | PTA_PCLMUL | PTA_AVX | PTA_AVX2
-+	| PTA_FMA4 | PTA_XOP | PTA_LWP | PTA_BMI | PTA_BMI2
-+	| PTA_TBM | PTA_F16C | PTA_FMA | PTA_PRFCHW | PTA_FXSR
- 	| PTA_XSAVE | PTA_XSAVEOPT | PTA_FSGSBASE | PTA_RDRND
- 	| PTA_MOVBE | PTA_MWAITX},
-       {"znver1", PROCESSOR_ZNVER1, CPU_ZNVER1,
-@@ -5196,6 +5204,9 @@ ix86_option_override_internal (bool main_args_p,
+@@ -5196,6 +5204,9 @@
      opts->x_ix86_isa_flags
        |= OPTION_MASK_ISA_LZCNT & ~opts->x_ix86_isa_flags_explicit;
  
@@ -170,37 +94,7 @@ index 91f51d5..6360fa1 100644
    /* Validate -mpreferred-stack-boundary= value or default it to
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
    ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
-@@ -5281,7 +5292,7 @@ ix86_option_override_internal (bool main_args_p,
-   /* For all chips supporting SSE2, -mfpmath=sse performs better than
-      fpmath=387.  The second is however default at many targets since the
-      extra 80bit precision of temporaries is considered to be part of ABI.
--     Overwrite the default at least for -ffast-math. 
-+     Overwrite the default at least for -ffast-math.
-      TODO: -mfpmath=both seems to produce same performing code with bit
-      smaller binaries.  It is however not clear if register allocation is
-      ready for this setting.
-@@ -6274,9 +6285,9 @@ ix86_valid_target_attribute_p (tree fndecl,
- 
-   tree old_optimize = build_optimization_node (&global_options);
- 
--  /* Get the optimization options of the current function.  */  
-+  /* Get the optimization options of the current function.  */
-   tree func_optimize = DECL_FUNCTION_SPECIFIC_OPTIMIZATION (fndecl);
-- 
-+
-   if (!func_optimize)
-     func_optimize = old_optimize;
- 
-@@ -6284,7 +6295,7 @@ ix86_valid_target_attribute_p (tree fndecl,
-   memset (&func_options, 0, sizeof (func_options));
-   init_options_struct (&func_options, NULL);
-   lang_hooks.init_options_struct (&func_options);
-- 
-+
-   cl_optimization_restore (&func_options,
- 			   TREE_OPTIMIZATION (func_optimize));
- 
-@@ -7088,6 +7099,7 @@ ix86_function_regparm (const_tree type, const_tree decl)
+@@ -7088,6 +7099,7 @@
  	 and callee not, or vice versa.  Instead look at whether the callee
  	 is optimized or not.  */
        if (target && opt_for_fn (target->decl, optimize)
@@ -208,7 +102,7 @@ index 91f51d5..6360fa1 100644
  	  && !(profile_flag && !flag_fentry))
  	{
  	  cgraph_local_info *i = &target->local;
-@@ -7179,6 +7191,7 @@ ix86_function_sseregparm (const_tree type, const_tree decl, bool warn)
+@@ -7179,6 +7191,7 @@
        /* TARGET_SSE_MATH */
        && (target_opts_for_fn (target->decl)->x_ix86_fpmath & FPMATH_SSE)
        && opt_for_fn (target->decl, optimize)
@@ -216,25 +110,7 @@ index 91f51d5..6360fa1 100644
        && !(profile_flag && !flag_fentry))
      {
        cgraph_local_info *i = &target->local;
-@@ -7789,7 +7802,7 @@ init_cumulative_args (CUMULATIVE_ARGS *cum,  /* Argument info to initialize */
- 
-    The midde-end can't deal with the vector types > 16 bytes.  In this
-    case, we return the original mode and warn ABI change if CUM isn't
--   NULL. 
-+   NULL.
- 
-    If INT_RETURN is true, warn ABI change if the vector mode isn't
-    available for function return value.  */
-@@ -9836,7 +9849,7 @@ ix86_return_in_memory (const_tree type, const_tree fntype ATTRIBUTE_UNUSED)
- 
- 	  /* Unless ABI prescibes otherwise,
- 	     MMX/3dNow values are returned in MM0 if available.  */
--	     
-+
- 	  if (size == 8)
- 	    return TARGET_VECT8_RETURNS || !TARGET_MMX;
- 
-@@ -10939,7 +10952,7 @@ ix86_can_use_return_insn_p (void)
+@@ -10939,7 +10952,7 @@
  
    ix86_compute_frame_layout (&frame);
    return (frame.stack_pointer_offset == UNITS_PER_WORD
@@ -243,7 +119,7 @@ index 91f51d5..6360fa1 100644
  }
  
  /* Value should be nonzero if functions must have frame pointers.
-@@ -10963,6 +10976,9 @@ ix86_frame_pointer_required (void)
+@@ -10963,6 +10976,9 @@
    if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
      return true;
  
@@ -253,7 +129,7 @@ index 91f51d5..6360fa1 100644
    /* Win64 SEH, very large frames need a frame-pointer as maximum stack
       allocation is 4GB.  */
    if (TARGET_64BIT_MS_ABI && get_frame_size () > SEH_MAX_FRAME_SIZE)
-@@ -11398,6 +11414,7 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11398,6 +11414,7 @@
  
    frame->nregs = ix86_nsaved_regs ();
    frame->nsseregs = ix86_nsaved_sseregs ();
@@ -261,7 +137,7 @@ index 91f51d5..6360fa1 100644
  
    /* 64-bit MS ABI seem to require stack alignment to be always 16,
       except for function prologues, leaf functions and when the defult
-@@ -11460,7 +11477,8 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11460,7 +11477,8 @@
      }
  
    frame->save_regs_using_mov
@@ -271,7 +147,7 @@ index 91f51d5..6360fa1 100644
         /* If static stack checking is enabled and done with probes,
  	  the registers need to be saved before allocating the frame.  */
         && flag_stack_check != STATIC_BUILTIN_STACK_CHECK);
-@@ -11480,6 +11498,13 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11480,6 +11498,13 @@
    /* The traditional frame pointer location is at the top of the frame.  */
    frame->hard_frame_pointer_offset = offset;
  
@@ -285,7 +161,7 @@ index 91f51d5..6360fa1 100644
    /* Register save area */
    offset += frame->nregs * UNITS_PER_WORD;
    frame->reg_save_offset = offset;
-@@ -11557,8 +11582,9 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11557,8 +11582,9 @@
    /* Size prologue needs to allocate.  */
    to_allocate = offset - frame->sse_reg_save_offset;
  
@@ -297,20 +173,19 @@ index 91f51d5..6360fa1 100644
      frame->save_regs_using_mov = false;
  
    if (ix86_using_red_zone ()
-@@ -11569,7 +11595,11 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11569,7 +11595,11 @@
      {
        frame->red_zone_size = to_allocate;
        if (frame->save_regs_using_mov)
--	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
 +	{
-+	  frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
+ 	frame->red_zone_size += frame->nregs * UNITS_PER_WORD;
 +	  frame->red_zone_size += frame->nmsave_args * UNITS_PER_WORD;
 +	  frame->red_zone_size += (frame->nmsave_args % 2) * UNITS_PER_WORD;
 +	}
        if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
  	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
      }
-@@ -11600,6 +11630,23 @@ ix86_compute_frame_layout (struct ix86_frame *frame)
+@@ -11600,6 +11630,23 @@
  	  frame->hard_frame_pointer_offset = frame->stack_pointer_offset - 128;
  	}
      }
@@ -334,7 +209,7 @@ index 91f51d5..6360fa1 100644
  }
  
  /* This is semi-inlined memory_address_length, but simplified
-@@ -11708,6 +11755,24 @@ ix86_emit_save_regs (void)
+@@ -11708,6 +11755,24 @@
    unsigned int regno;
    rtx_insn *insn;
  
@@ -359,7 +234,7 @@ index 91f51d5..6360fa1 100644
    for (regno = FIRST_PSEUDO_REGISTER - 1; regno-- > 0; )
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true))
        {
-@@ -11795,9 +11860,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -11795,9 +11860,30 @@
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -391,7 +266,7 @@ index 91f51d5..6360fa1 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true))
-@@ -12839,7 +12925,7 @@ ix86_expand_prologue (void)
+@@ -12839,7 +12925,7 @@
  	}
      }
  
@@ -400,7 +275,7 @@ index 91f51d5..6360fa1 100644
    sse_registers_saved = (frame.nsseregs == 0);
  
    if (frame_pointer_needed && !m->fs.fp_valid)
-@@ -12879,6 +12965,7 @@ ix86_expand_prologue (void)
+@@ -12879,6 +12965,7 @@
  	{
  	  ix86_emit_save_regs ();
  	  int_registers_saved = true;
@@ -408,7 +283,7 @@ index 91f51d5..6360fa1 100644
  	  gcc_assert (m->fs.sp_offset == frame.reg_save_offset);
  	}
  
-@@ -12890,7 +12977,7 @@ ix86_expand_prologue (void)
+@@ -12890,7 +12977,7 @@
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -417,7 +292,7 @@ index 91f51d5..6360fa1 100644
  	  int_registers_saved = true;
  	}
      }
-@@ -13133,7 +13220,7 @@ ix86_expand_prologue (void)
+@@ -13133,7 +13220,7 @@
      }
  
    if (!int_registers_saved)
@@ -426,7 +301,7 @@ index 91f51d5..6360fa1 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
  
-@@ -13166,6 +13253,7 @@ ix86_expand_prologue (void)
+@@ -13166,6 +13253,7 @@
       relative to the value of the stack pointer at the end of the function
       prologue, and moving instructions that access redzone area via frame
       pointer inside push sequence violates this assumption.  */
@@ -434,7 +309,7 @@ index 91f51d5..6360fa1 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -13393,6 +13481,7 @@ ix86_expand_epilogue (int style)
+@@ -13393,6 +13481,7 @@
  
    /* See the comment about red zone and frame
       pointer usage in ix86_expand_prologue.  */
@@ -442,7 +317,7 @@ index 91f51d5..6360fa1 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -13586,6 +13675,36 @@ ix86_expand_epilogue (int style)
+@@ -13586,6 +13675,36 @@
        ix86_emit_restore_regs_using_pop ();
      }
  
@@ -479,16 +354,7 @@ index 91f51d5..6360fa1 100644
    /* If we used a stack pointer and haven't already got rid of it,
       then do so now.  */
    if (m->fs.fp_valid)
-@@ -14146,7 +14265,7 @@ ix86_decompose_address (rtx addr, struct ix86_address *out)
- 	  addr = XEXP (addr, 0);
- 	  if (CONST_INT_P (addr))
- 	    return 0;
--	}	      
-+	}
-       else if (GET_CODE (addr) == AND
- 	       && const_32bit_mask (XEXP (addr, 1), DImode))
- 	{
-@@ -14547,6 +14666,19 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+@@ -14547,6 +14666,19 @@
    return !ix86_legitimate_constant_p (mode, x);
  }
  
@@ -508,314 +374,10 @@ index 91f51d5..6360fa1 100644
  /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
      otherwise zero.  */
  
-@@ -15659,7 +15791,7 @@ get_dllimport_decl (tree decl, bool beimport)
- #ifdef SUB_TARGET_RECORD_STUB
-       SUB_TARGET_RECORD_STUB (name);
- #endif
--    }      
-+    }
- 
-   rtl = gen_const_mem (Pmode, rtl);
-   set_mem_alias_set (rtl, ix86_GOT_alias_set ());
-@@ -15706,7 +15838,7 @@ legitimize_dllimport_symbol (rtx symbol, bool want_reg)
-   return x;
- }
- 
--/* Expand SYMBOL into its corresponding dllimport or refptr symbol.  WANT_REG 
-+/* Expand SYMBOL into its corresponding dllimport or refptr symbol.  WANT_REG
-    is true if we require the result be a register.  */
- 
- static rtx
-@@ -16802,7 +16934,7 @@ ix86_print_operand (FILE *file, rtx x, int code)
- 	    case 2:
- 	      putc ('w', file);
- 	      break;
--  
-+
- 	    case 4:
- 	      putc ('l', file);
- 	      break;
-@@ -18130,7 +18262,7 @@ ix86_mode_needed (int entity, rtx_insn *insn)
- }
- 
- /* Check if a 256bit AVX register is referenced in stores.   */
-- 
-+
- static void
- ix86_check_avx256_stores (rtx dest, const_rtx, void *data)
-  {
-@@ -18139,7 +18271,7 @@ ix86_check_avx256_stores (rtx dest, const_rtx, void *data)
-       bool *used = (bool *) data;
-       *used = true;
-     }
-- } 
-+ }
- 
- /* Calculate mode of upper 128bit AVX registers after the insn.  */
- 
-@@ -19210,7 +19342,7 @@ ix86_expand_vector_move_misalign (machine_mode mode, rtx operands[])
- 	    t = gen_reg_rtx (V4SFmode);
- 	  else
- 	    t = op0;
--	    
-+
- 	  if (TARGET_SSE_PARTIAL_REG_DEPENDENCY)
- 	    emit_move_insn (t, CONST0_RTX (V4SFmode));
- 	  else
-@@ -20246,7 +20378,7 @@ ix86_emit_binop (enum rtx_code code, machine_mode mode,
- 
-   op = gen_rtx_SET (dst, gen_rtx_fmt_ee (code, mode, dst, src));
-   clob = gen_rtx_CLOBBER (VOIDmode, gen_rtx_REG (CCmode, FLAGS_REG));
--  
-+
-   emit_insn (gen_rtx_PARALLEL (VOIDmode, gen_rtvec (2, op, clob)));
- }
- 
-@@ -23890,7 +24022,7 @@ ix86_expand_vec_perm (rtx operands[])
- 
-   if (TARGET_XOP)
-     {
--      /* The XOP VPPERM insn supports three inputs.  By ignoring the 
-+      /* The XOP VPPERM insn supports three inputs.  By ignoring the
- 	 one_operand_shuffle special case, we avoid creating another
- 	 set of constant vectors in memory.  */
-       one_operand_shuffle = false;
-@@ -25796,7 +25928,7 @@ expand_small_movmem_or_setmem (rtx destmem, rtx srcmem,
-    DONE_LABEL is a label after the whole copying sequence. The label is created
-    on demand if *DONE_LABEL is NULL.
-    MIN_SIZE is minimal size of block copied.  This value gets adjusted for new
--   bounds after the initial copies. 
-+   bounds after the initial copies.
- 
-    DESTMEM/SRCMEM are memory expressions pointing to the copies block,
-    DESTPTR/SRCPTR are pointers to the block. DYNAMIC_CHECK indicate whether
-@@ -26105,7 +26237,7 @@ expand_set_or_movmem_constant_prologue (rtx dst, rtx *srcp, rtx destreg,
-   return dst;
- }
- 
--/* Return true if ALG can be used in current context.  
-+/* Return true if ALG can be used in current context.
-    Assume we expand memset if MEMSET is true.  */
- static bool
- alg_usable_p (enum stringop_alg alg, bool memset, bool have_as)
-@@ -26438,7 +26570,7 @@ promote_duplicated_reg_to_size (rtx val, int size_needed, int desired_align,
- 	with specified algorithm.
- 
-      4) Epilogue: code copying tail of the block that is too small to be
--	handled by main body (or up to size guarded by prologue guard). 
-+	handled by main body (or up to size guarded by prologue guard).
- 
-   Misaligned move sequence
- 
-@@ -26645,7 +26777,7 @@ ix86_expand_set_or_movmem (rtx dst, rtx src, rtx count_exp, rtx val_exp,
- 
-   /* Do the cheap promotion to allow better CSE across the
-      main loop and epilogue (ie one load of the big constant in the
--     front of all code.  
-+     front of all code.
-      For now the misaligned move sequences do not have fast path
-      without broadcasting.  */
-   if (issetmem && ((CONST_INT_P (val_exp) || misaligned_prologue_used)))
-@@ -28853,7 +28985,7 @@ ix86_dependencies_evaluation_hook (rtx_insn *head, rtx_insn *tail)
- 		       using topological ordering in the region.  */
- 		    if (rgn == CONTAINING_RGN (e->src->index)
- 			&& BLOCK_TO_BB (bb->index) > BLOCK_TO_BB (e->src->index))
--		      add_dependee_for_func_arg (first_arg, e->src); 
-+		      add_dependee_for_func_arg (first_arg, e->src);
- 		  }
- 	      }
- 	    insn = first_arg;
-@@ -29360,7 +29492,7 @@ ix86_local_alignment (tree exp, machine_mode mode,
-      other unit can not rely on the alignment.
- 
-      Exclude va_list type.  It is the common case of local array where
--     we can not benefit from the alignment.  
-+     we can not benefit from the alignment.
- 
-      TODO: Probably one should optimize for size only when var is not escaping.  */
-   if (TARGET_64BIT && optimize_function_for_speed_p (cfun)
-@@ -36217,7 +36349,7 @@ add_condition_to_bb (tree function_decl, tree version_decl,
-   convert_expr = build1 (CONVERT_EXPR, ptr_type_node,
- 	     		 build_fold_addr_expr (version_decl));
-   result_var = create_tmp_var (ptr_type_node);
--  convert_stmt = gimple_build_assign (result_var, convert_expr); 
-+  convert_stmt = gimple_build_assign (result_var, convert_expr);
-   return_stmt = gimple_build_return (result_var);
- 
-   if (predicate_chain == NULL_TREE)
-@@ -36244,7 +36376,7 @@ add_condition_to_bb (tree function_decl, tree version_decl,
-       gimple_seq_add_stmt (&gseq, call_cond_stmt);
- 
-       predicate_chain = TREE_CHAIN (predicate_chain);
--      
-+
-       if (and_expr_var == NULL)
-         and_expr_var = cond_var;
-       else
-@@ -36285,7 +36417,7 @@ add_condition_to_bb (tree function_decl, tree version_decl,
-   gimple_set_bb (return_stmt, bb2);
- 
-   bb3 = e23->dest;
--  make_edge (bb1, bb3, EDGE_FALSE_VALUE); 
-+  make_edge (bb1, bb3, EDGE_FALSE_VALUE);
- 
-   remove_edge (e23);
-   make_edge (bb2, EXIT_BLOCK_PTR_FOR_FN (cfun), 0);
-@@ -36341,7 +36473,7 @@ get_builtin_code_for_version (tree decl, tree *predicate_list)
-     P_FMA4,
-     P_XOP,
-     P_PROC_XOP,
--    P_FMA,    
-+    P_FMA,
-     P_PROC_FMA,
-     P_BMI2,
-     P_AVX2,
-@@ -36414,11 +36546,11 @@ get_builtin_code_for_version (tree decl, tree *predicate_list)
-       cl_target_option_save (&cur_target, &global_options);
-       target_node = ix86_valid_target_attribute_tree (attrs, &global_options,
- 						      &global_options_set);
--    
-+
-       gcc_assert (target_node);
-       new_target = TREE_TARGET_OPTION (target_node);
-       gcc_assert (new_target);
--      
-+
-       if (new_target->arch_specified && new_target->arch > 0)
- 	{
- 	  switch (new_target->arch)
-@@ -36577,7 +36709,7 @@ get_builtin_code_for_version (tree decl, tree *predicate_list)
-       *predicate_list = predicate_chain;
-     }
- 
--  return priority; 
-+  return priority;
- }
- 
- /* This compares the priority of target features in function DECL1
-@@ -36596,7 +36728,7 @@ ix86_compare_version_priority (tree decl1, tree decl2)
- 
- /* V1 and V2 point to function versions with different priorities
-    based on the target ISA.  This function compares their priorities.  */
-- 
-+
- static int
- feature_compare (const void *v1, const void *v2)
- {
-@@ -36907,12 +37039,12 @@ ix86_function_versions (tree fn1, tree fn2)
-     result = true;
- 
-   XDELETEVEC (target1);
--  XDELETEVEC (target2); 
--  
-+  XDELETEVEC (target2);
-+
-   return result;
- }
- 
--static tree 
-+static tree
- ix86_mangle_decl_assembler_name (tree decl, tree id)
- {
-   /* For function version, add the target suffix to the assembler name.  */
-@@ -36982,7 +37114,7 @@ make_dispatcher_decl (const tree decl)
-   fn_type = TREE_TYPE (decl);
-   func_type = build_function_type (TREE_TYPE (fn_type),
- 				   TYPE_ARG_TYPES (fn_type));
--  
-+
-   func_decl = build_fn_decl (func_name, func_type);
-   XDELETEVEC (func_name);
-   TREE_USED (func_decl) = 1;
-@@ -36995,7 +37127,7 @@ make_dispatcher_decl (const tree decl)
-   /* This will be of type IFUNCs have to be externally visible.  */
-   TREE_PUBLIC (func_decl) = 1;
- 
--  return func_decl;  
-+  return func_decl;
- }
- 
- #endif
-@@ -37032,7 +37164,7 @@ ix86_get_function_versions_dispatcher (void *decl)
-   tree dispatch_decl = NULL;
- 
-   struct cgraph_function_version_info *default_version_info = NULL;
-- 
-+
-   gcc_assert (fn != NULL && DECL_FUNCTION_VERSIONED (fn));
- 
-   node = cgraph_node::get (fn);
-@@ -37040,7 +37172,7 @@ ix86_get_function_versions_dispatcher (void *decl)
- 
-   node_v = node->function_version ();
-   gcc_assert (node_v != NULL);
-- 
-+
-   if (node_v->dispatcher_resolver != NULL)
-     return node_v->dispatcher_resolver;
- 
-@@ -37187,7 +37319,7 @@ make_resolver_func (const tree default_decl,
- 
-   gcc_assert (dispatch_decl != NULL);
-   /* Mark dispatch_decl as "ifunc" with resolver as resolver_name.  */
--  DECL_ATTRIBUTES (dispatch_decl) 
-+  DECL_ATTRIBUTES (dispatch_decl)
-     = make_attribute ("ifunc", resolver_name, DECL_ATTRIBUTES (dispatch_decl));
- 
-   /* Create the alias for dispatch to resolver here.  */
-@@ -37202,7 +37334,7 @@ make_resolver_func (const tree default_decl,
-    provide the code to dispatch the right function at run-time.  NODE points
-    to the dispatcher decl whose body will be created.  */
- 
--static tree 
-+static tree
- ix86_generate_version_dispatcher_body (void *node_p)
- {
-   tree resolver_decl;
-@@ -37379,7 +37511,7 @@ fold_builtin_cpu (tree fndecl, tree *args)
-     M_INTEL_SILVERMONT,
-     M_INTEL_KNL,
-     M_AMD_BTVER1,
--    M_AMD_BTVER2,    
-+    M_AMD_BTVER2,
-     M_CPU_SUBTYPE_START,
-     M_INTEL_COREI7_NEHALEM,
-     M_INTEL_COREI7_WESTMERE,
-@@ -40499,9 +40631,9 @@ ix86_expand_builtin (tree exp, rtx target, rtx subtarget,
-       {
- 	/* Make it call __cpu_indicator_init in libgcc. */
- 	tree call_expr, fndecl, type;
--        type = build_function_type_list (integer_type_node, NULL_TREE); 
-+        type = build_function_type_list (integer_type_node, NULL_TREE);
- 	fndecl = build_fn_decl ("__cpu_indicator_init", type);
--	call_expr = build_call_expr (fndecl, 0); 
-+	call_expr = build_call_expr (fndecl, 0);
- 	return expand_expr (call_expr, target, mode, EXPAND_NORMAL);
-       }
-     case IX86_BUILTIN_CPU_IS:
-@@ -40963,7 +41095,7 @@ ix86_expand_builtin (tree exp, rtx target, rtx subtarget,
-       if (!REG_P (op2))
- 	op2 = copy_to_mode_reg (SImode, op2);
- 
--      emit_insn (fcode == IX86_BUILTIN_MONITOR 
-+      emit_insn (fcode == IX86_BUILTIN_MONITOR
- 		 ? ix86_gen_monitor (op0, op1, op2)
- 		 : ix86_gen_monitorx (op0, op1, op2));
-       return 0;
-@@ -52500,7 +52632,7 @@ ix86_expand_sse2_mulvxdi3 (rtx op0, rtx op1, rtx op2)
- 
-       /* Multiply lower parts and add all */
-       t5 = gen_reg_rtx (V2DImode);
--      emit_insn (gen_vec_widen_umult_even_v4si (t5, 
-+      emit_insn (gen_vec_widen_umult_even_v4si (t5,
- 					gen_lowpart (V4SImode, op1),
- 					gen_lowpart (V4SImode, op2)));
-       op0 = expand_binop (mode, add_optab, t5, t4, op0, 1, OPTAB_DIRECT);
-diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
-index f304b62..45ee970 100644
---- a/gcc/config/i386/i386.opt
-+++ b/gcc/config/i386/i386.opt
-@@ -499,6 +499,16 @@ mtls-direct-seg-refs
+diff -ru --ignore-all-space gcc-6.3.0/gcc/config/i386/i386.opt gcc-6.3.0-il/gcc/config/i386/i386.opt
+--- gcc-6.3.0/gcc/config/i386/i386.opt	2016-10-13 23:15:45.000000000 +0200
++++ gcc-6.3.0-il/gcc/config/i386/i386.opt	2017-01-31 01:07:31.550854008 +0100
+@@ -499,6 +499,16 @@
  Target Report Mask(TLS_DIRECT_SEG_REFS)
  Use direct references against %gs when accessing tls data.
  
@@ -832,24 +394,10 @@ index f304b62..45ee970 100644
  mtune=
  Target RejectNegative Joined Var(ix86_tune_string)
  Schedule code for given CPU.
-diff --git a/gcc/config/i386/sol2.h b/gcc/config/i386/sol2.h
-index 368c2d2..d2489c1 100644
---- a/gcc/config/i386/sol2.h
-+++ b/gcc/config/i386/sol2.h
-@@ -69,7 +69,7 @@ along with GCC; see the file COPYING3.  If not see
- #define ASM_CPU_SPEC "%(asm_cpu_default)"
- 
- /* Don't include ASM_PIC_SPEC.  While the Solaris 10+ assembler accepts -K PIC,
--   it gives many warnings: 
-+   it gives many warnings:
- 	Absolute relocation is used for symbol "<symbol>"
-    GNU as doesn't recognize -K at all.  */
- #undef ASM_SPEC
-diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
-index 5160e1f..3698ca2 100644
---- a/gcc/config/sol2.h
-+++ b/gcc/config/sol2.h
-@@ -155,15 +155,22 @@ along with GCC; see the file COPYING3.  If not see
+diff -ru --ignore-all-space gcc-6.3.0/gcc/config/sol2.h gcc-6.3.0-il/gcc/config/sol2.h
+--- gcc-6.3.0/gcc/config/sol2.h	2016-01-04 15:30:50.000000000 +0100
++++ gcc-6.3.0-il/gcc/config/sol2.h	2017-01-31 01:07:31.613504607 +0100
+@@ -155,15 +155,22 @@
  #define SUPPORTS_INIT_PRIORITY HAVE_INITFINI_ARRAY_SUPPORT
  
  #undef STARTFILE_ARCH_SPEC
@@ -875,7 +423,7 @@ index 5160e1f..3698ca2 100644
  #endif
  
  #if SUPPORTS_INIT_PRIORITY
-@@ -208,7 +215,7 @@ along with GCC; see the file COPYING3.  If not see
+@@ -208,7 +215,7 @@
  			       %{" PIE_SPEC ":crtendS.o%s} \
  			       %{" NO_PIE_SPEC ":crtend.o%s}}"
  #else
@@ -884,11 +432,10 @@ index 5160e1f..3698ca2 100644
  #endif
  
  #undef  ENDFILE_SPEC
-diff --git a/gcc/configure b/gcc/configure
-index 954673c..efd5ce6 100755
---- a/gcc/configure
-+++ b/gcc/configure
-@@ -22798,6 +22798,7 @@ if test $in_tree_ld != yes ; then
+diff -ru --ignore-all-space gcc-6.3.0/gcc/configure gcc-6.3.0-il/gcc/configure
+--- gcc-6.3.0/gcc/configure	2016-12-11 17:23:04.000000000 +0100
++++ gcc-6.3.0-il/gcc/configure	2017-01-31 01:07:35.420151795 +0100
+@@ -22798,6 +22798,7 @@
  	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
@@ -896,7 +443,7 @@ index 954673c..efd5ce6 100755
  	fi
  	;;
      esac
-@@ -27775,6 +27776,8 @@ elif test x$gcc_cv_ld != x; then
+@@ -27775,6 +27776,8 @@
          # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
          if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
            gcc_cv_ld_eh_frame_hdr=yes
@@ -905,11 +452,10 @@ index 954673c..efd5ce6 100755
          fi
          ;;
      esac
-diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 4c65d44..dacefa0 100644
---- a/gcc/configure.ac
-+++ b/gcc/configure.ac
-@@ -2592,6 +2592,7 @@ if test $in_tree_ld != yes ; then
+diff -ru --ignore-all-space gcc-6.3.0/gcc/configure.ac gcc-6.3.0-il/gcc/configure.ac
+--- gcc-6.3.0/gcc/configure.ac	2016-12-11 17:23:04.000000000 +0100
++++ gcc-6.3.0-il/gcc/configure.ac	2017-01-31 01:07:35.420576310 +0100
+@@ -2592,6 +2592,7 @@
  	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
  	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
  	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
@@ -917,7 +463,7 @@ index 4c65d44..dacefa0 100644
  	fi
  	;;
      esac
-@@ -4852,6 +4853,8 @@ elif test x$gcc_cv_ld != x; then
+@@ -4852,6 +4853,8 @@
          # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
          if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
            gcc_cv_ld_eh_frame_hdr=yes
@@ -926,11 +472,10 @@ index 4c65d44..dacefa0 100644
          fi
          ;;
      esac
-diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 2ed9285..8d3d947 100644
---- a/gcc/doc/invoke.texi
-+++ b/gcc/doc/invoke.texi
-@@ -339,7 +339,7 @@ Objective-C and Objective-C++ Dialects}.
+diff -ru --ignore-all-space gcc-6.3.0/gcc/doc/invoke.texi gcc-6.3.0-il/gcc/doc/invoke.texi
+--- gcc-6.3.0/gcc/doc/invoke.texi	2016-07-08 16:51:44.000000000 +0200
++++ gcc-6.3.0-il/gcc/doc/invoke.texi	2017-01-31 01:07:35.356443734 +0100
+@@ -339,7 +339,7 @@
  -fauto-inc-dec -fbranch-probabilities @gol
  -fbranch-target-load-optimize -fbranch-target-load-optimize2 @gol
  -fbtr-bb-exclusive -fcaller-saves @gol
@@ -939,7 +484,7 @@ index 2ed9285..8d3d947 100644
  -fcompare-elim -fcprop-registers -fcrossjumping @gol
  -fcse-follow-jumps -fcse-skip-blocks -fcx-fortran-rules @gol
  -fcx-limited-range @gol
-@@ -7766,6 +7766,12 @@ int f() @{
+@@ -7766,6 +7766,12 @@
  The @option{-fstrict-aliasing} option is enabled at levels
  @option{-O2}, @option{-O3}, @option{-Os}.
  
@@ -952,7 +497,7 @@ index 2ed9285..8d3d947 100644
  @item -fstrict-overflow
  @opindex fstrict-overflow
  Allow the compiler to assume strict signed overflow rules, depending
-@@ -8184,6 +8190,15 @@ to these tools. With non fat LTO makefiles need to be modified to use them.
+@@ -8184,6 +8190,15 @@
  The default is @option{-fno-fat-lto-objects} on targets with linker plugin
  support.
  
@@ -968,7 +513,7 @@ index 2ed9285..8d3d947 100644
  @item -fcompare-elim
  @opindex fcompare-elim
  After register allocation and post-register allocation instruction splitting,
-@@ -12871,6 +12886,10 @@ Generate code for the large code model.  This makes no assumptions about
+@@ -12871,6 +12886,10 @@
  addresses and sizes of sections.  Pointers are 64 bits.  Programs can be
  statically linked only.
  
@@ -979,182 +524,10 @@ index 2ed9285..8d3d947 100644
  @item -mstrict-align
  @opindex mstrict-align
  Do not assume that unaligned memory references are handled by the system.
-diff --git a/gcc/dwarf2out.c b/gcc/dwarf2out.c
-index d9747e0..d7b4493 100644
---- a/gcc/dwarf2out.c
-+++ b/gcc/dwarf2out.c
-@@ -1407,7 +1407,7 @@ dw_val_equal_p (dw_val_node *a, dw_val_node *b)
-       return a->v.val_file == b->v.val_file;
-     case dw_val_class_decl_ref:
-       return a->v.val_decl_ref == b->v.val_decl_ref;
--    
-+
-     case dw_val_class_const_double:
-       return (a->v.val_double.high == b->v.val_double.high
- 	      && a->v.val_double.low == b->v.val_double.low);
-@@ -1985,9 +1985,9 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
- 	unsigned r = val1->v.val_unsigned;
- 	if (for_eh_or_skip >= 0)
- 	  r = DWARF2_FRAME_REG_OUT (r, for_eh_or_skip);
--	gcc_assert (size_of_uleb128 (r) 
-+	gcc_assert (size_of_uleb128 (r)
- 		    == size_of_uleb128 (val1->v.val_unsigned));
--	dw2_asm_output_data_uleb128 (r, NULL);	
-+	dw2_asm_output_data_uleb128 (r, NULL);
-       }
-       break;
-     case DW_OP_fbreg:
-@@ -1998,9 +1998,9 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
- 	unsigned r = val1->v.val_unsigned;
- 	if (for_eh_or_skip >= 0)
- 	  r = DWARF2_FRAME_REG_OUT (r, for_eh_or_skip);
--	gcc_assert (size_of_uleb128 (r) 
-+	gcc_assert (size_of_uleb128 (r)
- 		    == size_of_uleb128 (val1->v.val_unsigned));
--	dw2_asm_output_data_uleb128 (r, NULL);	
-+	dw2_asm_output_data_uleb128 (r, NULL);
- 	dw2_asm_output_data_sleb128 (val2->v.val_int, NULL);
-       }
-       break;
-@@ -2201,7 +2201,7 @@ output_loc_operands (dw_loc_descr_ref loc, int for_eh_or_skip)
-     }
- }
- 
--/* Output a sequence of location operations.  
-+/* Output a sequence of location operations.
-    The for_eh_or_skip parameter controls whether register numbers are
-    converted using DWARF2_FRAME_REG_OUT, which is needed in the case that
-    hard reg numbers have been processed via DWARF_FRAME_REGNUM (i.e. for unwind
-@@ -2215,7 +2215,7 @@ output_loc_sequence (dw_loc_descr_ref loc, int for_eh_or_skip)
-     {
-       enum dwarf_location_atom opc = loc->dw_loc_opc;
-       /* Output the opcode.  */
--      if (for_eh_or_skip >= 0 
-+      if (for_eh_or_skip >= 0
-           && opc >= DW_OP_breg0 && opc <= DW_OP_breg31)
- 	{
- 	  unsigned r = (opc - DW_OP_breg0);
-@@ -2223,7 +2223,7 @@ output_loc_sequence (dw_loc_descr_ref loc, int for_eh_or_skip)
- 	  gcc_assert (r <= 31);
- 	  opc = (enum dwarf_location_atom) (DW_OP_breg0 + r);
- 	}
--      else if (for_eh_or_skip >= 0 
-+      else if (for_eh_or_skip >= 0
- 	       && opc >= DW_OP_reg0 && opc <= DW_OP_reg31)
- 	{
- 	  unsigned r = (opc - DW_OP_reg0);
-@@ -2302,13 +2302,13 @@ output_loc_operands_raw (dw_loc_descr_ref loc)
-     case DW_OP_regx:
-       {
- 	unsigned r = DWARF2_FRAME_REG_OUT (val1->v.val_unsigned, 1);
--	gcc_assert (size_of_uleb128 (r) 
-+	gcc_assert (size_of_uleb128 (r)
- 		    == size_of_uleb128 (val1->v.val_unsigned));
- 	fputc (',', asm_out_file);
- 	dw2_asm_output_data_uleb128_raw (r);
-       }
-       break;
--      
-+
-     case DW_OP_constu:
-     case DW_OP_plus_uconst:
-     case DW_OP_piece:
-@@ -2363,7 +2363,7 @@ output_loc_operands_raw (dw_loc_descr_ref loc)
-     case DW_OP_bregx:
-       {
- 	unsigned r = DWARF2_FRAME_REG_OUT (val1->v.val_unsigned, 1);
--	gcc_assert (size_of_uleb128 (r) 
-+	gcc_assert (size_of_uleb128 (r)
- 		    == size_of_uleb128 (val1->v.val_unsigned));
- 	fputc (',', asm_out_file);
- 	dw2_asm_output_data_uleb128_raw (r);
-@@ -3005,7 +3005,7 @@ struct dw_loc_list_hasher : ggc_ptr_hash<cached_dw_loc_list>
- {
- 
-   typedef const_tree compare_type;
--  
-+
-   static hashval_t hash (cached_dw_loc_list *);
-   static bool equal (cached_dw_loc_list *, const_tree);
- };
-@@ -10677,7 +10677,7 @@ output_one_line_info_table (dw_line_info_table *table)
- 	  dw2_asm_output_data (1, DW_LNS_set_prologue_end,
- 			       "set prologue end");
- 	  break;
--	  
-+
- 	case LI_set_epilogue_begin:
- 	  dw2_asm_output_data (1, DW_LNS_set_epilogue_begin,
- 			       "set epilogue begin");
-@@ -14847,7 +14847,7 @@ dw_sra_loc_expr (tree decl, rtx loc)
- 	      if (GET_CODE (varloc) == EXPR_LIST)
- 		varloc = XEXP (varloc, 0);
- 	    }
--	  do 
-+	  do
- 	    {
- 	      if (GET_CODE (varloc) == CONST
- 		  || GET_CODE (varloc) == SIGN_EXTEND
-@@ -18038,7 +18038,7 @@ compute_frame_pointer_to_fb_displacement (HOST_WIDE_INT offset)
-   frame_pointer_fb_offset = -offset;
- 
-   /* ??? AVR doesn't set up valid eliminations when there is no stack frame
--     in which to eliminate.  This is because it's stack pointer isn't 
-+     in which to eliminate.  This is because it's stack pointer isn't
-      directly accessible as a register within the ISA.  To work around
-      this, assume that while we cannot provide a proper value for
-      frame_pointer_fb_offset, we won't need one either.  */
-@@ -18073,7 +18073,7 @@ add_name_attribute (dw_die_ref die, const char *name_string)
-    ??? This is a temporary measure until after we're able to generate
-    regular DWARF for the complex Ada type system.  */
- 
--static void 
-+static void
- add_gnat_descriptive_type_attribute (dw_die_ref die, tree type,
- 				     dw_die_ref context_die)
- {
-@@ -19056,8 +19056,8 @@ add_calling_convention_attribute (dw_die_ref subr_die, tree decl)
-       /* DWARF 2 doesn't provide a way to identify a program's source-level
- 	entry point.  DW_AT_calling_convention attributes are only meant
- 	to describe functions' calling conventions.  However, lacking a
--	better way to signal the Fortran main program, we used this for 
--	a long time, following existing custom.  Now, DWARF 4 has 
-+	better way to signal the Fortran main program, we used this for
-+	a long time, following existing custom.  Now, DWARF 4 has
- 	DW_AT_main_subprogram, which we add below, but some tools still
- 	rely on the old way, which we thus keep.  */
-       value = DW_CC_program;
-@@ -20617,9 +20617,9 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
- 	    {
- 	      if (dwarf_version >= 3 || !dwarf_strict)
- 		{
--		  /* We should use ranges for non-contiguous code section 
-+		  /* We should use ranges for non-contiguous code section
- 		     addresses.  Use the actual code range for the initial
--		     section, since the HOT/COLD labels might precede an 
-+		     section, since the HOT/COLD labels might precede an
- 		     alignment offset.  */
- 		  bool range_list_added = false;
- 		  add_ranges_by_labels (subr_die, fde->dw_fde_begin,
-@@ -20655,7 +20655,7 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
- 		  if (TREE_PUBLIC (decl))
- 		    add_AT_flag (seg_die, DW_AT_external, 1);
- 
--		  if (decl_name != NULL 
-+		  if (decl_name != NULL
- 		      && IDENTIFIER_POINTER (decl_name) != NULL)
- 		    {
- 		      name = dwarf2_name (decl, 1);
-@@ -20669,7 +20669,7 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
- 		  if (DECL_ARTIFICIAL (decl))
- 		    add_AT_flag (seg_die, DW_AT_artificial, 1);
- 
--		  name = concat ("__second_sect_of_", name, NULL); 
-+		  name = concat ("__second_sect_of_", name, NULL);
- 		  add_AT_low_high_pc (seg_die, fde->dw_fde_second_begin,
-                                       fde->dw_fde_second_end, false);
- 		  add_name_attribute (seg_die, name);
-@@ -20842,6 +20842,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+diff -ru --ignore-all-space gcc-6.3.0/gcc/dwarf2out.c gcc-6.3.0-il/gcc/dwarf2out.c
+--- gcc-6.3.0/gcc/dwarf2out.c	2016-09-01 13:43:15.000000000 +0200
++++ gcc-6.3.0-il/gcc/dwarf2out.c	2017-01-31 01:07:35.421861016 +0100
+@@ -20842,6 +20842,11 @@
      /* Add the calling convention attribute if requested.  */
      add_calling_convention_attribute (subr_die, decl);
  
@@ -1166,56 +539,10 @@ index d9747e0..d7b4493 100644
    /* Output Dwarf info for all of the stuff within the body of the function
       (if it has one - it may be just a declaration).
  
-@@ -24831,7 +24836,7 @@ dwarf2out_source_line (unsigned int line, const char *filename,
-      that second line number entry.  */
-   /* Recall that this end-of-prologue indication is *not* the same thing
-      as the end_prologue debug hook.  The NOTE_INSN_PROLOGUE_END note,
--     to which the hook corresponds, follows the last insn that was 
-+     to which the hook corresponds, follows the last insn that was
-      emitted by gen_prologue.  What we need is to precede the first insn
-      that had been emitted after NOTE_INSN_FUNCTION_BEG, i.e. the first
-      insn that corresponds to something the user wrote.  These may be
-@@ -25035,7 +25040,7 @@ output_macinfo_op (macinfo_entry *ref)
-       file_num = maybe_emit_file (fd);
-       dw2_asm_output_data (1, DW_MACINFO_start_file, "Start new file");
-       dw2_asm_output_data_uleb128 (ref->lineno,
--				   "Included from line number %lu", 
-+				   "Included from line number %lu",
- 				   (unsigned long) ref->lineno);
-       dw2_asm_output_data_uleb128 (file_num, "file %s", ref->info);
-       break;
-@@ -25059,7 +25064,7 @@ output_macinfo_op (macinfo_entry *ref)
-       dw2_asm_output_data (1, ref->code,
- 			   ref->code == DW_MACINFO_define
- 			   ? "Define macro" : "Undefine macro");
--      dw2_asm_output_data_uleb128 (ref->lineno, "At line number %lu", 
-+      dw2_asm_output_data_uleb128 (ref->lineno, "At line number %lu",
- 				   (unsigned long) ref->lineno);
-       dw2_asm_output_nstring (ref->info, -1, "The macro");
-       break;
-@@ -27148,7 +27153,7 @@ hash_loc_operands (dw_loc_descr_ref loc, inchash::hash &hstate)
- 		      get_full_len (*val2->v.val_wide)
- 		      * HOST_BITS_PER_WIDE_INT / HOST_BITS_PER_CHAR);
- 	  break;
--	case dw_val_class_addr:	
-+	case dw_val_class_addr:
- 	  inchash::add_rtx (val2->v.val_addr, hstate);
- 	  break;
- 	default:
-@@ -27750,7 +27755,7 @@ dwarf2out_finish (const char *filename)
- 
-   /* We can only use the low/high_pc attributes if all of the code was
-      in .text.  */
--  if (!have_multiple_function_sections 
-+  if (!have_multiple_function_sections
-       || (dwarf_version < 3 && dwarf_strict))
-     {
-       /* Don't add if the CU has no associated code.  */
-diff --git a/gcc/intl.c b/gcc/intl.c
-index 3e355d7..15d74df 100644
---- a/gcc/intl.c
-+++ b/gcc/intl.c
-@@ -74,17 +74,11 @@ gcc_init_libintl (void)
+diff -ru --ignore-all-space gcc-6.3.0/gcc/intl.c gcc-6.3.0-il/gcc/intl.c
+--- gcc-6.3.0/gcc/intl.c	2016-01-04 15:30:50.000000000 +0100
++++ gcc-6.3.0-il/gcc/intl.c	2017-01-31 01:07:35.421930308 +0100
+@@ -74,17 +74,11 @@
  
    if (!strcmp (open_quote, "`") && !strcmp (close_quote, "'"))
      {
@@ -1237,18 +564,17 @@ index 3e355d7..15d74df 100644
      }
  }
  
-@@ -145,6 +139,3 @@ get_spaces (const char *str)
+@@ -145,6 +139,3 @@
     spaces[len] = '\0';
     return spaces;
  }
 -
 -
 -
-diff --git a/gcc/symtab.c b/gcc/symtab.c
-index 3d3cc4f..67fcfbe 100644
---- a/gcc/symtab.c
-+++ b/gcc/symtab.c
-@@ -1728,6 +1728,10 @@ symtab_node::noninterposable_alias (void)
+diff -ru --ignore-all-space gcc-6.3.0/gcc/symtab.c gcc-6.3.0-il/gcc/symtab.c
+--- gcc-6.3.0/gcc/symtab.c	2016-04-04 11:26:29.000000000 +0200
++++ gcc-6.3.0-il/gcc/symtab.c	2017-01-31 01:07:35.422076751 +0100
+@@ -1728,6 +1728,10 @@
    tree new_decl;
    symtab_node *new_node = NULL;
  
@@ -1259,43 +585,9 @@ index 3d3cc4f..67fcfbe 100644
    /* First try to look up existing alias or base object
       (if that is already non-overwritable).  */
    symtab_node *node = ultimate_alias_target ();
-diff --git a/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
-new file mode 100644
-index 0000000..770bdaf
---- /dev/null
-+++ b/gcc/testsuite/gcc.dg/fno-clone-preserves-unused-args.c
-@@ -0,0 +1,27 @@
-+/* { dg-do compile { target { ilp32 } } } */
-+/* { dg-options "-O2 -funit-at-a-time -fipa-sra -fno-clone-functions"  } */
-+/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
-+
-+#include <stdio.h>
-+
-+/*
-+ * Verify that preventing function cloning prevents constant prop/scalar
-+ * reduction removing parameters
-+ */
-+static void
-+t(int, int, int, int, int) __attribute__ ((noinline));
-+
-+int void()
-+{
-+    t(1, 2, 3, 4, 5);
-+}
-+
-+/* Only use 3 params, bait constprop/sra into deleting the other two */
-+static void(int a, int b, int c, int d, int e)
-+{
-+    printf("%d %d\n", a, b, c);
-+}
-diff --git a/gcc/testsuite/gcc.target/i386/local.c b/gcc/testsuite/gcc.target/i386/local.c
-index f444495..3a48758 100644
---- a/gcc/testsuite/gcc.target/i386/local.c
-+++ b/gcc/testsuite/gcc.target/i386/local.c
+diff -ru --ignore-all-space gcc-6.3.0/gcc/testsuite/gcc.target/i386/local.c gcc-6.3.0-il/gcc/testsuite/gcc.target/i386/local.c
+--- gcc-6.3.0/gcc/testsuite/gcc.target/i386/local.c	2015-12-29 11:32:21.000000000 +0100
++++ gcc-6.3.0-il/gcc/testsuite/gcc.target/i386/local.c	2017-01-31 01:07:32.695587218 +0100
 @@ -1,5 +1,6 @@
  /* { dg-do compile } */
 -/* { dg-options "-O2 -funit-at-a-time" } */
@@ -1304,105 +596,10 @@ index f444495..3a48758 100644
  /* { dg-final { scan-assembler "magic\[^\\n\]*eax" { target ia32 } } } */
  /* { dg-final { scan-assembler "magic\[^\\n\]*(edi|ecx)" { target { ! ia32 } } } } */
  
-diff --git a/gcc/testsuite/gcc.target/i386/msave-args-mov.c b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
-new file mode 100644
-index 0000000..a2ca767
---- /dev/null
-+++ b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
-@@ -0,0 +1,26 @@
-+/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
-+/* { dg-options "-msave-args -mforce-save-regs-using-mov -save-temps" } */
-+
-+#include <stdio.h>
-+
-+void t(int, int, int, int, int) __attribute__ ((noinline));
-+
-+int
-+main(int argc, char **argv)
-+{
-+	t(1, 2, 3, 4, 5);
-+	return (0);
-+}
-+
-+void
-+t(int a, int b, int c, int d, int e)
-+{
-+	printf("%d %d %d %d %d", a, b, c, d, e);
-+}
-+
-+/* { dg-final { scan-assembler "movq\t%rdi, -8\\(%rbp\\)" } } */
-+/* { dg-final { scan-assembler "movq\t%rsi, -16\\(%rbp\\)" } } */
-+/* { dg-final { scan-assembler "movq\t%rdx, -24\\(%rbp\\)" } } */
-+/* { dg-final { scan-assembler "movq\t%rcx, -32\\(%rbp\\)" } } */
-+/* { dg-final { scan-assembler "movq\t%r8, -40\\(%rbp\\)" } } */
-+/* { dg-final { cleanup-saved-temps } } */
-diff --git a/gcc/testsuite/gcc.target/i386/msave-args-push.c b/gcc/testsuite/gcc.target/i386/msave-args-push.c
-new file mode 100644
-index 0000000..fbe053d
---- /dev/null
-+++ b/gcc/testsuite/gcc.target/i386/msave-args-push.c
-@@ -0,0 +1,26 @@
-+/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
-+/* { dg-options "-msave-args -save-temps " } */
-+
-+#include <stdio.h>
-+
-+void t(int, int, int, int, int) __attribute__ ((noinline));
-+
-+int
-+main(int argc, char **argv)
-+{
-+	t(1, 2, 3, 4, 5);
-+	return (0);
-+}
-+
-+void
-+t(int a, int b, int c, int d, int e)
-+{
-+	printf("%d %d %d %d %d", a, b, c, d, e);
-+}
-+
-+/* { dg-final { scan-assembler "pushq\t%rdi" } } */
-+/* { dg-final { scan-assembler "pushq\t%rsi" } } */
-+/* { dg-final { scan-assembler "pushq\t%rdx" } } */
-+/* { dg-final { scan-assembler "pushq\t%rcx" } } */
-+/* { dg-final { scan-assembler "pushq\t%r8" } } */
-+/* { dg-final { cleanup-saved-temps } } */
-diff --git a/gcc/testsuite/gcc.target/i386/strict-cc.c b/gcc/testsuite/gcc.target/i386/strict-cc.c
-new file mode 100644
-index 0000000..fa0543e
---- /dev/null
-+++ b/gcc/testsuite/gcc.target/i386/strict-cc.c
-@@ -0,0 +1,24 @@
-+/* { dg-do compile { target { ilp32 } } } */
-+/* { dg-options "-O2 -funit-at-a-time -fstrict-calling-conventions"  } */
-+/* { dg-final { scan-assembler "pushl.*\\\$1" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$2" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$3" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$4" } } */
-+/* { dg-final { scan-assembler "pushl.*\\\$5" } } */
-+
-+#include <stdio.h>
-+
-+/* Verify that local calling convention is not used if strict conventions.  */
-+static int t(int, int, int, int, int) __attribute__ ((noinline));
-+
-+int
-+m()
-+{
-+    t(1, 2, 3, 4, 5);
-+}
-+
-+static int
-+t(int a, int b, int c, int d, int e)
-+{
-+    printf("%d\n", a, b, c, d, e);
-+}
-diff --git a/gcc/tree-inline.c b/gcc/tree-inline.c
-index dffb685..3ce5502 100644
---- a/gcc/tree-inline.c
-+++ b/gcc/tree-inline.c
-@@ -5534,7 +5534,8 @@ bool
+diff -ru --ignore-all-space gcc-6.3.0/gcc/tree-inline.c gcc-6.3.0-il/gcc/tree-inline.c
+--- gcc-6.3.0/gcc/tree-inline.c	2016-12-07 23:32:34.000000000 +0100
++++ gcc-6.3.0-il/gcc/tree-inline.c	2017-01-31 01:07:35.422488542 +0100
+@@ -5534,7 +5534,8 @@
  tree_versionable_function_p (tree fndecl)
  {
    return (!lookup_attribute ("noclone", DECL_ATTRIBUTES (fndecl))
@@ -1412,46 +609,10 @@ index dffb685..3ce5502 100644
  }
  
  /* Delete all unreachable basic blocks and update callgraph.
-diff --git a/include/dwarf2.def b/include/dwarf2.def
-index 2dfee56..c4e1e11 100644
---- a/include/dwarf2.def
-+++ b/include/dwarf2.def
-@@ -45,27 +45,27 @@
- 
- /* This file declares various DWARF-related constants using a set of
-    macros which can be redefined by the including file.
--   
-+
-    The macros are in sections.  Each section corresponds to a single
-    set of DWARF constants and has a corresponding key.  The key is
-    used in all the macro names.
--   
-+
-    The sections are TAG (for DW_TAG_ constants), FORM (DW_FORM_), AT
-    (DW_AT_), OP (DW_OP_), ATE (DW_ATE_), and CFA (DW_CFA_).
--   
-+
-    Using TAG as an example, the following macros may be used for each
-    key:
--   
-+
-    DW_FIRST_TAG(name, value) - Introduce the first DW_TAG constant.
--   
-+
-    DW_TAG(name, value) - Define a subsequent constant.
--   
-+
-    DW_TAG_DUP(name, value) - Define a subsequent constant whose value
-    is a duplicate of some other constant.  Not all keys use the _DUP
-    macro form.  If more than one name shares a value, then the base
-    (DW_TAG) form will be the preferred name and DW_TAG_DUP will hold
-    any alternate names.
--   
-+
-    DW_END_TAG - Invoked at the end of the DW_TAG constants.  */
- 
- DW_FIRST_TAG (DW_TAG_padding, 0x00)
-@@ -399,6 +399,8 @@ DW_AT (DW_AT_GNU_pubtypes, 0x2135)
+diff -ru --ignore-all-space gcc-6.3.0/include/dwarf2.def gcc-6.3.0-il/include/dwarf2.def
+--- gcc-6.3.0/include/dwarf2.def	2015-08-14 11:48:13.000000000 +0200
++++ gcc-6.3.0-il/include/dwarf2.def	2017-01-31 01:07:31.389764268 +0100
+@@ -399,6 +399,8 @@
  DW_AT (DW_AT_GNU_discriminator, 0x2136)
  /* VMS extensions.  */
  DW_AT (DW_AT_VMS_rtnbeg_pd_address, 0x2201)
@@ -1460,11 +621,10 @@ index 2dfee56..c4e1e11 100644
  /* GNAT extensions.  */
  /* GNAT descriptive type.
     See http://gcc.gnu.org/wiki/DW_AT_GNAT_descriptive_type .  */
-diff --git a/libgcc/config.host b/libgcc/config.host
-index 124f2ce..b3de3ae 100644
---- a/libgcc/config.host
-+++ b/libgcc/config.host
-@@ -267,7 +267,7 @@ case ${host} in
+diff -ru --ignore-all-space gcc-6.3.0/libgcc/config.host gcc-6.3.0-il/libgcc/config.host
+--- gcc-6.3.0/libgcc/config.host	2016-11-19 04:03:55.000000000 +0100
++++ gcc-6.3.0-il/libgcc/config.host	2017-01-31 01:07:30.277906831 +0100
+@@ -267,7 +267,7 @@
  *-*-solaris2*)
    # Unless linker support and dl_iterate_phdr are present,
    # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
@@ -1473,7 +633,7 @@ index 124f2ce..b3de3ae 100644
    if test $with_gnu_ld = yes; then
      tmake_file="$tmake_file t-slibgcc-gld"
    else
-@@ -287,6 +287,7 @@ case ${host} in
+@@ -287,6 +287,7 @@
        i?86-*-solaris2.1[0-9]* | x86_64-*-solaris2.1[0-9]*)
          # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
          # part of the base system.
