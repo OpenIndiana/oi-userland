@@ -20,26 +20,29 @@
 
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
-COMPONENT_NAME=		gnump
-COMPONENT_VERSION=5.0.5
+COMPONENT_NAME=					gmp
+COMPONENT_VERSION=			6.1.2
+COMPONENT_SUMMARY=			GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=	http://gmplib.org/
-COMPONENT_SRC_NAME=	gmp
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_FMRI=					library/gmp	
+COMPONENT_CLASSIFICATION=Development/High Performance Computing
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-    sha256:1f588aaccc41bb9aed946f9fe38521c26d8b290d003c5df807f65690f2aadec9
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/gnump
+COMPONENT_ARCHIVE_HASH= \
+  sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
+COMPONENT_LICENSE=			LGPLv3,GPLv3,FDLv1.3
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 
@@ -90,7 +93,6 @@ CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --disable-alloca
 CONFIGURE_OPTIONS += --enable-cxx
 CONFIGURE_OPTIONS += --enable-fft
-CONFIGURE_OPTIONS += --enable-mpbsd
 CONFIGURE_OPTIONS += --disable-fat
 CONFIGURE_OPTIONS += --with-pic
 
@@ -101,47 +103,47 @@ PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
 PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
+GMP_SOVERSION=4.5.2
+
 COMPONENT_POST_INSTALL_ACTION = \
     ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
       $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
+					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
+					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
+					$(PROTOUSRLIBDIR)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
+					$(PROTOUSRLIBDIR64)/libgmpxx.so.$(GMP_SOVERSION) ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
+					$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
-	$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
-	    $(COMPONENT_DIR)/libgmpxx.pc ; \
+					$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
+							$(COMPONENT_DIR)/libgmpxx.pc ; \
       $(MV) $(PROTOUSRINCLUDEDIR)/gmp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
       $(MV) $(PROTOUSRINCLUDEDIR)/mp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
-      $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
-	$(PROTOUSRSHAREHTMLDIR)/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.pc \
-	$(PROTOPKGCONFIGDIR) ; \
+					$(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmpxx.pc \
-	$(PROTOPKGCONFIGDIR) ; \
+					$(PROTOPKGCONFIGDIR) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/libgmp.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
+					$(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/libgmpxx.pc \
-	$(PROTOPKGCONFIGDIR64) ; \
+					$(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ )
+					$(PROTOUSRSHAREMAN3DIR)/ )
 
-# common targets
+ENV += -i
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
-
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/g++-4-runtime
+REQUIRED_PACKAGES += system/library/gcc-4-runtime
