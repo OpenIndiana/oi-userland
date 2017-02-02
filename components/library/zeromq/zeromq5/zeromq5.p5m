@@ -1,0 +1,136 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/library/c++/zeromq-$(COMPONENT_VERSION_MAJ_MIN)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - ABI version $(COMPONENT_VERSION_ABI)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+
+# Generated section:
+
+file path=$(COMPONENT_USR_DIR)/lib/$(MACH64)/libzmq.so.$(COMPONENT_VERSION_ABI).0.0 mode=0555
+link path=$(COMPONENT_USR_DIR)/lib/$(MACH64)/libzmq.so.$(COMPONENT_VERSION_ABI) \
+    target=libzmq.so.$(COMPONENT_VERSION_ABI).0.0
+link path=$(COMPONENT_USR_DIR)/lib/$(MACH64)/libzmq.so \
+    target=libzmq.so.$(COMPONENT_VERSION_ABI).0.0
+file path=$(COMPONENT_USR_DIR)/lib/libzmq.so.$(COMPONENT_VERSION_ABI).0.0 mode=0555
+link path=$(COMPONENT_USR_DIR)/lib/libzmq.so.$(COMPONENT_VERSION_ABI) \
+    target=libzmq.so.$(COMPONENT_VERSION_ABI).0.0
+link path=$(COMPONENT_USR_DIR)/lib/libzmq.so \
+    target=libzmq.so.$(COMPONENT_VERSION_ABI).0.0
+
+file path=$(COMPONENT_USR_DIR)/lib/$(MACH64)/pkgconfig/libzmq.pc
+file path=$(COMPONENT_USR_DIR)/lib/pkgconfig/libzmq.pc
+
+file path=$(COMPONENT_USR_DIR)/include/zmq.h
+file path=$(COMPONENT_USR_DIR)/include/zmq_utils.h
+
+# Mediate this:
+link path=usr/lib/$(MACH64)/libzmq.so \
+    target=../../$(COMPONENT_SUB_DIR)/lib/$(MACH64)/libzmq.so.$(COMPONENT_VERSION_ABI).0.0 \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+link path=usr/lib/libzmq.so \
+    target=../$(COMPONENT_SUB_DIR)/lib/libzmq.so.$(COMPONENT_VERSION_ABI).0.0 \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+
+link path=usr/lib/$(MACH64)/pkgconfig/libzmq.pc \
+    target=../../../$(COMPONENT_SUB_DIR)/lib/$(MACH64)/pkgconfig/libzmq.pc \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+link path=usr/lib/pkgconfig/libzmq.pc \
+    target=../../$(COMPONENT_SUB_DIR)/lib/pkgconfig/libzmq.pc \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+
+link path=usr/include/zmq.h \
+    target=../$(COMPONENT_SUB_DIR)/include/zmq.h \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+link path=usr/include/zmq_utils.h \
+    target=../$(COMPONENT_SUB_DIR)/include/zmq_utils.h \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+
+# This link should simplify usage of current (mediated) manpages via simple
+# addition to developer's MANPATH=/usr/zeromq/share/man:$MANPATH :
+link path=usr/zeromq target=./$(COMPONENT_SUB_DIR) \
+    mediator=zeromq mediator-version=$(COMPONENT_VERSION_MAJ_MIN)
+
+
+# Manpages provided only under dedicated project dir, not mediated
+# into common locations for visibility :
+
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_bind.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_close.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_connect.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_ctx_get.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_ctx_new.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_ctx_set.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_ctx_shutdown.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_ctx_term.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_curve_keypair.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_disconnect.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_errno.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_getsockopt.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_has.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_close.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_copy.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_data.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_get.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_gets.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_init.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_init_data.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_init_size.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_more.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_move.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_recv.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_send.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_set.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_msg_size.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_poll.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_proxy.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_proxy_steerable.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_recv.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_recvmsg.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_send_const.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_send.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_sendmsg.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_setsockopt.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_socket.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_socket_monitor.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_strerror.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_unbind.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_version.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_z85_decode.3
+file path=$(COMPONENT_USR_DIR)/share/man/man3/zmq_z85_encode.3
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_curve.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_inproc.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_ipc.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_null.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_pgm.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_plain.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_tcp.7
+file path=$(COMPONENT_USR_DIR)/share/man/man7/zmq_tipc.7
+
