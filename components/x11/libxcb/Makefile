@@ -69,6 +69,8 @@ CONFIGURE_OPTIONS+= --enable-xvmc
 CONFIGURE_OPTIONS+= --with-queue-size=32768 
 CONFIGURE_OPTIONS+= --with-pic
 
+CONFIGURE_ENV+= CPPFLAGS=-D_REENTRANT
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
