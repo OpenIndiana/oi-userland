@@ -20,9 +20,9 @@ The default behavior is as expected by Puppet.
 +    if Puppet[:degrade_smf_on_error]
 +      if !@degraded
 +        if Puppet.run_mode.agent?
-+          system 'svcadm clear puppet:agent'
++          system 'svcadm clear puppet:agent > /dev/null 2>&1'
 +        elsif Puppet.run_mode.master?
-+          system 'svcadm clear puppet:master'
++          system 'svcadm clear puppet:master > /dev/null 2>&1'
 +        end
 +      end
 +    end
