@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait fails to compile us (22221056)
@@ -46,6 +46,8 @@ BUILD_64=
 INSTALL_64=
 PUBLISH_STAMP=
 endif
+
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/common.mk
 
