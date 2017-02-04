@@ -20,24 +20,25 @@
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		daq
-COMPONENT_VERSION=	0.6.2
+COMPONENT_VERSION=	2.0.6
 COMPONENT_PROJECT_URL=	http://www.snort.org/
+COMPONENT_SUMMARY=	Snort data acquisition library for packet I/O
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0159865b5dc127ed2faf8d6732d781939f27e38b7c7deabcd369a22ea9e42f26
-COMPONENT_ARCHIVE_URL=	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
+    sha256:b40e1d1273e08aaeaa86e69d4f28d535b7e53bdb3898adf539266b63137be7cb
+COMPONENT_ARCHIVE_URL=	https://snort.org/downloads/snort/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_FMRI=		system/library/libdaq
+COMPONENT_CLASSIFICATION=	System/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-# Set -m32 or -m64 correctly for 32 and 64 bit versions.
-CC +=		$(CC_BITS)
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=    --enable-static=no
 
@@ -50,6 +51,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
