@@ -78,12 +78,33 @@ class BassComponent:
             # get required paths    (cd path ; gmake print-required-paths)
             self.required_paths = self.run_make(path, 'print-required-paths')
 
-    def required(self, component):
+            # get required packages (cd path ; gmake print-REQUIRED_PACKAGES)
+            self.required_packages = self.run_make(path, 'print-required-packages')
+
+    def required_path(self, component):
         result = False
 
         s1 = set(self.required_paths)
         s2 = set(component.supplied_paths)
         if s1.intersection(s2):
+            result = True
+
+        return result
+
+    def required_package(self, component):
+        result = False
+
+        s1 = set(self.required_packages)
+        s2 = set(component.supplied_packages)
+        if s1.intersection(s2):
+            result = True
+
+        return result
+
+    def required(self, component):
+        result = False
+
+        if (required_path(component) or required_package(component)):
             result = True
 
         return result
@@ -116,6 +137,7 @@ class BassComponent:
         result = result + "\tProvides Package(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_packages)
         result = result + "\tProvides Path(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_paths)
         result = result + "\tRequired Path(s):\n\t\t%s\n" % '\t\t'.join(self.required_paths)
+        result = result + "\tRequired Package(s):\n\t\t%s\n" % '\t\t'.join(self.required_packages)
 
         return result
 

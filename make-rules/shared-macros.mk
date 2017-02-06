@@ -1175,7 +1175,13 @@ endif
 
 include $(WS_MAKE_RULES)/environment.mk
 
-# A simple rule to print the value of any macro.  Ex:
+# Print the required packages as a listing, line by line
+print-required-packages::
+	@for fmri in $(REQUIRED_PACKAGES) ; do \
+		echo $$fmri ; \
+	 done
+
+# A simple rule to print the value of any macro (as MACRONAME=value).  Ex:
 #    $ gmake print-REQUIRED_PACKAGES
 # Note that some macros are set on a per target basis, so what you see
 # is not always what you get.
