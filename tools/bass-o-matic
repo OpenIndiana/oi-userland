@@ -221,13 +221,23 @@ def main():
     component_paths = FindComponentPaths(workspace, debug, subdir)
 
     if make_arg:
-        if template_zone:
-            print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+        if component_arg:
+            if template_zone:
+                print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+            else:
+                print "using current zone as the build environment for %s to run '%s'" % (component_arg, ['gmake'] + args)
         else:
-            print "using current zone as the build environment for %s to run '%s'" % (component_arg, ['gmake'] + args)
-        # TODO: Should this loop over component_paths to build each?
-        # TODO: Should this use or pass the template_zone value?
-        proc = subprocess.Popen(['gmake'] + args)
+            if template_zone:
+                print "using template zone %s to '%s' in workspace '%s'" % (template_zone, ['gmake'] + args, workspace)
+            else:
+                print "using current zone to run '%s' in workspace '%s'" % (['gmake'] + args, workspace)
+        # TODO: Should this loop over component_paths to build each (if several given)?
+        # TODO: Should there be an order of dependencies/parallelism for several paths?
+        # TODO: Should this use or pass the template_zone value somehow?
+        if component_arg:
+            proc = subprocess.Popen(['gmake'] + args, cwd = workspace + subdir + component_arg)
+        else:
+            proc = subprocess.Popen(['gmake'] + args, cwd = workspace)
         rc = proc.wait()
         sys.exit(rc)
 
