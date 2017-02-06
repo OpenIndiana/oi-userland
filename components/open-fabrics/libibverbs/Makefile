@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 include ../ofed-component-macros.mk
@@ -42,6 +42,7 @@ MAN3FILES =	ibv_alloc_shpd.3 \
 		ibv_register_sm_events.3
 
 include $(WS_MAKE_RULES)/shared-targets.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # add flags to get at extra bits from other components' source trees
 CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.6/src
@@ -60,6 +61,12 @@ COMPONENT_PREP_ACTION = \
 	cd ../libmlx4; gmake prep; \
 	cd ../librdmacm; gmake prep
 
+# Userland lint-install code (lint-libraries.mk) would install llib-libverbs.ln
+# to the directory 'build/prototype/$(MACH)/usr/lib/$(MACH64)',
+# which doesn't exist and must be created manually to let the installation pass.
+COMPONENT_PRE_INSTALL_ACTION = \
+        $(MKDIR) $(BUILD_DIR)/prototype/$(MACH)/usr/lib/$(MACH64)
+
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))/ibv_uc_pingpong; \
 	$(RM) $(PROTOUSRSHAREMAN1DIR)/ibv_uc_pingpong.1 \
@@ -70,7 +77,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREMAN3DIR)/ibv_unreg_xrc_rcv_qp.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ibv_query_xrc_rcv_qp.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ibv_create_xrc_rcv_qp.3 \
-	$(PROTOUSRSHAREMAN3DIR)/ibv_modify_xrc_rcv_qp.3
+	$(PROTOUSRSHAREMAN3DIR)/ibv_modify_xrc_rcv_qp.3; \
+	$(INSTALL) -c llib-libverbs $(PROTOUSRLIBDIR)/llib-libverbs
 
 install:	$(INSTALL_64) $(PROTOMAN3FILES)
 
