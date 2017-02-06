@@ -57,7 +57,7 @@ def FindComponentPaths(path, debug=None, subdir='/components'):
                 break
 
     if found == 0:
-        print >>sys.stderr, "FindComponentPaths() found nothing, maybe %s contains nothing?" % (path+subdir)
+        print >>sys.stderr, "FindComponentPaths() found nothing, maybe %s contains no p5m manifests?" % (path+subdir)
     else:
         if debug:
             print >>debug, "found %s items" % found
@@ -104,6 +104,8 @@ class BassComponent:
 
         if self.debug:
             proc.wait()
+            # No need to really "wait" above since stdout is read until closed
+            # Here we need this just to receive and process the error code
             if proc.returncode != 0:
                 print >>self.debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
 
@@ -119,8 +121,10 @@ class BassComponent:
 
 def usage():
     print "Usage: %s [-c|--components=(path|depend)]" % (sys.argv[0].split('/')[-1])
-    print "     -c | --components 'path'    Print dirname of the component"
+    print "     Parse component(s) in specified workspace/subdir to list data"
+    print "     -c | --components 'path'    Print dirname of the component(s)"
     print "     -c | --components 'depend'  Print dependencies of the component"
+    print "                                 in a manner similar to makefile deps"
     print "Usage: %s --make [--template-zone=tzone] [--component=NAME] [--] args..." % (sys.argv[0].split('/')[-1])
     print "     Use the optional template zone to 'gmake args...' for building of the"
     print "     specified component (without template use the current workspace)"
@@ -210,7 +214,7 @@ def main():
             for path in component_paths:
                 print "%s" % path
 
-        elif components_arg in [ 'depend', 'dependencies' ]:
+        elif components_arg in [ 'depend', 'dep', 'deps', 'dependencies' ]:
             for path in component_paths:
                 components[path] = BassComponent(path, debug)
 
