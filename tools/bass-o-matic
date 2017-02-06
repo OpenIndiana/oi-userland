@@ -156,6 +156,10 @@ def main():
         else:
             assert False, "unknown option"
 
+    if workspace is None:
+        print "FATAL: A --workspace argument or WS_TOP envvar is required"
+        usage()
+
     component_paths = FindComponentPaths(workspace, debug, subdir)
 
     if make_arg:
