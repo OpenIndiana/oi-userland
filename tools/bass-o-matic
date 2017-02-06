@@ -42,18 +42,25 @@ def FindComponentPaths(path, debug=None, subdir='/components'):
     paths = []
 
     if debug:
-        print >>debug, "searching %s for component directories" % path
+        print >>debug, "searching %s for component directories" % (path+subdir)
 
+    found = 0
     for dirpath, dirnames, filenames in os.walk(path + subdir):
-        found = 0
 
         for name in filenames:
             if expression.match(name):
+                found = found +1
                 if debug:
                     print >>debug, "found %s" % dirpath
                 paths.append(dirpath)
                 del dirnames[:]
                 break
+
+    if found == 0:
+        print >>sys.stderr, "FindComponentPaths() found nothing, maybe %s contains nothing?" % (path+subdir)
+    else:
+        if debug:
+            print >>debug, "found %s items" % found
 
     return sorted(paths)
 
@@ -157,7 +164,11 @@ def main():
             assert False, "unknown option"
 
     if workspace is None:
-        print "FATAL: A --workspace argument or WS_TOP envvar is required"
+        print >>sys.stderr, "FATAL: A --workspace argument or WS_TOP envvar is required"
+        usage()
+
+    if (components_arg is None and make_arg is None):
+        print >>sys.stderr, "FATAL: No valid action was requested"
         usage()
 
     component_paths = FindComponentPaths(workspace, debug, subdir)
@@ -165,6 +176,10 @@ def main():
     if make_arg:
         if template_zone:
             print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+        else:
+            print "using current zone as the build environment for %s to run '%s'" % (component_arg, ['gmake'] + args)
+        # TODO: Should this loop over component_paths to build each?
+        # TODO: Should this use or pass the template_zone value?
         proc = subprocess.Popen(['gmake'] + args)
         rc = proc.wait()
         sys.exit(rc)
@@ -186,8 +201,13 @@ def main():
                         component.required(components[d_path])):
                           print "%s: %s" % (c_path, d_path)
 
+        else:
+            print >>sys.stderr, "FATAL: Invalid value of --components argument: '%s'" % components_arg
+            usage()
+
         sys.exit(0)
 
+    print >>sys.stderr, "FATAL: FindComponentPaths() completed, but no further action was requested"
     sys.exit(1)
 
 if __name__ == "__main__":
