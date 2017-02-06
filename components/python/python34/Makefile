@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.5
-COMPONENT_PROJECT_URL=	http://python.org/
+COMPONENT_VERSION=	3.4.6
+COMPONENT_PROJECT_URL=	https://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ee64b1c8a47461009abf25252332d29a4e587cb4f0c1c96aa793a3732e9d898a
+    sha256:f13428bbe6aa9e3b9b6499502dc488c26096349ed7a21f7a0c1db90911115f40
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/python
 
-TPNO=			29998
+TPNO=			33492
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
