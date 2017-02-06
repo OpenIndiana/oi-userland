@@ -234,10 +234,12 @@ def main():
         # TODO: Should this loop over component_paths to build each (if several given)?
         # TODO: Should there be an order of dependencies/parallelism for several paths?
         # TODO: Should this use or pass the template_zone value somehow?
-        if component_arg:
-            proc = subprocess.Popen(['gmake'] + args, cwd = workspace + subdir + component_arg)
-        else:
-            proc = subprocess.Popen(['gmake'] + args, cwd = workspace)
+# NOTE: Per current usage in components/Makefile, this runs in whatever CWD is provided by caller; perhaps the other modes would benefit from spefial CLI flags
+#        if component_arg:
+#            proc = subprocess.Popen(['gmake'] + args, cwd = workspace + subdir + component_arg)
+#        else:
+#            proc = subprocess.Popen(['gmake'] + args, cwd = workspace)
+        proc = subprocess.Popen(['gmake'] + args)
         rc = proc.wait()
         sys.exit(rc)
 
