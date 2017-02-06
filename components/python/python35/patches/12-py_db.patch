@@ -1,18 +1,18 @@
 This patch adds Python debugger support.  It may be contributed upstream at
 some point, but the suitability (or lack thereof) has not yet been determined.
 
---- Python-3.5.2/Makefile.pre.in.~3~	2016-07-08 06:59:11.325607242 -0700
-+++ Python-3.5.2/Makefile.pre.in	2016-07-08 06:59:11.467802979 -0700
-@@ -489,7 +489,7 @@
+--- Python-3.5.3/Makefile.pre.in.~3~	2017-01-17 11:17:33.079376903 +0000
++++ Python-3.5.3/Makefile.pre.in	2017-01-17 11:17:33.175322774 +0000
+@@ -490,7 +490,7 @@
  
  # Default target
- all:		build_all
+ all:		@DEF_MAKE_ALL_RULE@
 -build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks Programs/_testembed python-config
 +build_all:	$(BUILDPYTHON) oldsharedmods sharedmods gdbhooks Programs/_testembed python-config build-py_db
  
  # Compile a binary with profile guided optimization.
  profile-opt:
-@@ -707,6 +707,15 @@
+@@ -708,6 +708,15 @@
  	@mv config.c Modules
  	@echo "The Makefile was updated, you may need to re-run make."
  
@@ -28,7 +28,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
  Modules/Setup: $(srcdir)/Modules/Setup.dist
  	@if test -f Modules/Setup; then \
-@@ -1099,7 +1108,7 @@
+@@ -1085,7 +1094,7 @@
  		$(TESTRUNNER) $(QUICKTESTOPTS)
  
  

@@ -1013,7 +1013,7 @@ new file mode 100755
 +
 --- Python-3.5.2/Lib/test/test_sys.py.~1~	2016-06-25 14:38:37.000000000 -0700
 +++ Python-3.5.2/Lib/test/test_sys.py	2016-07-07 15:09:04.689495337 -0700
-@@ -882,6 +882,7 @@
+@@ -883,6 +883,7 @@
          self.assertEqual(sys.getsizeof(True, -1), size('') + self.longdigit)
  
      def test_objecttypes(self):
@@ -1021,7 +1021,7 @@ new file mode 100755
          # check all types defined in Objects/
          calcsize = struct.calcsize
          size = test.support.calcobjsize
-@@ -911,13 +912,17 @@
+@@ -912,13 +913,17 @@
              return inner
          check(get_cell().__closure__[0], size('P'))
          # code
@@ -1042,9 +1042,9 @@ new file mode 100755
          # complex
          check(complex(0,1), size('2d'))
          # method_descriptor (descriptor object)
---- Python-3.5.2/Makefile.pre.in.~1~	2016-06-25 14:38:37.000000000 -0700
-+++ Python-3.5.2/Makefile.pre.in	2016-07-07 15:10:50.572816003 -0700
-@@ -57,6 +57,13 @@
+--- Python-3.5.3/Makefile.pre.in.~1~	2017-01-16 23:57:52.000000000 +0000
++++ Python-3.5.3/Makefile.pre.in	2017-01-17 10:56:57.057084254 +0000
+@@ -58,6 +58,13 @@
  # Use this to make a link between python$(VERSION) and python in $(BINDIR)
  LN=		@LN@
  
@@ -1058,7 +1058,7 @@ new file mode 100755
  # Portable install script (configure doesn't always guess right)
  INSTALL=	@INSTALL@
  INSTALL_PROGRAM=@INSTALL_PROGRAM@
-@@ -618,7 +625,7 @@
+@@ -619,7 +626,7 @@
  	$(AR) $(ARFLAGS) $@ $(MODOBJS)
  	$(RANLIB) $@
  
@@ -1067,7 +1067,7 @@ new file mode 100755
  	if test $(INSTSONAME) != $(LDLIBRARY); then \
  		$(BLDSHARED) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
  		$(LN) -f $(INSTSONAME) $@; \
-@@ -629,9 +636,8 @@
+@@ -630,9 +637,8 @@
  libpython3.so:	libpython$(LDVERSION).so
  	$(BLDSHARED) $(NO_AS_NEEDED) -o $@ -Wl,-h$@ $^
  
@@ -1079,7 +1079,7 @@ new file mode 100755
  
  libpython$(VERSION).sl: $(LIBRARY_OBJS)
  	$(LDSHARED) -o $@ $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST)
-@@ -740,12 +746,18 @@
+@@ -737,12 +743,18 @@
  		$(MODULE_OBJS) \
  		$(SIGNAL_OBJS) \
  		$(MODOBJS) \
@@ -1098,9 +1098,9 @@ new file mode 100755
  
  Modules/getpath.o: $(srcdir)/Modules/getpath.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) -DPYTHONPATH='"$(PYTHONPATH)"' \
-@@ -890,6 +902,46 @@
+@@ -876,6 +888,46 @@
  Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
- 	$(PYTHON) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h > Objects/typeslots.inc
+ 	$(PYTHON_FOR_GEN) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h Objects/typeslots.inc
  
 +$(srcdir)/Include/pydtrace.h: $(srcdir)/Include/pydtrace.d
 +	if test "$(DTRACE)" != "" ; then \
@@ -1145,7 +1145,7 @@ new file mode 100755
  ############################################################################
  # Header files
  
-@@ -1608,6 +1660,11 @@
+@@ -1595,6 +1647,11 @@
  	find build -name '*.py[co]' -exec rm -f {} ';' || true
  	-rm -f pybuilddir.txt
  	-rm -f Lib/lib2to3/*Grammar*.pickle
@@ -1155,9 +1155,9 @@ new file mode 100755
 +	rm -f Modules/gcmodule.o.ts_dtrace
 +	rm -f Objects/typeobject.o.ts_dtrace
  	-rm -f Programs/_testembed Programs/_freeze_importlib
- 	-rm -rf build
+ 	-find build -type f -a ! -name '*.gc??' -exec rm -f {} ';'
  
-@@ -1642,6 +1699,11 @@
+@@ -1633,6 +1690,11 @@
  				     -o -name '*.orig' -o -name '*.rej' \
  				     -o -name '*.bak' ')' \
  				     -exec rm -f {} ';'
@@ -1299,7 +1299,7 @@ new file mode 100755
   */
 --- Python-3.4.0/Objects/codeobject.c
 +++ Python-3.4.0/Objects/codeobject.c
-@@ -152,6 +152,37 @@
+@@ -192,6 +192,37 @@
      co->co_lnotab = lnotab;
      co->co_zombieframe = NULL;
      co->co_weakreflist = NULL;
@@ -1480,8 +1480,8 @@ new file mode 100755
      PyTypeObject *type, *base;
      destructor basedealloc;
      PyThreadState *tstate = PyThreadState_GET();
---- Python-3.5.2/Python/ceval.c.~1~	2016-06-25 14:38:38.000000000 -0700
-+++ Python-3.5.2/Python/ceval.c	2016-07-08 06:34:15.786356054 -0700
+--- Python-3.5.3/Python/ceval.c.~1~	2017-01-16 23:57:53.000000000 +0000
++++ Python-3.5.3/Python/ceval.c	2017-01-17 10:59:03.372507015 +0000
 @@ -20,6 +20,13 @@
  
  #include <ctype.h>
@@ -1619,7 +1619,7 @@ new file mode 100755
          switch (opcode) {
  
          /* BEWARE!
-@@ -3625,6 +3700,10 @@
+@@ -3640,6 +3715,10 @@
  
      /* pop frame */
  exit_eval_frame:
@@ -1630,7 +1630,7 @@ new file mode 100755
      Py_LeaveRecursiveCall();
      f->f_executing = 0;
      tstate->frame = f->f_back;
-@@ -4375,6 +4454,57 @@
+@@ -4390,6 +4469,57 @@
      return result;
  }
  
@@ -1688,7 +1688,7 @@ new file mode 100755
  PyObject *
  _PyEval_CallTracing(PyObject *func, PyObject *args)
  {
-@@ -4392,6 +4522,51 @@
+@@ -4407,6 +4537,51 @@
      return result;
  }
  
@@ -1740,8 +1740,8 @@ new file mode 100755
  /* See Objects/lnotab_notes.txt for a description of how tracing works. */
  static int
  maybe_call_line_trace(Py_tracefunc func, PyObject *obj,
---- Python-3.5.2/configure.~1~	2016-06-25 14:38:39.000000000 -0700
-+++ Python-3.5.2/configure	2016-07-08 06:36:50.661156099 -0700
+--- Python-3.5.3/configure.~1~	2017-01-16 23:57:54.000000000 +0000
++++ Python-3.5.3/configure	2017-01-17 11:00:12.674898964 +0000
 @@ -642,6 +642,11 @@
  MACHDEP_OBJS
  DYNLOADFILE
@@ -1754,7 +1754,7 @@ new file mode 100755
  THREADOBJ
  LDLAST
  USE_THREAD_MODULE
-@@ -828,6 +833,7 @@
+@@ -835,6 +840,7 @@
  with_tsc
  with_pymalloc
  with_valgrind
@@ -1762,7 +1762,7 @@ new file mode 100755
  with_fpectl
  with_libm
  with_libc
-@@ -1519,6 +1525,7 @@
+@@ -1540,6 +1546,7 @@
    --with(out)-tsc         enable/disable timestamp counter profile
    --with(out)-pymalloc    disable/enable specialized mallocs
    --with-valgrind         Enable Valgrind support
@@ -1770,7 +1770,7 @@ new file mode 100755
    --with-fpectl           enable SIGFPE catching
    --with-libm=STRING      math library
    --with-libc=STRING      C library
-@@ -11074,6 +11081,174 @@
+@@ -11181,6 +11188,174 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -1947,7 +1947,7 @@ new file mode 100755
  DLINCLDIR=.
 --- Python-3.5.2/configure.ac.~1~	2016-06-25 14:38:39.000000000 -0700
 +++ Python-3.5.2/configure.ac	2016-07-08 06:38:36.346837325 -0700
-@@ -3211,6 +3211,62 @@
+@@ -3277,6 +3277,62 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -2024,7 +2024,7 @@ new file mode 100755
     Dyld is necessary to support frameworks. */
 --- Python-3.5.2/setup.py.~1~	2016-06-25 14:38:39.000000000 -0700
 +++ Python-3.5.2/setup.py	2016-07-08 06:41:09.939900823 -0700
-@@ -690,6 +690,9 @@
+@@ -689,6 +689,9 @@
          # syslog daemon interface
          exts.append( Extension('syslog', ['syslogmodule.c']) )
  

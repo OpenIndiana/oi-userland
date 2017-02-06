@@ -4,7 +4,7 @@ the patch is Solaris-specific, it is not suitable for upstream.
 
 --- Python-3.5.2/setup.py.~6~	2016-07-08 07:00:12.092542253 -0700
 +++ Python-3.5.2/setup.py	2016-07-08 07:00:12.150840947 -0700
-@@ -1649,7 +1649,7 @@
+@@ -1648,7 +1648,7 @@
          # End multiprocessing
  
          # Platform-specific libraries
@@ -13,9 +13,9 @@ the patch is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('ossaudiodev', ['ossaudiodev.c']) )
          else:
              missing.append('ossaudiodev')
---- Python-3.4.0/Modules/ossaudiodev.c.~1~	2014-03-16 19:31:31.000000000 -0700
-+++ Python-3.4.0/Modules/ossaudiodev.c	2014-03-17 13:48:16.395254733 -0700
-@@ -1211,6 +1211,7 @@
+--- Python-3.5.3/Modules/ossaudiodev.c.~1~	2017-01-16 23:57:53.000000000 +0000
++++ Python-3.5.3/Modules/ossaudiodev.c	2017-01-17 11:19:22.935301990 +0000
+@@ -1214,6 +1214,7 @@
      _EXPORT_INT(m, SOUND_MIXER_MONITOR);
  #endif
  
@@ -23,7 +23,7 @@ the patch is Solaris-specific, it is not suitable for upstream.
      /* Expose all the ioctl numbers for masochists who like to do this
         stuff directly. */
      _EXPORT_INT(m, SNDCTL_COPR_HALT);
-@@ -1223,6 +1224,7 @@
+@@ -1226,6 +1227,7 @@
      _EXPORT_INT(m, SNDCTL_COPR_SENDMSG);
      _EXPORT_INT(m, SNDCTL_COPR_WCODE);
      _EXPORT_INT(m, SNDCTL_COPR_WDATA);
@@ -31,7 +31,7 @@ the patch is Solaris-specific, it is not suitable for upstream.
  #ifdef SNDCTL_DSP_BIND_CHANNEL
      _EXPORT_INT(m, SNDCTL_DSP_BIND_CHANNEL);
  #endif
-@@ -1244,8 +1246,12 @@
+@@ -1247,8 +1249,12 @@
      _EXPORT_INT(m, SNDCTL_DSP_GETSPDIF);
  #endif
      _EXPORT_INT(m, SNDCTL_DSP_GETTRIGGER);
@@ -44,7 +44,7 @@ the patch is Solaris-specific, it is not suitable for upstream.
      _EXPORT_INT(m, SNDCTL_DSP_NONBLOCK);
      _EXPORT_INT(m, SNDCTL_DSP_POST);
  #ifdef SNDCTL_DSP_PROFILE
-@@ -1265,6 +1271,7 @@
+@@ -1268,6 +1274,7 @@
      _EXPORT_INT(m, SNDCTL_DSP_STEREO);
      _EXPORT_INT(m, SNDCTL_DSP_SUBDIVIDE);
      _EXPORT_INT(m, SNDCTL_DSP_SYNC);
@@ -52,7 +52,7 @@ the patch is Solaris-specific, it is not suitable for upstream.
      _EXPORT_INT(m, SNDCTL_FM_4OP_ENABLE);
      _EXPORT_INT(m, SNDCTL_FM_LOAD_INSTR);
      _EXPORT_INT(m, SNDCTL_MIDI_INFO);
-@@ -1306,5 +1313,6 @@
+@@ -1309,5 +1316,6 @@
      _EXPORT_INT(m, SNDCTL_TMR_STOP);
      _EXPORT_INT(m, SNDCTL_TMR_TEMPO);
      _EXPORT_INT(m, SNDCTL_TMR_TIMEBASE);

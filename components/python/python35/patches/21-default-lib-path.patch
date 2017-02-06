@@ -1,29 +1,39 @@
 This patch was developed in-house.  It has been submitted upstream:
 http://bugs.python.org/issue23287
 
---- Python-3.5.2/Lib/ctypes/util.py.~1~	2016-06-25 14:38:35.000000000 -0700
-+++ Python-3.5.2/Lib/ctypes/util.py	2016-07-08 07:06:45.026306406 -0700
-@@ -175,24 +175,11 @@
+--- Python-3.5.3/Lib/ctypes/util.py.~1~	2016-12-17 12:05:05.000000000 +0000
++++ Python-3.5.3/Lib/ctypes/util.py	2016-12-19 08:44:16.426321564 +0000
+@@ -214,34 +214,15 @@
  
      elif sys.platform == "sunos5":
  
 -        def _findLib_crle(name, is64):
 -            if not os.path.exists('/usr/bin/crle'):
 -                return None
--
 +        def _findLib_path(name, is64):
+ 
+             env = dict(os.environ)
+             env['LC_ALL'] = 'C'
+ 
              if is64:
--                cmd = 'env LC_ALL=C /usr/bin/crle -64 2>/dev/null'
+-                args = ('/usr/bin/crle', '-64')
 +                paths = "/lib/64:/usr/lib/64"
              else:
--                cmd = 'env LC_ALL=C /usr/bin/crle 2>/dev/null'
+-                args = ('/usr/bin/crle',)
 -
 -            paths = None
--            with contextlib.closing(os.popen(cmd)) as f:
--                for line in f.readlines():
+-            try:
+-                proc = subprocess.Popen(args,
+-                                        stdout=subprocess.PIPE,
+-                                        stderr=subprocess.DEVNULL,
+-                                        env=env)
+-            except OSError:  # E.g. bad executable
+-                return None
+-            with proc:
+-                for line in proc.stdout:
 -                    line = line.strip()
--                    if line.startswith('Default Library Path (ELF):'):
--                        paths = line.split()[4]
+-                    if line.startswith(b'Default Library Path (ELF):'):
+-                        paths = os.fsdecode(line).split()[4]
 -
 -            if not paths:
 -                return None
@@ -31,7 +41,7 @@ http://bugs.python.org/issue23287
  
              for dir in paths.split(":"):
                  libfile = os.path.join(dir, "lib%s.so" % name)
-@@ -202,7 +189,7 @@
+@@ -251,7 +227,7 @@
              return None
  
          def find_library(name, is64 = False):
