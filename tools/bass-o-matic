@@ -118,7 +118,21 @@ class BassComponent:
         return result
 
 def usage():
-    print "Usage: %s [-c|--components=(path|depend)] [-z|--zone (zone)]" % (sys.argv[0].split('/')[-1])
+    print "Usage: %s [-c|--components=(path|depend)]" % (sys.argv[0].split('/')[-1])
+    print "     -c | --components 'path'    Print dirname of the component"
+    print "     -c | --components 'depend'  Print dependencies of the component"
+    print "Usage: %s --make [--template-zone=tzone] [--component=NAME] [--] args..." % (sys.argv[0].split('/')[-1])
+    print "     Use the optional template zone to 'gmake args...' for building of the"
+    print "     specified component (without template use the current workspace)"
+    print "     The '--' argument allows to pass dash-prefixed args to the gmake"
+    print "Common arguments:"
+    print "     -d | --debug                Enable printing of debug info (to stdout)"
+    print "     -d -d                       Use twice to print debug info onto stderr"
+    print "     -w | --workspace=WS_TOP     Provide absolute path to workspace root"
+    print "                                 (defaults to WS_TOP envvar if provided)"
+    print "     --subdir=COMP_TOP           Look for recipes for component(s) under"
+    print "                                 the directory named \$WS_TOP/\$COMP_TOP"
+    print "                                 (defaults to '/components')"
     sys.exit(1)
 
 def main():
@@ -137,6 +151,10 @@ def main():
     subdir="/components"
     workspace = os.getenv('WS_TOP')
 
+    # Note: arguments that do not start with "--" effectively cause the loop
+    # to break, and remaining things remain in args[] e.g. for --make to use.
+    # The standalone "--" argument also breaks out of the loop, allowing to
+    # pass dash-prefixed argumets to the make command.
     try:
         opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
             [ "debug", "workspace=", "components=",
@@ -159,7 +177,10 @@ def main():
         elif opt in [ "--subdir" ]:
             subdir = arg
         elif opt in [ "-d", "--debug" ]:
-            debug = sys.stdout
+            if debug is None:
+                debug = sys.stdout
+            else:
+                debug = sys.stderr
         else:
             assert False, "unknown option"
 
