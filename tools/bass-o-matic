@@ -20,6 +20,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2017, Jim Klimov
 #
 #
 # bass-o-matic.py
@@ -98,7 +99,7 @@ class BassComponent:
             proc.wait()
             if proc.returncode != 0:
                 print >>self.debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
-    
+
         return result
 
     def __str__(self):
@@ -117,7 +118,7 @@ def main():
     import getopt
     import sys
 
-    # FLUSH STDOUT 
+    # FLUSH STDOUT
     sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
     components = {}
@@ -161,14 +162,14 @@ def main():
         if template_zone:
             print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
         proc = subprocess.Popen(['gmake'] + args)
-	rc = proc.wait()
+        rc = proc.wait()
         sys.exit(rc)
 
     if components_arg:
         if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:
             for path in component_paths:
                 print "%s" % path
-            
+
         elif components_arg in [ 'depend', 'dependencies' ]:
             for path in component_paths:
                 components[path] = BassComponent(path, debug)
