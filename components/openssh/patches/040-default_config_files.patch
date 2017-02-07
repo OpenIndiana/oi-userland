@@ -30,8 +30,8 @@ diff -pur old/ssh_config new/ssh_config
 diff -pur old/sshd_config new/sshd_config
 --- old/sshd_config
 +++ new/sshd_config
-@@ -1,132 +1,96 @@
--#	$OpenBSD: sshd_config,v 1.99 2016/07/11 03:19:44 tedu Exp $
+@@ -1,119 +1,96 @@
+-#	$OpenBSD: sshd_config,v 1.100 2016/08/15 12:32:04 naddy Exp $
 +#       $OpenBSD: sshd_config,v 1.99 2016/07/11 03:19:44 tedu Exp $
  
  # This is the sshd server system-wide configuration file.  See
@@ -55,25 +55,10 @@ diff -pur old/sshd_config new/sshd_config
  #ListenAddress 0.0.0.0
  #ListenAddress ::
  
--# The default requires explicit activation of protocol 1
--#Protocol 2
-+# If port forwarding is enabled (default), specify if the server can bind to
-+# INADDR_ANY. 
-+# This allows the local port forwarding to work when connections are received
-+# from any remote host.
-+#GatewayPorts no
- 
--# HostKey for protocol version 1
--#HostKey /etc/ssh/ssh_host_key
--# HostKeys for protocol version 2
 -#HostKey /etc/ssh/ssh_host_rsa_key
 -#HostKey /etc/ssh/ssh_host_dsa_key
 -#HostKey /etc/ssh/ssh_host_ecdsa_key
 -#HostKey /etc/ssh/ssh_host_ed25519_key
--
--# Lifetime and size of ephemeral version 1 server key
--#KeyRegenerationInterval 1h
--#ServerKeyBits 1024
 -
 -# Ciphers and keying
 -#RekeyLimit default none
@@ -81,26 +66,39 @@ diff -pur old/sshd_config new/sshd_config
 -# Logging
 -#SyslogFacility AUTH
 -#LogLevel INFO
-+# X11 tunneling options
-+#X11DisplayOffset 10
-+#X11UseLocalhost yes
-+X11Forwarding yes
- 
+-
 -# Authentication:
-+# The maximum number of concurrent unauthenticated connections to sshd.
-+# start:rate:full see sshd(1) for more information.
-+#MaxStartups 10:30:100
- 
+-
 -#LoginGraceTime 2m
 -#PermitRootLogin prohibit-password
 -#StrictModes yes
 -#MaxAuthTries 6
 -#MaxSessions 10
++# If port forwarding is enabled (default), specify if the server can bind to
++# INADDR_ANY. 
++# This allows the local port forwarding to work when connections are received
++# from any remote host.
++#GatewayPorts no
+ 
+-#PubkeyAuthentication yes
++# X11 tunneling options
++#X11DisplayOffset 10
++#X11UseLocalhost yes
++X11Forwarding yes
+ 
+-# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+-# but this is overridden so installations will only check .ssh/authorized_keys
+-AuthorizedKeysFile	.ssh/authorized_keys
++# The maximum number of concurrent unauthenticated connections to sshd.
++# start:rate:full see sshd(1) for more information.
++#MaxStartups 10:30:100
+ 
+-#AuthorizedPrincipalsFile none
 +# Banner to be printed before authentication starts.
 +Banner /etc/issue
  
--#RSAAuthentication yes
--#PubkeyAuthentication yes
+-#AuthorizedKeysCommand none
+-#AuthorizedKeysCommandUser nobody
 +# Should sshd print the /etc/motd file and check for mail.
 +# On Solaris it is assumed that the login shell will do these (eg /etc/profile).
 +PrintMotd no
@@ -128,21 +126,10 @@ diff -pur old/sshd_config new/sshd_config
 +# The default is 1 hour (3600 seconds).
 +#KeyRegenerationInterval 3600
  
--# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
--# but this is overridden so installations will only check .ssh/authorized_keys
--AuthorizedKeysFile	.ssh/authorized_keys
--
--#AuthorizedPrincipalsFile none
--
--#AuthorizedKeysCommand none
--#AuthorizedKeysCommandUser nobody
--
 -# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
--#RhostsRSAAuthentication no
--# similar for protocol version 2
 -#HostbasedAuthentication no
 -# Change to yes if you don't trust ~/.ssh/known_hosts for
--# RhostsRSAAuthentication and HostbasedAuthentication
+-# HostbasedAuthentication
 -#IgnoreUserKnownHosts no
 -# Don't read the user's ~/.rhosts and ~/.shosts files
 -#IgnoreRhosts yes

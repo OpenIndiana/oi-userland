@@ -23,7 +23,7 @@
 diff -pur old/INSTALL new/INSTALL
 --- old/INSTALL
 +++ new/INSTALL
-@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
+@@ -98,9 +98,13 @@ http://www.gnu.org/software/autoconf/
  
  Basic Security Module (BSM):
  
@@ -40,7 +40,7 @@ diff -pur old/INSTALL new/INSTALL
  
  
  2. Building / Installation
-@@ -147,8 +151,9 @@ name).
+@@ -153,8 +157,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -56,18 +56,18 @@ diff -pur old/Makefile.in new/Makefile.in
 --- old/Makefile.in
 +++ new/Makefile.in
 @@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
- 	roaming_common.o roaming_client.o
+ 	sshconnect.o sshconnect1.o sshconnect2.o mux.o
  
- SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
 +	audit.o audit-bsm.o audit-linux.o audit-solaris.o platform.o \
  	sshpty.o sshlogin.o servconf.o serverloop.o \
- 	auth.o auth1.o auth2.o auth-options.o session.o \
- 	auth-chall.o auth2-chall.o groupaccess.o \
+ 	auth.o auth2.o auth-options.o session.o \
+ 	auth2-chall.o groupaccess.o \
 diff -pur old/README.platform new/README.platform
 --- old/README.platform
 +++ new/README.platform
-@@ -68,8 +68,8 @@ zlib-devel and pam-devel, on Debian base
+@@ -71,8 +71,8 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -78,7 +78,7 @@ diff -pur old/README.platform new/README.platform
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
  for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
-@@ -82,6 +82,9 @@ There is no official registry of 3rd par
+@@ -85,6 +85,9 @@ There is no official registry of 3rd par
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -91,7 +91,7 @@ diff -pur old/README.platform new/README.platform
 diff -pur old/config.h.in new/config.h.in
 --- old/config.h.in
 +++ new/config.h.in
-@@ -1635,6 +1635,9 @@
+@@ -1679,6 +1679,9 @@
  /* Use Linux audit module */
  #undef USE_LINUX_AUDIT
  
@@ -104,7 +104,7 @@ diff -pur old/config.h.in new/config.h.in
 diff -pur old/configure.ac new/configure.ac
 --- old/configure.ac
 +++ new/configure.ac
-@@ -1517,10 +1517,21 @@ AC_ARG_WITH([libedit],
+@@ -1560,10 +1560,21 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -130,7 +130,7 @@ diff -pur old/configure.ac new/configure.ac
 diff -pur old/defines.h new/defines.h
 --- old/defines.h
 +++ new/defines.h
-@@ -635,6 +635,11 @@ struct winsize {
+@@ -645,6 +645,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
  
@@ -145,7 +145,7 @@ diff -pur old/defines.h new/defines.h
 diff -pur old/sshd.c new/sshd.c
 --- old/sshd.c
 +++ new/sshd.c
-@@ -2234,7 +2234,9 @@ main(int ac, char **av)
+@@ -2043,7 +2043,9 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -155,7 +155,7 @@ diff -pur old/sshd.c new/sshd.c
  #endif
  
  #ifdef GSSAPI
-@@ -2264,6 +2266,10 @@ main(int ac, char **av)
+@@ -2073,6 +2075,10 @@ main(int ac, char **av)
  		do_pam_session();
  	}
  #endif

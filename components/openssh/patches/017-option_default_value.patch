@@ -13,7 +13,7 @@
 diff -pur old/readconf.c new/readconf.c
 --- old/readconf.c
 +++ new/readconf.c
-@@ -1803,7 +1803,11 @@ fill_default_options(Options * options)
+@@ -1936,7 +1936,11 @@ fill_default_options(Options * options)
  	if (options->forward_x11 == -1)
  		options->forward_x11 = 0;
  	if (options->forward_x11_trusted == -1)
@@ -24,8 +24,8 @@ diff -pur old/readconf.c new/readconf.c
 +#endif
  	if (options->forward_x11_timeout == -1)
  		options->forward_x11_timeout = 1200;
- 	if (options->exit_on_forward_failure == -1)
-@@ -1825,7 +1829,11 @@ fill_default_options(Options * options)
+ 	/*
+@@ -1969,7 +1973,11 @@ fill_default_options(Options * options)
  	if (options->challenge_response_authentication == -1)
  		options->challenge_response_authentication = 1;
  	if (options->gss_authentication == -1)
@@ -40,7 +40,7 @@ diff -pur old/readconf.c new/readconf.c
 diff -pur old/servconf.c new/servconf.c
 --- old/servconf.c
 +++ new/servconf.c
-@@ -265,7 +265,11 @@ fill_default_server_options(ServerOption
+@@ -249,7 +249,11 @@ fill_default_server_options(ServerOption
  	if (options->print_lastlog == -1)
  		options->print_lastlog = 1;
  	if (options->x11_forwarding == -1)
@@ -52,7 +52,7 @@ diff -pur old/servconf.c new/servconf.c
  	if (options->x11_display_offset == -1)
  		options->x11_display_offset = 10;
  	if (options->x11_use_localhost == -1)
-@@ -303,7 +307,11 @@ fill_default_server_options(ServerOption
+@@ -283,7 +287,11 @@ fill_default_server_options(ServerOption
  	if (options->kerberos_get_afs_token == -1)
  		options->kerberos_get_afs_token = 0;
  	if (options->gss_authentication == -1)
@@ -67,25 +67,29 @@ diff -pur old/servconf.c new/servconf.c
 diff -pur old/ssh_config.5 new/ssh_config.5
 --- old/ssh_config.5
 +++ new/ssh_config.5
-@@ -802,8 +802,8 @@ Furthermore, the
- token used for the session will be set to expire after 20 minutes.
- Remote clients will be refused access after this time.
+@@ -714,12 +714,11 @@ The default is to disable untrusted X11
+ elapsed.
+ .It Cm ForwardX11Trusted
+ If this option is set to
+-.Cm yes ,
++.Cm yes (the default on Solaris),
+ remote X11 clients will have full access to the original X11 display.
  .Pp
--The default is
--.Dq no .
-+The default on Solaris is
-+.Dq yes .
- .Pp
- See the X11 SECURITY extension specification for full details on
- the restrictions imposed on untrusted clients.
-@@ -832,8 +832,8 @@ The default is
+ If this option is set to
+-.Cm no
+-(the default),
++.Cm no,
+ remote X11 clients will be considered untrusted and prevented
+ from stealing or tampering with data belonging to trusted X11
+ clients.
+@@ -754,8 +753,8 @@ The default is
  .Pa /etc/ssh/ssh_known_hosts2 .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
 -The default is
--.Dq no .
+-.Cm no .
 +The default on Solaris is
-+.Dq yes .
++.Cm yes .
  .It Cm GSSAPIDelegateCredentials
  Forward (delegate) credentials to the server.
  The default is
@@ -93,24 +97,24 @@ diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
 @@ -621,8 +621,8 @@ The default is
- .Dq no .
+ .Cm no .
  .It Cm GSSAPIAuthentication
  Specifies whether user authentication based on GSSAPI is allowed.
 -The default is
--.Dq no .
+-.Cm no .
 +The default on Solaris is
-+.Dq yes .
++.Cm yes .
  .It Cm GSSAPICleanupCredentials
  Specifies whether to automatically destroy the user's credentials cache
  on logout.
-@@ -1637,8 +1637,8 @@ The argument must be
- .Dq yes
+@@ -1527,8 +1527,8 @@ The argument must be
+ .Cm yes
  or
- .Dq no .
+ .Cm no .
 -The default is
--.Dq no .
+-.Cm no .
 +The default on Solaris is
-+.Dq yes .
++.Cm yes .
  .Pp
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the

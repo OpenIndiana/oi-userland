@@ -20,26 +20,26 @@
 #
 
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.3p1
+COMPONENT_VERSION=	7.4p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.3.0.1
+IPS_COMPONENT_VERSION=	7.4.0.1
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
-COMPONENT_ARCHIVE_HASH=	sha256:3ffb989a6dcaa69594c3b550d4855a5a2e1718ccdde7f5e36387b424220fbecc
+COMPONENT_ARCHIVE_HASH=	sha256:1b1fc4a14e2024293181924ed24872e6f2e06293f3e8926a376b8aec481f19d1
 COMPONENT_ARCHIVE_URL=	http://mirrors.sonic.net/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 
-TPNO_OPENSSH=		30602
+TPNO_OPENSSH=		33237
 TPNO_GSSKEX=		20377
 
 # Because of set up requirements, test suite is in stc gate.
@@ -68,6 +68,8 @@ CFLAGS += -DOPENSSL_NO_CAST
 CFLAGS += -DENABLE_OPENSSL_FIPS
 CFLAGS += -DOPENSSL_NO_RC4
 CFLAGS += -DWITHOUT_HMAC_MD5
+CFLAGS += -DDEFAULT_PKCS11_WHITELIST='\"/usr/lib/sparcv9/*,/lib/sparcv9/*,/usr/lib/amd64/*,/lib/amd64/*\"'
+
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't

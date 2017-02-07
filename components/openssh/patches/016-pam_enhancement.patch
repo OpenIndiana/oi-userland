@@ -10,8 +10,8 @@
 # later release, we will remove this patch when we upgrade to that release.
 #
 diff -pur old/auth-pam.c new/auth-pam.c
---- old/auth-pam.c	2015-04-28 06:15:57.335765454 -0700
-+++ new/auth-pam.c	2015-04-28 06:15:57.417753483 -0700
+--- old/auth-pam.c
++++ new/auth-pam.c
 @@ -617,6 +617,72 @@ sshpam_cleanup(void)
  	sshpam_handle = NULL;
  }
@@ -86,8 +86,8 @@ diff -pur old/auth-pam.c new/auth-pam.c
  sshpam_init(Authctxt *authctxt)
  {
 @@ -624,18 +690,71 @@ sshpam_init(Authctxt *authctxt)
- 	const char *pam_rhost, *pam_user, *user = authctxt->user;
  	const char **ptr_pam_user = &pam_user;
+ 	struct ssh *ssh = active_state; /* XXX */
  
 +#ifdef PAM_ENHANCEMENT
 +	const char *pam_service;
@@ -158,8 +158,8 @@ diff -pur old/auth-pam.c new/auth-pam.c
  
  	if (sshpam_err != PAM_SUCCESS) {
 diff -pur old/auth.h new/auth.h
---- old/auth.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/auth.h	2015-04-28 06:18:25.719914272 -0700
+--- old/auth.h
++++ new/auth.h
 @@ -81,6 +81,9 @@ struct Authctxt {
  
  	struct sshkey	**prev_userkeys;
@@ -171,8 +171,8 @@ diff -pur old/auth.h new/auth.h
  /*
   * Every authentication method has to handle authentication requests for
 diff -pur old/auth2.c new/auth2.c
---- old/auth2.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/auth2.c	2015-04-28 06:15:57.419262466 -0700
+--- old/auth2.c
++++ new/auth2.c
 @@ -243,10 +243,21 @@ input_userauth_request(int type, u_int32
  			PRIVSEP(audit_event(SSH_INVALID_USER));
  #endif
@@ -279,8 +279,8 @@ diff -pur old/auth2.c new/auth2.c
 -
 -
 diff -pur old/monitor.c new/monitor.c
---- old/monitor.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor.c	2015-04-28 06:15:57.421294814 -0700
+--- old/monitor.c
++++ new/monitor.c
 @@ -127,6 +127,9 @@ int mm_answer_sign(int, Buffer *);
  int mm_answer_pwnamallow(int, Buffer *);
  int mm_answer_auth2_read_banner(int, Buffer *);
@@ -291,7 +291,7 @@ diff -pur old/monitor.c new/monitor.c
  int mm_answer_authpassword(int, Buffer *);
  int mm_answer_bsdauthquery(int, Buffer *);
  int mm_answer_bsdauthrespond(int, Buffer *);
-@@ -206,10 +209,17 @@ struct mon_table mon_dispatch_proto20[]
+@@ -202,10 +205,17 @@ struct mon_table mon_dispatch_proto20[]
      {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
      {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
      {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
@@ -307,13 +307,12 @@ diff -pur old/monitor.c new/monitor.c
      {MONITOR_REQ_PAM_START, MON_ONCE, mm_answer_pam_start},
 +#endif
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
-     {MONITOR_REQ_PAM_INIT_CTX, MON_ISAUTH, mm_answer_pam_init_ctx},
-     {MONITOR_REQ_PAM_QUERY, MON_ISAUTH, mm_answer_pam_query},
-@@ -371,6 +381,24 @@ monitor_child_preauth(Authctxt *_authctx
- 			if (!compat20)
- 				fatal("AuthenticationMethods is not supported"
- 				    "with SSH protocol 1");
-+
+     {MONITOR_REQ_PAM_INIT_CTX, MON_ONCE, mm_answer_pam_init_ctx},
+     {MONITOR_REQ_PAM_QUERY, 0, mm_answer_pam_query},
+@@ -311,6 +321,23 @@ monitor_child_preauth(Authctxt *_authctx
+ 
+ 		/* Special handling for multiple required authentications */
+ 		if (options.num_auth_methods != 0) {
 +#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
 +                        /* 
 +                         * If each userauth has its own PAM service, then PAM
@@ -334,7 +333,7 @@ diff -pur old/monitor.c new/monitor.c
  			if (authenticated &&
  			    !auth2_update_methods_lists(authctxt,
  			    auth_method, auth_submethod)) {
-@@ -389,8 +417,21 @@ monitor_child_preauth(Authctxt *_authctx
+@@ -329,8 +356,21 @@ monitor_child_preauth(Authctxt *_authctx
  			    !auth_root_allowed(auth_method))
  				authenticated = 0;
  #ifdef USE_PAM
@@ -356,18 +355,18 @@ diff -pur old/monitor.c new/monitor.c
  				Buffer m;
  
  				buffer_init(&m);
-@@ -863,6 +904,10 @@ mm_answer_pwnamallow(int sock, Buffer *m
- 		/* Allow service/style information on the auth context */
- 		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
- 		monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
+@@ -770,6 +810,10 @@ mm_answer_pwnamallow(int sock, Buffer *m
+ 	/* Allow service/style information on the auth context */
+ 	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
+ 	monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
 +#ifdef PAM_ENHANCEMENT
-+                /* Allow authmethod information on the auth context */
-+		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHMETHOD, 1);
++	/* Allow authmethod information on the auth context */
++	monitor_permit(mon_dispatch, MONITOR_REQ_AUTHMETHOD, 1);
 +#endif
- 	}
+ 
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -903,6 +948,24 @@ mm_answer_authserv(int sock, Buffer *m)
+@@ -810,6 +854,24 @@ mm_answer_authserv(int sock, Buffer *m)
  	return (0);
  }
  
@@ -393,8 +392,8 @@ diff -pur old/monitor.c new/monitor.c
  mm_answer_authpassword(int sock, Buffer *m)
  {
 diff -pur old/monitor.h new/monitor.h
---- old/monitor.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor.h	2015-04-28 06:15:57.421684373 -0700
+--- old/monitor.h
++++ new/monitor.h
 @@ -65,6 +65,9 @@ enum monitor_reqtype {
  	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
  	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
@@ -404,11 +403,11 @@ diff -pur old/monitor.h new/monitor.h
 +#endif        
  };
  
- struct mm_master;
+ struct monitor {
 diff -pur old/monitor_wrap.c new/monitor_wrap.c
---- old/monitor_wrap.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/monitor_wrap.c	2015-04-28 06:15:57.419906674 -0700
-@@ -347,6 +347,24 @@ mm_inform_authserv(char *service, char *
+--- old/monitor_wrap.c
++++ new/monitor_wrap.c
+@@ -345,6 +345,24 @@ mm_inform_authserv(char *service, char *
  	buffer_free(&m);
  }
  
@@ -434,12 +433,12 @@ diff -pur old/monitor_wrap.c new/monitor_wrap.c
  int
  mm_auth_password(Authctxt *authctxt, char *password)
 diff -pur old/servconf.c new/servconf.c
---- old/servconf.c	2015-04-28 06:15:57.300968063 -0700
-+++ new/servconf.c	2015-04-28 06:27:06.330272555 -0700
-@@ -163,6 +163,18 @@ initialize_server_options(ServerOptions
- 	options->ip_qos_bulk = -1;
- 	options->version_addendum = NULL;
- 	options->fingerprint_hash = -1;
+--- old/servconf.c
++++ new/servconf.c
+@@ -156,6 +156,18 @@ initialize_server_options(ServerOptions
+ 	options->authorized_keys_command_user = NULL;
+ 	options->revoked_keys_file = NULL;
+ 	options->trusted_user_ca_keys = NULL;
 +#ifdef PAM_ENHANCEMENT
 +	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;
@@ -452,10 +451,10 @@ diff -pur old/servconf.c new/servconf.c
 +	 */
 +	options->pam_service_per_authmethod = 1;
 +#endif
- }
- 
- /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -332,6 +344,12 @@ fill_default_server_options(ServerOption
+ 	options->authorized_principals_file = NULL;
+ 	options->authorized_principals_command = NULL;
+ 	options->authorized_principals_command_user = NULL;
+@@ -330,6 +342,12 @@ fill_default_server_options(ServerOption
  		options->ip_qos_bulk = IPTOS_THROUGHPUT;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -468,7 +467,7 @@ diff -pur old/servconf.c new/servconf.c
  	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
  		options->fwd_opts.streamlocal_bind_mask = 0177;
  	if (options->fwd_opts.streamlocal_bind_unlink == -1)
-@@ -400,6 +418,9 @@ typedef enum {
+@@ -416,6 +434,9 @@ typedef enum {
  	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
  	sUsePrivilegeSeparation, sAllowAgentForwarding,
  	sHostCertificate,
@@ -476,9 +475,9 @@ diff -pur old/servconf.c new/servconf.c
 +	sPAMServicePrefix, sPAMServiceName,
 +#endif
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
+ 	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sIPQoS, sVersionAddendum,
- 	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
-@@ -534,6 +555,10 @@ static struct {
+@@ -554,6 +575,10 @@ static struct {
  	{ "forcecommand", sForceCommand, SSHCFG_ALL },
  	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
  	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
@@ -489,7 +488,7 @@ diff -pur old/servconf.c new/servconf.c
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
  	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
-@@ -1765,6 +1790,37 @@ process_server_config_line(ServerOptions
+@@ -1854,6 +1879,37 @@ process_server_config_line(ServerOptions
  			options->fingerprint_hash = value;
  		break;
  
@@ -525,11 +524,11 @@ diff -pur old/servconf.c new/servconf.c
 +		break;
 +
  	case sDeprecated:
- 		logit("%s line %d: Deprecated option %s",
- 		    filename, linenum, arg);
+ 	case sIgnore:
+ 	case sUnsupported:
 diff -pur old/servconf.h new/servconf.h
---- old/servconf.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/servconf.h	2015-04-28 06:28:25.181429777 -0700
+--- old/servconf.h
++++ new/servconf.h
 @@ -54,6 +54,10 @@
  /* Magic name for internal sftp-server */
  #define INTERNAL_SFTP_NAME	"internal-sftp"
@@ -555,9 +554,9 @@ diff -pur old/servconf.h new/servconf.h
  }       ServerOptions;
  
 diff -pur old/sshd.8 new/sshd.8
---- old/sshd.8	2015-04-28 06:15:57.254681499 -0700
-+++ new/sshd.8	2015-04-28 06:15:57.426325504 -0700
-@@ -945,6 +945,33 @@ concurrently for different ports, this c
+--- old/sshd.8
++++ new/sshd.8
+@@ -920,6 +920,33 @@ concurrently for different ports, this c
  started last).
  The content of this file is not sensitive; it can be world-readable.
  .El
@@ -591,28 +590,13 @@ diff -pur old/sshd.8 new/sshd.8
  .Sh SEE ALSO
  .Xr scp 1 ,
  .Xr sftp 1 ,
-diff -pur old/sshd.c new/sshd.c
---- old/sshd.c	2015-04-28 06:15:57.302106750 -0700
-+++ new/sshd.c	2015-04-28 06:15:57.427449259 -0700
-@@ -2146,6 +2146,11 @@ main(int ac, char **av)
- 
- 	sshd_exchange_identification(sock_in, sock_out);
- 
-+#ifdef PAM_ENHANCEMENT
-+	if (!compat20)
-+	        options.pam_service_per_authmethod = 0;
-+#endif
-+
- 	/* In inetd mode, generate ephemeral key only for proto 1 connections */
- 	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
- 		generate_ephemeral_server_key();
 diff -pur old/sshd_config.5 new/sshd_config.5
---- old/sshd_config.5	2015-04-28 06:15:57.256560985 -0700
-+++ new/sshd_config.5	2015-04-28 06:15:57.425661853 -0700
-@@ -1044,6 +1044,21 @@ The probability increases linearly and a
- are refused if the number of unauthenticated connections reaches
- .Dq full
- (60).
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -813,6 +813,21 @@ is set to
+ .Cm yes ) .
+ .It Cm KerberosAuthentication
+ Specifies whether the password provided by the user for
 +.It Cm PAMServiceName
 +Specifies the PAM service name for the PAM session. The PAMServiceName and 
 +PAMServicePrefix options are mutually exclusive and if both set, sshd does not
@@ -628,16 +612,16 @@ diff -pur old/sshd_config.5 new/sshd_config.5
 +For example, if this option is set to admincli, the service name for the 
 +keyboard-interactive authentication method is admincli-kbdint instead of the 
 +default sshd-kbdint.
- .It Cm PasswordAuthentication
- Specifies whether password authentication is allowed.
- The default is
-@@ -1427,8 +1442,7 @@ If
+ .Cm PasswordAuthentication
+ will be validated through the Kerberos KDC.
+ To use this option, the server needs a
+@@ -1472,8 +1487,7 @@ If
  is enabled, you will not be able to run
  .Xr sshd 8
  as a non-root user.
 -The default is
--.Dq no .
-+On Solaris, the option is always enabled.
+-.Cm no .
+++On Solaris, the option is always enabled.
  .It Cm UsePrivilegeSeparation
  Specifies whether
  .Xr sshd 8

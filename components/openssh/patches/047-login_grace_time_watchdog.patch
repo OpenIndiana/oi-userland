@@ -19,7 +19,7 @@
 diff -pur old/sshd.c new/sshd.c
 --- old/sshd.c
 +++ new/sshd.c
-@@ -252,9 +252,16 @@ Buffer loginmsg;
+@@ -236,7 +236,14 @@ Buffer loginmsg;
  /* Unprivileged user */
  struct passwd *privsep_pw = NULL;
  
@@ -30,13 +30,11 @@ diff -pur old/sshd.c new/sshd.c
 +#define	GRACE_WATCHDOG_THRESHOLD 10
 +
  /* Prototypes for various functions defined later in this file. */
++static void stop_grace_watchdog(void);
  void destroy_sensitive_data(void);
  void demote_sensitive_data(void);
-+static void stop_grace_watchdog(void);
- 
- #ifdef WITH_SSH1
- static void do_ssh1_kex(void);
-@@ -369,12 +376,102 @@ grace_alarm_handler(int sig)
+ static void do_ssh2_kex(void);
+@@ -351,12 +358,101 @@ grace_alarm_handler(int sig)
  		signal(SIGTERM, SIG_IGN);
  		kill(0, SIGTERM);
  	}
@@ -135,11 +133,10 @@ diff -pur old/sshd.c new/sshd.c
 +	grace_watchdog_pid = -1;
 +}
 +
-+
- /*
-  * Signal handler for the key regeneration alarm.  Note that this
-  * alarm only occurs in the daemon waiting for connections, and it does not
-@@ -723,6 +820,7 @@ privsep_preauth(Authctxt *authctxt)
+ static void
+ sshd_exchange_identification(struct ssh *ssh, int sock_in, int sock_out)
+ {
+@@ -623,6 +719,7 @@ privsep_preauth(Authctxt *authctxt)
  		/* child */
  		close(pmonitor->m_sendfd);
  		close(pmonitor->m_log_recvfd);
@@ -147,7 +144,7 @@ diff -pur old/sshd.c new/sshd.c
  
  		/* Arrange for logging to be sent to the monitor */
  		set_log_handler(mm_log_handler, pmonitor);
-@@ -2235,8 +2333,10 @@ main(int ac, char **av)
+@@ -2006,8 +2103,10 @@ main(int ac, char **av)
  	 * are about to discover the bug.
  	 */
  	signal(SIGALRM, grace_alarm_handler);
@@ -158,8 +155,8 @@ diff -pur old/sshd.c new/sshd.c
 +	}
  
  	sshd_exchange_identification(ssh, sock_in, sock_out);
- 
-@@ -2302,6 +2402,7 @@ main(int ac, char **av)
+ 	packet_set_nonblocking();
+@@ -2055,6 +2154,7 @@ main(int ac, char **av)
  	 */
  	alarm(0);
  	signal(SIGALRM, SIG_DFL);

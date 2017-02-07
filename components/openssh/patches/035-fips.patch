@@ -7,7 +7,7 @@
 diff -pur old/cipher.c new/cipher.c
 --- old/cipher.c
 +++ new/cipher.c
-@@ -77,7 +77,34 @@ struct sshcipher {
+@@ -86,7 +86,34 @@ struct sshcipher {
  #endif
  };
  
@@ -99,7 +99,7 @@ diff -pur old/digest-openssl.c new/digest-openssl.c
 diff -pur old/gss-genr.c new/gss-genr.c
 --- old/gss-genr.c
 +++ new/gss-genr.c
-@@ -44,6 +44,7 @@
+@@ -43,6 +43,7 @@
  #include "cipher.h"
  #include "key.h"
  #include "kex.h"
@@ -107,7 +107,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  #include <openssl/evp.h>
  
  #include "ssh-gss.h"
-@@ -100,6 +101,7 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -99,6 +100,7 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  	char deroid[2];
  	const EVP_MD *evp_md = EVP_md5();
  	EVP_MD_CTX md;
@@ -115,7 +115,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  
  	if (gss_enc2oid != NULL) {
  		for (i = 0; gss_enc2oid[i].encoded != NULL; i++)
-@@ -112,6 +114,14 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -111,6 +113,14 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  
  	buffer_init(&buf);
  
@@ -130,7 +130,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  	oidpos = 0;
  	for (i = 0; i < gss_supported->count; i++) {
  		if (gss_supported->elements[i].length < 128 &&
-@@ -119,7 +129,6 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -118,7 +128,6 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  
  			deroid[0] = SSH_GSS_OIDTYPE;
  			deroid[1] = gss_supported->elements[i].length;
@@ -138,7 +138,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
  			EVP_DigestInit(&md, evp_md);
  			EVP_DigestUpdate(&md, deroid, 2);
  			EVP_DigestUpdate(&md,
-@@ -151,6 +160,12 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+@@ -150,6 +159,12 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
  			oidpos++;
  		}
  	}
@@ -154,7 +154,7 @@ diff -pur old/gss-genr.c new/gss-genr.c
 diff -pur old/kex.c new/kex.c
 --- old/kex.c
 +++ new/kex.c
-@@ -90,7 +90,43 @@ struct kexalg {
+@@ -89,7 +89,43 @@ struct kexalg {
  	int ec_nid;
  	int hash_alg;
  };
@@ -319,7 +319,7 @@ diff -pur old/misc.c new/misc.c
 diff -pur old/misc.h new/misc.h
 --- old/misc.h
 +++ new/misc.h
-@@ -40,6 +40,11 @@ struct ForwardOptions {
+@@ -44,6 +44,11 @@ struct ForwardOptions {
  
  char	*chop(char *);
  char	*strdelim(char **);
@@ -334,7 +334,7 @@ diff -pur old/misc.h new/misc.h
 diff -pur old/myproposal.h new/myproposal.h
 --- old/myproposal.h
 +++ new/myproposal.h
-@@ -88,21 +88,33 @@
+@@ -90,21 +90,33 @@
  # else
  #  define KEX_CURVE25519_METHODS ""
  # endif
@@ -372,7 +372,7 @@ diff -pur old/myproposal.h new/myproposal.h
  	HOSTKEY_ECDSA_CERT_METHODS \
  	"ssh-ed25519-cert-v01@openssh.com," \
  	"ssh-rsa-cert-v01@openssh.com," \
-@@ -112,17 +124,32 @@
+@@ -114,17 +126,32 @@
  	"rsa-sha2-256," \
  	"ssh-rsa"
  
@@ -394,21 +394,21 @@ diff -pur old/myproposal.h new/myproposal.h
  
 -#define KEX_CLIENT_ENCRYPT KEX_SERVER_ENCRYPT "," \
 +#define KEX_CLIENT_ENCRYPT_DFLT KEX_SERVER_ENCRYPT_DFLT "," \
-+	"aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc"
++	"aes128-cbc,aes192-cbc,aes256-cbc"
 +
 +#define KEX_SERVER_ENCRYPT_FIPS \
 +	"aes128-ctr,aes192-ctr,aes256-ctr" \
 +	AESGCM_CIPHER_MODES
 +
 +#define KEX_CLIENT_ENCRYPT_FIPS KEX_SERVER_ENCRYPT_FIPS "," \
- 	"aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc"
+ 	"aes128-cbc,aes192-cbc,aes256-cbc"
  
 -#define KEX_SERVER_MAC \
 +#define KEX_SERVER_MAC_DFLT \
  	"umac-64-etm@openssh.com," \
  	"umac-128-etm@openssh.com," \
  	"hmac-sha2-256-etm@openssh.com," \
-@@ -134,7 +161,42 @@
+@@ -136,7 +163,42 @@
  	"hmac-sha2-512," \
  	"hmac-sha1"
  
@@ -483,7 +483,7 @@ diff -pur old/ssh-add.c new/ssh-add.c
 diff -pur old/ssh-agent.1 new/ssh-agent.1
 --- old/ssh-agent.1
 +++ new/ssh-agent.1
-@@ -117,6 +117,8 @@ and
+@@ -118,6 +118,8 @@ and
  .Dq sha256 .
  The default is
  .Dq sha256 .
@@ -495,7 +495,7 @@ diff -pur old/ssh-agent.1 new/ssh-agent.1
 diff -pur old/ssh-agent.c new/ssh-agent.c
 --- old/ssh-agent.c
 +++ new/ssh-agent.c
-@@ -1196,6 +1196,7 @@ main(int ac, char **av)
+@@ -1214,6 +1214,7 @@ main(int ac, char **av)
  	struct timeval *tvp = NULL;
  	size_t len;
  	mode_t prev_mask;
@@ -503,7 +503,7 @@ diff -pur old/ssh-agent.c new/ssh-agent.c
  
  	ssh_malloc_init();	/* must be called before any mallocs */
  	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
-@@ -1207,6 +1208,9 @@ main(int ac, char **av)
+@@ -1225,6 +1226,9 @@ main(int ac, char **av)
  
  	platform_disable_tracing(0);	/* strict=no */
  
@@ -513,7 +513,7 @@ diff -pur old/ssh-agent.c new/ssh-agent.c
  #ifdef WITH_OPENSSL
  	OpenSSL_add_all_algorithms();
  #endif
-@@ -1337,8 +1341,19 @@ main(int ac, char **av)
+@@ -1363,8 +1367,19 @@ main(int ac, char **av)
  		printf(format, SSH_AUTHSOCKET_ENV_NAME, socket_name,
  		    SSH_AUTHSOCKET_ENV_NAME);
  		printf("echo Agent pid %ld;\n", (long)parent_pid);
@@ -611,7 +611,7 @@ diff -pur old/ssh.1 new/ssh.1
 diff -pur old/ssh.c new/ssh.c
 --- old/ssh.c
 +++ new/ssh.c
-@@ -609,6 +609,11 @@ main(int ac, char **av)
+@@ -606,6 +606,11 @@ main(int ac, char **av)
  	 */
  	initialize_options(&options);
  
@@ -623,7 +623,7 @@ diff -pur old/ssh.c new/ssh.c
  	/* Parse command-line arguments. */
  	host = NULL;
  	use_syslog = 0;
-@@ -1028,6 +1033,10 @@ main(int ac, char **av)
+@@ -1027,6 +1032,10 @@ main(int ac, char **av)
  #endif
  		);
  
@@ -651,8 +651,8 @@ diff -pur old/ssh_api.c new/ssh_api.c
 diff -pur old/ssh_config.5 new/ssh_config.5
 --- old/ssh_config.5
 +++ new/ssh_config.5
-@@ -489,6 +489,13 @@ aes128-gcm@openssh.com,aes256-gcm@openss
- aes128-cbc,aes192-cbc,aes256-cbc,3des-cbc
+@@ -442,6 +442,13 @@ aes128-gcm@openssh.com,aes256-gcm@openss
+ aes128-cbc,aes192-cbc,aes256-cbc
  .Ed
  .Pp
 +The following ciphers are FIPS-140 approved and are supported in FIPS-140 mode:
@@ -662,19 +662,19 @@ diff -pur old/ssh_config.5 new/ssh_config.5
 +aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
 +.Ed
 +.Pp
- The list of available ciphers may also be obtained using the
- .Fl Q
- option of
-@@ -738,6 +745,8 @@ and
- .Dq sha256 .
- The default is
- .Dq sha256 .
+ The list of available ciphers may also be obtained using
+ .Qq ssh -Q cipher .
+ .It Cm ClearAllForwardings
+@@ -665,6 +672,8 @@ Valid options are:
+ and
+ .Cm sha256
+ (the default).
 +In FIPS-140 mode the only supported option is
 +.Dq sha256 .
  .It Cm ForwardAgent
  Specifies whether the connection to the authentication agent (if any)
  will be forwarded to the remote machine.
-@@ -1249,6 +1258,16 @@ umac-64@openssh.com,umac-128@openssh.com
+@@ -1129,6 +1138,16 @@ umac-64@openssh.com,umac-128@openssh.com
  hmac-sha2-256,hmac-sha2-512,hmac-sha1
  .Ed
  .Pp
@@ -688,13 +688,13 @@ diff -pur old/ssh_config.5 new/ssh_config.5
 +hmac-sha1,hmac-sha1-96
 +.Ed
 +.Pp
- The list of available MAC algorithms may also be obtained using the
- .Fl Q
- option of
+ The list of available MAC algorithms may also be obtained using
+ .Qq ssh -Q mac .
+ .It Cm NoHostAuthenticationForLocalhost
 diff -pur old/sshconnect.c new/sshconnect.c
 --- old/sshconnect.c
 +++ new/sshconnect.c
-@@ -530,8 +530,14 @@ send_client_banner(int connection_out, i
+@@ -529,8 +529,14 @@ send_client_banner(int connection_out, i
  {
  	/* Send our own protocol version identification. */
  	if (compat20) {
@@ -712,7 +712,7 @@ diff -pur old/sshconnect.c new/sshconnect.c
 diff -pur old/sshd.8 new/sshd.8
 --- old/sshd.8
 +++ new/sshd.8
-@@ -86,6 +86,9 @@ rereads its configuration file when it r
+@@ -84,6 +84,9 @@ rereads its configuration file when it r
  by executing itself with the name and options it was started with, e.g.\&
  .Pa /usr/sbin/sshd .
  .Pp
@@ -725,26 +725,26 @@ diff -pur old/sshd.8 new/sshd.8
 diff -pur old/sshd.c new/sshd.c
 --- old/sshd.c
 +++ new/sshd.c
-@@ -431,10 +431,18 @@ sshd_exchange_identification(struct ssh
- 		minor = PROTOCOL_MINOR_1;
- 	}
+@@ -366,10 +366,18 @@ sshd_exchange_identification(struct ssh
+ 	char buf[256];			/* Must not be larger than remote_version. */
+ 	char remote_version[256];	/* Must be at least as big as buf. */
  
 +#ifdef ENABLE_OPENSSL_FIPS
 +	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s%s",
-+	    major, minor, SSH_VERSION,
++	    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
 +	    ssh_FIPS_mode() ? " FIPS" : " ",
 +	    *options.version_addendum == '\0' ? "" : " ",
 +	    options.version_addendum, newline);
 +#else
  	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s",
- 	    major, minor, SSH_VERSION,
+ 	    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
  	    *options.version_addendum == '\0' ? "" : " ",
  	    options.version_addendum, newline);
 +#endif
  
  	/* Send our protocol version identification. */
  	if (atomicio(vwrite, sock_out, server_version_string,
-@@ -1562,6 +1570,10 @@ main(int ac, char **av)
+@@ -1395,6 +1403,10 @@ main(int ac, char **av)
  	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
  	sanitise_stdfd();
  
@@ -755,7 +755,7 @@ diff -pur old/sshd.c new/sshd.c
  	/* Initialize configuration options to their default values. */
  	initialize_server_options(&options);
  
-@@ -1712,6 +1724,10 @@ main(int ac, char **av)
+@@ -1541,6 +1553,10 @@ main(int ac, char **av)
  	    SYSLOG_FACILITY_AUTH : options.log_facility,
  	    log_stderr || !inetd_flag);
  
@@ -769,7 +769,7 @@ diff -pur old/sshd.c new/sshd.c
 diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
-@@ -489,6 +489,13 @@ aes128-ctr,aes192-ctr,aes256-ctr,
+@@ -478,6 +478,13 @@ aes128-ctr,aes192-ctr,aes256-ctr,
  aes128-gcm@openssh.com,aes256-gcm@openssh.com
  .Ed
  .Pp
@@ -780,19 +780,19 @@ diff -pur old/sshd_config.5 new/sshd_config.5
 +aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
 +.Ed
 +.Pp
- The list of available ciphers may also be obtained using the
- .Fl Q
- option of
-@@ -585,6 +592,8 @@ and
- .Dq sha256 .
+ The list of available ciphers may also be obtained using
+ .Qq ssh -Q cipher .
+ .It Cm ClientAliveCountMax
+@@ -576,6 +583,8 @@ and
+ .Cm sha256 .
  The default is
- .Dq sha256 .
+ .Cm sha256 .
 +In FIPS-140 mode the only supported option is
 +.Dq sha256 .
  .It Cm ForceCommand
  Forces the execution of the command specified by
  .Cm ForceCommand ,
-@@ -1034,6 +1043,16 @@ umac-64@openssh.com,umac-128@openssh.com
+@@ -1006,6 +1015,16 @@ umac-64@openssh.com,umac-128@openssh.com
  hmac-sha2-256,hmac-sha2-512,hmac-sha1
  .Ed
  .Pp
@@ -806,13 +806,13 @@ diff -pur old/sshd_config.5 new/sshd_config.5
 +hmac-sha1,hmac-sha1-96
 +.Ed
 +.Pp
- The list of available MAC algorithms may also be obtained using the
- .Fl Q
- option of
+ The list of available MAC algorithms may also be obtained using
+ .Qq ssh -Q mac .
+ .It Cm Match
 diff -pur old/sshkey.c new/sshkey.c
 --- old/sshkey.c
 +++ new/sshkey.c
-@@ -85,7 +85,46 @@ struct keytype {
+@@ -84,7 +84,46 @@ struct keytype {
  	int cert;
  	int sigonly;
  };
