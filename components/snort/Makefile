@@ -20,53 +20,41 @@
 #
 
 #
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		snort
-COMPONENT_VERSION=	2.9.6.2
+COMPONENT_VERSION=	2.9.9.0
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8e1d7fc5e1523a786d845ca0102cc474abfcebfcc7e964a1653680034b5b5d77
+    sha256:71b147125e96390a12f3d55796ed5073df77206bd3563d84d3e5a1f19e7d7a56
 COMPONENT_PROJECT_URL=	http://www.snort.org/
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort.mirror/files/Snort%202.9.6.2/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-TPNO=			19385
+TPNO=			33599
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL =		0
-
-# without this we bus error on sparc. sadly I don't see any patches
-# that might relate from the upstream (though maybe that's really
-# "happily", as this is simpler)
-studio_ALIGN.sparc.64=  -xmemalign=1i
+# snort 2.9.8.3 (and later) requires automake/autoconf >= 1.14, but Userland
+# default is older than what is needed. So hard-coding to the next available,
+# 1.15: "--add-missing" needed to use default "compile" script.
+AUTOMAKE=/usr/bin/automake-1.15 --add-missing
+ACLOCAL=/usr/bin/aclocal-1.15
 
 # Need to recreate the configure script for gethrtime checks.
-COMPONENT_PREP_ACTION +=	(cd $(@D); autoconf);
+COMPONENT_PREP_ACTION +=	(cd $(@D); autoreconf -fiv);
 
 CONFIGURE_OPTIONS +=	--with-libpcre-libraries="$(USRLIBDIR64)"
 CONFIGURE_OPTIONS +=	--with-dnet-libraries="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS +=	--without-mysql
-CONFIGURE_OPTIONS +=	--without-postgresql
-CONFIGURE_OPTIONS +=	--enable-zlib
-CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--disable-static-daq
 
-# cheesy, but if we turn off visibility then it doesn't
-# save the CFLAGS right and then nulls them.
-CONFIGURE_OPTIONS +=   "gl_cv_cc_visibility=no"
-CONFIGURE_OPTIONS +=   gl_save_CFLAGS="$(CFLAGS)"
-
-# Move snort shared objects to 64-bit path to stop pkglint bitching.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicengine $(PROTOUSRLIBDIR64); \
-	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicpreprocessor $(PROTOUSRLIBDIR64) ;
-
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140

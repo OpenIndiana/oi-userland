@@ -1,0 +1,27 @@
+Fix alignment problems on SPARC. Based on similar fixes found at:
+
+  https://lists.debian.org/debian-sparc/2012/01/msg00012.html
+
+and:
+
+  https://www.winehq.org/pipermail/wine-patches/2011-February/098547.html
+
+This change needs to be sent upstream.
+
+--- snort-2.9.9.0/src/snort.c.orig	2017-01-25 10:28:13.663208245 +0000
++++ snort-2.9.9.0/src/snort.c	2017-01-30 13:20:41.973411707 +0000
+@@ -847,6 +847,14 @@
+     snort_argc = argc;
+     snort_argv = argv;
+ 
++/*
++ * 'ta 6' tells the kernel to synthesize any unaligned accesses this process
++ * makes, instead of just signalling an error and terminating the process.
++ */
++#ifdef __sparc
++    __asm("ta 6");
++#endif
++
+     return SnortMain(argc, argv);
+ }
+ 

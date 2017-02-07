@@ -1,17 +1,27 @@
-This patch does three things:
+Changes needed to get snort to successfully build on Solaris.
 
-1/ Uses gethrtime() rather than trying to read the %tick register (the
+1/ We need to define our own equivalent (snort_in6_addr) of the in6_addr
+   struct from /usr/include/netinet/in.h because on Solaris we do not have
+   a s6_addr16 definition. We then have to use snort_in6_addr instead of
+   in6_addr in numerous places.
+   CR #25300643 has been filed for this Solaris include file omission.
+
+2/ Uses gethrtime() rather than trying to read the %tick register (the
    latter has issues in MP environments)
-2/ Allows Studio to compile in 64-bit and normal optimization.
-3/ Removed the need to define lines like "CFLAGS += -Du_int8_t=uint8_t"
-   in the snort component Makefile.
 
-It has been sent upstream for consideration by the snort maintainers for
-a future release.
+3/ Remove the need to define lines like "CFLAGS += -Du_int8_t=uint8_t"
+   in the snort component Makefile by #include'ing "sf_types.h" in
+   snort-2.9.9.0/src/sfutil/sf_ip.h
 
---- configure.in.orig	2014-09-25 08:05:35.171512464 -0700
-+++ configure.in	2014-09-25 08:06:12.896272259 -0700
-@@ -746,27 +746,8 @@
+4/ Prevent "-Wall" being added to CFLAGS by removing a bogus piece of
+   code in configure.in
+
+The gethrtime() changes will be pushed upstream and the other configure.in
+change. The others should be fixed by changes to standard Solaris headers.
+
+--- snort-2.9.9.0.orig/configure.in	2016-11-14 21:27:15.000000000 +0000
++++ snort-2.9.9.0/configure.in	2017-01-25 09:36:56.282142284 +0000
+@@ -889,27 +889,8 @@
      AC_MSG_RESULT(no)
  fi
  
@@ -41,8 +51,21 @@ a future release.
  
  # modified from gnulib/m4/visibility.m4
  AC_DEFUN([CC_VISIBILITY],
---- src/cpuclock.h.orig	2014-09-25 08:07:00.139948870 -0700
-+++ src/cpuclock.h	2014-09-25 08:08:38.401237764 -0700
+@@ -1489,11 +1470,6 @@
+     fi
+ fi
+ 
+-# Question: Does ICC not support -Wall (VJR - Jan 14, 2015)
+-if test "$ICC" = "no"; then
+-    CFLAGS="$CFLAGS -Wall"
+-fi
+-
+ echo $CFLAGS > cflags.out
+ echo $CPPFLAGS > cppflags.out
+ 
+diff -urN snort-2.9.9.0.orig/src/cpuclock.h snort-2.9.9.0/src/cpuclock.h
+--- snort-2.9.9.0.orig/src/cpuclock.h	2016-06-07 00:47:47.000000000 +0000
++++ snort-2.9.9.0/src/cpuclock.h	2017-01-25 09:41:13.229685320 +0000
 @@ -84,26 +84,15 @@
      val = ((uint64_t)tbl) | (((uint64_t)tbu0) << 32);  \
  }
@@ -74,9 +97,200 @@ a future release.
  #endif /* POWERPC || PPC */
  #endif /* IA64 && HPUX */
  #endif /* IA64 && GNUC */
---- src/sfutil/sf_ip.h.orig	2014-09-25 08:09:20.181312683 -0700
-+++ src/sfutil/sf_ip.h	2014-09-25 08:09:41.442009279 -0700
-@@ -39,6 +39,7 @@
+diff -urN snort-2.9.9.0.orig/src/decode.c snort-2.9.9.0/src/decode.c
+--- snort-2.9.9.0.orig/src/decode.c	2016-08-16 01:55:56.000000000 +0000
++++ snort-2.9.9.0/src/decode.c	2017-01-25 07:29:26.221313664 +0000
+@@ -3152,7 +3152,7 @@
+ {
+     IP6RawHdr* hdr6 = (IP6RawHdr*)p->iph;
+     uint8_t multicast_scope;
+-    struct in6_addr* ip_dst;
++    struct snort_in6_addr* ip_dst;
+     uint32_t h_ip_dst;
+ 
+     if ( hdr6->ip6_src.s6_addr[0] == IP6_MULTICAST )
+diff -urN snort-2.9.9.0.orig/src/decode.h snort-2.9.9.0/src/decode.h
+--- snort-2.9.9.0.orig/src/decode.h	2016-06-07 00:47:47.000000000 +0000
++++ snort-2.9.9.0/src/decode.h	2017-01-25 07:29:41.049530830 +0000
+@@ -1135,7 +1135,7 @@
+ 
+ /* IPv6 address */
+ #ifndef s6_addr
+-struct in6_addr
++struct snort_in6_addr
+ {
+     union
+     {
+@@ -1157,8 +1157,8 @@
+     uint8_t  ip6_next;                /* next header */
+     uint8_t  ip6_hoplim;               /* hop limit */
+ 
+-    struct in6_addr ip6_src;      /* source address */
+-    struct in6_addr ip6_dst;      /* destination address */
++    struct snort_in6_addr ip6_src;      /* source address */
++    struct snort_in6_addr ip6_dst;      /* destination address */
+ } IP6RawHdr;
+ 
+ #define ip6flow  ip6_vtf
+@@ -1241,7 +1241,7 @@
+     uint8_t ip6rte0_seg_left;
+     uint8_t ip6rte0_reserved;
+     uint8_t ip6rte0_bitmap[3];
+-    struct in6_addr ip6rte0_addr[1];  /* Up to 23 IP6 addresses */
++    struct snort_in6_addr ip6rte0_addr[1];  /* Up to 23 IP6 addresses */
+ } IP6Route0;
+ 
+ /* Fragment header */
+diff -urN snort-2.9.9.0.orig/src/dynamic-preprocessors/appid/fw_appid.c snort-2.9.9.0/src/dynamic-preprocessors/appid/fw_appid.c
+--- snort-2.9.9.0.orig/src/dynamic-preprocessors/appid/fw_appid.c	2016-11-14 03:48:57.000000000 +0000
++++ snort-2.9.9.0/src/dynamic-preprocessors/appid/fw_appid.c	2017-01-25 07:40:47.816227342 +0000
+@@ -569,8 +569,8 @@
+                (!info->dip_flag || memcmp(&info->dip, key->ip_l, sizeof(info->dip)) == 0))))
+         {
+             int af;
+-            const struct in6_addr* sip;
+-            const struct in6_addr* dip;
++            const struct snort_in6_addr* sip;
++            const struct snort_in6_addr* dip;
+             unsigned offset;
+             uint16_t sport;
+             uint16_t dport;
+@@ -582,38 +582,38 @@
+                 {
+                     if (session->common.initiator_port == key->port_l)
+                     {
+-                        sip = (const struct in6_addr*)key->ip_l;
+-                        dip = (const struct in6_addr*)key->ip_h;
++                        sip = (const struct snort_in6_addr*)key->ip_l;
++                        dip = (const struct snort_in6_addr*)key->ip_h;
+                         sport = key->port_l;
+                         dport = key->port_h;
+                     }
+                     else
+                     {
+-                        sip = (const struct in6_addr*)key->ip_h;
+-                        dip = (const struct in6_addr*)key->ip_l;
++                        sip = (const struct snort_in6_addr*)key->ip_h;
++                        dip = (const struct snort_in6_addr*)key->ip_l;
+                         sport = key->port_h;
+                         dport = key->port_l;
+                     }
+                 }
+                 else if (memcmp(&session->common.initiator_ip, key->ip_l, sizeof(session->common.initiator_ip))==0)
+                 {
+-                    sip = (const struct in6_addr*)key->ip_l;
+-                    dip = (const struct in6_addr*)key->ip_h;
++                    sip = (const struct snort_in6_addr*)key->ip_l;
++                    dip = (const struct snort_in6_addr*)key->ip_h;
+                     sport = key->port_l;
+                     dport = key->port_h;
+                 }
+                 else
+                 {
+-                    sip = (const struct in6_addr*)key->ip_h;
+-                    dip = (const struct in6_addr*)key->ip_l;
++                    sip = (const struct snort_in6_addr*)key->ip_h;
++                    dip = (const struct snort_in6_addr*)key->ip_l;
+                     sport = key->port_h;
+                     dport = key->port_l;
+                 }
+             }
+             else
+             {
+-                sip = (const struct in6_addr*)key->ip_l;
+-                dip = (const struct in6_addr*)key->ip_h;
++                sip = (const struct snort_in6_addr*)key->ip_l;
++                dip = (const struct snort_in6_addr*)key->ip_h;
+                 sport = key->port_l;
+                 dport = key->port_h;
+             }
+diff -urN snort-2.9.9.0.orig/src/dynamic-preprocessors/appid/util/ip_funcs.h snort-2.9.9.0/src/dynamic-preprocessors/appid/util/ip_funcs.h
+--- snort-2.9.9.0.orig/src/dynamic-preprocessors/appid/util/ip_funcs.h	2016-06-07 00:47:48.000000000 +0000
++++ snort-2.9.9.0/src/dynamic-preprocessors/appid/util/ip_funcs.h	2017-01-25 07:44:56.916628622 +0000
+@@ -55,7 +55,7 @@
+ 
+ RNAIpv6AddrSet *ParseIpv6Cidr(char *);
+ 
+-static inline void copyIpv4ToIpv6Network(struct in6_addr *keyIp, const uint32_t ip)
++static inline void copyIpv4ToIpv6Network(struct snort_in6_addr *keyIp, const uint32_t ip)
+ {
+     keyIp->s6_addr32[0] = keyIp->s6_addr32[1] = 0;
+     keyIp->s6_addr16[4] = 0;
+diff -urN snort-2.9.9.0.orig/src/file-process/file_resume_block.c snort-2.9.9.0/src/file-process/file_resume_block.c
+--- snort-2.9.9.0.orig/src/file-process/file_resume_block.c	2016-06-07 00:47:49.000000000 +0000
++++ snort-2.9.9.0/src/file-process/file_resume_block.c	2017-01-25 07:35:43.838234514 +0000
+@@ -48,8 +48,8 @@
+ 
+ typedef struct _FileHashKey
+ {
+-    struct in6_addr sip;
+-    struct in6_addr dip;
++    struct snort_in6_addr sip;
++    struct snort_in6_addr dip;
+     uint32_t file_sig;
+ } FileHashKey;
+ 
+diff -urN snort-2.9.9.0.orig/src/file-process/file_segment_process.h snort-2.9.9.0/src/file-process/file_segment_process.h
+--- snort-2.9.9.0.orig/src/file-process/file_segment_process.h	2016-06-07 00:47:49.000000000 +0000
++++ snort-2.9.9.0/src/file-process/file_segment_process.h	2017-01-25 07:35:48.265314566 +0000
+@@ -61,8 +61,8 @@
+ 
+ typedef struct _FileKey
+ {
+-    struct in6_addr sip;
+-    struct in6_addr dip;
++    struct snort_in6_addr sip;
++    struct snort_in6_addr dip;
+     uint64_t file_id;
+ } FileKey;
+ 
+diff -urN snort-2.9.9.0.orig/src/preprocessors/portscan.c snort-2.9.9.0/src/preprocessors/portscan.c
+--- snort-2.9.9.0.orig/src/preprocessors/portscan.c	2016-06-07 00:47:49.000000000 +0000
++++ snort-2.9.9.0/src/preprocessors/portscan.c	2017-01-25 07:36:50.781966468 +0000
+@@ -129,8 +129,8 @@
+ typedef struct s_PS_HASH_KEY
+ {
+     int protocol;
+-    struct in6_addr scanner;
+-    struct in6_addr scanned;
++    struct snort_in6_addr scanner;
++    struct snort_in6_addr scanned;
+     tSfPolicyId      policyId;
+ } PS_HASH_KEY;
+ 
+diff -urN snort-2.9.9.0.orig/src/preprocessors/Session/session_expect.c snort-2.9.9.0/src/preprocessors/Session/session_expect.c
+--- snort-2.9.9.0.orig/src/preprocessors/Session/session_expect.c	2016-08-16 01:55:56.000000000 +0000
++++ snort-2.9.9.0/src/preprocessors/Session/session_expect.c	2017-01-25 07:42:04.457716140 +0000
+@@ -94,8 +94,8 @@
+ 
+ typedef struct _ExpectHashKey
+ {
+-    struct in6_addr ip1;
+-    struct in6_addr ip2;
++    struct snort_in6_addr ip1;
++    struct snort_in6_addr ip2;
+     uint16_t port1;
+     uint16_t port2;
+     uint32_t protocol;
+diff -urN snort-2.9.9.0.orig/src/preprocessors/Session/stream5_ha.c snort-2.9.9.0/src/preprocessors/Session/stream5_ha.c
+--- snort-2.9.9.0.orig/src/preprocessors/Session/stream5_ha.c	2016-06-07 00:47:49.000000000 +0000
++++ snort-2.9.9.0/src/preprocessors/Session/stream5_ha.c	2017-01-25 07:42:14.881222982 +0000
+@@ -128,9 +128,9 @@
+ typedef struct _HADebugSessionConstraints
+ {
+     int sip_flag;
+-    struct in6_addr sip;
++    struct snort_in6_addr sip;
+     int dip_flag;
+-    struct in6_addr dip;
++    struct snort_in6_addr dip;
+     uint16_t sport;
+     uint16_t dport;
+     uint8_t protocol;
+diff -urN snort-2.9.9.0.orig/src/sfutil/sf_ip.h snort-2.9.9.0/src/sfutil/sf_ip.h
+--- snort-2.9.9.0.orig/src/sfutil/sf_ip.h	2016-11-14 03:48:57.000000000 +0000
++++ snort-2.9.9.0/src/sfutil/sf_ip.h	2017-01-25 09:41:42.567822087 +0000
+@@ -43,6 +43,7 @@
  #endif
  
  #include "snort_debug.h" /* for inline definition */
@@ -84,3 +298,125 @@ a future release.
  
  /* define SFIP_ROBUST to check pointers passed into the sfip libs.
   * Robustification should not be enabled if the client code is trustworthy.
+@@ -87,9 +88,28 @@
+ #pragma pack(push,1)
+ #endif
+ 
++/* Workaround the struct in6_addr definition in /usr/include/netinet/in.h
++ * on Solaris not having a s6_addr16 definition.
++ */
++
++#undef s6_addr
++#undef s6_addr16
++#undef s6_addr32
++
++struct snort_in6_addr {
++    union {
++        uint8_t  _S6_u8[16];
++        uint16_t _S6_u16[8];
++        uint32_t _S6_u32[4];
++    } in6_u;
++#define s6_addr    in6_u._S6_u8
++#define s6_addr16  in6_u._S6_u16
++#define s6_addr32  in6_u._S6_u32
++};
++
+ struct _sfaddr
+ {
+-    struct in6_addr ip;
++    struct snort_in6_addr ip;
+     uint16_t family;
+ #   define ia8  ip.s6_addr
+ #   define ia16 ip.s6_addr16
+@@ -143,7 +163,7 @@
+ 
+ #pragma pack(push,1)
+ struct _sfaddr {
+-    struct in6_addr ip;
++    struct snort_in6_addr ip;
+     uint16_t family;
+ #   define ia8  ip.s6_addr
+ #   define ia16 ip.s6_addr16
+@@ -269,7 +289,7 @@
+ /* Returns 1 if the IP is non-zero. 0 otherwise */
+ /* XXX This is a performance critical function, \
+  *  need to determine if it's safe to not check these pointers */\
+-static inline int sfraw_is_set(const struct in6_addr *addr) {
++static inline int sfraw_is_set(const struct snort_in6_addr *addr) {
+ /*    ARG_CHECK1(ip, -1); */
+     return (addr->s6_addr32[3] || addr->s6_addr32[0] || addr->s6_addr32[1] || addr->s6_addr16[4] ||
+             (addr->s6_addr16[5] && addr->s6_addr16[5] != 0xFFFF)) ? 1 : 0;
+@@ -558,7 +578,7 @@
+     return 0;
+ }
+ 
+-static inline void sfaddr_copy_to_raw(struct in6_addr *dst, const sfaddr_t *src)
++static inline void sfaddr_copy_to_raw(struct snort_in6_addr *dst, const sfaddr_t *src)
+ {
+     dst->s6_addr32[0] = src->ia32[0];
+     dst->s6_addr32[1] = src->ia32[1];
+diff -urN snort-2.9.9.0.orig/src/sfutil/sfrf.c snort-2.9.9.0/src/sfutil/sfrf.c
+--- snort-2.9.9.0.orig/src/sfutil/sfrf.c	2016-06-07 00:47:49.000000000 +0000
++++ snort-2.9.9.0/src/sfutil/sfrf.c	2017-01-25 07:26:36.583837363 +0000
+@@ -77,7 +77,7 @@
+      * whether dos threshold is tracking by source or destination IP address. For tracking
+      * by rule, it is cleared out (all 0s).
+      */
+-    struct in6_addr ip;
++    struct snort_in6_addr ip;
+ 
+ } tSFRFTrackingNodeKey ;
+ 
+diff -urN snort-2.9.9.0.orig/src/sfutil/sfthd.h snort-2.9.9.0/src/sfutil/sfthd.h
+--- snort-2.9.9.0.orig/src/sfutil/sfthd.h	2016-11-14 03:48:57.000000000 +0000
++++ snort-2.9.9.0/src/sfutil/sfthd.h	2017-01-25 07:26:13.854480513 +0000
+@@ -104,7 +104,7 @@
+ typedef struct{
+ 
+     int thd_id;
+-    struct in6_addr ip;
++    struct snort_in6_addr ip;
+     tSfPolicyId policyId;
+ 
+ } THD_IP_NODE_KEY ;
+@@ -113,7 +113,7 @@
+ 
+     unsigned gen_id;
+     unsigned sig_id;
+-    struct in6_addr ip;
++    struct snort_in6_addr ip;
+     tSfPolicyId policyId;
+ 
+ } THD_IP_GNODE_KEY ;
+diff -urN snort-2.9.9.0.orig/src/tag.c snort-2.9.9.0/src/tag.c
+--- snort-2.9.9.0.orig/src/tag.c	2016-06-07 00:47:48.000000000 +0000
++++ snort-2.9.9.0/src/tag.c	2017-01-25 07:30:03.102551584 +0000
+@@ -63,8 +63,8 @@
+  */
+ typedef struct _tagSessionKey
+ {
+-    struct in6_addr sip;  ///source IP address
+-    struct in6_addr dip;  ///destination IP address
++    struct snort_in6_addr sip;  ///source IP address
++    struct snort_in6_addr dip;  ///destination IP address
+ 
+     /* ports */
+     uint16_t sp; ///source port
+@@ -317,7 +317,7 @@
+  */
+ static inline void SwapTag(TagNode *np)
+ {
+-    struct in6_addr tip;
++    struct snort_in6_addr tip;
+     uint16_t tport;
+ 
+     tip = np->key.sip;
+@@ -345,7 +345,7 @@
+ 
+     host_tag_cache_ptr = sfxhash_new(
+                 hashTableSize,       /* number of hash buckets */
+-                sizeof(struct in6_addr), /* size of the key we're going to use */
++                sizeof(struct snort_in6_addr), /* size of the key we're going to use */
+                 0,                   /* size of the storage node */
+                 0,                   /* disable memcap*/
+                 0,                   /* use auto node recovery */
