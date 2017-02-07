@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 6.3.0
+COMPONENT_REVISION= 1
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 COMPONENT_FMRI= developer/gcc-6
 COMPONENT_CLASSIFICATION= Development/C
