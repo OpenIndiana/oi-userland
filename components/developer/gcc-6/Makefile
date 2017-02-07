@@ -20,6 +20,7 @@ COMPONENT_NAME= gcc
 COMPONENT_VERSION= 6.3.0
 COMPONENT_REVISION= 1
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
+THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
 COMPONENT_FMRI= developer/gcc-6
 COMPONENT_CLASSIFICATION= Development/C
 COMPONENT_SUMMARY= GNU Compiler Collection
@@ -96,9 +97,11 @@ CONFIGURE_OPTIONS+= --host $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --build $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --target $(GNU_ARCH)
 #CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(THIS_GCC_PKGVERSION)"
+CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS+=	--enable-initfini-array
+CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
