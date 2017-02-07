@@ -1151,7 +1151,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with lockutils.lock('glance-image-%s' % iref):
             if os.path.isfile(downloading):
                 LOG.debug(_('Cleaning partial download of %s' % iref))
-                os.unlink(image)
                 os.unlink(downloading)
 
             elif os.path.exists(image):
@@ -1161,12 +1160,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             LOG.debug(_("Fetching new Glance image: id %s") % iref)
             try:
-                # touch the empty .downloading file
-                with open(downloading, 'w'):
-                    pass
-                images.fetch(context, iref, image, instance['user_id'],
+                images.fetch(context, iref, downloading, instance['user_id'],
                              instance['project_id'])
-                os.unlink(downloading)
+                os.rename(downloading, image)
                 return image
             except Exception as reason:
                 LOG.exception(_("Unable to fetch Glance image: id %s: %s")
