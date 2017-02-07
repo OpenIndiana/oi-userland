@@ -1,0 +1,83 @@
+Tomas Heran <tomas.heran@oracle.com>
+pthread_kill(pid, 0) on Solaris 12 doesn't return ESRCH for a thread that has
+not been detached or pthread_join()'ed.
+Upstream bug: https://gnunet.org/bugs/view.php?id=4884
+
+diff -r ba9a7ed454dd -r e3e34f3524be src/testcurl/perf_get_concurrent.c
+--- a/src/testcurl/perf_get_concurrent.c	Fri Oct 21 16:28:03 2016 +0200
++++ b/src/testcurl/perf_get_concurrent.c	Tue Feb 07 13:10:29 2017 +0100
+@@ -60,6 +60,8 @@
+  */
+ #define PAR CPU_COUNT
+ 
++static char *g_do_gets_err = NULL;
++
+ /**
+  * Do we use HTTP 1.1?
+  */
+@@ -215,6 +217,7 @@
+         {
+           for (j--; j >= 0; j--)
+             pthread_join(par[j], NULL);
++	  g_do_gets_err = "pthread_create error";
+           return "pthread_create error";
+         }
+     }
+@@ -225,6 +228,7 @@
+           NULL != ret_val)
+         err = ret_val;
+     }
++  g_do_gets_err = err;
+   return err;
+ }
+ 
+@@ -318,7 +322,6 @@
+   struct timeval tv;
+   MHD_UNSIGNED_LONG_LONG tt;
+   int tret;
+-  char *ret_val;
+   int ret = 0;
+ 
+   d = MHD_start_daemon (MHD_USE_DEBUG,
+@@ -330,6 +333,11 @@
+       MHD_stop_daemon(d);
+       return 512;
+     }
++  if (0 != pthread_detach(pid))
++  {
++      MHD_stop_daemon(d);
++      return 512;
++  }
+   start_timer ();
+   while (ESRCH != pthread_kill (pid, 0))
+     {
+@@ -354,20 +362,20 @@
+ 		   "select failed: %s\n",
+ 		   strerror (errno));
+ 	  ret |= 1024;
+-	  break;	      	  
++	  break;
+ 	}
+       MHD_run_from_select(d, &rs, &ws, &es);
+     }
+ 
+   stop ("external select");
+   MHD_stop_daemon (d);
+-  if (0 != pthread_join(pid, (void**)&ret_val) ||
+-      NULL != ret_val)
+-    {
+-      fprintf (stderr,
+-               "%s\n", ret_val);
+-      ret |= 8;
+-    }
++
++  if (g_do_gets_err != NULL)
++  {
++	  fprintf (stderr, "%s\n", g_do_gets_err);
++	  ret |= 8;
++  }
++
+   if (ret)
+     fprintf (stderr, "Error performing test.\n");
+   return 0;
+

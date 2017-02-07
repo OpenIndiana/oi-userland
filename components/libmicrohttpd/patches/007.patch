@@ -1,0 +1,24 @@
+Tomas Heran <tomas.heran@oracle.com>
+Upstream bug: https://gnunet.org/bugs/view.php?id=4815
+
+diff -r 34a8823ef56c -r 89e444406b37 src/microhttpd/mhd_itc.c
+--- a/src/microhttpd/mhd_itc.c	Fri Feb 03 14:25:16 2017 +0100
++++ b/src/microhttpd/mhd_itc.c	Fri Feb 03 14:25:18 2017 +0100
+@@ -40,7 +40,7 @@
+ /**
+  * Change itc FD options to be non-blocking.
+  *
+- * @param pip the pipe to manipulate
++ * @param itc the pipe to manipulate
+  * @return non-zero if succeeded, zero otherwise
+  */
+ int
+@@ -58,7 +58,7 @@
+       return 0;
+ 
+     if ( ((flags | O_NONBLOCK) != flags) &&
+-         (0 != fcntl (pip.fd[i],
++         (0 != fcntl (itc.fd[i],
+                       F_SETFL,
+                       flags | O_NONBLOCK)) )
+       return 0;

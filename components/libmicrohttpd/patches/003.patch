@@ -3,30 +3,20 @@ Allow MHD to work with connections not represented by file descriptors but
 rather an object that has recv and send "methods".
 NOTE: This RFE hasn't been shared with upstream yet.
 
-diff -r efe4a6fcacd1 -r 6d80d5999249 src/include/microhttpd.h
---- a/src/include/microhttpd.h	Thu Dec 18 21:49:28 2014 +0100
-+++ b/src/include/microhttpd.h	Thu Dec 18 21:49:28 2014 +0100
-@@ -285,7 +285,7 @@
-  * with the SHOUTcast "ICY" line instad of "HTTP".
-  * @ingroup specialized
-  */
--#define MHD_ICY_FLAG ((uint32_t)(1 << 31))
-+#define MHD_ICY_FLAG ((uint32_t)((uint32_t)1 << 31))
- 
- /**
-  * @defgroup headers HTTP headers
-@@ -562,7 +562,9 @@
-    * kernel >= 3.6.  On other systems, using this option cases #MHD_start_daemon
-    * to fail.
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/include/microhttpd.h
+--- a/src/include/microhttpd.h	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/include/microhttpd.h	Fri Oct 21 16:28:01 2016 +0200
+@@ -693,7 +693,8 @@
+    * open up an extra file descriptor, which we do not want to do
+    * unless necessary.
     */
--  MHD_USE_TCP_FASTOPEN = 16384
-+  MHD_USE_TCP_FASTOPEN = 16384,
-+
-+  MHD_USE_STREAM_CONNS = 32768
+-  MHD_USE_TLS_EPOLL_UPGRADE = 32768 | MHD_USE_SUSPEND_RESUME | MHD_USE_EPOLL | MHD_USE_TLS
++  MHD_USE_TLS_EPOLL_UPGRADE = 32768 | MHD_USE_SUSPEND_RESUME | MHD_USE_EPOLL | MHD_USE_TLS,
++  MHD_USE_STREAM_CONNS = 65536 | MHD_USE_NO_LISTEN_SOCKET
  
  };
  
-@@ -1445,6 +1447,16 @@
+@@ -1698,6 +1699,16 @@
  		    const struct sockaddr *addr,
  		    socklen_t addrlen);
  
@@ -38,26 +28,26 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/include/microhttpd.h
 +    ssize_t (*send_cls_u) (struct MHD_Connection * conn,
 +	    const void *write_to, size_t max_bytes));
 +
-+void * MHD_get_stream_connection_data(struct MHD_Connection *conn);
++_MHD_EXTERN void * MHD_get_stream_connection_data(struct MHD_Connection *conn);
 +
  
  /**
   * Obtain the `select()` sets for this daemon.
-diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/connection.c
---- a/src/microhttpd/connection.c	Thu Dec 18 21:49:28 2014 +0100
-+++ b/src/microhttpd/connection.c	Thu Dec 18 21:49:28 2014 +0100
-@@ -2565,7 +2565,7 @@
- 				      connection,
- 				      &connection->client_context,
- 						  MHD_REQUEST_TERMINATED_COMPLETED_OK);
--            connection->client_aware = MHD_NO;
-+            //connection->client_aware = MHD_NO;
-           }
-           end =
-             MHD_lookup_connection_value (connection, MHD_HEADER_KIND,
-@@ -2599,7 +2599,13 @@
-                                   connection->read_buffer,
-                                   connection->read_buffer_size);
+@@ -1931,7 +1942,7 @@
+  *  shorter afterwards due to elimination of escape sequences)
+  */
+ _MHD_EXTERN size_t
+-MHD_http_unescape (char *val);
++MHD_http_unescape (void *, void *, char *val);
+ 
+ 
+ /**
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/microhttpd/connection.c
+--- a/src/microhttpd/connection.c	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/microhttpd/connection.c	Fri Oct 21 16:28:01 2016 +0200
+@@ -3038,7 +3038,13 @@
+               connection->read_buffer_size
+                 = connection->daemon->pool_size / 2;
              }
 -	  connection->client_aware = MHD_NO;
 +	  /*
@@ -70,10 +60,10 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/connection.c
            connection->client_context = NULL;
            connection->continue_message_write_offset = 0;
            connection->responseCode = 0;
-diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
---- a/src/microhttpd/daemon.c	Thu Dec 18 21:49:28 2014 +0100
-+++ b/src/microhttpd/daemon.c	Thu Dec 18 21:49:28 2014 +0100
-@@ -1131,7 +1131,10 @@
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/microhttpd/daemon.c
+--- a/src/microhttpd/daemon.c	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/microhttpd/daemon.c	Fri Oct 21 16:28:01 2016 +0200
+@@ -1767,7 +1767,10 @@
  			 MHD_socket client_socket,
  			 const struct sockaddr *addr,
  			 socklen_t addrlen,
@@ -84,28 +74,24 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
 +			 void *callback_data)
  {
    struct MHD_Connection *connection;
-   int res_thread_create;
-@@ -1150,7 +1153,10 @@
- 	  return internal_add_connection (&daemon->worker_pool[(i + client_socket) % daemon->worker_pool_size],
- 					  client_socket,
- 					  addr, addrlen,
--					  external_add);
-+					  external_add,
-+					  recv_cls_u,
-+					  send_cls_u,
-+					  callback_data);
+   unsigned int i;
+@@ -1790,7 +1793,10 @@
+                                             client_socket,
+                                             addr,
+                                             addrlen,
+-                                            external_add);
++                                            external_add,
++					    recv_cls_u,
++					    send_cls_u,
++					    callback_data);
+         }
        /* all pools are at their connection limit, must refuse */
-       if (0 != MHD_socket_close_ (client_socket))
- 	MHD_PANIC ("close failed\n");
-@@ -1288,10 +1294,21 @@
+       MHD_socket_close_chk_ (client_socket);
+@@ -1944,7 +1950,20 @@
+   connection->recv_cls = &recv_param_adapter;
+   connection->send_cls = &send_param_adapter;
  
-   /* set default connection handlers  */
-   MHD_set_http_callbacks_ (connection);
--  connection->recv_cls = &recv_param_adapter;
--  connection->send_cls = &send_param_adapter;
--
 -  if (0 == (connection->daemon->options & MHD_USE_EPOLL_TURBO))
-+
 +  if (recv_cls_u == NULL)
 +    connection->recv_cls = &recv_param_adapter;
 +  else
@@ -121,19 +107,28 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
 +  if (0 == (connection->daemon->options & MHD_USE_EPOLL_TURBO) &&
 +      0 == (connection->daemon->options & MHD_USE_STREAM_CONNS))
      {
-       /* non-blocking sockets are required on most systems and for GNUtls;
- 	 however, they somehow cause serious problems on CYGWIN (#1824);
-@@ -1746,11 +1763,29 @@
- 		    socklen_t addrlen)
- {
-   make_nonblocking_noninheritable (daemon,
--				   client_socket);
-+   client_socket);
-   return internal_add_connection (daemon,
+       /* in turbo mode, we assume that non-blocking was already set
+ 	 by 'accept4' or whoever calls 'MHD_add_connection' */
+@@ -1952,8 +1971,8 @@
+         {
+ #ifdef HAVE_MESSAGES
+           MHD_DLOG (connection->daemon,
+-                    _("Failed to set nonblocking mode on connection socket: %s\n"),
+-                    MHD_socket_last_strerr_());
++                    _("Failed to set nonblocking mode on connection socket %d %d: %s\n"),
++                    connection->socket_fd, connection->daemon->options, MHD_socket_last_strerr_());
+ #endif
+         }
+     }
+@@ -2379,7 +2398,28 @@
  				  client_socket,
- 				  addr, addrlen,
+ 				  addr,
+                                   addrlen,
 -				  MHD_YES);
-+				  MHD_YES, NULL, NULL, NULL);
++				  MHD_YES,
++				  NULL,
++				  NULL,
++				  NULL);
 +}
 +
 +int
@@ -155,22 +150,25 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
  }
  
  
-@@ -1826,7 +1861,7 @@
- #endif
-   (void) internal_add_connection (daemon, s,
- 				  addr, addrlen,
+@@ -2501,7 +2541,10 @@
+                                   s,
+ 				  addr,
+                                   addrlen,
 -				  MHD_NO);
-+				  MHD_NO, NULL, NULL, NULL);
++				  MHD_NO,
++				  NULL,
++				  NULL,
++				  NULL);
    return MHD_YES;
  }
  
-@@ -2097,6 +2132,45 @@
+@@ -2793,6 +2836,45 @@
    return MHD_YES;
  }
  
 +/**
 + */
-+static int
++int
 +MHD_poll_stream_conns (struct MHD_Daemon *daemon,
 +	    int may_block)
 +{
@@ -210,39 +208,141 @@ diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
  
  /**
   * Main internal select() call.  Will compute select sets, call select()
-@@ -2675,6 +2749,11 @@
+@@ -3655,7 +3737,12 @@
      MHD_cleanup_connections (daemon);
    }
  #endif
+-  else
 +  else if (0 != (daemon->options & MHD_USE_STREAM_CONNS))
 +  {
 +    MHD_poll_stream_conns (daemon, MHD_NO);
 +    MHD_cleanup_connections (daemon);
 +  }
-   else
++   else
    {
      MHD_select (daemon, MHD_NO);
-diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/internal.h
---- a/src/microhttpd/internal.h	Thu Dec 18 21:49:28 2014 +0100
-+++ b/src/microhttpd/internal.h	Thu Dec 18 21:49:28 2014 +0100
-@@ -803,6 +803,11 @@
-    */
+     /* MHD_select does MHD_cleanup_connections already */
+@@ -3753,7 +3840,7 @@
+                   struct MHD_Connection *connection,
+                   char *val)
+ {
+-  return MHD_http_unescape (val);
++  return MHD_http_unescape (NULL, NULL, val);
+ }
+ 
+ 
+@@ -4880,36 +4967,38 @@
+       socket_fd = daemon->socket_fd;
+     }
+ 
+-  if (!MHD_socket_nonblocking_ (socket_fd))
+-    {
++  if (MHD_INVALID_SOCKET != socket_fd) {
++	  if (!MHD_socket_nonblocking_ (socket_fd))
++	    {
+ #ifdef HAVE_MESSAGES
+-      MHD_DLOG (daemon,
+-                _("Failed to set nonblocking mode on listening socket: %s\n"),
+-                MHD_socket_last_strerr_());
+-#endif
+-      if (0 != (flags & MHD_USE_EPOLL) ||
+-          daemon->worker_pool_size > 0)
+-        {
+-           /* Accept must be non-blocking. Multiple children may wake up
+-            * to handle a new connection, but only one will win the race.
+-            * The others must immediately return. */
+-          MHD_socket_close_chk_ (socket_fd);
+-          goto free_and_fail;
+-        }
+-    }
+-  if ( (!MHD_SCKT_FD_FITS_FDSET_(socket_fd,
+-                                 NULL)) &&
+-       (0 == (flags & (MHD_USE_POLL | MHD_USE_EPOLL)) ) )
+-    {
++	      MHD_DLOG (daemon,
++			_("Failed to set nonblocking mode on listening socket: %s\n"),
++			MHD_socket_last_strerr_());
++#endif
++	      if (0 != (flags & MHD_USE_EPOLL) ||
++		  daemon->worker_pool_size > 0)
++		{
++		   /* Accept must be non-blocking. Multiple children may wake up
++		    * to handle a new connection, but only one will win the race.
++		    * The others must immediately return. */
++		  MHD_socket_close_chk_ (socket_fd);
++		  goto free_and_fail;
++		}
++	    }
++	  if ( (!MHD_SCKT_FD_FITS_FDSET_(socket_fd,
++					 NULL)) &&
++	       (0 == (flags & (MHD_USE_POLL | MHD_USE_EPOLL)) ) )
++	    {
+ #ifdef HAVE_MESSAGES
+-      MHD_DLOG (daemon,
+-                _("Socket descriptor larger than FD_SETSIZE: %d > %d\n"),
+-                socket_fd,
+-                FD_SETSIZE);
+-#endif
+-      MHD_socket_close_chk_ (socket_fd);
+-      goto free_and_fail;
+-    }
++	      MHD_DLOG (daemon,
++			_("Socket descriptor larger than FD_SETSIZE: %d > %d\n"),
++			socket_fd,
++			FD_SETSIZE);
++#endif
++	      MHD_socket_close_chk_ (socket_fd);
++	      goto free_and_fail;
++	    }
++  }
+ 
+ #ifdef EPOLL_SUPPORT
+   if ( (0 != (flags & MHD_USE_EPOLL)) &&
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/microhttpd/internal.c
+--- a/src/microhttpd/internal.c	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/microhttpd/internal.c	Fri Oct 21 16:28:01 2016 +0200
+@@ -135,7 +135,7 @@
+  *  shorter afterwards due to elimination of escape sequences)
+  */
+ size_t
+-MHD_http_unescape (char *val)
++MHD_http_unescape (void *ign1, void *ign2, char *val)
+ {
+   char *rpos = val;
+   char *wpos = val;
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/microhttpd/internal.h
+--- a/src/microhttpd/internal.h	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/microhttpd/internal.h	Fri Oct 21 16:28:01 2016 +0200
+@@ -881,6 +881,11 @@
    TransmitCallback send_cls;
  
-+  /**
+   /**
 +   * User specified data that's associated with a connection.
 +   */
 +  void *callback_data;
 +
- #if HTTPS_SUPPORT
-   /**
-    * State required for HTTPS/SSL/TLS support.
-@@ -1050,7 +1055,7 @@
-   /**
-    * Number of worker daemons
-    */
--  unsigned int worker_pool_size;
-+  unsigned long long worker_pool_size;
- 
-   /**
-    * The select thread handle (if we have internal select)
++  /**
+    * If this connection was upgraded and if we are using
+    * #MHD_USE_THREAD_PER_CONNECTION or #MHD_USE_TLS, this points to
+    * the upgrade response details such that the
+diff -r 8cabd8ab3e3b -r 0b399364b890 src/microhttpd/postprocessor.c
+--- a/src/microhttpd/postprocessor.c	Fri Oct 21 16:18:03 2016 +0200
++++ b/src/microhttpd/postprocessor.c	Fri Oct 21 16:28:01 2016 +0200
+@@ -394,7 +394,7 @@
+           buf[pp->buffer_pos] = '\0';   /* 0-terminate key */
+           pp->buffer_pos = 0;   /* reset for next key */
+ 	  MHD_unescape_plus (buf);
+-          MHD_http_unescape (buf);
++          MHD_http_unescape (NULL, NULL, buf);
+           poff += equals + 1;
+           pp->state = PP_ProcessValue;
+           pp->value_offset = 0;
+@@ -460,7 +460,7 @@
+           /* unescape */
+           xbuf[xoff] = '\0';    /* 0-terminate in preparation */
+ 	  MHD_unescape_plus (xbuf);
+-          xoff = MHD_http_unescape (xbuf);
++          xoff = MHD_http_unescape (NULL, NULL, xbuf);
+           /* finally: call application! */
+ 	  pp->must_ikvi = MHD_NO;
+           if (MHD_NO == pp->ikvi (pp->cls,
