@@ -26,14 +26,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         irssi
-COMPONENT_VERSION=	0.8.21
+COMPONENT_VERSION=	1.0.1
 COMPONENT_PROJECT_URL=	https://irssi.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=\
-    sha256:42c1a35a70b51fecc0d46bc1af0a922ec8ca9ed812d73004b083fe069b62aa3b
+    sha256:196ae830763be0a9dc0b377e571db105e82f9b7f7e0f443a81fbc665cea819db
 COMPONENT_ARCHIVE_URL=	https://github.com/irssi/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-TPNO=		33225
+TPNO=		33724
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
