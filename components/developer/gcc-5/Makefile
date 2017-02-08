@@ -18,7 +18,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 5.4.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
+THIS_GCC_PKGVERSION= $(COMPONENT_VERSION)-OI-$(COMPONENT_REVISION)
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\)\.[0-9]\+.*/\1/')
 COMPONENT_FMRI= developer/gcc-5
 COMPONENT_CLASSIFICATION= Development/C
@@ -100,9 +101,11 @@ CONFIGURE_OPTIONS+= --host $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --build $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --target $(GNU_ARCH)
 #CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS+= --with-pkgversion="OpenIndiana $(THIS_GCC_PKGVERSION)"
+CONFIGURE_OPTIONS+= --with-bugurl="https://bugs.openindiana.org"
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS+=	--enable-initfini-array
+CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --without-gnu-ld
 CONFIGURE_OPTIONS+= --with-ld=/usr/bin/ld
