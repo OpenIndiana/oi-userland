@@ -1,37 +1,50 @@
 brltty sets -std=gnu99 which the Solaris headers view as incompatible with
 _XOPEN_SOURCE < 600, since XPG5 and prior standards required C89, not C99.
 
-Need to either relax system header checks (bug 23506995) or submit upstream.
+This could be avoided if we'd relax system header checks (bug 23506995).
 
---- brltty-5.4/configure.ac
-+++ brltty-5.4/configure.ac
-@@ -288,7 +288,7 @@ in
+Accepted upstream for release after 5.4:
+https://github.com/brltty/brltty/pull/84
+
+diff --git a/configure.ac b/configure.ac
+index c28a9da..97c9828 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -287,6 +287,9 @@ in
+    linux*|gnu*|kfreebsd*)
        brltty_prog_cc_sysflags="-D_DEFAULT_SOURCE -D_POSIX_C_SOURCE=2 -D_BSD_SOURCE -D_XOPEN_SOURCE=500 -D_XOPEN_SOURCE_EXTENDED -D_GNU_SOURCE"
        ;;
-    solaris*)
--      brltty_prog_cc_sysflags="-D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
++   solaris2.1?) # Solaris 10 & 11 require _XOPEN_SOURCE=600 if using C99
 +      brltty_prog_cc_sysflags="-D_XOPEN_SOURCE=600 -D__EXTENSIONS__"
++      ;;
+    solaris*)
+       brltty_prog_cc_sysflags="-D_XOPEN_SOURCE=500 -D__EXTENSIONS__"
        ;;
-    hpux*)
-       brltty_prog_cc_sysflags="-D_XOPEN_SOURCE_EXTENDED -D_HPUX_SOURCE"
---- brltty-5.4/Drivers/Braille/EuroBraille/eutp_brl.c
-+++ brltty-5.4/Drivers/Braille/EuroBraille/eutp_brl.c
-@@ -5,8 +5,6 @@
+diff --git a/Drivers/Braille/EuroBraille/eutp_brl.c b/Drivers/Braille/EuroBraille/eutp_brl.c
+index c9f5b29..69ea68b 100644
+--- a/Drivers/Braille/EuroBraille/eutp_brl.c
++++ b/Drivers/Braille/EuroBraille/eutp_brl.c
+@@ -5,7 +5,9 @@
  ** Login   <obert01@epita.fr>
  */
  
--#define _XOPEN_SOURCE 500
--
++#ifndef _XOPEN_SOURCE
+ #define _XOPEN_SOURCE 500
++#endif
+ 
  /* globals */
  unsigned char extensions[] = {'K', 'L', 'B', 'T', 'A'};
- unsigned char positions[] = {3, 7, 16};
---- brltty-5.4/Drivers/Braille/EuroBraille/eutp_transfer.c
-+++ brltty-5.4/Drivers/Braille/EuroBraille/eutp_transfer.c
-@@ -7,7 +7,6 @@
+diff --git a/Drivers/Braille/EuroBraille/eutp_transfer.c b/Drivers/Braille/EuroBraille/eutp_transfer.c
+index c5c0745..266c4f9 100644
+--- a/Drivers/Braille/EuroBraille/eutp_transfer.c
++++ b/Drivers/Braille/EuroBraille/eutp_transfer.c
+@@ -7,7 +7,9 @@
  ** Started on  Sun Mar 20 16:10:06 2005 Olivier BERT
  Last update Fri Jun  1 15:23:17 2007 Olivier BERT
  */
--#define _XOPEN_SOURCE 500
++#ifndef _XOPEN_SOURCE
+ #define _XOPEN_SOURCE 500
++#endif
  #include <sys/types.h>
  #include <dirent.h>
  #include <string.h>
