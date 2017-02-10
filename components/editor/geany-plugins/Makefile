@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2016 Predrag Zečević.  All rights reserved.
+# Copyright 2016-2017 Predrag Zečević.  All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geany-plugins
-COMPONENT_VERSION= 1.28
+COMPONENT_VERSION= 1.29
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/geany/plugins
 COMPONENT_SUMMARY= Plugins for Geany editor
 COMPONENT_DESCRIPTION= Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:918f644053ea205fdf0f2185ac3b8e21339764e0e761a38583f2dda7de7fdb97
+COMPONENT_ARCHIVE_HASH= sha256:b608e0b0efce80fc19a5ebd40f0c11ffcc23f5437542c8c4a2e8f7d88f76db4f
 COMPONENT_ARCHIVE_URL= http://plugins.geany.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://plugins.geany.org/
 COMPONENT_LICENSE= GPLv2
@@ -49,6 +49,8 @@ CONFIGURE_OPTIONS+= --disable-scope
 
 # requires older lua < 5.2
 CONFIGURE_OPTIONS+= --disable-geanylua
+# no lipsum (www.lipsum.com) in OI yet
+CONFIGURE_OPTIONS+= --disable-lipsum
 
 build: $(BUILD_32)
 
