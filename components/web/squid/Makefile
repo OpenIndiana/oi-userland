@@ -28,12 +28,12 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.5.22
+COMPONENT_VERSION=      3.5.24
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1ce95b469257abeb2ed8a1c0417812301c1ef5a4cc40ca504167daa470ad9358
+    sha256:4fe29f582eef357faa541a53835b6885e24e6f28b80a3abcdf3b57f5393bbdb2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
