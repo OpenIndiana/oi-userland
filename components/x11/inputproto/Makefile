@@ -49,3 +49,5 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 REQUIRED_PACKAGES += text/asciidoc
+
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros

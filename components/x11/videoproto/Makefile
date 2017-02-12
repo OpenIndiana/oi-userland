@@ -47,3 +47,5 @@ COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
